@@ -41,6 +41,7 @@
 // Numeric Headers
 
 // Utility Headers
+#include <utility/file/file_sys_util.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/io/izstream.hh>
 
@@ -84,20 +85,21 @@ PB::PoissonBoltzmannPotential()
 pqr_filename_("Unknown.pqr"),
 dx_filename_("Unknown.dx"),
 apbs_path_(DEFAULT_APBS_PATH),
+scratch_dir_(""),
 calcenergy_(false)
 {
 }
 
 core::Real
-PB::get_potential(ObjexxFCL::FArray3D< core::Real > const & potential,
-	numeric::xyzVector<core::Real> const & cartX) const {
+PB::get_potential( numeric::xyzVector<core::Real> const & cartX ) const {
 	if ( out_of_bounds(cartX) ) return 0.0;
 
 	numeric::xyzVector<core::Real> idxX;
 	cart2idx(cartX, idxX);
-	return core::scoring::electron_density::interp_linear(potential, idxX);
+	return core::scoring::electron_density::interp_linear(potential_, idxX);
 }
-void
+
+Real
 PB::eval_PB_energy_residue(
 	core::conformation::Residue const & rsd,
 	Real & PB_energy_residue,
@@ -112,7 +114,7 @@ PB::eval_PB_energy_residue(
 	// Compute potential. Linear sum.
 	for ( Size iatom=1; iatom<=rsd.natoms(); ++iatom ) {
 		if ( rsd.atomic_charge(iatom) > -1e-6 && rsd.atomic_charge(iatom) < 1e-6 ) continue;
-		core::Real iatom_potential = get_potential(potential_, rsd.xyz(iatom));
+		core::Real iatom_potential = get_potential(rsd.xyz(iatom));
 
 		core::Real atom_energy = rsd.atomic_charge(iatom)*iatom_potential * PB_burial_weight;
 
@@ -123,6 +125,30 @@ PB::eval_PB_energy_residue(
 		}
 		PB_energy_residue += atom_energy;
 	}
+	return PB_energy_residue;
+}
+
+void
+PB::solve_pb(
+	core::pose::Pose const & pose,
+	std::string const & tag,
+	std::map<std::string, bool> const & charged_residues,
+	bool cleanup_files /*= false*/
+) {
+	id::AtomID_Map<bool> charged_atoms;
+	id::AtomID_Map<bool> present_atoms;
+	pose::initialize_atomid_map( charged_atoms, pose, false );
+	pose::initialize_atomid_map( present_atoms, pose, true );
+
+	for ( Size seqpos = 1; seqpos <= pose.size(); seqpos++ ) {
+		conformation::Residue const & rsd( pose.residue( seqpos ) );
+
+		bool residue_charged = const_cast<std::map<std::string,bool>&>( charged_residues )[ rsd.type().name() ];
+
+		charged_atoms.fill_with( seqpos, residue_charged );
+	}
+
+	solve_pb( pose, tag, charged_atoms, present_atoms, cleanup_files );
 }
 
 //============================================================================
@@ -132,7 +158,9 @@ void
 PB::solve_pb(
 	core::pose::Pose const & pose,
 	std::string const & tag,
-	std::map<std::string, bool> const & charged_residues
+	id::AtomID_Map<bool> const & charged_atoms,
+	id::AtomID_Map<bool> const & present_atoms,
+	bool cleanup_files /*= false*/
 ) {
 	using namespace std;
 	time_t begin;
@@ -144,7 +172,7 @@ PB::solve_pb(
 
 	int apbs_dbg = basic::options::option[ basic::options::OptionKeys::pb_potential::apbs_debug ];
 	calcenergy_ = basic::options::option[ basic::options::OptionKeys::pb_potential::calcenergy ];
-	APBSWrapper apbs(pose, charged_residues, apbs_dbg, calcenergy_);
+	APBSWrapper apbs(pose, charged_atoms, present_atoms, apbs_dbg, calcenergy_);
 
 	APBSResultCOP result = 0;
 
@@ -239,7 +267,9 @@ PB::load_potential(
 void
 PB::solve_pb( core::pose::Pose const & pose,
 	std::string const & tag,
-	std::map<std::string, bool> const &charged_residues )
+	id::AtomID_Map<bool> const & charged_atoms,
+	id::AtomID_Map<bool> const & present_atoms,
+	bool cleanup /*= false*/ )
 {
 #ifndef __native_client__
 	using namespace std;
@@ -252,20 +282,31 @@ PB::solve_pb( core::pose::Pose const & pose,
 
 	calcenergy_ = basic::options::option[ basic::options::OptionKeys::pb_potential::calcenergy ];
 
+	if ( basic::options::option[ basic::options::OptionKeys::out::path::scratch ].user() ) {
+		scratch_dir_ = basic::options::option[ basic::options::OptionKeys::out::path::scratch ]();
+		if ( ! utility::file::is_directory( scratch_dir_ ) ) {
+			utility_exit_with_message("PoissonBoltzmannPotential error: scratch directory " + scratch_dir_ +
+				" does not appear to be a directory!" );
+		}
+	}
+
 	// Generate filenames based on the given tag.
 	config_filename_ = tag + APBS_CONFIG_EXT;
 	pqr_filename_ = tag + APBS_PQR_EXT;
 	dx_filename_ = tag + APBS_DX_EXT;
 
-	write_pqr(pose, charged_residues );
-	write_config(pose);
+	write_pqr(pose, charged_atoms, present_atoms );
+	write_config(pose, present_atoms);
 	std::string command_line(apbs_path_ + " " + config_filename_);
+	if ( scratch_dir_ != "" ) {
+		command_line = "cd " + scratch_dir_ + " && " + command_line;
+	}
 	if ( system(command_line.c_str()) == -1 ) {
 		TR.Error << "Shell command failed to run!" << std::endl;
 	}
 
 	// Check if APBS succeeded.  If not, get out.
-	std::ifstream dxstream(dx_filename_.c_str());
+	std::ifstream dxstream( fpath( dx_filename_ ).c_str() );
 	if ( ! dxstream.good() ) {
 		TR << "APBS failed to generate the result file.  Terminating the program." << std::endl;
 		utility_exit_with_message("APBS failed to generate the result file.");
@@ -274,6 +315,8 @@ PB::solve_pb( core::pose::Pose const & pose,
 
 	// load the result
 	load_APBS_potential();
+
+	if ( cleanup ) cleanup_files();
 
 	time_t end;
 	time(&end);
@@ -284,7 +327,7 @@ PB::solve_pb( core::pose::Pose const & pose,
 void
 PB::load_APBS_potential()
 {
-	utility::io::izstream p_stream( dx_filename_ );
+	utility::io::izstream p_stream( fpath( dx_filename_ ) );
 	runtime_assert(p_stream);
 
 	std::string line;
@@ -363,13 +406,15 @@ PB::load_APBS_potential()
 
 #endif // LINK_APBS_LIB
 //==============================================================================
+
 void
 PB::write_pqr(
 	core::pose::Pose const & pose,
-	std::map<std::string, bool> const & is_residue_charged_by_name_
+	id::AtomID_Map<bool> const & charged_atoms,
+	id::AtomID_Map<bool> const & present_atoms
 ) const {
 	// Generate .pqr
-	std::ofstream pqr_ostr(pqr_filename_.c_str());
+	std::ofstream pqr_ostr( fpath( pqr_filename_ ).c_str());
 
 	using namespace basic::options::OptionKeys;
 	utility::vector1<Size> charged_chains;
@@ -380,20 +425,19 @@ PB::write_pqr(
 
 	for ( Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
-		// TODO: Sachko 11/19/2012
-		// This search result should be cached.
-		bool residue_charged = const_cast<std::map<std::string,bool>&>(is_residue_charged_by_name_)[rsd.type().name()];
+
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
 			conformation::Atom const & atom( rsd.atom(j) );
 
 			//skip outputing virtual atom unless specified.
 			//fixed so that the last atom in atom type set can be something other than a virtual atom --steven combs
 			if ( rsd.atom_type(j).is_virtual() ) continue;
+			if ( ! present_atoms( i, j ) ) continue;
 
 			++number;
 
 			char const chain( chr_chains[ (rsd.chain()-1)%chr_chains.size() ] );
-			if ( residue_charged ) {
+			if ( charged_atoms( i, j ) ) {
 				using namespace ObjexxFCL::format;
 				pqr_ostr << "ATOM  " << I(5,number) << ' ' << rsd.atom_name(j) << ' ' <<
 					rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
@@ -416,7 +460,7 @@ PB::write_pqr(
 	}
 	pqr_ostr.close();
 
-	TR << pqr_filename_ << " is successfully written." << std::endl;
+	TR << fpath( pqr_filename_ ) << " is successfully written." << std::endl;
 }
 
 ///
@@ -424,17 +468,19 @@ PB::write_pqr(
 ///
 void
 PB::write_config(
-	core::pose::Pose const & pose
+	core::pose::Pose const & pose,
+	id::AtomID_Map<bool> const & present_atoms
 ) const {
 
 	// Generate .in
-	std::ofstream config_ostr(config_filename_.c_str());
+	std::ofstream config_ostr( fpath( config_filename_ ).c_str());
 
 	numeric::xyzVector <core::Real> min_r(9999,9999,9999);
 	numeric::xyzVector <core::Real> max_r(-9999,-9999,-9999);
 	// Find the min & max coords within the moleculer system to define the grid.
 	for ( core::Size ires=1; ires<=pose.size(); ++ires ) {
 		for ( core::Size iatom=1; iatom<=pose.residue(ires).natoms(); ++iatom ) {
+			if ( ! present_atoms( ires, iatom ) ) continue;
 			for ( core::Size i=0; i<3; ++i ) {
 				if ( pose.residue(ires).xyz(iatom)[i] < min_r[i] ) {
 					min_r[i] = pose.residue(ires).xyz(iatom)[i];
@@ -454,6 +500,12 @@ PB::write_config(
 	core::Real space(0.5);
 	numeric::xyzVector <core::Real> dimension_fine = length + numeric::xyzVector <core::Real> (fadd,fadd,fadd);
 	numeric::xyzVector <core::Real> dimension_coarse = length * cfac;
+
+	for ( Size idim = 0; idim < 3; idim++ ) {
+		if ( dimension_fine[idim] > dimension_coarse[idim] ) {
+			dimension_fine[idim] = dimension_coarse[idim];
+		}
+	}
 
 	numeric::xyzVector <core::Real> tmpv = dimension_fine / space + numeric::xyzVector <core::Real> (1.,1.,1.); // bazzoli: to avoid warning by my compiler
 	numeric::xyzVector <core::Size> n_grid;
@@ -529,8 +581,26 @@ PB::write_config(
 
 	config_ostr.close();
 
-	TR << config_filename_ << " is successfully written." << std::endl;
+	TR << fpath( config_filename_ ) << " is successfully written." << std::endl;
 }
+
+std::string
+PB::fpath( std::string const & file ) const {
+	if ( scratch_dir_ == "" ) return file;
+	return utility::file::FileName( file, scratch_dir_ ).name();
+}
+
+void
+PB::cleanup_files() const {
+	utility::file::file_delete( fpath( config_filename_ ) );
+	utility::file::file_delete( fpath( pqr_filename_ ) );
+	utility::file::file_delete( fpath( dx_filename_ ) );
+
+	// But what happens if one process deletes this file while another is writing to it?
+	// On linux, the answer is nothing
+	utility::file::file_delete( fpath( "io.mc" ) );
+}
+
 
 }
 }

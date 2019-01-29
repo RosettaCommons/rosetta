@@ -233,6 +233,7 @@ public:
 
 	std::vector<Atom> const & GetAtoms() { return run_.atoms; }
 	std::vector<DOT> const & GetDots(int const moleculeid) { return run_.dots[moleculeid]; }
+	std::vector<const DOT*> const & GetTrimmedDots(int const moleculeid) { return run_.trimmed_dots[moleculeid]; }
 	RESULTS const & GetResults() { return run_.results; }
 
 protected:
@@ -256,6 +257,7 @@ protected:
 		RESULTS results;
 		std::vector<Atom> atoms;
 		std::vector<DOT> dots[2];
+		std::vector<const DOT*> trimmed_dots[2];
 		std::vector<PROBE> probes;
 		Vec3 prevp;
 		int prevburied;

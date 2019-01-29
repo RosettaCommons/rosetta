@@ -23,6 +23,7 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/id/AtomID_Map.hh>
 #include <vector>
 #include <string>
 #include <map>
@@ -40,20 +41,24 @@ class APBSWrapper : public utility::pointer::ReferenceCount {
 	APBSResultOP result;
 public:
 	APBSWrapper(pose::Pose const & pose,
-		std::map<std::string, bool> const & charged_residues,
+		id::AtomID_Map<bool> const & charged_atoms,
+		id::AtomID_Map<bool> const & present_atoms,
 		int dbg, bool calcenergy);
 	~APBSWrapper() override;
 	APBSResultCOP exec();
 private:
 	// Count the number of non-virtual atoms
-	int count_atoms( pose::Pose const & pose ) const;
+	int count_atoms( id::AtomID_Map<bool> const & present_atoms ) const;
 };
 ///-------------------------------------------------------------------------------------
 /// PQR
 //--------------------------------------------------------------------------------------
 class PQR : public utility::pointer::ReferenceCount {
 public:
-	PQR(pose::Pose const &pose, int natoms, std::map<std::string, bool> const & charged_residues);
+	PQR( pose::Pose const &pose,
+		int natoms,
+		id::AtomID_Map<bool> const & charged_atoms,
+		id::AtomID_Map<bool> const & present_atoms);
 	~PQR() override;
 	inline int get_natoms() { return natoms_; }
 	static std::string const chains;
@@ -150,7 +155,7 @@ public:
 		double * raw_array();
 	};
 
-	APBSConfig(pose::Pose const & pose, int natoms, int dbg, bool calcenergy);
+	APBSConfig(pose::Pose const & pose, int natoms, int dbg, bool calcenergy, id::AtomID_Map<bool> const & present_atoms);
 	~APBSConfig() override;
 
 	// APBS debug level

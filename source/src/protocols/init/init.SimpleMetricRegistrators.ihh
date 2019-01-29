@@ -48,6 +48,8 @@ static SimpleMetricRegistrator< core::simple_metrics::metrics::TotalEnergyMetric
 
 static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::CompositeEnergyMetricCreator  > reg_CompositeEnergyMetricCreator;
 
+static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::ElectrostaticComplementarityMetricCreator  > reg_ElectrostaticComplementarityMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::ProtocolSettingsMetricCreator  > reg_ProtocolSettingsMetricCreator;
 
 /////////// Per Residue ////////////

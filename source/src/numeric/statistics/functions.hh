@@ -18,6 +18,7 @@
 
 #include <numeric/types.hh>
 #include <utility/vector1.fwd.hh>
+#include <utility/sort.functions.hh>
 
 // C++ headers
 //#include <cmath>
@@ -130,6 +131,10 @@ cov_with_provided_mean(
 	utility::vector1< numeric::Real > const & vec2,
 	numeric::Real m2);
 
+numeric::Real
+spearman_r(
+	utility::vector1< numeric::Real > const & vec1,
+	utility::vector1< numeric::Real > const & vec2 );
 
 } // namespace statistics
 } // namespace numeric

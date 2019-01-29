@@ -82,7 +82,8 @@ numeric::Real corrcoef_with_provided_mean_and_std_dev(
 			++v1, ++v2, n++ ) {
 		cov += ( *v1 - m1 ) * ( *v2 - m2 );
 	}
-	cov /= ( n - 1 );
+	// cov /= ( n - 1 );
+	cov /= n; // For pearson_r you just divide by n. Check the unit tests if you don't believe this
 	return cov / ( sd1 * sd2 );
 }
 
@@ -111,6 +112,19 @@ numeric::Real cov_with_provided_mean(
 	}
 	cov /= ( n - 1 );
 	return cov;
+}
+
+
+numeric::Real
+spearman_r(
+	utility::vector1< numeric::Real > const & vec1,
+	utility::vector1< numeric::Real > const & vec2
+) {
+
+	utility::vector1< numeric::Real > ranks1 = utility::fractional_rank( vec1 );
+	utility::vector1< numeric::Real > ranks2 = utility::fractional_rank( vec2 );
+
+	return corrcoef( ranks1, ranks2 );
 }
 
 

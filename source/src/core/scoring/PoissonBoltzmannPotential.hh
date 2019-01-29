@@ -25,6 +25,7 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/id/AtomID_Map.hh>
 #include <utility/vector1.hh>
 #include <utility/file/PathName.hh>
 
@@ -47,9 +48,9 @@ public:
 
 	~PoissonBoltzmannPotential() override; // auto-removing definition from header{}
 
-	core::Real get_potential(ObjexxFCL::FArray3D< core::Real > const & potential,
-		numeric::xyzVector<core::Real> const & cartX) const;
-	void
+	core::Real get_potential( numeric::xyzVector<core::Real> const & cartX) const;
+
+	Real
 	eval_PB_energy_residue(
 		core::conformation::Residue const & rsd,
 		Real & PB_energy_residue,
@@ -90,7 +91,20 @@ public:
 	/// @param is_residue_charged_by_name Which residues are charged?  The key is the residue name.
 	void solve_pb( core::pose::Pose const & pose,
 		std::string const & state_tag,
-		std::map<std::string, bool> const & is_residue_charged_by_name );
+		std::map<std::string, bool> const & is_residue_charged_by_name,
+		bool cleanup_files = false );
+
+	void solve_pb( core::pose::Pose const & pose,
+		std::string const & state_tag,
+		id::AtomID_Map<bool> const & charged_atoms,
+		id::AtomID_Map<bool> const & present_atoms,
+		bool cleanup_files = false );
+
+	void cleanup_files() const;
+private:
+
+	std::string fpath( std::string const & file ) const;
+
 private:
 	numeric::xyzMatrix< core::Real > i2c_, c2i_;
 	numeric::xyzVector< core::Real > lower_bound_;
@@ -103,11 +117,13 @@ private:
 	std::string pqr_filename_;
 	std::string dx_filename_;
 	std::string apbs_path_;  // full path name to the APBS executable: e.g. /usr/bin/apbs.exe
+	std::string scratch_dir_;
 	bool calcenergy_;
 
 	/// Prepare ABPS - generate .in and .pqr
 	void write_config (
-		core::pose::Pose const & pose) const;
+		core::pose::Pose const & pose,
+		id::AtomID_Map<bool> const & present_atoms) const;
 
 	/// Read & load the APBS results
 #ifdef LINK_APBS_LIB
@@ -119,7 +135,8 @@ private:
 
 	/// Write out .pqr
 	void write_pqr( core::pose::Pose const & pose,
-		std::map<std::string, bool> const & is_residue_charged_by_name) const;
+		id::AtomID_Map<bool> const & charged_atoms,
+		id::AtomID_Map<bool> const & present_atoms) const;
 
 };
 

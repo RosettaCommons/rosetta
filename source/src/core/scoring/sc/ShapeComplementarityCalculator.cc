@@ -170,21 +170,21 @@ int ShapeComplementarityCalculator::Calc()
 		// Cut away the periphery of each surface
 		TR.Debug << "Trimming peripheral band, " << settings.band << "A range" << std::endl;
 
-		std::vector<DOT const *> trimmed_dots[2];
+		// std::vector<DOT const *> trimmed_dots[2];
 		for ( int i = 0; i < 2; ++i ) {
-			run_.results.surface[i].trimmedArea = TrimPeripheralBand(run_.dots[i], trimmed_dots[i]);
-			if ( !trimmed_dots[i].size() ) {
+			run_.results.surface[i].trimmedArea = TrimPeripheralBand(run_.dots[i], run_.trimmed_dots[i]);
+			if ( !run_.trimmed_dots[i].size() ) {
 				throw CREATE_EXCEPTION(utility::excn::Exception, "No molecular dots for surface " + utility::to_string( i ));
 			}
-			run_.results.surface[i].nTrimmedDots = trimmed_dots[i].size();
+			run_.results.surface[i].nTrimmedDots = run_.trimmed_dots[i].size();
 			run_.results.surface[i].nAllDots = run_.dots[i].size();
 		}
 
 		// Compute distance arrays and histograms for each surface
 		TR.Debug << "Computing surface separation and vectors" << std::endl;
 
-		CalcNeighborDistance(0, trimmed_dots[0], trimmed_dots[1]);
-		CalcNeighborDistance(1, trimmed_dots[1], trimmed_dots[0]);
+		CalcNeighborDistance(0, run_.trimmed_dots[0], run_.trimmed_dots[1]);
+		CalcNeighborDistance(1, run_.trimmed_dots[1], run_.trimmed_dots[0]);
 
 		run_.results.surface[2].d_mean = (run_.results.surface[0].d_mean + run_.results.surface[1].d_mean) / 2;
 		run_.results.surface[2].d_median = (run_.results.surface[0].d_median + run_.results.surface[1].d_median) / 2;

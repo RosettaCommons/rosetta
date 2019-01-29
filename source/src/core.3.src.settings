@@ -219,6 +219,7 @@ sources = {
 	],
 	"core/simple_metrics/composite_metrics": [
 		"CompositeEnergyMetric",
+		"ElectrostaticComplementarityMetric",
 		"ProtocolSettingsMetric",
 	],
 
@@ -923,6 +924,7 @@ sources = {
 		"SinXOverX",
 	],
 	"core/scoring/sc": [
+		"ElectrostaticComplementarityCalculator",
 		"ShapeComplementarityCalculator",
 		"MolecularSurfaceCalculator",
 	],

@@ -19,7 +19,7 @@
 
 class StatisticsFunctionsTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	double delta_percent;
 
@@ -35,7 +35,7 @@ class StatisticsFunctionsTests : public CxxTest::TestSuite {
 		using numeric::statistics::kl_divergence;
 
 		vector1< Real > prior, posterior;
-	  prior.push_back( 0.05467002 );
+		prior.push_back( 0.05467002 );
 		prior.push_back( 0.08065691 );
 		prior.push_back( 0.10648267 );
 		prior.push_back( 0.12579441 );
@@ -57,4 +57,26 @@ class StatisticsFunctionsTests : public CxxTest::TestSuite {
 		posterior.push_back( 1.486720e-06 );
 		TS_ASSERT_DELTA( kl_divergence( prior, posterior ), 1.2914, delta_percent );
 	}
+
+	void test_pearson_r() {
+		utility::vector1< numeric::Real > a { 1, 2, 3, 6, 7, 8, 4, 5, 6 };
+		utility::vector1< numeric::Real > b { 5, 4, 7, 9, 9, 8, 7, 8, 10 };
+
+		TS_ASSERT_DELTA( numeric::statistics::mean( a.begin(), a.end(), 0.0 ), 4.6666666, 0.0001 );
+		TS_ASSERT_DELTA( numeric::statistics::mean( b.begin(), b.end(), 0.0 ), 7.4444444, 0.0001 );
+
+		TS_ASSERT_DELTA( numeric::statistics::std_dev( a.begin(), a.end(), 0.0 ), 2.2110831, 0.0001 );
+		TS_ASSERT_DELTA( numeric::statistics::std_dev( b.begin(), b.end(), 0.0 ), 1.8324913, 0.0001 );
+
+		TS_ASSERT_DELTA( numeric::statistics::cov( a, b ), 3.7916666, 0.0001 );
+
+		TS_ASSERT_DELTA( numeric::statistics::corrcoef( a, b ), 0.83182, 0.0001 );
+	}
+	void test_spearman_r() {
+		utility::vector1< numeric::Real > a { 1, 2, 3, 6, 7, 8, 4, 5, 6 };
+		utility::vector1< numeric::Real > b { 5, 4, 7, 9, 9, 8, 7, 8, 10 };
+
+		TS_ASSERT_DELTA( numeric::statistics::spearman_r( a, b ), 0.80935, 0.0001 );
+	}
+
 };

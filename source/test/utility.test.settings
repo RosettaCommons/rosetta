@@ -24,6 +24,7 @@ sources = {
 		"OrderedTuple",
 		"recent_history_queue",
 		"simulate_mpi",
+		"sort.functions",
 		"string_util",
 		'type_traits',
 		#"TopScoreSelector",
