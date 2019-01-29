@@ -181,7 +181,7 @@ void H::receive_specification()
 {
 	zmq::multipart_t message(bus);
 
-	if( message.size() == 2 ) {
+if(message.size() == 2 ) {
 		string type = message.popstr();
 		if( type == _m_specification_ ) {
 			specification = message.popstr();
