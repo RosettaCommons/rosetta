@@ -1,23 +1,28 @@
 -nstruct 1
+#-ex1
+#-ex2
+#-extrachi_cutoff 0
 -output_virtual true
 -write_all_connect_info
 -cyclic_peptide:sequence_file inputs/seq.txt
 -cyclic_peptide:rama_cutoff 8.0
 -cyclic_peptide:octahedral_metal_positions 5,10,15,20,25,30,Fe2
 -cyclic_peptide:octahedral_metal_sidechain_distance_filter_multiplier 2.0
--cyclic_peptide:octahedral_metal_constraints_energy_filter_multiplier 20.0
+-cyclic_peptide:octahedral_metal_constraints_energy_filter_multiplier 10.0
 -cyclic_peptide:fast_relax_rounds 3
 -cyclic_peptide:genkic_closure_attempts 1000
 -cyclic_peptide:min_genkic_hbonds 0
 -cyclic_peptide:min_final_hbonds 0
 -cyclic_peptide:filter_oversaturated_hbond_acceptors false
 -in:file:native inputs/native.pdb
--cyclic_peptide:user_set_alpha_dihedrals 1 76.2 -8.6 180 2 78.7 21.8 180 3 -94.4 30.9 180 4 95.9 -0.7 180 5 -67.1 -18.7 180 6 -76.2 8.6 180 7 -78.7 -21.8 180 8 94.4 -30.9 180 9 -95.9 0.7 180 10 67.1 18.7 180 11 76.2 -8.6 180 12 78.7 21.8 180 13 -94.4 30.9 180 14 95.9 -0.7 180 15 -67.1 -18.7 180 16 -76.2 8.6 180 17 -78.7 -21.8 180 18 94.4 -30.9 180 19 -95.9 0.7 180 20 67.1 18.7 180 21 76.2 -8.6 180 22 78.7 21.8 180 23 -94.4 30.9 180 24 95.9 -0.7 180 25 -67.1 -18.7 180 26 -76.2 8.6 180 27 -78.7 -21.8 180 28 94.4 -30.9 180 29 -95.9 0.7 180 30 67.1 18.7 180 
--cyclic_peptide:user_set_alpha_dihedral_perturbation 10.0
--cyclic_peptide:require_symmetry_repeats 6
--cyclic_peptide:require_symmetry_mirroring true
--cyclic_peptide:require_symmetry_angle_threshold 60.0
--cyclic_peptide:require_symmetry_perturbation 5.0
+-cyclic_peptide:user_set_alpha_dihedrals 1       97.6   -8.1 180  2       64.8   16.5 180  3      -99.9   20.0 180  4       95.6    4.9 180  5      -66.2  -36.7 180  6      -65.6   30.2 180  7      -97.7  -28.3 180  8      101.2  -15.5 180  9      -92.8   -4.1 180  10      66.1   -6.0 180  11      68.3    2.9 180  12      71.9   13.4 180  13     -81.8   21.6 180  14     108.3   -8.6 180  15     -69.9   -6.9 180  16     -69.9   -3.6 180  17     -66.8  -12.6 180 18      87.0  -27.9 180  19    -111.5   16.7 180  20      54.1   31.2 180  21      76.3  -17.0 180  22      66.7   19.8 180  23     -86.4   13.8 180  24     120.9  -23.9 180  25     -71.8  -13.9 180  26     -65.1    0.1 180  27     -77.9  -21.8 180  28      92.8   -6.5 180  29     -93.7  -26.9 180  30      68.7   -6.7 180
+#-cyclic_peptide:user_set_alpha_dihedrals 1 76.2 -8.6 180 2 78.7 21.8 180 3 -94.4 30.9 180 4 95.9 -0.7 180 5 -67.1 -18.7 180 6 -76.2 8.6 180 7 -78.7 -21.8 180 8 94.4 -30.9 180 9 -95.9 0.7 180 10 67.1 18.7 180 11 76.2 -8.6 180 12 78.7 21.8 180 13 -94.4 30.9 180 14 95.9 -0.7 180 15 -67.1 -18.7 180 16 -76.2 8.6 180 17 -78.7 -21.8 180 18 94.4 -30.9 180 19 -95.9 0.7 180 20 67.1 18.7 180 21 76.2 -8.6 180 22 78.7 21.8 180 23 -94.4 30.9 180 24 95.9 -0.7 180 25 -67.1 -18.7 180 26 -76.2 8.6 180 27 -78.7 -21.8 180 28 94.4 -30.9 180 29 -95.9 0.7 180 30 67.1 18.7 180 
+-cyclic_peptide:user_set_alpha_dihedral_perturbation 3.0
+#-cyclic_peptide:require_symmetry_repeats 6
+#-cyclic_peptide:require_symmetry_mirroring true
+#-cyclic_peptide:require_symmetry_angle_threshold 60.0
+#-cyclic_peptide:require_symmetry_perturbation 5.0
 -mute protocols.protein_interface_design.design_utils
+-symmetric_gly_tables true
 -jd2:failed_job_exception false
 -out:levels protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication:500 protocols.cyclic_peptide.CrosslinkerMover:500 protocols.cyclic_peptide.crosslinker.CrosslinkerMoverHelper:500 protocols.cyclic_peptide.crosslinker.OctahedralMetal_Helper:500
