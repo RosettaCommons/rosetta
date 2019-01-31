@@ -22,6 +22,7 @@
 // Project Headers
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -65,6 +66,9 @@ public:
 	void selection_tag( std::string const & setting );
 	std::string const & selection_tag() const;
 
+	void residue_selector( core::select::residue_selector::ResidueSelectorCOP const & sel );
+	core::select::residue_selector::ResidueSelectorCOP residue_selector() const;
+
 	virtual void parse_tag(utility::tag::TagCOP, DataMap &);
 	static std::string keyname() { return "ReadResfileFromDB"; }
 
@@ -72,6 +76,7 @@ private:
 	std::string database_table_;
 	std::string selection_tag_;
 	utility::sql_database::sessionOP db_session_;
+	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
 };
 
 } //namespace task_operations

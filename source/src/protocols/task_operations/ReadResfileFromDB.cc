@@ -17,6 +17,8 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // Project Headers
+#include <core/pose/Pose.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
@@ -131,7 +133,9 @@ ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 	TR << resfile;
 	TR << std::endl;
 	try {
-		parse_resfile_string(pose, task, "<resfile from database table '" + database_table_ + "' with tag '" + selection_tag + "'>", resfile);
+		core::select::residue_selector::ResidueSubset subset( pose.size(), true );
+		if ( residue_selector_ ) subset = residue_selector_->apply(pose);
+		parse_resfile_string(pose, task, "<resfile from database table '" + database_table_ + "' with tag '" + selection_tag + "'>", resfile, subset);
 	} catch( ResfileReaderException const & e ){
 		stringstream error_message;
 		error_message
@@ -171,6 +175,18 @@ ReadResfileFromDB::selection_tag() const
 	return selection_tag_;
 }
 
+void
+ReadResfileFromDB::residue_selector( core::select::residue_selector::ResidueSelectorCOP const & sel )
+{
+	residue_selector_ = sel;
+}
+
+core::select::residue_selector::ResidueSelectorCOP
+ReadResfileFromDB::residue_selector() const
+{
+	return residue_selector_;
+}
+
 
 void
 ReadResfileFromDB::parse_tag( TagCOP tag , DataMap & datamap )
@@ -188,6 +204,17 @@ ReadResfileFromDB::parse_tag( TagCOP tag , DataMap & datamap )
 	}
 	selection_tag( tag->getOption< std::string >( "selection_tag" ));
 	db_session_ = protocols::rosetta_scripts::parse_database_session(tag, datamap);
+
+	if ( tag->hasOption( "residue_selector" ) ) {
+		std::string const selector_name ( tag->getOption< std::string >( "residue_selector" ) );
+		try {
+			residue_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name ) );
+		} catch ( utility::excn::Exception & e ) {
+			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from ReadResfileFromDB::parse_tag()\n" + e.msg();
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
+		}
+		debug_assert(residue_selector_);
+	}
 }
 
 void ReadResfileFromDB::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
@@ -201,7 +228,12 @@ void ReadResfileFromDB::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		" the row in the indicated table that will be read from for the indicated job. In JD3, this"
 		" can/should be combined with the script_vars flag so that different jobs can read different"
 		" resfiles. This is a marked departure from the JD2 functionality which relied on the global"
-		" data representing the currently-running job. That functionality is now removed." );
+		" data representing the currently-running job. That functionality is now removed." )
+
+		+ utility::tag::XMLSchemaAttribute( "residue_selector", xs_string , "Optionally, a previously-defined ResidueSelector "
+		"may be specified using the residue_selector=(some string) option. If this is used, then the ResidueSelector is used "
+		"as a mask, and the ReadResfile TaskOperation is applied only to those residues selected by the ResidueSelector, "
+		"even if the resfile lists other residues as well." );
 
 	protocols::rosetta_scripts::attributes_for_parse_database_session( xsd, attributes );
 
