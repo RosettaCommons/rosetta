@@ -495,7 +495,9 @@ ParsedProtocol::get_additional_output( )
 	report_filters_to_pose( *pose );
 
 	// report filter values to tracer output
-	report_all( *pose );
+	if ( TR_report.visible() ) {
+		report_all( *pose );
+	}
 
 	final_score( *pose );
 
@@ -576,7 +578,9 @@ void ParsedProtocol::finish_protocol(Pose & pose) {
 	// report filter values to pose DataCache
 	report_filters_to_pose( pose );
 	// report filter values to tracer output
-	report_all( pose );
+	if ( TR_report.visible() ) {
+		report_all( pose );
+	}
 
 	if ( report_call_order() ) {
 		std::string job_name ( protocols::jd2::jd2_used() ? protocols::jd2::current_output_name() : "CURRENT_JOB" );
