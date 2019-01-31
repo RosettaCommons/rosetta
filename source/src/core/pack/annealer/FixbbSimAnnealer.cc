@@ -190,8 +190,8 @@ void FixbbSimAnnealer::run()
 			if ( rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
 
 			// for waters, set to virtual 50% of the time
-			core::conformation::Residue curres( *rotamer_sets()->rotamer_for_moltenres(moltenres_id, rotamer_state_on_moltenres) );
-			if ( ( curres.name3() == "HOH" ) && ( include_vrt ) ) {  // don't want to do this for waters without a virtual state, like TP3
+			std::string const & current_name3 = rotamer_sets()->rotamer_for_moltenres( moltenres_id, rotamer_state_on_moltenres )->name3();
+			if ( ( current_name3 == "HOH" ) && ( include_vrt ) ) {  // don't want to do this for waters without a virtual state, like TP3
 				double rand_num = numeric::random::rg().uniform();
 				double nrot = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
 				/// last state is the virtual state
