@@ -67,7 +67,8 @@ static basic::Tracer TR( "--namespace_dot--.--class--" );
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
 core::select::residue_selector::ResidueSelectorOP
 --class--::clone() const {
-	return core::select::residue_selector::ResidueSelectorOP( new --class--(*this) );
+
+	return utility::pointer::make_shared< --class-- >( *this );
 }
 
 /// @brief "Apply" function.

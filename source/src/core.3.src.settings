@@ -999,6 +999,7 @@ sources = {
 		"ResidueInSequenceMotifSelector",
 		"ResidueNameSelector",
 		"ResidueInMembraneSelector",
+		"ResiduePropertySelector",
 		"ResidueSpanSelector",
 		"ResiduePDBInfoHasLabelSelector",
 		"ResidueRanges",

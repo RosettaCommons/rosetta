@@ -291,10 +291,12 @@
 #include <core/select/residue_selector/AsymmetricUnitSelectorCreator.hh>
 #include <core/select/residue_selector/GlycanLayerSelectorCreator.hh>
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
+#include <core/select/residue_selector/ResiduePropertySelectorCreator.hh>
 #include <core/select/residue_selector/PrimarySequenceNeighborhoodSelectorCreator.hh>
 #include <core/select/residue_selector/SymmetricalResidueSelectorCreator.hh>
 #include <core/pack/task/residue_selector/ClashBasedShellSelectorCreator.hh>
 #include <core/select/residue_selector/CloseContactResidueSelectorCreator.hh>
+
 
 #include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
 
@@ -767,6 +769,7 @@ static ResidueSelectorRegistrator< RandomResidueSelectorCreator > reg_RandomResi
 static ResidueSelectorRegistrator< ResidueIndexSelectorCreator > reg_ResidueIndexSelectorCreator;
 static ResidueSelectorRegistrator< ResidueNameSelectorCreator > reg_ResidueNameSelectorCreator;
 static ResidueSelectorRegistrator< ResidueInSequenceMotifSelectorCreator > reg_ResidueInSequenceMotifSelectorCreator;
+static ResidueSelectorRegistrator< ResiduePropertySelectorCreator > reg_ResiduePropertySelectorCreator;
 static ResidueSelectorRegistrator< ResidueSpanSelectorCreator > reg_ResidueSpanSelectorCreator;
 static ResidueSelectorRegistrator< TrueResidueSelectorCreator > reg_TrueResidueSelectorCreator;
 static ResidueSelectorRegistrator< FalseResidueSelectorCreator > reg_FalseResidueSelectorCreator;
