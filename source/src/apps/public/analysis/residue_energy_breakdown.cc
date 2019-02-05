@@ -160,7 +160,9 @@ main( int argc, char* argv [] ) {
 						for ( ResidueNeighborConstIteratorOP rni( lrec->const_upper_neighbor_iterator_begin( ii ) ),
 								end( lrec->const_upper_neighbor_iterator_end( ii ) ); *rni != *end; ++(*rni) ) {
 							if ( rni->upper_neighbor_id() != jj ) { continue; }
-							rni->accumulate_energy( pair_energies );
+							EnergyMap unwt_pair_energies;
+							rni->accumulate_energy( unwt_pair_energies );
+							pair_energies += unwt_pair_energies * weights;
 							output = true;
 						}
 					}
