@@ -274,7 +274,7 @@ def generate_mappings_source_file(enum_info, enum_defs):
 
     # Add the generating function for the global map of string->enum.
     lines.append('std::map< std::string, ' + enum_info.name + ' > const *\n')
-    lines.append('ResidueProperties::generate_string_to_' + enum_info.short_name + '_map() {\n' )
+    lines.append('generate_string_to_' + enum_info.short_name + '_map() {\n' )
 
     lines.append('\t// A map of ' + enum_info.name +
         ' enum values keyed by corresponding string.\n')
@@ -294,7 +294,7 @@ def generate_mappings_source_file(enum_info, enum_defs):
     # Add declaration of global map of string->enum.
     map_name = enum_info.short_name.upper() + '_MAP'
     lines.append('static const std::map< std::string, ' + enum_info.name + ' > * const ' +
-                                                        map_name + '( ResidueProperties::generate_string_to_' + enum_info.short_name + '_map() );\n')
+                                                        map_name + '( generate_string_to_' + enum_info.short_name + '_map() );\n')
     lines.append('\n')
 
 
@@ -343,7 +343,7 @@ def generate_mappings_source_file(enum_info, enum_defs):
     # Add initialization function for second method (from enum value to string).
     # Add the generating function for the global map of string->enum.
     lines.append('utility::vector1< std::string > const *\n')
-    lines.append('ResidueProperties::generate_' + enum_info.short_name + '_to_string_vector() {\n' )
+    lines.append('generate_' + enum_info.short_name + '_to_string_vector() {\n' )
 
     lines.append('\t// A vector of strings keyed by ' + enum_info.name +
                 '.\n')
@@ -362,7 +362,7 @@ def generate_mappings_source_file(enum_info, enum_defs):
     lines.append('\n')
 
     # Define the static const global data.
-    lines.append('static const utility::vector1< std::string > * const STRING_LIST( ResidueProperties::generate_' + enum_info.short_name + '_to_string_vector() );\n')
+    lines.append('static const utility::vector1< std::string > * const STRING_LIST( generate_' + enum_info.short_name + '_to_string_vector() );\n')
     lines.append('\n')
 
 

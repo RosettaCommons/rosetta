@@ -25,6 +25,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ResidueProperty.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
@@ -117,11 +118,11 @@ public:
 	void
 	res_types( utility::vector1< std::string > const & res_type );
 
-	utility::vector1< std::string >
+	utility::vector1< core::chemical::ResidueProperty > const &
 	res_props() const;
 
 	void
-	res_props( utility::vector1< std::string > const & res_prop );
+	res_props( utility::vector1< core::chemical::ResidueProperty > const & res_prop );
 
 	bool
 	enable_min_residue_count() const;
@@ -188,7 +189,7 @@ private:
 	bool enable_min_residue_count_;
 	bool count_as_percentage_;
 	utility::vector1< std::string > res_types_;
-	utility::vector1< std::string > res_props_;
+	utility::vector1< core::chemical::ResidueProperty > res_props_;
 	bool packable_;
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::select::residue_selector::ResidueSelectorCOP selector_;

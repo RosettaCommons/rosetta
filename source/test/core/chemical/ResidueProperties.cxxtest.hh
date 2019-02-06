@@ -104,6 +104,22 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( test_properties_->get_list_of_properties().size(), 0 );
 	}
 
+	/// @brief Ensure that the get_property_from_string() and get_string_from_property() functions work.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void test_property_enums() {
+		using namespace core::chemical;
+		TS_ASSERT_THROWS_ANYTHING( ResidueProperties::get_property_from_string( "BOGUS_PROPERTY_THAT_DOESN'T_EXIST" ) );
+		TS_ASSERT_EQUALS( ResidueProperties::get_property_from_string( "AROMATIC" ), AROMATIC );
+		TS_ASSERT_EQUALS( ResidueProperties::get_property_from_string( "D_AA" ), D_AA );
+		TS_ASSERT_EQUALS( ResidueProperties::get_property_from_string( "POLAR" ), POLAR );
+		TS_ASSERT_EQUALS( ResidueProperties::get_property_from_string( "CHARGED" ), CHARGED );
+
+		TS_ASSERT_EQUALS( ResidueProperties::get_string_from_property( HYDROPHOBIC ), "HYDROPHOBIC" );
+		TS_ASSERT_EQUALS( ResidueProperties::get_string_from_property( ALIPHATIC ), "ALIPHATIC" );
+		TS_ASSERT_EQUALS( ResidueProperties::get_string_from_property( L_AA ), "L_AA" );
+		TS_ASSERT_EQUALS( ResidueProperties::get_string_from_property( CANONICAL_AA ), "CANONICAL_AA" );
+	}
+
 	// Confirm that variant-related methods function properly.
 	void test_variant_types()
 	{

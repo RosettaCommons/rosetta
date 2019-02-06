@@ -281,19 +281,16 @@ ResidueCountFilter::res_types(
 	res_types_ = res_types;
 }
 
-utility::vector1< std::string >
+utility::vector1< core::chemical::ResidueProperty > const &
 ResidueCountFilter::res_props() const {
 	return res_props_;
 }
 
 void
 ResidueCountFilter::res_props(
-	utility::vector1< std::string > const & res_props
+	utility::vector1< core::chemical::ResidueProperty > const & res_props
 ) {
-	res_props_.clear();
-	for ( core::Size i=1; i<=res_props.size(); ++i ) {
-		res_props_.push_back( res_props[i] );
-	}
+	res_props_ = res_props;
 }
 
 bool
@@ -396,11 +393,13 @@ ResidueCountFilter::add_residue_property_by_name(
 ) {
 	using namespace core::chemical;
 
-	std::map< std::string, ResidueProperty > const * const property_map_ptr( ResidueProperties::generate_string_to_property_map() );
-	if ( !( property_map_ptr->count( prop_input ) ) ) {
-		return false;
+	ResidueProperty const prop( ResidueProperties::get_property_from_string( prop_input ) );
+
+	if ( prop == NO_PROPERTY ) return false;
+
+	if ( !res_props_.has( prop ) ) {
+		res_props_.push_back( prop );
 	}
-	res_props_.push_back( prop_input );
 	return true;
 }
 
