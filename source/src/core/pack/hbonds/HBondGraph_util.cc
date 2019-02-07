@@ -417,12 +417,12 @@ void find_satisfying_interactions_with_background(
 		if ( hbond.don_res() == resid ) {
 			unsigned short int const Hatm = hbond.don_hatm();
 			unsigned short int const Datm = rotamer->atom_base( Hatm );
-			node.remove_atom_info_stable( Hatm );
-			node.remove_atom_info_stable( Datm );
+			node.remove_atom_info( Hatm );
+			node.remove_atom_info( Datm );
 		} else {
 			debug_assert( hbond.acc_res() == resid );
 			unsigned short int const Aatm = hbond.acc_atm();
-			node.remove_atom_info_stable( Aatm );
+			node.remove_atom_info( Aatm );
 		}//Acceptor
 	}// for all hbonds
 }

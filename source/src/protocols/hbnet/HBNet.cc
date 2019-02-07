@@ -3800,9 +3800,10 @@ HBondNode * HBNet::get_next_node( NetworkState & current_state ){
 	core::Size total_num_nbrs = 0;
 
 	bool all_nodes_satisfied( true );
-	for ( auto const & size_atominfo_pair : current_state.unsatisfied_sc_atoms_const() ) {
-		if ( size_atominfo_pair.second.size() ) {
-			if ( ! size_atominfo_pair.second[ 1 ].is_hydrogen() ) { //TODO?
+	for ( auto const & mres_atominfo_pair : current_state.unsatisfied_sc_atoms_const() ) {
+		core::scoring::hbonds::graph::AtomInfoSet const & unsats = mres_atominfo_pair.second;
+		if ( ! unsats.empty() ) {
+			if ( ! unsats.begin()->is_hydrogen() ) {
 				all_nodes_satisfied = false;
 				break;
 			}
@@ -3986,9 +3987,9 @@ void HBNet::add_residue_to_network_state( NetworkState & current_network_state, 
 			//Declare hbonding atoms to be satisfied!
 			for ( HBondInfo const & hbond : hbond_edge->hbonds() ) {
 				bool const first_node_is_donor = hbond.first_node_is_donor();
-				unsigned short int const local_atom_id_A = hbond.local_atom_id_A();//Acceptor
-				unsigned short int const local_atom_id_D = hbond.local_atom_id_D();//Donor
-				unsigned short int const local_atom_id_H = hbond.local_atom_id_H();//Hydrogen
+				auto const local_atom_id_A = hbond.local_atom_id_A();//Acceptor
+				auto const local_atom_id_D = hbond.local_atom_id_D();//Donor
+				auto const local_atom_id_H = hbond.local_atom_id_H();//Hydrogen
 
 				unsigned int const existing_node_mres = existing_node->moltenres();
 				unsigned int const new_node_mres = node_being_added->moltenres();
@@ -3996,18 +3997,16 @@ void HBNet::add_residue_to_network_state( NetworkState & current_network_state, 
 				bool const new_node_is_first_node = new_node_mres < existing_node_mres;
 				if ( new_node_is_first_node == first_node_is_donor ) {
 					//node_being_added is donor
-					HBondNode::remove_atom_info_from_vec_stable( current_network_state.get_unsats_for_mres( existing_node_mres )->second, local_atom_id_A );
+					current_network_state.get_unsats_for_mres( existing_node_mres )->remove( local_atom_id_A );
 
-					utility::vector1< AtomInfo > & donor_atom_vec = current_network_state.get_unsats_for_mres( new_node_mres )->second;
-					HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
-					HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
+					current_network_state.get_unsats_for_mres( new_node_mres )->remove( local_atom_id_D );
+					current_network_state.get_unsats_for_mres( new_node_mres )->remove( local_atom_id_H );
 				} else {
 					//node_being_added is acc
-					HBondNode::remove_atom_info_from_vec_stable( current_network_state.get_unsats_for_mres( new_node_mres )->second, local_atom_id_A );
+					current_network_state.get_unsats_for_mres( new_node_mres )->remove( local_atom_id_A );
 
-					utility::vector1< AtomInfo > & donor_atom_vec = current_network_state.get_unsats_for_mres( existing_node_mres )->second;
-					HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
-					HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
+					current_network_state.get_unsats_for_mres( existing_node_mres )->remove( local_atom_id_D );
+					current_network_state.get_unsats_for_mres( existing_node_mres )->remove( local_atom_id_H );
 				}
 
 				//unsatisfied_sc_atoms
@@ -4026,14 +4025,10 @@ void HBNet::add_residue_to_network_state( NetworkState & current_network_state, 
 			unsigned int const new_node_mres = node_being_added->moltenres();
 
 			for ( HBondInfo const & hbond : hbond_edge->hbonds() ) {
-				HBondNode::remove_atom_info_from_vec_stable(
-					current_network_state.get_unsats_for_mres( new_node_mres )->second,
-					hbond.local_atom_id_A()
-				);
+				current_network_state.get_unsats_for_mres( new_node_mres )->remove( hbond.local_atom_id_A() );
 
-				utility::vector1< AtomInfo > & donor_atom_vec = current_network_state.get_unsats_for_mres( new_node_mres )->second;
-				HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, hbond.local_atom_id_D() );
-				HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, hbond.local_atom_id_H() );
+				current_network_state.get_unsats_for_mres( new_node_mres )->remove( hbond.local_atom_id_D() );
+				current_network_state.get_unsats_for_mres( new_node_mres )->remove( hbond.local_atom_id_H() );
 			}//hbond
 		}//hbond_edge
 	}//symm
@@ -4044,9 +4039,10 @@ void HBNet::add_residue_to_network_state( NetworkState & current_network_state, 
 
 bool HBNet::network_state_is_satisfied( NetworkState & current_state ) const {
 
-	for ( auto const & uint_vec_pair : current_state.unsatisfied_sc_atoms_const() ) {
-		if ( uint_vec_pair.second.size() != 0 ) {
-			if ( uint_vec_pair.second[ 1 ].is_hydrogen() ) {
+	for ( auto const & mres_atominfo_pair : current_state.unsatisfied_sc_atoms_const() ) {
+		core::scoring::hbonds::graph::AtomInfoSet const & unsats = mres_atominfo_pair.second;
+		if ( ! unsats.empty() ) {
+			if ( ! unsats.begin()->is_hydrogen() ) {
 				//has unsat hydrogens, no heavy unsats
 				//TODO what do we do for hydrogens??? keep a running total?
 			} else {

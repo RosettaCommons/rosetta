@@ -37,11 +37,12 @@
 #include <set>
 #include <algorithm>
 
+#include <boost/container/flat_set.hpp>
+
 namespace core {
 namespace scoring {
 namespace hbonds {
 namespace graph {
-
 
 ///@brief Each HBondNode represents a rotamer from the RotamerSets object
 class HBondNode : public utility::graph::LowMemNode {
@@ -101,22 +102,19 @@ public://getters, setters, accessors
 
 	///@brief keep track of another node (rotamer) that this clashes with. You do not need to call this for all of the rotamers that share a residue position.
 	void register_clash( Size node_id ){
-		ids_of_clashing_nodes_.insert(
-			std::upper_bound( ids_of_clashing_nodes_.begin(), ids_of_clashing_nodes_.end(), node_id ),
-			node_id
-		);
+		ids_of_clashing_nodes_.insert( node_id );
 	}
 
 	///@brief does this node clash with another node (at another residue position)?
 	bool clashes( Size node_id ) const{
-		return std::binary_search( ids_of_clashing_nodes_.begin(), ids_of_clashing_nodes_.end(), node_id );
+		return ids_of_clashing_nodes_.find( node_id ) != ids_of_clashing_nodes_.end();
 	}
 
-	utility::vector1< AtomInfo > & polar_sc_atoms_not_satisfied_by_background() {
+	AtomInfoSet & polar_sc_atoms_not_satisfied_by_background() {
 		return polar_sc_atoms_not_satisfied_by_background_;
 	}
 
-	utility::vector1< AtomInfo > const & polar_sc_atoms_not_satisfied_by_background() const {
+	AtomInfoSet const & polar_sc_atoms_not_satisfied_by_background() const {
 		return polar_sc_atoms_not_satisfied_by_background_;
 	}
 
@@ -129,7 +127,7 @@ public://getters, setters, accessors
 		bool is_hydroxyl,
 		bool is_backbone
 	){
-		polar_sc_atoms_not_satisfied_by_background_.emplace_back(
+		polar_sc_atoms_not_satisfied_by_background_.emplace(
 			local_atom_id,
 			atom_position,
 			is_hydrogen,
@@ -143,25 +141,12 @@ public://getters, setters, accessors
 	/// @brief The polar atoms are sorted, so we have to cleverly insert and maintain the order
 	/// @details Used by merge
 	void add_polar_atom_if_doesnt_exist( AtomInfo const & info ) {
-		auto iter = std::lower_bound( polar_sc_atoms_not_satisfied_by_background_.begin(), polar_sc_atoms_not_satisfied_by_background_.end(), info );
-		if ( iter->local_atom_id() == info.local_atom_id() ) return;
-		polar_sc_atoms_not_satisfied_by_background_.insert( iter, info );
+		polar_sc_atoms_not_satisfied_by_background_.insert( info );
 	}
 
-	///@brief returns true if the atom was present, false is absent. False does not indicate failure!
-	static bool remove_atom_info_from_vec_stable( utility::vector1< AtomInfo > & atom_vec, unsigned short int local_atom_id ){
-		unsigned int const size = atom_vec.size();
-		for ( unsigned int ii = 0; ii < size; ++ii ) {//THIS IS 0 ON PURPOSE
-			if ( atom_vec[ ii + 1 ].local_atom_id() == local_atom_id ) {
-				atom_vec.erase( atom_vec.begin() + ii );
-				return true;
-			}
-		}
-		return false;
-	}
-
-	void remove_atom_info_stable( unsigned short int local_atom_id ){
-		remove_atom_info_from_vec_stable( polar_sc_atoms_not_satisfied_by_background_, local_atom_id );
+	/// @details O( N )
+	void remove_atom_info( unsigned short int local_atom_id ){
+		polar_sc_atoms_not_satisfied_by_background_.remove( local_atom_id );
 	}
 
 	/// @brief Only merges new data added by this class. Does not merge edges!!!
@@ -182,9 +167,9 @@ private:
 	unsigned int mres_id_;
 	unsigned int rotamer_id_;
 
-	utility::vector1< unsigned int > ids_of_clashing_nodes_;
+	boost::container::flat_set< unsigned int > ids_of_clashing_nodes_;
 
-	utility::vector1< AtomInfo > polar_sc_atoms_not_satisfied_by_background_;
+	AtomInfoSet polar_sc_atoms_not_satisfied_by_background_;
 
 public://please do not use this. It is required for pyrosetta compilation
 	HBondNode & operator = ( HBondNode const & src ) {

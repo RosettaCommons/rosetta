@@ -432,5 +432,29 @@ his_tyr_connectivity( Pose const & pose, HBondNetStruct & i )
 	return found;
 }
 
+bool edge_satisfies_heavy_unsat_for_node(
+	NetworkState const & current_state,
+	core::scoring::hbonds::graph::HBondNode const * node,
+	core::scoring::hbonds::graph::HBondEdge const * edge
+){
+	core::scoring::hbonds::graph::AtomInfoSet const * atoms =
+		current_state.get_unsats_for_mres( node->moltenres() );
+	if ( atoms == nullptr ) {
+		return false;
+	}
+	bool const node_is_first_node_ind = ( node->get_node_index() == edge->get_first_node_ind() );
+
+	for ( core::scoring::hbonds::graph::HBondInfo const & hbond : edge->hbonds() ) {
+		if ( node_is_first_node_ind == hbond.first_node_is_donor() ) {
+			//node is donor
+			if ( atoms->contains( hbond.local_atom_id_D() ) ) return true;
+		} else {
+			if ( atoms->contains( hbond.local_atom_id_A() ) ) return true;
+		}
+	}
+	return false;
+}
+
+
 } //hbnet
 } //protocols

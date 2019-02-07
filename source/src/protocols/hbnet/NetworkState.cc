@@ -25,8 +25,7 @@ NetworkState::NetworkState(
 	monte_carlo_seed_( monte_carlo_seed ),
 	full_twobody_energy_( monte_carlo_seed->energy() ),
 	score_ ( 0 ),
-	unsatisfied_sc_atoms_( 0 ),
-	sorter_()
+	unsatisfied_sc_atoms_()
 {
 	using namespace core::scoring::hbonds::graph;
 
@@ -57,17 +56,15 @@ NetworkState::NetworkState(
 
 		//Remove hbonding atoms from vector of unsats:
 		if ( first_node_is_donor ) {
-			HBondNode::remove_atom_info_from_vec_stable( get_unsats_for_mres( mres2 )->second, local_atom_id_A );
+			get_unsats_for_mres( mres2 )->remove( local_atom_id_A );
 
-			utility::vector1< AtomInfo > & donor_atom_vec = get_unsats_for_mres( mres1 )->second;
-			HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
-			HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
+			get_unsats_for_mres( mres1 )->remove( local_atom_id_D );
+			get_unsats_for_mres( mres1 )->remove( local_atom_id_H );
 		} else {
-			HBondNode::remove_atom_info_from_vec_stable( get_unsats_for_mres( mres1 )->second, local_atom_id_A );
+			get_unsats_for_mres( mres1 )->remove( local_atom_id_A );
 
-			utility::vector1< AtomInfo > & donor_atom_vec = get_unsats_for_mres( mres2 )->second;
-			HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
-			HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
+			get_unsats_for_mres( mres2 )->remove( local_atom_id_D );
+			get_unsats_for_mres( mres2 )->remove( local_atom_id_H );
 		}
 	}
 }
@@ -75,17 +72,18 @@ NetworkState::NetworkState(
 void NetworkState::add_polar_atoms(
 	core::scoring::hbonds::graph::HBondNode const * node
 ){
-	auto const & atoms_to_copy = node->polar_sc_atoms_not_satisfied_by_background();
+	using namespace core::scoring::hbonds::graph;
+
+	AtomInfoSet const & atoms_to_copy = node->polar_sc_atoms_not_satisfied_by_background();
 	core::Size const mres = node->moltenres();
 
-	auto iter = std::lower_bound( unsatisfied_sc_atoms_.begin(), unsatisfied_sc_atoms_.end(), mres, sorter_ );
-	if ( iter == unsatisfied_sc_atoms_.end() || iter->first != mres ) {
+	AtomInfoSet * const unsat_vec = get_unsats_for_mres( mres );
+
+	if ( unsat_vec == nullptr ) {
 		//element does not exist yet, so inset it
-		iter = unsatisfied_sc_atoms_.insert(
-			iter, std::make_pair( mres, atoms_to_copy )
-		);
+		unsatisfied_sc_atoms_[ mres ] = atoms_to_copy;
 	} else {
-		iter->second = atoms_to_copy;
+		(* unsat_vec) = atoms_to_copy;
 	}
 
 }

@@ -84,39 +84,12 @@ bool his_tyr_connectivity( core::pose::Pose const & pose, HBondNetStruct & i );
 //////////
 //Inlines:
 
-inline bool contains( utility::vector1< core::scoring::hbonds::graph::AtomInfo > const & atom_vec, short unsigned int const local_atom_id ){
-	for ( auto const & atom_info : atom_vec ) {
-		if ( atom_info.local_atom_id() == local_atom_id ) return true;
-		if ( atom_info.local_atom_id() > local_atom_id ) return false;//atom_vec is always sorted by local_atom_id
-	}
-	return false;
-}
-
-
-inline bool edge_satisfies_heavy_unsat_for_node(
+bool
+edge_satisfies_heavy_unsat_for_node(
 	NetworkState const & current_state,
 	core::scoring::hbonds::graph::HBondNode const * node,
 	core::scoring::hbonds::graph::HBondEdge const * edge
-){
-	utility::vector1< core::scoring::hbonds::graph::AtomInfo > const & atom_vec =
-		current_state.get_unsats_for_mres( node->moltenres() )->second;
-	bool const node_is_first_node_ind = ( node->get_node_index() == edge->get_first_node_ind() );
-
-	for ( core::scoring::hbonds::graph::HBondInfo const & hbond : edge->hbonds() ) {
-		if ( node_is_first_node_ind == hbond.first_node_is_donor() ) {
-			//node is donor
-			if ( contains( atom_vec, hbond.local_atom_id_D() ) ) {
-				return true;
-			}
-		} else {
-			//node is acc
-			if ( contains( atom_vec, hbond.local_atom_id_A() ) ) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
+);
 
 } //hbnet
 } //protocols

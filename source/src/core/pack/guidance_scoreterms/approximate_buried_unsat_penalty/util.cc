@@ -427,7 +427,7 @@ three_body_approximate_buried_unsat_calculation(
 
 
 		// This is all the polar atoms on the rotamer
-		utility::vector1< scoring::hbonds::graph::AtomInfo > const & hbnode_atoms =
+		boost::container::flat_set< scoring::hbonds::graph::AtomInfo > const & hbnode_atoms =
 			hbnode->polar_sc_atoms_not_satisfied_by_background();
 
 		// Prepare the vector of atoms for the burial calculation
@@ -440,7 +440,8 @@ three_body_approximate_buried_unsat_calculation(
 
 		for ( Size inodeat = 1; inodeat <= hbnode_atoms.size(); inodeat++ ) {
 
-			scoring::hbonds::graph::AtomInfo const & info = hbnode_atoms[inodeat];
+			scoring::hbonds::graph::AtomInfo const & info =
+				* std::next( hbnode_atoms.begin(), inodeat - 1 );
 
 			if ( info.is_hydrogen() ) continue;
 			if ( depths[inodeat] < atomic_depth_cutoff ) continue;

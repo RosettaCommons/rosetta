@@ -60,14 +60,14 @@ public:
 	}
 
 	void atom_has_match(
-		utility::vector1< AtomInfo > const & atoms,
+		AtomInfoSet const & atoms,
 		utility::vector1< bool > & atom_used,
 		conformation::Residue const & res,
 		Size at
 	) {
 		bool matched = false;
 		for ( Size iinfo = 1; iinfo <= atoms.size(); iinfo++ ) {
-			AtomInfo const & info = atoms.at(iinfo);
+			AtomInfo const & info = * std::next( atoms.begin(), iinfo - 1 );
 			if ( info.local_atom_id() == at ) {
 				TS_ASSERT( ! matched );
 				matched = true;
@@ -121,7 +121,7 @@ public:
 
 			TS_ASSERT( node->moltenres() == rotsets->resid_2_moltenres( resnum ) );
 
-			utility::vector1< AtomInfo > const & atoms = node->polar_sc_atoms_not_satisfied_by_background();
+			AtomInfoSet const & atoms = node->polar_sc_atoms_not_satisfied_by_background();
 			utility::vector1< bool > atom_used( atoms.size(), false );
 
 			// Make sure all polar heavy atoms appear exactly once

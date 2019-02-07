@@ -32,7 +32,7 @@ HBondNode::HBondNode() :
 	utility::graph::LowMemNode( 0 ),
 	mres_id_( 0 ),
 	rotamer_id_( 0 ),
-	ids_of_clashing_nodes_( 0 ),
+	ids_of_clashing_nodes_(),
 	polar_sc_atoms_not_satisfied_by_background_()
 { runtime_assert( false ); }
 
@@ -40,7 +40,7 @@ HBondNode::HBondNode( const HBondNode & ) :
 	utility::graph::LowMemNode( 0 ),
 	mres_id_( 0 ),
 	rotamer_id_( 0 ),
-	ids_of_clashing_nodes_( 0 ),
+	ids_of_clashing_nodes_(),
 	polar_sc_atoms_not_satisfied_by_background_()
 { runtime_assert( false ); }
 ///////////
@@ -103,34 +103,21 @@ HBondNode::merge_data(
 			add_polar_atom_if_doesnt_exist( info );
 		}
 	} else {
-		utility::vector1< unsigned short int > local_atom_ids_to_remove;
-		utility::vector1< AtomInfo > const & other_atoms = other.polar_sc_atoms_not_satisfied_by_background();
+		//Merge with AND logic
 
-		auto other_iter = other_atoms.begin();
-		auto other_end = other_atoms.end();
-		auto my_iter = polar_sc_atoms_not_satisfied_by_background_.begin();
-		auto my_end = polar_sc_atoms_not_satisfied_by_background_.end();
+		auto const & other_atoms = other.polar_sc_atoms_not_satisfied_by_background();
 
-		while ( other_iter != other_end && my_iter != my_end ) {
-
-			if ( *other_iter < *my_iter ) {
-				other_iter++;
-				continue;
+		using iter_type = AtomInfoSet::const_iterator;
+		for ( iter_type iter = polar_sc_atoms_not_satisfied_by_background_.begin();
+				iter != polar_sc_atoms_not_satisfied_by_background_.end(); ) {
+			//remove if absent from other set
+			if ( other_atoms.find( *iter ) == other_atoms.end() ) {
+				iter = polar_sc_atoms_not_satisfied_by_background_.erase( iter );
+			} else {
+				++iter;
 			}
-			if ( *my_iter < *other_iter ) {
-				// If we get to here, this atom isn't in the other list
-				local_atom_ids_to_remove.push_back( my_iter->local_atom_id() );
-				my_iter++;
-				continue;
-			}
-			// If we are here, the iters are pointing to the same atom
-			other_iter++;
-			my_iter++;
 		}
 
-		for ( unsigned short int local_atom_id : local_atom_ids_to_remove ) {
-			remove_atom_info_stable( local_atom_id );
-		}
 	}
 
 

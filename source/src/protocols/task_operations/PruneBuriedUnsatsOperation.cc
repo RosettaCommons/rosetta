@@ -141,7 +141,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 		hbonds_to_buried.resize( ihbnode, rotamer->nheavyatoms() ); // setting this guy up for later
 		is_satisfied.resize( ihbnode, rotamer->nheavyatoms() ); // setting this guy up for later
 
-		utility::vector1< scoring::hbonds::graph::AtomInfo > const & hbnode_atoms =
+		scoring::hbonds::graph::AtomInfoSet const & hbnode_atoms =
 			hbnode->polar_sc_atoms_not_satisfied_by_background();
 
 		for ( scoring::hbonds::graph::AtomInfo const & atom_info : hbnode_atoms ) {

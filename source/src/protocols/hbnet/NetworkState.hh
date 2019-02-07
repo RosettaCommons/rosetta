@@ -18,28 +18,12 @@
 #include <core/scoring/hbonds/graph/HBondInfo.hh>
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
 #include <core/scoring/hbonds/graph/HBondGraph.hh>
+#include <boost/container/flat_map.hpp>
+#include <boost/container/flat_set.hpp>
 //#include <core/pack/rotamer_set/RotamerSets.hh>
 
 namespace protocols {
 namespace hbnet {
-
-using mres_unsat_pair = std::pair< unsigned int /*mres*/, utility::vector1< core::scoring::hbonds::graph::AtomInfo > > ;
-
-struct compare_mres_unsat_pair : public std::binary_function< mres_unsat_pair, mres_unsat_pair, bool >{
-	bool operator()( mres_unsat_pair const & a, mres_unsat_pair const & b ) const {
-		return a.first < b.first;
-	}
-
-	bool operator()( mres_unsat_pair const & a, unsigned int b ) const {
-		return a.first < b;
-	}
-
-	bool operator()( unsigned int a, mres_unsat_pair const & b ) const {
-		return a < b.first;
-	}
-
-};
-
 
 class NetworkState {
 
@@ -71,16 +55,18 @@ public:
 	bool mres_has_heavy_unsats ( unsigned int mres ) const;
 
 public:
-	utility::vector1< mres_unsat_pair > const & unsatisfied_sc_atoms_const() const {
+	boost::container::flat_map< unsigned int,
+	core::scoring::hbonds::graph::AtomInfoSet >
+	const & unsatisfied_sc_atoms_const() const {
 		return unsatisfied_sc_atoms_;
 	}
 
 	///@brief get vector of AtomInfos for atoms that are unsatisfied
-	utility::vector1< mres_unsat_pair >::iterator
+	core::scoring::hbonds::graph::AtomInfoSet *
 	get_unsats_for_mres( unsigned int mres );
 
 	///@brief get vector of AtomInfos for atoms that are unsatisfied
-	utility::vector1< mres_unsat_pair >::const_iterator
+	core::scoring::hbonds::graph::AtomInfoSet const *
 	get_unsats_for_mres( unsigned int mres ) const;
 
 	utility::vector1< core::scoring::hbonds::graph::HBondNode const * > & nodes() {
@@ -141,44 +127,54 @@ private:
 	core::Real full_twobody_energy_;//Sum of hbond score + clash score for all residue pairs in "residues" data object
 	core::Real score_;//This holds whatever metric is used for sorting
 
-	utility::vector1< mres_unsat_pair > unsatisfied_sc_atoms_;
-	compare_mres_unsat_pair sorter_;
+	boost::container::flat_map <
+		unsigned int /*mres*/,
+		core::scoring::hbonds::graph::AtomInfoSet >
+		unsatisfied_sc_atoms_;
 };
 
-inline utility::vector1< mres_unsat_pair >::iterator
+inline
+core::scoring::hbonds::graph::AtomInfoSet *
 NetworkState::get_unsats_for_mres( unsigned int mres ) {
-	auto iter = std::lower_bound( unsatisfied_sc_atoms_.begin(), unsatisfied_sc_atoms_.end(), mres, sorter_ );
-	debug_assert( iter != unsatisfied_sc_atoms_.end() );//if this fails, there is no element in the vector for this mres
-	debug_assert( iter->first == mres );//if this fails, there is no element in the vector for this mres
-	return iter;
+	auto iter = unsatisfied_sc_atoms_.find( mres );
+	if ( iter == unsatisfied_sc_atoms_.end() ) {
+		return 0;
+	} else {
+		return &( iter->second );
+	}
 }
 
-inline utility::vector1< mres_unsat_pair >::const_iterator
+inline
+core::scoring::hbonds::graph::AtomInfoSet const *
 NetworkState::get_unsats_for_mres( unsigned int mres ) const {
-	auto const iter = std::lower_bound( unsatisfied_sc_atoms_.begin(), unsatisfied_sc_atoms_.end(), mres, sorter_ );
-	debug_assert( iter != unsatisfied_sc_atoms_.end() );//if this fails, there is no element in the vector for this mres
-	debug_assert( iter->first == mres );//if this fails, there is no element in the vector for this mres
-	return iter;
+	auto iter = unsatisfied_sc_atoms_.find( mres );
+	if ( iter == unsatisfied_sc_atoms_.end() ) {
+		return 0;
+	} else {
+		return &( iter->second );
+	}
 }
 
-inline bool
+
+inline
+bool
 NetworkState::mres_has_unsats( unsigned int mres ) const {
-	auto iter = std::lower_bound( unsatisfied_sc_atoms_.begin(), unsatisfied_sc_atoms_.end(), mres, sorter_ );
-	if ( iter == unsatisfied_sc_atoms_.end() ) return false;//if this is false, there is no element in the vector for this mres
-	if ( iter->first != mres ) return false;//if this is false, there is no element in the vector for this mres
-	return ! iter->second.empty();//if the vector of unsats is empty, there are no unsats for this mres
+	return get_unsats_for_mres( mres ) != nullptr;
 }
 
-inline bool
+inline
+bool
 NetworkState::mres_has_heavy_unsats ( unsigned int mres ) const {
-	auto iter = std::lower_bound( unsatisfied_sc_atoms_.begin(), unsatisfied_sc_atoms_.end(), mres, sorter_ );
-	if ( iter == unsatisfied_sc_atoms_.end() ) return false;
-	if ( iter->first != mres ) return false;
-	if ( iter->second.empty() ) return false;
+	core::scoring::hbonds::graph::AtomInfoSet const * unsats =
+		get_unsats_for_mres( mres );
+
+	if ( unsats == nullptr ) return false;
+
+	if ( unsats->empty() ) return false;
 
 	//These vectors are arranged in a way where all heavy atoms are listed before the hydrogens.
 	//If the first element is a hydrogen, there must be no heavy atoms
-	return ! iter->second.front().is_hydrogen();
+	return ! unsats->begin()->is_hydrogen();
 }
 
 

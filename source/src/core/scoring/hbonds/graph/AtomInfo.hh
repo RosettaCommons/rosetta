@@ -20,14 +20,12 @@
 #include <utility/DenseBoolMap.hh>
 #include <utility/pointer/owning_ptr.hh>
 
+#include <boost/container/flat_set.hpp>
+
 namespace core {
 namespace scoring {
 namespace hbonds {
 namespace graph {
-
-class LKAtomInfo;
-using LKAtomInfoOP = utility::pointer::shared_ptr< LKAtomInfo >;
-using LKAtomInfoCOP = utility::pointer::shared_ptr< LKAtomInfo const >;
 
 class AtomInfo {
 
@@ -42,8 +40,7 @@ public:
 		bool is_backbone_setting
 	) :
 		local_atom_id_( atomid ),
-		xyz_( atom_position ),
-		lk_info_( 0 )
+		xyz_( atom_position )
 	{
 		is_hydrogen( is_hydrogen_setting );
 		is_donor(    is_donor_setting );
@@ -51,28 +48,6 @@ public:
 		is_hydroxyl( is_hydroxyl_setting );
 		is_backbone( is_backbone_setting );
 	}
-
-	AtomInfo(
-		LKAtomInfoCOP lk_info,
-		unsigned short int atomid,
-		numeric::xyzVector< float > const & atom_position,
-		bool is_hydrogen_setting,
-		bool is_donor_setting,
-		bool is_acceptor_setting,
-		bool is_hydroxyl_setting,
-		bool is_backbone_setting
-	) :
-		local_atom_id_( atomid ),
-		xyz_( atom_position ),
-		lk_info_( lk_info )
-	{
-		is_hydrogen( is_hydrogen_setting );
-		is_donor(    is_donor_setting );
-		is_acceptor( is_acceptor_setting );
-		is_hydroxyl( is_hydroxyl_setting );
-		is_backbone( is_backbone_setting );
-	}
-
 
 	virtual ~AtomInfo(){}
 
@@ -91,68 +66,60 @@ private:
 		"AtomInfo's enum is not a continuous range!" );
 
 public://setters
-	inline void local_atom_id( unsigned short int local_atom_id ){
+	void local_atom_id( unsigned short int local_atom_id ){
 		local_atom_id_ = local_atom_id;
 	}
 
-	inline void is_hydrogen( bool setting ){
+	void is_hydrogen( bool setting ){
 		properties_.set< IS_HYDROGEN >( setting );
 	}
 
-	inline void is_donor( bool setting ){
+	void is_donor( bool setting ){
 		properties_.set< IS_DONOR >( setting );
 	}
 
-	inline void is_acceptor( bool setting ){
+	void is_acceptor( bool setting ){
 		properties_.set< IS_ACCEPTOR >( setting );
 	}
 
-	inline void is_hydroxyl( bool setting ){
+	void is_hydroxyl( bool setting ){
 		properties_.set< IS_HYDROXYL > ( setting );
 	}
 
-	inline void is_backbone( bool setting ){
+	void is_backbone( bool setting ){
 		properties_.set< IS_BACKBONE > ( setting );
 	}
 
-	inline void lk_info( LKAtomInfoCOP setting ){
-		lk_info_ = setting;
-	}
-
-	inline void xyz( numeric::xyzVector< float > const & setting ){
+	void xyz( numeric::xyzVector< float > const & setting ){
 		xyz_ = setting;
 	}
 
 public://getters
-	inline unsigned short int local_atom_id() const {
+	unsigned short int local_atom_id() const {
 		return local_atom_id_;
 	}
 
-	inline bool is_hydrogen() const {
+	bool is_hydrogen() const {
 		return properties_.get< IS_HYDROGEN >();
 	}
 
-	inline bool is_donor() const {
+	bool is_donor() const {
 		return properties_.get< IS_DONOR >();
 	}
 
-	inline bool is_acceptor() const {
+	bool is_acceptor() const {
 		return properties_.get< IS_ACCEPTOR >();
 	}
 
-	inline bool is_hydroxyl() const {
+	bool is_hydroxyl() const {
 		return properties_.get< IS_HYDROXYL >();
 	}
 
-	inline bool is_backbone() const {
+	bool is_backbone() const {
 		return properties_.get< IS_BACKBONE >();
 	}
 
-	inline LKAtomInfoCOP lk_info() const {
-		return lk_info_;
-	}
-
-	inline numeric::xyzVector< float > const & xyz() const {
+	numeric::xyzVector< float > const & xyz() const {
 		return xyz_;
 	}
 
@@ -165,19 +132,27 @@ private://DATA
 	numeric::xyzVector< float > xyz_;
 
 	utility::DenseBoolMap< Settings::count, Settings::IS_HYDROGEN > properties_;
-	LKAtomInfoCOP lk_info_;//Useless at the moment. Will be implemented in the future
 };
 
-class LKAtomInfo {
+class AtomInfoSet : public boost::container::flat_set< AtomInfo > {
 public:
-	LKAtomInfo(){}
-	LKAtomInfo( LKAtomInfo const & ){}
+	AtomInfoSet::const_iterator remove( unsigned short int local_atom_id ){
+		for ( auto iter = begin(); iter != end(); ++iter ) {
+			if ( iter->local_atom_id() == local_atom_id ) {
+				return remove( local_atom_id );
+			}
+		}
+		return end();
+	}
 
-	~LKAtomInfo(){}
-
-private://DATA
-	//Water info I guess?
+	bool contains( unsigned short int local_atom_id ) const {
+		auto predicate = [=]( AtomInfo const & ai ){
+			return ai.local_atom_id() == local_atom_id;
+		};
+		return std::find_if( begin(), end(), predicate ) != end();
+	}
 };
+
 
 } //graph
 } //hbonds
