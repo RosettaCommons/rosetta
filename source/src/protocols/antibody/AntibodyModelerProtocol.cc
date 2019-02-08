@@ -545,24 +545,12 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 		}
 
+		//JAB - IAM is now chain-order independant.
 		TR << "Running Interface AnalyzerMover" << std::endl;
+		std::string chains_str = "A_" +ab_info_->get_antibody_chain_string();
+		InterfaceAnalyzerMover analyzer = InterfaceAnalyzerMover(design::get_dock_chains_from_ab_dock_chains(ab_info_, chains_str), false /* tracer */, pack_scorefxn_, false /* compute_packstat */ , false /* pack_input */,  true /* pack_separated */) ;
 
-		std::string chains_str = "";
-		bool skip_IAM = false;
-		if ( pose.pdb_info()->chain(1) == 'L' ) {
-			chains_str = ab_info_->get_antibody_chain_string() + "_A";
-		} else if ( pose.pdb_info()->chain(pose.num_chains()) == 'H' ) {
-			chains_str = "A_" +ab_info_->get_antibody_chain_string();
-		} else {
-			skip_IAM = true;
-		}
-
-
-		if ( ! skip_IAM ) {
-			InterfaceAnalyzerMover analyzer = InterfaceAnalyzerMover(design::get_dock_chains_from_ab_dock_chains(ab_info_, chains_str), false /* tracer */, pack_scorefxn_, false /* compute_packstat */ , false /* pack_input */,  true /* pack_separated */) ;
-
-			analyzer.apply(pose); //Adds PoseExtraScore_Float to be output into scorefile.
-		}
+		analyzer.apply(pose); //Adds PoseExtraScore_Float to be output into scorefile.
 	}
 
 }// end apply

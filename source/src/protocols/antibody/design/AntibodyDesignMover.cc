@@ -1521,6 +1521,10 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 
 
 	if ( mc_optimize_dG_ ) {
+		if ( ! ab_info_->antigen_present() ) {
+			utility_exit_with_message("RAbD: Cannot optimize dG if there is no antigen present ");
+		}
+
 		mc_ =       utility::pointer::make_shared< MonteCarloInterface >( pose, *scorefxn_, outer_kt_, modeler_->get_dock_chains() );
 		inner_mc_ = utility::pointer::make_shared< MonteCarloInterface >( pose, *scorefxn_, inner_kt_, modeler_->get_dock_chains() );
 	} else {
