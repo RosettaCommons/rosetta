@@ -33,6 +33,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <core/simple_metrics/SimpleMetric.hh>
 #include <core/types.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
@@ -143,6 +144,12 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers );
 
+
+
+	/////////////////////////////////////////////
+	/////           ScoreFunction           /////
+	/////////////////////////////////////////////
+
 	/// @brief Constructs a single ScoreFunction from xml
 	/// @details Pass this function a single <ScoreFunction /> tag and it will
 	///   return to you that ScoreFunction
@@ -175,6 +182,12 @@ public:
 		std::string const & xml_text,
 		core::pose::Pose & pose,
 		utility::options::OptionCollection const & options );
+
+
+
+	/////////////////////////////////////////////
+	/////         ResidueSelector           /////
+	/////////////////////////////////////////////
 
 	/// @brief Constructs a single ResidueSelector from xml
 	/// @details Pass this function a single ResidueSelector tag and it will
@@ -212,6 +225,53 @@ public:
 		core::pose::Pose & pose,
 		utility::options::OptionCollection const & options );
 
+
+
+	/////////////////////////////////////////////
+	/////           SimpleMetric            /////
+	/////////////////////////////////////////////
+
+	/// @brief Constructs a single SimpleMetric from xml
+	/// @details Pass this function a single SimpleMetric tag and it will
+	///   return to you that SimpleMetric. For C++ users, you may need
+	///   to use std::dynamic_pointer_cast<   > after this call.
+	///   A pose is needed for the initialization of some Movers and may
+	///   be required if this functions throws an error.
+	static
+	core::simple_metrics::SimpleMetricOP
+	static_get_simple_metric(
+		std::string const & xml_text );
+
+	/// @brief Constructs a single SimpleMetric from xml
+	/// @details Pass this function a single SimpleMetric tag and it will
+	///   return to you that SimpleMetric. For C++ users, you may need
+	///   to use std::dynamic_pointer_cast<   > after this call.
+	///   The pose is needed for the initialization of some Movers and may
+	///   be modified if an APPLY_TO_POSE section is present.
+	static
+	core::simple_metrics::SimpleMetricOP
+	static_get_simple_metric(
+		std::string const & xml_text,
+		core::pose::Pose & pose );
+
+	/// @brief Constructs a single SimpleMetric from xml
+	/// @details Pass this function a single SimpleMetric tag and it will
+	///   return to you that SimpleMetric. For C++ users, you may need
+	///   to use std::dynamic_pointer_cast<   > after this call.
+	///   The pose is needed for the initialization of some Movers and may
+	///   be modified if an APPLY_TO_POSE section is present.
+	static
+	core::simple_metrics::SimpleMetricOP
+	static_get_simple_metric(
+		std::string const & xml_text,
+		core::pose::Pose & pose,
+		utility::options::OptionCollection const & options );
+
+
+	/////////////////////////////////////////////
+	/////               Filter              /////
+	/////////////////////////////////////////////
+
 	/// @brief Constructs a single Filter from xml
 	/// @details Pass this function a single Filter tag and it will
 	///   return to you that Filter. For C++ users, you may need
@@ -247,6 +307,12 @@ public:
 		std::string const & xml_text,
 		core::pose::Pose & pose,
 		utility::options::OptionCollection const & options );
+
+
+
+	/////////////////////////////////////////////
+	/////                Mover              /////
+	/////////////////////////////////////////////
 
 	/// @brief Constructs a single Mover from xml
 	/// @details Pass this function a single Mover tag and it will
@@ -284,6 +350,12 @@ public:
 		core::pose::Pose & pose,
 		utility::options::OptionCollection const & options );
 
+
+
+	/////////////////////////////////////////////
+	/////           TaskOperation           /////
+	/////////////////////////////////////////////
+
 	/// @brief Constructs a single TaskOperation from xml
 	/// @details Pass this function a single TaskOperation tag and it will
 	///   return to you that TaskOperation. For C++ users, you may need
@@ -319,6 +391,7 @@ public:
 		std::string const & xml_text,
 		core::pose::Pose & pose,
 		utility::options::OptionCollection const & options );
+
 
 	/// @brief List all the ScoreFunctions contained by name
 	utility::vector1< std::string >
@@ -327,6 +400,10 @@ public:
 	/// @brief List all the ResidueSelectors contained by name
 	utility::vector1< std::string >
 	list_residue_selectors() const;
+
+	/// @brief List all the SimpleMetrics contained by name
+	utility::vector1< std::string >
+	list_simple_metrics() const;
 
 	/// @brief List all the Filters contained by name
 	utility::vector1< std::string >
@@ -349,6 +426,11 @@ public:
 	/// @details This returns a clone and cannot be used to modify the ParsedProtocol
 	core::select::residue_selector::ResidueSelectorOP
 	get_residue_selector( std::string const & name ) const;
+
+	/// @brief Extract a SimpleMetric by name after using one of the create* methods
+	/// @details This returns a clone and cannot be used to modify the ParsedProtocol
+	core::simple_metrics::SimpleMetricOP
+	get_simple_metric( std::string const & name ) const ;
 
 	/// @brief Extract a Filter by name after using one of the create* methods
 	/// @details This returns a clone and cannot be used to modify the ParsedProtocol
@@ -388,6 +470,7 @@ private:
 
 	std::map< std::string, core::scoring::ScoreFunctionCOP > score_functions_;
 	std::map< std::string, core::select::residue_selector::ResidueSelectorCOP > residue_selectors_;
+	std::map< std::string, core::simple_metrics::SimpleMetricCOP > simple_metrics_;
 	std::map< std::string, protocols::filters::FilterCOP > filters_;
 	std::map< std::string, protocols::moves::MoverCOP > movers_;
 	std::map< std::string, core::pack::task::operation::TaskOperationCOP > task_operations_;

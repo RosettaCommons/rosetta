@@ -44,6 +44,16 @@ static SimpleMetricRegistrator< core::simple_metrics::metrics::SequenceSimilarit
 static SimpleMetricRegistrator< core::simple_metrics::metrics::TimingProfileMetricCreator          > reg_TimingProfileMetricCreator;
 static SimpleMetricRegistrator< core::simple_metrics::metrics::TotalEnergyMetricCreator      > reg_TotalEnergyMetricCreator;
 
+/////////// Testing  /////////////
+static SimpleMetricRegistrator< core::simple_metrics::TestRealMetricCreator  > reg_TestRealMetricCreator;
+static SimpleMetricRegistrator< core::simple_metrics::TestStringMetricCreator  > reg_TestStringMetricCreator;
+
+static SimpleMetricRegistrator< core::simple_metrics::TestCompositeRealMetricCreator  > reg_TestCompositeRealMetricCreator;
+static SimpleMetricRegistrator< core::simple_metrics::TestCompositeStringMetricCreator  > reg_TestCompositeStringMetricCreator;
+
+static SimpleMetricRegistrator< core::simple_metrics::TestPerResidueRealMetricCreator  > reg_TestPerResidueRealMetricCreator;
+static SimpleMetricRegistrator< core::simple_metrics::TestPerResidueStringMetricCreator  > reg_TestPerResidueStringMetricCreator;
+
 /////////// Composite   /////////////
 
 static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::CompositeEnergyMetricCreator  > reg_CompositeEnergyMetricCreator;
@@ -66,7 +76,7 @@ static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerRe
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueSasaMetricCreator > reg_PerResidueSasaMetricCreator;
 
 /////////////////////
-//Protocol-level SimpleMetrics should go into protocols/analysis/metrcs or protocols/analysis/yyy
+//Protocol-level SimpleMetrics should go into protocols/analysis/metrics or protocols/analysis/yyy
 
 static SimpleMetricRegistrator< protocols::analysis::simple_metrics::SequenceRecoveryMetricCreator > reg_SequenceRecoveryCreator;
 

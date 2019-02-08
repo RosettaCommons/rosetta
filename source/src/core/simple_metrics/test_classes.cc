@@ -257,7 +257,7 @@ TestPerResidueRealMetricCreator::provide_xml_schema( utility::tag::XMLSchemaDefi
 
 std::string
 TestPerResidueRealMetricCreator::keyname() const {
-	return TestCompositeRealMetric::name_static();
+	return TestPerResidueRealMetric::name_static();
 }
 
 SimpleMetricOP

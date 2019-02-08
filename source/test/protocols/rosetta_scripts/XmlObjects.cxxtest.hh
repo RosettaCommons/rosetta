@@ -24,6 +24,7 @@
 
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/select/residue_selector/PhiSelector.hh>
+#include <core/simple_metrics/test_classes.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/minimization_packing/MinMover.hh>
@@ -75,7 +76,10 @@ public:
 			"</TASKOPERATIONS>\n"
 			"<RESIDUE_SELECTORS>\n"
 			"<True name=\"true_sel\" />\n"
-			"</RESIDUE_SELECTORS>\n";
+			"</RESIDUE_SELECTORS>\n"
+			"<SIMPLE_METRICS>\n"
+			"<TestRealMetric name=\"test_sm\" />\n"
+			"</SIMPLE_METRICS>\n";
 
 		XmlObjectsCOP objs = XmlObjects::create_from_string( xml );
 
@@ -127,6 +131,15 @@ public:
 			TS_ASSERT( false );
 		}
 
+		TR << "Getting SimpleMetric" << std::endl;
+		try {
+			core::simple_metrics::SimpleMetricOP metric = objs->get_simple_metric("test_sm");
+			core::simple_metrics::TestRealMetricOP casted = std::dynamic_pointer_cast< core::simple_metrics::TestRealMetric >( metric );
+			(void)casted;
+		} catch (utility::excn::Exception const & e ) {
+			TR << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
 
 		TR << "End string instantiation test" << std::endl;
 
@@ -275,6 +288,38 @@ public:
 			core::select::residue_selector::ResidueSelectorOP selector = XmlObjects::static_get_residue_selector(
 				"<True />\n");
 			core::select::residue_selector::TrueResidueSelectorOP casted = std::dynamic_pointer_cast< core::select::residue_selector::TrueResidueSelector >( selector );
+			(void)casted;
+		} catch (utility::excn::Exception const & e ) {
+			TR << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
+
+
+		TR << "End static instantiation residue selector noname test" << std::endl;
+	}
+
+	void test_static_instantiation_simple_metric() {
+
+
+		TR << "Getting SimpleMetric" << std::endl;
+		try {
+			core::simple_metrics::SimpleMetricOP metric = XmlObjects::static_get_simple_metric(
+				"<TestRealMetric name=\"test_sm\" />\n");
+			core::simple_metrics::TestRealMetricOP casted = std::dynamic_pointer_cast< core::simple_metrics::TestRealMetric >( metric );
+			(void)casted;
+		} catch (utility::excn::Exception const & e ) {
+			TR << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
+		TR << "End static instantiation residue selector test" << std::endl;
+	}
+
+	void dont_test_static_instantiation_simple_metric_noname() {
+
+		try {
+			core::simple_metrics::SimpleMetricOP metric = XmlObjects::static_get_simple_metric(
+				"<TestRealMetric />\n");
+			core::simple_metrics::TestRealMetricOP casted = std::dynamic_pointer_cast< core::simple_metrics::TestRealMetric >( metric );
 			(void)casted;
 		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;

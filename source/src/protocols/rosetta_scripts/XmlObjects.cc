@@ -79,6 +79,7 @@ XmlObjects::operator=( XmlObjects const & src ) {
 
 		score_functions_ = src.score_functions_;
 		residue_selectors_ = src.residue_selectors_;
+		simple_metrics_ = src.simple_metrics_;
 		filters_ = src.filters_;
 		movers_ = src.movers_;
 		task_operations_ = src.task_operations_;
@@ -236,6 +237,14 @@ XmlObjects::init_from_maps(
 				data.get_ptr< select::residue_selector::ResidueSelector const >( "ResidueSelector", name );
 		}
 	}
+	if ( data.has_type( "SimpleMetric" ) ) {
+		for ( auto pair : data[ "SimpleMetric" ] ) {
+			std::string name = pair.first;
+			simple_metrics_[ name ] =
+				data.get_ptr< core::simple_metrics::SimpleMetric const >( "SimpleMetric", name );
+		}
+	}
+
 	if ( data.has_type( "scorefxns" ) ) {
 		for ( auto pair : data[ "scorefxns" ] ) {
 			std::string name = pair.first;
@@ -363,6 +372,42 @@ XmlObjects::static_get_residue_selector(
 	XmlObjectsCOP objs = create_from_string( wrapped_text, pose, options );
 
 	return objs->get_residue_selector( name );
+}
+
+core::simple_metrics::SimpleMetricOP
+XmlObjects::static_get_simple_metric(
+	std::string const & xml_text ) {
+	pose::Pose pose;
+	return static_get_simple_metric( xml_text, pose, basic::options::option );
+}
+
+core::simple_metrics::SimpleMetricOP
+XmlObjects::static_get_simple_metric(
+	std::string const & xml_text,
+	core::pose::Pose & pose ) {
+	return static_get_simple_metric( xml_text, pose, basic::options::option );
+}
+
+core::simple_metrics::SimpleMetricOP
+XmlObjects::static_get_simple_metric(
+	std::string const & xml_text_in,
+	core::pose::Pose & pose,
+	utility::options::OptionCollection const & options ) {
+
+	std::string xml_text = xml_text_in;
+	std::string name;
+	try {
+		name = get_or_set_tag_name( xml_text );
+	} catch ( utility::excn::Exception const & e ) {
+		TR << e.msg() << std::endl; // This line should be removed once PyRosetta correctly outputs the exception
+		TR << "Error parsing tag. Remember to specify only one SimpleMetric!" << std::endl;
+		throw e;
+	}
+
+	std::string wrapped_text = "<SIMPLE_METRICS>" + xml_text + "</SIMPLE_METRICS>";
+	XmlObjectsCOP objs = create_from_string( wrapped_text, pose, options );
+
+	return objs->get_simple_metric( name );
 }
 
 /// @brief Constructs a single Filter from xml
@@ -547,6 +592,15 @@ XmlObjects::list_residue_selectors() const {
 	return names;
 }
 
+utility::vector1< std::string >
+XmlObjects::list_simple_metrics() const {
+	utility::vector1< std::string > names;
+	for ( auto pair : simple_metrics_ ) {
+		names.push_back( pair.first );
+	}
+	return names;
+}
+
 /// @brief List all the Filters contained by name
 utility::vector1< std::string >
 XmlObjects::list_filters() const {
@@ -608,6 +662,18 @@ XmlObjects::get_residue_selector( std::string const & name ) const {
 	return residue_selectors_.at( name )->clone();
 }
 
+core::simple_metrics::SimpleMetricOP
+XmlObjects::get_simple_metric( std::string const & name ) const {
+	if ( simple_metrics_.count( name ) == 0 ) {
+		throw std::runtime_error( "SimpleMetric with name \"" + name +
+			"\" does not exist!!" );
+	}
+	// DO NOT switch this function to return a COP and remove this clone. PyRosetta
+	// allows one to modify COPs which allows one to change the const private data of this
+	// class and could even allow one to modify the ParsedProtocol. This behavior is
+	// side-effect programming and must be disallowed
+	return simple_metrics_.at( name )->clone();
+}
 
 /// @brief Extract a Filter by name after using one of the create* methods
 /// @details This returns a clone and cannot be used to modify the ParsedProtocol
@@ -687,6 +753,10 @@ XmlObjects::show( std::ostream & output ) const {
 	}
 	output << "TaskOperations:" << std::endl;
 	for ( auto pair : task_operations_ ) {
+		output << "  " << pair.first << std::endl;
+	}
+	output << "SimpleMetrics:" << std::endl;
+	for ( auto pair : simple_metrics_ ) {
 		output << "  " << pair.first << std::endl;
 	}
 	output << "Filters:" << std::endl;

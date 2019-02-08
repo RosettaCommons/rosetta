@@ -15,7 +15,7 @@
 #include <core/simple_metrics/SimpleMetricRegistrator.hh>
 
 #include <core/simple_metrics/simple_metric_creators.hh>
-
+#include <core/simple_metrics/test_classes_creators.hh>
 
 //Simple Metrics in Protocols should go into:
 // protocols/analysis/simple_metrics
