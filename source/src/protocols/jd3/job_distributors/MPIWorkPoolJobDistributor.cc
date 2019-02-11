@@ -114,7 +114,7 @@ MPIWorkPoolJobDistributor::go( JobQueenOP queen )
 	job_extractor_->set_job_queen( queen );
 	if ( mpi_rank_ == 0 ) {
 		go_master();
-	} else if ( mpi_rank_ <= n_archives_ ) {
+	} else if ( node_is_archive(mpi_rank_) ) {
 		go_archive();
 	} else {
 		go_worker();
@@ -343,10 +343,22 @@ MPIWorkPoolJobDistributor::master_setup()
 	}
 }
 
+bool
+MPIWorkPoolJobDistributor::node_is_archive( int node_rank ) const
+{
+	return node_rank != 0 && node_rank <= n_archives_;
+}
+
+bool
+MPIWorkPoolJobDistributor::node_is_outputter( int node_rank ) const
+{
+	return node_rank != 0 && node_rank <= max_n_outputters_;
+}
+
 void
 MPIWorkPoolJobDistributor::process_job_request_from_node( int worker_node )
 {
-	if ( worker_node <= max_n_outputters_ && ! output_list_empty_ ) {
+	if ( node_is_outputter(worker_node) && ! output_list_empty_ ) {
 		bool work_was_sent = send_output_instruction_to_node( worker_node );
 		debug_assert( work_was_sent );
 		return;
@@ -534,7 +546,7 @@ void
 MPIWorkPoolJobDistributor::process_output_complete_message( int remote_node )
 {
 	debug_assert( node_outputter_is_outputting_for_[ remote_node ] >= 0 &&
-		node_outputter_is_outputting_for_[ remote_node ] <= n_archives_ );
+		node_is_archive(node_outputter_is_outputting_for_[ remote_node ]));
 
 	int const archive_node = node_outputter_is_outputting_for_[ remote_node ];
 	node_outputter_is_outputting_for_[ remote_node ] = -1;
@@ -543,8 +555,8 @@ MPIWorkPoolJobDistributor::process_output_complete_message( int remote_node )
 	debug_assert( new_result_count >= 0 );
 	n_results_per_archive_.reset_coval( archive_node, new_result_count );
 
-	if ( remote_node <= n_archives_ ) {
-		TR << "Remote " << n_archives_ << " has completed an output" << std::endl;
+	if ( node_is_archive(remote_node) ) {
+		TR << "Remote " << remote_node << " has completed an output" << std::endl;
 		if ( jobs_to_output_for_archives_[ remote_node ].empty() ) {
 			TR << "Sending remote " << remote_node << " an output archived on another node, if available." << std::endl;
 			bool sent = send_output_instruction_to_node( remote_node );
@@ -846,12 +858,14 @@ MPIWorkPoolJobDistributor::process_retrieve_and_discard_job_result_request( int 
 
 	JobResultID job_result_id = { job_id, result_index };
 
+	bool archive_exists = false;
 	if ( archive_on_disk_ ) {
 		std::string const filename = filename_for_archive( job_id, result_index );
 		std::ifstream in ( filename );//as of now, this only checks to see if filename is good
 		if ( ! in.good() ) {
 			send_integer_to_node( worker_node, mpi_work_pool_jd_failed_to_retrieve_job_result );
 		} else {
+			archive_exists = true;
 			std::string const content = utility::file_contents( filename );
 			remove( filename.c_str() );
 
@@ -866,14 +880,25 @@ MPIWorkPoolJobDistributor::process_retrieve_and_discard_job_result_request( int 
 			// fatal error: the requested job result is not present at this node.
 			// inform node 0 (this isn't node 0, as this function is only called by archive nodes)
 			send_integer_to_node( worker_node, mpi_work_pool_jd_failed_to_retrieve_job_result );
-			return;
+		} else {
+			archive_exists = true;
+			// ok -- we have found the (serialized) JobResult
+			send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
+			send_string_to_node( worker_node, * iter->second );
+			job_results_.erase( iter );
 		}
-
-		// ok -- we have found the (serialized) JobResult
-		send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
-		send_string_to_node( worker_node, * iter->second );
-		job_results_.erase( iter );
 	}
+
+
+	if ( ! archive_exists ) {
+		// tell node 0 about failed retrieval
+		send_integer_to_node( 0, mpi_rank_ );
+		send_integer_to_node( 0, mpi_work_pool_jd_failed_to_retrieve_job_result );
+		send_integer_to_node( 0, worker_node );
+		send_size_to_node( 0, job_id );
+		send_size_to_node( 0, result_index );
+	}
+
 }
 
 void
@@ -946,6 +971,37 @@ MPIWorkPoolJobDistributor::send_output_instruction_to_node( int output_node )
 		update_output_list_empty_bool();
 		return true;
 	}
+
+	runtime_assert( ! node_is_archive(output_node) ||
+		jobs_to_output_for_archives_[ output_node ].empty() );
+
+	if ( node_is_archive(output_node) &&
+			( job_extractor_->not_done() ||
+			! in_flight_larval_jobs_.empty() ) ) {
+		// Archive nodes must not end up in a situation where node A wants
+		// a job result from node B and node B wants a job result from
+		// node A. This causes deadlock. In fact, any cycle of archives needing
+		// job results from other archives could cause deadlock.
+		// The only safe time for when any archive can ask another node
+		// for one of its results is when there are no results already stored
+		// on the archive that will ever be output and when we can
+		// guarantee that there will be no other job result could get stored
+		// on the archive (and therefore no other archive will ask for its
+		// stored result). The only time we can guarantee this is after
+		// all jobs have been started (and no more will ever run), and after
+		// all jobs that have been started have been completed and their
+		// results archived, and any of those results that should be output
+		// have already been output. What a mouth full.
+		// Currently the only time this function is called for an archive node
+		// is after the archive has already output all of the results that
+		// are waiting to be output, so that condition is only asserted
+		// here and is not checked explicitly.
+		// So if all the jobs have finished running and have been archived,
+		// then we may assign output_node an output task whose result lives
+		// on another archive.
+		return false;
+	}
+
 
 	// Tell the worker node to get an output result from the archive that has the most work
 	// if any of the archives have any work.
@@ -1127,7 +1183,7 @@ MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 	for ( auto spec : outputs_for_node0 ) {
 
 		bool sent( false );
-		while ( count_archive <= n_archives_ ) {
+		while ( node_is_archive(count_archive) ) {
 			if ( ! archive_currently_outputting_[ count_archive ] ) {
 				// send the job to the remote node and have it start outputting it
 				send_output_spec_and_job_result_to_remote( count_archive, spec );

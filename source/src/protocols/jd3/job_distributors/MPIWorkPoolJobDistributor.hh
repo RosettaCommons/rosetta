@@ -131,6 +131,12 @@ private:
 	void
 	master_setup();
 
+	bool
+	node_is_archive( int node_rank ) const;
+
+	bool
+	node_is_outputter( int node_rank ) const;
+
 	void
 	process_job_request_from_node( int worker_node );
 

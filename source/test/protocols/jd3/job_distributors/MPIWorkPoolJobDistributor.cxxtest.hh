@@ -979,6 +979,18 @@ public:
 		return serialized_T( spec );
 	}
 
+	std::string
+	serialized_output_specification(
+		JobResultID result_id,
+		JobOutputIndex output_index,
+		std::string const & outname
+	){
+		auto spec = std::make_shared< DummyOutputSpecification >( result_id, output_index );
+		spec->out_fname( outname );
+		OutputSpecificationOP base_spec(spec);
+		return serialized_T( base_spec );
+	}
+
 	output::OutputSpecificationOP
 	deserialized_output_specification( std::string const & serialized_spec )
 	{
@@ -3803,6 +3815,68 @@ public:
 
 #endif
 	}
+
+	void test_jd3_workpool_archive_output_result_from_other_archive() {
+		TS_ASSERT( true );
+
+#ifdef SERIALIZATION
+		core_init_with_additional_options( "-jd3::n_archive_nodes 2 -jd3::do_not_archive_on_node0 -jd3::compress_job_results 0" );
+
+		EnergyJobSummaryOP trpcage_job_summary( new EnergyJobSummary );
+		trpcage_job_summary->energy( 1234 );
+		utility::vector1< JobSummaryOP > summaries( 1, trpcage_job_summary );
+		std::string serialized_trpcage_job_summaries = serialized_job_summaries( summaries );
+
+		PoseJobResultOP trpcage_pose_result( new PoseJobResult );
+		trpcage_pose_result->pose(  create_trpcage_ideal_poseop() );
+
+		SimulateMPI::initialize_simulation( 5 );
+
+		SimulateMPI::set_mpi_rank( 0 );
+		send_integer_to_node( 1, 0 ); // master node says "I have a message for you, archive"
+		send_integer_to_node( 1, mpi_work_pool_jd_output_job_result_on_archive ); // "please output a job result that lives on another node"
+		send_integer_to_node( 1, 2 );
+		send_string_to_node( 1, serialized_output_specification( JobResultID( 6, 1 ), joi(6), "dummy_out.pdb" ));
+
+		SimulateMPI::set_mpi_rank(2);
+		send_integer_to_node( 1, mpi_work_pool_jd_job_result_retrieved );
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 1, 1, 6, trpcage_pose_result ) );
+
+		SimulateMPI::set_mpi_rank(0);
+		send_integer_to_node( 1, 0 ); // node 0 says "hey, I need to talk to you"
+		send_integer_to_node( 1, mpi_work_pool_jd_spin_down ); // time to shut down
+
+		//OK! Now create a PoolJQ3 and let 'er rip
+		SimulateMPI::set_mpi_rank( 1 );
+		PoolJQ1OP jq1( new PoolJQ1 );
+		MPIWorkPoolJobDistributor jd;
+		try {
+			jd.go( jq1 );
+		} catch ( ... ) {
+			TS_ASSERT( false /*no exception should be thrown*/ );
+		}
+
+		TS_ASSERT_EQUALS( jq1->dummy_outputter_->named_poses_.count( "dummy_out.pdb" ), 1 );
+
+		SimulateMPI::set_mpi_rank( 0 ); // the master node
+
+		ts_assert_mpi_buffer_has_integer( 1, "node 1 says that it has a message", 1 );
+		ts_assert_mpi_buffer_has_integer( 1, "node 1 says that it has output job result 1", mpi_work_pool_jd_output_completed );
+
+		SimulateMPI::set_mpi_rank( 2 ); // the seconda archive
+		ts_assert_mpi_buffer_has_integer( 1, "node 1 says that it has a message, 2", 1 );
+		ts_assert_mpi_buffer_has_integer( 1, "node 1 say that it needs a job result", mpi_work_pool_jd_retrieve_and_discard_job_result );
+		ts_assert_mpi_buffer_has_size( 1, "node 1 says the job result it needs is from job 6", 6 );
+		ts_assert_mpi_buffer_has_size( 1, "node 1 says the job result for job 6 it needs is #1", 1 );
+
+		SimulateMPI::set_mpi_rank( 1 ); // the archive
+
+		TS_ASSERT( SimulateMPI::incoming_message_queue_is_empty() );
+		TS_ASSERT( SimulateMPI::outgoing_message_queue_is_empty() );
+
+#endif
+	}
+
 
 	void test_master_node_response_to_failure_to_retrieve_job_result_from_archive()
 	{
