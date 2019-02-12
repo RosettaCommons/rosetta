@@ -44,11 +44,11 @@ typedef boost::unordered_map<core::Size, RationalMonteCarloTrigger> Triggers;
 /// class; almost anything you could possibly want to add is a bad idea.
 class RationalMonteCarlo : public protocols::moves::Mover {
 	typedef core::pose::Pose Pose;
-	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
+	typedef core::scoring::ScoreFunctionCOP ScoreFunctionCOP;
 
 public:
 	RationalMonteCarlo(moves::MoverOP mover,
-		ScoreFunctionOP score,
+		ScoreFunctionCOP score,
 		core::Size num_trials,
 		core::Real temperature,
 		bool recover_low);

@@ -7,37 +7,35 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/carbohydrates/GlycanTreeSampler.fwd.hh
+/// @file protocols/carbohydrates/GlycanSamplerCreator.hh
 /// @brief Main mover for Glycan Relax, which optimizes glycans in a pose.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#ifndef INCLUDED_protocols_carbohydrates_GlycanSamplerCreator_hh
+#define INCLUDED_protocols_carbohydrates_GlycanSamplerCreator_hh
 
-#ifndef INCLUDED_protocols_carbohydrates_GlycanTreeSampler_fwd_hh
-#define INCLUDED_protocols_carbohydrates_GlycanTreeSampler_fwd_hh
-
-// Utility headers
-#include <utility/pointer/owning_ptr.hh>
+#include <protocols/moves/MoverCreator.hh>
 
 
-
-// Forward
 namespace protocols {
 namespace carbohydrates {
 
-class GlycanTreeSampler;
+class GlycanSamplerCreator : public protocols::moves::MoverCreator {
 
-typedef utility::pointer::shared_ptr< GlycanTreeSampler > GlycanTreeSamplerOP;
-typedef utility::pointer::shared_ptr< GlycanTreeSampler const > GlycanTreeSamplerCOP;
+public:
+
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 
 
+
+};
 
 } //protocols
 } //carbohydrates
 
-
-#endif //INCLUDED_protocols/carbohydrates_GlycanTreeSampler_fwd_hh
-
-
+#endif //INCLUDED_protocols/carbohydrates_GlycanSampler_fwd_hh
 
 
 

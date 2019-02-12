@@ -49,7 +49,7 @@ using protocols::moves::MoverOP;
 
 static basic::Tracer TR( "protocols.simple_moves.RationalMonteCarlo" );
 
-RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionOP score, Size num_trials, Real temperature, bool recover_low)
+RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionCOP score, Size num_trials, Real temperature, bool recover_low)
 : Mover("RationalMonteCarlo"), mover_(std::move(mover)), num_trials_(num_trials), recover_low_(recover_low), next_trigger_id_(0) {
 	mc_ = utility::pointer::make_shared< protocols::moves::MonteCarlo >(*score, temperature);
 	protocols::viewer::add_monte_carlo_viewer(*mc_, "RationalMonteCarlo");
@@ -60,14 +60,16 @@ void RationalMonteCarlo::apply(Pose& pose) {
 	mc_->reset_counters();
 
 	for ( Size i = 1; i <= num_trials(); ++i ) {
-		Pose copy(pose);
 		mover_->apply(pose);
 
 		if ( mc_->boltzmann(pose) ) {  // accept
 			fire_all_triggers(pose);
-		} else {                     // reject
-			pose = copy;
 		}
+
+		//JAB - no reason to do a second copy when boltzmann is already doing this.
+		//else {                     // reject
+		// pose = copy;
+		//}
 	}
 
 	if ( recover_low() ) {
@@ -75,8 +77,11 @@ void RationalMonteCarlo::apply(Pose& pose) {
 	}
 
 	// Show simulation statistics
+	TR << "RationalMonteCarlo:"  << std::endl;
 	mc_->show_counters();
-	mc_->score_function().show(TR, pose);
+	if ( TR.Debug.visible() ) {
+		mc_->score_function().show(TR.Debug, pose);
+	}
 	TR.flush();
 }
 

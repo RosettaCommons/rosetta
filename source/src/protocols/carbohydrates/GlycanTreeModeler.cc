@@ -8,14 +8,14 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/carbohydrates/GlycanTreeModeler.cc
-/// @brief A protocol for optimizing glycan trees using the GlycanTreeSampler from the base of the tree out to the leaves.
+/// @brief A protocol for optimizing glycan trees using the GlycanSampler from the base of the tree out to the leaves.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 /// @author Sebastian Raemisch (raemisch@scripps.edu)
 
 // Unit headers
 #include <protocols/carbohydrates/GlycanTreeModeler.hh>
 #include <protocols/carbohydrates/GlycanTreeModelerCreator.hh>
-#include <protocols/carbohydrates/GlycanTreeSampler.hh>
+#include <protocols/carbohydrates/GlycanSampler.hh>
 #include <protocols/carbohydrates/util.hh>
 
 #include <protocols/simple_moves/ConvertRealToVirtualMover.hh>
@@ -44,10 +44,12 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
+#include <core/simple_metrics/metrics/TimingProfileMetric.hh>
 
 // Protocl headers
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -105,7 +107,8 @@ GlycanTreeModeler::GlycanTreeModeler( GlycanTreeModeler const & src ):
 	use_conformer_populations_(src.use_conformer_populations_),
 	force_virts_for_refine_(src.force_virts_for_refine_),
 	hybrid_protocol_(src.hybrid_protocol_),
-	use_gaussian_sampling_( src.use_gaussian_sampling_)
+	use_gaussian_sampling_( src.use_gaussian_sampling_),
+	use_shear_( src.use_shear_)
 
 {
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
@@ -167,6 +170,7 @@ GlycanTreeModeler::parse_my_tag(
 	set_use_conformer_probabilities( tag->getOption< bool >( "use_conformer_probs", use_conformer_populations_));
 	set_hybrid_protocol( tag->getOption< bool >("hybrid_protocol", hybrid_protocol_));
 	set_use_gaussian_sampling( tag->getOption< bool >( "use_gaussian_sampling", use_gaussian_sampling_));
+	use_shear_ = tag->getOption< bool >("shear", use_shear_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -223,7 +227,7 @@ void GlycanTreeModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		"root/start out to the glycan tips.  Next round we go backward, then forward.  The number of rounds corresponds to how many back "
 		"and forth directions we go")
 
-		+ XMLSchemaAttribute::attribute_w_default("glycan_sampler_rounds", xsct_non_negative_integer, "Round Number for the internal the GlycanTreeSampler.  Default is the default of the GlycanTreeSampler.", "25")
+		+ XMLSchemaAttribute::attribute_w_default("glycan_sampler_rounds", xsct_non_negative_integer, "Round Number for the internal the GlycanSampler.  Default is the default of the GlycanSampler.", "25")
 
 		+ XMLSchemaAttribute::attribute_w_default("use_conformer_probs", xsct_rosetta_bool, "Use conformer probabilities instead of doing uniform sampling", "false")
 		+ XMLSchemaAttribute::attribute_w_default("use_gaussian_sampling", xsct_rosetta_bool, "Set whether to build conformer torsions using a gaussian of the angle or through uniform sampling up to 1 SD (default)", "false")
@@ -238,10 +242,11 @@ void GlycanTreeModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool, "Use Cartesian Minimization instead of Dihedral Minimization during packing steps.", "false")
 
 
-		+ XMLSchemaAttribute::attribute_w_default("hybrid_protocol", xsct_rosetta_bool ,"Set to use an experimental protocol where we build out the glycans, but re-model the full tree during the building process" , "false");
+		+ XMLSchemaAttribute::attribute_w_default("hybrid_protocol", xsct_rosetta_bool ,"Set to use an experimental protocol where we build out the glycans, but re-model the full tree during the building process" , "false")
+		+ XMLSchemaAttribute::attribute_w_default("shear", xsct_rosetta_bool, "Use the Shear Mover that is now compatible with glycans at an a probability of 10 percent", "false");
 
 	std::string documentation =
-		"Brief: A protocol for optimizing glycan trees using the GlycanTreeSampler from the base of the tree out to the leaves.\n"
+		"Brief: A protocol for optimizing glycan trees using the GlycanSampler from the base of the tree out to the leaves.\n"
 		"Details: Works by making all other residues virtual except the ones it is working on (current Layer).\n"
 		"A virtual residue is not scored.\n"
 		"It will start at the first glycan residues, and then move out to the edges.\n"
@@ -250,7 +255,7 @@ void GlycanTreeModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		"\n"
 		"We start at the roots, and make all other glycan residues virtual.\n"
 		"We first model towards the leaves and this is considered the forward direction.\n"
-		"the GlycanTreeSampler is used for the actual modeling, we only model a layer at a time, until we reach the tips.\n"
+		"the GlycanSampler is used for the actual modeling, we only model a layer at a time, until we reach the tips.\n"
 		"If more than one round is set, the protocol will move backwards on the next round, from the leafs to the roots.\n"
 		"A third round will involve relaxation again in the forward direction.\n"
 		"So we go forward, back, forward, etc. for how ever many rounds you set.\n"
@@ -397,6 +402,11 @@ GlycanTreeModeler::set_hybrid_protocol(bool hybrid_protocol){
 	hybrid_protocol_ = hybrid_protocol;
 }
 
+void
+GlycanTreeModeler::set_use_shear(bool use_shear){
+	use_shear_ = use_shear;
+}
+
 /// @brief Apply the mover
 void
 GlycanTreeModeler::apply( core::pose::Pose & pose){
@@ -459,26 +469,28 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 		utility_exit_with_message("GlycanTreeModeler: No glycan residues to model.  Cannot continue.");
 	}
 
-	// Setup the GlycanTreeSampler
-	GlycanTreeSampler glycan_sampler = GlycanTreeSampler();
+	// Setup the GlycanSampler
+	GlycanSampler glycan_sampler = GlycanSampler();
 	if ( scorefxn_ ) {
 		glycan_sampler.set_scorefunction( scorefxn_ );
 	}
 
 	//Control our own refinement here as we may have multiple apply calls to Glycan Sampler.
 	// Without this, we would randomize EVERY time GlycaSampler's apply function is called.
-	glycan_sampler.set_refine( true );
+	glycan_sampler.set_randomize_first( false );
 	if ( ! refine_ ) {
 		glycan_sampler.randomize_glycan_torsions(pose, starting_subset);
 
 	}
 
-	//Only override cmd-line settings of the GlycanTreeSampler if it is set here.  Otherwise, cmd-line controls do not work.
+	//Only override cmd-line settings of the GlycanSampler if it is set here.  Otherwise, cmd-line controls do not work.
 	if ( glycan_sampler_rounds_ != 0 ) {
 		glycan_sampler.set_rounds(glycan_sampler_rounds_);
 	}
 
 	//Setup Glycan Sampler Options
+	glycan_sampler.set_use_shear(use_shear_);
+	glycan_sampler.set_refine( refine_ );
 	glycan_sampler.use_cartmin( cartmin_ );
 	glycan_sampler.set_min_rings( min_rings_ );
 	glycan_sampler.set_population_based_conformer_sampling(use_conformer_populations_);
@@ -607,7 +619,7 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 
 				if ( max_end + 1 <= layer_size_ ) {
 					if ( ! quench_mode_ ) {
-						TR.Error << "Maximum number of layers smaller than the layer size.  Either decrease the layer_size or use the GlycanTreeSampler instead.  Layer-based sampling does not make sense here." << std::endl;
+						TR.Error << "Maximum number of layers smaller than the layer size.  Either decrease the layer_size or use the GlycanSampler instead.  Layer-based sampling does not make sense here." << std::endl;
 						set_last_move_status(FAIL_DO_NOT_RETRY);
 						pose = starting_pose;
 						return;
@@ -615,7 +627,6 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 				}
 				ResidueSubset pre_virtualized( pose.total_residue(), false );
 				ResidueSubset needed_virtualization( pose.total_residue(), false );
-
 
 
 				while ( current_start <= max_end ) {
@@ -665,7 +676,7 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 						real_to_virt.apply( pose );
 					}
 
-					TR << "Running the GlycanTreeSampler on layer [ start -> end (including) ]: " << current_start << " " << current_end << std::endl;
+					TR << "Running the GlycanSampler on layer [ start -> end (including) ]: " << current_start << " " << current_end << std::endl;
 
 					core::Size n_in_layer = count_selected( and_selector->apply( pose ) );
 
@@ -744,7 +755,7 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 					modeling_layer_selector->set_layer( current_start, current_end );
 					//ResidueSubset modeling_layer = modeling_layer_selector->apply( pose );
 
-					TR << "Running the GlycanTreeSampler on layer: " << current_start << " " << current_end << std::endl;
+					TR << "Running the GlycanSampler on layer: " << current_start << " " << current_end << std::endl;
 
 					//Combine modeling layer with whatver the current_subset is.
 					store_subset->set_residue_subset( starting_subset );
@@ -793,6 +804,7 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 
 		//For now, we create a movemap from a selector manually.  Refactor this to Andrew's new code!
 		ReturnResidueSubsetSelectorOP return_subset_min = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector(min_subset));
+		core::Size n_glycan_residues = count_selected(min_subset);
 
 		MoveMapOP mm = core::pose::carbohydrates::create_glycan_movemap_from_residue_selector(pose,return_subset_min,true /*chi*/,min_rings_,true /*bb*/, cartmin_);
 
@@ -809,13 +821,17 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 		TaskFactoryOP tf = get_all_glycans_and_neighbor_res_task_factory( min_subset );
 		packer.task_factory( tf );
 
+		//Configure the ShearMover.
+		ShearMover shear = ShearMover();
+		shear.set_residue_selector(return_subset_min);
+
 		TR << "Running final min-pack." << std::endl;
 		core::Real prefinal = scorefxn_->score( pose );
 		///Run min/pack/min/pack/min round.
-		min_mover.apply(pose);
-		packer.apply( pose );
-		min_mover.apply(pose);
-		packer.apply( pose);
+
+		run_shear_min_pack(min_mover, packer, shear, *mc, n_glycan_residues, pose, use_shear_);
+		run_shear_min_pack(min_mover, packer, shear, *mc, n_glycan_residues, pose, use_shear_);
+
 		min_mover.apply(pose);
 
 		TR << "Start- : " << starting_score << std::endl;

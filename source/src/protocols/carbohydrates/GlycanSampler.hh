@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/carbohydrates/GlycanTreeSampler.hh
+/// @file protocols/carbohydrates/GlycanSampler.hh
 /// @brief Main mover for Glycan Relax, which optimizes glycans in a pose.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) and Jason W. Labonte (JWLabonte@jhu.edu)
 
 
-#ifndef INCLUDED_protocols_carbohydrates_GlycanTreeSampler_hh
-#define INCLUDED_protocols_carbohydrates_GlycanTreeSampler_hh
+#ifndef INCLUDED_protocols_carbohydrates_GlycanSampler_hh
+#define INCLUDED_protocols_carbohydrates_GlycanSampler_hh
 
 // Unit headers
-#include <protocols/carbohydrates/GlycanTreeSampler.fwd.hh>
+#include <protocols/carbohydrates/GlycanSampler.fwd.hh>
 #include <protocols/carbohydrates/LinkageConformerMover.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -30,8 +30,12 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
+#include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
+
+
 
 #include <basic/datacache/DataMap.fwd.hh>
 
@@ -55,22 +59,22 @@ namespace carbohydrates {
 ///
 /// Supports Symmetry
 ///
-class GlycanTreeSampler : public protocols::moves::Mover {
+class GlycanSampler : public protocols::moves::Mover {
 
 public:
 
-	GlycanTreeSampler();
+	GlycanSampler();
 
 	//@brief constructor with arguments
-	GlycanTreeSampler( core::select::residue_selector::ResidueSelectorCOP selector,
+	GlycanSampler( core::select::residue_selector::ResidueSelectorCOP selector,
 		core::scoring::ScoreFunctionCOP scorefxn,
 		core::Size rounds = 75);
 
 	// copy constructor
-	GlycanTreeSampler( GlycanTreeSampler const & src );
+	GlycanSampler( GlycanSampler const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	~GlycanTreeSampler() override;
+	~GlycanSampler() override;
 
 	void
 	apply( core::pose::Pose & pose ) override;
@@ -128,6 +132,23 @@ public:
 	void
 	set_min_rings( bool min_rings);
 
+	///@brief Set the protocol to use the refactored Shear Mover for glycan torsions at 10 % probability.
+	/// Default false.
+	void
+	set_use_shear( bool use_shear);
+
+	///@brief Set the protocol to randomize torsions before beginning.
+	/// This actually helps get to lower energy models.
+	/// Default True.  If doing refinement, this is automatically turned off.
+	void
+	set_randomize_first( bool randomize_first );
+
+	///@brief Set the number of inner cycles for BB sampling through small/sugarBB.
+	/// This is multiplied by the number of glycan residues
+	/// Default 1
+	void
+	set_inner_bb_cycles( core::Size inner_bb_cycles );
+
 public:
 	void
 	show( std::ostream & output=std::cout ) const override;
@@ -143,7 +164,7 @@ public:
 
 
 
-	//GlycanTreeSampler & operator=( GlycanTreeSampler const & src );
+	//GlycanSampler & operator=( GlycanSampler const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
 	moves::MoverOP
@@ -176,6 +197,7 @@ public:
 	///@brief Attempt to idealize all residues in of a set of trees. Experimental!
 	void
 	idealize_glycan_residues( core::pose::Pose & pose, utility::vector1< core::Size > const & tree_subset ) const;
+
 
 public:
 
@@ -228,16 +250,17 @@ private:
 
 private:
 
-	core::pack::task::TaskFactoryCOP tf_;
+	core::pack::task::TaskFactoryCOP tf_              = nullptr;
 
-	moves::MonteCarloOP mc_;
-	core::scoring::ScoreFunctionCOP scorefxn_;
+	moves::MonteCarloOP mc_                           = nullptr;
+	core::scoring::ScoreFunctionCOP scorefxn_         = nullptr;
 
-	LinkageConformerMoverOP linkage_mover_;
-	moves::RandomMoverOP weighted_random_mover_;
+	LinkageConformerMoverOP linkage_mover_            = nullptr;
+	moves::RandomMoverOP weighted_random_mover_       = nullptr;
 
-	minimization_packing::MinMoverOP min_mover_;
-	minimization_packing::PackRotamersMoverOP packer_;
+	minimization_packing::MinMoverOP min_mover_       = nullptr;
+	minimization_packing::PackRotamersMoverOP packer_ = nullptr;
+	simple_moves::ShearMoverOP shear_                 = nullptr;
 
 	core::Size rounds_ = 25; // cmdline
 	core::Real kt_ = 2.0; // cmdline
@@ -262,17 +285,20 @@ private:
 	bool min_rings_ = false;
 
 	core::Size forced_total_rounds_ = 0;
+	bool use_shear_ = false;
+	bool randomize_first_ = true;
+	core::Size inner_ncycles_ = 1; //For individual bb movements, multiply this by n glycans.
 
 };
 
-std::ostream &operator<< (std::ostream &os, GlycanTreeSampler const &mover);
+std::ostream &operator<< (std::ostream &os, GlycanSampler const &mover);
 
 
 } //protocols
 } //carbohydrates
 
 
-#endif //protocols/carbohydrates_GlycanTreeSampler_hh
+#endif //protocols/carbohydrates_GlycanSampler_hh
 
 
 

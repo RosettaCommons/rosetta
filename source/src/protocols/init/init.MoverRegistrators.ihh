@@ -77,7 +77,7 @@ static MoverRegistrator< constraint_generator::AddConstraintsCreator > reg_AddCo
 static MoverRegistrator< constraint_generator::RemoveConstraintsCreator > reg_RemoveConstraintsCreator;
 
 static MoverRegistrator< carbohydrates::CreateGlycanSequonMoverCreator > reg_CreateGlycanSequonMoverCreator;
-static MoverRegistrator< carbohydrates::GlycanTreeSamplerCreator > reg_GlycanTreeSamplerCreator;
+static MoverRegistrator< carbohydrates::GlycanSamplerCreator > reg_GlycanSamplerCreator;
 static MoverRegistrator< carbohydrates::GlycanTreeMinMoverCreator > reg_GlycanTreeMinMoverCreator;
 static MoverRegistrator< carbohydrates::GlycanTreeModelerCreator > reg_GlycanTreeModelerCreator;
 static MoverRegistrator< carbohydrates::LinkageConformerMoverCreator > reg_LinkageConformerMoverCreator;

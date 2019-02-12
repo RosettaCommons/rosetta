@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/carbohydrates/GlycanTreeModeler.hh
-/// @brief A protocol for optimizing glycan trees using the GlycanTreeSampler from the base of the tree out to the leaves.
+/// @brief A protocol for optimizing glycan trees using the GlycanSampler from the base of the tree out to the leaves.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 /// @author Sebastian Raemisch (raemisch@scripps.edu)
 
@@ -21,6 +21,10 @@
 
 // Protocol headers
 #include <protocols/filters/Filter.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
+#include <protocols/simple_moves/BackboneMover.fwd.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
@@ -39,7 +43,7 @@ enum QuenchDirection {
 	backward
 };
 
-///@brief A protocol for optimizing glycan trees using the GlycanTreeSampler from the base of the tree out to the leaves.
+///@brief A protocol for optimizing glycan trees using the GlycanSampler from the base of the tree out to the leaves.
 ///@details Works by making all other residues virtual except the ones it is working on (current Layer).
 /// A virtual residue is not scored.
 /// It will start at the first glycan residues, and then move out to the edges.
@@ -48,7 +52,7 @@ enum QuenchDirection {
 ///
 /// We start at the roots, and make all other glycan residues virtual.
 /// We first model towards the leaves and this is considered the forward direction.
-/// the GlycanTreeSampler is used for the actual modeling, we only model a layer at a time, until we reach the tips.
+/// the GlycanSampler is used for the actual modeling, we only model a layer at a time, until we reach the tips.
 /// If more than one round is set, the protocol will move backwards on the next round, from the leafs to the roots.
 /// A third round will involve relaxation again in the forward direction.
 /// So we go forward, back, forward, etc. for how ever many rounds you set.
@@ -180,6 +184,9 @@ public:
 	void
 	set_hybrid_protocol( bool hybrid_protocol );
 
+	void
+	set_use_shear( bool use_shear );
+
 public:
 
 	///@brief Set the scorefunction used for modeling.
@@ -272,6 +279,7 @@ private: // data
 	bool force_virts_for_refine_ = false;
 	bool hybrid_protocol_ = false;
 	bool use_gaussian_sampling_ = false;
+	bool use_shear_ = false;
 };
 
 std::ostream &

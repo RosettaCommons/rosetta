@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/carbohydrates/GlycanTreeSampler.cc
+/// @file protocols/carbohydrates/GlycanSampler.cc
 /// @brief Main mover for Glycan Relax, which optimizes glycans in a pose.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) and Jason W. Labonte (JWLabonte@jhu.edu)
 
-#include <protocols/carbohydrates/GlycanTreeSampler.hh>
-#include <protocols/carbohydrates/GlycanTreeSamplerCreator.hh>
+#include <protocols/carbohydrates/GlycanSampler.hh>
+#include <protocols/carbohydrates/GlycanSamplerCreator.hh>
 #include <protocols/carbohydrates/LinkageConformerMover.hh>
 #include <protocols/carbohydrates/GlycanTreeMinMover.hh>
 #include <protocols/carbohydrates/util.hh>
@@ -48,6 +48,7 @@
 #include <core/select/util.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/simple_metrics/metrics/TimingProfileMetric.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -58,6 +59,7 @@
 #include <protocols/simple_moves/bb_sampler/SmallBBSampler.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
@@ -74,7 +76,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-static basic::Tracer TR( "protocols.carbohydrates.GlycanTreeSampler" );
+static basic::Tracer TR( "protocols.carbohydrates.GlycanSampler" );
 
 
 namespace protocols {
@@ -83,6 +85,7 @@ namespace carbohydrates {
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
 using namespace protocols::simple_moves::bb_sampler;
+using namespace protocols::simple_moves::rational_mc;
 using namespace protocols::minimization_packing;
 
 using namespace core::pack::task;
@@ -91,25 +94,17 @@ using namespace core::select::residue_selector;
 using namespace core::kinematics;
 using namespace core::pose::carbohydrates;
 
-GlycanTreeSampler::GlycanTreeSampler():
-	protocols::moves::Mover( "GlycanTreeSampler" ),
-	tf_(/*NULL*/),
-	mc_(/*NULL*/),
-	scorefxn_(/* NULL */),
-	linkage_mover_(/* NULL */),
-	selector_(/*NULL*/)
+GlycanSampler::GlycanSampler():
+	protocols::moves::Mover( "GlycanSampler" )
 {
 	set_defaults();
 }
 
-GlycanTreeSampler::GlycanTreeSampler(
+GlycanSampler::GlycanSampler(
 	core::select::residue_selector::ResidueSelectorCOP selector,
 	core::scoring::ScoreFunctionCOP scorefxn,
 	core::Size rounds):
-	protocols::moves::Mover("GlycanTreeSampler"),
-	tf_(/*NULL*/),
-	mc_(/* NULL */),
-	linkage_mover_(/*NULL*/)
+	protocols::moves::Mover("GlycanSampler")
 
 {
 	scorefxn_ = scorefxn->clone();
@@ -118,11 +113,11 @@ GlycanTreeSampler::GlycanTreeSampler(
 	set_rounds(rounds);
 }
 
-GlycanTreeSampler::~GlycanTreeSampler()= default;
+GlycanSampler::~GlycanSampler()= default;
 
 
 void
-GlycanTreeSampler::parse_my_tag(
+GlycanSampler::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
 	protocols::filters::Filters_map const & ,
@@ -158,13 +153,16 @@ GlycanTreeSampler::parse_my_tag(
 	}
 
 	tree_based_min_pack_ = tag->getOption< bool >("tree_based_min_pack", tree_based_min_pack_);
-	population_based_conformer_sampling_ = tag->getOption< bool >("population_based_conformer_sampling", population_based_conformer_sampling_);
+	population_based_conformer_sampling_ = tag->getOption< bool >("use_conformer_probs", population_based_conformer_sampling_);
 	use_gaussian_sampling_ = tag->getOption< bool >("use_gaussian_sampling", use_gaussian_sampling_);
 	min_rings_ = tag->getOption< core::Real >("min_rings", min_rings_);
+	use_shear_ = tag->getOption< bool >("shear", use_shear_);
+	randomize_first_ = tag->getOption< bool >("randomize_torsions", randomize_first_);
+	inner_ncycles_ = tag->getOption< bool >("inner_bb_cycles", inner_ncycles_);
 
 }
 
-void GlycanTreeSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+void GlycanSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 
 	using namespace utility::tag;
@@ -179,9 +177,12 @@ void GlycanTreeSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute("pack_distance", xsct_real, "Neighbor distance for packing")
 		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool, "Use Cartesian Minimization instead of Dihedral Minimization during packing steps.", "false")
 		+ XMLSchemaAttribute::attribute_w_default("tree_based_min_pack", xsct_rosetta_bool, "Use Tree-based minimization and packing instead of minimizing and packing ALL residues each time we min.  Significantly impacts runtime.  If you are seeing crappy structures for a few sugars, turn this off.  This is default-on to decrease runtime for a large number of glycans.", "true")
-		+ XMLSchemaAttribute::attribute_w_default("population_based_conformer_sampling", xsct_rosetta_bool, "Use the populations of the conformers as probabilities during our linkage conformer sampling.  This makes it harder to overcome energy barriers with more-rare conformers!", "false")
+		+ XMLSchemaAttribute::attribute_w_default("use_conformer_probs", xsct_rosetta_bool, "Use the populations of the conformers as probabilities during our linkage conformer sampling.  This makes it harder to overcome energy barriers with more-rare conformers!", "false")
 		+ XMLSchemaAttribute::attribute_w_default("use_gaussian_sampling", xsct_rosetta_bool, "Set whether to build conformer torsions using a gaussian of the angle or through uniform sampling up to 1 SD (default)", "false")
-		+ XMLSchemaAttribute::attribute_w_default("min_rings", xsct_rosetta_bool, "Minimize Carbohydrate Rings during minimization. ", "false");
+		+ XMLSchemaAttribute::attribute_w_default("min_rings", xsct_rosetta_bool, "Minimize Carbohydrate Rings during minimization. ", "false")
+		+ XMLSchemaAttribute::attribute_w_default("shear", xsct_rosetta_bool, "Use the Shear Mover that is now compatible with glycans at an a probability of 10 percent", "false")
+		+ XMLSchemaAttribute::attribute_w_default("randomize_torsions", xsct_rosetta_bool, "If NOT doing refinement, control whether we randomize torsions at the start, which helps to achieve low energy structures.", "true")
+		+ XMLSchemaAttribute::attribute_w_default("inner_bb_cycles", xsct_non_negative_integer, "Inner cycles for each time we call BB sampling either through small/medium/large moves or through the SugarBB Sampler.  This is multiplied by the number of glycans", "1");
 
 	//Append for MoveMap, scorefxn, and task_operation tags.
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
@@ -199,7 +200,7 @@ void GlycanTreeSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 }
 
 void
-GlycanTreeSampler::set_defaults(){
+GlycanSampler::set_defaults(){
 	rounds_ = 75; //Means absolutely nothing right now - Actually set from cmd line.
 	test_ = false;
 
@@ -215,7 +216,7 @@ GlycanTreeSampler::set_defaults(){
 
 
 void
-GlycanTreeSampler::set_cmd_line_defaults(){
+GlycanSampler::set_cmd_line_defaults(){
 
 	rounds_ = option [OptionKeys::carbohydrates::glycan_sampler::glycan_sampler_rounds]();
 	test_ = option [OptionKeys::carbohydrates::glycan_sampler::glycan_sampler_test]();
@@ -231,7 +232,7 @@ GlycanTreeSampler::set_cmd_line_defaults(){
 
 }
 
-GlycanTreeSampler::GlycanTreeSampler( GlycanTreeSampler const & src ):
+GlycanSampler::GlycanSampler( GlycanSampler const & src ):
 	protocols::moves::Mover(src),
 	rounds_( src.rounds_ ),
 	kt_( src.kt_ ),
@@ -248,7 +249,10 @@ GlycanTreeSampler::GlycanTreeSampler( GlycanTreeSampler const & src ):
 	population_based_conformer_sampling_(src.population_based_conformer_sampling_),
 	use_gaussian_sampling_(src.use_gaussian_sampling_),
 	min_rings_(src.min_rings_),
-	forced_total_rounds_(src.forced_total_rounds_)
+	forced_total_rounds_(src.forced_total_rounds_),
+	use_shear_(src.use_shear_),
+	randomize_first_(src.randomize_first_),
+	inner_ncycles_( src.inner_ncycles_)
 {
 	if ( src.selector_ ) selector_ = src.selector_->clone();
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
@@ -259,7 +263,9 @@ GlycanTreeSampler::GlycanTreeSampler( GlycanTreeSampler const & src ):
 	if ( src.packer_ ) {
 		packer_ = utility::pointer::make_shared< PackRotamersMover >( * src.packer_);
 	}
-
+	if ( src.shear_ ) {
+		shear_ = utility::pointer::make_shared< ShearMover>( *src.shear_ );
+	}
 	if ( src.linkage_mover_ ) linkage_mover_ = utility::pointer::make_shared< LinkageConformerMover >( * src.linkage_mover_);
 	if ( src.weighted_random_mover_ ) weighted_random_mover_ = utility::pointer::make_shared< moves::RandomMover >( *src.weighted_random_mover_);
 	if ( src.tf_ ) tf_ = src.tf_->clone();
@@ -272,57 +278,55 @@ GlycanTreeSampler::GlycanTreeSampler( GlycanTreeSampler const & src ):
 
 
 protocols::moves::MoverOP
-GlycanTreeSampler::clone() const{
-	return utility::pointer::make_shared< GlycanTreeSampler >( *this );
+GlycanSampler::clone() const{
+	return utility::pointer::make_shared< GlycanSampler >( *this );
 }
 
-
-
-
-
 moves::MoverOP
-GlycanTreeSampler::fresh_instance() const
+GlycanSampler::fresh_instance() const
 {
-	return utility::pointer::make_shared< GlycanTreeSampler >();
+	return utility::pointer::make_shared< GlycanSampler >();
 }
 
 // XRW TEMP std::string
-// XRW TEMP GlycanTreeSampler::get_name() const {
-// XRW TEMP  return "GlycanTreeSampler";
+// XRW TEMP GlycanSampler::get_name() const {
+// XRW TEMP  return "GlycanSampler";
 // XRW TEMP }
 
 void
-GlycanTreeSampler::show(std::ostream & output) const
+GlycanSampler::show(std::ostream & output) const
 {
 	protocols::moves::Mover::show(output);
 }
 
-
-std::ostream &operator<< (std::ostream &os, GlycanTreeSampler const &mover)
+std::ostream &operator<< (std::ostream &os, GlycanSampler const &mover)
 {
 	mover.show(os);
 	return os;
 }
 
 void
-GlycanTreeSampler::set_residue_selector(core::select::residue_selector::ResidueSelectorCOP selector ){
+GlycanSampler::set_residue_selector(core::select::residue_selector::ResidueSelectorCOP selector ){
 	selector_ = selector->clone();
 }
 
 void
-GlycanTreeSampler::set_taskfactory(core::pack::task::TaskFactoryCOP tf){
+GlycanSampler::set_taskfactory(core::pack::task::TaskFactoryCOP tf){
 	tf_ = tf;
 }
 
 void
-GlycanTreeSampler::set_selector(core::select::residue_selector::ResidueSelectorCOP selector){
+GlycanSampler::set_selector(core::select::residue_selector::ResidueSelectorCOP selector){
 	selector_ = selector;
 }
 
-
+void
+GlycanSampler::set_inner_bb_cycles( core::Size inner_ncycles ){
+	inner_ncycles_ = inner_ncycles;
+}
 
 void
-GlycanTreeSampler::setup_default_task_factory(utility::vector1< bool > const & glycan_positions, core::pose::Pose const & pose ){
+GlycanSampler::setup_default_task_factory(utility::vector1< bool > const & glycan_positions, core::pose::Pose const & pose ){
 	using namespace core::pack::task::operation;
 	using namespace core::select::residue_selector;
 
@@ -367,60 +371,69 @@ GlycanTreeSampler::setup_default_task_factory(utility::vector1< bool > const & g
 	set_taskfactory(tf);
 }
 
-
 core::Size
-GlycanTreeSampler::get_glycan_sampler_rounds(){
+GlycanSampler::get_glycan_sampler_rounds(){
 	return rounds_;
 }
 
 void
-GlycanTreeSampler::force_total_rounds(core::Size total_rounds){
+GlycanSampler::force_total_rounds(core::Size total_rounds){
 	forced_total_rounds_ = total_rounds;
 }
 
 void
-GlycanTreeSampler::set_scorefunction(core::scoring::ScoreFunctionCOP scorefxn){
+GlycanSampler::set_scorefunction(core::scoring::ScoreFunctionCOP scorefxn){
 	scorefxn_ = scorefxn;
 }
 
 void
-GlycanTreeSampler::set_kt(core::Real kt){
+GlycanSampler::set_kt(core::Real kt){
 	kt_ = kt;
 }
 
 void
-GlycanTreeSampler::set_rounds(core::Size rounds){
+GlycanSampler::set_rounds(core::Size rounds){
 	rounds_ = rounds;
 }
 
 void
-GlycanTreeSampler::use_cartmin( bool use_cartmin ){
+GlycanSampler::use_cartmin( bool use_cartmin ){
 	cartmin_ = use_cartmin;
 }
 
 void
-GlycanTreeSampler::set_refine( bool refine ){
+GlycanSampler::set_refine( bool refine ){
 	refine_ = refine;
 }
 
 ///@brief set to minimize ring torsions during minimzation.  Default false.
 void
-GlycanTreeSampler::set_min_rings( bool min_rings){
+GlycanSampler::set_min_rings( bool min_rings){
 	min_rings_ = min_rings;
 }
 
 void
-GlycanTreeSampler::set_population_based_conformer_sampling(bool pop_based_sampling){
+GlycanSampler::set_population_based_conformer_sampling(bool pop_based_sampling){
 	population_based_conformer_sampling_ = pop_based_sampling;
 }
 
 void
-GlycanTreeSampler::set_use_gaussian_sampling(bool gaussian_sampling){
+GlycanSampler::set_use_gaussian_sampling(bool gaussian_sampling){
 	use_gaussian_sampling_ = gaussian_sampling;
 }
 
 void
-GlycanTreeSampler::setup_score_function() {
+GlycanSampler::set_use_shear(bool use_shear){
+	use_shear_ = use_shear;
+}
+
+void
+GlycanSampler::set_randomize_first(bool randomize_first){
+	randomize_first_ = randomize_first;
+}
+
+void
+GlycanSampler::setup_score_function() {
 
 	//Create Scorefunction if needed.
 	if ( ! scorefxn_ ) {
@@ -437,7 +450,7 @@ GlycanTreeSampler::setup_score_function() {
 
 
 void
-GlycanTreeSampler::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const {
+GlycanSampler::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const {
 
 	scorefxn->set_weight_if_zero(core::scoring::cart_bonded, .5);
 	scorefxn->set_weight(core::scoring::pro_close, 0);
@@ -445,7 +458,7 @@ GlycanTreeSampler::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const 
 }
 
 void
-GlycanTreeSampler::randomize_glycan_torsions(core::pose::Pose &pose, utility::vector1<bool> const & subset) const{
+GlycanSampler::randomize_glycan_torsions(core::pose::Pose &pose, utility::vector1<bool> const & subset) const{
 
 	TR << "Randomizing glycan torsions " << std::endl;
 	SmallBBSampler random_sampler = SmallBBSampler(  360.0 ); // +/- 180 degrees
@@ -470,18 +483,20 @@ GlycanTreeSampler::randomize_glycan_torsions(core::pose::Pose &pose, utility::ve
 }
 
 void
-GlycanTreeSampler::idealize_glycan_residues(core::pose::Pose & , utility::vector1< core::Size > const & ) const {
+GlycanSampler::idealize_glycan_residues(core::pose::Pose & , utility::vector1< core::Size > const & ) const {
 	TR << "Idealizing doing nothing.  Not currently implemented. " << std::endl;
 
 }
 
 void
-GlycanTreeSampler::setup_movers(
+GlycanSampler::setup_movers(
 	core::pose::Pose & pose,
 	utility::vector1< bool > const & dihedral_subset,
 	utility::vector1< bool > const & sugar_bb_subset,
 	utility::vector1< bool > const & subset)
 {
+	using namespace utility::pointer;
+
 	ReturnResidueSubsetSelectorOP return_subset_dihedral = utility::pointer::make_shared< ReturnResidueSubsetSelector >( dihedral_subset);
 	ReturnResidueSubsetSelectorOP return_subset_sugarbb =  utility::pointer::make_shared< ReturnResidueSubsetSelector >( sugar_bb_subset);
 	ReturnResidueSubsetSelectorOP return_subset = utility::pointer::make_shared< ReturnResidueSubsetSelector >(subset);
@@ -512,8 +527,11 @@ GlycanTreeSampler::setup_movers(
 		}
 	}
 
-
+	//Totally Reset the weighted random mover
 	weighted_random_mover_ = utility::pointer::make_shared< RandomMover >();
+
+	//Inner cycles for simple bb movers
+	core::Size total_inner_cycles = inner_ncycles_ * total_glycan_residues_;
 
 	//////        //////
 	// Linkage Movers //
@@ -543,6 +561,7 @@ GlycanTreeSampler::setup_movers(
 
 		core::Real sugar_bb_sampler_weight;
 		if ( tree_based_min_pack_ /* default true */ ) {
+
 			sugar_bb_sampler_weight = .30;
 		} else {
 			sugar_bb_sampler_weight = .40;
@@ -551,10 +570,39 @@ GlycanTreeSampler::setup_movers(
 		// does not dominate.  This will be better when we derive sugarbb data from the PDB and make the conformers better.
 		TR.Debug << " Adding sugar bb mover. " << std::endl;
 
-		weighted_random_mover_->add_mover(sugar_sampler_mover, sugar_bb_sampler_weight);
+		//We downweight sugarbb to do shear movements.
+		if ( use_shear_ ) {
+			sugar_bb_sampler_weight = sugar_bb_sampler_weight - .10;
+		}
+
+		RationalMonteCarloOP mc_cycle = make_shared< RationalMonteCarlo >(
+			sugar_sampler_mover,
+			scorefxn_,
+			total_inner_cycles,
+			kt_,
+			false /*recover_low*/);
+
+		weighted_random_mover_->add_mover(mc_cycle, sugar_bb_sampler_weight);
 	} else {
 		TR << "Increasing SmallMover weights as there is no data for SugarBB sampler to use..." << std::endl;
 		sugar_bb_offset = .30;
+	}
+
+	//////        //////
+	// Shear Movers //
+	//////        //////
+	shear_ = make_shared< ShearMover >();
+	shear_->set_residue_selector(return_subset_dihedral);
+	if ( use_shear_ ) {
+
+		RationalMonteCarloOP mc_cycle_shear = make_shared< RationalMonteCarlo >(
+			shear_,
+			scorefxn_,
+			total_inner_cycles,
+			kt_,
+			false /*recover_low*/);
+
+		weighted_random_mover_->add_mover(mc_cycle_shear, .10);
 	}
 
 	//////        //////
@@ -591,9 +639,53 @@ GlycanTreeSampler::setup_movers(
 		glycan_medium_mover->add_sampler( medium_sampler );
 		glycan_large_mover->add_sampler( large_sampler );
 	}
-	weighted_random_mover_->add_mover( glycan_small_mover, 0.17142857142857143 + sugar_bb_offset/3 );
-	weighted_random_mover_->add_mover( glycan_medium_mover, 0.08571428571428572 + sugar_bb_offset/3 );
-	weighted_random_mover_->add_mover( glycan_large_mover, 0.04285714285714286 + sugar_bb_offset/3 );
+
+	///Wrap movers in RationalMonteCarlo objects so that we may call them a few times since they are so fast.
+
+
+	//
+	//BB Sampling:
+	//  4:2:1 ratio of sampling Small,Medium,Large
+	//
+	//  .3 = 4X (small) + 2X (medium) + X(large)
+
+	core::Real total_prob = .3;
+	constexpr core::Real  X = .3/(1+2+4);
+
+	core::Real   small_prob = 4*X + sugar_bb_offset/3;
+	core::Real  medium_prob = 2*X + sugar_bb_offset/3;
+	core::Real   large_prob =   X + sugar_bb_offset/3;
+
+	//Initialize inner MC movers
+	RationalMonteCarloOP mc_cycle_small = make_shared< RationalMonteCarlo >(
+		glycan_small_mover,
+		scorefxn_,
+		total_inner_cycles,
+		kt_,
+		false /*recover_low*/);
+
+	RationalMonteCarloOP mc_cycle_medium = make_shared< RationalMonteCarlo >(
+		glycan_medium_mover,
+		scorefxn_,
+		total_inner_cycles,
+		kt_,
+		false /*recover_low*/);
+
+	RationalMonteCarloOP mc_cycle_large = make_shared< RationalMonteCarlo >(
+		glycan_large_mover,
+		scorefxn_,
+		total_inner_cycles,
+		kt_,
+		false /*recover_low*/);
+
+	//If we are refining, do not make huge random movements.
+	if ( ! refine_ ) {
+		weighted_random_mover_->add_mover( mc_cycle_small,  small_prob);
+		weighted_random_mover_->add_mover( mc_cycle_medium,  medium_prob);
+		weighted_random_mover_->add_mover( mc_cycle_large, large_prob );
+	} else {
+		weighted_random_mover_->add_mover( mc_cycle_small, total_prob);
+	}
 
 	//////    //////
 	// Min Movers //
@@ -603,7 +695,6 @@ GlycanTreeSampler::setup_movers(
 	if ( (! option [OptionKeys::run::nblist_autoupdate].user()) && (! option [OptionKeys::run::nblist_autoupdate]() ) ) {
 		min_mover_->min_options()->nblist_auto_update( true );
 	}
-
 
 	if ( cartmin_ ) {
 		min_mover_->min_type("lbfgs_armijo_nonmonotone");
@@ -628,7 +719,7 @@ GlycanTreeSampler::setup_movers(
 }
 
 void
-GlycanTreeSampler::setup_packer(
+GlycanSampler::setup_packer(
 	core::pose::Pose & pose,
 	utility::vector1< bool > const & full_subset)
 {
@@ -661,7 +752,7 @@ GlycanTreeSampler::setup_packer(
 
 ///@brief Initialize all objects.  Called at apply time!
 void
-GlycanTreeSampler::init_objects(core::pose::Pose & pose ){
+GlycanSampler::init_objects(core::pose::Pose & pose ){
 
 
 	using namespace core::pose::carbohydrates;
@@ -690,7 +781,7 @@ GlycanTreeSampler::init_objects(core::pose::Pose & pose ){
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( subset[ i ] ) {
 			if ( ! pose.residue( i ).is_carbohydrate() ) {
-				utility_exit_with_message(" GlycanTreeSampler: Residue "+utility::to_string(i)+" set in ResidueSelector, but not a carbohdyrate residue!");
+				utility_exit_with_message(" GlycanSampler: Residue "+utility::to_string(i)+" set in ResidueSelector, but not a carbohdyrate residue!");
 			}
 			core::Size parent = pose.glycan_tree_set()->get_parent( i );
 			//Residue has no dihedrals.  So turn it off so we don't choose it and then do nothing with it.
@@ -705,7 +796,7 @@ GlycanTreeSampler::init_objects(core::pose::Pose & pose ){
 		}
 	}
 
-	if ( ! refine_ ) randomize_glycan_torsions( pose, subset);
+	if ( ! refine_ && randomize_first_ ) randomize_glycan_torsions( pose, subset);
 
 
 	total_glycan_residues_ = count_selected(subset);
@@ -720,7 +811,7 @@ GlycanTreeSampler::init_objects(core::pose::Pose & pose ){
 }
 
 void
-GlycanTreeSampler::apply( core::pose::Pose& pose ){
+GlycanSampler::apply( core::pose::Pose& pose ){
 	using namespace core::kinematics;
 	using namespace core::chemical::carbohydrates;
 	using namespace core::scoring;
@@ -755,7 +846,6 @@ GlycanTreeSampler::apply( core::pose::Pose& pose ){
 	}
 
 
-
 	bool accepted = false;
 	mc_ = utility::pointer::make_shared< MonteCarlo >(pose, *scorefxn_, kt_);
 	mc_->set_last_accepted_pose(pose);
@@ -773,7 +863,7 @@ GlycanTreeSampler::apply( core::pose::Pose& pose ){
 		if ( weighted_random_mover_->get_last_move_status() == protocols::moves::MS_SUCCESS ) {
 			core::Real energy = scorefxn_->score(pose);
 			if ( TR.Debug.visible() ) {
-				TR.Debug << "energy pre- move  "<< energy_pre_move << std::endl;
+				TR.Debug << "energy pre- move: "<< energy_pre_move << std::endl;
 				TR.Debug << "energy post move: "<< energy << std::endl;
 			}
 			//TR << "energy pre- move  "<< energy_pre_move << std::endl;
@@ -806,17 +896,20 @@ GlycanTreeSampler::apply( core::pose::Pose& pose ){
 
 	if ( final_min_ ) {
 
-		min_mover_->apply( pose );
-		packer_->apply( pose );
-		min_mover_->apply( pose );
-		packer_->apply( pose);
-		min_mover_->apply( pose );
+		run_shear_min_pack(*min_mover_, *packer_, *shear_, *mc_, total_glycan_residues_, pose, use_shear_);
+		run_shear_min_pack(*min_mover_, *packer_, *shear_, *mc_, total_glycan_residues_, pose, use_shear_);
 
+		min_mover_->apply( pose );
+		energy = scorefxn_->score(pose);
+		TR << "energy final post min: " << energy << std::endl;
+		mc_->boltzmann( pose );
+		mc_->recover_low( pose);
+		energy = scorefxn_->score(pose);
+		TR << "energy recov post min: " << energy << std::endl;
+	} else {
 		energy = scorefxn_->score( pose );
-		TR << "energy final post min: "<< energy << std::endl;
+		TR << "energy final: "<< energy << std::endl;
 	}
-	energy = scorefxn_->score( pose );
-	TR << "energy final: "<< energy << std::endl;
 
 	std::string out = "FINAL END "+to_string( scorefxn_->score(pose) );
 	accept_log_.push_back(out);
@@ -831,27 +924,27 @@ GlycanTreeSampler::apply( core::pose::Pose& pose ){
 /////////////// Creator ///////////////
 
 
-std::string GlycanTreeSampler::get_name() const {
+std::string GlycanSampler::get_name() const {
 	return mover_name();
 }
 
-std::string GlycanTreeSampler::mover_name() {
-	return "GlycanTreeSampler";
+std::string GlycanSampler::mover_name() {
+	return "GlycanSampler";
 }
 
 
-std::string GlycanTreeSamplerCreator::keyname() const {
-	return GlycanTreeSampler::mover_name();
+std::string GlycanSamplerCreator::keyname() const {
+	return GlycanSampler::mover_name();
 }
 
 protocols::moves::MoverOP
-GlycanTreeSamplerCreator::create_mover() const {
-	return utility::pointer::make_shared< GlycanTreeSampler >();
+GlycanSamplerCreator::create_mover() const {
+	return utility::pointer::make_shared< GlycanSampler >();
 }
 
-void GlycanTreeSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+void GlycanSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	GlycanTreeSampler::provide_xml_schema( xsd );
+	GlycanSampler::provide_xml_schema( xsd );
 }
 
 

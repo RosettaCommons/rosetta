@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/carbohydrates/GlycanTreeModelerCreator.hh
-/// @brief A protocol for optimizing glycan trees using the GlycanTreeSampler from the base of the tree out to the leaves.
+/// @brief A protocol for optimizing glycan trees using the GlycanSampler from the base of the tree out to the leaves.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_carbohydrates_GlycanTreeModelerCreator_HH

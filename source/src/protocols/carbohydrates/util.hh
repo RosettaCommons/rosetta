@@ -17,6 +17,13 @@
 
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
+
+#include <protocols/minimization_packing/MinMover.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
+#include <protocols/simple_moves/BackboneMover.fwd.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
+
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -33,6 +40,17 @@ namespace carbohydrates {
 core::pack::task::TaskFactoryOP
 get_all_glycans_and_neighbor_res_task_factory(utility::vector1< bool > const & subset, core::Real pack_distance = 6.0, bool read_resfile = true);
 
+///@brief Run a shear/min/pack on all residues set to move.
+void
+run_shear_min_pack(
+	protocols::minimization_packing::MinMover & min_mover,
+	protocols::minimization_packing::PackRotamersMover & packer,
+	protocols::simple_moves::ShearMover & shear,
+	protocols::moves::MonteCarlo & mc,
+	core::Size n_glycan_residues,
+	core::pose::Pose & pose,
+	bool use_shear = true
+);
 
 } //protocols
 } //carbohydrates

@@ -70,7 +70,7 @@
 #include <protocols/canonical_sampling/TrialCounterObserverCreator.hh>
 
 #include <protocols/carbohydrates/CreateGlycanSequonMoverCreator.hh>
-#include <protocols/carbohydrates/GlycanTreeSamplerCreator.hh>
+#include <protocols/carbohydrates/GlycanSamplerCreator.hh>
 #include <protocols/carbohydrates/GlycanTreeMinMoverCreator.hh>
 #include <protocols/carbohydrates/GlycanTreeModelerCreator.hh>
 #include <protocols/carbohydrates/LinkageConformerMoverCreator.hh>
