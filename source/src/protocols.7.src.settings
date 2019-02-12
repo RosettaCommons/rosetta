@@ -397,7 +397,15 @@ sources = {
 	"protocols/residue_optimization": [
 		"MetapatchEnumeration",
 	],
-
+        "protocols/tcr" : [
+                "TCRmodel", # /* Ragul Gowthaman, documentation/application_documentation/structure_prediction/TCRmodel.md, test/integration/tests/tcrmodel/, Rosetta/demos/public/tcr_modeling */
+                "TCRseqInfo",
+                "TCRloopRefine",
+                "util",
+                "template_util",
+                "grafting_util",
+                "modeling_util",
+        ],
 	"protocols/testing": [
 		"BenchmarkBuildRotamersMover",
 	],

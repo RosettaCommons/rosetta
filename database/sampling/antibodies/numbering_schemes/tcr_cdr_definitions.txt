@@ -1,0 +1,16 @@
+#Defines a CDR definition using a numbering scheme (chain:pdb_res:insertion_code).
+
+DEFINES PierceLab:AHO_Scheme
+A1 cdr_start	A:24:~
+A1 cdr_end	A:42:~
+A2 cdr_start	A:56:~
+A2 cdr_end	A:90:~
+A3 cdr_start	A:107:~
+A3 cdr_end	A:138:~
+B1 cdr_start	B:24:~
+B1 cdr_end	B:42:~
+B2 cdr_start	B:56:~
+B2 cdr_end	B:90:~
+B3 cdr_start	B:107:~
+B3 cdr_end	B:138:~
+

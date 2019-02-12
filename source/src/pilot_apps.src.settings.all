@@ -790,7 +790,7 @@ sources = {
 		"cstmin",
 		"ragul_calculate_residue_rmsd",
 		"ragul_get_aa_code",
-		"ragul_analyze_tcr_interface"
+		"ragul_analyze_tcr_interface",
 	],
 	"pilot/ralford" : [
 		"version_mpscorefxn",

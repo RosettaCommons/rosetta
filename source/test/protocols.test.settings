@@ -766,9 +766,14 @@ sources = {
 		#"ThreadSequenceOperation",
 	],
 
+	"tcr" : [
+		"TCRmodelSeqParserTests",
+		"TCRmodelGraftingTests",
+	],
+
 	"toolbox/pose_manipulation" : [
 		"pose_manipulation",
-	],	
+	],
 
 	"pose_metric_calculators" : [
 		"Neighbor_Calculators",
@@ -1277,6 +1282,7 @@ testinputfiles = [
 	"task_operations/ResidueProbDesignOperation_set_position.u",
 	"task_operations/ResidueProbDesignOperation_zero_at_.05.u",
 	"task_operations/RestrictToMoveMapChiWNeighbors.u",
+	"tcr/4x6b_aho.pdb",
 	"util/aHo_antibody.pdb",
 	"util/demo_loopfile.loops",
 	"util/test_in.pdb",

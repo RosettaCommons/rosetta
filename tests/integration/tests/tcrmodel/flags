@@ -1,0 +1,21 @@
+-alpha QSVTQPDARVTVSEGASLQLRCKYSYSATPYLFWYVQYPRQGLQLLLKYYSGDPVVQGVNGFEAEFSKSNSSFHLRKASVHWSDSAVYFCAVSGFASALTFGSGTKVIVLPYIQNPEPAVYALKDPRSQDSTLCLFTDFDSQINVPKTMESGTFITDATVLDMKAMDSKSNGAIAWSNQTSFTCQDIFKETNATYPSSDVPC
+-beta EAAVTQSPRNKVAVTGGKVTLSCNQTNNHNNMYWYRQDTGHGLRLIHYSYGAGSTEKGDIPDGYKASRPSQENFSLILELATPSQTSVYFCASGGGGTLYFGAGTRLSVLEDLRNVTPPKVSLFEPSKAEIANKQKATLVCLARGFFPDHVELSWWVNGKEVHSGVSTDPQAYKESNYSYCLSSRLRVSATFWHNPRNHFRCQVQFHGLSEEDKWPEGSPKPVTQNISAEAWGRADC
+-alpha_orientation_template_pdb input/ora_tmplt_piece.pdb
+-beta_orientation_template_pdb input/orb_tmplt_piece.pdb
+-alpha_germline_template_pdb input/gma_tmplt_piece.pdb
+-beta_germline_template_pdb input/gmb_tmplt_piece.pdb
+-alpha_cdr3_template_pdb input/cdr3a_tmplt_piece.pdb
+-beta_cdr3_template_pdb input/cdr3b_tmplt_piece.pdb
+-use_alpha_germline_templates true
+-use_beta_germline_templates true
+-use_user_templates true
+-minimize_model false
+-assign_cdr
+-assign_cdr1a 23:33
+-assign_cdr2a 47:74
+-assign_cdr3a 91:100
+-assign_cdr1b 24:33
+-assign_cdr2b 47:75
+-assign_cdr3b 92:100
+-run:constant_seed
+-nodelay
