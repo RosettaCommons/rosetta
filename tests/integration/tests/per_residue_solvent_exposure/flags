@@ -1,4 +1,5 @@
 -in:file:s	1dwr_A.pdb	
+-in:file:centroid
 -centroid_version
 -cone_method
 -dist_midpoint	9.0

@@ -56,6 +56,8 @@ int main( int argc, char * argv [] )
 		// load pdb file into pose
 		import_pose::pose_from_file(p,pdb_file);
 
+		//core::import_pose::centroid_pose_from_pdb( p, pdb_file, core::import_pose::PDB_file);
+
 		// initialize score function; score_fxn is a POINTER
 		scoring::ScoreFunctionOP score_fxn = get_score_function();
 
@@ -66,9 +68,7 @@ int main( int argc, char * argv [] )
 		score_fxn->show(p);
 
 	}
-
-catch ( utility::excn::EXCN_Base const & e )
-{
+catch ( utility::excn::Exception const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

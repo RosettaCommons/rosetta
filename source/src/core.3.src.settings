@@ -654,6 +654,8 @@ sources = {
 		"ContextIndependentLRTwoBodyEnergy",
 		"ContextIndependentOneBodyEnergy",
 		"ContextIndependentTwoBodyEnergy",
+		"CovalentLabelingEnergy",
+		"CovalentLabelingFAEnergy",
 		"CustomAtomPairEnergy",
 		"D2H_SA_Energy",
 		"DirectReadoutEnergy",

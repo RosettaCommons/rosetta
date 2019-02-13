@@ -251,6 +251,18 @@ public:
 	void
 	exclude_monomer_fa_elec( bool const setting );
 
+	std::string
+	covalent_labeling_input() const;
+
+	void
+	covalent_labeling_input( std::string const & setting );
+
+	std::string
+	covalent_labeling_fa_input() const;
+
+	void
+	covalent_labeling_fa_input( std::string const & setting );
+
 	/// @brief The maximum (all atom) distance at which fa_elec is non-zero
 	core::Real
 	elec_max_dis() const;
@@ -820,6 +832,8 @@ private:
 	std::string split_unfolded_value_type_;
 	MethodWeights method_weights_;
 	SecondaryStructureWeights ss_weights_;
+	std::string covalent_labeling_input_;
+	std::string covalent_labeling_fa_input_;
 	bool exclude_protein_protein_fa_elec_;
 	bool exclude_RNA_RNA_fa_elec_;
 	bool exclude_RNA_protein_fa_elec_;

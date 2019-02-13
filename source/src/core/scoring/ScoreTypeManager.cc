@@ -323,6 +323,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "env" ]    = env;
 	name2score_type_[ "burial" ] = burial; //Probably unused
 	name2score_type_[ "burial_v2" ] = burial_v2; //burial score from a set of residues
+	name2score_type_[ "covalent_labeling" ] = covalent_labeling;
+	name2score_type_[ "covalent_labeling_fa" ] = covalent_labeling_fa;
 	name2score_type_[ "hrf_ms_labeling" ] = hrf_ms_labeling;
 	name2score_type_[ "abego" ]  = abego;
 	name2score_type_[ "pair" ]   = pair;

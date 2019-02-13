@@ -632,7 +632,8 @@ sources = {
 	# M ######################################################################
 	"pilot/maprahamian" : [
 		"burial_measure_centroid",
-		"per_residue_solvent_exposure",
+		#"per_residue_solvent_exposure",
+		"score_test",
 	],
 	"pilot/mdsmith" : [
 		#"ligand_motifs",

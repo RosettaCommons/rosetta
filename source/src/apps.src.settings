@@ -73,6 +73,7 @@ sources = {
 		"interface_energy",
 		"PeptideDeriver",
 		"per_residue_energies",
+		"per_residue_solvent_exposure",
                 "ResidueDisorder",
 		"residue_energy_breakdown",
 		"score",

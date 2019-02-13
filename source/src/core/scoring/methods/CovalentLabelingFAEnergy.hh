@@ -7,15 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/HRF_MSLabelingEnergy.hh /// @brief  energy term use for scoring predicted HRF_MSLabeling
+/// @file   core/scoring/methods/CovalentLabelingFAEnergy.hh
+/// @brief  energy term use for scoring predicted CovalentLabelingFA
 /// @author Melanie Aprahamian
 
-// define all those functions in cc file!!
+#ifndef INCLUDED_core_scoring_methods_CovalentLabelingFAEnergy_hh
+#define INCLUDED_core_scoring_methods_CovalentLabelingFAEnergy_hh
 
-#ifndef INCLUDED_core_scoring_methods_MSLabelingEnergy_hh
-#define INCLUDED_core_scoring_methods_MSLabelingEnergy_hh
-
-#include <core/scoring/methods/HRF_MSLabelingEnergyCreator.hh>
+#include <core/scoring/methods/CovalentLabelingFAEnergyCreator.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -30,10 +29,15 @@ namespace scoring {
 namespace methods {
 
 
-class HRF_MSLabelingEnergy : public ContextDependentOneBodyEnergy {
+class CovalentLabelingFAEnergy : public ContextDependentOneBodyEnergy {
 public:
 
-	HRF_MSLabelingEnergy();
+	typedef methods::ContextDependentOneBodyEnergy parent;
+
+public:
+
+	CovalentLabelingFAEnergy( methods::EnergyMethodOptions const & options );
+	CovalentLabelingFAEnergy( CovalentLabelingFAEnergy const & src );
 
 	/// clone
 	virtual
@@ -72,18 +76,13 @@ public:
 	) const;
 
 private:
+	std::string covalent_labeling_fa_input_file_;
 	void init_from_file();
-	utility::vector1< std::pair< core::Size, core::Real > > prot_factor_;
-	core::Real dist_midpoint_;
-	core::Real dist_exponent_;
-	core::Real slope_;
-	core::Real intercept_;
-	core::Real fade_outer_;
-	core::Real fade_dist_;
+	utility::vector1< std::pair< core::Size, core::Real > > input_nc_;
 };
 
 }
 }
 }
 
-#endif // INCLUDED_core_scoring_methods_MSLabelingEnergy_HH
+#endif // INCLUDED_core_scoring_methods_CovalentLabelingFAEnergy_HH

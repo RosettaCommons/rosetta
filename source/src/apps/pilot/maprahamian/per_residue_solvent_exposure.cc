@@ -22,6 +22,9 @@
 //        c) number of neighboring atoms
 //         i) sphere method ( -atom_neighbor_count -sphere_method)
 //         ii) cone method ( -atom_neighbor_count -cone_method)
+//    d) BB amid H (NOTE: does NOT work for PRO - instead uses CB)
+//     i) sphere method (-bb_amide_h -sphere_method)
+//     ii) cone method (-bb_amide_h -cone_method)
 //       Additional flags:
 //        -dist_midpoint (distance logistic function midpoint)
 //        -dist_steepness (exponential falloff of distance function)
@@ -71,7 +74,7 @@ OPT_KEY( Boolean, cone_method )
 OPT_KEY( Boolean, centroid_version )
 OPT_KEY( Boolean, neighbor_closest_atom )
 OPT_KEY( Boolean, atom_neighbor_count )
-
+OPT_KEY( Boolean, bb_amide_h)
 static basic::Tracer TR( "apps.pilot.maprahamian.per_residue_solvent_exposure" );
 
 // Main program
@@ -88,6 +91,7 @@ int main( int argc, char * argv [] ){
 		NEW_OPT( centroid_version, "centroid versions of the neighbor counts", false);
 		NEW_OPT( neighbor_closest_atom, "for FA neighbor count, use closest atom per residue as neighbor", false);
 		NEW_OPT( atom_neighbor_count, "atom neighbor count", false);
+		NEW_OPT( bb_amide_h, "use the BB amide H as target center", false);
 
 		// Initialize Rosetta
 		devel::init( argc, argv );
@@ -115,6 +119,7 @@ int main( int argc, char * argv [] ){
 		bool centroid_pose = option[ centroid_version ];
 		bool closest_atom = option[ neighbor_closest_atom ];
 		bool atom_neighbors = option[ atom_neighbor_count ];
+		bool bbh = option[ bb_amide_h ];
 
 		pose::Pose pose;
 		std::string pdb_file = option[in::file::s]()[1];
@@ -126,12 +131,21 @@ int main( int argc, char * argv [] ){
 
 			// SPHERE method
 			if ( sphere == true ) {
+				std::string target ("CEN");
+				if ( bbh == true ) {
+					target = "H";
+				}
 				core::Size const num_residues (pose.total_residue());
 				for ( core::Size res_count_target = 1; res_count_target <= num_residues; res_count_target++ ) {
+					if ( bbh == true ) {
+						if ( pose.residue(res_count_target).type().name1() == 'P' ) {
+							target = "CEN";
+						}
+					}
 					core::Real neighbor_count (0.0);
 					for ( core::Size res_count_neighbor = 1; res_count_neighbor <= num_residues; res_count_neighbor++ ) {
 						if ( pose.residue(res_count_target).seqpos() != pose.residue(res_count_neighbor).seqpos() ) {
-							core::Real const distance = pose.residue(res_count_neighbor).xyz("CEN").distance(pose.residue(res_count_target).xyz("CEN"));
+							core::Real const distance = pose.residue(res_count_neighbor).xyz("CEN").distance(pose.residue(res_count_target).xyz(target));
 							neighbor_count += 1.0/(1.0 + std::exp(distance_fn_steepness*(distance-distance_fn_midpoint)));
 						}
 					}
@@ -142,17 +156,28 @@ int main( int argc, char * argv [] ){
 			// CONE method
 			if ( cone == true ) {
 				core::Size const num_residues (pose.total_residue());
+				std::string target_vector_start ("CA");
+				std::string target ("CEN");
+				if ( bbh == true ) {
+					target_vector_start = "N";
+					target = "H";
+				}
 				for ( core::Size res_count_target = 1; res_count_target <= num_residues; res_count_target++ ) {
+					if ( bbh == true ) {
+						if ( pose.residue(res_count_target).type().name1() == 'P' ) {
+							target = "CEN";
+						}
+					}
 					core::Real neighbor_count (0.0);
-					numeric::xyzVector<core::Real> CA_CEN_vector = pose.residue(res_count_target).xyz("CEN") - pose.residue(res_count_target).xyz("CA");
-					core::Real const distance_internal = pose.residue(res_count_target).xyz("CEN").distance(pose.residue(res_count_target).xyz("CA"));
+					numeric::xyzVector<core::Real> target_vector = pose.residue(res_count_target).xyz(target) - pose.residue(res_count_target).xyz(target_vector_start);
+					core::Real const distance_internal = pose.residue(res_count_target).xyz(target).distance(pose.residue(res_count_target).xyz(target_vector_start));
 					for ( core::Size res_count_neighbor = 1; res_count_neighbor <= num_residues; res_count_neighbor++ ) {
 						if ( pose.residue(res_count_target).seqpos() != pose.residue(res_count_neighbor).seqpos() ) {
-							numeric::xyzVector<core::Real> neighbor_vector = pose.residue(res_count_neighbor).xyz("CEN") - pose.residue(res_count_target).xyz("CA");
-							core::Real const distance_to_neighbor = pose.residue(res_count_neighbor).xyz("CEN").distance(pose.residue(res_count_target).xyz("CA"));
-							numeric::xyzVector<core::Real> norm_CA_CEN_vector = CA_CEN_vector/distance_internal;
+							numeric::xyzVector<core::Real> neighbor_vector = pose.residue(res_count_neighbor).xyz("CEN") - pose.residue(res_count_target).xyz(target_vector_start);
+							core::Real const distance_to_neighbor = pose.residue(res_count_neighbor).xyz("CEN").distance(pose.residue(res_count_target).xyz(target_vector_start));
+							numeric::xyzVector<core::Real> norm_target_vector = target_vector/distance_internal;
 							numeric::xyzVector<core::Real> norm_neighbor_vector = neighbor_vector/distance_to_neighbor;
-							core::Real angle = std::acos(norm_CA_CEN_vector.dot(norm_neighbor_vector));
+							core::Real angle = std::acos(norm_target_vector.dot(norm_neighbor_vector));
 							if ( angle > cone_angle_cutoff ) {
 								angle = 0.0;
 							}
@@ -177,9 +202,15 @@ int main( int argc, char * argv [] ){
 					core::Size const num_residues (pose.total_residue());
 					for ( core::Size res_count_target = 1; res_count_target <= num_residues; res_count_target++ ) {
 						core::Real neighbor_count (0.0);
-						std::string CB_atom ("CB");
+						std::string target_atom ("CB");
 						if ( pose.residue(res_count_target).type().name1() == 'G' ) {
-							CB_atom = "1HA";
+							target_atom = "1HA";
+						}
+						if ( bbh == true ) {
+							target_atom = "H";
+							if ( pose.residue(res_count_target).type().name1() == 'P' ) {
+								target_atom = "CB";
+							}
 						}
 						for ( core::Size res_count_neighbor = 1; res_count_neighbor <= num_residues; res_count_neighbor++ ) {
 							if ( pose.residue(res_count_target).seqpos() != pose.residue(res_count_neighbor).seqpos() ) {
@@ -190,12 +221,12 @@ int main( int argc, char * argv [] ){
 								if ( closest_atom == true ) {
 									std::string neighbor_atom (pose.residue(res_count_neighbor).atom_name(1));
 									for ( core::Size atom_count = 2; atom_count <= pose.residue(res_count_neighbor).natoms(); atom_count++ ) {
-										if ( pose.residue(res_count_neighbor).xyz(atom_count).distance(pose.residue(res_count_target).xyz(CB_atom)) < pose.residue(res_count_neighbor).xyz(neighbor_atom).distance(pose.residue(res_count_target).xyz(CB_atom)) ) {
+										if ( pose.residue(res_count_neighbor).xyz(atom_count).distance(pose.residue(res_count_target).xyz(target_atom)) < pose.residue(res_count_neighbor).xyz(neighbor_atom).distance(pose.residue(res_count_target).xyz(target_atom)) ) {
 											neighbor_atom = pose.residue(res_count_neighbor).atom_name(atom_count);
 										}
 									}
 								}
-								core::Real const distance = pose.residue(res_count_neighbor).xyz(neighbor_atom).distance(pose.residue(res_count_target).xyz(CB_atom));
+								core::Real const distance = pose.residue(res_count_neighbor).xyz(neighbor_atom).distance(pose.residue(res_count_target).xyz(target_atom));
 								neighbor_count += 1.0/(1.0 + std::exp(distance_fn_steepness*(distance-distance_fn_midpoint)));
 							}
 						}
@@ -208,12 +239,20 @@ int main( int argc, char * argv [] ){
 					core::Size const num_residues (pose.total_residue());
 					for ( core::Size res_count_target = 1; res_count_target <= num_residues; res_count_target++ ) {
 						core::Real neighbor_count (0.0);
-						std::string CB_atom ("CB");
+						std::string target_atom_vector_start ("CA");
+						std::string target_atom ("CB");
 						if ( pose.residue(res_count_target).type().name1() == 'G' ) {
-							CB_atom = "1HA";
+							target_atom = "1HA";
 						}
-						numeric::xyzVector<core::Real> CA_CB_vector = pose.residue(res_count_target).xyz(CB_atom) - pose.residue(res_count_target).xyz("CA");
-						core::Real const distance_internal = pose.residue(res_count_target).xyz(CB_atom).distance(pose.residue(res_count_target).xyz("CA"));
+						if ( bbh == true ) {
+							target_atom = "H";
+							target_atom_vector_start = "N";
+							if ( pose.residue(res_count_target).type().name1() == 'P' ) {
+								target_atom = "CB";
+							}
+						}
+						numeric::xyzVector<core::Real> target_vector = pose.residue(res_count_target).xyz(target_atom) - pose.residue(res_count_target).xyz(target_atom_vector_start);
+						core::Real const distance_internal = pose.residue(res_count_target).xyz(target_atom).distance(pose.residue(res_count_target).xyz(target_atom_vector_start));
 						for ( core::Size res_count_neighbor = 1; res_count_neighbor <= num_residues; res_count_neighbor++ ) {
 							if ( pose.residue(res_count_target).seqpos() != pose.residue(res_count_neighbor).seqpos() ) {
 								std::string neighbor_atom ("CB");
@@ -223,16 +262,16 @@ int main( int argc, char * argv [] ){
 								if ( closest_atom == true ) {
 									std::string neighbor_atom (pose.residue(res_count_neighbor).atom_name(1));
 									for ( core::Size atom_count = 2; atom_count <= pose.residue(res_count_neighbor).natoms(); atom_count++ ) {
-										if ( pose.residue(res_count_neighbor).xyz(atom_count).distance(pose.residue(res_count_target).xyz(CB_atom)) < pose.residue(res_count_neighbor).xyz(neighbor_atom).distance(pose.residue(res_count_target).xyz(CB_atom)) ) {
+										if ( pose.residue(res_count_neighbor).xyz(atom_count).distance(pose.residue(res_count_target).xyz(target_atom)) < pose.residue(res_count_neighbor).xyz(neighbor_atom).distance(pose.residue(res_count_target).xyz(target_atom)) ) {
 											neighbor_atom = pose.residue(res_count_neighbor).atom_name(atom_count);
 										}
 									}
 								}
-								numeric::xyzVector<core::Real> neighbor_vector = pose.residue(res_count_neighbor).xyz(neighbor_atom) - pose.residue(res_count_target).xyz("CA");
-								core::Real const distance_to_neighbor = pose.residue(res_count_neighbor).xyz(neighbor_atom).distance(pose.residue(res_count_target).xyz("CA"));
-								numeric::xyzVector<core::Real> norm_CA_CB_vector = CA_CB_vector/distance_internal;
+								numeric::xyzVector<core::Real> neighbor_vector = pose.residue(res_count_neighbor).xyz(neighbor_atom) - pose.residue(res_count_target).xyz(target_atom_vector_start);
+								core::Real const distance_to_neighbor = pose.residue(res_count_neighbor).xyz(neighbor_atom).distance(pose.residue(res_count_target).xyz(target_atom_vector_start));
+								numeric::xyzVector<core::Real> norm_target_vector = target_vector/distance_internal;
 								numeric::xyzVector<core::Real> norm_neighbor_vector = neighbor_vector/distance_to_neighbor;
-								core::Real angle = std::acos(norm_CA_CB_vector.dot(norm_neighbor_vector));
+								core::Real angle = std::acos(norm_target_vector.dot(norm_neighbor_vector));
 								if ( angle > cone_angle_cutoff ) {
 									angle = 0.0;
 								}
