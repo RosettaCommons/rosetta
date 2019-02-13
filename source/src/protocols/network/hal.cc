@@ -40,7 +40,7 @@ using std::string;
 using namespace utility;
 using namespace protocols::network;
 
-static basic::Tracer TR( "HAL" );
+static basic::Tracer TR( "protocols.network.HAL" );
 
 
 auto const _greetings_ = "READY PLAYER ONE";

@@ -4385,6 +4385,23 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'loop2', 'File', desc="rigid region for chunk2" ),
 	), # -chunk
 
+	# Rosetta Cloud related stuff -----------------------------------------------------------
+	Option_Group( 'cloud',
+                Option( 'auth', 'String', desc='RosettaCloud credentials in form of <user_email>:<password>. To get your credentials visit https://ui.graylab.jhu.edu/settings', default=""),
+
+                Option( 'key', 'String', desc="Key to use when process query Cloud server for new ExecutionSummary ID, default is empty string (no key) which mean always create a new ES instance", default=""),
+
+                Option( 'clean', 'Boolean', desc="When option `key` is specified tell if Cloud server should clean exising ExecutionSummary instance from all existing files", default="false" ),
+
+                Option( 'host', 'String', desc="UI server address", default="ui.graylab.jhu.edu" ),
+                Option( 'port', 'Integer', desc="UI server port", default="80" ),
+
+                Option( 'block', 'Boolean', desc="Specify what to do when network queue is full: block and wait for packets to be be send or drop payload", default="true" ),
+
+
+	), # -cloud
+
+
 	# clustering options -----------------------------------------------------------
 	Option_Group( 'cluster',
 		Option('lite','Boolean',desc="uses light-weight method of outputting cluster-centers, useful for when there's a HUGE amount of data!",default='false'),

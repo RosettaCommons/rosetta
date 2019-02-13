@@ -24,14 +24,17 @@ namespace pose {
 // Forward
 class Pose;
 
-typedef utility::pointer::shared_ptr< Pose > PoseOP;
-typedef utility::pointer::shared_ptr< Pose const > PoseCOP;
+using PoseOP  = utility::pointer::shared_ptr< Pose > ;
+using PoseCOP = utility::pointer::shared_ptr< Pose const >;
 
-typedef utility::pointer::weak_ptr< Pose > PoseAP;
-typedef utility::pointer::weak_ptr< Pose const > PoseCAP;
+using PoseAP  = utility::pointer::weak_ptr< Pose >;
+using PoseCAP = utility::pointer::weak_ptr< Pose const >;
 
-typedef utility::vector1< PoseOP > PoseOPs;
-typedef utility::vector1< PoseCOP > PoseCOPs;
+using PoseUP  = std::unique_ptr< Pose >;
+using PoseCUP = std::unique_ptr< Pose const >;
+
+using PoseOPs  = utility::vector1< PoseOP >;
+using PoseCOPs = utility::vector1< PoseCOP >;
 
 } // namespace pose
 } // namespace core

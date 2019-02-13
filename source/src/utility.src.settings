@@ -51,6 +51,7 @@ sources = {
 		"LowMemGraph",
 	],
 	"utility/io": [
+	        "base64",
 		"icstream",
 		"izstream",
 		"ocstream",

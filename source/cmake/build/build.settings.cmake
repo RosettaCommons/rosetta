@@ -556,6 +556,23 @@ if( EXTRAS )
 
 	endif()
 
+	if( ${EXTRAS} MATCHES "cxx11thread" )
+	    ADD_DEFINITIONS(-DMULTI_THREADED)
+
+	    list( APPEND compile
+			-pthread
+	    )
+
+	    list( APPEND link
+			-lpthread
+	    )
+
+	    list( APPEND shlink
+			-lpthread
+	    )
+	endif()
+
+
 endif()
 
 # Make sure that the submodules are up-to-date w/r/t the extras

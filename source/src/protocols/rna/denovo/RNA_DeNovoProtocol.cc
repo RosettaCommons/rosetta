@@ -28,6 +28,10 @@
 #include <protocols/rna/setup/RNA_MonteCarloJobDistributor.hh>
 #include <protocols/rna/setup/RNA_CSA_JobDistributor.hh>
 
+// for cloud
+#include <protocols/network/cloud.hh>
+#include <core/io/silent/ScoreFileSilentStruct.hh>
+
 // Package headers
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <protocols/rna/denovo/util.hh>
@@ -81,6 +85,8 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+// check cloud auth, slightly alter behavior (for scorefiles)
+#include <basic/options/keys/cloud.OptionKeys.gen.hh>
 
 // External library headers
 
@@ -372,6 +378,25 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		//if ( options_->save_times() ) setPoseExtraScore( pose, "time", static_cast< Real >( clock() - start_time ) / CLOCKS_PER_SEC );
 
 		align_and_output_to_silent_file( pose, options_->silent_file(), out_file_tag );
+
+		// AMW: This is a nice opportunity to push data to the cloud. Right now we don't
+		// have any need to support really general, JD-compatible options for it; it's
+		// just a luxury feature. Hence why we're just using some static const bags of
+		// holding for speed...
+		if ( basic::options::option[ basic::options::OptionKeys::cloud::auth ].user() ) {
+			static const SilentFileOptions scorefileopts{};
+			static const SilentFileData sfd( "score.sc", scorefileopts );
+
+			protocols::network::post_decoy("decoy.pdb", pose);
+			ScoreFileSilentStruct sfss( scorefileopts, pose, out_file_tag );
+			sfd.write_silent_struct( sfss, "score.sc" );
+			std::ifstream f( "score.sc" );
+			// adapted from https://stackoverflow.com/questions/2912520/read-file-contents-into-a-string-in-c
+			std::string content( ( std::istreambuf_iterator<char>( f ) ),
+				( std::istreambuf_iterator< char >() ) );
+			protocols::network::post_file( "score.sc", content );
+		}
+
 	}
 
 	//} //nstruct

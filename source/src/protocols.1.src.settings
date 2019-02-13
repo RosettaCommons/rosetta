@@ -285,6 +285,7 @@ sources = {
 		"WhileMover",
 	],
 	"protocols/network": [
+		"cloud",
 		"hal",
 		"ui_mover",
 		"util",
