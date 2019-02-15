@@ -798,7 +798,7 @@ Options = Option_Group( '',
 					default='true'),
 			Option('write_pdb_link_records', 'Boolean',
 					desc='Sets whether or not the LINK records in PDB files are written.  '
-							'The default value is false.',
+							'The default value is true.',
 					short='Write LINK records?',
 					legal=['true', 'false'],
 					default='true'),
