@@ -130,8 +130,7 @@ RamaMutationSelector::apply(
 		utility::vector1< core::Real > mainchain_tors( pose.residue(ir).mainchain_torsions().size() - 1 );
 		for ( core::Size i(1), imax( pose.residue(ir).mainchain_torsions().size() ); i<imax; ++i ) mainchain_tors[i] = numeric::nonnegative_principal_angle_degrees( pose.residue(ir).mainchain_torsions()[i] );
 
-		core::Real scoreval(0.0);
-		rama.eval_rpp_rama_score( pose.conformation(), restype, other_restype, mainchain_tors, scoreval, gradient, false);
+		core::Real const scoreval = rama.eval_rpp_rama_score( pose.conformation(), restype, other_restype, mainchain_tors );
 		core::Real const scoreval_multiplied( scoreval * rama_prepro_multiplier() );
 		TR << "The rama_prepro energy for position " << ir << " is " << scoreval << " (" << scoreval_multiplied << " when multiplied by the weight coefficient), which is " << ( scoreval_multiplied <= score_threshold() ? "below" : "above" ) << " the threshold for selection." << std::endl;
 		if ( scoreval_multiplied <= score_threshold() ) selection[ir] = true;

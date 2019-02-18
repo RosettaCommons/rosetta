@@ -120,7 +120,6 @@ public:
 
 		core::scoring::ScoringManager const &score_man( *(core::scoring::ScoringManager::get_instance()) );
 		core::scoring::RamaPrePro const &rama( score_man.get_RamaPrePro() );
-		utility::vector1< core::Real > gradient; //Unused, but needed below.
 
 		core::Real old_score2(0), old_score3(0);
 
@@ -130,12 +129,12 @@ public:
 			utility::vector1< core::Real > mainchain_tors(2);
 			mainchain_tors[1] = pose.phi(ir);
 			mainchain_tors[2] = pose.psi(ir);
-			rama.eval_rpp_rama_score( pose.conformation(), pose.residue_type_ptr(ir), pose.residue_type_ptr(ir+1), mainchain_tors, direct_calc, gradient, false);
+			direct_calc = rama.eval_rpp_rama_score( pose.conformation(), pose.residue_type_ptr(ir), pose.residue_type_ptr(ir+1), mainchain_tors );
 			if ( ir > 2 ) {
 				utility::vector1< core::Real > mainchain_tors2(2);
 				mainchain_tors2[1] = pose.phi(ir-1);
 				mainchain_tors2[2] = pose.psi(ir-1);
-				rama.eval_rpp_rama_score( pose.conformation(), pose.residue_type_ptr(ir-1), pose.residue_type_ptr(ir), mainchain_tors2, direct_calc_2, gradient, false);
+				direct_calc_2 = rama.eval_rpp_rama_score( pose.conformation(), pose.residue_type_ptr(ir-1), pose.residue_type_ptr(ir), mainchain_tors2 );
 			}
 
 			// Note that there is a subtlety, here: because the rama_prepro energy is a two-body energy computed between residue i and i+1, the score is the sum of the rama_prepro score for

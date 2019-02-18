@@ -785,21 +785,17 @@ GeneralizedKICfilter::apply_rama_prepro_check(
 
 	core::scoring::RamaPrePro const & rama = core::scoring::ScoringManager::get_instance()->get_RamaPrePro(); //Get the Rama scoring function
 
-	core::Real rama_out(0.0);
 	utility::vector1 < core::Real > gradient; //Dummy var needed for next function call.
 	core::conformation::Residue const &this_residue( pose.residue(curres) );
 	utility::vector1 < core::Real > mainchain_torsions( this_residue.mainchain_torsions().size() - 1 );
 	for ( core::Size i=1, imax=mainchain_torsions.size(); i<=imax; ++i ) mainchain_torsions[i] = this_residue.mainchain_torsions()[i];
 	core::Size const &that_residue_index( this_residue.residue_connection_partner( this_residue.upper_connect().index() ) );
 
-	rama.eval_rpp_rama_score(
+	core::Real rama_out = rama.eval_rpp_rama_score(
 		pose.conformation(),
 		this_residue.type_ptr(),
 		pose.residue_type_ptr(that_residue_index),
-		mainchain_torsions,
-		rama_out,
-		gradient,
-		false /*Don't return gradient*/
+		mainchain_torsions
 	);
 
 	rama_out = rama_out * 0.45;  //Multiplied by beta_nov15 scorefunction weights.  TODO: let the user set the scorefunction?

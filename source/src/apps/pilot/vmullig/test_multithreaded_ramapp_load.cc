@@ -66,12 +66,11 @@ void register_options() {
 void
 rama_prepro_test( core::Size const thread_index, core::pose::PoseOP pose ) {
 	core::scoring::RamaPrePro const & ramapp( core::scoring::ScoringManager::get_instance()->get_RamaPrePro() );
-	core::Real rama_score;
 	utility::vector1< core::Real > grad;
 	utility::vector1< core::Real > mainchain_tors(2);
 	mainchain_tors[1] = pose->phi(5);
 	mainchain_tors[2] = pose->psi(5);
-	ramapp.eval_rpp_rama_score(pose->conformation(), pose->residue_type_ptr(5), pose->residue_type_ptr(6), mainchain_tors, rama_score, grad, false);
+	core::Real const rama_score = ramapp.eval_rpp_rama_score(pose->conformation(), pose->residue_type_ptr(5), pose->residue_type_ptr(6), mainchain_tors );
 	TR << "Thread " << thread_index << " evaluated ramaprepro score of " << rama_score << "." << std::endl;
 }
 

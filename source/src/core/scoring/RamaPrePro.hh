@@ -54,19 +54,28 @@ public:
 
 	/// @brief Evaluate the rama score for this residue (res1) given the identity of the next (res_aa2).
 	/// @details This version works for noncanonical or canonical residues with any number of mainchain
-	/// torsions.  If the next residue's identity is pro or d-pro, a different score table is used.  Note:
-	/// if return_derivs is true, the gradient vector is populated only.  If it is false, then only the
-	/// score_rama value is populated.
+	/// torsions.  If the next residue's identity is pro or d-pro, a different score table is used.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	void
+	Real
 	eval_rpp_rama_score(
 		core::conformation::Conformation const & conf,
 		core::chemical::ResidueTypeCOP res1,
 		core::chemical::ResidueTypeCOP res2,
-		utility::vector1 < core::Real > mainchain_torsions, //Deliberately copied, not passed by reference
-		Real & score_rama,
-		utility::vector1 < core::Real > &gradient,
-		bool const return_derivs
+		utility::vector1 < core::Real > const & mainchain_torsions
+	) const;
+
+
+	/// @brief Evaluate the rama score for this residue (res1) given the identity of the next (res_aa2).
+	/// @details This version works for noncanonical or canonical residues with any number of mainchain
+	/// torsions.  If the next residue's identity is pro or d-pro, a different score table is used.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void
+	eval_rpp_rama_derivatives(
+		core::conformation::Conformation const & conf,
+		core::chemical::ResidueTypeCOP res1,
+		core::chemical::ResidueTypeCOP res2,
+		utility::vector1 < core::Real > const & mainchain_torsions,
+		utility::vector1 < core::Real > & gradient
 	) const;
 
 
@@ -147,6 +156,10 @@ private: //Private methods.
 	/// pointers to them in a map of AA enum -> MainchainScoreTableCOP.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void read_canonical_rpp_tables();
+
+	/// @brief Return the input vector multiplied by -1.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	utility::vector1< core::Real > invert_vector( utility::vector1 < core::Real > const & input_vect ) const;
 
 private: //Private member variables.
 

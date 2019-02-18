@@ -372,13 +372,12 @@ StepWiseProteinBackboneSampler::rama_energy(
 ) {
 	Real rama_score;
 	if ( use_rama_pre_pro_ || mainchain_torsions.size() > 2 ) {
-		utility::vector1< Real > dummy_deriv;
 		core::chemical::ResidueTypeCOP res2( nullptr );
 		// Get UPPER-connected residue
 		if ( pose.residue( n ).has_upper_connect() && !pose.residue( n ).connection_incomplete( pose.residue_type( n ).upper_connect_id() ) ) {
 			res2 = pose.residue_type( pose.residue( n ).residue_connection_partner( pose.residue( n ).type().upper_connect_id() ) ).get_self_ptr();
 		}
-		rama_pre_pro_.eval_rpp_rama_score( pose.conformation(), pose.residue_type( n ).get_self_ptr(), res2, mainchain_torsions, rama_score, dummy_deriv, false );
+		rama_score = rama_pre_pro_.eval_rpp_rama_score( pose.conformation(), pose.residue_type( n ).get_self_ptr(), res2, mainchain_torsions );
 	} else {
 		rama_score = ramachandran_.eval_rama_score_residue( pose.aa( n ), mainchain_torsions[ 1 ], mainchain_torsions[ 2 ] );
 	}

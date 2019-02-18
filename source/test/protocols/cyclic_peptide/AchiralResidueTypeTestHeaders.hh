@@ -152,7 +152,6 @@ public:
 
 		TR << "Testing rama_prepro scoring of residue type " << residue_type_name << " when it is" << (prepro == false ? " not " : " ") <<  "before a proline.\n";
 		TR << "PHI\tPSI\tE\tE_mirror\n";
-		utility::vector1< core::Real > gradient; //Unused but needed for eval_rpp_rama_score().
 
 		core::Size const curpos( prepro == false ? 2 : 4 );
 
@@ -161,9 +160,9 @@ public:
 				core::Real energy1(0.0), energy2(0.0);
 				utility::vector1< core::Real > mainchain_tors(2, 0.0);
 				mainchain_tors[1] = phi; mainchain_tors[2] = psi;
-				rama.eval_rpp_rama_score( pose->conformation(), pose->residue_type_ptr(curpos), pose->residue_type_ptr(curpos+1), mainchain_tors, energy1, gradient, false); //Get energy
+				energy1 = rama.eval_rpp_rama_score( pose->conformation(), pose->residue_type_ptr(curpos), pose->residue_type_ptr(curpos+1), mainchain_tors ); //Get energy
 				mainchain_tors[1] = -1.0*phi; mainchain_tors[2] = -1.0*psi;
-				rama.eval_rpp_rama_score( pose->conformation(), pose->residue_type_ptr(curpos), pose->residue_type_ptr(curpos+1), mainchain_tors, energy2, gradient, false); //Get energy of mirror-image conformation.
+				energy2 = rama.eval_rpp_rama_score( pose->conformation(), pose->residue_type_ptr(curpos), pose->residue_type_ptr(curpos+1), mainchain_tors ); //Get energy of mirror-image conformation.
 				TR << phi << "\t" << psi << "\t" << energy1 << "\t" << energy2 << "\n";
 				TS_ASSERT_DELTA( energy1, energy2, threshold);
 			}
