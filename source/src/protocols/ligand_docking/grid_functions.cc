@@ -22,6 +22,7 @@
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
+#include <core/pack/palette/NoDesignPackerPalette.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/random_permutation.hh>
 #include <utility/vector1.hh>
@@ -115,6 +116,7 @@ void grid_rotamer_trials(
 	core::grid::CartGrid<int> const & grid,
 	core::pose::Pose & pose,
 	core::Size rsd_no,
+	core::pack::task::PackerTask const & packertask,
 	int const min_score /*= 0*/
 )
 {
@@ -122,7 +124,7 @@ void grid_rotamer_trials(
 
 	// Retrieve list of conformers
 	utility::vector1< ResidueOP > conformers;
-	rotamers_for_trials(pose, rsd_no, conformers);
+	rotamers_for_trials(pose, rsd_no, conformers, packertask);
 	if ( conformers.empty() ) return;
 	// Conformers are already aligned onto original residue coords at this point.
 
@@ -151,14 +153,14 @@ void grid_rotamer_trials(
 void grid_rotamer_trials_atr_rep(
 	core::grid::CartGrid<int> const & grid,
 	core::pose::Pose & pose,
-	core::Size rsd_no
-)
-{
+	core::Size rsd_no,
+	core::pack::task::PackerTask const & packertask
+) {
 	using core::conformation::ResidueOP;
 
 	// Retrieve list of conformers
 	utility::vector1< ResidueOP > conformers;
-	rotamers_for_trials(pose, rsd_no, conformers);
+	rotamers_for_trials(pose, rsd_no, conformers, packertask);
 	if ( conformers.empty() ) return;
 	TR<< "conformers.size: "<< conformers.size()<< std::endl;
 	// Conformers are already aligned onto original residue coords at this point.
@@ -191,20 +193,22 @@ void rb_grid_rotamer_trials_atr_rep(
 	core::grid::CartGrid<int> const & grid,
 	core::pose::Pose & pose,
 	core::Size begin,
-	core::Size end
+	core::Size end,
+	core::pack::task::PackerTask const & packertask
 ){
 	// Residues don't interact with each other -- no reason to do this more than
 	// once with the same pose. Likewise, ligand residues don't interact.
 	for ( ; begin <= end; ++begin ) {
 		TR<< "now performing rotamer trials on "<< begin << std::endl;
-		grid_rotamer_trials_atr_rep(grid, pose, begin);
+		grid_rotamer_trials_atr_rep(grid, pose, begin, packertask);
 	}
 }
 
 void rotamers_for_trials(
 	core::pose::Pose & pose,
 	core::Size rsd_no,
-	utility::vector1< core::conformation::ResidueOP > & conformers_out
+	utility::vector1< core::conformation::ResidueOP > & conformers_out,
+	core::pack::task::PackerTask const & packertask
 )
 {
 	using core::conformation::ResidueOP;
@@ -212,7 +216,6 @@ void rotamers_for_trials(
 
 	// Dummy parameters that the ligand rotamer library doesn't use:
 	core::scoring::ScoreFunction dummy_sfxn;
-	PackerTaskOP dummy_task = TaskFactory::create_packer_task(pose); // actually used, in a trivial way
 
 	utility::graph::GraphCOP empty_graph( utility::pointer::make_shared< utility::graph::Graph >() );
 	// Retrieve conformers - force a basic rotamer library if we don't have a specific one.
@@ -229,7 +232,7 @@ void rotamers_for_trials(
 	reslib->fill_rotamer_vector(
 		pose,
 		dummy_sfxn,
-		*dummy_task,
+		packertask,
 		empty_graph,
 		pose.residue_type_ptr(rsd_no), //ResidueTypeCOP
 		pose.residue(rsd_no),

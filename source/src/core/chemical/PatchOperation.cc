@@ -234,13 +234,15 @@ AddConnect::name() const {
 }
 
 AddProperty::AddProperty( std::string const & property_in ):
-	property_( property_in )
+	property_( property_in ),
+	property_enum_( ResidueProperties::get_property_from_string( property_in ) /*Will default to NO_PROPERTY if this is an on-the-fly property*/ )
 {}
 
 bool
 AddProperty::apply( ResidueType & rsd ) const
 {
-	rsd.add_property( property_ );
+	runtime_assert_string_msg( property_enum_ != core::chemical::NO_PROPERTY, "Error in AddProperty::apply(): Could not parse \"" + property_ + "\" as a valid residue type property." );
+	rsd.add_property( property_enum_ );
 	if ( TR_PatchOperations.Trace.visible() ) {
 		TR_PatchOperations.Trace << "AddProperty::apply: " << property_ << std::endl;
 	}
@@ -255,15 +257,17 @@ AddProperty::name() const {
 }
 
 DeleteProperty::DeleteProperty( std::string const & property_in ):
-	property_( property_in )
+	property_name_( property_in ),
+	property_( ResidueProperties::get_property_from_string( property_in ) /*Will default to NO_PROPERTY if this is an on-the-fly property*/ )
 {}
 
 bool
 DeleteProperty::apply( ResidueType & rsd ) const
 {
+	runtime_assert_string_msg( property_ != core::chemical::NO_PROPERTY, "Error in DeleteProperty::apply(): Could not parse \"" + property_name_ + "\" as a valid residue type property." );
 	rsd.delete_property( property_ );
 	if ( TR_PatchOperations.Trace.visible() ) {
-		TR_PatchOperations.Trace << "DeleteProperty::apply: " << property_ << std::endl;
+		TR_PatchOperations.Trace << "DeleteProperty::apply: " << property_name_ << std::endl;
 	}
 	return false;
 }
@@ -277,6 +281,13 @@ DeleteProperty::name() const {
 
 // DeleteVariantType //////////////////////////////////////////////////////////
 DeleteVariantType::DeleteVariantType( std::string const & variant_in ) :
+	variant_str_( variant_in ),
+	variant_( ResidueProperties::get_variant_from_string( variant_in ) )
+{}
+
+// DeleteVariantType //////////////////////////////////////////////////////////
+DeleteVariantType::DeleteVariantType( VariantType const variant_in ) :
+	variant_str_( ResidueProperties::get_string_from_variant(variant_in ) ),
 	variant_( variant_in )
 {}
 
@@ -286,7 +297,11 @@ DeleteVariantType::DeleteVariantType( std::string const & variant_in ) :
 bool
 DeleteVariantType::apply( ResidueType & rsd ) const
 {
-	rsd.remove_variant_type( variant_ );
+	if ( variant_ != NO_VARIANT ) {
+		rsd.remove_variant_type( variant_ );
+	} else {
+		rsd.remove_variant_type( variant_str_); //For on-the-fly types.
+	}
 	return false;  // success
 }
 
@@ -3697,6 +3712,7 @@ void
 core::chemical::AddProperty::save( Archive & arc ) const {
 	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
 	arc( CEREAL_NVP( property_ ) ); // std::string
+	arc( CEREAL_NVP( property_enum_ ) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -3705,6 +3721,7 @@ void
 core::chemical::AddProperty::load( Archive & arc ) {
 	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
 	arc( property_ ); // std::string
+	arc( property_enum_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddProperty );
@@ -3719,7 +3736,8 @@ template< class Archive >
 void
 core::chemical::DeleteProperty::save( Archive & arc ) const {
 	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
-	arc( CEREAL_NVP( property_ ) ); // std::string
+	arc( CEREAL_NVP( property_name_ ) );
+	arc( CEREAL_NVP( property_ ) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -3727,7 +3745,8 @@ template< class Archive >
 void
 core::chemical::DeleteProperty::load( Archive & arc ) {
 	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
-	arc( property_ ); // std::string
+	arc( property_name_ );
+	arc( property_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::chemical::DeleteProperty );
@@ -4016,6 +4035,7 @@ template< class Archive >
 void
 core::chemical::DeleteVariantType::save( Archive & arc ) const {
 	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( variant_str_ ) );
 	arc( CEREAL_NVP( variant_ ) ); // std::string
 }
 
@@ -4024,6 +4044,7 @@ template< class Archive >
 void
 core::chemical::DeleteVariantType::load( Archive & arc ) {
 	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( variant_str_ );
 	arc( variant_ ); // std::string
 }
 

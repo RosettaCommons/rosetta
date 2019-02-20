@@ -3,30 +3,29 @@
 <SCOREFXNS>
      <ScoreFunction name="SFXN_STD" weights="ref2015.wts" />
  </SCOREFXNS>
+<RESIDUE_SELECTORS>
+	<Layer name="core" select_core="true" select_boundary="false" select_surface="false" />
+	<Layer name="boundary" select_core="false" select_boundary="true" select_surface="false" />
+	<Layer name="surface" select_core="false" select_boundary="false" select_surface="true" />
 
+	<Index name="select_nterm" resnums="1,31" />
+	<Index name="select_cterm" resnums="30,60" />
+	<Or name="select_termini" selectors="select_nterm,select_cterm" />
+	<Not name="select_not_termini" selector="select_termini" />
+
+	<And name="select_core_notterm" selectors="select_not_termini,core" /> 
+	<And name="select_boundary_notterm" selectors="select_not_termini,boundary" /> 
+	<And name="select_surface_notterm" selectors="select_not_termini,surface" /> 
+</RESIDUE_SELECTORS>
 <TASKOPERATIONS>
-    
-    <LayerDesign name="layer_all" layer="core_boundary_surface_Nterm_Cterm" verbose="True" use_sidechain_neighbors="True" >
-        <core>
-            <all exclude="ACDEFGHIKLMNPQRSTVWY" ncaa_append="DLE,DIL" />
-        </core>
-        <boundary>
-            <all exclude="ACDEFGHIKLMNPQRSTVWY" ncaa_append="DAN,DSE,DLE,DIL"/>
-        </boundary>
-        <surface>
-            <all exclude="ACDEFGHIKLMNPQRSTVWY" ncaa_append="DAN,DSE"/>
-        </surface>
-	<Nterm>
-            <all exclude="ACDEFGHIKLMNPQRSTVWY" ncaa_append="DPR"/>
-	</Nterm>
-	<Cterm>
-            <all exclude="ACDEFGHIKLMNPQRSTVWY" ncaa_append="DAN,DSE"/>
-	</Cterm>
-    </LayerDesign>
-    
+	<ReadResfile name="resfile_core" selector="select_core_notterm" filename="xml/resfile_2_core.txt" />
+	<ReadResfile name="resfile_boundary" selector="select_boundary_notterm" filename="xml/resfile_2_boundary.txt" />
+	<ReadResfile name="resfile_surface" selector="select_surface_notterm" filename="xml/resfile_2_surface.txt" />
+	<ReadResfile name="resfile_termini" selector="select_termini" filename="xml/resfile_2_termini.txt" />
 </TASKOPERATIONS>
-<FILTERS>
-</FILTERS>
+<PACKER_PALETTES>
+	<CustomBaseTypePackerPalette name="palette" additional_residue_types="DPRO,DILE,DLEU,DASN,DSER" />
+</PACKER_PALETTES>
 <MOVERS>
     
 	<BundleGridSampler name="bgs1" crick_params_file="L_alpha_helix" use_degrees="1" residue_name="DALA" helix_length="30" scorefxn="SFXN_STD" nstruct_mode="true">
@@ -36,7 +35,7 @@
 
 	<DeclareBond name="add_termini" atom1="C" atom2="N" res1="1" res2="2" add_termini="true" />
 
-    <FastDesign name="fdesign4" scorefxn="SFXN_STD" repeats="1" task_operations="layer_all" ramp_down_constraints="false">
+    <FastDesign name="fdesign4" scorefxn="SFXN_STD" repeats="1" packer_palette="palette" task_operations="resfile_core,resfile_boundary,resfile_surface,resfile_termini" ramp_down_constraints="false">
         <MoveMap name="fdesign4_mm">
             <Span begin="1" end="60" chi="1" bb="0" />
 	    <Jump number="1" setting="0" />

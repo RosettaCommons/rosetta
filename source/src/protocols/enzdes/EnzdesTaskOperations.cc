@@ -742,6 +742,7 @@ DetectProteinLigandInterface::register_options()
 	using namespace basic::options::OptionKeys;
 
 	option.add_relevant( OptionKeys::packing::resfile  );
+	option.add_relevant( OptionKeys::packing::packer_palette::extra_base_type_file );
 
 	protocols::minimization_packing::MinMover::register_options();
 	protocols::minimization_packing::PackRotamersMover::register_options();

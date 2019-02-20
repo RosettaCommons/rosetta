@@ -38,7 +38,6 @@ RotamerSetFactory::create_rotamer_set( core::pose::Pose const & pose ) {
 	} else { //if not symmetric
 		return utility::pointer::make_shared< RotamerSet_ >();
 	}
-
 }
 
 

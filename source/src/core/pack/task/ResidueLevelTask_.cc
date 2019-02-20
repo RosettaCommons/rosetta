@@ -83,94 +83,71 @@ namespace task {
 static basic::Tracer T( "core.pack.task", basic::t_info );
 
 /// @details ResidueLevelTask constructor has following defaults:
-///all ex set to false with zero sample level
-///position is packable and designable to any of the canonical aa's,
-///with variant matching (for termini, etc)
-///current rotamer is not included for packer.
-///bump check is deactivated by default.
+/// all ex set to false with zero sample level
+/// position is packable and designable to any of the canonical aa's,
+/// with variant matching (for termini, etc)
+/// current rotamer is not included for packer.
+/// bump check is deactivated by default. Constructs a DefaultPackerPalette
+/// if not provided with an alternative.
 ResidueLevelTask_::ResidueLevelTask_(
 	conformation::Residue const & original_residue,
-	pose::Pose const & pose
-)
-:
-	include_current_( false ),
-	adducts_( true ),
-	original_residue_type_set_( pose.residue_type_set_for_pose( original_residue.type().mode() ) ),
+	pose::Pose const & /*pose*/,
+	core::pack::palette::PackerPaletteCOP packer_palette_in
+) :
+	ResidueLevelTask(),
+	behaviors_(),
+	original_residue_type_set_( packer_palette_in->residue_type_setCOP() ),
 	original_residue_type_( original_residue.type_ptr() ),
-	target_residue_type_(/* 0 */),
 	designing_( original_residue.is_protein() || original_residue.is_peptoid() ), // default -- design at all protein residues
-	repacking_( true ),
-	optimize_H_mode_( false ),
-	preserve_c_beta_( false ),
-	flip_HNQ_( false ),
-	fix_his_tautomer_( false ),
-	include_virtual_side_chain_( false ),
-	disabled_( false ),
-	design_disabled_( false ),
-	sample_proton_chi_( true ),
-	ex1_( false ),
-	ex2_( false ),
-	ex3_( false ),
-	ex4_( false ),
-	ex1aro_( false ),
-	ex2aro_( false ),
-	ex1aro_exposed_( false ),
-	ex2aro_exposed_( false ),
-	ex1_sample_level_( NO_EXTRA_CHI_SAMPLES ),
-	ex2_sample_level_( NO_EXTRA_CHI_SAMPLES ),
-	ex3_sample_level_( NO_EXTRA_CHI_SAMPLES ),
-	ex4_sample_level_( NO_EXTRA_CHI_SAMPLES ),
-	ex1aro_sample_level_( NO_EXTRA_CHI_SAMPLES ),
-	ex2aro_sample_level_( NO_EXTRA_CHI_SAMPLES ),
-	ex1aro_exposed_sample_level_( NO_EXTRA_CHI_SAMPLES ),
-	ex2aro_exposed_sample_level_( NO_EXTRA_CHI_SAMPLES ),
-	exdna_sample_level_( NO_EXTRA_CHI_SAMPLES ),
-	extrachi_cutoff_( EXTRACHI_CUTOFF_LIMIT ),
-	operate_on_ex1_( false ),
-	operate_on_ex2_( false ),
-	operate_on_ex3_( false ),
-	operate_on_ex4_( false )
+	rotamer_operations_(),
+	rotsetops_(),
+	mode_tokens_(),
+	packer_palette_( packer_palette_in )
 {
-	using namespace chemical;
+	packer_palette_->initialize_residue_level_task( original_residue, allowed_residue_types_ );
+	//TODO FIRST -- MOVE ALL OF THE LOGIC BELOW THAT'S COMMENTED OUT TO THE PACKER PALETTE!
+
+	/*using namespace chemical;
 
 	if ( original_residue.is_protein() || original_residue.is_peptoid() ) {
 
-		//default: all amino acids at all positions -- additional "and" operations will remove
-		// amino acids from the list of allowed ones
-		//no rule yet to treat chemically modified aa's differently
-		ResidueType const & match_residue_type( original_residue_type_set_->get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_SIDE_CHAIN ) );
-		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
-			ResidueTypeCOPs const & aas( original_residue_type_set_->get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
-			for ( auto const & aa : aas ) {
-				allowed_residue_types_.push_back( aa );
-			}
-		}
-		// allow noncanonical AAs and D-amino acids to be repacked
-		if ( !core::chemical::is_canonical_L_aa_or_gly( original_residue.aa() ) ) {
-			allowed_residue_types_.push_back( original_residue.type_ptr() );
-		}
+	//default: all amino acids at all positions -- additional "and" operations will remove
+	// amino acids from the list of allowed ones
+	//no rule yet to treat chemically modified aa's differently
+	ResidueType const & match_residue_type( original_residue_type_set_->get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_SIDE_CHAIN ) );
+	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+	ResidueTypeCOPs const & aas( original_residue_type_set_->get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
+	for ( auto const & aa : aas ) {
+	allowed_residue_types_.push_back( aa );
+	}
+	}
+	// allow noncanonical AAs and D-amino acids to be repacked
+	if ( !core::chemical::is_canonical_L_aa_or_gly( original_residue.aa() ) ) {
+	allowed_residue_types_.push_back( original_residue.type_ptr() );
+	}
 
-		// allow metapatched residues to at least repack???
-		if ( allowed_residue_types_.empty() ) {
-			allowed_residue_types_.push_back( original_residue.type_ptr() );
-		}
+	// allow metapatched residues to at least repack???
+	if ( allowed_residue_types_.empty() ) {
+	allowed_residue_types_.push_back( original_residue.type_ptr() );
+	}
 
 	} else if ( original_residue.is_DNA() ) {
 
-		ResidueTypeCOPs dna_types = ResidueTypeFinder( *original_residue_type_set_ ).variants( original_residue.type().variant_types() ).
-			base_property( DNA ).variant_exceptions( utility::tools::make_vector1( ADDUCT_VARIANT ) ).get_all_possible_residue_types();
-		for ( Size n = 1; n <= dna_types.size(); n++ ) allowed_residue_types_.push_back( dna_types[ n ] );
+	ResidueTypeCOPs dna_types = ResidueTypeFinder( *original_residue_type_set_ ).variants( original_residue.type().variant_types() ).
+	base_property( DNA ).variant_exceptions( utility::tools::make_vector1( ADDUCT_VARIANT ) ).get_all_possible_residue_types();
+	for ( Size n = 1; n <= dna_types.size(); n++ ) allowed_residue_types_.push_back( dna_types[ n ] );
 
 	} else if ( original_residue.is_RNA() ) {
 
-		ResidueType const & match_residue_type(
-			original_residue_type_set_->get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
-		allowed_residue_types_.push_back( match_residue_type.get_self_ptr() );
+	ResidueType const & match_residue_type(
+	original_residue_type_set_->get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
+	allowed_residue_types_.push_back( match_residue_type.get_self_ptr() );
 
 	} else {
-		// for non-amino acids, default is to include only the existing residuetype
-		allowed_residue_types_.push_back( original_residue.type_ptr() );
+	// for non-amino acids, default is to include only the existing residuetype
+	allowed_residue_types_.push_back( original_residue.type_ptr() );
 	}
+	*/
 	if ( original_residue.is_RNA() ) rna_task_ = utility::pointer::make_shared< rna::RNA_ResidueLevelTask >();
 	// The intention is for all ResidueTasks to *start off* as repackable.
 	// Some, like protein AAs and DNA, also start off designable.
@@ -777,6 +754,110 @@ void ResidueLevelTask_::prevent_repacking()
 	mode_tokens_.emplace_back("NATRO");
 }
 
+/// @brief Restrict residue types.
+/// @details This function takes a vector of base names to allow.  Anything not in this list is turned off.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ResidueLevelTask_::restrict_restypes(
+	utility::vector1< std::string > const & basenames_to_keep
+) {
+	//Unfortunate special case that's necessary:
+	bool const has_hisd_or_his( basenames_to_keep.has_value("HIS") || basenames_to_keep.has_value("HIS_D") ); //Note that != is an XOR operation.
+	bool const has_dhis_or_dhisd( basenames_to_keep.has_value("DHIS") || basenames_to_keep.has_value("DHIS_D") );
+
+	for ( ResidueTypeCOPList::iterator it( allowed_residue_types_.begin() ); it != allowed_residue_types_.end(); ) {
+		if ( basenames_to_keep.has_value( (*it)->base_name() ) ) {
+			++it;
+		} else if ( has_hisd_or_his && ( (*it)->base_name() == "HIS" || (*it)->base_name() == "HIS_D" ) ) { //An unfortunate but necessary unique special case: if the user specifies HIS or HIS_D, include HIS_D or HIS, respectively.
+			++it;
+		} else if ( has_dhis_or_dhisd && ( (*it)->base_name() == "DHIS" || (*it)->base_name() == "DHIS_D" ) ) { //An unfortunate but necessary unique special case: if the user specifies DHIS or DHIS_D, include DHIS_D or DHIS, respectively.
+			++it;
+		} else {
+			it = allowed_residue_types_.erase(it);
+		}
+	}
+}
+
+/// @brief Disable residue types.
+/// @details This function takes a vector of base names to prohibit.  Anything in this list is turned off.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ResidueLevelTask_::disable_restypes(
+	utility::vector1< std::string > const & basenames_to_disable
+) {
+	//Unfortunate special case that's necessary:
+	bool const has_hisd_or_his( basenames_to_disable.has_value("HIS") || basenames_to_disable.has_value("HIS_D") ); //Note that != is an XOR operation.
+	bool const has_dhis_or_dhisd( basenames_to_disable.has_value("DHIS") || basenames_to_disable.has_value("DHIS_D") );
+
+	for ( ResidueTypeCOPList::iterator it( allowed_residue_types_.begin() ); it != allowed_residue_types_.end(); ) {
+		if ( basenames_to_disable.has_value( (*it)->base_name() ) ) {
+			it = allowed_residue_types_.erase(it);
+		} else if ( has_hisd_or_his && ( (*it)->base_name() == "HIS" || (*it)->base_name() == "HIS_D" ) ) { //An unfortunate but necessary unique special case: if the user specifies HIS or HIS_D, include HIS_D or HIS, respectively.
+			it = allowed_residue_types_.erase(it);
+		} else if ( has_dhis_or_dhisd && ( (*it)->base_name() == "DHIS" || (*it)->base_name() == "DHIS_D" ) ) { //An unfortunate but necessary unique special case: if the user specifies DHIS or DHIS_D, include DHIS_D or DHIS, respectively.
+			it = allowed_residue_types_.erase(it);
+		} else {
+			++it;
+		}
+	}
+}
+
+/// @brief Given a list of residue properties, eliminate any residue type that does not have at
+/// least one of the properties in the list.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ResidueLevelTask_::restrict_to_restypes_with_at_least_one_property(
+	utility::vector1< core::chemical::ResidueProperty > const & properties
+) {
+	for ( core::chemical::ResidueProperty const & property : properties ) {
+		for ( ResidueTypeCOPList::iterator it( allowed_residue_types_.begin() ); it != allowed_residue_types_.end(); ) {
+			if ( (*it)->has_property( property ) ) {
+				++it;
+			} else {
+				it = allowed_residue_types_.erase( it );
+			}
+		}
+	}
+}
+
+/// @brief Given a list of residue properties, eliminate any residue type that does not have ALL of the properties in the list.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ResidueLevelTask_::restrict_to_restypes_with_all_properties(
+	utility::vector1< core::chemical::ResidueProperty > const & properties
+) {
+	for ( ResidueTypeCOPList::iterator it( allowed_residue_types_.begin() ); it != allowed_residue_types_.end(); ) {
+		bool had_all(true);
+		for ( core::chemical::ResidueProperty const & property : properties ) {
+			if ( !(*it)->has_property( property ) ) {
+				had_all=false;
+				break;
+			}
+		}
+		if ( had_all ) {
+			++it;
+		} else {
+			it = allowed_residue_types_.erase( it );
+		}
+	}
+}
+
+/// @brief Given a list of residue properties, eliminate any residue type that has any of the properties in the list.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ResidueLevelTask_::disable_restypes_with_at_least_one_property(
+	utility::vector1< core::chemical::ResidueProperty > const & properties
+) {
+	for ( core::chemical::ResidueProperty const & property : properties ) {
+		for ( ResidueTypeCOPList::iterator it( allowed_residue_types_.begin() ); it != allowed_residue_types_.end(); ) {
+			if ( (*it)->has_property( property ) ) {
+				it = allowed_residue_types_.erase( it );
+			} else {
+				++it;
+			}
+		}
+	}
+}
 
 /// @details contract (and) the list of available aas for canonical aa's
 ///if an amino acid is not present (false) in the boolean vector, then do not allow it at this position
@@ -788,7 +869,7 @@ ResidueLevelTask_::restrict_absent_canonical_aas( utility::vector1< bool > const
 	Size num_allowed = std::count( allowed_aas.begin(), allowed_aas.end(), true);
 	std::ostringstream aas;
 	if ( num_allowed == 0 ) {
-		mode_tokens_.emplace_back("EMPTY");
+		mode_tokens_.emplace_back("NATAA");
 	} else if ( num_allowed == chemical::num_canonical_aas ) {
 		// this doesn't constrain anything...
 	} else if ( num_allowed < chemical::num_canonical_aas/2 ) {
@@ -925,16 +1006,12 @@ ResidueLevelTask_::restrict_to_repacking()
 
 bool ResidueLevelTask_::is_original_type( chemical::ResidueTypeCOP type ) const
 {
-	if ( original_residue_type_->aa() == chemical::aa_unk ) {
-		// unknown aa; go with interchangeability_group
-		return ( type->interchangeability_group() == original_residue_type_->interchangeability_group() );
-	} else if ( fix_his_tautomer_ && (original_residue_type_->aa() == chemical::aa_his) ) {
-		// the only way to distinguish HIS and HIS_D is by their full name
-		// this will still fail for cases where variants mismatch but the tautomer does not
-		return( type->name() == original_residue_type_->name() );
-	} else {
+	if ( !fix_his_tautomer_ && (original_residue_type_->aa() == chemical::aa_his) ) {
+		// This gets around the problem of matching HIS to HIS_D with string-parsing.
 		return ( type->aa() == original_residue_type_->aa() );
 	}
+
+	return ( type->base_name() == original_residue_type_->base_name() );
 }
 
 chemical::ResidueTypeSetCOP
@@ -945,94 +1022,6 @@ ResidueLevelTask_::get_original_residue_set() const {
 chemical::AA const &
 ResidueLevelTask_::get_original_residue() const {
 	return original_residue_type_->aa();
-}
-
-/// @details expand (or) the list of available aa's for non-cannonicals
-/// looking for ResidueTypes that share the input "interchangeability_group" id
-void ResidueLevelTask_::allow_noncanonical_aa(
-	std::string const & interchangeability_group,
-	chemical::ResidueTypeSet const & residue_set
-)
-{
-	if ( disabled_ || design_disabled_ ) return;
-
-	using namespace core::chemical;
-
-	for ( Size ii = chemical::num_canonical_aas + 1; ii <= chemical::num_aa_types; ++ii ) {
-		ResidueTypeCOPs const & aas( ResidueTypeFinder( residue_set ).aa( AA( ii ) ).variants( original_residue_type_->variant_types() ).interchangeability_group( interchangeability_group ).get_all_possible_residue_types() );
-		for ( auto const & aa : aas ) {
-			if ( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), aa ) == allowed_residue_types_.end() /* haven't already added it */ ) {
-				allowed_residue_types_.push_back( aa );
-			}
-		}
-	}
-
-	mode_tokens_.emplace_back("NC");
-	mode_tokens_.push_back( interchangeability_group );
-
-	determine_if_designing();
-	determine_if_repacking();
-}
-
-/// @details Calls the overloaded allow_noncanonical_aas method using the same ResidueTypeSet as original_residue_type_
-void ResidueLevelTask_::allow_noncanonical_aa( std::string const & interchangeability_group )
-{
-	allow_noncanonical_aa( interchangeability_group, *original_residue_type_set_ );
-}
-
-/// @details Calls the overloaded allow_noncanonical_aas method using the same ResidueTypeSet as original_residue_type_
-/// taking as the interchangeability group what is returned by the "name_from_aa" function.
-void ResidueLevelTask_::allow_noncanonical_aa( chemical::AA aa )
-{
-	if ( aa <= chemical::num_canonical_aas ) {
-		T.Warning << "Canonical amino acid, " << aa << ", given in a call to allow_noncanonical_aa has no effect." << std::endl;
-		return;
-	}
-	allow_noncanonical_aa( name_from_aa(aa) );
-}
-
-/// @details expand (or) the list of available aa's for non-cannonicals
-/// looking for ResidueTypes that share the input "interchangeability_group" id
-void ResidueLevelTask_::disallow_noncanonical_aas()
-{
-	for ( auto
-			aas_iter( allowed_residue_types_.begin() ),
-			aas_end( allowed_residue_types_.end() );
-			aas_iter != aas_end; ) {
-
-		if ( (*aas_iter)->aa() > chemical::num_canonical_aas ) {
-			aas_iter = allowed_residue_types_.erase( aas_iter );
-		} else {
-			++aas_iter;
-		}
-	}
-
-	mode_tokens_.emplace_back("EMPTY");
-
-	determine_if_designing();
-	determine_if_repacking();
-}
-
-void
-ResidueLevelTask_::allow_aa(
-	chemical::AA const & aa
-)
-{
-	if ( disabled_ || design_disabled_ ) return;
-	disabled_ = false;
-	design_disabled_ = false;
-
-	chemical::ResidueTypeCOPs const aas( original_residue_type_set_->get_all_types_with_variants_aa( aa, original_residue_type_->variant_types() ) );
-
-	for ( auto const & aa : aas ) {
-		if ( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), aa ) ==
-				allowed_residue_types_.end() /* haven't already added it */ ) {
-			allowed_residue_types_.push_back( aa );
-		}
-	}
-
-	determine_if_designing();
-	determine_if_repacking();
 }
 
 ResidueLevelTask::ResidueTypeCOPList const &
@@ -1073,40 +1062,6 @@ ResidueLevelTask_::print_allowed_types( std::ostream & os ) const
 
 bool ResidueLevelTask_::being_designed() const { return designing_; } // is this residue up for design?
 bool ResidueLevelTask_::being_packed() const { return repacking_; } // is this residue being modified at all by the packer
-
-/// @brief ONLY for the RESET command in resfiles: completely reset this position.
-/// @details This does several things.  It:
-/// - Removes all noncanonicals allowed at this position.
-/// - Resets the list of allowed canonicals to the 20 standard canonicals.
-/// - Resets the designability of this position (design allowed).
-/// - Resets the repacking of this position (repacking allowed).
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-void ResidueLevelTask_::reset() {
-	using namespace core::chemical;
-
-	mode_tokens_.emplace_back("RESET" );
-	disallow_noncanonical_aas();
-
-	ResidueTypeSet const & residue_set( *get_original_residue_set() );
-	allowed_residue_types_.clear();
-	ResidueType const & match_residue_type( residue_set.get_residue_type_with_variant_removed( *original_residue_type_, chemical::VIRTUAL_SIDE_CHAIN ) );
-	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
-		ResidueTypeCOPs const & aas( residue_set.get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
-		for ( auto const & aa : aas ) {
-			allowed_residue_types_.push_back( aa );
-		}
-	}
-
-	//Re-enable design and repacking, if they've been disabled:
-	repacking_ = true;
-	designing_ = true;
-	disabled_ = false;
-	design_disabled_ = false;
-	determine_if_designing(); // This will ensure that disulfides aren't designed away.
-	determine_if_repacking();
-
-	return;
-}
 
 /// @details  bookkeeping - increases to EX_ONE_STDDEV if boolean is on, but sample level is zero (AS IT SHOULD!)
 void ResidueLevelTask_::refresh_ex1_sample_levels()
@@ -1546,6 +1501,7 @@ core::pack::task::ResidueLevelTask_::save( Archive & arc ) const {
 	arc( CEREAL_NVP( rotsetops_ ) ); // rotamer_set::RotSetOperationList
 	arc( CEREAL_NVP( mode_tokens_ ) ); // std::vector<std::string>
 	arc( CEREAL_NVP( rna_task_ ) ); // rna::RNA_ResidueLevelTaskOP
+	arc( CEREAL_NVP( packer_palette_ ) ); // core::pack::palette::PackerPaletteCOP
 }
 
 /// @brief Automatically generated deserialization method
@@ -1596,6 +1552,7 @@ core::pack::task::ResidueLevelTask_::load( Archive & arc ) {
 	arc( rotsetops_ ); // rotamer_set::RotSetOperationList
 	arc( mode_tokens_ ); // std::vector<std::string>
 	arc( rna_task_ ); // rna::RNA_ResidueLevelTaskOP
+	arc( packer_palette_ ); // core::pack::palette::PackerPaletteCOP
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pack::task::ResidueLevelTask_ );

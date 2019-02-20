@@ -392,7 +392,6 @@ AntibodySeqDesignTFCreator::get_framework_conservative_op(const core::pose::Pose
 
 		cons_task->limit_to_positions( conservative_positions );
 		cons_task->include_native_aa( true );
-		cons_task->add_to_allowed_aas( false );
 	}
 
 	if ( has_native_sequence( pose ) ) {

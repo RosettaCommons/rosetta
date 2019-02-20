@@ -1,0 +1,16 @@
+#-mute all
+-include_sugars
+-s input/maltotriose.pdb
+-out:path:pdb output/
+-out:path:score output/
+-out:suffix _redesigned
+-nstruct 1
+#-n_cycles 1
+-out:levels core.pack.palette.PackerPalette:500
+#-out:levels core.pack.task:500
+#-out:levels core.pack.pack_rotamers:500
+#-out:levels core.pack.rotamer_set.RotamerSet:500
+#-out:levels core.pack.rotamer_set.RotamerSet_:500
+#-out:levels core.pack.rotamer_set.RotamerSets:500
+#-out:levels protocols.simple_moves.PackRotamersMover:500
+#-out:levels core.conformation.Residue:500

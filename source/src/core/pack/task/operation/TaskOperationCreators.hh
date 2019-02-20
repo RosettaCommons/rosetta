@@ -156,6 +156,31 @@ public:
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
+
+class RestrictToSpecifiedBaseResidueTypesCreator : public TaskOperationCreator {
+	virtual TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+};
+
+class ProhibitSpecifiedBaseResidueTypesCreator : public TaskOperationCreator {
+	virtual TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+};
+
+class RestrictToResiduePropertiesCreator : public TaskOperationCreator {
+	virtual TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+};
+
+class ProhibitResiduePropertiesCreator : public TaskOperationCreator {
+	virtual TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+};
+
 class RestrictResidueToRepackingCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;

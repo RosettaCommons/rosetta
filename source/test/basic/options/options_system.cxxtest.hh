@@ -289,10 +289,10 @@ public:
 			iv1 + iv2 + iv3 + iv5 + rv1 + rv2 + rv3 + rv5 + sv1 + sv2 + sv3 + sv5 +
 			fv1 + fv2 + fv3 + fv5 + pv1 + pv2 + pv3 + pv5 + rcv1 + rcv2 + rcv3 + rcv5;
 
-		OptionCollectionOP local_options_ptr = read_subset_of_global_option_collection( option_list );
+		utility::options::OptionCollectionOP local_options_ptr = read_subset_of_global_option_collection( option_list );
 		TS_ASSERT( local_options_ptr );
 		if ( ! local_options_ptr ) return;
-		OptionCollection const & local_options( *local_options_ptr );
+		utility::options::OptionCollection const & local_options( *local_options_ptr );
 
 		TS_ASSERT( local_options.has( b1 ));
 		TS_ASSERT( local_options[ b1 ].active() );

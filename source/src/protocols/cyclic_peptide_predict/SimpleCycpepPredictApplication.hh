@@ -486,9 +486,9 @@ private:
 	/// @details Does no checking for duplicates.
 	std::string get_oneletter_codes( utility::vector1< std::string > const &fullnames ) const;
 
-	/// @brief Given a vector of full residue names, give me a string of the form "NC <3-letter code> NC <3-letter code> NC <3-letter code> ..."
+	/// @brief Given a vector of full residue names, give me a string of the form "X[<fullname1>]X[<fullname2>]X[<fullname3>] ..."
 	/// @details Does no checking for duplicates.  Will fail gracelessly with invalid names.
-	std::string get_nc_threeletter_codes( utility::vector1< std::string> const &fullnames ) const;
+	std::string get_nc_name_codes( utility::vector1< std::string> const &fullnames ) const;
 
 	/// @brief Given a pose, store a list of the disulfides in the pose.
 	/// @details Clears the old_disulfides list and repopulates it.

@@ -33,6 +33,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/NotResidueSelector.hh>
+#include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
@@ -84,8 +85,14 @@ public:
 		index_selector->set_index( selection_str.str() );
 		core::select::residue_selector::NotResidueSelectorOP not_selector( new core::select::residue_selector::NotResidueSelector(index_selector) );
 
+		using namespace core::pack::palette;
 		core::scoring::ScoreFunctionOP sfxn( core::scoring::get_score_function() );
 		core::pack::task::TaskFactoryOP task( new core::pack::task::TaskFactory );
+		CustomBaseTypePackerPaletteOP pp = utility::pointer::make_shared< CustomBaseTypePackerPalette >();
+		pp->add_base_residue_type( "001" );
+		pp->add_base_residue_type( "601" );
+		pp->add_base_residue_type( "602" );
+		task->set_packer_palette( pp );
 		core::pack::task::operation::ReadResfileOP resfile( new core::pack::task::operation::ReadResfile );
 		resfile->filename( "core/pack/peptoid_design_1.resfile" );
 		resfile->set_residue_selector( index_selector );
@@ -132,8 +139,14 @@ public:
 		add_comp.create_constraint_from_file( "core/pack/peptoid_design_2.comp" );
 		add_comp.apply(pose);
 
+		using namespace core::pack::palette;
 		core::pack::task::TaskFactoryOP task( new core::pack::task::TaskFactory );
 		core::pack::task::operation::ReadResfileOP resfile( new core::pack::task::operation::ReadResfile );
+		CustomBaseTypePackerPaletteOP pp = utility::pointer::make_shared< CustomBaseTypePackerPalette >();
+		pp->add_base_residue_type( "001" );
+		pp->add_base_residue_type( "601" );
+		pp->add_base_residue_type( "602" );
+		task->set_packer_palette( pp );
 		resfile->filename( "core/pack/peptoid_design_2.resfile" );
 		resfile->set_residue_selector( index_selector );
 		task->push_back(resfile);

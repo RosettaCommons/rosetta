@@ -26,6 +26,7 @@
 #include <core/chemical/types.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueProperties.hh>
 
 // Utility Headers
 #include <utility>
@@ -98,6 +99,9 @@ ResfileContents::ResfileContents(
 	uint lineno = 0;
 	while ( resfile ) {
 		vector1< string > tokens( tokenize_line( resfile ));
+
+		check_for_deprecated_commands( tokens );
+
 		++lineno;
 
 		if ( !tokens.size() ) continue;
@@ -166,6 +170,28 @@ ResfileContents::commands_for_residue( Size resid ) const
 std::string const &
 ResfileContents::fname_initialized_from() const {
 	return fname_initialized_from_;
+}
+
+/// @brief Given a vector of strings corresponding to the words in a whitespace-separated line, look for
+/// deprecated commands and issue a suitable warning.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ResfileContents::check_for_deprecated_commands(
+	utility::vector1< std::string > const & tokens
+) const {
+	static const std::string errmsg( "Error in ResfileContents::check_for_deprecated_commands(): The \"" );
+	static const std::string errmsg2( "\" command has been deprecated.  Please refer to the documentation on PackerPalettes (https://www.rosettacommons.org/docs/latest/rosetta_basics/structural_concepts/PackerPalette) for details on how to properly use PackerPalettes to create a set of ResidueTypes with which one will design, and TaskOperations to prune away ResidueTypes that are not desired at a particular location.");
+	static const utility::vector1< std::string > deprecated_tokens( { "NC", "EMPTY", "PIKRNA", "RESET" } );
+
+	for ( std::string const & token : tokens ) {
+		debug_assert( !token.empty() ); //Shouldn't be possible.
+		if ( token[0] == '#' ) break; //We're done once we reach a comment.
+		for ( std::string const & deprecated_token : deprecated_tokens ) {
+			if ( token == deprecated_token ) {
+				utility_exit_with_message( errmsg + deprecated_token + errmsg2  );
+			}
+		}
+	}
 }
 
 void
@@ -604,9 +630,14 @@ ALLAAwc::residue_action(
 
 
 ///////////////////////////////////////////////////////////////////////
-/// @brief PIKAA allows residues specifed in a following string and packing
-///the string should be formatted ALLCAPS with no spaces between residues
-///using the standard single letter codes
+/// @brief PIKAA allows residues specifed in a following string.
+/// @details In actuality, it is PROHIBITING any residue that is NOT in the
+/// following string.  The string should be formatted as an all-caps string of
+/// one-letter codes.  Noncanonical amino acids can be included using X[<full base name>].
+/// For example, to allow tyrosine, threonine, tryptophan, and 2-aminoisobutyric acid,
+/// you would use "PIKAA YTWX[AIB]".
+/// @author Original author unknown.
+/// @author Noncanonical pruning support added by Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 void
 PIKAA::initialize_from_tokens(
 	utility::vector1< std::string > const & tokens,
@@ -617,34 +648,68 @@ PIKAA::initialize_from_tokens(
 	using namespace chemical;
 	using utility::vector1;
 
-	debug_assert( get_token( which_token, tokens ) == name() );
-	keep_canonical_aas_.resize( chemical::num_canonical_aas, false );
+	static const std::string errmsg( "Error in core::pack::task::PIKAA::initialize_from_tokens(): " );
 
-	if ( which_token == tokens.size() ) {
-		std::stringstream err_msg;
-		err_msg << "PIKAA must be followed by a string of allowed amino acids.";
-		onError(err_msg.str());
-	}
+	debug_assert( get_token( which_token, tokens ) == name() );
+
+	// Clear stored data:
+	basenames_to_keep_.clear();
+
+	runtime_assert_string_msg( which_token != tokens.size(), errmsg + "PIKAA must be followed by a string of allowed amino acids." );
+
 	++which_token;
 	std::string const & aas_to_keep = get_token( which_token, tokens );
 
 
-	for ( char const aa_to_keep : aas_to_keep ) {
-		if ( oneletter_code_specifies_aa( aa_to_keep ) ) {
+	for ( core::Size i(0), imax(aas_to_keep.length()); i<imax; ++i ) {
+		char const aa_to_keep( aas_to_keep[i] );
+		if ( aa_to_keep == 'X' ) {
+			// NCAAs are specified with "X[<full base name>]".
+			std::string basename;
+			++i;
+			runtime_assert_string_msg( i != imax && aas_to_keep[i] == '[', errmsg + "An \"X\" in a \"PIKAA\" string must be followed by square brackets containing the full base name of a residue type." );
+			std::string base_name;
+			do {
+				++i;
+				runtime_assert_string_msg( i != imax , errmsg + "An opening bracket in a \"PIKAA\" string must be closed with a closing bracket." );
+				char const curlet( aas_to_keep[i] );
+				if ( curlet == ']' ) break;
+				runtime_assert_string_msg( !( curlet == ' ' || curlet == '\t' || curlet == '\n' || curlet == '\0' ), errmsg + "A \"PIKAA\" string cannot contain whitespace." );
+				base_name += curlet;
+			} while(true);
+			add_base_name_to_keep( base_name );
+		} else if ( oneletter_code_specifies_aa( aa_to_keep ) ) {
 			AA aa( aa_from_oneletter_code( aa_to_keep ) );
-			if ( size_t(aa) <= keep_canonical_aas_.size() ) {
-				keep_canonical_aas_[ aa ] = true;
+			if ( static_cast<Size>(aa) <= static_cast<Size>(core::chemical::num_canonical_aas ) ) {
+				add_base_name_to_keep( core::chemical::name_from_aa( aa ) ); //Canonical base names are the same as name3s.
 			} else if ( aa == na_ade || aa == na_cyt || aa == na_gua || aa == na_thy ) {
 				// allow use of PIKAA for DNA types (letters a,c,g,t)
-				na_allowed_.push_back( aa );
+				add_base_name_to_keep( core::chemical::name_from_aa( aa ) );
 			}
 		} else {
 			TR << "Ignoring unknown one-letter amino acid code " << aa_to_keep << " while parsing PIKAA mode for residue " << resid << "." << std::endl;
-
 		}
 	}
 
+	if ( !initialized_ ) {
+		TR.Warning << "Warning!  No sensible information was parsed from \"PIKAA " + tokens[which_token] + "\"." << std::endl;
+	}
+
 	++which_token;
+}
+
+/// @brief Add a base name to the list of base names to keep.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+PIKAA::add_base_name_to_keep(
+	std::string const & basename
+) {
+	static const std::string errmsg( "Error in core::pack::task::PIKAA::add_base_name_to_keep(): " );
+	runtime_assert_string_msg( !basename.empty(), errmsg + "A base name cannot be an empty string." );
+	runtime_assert_string_msg( !basenames_to_keep_.has_value( basename ), errmsg + "The base name \"" + basename + "\" was added more than once." );
+
+	basenames_to_keep_.push_back(basename);
+	initialized_ = true;
 }
 
 void
@@ -653,15 +718,8 @@ PIKAA::residue_action(
 	Size resid
 ) const
 {
-	if ( keep_canonical_aas_.size() != chemical::num_canonical_aas ) {
-		utility_exit_with_message( "PIKAA Resfile Command used uninitialized" );
-	}
-	task.nonconst_residue_task( resid ).restrict_absent_canonical_aas( keep_canonical_aas_ );
-
-	// nucleic acids
-	for ( auto const & elem : na_allowed_ ) {
-		task.nonconst_residue_task( resid ).allow_noncanonical_aa( elem );
-	}
+	runtime_assert_string_msg( initialized_, "Error in core::pack::task::PIKAA::residue_action(): PIKAA resfile command used uninitialized." );
+	task.nonconst_residue_task( resid ).restrict_restypes( basenames_to_keep_ );
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -712,56 +770,6 @@ PIKNA::residue_action(
 }
 
 ///////////////////////////////////////////////////////////////////////
-/// @brief PIKNA allows nucleic acid residues specifed in a following string
-/// uses a string of single letter codes
-void
-PIKRNA::initialize_from_tokens(
-	utility::vector1< std::string > const & tokens,
-	Size & which_token,
-	Size resid
-)
-{
-	using namespace chemical;
-	using utility::vector1;
-
-	debug_assert( tokens[ which_token ] == name() );
-	if ( which_token == tokens.size() ) {
-		TR.Error << "RESFILE ERROR: PIKRNA must be followed by a string of allowed "
-			<< "nucleic acids in single-letter format" << std::endl;
-		utility_exit();
-	}
-	std::string const & nas_string( tokens[ ++which_token ] );
-
-	for ( char const letter : nas_string ) {
-		// custom conversion from single letter to aa enum
-		AA na( aa_unk );
-		if      ( letter == 'A' || letter == 'a' ) na = na_rad;
-		else if ( letter == 'C' || letter == 'c' ) na = na_rcy;
-		else if ( letter == 'G' || letter == 'g' ) na = na_rgu;
-		else if ( letter == 'U' || letter == 'u' ) na = na_ura;
-		else {
-			TR.Error << "RESFILE ERROR: unknown one-letter nucleic acid code " << letter
-				<< " while parsing PIKRNA option for residue " << resid << std::endl;
-			utility_exit();
-		}
-		keep_rnas_.push_back( na );
-	}
-
-	++which_token;
-}
-
-void
-PIKRNA::residue_action(
-	PackerTask & task,
-	Size resid
-) const
-{
-	for ( auto const & keep_rna : keep_rnas_ ) {
-		task.nonconst_residue_task( resid ).allow_aa( keep_rna );
-	}
-}
-
-///////////////////////////////////////////////////////////////////////
 /// @brief NOTAA disallows residues specified in a following string, and allows packing
 ///the string should be formatted ALLCAPS with no spaces between residues
 ///using the standard single letter codes
@@ -772,21 +780,48 @@ NOTAA::initialize_from_tokens(
 	Size resid
 )
 {
+	static const std::string errmsg( "Error in core::pack::task::NOTAA::initialize_from_tokens(): " );
 	using namespace chemical;
 
 	debug_assert( get_token( which_token, tokens ) == name() );
-	keep_aas_.resize( chemical::num_canonical_aas, true );
+	basenames_to_exclude_.clear();
 
 	++which_token;
+
 	std::string const & aas_to_exclude = get_token( which_token, tokens );
 
-	for ( char const aa_to_exclude : aas_to_exclude ) {
-		if ( oneletter_code_specifies_aa( aa_to_exclude ) &&
-				aa_from_oneletter_code( aa_to_exclude ) <= chemical::num_canonical_aas  ) {
-			keep_aas_[ aa_from_oneletter_code( aa_to_exclude ) ] = false;
+	for ( core::Size i(0), imax(aas_to_exclude.length()); i<imax; ++i ) {
+		char const aa_to_exclude( aas_to_exclude[i] );
+		if ( aa_to_exclude == 'X' ) {
+			// NCAAs are specified with "X[<full base name>]".
+			std::string basename;
+			++i;
+			runtime_assert_string_msg( i != imax && aas_to_exclude[i] == '[', errmsg + "An \"X\" in a \"NOTAA\" string must be followed by square brackets containing the full base name of a residue type." );
+			std::string base_name;
+			do {
+				++i;
+				runtime_assert_string_msg( i != imax , errmsg + "An opening bracket in a \"NOTAA\" string must be closed with a closing bracket." );
+				char const curlet( aas_to_exclude[i] );
+				if ( curlet == ']' ) break;
+				runtime_assert_string_msg( !( curlet == ' ' || curlet == '\t' || curlet == '\n' || curlet == '\0' ), errmsg + "A \"NOTAA\" string cannot contain whitespace." );
+				base_name += curlet;
+			} while(true);
+			add_base_name_to_exclude( base_name );
+		} else if ( oneletter_code_specifies_aa( aa_to_exclude ) ) {
+			AA aa( aa_from_oneletter_code( aa_to_exclude ) );
+			if ( static_cast<Size>(aa) <= static_cast<Size>(core::chemical::num_canonical_aas ) ) {
+				add_base_name_to_exclude( core::chemical::name_from_aa( aa ) ); //Canonical base names are the same as name3s.
+			} else if ( aa == na_ade || aa == na_cyt || aa == na_gua || aa == na_thy ) {
+				// allow use of PIKAA for DNA types (letters a,c,g,t)
+				add_base_name_to_exclude( core::chemical::name_from_aa( aa ) );
+			}
 		} else {
-			TR << "Ignoring Unknown one-letter amino acid code "<< aa_to_exclude << " while parsing NOTAA option for residue " << resid << ".";
+			TR << "Ignoring unknown one-letter amino acid code " << aa_to_exclude << " while parsing NOTAA mode for residue " << resid << "." << std::endl;
 		}
+	}
+
+	if ( !initialized_ ) {
+		TR.Warning << "Warning!  No sensible information was parsed from \"NOTAA " + tokens[which_token] + "\"." << std::endl;
 	}
 
 	++which_token;
@@ -796,61 +831,23 @@ void
 NOTAA::residue_action(
 	PackerTask & task,
 	Size resid
-) const
-{
-	task.nonconst_residue_task( resid ).restrict_absent_canonical_aas( keep_aas_ );
+) const {
+	runtime_assert_string_msg( initialized_, "Error in core::pack::task::NOTAA::residue_action(): NOTAA resfile command used uninitialized." );
+	task.nonconst_residue_task( resid ).disable_restypes( basenames_to_exclude_ );
 }
 
-///////////////////////////////////////////////////////////////////////
-/// @brief EMPTY disallows canonical residues but leaves packing and designing unchanged
-///this is intended for use with noncanonical residues
-///it will act like NOTAA QWERTYIPASDFGHKLCVNM (all residues), which essentially prevents repacking; PIKAA with no argument raises error
+/// @brief Add a base name to the list of base names to exclude.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 void
-EMPTY::initialize_from_tokens(
-	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
-	Size & which_token,
-	Size /*resid*/
-)
-{
-	debug_assert( get_token( which_token, tokens ) == name() );
-	++which_token;
-}
+NOTAA::add_base_name_to_exclude(
+	std::string const & basename
+) {
+	static const std::string errmsg( "Error in core::pack::task::NOTAA::add_base_name_to_exclude(): " );
+	runtime_assert_string_msg( !basename.empty(), errmsg + "A base name cannot be an empty string." );
+	runtime_assert_string_msg( !basenames_to_exclude_.has_value( basename ), errmsg + "The base name \"" + basename + "\" was added more than once." );
 
-void
-EMPTY::residue_action(
-	PackerTask & task,
-	Size resid
-) const
-{
-	//vector is expected format for PackerTask, but false at all positions
-	utility::vector1< bool > keep_aas( chemical::num_canonical_aas, false );
-	std::string mode( "EMPTY" );
-	task.nonconst_residue_task( resid ).restrict_absent_canonical_aas( keep_aas, mode );
-	task.nonconst_residue_task( resid ).disallow_noncanonical_aas();
-
-}
-
-///////////////////////////////////////////////////////////////////////
-/// @brief RESET disallows noncanonical residues and enables all of the canonical
-///this is intended for use when both NC and PIKAA actions are used to allow for noncanonical and canonical residue at the same position
-void
-RESET::initialize_from_tokens(
-	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
-	Size & which_token,
-	Size /*resid*/
-)
-{
-	debug_assert( get_token( which_token, tokens ) == name() );
-	++which_token;
-}
-
-void
-RESET::residue_action(
-	PackerTask & task,
-	Size resid
-) const
-{
-	task.nonconst_residue_task(resid).reset();
+	basenames_to_exclude_.push_back(basename);
+	initialized_ = true;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -865,7 +862,8 @@ PROPERTY::initialize_from_tokens(
 {
 	debug_assert( get_token( which_token, tokens ) == name() );
 	++which_token;
-	property_ = get_token( which_token, tokens );
+	property_ = core::chemical::ResidueProperties::get_property_from_string( get_token( which_token, tokens ) );
+	runtime_assert_string_msg( property_ != core::chemical::NO_PROPERTY, "Error in core::pack::task::PROPERTY::initialize_from_tokens(): The string \"" + get_token( which_token, tokens ) + "\" corresponds to no known residue property." );
 	++which_token;
 }
 
@@ -877,25 +875,9 @@ PROPERTY::residue_action(
 {
 	using namespace chemical;
 
-	utility::vector1< bool > keep_aas( chemical::num_canonical_aas, false );
+	runtime_assert_string_msg( property_ != core::chemical::NO_PROPERTY, "Error in core::pack::task::PROPERTY::residue_action(): The PROPERTY object cannot be used uninitialized." );
 
-	for ( ResidueLevelTask::ResidueTypeCOPListConstIter
-			restype_iter = task.residue_task( resid ).allowed_residue_types_begin(),
-			restype_iter_end = task.residue_task( resid ).allowed_residue_types_end();
-			restype_iter != restype_iter_end; ++restype_iter ) {
-		if ( (*restype_iter)->aa() > num_canonical_aas ) {
-			std::stringstream err_msg;
-			err_msg  << "PROPERTY mode read for residue " << resid << " which has been instructed to use non-canonical amino acids.";
-			onError(err_msg.str());
-			continue;
-		}
-		if ( (*restype_iter)->has_property( property_ ) ) {
-			keep_aas[ (*restype_iter)->aa() ] = true;
-		}
-	}
-	std::string mode( property_ );
-	task.nonconst_residue_task(resid).restrict_absent_canonical_aas( keep_aas, mode );
-
+	task.nonconst_residue_task(resid).restrict_to_restypes_with_all_properties( utility::vector1< core::chemical::ResidueProperty >( { property_ } ) );
 }
 
 
@@ -1182,40 +1164,6 @@ EX::residue_action(
 	}
 }
 
-////////////////////////////////////////////////////////////////////
-/// @brief NC allows a noncanonical residue; use one NC command per noncanonical.
-/// The "nc_to_include_" string should match the interchangeability_group of
-/// your desired residue type, and the residue type(s) in that group with
-/// matching variants will be added to the PackerTask.
-void
-NC::initialize_from_tokens(
-	utility::vector1< std::string > const & tokens,
-	Size & which_token,
-	Size /*resid*/
-)
-{
-	debug_assert( get_token( which_token, tokens ) == name() );
-	++which_token;
-	nc_to_include_ = get_token( which_token, tokens );
-	++which_token;
-}//end NC
-
-void
-NC::residue_action(
-	PackerTask & task,
-	Size resid
-) const
-{
-	core::chemical::ResidueTypeSetCOP residue_set = task.residue_task( resid ).get_original_residue_set();
-	if ( residue_set->has_interchangeability_group( nc_to_include_ ) ) {
-		task.nonconst_residue_task(resid).allow_noncanonical_aa( nc_to_include_ );
-	} else {
-		std::stringstream err_msg;
-		err_msg  << "Unable to add non-canonical amino acid(s) with interchangeability group " << nc_to_include_ << " because there are no ResidueTypes with that interchangeability group in the ResidueTypeSet for residue " << resid << ".";
-		onError(err_msg.str());
-	}
-}//end NC
-
 /////////////////////////////////////////////////////////////////
 /// @brief EX_CUTOFF allows setting of the extrachi_cutoff (for determining burial for extra rotamers)
 void
@@ -1427,10 +1375,7 @@ create_command_map()
 	command_map[ ALLAAwc::name() ] = utility::pointer::make_shared< ALLAAwc >();
 	command_map[ PIKAA::name() ] = utility::pointer::make_shared< PIKAA >();
 	command_map[ PIKNA::name() ] = utility::pointer::make_shared< PIKNA >();
-	command_map[ PIKRNA::name() ] = utility::pointer::make_shared< PIKRNA >();
 	command_map[ NOTAA::name() ] = utility::pointer::make_shared< NOTAA >();
-	command_map[ EMPTY::name() ] = utility::pointer::make_shared< EMPTY >();
-	command_map[ RESET::name() ] = utility::pointer::make_shared< RESET >();
 	command_map[ PROPERTY::name() ] = utility::pointer::make_shared< PROPERTY >();
 	command_map[ POLAR::name() ] = utility::pointer::make_shared< POLAR >();
 	command_map[ APOLAR::name() ] = utility::pointer::make_shared< APOLAR >();
@@ -1439,7 +1384,6 @@ create_command_map()
 	command_map[ CHARGED::name() ] = utility::pointer::make_shared< CHARGED >();
 	command_map[ EX::name() ] = utility::pointer::make_shared< EX >();
 	command_map[ EX_CUTOFF::name() ] = utility::pointer::make_shared< EX_CUTOFF >();
-	command_map[ NC::name() ] = utility::pointer::make_shared< NC >();
 	command_map[ USE_INPUT_SC::name() ] = utility::pointer::make_shared< USE_INPUT_SC >();
 	command_map[ AUTO::name() ] = utility::pointer::make_shared< AUTO >();
 	command_map[ SCAN::name() ] = utility::pointer::make_shared< SCAN >();

@@ -23,6 +23,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
+#include <core/pack/palette/PackerPalette.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
@@ -71,18 +72,26 @@ vector1<TaskOperationOP> get_task_operations(
 TaskFactoryOP parse_task_operations(
 	TagCOP tag, DataMap const & data ) {
 
-	TaskFactoryOP new_task_factory( new TaskFactory );
 	if ( ! tag->hasOption(TASK_OPERATIONS_TAG) ) {
+		TaskFactoryOP new_task_factory( utility::pointer::make_shared< TaskFactory >() );
+
+		//VKM, Chemical XRW 2016: set up packer palettes:
+		set_up_packer_palette( tag, data, new_task_factory );
+
 		return new_task_factory;
 	}
+
 	TR << "Object " << tag->getOption<string>("name", "???") << " reading the following task_operations: ";
-	return parse_task_operations( tag->getOption<string>(TASK_OPERATIONS_TAG), data );
+	TaskFactoryOP new_task_factory( parse_task_operations( tag->getOption<string>(TASK_OPERATIONS_TAG), data ) );
+	set_up_packer_palette(tag, data, new_task_factory);
+	return new_task_factory;
 }
 
 TaskFactoryOP parse_task_operations(
 	string const & task_list, DataMap const & data ) {
 
-	TaskFactoryOP new_task_factory( new TaskFactory );
+	TaskFactoryOP new_task_factory( utility::pointer::make_shared< TaskFactory >() );
+
 	string const t_o_val( task_list );
 	typedef utility::vector1<string> StringVec;
 	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
@@ -119,6 +128,9 @@ TaskFactoryOP parse_task_operations(
 		}
 	}
 
+	//VKM, Chemical XRW 2016: set up packer palettes:
+	set_up_packer_palette( tag, data, task_factory );
+
 	if ( ! tag->hasOption(TASK_OPERATIONS_TAG) ) return task_factory;
 
 	string const t_o_val( tag->getOption<string>(TASK_OPERATIONS_TAG) );
@@ -140,32 +152,64 @@ TaskFactoryOP parse_task_operations(
 }
 
 void attributes_for_parse_task_operations(
-	AttributeList & attributes, string const & description) {
+	AttributeList & attributes, string const & description, string const & packerpalette_description) {
 
 	attributes + utility::tag::XMLSchemaAttribute(
 		TASK_OPERATIONS_TAG,
 		utility::tag::xsct_task_operation_comma_separated_list,
-		(description == "" ? "A comma separated list of TaskOperations to use." : description) );
+		(description.empty() ? "A comma-separated list of TaskOperations to use." : description) );
+
+	attributes + utility::tag::XMLSchemaAttribute( PACKER_PALETTE_TAG, utility::tag::xsct_packer_palette,
+		( packerpalette_description.empty() ? "A previously-defined PackerPalette to use, which specifies the set of residue types with which to design (to be pruned with TaskOperations)." : packerpalette_description ) );
 }
 
 void attributes_for_parse_task_operations_w_factory(
 	AttributeList & attributes, string const & used_for_descr ) {
 
-	string to_descrip = "A comma separated list of TaskOperations to use";
+	string to_descrip = "A comma-separated list of TaskOperations to use";
 	string tf_descrip = "A TaskFactory specification to use";
+	string pp_descrip = "A previously-defined PackerPalette to use";
 	if ( ! used_for_descr.empty() ) {
 		to_descrip += " for " + used_for_descr;
 		tf_descrip += " for " + used_for_descr;
+		pp_descrip += " for " + used_for_descr;
 	} else {
 		to_descrip += ".";
 		tf_descrip += ".";
+		pp_descrip += ", which specifies the set of residue types with which to design (to be pruned with TaskOperations).";
 	}
 
 	attributes
 		+ utility::tag::XMLSchemaAttribute( TASK_OPERATIONS_TAG, utility::tag::xsct_task_operation_comma_separated_list, to_descrip )
-		+ utility::tag::XMLSchemaAttribute( TASK_FACTORY_TAG, utility::tag::xs_string , tf_descrip );
+		+ utility::tag::XMLSchemaAttribute( TASK_FACTORY_TAG, utility::tag::xs_string , tf_descrip )
+		+ utility::tag::XMLSchemaAttribute( PACKER_PALETTE_TAG, utility::tag::xsct_packer_palette , pp_descrip );
 }
 
+
+/// @brief Parse a "packer_palette" tag from XML, and add a PackerPalette to a TaskFactory.
+/// @details Added as part of the 2016 Chemical XRW (eXtreme Rosetta Workshop), New Brunswick, NJ,
+/// 25 January 2016 to 1 February 2016.
+/// @param[in] tag Const owning pointer to an XML tag that may or may not contain a single "packer_palette=xxx" string.
+/// @param[in] data Const reference to the data map, from which defined PackerPalettes will be sought.
+/// @param[out] task_factory Non-const owning pointer to the task_factory that will have a PackerPalette added to it.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @note Moved to core on 7 Nov. 2018 by VKM, vmulligan@flatironinstitute.org.
+void
+set_up_packer_palette(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap const & data,
+	core::pack::task::TaskFactoryOP & task_factory
+) {
+	if ( !tag->hasOption("packer_palette") ) return;
+
+	std::string const pp_string( tag->getOption<std::string>("packer_palette") );
+	if ( data.has( "packer_palettes", pp_string ) ) {
+		TR << "Adding PackerPalette named \"" << pp_string << "\"." << std::endl;
+		task_factory->set_packer_palette( data.get_ptr< core::pack::palette::PackerPalette >("packer_palettes", pp_string ) );
+	} else {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "PackerPalette " + pp_string + " not found in basic::datacache::DataMap.");
+	}
+}
 
 }
 }

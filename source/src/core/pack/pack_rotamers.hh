@@ -38,9 +38,6 @@
 #include <utility/vector1.hh>
 
 
-// #include <vector>
-
-
 namespace core {
 namespace pack {
 

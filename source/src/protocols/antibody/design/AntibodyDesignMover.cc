@@ -777,7 +777,6 @@ AntibodyDesignMover::finalize_setup(Pose & pose){
 
 	framework_mutator_->set_scorefxn(scorefxn_);
 	framework_mutator_->set_pack_shell(neighbor_dis_);
-	framework_mutator_->keep_current(false);
 
 	//Reinit CDRDBPoseSet.  No option to set your own CDRs at the moment.  Later maybe.
 	initialize_cdr_set(pose);

@@ -29,6 +29,7 @@
 // C++ headers
 #include <map>
 #include <set>
+#include <tuple>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -44,6 +45,17 @@ namespace core {
 namespace chemical {
 
 typedef std::pair< AA, std::pair< utility::vector1< std::string >, utility::vector1< VariantType > > > AA_VariantsExceptions;
+
+/// @brief A type for key lookup.  This consists of a BASE TYPE ResidueTypeCOP, a list of variants (by enum), a list of custom variants (by string),
+/// a list of variant exceptions (by enum), and a bool for whether to turn off metapatches.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+typedef std::tuple<
+	ResidueTypeCOP,
+	utility::vector1< VariantType >, //Included VariantTypes
+	utility::vector1< std::string >, //Included special VariantTypes without enums
+	utility::vector1< VariantType >, //Excluded VariantTypes
+	bool //Disable metapatches
+	> Restype_Variants_VariantStrings_Exceptions;
 
 class ResidueTypeSetCache: public utility::pointer::ReferenceCount {
 
@@ -124,6 +136,66 @@ public:
 		utility::vector1< std::string > const & variants,
 		utility::vector1< VariantType > const & exceptions ) const;
 
+	/// @brief Have we already cached this combination of base type, variants, and exceptions?
+	/// @note This function is *not* threadsafe.  It is assumed that thread locking will be handled by whatever is calling this.
+	/// @param[in] base_type A ResidueTypeCOP to a base residue type, used for looking up the variant.
+	/// @param[in] variants A list of VariantTypes that the returned ResidueTypes *must* have, used for looking up the variant.
+	/// @param[in] variant_strings A list of custom VariantTypes (that don't have enums) that the returned ResidueTypes *must*
+	/// have, used for looking up the variant.
+	/// @param[in] exceptions A list of VariantTypes that are ignored in matching.
+	/// @param[in] no_metapatches If true, metapatches are ignored.
+	/// @returns TRUE if we have cached this combination, FALSE otherwise.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	bool
+	all_types_with_variants_residuetypecops_already_cached(
+		ResidueTypeCOP base_type,
+		utility::vector1< VariantType > const & variants,
+		utility::vector1< std::string > const & variant_strings,
+		utility::vector1< VariantType > const & exceptions,
+		bool const no_metapatches
+	) const;
+
+	/// @brief Cache this combination of base type, variants, and exceptions.
+	/// @note This function is *not* threadsafe.  It is assumed that thread locking will be handled by whatever is calling this.
+	/// @param[in] base_type A ResidueTypeCOP to a base residue type, used for looking up the variant.
+	/// @param[in] variants A list of VariantTypes that the returned ResidueTypes *must* have, used for looking up the variant.
+	/// @param[in] variant_strings A list of custom VariantTypes (that don't have enums) that the returned ResidueTypes *must*
+	/// have, used for looking up the variant.
+	/// @param[in] exceptions A list of VariantTypes that are ignored in matching.
+	/// @param[in] no_metapatches If true, metapatches are ignored.
+	/// @param[in] types_to_cache A vector of ResidueTypeCOPs to associate with the key defined by the five variables above.
+	/// @returns Nothing.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void
+	cache_all_types_with_variants_residuetypecops(
+		ResidueTypeCOP base_type,
+		utility::vector1< VariantType > const & variants,
+		utility::vector1< std::string > const & variant_strings,
+		utility::vector1< VariantType > const & exceptions,
+		bool const no_metapatches,
+		ResidueTypeCOPs const & types_to_cache
+	);
+
+	/// @brief Retrieve this combination of base type, variants, and exceptions.  NOTE THAT THIS ASSUMES THIS INFORMATION WAS
+	/// ALREADY CACHED!
+	/// @note This function is *not* threadsafe.  It is assumed that thread locking will be handled by whatever is calling this.
+	/// @param[in] base_type A ResidueTypeCOP to a base residue type, used for looking up the variant.
+	/// @param[in] variants A list of VariantTypes that the returned ResidueTypes *must* have, used for looking up the variant.
+	/// @param[in] variant_strings A list of custom VariantTypes (that don't have enums) that the returned ResidueTypes *must*
+	/// have, used for looking up the variant.
+	/// @param[in] exceptions A list of VariantTypes that are ignored in matching.
+	/// @param[in] no_metapatches If true, metapatches are ignored.
+	/// @returns A vector of ResidueTypeCOPs with the given base type and the associated variant types.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	ResidueTypeCOPs
+	retrieve_all_types_with_variants_residuetypecops(
+		ResidueTypeCOP base_type,
+		utility::vector1< VariantType > const & variants,
+		utility::vector1< std::string > const & variant_strings,
+		utility::vector1< VariantType > const & exceptions,
+		bool const no_metapatches
+	) const;
+
 	//ResidueTypeCOPs
 	//get_all_types_with_variants_aa( AA aa,
 	// utility::vector1< std::string > const & variants,
@@ -200,6 +272,11 @@ private:
 	/// @brief caching queries based on aa & variants to avoid recomputation with ResidueTypeFinder
 	///
 	std::map< AA_VariantsExceptions, ResidueTypeCOPs > cached_aa_variants_map_;
+
+	/// @brief Caching queries based on ResidueTypeCOP and variants to avoid recomputation with ResidueTypeFinder.
+	/// @details The key is a tuple of < BASE residue type COP, included variant list (enum and string), excluded variant list (enum and string) >.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::map< Restype_Variants_VariantStrings_Exceptions, ResidueTypeCOPs  > cached_restype_variants_map_;
 
 	///////////////////////////////////////////////////////////////////////////
 	// These need to be recomputed in a batchwise fashion,

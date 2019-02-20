@@ -172,6 +172,7 @@ sources = {
 		"SymmetricMinimizer",
 	],
 	"pack" : [
+		"basic_design",
 		"min_pack",
 		"PeptoidDesignTests",
 		"RotamerTrials",

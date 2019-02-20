@@ -30,39 +30,40 @@
 int
 main( int argc, char * argv [] )
 {
-    try {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	option.add_relevant(in::path::database);
-	option.add_relevant(in::file::extra_res_fa);
-	option.add_relevant(packing::unboundrot);
-	option.add_relevant(packing::ex1::ex1);
-	option.add_relevant(packing::ex1aro::ex1aro);
-	option.add_relevant(packing::ex2::ex2);
-	option.add_relevant(packing::extrachi_cutoff);
-	option.add_relevant(packing::no_optH);
-	option.add_relevant(packing::flip_HNQ);
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		option.add_relevant(in::path::database);
+		option.add_relevant(in::file::extra_res_fa);
+		option.add_relevant(packing::packer_palette::extra_base_type_file);
+		option.add_relevant(packing::unboundrot);
+		option.add_relevant(packing::ex1::ex1);
+		option.add_relevant(packing::ex1aro::ex1aro);
+		option.add_relevant(packing::ex2::ex2);
+		option.add_relevant(packing::extrachi_cutoff);
+		option.add_relevant(packing::no_optH);
+		option.add_relevant(packing::flip_HNQ);
 
-	option.add_relevant(in::file::s);
-	option.add_relevant(in::file::native);
-	option.add_relevant(in::path::fragments);
-	option.add_relevant(out::nstruct);
-	option.add_relevant(out::suffix);
-	option.add_relevant(out::path::pdb);
-	option.add_relevant(docking::ligand::option_file);
-	option.add_relevant(enzdes::cstfile);
+		option.add_relevant(in::file::s);
+		option.add_relevant(in::file::native);
+		option.add_relevant(in::path::fragments);
+		option.add_relevant(out::nstruct);
+		option.add_relevant(out::suffix);
+		option.add_relevant(out::path::pdb);
+		option.add_relevant(docking::ligand::option_file);
+		option.add_relevant(enzdes::cstfile);
 
 
-	// Parses command line options and inits RNG.
-	// Doesn't seem to hurt to do it again if already done once (?)
-	// Except in unit testing mode, where it wipes out e.g. -database
-	devel::init(argc, argv);
+		// Parses command line options and inits RNG.
+		// Doesn't seem to hurt to do it again if already done once (?)
+		// Except in unit testing mode, where it wipes out e.g. -database
+		devel::init(argc, argv);
 
-	protocols::jd2::JobDistributor::get_instance()->go(new protocols::ligand_docking::GrowLigand("X"));
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-	return -1;
-    }
-    return 0;
+		protocols::jd2::JobDistributor::get_instance()->go(new protocols::ligand_docking::GrowLigand("X"));
+	} catch (utility::excn::Exception const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }
 

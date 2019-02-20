@@ -87,7 +87,7 @@ public: // Test functions
 		using namespace core::scoring::nmr;
 		using namespace core::scoring::nmr::rdc;
 
-		TS_TRACE("Testing RDCMultiSet instantiation");
+		TR << "Testing RDCMultiSet instantiation" << std::endl;
 
 		RDCMultiSet multiset_1(bicelle_exp_input_, "Bicelles", g_);
 		RDCMultiSet multiset_2(tmv107_exp_input_, "TMV107", g_, 1.0, "NLSDA");
@@ -145,7 +145,7 @@ public: // Test functions
 	void test_score_calculation_by_svd() {
 		using namespace core::scoring::nmr::rdc;
 
-		TS_TRACE("Testing RDCMultiSet score calculation with SVD");
+		TR << "Testing RDCMultiSet score calculation with SVD" << std::endl;
 
 		// Create RDCMultiSets, set singleset weights and weighting scheme
 		// Update single rdc weights, spin coordinates and matrix A before tensor and score calculation
@@ -212,7 +212,7 @@ public: // Test functions
 	void test_score_calculation_by_nls() {
 		using namespace core::scoring::nmr::rdc;
 
-		TS_TRACE("Testing RDCMultiSet score calculation with NLS fitting");
+		TR << "Testing RDCMultiSet score calculation with NLS fitting" << std::endl;
 		// Set fixed RG seed for NLS fitting
 		initialize_rng();
 
@@ -273,7 +273,7 @@ public: // Test functions
 	void test_score_calculation_by_nls_da() {
 		using namespace core::scoring::nmr::rdc;
 
-		TS_TRACE("Testing RDCMultiSet score calculation with NLS fitting and fixed Da");
+		TR << "Testing RDCMultiSet score calculation with NLS fitting and fixed Da" << std::endl;
 		// Set fixed RG seed for NLS fitting
 		initialize_rng();
 
@@ -339,7 +339,7 @@ public: // Test functions
 	void test_score_calculation_by_nls_r() {
 		using namespace core::scoring::nmr::rdc;
 
-		TS_TRACE("Testing RDCMultiSet score calculation with NLS fitting and fixed R");
+		TR << "Testing RDCMultiSet score calculation with NLS fitting and fixed R" << std::endl;
 		// Set fixed RG seed for NLS fitting
 		initialize_rng();
 
@@ -411,7 +411,7 @@ public: // Test functions
 		// Additional options; sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:rdc:normalization_type none -nmr:rdc:correct_sign false");
 
-		TS_TRACE("Testing RDCMultiSet score calculation for normalized data");
+		TR << "Testing RDCMultiSet score calculation for normalized data" << std::endl;
 
 		utility::vector1< std::string > bicelle_normalized_data;
 		bicelle_normalized_data.push_back("core/scoring/nmr/rdc/bicelles_nh_norm_toNH.txt");

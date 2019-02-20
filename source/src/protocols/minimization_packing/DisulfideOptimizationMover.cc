@@ -87,15 +87,7 @@ DisulfideOptimizationMover::break_repack_reform( Pose & pose, utility::vector1< 
 	// Repack.
 	core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
-	// Work by allow_noncanonical_aa() to be stable to noncanonicals
-	task->nonconst_residue_task( cys_pos[ 1 ] ).allow_noncanonical_aa( pose.residue_type( cys_pos[ 1 ] ).name() );
-	task->nonconst_residue_task( cys_pos[ 2 ] ).allow_noncanonical_aa( pose.residue_type( cys_pos[ 2 ] ).name() );
-	/*
-	utility::vector1< bool > const allowed_aas( core::chemical::num_canonical_aas, false );
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-	if ( ii == cys_pos[ 1 ] || ii == cys_pos[ 2 ] ) continue;
-	task->nonconst_residue_task( ii ).restrict_absent_canonical_aas( allowed_aas );
-	}*/
+	task->restrict_to_repacking();
 	core::pack::pack_rotamers( pose, *sfxn_, task );
 
 	// Mutate back to a disulfide. The bond length will likely not be ideal.

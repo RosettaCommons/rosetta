@@ -145,14 +145,18 @@ public:
 		// original test_in.pdb pose is protonated on NE2
 		task->nonconst_residue_task( 6 ).or_fix_his_tautomer( true );
 		TS_ASSERT( task->residue_task( 6 ).allowed_residue_types().size() == 1 );
-		TS_ASSERT( (* task->residue_task( 6 ).allowed_residue_types_begin() )->name() == "HIS" );
+		if ( !task->residue_task( 6 ).allowed_residue_types().empty() ) {
+			TS_ASSERT( (* task->residue_task( 6 ).allowed_residue_types_begin() )->name() == "HIS" );
+		}
 
 		// 2. test that this operation is commutative, in that, it obeys an "or" like behavior;
 		// setting fix_his_tautomer to false after first setting it to true doesn't re-enable
 		// HIS_D
 		task->nonconst_residue_task( 6 ).or_fix_his_tautomer( false );
 		TS_ASSERT( task->residue_task( 6 ).allowed_residue_types().size() == 1 );
-		TS_ASSERT( (* task->residue_task( 6 ).allowed_residue_types_begin() )->name() == "HIS" );
+		if ( !task->residue_task( 6 ).allowed_residue_types().empty() ) {
+			TS_ASSERT( (* task->residue_task( 6 ).allowed_residue_types_begin() )->name() == "HIS" );
+		}
 
 	}
 

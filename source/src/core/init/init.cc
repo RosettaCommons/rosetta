@@ -302,6 +302,14 @@
 
 #include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
 
+// for creating and registering PackerPalettes
+#include <core/pack/palette/PackerPaletteRegistrator.hh>
+#include <core/pack/palette/CustomBaseTypePackerPaletteCreator.hh>
+#include <core/pack/palette/DefaultPackerPaletteCreator.hh>
+#include <core/pack/palette/NoDesignPackerPaletteCreator.hh>
+#include <core/pack/palette/PackerPaletteCreator.hh>
+
+// for creating and registering JumpSelectors:
 #include <core/select/jump_selector/JumpSelectorRegistrator.hh>
 #include <core/select/jump_selector/AndJumpSelectorCreator.hh>
 #include <core/select/jump_selector/OrJumpSelectorCreator.hh>
@@ -709,6 +717,10 @@ static TaskOperationRegistrator< ExtraRotamersGenericCreator > ExtraRotamersGene
 static TaskOperationRegistrator< RotamerExplosionCreator > RotamerExplosionCreator_registrator;
 static TaskOperationRegistrator< RestrictAbsentCanonicalAASCreator > RestrictAbsentCanonicalAASCreator_registrator;
 static TaskOperationRegistrator< DisallowIfNonnativeCreator > DisallowIfNonnativeCreator_registrator;
+static TaskOperationRegistrator< RestrictToSpecifiedBaseResidueTypesCreator > RestrictToSpecifiedBaseResidueTypesCreator_registrator;
+static TaskOperationRegistrator< ProhibitSpecifiedBaseResidueTypesCreator > ProhibitSpecifiedBaseResidueTypesCreator_registrator;
+static TaskOperationRegistrator< RestrictToResiduePropertiesCreator > RestrictToResiduePropertiesCreator_registrator;
+static TaskOperationRegistrator< ProhibitResiduePropertiesCreator > ProhibitResiduePropertiesCreator_registrator;
 static TaskOperationRegistrator< RestrictResidueToRepackingCreator > RestrictResidueToRepackingCreator_registrator;
 static TaskOperationRegistrator< RestrictToRepackingCreator > RestrictToRepackingCreator_registrator;
 static TaskOperationRegistrator< OperateOnCertainResiduesCreator > OperateOnCertainResiduesCreator_registrator;
@@ -791,6 +803,12 @@ static JumpSelectorRegistrator< OrJumpSelectorCreator > reg_OrJumpSelectorCreato
 static JumpSelectorRegistrator< NotJumpSelectorCreator > reg_NotJumpSelectorCreator;
 static JumpSelectorRegistrator< JumpIndexSelectorCreator > reg_JumpIndexSelectorCreator;
 static JumpSelectorRegistrator< InterchainJumpSelectorCreator > reg_InterchainJumpSelectorCreator;
+
+// register PackerPaletteCreators
+using namespace core::pack::palette;
+static PackerPaletteRegistrator< CustomBaseTypePackerPaletteCreator > reg_CustomBaseTypePackerPaletteCreator;
+static PackerPaletteRegistrator< DefaultPackerPaletteCreator > reg_DefaultPackerPaletteCreator;
+static PackerPaletteRegistrator< NoDesignPackerPaletteCreator > reg_NoDesignPackerPaletteCreator;
 
 using basic::resource_manager::ResourceLoaderRegistrator;
 static ResourceLoaderRegistrator< core::conformation::symmetry::SymmDataLoaderCreator > SymmDataLoaderCreator_registrator;

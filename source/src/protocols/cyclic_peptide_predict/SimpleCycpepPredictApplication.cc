@@ -44,6 +44,7 @@
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 #include <core/select/residue_selector/PhiSelector.hh>
 #include <core/select/residue_selector/BinSelector.hh>
 #include <core/select/residue_selector/NotResidueSelector.hh>
@@ -3625,79 +3626,88 @@ SimpleCycpepPredictApplication::set_up_design_taskoperations(
 	core::Size const nres,
 	core::pose::PoseCOP pose
 ) const {
-	fdes->set_up_default_task_factory();
+	using namespace core::pack::palette;
+	using namespace core::pack::task;
+
+	CustomBaseTypePackerPaletteOP palette( utility::pointer::make_shared< CustomBaseTypePackerPalette >() );
+	static const utility::fixedsizearray1< std::string, 18 > d_names( {"DALA","DASP","DGLU","DPHE","DHIS","DILE","DLYS","DLEU","DMET","DASN","DPRO","DGLN","DARG","DSER","DTHR","DVAL","DTRP","DTYR"} );
+	for ( std::string const & name : d_names ) {
+		palette->add_type( name );
+	}
+
+	TaskFactoryOP tf( utility::pointer::make_shared< TaskFactory >() );
+	tf->set_packer_palette( palette );
 
 	std::stringstream L_resfile("");
-	std::stringstream L_empty_resfile("");
 	std::stringstream D_resfile("");
+
 	L_resfile << "start" << std::endl;
-	L_empty_resfile << "start" << std::endl;
 	D_resfile << "start" << std::endl;
 
+	static const std::string L_default( "ADEFHIKLNPQRSTVWY" );
+	static const std::string D_default( "X[DALA]X[DASP]X[DGLU]X[DPHE]X[DHIS]X[DILE]X[DLYS]X[DLEU]X[DASN]X[DPRO]X[DGLN]X[DARG]X[DSER]X[DTHR]X[DVAL]X[DTRP]X[DTYR]" );
 	for ( core::Size i=1; i<=nres; ++i ) {
 		core::Size orig_res( i + cyclic_offset ) ;
 		if ( orig_res > nres ) orig_res -= nres;
 		debug_assert( orig_res >= 1 && orig_res <= nres ); //Should be true.
-		L_empty_resfile << i << " A EMPTY" << std::endl;
+
 		if ( allowed_canonicals_by_position_.count( static_cast<core::Size>(orig_res) ) == 1 ) {
 			if ( allowed_canonicals_by_position_.at( static_cast<core::Size>(orig_res) ).size() > 0 ) {
 				L_resfile << i << " A PIKAA " << get_oneletter_codes( allowed_canonicals_by_position_.at( static_cast<core::Size>(orig_res) ) ) << std::endl;
 			} else {
-				L_resfile << i << " A EMPTY" << std::endl;
+				L_resfile << i << " A NATAA" << std::endl;
 			}
 		} else if ( allowed_canonicals_by_position_.count( 0 ) == 1 ) {
 			if ( allowed_canonicals_by_position_ .at( 0 ).size() > 0 ) {
 				L_resfile << i << " A PIKAA " << get_oneletter_codes( allowed_canonicals_by_position_.at( 0 ) ) << std::endl;
 			} else {
-				L_resfile << i << " A EMPTY" << std::endl;
+				L_resfile << i << " A NATAA" << std::endl;
 			}
 		} else {
-			L_resfile << i << " A PIKAA ADEFHIKLNPQRSTVWY" << std::endl;
+			L_resfile << i << " A PIKAA " << L_default;
+			if ( !prohibit_D_at_negative_phi_ ) {
+				L_resfile << D_default;
+			}
+			L_resfile << std::endl;
 		}
 		if ( allowed_noncanonicals_by_position_.count( static_cast<core::Size>(orig_res) ) == 1 ) {
 			if ( allowed_noncanonicals_by_position_.at( static_cast<core::Size>(orig_res) ).size() > 0 ) {
-				D_resfile << i << " A " << get_nc_threeletter_codes( allowed_noncanonicals_by_position_.at( static_cast<core::Size>(orig_res) ) ) << std::endl;
+				D_resfile << i << " A PIKAA " << get_nc_name_codes( allowed_noncanonicals_by_position_.at( static_cast<core::Size>(orig_res) ) ) << std::endl;
 			}
 		} else if ( allowed_noncanonicals_by_position_.count( 0 ) == 1 ) {
 			if ( allowed_noncanonicals_by_position_.at( 0 ).size() > 0 ) {
-				D_resfile << i << " A " << get_nc_threeletter_codes( allowed_noncanonicals_by_position_.at( 0 ) ) << std::endl;
+				D_resfile << i << " A PIKAA " << get_nc_name_codes( allowed_noncanonicals_by_position_.at( 0 ) ) << std::endl;
 			}
 		} else {
-			D_resfile << i << " A NC DAL NC DAS NC DGU NC DPH NC DHI NC DIL NC DLY NC DLE NC DAN NC DPR NC DGN NC DAR NC DSE NC DTH NC DVA NC DTR NC DTY" << std::endl;
+			D_resfile << i << " A PIKAA " << D_default;
+			if ( !prohibit_L_at_positive_phi_ ) {
+				D_resfile << L_default;
+			}
+			D_resfile << std::endl;
 		}
 	}
 
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "L-resfile:\n" << L_resfile.str() << std::endl;
-		TR.Debug << "L-empty resfile:\n" << L_empty_resfile.str() << std::endl;
 		TR.Debug << "D-resfile:\n" << D_resfile.str() << std::endl;
 	}
 
 	core::pack::task::operation::ReadResfileOP L_resfile_taskop( new core::pack::task::operation::ReadResfile );
-	core::pack::task::operation::ReadResfileOP L_empty_resfile_taskop( new core::pack::task::operation::ReadResfile );
 	core::pack::task::operation::ReadResfileOP D_resfile_taskop( new core::pack::task::operation::ReadResfile );
 
 	L_resfile_taskop->set_cached_resfile( L_resfile.str() );
 	D_resfile_taskop->set_cached_resfile( D_resfile.str() );
-	if ( prohibit_L_at_positive_phi_ ) {
-		core::select::residue_selector::PhiSelectorOP neg_phi_selector( new core::select::residue_selector::PhiSelector );
-		neg_phi_selector->set_select_positive_phi(false);
-		L_resfile_taskop->set_residue_selector( neg_phi_selector );
 
-		L_empty_resfile_taskop->set_cached_resfile( L_empty_resfile.str() );
-		core::select::residue_selector::NotResidueSelectorOP notselector( new core::select::residue_selector::NotResidueSelector );
-		notselector->set_residue_selector( neg_phi_selector );
-		L_empty_resfile_taskop->set_residue_selector( notselector );
-	}
-	if ( prohibit_D_at_negative_phi_ ) {
-		core::select::residue_selector::PhiSelectorOP pos_phi_selector( new core::select::residue_selector::PhiSelector );
-		pos_phi_selector->set_select_positive_phi(true);
-		D_resfile_taskop->set_residue_selector( pos_phi_selector );
-	}
 
-	fdes->get_task_factory()->push_back( L_resfile_taskop );
-	if ( prohibit_L_at_positive_phi_ ) fdes->get_task_factory()->push_back( L_empty_resfile_taskop );
-	fdes->get_task_factory()->push_back( D_resfile_taskop );
+	core::select::residue_selector::PhiSelectorOP neg_phi_selector( new core::select::residue_selector::PhiSelector );
+	neg_phi_selector->set_select_positive_phi(false);
+	L_resfile_taskop->set_residue_selector( neg_phi_selector );
+	core::select::residue_selector::PhiSelectorOP pos_phi_selector( new core::select::residue_selector::PhiSelector );
+	pos_phi_selector->set_select_positive_phi(true);
+	D_resfile_taskop->set_residue_selector( pos_phi_selector );
+
+	tf->push_back( L_resfile_taskop );
+	tf->push_back( D_resfile_taskop );
 
 	//Prohibit design at isopeptide cyclization positions:
 	if ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
@@ -3713,8 +3723,10 @@ SimpleCycpepPredictApplication::set_up_design_taskoperations(
 
 		core::pack::task::operation::RestrictToRepackingRLTOP restrict_repacking( new core::pack::task::operation::RestrictToRepackingRLT );
 		core::pack::task::operation::OperateOnResidueSubsetOP op_on_subset( new core::pack::task::operation::OperateOnResidueSubset( restrict_repacking, linker_selector ) );
-		fdes->get_task_factory()->push_back(op_on_subset);
+		tf->push_back(op_on_subset);
 	}
+
+	fdes->set_task_factory( tf );
 }
 
 /// @brief Given a vector of full residue names of canonical residues, give me a concatenated list of one-letter codes.
@@ -3735,10 +3747,10 @@ SimpleCycpepPredictApplication::get_oneletter_codes(
 	return outstr.str();
 }
 
-/// @brief Given a vector of full residue names, give me a string of the form "NC <3-letter code> NC <3-letter code> NC <3-letter code> ..."
+/// @brief Given a vector of full residue names, give me a string of the form "X[<fullname1>]X[<fullname2>]X[<fullname3>] ..."
 /// @details Does no checking for duplicates.  Will fail gracelessly with invalid names.
 std::string
-SimpleCycpepPredictApplication::get_nc_threeletter_codes(
+SimpleCycpepPredictApplication::get_nc_name_codes(
 	utility::vector1< std::string> const &fullnames
 ) const {
 	using namespace core::chemical;
@@ -3746,9 +3758,8 @@ SimpleCycpepPredictApplication::get_nc_threeletter_codes(
 	ResidueTypeSetCOP restype_set( ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 	for ( core::Size i=1, imax=fullnames.size(); i<=imax; ++i ) {
 		ResidueTypeCOP curtype( ResidueTypeFinder( *restype_set ).residue_base_name( fullnames[i] ).get_representative_type() );
-		runtime_assert_string_msg( curtype, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::get_nc_threeletter_codes(): The name " + fullnames[i] + " corresponds to no known residue type." );
-		outstr << "NC " << curtype->name3();
-		if ( i < imax ) outstr << " ";
+		runtime_assert_string_msg( curtype, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::get_nc_name_codes(): The name " + fullnames[i] + " corresponds to no known residue type." );
+		outstr << "X[" << curtype->base_name() << "]";
 	}
 	return outstr.str();
 }

@@ -46,7 +46,7 @@ public:
 	core::pose::PoseOP pose;
 
 	void setUp(){
-		core_init_with_additional_options( "-fasta protocols/stepwise/modeler/align/seq_with_AAmismatch.fasta -s protocols/stepwise/modeler/align/scaff_subset_stepwise_input_seq_1.pdb" );
+		core_init_with_additional_options( "-out:level 500 -fasta protocols/stepwise/modeler/align/seq_with_AAmismatch.fasta -s protocols/stepwise/modeler/align/scaff_subset_stepwise_input_seq_1.pdb" );
 
 		using namespace core::chemical;
 		using namespace core::pose;

@@ -328,6 +328,47 @@ nonadduct_variants_match( ResidueType const & res1, ResidueType const & res2 )
 	return variants_match_with_exceptions( res1, res2, utility::vector1< VariantType >( 1, ADDUCT_VARIANT ) );
 }
 
+/// @brief Get a list of those VariantTypes that affect termini.
+/// @author Vikram K. Mulligan.
+utility::vector1 < VariantType >
+get_terminal_varianttypes() {
+	utility::vector1 < VariantType > terminal_types;
+	terminal_types.reserve(31);
+	terminal_types.push_back( UPPER_TERMINUS_VARIANT );
+	terminal_types.push_back( LOWER_TERMINUS_VARIANT );
+	terminal_types.push_back( UPPERTERM_TRUNC_VARIANT );
+	terminal_types.push_back( LOWERTERM_TRUNC_VARIANT );
+	terminal_types.push_back( NTERM_CONNECT );
+	terminal_types.push_back( CTERM_CONNECT );
+	terminal_types.push_back( CUTPOINT_LOWER );
+	terminal_types.push_back( CUTPOINT_UPPER );
+	terminal_types.push_back( METHYLATED_NTERM_VARIANT );
+	terminal_types.push_back( ACETYLATED_NTERMINUS_VARIANT );
+	terminal_types.push_back( METHYLATED_CTERMINUS_VARIANT );
+	terminal_types.push_back( PHOSPHONATE_UPPER_VARIANT );
+	terminal_types.push_back( THREE_PRIME_END_OH );
+	terminal_types.push_back( THREE_PRIME_PHOSPHATE );
+	terminal_types.push_back( THREE_PRIME_PACKABLE_PHOSPHATE );
+	terminal_types.push_back( FIVE_PRIME_END_OH );
+	terminal_types.push_back( FIVE_PRIME_END_PHOSPHATE );
+	terminal_types.push_back( FIVE_PRIME_PHOSPHATE );
+	terminal_types.push_back( FIVE_PRIME_PACKABLE_PHOSPHATE );
+	terminal_types.push_back( THREE_PRIME_FIVE_PRIME_METHYL_PHOSPHATE );
+	terminal_types.push_back( N_ACETYLATION );
+	terminal_types.push_back( C_METHYLAMIDATION );
+	terminal_types.push_back( OOP_PRE );
+	terminal_types.push_back( OOP_POST );
+	terminal_types.push_back( HBS_PRE );
+	terminal_types.push_back( HBS_POST );
+	terminal_types.push_back( A3B_HBS_PRE );
+	terminal_types.push_back( A3B_HBS_POST );
+	terminal_types.push_back( TRIAZOLAMERN );
+	terminal_types.push_back( TRIAZOLAMERC );
+	terminal_types.push_back( VIRTUAL_NTERM );
+	terminal_types.push_back( VIRTUAL_PHOSPHATE );
+
+	return terminal_types;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////

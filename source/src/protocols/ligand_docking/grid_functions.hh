@@ -22,6 +22,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/grid/CartGrid.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -71,6 +72,7 @@ void grid_rotamer_trials(
 	core::grid::CartGrid<int> const & grid,
 	core::pose::Pose & pose,
 	core::Size rsd_no,
+	core::pack::task::PackerTask const & packertask,
 	int const min_score = 0
 );
 
@@ -78,7 +80,8 @@ void rb_grid_rotamer_trials_atr_rep(
 	core::grid::CartGrid<int> const & grid,
 	core::pose::Pose & pose,
 	core::Size begin,
-	core::Size end
+	core::Size end,
+	core::pack::task::PackerTask const & packertask
 );
 
 /// @brief Try all rotamers for the specified residue and install the first one
@@ -87,14 +90,16 @@ void rb_grid_rotamer_trials_atr_rep(
 void grid_rotamer_trials_atr_rep(
 	core::grid::CartGrid<int> const & grid,
 	core::pose::Pose & pose,
-	core::Size rsd_no
+	core::Size rsd_no,
+	core::pack::task::PackerTask const & packertask
 );
 
 /// @brief Internal helper function for rotamer trials;  fills conformers_out.
 void rotamers_for_trials(
 	core::pose::Pose & pose,
 	core::Size rsd_no,
-	utility::vector1< core::conformation::ResidueOP > & conformers_out
+	utility::vector1< core::conformation::ResidueOP > & conformers_out,
+	core::pack::task::PackerTask const & packertask
 );
 
 

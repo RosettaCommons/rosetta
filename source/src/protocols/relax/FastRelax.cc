@@ -152,6 +152,7 @@ endrepeat
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/palette/NoDesignPackerPalette.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
@@ -363,6 +364,7 @@ FastRelax::parse_my_tag(
 	core::pack::task::TaskFactoryOP tf = protocols::rosetta_scripts::parse_task_operations( tag, data );
 	if ( tf->size() > 0 ) {
 		if ( !enable_design_ ) {
+			tf->set_packer_palette( utility::pointer::make_shared< core::pack::palette::NoDesignPackerPalette >() ); //Small efficiency gain should be possible if we never bother to construct vectors of every possible residue type at every possible position.
 			tf->push_back(utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >());
 		}
 		set_task_factory( tf );

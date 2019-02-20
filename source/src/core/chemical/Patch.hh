@@ -21,6 +21,7 @@
 // Package headers
 #include <core/chemical/PatchOperation.hh> // MSVC can't use fwd header
 #include <core/chemical/ResidueTypeSelector.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 // Utility headers
@@ -97,13 +98,28 @@ public:
 	utility::vector1< std::string >
 	adds_properties() const;
 
+	/// @brief Returns list of added property enums.  Useful for identifying patches that go with PDB residues.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	utility::vector1< ResidueProperty >
+	adds_properties_enums() const;
+
 	/// @brief returns list of deleted property names, useful for identifying patches that go with PDB residues
 	utility::vector1< std::string >
 	deletes_properties() const;
 
+	/// @brief Returns list of deleted property enums.  Useful for identifying patches that go with PDB residues.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	utility::vector1< ResidueProperty >
+	deletes_properties_enums() const;
+
 	/// @brief returns list of deleted variant names, useful for identifying patches that go with PDB residues
 	utility::vector1< std::string >
 	deletes_variants() const;
+
+	/// @brief Returns list of deleted VariantTypes.  Doesn't support on-the-fly VariantTypes.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	utility::vector1< core::chemical::VariantType >
+	deletes_variants_by_enum() const;
 
 	/// @brief returns new name3, if changed
 	std::string
@@ -148,11 +164,18 @@ case_from_lines(
 /// @brief A class patching basic ResidueType to create variant types, containing multiple PatchCase
 class Patch : public utility::pointer::ReferenceCount {
 public:
-	Patch() {}
-	Patch( TypeSetMode res_type_set_mode ) : res_type_set_mode_(res_type_set_mode) {}
+
+	/// @brief Constructor
+	///
+	Patch();
+
+	/// @brief Constructor with ResidueTypeSet mode.
+	///
+	Patch( TypeSetMode res_type_set_mode );
 
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	~Patch() override;
+
 	/// @brief constructor from file
 	void
 	read_file( std::string const & filename );
@@ -194,19 +217,49 @@ public:
 
 	void set_selector( ResidueTypeSelector const & selector ) { selector_ = selector; }
 
-	void set_name( std::string name ) { name_ = name; }
+	void set_name( std::string const & name ) {
+		name_ = name;
+		// Ugh.  String-parsing.  Figure this out ONCE, dammit!  VKM.
+		// This *is* the once. If you're allowing the name to be re-set, you need to
+		// re-determine if it's a metapatch. Note that this function is only called
+		// during construction so in any particular patch it's only called once.
+		is_metapatch_ = (name_.substr( 0, 3 ) == "MP-");
+	}
 
-	/// @brief the variant types created by applying this patch
+	/// @brief The variant types created by applying this patch
+	/// @brief Use custom_types() for a vector of strings of custom types.
 	virtual
-	utility::vector1< std::string > const &
+	utility::vector1< core::chemical::VariantType > const &
 	types() const
 	{
 		return types_;
 	}
 
-	inline void types( utility::vector1< std::string > const & types ) {
+	/// @brief The custom variant types added by this patch.
+	/// @details This must be a vector of strings, since the custom types are generated at runtime and can't be
+	/// enumerated at compile time.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	virtual
+	utility::vector1 < std::string > const &
+	custom_types() const {
+		return custom_types_;
+	}
+
+	/// @brief Set the variant types created by applying this patch.
+	/// @details For custom variant types, use the add_custom_type() function, which takes a string.
+	inline void types( utility::vector1< core::chemical::VariantType > const & types ) {
 		types_ = types;
 	}
+
+	/// @brief Add a VariantType to the list that this patch applies.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	virtual
+	void add_type( core::chemical::VariantType const type );
+
+	/// @brief Add a custom VariantType to the list that this patch applies.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	virtual
+	void add_custom_type( std::string const & custom_type );
 
 	inline
 	void
@@ -224,13 +277,27 @@ public:
 	utility::vector1< std::string >
 	adds_properties( ResidueType const & rsd_in ) const;
 
+	/// @brief Returns list of added properties, by enum.  Useful for identifying patches that go with PDB residues.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	utility::vector1< ResidueProperty >
+	adds_properties_enums( ResidueType const & rsd_in ) const;
+
 	/// @brief returns list of deleted property names, useful for identifying patches that go with PDB residues
 	utility::vector1< std::string >
 	deletes_properties( ResidueType const & rsd_in ) const;
 
+	/// @brief returns list of deleted property enums, useful for identifying patches that go with PDB residues.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	utility::vector1< ResidueProperty >
+	deletes_properties_enums( ResidueType const & rsd_in ) const;
+
 	/// @brief returns list of deleted variant names, useful for identifying patches that go with PDB residues
 	utility::vector1< std::string >
 	deletes_variants( ResidueType const & rsd_in ) const;
+
+	/// @brief Returns list of deleted VariantTypes.  Doesn't support on-the-fly VariantTypes.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	utility::vector1< core::chemical::VariantType > deletes_variants_by_enum( ResidueType const & rsd_type ) const;
 
 	/// @brief Does the patch potentially change the connections for the given atom on the ResidueType
 	bool
@@ -251,16 +318,26 @@ public:
 	chemical::AA
 	generates_aa( ResidueType const & rsd_in ) const;
 
+	/// @brief Is this a metapatch?
+	///
+	inline bool is_metapatch() const { return is_metapatch_; }
+
 	/// private data
 private:
 	/// mode of the residuetypeset to which this patch belongs
-	TypeSetMode res_type_set_mode_;
+	TypeSetMode res_type_set_mode_ = core::chemical::FULL_ATOM_t;
 
 	/// name of the patch
-	std::string name_;
+	std::string name_ = "";
 
-	/// @brief variant types created by the patch
-	utility::vector1< std::string > types_;
+	/// Is this a metapatch?
+	bool is_metapatch_ = false;
+
+	/// @brief Variant types created by the patch.
+	utility::vector1< core::chemical::VariantType > types_;
+
+	/// @brief Custom variant types created by this patch.
+	utility::vector1 < std::string > custom_types_;
 
 	/// @brief criteria to select ResidueTypes to which the patch is applied
 	ResidueTypeSelector selector_;
@@ -269,7 +346,7 @@ private:
 	utility::vector1< PatchCaseOP > cases_;
 
 	/// @brief if set this patch will not change the name of the ResidueType and returns true for replaces()
-	bool replaces_residue_type_;
+	bool replaces_residue_type_ = false;
 
 #ifdef    SERIALIZATION
 public:

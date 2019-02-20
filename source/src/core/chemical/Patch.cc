@@ -173,6 +173,8 @@
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
+#include <core/chemical/ResidueProperties.hh>
+
 // C++ headers
 #include <fstream>
 
@@ -190,6 +192,15 @@
 namespace core {
 namespace chemical {
 
+/// @brief Constructor
+///
+Patch::Patch() = default;
+
+/// @brief Constructor with ResidueTypeSet name.
+///
+Patch::Patch( TypeSetMode res_type_set_mode ) :
+	res_type_set_mode_(res_type_set_mode)
+{}
 
 /// @details Auto-generated virtual destructor
 Patch::~Patch() = default;
@@ -392,16 +403,42 @@ PatchCase::adds_properties() const
 	return property_names;
 }
 
+/// @details Loop through patch operations in this PatchCase, and compile a list of any ResidueProperties that are added.
+/// Note that this version uses enums, and only works for canonical properties (not on-the-fly properties).
+utility::vector1< ResidueProperty >
+PatchCase::adds_properties_enums() const
+{
+	utility::vector1< ResidueProperty > properties;
+	for ( auto const & operation : operations_ ) {
+		ResidueProperty const & property( operation->adds_property_enum() );
+		if ( property != NO_PROPERTY ) properties.push_back( property );
+	}
+	return properties;
+}
+
 /// @details Go through patch operations in this PatchCase, and compile list of any property names that are deleted.
 utility::vector1< std::string >
 PatchCase::deletes_properties() const
 {
 	utility::vector1< std::string > property_names;
 	for ( auto const & operation : operations_ ) {
-		std::string const property_name = operation->deletes_property();
+		std::string const & property_name = operation->deletes_property();
 		if ( property_name.size() > 0 ) property_names.push_back( property_name );
 	}
 	return property_names;
+}
+
+/// @details Loop through patch operations in this PatchCase, and compile a list of any ResidueProperties that are deleted.
+/// Note that this version uses enums, and only works for canonical properties (not on-the-fly properties).
+utility::vector1< ResidueProperty >
+PatchCase::deletes_properties_enums() const
+{
+	utility::vector1< ResidueProperty > property_enums;
+	for ( auto const & operation : operations_ ) {
+		ResidueProperty const & property = operation->deletes_property_enum();
+		if ( property != NO_PROPERTY ) property_enums.push_back( property );
+	}
+	return property_enums;
 }
 
 /// @details Go through patch operations in this PatchCase, and compile list of any property names that are deleted.
@@ -410,10 +447,23 @@ PatchCase::deletes_variants() const
 {
 	utility::vector1< std::string > variant_names;
 	for ( auto const & operation : operations_ ) {
-		std::string const variant_name = operation->deletes_variant();
+		std::string const & variant_name = operation->deletes_variant();
 		if ( variant_name.size() > 0 ) variant_names.push_back( variant_name );
 	}
 	return variant_names;
+}
+
+/// @details Go through patch operations in this PatchCase, and compile list of any property names that are deleted.
+/// This version works by enum, and doesn't support on-the-fly VariantTypes.
+utility::vector1< core::chemical::VariantType >
+PatchCase::deletes_variants_by_enum() const
+{
+	utility::vector1< core::chemical::VariantType > variants;
+	for ( auto const & operation : operations_ ) {
+		VariantType const & varianttype( operation->deletes_variant_enum() );
+		if ( varianttype != core::chemical::NO_VARIANT ) variants.push_back( varianttype );
+	}
+	return variants;
 }
 
 /// @brief returns list of new name3, useful for identifying patches that go with PDB residues
@@ -421,7 +471,7 @@ std::string
 PatchCase::generates_new_name3() const {
 	std::string new_name3( "" );
 	for ( auto const & operation : operations_ ) {
-		std::string const name3 = operation->generates_name3();
+		std::string const & name3 = operation->generates_name3();
 		if ( name3.size() > 0 ) {
 			runtime_assert( new_name3.size() == 0 ); // do not allow Patch to define more than one new name3
 			new_name3 =  name3;
@@ -474,6 +524,7 @@ Patch::read_file( std::string const & filename )
 
 	name_ = "";
 	types_.clear();
+	custom_types_.clear();
 	selector_.clear();
 	cases_.clear();
 	replaces_residue_type_ = false;
@@ -498,11 +549,12 @@ Patch::read_file( std::string const & filename )
 		l >> tag;
 		if ( tag == "NAME" ) {
 			l >> name_;
+			is_metapatch_ = (name_.substr( 0, 3 ) == "MP-");
 		} else if ( tag == "TYPES" ) {
 			std::string t;
 			l >> t;
 			while ( !l.fail() ) {
-				types_.push_back( t );
+				types_.push_back( ResidueProperties::get_variant_from_string(t) );
 				l >> t;
 			}
 		} else if ( tag == "REPLACE_RES_TYPE" ) {
@@ -548,6 +600,24 @@ Patch::read_file( std::string const & filename )
 
 		lines.erase( lines.begin() );
 	}
+}
+
+/// @brief Add a VariantType to the list that this patch applies.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+/// @author Andy Watkins (amw579@stanford.edu)
+void
+Patch::add_type( core::chemical::VariantType const type ) {
+	if ( types_.contains( type ) ) return;
+	types_.push_back(type);
+}
+
+/// @brief Add a custom VariantType to the list that this patch applies.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+/// @author Andy Watkins (amw579@stanford.edu)
+void
+Patch::add_custom_type( std::string const & custom_type ) {
+	if ( custom_types_.contains( custom_type ) ) return;
+	custom_types_.push_back(custom_type);
 }
 
 /// @details loop through the cases in this patch and if it is applicable to this ResidueType, the corresponding patch
@@ -698,6 +768,26 @@ Patch::adds_properties( ResidueType const & rsd_type ) const
 }
 
 /// @details loop through the cases in this patch and if it is applicable to this ResidueType, compile
+/// a list of any properties that are added, by enum.  Faster than string version.
+utility::vector1< ResidueProperty >
+Patch::adds_properties_enums( ResidueType const & rsd_type ) const
+{
+	utility::vector1< ResidueProperty > properties;
+	if ( !applies_to( rsd_type ) ) return properties;  // I don't know how to patch this residue.
+
+	for ( auto const & patch_case : cases_ ) {
+		if ( patch_case->applies_to( rsd_type ) ) {
+			// this patch case applies to this rsd_type
+			utility::vector1< ResidueProperty > const & properties_for_patch_case = patch_case->adds_properties_enums();
+			properties.insert( properties.end(), properties_for_patch_case.begin(), properties_for_patch_case.end() );
+		}
+	}
+
+	return properties;
+}
+
+
+/// @details loop through the cases in this patch and if it is applicable to this ResidueType, compile
 /// a list of any properties that are deleted.
 utility::vector1< std::string >
 Patch::deletes_properties( ResidueType const & rsd_type ) const
@@ -709,10 +799,27 @@ Patch::deletes_properties( ResidueType const & rsd_type ) const
 
 		if ( iter->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
-			utility::vector1< std::string > properties_for_patch_case = iter->deletes_properties();
-			for ( Size n = 1; n <= properties_for_patch_case.size(); n++ ) {
-				properties.push_back(  properties_for_patch_case[ n ] );
-			}
+			utility::vector1< std::string > const & properties_for_patch_case = iter->deletes_properties();
+			properties.insert( properties.end(), properties_for_patch_case.begin(), properties_for_patch_case.end() );
+		}
+	}
+
+	return properties;
+}
+
+/// @details loop through the cases in this patch and if it is applicable to this ResidueType, compile
+/// a list of any properties that are deleted, by enum.  Faster than string version.
+utility::vector1< ResidueProperty >
+Patch::deletes_properties_enums( ResidueType const & rsd_type ) const
+{
+	utility::vector1< ResidueProperty > properties;
+	if ( !applies_to( rsd_type ) ) return properties;  // I don't know how to patch this residue.
+
+	for ( auto const & iter : cases_ ) {
+		if ( iter->applies_to( rsd_type ) ) {
+			// this patch case applies to this rsd_type
+			utility::vector1< ResidueProperty > const & properties_for_patch_case = iter->deletes_properties_enums();
+			properties.insert( properties.end(), properties_for_patch_case.begin(), properties_for_patch_case.end() );
 		}
 	}
 
@@ -728,16 +835,32 @@ Patch::deletes_variants( ResidueType const & rsd_type ) const
 	if ( !applies_to( rsd_type ) ) return variants;  // I don't know how to patch this residue.
 
 	for ( auto const & iter : cases_ ) {
-
 		if ( iter->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
-			utility::vector1< std::string > variants_for_patch_case = iter->deletes_variants();
-			for ( Size n = 1; n <= variants_for_patch_case.size(); n++ ) {
-				variants.push_back(  variants_for_patch_case[ n ] );
-			}
+			utility::vector1< std::string > const & variants_for_patch_case = iter->deletes_variants();
+			variants.insert( variants.end(), variants_for_patch_case.begin(), variants_for_patch_case.end() );
 		}
 	}
 
+	return variants;
+}
+
+/// @details loop through the cases in this patch and if it is applicable to this ResidueType, compile
+/// a list of any variants that are deleted.  This version returns a list of VariantType enums (and does
+/// not support on-the-fly types).
+utility::vector1< core::chemical::VariantType >
+Patch::deletes_variants_by_enum( ResidueType const & rsd_type ) const
+{
+	utility::vector1< core::chemical::VariantType > variants;
+	if ( !applies_to( rsd_type ) ) return variants;  // I don't know how to patch this residue.
+
+	for ( auto const & iter : cases_ ) {
+		if ( iter->applies_to( rsd_type ) ) {
+			// this patch case applies to this rsd_type
+			utility::vector1< core::chemical::VariantType > const & variants_for_patch_case = iter->deletes_variants_by_enum();
+			variants.insert( variants.end(), variants_for_patch_case.begin(), variants_for_patch_case.end() );
+		}
+	}
 	return variants;
 }
 
@@ -759,7 +882,6 @@ Patch::changes_connections_on( ResidueType const & rsd_type, std::string const &
 			}
 		}
 	}
-
 	return false;
 }
 
@@ -862,7 +984,9 @@ void
 core::chemical::Patch::save( Archive & arc ) const {
 	arc( CEREAL_NVP( res_type_set_mode_ ) ); // enum core::chemical::TypeSetMode
 	arc( CEREAL_NVP( name_ ) ); // std::string
+	arc( CEREAL_NVP( is_metapatch_ ) ); //bool
 	arc( CEREAL_NVP( types_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( custom_types_ ) ); // utility::vector1<std::string>
 	arc( CEREAL_NVP( selector_ ) ); // class core::chemical::ResidueTypeSelector
 	arc( CEREAL_NVP( cases_ ) ); // utility::vector1<PatchCaseOP>
 	arc( CEREAL_NVP( replaces_residue_type_ ) ); // _Bool
@@ -874,7 +998,9 @@ void
 core::chemical::Patch::load( Archive & arc ) {
 	arc( res_type_set_mode_ ); // enum core::chemical::TypeSetMode
 	arc( name_ ); // std::string
+	arc( is_metapatch_ ); //bool
 	arc( types_ ); // utility::vector1<std::string>
+	arc( custom_types_ );
 	arc( selector_ ); // class core::chemical::ResidueTypeSelector
 	arc( cases_ ); // utility::vector1<PatchCaseOP>
 	arc( replaces_residue_type_ ); // _Bool

@@ -89,7 +89,7 @@ OTFFlexbbNode::declare_all_rotamers_initialized()
 		//std::cout << get_node_index() << " ii: " << ii << std::endl;
 		for ( int jj = 1; jj <= num_aa_types(); ++jj ) {
 			//std::cout << get_node_index() << " ii: " << ii << " jj: " << jj <<  std::endl;
-			Vector nbatm;
+			Vector nbatm({0,0,0});
 			Real bounding_square_radius( 0.0 );
 			for ( int kk = 1; kk <= num_states_for_aa_for_bb()( jj, ii ); ++kk ) {
 				//std::cout << get_node_index() << " ii: " << ii << " jj: " << jj << " kk: " << kk <<  std::endl;

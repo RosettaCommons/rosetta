@@ -1,0 +1,29 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15_comp" weights="ref2015.wts" >
+			<Reweight scoretype="aa_composition" weight="1.0" />
+		</ScoreFunction>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_designable" resnums="2-5,17,18" />
+		<Not name="select_not_designable" selector="select_designable" /> 
+	</RESIDUE_SELECTORS>
+	<PACKER_PALETTES>
+		<CustomBaseTypePackerPalette name="peptoid_palette" additional_residue_types="601" />
+	</PACKER_PALETTES>
+	<TASKOPERATIONS>
+		<ReadResfile name="resfile1" filename="inputs/resfile.txt" />
+		<OperateOnResidueSubset name="no_design_not_designable" selector="select_not_designable" >
+			<PreventRepackingRLT />
+		</OperateOnResidueSubset>
+	</TASKOPERATIONS>
+	<MOVERS>
+		<AddCompositionConstraintMover name="comp_csts" filename="inputs/peptoid_design.comp" />
+		<PackRotamersMover name="quick_design" scorefxn="r15_comp" packer_palette="peptoid_palette" task_operations="resfile1,no_design_not_designable" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="comp_csts" />
+		<Add mover="quick_design" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15_comp" />
+</ROSETTASCRIPTS>

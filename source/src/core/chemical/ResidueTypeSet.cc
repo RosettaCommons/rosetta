@@ -194,7 +194,7 @@ ResidueTypeSet::generate_residue_type_write_locked( std::string const & rsd_name
 
 	if ( patch_name.size() == 0 ) { // If this is the non-patched base type
 		if ( ! cache_object()->has_generated_residue_type( rsd_name_base ) ) {
-			lazy_load_base_type( rsd_name_base );
+			lazy_load_base_type_already_write_locked( rsd_name_base );
 		}
 		return cache_object()->name_map_or_null( rsd_name ); // We either have it or we don't
 	}
@@ -401,7 +401,7 @@ ResidueTypeSet::prep_restype( ResidueTypeOP new_type ) {
 		gasteiger::assign_gasteiger_atom_types( *new_type, gasteiger_set, false );
 	}
 
-	if ( option[ OptionKeys::in::add_orbitals] ) {
+	if ( option[ OptionKeys::in::add_orbitals] && new_type->has_orbital_types() ) {
 		orbitals::AssignOrbitals add_orbitals_to_residue(new_type);
 		add_orbitals_to_residue.assign_orbitals();
 	}
@@ -443,6 +443,28 @@ ResidueTypeSet::add_base_residue_type( ResidueTypeOP new_type )
 	cache_object()->add_residue_type( new_type );
 	cache_object()->clear_cached_maps();
 	base_residue_types_.push_back( new_type );
+}
+
+/// @brief Force the addition of a new residue type despite a const context.
+/// @details Danger!  Only intended for rare use cases in which there is no other way to allow a new base type
+/// to be added.
+/// @note Creates no write lock.  Can be called from the generate_residue_type_write_locked call chain, but not
+/// threadsafe unless a write lock is obtained outside of this function.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ResidueTypeSet::force_add_base_residue_type_already_write_locked(
+	ResidueTypeOP new_type
+) const {
+	debug_assert( new_type );
+	if ( mode() != new_type->mode() ) {
+		TR.Warning << "ResidueType " << new_type->name() << " of mode " << new_type->mode()
+			<< " is being added to a ResidueTypeSet of mode " << mode() << std::endl;
+		// But we're doing it anyway (though we probably shouldn't).
+	}
+	prep_restype( new_type );
+	cache_object()->add_residue_type( new_type );
+	cache_object()->clear_cached_maps();
+	const_cast< ResidueTypeSet * >(this)->base_residue_types_.push_back( new_type ); //Horrible but necessary abuse of const_cast for this function.
 }
 
 void
@@ -777,6 +799,49 @@ ResidueTypeSet::get_all_types_with_variants_aa( AA aa,
 	utility::thread::WriteLockGuard write_lock( cache_object()->read_write_mutex() );
 #endif
 	cache_object()->cache_all_types_with_variants_aa( aa, variants, exceptions, rts );
+	return rts;
+}
+
+/// @brief Given a base residue type, desired variants, and undesired variants, retrieve a list
+/// of cached ResidueTypeCOPs.  If not cached, generate the data and cache them.
+/// @param[in] base_type A ResidueTypeCOP to a base residue type, used for looking up the variant.
+/// @param[in] variants A list of VariantTypes that the returned ResidueTypes *must* have, used for looking up the variant.
+/// @param[in] variant_strings A list of custom VariantTypes (that don't have enums) that the returned ResidueTypes *must*
+/// have, used for looking up the variant.
+/// @param[in] exceptions A list of VariantTypes that are ignored in matching.
+/// @param[in] no_metapatches If true, metapatches are ignored.
+/// @returns A list of ResidueTypeCOPs matching the desired variants, with the desired base type.
+/// @note This function is threadsafe.  Caching and retrieveal are handled with a ReadWriteMutex.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+ResidueTypeCOPs
+ResidueTypeSet::get_all_types_with_variants_by_basetype(
+	ResidueTypeCOP base_type,
+	utility::vector1< VariantType > const & variants,
+	utility::vector1< std::string > const & variant_strings,
+	utility::vector1< VariantType > const & exceptions,
+	bool const no_metapatches
+) const {
+	{ // scope the read lock
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard read_lock( cache_object()->read_write_mutex() );
+#endif
+		if ( cache_object()->all_types_with_variants_residuetypecops_already_cached( base_type, variants, variant_strings, exceptions, no_metapatches ) ) {
+			return cache_object()->retrieve_all_types_with_variants_residuetypecops( base_type, variants, variant_strings, exceptions, no_metapatches );
+		}
+	}
+
+	// Without creating a write lock, go collect the appropriate set of RTs for the
+	// given query. Wait until this statement completes before creating the write lock,
+	// or the locks that the RTF creates will create a deadlock.
+	ResidueTypeFinder finder( *this );
+	if ( no_metapatches ) finder.disable_metapatches();
+	finder.base_type( base_type ).variants( variants, variant_strings, false ).variant_exceptions( exceptions, false );
+	ResidueTypeCOPs rts( finder.get_all_possible_residue_types() );
+
+#ifdef MULTI_THREADED
+	utility::thread::WriteLockGuard write_lock( cache_object()->read_write_mutex() );
+#endif
+	cache_object()->cache_all_types_with_variants_residuetypecops( base_type, variants, variant_strings, exceptions, no_metapatches, rts );
 	return rts;
 }
 

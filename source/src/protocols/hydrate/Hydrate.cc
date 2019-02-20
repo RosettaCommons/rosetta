@@ -24,6 +24,8 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
+#include <core/pack/palette/PackerPalette.hh>
+#include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 
 // Basic
 #include <basic/Tracer.hh>
@@ -255,7 +257,9 @@ Hydrate::apply(Pose & pose)
 	if ( short_residence_time_mode_ ) enforce_all_waters( pose );
 	// If running in short residence time mode, all waters packed in this step (Single Edge) while enforced to
 	// stay active, near the protein, and then they are packed again without being enforced,
-	pack::task::PackerTaskOP sew_task( pack::task::TaskFactory::create_packer_task( pose ));
+	core::pack::palette::CustomBaseTypePackerPaletteOP palette( utility::pointer::make_shared< core::pack::palette::CustomBaseTypePackerPalette >() );
+	palette->add_type("TP3");
+	pack::task::PackerTaskOP sew_task( pack::task::TaskFactory::create_packer_task( pose, palette ));
 	sew_task->initialize_from_command_line(); // -ex1 -ex2  etc.
 	(*score_fxn_)(pose);
 	get_ready_for_sew_packing( pose, sew_task);

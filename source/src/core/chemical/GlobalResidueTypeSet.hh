@@ -135,7 +135,7 @@ protected:
 
 	/// @brief Attempt to lazily load the given residue type from data.
 	bool
-	lazy_load_base_type( std::string const & rsd_base_name ) const override;
+	lazy_load_base_type_already_write_locked( std::string const & rsd_base_name ) const override;
 
 	/// @brief delete an unpatchable residue type from the set.
 	/// This should never be called in a GlobalResidueTypeSet - it's here just to match the base class interface.

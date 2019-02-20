@@ -14,6 +14,7 @@
 /// this operation is not applied for the residues defined by PIKAA.
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 /// @modified Javier Castellanos (javiercv@uw.edu )
+/// @modified Vikram K. Mulligan (vmullig@uw.edu) -- support for noncanonicals, now deprecated.
 
 //  The following are using amino acids for each layer
 /// @CORE
@@ -98,16 +99,6 @@ public:
 	typedef std::map< std::string,  LayerDefinitions > LayerResidues;
 	typedef std::pair< std::string, LayerDefinitions > Layer;
 
-	/// @brief List of noncanonicals that can be used in each secondary structure type.
-	/// @details This maps secondary structure string ("L","E","H") to allowed NCAAs (vector of strings of three-letter codes).
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	typedef std::map < std::string, utility::vector1 <std::string> > LayerNCDefinitions;
-	/// @brief List of LayerNCDefinitions that can be used in each layer.
-	/// @details This maps layer string ("core","boundary","surface") to LayerNCDefinitions (which in turn map secondary structure
-	/// strings to vectors of noncanonical residue three-letter codes).
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	typedef std::map < std::string, LayerNCDefinitions > LayerNCResidues;
-
 	static utility::vector1< std::string > const SS_TYPES;
 
 public:
@@ -146,11 +137,6 @@ public:
 		std::string const & layer_name,
 		std::string const & ss_name ) const;
 
-	/// @brief gets the residues allowed for a given secondary structure in a given layer
-	utility::vector1< std::string > const & layer_nc_residues(
-		std::string const & layer_name,
-		std::string const & ss_name ) const;
-
 	/// @brief sets residues allowed for a particular secondary structure in the given layer
 	void set_layer_residues(
 		std::string const & layer_name,
@@ -161,16 +147,6 @@ public:
 	void copy_layer_residues(
 		std::string const & src_layer,
 		std::string const & dest_layer );
-
-	/// @brief sets nc residues allowed for a particular secondary structure in the given layer
-	void set_nc_layer_residues(
-		std::string const & layer_name,
-		std::string const & ss_name,
-		std::string const & residues );
-	void set_nc_layer_residues(
-		std::string const & layer_name,
-		std::string const & ss_name,
-		utility::vector1< std::string > const & residues );
 
 	/// @brief sets layer operation
 	void set_layer_operation( std::string const & layer_name, LayerOperationType const operation );
@@ -271,25 +247,11 @@ private:
 
 	void set_default_layer_residues();
 
-	/// @brief Take a string consisting of comma-separated three-letter codes and parse it, storing separate three-letter codes in a given
-	/// utility::vector1 of strings.
-	void parse_ncaa_list(
-		std::string const & str,
-		utility::vector1< std::string > & storage_vect );
-
-	/// @brief Remove a list of residue types from another list.
-	///
-	void exclude_ncaas(
-		utility::vector1< std::string > const & aas_to_exclude,
-		utility::vector1< std::string > & storage_vect );
-
 	void set_layer_residues(
 		std::string const & layer_name,
 		std::string const & ss_name,
 		std::string const & residues,
 		LayerResidues & layer_residues );
-
-	void init_nc_layerdefinitions( std::string const & layer_name );
 
 	/// @brief Set whether this TaskOperation uses a whole, symmetric pose to define layers (true) or
 	/// just the asymmetric unit (false).  Default is true.
@@ -328,10 +290,6 @@ private:
 	bool make_pymol_script_;
 
 	LayerResidues layer_residues_;
-
-	/// @brief Map of string for layer ("core", "boundary", "surface") to LayerNCDefinitions map (which in turn maps secondary structure to list of allowed noncanonicals).
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	LayerNCResidues layer_nc_residues_;
 
 	/// @brief Should residues for which PIKAA or NATRO information was defined in a previously-applied resfile
 	/// be ignored by LayerDesign?  Default is now FALSE.

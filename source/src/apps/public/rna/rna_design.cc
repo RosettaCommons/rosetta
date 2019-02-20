@@ -27,6 +27,7 @@
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
+#include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
@@ -218,10 +219,12 @@ rna_design_test()
 	dump_pdb( pose, "start.pdb");
 	pose::Pose save_pose( pose );
 
-	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
-	task->initialize_from_command_line();
 
 	utility::vector1< std::string > names;
+	names.emplace_back( "  A" );
+	names.emplace_back( "  C" );
+	names.emplace_back( "  U" );
+	names.emplace_back( "  G" );
 	if ( option[ all_RNA ].value() ) {
 		//auto const RNA_rsd_types = ResidueTypeFinder( *rsd_set ).base_property( RNA ).get_all_possible_residue_types();
 		//for ( auto const & type : RNA_rsd_types ) { names.emplace_back( type->name3() ); }
@@ -246,7 +249,15 @@ rna_design_test()
 		names.emplace_back( "5IU" );
 		names.emplace_back( "NPU" );
 	}
-	//utility::vector1< core::chemical::AA > empty_na_vector;
+
+	//Create a packer palette (VKM, Jan 2019):
+	core::pack::palette::CustomBaseTypePackerPaletteOP pal( utility::pointer::make_shared< core::pack::palette::CustomBaseTypePackerPalette >() );
+	for ( core::Size i(1), imax(names.size()); i<=imax; ++i ) {
+		pal->add_type( ResidueTypeFinder( *rsd_set ).name3( names[i] ).get_representative_type()->base_name() );
+	}
+
+	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose, pal ));
+	task->initialize_from_command_line();
 
 	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
 		pack::task::parse_resfile(pose, *task);
@@ -256,17 +267,8 @@ rna_design_test()
 			if ( option[ ligand_distance ].user() && residues_too_distant( pose.residue( ii ), pose.residue( pose.size() ), option[ ligand_distance ]() ) ) continue;
 
 			if ( !pose.residue_type( ii ).is_RNA() ) continue;
-			//task->nonconst_residue_task( ii ).restrict_absent_nas( empty_na_vector );
-			task->nonconst_residue_task( ii ).allow_aa( na_rad );
-			task->nonconst_residue_task( ii ).allow_aa( na_ura );
-			task->nonconst_residue_task( ii ).allow_aa( na_rgu );
-			task->nonconst_residue_task( ii ).allow_aa( na_rcy );
-			if ( option[ all_RNA ].value() ) {
-				for ( auto const & name : names ) {
-					task->nonconst_residue_task( ii ).allow_noncanonical_aa(name);
-				}
-			}
-			assert( task->design_residue(ii) );
+
+			runtime_assert( task->design_residue(ii) );
 		}
 	}
 

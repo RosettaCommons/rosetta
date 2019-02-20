@@ -16,6 +16,9 @@
             Reweight scoretype=aa_composition weight=1.0 />
         </ScoreFunction>
     </SCOREFXNS>
+    <PACKER_PALETTES>
+	<CustomBaseTypePackerPalette name="palette" additional_residue_types="DALA" />
+    </PACKER_PALETTES>
     <RESIDUE_SELECTORS>
         <Phi name="posPhi" select_positive_phi="true" ignore_unconnected_upper="false"/>
         <Phi name="negPhi" select_positive_phi="false" ignore_unconnected_upper="false" />
@@ -33,7 +36,7 @@
         
         <!--required torsions to keep things in place. make sure you have them set for both ends-->
         
-        <PackRotamersMover name="packer" scorefxn="tala_comp" task_operations="l_res,d_res" />
+        <PackRotamersMover name="packer" scorefxn="tala_comp" task_operations="l_res,d_res" packer_palette="palette" />
 
     </MOVERS>
     <APPLY_TO_POSE>

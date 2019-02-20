@@ -1,0 +1,20 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+	</RESIDUE_SELECTORS>
+	<PACKER_PALETTES>
+		<CustomBaseTypePackerPalette name="custom_palette" additional_residue_types="ORN" />
+	</PACKER_PALETTES>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<PackRotamersMover name="design_test" packer_palette="custom_palette" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="design_test" />
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

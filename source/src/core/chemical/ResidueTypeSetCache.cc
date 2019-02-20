@@ -225,6 +225,78 @@ ResidueTypeSetCache::retrieve_all_types_with_variants_aa(
 	return cached_aa_variants_map_.find( query )->second;
 }
 
+/// @brief Have we already cached this combination of base type, variants, and exceptions?
+/// @note This function is *not* threadsafe.  It is assumed that thread locking will be handled by whatever is calling this.
+/// @param[in] base_type A ResidueTypeCOP to a base residue type, used for looking up the variant.
+/// @param[in] variants A list of VariantTypes that the returned ResidueTypes *must* have, used for looking up the variant.
+/// @param[in] variant_strings A list of custom VariantTypes (that don't have enums) that the returned ResidueTypes *must*
+/// have, used for looking up the variant.
+/// @param[in] exceptions A list of VariantTypes that are ignored in matching.
+/// @param[in] no_metapatches If true, metapatches are ignored.
+/// @returns TRUE if we have cached this combination, FALSE otherwise.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+bool
+ResidueTypeSetCache::all_types_with_variants_residuetypecops_already_cached(
+	ResidueTypeCOP base_type,
+	utility::vector1< VariantType > const & variants,
+	utility::vector1< std::string > const & variant_strings,
+	utility::vector1< VariantType > const & exceptions,
+	bool const no_metapatches
+) const {
+	runtime_assert( base_type->is_base_type() ); //TODO: Make this a debug_assert later.
+	Restype_Variants_VariantStrings_Exceptions query( std::make_tuple( base_type, variants, variant_strings, exceptions, no_metapatches ) );
+	return ( cached_restype_variants_map_.count( query ) != 0 );
+}
+
+/// @brief Cache this combination of base type, variants, and exceptions.
+/// @note This function is *not* threadsafe.  It is assumed that thread locking will be handled by whatever is calling this.
+/// @param[in] base_type A ResidueTypeCOP to a base residue type, used for looking up the variant.
+/// @param[in] variants A list of VariantTypes that the returned ResidueTypes *must* have, used for looking up the variant.
+/// @param[in] variant_strings A list of custom VariantTypes (that don't have enums) that the returned ResidueTypes *must*
+/// have, used for looking up the variant.
+/// @param[in] exceptions A list of VariantTypes that are ignored in matching.
+/// @param[in] no_metapatches If true, metapatches are ignored.
+/// @param[in] types_to_cache A vector of ResidueTypeCOPs to associate with the key defined by the five variables above.
+/// @returns Nothing.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ResidueTypeSetCache::cache_all_types_with_variants_residuetypecops(
+	ResidueTypeCOP base_type,
+	utility::vector1< VariantType > const & variants,
+	utility::vector1< std::string > const & variant_strings,
+	utility::vector1< VariantType > const & exceptions,
+	bool const no_metapatches,
+	ResidueTypeCOPs const & types_to_cache
+) {
+	runtime_assert( base_type->is_base_type() ); //TODO: Make this a debug_assert later.
+	Restype_Variants_VariantStrings_Exceptions key( std::make_tuple( base_type, variants, variant_strings, exceptions, no_metapatches ) );
+	cached_restype_variants_map_[ key ] = types_to_cache;
+}
+
+/// @brief Retrieve this combination of base type, variants, and exceptions.  NOTE THAT THIS ASSUMES THIS INFORMATION WAS
+/// ALREADY CACHED!
+/// @note This function is *not* threadsafe.  It is assumed that thread locking will be handled by whatever is calling this.
+/// @param[in] base_type A ResidueTypeCOP to a base residue type, used for looking up the variant.
+/// @param[in] variants A list of VariantTypes that the returned ResidueTypes *must* have, used for looking up the variant.
+/// @param[in] variant_strings A list of custom VariantTypes (that don't have enums) that the returned ResidueTypes *must*
+/// have, used for looking up the variant.
+/// @param[in] exceptions A list of VariantTypes that are ignored in matching.
+/// @param[in] no_metapatches If true, metapatches are ignored.
+/// @returns A vector of ResidueTypeCOPs with the given base type and the associated variant types.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+ResidueTypeCOPs
+ResidueTypeSetCache::retrieve_all_types_with_variants_residuetypecops(
+	ResidueTypeCOP base_type,
+	utility::vector1< VariantType > const & variants,
+	utility::vector1< std::string > const & variant_strings,
+	utility::vector1< VariantType > const & exceptions,
+	bool const no_metapatches
+) const {
+	runtime_assert( base_type->is_base_type() ); //TODO: Make this a debug_assert later.
+	Restype_Variants_VariantStrings_Exceptions query( std::make_tuple( base_type, variants, variant_strings, exceptions, no_metapatches ) );
+	return cached_restype_variants_map_.at( query );
+}
+
 /// @details Danger danger danger.  Unsafe in a multithreaded environment.
 void
 ResidueTypeSetCache::clear_cached_maps()
@@ -233,6 +305,7 @@ ResidueTypeSetCache::clear_cached_maps()
 	//aa_map_.clear();
 	//name3_map_.clear();
 	cached_aa_variants_map_.clear();
+	cached_restype_variants_map_.clear();
 	name3_generated_by_base_residue_name_.clear();
 	interchangeability_group_generated_by_base_residue_name_.clear();
 }
@@ -309,6 +382,7 @@ core::chemical::ResidueTypeSetCache::save( Archive & arc ) const {
 
 	// All the cached data is exempt, as it can be regenerated later.
 	// EXEMPT cached_aa_variants_map_
+	// EXEMPT cached_restype_variants_map_
 	// EXEMPT cache_up_to_date_
 	// ... yes, even cache_up_to_date_, because we're forcing it to false on reconstruction
 	// EXEMPT name3_generated_by_base_residue_name_ interchangeability_group_generated_by_base_residue_name_
@@ -332,6 +406,7 @@ core::chemical::ResidueTypeSetCache::load_and_construct( Archive & arc, cereal::
 
 	// All the cached data is exempt, as it can be regenerated later.
 	// EXEMPT cached_aa_variants_map_
+	// EXEMPT cached_restype_variants_map_
 	// EXEMPT cache_up_to_date_
 	// EXEMPT name3_generated_by_base_residue_name_ interchangeability_group_generated_by_base_residue_name_
 }

@@ -176,6 +176,17 @@ void AACompositionPropertiesSet::add_excluded_property( core::chemical::ResidueP
 	return;
 }
 
+/// @brief Convert a property name to a ResidueProperty enum.
+/// @details Throws an error if the property name is not recognized.
+core::chemical::ResidueProperty
+AACompositionPropertiesSet::parse_property(
+	std::string const &name
+) const {
+	core::chemical::ResidueProperty const prop_enum( core::chemical::ResidueProperties::get_property_from_string( name ) );
+	runtime_assert_string_msg( prop_enum != core::chemical::NO_PROPERTY, "Error in AACompositionPropertiesSet::parse_property(): The property \"" + name + "\" was not recognized as a valid residue type property." );
+	return prop_enum;
+}
+
 /// @brief Take a list of included type strings and add it to the list of included types, checking that
 /// none of the types has already been added.
 /// @details Populates the included_types_ vector based on the types named in the list.

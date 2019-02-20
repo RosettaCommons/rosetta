@@ -26,10 +26,12 @@
 
 // Project Headers
 #include <core/types.hh>
+#include <core/chemical/ResidueProperty.hh>
 #include <core/chemical/AA.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/excn/Exceptions.hh>
 
@@ -84,6 +86,11 @@ private: // helper types and functions for parsing
 		RANGE_RESID,
 		CHAIN_RESID
 	};
+
+	/// @brief Given a vector of strings corresponding to the words in a whitespace-separated line, look for
+	/// deprecated commands and issue a suitable warning.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void check_for_deprecated_commands( utility::vector1< std::string > const & tokens ) const;
 
 	void
 	parse_header_line(
@@ -319,10 +326,23 @@ public:
 
 };
 
-/// @brief PIKAA allows residues specifed in a following string and packing
+/// @brief PIKAA allows residues specifed in a following string.
+/// @details In actuality, it is PROHIBITING any residue that is NOT in the
+/// following string.  The string should be formatted as an all-caps string of
+/// one-letter codes.  Noncanonical amino acids can be included using X[<full base name>].
+/// For example, to allow tyrosine, threonine, tryptophan, and 2-aminoisobutyric acid,
+/// you would use "PIKAA YTWX[AIB]".
+/// @author Original author unknown.
+/// @author Noncanonical pruning support added by Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 class PIKAA : public ResfileCommand
 {
 public:
+	/// @brief Default constructor.
+	PIKAA() = default;
+
+	/// @brief Default copy constructor.
+	PIKAA( PIKAA const & /*src*/ ) = default;
+
 	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< PIKAA >(); }
 
 	virtual
@@ -330,6 +350,13 @@ public:
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
+	);
+
+	/// @brief Add a base name to the list of base names to keep.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void
+	add_base_name_to_keep(
+		std::string const & basename
 	);
 
 	virtual
@@ -346,8 +373,8 @@ public:
 	}
 
 private:
-	utility::vector1< bool > keep_canonical_aas_;
-	std::list< chemical::AA > na_allowed_; // nucleic acids which are allowed.
+	bool initialized_ = false;
+	utility::vector1< std::string > basenames_to_keep_;
 };
 
 /// @brief PIKNA allows nucleic acid residues specifed in a following string
@@ -380,40 +407,13 @@ private:
 	utility::vector1< chemical::AA > keep_nas_;
 };
 
-/// @brief PIKRNA allows nucleic acid residues specifed in a following string
-class PIKRNA : public ResfileCommand
-{
-public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< PIKRNA >(); }
-
-	virtual
-	void initialize_from_tokens(
-		utility::vector1< std::string > const & tokens,
-		Size & which_token,
-		Size resid
-	);
-
-	virtual
-	void residue_action(
-		PackerTask &,
-		Size resid
-	) const;
-
-	static std::string name() {return "PIKRNA";}
-
-	virtual std::string
-	get_name() {
-		return name();
-	}
-
-private:
-	utility::vector1< chemical::AA > keep_rnas_;
-};
-
 /// @brief NOTAA disallows residues specified in a following string, and allows packing
 class NOTAA : public ResfileCommand
 {
 public:
+	/// @brief Default constructor.
+	NOTAA() = default;
+
 	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< NOTAA >(); }
 
 	virtual
@@ -429,6 +429,10 @@ public:
 		Size resid
 	) const;
 
+	/// @brief Add a base name to the list of base names to exclude.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void add_base_name_to_exclude( std::string const & basename );
+
 	static std::string name() {return "NOTAA";}
 
 	virtual std::string
@@ -437,63 +441,8 @@ public:
 	}
 
 private:
-	utility::vector1< bool > keep_aas_;
-};
-
-/// @brief EMPTY disallows all canonical and noncanonical residues
-class EMPTY : public ResfileCommand
-{
-public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< EMPTY >(); }
-
-	virtual
-	void initialize_from_tokens(
-		utility::vector1< std::string > const & tokens,
-		Size & which_token,
-		Size resid
-	);
-
-	virtual
-	void residue_action(
-		PackerTask &,
-		Size resid
-	) const;
-
-	static std::string name() {return "EMPTY";}
-
-	virtual std::string
-	get_name() {
-		return name();
-	}
-
-};
-
-/// @brief RESET restores the list of allowd residue types to the CAAs
-class RESET : public ResfileCommand
-{
-public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< RESET >(); }
-
-	virtual
-	void initialize_from_tokens(
-		utility::vector1< std::string > const & tokens,
-		Size & which_token,
-		Size resid
-	);
-
-	virtual
-	void residue_action(
-		PackerTask &,
-		Size resid
-	) const;
-
-	static std::string name() {return "RESET";}
-
-	virtual std::string
-	get_name() {
-		return name();
-	}
-
+	utility::vector1< std::string > basenames_to_exclude_;
+	bool initialized_ = false;
 };
 
 /// @brief Allows designing on ANY residue type Property. (Only currently works with Cannonical AAs)
@@ -501,6 +450,9 @@ public:
 class PROPERTY : public ResfileCommand
 {
 public:
+	/// @brief Constructor.
+	PROPERTY() = default;
+
 	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< PROPERTY >(); }
 
 	virtual
@@ -523,7 +475,7 @@ public:
 		return name();
 	}
 
-	std::string property_;
+	core::chemical::ResidueProperty property_ = core::chemical::NO_PROPERTY;
 };
 
 
@@ -711,36 +663,6 @@ private:
 	bool           aro_specified_;
 	Size           which_chi_;
 	ExtraRotSample chi_sample_level_;
-};
-
-/// @brief NC handles explicit allowance of noncanonical residue types
-class NC : public ResfileCommand
-{
-public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< NC >(); }
-
-	virtual
-	void initialize_from_tokens(
-		utility::vector1< std::string > const & tokens,
-		Size & which_token,
-		Size resid
-	);
-
-	virtual
-	void residue_action(
-		PackerTask &,
-		Size resid
-	) const;
-
-	static std::string name() {return "NC";}
-
-	virtual std::string
-	get_name() {
-		return name();
-	}
-
-private:
-	std::string nc_to_include_;
 };
 
 /// @brief EX_CUTOFF allows setting of the extrachi_cutoff (for determining burial for extra rotamers)

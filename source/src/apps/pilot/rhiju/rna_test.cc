@@ -85,6 +85,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/variant_util.hh>
+#include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/AtomTreeMultifunc.hh>
@@ -1280,7 +1281,14 @@ rna_design_gap_test()
 		protocols::rna::denovo::ensure_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////
 
-		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
+		// Need to make a palette for RNA design.  (VKM, Jan 2019.)
+		core::pack::palette::CustomBaseTypePackerPaletteOP palette( utility::pointer::make_shared< core::pack::palette::CustomBaseTypePackerPalette >() );
+		palette->add_type( "RAD" );
+		palette->add_type( "URA" );
+		palette->add_type( "RGU" );
+		palette->add_type( "RCY" );
+
+		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose, palette ) );
 
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			//Hmmm, extras.
@@ -1296,11 +1304,7 @@ rna_design_gap_test()
 
 		pack::task::PackerTaskOP task_design = task->clone();
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-			task_design->nonconst_residue_task( ii ).allow_aa( na_rad );
-			task_design->nonconst_residue_task( ii ).allow_aa( na_ura );
-			task_design->nonconst_residue_task( ii ).allow_aa( na_rgu );
-			task_design->nonconst_residue_task( ii ).allow_aa( na_rcy );
-			assert( task->design_residue(ii) );
+			runtime_assert( task->design_residue(ii) );
 		}
 
 		Size pos( pdb_file.find( ".pdb" ) );

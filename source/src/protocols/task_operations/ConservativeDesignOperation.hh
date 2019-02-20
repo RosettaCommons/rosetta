@@ -78,12 +78,6 @@ public:
 	void
 	clear_positions();
 
-	/// @brief Add to the allowed amino acids list instead of replacing it.  Default false.
-	void
-	add_to_allowed_aas( bool setting ){
-		add_to_allowed_aas_ = setting;
-	}
-
 	/// @brief Include native amino acid in the allowed_aas list.  Default true.
 	void
 	include_native_aa( bool setting ){
@@ -135,7 +129,6 @@ private:
 	utility::vector1< core::Size > positions_;
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
 
-	bool add_to_allowed_aas_;
 	bool include_native_aa_;
 
 	std::string pose_sequence_;

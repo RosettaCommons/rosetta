@@ -126,11 +126,6 @@ public:
 	void
 	set_picking_rounds(core::Size rounds);
 
-	/// @brief Add to the current set of amino acids in the task or replace them?
-	/// Default False
-	void
-	set_add_to_current(bool add_to_current);
-
 	/// @brief Include the poses current residue type in the allowed amino acids.
 	/// Default True.
 	void
@@ -155,7 +150,6 @@ private:
 
 	//Profile Options
 	core::Size picking_rounds_;
-	bool keep_task_allowed_aas_;
 	bool include_native_restype_;
 
 	CDRDBSequenceSet sequences_;

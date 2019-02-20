@@ -31,6 +31,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/task_operations/RestrictByCalculatorsOperation.hh>
+#include <core/pack/palette/NoDesignPackerPalette.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -366,7 +367,7 @@ catch ( utility::excn::Exception & e ) {
 	//task_factory_->push_back( new protocols::task_operations::RestrictToInterfaceOperation );
 	task_factory_->push_back( utility::pointer::make_shared< IncludeCurrent >() );
 	//prevent repacking at linkage lysine!
-	PreventRepackingOP prevent( new PreventRepacking );
+	PreventRepackingOP prevent( utility::pointer::make_shared< PreventRepacking >() );
 	prevent->include_residue(GTPase_lys_);
 	task_factory_->push_back(prevent);
 
@@ -470,21 +471,23 @@ UBQ_GTPaseMover::apply( core::pose::Pose& pose){
 
 	TR << "foldtree, " << '\n' << pose.fold_tree() << std::flush;
 
+	core::pack::task::PackerTaskOP the_task( task_factory_->create_task_and_apply_taskoperations( pose ) );
+
 	/////////////////fullatom Monte Carlo//////////////////////////////////////////////////////////
 	//make the monte carlo object
 	using protocols::moves::MonteCarlo;
 	using protocols::moves::MonteCarloOP;
 	using basic::options::option;
 	using namespace basic::options::OptionKeys::AnchoredDesign;
-	MonteCarloOP mc( new MonteCarlo( pose, *fullatom_scorefunction_, option[ refine_temp ].value() ) );
+	MonteCarloOP mc( utility::pointer::make_shared< MonteCarlo >( pose, *fullatom_scorefunction_, option[ refine_temp ].value() ) );
 
 	//////////////////////////Small/ShearMovers////////////////////////////////////////////////////////
-	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover(amide_mm_, 0.8, 1) );
+	protocols::simple_moves::BackboneMoverOP small_mover( utility::pointer::make_shared< protocols::simple_moves::SmallMover >(amide_mm_, 0.8, 1) );
 	small_mover->angle_max( 'H', 4.0 );
 	small_mover->angle_max( 'E', 4.0 );
 	small_mover->angle_max( 'L', 4.0 );
 
-	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover(amide_mm_, 0.8, 1) );
+	protocols::simple_moves::BackboneMoverOP shear_mover( utility::pointer::make_shared< protocols::simple_moves::ShearMover >(amide_mm_, 0.8, 1) );
 	shear_mover->angle_max( 'H', 4.0 );
 	shear_mover->angle_max( 'E', 4.0 );
 	shear_mover->angle_max( 'L', 4.0 );
@@ -504,21 +507,21 @@ UBQ_GTPaseMover::apply( core::pose::Pose& pose){
 	// DOF_mover_chi2->set_angle_range(-180, 180);
 	// DOF_mover_chi2->tries(1000);
 
-	protocols::simple_moves::TorsionDOFMoverOP DOF_mover_isopeptide( new protocols::simple_moves::TorsionDOFMover );
+	protocols::simple_moves::TorsionDOFMoverOP DOF_mover_isopeptide( utility::pointer::make_shared< protocols::simple_moves::TorsionDOFMover >() );
 	DOF_mover_isopeptide->set_DOF(atomIDs[3], atomIDs[4], atomIDs[5], atomIDs[6]);
 	DOF_mover_isopeptide->check_mmt(true);
 	DOF_mover_isopeptide->temp(0.4);
 	DOF_mover_isopeptide->set_angle_range(-180, 180);
 	DOF_mover_isopeptide->tries(1000);
 
-	protocols::simple_moves::TorsionDOFMoverOP DOF_mover_psi( new protocols::simple_moves::TorsionDOFMover );
+	protocols::simple_moves::TorsionDOFMoverOP DOF_mover_psi( utility::pointer::make_shared< protocols::simple_moves::TorsionDOFMover >() );
 	DOF_mover_psi->set_DOF(atomIDs[4], atomIDs[5], atomIDs[6], atomIDs[7]);
 	DOF_mover_psi->check_mmt(true);
 	DOF_mover_psi->temp(0.4);
 	DOF_mover_psi->set_angle_range(-180, 180);
 	DOF_mover_psi->tries(1000);
 
-	protocols::simple_moves::TorsionDOFMoverOP DOF_mover_phi( new protocols::simple_moves::TorsionDOFMover );
+	protocols::simple_moves::TorsionDOFMoverOP DOF_mover_phi( utility::pointer::make_shared< protocols::simple_moves::TorsionDOFMover >() );
 	DOF_mover_phi->set_DOF(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8]);
 	DOF_mover_phi->check_mmt(true);
 	DOF_mover_phi->temp(0.4);
@@ -529,15 +532,15 @@ UBQ_GTPaseMover::apply( core::pose::Pose& pose){
 	//set up "pack only the moving conjugate" packer task
 	utility::vector1< bool > repack_residues(pose.size(), false); //this could be member data
 	repack_residues[GTPase_lys_] = true;
-	core::pack::task::PackerTaskOP SC_task(core::pack::task::TaskFactory::create_packer_task(pose) );
+	core::pack::task::PackerTaskOP SC_task(core::pack::task::TaskFactory::create_packer_task(pose, utility::pointer::make_shared< core::pack::palette::NoDesignPackerPalette >() ) );
 	SC_task->restrict_to_residues(repack_residues);
 	SC_task->restrict_to_repacking(); //SCmover will design, oops
 	//and the mover
-	protocols::simple_moves::sidechain_moves::SidechainMoverOP SC_mover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
+	protocols::simple_moves::sidechain_moves::SidechainMoverOP SC_mover( utility::pointer::make_shared< protocols::simple_moves::sidechain_moves::SidechainMover >() );
 	SC_mover->set_change_chi_without_replacing_residue(true);
 	SC_mover->set_task(SC_task);
 
-	protocols::moves::RandomMoverOP backbone_mover( new protocols::moves::RandomMover() );
+	protocols::moves::RandomMoverOP backbone_mover( utility::pointer::make_shared< protocols::moves::RandomMover >() );
 	backbone_mover->add_mover(small_mover, 2.0);
 	backbone_mover->add_mover(shear_mover, 1.0);
 	//   backbone_mover->add_mover(DOF_mover_chi1, 0.75); //SC mover will handle this DOF
@@ -552,7 +555,7 @@ UBQ_GTPaseMover::apply( core::pose::Pose& pose){
 		//make kinematic mover
 		using protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP;
 		using protocols::loops::loop_closure::kinematic_closure::KinematicMover;
-		KinematicMoverOP kin_mover( new KinematicMover() );
+		KinematicMoverOP kin_mover( utility::pointer::make_shared< KinematicMover >() );
 		kin_mover->set_temperature( 0.8 );
 		kin_mover->set_vary_bondangles( true );
 		kin_mover->set_sample_nonpivot_torsions( true );
@@ -560,7 +563,7 @@ UBQ_GTPaseMover::apply( core::pose::Pose& pose){
 
 		using protocols::loops::loop_closure::kinematic_closure::KinematicWrapperOP;
 		using protocols::loops::loop_closure::kinematic_closure::KinematicWrapper;
-		KinematicWrapperOP kin_wrapper( new KinematicWrapper(kin_mover, loop_) );
+		KinematicWrapperOP kin_wrapper( utility::pointer::make_shared< KinematicWrapper >(kin_mover, loop_) );
 
 		backbone_mover->add_mover(kin_wrapper, 5);
 
@@ -569,7 +572,7 @@ UBQ_GTPaseMover::apply( core::pose::Pose& pose){
 	/////////////////////////minimize backbone DOFs//////////////////////////////////////////////
 	using protocols::minimization_packing::MinMoverOP;
 	using protocols::minimization_packing::MinMover;
-	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover(
+	protocols::minimization_packing::MinMoverOP min_mover( utility::pointer::make_shared< protocols::minimization_packing::MinMover >(
 		amide_mm_,
 		fullatom_scorefunction_,
 		basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
@@ -579,29 +582,29 @@ UBQ_GTPaseMover::apply( core::pose::Pose& pose){
 	/////////////////////////////////rotamer trials mover///////////////////////////////////////////
 	using protocols::minimization_packing::RotamerTrialsMoverOP;
 	using protocols::minimization_packing::EnergyCutRotamerTrialsMover;
-	protocols::minimization_packing::RotamerTrialsMoverOP rt_mover( new protocols::minimization_packing::EnergyCutRotamerTrialsMover(
+	protocols::minimization_packing::RotamerTrialsMoverOP rt_mover( utility::pointer::make_shared< protocols::minimization_packing::EnergyCutRotamerTrialsMover >(
 		fullatom_scorefunction_,
-		task_factory_,
+		*the_task,
 		mc,
 		0.01 /*energycut*/ ) );
 
 	///////////////////////package RT/min for JumpOutMover////////////////////////////////////////
-	protocols::moves::SequenceMoverOP RT_min_seq( new protocols::moves::SequenceMover );
+	protocols::moves::SequenceMoverOP RT_min_seq( utility::pointer::make_shared< protocols::moves::SequenceMover >() );
 	RT_min_seq->add_mover(rt_mover);
 	RT_min_seq->add_mover(min_mover);
 
-	protocols::moves::JumpOutMoverOP bb_if_RT_min( new protocols::moves::JumpOutMover(
+	protocols::moves::JumpOutMoverOP bb_if_RT_min( utility::pointer::make_shared< protocols::moves::JumpOutMover >(
 		backbone_mover,
 		RT_min_seq,
 		fullatom_scorefunction_,
 		20.0) );
 
 	///////////////////////////////repack///////////////////////////////////////////////
-	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
-	pack_mover->task_factory( task_factory_ );
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover( utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >() );
+	pack_mover->task(the_task);
 	pack_mover->score_function( fullatom_scorefunction_ );
 
-	protocols::minimization_packing::MinMoverOP min_mover_pack( new protocols::minimization_packing::MinMover(
+	protocols::minimization_packing::MinMoverOP min_mover_pack( utility::pointer::make_shared< protocols::minimization_packing::MinMover >(
 		amide_mm_,
 		fullatom_scorefunction_,
 		basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
@@ -610,7 +613,7 @@ UBQ_GTPaseMover::apply( core::pose::Pose& pose){
 
 	using protocols::minimization_packing::TaskAwareMinMoverOP;
 	using protocols::minimization_packing::TaskAwareMinMover;
-	protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover( new protocols::minimization_packing::TaskAwareMinMover(min_mover_pack, task_factory_) );
+	protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover( utility::pointer::make_shared< protocols::minimization_packing::TaskAwareMinMover >(min_mover_pack, the_task) );
 
 	/////////////////////////////////////////refine loop///////////////////////////////////////////
 

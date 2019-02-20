@@ -70,6 +70,10 @@ bool variants_match( ResidueType const & res1, ResidueType const & res2 );
 /// @brief  Similar to variants_match(), but allows different adduct-modified states.
 bool nonadduct_variants_match( ResidueType const & res1, ResidueType const & res2 );
 
+/// @brief Get a list of those VariantTypes that affect termini.
+/// @author Vikram K. Mulligan.
+utility::vector1 < VariantType > get_terminal_varianttypes();
+
 /// @brief look for best match to atom_names
 ResidueTypeCOP find_best_match( ResidueTypeCOPs const & rsd_type_list,
 	utility::vector1< std::string > const & atom_names,

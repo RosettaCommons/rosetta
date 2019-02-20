@@ -20,16 +20,16 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/ReplicateTask.hh>
 
-// project headers
+// Project headers
 #include <core/types.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 
 // utility headers
-
-//Auto Headers
 #include <utility/vector1.hh>
 
 
@@ -67,9 +67,164 @@ public:
 
 	// --------------- Test Cases --------------- //
 
+	void test_RestrictToSpecifiedBaseResidueTypes() {
+		using namespace utility::pointer;
+		using namespace core::select::residue_selector;
+		using namespace core::pack::task;
+
+		TR << "Testing the RestrictToSpecifiedBaseResidueTypes TaskOperation." << std::endl;
+
+		ResidueIndexSelectorOP selector( make_shared< ResidueIndexSelector >() );
+		selector->set_index( "2" );
+
+		operation::RestrictToSpecifiedBaseResidueTypesOP task_op(
+			make_shared< operation::RestrictToSpecifiedBaseResidueTypes >(
+			utility::vector1< std::string >( { "ALA", "GLY" } ), selector ) );
+
+		TS_ASSERT_EQUALS( task_op->base_types().size(), 2 );
+		TS_ASSERT_EQUALS( task_op->base_types()[ 1 ], "ALA" );
+		TS_ASSERT_EQUALS( task_op->base_types()[ 2 ], "GLY" );
+
+		TaskFactory tf;
+		tf.push_back( task_op );
+
+		PackerTaskOP task( tf.create_task_and_apply_taskoperations( pose ) );
+
+		TR << "Allowed at residue 2:" << std::endl;
+		task->residue_task( 2 ).print_allowed_types( TR );
+		TS_ASSERT_EQUALS( task->residue_task( 2 ).allowed_residue_types().size(), 2 );
+
+		TR << "Allowed at residue 3:" << std::endl;
+		task->residue_task( 3 ).print_allowed_types( TR );
+		TS_ASSERT( task->residue_task( 3 ).allowed_residue_types().size() > 2 );
+	}
+
+
+	void test_ProhibitSpecifiedBaseResidueTypes() {
+		using namespace utility::pointer;
+		using namespace core::select::residue_selector;
+		using namespace core::pack::task;
+
+		TR << "Testing the ProhibitSpecifiedBaseResidueTypes TaskOperation." << std::endl;
+
+		ResidueIndexSelectorOP selector( make_shared< ResidueIndexSelector >() );
+		selector->set_index( "2" );
+
+		operation::ProhibitSpecifiedBaseResidueTypesOP task_op(
+			make_shared< operation::ProhibitSpecifiedBaseResidueTypes >(
+			utility::vector1< std::string >( { "HIS", "HIS_D" } ), selector ) );
+
+		TS_ASSERT_EQUALS( task_op->base_types().size(), 2 );
+		TS_ASSERT_EQUALS( task_op->base_types()[ 1 ], "HIS" );
+		TS_ASSERT_EQUALS( task_op->base_types()[ 2 ], "HIS_D" );
+
+		TaskFactory tf;
+		tf.push_back( task_op );
+
+		PackerTaskOP task( tf.create_task_and_apply_taskoperations( pose ) );
+
+		TR << "Allowed at residue 2:" << std::endl;
+		task->residue_task( 2 ).print_allowed_types( TR );
+		TS_ASSERT_EQUALS( task->residue_task( 2 ).allowed_residue_types().size(), 19 );
+
+		TR << "Allowed at residue 3:" << std::endl;
+		task->residue_task( 3 ).print_allowed_types( TR );
+		TS_ASSERT( task->residue_task( 3 ).allowed_residue_types().size() > 19 );
+	}
+
+
+	void test_RestrictToResidueProperties() {
+		using namespace utility;
+		using namespace utility::pointer;
+		using namespace core::chemical;
+		using namespace core::select::residue_selector;
+		using namespace core::pack::task;
+
+		TR << "Testing the RestrictToResidueProperties TaskOperation." << std::endl;
+
+		ResidueIndexSelectorOP selector( make_shared< ResidueIndexSelector >() );
+		selector->set_index( "2" );
+
+		operation::RestrictToResiduePropertiesOP task_op(
+			make_shared< operation::RestrictToResidueProperties >(
+			vector1< ResidueProperty >( { HYDROPHOBIC } ), selector ) );
+
+		TS_ASSERT_EQUALS( task_op->properties().size(), 1 );
+
+		TaskFactory tf;
+		tf.push_back( task_op );
+
+		PackerTaskOP task( tf.create_task_and_apply_taskoperations( pose ) );
+
+		TR << "Allowed at residue 2:" << std::endl;
+		task->residue_task( 2 ).print_allowed_types( TR );
+		TS_ASSERT_EQUALS( task->residue_task( 2 ).allowed_residue_types().size(), 7 );
+
+		task_op->set_properties( vector1< ResidueProperty >( { HYDROPHOBIC, ALIPHATIC } ) );
+
+		TS_ASSERT_EQUALS( task_op->properties().size(), 2 );
+
+		tf.clear();
+		tf.push_back( task_op );
+		task = tf.create_task_and_apply_taskoperations( pose );
+
+		TR << "Allowed at residue 2:" << std::endl;
+		task->residue_task( 2 ).print_allowed_types( TR );
+		TS_ASSERT_EQUALS( task->residue_task( 2 ).allowed_residue_types().size(), 4 );
+
+		TR << "Allowed at residue 3:" << std::endl;
+		task->residue_task( 3 ).print_allowed_types( TR );
+		TS_ASSERT( task->residue_task( 3 ).allowed_residue_types().size() > 7 );
+	}
+
+
+	void test_ProhibitResidueProperties() {
+		using namespace utility;
+		using namespace utility::pointer;
+		using namespace core::chemical;
+		using namespace core::select::residue_selector;
+		using namespace core::pack::task;
+
+		TR << "Testing the ProhibitResidueProperties TaskOperation." << std::endl;
+
+		ResidueIndexSelectorOP selector( make_shared< ResidueIndexSelector >() );
+		selector->set_index( "2" );
+
+		operation::ProhibitResiduePropertiesOP task_op(
+			make_shared< operation::ProhibitResidueProperties >(
+			vector1< ResidueProperty >( { SIDECHAIN_THIOL } ), selector ) );
+
+		TS_ASSERT_EQUALS( task_op->properties().size(), 1 );
+
+		TaskFactory tf;
+		tf.push_back( task_op );
+
+		PackerTaskOP task( tf.create_task_and_apply_taskoperations( pose ) );
+
+		TR << "Allowed at residue 2:" << std::endl;
+		task->residue_task( 2 ).print_allowed_types( TR );
+		TS_ASSERT_EQUALS( task->residue_task( 2 ).allowed_residue_types().size(), 20 );
+
+		task_op->set_properties( vector1< ResidueProperty >( { SIDECHAIN_THIOL, SIDECHAIN_AMINE } ) );
+
+		TS_ASSERT_EQUALS( task_op->properties().size(), 2 );
+
+		tf.clear();
+		tf.push_back( task_op );
+		task = tf.create_task_and_apply_taskoperations( pose );
+
+		TR << "Allowed at residue 2:" << std::endl;
+		task->residue_task( 2 ).print_allowed_types( TR );
+		TS_ASSERT_EQUALS( task->residue_task( 2 ).allowed_residue_types().size(), 19 );
+
+		TR << "Allowed at residue 3:" << std::endl;
+		task->residue_task( 3 ).print_allowed_types( TR );
+		TS_ASSERT( task->residue_task( 3 ).allowed_residue_types().size() > 20 );
+	}
+
+
 	/// @brief this test applies the DisallowIfNonnative TaskOperation to a PackerTask and verifies that the task
 	/// reflects the proper designable residues
-
 	void test_DisallowIfNonnativeTaskOperation() {
 
 		using namespace core;

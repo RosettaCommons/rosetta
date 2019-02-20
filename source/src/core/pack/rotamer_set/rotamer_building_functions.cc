@@ -580,8 +580,8 @@ build_dna_rotamers(
 
 	utility::vector1< ResidueOP > new_rotamers;
 
-	pack::task::ExtraRotSample const level
-		( task.residue_task( resid ).extrachi_sample_level( true /*buried*/, 1 /*chi*/, *concrete_residue ) );
+	pack::task::ExtraRotSample const level(
+		task.residue_task( resid ).extrachi_sample_level( true /*buried*/, 1 /*chi*/, *concrete_residue ) );
 
 	// need to improve this logic:
 	if ( level == task::EX_SIX_QUARTER_STEP_STDDEVS ) {
@@ -692,13 +692,13 @@ build_rotamers_from_rotamer_bins( conformation::Residue const & residue,
 /// @author  Labonte
 /// @note    This currently assumes that all torsions are independent.  For now, this is the default method of handling
 /// carbohydrate rotamers.  Ideally, we will find an alternative method for handling carbohydrate rotamer libraries....
-void build_rotamers_from_rotamer_bins(conformation::Residue const & residue,
+void build_rotamers_from_rotamer_bins( conformation::Residue const & residue,
 	utility::vector1<conformation::ResidueOP> & rotamers ) {
 
 	Size const n_chis( residue.type().nchi() );
-	tt.Debug << "Creating list of indices; ";
+	tt.Trace << "Creating list of indices; ";
 	utility::vector1< uint > current_bin_indices( n_chis, 0 );  // Initialize with zeroes.
-	tt.Debug << "nesting " << n_chis << " levels deep." << std::endl;
+	tt.Trace << "nesting " << n_chis << " levels deep." << std::endl;
 
 	build_rotamers_from_rotamer_bins( residue, rotamers, 1, current_bin_indices );
 }

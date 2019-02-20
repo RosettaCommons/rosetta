@@ -10,7 +10,9 @@
 /// @file   core/pack/task/ResfileReader.cc
 /// @brief  implementation of resfile reader and its command classes
 /// @author Gordon Lemmon (glemmon@gmail.com), adapted from the ResfileReader code
-/// by Steven Lewis (smlewi@gmail.com) and Andrew Leaver-Fay
+/// @author Steven Lewis (smlewi@gmail.com)
+/// @author Andrew Leaver-Fay
+/// @author Reworked a bit by Vikram K. Mulligan (vmulligan@flatironinstitue.org) during the 2019 PackerPalette mini-XRW to use PackerPalettes.
 
 // Unit Headers
 #include <protocols/ligand_docking/HighResDocker.hh>
@@ -37,6 +39,8 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/palette/PackerPalette.hh>
+#include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -413,14 +417,35 @@ HighResDocker::make_packer_task_from_vector(
 	ligand_options::Interface const & allow_repack
 ) const{
 	static bool pose_already_packed= false;
-	core::pack::task::PackerTaskOP pack_task( core::pack::task::TaskFactory::create_packer_task(pose) );
+
+	// Initialize the PackerPalette:
+	core::pack::palette::CustomBaseTypePackerPaletteOP palette( utility::pointer::make_shared< core::pack::palette::CustomBaseTypePackerPalette >() );
+	for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
+		core::chemical::ResidueType const & this_res_type( pose.residue_type(i) );
+		if ( this_res_type.is_ligand() ) {
+			if ( !palette->has_base_residue_type( this_res_type.base_name() ) ) {
+				palette->add_type( this_res_type.base_name() );
+			}
+
+			//Add all other residue types with the same name3:
+			core::chemical::ResidueTypeSetCOP rsd_type_set( pose.residue_type_set_for_pose( this_res_type.mode() ) );
+			core::chemical::ResidueTypeCOPs allowed_types( core::chemical::ResidueTypeFinder( *rsd_type_set ).name3( this_res_type.name3() ).get_all_possible_residue_types() ); // a vector1
+			for ( core::Size i(1), imax(allowed_types.size()); i<=imax; ++i ) {
+				if ( !palette->has_base_residue_type( allowed_types[i]->base_name() ) ) {
+					palette->add_type( allowed_types[i]->base_name() );
+				}
+			}
+		}
+	}
+
+	core::pack::task::PackerTaskOP pack_task( core::pack::task::TaskFactory::create_packer_task(pose, palette) );
 	pack_task->initialize_from_command_line(); // -ex1 -ex2  etc.
 
 	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot_( new core::pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot_->initialize_from_command_line();
 	pack_task->append_rotamerset_operation( unboundrot_ );
 
-	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		/// If several params files have the same name, allow switching among them
 		/// This was previously only enabled with mutate_same_name3.  Now default.
 		if ( ! pose.residue(i).is_ligand() ) continue;
@@ -498,11 +523,16 @@ HighResDocker::enable_ligand_rotamer_packing(
 		return;
 	}
 	// else
+
+	utility::vector1< std::string > types_to_allow;
+	types_to_allow.reserve( allowed_types.size() + 1 ); //Max possible size
+	types_to_allow.push_back( this_residue.type().base_name() );
 	for ( core::Size j = 1; j <= allowed_types.size(); ++j ) {
-		if ( allowed_types[j]->name() == this_residue.name() ) continue; // already in the task's list
+		if ( types_to_allow.has_value( allowed_types[j]->base_name() ) ) continue; // already in the task's list
 		///TODO figure out why this is nonconst.  Perhaps it could be const
-		pack_task->nonconst_residue_task( ligand_residue_id ).allow_noncanonical_aa( allowed_types[j]->name() );
+		types_to_allow.push_back( allowed_types[j]->base_name() );
 	}
+	pack_task->nonconst_residue_task( ligand_residue_id ).restrict_restypes( types_to_allow );
 }
 
 utility::vector1<protocols::moves::MoverOP>

@@ -15,6 +15,7 @@
 #include <protocols/parser/DataLoaderFactory.hh>
 #include <protocols/parser/DatabaseSessionLoaderCreator.hh>
 #include <protocols/parser/StandardLoaderCreators.hh>
+#include <protocols/parser/PackerPaletteLoaderCreator.hh>
 #include <protocols/parser/ResidueSelectorLoaderCreator.hh>
 #include <protocols/parser/ConstraintGeneratorLoaderCreator.hh>
 #include <protocols/parser/MoveMapFactoryLoaderCreator.hh>

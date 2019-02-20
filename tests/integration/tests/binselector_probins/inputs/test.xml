@@ -27,8 +27,9 @@
           <ReadResfile name="dpro" filename="inputs/d_pro.txt" selector="dprobin" />
           <ReadResfile name="notpro" filename="inputs/not_pro.txt" selector="noteitherpro" />
     </TASKOPERATIONS>
-    <FILTERS>
-    </FILTERS>
+    <PACKER_PALETTES>
+	<CustomBaseTypePackerPalette name="palette" additional_residue_types="DALA" />
+    </PACKER_PALETTES>
     <MOVERS>
         
         <DeclareBond name="terminal_bond2" res1="24" res2="1" atom1="C" atom2="N" add_termini="false" />
@@ -36,7 +37,7 @@
         
         <!--required torsions to keep things in place. make sure you have them set for both ends-->
         
-        <PackRotamersMover name="packer" scorefxn="tala_comp" task_operations="lpro,dpro,notpro" />
+        <PackRotamersMover name="packer" scorefxn="tala_comp" task_operations="lpro,dpro,notpro" packer_palette="palette" />
 
     </MOVERS>
     <APPLY_TO_POSE>

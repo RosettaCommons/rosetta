@@ -1378,11 +1378,12 @@ dna_coupled_rotamer_design_test()
 				//task->nonconst_residue_task( ii ).prevent_repacking();
 				assert( task->pack_residue(ii) );
 			} else {
-				task->nonconst_residue_task( ii ).allow_aa( na_ade );
+				//VKM, Jan 2019: It should no longer be necessary to turn on DNA for DNA design.
+				/*task->nonconst_residue_task( ii ).allow_aa( na_ade );
 				task->nonconst_residue_task( ii ).allow_aa( na_thy );
 				task->nonconst_residue_task( ii ).allow_aa( na_gua );
-				task->nonconst_residue_task( ii ).allow_aa( na_cyt );
-				assert( task->design_residue(ii) );
+				task->nonconst_residue_task( ii ).allow_aa( na_cyt );*/
+				runtime_assert( task->design_residue(ii) );
 			}
 		}
 

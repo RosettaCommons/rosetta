@@ -286,26 +286,12 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 					pickaa = true;
 					continue;
 				}
-				if ( split_info[i].substr(0,5) == "EMPTY" ) {
-					line.has_ncaa = true;
-					// get the list of ncaa
-					oss << split_info[i];
-					for ( int j = i+1; j < (int)split_info.size() - 1; j = j+2 ) {
-						if ( split_info[j] == "NC" ) {
-							core::chemical::ResidueTypeSetCOP res_type_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
-							std::string ncaa_fullname = res_type_set->name_map(split_info[j+1]).name3();
-							std::cout << "debugDATA " << ncaa_fullname << std::endl;
-							line.ncaaList.push_back(split_info[j+1]);
-							oss << " " << split_info[j] << " "  << ncaa_fullname;
-							i+=2;
-						}
-					}
-				}
 				if ( pickaa ) { // the column following PIKAA
 					for ( int j=0; j < (int)split_info[i].size(); ++j ) { // only find string element size
 
 						//char one_letter_name(core::chemical::aa_from_oneletter_code(aa));
 						char one_letter_name = split_info[i].substr(j,1).c_str()[0];
+						runtime_assert_string_msg( !(one_letter_name == 'X' || one_letter_name == '[' || one_letter_name == ']' ), "Error in RemodelData::get_loops_to_build_from_blueprint(): Line \"" + split_info[i] + "\" could not be parsed.  PIKAA statements cannot contain noncanonicals in the context of Remodel, since Remodel foolishly re-implements core functionality instead of calling core functions.  If this is a problem, contact possu@stanford.edu." );
 						chemical::AA aa = core::chemical::aa_from_oneletter_code( one_letter_name );
 						TR_REMODEL << "  design position " << line.index << " to " << one_letter_name << " " << aa << std::endl;
 

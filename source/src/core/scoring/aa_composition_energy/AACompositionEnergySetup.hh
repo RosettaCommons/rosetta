@@ -202,10 +202,8 @@ private:
 	void add_excluded_property( core::chemical::ResidueProperty const property );
 
 	/// @brief Convert a property name to a ResidueProperty enum.
-	///
-	inline core::chemical::ResidueProperty parse_property( std::string const &name ) const {
-		return core::chemical::ResidueProperties::get_property_from_string( name ); //Will throw an error if the property is not recognized.
-	}
+	/// @details Throws an error if the property name is not recognized.
+	core::chemical::ResidueProperty parse_property( std::string const &name ) const;
 
 private:
 	/******************

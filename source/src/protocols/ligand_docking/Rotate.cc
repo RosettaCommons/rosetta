@@ -23,6 +23,9 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/palette/NoDesignPackerPalette.hh>
 
 #include <core/scoring/rms_util.tmpl.hh>
 
@@ -286,7 +289,8 @@ Ligand_info Rotate::create_random_rotation(
 	core::pose::Pose & local_pose
 ) const{
 	apply_rotate(mover, local_pose, center, rotate_info_.jump_id, rotate_info_.tag_along_jumps);
-	rb_grid_rotamer_trials_atr_rep(*grid, local_pose, begin, end);
+	core::pack::task::PackerTaskCOP packertask( core::pack::task::TaskFactory::create_packer_task( local_pose, utility::pointer::make_shared< core::pack::palette::NoDesignPackerPalette >() ) );
+	rb_grid_rotamer_trials_atr_rep(*grid, local_pose, begin, end, *packertask);
 	core::kinematics::Jump jump= local_pose.jump(rotate_info_.jump_id);
 	std::pair<int, int> const scores= get_rb_atr_and_rep_scores(*grid, local_pose, begin, end);
 	Ligand_info ligand_info;

@@ -1,3 +1,2 @@
-RESET PIKAA A
-
+PIKAA A
 start

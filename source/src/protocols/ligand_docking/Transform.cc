@@ -37,6 +37,9 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/chains_util.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/palette/NoDesignPackerPalette.hh>
 
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
@@ -510,7 +513,8 @@ void Transform::setup_conformers(core::pose::Pose & pose, core::Size begin)
 	using namespace core::conformation;
 
 	utility::vector1< core::conformation::ResidueOP > ligand_confs;
-	rotamers_for_trials(pose,begin,ligand_confs);
+	core::pack::task::PackerTaskCOP the_task( core::pack::task::TaskFactory::create_packer_task(pose, utility::pointer::make_shared< core::pack::palette::NoDesignPackerPalette >() ) );
+	rotamers_for_trials(pose,begin,ligand_confs, *the_task);
 
 	ligand_conformers_.clear();
 	for ( core::conformation::ResidueOP const & conf: ligand_confs ) {

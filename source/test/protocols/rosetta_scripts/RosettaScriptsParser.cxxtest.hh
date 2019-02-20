@@ -61,15 +61,21 @@ public:
 		TR << "Starting RosettaScriptsParserTests::test_allowed_multiple_dependencies()" << std::endl;
 		TR << "This test ensures that the <xi:include ... /> function can be used to include the same file multiple times, if one so wishes." << std::endl;
 		TR << "Created by Vikram K. Mulligan (vmullig@uw.edu), Baker lab, 6 May 2016." << std::endl;
-		protocols::rosetta_scripts::RosettaScriptsParser parser;
-		utility::vector1< std::string > files_read_in;
 		try {
-			TR << "===THIS SHOULD NOT TRIGGER AN EXCEPTION===" << std::endl;
-			std::string substituted_contents;
-			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/permitted1.xml", substituted_contents, files_read_in, 0 );
+			protocols::rosetta_scripts::RosettaScriptsParser parser;
+			utility::vector1< std::string > files_read_in;
+			try {
+				TR << "===THIS SHOULD NOT TRIGGER AN EXCEPTION===" << std::endl;
+				std::string substituted_contents;
+				parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/permitted1.xml", substituted_contents, files_read_in, 0 );
+			} catch (utility::excn::Exception & e ) {
+				TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
+				TS_ASSERT(false); //We shouldn't get here.
+			}
 		} catch (utility::excn::Exception & e ) {
+			// The XSD itself is faulty;
 			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
-			TS_ASSERT(false); //We shouldn't get here.
+			TS_ASSERT( false );
 		}
 		TR << "===THE ABOVE SHOULD NOT HAVE TRIGGERED AN EXCEPTION===" << std::endl;
 		TR.flush();
@@ -79,19 +85,25 @@ public:
 		TR << "Starting RosettaScriptsParserTests::test_prohibit_circular_dependencies()" << std::endl;
 		TR << "This test ensures that the <xi:include ... /> function can't be used for circular inclusion patterns (e.g. A includes B includes C includes A)." << std::endl;
 		TR << "Created by Vikram K. Mulligan (vmullig@uw.edu), Baker lab, 6 May 2016." << std::endl;
-		protocols::rosetta_scripts::RosettaScriptsParser parser;
-		utility::vector1< std::string > files_read_in;
 		try {
-			TR << "===THIS SHOULD TRIGGER AN EXCEPTION===" << std::endl;
-			std::string substituted_contents;
-			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/prohibited1.xml", substituted_contents, files_read_in, 0 );
-		} catch (utility::excn::Exception & e ) {
-			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
-			TR << "===THE ABOVE SHOULD HAVE TRIGGERED AN EXCEPTION===" << std::endl;
+			protocols::rosetta_scripts::RosettaScriptsParser parser;
+			utility::vector1< std::string > files_read_in;
+			try {
+				TR << "===THIS SHOULD TRIGGER AN EXCEPTION===" << std::endl;
+				std::string substituted_contents;
+				parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/prohibited1.xml", substituted_contents, files_read_in, 0 );
+			} catch (utility::excn::Exception & e ) {
+				TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
+				TR << "===THE ABOVE SHOULD HAVE TRIGGERED AN EXCEPTION===" << std::endl;
 
-			std::string expected_err_msg = "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): Circular inclusion pattern detected when reading \"protocols/rosetta_scripts/prohibited1.xml\".";
-			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
-			return;
+				std::string expected_err_msg = "Error in protocols::rosetta_scipts::RosettaScriptsParser::read_in_and_recursively_replace_includes(): Circular inclusion pattern detected when reading \"protocols/rosetta_scripts/prohibited1.xml\".";
+				TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
+				return;
+			}
+		} catch (utility::excn::Exception & e ) {
+			// The XSD itself is faulty;
+			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
+			TS_ASSERT( false );
 		}
 		TR << "Error in RosettaScriptsParserTests::test_prohibit_circular_dependencies(): an exception should have been thrown by the circular dependencies, but wasn't." << std::endl;
 		TS_ASSERT(false); //We shouldn't get here.
@@ -102,29 +114,35 @@ public:
 		TR << "Starting RosettaScriptsParserTests::test_multiple_includes()" << std::endl;
 		TR << "This test looks for proper function of the <xi:include ... /> functionality." << std::endl;
 		TR << "Created by Vikram K. Mulligan (vmullig@uw.edu), Baker lab, 6 May 2016." << std::endl;
-		protocols::rosetta_scripts::RosettaScriptsParser parser;
+		try {
+			protocols::rosetta_scripts::RosettaScriptsParser parser;
 
-		//Read in the reference XML (no includes):
-		std::string test1xml;
-		utility::io::izstream inputstream;
-		inputstream.open("protocols/rosetta_scripts/test1.xml");
-		utility::slurp( inputstream, test1xml );
-		inputstream.close();
+			//Read in the reference XML (no includes):
+			std::string test1xml;
+			utility::io::izstream inputstream;
+			inputstream.open("protocols/rosetta_scripts/test1.xml");
+			utility::slurp( inputstream, test1xml );
+			inputstream.close();
 
-		//Read in the test XML (with includes):
-		utility::vector1< std::string > files_read_in;
-		std::string test2xml;
-		parser.read_in_and_recursively_replace_includes("protocols/rosetta_scripts/test2.xml", test2xml, files_read_in, 0);
+			//Read in the test XML (with includes):
+			utility::vector1< std::string > files_read_in;
+			std::string test2xml;
+			parser.read_in_and_recursively_replace_includes("protocols/rosetta_scripts/test2.xml", test2xml, files_read_in, 0);
 
-		if ( TR.visible() ) {
-			TR << "REFERENCE FILE (no includes):" << std::endl;
-			TR << test1xml << std::endl;
-			TR << "TEST FILE (with includes):" << std::endl;
-			TR << test2xml << std::endl;
+			if ( TR.visible() ) {
+				TR << "REFERENCE FILE (no includes):" << std::endl;
+				TR << test1xml << std::endl;
+				TR << "TEST FILE (with includes):" << std::endl;
+				TR << test2xml << std::endl;
+			}
+
+			//Are the interpreted files (with includes replaced with the contents of the other file) the same?
+			TS_ASSERT( test1xml == test2xml );
+		} catch (utility::excn::Exception & e ) {
+			// The XSD itself is faulty;
+			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
+			TS_ASSERT( false );
 		}
-
-		//Are the interpreted files (with includes replaced with the contents of the other file) the same?
-		TS_ASSERT( test1xml == test2xml );
 
 		TR.flush();
 	}
@@ -160,14 +178,20 @@ public:
 		core::pose::Pose test_pose;
 		core::pose::make_pose_from_sequence(test_pose, "TESTTESTTEST", "fa_standard", false);
 
-		protocols::rosetta_scripts::RosettaScriptsParser parser;
-		auto protocoltag = parser.create_tag_from_xml_string(report_at_end_protocol, utility::vector1<std::string>());
-		auto parsed_mover = parser.parse_protocol_tag(
-			test_pose,
-			parser.create_tag_from_xml_string(report_at_end_protocol, utility::vector1<std::string>()),
-			basic::options::option);
+		try {
+			protocols::rosetta_scripts::RosettaScriptsParser parser;
+			auto protocoltag = parser.create_tag_from_xml_string(report_at_end_protocol, utility::vector1<std::string>());
+			auto parsed_mover = parser.parse_protocol_tag(
+				test_pose,
+				parser.create_tag_from_xml_string(report_at_end_protocol, utility::vector1<std::string>()),
+				basic::options::option);
 
-		parsed_mover->apply(test_pose);
+			parsed_mover->apply(test_pose);
+		} catch (utility::excn::Exception & e ) {
+			// The XSD itself is faulty;
+			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
+			TS_ASSERT( false );
+		}
 
 		core::Real ala_pre, ala_post, ala_post_reported;
 		core::pose::getPoseExtraScore(test_pose, "ala_pre", ala_pre);

@@ -18,6 +18,9 @@
 		<Layer name="select_surface" select_core="false" select_boundary="false" select_surface="true" core_cutoff="3.5" surface_cutoff="2" />
 		
 	</RESIDUE_SELECTORS>
+	<PACKER_PALETTES>
+		<CustomBaseTypePackerPalette name="d_aa_palette" additional_residue_types="DALA,DCYS,DASP,DGLU,DPHE,DHIS,DILE,DLYS,DLEU,DMET,DASN,DPRO,DGLN,DARG,DSER,DTHR,DVAL,DTRP,DTYR" />
+	</PACKER_PALETTES>
 	<TASKOPERATIONS>
 	
 		<RestrictToRepacking name="nodesign" />
@@ -53,13 +56,13 @@
 		
 		<ConstraintSetMover name="constrain_pepbonds" add_constraints="1" cst_file="inputs/constraints.cst" />
 		
-		<FastDesign name="fdes" scorefxn="tala_symm_aacomp" repeats="1" relaxscript="inputs/fastdesign.txt"  task_operations="allowed_core,allowed_boundary,allowed_surface" >
+		<FastDesign name="fdes" scorefxn="tala_symm_aacomp" repeats="1" relaxscript="inputs/fastdesign.txt" packer_palette="d_aa_palette" task_operations="allowed_core,allowed_boundary,allowed_surface" >
 			<MoveMap name="fdes_mm">
 				<Span begin="1" end="999" bb="1" chi="1" />
 			</MoveMap>
 		</FastDesign>
 
-		<SymPackRotamersMover name="pack" scorefxn="tala_symm_aacomp" task_operations="allowed_core,allowed_boundary,allowed_surface" />
+		<SymPackRotamersMover name="pack" scorefxn="tala_symm_aacomp" packer_palette="d_aa_palette" task_operations="allowed_core,allowed_boundary,allowed_surface" />
 
 		<SymMinMover name="min" scorefxn="tala_symm" bb="1" chi="1" jump="ALL" >
 			<MoveMap name="min_mm">

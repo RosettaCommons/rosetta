@@ -258,6 +258,7 @@ EnzdesBaseProtocol::register_options()
 	option.add_relevant( OptionKeys::score::weights );
 	option.add_relevant( OptionKeys::score::patch );
 	option.add_relevant( OptionKeys::packing::soft_rep_design );
+	option.add_relevant( OptionKeys::packing::packer_palette::extra_base_type_file );
 
 	protocols::enzdes::DetectProteinLigandInterface::register_options();
 	protocols::enzdes::ProteinLigandInterfaceUpweighter::register_options();
@@ -639,7 +640,7 @@ EnzdesBaseProtocol::cst_minimize(
 
 		for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 
-			if ( task->pack_residue(i) && ( !is_catalytic_position( pose, i ) )  ) {
+			if ( task->pack_residue(i) /*&& ( !is_catalytic_position( pose, i ) )*/  ) {
 				pose.replace_residue( i, old_Pose.residue(i), true );
 			}
 		}

@@ -257,10 +257,6 @@ packing_specificity_test_fast(
 				if ( std::find( pos_list.begin(), pos_list.end(), ii ) == pos_list.end() ) {
 					task->nonconst_residue_task( ii ).prevent_repacking();
 				} else {
-					task->nonconst_residue_task( ii ).allow_aa( na_ade );
-					task->nonconst_residue_task( ii ).allow_aa( na_thy );
-					task->nonconst_residue_task( ii ).allow_aa( na_gua );
-					task->nonconst_residue_task( ii ).allow_aa( na_cyt );
 					if ( add_extra_rotamers ) {
 						// 100 rotamers
 						task->nonconst_residue_task( ii ).or_exdna_sample_level( static_cast<pack::task::ExtraRotSample>(4));
@@ -339,39 +335,10 @@ packing_specificity_test_fast(
 	basic::prof_show();
 }
 
-//   pack::task::PackerTaskOP
-//    pack_task( pack::task::TaskFactory::create_packer_task( pose )),
-//    design_task( pack::task::TaskFactory::create_packer_task( pose )),
-//    coupled_design_task( pack::task::TaskFactory::create_packer_task( pose ));
-
-//   pack_task->initialize_from_command_line();
-//   design_task->initialize_from_command_line();
-//   coupled_design_task->initialize_from_command_line();
-//   tt << "packloop: " << pose.sequence() << " START" << std::endl;
-
-//   for ( Size ii = 1; ii <= nres; ++ii ) {
-//    if ( pose.residue(ii).is_protein() ) {
-//     pack_task->nonconst_residue_task( ii ).restrict_to_repacking();
-//     design_task->nonconst_residue_task( ii ).restrict_to_repacking();
-//     coupled_design_task->nonconst_residue_task( ii ).restrict_to_repacking();
-//    } else {
-//     pack_task->nonconst_residue_task( ii ).prevent_repacking();
-//     design_task->nonconst_residue_task( ii ).allow_aa( na_ade );
-//     design_task->nonconst_residue_task( ii ).allow_aa( na_thy );
-//     design_task->nonconst_residue_task( ii ).allow_aa( na_gua );
-//     design_task->nonconst_residue_task( ii ).allow_aa( na_cyt );
-//     coupled_design_task->nonconst_residue_task( ii ).allow_aa( na_ade );
-//     coupled_design_task->nonconst_residue_task( ii ).allow_aa( na_thy );
-//     coupled_design_task->nonconst_residue_task( ii ).allow_aa( na_gua );
-//     coupled_design_task->nonconst_residue_task( ii ).allow_aa( na_cyt );
-//    }
-//   }
 
 /// @details Try all possible dna basepairs at the motif positions
 /// evaluate their energies with a repack
 /// requires that the pose already have base partner info set
-
-
 void
 packing_specificity_test(
 	pose::Pose const & start_pose,

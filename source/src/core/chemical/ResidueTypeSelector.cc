@@ -8,6 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   ResidueTypeSelector.cc
+/// @note This is NOT a ResidueSelector!  This file predates ResidueSelectors.
 /// @author Phil Bradley
 
 
@@ -166,6 +167,7 @@ template< class Archive >
 void
 core::chemical::Selector_PROPERTY::save( Archive & arc ) const {
 	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( CEREAL_NVP( custom_properties_ ) );
 	arc( CEREAL_NVP( properties_ ) ); // utility::vector1<std::string>
 }
 
@@ -174,6 +176,7 @@ template< class Archive >
 void
 core::chemical::Selector_PROPERTY::load( Archive & arc ) {
 	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( custom_properties_ );
 	arc( properties_ ); // utility::vector1<std::string>
 }
 
@@ -256,6 +259,7 @@ template< class Archive >
 void
 core::chemical::Selector_VARIANT_TYPE::save( Archive & arc ) const {
 	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( CEREAL_NVP( custom_variants_ ) );
 	arc( CEREAL_NVP( variants_ ) ); // utility::vector1<std::string>
 }
 
@@ -264,6 +268,7 @@ template< class Archive >
 void
 core::chemical::Selector_VARIANT_TYPE::load( Archive & arc ) {
 	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( custom_variants_ );
 	arc( variants_ ); // utility::vector1<std::string>
 }
 

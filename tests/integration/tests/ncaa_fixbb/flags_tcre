@@ -3,3 +3,4 @@
 -score:weights mm_std_fa_elec_dslf_fa13_split_unfolded
 -overwrite
 -out:suffix _mm_std_fa_elec_dslf_fa13_split_unfolded
+-packing:packer_palette:extra_base_type_file extra_restypes.txt

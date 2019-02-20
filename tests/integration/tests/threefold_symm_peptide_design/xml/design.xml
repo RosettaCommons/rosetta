@@ -61,6 +61,9 @@
 		</ScoreFunction>
 
 	</SCOREFXNS>
+	<PACKER_PALETTES>
+		<CustomBaseTypePackerPalette name="custom_palette" additional_residue_types="TBMBSYMM" />
+	</PACKER_PALETTES>
 	<RESIDUE_SELECTORS>
 		# Residue selectors provide rules for defining sets of amino acid positions
 		# in a structure.  They can be used to control many Rosetta algorithms.
@@ -88,6 +91,11 @@
 			use_sidechain_neighbors="false" ball_radius="2.0"
 			core_cutoff="30" surface_cutoff="50"
 		/>
+		<Index name="select_linker" resnums="11,21,32,42,53,63" />
+		<Not name="select_not_linker" selector="select_linker" />
+		<And name="select_core_not_linker" selectors="select_core,select_not_linker" />
+		<And name="select_boundary_not_linker" selectors="select_boundary,select_not_linker" />
+		<And name="select_surface_not_linker" selectors="select_surface,select_not_linker" />
 
 	</RESIDUE_SELECTORS>
 	<TASKOPERATIONS>
@@ -103,21 +111,21 @@
 		# the linker to change:
 		<RestrictResiduesToRepacking name="only_repack_linker" residues="21,42,63" />
 
-		# At buried positions selected with the “select_core” residue selector, only allow
+		# At buried positions selected with the “select_core_not_linker” residue selector, only allow
 		# hydrophobic amino acids or alanine (FAMILYVW):
-		<ReadResfile name="core_resfile" selector="select_core"
+		<ReadResfile name="core_resfile" selector="select_core_not_linker"
 			filename="xml/core.resfile"
 		/>
 
 		# At boundary positions, only allow proline, tyrosine, small aliphatic amino acids,
 		# or polar uncharged amino acids (ILYVTSNQP):
-		<ReadResfile name="boundary_resfile" selector="select_boundary"
+		<ReadResfile name="boundary_resfile" selector="select_boundary_not_linker"
 			filename="xml/boundary.resfile"
 		/>
 
 		# At solvent-exposed positions, only allow polar (charged or uncharged) amino acids
 		# or proline (DERKTSNQP):
-		<ReadResfile name="surface_resfile" selector="select_surface"
+		<ReadResfile name="surface_resfile" selector="select_surface_not_linker"
 			filename="xml/surface.resfile"
 		/>
 
@@ -227,6 +235,7 @@
 		# Carry out initial minimization to bring the fragments of the TBMB linker together,
 		# orienting the cysteine side-chains in the process:
 		<FastRelax name="frelax_linker"
+			packer_palette="custom_palette"
 			task_operations="nodesign"
 			min_type="lbfgs_armijo_nonmonotone"
 			scorefxn="tala_symm_cst" repeats="1"
@@ -264,7 +273,7 @@
 		# with a reduced repulsive term.  This is done for each loop conformation that GenKIC
 		# considers:
 		<SymPackRotamersMover name="quickpack"
-		  scorefxn="tala_symm_soft"
+		  scorefxn="tala_symm_soft" packer_palette="custom_palette"
 		  task_operations="core_resfile,boundary_resfile,surface_resfile,only_repack_linker"
 		/>
 
@@ -333,7 +342,7 @@
 		# conformation that GenKIC returns.  This first round keeps the backbone fixed while
 		# carrying out multiple rounds of side-chain design and side-chain energy minimization,
 		# gradually ramping the repulsive term in the score function from round to round. 
-		<FastDesign name="fdes1"
+		<FastDesign name="fdes1" packer_palette="custom_palette"
 		  task_operations="core_resfile,boundary_resfile,surface_resfile,only_repack_linker"
 		  disable_design="false" min_type="lbfgs_armijo_nonmonotone"
 		  scorefxn="tala_symm_cst" repeats="1"
@@ -368,7 +377,7 @@
 		# while carrying out multiple rounds of side-chain design and full-structure
 		# energy minimization, gradually ramping the repulsive term in the score function
 		# from round to round.
-		<FastDesign name="fdes2"
+		<FastDesign name="fdes2" packer_palette="custom_palette"
 		  task_operations="core_resfile,boundary_resfile,surface_resfile,only_repack_linker"
 		  disable_design="false" min_type="lbfgs_armijo_nonmonotone"
 		  scorefxn="tala_symm_cst" ramp_down_constraints="false" repeats="1"

@@ -749,7 +749,7 @@ GlobalResidueTypeSet::load_exclude_pdb_component_ids( std::string const & direct
 /// when this function is called. This function must not call any functions of the parent
 /// that attempts to create a write or a read lock, or this function will deadlock.
 bool
-GlobalResidueTypeSet::lazy_load_base_type( std::string const & rsd_base_name ) const
+GlobalResidueTypeSet::lazy_load_base_type_already_write_locked( std::string const & rsd_base_name ) const
 {
 	if ( cache_object()->has_generated_residue_type( rsd_base_name ) ) { return true; }
 	if ( cache_object()->is_prohibited( rsd_base_name ) ) { return false; }
@@ -766,6 +766,7 @@ GlobalResidueTypeSet::lazy_load_base_type( std::string const & rsd_base_name ) c
 			if ( new_rsd_type ) {
 				// Duplicate detection is handled by the exclude_pdb_component file -- if it's not exclude_pdb_component, we load the component
 				new_rsd_type->name( "pdb_" + short_name );
+				new_rsd_type->base_name( short_name );
 				TR << "Loading '" << short_name << "' from the PDB components dictionary for residue type '" << rsd_base_name << "'" << std::endl;
 			}
 		} else {
@@ -781,7 +782,7 @@ GlobalResidueTypeSet::lazy_load_base_type( std::string const & rsd_base_name ) c
 
 	// Finish up with the new residue type.
 	if ( new_rsd_type ) {
-		cache_object()->add_residue_type( new_rsd_type );
+		force_add_base_residue_type_already_write_locked( new_rsd_type );
 	}
 	return cache_object()->has_generated_residue_type( rsd_base_name );
 

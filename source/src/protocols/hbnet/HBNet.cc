@@ -2463,11 +2463,6 @@ HBNet::create_ptask(core::pose::Pose const & pose, bool initialize_from_commandl
 		task_factory_->push_back( pointer::make_shared< operation::InitializeFromCommandline >() );
 	}
 	PackerTaskOP task = task_factory_->create_task_and_apply_taskoperations( pose );
-	for ( core::Size resid = 1; resid <= pose.size(); ++resid ) {
-		if ( task->being_designed( resid ) ) {
-			task->nonconst_residue_task( resid ).allow_aa( core::chemical::aa_gly );
-		}
-	}
 	return task;
 }
 
@@ -3166,7 +3161,6 @@ HBNet::setup( Pose const & pose )
 					}
 				}
 				if ( extend_existing_networks_ ) {
-					task_->nonconst_residue_task( i ).reset(); // in case previously set to prevent_repacking()
 					// turning on optH restricts rotamers to only protons flips during packing
 					//   this simultaneously allows for
 					task_->nonconst_residue_task( i ).or_optimize_h( true );
@@ -3200,14 +3194,11 @@ HBNet::setup( Pose const & pose )
 	if ( keep_start_selector_rotamers_fixed_ ) {
 		for ( const auto & start_res : start_res_vec_ ) {
 			if ( !task_->being_packed( start_res ) ) {
-				//TR << "Residue " << start_res << " was set to not repack,
-				//only the input rotamer will be used."<< std::endl;
-				const chemical::AA aa = task_->nonconst_residue_task( start_res ).get_original_residue();
-				task_->nonconst_residue_task( start_res ).reset(); // in case previously set to prevent_repacking()
-				task_->nonconst_residue_task( start_res ).allow_aa( aa );
-				task_->nonconst_residue_task( start_res ).or_optimize_h( true );
-				task_->nonconst_residue_task( start_res ).or_include_current( true );
+				TR.Warning << "Warning!  The \"use_only_input_rot_for_start_res\" option was specified, but task operations were provided that ensure that position " << start_res << " is not being packed!" << std::endl;
 			}
+			task_->nonconst_residue_task( start_res ).or_optimize_h( true );
+			task_->nonconst_residue_task( start_res ).or_include_current( true );
+			task_->nonconst_residue_task( start_res ).restrict_to_repacking();
 		}
 	}
 	utility::vector1<Size>  residues_to_ala(0);
@@ -3689,7 +3680,7 @@ HBNet::attributes_for_hbnet( utility::tag::AttributeList & attlist )
 		"STRKHYWNQDE" )
 		+ XMLSchemaAttribute::attribute_w_default(
 		"use_only_input_rot_for_start_res", xsct_rosetta_bool,
-		"keep the input rotamer for starting residues fixed; only sample proton chis during network search",
+		"Keep the input rotamer for starting residues fixed; only sample proton chis during network search.  Note that the starting residue positions must otherwise be packable.",
 		"false")
 		+ XMLSchemaAttribute(
 		"start_resnums", xsct_residue_number_cslist,

@@ -45,6 +45,7 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -321,6 +322,7 @@ repack_test () {
 	using namespace kinematics;
 	using namespace pose;
 	using namespace pack;
+	using namespace core::pack::palette;
 
 	//Setup scoring function
 	std::string const & algorithm_name = option[algorithm];
@@ -336,21 +338,17 @@ repack_test () {
 	pose.dump_pdb( pdbname + "_start.pdb" );
 	std::cout << "Loaded in PDB file..." << std::endl;
 
-	pack::task::PackerTaskOP designtask( pack::task::TaskFactory::create_packer_task( pose ));
+	CustomBaseTypePackerPaletteOP palette( utility::pointer::make_shared< CustomBaseTypePackerPalette >() );
+	utility::vector1< std::string > beta_peptide_names( {"B3A", "B3C", "B3D", "B3E", "B3F", "B3G", "B3H", "B3I", "B3K", "B3L", "B3M", "B3N",
+		"B3O","B3P", "B3Q", "B3R", "B3S", "B3T", "B3V", "B3W", "B3Y"} );
+	for ( core::Size i(1), imax(beta_peptide_names.size()); i<=imax; ++i ) {
+		palette->add_type( beta_peptide_names[i] );
+	}
+
+	pack::task::PackerTaskOP designtask( pack::task::TaskFactory::create_packer_task( pose, palette ));
 	designtask->initialize_from_command_line();
 	if ( algorithm_name == "repack" ) {
 		designtask->restrict_to_repacking();
-	} else {
-		utility::vector1< bool > const allowed_aas (chemical::num_canonical_aas, false);
-		std::string const beta_peptide_names [21] = {"B3A", "B3C", "B3D", "B3E", "B3F", "B3G", "B3H", "B3I", "B3K", "B3L", "B3M", "B3N",
-			"B3O","B3P", "B3Q", "B3R", "B3S", "B3T", "B3V", "B3W", "B3Y"};
-
-		for ( Size i = 1; i <= pose.size(); ++i ) {
-			for ( Size j = 0; j != 21; ++j ) {
-				designtask->nonconst_residue_task(i).allow_noncanonical_aa( beta_peptide_names[j] );
-			}
-			designtask->nonconst_residue_task(i).restrict_absent_canonical_aas( allowed_aas );
-		}
 	}
 
 	Size const nres = pose.size();

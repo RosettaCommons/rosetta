@@ -64,7 +64,20 @@ class PackerTask_ : public PackerTask
 public:
 	/// @brief constructor; the PackerTask will always need a pose!
 	PackerTask_();
-	PackerTask_( pose::Pose const & pose );
+
+	/// @brief Initialization constructor that needs a pose.  A DefaultPackerPalette
+	/// is automatically created using the ResidueTypeSet of the pose.
+	PackerTask_(
+		pose::Pose const & pose
+	);
+
+
+	/// @brief Initialization constructor that needs a pose and a PackerPalette.
+	/// @details The input PackerPalette is cloned.
+	PackerTask_(
+		pose::Pose const & pose,
+		core::pack::palette::PackerPaletteCOP const & packer_palette
+	);
 
 	/// @brief dtor
 	virtual ~PackerTask_();
@@ -200,6 +213,13 @@ public:
 	virtual void show_residue_task( Size resid ) const;
 	virtual void show_all_residue_tasks( std::ostream & out ) const;
 	virtual void show_all_residue_tasks() const;
+
+	/// @brief Has this PackerTask been initialized with a PackerPalette?
+	/// @details PackerTasks must be initialized with PackerPalettes before being modified with TaskOperations.  The TaskFactory
+	/// will initialize the PackerTask with a DefaultPackerPalette if no custom PackerPalette is provided.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	virtual
+	bool is_initialized() const;
 
 	/// @brief read command line options (but not resfile) to set the state of the PackerTask, NOT IN CONSTRUCTOR
 	virtual
@@ -417,6 +437,12 @@ private: // private methods
 
 private:
 
+	/// @brief Has this PackerTask been initialized with a PackerPalette?
+	/// @details PackerTasks must be initialized with PackerPalettes before being modified with TaskOperations.  The TaskFactory
+	/// will initialize the PackerTask with a DefaultPackerPalette if no custom PackerPalette is provided.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_initialized_ = false;
+
 	Size nres_;
 
 	/// @details superficial on/off switch for repacking residues
@@ -430,28 +456,28 @@ private:
 	utility::vector1< ResidueLevelTask_ > residue_tasks_;
 
 	mutable Size n_to_be_packed_;
-	mutable bool n_to_be_packed_up_to_date_;
+	mutable bool n_to_be_packed_up_to_date_ = true;
 
 	/// @details linmem_ig overrides PDInteractionGraph
-	bool linmem_ig_;
-	bool linmem_ig_history_size_at_default_;
-	Size linmem_ig_history_size_;
+	bool linmem_ig_ = false;
+	bool linmem_ig_history_size_at_default_ = true;
+	Size linmem_ig_history_size_ = 10;
 	/// @details linmem_ig overrides LazyIG
-	bool lazy_ig_;
+	bool lazy_ig_ = false;
 
 	/// @details linmem_ig overrides DoubleLazyIG
-	bool double_lazy_ig_;
-	Size dlig_mem_limit_;
+	bool double_lazy_ig_ = false;
+	Size dlig_mem_limit_ = 0;
 
-	bool multi_cool_annealer_;
-	Size mca_history_size_;
+	bool multi_cool_annealer_ = false;
+	Size mca_history_size_ = 1;
 
 	/// @brief keep track: are we optimizing H at all positions?
 	/// don't use linmem_ig_ if so.
-	bool optimize_H_;
+	bool optimize_H_ = false;
 
-	bool bump_check_;
-	Real max_rotbump_energy_;
+	bool bump_check_ = true;
+	Real max_rotbump_energy_ = 5.0;
 
 	// pbhack temporary -- usually null pointer
 	RotamerCouplingsCOP rotamer_couplings_;
@@ -460,9 +486,9 @@ private:
 	RotamerLinksCOP rotamer_links_;
 
 	// rhiju -- some options that need to be sent to the annealer
-	Real low_temp_;
-	Real high_temp_;
-	bool disallow_quench_;
+	Real low_temp_ = -1.0;
+	Real high_temp_ = -1.0;
+	bool disallow_quench_ = false;
 
 	/// @details holds specific residue residue weights to be used in packing
 	IGEdgeReweightContainerOP IG_edge_reweights_;
@@ -470,7 +496,11 @@ private:
 	rotamer_set::RotSetsOperationList rotsetsops_;
 
 	// sheffler
-	PackerTaskSymmetryStatus symmetry_status_;
+	PackerTaskSymmetryStatus symmetry_status_ = NO_SYMMETRIZATION_REQUEST;
+
+	/// @brief The PackerPalette, which tells the PackerTask what the default set of residue types is in the absence of TaskOperations.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	core::pack::palette::PackerPaletteCOP packer_palette_;
 
 #ifdef    SERIALIZATION
 public:

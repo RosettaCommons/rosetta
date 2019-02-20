@@ -354,6 +354,16 @@ public:
 		core::pose::Pose & pose
 	);
 
+	/// @brief Instantiate a PackerPalette object.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void instantiate_packer_palette(
+		utility::tag::TagCOP const & tag_ptr,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map & filters,
+		protocols::moves::Movers_map & movers,
+		core::pose::Pose & pose
+	);
+
 	void instantiate_taskoperation(
 		utility::tag::TagCOP const & tag_ptr,
 		basic::datacache::DataMap & data,

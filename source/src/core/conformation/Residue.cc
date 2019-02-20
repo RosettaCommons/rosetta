@@ -101,6 +101,7 @@ Residue::Residue( ResidueTypeCOP rsd_type_in, bool const /*dummy_arg*/ ):
 	mainchain_torsions_( rsd_type_.mainchain_atoms().size(), 0.0 ),
 	actcoord_( 0.0 ),
 	data_cache_( nullptr ),
+	misplaced_( false ),
 	nonstandard_polymer_( false ),
 	connect_map_( rsd_type_.n_possible_residue_connections() )
 {
@@ -130,6 +131,7 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	mainchain_torsions_( rsd_type_.mainchain_atoms().size(), 0.0 ),
 	actcoord_( 0.0 ),
 	data_cache_( nullptr ),
+	misplaced_( false ),
 	nonstandard_polymer_( false ),
 	connect_map_( rsd_type_.n_possible_residue_connections() )
 {
@@ -150,38 +152,53 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 /// chi angles are uninitialized as all 0.0 and sidechain atom coords are from ideal coords. Its backbone is aligned
 /// with that of current_rsd.
 /// Its residue connections and its pseudobonds must be initialized from the original residue.
+/// @param   <allow_alternate_backbone_matching> If true, the number of main-chain atoms in the input ResidueType need
+///                                              not match the number in the template Residue.  A function will be
+///                                              called that will attempt to align the Residues' connections.  If
+///                                              successful, the new Residue will be created; if unsuccessful, an empty
+///                                              Residue will be returned.
 Residue::Residue(
 	ResidueType const & rsd_type_in,
 	Residue const & current_rsd,
 	Conformation const & conformation,
-	bool preserve_c_beta
+	bool preserve_c_beta,
+	bool allow_alternate_backbone_matching
 ):
 	utility::pointer::ReferenceCount(),
 	rsd_type_ptr_( rsd_type_in.get_self_ptr() ),
 	rsd_type_( rsd_type_in ),
 	seqpos_( current_rsd.seqpos() ),
-	mirrored_relative_to_type_(current_rsd.mirrored_relative_to_type()),
+	mirrored_relative_to_type_(current_rsd.mirrored_relative_to_type() ),
 	chain_( current_rsd.chain() ),
 	chi_( rsd_type_.nchi(), 0.0 ), // uninit
 	nus_( current_rsd.nus() ),
 	mainchain_torsions_( current_rsd.mainchain_torsions() ),
 	actcoord_( 0.0 ),
 	data_cache_( nullptr ),
+	misplaced_( true ),
 	nonstandard_polymer_( current_rsd.nonstandard_polymer_ ),
 	connect_map_( current_rsd.connect_map_ ),
 	connections_to_residues_( current_rsd.connections_to_residues_ ),
 	pseudobonds_( current_rsd.pseudobonds_ )
 {
 	// Assign atoms.
-	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
-		atoms_.push_back( Atom( rsd_type_.atom(i).ideal_xyz(), rsd_type_.atom(i).atom_type_index(),
-			rsd_type_.atom(i).mm_atom_type_index() ));
+	for ( Size i = 1; i <= rsd_type_.natoms(); ++i ) {
+		atoms_.push_back( Atom( rsd_type_.atom( i ).ideal_xyz(), rsd_type_.atom( i ).atom_type_index(),
+			rsd_type_.atom( i ).mm_atom_type_index() ) );
 	}
 
-	debug_assert( current_rsd.mainchain_torsions().size() == rsd_type_.mainchain_atoms().size() );
-
-	// Now orient the residue.
-	place( current_rsd, conformation, preserve_c_beta );
+	if ( current_rsd.mainchain_torsions().size() == rsd_type_.mainchain_atoms().size() ) {
+		// Now orient the residue.
+		misplaced_ = ! place( current_rsd, conformation, preserve_c_beta );
+	} else if ( allow_alternate_backbone_matching ) {
+		// TODO: function to attempt to place residue with alternate backbone, which may or may not fail
+		misplaced_ = true;
+	} else {
+		TR.Error << "New Residue cannot be aligned with template Residue, ";
+		TR.Error << "because the numbers of main-chain atoms differ." << std::endl;
+		utility_exit();
+	}
+	if ( misplaced_ ) { return; }
 
 	// Assumption: if two residue types have the same number of residue connections,
 	// then their residue connections are "the same" residue connections.
@@ -215,11 +232,9 @@ Residue::Residue(
 
 	update_nus();
 	assign_orbitals();
-
 }
 
 /// @brief Copy constructor.
-///
 Residue::Residue( Residue const & src ) :
 	utility::pointer::ReferenceCount(),
 	utility::pointer::enable_shared_from_this< Residue >(),
@@ -281,6 +296,7 @@ Residue::init_residue_from_other(
 		if ( data_cache_ != nullptr ) ( *data_cache_) = (*src.data_cache_);
 		else data_cache_ = utility::pointer::make_shared< basic::datacache::BasicDataCache >( *src.data_cache_);
 	}
+	misplaced_ = src.misplaced_;
 	nonstandard_polymer_ = src.nonstandard_polymer_;
 	connect_map_ = src.connect_map_;
 	connections_to_residues_ = src.connections_to_residues_;
@@ -640,9 +656,10 @@ Residue::update_actcoord()
 	rsd_type_.update_actcoord( *this );
 }
 
-void Residue::select_orient_atoms(Size & center, Size & nbr1, Size & nbr2) const
+void
+Residue::select_orient_atoms( Size & center, Size & nbr1, Size & nbr2 ) const
 {
-	rsd_type_.select_orient_atoms(center, nbr1, nbr2);
+	rsd_type_.select_orient_atoms( center, nbr1, nbr2 );
 }
 
 /// @details  Helper function: selects atoms to orient on and transforms all of my atoms to
@@ -760,16 +777,16 @@ void Residue::orient_onto_location(
 
 	// this could be made faster by getting the composite rotation and translation
 
-	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
-		Vector const old_xyz( atoms()[i].xyz() );
+	for ( Size i = 1; i <= rsd_type_.natoms(); ++i ) {
+		Vector const old_xyz( atoms()[ i ].xyz() );
 		Vector const new_xyz( src_stub.local2global( rot_stub.global2local( old_xyz ) ) );
-		atoms()[i].xyz( new_xyz );
+		atoms()[ i ].xyz( new_xyz );
 	}
 }
 
 
 /// @details oritent onto residue for peptoids
-/// Not to proud of this as I think there is probably a more general way but at the moment it is alluding me
+/// Not too proud of this as I think there is probably a more general way but at the moment it is alluding me
 /// To align a peptoid the N is the center and the nbrs are the lower connect and the CA. The lower connect is
 /// not stored in the atom index so we need to get the xyz coord a different way.
 void
@@ -910,22 +927,25 @@ Residue::orient_onto_residue_peptoid (
 
 }
 
-/// @details Place/orient "this" Residue onto "src" Residue by backbone superimposition
-/// Since rotamer is represented by Residue in mini now, this function is mainly used to place a rotamer
-/// onto the backbone of "src" residue. Meanwhile, it can also be used to add sidechains to one pose/conformation
-/// from another pose/conformation.\n
-/// current logic: find backbone atom with bonded neighbors in sidechain,
-/// and which is the base_atom of those neighbors. Take that backbone atom
-/// and find two neighboring backbone heavyatoms. The three atoms to be superimposed with
-/// are the center/base atom, the backbone neighbor 1 and the mid-point of backbone neighbor 1 and 2. This way,
-/// we can avoid large perturbation on backbone neighbor 2 after superimpostion if the two sets of backbone atoms
-/// are not perfectly superimposable ( e.g., with slightly different backbone geometry).\n
-/// after all atoms in "this" Residue is oriented, copy any corresponding backbone atom coords from "src" and if
-/// there are any backbone atom missing from "src" (for example, src is a proline with HN missing), build them using
-/// ideal internal coords (that is why "conformation" is needed as an input argument).
-/// For residues without any backbone atoms (e.g. some ligands), center on nbr_atom instead
-/// and two of its bonded neighbors (preferring heavy atoms to hydrogens if possible).
-void
+/// @details Place/orient "this" Residue onto "src" Residue by backbone superimposition.
+/// This function is mainly used to place a rotamer onto the backbone of "src" residue.
+/// Meanwhile, it can also be used to add sidechains to one pose/conformation from another pose/conformation.\n
+/// Current logic:
+/// - Find backbone atom with bonded neighbors in sidechain, and which is the base_atom of those neighbors.
+/// - Take that backbone atom and find two neighboring backbone heavyatoms.
+/// - The three atoms to be superimposed with are
+///   - the center/base atom,
+///   - the backbone neighbor 1,
+///   - and the mid-point of backbone neighbor 1 and 2.
+///   This way, we can avoid large perturbation on backbone neighbor 2 after superimpostion if the two sets of backbone
+///   atoms are not perfectly superimposable, (e.g., with slightly different backbone geometry).
+/// - After all atoms in "this" Residue are oriented, copy any corresponding backbone atom coords from "src", and if
+///   there are any backbone atoms missing from "src", (for example, src is a proline with HN missing), build them using
+///   ideal internal coords.  (That is why "conformation" is needed as an input argument).
+/// - For residues without any backbone atoms, (e.g., some ligands,) center on nbr_atom instead and two of its bonded
+///   neighbors, (preferring heavy atoms to hydrogens if possible.)
+/// @return true on success; false on failure
+bool
 Residue::place( Residue const & src, Conformation const & conformation, bool preserve_c_beta )
 {
 	using kinematics::Stub;
@@ -934,7 +954,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 	Size first_scatom( rsd_type_.first_sidechain_atom() );
 	if ( first_scatom >= 1 && first_scatom <= rsd_type_.nheavyatoms() ) {
 		// not all backbone -- need to do some orienting
-		if ( (*this).type().is_peptoid() ) {
+		if ( ( *this ).type().is_peptoid() ) {
 			orient_onto_residue_peptoid( src, conformation );
 		} else {
 			orient_onto_residue( src );
@@ -942,10 +962,9 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 	} // does the residue have any sidechain atoms?
 
 	// now copy the backbone atoms
-	//
 	utility::vector1< bool > missing( natoms(), false );
 	bool any_missing( false );
-	for ( Size i=1; i<= natoms(); ++i ) {
+	for ( Size i = 1; i <= natoms(); ++i ) {
 
 		//The O2' is a special case for RNA, because it is a "sidechain" atom that
 		// branches off the backbone separately from the base. This could be
@@ -1051,6 +1070,8 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 			}
 		}
 	}
+
+	return true;
 }
 
 bool
@@ -2022,6 +2043,7 @@ Residue::save( Archive & arc ) const
 	arc( mirrored_relative_to_type_ );
 	arc( chi_, nus_, mainchain_torsions_, actcoord_ );
 	arc( data_cache_ );
+	arc( misplaced_ );
 	arc( nonstandard_polymer_, connect_map_ );
 	arc( connections_to_residues_ );
 	arc( pseudobonds_ );
@@ -2046,6 +2068,7 @@ Residue::load_and_construct(
 	arc( construct->mirrored_relative_to_type_ );
 	arc( construct->chi_, construct->nus_, construct->mainchain_torsions_, construct->actcoord_ );
 	arc( construct->data_cache_ );
+	arc( construct->misplaced_ );
 	arc( construct->nonstandard_polymer_, construct->connect_map_ );
 	arc( construct->connections_to_residues_ );
 

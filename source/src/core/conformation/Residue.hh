@@ -115,15 +115,14 @@ public:
 		ResidueType const & rsd_type_in,
 		Residue const & current_rsd,
 		Conformation const & conformation,
-		bool preserve_c_beta = false
+		bool preserve_c_beta = false,
+		bool allow_alternate_backbone_matching = false
 	);
 
 	/// @brief Copy constructor.
-	///
 	Residue( Residue const & src );
 
 	/// @brief Destructor.
-	///
 	~Residue() override;
 
 private:
@@ -142,7 +141,6 @@ private:
 public:
 
 	/// @brief Copy this residue( allocate actual memory for it )
-	///
 	ResidueOP clone() const;
 
 	/// @brief Copy this residue( allocate actual memory for it ), keeping everything the same EXCEPT the type.
@@ -1136,6 +1134,13 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 
+
+	/// @brief Return whether or not the Residue was incorrectly oriented and placed within the polymer when created.
+	bool
+	misplaced() const
+	{
+		return misplaced_;
+	}
 
 	/// @brief Returns a ResidueOP for creating a rotamer of this residue
 	/// Temporary hack until Residue hierarchy is worked out
@@ -2316,7 +2321,7 @@ public:
 
 	/// @brief Place this rotamer at the sequence position occupied by  <src>
 	/// by reorienting the ideal side chain coordinates to match
-	void
+	bool
 	place(
 		Residue const & src,
 		Conformation const & conformation,
@@ -2489,8 +2494,12 @@ private:
 
 	basic::datacache::BasicDataCacheOP data_cache_;
 
+
 	/////////////////////////////////
 	/// Inter-residue connection data
+
+	/// @brief  Was the Residue incorrectly oriented and placed within the polymer when created?
+	bool misplaced_ = false;
 
 	/// @brief true if is_polymer() and either upper_connect or lower_connect (if they exist)
 	/// do not connect to seqpos()+1 or seqpos()-1

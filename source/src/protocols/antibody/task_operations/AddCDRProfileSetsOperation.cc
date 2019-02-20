@@ -88,7 +88,6 @@ AddCDRProfileSetsOperation::AddCDRProfileSetsOperation(AddCDRProfileSetsOperatio
 	use_outliers_(src.use_outliers_),
 	cutoff_(src.cutoff_),
 	picking_rounds_(src.picking_rounds_),
-	keep_task_allowed_aas_(src.keep_task_allowed_aas_),
 	include_native_restype_(src.include_native_restype_),
 	sequences_(src.sequences_),
 	pre_loaded_data_(src.pre_loaded_data_),
@@ -116,7 +115,6 @@ AddCDRProfileSetsOperation::set_defaults(){
 
 	//Profile Options
 	picking_rounds_ = 1;
-	keep_task_allowed_aas_ = false;
 	include_native_restype_ = true;
 	pre_loaded_data_ = false;
 	sequences_.clear();
@@ -139,7 +137,6 @@ AddCDRProfileSetsOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache
 	force_north_paper_db_ = tag->getOption< bool >("force_north_paper_db", force_north_paper_db_);
 	use_outliers_ = tag->getOption< bool >("use_outliers", use_outliers_);
 
-	keep_task_allowed_aas_ = tag->getOption< bool>("add_to_current", keep_task_allowed_aas_);
 	include_native_restype_ = tag->getOption< bool>("include_native_restype", include_native_restype_);
 	picking_rounds_ = tag->getOption< core::Size >("picking_rounds", picking_rounds_);
 	cutoff_ = tag->getOption< core::Size >("cutoff", cutoff_);
@@ -166,7 +163,6 @@ void AddCDRProfileSetsOperation::provide_xml_schema( utility::tag::XMLSchemaDefi
 		+ XMLSchemaAttribute::attribute_w_default( "limit_only_to_length", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "force_north_paper_db", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "use_outliers", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "add_to_current", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "include_native_restype", xsct_rosetta_bool, "XRW TO DO", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "picking_rounds", xsct_non_negative_integer, "XRW TO DO", "1" )
 		+ XMLSchemaAttribute::attribute_w_default( "cutoff", xsct_non_negative_integer, "XRW TO DO", "10" )
@@ -221,11 +217,6 @@ AddCDRProfileSetsOperation::set_picking_rounds(core::Size rounds){
 void
 AddCDRProfileSetsOperation::set_include_native_type(bool use_native){
 	include_native_restype_ = use_native;
-}
-
-void
-AddCDRProfileSetsOperation::set_add_to_current(bool add_to_current) {
-	keep_task_allowed_aas_ = add_to_current;
 }
 
 void
@@ -305,7 +296,6 @@ AddCDRProfileSetsOperation::apply(const core::pose::Pose& pose, core::pack::task
 
 		//Apply the task for each CDR
 		mut_set_op.set_mutation_sets(mutation_sets);
-		mut_set_op.add_to_allowed_aas(keep_task_allowed_aas_);
 		mut_set_op.include_native_aa(include_native_restype_);
 		mut_set_op.set_picking_rounds(picking_rounds_);
 		mut_set_op.apply( pose, task );

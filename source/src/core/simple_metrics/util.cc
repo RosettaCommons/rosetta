@@ -86,7 +86,7 @@ get_sm_data( core::pose::Pose const & pose ){
 
 std::string
 complex_type_name_for_simple_metric( std::string const & simple_metric_name){
-	return "simple_metric_" + simple_metric_name + "_complex_type";
+	return "simple_metric_" + simple_metric_name + "_type";
 }
 
 bool

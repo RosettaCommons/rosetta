@@ -62,7 +62,9 @@ using core::conformation::symmetry::SymmetricConformation;
 
 static basic::Tracer tt( "core.pack.pack_rotamers", basic::t_info );
 
-// @details Wraps the two very distinct and separate stages of rotamer packing, which are factored so that they may be called asynchronously.  Use this wrapper as a base model for higher-level packing routines (such as pack_rotamers_loop)
+/// @details Wraps the two very distinct and separate stages of rotamer packing,
+/// which are factored so that they may be called asynchronously.
+/// Use this wrapper as a base model for higher-level packing routines (such as pack_rotamers_loop)
 void
 pack_rotamers(
 	pose::Pose & pose,
@@ -191,7 +193,7 @@ pack_rotamers_setup(
 {
 	using namespace interaction_graph;
 
-	pack_scorefxn_pose_handshake( pose, scfxn);
+	pack_scorefxn_pose_handshake( pose, scfxn );
 
 	pose.update_residue_neighbors();
 

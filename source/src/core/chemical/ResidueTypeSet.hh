@@ -366,6 +366,25 @@ public:
 		utility::vector1< std::string > const & variants,
 		utility::vector1< VariantType > const & exceptions ) const;
 
+	/// @brief Given a base residue type, desired variants, and undesired variants, retrieve a list
+	/// of cached ResidueTypeCOPs.  If not cached, generate the data and cache them.
+	/// @param[in] base_type A ResidueTypeCOP to a base residue type, used for looking up the variant.
+	/// @param[in] variants A list of VariantTypes that the returned ResidueTypes *must* have, used for looking up the variant.
+	/// @param[in] variant_strings A list of custom VariantTypes (that don't have enums) that the returned ResidueTypes *must*
+	/// have, used for looking up the variant.
+	/// @param[in] exceptions A list of VariantTypes that are ignored in matching.
+	/// @param[in] no_metapatches If true, metapatches are ignored.
+	/// @returns A list of ResidueTypeCOPs matching the desired variants, with the desired base type.
+	/// @note This function is threadsafe.  Caching and retrieveal are handled with a ReadWriteMutex.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	ResidueTypeCOPs
+	get_all_types_with_variants_by_basetype(
+		ResidueTypeCOP base_type,
+		utility::vector1< VariantType > const & variants,
+		utility::vector1< std::string > const & variant_strings,
+		utility::vector1< VariantType > const & exceptions,
+		bool const no_metapatches
+	) const;
 
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
@@ -395,6 +414,14 @@ protected:
 	virtual
 	void
 	add_base_residue_type( ResidueTypeOP new_type );
+
+	/// @brief Force the addition of a new residue type despite a const context.
+	/// @details Danger!  Only intended for rare use cases in which there is no other way to allow a new base type
+	/// to be added.
+	/// @note Creates no write lock.  Can be called from the generate_residue_type_write_locked call chain, but not
+	/// threadsafe unless a write lock is obtained outside of this function.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual void force_add_base_residue_type_already_write_locked( ResidueTypeOP new_type ) const;
 
 	/// @brief adds a new residue type to the set, one that can be patched
 	/// Note: creates write lock on RTSC and must not be invoked in the generate_residue_type_write_locked
@@ -546,7 +573,7 @@ protected:
 	/// a write lock on the ResidueTypeSetCache.
 	virtual
 	bool
-	lazy_load_base_type( std::string const & rsd_base_name ) const = 0;
+	lazy_load_base_type_already_write_locked( std::string const & rsd_base_name ) const = 0;
 
 	void
 	figure_out_last_patch_from_name(

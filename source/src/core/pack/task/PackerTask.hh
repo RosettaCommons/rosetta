@@ -151,6 +151,13 @@ public:
 	virtual void show_all_residue_tasks( std::ostream & out ) const = 0;
 	virtual void show_all_residue_tasks() const = 0;
 
+	/// @brief Has this PackerTask been initialized with a PackerPalette?
+	/// @details PackerTasks must be initialized with PackerPalettes before being modified with TaskOperations.  The TaskFactory
+	/// will initialize the PackerTask with a DefaultPackerPalette if no custom PackerPalette is provided.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	virtual
+	bool is_initialized() const = 0;
+
 	virtual
 	PackerTask &
 	initialize_from_command_line() = 0;

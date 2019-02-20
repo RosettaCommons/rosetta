@@ -1,0 +1,9 @@
+When the packer is invoked:
+-- The PackerTask (PackerTask_) gets created with the PackerTask_(pose) constructor.  This initializes the vector of ResidueLevelTasks (or ResidueLevelTask_s) for the pose, one for each position.
+-- Initialization of a ResidueLevelTask_ involves creating vectors of ResidueTypes for the position, with the types variant-matched to the existing residue.
+-- TaskOperations can add noncanonicals to the vector of ResidueTypes for a position.
+-- So the sensible thing to do is:
+     -- Modify the PackerTask_(pose) constructor to take a PackerPalette as well.
+     -- Let the PackerPalette operate on the ResidueLevelTask_.
+     -- Have it pass the list of allowed base types and allowed variant types to the ResidueLevelTask_.
+     -- Have it pass enums for special behaviour (e.g. allow all with matching variant types; allow non-matching variant types; etc.) to the ResidueLevelTask_, which modify how the ResidueLevelTask_ sets itself up.

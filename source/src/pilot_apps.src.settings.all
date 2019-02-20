@@ -153,39 +153,39 @@ sources = {
 	],
 	"pilot/brunette" : [
 		#"abego_predict",
-        #"aln_to_disulf",
-        #"armEval",
-        #"calcFractionFolded",
-        #"convertFragmentType",
-        #"dumpPhiPsiStats",
-        #"extractNativeRepeats",
-        #"evalRepeats",
-        #"evalFullLength",
-        #"silents_to_ss",
-        #"fragments_to_ss",
-        #"hle_predict",
+		#"aln_to_disulf",
+		#"armEval",
+		#"calcFractionFolded",
+		#"convertFragmentType",
+		#"dumpPhiPsiStats",
+		#"extractNativeRepeats",
+		#"evalRepeats",
+		#"evalFullLength",
+		#"silents_to_ss",
+		#"fragments_to_ss",
+		#"hle_predict",
 		#"minimalCstRelax",
 		#"minimalCstHomology",
 		#"outputLayerDesignBurial",
 		#"outputAbego",
-        #"outputSasa",
-        #"repeat_dock",
-        "calc_ssm_energies_with_structure_profile",
-        #"outputRama",
-        #"cluster_alns", # /#TJ Brunette,Documentation Location,Demo Location */
+		#"outputSasa",
+		#"repeat_dock",
+		"calc_ssm_energies_with_structure_profile",
+		#"outputRama",
+		#"cluster_alns", # /#TJ Brunette,Documentation Location,Demo Location */
 		#"identify_homolog_inaccuracies",
 		#"contact_map_from_homologs",
 	],
 
 	# C ######################################################################
 	"pilot/calebgeniesse" : [
-    	],
-    	"pilot/carbohydrates" : [
+	],
+	"pilot/carbohydrates" : [
     		"basic_glycan_sampler",
-    		"glycan_clash_check",
-    		"glycan_info",
-    		"test_glycan_trees",
-    	],
+		"glycan_clash_check",
+		"glycan_info",
+		"test_glycan_trees",
+	],
 	"pilot/chen" : [
 		"simple_dna_regression_test", # /* ???,Documentation Location,Demo Location */
 	],
@@ -561,7 +561,7 @@ sources = {
 		#"oop_puck_energy_calc_mc",
 		#"oop_dimer_rama_calc",
 		"ld_converter",
-		"scaffold_matcher",
+		#"scaffold_matcher",
 	],
 	"pilot/kalngyk" : [
 		#"calibur" - Moved to public,
@@ -601,6 +601,7 @@ sources = {
 	# L ######################################################################
 	"pilot/labonte" : [
 		"debug_labontes_current_work",
+		"design_glycans",
 		"glycosyltransferase",
 		"load_crazy_sugars",
 		"test_glycan_linkages",

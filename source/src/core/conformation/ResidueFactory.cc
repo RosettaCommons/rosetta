@@ -38,10 +38,11 @@ ResidueFactory::create_residue(
 	chemical::ResidueType const & rsd_type,
 	Residue const & current_rsd,
 	Conformation const & conf,
-	bool preserve_c_beta
+	bool preserve_c_beta,
+	bool allow_alternate_backbone_matching
 )
 {
-	return utility::pointer::make_shared< Residue >( rsd_type, current_rsd, conf, preserve_c_beta );
+	return utility::pointer::make_shared< Residue >( rsd_type, current_rsd, conf, preserve_c_beta, allow_alternate_backbone_matching );
 }
 
 } // namespace conformation

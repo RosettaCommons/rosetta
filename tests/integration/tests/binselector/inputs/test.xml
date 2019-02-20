@@ -16,6 +16,9 @@
             Reweight scoretype=aa_composition weight=1.0 />
         </ScoreFunction>
     </SCOREFXNS>
+    <PACKER_PALETTES>
+	<CustomBaseTypePackerPalette name="palette" additional_residue_types="DALA,DVAL" />
+    </PACKER_PALETTES>
     <RESIDUE_SELECTORS>
         <Bin name="posPhisheet" bin="Bprime" bin_params_file="ABBA" /> 
         <Bin name="posPhihelix" bin="Aprime" bin_params_file="ABBA" /> 
@@ -37,7 +40,7 @@
         
         <!--required torsions to keep things in place. make sure you have them set for both ends-->
         
-        <PackRotamersMover name="packer" scorefxn="tala_comp" task_operations="lala,dala,lval,dval" />
+        <PackRotamersMover name="packer" scorefxn="tala_comp" packer_palette="palette" task_operations="lala,dala,lval,dval" />
 
     </MOVERS>
     <APPLY_TO_POSE>

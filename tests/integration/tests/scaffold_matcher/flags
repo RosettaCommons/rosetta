@@ -1,5 +1,0 @@
--hstarget input/mdm2.pdb 
--primary_hs_stub_lib input/mdm2_trp_stubs_trim.pdb 
--ancillary_hs_stub_libs input/mdm2_phe_leu_stubs_trim.pdb 
--s input/oopAAAA.pdb 
--score:weights mm_std

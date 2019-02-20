@@ -10,6 +10,9 @@
           <ReadResfile name="l_res" filename="inputs/l_res.txt" selector="negPhi"/>
           <ReadResfile name="d_res" filename="inputs/d_res.txt" selector="posPhi"/>
     </TASKOPERATIONS>
+	<PACKER_PALETTES>
+		<CustomBaseTypePackerPalette name="also_dala_palette" additional_residue_types="DALA" />
+	</PACKER_PALETTES>
     <FILTERS>
     </FILTERS>
     <MOVERS>
@@ -19,7 +22,7 @@
         
         <!--required torsions to keep things in place. make sure you have them set for both ends-->
         
-        <PackRotamersMover name="packer" scorefxn="tala_comp" task_operations="l_res,d_res" />
+        <PackRotamersMover name="packer" scorefxn="tala_comp" packer_palette="also_dala_palette" task_operations="l_res,d_res" />
 
     </MOVERS>
     <APPLY_TO_POSE>

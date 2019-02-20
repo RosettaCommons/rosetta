@@ -6,4 +6,5 @@
 -ia_ener 100
 -use_input_sc
 -pdb_gz
+-packing:packer_palette:extra_base_type_file extra_restypes.txt
 -overwrite

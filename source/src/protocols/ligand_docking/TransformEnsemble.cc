@@ -33,6 +33,9 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/chains_util.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/palette/NoDesignPackerPalette.hh>
 #include <protocols/ligand_docking/ligand_scores.hh>
 
 #include <basic/datacache/DataMap.hh>
@@ -183,6 +186,8 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 		make_multi_pose_grids(center);
 	}
 
+	core::pack::task::PackerTaskCOP the_task( core::pack::task::TaskFactory::create_packer_task(pose, utility::pointer::make_shared< core::pack::palette::NoDesignPackerPalette >() ) );
+
 	for ( core::Size i=1; i <= transform_info_.chains.size(); ++i ) {
 		core::Size const begin(pose.conformation().chain_begin(transform_info_.chain_ids[i]));
 
@@ -190,7 +195,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 		original_center = original_center + original_residue.xyz(original_residue.nbr_atom());
 
 		single_conformers.clear();
-		rotamers_for_trials(pose,begin,single_conformers);
+		rotamers_for_trials(pose,begin,single_conformers, *the_task);
 		ligand_conformers_.insert(std::pair<core::Size, utility::vector1< core::conformation::ResidueOP > >(i, single_conformers));
 
 	}

@@ -282,6 +282,9 @@ def generate_mappings_source_file(enum_info, enum_defs):
     if ( enum_info.short_name == "variant" ):
          # quick hack -- could probably do this for PROPERTY also -- rhiju
         lines.append( '\toutput_map->insert( std::make_pair( "NO_VARIANT", NO_VARIANT ) );\n' )
+    elif ( enum_info.short_name == "property" ):
+        # Yes, I think I will. -- VKM
+        lines.append( '\toutput_map->insert( std::make_pair( "NO_PROPERTY", NO_PROPERTY ) );\n' )
     for enum_def in enum_defs:
         line = '\toutput_map->insert( std::make_pair( "'
         line += enum_def + '", ' + enum_def + ' ) );\n'
@@ -326,6 +329,9 @@ def generate_mappings_source_file(enum_info, enum_defs):
     if ( enum_info.short_name == "variant" ):
          # quick hack -- could probably do this for PROPERTY also -- rhiju
         lines.append('\t\treturn ( *VARIANT_MAP ).at( "NO_VARIANT" );\n')
+    elif ( enum_info.short_name == "property" ):
+        # Yes, that's a good idea.  --VKM
+        lines.append('\t\treturn ( *PROPERTY_MAP ).at( "NO_PROPERTY" );\n')
     else:
         lines.append('\t\tthrow CREATE_EXCEPTION(Exception, "Rosetta does not recognize '
                      'the ' + enum_info.short_name + ': " + ' +

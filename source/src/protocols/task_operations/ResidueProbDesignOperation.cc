@@ -69,7 +69,6 @@ ResidueProbDesignOperation::ResidueProbDesignOperation() : core::pack::task::ope
 void
 ResidueProbDesignOperation::set_defaults() {
 	set_include_native_restype(true);
-	set_keep_task_allowed_aas(false);
 	set_sample_zero_probs_at(0.0);
 	set_picking_rounds(1);
 }
@@ -104,7 +103,6 @@ return *this;
 void
 ResidueProbDesignOperation::init_for_equal_operator_and_copy_constructor(ResidueProbDesignOperation& lhs, ResidueProbDesignOperation const & rhs){
 	lhs.include_native_restype_ = rhs.include_native_restype_;
-	lhs.keep_task_allowed_aa_ = rhs.keep_task_allowed_aa_;
 	lhs.overall_prob_set_ = rhs.overall_prob_set_;
 	lhs.picking_rounds_ = rhs.picking_rounds_;
 	lhs.prob_set_ = rhs.prob_set_;
@@ -187,11 +185,6 @@ ResidueProbDesignOperation::set_include_native_restype(bool include) {
 }
 
 void
-ResidueProbDesignOperation::set_keep_task_allowed_aas(bool setting) {
-	keep_task_allowed_aa_ = setting;
-}
-
-void
 ResidueProbDesignOperation::set_picking_rounds(core::Size picking_rounds) {
 	picking_rounds_ = picking_rounds;
 }
@@ -204,10 +197,6 @@ ResidueProbDesignOperation::set_sample_zero_probs_at(const core::Real probabilit
 bool
 ResidueProbDesignOperation::include_native_restype() const {
 	return include_native_restype_;
-}
-bool
-ResidueProbDesignOperation::keep_task_allowed_aas() const {
-	return keep_task_allowed_aa_;
 }
 
 void
@@ -327,18 +316,8 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 				allowed_aminos[aa_num] = true;
 			}
 
-			//Add to already allowed aminos
-			if ( keep_task_allowed_aa_ ) {
-				for ( core::Size aa_num = 1; aa_num <= 20; ++aa_num ) {
-					auto amino = static_cast<core::chemical::AA>(aa_num);
-					if ( allowed_aminos[aa_num] ) {
-						task.nonconst_residue_task(i).allow_aa(amino);
-					}
-				}
-			} else {
-				//Replace the current aminos
-				task.nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aminos);
-			}
+			//Mask the current aminos
+			task.nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aminos);
 		}
 	}
 }
@@ -346,7 +325,6 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 void
 ResidueProbDesignOperation::parse_tag( TagCOP tag , DataMap & ) {
 	set_aa_probabilities_from_file(tag->getOption<std::string>("weights_file"));
-	set_keep_task_allowed_aas(tag->getOption<bool>("keep_task_allowed_aas"));
 	set_include_native_restype(tag->getOption<bool>("include_native_restype"));
 	set_sample_zero_probs_at(tag->getOption<core::Real>("sample_zero_probs"));
 	set_picking_rounds(tag->getOption<core::Size>("picking_rounds"));
@@ -367,15 +345,12 @@ ResidueProbDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		"include_native_restype", xsct_rosetta_bool,
 		"The native residue type is always an allowed residue type.", "true")
 		+ XMLSchemaAttribute::attribute_w_default(
-		"keep_task_allowed_aas", xsct_rosetta_bool,
-		"If set to true, the sampled residue types will not replace all other previously allowed residue types.", "false")
-		+ XMLSchemaAttribute::attribute_w_default(
 		"sample_zero_probs", xsct_real,
 		"Overwrite the sampling probability for all residue types with a weight of zero with the given weight. For example, if you have a probability of zero, you can sample this instead at like .3 or .5 or whatever you want. The idea is that you don't need to go and change your input data to add some variability in the data - useful if you have a very low sampling rate of the input data.", "0.0")
 		+ XMLSchemaAttribute::attribute_w_default( "no_probabilities", xsct_rosetta_bool, "Should we sample ALL AA that does not have prob of 0 at 1.0 instead?  This basically works to add ALL AA seen at a given position in a particular cluster to the set of design residues.  Used to increase variability of designs or for testing purposes", "false")
 		+ XMLSchemaAttribute::attribute_w_default(
 		"picking_rounds", xsct_positive_integer,
-		"Allowed residue types can be sampled multiple times. Especially of interest in combination with the option 'keep_task_allowed_aas'.",
+		"Allowed residue types can be sampled multiple times.",
 		"1");
 
 	task_op_schema_w_attributes(xsd, keyname(), attributes, "Randomly adds allowed residue types to the PackerTask. Based on the user specified weights [0.0-1.0] for each residue type per position this operation will add the residue type to the list of allowed design residues in a non-deterministic manner.");

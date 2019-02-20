@@ -11,6 +11,7 @@
 ///
 /// @brief
 /// @author Ian W. Davis
+/// @author Reworked a bit by Vikram K. Mulligan (vmulligan@flatironinstitue.org) during the 2019 PackerPalette mini-XRW to use PackerPalettes.
 
 
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
@@ -40,6 +41,8 @@
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
+#include <core/pack/palette/PackerPalette.hh>
+#include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -474,7 +477,24 @@ LigandBaseProtocol::make_packer_task(
 ) const
 {
 	using namespace core::pack::task;
-	PackerTaskOP pack_task = TaskFactory::create_packer_task(pose);
+
+	// Initialize the PackerPalette:
+	core::pack::palette::CustomBaseTypePackerPaletteOP palette( utility::pointer::make_shared< core::pack::palette::CustomBaseTypePackerPalette >() );
+	for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
+		core::chemical::ResidueType const & this_res_type( pose.residue_type(i) );
+		if ( this_res_type.is_ligand() ) {
+			if ( !palette->has_base_residue_type( this_res_type.base_name() ) ) palette->add_type( this_res_type.base_name() );
+
+			//Add all other residue types with the same name3:
+			core::chemical::ResidueTypeSetCOP rsd_type_set( pose.residue_type_set_for_pose( this_res_type.mode() ) );
+			core::chemical::ResidueTypeCOPs allowed_types( core::chemical::ResidueTypeFinder( *rsd_type_set ).name3( this_res_type.name3() ).get_all_possible_residue_types() ); // a vector1
+			for ( core::Size i(1), imax(allowed_types.size()); i<=imax; ++i ) {
+				if ( !palette->has_base_residue_type( allowed_types[i]->base_name() ) ) palette->add_type( allowed_types[i]->base_name() );
+			}
+		}
+	}
+
+	PackerTaskOP pack_task = TaskFactory::create_packer_task(pose, palette);
 	pack_task->initialize_from_command_line(); // -ex1 -ex2  etc.
 	pack_task->append_rotamerset_operation( unboundrot_ );
 	//pack_task->restrict_to_repacking(); // all residues -- now set individually below
@@ -489,10 +509,17 @@ LigandBaseProtocol::make_packer_task(
 			using namespace core::chemical;
 			ResidueTypeSetCOP rsd_type_set = pose.residue_type_set_for_pose( this_rsd.type().mode() );
 			ResidueTypeCOPs allowed_types = core::chemical::ResidueTypeFinder( *rsd_type_set ).name3( this_rsd.name3() ).get_all_possible_residue_types(); // a vector1
+
+			utility::vector1< std::string > types_to_allow;
+			types_to_allow.reserve( allowed_types.size() + 1 );
+			types_to_allow.push_back( this_rsd.type().base_name() );
+
 			for ( core::Size j = 1; j <= allowed_types.size(); ++j ) {
-				if ( allowed_types[j]->name() == this_rsd.name() ) continue; // already in the task's list
-				pack_task->nonconst_residue_task( i ).allow_noncanonical_aa( allowed_types[j]->name() );
+				if ( types_to_allow.has_value( allowed_types[j]->base_name() ) ) continue; // already in the task's list
+				types_to_allow.push_back( allowed_types[j]->base_name() );
 			}
+			pack_task->nonconst_residue_task( i ).restrict_restypes( types_to_allow );
+
 			TR << "Allowed residues at position " << i << ":" << std::endl;
 			for ( auto rt = pack_task->nonconst_residue_task( i ).allowed_residue_types_begin();
 					rt != pack_task->nonconst_residue_task( i ).allowed_residue_types_end(); ++rt ) {

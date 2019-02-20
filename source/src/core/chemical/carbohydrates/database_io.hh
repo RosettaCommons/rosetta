@@ -59,12 +59,10 @@ read_nomenclature_table_from_database_file( std::string const & filename );
 LinkageConformers
 read_linkage_conformers_from_database_file( std::string const & filename );
 
-///@breif  Return a map of short names to IUPAC formatted strings.
-///  Reads from db_dir/common_names.txt, and loads the IUPAC files as strings.
+/// @brief  Return a map of short names to IUPAC formatted strings.
+///         Reads from db_dir/common_names.txt and loads the IUPAC files as strings.
 std::map< std::string, std::string >
-read_short_names_to_iupac_format_string( std::string const & dir, std::string common_mapping_path);
-
-
+read_short_names_to_iupac_format_string( std::string const & dir, std::string common_mapping_path );
 
 }  // namespace carbohydrates
 }  // namespace chemical

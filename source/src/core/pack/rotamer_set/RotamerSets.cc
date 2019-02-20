@@ -47,7 +47,6 @@
 
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
-static basic::Tracer TR( "core.pack.rotamer_set.RotamerSets", basic::t_info );
 
 // C++
 #include <fstream>
@@ -59,6 +58,9 @@ static basic::Tracer TR( "core.pack.rotamer_set.RotamerSets", basic::t_info );
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+
+
+static basic::Tracer TR( "core.pack.rotamer_set.RotamerSets", basic::t_info );
 
 
 using namespace ObjexxFCL;

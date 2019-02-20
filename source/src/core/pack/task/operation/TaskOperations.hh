@@ -31,6 +31,7 @@
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/types.hh>
+#include <core/chemical/ResidueProperty.hh>
 
 // Utility Headers
 #include <utility/options/OptionCollection.fwd.hh>
@@ -49,6 +50,157 @@ namespace pack {
 namespace task {
 namespace operation {
 
+/// @brief  Restrict the palette of ResidueTypes to the base ResidueTypes provided by name.
+/// @author Labonte <JWLabonte@jhu.edu>
+class RestrictToSpecifiedBaseResidueTypes : public TaskOperation {
+public:
+	typedef TaskOperation parent;
+
+public:
+	RestrictToSpecifiedBaseResidueTypes();
+	RestrictToSpecifiedBaseResidueTypes( RestrictToSpecifiedBaseResidueTypes const & object_to_copy );
+	RestrictToSpecifiedBaseResidueTypes( utility::vector1< std::string > const & base_types );
+	RestrictToSpecifiedBaseResidueTypes( utility::vector1< std::string > const & base_types,
+		core::select::residue_selector::ResidueSelectorCOP selector );
+
+	virtual ~RestrictToSpecifiedBaseResidueTypes() = default;
+
+	virtual TaskOperationOP clone() const;
+
+	virtual void apply( pose::Pose const & pose, PackerTask & task ) const;
+
+	virtual void parse_tag( TagCOP tag, DataMap & map );
+
+	static std::string keyname();
+	static utility::tag::AttributeList xml_schema_attributes();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	void set_base_types( utility::vector1< std::string > const & base_types ) { base_types_ = base_types; }
+	utility::vector1< std::string > const & base_types() const { return base_types_; }
+
+	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector );
+	core::select::residue_selector::ResidueSelectorCOP selector( ) const { return selector_; }
+
+private:
+	utility::vector1< std::string > base_types_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
+};
+
+
+/// @brief  Prohibit the base ResidueTypes provided by name from the palette of ResidueTypes.
+/// @author Labonte <JWLabonte@jhu.edu>
+class ProhibitSpecifiedBaseResidueTypes : public TaskOperation {
+public:
+	typedef TaskOperation parent;
+
+public:
+	ProhibitSpecifiedBaseResidueTypes();
+	ProhibitSpecifiedBaseResidueTypes( ProhibitSpecifiedBaseResidueTypes const & object_to_copy );
+	ProhibitSpecifiedBaseResidueTypes( utility::vector1< std::string > const & base_types );
+	ProhibitSpecifiedBaseResidueTypes( utility::vector1< std::string > const & base_types,
+		core::select::residue_selector::ResidueSelectorCOP selector );
+
+	virtual ~ProhibitSpecifiedBaseResidueTypes() = default;
+
+	virtual TaskOperationOP clone() const;
+
+	virtual void apply( pose::Pose const & pose, PackerTask & task ) const;
+
+	virtual void parse_tag( TagCOP tag, DataMap & map );
+
+	static std::string keyname();
+	static utility::tag::AttributeList xml_schema_attributes();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	void set_base_types( utility::vector1< std::string > const & base_types ) { base_types_ = base_types; }
+	utility::vector1< std::string > const & base_types() const { return base_types_; }
+
+	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector );
+	core::select::residue_selector::ResidueSelectorCOP selector( ) const { return selector_; }
+
+private:
+	utility::vector1< std::string > base_types_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
+};
+
+
+/// @brief  Restrict the palette of ResidueTypes to those with the given properties.
+/// @author Labonte <JWLabonte@jhu.edu>
+class RestrictToResidueProperties : public TaskOperation {
+public:
+	typedef TaskOperation parent;
+
+public:
+	RestrictToResidueProperties();
+	RestrictToResidueProperties( RestrictToResidueProperties const & object_to_copy );
+	RestrictToResidueProperties( utility::vector1< core::chemical::ResidueProperty > const & properties );
+	RestrictToResidueProperties( utility::vector1< core::chemical::ResidueProperty > const & properties,
+		core::select::residue_selector::ResidueSelectorCOP selector );
+
+	virtual ~RestrictToResidueProperties() = default;
+
+	virtual TaskOperationOP clone() const;
+
+	virtual void apply( pose::Pose const & pose, PackerTask & task ) const;
+
+	virtual void parse_tag( TagCOP tag, DataMap & map );
+
+	static std::string keyname();
+	static utility::tag::AttributeList xml_schema_attributes();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	void set_properties( utility::vector1< core::chemical::ResidueProperty > const & properties )
+	{ properties_ = properties; }
+	utility::vector1< core::chemical::ResidueProperty > const & properties() const { return properties_; }
+
+	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector );
+	core::select::residue_selector::ResidueSelectorCOP selector( ) const { return selector_; }
+
+private:
+	utility::vector1< core::chemical::ResidueProperty > properties_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
+};
+
+
+/// @brief  Restrict the palette of ResidueTypes to those with the given properties.
+/// @author Labonte <JWLabonte@jhu.edu>
+class ProhibitResidueProperties : public TaskOperation {
+public:
+	typedef TaskOperation parent;
+
+public:
+	ProhibitResidueProperties();
+	ProhibitResidueProperties( ProhibitResidueProperties const & object_to_copy );
+	ProhibitResidueProperties( utility::vector1< core::chemical::ResidueProperty > const & properties );
+	ProhibitResidueProperties( utility::vector1< core::chemical::ResidueProperty > const & properties,
+		core::select::residue_selector::ResidueSelectorCOP selector );
+
+	virtual ~ProhibitResidueProperties() = default;
+
+	virtual TaskOperationOP clone() const;
+
+	virtual void apply( pose::Pose const & pose, PackerTask & task ) const;
+
+	virtual void parse_tag( TagCOP tag, DataMap & map );
+
+	static std::string keyname();
+	static utility::tag::AttributeList xml_schema_attributes();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	void set_properties( utility::vector1< core::chemical::ResidueProperty > const & properties )
+	{ properties_ = properties; }
+	utility::vector1< core::chemical::ResidueProperty > const & properties() const { return properties_; }
+
+	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector );
+	core::select::residue_selector::ResidueSelectorCOP selector( ) const { return selector_; }
+
+private:
+	utility::vector1< core::chemical::ResidueProperty > properties_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
+};
+
+
+/// @brief RestrictToRepacking
 class RestrictToRepacking : public TaskOperation {
 public:
 	typedef TaskOperation parent;
@@ -95,7 +247,7 @@ private:
 	utility::vector1< core::Size > residues_to_restrict_to_repacking_;
 };
 
-// @brief  RestrictAbsentCanonicalAAS
+/// @brief  RestrictAbsentCanonicalAAS
 class RestrictAbsentCanonicalAAS : public TaskOperation
 {
 public:

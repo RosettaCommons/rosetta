@@ -57,7 +57,7 @@ public:
 
 	/// @brief Find all base residue types which match the relevant requirement criteria
 	ResidueTypeCOPs
-	get_possible_base_residue_types( bool const include_unpatchable = true ) const;
+	get_possible_base_residue_types( bool const include_unpatchable=true, bool const apply_all_filters=false ) const;
 
 	/// @brief Find all unpatchable residue types which match the relevant requirement criteria
 	ResidueTypeCOPs
@@ -99,11 +99,24 @@ public:
 		return *this;
 	}
 
+	/// @brief Disable metapatches.
+	/// @details By default, metapatched ResidueTypes will be considered.  This disables that.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	ResidueTypeFinder &
+	disable_metapatches() {
+		no_metapatches_ = true;
+		return *this;
+	}
+
+	/// @brief Have metapatched ResidueTypes been disabled?
+	/// @author Vikram K. Mulligan (vmullig@.uw.edu).
+	inline bool no_metapatches() const { return no_metapatches_; }
+
 	/// @brief Allow a base type to be specified rigidly.  Since any ResidueType's base type COP can now be accessed easily,
 	/// this is a far more efficient way to prune the set of possible ResidueTypes.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	ResidueTypeFinder &
-	base_type( ResidueTypeCOP basetype ) {
+	base_type( ResidueTypeCOP const & basetype ) {
 		runtime_assert( basetype );
 		base_type_ = basetype;
 		return *this;
@@ -133,8 +146,10 @@ public:
 		return *this;
 	}
 
+	/// @brief Add a set of VariantTypes, all of which matching ResidueTypes MUST have.
+	/// @details By default, clears old required VariantType list.  To append to list, set clear_existing=false.
 	ResidueTypeFinder &
-	variants( utility::vector1< VariantType > const & setting );
+	variants( utility::vector1< VariantType > const & setting, bool const clear_existing=true );
 
 	ResidueTypeFinder &
 	variants( utility::vector1< std::string > const & setting );
@@ -145,31 +160,33 @@ public:
 	/// @param[in] std_variants A vector of enums of standard variants that the ResidueTypeFinder should match.
 	/// @param[in] custom_variants A vector of strings of custom variant types that the ResidueTypeFinder should match.  Note that
 	/// standard types should NOT be included in this list.  There is no check for this!
+	/// @param[in] clear_existing If true (default), the existing VariantType lists are cleared.  If false, this just appends to those lists.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	ResidueTypeFinder &
 	variants(
 		utility::vector1< VariantType > const & std_variants,
-		utility::vector1< std::string > const & custom_variants
+		utility::vector1< std::string > const & custom_variants,
+		bool const clear_existing=true
 	);
 
+	/// @brief Provide a list of VariantTypes that a matched ResidueType must NOT have.
+	/// @details By default, this overwrites the existing list.  To append to the existing list,
+	/// set clear_existing to false.
 	ResidueTypeFinder &
-	disallow_variants( utility::vector1< VariantType > const & setting ) {
-		disallow_variants_ = setting;
-		return *this;
-	}
+	disallow_variants( utility::vector1< VariantType > const & setting, bool const clear_existing=true );
 
 	/// @brief Variant exceptions are variants which are excluded from consideration
 	/// during the `allow_extra_variants = false` filtering
 	ResidueTypeFinder &
-	variant_exceptions( utility::vector1< std::string > const & setting );
+	variant_exceptions( utility::vector1< std::string > const & setting, bool const clear_existing=true);
 
-	/// @brief Variant exceptions are variants which are excluded from consideration
+	/// @brief Provide a list of VariantTypes that will be ignored when matching.
+	/// @details By default, this overwritest the existing list.  To append to the existing list,
+	/// set clear_existing=false.
+	/// @note Variant exceptions are variants which are excluded from consideration
 	/// during the `allow_extra_variants = false` filtering
 	ResidueTypeFinder &
-	variant_exceptions( utility::vector1< VariantType > const & setting ) {
-		variant_exceptions_ = setting;
-		return *this;
-	}
+	variant_exceptions( utility::vector1< VariantType > const & setting, bool const clear_existing=true );
 
 	ResidueTypeFinder &
 	properties( utility::vector1< ResidueProperty > const & setting ) {
@@ -359,10 +376,18 @@ private:
 	utility::vector1< ResidueProperty > preferred_properties_; // Does not affect filtering, but may cause additional patches to be applied
 	utility::vector1< ResidueProperty > discouraged_properties_; // Only affects filtering if alternatives are present.
 	utility::vector1< std::string > patch_names_;
+
 	utility::vector1< std::string > connect_atoms_;
 	ResidueProperty base_property_ = NO_PROPERTY;
 	bool ignore_atom_named_H_ = false;
+	bool disallow_carboxyl_conjugation_at_glu_asp_; // special case
 	bool check_nucleic_acid_virtual_phosphates_ = false; // special case (could be generalized to match virtual atoms to missing atoms)
+
+	/// @brief Disable consideration of metapatched variants (for speed).
+	/// @details False by default (considers metapatches); if true, metapatches are disabled.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool no_metapatches_ = false;
+
 };
 
 } //chemical

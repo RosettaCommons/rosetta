@@ -184,8 +184,6 @@ attributes_for_parse_xyz_vector( utility::tag::AttributeList & attlist );
 //attributes_for_report_to_db( utility::tag::AttributeList &, utility::tag::XMLSchemaDefinition & );
 
 
-
-
 utility::sql_database::sessionOP
 parse_database_session(
 	utility::tag::TagCOP tag,
@@ -212,12 +210,13 @@ attributes_for_parse_database_session(
 void print_template_script();
 
 /// @brief Prints out XSD information about the XML-accessible options for a given RosettaScipts-accessible
-/// mover, filter, task operation, or residue selector.
+/// mover, filter, task operation, residue selector, simple_metric, or packer palette.
+/// @details Returns true for FAILURE to find the given component, false otherwise.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 bool print_information( std::string const &component_name, std::stringstream &outstream );
 
 /// @brief Prints out XSD information about the XML-accessible options for a given set of RosettaScipts-accessible
-/// movers, filters, task operations, or residue selectors.
+/// movers, filters, task operations, residue selectors, simple metrics, or packer palettes.
 /// @details Calls the single string version.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void print_information( utility::vector1 < std::string > const &component_names );

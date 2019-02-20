@@ -77,7 +77,6 @@ MutationSetDesignOperation::clone() const{
 
 void
 MutationSetDesignOperation::set_defaults(){
-	add_to_allowed_aas_ = false;
 	include_native_aa_ = false;
 	picking_rounds_ = 1;
 	reset_sample_index();
@@ -122,11 +121,6 @@ MutationSetDesignOperation::clear_mutation_sets(){
 void
 MutationSetDesignOperation::set_picking_rounds(core::Size picking_rounds){
 	picking_rounds_ = picking_rounds;
-}
-
-void
-MutationSetDesignOperation::add_to_allowed_aas(const bool& setting){
-	add_to_allowed_aas_ = setting;
 }
 
 void
@@ -214,17 +208,9 @@ MutationSetDesignOperation::apply(const core::pose::Pose& pose, core::pack::task
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( ! sampled_resnums[ i ] ) { continue;}
 
-		if ( add_to_allowed_aas_ ) {
-			for ( core::Size aa_num = 1; aa_num <= 20; ++aa_num ) {
-				auto amino = static_cast<core::chemical::AA>(aa_num);
-				if ( pose_allowed_aminos[ i ][ aa_num ] ) {
-					task.nonconst_residue_task(i).allow_aa(amino);
-				}
-			}
-		} else {
-			//Replace the current aminos
-			task.nonconst_residue_task(i).restrict_absent_canonical_aas(pose_allowed_aminos[ i ]);
-		}
+		//Replace the current aminos
+		task.nonconst_residue_task(i).restrict_absent_canonical_aas(pose_allowed_aminos[ i ]);
+
 	}
 }
 

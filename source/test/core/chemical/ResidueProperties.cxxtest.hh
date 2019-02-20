@@ -46,6 +46,9 @@ public:  // Standard methods //////////////////////////////////////////////////
 	{
 		core_init();
 
+		TR << "Setting up ResiduePropertiesTests." << std::endl;
+		TR.flush();
+
 		ChemicalManager * manager( ChemicalManager::get_instance() );
 		AtomTypeSetCOP atom_types = manager->atom_type_set( FA_STANDARD );
 		ElementSetCOP element_types = manager->element_set( "default" );
@@ -55,6 +58,9 @@ public:  // Standard methods //////////////////////////////////////////////////
 		residue_type_->name( "test_residue" );
 
 		test_properties_ = utility::pointer::make_shared< ResidueProperties >( residue_type_.get() );
+
+		TR << "Finished setting up ResiduePropertiesTests." << std::endl;
+		TR.flush();
 	}
 
 	// Destruction
@@ -70,7 +76,6 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		//std::vector< std::string > msg_lines = utility::split_by_newlines( msg );
 		//TS_ASSERT_EQUALS( msg_lines.size(), 3 );
 		//TS_ASSERT_EQUALS( msg_lines[1], expected_output );
-		//std::cout << "_____________" << e.msg() << std::endl;
 		TS_ASSERT( e.msg().find(expected_output) != std::string::npos );
 	}
 
@@ -78,37 +83,52 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	void test_properties()
 	{
 		TR << "Testing property-related methods of ResidueProperties."  << std::endl;
+		TR << "Ensuring that LIPID property is absent (by enum)." << std::endl; TR.flush();
 		TS_ASSERT( ! test_properties_->has_property( LIPID ) );
+		TR << "Ensuring that \"LIPID\" property is absent (by string)." << std::endl; TR.flush();
 		TS_ASSERT( ! test_properties_->has_property( "LIPID" ) );
+		TR << "Ensuring that \"FAT\" property is absent (by string)." << std::endl; TR.flush();
 		TS_ASSERT( ! test_properties_->has_property( "FAT" ) );
 
+
+		TR << "Setting property LIPID to true (by enum)." << std::endl; TR.flush();
 		test_properties_->set_property( LIPID, true );
 		set_throw_on_next_assertion_failure();
 		try {
+			TR << "Trying to set property \"FAT\" to true (by string).  This should throw an exception." << std::endl; TR.flush();
 			test_properties_->set_property( "FAT", true );
 		} catch (Exception const & e )  {
 			exception_message_matches( e,
-				"Rosetta does not recognize the property: FAT; has it been added to general_properties.list?" );
+				"ERROR: Error in core::chemical::ResidueProperties::set_property(): Rosetta does not recognize the property \"FAT\".  Has it been added to the \"general_properties.list\" file?");
 		}
 
+		TR << "Confirming that property LIPID is added (by enum)." << std::endl; TR.flush();
 		TS_ASSERT( test_properties_->has_property( LIPID ) );
+		TR << "Confirming that property \"LIPID\" is added (by string)." << std::endl; TR.flush();
 		TS_ASSERT( test_properties_->has_property( "LIPID") );
+		TR << "Confirming that property \"FAT\" is still absent (by string)." << std::endl; TR.flush();
 		TS_ASSERT( ! test_properties_->has_property( "FAT") );
 
+		TR << "Getting list of properties, and confirming that \"LIPID\" is the only entry." << std::endl; TR.flush();
 		TS_ASSERT_EQUALS( test_properties_->get_list_of_properties()[ 1 ], "LIPID" );
-
 		TS_ASSERT_EQUALS( test_properties_->get_list_of_properties().size(), 1 );
+
+		TR << "Setting \"LIPID\" to true again (by string), and confirming that \"LIPID\" is still the only entry." << std::endl; TR.flush();
 		test_properties_->set_property( "LIPID", true );
 		TS_ASSERT_EQUALS( test_properties_->get_list_of_properties().size(), 1 );
+
+		TR << "Setting LIPID to false again (by enum), and confirming that the properties list is now empty." << std::endl; TR.flush();
 		test_properties_->set_property( LIPID, false );
 		TS_ASSERT_EQUALS( test_properties_->get_list_of_properties().size(), 0 );
+
+		TR << "Test completed!" << std::endl; TR.flush();
 	}
 
 	/// @brief Ensure that the get_property_from_string() and get_string_from_property() functions work.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	void test_property_enums() {
 		using namespace core::chemical;
-		TS_ASSERT_THROWS_ANYTHING( ResidueProperties::get_property_from_string( "BOGUS_PROPERTY_THAT_DOESN'T_EXIST" ) );
+		TS_ASSERT_EQUALS( ResidueProperties::get_property_from_string( "BOGUS_PROPERTY_THAT_DOESN'T_EXIST" ), NO_PROPERTY );
 		TS_ASSERT_EQUALS( ResidueProperties::get_property_from_string( "AROMATIC" ), AROMATIC );
 		TS_ASSERT_EQUALS( ResidueProperties::get_property_from_string( "D_AA" ), D_AA );
 		TS_ASSERT_EQUALS( ResidueProperties::get_property_from_string( "POLAR" ), POLAR );

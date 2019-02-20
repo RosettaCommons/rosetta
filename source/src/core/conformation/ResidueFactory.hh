@@ -46,7 +46,8 @@ public:
 		chemical::ResidueType const & rsd_type,
 		Residue const & current_rsd,
 		Conformation const & conformation,
-		bool preserve_c_beta = false
+		bool preserve_c_beta = false,
+		bool allow_alternate_backbone_matching = false
 	);
 
 };

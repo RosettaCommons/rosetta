@@ -23,7 +23,7 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
-// Basic header
+// Basic headers
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 

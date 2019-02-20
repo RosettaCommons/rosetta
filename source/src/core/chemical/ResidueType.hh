@@ -882,6 +882,9 @@ public:
 		return orbital_types_;
 	}
 
+	/// @brief Does this residue type define orbital types?
+	bool has_orbital_types() const { return orbital_types_ != nullptr; }
+
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	////////////////  Ring Conformer Set Functions  //////////////////////
@@ -1542,6 +1545,14 @@ public:
 	void
 	add_metapatch_connect( std::string const & atom );
 
+	/// @brief Set that this is a metapatched ResidueType.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void set_metapatched() { is_metapatched_ = true; }
+
+	/// @brief Get whether this is a metapatched ResidueType.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	inline bool is_metapatched() const { return is_metapatched_; }
+
 	/// @brief Annotate a given chi as a proton chi, and set the sampling behavior
 	/// If the chi is already listed as a proton chi, change the sampling behavior
 	void
@@ -1618,6 +1629,10 @@ public:
 	/// @brief Add a property to this ResidueType.
 	void add_property( std::string const & property );
 
+	/// @brief Add a property to this ResidueType, by properties enum.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void add_property( core::chemical::ResidueProperty const property );
+
 	void set_adduct_flag( bool adduct_in );
 
 	/// @brief Add a numeric property.
@@ -1626,8 +1641,12 @@ public:
 	/// @brief Add a string property.
 	void add_string_property( std::string const & tag, std::string value );
 
-	/// @brief Add a property of this ResidueType.
+	/// @brief Delete a property of this ResidueType.
 	void delete_property( std::string const & property );
+
+	/// @brief Delete a property of this ResidueType, by properties enum.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void delete_property( core::chemical::ResidueProperty const property );
 
 	/// @brief Is this ResidueType a base type?
 	bool is_base_type() const;
@@ -1879,6 +1898,12 @@ public:
 	/// @brief  Check if residue is 'VIRTUAL_RESIDUE'
 	///  This ONLY checks the VIRTUAL_RESIDUE PROPERTY!
 	bool is_virtual_residue() const;
+
+	/// @brief  Check if residue is 'VRT1'
+	bool is_VRT1() const;
+
+	/// @brief  Check if residue is a TP3 water.
+	bool is_TP3() const;
 
 	/// @brief  Check if atom is an inverted virtual
 	bool is_inverted_virtual_residue( ) const;
@@ -2295,11 +2320,16 @@ public:
 
 	/// @brief Selects three atoms for orienting this residue type
 	void
-	select_orient_atoms(
-		Size & center,
-		Size & nbr1,
-		Size & nbr2
-	) const;
+	select_orient_atoms( Size & center, Size & nbr1, Size & nbr2 ) const;
+
+	/// @brief Pick atoms to use for orienting one Residue onto another, using standard logic.
+	/// @details Standard logic applies to case in which (a) the residue has backbone atoms, and (b) the residue
+	/// has sidechain atoms, and (c) the orient mode has not been set explicitly to force_nbr_atom_orient.  We loop through
+	/// all backbone atoms and find the first atom that is bonded to a sidechain atom AND two other backbone atoms.  The
+	/// first such atom becomes "center", and its two backbone neighbors become "nbr1" and "nbr2".
+	/// @note If ignore_virtuals is true, none of the atoms involved can be virtuals.  If false, they can be.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void select_orient_atoms_standard_logic( Size & center, Size & nbr1, Size & nbr2, bool const ignore_virtuals ) const;
 
 	/// @brief Selects three atoms for orienting this residue type
 	/// @note Returns tuple of form [center, nbr1, nbr2]
@@ -3006,6 +3036,10 @@ private:
 	utility::vector1< Adduct > defined_adducts_;
 
 	bool nondefault_;
+
+	/// @brief Is this ResidueType the product of metapatching?
+	/// @details False by default; true if and only if a metapatch contributed to this ResidueType.
+	bool is_metapatched_;
 
 	/// @brief Who needs to be told if this ResidueType is destroyed?
 	mutable utility::signals::BufferedSignalHub < void, RestypeDestructionEvent > destruction_obs_hub_;

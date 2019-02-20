@@ -1,0 +1,5 @@
+# This is a configuration file for the PackerPalette, listing additional
+# residue types with which we want to design.
+# Added by Vikram K. Mulligan (vmulligan@flatironinstitute.org) as part of the PackerPalettes 2019 Hackathon.
+601 001 #A couple of peptoids
+NVL HLU #A couple of noncanonical L-alpha amino acids

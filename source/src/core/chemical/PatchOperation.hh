@@ -19,6 +19,8 @@
 
 // Package headers
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueProperties.hh>
 
 // Utility header
 #include <utility>
@@ -66,17 +68,36 @@ public:
 	/// @brief Which property, if any, is added.
 	virtual
 	std::string
-	adds_property(){ return ""; }
+	adds_property() const { return ""; }
+
+	/// @brief Which property, if any, is added.
+	/// @details This returns an enum value.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	virtual
+	ResidueProperty
+	adds_property_enum() const { return NO_PROPERTY; }
 
 	/// @brief Which property, if any, is deleted.
 	virtual
 	std::string
-	deletes_property(){ return ""; }
+	deletes_property() const { return ""; }
+
+	/// @brief Which property, if any, is deleted.
+	/// @details This returns an enum value.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	virtual
+	ResidueProperty
+	deletes_property_enum() const { return NO_PROPERTY; }
 
 	/// @brief Which variant, if any, is deleted.
 	virtual
 	std::string
-	deletes_variant(){ return ""; }
+	deletes_variant() const { return ""; }
+
+	/// @brief Which variant, if any, is deleted, by enum.
+	virtual
+	VariantType
+	deletes_variant_enum() const { return NO_VARIANT; }
 
 	/// @brief Generates a new aa
 	virtual
@@ -286,11 +307,22 @@ public:
 
 	/// @brief Which property, if any, is added.
 	std::string
-	adds_property() override{ return property_; }
+	adds_property() const override { return property_; }
+
+	/// @brief Which property, if any, is added.
+	/// @details This returns an enum value.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	ResidueProperty
+	adds_property_enum() const override { return property_enum_; }
 
 private:
-	/// property to be added
+	/// @brief Name of property to be added.
 	std::string property_;
+
+	/// @brief Enum for property to be added.
+	/// @details Will be NO_PROPERTY if this is a custom property type.
+	ResidueProperty property_enum_;
+
 #ifdef    SERIALIZATION
 protected:
 	friend class cereal::access;
@@ -307,6 +339,7 @@ public:
 /// @brief delete a property from ResidueType
 ///    Added by Andy M. Chen in June 2009
 ///    This is needed for deleting properties, which occurs in certain PTM's (e.g. methylation)
+///    Rewritten by Vikram K. Mulligan on 25 Aug. 2016 to use enums wherever possible for speed.
 class DeleteProperty : public PatchOperation {
 public:
 
@@ -323,12 +356,24 @@ public:
 	name() const override;
 
 	/// @brief Which property, if any, is deleted.
+	///
 	std::string
-	deletes_property() override{ return property_; }
+	deletes_property() const override { return property_name_; }
+
+	/// @brief Which property, if any, is deleted.
+	/// @details Returns NO_PROPERTY if this PatchOperation deletes a custom, on-the-fly property.
+	ResidueProperty
+	deletes_property_enum() const override { return property_; }
+
 
 private:
-	// property to be added
-	std::string property_;
+	/// @brief Name (string) of property to be deleted.
+	std::string property_name_;
+
+	/// @brief Property to be deleted (enum).  Will be NO_PROPERTY if
+	/// this deletes a custom (on-the-fly) property.
+	ResidueProperty property_;
+
 #ifdef    SERIALIZATION
 protected:
 	friend class cereal::access;
@@ -345,10 +390,14 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief   A patch operation for deleting a VariantType from a ResidueType.
 /// @author  Labonte <JWLabonte@jhu.edu>
+/// @author  Vikram K. Mulligan (vmullig@uw.edu) -- modified to primarily use enums instead of strings.
 class DeleteVariantType : public PatchOperation {
 public:
 	// Constructor
 	DeleteVariantType( std::string const & variant_in );
+
+	// Constructor
+	DeleteVariantType( VariantType const variant_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
 	bool apply( ResidueType & rsd ) const override;
@@ -360,10 +409,16 @@ public:
 
 	/// @brief Which variant, if any, is deleted.
 	std::string
-	deletes_variant() override{ return variant_; }
+	deletes_variant() const override { return variant_str_; }
+
+	/// @brief Which variant, if any, is deleted, by enum.
+	VariantType
+	deletes_variant_enum() const override { return variant_; }
 
 private:
-	std::string variant_;
+	std::string variant_str_;
+	VariantType variant_;
+
 #ifdef    SERIALIZATION
 protected:
 	friend class cereal::access;

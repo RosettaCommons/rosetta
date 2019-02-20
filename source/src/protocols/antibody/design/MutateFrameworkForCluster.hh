@@ -115,11 +115,6 @@ public:
 	std::map<clusters::CDRClusterEnum, utility::vector1<MutantPosition> >
 	get_data();
 
-	/// @brief Set to keep the current amino acid(s) for the position in the mutation set.
-	/// Each position is not 100 percent a particular mutant for a cluster, so we allow this by default and hope Rosetta can choose properly.
-	void
-	keep_current( bool keep_current);
-
 public:
 
 	/////////// Helper functions //////////////
@@ -162,9 +157,6 @@ private:
 	std::map<clusters::CDRClusterEnum, utility::vector1<MutantPosition> > mutant_info_;
 	utility::vector1<bool> cdrs_;
 	core::Real pack_shell_;
-	bool keep_current_;
-
-
 
 };
 

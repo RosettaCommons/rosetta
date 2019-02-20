@@ -105,12 +105,14 @@ ResidueProperties::has_property( std::string const & property ) const
 	using namespace utility::excn;
 
 	// should we use NO_PROPERTY return value instead of exception catching? Would aid in gdb/lldb debugging to not use exceptions for this. See has_variant_type. -- rhiju
-	try {
-		return general_property_status_[ get_property_from_string( property ) ];
-	} catch ( Exception const & e ) {
-		TR.Warning << e.msg() << endl;
+	// YES, we should. Done.  --Vikram
+
+	ResidueProperty const prop( get_property_from_string( property ) );
+	if ( prop == NO_PROPERTY ) {
+		if ( TR.Warning.visible() ) TR.Warning << "Error in core::chemical::ResidueProperties::set_property(): Rosetta does not recognize the property \"" << property << "\".  Has it been added to the \"general_properties.list\" file?" << std::endl;
+		return false;
 	}
-	return false;
+	return general_property_status_[ prop ];
 }
 
 void
@@ -120,11 +122,11 @@ ResidueProperties::set_property( std::string const & property, bool const settin
 	using namespace utility::excn;
 
 	// should we use NO_PROPERTY return value instead of exception catching? Would aid in gdb/lldb debugging to not use exceptions for this. See set_variant_type. -- rhiju
-	try {
-		general_property_status_[ get_property_from_string( property ) ] = setting;
-	} catch ( Exception const & e ) {
-		utility_exit_with_message( e.msg() );
-	}
+	// YES, we should. Done.  --Vikram
+
+	ResidueProperty const prop( get_property_from_string( property ) );
+	runtime_assert_string_msg( prop != NO_PROPERTY, "Error in core::chemical::ResidueProperties::set_property(): Rosetta does not recognize the property \"" + property + "\".  Has it been added to the \"general_properties.list\" file?" );
+	general_property_status_[ prop ] = setting;
 }
 
 

@@ -14,6 +14,10 @@
 ///
 /// @details
 /// Suppose you want to chlorinate all 'chlorinatable positions' and have a bajillion RTs result. NOW. YOU. CAN.
+///
+/// @author Andy Watkins
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- Reworked a bit to minimize string parsing elsewhere during PackerPalette implementation.
+///
 /////////////////////////////////////////////////////////////////////////
 
 
@@ -185,9 +189,17 @@ Metapatch::get_one_patch( /*ResidueType const & rsd_type, */std::string const & 
 
 	PatchCaseOP new_case( case_from_lines( substituted_lines ) );
 	p->add_case( new_case );
-	p->set_name( "MP-" + trimmed_atom + "-" + name_ );
+	p->set_name( "MP-" + trimmed_atom + "-" + name_ ); //Also sets patch to be metapatched.
 	p->set_selector( selector_ );
-	p->types( types );
+
+	for ( auto const & type : types ) {
+		core::chemical::VariantType vartype( ResidueProperties::get_variant_from_string( type ) );
+		if ( vartype == core::chemical::NO_VARIANT ) { //Custom type; add to string list
+			p->add_custom_type( type );
+		} else { //Standard type; add to enum list.
+			p->add_type( vartype );
+		}
+	}
 
 	return p;
 }

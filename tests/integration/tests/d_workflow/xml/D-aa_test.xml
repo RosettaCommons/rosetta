@@ -5,30 +5,32 @@
      <ScoreFunction name="SFXN_STD" weights="ref2015.wts" />
      
  </SCOREFXNS>
-
+<RESIDUE_SELECTORS>
+	<Layer name="select_core" select_core="true" select_boundary="false" select_surface="false" />
+	<Layer name="select_boundary" select_core="false" select_boundary="true" select_surface="false" />
+	<Layer name="select_surface" select_core="false" select_boundary="false" select_surface="true" />
+	<Index name="select_3" resnums="3" />
+	<Not name="select_not_3" selector="select_3" />
+	<And name="select_core_not_3" selectors="select_core,select_not_3" />
+	<And name="select_boundary_not_3" selectors="select_boundary,select_not_3" />
+	<And name="select_surface_not_3" selectors="select_surface,select_not_3" />
+</RESIDUE_SELECTORS>
 <TASKOPERATIONS>
-    <ReadResfile name="resfile" filename="xml/resfile.txt" />
+    <ReadResfile name="resfile" filename="xml/resfile.txt" selector="select_3" />
     
     <OperateOnCertainResidues name="no_design_DPRO" >
         <ResidueName3Is name3="DPR" />
         <RestrictToRepackingRLT />
     </OperateOnCertainResidues>
-  
-    <LayerDesign name="layer_all" layer="core_boundary_surface_Nterm_Cterm" verbose="True" use_sidechain_neighbors="True" >
-        <core>
-            <all append="M" />
-        </core>
-        <boundary>
-        </boundary>
-        <surface>
-            <all exclude="ACDEFGHIKLMNPQRSTVWY" ncaa_append="DAN,DSE"/>
-        </surface>
-    </LayerDesign>
+
+    <ReadResfile name="boundary_resfile" selector="select_boundary_not_3" filename="xml/resfile_boundary.txt" />
+    <ReadResfile name="core_resfile" selector="select_core_not_3" filename="xml/resfile_core.txt" />
+    <ReadResfile name="surface_resfile" selector="select_surface_not_3" filename="xml/resfile_surface.txt" />
     
 </TASKOPERATIONS>
-<FILTERS>
-
-</FILTERS>
+<PACKER_PALETTES>
+	<CustomBaseTypePackerPalette name="palette" additional_residue_types="DPRO,DASN,DSER" />
+</PACKER_PALETTES>
 <MOVERS>
     
     <PeptideStubMover name="intial_stub" reset="true">
@@ -56,7 +58,7 @@
     </SetTorsion>
     
 
-    <FastDesign name="fdesign4" scorefxn="SFXN_STD" repeats="4" task_operations="layer_all,resfile,no_design_DPRO" ramp_down_constraints="false">
+    <FastDesign name="fdesign4" scorefxn="SFXN_STD" repeats="4" task_operations="core_resfile,boundary_resfile,surface_resfile,resfile,no_design_DPRO" ramp_down_constraints="false" packer_palette="palette" >
                     
         <MoveMap name="fdesign_mm">
             <Chain number="1" chi="true" bb="true" />

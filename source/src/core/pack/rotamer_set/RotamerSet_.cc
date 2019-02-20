@@ -136,9 +136,7 @@ RotamerSet_::build_rotamers(
 }
 
 void
-RotamerSet_::add_rotamer(
-	conformation::Residue const & rotamer
-)
+RotamerSet_::add_rotamer( conformation::Residue const & rotamer )
 {
 	prepare_for_new_residue_type( rotamer.type() );
 	push_back_rotamer( rotamer.clone() );
@@ -228,7 +226,7 @@ RotamerSet_::build_rotamers_for_concrete_virt(
 	bool use_neighbor_context
 )
 {
-	conformation::Residue const & existing_residue( pose.residue( resid() ));
+	conformation::Residue const & existing_residue( pose.residue( resid() ) );
 	build_rotamers_for_concrete(
 		pose, scorefxn, task, concrete_residue, existing_residue,
 		packer_neighbor_graph, use_neighbor_context );
@@ -246,6 +244,7 @@ RotamerSet_::build_rotamers_for_concrete(
 {
 	using namespace conformation;
 	using namespace pack::task;
+
 	prepare_for_new_residue_type( *concrete_residue );
 	if ( task.residue_task( resid() ).optimize_h() ) {
 		build_optimize_H_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph, scorefxn );
@@ -279,19 +278,30 @@ RotamerSet_::build_rotamers_for_concrete(
 		}
 
 	} else if ( concrete_residue->is_carbohydrate() ) {  // Carbohydrates /////////////////////////////////////////////
-		// For now, rotamer bins are stored in the params files themselves.  This code will generate all the rotamers
-		// from the torsion angles listed in the params files.  (The params files do not contain PROTON_CHI records and
-		// use CHI_ROTAMER records exclusively.)  All of this will likely change in the future.
+		// For now, rotamer bins are stored in the .params files themselves.  This code will generate all the rotamers
+		// from the torsion angles listed in the .params files.  (The .params files do not contain PROTON_CHI records
+		// and use CHI_ROTAMER records exclusively.)  All of this will likely change in the future.  ~Labonte
 
 		utility::vector1< ResidueOP > new_rotamers;
 
-		build_rotamers_from_rotamer_bins( existing_residue, new_rotamers );
+		if ( existing_residue.name() == concrete_residue->name() ) {  // Packing only
+			build_rotamers_from_rotamer_bins( existing_residue, new_rotamers );
 
-		// Add current rotamer, if applicable.
-		if ( task.include_current( resid() ) && existing_residue.name() == concrete_residue->name() ) {
-			ResidueOP rot = existing_residue.create_rotamer();
-			new_rotamers.push_back( rot );
-			id_for_current_rotamer_ = new_rotamers.size();
+			// Add current rotamer, if applicable.
+			if ( task.include_current( resid() ) ) {
+				ResidueOP rot = existing_residue.create_rotamer();
+				new_rotamers.push_back( rot );
+				id_for_current_rotamer_ = new_rotamers.size();
+			}
+		} else {  // Design
+			bool const allow_alternate_backbone_matching( false );  // TODO: populate this value from the task
+			ResidueCOP designed_residue(
+				ResidueFactory::create_residue( *concrete_residue, existing_residue, pose.conformation(), false, allow_alternate_backbone_matching ) );
+			if ( designed_residue->misplaced() ) {
+				// It is impossible for the residue at this position to be replaced by this "concrete" residue.
+				return;
+			}
+			build_rotamers_from_rotamer_bins( *designed_residue, new_rotamers );
 		}
 
 		// Push back rotamers.
@@ -300,7 +310,7 @@ RotamerSet_::build_rotamers_for_concrete(
 			push_back_rotamer( new_rotamers[ i ] );
 		}
 
-	} else if ( concrete_residue->name() == "VRT1" ) { // Single-atom virtual residue /////////////////////////////////
+	} else if ( concrete_residue->is_VRT1() ) { // Single-atom virtual residue /////////////////////////////////
 		tt << "building VRT1 residue at " << resid() << ' ' << existing_residue.name() << "position\n";
 		if ( existing_residue.name() == concrete_residue->name() ) {
 			ResidueOP rot = existing_residue.clone();
@@ -314,7 +324,7 @@ RotamerSet_::build_rotamers_for_concrete(
 			push_back_rotamer( rot );
 		}
 
-	} else if ( concrete_residue->name() == "TP3" ) { // TIP3 water /////////////////////////////////
+	} else if ( concrete_residue->is_TP3() ) { // TIP3 water /////////////////////////////////
 		// hydrate/SPaDES protocol
 		if ( basic::options::option[ basic::options::OptionKeys::hydrate::water_rotamers_cap].user() ) {
 			build_filtered_tp3_water_rotamers( pose, scorefxn, task, concrete_residue, existing_residue, packer_neighbor_graph );

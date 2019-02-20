@@ -137,6 +137,7 @@ DockTaskFactory::register_options()
 	option.add_relevant( OptionKeys::docking::norepack1 );
 	option.add_relevant( OptionKeys::docking::norepack2 );
 	option.add_relevant( OptionKeys::packing::resfile );
+	option.add_relevant( OptionKeys::packing::packer_palette::extra_base_type_file );
 }
 void DockTaskFactory::set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations )
 {

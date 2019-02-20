@@ -129,6 +129,14 @@ sources = {
 		"SymmMinimalistInteractionGraph",
 		"util",
 	],
+	"core/pack/palette": [
+		"CustomBaseTypePackerPalette",
+		"DefaultPackerPalette",
+		"NoDesignPackerPalette",
+		"PackerPalette",
+		"PackerPaletteFactory",
+		"xsd_util",
+	],
 	"core/pack/rotamer_set": [
 		"AddResiduesRotamerSetOperation",
 		"bb_independent_rotamers",

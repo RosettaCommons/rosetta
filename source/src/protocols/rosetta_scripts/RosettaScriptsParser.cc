@@ -27,6 +27,9 @@
 #include <protocols/rosetta_scripts/XmlObjects.hh>
 
 // Project headers
+#include <basic/options/option.hh>
+#include <core/pack/palette/PackerPalette.hh>
+#include <core/pack/palette/PackerPaletteFactory.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pose/Pose.hh>
@@ -586,6 +589,16 @@ RosettaScriptsParser::generate_mover_for_protocol(
 
 		if ( curr_tag->getName() == "IMPORT" ) {
 
+			if ( curr_tag->hasOption("packer_palettes") ) {
+				// Import task operations
+				std::string pp_str( curr_tag->getOption<std::string>("packer_palettes") );
+				std::istringstream pp_ss(pp_str);
+				std::string pp_name;
+				while ( std::getline(pp_ss, pp_name, ',') ) {
+					import_tag_names.insert(std::make_pair("PACKER_PALETTES", pp_name));
+				}
+			}//fi packer_palettes
+
 			if ( curr_tag->hasOption("taskoperations") ) {
 				// Import task operations
 				std::string taskoperations_str( curr_tag->getOption<std::string>("taskoperations") );
@@ -881,6 +894,33 @@ RosettaScriptsParser::instantiate_mover(
 	TR << "Defined mover named \"" << user_defined_name << "\" of type " << type << std::endl;
 }
 
+/// @brief Instantiate a PackerPalette object.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void RosettaScriptsParser::instantiate_packer_palette(
+	TagCOP const & tag_ptr,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map & /*filters*/,
+	Movers_map & /*movers*/,
+	core::pose::Pose & /*pose*/
+) {
+	using namespace core::pack::palette;
+
+	std::string const type( tag_ptr->getName() );
+	if ( ! tag_ptr->hasOption("name") ) {
+		throw CREATE_EXCEPTION( utility::excn::RosettaScriptsOptionError, "Can't define unnamed PackerPalette of type " + type + "." );
+	}
+
+	std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
+	if ( data.has( "packer_palette", user_defined_name ) ) {
+		throw CREATE_EXCEPTION( utility::excn::RosettaScriptsOptionError, "PackerPalette with name \"" + user_defined_name + "\" (of type " + type + ") already exists." );
+	}
+
+	PackerPaletteOP new_pp( PackerPaletteFactory::get_instance()->newPackerPalette( type, data, tag_ptr ) );
+	runtime_assert( new_pp != 0 );
+	data.add("packer_palette", user_defined_name, new_pp );
+	TR << "Defined PackerPalette named \"" << user_defined_name << "\" of type " << type << "." << std::endl;
+}
+
 
 /// @brief Instantiate a new task operation (used in IMPORT tag)
 void
@@ -985,6 +1025,17 @@ RosettaScriptsParser::import_tags(
 		// Check what we'd like to import from it
 		for ( TagCOP tag : curr_level_tag->getTags() ) {
 
+			if ( tag->getName() == "PACKER_PALETTES" ) {
+				for ( TagCOP packer_palette_tag : tag->getTags() ) {
+					std::string packer_palette_name( packer_palette_tag->getOption<std::string>("name") );
+					ImportTagName key( std::make_pair( tag->getName(), packer_palette_name ) );
+					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
+					if ( need_import ) {
+						instantiate_packer_palette(packer_palette_tag, data, filters, movers, pose);
+						import_tag_names.erase(key);
+					}
+				}
+			}
 			if ( tag->getName() == "TASKOPERATIONS" ) {
 				for ( TagCOP taskoperation_tag : tag->getTags() ) {
 					std::string taskoperation_name( taskoperation_tag->getOption<std::string>("name") );

@@ -57,8 +57,10 @@ TRIAZOLE_LINKER # Another new class of artificial heteropolymers. ~Vmulligan
 METAL  # This residue type is a metal ion.
 SURFACE
 WATER
+TP3 # A particular type of water.  This is used by the residue type setup machinery for the packer, and having this as a property avoids some string parsing.
 SOLVENT
 VIRTUAL_RESIDUE
+VRT1 # A particular type of virtual residue.  This is used by the residue type setup machinery for the packer, and having this as a property avoids some string parsing.
 INVERTED_VIRTUAL_RESIDUE #Used by the symmetry machinery for mirror symmetry. ~Vmulligan
 
 ## Variants

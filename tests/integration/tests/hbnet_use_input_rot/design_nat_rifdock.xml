@@ -32,13 +32,22 @@
     <!-- Leave out of HBnet design -->
     <Not name="not_interface" selector="interface_by_vector"/>
     <Or name="hbnet_no_touch" selectors="rifRes,not_interface"/>
+    <Index name="keep_packable" resnums="13,17,35,64,127" />
+    <Not name="not_keep_packable" selector="keep_packable" />
+    <And name="hbnet_no_touch_2" selectors="hbnet_no_touch,not_keep_packable" />
   </RESIDUE_SELECTORS>
   
   <TASKOPERATIONS>
     <!-- Design around ligand -->
-    <OperateOnResidueSubset name="fixlig" selector="ligand"> <PreventRepackingRLT/> </OperateOnResidueSubset>
-    <OperateOnResidueSubset name="replig" selector="ligand"> <RestrictToRepackingRLT/> </OperateOnResidueSubset>
-    <OperateOnResidueSubset name="no_design_or_pack" selector="hbnet_no_touch"> <PreventRepackingRLT/> </OperateOnResidueSubset>
+    <OperateOnResidueSubset name="fixlig" selector="ligand">
+	<PreventRepackingRLT/>
+    </OperateOnResidueSubset>
+    <OperateOnResidueSubset name="replig" selector="ligand">
+	<RestrictToRepackingRLT/>
+    </OperateOnResidueSubset>
+    <OperateOnResidueSubset name="no_design_or_pack" selector="hbnet_no_touch_2">
+	<PreventRepackingRLT/>
+    </OperateOnResidueSubset>
     <LimitAromaChi2 name="limitAroChi" />
     <ExtraRotamersGeneric name="extra_rots" ex1="True" ex2="True" ex3="True" ex1_sample_level="1" ex2_sample_level="1"
 			  ex3_sample_level="1" extrachi_cutoff="1"/>
@@ -50,7 +59,7 @@
   <MOVERS>
     <HBNet name="hbnet_ligand" scorefxn="standardfxn" hb_threshold="-0.5" start_selector="polar_rifres_or_ligand" design_residues="STNQYW" write_cst_files="False" 
 	   write_network_pdbs="False" store_subnetworks="False" minimize="False" min_network_size="3" max_unsat_Hpol="0" verbose="1"
-	   task_operations="fixlig,no_design_or_pack,limitAroChi" use_only_input_rot_for_start_res="True"/>
+	   task_operations="replig,no_design_or_pack,limitAroChi" use_only_input_rot_for_start_res="True"/>
   </MOVERS>
   <APPLY_TO_POSE>
   </APPLY_TO_POSE>

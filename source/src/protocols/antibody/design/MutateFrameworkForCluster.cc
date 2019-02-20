@@ -76,8 +76,7 @@ MutateFrameworkForCluster::MutateFrameworkForCluster(MutateFrameworkForCluster c
 	protocols::moves::Mover(src),
 	mutant_info_(src.mutant_info_),
 	cdrs_(src.cdrs_),
-	pack_shell_(src.pack_shell_),
-	keep_current_(src.keep_current_)
+	pack_shell_(src.pack_shell_)
 {
 	if ( src.ab_info_ ) ab_info_ = utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_ );
 	if ( src.scorefxn_ ) scorefxn_ = scorefxn_->clone();
@@ -89,7 +88,6 @@ MutateFrameworkForCluster::set_defaults() {
 	cdrs_.clear();
 	cdrs_.resize(6, true);
 	pack_shell_ = 6.0;
-	keep_current_ = true;
 	scorefxn_ = get_score_function();
 
 }
@@ -119,7 +117,6 @@ MutateFrameworkForCluster::parse_my_tag(
 {
 	ab_info_ = utility::pointer::make_shared< AntibodyInfo >( pose );
 	cdrs_ = get_cdr_bool_from_tag(tag, "cdrs");
-	keep_current_ = tag->getOption("keep_current", keep_current_);
 	pack_shell_ = tag->getOption("pack_shell", pack_shell_);
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn", data ) ;
@@ -151,11 +148,6 @@ MutateFrameworkForCluster::set_scorefxn(core::scoring::ScoreFunctionCOP scorefxn
 void
 MutateFrameworkForCluster::set_custom_data(const std::map<CDRClusterEnum,utility::vector1<MutantPosition> >& mutant_info){
 	mutant_info_ = mutant_info;
-}
-
-void
-MutateFrameworkForCluster::keep_current(bool keep_current){
-	keep_current_ = keep_current;
 }
 
 std::map<clusters::CDRClusterEnum, utility::vector1<MutantPosition> >
@@ -362,20 +354,8 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 			}
 			design_positions[ resnum ] = true;
 
-
-			if ( keep_current_ ) {
-				for ( core::Size aa_num = 1; aa_num <= 20; ++aa_num ) {
-
-					if ( mut_pos.mutants_allowed_[ aa_num ] ) {
-
-						auto amino = static_cast<core::chemical::AA>(aa_num);
-						task->nonconst_residue_task(i).allow_aa(amino);
-					}
-				}
-			} else {
-				//Replace the current aminos
-				task->nonconst_residue_task(i).restrict_absent_canonical_aas( mut_pos.mutants_allowed_);
-			}
+			//Mask the current aminos
+			task->nonconst_residue_task(i).restrict_absent_canonical_aas( mut_pos.mutants_allowed_);
 
 		}
 	}

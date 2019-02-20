@@ -15,6 +15,10 @@
 			<Reweight scoretype="aspartimide_penalty" weight="1.0" />
 		</ScoreFunction>
 	</SCOREFXNS>
+	# The PACKER_PALETTES section defines the total set of residues with which we're designing.
+	<PACKER_PALETTES>
+		<CustomBaseTypePackerPalette name="palette" additional_residue_types="DALA,DGLU,DASP,DPHE,DHIS,DILE,DLYS,DLEU,DMET,DASN,DPRO,DGLN,DARG,DSER,DTHR,DVAL,DTRP,DTYR" /> 
+	</PACKER_PALETTES>
 	# The RESIDUE_SELECTORS section allows users to configure tools to select residues,
 	# which are used when setting up other Rosetta modules.
 	<RESIDUE_SELECTORS>
@@ -70,7 +74,7 @@
 		# The FastDesign mover performs alternating rounds of sequence design and torsion-space energy minimization, while ramping the
 		# repulsive term in the scorefunction (fa_rep).  We use it here with a modified scorefunction with constraints and aa_composition
 		# energy terms activated:
-		<FastDesign name="fdes" scorefxn="ref_highhbond" repeats="1" task_operations="d_res,l_res" ramp_down_constraints="false" >
+		<FastDesign name="fdes" scorefxn="ref_highhbond" packer_palette="palette" repeats="1" task_operations="d_res,l_res" ramp_down_constraints="false" >
 			# A MoveMap is used to specify which degrees of freedom can move and which are fixed during energy minimization.  Here,
 			# we indicate that all mainchain torsions (bb) and all sidechain torsions (chi) can move:
 			<MoveMap name="fdes_mm" >
@@ -79,7 +83,7 @@
 		</FastDesign>
 		# A final relaxation is performed with the regular energy function (i.e. without the increased hydrogen
 		# bond weight.
-		<FastRelax name="frlx" scorefxn="ref" repeats="1" ramp_down_constraints="false" >
+		<FastRelax name="frlx" scorefxn="ref" repeats="1" packer_palette="palette" ramp_down_constraints="false" >
 			<MoveMap name="frlx_mm" >
 				<Chain number="1" chi="true" bb="true" />
 			</MoveMap>

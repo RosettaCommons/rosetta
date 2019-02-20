@@ -85,7 +85,6 @@ AddCDRProfilesOperation::set_defaults(){
 
 	//Profile Options
 	picking_rounds_ = 1;
-	keep_task_allowed_aas_ = false;
 	include_native_restype_ = true;
 	force_north_paper_db_ = false;
 	use_outliers_ = false;
@@ -120,7 +119,6 @@ AddCDRProfilesOperation::AddCDRProfilesOperation(AddCDRProfilesOperation const &
 	TaskOperation(src),
 	seq_design_options_(src.seq_design_options_),
 	picking_rounds_(src.picking_rounds_),
-	keep_task_allowed_aas_(src.keep_task_allowed_aas_),
 	include_native_restype_(src.include_native_restype_),
 	force_north_paper_db_(src.force_north_paper_db_),
 	use_outliers_(src.use_outliers_),
@@ -160,7 +158,6 @@ AddCDRProfilesOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::D
 
 	AntibodyDesignEnumManager manager = AntibodyDesignEnumManager();
 	set_fallback_strategy(manager.seq_design_strategy_string_to_enum(tag->getOption< std::string >("fallback_strategy", "seq_design_conservative")));
-	keep_task_allowed_aas_ = tag->getOption< bool>("add_to_current", keep_task_allowed_aas_);
 	include_native_restype_ = tag->getOption< bool>("include_native_restype", include_native_restype_);
 	picking_rounds_ = tag->getOption< core::Size >("picking_rounds", picking_rounds_);
 	force_north_paper_db_ = tag->getOption< bool >("force_north_paper_db", force_north_paper_db_);
@@ -194,7 +191,6 @@ void AddCDRProfilesOperation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	attributes
 		+ XMLSchemaAttribute( "cdrs", xs_string , "Which CDRs " )
 		+ XMLSchemaAttribute::attribute_w_default( "fallback_strategy", xs_string, "Strategy to use when there is not enough data to use profiles for a particular CDR cluster", "seq_design_conservative" )
-		+ XMLSchemaAttribute::attribute_w_default( "add_to_current", xsct_rosetta_bool, "Should we add to the current design set of the TaskFactory, or replace it?", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "include_native_restype", xsct_rosetta_bool, "Should we include the native AA at the position, or not?", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "picking_rounds", xsct_non_negative_integer, "How many times should we choose an AA from the probabilities?", "1" )
 		+ XMLSchemaAttribute::attribute_w_default( "force_north_paper_db", xsct_rosetta_bool, "Should we only use the North Paper database, or use newer data if present?", "false" )
@@ -268,11 +264,6 @@ AddCDRProfilesOperation::set_cdrs(const utility::vector1<bool>& c) {
 void
 AddCDRProfilesOperation::set_design_options(design::AntibodyCDRSeqDesignOptions seq_design_options){
 	seq_design_options_ = seq_design_options;
-}
-
-void
-AddCDRProfilesOperation::set_add_to_current(bool add_to_current){
-	keep_task_allowed_aas_ = add_to_current;
 }
 
 void
@@ -458,7 +449,6 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 
 		profile_sets_task->set_picking_rounds(picking_rounds_);
 		profile_sets_task->set_include_native_type(include_native_restype_);
-		profile_sets_task->set_add_to_current(keep_task_allowed_aas_);
 		profile_sets_task->apply(pose, task);
 	}
 
@@ -485,11 +475,6 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 		prob_task.set_aa_probability_set( prob_set );
 		prob_task.set_no_probability(no_probability_);
 
-		if ( n_profile_set_cdrs > 0 ) {
-			prob_task.set_keep_task_allowed_aas(true);
-		} else {
-			prob_task.set_keep_task_allowed_aas( keep_task_allowed_aas_);
-		}
 		prob_task.set_include_native_restype( include_native_restype_ );
 		prob_task.set_sample_zero_probs_at( zero_prob_sample_ );
 		TR << "applying prob task op"<<std::endl;
@@ -505,7 +490,6 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 	}
 
 	/// Add the conservative design op.
-	cons_task_->add_to_allowed_aas(keep_task_allowed_aas_);
 	cons_task_->include_native_aa(include_native_restype_);
 	core::Size cons_task_residues = 0;
 

@@ -21,6 +21,9 @@
 		<And name="select_neg_phi_boundary" selectors="select_neg_phi,select_boundary" />
 		<And name="select_neg_phi_surf"     selectors="select_neg_phi,select_surf"     />
 	</RESIDUE_SELECTORS>
+	<PACKER_PALETTES>
+		<CustomBaseTypePackerPalette name="also_d_aa_and_ncaa_palette" additional_residue_types="DALA,DCYS,DASP,DGLU,DPHE,DHIS,DILE,DLYS,DLEU,DMET,DASN,DPRO,DGLN,DARG,DSER,DTHR,DVAL,DTRP,DTYR,DAB,DDAB" />
+	</PACKER_PALETTES>
 	<TASKOPERATIONS>
 		<!-- Task operations for design: -->
 		<ExtraRotamersGeneric name="extra_rot" ex1="false" ex2="false" extrachi_cutoff="0" />
@@ -36,7 +39,7 @@
 	</MOVE_MAP_FACTORIES>
 	<SIMPLE_METRICS>
 		<!-- This simple metric generates a summary of the interaction graph in a foramt that the quantum packer can read: -->
-		<InteractionGraphSummaryMetric name="intgraph_summary" scorefxn="r15" task_operations="extra_rot,limit_aro_chi2,l_design_core,l_design_boundary,l_design_surf,d_design_core,d_design_boundary,d_design_surf" />
+		<InteractionGraphSummaryMetric name="intgraph_summary" scorefxn="r15" packer_palette="also_d_aa_and_ncaa_palette" task_operations="extra_rot,limit_aro_chi2,l_design_core,l_design_boundary,l_design_surf,d_design_core,d_design_boundary,d_design_surf" />
 	</SIMPLE_METRICS>
 	<FILTERS>
 	</FILTERS>
@@ -48,7 +51,7 @@
 		<RunSimpleMetrics name="qpacker_metric" metrics="intgraph_summary" prefix="qpacker_" />	
 
 		<!-- Design -->
-		<PackRotamersMover name="design" scorefxn="r15" task_operations="extra_rot,limit_aro_chi2,l_design_core,l_design_boundary,l_design_surf,d_design_core,d_design_boundary,d_design_surf" />
+		<PackRotamersMover name="design" scorefxn="r15" packer_palette="also_d_aa_and_ncaa_palette" task_operations="extra_rot,limit_aro_chi2,l_design_core,l_design_boundary,l_design_surf,d_design_core,d_design_boundary,d_design_surf" />
 	</MOVERS>
 	<PROTOCOLS>
 		<Add mover="connect_ends" />

@@ -44,6 +44,7 @@
 #include <core/pack/annealer/SimAnnealerBase.hh>
 #include <core/pack/interaction_graph/InteractionGraphFactory.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -88,6 +89,7 @@ main( int argc, char** argv )
 		using namespace core::pack;
 		using namespace core::pack::rotamers;
 		using namespace core::pack::task;
+		using namespace core::pack::palette;
 		using namespace core::pack::annealer;
 		using namespace core::pack::interaction_graph;
 		using namespace core::pack::rotamer_set;
@@ -193,8 +195,12 @@ main( int argc, char** argv )
 		//////////                                                           //////////
 		///////////////////////////////////////////////////////////////////////////////
 
+		// Create PackerPalette (VKM, Jan 2019):
+		CustomBaseTypePackerPaletteOP palette( utility::pointer::make_shared< CustomBaseTypePackerPalette >() );
+		palette->add_type( sl_code );
+
 		// Setup packer task
-		PackerTaskOP pack2 = TaskFactory::create_packer_task( *myPose );
+		PackerTaskOP pack2 = TaskFactory::create_packer_task( *myPose, palette );
 		if ( repack ) {
 			std::fill(residues_to_pack.begin(), residues_to_pack.end(), true);
 		} else {
@@ -206,11 +212,9 @@ main( int argc, char** argv )
 			if ( ii == seqid ) continue;
 			pack2->nonconst_residue_task(ii).restrict_to_repacking();
 		}
+
 		// Turn on at the spinlabel position
-		pack2->nonconst_residue_task(seqid).allow_noncanonical_aa(sl_code);
-		// Turn off canonical amino acids at the spinlabel position
-		utility::vector1< bool > keep_aas(core::chemical::num_canonical_aas, false);
-		pack2->nonconst_residue_task(seqid).restrict_absent_canonical_aas(keep_aas);
+		pack2->nonconst_residue_task(seqid).restrict_restypes( utility::vector1< std::string >( seqid ) );
 
 		// Setup packing
 		RotamerSetsOP rotsets = RotamerSetsOP(new rotamer_set::RotamerSets());
@@ -283,7 +287,7 @@ main( int argc, char** argv )
 		///////////////////////////////////////////////////////////////////////////////
 
 		// Setup packer task
-		PackerTaskOP pack3 = TaskFactory::create_packer_task( *myPose );
+		PackerTaskOP pack3 = TaskFactory::create_packer_task( *myPose, palette ); //VKM, Jan 2019: Note that for now, we can reuse the same PackerPalette.  If this step used a *different* spin label, we'd have to change this out for a new one, here.
 		if ( repack ) {
 			std::fill(residues_to_pack.begin(), residues_to_pack.end(), true);
 		} else {
@@ -296,21 +300,15 @@ main( int argc, char** argv )
 			pack3->nonconst_residue_task(ii).restrict_to_repacking();
 		}
 		core::chemical::ResidueTypeSetCOP residue_set_at_spinlabel_site = pack3->nonconst_residue_task(seqid).get_original_residue_set();
-		std::string spinlabel_to_include(sl_code);
+		std::string const & spinlabel_to_include(sl_code);
 
 		// Does this ResidueTypeSet have ResidueTypes with the given interchangeability group?
 		// Then add the Spinlabel residue type
-		if ( residue_set_at_spinlabel_site->has_interchangeability_group(spinlabel_to_include) ) {
-			//pack3->nonconst_residue_task(seqid).allow_noncanonical_aa( spinlabel_to_include, *residue_set );
-			pack3->nonconst_residue_task(seqid).allow_noncanonical_aa( spinlabel_to_include );
-		} else {
-			std::ostringstream convert;
-			convert << seqid;
-			utility_exit_with_message( "Unable to add non-canonical amino acid(s) with interchangeability group " + spinlabel_to_include + " because there are no ResidueTypes with that interchangeability group in the ResidueTypeSet for residue " + convert.str() );
-		}
+		runtime_assert_string_msg ( residue_set_at_spinlabel_site->has_interchangeability_group(spinlabel_to_include),
+			"Unable to add non-canonical amino acid(s) with interchangeability group " + spinlabel_to_include + " because there are no ResidueTypes with that interchangeability group in the ResidueTypeSet for residue " + std::to_string( seqid ) + "." );
 
 		// Turn off canonical amino acids at the spinlabeled position
-		pack3->nonconst_residue_task(seqid).restrict_absent_canonical_aas(keep_aas);
+		pack3->nonconst_residue_task(seqid).restrict_restypes( utility::vector1< std::string >( { spinlabel_to_include } ) );
 
 		// Perform packing of protein and mutation of spinlabeled residue to spinlabel residue
 		pack_rotamers( *myPose, *sfxn, pack3);

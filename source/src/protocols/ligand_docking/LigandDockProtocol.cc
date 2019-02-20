@@ -27,6 +27,8 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/palette/NoDesignPackerPalette.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
@@ -606,6 +608,10 @@ LigandDockProtocol::optimize_orientation3(
 	cst_scorefxn.set_weight(core::scoring::dihedral_constraint, 1.0 );
 	vector1< core::Real > perfect_cstscores;
 
+	// The following should be created once *outside* of this loop, for efficiency.
+	// --VKM, Jan 2019.
+	core::pack::task::PackerTaskCOP packertask( core::pack::task::TaskFactory::create_packer_task(pose, utility::pointer::make_shared< core::pack::palette::NoDesignPackerPalette >() ) );
+
 	for ( int i = 0; i < num_cycles; ++i ) {
 		//randomize2->apply(pose);
 		// Randomize orientation:  copied from RigidBodyRandomizeMover.apply()
@@ -617,7 +623,7 @@ LigandDockProtocol::optimize_orientation3(
 		flexible_jump.rotation_by_matrix( upstream_stub, rot_center, protocols::geometry::random_reorientation_matrix() );
 		pose.set_jump( jump_id, flexible_jump );
 
-		grid_rotamer_trials_atr_rep(*grid, pose, lig_id);
+		grid_rotamer_trials_atr_rep(*grid, pose, lig_id, *packertask);
 		int curr_rep(0), curr_atr(0); // dummy initial values for compiler
 		grid_score_atr_rep(*grid, pose.residue(lig_id), curr_atr, curr_rep);
 		// Always accept first try as best so far ... sort of a do-while loop.
@@ -682,7 +688,7 @@ LigandDockProtocol::optimize_orientation3(
 		// recover best ligand pose
 		// Not *guaranteed* to be the same one if multiple confs are iso-energetic, actually.
 		// Not that that matters for our purposes.
-		grid_rotamer_trials_atr_rep(*grid, pose, lig_id);
+		grid_rotamer_trials_atr_rep(*grid, pose, lig_id, *packertask);
 	}
 
 	//clock_t end_time = clock();

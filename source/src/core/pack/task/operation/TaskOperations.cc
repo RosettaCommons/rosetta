@@ -31,9 +31,7 @@
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/pose/datacache/ObserverCache.hh>
-#include <basic/datacache/DataMap.hh>
-#include <basic/options/option.hh>
-#include <basic/Tracer.hh>
+#include <core/chemical/ResidueProperties.hh>
 
 // Utility Headers
 #include <utility>
@@ -45,12 +43,14 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-
-// option key includes
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+// Basic Headers
+#include <basic/datacache/DataMap.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 
 
 namespace core {
@@ -65,6 +65,539 @@ using basic::t_debug;
 static basic::Tracer TR( "core.pack.task.operation.TaskOperations", t_info );
 
 using namespace utility::tag;
+
+
+/// BEGIN RestrictToSpecifiedBaseResidueTypes
+
+RestrictToSpecifiedBaseResidueTypes::RestrictToSpecifiedBaseResidueTypes() : parent()
+{}
+
+RestrictToSpecifiedBaseResidueTypes::RestrictToSpecifiedBaseResidueTypes(
+	RestrictToSpecifiedBaseResidueTypes const & object_to_copy ) : parent( object_to_copy )
+{
+	base_types_ = object_to_copy.base_types_;
+	if ( object_to_copy.selector_ ) {
+		selector_ = object_to_copy.selector_->clone();
+	}
+}
+
+RestrictToSpecifiedBaseResidueTypes::RestrictToSpecifiedBaseResidueTypes(
+	utility::vector1< std::string > const & base_types ) :
+	parent(),
+	base_types_( base_types )
+{}
+
+RestrictToSpecifiedBaseResidueTypes::RestrictToSpecifiedBaseResidueTypes(
+	utility::vector1< std::string > const & base_types,
+	core::select::residue_selector::ResidueSelectorCOP selector ) :
+	parent(),
+	base_types_( base_types ),
+	selector_( selector->clone() )
+{}
+
+
+TaskOperationOP
+RestrictToSpecifiedBaseResidueTypes::clone() const
+{
+	return utility::pointer::make_shared< RestrictToSpecifiedBaseResidueTypes >( *this );
+}
+
+void
+RestrictToSpecifiedBaseResidueTypes::apply( pose::Pose const & pose, PackerTask & task ) const
+{
+	core::select::residue_selector::ResidueSubset subset;
+	if ( ! selector_ ) {
+		// If no ResidueSelector is specified, assume that this TaskOperation applies to all residues in the Pose.
+		subset.resize( pose.size(), true );
+	} else {
+		subset = selector_->apply( pose );
+	}
+
+	for ( core::uint i( 1 ); i <= pose.size(); ++i ) {
+		if ( subset[ i ] ) {
+			ResidueLevelTask & res_task( task.nonconst_residue_task( i ) );
+			res_task.restrict_restypes( base_types_ );
+		}
+	}
+}
+
+void
+RestrictToSpecifiedBaseResidueTypes::parse_tag( TagCOP tag, DataMap & map )
+{
+	using namespace utility;
+
+	if ( tag->hasOption( "base_types" ) ) {
+		std::string const & base_types = tag->getOption< std::string >( "base_types" );
+		if ( ! base_types.empty() ) {
+			base_types_ = string_split( strip( base_types, " \t\n" ), ',' );
+		}
+	}
+
+	if ( tag->hasOption( "selector" ) ) {
+		std::string const selector_name ( tag->getOption< std::string >( "selector" ) );
+		try {
+			set_selector( map.get_ptr< core::select::residue_selector::ResidueSelector const >(
+				"ResidueSelector", selector_name ) );
+		} catch ( excn::Exception & e ) {
+			std::string error_message = "Failed to find ResidueSelector named " + selector_name +
+				" from the DataMap passed to RestrictToSpecifiedBaseResidueTypes::parse_tag()\n" + e.msg();
+			throw CREATE_EXCEPTION( excn::Exception,  error_message );
+		}
+		debug_assert( selector_ );
+	}
+}
+
+std::string
+RestrictToSpecifiedBaseResidueTypes::keyname()
+{
+	return "RestrictToSpecifiedBaseResidueTypes";
+}
+
+utility::tag::AttributeList
+RestrictToSpecifiedBaseResidueTypes::xml_schema_attributes()
+{
+	utility::tag::AttributeList attributes;
+	attributes
+		+ utility::tag::XMLSchemaAttribute( "base_types", xsct_string_cslist,
+		"A comma-separated list of ResidueTypes (by full base name)." )
+		+ utility::tag::XMLSchemaAttribute( "selector", xs_string , "If provided, the TaskOperation will apply to the "
+		"subset of residues specified. If not provided, the TaskOperation will apply to all residues in the Pose." );
+	return attributes;
+}
+
+void
+RestrictToSpecifiedBaseResidueTypes::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	utility::tag::AttributeList attributes = xml_schema_attributes();
+	task_op_schema_w_attributes( xsd, keyname(), attributes,
+		"Restrict the palette of ResidueTypes to the base ResidueTypes provided by name." );
+}
+
+void
+RestrictToSpecifiedBaseResidueTypes::set_selector( core::select::residue_selector::ResidueSelectorCOP selector )
+{
+	selector_ = selector->clone();
+}
+
+
+TaskOperationOP RestrictToSpecifiedBaseResidueTypesCreator::create_task_operation() const
+{
+	return utility::pointer::make_shared< RestrictToSpecifiedBaseResidueTypes >();
+}
+
+std::string
+RestrictToSpecifiedBaseResidueTypesCreator::keyname() const {
+	return RestrictToSpecifiedBaseResidueTypes::keyname();
+}
+
+void
+RestrictToSpecifiedBaseResidueTypesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictToSpecifiedBaseResidueTypes::provide_xml_schema( xsd );
+}
+
+
+/// BEGIN ProhibitSpecifiedBaseResidueTypes
+
+ProhibitSpecifiedBaseResidueTypes::ProhibitSpecifiedBaseResidueTypes() : parent()
+{}
+
+ProhibitSpecifiedBaseResidueTypes::ProhibitSpecifiedBaseResidueTypes(
+	ProhibitSpecifiedBaseResidueTypes const & object_to_copy ) : parent( object_to_copy )
+{
+	base_types_ = object_to_copy.base_types_;
+	if ( object_to_copy.selector_ ) {
+		selector_ = object_to_copy.selector_->clone();
+	}
+}
+
+ProhibitSpecifiedBaseResidueTypes::ProhibitSpecifiedBaseResidueTypes(
+	utility::vector1< std::string > const & base_types ) :
+	parent(),
+	base_types_( base_types )
+{}
+
+ProhibitSpecifiedBaseResidueTypes::ProhibitSpecifiedBaseResidueTypes(
+	utility::vector1< std::string > const & base_types,
+	core::select::residue_selector::ResidueSelectorCOP selector ) :
+	parent(),
+	base_types_( base_types ),
+	selector_( selector->clone() )
+{}
+
+
+TaskOperationOP
+ProhibitSpecifiedBaseResidueTypes::clone() const
+{
+	return utility::pointer::make_shared< ProhibitSpecifiedBaseResidueTypes >( *this );
+}
+
+void
+ProhibitSpecifiedBaseResidueTypes::apply( pose::Pose const & pose, PackerTask & task ) const
+{
+	core::select::residue_selector::ResidueSubset subset;
+	if ( ! selector_ ) {
+		// If no ResidueSelector is specified, assume that this TaskOperation applies to all residues in the Pose.
+		subset.resize( pose.size(), true );
+	} else {
+		subset = selector_->apply( pose );
+	}
+
+	for ( core::uint i( 1 ); i <= pose.size(); ++i ) {
+		if ( subset[ i ] ) {
+			ResidueLevelTask & res_task( task.nonconst_residue_task( i ) );
+			res_task.disable_restypes( base_types_ );
+		}
+	}
+}
+
+void
+ProhibitSpecifiedBaseResidueTypes::parse_tag( TagCOP tag, DataMap & map )
+{
+	using namespace utility;
+
+	if ( tag->hasOption( "base_types" ) ) {
+		std::string const & base_types = tag->getOption< std::string >( "base_types" );
+		if ( ! base_types.empty() ) {
+			base_types_ = string_split( strip( base_types, " \t\n" ), ',' );
+		}
+	}
+
+	if ( tag->hasOption( "selector" ) ) {
+		std::string const selector_name ( tag->getOption< std::string >( "selector" ) );
+		try {
+			set_selector( map.get_ptr< core::select::residue_selector::ResidueSelector const >(
+				"ResidueSelector", selector_name ) );
+		} catch ( excn::Exception & e ) {
+			std::string error_message = "Failed to find ResidueSelector named " + selector_name +
+				" from the DataMap passed to RestrictToSpecifiedBaseResidueTypes::parse_tag()\n" + e.msg();
+			throw CREATE_EXCEPTION( excn::Exception,  error_message );
+		}
+		debug_assert( selector_ );
+	}
+}
+
+std::string
+ProhibitSpecifiedBaseResidueTypes::keyname()
+{
+	return "ProhibitSpecifiedBaseResidueTypes";
+}
+
+utility::tag::AttributeList
+ProhibitSpecifiedBaseResidueTypes::xml_schema_attributes()
+{
+	utility::tag::AttributeList attributes;
+	attributes
+		+ utility::tag::XMLSchemaAttribute( "base_types", xsct_string_cslist,
+		"A comma-separated list of ResidueTypes (by full base name)." )
+		+ utility::tag::XMLSchemaAttribute( "selector", xs_string , "If provided, the TaskOperation will apply to the "
+		"subset of residues specified. If not provided, the TaskOperation will apply to all residues in the Pose." );
+	return attributes;
+}
+
+void
+ProhibitSpecifiedBaseResidueTypes::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	utility::tag::AttributeList attributes = xml_schema_attributes();
+	task_op_schema_w_attributes( xsd, keyname(), attributes,
+		"Prohibit the base ResidueTypes provided by name from the palette of ResidueTypes." );
+}
+
+void
+ProhibitSpecifiedBaseResidueTypes::set_selector( core::select::residue_selector::ResidueSelectorCOP selector )
+{
+	selector_ = selector->clone();
+}
+
+
+TaskOperationOP ProhibitSpecifiedBaseResidueTypesCreator::create_task_operation() const
+{
+	return utility::pointer::make_shared< ProhibitSpecifiedBaseResidueTypes >();
+}
+
+std::string
+ProhibitSpecifiedBaseResidueTypesCreator::keyname() const {
+	return ProhibitSpecifiedBaseResidueTypes::keyname();
+}
+
+void
+ProhibitSpecifiedBaseResidueTypesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ProhibitSpecifiedBaseResidueTypes::provide_xml_schema( xsd );
+}
+
+
+/// BEGIN RestrictToResidueProperties
+
+RestrictToResidueProperties::RestrictToResidueProperties() : parent()
+{}
+
+RestrictToResidueProperties::RestrictToResidueProperties(
+	RestrictToResidueProperties const & object_to_copy ) : parent( object_to_copy )
+{
+	properties_ = object_to_copy.properties_;
+	if ( object_to_copy.selector_ ) {
+		selector_ = object_to_copy.selector_->clone();
+	}
+}
+
+RestrictToResidueProperties::RestrictToResidueProperties(
+	utility::vector1< core::chemical::ResidueProperty > const & properties ) :
+	parent(),
+	properties_( properties )
+{}
+
+RestrictToResidueProperties::RestrictToResidueProperties(
+	utility::vector1< core::chemical::ResidueProperty > const & properties,
+	core::select::residue_selector::ResidueSelectorCOP selector ) :
+	parent(),
+	properties_( properties ),
+	selector_( selector->clone() )
+{}
+
+
+TaskOperationOP
+RestrictToResidueProperties::clone() const
+{
+	return utility::pointer::make_shared< RestrictToResidueProperties >( *this );
+}
+
+void
+RestrictToResidueProperties::apply( pose::Pose const & pose, PackerTask & task ) const
+{
+	core::select::residue_selector::ResidueSubset subset;
+	if ( ! selector_ ) {
+		// If no ResidueSelector is specified, assume that this TaskOperation applies to all residues in the Pose.
+		subset.resize( pose.size(), true );
+	} else {
+		subset = selector_->apply( pose );
+	}
+
+	for ( core::uint i( 1 ); i <= pose.size(); ++i ) {
+		if ( subset[ i ] ) {
+			ResidueLevelTask & res_task( task.nonconst_residue_task( i ) );
+			res_task.restrict_to_restypes_with_all_properties( properties_ );
+		}
+	}
+}
+
+void
+RestrictToResidueProperties::parse_tag( TagCOP tag, DataMap & map )
+{
+	using namespace utility;
+
+	if ( tag->hasOption( "properties" ) ) {
+		std::string const & properties_string = tag->getOption< std::string >( "properties" );
+		if ( ! properties_string.empty() ) {
+			utility::vector1< std::string > const & property_strings(
+				string_split( strip( properties_string, " \t\n" ), ',' ) );
+			for ( auto const & property_string : property_strings ) {
+				core::chemical::ResidueProperty const property_enum( core::chemical::ResidueProperties::get_property_from_string( property_string ) );
+				runtime_assert_string_msg( property_enum != core::chemical::NO_PROPERTY, "Error in RestrictToResidueProperties::parse_tag(): Could not parse \"" + property_string + "\" as a recognized residue type property."  );
+				properties_.push_back( property_enum );
+			}
+		}
+	}
+
+	if ( tag->hasOption( "selector" ) ) {
+		std::string const selector_name ( tag->getOption< std::string >( "selector" ) );
+		try {
+			set_selector( map.get_ptr< core::select::residue_selector::ResidueSelector const >(
+				"ResidueSelector", selector_name ) );
+		} catch ( excn::Exception & e ) {
+			std::string error_message = "Failed to find ResidueSelector named " + selector_name +
+				" from the DataMap passed to RestrictToResidueProperties::parse_tag()\n" + e.msg();
+			throw CREATE_EXCEPTION( excn::Exception,  error_message );
+		}
+		debug_assert( selector_ );
+	}
+}
+
+std::string
+RestrictToResidueProperties::keyname()
+{
+	return "RestrictToResidueProperties";
+}
+
+utility::tag::AttributeList
+RestrictToResidueProperties::xml_schema_attributes()
+{
+	utility::tag::AttributeList attributes;
+	attributes
+		+ utility::tag::XMLSchemaAttribute( "properties", xsct_string_cslist,
+		"A comma-separated list of ResidueProperties, all of which must be present in a ResidueType to design with it." )
+		+ utility::tag::XMLSchemaAttribute( "selector", xs_string , "If provided, the TaskOperation will apply to the "
+		"subset of residues specified. If not provided, the TaskOperation will apply to all residues in the Pose." );
+	return attributes;
+}
+
+void
+RestrictToResidueProperties::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	utility::tag::AttributeList attributes = xml_schema_attributes();
+	task_op_schema_w_attributes( xsd, keyname(), attributes,
+		"Restrict the palette of ResidueTypes to those with the given properties." );
+}
+
+void
+RestrictToResidueProperties::set_selector( core::select::residue_selector::ResidueSelectorCOP selector )
+{
+	selector_ = selector->clone();
+}
+
+
+TaskOperationOP RestrictToResiduePropertiesCreator::create_task_operation() const
+{
+	return utility::pointer::make_shared< RestrictToResidueProperties >();
+}
+
+std::string
+RestrictToResiduePropertiesCreator::keyname() const {
+	return RestrictToResidueProperties::keyname();
+}
+
+void
+RestrictToResiduePropertiesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictToResidueProperties::provide_xml_schema( xsd );
+}
+
+
+/// BEGIN ProhibitResidueProperties
+
+ProhibitResidueProperties::ProhibitResidueProperties() : parent()
+{}
+
+ProhibitResidueProperties::ProhibitResidueProperties(
+	ProhibitResidueProperties const & object_to_copy ) : parent( object_to_copy )
+{
+	properties_ = object_to_copy.properties_;
+	if ( object_to_copy.selector_ ) {
+		selector_ = object_to_copy.selector_->clone();
+	}
+}
+
+ProhibitResidueProperties::ProhibitResidueProperties(
+	utility::vector1< core::chemical::ResidueProperty > const & properties ) :
+	parent(),
+	properties_( properties )
+{}
+
+ProhibitResidueProperties::ProhibitResidueProperties(
+	utility::vector1< core::chemical::ResidueProperty > const & properties,
+	core::select::residue_selector::ResidueSelectorCOP selector ) :
+	parent(),
+	properties_( properties ),
+	selector_( selector->clone() )
+{}
+
+
+TaskOperationOP
+ProhibitResidueProperties::clone() const
+{
+	return utility::pointer::make_shared< ProhibitResidueProperties >( *this );
+}
+
+void
+ProhibitResidueProperties::apply( pose::Pose const & pose, PackerTask & task ) const
+{
+	core::select::residue_selector::ResidueSubset subset;
+	if ( ! selector_ ) {
+		// If no ResidueSelector is specified, assume that this TaskOperation applies to all residues in the Pose.
+		subset.resize( pose.size(), true );
+	} else {
+		subset = selector_->apply( pose );
+	}
+
+	for ( core::uint i( 1 ); i <= pose.size(); ++i ) {
+		if ( subset[ i ] ) {
+			ResidueLevelTask & res_task( task.nonconst_residue_task( i ) );
+			res_task.disable_restypes_with_at_least_one_property( properties_ );
+		}
+	}
+}
+
+void
+ProhibitResidueProperties::parse_tag( TagCOP tag, DataMap & map )
+{
+	using namespace utility;
+
+	if ( tag->hasOption( "properties" ) ) {
+		std::string const & properties_string = tag->getOption< std::string >( "properties" );
+		if ( ! properties_string.empty() ) {
+			utility::vector1< std::string > const & property_strings(
+				string_split( strip( properties_string, " \t\n" ), ',' ) );
+			for ( auto const & property_string : property_strings ) {
+				core::chemical::ResidueProperty const property_enum( core::chemical::ResidueProperties::get_property_from_string( property_string ) );
+				runtime_assert_string_msg( property_enum != core::chemical::NO_PROPERTY, "Error in ProhibitResidueProperties::parse_tag(): Could not parse \"" + property_string + "\" as a recognized residue type property."  );
+				properties_.push_back( property_enum );
+			}
+		}
+	}
+
+	if ( tag->hasOption( "selector" ) ) {
+		std::string const selector_name ( tag->getOption< std::string >( "selector" ) );
+		try {
+			set_selector( map.get_ptr< core::select::residue_selector::ResidueSelector const >(
+				"ResidueSelector", selector_name ) );
+		} catch ( excn::Exception & e ) {
+			std::string error_message = "Failed to find ResidueSelector named " + selector_name +
+				" from the DataMap passed to ProhibitResidueProperties::parse_tag()\n" + e.msg();
+			throw CREATE_EXCEPTION( excn::Exception,  error_message );
+		}
+		debug_assert( selector_ );
+	}
+}
+
+std::string
+ProhibitResidueProperties::keyname()
+{
+	return "ProhibitResidueProperties";
+}
+
+utility::tag::AttributeList
+ProhibitResidueProperties::xml_schema_attributes()
+{
+	utility::tag::AttributeList attributes;
+	attributes
+		+ utility::tag::XMLSchemaAttribute( "properties", xsct_string_cslist,
+		"A comma-separated list of ResidueProperties, none of which may be present in a ResidueType to design with it." )
+		+ utility::tag::XMLSchemaAttribute( "selector", xs_string , "If provided, the TaskOperation will apply to the "
+		"subset of residues specified. If not provided, the TaskOperation will apply to all residues in the Pose." );
+	return attributes;
+}
+
+void
+ProhibitResidueProperties::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	utility::tag::AttributeList attributes = xml_schema_attributes();
+	task_op_schema_w_attributes( xsd, keyname(), attributes,
+		"Restrict the palette of ResidueTypes to those without the given properties." );
+}
+
+void
+ProhibitResidueProperties::set_selector( core::select::residue_selector::ResidueSelectorCOP selector )
+{
+	selector_ = selector->clone();
+}
+
+
+TaskOperationOP ProhibitResiduePropertiesCreator::create_task_operation() const
+{
+	return utility::pointer::make_shared< ProhibitResidueProperties >();
+}
+
+std::string
+ProhibitResiduePropertiesCreator::keyname() const {
+	return ProhibitResidueProperties::keyname();
+}
+
+void
+ProhibitResiduePropertiesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ProhibitResidueProperties::provide_xml_schema( xsd );
+}
+
 
 /// BEGIN RestrictToRepacking
 

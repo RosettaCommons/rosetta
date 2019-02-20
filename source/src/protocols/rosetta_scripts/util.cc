@@ -27,9 +27,11 @@
 #include <core/pose/ref_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/palette/PackerPaletteFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/palette/PackerPalette.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/id/types.hh>
@@ -625,6 +627,8 @@ print_template_script() {
 		<< "\t</SCOREFXNS>\n"
 		<< "\t<RESIDUE_SELECTORS>\n"
 		<< "\t</RESIDUE_SELECTORS>\n"
+		<< "\t<PACKER_PALETTES>\n"
+		<< "\t</PACKER_PALETTES>\n"
 		<< "\t<TASKOPERATIONS>\n"
 		<< "\t</TASKOPERATIONS>\n"
 		<< "\t<MOVE_MAP_FACTORIES>\n"
@@ -647,7 +651,7 @@ print_template_script() {
 }
 
 /// @brief Prints out XSD information about the XML-accessible options for a given RosettaScipts-accessible
-/// mover, filter, task operation, or residue selector.
+/// mover, filter, task operation, residue selector, simple_metric, or packer palette.
 /// @details Returns true for FAILURE to find the given component, false otherwise.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 bool
@@ -721,11 +725,23 @@ print_information(
 		metric_factory->provide_xml_schema( component_name, xsd );
 		outstream << xsd.human_readable_summary( component_name, "simple_metric" );
 	}
+
+	// 7. Check packer palettes:
+	core::pack::palette::PackerPaletteFactory* pp_factory( core::pack::palette::PackerPaletteFactory::get_instance() ); //Must be raw pointer; owning pointer does weird things with static singleton.
+	if ( pp_factory->has_type( component_name ) ) {
+		if ( !missing ) outstream << "\n";
+		missing = false;
+		outstream << "INFORMATION ABOUT PACKER PALETTE \"" << component_name << "\":\n\n";
+		utility::tag::XMLSchemaDefinition xsd;
+		pp_factory->provide_xml_schema( component_name, xsd );
+		outstream << xsd.human_readable_summary( component_name, "packer_palette" );
+	}
+
 	return missing;
 }
 
 /// @brief Prints out XSD information about the XML-accessible options for a given set of RosettaScipts-accessible
-/// movers, filters, task operations, or residue selectors.
+/// movers, filters, task operations, residue selectors, simple metric, or packer palette.
 /// @details Calls the single string version.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void
@@ -733,11 +749,11 @@ print_information(
 	utility::vector1 < std::string > const &component_names
 ) {
 	core::Size const ncomponents( component_names.size() );
-	runtime_assert_string_msg( ncomponents > 0, "Error!  The rosetta_scripts application was used with the -parser:info flag, but nothing was provided after this flag.  The user must specify the name of at least one mover, filter, task operation, or residue selector for which to retrieve information." );
+	runtime_assert_string_msg( ncomponents > 0, "Error!  The rosetta_scripts application was used with the -parser:info flag, but nothing was provided after this flag.  The user must specify the name of at least one mover, filter, task operation, residue selector, simple metric, or packer palette for which to retrieve information." );
 
 	utility::vector1 < std::string > failed_components;
 	std::stringstream outstream("");
-	outstream << "\nThe rosetta_scripts application was used with the -parser:info flag.\nWriting options for the indicated movers/filters/task operations/residue selectors:\n";
+	outstream << "\nThe rosetta_scripts application was used with the -parser:info flag.\nWriting options for the indicated movers/filters/task operations/residue selectors/simple metrics/packer palettes:\n";
 
 	for ( core::Size i(1); i<=ncomponents; ++i ) {
 		outstream << "--------------------------------------------------------------------------------\n";
@@ -748,7 +764,7 @@ print_information(
 	}
 	outstream << "--------------------------------------------------------------------------------\n";
 	if ( failed_components.size() > 0 ) {
-		outstream << "Warning: the following are not movers, filters, task operations, or residue selectors; no information could be found for these:\n";
+		outstream << "Warning: the following are not movers, filters, task operations, residue selectors, simple metrics, or packer palettes; no information could be found for these:\n";
 		for ( core::Size i(1), imax(failed_components.size()); i<=imax; ++i ) {
 			outstream << failed_components[i] << "\n";
 		}
@@ -773,7 +789,6 @@ void save_schema(  std::string const & filename ) {
 	std::ofstream ofs( filename );
 	ofs << schema << std::endl;
 }
-
 
 } //RosettaScripts
 } //protocols

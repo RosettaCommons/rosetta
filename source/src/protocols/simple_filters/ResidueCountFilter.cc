@@ -395,7 +395,10 @@ ResidueCountFilter::add_residue_property_by_name(
 
 	ResidueProperty const prop( ResidueProperties::get_property_from_string( prop_input ) );
 
-	if ( prop == NO_PROPERTY ) return false;
+	if ( prop == NO_PROPERTY ) {
+		TR.Warning << "The string \"" << prop_input << "\" could not be parsed as a valid residue type property!" << std::endl;
+		return false;
+	}
 
 	if ( !res_props_.has( prop ) ) {
 		res_props_.push_back( prop );

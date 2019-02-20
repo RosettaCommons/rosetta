@@ -47,6 +47,9 @@
 		<And name="select_not_core_pos_phi" selectors="select_not_core,select_pos_phi" />
 		<And name="select_not_core_neg_phi" selectors="select_not_core,select_neg_phi" />
 	</RESIDUE_SELECTORS>
+	<PACKER_PALETTES>
+		<CustomBaseTypePackerPalette name="also_d_aa_and_oligourea_palette" additional_residue_types="DALA,DCYS,DASP,DGLU,DPHE,DHIS,DILE,DLYS,DLEU,DMET,DASN,DPRO,DGLN,DARG,DSER,DTHR,DVAL,DTRP,DTYR,OU3_ALA,OU3_VAL,DOU3_ALA,DOU3_VAL" />
+	</PACKER_PALETTES>
 	<TASKOPERATIONS>
 		<ReadResfile name="resfile_L_oligourea" filename="inputs/L_oligourea.resfile" selector="select_L_oligourea" />
 		<ReadResfile name="resfile_D_oligourea" filename="inputs/D_oligourea.resfile" selector="select_D_oligourea" />
@@ -80,11 +83,11 @@
 
 		<AddCompositionConstraintMover name="comp_csts" filename="inputs/global.comp" selector="select_first_repeat" />
 
-		<FastDesign name="fdes1" scorefxn="r15_mod_cst_highhbond" task_operations="resfile_core_pos_phi,resfile_boundary_surface_pos_phi,resfile_core_neg_phi,resfile_boundary_surface_neg_phi,resfile_L_oligourea,resfile_D_oligourea,ex1_ex2" repeats="1" />
+		<FastDesign name="fdes1" scorefxn="r15_mod_cst_highhbond" packer_palette="also_d_aa_and_oligourea_palette" task_operations="resfile_core_pos_phi,resfile_boundary_surface_pos_phi,resfile_core_neg_phi,resfile_boundary_surface_neg_phi,resfile_L_oligourea,resfile_D_oligourea,ex1_ex2" repeats="1" />
 		
-		<FastDesign name="fdes2" scorefxn="r15_mod_cst" task_operations="resfile_core_pos_phi,resfile_boundary_surface_pos_phi,resfile_core_neg_phi,resfile_boundary_surface_neg_phi,resfile_L_oligourea,resfile_D_oligourea,ex1_ex2" repeats="1" />
+		<FastDesign name="fdes2" scorefxn="r15_mod_cst" packer_palette="also_d_aa_and_oligourea_palette" task_operations="resfile_core_pos_phi,resfile_boundary_surface_pos_phi,resfile_core_neg_phi,resfile_boundary_surface_neg_phi,resfile_L_oligourea,resfile_D_oligourea,ex1_ex2" repeats="1" />
 
-		<FastRelax name="final_fastrelax" scorefxn="r15_cst_symm" repeats="1" task_operations="no_design,ex1_ex2" />
+		<FastRelax name="final_fastrelax" scorefxn="r15_cst_symm" repeats="1" packer_palette="also_d_aa_and_oligourea_palette" task_operations="no_design,ex1_ex2" />
 
 	</MOVERS>
 	<APPLY_TO_POSE>

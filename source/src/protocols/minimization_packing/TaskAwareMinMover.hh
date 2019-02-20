@@ -24,7 +24,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
-//#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -46,6 +46,13 @@ public:
 	TaskAwareMinMover(
 		protocols::minimization_packing::MinMoverOP minmover_in,
 		core::pack::task::TaskFactoryCOP factory_in
+	);
+
+	/// @brief Constructor with PackerTask.  The input PackerTask is cloned.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	TaskAwareMinMover(
+		protocols::minimization_packing::MinMoverOP minmover_in,
+		core::pack::task::PackerTaskCOP const & task_in
 	);
 
 	~TaskAwareMinMover() override;
@@ -98,6 +105,11 @@ private:
 	/// @brief OP for constant task factory for nonconstant tasks, if present
 	core::pack::task::TaskFactoryCOP factory_;
 	bool chi_, bb_, jump_;
+
+	/// @brief Optional: from code, a packer task may be provided directly, but it must match the size of the pose
+	/// on which we will be calling apply().
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	core::pack::task::PackerTaskOP task_;
 
 };//end TaskAwareMinMover
 

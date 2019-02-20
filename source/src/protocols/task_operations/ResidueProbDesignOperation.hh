@@ -146,15 +146,6 @@ public:
 	picking_rounds() const;
 
 
-	/// @brief Add the aa types chosen from the probabilities to the  allowed aa at the position instead of overwriting it.
-	/// @details Will result in very different results.
-	void
-	set_keep_task_allowed_aas(bool setting);
-
-	bool
-	keep_task_allowed_aas() const;
-
-
 	bool
 	resnum_exists_in_set(core::Size const resnum) const;
 
@@ -190,7 +181,6 @@ private:
 	AAProbabilities overall_prob_set_;
 
 	bool include_native_restype_;
-	bool keep_task_allowed_aa_;
 	core::Real zero_probs_overwrite_;
 	core::Size picking_rounds_;
 	bool no_probability_ = false;

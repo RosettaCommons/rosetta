@@ -28,6 +28,7 @@
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/pose/Pose.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -78,7 +79,8 @@ TaskAwareMinMover::TaskAwareMinMover()
 	factory_(/* nullptr */),
 	chi_(true),
 	bb_(false),
-	jump_(false)
+	jump_(false),
+	task_(nullptr)
 {}
 
 /// @brief constructor with TaskFactory
@@ -90,7 +92,27 @@ TaskAwareMinMover::TaskAwareMinMover(
 	factory_(std::move(factory_in)),
 	chi_(true),
 	bb_(false),
-	jump_(false)
+	jump_(false),
+	task_(nullptr)
+{
+	protocols::moves::Mover::type( "TaskAwareMinMover" );
+	if ( minmover_ ) {
+		base_movemap_ = minmover_->explicitly_set_movemap(); // Not ideal, as MinMover::movemap() should really be called with a Pose
+	}
+}
+
+/// @brief Constructor with PackerTask.  The input PackerTask is cloned.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+TaskAwareMinMover::TaskAwareMinMover(
+	protocols::minimization_packing::MinMoverOP minmover_in,
+	core::pack::task::PackerTaskCOP const & task_in
+) : protocols::moves::Mover("TaskAwareMinMover"),
+	minmover_(std::move(minmover_in)),
+	factory_(nullptr),
+	chi_(true),
+	bb_(false),
+	jump_(false),
+	task_(task_in->clone())
 {
 	protocols::moves::Mover::type( "TaskAwareMinMover" );
 	if ( minmover_ ) {
@@ -103,7 +125,7 @@ TaskAwareMinMover::~TaskAwareMinMover()= default;
 /// @details apply will extract the movemap from your minmover, modify it to include sidechain DOFs that are packable according to some TaskFactory, run the minmover with this movemap, and revert the minmover to its original movemap.
 void TaskAwareMinMover::apply( core::pose::Pose & pose ){
 	runtime_assert( minmover_ != nullptr );
-	runtime_assert( factory_ != nullptr );
+	runtime_assert( factory_ != nullptr || task_ != nullptr );
 
 	using core::kinematics::MoveMapOP;
 	using core::kinematics::MoveMap;
@@ -118,11 +140,12 @@ void TaskAwareMinMover::apply( core::pose::Pose & pose ){
 
 	//generate task
 	using core::pack::task::PackerTaskOP;
-	PackerTaskOP task( factory_->create_task_and_apply_taskoperations( pose ) );
+	PackerTaskOP task( task_ == nullptr ? factory_->create_task_and_apply_taskoperations( pose ) : task_ );
 
 	//modify movemap by task
 	//  core::kinematics::modify_movemap_from_packertask( *mm, *task );
 	Size const nres( task->total_residue() );
+	runtime_assert_string_msg( nres == pose.total_residue(), "Error in TaskAwareMinMover: a PackerTask was provided to this mover that does not match the size of the pose." );
 
 	mm->set_jump( jump_ );
 	for ( Size i(1); i <= nres; ++i ) {

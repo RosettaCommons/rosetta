@@ -158,7 +158,8 @@ ResidueType::ResidueType(
 	atom_depends_on_connection_(),
 	net_formal_charge_(0),
 	finalized_(false),
-	nondefault_(false)
+	nondefault_(false),
+	is_metapatched_(false)
 {
 	if ( atom_types != nullptr ) {
 		// For any actual ResidueType atom_types should be valid, but there's tricky RTS bootstraping logic
@@ -311,6 +312,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	finalized_ = residue_type.finalized_;
 	defined_adducts_ = residue_type.defined_adducts_;
 	nondefault_ = residue_type.nondefault_;
+	is_metapatched_ = residue_type.is_metapatched_;
 
 	// When you copy vertex descriptors from cached data, the vertex descriptors are pointing to the old copied graph.
 	// New vertices are assigned.  You have to map the old vertex to the new vertex.
@@ -2178,7 +2180,22 @@ ResidueType::set_properties( ResiduePropertiesOP properties ) {
 void
 ResidueType::add_property( std::string const & property )
 {
-	// signal that we need to update the derived data.
+	// Signal that we need to update the derived data.
+	finalized_ = false;
+
+	core::chemical::ResidueProperty const prop_enum( core::chemical::ResidueProperties::get_property_from_string( property ) );
+	runtime_assert_string_msg( prop_enum != NO_PROPERTY, "Error in ResidueType::add_property(): Could not parse property \"" + property + "\" as a valid residue type property." );
+	add_property( prop_enum );
+}
+
+/// @brief Add a property to this ResidueType, by properties enum.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ResidueType::add_property(
+	core::chemical::ResidueProperty const property
+) {
+	runtime_assert( property != NO_PROPERTY );
+
 	finalized_ = false;
 
 	properties_->set_property( property, true );
@@ -2187,43 +2204,43 @@ ResidueType::add_property( std::string const & property )
 
 	// Special "umbrella cases"
 	// FIXME: There really shouldn't be as many umbrella cases, IMO. ~Labonte
-	if ( property == "PROTEIN" ) {
+	if ( property == PROTEIN ) {
 		properties_->set_property( POLYMER, true );
-	} else if ( property == "ALPHA_AA" ) {
+	} else if ( property == ALPHA_AA ) {
 		properties_->set_property( PROTEIN, true );
 		properties_->set_property( POLYMER, true );
-	} else if ( property == "BETA_AA" ) {
+	} else if ( property == BETA_AA ) {
 		properties_->set_property( PROTEIN, true );
 		properties_->set_property( POLYMER, true );
-	} else if ( property == "L_AA" ) {
-		properties_->set_property( PROTEIN, true );
-		properties_->set_property( POLYMER, true );
-		//properties_->set_property( ALPHA_AA, true );
-	} else if ( property == "D_AA" ) {
+	} else if ( property == L_AA ) {
 		properties_->set_property( PROTEIN, true );
 		properties_->set_property( POLYMER, true );
 		//properties_->set_property( ALPHA_AA, true );
-	} else if ( property == "DNA" ) {
+	} else if ( property == D_AA ) {
+		properties_->set_property( PROTEIN, true );
 		properties_->set_property( POLYMER, true );
-	} else if ( property == "RNA" ) {
+		//properties_->set_property( ALPHA_AA, true );
+	} else if ( property == DNA ) {
 		properties_->set_property( POLYMER, true );
-	} else if ( property == "PEPTOID" ) {
+	} else if ( property == RNA ) {
+		properties_->set_property( POLYMER, true );
+	} else if ( property == PEPTOID ) {
 		properties_->set_property( POLYMER, true );
 		// amw: This will no longer be true if we incorporate
 		// alanine peptoids (or update our chirality model entirely)
 		properties_->set_property( ACHIRAL_BACKBONE, true );
-	} else if ( property == "LOWERTERM_TRUNC" ) {
+	} else if ( property == LOWERTERM_TRUNC ) {
 		properties_->set_property( LOWER_TERMINUS, true );
-	} else if ( property == "UPPERTERM_TRUNC" ) {
+	} else if ( property == UPPERTERM_TRUNC ) {
 		properties_->set_property( UPPER_TERMINUS, true );
-	} else if ( property == "PHOSPHONATE" ) {
+	} else if ( property == PHOSPHONATE ) {
 		properties_->set_property( POLYMER, true );
-	} else if ( property == "PHOSPHONATE_UPPER" ) {
+	} else if ( property == PHOSPHONATE_UPPER ) {
 		properties_->set_property( UPPER_TERMINUS, true );
 		properties_->set_property( PHOSPHONATE, true );
-	} else if ( property == "ACETYLATED_NTERMINUS" ) {
+	} else if ( property == ACETYLATED_NTERMINUS ) {
 		properties_->set_property( LOWER_TERMINUS, true );
-	} else if ( property == "METHYLATED_CTERMINUS" ) {
+	} else if ( property == METHYLATED_CTERMINUS ) {
 		properties_->set_property( UPPER_TERMINUS, true );
 	}
 }
@@ -2254,6 +2271,17 @@ ResidueType::delete_property( std::string const & property )
 	// Signal that we need to update the derived data.
 	finalized_ = false;
 
+	properties_->set_property( property, false );
+}
+
+/// @brief Delete a property of this ResidueType, by properties enum.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ResidueType::delete_property(
+	core::chemical::ResidueProperty const property
+) {
+	runtime_assert( property != NO_PROPERTY );
+	finalized_ = false;
 	properties_->set_property( property, false );
 }
 
@@ -2621,6 +2649,20 @@ ResidueType::is_virtual_residue() const
 	return properties_->has_property( VIRTUAL_RESIDUE );
 }
 
+/// @brief  Check if residue is 'VRT1'
+bool
+ResidueType::is_VRT1() const
+{
+	return properties_->has_property( VRT1 );
+}
+
+/// @brief  Check if residue is a TP3 water.
+bool
+ResidueType::is_TP3() const
+{
+	return properties_->has_property( TP3 );
+}
+
 /// @brief  Check if residue is 'INVERTING_VIRTUAL_RESIDUE'
 /// @details Used by the symmetry machinery for mirror symmetry operations.
 bool
@@ -2789,7 +2831,7 @@ ResidueType::delete_terminal_chi(
 
 void
 ResidueType::delete_child_proton( std::string const & atom ) {
-	std::string res_varname( atom + "-PRUNEH" );
+	std::string res_varname( "MP-" + atom + "-PRUNEH" );
 	Size count = 0;
 	enable_custom_variant_types();
 	while ( true ) {
@@ -2800,7 +2842,7 @@ ResidueType::delete_child_proton( std::string const & atom ) {
 		if ( count == 1 ) {
 			if ( ! has_variant_type( res_varname ) ) break;
 		} else {
-			res_varname = atom + "-PRUNEH" + utility::to_string( count );
+			res_varname = "MP-" + atom + "-PRUNEH" + utility::to_string( count );
 			if ( ! has_variant_type( res_varname ) ) break;
 		}
 	}
@@ -4654,11 +4696,7 @@ ResidueType::set_icoor_private(
 }
 
 void
-ResidueType::select_orient_atoms(
-	Size & center,
-	Size & nbr1,
-	Size & nbr2
-) const
+ResidueType::select_orient_atoms( Size & center, Size & nbr1, Size & nbr2 ) const
 {
 	center = 0;
 	nbr1 = 0;
@@ -4693,34 +4731,60 @@ ResidueType::select_orient_atoms(
 		if ( !( center && nbr1 && nbr2 ) ) {
 			//debug_assert() isn't enough for these cases b/c they're typically ligands
 			// and thus depend on user input -- need to be caught even in release mode.
-			utility_exit_with_message("Cannot superimpose residues of type "+name());
+			utility_exit_with_message( "Cannot superimpose residues of type " + name() );
 		}
-		//std::cout << "Superimposing on " << atom_name(center) << " " << atom_name(nbr1) << " " << atom_name(nbr2) << "\n";
-
 	} else {
 		// look for a backbone atom, one of whose neighbors is a sidechain atom
 		// center will be this atom
 		// nbr1 and nbr2 will be the backbone heavyatom nbrs of this atom
 		// eg center = CA, nbr1 = N. nbr2 = C in the protein case
-		for ( Size atom_index(1); atom_index <= natoms(); ++atom_index ) {
-			if ( atom_is_backbone( atom_index ) ) {
-				AtomIndices const & nbrs( bonded_neighbor( atom_index ) );
-				center = 0; nbr1 = 0; nbr2 = 0;
-				for ( Size nbr_index(1); nbr_index <= nbrs.size(); ++nbr_index ) {
-					Size const nbr( nbrs[ nbr_index ] );
-					if ( !atom_is_backbone( nbr ) && atom_base( nbr ) == atom_index ) {
-						// nbr is a sidechain atom that branches from the atom at atom_index
-						center = atom_index;
-					} else if ( atom_is_backbone( nbr ) && nbr <= nheavyatoms() ) {
-						// nbr is a backbone heavy atom neighbor of the atom at atom_index
-						if ( nbr1 ) nbr2 = nbr;
-						else nbr1 = nbr;
-					}
-				}
-			} // atom_index is backbone
-			if ( center && nbr1 && nbr2 ) break;
-		} // atom_index
+		select_orient_atoms_standard_logic( center, nbr1, nbr2, true ); //First try ignoring virtuals.
+		if ( !( center && nbr1 && nbr2 ) ) {
+			center = 0; nbr1 = 0; nbr2 = 0;
+			select_orient_atoms_standard_logic( center, nbr1, nbr2, false ); //If we fail, try again allowing virtuals.
+		}
 	}
+	//std::cout << "Superimposing on " << atom_name(center) << " " << atom_name(nbr1) << " " << atom_name(nbr2) << "\n";
+	runtime_assert_string_msg( center && nbr1 && nbr2, "Error in core::chemical::ResidueType::select_orient_atoms(): Could not find three atoms to use for orienting residue type " + name() + "." );
+}
+
+/// @brief Pick atoms to use for orienting one Residue onto another, using standard logic.
+/// @details Standard logic applies to case in which (a) the residue has backbone atoms, and (b) the residue
+/// has sidechain atoms, and (c) the orient mode has not been set explicitly to force_nbr_atom_orient.  We loop through
+/// all backbone atoms and find the first atom that is bonded to a sidechain atom AND two other backbone atoms.  The
+/// first such atom becomes "center", and its two backbone neighbors become "nbr1" and "nbr2".
+/// @note If ignore_virtuals is true, none of the atoms involved can be virtuals.  If false, they can be.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ResidueType::select_orient_atoms_standard_logic(
+	Size & center,
+	Size & nbr1,
+	Size & nbr2,
+	bool const ignore_virtuals
+) const {
+	// look for a backbone atom, one of whose neighbors is a sidechain atom
+	// center will be this atom
+	// nbr1 and nbr2 will be the backbone heavyatom nbrs of this atom
+	// eg center = CA, nbr1 = N. nbr2 = C in the protein case
+	for ( Size atom_index( 1 ); atom_index <= natoms(); ++atom_index ) {
+		if ( atom_is_backbone( atom_index ) ) {
+			AtomIndices const & nbrs( bonded_neighbor( atom_index ) );
+			center = 0; nbr1 = 0; nbr2 = 0;
+			for ( Size nbr_index( 1 ); nbr_index <= nbrs.size(); ++nbr_index ) {
+				Size const nbr( nbrs[ nbr_index ] );
+				if ( ignore_virtuals && is_virtual(nbr) ) continue;
+				if ( !atom_is_backbone( nbr ) && atom_base( nbr ) == atom_index ) {
+					// nbr is a sidechain atom that branches from the atom at atom_index.
+					// It is also not a virtual atom, (which is important for avoiding vector normalization errors.)
+					center = atom_index;
+				} else if ( atom_is_backbone( nbr ) && nbr <= nheavyatoms() ) {
+					// nbr is a (real) backbone heavy atom neighbor of the atom at atom_index
+					if ( nbr1 ) { nbr2 = nbr; } else { nbr1 = nbr; }
+				}
+			}
+		} // atom_index is backbone
+		if ( center && nbr1 && nbr2 ) break;
+	} // atom_index
 }
 
 std::tuple<Size, Size, Size>
@@ -5213,6 +5277,7 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	// ( will call finalization function on load )
 	arc( CEREAL_NVP( defined_adducts_ ) ); // utility::vector1<Adduct>
 	arc( CEREAL_NVP( nondefault_ ) ); // _Bool
+	arc( CEREAL_NVP( is_metapatched_ ) ); //bool
 
 	// Observers aren't being serialized - any observer on the remote side will have to reattach itself.
 	// EXEMPT destruction_obs_hub_
@@ -5422,6 +5487,7 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	arc( net_formal_charge_ ); //core::Size
 	arc( defined_adducts_ ); // utility::vector1<Adduct>
 	arc( nondefault_ ); // _Bool
+	arc( is_metapatched_ ); //bool
 
 	// Observers aren't being serialized - any observer on the remote side will have to reattach itself.
 	// EXEMPT destruction_obs_hub_

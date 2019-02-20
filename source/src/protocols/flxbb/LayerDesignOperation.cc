@@ -17,7 +17,7 @@
 /// the option ignore_pikaa_natro=true can be added to the <LayerDesign> tag to turn this on.
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 /// @modified Javier Castellanos (javiercv@uw.edu )
-/// @modified Vikram K. Mulligan (vmullig@uw.edu) -- support for noncanonicals.
+/// @modified Vikram K. Mulligan (vmullig@uw.edu) -- support for noncanonicals, now deprecated.
 
 //  The following are using amino acids for each layer
 /// @CORE
@@ -361,22 +361,9 @@ makeMap( T const & map_initializer )
 }
 
 void
-LayerDesignOperation::init_nc_layerdefinitions( std::string const & layer_name )
-{
-	LayerNCDefinitions & def = layer_nc_residues_[ layer_name ];
-	if ( ( layer_name == "Nterm" ) || ( layer_name == "Cterm" ) ) {
-		def[ "all" ];
-	} else {
-		for ( auto const & ss : SS_TYPES ) {
-			def[ ss ];
-		}
-	}
-}
-
-void
 LayerDesignOperation::set_default_layer_residues() {
 	TR << "Initializing the layers with the default residues" << std::endl;
-	boost::assign::insert(layer_residues_) //If the defaults are modified here, be sure to set up defaults below for the layer_nc_residues_ object that defines noncanonicals.
+	boost::assign::insert(layer_residues_)
 		(std::string("core"), makeMap( boost::assign::map_list_of
 		(std::string("all"),            std::string("AFILPVWYDNST"))
 		(std::string("Loop"),            std::string("AFILPVWY"))
@@ -410,13 +397,6 @@ LayerDesignOperation::set_default_layer_residues() {
 		//(std::string("all"),              std::string("DEGNPQRK"))
 		));
 
-	// Note: by default, the layer_nc_residues_ object contains empty NCAA lists, since we're not designing with noncanonicals by default. --VKM
-	init_nc_layerdefinitions( "core" );
-	init_nc_layerdefinitions( "boundary" );
-	init_nc_layerdefinitions( "surface" );
-	init_nc_layerdefinitions( "Nterm" );
-	init_nc_layerdefinitions( "Cterm" );
-
 	boost::assign::insert(design_layer_)
 		(std::string("core"), false )
 		(std::string("boundary"), false )
@@ -447,31 +427,6 @@ LayerDesignOperation::get_restrictions( std::string const & layer, std::string c
 		restrict_to_aa[ chemical::aa_from_oneletter_code( restype ) ] = true;
 	}
 	return restrict_to_aa;
-}
-
-/// @brief Take a string consisting of comma-separated three-letter codes and parse it, storing separate three-letter codes in a given
-/// utility::vector1 of strings.
-void LayerDesignOperation::parse_ncaa_list( std::string const &str, utility::vector1<std::string> &storage_vect ) {
-	for ( core::Size i=0; i<str.length()-2; ++i ) {
-		if ( str[i]!=',' && str[i]!=' ' && str[i]!='\n' && str[i]!='\t' ) {
-			storage_vect.push_back( str.substr(i,3) );
-			i+=2;
-		}
-	}
-	return;
-}
-
-/// @brief Remove a list of residue types from another list.
-///
-void LayerDesignOperation::exclude_ncaas( utility::vector1<std::string> const &aas_to_exclude, utility::vector1<std::string> &storage_vect ) {
-	for ( core::Size i=1,imax=aas_to_exclude.size(); i<=imax; ++i ) { //Loop through all aas to exclude.
-		for ( auto j = storage_vect.begin(); j<storage_vect.end(); ++j ) {
-			if ( (*j)==aas_to_exclude[i] ) {
-				storage_vect.erase(j);
-			}
-		}
-	}
-	return;
 }
 
 void
@@ -574,7 +529,6 @@ LayerDesignOperation::add_layer(
 	task_layers_[ layer_name ] = task;
 	design_layer_[ layer_name ] = true;
 
-	layer_nc_residues_[ layer_name ] ;
 	layer_operation_[ layer_name ] = operation;
 	layer_specification_[ layer_name ] = specification;
 	LayerDefinitions newdef;
@@ -596,27 +550,6 @@ LayerDesignOperation::layer_residues(
 	auto it2 = it->second.find( ss_name );
 	if ( it2 == it->second.end() ) {
 		throw CREATE_EXCEPTION(utility::excn::Exception,  "SS type " + ss_name + " in layer " + layer_name + " was not found when trying to determine valid residue types." );
-	}
-	debug_assert( it2 != it->second.end() );
-
-	return it2->second;
-}
-
-/// @brief gets the residues allowed for a given secondary structure in a given layer
-utility::vector1< std::string > const &
-LayerDesignOperation::layer_nc_residues(
-	std::string const & layer_name,
-	std::string const & ss_name ) const
-{
-	auto it = layer_nc_residues_.find( layer_name );
-	if ( it == layer_nc_residues_.end() ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception,  "Layer " + layer_name + " was not found when trying to determine valid residue types." );
-	}
-	debug_assert( it != layer_nc_residues_.end() );
-
-	auto it2 = it->second.find( ss_name );
-	if ( it2 == it->second.end() ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception,  "SS type " + ss_name + " in layer " + layer_name + " was not found when trying to determine valid ncaa residue types." );
 	}
 	debug_assert( it2 != it->second.end() );
 
@@ -649,25 +582,6 @@ LayerDesignOperation::set_layer_residues(
 	std::string const & residues )
 {
 	set_layer_residues( layer_name, ss_name, residues, layer_residues_ );
-}
-
-void
-LayerDesignOperation::set_nc_layer_residues(
-	std::string const & layer_name,
-	std::string const & ss_name,
-	std::string const & residues )
-{
-	layer_nc_residues_[ layer_name ][ ss_name ].clear(); //Clear the list of NCAAS
-	parse_ncaa_list( residues, layer_nc_residues_[ layer_name ][ ss_name ] ); //Add these NCAAs.
-}
-
-void
-LayerDesignOperation::set_nc_layer_residues(
-	std::string const & layer_name,
-	std::string const & ss_name,
-	utility::vector1< std::string > const & residues )
-{
-	layer_nc_residues_[ layer_name ][ ss_name ] = residues;
 }
 
 void
@@ -705,6 +619,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	LayerSpecification layer_specification;
 	BOOST_FOREACH ( const TaskLayers::value_type& task_pair, task_layers_ ) {
 		if ( TR.visible() ) TR << "Residues  for task layer " << task_pair.first << ": " <<std::endl;
+
 		PackerTask_ layer_task(input_pose);
 		task_pair.second->apply(input_pose, layer_task);
 		utility::vector1< bool > designable_residues( layer_task.designing_residues() );
@@ -927,18 +842,6 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 			if ( sstype!="" ) {
 				//Restrict allowed canonical residues:
 				task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, sstype) );
-				//Add allowed noncanonical residues:
-				auto cur_nc_layer = layer_nc_residues_.find(layer);
-				if ( cur_nc_layer!=layer_nc_residues_.end() ) {
-					auto cur_nc_defs = cur_nc_layer->second.find(sstype);
-					if ( cur_nc_defs!=cur_nc_layer->second.end() ) {
-						if ( !cur_nc_defs->second.empty() ) { //If there are NCAAs defined for this layer:
-							for ( auto it=cur_nc_defs->second.begin(); it < cur_nc_defs->second.end(); ++it ) { //Loop through all NCAAs defined for this layer.
-								task.nonconst_residue_task(i).allow_noncanonical_aa( *it ); //Add the current NCAA to the list allowed for this residue.
-							}
-						}
-					}
-				}
 			}
 			if ( TR.visible() ) TR << i << " done " << std::endl << std::flush;
 		} // for each layer
@@ -1056,7 +959,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 		for ( auto layer : layer_residues_ ) {
 			TR << "Layer " << layer.first << std::endl;
 			for ( auto layer_def : layer.second ) {
-				TR << "\t" << ObjexxFCL::format::LJ(15,layer_def.first) << "aa = " << layer_def.second << "\t ncaa = " << print_string_vector( layer_nc_residues_[ layer.first ][ layer_def.first ] ) << std::endl;
+				TR << "\t" << ObjexxFCL::format::LJ(15,layer_def.first) << "aa = " << layer_def.second << std::endl;
 			}
 			TR << std::endl;
 		}
@@ -1166,11 +1069,8 @@ void LayerDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	ss_layer_attributes
 		+ Attr( "copy_layer", xs_string, "XRW TO DO" )
 		+ Attr( "aa", xs_string, "XRW TO DO" )
-		+ Attr( "ncaa", xs_string, "XRW TO DO" )
 		+ Attr( "append", xs_string, "XRW TO DO" )
-		+ Attr( "ncaa_append", xs_string, "XRW TO DO" )
 		+ Attr( "exclude", xs_string, "XRW TO DO" )
-		+ Attr( "ncaa_exclude", xs_string, "XRW TO DO" )
 		+ Attr( "operation", "layer_design_operation_behavior", "XRW TO DO" )
 		+ Attr( "specification", "layer_design_specification_behavior", "XRW TO DO" );
 
@@ -1353,25 +1253,6 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 			}
 		}
 
-		// fill up empty non-canonical amino acid lists with "all" list if it exists
-		utility::vector1< std::string > all_layers_ncaa_residues;
-		LayerNCDefinitions::const_iterator nc = layer_nc_residues_[ layer.first ].find( "all" );
-		if ( nc != layer_nc_residues_[ layer.first ].end() ) {
-			all_layers_ncaa_residues = layer_nc_residues( layer.first, "all" );
-		}
-
-		// skip if "all" layer is empty
-		if ( ! all_layers_ncaa_residues.size() ) {
-			continue;
-		}
-
-		BOOST_FOREACH ( std::string const & ss_def_name, SS_TYPES ) {
-			auto ldncaa_it = layer_nc_residues_[ layer.first ].find( ss_def_name );
-			if ( ( ldncaa_it == layer_nc_residues_[ layer.first ].end() ) || ( !ldncaa_it->second.size() ) ) {
-				TR << "layer " << layer.first << " has no specification for noncanonical residues in " << ss_def_name << ".  The layer will be filled with the noncanonical residues defined for all secondary structure types." << std::endl;
-				set_nc_layer_residues( layer.first, ss_def_name, all_layers_ncaa_residues );
-			}
-		}
 	}
 }
 
@@ -1419,19 +1300,6 @@ LayerDesignOperation::parse_layer_secstruct_tag(
 			}
 		}
 	}
-	if ( secstruct_tag->hasOption( "ncaa" ) ) {
-		std::string const aas = secstruct_tag->getOption< std::string >( "ncaa" );
-		set_nc_layer_residues( layer_name, secstruct, aas );
-		TR << "Assigning noncanonical residues " << aas << " to layer " << layer_name << " for ss " << secstruct << std::endl;
-		if ( secstruct == "all" ) {
-			LayerNCDefinitions & ld = layer_nc_residues_[ layer_name ];
-			for ( LayerNCDefinitions::const_iterator l = ld.begin(); l != ld.end(); ++l ) {
-				if ( l->first != "all" ) {
-					set_nc_layer_residues( layer_name, l->first, aas );
-				}
-			}
-		}
-	}
 	if ( secstruct_tag->hasOption( "append" ) ) {
 		std::string const aas = secstruct_tag->getOption< std::string >( "append" );
 		LayerDefinitions::const_iterator prevaas = layer_residues_[ layer_name ].find( secstruct );
@@ -1450,18 +1318,6 @@ LayerDesignOperation::parse_layer_secstruct_tag(
 					set_layer_residues( layer_name, ld.first, unique_chars( cur_aas + aas ) );
 				}
 			}
-		}
-	}
-	if ( secstruct_tag->hasOption( "ncaa_append" ) ) {
-		LayerNCDefinitions & defs = layer_nc_residues_[ layer_name ];
-		std::string const aas = secstruct_tag->getOption< std::string >( "ncaa_append" );
-		utility::vector1< std::string > aas_vec;
-		parse_ncaa_list( aas, aas_vec );
-		defs[ secstruct ] = unique_strs( aas_vec, defs[ secstruct ] );
-
-		TR << "Appending noncanonical residues " << aas << " to layer " << layer_name << std::endl;
-		for ( auto & def : defs ) {
-			def.second = unique_strs( aas_vec, def.second );
 		}
 	}
 	if ( secstruct_tag->hasOption( "exclude" ) ) {
@@ -1492,17 +1348,6 @@ LayerDesignOperation::parse_layer_secstruct_tag(
 				}
 				set_layer_residues( lrs->first, ld->first, std::string( temp_def_res_set.begin(), temp_def_res_set.end() ) );
 			}
-		}
-	}
-	if ( secstruct_tag->hasOption( "ncaa_exclude" ) ) {
-		LayerNCDefinitions & defs = layer_nc_residues_[ layer_name ];
-		std::string const aas = secstruct_tag->getOption< std::string >( "ncaa_exclude" );
-		TR << "Excluding noncanonical residues " << aas << " from layer " << layer_name << std::endl;
-		utility::vector1< std::string > res_to_exclude;
-		parse_ncaa_list( aas, res_to_exclude );
-		exclude_ncaas( res_to_exclude, defs[ secstruct ] );
-		for ( auto & def : defs ) {
-			exclude_ncaas( res_to_exclude, def.second );
 		}
 	}
 

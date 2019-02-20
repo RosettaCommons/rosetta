@@ -137,25 +137,24 @@ switch_to_residue_type_set(
 		}
 
 		if ( ! new_rsd_type ) {
-			if ( ( rsd.aa() == aa_unk ) || ( rsd.name().substr(0,5) == "HIS_D" ) ) {
-				// ligand or metal ions are all defined as "UNK" AA, so check a rsdtype with same name
-				// for HIS_D tautomer, we want to keep its tautomer state
-				if ( type_set.has_name( rsd.name() ) ) {
-					new_rsd_type = type_set.name_mapOP( rsd.name() );
-				}
-			} else  {
+			// ligand or metal ions are all defined as "UNK" AA, so check a rsdtype with same name
+			// for HIS_D tautomer, we want to keep its tautomer state
+			if ( type_set.has_name( rsd.name() ) ) {
+				new_rsd_type = type_set.name_mapOP( rsd.name() );
+			}
+			if ( !new_rsd_type ) {
 				// for a normal AA/DNA/RNA residue, now look for a rsdtype with same variants
 				// For CYZ "first three characters of name" and "name3" are different...
 				//new_rsd_type = type_set.get_representative_type_name3( rsd.name().substr(0,3), rsd.type().variant_types() );
 				new_rsd_type = type_set.get_representative_type_name3( rsd.name3(), rsd.type().variant_types() );
-				if ( !new_rsd_type && allow_sloppy_match ) {
-					TR.Warning << "Did not find perfect match for residue: "  << rsd.name()
-						<< "at position " << i << ". Trying to find acceptable match. " << std::endl;
-					core::chemical::ResidueTypeCOP new_rsd_type2( type_set.get_representative_type_name3( rsd.name().substr(0,3) ) );
-					if ( new_rsd_type2 && rsd.type().name3()  == new_rsd_type2->name3() ) { // Would the name3's ever not match?
-						TR.Warning << "Found an acceptable match: " << rsd.type().name() << " --> " << new_rsd_type2->name() << std::endl;
-						new_rsd_type = new_rsd_type2;
-					}
+			}
+			if ( !new_rsd_type && allow_sloppy_match ) {
+				TR.Warning << "Did not find perfect match for residue: "  << rsd.name()
+					<< "at position " << i << ". Trying to find acceptable match. " << std::endl;
+				core::chemical::ResidueTypeCOP new_rsd_type2( type_set.get_representative_type_name3( rsd.name().substr(0,3) ) );
+				if ( new_rsd_type2 && rsd.type().name3()  == new_rsd_type2->name3() ) { // Would the name3's ever not match?
+					TR.Warning << "Found an acceptable match: " << rsd.type().name() << " --> " << new_rsd_type2->name() << std::endl;
+					new_rsd_type = new_rsd_type2;
 				}
 			}
 		}
@@ -178,6 +177,7 @@ switch_to_residue_type_set(
 			TR.Error << pose.sequence() << std::endl;
 			TR.Error  << "can not find a residue type that matches the residue " << rsd.name()
 				<< " at position " << i << std::endl;
+			rsd.type().show( TR.Error, false );
 			utility_exit_with_message( "core::util::switch_to_residue_type_set fails\n" );
 		}
 

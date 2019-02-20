@@ -361,7 +361,7 @@ PoseResidueTypeSet::set_merge_behavior_manager( MergeBehaviorManagerCOP mbm) {
 
 /// @brief Attempt to lazily load the given residue type from data.
 bool
-PoseResidueTypeSet::lazy_load_base_type( std::string const & rsd_base_name ) const
+PoseResidueTypeSet::lazy_load_base_type_already_write_locked( std::string const & rsd_base_name ) const
 {
 	// We don't have any special lazy loading for the PoseResidueTypeSet
 	// (The default_rts will lazy load when we ask it for it's ResidueTypes.)

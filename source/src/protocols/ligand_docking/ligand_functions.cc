@@ -25,6 +25,9 @@
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <basic/Tracer.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/palette/NoDesignPackerPalette.hh>
 
 #include <protocols/ligand_docking/grid_functions.hh>
 
@@ -137,12 +140,13 @@ get_ligand_torsion_constraints(
 	using core::chemical::ResidueType;
 
 	ResidueType const & rsdtype = pose.residue_type(rsd_no);
+	core::pack::task::PackerTaskCOP packertask( core::pack::task::TaskFactory::create_packer_task(pose, utility::pointer::make_shared< core::pack::palette::NoDesignPackerPalette >() ) );
 	for ( Size i = 1; i <= rsdtype.nchi(); ++i ) {
 		//bool has_diversity(false);
 		if ( rsdtype.chi_rotamers(i).size() == 0 ) {
 			bool has_diversity(false);
 			utility::vector1< core::conformation::ResidueOP > rotamers;
-			rotamers_for_trials(pose, rsd_no, rotamers);
+			rotamers_for_trials(pose, rsd_no, rotamers, *packertask);
 			if ( rotamers.empty() || option[ OptionKeys::packing::use_input_sc ]() ) {
 				rotamers.push_back( pose.residue(rsd_no).clone() );
 				if ( (rotamers.size()==1) && constrain_all_torsions_equally ) has_diversity=true;

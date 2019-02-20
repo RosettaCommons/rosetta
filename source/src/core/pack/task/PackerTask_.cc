@@ -26,10 +26,12 @@
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
 #include <core/pack/task/rna/RNA_ResidueLevelTask.hh>
+#include <core/pack/palette/PackerPaletteFactory.hh>
 
 //Project Headers
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
@@ -200,28 +202,11 @@ PackerTask_::symmetrize_by_intersection() const {
 	return symmetry_status_ == REQUEST_SYMMETRIZE_BY_INTERSECTION;
 }
 
-PackerTask_::PackerTask_(
-)
-:
+PackerTask_::PackerTask_():
 	nres_(0 ),
 	pack_residue_( nres_, true ),
 	n_to_be_packed_( nres_ ),
-	n_to_be_packed_up_to_date_( true ),
-	linmem_ig_( false ),
-	linmem_ig_history_size_at_default_( true ),
-	linmem_ig_history_size_( 10 ),
-	lazy_ig_( false ),
-	double_lazy_ig_( false ),
-	dlig_mem_limit_( 0 ),
-	multi_cool_annealer_( false ),
-	mca_history_size_( 1 ),
-	optimize_H_( false ),
-	bump_check_( true ),
-	max_rotbump_energy_( 5.0 ),
-	low_temp_( -1.0 ), //default --> let annealer pick
-	high_temp_( -1.0 ), //default --> let annealer pick
-	disallow_quench_( false ),
-	symmetry_status_(NO_SYMMETRIZATION_REQUEST)
+	packer_palette_(/*NULL*/)
 {
 	IG_edge_reweights_ = nullptr; //default stays empty, no reweighting
 }
@@ -231,33 +216,51 @@ PackerTask_::PackerTask_(
 ///the constructor reads NEITHER the command line flags NOR a resfile; this must be done after creation!
 PackerTask_::PackerTask_(
 	pose::Pose const & pose
-)
-:
+) :
 	nres_( pose.size() ),
 	pack_residue_( nres_, true ),
 	n_to_be_packed_( nres_ ),
-	n_to_be_packed_up_to_date_( true ),
-	linmem_ig_( false ),
-	linmem_ig_history_size_at_default_( true ),
-	linmem_ig_history_size_( 10 ),
-	lazy_ig_( false ),
-	double_lazy_ig_( false ),
-	dlig_mem_limit_( 0 ),
-	multi_cool_annealer_( false ),
-	mca_history_size_( 1 ),
-	optimize_H_( false ),
-	bump_check_( true ),
-	max_rotbump_energy_( 5.0 ),
-	low_temp_( -1.0 ), //default --> let annealer pick
-	high_temp_( -1.0 ), //default --> let annealer pick
-	disallow_quench_( false ),
-	symmetry_status_(NO_SYMMETRIZATION_REQUEST)
+	packer_palette_() //Initialized below
+{
+	//Create PackerPalette:
+	{
+		core::pack::palette::PackerPaletteOP new_palette( core::pack::palette::PackerPaletteFactory::get_instance()->create_packer_palette_from_global_defaults() );
+		if ( pose.total_residue() > 0 ) {
+			new_palette->set_residue_type_set( pose.residue_type_set_for_pose() );
+		}
+		packer_palette_ = new_palette; //Nonconst to const.
+	}
+
+	//create residue-level tasks
+	residue_tasks_.reserve( nres_ );
+	for ( Size ii = 1; ii <= nres_; ++ii ) {
+		residue_tasks_.push_back( ResidueLevelTask_( pose.residue(ii), pose, packer_palette_ ));
+	}
+
+	is_initialized_ = true;
+
+	IG_edge_reweights_ = nullptr; //default stays empty, no reweighting
+}
+
+/// @details constructor requires a pose.  most settings are in ResidueLevelTask
+///nres_ is copied from the pose, all residues are set to be packable by default, and bump_check is true
+///the constructor reads NEITHER the command line flags NOR a resfile; this must be done after creation!
+PackerTask_::PackerTask_(
+	pose::Pose const & pose,
+	core::pack::palette::PackerPaletteCOP const & packer_palette
+) :
+	nres_( pose.size() ),
+	pack_residue_( nres_, true ),
+	n_to_be_packed_( nres_ ),
+	packer_palette_( packer_palette == nullptr ? nullptr : packer_palette->clone() )
 {
 	//create residue-level tasks
 	residue_tasks_.reserve( nres_ );
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
-		residue_tasks_.push_back( ResidueLevelTask_( pose.residue(ii), pose ));
+		residue_tasks_.push_back( ResidueLevelTask_( pose.residue(ii), pose, packer_palette_ ));
 	}
+
+	is_initialized_ = true;
 
 	IG_edge_reweights_ = nullptr; //default stays empty, no reweighting
 }
@@ -285,7 +288,8 @@ PackerTask_::clean_residue_task( conformation::Residue const & original_residue,
 		--n_to_be_packed_;
 		pack_residue_[ seqpos ] = true;
 	}
-	residue_tasks_[seqpos] = ResidueLevelTask_( original_residue, pose );
+	runtime_assert( packer_palette_ );
+	residue_tasks_[seqpos] = ResidueLevelTask_( original_residue, pose, packer_palette_ );
 }
 
 /// @details turn off packing at all positions.
@@ -651,6 +655,16 @@ PackerTask_::show_all_residue_tasks() const {
 	for ( Size i=1, it_end = total_residue(); i <= it_end; ++i ) {
 		show_residue_task( i );
 	}
+}
+
+/// @brief Has this PackerTask been initialized with a PackerPalette?
+/// @details PackerTasks must be initialized with PackerPalettes before being modified with TaskOperations.  The TaskFactory
+/// will initialize the PackerTask with a DefaultPackerPalette if no custom PackerPalette is provided.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+PackerTask_::is_initialized() const
+{
+	return is_initialized_;
 }
 
 PackerTask &
@@ -1061,7 +1075,7 @@ void PackerTask_::remap_residue_level_tasks(
 
 		if ( old_pos == 0 ) {
 			//find insertions and remapped residues old res index is 0
-			remapped_residue_tasks.push_back( ResidueLevelTask_( pose.residue( ii ), pose ));
+			remapped_residue_tasks.push_back( ResidueLevelTask_( pose.residue( ii ), pose, packer_palette_ ));
 			remapped_residue_tasks[ii].initialize_from_command_line();
 			remapped_pack_residue.push_back( true );
 		} else if ( old_pos != 0 ) {
@@ -1096,6 +1110,7 @@ template< class Archive >
 void
 core::pack::task::PackerTask_::save( Archive & arc ) const {
 	arc( cereal::base_class< core::pack::task::PackerTask >( this ) );
+	arc( CEREAL_NVP( is_initialized_ ) ); // _Bool
 	arc( CEREAL_NVP( nres_ ) ); // Size
 	arc( CEREAL_NVP( pack_residue_ ) ); // utility::vector1<_Bool>
 	arc( CEREAL_NVP( residue_tasks_ ) ); // utility::vector1<ResidueLevelTask_>
@@ -1120,6 +1135,7 @@ core::pack::task::PackerTask_::save( Archive & arc ) const {
 	arc( CEREAL_NVP( IG_edge_reweights_ ) ); // IGEdgeReweightContainerOP
 	arc( CEREAL_NVP( rotsetsops_ ) ); // rotamer_set::RotSetsOperationList
 	arc( CEREAL_NVP( symmetry_status_ ) ); // enum core::pack::task::PackerTaskSymmetryStatus
+	arc( CEREAL_NVP( packer_palette_ ) ); // core::pack::palette::PackerPaletteCOP
 }
 
 /// @brief Automatically generated deserialization method
@@ -1127,6 +1143,7 @@ template< class Archive >
 void
 core::pack::task::PackerTask_::load( Archive & arc ) {
 	arc( cereal::base_class< core::pack::task::PackerTask >( this ) );
+	arc( is_initialized_ ); // _Bool
 	arc( nres_ ); // Size
 	arc( pack_residue_ ); // utility::vector1<_Bool>
 	arc( residue_tasks_ ); // utility::vector1<ResidueLevelTask_>
@@ -1155,6 +1172,7 @@ core::pack::task::PackerTask_::load( Archive & arc ) {
 	arc( IG_edge_reweights_ ); // IGEdgeReweightContainerOP
 	arc( rotsetsops_ ); // rotamer_set::RotSetsOperationList
 	arc( symmetry_status_ ); // enum core::pack::task::PackerTaskSymmetryStatus
+	arc( packer_palette_ ); // core::pack::palette::PackerPaletteCOP
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pack::task::PackerTask_ );

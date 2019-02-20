@@ -3,3 +3,4 @@
 -score:weights mm_std
 -overwrite
 -out:suffix _mm_std
+-packing:packer_palette:extra_base_type_file extra_restypes.txt

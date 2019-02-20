@@ -75,69 +75,75 @@ public:
 		using namespace utility::tools;
 
 		ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-		PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
-		pose::Pose & pose = *pose_op;
+		// AMW TODO: temp catch this exception because we have something broken, but we don't want to crash.
+		try {
+			PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
 
-		AddMover add_mover;
-		add_mover.set_start_added_residue_in_aform( true );
-		add_mover.set_presample_added_residue( false );
-		// residue between built MS2 hairpin and the base pair step.
-		add_mover.apply( pose, StepWiseMove( 86, Attachment(85,BOND_TO_PREVIOUS), ADD ) );
-		// join the two poses
-		add_mover.apply( pose, StepWiseMove( 87, Attachment(86,BOND_TO_PREVIOUS), ADD ) );
+			pose::Pose & pose = *pose_op;
 
-		// First residues 1-83 are protein. Rest are RNA:
-		TS_ASSERT_EQUALS( pose.sequence(), "FANGVAEWKVTCSVRQSSAQNRKYTIKVEYLNMELTIPIFANGVAEWRSKVTCSVRQSSANRKYTIKVEVPAAWRSYLNMELTacaugaggaucacccagu" );
+			AddMover add_mover;
+			add_mover.set_start_added_residue_in_aform( true );
+			add_mover.set_presample_added_residue( false );
+			// residue between built MS2 hairpin and the base pair step.
+			add_mover.apply( pose, StepWiseMove( 86, Attachment(85,BOND_TO_PREVIOUS), ADD ) );
+			// join the two poses
+			add_mover.apply( pose, StepWiseMove( 87, Attachment(86,BOND_TO_PREVIOUS), ADD ) );
 
-		utility::vector1< Size > working_moving_res_list = make_vector1( 86 );
-		StepWiseWorkingParametersOP working_parameters = setup_working_parameters_for_swa( working_moving_res_list, pose, 0 /* no native pose */,  vector1< Size >() /*bridge_res*/, vector1< Size >()/*working_minimize_res*/  );
+			// First residues 1-83 are protein. Rest are RNA:
+			TS_ASSERT_EQUALS( pose.sequence(), "FANGVAEWKVTCSVRQSSAQNRKYTIKVEYLNMELTIPIFANGVAEWRSKVTCSVRQSSANRKYTIKVEVPAAWRSYLNMELTacaugaggaucacccagu" );
 
-		vector1< PoseOP > pose_list;
-		pose_list.push_back( pose.clone() );
-		StepWiseModelerOptionsOP options( new StepWiseModelerOptions );
-		TS_ASSERT_EQUALS( options->num_pose_minimize(), 0 ); // seek default
+			utility::vector1< Size > working_moving_res_list = make_vector1( 86 );
+			StepWiseWorkingParametersOP working_parameters = setup_working_parameters_for_swa( working_moving_res_list, pose, 0 /* no native pose */,  vector1< Size >() /*bridge_res*/, vector1< Size >()/*working_minimize_res*/  );
 
-		StepWisePacker stepwise_packer( working_moving_res_list );
-		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" ); // RNA/protein.
-		stepwise_packer.set_scorefxn( scorefxn );
-		TS_ASSERT( !stepwise_packer.pack_all_side_chains() );
-		stepwise_packer.figure_out_neighbors( pose );
-		TR << "working_pack_res: " << make_tag_with_dashes( stepwise_packer.working_pack_res() ) << std::endl;
+			vector1< PoseOP > pose_list;
+			pose_list.push_back( pose.clone() );
+			StepWiseModelerOptionsOP options( new StepWiseModelerOptions );
+			TS_ASSERT_EQUALS( options->num_pose_minimize(), 0 ); // seek default
 
-		{
-			// in enumeration mode, num_pose_minimize should be 0 --> minimize all
-			TS_ASSERT( !options->choose_random() );
-			StepWiseMinimizer stepwise_minimizer( pose_list, working_parameters, options, 0 /*dummy scorefxn*/  );
-			stepwise_minimizer.set_working_pack_res( stepwise_packer.working_pack_res() );
-			TS_ASSERT_EQUALS( stepwise_minimizer.num_pose_minimize(), 0 ); // default for RNA
-			TS_ASSERT_EQUALS( stepwise_minimizer.working_minimize_res(), make_vector1( Size(86) ) ); // default for RNA
+			StepWisePacker stepwise_packer( working_moving_res_list );
+			ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" ); // RNA/protein.
+			stepwise_packer.set_scorefxn( scorefxn );
+			TS_ASSERT( !stepwise_packer.pack_all_side_chains() );
+			stepwise_packer.figure_out_neighbors( pose );
+			TR << "working_pack_res: " << make_tag_with_dashes( stepwise_packer.working_pack_res() ) << std::endl;
 
-			TS_ASSERT( stepwise_minimizer.working_pack_res().has_value( Size(86) ) );  // 2'-OH for nearby residues
-			TS_ASSERT( stepwise_minimizer.working_pack_res().has_value( Size(58) ) );  // protein side-chain for nearby residues
-			TS_ASSERT_LESS_THAN( stepwise_minimizer.working_pack_res().size(), pose.size() );  // but do not pack all residues.
+			{
+				// in enumeration mode, num_pose_minimize should be 0 --> minimize all
+				TS_ASSERT( !options->choose_random() );
+				StepWiseMinimizer stepwise_minimizer( pose_list, working_parameters, options, 0 /*dummy scorefxn*/  );
+				stepwise_minimizer.set_working_pack_res( stepwise_packer.working_pack_res() );
+				TS_ASSERT_EQUALS( stepwise_minimizer.num_pose_minimize(), 0 ); // default for RNA
+				TS_ASSERT_EQUALS( stepwise_minimizer.working_minimize_res(), make_vector1( Size(86) ) ); // default for RNA
+
+				TS_ASSERT( stepwise_minimizer.working_pack_res().has_value( Size(86) ) );  // 2'-OH for nearby residues
+				TS_ASSERT( stepwise_minimizer.working_pack_res().has_value( Size(58) ) );  // protein side-chain for nearby residues
+				TS_ASSERT_LESS_THAN( stepwise_minimizer.working_pack_res().size(), pose.size() );  // but do not pack all residues.
+			}
+
+			{
+				// in choose_random mode, num_pose_minimize should be 1 (for RNA)
+				options->set_choose_random( true );
+				TS_ASSERT( options->choose_random() );
+				StepWiseMinimizer stepwise_minimizer( pose_list, working_parameters, options, 0 /*dummy scorefxn*/  );
+				TS_ASSERT_EQUALS( stepwise_minimizer.num_pose_minimize(), 1 ); // default for RNA
+				TS_ASSERT_EQUALS( stepwise_minimizer.working_minimize_res(), make_vector1( Size(86) ) ); // default for RNA
+				TS_ASSERT( options->choose_random() );
+			}
+
+			{
+				// in choose_random mode, num_pose_minimize should be 5 if moving at least one protein residue
+				StepWiseWorkingParametersOP working_parameters_minimize_protein = setup_working_parameters_for_swa( vector1<Size>() /*no sampled res*/, pose, 0 /* no native pose */,  vector1< Size >() /*bridge_res*/, make_vector1(1,2) /*minimize protein res*/  );
+
+				TS_ASSERT( options->choose_random() );
+				StepWiseMinimizer stepwise_minimizer( pose_list, working_parameters_minimize_protein, options, 0 /*dummy scorefxn*/  );
+				TS_ASSERT_EQUALS( stepwise_minimizer.num_pose_minimize(), 5 ); // default for RNA
+				TS_ASSERT_EQUALS( stepwise_minimizer.working_minimize_res(), make_vector1( Size( 1 ), Size( 2 ), Size( 86 ) ) );
+				TS_ASSERT( options->choose_random() );
+			}
+		} catch (utility::excn::Exception & e ) {
+			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
+			TS_ASSERT(false); //We shouldn't get here.
 		}
-
-		{
-			// in choose_random mode, num_pose_minimize should be 1 (for RNA)
-			options->set_choose_random( true );
-			TS_ASSERT( options->choose_random() );
-			StepWiseMinimizer stepwise_minimizer( pose_list, working_parameters, options, 0 /*dummy scorefxn*/  );
-			TS_ASSERT_EQUALS( stepwise_minimizer.num_pose_minimize(), 1 ); // default for RNA
-			TS_ASSERT_EQUALS( stepwise_minimizer.working_minimize_res(), make_vector1( Size(86) ) ); // default for RNA
-			TS_ASSERT( options->choose_random() );
-		}
-
-		{
-			// in choose_random mode, num_pose_minimize should be 5 if moving at least one protein residue
-			StepWiseWorkingParametersOP working_parameters_minimize_protein = setup_working_parameters_for_swa( vector1<Size>() /*no sampled res*/, pose, 0 /* no native pose */,  vector1< Size >() /*bridge_res*/, make_vector1(1,2) /*minimize protein res*/  );
-
-			TS_ASSERT( options->choose_random() );
-			StepWiseMinimizer stepwise_minimizer( pose_list, working_parameters_minimize_protein, options, 0 /*dummy scorefxn*/  );
-			TS_ASSERT_EQUALS( stepwise_minimizer.num_pose_minimize(), 5 ); // default for RNA
-			TS_ASSERT_EQUALS( stepwise_minimizer.working_minimize_res(), make_vector1( Size( 1 ), Size( 2 ), Size( 86 ) ) );
-			TS_ASSERT( options->choose_random() );
-		}
-
 	}
 
 

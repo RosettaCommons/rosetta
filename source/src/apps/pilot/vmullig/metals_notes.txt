@@ -25,5 +25,5 @@ To add to documentation:
 -- A section on how to deal with noncanonicals in Rosetta
 
 Tests:
--- Add unit tests
+-- Add unit tests!
 -- Add integration tests

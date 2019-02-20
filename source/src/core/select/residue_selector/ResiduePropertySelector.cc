@@ -165,7 +165,7 @@ ResiduePropertySelector::parse_my_tag(
 	for ( std::string const & prop : properties ) {
 		core::chemical::ResidueProperty const prop_enum( core::chemical::ResidueProperties::get_property_from_string( utility::upper(prop ) ));
 		if ( prop_enum == core::chemical::NO_PROPERTY ) {
-			utility_exit_with_message("ResiduePropertySelector: unknown property: "+prop+" Please see documentation for list of available properties.");
+			utility_exit_with_message("ResiduePropertySelector: unknown property: \"" + prop + "\".  Please see documentation for list of available residue type properties.");
 		} else {
 			add_property(prop_enum);
 		}

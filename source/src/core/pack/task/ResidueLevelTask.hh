@@ -31,6 +31,7 @@
 #include <core/chemical/AA.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
+#include <core/chemical/ResidueProperty.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -173,6 +174,29 @@ public:
 	// remove all ResidueTypes from the list of allowed residue types
 	virtual void prevent_repacking() = 0;
 
+	/// @brief Restrict residue types.
+	/// @details This function takes a vector of base names to allow.  Anything not in this list is turned off.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual void restrict_restypes( utility::vector1< std::string > const & basenames_to_keep ) = 0;
+
+	/// @brief Disable residue types.
+	/// @details This function takes a vector of base names to prohibit.  Anything in this list is turned off.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual void disable_restypes( utility::vector1< std::string > const & basenames_to_disable ) = 0;
+
+	/// @brief Given a list of residue properties, eliminate any residue type that does not have at
+	/// least one of the properties in the list.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual void restrict_to_restypes_with_at_least_one_property( utility::vector1< core::chemical::ResidueProperty > const & properties ) = 0;
+
+	/// @brief Given a list of residue properties, eliminate any residue type that does not have ALL of the properties in the list.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual void restrict_to_restypes_with_all_properties( utility::vector1< core::chemical::ResidueProperty > const & properties ) = 0;
+
+	/// @brief Given a list of residue properties, eliminate any residue type that has any of the properties in the list.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual void disable_restypes_with_at_least_one_property( utility::vector1< core::chemical::ResidueProperty > const & properties ) = 0;
+
 	// contract (and) the list of available aas for canonical aa's
 	// if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
 	virtual void restrict_absent_canonical_aas( utility::vector1< bool > const & ) = 0;
@@ -200,26 +224,6 @@ public:
 	/// @brief
 	virtual chemical::AA const & get_original_residue() const = 0;
 
-	/// @brief expand (or) the list of available residue types for non-cannonicals
-	virtual void allow_noncanonical_aa(
-		std::string const & interchangeability_group,
-		chemical::ResidueTypeSet const & residue_set // who gives this reference to the rlt?; maybe rlt holds a rts (what is an rlt?)
-	) = 0;
-
-	/// @brief expand (or) the list of available residue types for non-cannonicals.  Assumes same restypeset as original residue
-	virtual void allow_noncanonical_aa( std::string const & aaname ) = 0;
-
-	/// @brief explicitly allow a NCAA; assumes same ResidueTypeSet as original_residue_type_
-	virtual void allow_noncanonical_aa( chemical::AA aa ) = 0;
-
-	/// @brief explicitly disallow all NCAAs
-	virtual void disallow_noncanonical_aas() = 0;
-
-	// expand (or) the list of rsdtypes by including types with this aa and which variant-match the original rsd
-	virtual
-	void
-	allow_aa( chemical::AA const & aa ) = 0;
-
 	virtual ResidueTypeCOPList const & allowed_residue_types() const = 0;
 	virtual ResidueTypeCOPListConstIter allowed_residue_types_begin() const = 0;
 	virtual ResidueTypeCOPListConstIter allowed_residue_types_end() const = 0;
@@ -229,15 +233,6 @@ public:
 
 	virtual bool being_designed() const = 0; // is this residue up for design?
 	virtual bool being_packed() const = 0; // is this residue being modified at all by the packer
-
-	/// @brief ONLY for the RESET command in resfiles: completely reset this position.
-	/// @details This does several things.  It:
-	/// - Removes all noncanonicals allowed at this position.
-	/// - Resets the list of allowed canonicals to the 20 standard canonicals.
-	/// - Resets the designability of this position (design allowed).
-	/// - Resets the repacking of this position (repacking allowed).
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	virtual void reset() = 0;
 
 	virtual
 	rotamer_set::RotamerOperations const &

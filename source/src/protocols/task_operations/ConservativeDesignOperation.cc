@@ -84,7 +84,6 @@ void
 ConservativeDesignOperation::set_defaults(){
 	conserved_mutations_.resize(20);
 	pose_sequence_.clear();
-	add_to_allowed_aas_ = false;
 	include_native_aa_ = true;
 	data_source_ = "NA";
 }
@@ -126,7 +125,6 @@ ConservativeDesignOperation::ConservativeDesignOperation(ConservativeDesignOpera
 void
 ConservativeDesignOperation::init_for_equal_operator_and_copy_constructor(ConservativeDesignOperation& lhs, ConservativeDesignOperation const & rhs){
 	lhs.conserved_mutations_ = rhs.conserved_mutations_;
-	lhs.add_to_allowed_aas_ = rhs.add_to_allowed_aas_;
 	lhs.include_native_aa_ = rhs.include_native_aa_;
 	lhs.positions_ = rhs.positions_;
 	lhs.pose_sequence_ = rhs.pose_sequence_;
@@ -237,16 +235,8 @@ ConservativeDesignOperation::apply( core::pose::Pose const & pose, core::pack::t
 		}
 
 		//Add the residues to the allowed list in task, or replace it.
-		if ( add_to_allowed_aas_ ) {
-			for ( core::Size aa_num = 1; aa_num <= 20; ++aa_num ) {
-				auto amino = static_cast<core::chemical::AA>(aa_num);
-				if ( allowed_aminos[aa_num] ) {
-					task.nonconst_residue_task(i).allow_aa(amino);
-				}
-			}
-		} else {
-			task.nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aminos);
-		}
+		task.nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aminos);
+
 		//task.show_residue_task(std::cout, i);
 	}
 }
@@ -263,10 +253,6 @@ ConservativeDesignOperation::parse_tag( utility::tag::TagCOP tag, basic::datacac
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from ConservativeDesignOperation::parse_tag\n" + e.msg();
 			throw CREATE_EXCEPTION( utility::excn::Exception,  error_message );
 		}
-	}
-
-	if ( tag->hasOption( "add_to_allowed_aas" ) ) {
-		add_to_allowed_aas( tag->getOption< bool >( "add_to_allowed_aas" ) );
 	}
 
 	if ( tag->hasOption( "include_native_aa" ) ) {
@@ -292,10 +278,6 @@ void ConservativeDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDef
 		"data_source", xs_string,
 		"Set the source of the data used to define what is conservative. Options are: chothia_76 and the Blosum matrices from 30 to 100; designated as blosum30, 62, etc. Default is blosum62.  The higher the number, the more conservative the set of mutations (numbers are sequence identity cutoffs).",
 		"blosum62")
-		+ XMLSchemaAttribute::attribute_w_default(
-		"add_to_allowed_aas", xsct_rosetta_bool,
-		"Add to the allowed amino acids list instead of replacing it",
-		"false")
 		+ XMLSchemaAttribute::attribute_w_default(
 		"include_native_aa", xsct_rosetta_bool,
 		"Include native amino acid in the allowed_aas list",

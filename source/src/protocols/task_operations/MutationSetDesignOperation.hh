@@ -95,13 +95,9 @@ public:
 
 	///////// Sampling Control /////////////
 
-	/// @brief Add to the allowed amino acids list instead of replacing them.  Default false.
-	void
-	add_to_allowed_aas(bool const & setting);
-
 	/// @brief Include native amino acid in the allowed_aas list.  Default False.
 	void
-	include_native_aa(bool const & setting);
+	include_native_aa( bool const & setting );
 
 	/// @brief Number of times we sample from our sets. Default 1/apply.
 	/// The more rounds, the closer the final amino acid set for each position will be to the full profile for that position.
@@ -147,7 +143,6 @@ private:
 
 private:
 	//bool iterative_mode_;
-	bool add_to_allowed_aas_;
 	bool include_native_aa_;
 
 	utility::vector1< MutationSet > mutation_sets_;

@@ -166,6 +166,7 @@ enum XMLSchemaCommonType {
 	xsct_chain_cslist,
 	xsct_dssp_string,
 	xsct_canonical_res_char,
+	xsct_packer_palette, //A single packer palette, previously defined in XML
 	xsct_task_operation, //A single task operation, previously defined in XML
 	xsct_task_operation_comma_separated_list, //A comma-separated list of task operations, all of which are previously defined in XML
 	xsct_pose_cached_task_operation //The identifier of a task operation stored in the datacache of a Pose object.

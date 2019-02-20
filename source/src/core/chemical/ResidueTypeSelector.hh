@@ -31,6 +31,7 @@
 ///
 ///     The individual constraints that make up the ResidueTypeSelector object are subclasses of
 ///     ResidueTypeSelectorSingle; ResidueTypeSelector has a vector1 of ResidueTypeSelectorSingleOP's
+/// @note This is NOT a ResidueSelector!  This file predates ResidueSelectors.
 
 
 #ifndef INCLUDED_core_chemical_ResidueTypeSelector_hh
@@ -257,6 +258,10 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Does the residue have ANY of these properties?
+/// @author Phil Bradley
+/// @author Vikram K. Mulligan -- Rewrote this on 23 Aug 2016 to use Properties enums,
+/// which was needed for speed with the ResidueTypeFinder.
+/// @author Andy Watkins -- Rewrote this on 10 Jan 2019 to use modern loops
 class Selector_PROPERTY : public ResidueTypeSelectorSingle {
 public:
 	Selector_PROPERTY(
@@ -264,21 +269,45 @@ public:
 		bool const result
 	):
 		ResidueTypeSelectorSingle( result ),
-		properties_( properties_in )
-	{}
+		custom_properties_(),
+		properties_()
+	{
+		for ( auto const & prop_in : properties_in ) {
+			ResidueProperty const curprop ( ResidueProperties::get_property_from_string( prop_in ) );
+			if ( curprop == NO_PROPERTY ) { //An unrecognized property must be a custom, on-the-fly property.
+				custom_properties_.push_back( prop_in );
+			} else { //Otherwise, we store the enum for the property.
+				properties_.push_back(curprop);
+			}
+		}
+	}
 
-	// select by PROPERTY
+	/// @brief Given a ResidueType, return a boolean value based on whether the ResidueType has the
+	/// property that this selector selects.
 	bool
 	operator[]( ResidueType const & rsd ) const override {
-		for ( auto const & propertie : properties_ ) {
-			if ( rsd.has_property( propertie ) ) return desired_result();
+		//Check basic properties:
+		for ( auto const & prop : properties_ ) {
+			if ( rsd.has_property( prop ) ) return desired_result();
+		}
+		//Check custom properties:
+		for ( auto const & custom_prop : custom_properties_ ) {
+			if ( rsd.has_property( custom_prop ) ) return desired_result();
 		}
 		return !desired_result();
 	}
 
 	// data
 private:
-	utility::vector1< std::string > properties_;
+
+	/// @brief On-the-fly generated properties, which must be stored by string.
+	///
+	utility::vector1< std::string > custom_properties_;
+
+	/// @brief Standard properties, which are stored efficiently by enum.
+	///
+	utility::vector1< ResidueProperty > properties_;
+
 #ifdef    SERIALIZATION
 protected:
 	friend class cereal::access;
@@ -289,10 +318,13 @@ public:
 	template< class Archive > void load( Archive & arc );
 #endif // SERIALIZATION
 
-};
+}; //class Selector_PROPERTY
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Does the residue have ANY of variant types?
+/// @author Phil Bradley
+/// @author Vikram K. Mulligan -- Rewrote this on 23 Aug 2016 to use VariantType enums,
+/// which was needed for speed with the ResidueTypeFinder.
 class Selector_VARIANT_TYPE : public ResidueTypeSelectorSingle {
 public:
 	Selector_VARIANT_TYPE(
@@ -300,21 +332,44 @@ public:
 		bool const result
 	):
 		ResidueTypeSelectorSingle( result ),
-		variants_( variants_in )
-	{}
+		custom_variants_(),
+		variants_()
+	{
+		for ( auto const & var_in : variants_in ) {
+			VariantType const curtype( ResidueProperties::get_variant_from_string( var_in ) );
+			if ( curtype == NO_VARIANT ) {
+				custom_variants_.push_back( var_in );
+			} else {
+				variants_.push_back( curtype );
+			}
+		}
+	}
 
 	// select by VARIANT_TYPE
 	bool
 	operator[]( ResidueType const & rsd ) const override {
-		for ( auto const & variant : variants_ ) {
-			if ( rsd.has_variant_type( variant ) ) return desired_result();
+		//Check standard variants:
+		for ( auto const & var : variants_ ) {
+			if ( rsd.has_variant_type( var ) ) return desired_result();
+		}
+		//Check the custom variants, too:
+		for ( auto const & custom_var : custom_variants_ ) {
+			if ( rsd.has_variant_type( custom_var ) ) return desired_result();
 		}
 		return !desired_result();
 	}
 
 	// data
 private:
-	utility::vector1< std::string > variants_;
+
+	/// @brief Noncanonical variants, stored by string.
+	///
+	utility::vector1 < std::string > custom_variants_;
+
+	/// @brief Canonical variants, stored by enum.
+	///
+	utility::vector1< VariantType > variants_;
+
 #ifdef    SERIALIZATION
 protected:
 	friend class cereal::access;
