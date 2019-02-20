@@ -7,29 +7,30 @@
 # (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 
 import contextlib
-import time
-import sys
-import subprocess
-import unittest
 import os
+import subprocess
+import sys
 import tempfile
+import time
+import unittest
 
 
 class TestDaskArgs(unittest.TestCase):
+
     def test_worker_extra(self):
         """worker_extra worker plugin controls rosetta flags and local dir.
 
         pyrosetta.distributed.dask.worker_extra can be used to specify a set of
-        rosetta init flags and local directory info that will be use to
+        PyRosetta initialization flags and local directory information that will be used to
         pre-initialize all worker processes in a dask cluster.
 
         This provides support for protocols which may require command line
-        flags including (eg. additional residue types, logging flags, ...).
+        flags including (e.g. additional residue types, logging flags, ...).
         """
 
-        # Import locally allow test discovery if dependencies aren't present
-        from dask.distributed import Client, LocalCluster
+        # Import locally to allow test discovery if dependencies aren't present
         from dask import delayed
+        from dask.distributed import Client, LocalCluster
 
         import pyrosetta
         import pyrosetta.distributed.dask
@@ -41,11 +42,11 @@ class TestDaskArgs(unittest.TestCase):
             n_workers=0, diagnostics_port=None
         ) as cluster:
 
-            # Context manger control launch & teardown of test worker
+            # Context manager controls launch & teardown of test worker
             @contextlib.contextmanager
             def one_worker(init_flags):
                 init = pyrosetta.distributed.dask.worker_extra(
-                    init_flags=flags, local_directory=workdir
+                    init_flags=init_flags, local_directory=workdir
                 )
 
                 worker_command = (
@@ -74,7 +75,7 @@ class TestDaskArgs(unittest.TestCase):
 
             HBI_fa_params_path = os.path.join(workdir, "HBI.fa.params")
 
-            with open(workdir + "/HBI.fa.params", "w") as of:
+            with open(HBI_fa_params_path, "w") as of:
                 of.write(_HBI_fa_params)
 
             # Unformatted PyRosetta command line flags
@@ -102,9 +103,9 @@ class TestDaskArgs(unittest.TestCase):
             with one_worker(flags), Client(cluster):
                 cluster_result = delayed(protocol)(pose).compute()
 
-            assert (
-                cluster_result.scores["total_score"]
-                == local_result.scores["total_score"]
+            self.assertEqual(
+                cluster_result.scores["total_score"],
+                local_result.scores["total_score"]
             )
 
 

@@ -1,13 +1,19 @@
-import unittest
-from collections import namedtuple
+# :noTabs=true:
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org.
+# (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 
 import numpy
-
-from pyrosetta.utility.array import atom_array_to_coordinates
 import pyrosetta.protocols.structure_search as search
 import pyrosetta.numeric.alignment.rmsd_calc as rmsd_calc
+import unittest
 
+from collections import namedtuple
 from pyrosetta.tests.protocols.indexed_structure_store.data import source_structure_residues
+from pyrosetta.utility.array import atom_array_to_coordinates
 
 
 def fragment_start_indicies_from_residue_array(fragment_length, source_residues):
