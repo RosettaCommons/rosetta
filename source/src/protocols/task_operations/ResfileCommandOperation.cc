@@ -133,7 +133,7 @@ ResfileCommandOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	std::string command_doc =  "@brief A resfile command string without any numbers in the front.\n"
 		"Example:\n"
 		" POLAR\n"
-		" EMPTY NC R2 NC T6 NC OP5 \n";
+		" PIKAA X[R2]X[T6]X[OP5] \n";
 
 	attlist + XMLSchemaAttribute("command", xs_string, command_doc);
 

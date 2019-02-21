@@ -61,9 +61,9 @@ public:
 public:
 
 	///@brief A resfile command string without any numbers in the front.
-	///EX:
+	///eg:
 	/// POLAR
-	/// EMPTY NC R2 NC T6 NC OP5
+	/// PIKAA X[R2]X[T6]X[OP5]
 	///
 	void
 	set_command( std::string const & command);

@@ -105,9 +105,7 @@ public:
 	///   - An expression like: [^PAV] indicates that we will design anything except Proline, Alanine, and Valine
 	///   - An expression like: [NTS] indicates that that position can be Asparigine, Threonine, or Serine and only of these will be enabled during the design.
 	///   - RESFILE commands are accepted as well. A % is required in front of them.
-	///     For example [%POLAR] is totally cool. These are the same as in a resfile line
-	///     So, Non-cannonicals work the same:
-	///       [%EMPTY NC R2 NC T6 NC OP5]
+	///     For example [%POLAR] is totally cool. These are the same as in a resfile line.
 	///
 	/// EXAMPLE:
 	///  Glycosylation N-Linked motif design: N[^P][ST]

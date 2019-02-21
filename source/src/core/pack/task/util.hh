@@ -48,7 +48,7 @@ parse_res_agnostic_commands(
 ///   - An expression like: [NTS] indicates that that position can be Asparigine, Threonine, or Serine and only of these will be enabled during the design.
 ///   - RESFILE commands are accepted as well.
 ///      These require a % Charactor to start the whole line off.
-///      For example [%POLAR] is totally cool, as is [%PIKAA ST] or [%EMPTY NC R2 NC T6 NC OP5] for Noncannonicals.
+///      For example [%POLAR] is totally cool, as is [%PIKAA ST].
 ///
 ///       (Non-cannonical, DNA, RNA, etc. should all work here!!)
 ///
