@@ -23,9 +23,8 @@ testname    = "enzyme_design"
 debug       = config['debug']
 rosetta_dir = config['rosetta_dir']
 working_dir = config['working_dir']
-
-hpc_driver = benchmark.hpc_driver()
-extension  = benchmark.calculate_extension()
+hpc_driver  = benchmark.hpc_driver()
+extension   = benchmark.calculate_extension()
 
 
 command_line = '''

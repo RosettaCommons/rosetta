@@ -12,9 +12,7 @@
 ## @brief this script is part of enzyme_design scientific test
 ## @author Rocco Moretti
 
-
-
-import json
+import json, subprocess
 import benchmark
 import operator
 
@@ -23,35 +21,79 @@ from benchmark.tests import _PlotsKey_, _TestsKey_
 
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into globals
 
-_index_html_template_ = '''\
-<html>
-<head>
-    <title>Enzyme Design scientific benchmark test results</title>
-  <style>
-    fixed {{background-color: #eee; white-space: pre-wrap; font-family: Monaco, 'Liberation Mono', Courier, monospace; font-size:12px; }}
-  </style>
-</head>
-<body>
-<H2>Enzyme Design Benchmark</H2>
-<p>
-    The enzdes benchmark is described in <a href="https://doi.org/10.1002/prot.24463">Nivon et al. (2014)</a> "Automating human intuition for protein design."
-    The concept is to redesign the binding sites of a set of proteins which bind to their native ligands.
-    As the sequences of the native proteins should theoretically be optimal for binding, an ideal design protocol should optimize sequence recovery.
+# read readme
+with open("readme.md") as f:
+    readme = f.readlines()
 
-    The thresholds for this test are somewhat arbitrary, and are based off of the previous runs for this work.
-</p>
-<br/>
-<h3>FAILURES</h3>
-<p>
-    {failures}
-</p>
-<h3>RESULTS</h3>
-<p>
-    {results}
-</p>
-<br/>
-</body></html>
-'''
+# build up html from readme, start with the starting tag
+_index_html_template_ = "<html>\n"
+_index_html_template_ += "<H2>Scientific test: " + testname + "</H2>\n"
+_index_html_template_ += "<h3>FAILURES</h3>\n<p>{failures}</p>\n"
+_index_html_template_ += "<h3>RESULTS</h3>\n"
+_index_html_template_ += '<img src="{plot_outfile}" alt="Plot of per-target values." style="max-width: 100%">\n'
+_index_html_template_ += "<p>{results}</p>\n"
+
+# add text from readme
+current_para = ""
+for l in readme:
+
+    # headings
+    if l.startswith( "## " ):
+        if len(current_para) != 0:
+            _index_html_template_ += "<p>" + current_para + "</p>\n"
+            current_para = ""
+        _index_html_template_ += "<h3>" + l.replace( ">> ", "" ) + "</h3>\n"
+
+    # ignore the description
+    elif l.startswith( "#### " ):
+        continue
+
+    # insert the actual text as a paragraph
+    elif len(l.strip()) == 0:
+        if len(current_para) != 0:
+            _index_html_template_ += "<p>" + current_para + "</p>\n"
+            current_para = ""
+
+    else:
+        current_para += l
+
+if len(current_para) != 0:
+    _index_html_template_ += "<p>" + current_para + "</p>\n"
+    current_para = ""
+
+# html closing tag
+_index_html_template_ += "</body></html>\n"
+
+
+#_index_html_template_ = '''\
+#<html>
+#<head>
+#    <title>Enzyme Design scientific benchmark test results</title>
+#  <style>
+#    fixed {{background-color: #eee; white-space: pre-wrap; font-family: Monaco, 'Liberation Mono', Courier, monospace; font-size:12px; }}
+#  </style>
+#</head>
+#<body>
+#<H2>Enzyme Design Benchmark</H2>
+#<p>
+#    The enzdes benchmark is described in <a href="https://doi.org/10.1002/prot.24463">Nivon et al. (2014)</a> "Automating human intuition for protein design."
+#    The concept is to redesign the binding sites of a set of proteins which bind to their native ligands.
+#    As the sequences of the native proteins should theoretically be optimal for binding, an ideal design protocol should optimize sequence recovery.
+#
+#    The thresholds for this test are somewhat arbitrary, and are based off of the previous runs for this work.
+#</p>
+#<br/>
+#<h3>FAILURES</h3>
+#<p>
+#    {failures}
+#</p>
+#<h3>RESULTS</h3>
+#<p>
+#    {results}
+#</p>
+#<br/>
+#</body></html>
+#'''
 
 def check_value( value, comparison, threshold ):
     funcs = {
@@ -80,7 +122,7 @@ def failures(results, thresholds):
 def format_failures( fails ):
     output = ["<ul>"]
     for (target, metric, reason) in fails:
-        output.append( "<li>{target} with metric {metric}: {reason}</li>" )
+        output.append( f"<li>{target} with metric {metric}: {reason}</li>" )
     if len(fails) == 0:
         output.append( "<i>(NONE)</i>" )
     output.append("</ul>")
@@ -131,6 +173,7 @@ def write_html(results,thresholds) :
             _index_html_template_.format(
                 results=format_results( results ),
                 failures=format_failures( fails ),
+                plot_outfile=plot_outfile,
             )
         )
 

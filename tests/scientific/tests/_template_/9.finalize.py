@@ -44,11 +44,11 @@ for l in readme:
     # headings
     if l.startswith( "## " ):
         _index_html_template_ += "<h3>" + l.replace( ">> ", "" ) + "</h3>\n"
-    
+
     # ignore the description
     elif l.startswith( "#### " ):
         continue
-        
+
     # insert the actual text as a paragraph
     else:
         _index_html_template_ += "<p>" + l + "</p>\n"

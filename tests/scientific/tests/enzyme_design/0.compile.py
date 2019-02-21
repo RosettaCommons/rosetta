@@ -11,7 +11,6 @@
 ## @file  enzyme_design/0.compile.py
 ## @brief this script is part of enzyme_design scientific test
 ## @author Sergey Lyskov
-## @author Rocco Moretti
 
 import benchmark
 
