@@ -20,7 +20,7 @@ from benchmark import *
 
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into globals
 
-def failures(results):
+def obtain_failures(results):
     fails = []
     for target in targets:
         if "FALSE" in list(results[target].values()):
@@ -37,7 +37,7 @@ _index_html_template_ = "<html>\n<body>"
 _index_html_template_ += "<H2>Scientific test: stepwise_rna_favorites</H2>\n"
 _index_html_template_ += "<h3>FAILURES</h3>\n<p>\n"
 
-failures = failures(results)
+failures = obtain_failures(results)
 # add failures to html
 if len( failures ) > 0:
     for failure in failures:
@@ -74,7 +74,7 @@ def state_of_results(results):
 
         f.write(
             _index_html_template_.format(
-                failures=failures(results),
+                failures=obtain_failures(results),
             )
         )
 
