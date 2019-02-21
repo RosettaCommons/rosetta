@@ -90,7 +90,7 @@ TaskFactory::modify_task( core::pose::Pose const & pose, PackerTaskOP task ) con
 {
 	runtime_assert_string_msg( task != nullptr, "Error in core::pack::task::TaskFactory::modify_task(): a null pointer to the PackerTask was provided." );
 	runtime_assert_string_msg( task->is_initialized(), "Error in core::pack::task::TaskFactory::modify_task(): a PackerTask was provided that has not yet been initialized." );
-	for ( TaskOperationOP const taskop : *this ) {
+	for ( TaskOperationOP const & taskop : *this ) {
 		taskop->apply( pose, *task );
 	}
 }
