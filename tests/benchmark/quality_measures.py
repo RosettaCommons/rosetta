@@ -17,11 +17,20 @@ import numpy as np
 
 #=======================================
 def check_all_values_below_cutoff( col, cutoff, tag, filehandle ):
+	
+	return check_xpercent_values_below_cutoff( col, cutoff, tag, filehandle, 100 )
+
+#=======================================
+def check_xpercent_values_below_cutoff( col, cutoff, tag, filehandle, percentage ):
 
 	out = "All " + tag + "s < cutoff"
 	filehandle.write( out + " " + str(cutoff) + "\t" )
+	
+	# sort the values from smallest to largest, then take the first x records
+	col = sorted(col)
+	partial_col = col[:int( percentage * len( col )/100 )]
 
-	if all( i <= cutoff for i in col ):
+	if all( i <= cutoff for i in partial_col ):
 		value = True
 	else:
 		value = False

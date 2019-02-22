@@ -22,7 +22,7 @@ This is running RosettaScripts with the FastRelax mover, then superimposes the d
 #### What are the performance metrics used and why were they chosen?
 #### How do you define a pass/fail for this test?
 #### How were any cutoffs defined?
-We use the total Rosetta score and RMSD to the native structure as we are interested in the sampling range and the score ranges in sampling. A failed test constitutes decoys generated larger than the defined score and RMSD cutoffs. The cutoffs were defined by looking at these ranges in a single run without outlier decoys. Specifically, for RMSD we use the maximum RMSD + stdev + 1A. The +1A is to account for the very narrow funnels with small stdevs. For score, we use the maximum score + stdev.  
+We use the total Rosetta score and RMSD to the native structure as we are interested in the sampling range and the score ranges in sampling. A passed test constitutes 90% of the decoys generated have a smaller than the defined score and RMSD cutoffs. The cutoffs were defined by looking at these ranges in a single run without outlier decoys. Specifically, for RMSD we use the maximum RMSD + stdev + 1A. The +1A is to account for the very narrow funnels with small stdevs. For score, we use the maximum score + stdev.  
 
 ## KEY RESULTS
 #### What is the baseline to compare things to - experimental data or a previous Rosetta protocol?
