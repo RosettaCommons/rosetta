@@ -72,7 +72,7 @@ typedef int socket_t;
 #endif
 
 #ifdef CPPHTTPLIB_ZLIB_SUPPORT
-#include <zlib.h>
+#include <zlib/zlib.h>
 #endif
 
 /*
