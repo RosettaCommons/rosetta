@@ -4,6 +4,7 @@
 //  Copyright (c) 2017 Yuji Hirose. All rights reserved.
 //  MIT License
 //
+// Edited by Rocco Moretti for Rosetta to put multithreaded (server) usage behind Rosetta's MULTI_THREADED macros
 
 #ifndef CPPHTTPLIB_HTTPLIB_H
 #define CPPHTTPLIB_HTTPLIB_H
@@ -41,7 +42,7 @@
 
 typedef SOCKET socket_t;
 #else
-#include <pthread.h>
+//#include <pthread.h> // ROSETTA
 #include <unistd.h>
 #include <netdb.h>
 #include <cstring>
@@ -62,7 +63,9 @@ typedef int socket_t;
 #include <mutex>
 #include <regex>
 #include <string>
+#ifdef MULTI_THREADED // ROSETTA
 #include <thread>
+#endif // ROSETTA
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <assert.h>
@@ -202,6 +205,7 @@ private:
     std::string buffer;
 };
 
+#ifdef MULTI_THREADED // ROSETTA
 class Server {
 public:
     typedef std::function<void (const Request&, Response&)> Handler;
@@ -271,6 +275,7 @@ private:
     std::mutex  running_threads_mutex_;
     int         running_threads_;
 };
+#endif // ROSETTA MULTI_THREADED
 
 class Client {
 public:
@@ -1493,7 +1498,7 @@ inline const std::string& BufferStream::get_buffer() const {
     return buffer;
 }
 
-
+#ifdef MULTI_THREADED // ROSETTA
 // HTTP server implementation
 inline Server::Server()
     : keep_alive_max_count_(5)
@@ -1948,6 +1953,7 @@ inline bool Server::read_and_close_socket(socket_t sock)
             return process_request(strm, last_connection, connection_close);
         });
 }
+#endif // ROSETTA MULTI_THREADED
 
 // HTTP client implementation
 inline Client::Client(

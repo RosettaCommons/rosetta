@@ -32,16 +32,16 @@
 #define CPPHTTPLIB_ZLIB_SUPPORT
 #include <httplib.h>
 
+#ifdef MULTI_THREADED
 
 #include <condition_variable>
 #include <chrono>
 #include <deque>
 #include <thread>
 
+#endif
 
 static basic::Tracer TR( "protocols.network.cloud" );
-
-int const HIGH_WATER_MARK = 128; //  maximum number of WorkUnit's to store in network queue
 
 namespace protocols {
 namespace network {
@@ -86,6 +86,8 @@ private:
 
 	void run();
 
+	void process_work_unit(WorkUnit & unit);
+
 	struct ServerAddress {
 		std::string host;
 		std::string path;
@@ -96,6 +98,9 @@ private:
 	static std::string basic_auth_string();
 
 private:
+
+#ifdef MULTI_THREADED
+	static int const HIGH_WATER_MARK = 128; //  maximum number of WorkUnit's to store in network queue
 
 	std::mutex queue_mutex_;
 	std::condition_variable queue_condition_variable_;
@@ -109,22 +114,27 @@ private:
 	std::vector<std::thread> threads_;  // std::vector instead of std::array in case we need to specify number of worker though command-line options in the future
 
 	//std::atomic<int> load_{0}; // load appoximation for reporting during shutdown
+
+#endif // MULTI_THREADED
 };
 
 
 NetworkQueue::NetworkQueue()
 {
+#ifdef MULTI_THREADED
 	threads_.reserve(NUMBER_OF_WORKER_THREADS);
 	for ( int i = 0; i < NUMBER_OF_WORKER_THREADS; ++i ) {
 		threads_.push_back( std::thread(&NetworkQueue::run, this) );
 	}
 
 	//std::atexit(atexit_handler);
+#endif // MULTI_THREADED
 }
 
 
 NetworkQueue::~NetworkQueue()
 {
+#ifdef MULTI_THREADED
 	{
 		std::lock_guard<std::mutex> _(queue_mutex_);
 
@@ -152,6 +162,7 @@ NetworkQueue::~NetworkQueue()
 	}
 
 	std::cout << "NetworkQueue::~NetworkQueue(): flushing network buffers... Done." << std::endl;
+#endif // MULTI_THREADED
 }
 
 
@@ -186,6 +197,8 @@ std::string NetworkQueue::basic_auth_string()
 
 void NetworkQueue::add(WorkUnit && wu)
 {
+#ifdef MULTI_THREADED
+
 	static bool block = basic::options::option[ basic::options::OptionKeys::cloud::block ]();
 
 	while ( true ) {
@@ -210,6 +223,10 @@ void NetworkQueue::add(WorkUnit && wu)
 	}
 
 	queue_condition_variable_.notify_one();
+#else
+	// If we're not multithreaded, we run the network job immediately.
+	process_work_unit( wu );
+#endif // MULTI_THREADED
 }
 
 
@@ -274,7 +291,9 @@ int NetworkQueue::get_execution_summary_id()
 	auto auth = basic_auth_string();
 	if ( auth.empty() ) {
 		std::cout << TR.bgRed << TR.Black << "WARNING" << TR.Reset << TR.Red << " You trying to use RosettaCloud integration without providing user-name:password thorough `--cloud:auth` command line option! To get your credentials please visit https://ui.graylab.jhu.edu/settings page." << TR.Reset << std::endl;
+#ifdef MULTI_THREADED
 		std::this_thread::sleep_for(std::chrono::seconds(5));
+#endif
 		return 0;
 	}
 
@@ -326,12 +345,11 @@ StringUP pose_to_string(core::pose::Pose const &pose)
 
 void NetworkQueue::run()
 {
+#ifdef MULTI_THREADED
 	//std::cout << "NetworkQueue::run..." << std::endl;
 
 	//QueueType queue;
 	bool terminate = false;
-
-	static auto execution_summary_id = get_execution_summary_id();
 
 	while ( !terminate ) {
 		WorkUnit unit;
@@ -350,48 +368,55 @@ void NetworkQueue::run()
 			if ( terminate ) break;
 		}
 
+		process_work_unit(unit);
 
-		if ( execution_summary_id  and  (unit.pose or unit.data) ) {
-			//std::cout << "WS:" << std::this_thread::get_id() << std::endl;
-			//WorkUnit & unit( queue.front() );
-
-			auto addr = ui_server_address();
-
-			httplib::Client cli(addr.host.c_str(), addr.port);
-
-			httplib::Headers headers { {"Authorization", basic_auth_string()}, {"User-Agent", "Rosetta/3.7"} };
-
-			StringUP payload;
-
-			if ( unit.pose ) {
-#ifdef MULTI_THREADED
-				payload = pose_to_string(*unit.pose);
-#else
-				utility_exit_with_message("NetworkQueue::run(): Got Pose payload when MULTI_THREADED is not defined!");
-#endif
-			} else payload = std::move(unit.data);
-
-			if ( !payload ) utility_exit_with_message("NetworkQueue::run(): Got EMPTY payload!");
-
-			if ( payload->size() > 1024 ) { // Compressing payload when it make sense
-				std::ostringstream zmsg;
-				zlib_stream::zip_ostream zipper(zmsg, true);
-				zipper << *payload;
-				zipper.zflush_finalize();
-
-				payload = StringUP( new string( zmsg.str() ) );
-
-				headers.insert( {"Content-Encoding", "gzip"} );
-			}
-
-			string maybe_append = unit.append ? "?append" : "";
-
-			auto res = cli.Post( (addr.path + "/file/" + std::to_string(execution_summary_id) + '/' + unit.name + maybe_append).c_str(),
-				headers, *payload, "application/octet-stream"); // "text/plain"
-		}
 	}
 
 	//std::cout << "NetworkQueue::run... Done!" << std::endl;
+#else
+	utility_exit_with_message("Attempted to use NetworkQueue::run() in a non-multithreaded environment!");
+#endif
+}
+
+void
+NetworkQueue::process_work_unit(WorkUnit & unit) {
+
+	static auto execution_summary_id = get_execution_summary_id();
+
+	if ( execution_summary_id  and  (unit.pose or unit.data) ) {
+		//std::cout << "WS:" << std::this_thread::get_id() << std::endl;
+		//WorkUnit & unit( queue.front() );
+
+		auto addr = ui_server_address();
+
+		httplib::Client cli(addr.host.c_str(), addr.port);
+
+		httplib::Headers headers { {"Authorization", basic_auth_string()}, {"User-Agent", "Rosetta/3.7"} };
+
+		StringUP payload;
+
+		if ( unit.pose ) {
+			payload = pose_to_string(*unit.pose);
+		} else payload = std::move(unit.data);
+
+		if ( !payload ) utility_exit_with_message("NetworkQueue::run(): Got EMPTY payload!");
+
+		if ( payload->size() > 1024 ) { // Compressing payload when it make sense
+			std::ostringstream zmsg;
+			zlib_stream::zip_ostream zipper(zmsg, true);
+			zipper << *payload;
+			zipper.zflush_finalize();
+
+			payload = StringUP( new string( zmsg.str() ) );
+
+			headers.insert( {"Content-Encoding", "gzip"} );
+		}
+
+		string maybe_append = unit.append ? "?append" : "";
+
+		auto res = cli.Post( (addr.path + "/file/" + std::to_string(execution_summary_id) + '/' + unit.name + maybe_append).c_str(),
+			headers, *payload, "application/octet-stream"); // "text/plain"
+	}
 }
 
 /// estimate if it resonable to expect for Cloud integration to work with current build settings and supplied commandline options
@@ -427,7 +452,6 @@ void post_decoy(std::string const &file_name, core::pose::Pose const &pose)
 
 	if ( warn ) {
 		TR << TR.bgRed << TR.Black << "WARNING" << TR.Reset << TR.Red << " You using RosettaCloud integration with non-multithreaded build: all Pose operation will be done in main thread which will lead to performance degradation... Please consider build with `extras=cxx11thread` instead! (if you using Ninja build: you can use source/cmake/build_cxx11thread build variant)..." << TR.Reset << std::endl;
-		std::this_thread::sleep_for(std::chrono::seconds(4));
 		warn = false;
 	}
 
