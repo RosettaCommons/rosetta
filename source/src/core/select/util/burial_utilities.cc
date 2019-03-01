@@ -25,7 +25,7 @@ namespace util {
 
 /// @brief Given a point in 3D space, determine whether or not that point is buried by the method of sidechain neighbor cones.
 /// @note A crude distance cutoff metric is also used to make this calculation more efficient.
-/// @details Returns true for burial, false otherwise.
+/// @details Returns true for burial, false otherwise.  Updated 1 March 2019 to ignore ligands.
 /// @param[in] point_coordinates The 3D coordinates of the point in space.
 /// @param[in] pose The pose, for reference.
 /// @param[in] angle_exponent A value defining how rapidly the cone falls off in the angular direction.
@@ -48,6 +48,7 @@ bool determine_whether_point_is_buried (
 
 	for ( core::Size ir(1), irmax(pose.total_residue()); ir<=irmax; ++ir ) {
 		core::chemical::ResidueType const &restype( pose.residue_type(ir) );
+		if ( restype.is_ligand() ) continue;
 		core::id::AtomID at2( restype.aa() == core::chemical::aa_gly ? restype.atom_index("2HA") : restype.first_sidechain_atom(), ir );
 		core::id::AtomID at1( restype.icoor(at2.atomno()).stub_atom1().atomno(), ir );
 		numeric::xyzVector< core::Real > const conevect_coordinate_2( pose.xyz(at2) );
