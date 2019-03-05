@@ -143,7 +143,6 @@ public:
 
 
 	/// @brief Non-const access to the StructFileRep object.
-	///
 	StructFileRepOP sfr();
 
 
@@ -192,6 +191,15 @@ private: //PRIVATE FUNCTIONS:
 		core::Size const new_tercount);
 
 	core::Size get_new_atom_serial_num() const;
+
+
+private: //PRIVATE FUNCTIONS:
+
+	/// @brief Create a default PDB-format title section.
+	void generate_default_title_section();
+
+	/// @brief Create default PDB remarks, which provide the date and Rosetta version number.
+	void generate_default_remarks();
 
 	/// @brief Set whether to write the fold tree, in the
 	/// StructFileRepOptions object (options_).
@@ -246,7 +254,6 @@ private: //PRIVATE FUNCTIONS:
 	void grab_pdbinfo_labels( core::pose::Pose const &pose );
 
 	/// @brief Get the total number of atoms in the SFR.
-	///
 	core::Size total_sfr_atoms( StructFileRep const & sfr) const;
 
 	/// @brief Get the total number of atoms in a chain in the SFR.

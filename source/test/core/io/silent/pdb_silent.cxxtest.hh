@@ -44,7 +44,10 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init_with_additional_options( "-in::file::silent_struct_type pdb -out:level 500" );
+		core_init_with_additional_options(
+			"-in::file::silent_struct_type pdb "
+			"-out:level 500 "
+			"-INTEGRATION_TEST" );
 	}
 
 	// Shared finalization goes here.

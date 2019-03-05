@@ -195,8 +195,6 @@ dump_cif(
 }
 
 
-
-
 void
 dump_cif(
 	std::ostream & out,

@@ -22,6 +22,7 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
+#include <basic/options/keys/testing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -80,6 +81,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_guarantee_no_DNA( tag->getOption< bool >( "guarantee_no_DNA", true ) );
 	set_keep_input_protonation_state( tag->getOption< bool >( "keep_input_protonation_state", false ) );
 	set_preserve_header( tag->getOption< bool >( "preserve_header", false ) );
+	set_pdb_author( tag->getOption< std::string >( "set_pdb_author", "" ) );
 	set_preserve_crystinfo( tag->getOption< bool >( "preserve_crystinfo", false ) );
 	set_missing_dens_as_jump( tag->getOption< bool >( "missing_dens_as_jump", false ) );
 	set_no_chainend_ter( tag->getOption< bool >( "no_chainend_ter", false ) );
@@ -119,6 +121,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 
 	set_show_all_fixes( tag->getOption< bool >( "show_all_fixes", false ) );
 	set_constraints_from_link_records( tag->getOption< bool >( "constraints_from_link_records", false ) );
+	set_integration_test_mode( tag->getOption< bool >( "integration_test_mode", false ) );
 }
 
 std::string StructFileRepOptions::type() const { return "file_data_options"; }
@@ -140,6 +143,7 @@ bool StructFileRepOptions::ignore_zero_occupancy() const { return ignore_zero_oc
 bool StructFileRepOptions::guarantee_no_DNA() const { return guarantee_no_DNA_; }
 bool StructFileRepOptions::keep_input_protonation_state() const { return keep_input_protonation_state_; }
 bool StructFileRepOptions::preserve_header() const { return preserve_header_; }
+std::string const & StructFileRepOptions::pdb_author() const { return pdb_author_; }
 bool StructFileRepOptions::preserve_crystinfo() const { return preserve_crystinfo_; }
 bool StructFileRepOptions::missing_dens_as_jump() const { return missing_dens_as_jump_; }
 bool StructFileRepOptions::no_chainend_ter() const { return no_chainend_ter_; }
@@ -178,6 +182,8 @@ bool StructFileRepOptions::constraints_from_link_records() const { return constr
 bool StructFileRepOptions::output_pose_cache() const { return output_pose_cache_data_; }
 bool StructFileRepOptions::output_pose_energies_table() const { return output_pose_energies_table_; }
 bool StructFileRepOptions::output_only_asymmetric_unit() const { return output_only_asymmetric_unit_; }
+bool StructFileRepOptions::integration_test_mode() const { return integration_test_mode_; }
+
 // mutators
 
 void StructFileRepOptions::set_check_if_residues_are_Ntermini( std::string const & check_if_residues_are_Ntermini )
@@ -224,6 +230,9 @@ void StructFileRepOptions::set_keep_input_protonation_state( bool const keep_inp
 
 void StructFileRepOptions::set_preserve_header( bool const preserve_header )
 { preserve_header_ = preserve_header; }
+
+void StructFileRepOptions::set_pdb_author( std::string const & pdb_author )
+{ pdb_author_ = pdb_author; }
 
 void StructFileRepOptions::set_preserve_crystinfo( bool const preserve_crystinfo )
 { preserve_crystinfo_ = preserve_crystinfo; }
@@ -335,6 +344,8 @@ void StructFileRepOptions::set_constraints_from_link_records( bool const setting
 void StructFileRepOptions::set_output_pose_energies_table( bool const setting ) { output_pose_energies_table_ = setting; }
 void StructFileRepOptions::set_output_pose_cache_data( bool const setting ) { output_pose_cache_data_ = setting; }
 
+void StructFileRepOptions::set_integration_test_mode( bool const setting ) { integration_test_mode_ = setting; }
+
 /// @details List all of the options (by option key) that are read in the init_from_options function.
 void
 StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_options )
@@ -357,6 +368,7 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ in::guarantee_no_DNA
 		+ pH::keep_input_protonation_state
 		+ run::preserve_header
+		+ out::file::set_pdb_author
 		+ in::preserve_crystinfo
 		+ in::missing_density_to_jump
 		+ out::file::no_chainend_ter
@@ -396,7 +408,8 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ in::max_bond_length
 		+ in::min_bond_length
 		+ in::read_only_ATOM_entries
-		+ out::file::write_seqres_records;
+		+ out::file::write_seqres_records
+		+ testing::INTEGRATION_TEST;
 
 }
 
@@ -424,6 +437,9 @@ StructFileRepOptions::append_schema_attributes( utility::tag::AttributeList & at
 		+ Attr::attribute_w_default( "guarantee_no_DNA", xsct_rosetta_bool, "TO DO",  "1" )
 		+ Attr::attribute_w_default( "keep_input_protonation_state", xsct_rosetta_bool, "TO DO",   "0" )
 		+ Attr::attribute_w_default( "preserve_header", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "set_pdb_author", xs_string,
+		"Set the author name(s), if any, to output in the .pdb Title Section. "
+		"List of names should be comma-delimited.", "" )
 		+ Attr::attribute_w_default( "preserve_crystinfo", xsct_rosetta_bool, "TO DO",  "0" )
 		+ Attr::attribute_w_default( "missing_dens_as_jump", xsct_rosetta_bool, "TO DO",  "0" )
 		+ Attr::attribute_w_default( "no_chainend_ter", xsct_rosetta_bool, "TO DO",  "0" )
@@ -455,7 +471,10 @@ StructFileRepOptions::append_schema_attributes( utility::tag::AttributeList & at
 		+ Attr::attribute_w_default( "treat_residues_in_these_chains_as_separate_chemical_entities", xs_string, "TO DO", " " )
 		+ Attr::attribute_w_default( "remap_pdb_atom_names_for", xs_string, "Comma separated list of atom names to remap to other names", "" )
 		+ Attr::attribute_w_default( "show_all_fixes", xsct_rosetta_bool, "TO DO",  "0" )
-		+ Attr::attribute_w_default( "constraints_from_link_records", xsct_rosetta_bool, "TO DO", "0" );
+		+ Attr::attribute_w_default( "constraints_from_link_records", xsct_rosetta_bool, "TO DO", "0" )
+		+ Attr::attribute_w_default( "integration_test_mode", xsct_rosetta_bool, "Is this script running as part of an integration test?",  "0" );
+
+
 
 }
 
@@ -495,6 +514,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_guarantee_no_DNA( options[ in::guarantee_no_DNA].value());
 	set_keep_input_protonation_state( options[ pH::keep_input_protonation_state ]());
 	set_preserve_header( options[ run::preserve_header ].value());
+	set_pdb_author( options[ out::file::set_pdb_author ].value() );
 	set_preserve_crystinfo( options[ in::preserve_crystinfo ]() );
 	set_missing_dens_as_jump( options[ in::missing_density_to_jump ]() );
 	set_no_chainend_ter( options[ OptionKeys::out::file::no_chainend_ter ]() );
@@ -537,6 +557,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_output_pose_energies_table(options[ OptionKeys::out::file::output_pose_energies_table ]()); //JD2 only?
 	set_output_pose_cache_data(options[ OptionKeys::out::file::output_pose_cache_data ]()); //JD2 only?
 	set_fold_tree_io( options[ OptionKeys::out::file::output_pose_fold_tree]());
+	set_integration_test_mode( options[ OptionKeys::testing::INTEGRATION_TEST ]() );
 }
 
 bool
@@ -555,6 +576,7 @@ StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 	if ( ignore_zero_occupancy_                                 != other.ignore_zero_occupancy_                                ) return false;
 	if ( keep_input_protonation_state_                          != other.keep_input_protonation_state_                         ) return false;
 	if ( preserve_header_                                       != other.preserve_header_                                      ) return false;
+	if ( pdb_author_                                            != other.pdb_author_                                           ) return false;
 	if ( preserve_crystinfo_                                    != other.preserve_crystinfo_                                   ) return false;
 	if ( missing_dens_as_jump_                                  != other.missing_dens_as_jump_                                 ) return false;
 	if ( no_chainend_ter_                                       != other.no_chainend_ter_                                      ) return false;
@@ -590,7 +612,7 @@ StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 	if ( maintain_links_                                        != other.maintain_links_                                       ) return false;
 	if ( max_bond_length_                                       != other.max_bond_length_                                      ) return false;
 	if ( min_bond_length_                                       != other.min_bond_length_                                      ) return false;
-
+	if ( integration_test_mode_                                 != other.integration_test_mode_                                ) return false;
 	return true;
 }
 
@@ -624,6 +646,8 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	if ( keep_input_protonation_state_                          != other.keep_input_protonation_state_                         ) return false;
 	if ( preserve_header_                                       <  other.preserve_header_                                      ) return true;
 	if ( preserve_header_                                       != other.preserve_header_                                      ) return false;
+	if ( pdb_author_                                            <  other.pdb_author_                                           ) return true;
+	if ( pdb_author_                                            != other.pdb_author_                                           ) return false;
 	if ( preserve_crystinfo_                                    <  other.preserve_crystinfo_                                   ) return true;
 	if ( preserve_crystinfo_                                    != other.preserve_crystinfo_                                   ) return false;
 	if ( missing_dens_as_jump_                                  <  other.missing_dens_as_jump_                                 ) return true;
@@ -694,6 +718,8 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	if ( max_bond_length_                                       != other.max_bond_length_                                      ) return false;
 	if ( min_bond_length_                                       <  other.min_bond_length_                                      ) return true;
 	if ( min_bond_length_                                       != other.min_bond_length_                                      ) return false;
+	if ( integration_test_mode_                                 <  other.integration_test_mode_                                ) return true;
+	if ( integration_test_mode_                                 != other.integration_test_mode_                                ) return false;
 	return false;
 }
 
@@ -721,6 +747,7 @@ core::io::StructFileRepOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( guarantee_no_DNA_ ) ); // _Bool
 	arc( CEREAL_NVP( keep_input_protonation_state_ ) ); // _Bool
 	arc( CEREAL_NVP( preserve_header_ ) ); // _Bool
+	arc( CEREAL_NVP( pdb_author_ ) );  // std::string
 	arc( CEREAL_NVP( preserve_crystinfo_ ) ); // _Bool
 	arc( CEREAL_NVP( missing_dens_as_jump_ ) ); // _Bool
 	arc( CEREAL_NVP( no_chainend_ter_ ) ); // _Bool
@@ -759,6 +786,7 @@ core::io::StructFileRepOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( constraints_from_link_records_ ) ); // _Bool
 	arc( CEREAL_NVP( output_pose_energies_table_ ) ); // _Bool
 	arc( CEREAL_NVP( output_pose_cache_data_ ) ); // _Bool
+	arc( CEREAL_NVP( integration_test_mode_ ) );  // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -779,6 +807,7 @@ core::io::StructFileRepOptions::load( Archive & arc ) {
 	arc( guarantee_no_DNA_ ); // _Bool
 	arc( keep_input_protonation_state_ ); // _Bool
 	arc( preserve_header_ ); // _Bool
+	arc( pdb_author_ );  // std::string
 	arc( preserve_crystinfo_ ); // _Bool
 	arc( missing_dens_as_jump_ ); // _Bool
 	arc( no_chainend_ter_ ); // _Bool
@@ -817,6 +846,7 @@ core::io::StructFileRepOptions::load( Archive & arc ) {
 	arc( constraints_from_link_records_ ); // _Bool
 	arc( output_pose_energies_table_ ); // _Bool
 	arc( output_pose_cache_data_ ); // _Bool
+	arc( integration_test_mode_ );  // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::io::StructFileRepOptions );

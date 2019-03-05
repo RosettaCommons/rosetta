@@ -45,7 +45,7 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init_with_additional_options( "-include_sugars -output_virtual" );
+		core_init_with_additional_options( "-include_sugars -output_virtual -INTEGRATION_TEST" );
 	}
 
 	// Shared finalization goes here.
@@ -94,7 +94,13 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init_with_additional_options( "-auto_detect_glycan_connections -include_sugars -alternate_3_letter_codes pdb_sugar -ignore_zero_occupancy -write_pdb_link_records " );
+		core_init_with_additional_options(
+			"-auto_detect_glycan_connections "
+			"-include_sugars "
+			"-alternate_3_letter_codes pdb_sugar "
+			"-ignore_zero_occupancy "
+			"-write_pdb_link_records "
+			"-INTEGRATION_TEST" );
 	}
 
 	// Shared finalization goes here.

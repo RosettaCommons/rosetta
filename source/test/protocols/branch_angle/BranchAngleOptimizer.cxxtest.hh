@@ -112,7 +112,7 @@ public:
 	BranchAngleOptimizerTest() {}
 
 	void setUp() {
-		core_init_with_additional_options( "-no_optH" );
+		core_init_with_additional_options( "-no_optH -INTEGRATION_TEST" );
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
 		the_pose = utility::pointer::make_shared< Pose >();

@@ -15,6 +15,7 @@ sources = {
 		"Binary_Util",
 		"CSI_Sequence",
 		"curl",
+		"dating",
 		"exit",
 		"heap",
 		"inline_file_provider",

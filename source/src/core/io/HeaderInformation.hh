@@ -9,7 +9,7 @@
 
 /// @file   core/io/HeaderInformation.hh
 ///
-/// @brief  Information stored in the HEADER record in the PDB format
+/// @brief  Information stored in the Title Section in the PDB format
 /// @author Matthew O'Meara
 
 #ifndef INCLUDED_core_io_HeaderInformation_hh
@@ -36,7 +36,7 @@
 #include <cereal/types/polymorphic.fwd.hpp>
 
 #ifdef PYROSETTA
-		#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/polymorphic.hpp>
 #endif
 
 #endif // SERIALIZATION
@@ -44,104 +44,76 @@
 namespace core {
 namespace io {
 
-/// @brief Information stored in the header records
+/// @brief Information stored in the Title Section records
 ///http://www.wwpdb.org/documentation/format32/sect2.html
 ///HEADER    PEPTIDASE                               13-JAN-98   1A2Z
 class HeaderInformation : public utility::pointer::ReferenceCount {
 public:
 	HeaderInformation();
-	HeaderInformation(HeaderInformation const & src);
+	HeaderInformation( HeaderInformation const & src );
 	~HeaderInformation() override;
 
-	void
-	store_record( pdb::Record & R );
+	void store_record( pdb::Record & R );
 
-	void
-	finalize_parse();
+	void finalize_parse();
 
-	bool
-	parse_in_progress() const;
+	bool parse_in_progress() const;
 
-	void
-	fill_records( std::vector< pdb::Record > & VR ) const;
+	void fill_records( std::vector< pdb::Record > & VR ) const;
 
 public: // Fields for HEADER Records
-	void
-	store_classification(std::string const & classification);
+	void store_classification(std::string const & classification);
 
-	std::string
-	classification() const;
+	std::string classification() const;
 
 	/// @brief Store the deposition date using the format like "84-DEC-18"
-	void
-	store_deposition_date(std::string const & deposition_date);
+	void store_deposition_date(std::string const & deposition_date);
 
 	/// @brief Store the deposition date using the format of two digit numbers
 	/// for the year, month and day of the month.
-	void
-	store_deposition_date(
-		Size yy,
-		Size mm,
-		Size dd);
+	void store_deposition_date( Size yy, Size mm, Size dd );
 
-	std::string
-	deposition_date() const;
+	std::string deposition_date() const;
 
 	/// @brief get the deposition date using the format of two digit numbers
 	/// for the year, month and day of the month
-	void
-	deposition_date(
-		Size & yy,
-		Size & mm,
-		Size & dd) const;
+	void deposition_date( Size & yy, Size & mm, Size & dd) const;
 
-	std::string
-	idCode() const;
+	std::string idCode() const;
 
-	void
-	store_idCode(std::string const & id_code);
+	void store_idCode( std::string const & id_code );
 
-	void
-	fill_header_record(std::vector< pdb::Record > & VR) const;
+	void fill_header_record( std::vector< pdb::Record > & VR ) const;
 
 public: //  Fields for the TITLE Record
 
 	/// @brief Append title record onto current title string
-	void
-	store_title(std::string const & title);
+	void store_title( std::string const & title );
 
-	void
-	clear_title();
+	void clear_title();
 
-	std::string const &
-	title() const;
+	std::string const & title() const;
 
-	void
-	fill_title_records(std::vector< pdb::Record > & VR) const;
+	void fill_title_records( std::vector< pdb::Record > & VR ) const;
 
 public: //  Fields for KEYWDS Records
 
 	typedef std::list< std::string > Keywords;
 
-	void
-	store_keywords(std::string const & keywords);
+	void store_keywords( std::string const & keywords );
 
-	void
-	finalize_keyword_records();
+	void finalize_keyword_records();
 
-	bool
-	keyword_in_progress() const;
+	bool keyword_in_progress() const;
 
-	void
-	clear_keywords();
+	void clear_keywords();
 
-	Keywords const &
-	keywords() const;
+	Keywords const & keywords() const;
 
-	// Undefined, commenting out to fix PyRosetta build  std::string keywords_string() const;
+	// Undefined, commenting out to fix PyRosetta build
+	//std::string keywords_string() const;
 
-	void
-	fill_keyword_records(std::vector< pdb::Record > & VR) const;
+	void fill_keyword_records( std::vector< pdb::Record > & VR ) const;
 
 public: //  Fields for COMPND Records
 
@@ -236,34 +208,25 @@ public: //  Fields for COMPND Records
 
 	typedef utility::vector1< std::pair< CompoundToken, std::string > > Compounds;
 
-	std::string
-	static compound_token_to_string(CompoundToken token);
+	std::string static compound_token_to_string( CompoundToken token );
 
-	CompoundToken
-	static string_to_compound_token(std::string const & token, bool warn_on_unrecognized = true);
+	CompoundToken static string_to_compound_token( std::string const & token, bool warn_on_unrecognized = true );
 
-	void
-	store_compound(std::string const & compound);
+	void store_compound( std::string const & compound );
 
-	void
-	store_compound(CompoundToken token, std::string const & value);
+	void store_compound( CompoundToken token, std::string const & value );
 
-	Compounds const &
-	compounds() const;
+	Compounds const & compounds() const;
 
-	void
-	finalize_compound_records();
+	void finalize_compound_records();
 
-	bool
-	compound_in_progress() const;
+	bool compound_in_progress() const;
 
-	void
-	clear_compounds();
+	void clear_compounds();
 
-	void
-	fill_compound_records(std::vector< pdb::Record > & VR) const;
+	void fill_compound_records(std::vector< pdb::Record > & VR) const;
 
-public: /// Fields for the EXPDTA Record
+public: // Fields for the EXPDTA Record
 
 	enum ExperimentalTechnique {
 		UNKNOWN_EXPDTA = 0,
@@ -294,54 +257,58 @@ public: /// Fields for the EXPDTA Record
 	};
 	typedef std::list< ExperimentalTechnique > ExperimentalTechniques;
 
-	std::string
-	static experimental_technique_to_string(ExperimentalTechnique technique);
+	std::string static experimental_technique_to_string( ExperimentalTechnique technique );
 
-	ExperimentalTechnique
-	static string_to_experimental_technique(std::string const &technique);
+	ExperimentalTechnique static string_to_experimental_technique( std::string const &technique );
 
-	/// @parse the list of techniques string following the technqiue
+	/// @brief Parse the list of techniques string following the technique
 	/// field in the EXPDTA record of the pdb format and store the techniques
-	void
-	store_experimental_techniques(std::string const & exp);
+	void store_experimental_techniques( std::string const & exp );
 
-	void
-	store_experimental_technique(ExperimentalTechnique technique);
+	void store_experimental_technique( ExperimentalTechnique technique );
 
-	ExperimentalTechniques const &
-	experimental_techniques() const;
+	ExperimentalTechniques const & experimental_techniques() const;
 
-	void
-	finalize_experimental_technique_records();
+	void finalize_experimental_technique_records();
 
-	bool
-	experimental_technique_in_progress() const;
+	bool experimental_technique_in_progress() const;
 
-	void
-	clear_experimental_techniques();
+	void clear_experimental_techniques();
 
-	bool
-	is_experimental_technique(ExperimentalTechnique technique) const;
+	bool is_experimental_technique( ExperimentalTechnique technique ) const;
 
-	void
-	fill_experimental_technique_records(std::vector< pdb::Record > & VR) const;
+	void fill_experimental_technique_records( std::vector< pdb::Record > & VR ) const;
+
+public:  // Fields for the AUTHOR record
+
+	typedef std::list< std::string > Authors;
+
+	Authors const & authors() const { return authors_; }
+
+	void clear_authors() { authors_.clear(); }
+
+	bool author_in_progress() const { return author_in_progress_; }
+
+	void finalize_author_records() { author_in_progress_ = false; }
+
+	void store_authors( std::string const & authors );
+
+	void add_author( std::string const & author );
+
+	void fill_author_records( std::vector< pdb::Record > & VR ) const;
 
 private: // Helper functions
 
 	/// @brief create enough records of <record_type> to express the
 	/// <contents> string and save them into the Records vector
-	void
-	fill_wrapped_records(
+	void fill_wrapped_records(
 		std::string const & record_type,
 		std::string const & field_name,
 		std::string const & contents,
 		Size & line_no,
-		std::vector< pdb::Record > & VR) const;
+		std::vector< pdb::Record > & VR ) const;
 
-	void
-	set_line_continuation(
-		pdb::Record & R,
-		Size const line_no) const;
+	void set_line_continuation( pdb::Record & R, Size const line_no ) const;
 
 
 private: // Data for HEADER Record
@@ -350,9 +317,9 @@ private: // Data for HEADER Record
 	std::string classification_;
 
 	/// @brief Deposition date DD-MON-YY
-	Size dep_year_;
-	Size dep_month_;
-	Size dep_day_;
+	Size dep_year_;  // 0 means date not supplied or intentionally blank for testing purposes
+	Size dep_month_;  // 0 means date not supplied or intentionally blank for testing purposes
+	Size dep_day_;  // 0 means date not supplied or intentionally blank for testing purposes
 
 	/// @brief 4-character PDB unique identifier
 	std::string idCode_;
@@ -362,7 +329,7 @@ private: // Data for TITLE Record
 
 	std::string title_;
 
-private: // Date for KEYWDS Record
+private: // Data for KEYWDS Record
 
 	Keywords keywords_;
 
@@ -374,11 +341,18 @@ private: // Data for COMPND Record
 
 	std::string compound_in_progress_;
 
-private: // data for EXPDTA Record
+private: // Data for EXPDTA Record
 
 	ExperimentalTechniques experimental_techniques_;
 
 	std::string experimental_technique_in_progress_;
+
+private:  // Data for AUTHORS record
+
+	Authors authors_;
+
+	bool author_in_progress_;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

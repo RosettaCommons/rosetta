@@ -74,6 +74,7 @@ public:
 	bool guarantee_no_DNA() const;
 	bool keep_input_protonation_state() const;
 	bool preserve_header() const;
+	std::string const & pdb_author() const;
 	bool preserve_crystinfo() const;
 	bool missing_dens_as_jump() const;
 	bool no_chainend_ter() const;
@@ -114,6 +115,8 @@ public:
 	bool output_pose_energies_table() const;
 	bool output_pose_cache() const;
 
+	bool integration_test_mode() const;
+
 	// mutators
 	void set_check_if_residues_are_Ntermini( std::string const & check_if_residues_are_Ntermini );
 	void set_check_if_residues_are_Ctermini( std::string const & check_if_residues_are_Ctermini );
@@ -129,6 +132,7 @@ public:
 	void set_guarantee_no_DNA( bool const guarantee_no_DNA );
 	void set_keep_input_protonation_state( bool const keep_input_protonation_state );
 	void set_preserve_header( bool const preserve_header );
+	void set_pdb_author( std::string const & pdb_author );
 	void set_preserve_crystinfo( bool const preserve_crystinfo );
 	void set_missing_dens_as_jump( bool const missing_dens_as_jump );
 	void set_no_chainend_ter( bool const no_chainend_ter );
@@ -167,6 +171,7 @@ public:
 	void set_constraints_from_link_records( bool const setting );
 	void set_output_pose_energies_table(bool const setting);
 	void set_output_pose_cache_data(bool const setting);
+	void set_integration_test_mode( bool const setting );
 
 	/// @brief Declare the list of options that are read in the process of reading a PDB (or SDF) and converting
 	/// it into a Pose.
@@ -206,6 +211,7 @@ private:
 	bool guarantee_no_DNA_;
 	bool keep_input_protonation_state_;
 	bool preserve_header_;
+	std::string pdb_author_;
 	bool preserve_crystinfo_;
 	bool missing_dens_as_jump_;
 	bool no_chainend_ter_;
@@ -247,6 +253,7 @@ private:
 	bool constraints_from_link_records_;
 	bool output_pose_energies_table_;
 	bool output_pose_cache_data_;
+	bool integration_test_mode_;
 
 #ifdef    SERIALIZATION
 public:

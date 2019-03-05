@@ -52,7 +52,13 @@ public:  // Standard methods //////////////////////////////////////////////////
 	void setUp()
 	{
 		core_init_with_additional_options(
-			"-write_all_connect_info -connect_info_cutoff 0.0 -include_sugars -output_ligands_as_separate_chains" );
+			"-write_all_connect_info "
+			"-connect_info_cutoff 0.0 "
+			"-include_sugars "
+			"-output_ligands_as_separate_chains "
+			"-INTEGRATION_TEST "
+			// Parser doesn't recognize double quotes; using underscore to make my life easier for test.
+			"-set_pdb_author J.R.R.TOLKEIN,M.L.KING_JR.,J.W.GIBBS" );
 	}
 
 	// Destruction
@@ -132,9 +138,19 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].element, " H" );
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][1].element, " H" );
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].element, " H" );
+	}
 
-		//pose->dump_pdb("vmemb.pdb"); //DELETE ME
+	/// @author  Labonte <JWLabonte@jhu.edu>
+	void test_title_section_records () {
+		using namespace core;
 
+		pose::PoseOP testpose( pdb1rpb_poseop() );
+		io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
+		pose_to_sfr.init_from_pose( *testpose );
+
+		TS_ASSERT_EQUALS( pose_to_sfr.sfr()->header()->authors().size(), 3 );
+		TS_ASSERT_EQUALS( pose_to_sfr.sfr()->header()->authors().front(), "J.R.R.TOLKEIN" );
+		TS_ASSERT_EQUALS( pose_to_sfr.sfr()->header()->authors().back(), "J.W.GIBBS" );
 	}
 
 	/// @brief Check that the foldtree records are properly written out to the StructFileRep.

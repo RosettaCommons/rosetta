@@ -9,7 +9,7 @@
 
 /// @file   core/io/HeaderInformation.cc
 ///
-/// @brief  Information stored in the HEADER record in the PDB format
+/// @brief  Information stored in the Title Section in the PDB format
 /// @author Matthew O'Meara
 
 // Unit headers
@@ -72,54 +72,60 @@ using core::io::pdb::RecordCollection;
 static basic::Tracer TR( "core.io.pdb.HeaderInformation" );
 
 HeaderInformation::HeaderInformation() : utility::pointer::ReferenceCount(),
-	classification_(""),
-	dep_year_(0),
-	dep_month_(0),
-	dep_day_(0),
-	idCode_(""),
-	title_(""),
+	classification_( "" ),
+	dep_year_( 0 ),
+	dep_month_( 0 ),
+	dep_day_( 0 ),
+	idCode_( "" ),
+	title_( "" ),
 	keywords_(),
-	keyword_in_progress_(false),
+	keyword_in_progress_( false ),
 	compounds_(),
-	compound_in_progress_(""),
+	compound_in_progress_( "" ),
 	experimental_techniques_(),
-	experimental_technique_in_progress_("")
+	experimental_technique_in_progress_( "" ),
+	authors_(),
+	author_in_progress_( false )
 {}
 
-HeaderInformation::HeaderInformation(
-	HeaderInformation const & src) : utility::pointer::ReferenceCount(),
-	classification_(src.classification_),
-	dep_year_(src.dep_year_),
-	dep_month_(src.dep_month_),
-	dep_day_(src.dep_day_),
-	idCode_(src.idCode_),
-	title_(""),
-	keywords_(src.keywords_),
-	keyword_in_progress_(src.keyword_in_progress_),
-	compounds_(src.compounds_),
-	compound_in_progress_(src.compound_in_progress_),
-	experimental_techniques_(src.experimental_techniques_),
-	experimental_technique_in_progress_(src.experimental_technique_in_progress_)
+HeaderInformation::HeaderInformation( HeaderInformation const & src ) : utility::pointer::ReferenceCount(),
+	classification_( src.classification_ ),
+	dep_year_( src.dep_year_ ),
+	dep_month_( src.dep_month_ ),
+	dep_day_( src.dep_day_ ),
+	idCode_( src.idCode_ ),
+	title_( "" ),
+	keywords_( src.keywords_ ),
+	keyword_in_progress_( src.keyword_in_progress_ ),
+	compounds_( src.compounds_ ),
+	compound_in_progress_( src.compound_in_progress_ ),
+	experimental_techniques_( src.experimental_techniques_ ),
+	experimental_technique_in_progress_( src.experimental_technique_in_progress_ ),
+	authors_( src.authors_ ),
+	author_in_progress_( src.author_in_progress_ )
 {}
 
 HeaderInformation::~HeaderInformation() = default;
 
 
 void
-HeaderInformation::store_record( Record & R ){
+HeaderInformation::store_record( Record & R )
+{
 	string const & type = R[ "type" ].value;
 	if ( type == "HEADER" ) {
 		store_classification( R[ "classification" ].value );
 		store_deposition_date( R[ "depDate" ].value );
 		store_idCode( R[ "idCode" ].value );
 	} else if ( type == "TITLE " ) {
-		store_title( R[ "title" ].value);
-	} else if ( type == "KEYWDS" ) {
-		store_keywords( R[ "keywords" ].value);
+		store_title( R[ "title" ].value );
 	} else if ( type == "COMPND" ) {
-		store_compound( R[ "compound" ].value);
+		store_compound( R[ "compound" ].value );
+	} else if ( type == "KEYWDS" ) {
+		store_keywords( R[ "keywords" ].value );
 	} else if ( type == "EXPDTA" ) {
-		store_experimental_techniques( R[ "technique" ].value);
+		store_experimental_techniques( R[ "technique" ].value );
+	} else if ( type == "AUTHOR" ) {
+		store_authors( R[ "authorList" ].value );
 	} else {
 		std::stringstream err_msg;
 		err_msg
@@ -130,32 +136,37 @@ HeaderInformation::store_record( Record & R ){
 }
 
 void
-HeaderInformation::finalize_parse() {
-	finalize_keyword_records();
+HeaderInformation::finalize_parse()
+{
 	finalize_compound_records();
+	finalize_keyword_records();
 	finalize_experimental_technique_records();
+	finalize_author_records();
 }
 
 bool
-HeaderInformation::parse_in_progress() const {
+HeaderInformation::parse_in_progress() const
+{
 	return
-		keyword_in_progress() ||
 		compound_in_progress() ||
-		experimental_technique_in_progress();
+		keyword_in_progress() ||
+		experimental_technique_in_progress() ||
+		author_in_progress();
 }
 
 void
-HeaderInformation::fill_records(
-	std::vector<Record> & VR
-) const {
-	fill_header_record(VR);
-	fill_title_records(VR);
-	fill_keyword_records(VR);
-	fill_compound_records(VR);
-	fill_experimental_technique_records(VR);
+HeaderInformation::fill_records( std::vector<Record> & VR ) const
+{
+	fill_header_record( VR );
+	fill_title_records( VR );
+	fill_compound_records( VR );
+	fill_keyword_records( VR );
+	fill_experimental_technique_records( VR );
+	fill_author_records( VR );
 }
 
-////////////// HEADER ///////////////////
+
+// HEADER /////////////////////////////////////////////////////////////////////
 
 void
 HeaderInformation::store_classification(string const & classification){
@@ -173,7 +184,14 @@ HeaderInformation::classification() const {
 }
 
 void
-HeaderInformation::store_deposition_date(string const & depDate) {
+HeaderInformation::store_deposition_date( string const & depDate )
+{
+	if ( depDate == "xx-MMM-xx" ) {
+		dep_day_ = 0;
+		dep_month_ = 0;
+		dep_year_ = 0;
+		return;
+	}
 
 	dep_day_ = atoi(depDate.substr(0,2).c_str());
 	if ( dep_day_ > 31 || dep_day_ < 1 ) {
@@ -203,6 +221,7 @@ HeaderInformation::store_deposition_date(string const & depDate) {
 }
 
 
+/// @note  These parameters are listed in the opposite order that they are given in a .pdb file!
 void
 HeaderInformation::store_deposition_date(
 	Size yy,
@@ -211,8 +230,8 @@ HeaderInformation::store_deposition_date(
 ) {
 
 	dep_year_ = yy;
-	if ( dep_month_ > 99 || dep_day_ < 1 ) {
-		TR.Warning << "Deposition month not in range [01, 99]: " << dep_month_ << endl;
+	if ( dep_year_ > 99 || dep_year_ < 1 ) {
+		TR.Warning << "Deposition year not in range [01, 99]: " << dep_year_ << endl;
 	}
 
 	dep_month_ = mm;
@@ -228,14 +247,19 @@ HeaderInformation::store_deposition_date(
 
 
 string
-HeaderInformation::deposition_date() const {
+HeaderInformation::deposition_date() const
+{
+	if ( ( dep_day_ == 0 ) && ( dep_month_ == 0 ) && ( dep_year_ == 0 ) ) {
+		return "xx-MMM-xx";
+	}
+
 	std::stringstream dep_date;
 
 	if ( dep_day_ > 31 || dep_day_ < 1 ) {
 		utility_exit_with_message("deposition day is outside of range [1,31]: " +
 			boost::lexical_cast<std::string>(dep_day_));
 	}
-	dep_date << dep_day_ << "-";
+	dep_date << (dep_day_ < 10 ? "0" : "") << dep_day_ << "-";
 	switch(dep_month_){
 	case 1 : dep_date  << "JAN"; break;
 	case 2 : dep_date  << "FEB"; break;
@@ -283,22 +307,18 @@ HeaderInformation::store_idCode(string const & idCode) {
 }
 
 void
-HeaderInformation::fill_header_record(
-	std::vector< Record > & VR
-) const {
-	if ( !classification_.empty() &&
-			dep_year_ && dep_month_ && dep_day_ && !idCode_.empty() ) {
-		Record R = RecordCollection::record_from_record_type( pdb::HEADER );
-		R["type"].value = "HEADER";
-		R["classification"].value = classification();
-		R["depDate"].value = deposition_date();
-		R["idCode"].value = idCode();
-		VR.push_back(R);
-	}
+HeaderInformation::fill_header_record( std::vector< Record > & VR ) const
+{
+	Record R = RecordCollection::record_from_record_type( pdb::HEADER );
+	R["type"].value = "HEADER";
+	R["classification"].value = classification();
+	R["depDate"].value = deposition_date();
+	R["idCode"].value = idCode();
+	VR.push_back(R);
 }
 
 
-////////////// TITLE ///////////////////
+// TITLE //////////////////////////////////////////////////////////////////////
 
 /// @details Append title, strip off white space on the left for the
 /// first record and on the right for all records.
@@ -339,7 +359,8 @@ HeaderInformation::fill_title_records(
 	}
 }
 
-////////////// KEYWDS ///////////////////
+
+// KEYWDS /////////////////////////////////////////////////////////////////////
 
 void
 HeaderInformation::store_keywords(string const & keywords){
@@ -403,7 +424,7 @@ HeaderInformation::fill_keyword_records(
 	fill_wrapped_records("KEYWDS", "keywords", keywords, line_no, VR);
 }
 
-///////////// COMPND ///////////////////
+// COMPND /////////////////////////////////////////////////////////////////////
 
 std::string
 HeaderInformation::compound_token_to_string(CompoundToken token) {
@@ -447,7 +468,6 @@ HeaderInformation::string_to_compound_token(std::string const & token, bool warn
 	}
 	return UNKNOWN_CMPD;
 }
-
 
 /// @details Assume each new compound token/value pair begins on a new
 /// line but the value can be multiple lines. So, if a compound record
@@ -561,7 +581,8 @@ HeaderInformation::fill_compound_records(
 	}
 }
 
-////////////// EXPDTA ///////////////////
+
+// EXPDTA /////////////////////////////////////////////////////////////////////
 
 string
 HeaderInformation::experimental_technique_to_string(
@@ -781,8 +802,59 @@ HeaderInformation::fill_experimental_technique_records(
 }
 
 
-////////// Helper Functions /////////////
+// AUTHOR /////////////////////////////////////////////////////////////////////
 
+void
+HeaderInformation::store_authors( string const & authors )
+{
+	if ( authors.empty() ) {
+		TR.Trace << "Attempting to add empty authors string." << endl;
+		return;
+	}
+
+	size_t i( authors.find_first_not_of( ' ' ) );
+	while ( i != std::string::npos ) {
+		size_t j( authors.find( ',', i ) );
+		if ( author_in_progress_ ) {
+			authors_.back().append( " " + rstripped_whitespace( authors.substr( i, j - i ) ) );
+			author_in_progress_ = false;
+		} else {
+			authors_.push_back( rstripped_whitespace( authors.substr( i, j - i ) ) );
+		}
+		if ( j != std::string::npos ) {
+			i = authors.find_first_not_of( ' ', j + 1 );
+		} else {
+			author_in_progress_ = true;
+			return;
+		}
+	}
+}
+
+/// @brief Add an author to this Title section.
+void
+HeaderInformation::add_author( std::string const & author )
+{
+	authors_.push_back( author );
+}
+
+void
+HeaderInformation::fill_author_records( std::vector< Record > & VR ) const
+{
+	if ( authors_.empty() ) return;
+
+	string authors;
+	for ( auto k = authors_.begin(), ke = authors_.end(); k != ke; ++k ) {
+		if ( ! authors.empty() ) {
+			authors.append( "," );
+		}
+		authors.append( *k );
+	}
+	core::uint line_no( 1 );
+	fill_wrapped_records( "AUTHOR", "authorList", authors, line_no, VR );
+}
+
+
+// Helper Functions ///////////////////////////////////////////////////////////
 
 void
 HeaderInformation::fill_wrapped_records(
@@ -790,8 +862,8 @@ HeaderInformation::fill_wrapped_records(
 	string const & field_name,
 	string const & contents,
 	Size & line_no,
-	std::vector< Record > & VR
-) const {
+	std::vector< Record > & VR ) const
+{
 	// Assume contents string is stripped of white space
 	size_t l_begin(0), l_len(0), l_end(0);
 	size_t field_width(60);
@@ -885,6 +957,8 @@ core::io::HeaderInformation::save( Archive & arc ) const {
 	arc( CEREAL_NVP( compound_in_progress_ ) ); // _Bool
 	arc( CEREAL_NVP( experimental_techniques_ ) ); // ExperimentalTechniques
 	arc( CEREAL_NVP( experimental_technique_in_progress_ ) ); // std::string
+	arc( CEREAL_NVP( authors_ ) );  // Authors
+	arc( CEREAL_NVP( author_in_progress_ ) );  // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -903,6 +977,8 @@ core::io::HeaderInformation::load( Archive & arc ) {
 	arc( compound_in_progress_ ); // _Bool
 	arc( experimental_techniques_ ); // ExperimentalTechniques
 	arc( experimental_technique_in_progress_ ); // std::string
+	arc( authors_ );  // Authors
+	arc( author_in_progress_ );  // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::io::HeaderInformation );

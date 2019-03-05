@@ -4,6 +4,6 @@ Tabs 21	9	1.7	9e-16	0.2	3.14159	-0.726335	-2.43169	-0.834851	0	-1.75902	3.90664e
 set_abs_tolerance(1e-15)
 These lines will be compared approximately
 NOTE: The discrepancy between the in-code and file representations is *deliberate* - please don't overwrite willy-nilly.
-Spaces 21 9 1.7 8e-16 0.2 3.14159 -0.726335 -2.43169 -0.834851 0 -1.75902 3.90e-16
-Tabs 21	9	1.7	8e-16	0.2	3.14159	-0.726335	-2.43169	-0.834851	0	-1.75902	3.90e-16
+Spaces 21 9 1.7 9e-16 0.2 3.14159 -0.726335 -2.43169 -0.834851 0 -1.75902 3.90664e-16
+Tabs 21	9	1.7	9e-16	0.2	3.14159	-0.726335	-2.43169	-0.834851	0	-1.75902	3.90664e-16
 

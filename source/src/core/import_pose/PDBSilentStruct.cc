@@ -158,7 +158,10 @@ bool PDBSilentStruct::init_from_lines(
 				}
 			} // for ( energy_iter ... )
 			decoy_tag( tag ); // decoy_tag should be last column of this line.
-		} else if ( iter->substr(0,6) == "REMARK" ) {
+		} else if ( ( iter->substr(0,6) == "HEADER" ) ||
+				( iter->substr(0,6) == "REMARK" ) ||
+				( iter->substr(0,6) == "EXPDTA" ) ||
+				( iter->substr(0,6) == "AUTHOR" ) ) {
 			// do nothing!
 		} else {
 			using namespace basic::options;

@@ -70,7 +70,6 @@ static basic::Tracer TR( "core.pose.PDBInfo" );
 core::pose::UnrecognizedAtomRecord::UnrecognizedAtomRecord() = default;
 
 
-
 /// @brief default constructor, obsolete is *true*
 PDBInfo::PDBInfo() :
 	Super(),
@@ -427,7 +426,7 @@ PDBInfo::tighten_memory()
 	}
 }
 
-/// @detailed tag of <chain>[:<segid]:<number>[<icode>] that is useful for output, like make_tag_with_dashes() in string_util.hh
+/// @details tag of <chain>[:<segid]:<number>[<icode>] that is useful for output, like make_tag_with_dashes() in string_util.hh
 ///   Kind of like pose2pdb but can carry more information, and no spaces.
 ///   TODO: where to put icode?
 std::string

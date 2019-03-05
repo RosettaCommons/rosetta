@@ -1011,6 +1011,9 @@ SilentFileData::line_starts_with_other_header_string(
 	std::string const &line
 ) const {
 	return (
+		line.substr(0,6) == "HEADER" ||
+		line.substr(0,6) == "EXPDTA" ||
+		line.substr(0,6) == "AUTHOR" ||
 		line.substr(0,10) == "FOLD_TREE " ||
 		line.substr(0,2) == "RT" ||
 		line.substr(0,24) == "NONCANONICAL_CONNECTION:" ||

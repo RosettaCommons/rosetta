@@ -26,13 +26,16 @@
 // Project header
 #include <core/types.hh>
 #include <utility/excn/Exceptions.hh>
-#include <basic/Tracer.hh>
 
+// Basic header
+#include <basic/Tracer.hh>
 
 // C++ header
 #include <map>
 
-static basic::Tracer TR("core.chemical.carbohydrates.database_io.cxxtest");
+
+static basic::Tracer TR( "core.chemical.carbohydrates.database_io.cxxtest" );
+
 
 class CarbohydrateDatabaseIOTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////

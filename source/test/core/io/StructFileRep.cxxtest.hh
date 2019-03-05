@@ -250,9 +250,10 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		std::istringstream pdb_result(pdb_stream.str());
 		std::string test_answer("");
 		//convert the first 13 lines of the PDB into our string to compare to
-		for ( core::Size lineNum(1); lineNum <= 13 /*13 SS elements*/; ++lineNum ) {
+		for ( core::Size lineNum(1); lineNum <= 22 /*13 SS elements + 9 title and remark records*/; ++lineNum ) {
 			std::string templine;
-			std::getline(pdb_result, templine);
+			std::getline( pdb_result, templine );
+			if ( lineNum < 10 ) { continue; }
 			test_answer += templine + "\n";
 		}
 
@@ -300,9 +301,10 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		std::istringstream pdb_result(pdb_stream.str());
 		std::string test_answer("");
 		//convert the first 66 lines of the PDB into our string to compare to
-		for ( core::Size lineNum(1); lineNum <= 66 /*66 SS elements*/; ++lineNum ) {
+		for ( core::Size lineNum(1); lineNum <= 75 /*66 SS elements + 9 title and remark lines*/; ++lineNum ) {
 			std::string templine;
-			std::getline(pdb_result, templine);
+			std::getline( pdb_result, templine );
+			if ( lineNum < 10 ) { continue; }
 			test_answer += templine + "\n";
 		}
 

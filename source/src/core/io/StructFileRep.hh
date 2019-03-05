@@ -195,15 +195,15 @@ public:  // Accessors /////////////////////////////////////////////////////////
 
 
 	// PDB Title Section //////////////////////////////////////////////////////
-	/// @brief    Access HEADER, TITLE, EXPDTA, KEYWDS, and COMPND records.
+	/// @brief   Access HEADER, TITLE, EXPDTA, KEYWDS, COMPND, and AUTHOR records.
 	/// @details "header" is a misnomer, as it actually stores HEADER, TITLE,
-	/// EXPDTA, KEYWDS, and COMPND records.
+	/// EXPDTA, KEYWDS, COMPND, and AUTHOR records.
 	HeaderInformationCOP  header() const { return header_; }
 	HeaderInformationOP & header()       { return header_; }
 
-	// Accessors for OBSLTE, SPLT, CAVEAT, NUMMDL, MDLTYP, AUTHOR, REVDAT,
-	// SPRSDE, and/or JRNL records data should be declared here if ever
-	// implemented.
+	// Accessors for OBSLTE, SPLT, CAVEAT, NUMMDL, MDLTYP, REVDAT, SPRSDE, and/or
+	// JRNL records data should be declared here if ever implemented or else they
+	// should be added to HeaderInformation.
 
 	/// @brief Access PDB remarks.
 	RemarksCOP  remarks() const { return remarks_; }

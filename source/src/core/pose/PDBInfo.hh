@@ -580,6 +580,7 @@ public: // pdb-wide accessors/mutators
 		return header_information_;
 	}
 
+
 	/// @brief For structures deposited into the protein databank, the
 	/// chain sequences stores the SEQRES records. A listing of the
 	/// consecutive chemical components covalently linked in a linear

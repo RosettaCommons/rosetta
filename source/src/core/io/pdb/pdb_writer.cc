@@ -11,6 +11,7 @@
 /// @brief Function(s) for pdb writing
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com), XRW 2016 Team
 /// @author Sergey Lyskov (Sergey.Lyskov@jhu.edu)
+/// @author Labonte <JWLabonte@jhu.edu>
 
 
 // Unit headers
@@ -50,13 +51,7 @@
 
 // Options
 #include <basic/options/option.hh>
-//#include <basic/options/keys/chemical.OptionKeys.gen.hh>
-//#include <basic/options/keys/run.OptionKeys.gen.hh>
-//#include <basic/options/keys/in.OptionKeys.gen.hh>
-//#include <basic/options/keys/mp.OptionKeys.gen.hh>
-//#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-//#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -92,6 +87,7 @@ using utility::fmt_real;
 
 using basic::Error;
 using basic::Warning;
+
 
 /// @brief Writes  <pose>  to a PDB file, returns false if an error occurs
 ///  Use default StructFileRepOptions
@@ -357,28 +353,30 @@ create_pdb_line_from_record( Record const & record )
 
 
 /// @details Create vector of Record from given StructFileRep object.  Used in PDB writing support.
-std::vector<Record>
+std::vector< Record >
 create_records_from_sfr(
 	StructFileRep const & sfr,
-	core::io::StructFileRepOptionsCOP options
-) {
+	core::io::StructFileRepOptionsCOP options )
+{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	std::vector<Record> VR;
-
-	sfr.header()->fill_records( VR );
 	Record R;
+	std::vector< Record > VR;
+
 
 	// Title Section //////////////////////////////////////////////////////////
+	sfr.header()->fill_records( VR );  // HEADER, TITLE, EXPDTA, KEYWDS, COMPND, and AUTHOR records.
+
 	R = RecordCollection::record_from_record_type( REMARK );
-	for ( Size i=0; i<sfr.remarks()->size(); ++i ) {
-		RemarkInfo const & ri( sfr.remarks()->at(i) );
-		R["type"].value = "REMARK";
-		R["remarkNum"].value = pad_left( ri.num, 3 ); //("%3d", ri.num);
-		R["value"].value = ri.value;
-		VR.push_back(R);
+	for ( core::uint i( 0 ); i < sfr.remarks()->size(); ++i ) {
+		RemarkInfo const & ri( sfr.remarks()->at( i ) );
+		R[ "type" ].value = "REMARK";
+		R[ "remarkNum" ].value = pad_left( ri.num, 3 );  //("%3d", ri.num);
+		R[ "value" ].value = ri.value;
+		VR.push_back( R );
 	}
+
 
 	// Secondary Structure Section ///////////////////////////////////////////
 	if ( options->output_secondary_structure() ) {
@@ -456,6 +454,7 @@ create_records_from_sfr(
 		}
 	}
 
+
 	// Connectivity Annotation Section ////////////////////////////////////////
 	R = RecordCollection::record_from_record_type( SSBOND );
 	for ( auto const & branch_point : sfr.ssbond_map() ) {
@@ -497,6 +496,7 @@ create_records_from_sfr(
 		}
 	}
 
+
 	// Crystallographic & Coordinate Transformation Section ///////////////////
 	R = RecordCollection::record_from_record_type( CRYST1 );
 	CrystInfo ci = sfr.crystinfo();
@@ -512,6 +512,8 @@ create_records_from_sfr(
 		VR.push_back( R );
 	}
 
+
+	// Coordinate Section /////////////////////////////////////////////////////
 	bool const no_chainend_ter( options->no_chainend_ter() ); //Should we skip TER records at chain ends?
 	std::map < core::Size, core::Size > serial_to_serial_with_ter; //Reused later during CONECT record dumping.
 	R = RecordCollection::record_from_record_type( "ATOM  " );
@@ -628,6 +630,7 @@ create_records_from_sfr(
 		}
 	}
 
+
 	// Rosetta-specific Information from the SFR //////////////////////////////
 	R = RecordCollection::record_from_record_type( UNKNOW );
 	// note: "start" and "end" of this field ("type") are left at their default values of 0; this is not a proper field.
@@ -677,8 +680,6 @@ create_records_from_sfr(
 
 	return VR;
 }
-
-
 
 
 /// @details Create a faux PDBInfo object from a Residue

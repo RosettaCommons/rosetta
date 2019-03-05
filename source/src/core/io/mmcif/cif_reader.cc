@@ -151,6 +151,11 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 			sfr->header()->store_experimental_techniques( exptl( 0, "method" ) );
 		}
 
+		if ( block.IsTablePresent( "audit_author" ) ) {
+			ISTable& author = block.GetTable( "audit_author" );
+			sfr->header()->store_authors( author( 0, "name" ) );
+		}
+
 		sfr->header()->finalize_parse();
 	}
 

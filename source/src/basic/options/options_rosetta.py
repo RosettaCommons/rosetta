@@ -796,6 +796,11 @@ Options = Option_Group( '',
 					desc="Force ResidueConformationFeatures to treat the structure as nonideal.  "
 							"If you know all your structures are non-ideal this decreases pose output time",
 					default='true'),
+			Option('set_pdb_author', 'String',
+					desc='Set the author name(s), if any, to output in the .pdb Title Section. '
+							'List of names should be comma-delimited.',
+					short='AUTHOR?',
+					default=''),
 			Option('write_pdb_link_records', 'Boolean',
 					desc='Sets whether or not the LINK records in PDB files are written.  '
 							'The default value is true.',

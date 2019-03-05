@@ -128,7 +128,7 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 		// Record contains "header information", i.e., is from the Title Section of the PDB file.
 		if ( (record_type == "HEADER" || record_type == "KEYWDS" ||
 				record_type == "TITLE " || record_type == "COMPND" ||
-				record_type == "EXPDTA" ) && (! options.read_only_ATOM_entries() ) ) {
+				record_type == "EXPDTA" || record_type == "AUTHOR" ) && (! options.read_only_ATOM_entries() ) ) {
 			// TODO: Add rest of Title Section records.
 			sfr.header()->store_record( records[ i ] );
 
