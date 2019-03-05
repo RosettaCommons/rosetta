@@ -192,6 +192,14 @@ public:
 	void
 	_add_weights_from_stream( std::istream & data, bool patch=false, std::string const & filename="");
 
+	static
+	EnergyMap
+	extract_weights_from_file( std::string const & filename, bool patch=false );
+
+	static
+	EnergyMap
+	extract_weights_from_stream( std::istream & data, bool patch=false, std::string const & filename="" );
+
 	/// @brief Resets everything before reading the  <filename>
 	void
 	initialize_from_file( std::string const & filename );

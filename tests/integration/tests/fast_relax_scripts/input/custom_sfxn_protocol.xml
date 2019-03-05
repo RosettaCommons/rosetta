@@ -1,0 +1,19 @@
+<ROSETTASCRIPTS>
+
+  <SCOREFXNS>
+    <ScoreFunction name="sfxn" weights="%%sfxn%%"/>
+  </SCOREFXNS>
+
+  <TASKOPERATIONS>
+    <InitializeFromCommandline name="ifc"/>
+  </TASKOPERATIONS>
+
+  <MOVERS>
+    <FastRelax name="relax" scorefxn="sfxn" task_operations="ifc" repeats="1" relaxscript="%%script%%" dualspace="%%dualspace%%"/>
+  </MOVERS>
+
+  <PROTOCOLS>
+    <Add mover="relax"/>
+  </PROTOCOLS>
+
+</ROSETTASCRIPTS>

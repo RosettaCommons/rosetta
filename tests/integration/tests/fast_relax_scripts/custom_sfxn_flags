@@ -1,0 +1,5 @@
+-s input/smallpose.pdb
+-nooutput
+-mute all
+-unmute protocols
+-parser:protocol input/custom_sfxn_protocol.xml

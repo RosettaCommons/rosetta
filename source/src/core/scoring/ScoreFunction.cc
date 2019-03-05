@@ -20,37 +20,40 @@
 // C/C++ headers
 #include <algorithm>
 #include <string>
+#include <sstream>
 #include <vector>
+#include <istream>
 
 // External headers
 #include <boost/algorithm/string/join.hpp>
 
 // Package headers
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
+#include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/MinimizationGraph.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionInfo.hh>
+#include <core/scoring/ScoreTypeManager.hh>
+#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/hbonds.hh>
+#include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
+#include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
+#include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
+#include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
+#include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
+#include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
-#include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
-#include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
-#include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
-#include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
+#include <core/scoring/methods/FreeDOF_Options.hh>
 #include <core/scoring/methods/TwoBodyEnergy.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/methods/FreeDOF_Options.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
-#include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 
 // Project headers
@@ -78,10 +81,10 @@
 
 // Utility headers
 #include <utility/io/izstream.hh>
+#include <utility/io/GeneralFileManager.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 #include <utility/vector1.hh>
-#include <istream>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
@@ -250,7 +253,9 @@ ScoreFunction::add_weights_from_file( std::string const & filename )
 void
 ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/*=false*/ )
 {
-	utility::io::izstream data( filename );
+	std::string file_contents = utility::io::GeneralFileManager::get_instance()->get_file_contents( filename );
+	std::stringstream data( file_contents );
+	//utility::io::izstream data( filename );
 	_add_weights_from_stream(data, patch, filename);
 }
 
@@ -494,6 +499,69 @@ ScoreFunction::_add_weights_from_stream( std::istream & data, bool patch/*=false
 		}
 	}
 }
+
+EnergyMap
+ScoreFunction::extract_weights_from_file(
+	std::string const & filename,
+	bool patch/*=false*/
+) {
+	std::string file_contents =
+		utility::io::GeneralFileManager::get_instance()->get_file_contents( filename );
+	std::stringstream data( file_contents );
+	return extract_weights_from_stream( data, patch, filename );
+}
+
+EnergyMap
+ScoreFunction::extract_weights_from_stream(
+	std::istream & data,
+	bool patch/*=false*/,
+	std::string const & filename /*=""*/
+) {
+	if ( !data.good() ) {
+		if ( ! patch ) { utility_exit_with_message( "Unable to open weights file: "+filename ); }
+		else { utility_exit_with_message( "Unable to open weights-patch file: "+filename ); }
+	}
+
+	EnergyMap weights;
+
+	std::string line,tag,operation;
+	ScoreType score_type;
+	Real wt;
+
+	while ( getline( data, line ) ) {
+		std::istringstream l( line );
+		l >> tag;
+		if ( l.fail() || tag[0] == '#' ) continue;
+
+		// //////////// Property Setting Tags ///////////////////////
+		if ( ScoreTypeManager::is_score_type( tag) ) {
+
+			// //////////// Regular Weights ///////////////////////
+			l.str( line );
+
+			if ( ! patch ) {
+				// Weights file parsing
+				l >> score_type >> wt;
+				if ( l.fail() ) {
+					utility_exit_with_message( "bad line in file "+filename+":"+line );
+				}
+			} else {
+				// Patch file parsing
+				l >> score_type >> operation >> wt;
+				if ( l.fail() ) {
+					tr.Error << "could not parse line in patch-file: " << line << std::endl;
+					continue;
+				}
+			} // if ( ! patch )
+
+			weights.set( score_type, wt );
+
+		} // if is score type
+	} // while ( getline( data, line ) )
+
+	return weights;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 void

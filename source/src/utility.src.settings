@@ -51,13 +51,14 @@ sources = {
 		"LowMemGraph",
 	],
 	"utility/io": [
-	        "base64",
+		"FileContentsMap",
+		"GeneralFileManager",
 		"icstream",
 		"izstream",
 		"ocstream",
 		"ozstream",
-		"FileContentsMap",
 		"util",
+	        "base64",
 	],
 	"utility/keys": [
 		"Key2Tuple.srlz",

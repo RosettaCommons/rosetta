@@ -1,0 +1,15 @@
+#This file organizes the available relax scripts.
+#Each script lists whether or not (Y/N) it has specific implementations based on the score function in the second column
+#If so, the third column contains a :-delimited list of score functions with implementations.
+#Note: for a score funciton to have an implementation, there must be a file "A.B.txt" where A is the title and B is the name of the scorefunction.
+#      Ideally, there will also be an "A.B.dualspace.txt" file.
+title               sfxn-dependent?     sfxns
+InterfaceDesign2019 N
+InterfaceRelax2019  N
+KillA2019           Y                   score12:talaris2013:talaris2014:ref2015:beta_nov16
+MonomerDesign2019   N
+MonomerRelax2019    N
+default             N
+legacy              N
+no_cst_ramping      N
+rosettacon2018      N

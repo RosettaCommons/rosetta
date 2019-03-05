@@ -55,7 +55,10 @@ public:
 	/// @brief Clone function: make a copy of this object and return an owning pointer to the copy.
 	RelaxScriptFileContentsOP clone() const;
 
-	inline utility::vector1< std::string > const & get_file_lines() const { return file_lines_; }
+	utility::vector1< std::string > const &
+	get_file_lines() const {
+		return file_lines_;
+	}
 
 private:
 
@@ -73,7 +76,7 @@ public: // Public methods //////////////////////////////////////////////////
 
 	/// @brief Get a relax script.  Load it from disk if it has not already been loaded.
 	/// @details Threadsafe and lazily loaded.
-	RelaxScriptFileContents const & get_relax_script( std::string const &filename ) const;
+	RelaxScriptFileContents const & get_relax_script( std::string const & filename ) const;
 
 private:  // Private methods //////////////////////////////////////////////////
 

@@ -24,19 +24,19 @@
 
 #include <protocols/checkpoint/CheckPointer.hh>
 
+#include <core/io/silent/silent.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-
 #include <core/pose/Pose.fwd.hh>
-
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 //// C++ headers
 #include <string>
 
-#include <core/io/silent/silent.fwd.hh>
+
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/string_util.hh>
 
 class FastRelaxTests;
 
@@ -66,6 +66,35 @@ struct RelaxScriptCommand {
 struct VariableSubstitutionPair {
 	std::string string_being_replaced;
 	std::string string_being_added;
+};
+
+//represents a single line of database/sampling/relax_scripts/index.dat
+struct DatabaseRelaxScript {
+	std::string title;
+	bool sfxn_specialized;
+	utility::vector1< std::string > sfxns_supported;
+
+	DatabaseRelaxScript() = delete;
+
+	DatabaseRelaxScript(
+		std::string const & title_arg,
+		bool sfxn_specialized_arg
+	) :
+		title( title_arg ),
+		sfxn_specialized( sfxn_specialized_arg ),
+		sfxns_supported()
+	{}
+
+	DatabaseRelaxScript(
+		std::string const & title_arg,
+		bool sfxn_specialized_arg,
+		std::string const & sfxns_arg
+	) :
+		title( title_arg ),
+		sfxn_specialized( sfxn_specialized_arg ),
+		sfxns_supported( utility::string_split( sfxns_arg, ':' ) )
+	{}
+
 };
 
 class FastRelax : public RelaxProtocolBase {
@@ -219,6 +248,9 @@ private:
 	utility::vector1< std::string >
 	get_possible_relax_script_names( std::string const & prefix ) const;
 
+	void
+	initialize_relax_scripts_in_database();
+
 	//passing script_file by-value on purpose!
 	void read_script_file( std::string script_file, core::Size standard_repeats = 5  );
 
@@ -277,6 +309,9 @@ private:   // options
 
 	/// @brief whether user specified script file
 	bool script_file_specified_;
+
+	/// @brief cached data from database/sampling/relax_scripts/index.dat
+	utility::vector1< DatabaseRelaxScript > relax_scripts_in_database_;
 
 private:   // other data
 	protocols::checkpoint::CheckPointer checkpoints_;
