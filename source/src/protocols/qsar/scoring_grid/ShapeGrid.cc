@@ -225,20 +225,26 @@ core::Real ShapeGrid::get_point_score(numeric::kdtree::KDPointList const & neare
 		//This is a bit dangerous
 		utility::pointer::ReferenceCountOP data_pointer(kd_point->data());
 		core::conformation::ResidueOP residue(utility::pointer::dynamic_pointer_cast< core::conformation::Residue > ( data_pointer ));
+		core::chemical::ResidueType const & restype( residue->type() );
 
-		core::Vector ca(residue->xyz("CA"));
-		core::Vector cb;
-		if ( residue->name3() == "GLY" ) {
-			cb = residue->xyz("2HA");
-		} else {
-			cb = residue->xyz("CB");
-		}
-		core::Vector n(residue->xyz("N"));
+		if ( !restype.is_polymer() ) continue;
+
+		core::Size const sc_atom_index( restype.aa() == core::chemical::aa_gly ? restype.atom_index("2HA") : restype.first_sidechain_atom() );
+		core::Vector const cb( residue->xyz( sc_atom_index ) );
+		core::Size const ca_index( restype.icoor(sc_atom_index).stub_atom1().atomno() );
+		core::Vector const ca(residue->xyz( ca_index ) );
+		core::Size const n_index( restype.icoor(ca_index).stub_atom1().atomno() );
+		core::Vector const n(residue->xyz( n_index ));
 		core::Vector ha;
 		if ( residue->name3() == "GLY" ) {
 			ha = residue->xyz("1HA");
 		} else {
-			ha = residue->xyz("HA");
+			if ( restype.has("HA") ) {
+				ha = residue->xyz("HA");
+			} else {
+				core::Vector const crosspdt( ( (n-ca).cross( cb-ca ) ).normalized() );
+				ha = ca + crosspdt*1.09; //Arbitrarily pick a point somewhere in the general direction of where the HA would be.
+			}
 		}
 		core::Real distance = cb.distance(query_coords);
 
