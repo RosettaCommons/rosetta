@@ -967,6 +967,14 @@ residue_types/carbohydrates/aldoses/hexoses/galactoses/to4-alpha-D-Galp.params
 residue_types/carbohydrates/aldoses/hexoses/galactoses/to4-beta-D-Galp.params
 residue_types/carbohydrates/aldoses/hexoses/galactoses/to6-alpha-D-Galp.params
 residue_types/carbohydrates/aldoses/hexoses/galactoses/to6-beta-D-Galp.params
+residue_types/carbohydrates/aldoses/hexoses/galactoses/to2-alpha-L-Galp.params
+residue_types/carbohydrates/aldoses/hexoses/galactoses/to2-beta-L-Galp.params
+residue_types/carbohydrates/aldoses/hexoses/galactoses/to3-alpha-L-Galp.params
+residue_types/carbohydrates/aldoses/hexoses/galactoses/to3-beta-L-Galp.params
+residue_types/carbohydrates/aldoses/hexoses/galactoses/to4-alpha-L-Galp.params
+residue_types/carbohydrates/aldoses/hexoses/galactoses/to4-beta-L-Galp.params
+residue_types/carbohydrates/aldoses/hexoses/galactoses/to6-alpha-L-Galp.params
+residue_types/carbohydrates/aldoses/hexoses/galactoses/to6-beta-L-Galp.params
 residue_types/carbohydrates/aldoses/hexoses/galactoses/to3-alpha-L-Fucp.params
 residue_types/carbohydrates/aldoses/hexoses/galactoses/to3-beta-L-Fucp.params
 residue_types/carbohydrates/aldoses/hexoses/galactoses/to4-alpha-L-Fucp.params
