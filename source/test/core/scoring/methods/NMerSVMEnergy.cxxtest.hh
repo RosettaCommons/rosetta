@@ -70,89 +70,141 @@ public:
 		svm_fname_vec.push_back( "sequence/mhc_svms/HLA-DRB10101_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model" );
 		utility::vector1< std::string > pssm_fname_vec;
 		pssm_fname_vec.push_back( "sequence/mhc_pssms/HLA-DRB10101_nooverlap.9mer.norm.pssm" );
+		utility::vector1< std::string > svm_rank_fname_vec;
+		svm_rank_fname_vec.push_back( "sequence/mhc_rank_svm_scores/HLA-DRB10101.libsvm.test.out.sort.gz" );
+
 		NMerSVMEnergy nmer_svm_energy(
 			core::Size( 9 ),
 			false,
 			core::Size( 3 ),
 			true,
+			false,
 			0.0,
 			svm_fname_vec,
+			svm_rank_fname_vec,
+			pssm_fname_vec
+		);
+
+		// this method scores by rank
+		NMerSVMEnergy nmer_svm_energy_rank(
+			core::Size( 9 ),
+			false,
+			core::Size( 3 ),
+			true,
+			true,
+			0.0,
+			svm_fname_vec,
+			svm_rank_fname_vec,
 			pssm_fname_vec
 		);
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 1 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.1115, 1e-4 );
+			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.111528, 1e-4 );
+			EnergyMap emap_rank;
+			nmer_svm_energy_rank.residue_energy( trpcage.residue( 1 ), trpcage, emap_rank );
+			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.15003, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 2 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.2871, 1e-4 );
+			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.287198, 1e-4 );
+			EnergyMap emap_rank;
+			nmer_svm_energy_rank.residue_energy( trpcage.residue( 2 ), trpcage, emap_rank );
+			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.43363, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 3 ), trpcage, emap );
 			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.260367, 1e-4 );
+			EnergyMap emap_rank;
+			nmer_svm_energy_rank.residue_energy( trpcage.residue( 3 ), trpcage, emap_rank );
+			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.38091, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 4 ), trpcage, emap );
 			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.446798, 1e-4 );
+			EnergyMap emap_rank;
+			nmer_svm_energy_rank.residue_energy( trpcage.residue( 4 ), trpcage, emap_rank );
+			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.74495, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 5 ), trpcage, emap );
 			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.319999, 1e-4 );
+			EnergyMap emap_rank;
+			nmer_svm_energy_rank.residue_energy( trpcage.residue( 5 ), trpcage, emap_rank );
+			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.50097, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 6 ), trpcage, emap );
 			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.470622, 1e-4 );
+			EnergyMap emap_rank;
+			nmer_svm_energy_rank.residue_energy( trpcage.residue( 6 ), trpcage, emap_rank );
+			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.78319, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 7 ), trpcage, emap );
 			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.325501, 1e-4 );
+			EnergyMap emap_rank;
+			nmer_svm_energy_rank.residue_energy( trpcage.residue( 7 ), trpcage, emap_rank );
+			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.5122, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 8 ), trpcage, emap );
 			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.0427313, 1e-4 );
+			EnergyMap emap_rank;
+			nmer_svm_energy_rank.residue_energy( trpcage.residue( 8 ), trpcage, emap_rank );
+			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.0871, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 9 ), trpcage, emap );
 			TS_ASSERT_DELTA( emap[ nmer_svm ], -0.0288486, 1e-4 );
+			EnergyMap emap_rank;
+			nmer_svm_energy_rank.residue_energy( trpcage.residue( 9 ), trpcage, emap_rank );
+			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.04636, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 10 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], -0.0679, 1e-4 );
+			TS_ASSERT_DELTA( emap[ nmer_svm ], -0.0679406, 1e-4 );
+			EnergyMap emap_rank;
+			nmer_svm_energy_rank.residue_energy( trpcage.residue( 10 ), trpcage, emap_rank );
+			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.0319, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 11 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], -0.2730, 1e-4 );
+			TS_ASSERT_DELTA( emap[ nmer_svm ], -0.273094, 1e-4 );
+			EnergyMap emap_rank;
+			nmer_svm_energy_rank.residue_energy( trpcage.residue( 11 ), trpcage, emap_rank );
+			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.0035, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 12 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.1517, 1e-4 );
+			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.151785, 1e-4 );
+			EnergyMap emap_rank;
+			nmer_svm_energy_rank.residue_energy( trpcage.residue( 12 ), trpcage, emap_rank );
+			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.20042, 1e-4 );
 		}
-
 	}
-
-
 };
+

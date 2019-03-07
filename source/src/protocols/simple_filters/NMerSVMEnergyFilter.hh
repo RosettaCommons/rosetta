@@ -9,7 +9,7 @@
 
 /// @file protocols/simple_filters/NMerSVMEnergyFilter.hh
 /// @brief definition of filter class NMerSVMEnergyFilter.
-/// @author Chris King (chrisk1@uw.edu)
+/// @author Indigo King (indigo.c.king@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_filters_NMerSVMEnergyFilter_hh
 #define INCLUDED_protocols_simple_filters_NMerSVMEnergyFilter_hh
@@ -24,6 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/NMerSVMEnergy.hh>
 
 namespace protocols {
@@ -69,8 +70,10 @@ private:
 	core::Real score_type_threshold_;
 	bool dump_table_;
 	std::string string_resnums_;
-	core::scoring::methods::NMerSVMEnergy energy_method_;
+	core::scoring::methods::EnergyMethodOptions opts_;
+	core::scoring::methods::NMerSVMEnergy energy_method_ = core::scoring::methods::NMerSVMEnergy( opts_ );
 	bool count_eps_;
+	bool rank_as_score_;
 	core::Real ep_cutoff_;
 };
 

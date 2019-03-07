@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/NMerPSSMEnergy.hh
 /// @brief  PSSMerence energy method implementation
-/// @author Chris King (dr.chris.king@gmail.com)
+/// @author Indigo King (indigo.c.king@gmail.com)
 
 // Unit headers
 #include <core/scoring/methods/NMerPSSMEnergy.hh>

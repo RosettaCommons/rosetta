@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/NMerRefEnergy.hh
 /// @brief  Reference energy method implementation
-/// @author Chris King (dr.chris.king@gmail.com)
+/// @author Indigo King (indigo.c.king@gmail.com)
 
 // Unit headers
 #include <core/scoring/methods/NMerRefEnergy.hh>
@@ -153,7 +153,7 @@ void NMerRefEnergy::read_nmer_table_list( std::string const & ref_list_fname ) {
 	}
 }
 
-//load tables from a vector of filenames
+/// @brief load tables from a vector of filenames
 void
 NMerRefEnergy::read_nmer_fname_vector( utility::vector1< std::string > const & fname_vec ) {
 	//now loop over all names in vector
@@ -163,7 +163,7 @@ NMerRefEnergy::read_nmer_fname_vector( utility::vector1< std::string > const & f
 	}
 }
 
-// this now appends a new table (map) to the vector of tables (maps) every time new file is read
+/// @brief this now appends a new table (map) to the vector of tables (maps) every time new file is read
 void NMerRefEnergy::read_nmer_table( std::string const & ref_fname ) {
 
 	TR << "checking for NMerRefEnergy scores" << std::endl;
@@ -222,7 +222,7 @@ NMerRefEnergy::clone() const
 void
 NMerRefEnergy::get_residue_energy_by_table(
 	pose::Pose const & pose,
-	Size const & seqpos,
+	Size const seqpos,
 	Real & rsd_energy_sum,
 	utility::vector1< Real > & rsd_table_energies
 ) const
@@ -237,20 +237,21 @@ NMerRefEnergy::get_residue_energy_by_table(
 	//TODO: how deal w/ sequences shorter than nmer_length_?
 	// this matters at both termini… maybe take max of all overlapping frames w/ missing res as 'X'?
 	// go ahead and bail if we fall off the end of the chain
-	if ( p1_seqpos + nmer_length_ - 1 <= pose.conformation().chain_end( pose.chain( p1_seqpos ) ) ) {
+	// end of 9mer <= end of chain?
+	if ( ( p1_seqpos + nmer_length_ - 1 ) <= ( pose.conformation().chain_end( pose.chain( p1_seqpos ) ) ) ) {
 		//need p1 position in this chain's sequence, offset with index of first res
-		std::string chain_sequence( pose.chain_sequence( pose.chain( p1_seqpos ) ) );
+		std::string const chain_sequence( pose.chain_sequence( pose.chain( p1_seqpos ) ) );
 
 		rsd_energy_sum = 0.;
 		for ( Size i = 1; i <= n_tables(); ++i ) {
 
-			std::map < std::string, core::Real > nmer_ref_energy( nmer_ref_energies_[ i ] );
+			std::map < std::string, core::Real > const nmer_ref_energy( nmer_ref_energies_[ i ] );
 			if ( nmer_ref_energy.empty() ) return;
-			//skip if not a NMer center
-			if ( seqpos < 1 || seqpos > pose.size() - nmer_cterm_ ) return;
+			//skip if not a NMer center, make sure seqpos is in the pose and also inside a whole Nmer
+			if ( ( seqpos < 1 ) || ( seqpos > ( pose.size() - nmer_cterm_ ) ) ) return;
 			//get the NMer centered on seqpos
 			std::string sequence;
-			for ( Size iseq = seqpos; iseq <= seqpos + nmer_cterm_; ++iseq ) {
+			for ( Size iseq = seqpos; iseq <= ( seqpos + nmer_cterm_ ); ++iseq ) {
 				sequence += pose.residue( iseq ).name1();
 			}
 			//bail if seq not in table

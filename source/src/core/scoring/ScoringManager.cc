@@ -120,6 +120,8 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/thread/threadsafe_creation.hh>
+#include <utility/libsvm/Svm_rosetta.hh>
+#include <utility/pointer/memory.hh>
 
 #include <utility/pointer/memory.hh>
 
@@ -185,6 +187,13 @@ ScoringManager::ScoringManager() :
 	nv_lookup_mutex_(),
 	orbitals_lookup_mutex_(),
 	ddp_lookup_mutex_(),
+
+	nmer_svm_list_mutex_(),
+	nmer_svm_mutex_(),
+	nmer_svm_rank_list_mutex_(),
+	nmer_svm_rank_mutex_(),
+	nmer_svm_aa_encoding_matrix_mutex_(),
+
 	p_aa_mutex_(),
 	p_aa_ss_mutex_(),
 	unfoldedstate_mutex_(),
@@ -252,6 +261,10 @@ ScoringManager::ScoringManager() :
 	nv_lookup_bool_(false),
 	orbitals_lookup_bool_(false),
 	ddp_lookup_bool_(false),
+	//nmer_svm_list_bool_(false),
+	//nmer_svm_bool_(false),
+	//nmer_svm_rank_list_bool_(false),
+	//nmer_svm_rank_bool_(false),
 	p_aa_bool_(false),
 	p_aa_ss_bool_(false),
 	unfoldedstate_bool_(false),
@@ -921,6 +934,61 @@ ScoringManager::get_DDPLookupTable() const
 	return *DDP_lookup_table_;
 }
 
+/// @brief Get a string listing SVM files.
+/// @details Used by the NMerSVMEnergy.  Loaded lazily in a threadsafe manner.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string const &
+ScoringManager::get_nmer_svm_list_file_contents(
+	std::string const & filename
+) const {
+	boost::function< utility::pointer::shared_ptr< std::string > () > creator( boost::bind( &ScoringManager::create_file_contents_instance, filename ) );
+	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( nmer_svm_list_mutex_ ), filename, nmer_svm_list_file_contents_map_ ) );
+}
+
+/// @brief Get a const reference to an SVM object.
+/// @details Used by the NMerSVMEnergy.  Loaded lazily in a threadsafe manner.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+utility::libsvm::Svm_rosettaCOP
+ScoringManager::get_nmer_svm(
+	std::string const & filename
+) const {
+	boost::function< utility::libsvm::Svm_rosettaOP () > creator( boost::bind( &ScoringManager::create_svm_rosetta, filename ) );
+	return utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( nmer_svm_mutex_ ), filename, nmer_svm_map_ );
+}
+
+/// @brief Get a string listing SVM rank files.
+/// @details Used by the NMerSVMEnergy.  Loaded lazily in a threadsafe manner.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string const &
+ScoringManager::get_nmer_svm_rank_list_file_contents(
+	std::string const & filename
+) const {
+	boost::function< utility::pointer::shared_ptr< std::string > () > creator( boost::bind( &ScoringManager::create_file_contents_instance, filename ) );
+	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( nmer_svm_rank_list_mutex_ ), filename, nmer_svm_rank_list_file_contents_map_ ) );
+}
+
+/// @brief Get a const reference to a vector of floats corresponding to ranked SVM information.
+/// @details Used by the NMerSVMEnergy.  Loaded lazily in a threadsafe manner.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+utility::vector1< core::Real > const &
+ScoringManager::get_nmer_svm_rank(
+	std::string const & filename
+) const {
+	boost::function< utility::pointer::shared_ptr< utility::vector1< core::Real > > () > creator( boost::bind( &ScoringManager::create_nmer_svm_rank, filename ) );
+	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( nmer_svm_rank_mutex_ ), filename, nmer_svm_rank_map_ ) );
+}
+
+/// @brief Get the map of AA oneletter code->vector of floats used by the NMerSVMEnergy.
+/// @details Loaded lazily in a threadsafe manner.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::map< char, utility::vector1< core::Real > > const &
+ScoringManager::get_nmer_svm_aa_matrix(
+	std::string const & filename
+) const {
+	boost::function< utility::pointer::shared_ptr< std::map< char, utility::vector1< core::Real > > > () > creator( boost::bind( &ScoringManager::create_nmer_svm_aa_matrix, filename ) );
+	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( nmer_svm_aa_encoding_matrix_mutex_ ), filename, nmer_svm_aa_matrix_map_ ) );
+}
+
 /// @brief Get an instance of the UnfoldedStatePotential scoring object.
 /// @details Threadsafe and lazily loaded.
 /// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
@@ -1546,6 +1614,134 @@ ScoringManager::create_ramapp_instance() {
 P_AA_ABEGO3_OP
 ScoringManager::create_p_aa_abego3_instance() {
 	return utility::pointer::make_shared< P_AA_ABEGO3 >();
+}
+
+/// @brief Create an instance of the contents of a file.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+utility::pointer::shared_ptr< std::string >
+ScoringManager::create_file_contents_instance(
+	std::string const & filename
+) {
+
+	TR << "Reading \"" << filename << "\"." << std::endl;
+
+	std::string fname( filename );
+	if ( !utility::file::file_exists( filename ) ) {
+		fname = basic::database::full_name( filename, false );
+	}
+	utility::io::izstream in_stream( fname );
+	if ( !in_stream.good() ) {
+		utility_exit_with_message( "Error opening \"" + filename + "\"." );
+	}
+	utility::pointer::shared_ptr< std::string > stringout( utility::pointer::make_shared< std::string >( utility::file_contents( fname ) ) );
+	in_stream.close();
+	return stringout;
+}
+
+/// @brief Create an instance of an SVM, reading data from disk.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+utility::libsvm::Svm_rosettaOP
+ScoringManager::create_svm_rosetta(
+	std::string const & filename
+) {
+	std::string const fname( utility::file::file_exists( filename ) ? filename : basic::database::full_name( filename, false ) );
+	TR << "Creating SVM object from \"" << filename << "\"." << std::endl;
+	return utility::pointer::make_shared< utility::libsvm::Svm_rosetta >( fname );
+}
+
+/// @brief Create an instance of an SVM rank cector, by reading data from disk.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+utility::pointer::shared_ptr< utility::vector1< core::Real > >
+ScoringManager::create_nmer_svm_rank(
+	std::string const & filename
+) {
+	std::string fname( filename );
+	if ( !utility::file::file_exists( filename ) ) {
+		fname = basic::database::full_name( filename, false );
+	}
+
+	utility::pointer::shared_ptr< utility::vector1< core::Real > > nmer_svm_rank( utility::pointer::make_shared< utility::vector1 < core::Real > > () );
+
+	utility::io::izstream in_stream;
+	if ( utility::file::file_exists( fname ) ) {
+		in_stream.open( fname );
+	} else {
+		in_stream.open( basic::database::full_name( fname, false ) );
+	}
+	TR << "reading NMerSVMEnergy ranks scores from \"" << filename << "\"." << std::endl;
+
+	if ( !in_stream.good() ) {
+		utility_exit_with_message( "[ERROR] Error opening NMerSVMEnergy ranks file \"" + filename + "\"." );
+	}
+	std::string line;
+	core::Real prev_score( -9999999. );
+	bool read_first_score( false );
+	while ( getline( in_stream, line) ) {
+		utility::vector1< std::string > const tokens ( utility::split( line ) );
+		//skip comments
+		if ( tokens[ 1 ][ 0 ] == '#' ) continue;
+		if ( tokens.size() != 1 ) {
+			utility_exit_with_message( "[ERROR] NMerSVM rank scores database file \""
+				+ filename + "\" does not have 1 entry at line " + line + "." );
+		}
+		core::Real const score( atof( tokens[ 1 ].c_str() ) );
+		nmer_svm_rank->push_back( score );
+		// check that scores are sorted ascending
+		if ( read_first_score && score < prev_score ) {
+			utility_exit_with_message( "[ERROR] Scores not sorted ascending in NMerSVMEnergy ranks file \"" + filename + "\" at line " + line + "." );
+		}
+		prev_score = score;
+		read_first_score = true;
+	}
+	in_stream.close();
+	return nmer_svm_rank;
+}
+
+/// Create an instance of an aa floats list used by the NMerSVMEnergy.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+utility::pointer::shared_ptr< std::map< char, utility::vector1< core::Real > > >
+ScoringManager::create_nmer_svm_aa_matrix(
+	std::string const & filename
+) {
+	std::string fname( filename );
+	if ( !utility::file::file_exists( filename ) ) {
+		fname = basic::database::full_name( filename, false );
+	}
+
+	TR << "reading NMerSVM encoding matrix " << fname << std::endl;
+	utility::io::izstream in_stream( fname );
+	if ( !in_stream.good() ) {
+		utility_exit_with_message( "[ERROR] Error opening NMerSVM encoding matrix file \"" + filename + "\"." );
+	}
+	std::string line;
+	utility::pointer::shared_ptr < std::map< char, utility::vector1< core::Real > > > aa_encoder(
+		utility::pointer::make_shared< std::map< char, utility::vector1< core::Real > > >()
+	);
+	while ( getline( in_stream, line) ) {
+		utility::vector1< std::string > const tokens( utility::string_split_multi_delim( line, " \t" ) );
+		//skip comments
+		if ( tokens[ 1 ][ 0 ] == '#' ) continue;
+		char const aa( tokens[ 1 ][ 0 ] );
+		if ( aa_encoder->count( aa ) ) {
+			utility_exit_with_message( "[ERROR] NMer SVM encoding matrix file "
+				+ fname + " has double entry for aa " + aa );
+		}
+		utility::vector1< Real > aa_vals;
+		for ( Size ival = 2; ival <= tokens.size(); ++ival ) {
+			Real const val( atof( tokens[ ival ].c_str() ) );
+			aa_vals.push_back( val );
+		}
+		(*aa_encoder)[ aa ] = aa_vals;
+	}
+	return aa_encoder;
 }
 
 /// @brief Create an instance of the P_AA object, by owning pointer.

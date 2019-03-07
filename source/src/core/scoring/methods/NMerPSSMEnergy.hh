@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/NMerPSSMEnergy.hh
 /// @brief  PSSM energy method declaration
-/// @author Chris King (dr.chris.king@gmail.com)
+/// @author Indigo King (indigo.c.king@gmail.com)
 
 
 #ifndef INCLUDED_core_scoring_methods_NMerPSSMEnergy_hh

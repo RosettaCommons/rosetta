@@ -9,7 +9,7 @@
 
 /// @file   protocols/simple_filters/NMerSVMEnergyFilter.fwd.hh
 /// @brief
-/// @author Chris King (chrisk1@uw.edu)
+/// @author Indigo King (indigo.c.king@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_filters_NMerSVMEnergyFilter_fwd_hh
 #define INCLUDED_protocols_simple_filters_NMerSVMEnergyFilter_fwd_hh

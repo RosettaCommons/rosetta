@@ -138,7 +138,8 @@
 
 // Utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
+#include <utility/libsvm/Svm_rosetta.fwd.hh>
 
 namespace core {
 namespace scoring {
@@ -460,6 +461,31 @@ public:
 	/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
 	interface_::DDPlookup const & get_DDPLookupTable() const;
 
+	/// @brief Get a string listing SVM files.
+	/// @details Used by the NMerSVMEnergy.  Loaded lazily in a threadsafe manner.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string const & get_nmer_svm_list_file_contents( std::string const & filename ) const;
+
+	/// @brief Get a const reference to an SVM object.
+	/// @details Used by the NMerSVMEnergy.  Loaded lazily in a threadsafe manner.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	utility::libsvm::Svm_rosettaCOP get_nmer_svm( std::string const & filename ) const;
+
+	/// @brief Get a string listing SVM rank files.
+	/// @details Used by the NMerSVMEnergy.  Loaded lazily in a threadsafe manner.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string const & get_nmer_svm_rank_list_file_contents( std::string const & filename ) const;
+
+	/// @brief Get a const reference to a vector of floats corresponding to ranked SVM information.
+	/// @details Used by the NMerSVMEnergy.  Loaded lazily in a threadsafe manner.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	utility::vector1< core::Real > const & get_nmer_svm_rank( std::string const & filename ) const;
+
+	/// @brief Get the map of AA oneletter code->vector of floats used by the NMerSVMEnergy.
+	/// @details Loaded lazily in a threadsafe manner.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::map< char, utility::vector1< core::Real > > const & get_nmer_svm_aa_matrix( std::string const & filename ) const;
+
 	/// @brief Get an instance of the P_AA scoring object.
 	/// @details Threadsafe and lazily loaded.
 	/// @note Targeted object is also threadsafe, to the best of my ability to tell.
@@ -751,6 +777,30 @@ private:
 	/// @note Not intended for use outside of ScoringManager.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	static P_AA_ABEGO3_OP create_p_aa_abego3_instance();
+
+	/// @brief Create an instance of the contents of a file.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	static utility::pointer::shared_ptr< std::string > create_file_contents_instance( std::string const & filename );
+
+	/// @brief Create an instance of an SVM, reading data from disk.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	static utility::libsvm::Svm_rosettaOP create_svm_rosetta( std::string const & filename );
+
+	/// @brief Create an instance of an SVM rank cector, by reading data from disk.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	static utility::pointer::shared_ptr< utility::vector1< core::Real > > create_nmer_svm_rank( std::string const & filename );
+
+	/// Create an instance of an aa floats list used by the NMerSVMEnergy.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	static utility::pointer::shared_ptr< std::map< char, utility::vector1< core::Real > > > create_nmer_svm_aa_matrix( std::string const & filename );
 
 	/// @brief Create an instance of the P_AA object, by owning pointer.
 	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
@@ -1131,6 +1181,13 @@ private:
 	mutable std::mutex nv_lookup_mutex_;
 	mutable std::mutex orbitals_lookup_mutex_;
 	mutable std::mutex ddp_lookup_mutex_;
+
+	mutable utility::thread::ReadWriteMutex nmer_svm_list_mutex_;
+	mutable utility::thread::ReadWriteMutex nmer_svm_mutex_;
+	mutable utility::thread::ReadWriteMutex nmer_svm_rank_list_mutex_;
+	mutable utility::thread::ReadWriteMutex nmer_svm_rank_mutex_;
+	mutable utility::thread::ReadWriteMutex nmer_svm_aa_encoding_matrix_mutex_;
+
 	mutable std::mutex p_aa_mutex_;
 	mutable std::mutex p_aa_ss_mutex_;
 	mutable std::mutex unfoldedstate_mutex_;
@@ -1202,6 +1259,12 @@ private:
 	mutable std::atomic_bool nv_lookup_bool_;
 	mutable std::atomic_bool orbitals_lookup_bool_;
 	mutable std::atomic_bool ddp_lookup_bool_;
+
+	//mutable std::atomic_bool nmer_svm_list_bool_;
+	//mutable std::atomic_bool nmer_svm_bool_;
+	//mutable std::atomic_bool nmer_svm_rank_list_bool_;
+	//mutable std::atomic_bool nmer_svm_rank_bool_;
+
 	mutable std::atomic_bool p_aa_bool_;
 	mutable std::atomic_bool p_aa_ss_bool_;
 	mutable std::atomic_bool unfoldedstate_bool_;
@@ -1259,6 +1322,13 @@ private:
 	mutable std::map< std::pair< bool, std::string >, rna::RNA_SuitePotentialOP > rna_suite_potential_;
 	mutable rna::TNA_SuitePotentialOP tna_suite_potential_;
 	mutable std::map< std::string, loop_graph::evaluator::SixDTransRotPotentialOP > loop_close_six_d_potential_;
+
+	mutable std::map< std::string, utility::pointer::shared_ptr< std::string > > nmer_svm_list_file_contents_map_;
+	mutable std::map< std::string, utility::libsvm::Svm_rosettaOP > nmer_svm_map_;
+	mutable std::map< std::string, utility::pointer::shared_ptr< std::string > > nmer_svm_rank_list_file_contents_map_;
+	mutable std::map< std::string, utility::pointer::shared_ptr< utility::vector1< core::Real > > > nmer_svm_rank_map_;
+	mutable std::map< std::string, utility::pointer::shared_ptr< std::map< char, utility::vector1< core::Real > > > > nmer_svm_aa_matrix_map_;
+
 	mutable P_AAOP p_aa_;
 	mutable P_AA_ssOP p_aa_ss_;
 	mutable WaterAdductHBondPotentialOP water_adduct_hbond_potential_;

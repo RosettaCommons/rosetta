@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/NMerRefEnergy.hh
 /// @brief  Reference energy method declaration
-/// @author Chris King
+/// @author Indigo King (indigo.c.king@gmail.com)
 
 
 #ifndef INCLUDED_core_scoring_methods_NMerRefEnergy_hh
@@ -49,7 +49,7 @@ public:
 
 	NMerRefEnergy();
 
-
+	// a vector of maps, each subsequence->score lookup table pushed onto the vector (see header)
 	NMerRefEnergy( utility::vector1< std::map< std::string, core::Real > > const & nmer_ref_energies_in );
 
 
@@ -73,7 +73,7 @@ public:
 	void
 	get_residue_energy_by_table(
 		core::pose::Pose const &,
-		core::Size const &,
+		core::Size const,
 		core::Real &,
 		utility::vector1< core::Real > &
 	) const;

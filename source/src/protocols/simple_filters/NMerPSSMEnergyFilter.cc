@@ -9,7 +9,7 @@
 
 /// @file protocols/simple_filters/NMerPSSMEnergyFilter.cc
 /// @brief
-/// @author Chris King (chrisk1@uw.edu)
+/// @author Indigo King (indigo.c.king@gmail.com)
 
 
 //Unit Headers

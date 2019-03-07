@@ -519,6 +519,142 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	core::Real voids_penalty_energy_voxel_size() const;
 
+	///////////////////////// NMerSVMEnergy Options ////////////////////////////////////////////////////////////
+
+	/// @brief Get reference sequence length.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	core::Size nmer_ref_seq_length() const;
+
+	/// @brief Get SVM term length.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	core::Size nmer_svm_term_length() const;
+
+	/// @brief Get nmer_svm_pssm_feat_.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	bool nmer_svm_pssm_feat() const;
+
+	/// @brief Get whether the SVM scorecut is defined.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	bool nmer_svm_scorecut_defined() const;
+
+	/// @brief Get the SVM scorecut.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	core::Real const & nmer_svm_scorecut() const;
+
+	/// @brief Get whether the SVM average rank should be treated as an energy.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	bool nmer_svm_avg_rank_as_energy() const;
+
+	/// @brief Get whether we have a user-specified AA matrix.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	bool nmer_svm_aa_matrix_defined() const;
+
+	/// @brief Get the user-specified AA matrix filename.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string const & nmer_svm_aa_matrix() const;
+
+	/// @brief Get whether SVM list is provided by user.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	bool nmer_svm_list_defined() const;
+
+	/// @brief Get SVM filename list file.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string const & nmer_svm_list() const;
+
+	/// @brief Get whether SVM is provided by the user.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	bool nmer_svm_defined() const;
+
+	/// @brief Get SVM file provided by the user.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string const & nmer_svm() const;
+
+	/// @brief Get whether SVM rank list is provided by the user.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	bool nmer_svm_rank_list_defined() const;
+
+	/// @brief Get SVM rank list provided by the user.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string const & nmer_svm_rank_list() const;
+
+	/// @brief Get whether an SVM rank file is provided by the user.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	bool nmer_svm_rank_defined() const;
+
+	/// @brief Get SVM rank file that was provided by the user.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string const & nmer_svm_rank() const;
+
+	////// Setters ///////
+
+	/// @brief Set reference sequence length.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void nmer_ref_seq_length( core::Size const setting );
+
+	/// @brief Set SVM term length.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void nmer_svm_term_length( core::Size const setting );
+
+	/// @brief Set nmer_svm_pssm_feat_.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void nmer_svm_pssm_feat( bool const setting );
+
+	/// @brief Set the SVM scorecut.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void nmer_svm_scorecut( core::Real const & setting );
+
+	/// @brief Set whether the SVM average rank should be treated as an energy.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void nmer_svm_avg_rank_as_energy( bool const setting );
+
+	/// @brief Set the user-specified AA matrix filename.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void nmer_svm_aa_matrix( std::string const & filename );
+
+	/// @brief Set SVM filename list file.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void nmer_svm_list( std::string const & filename );
+
+	/// @brief Set SVM file.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void nmer_svm( std::string const & filename );
+
+	/// @brief Set SVM rank list.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void nmer_svm_rank_list( std::string const & filename );
+
+	/// @brief Set SVM rank file.
+	/// @details Used by NMerSVMEnergy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void nmer_svm_rank( std::string const &filename );
+
+	///////////////////////// End NMerSVMEnergy Options ////////////////////////////////////////////////////////
+
 	/// @brief Get whether we're prohibiting evaluation of the voids_penalty score term outside
 	/// of the context of the packer.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
@@ -879,6 +1015,24 @@ private:
 	bool symmetric_gly_tables_;
 	bool loop_close_use_6D_potential_;
 	bool fa_stack_base_all_;
+
+	//Options for the NMerSVMEnergy:
+	core::Size nmer_ref_seq_length_ = 9;
+	core::Size nmer_svm_term_length_ = 3;
+	bool nmer_svm_pssm_feat_ = true;
+	bool nmer_svm_scorecut_defined_ = false;
+	core::Real nmer_svm_scorecut_ = 0.0;
+	bool nmer_svm_avg_rank_as_energy_ = false;
+	bool nmer_svm_aa_matrix_defined_ = false;
+	std::string nmer_svm_aa_matrix_;
+	bool nmer_svm_list_defined_ = false;
+	std::string nmer_svm_list_;
+	bool nmer_svm_defined_ = false;
+	std::string nmer_svm_;
+	bool nmer_svm_rank_list_defined_ = false;
+	std::string nmer_svm_rank_list_;
+	bool nmer_svm_rank_defined_ = false;
+	std::string nmer_svm_rank_;
 
 	//Options for the BuriedUnsatPenalty energy:
 	core::Real buried_unsatisfied_penalty_cone_angle_exponent_;

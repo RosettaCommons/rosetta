@@ -9,7 +9,7 @@
 
 /// @file   protocols/simple_filters/NMerPSSMEnergyFilterCreator.hh
 /// @brief  FilterCreators for the NMerPSSMEnergyFilter
-/// @author Chris King (chrisk1@uw.edu)
+/// @author Indigo King (indigo.c.king@gmail.com)
 
 
 #ifndef INCLUDED_protocols_simple_filters_NMerPSSMEnergyFilterCreator_hh

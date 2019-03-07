@@ -76,7 +76,6 @@ void ScoreFunctionLoader::load_data(
 	}//end user-defined scorefxns
 }
 
-
 /// @brief Load a single ScoreFunction from a tag.
 core::scoring::ScoreFunctionOP
 ScoreFunctionLoader::create_scorefxn_from_tag(
@@ -204,6 +203,40 @@ ScoreFunctionLoader::create_scorefxn_from_tag(
 			if ( mod_tag->hasOption( "buried_unsatisfied_penalty_hbond_energy_threshold" ) ) {
 				emoptions.buried_unsatisfied_penalty_hbond_energy_threshold( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_hbond_energy_threshold") );
 			}
+
+			////// NMerSVMEnergy options //////
+			if ( mod_tag->hasOption("nmer_ref_seq_length") ) {
+				emoptions.nmer_ref_seq_length( mod_tag->getOption< core::Size >( "nmer_ref_seq_length" ) );
+			}
+			if ( mod_tag->hasOption("nmer_svm_term_length") ) {
+				emoptions.nmer_svm_term_length( mod_tag->getOption< core::Size >( "nmer_svm_term_length" ) );
+			}
+			if ( mod_tag->hasOption("nmer_svm_pssm_feat") ) {
+				emoptions.nmer_svm_pssm_feat( mod_tag->getOption< bool >( "nmer_svm_pssm_feat" ) );
+			}
+			if ( mod_tag->hasOption("nmer_svm_scorecut") ) {
+				emoptions.nmer_svm_scorecut( mod_tag->getOption< core::Real >( "nmer_svm_scorecut" ) );
+			}
+			if ( mod_tag->hasOption("nmer_svm_avg_rank_as_energy") ) {
+				emoptions.nmer_svm_avg_rank_as_energy( mod_tag->getOption< bool >( "nmer_svm_avg_rank_as_energy" ) );
+			}
+			if ( mod_tag->hasOption("nmer_svm_aa_matrix") ) {
+				emoptions.nmer_svm_aa_matrix( mod_tag->getOption< std::string >( "nmer_svm_aa_matrix" ) );
+			}
+			if ( mod_tag->hasOption("nmer_svm_list") ) {
+				emoptions.nmer_svm_list( mod_tag->getOption< std::string >( "nmer_svm_list" ) );
+			}
+			if ( mod_tag->hasOption("nmer_svm") ) {
+				emoptions.nmer_svm( mod_tag->getOption< std::string >( "nmer_svm" ) );
+			}
+			if ( mod_tag->hasOption("nmer_svm_rank_list") ) {
+				emoptions.nmer_svm_rank_list( mod_tag->getOption< std::string >( "nmer_svm_rank_list" ) );
+			}
+			if ( mod_tag->hasOption("nmer_svm_rank") ) {
+				emoptions.nmer_svm_rank( mod_tag->getOption< std::string >( "nmer_svm_rank" ) );
+			}
+
+			////// End NMerSVMEnergy options //////
 
 			//Options for voids_penalty energy:
 			if ( mod_tag->hasOption("voids_penalty_energy_containing_cones_cutoff") ) {
@@ -388,6 +421,16 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "scale_sc_dens", xsct_real , "XRW TO DO" )
 		+ XMLSchemaAttribute( "scale_sc_dens_byres", xs_string , "XRW TO DO" )
 
+		+ XMLSchemaAttribute( "nmer_ref_seq_length", xsct_non_negative_integer, "Length of N-mers in nmer_ref score." )
+		+ XMLSchemaAttribute( "nmer_svm_term_length", xsct_non_negative_integer, "How many up/downstream residues to average and include in SVM sequence encodingin nmer_ref score." )
+		+ XMLSchemaAttribute( "nmer_svm_pssm_feat", xsct_rosetta_bool, "Add pssm features to svm encoding in nmer_ref score?" )
+		+ XMLSchemaAttribute( "nmer_svm_scorecut", xsct_real, "N-mer SVM scorecut gate for ignoring low-scoring N-mers in nmer_ref score." )
+		+ XMLSchemaAttribute( "nmer_svm_avg_rank_as_energy", xsct_rosetta_bool, "Use average of SVM score ranks as residue energy for NmerSVM scoring method (nmer_ref score term).  This option is good for normalizing across mhc/hla alleles." )
+		+ XMLSchemaAttribute( "nmer_svm_aa_matrix", xs_string, "N-mer SVM sequence-encoding matrix filename for nmer_ref score." )
+		+ XMLSchemaAttribute( "nmer_svm_list", xs_string, "File with list of N-mer SVM filenames (libsvm) for nmer_ref score." )
+		+ XMLSchemaAttribute( "nmer_svm", xs_string, "N-mer SVM filename (libsvm) for nmer_ref score." )
+		+ XMLSchemaAttribute( "nmer_svm_rank_list", xs_string, "File with list of N-mer svm rank scores filenames (libsvm) for nmer_ref score." )
+		+ XMLSchemaAttribute( "nmer_svm_rank", xs_string, "N-mer SVM rank scores filename (libsvm) for nmer_ref score." )
 		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_hbond_energy_threshold", xsct_real, "Energy threshold for a h-bond to be considered satisfying a buried polar. Should be a negative number. (Setting to -0.001 will be much faster than 0 at runtime)" )
 		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_burial_atomic_depth", xsct_real, "The atomic depth cutoff to determine whether or not a polar atom is buried. Measured from the Sasa surface." )
 		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_burial_probe_radius", xsct_real, "The probe radius for the atomic depth calculation." )

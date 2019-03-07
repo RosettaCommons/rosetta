@@ -53,11 +53,11 @@ private:
 
 class Svm_rosetta: public utility::pointer::ReferenceCount {
 public:
-	Svm_rosetta(std::string model_filename);
+	Svm_rosetta(std::string const & model_filename);
 	~Svm_rosetta() override;
-	platform::Size get_nr_class();
-	utility::vector1< platform::Real > predict_probability(utility::vector1< Svm_node_rosettaOP > & features);
-	platform::Real predict( const utility::vector1< Svm_node_rosettaOP > & features);
+	platform::Size get_nr_class() const;
+	utility::vector1< platform::Real > predict_probability(utility::vector1< Svm_node_rosettaOP > const  & features) const;
+	platform::Real predict( utility::vector1< Svm_node_rosettaOP > const & features) const;
 private:
 	svm_model *svm_model_;
 };

@@ -9,7 +9,9 @@
 
 /// @file   core/scoring/methods/NMerSVMEnergy.hh
 /// @brief  SVM energy method declaration
-/// @author Chris King (dr.chris.king@gmail.com)
+/// @author Indigo King (indigo.c.king@gmail.com)
+/// @author Vikram K. Mulligan (vmulligan@flatironinstititue.org) -- Implemented lazy, one-time, threadsafe loading of all data read from files, and
+/// replaced reads of global options system with reads from local EnergyMethodsOptions class.
 
 
 #ifndef INCLUDED_core_scoring_methods_NMerSVMEnergy_hh
@@ -17,6 +19,7 @@
 
 // Unit headers
 #include <core/scoring/methods/NMerSVMEnergy.fwd.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
@@ -49,10 +52,13 @@ public:
 public:
 
 
-	NMerSVMEnergy();
+	/// @brief Default constructor is explicitly deleted.  Only EnergyMethodOptions constructor is allowed.
+	NMerSVMEnergy() = delete;
 
+	/// @brief EnergyMethodOptions constructor.
+	NMerSVMEnergy( EnergyMethodOptions const & options );
 
-	NMerSVMEnergy( utility::vector1< std::string > const & svm_fnames );
+	NMerSVMEnergy( EnergyMethodOptions const & options, utility::vector1< std::string > const & svm_fnames, utility::vector1< std::string > const & svm_rank_fnames );
 
 
 	NMerSVMEnergy(
@@ -60,8 +66,10 @@ public:
 		bool const gate_svm_scores,
 		core::Size const term_length,
 		bool const use_pssm_features,
+		bool const avg_rank_as_energy,
 		core::Real const nmer_svm_scorecut,
 		utility::vector1< std::string > const & svm_fname_vec,
+		utility::vector1< std::string > const & svm_rank_fname_vec,
 		utility::vector1< std::string > const & pssm_fname_vec
 	);
 
@@ -71,8 +79,10 @@ public:
 		bool const gate_svm_scores,
 		core::Size const term_length,
 		bool const use_pssm_features,
+		bool const avg_rank_as_energy,
 		core::Real const nmer_svm_scorecut,
 		utility::vector1< std::string > const & svm_fname_vec,
+		utility::vector1< std::string > const & svm_rank_fname_vec,
 		utility::vector1< std::string > const & pssm_fname_vec,
 		std::string const & aa_matrix
 	);
@@ -115,17 +125,21 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 
-	core::Real
+	void
 	get_residue_energy_by_svm(
 		core::pose::Pose const &,
 		core::Size const &,
 		core::Real &,
+		core::Real &,
+		utility::vector1< core::Real > &,
 		utility::vector1< core::Real > &
 	) const;
-
-	void read_nmer_svm_list( std::string );
+	void read_nmer_svm_list( std::string const & );
+	void read_nmer_svm( std::string const & );
+	void read_nmer_svm_rank_list( std::string const & );
+	void read_nmer_svm_rank( std::string const & );
 	void read_nmer_svm_fname_vector( utility::vector1< std::string > const & );
-	void read_nmer_svm( std::string );
+	void read_nmer_svm_rank_fname_vector( utility::vector1< std::string > const & );
 	core::Size n_svms() const;
 	void read_aa_encoding_matrix( std::string const & );
 	void nmer_length( core::Size const );
@@ -133,6 +147,7 @@ public:
 	void term_length( core::Size const );
 	core::Size term_length() const;
 	void use_pssm_features( bool const );
+	void avg_rank_as_energy( bool const );
 	void gate_svm_scores( bool const );
 	void nmer_svm_scorecut( core::Real const );
 	utility::vector1< utility::libsvm::Svm_node_rosettaOP > get_svm_nodes( utility::vector1< core::Real > const & ) const;
@@ -143,18 +158,26 @@ public:
 	void add_pssm_features( std::string const &, core::Size const, utility::vector1< core::Real > & ) const;
 
 private:
-	utility::vector1< utility::libsvm::Svm_rosettaOP > all_nmer_svms_;
+	utility::vector1< utility::libsvm::Svm_rosettaCOP > all_nmer_svms_;
+	utility::vector1< utility::vector1< core::Real > > all_nmer_svms_ranks_;
 	std::map< char, utility::vector1< core::Real > > aa_encoder_;
 	core::Size nmer_length_;
 	core::Size nmer_cterm_;
 	core::Size term_length_;
 	bool gate_svm_scores_;
 	bool use_pssm_features_;
+	bool avg_rank_as_energy_;
 	core::Real nmer_svm_scorecut_;
 	core::scoring::methods::NMerPSSMEnergy nmer_pssm_;
 
-	void read_nmer_svms_from_options();
-	void initialize_from_options();
+	/// @details This function triggers reads from disk the first time only, and then data are cached globally in the ScoringManager.  This
+	/// is fully threadsafe.  --VKM
+	void read_nmer_svms_from_options( EnergyMethodOptions const & options );
+
+	/// @details This function triggers reads from disk the first time only, and then data are cached globally in the ScoringManager.  This
+	/// is fully threadsafe.  --VKM
+	void initialize_from_options( EnergyMethodOptions const & options );
+
 	virtual
 	core::Size version() const;
 };

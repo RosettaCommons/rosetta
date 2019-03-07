@@ -7,9 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/methods/NMerSVMEnergy.hh
-/// @brief  SVMerence energy method implementation
-/// @author Chris King (dr.chris.king@gmail.com)
+/// @file   core/scoring/methods/NMerSVMEnergy.cc
+/// @brief  SVM sequence profile energy method implementation
+/// @author Indigo King (indigo.c.king@gmail.com)
+/// @author Vikram K. Mulligan (vmulligan@flatironinstititue.org) -- Implemented lazy, one-time, threadsafe loading of all data read from files, and
+/// replaced reads of global options system with reads from local EnergyMethodsOptions class.
 
 // Unit headers
 #include <core/scoring/methods/NMerSVMEnergy.hh>
@@ -17,6 +19,7 @@
 
 // Package headers
 #include <core/scoring/EnergyMap.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -24,6 +27,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/methods/NMerPSSMEnergy.hh>
+#include <core/scoring/ScoringManager.hh>
 #include <basic/database/open.hh>
 #include <utility/file/file_sys_util.hh>
 
@@ -32,15 +36,11 @@
 #include <vector>
 
 // Utility Headers
-#include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
-
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/database/open.hh>
 
 #include <utility/libsvm/Svm_rosetta.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 
 #include <utility/exit.hh>
 
@@ -57,9 +57,9 @@ using utility::vector1;
 /// never an instance already in use
 methods::EnergyMethodOP
 NMerSVMEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	methods::EnergyMethodOptions const &options
 ) const {
-	return utility::pointer::make_shared< NMerSVMEnergy >();
+	return utility::pointer::make_shared< NMerSVMEnergy >( options );
 }
 
 ScoreTypes
@@ -105,6 +105,11 @@ NMerSVMEnergy::use_pssm_features( bool const use_pssm_features ){
 }
 
 void
+NMerSVMEnergy::avg_rank_as_energy( bool const avg_rank_as_energy ){
+	avg_rank_as_energy_ = avg_rank_as_energy;
+}
+
+void
 NMerSVMEnergy::gate_svm_scores( bool const gate_svm_scores ){
 	gate_svm_scores_ = gate_svm_scores;
 }
@@ -115,17 +120,17 @@ NMerSVMEnergy::nmer_svm_scorecut( Real const nmer_svm_scorecut ){
 }
 
 void
-NMerSVMEnergy::initialize_from_options()
+NMerSVMEnergy::initialize_from_options( EnergyMethodOptions const & options )
 {
-	using namespace basic::options;
-	NMerSVMEnergy::nmer_length( option[ OptionKeys::score::nmer_ref_seq_length ]() );
-	NMerSVMEnergy::gate_svm_scores( option[ OptionKeys::score::nmer_svm_scorecut ].user() );
-	NMerSVMEnergy::term_length( option[ OptionKeys::score::nmer_svm_term_length ]() );
-	NMerSVMEnergy::use_pssm_features( option[ OptionKeys::score::nmer_svm_pssm_feat ]() );
-	NMerSVMEnergy::nmer_svm_scorecut( option[ OptionKeys::score::nmer_svm_scorecut ]() );
+	NMerSVMEnergy::nmer_length( options.nmer_ref_seq_length() );
+	NMerSVMEnergy::gate_svm_scores( options.nmer_svm_scorecut_defined() );
+	NMerSVMEnergy::term_length( options.nmer_svm_term_length() );
+	NMerSVMEnergy::use_pssm_features( options.nmer_svm_pssm_feat() );
+	NMerSVMEnergy::nmer_svm_scorecut( options.nmer_svm_scorecut() );
+	NMerSVMEnergy::avg_rank_as_energy( options.nmer_svm_avg_rank_as_energy() );
 	//load user-defined encoding?
-	if ( option[ OptionKeys::score::nmer_svm_aa_matrix ].user() ) {
-		NMerSVMEnergy::read_aa_encoding_matrix( option[ OptionKeys::score::nmer_svm_aa_matrix ]() );
+	if ( options.nmer_svm_aa_matrix_defined() ) {
+		NMerSVMEnergy::read_aa_encoding_matrix( options.nmer_svm_aa_matrix() );
 	} else {
 		NMerSVMEnergy::read_aa_encoding_matrix(
 			//or default to database BLOSUM62
@@ -133,22 +138,24 @@ NMerSVMEnergy::initialize_from_options()
 	}
 }
 
-NMerSVMEnergy::NMerSVMEnergy() :
-	parent( utility::pointer::make_shared< NMerSVMEnergyCreator >() )
+NMerSVMEnergy::NMerSVMEnergy( EnergyMethodOptions const & options ) :
+	parent( methods::EnergyMethodCreatorOP( utility::pointer::make_shared< NMerSVMEnergyCreator >() ) )
 {
-	NMerSVMEnergy::initialize_from_options();
-	read_nmer_svms_from_options();
+	NMerSVMEnergy::initialize_from_options( options );
+	read_nmer_svms_from_options( options );
 }
 
-//init from scratch w/ a vecotr of libsvm model filenames
-NMerSVMEnergy::NMerSVMEnergy( utility::vector1< std::string > const & svm_fnames ):
-	parent( utility::pointer::make_shared< NMerSVMEnergyCreator >() )
+//init from scratch w/ a vector of libsvm model and rank filenames
+NMerSVMEnergy::NMerSVMEnergy( EnergyMethodOptions const & options, utility::vector1< std::string > const & svm_fnames, utility::vector1< std::string > const & svm_rank_fnames ):
+	parent( methods::EnergyMethodCreatorOP( utility::pointer::make_shared< NMerSVMEnergyCreator >() ) )
 {
-	NMerSVMEnergy::initialize_from_options();
+	NMerSVMEnergy::initialize_from_options( options );
 
 	all_nmer_svms_.clear();
+	all_nmer_svms_ranks_.clear();
 	for ( Size isvm = 1; isvm <= svm_fnames.size(); ++isvm ) {
 		NMerSVMEnergy::read_nmer_svm( svm_fnames[ isvm ] );
+		NMerSVMEnergy::read_nmer_svm_rank( svm_rank_fnames[ isvm ] );
 	}
 }
 
@@ -158,8 +165,10 @@ NMerSVMEnergy::NMerSVMEnergy(
 	bool const gate_svm_scores,
 	core::Size const term_length,
 	bool const use_pssm_features,
+	bool const avg_rank_as_energy,
 	core::Real const nmer_svm_scorecut,
 	utility::vector1< std::string > const & svm_fname_vec,
+	utility::vector1< std::string > const & svm_rank_fname_vec,
 	utility::vector1< std::string > const & pssm_fname_vec
 ) :
 	parent( utility::pointer::make_shared< NMerSVMEnergyCreator >() )
@@ -168,16 +177,18 @@ NMerSVMEnergy::NMerSVMEnergy(
 	NMerSVMEnergy::gate_svm_scores( gate_svm_scores );
 	NMerSVMEnergy::term_length( term_length );
 	NMerSVMEnergy::use_pssm_features( use_pssm_features );
+	NMerSVMEnergy::avg_rank_as_energy( avg_rank_as_energy );
 	NMerSVMEnergy::nmer_svm_scorecut( nmer_svm_scorecut );
 	NMerSVMEnergy::read_nmer_svm_fname_vector( svm_fname_vec );
-	NMerSVMEnergy::read_aa_encoding_matrix(
-		//default to database BLOSUM62
-		basic::database::full_name( "sequence/substitution_matrix/BLOSUM62.prob.rescale" ) );
+	NMerSVMEnergy::read_nmer_svm_rank_fname_vector( svm_rank_fname_vec );
 	// set pssm options and pssm file paths
 	nmer_pssm_.nmer_length( nmer_length );
 	nmer_pssm_.gate_pssm_scores( false );
 	nmer_pssm_.nmer_pssm_scorecut( 0.0 );
 	nmer_pssm_.read_nmer_pssm_fname_vector( pssm_fname_vec );
+	NMerSVMEnergy::read_aa_encoding_matrix(
+		//default to database BLOSUM62
+		basic::database::full_name( "sequence/substitution_matrix/BLOSUM62.prob.rescale" ) );
 }
 
 // full ctor init with vector of svm filenames with custom encoding matrix
@@ -186,8 +197,10 @@ NMerSVMEnergy::NMerSVMEnergy(
 	bool const gate_svm_scores,
 	Size const term_length,
 	bool const use_pssm_features,
+	bool const avg_rank_as_energy,
 	core::Real const nmer_svm_scorecut,
 	utility::vector1< std::string > const & svm_fname_vec,
+	utility::vector1< std::string > const & svm_rank_fname_vec,
 	utility::vector1< std::string > const & pssm_fname_vec,
 	std::string const & aa_matrix
 ) :
@@ -197,57 +210,59 @@ NMerSVMEnergy::NMerSVMEnergy(
 	NMerSVMEnergy::gate_svm_scores( gate_svm_scores );
 	NMerSVMEnergy::term_length( term_length );
 	NMerSVMEnergy::use_pssm_features( use_pssm_features );
+	NMerSVMEnergy::avg_rank_as_energy( avg_rank_as_energy );
 	NMerSVMEnergy::nmer_svm_scorecut( nmer_svm_scorecut );
 	NMerSVMEnergy::read_nmer_svm_fname_vector( svm_fname_vec );
-	NMerSVMEnergy::read_aa_encoding_matrix( aa_matrix );
+	NMerSVMEnergy::read_nmer_svm_rank_fname_vector( svm_rank_fname_vec );
 	// set pssm options and pssm file paths
 	nmer_pssm_.nmer_length( nmer_length );
 	nmer_pssm_.gate_pssm_scores( false );
 	nmer_pssm_.nmer_pssm_scorecut( 0.0 );
 	nmer_pssm_.read_nmer_pssm_fname_vector( pssm_fname_vec );
+	NMerSVMEnergy::read_aa_encoding_matrix( aa_matrix );
 }
 
 NMerSVMEnergy::~NMerSVMEnergy() = default;
 
 void
-NMerSVMEnergy::read_nmer_svms_from_options() {
-
-	using namespace basic::options;
+NMerSVMEnergy::read_nmer_svms_from_options( EnergyMethodOptions const & options ) {
 
 	TR << "checking for NMerSVMEnergy SVM list" << std::endl;
 
 	//check for svm list file
-	if ( option[ OptionKeys::score::nmer_svm_list ].user() ) {
-		std::string const & svm_list_fname( option[ OptionKeys::score::nmer_svm_list ] );
-		NMerSVMEnergy::read_nmer_svm_list( svm_list_fname );
+	if ( options.nmer_svm_list_defined() ) {
+		NMerSVMEnergy::read_nmer_svm_list( options.nmer_svm_list() );
 	}
 	//use single svm file
-	if ( option[ OptionKeys::score::nmer_svm ].user() ) {
-		std::string const & svm_fname( option[ OptionKeys::score::nmer_svm ] );
-		NMerSVMEnergy::read_nmer_svm( svm_fname );
+	if ( options.nmer_svm_defined() ) {
+		NMerSVMEnergy::read_nmer_svm( options.nmer_svm() );
+	}
+	//check for svm ranks list file
+	if ( options.nmer_svm_rank_list_defined() ) {
+		NMerSVMEnergy::read_nmer_svm_rank_list( options.nmer_svm_rank_list() );
+	}
+	//use single svm ranks file
+	if ( options.nmer_svm_rank_defined() ) {
+		NMerSVMEnergy::read_nmer_svm_rank( options.nmer_svm_rank() );
 	}
 }
 
 //load svms from a list file
 void
-NMerSVMEnergy::read_nmer_svm_list( std::string svm_list_fname ) {
-	if ( !utility::file::file_exists( svm_list_fname ) ) {
-		svm_list_fname = basic::database::full_name( svm_list_fname, false );
-	}
+NMerSVMEnergy::read_nmer_svm_list( std::string const & svm_list_fname ) {
+	std::string const & svm_list_contents( core::scoring::ScoringManager::get_instance()->get_nmer_svm_list_file_contents( svm_list_fname ) );
+
 	TR << "reading NMerSVMEnergy list from " << svm_list_fname << std::endl;
 	TR << "SVM cache is cleared each time a list is loaded!" << std::endl;
 	all_nmer_svms_.clear();
-	utility::io::izstream in_stream( svm_list_fname );
-	if ( !in_stream.good() ) {
-		utility_exit_with_message( "Error opening NMerSVMEnergy list file" );
-	}
+
 	//now loop over all names in list
-	std::string svm_fname;
-	while ( getline( in_stream, svm_fname ) ) {
-		utility::vector1< std::string > const tokens( utility::split( svm_fname ) );
+	utility::vector1< std::string > const lines( utility::split(svm_list_contents) );
+	for ( std::string const & line : lines ) {
+		utility::vector1< std::string > const tokens( utility::split( line ) );
 		//skip comments
 		if ( tokens[ 1 ][ 0 ] == '#' ) continue;
-		NMerSVMEnergy::read_nmer_svm( svm_fname );
+		NMerSVMEnergy::read_nmer_svm( line );
 	}
 }
 
@@ -256,21 +271,50 @@ void
 NMerSVMEnergy::read_nmer_svm_fname_vector( utility::vector1< std::string > const & svm_fname_vec ) {
 	//now loop over all names in vector
 	for ( Size i = 1; i<= svm_fname_vec.size(); ++i ) {
-		std::string const & svm_fname( svm_fname_vec[ i ] );
-		NMerSVMEnergy::read_nmer_svm( svm_fname );
+		NMerSVMEnergy::read_nmer_svm( svm_fname_vec[ i ] );
+	}
+}
+
+//load svm_ranks from a vector of filenames
+void
+NMerSVMEnergy::read_nmer_svm_rank_fname_vector( utility::vector1< std::string > const & svm_rank_fname_vec ) {
+	//now loop over all names in vector
+	for ( Size i = 1; i<= svm_rank_fname_vec.size(); ++i ) {
+		NMerSVMEnergy::read_nmer_svm_rank( svm_rank_fname_vec[ i ] );
 	}
 }
 
 void
-NMerSVMEnergy::read_nmer_svm( std::string svm_fname ) {
-
-	if ( !utility::file::file_exists( svm_fname ) ) {
-		svm_fname = basic::database::full_name( svm_fname, false );
-	}
-	TR << "reading NMerSVMEnergy scores from " << svm_fname << std::endl;
-	const char* svm_fname_ch( svm_fname.c_str() );
-	Svm_rosettaOP nmer_svm( new Svm_rosetta( svm_fname_ch ) );
+NMerSVMEnergy::read_nmer_svm(
+	std::string const & svm_fname
+) {
+	Svm_rosettaCOP nmer_svm( core::scoring::ScoringManager::get_instance()->get_nmer_svm( svm_fname ) ); //Svm_rosetta class has no clone operator, apparently.
 	all_nmer_svms_.push_back( nmer_svm );
+}
+
+/// @brief load svm_ranks from a list file
+void
+NMerSVMEnergy::read_nmer_svm_rank_list( std::string const & svm_rank_list_fname ) {
+	std::string const & svm_rank_list_contents( core::scoring::ScoringManager::get_instance()->get_nmer_svm_rank_list_file_contents( svm_rank_list_fname ) );
+
+	TR << "reading NMerSVMEnergy rank list from " << svm_rank_list_fname << std::endl;
+
+	//now loop over all names in list
+	utility::vector1< std::string > const lines( utility::split(svm_rank_list_contents) );
+	for ( std::string const & line : lines ) {
+		utility::vector1< std::string > const tokens( utility::split( line ) );
+		//skip comments
+		if ( tokens[ 1 ][ 0 ] == '#' ) continue; //A bit of an odd way to do this, but okay. --VKM
+		NMerSVMEnergy::read_nmer_svm_rank( line );
+	}
+}
+
+/// @brief this is a sorted (ascending) list of precomputed energies of a bunch (100k) of random human peptides
+/// @brief ...used to give a %ile rank score, useful for comparing diff MHC alelle predictions
+void
+NMerSVMEnergy::read_nmer_svm_rank( std::string const & svm_rank_fname ) {
+	utility::vector1< core::Real > const & nmer_svm_rank( core::scoring::ScoringManager::get_instance()->get_nmer_svm_rank( svm_rank_fname ) );
+	all_nmer_svms_ranks_.push_back( nmer_svm_rank );
 }
 
 //load the map that featurizes each aa in the sequence
@@ -278,33 +322,9 @@ NMerSVMEnergy::read_nmer_svm( std::string svm_fname ) {
 //for exact encoding, load an identity matrix
 void
 NMerSVMEnergy::read_aa_encoding_matrix( std::string const & fname ){
-
 	//clear the old data in case we're re-init'ing
 	aa_encoder_.clear();
-
-	//and load the data
-	TR << "reading NMerSVM encoding matrix " << fname << std::endl;
-	utility::io::izstream in_stream( fname );
-	if ( !in_stream.good() ) {
-		utility_exit_with_message( "[ERROR] Error opening NMerSVM encoding matrix file" );
-	}
-	std::string line;
-	while ( getline( in_stream, line) ) {
-		utility::vector1< std::string > const tokens( utility::string_split_multi_delim( line, " \t" ) );
-		//skip comments
-		if ( tokens[ 1 ][ 0 ] == '#' ) continue;
-		char const aa( tokens[ 1 ][ 0 ] );
-		if ( aa_encoder_.count( aa ) ) {
-			utility_exit_with_message( "[ERROR] NMer SVM encoding matrix file "
-				+ fname + " has double entry for aa " + aa );
-		}
-		utility::vector1< Real > aa_vals;
-		for ( Size ival = 2; ival <= tokens.size(); ++ival ) {
-			Real const val( atof( tokens[ ival ].c_str() ) );
-			aa_vals.push_back( val );
-		}
-		aa_encoder_[ aa ] = aa_vals;
-	}
+	aa_encoder_ = core::scoring::ScoringManager::get_instance()->get_nmer_svm_aa_matrix( fname );
 }
 
 //transform score matrix vals to probabilities, rescale to [-1,1]
@@ -458,12 +478,16 @@ NMerSVMEnergy::add_pssm_features( std::string const & seq, Size const isvm, vect
 	}
 }
 
-Real
+/// @brief the main compute function, rsd_energy_avg is the default return value for residue energy
+/// @brief optionally return normalized rank avg value instead
+void
 NMerSVMEnergy::get_residue_energy_by_svm(
 	pose::Pose const & pose,
 	Size const & seqpos,
 	Real & rsd_energy_avg,
-	vector1< Real > & rsd_svm_energies
+	Real & rsd_rank_avg,
+	vector1< Real > & rsd_svm_energies,
+	vector1< Real > & rsd_svm_ranks
 ) const
 {
 	debug_assert( rsd_svm_energies.size() == n_svms() );
@@ -476,18 +500,19 @@ NMerSVMEnergy::get_residue_energy_by_svm(
 	//TODO: how deal w/ sequences shorter than nmer_length_?
 	// this matters at both termini… maybe take max of all overlapping frames w/ missing res as 'X'?
 	// go ahead and bail if we fall off the end of the chain
+	rsd_energy_avg = 0.;
+	rsd_rank_avg = 0.;
 	if ( p1_seqpos + nmer_length_ - 1 <= pose.conformation().chain_end( pose.chain( p1_seqpos ) ) ) {
 		//need p1 position in this chain's sequence, offset with index of first res
 		Size const chain_p1_seqpos( p1_seqpos - pose.conformation().chain_begin( pose.chain( p1_seqpos ) ) + 1 );
 		std::string const & chain_sequence( pose.chain_sequence( pose.chain( p1_seqpos ) ) );
 
-		rsd_energy_avg = 0.;
 		//encode nmer string --> feature(Svm_node) vector
 		for ( Size isvm = 1; isvm <= n_svms(); ++isvm ) {
 			vector1< Svm_node_rosettaOP > p1_seqpos_nmer_features(
 				get_svm_nodes( encode_nmer( chain_sequence, chain_p1_seqpos, isvm ) ) );
 			//get this svm model
-			Svm_rosettaOP nmer_svm_model( all_nmer_svms_[ isvm ] );
+			Svm_rosettaCOP nmer_svm_model( all_nmer_svms_[ isvm ] );
 			//Svm_rosetta funxn to wrap svm_predict, see Svm_rosetta::predict_probability for template,
 			Real rsd_svm_energy( nmer_svm_model->predict( p1_seqpos_nmer_features ) );
 			//gate energy at svm_scorecut, thus ignoring low-scoring nmers
@@ -497,9 +522,22 @@ NMerSVMEnergy::get_residue_energy_by_svm(
 			//normalize energy by number of svms used
 			//otherwise avg scores would become huge if we use lots of svms instead of just 1
 			rsd_energy_avg += ( rsd_svm_energy / n_svms() );
+
+			// calc svm score rank for each svm
+			vector1< core::Real > const & nmer_svm_rank( all_nmer_svms_ranks_[ isvm ] );
+			Size rank( 1 );
+			for ( Size irank = 1; irank <= nmer_svm_rank.size(); ++irank ) {
+				if ( nmer_svm_rank[ irank ] > rsd_svm_energy || irank == nmer_svm_rank.size() ) {
+					rank = irank;
+					break;
+				}
+			}
+			// calc fraction of rank, low rank is lower scoring subseq
+			core::Real const rsd_svm_rank_fraction( core::Real( rank ) / core::Real( nmer_svm_rank.size() ) );
+			rsd_svm_ranks[ isvm ] = rsd_svm_rank_fraction;
+			rsd_rank_avg += ( rsd_svm_rank_fraction / n_svms() );
 		}
 	}
-	return rsd_energy_avg;
 }
 
 void
@@ -512,10 +550,13 @@ NMerSVMEnergy::residue_energy(
 	if ( all_nmer_svms_.empty() ) return;
 	Size const seqpos( rsd.seqpos() );
 
-	Real rsd_energy( 0. );
+	Real rsd_energy_avg( 0. );
+	Real rsd_rank_avg( 0. );
 	vector1< Real > rsd_svm_energies( n_svms(), Real( 0. ) );
-	get_residue_energy_by_svm( pose, seqpos, rsd_energy, rsd_svm_energies );
-	emap[ nmer_svm ] += rsd_energy;
+	vector1< Real > rsd_svm_ranks( n_svms(), Real( 0. ) );
+	get_residue_energy_by_svm( pose, seqpos, rsd_energy_avg, rsd_rank_avg, rsd_svm_energies, rsd_svm_ranks );
+	if ( avg_rank_as_energy_ ) emap[ nmer_svm ] += rsd_rank_avg;
+	else emap[ nmer_svm ] += rsd_energy_avg;
 }
 
 

@@ -137,6 +137,25 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	symmetric_gly_tables_(false),
 	loop_close_use_6D_potential_(false),
 	fa_stack_base_all_(false),
+
+	//Options for the NMerSVMEnergy:
+	nmer_ref_seq_length_(9),
+	nmer_svm_term_length_(3),
+	nmer_svm_pssm_feat_(true),
+	nmer_svm_scorecut_defined_(false),
+	nmer_svm_scorecut_(0.0),
+	nmer_svm_avg_rank_as_energy_(false),
+	nmer_svm_aa_matrix_defined_(false),
+	nmer_svm_aa_matrix_(""),
+	nmer_svm_list_defined_(false),
+	nmer_svm_list_(""),
+	nmer_svm_defined_(false),
+	nmer_svm_(""),
+	nmer_svm_rank_list_defined_(false),
+	nmer_svm_rank_list_(""),
+	nmer_svm_rank_defined_(false),
+	nmer_svm_rank_(""),
+
 	buried_unsatisfied_penalty_cone_angle_exponent_(2.0),
 	buried_unsatisfied_penalty_cone_angle_shift_factor_(0.25),
 	buried_unsatisfied_penalty_cone_dist_exponent_(1.0),
@@ -243,6 +262,25 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		symmetric_gly_tables_ = src.symmetric_gly_tables_;
 		loop_close_use_6D_potential_ = src.loop_close_use_6D_potential_;
 		fa_stack_base_all_ = src.fa_stack_base_all_;
+
+		//Options for the NMerSVMEnergy:
+		nmer_ref_seq_length_ = src.nmer_ref_seq_length_;
+		nmer_svm_term_length_ = src.nmer_svm_term_length_;
+		nmer_svm_pssm_feat_ = src.nmer_svm_pssm_feat_;
+		nmer_svm_scorecut_defined_ = src.nmer_svm_scorecut_defined_;
+		nmer_svm_scorecut_ = src.nmer_svm_scorecut_;
+		nmer_svm_avg_rank_as_energy_ = src.nmer_svm_avg_rank_as_energy_;
+		nmer_svm_aa_matrix_defined_ = src.nmer_svm_aa_matrix_defined_;
+		nmer_svm_aa_matrix_ = src.nmer_svm_aa_matrix_;
+		nmer_svm_list_defined_ = src.nmer_svm_list_defined_;
+		nmer_svm_list_ = src.nmer_svm_list_;
+		nmer_svm_defined_ = src.nmer_svm_defined_;
+		nmer_svm_ = src.nmer_svm_;
+		nmer_svm_rank_list_defined_ = src.nmer_svm_rank_list_defined_;
+		nmer_svm_rank_list_ = src.nmer_svm_rank_list_;
+		nmer_svm_rank_defined_ = src.nmer_svm_rank_defined_;
+		nmer_svm_rank_ = src.nmer_svm_rank_;
+
 		buried_unsatisfied_penalty_cone_angle_exponent_ = src.buried_unsatisfied_penalty_cone_angle_exponent_;
 		buried_unsatisfied_penalty_cone_angle_shift_factor_ = src.buried_unsatisfied_penalty_cone_angle_shift_factor_;
 		buried_unsatisfied_penalty_cone_dist_exponent_ = src.buried_unsatisfied_penalty_cone_dist_exponent_;
@@ -317,6 +355,23 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	loop_close_use_6D_potential_ = options[ basic::options::OptionKeys::score::loop_close::use_6D_potential ]();
 	fa_stack_base_all_ = !options[ basic::options::OptionKeys::score::fa_stack_base_base_only ]();
 
+	//Options for the NMerSVMEnergy:
+	nmer_ref_seq_length_ = options[ basic::options::OptionKeys::score::nmer_ref_seq_length ]();
+	nmer_svm_term_length_ = options[ basic::options::OptionKeys::score::nmer_svm_term_length ]();
+	nmer_svm_pssm_feat_ = options[ basic::options::OptionKeys::score::nmer_svm_pssm_feat ]();
+	nmer_svm_scorecut_defined_ = options[ basic::options::OptionKeys::score::nmer_svm_scorecut ].user();
+	nmer_svm_scorecut_ = options[ basic::options::OptionKeys::score::nmer_svm_scorecut ]();
+	nmer_svm_avg_rank_as_energy_ = options[ basic::options::OptionKeys::score::nmer_svm_avg_rank_as_energy ]();
+	nmer_svm_aa_matrix_defined_ = options[ basic::options::OptionKeys::score::nmer_svm_aa_matrix ].user();
+	nmer_svm_aa_matrix_ = ( options[ basic::options::OptionKeys::score::nmer_svm_aa_matrix ].user() ? options[ basic::options::OptionKeys::score::nmer_svm_aa_matrix ]() : std::string("") );
+	nmer_svm_list_defined_ = options[ basic::options::OptionKeys::score::nmer_svm_list ].user();
+	nmer_svm_list_ = options[ basic::options::OptionKeys::score::nmer_svm_list ]();
+	nmer_svm_defined_ = options[ basic::options::OptionKeys::score::nmer_svm ].user();
+	nmer_svm_ = options[ basic::options::OptionKeys::score::nmer_svm ]();
+	nmer_svm_rank_list_defined_ = options[ basic::options::OptionKeys::score::nmer_svm_rank_list ].user();
+	nmer_svm_rank_list_ = options[ basic::options::OptionKeys::score::nmer_svm_rank_list ]();
+	nmer_svm_rank_defined_ = options[ basic::options::OptionKeys::score::nmer_svm_rank ].user();
+	nmer_svm_rank_ = options[ basic::options::OptionKeys::score::nmer_svm_rank ]();
 	buried_unsatisfied_penalty_cone_angle_exponent_ = options[ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_angle_exponent ]();
 	buried_unsatisfied_penalty_cone_angle_shift_factor_ = options[ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_angle_shift_factor ]();
 	buried_unsatisfied_penalty_cone_dist_exponent_ = options[ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_dist_exponent ]();
@@ -408,6 +463,18 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::fa_stack_base_base_only
 		+ basic::options::OptionKeys::score::use_gen_kirkwood
 		+ basic::options::OptionKeys::score::use_polarization
+
+		+ basic::options::OptionKeys::score::nmer_ref_seq_length
+		+ basic::options::OptionKeys::score::nmer_svm_term_length
+		+ basic::options::OptionKeys::score::nmer_svm_pssm_feat
+		+ basic::options::OptionKeys::score::nmer_svm_scorecut
+		+ basic::options::OptionKeys::score::nmer_svm_avg_rank_as_energy
+		+ basic::options::OptionKeys::score::nmer_svm_aa_matrix
+		+ basic::options::OptionKeys::score::nmer_svm_list
+		+ basic::options::OptionKeys::score::nmer_svm
+		+ basic::options::OptionKeys::score::nmer_svm_rank_list
+		+ basic::options::OptionKeys::score::nmer_svm_rank
+
 		+ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_angle_exponent
 		+ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_angle_shift_factor
 		+ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_dist_exponent
@@ -923,6 +990,178 @@ EnergyMethodOptions::symmetric_gly_tables( bool const setting ) {
 	symmetric_gly_tables_ = setting;
 }
 
+///////////////////////// NMerSVMEnergy Options ////////////////////////////////////////////////////////////
+
+/// @brief Get reference sequence length.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+core::Size EnergyMethodOptions::nmer_ref_seq_length() const { return nmer_ref_seq_length_; }
+
+/// @brief Get SVM term length.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+core::Size EnergyMethodOptions::nmer_svm_term_length() const { return nmer_svm_term_length_; }
+
+/// @brief Get nmer_svm_pssm_feat_.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+bool EnergyMethodOptions::nmer_svm_pssm_feat() const { return nmer_svm_pssm_feat_; }
+
+/// @brief Get whether the SVM scorecut is defined.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+bool EnergyMethodOptions::nmer_svm_scorecut_defined() const { return nmer_svm_scorecut_defined_; }
+
+/// @brief Get the SVM scorecut.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+core::Real const & EnergyMethodOptions::nmer_svm_scorecut() const { return nmer_svm_scorecut_; }
+
+/// @brief Get whether the SVM average rank should be treated as an energy.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+bool EnergyMethodOptions::nmer_svm_avg_rank_as_energy() const { return nmer_svm_avg_rank_as_energy_; }
+
+/// @brief Get whether we have a user-specified AA matrix.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+bool EnergyMethodOptions::nmer_svm_aa_matrix_defined() const { return nmer_svm_aa_matrix_defined_; }
+
+/// @brief Get the user-specified AA matrix filename.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string const & EnergyMethodOptions::nmer_svm_aa_matrix() const { return nmer_svm_aa_matrix_; }
+
+/// @brief Get whether SVM list is provided by user.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+bool EnergyMethodOptions::nmer_svm_list_defined() const { return nmer_svm_list_defined_; }
+
+/// @brief Get SVM filename list file.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string const & EnergyMethodOptions::nmer_svm_list() const { return nmer_svm_list_; }
+
+/// @brief Get whether SVM is provided by the user.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+bool EnergyMethodOptions::nmer_svm_defined() const { return nmer_svm_defined_; }
+
+/// @brief Get SVM file provided by the user.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string const & EnergyMethodOptions::nmer_svm() const { return nmer_svm_; }
+
+/// @brief Get whether SVM rank list is provided by the user.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+bool EnergyMethodOptions::nmer_svm_rank_list_defined() const { return nmer_svm_rank_list_defined_; }
+
+/// @brief Get SVM rank list provided by the user.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string const & EnergyMethodOptions::nmer_svm_rank_list() const { return nmer_svm_rank_list_; }
+
+/// @brief Get whether an SVM rank file is provided by the user.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+bool EnergyMethodOptions::nmer_svm_rank_defined() const { return nmer_svm_rank_defined_; }
+
+/// @brief Get SVM rank file that was provided by the user.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string const & EnergyMethodOptions::nmer_svm_rank() const { return nmer_svm_rank_; }
+
+////// Setters ///////
+
+/// @brief Set reference sequence length.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void EnergyMethodOptions::nmer_ref_seq_length( core::Size const setting ) { nmer_ref_seq_length_ = setting; }
+
+/// @brief Set SVM term length.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void EnergyMethodOptions::nmer_svm_term_length( core::Size const setting ) { nmer_svm_term_length_ = setting; }
+
+/// @brief Set nmer_svm_pssm_feat_.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void EnergyMethodOptions::nmer_svm_pssm_feat( bool const setting ) { nmer_svm_pssm_feat_ = setting; }
+
+/// @brief Set the SVM scorecut.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+EnergyMethodOptions::nmer_svm_scorecut(
+	core::Real const & setting
+) {
+	nmer_svm_scorecut_ = setting;
+	nmer_svm_scorecut_defined_ = true;
+}
+
+/// @brief Set whether the SVM average rank should be treated as an energy.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void EnergyMethodOptions::nmer_svm_avg_rank_as_energy( bool const setting ) { nmer_svm_avg_rank_as_energy_ = setting; }
+
+/// @brief Set the user-specified AA matrix filename.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+EnergyMethodOptions::nmer_svm_aa_matrix(
+	std::string const & filename
+) {
+	nmer_svm_aa_matrix_ = filename;
+	nmer_svm_aa_matrix_defined_ = true;
+}
+
+/// @brief Set SVM filename list file.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+EnergyMethodOptions::nmer_svm_list(
+	std::string const & filename
+) {
+	nmer_svm_list_ = filename;
+	nmer_svm_list_defined_ = true;
+}
+
+/// @brief Set SVM file.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+EnergyMethodOptions::nmer_svm(
+	std::string const & filename
+) {
+	nmer_svm_ = filename;
+	nmer_svm_defined_ = true;
+}
+
+/// @brief Set SVM rank list.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+EnergyMethodOptions::nmer_svm_rank_list(
+	std::string const & filename
+) {
+	nmer_svm_rank_list_ = filename;
+	nmer_svm_rank_defined_ = true;
+}
+
+/// @brief Set SVM rank file.
+/// @details Used by NMerSVMEnergy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+EnergyMethodOptions::nmer_svm_rank(
+	std::string const &filename
+) {
+	nmer_svm_rank_ = filename;
+	nmer_svm_rank_defined_ = true;
+}
+
+///////////////////////// End NMerSVMEnergy Options ////////////////////////////////////////////////////////
+
 /// @brief Get the number of cones in which a voxel must lie in order for that voxel to be considered
 /// to be "buried".
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1399,6 +1638,24 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.pb_unbound_tag_ == b.pb_unbound_tag_ ) &&
 		( a.ordered_wat_penalty_ == b.ordered_wat_penalty_ ) &&
 		( a.ordered_pt_wat_penalty_ == b.ordered_pt_wat_penalty_ ) &&
+
+		( a.nmer_ref_seq_length_ == b.nmer_ref_seq_length_ ) &&
+		( a.nmer_svm_ == b.nmer_svm_ ) &&
+		( a.nmer_svm_aa_matrix_ == b.nmer_svm_aa_matrix_ ) &&
+		( a.nmer_svm_aa_matrix_defined_ == b.nmer_svm_aa_matrix_defined_ ) &&
+		( a.nmer_svm_avg_rank_as_energy_ == b.nmer_svm_avg_rank_as_energy_ ) &&
+		( a.nmer_svm_defined_ == b.nmer_svm_defined_ ) &&
+		( a.nmer_svm_list_ == b.nmer_svm_list_ ) &&
+		( a.nmer_svm_list_defined_ == b.nmer_svm_list_defined_ ) &&
+		( a.nmer_svm_pssm_feat_ == b.nmer_svm_pssm_feat_ ) &&
+		( a.nmer_svm_rank_ == b.nmer_svm_rank_ ) &&
+		( a.nmer_svm_rank_defined_ == b.nmer_svm_rank_defined_ ) &&
+		( a.nmer_svm_rank_list_ == b.nmer_svm_rank_list_ ) &&
+		( a.nmer_svm_rank_list_defined_ == b.nmer_svm_rank_list_defined_ ) &&
+		( a.nmer_svm_scorecut_ == b.nmer_svm_scorecut_ ) &&
+		( a.nmer_svm_scorecut_defined_ == b.nmer_svm_scorecut_defined_ ) &&
+		( a.nmer_svm_term_length_ == b.nmer_svm_term_length_ ) &&
+
 		( a.voids_penalty_energy_containing_cones_cutoff_ == b.voids_penalty_energy_containing_cones_cutoff_ ) &&
 		( a.voids_penalty_energy_cone_distance_cutoff_ == b.voids_penalty_energy_cone_distance_cutoff_ ) &&
 		( a.voids_penalty_energy_cone_dotproduct_cutoff_ == b.voids_penalty_energy_cone_dotproduct_cutoff_ ) &&
@@ -1522,6 +1779,24 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: pb_unbound_tag: " << pb_unbound_tag_ << std::endl;
 	out << "EnergyMethodOptions::show: ordered_wat_penalty: " << ordered_wat_penalty_ << std::endl;
 	out << "EnergyMethodOptions::show: ordered_pt_wat_penalty: " << ordered_pt_wat_penalty_ << std::endl;
+
+	out << "EnergyMethodOptions::show: nmer_ref_seq_length_: " << nmer_ref_seq_length_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_term_length_: " << nmer_svm_term_length_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_pssm_feat_: " << nmer_svm_pssm_feat_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_scorecut_defined_: " << nmer_svm_scorecut_defined_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_scorecut_: " << nmer_svm_scorecut_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_avg_rank_as_energy_: " << nmer_svm_avg_rank_as_energy_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_aa_matrix_defined_: " << nmer_svm_aa_matrix_defined_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_aa_matrix_: " << nmer_svm_aa_matrix_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_list_defined_: " << nmer_svm_list_defined_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_list_: " << nmer_svm_list_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_defined_: " << nmer_svm_defined_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_: " << nmer_svm_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_rank_list_defined_: " << nmer_svm_rank_list_defined_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_rank_list_: " << nmer_svm_rank_list_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_rank_defined_: " << nmer_svm_rank_defined_ << std::endl;
+	out << "EnergyMethodOptions::show: nmer_svm_rank_: " << nmer_svm_rank_ << std::endl;
+
 	out << "EnergyMethodOptions::show: voids_penalty_energy_containing_cones_cutoff_:" << voids_penalty_energy_containing_cones_cutoff_ << std::endl;
 	out << "EnergyMethodOptions::show: voids_penalty_energy_cone_distance_cutoff_: " << voids_penalty_energy_cone_distance_cutoff_ << std::endl;
 	out << "EnergyMethodOptions::show: voids_penalty_energy_cone_dotproduct_cutoff_: " << voids_penalty_energy_cone_dotproduct_cutoff_ << std::endl;
@@ -1835,6 +2110,24 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( loop_close_use_6D_potential_ ) ); // _Bool
 	arc( CEREAL_NVP( fa_stack_base_all_ ) ); // _Bool
 
+
+	arc( CEREAL_NVP( nmer_ref_seq_length_ ) );
+	arc( CEREAL_NVP( nmer_svm_term_length_ ) );
+	arc( CEREAL_NVP( nmer_svm_pssm_feat_ ) );
+	arc( CEREAL_NVP( nmer_svm_scorecut_defined_ ) );
+	arc( CEREAL_NVP( nmer_svm_scorecut_ ) );
+	arc( CEREAL_NVP( nmer_svm_avg_rank_as_energy_ ) );
+	arc( CEREAL_NVP( nmer_svm_aa_matrix_defined_ ) );
+	arc( CEREAL_NVP( nmer_svm_aa_matrix_ ) );
+	arc( CEREAL_NVP( nmer_svm_list_defined_ ) );
+	arc( CEREAL_NVP( nmer_svm_list_ ) );
+	arc( CEREAL_NVP( nmer_svm_defined_ ) );
+	arc( CEREAL_NVP( nmer_svm_ ) );
+	arc( CEREAL_NVP( nmer_svm_rank_list_defined_ ) );
+	arc( CEREAL_NVP( nmer_svm_rank_list_ ) );
+	arc( CEREAL_NVP( nmer_svm_rank_defined_ ) );
+	arc( CEREAL_NVP( nmer_svm_rank_ ) );
+
 	arc( CEREAL_NVP( buried_unsatisfied_penalty_cone_angle_exponent_ ) );
 	arc( CEREAL_NVP( buried_unsatisfied_penalty_cone_angle_shift_factor_ ) );
 	arc( CEREAL_NVP( buried_unsatisfied_penalty_cone_dist_exponent_ ) );
@@ -1927,6 +2220,23 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( symmetric_gly_tables_ ); // _Bool
 	arc( loop_close_use_6D_potential_ ); // _Bool
 	arc( fa_stack_base_all_ ); // _Bool
+
+	arc( nmer_ref_seq_length_ );
+	arc( nmer_svm_term_length_ );
+	arc( nmer_svm_pssm_feat_ );
+	arc( nmer_svm_scorecut_defined_ );
+	arc( nmer_svm_scorecut_ );
+	arc( nmer_svm_avg_rank_as_energy_ );
+	arc( nmer_svm_aa_matrix_defined_ );
+	arc( nmer_svm_aa_matrix_ );
+	arc( nmer_svm_list_defined_ );
+	arc( nmer_svm_list_ );
+	arc( nmer_svm_defined_ );
+	arc( nmer_svm_ );
+	arc( nmer_svm_rank_list_defined_ );
+	arc( nmer_svm_rank_list_ );
+	arc( nmer_svm_rank_defined_ );
+	arc( nmer_svm_rank_ );
 
 	arc( buried_unsatisfied_penalty_cone_angle_exponent_ );
 	arc( buried_unsatisfied_penalty_cone_angle_shift_factor_ );

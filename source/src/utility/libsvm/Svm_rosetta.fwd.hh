@@ -24,6 +24,7 @@ typedef utility::pointer::shared_ptr< Svm_node_rosetta > Svm_node_rosettaOP;
 
 class Svm_rosetta;
 typedef utility::pointer::shared_ptr< Svm_rosetta > Svm_rosettaOP;
+typedef utility::pointer::shared_ptr< Svm_rosetta const > Svm_rosettaCOP;
 
 } //namespace libsvm
 } //namespace utility
