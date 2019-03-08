@@ -160,14 +160,17 @@ void ForceDisulfidesMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	AttributeList attlist;
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
 
+	std::string one_pair = refpose_enabled_residue_number_string() + ":" + refpose_enabled_residue_number_string();
+	std::string set_of_pairs = one_pair + "(," + one_pair + ")*";
+
 	XMLSchemaRestriction pair_cslist;
-	pair_cslist.name( "colon_sep_size_pair_cslist" );
+	pair_cslist.name( "colon_sep_respair_cslist" );
 	pair_cslist.base_type( xs_string );
-	pair_cslist.add_restriction( xsr_pattern, "[+]?[0-9]+:[+]?[0-9]+(,[+]?[0-9]+:[+]?[0-9]+)*" );
+	pair_cslist.add_restriction( xsr_pattern, set_of_pairs );
 	xsd.add_top_level_element( pair_cslist );
 
-	attlist + XMLSchemaAttribute::required_attribute( "disulfides", "colon_sep_size_pair_cslist",
-		"For instance: 23A:88A,22B:91B. Can also take regular Rosetta numbering as in: 24:88,23:91." );
+	attlist + XMLSchemaAttribute::required_attribute( "disulfides", "colon_sep_respair_cslist",
+		"For instance: 23A:88A,22B:91B. Can also take regular Rosetta (aka Pose) numbering as in: 24:88,23:91." );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"Set a list of cysteine pairs to form disulfides and repack their surroundings."
 		" Useful for cases where the disulfides aren't recognized by Rosetta.", attlist );
