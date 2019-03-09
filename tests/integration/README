@@ -19,14 +19,14 @@ This is what the basic execute command looks like:
 
 This will put the output in a log file.  Next, there are some flags that should be in EVERY run, which are more convenient to put in the command file over the options file:
 
-%(bin)s/AnchoredDesign.%(binext)s @options -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/AnchoredDesign.%(binext)s @options -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     > log
 
-nodelay and constant_seed prevent spurious failures and runtime inefficiencies.  Note the \ to continue the command on the next line.
+-testing:INTEGRATION_TEST includes the -nodelay and -constant_seed flags, which prevent spurious failures and runtime inefficiencies.  Note the \ to continue the command on the next line.
 
 The next thing you need to do is strip out irrelevant output.  egrep -v stands for "remove all lines matching this" before putting it in the log file:
 
-%(bin)s/AnchoredDesign.%(binext)s @options -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/AnchoredDesign.%(binext)s @options -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -v 'reported success in' \
     | egrep -v 'jobs attempted in' \
     | egrep -v 'core.init: command' \

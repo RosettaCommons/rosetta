@@ -9,7 +9,7 @@
 # so any legal shell commands can go in this file.
 # Or comments like this one, for that matter.
 #
-# Variable substiution is done using Python's printf format,
+# Variable substitution is done using Python's printf format,
 # meaning you need a percent sign, the variable name in parentheses,
 # and the letter 's' (for 'string').
 #
@@ -20,7 +20,7 @@
 #   database    where the Mini database lives
 #   bin         where the Mini binaries live
 #   binext      the extension on binary files, like ".linuxgccrelease"
-#   python      the full path to the Python interpretter
+#   python      the full path to the Python interpreter
 #
 # The most important thing is that the test execute in the right directory.
 # This is especially true when we're using SSH to execute on other hosts.
