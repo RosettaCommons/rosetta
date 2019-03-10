@@ -1,0 +1,4 @@
+-s 1ACB.relaxed.pdb  1M1E.relaxed.pdb  4GEH.relaxed.pdb
+-nstruct 2
+-nooutput
+-parser:protocol protocol.xml

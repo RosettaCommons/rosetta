@@ -162,4 +162,4 @@ fi
 
 
 #cleanup
-# rm temp*
+rm temp*

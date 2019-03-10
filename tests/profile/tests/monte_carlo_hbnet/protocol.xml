@@ -1,0 +1,37 @@
+<ROSETTASCRIPTS>
+
+  <RESIDUE_SELECTORS>
+    <Chain name="chain1" chains="1"/>
+    <Chain name="chain2" chains="2"/>
+    <InterfaceByVector name="interface" grp1_selector="chain1" grp2_selector="chain2"/>
+    <Not name="not_interface" selector="interface"/>
+    <Or name="one_sided_design" selectors="not_interface,chain2"/>
+  </RESIDUE_SELECTORS>
+
+  <TASKOPERATIONS>
+    <IncludeCurrent name="keep_curr"/>
+
+    <ExtraRotamersGeneric name="extrachi"
+			  ex1="1" ex2="1" ex3="0" ex4="0"
+			  ex1_sample_level="1" ex2_sample_level="1" ex3_sample_level="0" ex4_sample_level="0"
+			  extrachi_cutoff="0"/>
+
+    <OperateOnResidueSubset name="repack_non_interface" selector="one_sided_design">
+      <RestrictToRepackingRLT/>
+    </OperateOnResidueSubset>
+
+    <OperateOnResidueSubset name="fix_non_interface" selector="not_interface">
+      <PreventRepackingRLT/>
+    </OperateOnResidueSubset>
+
+  </TASKOPERATIONS>
+
+  <MOVERS>
+    <HBNetStapleInterface hb_threshold="-0.65" store_network_scores_in_pose="true" secondary_threshold="-0.5" write_cst_files="false" max_network_size="100" max_unsat_Hpol="3" design_residues="STKHYWNQDE"  monte_carlo="true" total_num_mc_runs="100000" task_operations="keep_curr,repack_non_interface,extrachi,fix_non_interface" scorefxn="commandline" name="HBNet" max_networks_per_pose="10" min_networks_per_pose="1" allow_no_hbnets="true"/>
+  </MOVERS>
+
+  <PROTOCOLS>
+    <Add mover="HBNet"/>
+  </PROTOCOLS>
+
+</ROSETTASCRIPTS>

@@ -139,7 +139,7 @@ public:
 	AtomInfoSet::const_iterator remove( unsigned short int local_atom_id ){
 		for ( auto iter = begin(); iter != end(); ++iter ) {
 			if ( iter->local_atom_id() == local_atom_id ) {
-				return remove( local_atom_id );
+				return erase( iter );
 			}
 		}
 		return end();
