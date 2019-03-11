@@ -15,7 +15,7 @@ import sys
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
 
-import os, re, subprocess, time
+import os, re, subprocess, time, os.path
 from os import path
 from optparse import OptionParser
 
@@ -699,6 +699,13 @@ def main(args):
             raise ValueError("Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database)
 
     else: options.database = path.abspath( options.database )
+
+    for fl in 'bbdep02.May.sortlib.Dunbrack02.lib.bin bbdep02.May.sortlib-correct.12.2010.Dunbrack02.lib.bin ExtendedOpt1-5/Dunbrack10.lib.bin beta_nov2016/Dunbrack10.lib.bin shapovalov/StpDwn_0-0-0/Dunbrack10.lib.bin '.split():
+        if os.path.isfile(options.database + '/rotamer/' + fl): break
+
+    else:
+        print('WARNING: Clean checkout detected! (no database binary files found) Adding extra 8min to test timeout time...')
+        if options.timeout: options.timeout += 8
 
 
     if not options.valgrind and ( options.trackorigins or options.leakcheck or options.valgrind_path is not None ):
