@@ -220,6 +220,7 @@ SimpleMetricFilter::parse_my_tag(
 
 	set_use_cached_data(use_cache, prefix, suffix);
 	set_fail_on_missing_cache(tag->getOption< bool>("fail_on_missing_cache", fail_on_missing_cache_));
+	set_use_sum_for_per_residue_real(tag->getOption< bool >("use_sum_for_per_residue_real", sum_per_residue_real_metric_));
 
 }
 
@@ -244,7 +245,7 @@ void SimpleMetricFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 
 	attlist + XMLSchemaAttribute("match", xs_string, "String to match on to determine if filter passes or not for any StringMetric or CompositeStringMetric.  Set the comparison type to indicate the behavior of this filter.");
 
-	attlist + XMLSchemaAttribute("use_sum_for_per_residue_real", xs_string, "If you are using a PerResidueRealMetric, set this to use the SUM of the values to act as a RealMetric instead of acting as a composite metric.  Default False.");
+	attlist + XMLSchemaAttribute("use_sum_for_per_residue_real", xsct_rosetta_bool, "If you are using a PerResidueRealMetric, set this to use the SUM of the values to act as a RealMetric instead of acting as a composite metric.  Default False.");
 	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
 
 	//Data Cache

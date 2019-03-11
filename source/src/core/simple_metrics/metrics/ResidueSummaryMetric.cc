@@ -189,7 +189,9 @@ ResidueSummaryMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	utility::vector1< std::string > types = get_summary_type_strings();
 	utility::tag::add_schema_restrictions_for_strings( xsd, "summary_types", types);
 
-	attlist + XMLSchemaAttribute::attribute_w_default("action", "summary_types", "Summary type that this metric should calculate.", "mean");
+	std::string const action_docs = "Summary type that this metric should calculate.  Current choices are:\n" + utility::to_string(types);
+
+	attlist + XMLSchemaAttribute::attribute_w_default("action", "summary_types", action_docs, "mean");
 
 	attlist + XMLSchemaAttribute("action_value", xsct_real, "Number to use for any summary metrics that calculate N residues based on a value. ");
 
@@ -203,7 +205,7 @@ ResidueSummaryMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 	std::string description =
 		"A SimpleMetric that takes a PerResidueRealMetric and calculates different summaries of the overall data.\n"
-		"  This metric can calculate means, totals, or the number of residues (n_res) matching certain criteria\n"
+		"  This metric can calculate means, totals, or the number of residues (n_res) matching certain criteria. \n"
 		"  Useful for summarizing metrics or using more complex functionality in the SimpleMetricFilter\n"
 		"\n"
 		"  Be sure to set a custom_type to label the summary type in which you are calculating!.";
