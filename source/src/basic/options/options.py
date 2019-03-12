@@ -153,6 +153,7 @@ def main(args):
                         num_changed_files += f.close()
 
             f = KeepSameFile('option.cc.include.gen.hh', 'w')
+            gen_hh_files.sort()
             for include_file in gen_hh_files:
                 f.write( '#include <basic/options/keys/' + include_file + '>\n' )
             num_changed_files += f.close()

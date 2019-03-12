@@ -128,6 +128,5 @@ for entry in actual.sources:
   if prog_name == "generate_database_cache" and "release" in build.options.mode:
     # Run the generation application as part of the install
     def run_generate_command( target, source, env):
-	os.system( str(target[0]) + " -mute all -unmute apps.public.generate_database_cache" );
+      os.system( str(target[0]) + " -mute all -unmute apps.public.generate_database_cache" );
     env.AddPostAction( install_bin, env.Action( run_generate_command ) )
-

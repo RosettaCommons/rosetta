@@ -56,9 +56,10 @@ lists of strings.
 
 """
 
-import os, commands
+import os, subprocess
 
-shell_gcc = commands.getoutput('which gcc').split()[0]
+#shell_gcc = subprocess.getoutput('which gcc').split()[0]
+shell_gcc = subprocess.check_output(["which", "gcc"]).split()[0]
 
 settings = {
     "base" : {
@@ -2073,7 +2074,7 @@ settings = {
 
 	    # looks like debug mode is broken in Xcode 9.0, disbaling this for now
 	    # enable STL debug mode, see https://libcxx.llvm.org/docs/DesignDocs/DebugMode.html and https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
-        # I had played around with keeping _GLIBCXX_DEBUG for mac, but it's not strictly necessary 
+        # I had played around with keeping _GLIBCXX_DEBUG for mac, but it's not strictly necessary
         # as long as SOME tests are running with the stricter settings, and it was hell on a few
         # tests for some reason
             #"defines" : [ "_LIBCPP_DEBUG", "_GLIBCXX_DEBUG" ],

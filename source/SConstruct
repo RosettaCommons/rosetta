@@ -2,64 +2,63 @@
 #
 # Main build file for system.
 
+from __future__ import print_function
 import os, sys
 
 EnsureSConsVersion(0, 98, 1) # Need version 0.98.1 or above
-if( not (2,4) < sys.version_info < (3,0) ):
-    print "A version of Python between 2.4 and 2.7 is required to build Rosetta."
-    print "Version being used:"
-    print sys.version
+if( not (2,7) <= sys.version_info ):
+    print("A version of Python greater than or equal to 2.7 is required to build Rosetta.")
+    print("Version being used:")
+    print(sys.version)
 
 def print_build(build):
     from tools.build.settings import Settings
 
     if build.options.log:
-        print "Logging information printing for build:", \
-              ",".join(build.options.log), "\n"
+        print("Logging information printing for build:", ",".join(build.options.log), "\n")
         if "toplevel" in build.options.log:
-            print "Toplevel directory:",
+            print("Toplevel directory:", end=' ')
             Settings.write(build.toplevel)
-            print "\n"
+            print("\n")
         if "targets" in build.options.log:
-            print "Command-line targets:", ", ".join(COMMAND_LINE_TARGETS) or "none"
-            print "Build targets:", ", ".join(BUILD_TARGETS) or "defaults"
-            print ""
+            print("Command-line targets:", ", ".join(COMMAND_LINE_TARGETS) or "none")
+            print("Build targets:", ", ".join(BUILD_TARGETS) or "defaults")
+            print("")
         if "platform" in build.options.log:
-            print "Platform:",
+            print("Platform:", end=' ')
             Settings.write(build.platform)
-            print "\n"
+            print("\n")
             if 'unit_test_platform_only' in build.targets:
                 sys.exit()
         if "projects" in build.options.log:
-            print "Projects:",
+            print("Projects:", end=' ')
             Settings.write(build.projects, 1)
-            print "\n"
+            print("\n")
         if "options" in build.options.log:
-            print "Command-line options:", \
-                  ", ".join( [ "%s = %s" % item for item in ARGUMENTS.items() ] )
-            print ""
-            print "Requested options:",
+            print("Command-line options:", ", ".join( [ "%s = %s" % item for item in list(ARGUMENTS.items()) ] ))
+            print("")
+            print("Requested options:", end=' ')
             Settings.write(build.options_requested, 1)
-            print "\n\nActual options:",
+            print("\n\nActual options:", end=' ')
             Settings.write(build.options, 1)
-            print "\n"
+            print("\n")
         if "settings" in build.options.log:
-            print "Settings ids:",
+            print("Settings ids:", end=' ')
             Settings.write([ s.id for s in build.settings ], 1)
-            print "\n\nSettings:",
+            print("\n\nSettings:", end=' ')
             Settings.write(build.settings, 1)
-            print "\n"
+            print("\n")
         if "environment" in build.options.log:
-            print "Environment:"
+            print("Environment:")
             env_vars = []
             env_dict = build.environment.Dictionary()
-            env_keys = env_dict.keys()
+            env_keys = list(env_dict.keys())
             env_keys.sort()
             for key in env_keys:
-                if env_dict.has_key(key):
+                if key in env_dict:
                     env_vars += [ key + " = " + str(env_dict[key]) ]
             Settings.write(env_vars, 1)
-        print "-" * 72
+        print("-" * 72)
 
 help = """
 This is the Rosetta build system (using SCons).
@@ -162,9 +161,9 @@ def main():
         # Run the SConscript to choose which subdirectories to invoke
         SConscript("SConscript", "build")
 
-    except StandardError, ex:
+    except Exception as ex:
         if not DEBUG:
-            print "Error:", ex
+            print("Error:", ex)
         else:
             # Print a stack trace
             sys.excepthook(*sys.exc_info())

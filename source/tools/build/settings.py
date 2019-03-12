@@ -11,6 +11,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+from __future__ import print_function
 import copy, re, string, sys
 import SCons # needed for version checking
 
@@ -78,7 +79,7 @@ to catch mistakes (via the Python >= 2.2 "slots" mechanism.
         self.rest = {}
         # Add all settings which are known to the object's fields.
         # Add all remaining settings to an external dictionary.
-        for name, value in settings.items():
+        for name, value in list(settings.items()):
             if name in self.__slots__:
                 self[name] = value
             else:
@@ -89,22 +90,22 @@ to catch mistakes (via the Python >= 2.2 "slots" mechanism.
             try:
                 return self[key]
             except KeyError:
-                raise AttributeError, "No such attribute " + key
+                raise AttributeError("No such attribute " + key)
         elif key in ("rest",):
             return dict.__getattr__(self, key)
         else:
-            raise AttributeError, "No such attribute " + key
+            raise AttributeError("No such attribute " + key)
 
     def __setattr__(self, key, value):
         if key in self.__slots__:
             try:
                 self[key] = value
             except KeyError:
-                raise AttributeError, "No such attribute " + key
+                raise AttributeError("No such attribute " + key)
         elif key in ("rest",):
             dict.__setattr__(self, key, value)
         else:
-            raise AttributeError, "No such attribute " + key
+            raise AttributeError("No such attribute " + key)
 
     def keys(self):
         """The order of keys in a settings object is the same
@@ -127,8 +128,8 @@ lists, strings, and numbers) and nothing else.  It is almost
 but not quite JSON (www.json.org).
 """
         settings = {}
-        execfile(file, settings)
-        if settings.has_key("__builtins__"):
+        exec(compile(open(file).read(), file, 'exec'), settings)
+        if "__builtins__" in settings:
             del settings["__builtins__"]
         if root:
             settings = settings[root]
@@ -145,9 +146,9 @@ obviously a keyword conflict.)
         # Settings are also dictionaries
         if isinstance(settings, dict):
             if len(settings) == 0:
-                print >>file, "{}",
+                print("{}", end=' ', file=file)
             else:
-                keys = settings.keys()
+                keys = list(settings.keys())
                 for key in keys:
                     value = settings[key]
 #                   # Don't print empty items
@@ -156,20 +157,20 @@ obviously a keyword conflict.)
 #                       type(value) is str and len(value) == 0
 #                   ):
                     if True:
-                        print >>file, "\n" + (indent * 2) * " " + key + ":",
+                        print("\n" + (indent * 2) * " " + key + ":", end=' ', file=file)
                         class_.write(value, indent + 1, file)
         elif type(settings) in (list, tuple):
             if len(settings) == 0:
-                print >>file, "[]",
+                print("[]", end=' ', file=file)
             for item in settings:
-                print >>file, "\n" + (indent * 2) * " " + "-", # str(count) + ":",
+                print("\n" + (indent * 2) * " " + "-", end=' ', file=file) # str(count) + ":",
                 class_.write(item, indent + 1, file)
         elif type(settings) is type(None):
-            print >>file, "<NONE>",
+            print("<NONE>", end=' ', file=file)
         elif type(settings) is str and len(settings) == 0:
-            print >>file, "\"\"",
+            print("\"\"", end=' ', file=file)
         else:
-            print >>file, str(settings),
+            print(str(settings), end=' ', file=file)
 
     write = classmethod(write)
 
@@ -215,7 +216,7 @@ up into categories for explanatory purposes.
 
     def __init__(self, **flags):
         Settings.__init__(self, init = [], **flags)
-        for name, value in self.items():
+        for name, value in list(self.items()):
             assert type(value) is list, "Parameters of BuildFlags must be lists"
 
 
@@ -244,7 +245,7 @@ used by the build.
 
         This is complicated by the fact that a version string can be
         something like 3.2b1."""
-        version = string.split(string.split(version_string, ' ')[0], '.')
+        version = str.split( str.split( version_string, ' ')[0], '.')
         v_major = int(version[0])
         v_minor = int(re.match('\d+', version[1]).group())
         if len(version) >= 3:
@@ -391,7 +392,7 @@ by SConscripts.
         self.name = name
 
     def _get_packages(self):
-        packages = self.sources.keys()
+        packages = list(self.sources.keys())
         packages.sort()
         # packages = [ self.name + "/" + package for package in packages if package ]
         return packages
@@ -445,5 +446,3 @@ class BuildState (Settings):
     def __init__(self, state = None):
         if not state: state = {}
         Settings.__init__(self, **state)
-
-

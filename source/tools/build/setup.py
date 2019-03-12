@@ -92,7 +92,7 @@ directory it is built to, and what settings it ultimately uses.
     # This is used primarily for error reporting.
     # (There must be some dict function for extracting a subset of a map...)
     requested = BuildOptions(
-        utility.map_subset(env.Dictionary(), defaults.keys())
+        utility.map_subset(env.Dictionary(), list(defaults.keys()))
     )
 
     # We want to pull out the compiler command from the settings to get the compiler type
@@ -247,7 +247,7 @@ combinatorically unmanageable.
         # We only incorporate the settings of those ids we happen to find.
         # This could lead to subtle errors, because there's no easy way
         # to recognize the absence of a given id.
-        if supported.has_key(id) and supported[id]:
+        if id in supported and supported[id]:
             actual += [ id ]
 
     # Create the build settings which match all actual build ids
@@ -319,18 +319,18 @@ def get_projects():
         if os.path.exists( modification + ".settings") :
             site = Settings.load( modification + ".settings", "settings");
 
-            if site[modification]["prepends"].has_key("projects") :
+            if "projects" in site[modification]["prepends"] :
                 for cat in site[modification]["prepends"]["projects"] :
                     for item in site[modification]["prepends"]["projects"][cat] :
                         allowed[cat].insert(0, item )
-            if site[modification]["appends"].has_key("projects") :
+            if "projects" in site[modification]["appends"] :
                 for cat in site[modification]["appends"]["projects"] :
                     for item in site[modification]["appends"]["projects"][cat] :
                         allowed[cat].append(item)
-            if site[modification]["overrides"].has_key("projects") :
+            if "projects" in site[modification]["overrides"] :
                 for cat in site[modification]["overrides"]["projects"] :
                     allowed[cat] = site[modification]["overrides"]["projects"][cat]
-            if site[modification]["removes"].has_key("projects") :
+            if "projects" in site[modification]["removes"] :
                 for cat in site[modification]["removes"]["projects"] :
                     for project in allowed[cat] :
                         for removed_project in site[modification]["removes"]["projects"][cat] :
@@ -385,15 +385,15 @@ what SCons will use to build the system.
     for setting in settings:
         if setting.appends:
             symbols = setting.appends.symbols()
-            if symbols.has_key("ENV"):
-                for key, value in symbols["ENV"].items():
+            if "ENV" in symbols:
+                for key, value in list(symbols["ENV"].items()):
                     env["ENV"][key] += value
                 del symbols["ENV"]
             env.Append(**symbols)
         if setting.prepends:
             symbols = setting.prepends.symbols()
-            if symbols.has_key("ENV"):
-                for key, value in symbols["ENV"].items():
+            if "ENV" in symbols:
+                for key, value in list(symbols["ENV"].items()):
                     if key in env["ENV"]:
                         env["ENV"][key] = value + env["ENV"][key]
                     else:
@@ -404,7 +404,7 @@ what SCons will use to build the system.
             env.Replace(**setting.overrides.symbols())
         if setting.removes:
             removes = setting.removes.symbols()
-            for name, values in removes.items():
+            for name, values in list(removes.items()):
                 existing = env.Dictionary()[name]
                 if isinstance( existing, list ): # list of values
                      for value in values:

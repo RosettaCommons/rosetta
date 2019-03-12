@@ -8,6 +8,7 @@
 """Utility functions used by the Rosetta build system.  None of these are
 critical: they are mostly useful shortcuts.
 """
+from __future__ import print_function
 import fnmatch, os
 
 # Paths
@@ -95,9 +96,9 @@ def map_subset(map, keys):
 
 def print_settings(settings, indent = 0):
     if isinstance(settings, dict):
-        keys = settings.keys(); keys.sort()
+        keys = list(settings.keys()); keys.sort()
         if len(settings) == 0:
-            print "{}",
+            print("{}", end=' ')
         for key in keys:
             value = settings[key]
 #             # Don't print empty items
@@ -106,39 +107,39 @@ def print_settings(settings, indent = 0):
 #                 type(value) is str and len(value) == 0
 #             ):
             if True:
-                print "\n" + (indent * 2) * " " + key + ":",
+                print("\n" + (indent * 2) * " " + key + ":", end=' ')
                 print_settings(value, indent + 1)
     elif type(settings) in (list, tuple):
         if len(settings) == 0:
-            print "[]",
+            print("[]", end=' ')
         # count = 1
         for item in settings:
-            print "\n" + (indent * 2) * " " + "-", # str(count) + ":",
+            print("\n" + (indent * 2) * " " + "-", end=' ') # str(count) + ":",
             print_settings(item, indent + 1)
             # count += 1
     elif type(settings) is type(None):
-        print "<NONE>",
+        print("<NONE>", end=' ')
     elif type(settings) is str and len(settings) == 0:
-        print "\"\"",
+        print("\"\"", end=' ')
     else:
-        print str(settings),
+        print(str(settings), end=' ')
 
 
 def print_map(map, keys = None):
     if len(map) > 0:
         if keys is None:
-            keys = map.keys()
+            keys = list(map.keys())
             keys.sort()
         for key in keys:
             value = map[key]
-            print key, "=", value
-        print ""
+            print(key, "=", value)
+        print("")
 
 
 def print_environment(environment, *filter):
     symbols = environment.Dictionary()
     if filter and type(filter[0]) is type(print_environment):
-        keys = symbols.keys()
+        keys = list(symbols.keys())
         filter = filter[0]
     else:
         keys = filter
@@ -148,14 +149,14 @@ def print_environment(environment, *filter):
         key = str(key)
         value = str(symbols[key])
         if filter:
-            if filter(key) or filter(value):
+            if list(filter(key)) or list(filter(value)):
                 keep[key] = value
         else:
             keep[key] = value
-    sorted_keys = keep.keys()
+    sorted_keys = list(keep.keys())
     sorted_keys.sort()
     for key in sorted_keys:
-        print key, '=', symbols[key]
+        print(key, '=', symbols[key])
 
 # Install rules
 
@@ -164,7 +165,7 @@ def install_links(target, source, env):
     """
     import os
     source = "%s/%s" % (relative_path(source, target), source)
-    if os.__dict__.has_key("symlink"):
+    if "symlink" in os.__dict__:
         os.symlink(source, target)
     else:
         import shutil
@@ -194,7 +195,7 @@ def install_links_with_stripped_target(target, source, env):
     else:
         stripped_target = None
 
-    if os.__dict__.has_key("symlink"):
+    if "symlink" in os.__dict__:
         try: os.unlink(target)
         except: pass
         os.symlink(source, target)

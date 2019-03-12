@@ -22,6 +22,7 @@ operating_systems - OSes and their supported version numbers/names.
   XXX: Do we need to support OS bit-widths?
 architectures - Processors and their supported bit-widths.
 """
+
 from __future__ import print_function
 
 import sys, os
@@ -73,9 +74,7 @@ def select_compiler_version(supported, compiler, requested, compiler_command):
             actual, actual_full = requested, requested
 
     if not actual or actual == "*":
-        raise RuntimeError, \
-            "Could not determine version for compiler '%s'.  Check whether compiler by that name is installed and on your path." % \
-                (compiler)
+        raise RuntimeError("Could not determine version for compiler '%s'.  Check whether compiler by that name is installed and on your path." % (compiler))
 
     # if compiler in supported.cxx:
     #     versions = supported.cxx[compiler]
@@ -94,9 +93,7 @@ def select_compiler_version(supported, compiler, requested, compiler_command):
     # A wildcard request will match any actual version.
     if requested != "*":
         if actual_full.find(requested) != 0:
-            raise ValueError, \
-                "Actual compiler version '%s' does not match requested version '%s'" % \
-                (actual, requested)
+            raise ValueError("Actual compiler version '%s' does not match requested version '%s'" % (actual, requested))
 
     return actual
 
@@ -120,10 +117,10 @@ def select_os(supported, requested, expected = None):
 
     # Look up translated name in the default os names.
     if actual not in supported.os:
-        raise KeyError, "Operating system '%s' is unsupported." % (actual)
+        raise KeyError("Operating system '%s' is unsupported." % (actual))
 
     if requested != "*" and requested != actual:
-        raise ValueError, "Actual operating system '%s' does not match requested version '%s'" % (actual, requested)
+        raise ValueError("Actual operating system '%s' does not match requested version '%s'" % (actual, requested))
 
     return actual
 
@@ -133,7 +130,7 @@ def select_os_version(supported, os, requested):
 """
     actual, actual_full = _get_os_version()
     if requested != "*" and requested != actual:
-        raise ValueError, "Actual operating system version '%s' does not match requested version '%s'" % (actual, requested)
+        raise ValueError("Actual operating system version '%s' does not match requested version '%s'" % (actual, requested))
 
     return actual
 
@@ -181,18 +178,18 @@ def select_arch(supported, os, requested, expected = None):
     if actual not in supported.arch:
         if expected:
             #We got an explicit expected platform - don't be clever.
-            raise KeyError, "Processor architechture '%s' is unsupported." % (expected)
+            raise KeyError("Processor architechture '%s' is unsupported." % (expected))
         #Some platforms use more specific strings in platform.processor() e.g. "Intel(R) Core(TM)2 CPU T7400 @ 2.16GHz"
         # platform.machine() often gives better results. (We only use machine() as fallback to match historical behavior.)
         machine = _get_machine()
         machine = processor_translation.get( machine, machine )
         if machine not in supported.arch:
-            raise KeyError, "Processor '%s' with machine designation '%s' is unsupported." % (actual, machine)
+            raise KeyError("Processor '%s' with machine designation '%s' is unsupported." % (actual, machine))
         else:
             actual = machine
 
     if requested != "*" and requested != actual:
-        raise ValueError, "Actual processor architecture '%s' does not match requested version '%s'" % (actual, requested)
+        raise ValueError("Actual processor architecture '%s' does not match requested version '%s'" % (actual, requested))
 
     return actual
 
@@ -340,7 +337,7 @@ def _get_arch():
     On Python versions without 'platform' this gets tricky.
     """
     # Note that these are very different values, and need processing
-    if globals().has_key("platform"):
+    if "platform" in globals():
         return platform.processor() or _uname()[4]
     else:
         return _uname()[4]
@@ -348,17 +345,17 @@ def _get_arch():
 def _get_machine():
     """Ask Python what the machine designation is.
     """
-    if globals().has_key("platform"):
+    if "platform" in globals():
         return platform.machine()
     else:
-        raise SystemError, "Unable to get machine designation -- use a more recent Python version."
+        raise SystemError("Unable to get machine designation -- use a more recent Python version.")
 
 def _get_arch_size():
     """Ask Python what the architecture size is.
 
     On Python versions without 'platform' this gets tricky.
     """
-    if globals().has_key("platform"):
+    if "platform" in globals():
         return platform.architecture()[0]
     else:
         return _uname()[4]

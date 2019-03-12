@@ -25,7 +25,7 @@ def add_common_nvcc_variables(env):
   """
 
   # "NVCC common command line"
-  if not env.has_key('_NVCCCOMCOM'):
+  if '_NVCCCOMCOM' not in env:
     # prepend -Xcompiler before each flag
 
     # these flags are common to both static and shared compilations

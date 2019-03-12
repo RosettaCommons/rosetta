@@ -24,9 +24,9 @@ _api_version_ = '1.0'  # api version
 
 
 tests = dict(
-    debug     = NT(command='./scons.py bin cxx={compiler} extras={extras} -j{jobs}', incremental=True),
-    release   = NT(command='./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
-    static    = NT(command='./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
+    debug     = NT(command='{python} ./scons.py bin cxx={compiler} extras={extras} -j{jobs}', incremental=True),
+    release   = NT(command='{python} ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
+    static    = NT(command='{python} ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
 
     ninja_debug    = NT(command='./ninja_build.py debug -remake -j{jobs}', incremental=True),
     ninja_release  = NT(command='./ninja_build.py release -remake -j{jobs}', incremental=True),
@@ -39,10 +39,11 @@ tests = dict(
 
     cppcheck  = NT(command='cd src && bash ../../tests/benchmark/util/do_cppcheck.sh -j {jobs} -e "{extras}"', incremental=False),
 
-    ui  = NT(command='cd src/ui && python update_ui_project.py && cd ../../build && mkdir -p ui.{platform_suffix}.debug && cd ui.{platform_suffix}.debug && {qmake} -r ../qt/qt.pro {qt_extras}&& make -j{jobs}', incremental=True),
+    ui  = NT(command='cd src/ui && {python} update_ui_project.py && cd ../../build && mkdir -p ui.{platform_suffix}.debug && cd ui.{platform_suffix}.debug && {qmake} -r ../qt/qt.pro {qt_extras}&& make -j{jobs}', incremental=True),
 
-    xcode = NT(command='cd xcode && python make_project.py all && xcodebuild -scheme rosetta_scripts -configuration Debug -jobs {jobs} build', incremental=True),  #  -alltargets
+    xcode = NT(command='cd xcode && {python} make_project.py all && xcodebuild -scheme rosetta_scripts -configuration Debug -jobs {jobs} build', incremental=True),  #  -alltargets
 
+    #py3_debug = NT(command='python3 ./scons.py bin cxx={compiler} extras={extras} -j{jobs}', incremental=True),
 )
 
 # def set_up():
@@ -72,6 +73,8 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
     platform_suffix = platform_to_pretty_string(platform)
+
+    python = get_path_to_python_executable(platform, config).python
 
     qmake = config['qmake']
     qt_extras = '-spec linux-clang ' if (compiler == 'clang' and platform['os'] == 'linux') else ''

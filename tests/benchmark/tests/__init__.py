@@ -326,10 +326,12 @@ def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=Fals
     jobs = config['cpu_count']
     skip_compile = config.get('skip_compile', False)
 
+    python = get_path_to_python_executable(platform, config).python
+
     # removing all symlinks from bin/ and then building binaries...
-    build_command_line = 'find bin -type l ! -name ".*" -exec rm {{}} \\; ; ./scons.py bin mode={mode} cxx={compiler} extras={extras} -j{jobs}'.format(jobs=jobs, mode=mode, compiler=compiler, extras=extras)
+    build_command_line = f'find bin -type l ! -name ".*" -exec rm {{}} \\; ; {python} ./scons.py bin mode={mode} cxx={compiler} extras={extras} -j{jobs}'
     if build_unit:
-        build_command_line += ' && ./scons.py cxx={compiler} mode={mode} extras={extras} cat=test -j{jobs}'.format(jobs=jobs, compiler=compiler, extras=extras, mode=mode)
+        build_command_line += f' && {python} ./scons.py cxx={compiler} mode={mode} extras={extras} cat=test -j{jobs}'
 
     if skip_compile:
         build_command_line = "SKIPPED: " + build_command_line

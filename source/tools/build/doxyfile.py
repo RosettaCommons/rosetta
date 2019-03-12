@@ -39,8 +39,8 @@ class Doxyfile:
 
     # Convenience method.  We are not trying to make this class a dictionary.
     def __setitem__(self, key, value):
-        if not self.__settings.has_key(key):
-            raise KeyError, "Doxyfile has no such field: '%s'" % key
+        if key not in self.__settings:
+            raise KeyError("Doxyfile has no such field: '%s'" % key)
         self.__settings[key] = value
 
 
@@ -49,12 +49,12 @@ class Doxyfile:
         Change the settings in the Doxyfile to those in 'settings'.
         Settings not part of the standard Doxygen options will be rejected.
         """
-        for name, value in settings.items():
+        for name, value in list(settings.items()):
             self[name] = value
 
 
     def initialize_defaults(self):
-        for name in constants.defaults.keys():
+        for name in list(constants.defaults.keys()):
             self.__settings[name] = constants.defaults[name]
 
 
@@ -82,7 +82,7 @@ class Doxyfile:
                 elif len(terms) == 3:
                     name, value = terms[0], terms[2]
                 # Add the fields
-                if not self.__settings.has_key(name):
+                if name not in self.__settings:
                     value = constants.defaults[name]
                 self.__settings[name] = (value, constants.comments.get(name, ""))
 
@@ -106,11 +106,11 @@ class Doxyfile:
         if with_comments:
             self.write_comments(file, constants.header)
         # Write out each field
-        items = self.__settings.items()
+        items = list(self.__settings.items())
         items.sort()
         for name, value in items:
             if with_comments:
-                if constants.comments.has_key(name):
+                if name in constants.comments:
                     self.write_comments(file, constants.comments[name])
             file.write("%-24s = %s\n" % (name, value))
         file.close()
@@ -153,10 +153,10 @@ def generate(env):
 
    # Doxygen has no command line input: all configuration is done via a file.
    # This specifies the name of the file
-   if not env.has_key("DOXYFILE_FILE"):
+   if "DOXYFILE_FILE" not in env:
        env["DOXYFILE_FILE"] = "Doxyfile"
    # Options to add to $DOXYFILE to modify the run
-   if not env.has_key("DOXYFILE_OPTIONS"):
+   if "DOXYFILE_OPTIONS" not in env:
        env["DOXYFILE_OPTIONS"] = {}
 
 

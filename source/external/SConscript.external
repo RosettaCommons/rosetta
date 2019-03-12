@@ -45,7 +45,7 @@ elif os.path.exists( subsettings ):
   # Sources.  Currently we assume they are all C++.  If this ever changes
   # we will need to differentiate language types in the .src.settings files.
   if use_this:
-   for package, modules in requested.sources.items():
+   for package, modules in list(requested.sources.items()):
     for module in modules:
         # CUDA files have extension '.cu'
         if module.endswith(".cu"):
