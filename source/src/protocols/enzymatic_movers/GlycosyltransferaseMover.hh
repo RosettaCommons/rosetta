@@ -41,7 +41,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 	GlycosyltransferaseMover & operator=( GlycosyltransferaseMover const & object_to_copy );
 
 	// Destructor
-	virtual ~GlycosyltransferaseMover();
+	~GlycosyltransferaseMover() override = default;
 
 
 public: // Standard Rosetta methods ///////////////////////////////////////////
@@ -52,10 +52,15 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 
 	// Mover methods
 	/// @brief  Return the name of the Mover.
+	std::string get_name() const override;
+
+	static std::string mover_name() { return "GlycosyltransferaseMover"; }
+
 
 	moves::MoverOP clone() const override;
 
 	moves::MoverOP fresh_instance() const override;
+
 
 	void parse_my_tag(
 		TagCOP tag,
@@ -64,24 +69,14 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 		moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose ) override;
 
-	std::string
-	get_name() const override;
-
-	static
-	std::string
-	mover_name();
-
-	static
-	void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-
-
-	/// @brief  Apply the corresponding move to <input_pose>.
-	//virtual void apply( core::pose::Pose & input_pose );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
 protected:
-	void perform_reaction( core::pose::Pose & input_pose, core::uint const sepos, std::string const & cosubstrate ) override;
+	void perform_reaction(
+		core::pose::Pose & input_pose,
+		core::uint const sepos,
+		std::string const & cosubstrate ) override;
 
 
 private:  // Private methods //////////////////////////////////////////////////

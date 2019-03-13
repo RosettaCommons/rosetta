@@ -138,10 +138,10 @@ process()
 	{  // Carbohydrate-related umbrella options to make life easier for users
 		using namespace basic::options::OptionKeys;
 
-		if ( option[ in::include_sugars ] ) {
-			option[ score::no_pro_close_ring_closure ].value( true );
-			//option[ score::ring_close_shadow_constraint ].value( 0.1 );
-		}
+		//if ( option[ in::include_sugars ] ) {
+		//option[ score::no_pro_close_ring_closure ].value( true );
+		//option[ score::ring_close_shadow_constraint ].value( 0.1 );
+		//}
 		if ( option[ carbohydrates::glycam_pdb_format ] ) {
 			utility::vector1< std::string > alt_codes_list;
 			if ( option[ in::alternate_3_letter_codes ].active() ) {

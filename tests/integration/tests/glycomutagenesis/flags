@@ -1,0 +1,9 @@
+-mute all
+-include_sugars
+-lock_rings
+-s input/pentakisalanine.pdb
+-out:path:pdb output/
+-out:path:score output/
+-in:file:native input/pentakisalanine.pdb
+-nstruct 5
+-n_cycles 25

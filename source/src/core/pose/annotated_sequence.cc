@@ -417,7 +417,7 @@ residue_types_from_saccharide_sequence_recursive(
 
 				if ( ( L_or_D_assigned ) && ( sterochem == '*' ) ) {
 					utility_exit_with_message( "Saccharide sequence input error: " +
-						code + "cannot have a stereochemical prefix." );
+						code + " cannot have a stereochemical prefix." );
 				}
 				if ( ( ! L_or_D_assigned ) && ( sterochem != '*' ) ) {
 					residue_type_name << sterochem << '-';

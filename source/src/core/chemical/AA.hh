@@ -173,7 +173,7 @@ enum AA {
 };
 
 //////////////////////////////////////////////////////////
-/// @brief Give an AA string name, return its enum type.
+/// @brief Give an AA string 3-letter code, return its enum type.
 //////////////////////////////////////////////////////////
 AA
 aa_from_name( std::string const & name );

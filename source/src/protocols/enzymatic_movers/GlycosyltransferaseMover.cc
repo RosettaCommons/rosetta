@@ -20,10 +20,12 @@
 // Project headers
 #include <core/pose/carbohydrates/util.hh>
 
+#include <protocols/moves/mover_schemas.hh>
 //#include <protocols/rosetta_scripts/util.hh>
 
 // Utility headers
 //#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // Basic header
 //#include <basic/options/option.hh>
@@ -31,9 +33,6 @@
 
 // C++ headers
 #include <iostream>
-// XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 
 // Construct tracers.
@@ -70,9 +69,6 @@ GlycosyltransferaseMover::operator=( GlycosyltransferaseMover const & object_to_
 	return *this;
 }
 
-// Destructor
-GlycosyltransferaseMover::~GlycosyltransferaseMover() = default;
-
 
 // Standard Rosetta methods ///////////////////////////////////////////////////
 // General methods
@@ -88,11 +84,10 @@ GlycosyltransferaseMover::register_options()
 
 
 // Mover methods
-// XRW TEMP std::string
-// XRW TEMP GlycosyltransferaseMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return type();
-// XRW TEMP }
+std::string
+GlycosyltransferaseMover::get_name() const {
+	return mover_name();
+}
 
 moves::MoverOP
 GlycosyltransferaseMover::clone() const
@@ -106,6 +101,7 @@ GlycosyltransferaseMover::fresh_instance() const
 	return utility::pointer::make_shared< GlycosyltransferaseMover >();
 }
 
+
 void
 GlycosyltransferaseMover::parse_my_tag(
 	TagCOP /*tag*/,
@@ -115,49 +111,20 @@ GlycosyltransferaseMover::parse_my_tag(
 	Pose const & /*pose*/ )
 {}
 
-
-/// @details  WiP
-/// @param    <input_pose>: the structure to be glycosylated, i.e., "substrate 1"
-/*void
-GlycosyltransferaseMover::apply( Pose & input_pose )
-{
-using namespace std;
-
-show( TR );
-
-set_pose_reactive_sites( input_pose );
-
-TR << "Simulating glycosyltransferase " << get_enzyme() << " acting on the pose...." << endl;
-
-Size const n_sites( get_n_reactive_sites() );
-for ( core::uint i( 1 ); i <= n_sites; ++i ) {
-if ( ! get_ensured_sites().contains( get_reactive_site_sequence_position( i ) ) ) {
-// If the site is not ensured, randomly decide whether or not to glycosylate it.
-if ( numeric::random::rg().uniform() > get_efficiency() ) {
-continue;
-}
-}
-core::uint j;
-if ( performs_major_reaction_only() ) {
-j = 1;
-} else {
-j = core::uint( numeric::random::rg().uniform() * get_n_co_substrates() + 1 );
-}
-//ConsensusSequenceType const sequence_type(
-//  EnzymeManager::get_consensus_sequence_type( species_name_, enzyme_name_ ) );
-core::pose::carbohydrates::glycosylate_pose(
-input_pose,
-get_reactive_site_sequence_position( i ),
-get_reactive_site_atom_name( i ),
-get_co_substrate( j ) );
-}
-
-TR << "Move(s) complete." << endl;
-}*/
-
-
 void
-GlycosyltransferaseMover::perform_reaction( core::pose::Pose & input_pose, core::uint const sepos, std::string const & cosubstrate )
+GlycosyltransferaseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Enzymatic mover to glycosylate a pose", attlist );
+}
+
+// Protected methods //////////////////////////////////////////////////////////
+void
+GlycosyltransferaseMover::perform_reaction(
+	core::pose::Pose & input_pose,
+	core::uint const sepos,
+	std::string const & cosubstrate )
 {
 	core::pose::carbohydrates::glycosylate_pose(
 		input_pose,
@@ -196,56 +163,22 @@ GlycosyltransferaseMover::copy_data(
 
 
 // Creator methods ////////////////////////////////////////////////////////////
-// Return an up-casted owning pointer (MoverOP) to the mover.
-// XRW TEMP moves::MoverOP
-// XRW TEMP GlycosyltransferaseMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< GlycosyltransferaseMover >();
-// XRW TEMP }
-
-// Return the string identifier for the associated Mover (GlycosyltransferaseMover).
-// XRW TEMP std::string
-// XRW TEMP GlycosyltransferaseMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return GlycosyltransferaseMover::mover_name();
-// XRW TEMP }
-
-// Static method that returns the keyname for performance reasons.
-// XRW TEMP std::string
-// XRW TEMP GlycosyltransferaseMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "GlycosyltransferaseMover";
-// XRW TEMP }
-
-std::string GlycosyltransferaseMover::get_name() const {
-	return mover_name();
-}
-
-std::string GlycosyltransferaseMover::mover_name() {
-	return "GlycosyltransferaseMover";
-}
-
-void GlycosyltransferaseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
-{
-	using namespace utility::tag;
-	AttributeList attlist;
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Enzymatic mover to glycosylate a pose", attlist );
-}
-
-std::string GlycosyltransferaseMoverCreator::keyname() const {
+std::string
+GlycosyltransferaseMoverCreator::keyname() const {
 	return GlycosyltransferaseMover::mover_name();
 }
 
+// Return an up-casted owning pointer (MoverOP) to the mover.
 protocols::moves::MoverOP
 GlycosyltransferaseMoverCreator::create_mover() const {
 	return utility::pointer::make_shared< GlycosyltransferaseMover >();
 }
 
-void GlycosyltransferaseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+void
+GlycosyltransferaseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
 	GlycosyltransferaseMover::provide_xml_schema( xsd );
 }
-
 
 
 // Helper methods /////////////////////////////////////////////////////////////

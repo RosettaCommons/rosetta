@@ -362,8 +362,8 @@ private:  // Private methods
 		// Instantiate the Movers.
 		// Note: The randomizer objects require a Pose and so cannot be initialized here.
 
-		slider_ = docking::FaDockingSlideIntoContactOP ( new docking::FaDockingSlideIntoContact( JUMP_NUM ) );
-		perturber_ = rigid::RigidBodyPerturbMoverOP ( new rigid::RigidBodyPerturbMover( JUMP_NUM, rot_, trans_ ) );
+		slider_ = docking::FaDockingSlideIntoContactOP( new docking::FaDockingSlideIntoContact( JUMP_NUM ) );
+		perturber_ = rigid::RigidBodyPerturbMoverOP( new rigid::RigidBodyPerturbMover( JUMP_NUM, rot_, trans_ ) );
 
 		jump_mm_ = utility::pointer::make_shared< kinematics::MoveMap >();
 		ring_mm_ = utility::pointer::make_shared< kinematics::MoveMap >();
@@ -652,7 +652,7 @@ main( int argc, char *argv[] )
 
 		// Distribute the mover.
 		protocols::jd2::JobDistributor::get_instance()->go( protocol );
-	} catch (utility::excn::Exception const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
 		return FAILURE;
 	}

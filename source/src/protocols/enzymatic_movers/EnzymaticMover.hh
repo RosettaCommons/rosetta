@@ -79,7 +79,10 @@ protected: // Accessors/Mutators //////////////////////////////////////////////
 	/// @brief  Set the family name of this simulated enzyme.
 	void set_enzyme_family( std::string const & family_name );
 
-	virtual void perform_reaction( core::pose::Pose & input_pose, core::uint const sepos, std::string const & cosubstrate ) = 0;  // This method must be overridden.
+	virtual void perform_reaction(
+		core::pose::Pose & input_pose,
+		core::uint const sepos,
+		std::string const & cosubstrate ) = 0;  // This method must be overridden.
 
 public:
 	/// @brief    Get the family name of this simulated enzyme.
@@ -248,7 +251,7 @@ private:  // Private methods //////////////////////////////////////////////////
 	void copy_data( EnzymaticMover & object_to_copy_to, EnzymaticMover const & object_to_copy_from );
 
 
-	// Access the EnzymeManager to get efficiency.
+	// Access the EnzymeManager to set efficiency.
 	void set_efficiency();
 
 	// Access the EnzymeManager to determine which co-substrates are able to take part in the reaction of this

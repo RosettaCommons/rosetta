@@ -241,7 +241,7 @@ EnzymaticMover::set_pose_reactive_sites( core::pose::Pose const & pose )
 	core::uint const site_residue_position( EnzymeManager::get_reactive_residue_consensus_sequence_position(
 		enzyme_family_, species_name_, enzyme_name_ ) );
 	vector1< string > const & site_residues( consensus_residues[ site_residue_position ] );  // could be more than one
-	Size const n_consensus_residues( site_residues.size() );
+	Size const n_consensus_residues( consensus_residues.size() );
 	Size const n_residues_left_of_site( site_residue_position - 1 );
 	Size const n_residues_right_of_site( n_consensus_residues - site_residue_position );
 	string const & site_atom( EnzymeManager::get_reactive_atom( enzyme_family_, species_name_, enzyme_name_ ) );
@@ -251,8 +251,9 @@ EnzymaticMover::set_pose_reactive_sites( core::pose::Pose const & pose )
 	Size const n_residues( pose.total_residue() );
 	for ( core::uint i( 1 ); i <= n_residues; ++i ) {
 		if ( excluded_sites_.contains( i ) ) { continue; }
-		if ( site_residues.contains( pose.residue( i ).name3() ) ) {
-			TR.Debug << "Found potential site: " << pose.residue( i ).name3() << i;
+		string const & res_i( pose.residue( i ).name3() );
+		if ( site_residues.contains( res_i ) ) {
+			TR.Debug << "Found potential site: " << res_i << i;
 			TR.Debug << "  Checking if within consensus sequence..." << endl;
 			if ( i < site_residue_position ) {
 				TR.Trace << "Residue too close to start of sequence to fall within consensus." << endl;
@@ -264,26 +265,32 @@ EnzymaticMover::set_pose_reactive_sites( core::pose::Pose const & pose )
 			}
 
 			// Check left.
+			bool left_matches( true );
 			for ( core::uint j( 1 ); j <= n_residues_left_of_site; ++j ) {
 				if ( ! consensus_residues[ site_residue_position - j ].contains( pose.residue( i - j ).name3() ) ) {
 					TR.Trace << "Residue " << pose.residue( i - j ).name3() << i - j;
-					TR.Trace << " found left of " << pose.residue( i ).name3() << i;
+					TR.Trace << " found left of " << res_i << i;
 					TR.Trace << " does not fall within consensus." << endl;
-					continue;
+					left_matches = false;
+					break;
 				}
 			}
+			if ( ! left_matches ) { continue; }
 
 			// Check right.
+			bool right_matches( true );
 			for ( core::uint j( 1 ); j <= n_residues_right_of_site; ++j ) {
 				if ( ! consensus_residues[ site_residue_position + j ].contains( pose.residue( i + j ).name3() ) ) {
 					TR.Trace << "Residue " << pose.residue( i + j ).name3() << i + j;
-					TR.Trace << " found right of " << pose.residue( i ).name3() << i;
+					TR.Trace << " found right of " << res_i << i;
 					TR.Trace << " does not fall within consensus." << endl;
-					continue;
+					right_matches = false;
+					break;
 				}
 			}
+			if ( ! right_matches ) { continue; }
 
-			TR.Trace << pose.residue( i ).name3() << i << " is a non-excluded match; adding..." << endl;
+			TR.Trace << res_i << i << " is a non-excluded match; adding..." << endl;
 			reaction_sites_.push_back( make_pair( i, site_atom ) );
 		}
 	}

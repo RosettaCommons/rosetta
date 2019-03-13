@@ -602,6 +602,7 @@ sources = {
 	"pilot/labonte" : [
 		"debug_labontes_current_work",
 		"design_glycans",
+		"glycomutagenesis",
 		"glycosyltransferase",
 		"load_crazy_sugars",
 		"test_glycan_linkages",

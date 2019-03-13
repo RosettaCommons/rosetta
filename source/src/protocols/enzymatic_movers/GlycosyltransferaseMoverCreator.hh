@@ -24,15 +24,13 @@ namespace enzymatic_movers {
 
 /// @brief  MoverCreator allowing the MoverFactory to create a GlycosyltransferaseMover
 class GlycosyltransferaseMoverCreator : public moves::MoverCreator {
-
 public:
 	/// @brief  Return an up-casted owning pointer (MoverOP) to the mover.
-
-	/// @brief  Return the string identifier for the associated Mover (GlycosyltransferaseMover).
-
-	/// @brief  Static method that returns the keyname for performance reasons.
 	protocols::moves::MoverOP create_mover() const override;
+
+	/// @brief  Return the key name for the associated Mover (GlycosyltransferaseMover).
 	std::string keyname() const override;
+
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 

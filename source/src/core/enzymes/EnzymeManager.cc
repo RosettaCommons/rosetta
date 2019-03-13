@@ -122,12 +122,23 @@ EnzymeManager::get_reactive_atom(
 EnzymeManager::EnzymeManager()
 {
 	// TODO: Refactor to lazily load based on the requested family-species-name combos in a thread-safe manner.
-	EnzymeData enzyme_data( read_enzyme_data_from_file( basic::database::full_name(
-		"virtual_enzymes/glycosyltransferases/h_sapiens/generic_N-glycosyltransferase" ) ) );  // TEMP
+	EnzymeData enzyme_data;
 
+	enzyme_data = read_enzyme_data_from_file( basic::database::full_name(
+		"virtual_enzymes/glycosyltransferases/h_sapiens/generic_N-glycosyltransferase" ) );  // TEMP
 	parse_consensus_sequence( enzyme_data );
-
 	enzymes_[ "glycosyltransferases" ][ "h_sapiens" ][ "generic_N-glycosyltransferase" ] = enzyme_data;  // TEMP
+
+	enzyme_data = read_enzyme_data_from_file( basic::database::full_name(
+		"virtual_enzymes/glycosyltransferases/c_jejuni/generic_N-glycosyltransferase" ) );  // TEMP
+	parse_consensus_sequence( enzyme_data );
+	enzymes_[ "glycosyltransferases" ][ "c_jejuni" ][ "generic_N-glycosyltransferase" ] = enzyme_data;  // TEMP
+
+
+	enzyme_data = read_enzyme_data_from_file( basic::database::full_name(
+		"virtual_enzymes/glycosyltransferases/c_jejuni/PglB" ) );  // TEMP
+	parse_consensus_sequence( enzyme_data );
+	enzymes_[ "glycosyltransferases" ][ "c_jejuni" ][ "PglB" ] = enzyme_data;  // TEMP
 }
 
 
