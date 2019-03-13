@@ -8,6 +8,7 @@
 
 import pyrosetta
 import pyrosetta.rosetta.core.pose as pose
+from pyrosetta.rosetta.core.simple_metrics import TestRealMetric, TestStringMetric
 import unittest
 
 
@@ -128,6 +129,22 @@ class TestPoseScoresAccessor(unittest.TestCase):
 
         test_pose.scores.clear()
         self.assertDictEqual(dict(test_pose.scores), dict())
+        
+        #Test SimpleMetric scores
+        test_real = TestRealMetric()
+        test_str = TestStringMetric()
+
+        test_real.apply(test_pose)
+
+        self.assertDictEqual(dict(test_pose.scores), {"SomeReal": 1.0})
+        test_str.apply(test_pose)
+
+        self.assertDictEqual(dict(test_pose.scores), {"SomeReal": 1.0, "SomeString": "TESTING"})
+
+        test_pose.scores.clear()
+        self.assertDictEqual(dict(test_pose.scores), dict())
+        
+
 
 
 class TestPoseResidueLabelAccessor(unittest.TestCase):

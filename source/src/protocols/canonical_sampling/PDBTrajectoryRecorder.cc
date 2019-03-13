@@ -132,9 +132,9 @@ PDBTrajectoryRecorder::write_model(
 		tempering = dynamic_cast< TemperingBase const * >( metropolis_hastings_mover->tempering().get() );
 	}
 
-	std::map < std::string, core::Real > score_map;
+
 	std::map < std::string, std::string > string_map;
-	core::io::raw_data::ScoreMap::score_map_from_scored_pose(score_map, pose);
+	std::map < std::string, core::Real > score_map = core::io::raw_data::ScoreMap::get_energies_map_from_scored_pose(pose);
 	core::io::raw_data::ScoreStructText score_struct;
 
 	trajectory_stream_ << "MODEL     " << std::setw(4) << model_count() << std::endl;

@@ -112,7 +112,7 @@ ScoreFileOutputter::write_output(
 
 	std::map < std::string, core::Real > score_map;
 	std::map < std::string, std::string > string_map;
-	core::io::raw_data::ScoreMap::score_map_from_scored_pose( score_map, pose );
+	core::io::raw_data::ScoreMap::add_energies_data_from_scored_pose( pose, score_map );
 	core::io::raw_data::ScoreMap::add_arbitrary_score_data_from_pose( pose, score_map );
 	core::io::raw_data::ScoreMap::add_arbitrary_string_data_from_pose( pose, string_map );
 

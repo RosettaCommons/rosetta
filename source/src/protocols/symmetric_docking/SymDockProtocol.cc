@@ -401,7 +401,10 @@ SymDockProtocol::apply( pose::Pose & pose )
 			if ( !hurry_ ) passed_lowres_filter_ = docking_lowres_filter( pose );
 
 			// add scores to map for output
-			if ( !hurry_ ) core::io::raw_data::ScoreMap::nonzero_energies( score_map_, docking_scorefxn, pose );
+			if ( !hurry_ ) {
+				docking_scorefxn->score(pose);
+				core::io::raw_data::ScoreMap::add_energies_data_from_scored_pose( pose,  score_map_ );
+			}
 			if ( !hurry_ && get_native_pose() ) {
 				Real cen_rms = calc_rms( pose );
 				score_map_["cen_rms"] = cen_rms; //jd1
@@ -430,7 +433,8 @@ SymDockProtocol::apply( pose::Pose & pose )
 			if ( !hurry_ ) {
 				Real interface_score = calc_interaction_energy( pose );
 				// add scores to map for output
-				core::io::raw_data::ScoreMap::nonzero_energies( score_map_, docking_scorefxn, pose );//jd1
+				docking_scorefxn->score(pose);
+				core::io::raw_data::ScoreMap::add_energies_data_from_scored_pose( pose, score_map_ );//jd1
 				score_map_["I_sc"] = interface_score; //jd1
 				job->add_string_real_pair("I_sc", interface_score);
 				// check highres docking filter

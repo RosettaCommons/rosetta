@@ -51,9 +51,9 @@ ScoreMap::~ScoreMap() = default;
 ///  score_file information that is to be written out at the end of the
 ///  protocol.
 void
-ScoreMap::nonzero_energies(
+ScoreMap::score_and_add_energies_to_map(
 	std::map < std::string, core::Real > & score_map,
-	scoring::ScoreFunctionOP score_fxn,
+	scoring::ScoreFunctionCOP score_fxn,
 	pose::Pose & pose
 )
 {
@@ -61,17 +61,20 @@ ScoreMap::nonzero_energies(
 
 	(*score_fxn)(pose);
 
-	score_map_from_scored_pose(score_map, pose);
+	add_energies_data_from_scored_pose(pose, score_map);
 }
 
-/// @details creates score map from scored pdb; const so it can be used in job distributor
-void
-ScoreMap::score_map_from_scored_pose(
-	std::map < std::string, core::Real > & score_map,
-	pose::Pose const & pose
-) {
-	using namespace core::scoring;
 
+std::map< std::string, core::Real >
+ScoreMap::get_energies_map_from_scored_pose( core::pose::Pose const & pose ){
+	using namespace core::scoring;
+	std::map< std::string, core::Real > score_map;
+	add_energies_data_from_scored_pose(pose, score_map );
+	return score_map;
+}
+
+void
+ScoreMap::add_energies_data_from_scored_pose( core::pose::Pose const & pose, std::map< std::string, core::Real > & score_map ){
 	// Which score terms to use
 	core::scoring::EnergyMap weights = pose.energies().weights();
 	using ScoreTypeVec = utility::vector1<core::scoring::ScoreType>;
@@ -91,17 +94,10 @@ ScoreMap::score_map_from_scored_pose(
 	score_map[ name_from_score_type(core::scoring::total_score) ] = total;
 }
 
-std::map< std::string, core::Real > ScoreMap::score_map_from_scored_pose( core::pose::Pose const & pose ){
-	std::map< std::string, core::Real > score_map;
-	score_map_from_scored_pose(score_map, pose);
-	return score_map;
-}
-
-
 /// @brief print out the contents of the ScoreMap
 void
 ScoreMap::print(
-	std::map < std::string, core::Real > & score_map,
+	std::map < std::string, core::Real > const & score_map,
 	std::ostream & out
 )
 {
@@ -127,11 +123,7 @@ ScoreMap::print(
 }
 
 void
-ScoreMap::add_arbitrary_string_data_from_pose(
-	core::pose::Pose const & pose,
-	std::map < std::string, std::string > & string_map
-)
-{
+ScoreMap::add_arbitrary_string_data_from_pose( pose::Pose const & pose, std::map< std::string, std::string > & string_map){
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
 		basic::datacache::CacheableStringMapCOP data
 			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringMap const >
@@ -176,15 +168,18 @@ ScoreMap::add_arbitrary_string_data_from_pose(
 		}
 
 	} // End SimpleMetric extraction
+}
 
+std::map< std::string, std::string >
+ScoreMap::get_arbitrary_string_data_from_pose( pose::Pose const & pose){
+	std::map< std::string, std::string > string_map;
+	add_arbitrary_string_data_from_pose(pose, string_map);
+	return string_map;
 }
 
 void
-ScoreMap::add_arbitrary_score_data_from_pose(
-	core::pose::Pose const & pose,
-	std::map < std::string, core::Real > & score_map
-)
-{
+ScoreMap::add_arbitrary_score_data_from_pose(core::pose::Pose const & pose, std::map<std::string, core::Real> & score_map){
+
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
 		basic::datacache::CacheableStringFloatMapCOP data
 			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
@@ -230,9 +225,15 @@ ScoreMap::add_arbitrary_score_data_from_pose(
 		}
 
 	} // End SimpleMetric extraction
-
 }
 
+
+std::map< std::string, core::Real >
+ScoreMap::get_arbitrary_score_data_from_pose( pose::Pose const & pose){
+	std::map< std::string, core::Real > score_map;
+	add_arbitrary_score_data_from_pose(pose, score_map);
+	return score_map;
+}
 
 
 } // raw_data

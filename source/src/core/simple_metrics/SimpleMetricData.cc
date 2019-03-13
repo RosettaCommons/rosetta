@@ -65,6 +65,23 @@ SimpleMetricData::shared_from_this() {
 /////           Data Access             /////
 /////////////////////////////////////////////
 
+void
+SimpleMetricData::clear(){
+	//Simple Metrics
+	string_data_.clear();
+	real_data_.clear();
+
+	//CompositeMetrics
+	composite_string_data_.clear();
+	composite_real_data_.clear();
+
+	//PerResidueMetrics
+	per_residue_string_data_.clear();
+	per_residue_real_data_.clear();
+
+	per_residue_string_output_.clear();
+	per_residue_real_output_.clear();
+}
 
 /////////////////////////////////////////////
 /////          Simple Metrics           /////

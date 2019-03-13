@@ -142,7 +142,7 @@ ScoreMover::apply( Pose & pose ) {
 	if ( verbose_ ) {
 		/// Now handled automatically.  score_function_->accumulate_residue_total_energies( pose );
 		using namespace basic::datacache;
-		core::io::raw_data::ScoreMap::nonzero_energies( score_map_, score_function_, pose );
+		core::io::raw_data::ScoreMap::add_energies_data_from_scored_pose( pose, score_map_ );
 		pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP, utility::pointer::make_shared< basic::datacache::DiagnosticData >(score_map_));
 		pose.energies().show( TR );
 		core::io::raw_data::ScoreMap::print( score_map_, TR );

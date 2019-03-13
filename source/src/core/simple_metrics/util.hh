@@ -51,6 +51,9 @@ get_sm_data(pose::Pose const & pose);
 bool
 has_sm_data(pose::Pose const & pose);
 
+///@brief Clear the SM data stored in the pose
+void
+clear_sm_data(pose::Pose & pose );
 
 //////////////////////////////////////////////////////////////////////////////
 

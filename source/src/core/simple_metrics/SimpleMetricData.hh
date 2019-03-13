@@ -92,6 +92,10 @@ public:
 	/////           Data Access             /////
 	/////////////////////////////////////////////
 
+	///@brief Clear all data held by this class
+	void
+	clear();
+
 public:
 
 

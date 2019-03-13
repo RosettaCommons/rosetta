@@ -26,6 +26,9 @@ from pyrosetta.rosetta.core.pose import (
     clearPoseExtraScore,
     clearPoseExtraScores,
 )
+
+from pyrosetta.rosetta.core.io.raw_data import ScoreMap
+from pyrosetta.rosetta.core.simple_metrics import clear_sm_data
 from pyrosetta.rosetta.core.pose import remove_upper_terminus_type_from_pose_residue
 from pyrosetta.rosetta.core.pose import add_upper_terminus_type_to_pose_residue
 from pyrosetta.rosetta.core.conformation import Residue
@@ -393,8 +396,8 @@ class PoseScoreAccessor(MutableMapping):
 
         return types.MappingProxyType(
             dict(
-                list(getPoseExtraFloatScores(self.pose).items())
-                + list(getPoseExtraStringScores(self.pose).items())
+                list(ScoreMap.get_arbitrary_string_data_from_pose(self.pose).items())
+                + list(ScoreMap.get_arbitrary_score_data_from_pose(self.pose).items())
             )
         )
 
@@ -410,8 +413,8 @@ class PoseScoreAccessor(MutableMapping):
 
         return types.MappingProxyType(
             dict(
-                list(getPoseExtraFloatScores(self.pose).items())
-                + list(getPoseExtraStringScores(self.pose).items())
+                list(ScoreMap.get_arbitrary_string_data_from_pose(self.pose).items())
+                + list(ScoreMap.get_arbitrary_score_data_from_pose(self.pose).items())
                 + list(self.pose.energies().active_total_energies().items())
             )
         )
@@ -457,9 +460,13 @@ class PoseScoreAccessor(MutableMapping):
 
         clearPoseExtraScore(self.pose, key)
 
+        #SimpleMetric data cannot be mutated by anything other than a SimpleMetric.
+
     def clear(self):
+        """ Clear pose energies, extra scores, and SimpleMetric data"""
         self.pose.energies().clear()
         clearPoseExtraScores(self.pose)
+        clear_sm_data(self.pose)
 
     def __str__(self):
         return str(dict(self))

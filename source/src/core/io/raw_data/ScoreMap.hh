@@ -34,25 +34,46 @@ public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	~ScoreMap() override;
 	/// @brief full atom energies for output
-	static void nonzero_energies(
+
+	///@brief Scores and grabs (nonzero, weighted) energies map.
+	static
+	void
+	score_and_add_energies_to_map(
 		std::map< std::string, core::Real> & score_map,
-		core::scoring::ScoreFunctionOP score_fxn,
+		core::scoring::ScoreFunctionCOP score_fxn,
 		core::pose::Pose & pose
 	);
 
-	/// @brief generates a scoremap assuming the pose is already scored (note const w.r.t. pose)
-	static void score_map_from_scored_pose(
-		std::map< std::string, core::Real> & score_map,
-		core::pose::Pose const & pose
-	);
+	/// @brief generates a (nonzero) (weighted) scoremap assuming the pose is already scored (note const w.r.t. pose)
+	static
+	std::map< std::string, core::Real>
+	get_energies_map_from_scored_pose( core::pose::Pose const & pose );
 
-	/// @brief return-by-value version of score_map_from_scored_pose
-	static std::map< std::string, core::Real> score_map_from_scored_pose( core::pose::Pose const & pose );
+	///@brief Return by value version of extra string data.
+	///
+	///@details
+	/// Get data set as PoseExtraScores (ARBITRARY_STRING_DATA) and SimpleMetrics (SIMPLE_METRIC_DATA).
+	static
+	std::map< std::string, std::string >
+	get_arbitrary_string_data_from_pose( pose::Pose const & pose );
 
-	/// @brief print out the values in the scoremap
-	static void print(
-		std::map < std::string, core::Real > & score_map,
-		std::ostream & out
+	///@brief Return by value version of extra score data.
+	///
+	///@details
+	/// Get data set as PoseExtraScores (ARBITRARY_FLOAT_DATA) and SimpleMetrics (SIMPLE_METRIC_DATA).
+	static
+	std::map< std::string, core::Real >
+	get_arbitrary_score_data_from_pose( pose::Pose const & pose );
+
+
+	/////////////////// Add Data ///////////////////////
+
+	///@brief Add energies to scores map.
+	static
+	void
+	add_energies_data_from_scored_pose(
+		core::pose::Pose const & pose,
+		std::map< std::string, core::Real> & scores
 	);
 
 	///@brief Add data set as PoseExtraScores (ARBITRARY_STRING_DATA) and SimpleMetrics (SIMPLE_METRIC_DATA).
@@ -63,13 +84,25 @@ public:
 		std::map < std::string, std::string > & string_map
 	);
 
-	///@brief Add data set as PoseExtraScores (ARBITRARY_STRING_DATA) and SimpleMetrics (SIMPLE_METRIC_DATA).
+	///@brief Add data set as PoseExtraScores (ARBITRARY_FLOAT_DATA) and SimpleMetrics (SIMPLE_METRIC_DATA).
 	static
 	void
 	add_arbitrary_score_data_from_pose(
 		core::pose::Pose const & pose,
 		std::map < std::string, core::Real > & score_map
 	);
+
+
+	/////////// Etc //////////////
+
+	/// @brief print out the values in the scoremap
+	static
+	void
+	print(
+		std::map < std::string, core::Real > const & score_map,
+		std::ostream & out
+	);
+
 
 };
 

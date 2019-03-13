@@ -10,55 +10,49 @@ import json
 import os
 import pyrosetta
 import random
+from pyrosetta.rosetta.core.io.raw_data import ScoreMap
+from sys import exit
 
 
 def output_scorefile(pose, pdb_name, current_name, scorefilepath, scorefxn, nstruct,
-                     native_pose=None, additional_decoy_info=None, json_format=False):
+                     native_pose=None, additional_decoy_info=None, json_format=True):
     """
     Moved from PyJobDistributor (Jared Adolf-Bryfogle)
     Creates a scorefile if none exists, or appends the current one.
     Calculates and writes CA_rmsd if native pose is given,
     as well as any additional decoy info
     """
-    total_score = scorefxn(pose)   # Scores pose and calculates total score.
-    
-    if json_format:
-        entries = {}
-        entries.update(
-            {
-             "pdb_name": str(pdb_name),
-             "filename": str(current_name),
-             "nstruct": int(nstruct)
-             }
-        )
-        entries.update(dict(pose.scores))
-        if native_pose:
-            entries["rmsd"] = float(pyrosetta.rosetta.core.scoring.CA_rmsd(native_pose, pose))
-        if additional_decoy_info:
-            entries["additional_decoy_info"] = str(additional_decoy_info)
 
-        with open(scorefilepath, "a") as f:
-            json.dump(entries, f)
-            f.write("\n")
 
-    else:
-        if not os.path.exists(scorefilepath):
-            with open(scorefilepath, "w") as f:
-                f.write("pdb name: " + pdb_name + "     nstruct: " + str(nstruct) + "\n")
+    if not json_format:
+        exit(
+            "\nThis scorefile output format is deprecated. Please use json output format instead or grab data from pose.scores")
 
-        score_line = pose.energies().total_energies().weighted_string_of(scorefxn.weights())
-        output_line = "filename: " + current_name + " total_score: " + str(round(total_score, 3))
+    total_score = scorefxn(pose)  # Scores pose and calculates total score.
+    entries = {}
+    entries.update(
+        {
+         "pdb_name": str(pdb_name),
+         "decoy": str(current_name),
+         "filename": str(current_name),
+         "nstruct": int(nstruct)
+         }
+    )
+    scores =  dict(
+        list(ScoreMap.get_arbitrary_string_data_from_pose(pose).items())
+        + list(ScoreMap.get_arbitrary_score_data_from_pose(pose).items())
+        + list(ScoreMap.get_energies_map_from_scored_pose(pose).items())
+    )
 
-        # Calculates rmsd if native pose is defined.
-        if native_pose:
-            rmsd = pyrosetta.rosetta.core.scoring.CA_rmsd(native_pose, pose)
-            output_line = output_line + " rmsd: " + str(round(rmsd, 3))
+    entries.update(scores)
+    if native_pose and "rmsd" not in entries:
+        entries["rmsd"] = float(pyrosetta.rosetta.core.scoring.CA_rmsd(native_pose, pose))
+    if additional_decoy_info:
+        entries["additional_decoy_info"] = str(additional_decoy_info)
 
-        with open(scorefilepath, "a") as f:
-            if additional_decoy_info:
-                f.write(output_line + " " + score_line + " " + additional_decoy_info + "\n")
-            else:
-                f.write(output_line + " " + score_line + "\n")
+    with open(scorefilepath, "a") as f:
+        json.dump(entries, f)
+        f.write("\n")
 
 
 class PyJobDistributor:
@@ -73,7 +67,7 @@ class PyJobDistributor:
         self.scorefxn = scorefxn          # Used for final score calculation
         self.native_pose = None           # Used for rmsd calculation
         self.additional_decoy_info = None # Used for any additional decoy information you want stored
-        self.json_format = False          # Used for JSON formatted scorefile
+        self.json_format = True          # Used for JSON formatted scorefile
 
         self.sequence = list(range(nstruct))
         random.shuffle(self.sequence)

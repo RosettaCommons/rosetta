@@ -49,6 +49,7 @@
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/io/raw_data/ScoreMap.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -78,6 +79,7 @@ using namespace protocols::antibody;
 using namespace core::scoring;
 using namespace core::select;
 using namespace core::select::residue_selector;
+using namespace core::io::raw_data;
 
 class SimpleMetricTests : public CxxTest::TestSuite {
 	//Define Variables
@@ -113,10 +115,21 @@ public:
 		TS_ASSERT( present );
 		TS_ASSERT( value == "TESTING");
 
+		//Test ScoreMap here
+		std::map< std::string, std::string > scores = ScoreMap::get_arbitrary_string_data_from_pose( pose );
+		TS_ASSERT( scores.count( "prefix_SomeString_suffix" ));
+		TS_ASSERT( scores.at("prefix_SomeString_suffix") == "TESTING");
+
 		//Test Cached Calculate function.
 		TS_ASSERT_THROWS_NOTHING(tester.cached_calculate(pose, true, "prefix_", "_suffix", true /*fail_on_no_cache*/));
 		value = tester.cached_calculate(pose, true, "prefix_", "_suffix", true);
 		TS_ASSERT( value == "TESTING");
+
+		//Test clearing data
+		clear_sm_data( pose );
+		TS_ASSERT( has_sm_data( pose )); //Class is still present - we do not kill it.
+		present = get_sm_data( pose )->get_value("prefix_SomeString_suffix", value );
+		TS_ASSERT( ! present );
 
 	}
 
@@ -143,10 +156,19 @@ public:
 		TS_ASSERT( present );
 		TS_ASSERT( value == 1.0 );
 
+		//Test ScoreMap here
+		std::map< std::string, core::Real > scores = ScoreMap::get_arbitrary_score_data_from_pose( pose );
+		TS_ASSERT( scores.count( "prefix_sometype_SomeReal_suffix" ) );
+		TS_ASSERT( scores.at("prefix_sometype_SomeReal_suffix") == 1.0 );
+
 		TS_ASSERT_THROWS_NOTHING(tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail_on_no_cache*/));
 		value = tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail_on_no_cache*/);
 		TS_ASSERT( value == 1.0 );
 
+		//Test clearing all data
+		clear_sm_data( pose );
+		present = get_sm_data( pose )->get_value("prefix_sometype_SomeReal_suffix", value );
+		TS_ASSERT( !present );
 	}
 
 	void test_composite_string_metric() {
@@ -174,6 +196,11 @@ public:
 		TS_ASSERT( values["s_data1"] == "value1");
 		TS_ASSERT( values["s_data2"] == "value2");
 
+		//Test clearing of all data
+		clear_sm_data( pose );
+		present = get_sm_data(pose)->get_value("prefix_SomeCompositeString_suffix", values );
+		TS_ASSERT( ! present );
+
 	}
 
 	void test_composite_real_metric() {
@@ -200,6 +227,10 @@ public:
 		values = tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail_on_no_cache*/);
 		TS_ASSERT( values["r_data1"] == 1.0);
 		TS_ASSERT( values["r_data2"] == 2.0);
+
+		clear_sm_data( pose );
+		present = get_sm_data( pose )->get_value( "prefix_SomeCompositeReal_suffix", values );
+		TS_ASSERT( ! present );
 
 	}
 
@@ -233,6 +264,10 @@ public:
 		TS_ASSERT( values.at(1) == 1.0);
 		TS_ASSERT( values.at(2) == 2.0);
 
+		clear_sm_data( pose );
+		present = get_sm_data(pose)->get_value( "prefix_SomePerResidueReal_suffix", values);
+		TS_ASSERT( ! present );
+
 	}
 
 	void test_per_residue_string_metric() {
@@ -265,6 +300,11 @@ public:
 		values = tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true, use_ref_pose);
 		TS_ASSERT( values.at(1) == "value1");
 		TS_ASSERT( values.at(2) == "value2");
+
+		clear_sm_data( pose );
+		present = get_sm_data(pose)->get_value( "prefix_SomePerResidueString_suffix", values);
+		TS_ASSERT( ! present );
+
 
 	}
 

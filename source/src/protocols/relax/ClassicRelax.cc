@@ -730,7 +730,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 
 	// add scores to map for output
 	std::map < std::string, core::Real > score_map;
-	core::io::raw_data::ScoreMap::nonzero_energies( score_map, get_scorefxn(), pose );
+	core::io::raw_data::ScoreMap::score_and_add_energies_to_map( score_map, get_scorefxn(), pose );
 	if ( get_native_pose()!=nullptr ) {
 		score_map["rms"] = CA_rmsd( *get_native_pose(), pose );
 	}

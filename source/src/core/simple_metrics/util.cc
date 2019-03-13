@@ -100,6 +100,18 @@ has_sm_data( core::pose::Pose const & pose ){
 }
 
 void
+clear_sm_data( core::pose::Pose & pose ){
+	if ( has_sm_data(pose) ) {
+		SimpleMetricDataOP data
+			=  utility::pointer::dynamic_pointer_cast< SimpleMetricData >
+			( pose.data().get_ptr(core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA) );
+
+		runtime_assert( data.get() != nullptr );
+		data->clear();
+	}
+}
+
+void
 xsd_simple_metric_type_definition_w_attributes(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,

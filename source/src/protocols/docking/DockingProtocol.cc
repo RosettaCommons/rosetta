@@ -1102,7 +1102,7 @@ DockingProtocol::apply( pose::Pose & pose )
 				protocols::jd2::add_string_real_pair_to_current_job("cen_rms", calc_Lrmsd( pose, *get_native_pose(), movable_jumps_ ));
 			}
 			// store the low res scores for output
-			core::io::raw_data::ScoreMap::score_map_from_scored_pose( lowres_scores, pose );
+			core::io::raw_data::ScoreMap::add_energies_data_from_scored_pose(  pose, lowres_scores );
 		}
 		if ( lowres_filter_ ) {
 			passed_lowres_filter = lowres_filter_->apply( pose );
