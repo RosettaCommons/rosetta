@@ -705,7 +705,7 @@ def main(args):
 
     else:
         print('WARNING: Clean checkout detected! (no database binary files found) Adding extra 8min to test timeout time...')
-        if options.timeout: options.timeout += 8
+        if options.timeout: options.timeout += 16
 
 
     if not options.valgrind and ( options.trackorigins or options.leakcheck or options.valgrind_path is not None ):
