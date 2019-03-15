@@ -174,7 +174,8 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
     v = rosetta.utility.vector1_string()
     v.extend(args)
 
-    logger.info(version())
+    print( version() )
+    logger.info( version() )
     rosetta.protocols.init.init(v)
 
 # FIXME: create 'version' struct in utility instead
@@ -191,8 +192,7 @@ def version():
     return "PyRosetta-4 " + rosetta.utility.Version.date().split("-").pop(0) + \
            " [Rosetta " + _version_string() + ' ' + rosetta.utility.Version.date() + \
            "] retrieved from: " + rosetta.utility.Version.url() + \
-           "\n(C) Copyright Rosetta Commons Member Institutions." + \
-           "\nCreated in JHU by Sergey Lyskov and PyRosetta Team.\n"
+           "\n(C) Copyright Rosetta Commons Member Institutions. Created in JHU by Sergey Lyskov and PyRosetta Team."
 
 
 ###############################################################################

@@ -76,7 +76,7 @@ def run_pyrosetta_test(rosetta_dir, working_dir, platform, config, hpc_driver=No
 
     TR('Running scripts.pyrosetta: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    python_environment = get_path_to_python_executable(platform, config)
+    python_environment = local_python_install(platform, config)
     ve = setup_python_virtual_environment(working_dir+'/ve', python_environment, 'pytest pytest-json')
 
     result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', debug=debug)

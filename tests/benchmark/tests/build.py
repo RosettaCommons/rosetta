@@ -74,7 +74,7 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     extras   = ','.join(platform['extras'])
     platform_suffix = platform_to_pretty_string(platform)
 
-    python = get_path_to_python_executable(platform, config).python
+    python = local_python_install(platform, config).python
 
     qmake = config['qmake']
     qt_extras = '-spec linux-clang ' if (compiler == 'clang' and platform['os'] == 'linux') else ''

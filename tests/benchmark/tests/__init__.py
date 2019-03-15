@@ -14,6 +14,7 @@
 
 import os, time, sys, codecs, urllib.request, imp, subprocess  # urllib.error, urllib.parse,
 import platform as  platform_module
+import types as types_module
 
 # ⚔ do not change wording below, it have to stay in sync with upstream (up to benchmark-model).
 # Copied from benchmark-model, standard state code's for tests results.
@@ -70,7 +71,7 @@ class NT:  # named tuple
     def __repr__(self):
         r = 'NT: |'
         for i in dir(self):
-            if not i.startswith('__') and not isinstance(getattr(self, i), types.MethodType): r += '%s --> %s, ' % (i, getattr(self, i))
+            if not i.startswith('__') and not isinstance(getattr(self, i), types_module.MethodType): r += '%s --> %s, ' % (i, getattr(self, i))
         return r[:-2]+'|'
 
 
@@ -326,7 +327,7 @@ def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=Fals
     jobs = config['cpu_count']
     skip_compile = config.get('skip_compile', False)
 
-    python = get_path_to_python_executable(platform, config).python
+    python = local_python_install(platform, config).python
 
     # removing all symlinks from bin/ and then building binaries...
     build_command_line = f'find bin -type l ! -name ".*" -exec rm {{}} \\; ; {python} ./scons.py bin mode={mode} cxx={compiler} extras={extras} -j{jobs}'
@@ -342,12 +343,12 @@ def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=Fals
     return res, output, build_command_line
 
 
-def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', verbose=False, debug=False, version=None):
+def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', options='', conda=None, verbose=False, debug=False, version=None):
     ''' Compile Rosetta binaries on a given platform return NT(exitcode, output, build_command_line, pyrosetta_path, python) '''
 
     #binder = install_llvm_tool('binder', source_location='{}/source/src/python/PyRosetta/binder'.format(rosetta_dir), config=config)
 
-    py_env = get_path_to_python_executable(platform, config)
+    py_env = conda if conda else local_python_install(platform, config)
 
     #print(sysconfig.get_config_vars())
     #CONFINCLUDEPY
@@ -361,16 +362,16 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', verb
 
     if version: extra += " --version '{version}'".format(**vars())
 
-    command_line = 'cd {rosetta_dir}/source/src/python/PyRosetta && {python} build.py -j{jobs} --compiler {compiler} --type {mode}{extra}'.format(rosetta_dir=rosetta_dir, python=py_env.python, jobs=jobs, compiler=platform['compiler'], mode=mode, extra=extra)
+    command_line = f'cd {rosetta_dir}/source/src/python/PyRosetta && {py_env.python} build.py -j{jobs} --compiler {platform["compiler"]} --type {mode}{extra} {options}'
 
     pyrosetta_path = execute('Getting PyRosetta build path...', command_line + ' --print-build-root', return_='output').split()[0]
 
     if debug:
         res, output = 0, '__init__.py:build_pyrosetta: debug is enabled, skipping build...\n'
     else:
-        res, output = execute('Building PyRosetta {}...'.format(mode), command_line, return_='tuple')
+        res, output = execute('Building PyRosetta {}...'.format(mode), command_line, return_='tuple', add_message_and_command_line_to_output=True)
 
-    return NT(exitcode=res, output=output, command_line=command_line, pyrosetta_path=pyrosetta_path, python=py_env.python, python_root_dir=py_env.python_root_dir)
+    return NT(exitcode=res, output=output, command_line=command_line, pyrosetta_path=pyrosetta_path, python=py_env.python, root=py_env.root)
 
 
 
@@ -421,8 +422,20 @@ def install_llvm_tool(name, source_location, config, clean=True):
     return executable
 
 
+def get_python_include_and_lib(python):
+    ''' calculate python include dir and lib dir from given python executable executable
+    '''
+    info = execute('Getting python configuration info...', '{python}-config --prefix --includes'.format(**vars()), return_='output').replace('\r', '').split('\n')  # Python-3 only: --abiflags
+    python_prefix = info[0]
+    python_include_dir = info[1].split()[0][len('-I'):]
+    python_lib_dir = python_prefix + '/lib'
+    #python_abi_suffix = info[2]
+    #print(python_include_dir, python_lib_dir)
 
-def get_path_to_python_executable(platform, config):
+    return NT(python_include_dir=python_include_dir, python_lib_dir=python_lib_dir)
+
+
+def local_python_install(platform, config):
     ''' Perform local install of given Python version and return path-to-python-interpreter, python_include_dir, python_lib_dir
         If previous install is detected skip installiation.
     '''
@@ -520,14 +533,10 @@ def get_path_to_python_executable(platform, config):
 
         print( 'Installing Python-{python_version}, using {url} with extra:{extra}... Done.'.format( **vars() ) )
 
-    info = execute('Getting python configuration info...', '{executable}-config --prefix --includes'.format(**vars()), return_='output').split('\n')  # Python-3 only: --abiflags
-    python_prefix = info[0]
-    python_include_dir = info[1].split()[0][len('-I'):]
-    python_lib_dir = python_prefix + '/lib'
-    #python_abi_suffix = info[2]
-    #print(python_include_dir, python_lib_dir)
+    il = get_python_include_and_lib(executable)
 
-    return NT(python=executable, python_root_dir=root, python_include_dir=python_include_dir, python_lib_dir=python_lib_dir, version=python_version)
+    return NT(python=executable, root=root, python_include_dir=il.python_include_dir, python_lib_dir=il.python_lib_dir, version=python_version)
+
 
 
 def setup_python_virtual_environment(working_dir, python_environment, packages=''):
@@ -554,3 +563,112 @@ def generate_version_information(rosetta_dir, url=None, branch=None, package=Non
 
     version = imp.load_source('version', rosetta_dir + '/source/version.py')
     return version.generate_version_information(rosetta_dir=rosetta_dir, url=url, branch=branch, package=package, revision=revision, date=date, file_name=file_name)
+
+
+
+def _get_path_to_conda_root(platform, config):
+    ''' Perform local (prefix) install of miniconda and return NT(activate, conda_root_dir, conda)
+        this function is for inner use only, - to setup custom conda environment inside your test use `setup_conda_virtual_environment` below
+    '''
+    prefix = config['prefix']
+
+    miniconda_sources = {
+        'mac'    : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh',
+        'linux'  : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh',
+        'ubuntu' : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh',
+    }
+
+    conda_sources = {
+        'mac'    : 'https://repo.continuum.io/archive/Anaconda3-2018.12-MacOSX-x86_64.sh',
+        'linux'  : 'https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh',
+        'ubuntu' : 'https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh',
+    }
+
+
+    #url = conda_sources[ platform['os'] ]
+    url = miniconda_sources[ platform['os'] ]
+
+    version = '1'
+    channels = ''  #'conda-forge'
+
+    #packages = ['conda-build gcc libgcc', 'libgcc=5.2.0'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
+    #packages = ['conda-build gcc'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
+    packages = ['conda-build anaconda-client',]
+
+    signature = f'url: {url}\nversion: {version}\channels: {channels}\npackages: {packages}\n'
+
+    machine_name = os.uname()[1]
+    suffix = platform['os'] + '.' + machine_name
+
+    root = os.path.abspath( prefix + '/' + suffix + '/conda' )
+
+    signature_file_name = root + '/.signature'
+
+    # presense of __PYVENV_LAUNCHER__,PYTHONHOME, PYTHONPATH sometimes confuse Python so we have to unset them
+    unset = 'unset __PYVENV_LAUNCHER__ && unset PYTHONHOME && unset PYTHONPATH'
+    activate = unset + ' && source ' + root + '/bin/activate'
+
+    executable = root + '/bin/conda'
+
+
+    if os.path.isfile(signature_file_name) and open(signature_file_name).read() == signature:
+        print( f'Install for MiniConda is detected, skipping installation procedure...' )
+        pass
+
+    else:
+        print( f'Installing MiniConda, using {url}...' )
+
+        if os.path.isdir(root): shutil.rmtree(root)
+
+        build_prefix = os.path.abspath(root + f'/../build-conda' )
+
+        #if not os.path.isdir(root): os.makedirs(root)
+        if not os.path.isdir(build_prefix): os.makedirs(build_prefix)
+
+        archive = build_prefix + '/' + url.split('/')[-1]
+
+        with open(archive, 'wb') as f:
+            response = urllib.request.urlopen(url)
+            f.write( response.read() )
+
+        execute('Installing conda...', f'cd {build_prefix} && {unset} && bash {archive} -b -p {root}' )
+
+        # conda update --yes --quiet -n base -c defaults conda
+
+        if channels: execute(f'Adding extra channles {channels}...', f'cd {build_prefix} && {activate} && conda config --add channels {channels}' )
+
+        for p in packages: execute(f'Installing conda packages: {p}...', f'cd {build_prefix} && {activate} && conda install --quiet --yes {p}' )
+
+        shutil.rmtree(build_prefix)
+
+        with open(signature_file_name, 'w') as f: f.write(signature)
+
+        print( f'Installing MiniConda, using {url}... Done.' )
+
+    return NT(conda=executable, root=root, activate=activate)
+
+
+
+def setup_conda_virtual_environment(working_dir, platform, config, packages=''):
+    ''' Deploy Conda virtual environment at working_dir
+    '''
+    conda_root_env = _get_path_to_conda_root(platform, config)
+    activate = conda_root_env.activate
+
+    python_version = platform.get('python', '3.6')
+
+    prefix = os.path.abspath( working_dir + '/.conda-python-' + python_version )
+
+    command_line = f'conda create --quiet --yes --prefix {prefix} python={python_version}'
+
+    execute( f'Setting up Conda for Python-{python_version} virtual environment...', f'cd {working_dir} && {activate} && ( {command_line} || ( conda -y clean && {command_line} ) )' )
+
+    activate = f'{activate} && conda activate {prefix}'
+
+    if packages: execute( f'Setting up extra packages {packages}...', f'cd {working_dir} && {activate} && conda install --quiet --yes {packages}' )
+
+    python = prefix + '/bin/python' + python_version
+
+    il = get_python_include_and_lib(python)
+
+    return NT( activate = activate, root = prefix, python = python, python_include_dir=il.python_include_dir, python_lib_dir=il.python_lib_dir, version=python_version, activate_base = conda_root_env.activate)

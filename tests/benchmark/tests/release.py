@@ -33,8 +33,12 @@ download_template = '''\
 <body></body>
 </html>'''
 
+def get_platform_release_name(platform):
+    addon = dict(linux='.CentOS', ubuntu='.Ubuntu', mac='')
+    return '.'.join([platform['os']]+platform['extras']) + addon[ platform['os'] ]
 
-def release(name, package_name, package_dir, working_dir, platform, config, release_as_git_repository=True):
+
+def release(name, package_name, package_dir, working_dir, platform, config, release_as_git_repository=True, file=None):
     ''' Create a release packge: tar.bz2 + git repository
         name - must be a name of what is released without any suffices: rosetta, PyRosetta etc
         package_name - base name for archive (without tar.bz2) that should include name, os, revision, branch + other relevant platform info
@@ -45,11 +49,16 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
 
     branch=config['branch']
 
-    package_versioning_name =  '{package_name}.{branch}-{revision}'.format(package_name=package_name, branch=config['branch'], revision=config['revision'])
+    package_versioning_name = '{package_name}.{branch}-{revision}'.format(package_name=package_name, branch=config['branch'], revision=config['revision'])
 
-    TR('Creating tar.bz2 for {name} as {package_versioning_name}...'.format( **vars() ) )
-    archive = working_dir + '/' + package_versioning_name + '.tar.bz2'
-    with tarfile.open(archive, "w:bz2") as t: t.add(package_dir, arcname=package_versioning_name)  # , filter=arch_filter
+    if package_dir:
+        TR('Creating tar.bz2 for {name} as {package_versioning_name}...'.format( **vars() ) )
+        archive = working_dir + '/' + package_versioning_name + '.tar.bz2'
+        with tarfile.open(archive, "w:bz2") as t: t.add(package_dir, arcname=package_versioning_name)  # , filter=arch_filter
+
+    else:
+        assert file.endswith('.tar.bz2')
+        archive = file
 
     release_path = '{release_dir}/{name}/archive/{branch}/{package_name}/'.format(release_dir=config['release_root'], **vars())
     if not os.path.isdir(release_path): os.makedirs(release_path)
@@ -381,7 +390,7 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
 
     TR('Running PyRosetta4-documentaion release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    python_environment = get_path_to_python_executable(platform, config)
+    python_environment = local_python_install(platform, config)
     ve = setup_python_virtual_environment(working_dir+'/ve', python_environment, 'sphinx')
 
     package_name = 'PyRosetta4.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=platform['python'][:3].replace('.', ''))
@@ -429,6 +438,311 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
             with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
     return results
+
+
+_conda_setup_only_build_sh_template_ = '''\
+#Configure!/bin/bash
+#http://redsymbol.net/articles/unofficial-bash-strict-mode/
+
+set -euo pipefail
+IFS=$'\n\t'
+
+set -x
+
+echo "--- Build"
+echo "PWD: `pwd`"
+echo "Python: `which python` --> `python --version`"
+echo "PREFIX Python: `which ${{PREFIX}}/bin/python` --> `${{PREFIX}}/bin/python --version`"
+
+
+echo "-------------------------------- Installing PyRosetta Python package..."
+
+pushd {package_dir}/setup
+
+cat ../version.json
+
+# Run initial test to prebuild databases
+${{PREFIX}}/bin/python -c 'import pyrosetta; pyrosetta.init(); pyrosetta.get_score_function()(pyrosetta.pose_from_sequence("TEST"))'
+
+${{PREFIX}}/bin/python setup.py install --single-version-externally-managed --record=record.txt > install.log
+
+popd
+echo "-------------------------------- Installing PyRosetta Python package... Done."
+'''
+
+def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    memory = config['memory'];  jobs = config['cpu_count']
+    if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
+
+    TR = Tracer(True)
+
+    TR('Running PyRosetta4 conda release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
+
+    conda = setup_conda_virtual_environment(working_dir, platform, config)
+
+    platform_name = get_platform_release_name(platform)
+    release_name = 'PyRosetta4.conda.{platform}.python{python_version}.{kind}'.format(kind=kind, platform=platform_name, python_version=platform['python'][:3].replace('.', '') )
+
+    version_file = working_dir + '/version.json'
+    version = generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='http://www.pyrosetta.org', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
+
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, conda=conda, debug=debug, version=version_file, options='--multi-threaded --no-strip-module --binder-config rosetta.distributed.config --serialization')
+    build_command_line = result.command_line
+    pyrosetta_path = result.pyrosetta_path
+
+    for f in os.listdir(pyrosetta_path + '/source'):
+        if os.path.islink(pyrosetta_path + '/source/' + f): os.remove(pyrosetta_path + '/source/' + f)
+    distutils.dir_util.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
+
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(result.output)
+
+    if result.exitcode:
+        res_code = _S_build_failed_
+        results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : result.output }
+        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
+
+    else:
+
+        if debug:
+            res, output = 0, 'Benchmark `debug` is enabled, skipping PyRosetta unit test run...\n'
+            results = {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : output }
+
+        else:
+            distr_file_list = os.listdir(pyrosetta_path+'/build')
+
+            #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
+            gui_flag, res, output = '', result.exitcode, result.output
+            if False  and  kind == 'Debug': res, output = 0, 'Debug build, skipping PyRosetta unit tests run...\n'
+            else: res, output = execute('Running PyRosetta tests...', 'cd {pyrosetta_path}/build && {python} self-test.py {gui_flag} -j{jobs}'.format(pyrosetta_path=pyrosetta_path, python=result.python, jobs=jobs, gui_flag=gui_flag), return_='tuple')
+
+            json_file = pyrosetta_path + '/build/.test.output/.test.results.json'
+            with open(json_file) as f: results = json.load(f)
+
+            execute('Deleting PyRosetta tests output...', 'cd {pyrosetta_path}/build && {python} self-test.py --delete-tests-output'.format(pyrosetta_path=pyrosetta_path, python=result.python), return_='tuple')
+            extra_files = [f for f in os.listdir(pyrosetta_path+'/build') if f not in distr_file_list]  # not f.startswith('.test.')  and
+            if extra_files:
+                results['results']['tests']['self-test'] = dict(state='failed', log='self-test.py scripts failed to delete files: ' + ' '.join(extra_files))
+                results[_StateKey_] = 'failed'
+
+            if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
+            output = 'Running: {}\n'.format(build_command_line) + output  # Making sure that exact command line used is stored
+
+            results[_LogKey_] = output
+
+        if results[_StateKey_] == 'failed':
+            # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
+        else:
+
+            TR('Running PyRosetta4 release test: Build and Unit tests passged! Now creating package...')
+
+            package_dir = working_dir + '/' + release_name
+
+            execute( f'Creating PyRosetta4 distribution package...', f'{build_command_line} -sd --create-package {package_dir}' )
+
+            recipe_dir = working_dir + '/recipe';  os.makedirs(recipe_dir)
+
+            recipe = dict(
+                package = dict(
+                    name    = 'pyrosetta',
+                    version = version['version'],
+                ),
+                requirements = dict(
+                    build = [f'python =={platform["python"]}'],
+                    host  = [f'python =={platform["python"]}', 'setuptools', 'numpy', 'zlib'],
+                    run   = [f'python =={platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
+                ),
+                test = dict( commands = ['python -m unittest pyrosetta.tests.distributed.test_smoke'] ),
+
+                about = dict( home ='http://www.pyrosetta.org' ),
+            )
+            #if platform['os'] != 'mac': recipe['test'] = dict( commands = ['python -m unittest pyrosetta.tests.distributed.test_smoke'] )
+
+            with open( recipe_dir + '/meta.yaml', 'w' ) as f: json.dump(recipe, f, sort_keys=True, indent=2)
+
+            with open( recipe_dir + '/build.sh', 'w' ) as f: f.write( _conda_setup_only_build_sh_template_.format(**locals()) )
+
+            # --output              Output the conda package filename which would have been created
+            # --output-folder OUTPUT_FOLDER folder to dump output package to. Package are moved here if build or test succeeds. Destination folder must exist prior to using this.
+
+            conda_package_dir = working_dir + '/conda_package';  os.makedirs(conda_package_dir)
+
+            conda_token = config.get('conda_token', '')
+            maybe_upload = f' --channel rosettacommons --user rosettacommons --token {conda_token}' if conda_token and config['branch'] == 'release' else ''
+            #maybe_upload = f' --channel rosettacommons --user rosettacommons --token {conda_token} --label devel' if conda_token else ''
+
+            conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet {recipe_dir}  --output-folder {conda_package_dir}' + maybe_upload
+            conda_package = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True).split()[0]  # removing '\n' at the end
+
+            TR(f'Building Conda package: {conda_package}...')
+            res, conda_log = execute('Creating Conda package...', conda_build_command_line, return_='tuple', add_message_and_command_line_to_output=True)
+            conda_log = conda_log.replace(conda_token, 'CONDA_TOKEN')
+
+            results[_LogKey_]  += f'Got package name from conda build command line `{conda_build_command_line}` : {conda_package}\n' + conda_log
+            with open(working_dir+'/conda-build-log.txt', 'w') as f: f.write( to_unicode(conda_log) )
+
+            if res:
+                results[_StateKey_] = _S_script_failed_
+                results[_LogKey_]  += conda_log
+
+            else:
+                release('PyRosetta4', release_name, None, working_dir, platform, config, release_as_git_repository = False, file = conda_package)
+
+            for d in [conda.root, package_dir, conda_package_dir]: shutil.rmtree(d)  # removing packages to keep size of Benchmark database small
+
+            # res_code = _S_passed_
+            # results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+
+    return results
+
+
+_conda_build_sh_template_ = '''\
+#Configure!/bin/bash
+#http://redsymbol.net/articles/unofficial-bash-strict-mode/
+
+set -euo pipefail
+IFS=$'\n\t'
+
+set -x
+
+echo "--- Build"
+echo "PWD: `pwd`"
+echo "GCC: `which gcc`"
+echo "Python: `which python` --> `python --version`"
+echo "PREFIX Python: `which ${{PREFIX}}/bin/python` --> `${{PREFIX}}/bin/python --version`"
+
+
+echo "--- Env"
+build_args=(
+--create-package {package_dir}
+--version {working_dir}/version.json
+--binder-config rosetta.config
+--binder-config rosetta.distributed.config
+--serialization
+--multi-threaded
+--no-strip-module
+)
+#--no-zmq
+
+if [[ ! -z "${{GCC:-}}" ]]; then
+  # Build via gcc/g++ rather than conda cc c++ compiler aliases
+  # binder invokation still targets system C++ standard library
+  # see linux-anvil for system gcc/g++ installation
+  build_args+=(--compiler ${{GCC}})
+  export CC=${{GCC}}
+  export CXX=${{GXX}}
+
+  # Override flags to just include prefix
+  export CFLAGS="-I${{PREFIX}}/include"
+  export CXXFLAGS="-I${{PREFIX}}/include"
+fi
+
+if [[ ! -z "${{CLANG:-}}" ]]; then
+  # override conda-provided clang compiler with system clang
+  # still links against conda libc++ shared libraries
+  export CLANG=/usr/bin/clang
+  export CC=${{CLANG}}
+  export CLANGXX=/usr/bin/clang++
+  export CXX=${{CLANGXX}}
+  build_args+=(--compiler ${{CLANG}})
+fi
+
+
+pushd {rosetta_dir}/source/src/python/PyRosetta
+
+${{PREFIX}}/bin/python build.py ${{build_args[@]}} -j{jobs}
+
+echo "-------------------------------- Running PyRosetta unit tests..."
+pushd `${{PREFIX}}/bin/python build.py ${{build_args[@]}} --print-build-root`/build
+${{PREFIX}}/bin/python self-test.py -j{jobs}
+${{PREFIX}}/bin/python self-test.py --delete-tests-output
+
+echo "-------------------------------- Running PyRosetta unit tests... Done."
+
+popd
+popd
+
+
+echo "-------------------------------- Installing PyRosetta Python package..."
+
+pushd {package_dir}/setup
+
+cat ../version.json
+
+# Run initial test to prebuild databases
+${{PREFIX}}/bin/python -c 'import pyrosetta; pyrosetta.init(); pyrosetta.get_score_function()(pyrosetta.pose_from_sequence("TEST"))'
+
+${{PREFIX}}/bin/python setup.py install --single-version-externally-managed --record=record.txt > install.log
+
+popd
+echo "-------------------------------- Installing PyRosetta Python package... Done."
+'''
+def conda_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    ''' Build PyRosetta package using Conda build tools so it will be linked to Conda provided libc
+    '''
+    memory = config['memory'];  jobs = config['cpu_count']
+    if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
+
+    TR = Tracer(True)
+
+    TR('Running PyRosetta4 conda release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
+
+    conda = setup_conda_virtual_environment(working_dir, platform, config, packages='gcc')  # gcc cmake ninja
+
+    release_name = 'PyRosetta4.conda.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=platform['python'][:3].replace('.', '') )
+
+    version_file = working_dir + '/version.json'
+    version = generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='http://www.pyrosetta.org', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
+
+    recipe_dir = working_dir + '/recipe';  os.makedirs(recipe_dir)
+
+    recipe = dict(
+        package = dict(
+            name    = 'pyrosetta',
+            version = version['version'],
+        ),
+        requirements = dict(
+            build = [f'python =={platform["python"]}', 'gcc', "{{ compiler('c') }}", "{{ compiler('cxx') }}", ], # 'cmake', 'ninja'
+            host  = [f'python =={platform["python"]}', 'setuptools', 'numpy', 'zlib'],
+            run   = [f'python =={platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
+        ),
+        test = dict( commands = ['python -m unittest pyrosetta.tests.distributed.test_smoke'] ),
+        about = dict( home ='http://www.pyrosetta.org' ),
+    )
+    with open( recipe_dir + '/meta.yaml', 'w' ) as f: json.dump(recipe, f, sort_keys=True, indent=2)
+
+    package_dir = working_dir + '/' + release_name
+
+    with open( recipe_dir + '/build.sh', 'w' ) as f: f.write( _conda_build_sh_template_.format(**locals()) )
+
+    # --output              Output the conda package filename which would have been created
+    # --output-folder OUTPUT_FOLDER folder to dump output package to. Package are moved here if build or test succeeds. Destination folder must exist prior to using this.
+
+    conda_package_dir = working_dir + '/conda_package';  os.makedirs(conda_package_dir)
+
+    conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet {recipe_dir} --output-folder {conda_package_dir}'
+    conda_package = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True).split()[0]  # removing '\n' at the end
+
+    TR(f'Building Conda package: {conda_package}...')
+    conda_log = execute('Creating Conda package...', conda_build_command_line, return_='output')
+    results[_LogKey_]  += conda_log
+    with open(working_dir+'/conda-build-log.txt', 'w') as f: f.write( to_unicode(result.output) )
+
+
+    '''
+    release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in ['Release', 'MinSizeRel'] else False )
+
+    if os.path.isdir(package_dir): shutil.rmtree(package_dir)  # removing package to keep size of database small
+
+    res_code = _S_passed_
+    results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+    with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+    '''
+
+    return results
+
+
 
 
 def ui_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
@@ -486,6 +800,10 @@ def ui_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verb
 
 
 
+def py_rosetta4_conda_release(*args, **kwargs): return native_libc_py_rosetta4_conda_release(*args, **kwargs)
+#def py_rosetta4_conda_release(*args, **kwargs): return conda_libc_py_rosetta4_conda_release(*args, **kwargs)
+
+
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     ''' Run single test.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
@@ -494,15 +812,15 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     if   test =='source': return rosetta_source_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='binary': return rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='PyRosetta.monolith':  return py_rosetta_release('monolith',  rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.namespace': return py_rosetta_release('namespace', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.monolith_debug':  return py_rosetta_release('monolith_debug',  rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.namespace_debug': return py_rosetta_release('namespace_debug', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-
     elif test =='PyRosetta4.Debug':          return py_rosetta4_release('Debug',          rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='PyRosetta4.Release':        return py_rosetta4_release('Release',        rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='PyRosetta4.MinSizeRel':     return py_rosetta4_release('MinSizeRel',     rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='PyRosetta4.RelWithDebInfo': return py_rosetta4_release('RelWithDebInfo', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+
+    elif test =='PyRosetta4.conda.Debug':          return py_rosetta4_conda_release('Debug',          rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta4.conda.Release':        return py_rosetta4_conda_release('Release',        rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta4.conda.MinSizeRel':     return py_rosetta4_conda_release('MinSizeRel',     rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta4.conda.RelWithDebInfo': return py_rosetta4_conda_release('RelWithDebInfo', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     elif test =='PyRosetta4.documentation':  return py_rosetta4_documentaion('MinSizeRel', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 

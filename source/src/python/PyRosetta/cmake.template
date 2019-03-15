@@ -1,5 +1,7 @@
-#cmake_minimum_required(VERSION 2.8)
 cmake_minimum_required(VERSION 3.0)
+
+# string below should form comment unique for given build config (compiler, gcc-install-prefix, python-include-dir, python-lib) options (we use this for dependency tracking
+#%__PyRosetta_build_config__%#
 
 # Export compilation database for use in IDEs
 SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)

@@ -70,6 +70,8 @@ def main(args):
 
     parser.add_argument("--skip-compile", dest='skip_compile', default=None, action="store_true", help="Skip the compilation phase. Assumes the binaries are already compiled locally.")
 
+    #parser.add_argument("--results-root", default=None, action="store", help="Location of `results` dir default is to use `./results`")
+
     parser.add_argument('args', nargs=argparse.REMAINDER)
 
     global Options;
@@ -88,8 +90,8 @@ def main(args):
     #Platform['options'] = json.loads( Options.options ) if Options.options else {}
 
     if Options.memory: memory = Options.memory
-    elif Platform['os'] in ['linux', 'ubuntu']: memory = int( execute('Getting memory info...', 'free -m', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split('\n')[1].split()[1]) / 1024
-    elif Platform['os'] == 'mac':   memory = int( execute('Getting memory info...', 'sysctl -a | grep hw.memsize', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split()[1]) / 1024 / 1024 / 1024
+    elif Platform['os'] in ['linux', 'ubuntu']: memory = int( execute('Getting memory info...', 'free -m', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split('\n')[1].split()[1]) // 1024
+    elif Platform['os'] == 'mac':   memory = int( execute('Getting memory info...', 'sysctl -a | grep hw.memsize', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split()[1]) // 1024 // 1024 // 1024
 
     Platform['compiler'] = Options.compiler
 
@@ -113,10 +115,14 @@ def main(args):
 
     config = Config.items('config')
     config = dict(config, cpu_count=Config.getint('DEFAULT', 'cpu_count'), memory=memory, debug=Options.debug)
-    if 'prefix' not in config: config['prefix'] = os.path.abspath('./results/prefix')
+
+    if 'results_root' not in config: config['results_root'] = os.path.abspath('./results/')
+
+    if 'prefix' not in config: config['prefix'] = os.path.abspath( config['results_root'] + '/prefix')
 
     if Options.skip_compile is not None: config['skip_compile'] = Options.skip_compile
 
+    #print(f'Results path: {config["results_root"]}')
     print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True), Platform))
 
     if Options.compare: print('Comparing tests {} with suffixes: {}'.format(Options.args, Options.compare) )
@@ -173,12 +179,12 @@ def main(args):
         test_suite = imp.load_source('test_suite', file_name)
 
         if Options.compare:
-            working_dir_1 = os.path.abspath( f'./results/{Platform["os"]}.{test}.{Options.compare[0]}' )
+            working_dir_1 = os.path.abspath( config['results_root'] + f'/{Platform["os"]}.{test}.{Options.compare[0]}' )
             res_1 = json.load( open(working_dir_1 + '/output.results.json') )["results"]
 
             if Options.compare[1] == 'None': res_2, working_dir_2 = None, None
             else:
-                working_dir_2 = os.path.abspath( f'./results/{Platform["os"]}.{test}.{Options.compare[1]}' )
+                working_dir_2 = os.path.abspath( config['results_root'] + f'/{Platform["os"]}.{test}.{Options.compare[1]}' )
                 res_2 = json.load( open(working_dir_2 + '/output.results.json') )["results"]
 
             res = test_suite.compare(test, res_1, working_dir_1, res_2, working_dir_2)
@@ -192,7 +198,7 @@ def main(args):
 
 
         else:
-            working_dir = os.path.abspath( f'./results/{Platform["os"]}.{test}{Options.suffix}' )
+            working_dir = os.path.abspath( config['results_root'] + f'/{Platform["os"]}.{test}{Options.suffix}' )
             if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
             os.makedirs(working_dir)
 

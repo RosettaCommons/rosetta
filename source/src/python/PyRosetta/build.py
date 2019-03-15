@@ -28,7 +28,7 @@ elif sys.platform == "win32" : Platform = "windows"
 else: Platform = "unknown"
 PlatformBits = platform.architecture()[0][:2]
 
-_script_version_ = '1.0'  # used as seed for dependency tracking
+_script_version_ = '1.1'  # used as seed for dependency tracking
 
 if os.path.isfile('.hostname'):
     with open('.hostname') as f: _machine_name_ = f.read().split()[0]
@@ -479,6 +479,14 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
 
     with open('cmake.template') as f: cmake = f.read()
 
+    build_config = '# PyRosetta build config: {})'.format(
+        dict(compiler = execute('Getting compiler path...', 'which gcc && which g++' if Options.compiler == 'gcc' else 'which clang && which clang++', return_ = 'output', silent = True),
+             gcc_install_prefix = Options.gcc_install_prefix,
+             pybind11 = Options.pybind11,
+             python_include = Options.python_include_dir,
+             python_lib = Options.python_lib)
+    )
+
     if Options.external_link:
         rosetta_cmake = """
             include_directories(SYSTEM {system_include})
@@ -495,6 +503,7 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
         cmake = cmake.replace('#%__Rosetta_cmake_instructions__%#', rosetta_cmake)
         cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join(extra_sources))
         cmake = cmake.replace('#%__Rosetta_libraries__%#', ' '.join(libs + ["${LINK_EXTERNAL_LIBS}"]))
+        cmake = cmake.replace('#%__PyRosetta_build_config__%#', build_config)
 
         modified |= update_source_file(prefix + 'CMakeLists.txt', cmake)
 
@@ -505,8 +514,9 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
         rosetta_cmake += 'add_definitions({})\n'.format(' '.join([ '-D'+d for d in get_defines()] ) )
 
         cmake = cmake.replace('#%__Rosetta_cmake_instructions__%#', rosetta_cmake)
-        cmake = cmake.replace( '#%__PyRosetta_sources__%#', '\n'.join(extra_sources + ['$<TARGET_OBJECTS:{}>'.format(l) for l in libs] ) )  # cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join([ os.path.abspath(prefix + f) for f in extra_sources]))
+        cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join(extra_sources + ['$<TARGET_OBJECTS:{}>'.format(l) for l in libs] ) )  # cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join([ os.path.abspath(prefix + f) for f in extra_sources]))
         cmake = cmake.replace('#%__Rosetta_libraries__%#', '')  # cmake = cmake.replace('#%__Rosetta_libraries__%#', ' '.join(libs))
+        cmake = cmake.replace('#%__PyRosetta_build_config__%#', build_config)
 
         modified |= update_source_file(prefix + 'CMakeLists.txt', cmake)
 
@@ -810,6 +820,8 @@ def main(args):
     if Options.print_build_root: print(binding_build_root, end=('\n' if sys.stdout.isatty() else '') ); sys.exit(0)
 
     print('Creating PyRosetta in "{}" mode in: {}'.format(Options.type, binding_build_root))
+
+    if len(Options.binder_config) > 1 : print('Binder config: ', Options.binder_config)
 
     link_supplemental_files(rosetta_source_path)
 

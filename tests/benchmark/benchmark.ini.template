@@ -23,6 +23,9 @@ hpc_driver = MultiCore
 branch = unknown
 revision = 42
 
+# path to directory where test results will be stored
+results_root = %(here)s/results
+
 # Path to boost python library (Required for most PyRosetta builds and tests)
 #boost_python_library = /Users/benchmark/G/PyRosetta.develop.boost-1.55/PyRosetta.Develop.64/lib/libboost_python.dylib
 
@@ -30,3 +33,6 @@ revision = 42
 release_dir = ./results/_release_
 
 release_root = ./results/_release_
+
+
+conda_token = your-conda-token
