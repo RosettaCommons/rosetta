@@ -10,11 +10,11 @@
 
 from __future__ import print_function
 
-from rosetta.core.scoring import *
+from pyrosetta.rosetta.core.scoring import *
 
-from rosetta.protocols.moves import *
-from rosetta.protocols.simple_moves import *
-from rosetta.protocols.minimization_packing import *
+from pyrosetta.rosetta.protocols.moves import *
+from pyrosetta.rosetta.protocols.simple_moves import *
+from pyrosetta.rosetta.protocols.minimization_packing import *
 
-from rosetta.protocols.loops import *
-from rosetta.protocols.docking import *
+from pyrosetta.rosetta.protocols.loops import *
+from pyrosetta.rosetta.protocols.docking import *

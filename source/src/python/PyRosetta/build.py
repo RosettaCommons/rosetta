@@ -357,8 +357,7 @@ def setup_source_directory_links(rosetta_source_path):
         os.symlink(source_path, s)
 
     if Options.external_link:
-        target_lib_path = os.path.relpath(
-            os.path.join(rosetta_source_path, "cmake", "build_{}".format(Options.external_link)), prefix)
+        target_lib_path = os.path.relpath( os.path.join(rosetta_source_path, "cmake", "build_PyRosetta.{}".format(Options.external_link) ), prefix)
 
         s = os.path.join(prefix, "lib")
         if os.path.islink(s): os.unlink(s)
@@ -777,7 +776,7 @@ def main(args):
 
     parser.add_argument('-p', '--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
     parser.add_argument('--create-wheel', default='', help='Create python wheel in the specified directory. (default is to skip creating wheel)')
-    parser.add_argument('--external-link', default=None, choices=["debug", "release", "mac_graphics"], help="Optional, link externally compiled rosetta libraries from the given cmake build directory rather than rebuilding in extension modoule.")
+    parser.add_argument('--external-link', default=None, choices=["debug", "release"], help="Instead of building Rosetta libraries link to Rosetta libraries compiled with CMake PyRosetta.<kind> build")
 
     parser.add_argument('--python-include-dir', default=None, help='Path to python C headers. Use this if CMake fails to autodetect it')
     parser.add_argument('--python-lib', default=None, help='Path to python library. Use this if CMake fails to autodetect it')
