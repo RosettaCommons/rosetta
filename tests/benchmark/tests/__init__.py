@@ -12,7 +12,7 @@
 ## @brief  Common constats and types for all test types
 ## @author Sergey Lyskov
 
-import os, time, sys, codecs, urllib.request, imp, subprocess  # urllib.error, urllib.parse,
+import os, time, sys, shutil, codecs, urllib.request, imp, subprocess  # urllib.error, urllib.parse,
 import platform as  platform_module
 import types as types_module
 
