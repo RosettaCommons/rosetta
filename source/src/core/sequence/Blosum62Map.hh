@@ -67,6 +67,7 @@ std::unordered_map< std::pair< char, char >, int, CharPairHash >
 create_map_for_Blosum62Map(){
 
 	std::unordered_map< std::pair< char, char >, int, CharPairHash > score_for_aa_pair;
+	score_for_aa_pair.max_load_factor( 0.6 );
 
 	utility::vector1< char > aas = { 'A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V', 'B', 'Z', 'X' };
 

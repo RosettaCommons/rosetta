@@ -101,7 +101,7 @@ public:
 
 private:
 
-	std::unordered_map< std::pair<uint32_t, uint32_t>, float, boost::hash< std::pair<uint32_t, uint32_t>>> future_edges_;
+	std::unordered_map< std::pair< uint32_t, uint32_t >, float, boost::hash< std::pair< uint32_t, uint32_t > > > future_edges_;
 	scoring::hbonds::graph::HBondGraphOP hbond_graph_;
 	rotamer_set::RotamerSetsCOP rotamer_sets_;
 

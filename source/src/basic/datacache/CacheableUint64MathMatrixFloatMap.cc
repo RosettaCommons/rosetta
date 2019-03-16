@@ -31,7 +31,9 @@
 namespace basic {
 namespace datacache {
 
-CacheableUint64MathMatrixFloatMap::CacheableUint64MathMatrixFloatMap() : CacheableData() {}
+CacheableUint64MathMatrixFloatMap::CacheableUint64MathMatrixFloatMap() : CacheableData() {
+	map_.max_load_factor( 0.7 );
+}
 
 CacheableUint64MathMatrixFloatMap::~CacheableUint64MathMatrixFloatMap() = default;
 

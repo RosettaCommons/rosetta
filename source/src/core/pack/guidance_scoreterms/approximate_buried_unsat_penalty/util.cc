@@ -29,6 +29,7 @@
 #include <basic/Tracer.hh>
 
 #include <utility/graph/Graph.hh>
+#include <utility/pointer/memory.hh>
 #include <boost/format.hpp>
 
 #include <chrono>
@@ -339,7 +340,7 @@ three_body_approximate_buried_unsat_calculation(
 	bool assume_const_backbone /* =true */
 ) {
 	const float PENALTY = 1.0f;
-	basic::datacache::CacheableUint64MathMatrixFloatMapOP score_map ( new basic::datacache::CacheableUint64MathMatrixFloatMap() );
+	basic::datacache::CacheableUint64MathMatrixFloatMapOP score_map ( utility::pointer::make_shared< basic::datacache::CacheableUint64MathMatrixFloatMap >() );
 
 
 	// We don't strictly need to do this. But it will keep the memory requirements down for giant symmetries
@@ -399,6 +400,8 @@ three_body_approximate_buried_unsat_calculation(
 
 	ReweightData reweight_data( pose, rotsets->task() );
 	std::unordered_map< OversatToSidechain, ScratchVectorLimits, OversatToSidechainHasher > oversat_map;
+	oversat_map.max_load_factor( 0.7 );
+
 	// This seems like a good ballpark start
 	ScratchVectors<float> oversat_scratch( rotsets->nrotamers(), 0.0f );
 
@@ -688,12 +691,6 @@ three_body_approximate_buried_unsat_calculation(
 	}
 
 	TR << "Mem use: " << mem_use << " bytes" << std::endl;
-
-
-
-
-
-
 
 	return score_map;
 }

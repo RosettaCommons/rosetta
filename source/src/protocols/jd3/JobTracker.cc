@@ -35,7 +35,8 @@ namespace jd3 {
 JobTracker::JobTracker():
 	utility::pointer::ReferenceCount()
 {
-
+	completed_jobs_by_dag_node_.max_load_factor( 0.7 );
+	started_jobs_by_dag_node_.max_load_factor( 0.7 );
 }
 
 JobTracker::~JobTracker(){}

@@ -91,6 +91,7 @@ InterfaceHbondsFilter::InterfaceHbondsFilter(
 	salt_bridge_distance_cutoff_(salt_bridge_distance_cutoff_in),
 	charged_res_()
 {
+	charged_res_.max_load_factor( 0.7 );
 	if ( ! scorefxn_ ) {
 		scorefxn_ = core::scoring::get_score_function( true /* full atom score function */ );
 	}
@@ -144,6 +145,7 @@ void InterfaceHbondsFilter::initialize_charged_residue_map()
 		{ "ASP", { {"OD1",NEGATIVE}, {"OD2",NEGATIVE} } },
 		{ "GLU", { {"OE1",NEGATIVE}, {"OE2",NEGATIVE} } }
 		};
+	charged_res_.max_load_factor( 0.7 );
 
 
 	if ( include_His_chain_terminus_ ) {

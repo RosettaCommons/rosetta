@@ -839,6 +839,9 @@ void MRSJobQueen::parse_common_tag( utility::tag::TagCOP common_tag ){
 	}
 
 	cluster_data_for_results_of_stage_.resize( num_stages_ );
+	for ( auto & map : cluster_data_for_results_of_stage_ ) {
+		map.max_load_factor( 0.6 );
+	}
 	tag_manager_.set_common_data_tags( std::move( data_tags ) );
 }
 
