@@ -167,7 +167,7 @@ void remodel_tcr_cdr_loops ( core::pose::Pose &tcr_pose, protocols::loops::Loops
 	protocols::loops::add_cutpoint_variants( tcr_pose );
 	core::scoring::ScoreFunctionOP lowres_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
 	core::util::switch_to_residue_type_set( tcr_pose, core::chemical::CENTROID_t );
-	protocols::loops::Loops::const_iterator loop, end;
+	//protocols::loops::Loops::const_iterator loop, end;
 	protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC ploopmover(cdr3loops, lowres_scorefxn_ );
 	ploopmover.apply( tcr_pose );
 	core::util::switch_to_residue_type_set( tcr_pose, core::chemical::FULL_ATOM_t );

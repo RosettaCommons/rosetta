@@ -102,6 +102,7 @@ public:
 	core::Real max_bond_length() const;
 	core::Real min_bond_length() const;
 	bool use_pdb_format_HETNAM_records() const;
+	bool write_pdb_title_section_records() const;
 	bool write_pdb_link_records() const;
 	bool write_pdb_parametric_info() const;
 	bool write_all_connect_info() const;
@@ -160,6 +161,7 @@ public:
 	void set_max_bond_length( core::Real const max_bond_length );
 	void set_min_bond_length( core::Real const min_bond_length );
 	void set_use_pdb_format_HETNAM_records( bool const setting );
+	void set_write_pdb_title_section_records( bool const setting );
 	void set_write_pdb_link_records( bool const setting );
 	void set_write_pdb_parametric_info( bool const setting );
 	void set_write_all_connect_info( bool const setting );
@@ -239,6 +241,7 @@ private:
 	core::Real max_bond_length_;
 	core::Real min_bond_length_;
 	bool use_pdb_format_HETNAM_records_;
+	bool write_pdb_title_section_records_;
 	bool write_pdb_link_records_;
 	bool write_pdb_parametric_info_;
 	bool write_all_connect_info_;

@@ -25,7 +25,6 @@ class HeaderInformation;
 typedef utility::pointer::shared_ptr< HeaderInformation > HeaderInformationOP;
 typedef utility::pointer::shared_ptr< HeaderInformation const > HeaderInformationCOP;
 
-
 } // namespace io
 } // namespace core
 

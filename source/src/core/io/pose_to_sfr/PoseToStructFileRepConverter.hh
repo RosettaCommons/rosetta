@@ -25,6 +25,8 @@
 #include <core/io/StructFileRep.hh>
 #include <core/io/StructFileRepOptions.hh>
 #include <core/io/StructFileReaderOptions.fwd.hh>
+#include <core/io/HeaderInformation.fwd.hh>
+#include <core/io/rcsb/ExperimentalTechnique.hh>
 #include <core/io/Remarks.fwd.hh>
 #include <core/io/ResidueInformation.fwd.hh>
 
@@ -196,10 +198,10 @@ private: //PRIVATE FUNCTIONS:
 private: //PRIVATE FUNCTIONS:
 
 	/// @brief Create a default PDB-format title section.
-	void generate_default_title_section();
+	void generate_default_title_section( rcsb::ExperimentalTechnique const technique );
 
 	/// @brief Create default PDB remarks, which provide the date and Rosetta version number.
-	void generate_default_remarks();
+	void generate_default_remarks( rcsb::ExperimentalTechnique const technique );
 
 	/// @brief Set whether to write the fold tree, in the
 	/// StructFileRepOptions object (options_).

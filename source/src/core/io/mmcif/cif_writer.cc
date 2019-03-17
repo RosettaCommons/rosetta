@@ -13,12 +13,14 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
+// Unit Header
 #include <core/io/mmcif/cif_writer.hh>
-#include <core/io/StructFileRepOptions.hh>
-#include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
 
 // Package headers
 #include <core/io/pdb/pdb_reader.hh>  // TODO: Pull out pseudo-duplicated code and move to sfr_storage.cc.
+#include <core/io/rcsb/ExperimentalTechnique.hh>
+#include <core/io/StructFileRepOptions.hh>
+#include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
 
 // When you move PDBReader and PoseUnbuilder, take these.
 #include <core/pose/Pose.hh>
@@ -252,13 +254,13 @@ dump_cif(
 		exptl->AddColumn( "method" );
 		std::string tech_str = "";
 		// keywords is a std::list, so <
-		std::list< HeaderInformation::ExperimentalTechnique >::const_iterator iter3, end3;
+		std::list< rcsb::ExperimentalTechnique >::const_iterator iter3, end3;
 		for ( iter3 = sfr->header()->experimental_techniques().begin(),
 				end3 = --sfr->header()->experimental_techniques().end(); iter3 != end3; ++iter3 ) {
-			tech_str += HeaderInformation::experimental_technique_to_string(
+			tech_str += rcsb::experimental_technique_to_string(
 				*iter3 ) + ", ";
 		}
-		tech_str += HeaderInformation::experimental_technique_to_string( *++iter3 );
+		tech_str += rcsb::experimental_technique_to_string( *++iter3 );
 		exptl->AddRow( std::vector< std::string >( 1, tech_str ) );
 		block.WriteTable( exptl );
 	}

@@ -109,7 +109,8 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_max_bond_length( tag->getOption< core::Real >( "max_bond_length", 1.6) );
 	set_min_bond_length( tag->getOption< core::Real >( "min_bond_length", 1.3) );
 	set_use_pdb_format_HETNAM_records( tag->getOption< bool >( "use_pdb_format_HETNAM_records", false ) );
-	set_write_pdb_link_records( tag->getOption <bool >( "write_pdb_link_records", false ) );
+	set_write_pdb_title_section_records( tag->getOption <bool >( "write_pdb_title_section_records", true ) );
+	set_write_pdb_link_records( tag->getOption <bool >( "write_pdb_link_records", true ) );
 	set_write_pdb_parametric_info( tag->getOption< bool >("write_pdb_parametric_info", true) );
 	set_write_all_connect_info( tag->getOption< bool >("write_all_connect_info", false) );
 	set_write_seqres_records( tag->getOption< bool >("write_seqres_records", 0) );
@@ -170,6 +171,7 @@ bool StructFileRepOptions::maintain_links() const { return maintain_links_; }
 core::Real StructFileRepOptions::max_bond_length() const { return max_bond_length_; }
 core::Real StructFileRepOptions::min_bond_length() const { return min_bond_length_; }
 bool StructFileRepOptions::use_pdb_format_HETNAM_records() const { return use_pdb_format_HETNAM_records_; }
+bool StructFileRepOptions::write_pdb_title_section_records() const { return write_pdb_title_section_records_; }
 bool StructFileRepOptions::write_pdb_link_records() const { return write_pdb_link_records_; }
 bool StructFileRepOptions::write_pdb_parametric_info() const { return write_pdb_parametric_info_; }
 bool StructFileRepOptions::write_all_connect_info() const { return write_all_connect_info_; }
@@ -318,6 +320,9 @@ void StructFileRepOptions::set_min_bond_length( core::Real const min_bond_length
 void StructFileRepOptions::set_use_pdb_format_HETNAM_records( bool const setting )
 { use_pdb_format_HETNAM_records_ = setting; }
 
+void StructFileRepOptions::set_write_pdb_title_section_records( bool const setting )
+{ write_pdb_title_section_records_ = setting; }
+
 void StructFileRepOptions::set_write_pdb_link_records( bool const setting )
 { write_pdb_link_records_ = setting; }
 
@@ -389,6 +394,7 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ out::file::renumber_pdb
 		+ out::file::suppress_zero_occ_pdb_output
 		+ out::file::use_pdb_format_HETNAM_records
+		+ out::file::write_pdb_title_section_records
 		+ out::file::write_pdb_link_records
 		+ in::file::treat_residues_in_these_chains_as_separate_chemical_entities
 		+ in::file::remap_pdb_atom_names_for
@@ -465,7 +471,8 @@ StructFileRepOptions::append_schema_attributes( utility::tag::AttributeList & at
 		+ Attr::attribute_w_default( "max_bond_length", xsct_real, "TO DO",  "1.6" )
 		+ Attr::attribute_w_default( "min_bond_length", xsct_real, "TO DO", "1.3" )
 		+ Attr::attribute_w_default( "use_pdb_format_HETNAM_records", xsct_rosetta_bool, "TO DO",  "0" )
-		+ Attr::attribute_w_default( "write_pdb_link_records", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "write_pdb_title_section_records", xsct_rosetta_bool, "Write HEADER, EXPDTA, AUTHOR, and REMARK records?",  "1" )
+		+ Attr::attribute_w_default( "write_pdb_link_records", xsct_rosetta_bool, "Write LINK records?",  "1" )
 		+ Attr::attribute_w_default( "write_pdb_parametric_info", xsct_rosetta_bool, "TO DO", "1")
 		+ Attr::attribute_w_default( "write_all_connect_info", xsct_rosetta_bool, "TO DO", "0" )
 		+ Attr::attribute_w_default( "treat_residues_in_these_chains_as_separate_chemical_entities", xs_string, "TO DO", " " )
@@ -543,6 +550,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_min_bond_length( options[ in::min_bond_length ]() );
 	set_read_only_ATOM_entries( options[ in::read_only_ATOM_entries ]() );
 	set_use_pdb_format_HETNAM_records( options[ OptionKeys::out::file::use_pdb_format_HETNAM_records ]() );
+	set_write_pdb_title_section_records( options[ out::file::write_pdb_title_section_records ]() );
 	set_write_pdb_link_records( options[ out::file::write_pdb_link_records ]() );
 	set_write_seqres_records( options[out::file::write_seqres_records ]() );
 	set_chains_whose_residues_are_separate_chemical_entities( options[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or(""));
@@ -596,6 +604,7 @@ StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 	if ( renumber_pdb_                                          != other.renumber_pdb_                                         ) return false;
 	if ( suppress_zero_occ_pdb_output_                          != other.suppress_zero_occ_pdb_output_                         ) return false;
 	if ( use_pdb_format_HETNAM_records_                         != other.use_pdb_format_HETNAM_records_                        ) return false;
+	if ( write_pdb_title_section_records_                       != other.write_pdb_title_section_records_                               ) return false;
 	if ( write_pdb_link_records_                                != other.write_pdb_link_records_                               ) return false;
 	if ( write_seqres_records_                                  != other.write_seqres_records_                                 ) return false;
 	if ( write_pdb_parametric_info_                             != other.write_pdb_parametric_info_                            ) return false;
@@ -686,6 +695,8 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	if ( suppress_zero_occ_pdb_output_                          != other.suppress_zero_occ_pdb_output_                         ) return false;
 	if ( use_pdb_format_HETNAM_records_                         <  other.use_pdb_format_HETNAM_records_                        ) return true;
 	if ( use_pdb_format_HETNAM_records_                         != other.use_pdb_format_HETNAM_records_                        ) return false;
+	if ( write_pdb_title_section_records_                       <  other.write_pdb_title_section_records_                               ) return true;
+	if ( write_pdb_title_section_records_                       != other.write_pdb_title_section_records_                               ) return false;
 	if ( write_pdb_link_records_                                <  other.write_pdb_link_records_                               ) return true;
 	if ( write_pdb_link_records_                                != other.write_pdb_link_records_                               ) return false;
 	if ( write_seqres_records_                                  <  other.write_seqres_records_                                 ) return true;
@@ -775,6 +786,7 @@ core::io::StructFileRepOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( max_bond_length_ ) ); // core::Real
 	arc( CEREAL_NVP( min_bond_length_ ) ); // core::Real
 	arc( CEREAL_NVP( use_pdb_format_HETNAM_records_ ) ); // _Bool
+	arc( CEREAL_NVP( write_pdb_title_section_records_ ) ); // _Bool
 	arc( CEREAL_NVP( write_pdb_link_records_ ) ); // _Bool
 	arc( CEREAL_NVP( write_pdb_parametric_info_ ) ); // _Bool
 	arc( CEREAL_NVP( write_all_connect_info_ ) ); // _Bool
@@ -835,6 +847,7 @@ core::io::StructFileRepOptions::load( Archive & arc ) {
 	arc( max_bond_length_ ); // core::Real
 	arc( min_bond_length_ ); // core::Real
 	arc( use_pdb_format_HETNAM_records_ ); // _Bool
+	arc( write_pdb_title_section_records_ );  // _Bool
 	arc( write_pdb_link_records_ ); // _Bool
 	arc( write_pdb_parametric_info_ ); // _Bool
 	arc( write_all_connect_info_ ); // _Bool

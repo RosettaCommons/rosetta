@@ -17,6 +17,7 @@
 
 // Unit headers
 #include <core/io/HeaderInformation.fwd.hh>
+#include <core/io/rcsb/ExperimentalTechnique.hh>
 #include <core/io/pdb/Record.hh>
 
 // Platform headers
@@ -228,46 +229,13 @@ public: //  Fields for COMPND Records
 
 public: // Fields for the EXPDTA Record
 
-	enum ExperimentalTechnique {
-		UNKNOWN_EXPDTA = 0,
-		// Experimental Techniques for spec version 3.3
-		X_RAY_DIFFRACTION = 1,
-		FIBER_DIFFRACTION,
-		NEUTRON_DIFFRACTION,
-		ELECTRON_CRYSTALLOGRAPHY,
-		ELECTRON_MICROSCOPY,
-		SOLID_STATE_NMR,
-		SOLUTION_NMR,
-		SOLUTION_SCATTERING,
-
-		THEORETICAL_MODEL,
-		ExperimentalTechnique_max_current = THEORETICAL_MODEL,
-
-		// Additional non-obsolete code.
-		EPR,
-
-		// Obsolete technique codes
-		ELECTRON_DEFRACTION,
-		CRYO_ELECTRON_MICROSCOPY,
-		SOLUTION_SCATTERING_THEORETICAL_MODEL,
-		FLORECENCE_TRANSFER,
-		NMR, // Note the qualifying information is parsed not stored
-
-		ExperimentalTechnique_max = NMR
-	};
-	typedef std::list< ExperimentalTechnique > ExperimentalTechniques;
-
-	std::string static experimental_technique_to_string( ExperimentalTechnique technique );
-
-	ExperimentalTechnique static string_to_experimental_technique( std::string const &technique );
-
 	/// @brief Parse the list of techniques string following the technique
 	/// field in the EXPDTA record of the pdb format and store the techniques
 	void store_experimental_techniques( std::string const & exp );
 
-	void store_experimental_technique( ExperimentalTechnique technique );
+	void store_experimental_technique( rcsb::ExperimentalTechnique technique );
 
-	ExperimentalTechniques const & experimental_techniques() const;
+	rcsb::ExperimentalTechniques const & experimental_techniques() const;
 
 	void finalize_experimental_technique_records();
 
@@ -275,7 +243,7 @@ public: // Fields for the EXPDTA Record
 
 	void clear_experimental_techniques();
 
-	bool is_experimental_technique( ExperimentalTechnique technique ) const;
+	bool is_experimental_technique( rcsb::ExperimentalTechnique technique ) const;
 
 	void fill_experimental_technique_records( std::vector< pdb::Record > & VR ) const;
 
@@ -343,7 +311,7 @@ private: // Data for COMPND Record
 
 private: // Data for EXPDTA Record
 
-	ExperimentalTechniques experimental_techniques_;
+	rcsb::ExperimentalTechniques experimental_techniques_;
 
 	std::string experimental_technique_in_progress_;
 
