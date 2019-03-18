@@ -63,10 +63,10 @@ void JCouplingIO::read(std::string const & file_name) {
 
 	while ( !data.eof() ) {
 		getline(data, line);
-		std::istringstream line_stream(line);
+		std::istringstream line_stream2(line);
 		core::Real val, dev;
 		core::Size res;
-		line_stream >> res >> val >> dev;
+		line_stream2 >> res >> val >> dev;
 
 		if ( !(option[frags::filter_JC].user() && (val >4) && (val<6)  ) ) {
 			temp_data[res].push_back(val);

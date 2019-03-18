@@ -68,8 +68,10 @@ protected:
 
 public:
 	// This constructor parameter is an extension!
-	explicit unordered_object_pool(const size_type next_size = 32)
-	:pool<UserAllocator>(sizeof(T), next_size) { }
+	explicit
+	unordered_object_pool( size_type const the_next_size = 32 ) :
+		pool< UserAllocator >( sizeof(T), the_next_size )
+	{ }
 
 	~unordered_object_pool();
 

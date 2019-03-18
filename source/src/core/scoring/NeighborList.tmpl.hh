@@ -208,7 +208,7 @@ NeighborList::setup(
 			CountPairFunctionCOP count_pair( etable_method.get_count_pair_function( i, j, pose, sfxn) );
 
 			conformation::Residue const & jres( pose.residue( j ) );
-			core::Real weight_func = pose.conformation().get_residue_weight(i,j);
+			core::Real weight_func2 = pose.conformation().get_residue_weight(i,j);
 
 			for ( int ii=1, ii_end = ires.natoms(); ii<= ii_end; ++ii ) {
 				conformation::Atom const & iatom( ires.atom(ii) );
@@ -223,7 +223,7 @@ NeighborList::setup(
 						Real const dist_sq( iatom.xyz().distance_squared( jatom.xyz() ));
 						Real const cutoff( atom_pair_cutoff( iatom_is_hydrogen, jatom_is_hydrogen ));
 						if ( dist_sq <= cutoff ) {
-							declare_atoms_neighbors( id::AtomID( ii, i ), id::AtomID( jj, j ), path_dist, weight, weight_func );
+							declare_atoms_neighbors( id::AtomID( ii, i ), id::AtomID( jj, j ), path_dist, weight, weight_func2 );
 						} // distance check
 
 						if ( auto_update_ ) {
@@ -232,8 +232,8 @@ NeighborList::setup(
 								HH_cutoff_wide_ : ( ( iatom_is_hydrogen || jatom_is_hydrogen ) ?
 								XH_cutoff_wide_ : XX_cutoff_wide_ ) );
 							if ( dist_sq <= wide_cutoff ) {
-								wide_nblist_[i][ii].push_back( AtomNeighbor( j, jj, path_dist, weight, weight_func ) );
-								wide_nblist_[j][jj].push_back( AtomNeighbor( i, ii, path_dist, weight, weight_func ) );
+								wide_nblist_[i][ii].push_back( AtomNeighbor( j, jj, path_dist, weight, weight_func2 ) );
+								wide_nblist_[j][jj].push_back( AtomNeighbor( i, ii, path_dist, weight, weight_func2 ) );
 							}
 						}
 

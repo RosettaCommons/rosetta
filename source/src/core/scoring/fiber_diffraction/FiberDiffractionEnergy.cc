@@ -145,9 +145,12 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 		setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
 	auto form_factors(form_factors_.begin());
 
-	core::Real max_r_value;
-	find_max_r( pose, max_r_value );
-	TR<<"Max r value "<<max_r_value<<std::endl;
+	{
+		core::Real max_r_value;
+		find_max_r( pose, max_r_value );
+		TR<<"Max r value "<<max_r_value<<std::endl;
+	}
+
 	I.resize(lmax+1);
 	for ( Size l=0; l<= lmax; ++l ) {
 		I[l].resize(Rmax);

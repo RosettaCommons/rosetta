@@ -75,8 +75,8 @@ CachedResidueSubset::get_subset( std::string const & name ) const
 	if ( subset == subsets_.end() ) {
 		std::stringstream msg;
 		msg << "CachedResidueSubset: No cached residue subset named " << name << " was found in the pose.  Available subsets are: ";
-		for ( auto const & subset : subsets_ ) {
-			msg << subset.first << " ";
+		for ( auto const & subset2 : subsets_ ) {
+			msg << subset2.first << " ";
 		}
 		msg << std::endl;
 		throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );

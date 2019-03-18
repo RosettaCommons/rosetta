@@ -164,12 +164,12 @@ NMRSpinlabel::init_radical_atom_weights_and_coordinates() {
 }
 
 void
-NMRSpinlabel::show(std::ostream & TR) {
-	TR << " * * * NMRSpinlabel data * * * " << std::endl;
-	TR << "Full name        : " << name_ << std::endl;
-	TR << "Three-letter code: " << three_letter_code_ << std::endl;
-	TR << "Radical ion/atom : " << radical_atom_ << std::endl;
-	TR << "Ensemble size    : " << weights_coordinates_table_.size() << std::endl;
+NMRSpinlabel::show( std::ostream & tracer ) {
+	tracer << " * * * NMRSpinlabel data * * * " << std::endl;
+	tracer << "Full name        : " << name_ << std::endl;
+	tracer << "Three-letter code: " << three_letter_code_ << std::endl;
+	tracer << "Radical ion/atom : " << radical_atom_ << std::endl;
+	tracer << "Ensemble size    : " << weights_coordinates_table_.size() << std::endl;
 }
 
 void

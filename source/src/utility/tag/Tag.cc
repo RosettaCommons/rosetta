@@ -381,7 +381,7 @@ struct error_report_parser {
 	//   char const* eol_msg;
 	//   char const* msg;
 	vector< file_position >& errors;
-	explicit error_report_parser( vector<file_position>& errors ) : errors(errors) {}
+	explicit error_report_parser( vector<file_position>& error_vec ) : errors( error_vec ) {}
 
 	using result_t = boost::spirit::classic::nil_t;
 

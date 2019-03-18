@@ -57,14 +57,14 @@ using namespace core;
 template< class T > void dump_matrix( Size, T const &, basic::Tracer & ) {}
 
 /// @brief A function (not a macro) that will print a square matrix to tr.Debug
-template< class T > void dump_matrix_no( Size nr, T const & a, basic::Tracer & tr)
+template< class T > void dump_matrix_no( Size nr, T const & a, basic::Tracer & tracer)
 {
 	Size i,k;
 	for ( i =0 ; i<nr; ++i ) {
 		for ( k =0 ; k<nr; ++k ) {
-			tr.Debug << a[i][k] << " ";
+			tracer.Debug << a[i][k] << " ";
 		}
-		tr.Debug << "\n";
+		tracer.Debug << "\n";
 	}
 }
 
@@ -130,8 +130,8 @@ void PCA::read_eigvec_file( std::string fn, pose::Pose const& pose,int nvec) {
 	for ( Size i=1; i<=nvec_; i++ ) {
 		for ( Size k=1; k<=npca_; k++ ) {
 			getline(data, line);
-			std::istringstream line_stream( line );
-			line_stream >> eigvec_( 1, k, i) >> eigvec_( 2, k, i) >> eigvec_(3, k, i);
+			std::istringstream line_stream2( line );
+			line_stream2 >> eigvec_( 1, k, i) >> eigvec_( 2, k, i) >> eigvec_(3, k, i);
 		}
 	}
 }
@@ -316,8 +316,8 @@ void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
 	}
 
 	/* clear matrix U */
-	for ( auto & i : u ) {
-		for ( double & j : i ) j=0;
+	for ( auto & ii : u ) {
+		for ( double & jj : ii ) jj=0;
 	}
 	/*calculate the matrix U*/
 	for ( n=0; (n<natoms); n++ ) {

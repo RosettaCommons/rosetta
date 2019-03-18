@@ -180,7 +180,7 @@ set<std::string> SSHashedFragmentStore::potential_valid_ss_strings(std::string f
 	union_frag_ss.clear();
 	//step2 EL -> LL,EE
 	for ( iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter ) {
-		set<std::string> union_frag_ss;
+		//set<std::string> union_frag_ss;
 		Size found = iter->find("EL");
 		while ( found!=std::string::npos ) {
 			std::string tmp_string1 = *iter;
@@ -198,7 +198,7 @@ set<std::string> SSHashedFragmentStore::potential_valid_ss_strings(std::string f
 	union_frag_ss.clear();
 	//step3 LH -> LL,HH
 	for ( iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter ) {
-		set<std::string> union_frag_ss;
+		//set<std::string> union_frag_ss;
 		Size found = iter->find("LH");
 		while ( found!=std::string::npos ) {
 			std::string tmp_string1 = *iter;
@@ -216,7 +216,7 @@ set<std::string> SSHashedFragmentStore::potential_valid_ss_strings(std::string f
 	union_frag_ss.clear();
 	//step4 LE -> LL,EE
 	for ( iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter ) {
-		set<std::string> union_frag_ss;
+		//set<std::string> union_frag_ss;
 		Size found = iter->find("LE");
 		while ( found!=std::string::npos ) {
 			std::string tmp_string1 = *iter;

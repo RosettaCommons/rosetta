@@ -55,9 +55,10 @@ typedef utility::pointer::shared_ptr< Edge const > EdgeCOP;
 class Node : public utility::pointer::ReferenceCount
 {
 public:
-	Node( std::string const id, core::Size const resi)
-	: resi(resi), id(id),
-		distanceFromStart(9999),
+	Node( std::string const & ID, core::Size const res) :
+		resi( res ),
+		id( ID ),
+		distanceFromStart( 9999 ),
 		in_list( false )
 	{
 		neighbors.clear();

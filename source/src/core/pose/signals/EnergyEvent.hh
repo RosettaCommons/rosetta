@@ -53,8 +53,8 @@ struct EnergyEvent : public GeneralEvent {
 
 	/// @brief constructor
 	inline
-	EnergyEvent( Pose const * pose ) :
-		Super( pose )
+	EnergyEvent( Pose const * p ) :
+		Super( p )
 	{}
 
 

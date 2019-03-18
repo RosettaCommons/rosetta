@@ -69,13 +69,13 @@ public:
 		bool fftshift=false) {
 		init();
 
-		isLoaded = true;
-		origin = new_origin;
-		grid = numeric::xyzVector< int >(map.u1(),map.u2(),map.u3());
+		isLoaded_ = true;
+		origin_ = new_origin;
+		grid_ = numeric::xyzVector< int >(map.u1(),map.u2(),map.u3());
 		cellDimensions = numeric::xyzVector< float >(apix*map.u1(),apix*map.u2(),apix*map.u3());
 		cellAngles = numeric::xyzVector< float >(90,90,90);
 		density.dimension( map.u1(),map.u2(),map.u3() );
-		if ( fftshift ) origin -= grid/2;
+		if ( fftshift ) origin_ -= grid_/2;
 		for ( int i=1; i<=(int)map.u1(); ++i ) {
 			int fi = (int)(fftshift ? pos_mod( i-(map.u1()/2)-1 , map.u1())+1 : i);
 			for ( int j=1; j<=(int)map.u2(); ++j ) {
@@ -326,7 +326,7 @@ public:
 
 	/// @brief Get the transformation from indices to Cartesian coords using 'real' origin
 	numeric::xyzVector<core::Real> getTransform() {
-		numeric::xyzVector<core::Real> idxX(  grid[0]-origin[0]+1 , grid[1]-origin[1]+1 , grid[2]-origin[2]+1 ) , cartX;
+		numeric::xyzVector<core::Real> idxX(  grid_[0]-origin_[0]+1 , grid_[1]-origin_[1]+1 , grid_[2]-origin_[2]+1 ) , cartX;
 		idx2cart( idxX , cartX );
 		return cartX;
 	}
@@ -353,11 +353,11 @@ public:
 	inline bool getScoreWindowContext() const { return score_window_context_; }
 
 	//  map properties
-	inline bool isMapLoaded() const { return this->isLoaded; };
-	inline core::Real getResolution( ) const { return this->reso; }
-	inline numeric::xyzVector<core::Real> getOrigin() const { return origin; }
-	inline void setOrigin( numeric::xyzVector<core::Real> newori ) { origin = newori; }
-	inline numeric::xyzVector<int> getGrid() const { return grid; }
+	inline bool isMapLoaded() const { return isLoaded_; };
+	inline core::Real getResolution( ) const { return reso_; }
+	inline numeric::xyzVector<core::Real> getOrigin() const { return origin_; }
+	inline void setOrigin( numeric::xyzVector<core::Real> newori ) { origin_ = newori; }
+	inline numeric::xyzVector<int> getGrid() const { return grid_; }
 	numeric::xyzVector<core::Real> get_cellDimensions() const { return cellDimensions; }
 	inline utility::vector1< core::kinematics::RT > getsymmOps() const { return symmOps; }
 
@@ -419,9 +419,9 @@ public:
 	numeric::xyzVector<core::Real>
 	get_voxel_spacing(  ) {
 		numeric::xyzVector<core::Real> apix(
-			cellDimensions[0]/grid[0],
-			cellDimensions[1]/grid[1],
-			cellDimensions[2]/grid[2]
+			cellDimensions[0]/grid_[0],
+			cellDimensions[1]/grid_[1],
+			cellDimensions[2]/grid_[2]
 		);
 		return apix;
 	}
@@ -436,26 +436,26 @@ public:
 	inline void cart2idx( numeric::xyzVector<core::Real> const & cartX , numeric::xyzVector<core::Real> &idxX ) const {
 		numeric::xyzVector<core::Real> fracX = c2f*cartX;
 		idxX = numeric::xyzVector<core::Real>(
-			fracX[0]*grid[0] - origin[0] + 1,
-			fracX[1]*grid[1] - origin[1] + 1,
-			fracX[2]*grid[2] - origin[2] + 1);
+			fracX[0]*grid_[0] - origin_[0] + 1,
+			fracX[1]*grid_[1] - origin_[1] + 1,
+			fracX[2]*grid_[2] - origin_[2] + 1);
 	}
 
 	template<class Q>
 	void idx2cart( numeric::xyzVector<Q> const & idxX , numeric::xyzVector<core::Real> &cartX ) const {
 		numeric::xyzVector<core::Real> fracX(
-			(idxX[0]  + origin[0] -1 ) / grid[0],
-			(idxX[1]  + origin[1] -1 ) / grid[1],
-			(idxX[2]  + origin[2] -1 ) / grid[2] );
+			(idxX[0]  + origin_[0] -1 ) / grid_[0],
+			(idxX[1]  + origin_[1] -1 ) / grid_[1],
+			(idxX[2]  + origin_[2] -1 ) / grid_[2] );
 		cartX = f2c*fracX;
 	}
 
 	template<class Q>
 	void idxoffset2cart( numeric::xyzVector<Q> const & idxX , numeric::xyzVector<core::Real> &cartX ) const {
 		numeric::xyzVector<core::Real> fracX(
-			( (core::Real) idxX[0] ) / grid[0],
-			( (core::Real) idxX[1] ) / grid[1],
-			( (core::Real) idxX[2] ) / grid[2] );
+			( (core::Real) idxX[0] ) / grid_[0],
+			( (core::Real) idxX[1] ) / grid_[1],
+			( (core::Real) idxX[2] ) / grid_[2] );
 		cartX = f2c*fracX;
 	}
 
@@ -532,23 +532,23 @@ private:
 
 	// volume of 1 voxel
 	double voxel_volume( ) {
-		return V / (grid[0]*grid[1]*grid[2]);
+		return V / (grid_[0]*grid_[1]*grid_[2]);
 	}
 
 
 private:
-	bool isLoaded;
+	bool isLoaded_;
 
 	// the density data array and spline coeffs
 	ObjexxFCL::FArray3D< float > density;
 	ObjexxFCL::FArray3D< double > coeffs_density_;
 
 	// fft of density -- only used in FSC calc
-	ObjexxFCL::FArray3D< std::complex<double> > Fdensity;
+	ObjexxFCL::FArray3D< std::complex<double> > Fdensity_;
 
 	// Controllable parameters
 	std::map< core::Size, bool > scoring_mask_;
-	core::Real reso, ATOM_MASK, CA_MASK, force_apix_on_map_load_, SC_scaling_;
+	core::Real reso_, ATOM_MASK, CA_MASK, force_apix_on_map_load_, SC_scaling_;
 	core::Real ATOM_MASK_PADDING;
 	core::Size WINDOW_;
 	bool score_window_context_, remap_symm_;
@@ -563,8 +563,8 @@ private:
 	// map info
 	core::Real minimumB;    // minimum B factor allowed by map
 	core::Real effectiveB;  // B factor blurring based on map resolution
-	numeric::xyzVector< int > grid;
-	numeric::xyzVector< core::Real > origin;
+	numeric::xyzVector< int > grid_;
+	numeric::xyzVector< core::Real > origin_;
 	bool use_altorigin;   // which field to write origin to ... only affects map outputting!
 	core::Real dens_mean, dens_min, dens_max, dens_stdev;
 

@@ -155,18 +155,18 @@ PCSData::compute_score_all_tags(
 }
 
 void
-PCSData::show(std::ostream & TR) const {
+PCSData::show(std::ostream & tracer) const {
 	auto sum_calc = [](Size const & a, PCSSingleSetOP const & b) { return a + b->get_number_pcs(); };
 	Size total_pcs(0);
 	for ( Size i = 1; i <= number_tags_; ++i ) {
 		total_pcs += std::accumulate(std::begin(pcs_multiset_vec_[i]->get_pcs_singleset_vec()),
 			std::end(pcs_multiset_vec_[i]->get_pcs_singleset_vec()), 0, sum_calc);
 	}
-	TR << "   * * * PCSData Summary Report * * *   " << std::endl;
-	TR << "No Spinlabel Sites: " << number_tags_ << std::endl;
-	TR << "Total No PCSs:      " << total_pcs << std::endl;
+	tracer << "   * * * PCSData Summary Report * * *   " << std::endl;
+	tracer << "No Spinlabel Sites: " << number_tags_ << std::endl;
+	tracer << "Total No PCSs:      " << total_pcs << std::endl;
 	for ( Size i = 1; i <= number_tags_; ++i ) {
-		pcs_multiset_vec_[i]->show(TR);
+		pcs_multiset_vec_[i]->show(tracer);
 	}
 }
 

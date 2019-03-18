@@ -100,11 +100,33 @@ public:
 	struct CompletionMessage {
 	public:
 		CompletionMessage() : batch_id( 0 ), final( false ), bad( 0 ), good( 0 ), njobs( 0 ), msg_tag( JOB_COMPLETION ) {};
-		CompletionMessage( core::Size id, bool fi, core::Size bad_in, core::Size good_in, core::Size total_in )
-		: batch_id( id ), final( fi), bad( bad_in ),good( good_in ), njobs( total_in ), msg_tag( JOB_COMPLETION ) {};
-		CompletionMessage( core::Size batch_id, core::Size tag )
-		: batch_id( batch_id ), final( false ), bad( 0 ), good( 0 ), njobs( 0 ), msg_tag( QUEUE_EMPTY )
-		{ runtime_assert( tag == QUEUE_EMPTY ); };
+
+		CompletionMessage(
+			core::Size id,
+			bool fi,
+			core::Size bad_in,
+			core::Size good_in,
+			core::Size total_in
+		) :
+			batch_id( id ),
+			final( fi),
+			bad( bad_in ),
+			good( good_in ),
+			njobs( total_in ),
+			msg_tag( JOB_COMPLETION )
+		{};
+
+		CompletionMessage( core::Size batch_ID, core::Size tag ) :
+			batch_id( batch_ID ),
+			final( false ),
+			bad( 0 ),
+			good( 0 ),
+			njobs( 0 ),
+			msg_tag( QUEUE_EMPTY )
+		{
+			runtime_assert( tag == QUEUE_EMPTY );
+		};
+
 		core::Size batch_id;
 		bool final;
 		core::Size bad;

@@ -138,8 +138,8 @@ RNA_DMS_LowResolutionPotential::read_DMS_low_resolution_stats_file( std::string 
 	numeric::MathVector< Real > DMS_stats( 80 );
 	Size DMS_idx = 0;
 	while ( getline( stream, line ) ) {
-		std::istringstream l( line );
-		l  >> DMS >> log_stats_value;
+		std::istringstream l2( line );
+		l2  >> DMS >> log_stats_value;
 		stats_value = exp( log_stats_value );
 		DMS_values_.insert( DMS );
 		DMS_stats( DMS_idx ) = stats_value;

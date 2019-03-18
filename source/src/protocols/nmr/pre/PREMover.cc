@@ -568,14 +568,14 @@ PREMover::apply(Pose & pose) {
 }
 
 void
-PREMover::show(std::ostream& TR) const {
-	TR << " * * * PREMover Data * * * " << std::endl;
+PREMover::show(std::ostream& tracer) const {
+	tracer << " * * * PREMover Data * * * " << std::endl;
 	if ( pre_data_ ) {
-		pre_data_->show(TR);
+		pre_data_->show(tracer);
 	}
-	TR << "Spinlabel histograms:" << std::endl;
+	tracer << "Spinlabel histograms:" << std::endl;
 	for ( SpinlabelHistogramMap::const_iterator iter = histogram_files_.begin(), last = histogram_files_.end(); iter != last; ++iter ) {
-		TR << (*iter).first << ": " << (*iter).second.first << std::endl;
+		tracer << (*iter).first << ": " << (*iter).second.first << std::endl;
 	}
 }
 

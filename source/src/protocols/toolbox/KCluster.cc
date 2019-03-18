@@ -378,9 +378,9 @@ void KClusterData::save_all_in_one()
 			//get center that has been marked
 			//it->set_decoy_tag(tags_[count]);
 			//clusters.write_silent_struct(**it,silent_outfile);
-			for ( Size i=2, nt=tags_[count].size(); i<=nt; i++ ) {
+			for ( Size j=2, nt=tags_[count].size(); j<=nt; ++j ) {
 				//it->set_decoy_tag(tags_[count][i]);
-				it->add_string_value("cluster_id",tags_[count][i]);
+				it->add_string_value("cluster_id",tags_[count][j]);
 				clusters.write_silent_struct(**it,silent_outfile);
 			}
 		}
@@ -416,17 +416,17 @@ void KClusterData::save_cluster_tree()
 			count++;
 			//if (tags_[count].c_str()[0]=='d') continue; //skip data
 			//get center that has been marked
-			for ( Size i=2, nt=tags_[count].size(); i<=nt; i++ ) {
-				string filename(file_full_path(tags_[count][i]));
+			for ( Size j=2, nt=tags_[count].size(); j<=nt; ++j ) {
+				string filename(file_full_path(tags_[count][j]));
 				utility::file::create_directory_recursive(utility::file::FileName(filename).path());
 
 				if ( option[cluster::K_redundant] ) {
 
 					//it->set_decoy_tag(fix_tag_suffix(tags_[count][i]));
-					it->add_string_value("cluster_id",fix_tag_suffix(tags_[count][i]));
+					it->add_string_value("cluster_id",fix_tag_suffix(tags_[count][j]));
 				} else {
 					//it->set_decoy_tag(tags_[count][i]);
-					it->add_string_value("cluster_id",tags_[count][i]);
+					it->add_string_value("cluster_id",tags_[count][j]);
 				}
 
 				if ( option[ cluster::K_save_headers ] ) {

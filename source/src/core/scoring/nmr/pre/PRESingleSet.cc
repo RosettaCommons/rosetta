@@ -228,22 +228,22 @@ PRESingleSet::calc_omega_I() const {
 }
 
 void
-PRESingleSet::show(std::ostream & TR) const {
+PRESingleSet::show(std::ostream & tracer) const {
 	// Store old iostream manipulator flags
 	std::ios oldState(nullptr);
-	oldState.copyfmt(TR);
-	TR << "   * * * PRESingleSet Summary Report * * *   " << std::endl;
-	TR << " PRE dataset " << dataset_name_ << " contains " << number_pre_ << " PRE values and has weight " << weight_ << "." << std::endl;
-	TR << " * * * * * * PRE values  * * * * * * " << std::endl;
+	oldState.copyfmt(tracer);
+	tracer << "   * * * PRESingleSet Summary Report * * *   " << std::endl;
+	tracer << " PRE dataset " << dataset_name_ << " contains " << number_pre_ << " PRE values and has weight " << weight_ << "." << std::endl;
+	tracer << " * * * * * * PRE values  * * * * * * " << std::endl;
 	for ( Size i = 1; i <= number_pre_; ++i ) {
-		pre_single_vec_[i].show(TR);
+		pre_single_vec_[i].show(tracer);
 	}
-	TR << " * * * Experimental conditions * * * " << std::endl;
-	TR << std::setprecision(1) << std::fixed;
-	TR << "Paramagnetic rate    = " << (rate_type_ == R2_PARA ? "R2" : "R1") << std::endl;
-	TR << "Field strength (MHz) = " << field_strength_ << std::endl;
-	TR << "Scaling factor       = " << std::scientific << scaling_factor_ << std::endl;
-	TR.copyfmt(oldState);
+	tracer << " * * * Experimental conditions * * * " << std::endl;
+	tracer << std::setprecision(1) << std::fixed;
+	tracer << "Paramagnetic rate    = " << (rate_type_ == R2_PARA ? "R2" : "R1") << std::endl;
+	tracer << "Field strength (MHz) = " << field_strength_ << std::endl;
+	tracer << "Scaling factor       = " << std::scientific << scaling_factor_ << std::endl;
+	tracer.copyfmt(oldState);
 }
 
 void

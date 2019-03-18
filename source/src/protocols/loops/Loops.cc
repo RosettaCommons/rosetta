@@ -612,17 +612,17 @@ void Loops::verify_against( core::pose::Pose const & pose ) const {
 
 // @brief Extend a loop .. don't extend across cutpoints in the pose
 void Loops::grow_all_loops( core::pose::Pose const & pose, core::Real magnitude ) {
-	Loops &loops_ = *this;
-	for ( core::Size i=1; i <= loops_.size(); i++ ) {
-		grow_loop( pose, loops_[i], magnitude);
+	Loops &loops = *this;
+	for ( core::Size i=1; i <= loops.size(); i++ ) {
+		grow_loop( pose, loops[i], magnitude);
 	}
 }
 
 // @brief Extend a loop
 void Loops::grow_all_loops( core::Size nres, core::Real magnitude ) {
-	Loops &loops_ = *this;
-	for ( core::Size i=1; i <= loops_.size(); i++ ) {
-		grow_loop( nres, loops_[i], magnitude);
+	Loops &loops = *this;
+	for ( core::Size i=1; i <= loops.size(); i++ ) {
+		grow_loop( nres, loops[i], magnitude);
 	}
 }
 
@@ -705,7 +705,7 @@ void Loops::grow_loop(
 ) {
 	Loop originalloop = loop;
 
-	Loops &loops_ = *this;
+	Loops &loops = *this;
 
 	tr.Debug << "GrowLoop: " << loop << std::endl;
 
@@ -737,7 +737,7 @@ void Loops::grow_loop(
 	tr.Debug << "NewLoop before loop check: " << new_start << "  " << new_stop << std::endl;
 
 	//grow loops to the start of previous or next loop
-	for ( auto it=loops_.v_begin(), it_end=loops_.v_end();
+	for ( auto it=loops.v_begin(), it_end=loops.v_end();
 			it != it_end; ++it ) {
 		if ( (*it) != originalloop ) {
 			//case where the start has grown into the previous loop

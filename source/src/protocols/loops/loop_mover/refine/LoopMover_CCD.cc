@@ -252,8 +252,8 @@ LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	set_fold_tree_from_loops( tag->getOption< bool >( "set_fold_tree_from_loops", true ) );
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
 	bool specified_movemap( false );
-	for ( utility::tag::TagCOP tag : branch_tags ) {
-		if ( tag->getName() == "MoveMap" ) specified_movemap = true;
+	for ( utility::tag::TagCOP tag2 : branch_tags ) {
+		if ( tag2->getName() == "MoveMap" ) specified_movemap = true;
 		break;
 	}
 	if ( specified_movemap ) {

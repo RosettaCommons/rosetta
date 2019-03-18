@@ -52,10 +52,10 @@ ResidueChainVectorOption::resnum_and_chain() const {
 	for ( Size n = 1; n <= value_strings_.size(); n++ ) {
 		std::tuple< std::vector< int >, std::vector< char >, std::vector< std::string > > const resnum_and_chain = get_resnum_and_chain_and_segid( value_strings_[n], string_is_ok );
 		runtime_assert( string_is_ok );
-		for ( Size n = 0; n < std::get< 0 >( resnum_and_chain ).size(); n++ ) {
-			resnum.push_back( std::get<0>(resnum_and_chain)[n] );
-			chains.push_back( std::get<1>(resnum_and_chain)[n] );
-			segids.push_back( std::get<2>(resnum_and_chain)[n] );
+		for ( Size n2 = 0; n2 < std::get< 0 >( resnum_and_chain ).size(); n2++ ) {
+			resnum.push_back( std::get<0>(resnum_and_chain)[n2] );
+			chains.push_back( std::get<1>(resnum_and_chain)[n2] );
+			segids.push_back( std::get<2>(resnum_and_chain)[n2] );
 		}
 	}
 	return std::make_tuple( resnum, chains, segids );

@@ -148,8 +148,8 @@ public:
 	template<typename T2> T2 operator()(T2 const & x) { return (*this)*x; }
 
 	void to_quaternion( T& qw, T& qx, T& qy, T& qz ) const {
-		T const t = xx()+yy()+zz(); // trace of M
-		T const r = sqrt(1+t);
+		T const my_t = xx()+yy()+zz(); // trace of M
+		T const r = sqrt(1+my_t);
 		qw = 0.5*r;
 		qx = copysign(0.5*sqrt(1+xx()-yy()-zz()), yz()-zy());
 		qy = copysign(0.5*sqrt(1-xx()+yy()-zz()), zx()-xz());

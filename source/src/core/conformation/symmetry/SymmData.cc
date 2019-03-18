@@ -570,16 +570,16 @@ SymmData::read_symmetry_data_from_stream(
 						Vector x_new( virt_coord.get_x() );
 						Vector y_new( virt_coord.get_y() );
 						Vector origin_new ( virt_coord.get_origin() );
-						Size num_rots(0), num_trans(0);
+						Size num_rots2(0), num_trans2(0);//Are these supposed to be the same variables as num_rots and num_trans?
 						for ( vector< pair< Size, string > >::const_iterator it = transform_type.begin();
 								it != transform_type.end(); ++it ) {
 							if ( it->second == "rot" ) {
-								Size matrix_num ( ++num_rots );
+								Size matrix_num ( ++num_rots2 );
 								x_new = rot_matrix[matrix_num -1]*x_new;
 								y_new = rot_matrix[matrix_num -1]*y_new;
 								origin_new = rot_matrix[matrix_num -1]*origin_new;
 							} else if ( it->second == "trans" ) {
-								Size vector_num ( ++num_trans );
+								Size vector_num ( ++num_trans2 );
 								origin_new = trans_vector[vector_num -1] + origin_new;
 							}
 						}
@@ -939,16 +939,16 @@ SymmData::read_symmetry_data_from_stream(
 
 		if ( virt_id_to_subunit_chain_.size() != virt_id_to_subunit_num_.size() ) utility_exit_with_message("missing component chains!");
 		map<char,Size> chaincount;
-		for ( map<string,char>::const_iterator i = virt_id_to_subunit_chain_.begin(); i != virt_id_to_subunit_chain_.end(); ++i ) {
-			char const & chain = i->second;
+		for ( map<string,char>::const_iterator j = virt_id_to_subunit_chain_.begin(); j != virt_id_to_subunit_chain_.end(); ++j ) {
+			char const & chain = j->second;
 			if ( chaincount.count(chain)==0 ) chaincount[chain] = 0;
 			chaincount[chain]++;
 		}
 		if ( chaincount.size() == 1 ) utility_exit_with_message("For compatibility, don't use multicomponent format with only one component!!!");
 		subunits_ = chaincount.begin()->second;
 		num_components_ = chaincount.size();
-		for ( map<char,Size>::const_iterator i = chaincount.begin(); i != chaincount.end(); ++i ) {
-			if ( i->second != subunits_ ) {
+		for ( map<char,Size>::const_iterator k = chaincount.begin(); k != chaincount.end(); ++k ) {
+			if ( k->second != subunits_ ) {
 				for ( map<char,Size>::const_iterator j = chaincount.begin(); j != chaincount.end(); ++j ) {
 					TR << "SUBUNIT " << j->first << " num subs: " << j->second << endl;
 				}
@@ -958,11 +958,11 @@ SymmData::read_symmetry_data_from_stream(
 
 		// compute reference xforms
 		map<pair<char,Size>,Xform> frames;
-		for ( map<string,Size>::const_iterator i = virt_id_to_subunit_num_.begin(); i != virt_id_to_subunit_num_.end(); ++i ) {
-			string const & virt_id = i->first;
-			Size const & subnum = i->second;
+		for ( map<string,Size>::const_iterator j = virt_id_to_subunit_num_.begin(); j != virt_id_to_subunit_num_.end(); ++j ) {
+			string const & virt_id = j->first;
+			Size const & subnum = j->second;
 			char const & chain = virt_id_to_subunit_chain_[virt_id];
-			VirtualCoordinate const & vc( virtual_coordinates_[i->first] );
+			VirtualCoordinate const & vc( virtual_coordinates_[j->first] );
 
 			Vec zaxis( vc.get_x().cross(vc.get_y()).normalized() );
 			if ( vc.get_mirror_z() ) zaxis *= -1.0; // Mirror the z-axis if it says to do so in the VirtualCoordinate.
@@ -989,17 +989,17 @@ SymmData::read_symmetry_data_from_stream(
 
 		// compute relative xforms
 		map<pair<char,Size>,Xform> relxforms;
-		for ( map<string,Size>::const_iterator i = virt_id_to_subunit_num_.begin(); i != virt_id_to_subunit_num_.end(); ++i ) {
-			string const & virt_id = i->first;
-			Size const & subnum = i->second;
+		for ( map<string,Size>::const_iterator j = virt_id_to_subunit_num_.begin(); j != virt_id_to_subunit_num_.end(); ++j ) {
+			string const & virt_id = j->first;
+			Size const & subnum = j->second;
 			char const & chain = virt_id_to_subunit_chain_[virt_id];
 			relxforms[make_pair(chain,subnum)] = frames[make_pair(chain,(subnum-1)%subunits_+1)] * ~frames[make_pair(chain,1)];
 		}
 
 		map<pair<char,Size>,Size> subperm;
-		for ( map<string,Size>::const_iterator i = virt_id_to_subunit_num_.begin(); i != virt_id_to_subunit_num_.end(); ++i ) {
-			string const & virt_id = i->first;
-			Size const & subnum = i->second;
+		for ( map<string,Size>::const_iterator i2 = virt_id_to_subunit_num_.begin(); i2 != virt_id_to_subunit_num_.end(); ++i2 ) {
+			string const & virt_id = i2->first;
+			Size const & subnum = i2->second;
 			char const & chain = virt_id_to_subunit_chain_[virt_id];
 			if ( chain == firstchain ) continue;
 			Xform const & xform1( relxforms[make_pair(chain,subnum)] );
@@ -1023,9 +1023,9 @@ SymmData::read_symmetry_data_from_stream(
 		}
 
 		// now map the extra component subunits
-		for ( map<string,Size>::const_iterator i = virt_id_to_subunit_num_.begin(); i != virt_id_to_subunit_num_.end(); ++i ) {
-			string const & virt_id = i->first;
-			Size const & subnum = i->second;
+		for ( map<string,Size>::const_iterator i2 = virt_id_to_subunit_num_.begin(); i2 != virt_id_to_subunit_num_.end(); ++i2 ) {
+			string const & virt_id = i2->first;
+			Size const & subnum = i2->second;
 			char const & chain = virt_id_to_subunit_chain_[virt_id];
 			Size newsubnum = 0;
 			if ( chain==firstchain ) {
@@ -1046,9 +1046,9 @@ SymmData::read_symmetry_data_from_stream(
 
 		// another sanity check
 		map<char,string> chainres;
-		for ( map<string,char>::const_iterator i = virt_id_to_subunit_chain_.begin(); i != virt_id_to_subunit_chain_.end(); ++i ) {
-			string const & virt_id = i->first;
-			char const & chain = i->second;
+		for ( map<string,char>::const_iterator i2 = virt_id_to_subunit_chain_.begin(); i2 != virt_id_to_subunit_chain_.end(); ++i2 ) {
+			string const & virt_id = i2->first;
+			char const & chain = i2->second;
 			// make sure [<res req>] are all same
 			if ( chainres.count(chain)==0 ) chainres[chain] = virt_id_to_subunit_residue_[virt_id];
 			if ( chainres[chain] != virt_id_to_subunit_residue_[virt_id] ) {
@@ -1061,8 +1061,8 @@ SymmData::read_symmetry_data_from_stream(
 		components_ = chains;
 		name2component_ = virt_id_to_subunit_chain_;
 		map<Size,string> jnum2dofname_;
-		for ( std::map<std::string,Size>::const_iterator i = jump_string_to_jump_num_.begin(); i != jump_string_to_jump_num_.end(); ++i ) {
-			jnum2dofname_[i->second] = i->first;
+		for ( std::map<std::string,Size>::const_iterator i2 = jump_string_to_jump_num_.begin(); i2 != jump_string_to_jump_num_.end(); ++i2 ) {
+			jnum2dofname_[i2->second] = i2->first;
 		}
 
 		for ( auto & dof : dofs_ ) {
@@ -1277,13 +1277,13 @@ SymmData::show()
 		TR << "Jump " << itv->first << " " << pos_id1 << " " << pos_id2 << endl;
 	}
 	TR << "Include subunit:";
-	for ( core::Size & it : include_subunit_ ) {
-		TR << ' ' << it ;
+	for ( core::Size iter : include_subunit_ ) {
+		TR << ' ' << iter;
 	}
 	TR << endl;
 	TR << "Output subunit:";
-	for ( core::Size & it : output_subunit_ ) {
-		TR << ' ' << it ;
+	for ( core::Size iter : output_subunit_ ) {
+		TR << ' ' << iter ;
 	}
 	TR << endl;
 	TR << "SlideType: ";
@@ -1298,8 +1298,8 @@ SymmData::show()
 	TR << slide_info_.get_SlideCriteriaVal() << endl;
 	TR << "SlideOrder: ";
 	if ( slide_order_string_.size() == 0 ) TR << "none";
-	for ( auto & it : slide_order_string_ ) {
-		TR << ' ' << it ;
+	for ( auto & iter : slide_order_string_ ) {
+		TR << ' ' << iter;
 	}
 
 	TR << endl;

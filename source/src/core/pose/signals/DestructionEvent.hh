@@ -45,8 +45,8 @@ struct DestructionEvent { // do not derive from GeneralEvent
 
 	/// @brief constructor
 	inline
-	DestructionEvent( Pose const * pose ) :
-		pose( pose )
+	DestructionEvent( Pose const * p ) :
+		pose( p )
 	{}
 
 

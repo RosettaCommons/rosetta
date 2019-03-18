@@ -413,8 +413,8 @@ ProQ_Energy::read_profiles_and_entropy(std::string profile,
 		utility_exit_with_message( "ERROR: Unable to open: " + mtxfile);
 	}
 	getline(stream,line);
-	std::istringstream l(line);
-	l >> nres_;
+	std::istringstream ll( line );
+	ll >> nres_;
 	nres=nres_;
 
 	TR.Debug << "NRES from  " << mtxfile << " : " << nres_ <<std::endl;

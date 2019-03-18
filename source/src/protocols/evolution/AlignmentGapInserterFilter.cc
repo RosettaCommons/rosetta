@@ -231,9 +231,11 @@ AlignmentGapInserter::apply( core::pose::Pose const & p ) const {
 	utility::vector1< std::string > available_aa_identities_vector;
 	std::ifstream infile( available_AAs_file() );
 	core::Size resi_num;
-	std::string avail_aas;
-	while ( infile >> resi_num >> avail_aas ) {
-		available_aa_identities_vector.push_back( avail_aas );
+	{
+		std::string avail_aas;
+		while ( infile >> resi_num >> avail_aas ) {
+			available_aa_identities_vector.push_back( avail_aas );
+		}
 	}
 	if ( available_aa_identities_vector.size() != pose_seq.size() ) {
 		TR << "Pose sequence is " << pose_seq.size() << " aa long " << std::endl;
@@ -327,15 +329,17 @@ AlignmentGapInserter::apply( core::pose::Pose const & p ) const {
 			std::string aa_indel_motif_aln_seq, binary_indel_motif_aln_seq;
 			std::tie(aa_indel_motif_target, binary_indel_motif_target) = AlignmentCleanerTools::indel_motif(target_sequence, indel_motif_radius(), aln_resi, pose_ss_aln );
 			std::tie(aa_indel_motif_aln_seq, binary_indel_motif_aln_seq) = AlignmentCleanerTools::indel_motif(aln_seq, indel_motif_radius(), aln_resi, pose_ss_aln);
-			bool is_non_matching_indel_motif = ( binary_indel_motif_target != binary_indel_motif_aln_seq );
-			if ( is_non_matching_indel_motif ) {
-				TR << "Excluding position " << aln_resi << aln_seq_resi_type << " (pose_resi = " <<  pose_resi << pose_resn << ") in aln " << aln_num << " bc non-matching indel motif in primary seq" << std::endl;
-				for ( core::Real& e: max_score_diffs() ) {
-					for ( core::Real &s: loop_seqid_thresholds() ) {
-						aln_clean_all[e][s][aln_num]->replace_char(aln_resi + 1, '-'); // the sequence object is 1 numbered
+			{
+				bool is_non_matching_indel_motif = ( binary_indel_motif_target != binary_indel_motif_aln_seq );
+				if ( is_non_matching_indel_motif ) {
+					TR << "Excluding position " << aln_resi << aln_seq_resi_type << " (pose_resi = " <<  pose_resi << pose_resn << ") in aln " << aln_num << " bc non-matching indel motif in primary seq" << std::endl;
+					for ( core::Real& e: max_score_diffs() ) {
+						for ( core::Real &s: loop_seqid_thresholds() ) {
+							aln_clean_all[e][s][aln_num]->replace_char(aln_resi + 1, '-'); // the sequence object is 1 numbered
+						}
 					}
+					continue;
 				}
-				continue;
 			}
 
 			// If the indel motif is matching and aln_resi is
@@ -383,8 +387,8 @@ AlignmentGapInserter::apply( core::pose::Pose const & p ) const {
 					thread_seq[ gap_pos ] = 'G'; // mutate to glycine
 				}
 				// Thread on the sequence
-				core::pose::Pose pose( p ); // reset the pose to the input pose
-				AlignmentCleanerTools::thread_sequence_on_pose( pose, thread_seq, scorefxn() );
+				core::pose::Pose pose2( p ); // reset the pose to the input pose
+				AlignmentCleanerTools::thread_sequence_on_pose( pose2, thread_seq, scorefxn() );
 
 				//std::stringstream ss;
 				//std::string outname;
@@ -397,12 +401,12 @@ AlignmentGapInserter::apply( core::pose::Pose const & p ) const {
 				// (2) Neighbor residues has different indel motif
 				// (3) Neighbor is in a low loop seqid environment
 				utility::vector1< core::Size > e_nbrs;
-				for ( utility::graph::EdgeListConstIterator egraph_it = pose.energies().energy_graph().get_node( pose_resi )->edge_list_begin();
-						egraph_it != pose.energies().energy_graph().get_node( pose_resi )->edge_list_end(); ++egraph_it ) {
+				for ( utility::graph::EdgeListConstIterator egraph_it = pose2.energies().energy_graph().get_node( pose_resi )->edge_list_begin();
+						egraph_it != pose2.energies().energy_graph().get_node( pose_resi )->edge_list_end(); ++egraph_it ) {
 					core::Size const other_pose_res = (*egraph_it)->get_other_ind( pose_resi );
 					core::Size const other_res_aln = pose2aln[other_pose_res];
 					auto const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
-					EnergyMap const cur_weights = pose.energies().weights();
+					EnergyMap const cur_weights = pose2.energies().weights();
 					core::Real const resresE( Eedge->dot_abs( cur_weights ) );
 					bool const is_not_res_nbr = ( resresE < nbr_e_threshold() );
 					if ( is_not_res_nbr ) continue;
@@ -468,7 +472,7 @@ AlignmentGapInserter::apply( core::pose::Pose const & p ) const {
 				if ( gap_inserted ) break;
 
 				// Measure the energy vec for the site.
-				core::Real resi_score = pose.energies().residue_total_energy(pose_resi);
+				core::Real resi_score = pose2.energies().residue_total_energy(pose_resi);
 				if ( aln_num == 1 ) target_energy_profile.push_back(resi_score);
 				else candidate_energy_profile.push_back(resi_score);
 			} // avail_resn

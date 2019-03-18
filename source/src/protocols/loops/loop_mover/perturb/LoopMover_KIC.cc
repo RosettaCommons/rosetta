@@ -511,14 +511,14 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 						kic_start = numeric::random::rg().random_range(loop_begin,loop_end-2);
 						// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
 						kic_end = numeric::random::rg().random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), loop_end));
-						Size middle_offset = (kic_end - kic_start) / 2;
-						kic_middle = kic_start + middle_offset;
+						Size const mid_offset = (kic_end - kic_start) / 2;
+						kic_middle = kic_start + mid_offset;
 					} else {
 						//tr() << " -- selection starting from the end of the loop -- " << std::endl;
 						kic_end = numeric::random::rg().random_range(loop_begin+2,loop_end);
 						kic_start = numeric::random::rg().random_range(std::max((kic_end - std::min(max_seglen_, kic_end) + 1), loop_begin), kic_end-2);
-						Size middle_offset = (kic_end - kic_start) / 2;
-						kic_middle = kic_start + middle_offset;
+						Size const mid_offset = (kic_end - kic_start) / 2;
+						kic_middle = kic_start + mid_offset;
 					}
 				}
 				myKinematicMover.set_pivots(kic_start, kic_middle, kic_end);
@@ -551,8 +551,8 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 					if ( local_movie ) {
 						loop_outfile << "MODEL" << std::endl;
 						utility::vector1<Size> indices(loop_end - loop_begin + 3);
-						for ( Size i=loop_begin-1, j=1; i<=loop_end+1; i++, j++ ) {
-							indices[j]=i;
+						for ( Size k=loop_begin-1, l=1; k<=loop_end+1; ++k, ++l ) {
+							indices[l]=k;
 						}
 						//pose.dump_pdb(loop_outfile, indices, "init_perturb"); //JAB - tag never used.
 						pose.dump_pdb(loop_outfile, indices);

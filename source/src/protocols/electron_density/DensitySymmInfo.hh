@@ -30,10 +30,10 @@ namespace electron_density {
 class DensitySymmInfo {
 public:
 	DensitySymmInfo() :
-		type('C'), count_primary(1), symm_center(0,0,0), axis_primary(0,0,0), axis_secondary(0,0,0) {}
+		type('C'), count_primary(1), symm_center_(0,0,0), axis_primary(0,0,0), axis_secondary(0,0,0) {}
 
 	// initialize from a string, e.g., 'C4'
-	DensitySymmInfo(std::string tag) : symm_center(0,0,0), axis_primary(0,0,0), axis_secondary(0,0,0) {
+	DensitySymmInfo(std::string tag) : symm_center_(0,0,0), axis_primary(0,0,0), axis_secondary(0,0,0) {
 		type = tag[0];
 		runtime_assert( type == 'C' || type == 'D' );
 		count_primary = (core::Size)std::atoi( tag.substr(1).c_str() );
@@ -65,7 +65,7 @@ private:
 	char type; // one of 'C' or 'D' (currently)
 
 	core::Size count_primary;
-	numeric::xyzVector< core::Real > symm_center;
+	numeric::xyzVector< core::Real > symm_center_;
 	numeric::xyzVector< core::Real > axis_primary;
 	numeric::xyzVector< core::Real > axis_secondary; // 2-fold axis for D symmetries
 

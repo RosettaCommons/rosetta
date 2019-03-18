@@ -461,7 +461,6 @@ void LoopMover_Refine_KIC::apply(
 	rottrials_packer_task->restrict_to_residues( allow_sc_move_all_loops );
 
 	// minimize after initial repack
-	std::string move_type = "repack";
 	pose.update_residue_neighbors(); // to update 10A nbr graph
 	kinematics::MoveMap mm_all_loops; // DJM tmp
 	loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
@@ -471,7 +470,10 @@ void LoopMover_Refine_KIC::apply(
 	min_mover->score_function( min_scorefxn ); // AS: needs to be adapted in case we ramp any weights (or does this happen automatically through pointers?)
 	// minimizer->run( pose, mm_all_loops, *min_scorefxn, options ); // DJM tmp
 	min_mover->apply( pose );
-	mc.boltzmann( pose, move_type );
+	{
+		std::string move_type = "repack";
+		mc.boltzmann( pose, move_type );
+	}
 	mc.show_scores();
 	if ( redesign_loop_ ) {
 		tr() << "Sequence after design step: "
@@ -704,10 +706,10 @@ void LoopMover_Refine_KIC::apply(
 							min_mover->apply( pose );
 						}
 
-						std::string move_type;
-						if ( redesign_loop_ ) move_type = "repack+design";
-						else move_type = "repack";
-						mc.boltzmann( pose, move_type );
+						std::string move_type2;
+						if ( redesign_loop_ ) move_type2 = "repack+design";
+						else move_type2 = "repack";
+						mc.boltzmann( pose, move_type2 );
 						mc.show_scores();
 						if ( redesign_loop_ ) {
 							tr() << "Sequence after design step: "
@@ -717,7 +719,7 @@ void LoopMover_Refine_KIC::apply(
 					}
 
 					// AS: first do repacking (if applicable), then rotamer trials -- we've shown that this increases recovery of native side chain conformations
-					for ( Size i = 1; i <= num_rot_trials; i++ ) {
+					for ( Size ii = 1; ii <= num_rot_trials; ii++ ) {
 						pack::rotamer_trials( pose, *local_scorefxn, rottrials_packer_task );
 						pose.update_residue_neighbors(); // to update 10A nbr graph
 					}
@@ -732,8 +734,8 @@ void LoopMover_Refine_KIC::apply(
 					// test for acceptance
 					std::stringstream k_trial;
 					k_trial << kinematic_trial;
-					std::string move_type = "kic_refine_r" + k_trial.str();
-					bool accepted = mc.boltzmann( pose, move_type );
+					std::string move_type2 = "kic_refine_r" + k_trial.str();
+					bool accepted = mc.boltzmann( pose, move_type2 );
 
 					if ( accepted ) {
 						tr() << "RMS to native after accepted kinematic round " << kinematic_trial << " move on loop "
@@ -743,8 +745,8 @@ void LoopMover_Refine_KIC::apply(
 						if ( local_movie ) {
 							loop_outfile << "MODEL" << std::endl;
 							utility::vector1<Size> indices(end_loop - begin_loop + 3);
-							for ( Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
-								indices[j]=i;
+							for ( Size ii=begin_loop-1, jj=1; ii<=end_loop+1; ++ii, ++jj ) {
+								indices[jj]=ii;
 							}
 							//pose.dump_pdb(loop_outfile, indices, "refine_r" + k_trial.str()); JAB - tag never used.
 							pose.dump_pdb(loop_outfile, indices);
@@ -805,10 +807,10 @@ void LoopMover_Refine_KIC::apply(
 						min_mover->apply( pose );
 					}
 
-					std::string move_type;
-					if ( redesign_loop_ ) move_type = "repack+design";
-					else move_type = "repack";
-					mc.boltzmann( pose, move_type );
+					std::string move_type2;
+					if ( redesign_loop_ ) move_type2 = "repack+design";
+					else move_type2 = "repack";
+					mc.boltzmann( pose, move_type2 );
 					mc.show_scores();
 					if ( redesign_loop_ ) {
 						tr() << "Sequence after design step: "

@@ -243,28 +243,30 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 	TR << "Nterm atom " << nterm_base_lc_icoor.stub_atom2().atomno() << " and " << nterm_base_lc_icoor.stub_atom1().atomno() << " make and angle of " << nterm_base_lc_icoor.theta() << "with its lower connect" << std::endl;
 	Real a1_cst_radian( numeric::constants::r::pi - nterm_base_lc_icoor.theta() );
 	TR << "Adding AngleConstraint of radian: " << a1_cst_radian << std::endl;
-	ConstraintOP a1( new AngleConstraint( nterm_ca, nterm_n, cterm_c, utility::pointer::make_shared< CircularHarmonicFunc >( a1_cst_radian, 0.1 ) ) );
-	pose.add_constraint( a1 );
 
-	TR << "Cterm atom " << cterm_base_uc_icoor.stub_atom2().atomno() << " and " << cterm_base_uc_icoor.stub_atom1().atomno() << " make and angle of " << cterm_base_uc_icoor.theta() << "with its upper connect" << std::endl;
-	Real a2_cst_radian( numeric::constants::r::pi - cterm_base_uc_icoor.theta() );
-	TR << "Adding AngleConstraint of radian: " << a2_cst_radian << std::endl;
-	ConstraintOP a2( new AngleConstraint( nterm_n, cterm_c, cterm_ca, utility::pointer::make_shared< CircularHarmonicFunc >( a2_cst_radian, 0.1 ) ) );
-	pose.add_constraint( a2 );
+	{
+		ConstraintOP a1( utility::pointer::make_shared< AngleConstraint >( nterm_ca, nterm_n, cterm_c, utility::pointer::make_shared< CircularHarmonicFunc >( a1_cst_radian, 0.1 ) ) );
+		pose.add_constraint( a1 );
 
-	TR << "Nterm atom N with Cterm atom C and O makes an angle of ~123.4 degrees" << std::endl;
-	Real a3_cst_radian( numeric::constants::r::pi *123.4/180.0 );
-	TR << "Adding AngleConstraint of radian: " << a3_cst_radian << std::endl;
-	ConstraintOP a3( new AngleConstraint( nterm_n, cterm_c, cterm_o, utility::pointer::make_shared< CircularHarmonicFunc >( a3_cst_radian, 0.05 ) ) );
-	pose.add_constraint( a3 );
+		TR << "Cterm atom " << cterm_base_uc_icoor.stub_atom2().atomno() << " and " << cterm_base_uc_icoor.stub_atom1().atomno() << " make and angle of " << cterm_base_uc_icoor.theta() << "with its upper connect" << std::endl;
+		Real a2_cst_radian( numeric::constants::r::pi - cterm_base_uc_icoor.theta() );
+		TR << "Adding AngleConstraint of radian: " << a2_cst_radian << std::endl;
+		ConstraintOP a2( utility::pointer::make_shared< AngleConstraint >( nterm_n, cterm_c, cterm_ca, utility::pointer::make_shared< CircularHarmonicFunc >( a2_cst_radian, 0.1 ) ) );
+		pose.add_constraint( a2 );
 
-	// create improper torsion constraint for CO planarity
-	TR << "Nterm atom N with Cterm atom C and O and CA makes an improper torsion of ~180 degrees" << std::endl;
-	Real d4_cst_radian( numeric::constants::r::pi );
-	TR << "Adding AngleConstraint of radian: " << d4_cst_radian << std::endl;
-	ConstraintOP d4( new DihedralConstraint( nterm_n, cterm_ca, cterm_c, cterm_o, utility::pointer::make_shared< CircularHarmonicFunc >( d4_cst_radian, 0.05 ) ) );
-	pose.add_constraint( d4 );
+		TR << "Nterm atom N with Cterm atom C and O makes an angle of ~123.4 degrees" << std::endl;
+		Real a3_cst_radian( numeric::constants::r::pi *123.4/180.0 );
+		TR << "Adding AngleConstraint of radian: " << a3_cst_radian << std::endl;
+		ConstraintOP a3( utility::pointer::make_shared< AngleConstraint >( nterm_n, cterm_c, cterm_o, utility::pointer::make_shared< CircularHarmonicFunc >( a3_cst_radian, 0.05 ) ) );
+		pose.add_constraint( a3 );
 
+		// create improper torsion constraint for CO planarity
+		TR << "Nterm atom N with Cterm atom C and O and CA makes an improper torsion of ~180 degrees" << std::endl;
+		Real d4_cst_radian( numeric::constants::r::pi );
+		TR << "Adding AngleConstraint of radian: " << d4_cst_radian << std::endl;
+		ConstraintOP d4( utility::pointer::make_shared< DihedralConstraint >( nterm_n, cterm_ca, cterm_c, cterm_o, utility::pointer::make_shared< CircularHarmonicFunc >( d4_cst_radian, 0.05 ) ) );
+		pose.add_constraint( d4 );
+	}
 
 	// create dihedral constraints based on MMTorsion term
 

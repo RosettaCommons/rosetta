@@ -103,9 +103,9 @@ public:
 	///////////
 private:
 	bool isLoaded;
-	core::Real c;
-	core::Real res_cutoff_high;
-	core::Real res_cutoff_low;
+	core::Real c_;
+	core::Real res_cutoff_high_;
+	core::Real res_cutoff_low_;
 
 	//Layer lines, maximum layer line number and reciprocal R
 	core::Size lmax, Rmax;

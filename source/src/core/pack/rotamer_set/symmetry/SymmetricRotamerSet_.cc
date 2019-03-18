@@ -198,14 +198,14 @@ SymmetricRotamerSet_::compute_one_body_energies(
 					sf.prepare_rotamers_for_packing( pose, *one_rotamer_set );
 					sf.prepare_rotamers_for_packing( pose, *sym_rotset );
 					// make a temporary core::PackerEnergy object with on rotamer in it
-					ObjexxFCL::FArray2D< core::PackerEnergy > temp_energies( 1, 1, 0.0 );
+					ObjexxFCL::FArray2D< core::PackerEnergy > temp_energies2( 1, 1, 0.0 );
 					// evaluate the energy for this rotamer-rotamer interaction
 					sf.evaluate_rotamer_pair_energies(
-						*one_rotamer_set, *sym_rotset, pose, temp_energies );
+						*one_rotamer_set, *sym_rotset, pose, temp_energies2 );
 					// add the energy of this interaction. Mulitply with by the interaction energy scale
 					// between the ASU and the subunit that neighbor_id is on.
-					// if ( theresid == 238 && (jj == 1||jj==9) ) { std::cout << "E1 self interaction " << iiresid << " with " << neighbor_id << "; rot " << jj << ": " << temp_energies[ 0 ]*symm_info->score_multiply( iiresid, neighbor_id ) << std::endl; }
-					energies[ jj ] += temp_energies[ 0 ]*ii_neighb_score_multiply_factor;
+					// if ( theresid == 238 && (jj == 1||jj==9) ) { std::cout << "E1 self interaction " << iiresid << " with " << neighbor_id << "; rot " << jj << ": " << temp_energies2[ 0 ]*symm_info->score_multiply( iiresid, neighbor_id ) << std::endl; }
+					energies[ jj ] += temp_energies2[ 0 ]*ii_neighb_score_multiply_factor;
 				}
 			}
 		}
@@ -265,13 +265,13 @@ SymmetricRotamerSet_::compute_one_body_energies(
 							orient_rotamer_set_to_symmetric_partner( pose, *sym_rsd, neighbor_id, *one_rotamer_set ) );
 						sf.prepare_rotamers_for_packing( pose, *one_rotamer_set );
 						sf.prepare_rotamers_for_packing( pose, *sym_rotset );
-						ObjexxFCL::FArray2D< core::PackerEnergy > temp_energies( 1, 1, 0.0 );
+						ObjexxFCL::FArray2D< core::PackerEnergy > temp_energies2( 1, 1, 0.0 );
 						// evaluate the energy for this rotamer-rotamer interaction
 						(*lr_iter)->evaluate_rotamer_pair_energies(
-							*one_rotamer_set, *sym_rotset, pose, sf, sf.weights(), temp_energies );
+							*one_rotamer_set, *sym_rotset, pose, sf, sf.weights(), temp_energies2 );
 						// add the energy of this interaction. Mulitply with the number of subunits in
 						// the system
-						energies[ jj ] += temp_energies[ 0 ]*ii_neighb_score_multiply_factor;
+						energies[ jj ] += temp_energies2[ 0 ]*ii_neighb_score_multiply_factor;
 					}
 				}
 			} // (potentially) long-range neighbors of iiresid [our resid()]

@@ -506,12 +506,12 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP tag,
 	repack( tag->getOption< bool >( "repack", true ) );
 	skip_report_ = tag->getOption< bool >( "skip_report", skip_report_ );
 	utility::vector0< TagCOP > const & branch( tag->getTags() );
-	for ( TagCOP tag : branch ) {
+	for ( TagCOP const & tag2 : branch ) {
 		using namespace core::chemical;
 
-		std::string const residue_type( tag->getName() );
+		std::string const residue_type( tag2->getName() );
 		AA const aa( aa_from_name( residue_type ) );
-		auto const threshold_probability_input( tag->getOption< core::Real >( "threshold_probability" ) );
+		auto const threshold_probability_input( tag2->getOption< core::Real >( "threshold_probability" ) );
 
 		threshold_probability( aa, threshold_probability_input );
 	}

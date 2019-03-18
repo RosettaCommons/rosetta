@@ -156,7 +156,7 @@ FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_
 	tr.Debug << "try " << Ntest << " of " <<  Ntot << " fragments in full-atom mode" << std::endl;
 
 	best_score_ = REALLY_BAD_SCORE;
-	FragID best_fragment_;
+	FragID best_fragment;
 
 	///* score 10% frags with full-atom
 	std::string frag_file=basic::options::option[ basic::options::OptionKeys::out::file::silent ]()+"_best_frags";
@@ -202,7 +202,7 @@ FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_
 
 		if ( fa_score < best_score_ ) {
 			best_score_ = fa_score;
-			best_fragment_ = frag;
+			best_fragment = frag;
 		}
 
 		fascore_store.store( frag, fa_score );
@@ -224,20 +224,20 @@ FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_
 	}
 
 
-	if ( ! best_fragment_.frame().is_valid() ) {
+	if ( ! best_fragment.frame().is_valid() ) {
 		throw CREATE_EXCEPTION(loops::EXCN_Loop_not_closed, "");
 	}
 	//* apply winner and generate output, --- essentially copy from Parent class
-	best_fragment_.apply( movemap(), less_cut );
-	best_fragment_.apply( movemap(), more_cut );
+	best_fragment.apply( movemap(), less_cut );
+	best_fragment.apply( movemap(), more_cut );
 
-	core::pose::setPoseExtraScore( more_cut, "loop_vdw_score", vdw_store.retrieve( best_fragment_ ));
-	core::pose::setPoseExtraScore( more_cut, "loop_chain_score", chainbreak_store.retrieve( best_fragment_ ));
-	core::pose::setPoseExtraScore( more_cut, "loop_total_score", score_store.retrieve( best_fragment_ ));
-	core::pose::setPoseExtraScore( more_cut, "loop_overlap_score", overlap_store.retrieve( best_fragment_ ));
-	core::pose::setPoseExtraScore( more_cut, "looprms", rms_store.retrieve( best_fragment_ ));
-	core::pose::setPoseExtraScore( more_cut, "post_relax_looprms", post_relax_rms_store.retrieve( best_fragment_ ));
-	core::pose::setPoseExtraScore( more_cut, "fa_score", fascore_store.retrieve( best_fragment_ ));
+	core::pose::setPoseExtraScore( more_cut, "loop_vdw_score", vdw_store.retrieve( best_fragment ));
+	core::pose::setPoseExtraScore( more_cut, "loop_chain_score", chainbreak_store.retrieve( best_fragment ));
+	core::pose::setPoseExtraScore( more_cut, "loop_total_score", score_store.retrieve( best_fragment ));
+	core::pose::setPoseExtraScore( more_cut, "loop_overlap_score", overlap_store.retrieve( best_fragment ));
+	core::pose::setPoseExtraScore( more_cut, "looprms", rms_store.retrieve( best_fragment ));
+	core::pose::setPoseExtraScore( more_cut, "post_relax_looprms", post_relax_rms_store.retrieve( best_fragment ));
+	core::pose::setPoseExtraScore( more_cut, "fa_score", fascore_store.retrieve( best_fragment ));
 
 
 }

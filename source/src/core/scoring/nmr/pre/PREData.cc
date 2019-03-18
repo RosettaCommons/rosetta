@@ -136,14 +136,14 @@ PREData::compute_score_all_spinlabel(
 }
 
 void
-PREData::show(std::ostream & TR) const {
+PREData::show(std::ostream & tracer) const {
 	auto sum_calc = [](Size const & a, PREMultiSetOP const & b) { return a + b->get_total_number_pre(); };
 	Size total_pre = std::accumulate(pre_multiset_vec_.begin(), pre_multiset_vec_.end(), 0, sum_calc);
-	TR << "   * * * PREData Summary Report * * *   " << std::endl;
-	TR << "No Spinlabel sites: " << number_spinlabel_sites_ << std::endl;
-	TR << "Total No PREs:      " << total_pre << std::endl;
+	tracer << "   * * * PREData Summary Report * * *   " << std::endl;
+	tracer << "No Spinlabel sites: " << number_spinlabel_sites_ << std::endl;
+	tracer << "Total No PREs:      " << total_pre << std::endl;
 	for ( Size i = 1; i <= number_spinlabel_sites_; ++i ) {
-		pre_multiset_vec_[i]->show(TR);
+		pre_multiset_vec_[i]->show(tracer);
 	}
 }
 

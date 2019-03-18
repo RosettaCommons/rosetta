@@ -305,9 +305,8 @@ RampingMover::parse_my_tag(
 			if ( ! datamap.has( "scorefxns", scorefxn_key ) ) {
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
 			}
-			core::scoring::ScoreFunctionCOP sfxn = datamap.get_ptr< core::scoring::ScoreFunction >( "scorefxns", scorefxn_key );
-			start_weights_ = end_weights_ = sfxn->weights();
-
+			core::scoring::ScoreFunctionCOP sfxn2 = datamap.get_ptr< core::scoring::ScoreFunction >( "scorefxns", scorefxn_key );
+			start_weights_ = end_weights_ = sfxn2->weights();
 		}
 
 

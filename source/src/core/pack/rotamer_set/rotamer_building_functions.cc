@@ -252,9 +252,11 @@ build_lib_dna_rotamers(
 				TorsionID const id ( ( i==1 ) ? ( TorsionID( seqpos-1, BB, nbb ) ) : ( TorsionID( seqpos, BB, i-1 ) ) );
 				mini_pose.set_torsion( id, (*dihedrals)[i] );
 			}
-			// Set chi
-			TorsionID const id ( seqpos, CHI, 1 );
-			mini_pose.set_torsion( id, (*dihedrals)[7] );
+
+			{// Set chi
+				TorsionID const id ( seqpos, CHI, 1 );
+				mini_pose.set_torsion( id, (*dihedrals)[7] );
+			}
 
 			Vector const rot_P_O3( ( next_rsd.xyz("P") - mini_pose.residue(seqpos).xyz("O3'") ) );
 
@@ -503,7 +505,7 @@ build_random_dna_rotamers(
 
 
 		// now try a bunch of moves:
-		for ( int r=1; r<= nrot_to_build-1; ++r ) {
+		for ( int rot_ii=1; rot_ii <= nrot_to_build-1; ++rot_ii ) {
 
 
 			// choose random starting points
@@ -563,7 +565,7 @@ build_random_dna_rotamers(
 			debug_assert( mini_pose.residue(seqpos  ).xyz("P").distance( pose.residue(resid  ).xyz("P")) < 1e-2 &&
 				mini_pose.residue(seqpos+1).xyz("P").distance( pose.residue(resid+1).xyz("P")) < 1e-2 );
 
-		} // r =1,nrot_to_build
+		} // rot_ii =1,nrot_to_build
 	}
 }
 
@@ -1325,11 +1327,12 @@ build_donor_acceptor_waters(
 
 			/// evaluate the energy of the two hbonds
 
-			// donor to water
 			Real energy1(0.0);
-			HBEvalTuple const hbe_type( get_hb_don_chem_type( rsd1.atom_base( hatm1 ), rsd1 ), hbacc_H2O, seq_sep_other);
-			hb_energy_deriv( *hb_database, hbondopts, hbe_type, datm1_xyz, hatm1_xyz,
-				rot->xyz("O"), rot->xyz("H1"), rot->xyz("H2"), energy1 );
+			{// donor to water
+				HBEvalTuple const hbe_type( get_hb_don_chem_type( rsd1.atom_base( hatm1 ), rsd1 ), hbacc_H2O, seq_sep_other);
+				hb_energy_deriv( *hb_database, hbondopts, hbe_type, datm1_xyz, hatm1_xyz,
+					rot->xyz("O"), rot->xyz("H1"), rot->xyz("H2"), energy1 );
+			}
 
 			Real energy2(0.0);
 			{ // water to acceptor

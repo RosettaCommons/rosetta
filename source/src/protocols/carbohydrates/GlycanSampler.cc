@@ -861,13 +861,13 @@ GlycanSampler::apply( core::pose::Pose& pose ){
 		energy_pre_move = scorefxn_->score(pose);
 		weighted_random_mover_->apply(pose);
 		if ( weighted_random_mover_->get_last_move_status() == protocols::moves::MS_SUCCESS ) {
-			core::Real energy = scorefxn_->score(pose);
+			core::Real energy2 = scorefxn_->score(pose);
 			if ( TR.Debug.visible() ) {
 				TR.Debug << "energy pre- move: "<< energy_pre_move << std::endl;
-				TR.Debug << "energy post move: "<< energy << std::endl;
+				TR.Debug << "energy post move: "<< energy2 << std::endl;
 			}
 			//TR << "energy pre- move  "<< energy_pre_move << std::endl;
-			//TR << "energy post move: "<< energy << std::endl;
+			//TR << "energy post move: "<< energy2 << std::endl;
 
 			if ( pymol_movie_ ) {
 				pmm_trials.apply( pose );
@@ -878,7 +878,7 @@ GlycanSampler::apply( core::pose::Pose& pose ){
 			if ( pymol_movie_ && accepted ) {
 				pmm_accepts.apply( pose );
 			}
-			std::string out = to_string( round )+" "+to_string( energy )+" "+to_string( accepted );
+			std::string out = to_string( round )+" "+to_string( energy2 )+" "+to_string( accepted );
 			accept_log_.push_back( out );
 
 			out = "FINAL "+ to_string( round )+" "+to_string( scorefxn_->score( pose ));

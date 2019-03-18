@@ -504,8 +504,8 @@ bool HamiltonianExchange::initialize_exchange_schedule_from_file( std::string co
 		while ( line_stream.good() ) {
 			line_stream >> grid1 >> grid2;
 			if ( !line_stream.fail() ) {
-				std::pair< int, int> elem( grid1, grid2);
-				list.push_back( elem );
+				std::pair< int, int> elem2( grid1, grid2);
+				list.push_back( elem2 );
 			}
 		}
 		exchange_schedules_.push_back( list );
@@ -618,21 +618,21 @@ bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
 		}
 		tr.Debug << "line_stream still good after PATCH reading" << std::endl;
 		while ( line_stream.good() ) {
-			std::string tag;
+			std::string tag2;
 			core::scoring::ScoreType score_type;
 			std::string operation;
 			Real wt;
-			line_stream >> tag;
+			line_stream >> tag2;
 			if ( line_stream.fail() ) {  //nothing else to read
 				break;
 			}
-			if ( tag == "ETABLE" ) {
-				line_stream >> tag;
-				score->set_etable( tag );
+			if ( tag2 == "ETABLE" ) {
+				line_stream >> tag2;
+				score->set_etable( tag2 );
 				continue;
 			} else {
-				std::istringstream tag_stream( tag );
-				tag_stream >> score_type;
+				std::istringstream tag_stream2( tag2 );
+				tag_stream2 >> score_type;
 				line_stream >> operation >> wt;
 			}
 			if ( line_stream.fail() ) {

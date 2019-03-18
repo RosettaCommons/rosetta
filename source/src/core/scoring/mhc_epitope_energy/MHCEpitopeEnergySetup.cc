@@ -238,9 +238,9 @@ void MHCEpitopeEnergySetup::parse_specs( utility::vector1 < std::string > const 
 
 	for ( core::Size i=2; i<=nlines; ++i ) { //Loop through all remaining lines, containing options
 		TR.Debug << "option: '" << lines[i] << "'" << std::endl;
-		std::istringstream line(lines[i]);
+		std::istringstream line2(lines[i]);
 		std::string option;
-		line >> option;
+		line2 >> option;
 		if ( option == "alleles" ) {
 			// Use only the alleles listed after the alleles keyword.
 			// Use * to use all alleles in the matrix file (default behaviour).
@@ -248,7 +248,7 @@ void MHCEpitopeEnergySetup::parse_specs( utility::vector1 < std::string > const 
 		} else if ( option == "threshold" && method=="matrix" ) {
 			// If the threshold keyword is used, set the threshold in the predictor.
 			core::Real thresh;
-			line >> thresh;
+			line2 >> thresh;
 			pred_m->set_thresh(thresh);
 		} else if ( option == "unseen" && method=="external" ) {
 			// How to handle unseen epitopes.
@@ -257,28 +257,28 @@ void MHCEpitopeEnergySetup::parse_specs( utility::vector1 < std::string > const 
 			std::string handler;
 			core::Size unseen;
 			// Read the penalty and store it
-			line >> handler >> unseen;
+			line2 >> handler >> unseen;
 			pred_e->set_unseen_penalty(unseen);
 		} else if ( option == "xform" ) {
 			// A transformation to the score returned by the predictor
 			std::string xform;
-			line >> xform;
+			line2 >> xform;
 			if ( xform == "raw" ) {
 				// Use the score as given, subject to a scoring offset
 				relative_ = false;
-				line >> score_offset_;
+				line2 >> score_offset_;
 				apply_offset_ = true;
 			} else if ( xform == "relative+" ) {
 				// Relative to the native score, plus a scoring offset
 				relative_ = true;
 				relative_additive_ = true;
-				line >> score_offset_;
+				line2 >> score_offset_;
 				apply_offset_ = true;
 			} else if ( xform == "relative*" ) {
 				// Relative to the native score, with multiplicative offset (i.e., native * score_offset_)
 				relative_ = true;
 				relative_additive_ = false;
-				line >> score_offset_;
+				line2 >> score_offset_;
 				apply_offset_ = true;
 			} else {
 				TR.Error << "Unknown xform; ignoring:" << lines[i] << std::endl;

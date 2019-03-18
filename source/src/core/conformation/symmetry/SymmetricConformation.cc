@@ -898,7 +898,7 @@ SymmetricConformation::append_residue_by_jump(
 	// go from last->first so we don't have to worry about offsets
 	for ( int i=nsubunits; i>=1; --i ) {
 		core::Size seqpos = i*nres_monomer;
-		core::Size anchor_pos = (i-1)*nres_monomer+asymm_anchor;
+		core::Size my_anchor_pos = (i-1)*nres_monomer+asymm_anchor;
 		Residue new_new_rsd = new_rsd;
 		if ( !symm_info_->bb_is_independent( seqpos ) ) {
 			// transform coords
@@ -906,7 +906,7 @@ SymmetricConformation::append_residue_by_jump(
 				new_new_rsd.set_xyz(j , apply_transformation( new_rsd.xyz(j), nres_monomer, seqpos ) );
 			}
 		}
-		insert_residue_by_jump( new_new_rsd, seqpos+1, anchor_pos, anchor_atom, root_atom, start_new_chain );
+		insert_residue_by_jump( new_new_rsd, seqpos+1, my_anchor_pos, anchor_atom, root_atom, start_new_chain );
 	}
 	// update symminfo
 	symm_info_->resize_asu( nres_monomer + 1 );

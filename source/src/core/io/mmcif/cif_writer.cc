@@ -410,38 +410,38 @@ dump_cif(
 
 			std::vector< std::string > vec;
 			vec.emplace_back(ai.isHet ? "HETATM" : "ATOM" );
-			std::stringstream ss;
-			ss << ai.serial;
-			vec.push_back( ss.str() );
+			std::stringstream ss2;
+			ss2 << ai.serial;
+			vec.push_back( ss2.str() );
 			vec.push_back( utility::strip(ai.name) );
 			vec.emplace_back(1, ai.altLoc == ' ' ? '?' : ai.altLoc );
 			vec.push_back( ai.resName );
 			vec.emplace_back(1, ai.chainID == ' ' ? '?' : ai.chainID );
-			ss.str(std::string());
-			ss << ai.resSeq;
-			vec.push_back( ss.str() );
+			ss2.str(std::string());
+			ss2 << ai.resSeq;
+			vec.push_back( ss2.str() );
 			vec.emplace_back(1, ai.iCode == ' ' ? '?' : ai.iCode );
 
 			// NOTE: we will never be writing out "     nan" here.
-			ss.str(std::string());
-			ss << ai.x;
-			vec.push_back( ss.str() );
+			ss2.str(std::string());
+			ss2 << ai.x;
+			vec.push_back( ss2.str() );
 
-			ss.str(std::string());
-			ss << ai.y;
-			vec.push_back( ss.str() );
+			ss2.str(std::string());
+			ss2 << ai.y;
+			vec.push_back( ss2.str() );
 
-			ss.str(std::string());
-			ss << ai.z;
-			vec.push_back( ss.str() );
+			ss2.str(std::string());
+			ss2 << ai.z;
+			vec.push_back( ss2.str() );
 
-			ss.str(std::string());
-			ss << ai.occupancy;
-			vec.push_back( ss.str() );
+			ss2.str(std::string());
+			ss2 << ai.occupancy;
+			vec.push_back( ss2.str() );
 
-			ss.str(std::string());
-			ss << ai.temperature;
-			vec.push_back( ss.str() );
+			ss2.str(std::string());
+			ss2 << ai.temperature;
+			vec.push_back( ss2.str() );
 
 			vec.push_back( utility::strip(ai.element) );
 			vec.push_back( sfr->modeltag() );
@@ -544,17 +544,17 @@ dump_cif(
 		rosetta_additional->AddColumn( "output");
 
 		if ( ! sfr->foldtree_string().empty() ) {
-			std::vector< std::string > out;
+			std::vector< std::string > out_vec;
 
-			out.emplace_back("fold_tree");
-			out.push_back(sfr->foldtree_string());
-			rosetta_additional->AddRow(out);
+			out_vec.emplace_back("fold_tree");
+			out_vec.push_back(sfr->foldtree_string());
+			rosetta_additional->AddRow(out_vec);
 		}
 		if ( ! sfr->additional_string_output().empty() ) {
-			std::vector< std::string > out;
+			std::vector< std::string > out_vec;
 
-			out.emplace_back("etc" );
-			out.push_back( sfr->additional_string_output() );
+			out_vec.emplace_back("etc" );
+			out_vec.push_back( sfr->additional_string_output() );
 			rosetta_additional->AddRow( std::vector< std::string >( 1, sfr->additional_string_output() ) );
 		}
 		block.WriteTable( rosetta_additional );

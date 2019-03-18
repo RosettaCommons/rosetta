@@ -371,7 +371,7 @@ find_neighbors_3dgrid(
 
 	// Types
 	typedef  numeric::xyzTriple< core::Size >  CubeDim; // Cube dimensions
-	typedef  numeric::xyzTriple< core::Size >  CubeKey; // Cube index-triple key
+	//typedef  numeric::xyzTriple< core::Size >  CubeKey; // Cube index-triple key
 	typedef  utility::vector1< PointPosition > Points;
 	typedef  std::vector< core::Size >  PointIDs;
 	typedef ObjexxFCL::FArray3D< PointIDs > Cubes; // The 3D array that will be indexed into.  Indexed from 1, not 0.
@@ -762,7 +762,7 @@ find_neighbors_3dgrid_restricted(
 
 	// Types
 	typedef  numeric::xyzTriple< core::Size >  CubeDim; // Cube dimensions
-	typedef  numeric::xyzTriple< core::Size >  CubeKey; // Cube index-triple key
+	//typedef  numeric::xyzTriple< core::Size >  CubeKey; // Cube index-triple key
 	typedef  utility::vector1< PointPosition > Points;
 	typedef  std::vector< core::Size >  PointIDs;
 	typedef ObjexxFCL::FArray3D< PointIDs > Cubes; // The 3D array that will be indexed into.  Indexed from 1, not 0.

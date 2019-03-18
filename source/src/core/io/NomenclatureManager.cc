@@ -369,28 +369,27 @@ NomenclatureManager::find_alternate_codes_file( std::string const & filename )
 	izstream potential_file( filename );
 	if ( potential_file.good() ) {
 		return filename;
-	} else {
-		izstream potential_file( filename + ext );  // Perhaps the user didn't use the .codes extension.
-		if ( potential_file.good() ) {
-			return filename + ext;
-		} else {
-			izstream potential_file( path + filename);  // Let's assume it's in the database in the usual spot.
-			if ( potential_file.good() ) {
-				return path + filename;
-			} else {
-				izstream potential_file( path + filename + ext );  // last try
-				if ( potential_file.good() ) {
-					return path + filename + ext;
-				} else {
-					utility_exit_with_message( "Unable to open alternative codes file. Neither ./" + filename +
-						" nor " + "./" + filename + ext +
-						" nor " + path + filename +
-						" nor " + path + filename + ext + " exists." );
-				}
-			}
-		}
 	}
-	return "INCONCEIVABLE!";  // Code can never reach here.
+
+	izstream potential_file2( filename + ext );  // Perhaps the user didn't use the .codes extension.
+	if ( potential_file2.good() ) {
+		return filename + ext;
+	}
+
+	izstream potential_file3( path + filename);  // Let's assume it's in the database in the usual spot.
+	if ( potential_file3.good() ) {
+		return path + filename;
+	}
+
+	izstream potential_file4( path + filename + ext );  // last try
+	if ( potential_file4.good() ) {
+		return path + filename + ext;
+	}
+
+	utility_exit_with_message( "Unable to open alternative codes file. Neither ./" + filename +
+		" nor " + "./" + filename + ext +
+		" nor " + path + filename +
+		" nor " + path + filename + ext + " exists." );
 }
 
 

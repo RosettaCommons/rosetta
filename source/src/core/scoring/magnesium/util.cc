@@ -139,12 +139,12 @@ get_closest_orbital_axis( core::conformation::Residue const & mg_rsd, Vector con
 	Vector const & mg_xyz = mg_rsd.xyz( 1 );
 	Vector lig = ( j_xyz - mg_xyz ).normalized();
 	Real best_cos_angle( -1.0 );
-	for ( Size n = 1; n <= 6; n++ ) {
-		Vector v = ( mg_rsd.xyz( n+1 ) - mg_xyz ).normalized();
-		Real const cos_angle = dot( v, lig ); // -1.0 (worst) to 1.0 (best)
-		if ( cos_angle >= best_cos_angle ) {
-			best_cos_angle = cos_angle;
-			which_orbital_atom = n;
+	for ( Size ii = 1; ii <= 6; ++ii ) {
+		Vector v = ( mg_rsd.xyz( ii+1 ) - mg_xyz ).normalized();
+		Real const cos_angle_ii = dot( v, lig ); // -1.0 (worst) to 1.0 (best)
+		if ( cos_angle_ii >= best_cos_angle ) {
+			best_cos_angle = cos_angle_ii;
+			which_orbital_atom = ii;
 		}
 	}
 	cos_angle = best_cos_angle;

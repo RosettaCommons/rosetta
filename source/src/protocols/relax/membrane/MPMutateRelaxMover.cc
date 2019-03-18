@@ -200,7 +200,7 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 
 		// counter
 		counter = 1;
-		std::string mutations;
+		//std::string mutations;
 
 		// iterate over nstruct
 		while ( counter <= nstruct_ ) {

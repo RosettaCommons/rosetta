@@ -83,11 +83,13 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 		<< " of size " << current_chunk->size() << std::endl;
 
 	//Check to see if the cache needs to be recalculated
-	std::string & tmp = current_chunk->chunk_key();
-	if ( tmp.compare(cached_scores_id_) == 0 ) {
-		return;
+	{
+		std::string & tmp = current_chunk->chunk_key();
+		if ( tmp.compare(cached_scores_id_) == 0 ) {
+			return;
+		}
+		cached_scores_id_ = tmp;
 	}
-	cached_scores_id_ = tmp;
 
 	//Initialize empty 2D table, vall-length x target-length
 	core::Size query_sequence_length = target_shifts_.size();
@@ -196,11 +198,12 @@ bool CSScore::score(FragmentCandidateOP fragment, FragmentScoreMapOP scores) {
 
 bool CSScore::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP scores) {
 
-	std::string & tmp = fragment->get_chunk()->chunk_key();
-
-	if ( tmp.compare(cached_scores_id_) != 0 ) {
-		do_caching(fragment->get_chunk());
-		cached_scores_id_ = tmp;
+	{
+		std::string & tmp = fragment->get_chunk()->chunk_key();
+		if ( tmp.compare(cached_scores_id_) != 0 ) {
+			do_caching(fragment->get_chunk());
+			cached_scores_id_ = tmp;
+		}
 	}
 
 	//core::Size offset_q = fragment->get_first_index_in_query() - 1;

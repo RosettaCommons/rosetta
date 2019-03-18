@@ -116,7 +116,7 @@ private:
 	// similar to pairing1 but for strand 2.
 	std::vector<core::Size> pairing2;
 	//bool pleat_weird;
-	bool antipar;
+	bool antipar_;
 };
 
 std::ostream & operator<<(std::ostream & out, StrandPairing const& sp);

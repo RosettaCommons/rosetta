@@ -264,8 +264,10 @@ RDAT::read_rdat_file( std::string const & filename ) {
 			comments_.push_back( remove_tag(line, "COMMENT") );
 		} else if ( ( line.find( "ANNOTATION") != std::string::npos ) &&
 				( line.find( "ANNOTATION_DATA") == std::string::npos ) ) {
-			vector1< std::string > tags = str2cell( remove_tag(line,"ANNOTATION") );
-			for ( Size k = 1; k <= tags.size(); k++ ) annotations_.push_back( get_annotation( tags[k] ) );
+			vector1< std::string > my_tags = str2cell( remove_tag(line,"ANNOTATION") );
+			for ( Size k = 1; k <= my_tags.size(); k++ ) {
+				annotations_.push_back( get_annotation( tags[k] ) );
+			}
 		} else if ( line.find( "NAME") != std::string::npos ) {
 			name_ = remove_tag(line, "NAME");
 		} else if ( line.find( "SEQUENCE") != std::string::npos ) {

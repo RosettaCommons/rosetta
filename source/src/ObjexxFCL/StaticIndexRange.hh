@@ -86,8 +86,8 @@ public: // Creation
 
 	/// @brief Unbounded Upper Index Constructor
 	inline
-	StaticIndexRange( Star const & star ) :
-		Super( star )
+	StaticIndexRange( Star const & str ) :
+		Super( str )
 	{}
 
 
@@ -192,8 +192,8 @@ public: // Creation
 
 	/// @brief Index and Unbounded Upper Index Constructor
 	inline
-	StaticIndexRange( int const l_a, Star const & star ) :
-		Super( l_a, star )
+	StaticIndexRange( int const l_a, Star const & str ) :
+		Super( l_a, str )
 	{
 		assert( legal_static() );
 	}
@@ -201,8 +201,8 @@ public: // Creation
 
 	/// @brief Dimension and Unbounded Upper Index Constructor
 	inline
-	StaticIndexRange( Dimension const & l_dim_a, Star const & star ) :
-		Super( l_dim_a.value(), star )
+	StaticIndexRange( Dimension const & l_dim_a, Star const & str ) :
+		Super( l_dim_a.value(), str )
 	{
 		assert( legal_static() );
 	}
@@ -210,8 +210,8 @@ public: // Creation
 
 	/// @brief Expression and Unbounded Upper Index Constructor
 	inline
-	StaticIndexRange( Expression const & l_exp_a, Star const & star ) :
-		Super( l_exp_a.ivalue(), star )
+	StaticIndexRange( Expression const & l_exp_a, Star const & str ) :
+		Super( l_exp_a.ivalue(), str )
 	{
 		assert( legal_static() );
 	}
@@ -268,9 +268,9 @@ public: // Assignment
 	/// @brief Unbounded Upper Index Assignment
 	inline
 	StaticIndexRange &
-	operator =( Star const & star )
+	operator =( Star const & str )
 	{
-		Super::operator =( star );
+		Super::operator =( str );
 		return *this;
 	}
 
@@ -338,9 +338,9 @@ public: // Assignment
 	/// @brief Unbounded Upper Index Assignment
 	inline
 	StaticIndexRange &
-	assign( Star const & star )
+	assign( Star const & str )
 	{
-		Super::operator =( star );
+		Super::operator =( str );
 		return *this;
 	}
 
@@ -469,9 +469,9 @@ public: // Assignment
 	/// @brief Index and Unbounded Upper Index Assignment
 	inline
 	StaticIndexRange &
-	assign( int const l_a, Star const & star )
+	assign( int const l_a, Star const & str )
 	{
-		Super::assign( l_a, star );
+		Super::assign( l_a, str );
 		assert( legal_static() );
 		return *this;
 	}
@@ -480,9 +480,9 @@ public: // Assignment
 	/// @brief Dimension and Unbounded Upper Index Assignment
 	inline
 	StaticIndexRange &
-	assign( Dimension const & l_dim_a, Star const & star )
+	assign( Dimension const & l_dim_a, Star const & str )
 	{
-		Super::assign( l_dim_a.value(), star );
+		Super::assign( l_dim_a.value(), str );
 		assert( legal_static() );
 		return *this;
 	}
@@ -491,9 +491,9 @@ public: // Assignment
 	/// @brief Expression and Unbounded Upper Index Assignment
 	inline
 	StaticIndexRange &
-	assign( Expression const & l_exp_a, Star const & star )
+	assign( Expression const & l_exp_a, Star const & str )
 	{
-		Super::assign( l_exp_a.ivalue(), star );
+		Super::assign( l_exp_a.ivalue(), str );
 		assert( legal_static() );
 		return *this;
 	}
@@ -569,9 +569,9 @@ public: // Modifier
 	/// @brief Unbounded Upper Index Set
 	inline
 	StaticIndexRange &
-	u( Star const & star )
+	u( Star const & str )
 	{
-		Super::u( star );
+		Super::u( str );
 		assert( legal_static() );
 		return *this;
 	}

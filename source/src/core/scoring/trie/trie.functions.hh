@@ -78,14 +78,13 @@ create_trie(
 				newhatom.is_hydrogen( true );
 
 				// hydrate/SPaDES protocol
-				if ( ii_rotamer->name() == "TP3" ) newhatom.is_wat( true );
-				else newhatom.is_wat( false );
+				newhatom.is_wat( ii_rotamer->name() == "TP3" );
 
-				CPDAT cpdata;
-				initialize_cpdata_for_atom( cpdata, kk, *ii_rotamer, cpdata_map );
+				CPDAT cpdata2;
+				initialize_cpdata_for_atom( cpdata2, kk, *ii_rotamer, cpdata_map );
 
-				RotamerDescriptorAtom< AT, CPDAT > rdatom( newhatom, cpdata );
-				rotamer_descriptors[ ii ].atom( ++count_added_atoms, rdatom );
+				RotamerDescriptorAtom< AT, CPDAT > rdatom2( newhatom, cpdata2 );
+				rotamer_descriptors[ ii ].atom( ++count_added_atoms, rdatom2 );
 
 			}
 		}
@@ -128,12 +127,12 @@ create_trie(
 		if ( res.name() == "TP3" ) newatom.is_wat( true ); // hybrid solvation scoring function
 		else newatom.is_wat( false );
 
-		CPDAT cpdata;
-		initialize_cpdata_for_atom( cpdata, jj, res, cpdata_map );
-
-
-		RotamerDescriptorAtom< AT, CPDAT > rdatom( newatom, cpdata );
-		rotamer_descriptor[ 1 ].atom( ++count_added_atoms, rdatom );
+		{//scope guards added so that we can reuse variable names
+			CPDAT cpdata;
+			initialize_cpdata_for_atom( cpdata, jj, res, cpdata_map );
+			RotamerDescriptorAtom< AT, CPDAT > rdatom( newatom, cpdata );
+			rotamer_descriptor[ 1 ].atom( ++count_added_atoms, rdatom );
+		}
 
 		for ( Size kk = res.attached_H_begin( jj ), kk_end = res.attached_H_end( jj );
 				kk <= kk_end; ++kk ) {
@@ -142,13 +141,12 @@ create_trie(
 			newhatom.is_hydrogen( true );
 
 			// hydrate/SPaDES protocol
-			if ( res.name() == "TP3" ) newhatom.is_wat( true ); // hybrid solvation scoring function
-			else newhatom.is_wat( false );
+			newhatom.is_wat( res.name() == "TP3" );
 
-			CPDAT cpdata;
-			initialize_cpdata_for_atom( cpdata, kk, res, cpdata_map );
+			CPDAT cpdata2;
+			initialize_cpdata_for_atom( cpdata2, kk, res, cpdata_map );
 
-			RotamerDescriptorAtom< AT, CPDAT > rdatom( newhatom, cpdata );
+			RotamerDescriptorAtom< AT, CPDAT > rdatom( newhatom, cpdata2 );
 			rotamer_descriptor[ 1 ].atom( ++count_added_atoms, rdatom );
 		}
 	}
@@ -202,14 +200,16 @@ create_trie(
 			AT newatom( *ii_rotamer, jj );
 			newatom.is_hydrogen( false );
 
-			CPDAT cpdata;
-			std::map< chemical::ResidueTypeCOP, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( ii_rotamer->type_ptr() );
-			core::Size jj_rep = jj;
-			if ( it != cp_reps.end() ) jj_rep=lookup_cp_map( it->second, jj );
-			initialize_cpdata_for_atom( cpdata, jj_rep, *ii_rotamer, cpdata_map );
+			{
+				CPDAT cpdata;
+				std::map< chemical::ResidueTypeCOP, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( ii_rotamer->type_ptr() );
+				core::Size jj_rep = jj;
+				if ( it != cp_reps.end() ) jj_rep=lookup_cp_map( it->second, jj );
+				initialize_cpdata_for_atom( cpdata, jj_rep, *ii_rotamer, cpdata_map );
 
-			RotamerDescriptorAtom< AT, CPDAT > rdatom( newatom, cpdata );
-			rotamer_descriptors[ ii ].atom( ++count_added_atoms, rdatom );
+				RotamerDescriptorAtom< AT, CPDAT > rdatom( newatom, cpdata );
+				rotamer_descriptors[ ii ].atom( ++count_added_atoms, rdatom );
+			}
 
 			for ( Size kk = ii_rotamer->attached_H_begin( jj ),
 					kk_end = ii_rotamer->attached_H_end( jj );
@@ -264,15 +264,16 @@ create_trie(
 		AT newatom( res, jj );
 		newatom.is_hydrogen( false );
 
-		CPDAT cpdata;
-		std::map< chemical::ResidueTypeCOP, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( res.type_ptr() );
-		core::Size jj_rep = jj;
-		if ( it != cp_reps.end() ) jj_rep=lookup_cp_map( it->second, jj );
-		initialize_cpdata_for_atom( cpdata, jj_rep, res, cpdata_map );
+		{
+			CPDAT cpdata;
+			std::map< chemical::ResidueTypeCOP, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( res.type_ptr() );
+			core::Size jj_rep = jj;
+			if ( it != cp_reps.end() ) jj_rep=lookup_cp_map( it->second, jj );
+			initialize_cpdata_for_atom( cpdata, jj_rep, res, cpdata_map );
 
-
-		RotamerDescriptorAtom< AT, CPDAT > rdatom( newatom, cpdata );
-		rotamer_descriptor[ 1 ].atom( ++count_added_atoms, rdatom );
+			RotamerDescriptorAtom< AT, CPDAT > rdatom( newatom, cpdata );
+			rotamer_descriptor[ 1 ].atom( ++count_added_atoms, rdatom );
+		}
 
 		for ( Size kk = res.attached_H_begin( jj ), kk_end = res.attached_H_end( jj );
 				kk <= kk_end; ++kk ) {

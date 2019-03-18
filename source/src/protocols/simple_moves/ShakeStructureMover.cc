@@ -89,8 +89,8 @@ ShakeStructureMover::ShakeStructureMover() :
 	ramp_fa_rep(false),
 	min_cst(false),
 	scorefxn(/* 0 */),
-	ensemble_ca_rmsd(-1),
-	ensemble_ca_rmsd_tolerance(0.75f),
+	ensemble_ca_rmsd_(-1),
+	ensemble_ca_rmsd_tolerance_(0.75f),
 	is_properly_initialized(false),
 	harmonic_ca_cst_std_dev(2.0f),
 	scorefunction_initialized(false),
@@ -108,8 +108,8 @@ ShakeStructureMover::ShakeStructureMover(core::scoring::ScoreFunctionOP s) :
 	ramp_fa_rep(false),
 	min_cst(false),
 	scorefxn(std::move(s)),
-	ensemble_ca_rmsd(-1),
-	ensemble_ca_rmsd_tolerance(0.75),
+	ensemble_ca_rmsd_(-1),
+	ensemble_ca_rmsd_tolerance_(0.75),
 	is_properly_initialized(false),
 	harmonic_ca_cst_std_dev(2.0),
 	scorefunction_initialized(true),
@@ -130,8 +130,8 @@ ShakeStructureMover::ShakeStructureMover(
 	ramp_fa_rep(false),
 	min_cst(false),
 	scorefxn(std::move(s)),
-	ensemble_ca_rmsd(-1),
-	ensemble_ca_rmsd_tolerance(0.75),
+	ensemble_ca_rmsd_(-1),
+	ensemble_ca_rmsd_tolerance_(0.75),
 	is_properly_initialized(false),
 	harmonic_ca_cst_std_dev(2.0),
 	scorefunction_initialized(true),
@@ -152,8 +152,8 @@ ShakeStructureMover::ShakeStructureMover(
 	ramp_fa_rep(false),
 	min_cst(false),
 	scorefxn(std::move(s)),
-	ensemble_ca_rmsd(ens_diversity),
-	ensemble_ca_rmsd_tolerance(ens_div_tolerance),
+	ensemble_ca_rmsd_(ens_diversity),
+	ensemble_ca_rmsd_tolerance_(ens_div_tolerance),
 	is_properly_initialized(false),
 	harmonic_ca_cst_std_dev(2.0),
 	scorefunction_initialized(true),
@@ -201,15 +201,15 @@ ShakeStructureMover::set_scorefunction(core::scoring::ScoreFunctionOP s){
 
 void
 ShakeStructureMover::set_ensemble_diversity(core::Real ca_rmsd){
-	ensemble_ca_rmsd=ca_rmsd;
-	ensemble_ca_rmsd_tolerance=((ca_rmsd*0.25)+0.1);
+	ensemble_ca_rmsd_=ca_rmsd;
+	ensemble_ca_rmsd_tolerance_=((ca_rmsd*0.25)+0.1);
 	mc_temp=-1;
 }
 
 
 void
 ShakeStructureMover::set_rmsd_target_tolerance(core::Real tol){
-	ensemble_ca_rmsd_tolerance=tol;
+	ensemble_ca_rmsd_tolerance_=tol;
 }
 
 void
@@ -262,12 +262,12 @@ ShakeStructureMover::get_scorefunction(){
 
 core::Real
 ShakeStructureMover::get_ensemble_diversity(){
-	return ensemble_ca_rmsd;
+	return ensemble_ca_rmsd_;
 }
 
 core::Real
 ShakeStructureMover::get_rmsd_target_tolerance(){
-	return ensemble_ca_rmsd_tolerance;
+	return ensemble_ca_rmsd_tolerance_;
 }
 
 bool
@@ -282,7 +282,7 @@ ShakeStructureMover::get_harmonic_ca_cst_std_dev(){
 
 core::Real
 ShakeStructureMover::get_ensemble_ca_rmsd(){
-	return ensemble_ca_rmsd;
+	return ensemble_ca_rmsd_;
 }
 
 bool
@@ -366,12 +366,12 @@ ShakeStructureMover::setup_for_run(core::pose::Pose & p){
 		min_scorefxn = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
 
-	if ( mc_temp <= 0 && ensemble_ca_rmsd > 0 ) {
-		//set mc_temp based on ensemble_ca_rmsd
+	if ( mc_temp <= 0 && ensemble_ca_rmsd_ > 0 ) {
+		//set mc_temp based on ensemble_ca_rmsd_
 		testing_phase=true;
 		mc_temp = set_temp_based_on_ens_diversity(p,(*scorefxn));
 		is_properly_initialized = true;
-	} else if ( mc_temp > 0 && ensemble_ca_rmsd < 0 ) {
+	} else if ( mc_temp > 0 && ensemble_ca_rmsd_ < 0 ) {
 		//ready to go!
 		is_properly_initialized = true;
 	} else {
@@ -569,21 +569,21 @@ ShakeStructureMover::set_temp_based_on_ens_diversity(
 
 	core::pose::Pose init(p);
 	core::pose::Pose test(p);
-	while ( (avg_ca_rmsd) > (ensemble_ca_rmsd+ensemble_ca_rmsd_tolerance) || (avg_ca_rmsd) < (ensemble_ca_rmsd-ensemble_ca_rmsd_tolerance) ) {
-		double avg_ca_rmsd=0;
+	while ( (avg_ca_rmsd > ensemble_ca_rmsd_+ensemble_ca_rmsd_tolerance_) || (avg_ca_rmsd < ensemble_ca_rmsd_-ensemble_ca_rmsd_tolerance_) ) {
+		avg_ca_rmsd = 0;
 		for ( int i =0; i<numstruct; i++ ) {
 			test = init;
 			run_mc(test, s,temperature);
 			//std::cout << "[DEBUG]: rmsd in set temp " << core::scoring::CA_rmsd(test,init) << std::endl;
 			avg_ca_rmsd+=core::scoring::CA_rmsd(test,init);
 		}
-		avg_ca_rmsd = avg_ca_rmsd /numstruct;
-		if ( avg_ca_rmsd > (ensemble_ca_rmsd+ensemble_ca_rmsd_tolerance) ) {
+		avg_ca_rmsd = avg_ca_rmsd / numstruct;
+		if ( avg_ca_rmsd > (ensemble_ca_rmsd_+ensemble_ca_rmsd_tolerance_) ) {
 			temperature -= increment;
-			//std::cout <<  "avg rmsd is " << avg_ca_rmsd << " which is greater than upper bound: " << ensemble_ca_rmsd+ensemble_ca_rmsd_tolerance << " so temp is decreased to " << temperature << std::endl;
-		} else if ( avg_ca_rmsd < (ensemble_ca_rmsd-ensemble_ca_rmsd_tolerance) ) {
+			//std::cout <<  "avg rmsd is " << avg_ca_rmsd << " which is greater than upper bound: " << ensemble_ca_rmsd_+ensemble_ca_rmsd_tolerance_ << " so temp is decreased to " << temperature << std::endl;
+		} else if ( avg_ca_rmsd < (ensemble_ca_rmsd_-ensemble_ca_rmsd_tolerance_) ) {
 			temperature += increment;
-			//std::cout <<  "avg rmsd is " << avg_ca_rmsd << " which is less than lower bound: " << ensemble_ca_rmsd-ensemble_ca_rmsd_tolerance << " so temp is increased to " << temperature << std::endl;
+			//std::cout <<  "avg rmsd is " << avg_ca_rmsd << " which is less than lower bound: " << ensemble_ca_rmsd_-ensemble_ca_rmsd_tolerance_ << " so temp is increased to " << temperature << std::endl;
 		}
 	}
 	testing_phase=false;

@@ -709,26 +709,27 @@ CanonicalSamplingMover::apply(Pose & pose){
 		}
 
 		if ( (i_trial % interval_transitiondump_)  == 0 ) { //output current next cluster
-			std::string cluster_center; core::Real rms_to_cluster;
+			std::string cluster_center;
+			core::Real rms_to_cluster;
 			core::pose::Pose looponly;
 			core::Size new_level_start = 0;
 			if ( use_hierarchical_clustering_ ) {
 				if ( !MPI_synchronize_pools_ ) {
 					protocols::canonical_sampling::mc_convergence_checks::HierarchicalLevelOP hpool_ptr = utility::pointer::dynamic_pointer_cast<protocols::canonical_sampling::mc_convergence_checks::HierarchicalLevel > ( pool_rms_ );
 					utility::vector1< core::Size > address(hpool_ptr->nlevels(), 0 );
-					utility::vector1< core::Real > rms_to_cluster(hpool_ptr->nlevels(), 0.0);
+					utility::vector1< core::Real > rms_to_cluster_vec(hpool_ptr->nlevels(), 0.0);
 					if ( save_loops_only_ && loops.num_loop() > 0 ) {
 						for ( auto const & loop : loops ) {
 							looponly = core::pose::Pose( pose, loop.start(), loop.stop() );
 						}
-						hpool_ptr->evaluate( looponly, cluster_center, rms_to_cluster, address );
+						hpool_ptr->evaluate( looponly, cluster_center, rms_to_cluster_vec, address );
 					} else {
-						hpool_ptr->evaluate( pose, cluster_center, rms_to_cluster, address );
+						hpool_ptr->evaluate( pose, cluster_center, rms_to_cluster_vec, address );
 					}
 					protocols::canonical_sampling::mc_convergence_checks::HierarchicalLevelOP level_n = hpool_ptr;
 					bool above_threshold = false;
-					for ( core::Size ii = 1; ii <= rms_to_cluster.size(); ii++ ) {
-						if ( rms_to_cluster[ ii ] > level_n->radius() ) {
+					for ( core::Size ii = 1; ii <= rms_to_cluster_vec.size(); ii++ ) {
+						if ( rms_to_cluster_vec[ ii ] > level_n->radius() ) {
 							above_threshold = true;
 							new_level_start = ii;
 						}

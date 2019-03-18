@@ -111,18 +111,20 @@ bool
 Contains( std::list< NodeOP > const & nodes, NodeCOP node );
 
 // Nodes (and edges) for network algorithms
-class Node : public utility::pointer::ReferenceCount
+struct Node : public utility::pointer::ReferenceCount
 {
-public:
-	Node( std::string  id, core::Size const resi)
-	: resi(resi), id(std::move(id)),
+	Node(
+		std::string ID,
+		core::Size const res
+	) :
+		resi( res ),
+		id(std::move(ID)),
 		distanceFromStart(9999),
 		in_list( false )
 	{
 		neighbors.clear();
 	}
 
-public:
 	core::Size resi;
 	std::string id;
 	std::list< NodeOP > neighbors;

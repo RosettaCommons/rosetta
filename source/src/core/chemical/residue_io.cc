@@ -635,11 +635,10 @@ read_topology_file(
 	using namespace basic;
 
 	// read the file
-	std::string line;
 	utility::vector1< std::string > lines;
 
 	std::string myname;
-	while ( getline( data, line ) ) {
+	for ( std::string line; getline( data, line ) ; ) {
 		//if ( line.size() < 1 || line[0] == '#' ) continue;
 		if ( line.size() < 1 ) continue;
 		std::string::size_type pound = line.find('#', 0);
@@ -932,14 +931,14 @@ read_topology_file(
 				l >> tag;
 			}
 		} else if ( tag == "NUMERIC_PROPERTY" ) {
-			core::Real value = 0.0;
-			l >> tag >> value;
-			rsd->add_numeric_property(tag,value);
+			core::Real val = 0.0;
+			l >> tag >> val;
+			rsd->add_numeric_property(tag,val);
 
 		} else if ( tag == "STRING_PROPERTY" ) {
-			std::string value;
-			l >> tag >> value;
-			rsd->add_string_property(tag,value);
+			std::string val;
+			l >> tag >> val;
+			rsd->add_string_property(tag,val);
 
 		} else if ( tag == "VARIANT" ) {
 			l >> tag;
@@ -1120,10 +1119,10 @@ read_topology_file(
 				utility::vector1<Size> n_bins_per_rot;
 				l >> n_rots;
 				n_bins_per_rot.resize( n_rots );
-				for ( Size i = 1; i <= n_rots; ++i ) {
+				for ( Size rot = 1; rot <= n_rots; ++rot ) {
 					Size bin_size(0);
 					l >> bin_size;
-					n_bins_per_rot[i] = bin_size;
+					n_bins_per_rot[ rot ] = bin_size;
 				}
 				ncaa_libspec->ncaa_rotlib_n_bin_per_rot( n_bins_per_rot );
 			} else if ( tag == "NRCHI_SYMMETRIC" ) {
@@ -1784,7 +1783,7 @@ setup_icoor_reassignments_from_commandline(
 
 		tr.Trace << "setup_icoor_reassignments_from_commandline: reassigning " << rsd_type_set_mode << ' ' <<
 			rsd_type_name << ' ' << atom_name << " to new icoor params: ";
-		for ( Size i=1; i<= 6; ++i ) tr.Trace << ' ' << new_icoor_params[i];
+		for ( Size j=1; j <= 6; ++j ) tr.Trace << ' ' << new_icoor_params[j];
 		tr.Trace << std::endl;
 
 		icoor_reassignments[ atom_name ] = new_icoor_params;

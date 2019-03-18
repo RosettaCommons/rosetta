@@ -307,21 +307,21 @@ initial_pose_for_residues(
 	for ( auto & entry: residue_entries[ndarray::view(chain_spans[0].first, chain_spans[0].second)] ) {
 		chain_chars.push_back(entry.sc.aa);
 	}
-	std::string chain_seq(chain_chars.begin(), chain_chars.end());
 
+	std::string chain_seq(chain_chars.begin(), chain_chars.end());
 	core::pose::make_pose_from_sequence(
 		*work_pose, chain_seq, residue_type, auto_termini);
 
 	for ( Span chain_span : boost::make_iterator_range(chain_spans.begin() + 1, chain_spans.end()) ) {
-		std::vector<char> chain_chars;
+		std::vector<char> chain_chars2;
 		for ( auto & entry: residue_entries[ndarray::view(chain_span.first, chain_span.second)] ) {
-			chain_chars.push_back(entry.sc.aa);
+			chain_chars2.push_back(entry.sc.aa);
 		}
-		std::string chain_seq(chain_chars.begin(), chain_chars.end());
+		std::string chain_seq2(chain_chars2.begin(), chain_chars2.end());
 
 		core::pose::Pose chain_pose;
 		core::pose::make_pose_from_sequence(
-			chain_pose, chain_seq, residue_type, auto_termini);
+			chain_pose, chain_seq2, residue_type, auto_termini);
 		work_pose->append_pose_by_jump(chain_pose, 1);
 	}
 

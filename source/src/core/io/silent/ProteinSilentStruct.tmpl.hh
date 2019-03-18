@@ -220,12 +220,12 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 		if ( iter->substr(0,7) == "SCORE: " ) { // SCORE: line with values from this structure.
 			resize( total_residue ); // sequence_ should be defined by now.
 
-			std::string tag;
-			line_stream >> tag;
-			if ( line_stream.fail() || tag != "SCORE:" ) {
+			std::string tag2;
+			line_stream >> tag2;
+			if ( line_stream.fail() || tag2 != "SCORE:" ) {
 				pss_tr.Error << "bad format in first score line of silent file" << std::endl;
 				pss_tr.Error << "line = " << *iter << std::endl;
-				pss_tr.Error << "tag = " << tag << std::endl;
+				pss_tr.Error << "tag = " << tag2 << std::endl;
 			}
 
 			parse_energies( line_stream, energy_names );
@@ -263,9 +263,9 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 				continue;
 			} else if ( iter->substr(0,4) == "JUMP" ) {
 				// support for rosetta++ silent files
-				std::string tag;
+				std::string tag2;
 				Size nr;
-				line_stream >> tag; //JUMP
+				line_stream >> tag2; //JUMP
 				line_stream >> nr;
 				if ( nr != fold_tree().num_jump() ) {
 					pss_tr.Warning << "corrupted silent file read line JUMP X -- X ";
@@ -481,7 +481,8 @@ void ProteinSilentStruct_Template<T>::fill_pose(
 		utility_exit_with_message( "RuntimeAssert failed: nres() == one_letter_sequence().length()" );
 	}
 
-	{ basic::ProfileThis doit( basic::SILENT_SET_POSE_COORDS );
+	{
+		basic::ProfileThis doit2( basic::SILENT_SET_POSE_COORDS );
 		// angles and secondary structure
 		for ( Size seqpos = 1; seqpos <= nres(); ++seqpos ) {
 			if ( pose.residue_type(seqpos).is_protein() ) { //skip non-protein residues //ask for type to avoid updateing of coords.

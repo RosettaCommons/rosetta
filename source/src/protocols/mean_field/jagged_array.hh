@@ -209,10 +209,10 @@ public: // Creation
 	inline
 	jagged_array(
 		InputIterator const beg,
-		InputIterator const end,
+		InputIterator const ending,
 		allocator_type const & alloc = allocator_type()
 	) :
-		super( beg, end, alloc )
+		super( beg, ending, alloc )
 	{}
 
 
@@ -546,13 +546,13 @@ public: // Assignment
 
 		assert( ! empty() );
 
-		Size max_size = size_col( 1 );
+		Size my_max_size = size_col( 1 );
 
 		for ( Size i = 2; i <= size(); ++i ) {
-			if ( max_size < size_col( i ) ) max_size = size_col( i );
+			if ( my_max_size < size_col( i ) ) my_max_size = size_col( i );
 		}
 
-		return max_size;
+		return my_max_size;
 	}
 
 	/// @brief checks if a second jagged_array is of equal size for all columns

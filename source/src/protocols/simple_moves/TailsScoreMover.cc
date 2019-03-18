@@ -101,9 +101,9 @@ double TailsScoreMover::visit(
 		Real down_updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail) - ED*(in_ltail-1+in_rtail);
 		if ( up_updated_tail_score < updated_tail_score && down_updated_tail_score < updated_tail_score ) {
 			// TR<< "Hill" << "    " << in_ltail<< "   " << in_rtail << "   " << updated_tail_score << "    "<< up_updated_tail_score << "     " << down_updated_tail_score << "    "<< in_array_of_visits[in_ltail][in_rtail] << std::endl;
-			m_hill_size = m_hill_size + updated_tail_score;
-			m_number_of_hill_points+=1;
-			// TR<< "Updating hill size     " <<m_hill_size<<"    "<<m_number_of_hill_points <<  std::endl;
+			m_hill_size_ = m_hill_size_ + updated_tail_score;
+			m_number_of_hill_points_+=1;
+			// TR<< "Updating hill size     " <<m_hill_size_<<"    "<<m_number_of_hill_points_ <<  std::endl;
 			in_array_of_visits[in_ltail][in_rtail] = HILL;
 			out_min_ltail = in_current_min_ltail;
 			out_min_rtail = in_current_min_rtail;
@@ -117,9 +117,9 @@ double TailsScoreMover::visit(
 		Real left_updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail) - ED*(in_ltail+in_rtail-1);
 		if ( left_updated_tail_score < updated_tail_score && right_updated_tail_score < updated_tail_score ) {
 			// TR<< "Hill" << "    " << in_ltail<< "   " << in_rtail << "   " << updated_tail_score << "    "<< left_updated_tail_score << "     " << right_updated_tail_score << "    "<< in_array_of_visits[in_ltail][in_rtail] << std::endl;
-			m_hill_size = m_hill_size + updated_tail_score;
-			m_number_of_hill_points+=1;
-			// TR<< "Updating hill size     " <<m_hill_size<<"    "<<m_number_of_hill_points <<  std::endl;
+			m_hill_size_ = m_hill_size_ + updated_tail_score;
+			m_number_of_hill_points_+=1;
+			// TR<< "Updating hill size     " <<m_hill_size_<<"    "<<m_number_of_hill_points_ <<  std::endl;
 			in_array_of_visits[in_ltail][in_rtail] = HILL;
 			out_min_ltail = in_current_min_ltail;
 			out_min_rtail = in_current_min_rtail;

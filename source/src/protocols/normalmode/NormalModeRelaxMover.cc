@@ -413,7 +413,7 @@ NormalModeRelaxMover::apply_on_pose( pose::Pose &pose, core::kinematics::MoveMap
 		relax_prot.apply( pose );
 
 	} else if ( relaxmode_.compare("min") == 0 ) {
-		optimization::CartesianMinimizer minimizer;
+		//optimization::CartesianMinimizer minimizer;
 
 		if ( !cartesian_ ) pose = expose; // start from perturbed
 

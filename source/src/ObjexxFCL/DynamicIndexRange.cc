@@ -23,8 +23,8 @@ namespace ObjexxFCL {
 
 
 /// @brief Dimension and Unbounded Upper Index Constructor
-DynamicIndexRange::DynamicIndexRange( Dimension const & l_dim_a, Star const & star ) :
-	IndexRange( l_dim_a.zvalue(), star ),
+DynamicIndexRange::DynamicIndexRange( Dimension const & l_dim_a, Star const & str ) :
+	IndexRange( l_dim_a.zvalue(), str ),
 	l_dim_p_( l_dim_a.reference_copy() ),
 	u_dim_p_( new Dimension( *l_dim_p_ - 2 ) ) // Stays unbounded until upper index changed
 {
@@ -35,8 +35,8 @@ DynamicIndexRange::DynamicIndexRange( Dimension const & l_dim_a, Star const & st
 
 
 /// @brief Expression and Unbounded Upper Index Constructor
-DynamicIndexRange::DynamicIndexRange( Expression const & l_exp_a, Star const & star ) :
-	IndexRange( l_exp_a.zvalue(), star ),
+DynamicIndexRange::DynamicIndexRange( Expression const & l_exp_a, Star const & str ) :
+	IndexRange( l_exp_a.zvalue(), str ),
 	l_dim_p_( new Dimension( l_exp_a ) ),
 	u_dim_p_( new Dimension( *l_dim_p_ - 2 ) ) // Stays unbounded until upper index changed
 {
@@ -48,11 +48,11 @@ DynamicIndexRange::DynamicIndexRange( Expression const & l_exp_a, Star const & s
 
 /// @brief Dimension and Unbounded Upper Index Assignment
 DynamicIndexRange &
-DynamicIndexRange::assign( Dimension const & l_dim_a, Star const & star )
+DynamicIndexRange::assign( Dimension const & l_dim_a, Star const & str )
 {
 	delete l_dim_p_; l_dim_p_ = l_dim_a.reference_copy(); l_insert_as_observer();
 	delete u_dim_p_; u_dim_p_ = new Dimension( *l_dim_p_ - 2 ); u_insert_as_observer();
-	Super::assign( l_dim_a.zvalue(), star );
+	Super::assign( l_dim_a.zvalue(), str );
 	assert( legal_dynamic() );
 	size_dynamic();
 	notify();
@@ -62,11 +62,11 @@ DynamicIndexRange::assign( Dimension const & l_dim_a, Star const & star )
 
 /// @brief Expression and Unbounded Upper Index Assignment
 DynamicIndexRange &
-DynamicIndexRange::assign( Expression const & l_exp_a, Star const & star )
+DynamicIndexRange::assign( Expression const & l_exp_a, Star const & str )
 {
 	delete l_dim_p_; l_dim_p_ = new Dimension( l_exp_a ); l_insert_as_observer();
 	delete u_dim_p_; u_dim_p_ = new Dimension( *l_dim_p_ - 2 ); u_insert_as_observer();
-	Super::assign( l_dim_p_->zvalue(), star );
+	Super::assign( l_dim_p_->zvalue(), str );
 	assert( legal_dynamic() );
 	size_dynamic();
 	notify();
@@ -76,7 +76,7 @@ DynamicIndexRange::assign( Expression const & l_exp_a, Star const & star )
 
 /// @brief Unbounded Upper Index Set
 DynamicIndexRange &
-DynamicIndexRange::u( Star const & star )
+DynamicIndexRange::u( Star const & str )
 {
 	delete u_dim_p_;
 	if ( l_dim_p_ ) {
@@ -84,7 +84,7 @@ DynamicIndexRange::u( Star const & star )
 	} else {
 		u_dim_p_ = nullptr;
 	}
-	Super::u( star );
+	Super::u( str );
 	assert( legal_dynamic() );
 	size_dynamic();
 	notify();
@@ -94,7 +94,7 @@ DynamicIndexRange::u( Star const & star )
 
 /// @brief Unbounded Upper Index Set Without Notification
 DynamicIndexRange &
-DynamicIndexRange::u_no_notify( Star const & star )
+DynamicIndexRange::u_no_notify( Star const & str )
 {
 	delete u_dim_p_;
 	if ( l_dim_p_ ) {
@@ -102,7 +102,7 @@ DynamicIndexRange::u_no_notify( Star const & star )
 	} else {
 		u_dim_p_ = nullptr;
 	}
-	Super::u( star );
+	Super::u( str );
 	assert( legal_dynamic() );
 	size_dynamic();
 	return *this;

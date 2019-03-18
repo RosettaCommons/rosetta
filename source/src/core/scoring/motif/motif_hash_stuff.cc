@@ -2133,7 +2133,7 @@ void* preload_motif_data_pthread_wrapper(void* ptr)
 	return nullptr;
 }
 
-void preload_motif_data(MotifHashManager & mman){
+void preload_motif_data(MotifHashManager & mhman){
 	TR << "preload_motif_data" << std::endl;
 	ResPairMotifsStringMap tmp_map;
 	if ( option[basic::options::OptionKeys::mh::path::motifs_BB_PH]().size() > 0 ) {
@@ -2179,11 +2179,11 @@ void preload_motif_data(MotifHashManager & mman){
 		string tag = utility::file_basename(v.first);
 		if ( tag.size()>=11 && tag.substr(tag.size()-11)==".rpm.bin.gz" ) tag = tag.substr(0,tag.size()-11);
 		TR << "adding to motifs_by_fname " << tag << endl;
-		if ( mman.motifs_by_fname_.find(tag)!=mman.motifs_by_fname_.end() ) utility_exit_with_message("duplicate motif tag: "+tag);
-		mman.motifs_by_fname_[tag] = utility::pointer::shared_ptr<class core::scoring::motif::MotifHash>( new MotifHash(v.second) );
+		if ( mhman.motifs_by_fname_.find(tag)!=mhman.motifs_by_fname_.end() ) utility_exit_with_message("duplicate motif tag: "+tag);
+		mhman.motifs_by_fname_[tag] = utility::pointer::shared_ptr<class core::scoring::motif::MotifHash>( new MotifHash(v.second) );
 		// /*kill me!*/mman.motifs_by_fname_[tag]->hasher().tree_init(5);
 	}
-	mman.done_loading_ = true;
+	mhman.done_loading_ = true;
 }
 
 MotifHashManager::MotifHashManager() :

@@ -69,7 +69,7 @@ void MoveMap::set_ranges_unmodifiable(const std::vector<std::pair<Size, Size> >&
 		debug_assert(end > 0);
 		debug_assert(begin <= end);
 
-		for ( Size i = begin; i <= end; ++i ) set_bb(i, false);
+		for ( Size j = begin; j <= end; ++j ) set_bb( j, false );
 	}
 }
 

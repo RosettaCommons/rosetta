@@ -1555,8 +1555,8 @@ void SurfaceNode< V, E, G >::verify_patch_areas_correct( int node_id, int previo
 			// now do all of this over again for the background nodes!  the total number of background nodes is just the total number
 			// of residue - number of moltenresidues.  need to add a method which allows access to the bgenumeration_2_resid array
 			// kept in the SIG.
-			int nbackground = poseRef.size() - get_surface_owner()->rotamer_sets().nmoltenres();
-			for ( int id = 1; id <= nbackground; ++id ) {
+			int num_background = poseRef.size() - get_surface_owner()->rotamer_sets().nmoltenres();
+			for ( int id = 1; id <= num_background; ++id ) {
 
 				conformation::Residue const & rsd2 = poseRef.residue( get_surface_owner()->bg_node_2_resid( id ) );
 

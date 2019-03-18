@@ -40,6 +40,7 @@
 
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
+#include <utility/pointer/memory.hh>
 
 // C++ Headers
 
@@ -153,17 +154,17 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 			int sym_aware_jump_id = 0;
 			if ( sym_dof_names_ != "" ) {
 				utility::vector1<std::string> sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
-				for ( Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
-					sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( sasa_pose, sym_dof_name_list[i] );
-					protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( sasa_pose, sym_aware_jump_id ) );
+				for ( Size ii = 1; ii <= sym_dof_name_list.size(); ++ii ) {
+					sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( sasa_pose, sym_dof_name_list[ii] );
+					protocols::rigid::RigidBodyTransMoverOP translate( utility::pointer::make_shared< protocols::rigid::RigidBodyTransMover >( sasa_pose, sym_aware_jump_id ) );
 					translate->step_size( 1000.0 );
 					translate->apply( sasa_pose );
 				}
 			} else {
 				utility::vector1<core::Size> jump_list = utility::string_split( jump_nums_ , ',',core::Size());
-				for ( Size i = 1; i <= jump_list.size(); i++ ) {
-					sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( sasa_pose, jump_list[i] );
-					protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( sasa_pose, sym_aware_jump_id ) );
+				for ( Size ii = 1; ii <= jump_list.size(); ++ii ) {
+					sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( sasa_pose, jump_list[ii] );
+					protocols::rigid::RigidBodyTransMoverOP translate( utility::pointer::make_shared< protocols::rigid::RigidBodyTransMover >( sasa_pose, sym_aware_jump_id ) );
 					translate->step_size( 1000.0 );
 					translate->apply( sasa_pose );
 				}
@@ -179,17 +180,17 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 		core::pose::initialize_atomid_map( atom_sasa, sasa_pose, 0.0);
 		core::Size itype;
 
-		for ( core::Size i = 1; i <= sasa_pose.size(); ++i ) {
-			if ( sasa_pose.residue(i).name3()=="GLY" ) { // Don't try CBs with GLYs
+		for ( core::Size ii = 1; ii <= sasa_pose.size(); ++ii ) {
+			if ( sasa_pose.residue(ii).name3()=="GLY" ) { // Don't try CBs with GLYs
 				itype = 4;
 			} else {
 				itype = 5;
 			}
-			for ( core::Size j = 1; j<=sasa_pose.residue(i).nheavyatoms(); ++j ) {
+			for ( core::Size j = 1; j<=sasa_pose.residue(ii).nheavyatoms(); ++j ) {
 				if ( (mode_ == "mc") && (j > itype) ) {
 					continue;
 				} else {
-					core::id::AtomID atom( j, i );
+					core::id::AtomID atom( j, ii );
 					atom_mask.set( atom, true );
 				}
 			}
@@ -200,11 +201,11 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 
 		if ( mode_ == "sc" ) {
 			utility::vector1<core::Real> sc_sasas(sasa_pose.size(),0.0);
-			for ( Size i = 1; i <= sasa_pose.size(); i++ ) {
+			for ( Size ii = 1; ii <= sasa_pose.size(); ++ii ) {
 				// Use CA as the side chain for Glys
-				if ( sasa_pose.residue(i).name3()=="GLY" ) sc_sasas[i] += atom_sasa[AtomID(2,i)];
-				for ( Size j = 5; j <= sasa_pose.residue(i).nheavyatoms(); j++ ) {
-					sc_sasas[i] += atom_sasa[AtomID(j,i)];
+				if ( sasa_pose.residue(i).name3()=="GLY" ) sc_sasas[ii] += atom_sasa[AtomID(2,ii)];
+				for ( Size j = 5; j <= sasa_pose.residue(ii).nheavyatoms(); j++ ) {
+					sc_sasas[ii] += atom_sasa[AtomID(j,ii)];
 				}
 			}
 			final_sasas = sc_sasas;

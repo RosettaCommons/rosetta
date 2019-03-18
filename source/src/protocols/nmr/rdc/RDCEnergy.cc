@@ -314,7 +314,7 @@ RDCEnergy::register_options() {
 /// @brief show additional information of the energy method
 void
 RDCEnergy::show_additional_info(
-	std::ostream & TR,
+	std::ostream & tracer,
 	Pose & pose,
 	bool verbose
 ) const
@@ -333,9 +333,9 @@ RDCEnergy::show_additional_info(
 	utility::vector1< Real > scores_all_media(number_media, 0.0); // set all scores to zero because we are going to use +=
 	utility::vector1< RDCMultiSetOP > & multiset_vec = rdc_data_all.get_rdc_multiset_vec();
 
-	TR << " * * * * * * *       RDCEnergy Info       * * * * * * * " << std::endl;
-	TR << "Total Score: " << rdc_score << std::endl;
-	TR << "Is norm of " << number_media << " alignment media." << std::endl;
+	tracer << " * * * * * * *       RDCEnergy Info       * * * * * * * " << std::endl;
+	tracer << "Total Score: " << rdc_score << std::endl;
+	tracer << "Is norm of " << number_media << " alignment media." << std::endl;
 
 	// Back-calculate RDCs from determined tensor params
 	// Show calc vs exp RDC and tensor params
@@ -408,13 +408,13 @@ RDCEnergy::show_additional_info(
 			} else if ( norm_type == NORM_TYPE_CH ) {
 				Dmax /= rdc_scaling_factor_toCH(singleset_vec[j]->get_rdc_type());
 			}
-			TR << "RDC dataset: " << singleset_vec[j]->get_dataset_name() << std::endl;
+			tracer << "RDC dataset: " << singleset_vec[j]->get_dataset_name() << std::endl;
 			if ( verbose ) {
-				TR << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " << std::endl;
-				TR << " * * * * * * * * * * * * * * * * * * * * *                exp vs. calc RDC               * * * * * * * * * * * * * * * * * * * * * " << std::endl;
-				TR << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " << std::endl;
-				TR << " SpinA_Resid_Atom     SpinB_Resid_Atom     Obs_RDC     Scal_Obs_RDC     Calc_RDC     Scal_Calc_RDC     Deviation     Abs_Deviation " << std::endl;
-				TR << " --------------------------------------------------------------------------------------------------------------------------------- " << std::endl;
+				tracer << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " << std::endl;
+				tracer << " * * * * * * * * * * * * * * * * * * * * *                exp vs. calc RDC               * * * * * * * * * * * * * * * * * * * * * " << std::endl;
+				tracer << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " << std::endl;
+				tracer << " SpinA_Resid_Atom     SpinB_Resid_Atom     Obs_RDC     Scal_Obs_RDC     Calc_RDC     Scal_Calc_RDC     Deviation     Abs_Deviation " << std::endl;
+				tracer << " --------------------------------------------------------------------------------------------------------------------------------- " << std::endl;
 			}
 			// loop over no subunits
 			for ( Size su = 1; su <= num_subunits; ++su ) {
@@ -469,54 +469,54 @@ RDCEnergy::show_additional_info(
 						for ( auto const & spin_pair : singleset_vec[j]->get_single_rdc_vec()[k].get_spinsAB() ) {
 							converter << std::setw(4) << spin_pair.first.rsd() << " " << pose.residue(spin_pair.first.rsd()).atom_name(spin_pair.first.atomno()) << " ";
 						}
-						TR << " ( " << std::right << converter.str() << ")";
+						tracer << " ( " << std::right << converter.str() << ")";
 						converter.clear();
 						converter.str("");
 
 						for ( auto const & spin_pair : singleset_vec[j]->get_single_rdc_vec()[k].get_spinsAB() ) {
 							converter << std::setw(4) << spin_pair.second.rsd() << " " << pose.residue(spin_pair.second.rsd()).atom_name(spin_pair.second.atomno()) << " ";
 						}
-						TR << " ( " << std::right << converter.str() << ")";
+						tracer << " ( " << std::right << converter.str() << ")";
 
-						TR << std::setw(12) << std::fixed << std::setprecision(3);
+						tracer << std::setw(12) << std::fixed << std::setprecision(3);
 						if ( norm_type == NORM_TYPE_NH ) {
-							TR << rdc_values(index_offset + no_rdcs*(su-1) + k) * rdc_scaling_factor_toNH(singleset_vec[j]->get_rdc_type());
+							tracer << rdc_values(index_offset + no_rdcs*(su-1) + k) * rdc_scaling_factor_toNH(singleset_vec[j]->get_rdc_type());
 						} else if ( norm_type == NORM_TYPE_CH ) {
-							TR << rdc_values(index_offset + no_rdcs*(su-1) + k) * rdc_scaling_factor_toCH(singleset_vec[j]->get_rdc_type());
+							tracer << rdc_values(index_offset + no_rdcs*(su-1) + k) * rdc_scaling_factor_toCH(singleset_vec[j]->get_rdc_type());
 						} else {
-							TR << rdc_values(index_offset + no_rdcs*(su-1) + k);
+							tracer << rdc_values(index_offset + no_rdcs*(su-1) + k);
 						}
-						TR << std::setw(17) << std::fixed << std::setprecision(3) << rdc_values(index_offset + no_rdcs*(su-1) + k);
-						TR << std::setw(13) << std::fixed << std::setprecision(3);
+						tracer << std::setw(17) << std::fixed << std::setprecision(3) << rdc_values(index_offset + no_rdcs*(su-1) + k);
+						tracer << std::setw(13) << std::fixed << std::setprecision(3);
 						if ( norm_type == NORM_TYPE_NH ) {
-							TR << calc_rdc * rdc_scaling_factor_toNH(singleset_vec[j]->get_rdc_type());
+							tracer << calc_rdc * rdc_scaling_factor_toNH(singleset_vec[j]->get_rdc_type());
 						} else if ( norm_type == NORM_TYPE_CH ) {
-							TR << calc_rdc * rdc_scaling_factor_toCH(singleset_vec[j]->get_rdc_type());
+							tracer << calc_rdc * rdc_scaling_factor_toCH(singleset_vec[j]->get_rdc_type());
 						} else {
-							TR << calc_rdc;
+							tracer << calc_rdc;
 						}
-						TR << std::setw(18) << std::fixed << std::setprecision(3) << calc_rdc;
-						TR << std::setw(14) << std::fixed << std::setprecision(3) << rdc_dev;
-						TR << std::setw(18) << std::fixed << std::setprecision(3) << rdc_abs_dev << std::endl;
+						tracer << std::setw(18) << std::fixed << std::setprecision(3) << calc_rdc;
+						tracer << std::setw(14) << std::fixed << std::setprecision(3) << rdc_dev;
+						tracer << std::setw(18) << std::fixed << std::setprecision(3) << rdc_abs_dev << std::endl;
 					} // number RDCs per experiment
 				} // number subunits
 			}
 			if ( verbose ) {
-				TR << " --------------------------------------------------------------------------------------------------------------------------------- " << std::endl;
+				tracer << " --------------------------------------------------------------------------------------------------------------------------------- " << std::endl;
 			}
 			score_single_experiment /= num_subunits; // Since we have summed up over number of subunits we need to divide here again.
 			//scores_all_media[i] += std::sqrt(score_single_experiment) * singleset_vec[j]->get_weight();
 			scores_all_media[i] += score_single_experiment * singleset_vec[j]->get_weight();
-			TR << "Weighted score for experiment " << singleset_vec[j]->get_dataset_name() << " " << score_single_experiment << std::endl;
+			tracer << "Weighted score for experiment " << singleset_vec[j]->get_dataset_name() << " " << score_single_experiment << std::endl;
 
 			// Increment the index offset
 			index_offset += number_rdcs_per_experiment * num_subunits;
 		}
-		TR << "Overall weighted score for alignment medium " << multiset_vec[i]->get_alignment_medium_label() << ": " << scores_all_media[i] << std::endl;
-		tensor.show_tensor_stats(TR, true);
+		tracer << "Overall weighted score for alignment medium " << multiset_vec[i]->get_alignment_medium_label() << ": " << scores_all_media[i] << std::endl;
+		tensor.show_tensor_stats(tracer, true);
 		Real Q_fac_per_medium(std::sqrt(sum_dev_square/sum_exp_square));
 		Real Rmsd_per_medium(std::sqrt(sum_dev_square/ (number_rdcs_per_medium * num_subunits)));
-		TR << "RDC Q-factor and Rmsd for alignment medium " << multiset_vec[i]->get_alignment_medium_label() << ": " << Q_fac_per_medium << ", " << Rmsd_per_medium << std::endl;
+		tracer << "RDC Q-factor and Rmsd for alignment medium " << multiset_vec[i]->get_alignment_medium_label() << ": " << Q_fac_per_medium << ", " << Rmsd_per_medium << std::endl;
 		sum_all_dev_square += sum_dev_square;
 		sum_all_exp_square += sum_exp_square;
 		total_number_rdcs += number_rdcs_per_medium * num_subunits;
@@ -524,7 +524,7 @@ RDCEnergy::show_additional_info(
 	}
 	Real total_Q_fac(std::sqrt(sum_all_dev_square/sum_all_exp_square));
 	Real total_Rmsd(std::sqrt(sum_all_dev_square/total_number_rdcs));
-	TR << "Total RDC Q-factor and Rmsd for " << number_media << " alignment media and " << total_number_experiments
+	tracer << "Total RDC Q-factor and Rmsd for " << number_media << " alignment media and " << total_number_experiments
 		<< " experiments " << total_Q_fac << ", " << total_Rmsd << std::endl;
 }
 

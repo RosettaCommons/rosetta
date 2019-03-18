@@ -90,8 +90,8 @@ std::vector< std::string > split_by_newlines( std::string const & s )
 			break;
 		}
 	}
-	for ( platform::SSize i=r.size()-1; i>=0; i-- ) {  // removing empty lines
-		if ( r[i].size() == 0 ) r.erase( r.begin()+i );
+	for ( platform::SSize i2=r.size()-1; i2>=0; --i2 ) {  // removing empty lines
+		if ( r[i2].empty() ) r.erase( r.begin()+i2 );
 	}
 	return r;
 }

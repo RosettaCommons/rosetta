@@ -609,16 +609,16 @@ PCSSingleSet::set_averaging_type(std::string const & type) {
 }
 
 void
-PCSSingleSet::show(std::ostream & TR) const {
-	TR << "   * * * PCSSingleSet Summary Report * * *   " << std::endl;
-	TR << " PCS dataset " << dataset_name_ << " contains " << number_pcs_ << " pcs values and has weight " << weight_ << "." << std::endl;
-	TR << " PCS values: " << std::endl;
-	TR << " * * * * * * PCS values * * * * * * " << std::endl;
+PCSSingleSet::show(std::ostream & tracer) const {
+	tracer << "   * * * PCSSingleSet Summary Report * * *   " << std::endl;
+	tracer << " PCS dataset " << dataset_name_ << " contains " << number_pcs_ << " pcs values and has weight " << weight_ << "." << std::endl;
+	tracer << " PCS values: " << std::endl;
+	tracer << " * * * * * * PCS values * * * * * * " << std::endl;
 	for ( Size i = 1; i <= number_pcs_; ++i ) {
-		pcs_single_vec_[i].show(TR);
+		pcs_single_vec_[i].show(tracer);
 	}
-	TR << " * * * * * * PCS tensor * * * * * * " << std::endl;
-	computation_type_ == SVD ? tensor_->show_tensor_stats(TR, false) : tensor_->show_tensor_stats(TR, true);
+	tracer << " * * * * * * PCS tensor * * * * * * " << std::endl;
+	computation_type_ == SVD ? tensor_->show_tensor_stats(tracer, false) : tensor_->show_tensor_stats(tracer, true);
 }
 
 /// @brief solves the PCS tensor using SVD and returns the weighted PCS score

@@ -574,8 +574,8 @@ void solve_sturm(const int& p_order, int& n_root, const utility::vector1<double>
 	sbisect(np, sseq, min, max, atmin, atmax, roots_array);
 
 	// DJM: copy the roots array into the roots vector
-	for ( numeric::Size i=1; i<= roots.size(); i++ ) {
-		roots[i]=roots_array[i-1];
+	for ( numeric::Size j=1; j<= roots.size(); j++ ) {
+		roots[j]=roots_array[j-1];
 	}
 	//// DJM: now we can delete the roots array -- not if statically allocated
 	//delete [] roots_array;

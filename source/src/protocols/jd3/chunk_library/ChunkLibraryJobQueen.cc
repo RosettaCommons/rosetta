@@ -722,8 +722,8 @@ ChunkLibraryJobQueen::allow_chunk_library_inputter( chunk_library_inputters::Chu
 		// so interpret this as them wanting to allow the user to provide another
 		// inputter.
 		inputter_creator_list_ = chunk_library_inputters::ChunkLibraryInputterFactory::get_instance()->chunk_library_inputter_creators();
-		for ( auto creator : inputter_creator_list_ ) {
-			inputter_creators_[ creator->keyname() ] = creator;
+		for ( auto const & creator_ii : inputter_creator_list_ ) {
+			inputter_creators_[ creator_ii->keyname() ] = creator_ii;
 		}
 	}
 	if ( ! inputter_creators_.count( creator->keyname() ) ) {
@@ -752,8 +752,8 @@ ChunkLibraryJobQueen::allow_pose_outputter( pose_outputters::PoseOutputterCreato
 		// so interpret this as them wanting to allow the user to provide another
 		// outputter in addition to the original set.
 		outputter_creator_list_ = pose_outputters::PoseOutputterFactory::get_instance()->pose_outputter_creators();
-		for ( auto creator : outputter_creator_list_ ) {
-			outputter_creators_[ creator->keyname() ] = creator;
+		for ( auto const & creator_ii : outputter_creator_list_ ) {
+			outputter_creators_[ creator_ii->keyname() ] = creator_ii;
 		}
 	}
 	if ( ! outputter_creators_.count( creator->keyname() ) ) {
@@ -777,8 +777,8 @@ ChunkLibraryJobQueen::set_default_outputter( pose_outputters::PoseOutputterCreat
 		// instantiation herself
 		use_factory_provided_pose_outputters_ = false;
 		outputter_creator_list_ = pose_outputters::PoseOutputterFactory::get_instance()->pose_outputter_creators();
-		for ( auto creator : outputter_creator_list_ ) {
-			outputter_creators_[ creator->keyname() ] = creator;
+		for ( auto const & creator_ii : outputter_creator_list_ ) {
+			outputter_creators_[ creator_ii->keyname() ] = creator_ii;
 		}
 	}
 }

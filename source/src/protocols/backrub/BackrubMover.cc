@@ -416,12 +416,14 @@ connected_mainchain_atomids(
 	atomids.clear();
 
 	// make sure that atomid is a mainchain atom
-	chemical::AtomIndices const & mainchain_atoms(pose.residue_type(atomid.rsd()).mainchain_atoms());
 	Size mainchain_index(0);
-	for ( Size i = 1; i <= mainchain_atoms.size(); ++i ) {
-		if ( mainchain_atoms[i] == atomid.atomno() ) {
-			mainchain_index = i;
-			break;
+	{
+		chemical::AtomIndices const & mainchain_atoms(pose.residue_type(atomid.rsd()).mainchain_atoms());
+		for ( Size i = 1; i <= mainchain_atoms.size(); ++i ) {
+			if ( mainchain_atoms[i] == atomid.atomno() ) {
+				mainchain_index = i;
+				break;
+			}
 		}
 	}
 	// we weren't given a mainchain atom, return nothing
@@ -444,8 +446,8 @@ connected_mainchain_atomids(
 				// check to see if the atom it is connected to is the last mainchain atom of the corresponding residue
 				chemical::ResConnID resconid(residue.actual_residue_connection(i));
 				Size connected_atomno(pose.residue(resconid.resid()).residue_connect_atom_index(resconid.connid()));
-				chemical::AtomIndices const & mainchain_atoms(pose.residue(resconid.resid()).mainchain_atoms());
-				if ( mainchain_atoms.size() && mainchain_atoms.back() == connected_atomno ) {
+				chemical::AtomIndices const & mainchain_atoms2(pose.residue(resconid.resid()).mainchain_atoms());
+				if ( ! mainchain_atoms2.empty() && mainchain_atoms2.back() == connected_atomno ) {
 					// success, set the new residue number
 					resnum = resconid.resid();
 					break;
@@ -481,8 +483,8 @@ connected_mainchain_atomids(
 				// check to see if the atom it is connected to is the first mainchain atom of the corresponding residue
 				chemical::ResConnID resconid(residue.actual_residue_connection(i));
 				Size connected_atomno(pose.residue(resconid.resid()).residue_connect_atom_index(resconid.connid()));
-				chemical::AtomIndices const & mainchain_atoms(pose.residue(resconid.resid()).mainchain_atoms());
-				if ( mainchain_atoms.size() && mainchain_atoms.front() == connected_atomno ) {
+				chemical::AtomIndices const & mainchain_atoms2(pose.residue(resconid.resid()).mainchain_atoms());
+				if ( ! mainchain_atoms2.empty() && mainchain_atoms2.front() == connected_atomno ) {
 					// success, set the new residue number
 					resnum = resconid.resid();
 					break;

@@ -705,9 +705,11 @@ bool BBConRotMover::closure(
 		cosA1 =  ( w * v.x() - v.y() * h ) / va;
 		sinA1 = -( w * v.y() + v.x() * h ) / va;
 		//set_rotation_matrix_Z( cosA1, sinA1, T1, T1t );
-		xyzMatrix T1(z_rotation_matrix_radians( std::atan2(sinA1, cosA1) ));
 
-		a = T1 * v;
+		{
+			xyzMatrix T1(z_rotation_matrix_radians( std::atan2(sinA1, cosA1) ));
+			a = T1 * v;
+		}
 		j = a + p1;
 
 		a = r4 - r1;

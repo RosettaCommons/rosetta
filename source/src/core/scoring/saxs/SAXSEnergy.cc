@@ -287,25 +287,27 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
 	// ---------- Repack the set of unique FFs to a vactor and hash their indexes in with a map
 	ff_ops_.clear();
 	ff_map_.clear();
-	Size i = 1;
-	for ( auto const & it : ff_set ) {
-		ff_map_.insert( std::pair<FormFactorOP,Size>(it,i) );
-		ff_ops_.push_back( it );
-		i++;
+	{//scope guards to keep i from leaking elsewhere
+		Size i = 1;
+		for ( auto const & it : ff_set ) {
+			ff_map_.insert( std::pair<FormFactorOP,Size>(it,i) );
+			ff_ops_.push_back( it );
+			i++;
+		}
 	}
 
 	// ---------- Create a matrix of distance histograms
-	for ( Size i=1; i<=ff_ops_.size(); i++ ) {
+	for ( Size j=1; j <= ff_ops_.size(); ++j ) {
 		utility::vector1<DistanceHistogramOP> row;
 		dhist_.push_back( row );
-		for ( Size j=1; j<=ff_ops_.size(); j++ ) {
-			dhist_[i].push_back( utility::pointer::make_shared< DistanceHistogram >() );
+		for ( Size k=1; k <= ff_ops_.size(); ++k ) {
+			dhist_[j].push_back( utility::pointer::make_shared< DistanceHistogram >() );
 		}
 	}
 
 	// ---------- Prepare atoms, residues and assign atom types
-	for ( Size i = 1; i <= pose.size(); ++i ) {
-		core::conformation::Residue resi = pose.residue(i);
+	for ( Size j = 1; j <= pose.size(); ++j ) {
+		core::conformation::Residue resi = pose.residue(j);
 		for ( Size m = 1; m <= resi.natoms(); ++m ) {
 			if ( (! if_hydrogens_)&&( resi.atom_type(m).is_hydrogen()) ) {
 				continue;
@@ -313,7 +315,7 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
 			if ( ! ff_manager_->is_known_atom( resi.atom_type(m).name() ) ) {
 				continue;
 			}
-			r_ids_.push_back( i );
+			r_ids_.push_back( j );
 			a_ids_.push_back( m );
 			FormFactorOP fi =  ff_manager_->get_ff(resi.atom_type(m).name());
 			atom_ff_types_.push_back( ff_map_[fi] );

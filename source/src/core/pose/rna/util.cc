@@ -1716,17 +1716,17 @@ setup_base_pair_constraints(
 
 			for ( Size p = 1; p <= atom_ids1.size(); p++ ) {
 
-				Size const atom1 = pose.residue_type(i).atom_index( atom_ids1[p] ) ;
-				Size const atom2 = pose.residue_type(j).atom_index( atom_ids2[p] ) ;
+				Size const p_atom1 = pose.residue_type(i).atom_index( atom_ids1[p] ) ;
+				Size const p_atom2 = pose.residue_type(j).atom_index( atom_ids2[p] ) ;
 
 				TR << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue_type(i).name1() << I(3,i) << " <-->  " <<
 					pose.residue_type(j).name1() << I(3,j) << "   " <<
 					atom_ids1[p] << " <--> " <<
-					atom_ids2[p] << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
+					atom_ids2[p] << ".  [ " << p_atom1 << "-" << p_atom2 << "]" << std::endl;
 
 				pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
-					id::AtomID(atom1,i),
-					id::AtomID(atom2,j),
+					id::AtomID( p_atom1, i ),
+					id::AtomID( p_atom2, j ),
 					distance_func, core::scoring::base_pair_constraint ) ) );
 			}
 		} else { //coarse-grained RNA

@@ -25,10 +25,9 @@
 #include <set>
 #include <vector>
 
-namespace protocols
-{
-namespace indexed_structure_store
-{
+namespace protocols {
+namespace indexed_structure_store {
+
 std::ostream& operator<<(std::ostream& os, const FragmentSpecification& s)
 {
 	os << "FragmentSpecification(fragment_length=" << s.fragment_length
@@ -37,9 +36,10 @@ std::ostream& operator<<(std::ostream& os, const FragmentSpecification& s)
 }
 
 FragmentStore::FragmentStore(
-	FragmentSpecification fragment_specification,
-	numeric::Size num_fragments) :
-	fragment_specification(fragment_specification),
+	FragmentSpecification fragment_spec,
+	numeric::Size num_fragments
+) :
+	fragment_specification(fragment_spec),
 	fragment_threshold_distances(num_fragments),
 	fragment_coordinates(num_fragments * fragment_specification.coordinates_per_fragment() )
 {
@@ -92,13 +92,13 @@ void FragmentStore::delete_homologs(){
 		std::string string_ii = string_groups["name"][ii];
 		if ( homologs.find(string_ii) != homologs.end() ) {
 			residues_to_delete.push_back(true);
-			for ( numeric::Size ii=0; ii<fragment_length; ++ii ) {
+			for ( numeric::Size jj=0; jj < fragment_length; ++jj ) {
 				coordinates_to_delete.push_back(true);
 			}
 			num_fragments_--;
 		} else {
 			residues_to_delete.push_back(false);
-			for ( numeric::Size ii=0; ii<fragment_length; ++ii ) {
+			for ( numeric::Size jj=0; jj < fragment_length; ++jj ) {
 				coordinates_to_delete.push_back(false);
 			}
 		}

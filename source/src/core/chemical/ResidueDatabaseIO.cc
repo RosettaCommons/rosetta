@@ -524,12 +524,12 @@ std::string ResidueDatabaseIO::get_atom_name_from_database_atom_index(
 	while ( res.next() )
 			{
 		std::string atom_name;
-		core::Size atom_index;
+		core::Size atom_ind;
 
-		res >> atom_index >> atom_name;
+		res >> atom_ind >> atom_name;
 
-		std::pair<std::string,core::Size> new_atom_id = std::make_pair(residue_name,atom_index);
-		atom_name_id_cache_.insert(std::make_pair(new_atom_id,atom_name));
+		std::pair<std::string,core::Size> new_atom_id = std::make_pair( residue_name, atom_ind );
+		atom_name_id_cache_.insert( std::make_pair(new_atom_id,atom_name) );
 
 	}
 

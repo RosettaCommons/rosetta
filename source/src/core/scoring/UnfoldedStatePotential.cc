@@ -129,12 +129,12 @@ UnfoldedStatePotential::read_database_file( std::string const & filename ) {
 		l >> tlc;
 		ObjexxFCL::lpad( tlc, 3 ); // RNA codes are rA, etc. (two letters)
 
-		for ( Size i=1; i <= ntypes; ++i ) {
+		for ( Size t=1; t <= ntypes; ++t ) {
 			l >> val;
 			if ( l.fail() ) {
 				utility_exit_with_message("Error, number of energies doesn't match number of score types in '"+filename+"'");
 			}
-			emap[ unfolded_score_types[i] ] = val; // add energy to appropriate score type in temp emap
+			emap[ unfolded_score_types[t] ] = val; // add energy to appropriate score type in temp emap
 		}
 
 		// add tlc/emap pair to map

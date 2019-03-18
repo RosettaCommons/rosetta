@@ -362,7 +362,7 @@ PREEnergy::version() const { return 1; }
 /// @brief show additional information of the energy method
 void
 PREEnergy::show_additional_info(
-	std::ostream & TR,
+	std::ostream & tracer,
 	Pose & pose,
 	bool verbose
 ) const
@@ -382,9 +382,9 @@ PREEnergy::show_additional_info(
 	utility::vector1< PREMultiSetOP > & multiset_vec = pre_data_all.get_pre_multiset_vec();
 	runtime_assert(number_spinlabel_sites == multiset_vec.size());
 
-	TR << " * * * * * * *       PREEnergy Info       * * * * * * * " << std::endl;
-	TR << "Total Score: " << pre_score << std::endl;
-	TR << "Is norm of " << number_spinlabel_sites << " spinlabel sites." << std::endl;
+	tracer << " * * * * * * *       PREEnergy Info       * * * * * * * " << std::endl;
+	tracer << "Total Score: " << pre_score << std::endl;
+	tracer << "Is norm of " << number_spinlabel_sites << " spinlabel sites." << std::endl;
 
 	Real sum_all_dev_square(0);
 	Real sum_all_exp_square(0);
@@ -416,13 +416,13 @@ PREEnergy::show_additional_info(
 			runtime_assert(number_pres_per_experiment == pre_single_vec.size());
 			Real scal(1.0 / singleset_vec[j]->get_scaling_factor());
 
-			TR << "PRE dataset: " << singleset_vec[j]->get_dataset_name() << std::endl;
+			tracer << "PRE dataset: " << singleset_vec[j]->get_dataset_name() << std::endl;
 			if ( verbose ) {
-				TR << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " << std::endl;
-				TR << " * * * * * * * * * * * * * * * *              exp vs. calc PRE             * * * * * * * * * * * * * * * * * " << std::endl;
-				TR << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " << std::endl;
-				TR << " Spin_Resid_Atom     Obs_PRE     Scal_Obs_PRE     Calc_PRE     Scal_Calc_PRE     Deviation     Abs_Deviation " << std::endl;
-				TR << " ----------------------------------------------------------------------------------------------------------- " << std::endl;
+				tracer << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " << std::endl;
+				tracer << " * * * * * * * * * * * * * * * *              exp vs. calc PRE             * * * * * * * * * * * * * * * * * " << std::endl;
+				tracer << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " << std::endl;
+				tracer << " Spin_Resid_Atom     Obs_PRE     Scal_Obs_PRE     Calc_PRE     Scal_Calc_PRE     Deviation     Abs_Deviation " << std::endl;
+				tracer << " ----------------------------------------------------------------------------------------------------------- " << std::endl;
 			}
 
 			// Loop over PRE values per experiment
@@ -439,32 +439,32 @@ PREEnergy::show_additional_info(
 					for ( core::id::AtomID const & id : pre_single_vec[k].get_protein_spins() ) {
 						converter << std::setw(4) << id.rsd() << " " << pose.residue(id.rsd()).atom_name(id.atomno()) << " ";
 					}
-					TR << " ( " << std::right << converter.str() << ")";
-					TR << std::setw(12)<< std::fixed << std::setprecision(3) << pre_values[ index_offset + k ] / scal; // Revert normalization of PRE data that was applied during creation of PRESingleSet
-					TR << std::setw(17)<< std::fixed << std::setprecision(3) << pre_values[ index_offset + k ];
-					TR << std::setw(13)<< std::fixed << std::setprecision(3) << calc_pre / scal;       // Revert normalization of PRE data that was applied during creation of PRESingleSet
-					TR << std::setw(18)<< std::fixed << std::setprecision(3) << calc_pre;
-					TR << std::setw(14)<< std::fixed << std::setprecision(3) << pre_dev;
-					TR << std::setw(18)<< std::fixed << std::setprecision(3) << pre_abs_dev << std::endl;
+					tracer << " ( " << std::right << converter.str() << ")";
+					tracer << std::setw(12)<< std::fixed << std::setprecision(3) << pre_values[ index_offset + k ] / scal; // Revert normalization of PRE data that was applied during creation of PRESingleSet
+					tracer << std::setw(17)<< std::fixed << std::setprecision(3) << pre_values[ index_offset + k ];
+					tracer << std::setw(13)<< std::fixed << std::setprecision(3) << calc_pre / scal;       // Revert normalization of PRE data that was applied during creation of PRESingleSet
+					tracer << std::setw(18)<< std::fixed << std::setprecision(3) << calc_pre;
+					tracer << std::setw(14)<< std::fixed << std::setprecision(3) << pre_dev;
+					tracer << std::setw(18)<< std::fixed << std::setprecision(3) << pre_abs_dev << std::endl;
 				}
 			} // PREs per experiment
 			if ( verbose ) {
-				TR << " ----------------------------------------------------------------------------------------------------------- " << std::endl;
+				tracer << " ----------------------------------------------------------------------------------------------------------- " << std::endl;
 			}
 
 			//scores_all_spinlabels[i] += std::sqrt(single_score) * singleset_vec[j]->get_weight();
 			scores_all_spinlabels[i] += single_score * singleset_vec[j]->get_weight();
-			TR << "Weighted score for PRE dataset " << singleset_vec[j]->get_dataset_name() << " " << single_score << std::endl;
+			tracer << "Weighted score for PRE dataset " << singleset_vec[j]->get_dataset_name() << " " << single_score << std::endl;
 
 			// Increment index offset
 			index_offset += number_pres_per_experiment;
 
 		} // PREs per spinlabel position
 
-		TR << "Overall weighted PRE score for spinlabel position " << multiset_vec[i]->get_spinlabel_site_rsd() << ": " << scores_all_spinlabels[i] << std::endl;
+		tracer << "Overall weighted PRE score for spinlabel position " << multiset_vec[i]->get_spinlabel_site_rsd() << ": " << scores_all_spinlabels[i] << std::endl;
 		Real Q_fac_per_sl_site(std::sqrt(sum_dev_square/sum_exp_square));
 		Real Rmsd_per_sl_site(std::sqrt(sum_dev_square/number_pres_per_spinlabel));
-		TR << "PRE Q-factor and Rmsd for spinlabel position " << multiset_vec[i]->get_spinlabel_site_rsd() << ": " << Q_fac_per_sl_site << ", " << Rmsd_per_sl_site << std::endl;
+		tracer << "PRE Q-factor and Rmsd for spinlabel position " << multiset_vec[i]->get_spinlabel_site_rsd() << ": " << Q_fac_per_sl_site << ", " << Rmsd_per_sl_site << std::endl;
 		sum_all_dev_square += sum_dev_square;
 		sum_all_exp_square += sum_exp_square;
 		total_number_pre += number_pres_per_spinlabel;
@@ -474,7 +474,7 @@ PREEnergy::show_additional_info(
 
 	Real total_Q_fac(std::sqrt(sum_all_dev_square/sum_all_exp_square));
 	Real total_Rmsd(std::sqrt(sum_all_dev_square/total_number_pre));
-	TR << "Total PRE Q-factor and Rmsd for " << number_spinlabel_sites << " spinlabel positions and " << total_number_experiments
+	tracer << "Total PRE Q-factor and Rmsd for " << number_spinlabel_sites << " spinlabel positions and " << total_number_experiments
 		<< " experiments: " << total_Q_fac << ", " << total_Rmsd << std::endl;
 }
 

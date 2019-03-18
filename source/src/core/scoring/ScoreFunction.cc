@@ -480,21 +480,21 @@ ScoreFunction::_add_weights_from_stream( std::istream & data, bool patch/*=false
 	} // while ( getline( data, line ) )
 
 	for ( Size n = 1; n <= score_types_from_file.size(); n++ ) {
-		ScoreType const & score_type = score_types_from_file[n].first;
+		ScoreType const & score_type_n = score_types_from_file[n].first;
 		Real const        & weight     = score_types_from_file[n].second;
-		set_weight( score_type, weight );
+		set_weight( score_type_n, weight );
 	}
 	for ( Size n = 1; n <= patches_from_file.size(); n++ ) {
-		ScoreType const & score_type = patches_from_file[n].first.first;
+		ScoreType const & score_type_n = patches_from_file[n].first.first;
 		Real const & weight     = patches_from_file[n].first.second;
-		std::string const & operation = patches_from_file[n].second;
-		if ( operation == "*=" ) {
-			set_weight( score_type, weights_[ score_type ]*weight );
-		} else if ( operation == "=" ) {
-			set_weight( score_type, weight );
+		std::string const & operation_n = patches_from_file[n].second;
+		if ( operation_n == "*=" ) {
+			set_weight( score_type_n, weights_[ score_type_n ]*weight );
+		} else if ( operation_n == "=" ) {
+			set_weight( score_type_n, weight );
 		} else {
 			utility_exit_with_message(
-				"unrecognized scorefunction patch operation "+operation+" in file: "+filename
+				"unrecognized scorefunction patch operation "+operation_n+" in file: "+filename
 			);
 		}
 	}
@@ -1176,14 +1176,14 @@ ScoreFunction::get_sub_score(
 		///  Context Independent Long Range twobody methods
 
 		for ( auto const & cd_lr_2b_method : cd_lr_2b_methods_ ) {
-			LREnergyContainerCOP lrec =
+			LREnergyContainerCOP lrec_ii =
 				pose.energies().long_range_container(cd_lr_2b_method->long_range_type());
 			// Potentially O(N^2) operation...
 			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				if ( !residue_mask[ii] ) continue;
 				for ( ResidueNeighborConstIteratorOP
-						rni = lrec->const_upper_neighbor_iterator_begin( ii ),
-						rniend = lrec->const_upper_neighbor_iterator_end( ii );
+						rni = lrec_ii->const_upper_neighbor_iterator_begin( ii ),
+						rniend = lrec_ii->const_upper_neighbor_iterator_end( ii );
 						(*rni) != (*rniend); ++(*rni) ) {
 					if ( !residue_mask[rni->upper_neighbor_id()] ) continue;
 

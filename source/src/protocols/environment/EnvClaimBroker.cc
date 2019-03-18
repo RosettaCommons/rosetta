@@ -886,12 +886,14 @@ void EnvClaimBroker::add_chainbreak_variants( core::Size rsd_num_lower,
 
 }
 
-EnvClaimBroker::BrokeredJumpData::BrokeredJumpData( std::pair< core::Size, core::Size > const & positions,
-	std::pair< std::string, std::string > const & atoms,
-	bool put_jump_stub_intra_residue  ) :
+EnvClaimBroker::BrokeredJumpData::BrokeredJumpData(
+	std::pair< core::Size, core::Size > const & positions,
+	std::pair< std::string, std::string > const & atms,
+	bool put_jump_stub_intra_res
+) :
 	pos( positions ),
-	atoms( atoms ),
-	put_jump_stub_intra_residue( put_jump_stub_intra_residue )
+	atoms( atms ),
+	put_jump_stub_intra_residue( put_jump_stub_intra_res )
 {
 	std::pair< std::string, std::string > null_atoms = std::make_pair( "", "" );
 	if ( put_jump_stub_intra_residue &&

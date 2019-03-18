@@ -395,10 +395,10 @@ SidechainMCMover::initialize_simulation(
 	SidechainMover::initialize_simulation(pose, metropolis_hastings_mover,cycle);
 
 	if ( inherit_scorefxn_temperature_ ) {
-		protocols::canonical_sampling::MetropolisHastingsMoverOP metropolis_hastings_mover( metropolis_hastings_mover_ );
-		runtime_assert(metropolis_hastings_mover != nullptr);
-		set_scorefunction(metropolis_hastings_mover->monte_carlo()->score_function());
-		set_temperature(metropolis_hastings_mover->monte_carlo()->temperature());
+		protocols::canonical_sampling::MetropolisHastingsMoverOP metropolis_hastings_mover2( metropolis_hastings_mover_ );
+		runtime_assert(metropolis_hastings_mover2 != nullptr);
+		set_scorefunction(metropolis_hastings_mover2->monte_carlo()->score_function());
+		set_temperature(metropolis_hastings_mover2->monte_carlo()->temperature());
 	}
 }
 

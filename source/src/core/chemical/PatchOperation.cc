@@ -2661,7 +2661,7 @@ patch_operation_from_patch_file_line(
 		return utility::pointer::make_shared< DeleteAtom >( atom_name );
 
 	} else if ( tag == "ADD_ATOM_ALIAS" ) {
-		std::string atom1,atom2 = "";
+		//std::string atom1,atom2 = "";
 		atom1 = line.substr( 15, 4 ); // Rosetta atom
 		atom2 = line.substr( 20, 4);
 		l >> atom_name >> atom_alias;
@@ -2719,7 +2719,7 @@ patch_operation_from_patch_file_line(
 		return utility::pointer::make_shared< SetNbrAtom >( atom_name );
 
 	} else if ( tag == "NBR_RADIUS" ) {
-		Real radius;
+		//Real radius;
 		l >> radius;
 		if ( l.fail() ) {
 			utility_exit_with_message( "Failed to parse NBR_RADIUS patch operation." );
@@ -2773,16 +2773,16 @@ patch_operation_from_patch_file_line(
 		// Added by Andy M. Chen in June 2009
 		// This is needed for PTMs, which often result in one or more extra chi angles.
 	} else if ( tag == "ADD_PROTON_CHI" ) {
-		Size chino, nsamples, nextra_samples;
-		std::string dummy;
+		Size nsamples, nextra_samples;
+		std::string dummy2;
 		l >> chino;
-		l >> dummy; // should be "SAMPLES"
+		l >> dummy2; // should be "SAMPLES"
 		l >> nsamples;
 		utility::vector1< Real > samples( nsamples );
 		for ( Size ii = 1; ii <= nsamples; ++ii ) {
 			l >> samples[ ii ];
 		}
-		l >> dummy; // should be "EXTRA"
+		l >> dummy2; // should be "EXTRA"
 		l >> nextra_samples;
 		utility::vector1< Real > extra_samples( nextra_samples );
 		for ( Size ii = 1; ii <= nextra_samples; ++ii ) {
@@ -2807,7 +2807,7 @@ patch_operation_from_patch_file_line(
 	} else if ( tag == "DELETE_TERMINAL_CHI" ) {
 		return utility::pointer::make_shared< DeleteTerminalChi >();
 	} else if ( tag == "DELETE_METALBINDING_ATOM" ) {
-		std::string atom_name;
+		//std::string atom_name;
 		l >> atom_name;
 		if ( l.fail() ) {
 			utility_exit_with_message( "Failed to parse DELETE_METALBINDING_ATOM patch operation." );
@@ -2816,7 +2816,7 @@ patch_operation_from_patch_file_line(
 
 		return utility::pointer::make_shared< DeleteMetalbindingAtom >( atom_name );
 	} else if ( tag == "DELETE_ACT_COORD_ATOM" ) {
-		std::string atom_name;
+		//std::string atom_name;
 		l >> atom_name;
 		if ( l.fail() ) {
 			utility_exit_with_message( "Failed to parse DELETE_ACT_COORD_ATOM patch operation." );
@@ -2953,7 +2953,7 @@ patch_operation_from_patch_file_line(
 		if ( l.fail() ) utility_exit_with_message( "bad SET_ICOOR line in patchfile: " + line );
 		return utility::pointer::make_shared< SetICoor >( atom_name, radians(phi), radians(theta), d, stub1, stub2, stub3 );
 	} else if ( tag == "SET_ANCESTOR" ) {
-		std::string atom_name, which_anc, anc_atom_name;
+		std::string which_anc, anc_atom_name;
 		Ancestor anc( anc_parent );
 		l >> atom_name >> which_anc >> anc_atom_name;
 		if ( which_anc == "PARENT" ) {

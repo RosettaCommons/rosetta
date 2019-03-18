@@ -312,26 +312,26 @@ PCSMultiSet::compute_score(
 }
 
 void
-PCSMultiSet::show(std::ostream & TR) const {
+PCSMultiSet::show(std::ostream & tracer) const {
 	auto sum_calc = [](Size const & a, PCSSingleSetOP const & b) { return a + b->get_number_pcs(); };
 	Size total_pcs = std::accumulate(pcs_singleset_vec_.begin(), pcs_singleset_vec_.end(), 0, sum_calc);
-	TR << "   * * * PCSMultiSet Summary Report * * *   " << std::endl;
-	TR << "Spinlabel site: " << tag_residue_number_ << std::endl;
-	TR << "No experiments: " << number_metal_ions_ << std::endl;
-	TR << "No PCSs:        " << total_pcs << std::endl;
-	TR << "PCS Spinlabel:  ";
+	tracer << "   * * * PCSMultiSet Summary Report * * *   " << std::endl;
+	tracer << "Spinlabel site: " << tag_residue_number_ << std::endl;
+	tracer << "No experiments: " << number_metal_ions_ << std::endl;
+	tracer << "No PCSs:        " << total_pcs << std::endl;
+	tracer << "PCS Spinlabel:  ";
 	if ( spinlabel_ ) {
-		TR << std::endl;
-		TR << " - Name           = " << spinlabel_->get_name() << std::endl;
-		TR << " - 3-Letter code  = " << spinlabel_->get_code() << std::endl;
-		TR << " - Radical ion    = " << spinlabel_->get_radical_atom() << std::endl;
-		TR << " - Ensemble size  = " << spinlabel_->get_current_ensemble_size() << std::endl;
+		tracer << std::endl;
+		tracer << " - Name           = " << spinlabel_->get_name() << std::endl;
+		tracer << " - 3-Letter code  = " << spinlabel_->get_code() << std::endl;
+		tracer << " - Radical ion    = " << spinlabel_->get_radical_atom() << std::endl;
+		tracer << " - Ensemble size  = " << spinlabel_->get_current_ensemble_size() << std::endl;
 	} else {
-		TR << "None" << std::endl;
+		tracer << "None" << std::endl;
 	}
-	TR << "Experimental conditions: " << std::endl;
+	tracer << "Experimental conditions: " << std::endl;
 	for ( Size i = 1; i <= number_metal_ions_; ++i ) {
-		TR << " - " << pcs_singleset_vec_[i]->get_dataset_name() << ": [ " << pcs_singleset_vec_[i]->get_number_pcs() << " PCSs, "
+		tracer << " - " << pcs_singleset_vec_[i]->get_dataset_name() << ": [ " << pcs_singleset_vec_[i]->get_number_pcs() << " PCSs, "
 			<< pcs_singleset_vec_[i]->get_metal_ion_label() << " ]" << std::endl;
 	}
 }

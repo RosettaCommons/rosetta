@@ -368,10 +368,10 @@ void SymmetrySlider::setup( core::pose::Pose & pose )
 			InitialJumps_[ (*i_it).first ]=pose.jump( (*i_it).first );
 
 			//fpd also find the correct direction to slide for each jump
-			std::map< Size, core::conformation::symmetry::SymDof > dofs = symm_conf.Symmetry_Info()->get_dofs();
+			std::map< Size, core::conformation::symmetry::SymDof > dofs2 = symm_conf.Symmetry_Info()->get_dofs();
 			std::map< Size, core::conformation::symmetry::SymDof >::iterator dof_iterator;
 
-			dof_iterator = dofs.find( ( *i_it).first );
+			dof_iterator = dofs2.find( ( *i_it).first );
 			rigid::RigidBodyDofTransMover dofmover( (*dof_iterator).second, (*i_it).first, step_size() );
 			InvertJump_[ (*i_it).first ]=!dofmover_compresses( pose, dofmover );
 		}

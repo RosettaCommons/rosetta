@@ -45,13 +45,13 @@ public:
 	*/
 
 	EtableFunc (
-		Real const min_,
-		Real const max_,
-		Real const stepsize_
+		Real const min,
+		Real const max,
+		Real const stepsize
 	) :
-		min_     ( min_ ),
-		max_     ( max_ ),
-		stepsize_( stepsize_ )
+		min_     ( min ),
+		max_     ( max ),
+		stepsize_( stepsize )
 	{}
 
 	/// @brief returns a clone of this EtableFunc

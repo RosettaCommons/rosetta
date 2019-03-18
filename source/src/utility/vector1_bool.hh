@@ -174,10 +174,10 @@ public: // Creation
 	inline
 	vector1(
 		InputIterator const beg,
-		InputIterator const end,
+		InputIterator const ending,
 		allocator_type const & alloc = allocator_type()
 	) :
-		super( beg, end, alloc )
+		super( beg, ending, alloc )
 	{}
 
 

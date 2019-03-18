@@ -268,13 +268,13 @@ core::Real RotamerBoltzCalculator::computeBoltzWeight_lazy(core::pose::Pose& pos
 	*/
 
 	for ( Size i=1; i<rotset_->num_rotamers(); i++ ) {
-		core::pose::Pose pose = const_min_pose;
+		core::pose::Pose pose2 = const_min_pose;
 		PROF_START(basic::TEST3);
 		rot_to_pack = init_rot_to_pack(rotsets, moltenResid, i);
-		pmover.apply_to_rotpack(pose, rot_to_pack);
-		min_mover->apply( pose );
+		pmover.apply_to_rotpack(pose2, rot_to_pack);
+		min_mover->apply( pose2 );
 		PROF_STOP(basic::TEST3);
-		core::Real const score( stf.compute( pose ) );
+		core::Real const score( stf.compute( pose2 ) );
 		scores.push_back( score );
 	}
 	return computeBoltzSum(init_score, scores);

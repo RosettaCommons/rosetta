@@ -86,8 +86,8 @@ OnTheFlyNode::set_rotamers(
 	// figure out which residue-type group each rotamer is a member of
 	Size curr_restype = 1;
 	Size count_for_restype = 1;
-	Size const num_aa_types_ = rotamers->get_n_residue_groups();
-	//num_states_for_aatype_.resize( num_aa_types_ );
+	Size const num_aa_types = rotamers->get_n_residue_groups();
+	//num_states_for_aatype_.resize( num_aa_types );
 	for ( Size ii = 1; ii <= rotamers_.size(); ++ii ) {
 
 		sparse_mat_info_for_state_[ ii ].set_aa_type( curr_restype );
@@ -98,7 +98,7 @@ OnTheFlyNode::set_rotamers(
 			// increment curr_restype and skip over restypes with 0 rotamers
 			++curr_restype;
 			count_for_restype = 1;
-			if ( curr_restype > num_aa_types_ ) break;
+			if ( curr_restype > num_aa_types ) break;
 			state_offset_for_aatype_[ curr_restype ] = ii;
 		}
 	}

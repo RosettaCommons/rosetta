@@ -205,8 +205,8 @@ NormalModeMultifunc::vars_to_dofs( Multivec const & vars ) const {
 			// Iter over Normal mode torsions to accummulate into dofs
 			for ( Size i_tor = 1; i_tor <= NM_torID.size(); ++i_tor ) {
 				if ( map_NM_to_DOF_.count( i_tor ) ) {
-					auto it = map_NM_to_DOF_.find( i_tor );
-					Size const i_dof( it->second );
+					auto iter = map_NM_to_DOF_.find( i_tor );
+					Size const i_dof( iter->second );
 					dofs[ i_dof ] += scale * vars[ i_var ]*eigv[ i_tor ];
 				}
 			}
@@ -292,8 +292,8 @@ NormalModeMultifunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 
 			for ( Size i_tor = 1; i_tor <= eigv.size(); ++i_tor ) {
 				if ( map_NM_to_DOF_.count( i_tor ) ) {
-					auto it = map_NM_to_DOF_.find( i_tor );
-					Size const i_dof( it->second );
+					auto iter = map_NM_to_DOF_.find( i_tor );
+					Size const i_dof( iter->second );
 
 					//std::cout << "NM map, itor/idof: " << i_tor << " " << i_dof;
 					//std::cout << " " << scale * dEddofs[i_dof]*eigv[i_tor] << std::endl;

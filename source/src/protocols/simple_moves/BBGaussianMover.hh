@@ -195,7 +195,7 @@ protected:
 	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
 
 	//move up
-	Vector dphi;
+	Vector dphi_;
 	Real factorA_;
 	Real factorB_;
 

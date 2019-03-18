@@ -216,34 +216,34 @@ PCSTensor::reorder_tensor() {
 ///          principal axis system, show tensor parameters in PAS. If either of
 ///          the two conditions is not fulfilled show tensor matrix in arbitrary frame.
 void
-PCSTensor::show_tensor_stats(std::ostream & TR, bool show_in_pas) const {
+PCSTensor::show_tensor_stats(std::ostream & tracer, bool show_in_pas) const {
 	using namespace ObjexxFCL;
 	using namespace ObjexxFCL::format;
 	Size width(10);
 	Size precision(3);
-	TR << "   * * * PCSTensor parameters * * *   "  << std::endl;
+	tracer << "   * * * PCSTensor parameters * * *   "  << std::endl;
 	if ( show_in_pas && ( pcs_tensor_in_pas_ || (pcs_tensor_diagonalized_ && pcs_tensor_reconfigured_ ) ) ) {
-		TR << "Xax    (10-32 m3) = " << F(width, precision, get_ax()) << std::endl;
-		TR << "Xrh    (10-32 m3) = " << F(width, precision, get_rh()) << std::endl;
-		TR << "alpha  (degrees)  = " << F(width, precision, get_alpha()) << std::endl;
-		TR << "beta   (degrees)  = " << F(width, precision, get_beta()) << std::endl;
-		TR << "gamma  (degrees)  = " << F(width, precision, get_gamma()) << std::endl;
-		TR << "xM     (Ang.)     = " << F(width, precision, get_metal_center().x()) << std::endl;
-		TR << "yM     (Ang.)     = " << F(width, precision, get_metal_center().y()) << std::endl;
-		TR << "zM     (Ang.)     = " << F(width, precision, get_metal_center().z()) << std::endl;
+		tracer << "Xax    (10-32 m3) = " << F(width, precision, get_ax()) << std::endl;
+		tracer << "Xrh    (10-32 m3) = " << F(width, precision, get_rh()) << std::endl;
+		tracer << "alpha  (degrees)  = " << F(width, precision, get_alpha()) << std::endl;
+		tracer << "beta   (degrees)  = " << F(width, precision, get_beta()) << std::endl;
+		tracer << "gamma  (degrees)  = " << F(width, precision, get_gamma()) << std::endl;
+		tracer << "xM     (Ang.)     = " << F(width, precision, get_metal_center().x()) << std::endl;
+		tracer << "yM     (Ang.)     = " << F(width, precision, get_metal_center().y()) << std::endl;
+		tracer << "zM     (Ang.)     = " << F(width, precision, get_metal_center().z()) << std::endl;
 	} else {
-		TR << "[[ " << F(width, precision, get_T_xx()) << ", "
+		tracer << "[[ " << F(width, precision, get_T_xx()) << ", "
 			<< F(width, precision, get_T_xy()) << ", "
 			<< F(width, precision, get_T_xz()) << " ]," << std::endl;
-		TR << " [ " << F(width, precision, get_T_xy()) << ", "
+		tracer << " [ " << F(width, precision, get_T_xy()) << ", "
 			<< F(width, precision, get_T_yy()) << ", "
 			<< F(width, precision, get_T_yz()) << " ]," << std::endl;
-		TR << " [ " << F(width, precision, get_T_xz()) << ", "
+		tracer << " [ " << F(width, precision, get_T_xz()) << ", "
 			<< F(width, precision, get_T_yz()) << ", "
 			<< F(width, precision, -get_T_xx()-get_T_yy()) << " ]]" << std::endl;
-		TR << "xM     = " << F(width, precision, get_metal_center().x()) << std::endl;
-		TR << "yM     = " << F(width, precision, get_metal_center().y()) << std::endl;
-		TR << "zM     = " << F(width, precision, get_metal_center().z()) << std::endl;
+		tracer << "xM     = " << F(width, precision, get_metal_center().x()) << std::endl;
+		tracer << "yM     = " << F(width, precision, get_metal_center().y()) << std::endl;
+		tracer << "zM     = " << F(width, precision, get_metal_center().z()) << std::endl;
 	}
 }
 

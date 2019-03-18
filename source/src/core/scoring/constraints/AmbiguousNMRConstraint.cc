@@ -126,12 +126,12 @@ AmbiguousNMRConstraint::dist( func::XYZ_Func const & xyz ) const
 		PROF_STOP( basic::NOESY_ASSIGN_DIST_CST_CAST );
 		if ( cst_in_casted ) cum_invdist6 += cst_in_casted->inv_dist6( xyz );
 		if ( !cst_in_casted ) {
-			AtomPairConstraintCOP cst_in_casted;
+			AtomPairConstraintCOP cst2_in_casted;
 			PROF_START( basic::NOESY_ASSIGN_DIST_CST_CAST );
-			cst_in_casted = utility::pointer::dynamic_pointer_cast< AtomPairConstraint const >( member_it );
+			cst2_in_casted = utility::pointer::dynamic_pointer_cast< AtomPairConstraint const >( member_it );
 			PROF_STOP( basic::NOESY_ASSIGN_DIST_CST_CAST );
-			if ( cst_in_casted ) {
-				Real dist = cst_in_casted->dist( xyz );
+			if ( cst2_in_casted ) {
+				Real dist = cst2_in_casted->dist( xyz );
 				Real inv_dist = 1.0/dist;
 				Real inv_dist2 = inv_dist*inv_dist;
 				cum_invdist6 += inv_dist2*inv_dist2*inv_dist2;

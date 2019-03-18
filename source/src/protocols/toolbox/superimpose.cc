@@ -313,14 +313,14 @@ void jacobi(double a[6][6],double d[],double v[6][6],int *nrot);
 template< class T > void dump_matrix( Size, T const &, basic::Tracer & ) {}
 
 /// @brief A function (not a macro) that will print a square matrix to tr.Debug
-template< class T > void dump_matrix_no( Size nr, T const & a, basic::Tracer & tr)
+template< class T > void dump_matrix_no( Size nr, T const & a, basic::Tracer & tracer)
 {
 	Size i,k;
 	for ( i =0 ; i<nr; ++i ) {
 		for ( k =0 ; k<nr; ++k ) {
-			tr.Debug << a[i][k] << " ";
+			tracer.Debug << a[i][k] << " ";
 		}
-		tr.Debug << "\n";
+		tracer.Debug << "\n";
 	}
 }
 
@@ -466,8 +466,8 @@ void calc_fit_R(int natoms, Real const* weights, rvec const* xref, rvec const*x,
 	}
 
 	/* clear matrix U */
-	for ( auto & i : u ) {
-		for ( double & j : i ) j=0;
+	for ( auto & ii : u ) {
+		for ( double & jj : ii ) jj=0;
 	}
 
 	/*calculate the matrix U*/

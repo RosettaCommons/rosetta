@@ -189,7 +189,7 @@ private:
 	protocols::simple_moves::ShortBackrubMoverOP short_backrub_mover_;
 
 	/// @brief mover used for backbone moves when option set to kinematic closure
-	protocols::kinematic_closure::KicMoverOP fullatom_kic_mover;
+	protocols::kinematic_closure::KicMoverOP fullatom_kic_mover_;//This seems to be completely unused
 
 	/// @brief mover used for side-chain moves
 	protocols::minimization_packing::BoltzmannRotamerMoverOP boltzmann_rotamer_mover_;

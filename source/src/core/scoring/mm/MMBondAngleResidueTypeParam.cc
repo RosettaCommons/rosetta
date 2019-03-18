@@ -75,7 +75,7 @@ score_atom_centrally(
 void
 MMBondAngleResidueTypeParam::init(
 	core::chemical::ResidueType const & residue_type,
-	MMBondAngleLibrary const & mm_bondangle_library,
+	MMBondAngleLibrary const & mm_bondangle_lib,
 	bool use_residue_type_theta0,
 	utility::vector1<std::string> const & central_atoms_to_score
 ) {
@@ -100,7 +100,7 @@ MMBondAngleResidueTypeParam::init(
 		//  << residue_type.atom_name(atom_set.key3())
 		//   << " (" << type1 << "-" << type2 << "-" << type3 << ")";
 
-		core::scoring::mm::mm_bondangle_library_citer_pair mm_pair(mm_bondangle_library.lookup(type1, type2, type3));
+		core::scoring::mm::mm_bondangle_library_citer_pair mm_pair( mm_bondangle_lib.lookup(type1, type2, type3) );
 
 		// make sure there is at least one set of parameters defined
 		debug_assert(mm_pair.first != mm_pair.second);

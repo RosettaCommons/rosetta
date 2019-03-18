@@ -433,14 +433,10 @@ ParsedProtocol::parse_my_tag(
 core::pose::PoseOP
 ParsedProtocol::get_additional_output( )
 {
-	core::pose::PoseOP pose=nullptr;
-	MoverFilterVector::const_reverse_iterator rmover_it;
-	const MoverFilterVector::const_reverse_iterator movers_crend = movers_.rend();
-
 	if ( !resume_support_ ) {
 		// Get output from last specified mover
 		const utility::vector1< MoverFilterPair >::const_reverse_iterator movers_crend = movers_.rend();
-		for ( rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
+		for ( auto rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
 			protocols::moves::MoverOP mover = (*rmover_it).first.first;
 			if ( mover && mover->get_name() != "NullMover" ) {
 				core::pose::PoseOP additional_pose = mover->get_additional_output();
@@ -455,10 +451,12 @@ ParsedProtocol::get_additional_output( )
 		return nullptr;
 	}
 
-	// Legacy Protocol resume support:
+	// Legacy Protocol resume suppor
+	core::pose::PoseOP pose = nullptr;
+	auto rmover_it = movers_.rbegin();
 
 	//fpd search the mover-filter pairs backwards; look for movers that have remaining poses
-	for ( rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
+	for ( auto movers_crend = movers_.rend(); rmover_it != movers_crend; ++rmover_it ) {
 		core::pose::PoseOP checkpoint = (*rmover_it).first.first->get_additional_output();
 		if ( checkpoint ) {
 			//std::string const mover_name( rmover_it->first.first->get_name() );

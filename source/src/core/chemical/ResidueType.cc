@@ -469,9 +469,9 @@ ResidueType::operator=( ResidueType const & residue_type )
 		cut_bond_neighbor_[ new_key ] = new_value;
 	}
 
-	std::map< VD, AtomICoor > old_icoor(icoor_);
+	std::map< VD, AtomICoor > old_icoors(icoor_);
 	icoor_.clear();
-	for ( auto const & elem : old_icoor ) {
+	for ( auto const & elem : old_icoors ) {
 		VD old_key = elem.first;
 		VD new_key = old_to_new[old_key];
 		AtomICoor old_icoor = elem.second; //now we have to change the vertex descriptors within icoor. They are pointing to an old vertex descriptor
@@ -1995,11 +1995,11 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 			// Oh: we also *must* figure out why atom ordering matters so much for the backbone
 			// sidechain distinction (rather than reordering after a Correct grouping) and how to
 			// do the latter. Right now I have to relabel...
-			for ( VDs const & chi : found_chis ) {
-				if ( atom_name( chi[ 3 ] ) == "O2'" && atom_name( chi[ 2 ] ) == "C2'" ) {
-					true_chis.emplace_back( chi );
+			for ( VDs const & found_chi : found_chis ) {
+				if ( atom_name( found_chi[ 3 ] ) == "O2'" && atom_name( found_chi[ 2 ] ) == "C2'" ) {
+					true_chis.emplace_back( found_chi );
 
-					for ( Size ii = 1; ii < atom_index( atom_name( chi[ 3 ] ) ); ++ii ) {
+					for ( Size ii = 1; ii < atom_index( atom_name( found_chi[ 3 ] ) ); ++ii ) {
 						set_backbone_heavyatom( atom_name( ii ) );
 					}
 				}
@@ -2020,11 +2020,11 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 			// we don't want to update it right away.
 
 			std::string candidate_new_atom = target_first_atom;
-			for ( VDs const & chi : found_chis ) {
-				tr.Trace << "looking at found chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
-				if ( atom_name( chi[ 1 ] ) == target_first_atom ) {
-					true_chis.push_back( chi );
-					candidate_new_atom = atom_name( chi[ 2 ] );
+			for ( VDs const & found_chi : found_chis ) {
+				tr.Trace << "looking at found chi: " << atom_name( found_chi[1] ) << " " << atom_name( found_chi[2] ) << " " << atom_name( found_chi[3] ) << " " << atom_name( found_chi[4] ) << std::endl;
+				if ( atom_name( found_chi[ 1 ] ) == target_first_atom ) {
+					true_chis.push_back( found_chi );
+					candidate_new_atom = atom_name( found_chi[ 2 ] );
 				}
 			}
 			if ( candidate_new_atom == target_first_atom ) break;
@@ -2034,11 +2034,11 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 			target_first_atom = candidate_new_atom;
 		}
 
-		for ( VDs const & chi : true_chis ) {
-			tr.Debug << "looking at true chi: " << atom_name( chi[1] ) << " " << atom_name( chi[2] ) << " " << atom_name( chi[3] ) << " " << atom_name( chi[4] ) << std::endl;
-			debug_assert( chi.size() == 4 );
-			add_chi( chi[1], chi[2], chi[3], chi[4] );
-			if ( atom( chi[4] ).element_type()->element() == core::chemical::element::H ) {
+		for ( VDs const & true_chi : true_chis ) {
+			debug_assert( true_chi.size() == 4 );
+			tr.Debug << "looking at true chi: " << atom_name( true_chi[1] ) << " " << atom_name( true_chi[2] ) << " " << atom_name( true_chi[3] ) << " " << atom_name( true_chi[4] ) << std::endl;
+			add_chi( true_chi[1], true_chi[2], true_chi[3], true_chi[4] );
+			if ( atom( true_chi[4] ).element_type()->element() == core::chemical::element::H ) {
 				// proton chi
 				proton_chis.push_back( nchi() );
 			}

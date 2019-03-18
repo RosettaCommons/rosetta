@@ -214,7 +214,7 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 
 		numeric::xyzVector<core::Real> final_orb_xyz(0.0);
 		core::Real low_D = 11;
-		numeric::xyzVector<core::Real> res2_H_xyz;
+		//numeric::xyzVector<core::Real> res2_H_xyz;
 		std::string orbital_type("");
 		core::Real angle=2;
 		core::Size atom_index_min_dist(0);
@@ -354,7 +354,7 @@ void OrbitalsStatistics::bb_stats(
 		core::conformation::Residue resid1 = pdb.residue(res_num1);
 
 		core::Real low_D = 11;
-		numeric::xyzVector<core::Real> res2_H_xyz;
+		//numeric::xyzVector<core::Real> res2_H_xyz;
 		std::string orbital_type("");
 		core::Real angle=2;
 		core::Size atom_index_min_dist(0);

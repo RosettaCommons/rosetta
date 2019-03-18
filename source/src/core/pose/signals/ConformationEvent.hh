@@ -54,8 +54,8 @@ struct ConformationEvent : public GeneralEvent {
 
 	/// @brief constructor
 	inline
-	ConformationEvent( Pose const * pose ) :
-		Super( pose )
+	ConformationEvent( Pose const * p ) :
+		Super( p )
 	{}
 
 

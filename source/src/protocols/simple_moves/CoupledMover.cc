@@ -44,7 +44,6 @@
 
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <protocols/minimization_packing/BoltzmannRotamerMover.hh>
@@ -61,6 +60,7 @@
 #include <basic/Tracer.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 
 // Numeric Headers
 #include <numeric/random/random.hh>
@@ -183,7 +183,7 @@ CoupledMover::apply( core::pose::Pose & pose )
 
 			} else if ( backbone_mover_ == "kic" ) {
 				// Backbone move is KIC
-				protocols::kinematic_closure::KicMoverOP fullatom_kic_mover( new protocols::kinematic_closure::KicMover() );
+				protocols::kinematic_closure::KicMoverOP fullatom_kic_mover( utility::pointer::make_shared< protocols::kinematic_closure::KicMover >() );
 				fullatom_kic_mover->add_perturber( perturber_ );
 				using protocols::loops::Loop;
 				// Set up designable loop size

@@ -91,15 +91,15 @@ Size SSManager::symbolString2index( std::string symbolString){
 }
 
 /// @brief transform abego symbol string to base5 index. This is used to quickly pool the abego from Alex's hd5 database
-std::string SSManager::index2symbolString( Size index,Size length){
+std::string SSManager::index2symbolString( Size const index, Size length ){
 	Size tmp_index=index;
 	std::string symbolString ="";
 	for ( Size ii=0; ii<length; ++ii ) {
-		Size index = tmp_index % 3;
+		Size iindex = tmp_index % 3;
 		tmp_index = tmp_index/3;
-		symbolString+=index2symbol(index+1);
+		symbolString += index2symbol( iindex+1 );
 	}
-	return(symbolString);
+	return symbolString;
 }
 
 

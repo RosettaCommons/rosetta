@@ -303,8 +303,8 @@ SecondaryStructureSelector::fix_secstruct_definition( std::string & ss ) const
 	TR << ss << std::endl;
 	TR << todel << std::endl;
 	for ( auto const & combo : todel ) {
-		for ( core::Size i = 0; i < combo.second; ++i ) {
-			ss[combo.first + i] = 'L';
+		for ( core::Size ii = 0; ii < combo.second; ++ii ) {
+			ss[ combo.first + ii ] = 'L';
 		}
 	}
 	TR << ss << std::endl;

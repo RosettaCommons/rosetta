@@ -229,29 +229,29 @@ RDCTensor::reorder_tensor() {
 ///          principal axis system, show tensor parameters in PAS. If either of
 ///          the two conditions is not fulfilled show tensor matrix in arbitrary frame.
 void
-RDCTensor::show_tensor_stats(std::ostream & TR, bool show_in_pas) const {
+RDCTensor::show_tensor_stats(std::ostream & tracer, bool show_in_pas) const {
 	using namespace ObjexxFCL;
 	using namespace ObjexxFCL::format;
 	Size width(10);
 	Size precision1(6);
 	Size precision2(3);
-	TR << "   * * * RDCTensor parameters * * *   "  << std::endl;
+	tracer << "   * * * RDCTensor parameters * * *   "  << std::endl;
 	if ( show_in_pas && ( rdc_tensor_in_pas_ || ( rdc_tensor_diagonalized_ && rdc_tensor_reconfigured_ ) ) ) {
-		TR << "Da    (Hz)   = " << F(width, precision2, get_Da()) << std::endl;
-		TR << "R            = " << F(width, precision2, get_R()) << std::endl;
-		TR << "Aa    (Hz)   = " << E(width, precision1, get_ax()) << std::endl;
-		TR << "Ar    (Hz)   = " << E(width, precision1, get_rh()) << std::endl;
-		TR << "alpha (deg.) = " << F(width, precision2, get_alpha()) << std::endl;
-		TR << "beta  (deg.) = " << F(width, precision2, get_beta()) << std::endl;
-		TR << "gamma (deg.) = " << F(width, precision2, get_gamma()) << std::endl;
+		tracer << "Da    (Hz)   = " << F(width, precision2, get_Da()) << std::endl;
+		tracer << "R            = " << F(width, precision2, get_R()) << std::endl;
+		tracer << "Aa    (Hz)   = " << E(width, precision1, get_ax()) << std::endl;
+		tracer << "Ar    (Hz)   = " << E(width, precision1, get_rh()) << std::endl;
+		tracer << "alpha (deg.) = " << F(width, precision2, get_alpha()) << std::endl;
+		tracer << "beta  (deg.) = " << F(width, precision2, get_beta()) << std::endl;
+		tracer << "gamma (deg.) = " << F(width, precision2, get_gamma()) << std::endl;
 	} else {
-		TR << "[[ " << E(width, precision1, get_T_xx()) << ", "
+		tracer << "[[ " << E(width, precision1, get_T_xx()) << ", "
 			<< E(width, precision1, get_T_xy()) << ", "
 			<< E(width, precision1, get_T_xz()) << " ]," << std::endl;
-		TR << " [ " << E(width, precision1, get_T_xy()) << ", "
+		tracer << " [ " << E(width, precision1, get_T_xy()) << ", "
 			<< E(width, precision1, get_T_yy()) << ", "
 			<< E(width, precision1, get_T_yz()) << " ]," << std::endl;
-		TR << " [ " << E(width, precision1, get_T_xz()) << ", "
+		tracer << " [ " << E(width, precision1, get_T_xz()) << ", "
 			<< E(width, precision1, get_T_yz()) << ", "
 			<< E(width, precision1, -get_T_xx()-get_T_yy()) << " ]]" << std::endl;
 	}

@@ -723,9 +723,9 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		//Find obligate pairs
 		vector1< vector1< Size > > chunks;
 		vector1< Size > curr_chunk;
-		Size i( 0 ), j( 0 );
+		//Size i( 0 ), j( 0 );
 		char c(' '), d( ' ' );
-		for ( Size q = 1; q <= resnum.size(); q++ ) {
+		for ( Size q = 1, i = 0, j = 0; q <= resnum.size(); q++ ) {
 			i = resnum[ q ];
 			c = conventional_chains[ resnum[ q ] ];
 			domain_map[ i ] = n;
@@ -1437,10 +1437,13 @@ RNA_DeNovoSetup::setup_refine_pose_list( utility::options::OptionCollection cons
 }
 
 vector1<pose::PoseOP>
-RNA_DeNovoSetup::get_refine_pose_list( std::string const & input_silent_file,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_res_and_chain_and_segid,
-	core::chemical::ResidueTypeSetCOP rsd_set_ ) const
-{
+RNA_DeNovoSetup::get_refine_pose_list(
+	std::string const & input_silent_file,
+	std::tuple< utility::vector1< int >,
+	utility::vector1< char >,
+	utility::vector1< std::string > > const & output_res_and_chain_and_segid,
+	core::chemical::ResidueTypeSetCOP rsd_set
+) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::import_pose::pose_stream;
@@ -1462,8 +1465,8 @@ RNA_DeNovoSetup::get_refine_pose_list( std::string const & input_silent_file,
 		int pose_count = 1;
 		input->set_order_by_energy( true );
 		while ( input->has_another_pose() ) {
-			pose::PoseOP new_pose( new pose::Pose );
-			input->fill_pose( *new_pose, *rsd_set_ );
+			pose::PoseOP new_pose = utility::pointer::make_shared< pose::Pose >();
+			input->fill_pose( *new_pose, *rsd_set );
 			set_output_res_and_chain( *new_pose, output_res_and_chain_and_segid );
 			refine_pose_list.push_back( new_pose );
 

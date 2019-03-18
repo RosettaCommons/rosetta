@@ -340,15 +340,17 @@ ProClosureEnergy::eval_intrares_derivatives(
 	Vector const & nv_pos( rsd.xyz( NV_ind ));
 	Vector const & n_pos(  rsd.xyz( N_ind ));
 
-	Distance dist_n_nv( 0.0 );
-	numeric::deriv::distance_f1_f2_deriv( nv_pos, n_pos, dist_n_nv, f1, f2 );
-	Real deriv( weights[ pro_close ] * 2 * dist_n_nv / ( n_nv_dist_sd_ ));
-	f1 *= deriv; f2 *= deriv;
+	{
+		Distance dist_n_nv( 0.0 );
+		numeric::deriv::distance_f1_f2_deriv( nv_pos, n_pos, dist_n_nv, f1, f2 );
+		Real deriv( weights[ pro_close ] * 2 * dist_n_nv / ( n_nv_dist_sd_ ));
+		f1 *= deriv; f2 *= deriv;
 
-	atom_derivs[ NV_ind ].f1() += f1;
-	atom_derivs[ NV_ind ].f2() += f2;
-	atom_derivs[ N_ind  ].f1() -= f1;
-	atom_derivs[ N_ind  ].f2() -= f2;
+		atom_derivs[ NV_ind ].f1() += f1;
+		atom_derivs[ NV_ind ].f2() += f2;
+		atom_derivs[ N_ind  ].f1() -= f1;
+		atom_derivs[ N_ind  ].f2() -= f2;
+	}
 
 	// N-terminal proline
 	if ( rsd.has( scCAV_ ) && rsd.has( bbCA_ ) ) {

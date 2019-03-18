@@ -228,14 +228,14 @@ public:
 		}
 		for ( int i=1; i<=(int)ico.size(); ++i ) {
 			// convert to spherical ASSUMES NORMALIZED
-			Real theta = pi-acos( ico[i][2] );
+			Real my_theta = pi-acos( ico[i][2] );
 			Real phi = atan2( ico[i][1], ico[i][0] ) + pi;
 			for ( int j=0; j<S1subs; ++j ) {
 				Real psi = 2.0*j*pi/((Real)S1subs);
-				Real w = sin(theta/2)*sin(phi+psi/2);
-				Real x = cos(theta/2)*cos(psi/2);
-				Real y = cos(theta/2)*sin(psi/2);
-				Real z = sin(theta/2)*cos(phi+psi/2);
+				Real w = sin(my_theta/2)*sin(phi+psi/2);
+				Real x = cos(my_theta/2)*cos(psi/2);
+				Real y = cos(my_theta/2)*sin(psi/2);
+				Real z = sin(my_theta/2)*cos(phi+psi/2);
 				rotlist_[counter++] = urs_Quat(x,y,z,w);
 			}
 		}

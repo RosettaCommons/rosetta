@@ -135,8 +135,8 @@ void SiteGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 			set_sphere(residue.xyz(atom_index),atr_radius_,atr_weight_);
 
 			//set neutral
-			for ( core::Size atom_index = 1; atom_index <= residue.nheavyatoms(); ++atom_index ) {
-				set_sphere(residue.xyz(atom_index),rep_radius_,0);
+			for ( core::Size atom_index2 = 1; atom_index2 <= residue.nheavyatoms(); ++atom_index2 ) {
+				set_sphere(residue.xyz(atom_index2),rep_radius_,0);
 			}
 
 			//set repulsive

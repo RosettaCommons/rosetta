@@ -355,15 +355,15 @@ RotamericSingleResidueDunbrackLibraryParser::determine_rotamer_well_order(
 	utility::vector1< std::map< core::Size, core::Size > > & rotamer_well_reordering,
 	std::string const &filename
 ) const {
-	core::Size const n_rotwells( rotwells_.size() );
-	runtime_assert_string_msg( n_rotwells > 0, "Error in RotamericSingleResidueDunbrackLibraryParser::determine_rotamer_well_order(): No rotamer wells have yet been stored!" );
+	core::Size const num_rotwells( rotwells_.size() );
+	runtime_assert_string_msg( num_rotwells > 0, "Error in RotamericSingleResidueDunbrackLibraryParser::determine_rotamer_well_order(): No rotamer wells have yet been stored!" );
 
 	bool reordering_needed( false );
 
 	utility::vector1< core::Size > first_bb_bin_indices; //List of indices of rotwells_ entries that correspond to the first backbone bin.
 	utility::vector1< core::Size > max_rotwell_indices; //The maximum values of the rotamer well indices for each chi.
 	max_rotwell_indices.resize( rotwells_[1].size(), 0 );
-	for ( core::Size i(1); i<=n_rotwells; ++i ) {
+	for ( core::Size i(1); i<=num_rotwells; ++i ) {
 		if ( backbone_torsions_[i] == backbone_torsions_[1] ) first_bb_bin_indices.push_back(i);
 		for ( core::Size j(1); j<=rotwells_[i].size(); ++j ) {
 			debug_assert(rotwells_[i].size() == max_rotwell_indices.size());

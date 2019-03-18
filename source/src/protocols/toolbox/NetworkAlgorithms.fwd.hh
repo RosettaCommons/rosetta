@@ -19,7 +19,8 @@
 
 namespace protocols {
 namespace toolbox {
-class Node;
+
+struct Node;
 typedef utility::pointer::shared_ptr< Node > NodeOP;
 typedef utility::pointer::shared_ptr< Node const > NodeCOP;
 

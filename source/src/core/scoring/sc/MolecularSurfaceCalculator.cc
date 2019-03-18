@@ -1089,8 +1089,8 @@ int MolecularSurfaceCalculator::GenerateConcaveSurface()
 				// check against 3 planes
 				int bail = 0;
 				for ( auto const & vector : vectors ) {
-					ScValue dt = point->dot(vector);
-					if ( dt >= 0.0 ) {
+					ScValue dt2 = point->dot(vector);
+					if ( dt2 >= 0.0 ) {
 						bail = 1;
 						break;
 					}

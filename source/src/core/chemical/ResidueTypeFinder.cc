@@ -218,7 +218,8 @@ ResidueTypeFinder::append_relevant_pdb_components( ResidueTypeCOPs & rsd_types )
 		for ( auto rsd_type : rsd_types ) {
 			if ( rsd_type->name3() == name3_ ||
 					residue_type_set_.generates_patched_residue_type_with_name3( residue_type_base_name( *rsd_type ), name3_ ) ) {
-				rosetta_type_has_name3 = true; break;
+				rosetta_type_has_name3 = true;
+				break;
 			}
 		}
 		if ( !rosetta_type_has_name3 || option[ OptionKeys::in::file::check_all_PDB_components ]() ) {
@@ -1030,9 +1031,10 @@ ResidueTypeFinder::filter_disallow_variants( ResidueTypeCOPs const & rsd_types )
 	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
 		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
 		bool disallowed( false );
-		for ( Size n = 1; n <= disallow_variants_.size(); n++ ) {
-			if ( rsd_type->has_variant_type( disallow_variants_[ n ] ) ) {
-				disallowed = true; break;
+		for ( Size i = 1; i <= disallow_variants_.size(); ++i ) {
+			if ( rsd_type->has_variant_type( disallow_variants_[ i ] ) ) {
+				disallowed = true;
+				break;
 			}
 		}
 		if ( !disallowed ) filtered_rsd_types.push_back( rsd_type );
@@ -1053,9 +1055,10 @@ ResidueTypeFinder::filter_disallow_properties( ResidueTypeCOPs const & rsd_types
 	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
 		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
 		bool disallowed( false );
-		for ( Size n = 1; n <= disallow_properties_.size(); n++ ) {
-			if ( rsd_type->has_property( disallow_properties_[ n ] ) ) {
-				disallowed = true; break;
+		for ( Size i = 1; i <= disallow_properties_.size(); ++i ) {
+			if ( rsd_type->has_property( disallow_properties_[ i ] ) ) {
+				disallowed = true;
+				break;
 			}
 		}
 		if ( !disallowed ) filtered_rsd_types.push_back( rsd_type );

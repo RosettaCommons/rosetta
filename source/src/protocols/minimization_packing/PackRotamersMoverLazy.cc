@@ -110,8 +110,8 @@ PackRotamersMoverLazy::apply_to_rotpack( Pose & pose , utility::vector0< int > r
 	}
 	if ( nloop() > 1 ) pose = best_pose;
 
-	ScoreFunctionCOP scorefxn_ = score_function();
-	(*scorefxn_)(pose);
+	ScoreFunctionCOP scorefxn = score_function();
+	(*scorefxn)(pose);
 }
 
 }//moves

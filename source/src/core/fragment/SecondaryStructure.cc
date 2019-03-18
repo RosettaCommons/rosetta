@@ -177,13 +177,13 @@ void SecondaryStructure::read_from_file( std::string fn ) {
 	strand_fraction_.dimension( total_residue_, 0.0 );
 
 	while ( getline( data, line ) ) {
-		std::istringstream line_stream( line );
+		std::istringstream line_stream2( line );
 		// a=i, b=j, c=orientation(1 or 2), d=pleating(1 or 2)
 		int pos;
 		core::Real ef,hf,lf;
-		line_stream >> pos >> ef >> hf >> lf;
+		line_stream2 >> pos >> ef >> hf >> lf;
 
-		if ( line_stream.fail() ) {
+		if ( line_stream2.fail() ) {
 			tr.Warning << "parse error: " << line << std::endl;
 			continue;
 		}

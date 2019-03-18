@@ -817,7 +817,7 @@ void bridgeObjects (const utility::vector1<utility::fixedsizearray1<Real,3> >& a
 		}
 		int chain12len = (l1-1) + (l2-2); // implementing chain12 = [chain1b(:,2:l1), chain2b(:,2:l2-1)];
 		chain12.resize(chain12len);
-		int ind = 1;
+		ind = 1;
 		for ( int k=2; k<=l1; k++ ) {
 			for ( int n=1; n<=3; n++ ) {
 				chain12[ind][n] = chain1b[k][n];

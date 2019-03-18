@@ -204,8 +204,8 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 					loops::PoseNumberedLoopFileReader reader;
 					reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
 					list_of_loops = reader.read_pose_numbered_loops_file(is, selection_file, false );
-					loops::Loops core = loops::Loops( list_of_loops );
-					core.get_residues( selection );
+					loops::Loops core2 = loops::Loops( list_of_loops );
+					core2.get_residues( selection );
 				}
 			}
 			if ( invert ) {

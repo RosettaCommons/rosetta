@@ -93,8 +93,8 @@ private:
 	bool ramp_fa_rep;
 	bool min_cst;
 	core::scoring::ScoreFunctionOP scorefxn;
-	core::Real ensemble_ca_rmsd;
-	core::Real ensemble_ca_rmsd_tolerance;
+	core::Real ensemble_ca_rmsd_;
+	core::Real ensemble_ca_rmsd_tolerance_;
 	bool is_properly_initialized;
 	core::Real harmonic_ca_cst_std_dev;
 	bool scorefunction_initialized;

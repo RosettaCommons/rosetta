@@ -359,7 +359,9 @@ AtomTree::replace_residue_subtree(
 				old_root_atom = old_atom;
 			}
 			// this is just debugging to confirm that outgoing vector actually contains all the outgoing connections
-			for ( Size i=0; i< old_atom->n_children(); ++i ) debug_assert( old_atom->child(i)->id().rsd() == seqpos );
+			for ( Size j=0; j < old_atom->n_children(); ++j ) {
+				debug_assert( old_atom->child( j )->id().rsd() == seqpos );
+			}
 		}
 	}
 

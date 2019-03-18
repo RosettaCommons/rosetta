@@ -53,7 +53,7 @@ private:
 	int nextX, nextY, nextZ;
 
 	// grids and dimensions
-	float threshold;
+	float threshold_;
 	ObjexxFCL::FArray3D_float const * densityPtr;
 	ObjexxFCL::FArray4D_float * gradPtr;
 	numeric::xyzVector_int size;

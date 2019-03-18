@@ -173,8 +173,8 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 
 				loops::PoseNumberedLoopFileReader reader;
 				reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
-				loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( is, selection_file, false /*no strict checking */ );
-				loops::Loops core( loops );
+				loops::SerializedLoopList loops2 = reader.read_pose_numbered_loops_file( is, selection_file, false /*no strict checking */ );
+				loops::Loops core( loops2 );
 				core.get_residues( selection );
 			}
 			if ( invert ) {

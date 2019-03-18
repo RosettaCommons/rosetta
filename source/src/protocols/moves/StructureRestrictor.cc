@@ -49,23 +49,23 @@ namespace moves {
 
 StructureRestrictor::StructureRestrictor():
 	Mover("StructureRestrictor"),
-	//  relevant_chains_fname( basic::options::option[ basic::options::OptionKeys::StructureRestrictor::relevant_chains].value() ),
-	initialized( false )
+	//  relevant_chains_fname_( basic::options::option[ basic::options::OptionKeys::StructureRestrictor::relevant_chains].value() ),
+	initialized_( false )
 {}
 
 StructureRestrictor::StructureRestrictor( string const & name):
 	Mover(name),
-	//  relevant_chains_fname( basic::options::option[ basic::options::OptionKeys::StructureRestrictor::relevant_chains].value() ),
-	initialized( false )
+	//  relevant_chains_fname_( basic::options::option[ basic::options::OptionKeys::StructureRestrictor::relevant_chains].value() ),
+	initialized_( false )
 {}
 
 StructureRestrictor::StructureRestrictor( StructureRestrictor const & src):
 	//utility::pointer::ReferenceCount(),
 	Mover(src)
 {
-	chain_map = std::map< std::string, std::string>( src.chain_map );
-	relevant_chains_fname = src.relevant_chains_fname;
-	initialized = src.initialized;
+	chain_map_ = std::map< std::string, std::string>( src.chain_map_ );
+	relevant_chains_fname_ = src.relevant_chains_fname_;
+	initialized_ = src.initialized_;
 }
 
 StructureRestrictor::~StructureRestrictor()= default;
@@ -88,14 +88,14 @@ StructureRestrictor::parse_my_tag(
 	Pose const & /*pose*/ )
 {
 	if ( tag->hasOption("relevant_chains") ) {
-		relevant_chains_fname = tag->getOption<string>("relevant_chains");
+		relevant_chains_fname_ = tag->getOption<string>("relevant_chains");
 	}
 }
 
 void
 StructureRestrictor::setup_relevant_chains(
 	string const & relevant_chains_fname,
-	map<string, string> & chain_map
+	map< string, string > & chain_map
 ){
 	if ( relevant_chains_fname.length() == 0 ) {
 		TR_SR.Error << " Cannot open relevant_chains_file '"<< relevant_chains_fname << "'" << endl;
@@ -117,7 +117,7 @@ StructureRestrictor::setup_relevant_chains(
 		split(tokens, line, is_any_of(tab) );
 		chain_map.insert(std::pair<string, string>(tokens[0], tokens[1]));
 	}
-	initialized = true;
+	initialized_ = true;
 }
 
 // this is a hack because poses do not have canonical names!
@@ -139,29 +139,29 @@ StructureRestrictor::pose_name(Pose const & pose){
 
 void
 StructureRestrictor::apply( Pose& pose ){
-	if ( !initialized ) {
-		setup_relevant_chains(relevant_chains_fname, chain_map);
+	if ( !initialized_ ) {
+		setup_relevant_chains(relevant_chains_fname_, chain_map_);
 	}
 
 
 	string const & name = pose_name(pose);
-	auto i(chain_map.find(name));
-	if ( i == chain_map.end() ) {
+	auto i(chain_map_.find(name));
+	if ( i == chain_map_.end() ) {
 		TR_SR << "No chain information found for structure " << name << "." << endl;
 		return;
 	}
 	string chains = i->second;
 	TR_SR << "Restricting structure " << name << " to chains " << chains << "." << endl;
 	Size res_begin_delete = 1;
-	for ( Size i=1; i <= pose.size(); ++i ) {
+	for ( Size j=1; j <= pose.size(); ++j ) {
 		//INVARIANT: if we're in a stretch to delete then res_begin_delete
 		//indicates the first residue in this stretch to delete
-		if ( chains.find( pose.pdb_info()->chain(i), 0) != string::npos ) {
+		if ( chains.find( pose.pdb_info()->chain(j), 0) != string::npos ) {
 			//keep this position
-			if ( res_begin_delete != i ) {
-				pose.conformation().delete_residue_range_slow(res_begin_delete, i-1);
+			if ( res_begin_delete != j ) {
+				pose.conformation().delete_residue_range_slow(res_begin_delete, j-1);
 			}
-			res_begin_delete = i+1;
+			res_begin_delete = j+1;
 		}
 	}
 	// don't for get the last section to delete

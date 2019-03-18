@@ -81,7 +81,7 @@ protected:
 	core::Real min_size_;
 	core::Size min_nb_;
 	core::Real min_sep_;
-	core::scoring::packstat::SasaOptions opts;
+	core::scoring::packstat::SasaOptions opts_;
 
 };
 

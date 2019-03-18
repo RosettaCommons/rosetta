@@ -356,7 +356,7 @@ GridSet::total_score(utility::vector1< GridScorable const * > const & items) con
 {
 	ScoreMap score_map( grid_scores(items) );
 
-	core::Real total_score = 0.0;
+	core::Real score = 0.0;
 
 	for ( ScoreMap::value_type const & score_map_entry: score_map ) {
 		std::string const & name( score_map_entry.first );
@@ -366,40 +366,40 @@ GridSet::total_score(utility::vector1< GridScorable const * > const & items) con
 			weight = grid_weights_.at(name);
 		}
 
-		total_score += component_score*weight;
+		score += component_score*weight;
 	}
 
 	if ( norm_function_ ) {
-		return normalize( total_score, items );
+		return normalize( score, items );
 	} else {
-		return total_score;
+		return score;
 	}
 }
 
 core::Real
-GridSet::normalize( core::Real total_score, utility::vector1< core::conformation::UltraLightResidue const* > const & items ) const
+GridSet::normalize( core::Real score, utility::vector1< core::conformation::UltraLightResidue const* > const & items ) const
 {
-	if ( ! norm_function_ ) { return total_score; }
+	if ( ! norm_function_ ) { return score; }
 
 	core::conformation::ResidueCOPs residue_cops;
 	for ( core::conformation::UltraLightResidue const* resi : items ) {
 		residue_cops.push_back( resi->residue() );
 	}
-	core::Real normalized_score = (*norm_function_)(total_score,residue_cops);
-	TR.Trace << "Score normalized from " << total_score << " to "<< normalized_score << std::endl;
+	core::Real normalized_score = (*norm_function_)(score,residue_cops);
+	TR.Trace << "Score normalized from " << score << " to "<< normalized_score << std::endl;
 	return normalized_score;
 }
 
 core::Real
-GridSet::normalize( core::Real total_score, utility::vector1< core::conformation::Residue const* > const & items ) const {
-	if ( ! norm_function_ ) { return total_score; }
+GridSet::normalize( core::Real score, utility::vector1< core::conformation::Residue const* > const & items ) const {
+	if ( ! norm_function_ ) { return score; }
 
 	core::conformation::ResidueCOPs residue_cops;
 	for ( core::conformation::Residue const* resi : items ) {
 		residue_cops.push_back( resi->get_self_ptr() );
 	}
-	core::Real normalized_score = (*norm_function_)(total_score,residue_cops);
-	TR.Trace << "Score normalized from " << total_score << " to "<< normalized_score << std::endl;
+	core::Real normalized_score = (*norm_function_)(score,residue_cops);
+	TR.Trace << "Score normalized from " << score << " to "<< normalized_score << std::endl;
 	return normalized_score;
 }
 

@@ -33,12 +33,10 @@ struct DirectSegmentLookupResult {
 	std::vector<search::StructurePairQueryResult> query_results;
 };
 
-class DirectSegmentLookup {
-public:
-
+struct DirectSegmentLookup {
 	typedef DirectSegmentLookupConfig Config;
 
-	DirectSegmentLookup(Config config) : config(config) { }
+	DirectSegmentLookup(Config conf) : config(conf) { }
 
 	std::vector<DirectSegmentLookupResult> segment_lookup(
 		ndarray::Array<ResidueEntry, 1> source_residues,
@@ -51,4 +49,5 @@ public:
 	search::PairQuerySummaryStatistics query_stats;
 	DirectSegmentLookupConfig config;
 };
+
 } }

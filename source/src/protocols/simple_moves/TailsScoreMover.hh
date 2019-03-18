@@ -36,12 +36,14 @@ public:
 	///  empty constructor fills values with the values
 	///  read in from the commandline
 	TailsScoreMover() :
-		ScoreMover()
+		ScoreMover(),
+		m_number_of_hill_points_( 0 )
 	{}
 
 	/// @brief
 	TailsScoreMover( core::scoring::ScoreFunctionOP scorefxn_in ) :
-		ScoreMover(scorefxn_in)
+		ScoreMover(scorefxn_in),
+		m_number_of_hill_points_( 0 )
 	{}
 
 	void apply( core::pose::Pose & pose ) override;
@@ -55,8 +57,8 @@ private:
 		int in_ltail, int in_rtail, int in_array_of_visits [][200], int &out_min_ltail,
 		int &out_min_rtail, int in_sequence_length, utility::vector1< core::Size > & tail, core::pose::Pose & pose,std::ofstream& area_file);
 	void make_tail(utility::vector1< core::Size > & tail,int in_ltaillength, int in_rtaillength, int in_sequence_length);
-	core::Real m_hill_size;
-	int m_number_of_hill_points;
+	core::Real m_hill_size_;
+	int m_number_of_hill_points_;
 	bool m_done_all;
 
 };

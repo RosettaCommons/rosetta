@@ -1214,8 +1214,8 @@ delete_carbohydrate_branch( Pose & pose, uint const delete_to )
 
 	// Update contents of Pose - does it have any carbohydrates left?
 	bool found_carbohydrate = false;
-	for ( core::Size i = 1; i <= pose.size(); ++i ) {
-		if ( pose.residue( i ).is_carbohydrate() ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+		if ( pose.residue( ii ).is_carbohydrate() ) {
 			found_carbohydrate = true;
 			break;
 		}

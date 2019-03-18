@@ -82,7 +82,7 @@ private:
 
 	bool is_map_loaded_, is_score_precomputed_;
 
-	core::Real map_reso, cell_volume, r_cell_volume, max_del_grid, grid_spacing, gaussian_max_d, normalization, avg_rho_obs;
+	core::Real map_reso_, cell_volume, r_cell_volume, max_del_grid, grid_spacing, gaussian_max_d, normalization, avg_rho_obs;
 
 	//Stored 1d gaussian
 	utility::vector1< core::Real > atom_gaussian_value;

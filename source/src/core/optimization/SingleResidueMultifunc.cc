@@ -58,24 +58,24 @@ SingleResidueMultifunc::operator ()( Multivec const & vars ) const {
 	using namespace conformation;
 	using namespace scoring;
 
-	pose::Pose & pose_ = parent::pose();
-	MinimizerMap const & min_map_ = parent::min_map();
-	scoring::ScoreFunction const & score_function_ = parent::score_function();
+	pose::Pose & pose = parent::pose();
+	MinimizerMap const & min_map = parent::min_map();
+	scoring::ScoreFunction const & score_function = parent::score_function();
 
 	PROF_START( basic::FUNC );
-	min_map_.copy_dofs_to_pose( pose_, vars );
-	conformation::Residue const & rsd = pose_.residue(rsd_id_);
+	min_map.copy_dofs_to_pose( pose, vars );
+	conformation::Residue const & rsd = pose.residue(rsd_id_);
 
 	// Code adapted from RotamerSet_::compute_onebody_energies()
 	EnergyMap emap;
 	EnergyMap emap2b;
 
-	pose_.scoring_begin( score_function_ );
+	pose.scoring_begin( score_function );
 	// Setup (particularly hbonds) is expensive and so is done once, in RTMIN.
 
-	score_function_.eval_ci_1b( rsd, pose_, emap );
-	score_function_.eval_cd_1b( rsd, pose_, emap );
-	score_function_.eval_intrares_energy( rsd, pose_, emap );
+	score_function.eval_ci_1b( rsd, pose, emap );
+	score_function.eval_cd_1b( rsd, pose, emap );
+	score_function.eval_intrares_energy( rsd, pose, emap );
 
 	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = packer_neighbor_graph_->get_node( rsd_id_ )->const_edge_list_begin(),
@@ -83,14 +83,14 @@ SingleResidueMultifunc::operator ()( Multivec const & vars ) const {
 			ir != ire; ++ir ) {
 		int const neighbor_id( (*ir)->get_other_ind( rsd_id_ ) );
 		//if ( task.pack_residue( neighbor_id ) ) continue;
-		Residue const & neighbor( pose_.residue( neighbor_id ) );
+		Residue const & neighbor( pose.residue( neighbor_id ) );
 
 		emap2b.zero();
-		score_function_.eval_ci_2b( rsd, neighbor, pose_, emap2b );
+		score_function.eval_ci_2b( rsd, neighbor, pose, emap2b );
 		emap += emap2b;
 
 		emap2b.zero();
-		score_function_.eval_cd_2b( rsd, neighbor, pose_, emap2b );
+		score_function.eval_cd_2b( rsd, neighbor, pose, emap2b );
 		emap += emap2b;
 	}
 
@@ -98,10 +98,10 @@ SingleResidueMultifunc::operator ()( Multivec const & vars ) const {
 	// Iterate across the long range energy functions and use the iterators generated
 	// by the LRnergy container object
 	for ( auto
-			lr_iter = score_function_.long_range_energies_begin(),
-			lr_end  = score_function_.long_range_energies_end();
+			lr_iter = score_function.long_range_energies_begin(),
+			lr_end  = score_function.long_range_energies_end();
 			lr_iter != lr_end; ++lr_iter ) {
-		LREnergyContainerCOP lrec = pose_.energies().long_range_container( (*lr_iter)->long_range_type() );
+		LREnergyContainerCOP lrec = pose.energies().long_range_container( (*lr_iter)->long_range_type() );
 		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 		// Potentially O(N) operation leading to O(N^2) behavior
@@ -112,22 +112,22 @@ SingleResidueMultifunc::operator ()( Multivec const & vars ) const {
 			Size const neighbor_id = rni->neighbor_id();
 			debug_assert( neighbor_id != rsd_id_ );
 
-			(*lr_iter)->residue_pair_energy( rsd, pose_.residue( neighbor_id ), pose_, score_function_, emap );
+			(*lr_iter)->residue_pair_energy( rsd, pose.residue( neighbor_id ), pose, score_function, emap );
 
 		} // (potentially) long-range neighbors of rsd
 	} // long-range energy functions
 
 	// give energyfunctions a chance update/finalize energies
 	// etable nblist calculation is performed here (?)
-	for ( auto it=score_function_.all_energies_begin(),
-			it_end = score_function_.all_energies_end(); it != it_end; ++it ) {
-		(*it)->finalize_total_energy( pose_, score_function_, emap );
+	for ( auto it=score_function.all_energies_begin(),
+			it_end = score_function.all_energies_end(); it != it_end; ++it ) {
+		(*it)->finalize_total_energy( pose, score_function, emap );
 	}
 
-	//emap.show_weighted(std::cout, score_function_.weights());
+	//emap.show_weighted(std::cout, score_function.weights());
 
-	Real const score = score_function_.weights().dot( emap );
-	pose_.scoring_end( score_function_ );
+	Real const score = score_function.weights().dot( emap );
+	pose.scoring_end( score_function );
 	PROF_STOP( basic::FUNC );
 	return score;
 }

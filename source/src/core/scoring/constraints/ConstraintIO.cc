@@ -357,7 +357,7 @@ get_section_name ( std::string line ) {
 	// It is redeclared (quite formally) in lower scope anyway...
 	// That might actually be the issue. Which start is being reassigned?
 	// the second conditional can only see the one that stays 0
-	int start = 0;
+	//int start = 0;
 	if ( tok == "[" ) { //
 		line_stream >> tok;
 	} else {
@@ -370,6 +370,7 @@ get_section_name ( std::string line ) {
 	if ( loc != std::string::npos ) {
 		return tok;
 	} else {
+		int start = 0;
 		return tok.substr(start,loc);
 	}
 }

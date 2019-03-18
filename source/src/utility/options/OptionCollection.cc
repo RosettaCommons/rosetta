@@ -425,9 +425,9 @@ void OptionCollection::load_options_from_stream(std::istream& stream, std::strin
 				throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Unsupported option file specification: " + line ));
 			}
 			size_type const fe( line.find_last_not_of( "\" " ) );
-			string file_string( fb <= fe ? line.substr( fb, fe - fb + 1 ) : string() );
+			string file_string2( fb <= fe ? line.substr( fb, fe - fb + 1 ) : string() );
 
-			load_options_from_file(ObjexxFCL::trim(file_string), cid);
+			load_options_from_file(ObjexxFCL::trim(file_string2), cid);
 		} else if ( (stream ) && len_trim_whitespace(line) > 0 && stripped_whitespace(line)[0] != '#' ) {
 			throw(CREATE_EXCEPTION(excn::Exception,  "Comments in an option file must begin with '#', options must begin with '-' the line:\n"
 				+stripped_whitespace(line)+"\n is incorrectly formatted"));

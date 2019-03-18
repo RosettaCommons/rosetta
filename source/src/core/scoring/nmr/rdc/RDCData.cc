@@ -155,14 +155,14 @@ RDCData::compute_score_all_media(
 }
 
 void
-RDCData::show(std::ostream & TR) const {
+RDCData::show(std::ostream & tracer) const {
 	auto sum_calc = [](Size const & a, RDCMultiSetOP const & b) { return a + b->get_total_number_rdc(); };
 	Size total_rdc = std::accumulate(rdc_multiset_vec_.begin(), rdc_multiset_vec_.end(), 0, sum_calc);
-	TR << "   * * * RDCData Summary Report * * *   " << std::endl;
-	TR << "No Alignment Media: " << number_alignment_media_ << std::endl;
-	TR << "Total No RDCs:      " << total_rdc << std::endl;
+	tracer << "   * * * RDCData Summary Report * * *   " << std::endl;
+	tracer << "No Alignment Media: " << number_alignment_media_ << std::endl;
+	tracer << "Total No RDCs:      " << total_rdc << std::endl;
 	for ( Size i = 1; i <= number_alignment_media_; ++i ) {
-		rdc_multiset_vec_[i]->show(TR);
+		rdc_multiset_vec_[i]->show(tracer);
 	}
 }
 

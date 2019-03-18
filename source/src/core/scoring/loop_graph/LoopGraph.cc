@@ -175,12 +175,12 @@ struct cycle_printer
 
 		// Iterate over path printing each vertex that forms the cycle.
 		typename Path::const_iterator i, end = p.end();
-		utility::vector1< Size > cycle;
+		utility::vector1< Size > cycle_vec;
 		for ( i = p.begin(); i != end; ++i ) {
 			// add 1, to convert from 0-indexed vertices to 1-indexed domains
-			cycle.push_back( get(indices, *i)+1 );
+			cycle_vec.push_back( get(indices, *i)+1 );
 		}
-		cycles_.push_back( cycle );
+		cycles_.push_back( cycle_vec );
 	}
 
 	utility::vector1< utility::vector1< Size > > & cycles_;
@@ -450,9 +450,9 @@ LoopGraph::update_loops( utility::vector1< Size > const & pose_domain_map,
 	}
 
 	for ( Size k = 1; k <= loops_.size(); k++ ) {
-		Size const & takeoff_domain = loops_[ k ].takeoff_domain();
-		if ( takeoff_domain == 0 ) continue;
-		loops_from_domain_[ takeoff_domain ].push_back( k );
+		Size const & takeoff_domain2 = loops_[ k ].takeoff_domain();
+		if ( takeoff_domain2 == 0 ) continue;
+		loops_from_domain_[ takeoff_domain2 ].push_back( k );
 	}
 }
 

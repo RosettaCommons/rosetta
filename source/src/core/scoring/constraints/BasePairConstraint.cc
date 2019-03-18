@@ -31,6 +31,7 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 
 
 #ifdef SERIALIZATION
@@ -287,8 +288,8 @@ BasePairConstraint::init_subsidiary_constraints( core::pose::Pose const & pose )
 
 	for ( Size p = 1; p <= atom_ids1.size(); p++ ) {
 
-		Size const atom1 = pose.residue_type( res1_ ).atom_index( atom_ids1[ p ] ) ;
-		Size const atom2 = pose.residue_type( res2_ ).atom_index( atom_ids2[ p ] ) ;
+		Size const atm1 = pose.residue_type( res1_ ).atom_index( atom_ids1[ p ] ) ;
+		Size const atm2 = pose.residue_type( res2_ ).atom_index( atom_ids2[ p ] ) ;
 
 		// AMW TODO: check to see each RT has the atom in question (only important for chemical
 		// modifications) and accordingly skip. After the loop, if no constraints have been added,
@@ -298,9 +299,9 @@ BasePairConstraint::init_subsidiary_constraints( core::pose::Pose const & pose )
 		tr.Debug << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue_type(res1_).name1() << res1_ << " <-->  " <<
 			pose.residue_type(res2_).name1() << res2_ << "   " <<
 			atom_ids1[ p ] << " <--> " <<
-			atom_ids2[ p ] << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
+			atom_ids2[ p ] << ".  [ " << atm1 << "-" << atm2 << "]" << std::endl;
 
-		constraints_.emplace_back( new AtomPairConstraint( id::AtomID(atom1,res1_), id::AtomID(atom2,res2_), distance_func, base_pair_constraint ) );
+		constraints_.emplace_back( utility::pointer::make_shared< AtomPairConstraint >( id::AtomID(atm1,res1_), id::AtomID(atm2,res2_), distance_func, base_pair_constraint ) );
 	}
 
 }

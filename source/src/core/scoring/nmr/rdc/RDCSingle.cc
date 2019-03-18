@@ -151,21 +151,21 @@ RDCSingle::operator=(RDCSingle const & rhs) {
 RDCSingle::~RDCSingle() {}
 
 void
-RDCSingle::show(std::ostream & TR) const {
+RDCSingle::show(std::ostream & tracer) const {
 	// Store old iostream manipulator flags
 	std::ios oldState(nullptr);
-	oldState.copyfmt(TR);
-	TR << "( ";
+	oldState.copyfmt(tracer);
+	tracer << "( ";
 	for ( Size i = 1; i <= spinsAB_.size() - 1; ++i ) {
-		TR << std::setw(4) << spinsAB_[i].first.rsd() << " " << std::setw(4) << spinsAB_[i].first.atomno() << " or ";
+		tracer << std::setw(4) << spinsAB_[i].first.rsd() << " " << std::setw(4) << spinsAB_[i].first.atomno() << " or ";
 	}
-	TR << std::setw(4) << spinsAB_.back().first.rsd() << " " << std::setw(4) << spinsAB_.back().first.atomno() << " ) ( ";
+	tracer << std::setw(4) << spinsAB_.back().first.rsd() << " " << std::setw(4) << spinsAB_.back().first.atomno() << " ) ( ";
 	for ( Size i = 1; i <= spinsAB_.size() - 1; ++i ) {
-		TR << std::setw(4) << spinsAB_[i].second.rsd() << " " << std::setw(4) << spinsAB_[i].second.atomno() << " or ";
+		tracer << std::setw(4) << spinsAB_[i].second.rsd() << " " << std::setw(4) << spinsAB_[i].second.atomno() << " or ";
 	}
-	TR << std::setw(4) << spinsAB_.back().second.rsd() << " " << std::setw(4) << spinsAB_.back().second.atomno() << " ) ";
-	TR << std::setw(6) << std::fixed << std::setprecision(3) << rdc_exp_ << " +/- " << rdc_err_ << std::endl;
-	TR.copyfmt(oldState);
+	tracer << std::setw(4) << spinsAB_.back().second.rsd() << " " << std::setw(4) << spinsAB_.back().second.atomno() << " ) ";
+	tracer << std::setw(6) << std::fixed << std::setprecision(3) << rdc_exp_ << " +/- " << rdc_err_ << std::endl;
+	tracer.copyfmt(oldState);
 }
 
 bool operator==(RDCSingle const & lhs, RDCSingle const & rhs) {

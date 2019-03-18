@@ -605,7 +605,7 @@ PCSEnergy::version() const { return 1; }
 /// @brief show additional information of the energy method
 void
 PCSEnergy::show_additional_info(
-	std::ostream & TR,
+	std::ostream & tracer,
 	Pose & pose,
 	bool verbose
 ) const
@@ -625,9 +625,9 @@ PCSEnergy::show_additional_info(
 	utility::vector1< Real > scores_all_tags(number_tags, 0.0); // set all score to zero because we are going to use +=
 	utility::vector1< PCSMultiSetOP > & multiset_vec = pcs_data_all.get_pcs_multiset_vec();
 
-	TR << " * * * * * * *       PCSEnergy Info       * * * * * * * " << std::endl;
-	TR << "Total Score: " << pcs_score << std::endl;
-	TR << "Is norm of " << number_tags << " tagging sites." << std::endl;
+	tracer << " * * * * * * *       PCSEnergy Info       * * * * * * * " << std::endl;
+	tracer << "Total Score: " << pcs_score << std::endl;
+	tracer << "Is norm of " << number_tags << " tagging sites." << std::endl;
 
 	// Back-calculate PCSs from determined tensor params
 	// Show calc vs exp PCS and tensor params
@@ -677,13 +677,13 @@ PCSEnergy::show_additional_info(
 			numeric::xyzMatrix< Real > rotM(rotation_matrix_from_euler_angles(euler_angles, tensor.get_euler_convention()));
 			Real single_score(0);
 
-			TR << "PCS dataset: " << singleset_vec[j]->get_dataset_name() << std::endl;
+			tracer << "PCS dataset: " << singleset_vec[j]->get_dataset_name() << std::endl;
 			if ( verbose ) {
-				TR << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " << std::endl;
-				TR << " * * * * * * * * * * * * * * * *              exp vs. calc PCS             * * * * * * * * * * * * * * * * * " << std::endl;
-				TR << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " << std::endl;
-				TR << " Spin_Resid_Atom     Obs_PCS     Scal_Obs_PCS     Calc_PCS     Scal_Calc_PCS     Deviation     Abs_Deviation " << std::endl;
-				TR << " ----------------------------------------------------------------------------------------------------------- " << std::endl;
+				tracer << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " << std::endl;
+				tracer << " * * * * * * * * * * * * * * * *              exp vs. calc PCS             * * * * * * * * * * * * * * * * * " << std::endl;
+				tracer << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " << std::endl;
+				tracer << " Spin_Resid_Atom     Obs_PCS     Scal_Obs_PCS     Calc_PCS     Scal_Calc_PCS     Deviation     Abs_Deviation " << std::endl;
+				tracer << " ----------------------------------------------------------------------------------------------------------- " << std::endl;
 			}
 
 			// Calculate all PCSs for this PCSSingleSet
@@ -722,27 +722,27 @@ PCSEnergy::show_additional_info(
 					for ( core::id::AtomID const & id : singleset_vec[j]->get_single_pcs_vec()[k].get_protein_spins() ) {
 						converter << std::setw(4) << id.rsd() << " " << pose.residue(id.rsd()).atom_name(id.atomno()) << " ";
 					}
-					TR << " ( " << std::right << converter.str() << ")";
-					TR << std::setw(12)<< std::fixed << std::setprecision(3) << exp_pcs_values(k) / scal;  // Revert normalization of PCS data that was applied during creation of PCSSingleSet
-					TR << std::setw(17)<< std::fixed << std::setprecision(3) << exp_pcs_values(k);
-					TR << std::setw(13)<< std::fixed << std::setprecision(3) << calc_pcs / scal;    // Revert normalization of PCS data that was applied during creation of PCSSingleSet
-					TR << std::setw(18)<< std::fixed << std::setprecision(3) << calc_pcs;
-					TR << std::setw(14)<< std::fixed << std::setprecision(3) << pcs_dev;
-					TR << std::setw(18)<< std::fixed << std::setprecision(3) << pcs_abs_dev << std::endl;
+					tracer << " ( " << std::right << converter.str() << ")";
+					tracer << std::setw(12)<< std::fixed << std::setprecision(3) << exp_pcs_values(k) / scal;  // Revert normalization of PCS data that was applied during creation of PCSSingleSet
+					tracer << std::setw(17)<< std::fixed << std::setprecision(3) << exp_pcs_values(k);
+					tracer << std::setw(13)<< std::fixed << std::setprecision(3) << calc_pcs / scal;    // Revert normalization of PCS data that was applied during creation of PCSSingleSet
+					tracer << std::setw(18)<< std::fixed << std::setprecision(3) << calc_pcs;
+					tracer << std::setw(14)<< std::fixed << std::setprecision(3) << pcs_dev;
+					tracer << std::setw(18)<< std::fixed << std::setprecision(3) << pcs_abs_dev << std::endl;
 				}
 			}
 			if ( verbose ) {
-				TR << " ----------------------------------------------------------------------------------------------------------- " << std::endl;
+				tracer << " ----------------------------------------------------------------------------------------------------------- " << std::endl;
 			}
 			//scores_all_tags[i] += std::sqrt(single_score) * singleset_vec[j]->get_weight();
 			scores_all_tags[i] += single_score * singleset_vec[j]->get_weight();
-			TR << "Weighted score for dataset " << singleset_vec[j]->get_dataset_name() << " " << single_score << std::endl;
-			tensor.show_tensor_stats(TR, true);
+			tracer << "Weighted score for dataset " << singleset_vec[j]->get_dataset_name() << " " << single_score << std::endl;
+			tensor.show_tensor_stats(tracer, true);
 		}
-		TR << "Overall weighted score for tagging site " << multiset_vec[i]->get_tag_residue_number() << ": " << scores_all_tags[i] << std::endl;
+		tracer << "Overall weighted score for tagging site " << multiset_vec[i]->get_tag_residue_number() << ": " << scores_all_tags[i] << std::endl;
 		Real Q_fac_per_tag(std::sqrt(sum_dev_square/sum_exp_square));
 		Real Rmsd_per_tag(std::sqrt(sum_dev_square/number_pcs_per_tag));
-		TR << "PCS Q-factor and Rmsd for tagging site " << multiset_vec[i]->get_tag_residue_number() << ": " << Q_fac_per_tag << ", " << Rmsd_per_tag << std::endl;
+		tracer << "PCS Q-factor and Rmsd for tagging site " << multiset_vec[i]->get_tag_residue_number() << ": " << Q_fac_per_tag << ", " << Rmsd_per_tag << std::endl;
 		sum_all_dev_square += sum_dev_square;
 		sum_all_exp_square += sum_exp_square;
 		number_all_pcs += number_pcs_per_tag;
@@ -750,7 +750,7 @@ PCSEnergy::show_additional_info(
 	}
 	Real total_Q_fac(std::sqrt(sum_all_dev_square/sum_all_exp_square));
 	Real total_Rmsd(std::sqrt(sum_all_dev_square/number_all_pcs));
-	TR << "Total PCS Q-factor and Rmsd for " << number_tags << " tagging sites and " << total_number_experiments
+	tracer << "Total PCS Q-factor and Rmsd for " << number_tags << " tagging sites and " << total_number_experiments
 		<< " experiments: " << total_Q_fac << ", " << total_Rmsd << std::endl;
 }
 

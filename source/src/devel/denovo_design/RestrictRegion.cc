@@ -322,11 +322,11 @@ RestrictRegion::apply( core::pose::Pose & pose )
 		if ( restrict_count >= regions_to_mutate_ ||
 				( i >= 1 && i == residues.size() ) ) {
 			// re-create task after mutation to make sure task ops haven't changed and write resfile
-			core::pack::task::PackerTaskOP task;
+			core::pack::task::PackerTaskOP task2;
 			if ( task_factory_ ) {
-				task = task_factory_->create_task_and_apply_taskoperations( pose );
+				task2 = task_factory_->create_task_and_apply_taskoperations( pose );
 			} else {
-				task = core::pack::task::TaskFactory::create_packer_task( pose );
+				task2 = core::pack::task::TaskFactory::create_packer_task( pose );
 			}
 
 			// restrict new trps if the max has been reached
@@ -342,7 +342,7 @@ RestrictRegion::apply( core::pose::Pose & pose )
 					for ( core::Size j=1; j<=pose.size(); ++j ) {
 						if ( pose.residue( j ).name1() != 'W' ) {
 							allowed_aa[ core::chemical::aa_from_oneletter_code( 'W' ) ] = false;
-							task->nonconst_residue_task( j ).restrict_absent_canonical_aas( allowed_aa );
+							task2->nonconst_residue_task( j ).restrict_absent_canonical_aas( allowed_aa );
 							allowed_aa[ core::chemical::aa_from_oneletter_code( 'W' ) ] = true;
 						} else {
 							TR << "Not restricting TRP at position " << pose.residue( j ).name() << j << std::endl;
@@ -351,7 +351,7 @@ RestrictRegion::apply( core::pose::Pose & pose )
 				}
 			}
 
-			write_resfile( pose, task );
+			write_resfile( pose, task2 );
 			//TR << *task;
 			TR << "Success; type=" << type_ << std::endl;
 			return;

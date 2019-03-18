@@ -533,12 +533,11 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::interpolate_nrchi_values(
 		indices[ ii ] = make_conditional_index< N >( parent::N_BB_BINS, ii, bb_bin, bb_bin_next );
 	}
 
-	utility::fixedsizearray1< Real, ( 1 << N ) > vals;
 	utility::vector1< Real > energies( 0, bbdep_nrchi_nbins_ );
 	utility::fixedsizearray1< Real, N > dummy;
 	for ( Size jj = 1; jj <= bbdep_nrchi_nbins_; ++jj ) {
+		utility::fixedsizearray1< Real, ( 1 << N ) > vals;
 		for ( Size ii = 1; ii <= ( 1 << N ); ++ii ) {
-			utility::fixedsizearray1< Size, ( 1 << N ) > vals;
 			vals[ ii ] = bbdep_nrc_interpdata_[ packed_rotno ]( indices[ ii ], jj ).n_derivs_[ 1 ];
 		}
 		interpolate_polylinear_by_value( vals, bb_alpha, parent::BB_BINRANGE, false, energies[ jj ], dummy );
@@ -1136,9 +1135,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io
 	BBDepScoreInterpData<N> * bbdep_nrc_interpdata = new BBDepScoreInterpData<N>[ n_bbdep_scores ];
 	in.read( (char*) bbdep_nrc_interpdata, n_bbdep_scores * sizeof( BBDepScoreInterpData<N> ) );
 
-	Size count( 0 );
 	bbdep_nrc_interpdata_.resize( grandparent::n_packed_rots() );//, far2d );
-	for ( Size ii = 1; ii <= grandparent::n_packed_rots(); ++ii ) {
+	for ( Size ii = 1, count = 0; ii <= grandparent::n_packed_rots(); ++ii ) {
 		bbdep_nrc_interpdata_[ ii ].dimension( num_rot_bin, bbdep_nrchi_nbins_, BBDepScoreInterpData<N>() );
 		for ( Size jj = 1; jj <= bbdep_nrchi_nbins_; ++jj ) {
 			utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
@@ -1192,9 +1190,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io
 	bbdep_rotamers_to_sample_.dimension( num_rot_bin, grandparent::n_packed_rots()*n_nrchi_sample_bins_ );
 	bbdep_rotsample_sorted_order_.dimension( num_rot_bin, grandparent::n_packed_rots(), n_nrchi_sample_bins_ );
 
-	count = 0;
-	Size count_iijj( 1 ); // 3d array sorted by frequency instead of 4d array divided first by rotameric rotno.
-	for ( Size ii = 1; ii <= n_nrchi_sample_bins_; ++ii ) {
+	//Size count_iijj( 1 ); // 3d array sorted by frequency instead of 4d array divided first by rotameric rotno.
+	for ( Size ii = 1, count = 0, count_iijj = 1; ii <= n_nrchi_sample_bins_; ++ii ) {
 		for ( Size jj = 1; jj <= grandparent::n_packed_rots(); ++jj ) {
 			utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 			utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );

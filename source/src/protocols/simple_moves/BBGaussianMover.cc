@@ -92,7 +92,7 @@ BBGaussianMover::BBGaussianMover(Size n_end_atom, Size n_dof_angle, Size n_pert_
 	matrix_A(n_dof_angle_, Vector(n_dof_angle_)),
 	matrix_dRdPhi(n_end_atom_, VdRdPhi(n_dof_angle_)),
 	last_proposal_density_ratio_(1.0),
-	dphi(n_dof_angle_)
+	dphi_(n_dof_angle_)
 {
 	init();
 	//no need to do it here, may assign movemap later
@@ -126,7 +126,7 @@ void BBGaussianMover::resize(Size n_end_atom, Size n_dof_angle, Size n_pert_res)
 	matrix_G.resize(n_dof_angle, Vector(n_dof_angle));
 	matrix_A.resize(n_dof_angle, Vector(n_dof_angle));
 	matrix_dRdPhi.resize(n_end_atom, VdRdPhi(n_dof_angle));
-	dphi.resize(n_dof_angle);
+	dphi_.resize(n_dof_angle);
 }
 
 void BBGaussianMover::init()
@@ -436,7 +436,7 @@ core::Real BBGaussianMover::get_L_prime()
 {
 	Vector delta(n_dof_angle_);
 	//get L
-	Real detL = cholesky_bw(matrix_A, n_dof_angle_, dphi, delta);
+	Real detL = cholesky_bw(matrix_A, n_dof_angle_, dphi_, delta);
 
 	//calculate d^2 = delta^2
 	Real d2=0.0;
@@ -458,7 +458,7 @@ core::Real BBGaussianMover::get_L_move(Pose &pose)
 	for ( Size i=1; i<=n_dof_angle_; i++ ) d2 += delta[i]*delta[i];
 
 	//cholesky, get L^t, L^-1
-	Real detL = cholesky_fw(matrix_A, n_dof_angle_, delta, dphi);
+	Real detL = cholesky_fw(matrix_A, n_dof_angle_, delta, dphi_);
 
 	//W_old *= exp(-d^2)
 	Real W_old = detL*exp(-d2/2.0);
@@ -475,11 +475,11 @@ core::Real BBGaussianMover::get_L_move(Pose &pose)
 				//conformation::Residue const & rsd( pose.residue( j ) );
 				if ( j<right || (!shrink_frag_ends_) ) {
 					//skip j==right, unless shrink==false
-					pose.set_psi(j, basic::periodic_range( pose.psi(j)+dphi[n_dof--], 360.0 ) );
+					pose.set_psi(j, basic::periodic_range( pose.psi(j)+dphi_[n_dof--], 360.0 ) );
 				}
 				if ( j>left || (!shrink_frag_ends_) ) {
 					//skip j==left, unless shring==false
-					pose.set_phi(j, basic::periodic_range( pose.phi(j)+dphi[n_dof--], 360.0 ) );
+					pose.set_phi(j, basic::periodic_range( pose.phi(j)+dphi_[n_dof--], 360.0 ) );
 				}
 			}
 		}
@@ -487,8 +487,8 @@ core::Real BBGaussianMover::get_L_move(Pose &pose)
 		//set the new phi,psi (above all called phi, actually 4 phi, 4 psi)
 		for ( Size j=0; j<n_pert_res_; j++ ) {
 			Size ndx = resnum_-j;
-			pose.set_psi(ndx, basic::periodic_range( pose.psi(ndx)+dphi[n_dof--], 360.0 ) );
-			pose.set_phi(ndx, basic::periodic_range( pose.phi(ndx)+dphi[n_dof--], 360.0 ) );
+			pose.set_psi(ndx, basic::periodic_range( pose.psi(ndx)+dphi_[n_dof--], 360.0 ) );
+			pose.set_phi(ndx, basic::periodic_range( pose.phi(ndx)+dphi_[n_dof--], 360.0 ) );
 		}
 	}
 	runtime_assert(n_dof==0);

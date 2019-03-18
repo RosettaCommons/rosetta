@@ -68,12 +68,12 @@ DensitySymmInfo::detect_axes( core::scoring::electron_density::ElectronDensity c
 		utility_exit();
 	}
 
-	symm_center = centers[best_correl_idx];
+	symm_center_ = centers[best_correl_idx];
 	axis_primary = axes_to_test[best_correl_idx];
 	core::Size old_best_correl_idx = best_correl_idx;
 
 	TR << "Found " << count_primary << "-fold symm axis: " << axis_primary[0] << ","<< axis_primary[1] << ","<< axis_primary[2]
-		<< "  center: " << symm_center[0] << ","<< symm_center[1] << ","<< symm_center[2]
+		<< "  center: " << symm_center_[0] << ","<< symm_center_[1] << ","<< symm_center_[2]
 		<< "  autocorrelation=" << best_correl << std::endl;
 
 	if ( type == 'D' ) {
@@ -106,10 +106,10 @@ DensitySymmInfo::detect_axes( core::scoring::electron_density::ElectronDensity c
 		axis_secondary = axes_to_test[best_correl_idx];
 		core::Real error=0.0;
 
-		symm_center = resolve_symm_axes( symm_center, axis_primary, centers[best_correl_idx], axis_secondary, error );
+		symm_center_ = resolve_symm_axes( symm_center_, axis_primary, centers[best_correl_idx], axis_secondary, error );
 
 		TR << "Found 2-fold symm axis: " << axis_secondary[0] << ","<< axis_secondary[1] << ","<< axis_secondary[2]
-			<< "  resolved center: " << symm_center[0] << ","<< symm_center[1] << ","<< symm_center[2]
+			<< "  resolved center: " << symm_center_[0] << ","<< symm_center_[1] << ","<< symm_center_[2]
 			<< "  with error=" << error
 			<< "  autocorrelation=" << best_correl << std::endl;
 
@@ -300,7 +300,7 @@ DensitySymmInfo::mask_asu( ObjexxFCL::FArray3D< double > &vol, core::scoring::el
 
 	if ( type=='C' || type == 'D' ) {
 		// get grid coords of symm center
-		e.cart2idx( symm_center, idx_center );
+		e.cart2idx( symm_center_, idx_center );
 
 		// build our coord system
 		numeric::xyzVector< core::Real > X,Y,Z=axis_primary;
@@ -360,7 +360,7 @@ DensitySymmInfo::min_symm_dist2(
 		for ( int i=2; i<=(int)count_primary; ++i ) {
 			core::Real angle = (i-1) * 2*numeric::constants::d::pi / count_primary;
 			numeric::xyzMatrix<core::Real> R_i = numeric::rotation_matrix( axis_primary, angle );
-			numeric::xyzVector<core::Real> Y_i = R_i*(Y-symm_center) + symm_center;
+			numeric::xyzVector<core::Real> Y_i = R_i*(Y-symm_center_) + symm_center_;
 			mindist = std::min( (X - Y_i).length_squared() , mindist );
 		}
 	} else if ( type == 'D' ) {
@@ -371,7 +371,7 @@ DensitySymmInfo::min_symm_dist2(
 				if ( i==1 && j==1 ) continue; // identity
 				core::Real angle_j = (j==1) ? 0 : numeric::constants::d::pi;
 				numeric::xyzMatrix<core::Real> R_j = numeric::rotation_matrix( axis_secondary, angle_j );
-				numeric::xyzVector<core::Real> Y_i = R_j*R_i*(Y-symm_center) + symm_center;
+				numeric::xyzVector<core::Real> Y_i = R_j*R_i*(Y-symm_center_) + symm_center_;
 				mindist = std::min( (X - Y_i).length_squared() , mindist );
 			}
 		}

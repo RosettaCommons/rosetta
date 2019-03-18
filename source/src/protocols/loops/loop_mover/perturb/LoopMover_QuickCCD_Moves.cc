@@ -295,12 +295,12 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	// CHeck chain break !
 	if ( chainbreak_present ) {
 		( *scorefxn() )( pose );
-		core::Real chain_break_score = std::max( (float)pose.energies().total_energies()[ scoring::chainbreak ],
+		core::Real const chain_break_score2 = std::max( (float)pose.energies().total_energies()[ scoring::chainbreak ],
 			(float)pose.energies().total_energies()[ scoring::linear_chainbreak ] );
 
 		core::Real chain_break_tol = option[ basic::options::OptionKeys::loops::chain_break_tol ]();
-		tr().Info << "Chainbreak: " << chain_break_score << " Max: " << chain_break_tol << std::endl;
-		if ( chain_break_score > chain_break_tol ) return Failure;
+		tr().Info << "Chainbreak: " << chain_break_score2 << " Max: " << chain_break_tol << std::endl;
+		if ( chain_break_score2 > chain_break_tol ) return Failure;
 	}
 
 	// return to original fold tree

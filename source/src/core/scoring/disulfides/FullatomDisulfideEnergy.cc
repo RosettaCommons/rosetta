@@ -137,15 +137,15 @@ FullatomDisulfideEnergy::ensure_lrenergy_container_is_up_to_date(
 	using namespace methods;
 
 	if ( pose.energies().long_range_container( fa_disulfide_energy ) == nullptr ) {
-		FullatomDisulfideEnergyContainerOP dec( new FullatomDisulfideEnergyContainer( pose ) );
+		FullatomDisulfideEnergyContainerOP dec = utility::pointer::make_shared< FullatomDisulfideEnergyContainer >( pose );
 		pose.energies().set_long_range_container( fa_disulfide_energy, dec );
 	} else {
 		FullatomDisulfideEnergyContainerOP dec = FullatomDisulfideEnergyContainerOP (
-			utility::pointer::static_pointer_cast< core::scoring::disulfides::FullatomDisulfideEnergyContainer > ( pose.energies().nonconst_long_range_container( fa_disulfide_energy ) ));
+			utility::pointer::static_pointer_cast< FullatomDisulfideEnergyContainer > ( pose.energies().nonconst_long_range_container( fa_disulfide_energy ) ) );
 		dec->update( pose );
 		if ( dec->num_residues() != pose.conformation().size() ) {
-			FullatomDisulfideEnergyContainerOP dec( new FullatomDisulfideEnergyContainer( pose ) );
-			pose.energies().set_long_range_container( fa_disulfide_energy, dec );
+			FullatomDisulfideEnergyContainerOP dec2 = utility::pointer::make_shared< FullatomDisulfideEnergyContainer >( pose );
+			pose.energies().set_long_range_container( fa_disulfide_energy, dec2 );
 		}
 	}
 }

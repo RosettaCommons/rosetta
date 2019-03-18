@@ -91,8 +91,10 @@ std::string SingleResidueCenrotLibrary::read_from_file(
 	Size count;
 
 	//make up a dummy sample for GLY/ALA
-	CentroidRotamerSampleData crsd(1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
-	dummy_sample_.push_back(crsd);
+	{
+		CentroidRotamerSampleData crsd(1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+		dummy_sample_.push_back(crsd);
+	}
 
 	while ( infile ) {
 		/// 1. peek at the line; if it starts with #, skip to the next line.

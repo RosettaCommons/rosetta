@@ -41,15 +41,14 @@ struct SegmentSequenceProfileResult {
 	ArrayXaa log_odds;
 };
 
-class SegmentSequenceProfile {
-public:
+struct SegmentSequenceProfile {
 
 	typedef SegmentSequenceProfileConfig Config;
 
 	static std::map<core::chemical::AA, core::Real> aa_background_distribution;
 
 	SegmentSequenceProfile() = default;
-	SegmentSequenceProfile(Config config) : config(config) { }
+	SegmentSequenceProfile(Config conf) : config(conf) { }
 
 	SegmentSequenceProfileResult segment_profile(
 		StructureStore & structure_store,

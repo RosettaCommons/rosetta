@@ -155,10 +155,10 @@ P_AA::read_P_AA_n()
 
 #ifndef NDEBUG
 	// Check probabilities sum to ~ 1 for each (n)
-	for ( int n = 1; n <= 14; ++n ) {
+	for ( int nn = 1; nn <= 14; ++nn ) {
 		Probability probability_sum( 0.0 );
 		for ( Probability_AA_n::ConstIterator i = P_AA_n_.begin(), e = P_AA_n_.end(); i != e ; ++i ) {
-			probability_sum += (*i)[ n ];
+			probability_sum += (*i)[ nn ];
 		}
 		debug_assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .0001 ), Probability( .0001 ) ) );
 	}

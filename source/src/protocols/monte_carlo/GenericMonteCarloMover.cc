@@ -962,24 +962,24 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 		adaptation_period( tag->getOption< core::Size >( "adaptation_period", std::max( (int) maxtrials_ / 10, 10 ) ) );
 	}
 
-	String const  user_defined_mover_name_( tag->getOption< String >( "mover_name" ,""));
-	if ( data.has( "stopping_condition", user_defined_mover_name_ ) ) {
-		TR<<user_defined_mover_name_<<" defines its own stopping condition, and GenericMC will respect this stopping condition"<<std::endl;
-		mover_stopping_condition_ = data.get_ptr< basic::datacache::DataMapObj< bool > >( "stopping_condition", user_defined_mover_name_ );
+	String const  user_defined_mover_name( tag->getOption< String >( "mover_name" ,""));
+	if ( data.has( "stopping_condition", user_defined_mover_name ) ) {
+		TR<<user_defined_mover_name<<" defines its own stopping condition, and GenericMC will respect this stopping condition"<<std::endl;
+		mover_stopping_condition_ = data.get_ptr< basic::datacache::DataMapObj< bool > >( "stopping_condition", user_defined_mover_name );
 	}
 
 	String const filter_name( tag->getOption< String >( "filter_name", "true_filter" ) );
-	auto  find_mover ( movers.find( user_defined_mover_name_ ));
+	auto  find_mover ( movers.find( user_defined_mover_name ));
 	auto find_filter( filters.find( filter_name ));
-	if ( find_mover == movers.end() && user_defined_mover_name_ != "" ) {
-		TR.Error << "Mover \"" << user_defined_mover_name_ << "\" was not found in map.  Has it been defined in the XML before the GenericMonteCarloMover?\n(Error in this context:)\n" << tag << std::endl;
+	if ( find_mover == movers.end() && user_defined_mover_name != "" ) {
+		TR.Error << "Mover \"" << user_defined_mover_name << "\" was not found in map.  Has it been defined in the XML before the GenericMonteCarloMover?\n(Error in this context:)\n" << tag << std::endl;
 		runtime_assert( find_mover != movers.end() );
 	}
 	if ( find_filter == filters.end() ) {
 		TR.Error << "Filter \"" << filter_name << "\"not found in map.  Has it been defined in the XML before the GenericMonteCarloMover?\n(Error in this context):\n" << tag << std::endl;
 		runtime_assert( find_filter != filters.end() );
 	}
-	if ( user_defined_mover_name_ != "" ) {
+	if ( user_defined_mover_name != "" ) {
 		mover_ = find_mover->second;
 	}
 
@@ -1009,7 +1009,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 	runtime_assert_string_msg( filter_name != "true_filter" || scorefxn_, "You need to set filter_nam2e or scorefxn_name for MC criteria." );
 
 	if ( filters_.size() == 0 ) {
-		TR << "Apply mover of " << user_defined_mover_name_ << ", and evaluate score by " << sfxn
+		TR << "Apply mover of " << user_defined_mover_name << ", and evaluate score by " << sfxn
 			<< " at Temperature=" << temperature_ << ", ntrails= " << maxtrials_ << std::endl;
 	}
 
@@ -1027,10 +1027,10 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 		if ( btag->getName() == "Filters" ) {
 			utility::vector1< TagCOP > const filters_tags( btag->getTags() );
 			for ( TagCOP ftag : filters_tags ) {
-				String const filter_name( ftag->getOption< String >( "filter_name" ) );
-				auto find_filt( filters.find( filter_name ));
+				String const filter_name2( ftag->getOption< String >( "filter_name" ) );
+				auto find_filt( filters.find( filter_name2 ));
 				if ( find_filt == filters.end() ) {
-					TR.Error << "Filter \"" <<  filter_name << "\" was not found in map.  Has it been defined in the XML before the GenericMonteCarloMover?\n(Error in this context:)\n" << tag << std::endl;
+					TR.Error << "Filter \"" <<  filter_name2 << "\" was not found in map.  Has it been defined in the XML before the GenericMonteCarloMover?\n(Error in this context:)\n" << tag << std::endl;
 					runtime_assert( find_filt != filters.end() );
 				}
 				auto const temp( ftag->getOption< Real >( "temperature", 1 ) );
@@ -1039,10 +1039,10 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 				bool const rank( ftag->getOption< bool >( "rank", false ) );
 				if ( rank ) {
 					if ( rank_by_filter_ != 1 ) {
-						TR.Warning << "Multiple filters set to rank! Using most recent (currently "<< filter_name << ")." << std::endl;
+						TR.Warning << "Multiple filters set to rank! Using most recent (currently "<< filter_name2 << ")." << std::endl;
 					}
 					if ( boltz_rank_ ) {
-						TR.Warning << "Setting of rank on sub-filter "<< filter_name << " will be ignored as parent is set to Boltzmann rank all." << std::endl;
+						TR.Warning << "Setting of rank on sub-filter "<< filter_name2 << " will be ignored as parent is set to Boltzmann rank all." << std::endl;
 					}
 				}
 				add_filter( find_filt->second, adap, temp, samp_type, rank );

@@ -656,9 +656,9 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 					if ( ! first_modeling ) {
 						TR << "De-Virtualizing current foliage layer" << std::endl;
 						ResidueSubset to_de_virtualize( pose.total_residue(), false );
-						for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-							if ( pre_virtualized[ i ] == true && needed_virtualization[ i ] == false ) {
-								to_de_virtualize[ i ] = true;
+						for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+							if ( pre_virtualized[ ii ] && ! needed_virtualization[ ii ] ) {
+								to_de_virtualize[ ii ] = true;
 							}
 						}
 						store_to_de_virt_subset->set_residue_subset( to_de_virtualize );
@@ -745,9 +745,9 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 				{
 				TR << "Going in the backward direction " << std::endl;
 
-				core::Size max_end = pose.glycan_tree_set()->get_largest_glycan_tree_layer();
-				core::SSize current_end = max_end;
-				core::SSize current_start = max_end - layer_size_ + 1;
+				core::Size max_end2 = pose.glycan_tree_set()->get_largest_glycan_tree_layer();
+				core::SSize current_end = max_end2;
+				core::SSize current_start = max_end2 - layer_size_ + 1;
 
 
 				while ( current_start >= 0 ) {

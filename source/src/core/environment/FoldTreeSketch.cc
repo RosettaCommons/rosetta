@@ -164,8 +164,8 @@ void FoldTreeSketch::append_peptide( Size length ){
 
 	// If a peptide with more than one residue is being appended, connect them with a single peptide edge
 	for ( Size i = old_size + 2; i <= old_size + length; ++i ) {
-		NodeOP node = FoldTreeSketch::Node::newNode( i );
-		nodes_.push_back( node );
+		NodeOP node2 = FoldTreeSketch::Node::newNode( i );
+		nodes_.push_back( node2 );
 		nodes_[ i ]->add_peptide_neighbor( nodes_[ i - 1 ] );
 	}
 

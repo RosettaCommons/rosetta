@@ -205,7 +205,6 @@ WidthFirstSlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut
 	} //scope
 
 	// pose::Pose best_pose = more_cut;
-	fragment::FrameList closure_frames;
 
 	// try different loop sizes
 	WindowList windows;

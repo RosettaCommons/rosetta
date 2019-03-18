@@ -103,8 +103,8 @@ RelaxScriptManager::create_relax_script_instance(
 	}
 	infile.close();
 
-	for ( auto const & line : filelines ) {
-		TR << line << std::endl;
+	for ( auto const & fl : filelines ) {
+		TR << fl << std::endl;
 	}
 
 	return utility::pointer::make_shared< RelaxScriptFileContents >(filelines);

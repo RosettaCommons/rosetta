@@ -583,8 +583,7 @@ operator >>( std::istream & is, FullModelParameters & t )
 	is >> tag;
 	std::tuple< std::vector<int>, std::vector<char>, std::vector< std::string > > resnum_chain;
 	runtime_assert ( !is.fail() && ( tag == "CONVENTIONAL_RES_CHAIN_SEGID" || tag == "CONVENTIONAL_RES_CHAIN" ) );
-	bool ok( true );
-	while ( ok ) {
+	for ( bool ok = true; ok ; ) {
 		is >> tag;
 		resnum_chain = get_resnum_and_chain_and_segid( tag, ok );
 		if ( ok ) {

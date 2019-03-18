@@ -251,12 +251,12 @@ void LoopMover_Refine_Backrub::apply(
 				// repack trial
 				//pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 				// DJM: try updating existing packer task
-				utility::vector1<bool> allow_repacked( nres, false );
-				select_loop_residues( pose, *loops(), !fix_natsc, allow_repacked, 10.0 /* neighbor_cutoff */);
-				this_packer_task->restrict_to_residues( allow_repacked );
+				utility::vector1<bool> allow_repacked2( nres, false );
+				select_loop_residues( pose, *loops(), !fix_natsc, allow_repacked2, 10.0 /* neighbor_cutoff */);
+				this_packer_task->restrict_to_residues( allow_repacked2 );
 				pack::pack_rotamers( pose, *score_fxn, this_packer_task );
-				std::string move_type = "repack";
-				mc.boltzmann( pose, move_type );
+				std::string move_type2 = "repack";
+				mc.boltzmann( pose, move_type2 );
 			}
 		} //inner_cycle
 	} //outer_cycle

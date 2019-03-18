@@ -361,76 +361,76 @@ LinearMemNode::project_deltaE_for_substitution
 							core::PackerEnergy recomputed = compute_rotamer_pair_energy( ii, current_state_, neighbors_curr_state_[ ii ] );
 							T << "Recomputed energy: " << recomputed << std::endl;
 
-							scoring::EnergyMap tbemap;
+							scoring::EnergyMap tbemap2;
 							get_on_the_fly_owner()->score_function().eval_ci_2b(
 								get_on_the_fly_owner()->pose().residue( get_node_index() ),
 								get_on_the_fly_owner()->pose().residue( other_node_index ),
 								get_on_the_fly_owner()->pose(),
-								tbemap );
+								tbemap2 );
 							get_on_the_fly_owner()->score_function().eval_cd_2b(
 								get_on_the_fly_owner()->pose().residue( get_node_index() ),
 								get_on_the_fly_owner()->pose().residue( other_node_index ),
 								get_on_the_fly_owner()->pose(),
-								tbemap );
-							T << "Rescored from pose: " << get_on_the_fly_owner()->score_function().weights().dot( tbemap ) << std::endl;
+								tbemap2 );
+							T << "Rescored from pose: " << get_on_the_fly_owner()->score_function().weights().dot( tbemap2 ) << std::endl;
 
-							tbemap.zero();
+							tbemap2.zero();
 							get_on_the_fly_owner()->score_function().eval_ci_2b(
 								get_rotamer( current_state_ ),
 								get_on_the_fly_owner()->pose().residue( other_node_index ),
 								get_on_the_fly_owner()->pose(),
-								tbemap );
+								tbemap2 );
 							get_on_the_fly_owner()->score_function().eval_cd_2b(
 								get_rotamer( current_state_ ),
 								get_on_the_fly_owner()->pose().residue( other_node_index ),
 								get_on_the_fly_owner()->pose(),
-								tbemap );
-							T << "Rescored combo: " << get_on_the_fly_owner()->score_function().weights().dot( tbemap ) << std::endl;
+								tbemap2 );
+							T << "Rescored combo: " << get_on_the_fly_owner()->score_function().weights().dot( tbemap2 ) << std::endl;
 
 
-							tbemap.zero();
+							tbemap2.zero();
 							get_on_the_fly_owner()->score_function().eval_ci_2b(
 								get_adjacent_linmem_node( ii )->get_rotamer( neighbors_curr_state_[ ii ]),
 								get_on_the_fly_owner()->pose().residue( get_node_index() ),
 								get_on_the_fly_owner()->pose(),
-								tbemap );
+								tbemap2 );
 							get_on_the_fly_owner()->score_function().eval_cd_2b(
 								get_adjacent_linmem_node( ii )->get_rotamer( neighbors_curr_state_[ ii ]),
 								get_on_the_fly_owner()->pose().residue( get_node_index() ),
 								get_on_the_fly_owner()->pose(),
-								tbemap );
-							T << "Rescored combo 2: " << get_on_the_fly_owner()->score_function().weights().dot( tbemap ) << std::endl;
+								tbemap2 );
+							T << "Rescored combo 2: " << get_on_the_fly_owner()->score_function().weights().dot( tbemap2 ) << std::endl;
 
 
 							/// Check if order dependence is causing a bug -- res1 and res2 should not have to be ordered in the
 							/// residue pair energy calls
-							tbemap.zero();
+							tbemap2.zero();
 							get_on_the_fly_owner()->score_function().eval_ci_2b(
 								get_on_the_fly_owner()->pose().residue( other_node_index ),
 								get_rotamer( current_state_ ),
 								get_on_the_fly_owner()->pose(),
-								tbemap );
+								tbemap2 );
 							get_on_the_fly_owner()->score_function().eval_cd_2b(
 								get_on_the_fly_owner()->pose().residue( other_node_index ),
 								get_rotamer( current_state_ ),
 								get_on_the_fly_owner()->pose(),
-								tbemap );
-							T << "Rescored combo swapped: " << get_on_the_fly_owner()->score_function().weights().dot( tbemap ) << std::endl;
+								tbemap2 );
+							T << "Rescored combo swapped: " << get_on_the_fly_owner()->score_function().weights().dot( tbemap2 ) << std::endl;
 
 							/// Check if order dependence is causing a bug -- res1 and res2 should not have to be ordered in the
 							/// residue pair energy calls
-							tbemap.zero();
+							tbemap2.zero();
 							get_on_the_fly_owner()->score_function().eval_ci_2b(
 								get_on_the_fly_owner()->pose().residue( get_node_index() ),
 								get_adjacent_linmem_node( ii )->get_rotamer( neighbors_curr_state_[ ii ]),
 								get_on_the_fly_owner()->pose(),
-								tbemap );
+								tbemap2 );
 							get_on_the_fly_owner()->score_function().eval_cd_2b(
 								get_on_the_fly_owner()->pose().residue( get_node_index() ),
 								get_adjacent_linmem_node( ii )->get_rotamer( neighbors_curr_state_[ ii ]),
 								get_on_the_fly_owner()->pose(),
-								tbemap );
-							T << "Rescored combo 2 swapped: " << get_on_the_fly_owner()->score_function().weights().dot( tbemap ) << std::endl;
+								tbemap2 );
+							T << "Rescored combo 2 swapped: " << get_on_the_fly_owner()->score_function().weights().dot( tbemap2 ) << std::endl;
 
 							//These references are useful in GDB if you need to debug.
 							//

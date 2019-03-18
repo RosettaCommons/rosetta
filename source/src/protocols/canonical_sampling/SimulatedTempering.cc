@@ -297,8 +297,8 @@ bool SimulatedTempering::initialize_from_file( std::string const& filename ) {
 		return false;
 	}
 
-	Real temp, weight, count, wcount;
 	if ( line_format ) {
+		Real temp, weight, count, wcount;
 		for ( Size ct=1; ct <= n_levels; ++ct ) {
 			line_stream >> temp >> weight >> wcount >> count;
 			temperatures.push_back( temp );
@@ -316,17 +316,17 @@ bool SimulatedTempering::initialize_from_file( std::string const& filename ) {
 
 	// table format
 	while ( getline( in, line ) ) {
-		std::istringstream line_stream( line );
+		std::istringstream line_stream2( line );
 		Real temp, weight, wcount;
-		line_stream >> temp;
-		if ( !line_stream.good() ) tr.Error << "format error in temperature file: " << filename << " at line " << line << std::endl;
-		line_stream >> weight;
-		if ( !line_stream.good() ) {
+		line_stream2 >> temp;
+		if ( !line_stream2.good() ) tr.Error << "format error in temperature file: " << filename << " at line " << line << std::endl;
+		line_stream2 >> weight;
+		if ( !line_stream2.good() ) {
 			tr.Warning << "no weights in temperature file: " << filename << " initialize with 1.0" << std::endl;
 			weight = 1.0;
 		}
-		line_stream >> wcount;
-		if ( !line_stream.good() ) {
+		line_stream2 >> wcount;
+		if ( !line_stream2.good() ) {
 			wcount=1;
 		}
 		temperatures.push_back( temp );

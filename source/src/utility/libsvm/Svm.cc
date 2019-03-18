@@ -493,19 +493,26 @@ void Solver::reconstruct_gradient()
 	}
 }
 
-void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
-	double *alpha_, double Cp, double Cn, double eps,
+void Solver::Solve(
+	int my_l,
+	const QMatrix& my_Q,
+	const double *p_,
+	const schar *y_,
+	double *alpha_,
+	double my_Cp,
+	double my_Cn,
+	double my_eps,
 	SolutionInfo* si, int shrinking)
 {
-	this->l = l;
-	this->Q = &Q;
-	QD=Q.get_QD();
-	clone(p, p_,l);
-	clone(y, y_,l);
-	clone(alpha,alpha_,l);
-	this->Cp = Cp;
-	this->Cn = Cn;
-	this->eps = eps;
+	this->l = my_l;
+	this->Q = & my_Q;
+	QD=Q->get_QD();
+	clone( p, p_, l );
+	clone( y, y_, l );
+	clone( alpha, alpha_, l );
+	this->Cp = my_Cp;
+	this->Cn = my_Cn;
+	this->eps = my_eps;
 	unshrink = false;
 
 	// initialize alpha_status
@@ -536,7 +543,7 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 		}
 		for ( i=0; i<l; i++ ) {
 			if ( !is_lower_bound(i) ) {
-				const Qfloat *Q_i = Q.get_Q(i,l);
+				const Qfloat *Q_i = Q->get_Q(i,l);
 				double alpha_i = alpha[i];
 				int j;
 				for ( j=0; j<l; j++ ) {
@@ -585,8 +592,8 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 
 		// update alpha[i] and alpha[j], handle bounds carefully
 
-		const Qfloat *Q_i = Q.get_Q(i,active_size);
-		const Qfloat *Q_j = Q.get_Q(j,active_size);
+		const Qfloat *Q_i = Q->get_Q(i,active_size);
+		const Qfloat *Q_j = Q->get_Q(j,active_size);
 
 		double C_i = get_C(i);
 		double C_j = get_C(j);
@@ -678,7 +685,7 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 			update_alpha_status(j);
 			int k;
 			if ( ui != is_upper_bound(i) ) {
-				Q_i = Q.get_Q(i,l);
+				Q_i = Q->get_Q(i,l);
 				if ( ui ) {
 					for ( k=0; k<l; k++ ) {
 						G_bar[k] -= C_i * Q_i[k];
@@ -691,7 +698,7 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 			}
 
 			if ( uj != is_upper_bound(j) ) {
-				Q_j = Q.get_Q(j,l);
+				Q_j = Q->get_Q(j,l);
 				if ( uj ) {
 					for ( k=0; k<l; k++ ) {
 						G_bar[k] -= C_j * Q_j[k];
@@ -971,13 +978,24 @@ class Solver_NU: public Solver
 {
 public:
 	Solver_NU() = default;
-	void Solve(int l, const QMatrix& Q, const double *p, const schar *y,
-		double *alpha, double Cp, double Cn, double eps,
-		SolutionInfo* si, int shrinking)
-	{
-		this->si = si;
-		Solver::Solve(l,Q,p,y,alpha,Cp,Cn,eps,si,shrinking);
+
+	//Most of these names start with "my" to prevent shadowing
+	void Solve(
+		int my_l,
+		const QMatrix& my_Q,
+		const double * my_p,
+		const schar * my_y,
+		double * my_alpha,
+		double my_Cp,
+		double my_Cn,
+		double my_eps,
+		SolutionInfo* my_si,
+		int my_shrinking
+	) {
+		this->si = my_si;
+		Solver::Solve( my_l, my_Q, my_p, my_y, my_alpha, my_Cp, my_Cn, my_eps, my_si, my_shrinking );
 	}
+
 private:
 	SolutionInfo *si;
 	int select_working_set(int &i, int &j) override;

@@ -1700,10 +1700,10 @@ void DoubleLazyInteractionGraph::note_submatrix_added(
 
 		--global_submatrix_index; // convert to a 0-based index for modular arithmetic
 
-		int const edge_index = global_submatrix_index / sqr_num_aa_types_;
+		int const edge_index2 = global_submatrix_index / sqr_num_aa_types_;
 		int const local_submatrix_index = global_submatrix_index % sqr_num_aa_types_;
 
-		int savings = dlazy_edge_vector_[ edge_index ]->drop_aa_submatrix( local_submatrix_index );
+		int savings = dlazy_edge_vector_[ edge_index2 ]->drop_aa_submatrix( local_submatrix_index );
 		//std::cout << "submatrix " << global_submatrix_index << " being deleted " << std::endl;
 		curr_memory_for_rpes_ -= savings;
 	}

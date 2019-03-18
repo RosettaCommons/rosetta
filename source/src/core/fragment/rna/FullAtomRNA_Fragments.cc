@@ -416,8 +416,8 @@ FullAtomRNA_Fragments::apply_best_fragment(
 
 			// Test this one
 			insert_fragment( pose, position, torsion_set, atom_level_domain_map );
-			for ( Size ii = 1; ii < symm_hack_arity; ++ii ) {
-				insert_fragment( pose, ( position + ii * pose.size() / symm_hack_arity - 1 ) % pose.size() + 1, torsion_set, atom_level_domain_map );
+			for ( Size jj = 1; jj < symm_hack_arity; ++jj ) {
+				insert_fragment( pose, ( position + jj * pose.size() / symm_hack_arity - 1 ) % pose.size() + 1, torsion_set, atom_level_domain_map );
 			}
 
 			// OK: better?
@@ -434,8 +434,8 @@ FullAtomRNA_Fragments::apply_best_fragment(
 
 			// Test this one
 			insert_fragment( pose, position, torsion_set, atom_level_domain_map );
-			for ( Size ii = 1; ii < symm_hack_arity; ++ii ) {
-				insert_fragment( pose, ( position + ii * pose.size() / symm_hack_arity - 1 ) % pose.size() + 1, torsion_set, atom_level_domain_map );
+			for ( Size jj = 1; jj < symm_hack_arity; ++jj ) {
+				insert_fragment( pose, ( position + jj * pose.size() / symm_hack_arity - 1 ) % pose.size() + 1, torsion_set, atom_level_domain_map );
 			}
 
 			// OK: better?

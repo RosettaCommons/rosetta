@@ -1062,8 +1062,8 @@ void FastRelax::set_script_from_lines( std::vector< std::string > const & fileli
 		if ( tokens.size() > 20 ) { // large data; now used for reference weights storage only.
 			RelaxScriptCommand newcmd;
 			newcmd.command = tokens[1];
-			for ( Size i = 2; i <= tokens.size(); ++i ) {
-				newcmd.params_vec.push_back( atof(tokens[i].c_str()) );
+			for ( Size ii = 2; ii <= tokens.size(); ++ii ) {
+				newcmd.params_vec.push_back( atof(tokens[ii].c_str()) );
 			}
 			newcmd.nparams = newcmd.params_vec.size();
 			script_.push_back( newcmd );

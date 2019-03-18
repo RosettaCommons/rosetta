@@ -147,31 +147,31 @@ CrystalContactsOperation::is_crystal_contact( core::conformation::Residue const 
 		}
 	} else if ( nbr_radius_to_atoms_ ) {
 		// is CBeta to atom distance less than asymm nbr_radius plus gaps?
-		for ( Size atom_symm = symm_residue.natoms(); atom_symm > 0; --atom_symm ) {
+		for ( Size atom_symm2 = symm_residue.natoms(); atom_symm2 > 0; --atom_symm2 ) {
 			contact_distance = asymm_residue.nbr_radius() + all_gap_;
-			if ( asymm_residue.is_polar() && (symm_residue.atom_type(atom_symm).is_acceptor() || symm_residue.atom_type(atom_symm).is_polar_hydrogen() || symm_residue.atom_type(atom_symm).is_donor() ) ) {
+			if ( asymm_residue.is_polar() && (symm_residue.atom_type(atom_symm2).is_acceptor() || symm_residue.atom_type(atom_symm2).is_polar_hydrogen() || symm_residue.atom_type(atom_symm2).is_donor() ) ) {
 				contact_distance += polar_gap_;
 			}
-			if ( asymm_residue.xyz(atom_asymm).distance_squared(symm_residue.xyz(atom_symm)) <= contact_distance*contact_distance ) {
+			if ( asymm_residue.xyz(atom_asymm).distance_squared(symm_residue.xyz(atom_symm2)) <= contact_distance*contact_distance ) {
 				is_contact = true;
 				TR.Debug << "contact: " << asymm_residue.seqpos() << " " << symm_residue.seqpos() << " " << contact_distance << std::endl;
 				TR.Debug << "contact: " << asymm_residue.name3() << " " << symm_residue.name3() << " " << contact_distance << std::endl;
-				TR.Debug << "contact: " << atom_asymm << " " << symm_residue.atom_name(atom_symm) << " " << contact_distance << std::endl;
-				TR.Debug << "actual distance squared: " << asymm_residue.xyz(atom_asymm).distance_squared(symm_residue.xyz(atom_symm)) << " contact squared: " << contact_distance*contact_distance << std::endl;
-				//TR.Debug << "contact: " << asymm_residue.xyz(atom_asymm)[0] << " " << asymm_residue.xyz(atom_asymm)[1] << " " << asymm_residue.xyz(atom_asymm)[2] << " " << symm_residue.xyz(atom_symm)[0] << " " << symm_residue.xyz(atom_symm)[1] << " " << symm_residue.xyz(atom_symm)[2] << " " << contact_distance << std::endl;
+				TR.Debug << "contact: " << atom_asymm << " " << symm_residue.atom_name(atom_symm2) << " " << contact_distance << std::endl;
+				TR.Debug << "actual distance squared: " << asymm_residue.xyz(atom_asymm).distance_squared(symm_residue.xyz(atom_symm2)) << " contact squared: " << contact_distance*contact_distance << std::endl;
+				//TR.Debug << "contact: " << asymm_residue.xyz(atom_asymm)[0] << " " << asymm_residue.xyz(atom_asymm)[1] << " " << asymm_residue.xyz(atom_asymm)[2] << " " << symm_residue.xyz(atom_symm2)[0] << " " << symm_residue.xyz(atom_symm2)[1] << " " << symm_residue.xyz(atom_symm2)[2] << " " << contact_distance << std::endl;
 				break;
 			}
-		}
+		}//for atom_symm2
 	} else if ( atoms_to_atoms_ ) {
 		// are atom to atom distances less than gaps?
-		for ( Size atom_asymm = asymm_residue.natoms(); atom_asymm > 0; --atom_asymm ) {
-			for ( Size atom_symm = symm_residue.natoms(); atom_symm > 0; --atom_symm ) {
+		for ( Size atom_asymm2 = asymm_residue.natoms(); atom_asymm2 > 0; --atom_asymm2 ) {
+			for ( Size atom_symm2 = symm_residue.natoms(); atom_symm2 > 0; --atom_symm2 ) {
 				contact_distance = all_gap_;
-				if ( (asymm_residue.atom_type(atom_symm).is_acceptor() && symm_residue.atom_type(atom_symm).is_polar_hydrogen()) ||
-						(asymm_residue.atom_type(atom_symm).is_polar_hydrogen() && symm_residue.atom_type(atom_symm).is_acceptor()) ) {
+				if ( (asymm_residue.atom_type(atom_symm2).is_acceptor() && symm_residue.atom_type(atom_symm2).is_polar_hydrogen()) ||
+						(asymm_residue.atom_type(atom_symm2).is_polar_hydrogen() && symm_residue.atom_type(atom_symm2).is_acceptor()) ) {
 					contact_distance += polar_gap_;
 				}
-				if ( asymm_residue.xyz(atom_asymm).distance_squared(symm_residue.xyz(atom_symm)) <= contact_distance*contact_distance ) {
+				if ( asymm_residue.xyz(atom_asymm2).distance_squared(symm_residue.xyz(atom_symm2)) <= contact_distance*contact_distance ) {
 					is_contact = true;
 					TR.Debug << "contact: " << asymm_residue.seqpos() << " " << symm_residue.seqpos() << " " << contact_distance << std::endl;
 					break;

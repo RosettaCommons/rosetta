@@ -99,16 +99,16 @@ void PhiPsiTalosIO::read(std::string const & file_name) {
 
 		if ( (strs.size() == vars.size()) && (strs[1] != "REMARK") ) {
 			char aa;
-			std::istringstream line_stream(line);
+			std::istringstream line_stream2(line);
 			core::Real phi, psi, d_phi, d_psi, dist, s2;
 			core::Size res_id, count;
 			std::string cls;
 			if ( vars.size()==10 ) {
-				line_stream >> res_id >> aa >> phi >> psi >> d_phi >> d_psi >> dist
+				line_stream2 >> res_id >> aa >> phi >> psi >> d_phi >> d_psi >> dist
 					>> s2 >> count >> cls;
 			} else {
 				core::Size cs_count;
-				line_stream >> res_id >> aa >> phi >> psi >> d_phi >> d_psi >> dist
+				line_stream2 >> res_id >> aa >> phi >> psi >> d_phi >> d_psi >> dist
 					>> s2 >> count >> cs_count >> cls;
 			}
 			data_format_ = " %4d %s %8.3f %8.3f %8.3f %8.3f %8.3f %5.3f %2d %s";

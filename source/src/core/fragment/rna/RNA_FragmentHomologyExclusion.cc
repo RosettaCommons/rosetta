@@ -140,11 +140,12 @@ utility::vector1< core::Size > analyze_for_homology( std::string const & in_file
 	PoseOP pose_op = core::import_pose::get_pdb_and_cleanup( in_file, rsd_set );
 	Pose & pose_input = *pose_op;
 
-	std::string const secstruct = figure_out_secstruct( pose_input );
-
 	utility::vector1< std::pair< Size, std::string > > secstruct_segments; // position, secstruct
-	obtain_secstruct_segments( secstruct_segments, secstruct );
-	secstruct_segments = split_segments_longer_than_6mers( secstruct_segments );
+	{
+		std::string const secstruct = figure_out_secstruct( pose_input );
+		obtain_secstruct_segments( secstruct_segments, secstruct );
+		secstruct_segments = split_segments_longer_than_6mers( secstruct_segments );
+	}
 
 	utility::vector1< Size > foo;
 	for ( auto const & elem : secstruct_segments ) {

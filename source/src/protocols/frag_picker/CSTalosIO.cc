@@ -188,20 +188,20 @@ bool CSTalosIO::has_atom(core::Size residue_id, std::string const & atom_name) c
 	}
 
 	utility::vector1<boost::tuple<core::Size, char, std::string, core::Real> >
-		used_for_searching_;
+		used_for_searching;
 
-	get_tuples(residue_id, used_for_searching_);
-	for ( core::Size i = 1; i <= used_for_searching_.size(); i++ ) {
-		//std::cout << "FROMTUPLE " << residue_id << " " << used_for_searching_[i].get<0>() << " " << used_for_searching_[i].get<2>() << " " << used_for_searching_[i].get<1>() << std::endl;
+	get_tuples(residue_id, used_for_searching);
+	for ( core::Size i = 1; i <= used_for_searching.size(); i++ ) {
+		//std::cout << "FROMTUPLE " << residue_id << " " << used_for_searching[i].get<0>() << " " << used_for_searching[i].get<2>() << " " << used_for_searching[i].get<1>() << std::endl;
 
 		//Seriously, get_tuples(residue_id,...) also fetches tuples for OTHER residue IDs.
 		//I have no idea why.
-		if ( (used_for_searching_[i].get<0>() == residue_id) && (used_for_searching_[i].get<2> () == atom_name) ) {
-			used_for_searching_.clear();
+		if ( (used_for_searching[i].get<0>() == residue_id) && (used_for_searching[i].get<2> () == atom_name) ) {
+			used_for_searching.clear();
 			return true;
 		}
 	}
-	used_for_searching_.clear();
+	used_for_searching.clear();
 
 	return false;
 }
@@ -215,17 +215,17 @@ core::Real CSTalosIO::get_shift(core::Size residue_id, std::string const & atom_
 	}
 
 	utility::vector1<boost::tuple<core::Size, char, std::string, core::Real> >
-		used_for_searching_;
+		used_for_searching;
 
-	get_tuples(residue_id, used_for_searching_);
-	for ( core::Size i = 1; i <= used_for_searching_.size(); i++ ) {
-		//std::cout << "GET_SHIFT " << residue_id << " " << atom_name << " " << used_for_searching_[i].get<2>() << std::endl;
+	get_tuples(residue_id, used_for_searching);
+	for ( core::Size i = 1; i <= used_for_searching.size(); i++ ) {
+		//std::cout << "GET_SHIFT " << residue_id << " " << atom_name << " " << used_for_searching[i].get<2>() << std::endl;
 
 		//Seriously, get_tuples(residue_id,...) also fetches tuples for OTHER residue IDs.
 		//I have no idea why.
-		if ( (used_for_searching_[i].get<0>() == residue_id) && (used_for_searching_[i].get<2> () == atom_name) ) {
-			core::Real ret = used_for_searching_[i].get<3> ();
-			used_for_searching_.clear();
+		if ( (used_for_searching[i].get<0>() == residue_id) && (used_for_searching[i].get<2> () == atom_name) ) {
+			core::Real ret = used_for_searching[i].get<3> ();
+			used_for_searching.clear();
 			return ret;
 		}
 	}

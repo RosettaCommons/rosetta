@@ -134,17 +134,17 @@ PCSSingle::operator=(PCSSingle const & rhs) {
 PCSSingle::~PCSSingle() {}
 
 void
-PCSSingle::show(std::ostream & TR) const {
+PCSSingle::show(std::ostream & tracer) const {
 	// Store old iostream manipulator flags
 	std::ios oldState(nullptr);
-	oldState.copyfmt(TR);
-	TR << "( ";
+	oldState.copyfmt(tracer);
+	tracer << "( ";
 	for ( Size i = 1; i <= protein_spins_.size()-1; ++i ) {
-		TR << std::setw(4) << protein_spins_[i].rsd() << " " << std::setw(4) << protein_spins_[i].atomno() << " or ";
+		tracer << std::setw(4) << protein_spins_[i].rsd() << " " << std::setw(4) << protein_spins_[i].atomno() << " or ";
 	}
-	TR << std::setw(4) << protein_spins_.back().rsd() << " " << std::setw(4) << protein_spins_.back().atomno() << " ) ";
-	TR << std::setw(6) << std::fixed << std::setprecision(3) << pcs_exp_ << " +/- " << pcs_err_ << std::endl;
-	TR.copyfmt(oldState);
+	tracer << std::setw(4) << protein_spins_.back().rsd() << " " << std::setw(4) << protein_spins_.back().atomno() << " ) ";
+	tracer << std::setw(6) << std::fixed << std::setprecision(3) << pcs_exp_ << " +/- " << pcs_err_ << std::endl;
+	tracer.copyfmt(oldState);
 }
 
 bool

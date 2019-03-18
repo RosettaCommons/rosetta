@@ -1069,22 +1069,21 @@ Energies::accumulate_residue_total_energy() const
 		} // nbr jj of ii
 	} // ii=1,nres
 
-	for ( Size ii = 1; ii <= long_range_energy_containers_.size(); ++ii ) {
-		LREnergyContainerCOP lrec = long_range_energy_containers_[ ii ];
+	for ( LREnergyContainerOP const & lrec : long_range_energy_containers_ ) {
 		if ( lrec == nullptr ) continue;
 		if ( lrec->empty() ) continue;
 
 		// Potentially O(N^2) operation...
-		for ( Size ii = 1; ii <= size_; ++ii ) {
+		for ( Size kk = 1; kk <= size_; ++kk ) {
 			for ( ResidueNeighborConstIteratorOP
-					rni = lrec->const_upper_neighbor_iterator_begin( ii ),
-					rniend = lrec->const_upper_neighbor_iterator_end( ii );
+					rni = lrec->const_upper_neighbor_iterator_begin( kk ),
+					rniend = lrec->const_upper_neighbor_iterator_end( kk );
 					(*rni) != (*rniend); ++(*rni) ) {
 				Size jj = rni->upper_neighbor_id();
 				EnergyMap emap;
 				rni->retrieve_energy( emap );
 				Real half = 0.5 * scorefxn_weights_.dot( emap );
-				residue_total_energy_[ ii ] += half;
+				residue_total_energy_[ kk ] += half;
 				residue_total_energy_[ jj ] += half;
 			}
 		}

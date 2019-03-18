@@ -252,9 +252,9 @@ Operator::compute(
 	}
 	if ( operation() == ABS ) {
 		runtime_assert( filters().size() == 1 );
-		core::Real const val( filters()[ 1 ]->report_sm( pose ) );
-		core::Real const abs_val( negate() ? -std::abs( val ) : std::abs( val ) );
-		TR<<"Filter returns "<<val<<" and its absolute value is "<<abs_val<<std::endl;
+		core::Real const val2( filters()[ 1 ]->report_sm( pose ) );
+		core::Real const abs_val( negate() ? -std::abs( val2 ) : std::abs( val2 ) );
+		TR<<"Filter returns "<<val2<<" and its absolute value is "<<abs_val<<std::endl;
 		return abs_val;
 	}
 	if ( operation() == PRODUCT ) {

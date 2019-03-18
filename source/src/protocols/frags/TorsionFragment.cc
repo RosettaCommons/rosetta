@@ -155,14 +155,16 @@ TorsionFragmentLibrary::read_file(
 	}
 	std::string line;
 	while ( getline( data, line ) ) {
-		std::istringstream line_stream( line );
 		std::string tag1, tag2;
 		Size position, neighbors;
-		line_stream >> tag1 >> position >> tag2 >> neighbors;
-		if ( line_stream.fail() || tag1 != "position:" || tag2 != "neighbors:" ) {
-			std::cerr << " format errors in fragment library file: " << line << std::endl;
-			resize(0);
-			return false;
+		{
+			std::istringstream line_stream( line );
+			line_stream >> tag1 >> position >> tag2 >> neighbors;
+			if ( line_stream.fail() || tag1 != "position:" || tag2 != "neighbors:" ) {
+				std::cerr << " format errors in fragment library file: " << line << std::endl;
+				resize(0);
+				return false;
+			}
 		}
 		resize( position );
 		getline(data, line); // skip blank line

@@ -57,8 +57,8 @@ struct GeneralEvent {
 
 	/// @brief constructor
 	inline
-	GeneralEvent( Pose const * pose ) :
-		pose( pose )
+	GeneralEvent( Pose const * p ) :
+		pose( p )
 	{}
 
 

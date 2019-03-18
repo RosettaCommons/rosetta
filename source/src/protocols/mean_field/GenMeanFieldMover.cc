@@ -49,6 +49,7 @@
 #include <utility/file/file_sys_util.hh> // file_exists
 #include <utility/file/FileName.hh>
 #include <utility/vector0.hh>
+#include <utility/pointer/memory.hh>
 #include <utility/io/izstream.hh>
 
 // option keys
@@ -332,17 +333,18 @@ GenMeanFieldMover::prepare_task_poses( pose::Pose const & pose )
 	//tasks_.push_back( task_ );
 
 	//unbind poses by last jump if unbound is on
-	for ( pose::PoseOPs::const_iterator pose = poses_.begin();
-			pose != poses_.end(); ++pose ) {
+	for ( pose::PoseOPs::const_iterator pose2 = poses_.begin();
+			pose2 != poses_.end(); ++pose2 ) {
 		//commented out for 1task
-		task_ = task_factory()->create_task_and_apply_taskoperations( **pose );
+		task_ = task_factory()->create_task_and_apply_taskoperations( **pose2 );
 		task_->set_bump_check( true );
 		tasks_.push_back( task_ );
 
 		if ( unbound() ) {
-			protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( **pose, (*pose)->num_jump() ) ); // JB 120420
+			protocols::rigid::RigidBodyTransMoverOP translate =
+				utility::pointer::make_shared< protocols::rigid::RigidBodyTransMover >( **pose2, (*pose2)->num_jump() ); // JB 120420
 			translate->step_size( 1000.0 );
-			translate->apply( **pose );
+			translate->apply( **pose2 );
 		}
 
 	}

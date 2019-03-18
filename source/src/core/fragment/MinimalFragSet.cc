@@ -126,7 +126,6 @@ void MinimalFragSet::read_fragment_stream( std::string const & filename, std::st
 	string line( first_line );
 	utility::vector1<torsions> vall_torsions;
 	Size insertion_pos = 1;
-	FrameOP frame;
 	std::map<std::pair<Size,Size>, Size> frame_counts;
 	Size n_frags( 0 );
 	do {

@@ -116,12 +116,12 @@ RDCSingleSet::set_single_rdc_weighting_scheme(std::string const & weighting_sche
 }
 
 void
-RDCSingleSet::show(std::ostream & TR) const {
-	TR << "   * * * RDCSingleSet Summary Report * * *   " << std::endl;
-	TR << " RDC dataset " << dataset_name_ << " contains " << number_rdc_ << " rdc values and has weight " << weight_ << "." << std::endl;
-	TR << " * * * * * * RDC values * * * * * * " << std::endl;
+RDCSingleSet::show(std::ostream & tracer) const {
+	tracer << "   * * * RDCSingleSet Summary Report * * *   " << std::endl;
+	tracer << " RDC dataset " << dataset_name_ << " contains " << number_rdc_ << " rdc values and has weight " << weight_ << "." << std::endl;
+	tracer << " * * * * * * RDC values * * * * * * " << std::endl;
 	for ( Size i = 1; i <= number_rdc_; ++i ) {
-		rdc_single_vec_[i].show(TR);
+		rdc_single_vec_[i].show(tracer);
 	}
 }
 

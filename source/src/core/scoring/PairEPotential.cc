@@ -63,30 +63,32 @@ PairEPotential::PairEPotential() :
 	pair_corr_.dimension( max_aa, max_aa, 2, 2, 5, TableProbability( 0.0 ) );
 
 	// Read the file and assign the array elements
-	int aa1, aa2, e1, e2, r12_bin;
-	TableProbability pair_probability;
-	while ( stream ) {
-		using namespace ObjexxFCL::format;
-		stream
-			>> bite( 2, aa1 ) >> skip( 1 )
-			>> bite( 2, aa2 ) >> skip( 1 )
-			>> bite( 2, e1 ) >> skip( 1 )
-			>> bite( 2, e2 ) >> skip( 1 )
-			>> bite( 2, r12_bin ) >> skip( 1 )
-			>> bite( 12, pair_probability ) >> skip;
+	{
+		int aa1, aa2, e1, e2, r12_bin;
+		TableProbability pair_probability;
+		while ( stream ) {
+			using namespace ObjexxFCL::format;
+			stream
+				>> bite( 2, aa1 ) >> skip( 1 )
+				>> bite( 2, aa2 ) >> skip( 1 )
+				>> bite( 2, e1 ) >> skip( 1 )
+				>> bite( 2, e2 ) >> skip( 1 )
+				>> bite( 2, r12_bin ) >> skip( 1 )
+				>> bite( 12, pair_probability ) >> skip;
 
-		//iwd  A few entries have 0 observations, which leads to a likelihood ratio of 0,
-		//iwd  which causes INF and NAN values when you take the log of it.
-		//iwd  It's also unrealistic, as the value is just due to statistics of small numbers.
-		//iwd  This (conservative) replacement is the minimum (non-zero) probability in the file.
-		TableProbability const min_prob = 0.05;
-		if ( pair_probability < min_prob ) pair_probability = min_prob;
+			//iwd  A few entries have 0 observations, which leads to a likelihood ratio of 0,
+			//iwd  which causes INF and NAN values when you take the log of it.
+			//iwd  It's also unrealistic, as the value is just due to statistics of small numbers.
+			//iwd  This (conservative) replacement is the minimum (non-zero) probability in the file.
+			TableProbability const min_prob = 0.05;
+			if ( pair_probability < min_prob ) pair_probability = min_prob;
 
-		if ( stream ) {
-			pair_corr_( aa1, aa2, e1, e2, r12_bin ) = pair_probability;
+			if ( stream ) {
+				pair_corr_( aa1, aa2, e1, e2, r12_bin ) = pair_probability;
+			}
 		}
+		stream.close();
 	}
-	stream.close();
 
 	//bk One interesting property of the pair statistics are that they favor unlike charges being
 	//bk near each other, but only very close range interactions between like charges are

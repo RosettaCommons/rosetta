@@ -58,6 +58,7 @@
 #include <platform/types.hh>
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 #include <utility/file/FileName.hh>
 #include <utility/keys/SmallKeyVector.hh>
 #include <basic/options/option.hh>
@@ -126,14 +127,14 @@ bool PDBSilentStruct::init_from_lines(
 		// get scorename data from the first two lines provided, put into container
 		// for further use by other SilentStruct objects.
 
-		EnergyNamesOP enames( new EnergyNames( *iter ) );
+		EnergyNamesOP enames = utility::pointer::make_shared< EnergyNames >( *iter );
 		container.set_shared_silent_data( energynames, enames  );
 		energy_names_ = enames->energy_names();
 	} // get header information
 
 	std::string concatenated_pdb_info; // concatenated pdb information
 	for ( auto end = lines.end(); iter != end; ++iter ) {
-		string tag;
+		//string tag;
 		std::istringstream line_stream( *iter );
 
 		if ( iter->substr(0,7) == "SCORE: " ) { // SCORE: line with values from this structure.

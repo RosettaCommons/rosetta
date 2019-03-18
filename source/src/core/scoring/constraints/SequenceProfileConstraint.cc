@@ -144,9 +144,9 @@ SequenceProfileConstraint::read_def(
 		utility::vector1<Real> aa_scores;
 		TR(t_debug) << "Loading seqprof constraint for resi " << residue_index << " with aa_count " << aa_count << std::endl;
 		for ( Size i = 1; i <= aa_count; i++ ) {
-			Real tmp;
-			tmpss >> tmp;
-			aa_scores.push_back( tmp );
+			Real tmp2;
+			tmpss >> tmp2;
+			aa_scores.push_back( tmp2 );
 		}
 		if ( ! sequence_profile_ )  {
 			SequenceProfileOP newseqprof( new SequenceProfile );

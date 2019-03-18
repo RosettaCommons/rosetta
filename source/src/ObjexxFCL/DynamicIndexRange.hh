@@ -107,8 +107,8 @@ public: // Creation
 
 	/// @brief Unbounded Upper Index Constructor
 	inline
-	DynamicIndexRange( Star const & star ) :
-		Super( star ),
+	DynamicIndexRange( Star const & str ) :
+		Super( str ),
 		l_dim_p_( 0 ),
 		u_dim_p_( 0 )
 	{}
@@ -257,8 +257,8 @@ public: // Creation
 
 	/// @brief Index and Unbounded Upper Index Constructor
 	inline
-	DynamicIndexRange( int const l_a, Star const & star ) :
-		Super( l_a, star ),
+	DynamicIndexRange( int const l_a, Star const & str ) :
+		Super( l_a, str ),
 		l_dim_p_( 0 ),
 		u_dim_p_( 0 )
 	{
@@ -336,11 +336,11 @@ public: // Assignment
 	/// @brief Unbounded Upper Index Assignment
 	inline
 	DynamicIndexRange &
-	operator =( Star const & star )
+	operator =( Star const & str )
 	{
 		delete l_dim_p_; l_dim_p_ = 0;
 		delete u_dim_p_; u_dim_p_ = 0;
-		Super::operator =( star );
+		Super::operator =( str );
 		notify();
 		return *this;
 	}
@@ -425,11 +425,11 @@ public: // Assignment
 	/// @brief Unbounded Upper Index Assignment
 	inline
 	DynamicIndexRange &
-	assign( Star const & star )
+	assign( Star const & str )
 	{
 		delete l_dim_p_; l_dim_p_ = 0;
 		delete u_dim_p_; u_dim_p_ = 0;
-		Super::operator =( star );
+		Super::operator =( str );
 		notify();
 		return *this;
 	}
@@ -602,11 +602,11 @@ public: // Assignment
 	/// @brief Index and Unbounded Upper Index Assignment
 	inline
 	DynamicIndexRange &
-	assign( int const l_a, Star const & star )
+	assign( int const l_a, Star const & str )
 	{
 		delete l_dim_p_; l_dim_p_ = 0;
 		delete u_dim_p_; u_dim_p_ = 0;
-		Super::assign( l_a, star );
+		Super::assign( l_a, str );
 		assert( legal_static() );
 		notify();
 		return *this;
@@ -656,11 +656,11 @@ public: // Assignment
 	/// @brief Index and Unbounded Upper Index Assignment Without Notification
 	inline
 	DynamicIndexRange &
-	assign_no_notify( int const l_a, Star const & star )
+	assign_no_notify( int const l_a, Star const & str )
 	{
 		delete l_dim_p_; l_dim_p_ = 0;
 		delete u_dim_p_; u_dim_p_ = 0;
-		Super::assign( l_a, star );
+		Super::assign( l_a, str );
 		assert( legal_static() );
 		return *this;
 	}

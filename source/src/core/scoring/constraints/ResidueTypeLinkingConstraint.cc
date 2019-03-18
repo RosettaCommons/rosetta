@@ -25,6 +25,7 @@
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility>
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 
 
 #ifdef SERIALIZATION
@@ -69,16 +70,16 @@ ResidueTypeLinkingConstraint::ResidueTypeLinkingConstraint(
 	core::pose::Pose const &, //pose,
 	Size seqpos1,
 	Size seqpos2,
-	std::string const & AA1name,
-	std::string const & AA2name,
+	std::string const & AA1_name,
+	std::string const & AA2_name,
 	core::Real bonus
 ):
 	Constraint( core::scoring::res_type_linking_constraint ),
 
 	seqpos1_( seqpos1 ),
 	seqpos2_( seqpos2 ),
-	rsd1_type_name3_( AA1name ),
-	rsd2_type_name3_( AA2name ),
+	rsd1_type_name3_( AA1_name ),
+	rsd2_type_name3_( AA2_name ),
 	bonus_( bonus )
 {}
 
@@ -87,7 +88,7 @@ ResidueTypeLinkingConstraint::~ResidueTypeLinkingConstraint() = default;
 ConstraintOP
 ResidueTypeLinkingConstraint::clone() const
 {
-	return ConstraintOP( new ResidueTypeLinkingConstraint( *this ) );
+	return ConstraintOP( utility::pointer::make_shared< ResidueTypeLinkingConstraint >( *this ) );
 }
 
 utility::vector1< core::Size >

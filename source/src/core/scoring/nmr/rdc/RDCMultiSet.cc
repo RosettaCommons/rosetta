@@ -1225,18 +1225,18 @@ RDCMultiSet::set_averaging_type(std::string const & type) {
 }
 
 void
-RDCMultiSet::show(std::ostream & TR) const {
-	TR << "   * * * RDCMultiSet Summary Report * * *   " << std::endl;
-	TR << "Alignment Medium: " << alignment_medium_ << std::endl;
-	TR << "No experiments:   " << number_experiments_ << std::endl;
-	TR << "No RDCs:          " << total_number_rdc_ << std::endl;
-	TR << "Experimental conditions: " << std::endl;
+RDCMultiSet::show(std::ostream & tracer) const {
+	tracer << "   * * * RDCMultiSet Summary Report * * *   " << std::endl;
+	tracer << "Alignment Medium: " << alignment_medium_ << std::endl;
+	tracer << "No experiments:   " << number_experiments_ << std::endl;
+	tracer << "No RDCs:          " << total_number_rdc_ << std::endl;
+	tracer << "Experimental conditions: " << std::endl;
 	for ( Size i = 1; i <= number_experiments_; ++i ) {
-		TR << " - " << rdc_singleset_vec_[i]->get_dataset_name() << " : [ " << rdc_singleset_vec_[i]->get_number_rdc() << " RDCs, "
+		tracer << " - " << rdc_singleset_vec_[i]->get_dataset_name() << " : [ " << rdc_singleset_vec_[i]->get_number_rdc() << " RDCs, "
 			<< convert_rdc_type_to_string(rdc_singleset_vec_[i]->get_rdc_type()) << " ]" << std::endl;
 	}
-	TR << "Alignment Tensor: " << std::endl;
-	computation_type_ == SVD ? tensor_->show_tensor_stats(TR, false) : tensor_->show_tensor_stats(TR, true);
+	tracer << "Alignment Tensor: " << std::endl;
+	computation_type_ == SVD ? tensor_->show_tensor_stats(tracer, false) : tensor_->show_tensor_stats(tracer, true);
 }
 
 } // namespace rdc

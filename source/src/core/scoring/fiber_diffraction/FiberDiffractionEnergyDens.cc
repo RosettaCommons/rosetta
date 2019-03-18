@@ -289,7 +289,7 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 	ObjexxFCL::FArray1D< float > & rc,
 	ObjexxFCL::FArray1D< float > & phic,
 	ObjexxFCL::FArray1D< float > & zc,
-	Real const c_
+	Real const c
 ) const
 {
 
@@ -310,7 +310,7 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 	core::Real minX, minY, minZ, maxX, maxY, maxZ;
 	find_min_xyz(pose, minX, minY, minZ, maxX, maxY, maxZ);
 
-	if ( fabs(maxZ-minZ) > c_ ) maxZ = minZ+c_;
+	if ( fabs(maxZ-minZ) > c ) maxZ = minZ+c;
 	core::Real minZZ(minZ), maxZZ(maxZ);
 
 	core::Real pad(5);
@@ -400,11 +400,11 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 			}
 
 			if ( atm_i.xyz()[2]>maxZZ ) {
-				zr = int(fabs(atm_i.xyz()[2]-minZZ)/c_);
+				zr = int(fabs(atm_i.xyz()[2]-minZZ)/c);
 
 				atmi_xyz_[0] =  atm_i.xyz()[0];
 				atmi_xyz_[1] =  atm_i.xyz()[1];
-				atmi_xyz_[2] =  atm_i.xyz()[2]-zr*c_;
+				atmi_xyz_[2] =  atm_i.xyz()[2]-zr*c;
 			} else {
 				atmi_xyz_[0] =  atm_i.xyz()[0];
 				atmi_xyz_[1] =  atm_i.xyz()[1];

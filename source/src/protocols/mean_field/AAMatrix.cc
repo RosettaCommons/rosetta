@@ -444,10 +444,10 @@ AAMatrix::parse_aa_matrix_line( utility::vector1 < std::string > const & tokens,
 
 	//tokens begins with positional index
 	for ( Size which_token = 2; which_token <= tokens.size(); ++which_token ) {
-		std::istringstream token_s( tokens[ which_token ] );
+		std::istringstream token_s2( tokens[ which_token ] );
 		Real prob;
 
-		if ( ! ( token_s >> prob ) ) {
+		if ( ! ( token_s2 >> prob ) ) {
 			std::stringstream error_message;
 			error_message
 				<< "Error parsing specificity profile (AAMatrix): expected numeric value." << std::endl;

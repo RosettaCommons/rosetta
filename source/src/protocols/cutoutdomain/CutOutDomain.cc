@@ -111,9 +111,9 @@ CutOutDomain::find_nearest_res( core::pose::Pose const & source, core::pose::Pos
 			nearest_res = i;
 		}
 	}
-	static basic::Tracer TR( "This is nearest_res" );
+	static basic::Tracer tr( "This is nearest_res" );
 
-	TR<<nearest_res<<std::endl;
+	tr << nearest_res << std::endl;
 	if ( min_dist <= 10.0 ) return nearest_res;
 	else return 0;
 }

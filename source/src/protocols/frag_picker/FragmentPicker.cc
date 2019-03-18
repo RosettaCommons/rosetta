@@ -440,16 +440,16 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<core::Size> c
 					if ( std::abs(int(outi[fi].first->get_residue(1)->resi()-outj[fj].first->get_residue(1)->resi())) < (int)fragment_size ) continue; // skip overlapping fragments in PDB
 					core::Size qpi = qPosi; // query position i in fragment
 					utility::vector1<ContactOP> contacts;
-					bool skip = false;
+					bool skip2 = false;
 					bool has_good_constraint = false;
 					bool has_constraints = (atom_pair_constraint_contact_map_.size() > 0) ? true : false;
 					for ( core::Size i=1; i<=fragment_size; ++i ) {
 						VallResidueOP ri = outi[fi].first->get_residue(i);
 						core::Size qpj = qPosj; // query position j in fragment
 						for ( core::Size j=1; j<=fragment_size; ++j ) {
-							if ( skip ) continue;
+							if ( skip2 ) continue;
 							if ( std::abs(int(qpi-qpj)) < (int)contacts_min_seq_sep_ ) continue;
-							// skip local contacts relative to fragments
+							// skip2 local contacts relative to fragments
 							if ( std::abs(int( ri->resi()-outj[fj].first->get_residue(j)->resi() )) < (int)contacts_min_seq_sep_ ) continue;
 							std::set<ContactType>::iterator it, ctend;
 							for ( it=contact_types_.begin(); it != ctend; ++it ) {
@@ -461,7 +461,7 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<core::Size> c
 								core::Real dist_squared = ri->distance_squared(outj[fj].first->get_residue(j), *it);
 								if ( has_constraints && atom_pair_constraint_contact_map_[qpi][qpj] > 0 ) {
 									if ( dist_squared > atom_pair_constraint_contact_map_[qpi][qpj] ) {
-										skip = true;
+										skip2 = true;
 										continue;
 									} else {
 										has_good_constraint = true;
@@ -473,7 +473,7 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<core::Size> c
 						}
 						qpi++;
 					}
-					if ( !skip && contacts.size() > 0 && (!has_constraints || has_good_constraint) ) {
+					if ( !skip2 && contacts.size() > 0 && (!has_constraints || has_good_constraint) ) {
 						// save all fragment pairs with contacts
 						nonlocal::NonlocalPairOP pair( new nonlocal::NonlocalPair( qPosi, qPosj, outi[fi], outj[fj], fi, fj, contacts ) );
 						pairs.push_back(pair);

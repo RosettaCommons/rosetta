@@ -363,8 +363,8 @@ bool TemperingBase::initialize_from_file( std::string const& filename ) {
 		return false;
 	}
 
-	Real temp;
 	if ( line_format ) {
+		Real temp;
 		for ( Size ct=1; ct <= n_levels; ++ct ) {
 			line_stream >> temp;
 			temperatures_.push_back( temp );
@@ -379,10 +379,10 @@ bool TemperingBase::initialize_from_file( std::string const& filename ) {
 
 	// table format
 	while ( getline( in, line ) ) {
-		std::istringstream line_stream( line );
+		std::istringstream line_stream2( line );
 		Real temp;
-		line_stream >> temp;
-		if ( !line_stream.good() ) tr.Error << "format error in temperature file: " << filename << " at line " << line << std::endl;
+		line_stream2 >> temp;
+		if ( !line_stream2.good() ) tr.Error << "format error in temperature file: " << filename << " at line " << line << std::endl;
 		temperatures_.push_back( temp );
 	}
 	return true; //succesfully initialized

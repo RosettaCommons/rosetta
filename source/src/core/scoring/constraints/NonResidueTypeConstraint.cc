@@ -62,12 +62,12 @@ NonResidueTypeConstraint::NonResidueTypeConstraint(
 NonResidueTypeConstraint::NonResidueTypeConstraint(
 	core::pose::Pose const &,
 	Size seqpos,
-	std::string const & AAname,
+	std::string const & AA_name,
 	core::Real favor_non_native_bonus
 ):
 	Constraint( core::scoring::res_type_constraint ),
 	seqpos_( seqpos ),
-	rsd_type_name3_( AAname ),
+	rsd_type_name3_( AA_name ),
 	favor_non_native_bonus_( favor_non_native_bonus )
 {}
 

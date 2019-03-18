@@ -241,12 +241,12 @@ bool RamaScore::score(FragmentCandidateOP fragment,FragmentScoreMapOP scores) {
 bool RamaScore::cached_score(FragmentCandidateOP fragment,
 	FragmentScoreMapOP scores) {
 
-
-	std::string & tmp = fragment->get_chunk()->chunk_key();
-	if ( tmp.compare(cached_scores_id_) != 0 ) {
-		do_caching(fragment->get_chunk());
+	{
+		std::string & tmp = fragment->get_chunk()->chunk_key();
+		if ( tmp.compare(cached_scores_id_) != 0 ) {
+			do_caching(fragment->get_chunk());
+		}
 	}
-
 
 	core::Real totalScore = 0.0;
 

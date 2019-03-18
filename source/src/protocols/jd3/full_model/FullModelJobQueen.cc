@@ -724,8 +724,8 @@ FullModelJobQueen::allow_full_model_inputter( full_model_inputters::FullModelInp
 		// so interpret this as them wanting to allow the user to provide another
 		// inputter.
 		inputter_creator_list_ = full_model_inputters::FullModelInputterFactory::get_instance()->full_model_inputter_creators();
-		for ( auto creator : inputter_creator_list_ ) {
-			inputter_creators_[ creator->keyname() ] = creator;
+		for ( auto const & creator_ii : inputter_creator_list_ ) {
+			inputter_creators_[ creator_ii->keyname() ] = creator_ii;
 		}
 	}
 	if ( ! inputter_creators_.count( creator->keyname() ) ) {
@@ -755,8 +755,8 @@ FullModelJobQueen::allow_pose_outputter( pose_outputters::PoseOutputterCreatorOP
 		// so interpret this as them wanting to allow the user to provide another
 		// outputter in addition to the original set.
 		outputter_creator_list_ = pose_outputters::PoseOutputterFactory::get_instance()->pose_outputter_creators();
-		for ( auto creator : outputter_creator_list_ ) {
-			outputter_creators_[ creator->keyname() ] = creator;
+		for ( auto const & creator_ii : outputter_creator_list_ ) {
+			outputter_creators_[ creator_ii->keyname() ] = creator_ii;
 		}
 	}
 	if ( ! outputter_creators_.count( creator->keyname() ) ) {
@@ -780,8 +780,8 @@ FullModelJobQueen::set_default_outputter( pose_outputters::PoseOutputterCreatorO
 		// instantiation herself
 		use_factory_provided_pose_outputters_ = false;
 		outputter_creator_list_ = pose_outputters::PoseOutputterFactory::get_instance()->pose_outputter_creators();
-		for ( auto creator : outputter_creator_list_ ) {
-			outputter_creators_[ creator->keyname() ] = creator;
+		for ( auto const & creator_ii : outputter_creator_list_ ) {
+			outputter_creators_[ creator_ii->keyname() ] = creator_ii;
 		}
 	}
 }

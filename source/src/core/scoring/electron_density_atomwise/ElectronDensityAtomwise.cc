@@ -82,7 +82,7 @@ ElectronDensityAtomwise::ElectronDensityAtomwise() {
 	cell_dimensions = numeric::xyzVector< float >( 1, 1, 1 );
 	cell_angles = numeric::xyzVector< float >( 90, 90, 90 );
 	// resolution ... set in readMRCandResize
-	map_reso = -1.0;
+	map_reso_ = -1.0;
 }
 
 ////////
@@ -420,7 +420,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 	}
 
 	std::string map_file = basic::options::option[ basic::options::OptionKeys::edensity::mapfile ]();
-	map_reso = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
+	map_reso_ = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
 	grid_spacing = basic::options::option[ basic::options::OptionKeys::edensity::grid_spacing ]();
 	std::fstream mapin( map_file.c_str() , std::ios::binary | std::ios::in );
 	char mapString[4], symData[81];
@@ -498,7 +498,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 		swap4_aligned( &symBytes, 1 );
 	}
 
-	TR << " Setting resolution to " << map_reso << "A" << std::endl;
+	TR << " Setting resolution to " << map_reso_ << "A" << std::endl;
 	TR << " Read density map'" << map_file << "'" << std::endl;
 	TR << "     extent: " << extent[0] << " x " << extent[1] << " x " << extent[2] << std::endl;
 	TR << "     origin: " << origin_xyz[0] << " x " << origin_xyz[1] << " x" << origin_xyz[2] << std::endl;

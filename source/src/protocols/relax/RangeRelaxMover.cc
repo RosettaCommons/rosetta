@@ -692,14 +692,14 @@ void RangeRelaxMover::constrain_to_reference( Pose & pose, Pose & ref_pose ) {
 
 		// get "fixed" AtomID, this is only to know when to rescore the pose
 		if ( i == 1 ) {
-			AtomID aid_fixed( 1, nres_protein( pose ) );
+			aid_fixed = AtomID( 1, nres_protein( pose ) );
 		}
 
 		// get coords to which we want to constraint to
 		core::Vector coord = ref_pose.residue( i ).atom( "CA" ).xyz();
 
 		// get constraint function: harmonic around 0 with stdev
-		FuncOP harmonic( new HarmonicFunc( 0.0, 1.0 ) );
+		FuncOP harmonic( utility::pointer::make_shared< HarmonicFunc >( 0.0, 1.0 ) );
 
 		// add constraint to pose
 		pose.add_constraint( utility::pointer::make_shared< CoordinateConstraint >( aid, aid_fixed, coord, harmonic ) );

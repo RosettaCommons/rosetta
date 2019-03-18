@@ -28,12 +28,12 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 #include <set>
-
 
 using basic::Error;
 using basic::Warning;
@@ -76,7 +76,7 @@ void LinkResidues::remap_allowed_residues_to_template(core::pose::Pose const & p
 	using namespace utility;
 	using namespace core;
 	using namespace core::id;
-	SequenceMappingOP seqmap( new core::id::SequenceMapping() );
+	SequenceMappingOP seqmap( utility::pointer::make_shared< core::id::SequenceMapping >() );
 	for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
 		links->set_template(ii,ii);
 	}
@@ -92,9 +92,11 @@ void LinkResidues::remap_allowed_residues_to_template(core::pose::Pose const & p
 				grp_i.push_back(set_i);
 			}
 			//check that all sets in the group have the same number of residues
-			Size numResInSet = grp_i[1].size();
-			for ( Size kk=2; kk<=grp_i.size(); ++kk ) {
-				runtime_assert(grp_i[kk].size() == numResInSet);
+			{
+				Size numResInSet = grp_i[1].size();
+				for ( Size kk=2; kk<=grp_i.size(); ++kk ) {
+					runtime_assert(grp_i[kk].size() == numResInSet);
+				}
 			}
 			//go through the sets and set them to be equal
 			for ( Size kk=1; kk<=grp_i.size(); ++kk ) {
@@ -139,9 +141,11 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 			grp_i.push_back(set_i);
 		}
 		//check that all sets in the group have the same number of residues
-		Size numResInSet = grp_i[1].size();
-		for ( Size kk=2; kk<=grp_i.size(); ++kk ) {
-			runtime_assert(grp_i[kk].size() == numResInSet);
+		{
+			Size numResInSet = grp_i[1].size();
+			for ( Size kk=2; kk<=grp_i.size(); ++kk ) {
+				runtime_assert(grp_i[kk].size() == numResInSet);
+			}
 		}
 		//go through the sets and set them to be equal
 		for ( Size kk=1; kk<=grp_i.size(); ++kk ) {

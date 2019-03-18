@@ -37,7 +37,7 @@ triangleIterator::triangleIterator(FArray3D_float const & density, float const &
 
 	gradPtr = new FArray4D_float(3, size[0], size[1], size[2]);
 	computeGradient();
-	this->threshold = threshold;
+	threshold_ = threshold;
 
 	// This will start us off looking for triangles at (0, 0, 0)
 	nextX = nextY = 0;
@@ -95,7 +95,7 @@ void triangleIterator::aquireNextQueue() {
 					int vx = x + VERTEX_OFF[i][0];
 					int vy = y + VERTEX_OFF[i][1];
 					int vz = z + VERTEX_OFF[i][2];
-					if ( density(vx + 1, vy + 1, vz + 1) > threshold ) {
+					if ( density(vx + 1, vy + 1, vz + 1) > threshold_ ) {
 						bitfield |= (1 << (i - 1));
 					}
 				}
@@ -118,8 +118,8 @@ void triangleIterator::aquireNextQueue() {
 						int z1 = z + VERTEX_OFF[v1][2] + 1;
 
 						// look up the level set values
-						float phi0 = density(x0, y0, z0) - threshold;
-						float phi1 = density(x1, y1, z1) - threshold;
+						float phi0 = density(x0, y0, z0) - threshold_;
+						float phi1 = density(x1, y1, z1) - threshold_;
 
 						// compute the distance to front
 						xyzVector_float p0(x0, y0, z0);

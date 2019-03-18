@@ -885,9 +885,9 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenThreeSingle( const core::chemical
 		// Node 6b in multiple rings (Accuracy: 96.4%, 5981 cases) No impetus to become planar
 		SetToType( gasteiger_atom_type_set_->atom_type("N_Te2TeTeTe"));
 	} else if ( SMALLEST_RING_SIZE == 6 ) {
-		RealResidueAdjacentIter iter, iter_end;
-		for ( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
-			const ElementCOP & element_data = graph[ *iter ].element_type();
+		RealResidueAdjacentIter iter2, iter_end2;
+		for ( boost::tie(iter2,iter_end2) = boost::adjacent_vertices( atomVD, graph ); iter2 != iter_end2; ++iter2 ) {
+			const ElementCOP & element_data = graph[ *iter2 ].element_type();
 			// Node 7: In a 6 membered ring (Accuracy: 70.4%, 252 cases)
 			if ( element_data->element() == element::O ) {
 				// Node 7a at least 1 O Trigonal (181 cases)
@@ -900,9 +900,9 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenThreeSingle( const core::chemical
 	} else {
 		// Node 8 Everything else (Accuracy: 78.6%, 564 cases)
 		size_t heteroatom_count( 0);
-		RealResidueAdjacentIter iter, iter_end;
-		for ( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
-			const ElementCOP & element_data = graph[ *iter ].element_type();
+		RealResidueAdjacentIter iter2, iter_end2;
+		for ( boost::tie(iter2,iter_end2) = boost::adjacent_vertices( atomVD, graph ); iter2 != iter_end2; ++iter2 ) {
+			const ElementCOP & element_data = graph[ *iter2 ].element_type();
 			if ( element_data->element() != element::C ) { // TODO: Do we need a Hydrogen check here, too?
 				++heteroatom_count;
 			}
@@ -926,9 +926,9 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenSingleDouble( const core::chemica
 	// use the digonal type only if bound to an atom w/ period 3+ and
 	// whose main group (5 for N, 6 for O) is <= the bonded atom, and is at least 4
 	// For example, Al should not induce digonality
-	RealResidueAdjacentIter iter, iter_end;
-	for ( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
-		const ElementCOP & element_data = graph[ *iter ].element_type();
+	RealResidueAdjacentIter iter2, iter_end2;
+	for ( boost::tie(iter2,iter_end2) = boost::adjacent_vertices( atomVD, graph ); iter2 != iter_end2; ++iter2 ) {
+		const ElementCOP & element_data = graph[ *iter2 ].element_type();
 		if ( element_data->get_period() > 2 && ( element_data->get_main_group() == 4 || element_data->get_main_group() == 5) ) {
 			SetToType( gasteiger_atom_type_set_->atom_type("N_DiDiPi2Pi"));
 			return;

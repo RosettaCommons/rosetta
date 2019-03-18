@@ -128,8 +128,8 @@ void ScoringGridLoader::parse_gridset_tag( utility::tag::TagCOP tag, utility::ta
 		TR.Warning << "No Scoring grids specified! Scoring Grids for the " << name << " GridSet will be empty!" << std::endl;
 	}
 
-	for ( TagCOP tag : grid_tags ) {
-		grid_set->make_new_grid(tag);
+	for ( TagCOP const & t : grid_tags ) {
+		grid_set->make_new_grid( t );
 	}
 
 	// Put the grid in the "default" slot for the DataMap.

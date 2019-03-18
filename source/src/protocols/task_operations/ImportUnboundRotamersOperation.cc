@@ -77,9 +77,9 @@ ImportUnboundRotamersOperation::clone() const {
 void
 ImportUnboundRotamersOperation::apply( Pose const & /*pose*/, PackerTask & task ) const
 {
-	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot_( new core::pack::rotamer_set::UnboundRotamersOperation );
-	unboundrot_->initialize_from_command_line();
-	task.append_rotamerset_operation( unboundrot_ );
+	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot( utility::pointer::make_shared< core::pack::rotamer_set::UnboundRotamersOperation >() );
+	unboundrot->initialize_from_command_line();
+	task.append_rotamerset_operation( unboundrot );
 
 }
 

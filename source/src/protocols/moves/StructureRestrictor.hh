@@ -72,9 +72,9 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 
 private:
-	std::map<std::string, std::string> chain_map;
-	std::string relevant_chains_fname;
-	bool initialized;
+	std::map<std::string, std::string> chain_map_;
+	std::string relevant_chains_fname_;
+	bool initialized_;
 };
 
 }//moves

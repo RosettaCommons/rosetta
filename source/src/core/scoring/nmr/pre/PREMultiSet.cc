@@ -481,11 +481,11 @@ pre_erf_opt_tau(
 				}
 			} else if ( pre_multiset_ptr->ave_type_ == SUM ) {
 				// if spins in the third dimension are not equivalent but e.g. symmetric spins sum up their PRE and calculate the residual
-				for ( Size k = 1, k_end = pre_multiset_ptr->spin_coordinates_[i][su].size(); k <= k_end; ++k ) {
+				for ( Size kk = 1, kk_end = pre_multiset_ptr->spin_coordinates_[i][su].size(); kk <= kk_end; ++kk ) {
 					if ( pre_multiset_ptr->pre_singleset_vec_[j]->get_pre_rate_type() == R1_PARA ) {
-						fvec[i-1] -= pre_multiset_ptr->R1_Para(pre_params, pre_multiset_ptr->one_over_r6_values_[i][su][k], pre_multiset_ptr->s2_values_[i][su][k], scal);
+						fvec[i-1] -= pre_multiset_ptr->R1_Para(pre_params, pre_multiset_ptr->one_over_r6_values_[i][su][kk], pre_multiset_ptr->s2_values_[i][su][kk], scal);
 					} else if ( pre_multiset_ptr->pre_singleset_vec_[j]->get_pre_rate_type() == R2_PARA ) {
-						fvec[i-1] -= pre_multiset_ptr->R2_Para(pre_params, pre_multiset_ptr->one_over_r6_values_[i][su][k], pre_multiset_ptr->s2_values_[i][su][k], scal);
+						fvec[i-1] -= pre_multiset_ptr->R2_Para(pre_params, pre_multiset_ptr->one_over_r6_values_[i][su][kk], pre_multiset_ptr->s2_values_[i][su][kk], scal);
 					}
 				}
 
@@ -616,20 +616,20 @@ pre_erf_opt_tau_xyz(
 						pre_multiset_ptr->s2_values_[i][su][1], scal, use_only_sb);
 				}
 			} else if ( pre_multiset_ptr->ave_type_ == SUM ) {
-				for ( Size k = 1, k_end = pre_multiset_ptr->spin_coordinates_[i][su].size(); k <= k_end; ++k ) {
+				for ( Size kk = 1, kk_end = pre_multiset_ptr->spin_coordinates_[i][su].size(); kk <= kk_end; ++kk ) {
 
 					// First, calculate <r-6> and S2 from new para ion xyz coordinates
-					pre_multiset_ptr->calc_r6_S2(paraion_position, PREMultiSet::CoordVector(1, pre_multiset_ptr->spin_coordinates_[i][su][k]),
-						pre_multiset_ptr->one_over_r6_values_[i][su][k], pre_multiset_ptr->s2_values_[i][su][k]);
+					pre_multiset_ptr->calc_r6_S2(paraion_position, PREMultiSet::CoordVector(1, pre_multiset_ptr->spin_coordinates_[i][su][kk]),
+						pre_multiset_ptr->one_over_r6_values_[i][su][kk], pre_multiset_ptr->s2_values_[i][su][kk]);
 
 					// Second, calculate the residual
 					// Here, we sum up the PRE of the spins in the third dimension of spin_coordinates (if they are not equivalent but e.g. hold symmetric spins)
 					if ( pre_multiset_ptr->pre_singleset_vec_[j]->get_pre_rate_type() == R1_PARA ) {
-						fvec[i-1] -= pre_multiset_ptr->R1_Para(pre_params, pre_multiset_ptr->one_over_r6_values_[i][su][k],
-							pre_multiset_ptr->s2_values_[i][su][k], scal, use_only_sb);
+						fvec[i-1] -= pre_multiset_ptr->R1_Para(pre_params, pre_multiset_ptr->one_over_r6_values_[i][su][kk],
+							pre_multiset_ptr->s2_values_[i][su][kk], scal, use_only_sb);
 					} else if ( pre_multiset_ptr->pre_singleset_vec_[j]->get_pre_rate_type() == R2_PARA ) {
-						fvec[i-1] -= pre_multiset_ptr->R2_Para(pre_params, pre_multiset_ptr->one_over_r6_values_[i][su][k],
-							pre_multiset_ptr->s2_values_[i][su][k], scal, use_only_sb);
+						fvec[i-1] -= pre_multiset_ptr->R2_Para(pre_params, pre_multiset_ptr->one_over_r6_values_[i][su][kk],
+							pre_multiset_ptr->s2_values_[i][su][kk], scal, use_only_sb);
 					}
 				}
 
@@ -989,38 +989,38 @@ PREMultiSet::set_atom_derivatives(
 }
 
 void
-PREMultiSet::show(std::ostream & TR) const {
+PREMultiSet::show(std::ostream & tracer) const {
 	// Store old iostream manipulator flags
 	std::ios oldState(nullptr);
-	oldState.copyfmt(TR);
+	oldState.copyfmt(tracer);
 
-	TR << "   * * * PREMultiSet Summary Report * * *   " << std::endl;
-	TR << "Spinlabel site: " << spinlabel_site_rsd_ << std::endl;
-	TR << "No experiments: " << number_experiments_ << std::endl;
-	TR << "No PREs:        " << total_number_pres_ << std::endl;
-	TR << "PRE Spinlabel:  ";
+	tracer << "   * * * PREMultiSet Summary Report * * *   " << std::endl;
+	tracer << "Spinlabel site: " << spinlabel_site_rsd_ << std::endl;
+	tracer << "No experiments: " << number_experiments_ << std::endl;
+	tracer << "No PREs:        " << total_number_pres_ << std::endl;
+	tracer << "PRE Spinlabel:  ";
 	if ( spinlabel_ ) {
-		TR << std::endl;
-		TR << " - Name           = " << spinlabel_->get_name() << std::endl;
-		TR << " - 3-Letter code  = " << spinlabel_->get_code() << std::endl;
-		TR << " - Radical ion    = " << spinlabel_->get_radical_atom() << std::endl;
-		TR << " - Ensemble size  = " << spinlabel_->get_current_ensemble_size() << std::endl;
+		tracer << std::endl;
+		tracer << " - Name           = " << spinlabel_->get_name() << std::endl;
+		tracer << " - 3-Letter code  = " << spinlabel_->get_code() << std::endl;
+		tracer << " - Radical ion    = " << spinlabel_->get_radical_atom() << std::endl;
+		tracer << " - Ensemble size  = " << spinlabel_->get_current_ensemble_size() << std::endl;
 	} else {
-		TR << "None" << std::endl;
+		tracer << "None" << std::endl;
 	}
-	TR << "Experimental conditions: " << std::endl;
+	tracer << "Experimental conditions: " << std::endl;
 	for ( Size i = 1; i <= number_experiments_; ++i ) {
-		TR << " - " << pre_singleset_vec_[i]->get_dataset_name() << ": [ " << pre_singleset_vec_[i]->get_number_pre() << " PREs, "
+		tracer << " - " << pre_singleset_vec_[i]->get_dataset_name() << ": [ " << pre_singleset_vec_[i]->get_number_pre() << " PREs, "
 			<< pre_singleset_vec_[i]->pre_rate_type_to_string() << ", " << pre_singleset_vec_[i]->get_field_strength() << " MHz ]" << std::endl;
 	}
-	TR << std::setprecision(2) << std::fixed << std::right;
-	TR << " - MW     (kDa)   = " << std::setw(9) << protein_mass_ << std::endl;
-	TR << " - T      (K)     = " << std::setw(9) << temperature_ << std::endl;
-	TR << "Optimized correlation time: " << std::endl;
-	TR << " - tau_r  (nsec)  = " << std::setw(9) << std::scientific << tau_r_*1.0e+9 << std::endl;
-	TR << " - tau_c  (nsec)  = " << std::setw(9) << std::scientific << tau_c_*1.0e+9 << std::endl;
-	TR << " - tau_t  (nsec)  = " << std::setw(9) << std::scientific << tau_t_*1.0e+9 << std::endl;
-	TR.copyfmt(oldState);
+	tracer << std::setprecision(2) << std::fixed << std::right;
+	tracer << " - MW     (kDa)   = " << std::setw(9) << protein_mass_ << std::endl;
+	tracer << " - T      (K)     = " << std::setw(9) << temperature_ << std::endl;
+	tracer << "Optimized correlation time: " << std::endl;
+	tracer << " - tau_r  (nsec)  = " << std::setw(9) << std::scientific << tau_r_*1.0e+9 << std::endl;
+	tracer << " - tau_c  (nsec)  = " << std::setw(9) << std::scientific << tau_c_*1.0e+9 << std::endl;
+	tracer << " - tau_t  (nsec)  = " << std::setw(9) << std::scientific << tau_t_*1.0e+9 << std::endl;
+	tracer.copyfmt(oldState);
 }
 
 void

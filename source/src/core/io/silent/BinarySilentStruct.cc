@@ -358,14 +358,14 @@ bool BinarySilentStruct::init_from_lines(
 			Size nres = one_letter_sequence().length();
 			resize( nres );
 
-			std::string tag;
-			line_stream >> tag;
-			if ( line_stream.fail() || ( tag != "SCORE:" && tag != "OTHER:" ) ) {
+			std::string tag2;
+			line_stream >> tag2;
+			if ( line_stream.fail() || ( tag2 != "SCORE:" && tag2 != "OTHER:" ) ) {
 				tr.Error << "bad format in first score line of silent file" << std::endl;
 				tr.Error << "line = " << *iter << std::endl;
-				tr.Error << "tag = " << tag << std::endl;
+				tr.Error << "tag = " << tag2 << std::endl;
 			}
-			scoreline_prefix( tag );
+			scoreline_prefix( tag2 );
 
 			parse_energies( line_stream, energy_names_ );
 
@@ -408,9 +408,9 @@ bool BinarySilentStruct::init_from_lines(
 				continue;
 			} else if ( iter->substr(0,4) == "JUMP" ) {
 				// support for rosetta++ silent files
-				std::string tag;
+				std::string tag2;
 				Size nr;
-				line_stream >> tag; //JUMP
+				line_stream >> tag2; //JUMP
 				line_stream >> nr;
 				if ( nr != fold_tree().num_jump() ) {
 					tr.Warning

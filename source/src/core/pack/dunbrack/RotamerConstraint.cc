@@ -34,6 +34,7 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 
 
 #ifdef    SERIALIZATION
@@ -70,10 +71,10 @@ void load_unboundrot(pose::Pose & pose)
 		for ( Size i = 1; i <= option[ OptionKeys::packing::unboundrot ]().size(); ++i ) {
 			std::string filename = option[ OptionKeys::packing::unboundrot ]()[i].name();
 			TR << "Adding 'unbound' rotamers from " << filename << std::endl;
-			PoseOP pose( new Pose() );
+			PoseOP pose2 = utility::pointer::make_shared< Pose >();
 			//core::import_pose::pose_from_file( *pose, filename , core::import_pose::PDB_file);
-			core::io::pdb::build_pose_from_pdb_as_is( *pose, filename );
-			unboundrot_poses.push_back( pose );
+			core::io::pdb::build_pose_from_pdb_as_is( *pose2, filename );
+			unboundrot_poses.push_back( pose2 );
 		}
 	}
 

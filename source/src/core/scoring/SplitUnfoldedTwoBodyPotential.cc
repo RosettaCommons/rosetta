@@ -206,12 +206,12 @@ void SplitUnfoldedTwoBodyPotential::read_database_file(std::string filename)
 		EnergyMap emap;
 		l >> tlc;
 		ObjexxFCL::lpad(tlc, 1); // make sure we have *something*(add a blank space if there is no atom type name, should never happen under normal conditions though)
-		for ( Size i=1; i<=ntypes; ++i ) {
+		for ( Size j=1; j<=ntypes; ++j ) {
 			l >> val;
 			if ( l.fail() ) {
 				utility_exit_with_message("Error, number of energies doesn't match number of score types in '"+filename+"'");
 			}
-			emap[atom_score_types[i]] = val; // add energy to appropriate score type in temp emap
+			emap[atom_score_types[j]] = val; // add energy to appropriate score type in temp emap
 		}
 
 		// add tlc/emap pair to map

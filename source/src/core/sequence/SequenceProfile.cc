@@ -265,8 +265,8 @@ void SequenceProfile::read_from_file(
 
 	// initialize headers
 	getline( input, line );
-	std::istringstream line_stream( line );
-	while ( !line_stream.fail() ) {
+	//std::istringstream line_stream( line );
+	for ( std::istringstream line_stream( line ); !line_stream.fail() ; ) {
 		std::string aa;
 		line_stream >> aa;
 		if ( line_stream.fail() ) continue;

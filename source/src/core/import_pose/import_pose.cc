@@ -1290,7 +1290,8 @@ setup_fold_trees( vector1< Pose * > & pose_pointers,
 
 		update_fixed_domain_from_extra_minimize_jump_res( fixed_domain_map, pose, res_list, extra_minimize_jump_res );
 
-		vector1< Size> root_partition_res; for ( Size n = 1; n <= pose.size(); n++ ) root_partition_res.push_back( n );
+		vector1< Size> root_partition_res;
+		for ( Size nn = 1; nn <= pose.size(); ++nn ) root_partition_res.push_back( nn );
 		core::pose::reroot( pose, root_partition_res, res_list, preferred_root_res, fixed_domain_map,
 			cutpoint_open_in_full_model, working_res );
 

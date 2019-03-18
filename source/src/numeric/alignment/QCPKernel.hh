@@ -210,7 +210,7 @@ class QCPKernel
 
 			Real evecprec = 1e-6;
 
-			Real a2, x2, y2, z2;
+			Real a2, y2, z2;
 
 			Real xy, az, zx, ay, yz, ax;
 
@@ -304,7 +304,7 @@ class QCPKernel
 			rot_matrix[6] = 2 * (zx + ay);
 			rot_matrix[7] = 2 * (yz - ax);
 			rot_matrix[8] = a2 - x2 - y2 + z2;
-		}
+		}// if rot_matrix != NULL
 
 		if ( std::isnan(mxEigenV) ) {
 			return 0.0;

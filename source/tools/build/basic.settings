@@ -169,6 +169,7 @@ settings = {
                 "warn" : [
                     "Wall",
                     "Wextra",
+                    #"Wshadow", # Just in debug mode for now
                     "pedantic",
                     "Werror", # REMOVE FOR RELEASE
                     "Wno-long-long",
@@ -310,6 +311,9 @@ settings = {
                     "ggdb",
                     "ffloat-store"
                     # "fstack-check"
+                ],
+                "warn" : [
+                    #"Wshadow",
                 ],
             },
 	    # enable STL debug mode, see https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html

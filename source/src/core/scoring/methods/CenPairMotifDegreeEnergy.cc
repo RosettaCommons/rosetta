@@ -128,8 +128,8 @@ void CenPairMotifDegreeEnergy::finalize_total_energy( pose::Pose & pose, ScoreFu
 								if ( tmpScore>0 ) {
 									bool foundRes = false;
 									vector1<Size>::iterator it;
-									for ( Size ii=jr-GAP_THRESH; ii<=jr+GAP_THRESH && foundRes==false; ++ii ) {
-										it = find(contactingRes.begin(),contactingRes.end(),ii);
+									for ( Size jj=jr-GAP_THRESH; jj<=jr+GAP_THRESH && foundRes==false; ++jj ) {
+										it = find(contactingRes.begin(),contactingRes.end(),jj);
 										if ( it!=contactingRes.end() ) {
 											foundRes = true;
 										}

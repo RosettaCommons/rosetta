@@ -299,53 +299,54 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 
 
 	TR.Debug << "Outputting initial measures for contacts" << std::endl;
-	core::id::AtomID base_atom;
-	core::id::AtomID base_base_atom;
-	core::id::AtomID base_2;
-	core::id::AtomID base_base_2;
-	for ( core::id::AtomID contact: metal_contact_ids ) {
-		TR.Debug << "CONTACT\tDISTANCE\tANGLE\tDIHEDRAL" << std::endl;
-		if ( base_atom_name_ != "" ) {
-			base_atom = core::id::AtomID( pose.residue( contact.rsd() ).atom_index( base_atom_name_ ), contact.rsd() );
-		} else {
-			base_atom = core::id::AtomID( pose.residue( contact.rsd() ).atom_base( contact.atomno() ), contact.rsd() );
-		}
-		if ( base_base_atom_name_ != "" ) {
-			base_base_atom = core::id::AtomID( pose.residue( contact.rsd() ).atom_index( base_base_atom_name_ ), contact.rsd() );
-		} else {
-			base_base_atom = core::id::AtomID( pose.residue( contact.rsd() ).atom_base( base_atom.atomno() ), contact.rsd() );
-		}
-		numeric::xyzVector< core::Real > base_base_coords = pose.residue( base_base_atom.rsd() ).atom( base_base_atom.atomno() ).xyz();
-		numeric::xyzVector< core::Real > base_coords = pose.residue( base_atom.rsd() ).atom( base_atom.atomno() ).xyz();
-		numeric::xyzVector< core::Real > contact_coords = pose.residue( contact.rsd() ).atom( contact.atomno() ).xyz();
-		numeric::xyzVector< core::Real > metal_coords = pose.residue( metal_atom_id.rsd() ).atom( metal_atom_id.atomno() ).xyz();
-
-		core::Real distance = contact_coords.distance( metal_coords );
-		core::Real angle = numeric::angle_radians( base_coords, contact_coords, metal_coords );
-		core::Real dihedral = numeric::dihedral_radians( base_base_coords, base_coords, contact_coords, metal_coords );
-		TR << contact.rsd() << "\t" << distance << "\t" << angle << "\t" << dihedral << std::endl;
-
-		TR.Debug << "CONTACT 1\tCONTACT 2\tANGLE\tDIHEDRAL 1\tDIHEDRAL 2" << std::endl;
-		for ( core::id::AtomID contact2: metal_contact_ids ) {
+	{//adding scope guards to keep these variable names from leaking
+		core::id::AtomID base_atom;
+		core::id::AtomID base_base_atom;
+		core::id::AtomID base_2;
+		core::id::AtomID base_base_2;
+		for ( core::id::AtomID contact: metal_contact_ids ) {
+			TR.Debug << "CONTACT\tDISTANCE\tANGLE\tDIHEDRAL" << std::endl;
 			if ( base_atom_name_ != "" ) {
-				base_2 = core::id::AtomID( pose.residue( contact2.rsd() ).atom_index( base_atom_name_ ), contact2.rsd() );
+				base_atom = core::id::AtomID( pose.residue( contact.rsd() ).atom_index( base_atom_name_ ), contact.rsd() );
 			} else {
-				base_2 = core::id::AtomID( pose.residue( contact2.rsd() ).atom_base( contact2.atomno() ), contact2.rsd() );
+				base_atom = core::id::AtomID( pose.residue( contact.rsd() ).atom_base( contact.atomno() ), contact.rsd() );
 			}
 			if ( base_base_atom_name_ != "" ) {
-				base_base_2 = core::id::AtomID( pose.residue( contact2.rsd() ).atom_index( base_base_atom_name_ ), contact2.rsd() );
+				base_base_atom = core::id::AtomID( pose.residue( contact.rsd() ).atom_index( base_base_atom_name_ ), contact.rsd() );
 			} else {
-				base_base_2 = core::id::AtomID( pose.residue( contact2.rsd() ).atom_base( base_2.atomno() ), contact2.rsd() );
+				base_base_atom = core::id::AtomID( pose.residue( contact.rsd() ).atom_base( base_atom.atomno() ), contact.rsd() );
 			}
-			numeric::xyzVector< core::Real > base_2_coords = pose.residue( base_2.rsd() ).atom( base_2.atomno() ).xyz();
-			numeric::xyzVector< core::Real > contact_2_coords = pose.residue( contact2.rsd() ).atom( contact2.atomno() ).xyz();
-			core::Real angle2 = numeric::angle_radians( contact_coords, metal_coords, contact_2_coords );
-			core::Real dihedral2 = numeric::dihedral_radians( base_coords, contact_coords, metal_coords, contact_2_coords );
-			core::Real dihedral3 = numeric::dihedral_radians( contact_coords, metal_coords, contact_2_coords, base_2_coords );
-			TR << contact.rsd() << "\t" << contact2.rsd() << "\t" << angle2 << "\t" << dihedral2 << "\t" << dihedral3 << std::endl;
+			numeric::xyzVector< core::Real > base_base_coords = pose.residue( base_base_atom.rsd() ).atom( base_base_atom.atomno() ).xyz();
+			numeric::xyzVector< core::Real > base_coords = pose.residue( base_atom.rsd() ).atom( base_atom.atomno() ).xyz();
+			numeric::xyzVector< core::Real > contact_coords = pose.residue( contact.rsd() ).atom( contact.atomno() ).xyz();
+			numeric::xyzVector< core::Real > metal_coords = pose.residue( metal_atom_id.rsd() ).atom( metal_atom_id.atomno() ).xyz();
+
+			core::Real distance = contact_coords.distance( metal_coords );
+			core::Real angle = numeric::angle_radians( base_coords, contact_coords, metal_coords );
+			core::Real dihedral = numeric::dihedral_radians( base_base_coords, base_coords, contact_coords, metal_coords );
+			TR << contact.rsd() << "\t" << distance << "\t" << angle << "\t" << dihedral << std::endl;
+
+			TR.Debug << "CONTACT 1\tCONTACT 2\tANGLE\tDIHEDRAL 1\tDIHEDRAL 2" << std::endl;
+			for ( core::id::AtomID contact2: metal_contact_ids ) {
+				if ( base_atom_name_ != "" ) {
+					base_2 = core::id::AtomID( pose.residue( contact2.rsd() ).atom_index( base_atom_name_ ), contact2.rsd() );
+				} else {
+					base_2 = core::id::AtomID( pose.residue( contact2.rsd() ).atom_base( contact2.atomno() ), contact2.rsd() );
+				}
+				if ( base_base_atom_name_ != "" ) {
+					base_base_2 = core::id::AtomID( pose.residue( contact2.rsd() ).atom_index( base_base_atom_name_ ), contact2.rsd() );
+				} else {
+					base_base_2 = core::id::AtomID( pose.residue( contact2.rsd() ).atom_base( base_2.atomno() ), contact2.rsd() );
+				}
+				numeric::xyzVector< core::Real > base_2_coords = pose.residue( base_2.rsd() ).atom( base_2.atomno() ).xyz();
+				numeric::xyzVector< core::Real > contact_2_coords = pose.residue( contact2.rsd() ).atom( contact2.atomno() ).xyz();
+				core::Real angle2 = numeric::angle_radians( contact_coords, metal_coords, contact_2_coords );
+				core::Real dihedral2 = numeric::dihedral_radians( base_coords, contact_coords, metal_coords, contact_2_coords );
+				core::Real dihedral3 = numeric::dihedral_radians( contact_coords, metal_coords, contact_2_coords, base_2_coords );
+				TR << contact.rsd() << "\t" << contact2.rsd() << "\t" << angle2 << "\t" << dihedral2 << "\t" << dihedral3 << std::endl;
+			}
 		}
 	}
-
 
 
 	//TEMP

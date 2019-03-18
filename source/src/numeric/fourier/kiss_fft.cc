@@ -584,7 +584,7 @@ void kiss_fftnd(kiss_fftnd_cfg st,const kiss_fft_cpx *fin,kiss_fft_cpx *fout) {
 		bufout = fout;
 		if ( fin==fout ) {
 			//memcpy( st->tmpbuf(), fin, sizeof(kiss_fft_cpx) * st->dimprod() );
-			for ( int i=0; i<st->dimprod(); ++i ) st->tmpbuf()[i]=fin[i];
+			for ( i=0; i<st->dimprod(); ++i ) st->tmpbuf()[i]=fin[i];
 			bufin = st->tmpbuf();
 		}
 	} else {

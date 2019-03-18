@@ -351,12 +351,12 @@ HBondDatabase::initialize_HBPoly1D()
 		{ stringstream buf; buf << tokens[i]; i++; buf >> root2;}
 		{ stringstream buf; buf << tokens[i]; i++; buf >> degree;}
 
-		vector1< Real > coefficients_;
+		vector1< Real > coefficients;
 		Real c;
 
 		while ( i <= tokens.size() && i <= 11 + degree ) {
 			stringstream buf; buf << tokens[i]; i++; buf >> c;
-			coefficients_.push_back(c);
+			coefficients.push_back(c);
 		}
 
 		Polynomial_1dOP p;
@@ -366,7 +366,7 @@ HBondDatabase::initialize_HBPoly1D()
 				geometric_dimension,
 				xmin, xmax, min_val, max_val, root1, root2,
 				degree,
-				coefficients_);
+				coefficients);
 		} catch ( utility::excn::Exception& excn ) {
 			std::stringstream msg;
 			msg

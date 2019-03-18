@@ -52,6 +52,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/pointer/memory.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 
@@ -160,18 +161,18 @@ DeNovoSilentFilePoseOutputter::create_output_specification(
 		if ( job_options[ out::file::silent ].user() ) {
 			fname_out = job_options[ out::file::silent ]();
 		} else {
-			std::string tag;
+			std::string tag2;
 			if ( job_options[ rna::denovo::tag ].user() ) {
-				tag = job_options[ rna::denovo::tag ]();
+				tag2 = job_options[ rna::denovo::tag ]();
 			} else {
-				tag = utility::file_basename( utility::file::cwd() );
-				TR << TR.Green << "Setting silent file name based on directory: " << tag << ".out" << std::endl;
+				tag2 = utility::file_basename( utility::file::cwd() );
+				TR << TR.Green << "Setting silent file name based on directory: " << tag2 << ".out" << std::endl;
 			}
-			fname_out = tag  + ".out";
+			fname_out = tag2  + ".out";
 		}
 	}
 
-	SilentFilePoseOutputSpecificationOP sf_pos( new SilentFilePoseOutputSpecification );
+	SilentFilePoseOutputSpecificationOP sf_pos = utility::pointer::make_shared< SilentFilePoseOutputSpecification >();
 	sf_pos->sf_opts( opts );
 	sf_pos->out_fname( fname_out );
 	sf_pos->buffer_limit( buffer_limit );

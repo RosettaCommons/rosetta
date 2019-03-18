@@ -192,7 +192,7 @@ void StructureDatabase::initialize(
 }
 
 void StructureDatabase::initialize_structure_data_from_buffer(
-	StructureData & structure_data,
+	StructureData & struct_data,
 	ndarray::Array<SearchReal, 3, 3> coordinate_buffer,
 	ndarray::Array<Index, 1> structure_endpoints,
 	ndarray::Array<Index, 1> chain_endpoints,
@@ -220,7 +220,7 @@ void StructureDatabase::initialize_structure_data_from_buffer(
 		chain_endpoints_end++;
 	}
 
-	structure_data.initialize(
+	struct_data.initialize(
 		coordinate_span_start,
 		coordinate_buffer[ndarray::view(coordinate_span_start, coordinate_span_end)],
 		chain_endpoints[ndarray::view(chain_endpoints_start, chain_endpoints_end)].template asEigen<Eigen::ArrayXpr>() - coordinate_span_start
@@ -328,12 +328,12 @@ StructureSingleQuery::StructureSingleQuery(
 	}
 }
 
-PairQueryExecutor::PairQueryExecutor(Query const & query) : query(query)
+PairQueryExecutor::PairQueryExecutor(Query const & q) : query(q)
 {
-	query_coordinate_buffer.resize(3, query.q_buffer_a.cols() + query.q_buffer_b.cols());
+	query_coordinate_buffer.resize(3, q.q_buffer_a.cols() + q.q_buffer_b.cols());
 
-	query_coordinate_buffer.leftCols(query.q_buffer_a.cols()) = query.q_buffer_a;
-	query_coordinate_buffer.rightCols(query.q_buffer_b.cols()) = query.q_buffer_b;
+	query_coordinate_buffer.leftCols(q.q_buffer_a.cols()) = q.q_buffer_a;
+	query_coordinate_buffer.rightCols(q.q_buffer_b.cols()) = q.q_buffer_b;
 	query_coordinate_com = query_coordinate_buffer.rowwise().sum() / query_coordinate_buffer.cols();
 
 	structure_coordinate_buffer.resize(3, query_coordinate_buffer.cols());
@@ -428,9 +428,9 @@ SearchReal PairQueryExecutor::perform_structure_rmsd(
 	return numeric::alignment::QCPKernel<SearchReal>::calc_coordinate_rmsd( query_coordinate_buffer, query_coordinate_com, structure_coordinate_buffer, structure_coordinate_com);
 }
 
-SingleQueryExecutor::SingleQueryExecutor(Query const & query) : query(query)
+SingleQueryExecutor::SingleQueryExecutor(Query const & q) : query(q)
 {
-	query_coordinate_buffer = query.q_buffer;
+	query_coordinate_buffer = q.q_buffer;
 	query_coordinate_com = query_coordinate_buffer.rowwise().sum() / query_coordinate_buffer.cols();
 
 	structure_coordinate_buffer.resize(3, query_coordinate_buffer.cols());

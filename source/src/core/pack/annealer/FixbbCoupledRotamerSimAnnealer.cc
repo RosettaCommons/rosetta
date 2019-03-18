@@ -290,8 +290,8 @@ void FixbbCoupledRotamerSimAnnealer::run()
 									if ( state_on_node( i ) == 0 ) {
 										TR << '.';
 									} else {
-										RotamerSetCOP rotamer_set( rotamer_sets()->rotamer_set_for_moltenresidue( i ) );
-										conformation::ResidueCOP rotamer( rotamer_set->rotamer( state_on_node( i ) ) );
+										RotamerSetCOP my_rotamer_set( rotamer_sets()->rotamer_set_for_moltenresidue( i ) );
+										conformation::ResidueCOP rotamer( my_rotamer_set->rotamer( state_on_node( i ) ) );
 										if ( rotamer->is_DNA() ) TR << rotamer->name1();
 									}
 								}

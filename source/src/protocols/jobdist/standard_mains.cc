@@ -282,7 +282,7 @@ int universal_main(
 		BaseJobDistributorOP jobdist;
 
 		// create joblist
-		for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
+		for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), iter_end = sfd.end(); iter != iter_end; ++iter ) {
 			if ( numeric::random::rg().uniform() < thinout_factor ) {
 				//std::cout << "Thinout: Skipping " << iter->decoy_tag() << std::endl;
 				continue; // ignore structures if thinout is required!

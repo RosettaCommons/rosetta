@@ -1073,7 +1073,6 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 		if ( rotprob[ sri ] <= 1e-6 ) rotprob[ sri ] = 1e-6;
 	}
 
-	utility::fixedsizearray1< Real, N > binw( BB_BINRANGE );
 	utility::fixedsizearray1< Real, N > scratch_drotprob_dbb;
 
 	/// Note: with bicubic splines to interpolate the energy for a rotamer, bilinear
@@ -1081,8 +1080,11 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 	/// for the 2002 library.  However, the 2008 and 2010 libraries are not yet up to
 	/// speed with cubic interpolation (requiring tricubic splines), so keep this value
 	/// around for the moment.  Also being preserved for the sake of backwards compatibility.
-	interpolate_polylinear_by_value( rotprob, bb_alpha, binw, false /*Do not treat as angles*/ ,
-		scratch.rotprob(), scratch_drotprob_dbb );
+	{//scope guards to prevent the binw variable from leaking
+		utility::fixedsizearray1< Real, N > binw( BB_BINRANGE );
+		interpolate_polylinear_by_value( rotprob, bb_alpha, binw, false /*Do not treat as angles*/ ,
+			scratch.rotprob(), scratch_drotprob_dbb );
+	}
 	//std::cout << "********** After interpolate_polylinear_by_value, scratch.rotprob()=" << scratch.rotprob() << std::endl;
 
 	for ( Size i = 1; i <= N; ++i ) scratch.drotprob_dbb()[ i ] = scratch_drotprob_dbb[ i ];

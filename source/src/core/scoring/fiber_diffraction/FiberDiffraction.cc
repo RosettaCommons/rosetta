@@ -50,9 +50,9 @@ FiberDiffraction::FiberDiffraction() {
 
 void FiberDiffraction::init() {
 	isLoaded = false;
-	c =0.0;
-	res_cutoff_high = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
-	res_cutoff_low = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_low ]();
+	c_ = 0.0;
+	res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
+	res_cutoff_low_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_low ]();
 }
 
 FiberDiffraction::~FiberDiffraction() = default;
@@ -154,8 +154,8 @@ bool FiberDiffraction::loadFiberDiffractionData(
 	core::Real const & res_cutoff_low
 ) {
 	std::ifstream input( layer_lines.c_str() );
-	bool isLoaded( loadFiberDiffractionData(input,layer_lines, c, res_cutoff_high, res_cutoff_low) );
-	return isLoaded;
+	bool is_loaded( loadFiberDiffractionData(input,layer_lines, c, res_cutoff_high, res_cutoff_low) );
+	return is_loaded;
 }
 
 bool FiberDiffraction::loadFiberDiffractionData(

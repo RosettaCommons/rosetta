@@ -108,12 +108,12 @@ bool RigidBodySilentStruct::init_from_lines(
 		}
 
 		if ( iter->substr(0,7) == "SCORE: " ) { // SCORE: line with values from this structure.
-			std::string tag;
-			line_stream >> tag;
-			if ( line_stream.fail() || tag != "SCORE:" ) {
+			std::string tag2;
+			line_stream >> tag2;
+			if ( line_stream.fail() || tag2 != "SCORE:" ) {
 				tr.Error << "bad format in first score line of silent file" << std::endl;
 				tr.Error << "line = " << *iter << std::endl;
-				tr.Error << "tag = " << tag << std::endl;
+				tr.Error << "tag2 = " << tag2 << std::endl;
 			}
 
 			parse_energies( line_stream, energy_names );

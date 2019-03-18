@@ -221,25 +221,25 @@ bool RNA_SilentStruct::init_from_lines(
 		if ( iter->substr(0,7) == "SCORE: " ) { // SCORE: line with values from this structure.
 			resize( sequence().length() ); // sequence_ should be defined by now.
 
-			std::string tag;
-			line_stream >> tag;
-			if ( line_stream.fail() || tag != "SCORE:" ) {
+			std::string tag2;
+			line_stream >> tag2;
+			if ( line_stream.fail() || tag2 != "SCORE:" ) {
 				tr.Error << "bad format in first score line of silent file" << std::endl;
 				tr.Error << "line = " << *iter << std::endl;
-				tr.Error << "tag = " << tag << std::endl;
+				tr.Error << "tag = " << tag2 << std::endl;
 			}
 
 			utility::vector1< std::string >::const_iterator energy_iter;
 			for ( energy_iter = energy_names_.begin(); energy_iter != energy_names_.end(); ++energy_iter ) {
-				line_stream >> tag;
+				line_stream >> tag2;
 				if ( *energy_iter != "description" ) { // currently the only text-based field, might change in future.
-					auto score_val = (Real) float_of( tag );
+					auto score_val = (Real) float_of( tag2 );
 					add_energy( *energy_iter, score_val );
 				} else {
-					line_stream >> tag;
+					line_stream >> tag2;
 				}
 			} // for ( energy_iter ... )
-			decoy_tag( tag ); // decoy_tag should be last column of this line.
+			decoy_tag( tag2 ); // decoy_tag should be last column of this line.
 		} else { // conformation lines
 			// parse fold_tree and jump lines
 			if ( iter->substr(0,10) == "FOLD_TREE " ) {

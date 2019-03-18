@@ -395,11 +395,11 @@ correctly_add_2prime_connection_variants( pose::Pose & pose, Size const twoprime
 		if ( upper_rsd.residue_connect_atom_index( k ) != upper_rsd.lower_connect_atom() ) continue;
 		Size lower( upper_rsd.connected_residue_at_resconn( k ) );
 		if ( lower == 0 ) continue;
-		Residue const & lower_rsd( pose.conformation().residue( lower ) ); // lower residue.
+		Residue const & lower_rsd_k( pose.conformation().residue( lower ) ); // lower residue.
 		Size const m = upper_rsd.residue_connection_conn_id( k );
-		runtime_assert( lower_rsd.residue_connect_atom_index( m ) == lower_rsd.upper_connect_atom() );
-		runtime_assert( lower_rsd.connected_residue_at_resconn( m ) == next_res );
-		//lower_rsd.mark_connect_incomplete( m );
+		runtime_assert( lower_rsd_k.residue_connect_atom_index( m ) == lower_rsd_k.upper_connect_atom() );
+		runtime_assert( lower_rsd_k.connected_residue_at_resconn( m ) == next_res );
+		//lower_rsd_k.mark_connect_incomplete( m );
 		//upper_rsd.mark_connect_incomplete( k );
 		pose.conformation().sever_chemical_bond( next_res, k, lower, m );
 	}

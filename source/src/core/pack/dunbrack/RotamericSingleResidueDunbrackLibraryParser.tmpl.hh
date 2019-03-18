@@ -122,7 +122,7 @@ RotamericSingleResidueDunbrackLibraryParser::configure_rotameric_single_residue_
 
 					if ( packed_rotno < 1 || packed_rotno > library.n_packed_rots() ) {
 						std::cerr << "ERROR in converting rotwell to packed rotno: ";
-						for ( Size ii = 1; ii <= T; ++ii ) std::cerr << " " << rotwells_[i][ ii ];
+						for ( Size kk = 1; kk <= T; ++kk ) std::cerr << " " << rotwells_[i][ kk ];
 						std::cerr << " " << packed_rotno << std::endl;
 						utility_exit();
 					}

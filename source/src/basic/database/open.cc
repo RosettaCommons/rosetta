@@ -127,8 +127,8 @@ find_database_path(
 	if ( potential_file.good() ) {
 		return filename;
 	} else {
-		izstream potential_file( path + filename);  // Let's assume it's in the database in the usual spot.
-		if ( potential_file.good() ) {
+		izstream potential_file2( path + filename);  // Let's assume it's in the database in the usual spot.
+		if ( potential_file2.good() ) {
 			return path + filename;
 		} else {
 			if ( mute_error_if_failure ) {
@@ -161,16 +161,16 @@ find_database_path( std::string const & dir, std::string const & filename, std::
 	if ( potential_file.good() ) {
 		return filename;
 	} else {
-		izstream potential_file( filename + ext );  // Perhaps the user didn't use the .table extension.
-		if ( potential_file.good() ) {
+		izstream potential_file2( filename + ext );  // Perhaps the user didn't use the .table extension.
+		if ( potential_file2.good() ) {
 			return filename + ext;
 		} else {
-			izstream potential_file( path + filename);  // Let's assume it's in the database in the usual spot.
-			if ( potential_file.good() ) {
+			izstream potential_file3( path + filename);  // Let's assume it's in the database in the usual spot.
+			if ( potential_file3.good() ) {
 				return path + filename;
 			} else {
-				izstream potential_file( path + filename + ext );  // last try
-				if ( potential_file.good() ) {
+				izstream potential_file4( path + filename + ext );  // last try
+				if ( potential_file4.good() ) {
 					return path + filename + ext;
 				} else {
 					utility_exit_with_message( "Unable to open file. Neither ./" + filename +

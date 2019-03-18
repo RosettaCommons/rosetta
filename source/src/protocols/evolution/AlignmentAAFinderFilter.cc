@@ -256,15 +256,15 @@ AlignmentAAFinder::apply( core::pose::Pose const & p ) const {
 			}
 
 			// Test if the amino acid can actually fit in the current sequence background.
-			core::pose::Pose pose( p ); // reset pose to the input pose
+			core::pose::Pose pose2( p ); // reset pose to the input pose
 			std::string thread_seq_gapped = target_sequence;
 			thread_seq_gapped[aln_resi] = aln_seq_resi_type;
 			std::string thread_seq;
 			for ( char const& c: thread_seq_gapped ) {
 				if ( c != '-' ) thread_seq += c;
 			}
-			AlignmentCleanerTools::thread_sequence_on_pose(pose, thread_seq, scorefxn() );
-			core::Real const resi_score = pose.energies().residue_total_energy(pose_resi);
+			AlignmentCleanerTools::thread_sequence_on_pose(pose2, thread_seq, scorefxn() );
+			core::Real const resi_score = pose2.energies().residue_total_energy(pose_resi);
 			tested_aa_identities += aln_seq_resi_type;
 
 			bool const use_stability_in_target_seq_as_cutoff = true;

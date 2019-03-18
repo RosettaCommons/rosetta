@@ -66,12 +66,12 @@ ResidueTypeConstraint::ResidueTypeConstraint(
 ResidueTypeConstraint::ResidueTypeConstraint(
 	core::pose::Pose const &, //pose,
 	Size seqpos,
-	std::string const & AAname,
+	std::string const & AA_name,
 	core::Real favor_native_bonus
 ):
 	Constraint( core::scoring::res_type_constraint ),
 	seqpos_( seqpos ),
-	rsd_type_name3_(std::move( AAname )),
+	rsd_type_name3_( AA_name ),
 	favor_native_bonus_( favor_native_bonus )
 {}
 

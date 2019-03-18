@@ -86,8 +86,8 @@ void Environment::register_mover( moves::MoverOP mover ){
 		}
 	} else if ( mover_container ) {
 		for ( Size i = 0; i < mover_container->nr_moves(); ++i ) {
-			moves::MoverOP const & mover = mover_container->movers()[ i ];
-			register_mover( mover );
+			moves::MoverOP const & imover = mover_container->movers()[ i ];
+			register_mover( imover );
 		}
 	} else if ( mover_applier ) {
 		register_mover( mover_applier->mover() );

@@ -1267,8 +1267,8 @@ get_cycles_from_intersections(
 		// Full circles are complete cycles on their own
 		if ( i_current->circle() ) {
 			// Circles only know the other atom
-			PDsphere const * other_sph( i_current->atoms()[1] );
-			SAnode this_node( i_current, other_sph );
+			PDsphere const * other_sph2( i_current->atoms()[1] );
+			SAnode this_node( i_current, other_sph2 );
 			cycle.push_back( this_node );
 			//   TR << "Pushing completed cycle with " << cycle.size() << " intersections" << std::endl;
 			cycles.push_back( cycle ); // Maybe 'cycle' should hold pointers rather than SAnodes.  This copy could be costly.

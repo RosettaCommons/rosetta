@@ -681,13 +681,13 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		using namespace core::pose::datacache;
 		// mjo comment out precision because it is not used and causes a warning.
 		//std::string tag( core::pose::tag_from_pose(pose) );
-		for ( Size ex = 0; ex < nex_; ex++ ) {
-			//Real Smax = sqrt(sqr(S_[ex][0][0]) + sqr(S_[ex][0][1]) + sqr(S_[ex][0][2]) + sqr(S_[ex][1][1]) + sqr(S_[ex][1][2]));
-			//out << A( width_large, "TAG ")   << A( width, tag ) << A( width, "EXP       ")   << I( width, ex ) << I( width, Smax )
+		for ( Size my_ex = 0; my_ex < nex_; my_ex++ ) {
+			//Real Smax = sqrt(sqr(S_[my_ex][0][0]) + sqr(S_[my_ex][0][1]) + sqr(S_[my_ex][0][2]) + sqr(S_[my_ex][1][1]) + sqr(S_[my_ex][1][2]));
+			//out << A( width_large, "TAG ")   << A( width, tag ) << A( width, "EXP       ")   << I( width, my_ex ) << I( width, Smax )
 			//  << I( width, vtot )<< I( width, Rohl2Hess )<< std::endl;
-			show_tensor_stats( out, ex );
-			show_tensor_matrix( out, ex );
-			show_rdc_values( out, ex );
+			show_tensor_stats( out, my_ex );
+			show_tensor_matrix( out, my_ex );
+			show_rdc_values( out, my_ex );
 		}
 		out << "//" <<std::endl;
 		out.close();
@@ -855,10 +855,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 	if ( nex_ == 0 || nrows_ == 0 ) return 0;
 
 	//non-linear square fitting of RDC data
-	utility::vector1<core::scoring::RDC>::const_iterator it;
 	bool const correct_NH( basic::options::option[basic::options::OptionKeys::rdc::correct_NH_length]);
 	core::Size nrow(0);
-	core::Real obs(0.0);
 
 	//initialize the cnt
 	for ( core::Size id = 0; id < nex_+1; id++ ) {
@@ -867,7 +865,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 
 	core::Real scale_to_NH = COMMON_DENOMINATOR;
 
-	for ( it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
+	//utility::vector1<core::scoring::RDC>::const_iterator it;
+	for ( auto it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
 		if ( it->res1() > pose.size() || it->res2() > pose.size() ) {
 			if ( tr.Debug.visible() ) tr.Debug << "non-existing residue, ignore RDC" << std::endl;
 			continue;
@@ -897,7 +896,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 
 		//check the -1 if it is correct
 		core::Size id = All_RDC_lines_[nrow].expid();
-		obs = All_RDC_lines_[nrow].Jdipolar()*(scale_to_NH)/pfac;
+		core::Real obs = All_RDC_lines_[nrow].Jdipolar()*(scale_to_NH)/pfac;
 
 		r0_[nrow-1] = r.normalized().x();
 		r1_[nrow-1] = r.normalized().y();

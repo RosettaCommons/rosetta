@@ -175,7 +175,7 @@ RTMin::rtmin(
 
 	// true -- nblist, false -- deriv_check, false -- deriv_verbose
 	//optimization::MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.1, true, false, false );
-	std::string minimizer = "lbfgs";
+	std::string minimizer_type = "lbfgs";
 	Size max_iter=200;
 	if ( cartesian_ || nonideal_ ) {
 		if ( !scfxn.ready_for_nonideal_scoring() ) {
@@ -183,7 +183,7 @@ RTMin::rtmin(
 		}
 	}
 
-	optimization::MinimizerOptions min_options( minimizer, 0.1, true, false, false );
+	optimization::MinimizerOptions min_options( minimizer_type, 0.1, true, false, false );
 	min_options.max_iter(max_iter);
 	min_options.silent(true);
 

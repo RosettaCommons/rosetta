@@ -289,10 +289,11 @@ LK_PolarNonPolarEnergy::get_residue_energy_RNA_intra(
 
 			Vector const heavy_atom_j( rsd2.xyz( j ) );
 
-			Vector const d_ij = heavy_atom_j - heavy_atom_i;
-			Real const d2 = d_ij.length_squared();
-
-			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
+			{//scope guards keep d_ij from leaking
+				Vector const d_ij = heavy_atom_j - heavy_atom_i;
+				Real const d2 = d_ij.length_squared();
+				if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
+			}
 
 			Real dotprod( 1.0 );
 			Real dummy_deriv( 0.0 );
@@ -374,10 +375,11 @@ LK_PolarNonPolarEnergy::get_residue_pair_energy_one_way(
 
 			Vector const heavy_atom_j( rsd2.xyz( j ) );
 
-			Vector const d_ij = heavy_atom_j - heavy_atom_i;
-			Real const d2 = d_ij.length_squared();
-
-			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
+			{//scope guards keep d_ij from leaking
+				Vector const d_ij = heavy_atom_j - heavy_atom_i;
+				Real const d2 = d_ij.length_squared();
+				if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
+			}
 
 			Real dotprod( 1.0 );
 			Real dummy_deriv( 0.0 );

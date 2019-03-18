@@ -860,7 +860,7 @@ ConstraintOP AmbiguousNMRDistanceConstraint::map_to_CEN( pose::Pose const& fa_po
 	}
 	tr.Debug << "map_to_CEN:  " << atom1 << " " << resid( 1 ) << " --> " << atom2 << " " << resid( 2 ) << (still_ambiguous ? " ambiguous " : " straight ") << std::endl;
 	{ //scope for profile
-		basic::ProfileThis doit( basic::NOESY_ASSIGN_MAP2CB_NEW );
+		basic::ProfileThis doit2( basic::NOESY_ASSIGN_MAP2CB_NEW );
 		if ( still_ambiguous ) {
 			return utility::pointer::make_shared< AmbiguousNMRDistanceConstraint >( id::NamedAtomID( atom1, resid( 1 ) ), id::NamedAtomID( atom2, resid( 2 ) ), centroid, func_, score_type() );
 		} else {

@@ -421,11 +421,11 @@ SpanningTopology::create_from_spanfile( std::string spanfile, std::map< std::str
 	for ( core::Size i = 1; i <= total_tmhelix; ++i ) {
 
 		getline( stream, line );
-		std::istringstream l( line );
+		std::istringstream l2( line );
 
 		// tag that is read in
 		std::string start_tag, end_tag;
-		l >> start_tag >> end_tag;
+		l2 >> start_tag >> end_tag;
 
 		// initialize residue numbers in pose numbering that will be used to
 		// create a Span object

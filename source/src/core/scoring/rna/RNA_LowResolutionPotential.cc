@@ -671,17 +671,17 @@ RNA_LowResolutionPotential::get_rna_repulsive_score(
 	Size const & atom_num_j_bin,
 	Real & deriv /* = 0.0 */ ) const
 {
-	static Real const rna_repulsive_max_penalty_ = 8.0; //In kT.
-	static Real const rna_repulsive_screen_scale_ = 2.5; //In Angstroms
-	static Real const rna_repulsive_distance_cutoff_ = 8.0; //In Angstroms
+	constexpr Real rna_repulsive_max_penalty = 8.0; //In kT.
+	constexpr Real rna_repulsive_screen_scale = 2.5; //In Angstroms
+	constexpr Real rna_repulsive_distance_cutoff = 8.0; //In Angstroms
 
-	static Real offset = rna_repulsive_max_penalty_ * exp( -1.0 * rna_repulsive_distance_cutoff_ / rna_repulsive_screen_scale_ );
+	static Real offset = rna_repulsive_max_penalty * exp( -1.0 * rna_repulsive_distance_cutoff / rna_repulsive_screen_scale );
 
 	deriv = 0.0;
-	if ( r < rna_repulsive_distance_cutoff_ ) {
-		Real potential = rna_repulsive_max_penalty_ * exp( -1.0 * r/ rna_repulsive_screen_scale_ ) - offset;
-		deriv = -1.0 * ( rna_repulsive_max_penalty_ / rna_repulsive_screen_scale_ ) *
-			exp( -1.0 * r/ rna_repulsive_screen_scale_ );
+	if ( r < rna_repulsive_distance_cutoff ) {
+		Real potential = rna_repulsive_max_penalty * exp( -1.0 * r/ rna_repulsive_screen_scale ) - offset;
+		deriv = -1.0 * ( rna_repulsive_max_penalty / rna_repulsive_screen_scale ) *
+			exp( -1.0 * r/ rna_repulsive_screen_scale );
 
 		potential *=  rna_repulsive_weight_( atom_num_j_bin );
 		deriv     *=  rna_repulsive_weight_( atom_num_j_bin );

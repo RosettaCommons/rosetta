@@ -359,12 +359,12 @@ utility::vector1< utility::vector1< core::Size > > convex_hull( std::map< core::
 		}
 
 		// compute points in triangle
-		utility::vector1< core::Size > move_to_inside = points_in_triangle( coords, p1, p2, max_point, outside );
+		utility::vector1< core::Size > move_to_inside2 = points_in_triangle( coords, p1, p2, max_point, outside );
 
 		// move points in triangle from outside to inside
-		for ( core::Size j = 1; j <= move_to_inside.size(); ++j ) {
-			inside.push_back( move_to_inside[ j ] );
-			outside.erase( std::remove( outside.begin(), outside.end(), move_to_inside[ j ] ), outside.end() );
+		for ( core::Size j = 1; j <= move_to_inside2.size(); ++j ) {
+			inside.push_back( move_to_inside2[ j ] );
+			outside.erase( std::remove( outside.begin(), outside.end(), move_to_inside2[ j ] ), outside.end() );
 		}
 
 		length = outside.size();

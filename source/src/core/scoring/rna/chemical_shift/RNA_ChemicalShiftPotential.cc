@@ -1659,8 +1659,8 @@ RNA_ChemicalShiftPotential::get_deriv_for_chemical_shift(
 						xyz_j = curr_nmr_atom_pos;
 						xyz_i = rsd_in.xyz( atom_name_in);
 						r_vector = xyz_i - xyz_j;
-						Real const r_length = r_vector.length();
-						Real const dE_dr_over_r = larmord_beta_ * alpha * pow( r_length, larmord_beta_ - 2.0 );
+						Real const new_r_length = r_vector.length();
+						Real const dE_dr_over_r = larmord_beta_ * alpha * pow( new_r_length, larmord_beta_ - 2.0 );
 						f2_vec = r_vector;
 						f1_vec = xyz_i.cross( xyz_j );
 						f1tmp += dE_dr_over_r * f1_vec;

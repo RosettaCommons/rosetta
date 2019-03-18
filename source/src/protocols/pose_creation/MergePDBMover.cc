@@ -476,28 +476,29 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 
 		//step 1 add location where chain A and B now overlap as overlap_2 (other_overlap)
 		TR << "Determining other_overlap" << std::endl;
-		core::select::residue_selector::ResidueSelectorCOP overlap_selector(new core::select::residue_selector::ResiduePDBInfoHasLabelSelector("overlap"));
-		core::select::residue_selector::ResidueSelectorCOP interface_selector(new core::select::residue_selector::ResiduePDBInfoHasLabelSelector(no_design_label_));
-		core::select::residue_selector::ResidueSelectorCOP overlap_plus_interface_selector(new core::select::residue_selector::OrResidueSelector(overlap_selector,interface_selector));
-		core::select::residue_selector::ResidueSelectorCOP not_overlap_interface_selector(new core::select::residue_selector::NotResidueSelector(overlap_plus_interface_selector));
-		core::select::residue_selector::ResidueSelectorCOP partA_selector(new core::select::residue_selector::ResidueIndexSelector(chunk1_insert_res)); //always input_pose
-		core::select::residue_selector::ResidueSelectorCOP partB_selector(new core::select::residue_selector::ResidueIndexSelector(chunk2_insert_res)); //always xml_pose
-		core::select::residue_selector::InterGroupInterfaceByVectorSelectorOP interface_AB_selector( new core::select::residue_selector::InterGroupInterfaceByVectorSelector );
-		interface_AB_selector->group1_selector( partA_selector );
-		interface_AB_selector->group2_selector( partB_selector );
-		interface_AB_selector->cb_dist_cut( design_range_ ); //defaults to 11
-		interface_AB_selector->vector_dist_cut( design_range_*0.8181 ); //defaults to 9 in the selector. This is really arbitrary atm, I just took the default value of 9/11 = 0.8181
-		core::select::residue_selector::InterGroupInterfaceByVectorSelectorOP interface_BA_selector( new core::select::residue_selector::InterGroupInterfaceByVectorSelector ); //reverse since the selector has to be downstream
-		interface_BA_selector->group1_selector( partB_selector );
-		interface_BA_selector->group2_selector( partA_selector );
-		interface_BA_selector->cb_dist_cut( design_range_ ); //defaults to 11
-		interface_BA_selector->vector_dist_cut( design_range_*0.8181 );
-		core::select::residue_selector::ResidueSelectorCOP interface_ABBA_selector(new core::select::residue_selector::OrResidueSelector(interface_AB_selector,interface_BA_selector));
-		core::select::residue_selector::ResidueSelectorCOP interface_exclude_overlap_selector(new core::select::residue_selector::AndResidueSelector(interface_ABBA_selector,not_overlap_interface_selector));
-		protocols::simple_moves::AddResidueLabelMover add_other_overlap = AddResidueLabelMover(interface_exclude_overlap_selector,"other_overlap");
-		TR.Debug << "apply other_overlap to output_pose" << std::endl;
-		add_other_overlap.apply(*output_poseOP);
-
+		{
+			core::select::residue_selector::ResidueSelectorCOP overlap_selector( utility::pointer::make_shared< core::select::residue_selector::ResiduePDBInfoHasLabelSelector >("overlap"));
+			core::select::residue_selector::ResidueSelectorCOP interface_selector( utility::pointer::make_shared< core::select::residue_selector::ResiduePDBInfoHasLabelSelector >(no_design_label_));
+			core::select::residue_selector::ResidueSelectorCOP overlap_plus_interface_selector( utility::pointer::make_shared< core::select::residue_selector::OrResidueSelector >(overlap_selector,interface_selector));
+			core::select::residue_selector::ResidueSelectorCOP not_overlap_interface_selector( utility::pointer::make_shared< core::select::residue_selector::NotResidueSelector >(overlap_plus_interface_selector));
+			core::select::residue_selector::ResidueSelectorCOP partA_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >(chunk1_insert_res)); //always input_pose
+			core::select::residue_selector::ResidueSelectorCOP partB_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >(chunk2_insert_res)); //always xml_pose
+			core::select::residue_selector::InterGroupInterfaceByVectorSelectorOP interface_AB_selector( utility::pointer::make_shared< core::select::residue_selector::InterGroupInterfaceByVectorSelector >() );
+			interface_AB_selector->group1_selector( partA_selector );
+			interface_AB_selector->group2_selector( partB_selector );
+			interface_AB_selector->cb_dist_cut( design_range_ ); //defaults to 11
+			interface_AB_selector->vector_dist_cut( design_range_*0.8181 ); //defaults to 9 in the selector. This is really arbitrary atm, I just took the default value of 9/11 = 0.8181
+			core::select::residue_selector::InterGroupInterfaceByVectorSelectorOP interface_BA_selector( utility::pointer::make_shared< core::select::residue_selector::InterGroupInterfaceByVectorSelector >() ); //reverse since the selector has to be downstream
+			interface_BA_selector->group1_selector( partB_selector );
+			interface_BA_selector->group2_selector( partA_selector );
+			interface_BA_selector->cb_dist_cut( design_range_ ); //defaults to 11
+			interface_BA_selector->vector_dist_cut( design_range_*0.8181 );
+			core::select::residue_selector::ResidueSelectorCOP interface_ABBA_selector( utility::pointer::make_shared< core::select::residue_selector::OrResidueSelector >(interface_AB_selector,interface_BA_selector));
+			core::select::residue_selector::ResidueSelectorCOP interface_exclude_overlap_selector( utility::pointer::make_shared< core::select::residue_selector::AndResidueSelector >(interface_ABBA_selector,not_overlap_interface_selector));
+			protocols::simple_moves::AddResidueLabelMover add_other_overlap = AddResidueLabelMover(interface_exclude_overlap_selector,"other_overlap");
+			TR.Debug << "apply other_overlap to output_pose" << std::endl;
+			add_other_overlap.apply(*output_poseOP);
+		}
 
 		//store PDBInfoLabels
 		std::map<core::Size, vector1<std::string> > res_label_map;
@@ -509,12 +510,12 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 		renumber_pdbinfo_based_on_conf_chains(*output_poseOP,true,false,false,false);
 
 		//reapply residue_label to output_pose
-		std::map<core::Size, vector1<std::string> >::iterator res_label_map_itr;
-		vector1<std::string>::iterator res_label_itr;
-		for ( res_label_map_itr=res_label_map.begin(); res_label_map_itr!=res_label_map.end(); ++res_label_map_itr ) {
+		//std::map<core::Size, vector1<std::string> >::iterator res_label_map_itr;
+		//vector1<std::string>::iterator res_label_itr;
+		for ( auto res_label_map_itr=res_label_map.begin(); res_label_map_itr!=res_label_map.end(); ++res_label_map_itr ) {
 			Size resid = res_label_map_itr->first;
 			vector1<std::string> tmp_labels = res_label_map_itr->second;
-			for ( res_label_itr=tmp_labels.begin(); res_label_itr!=tmp_labels.end(); ++res_label_itr ) {
+			for ( auto res_label_itr=tmp_labels.begin(); res_label_itr!=tmp_labels.end(); ++res_label_itr ) {
 				output_poseOP->pdb_info()->add_reslabel(resid, *res_label_itr);
 			}
 		}
@@ -526,12 +527,12 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 			sfxn_->score(*output_poseOP);
 
 			//discard SYMMETRIC poses with bad clashes
-			core::pose::PoseOP centroidPoseOP = output_poseOP->clone();
-			tocen->apply( *centroidPoseOP );
-			Real score0 = sfxn0->score( *centroidPoseOP );
-			TR << "SYMMETRIC score0 for clash_check (threshold: " << clash_threshold_ << " );" << score0 << std::endl;
-			bool duplicate = check_duplicate(*output_poseOP);
-			if ( score0>clash_threshold_ || duplicate ) {
+			core::pose::PoseOP centroidPose = output_poseOP->clone();
+			tocen->apply( *centroidPose );
+			Real score_0 = sfxn0->score( *centroidPose );
+			TR << "SYMMETRIC score0 for clash_check (threshold: " << clash_threshold_ << " );" << score_0 << std::endl;
+			bool const is_duplicate = check_duplicate(*output_poseOP);
+			if ( score_0>clash_threshold_ || is_duplicate ) {
 				//no output
 				overlaps_[kk].output_poseOP = NULL;
 				TR << "SYMMETRIC clash_check failed OR duplicate structure, tossing structure #: " << kk << std::endl;
@@ -555,12 +556,12 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 			renumber_pdbinfo_based_on_conf_chains(*asp_output_poseOP,true,false,false,false);
 
 			//reapply residue_label to ASP
-			std::map<core::Size, vector1<std::string> >::iterator res_label_map_itr;
-			vector1<std::string>::iterator res_label_itr;
-			for ( res_label_map_itr=res_label_map.begin(); res_label_map_itr!=res_label_map.end(); ++res_label_map_itr ) {
+			//std::map<core::Size, vector1<std::string> >::iterator res_label_map_itr;
+			//vector1<std::string>::iterator res_label_itr;
+			for ( auto res_label_map_itr=res_label_map.begin(); res_label_map_itr!=res_label_map.end(); ++res_label_map_itr ) {
 				Size resid = res_label_map_itr->first;
 				vector1<std::string> tmp_labels = res_label_map_itr->second;
-				for ( res_label_itr=tmp_labels.begin(); res_label_itr!=tmp_labels.end(); ++res_label_itr ) {
+				for ( auto res_label_itr=tmp_labels.begin(); res_label_itr!=tmp_labels.end(); ++res_label_itr ) {
 					asp_output_poseOP->pdb_info()->add_reslabel(resid, *res_label_itr);
 				}
 			}
@@ -596,26 +597,26 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 
 			//add other_overlap_sym
 			//select old residue_labels from asym step
-			core::select::residue_selector::ResidueSelectorCOP other_overlap_selector(new core::select::residue_selector::ResiduePDBInfoHasLabelSelector("other_overlap"));
-			core::select::residue_selector::ResidueSelectorCOP overlap_selector(new core::select::residue_selector::ResiduePDBInfoHasLabelSelector("overlap"));
-			core::select::residue_selector::ResidueSelectorCOP interface_selector(new core::select::residue_selector::ResiduePDBInfoHasLabelSelector(no_design_label_));
-			core::select::residue_selector::OrResidueSelectorOP old_labels_selector(new core::select::residue_selector::OrResidueSelector);
+			core::select::residue_selector::ResidueSelectorCOP other_overlap_selector( utility::pointer::make_shared< core::select::residue_selector::ResiduePDBInfoHasLabelSelector >("other_overlap") );
+			core::select::residue_selector::ResidueSelectorCOP overlap_selector2( utility::pointer::make_shared< core::select::residue_selector::ResiduePDBInfoHasLabelSelector >("overlap") );
+			core::select::residue_selector::ResidueSelectorCOP interface_selector( utility::pointer::make_shared< core::select::residue_selector::ResiduePDBInfoHasLabelSelector >( no_design_label_ ) );
+			core::select::residue_selector::OrResidueSelectorOP old_labels_selector( utility::pointer::make_shared< core::select::residue_selector::OrResidueSelector >() );
 			old_labels_selector->add_residue_selector(other_overlap_selector);
-			old_labels_selector->add_residue_selector(overlap_selector);
+			old_labels_selector->add_residue_selector(overlap_selector2);
 			old_labels_selector->add_residue_selector(interface_selector);
-			core::select::residue_selector::ResidueSelectorCOP not_old_labels_selector(new core::select::residue_selector::NotResidueSelector(old_labels_selector));
+			core::select::residue_selector::ResidueSelectorCOP not_old_labels_selector( utility::pointer::make_shared< core::select::residue_selector::NotResidueSelector >(old_labels_selector) );
 			//select sym_interface
-			core::select::residue_selector::ResidueSelectorCOP chain_selector(new core::select::residue_selector::ResidueIndexSelector( res_in_chainA_asp ));
-			core::select::residue_selector::ResidueSelectorCOP not_chainA_selector(new core::select::residue_selector::NotResidueSelector(chain_selector));
-			core::select::residue_selector::InterGroupInterfaceByVectorSelectorOP interface_sym_AB_selector( new core::select::residue_selector::InterGroupInterfaceByVectorSelector );
+			core::select::residue_selector::ResidueSelectorCOP chain_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( res_in_chainA_asp ));
+			core::select::residue_selector::ResidueSelectorCOP not_chainA_selector( utility::pointer::make_shared< core::select::residue_selector::NotResidueSelector >(chain_selector));
+			core::select::residue_selector::InterGroupInterfaceByVectorSelectorOP interface_sym_AB_selector( utility::pointer::make_shared< core::select::residue_selector::InterGroupInterfaceByVectorSelector >() );
 			interface_sym_AB_selector->group1_selector( chain_selector );
 			interface_sym_AB_selector->group2_selector( not_chainA_selector );
 			interface_sym_AB_selector->cb_dist_cut( design_range_ ); //defaults to 11
 			interface_sym_AB_selector->vector_dist_cut( design_range_*0.8181 );
 			//combine all selections
-			core::select::residue_selector::ResidueSelectorCOP chunk2_asp_selector(new core::select::residue_selector::ResidueIndexSelector( chunk2_insert_res_asp ));
-			core::select::residue_selector::ResidueSelectorCOP chunk2_around_selector(new core::select::residue_selector::NeighborhoodResidueSelector(chunk2_asp_selector,design_range_,true));
-			core::select::residue_selector::AndResidueSelectorOP new_sym_interface_selector(new core::select::residue_selector::AndResidueSelector );
+			core::select::residue_selector::ResidueSelectorCOP chunk2_asp_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( chunk2_insert_res_asp ) );
+			core::select::residue_selector::ResidueSelectorCOP chunk2_around_selector( utility::pointer::make_shared< core::select::residue_selector::NeighborhoodResidueSelector >(chunk2_asp_selector,design_range_,true));
+			core::select::residue_selector::AndResidueSelectorOP new_sym_interface_selector( utility::pointer::make_shared< core::select::residue_selector::AndResidueSelector >() );
 			new_sym_interface_selector->add_residue_selector( chain_selector ); //must be on chain1 (asu)
 			new_sym_interface_selector->add_residue_selector( not_old_labels_selector ); //must NOT be overlap or other_overlap or no_design_label
 			new_sym_interface_selector->add_residue_selector( interface_sym_AB_selector ); //symmetrical interface residue
@@ -764,17 +765,17 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 			//PackerTaskOP taskOP = task_factory_->create_task_and_apply_taskoperations(*poses[kk]);
 
 			//find residues allowed to design
-			core::select::residue_selector::ResidueSelectorCOP overlap_p1_selector(new core::select::residue_selector::ResiduePDBInfoHasLabelSelector("overlap"));
-			core::select::residue_selector::ResidueSelectorCOP overlap_p2_selector(new core::select::residue_selector::ResiduePDBInfoHasLabelSelector("other_overlap"));
-			core::select::residue_selector::ResidueSelectorCOP overlap_p3_selector(new core::select::residue_selector::ResiduePDBInfoHasLabelSelector("other_overlap_sym"));
-			core::select::residue_selector::OrResidueSelectorOP overlap_selector(new core::select::residue_selector::OrResidueSelector);
+			core::select::residue_selector::ResidueSelectorCOP overlap_p1_selector( utility::pointer::make_shared< core::select::residue_selector::ResiduePDBInfoHasLabelSelector >("overlap"));
+			core::select::residue_selector::ResidueSelectorCOP overlap_p2_selector( utility::pointer::make_shared< core::select::residue_selector::ResiduePDBInfoHasLabelSelector >("other_overlap"));
+			core::select::residue_selector::ResidueSelectorCOP overlap_p3_selector( utility::pointer::make_shared< core::select::residue_selector::ResiduePDBInfoHasLabelSelector >("other_overlap_sym"));
+			core::select::residue_selector::OrResidueSelectorOP overlap_selector( utility::pointer::make_shared< core::select::residue_selector::OrResidueSelector >());
 			overlap_selector->add_residue_selector(overlap_p1_selector);
 			overlap_selector->add_residue_selector(overlap_p2_selector);
 			overlap_selector->add_residue_selector(overlap_p3_selector);
-			core::select::residue_selector::ResidueSelectorCOP no_design_selector(new core::select::residue_selector::ResiduePDBInfoHasLabelSelector(no_design_label_));
-			core::select::residue_selector::ResidueSelectorCOP not_no_design_selector(new core::select::residue_selector::NotResidueSelector(no_design_selector));
-			core::select::residue_selector::ResidueSelectorCOP design_selector(new core::select::residue_selector::AndResidueSelector(overlap_selector,not_no_design_selector));
-			//core::select::residue_selector::ResidueSelectorCOP symmetric_design_selector(new core::select::residue_selector::SymmetricalResidueSelector(design_selector)); //shouldn't need this since packer is sym aware
+			core::select::residue_selector::ResidueSelectorCOP no_design_selector( utility::pointer::make_shared< core::select::residue_selector::ResiduePDBInfoHasLabelSelector >(no_design_label_));
+			core::select::residue_selector::ResidueSelectorCOP not_no_design_selector( utility::pointer::make_shared< core::select::residue_selector::NotResidueSelector >(no_design_selector));
+			core::select::residue_selector::ResidueSelectorCOP design_selector( utility::pointer::make_shared< core::select::residue_selector::AndResidueSelector >(overlap_selector,not_no_design_selector));
+			//core::select::residue_selector::ResidueSelectorCOP symmetric_design_selector( utility::pointer::make_shared< core::select::residue_selector::SymmetricalResidueSelector >(design_selector)); //shouldn't need this since packer is sym aware
 			utility::vector1< bool > design_res = design_selector->apply( *overlaps_[kk].output_poseOP );
 
 			TR << "select design_res, resi ";
@@ -786,9 +787,9 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 			TR << std::endl;
 
 			//selecting residues allowed to pack
-			core::select::residue_selector::ResidueSelectorCOP near_overlap_selector(new core::select::residue_selector::NeighborhoodResidueSelector(overlap_selector,packing_range_,false));
-			core::select::residue_selector::ResidueSelectorCOP pack_selector(new core::select::residue_selector::AndResidueSelector(near_overlap_selector,not_no_design_selector));
-			//core::select::residue_selector::ResidueSelectorCOP symmetric_pack_selector(new core::select::residue_selector::SymmetricalResidueSelector(pack_selector));
+			core::select::residue_selector::ResidueSelectorCOP near_overlap_selector( utility::pointer::make_shared< core::select::residue_selector::NeighborhoodResidueSelector >(overlap_selector,packing_range_,false));
+			core::select::residue_selector::ResidueSelectorCOP pack_selector( utility::pointer::make_shared< core::select::residue_selector::AndResidueSelector >(near_overlap_selector,not_no_design_selector));
+			//core::select::residue_selector::ResidueSelectorCOP symmetric_pack_selector( utility::pointer::make_shared< core::select::residue_selector::SymmetricalResidueSelector >(pack_selector));
 			utility::vector1< bool > pack_res = pack_selector->apply( *overlaps_[kk].output_poseOP );
 
 			TR << "select pack_res, resi ";
@@ -800,9 +801,9 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 			TR << std::endl;
 
 			//selecting residue not allowed to pack/design
-			core::select::residue_selector::ResidueSelectorCOP pack_and_design_selector(new core::select::residue_selector::OrResidueSelector(pack_selector,design_selector));
-			core::select::residue_selector::ResidueSelectorCOP no_pack_selector(new core::select::residue_selector::NotResidueSelector(pack_and_design_selector));
-			//core::select::residue_selector::ResidueSelectorCOP symmetric_no_pack_selector(new core::select::residue_selector::SymmetricalResidueSelector(no_pack_selector));
+			core::select::residue_selector::ResidueSelectorCOP pack_and_design_selector( utility::pointer::make_shared< core::select::residue_selector::OrResidueSelector >(pack_selector,design_selector));
+			core::select::residue_selector::ResidueSelectorCOP no_pack_selector( utility::pointer::make_shared< core::select::residue_selector::NotResidueSelector >(pack_and_design_selector));
+			//core::select::residue_selector::ResidueSelectorCOP symmetric_no_pack_selector( utility::pointer::make_shared< core::select::residue_selector::SymmetricalResidueSelector >(no_pack_selector));
 			utility::vector1< bool > no_pack_res = no_pack_selector->apply( *overlaps_[kk].output_poseOP );
 
 			TR << "select no_pack_res, resi ";
@@ -837,7 +838,7 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 			//minimize
 			if ( do_minimize_ ) {
 				if ( pose_symmetric ) {
-					kinematics::MoveMapOP mm_locOP( new core::kinematics::MoveMap() );
+					kinematics::MoveMapOP mm_locOP( utility::pointer::make_shared< core::kinematics::MoveMap >() );
 					mm_locOP->set_jump( false ); mm_locOP->set_bb( false ); mm_locOP->set_chi( true );
 					protocols::minimization_packing::MinMover min_mover(mm_locOP,sfxn_,"lbfgs_armijo_nonmonotone",0.02,true);
 					min_mover.apply(*overlaps_[kk].output_poseOP);
