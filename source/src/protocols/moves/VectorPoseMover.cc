@@ -7,9 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/simple_moves/VectorPoseMover.cc
-/// @brief Designates a mover that can be passed multiple poses by the MSDJobDistributor
-/// @brief Any movers deriving from this subclass can then act on all of the input poses simultaneously
+/// @file protocols/moves/VectorPoseMover.cc
+/// @brief Designates a mover that can be passed multiple poses by the VectorPoseJobDistributor
+/// Any movers deriving from this subclass can then act on all of the input poses simultaneously
+/// Only accessible through recon application.
 /// @author Alex Sevy (alex.sevy@gmail.com)
 
 #include <protocols/moves/VectorPoseMover.hh>

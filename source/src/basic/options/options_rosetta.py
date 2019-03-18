@@ -900,14 +900,6 @@ Options = Option_Group( '',
 			desc='Shuffle job order',
 			legal=['true','false'], default='false'
 			),
-		Option( 'msd_job_dist', 'Boolean',
-			desc='Use MSD Job Distributor',
-			legal=['true','false'], default='false'
-			),
-		Option( 'msd_randomize', 'Boolean',
-			desc='Randomize order of input poses for MSD',
-			legal=['true', 'false'], default='false'
-			),
 		Option( 'n_cycles', 'Integer',
 			desc='Option to control miscellaneous cycles within protocols.  This has no core meaning - it is meant to reduce option-bloat by having every protocol define separate cycles options.  Check your protocol\'s documentation to see if it is used.',
 			lower='1', default='1'
@@ -1695,6 +1687,13 @@ Options = Option_Group( '',
 		  Option( 'use_cubic_interp', 'Boolean', desc='cubic interpolation for 6D potential, instead of polylinear', default='true' ),
  		), #-score:loop_close
 	), # -score
+
+	# for recon design application ---------------------------------------
+	Option_Group( 'recon',
+    Option( 'randomize', 'Boolean',
+      desc='Randomize order of input poses for RECON MSD',
+      legal=['true', 'false'], default='false' )
+   ),
 
 	# packing options -----------------------------------------------------------
 	Option_Group( 'packing',
@@ -8506,6 +8505,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 		# Option( 'filterdist'       ,'Real' ,desc="MC temp for cen fold", default="2.0" ),
 	), #-willmatch
+	
 	Option_Group( 'PDB_diagnostic',
 		Option( 'reading_only', 'Boolean', desc="if true, become a no-op (only structure reading is tested). Useful for not-mega-clusters where packing a virus/ribosome will crush memory.", default="false" ),
 		Option( 'skip_pack_and_min', 'Boolean', desc="Skip the packing and minimization steps (leaving in the scoring and ResidueType analyses). Good for speed, or for shallower tests.", default="false"),

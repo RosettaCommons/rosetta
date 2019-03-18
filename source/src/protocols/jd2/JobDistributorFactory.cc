@@ -25,7 +25,6 @@
 #include <protocols/jd2/MPIMultiCommJobDistributor.hh>
 //#include <protocols/jd2/MultiThreadedJobDistributor.hh>
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
-#include <protocols/jd2/MSDJobDistributor.hh>
 
 #include <protocols/jd2/JobInputterFactory.hh>
 
@@ -113,10 +112,6 @@ JobDistributorFactory::create_job_distributor() {
 
 	if ( option[  OptionKeys::run::shuffle ]() ) {
 		return new ShuffleFileSystemJobDistributor;
-	}
-
-	if ( option[ OptionKeys::run::msd_job_dist ]() ) {
-		return new MSDJobDistributor;
 	}
 
 	if ( option[ OptionKeys::run::proc_id ].user()

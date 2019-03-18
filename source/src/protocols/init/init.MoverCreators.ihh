@@ -517,7 +517,6 @@
 #include <protocols/simple_moves/AddPDBInfoMoverCreator.hh>
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
 #include <protocols/simple_moves/FavorSymmetricSequenceCreator.hh>
-#include <protocols/simple_moves/FindConsensusSequenceCreator.hh>
 #include <protocols/calc_taskop_movers/ForceDisulfidesMoverCreator.hh>
 #include <protocols/monte_carlo/GenericMonteCarloMoverCreator.hh>
 #include <protocols/monte_carlo/GenericSimulatedAnnealerCreator.hh>
@@ -531,7 +530,6 @@
 #include <protocols/monte_carlo/MonteCarloRecoverCreator.hh>
 #include <protocols/monte_carlo/MonteCarloResetCreator.hh>
 #include <protocols/monte_carlo/MonteCarloTestCreator.hh>
-#include <protocols/simple_moves/MSDMoverCreator.hh>
 #include <protocols/simple_moves/MutateResidueCreator.hh>
 #include <protocols/simple_moves/PDBReloadMoverCreator.hh>
 #include <protocols/simple_moves/PeriodicBoxMoverCreator.hh>

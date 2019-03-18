@@ -1,0 +1,4 @@
+-parser:protocol msd.xml 
+-s 1avz.pdb.gz 1m27.pdb.gz
+-out:suffix mpi
+-overwrite

@@ -361,6 +361,12 @@ sources = {
 		"StoreResidueSubsetMover",
 		"TaskSelector",
 	],
+	"protocols/recon_design": [
+		"MSDMover",
+		"FindConsensusSequence",
+		"FitnessFilter",
+		"recon_util",
+	],
 	"protocols/rigid": [
 		"PoseMembraneRigidBodyMover",
 		"RB_geometry",
@@ -669,7 +675,6 @@ sources = {
 
 		"FavorSequenceProfile",
 		"FavorSymmetricSequence",
-		"FindConsensusSequence",
 
 		"ReportEffectivePKA",
 		"FragmentMover",
@@ -679,8 +684,6 @@ sources = {
 
 		"MembraneTopology",
 		"MissingDensityToJumpMover",
-
-		"MSDMover",
 		"MutateResidue",
 		"PDBReloadMover",
 		"PeriodicBoxMover",

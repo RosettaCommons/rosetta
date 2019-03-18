@@ -289,6 +289,9 @@ sources = {
 		"recces_turner",
 		"thermal_sampler",
 	    ],
+	"public/recon_design": [
+		"recon",
+	],
 	"public/legacy_sewing": [
 		"sewing_hasher",
 	],

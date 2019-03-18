@@ -7,18 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/simple_moves/FindConsensusSequence.fwd.hh
-/// @brief Finds the consensus sequence that optimizes energy of all input poses
+/// @file protocols/recon_design/FindConsensusSequence.fwd.hh
+/// @brief Finds the consensus sequence that optimizes energy of all input poses.
+/// Used in RECON msd application.
 /// @author Alex Sevy (alex.sevy@gmail.com)
 
-#ifndef INCLUDED_protocols_simple_moves_FindConsensusSequence_fwd_hh
-#define INCLUDED_protocols_simple_moves_FindConsensusSequence_fwd_hh
+#ifndef INCLUDED_protocols_recon_design_FindConsensusSequence_fwd_hh
+#define INCLUDED_protocols_recon_design_FindConsensusSequence_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 
 namespace protocols {
-namespace simple_moves {
+namespace recon_design {
 
 // Forward declaration of class
 class FindConsensusSequence;
@@ -26,7 +27,7 @@ class FindConsensusSequence;
 typedef utility::pointer::shared_ptr< FindConsensusSequence > FindConsensusSequenceOP;
 typedef utility::pointer::shared_ptr< FindConsensusSequence const > FindConsensusSequenceCOP;
 
-} // namespace simple_moves
+} // namespace recon_design
 } // namespace protocols
 
-#endif //INCLUDED_protocols_simple_moves_FindConsensusSequence_fwd_hh
+#endif //INCLUDED_protocols_recon_design_FindConsensusSequence_fwd_hh

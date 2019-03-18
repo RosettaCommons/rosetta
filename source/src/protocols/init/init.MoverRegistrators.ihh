@@ -533,7 +533,6 @@ static MoverRegistrator< simple_moves::DumpPdbCreator > reg_DumpPdbCreator;
 static MoverRegistrator< simple_moves::AddPDBInfoMoverCreator > reg_AddPDBInfoMoverCreator;
 static MoverRegistrator< simple_moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
 static MoverRegistrator< simple_moves::FavorSymmetricSequenceCreator > reg_FavorSymmetricSequenceCreator;
-static MoverRegistrator< simple_moves::FindConsensusSequenceCreator > reg_FindConsensusSequenceCreator;
 static MoverRegistrator< calc_taskop_movers::ForceDisulfidesMoverCreator > reg_ForceDisulfidesMoverCreator;
 static MoverRegistrator< monte_carlo::GenericMonteCarloMoverCreator > reg_GenericMonteCarloMoverCreator;
 static MoverRegistrator< monte_carlo::GenericSimulatedAnnealerCreator > reg_GenericSimulatedAnnealerCreator;
@@ -547,7 +546,6 @@ static MoverRegistrator< simple_moves::ModifyVariantTypeMoverCreator > reg_Modif
 static MoverRegistrator< monte_carlo::MonteCarloRecoverCreator > reg_GenericMonteCarloRecoverCreator;
 static MoverRegistrator< monte_carlo::MonteCarloResetCreator > reg_MonteCarloResetCreator;
 static MoverRegistrator< monte_carlo::MonteCarloTestCreator > reg_MonteCarloTestCreator;
-static MoverRegistrator< simple_moves::MSDMoverCreator > reg_MSDMoverCreator;
 static MoverRegistrator< simple_moves::MutateResidueCreator > reg_MutateResidueCreator;
 static MoverRegistrator< simple_moves::PDBReloadMoverCreator > reg_PDBReloadMoverCreator;
 static MoverRegistrator< simple_moves::PeriodicBoxMoverCreator > reg_PeriodicBoxMoverCreator;

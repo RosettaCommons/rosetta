@@ -94,7 +94,6 @@ send_string_to_node(
 	MPI_Send( const_cast< char * > (message.c_str()), len, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
 }
 
-
 char
 receive_char_from_node(
 	int source

@@ -7,9 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/simple_moves/VectorPoseMover.hh
-/// @brief Designates a mover that can be passed multiple poses by the MSDJobDistributor
-/// @brief Any movers deriving from this subclass can then act on all of the input poses simultaneously
+/// @file protocols/moves/VectorPoseMover.hh
+/// @brief Designates a mover that can be passed multiple poses by the VectorPoseJobDistributor
+/// Any movers deriving from this subclass can then act on all of the input poses simultaneously
+/// Only accessible through recon application.
 /// @author Alex Sevy (alex.sevy@gmail.com)
 
 #ifndef INCLUDED_PROTOCOLS_MOVES_VectorPoseMover_HH
@@ -25,7 +26,9 @@
 namespace protocols {
 namespace moves {
 
-/// @detail A simple class used for a mover that acts on a vector of poses
+/// @brief Designates a mover that can be passed multiple poses by the VectorPoseJobDistributor
+/// Any movers deriving from this subclass can then act on all of the input poses simultaneously
+/// Only accessible through recon application.
 class VectorPoseMover : public Mover {
 
 public:
@@ -42,15 +45,15 @@ public:
 
 	void apply ( core::pose::Pose& pose ) override = 0;
 
+	/// @brief Pure virtual method to apply this mover under MPI
+	virtual void apply_mpi ( core::pose::Pose& pose ) = 0;
+
 	/// @brief Set the vector of poses for the mover to act upon
 	void set_poses( utility::vector1< core::pose::PoseOP > const & poses );
 
-	/// @brief Sets current pose in case you want to act on only one of the present poses
-	// void set_current_pose( core::Size current );
-
 protected:
+	/// @brief Vector of all the input poses
 	utility::vector1< core::pose::PoseOP > poses_;
-	// core::Size current_pose_;
 };
 
 }  // namespace moves

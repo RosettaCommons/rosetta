@@ -580,7 +580,12 @@ sources = {
 		"MPFastRelaxFoldTree",
 		"MPRangeRelaxMover",
 	],
-
+	
+	"recon_design" : [
+		"MSDMoverTest",
+		"FindConsensusSequenceTest",
+		"FitnessFilterTest",
+	],
 	"residue_selectors" : [
 		"StoredResidueSubsetSelector",
 		"TaskSelector",
@@ -663,7 +668,6 @@ sources = {
 		"FAVirtMoverTests",
 		"GenericSimulatedAnnealer",
 		#"UniformPositionMover",
-		"MSDMoverTest",
 		"MutateResidue",
                 "SetupMetalsMoverTests",
 		"SimpleThreadingMoverTests",
@@ -1179,6 +1183,8 @@ testinputfiles = [
 	"pmut_scan/mutants.txt",
 	"pmut_scan/shortloop.01.pdb.gz",
 	"pmut_scan/shortloop.02.pdb.gz",
+	"recon_design/design.resfile",
+	"recon_design/design2.resfile",
 	"qsar/scoring_grid/2JJC.pdb",
 	"qsar/scoring_grid/LIG.params",
 	"qsar/scoring_grid/1x0n_model1_renum.pdb",
@@ -1233,8 +1239,6 @@ testinputfiles = [
         "sewing/inputs/zinc_site_10_12.pdb",
 	"simple_filters/interface_hbonds_input.pdb",
 	"simple_moves/1bl0_auto.fasta.pssm",
-	"simple_moves/design.resfile",
-	"simple_moves/design2.resfile",
 	"simple_moves/DisulfideInsertionMover.xml",
 	"simple_moves/1A2A_A.pdb",
 	"simple_moves/test_input.pdb",

@@ -7,20 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/simple_moves/MSDMoverCreator.hh
-/// @brief Multistate design mover used for constrained MSD application
+/// @file protocols/recon_design/FindConsensusSequenceCreator.hh
+/// @brief Multistate design mover used for RECON msd application
 /// @author Alex Sevy (alex.sevy@gmail.com)
 
-#ifndef INCLUDED_protocols_simple_moves_MSDMoverCreator_hh
-#define INCLUDED_protocols_simple_moves_MSDMoverCreator_hh
+#ifndef INCLUDED_protocols_recon_design_FindConsensusSequenceCreator_hh
+#define INCLUDED_protocols_recon_design_FindConsensusSequenceCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace simple_moves {
+namespace recon_design {
 
-class MSDMoverCreator : public protocols::moves::MoverCreator {
+class FindConsensusSequenceCreator : public protocols::moves::MoverCreator {
 public:
+	static std::string mover_name();
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;

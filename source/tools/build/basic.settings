@@ -78,13 +78,13 @@ settings = {
             # Leading '#' means relative to the base directory, (i.e.,
             # main/external/boinc/api, etc.)
             "include_path" : [
-
-	    	# now done with -isystem flag at "compiler" handles
-                # "#external/libxml2/include",
-                # "#external/boost_1_55_0",
-                # "#external/",
-                # "#external/dbio",
-            ],
+                "#external/boost_1_55_0",
+                "#external/libxml2/include",
+                "#external/",
+                "#external/dbio",
+                "/usr/include",
+                "/usr/local/include",
+			],
             "library_path" : [
                 "/usr/lib",
                 "/usr/local/lib",

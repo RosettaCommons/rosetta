@@ -263,6 +263,8 @@
 #include <protocols/rbsegment_relax/MakeStarTopologyCreator.hh>
 #include <protocols/rbsegment_relax/OptimizeThreadingCreator.hh>
 #include <protocols/rbsegment_relax/IdealizeHelicesCreator.hh>
+#include <protocols/recon_design/FindConsensusSequenceCreator.hh>
+#include <protocols/recon_design/MSDMoverCreator.hh>
 #include <protocols/relax/AtomCoordinateCstMoverCreator.hh>
 #include <protocols/relax/FastRelaxCreator.hh>
 #include <protocols/relax/LocalRelaxCreator.hh>
@@ -302,7 +304,6 @@
 #include <protocols/pose_creation/ExtendedPoseMoverCreator.hh>
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
 #include <protocols/simple_moves/FavorSymmetricSequenceCreator.hh>
-#include <protocols/simple_moves/FindConsensusSequenceCreator.hh>
 #include <protocols/calc_taskop_movers/ForceDisulfidesMoverCreator.hh>
 #include <protocols/monte_carlo/GenericMonteCarloMoverCreator.hh>
 #include <protocols/pose_creation/LoadPDBMoverCreator.hh>
@@ -315,7 +316,6 @@
 #include <protocols/simple_moves/ModifyVariantTypeMoverCreator.hh>
 #include <protocols/monte_carlo/MonteCarloRecoverCreator.hh>
 #include <protocols/monte_carlo/MonteCarloTestCreator.hh>
-#include <protocols/simple_moves/MSDMoverCreator.hh>
 #include <protocols/simple_moves/MutateResidueCreator.hh>
 #include <protocols/minimization_packing/PackRotamersMoverCreator.hh>
 #include <protocols/simple_moves/PSSM2BfactorMoverCreator.hh>
@@ -1158,6 +1158,12 @@ public:
 	void test_protocols_rbsegment_relax_IdealizeHelicesMoverCreator_name()
 	{ protocols::rbsegment_relax::IdealizeHelicesMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "IdealizeHelices" ); }
 
+	void test_protocols_recon_design_FindConsensusSequenceCreator_name()
+	{ protocols::recon_design::FindConsensusSequenceCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "FindConsensusSequence" ); }
+
+	void test_protocols_recon_design_MSDMoverCreator_name()
+	{ protocols::recon_design::MSDMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MSDMover" ); }
+
 	void test_protocols_relax_AtomCoordinateCstMoverCreator_name()
 	{ protocols::relax::AtomCoordinateCstMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AtomCoordinateCstMover" ); }
 
@@ -1281,9 +1287,6 @@ public:
 	void test_protocols_simple_moves_FavorSymmetricSequenceCreator_name()
 	{ protocols::simple_moves::FavorSymmetricSequenceCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "FavorSymmetricSequence" ); }
 
-	void test_protocols_simple_moves_FindConsensusSequenceCreator_name()
-	{ protocols::simple_moves::FindConsensusSequenceCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "FindConsensusSequence" ); }
-
 	void test_protocols_simple_moves_ForceDisulfidesMoverCreator_name()
 	{ protocols::calc_taskop_movers::ForceDisulfidesMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ForceDisulfides" ); }
 
@@ -1319,9 +1322,6 @@ public:
 
 	void test_protocols_simple_moves_MonteCarloTestCreator_name()
 	{ protocols::monte_carlo::MonteCarloTestCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MonteCarloTest" ); }
-
-	void test_protocols_simple_moves_MSDMoverCreator_name()
-	{ protocols::simple_moves::MSDMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MSDMover" ); }
 
 	void test_protocols_simple_moves_MutateResidueCreator_name()
 	{ protocols::simple_moves::MutateResidueCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MutateResidue" ); }

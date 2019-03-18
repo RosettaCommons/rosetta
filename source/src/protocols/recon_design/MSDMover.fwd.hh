@@ -7,23 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd2/MSDJobDistributor.fwd.hh
-/// @brief  Job distributor for running constrained multistate design
+/// @file protocols/recon_design/MSDMover.fwd.hh
+/// @brief Multistate design mover used for RECON MSD application
 /// @author Alex Sevy (alex.sevy@gmail.com)
 
-#ifndef INCLUDED_protocols_jd2_MSDJobDistributor_fwd_hh
-#define INCLUDED_protocols_jd2_MSDJobDistributor_fwd_hh
+#ifndef INCLUDED_protocols_recon_design_MSDMover_fwd_hh
+#define INCLUDED_protocols_recon_design_MSDMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace protocols {
-namespace jd2 {
+namespace recon_design {
 
-class MSDJobDistributor;
-typedef utility::pointer::shared_ptr< MSDJobDistributor > MSDJobDistributorOP;
-typedef utility::pointer::shared_ptr< MSDJobDistributor const > MSDJobDistributorCOP;
+// Forward declaration of class
+class MSDMover;
 
-}//jd2
-}//protocols
+typedef utility::pointer::shared_ptr< MSDMover > MSDMoverOP;
+typedef utility::pointer::shared_ptr< MSDMover const > MSDMoverCOP;
 
-#endif //INCLUDED_protocols_jd2_JobDistributor_FWD_HH
+} // namespace recon_design
+} // namespace protocols
+
+#endif //INCLUDED_protocols_recon_design_MSDMover_fwd_hh
+
