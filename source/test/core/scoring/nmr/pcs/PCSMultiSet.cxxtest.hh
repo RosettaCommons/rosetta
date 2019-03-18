@@ -81,7 +81,7 @@ public:
 		using namespace core::scoring::nmr;
 		using namespace core::scoring::nmr::pcs;
 
-		TS_TRACE("Test PCSMultiSet instantiation with NMRGridSearch and NMRSpinlabel");
+		TR << "Test PCSMultiSet instantiation with NMRGridSearch and NMRSpinlabel" << std::endl;
 
 		// create gridsearch object
 		core::id::AtomID grid_atom1( named_atom_id_to_atom_id(core::id::NamedAtomID("CA", 95), sh2_) );
@@ -129,7 +129,7 @@ public:
 		using namespace core::scoring::nmr;
 		using namespace core::scoring::nmr::pcs;
 
-		TS_TRACE("Test PCSMultiSet score calculation with NMRGridSearch");
+		TR << "Test PCSMultiSet score calculation with NMRGridSearch" << std::endl;
 		// Set fixed RG seed for NLS fitting
 		initialize_rng();
 
@@ -205,7 +205,7 @@ public:
 		// Set fixed RG seed for NLS fitting
 		initialize_rng();
 
-		TS_TRACE("Test PCSMultiSet score calculation with NMRSpinlabel");
+		TR << "Test PCSMultiSet score calculation with NMRSpinlabel" << std::endl;
 
 		// create spinlabel object
 		NMRSpinlabelOP spinlabel( new NMRSpinlabel("fa_standard", "R1A") );
@@ -273,7 +273,7 @@ public:
 		using namespace core::scoring::nmr;
 		using namespace core::scoring::nmr::pcs;
 
-		TS_TRACE("Test PCSMultiSet score calculation with fixed input tensor");
+		TR << "Test PCSMultiSet score calculation with fixed input tensor" << std::endl;
 
 		// Create PCSMultiSet with default spinlabel
 		utility::vector1<PCSSingleSetOP> pcs_data_cam;

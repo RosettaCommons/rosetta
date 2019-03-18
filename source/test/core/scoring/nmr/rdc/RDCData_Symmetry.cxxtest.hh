@@ -88,7 +88,7 @@ public: // Test functions
 		// Sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:rdc:correct_sign false -nmr:rdc:normalization_type NH -nmr:rdc:use_symmetry_calc -nmr:rdc:multiset_weights 2.0 1.5");
 
-		TS_TRACE("Testing RDCData score calculation for symmetric pose");
+		TR << "Testing RDCData score calculation for symmetric pose" << std::endl;
 
 		// Setup RDC data
 		RDCData rdc_data_all("core/scoring/nmr/rdc/rdc_data_2jwk_asu_input_file.txt", tolR_);
@@ -130,7 +130,7 @@ public: // Test functions
 		// Additional options; sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:rdc:correct_sign false -nmr:rdc:normalization_type NH -nmr:rdc:multiset_weights 2.0 1.5");
 
-		TS_TRACE("Testing RDCData score calculation for symmetric pose");
+		TR << "Testing RDCData score calculation for symmetric pose" << std::endl;
 
 		// Setup RDC data
 		RDCData rdc_data_all("core/scoring/nmr/rdc/rdc_data_2jwk_all_su_input_file.txt", tolR_);

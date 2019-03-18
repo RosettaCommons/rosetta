@@ -71,7 +71,7 @@ public: // Methods
 	void test_RDCData_instantiation() {
 		using namespace core::scoring::nmr::rdc;
 
-		TS_TRACE("Testing RDCData instantiation");
+		TR << "Testing RDCData instantiation" << std::endl;
 
 		RDCData rdc_data_all("core/scoring/nmr/rdc/rdc_data_g_input_file.txt", g_);
 		rdc_data_all.show(TR.Debug);
@@ -83,7 +83,7 @@ public: // Methods
 		using namespace core::scoring::nmr;
 		using namespace core::scoring::nmr::rdc;
 
-		TS_TRACE("Testing RDCData instantiation");
+		TR << "Testing RDCData instantiation" << std::endl;
 
 		RDCDataOP rdc_data_all_ptr(utility::pointer::static_pointer_cast< RDCData >( NMRDataFactory::get_instance()->get_nmr_data("RDC", "core/scoring/nmr/rdc/rdc_data_g_input_file.txt", g_) ) );
 		rdc_data_all_ptr->show(TR.Debug);
@@ -97,7 +97,7 @@ public: // Methods
 		// Set fixed RG seed for NLS fitting
 		initialize_rng();
 
-		TS_TRACE("Testing RDCData score calculation");
+		TR << "Testing RDCData score calculation" << std::endl;
 
 		RDCData rdc_data_all("core/scoring/nmr/rdc/rdc_data_g_input_file.txt", g_);
 

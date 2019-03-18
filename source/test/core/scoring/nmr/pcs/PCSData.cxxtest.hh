@@ -99,7 +99,7 @@ public:
 	void test_PCSData_score_calculation_with_gridsearch() {
 		using namespace core::scoring::nmr::pcs;
 
-		TS_TRACE("Testing PCSData score calculation with grid search");
+		TR << "Testing PCSData score calculation with grid search" << std::endl;
 		// Set fixed RG seed for NLS fitting
 		initialize_rng();
 
@@ -177,7 +177,7 @@ public:
 		// Additional options, sets also fixed RG seed
 		core_init_with_additional_options("-nmr:spinlabel:highres_conformer_filter_type DISTANCE");
 
-		TS_TRACE("Testing PCSData score calculation with spinlabel");
+		TR << "Testing PCSData score calculation with spinlabel" << std::endl;
 
 		PCSData pcs_data("core/scoring/nmr/pcs/pcs_data_1cdl_mtsl_input_file.txt", cam_);
 		utility::vector1< utility::vector1< PCSTensorCOP > > tensors_all_tags_and_lanthanides(pcs_data.get_number_tags());
@@ -221,7 +221,7 @@ public:
 		// Additional options, sets also fixed RG seed
 		core_init_with_additional_options("-nmr:pcs:normalize_data");
 
-		TS_TRACE("Testing PCSData score calculation with scaled data and grid search");
+		TR << "Testing PCSData score calculation with scaled data and grid search" << std::endl;
 
 		PCSData pcs_data("core/scoring/nmr/pcs/pcs_data_2ksy_input_file.txt", psR2_);
 		utility::vector1< utility::vector1< PCSTensorCOP > > tensors_all_tags_and_lanthanides(pcs_data.get_number_tags());

@@ -104,7 +104,7 @@ public: // Test functions
 		// Important: use this option to turn automatic symmetry handling on
 		core_init_with_additional_options("-nmr:rdc:correct_sign false -nmr:rdc:normalization_type NH -nmr:rdc:use_symmetry_calc");
 
-		TS_TRACE("Testing RDCMultiSet score calculation for symmetric pose with SVD");
+		TR << "Testing RDCMultiSet score calculation for symmetric pose with SVD" << std::endl;
 
 		// Setup rdc data
 		RDCMultiSetOP rdc_data = RDCMultiSetOP( new RDCMultiSet(rdc_input_asu_, "phage_pf1", tolR_, 1.0, "SVD") );
@@ -147,7 +147,7 @@ public: // Test functions
 
 		core_init_with_additional_options("-nmr:rdc:correct_sign false -nmr:rdc:normalization_type NH");
 
-		TS_TRACE("Testing RDCMultiSet score calculation for symmetric pose with SVD");
+		TR << "Testing RDCMultiSet score calculation for symmetric pose with SVD" << std::endl;
 
 		// Setup rdc data
 		RDCMultiSetOP rdc_data = RDCMultiSetOP( new RDCMultiSet(rdc_input_all_su_, "phage_pf1", tolR_, 1.0, "SVD") );
@@ -189,7 +189,7 @@ public: // Test functions
 		// Sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:rdc:correct_sign false -nmr:rdc:normalization_type NH -nmr:rdc:use_symmetry_calc");
 
-		TS_TRACE("Testing RDCMultiSet score calculation for symmetric pose with NLSDAR");
+		TR << "Testing RDCMultiSet score calculation for symmetric pose with NLSDAR" << std::endl;
 
 		// Setup rdc data
 		RDCMultiSetOP rdc_data = RDCMultiSetOP( new RDCMultiSet(rdc_input_asu_, "phage_pf1", tolR_, 1.0, "NLSDAR") );
@@ -228,7 +228,7 @@ public: // Test functions
 		// Additional options; sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:rdc:correct_sign false -nmr:rdc:normalization_type NH");
 
-		TS_TRACE("Testing RDCMultiSet score calculation for symmetric pose with NLSDAR");
+		TR << "Testing RDCMultiSet score calculation for symmetric pose with NLSDAR" << std::endl;
 
 		// Setup rdc data
 		RDCMultiSetOP rdc_data = RDCMultiSetOP( new RDCMultiSet(rdc_input_all_su_, "phage_pf1", tolR_, 1.0, "NLS") );

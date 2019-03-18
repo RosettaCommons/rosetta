@@ -96,7 +96,7 @@ public:
 					TS_ASSERT( nleu_samples[ii].rot_well() == cleu_samples[ii].rot_well() );
 					TS_ASSERT( nleu_samples[ii].chi_mean() == cleu_samples[ii].chi_mean() );
 					TS_ASSERT( nleu_samples[ii].chi_sd() == cleu_samples[ii].chi_sd() );
-					std::cout << "nleu prob " << nleu_samples[ii].probability() << " and cleu prob " <<  cleu_samples[ii].probability() << std::endl;
+					TR << "nleu prob " << nleu_samples[ii].probability() << " and cleu prob " <<  cleu_samples[ii].probability() << std::endl;
 					TS_ASSERT( nleu_samples[ii].probability() == cleu_samples[ii].probability() );
 				}
 			}

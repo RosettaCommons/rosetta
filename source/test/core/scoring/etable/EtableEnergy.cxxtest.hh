@@ -1016,8 +1016,8 @@ public:
 		sfxn.setup_for_minimizing( pose, min_map );
 		/// END AtomTreeMinimizer setup block
 
-		Real start_func = sfxn(pose);
-		std::cout << "start_func: " << start_func << std::endl;
+		/*Real start_func =*/ sfxn(pose);
+		//std::cout << "start_func: " << start_func << std::endl;
 		TS_ASSERT_DELTA( -27.69173373969223, start_score, 1e-12 );
 		//TS_ASSERT_DELTA( -22.39185655926555, start_func, 1e-12 );
 	}

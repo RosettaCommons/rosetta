@@ -181,7 +181,7 @@ public:
 	void test_PREData_instantiation() {
 		using namespace core::scoring::nmr::pre;
 
-		TS_TRACE("Testing PREData creation");
+		TR << "Testing PREData creation" << std::endl;
 
 		PREData pre_data_cam("core/scoring/nmr/pre/pre_data_1cdl_input.txt", cam_);
 		pre_data_cam.show(TR.Debug);
@@ -198,7 +198,7 @@ public:
 		using namespace core::scoring::nmr;
 		using namespace core::scoring::nmr::pre;
 
-		TS_TRACE("Testing PREData creation");
+		TR << "Testing PREData creation" << std::endl;
 
 		PREDataOP pre_data_cam(utility::pointer::static_pointer_cast< PREData >( NMRDataFactory::get_instance()->get_nmr_data("PRE", "core/scoring/nmr/pre/pre_data_1cdl_input.txt", cam_) ) );
 		pre_data_cam->show(TR.Debug);
@@ -216,7 +216,7 @@ public:
 		// Turn on normalization of input PREs by experiment StdDev; sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:pre:normalize_data true");
 
-		TS_TRACE("Testing PREData score calculation with spinlabel");
+		TR << "Testing PREData score calculation with spinlabel" << std::endl;
 
 		PREData pre_data("core/scoring/nmr/pre/pre_data_1cdl_input.txt", cam_);
 		utility::vector1< PREMultiSetOP > & multiset_vec = pre_data.get_pre_multiset_vec();
@@ -252,7 +252,7 @@ public:
 		// Turn on normalization of input PREs by experiment StdDev; sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:pre:normalize_data true -nmr:spinlabel:max_ensemble_size 60");
 
-		TS_TRACE("Testing PREData score calculation with spinlabel");
+		TR << "Testing PREData score calculation with spinlabel" << std::endl;
 
 		PREData pre_data("core/scoring/nmr/pre/pre_data_1cdl_input.txt", cam_);
 		utility::vector1< PREMultiSetOP > & multiset_vec = pre_data.get_pre_multiset_vec();
@@ -283,7 +283,7 @@ public:
 		// Turn on normalization of input PREs by experiment StdDev; sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:pre:normalize_data true");
 
-		TS_TRACE("Testing PREData score calculation with metal ion grid search");
+		TR << "Testing PREData score calculation with metal ion grid search" << std::endl;
 
 		PREData pre_data("core/scoring/nmr/pre/pre_data_mid1_input.txt", mid1_);
 		utility::vector1< PREMultiSetOP > & multiset_vec = pre_data.get_pre_multiset_vec();

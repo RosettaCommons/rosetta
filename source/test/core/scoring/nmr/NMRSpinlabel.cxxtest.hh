@@ -79,7 +79,7 @@ public:
 	void test_creation_and_access() {
 		using namespace core::scoring::nmr;
 
-		TS_TRACE("Testing instantiation of NMRSpinlabel.");
+		TR << "Testing instantiation of NMRSpinlabel." << std::endl;
 
 		// Test creation of NMRSpinlabel object and some data members that are automatically set
 		NMRSpinlabelOP spl( new NMRSpinlabel("fa_standard", "R1A") );
@@ -132,7 +132,7 @@ public:
 		using WeightCoordVector = NMRSpinlabel::WeightCoordVector;
 
 		core_init_with_additional_options("-nmr:spinlabel:max_ensemble_size 100");
-		TS_TRACE("Testing NMRSpinlabel neighbor count filter.");
+		TR << "Testing NMRSpinlabel neighbor count filter." << std::endl;
 
 		NMRSpinlabelOP spl( new NMRSpinlabel("fa_standard", "R1A") );
 		core::Size n_good_conformers(19);
@@ -191,7 +191,7 @@ public:
 		using WeightCoordVector = NMRSpinlabel::WeightCoordVector;
 
 		core_init_with_additional_options("-nmr:spinlabel:max_ensemble_size 10");
-		TS_TRACE("Testing NMRSpinlabel neighbor count filter and clustering.");
+		TR << "Testing NMRSpinlabel neighbor count filter and clustering." << std::endl;
 
 		NMRSpinlabelOP spl( new NMRSpinlabel("fa_standard", "R1A") );
 		core::Size n_good_conformers(10);
@@ -211,7 +211,7 @@ public:
 
 		core_init_with_additional_options("-nmr:spinlabel:max_ensemble_size 100");
 
-		TS_TRACE("Testing NMRSpinlabel filter by masking");
+		TR << "Testing NMRSpinlabel filter by masking" << std::endl;
 
 		NMRSpinlabelOP spl( new NMRSpinlabel("fa_standard", "R1A") );
 		core::Size n_good_conformers(19);
@@ -338,7 +338,7 @@ public:
 
 		core_init_with_additional_options("-nmr:spinlabel:max_ensemble_size 10");
 
-		TS_TRACE("Testing NMRSpinlabel filter by masking and clustering");
+		TR << "Testing NMRSpinlabel filter by masking and clustering" << std::endl;
 
 		NMRSpinlabelOP spl( new NMRSpinlabel("fa_standard", "R1A") );
 		core::Size n_good_conformers(19);

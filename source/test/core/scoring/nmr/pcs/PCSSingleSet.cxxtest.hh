@@ -139,7 +139,7 @@ public:
 		using namespace core::scoring::nmr::pcs;
 		using core::pose::named_atom_id_to_atom_id;
 
-		TS_TRACE("Testing PCS tensor and score calculation by SVD");
+		TR << "Testing PCS tensor and score calculation by SVD" << std::endl;
 
 		// create pcs dataset
 		core::Real weight(1.0);
@@ -208,7 +208,7 @@ public:
 
 		core_init_with_additional_options("-nmr:pcs:normalize_data");
 
-		TS_TRACE("Testing PCS tensor and score calculation by SVD");
+		TR << "Testing PCS tensor and score calculation by SVD" << std::endl;
 
 		// create pcs dataset
 		core::Real weight(1.0);
@@ -273,7 +273,7 @@ public:
 	void test_calc_tensor_and_score_nls() {
 		using namespace core::scoring::nmr::pcs;
 
-		TS_TRACE("Testing PCS tensor and score calculation by NLS");
+		TR << "Testing PCS tensor and score calculation by NLS" << std::endl;
 		// Set fixed RG seed for NLS fitting
 		initialize_rng();
 
@@ -361,7 +361,7 @@ public:
 	void test_calc_tensor_and_score_nls_fixed_XaxXrh() {
 		using namespace core::scoring::nmr::pcs;
 
-		TS_TRACE("Testing PCS tensor and score calculation by NLS with fixed Xax and Xrh");
+		TR << "Testing PCS tensor and score calculation by NLS with fixed Xax and Xrh" << std::endl;
 		// Set fixed RG seed for NLS fitting
 		initialize_rng();
 
@@ -477,7 +477,7 @@ public:
 		using namespace core::scoring::nmr;
 		using namespace core::scoring::nmr::pcs;
 
-		TS_TRACE("Testing PCS tensor and score calculation using different weighting methods");
+		TR << "Testing PCS tensor and score calculation using different weighting methods" << std::endl;
 		// Set fixed RG seed for NLS fitting
 		initialize_rng();
 

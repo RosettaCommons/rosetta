@@ -42,6 +42,9 @@
 #include <utility/pointer/memory.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+#include <basic/Tracer.hh>
+
+static basic::Tracer TR("core.pack.basic_design.cxxtest");
 
 //I'm lazy using's
 using namespace core;
@@ -83,7 +86,7 @@ public:
 
 		DefaultPackerPaletteOP pp = make_shared< DefaultPackerPalette >();
 		PackerTask_OP the_task = make_shared< PackerTask_ >( pose, pp ); // ALSO has an implicit DPP
-		the_task->show();
+		the_task->show(TR);
 		TS_ASSERT( the_task->residue_task( 1 ).allowed_residue_types().size() == 21 );
 	}
 
@@ -93,7 +96,7 @@ public:
 		CustomBaseTypePackerPaletteOP pp = make_shared< CustomBaseTypePackerPalette >();
 		pp->add_type( "NVL" );
 		PackerTask_OP the_task = make_shared< PackerTask_ >( pose, pp ); // ALSO has an implicit DPP
-		the_task->show();
+		the_task->show(TR);
 		TS_ASSERT( the_task->residue_task( 1 ).allowed_residue_types().size() == 22 );
 	}
 
@@ -105,7 +108,7 @@ public:
 		TaskFactory tf;
 		tf.set_packer_palette( pp );
 		PackerTaskOP the_task = tf.create_task_and_apply_taskoperations( pose );
-		the_task->show();
+		the_task->show(TR);
 		TS_ASSERT( the_task->residue_task( 1 ).allowed_residue_types().size() == 21 );
 	}
 
@@ -118,7 +121,7 @@ public:
 		TaskFactory tf;
 		tf.set_packer_palette( pp );
 		PackerTaskOP the_task = tf.create_task_and_apply_taskoperations( pose );
-		the_task->show();
+		the_task->show(TR);
 		TS_ASSERT( the_task->residue_task( 1 ).allowed_residue_types().size() == 22 );
 	}
 

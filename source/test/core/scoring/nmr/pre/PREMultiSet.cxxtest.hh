@@ -109,7 +109,7 @@ public:
 		using namespace core::scoring::nmr;
 		using namespace core::scoring::nmr::pre;
 
-		TS_TRACE("Testing PREMultiSet creation");
+		TR << "Testing PREMultiSet creation" << std::endl;
 
 		// Create first PREMultiSet with default spinlabel
 		PRESingleSetOP pre_data_c13z_r2_1h( new PRESingleSet("core/scoring/nmr/pre/sim_pre_c13z_r2_1h.txt", cam_, 1.0, "R2", "SIGMA"));
@@ -294,7 +294,7 @@ public:
 		// Turn on normalization of input PREs by experiment StdDev; sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:pre:normalize_data true");
 
-		TS_TRACE("Testing PREMultiSet score calculation with spinlabel");
+		TR << "Testing PREMultiSet score calculation with spinlabel" << std::endl;
 
 		PRESingleSetOP pre_data_c13z_r2_1h( new PRESingleSet("core/scoring/nmr/pre/sim_pre_c13z_r2_1h.txt", cam_, 1.0, "R2", "CONST"));
 		PRESingleSetOP pre_data_c13z_r2_15n( new PRESingleSet("core/scoring/nmr/pre/sim_pre_c13z_r2_15n.txt", cam_, 1.0, "R2", "CONST"));
@@ -321,7 +321,7 @@ public:
 		// Turn on normalization of input PREs by experiment StdDev; sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:pre:normalize_data true");
 
-		TS_TRACE("Testing PREMultiSet score calculation with grid search");
+		TR << "Testing PREMultiSet score calculation with grid search" << std::endl;
 
 		// Center grid search in MN ion
 		core::id::AtomID grid_atom1( named_atom_id_to_atom_id(core::id::NamedAtomID("MN", 44), mid1_) );
@@ -389,7 +389,7 @@ public:
 		// Turn on normalization of input PREs by experiment StdDev; sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:pre:normalize_data true -nmr:pre:nls_repeats 5");
 
-		TS_TRACE("Testing optimization of spinlabel position and PREMultiSet score calculation");
+		TR << "Testing optimization of spinlabel position and PREMultiSet score calculation" << std::endl;
 
 		NMRSpinlabelOP spinlabel( new NMRSpinlabel("fa_standard", "R1A") );
 		PRESingleSetOP pre_data_c13z_r2_1h( new PRESingleSet("core/scoring/nmr/pre/sim_pre_c13z_r2_1h.txt", cam_, 1.0, "R2", "CONST"));

@@ -75,7 +75,7 @@ public:
 		// Additional options; sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:pre:input_file protocols/nmr/pre/pre_data_input.txt -nmr:pre:multiset_weights 1.0 -nmr:pre:show_info true");
 
-		TS_TRACE("Test instantiation of PREEnergy.");
+		TR << "Test instantiation of PREEnergy." << std::endl;
 
 		PREEnergy pre_energy;
 		PREData & pre_data = pre_energy.get_pre_data_from_pose(gb1_);
@@ -95,7 +95,7 @@ public:
 		// Additional options; sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:pre:normalize_data true -nmr:pre:input_file protocols/nmr/pre/pre_data_input.txt -nmr:pre:multiset_weights 1.0 -nmr:pre:show_info true -nmr:spinlabel:highres_conformer_filter_type DISTANCE");
 
-		TS_TRACE("Test PREEnergy calculation with implicit spinlabel.");
+		TR << "Test PREEnergy calculation with implicit spinlabel." << std::endl;
 
 		PREEnergy pre_energy;
 		ScoreFunction sfxn;
@@ -114,7 +114,7 @@ public:
 		// Additional options; sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:pre:normalize_data true -nmr:pre:input_file protocols/nmr/pre/pre_data_input.txt -nmr:pre:multiset_weights 1.0 -nmr:pre:show_info true -nmr:spinlabel:highres_conformer_filter_type BUMP_ENERGY");
 
-		TS_TRACE("Test PREEnergy calculation with explicit spinlabel and no side chain packing.");
+		TR << "Test PREEnergy calculation with explicit spinlabel and no side chain packing." << std::endl;
 
 		PREEnergy pre_energy;
 		ScoreFunction sfxn;
@@ -134,7 +134,7 @@ public:
 		// Additional options; sets also fixed RG seed for NLS fitting
 		core_init_with_additional_options("-nmr:pre:normalize_data true -nmr:pre:input_file protocols/nmr/pre/pre_data_input.txt -nmr:pre:multiset_weights 1.0 -nmr:pre:show_info true -nmr:spinlabel:highres_conformer_filter_type BUMP_ENERGY");
 
-		TS_TRACE("Test PREEnergy show info function.");
+		TR << "Test PREEnergy show info function." << std::endl;
 
 		PREEnergy pre_energy;
 		ScoreFunction sfxn;

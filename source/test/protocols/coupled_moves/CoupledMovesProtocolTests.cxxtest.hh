@@ -30,12 +30,16 @@
 #include <protocols/coupled_moves/CoupledMovesProtocol.hh>
 #include <protocols/coupled_moves/CoupledMovesProtocolCreator.hh>
 
+#include <basic/Tracer.hh>
+
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 
 // C++ headers
 #include <iostream>
+
+static basic::Tracer TR("CoupledMovesProtocolTests_cxxtest");
 
 using namespace std;
 using core::import_pose::pose_from_file;
@@ -124,7 +128,7 @@ public:
 
 		// Test that protocol produces unique sequences
 		std::map<std::string,core::Real> unique_sequences = coupled_moves_protocol_->get_unique_sequences();
-		std::cout << unique_sequences << std::endl;
+		TR << unique_sequences << std::endl;
 		core::Size n = unique_sequences.size();
 		TS_ASSERT( n > 0 );
 	} //test_apply

@@ -301,6 +301,7 @@ public:
 
 		//protocols::relax::FastRelax mover;
 		T mover;
+		set_throw_on_next_assertion_failure(); // Suppress backtrace printing.
 		TS_ASSERT_THROWS_ANYTHING( mover.parse_my_tag( tag, dm, fm, mm, pose ) );
 	}
 
