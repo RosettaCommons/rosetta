@@ -58,9 +58,7 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
 
 
 def poses_from_silent(silent_filename):
-    """
-    Returns an Iterator object which is composed of Pose objects from a silent
-    file.
+    """Returns an Iterator object which is composed of Pose objects from a silent file.
 
     @atom-moyer
     """
@@ -70,4 +68,42 @@ def poses_from_silent(silent_filename):
         ss = sfd.get_structure(tag)
         pose = Pose()
         ss.fill_pose(pose)
+        pose.pdb_info().name(tag)
         yield pose
+
+
+def poses_to_silent(poses, output_filename):
+    """Takes a Pose or list of poses and outputs them as a binary silent file.
+    This method requires a Pose object. 
+    If you are using a PackedPose, use pyrosetta.distributed.io.to_silent()
+
+    Inputs:
+    poses: Pose or list of poses. This function automatically detects which one.
+    output_filename: The desired name of the output silent file.
+
+    Example:
+    poses_to_silent(poses, "mydesigns.silent")
+
+    The decoy name written to your silent file is take from pose.pdb_info().name()
+    To set a different decoy name, change it in your pose before calling this function.
+    Example:
+    pose.pdb_info().name("my_tag.pdb")
+
+    @srgerb
+    """
+
+    silentOptions = rosetta.core.io.silent.SilentFileOptions()
+    silentOptions.set_binary_output(True)
+    silentFile = rosetta.core.io.silent.SilentFileData(silentOptions)
+    silentStruct = rosetta.core.io.silent.BinarySilentStruct(silentOptions)
+
+    def output_silent(pose):
+        decoy_tag = pose.pdb_info().name()
+        silentStruct.fill_struct(pose, tag=decoy_tag)
+        silentFile.write_silent_struct(silentStruct, filename=output_filename)
+
+    if isinstance(poses, (list, tuple, set)):
+        for pose in poses:
+            output_silent(pose=pose)
+    else:
+        output_silent(pose=poses)
