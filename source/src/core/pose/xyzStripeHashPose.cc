@@ -72,7 +72,7 @@ core::id::AtomID_Map<platform::Real> make_atom_map( core::pose::Pose const & p, 
 			break;
 		case PoseCoordPickMode_HVY :
 			for ( Size ia = 1; ia <= r.nheavyatoms(); ++ia ) {
-				if ( ia==4 ) continue;
+				// if ( ia==4 ) continue; // why was this ever here? -- bcov
 				core::id::AtomID const aid(ia,ir);
 				amap[aid] = 1.0;
 			}
@@ -80,7 +80,7 @@ core::id::AtomID_Map<platform::Real> make_atom_map( core::pose::Pose const & p, 
 		case PoseCoordPickMode_HVY_IF_NP :
 			for ( Size ia = 1; ia <= r.nheavyatoms(); ++ia ) {
 				core::id::AtomID const aid(ia,ir);
-				if ( ia==4 ) continue;
+				// if ( ia==4 ) continue;
 				if ( ia <= 5 || !r.is_polar() ) amap[aid] = 1.0;
 			}
 			break;

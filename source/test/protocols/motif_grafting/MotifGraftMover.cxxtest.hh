@@ -81,6 +81,7 @@ public:
 		core::Real r_RMSD      = 0.5;               //RMSD tol
 		core::Real r_NC_RMSD     = 0.5;               //NC points RMSD tol
 		core::Size  s_ClashTol    = 5;                //Clash Score tol
+		core::Size  s_min_frag_size = 0;      // min_frag_length
 		std::string s_comb_d     = "0:0";              //Combinatory delta
 		std::string s_max_frag_d   = "0:0";              //Max Fragment relpacement delta
 		std::string s_clash_res    = "GLY";              //Clash score test residue
@@ -92,6 +93,8 @@ public:
 		bool  b_only_if_Cpoint_eq  = false;              //graft only if Cpoint aminoacid identities are equal
 		bool  b_revert_to_native  = false;              //revert to the native scafold sequence after grafting
 		bool  b_allow_repeat    = false;              //Allow repeat same graft
+		core::Real r_output_cluster_tolerance = -1.0; // Don't cluster output
+		protocols::filters::FilterCOP f_output_filter = nullptr; // Don't filter output
 
 		mgm.init_parameters(
 			s_context,
@@ -99,6 +102,7 @@ public:
 			r_RMSD,
 			r_NC_RMSD,
 			s_ClashTol,
+			s_min_frag_size,
 			s_comb_d,
 			s_max_frag_d,
 			s_clash_res,
@@ -109,7 +113,9 @@ public:
 			b_only_if_Npoint_eq,
 			b_only_if_Cpoint_eq,
 			b_revert_to_native,
-			b_allow_repeat);
+			b_allow_repeat,
+			r_output_cluster_tolerance,
+			f_output_filter);
 
 		//Import the test scaffold
 		TR << "Importing Pose" << std::endl;
@@ -175,6 +181,7 @@ public:
 		core::Real r_RMSD      = 0.5;               //RMSD tol
 		core::Real r_NC_RMSD     = 0.5;               //NC points RMSD tol
 		core::Size  s_ClashTol    = 5;                //Clash Score tol
+		core::Size  s_min_frag_size = 0;      // min_frag_length
 		std::string s_comb_d     = "0:0,0:0";            //Combinatory delta
 		std::string s_max_frag_d   = "0:0,0:0";            //Max Fragment relpacement delta
 		std::string s_clash_res    = "GLY";              //Clash score test residue
@@ -186,6 +193,8 @@ public:
 		bool  b_only_if_Cpoint_eq  = false;              //graft only if Cpoint aminoacid identities are equal
 		bool   b_revert_to_native  = true;               //revert to the native scafold sequence after grafting
 		bool   b_allow_repeat    = false;              //Allow repeat same graft
+		core::Real r_output_cluster_tolerance = -1.0; // Don't cluster output
+		protocols::filters::FilterCOP f_output_filter = nullptr; // Don't filter output
 
 		mgm.init_parameters(
 			s_context,
@@ -193,6 +202,7 @@ public:
 			r_RMSD,
 			r_NC_RMSD,
 			s_ClashTol,
+			s_min_frag_size,
 			s_comb_d,
 			s_max_frag_d,
 			s_clash_res,
@@ -203,7 +213,9 @@ public:
 			b_only_if_Npoint_eq,
 			b_only_if_Cpoint_eq,
 			b_revert_to_native,
-			b_allow_repeat);
+			b_allow_repeat,
+			r_output_cluster_tolerance,
+			f_output_filter);
 
 		//Import the test scaffold
 		TR << "Importing Pose" << std::endl;
@@ -270,6 +282,7 @@ public:
 		core::Real r_RMSD      = 0.5;               //RMSD tol
 		core::Real r_NC_RMSD     = 0.5;               //NC points RMSD tol
 		core::Size  s_ClashTol    = 5;                //Clash Score tol
+		core::Size  s_min_frag_size = 0;      // min_frag_length
 		std::string s_comb_d     = "0:0";              //Combinatory delta
 		std::string s_max_frag_d   = "0:0";              //Max Fragment relpacement delta
 		std::string s_clash_res    = "GLY";              //Clash score test residue
@@ -281,6 +294,8 @@ public:
 		bool  b_only_if_Cpoint_eq  = false;              //graft only if Cpoint aminoacid identities are equal
 		bool   b_revert_to_native  = false;              //revert to the native scafold sequence after grafting
 		bool   b_allow_repeat    = false;              //Allow repeat same graft
+		core::Real r_output_cluster_tolerance = -1.0; // Don't cluster output
+		protocols::filters::FilterCOP f_output_filter = nullptr; // Don't filter output
 
 		mgm.init_parameters(
 			s_context,
@@ -288,6 +303,7 @@ public:
 			r_RMSD,
 			r_NC_RMSD,
 			s_ClashTol,
+			s_min_frag_size,
 			s_comb_d,
 			s_max_frag_d,
 			s_clash_res,
@@ -298,7 +314,9 @@ public:
 			b_only_if_Npoint_eq,
 			b_only_if_Cpoint_eq,
 			b_revert_to_native,
-			b_allow_repeat);
+			b_allow_repeat,
+			r_output_cluster_tolerance,
+			f_output_filter);
 
 		//Import the test scaffold
 		TR << "Importing Pose" << std::endl;
@@ -364,6 +382,7 @@ public:
 		core::Real r_RMSD      = 0.5;               //RMSD tol
 		core::Real r_NC_RMSD     = 0.5;               //NC points RMSD tol
 		core::Size  s_ClashTol    = 5;                //Clash Score tol
+		core::Size  s_min_frag_size = 0;      // min_frag_length
 		std::string s_comb_d     = "0:0,0:0";            //Combinatory delta
 		std::string s_max_frag_d   = "0:0,0:0";            //Max Fragment relpacement delta
 		std::string s_clash_res    = "GLY";              //Clash score test residue
@@ -375,6 +394,8 @@ public:
 		bool  b_only_if_Cpoint_eq  = true;               //graft only if Cpoint aminoacid identities are equal
 		bool   b_revert_to_native  = true;               //revert to the native scafold sequence after grafting
 		bool   b_allow_repeat    = false;              //Allow repeat same graft
+		core::Real r_output_cluster_tolerance = -1.0; // Don't cluster output
+		protocols::filters::FilterCOP f_output_filter = nullptr; // Don't filter output
 
 		mgm.init_parameters(
 			s_context,
@@ -382,6 +403,7 @@ public:
 			r_RMSD,
 			r_NC_RMSD,
 			s_ClashTol,
+			s_min_frag_size,
 			s_comb_d,
 			s_max_frag_d,
 			s_clash_res,
@@ -392,7 +414,9 @@ public:
 			b_only_if_Npoint_eq,
 			b_only_if_Cpoint_eq,
 			b_revert_to_native,
-			b_allow_repeat);
+			b_allow_repeat,
+			r_output_cluster_tolerance,
+			f_output_filter);
 
 		//Import the test scaffold
 		TR << "Importing Pose" << std::endl;

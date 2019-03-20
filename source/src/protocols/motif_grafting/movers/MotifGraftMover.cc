@@ -45,6 +45,7 @@
 #include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/xyzStripeHashPose.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -56,6 +57,7 @@
 #include <core/scoring/Energies.hh>
 
 //Include Rosetta Mover protocols
+#include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <basic/datacache/DataMap.fwd.hh>
@@ -103,6 +105,7 @@ void MotifGraftMover::init_parameters(
 	core::Real  const & r_RMSD_tolerance,
 	core::Real  const & r_NC_points_RMSD_tolerance,
 	core::Size  const & i_clash_score_cutoff,
+	core::Size  const & i_min_fragment_size,
 	std::string const & s_combinatory_fragment_size_delta,
 	std::string const & s_max_fragment_replacement_size_delta,
 	std::string const & s_clash_test_residue,
@@ -113,7 +116,9 @@ void MotifGraftMover::init_parameters(
 	bool        const & b_only_allow_if_N_point_match_aa_identity,
 	bool        const & b_only_allow_if_C_point_match_aa_identity,
 	bool        const & b_revert_graft_to_native_sequence,
-	bool        const & b_allow_repeat_same_graft_output)
+	bool        const & b_allow_repeat_same_graft_output,
+	core::Real  const & r_output_cluster_tolerance,
+	filters::FilterCOP const & f_output_filter)
 {
 	//Parse the arguments in the global space variables
 	MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVariables(
@@ -122,6 +127,7 @@ void MotifGraftMover::init_parameters(
 		r_RMSD_tolerance,
 		r_NC_points_RMSD_tolerance,
 		i_clash_score_cutoff,
+		i_min_fragment_size,
 		s_combinatory_fragment_size_delta,
 		s_max_fragment_replacement_size_delta,
 		s_clash_test_residue,
@@ -132,7 +138,9 @@ void MotifGraftMover::init_parameters(
 		b_only_allow_if_N_point_match_aa_identity,
 		b_only_allow_if_C_point_match_aa_identity,
 		b_revert_graft_to_native_sequence,
-		b_allow_repeat_same_graft_output);
+		b_allow_repeat_same_graft_output,
+		r_output_cluster_tolerance,
+		f_output_filter);
 }
 
 /**@brief MotifGraftMover Destructor**/
@@ -168,16 +176,25 @@ void MotifGraftMover::apply(core::pose::Pose & pose)
 		//Do not allow the apply to re-run
 		gp_b_allow_repeat_same_graft_output_=false;
 		return;
-	} else if ( motif_match_results_.size() > 1 ) {
+	} else {
 		TR.Info << "Generated " << motif_match_results_.size() << " results." << std::endl;
 		//Create copy of input pose to support result interation
 		gp_p_target_pose_ = utility::pointer::make_shared< Pose >(pose);
 	}
 
-	MotifMatch match = motif_match_results_.top();
-	motif_match_results_.pop();
+	output_transforms_.clear();
+	bool output_success = get_next_output( pose );
 
-	generate_match_pose(pose, *gp_p_contextStructure_, gp_b_revert_graft_to_native_sequence_, match);
+	if ( ! output_success ) {
+		TR.Info << "No generated results passed the filter." << std::endl;
+		// Matching failed, set fail_do_not_retry return code.
+		set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
+		//Do not allow the apply to re-run
+		gp_b_allow_repeat_same_graft_output_=false;
+		return;
+	}
+
+
 }
 
 /**@brief Iterate over the results to get additional matches in the queue**/
@@ -189,9 +206,6 @@ core::pose::PoseOP MotifGraftMover::get_additional_output()
 		TR.Debug << "No additional output." << std::endl;
 		set_last_move_status(protocols::moves::MS_SUCCESS);
 		return nullptr;
-	} else if ( motif_match_results_.size() == 1 ) {
-		// Last iteration, do not create a new pose reference
-		work_pose = gp_p_target_pose_;
 	} else {
 		// May produce additional output poses, create a copy of the target pose
 		work_pose = utility::pointer::make_shared< Pose >(*gp_p_target_pose_);
@@ -199,13 +213,97 @@ core::pose::PoseOP MotifGraftMover::get_additional_output()
 
 	TR.Debug << "Returning additional output. " << motif_match_results_.size() << " remaining." << std::endl;
 
-	MotifMatch match = motif_match_results_.top();
-	motif_match_results_.pop();
+	bool output_success = get_next_output( *work_pose );
 
-	generate_match_pose(*work_pose, *gp_p_contextStructure_, gp_b_revert_graft_to_native_sequence_, match);
+	if ( ! output_success ) {
+		TR.Debug << "No additional output." << std::endl;
+		set_last_move_status(protocols::moves::MS_SUCCESS);
+		return nullptr;
+	}
 
 	return work_pose;
 }
+
+
+bool MotifGraftMover::get_next_output( core::pose::Pose & work_pose ) {
+
+	bool passed_filter = false;
+	while ( ! passed_filter ) {
+
+		// Get a MotifMatch from the list, potentially using clustering to find a non-redundant one
+		MotifMatch match;
+		numeric::HomogeneousTransform< core::Real > match_xform;
+		if ( gp_r_output_cluster_tolerance_ < 0 ) {
+			match = motif_match_results_.top();
+			motif_match_results_.pop();
+		} else {
+			bool found_one = get_next_nonredundant_motifmatch( match, match_xform );
+			if ( ! found_one ) {
+				return false;
+			}
+		}
+
+		// Modify work_pose in-place
+		generate_match_pose( work_pose, *gp_p_contextStructure_, gp_b_revert_graft_to_native_sequence_, match);
+
+		// Ensure that we pass the filter if it exists
+		passed_filter = true;
+		if ( gp_f_output_filter_ ) {
+			passed_filter = gp_f_output_filter_->apply( work_pose );
+		}
+
+		// Either save the xform or reset the work pose
+		if ( passed_filter ) {
+			output_transforms_.push_back( match_xform );
+		} else {
+			TR.Info << "Output failed to pass filter." << std::endl;
+			work_pose = *gp_p_target_pose_;
+		}
+	}
+
+	return true;
+
+}
+
+
+/** @brief Used during output to discard redundant results **/
+bool
+MotifGraftMover::get_next_nonredundant_motifmatch( MotifMatch & match, numeric::HomogeneousTransform< core::Real > & match_xform ) {
+
+	// This should probably be cached. But it doesn't take long to compute.
+	utility::vector1< bool > all_res( gp_p_target_pose_->size(), true );
+	numeric::xyzVector< core::Real > target_com = core::pose::center_of_mass( *gp_p_target_pose_, all_res );
+	core::Real target_rg = core::pose::radius_of_gyration( *gp_p_target_pose_, target_com, all_res );
+
+
+	while ( motif_match_results_.size() > 0 ) {
+		MotifMatch tmp_match = motif_match_results_.top();
+		motif_match_results_.pop();
+
+		numeric::HomogeneousTransform< core::Real > xform = tmp_match.get_homogeneous_transform_com_from_orig( target_com );
+		numeric::HomogeneousTransform< core::Real > inv_xform = xform.inverse();
+
+		bool is_unique = true;
+
+		for ( numeric::HomogeneousTransform< core::Real > const & out_xform : output_transforms_ ) {
+			core::Real rmsd = ( inv_xform * out_xform ).xform_magnitude( target_rg );
+
+			if ( rmsd < gp_r_output_cluster_tolerance_ ) {
+				is_unique = false;
+				break;
+			}
+		}
+
+		if ( is_unique ) {
+			match = tmp_match;
+			match_xform = xform;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 /**@brief Identify all potential matches for the given target scaffold (this is where the motif grafting code is called)**/
 std::priority_queue<MotifMatch> MotifGraftMover::generate_scaffold_matches(
@@ -277,6 +375,7 @@ std::priority_queue<MotifMatch> MotifGraftMover::generate_scaffold_matches(
 		gp_r_RMSD_tolerance_,
 		gp_r_NC_points_RMSD_tolerance_,
 		gp_i_clash_score_cutoff_,
+		gp_i_min_fragment_size_,
 		gp_s_clash_test_residue_,
 		gp_vp_max_fragment_replacement_size_delta_,
 		gp_vp_combinatory_fragment_size_delta_,
@@ -298,6 +397,7 @@ void MotifGraftMover::get_matching_fragments(
 	core::Real const & RMSD_tol,
 	core::Real const & NC_points_RMSD_tol,
 	core::Size const & clash_cutoff,
+	core::Size const & min_fragment_size,
 	std::string const & clash_test_residue,
 	utility::vector1 < std::pair< long int, long int > > const & max_fragment_replacement_size_delta,
 	utility::vector1 < std::pair< core::Size, core::Size > > const & combinatory_fragment_size_delta,
@@ -312,13 +412,24 @@ void MotifGraftMover::get_matching_fragments(
 	//Will store all the posible motif-fragments combinations (when variated by combinatory_fragment_size_delta)
 	utility::vector1< utility::vector1< std::pair< core::Size, core::Size > > > vv_motif_fragments_all_posible_permutations;
 	//Generate all the combination of different legths of the motif fragment as requested in combinatory_fragment_size_delta, and iterate the complete epigraft function using it
-	generate_combinations_of_motif_fragments_by_delta_variation(p_motif_, combinatory_fragment_size_delta, vv_motif_fragments_all_posible_permutations);
+	generate_combinations_of_motif_fragments_by_delta_variation(p_motif_, combinatory_fragment_size_delta, min_fragment_size, vv_motif_fragments_all_posible_permutations );
 	//Create the score Function and BTW score the context /**/NO Longer Needed/**/
 	//core::scoring::ScoreFunctionOP scorefxn_ = new core::scoring::ScoreFunction();
 	//scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 	//scorefxn_->set_weight( core::scoring::fa_atr, 1.0 );
 	core::pose::Pose p_context_tmp = *p_contextStructure_;
 	///core::Real r_context_score = MotifGraftMover::get_clash_score_from_pose(p_context_tmp, scorefxn_);
+
+	// bcov -- Making the clash checking faster through hashing
+	core::id::AtomID_Map<core::Real> context_heavy_atoms = core::pose::make_atom_map( p_context_tmp, core::pose::PoseCoordPickMode_HVY );
+	utility::vector1<numeric::geometry::hashing::Ball> context_balls;
+	core::pose::xyzStripeHashPose::extract_pose_balls( p_context_tmp, context_balls, context_heavy_atoms );
+
+	// Ok, so here's the deal with the atomic radii we choose here. 2.0 is carbon, 1.6 is oxygen.
+	// But Daniel's clashing function uses half the atomic radii. So 1.6 is too small, but the
+	// "correct" number might be something like 0.9
+	numeric::geometry::hashing::MinimalClashHash context_clash_hash( 0.25f, 1.6f, context_balls );
+
 
 	//Test combinations of fragments (outer loop)
 	for ( core::Size numPermutation = 1; numPermutation <= vv_motif_fragments_all_posible_permutations.size(); ++numPermutation ) {
@@ -398,7 +509,7 @@ void MotifGraftMover::get_matching_fragments(
 		//p_motif_mono_aa.dump_pdb( "test_y"+utility::to_string(numPermutation)+".pdb");
 
 		//Test the remaining fragments based on the clash score
-		MotifGraftMover::test_epigraft_and_contextStructure_clashes( p_scaffold_mono_aa, p_motif_mono_aa, *p_contextStructure_, clash_cutoff, v_m2s_data);
+		MotifGraftMover::test_epigraft_and_contextStructure_clashes( p_scaffold_mono_aa, p_motif_mono_aa, *p_contextStructure_, clash_cutoff, v_m2s_data, context_clash_hash);
 		TR.Debug << "Num of Fragments so far: " << v_m2s_data.size() << std::endl;
 		if ( v_m2s_data.size() == 0 ) {
 			//throw CREATE_EXCEPTION(utility::excn::Exception, "For this scaffold I couldn't find any suitable fragment combination that pass the clash_score test.");
@@ -426,6 +537,7 @@ void MotifGraftMover::get_matching_fragments(
 void MotifGraftMover::generate_combinations_of_motif_fragments_by_delta_variation(
 	core::pose::PoseOP const & p_motif_,
 	utility::vector1 < std::pair< long int, long int > > const & combinatory_fragment_size_delta,
+	core::Size min_fragment_size,
 	utility::vector1< utility::vector1< std::pair< core::Size, core::Size > > > & vv_resulting_permutations)
 {
 	TR.Debug << "Generating combinations of fragments as requested in combinatory_fragment_size_delta" << std::endl;
@@ -448,6 +560,8 @@ void MotifGraftMover::generate_combinations_of_motif_fragments_by_delta_variatio
 				//Store the beggining and the end in motif_extremes vector1
 				tmpMotifNdx.first  = (core::Size)(j);
 				tmpMotifNdx.second = (core::Size)(k);
+				if ( tmpMotifNdx.second - tmpMotifNdx.first < min_fragment_size ) continue;
+
 				TR.Debug << "Applying deltas to the motif. Variant of motif fragment #" << i << ". Start at: " << tmpMotifNdx.first << ", end: " << tmpMotifNdx.second << std::endl;
 				v_tmp_motif_fragments_indexes.push_back(tmpMotifNdx);
 			}
@@ -489,7 +603,8 @@ void MotifGraftMover::test_epigraft_and_contextStructure_clashes(
 	core::pose::Pose const & p_motif_,
 	core::pose::Pose const & p_contextStructure_,
 	core::Size const & clash_cutoff,
-	utility::vector1< motif2scaffold_data > & v_m2s_data)
+	utility::vector1< motif2scaffold_data > & v_m2s_data,
+	numeric::geometry::hashing::MinimalClashHash const & context_clash_hash)
 {
 	//Just a sanity check of the motif and scaffold clashes
 	core::Size motif_context_clash_count  = MotifGraftMover::count_clashes_between_two_poses(p_motif_, p_contextStructure_, std::numeric_limits<int>::max() );
@@ -524,12 +639,20 @@ void MotifGraftMover::test_epigraft_and_contextStructure_clashes(
 
 		///Count number of clashes between the scaffold, motif and context
 		core::Size clash_score = 0;
-		motif_scaffold_clash_count   = MotifGraftMover::count_clashes_between_two_poses( p_this_motif, p_frankenstein, clash_cutoff );
-		if ( motif_scaffold_clash_count <= clash_cutoff ) {
-			scaffold_context_clash_count = MotifGraftMover::count_clashes_between_two_poses( p_frankenstein, p_contextStructure_, ( clash_cutoff - motif_scaffold_clash_count ) );
+
+
+		core::id::AtomID_Map<core::Real> franken_heavy_atoms = core::pose::make_atom_map( p_frankenstein, core::pose::PoseCoordPickMode_HVY ) ;
+		utility::vector1<numeric::geometry::hashing::Ball> franken_balls;
+		core::pose::xyzStripeHashPose::extract_pose_balls( p_frankenstein, franken_balls, franken_heavy_atoms );
+		scaffold_context_clash_count = context_clash_hash.clash_check_balls( franken_balls );
+
+		if ( scaffold_context_clash_count <= clash_cutoff ) {
+
+			motif_scaffold_clash_count   = MotifGraftMover::count_clashes_between_two_poses( p_this_motif, p_frankenstein, clash_cutoff );
+
 			clash_score = motif_scaffold_clash_count + scaffold_context_clash_count;
 		} else {
-			clash_score = motif_scaffold_clash_count;
+			clash_score = scaffold_context_clash_count;
 			TR.Info << "Clash Score Test Failed" << std::endl;
 		}
 		///For Debug:
@@ -1535,6 +1658,7 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 	core::Real  const & r_RMSD_tolerance,
 	core::Real  const & r_NC_points_RMSD_tolerance,
 	core::Size  const & i_clash_score_cutoff,
+	core::Size  const & i_min_fragment_size,
 	std::string const & s_combinatory_fragment_size_delta,
 	std::string const & s_max_fragment_replacement_size_delta,
 	std::string const & s_clash_test_residue,
@@ -1545,7 +1669,9 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 	bool        const & b_only_allow_if_N_point_match_aa_identity,
 	bool        const & b_only_allow_if_C_point_match_aa_identity,
 	bool        const & b_revert_graft_to_native_sequence,
-	bool        const & b_allow_repeat_same_graft_output)
+	bool        const & b_allow_repeat_same_graft_output,
+	core::Real  const & r_output_cluster_tolerance,
+	filters::FilterCOP const & f_output_filter )
 {
 	//REQUIRED: context structure
 	gp_p_contextStructure_ = core::import_pose::pose_from_file( s_contextStructure, false , core::import_pose::PDB_file);
@@ -1564,6 +1690,9 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 	//REQUIRED: clash_score_cutoff
 	gp_i_clash_score_cutoff_=i_clash_score_cutoff;
 	TR.Info << "Clash score cutoff settled to: " << gp_i_clash_score_cutoff_ << std::endl;
+
+	gp_i_min_fragment_size_=i_min_fragment_size;
+	TR.Info << "Minimum fragment size settled to: " << gp_i_min_fragment_size_ << std::endl;
 
 	//OPTIONAL: combinatory_fragment_size_delta
 	//ToDo: add checks for inconsistent inputs
@@ -1753,6 +1882,16 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 		TR.Warning << "If the number of matches in a single pose is < nstruct, when all the matches are generated the mover will stop." << std::endl;
 	}
 
+	//OPTIONAL: cluster outputs to remove redundant ones?
+	gp_r_output_cluster_tolerance_ = r_output_cluster_tolerance;
+	if ( gp_r_output_cluster_tolerance_ < 0 ) {
+		// Make this sound like Daniel wrote it
+		TR.Warning << "Output will NOT be clustered and redundant outputs may be present." << std::endl;
+	}
+
+	//OPTIONAL: apply a filter to outputs before clustering
+	gp_f_output_filter_ = f_output_filter;
+
 
 	TR.Info << "DONE parsing global arguments" << std::endl;
 }
@@ -1761,7 +1900,7 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 void MotifGraftMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
+	protocols::filters::Filters_map const & filters_map,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &)
 {
@@ -1771,6 +1910,7 @@ void MotifGraftMover::parse_my_tag(
 	core::Real  r_RMSD_tolerance;
 	core::Real  r_NC_points_RMSD_tolerance;
 	core::Size  i_clash_score_cutoff;
+	core::Size  i_min_fragment_size;
 	std::string s_combinatory_fragment_size_delta;
 	std::string s_max_fragment_replacement_size_delta;
 	std::string s_clash_test_residue;
@@ -1782,6 +1922,8 @@ void MotifGraftMover::parse_my_tag(
 	bool        b_only_allow_if_C_point_match_aa_identity;
 	bool        b_revert_graft_to_native_sequence;
 	bool        b_graft_only_hotspots_by_sidechain_replacement;
+	core::Real  r_output_cluster_tolerance;
+	filters::FilterCOP f_output_filter;
 
 	//Read XML Options
 	TR.Info << "Reading XML parameters" << std::endl;
@@ -1820,6 +1962,12 @@ void MotifGraftMover::parse_my_tag(
 		i_clash_score_cutoff = tag->getOption<core::Size>( "clash_score_cutoff" );
 	} else {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must specify the clash_score_cutoff.");
+	}
+
+	if ( tag->hasOption("min_fragment_size") ) {
+		i_min_fragment_size = tag->getOption<core::Size>( "min_fragment_size" );
+	} else {
+		i_min_fragment_size = 0;
 	}
 
 	//OPTIONAL: combinatory_fragment_size_delta
@@ -1907,6 +2055,22 @@ void MotifGraftMover::parse_my_tag(
 		b_allow_repeat_same_graft_output=false;
 	}
 
+	//OPTIONAL
+	if ( tag->hasOption("output_cluster_tolerance") ) {
+		r_output_cluster_tolerance = tag->getOption< core::Real >("output_cluster_tolerance");
+	} else {
+		TR.Warning << "No output_cluster_tolerance option defined, output will not be clustered for redundancy" << std::endl;
+		r_output_cluster_tolerance=-1.0f;
+	}
+
+	//OPTIONAL
+	if ( tag->hasOption("output_filter") ) {
+		std::string filter_name = tag->getOption< std::string >("output_filter");
+		f_output_filter = protocols::rosetta_scripts::parse_filter( filter_name, filters_map );
+	} else {
+		f_output_filter=nullptr;
+	}
+
 	TR.Info << "DONE reading XML parmeters" << std::endl;
 	//END XML Read
 
@@ -1917,6 +2081,7 @@ void MotifGraftMover::parse_my_tag(
 		r_RMSD_tolerance,
 		r_NC_points_RMSD_tolerance,
 		i_clash_score_cutoff,
+		i_min_fragment_size,
 		s_combinatory_fragment_size_delta,
 		s_max_fragment_replacement_size_delta,
 		s_clash_test_residue,
@@ -1927,7 +2092,9 @@ void MotifGraftMover::parse_my_tag(
 		b_only_allow_if_N_point_match_aa_identity,
 		b_only_allow_if_C_point_match_aa_identity,
 		b_revert_graft_to_native_sequence,
-		b_allow_repeat_same_graft_output);
+		b_allow_repeat_same_graft_output,
+		r_output_cluster_tolerance,
+		f_output_filter);
 }
 
 /**@brief Function used by roseta to create clones of movers**/
@@ -1968,6 +2135,10 @@ void MotifGraftMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		"The number of atom clashes are = (motif vs scaffold) + (scaffold vs pose), "
 		"after the translation and mutation (to the \"clash_test_residue\") of the scaffold. "
 		"Recommended: \"5\"");
+	attlist + XMLSchemaAttribute(
+		"min_fragment_size", xsct_non_negative_integer,
+		"The minimum size fragment that can be inserted. Useful if you need to set "
+		"large enough that small fragments could be produced.");
 	attlist + XMLSchemaAttribute(
 		"combinatory_fragment_size_delta", xs_string,
 		"Is a string separated by a colon that defines the "
@@ -2070,6 +2241,20 @@ void MotifGraftMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		"rosetta will stop only when -nstructs are generated "
 		"(even if it has to repeat n-times the same result) or if the mover "
 		"fails (i.e. no graft matches at all).", "false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"output_cluster_tolerance", xsct_real,
+		"If this is enabled (set greater than 0), grafts will be clustered before being "
+		"output in order to remove redundant grafts. This setting is the RMSD "
+		"that will be used for clustering. This RMSD is not exact, but is "
+		"correlated with an actual RMSD.", "-1.0");
+
+	attlist + XMLSchemaAttribute(
+		"output_filter", xs_string,
+		"Only output results that pass this filter. This filter is applied before "
+		"clustering. If many of your outputs fail your filters, apply the filter here "
+		"will ensure that if any member of a cluster can pass the filter, that that "
+		"member will be output.");
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd,

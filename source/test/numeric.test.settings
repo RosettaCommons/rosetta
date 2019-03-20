@@ -33,6 +33,7 @@ sources = {
 		"sphericalVector",
 		"statistics.functions",
 		"util",
+		"VoxelArray",
 		"VoxelGrid",
         	"WrapAngles",
 		"xyz.functions",
@@ -48,6 +49,9 @@ sources = {
 		"BoundingBox",
 		"ring_plane.functions",
 	],
+        "geometry/hashing" : [
+                "MinimalClashHash",
+        ],
 	"histograms" : [
 		"OneDHistogram",
 		"TwoDHistogram",

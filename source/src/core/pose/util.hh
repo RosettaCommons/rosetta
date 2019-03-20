@@ -342,6 +342,19 @@ core::Size noncanonical_chi_count(core::pose::Pose const & pose);
 /// @details No virtuals, membrane residues or embedding residues counted
 core::Size nres_protein( core::pose::Pose const & pose );
 
+/// @brief Get the radius of gyration of the selected residues
+///
+/// WARNING: Despite the name, this function only calculates with a single coordinate per residue
+/// (the Calpha/neighbor atom)
+/// @details Requires the center_of_mass as an input because often people will want
+///          both com and rg and this ensures that we only calculate com once.
+core::Real
+radius_of_gyration(
+	core::pose::Pose const & pose,
+	numeric::xyzVector< core::Real > const & center_of_mass,
+	utility::vector1< bool > const & residues
+);
+
 /// @brief Get the center of the indicated residues
 ///
 /// WARNING: Despite the name, this function only calculates with a single coordinate per residue

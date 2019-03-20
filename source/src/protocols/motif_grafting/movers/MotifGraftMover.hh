@@ -26,6 +26,8 @@
 #include <core/types.hh>
 
 //Include Rosetta numeric
+#include <numeric/geometry/hashing/MinimalClashHash.hh>
+#include <numeric/HomogeneousTransform.hh>
 #include <numeric/xyz.functions.hh>
 
 //Include Rosetta XML tag reader
@@ -38,6 +40,7 @@
 
 //Include Rosetta protocols
 #include <basic/datacache/DataMap.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 //Include ObjexxFCL
@@ -148,6 +151,48 @@ public:
 		return s_out;
 	};
 
+	// This function totally works, I just didn't end up using it -- bcov
+
+	// The way these are applied is TvecB, RotM, sub TvecB
+	// So make those into homogeneous transforms and left multiply
+	// numeric::HomogeneousTransform< core::Real > get_homogeneous_transform() const {
+	//  numeric::xyzMatrix< core::Real > identity = numeric::xyzMatrix< core::Real >::identity();
+	//  numeric::xyzVector< core::Real > zero( 0, 0, 0 );
+
+	//  numeric::HomogeneousTransform< core::Real > xform_RotM( scaffold_fragment_data.RotM, zero );
+	//  numeric::HomogeneousTransform< core::Real > xform_minTvecA( identity, -scaffold_fragment_data.TvecA );
+	//  numeric::HomogeneousTransform< core::Real > xform_TvecB( identity, scaffold_fragment_data.TvecB );
+
+	//  return xform_minTvecA * xform_RotM * xform_TvecB;
+	// }
+
+
+	// We want an xform that starts with the COM at the origin and translates it to the final position
+	// It turns out that even though the current transform is based on the cutpoint, we could actually
+	//  pretend that it is based on the COM because transforms are invariant like that.
+	// But, what we want to do is chop off the translation to the origin, and after that we can no
+	//  longer pretend that we're working with the COM.
+	// So we need to first wrap the transform so it explicitly deals with the COM, and then chop
+	//  off the part that translates it to the oririn
+	// So we currently have an xform that is: trans_com_to_final <- rotate_to_final <- trans_com_to_orig
+	// Just take off that first xform and it's the right answer
+	numeric::HomogeneousTransform< core::Real > get_homogeneous_transform_com_from_orig( numeric::xyzVector< core::Real > com ) const {
+		numeric::xyzMatrix< core::Real > identity = numeric::xyzMatrix< core::Real >::identity();
+		numeric::xyzVector< core::Real > zero( 0, 0, 0 );
+
+		numeric::HomogeneousTransform< core::Real > xform_RotM( scaffold_fragment_data.RotM, zero );
+		numeric::HomogeneousTransform< core::Real > xform_minTvecA( identity, -scaffold_fragment_data.TvecA );
+		// numeric::HomogeneousTransform< core::Real > xform_TvecB( identity, scaffold_fragment_data.TvecB );
+
+		numeric::xyzVector< core::Real > com_to_cutpoint = -scaffold_fragment_data.TvecB - com;
+		numeric::xyzVector< core::Real > final_cutpoint_to_final_com = xform_RotM * (- com_to_cutpoint);
+
+		// numeric::HomogeneousTransform< core::Real > xform_com_to_cutpoint( identity, com_to_cutpoint );
+		numeric::HomogeneousTransform< core::Real > xform_final_cutpoint_to_final_com( identity, final_cutpoint_to_final_com );
+
+		return xform_final_cutpoint_to_final_com * xform_minTvecA * xform_RotM;// * xform_TvecB * xform_com_to_cutpoint;
+	}
+
 private:
 	motif2scaffold_data scaffold_fragment_data;
 	core::Real RMSD;
@@ -172,6 +217,7 @@ public:
 		core::Real  const & r_RMSD_tolerance,
 		core::Real  const & r_NC_points_RMSD_tolerance,
 		core::Size  const & i_clash_score_cutoff,
+		core::Size  const & i_min_fragment_size,
 		std::string const & s_combinatory_fragment_size_delta,
 		std::string const & s_max_fragment_replacement_size_delta,
 		std::string const & s_clash_test_residue,
@@ -182,7 +228,9 @@ public:
 		bool        const & b_only_allow_if_N_point_match_aa_identity,
 		bool        const & b_only_allow_if_C_point_match_aa_identity,
 		bool        const & b_revert_graft_to_native_sequence,
-		bool        const & b_allow_repeat_same_graft_output);
+		bool        const & b_allow_repeat_same_graft_output,
+		core::Real  const & r_output_cluster_tolerance,
+		filters::FilterCOP const & f_output_filter );
 
 	/**@brief MotifGraftMover Destructor**/
 	~MotifGraftMover();
@@ -198,6 +246,13 @@ public:
 
 	/**@brief Header only mover get_name**/
 
+
+	/** @brief Used during output to discard redundant results and apply filter **/
+	bool get_next_output( core::pose::Pose & work_pose );
+
+	/** @brief Used during output to discard redundant results **/
+	bool get_next_nonredundant_motifmatch( MotifMatch & match, numeric::HomogeneousTransform< core::Real > & match_xform );
+
 	/** @brief As the name suggests in generates all the permutations of a vector of vectors of pairs (Alex: we should templatize this! Maybe alrready there?)**/
 	void permutate_n_vv_of_pairs(
 		utility::vector1< utility::vector1< std::pair< core::Size, core::Size > > > const & vv_of_pairs,
@@ -210,6 +265,7 @@ public:
 	void generate_combinations_of_motif_fragments_by_delta_variation(
 		core::pose::PoseOP const & p_motif_,
 		utility::vector1 < std::pair< long int, long int > > const & combinatory_fragment_size_delta,
+		core::Size min_fragment_size,
 		utility::vector1< utility::vector1< std::pair< core::Size, core::Size > > > & vv_resulting_permutations);
 
 	/**@brief Fuction to parse RosettaScripts XML options**/
@@ -241,6 +297,7 @@ public:
 		core::Real const & RMSD_tol,
 		core::Real const & NC_points_RMSD_tol,
 		core::Size const & clash_cutoff,
+		core::Size const & min_fragment_size,
 		std::string const & clash_test_residue,
 		utility::vector1 < std::pair< long int, long int > > const & max_fragment_replacement_size_delta_,
 		utility::vector1 < std::pair< core::Size, core::Size > > const & combinatory_fragment_size_delta,
@@ -259,7 +316,8 @@ public:
 		core::pose::Pose const & p_motif_,
 		core::pose::Pose const & p_contextStructure_,
 		core::Size const & clash_cutoff,
-		utility::vector1< motif2scaffold_data > & v_m2s_data);
+		utility::vector1< motif2scaffold_data > & v_m2s_data,
+		numeric::geometry::hashing::MinimalClashHash const & context_clash_hash);
 
 	/**@brief Count the Number of Clashes between two poses*/
 	core::Size count_clashes_between_two_poses(
@@ -394,6 +452,7 @@ public:
 		core::Real  const & r_RMSD_tolerance,
 		core::Real  const & r_NC_points_RMSD_tolerance,
 		core::Size  const & i_clash_score_cutoff,
+		core::Size  const & i_min_fragment_size,
 		std::string const & s_combinatory_fragment_size_delta,
 		std::string const & s_max_fragment_replacement_size_delta,
 		std::string const & s_clash_test_residue,
@@ -404,7 +463,9 @@ public:
 		bool        const & b_only_allow_if_N_point_match_aa_identity,
 		bool        const & b_only_allow_if_C_point_match_aa_identity,
 		bool        const & b_revert_graft_to_native_sequence,
-		bool        const & b_allow_repeat_same_graft_output);
+		bool        const & b_allow_repeat_same_graft_output,
+		core::Real  const & r_output_cluster_tolerance,
+		filters::FilterCOP const & f_output_filter );
 
 	std::string
 	get_name() const override;
@@ -424,6 +485,7 @@ protected:
 	core::Real         gp_r_RMSD_tolerance_;
 	core::Real         gp_r_NC_points_RMSD_tolerance_;
 	core::Size         gp_i_clash_score_cutoff_;
+	core::Size         gp_i_min_fragment_size_;
 	utility::vector1 < std::pair< core::Size, core::Size > >  gp_vp_combinatory_fragment_size_delta_;
 	utility::vector1 < std::pair< long int, long int > >      gp_vp_max_fragment_replacement_size_delta_;
 	std::string        gp_s_clash_test_residue_;
@@ -439,6 +501,10 @@ protected:
 
 	core::pose::PoseOP gp_p_target_pose_; //Swap space for our input pose
 	std::priority_queue<MotifMatch> motif_match_results_;
+
+	core::Real         gp_r_output_cluster_tolerance_;
+	utility::vector1< numeric::HomogeneousTransform< core::Real > > output_transforms_; // Used for output cluster tolerance
+	filters::FilterCOP gp_f_output_filter_;
 }; //END class MotifGraftMover
 
 }//END namespace movers

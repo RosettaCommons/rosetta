@@ -1342,6 +1342,32 @@ Size nres_protein( pose::Pose const & pose ) {
 		} );
 }// nres_protein
 
+core::Real
+radius_of_gyration(
+	core::pose::Pose const & pose,
+	numeric::xyzVector< core::Real > const & center_of_mass,
+	utility::vector1< bool > const & residues
+) {
+	using namespace numeric;
+	using core::conformation::Residue;
+	debug_assert( pose.size() == residues.size() );
+
+	core::Real rg_worker = 0;
+	core::Size counted = 0;
+
+	for ( Size i = residues.l(); i <= residues.u(); ++i ) {
+		if ( residues[ i ] ) {
+			Residue const & rsd( pose.residue( i ) );
+			rg_worker += center_of_mass.distance_squared( rsd.is_protein() ? rsd.atom( "CA" ).xyz() : rsd.nbr_atom_xyz() );
+			counted++;
+		}
+	}
+
+	if ( counted == 0 ) { utility_exit_with_message( "Cannot compute radius of gyration of zero residues!" ); }
+
+	return std::sqrt( rg_worker / counted );
+}
+
 
 numeric::xyzVector< Real >
 center_of_mass(

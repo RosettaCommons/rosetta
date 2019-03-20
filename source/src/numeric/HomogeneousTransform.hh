@@ -548,6 +548,41 @@ public:
 	}
 
 public:
+	/// Less accurate functions
+
+	/// @brief Used to calculate no-alignment "RMSD" of two identical poses using transforms
+	/// @details For this to work, the two poses must be identical, but with different
+	///          orientations. Here are the steps to use this:
+	///          1. The radius of gyration of the pose must be calculated (see core/pose/util.hh )
+	///          2. There must be an archetype pose with its center of mass at the origin
+	///    (this can be imaginary)
+	///          3. The relative transform of each of the two poses relative to the
+	///             archetype must be calculated. (i.e. What transform you would apply
+	///             to the archetype to move it to where the pose is.)
+	///          4. RMSD = ( xform1.inverse() * xform2 ).xform_magnitude( radius_of_gyration )
+	T
+	xform_magnitude(
+		T radius_of_gyration
+	) {
+		// Find squared norm of translation
+		T err_trans2 = px_*px_ + py_*py_+ pz_*pz_;
+
+		// Use clever trace hack to get cos( rotation_matrix().angle() )
+		T cos_theta = ( xx_ + yy_ + zz_ - 1.0 ) / 2.0;
+
+		// Calculate the sin() and then multiply by radius of gyration to get the rotation distance
+		T err_rot = sqrt( std::max( 0.0, 1.0 - cos_theta*cos_theta ) ) * radius_of_gyration;
+
+		// That fails if we go past 90 degrees, so just use rg in that case
+		if ( cos_theta < 0 ) err_rot = radius_of_gyration;
+
+		// Combine the distances
+		T err = sqrt( err_trans2 + err_rot*err_rot );
+
+		return err;
+	}
+
+public:
 	std::ostream &
 	show(std::ostream & stream = std::cout) const
 	{

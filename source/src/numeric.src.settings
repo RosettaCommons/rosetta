@@ -50,6 +50,7 @@ sources = {
 		"ring_plane.functions",
 	],
 	"numeric/geometry/hashing": [
+		"MinimalClashHash",
 		"SixDHasher",
 		"xyzStripeHash",
 	],
