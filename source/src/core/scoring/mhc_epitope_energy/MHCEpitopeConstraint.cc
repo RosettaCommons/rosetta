@@ -39,6 +39,7 @@
 #include <utility/exit.hh>
 
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 
 namespace core {
 namespace scoring {
@@ -51,7 +52,7 @@ static basic::Tracer TR( "core.scoring.mhc_epitope_energy.MHCEpitopeConstraint" 
 MHCEpitopeConstraint::MHCEpitopeConstraint():
 	core::scoring::aa_composition_energy::SequenceConstraint( core::scoring::mhc_epitope ),
 	selector_(),
-	mhc_epitope_setup_( new MHCEpitopeEnergySetup ),
+	mhc_epitope_setup_( utility::pointer::make_shared<MHCEpitopeEnergySetup>() ),
 	cst_weight_(1.0)
 {}
 
@@ -151,7 +152,7 @@ MHCEpitopeConstraint::get_cst_weight() const {return cst_weight_;}
 void
 MHCEpitopeConstraint::show_def (std::ostream &TO, pose::Pose const &pose) const {
 	runtime_assert( mhc_epitope_setup_ );
-	select::residue_selector::ResidueRangesOP ranges( new select::residue_selector::ResidueRanges );
+	select::residue_selector::ResidueRangesOP ranges( utility::pointer::make_shared<select::residue_selector::ResidueRanges>() );
 	ranges->from_subset( selector_->apply( pose ) );
 	for ( auto const & range : *ranges ) {
 		TO << "MHCEpitope Residue " << range.start() << " Residue " << range.stop() << std::endl;

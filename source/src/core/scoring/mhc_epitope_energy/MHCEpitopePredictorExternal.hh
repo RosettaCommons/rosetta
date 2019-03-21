@@ -10,7 +10,7 @@
 /// @file core/scoring/mhc_epitope_energy/MHCEpitopePredictorExternal.hh
 /// @brief MHC epitope predictor using calculations from an external program cached in an sqlite database
 /// @details The peptides that might be encountered during packing should have scores stored in the "epitopes" table, with column "peptide" given the string and "score" the score.
-/// For peptides not stored in the database, the current default method is to simply return the value "unseen_penalty". The class could be augmented to invoke an external program on the fly and cache the computed result, but since that is slow, we started with the method of precomputing and caching scores of desireable peptides. See the tools directory for scripts to help with that; additional constraints (via e.g., FavorSequenceProfile) can be used to focus the amino acid selections on desirable choices, as demonstrated in the examples there.
+/// For peptides not stored in the database, the current default method is to simply return the value "unseen_score" (positive is a penalty). The class could be augmented to invoke an external program on the fly and cache the computed result, but since that is slow, we started with the method of precomputing and caching scores of desireable peptides. See the tools directory for scripts to help with that; additional constraints (via e.g., FavorSequenceProfile) can be used to focus the amino acid selections on desirable choices, as demonstrated in the examples there.
 /// The database should also include a "meta" table with information about the predictor stored as a map with columns "name" and "value". Currently, the only thing that's needed from there is "peptide_length" (for MHCEpitopePredictor) and the specified length.
 /// @author Chris Bailey-Kellogg, cbk@cs.dartmouth.edu; Brahm Yachnin, brahm.yachnin@rutgers.edu
 
@@ -57,11 +57,11 @@ public:
 	/// @brief Return the sqlite database connection pointer
 	utility::sql_database::sessionOP get_database() { return session_; }
 
-	/// @brief Sets the penalty for a peptide not in the database
-	void set_unseen_penalty(core::Size up) { unseen_penalty_ = up; }
+	/// @brief Sets the score for a peptide not in the database
+	void set_unseen_score(core::Size u) { unseen_score_ = u; }
 
-	/// @brief Accessor for the unseen_penalty_
-	core::Size get_unseen_penalty() { return unseen_penalty_; }
+	/// @brief Accessor for the unseen_score_
+	core::Size get_unseen_score() { return unseen_score_; }
 
 private:
 	/// @brief The name of the database filename.
@@ -73,8 +73,8 @@ private:
 	/// @brief The underlying predictor that generated the database, read from database
 	std::string pred_name_ = "";
 
-	/// @brief The penalty for a peptide not in the database
-	core::Size unseen_penalty_ = 100;
+	/// @brief The score for a peptide not in the database
+	core::Size unseen_score_ = 100;
 
 #ifdef    SERIALIZATION
 public:

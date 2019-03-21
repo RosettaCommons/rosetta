@@ -32,7 +32,7 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-
+#include <utility/pointer/memory.hh>
 
 static basic::Tracer TR("protocols.aa_composition.AddMHCEpitopeConstraintMover.cxxtest");
 
@@ -79,12 +79,12 @@ public:
 		TS_ASSERT_EQUALS( scorefxn(pose), 0 );
 
 		//Create an AddMHCEpitopeConstraintMover object
-		AddMHCEpitopeConstraintMoverOP add_mhc_csts( new AddMHCEpitopeConstraintMover );
+		AddMHCEpitopeConstraintMoverOP add_mhc_csts( utility::pointer::make_shared<AddMHCEpitopeConstraintMover>() );
 		//Create the csts from file contents
 		std::string config_string = "method matrix propred8\nalleles *\nthreshold 5";
 		add_mhc_csts->create_constraint_from_file_contents( config_string );
 		//Create a residue selector for the first 9 residues (one allele).
-		core::select::residue_selector::ResidueIndexSelectorCOP selector( new core::select::residue_selector::ResidueIndexSelector("1-9") );
+		core::select::residue_selector::ResidueIndexSelectorCOP selector( utility::pointer::make_shared<core::select::residue_selector::ResidueIndexSelector>("1-9") );
 
 		//Associate that residue selector with the mover.
 		add_mhc_csts->add_residue_selector( selector );
@@ -96,12 +96,12 @@ public:
 		TS_ASSERT_EQUALS( base_cst_score, 8.0 );
 
 		//Create the clear csts mover
-		ClearCompositionConstraintsMoverOP clear_mhc_csts( new ClearCompositionConstraintsMover() );
+		ClearCompositionConstraintsMoverOP clear_mhc_csts( utility::pointer::make_shared<ClearCompositionConstraintsMover>() );
 		clear_mhc_csts->apply(pose);
 		TS_ASSERT_EQUALS( scorefxn(pose), 0 );
 
 		//Create another AddMHCEpitopeConstraintMover object, as before
-		AddMHCEpitopeConstraintMoverOP add_weighted_mhc_csts( new AddMHCEpitopeConstraintMover );
+		AddMHCEpitopeConstraintMoverOP add_weighted_mhc_csts( utility::pointer::make_shared<AddMHCEpitopeConstraintMover>() );
 		add_weighted_mhc_csts->create_constraint_from_file_contents( config_string );
 		add_weighted_mhc_csts->add_residue_selector( selector );
 		//For this cst, apply a weight of 0.5

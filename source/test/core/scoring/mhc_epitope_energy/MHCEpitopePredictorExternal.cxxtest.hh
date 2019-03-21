@@ -21,7 +21,7 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-
+#include <utility/pointer/memory.hh>
 
 static basic::Tracer TR("core.scoring.mhc_epitope_energy.MHCEpitopePredictorExternal.cxxtest");
 
@@ -60,10 +60,10 @@ public:
 	void test_mhc_predictor_external() {
 #ifndef MULTI_THREADED
 		//Create a new MHCEpitopePredictorExternal object
-		MHCEpitopePredictorExternalOP pred_e( new MHCEpitopePredictorExternal() );
+		MHCEpitopePredictorExternalOP pred_e( utility::pointer::make_shared<MHCEpitopePredictorExternal>() );
 
 		//Check the default unseen_penalty_
-		TS_ASSERT_EQUALS(pred_e->get_unseen_penalty(), 100);
+		TS_ASSERT_EQUALS(pred_e->get_unseen_score(), 100);
 
 		//Check that there is no database
 		TS_ASSERT(! pred_e->get_database() );
@@ -75,9 +75,9 @@ public:
 		//Check the score for an unknown peptide
 		TS_ASSERT_EQUALS(pred_e->score(unk_sequence), 100);
 
-		//Set the unknown penalty to something else and re-score
-		pred_e->set_unseen_penalty(50);
-		TS_ASSERT_EQUALS(pred_e->get_unseen_penalty(), 50);
+		//Set the unknown score to something else and re-score
+		pred_e->set_unseen_score(50);
+		TS_ASSERT_EQUALS(pred_e->get_unseen_score(), 50);
 		TS_ASSERT_EQUALS(pred_e->score(unk_sequence), 50);
 
 		//Check the score of the known sequence

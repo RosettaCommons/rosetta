@@ -770,8 +770,9 @@ sources = {
 		"MHCEpitopeEnergy",
 		"MHCEpitopeEnergySetup",
 		"MHCEpitopePredictor",
-                "MHCEpitopePredictorMatrix",
                 "MHCEpitopePredictorExternal",
+                "MHCEpitopePredictorMatrix",
+                "MHCEpitopePredictorPreLoaded",
 	],
 	"core/scoring/mm": [
 		"MMBondAngleLibrary",

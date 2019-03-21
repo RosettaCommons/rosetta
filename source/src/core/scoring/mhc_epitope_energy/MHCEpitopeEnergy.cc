@@ -50,6 +50,7 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/memory.hh>
 
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictor.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorMatrix.hh>
@@ -82,7 +83,7 @@ ScoreCache::~ScoreCache() = default;
 
 ScoreCacheOP ScoreCache::clone() const
 {
-	return ScoreCacheOP(new ScoreCache(*this));
+	return ScoreCacheOP( utility::pointer::make_shared<ScoreCache>(*this));
 }
 
 
@@ -303,7 +304,7 @@ MHCEpitopeEnergy::set_up_residuearrayannealableenergy_for_packing (
 	// Set up score caches
 	score_caches_.clear();
 	for ( core::Size h=1, hmax=setup_helpers_for_packing_.size(); h<=hmax; ++h ) {
-		ScoreCacheOP cache(new ScoreCache(nres));
+		ScoreCacheOP cache(utility::pointer::make_shared<ScoreCache>(nres));
 		score_caches_.push_back(cache);
 	}
 

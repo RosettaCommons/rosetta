@@ -23,6 +23,7 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 
 
 static basic::Tracer TR("core.scoring.mhc_epitope_energy.MHCEpitopeEnergySetup.cxxtest");
@@ -55,7 +56,7 @@ public:
 	/// @author Brahm Yachnin
 	void test_mhc_init_matrix( ) {
 		// Make a new MHCEpitopeEnergySetup object.
-		MHCEpitopeEnergySetupOP mhc_from_file( new MHCEpitopeEnergySetup() );
+		MHCEpitopeEnergySetupOP mhc_from_file( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
 
 		// The setup object should be the default, always-zero predictor.
 		TS_ASSERT( mhc_from_file->is_default() );
@@ -73,7 +74,7 @@ public:
 		TS_ASSERT_EQUALS( mhc_from_file->raw_score("FRILAAIGI"), 8.0 );
 
 		// Make another MHCEpitopeEnergySetup object, this time to config using "file contents."
-		MHCEpitopeEnergySetupOP mhc_from_string( new MHCEpitopeEnergySetup() );
+		MHCEpitopeEnergySetupOP mhc_from_string( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
 
 		// Set up a string object that matches the .mhc file
 		std::string config_string = "method matrix propred8\nalleles *\nthreshold 5";
@@ -88,7 +89,7 @@ public:
 		TS_ASSERT_EQUALS ( *mhc_from_file == *mhc_from_string, true );
 
 		// One with a different threshold
-		MHCEpitopeEnergySetupOP mhc_from_string2( new MHCEpitopeEnergySetup() );
+		MHCEpitopeEnergySetupOP mhc_from_string2( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
 		std::string config_string2 = "method matrix propred8\nalleles *\nthreshold 2";
 		mhc_from_string2->initialize_from_file_contents( config_string2 );
 		TS_ASSERT_EQUALS ( *mhc_from_string2 == *mhc_from_string, false );
@@ -96,7 +97,7 @@ public:
 		// TODO: when have ability to change set of alleles, test that contribution to operator==
 
 		// No predictor
-		MHCEpitopeEnergySetupOP mhc_from_string3( new MHCEpitopeEnergySetup() );
+		MHCEpitopeEnergySetupOP mhc_from_string3( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
 		TS_ASSERT_EQUALS ( *mhc_from_string3 == *mhc_from_string, false );
 
 		TR << "End of test_mhc_init_matrix." << std::endl;
@@ -108,7 +109,7 @@ public:
 	void test_mhc_init_database( ) {
 #ifndef MULTI_THREADED
 		// Make a new MHCEpitopeEnergySetup object.
-		MHCEpitopeEnergySetupOP mhc_from_file( new MHCEpitopeEnergySetup() );
+		MHCEpitopeEnergySetupOP mhc_from_file( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
 
 		// The setup object should be the default, always-zero predictor.
 		TS_ASSERT( mhc_from_file->is_default() );
@@ -125,7 +126,7 @@ public:
 		TS_ASSERT_EQUALS( mhc_from_file->raw_score("YFCTRAFRILAWIGI"), 2.0 );
 
 		// Make another MHCEpitopeEnergySetup object, this time to config using "file contents."
-		MHCEpitopeEnergySetupOP mhc_from_string( new MHCEpitopeEnergySetup() );
+		MHCEpitopeEnergySetupOP mhc_from_string( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
 
 		// Set up a string object that matches the .mhc file
 		std::string config_string = "method external core/scoring/mhc_epitope_energy/externaldb.sql\nalleles *\nunseen penalize 100";
@@ -140,13 +141,13 @@ public:
 		TS_ASSERT_EQUALS ( *mhc_from_file == *mhc_from_string, true );
 
 		// One with a different unseen penalty
-		MHCEpitopeEnergySetupOP mhc_from_string2( new MHCEpitopeEnergySetup() );
+		MHCEpitopeEnergySetupOP mhc_from_string2( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
 		std::string config_string2 = "method external core/scoring/mhc_epitope_energy/externaldb.sql\nalleles *\nunseen penalize 1";
 		mhc_from_string2->initialize_from_file_contents( config_string2 );
 		TS_ASSERT_EQUALS ( *mhc_from_string2 == *mhc_from_string, false );
 
 		// Different type of predictor
-		MHCEpitopeEnergySetupOP mhc_from_string3( new MHCEpitopeEnergySetup() );
+		MHCEpitopeEnergySetupOP mhc_from_string3( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
 		std::string config_string3 = "method matrix propred8\nalleles *\nthreshold 2";
 		mhc_from_string3->initialize_from_file_contents( config_string3 );
 		TS_ASSERT_EQUALS ( *mhc_from_string3 == *mhc_from_string, false );
@@ -155,13 +156,65 @@ public:
 		TR << "End of test_mhc_init_database." << std::endl;
 	}
 
+	/// @brief Parse the mhc_epitope parameters from an .mhc file format, and test them.
+	/// @brief This uses a preloaded csv-type setup
+	/// @author Brahm Yachnin
+	void test_mhc_init_csv( ) {
+		// Make a new MHCEpitopeEnergySetup object.
+		MHCEpitopeEnergySetupOP mhc_from_file( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
+
+		// The setup object should be the default, always-zero predictor.
+		TS_ASSERT( mhc_from_file->is_default() );
+
+		// Initialize from a .mhc file
+		mhc_from_file->initialize_from_file( "core/scoring/mhc_epitope_energy/preload_csv.mhc" );
+
+		// The setup object should no longer be the default.
+		TS_ASSERT( ! mhc_from_file->is_default() );
+
+		// We are using a NetMHCII database, so the peptide length should be 15.
+		TS_ASSERT_EQUALS( mhc_from_file->get_peptide_length(), 15 );
+		// Get the raw score from an arbitrary peptide using the predictor.
+		TS_ASSERT_EQUALS( mhc_from_file->raw_score("YFCTRAFRILAWIGI"), 2.0 );
+
+		// Make another MHCEpitopeEnergySetup object, this time to config using "file contents."
+		MHCEpitopeEnergySetupOP mhc_from_string( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
+
+		// Set up a string object that matches the .mhc file
+		std::string config_string = "method preloaded csv core/scoring/mhc_epitope_energy/externaldb.csv\nalleles *\nunseen score 100";
+
+		// Initialize it using the string
+		mhc_from_string->initialize_from_file_contents( config_string );
+
+		// The file and file contents predictors should be the same.
+		TS_ASSERT_EQUALS( mhc_from_file->report(), mhc_from_string->report() ); //I think this is the best we can do without comparing all accessors.
+
+		// Test using operator==
+		TS_ASSERT_EQUALS ( *mhc_from_file == *mhc_from_string, true );
+
+		// One with a different unseen score
+		MHCEpitopeEnergySetupOP mhc_from_string2( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
+		std::string config_string2 = "method preloaded csv core/scoring/mhc_epitope_energy/externaldb.csv\nalleles *\nunseen penalize 1";
+		mhc_from_string2->initialize_from_file_contents( config_string2 );
+		TS_ASSERT_EQUALS ( *mhc_from_string2 == *mhc_from_string, false );
+
+		// Set up a predictor that ignores unseen peptides
+		MHCEpitopeEnergySetupOP mhc_ignore_unseen( utility::pointer::make_shared< MHCEpitopeEnergySetup >() );
+		std::string config_ignore_unseen = "method preloaded csv core/scoring/mhc_epitope_energy/externaldb.csv\nalleles *\nunseen ignore";
+		mhc_ignore_unseen->initialize_from_file_contents( config_ignore_unseen );
+		TS_ASSERT_EQUALS( mhc_ignore_unseen->raw_score( "AFRILAWIGIQNPTS" ), 4 ); // A peptide that is known should have a non-zero score.
+		TS_ASSERT_EQUALS( mhc_ignore_unseen->raw_score( "AAAAAAWIGIQNPTS" ), 0 ); // A peptide that is UNknown should have a zero score.
+
+		TR << "End of test_mhc_init_csv." << std::endl;
+	}
+
 	/// @brief Use the raw xform settings and test that raw_score and xform work.
 	/// @author Brahm Yachnin
 	void test_mhc_xformed_raw( ) {
 		// Initialize another MHCEpitopeEnergySetup object, with a raw xform.
 		core::Real raw_offset = 5.0;
 		std::string xform_raw = "method matrix propred8\nalleles *\nthreshold 5\nxform raw " + std::to_string(raw_offset);
-		MHCEpitopeEnergySetupOP mhc_raw_xform( new MHCEpitopeEnergySetup() );
+		MHCEpitopeEnergySetupOP mhc_raw_xform( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
 		mhc_raw_xform->initialize_from_file_contents( xform_raw );
 
 		// Calculate the raw score with this predictor, which doesn't include the offset.
@@ -198,7 +251,7 @@ public:
 		// Initialize another MHCEpitopeEnergySetup object, with a relative+ xform.
 		core::Real rel_offset = 1.0;
 		std::string xform_rel = "method matrix propred8\nalleles *\nthreshold 5\nxform relative+ " + std::to_string(rel_offset);
-		MHCEpitopeEnergySetupOP mhc_rel_xform( new MHCEpitopeEnergySetup() );
+		MHCEpitopeEnergySetupOP mhc_rel_xform( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
 		mhc_rel_xform->initialize_from_file_contents( xform_rel );
 
 		// Calculate the raw score with this predictor, which doesn't include the offset.
@@ -230,7 +283,7 @@ public:
 		// Initialize another MHCEpitopeEnergySetup object, with a relative* xform.
 		core::Real rel_offset = 1.1;
 		std::string xform_rel = "method matrix propred8\nalleles *\nthreshold 5\nxform relative* " + std::to_string(rel_offset);
-		MHCEpitopeEnergySetupOP mhc_rel_xform( new MHCEpitopeEnergySetup() );
+		MHCEpitopeEnergySetupOP mhc_rel_xform( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
 		mhc_rel_xform->initialize_from_file_contents( xform_rel );
 
 		// Calculate the raw score with this predictor, which doesn't include the offset.

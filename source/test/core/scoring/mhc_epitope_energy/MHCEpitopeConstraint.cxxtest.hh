@@ -26,6 +26,7 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 
 
 static basic::Tracer TR("core.scoring.mhc_epitope_energy.MHCEpitopeConstraint.cxxtest");
@@ -64,16 +65,16 @@ public:
 		core::Real cstweight = 0.5;
 
 		// Create a residue selector for the first 9 residues.
-		core::select::residue_selector::ResidueIndexSelectorCOP selector( new core::select::residue_selector::ResidueIndexSelector("1-9") );
+		core::select::residue_selector::ResidueIndexSelectorCOP selector( utility::pointer::make_shared<core::select::residue_selector::ResidueIndexSelector>("1-9") );
 
 		// MHCEpitopeSetup string
 		std::string setup_string = "method matrix propred8\nalleles *\nthreshold 5";
 		// Make our own MHCEpitopeEnergySetup object (not a cst)
-		MHCEpitopeEnergySetupOP mhc_setup_obj( new MHCEpitopeEnergySetup() );
+		MHCEpitopeEnergySetupOP mhc_setup_obj( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
 		mhc_setup_obj->initialize_from_file_contents(setup_string);
 
 		// Make a new MHCEpitopeConstraint object
-		MHCEpitopeConstraintOP mhc_cst_obj( new MHCEpitopeConstraint() );
+		MHCEpitopeConstraintOP mhc_cst_obj( utility::pointer::make_shared<MHCEpitopeConstraint>() );
 
 		// Set the desired parameters
 		mhc_cst_obj->initialize_from_file_contents( setup_string );

@@ -29,6 +29,7 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

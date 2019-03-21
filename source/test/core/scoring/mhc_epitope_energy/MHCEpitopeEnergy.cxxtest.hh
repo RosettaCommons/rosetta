@@ -42,6 +42,7 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 
 
 static basic::Tracer TR("core.scoring.mhc_epitope_energy.MHCEpitopeEnergy.cxxtest");
@@ -111,7 +112,7 @@ public:
 		//// Now calculate the energy directly using MHCEpitopeEnergy's calculate_energy method
 
 		// Set up a MHCEpitopeEnergy object
-		MHCEpitopeEnergyOP mhc_energy( new MHCEpitopeEnergy( options ) );
+		MHCEpitopeEnergyOP mhc_energy( utility::pointer::make_shared<MHCEpitopeEnergy>( options ) );
 
 		// Set up mhc_energy for packing
 		core::pack::rotamer_set::RotamerSets rot_set; // This is needed for the following function, even though we don't use it.
@@ -153,7 +154,7 @@ public:
 		scorefxn.set_energy_method_options(options);
 
 		// Set up a MHCEpitopeEnergy object
-		MHCEpitopeEnergyOP mhc_energy( new MHCEpitopeEnergy( options ) );
+		MHCEpitopeEnergyOP mhc_energy( utility::pointer::make_shared<MHCEpitopeEnergy>( options ) );
 
 		// Set up mhc_energy for packing and calculate the energy before mutation
 		core::pack::rotamer_set::RotamerSets rot_set; // This is needed for the following function, even though we don't use it.
@@ -200,7 +201,7 @@ public:
 		scorefxn.set_energy_method_options(options);
 
 		// Set up a MHCEpitopeEnergy object
-		MHCEpitopeEnergyOP mhc_energy( new MHCEpitopeEnergy( options ) );
+		MHCEpitopeEnergyOP mhc_energy( utility::pointer::make_shared<MHCEpitopeEnergy>( options ) );
 
 		// Score the pose
 		TS_ASSERT_EQUALS(scorefxn(pose), 15);
@@ -348,7 +349,7 @@ public:
 		scorefxn.set_energy_method_options(options);
 
 		//Set up a MHCEpitopeEnergy object
-		MHCEpitopeEnergyOP mhc_energy( new MHCEpitopeEnergy( options ) );
+		MHCEpitopeEnergyOP mhc_energy( utility::pointer::make_shared<MHCEpitopeEnergy>( options ) );
 		//Set up mhc_energy for packing and calculate the energy before symmetrizing.
 		core::pack::rotamer_set::RotamerSets rot_set; // This is needed for the following function, even though we don't use it.
 		mhc_energy->set_up_residuearrayannealableenergy_for_packing( pose, rot_set, scorefxn );
@@ -409,7 +410,7 @@ public:
 		}
 
 		// Setup rotamer sets
-		RotamerSetsOP rotsets( new RotamerSets() );
+		RotamerSetsOP rotsets( utility::pointer::make_shared<RotamerSets>() );
 		rotsets->set_task( task );
 		utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scorefxn, task );
 		/* Ooops, get_n_rotamers_for_residue_type is from class RotamerSet, not RotamerSets.

@@ -21,6 +21,7 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 
 static basic::Tracer TR("core.scoring.mhc_epitope_energy.MHCEpitopePredictorMatrix.cxxtest");
 
@@ -55,7 +56,7 @@ public:
 	/// @author Brahm Yachnin
 	void test_mhc_predictor_matrix() {
 		//Create a new MHCEpitopePredictorMatrix object
-		MHCEpitopePredictorMatrixOP pred_m( new MHCEpitopePredictorMatrix() );
+		MHCEpitopePredictorMatrixOP pred_m( utility::pointer::make_shared<MHCEpitopePredictorMatrix>() );
 
 		//By default, the predictor should have a threshold of 5.0
 		TS_ASSERT_EQUALS(pred_m->get_thresh(), 5.0);

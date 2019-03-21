@@ -55,7 +55,7 @@ bool MHCEpitopePredictorExternal::operator==(MHCEpitopePredictor const &other)
 	if ( !o ) return false;
 
 	if ( o->filename_ != filename_ ) return false; // could be overly strict -- different filenames could have same data, but let's not go there
-	if ( o->unseen_penalty_ != unseen_penalty_ ) return false;
+	if ( o->unseen_score_ != unseen_score_ ) return false;
 
 	return true;
 }
@@ -67,7 +67,7 @@ std::string MHCEpitopePredictorExternal::report() const
 	std::stringstream output("");
 
 	// TODO: Any other metadata? If so, hold on to it in connect()
-	output << "External predictor database from file '" << filename_ << "' based on " << pred_name_ << "; peptide length " << get_peptide_length() << "; unseen penalty " << unseen_penalty_;
+	output << "External predictor database from file '" << filename_ << "' based on " << pred_name_ << "; peptide length " << get_peptide_length() << "; unseen score " << unseen_score_;
 
 	return output.str();
 }
@@ -79,11 +79,11 @@ core::Real MHCEpitopePredictorExternal::score(std::string const &pep)
 		utility_exit_with_message("MHCEpitopePredicotrExternal is trying to score a peptide of the incorrect size!");
 	}
 
-	// Simply gets the score from the database, returning unseen_penalty if it isn't there
+	// Simply gets the score from the database, returning unseen_score_ if it isn't there
 
 	cppdb::result fetch = ((*session_) << "SELECT score FROM epitopes WHERE peptide=?" << pep).row(); // fetch single row if it exists
-	if ( fetch.empty() ) { // if the peptide doesn't exist in the database, return the unseen_penalty_
-		return unseen_penalty_;
+	if ( fetch.empty() ) { // if the peptide doesn't exist in the database, return the unseen_score_
+		return unseen_score_;
 	}
 	core::Real score;
 	fetch >> score;
@@ -135,7 +135,7 @@ core::scoring::mhc_epitope_energy::MHCEpitopePredictorExternal::save( Archive & 
 	// EXEMPT session_
 	arc( CEREAL_NVP( filename_ ) ); // std::string
 	arc( CEREAL_NVP( pred_name_ ) ); // std::string
-	arc( CEREAL_NVP( unseen_penalty_ ) ); // core::Size
+	arc( CEREAL_NVP( unseen_score_ ) ); // core::Size
 }
 
 /// @brief Automatically generated deserialization method
@@ -147,7 +147,7 @@ core::scoring::mhc_epitope_energy::MHCEpitopePredictorExternal::load( Archive & 
 	// EXEMPT session_
 	arc( filename_ ); // std::string
 	arc( pred_name_ ); // std::string
-	arc( unseen_penalty_ ); // core::Size
+	arc( unseen_score_ ); // core::Size
 
 	// Re-connect to the session
 	connect( filename_ );

@@ -1,0 +1,3 @@
+method preloaded csv core/scoring/mhc_epitope_energy/externaldb.csv
+alleles *
+unseen score 100

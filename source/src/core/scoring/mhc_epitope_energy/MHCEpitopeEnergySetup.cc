@@ -15,8 +15,9 @@
 // Unit headers
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergySetup.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictor.hh>
-#include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorMatrix.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorExternal.hh>
+#include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorMatrix.hh>
+#include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorPreLoaded.hh>
 
 // Package headers
 #include <core/scoring/EnergyMap.hh>
@@ -39,6 +40,7 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/memory.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
@@ -209,38 +211,51 @@ void MHCEpitopeEnergySetup::parse_specs( utility::vector1 < std::string > const 
 	// The first line of the .mhc file contains the method keyword, the method type, and for the filename of the reference data.
 
 	// Get method from first line
-	std::istringstream line(lines[1]);
+	std::istringstream firstline(lines[1]);
 	std::string keyword, method, filename;
-	line >> keyword;
-	line >> method;
+	firstline >> keyword;
+	firstline >> method;
 	TR.Debug << "method: '" << method  << "'" << std::endl;
 
 	// Hold on to predictor as its subclass, to set options without typecasting
-	MHCEpitopePredictorMatrixOP pred_m;
-	MHCEpitopePredictorExternalOP pred_e;
+	MHCEpitopePredictorExternalOP pred_external;
+	MHCEpitopePredictorMatrixOP pred_matrix;
+	MHCEpitopePredictorPreLoadedOP pred_pre;
 	if ( method == "matrix" ) {
 		// For matrix methods, read the filename containing the matrix, and use it to create a new MHCEpitopePredictorMatrix object.
-		line >> filename;
-		pred_m = MHCEpitopePredictorMatrixOP(new MHCEpitopePredictorMatrix(filename));
-		predictor_ = pred_m;
+		firstline >> filename;
+		pred_matrix = MHCEpitopePredictorMatrixOP(utility::pointer::make_shared<MHCEpitopePredictorMatrix>(filename));
+		predictor_ = pred_matrix;
 	} else if ( method == "external" ) {
 		// We don't know how the database will work in a multi-threading environment, so we are disabling it in case.
 #ifdef MULTI_THREADED // Once this issue is resolved, the #ifndef blocks in the unit test suite should be removed (MHCEpitopePredictorExternal.cxxtest.hh, MHCEpitopeEnergy.cxxtest.hh, MHCEpitopeEnergySetup.cxxtest.hh)
 		utility_exit_with_message( "The MHCEpitopePredictorExternal is not supported in a multi-threading environment at this time.  Contact cbk@cs.dartmouth.edu and brahm.yachnin@rutgers.edu if you would like to help test it with multi-threading." );
 #endif
 		// For external database methods, read the filename containing the database, and use it to create a new MHCEpitopePredictorExternal object.
-		line >> filename;
-		pred_e = MHCEpitopePredictorExternalOP(new MHCEpitopePredictorExternal(filename));
-		predictor_ = pred_e;
+		firstline >> filename;
+		pred_external = MHCEpitopePredictorExternalOP(utility::pointer::make_shared<MHCEpitopePredictorExternal>(filename));
+		predictor_ = pred_external;
+	} else if ( method == "preloaded" ) {
+		pred_pre = MHCEpitopePredictorPreLoadedOP(utility::pointer::make_shared<MHCEpitopePredictorPreLoaded>());
+		predictor_ = pred_pre;
+		std::string filetype;
+		firstline >> filetype >> filename;
+		if ( filetype == "db" ) {
+			pred_pre->load_database(filename);
+		} else if ( filetype == "csv" ) {
+			pred_pre->load_csv(filename);
+		} else {
+			utility_exit_with_message("ERROR: Unknown preloaded file type " + filetype);
+		}
 	} else {
 		utility_exit_with_message("ERROR: Unknown epitope prediction method " + method);
 	}
 
 	for ( core::Size i=2; i<=nlines; ++i ) { //Loop through all remaining lines, containing options
 		TR.Debug << "option: '" << lines[i] << "'" << std::endl;
-		std::istringstream line2(lines[i]);
+		std::istringstream line(lines[i]);
 		std::string option;
-		line2 >> option;
+		line >> option;
 		if ( option == "alleles" ) {
 			// Use only the alleles listed after the alleles keyword.
 			// Use * to use all alleles in the matrix file (default behaviour).
@@ -248,37 +263,45 @@ void MHCEpitopeEnergySetup::parse_specs( utility::vector1 < std::string > const 
 		} else if ( option == "threshold" && method=="matrix" ) {
 			// If the threshold keyword is used, set the threshold in the predictor.
 			core::Real thresh;
-			line2 >> thresh;
-			pred_m->set_thresh(thresh);
-		} else if ( option == "unseen" && method=="external" ) {
+			line >> thresh;
+			pred_matrix->set_thresh(thresh);
+		} else if ( option == "unseen" && (method=="external" || method=="preloaded") ) {
 			// How to handle unseen epitopes.
 			// The line gives the type of handler and its parameters
-			// For now, the only type of handler is "penalize", i.e., use a prespecified score for all unseens epitopes
 			std::string handler;
-			core::Size unseen;
-			// Read the penalty and store it
-			line2 >> handler >> unseen;
-			pred_e->set_unseen_penalty(unseen);
+			line >> handler;
+			core::Size unseen(0);
+			if ( handler == "ignore" ) {
+				// Useful with experimental data, where if you haven't seen it, it's a good thing
+				unseen = 0; // already was, but now it's doubly so
+			} else if ( handler == "penalize" || handler == "score" ) {
+				line >> unseen;
+			} else {
+				TR.Error << "Unknown unseen handler " << handler << "; ignoring: " << lines[i] << std::endl;
+			}
+			if ( method=="external" ) pred_external->set_unseen_score(unseen);
+			else if ( method=="preloaded" ) pred_pre->set_unseen_score(unseen);
+			// those are the only two possibilities now, but put the else if for future expansion
 		} else if ( option == "xform" ) {
 			// A transformation to the score returned by the predictor
 			std::string xform;
-			line2 >> xform;
+			line >> xform;
 			if ( xform == "raw" ) {
 				// Use the score as given, subject to a scoring offset
 				relative_ = false;
-				line2 >> score_offset_;
+				line >> score_offset_;
 				apply_offset_ = true;
 			} else if ( xform == "relative+" ) {
 				// Relative to the native score, plus a scoring offset
 				relative_ = true;
 				relative_additive_ = true;
-				line2 >> score_offset_;
+				line >> score_offset_;
 				apply_offset_ = true;
 			} else if ( xform == "relative*" ) {
 				// Relative to the native score, with multiplicative offset (i.e., native * score_offset_)
 				relative_ = true;
 				relative_additive_ = false;
-				line2 >> score_offset_;
+				line >> score_offset_;
 				apply_offset_ = true;
 			} else {
 				TR.Error << "Unknown xform; ignoring:" << lines[i] << std::endl;

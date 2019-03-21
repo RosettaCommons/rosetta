@@ -535,7 +535,8 @@ sources = {
 	"MHCEpitopeEnergy",
 	"MHCEpitopeEnergySetup",
 	"MHCEpitopePredictorExternal",
-	"MHCEpitopePredictorMatrix"
+	"MHCEpitopePredictorMatrix",
+	"MHCEpitopePredictorPreLoaded"
   ],
 	"scoring/mm" : [
 		"MMBondAngleLibrary",
@@ -1117,8 +1118,11 @@ testinputfiles = [
 	"scoring/methods/score3_in.silent_out",
 	"scoring/methods/test_in.pdb",
 	"scoring/mhc_epitope_energy/c3.sym",
+	"scoring/mhc_epitope_energy/externaldb.csv",
 	"scoring/mhc_epitope_energy/external_db.mhc",
 	"scoring/mhc_epitope_energy/externaldb.sql",
+	"scoring/mhc_epitope_energy/preload_csv.mhc",
+	"scoring/mhc_epitope_energy/propred8_5.mhc",
 	"scoring/mm_twist.data",
 	"scoring/mm/MMBondAngleScoreTests.u",
 	"scoring/mm/mm_torsion_params.txt",

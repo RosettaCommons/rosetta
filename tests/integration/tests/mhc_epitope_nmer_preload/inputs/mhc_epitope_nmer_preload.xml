@@ -4,18 +4,21 @@ Author: Brahm Yachnin, Chris Bailey-Kellogg
 Email: brahm.yachnin@rutgers.edu, cbk@cs.dartmouth.edu
 
 This integration test runs a packing and minimization trajectory with the mhc_epitope scoreterm
-turned on.  Globally, the scoreterm uses the propred matrix to prevent the epitope counts from
-increasing beyond native.  An MHC constraint is also applied, which uses an external NetMHCII
+turned on.  Globally, the scoreterm uses the "nmer" SVM method (SEE NOTE) to prevent the epitope counts from
+increasing beyond native.  An MHC constraint is also applied, which uses a pre-loaded NetMHCII CSV
 database file (generated specifically for this hotspot) to specifically reduce immunogenicity at
 that hotspot.  Catalytic residue restrictions are applied, and design is allowed only around the
 hotspot.
+
+NOTE: Currently, this is using the Propred instead of nmer, because nmer has not yet been implemented.
+Once nmer is working, we will switch this over to use that predictor.
 
 This is a reasonable way of setting up a de-immunization trajectory, with the following caveats:
 -Standard design settings (e.g. -ex1 -ex2) should be applied as usual (excluded to reduce test runtime).
 -A rather small design shell is being used, once again, to reduce test runtime.
 -A single hotspot is selected, though the protein contains multiple hotspots.
 -To reduce the design space, a task operation that restricts designable residues to those contained
-withn the custom database can be used.  The "unseen penalty" restriction will generally prevent these
+withn the custom database can be used.  The "unseen score" restriction will generally prevent these
 residues from being selected, but eliminating them from design space would reduce the number of rotamers
 to sample.  (A resfile is being used for that purpose here.)
 -Aggressively designing against immune epitopes tends to produce unrealistic sequences (especially, produces
@@ -26,7 +29,7 @@ or AAComposition design guidance terms, could also be used here.
 	<SCOREFXNS>
 		<ScoreFunction name="ref_deimm" weights="ref2015.wts">
 		  <Reweight scoretype="mhc_epitope" weight="2"/>
-		  <Set mhc_epitope_setup_file="inputs/propred8_relative.mhc"/>
+		  <Set mhc_epitope_setup_file="inputs/nmer_relative.mhc"/>
 		</ScoreFunction>
 	</SCOREFXNS>
 	
@@ -58,13 +61,13 @@ or AAComposition design guidance terms, could also be used here.
 		<SetupMetalsMover name="setup_metals" contact_residue_selector="metal_coord_res"/>
 		<FavorNativeResidue name="favour_native" bonus="0.75"/>
 		
-		<AddMHCEpitopeConstraintMover name="add_netmhcii_csts" filename="inputs/ycd_netmhcii_72A-91A.mhc" selector="hotspots" weight="1.5"/>
+		<AddMHCEpitopeConstraintMover name="add_netmhcii_csts" filename="inputs/ycd_netmhcii_preload_72A-91A.mhc" selector="hotspots" weight="1.5"/>
 		
 		<SymPackRotamersMover name="pack" scorefxn="ref_deimm" task_operations="init,inccurrent,fix_catalytic,design_around_hotspots,resfile,restrict_aas"/>
 		<TaskAwareSymMinMover name="min" scorefxn="ref_deimm" chi="1" bb="0" task_operations="init,inccurrent,fix_catalytic,design_around_hotspots,resfile,restrict_aas"/>
 	</MOVERS>
 	
-	<PROTOCOLS>	
+	<PROTOCOLS>
 		<Add mover_name="sym"/>
 		<Add mover_name="setup_metals"/>
 		<Add mover_name="favour_native"/>
