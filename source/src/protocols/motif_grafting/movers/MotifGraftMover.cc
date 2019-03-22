@@ -231,7 +231,8 @@ bool MotifGraftMover::get_next_output( core::pose::Pose & work_pose ) {
 	while ( ! passed_filter ) {
 
 		// Get a MotifMatch from the list, potentially using clustering to find a non-redundant one
-		MotifMatch match;
+		MotifMatch match( motif_match_results_.top() ); // Needs to be initialized to something to avoid uninitialized var error in gcc 8.2. (VKM, March 2019)
+		// Note that this code does a lot of copying these MotifMatch objects around.  This could be made more efficient with pointers.
 		numeric::HomogeneousTransform< core::Real > match_xform;
 		if ( gp_r_output_cluster_tolerance_ < 0 ) {
 			match = motif_match_results_.top();
