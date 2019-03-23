@@ -120,7 +120,10 @@ RandomMutation::apply( core::pose::Pose & pose )
 			allow_temp.push_back( restype->aa() );
 		}
 	}
-
+	if ( allow_temp.empty() ) {
+		TR.Warning << "Somehow no residues are allowed, but the target residue was flagged as designable." << std::endl;
+		return;
+	}
 	AA const target_aa( allow_temp[ (core::Size) floor( numeric::random::rg().uniform() * allow_temp.size() ) + 1 ] );
 	utility::vector1< bool > allowed_aas;
 	allowed_aas.clear();
