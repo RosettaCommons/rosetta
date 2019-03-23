@@ -554,6 +554,9 @@ EnergyBasedClusteringProtocol::calc_dist(
 						++offset_index_1; //Move this with index.
 					}
 					if ( ir==(nresidues-ioffset) ) offset_index_1=1; //Reset this if we've reached the wrap-around point.
+					if ( ir==nresidues ) {
+						runtime_assert_string_msg( index-1 == alignmentvect2.size(), errmsg + "INTERNAL PROGRAM ERROR: number of atom mismatch.  This ought not to happen.  Please contact Vikram K. Mulligan (vmulligan@flatironinstitute.org)." );
+					}
 				} //Looping through all residues
 
 				core::Real const curdist = calc_dist(vect1, vect2, clustmode, alignmentvect1, avect2, nresidues, firstpose);
@@ -699,7 +702,7 @@ EnergyBasedClusteringProtocol::alignment_atoms_in_res (
 			) {
 		++numatoms; //O used for clustering
 	}
-	if ( options_.use_CB_ && res.has( res.is_peptoid() ? "CA1" : "CB" ) ) ++numatoms; //Add one atom if "CB" is to be counted.
+	if ( options_.use_CB_ && ( (res.is_peptoid() && res.has( "CA1" ) ) || ( !res.is_peptoid() && ( res.has( "CB" ) || ( type.is_n_methylated() && res.has( "CN" ) ) ) ) ) ) ++numatoms; //Add one atom if "CB" is to be counted.
 	return numatoms;
 }
 
@@ -758,8 +761,8 @@ EnergyBasedClusteringProtocol::use_this_atom(
 				( atname1 == "O" && res1.has_upper_connect() && res1.connected_residue_at_upper()!=0 &&
 				res2.has_upper_connect() && res2.connected_residue_at_upper()!=0
 				) ||
-				( options_.use_CB_ && atname1 == "CB" ) ||
-				atname1 == "CA1"
+				( options_.use_CB_ && ( ( !type1.is_peptoid() && atname1 == "CB" ) || ( type1.is_peptoid() && atname1 == "CA1" ) )
+				)
 				) {
 			return true;
 		}
@@ -835,10 +838,12 @@ EnergyBasedClusteringProtocol::use_in_rmsd(
 
 	//The name of the atom:
 	std::string atname1( utility::strip( pose1.residue(resno).atom_name(atomno), " " ) );
-	if ( atname1 == "CN" && pose1.residue_type(resno).is_alpha_aa() && pose1.residue_type(resno).is_n_methylated() ) atname1 = "CA1"; //Allow N-methyl amino acids to be aligned to peptoids.
-	if ( !pose2.residue_type(resno).has(atname1) ) {
-		if ( atname1 == "CA1" && pose2.residue_type(resno).is_alpha_aa() && pose2.residue_type(resno).is_n_methylated() && pose2.residue_type(resno).has("CN") ) return true;
-		return false;
+	if ( options_.use_CB_ ) {
+		if ( atname1 == "CN" && pose1.residue_type(resno).is_alpha_aa() && pose1.residue_type(resno).is_n_methylated() ) atname1 = "CA1"; //Allow N-methyl amino acids to be aligned to peptoids.
+		if ( !pose2.residue_type(resno).has(atname1) ) {
+			if ( atname1 == "CA1" && pose2.residue_type(resno).is_alpha_aa() && pose2.residue_type(resno).is_n_methylated() && pose2.residue_type(resno).has("CN") ) return true;
+			return false;
+		}
 	}
 
 	if ( use_this_atom( pose1.residue(resno), pose2.residue(resno), atomno, atname1 ) ) return true;
@@ -1369,7 +1374,7 @@ EnergyBasedClusteringProtocol::do_initial_import_and_scoring(
 		}
 
 		if ( count % 100 == 0 ) {
-			TR << count << " structures loaded...";
+			TR << count << " structures loaded..." << std::endl;
 		}
 
 		cluster_assignments.push_back(0); //Initially, every structure is assigned to cluster 0 (unassigned).
