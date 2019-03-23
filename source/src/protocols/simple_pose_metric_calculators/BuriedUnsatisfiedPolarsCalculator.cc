@@ -394,6 +394,7 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 							if ( atom_hbonds.value().has( hatm_id ) && atom_hbonds.value()[ hatm_id ] == 0 ) {
 								h_unsat++;
 								countable_nonheavy_unsats_++;
+								all_bur_unsat_polars_++;
 								atom_bur_unsat_.set( hatm_id, true );
 								// legacy behavior assumes H's will not be added, so should never get here in legacy behavior (same for BUNS2 filter)
 							}
@@ -402,6 +403,7 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 						if ( h_unsat == h_count ) { // every Hpol attached to N donor is unsat, so heavy-atom N is unsat
 							this_atom_bur_unsat = true;
 							all_heavy_unsats_++;
+							all_bur_unsat_polars_++;
 							residue_bur_unsat_polars_[ resnum ]++;
 							if ( this_pose.residue( resnum ).atom_is_backbone( at ) ) {
 								bb_heavy_unsats_++;
@@ -412,6 +414,7 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 						if ( atom_hbonds.value()[ atid ] == 0 ) { // if "OH" this will not be 0
 							this_atom_bur_unsat = true;
 							all_heavy_unsats_++;
+							all_bur_unsat_polars_++;
 							residue_bur_unsat_polars_[ resnum ]++;
 							if ( this_pose.residue( resnum ).atom_is_backbone( at ) ) {
 								bb_heavy_unsats_++;
