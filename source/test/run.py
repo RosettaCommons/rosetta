@@ -104,7 +104,7 @@ class Tester:
 
 
     def mfork(self):
-        ''' Check if number of child process is below Options.jobs. And if it is - fork the new pocees and return its pid.
+        ''' Check if number of child process is below Options.jobs. And if it is - fork the new process and return its pid.
         '''
         while len(self.jobs) >= Options.jobs :
             for p in self.jobs[:] :
@@ -121,6 +121,10 @@ class Tester:
         if pid: self.jobs.append(pid) # We are parent!
         return pid
 
+    def wait_all(self):
+        ''' Wait for all jobs to finish. '''
+        oldjobs, self.jobs = self.jobs, [] # Swap to be safe about adding new jobs while waiting.
+        for p in oldjobs: os.waitpid(p, 0) # waiting for all child process to terminate...
 
     # Try to identity plaform by using scons compiliation feature.
     def getPlatformID(self):
@@ -129,7 +133,8 @@ class Tester:
             self.log( "Skipping platform identification. Using explicit directory instead: " + self.testpath )
             return
         self.log( "Identifying platform...\n")
-        cmd_str = "./scons.py unit_test_platform_only log=platform"
+        # We use sys.executable here, so we use the same Python as the test script (if it was explicitly specified).
+        cmd_str = sys.executable + " ./scons.py unit_test_platform_only log=platform"
         if Options.extras:
             cmd_str += " extras=%s" % (Options.extras)
         if Options.mode:
@@ -188,12 +193,10 @@ class Tester:
         return oi
 
 
-    def runOneLibUnitTests(self, lib, yjson_file, log_file):
-        if Options.one  and  ( (lib, Options.one.split(':')[0]) not in self.all_test_suites_by_lib[lib] ): return
-
+    def runOneLibUnitTests(self, lib, test_name, yjson_file, log_file):
         #self.unitTestLog += self.log("-------- %s --------\n" % E)
         path = "cd " + self.testpath + " && "
-        exe = self.buildCommandLine(lib, Options.one)
+        exe = self.buildCommandLine(lib, test_name)
         print("Command line: %s%s" % (path, exe))
 
         if os.path.isfile(yjson_file): os.remove(yjson_file)
@@ -201,14 +204,17 @@ class Tester:
         output = [ "Running %s unit tests...\n" % lib ]
 
         if( Options.timeout > 0 ):
-            timelimit = sys.executable + ' ' +os.path.abspath('test/timelimit.py') + ' ' + str(Options.timeout * _timeout_factors_.get(lib[:-len('.test')]+':'+Options.one, 1)) + ' '
+            my_timeout = Options.timeout * _timeout_factors_.get(lib[:-len('.test')]+':'+test_name, 1)
+            if ':' not in test_name:
+                my_timeout *= SUITE_FACTOR
+            timelimit = sys.executable + ' ' +os.path.abspath('test/timelimit.py') + ' ' + str(my_timeout) + ' '
         else:
             timelimit = ""
 
         #print( "timelimit:", timelimit )
 
         command_line = path + ' ' + timelimit + exe + " 1>&2"
-        #print 'Executing:', command_line
+        #print( ">>>>>>", 'Executing:', command_line)
 
         f = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr
         if Options.valgrind:
@@ -245,19 +251,25 @@ class Tester:
             data = json.loads(open(yjson_file).read())
             failures = []
             for test in data["ALL_TESTS"]:
-                if test.startswith( Options.one ):
+                if any( [ test.startswith( testname ) for testname in Options.test_list ] ):
                     failures.append( test )
             data["FAILED_TESTS"] = failures
             yjson = open( yjson_file, "w" )
             yjson.write( json.dumps(data) )
             yjson.close()
 
+    def outfileOneSuite(self, lib, suite, extension):
+        filename = self.testpath + '/' + lib + '.' + suite + '.' + extension
+        filename = filename.replace(':','__')
+        return filename
+
     def runOneSuite(self, lib, suite):
+        assert ':' not in suite
         path = "cd " + self.testpath + " && "
         exe = self.buildCommandLine(lib, suite)
 
-        log_file = self.testpath + '/' + lib + '.' + suite + '.log'
-        yjson_file = self.testpath + '/' + lib + '.'+ suite + '.json'
+        log_file = self.outfileOneSuite( lib, suite, 'log' )
+        yjson_file = self.outfileOneSuite( lib, suite, 'json' )
 
         if os.path.isfile(yjson_file): os.remove(yjson_file)
         if os.path.isfile(log_file): os.remove(log_file)
@@ -317,6 +329,54 @@ class Tester:
             yjson.write( json.dumps(data) )
             yjson.close()
 
+    # Obtain the list of valid tests.
+    # Will initialize self.libs_for_test; self.all_tests and self.all_suites
+    def obtainTestList(self):
+        # Contains both tests (with colon) and suite names
+        # Is a one->many mapping, just in case the same suite is named in multiple libraries
+        self.libs_for_test = {} # dictionary of strings -> sets()
+
+        self.all_tests = []
+        self.all_suites = set()
+
+        # To speed up running, launch library finding across multiple jobs
+        for lib in UnitTestExecutable:
+            testlist_output = self.testpath + '/' + lib + '.testlist_output'
+            if os.path.isfile(testlist_output): os.remove(testlist_output)
+            pid = self.mfork()
+            if not pid:  # we are child process
+                exit_code, command_output = execute('Getting list of test for {lib}...'.format(**locals()), self.testpath + '/' + lib + ' _ListAllTests_', return_='tuple', silent=True)
+
+                if exit_code:
+                    # The output doesn't contain a test list, only an error message
+                    print('Could not acquire list of available tests from library {lib}, request terminated with error:\n{command_output}\nTerminating...'.format(**locals()))
+                    sys.exit(1)
+                else:
+                    with open(testlist_output, 'w') as f:
+                        f.write(command_output)
+                    sys.exit(0)
+
+        self.wait_all() # waiting for all child process to terminate...
+
+        # Now parse
+        for lib in UnitTestExecutable:
+            testlist_output = self.testpath + '/' + lib + '.testlist_output'
+            if not os.path.exists( testlist_output ): continue
+            with open(testlist_output) as f:
+                command_output = f.read();
+            os.remove(testlist_output)
+
+            for test in command_output.split():
+                suite = test.split(':')[0]
+
+                self.all_tests.append(test)
+                self.all_suites.add(suite)
+                self.libs_for_test.setdefault(test, set()).add( lib )
+                self.libs_for_test.setdefault(suite, set()).add( lib )
+
+        self.all_tests.sort( key = lambda x: x.lower() )
+        self.all_suites = sorted( self.all_suites );
+
     # Run unit test.
     def runUnitTests(self):
         self.getPlatformID()
@@ -325,90 +385,46 @@ class Tester:
 
         logs_yjsons = {}
 
-        # Getting list of test suites
-        self.all_test_suites = []
-        self.all_test_suites_by_lib = {}
+        # Fill out the test info self variables.
+        self.obtainTestList()
 
-        self.all_tests = []
-
-        for lib in UnitTestExecutable:
-            tests = set()
-
-            exit_code, command_output = execute('Getting list of test for {lib}...'.format(**locals()), self.testpath + '/' + lib + ' _ListAllTests_', return_='tuple', silent=True)
-
-            if exit_code:
-                # The output doesn't contain a test list, only an error message
-                print('Could not acquire list of available tests from library {lib}, request terminated with error:\n{command_output}\nTerminating...'.format(**locals()))
-                sys.exit(1)
-            else:
-                for test in command_output.split():
-                    tests.add( (lib, test.split(':')[0]) )
-                    self.all_tests.append(test)
-
-            self.all_test_suites.extend( tests )
-            self.all_test_suites_by_lib[lib] = tests
-
-
-        self.all_tests.sort( key = lambda x: x.lower() )
-        #print 'Suites:', self.all_test_suites
-        #print 'Tests:', self.all_tests
-
-        if Options.one:  # or Options.jobs < 5:
-            if Options.one not in [s for (l,s) in self.all_test_suites] + self.all_tests:
-                print('\nTest suite %s not found!' % Options.one)
-                print( "Available test suites are: {tests}".format(tests = ' '.join(self.all_tests) ) )
+        # Check tests, and default to running all suites if none specified
+        for test_name in Options.test_list:
+            if test_name not in self.libs_for_test:
+                print('\nTest %s not found!' % test_name)
+                print( "Available tests are: {tests}".format(tests = ' '.join(self.all_tests) ) )
                 sys.exit(1)
 
-            for lib in UnitTestExecutable:
-                log_file = self.testpath + '/' + lib + '.log'
-                yjson_file = self.testpath + '/' + lib + '.json'
+        if len( Options.test_list ) == 0:
+            Options.test_list = self.all_suites
 
-                logs_yjsons[lib] = (log_file, yjson_file)
+        # Actually launch the tests
+        if Options.one:
+            for test_name in Options.test_list:
+                for lib in self.libs_for_test.get(test_name,set()):
 
-                if Options.jobs > 1:
+                    log_file = self.testpath + '/' + lib + '.log'
+                    yjson_file = self.testpath + '/' + lib + '.json'
+
+                    logs_yjsons[lib] = (log_file, yjson_file)
+
                     pid = self.mfork()
-                    if not pid:  # we are child process
-                        self.runOneLibUnitTests(lib, yjson_file, log_file)
+                    if not pid:
+                        self.runOneLibUnitTests(lib, test_name, yjson_file, log_file)
                         sys.exit(0)
 
-                else:
-                    self.runOneLibUnitTests(lib, yjson_file, log_file)
-
-            for p in self.jobs: os.waitpid(p, 0)  # waiting for all child process to termintate...
-
-            # extracting and aggregation results, but only if running all tests
-            if not Options.one:
-                all_results_yjson_file = '.unit_test_results.json'
-                with open(all_results_yjson_file, 'w') as uf:
-                    for lib in logs_yjsons:
-                        (log_file, yjson_file) = logs_yjsons[lib]
-                        with open(log_file, 'r') as f:
-                            info = self.extractInfo( f.read() )
-                        info.name = lib
-                        self.results[lib] = info
-
-                        if not os.path.isfile(yjson_file):
-                            print("Unable to read json file with test results %s - unit test run aborted!" % yjson_file)
-                            os.remove(all_results_yjson_file)
-                            sys.exit(1)
-
-                        # generating summary yjson file for all tests
-                        uf.write(lib + ':\n')
-                        with open(yjson_file, 'w') as f:
-                            for line in f: uf.write("    "+line)
-                        uf.write('\n')
-
-            #self.log( "Run unit tests... Done.\n")
+            self.wait_all()
 
         else: # running Unit test on multiple CPU's, new style, fully parallel
-            for lib, suite in self.all_test_suites:
-                pid = self.mfork()
-                if not pid:  # we are child process
-                    if Options.debug: print('DEBUG MODE ENABLED: Skipping tests run: ' + lib + suite)
-                    else: self.runOneSuite(lib, suite)
-                    sys.exit(0)
+            for suite in Options.test_list:
+                for lib in self.libs_for_test.get( suite, set() ):
+                    pid = self.mfork()
+                    if not pid:  # we are child process
+                        if Options.debug: print('DEBUG MODE ENABLED: Skipping tests run: ' + lib + ' ' + suite)
+                        else: self.runOneSuite(lib, suite)
+                        sys.exit(0)
 
-            for p in self.jobs: os.waitpid(p, 0)  # waiting for all child process to termintate...
+            self.wait_all() # waiting for all child process to termintate...
 
             # Now all tests should be finished, all we have to do is to create a log file and aggegated JSON file to emulate single CPU out run
             all_yjson = {}
@@ -417,19 +433,23 @@ class Tester:
             _finished_ = 'passed'
 
             for lib in UnitTestExecutable:
+                ntests_for_lib = 0
                 log_file = self.testpath + '/' + lib + '.log'
                 yjson_file = self.testpath + '/' + lib + '.json'
 
                 logs_yjsons[lib] = (log_file, yjson_file)
 
+                suites_for_lib = [ suite for suite in Options.test_list if lib in self.libs_for_test.get( suite, set() ) ]
+
                 yjson_data = {}
                 with open(log_file, 'w') as log_file_h:
-                    for l, suite in self.all_test_suites_by_lib[lib]:
-                        suite_log = open(self.testpath + '/' + lib + '.' + suite + '.log').read()
+                    for suite in suites_for_lib:
+                        suite_log = open( self.outfileOneSuite( lib, suite, 'log') ).read()
                         log_file_h.write( suite_log )
 
-                        print('trying: ', self.testpath + '/' + lib + '.' + suite + '.json')
-                        with open(self.testpath + '/' + lib + '.' + suite + '.json') as f:
+                        yjson_suite_file = self.outfileOneSuite( lib, suite, 'json')
+                        print('trying: ', yjson_suite_file)
+                        with open(yjson_suite_file) as f:
                             data = json.loads( f.read() )
 
                         for k in data:
@@ -443,6 +463,8 @@ class Tester:
                         def json_key_from_test(test): return lib[:-len('.test')] + ':' + test.replace(':', ':')  # we might want different separator then ':' in the future
 
                         for test in data['ALL_TESTS']:
+                            if not test.startswith(suite+':'): continue # Only count tests for this suite
+                            ntests_for_lib += 1
                             json_key = json_key_from_test(test)
                             if json_key not in all_json['tests']: all_json['tests'][json_key] = dict(state=_finished_, log='')
 
@@ -457,7 +479,7 @@ class Tester:
 
                 #if 'ALL_TESTS' in yjson_data:
                 if yjson_data:
-                    self.results[lib] = OI(testCount=len(yjson_data['ALL_TESTS']), testFailed=len(yjson_data['FAILED_TESTS']), failedTestsList=yjson_data['FAILED_TESTS'], name=lib)
+                    self.results[lib] = OI(testCount=ntests_for_lib, testFailed=len(yjson_data['FAILED_TESTS']), failedTestsList=yjson_data['FAILED_TESTS'], name=lib)
                     all_yjson[lib] = yjson_data
 
                 logs_yjsons[lib] = (log_file, yjson_file)
@@ -476,19 +498,6 @@ class Tester:
 
             with open('.unit_test_results.json', 'w') as f:
                 json.dump(all_json, f, sort_keys=True, indent=2)
-
-
-        '''
-        error = False
-        for p in self.jobs:
-            r = os.waitpid(p, 0)  # waiting for all child process to termintate...
-            if r[0] == p :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
-                error = True
-
-        if error:
-            print 'Some of the build scripts return an error, PyRosetta build failed!'
-            sys.exit(1)
-        '''
 
 
     def printSummary(self):
@@ -567,7 +576,9 @@ def parse_valgrind_options(options, option_parser):
         sys.exit(1)
 
 def main(args):
-    ''' Script to run Unit test in Rosetta3.  For debugging, you must use the --unmute option to unmute tracers you are interested in.
+    ''' Script to run Unit tests in Rosetta.
+    By default the script will run all unit tests. You can run specific tests by listing them on the command line.
+    It is HIGHLY RECOMMENDED to run a unit test suite (no colon) instead of one unit test!
     '''
     parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]")
     parser.set_description(main.__doc__)
@@ -588,12 +599,10 @@ def main(args):
       help="mode option passed to scons to help identify platform"
     )
 
-
     parser.add_option("-1", "--one",
-      default='', action="store",
-      help="Run just one unit test or one test suite. To run one unit test-suite just specify it name, ie: '--one PDB_IO'. \
-            To run one unit test specify name of test suite, colon, then name of the test it self, like this: '--one PDB_IO:test_pdb_io'.  \
-            It is HIGHLY RECOMMENDED to run one unit test suite instead of one unit test! (when running one test all suites have to be initialized, while when running one suite this is not the case).",
+      default=False, action="store_true",
+      help="Run using the older 'one-by-one' method. \
+            This will automatically be enabled if you specified a subtest (with a colon) instead of a full suite."
     )
 
     parser.add_option("-j", "--jobs",
@@ -605,13 +614,13 @@ def main(args):
     parser.add_option('--mute',
       default=[],
       action="append",
-      help="Mute specified tracer channels. (Note - ALL are MUTED by default!)",
+      help="Mute specified tracer channels. (Note: all channels will be muted by default when more than one test is run.)",
     )
 
     parser.add_option('--unmute',
       default=[],
       action="append",
-      help="UnMute specified tracer channels. (You will need this for debugging as ALL CHANNELS ARE MUTED BY DEFAULT)",
+      help="UnMute specified tracer channels. (Useful when debugging and running more than one test.)",
     )
 
     parser.add_option('--levels',
@@ -621,6 +630,7 @@ def main(args):
     )
 
     parser.add_option('--level',
+      default=[],
       action="append",
       help="Tracer out:level configuration (For example, 400/500)",
     )
@@ -655,8 +665,8 @@ def main(args):
     )
 
     parser.add_option("--timeout",
-      action="store",type="int", default=6,
-      help="Automatically cancel test runs if they are taking longer than the given number of minutes. (Default 6). A value of zero turns off the timeout. Note that some tests might have custom (longer) timeout value for historical reasons."
+      action="store",type="float", default=6,
+      help="Automatically cancel test runs if they are taking longer than the given number of minutes. A value of zero turns off the timeout. Note that some tests might have custom (longer) timeout value for historical reasons."
     )
 
     parser.add_option("--valgrind",
@@ -678,9 +688,16 @@ def main(args):
 
     (options, args) = parser.parse_args(args=args[1:])
 
-    unknown_args = [a.strip() for a in args if a.strip()]
-    if unknown_args:
-        raise ValueError("Unknown options: %s", unknown_args)
+    options.test_list = args
+    # Need old style to run colon-containing tests, due to lack of json output
+    if not options.one and any( ':' in t for t in options.test_list ):
+        print("A subtest (with a colon) was specified: automatically turning on one-by-one running.")
+        options.one = True
+
+    #When specifiying more than one test (or the default of all tests), mute tests unless overridden
+    if len(options.test_list) != 1 and options.mute == [] and options.unmute == [] and options.levels == [] and options.level == []:
+        print("More than one test to run - enabling mute.")
+        options.mute.append("all")
 
     if options.database == parser.get_default_values().database:
         if path.isdir( path.join( "..", "database") ):
@@ -704,9 +721,8 @@ def main(args):
         if os.path.isfile(options.database + '/rotamer/' + fl): break
 
     else:
-        print('WARNING: Clean checkout detected! (no database binary files found) Adding extra 8min to test timeout time...')
+        print('WARNING: Clean checkout detected! (no database binary files found) Adding extra time to timeout time...')
         if options.timeout: options.timeout += 16
-
 
     if not options.valgrind and ( options.trackorigins or options.leakcheck or options.valgrind_path is not None ):
         print("Valgrind specific options set, but Valgrind mode not enabled. Enabling it for you.")
@@ -714,16 +730,15 @@ def main(args):
     if options.valgrind:
         parse_valgrind_options(options,parser)
 
+    # Fiddle with timeout defaults
+    if len(options.test_list) > 0 and options.timeout == parser.get_default_values().timeout:
+        options.timeout = 0 # Don't do timeout (by default) if we've gone to the hassle of manually specifying tests
+
     global Options;  Options = options
-
-
-    #db_path = None
-    #if len(args) <= 1: print "Warning: no database path was specified!"
-    #else: db_path = " ".join(args[1:])
 
     T = Tester()
     T.runUnitTests()
-    if not Options.one: T.printSummary()
+    if not Options.one : T.printSummary()
 
     print("Done!")
 

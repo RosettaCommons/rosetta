@@ -24,7 +24,7 @@ def main(argv):
         print('Usage: "timelimit <number of minutes to wait> <command line> <args...>"')
         return 1
 
-    timeout = int(argv[1])
+    timeout = float(argv[1])
 
     commline = ' '.join(argv[2:])
     proc = subprocess.Popen(["bash", "-c", commline])
