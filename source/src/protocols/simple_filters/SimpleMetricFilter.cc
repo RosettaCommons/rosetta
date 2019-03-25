@@ -88,7 +88,7 @@ core::Real
 SimpleMetricFilter::report_sm( core::pose::Pose const & pose ) const
 {
 	if ( metric_->simple_metric_type() != "RealMetric" ) {
-		TR << "SimpleMetricFilter can only use report_sm for RealMetrics. Returning 0" << std::endl;
+		TR << metric_->name() << "is not a RealMetric. It will have its score reported as 0." << std::endl;
 		return 0;
 	}
 
