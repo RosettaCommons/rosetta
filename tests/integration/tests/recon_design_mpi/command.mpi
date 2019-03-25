@@ -34,6 +34,8 @@ mpirun -np 2 %(bin)s/recon.%(binext)s %(additional_flags)s @options -database %(
      > log_main
  test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
+bash ../../clean_mpi_logs.sh
+
 # making script terminate with error after any command that return non zero exit code
 set -e
 
