@@ -163,6 +163,7 @@ AACompositionEnergy::finalize_total_energy(
 core::Real
 AACompositionEnergy::calculate_energy(
 	utility::vector1< core::conformation::ResidueCOP > const &resvect,
+	utility::vector1< core::Size > const &, //rotamer_ids
 	core::Size const /*substitution_position = 0*/
 ) const {
 	if ( disabled_ ) return 0.0; //Do nothing when disabled.

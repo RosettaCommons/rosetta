@@ -142,8 +142,13 @@ public:
 private:
 
 	/// @brief Calculate the energy given the vector of residue owning pointers.
-	/// @param[in] resvect 1-vector of const-owning pointers to Residue objects representing current state.
-	core::Real calculate_weighted_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect, int const substitution_position=0 );
+	/// @param[in] resvect 1-vector of const-owning pointers to Residue objects representing current state
+	/// @param[in] vector of rotamer state assignments per resid (same dimension as first parameter)
+	core::Real calculate_weighted_energy(
+		utility::vector1< core::conformation::ResidueCOP > const & resvect,
+		utility::vector1< core::Size > const & current_rotamer_ids,
+		int const substitution_position=0
+	);
 
 	/// @brief Initialize symmetry information.
 	/// @details Called by initialize().
@@ -152,7 +157,7 @@ private:
 
 	/// @brief Sets the current consideration.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void set_consideration( int const node_ind, int const node_resid, int const new_state, utility::vector1< std::pair< int, core::conformation::ResidueCOP> > & unset_info );
+	void set_consideration( int const node_ind, int const node_resid, int const new_state, utility::vector1< std::pair< int, core::conformation::ResidueCOP > > & unset_info );
 
 	/// @brief Clears the current consideration.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
@@ -178,6 +183,9 @@ private:
 	/// @brief Const-owning pointers to the current residues.
 	///
 	utility::vector1< core::conformation::ResidueCOP > current_residues_;
+
+	/// @brief holds the current rotamers ids, should always be in sync with current_residues_
+	utility::vector1< core::Size > current_rotamer_ids_;
 
 	/// @brief Current energy.
 	///

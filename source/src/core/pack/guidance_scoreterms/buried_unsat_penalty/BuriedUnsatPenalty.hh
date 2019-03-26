@@ -104,7 +104,11 @@ public:
 	/// @details Called directly by the ResidueArrayAnnealingEvaluator during packer runs.
 	/// @note Outside of the context of the packer, this doesn't behave as expected (and finalize_total_energy() should
 	/// be called instead).
-	core::Real calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect, core::Size const substitution_position = 0 ) const override;
+	core::Real calculate_energy(
+		utility::vector1< core::conformation::ResidueCOP > const &resvect,
+		utility::vector1< core::Size > const & rotamer_ids,
+		core::Size const substitution_position = 0
+	) const override;
 
 	/// @brief What to do when a substitution that was considered is accepted.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).

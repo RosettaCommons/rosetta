@@ -43,7 +43,11 @@ public:
 
 	/// @brief Calculate the energy given a vector of const-owning pointers to Residue objects.
 	/// @details Must be implemented by derived classes.
-	virtual core::Real calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect, core::Size const substitution_position = 0 ) const = 0;
+	virtual core::Real calculate_energy(
+		utility::vector1< core::conformation::ResidueCOP > const & resvect,
+		utility::vector1< core::Size > const & current_rotamer_ids,
+		core::Size const substitution_position = 0
+	) const = 0;
 
 	/// @brief ResidueArrayAnnealableEnergy objects may optionally cache data within the EnergyMethod prior to a packer run.
 	/// This function is defined as doing nothing by default, but can be redefined on a per-EnergyMethod basis to cache whatever

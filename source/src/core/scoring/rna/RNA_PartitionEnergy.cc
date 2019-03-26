@@ -116,7 +116,9 @@ RNA_PartitionEnergy::finalize_total_energy(
 }
 
 core::Real
-RNA_PartitionEnergy::calculate_energy( utility::vector1< core::conformation::ResidueCOP > const & resvect,
+RNA_PartitionEnergy::calculate_energy(
+	utility::vector1< core::conformation::ResidueCOP > const & resvect,
+	utility::vector1< core::Size > const &,
 	core::Size const //substitution_position = 0
 ) const {
 	using namespace core::pose::full_model_info;

@@ -90,7 +90,11 @@ public:
 
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues.
 	/// @details Called directly by the ResidueArrayAnnealingEvaluator during packer runs.
-	core::Real calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect, core::Size const substitution_position = 0 ) const override;
+	core::Real calculate_energy(
+		utility::vector1< core::conformation::ResidueCOP > const &resvect,
+		utility::vector1< core::Size > const & rotamer_ids,
+		core::Size const substitution_position = 0
+	) const override;
 
 	/// @brief Get a summary of all loaded data.
 	///

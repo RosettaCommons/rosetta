@@ -110,7 +110,11 @@ public:
 
 	/// @brief Should be possible to dump the packer from here. Not implemented yet though
 	///
-	core::Real calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect, core::Size const substitution_position = 0 ) const override;
+	core::Real calculate_energy(
+		utility::vector1< core::conformation::ResidueCOP > const &resvect,
+		utility::vector1< core::Size > const & rotamer_ids,
+		core::Size const substitution_position = 0
+	) const override;
 
 
 private:

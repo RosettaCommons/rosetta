@@ -82,7 +82,11 @@ public:
 
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues.
 	/// @details Called by finalize_total_energy().
-	virtual core::Real calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect, core::Size const substitution_position = 0 ) const;
+	virtual core::Real calculate_energy(
+		utility::vector1< core::conformation::ResidueCOP > const & resvect,
+		utility::vector1< core::Size > const & rotamer_ids,
+		core::Size const substitution_position = 0
+	) const;
 
 private:
 

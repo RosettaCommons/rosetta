@@ -118,9 +118,11 @@ public:
 		core::pack::rotamer_set::RotamerSets rot_set; // This is needed for the following function, even though we don't use it.
 		mhc_energy->set_up_residuearrayannealableenergy_for_packing( pose, rot_set, scorefxn );
 
+		utility::vector1< core::Size > const dummy_rotamers( reslist.size(), 0 );
+
 		// Calculate the score using the calculate_energy method.
 		core::Real calc_energy;
-		calc_energy = mhc_energy->calculate_energy( reslist, 0 );
+		calc_energy = mhc_energy->calculate_energy( reslist, dummy_rotamers, 0 );
 		TS_ASSERT_EQUALS( calc_energy, sfxn_energy );
 
 		//// Disable in setup_for_minimizing and make sure the score is now 0.
@@ -129,11 +131,11 @@ public:
 		// Disable the scoreterm for minimization
 		mhc_energy->setup_for_minimizing( pose, scorefxn, minmap );
 		// Calculate the score and make sure it's 0
-		TS_ASSERT_EQUALS( mhc_energy->calculate_energy( reslist, 0 ), 0 );
+		TS_ASSERT_EQUALS( mhc_energy->calculate_energy( reslist, dummy_rotamers, 0 ), 0 );
 
 		// Re-enable post-minimization
 		mhc_energy->finalize_after_minimizing( pose );
-		TS_ASSERT_EQUALS( mhc_energy->calculate_energy( reslist, 0 ), calc_energy );
+		TS_ASSERT_EQUALS( mhc_energy->calculate_energy( reslist, dummy_rotamers, 0 ), calc_energy );
 
 		TR << "End of test_mhc_energy_matrix_scoring." << std::endl;
 	}
@@ -156,10 +158,12 @@ public:
 		// Set up a MHCEpitopeEnergy object
 		MHCEpitopeEnergyOP mhc_energy( utility::pointer::make_shared<MHCEpitopeEnergy>( options ) );
 
+		utility::vector1< core::Size > const dummy_rotamers( reslist.size(), 0 );
+
 		// Set up mhc_energy for packing and calculate the energy before mutation
 		core::pack::rotamer_set::RotamerSets rot_set; // This is needed for the following function, even though we don't use it.
 		mhc_energy->set_up_residuearrayannealableenergy_for_packing( pose, rot_set, scorefxn );
-		mhc_energy->calculate_energy( reslist, 0 );
+		mhc_energy->calculate_energy( reslist, dummy_rotamers, 0 );
 
 		// The position and new ID of the substituted residue.
 		core::Size subst_position = 9;
@@ -177,10 +181,10 @@ public:
 
 		core::Real cache_energy, full_energy;
 		// Calculate the energy by updating the cache at the substitution position only
-		cache_energy = mhc_energy->calculate_energy( reslist, subst_position );
+		cache_energy = mhc_energy->calculate_energy( reslist, dummy_rotamers, subst_position );
 		TS_ASSERT_EQUALS( cache_energy, 7.0 );
 		// Calculate the energy of the full pose, and verify that it's the same
-		full_energy = mhc_energy->calculate_energy( reslist, 0 );
+		full_energy = mhc_energy->calculate_energy( reslist, dummy_rotamers, 0 );
 		TS_ASSERT_EQUALS( full_energy, cache_energy );
 
 		TR << "End of test_mhc_energy_caching." << std::endl;
@@ -353,7 +357,8 @@ public:
 		//Set up mhc_energy for packing and calculate the energy before symmetrizing.
 		core::pack::rotamer_set::RotamerSets rot_set; // This is needed for the following function, even though we don't use it.
 		mhc_energy->set_up_residuearrayannealableenergy_for_packing( pose, rot_set, scorefxn );
-		core::Real presym_score = mhc_energy->calculate_energy( reslist, 0 );
+		utility::vector1< core::Size > const dummy_rotamers( reslist.size(), 0 );
+		core::Real presym_score = mhc_energy->calculate_energy( reslist, dummy_rotamers, 0 );
 
 		//Make a symmetric pose, using a de novo c3 symmetry file.
 		core::Size nsub = 3; //Three subunits in the c3.sym file.

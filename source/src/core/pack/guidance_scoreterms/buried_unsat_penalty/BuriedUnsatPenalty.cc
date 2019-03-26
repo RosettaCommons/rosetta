@@ -174,6 +174,7 @@ void BuriedUnsatPenalty::finalize_total_energy(
 core::Real
 BuriedUnsatPenalty::calculate_energy(
 	utility::vector1< core::conformation::ResidueCOP > const &resvect,
+	utility::vector1< core::Size > const &,
 	core::Size const //substitution_position
 ) const {
 

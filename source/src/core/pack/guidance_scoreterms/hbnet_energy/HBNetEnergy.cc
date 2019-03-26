@@ -145,7 +145,9 @@ void HBNetEnergy::finalize_total_energy(
 		reslist[ir] = pose.conformation().residue_cop(ir);
 	}
 
-	totals[ core::scoring::hbnet ] += calculate_energy(reslist);
+	utility::vector1< core::Size > const zero_rotamers( reslist.size(), 0 );
+
+	totals[ core::scoring::hbnet ] += calculate_energy( reslist, zero_rotamers );
 }
 
 /// @brief Calculate the total energy given a vector of const owning pointers to residues.
@@ -154,6 +156,7 @@ void HBNetEnergy::finalize_total_energy(
 core::Real
 HBNetEnergy::calculate_energy(
 	utility::vector1< core::conformation::ResidueCOP > const & resvect,
+	utility::vector1< core::Size > const &,
 	core::Size const substitution_position /*= 0*/
 ) const {
 	if ( disabled_ ) return 0.0; //Do nothing when disabled.

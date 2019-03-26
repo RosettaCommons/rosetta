@@ -225,6 +225,7 @@ void MHCEpitopeEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFunc
 core::Real
 MHCEpitopeEnergy::calculate_energy(
 	utility::vector1< core::conformation::ResidueCOP > const &reslist,
+	utility::vector1< core::Size > const &,
 	core::Size const substitution_position /* = 0 */
 ) const {
 	if ( disabled_ ) return 0.0; //Do nothing when disabled.

@@ -162,6 +162,7 @@ void NetChargeEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFunct
 core::Real
 NetChargeEnergy::calculate_energy(
 	utility::vector1< core::conformation::ResidueCOP > const &resvect,
+	utility::vector1< core::Size > const &,
 	core::Size const /*substitution_position = 0*/
 ) const {
 	//for(core::Size i=1, imax=resvect.size(); i<=imax; ++i) { TR << i << ":\t" << resvect[i]->name() << "\t" << resvect[i]->seqpos() << std::endl; } //DELETE ME

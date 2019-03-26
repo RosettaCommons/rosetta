@@ -156,6 +156,7 @@ DumpTrajectoryEnergy::set_up_residuearrayannealableenergy_for_packing (
 core::Real
 DumpTrajectoryEnergy::calculate_energy(
 	utility::vector1< core::conformation::ResidueCOP > const &,
+	utility::vector1< core::Size > const &,
 	core::Size const /*substitution_position = 0*/ ) const {
 	return 0;
 }

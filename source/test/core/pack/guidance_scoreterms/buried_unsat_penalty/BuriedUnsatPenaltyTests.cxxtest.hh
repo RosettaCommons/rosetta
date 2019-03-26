@@ -206,6 +206,7 @@ public:
 		//pose.dump_pdb( "BURIED_UNSAT_TESTPOSE_PACKSTEPS_1.pdb" ); //DELETE ME.
 
 		utility::vector1< core::conformation::ResidueCOP > residue_vect( pose.total_residue() );
+		utility::vector1< core::Size > const rotamer_vect( pose.total_residue(), 0 );
 
 		{
 			TR << "TEST 1" << std::endl;
@@ -213,7 +214,7 @@ public:
 			for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
 				residue_vect[i] = pose.conformation().residue_cop(i);
 			}
-			core::Real const score1( scoreterm.calculate_energy(residue_vect, 1) );
+			core::Real const score1( scoreterm.calculate_energy(residue_vect, rotamer_vect,  1) );
 			TR << "Initial score = " << score1 << std::endl;
 			TS_ASSERT_DELTA( score1, 2025, 1e-6 ); // 9 unsatisfieds ((9*5)^2 = 2025)
 			core::scoring::EnergyMap totals;
@@ -235,7 +236,7 @@ public:
 			core::pose::Pose pose2( pose );
 			pose2.replace_residue( 2, *substitution_residue, false );
 			//pose2.dump_pdb( "BURIED_UNSAT_TESTPOSE_PACKSTEPS_2.pdb" ); //DELETE ME.
-			core::Real const score2( scoreterm.calculate_energy(residue_vect, 2) );
+			core::Real const score2( scoreterm.calculate_energy(residue_vect, rotamer_vect, 2) );
 			TR << "Second score = " << score2 << std::endl;
 			TS_ASSERT_DELTA( score2, 3025, 1e-6 ); // 11 unsatisfieds ((11*5)^2 = 3025)
 			core::scoring::EnergyMap totals;
@@ -256,7 +257,7 @@ public:
 			residue_vect[5] = substitution_residue;
 			pose3.replace_residue( 5, *substitution_residue, false );
 			//pose3.dump_pdb( "BURIED_UNSAT_TESTPOSE_PACKSTEPS_3.pdb" ); //DELETE ME.
-			core::Real const score3( scoreterm.calculate_energy(residue_vect, 5) );
+			core::Real const score3( scoreterm.calculate_energy(residue_vect, rotamer_vect, 5) );
 			TR << "Third score = " << score3 << std::endl;
 			TS_ASSERT_DELTA( score3, 3025, 1e-6 ); // 11 unsatisfieds ((11*5)^2 = 3025)
 			core::scoring::EnergyMap totals;
@@ -278,7 +279,7 @@ public:
 			residue_vect[8] = substitution_residue;
 			pose4.replace_residue( 8, *substitution_residue, false );
 			//pose4.dump_pdb( "BURIED_UNSAT_TESTPOSE_PACKSTEPS_4.pdb" ); //DELETE ME.
-			core::Real const score4( scoreterm.calculate_energy(residue_vect, 8) );
+			core::Real const score4( scoreterm.calculate_energy(residue_vect, rotamer_vect, 8) );
 			TR << "Fourth score = " << score4 << std::endl;
 			TS_ASSERT_DELTA( score4, 4225, 1e-6 ); // 13 unsatisfieds ((13*5)^2 = 4225)
 			core::scoring::EnergyMap totals;
@@ -297,7 +298,7 @@ public:
 			residue_vect[8] = substitution_residue;
 			pose5.replace_residue( 8, *substitution_residue, false );
 			//pose5.dump_pdb( "BURIED_UNSAT_TESTPOSE_PACKSTEPS_5.pdb" ); //DELETE ME.
-			core::Real const score5( scoreterm.calculate_energy(residue_vect, 8) );
+			core::Real const score5( scoreterm.calculate_energy(residue_vect, rotamer_vect, 8) );
 			TR << "Fifth score = " << score5 << std::endl;
 			TS_ASSERT_DELTA( score5, 3025, 1e-6 ); // 11 unsatisfieds ((11*5)^2 = 3025)
 			core::scoring::EnergyMap totals;
@@ -315,7 +316,7 @@ public:
 			residue_vect[5] = substitution_residue;
 			pose6.replace_residue( 5, *substitution_residue, false );
 			//pose6.dump_pdb( "BURIED_UNSAT_TESTPOSE_PACKSTEPS_6.pdb" ); //DELETE ME.
-			core::Real const score6( scoreterm.calculate_energy(residue_vect, 5) );
+			core::Real const score6( scoreterm.calculate_energy(residue_vect, rotamer_vect, 5) );
 			TR << "Fifth score = " << score6 << std::endl;
 			TS_ASSERT_DELTA( score6, 3025, 1e-6 ); // 11 unsatisfieds ((11*5)^2 = 3025)
 			core::scoring::EnergyMap totals;
@@ -333,7 +334,7 @@ public:
 			residue_vect[8] = substitution_residue;
 			pose7.replace_residue( 8, *substitution_residue, false );
 			//pose7.dump_pdb( "BURIED_UNSAT_TESTPOSE_PACKSTEPS_7.pdb" ); //DELETE ME.
-			core::Real const score7( scoreterm.calculate_energy(residue_vect, 8) );
+			core::Real const score7( scoreterm.calculate_energy(residue_vect, rotamer_vect, 8) );
 			TR << "Fifth score = " << score7 << std::endl;
 			TS_ASSERT_DELTA( score7, 2025, 1e-6 ); // 9 unsatisfieds ((9*5)^2 = 2025)
 			core::scoring::EnergyMap totals;

@@ -61,6 +61,7 @@ ResidueArrayAnnealingEvaluator::ResidueArrayAnnealingEvaluator():
 	weighted_energy_methods_(),
 	source_pose_residues_(),
 	current_residues_(),
+	current_rotamer_ids_(),
 	//current_energy_,
 	considered_node_(0),
 	considered_state_(0),
@@ -87,6 +88,7 @@ ResidueArrayAnnealingEvaluator::ResidueArrayAnnealingEvaluator( ResidueArrayAnne
 	weighted_energy_methods_( src.weighted_energy_methods_ ),
 	source_pose_residues_( src.source_pose_residues_ ),
 	current_residues_( src.current_residues_ ),
+	current_rotamer_ids_( src.current_rotamer_ids_ ),
 	//current_energy_,
 	considered_node_( src.considered_node_ ),
 	considered_state_( src.considered_state_ ),
@@ -261,17 +263,21 @@ void ResidueArrayAnnealingEvaluator::set_consideration (
 ) {
 	using namespace core::conformation;
 
-	unset_information.push_back( std::pair< int, ResidueCOP>( node_resid, current_residues_.at(node_resid) ) );
+	unset_information.push_back( std::pair< int, ResidueCOP >( node_resid, current_residues_.at(node_resid) ) );
 
 	current_residues_[ node_resid ] = per_node_rotamer_sets_.at(node_ind)->rotamer(new_state);
+	current_rotamer_ids_[ node_resid ] = new_state;
 
 	//If this is the symmetric case, we also need to update the symmetric nodes:
 	if ( is_symmetric_ ) {
 		utility::vector1 < core::Size > const & dependent_nodes( dependent_node_map_.at( node_ind ) );
 		utility::vector1 < core::Size > const & dependent_residues( dependent_residue_map_.at( node_ind ) );
 		for ( core::Size i=1, imax=dependent_nodes.size(); i<=imax; ++i ) {
-			unset_information.push_back( std::pair< int, ResidueCOP>( static_cast<int>( dependent_residues[i] ), current_residues_.at( dependent_residues[i] ) ) );
+			int const j = static_cast<int>( dependent_residues[i] );
+			auto const & j_res_cop = current_residues_.at( dependent_residues[i] );
+			unset_information.push_back( std::pair< int, ResidueCOP>( j, j_res_cop ) );
 			current_residues_[ dependent_residues[i] ] = per_node_rotamer_sets_.at( dependent_nodes[i] )->rotamer(new_state);
+			current_rotamer_ids_[ dependent_residues[i] ] = new_state;
 		}
 	}
 }
@@ -297,7 +303,8 @@ void ResidueArrayAnnealingEvaluator::blanket_assign_state_0()
 {
 	// State zero is not well defined for this model, assigned to the pose's origin residue.
 	current_residues_ = source_pose_residues_;
-	current_energy_ = calculate_weighted_energy( current_residues_ );
+	current_rotamer_ids_.assign( current_residues_.size(), 0 );
+	current_energy_ = calculate_weighted_energy( current_residues_, current_rotamer_ids_ );
 
 	clear_consideration();
 }
@@ -306,7 +313,7 @@ bool ResidueArrayAnnealingEvaluator::any_vertex_state_unassigned() const
 {
 	for ( int node_ind = 1; node_ind <= get_num_nodes(); ++node_ind ) {
 		int resid = per_node_rotamer_sets_.at(node_ind)->resid();
-
+		//maybe use current_rotamer_ids_ here?
 		if ( current_residues_.at(resid) == source_pose_residues_.at(resid) ) {
 			return true;
 		}
@@ -317,7 +324,9 @@ bool ResidueArrayAnnealingEvaluator::any_vertex_state_unassigned() const
 
 core::PackerEnergy ResidueArrayAnnealingEvaluator::set_state_for_node(int node_ind , int new_state)
 {
-	current_residues_.at(per_node_rotamer_sets_.at(node_ind)->resid()) = per_node_rotamer_sets_.at(node_ind)->rotamer(new_state);
+	auto const resid = per_node_rotamer_sets_.at(node_ind)->resid();
+	current_residues_.at( resid ) = per_node_rotamer_sets_.at(node_ind)->rotamer(new_state);
+	current_rotamer_ids_[ resid ] = new_state;
 
 	//If this is the symmetric case, we also need to update the symmetric nodes:
 	if ( is_symmetric_ ) {
@@ -325,10 +334,11 @@ core::PackerEnergy ResidueArrayAnnealingEvaluator::set_state_for_node(int node_i
 		utility::vector1 < core::Size > const & dependent_residues( dependent_residue_map_.at( node_ind ) );
 		for ( core::Size i=1, imax=dependent_nodes.size(); i<=imax; ++i ) {
 			current_residues_.at( dependent_residues[i] ) = per_node_rotamer_sets_.at( dependent_nodes[i] )->rotamer(new_state);
+			current_rotamer_ids_[ dependent_residues[i] ] = new_state;
 		}
 	}
 
-	current_energy_ = calculate_weighted_energy( current_residues_ );
+	current_energy_ = calculate_weighted_energy( current_residues_, current_rotamer_ids_ );
 
 	clear_consideration();
 
@@ -338,8 +348,10 @@ core::PackerEnergy ResidueArrayAnnealingEvaluator::set_state_for_node(int node_i
 core::PackerEnergy ResidueArrayAnnealingEvaluator::set_network_state( ObjexxFCL::FArray1_int & state_array )
 {
 	for ( int node_ind = 1; node_ind <= get_num_nodes(); ++node_ind ) {
-		int new_state = state_array(node_ind);
-		current_residues_.at(per_node_rotamer_sets_.at(node_ind)->resid()) = per_node_rotamer_sets_.at(node_ind)->rotamer(new_state);
+		int const new_state = state_array(node_ind);
+		auto const resid = per_node_rotamer_sets_.at(node_ind)->resid();
+		current_residues_.at( resid ) = per_node_rotamer_sets_.at(node_ind)->rotamer(new_state);
+		current_rotamer_ids_[ resid ] = new_state;
 
 		//If this is the symmetric case, we also need to update the symmetric nodes:
 		if ( is_symmetric_ ) {
@@ -347,11 +359,12 @@ core::PackerEnergy ResidueArrayAnnealingEvaluator::set_network_state( ObjexxFCL:
 			utility::vector1 < core::Size > const & dependent_residues( dependent_residue_map_.at( node_ind ) );
 			for ( core::Size i=1, imax=dependent_nodes.size(); i<=imax; ++i ) {
 				current_residues_.at( dependent_residues[i] ) = per_node_rotamer_sets_.at( dependent_nodes[i] )->rotamer(new_state);
+				current_rotamer_ids_[ dependent_residues[i] ] = new_state;
 			}
 		}
 	}
 
-	current_energy_ = calculate_weighted_energy( current_residues_ );
+	current_energy_ = calculate_weighted_energy( current_residues_, current_rotamer_ids_ );
 
 	clear_consideration();
 
@@ -372,7 +385,7 @@ void ResidueArrayAnnealingEvaluator::consider_substitution(
 
 	considered_node_ = node_ind;
 	considered_state_ = new_state;
-	considered_energy_ = calculate_weighted_energy( current_residues_, node_resid );
+	considered_energy_ = calculate_weighted_energy( current_residues_, current_rotamer_ids_, node_resid );
 
 	unset_consideration( unset_information );
 
@@ -413,11 +426,16 @@ ResidueArrayAnnealingEvaluator::clean_up_after_packing(
 	}
 }
 
-core::Real ResidueArrayAnnealingEvaluator::calculate_weighted_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect, int const substitution_position ) {
+core::Real
+ResidueArrayAnnealingEvaluator::calculate_weighted_energy(
+	utility::vector1< core::conformation::ResidueCOP > const & resvect,
+	utility::vector1< core::Size > const & current_rotamer_ids,
+	int const substitution_position
+) {
 	core::Real result = 0;
 
 	for ( WeightedMethodPair const & method : weighted_energy_methods_ ) {
-		result += method.first * method.second->calculate_energy( resvect, substitution_position );
+		result += method.first * method.second->calculate_energy( resvect, current_rotamer_ids, substitution_position );
 	}
 
 	return result;

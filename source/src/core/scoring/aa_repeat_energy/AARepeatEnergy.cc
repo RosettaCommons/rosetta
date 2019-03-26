@@ -127,7 +127,9 @@ void AARepeatEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFuncti
 		resvector.push_back( pose.residue(ir).get_self_ptr() );
 	}
 
-	totals[ aa_repeat ] += calculate_energy( resvector ); //Using the vector of residue owning pointers, calculate the repeat energy (unweighted) and set the aa_repeat_energy to this value.
+	utility::vector1< core::Size > const zero_rotamers( resvector.size(), 0 );
+
+	totals[ aa_repeat ] += calculate_energy( resvector, zero_rotamers ); //Using the vector of residue owning pointers, calculate the repeat energy (unweighted) and set the aa_repeat_energy to this value.
 
 	return;
 }
@@ -135,7 +137,8 @@ void AARepeatEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFuncti
 /// @brief Calculate the total energy given a vector of const owning pointers to residues.
 /// @details Called by finalize_total_energy().
 core::Real AARepeatEnergy::calculate_energy(
-	utility::vector1< core::conformation::ResidueCOP > const &resvect,
+	utility::vector1< core::conformation::ResidueCOP > const & resvect,
+	utility::vector1< core::Size > const &,
 	core::Size const /*substitution_position = 0*/
 ) const {
 	core::Size const nres( resvect.size() );

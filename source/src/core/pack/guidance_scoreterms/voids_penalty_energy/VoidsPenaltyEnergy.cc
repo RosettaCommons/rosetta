@@ -168,6 +168,7 @@ void VoidsPenaltyEnergy::finalize_total_energy(
 core::Real
 VoidsPenaltyEnergy::calculate_energy(
 	utility::vector1< core::conformation::ResidueCOP > const &resvect,
+	utility::vector1< core::Size > const &,
 	core::Size const //substitution_position
 ) const {
 	debug_assert(resvect.size() == rotamer_volumes_.size());
