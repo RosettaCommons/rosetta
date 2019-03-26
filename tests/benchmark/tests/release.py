@@ -440,6 +440,36 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
     return results
 
 
+_index_html_template_ = '''\
+<html>
+<head>
+    <title>PyRosetta conda package</title>
+
+  <style>
+    fixed {{background-color: #eee; white-space: pre-wrap; font-family: Monaco, 'Liberation Mono', Courier, monospace; font-size:12px; }}
+  </style>
+</head>
+<body>
+<p>
+    To install this PyRosetta conda package:
+    <ul>
+        <li>
+        please add <fixed>graylab.jhu.edu/download/PyRosetta4/conda/{release_kind}</fixed> into your local <fixed>~/.condarc</fixed> file, like:<br/><br/>
+<fixed>channels:
+  - https://USERNAME:PASSWORD@https://graylab.jhu.edu/download/PyRosetta4/conda/{release_kind}
+</fixed>
+<br/><br/>(ask for user-name and password in RosettaCommons Slack <fixed>#PyRosetta</fixed> channel)
+        </li>
+        <li> Then run <fixed>conda install pyrosetta={conda_package_version}</fixed> to install <em>this<em> build.
+        </li>
+
+    </ul>
+</p>
+
+</body></html>
+'''
+
+
 _conda_setup_only_build_sh_template_ = '''\
 #Configure!/bin/bash
 #http://redsymbol.net/articles/unofficial-bash-strict-mode/
@@ -565,8 +595,38 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
             # --output              Output the conda package filename which would have been created
             # --output-folder OUTPUT_FOLDER folder to dump output package to. Package are moved here if build or test succeeds. Destination folder must exist prior to using this.
 
-            conda_package_dir = working_dir + '/conda_package';  os.makedirs(conda_package_dir)
+            release_kind = 'release' if config['branch'] == 'release' else 'devel'
+            conda_release_path = '{release_dir}/PyRosetta4/conda/{release_kind}'.format(release_dir=config['release_root'], release_kind = release_kind)
+            if not os.path.isdir(conda_release_path): os.makedirs(conda_release_path)
 
+            conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet {recipe_dir}  --output-folder {conda_release_path}'
+            conda_package = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True).split()[0]  # removing '\n' at the end
+
+            TR(f'Building Conda package: {conda_package}...')
+            res, conda_log = execute('Creating Conda package...', conda_build_command_line, return_='tuple', add_message_and_command_line_to_output=True)
+
+            results[_LogKey_]  += f'Got package name from conda build command line `{conda_build_command_line}` : {conda_package}\n' + conda_log
+            with open(working_dir+'/conda-build-log.txt', 'w') as f: f.write( to_unicode(conda_log) )
+
+            if res:
+                results[_StateKey_] = _S_script_failed_
+                results[_LogKey_]  += conda_log
+            else:
+                execute('Regenerating Conda package index...', f'{conda.activate_base} && cd {conda_release_path} && conda index .')
+
+                conda_package_version = conda_package.split('/')[-1].split('-')[1]
+                with open(f'{working_dir}/index.html', 'w') as f: f.write( _index_html_template_.format(**vars() ) )
+
+
+            if not debug:
+                for d in [conda.root, package_dir]: shutil.rmtree(d)  # removing packages to keep size of Benchmark database small
+
+            # res_code = _S_passed_
+            # results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+
+
+            '''
             conda_token = config.get('conda_token', '')
             maybe_upload = f' --channel rosettacommons --user rosettacommons --token {conda_token}' if conda_token and config['branch'] == 'release' else ''
             #maybe_upload = f' --channel rosettacommons --user rosettacommons --token {conda_token} --label devel' if conda_token else ''
@@ -588,11 +648,13 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
             else:
                 release('PyRosetta4', release_name, None, working_dir, platform, config, release_as_git_repository = False, file = conda_package)
 
-            for d in [conda.root, package_dir, conda_package_dir]: shutil.rmtree(d)  # removing packages to keep size of Benchmark database small
+            if not debug:
+                for d in [conda.root, package_dir, conda_package_dir]: shutil.rmtree(d)  # removing packages to keep size of Benchmark database small
 
             # res_code = _S_passed_
             # results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
             with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+            '''
 
     return results
 

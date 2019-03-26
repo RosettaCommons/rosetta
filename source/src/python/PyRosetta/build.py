@@ -333,9 +333,14 @@ def link_supplemental_files(rosetta_source_path):
     prefix = get_binding_build_root(rosetta_source_path, build=True)
     source = rosetta_source_path + '/src/python/PyRosetta/src'
 
+    # remove broken symlinks if any (possibly from previous build attempts)
+    for dir_name, dirs, files in os.walk(prefix):
+        for p in dirs+files:
+            path = dir_name + '/' + p
+            if os.path.islink(path) and not os.path.exists(path): os.unlink(path)
+
     #distutils.dir_util.copy_tree(source, prefix, update=False)
     symlink_tree(source, prefix)
-
 
     # database_dest = prefix + '/pyrosetta/database'
     # if os.path.islink(database_dest): os.unlink(database_dest)
@@ -345,6 +350,7 @@ def link_supplemental_files(rosetta_source_path):
 
     #if not os.path.islink(prefix + '/apps'): os.symlink('../../../../../../../scripts/PyRosetta/public', prefix + '/apps')  # creating link to PyRosetta apps dir
     symlink(rosetta_source_path + '/scripts/PyRosetta/public', prefix + '/apps')
+
 
 
 def setup_source_directory_links(rosetta_source_path):

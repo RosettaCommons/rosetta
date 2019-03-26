@@ -125,7 +125,7 @@ def _is_interactive():
     import __main__ as main
     return not hasattr(main, '__file__')
 
-def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, notebook=None):
+def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, notebook=None, silent=False):
     """Initialize Rosetta.  Includes core data and global options.
 
     options string with default Rosetta command-line options args.
@@ -174,7 +174,7 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
     v = rosetta.utility.vector1_string()
     v.extend(args)
 
-    print( version() )
+    if not silent: print( version() )
     logger.info( version() )
     rosetta.protocols.init.init(v)
 
