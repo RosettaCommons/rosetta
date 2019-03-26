@@ -257,7 +257,7 @@ NMerSVMEnergy::read_nmer_svm_list( std::string const & svm_list_fname ) {
 	all_nmer_svms_.clear();
 
 	//now loop over all names in list
-	utility::vector1< std::string > const lines( utility::split(svm_list_contents) );
+	utility::vector1< std::string > const lines( utility::split_by_newlines(svm_list_contents) );
 	for ( std::string const & line : lines ) {
 		utility::vector1< std::string > const tokens( utility::split( line ) );
 		//skip comments
@@ -300,7 +300,7 @@ NMerSVMEnergy::read_nmer_svm_rank_list( std::string const & svm_rank_list_fname 
 	TR << "reading NMerSVMEnergy rank list from " << svm_rank_list_fname << std::endl;
 
 	//now loop over all names in list
-	utility::vector1< std::string > const lines( utility::split(svm_rank_list_contents) );
+	utility::vector1< std::string > const lines( utility::split_by_newlines(svm_rank_list_contents) );
 	for ( std::string const & line : lines ) {
 		utility::vector1< std::string > const tokens( utility::split( line ) );
 		//skip comments
