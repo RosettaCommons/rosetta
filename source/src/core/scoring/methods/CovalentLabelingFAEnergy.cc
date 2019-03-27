@@ -118,10 +118,7 @@ CovalentLabelingFAEnergy::residue_energy(
 					numeric::xyzVector<core::Real> norm_CA_target_vector = (residue.xyz(target_atom) - residue.xyz("CA"))/(residue.xyz(target_atom).distance(residue.xyz("CA")));
 					numeric::xyzVector<core::Real> norm_neighbor_vector = (pose.residue(res_count_neighbor).xyz(neighbor_atom)-residue.xyz("CA"))/(pose.residue(res_count_neighbor).xyz(neighbor_atom).distance(residue.xyz("CA")));
 					angle = std::acos(norm_CA_target_vector.dot(norm_neighbor_vector));
-					if ( angle > numeric::NumericTraits< float >::pi_2() ) {
-						angle = 0.0;
-					}
-					neighbor_count += 1.0/(1.0 + std::exp(1.0*(distance-9.0)))*1.0/(1.0 + std::exp(numeric::NumericTraits< float >::pi()*2.0*(angle-numeric::NumericTraits< float >::pi_2()/2.0)));
+					neighbor_count += 1.0/(1.0 + std::exp(1.0*(distance-9.0)))*1.0/(1.0 + std::exp(numeric::NumericTraits< float >::pi()*2.0*(angle-numeric::NumericTraits< float >::pi())));
 				}
 			}
 			emap[covalent_labeling_fa] += -1.0/(1.0 + std::exp(10.0*(std::abs(neighbor_count - nc_from_file)-2.0)));
@@ -132,7 +129,7 @@ CovalentLabelingFAEnergy::residue_energy(
 void
 CovalentLabelingFAEnergy::indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const
 {
-	context_graphs_required[ twelve_A_neighbor_graph ] = true;
+	context_graphs_required[ twelve_A_neighbor_graph ] = false;
 }
 
 

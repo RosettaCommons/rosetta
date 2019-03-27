@@ -62,7 +62,6 @@ using namespace pose;
 
 OPT_KEY( Real, dist_midpoint )
 OPT_KEY( Real, dist_steepness )
-OPT_KEY( Real, cone_angle )
 OPT_KEY( Real, angle_midpoint )
 OPT_KEY( Real, angle_steepness )
 OPT_KEY( Boolean, sphere_method )
@@ -78,9 +77,6 @@ void sphere_FA_nc_calculator ( pose::Pose pose, core::Real distance_fn_midpoint,
 	for ( core::Size res_count_target = 1; res_count_target <= num_residues; res_count_target++ ) {
 		core::Real neighbor_count (0.0);
 		std::string target_atom ("CA");
-		if ( pose.residue(res_count_target).type().name1() == 'G' ) {
-			target_atom = "1HA";
-		}
 		for ( core::Size res_count_neighbor = 1; res_count_neighbor <= num_residues; res_count_neighbor++ ) {
 			if ( pose.residue(res_count_target).seqpos() != pose.residue(res_count_neighbor).seqpos() ) {
 				std::string neighbor_atom ("CB");
@@ -101,9 +97,6 @@ void sphere_FA_nc_anyatom_calculator ( pose::Pose pose, core::Real distance_fn_m
 	for ( core::Size res_count_target = 1; res_count_target <= num_residues; res_count_target++ ) {
 		core::Real neighbor_count (0.0);
 		std::string target_atom ("CA");
-		if ( pose.residue(res_count_target).type().name1() == 'G' ) {
-			target_atom = "1HA";
-		}
 		for ( core::Size res_count_neighbor = 1; res_count_neighbor <= num_residues; res_count_neighbor++ ) {
 			if ( pose.residue(res_count_target).seqpos() != pose.residue(res_count_neighbor).seqpos() ) {
 				std::string neighbor_atom (pose.residue(res_count_neighbor).atom_name(1));
@@ -137,7 +130,7 @@ void sphere_cen_nc_calculator ( pose::Pose pose, core::Real distance_fn_midpoint
 }
 
 // Cone FA Method
-void cone_FA_nc_calculator ( pose::Pose pose, core::Real distance_fn_midpoint, core::Real distance_fn_steepness, core::Real angle_fn_midpoint, core::Real angle_fn_steepness, core::Real cone_angle_cutoff ) {
+void cone_FA_nc_calculator ( pose::Pose pose, core::Real distance_fn_midpoint, core::Real distance_fn_steepness, core::Real angle_fn_midpoint, core::Real angle_fn_steepness ) {
 	core::Size const num_residues (pose.total_residue());
 	for ( core::Size res_count_target = 1; res_count_target <= num_residues; res_count_target++ ) {
 		core::Real neighbor_count (0.0);
@@ -159,9 +152,6 @@ void cone_FA_nc_calculator ( pose::Pose pose, core::Real distance_fn_midpoint, c
 				numeric::xyzVector<core::Real> norm_target_vector = target_vector/distance_internal;
 				numeric::xyzVector<core::Real> norm_neighbor_vector = neighbor_vector/distance_to_neighbor;
 				core::Real angle = std::acos(norm_target_vector.dot(norm_neighbor_vector));
-				if ( angle > cone_angle_cutoff ) {
-					angle = 0.0;
-				}
 				neighbor_count += 1.0/(1.0 + std::exp(distance_fn_steepness*(distance_to_neighbor-distance_fn_midpoint)))*1.0/(1.0 + std::exp(angle_fn_steepness*(angle-angle_fn_midpoint)));
 			}
 		}
@@ -170,7 +160,7 @@ void cone_FA_nc_calculator ( pose::Pose pose, core::Real distance_fn_midpoint, c
 }
 
 // Cone FA Closest Atom Method
-void cone_FA_nc_anyatom_calculator ( pose::Pose pose, core::Real distance_fn_midpoint, core::Real distance_fn_steepness, core::Real angle_fn_midpoint, core::Real angle_fn_steepness, core::Real cone_angle_cutoff ) {
+void cone_FA_nc_anyatom_calculator ( pose::Pose pose, core::Real distance_fn_midpoint, core::Real distance_fn_steepness, core::Real angle_fn_midpoint, core::Real angle_fn_steepness ) {
 	core::Size const num_residues (pose.total_residue());
 	for ( core::Size res_count_target = 1; res_count_target <= num_residues; res_count_target++ ) {
 		core::Real neighbor_count (0.0);
@@ -194,9 +184,6 @@ void cone_FA_nc_anyatom_calculator ( pose::Pose pose, core::Real distance_fn_mid
 				numeric::xyzVector<core::Real> norm_target_vector = target_vector/distance_internal;
 				numeric::xyzVector<core::Real> norm_neighbor_vector = neighbor_vector/distance_to_neighbor;
 				core::Real angle = std::acos(norm_target_vector.dot(norm_neighbor_vector));
-				if ( angle > cone_angle_cutoff ) {
-					angle = 0.0;
-				}
 				neighbor_count += 1.0/(1.0 + std::exp(distance_fn_steepness*(distance_to_neighbor-distance_fn_midpoint)))*1.0/(1.0 + std::exp(angle_fn_steepness*(angle-angle_fn_midpoint)));
 			}
 		}
@@ -205,7 +192,7 @@ void cone_FA_nc_anyatom_calculator ( pose::Pose pose, core::Real distance_fn_mid
 }
 
 // Cone Centroid Method
-void cone_cen_nc_calculator ( pose::Pose pose, core::Real distance_fn_midpoint, core::Real distance_fn_steepness, core::Real angle_fn_midpoint, core::Real angle_fn_steepness, core::Real cone_angle_cutoff ) {
+void cone_cen_nc_calculator ( pose::Pose pose, core::Real distance_fn_midpoint, core::Real distance_fn_steepness, core::Real angle_fn_midpoint, core::Real angle_fn_steepness ) {
 	core::Size const num_residues (pose.total_residue());
 	std::string target_vector_start ("CA");
 	std::string target ("CEN");
@@ -220,9 +207,6 @@ void cone_cen_nc_calculator ( pose::Pose pose, core::Real distance_fn_midpoint, 
 				numeric::xyzVector<core::Real> norm_target_vector = target_vector/distance_internal;
 				numeric::xyzVector<core::Real> norm_neighbor_vector = neighbor_vector/distance_to_neighbor;
 				core::Real angle = std::acos(norm_target_vector.dot(norm_neighbor_vector));
-				if ( angle > cone_angle_cutoff ) {
-					angle = 0.0;
-				}
 				neighbor_count += 1.0/(1.0 + std::exp(distance_fn_steepness*(distance_to_neighbor-distance_fn_midpoint)))*1.0/(1.0 + std::exp(angle_fn_steepness*(angle-angle_fn_midpoint)));
 			}
 		}
@@ -236,8 +220,7 @@ int main( int argc, char * argv [] ){
 
 		NEW_OPT( dist_midpoint, "midpoint of distance falloff", 9.0);
 		NEW_OPT( dist_steepness, "exponent factor for distance falloff", 1.0);
-		NEW_OPT( cone_angle, "angle cutoff for cone", numeric::NumericTraits< float >::pi_2());
-		NEW_OPT( angle_midpoint, "midpoint of angle falloff", numeric::NumericTraits< float >::pi_2()/2.0);
+		NEW_OPT( angle_midpoint, "midpoint of angle falloff", numeric::NumericTraits< float >::pi()/2.0);
 		NEW_OPT( angle_steepness, "exponent factor for angle falloff", numeric::NumericTraits< float >::pi()*2.0);
 		NEW_OPT( sphere_method, "calculate neighbor count based upon SPHERE method", false);
 		NEW_OPT( cone_method, "calculate neighbor count based upon the CONE method", false);
@@ -256,7 +239,6 @@ int main( int argc, char * argv [] ){
 
 		core::Real distance_fn_midpoint = option[ dist_midpoint ];
 		core::Real distance_fn_steepness = option[ dist_steepness ];
-		core::Real cone_angle_cutoff = option[ cone_angle ];
 		core::Real angle_fn_midpoint = option[ angle_midpoint ];
 		core::Real angle_fn_steepness = option[ angle_steepness ];
 		bool sphere = option[ sphere_method ];
@@ -277,7 +259,7 @@ int main( int argc, char * argv [] ){
 				sphere_cen_nc_calculator( pose, distance_fn_midpoint, distance_fn_steepness );
 			}
 			if ( cone == true ) {
-				cone_cen_nc_calculator( pose, distance_fn_midpoint, distance_fn_steepness, angle_fn_midpoint, angle_fn_steepness, cone_angle_cutoff );
+				cone_cen_nc_calculator( pose, distance_fn_midpoint, distance_fn_steepness, angle_fn_midpoint, angle_fn_steepness );
 			}
 		}
 
@@ -293,10 +275,10 @@ int main( int argc, char * argv [] ){
 			}
 			if ( cone == true ) {
 				if ( closest_atom == true ) {
-					cone_FA_nc_anyatom_calculator( pose, distance_fn_midpoint, distance_fn_steepness, angle_fn_midpoint, angle_fn_steepness, cone_angle_cutoff );
+					cone_FA_nc_anyatom_calculator( pose, distance_fn_midpoint, distance_fn_steepness, angle_fn_midpoint, angle_fn_steepness );
 				}
 				if ( closest_atom == false ) {
-					cone_FA_nc_calculator( pose, distance_fn_midpoint, distance_fn_steepness, angle_fn_midpoint, angle_fn_steepness, cone_angle_cutoff );
+					cone_FA_nc_calculator( pose, distance_fn_midpoint, distance_fn_steepness, angle_fn_midpoint, angle_fn_steepness );
 				}
 			}
 		}
