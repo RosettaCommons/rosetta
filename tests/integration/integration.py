@@ -799,13 +799,13 @@ def order_tests(tests):
     ordered = []
     # Anything extremely long in debug mode should not be run on the test server.
     tabooed = ["tests/remodel", "tests/remodel_disulfides", "tests/inverse_rotamer_remodel", "tests/pepspec", "tests/bridge_chains",
-              "tests/mp_relax_w_ligand", "tests/membrane_relax", "tests/membrane_relax_hbond", "tests/continuous_sewing_hasher", 
+              "tests/mp_relax_w_ligand", "tests/membrane_relax", "tests/membrane_relax_hbond", "tests/continuous_sewing_hasher",
               "tests/discontinuous_sewing_hasher"]
-                                
+
     for test in tests:
         # skip tabooed-for-debug tests
         if test in tabooed and Options.mode != "release": continue
-        
+
         testbase = os.path.basename(test)
         if test in times:
             ordered.append( (times[test], test) )
@@ -976,6 +976,7 @@ def generateIntegrationTestGlobalSubstitutionParameters(host=None):
     database = Options.database
 
     bin = path.join(minidir, "bin")
+    raw_bin_dir = bin  # Duplicate so that we can avoid valgrind-related expansion when we want to.
     pyapps = path.join(minidir, "scripts", "python")
     template_dir = path.join(minidir, "code_templates")
 
@@ -1022,9 +1023,10 @@ def generateTestCommandline(test, outdir, options=None, host=None):
             preamble = preamble + " --track-origins=yes"
         if options.leakcheck:
             preamble = preamble + " --leak-check=full"
-        # The fragment tests need special consideration
-        if test.startswith("fragment"):
-            preamble = preamble + " --main-stacksize=12000000"
+        # Certain tests need extended stack sizes
+        NEEDS_EXPANDED_STACK = ['fragment_picker','ligand_dock_ensemble','repeat_propagate']
+        if test in NEEDS_EXPANDED_STACK:
+            preamble = preamble + " --main-stacksize=" + str( 64*1024*1024 ) # Default is ~32 MB, try ~64 MB stack
         params["bin"] = preamble + " " + params["bin"]
 
     cmd=''

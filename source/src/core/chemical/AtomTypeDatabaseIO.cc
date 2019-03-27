@@ -283,9 +283,13 @@ AtomTypeDatabaseIO::write_atom_type_table(
 	string stmt_string = "INSERT INTO atom_types (atom_type_set_name, name, element, lennard_jones_radius, lennard_jones_well_depth, lazaridis_karplus_lambda, lazaridis_karplus_degrees_of_freedom, lazaridis_karplus_volume) VALUES (?,?,?,?,?,?,?,?);";
 	statement stmt(safely_prepare_statement(stmt_string, db_session));
 
+	// stmt.bind() binds by reference -- need to lifetime preserve any (non-primitive) return-by-value intermediate values
+	auto const & atom_type_name = atom_type.name();
+	auto const & atom_type_element = atom_type.element();
+
 	stmt.bind(1,atom_type_set_name);
-	stmt.bind(2,atom_type.name());
-	stmt.bind(3,atom_type.element());
+	stmt.bind(2,atom_type_name);
+	stmt.bind(3,atom_type_element);
 	stmt.bind(4,atom_type.lj_radius());
 	stmt.bind(5,atom_type.lj_wdepth());
 	stmt.bind(6,atom_type.lk_lambda());

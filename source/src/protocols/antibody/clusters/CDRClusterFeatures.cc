@@ -174,16 +174,21 @@ CDRClusterFeatures::report_features(core::pose::Pose const & pose, utility::vect
 
 		//Short-circuit evaluation here:
 		if ( ab_info->has_cluster_for_cdr(cdr) && (std::find(cdrs_.begin(), cdrs_.end(), cluster->cdr()) != cdrs_.end()) ) {
-			std::string sequence = ab_info->get_CDR_sequence_with_stem(cdr, pose, 0, 0, North);
+
+			// stmt.bind() binds by reference -- need to lifetime preserve any (non-primitive) return-by-value intermediate values
+			auto const & sequence = ab_info->get_CDR_sequence_with_stem(cdr, pose, 0, 0, North);
+			auto const & cluster_name = ab_info->get_cluster_name(cluster->cluster());
+			auto const & cdr_name = ab_info->get_CDR_name(cdr);
 			std::stringstream str_chain;
 			str_chain << ab_info->get_CDR_chain(cdr);
+
 			stmt.bind(1, struct_id);
 			stmt.bind(2, ab_info->get_CDR_start(cdr, pose, North));
 			stmt.bind(3, ab_info->get_CDR_end(cdr, pose, North));
 			stmt.bind(4, str_chain);
-			stmt.bind(5, ab_info->get_CDR_name(cdr));
+			stmt.bind(5, cdr_name);
 			stmt.bind(6, ab_info->get_CDR_length(cdr, pose, North));
-			stmt.bind(7, ab_info->get_cluster_name(cluster->cluster()) );
+			stmt.bind(7, cluster_name );
 			stmt.bind(8, cluster->distance());
 			stmt.bind(9, cluster->length_normalized_distance());
 			stmt.bind(10, cluster->normalized_distance_in_degrees());

@@ -594,7 +594,7 @@ get_non_NU_TorsionID_from_AtomIDs( Conformation const & conf, utility::vector1< 
 	uint const resnum( upstream_bond_atom.rsd() );
 	Residue const & parent( conf.residue( resnum ) );
 
-	TorsionType type;
+	TorsionType type = BB;
 	uint torsionnum( 0 );
 
 	if ( upstream_bond_atom_parent.rsd() != resnum ) {

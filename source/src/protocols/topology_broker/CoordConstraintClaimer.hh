@@ -99,33 +99,36 @@ private:
 	void set_cst_root();
 	void generate_constraints( core::pose::Pose const& cst_pose ) const;
 	void read_constraints_from_file( core::pose::Pose const& cst_pose ) const;
-	std::string filename_;
-	std::string cst_filename_;
+
+private:
+
+	std::string filename_ = "NoFile";
+	std::string cst_filename_ = "NoFile";
 	loops::Loops rigid_; //if empty ---> all residues, otherwise only on these
 
 	mutable core::scoring::constraints::ConstraintSetOP constraints_;
 	mutable std::string sequence_;
 	core::scoring::func::FuncOP cst_func_;
-	Size root_; //if 0 -- it's ignored. otherwise try to set fold-tree root to this.
-	std::string root_from_label_;
-	bool bRegenerateFromInputPose_;
-	bool bUseXYZ_in_cstfile_;
+	Size root_ = 1; //if 0 -- it's ignored. otherwise try to set fold-tree root to this.
+	std::string root_from_label_ = "ALL";
+	bool bRegenerateFromInputPose_ = false;
+	bool bUseXYZ_in_cstfile_ = false;
 	core::pose::PoseOP cst_pose_;
 
 	/// @brief true if constraints are active in centroid mode
-	bool bCentroid_;
+	bool bCentroid_ = true;
 
 	/// @brief true if constraints are active in full-atom mode
-	bool bFullatom_;
+	bool bFullatom_ = false;
 
 	/// @brief tmp for backwards compatibility
-	bool bLocal_;
+	bool bLocal_ = false;
 
 	/// @brief add 0..perturb_ random number to xyz-coords.
-	core::Real perturb_;
+	core::Real perturb_ = 0;
 
 	/// @brief superimpose xyz coordinates with pose in add_constraints()
-	bool bSuperimpose_;
+	bool bSuperimpose_ = false;
 
 	/// @brief superimpose on these residues
 	loops::Loops superimpose_regions_;

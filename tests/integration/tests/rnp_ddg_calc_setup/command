@@ -51,7 +51,7 @@ date > start-time.ignore
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 
-%(python)s %(minidir)s/src/apps/public/rnp_ddg/general_RNP_setup_script.py --low_res --tag demo_run --start_struct relaxed_1ZDH.pdb --seq_file mutant_list.txt --rosetta_prefix %(bin)s/ --Nreps 1 --protein_pack_reps 1 --skip_RNAfold 2>&1 \
+%(python)s %(minidir)s/src/apps/public/rnp_ddg/general_RNP_setup_script.py --low_res --tag demo_run --start_struct relaxed_1ZDH.pdb --seq_file mutant_list.txt --rosetta_prefix %(raw_bin_dir)s/ --Nreps 1 --protein_pack_reps 1 --skip_RNAfold 2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

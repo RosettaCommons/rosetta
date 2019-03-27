@@ -129,12 +129,12 @@ private:
 	minimization_packing::PackRotamersMoverOP packer_;
 
 	/// Output extra debug messages
-	bool debug_;
+	bool debug_ = false;
 
 	/// Variables used in MPI
-	core::Size rank_;
-	core::Size n_procs_;
-	bool master_;
+	core::Size rank_ = 0;
+	core::Size n_procs_ = 1;
+	bool master_ = false;
 
 };
 

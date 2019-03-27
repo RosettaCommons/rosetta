@@ -227,20 +227,21 @@ MultiObjective::calculate_structure_diversity(
 			nrel--;
 			dvector[j] = 0.0;
 		} else {
-			core::Real dumm, dist( 0.0 );
+			core::Real dist( 0.0 );
 			if ( similarity_measure.compare( "Sscore" ) == 0 ) {
+				core::Real dumm; // Dummy variable for return-by-ref rmsd
 				dist = CA_Sscore( ss1, ss2, dumm, true, 2.0 );
 				//dist = CA_Sscore( ss1, ss2, dumm, 1.0 );
 
 			} else if ( similarity_measure.compare( "rmsd" ) == 0 ) {
-				dumm = CA_Sscore( ss1, ss2, dist, true, 2.0 );
-				//dumm = CA_Sscore( ss1, ss2, dist, 1.0 );
+				CA_Sscore( ss1, ss2, dist, true, 2.0 );
+				//CA_Sscore( ss1, ss2, dist, 1.0 );
 
 			} else if ( similarity_measure.compare( "looprmsd" ) == 0 ) {
 				std::string loopstr = option[ lh::loop_string ]();
 				utility::vector1< core::Size > loopres = loopstring_to_loopvector( loopstr );
-				dumm = CA_Sscore( ss1, ss2, dist, loopres, true, 2.0 );
-				//dumm = CA_Sscore( ss1, ss2, dist, loopres, 1.0 );
+				CA_Sscore( ss1, ss2, dist, loopres, true, 2.0 );
+				//CA_Sscore( ss1, ss2, dist, loopres, 1.0 );
 			} else { }
 			dvector[j] = dist;
 			//TR << "d: " << j << " " << dist << std::endl;

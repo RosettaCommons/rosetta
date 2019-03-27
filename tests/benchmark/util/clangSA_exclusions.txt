@@ -1,6 +1,38 @@
 # This is the exclusion list for clang static analysis benchmark script
 # Only put things here if you *know* they aren't an issue.
-# For each, add a comment as to why it isn't an issue.
+# For each, add a comment (on the prior line) as to why it isn't an issue.
 # (Note: *All* instances of the error will be suppressed in the file, not just
 # for the line you want. Be careful.)
+
+### src/utility/libsvm/Svm.cc is effectively and external file -- Ignore issues there, as it's a bit of a mess.
+src/utility/libsvm/Svm.cc:810 Array access (from variable 'Q_i') results in a null pointer dereference 
+src/utility/libsvm/Svm.cc:831 Array access (from variable 'Q_i') results in a null pointer dereference 
+src/utility/libsvm/Svm.cc:1047 Array access (from variable 'Q_ip') results in a null pointer dereference 
+src/utility/libsvm/Svm.cc:1068 Array access (from variable 'Q_in') results in a null pointer dereference 
+src/utility/libsvm/Svm.cc:1398 The left operand of '>' is a garbage value 
+src/utility/libsvm/Svm.cc:1433 The left operand of '>' is a garbage value 
+src/utility/libsvm/Svm.cc:1621 Function call argument is an uninitialized value 
+src/utility/libsvm/Svm.cc:1858 Array subscript is undefined 
+src/utility/libsvm/Svm.cc:1878 Array subscript is undefined 
+src/utility/libsvm/Svm.cc:1882 Array subscript is undefined 
+src/utility/libsvm/Svm.cc:1886 Array subscript is undefined 
+src/utility/libsvm/Svm.cc:1901 Array subscript is undefined 
+src/utility/libsvm/Svm.cc:1996 Call to 'malloc' has an allocation size of 0 bytes 
+src/utility/libsvm/Svm.cc:2104 The left expression of the compound assignment is an uninitialized value. The computed value will also be garbage 
+src/utility/libsvm/Svm.cc:2114 Call to 'malloc' has an allocation size of 0 bytes 
+src/utility/libsvm/Svm.cc:2173 Assigned value is garbage or undefined 
+src/utility/libsvm/Svm.cc:2180 Assigned value is garbage or undefined 
+src/utility/libsvm/Svm.cc:2206 Call to 'malloc' has an allocation size of 0 bytes 
+src/utility/libsvm/Svm.cc:2358 Array subscript is undefined 
+src/utility/libsvm/Svm.cc:2377 Array subscript is undefined 
+src/utility/libsvm/Svm.cc:2485 The right operand of '*' is a garbage value 
+src/utility/libsvm/Svm.cc:2488 The right operand of '*' is a garbage value 
+src/utility/libsvm/Svm.cc:2796 The left operand of '-' is a garbage value 
+src/utility/libsvm/Svm.cc:2804 Assigned value is garbage or undefined 
+src/utility/libsvm/Svm.cc:2812 The left operand of '-' is a garbage value 
+src/utility/libsvm/Svm.cc:2820 The left operand of '-' is a garbage value 
+src/utility/libsvm/Svm.cc:2828 Assigned value is garbage or undefined 
+src/utility/libsvm/Svm.cc:2866 Value stored to 'p' is never read 
+src/utility/libsvm/Svm.cc:2876 Assigned value is garbage or undefined 
+src/utility/libsvm/Svm.cc:2897 Dereference of undefined pointer value
 

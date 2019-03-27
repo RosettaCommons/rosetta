@@ -201,7 +201,7 @@ private: // data
 	core::select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
 	GlycanSequon sequon_type_ = n_linked_typical;
 	bool positions_as_start_of_sequon_ = false;
-	bool design_x_positions_;
+	bool design_x_positions_  = false;
 
 	calc_taskop_movers::CreateSequenceMotifMoverOP motif_mover_ ;
 	bool pack_neighbors_ = true;

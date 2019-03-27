@@ -67,7 +67,7 @@ struct ReweightData {
 	{}
 
 	pose::Pose const & pose;
-	task::PackerTaskCOP const & task;
+	task::PackerTaskCOP task;
 	task::IGEdgeReweightContainerCOP edge_reweights;
 	std::unordered_map< uint64_t, float > stored_edge_reweights;
 };

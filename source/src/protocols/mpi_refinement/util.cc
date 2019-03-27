@@ -751,22 +751,25 @@ distance( core::io::silent::SilentStructOP ss1,
 	using namespace basic::options::OptionKeys;
 
 	std::string ssname = ss2->decoy_tag();
-	core::Real dist( 0.0 ), dumm;
+	core::Real dist( 0.0 );
 
 	if ( ssname.compare( ss1->decoy_tag() ) == 0 ) {
 		dist = 0.0;
 	} else {
 		if ( similarity_measure.compare( "Sscore" ) == 0 ) {
+			core::Real dumm; // Dummy variable for return-by-ref rmsd
 			dist = CA_Sscore( ss1, ss2, dumm, superimpose, 2.0 );
 
 		} else if ( similarity_measure.compare( "rmsd" ) == 0 ) {
-			dumm = CA_Sscore( ss1, ss2, dist, superimpose, 2.0 );
+			CA_Sscore( ss1, ss2, dist, superimpose, 2.0 );
 
 		} else if ( similarity_measure.compare( "looprmsd" ) == 0 ) {
 			std::string loopstr = option[ lh::loop_string ]();
 			utility::vector1< core::Size > loopres = loopstring_to_loopvector( loopstr );
-			dumm = CA_Sscore( ss1, ss2, dist, loopres, superimpose, 2.0 );
-		} else { }
+			CA_Sscore( ss1, ss2, dist, loopres, superimpose, 2.0 );
+		} else {
+			TR.Warning << "Unknown similarity measure '" << similarity_measure << "' - returning zero for distance metric." << std::endl;
+		}
 	}
 	return dist;
 }

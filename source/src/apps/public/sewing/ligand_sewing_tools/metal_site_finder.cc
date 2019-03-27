@@ -76,12 +76,23 @@ public:
 	//Virtual methods
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
+	void initialize_from_options();
 	virtual void apply(core::pose::Pose & pose);
 	virtual std::string get_name() const;
 	//For RosettaScripts
 	//Any other methods
 private:
-	//private data
+	// The defaults here are mainly to keep the code analysis tools from complaining
+	// call initialize_from_options() to actually set them.
+	core::Size max_res_span_ = 20;
+	core::Size min_total_coord_atoms_ = 5;
+	core::Size min_local_coord_atoms_ = 3;
+	core::Size min_coord_res_ = 3;
+	core::Size max_loop_size_ = 12;
+	std::string allowed_elements_;
+	utility::vector1< std::string > allowed_elements_list_;
+	bool strict_ = false;
+	core::Real distance_cutoff_ = 3.5;
 };
 
 //Owning pointers
@@ -110,27 +121,31 @@ std::string MetalSiteFinderMover::get_name() const{
 	return "MetalSiteFinderMover";
 }
 
+void MetalSiteFinderMover::initialize_from_options() {
+	//Set max_res_span and min_local_coord_atoms and min_coord_res from options
+	max_res_span_ = basic::options::option[ local::max_res_span ].value();
+	min_total_coord_atoms_ = basic::options::option[ local::min_total_coord_atoms ].value();
+	min_local_coord_atoms_ = basic::options::option[ local::min_local_coord_atoms ].value();
+	min_coord_res_ = basic::options::option[ local::min_coord_res ].value();
+	max_loop_size_ = basic::options::option[ local::max_loop_size ].value();
+	allowed_elements_ = basic::options::option[ local::allowed_elements ].value();
+	allowed_elements_list_ = utility::string_split_simple( allowed_elements_, ',' );
+	strict_ = basic::options::option[ local::strict_ss_changes ].value();
+	distance_cutoff_ = basic::options::option[ local::metal_ligand_distance_cutoff ].value(); //All known calcium ligands are 1.5 to 3.5 angstroms from the ion
+}
+
 void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 	TR << "Begin structure" << std::endl;
 	//Get DSSP for pose
 	core::scoring::dssp::Dssp pose_dssp_object( pose );
 
-
 	//Create a dummy pose that will be used for pdb dumps
 	core::pose::PoseOP dummy_pose;
 
-	//Set max_res_span and min_local_coord_atoms and min_coord_res from options
-	core::Size max_res_span = basic::options::option[ local::max_res_span ].value();
-	core::Size min_total_coord_atoms = basic::options::option[ local::min_total_coord_atoms ].value();
-	core::Size min_local_coord_atoms = basic::options::option[ local::min_local_coord_atoms ].value();
-	core::Size min_coord_res = basic::options::option[ local::min_coord_res ].value();
-	core::Size max_loop_size = basic::options::option[ local::max_loop_size ].value(); // ClangSA: Value stored to 'max_loop_size' during its initialization is never read
-	std::string allowed_elements = basic::options::option[ local::allowed_elements ].value();
-	utility::vector1< std::string > allowed_elements_list = utility::string_split_simple( allowed_elements, ',' );
-	bool strict = basic::options::option[ local::strict_ss_changes ].value(); // ClangSA: Value stored to 'strict' during its initialization is never read
-	core::Real distance_cutoff = basic::options::option[ local::metal_ligand_distance_cutoff ].value(); //All known calcium ligands are 1.5 to 3.5 angstroms from the ion
-	//Declare the AtomGraphOP pose_atom_graph
+	// Make sure all the parameter settings are set.
+	initialize_from_options();
 
+	//Declare the AtomGraphOP pose_atom_graph
 	core::conformation::AtomGraphOP pose_atom_graph( new core::conformation::AtomGraph );
 
 
@@ -147,7 +162,7 @@ void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 	///TODO BEGIN  ================================================================
 
 	//Find neighboring atoms within cutoff using find_neighbors
-	core::conformation::find_neighbors< core::conformation::AtomGraphVertexData, core::conformation::AtomGraphEdgeData >( pose_atom_graph, distance_cutoff );
+	core::conformation::find_neighbors< core::conformation::AtomGraphVertexData, core::conformation::AtomGraphEdgeData >( pose_atom_graph, distance_cutoff_ );
 	//Now there are edges b/w atoms separated by no more distance_cutoff
 	core::Size num_atoms = pose_atom_graph->num_vertices();
 
@@ -261,7 +276,7 @@ void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 					last_checked_res = ligand_oxygens[ ligand_atom_no ].rsd();
 				}
 			}
-			if ( num_coord_res < min_coord_res ) { //If the binding site contains too few residues, move on
+			if ( num_coord_res < min_coord_res_ ) { //If the binding site contains too few residues, move on
 				TR << "The binding site contains too few residues!" << std::endl;
 				continue;
 			}
@@ -283,18 +298,18 @@ void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 					if ( next_ox_num > ligand_oxygens.size() ) {
 						TR << "Faulty loop for next_ox_num" << std::endl;
 					}
-					if ( ligand_oxygens[ next_ox_num ].rsd() < (current_resnum + max_res_span ) ) {
+					if ( ligand_oxygens[ next_ox_num ].rsd() < (current_resnum + max_res_span_ ) ) {
 						++current_local_ligands;
 					}
 				}
 				num_coord_oxygens.push_back( current_local_ligands );
 			}
-			if ( num_coord_oxygens.size() < min_total_coord_atoms ) {
+			if ( num_coord_oxygens.size() < min_total_coord_atoms_ ) {
 				TR << "Not enough nearby atoms are ligand atoms." << std::endl;
 				continue;
 			}
 			//Make sure we have enough ligands
-			if ( utility::max( num_coord_oxygens ) < min_local_coord_atoms ) {
+			if ( utility::max( num_coord_oxygens ) < min_local_coord_atoms_ ) {
 				TR << "Not enough local ligand atoms." << std::endl;
 			}
 			{
@@ -341,7 +356,7 @@ void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 				//Find first residue in that SSE
 
 
-				if ( strict ) {
+				if ( strict_ ) {
 					for ( core::Size ss_res = span_start; ss_res > chain_start + 1; --ss_res ) {
 						//Check if ss_res - 1 AND ss_res - 2 are a different SSE (i.e. ss_res is the first residue in the same SSE as span_start)
 						if ( secstruct[ span_start - 1 ] != secstruct[ ss_res - 2 ] && secstruct[ ss_res - 3 ] !=  secstruct[ span_start - 1 ] ) {
@@ -378,7 +393,7 @@ void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 
 				//Detecting end of SSE that contains the first residue
 
-				if ( strict ) {
+				if ( strict_ ) {
 					//In the strict case, both ss_res and ss_res - 1 (two residues after the possible SSE) need to be different from the SSE of span_start
 
 					for ( core::Size ss_res = span_start + 2; ss_res <= chain_stop; ++ss_res ) {
@@ -445,7 +460,7 @@ void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 					//Else find the first residue in the previous SSE (just before the DSSP changes)
 
 
-					if ( strict ) {
+					if ( strict_ ) {
 						for ( core::Size prev_ss_res = sse_end; prev_ss_res > chain_start + 1; --prev_ss_res ) {
 							if ( secstruct[ sse_end - 1] != secstruct[ prev_ss_res - 2] && secstruct[ sse_end - 1] != secstruct[ prev_ss_res - 3] ) {
 								sse_begin = prev_ss_res;
@@ -582,7 +597,7 @@ void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 			} else if ( secstruct[ span_end  - 1 ] != 'L' ) { //In this case, span_end is in a different SSE from span_begin
 
 				//Find last residue in that SSE
-				if ( strict ) {
+				if ( strict_ ) {
 					for ( core::Size ss_res = span_end + 2; ss_res <= chain_stop; ++ss_res ) {
 						if ( secstruct[ span_end  - 1 ] != secstruct[ ss_res - 2 ] && secstruct[ span_end - 1 ] != secstruct[ ss_res - 1 ] ) {
 							site_end = ss_res - 2;
@@ -604,7 +619,7 @@ void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 					}
 				}
 				//Now find the first residue in that SSE
-				if ( strict ) {
+				if ( strict_ ) {
 					for ( core::Size ss_res = span_end; ss_res > chain_start + 1; --ss_res ) {
 						//Check if ss_res - 1 is a different SSE (i.e. ss_res is the first residue in the same SSE as span_start)
 						if ( secstruct[ span_end - 1] != secstruct[ ss_res - 2 ] && secstruct[ ss_res - 3 ] !=  secstruct[ span_end - 1] ) {
@@ -653,7 +668,7 @@ void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 				//In cases where we DID find another SSE after this loop
 				if ( next_sse_begin != 0 ) {
 					//Find last residue in this SSE
-					if ( strict ) {
+					if ( strict_ ) {
 						for ( core::Size next_ss_res = next_sse_begin + 1; next_ss_res <= chain_stop - 1; ++next_ss_res ) {
 							if ( secstruct[ next_ss_res - 1 ] != secstruct[ next_sse_begin - 1 ] && secstruct[ next_ss_res ] != secstruct[ next_sse_begin - 1 ] ) { //If we have moved on to a new SSE
 								site_end = next_ss_res - 1;
@@ -708,7 +723,7 @@ void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 			} else {
 				loop_size = next_sse_begin - sse_end - 1;
 			}
-			if ( loop_size > max_loop_size ) {
+			if ( loop_size > max_loop_size_ ) {
 				TR << output_name << " rejected for loop size greater than maximum. Size: " << loop_size <<  std::endl;
 				continue; //Move on to the next ca site
 			}
@@ -730,12 +745,12 @@ void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 				for ( core::Size ligand_no = 1; ligand_no <=ligand_oxygens.size(); ++ligand_no ) {
 					std::string element = pose.residue( ligand_oxygens[ ligand_no ].rsd() ).atom_type_set()[ pose.residue( ligand_oxygens[ ligand_no ].rsd() ).atom_type_index( ligand_oxygens[ ligand_no ].atomno() ) ].element();
 					//If this element is NOT allowed, skip it
-					if ( allowed_elements != "" && std::find( allowed_elements_list.begin(), allowed_elements_list.end(), element ) == allowed_elements_list.end() ) {
+					if ( allowed_elements_ != "" && std::find( allowed_elements_list_.begin(), allowed_elements_list_.end(), element ) == allowed_elements_list_.end() ) {
 						continue;
 					}
 					++good_local_ligands;
 				}
-				if ( good_local_ligands <= min_local_coord_atoms ) {
+				if ( good_local_ligands <= min_local_coord_atoms_ ) {
 					TR << "Not enough local ligands!" << std::endl;
 					continue;
 				}

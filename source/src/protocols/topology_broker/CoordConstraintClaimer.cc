@@ -77,25 +77,11 @@ using namespace scoring::constraints;
 using namespace ObjexxFCL;
 
 CoordConstraintClaimer::CoordConstraintClaimer() :
-	filename_( "NO_FILE"),
-	constraints_( /* NULL */ ),
-	root_( 1 ),
-	bRegenerateFromInputPose_ ( false ),
-	cst_pose_ ( /* NULL */ ),
-	bCentroid_( true ),
-	bFullatom_( false ),
-	bLocal_( false )
+	filename_( "NO_FILE")
 {}
 
 CoordConstraintClaimer::CoordConstraintClaimer( std::string const & filename ) :
-	filename_( filename ),
-	constraints_( /* NULL */ ),
-	root_( 1 ),
-	bRegenerateFromInputPose_ ( false ),
-	cst_pose_ ( /* NULL */ ),
-	bCentroid_( true ),
-	bFullatom_( false ),
-	bLocal_( false )
+	filename_( filename )
 {}
 
 CoordConstraintClaimer::~CoordConstraintClaimer() = default;

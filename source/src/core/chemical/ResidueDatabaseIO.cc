@@ -688,12 +688,17 @@ ResidueDatabaseIO::report_residue_type_atom(
 	// AtomTypeSet?
 	for ( Size i=1; i <= res_type.natoms(); ++i ) {
 
+		// stmt.bind() binds by reference -- need to lifetime preserve any (non-primitive) return-by-value intermediate values
+		auto const & atom_name = res_type.atom_name(i);
+		auto const & atom_type_name = res_type.atom_type(i).atom_type_name();
+		auto const & mm_name = res_type.atom(i).mm_name();
+
 		stmt.bind(1,residue_type_set_name);
 		stmt.bind(2,res_type.name());
 		stmt.bind(3,i);
-		stmt.bind(4,res_type.atom_name(i));
-		stmt.bind(5,res_type.atom_type(i).atom_type_name());
-		stmt.bind(6,res_type.atom(i).mm_name());
+		stmt.bind(4,atom_name);
+		stmt.bind(5,atom_type_name);
+		stmt.bind(6,mm_name);
 		stmt.bind(7,res_type.atom(i).charge());
 		stmt.bind(8,res_type.atom_is_backbone(i));
 		basic::database::safely_write_to_database(stmt);

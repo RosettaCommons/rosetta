@@ -144,7 +144,7 @@ void triangleIterator::aquireNextQueue() {
 					nextZ = z;
 					return;
 				}
-				starting = false; // ClangSA: Value stored to 'starting' is never read
+				//starting = false; // starting is only read on loop initialization, not read until it gets reset below (ClangSA fix)
 			}
 			starting = false;
 		}

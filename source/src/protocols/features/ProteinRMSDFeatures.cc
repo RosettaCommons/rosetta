@@ -217,8 +217,11 @@ ProteinRMSDFeatures::report_features(
 	std::string statement_string = "INSERT INTO protein_rmsd (struct_id, reference_tag, protein_CA, protein_CA_or_CB, protein_backbone, protein_backbone_including_O, protein_backbone_sidechain_heavyatom, heavyatom, nbr_atom, all_atom) VALUES (?,?,?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
+	// stmt.bind() binds by reference -- need to lifetime preserve any (non-primitive) return-by-value intermediate values
+	auto const & tag = find_tag(*reference_pose_);
+
 	stmt.bind(1,struct_id);
-	stmt.bind(2,find_tag(*reference_pose_));
+	stmt.bind(2,tag);
 	stmt.bind(3,rmsd_with_super(*reference_pose_, pose, subset_residues, is_protein_CA));
 	stmt.bind(4,rmsd_with_super(*reference_pose_, pose, subset_residues, is_protein_CA_or_CB));
 	stmt.bind(5,rmsd_with_super(*reference_pose_, pose, subset_residues, is_protein_backbone));

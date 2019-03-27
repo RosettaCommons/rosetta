@@ -33,7 +33,7 @@ Note: this is version adapted for Rosetta. Original was taken from https://githu
 
 #include <utility/io/base64.hh>
 #include <iostream>
-
+#include <cassert>
 
 namespace utility {
 namespace io {
@@ -97,6 +97,7 @@ std::string base64_decode(std::string const& encoded_string) {
 	int i = 0;
 	int in_ = 0;
 	unsigned char char_array_4[4], char_array_3[3];
+	bool char_array_3_initialized = false; // For clang static analysis
 	std::string ret;
 
 	while ( in_len-- && ( encoded_string[in_] != '=') && is_base64(encoded_string[in_]) ) {
@@ -109,6 +110,7 @@ std::string base64_decode(std::string const& encoded_string) {
 			char_array_3[0] = ( char_array_4[0] << 2       ) + ((char_array_4[1] & 0x30) >> 4);
 			char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
 			char_array_3[2] = ((char_array_4[2] & 0x3) << 6) +   char_array_4[3];
+			char_array_3_initialized = true;
 
 			for ( i = 0; (i < 3); i++ ) {
 				ret += char_array_3[i];
@@ -117,12 +119,14 @@ std::string base64_decode(std::string const& encoded_string) {
 		}
 	}
 
-	if ( i ) {
+	assert( i == 0 || char_array_3_initialized ); // if i != 0, things are a mess if char_array_3 isn't initialized.
+	if ( i && char_array_3_initialized ) {
 		int j = 0;
 		for ( j = 0; j < i; j++ ) {
 			char_array_4[j] = base64_chars.find(char_array_4[j]);
 		}
 
+		assert( char_array_3_initialized );
 		char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
 		char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
 

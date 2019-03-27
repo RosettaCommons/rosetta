@@ -1486,9 +1486,13 @@ HBondDatabase::report_parameter_features(
 	std::string hbond_polynomial_string = "INSERT INTO hbond_polynomial_1d (database_tag, name, dimension, xmin, xmax, min_val, max_val, root1, root2, degree, c_a, c_b, c_c, c_d, c_e, c_f, c_g, c_h, c_i, c_j, c_k) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement hbond_polynomial_statement(basic::database::safely_prepare_statement(hbond_polynomial_string,db_session));
 	for ( auto const & poly_name_fn : HBPoly1D_lookup_by_name_ ) {
+
+		// stmt.bind() binds by reference -- need to lifetime preserve any (non-primitive) return-by-value intermediate values
+		auto const & geo_dim_name = HBondTypeManager::name_from_geo_dim_type(poly_name_fn.second->geometric_dimension());
+
 		hbond_polynomial_statement.bind(1,database_tag);
 		hbond_polynomial_statement.bind(2,poly_name_fn.first);
-		hbond_polynomial_statement.bind(3,HBondTypeManager::name_from_geo_dim_type(poly_name_fn.second->geometric_dimension()));
+		hbond_polynomial_statement.bind(3,geo_dim_name);
 		hbond_polynomial_statement.bind(4,poly_name_fn.second->xmin());
 		hbond_polynomial_statement.bind(5,poly_name_fn.second->xmax());
 		hbond_polynomial_statement.bind(6,poly_name_fn.second->min_val());
@@ -1518,29 +1522,43 @@ HBondDatabase::report_parameter_features(
 		for ( Size hbacc=1; hbacc <= hbacc_MAX; ++hbacc ) {
 			string const & acc_chem_type(HBondTypeManager::name_from_acc_chem_type(HBAccChemType(hbacc)));
 			for ( Size hbseq_sep=1; hbseq_sep <= seq_sep_MAX; ++hbseq_sep ) {
-				string const & separation(HBondTypeManager::name_from_seq_sep_type(HBSeqSep(hbseq_sep)));
 
 				HBEvalType const hbe((*HBEval_lookup)(hbdon, hbacc, hbseq_sep));
 				if ( hbe == hbe_UNKNOWN ) {
 					continue;
 				}
 
+				// stmt.bind() binds by reference -- need to lifetime preserve any (non-primitive) return-by-value intermediate values
+				auto const & separation(HBondTypeManager::name_from_seq_sep_type(HBSeqSep(hbseq_sep)));
+				auto const & val_AHdist_short_fade_lookup = AHdist_short_fade_lookup(hbe)->get_name();
+				auto const & val_AHdist_long_fade_lookup = AHdist_long_fade_lookup(hbe)->get_name();
+				auto const & val_cosBAH_fade_lookup = cosBAH_fade_lookup(hbe)->get_name();
+				auto const & val_cosBAH2_fade_lookup = cosBAH2_fade_lookup(hbe)->get_name();
+				auto const & val_cosAHD_fade_lookup = cosAHD_fade_lookup(hbe)->get_name();
+				auto const & val_AHdist_poly_lookup = AHdist_poly_lookup(hbe)->name();
+				auto const & val_cosBAH_short_poly_lookup = cosBAH_short_poly_lookup(hbe)->name();
+				auto const & val_cosBAH_long_poly_lookup = cosBAH_long_poly_lookup(hbe)->name();
+				auto const & val_cosBAH2_poly_lookup = cosBAH2_poly_lookup(hbe)->name();
+				auto const & val_cosAHD_short_poly_lookup = cosAHD_short_poly_lookup(hbe)->name();
+				auto const & val_cosAHD_long_poly_lookup = cosAHD_long_poly_lookup(hbe)->name();
+				auto const & val_weight_type = HBondTypeManager::name_from_weight_type(weight_type_lookup(hbe));
+
 				hbond_evaluation_statement.bind(1,database_tag);
 				hbond_evaluation_statement.bind(2,don_chem_type);
 				hbond_evaluation_statement.bind(3,acc_chem_type);
 				hbond_evaluation_statement.bind(4,separation);
-				hbond_evaluation_statement.bind(5,AHdist_short_fade_lookup(hbe)->get_name());
-				hbond_evaluation_statement.bind(6,AHdist_long_fade_lookup(hbe)->get_name());
-				hbond_evaluation_statement.bind(7,cosBAH_fade_lookup(hbe)->get_name());
-				hbond_evaluation_statement.bind(8,cosBAH2_fade_lookup(hbe)->get_name());
-				hbond_evaluation_statement.bind(9,cosAHD_fade_lookup(hbe)->get_name());
-				hbond_evaluation_statement.bind(10,AHdist_poly_lookup(hbe)->name());
-				hbond_evaluation_statement.bind(11,cosBAH_short_poly_lookup(hbe)->name());
-				hbond_evaluation_statement.bind(12,cosBAH_long_poly_lookup(hbe)->name());
-				hbond_evaluation_statement.bind(13,cosBAH2_poly_lookup(hbe)->name());
-				hbond_evaluation_statement.bind(14,cosAHD_short_poly_lookup(hbe)->name());
-				hbond_evaluation_statement.bind(15,cosAHD_long_poly_lookup(hbe)->name());
-				hbond_evaluation_statement.bind(16,HBondTypeManager::name_from_weight_type(weight_type_lookup(hbe)));
+				hbond_evaluation_statement.bind(5,val_AHdist_short_fade_lookup);
+				hbond_evaluation_statement.bind(6,val_AHdist_long_fade_lookup);
+				hbond_evaluation_statement.bind(7,val_cosBAH_fade_lookup);
+				hbond_evaluation_statement.bind(8,val_cosBAH2_fade_lookup);
+				hbond_evaluation_statement.bind(9,val_cosAHD_fade_lookup);
+				hbond_evaluation_statement.bind(10,val_AHdist_poly_lookup);
+				hbond_evaluation_statement.bind(11,val_cosBAH_short_poly_lookup);
+				hbond_evaluation_statement.bind(12,val_cosBAH_long_poly_lookup);
+				hbond_evaluation_statement.bind(13,val_cosBAH2_poly_lookup);
+				hbond_evaluation_statement.bind(14,val_cosAHD_short_poly_lookup);
+				hbond_evaluation_statement.bind(15,val_cosAHD_long_poly_lookup);
+				hbond_evaluation_statement.bind(16,val_weight_type);
 
 				basic::database::safely_write_to_database(hbond_evaluation_statement);
 			}

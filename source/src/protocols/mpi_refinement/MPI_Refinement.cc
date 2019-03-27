@@ -377,14 +377,16 @@ MPI_Refinement::add_structure_to_library_add_n_replace( core::io::silent::Silent
 			end = library_central_.end(); jt != end; ++jt ) {
 
 		core::Real the_dist( 0.0 );
-		core::Real dumm;
 		// slow down?
 		core::io::silent::SilentStructOP ss( pss.clone() );
 		if ( dist_measure.compare("rmsd") == 0 ) {
-			dumm = 1.0 - CA_Sscore( ss, *jt, the_dist );
+			CA_Sscore( ss, *jt, the_dist );
 		} else if ( dist_measure.compare("Sscore") == 0 ) {
+			core::Real dumm; // dummy for return-by-reference
 			the_dist = 1.0 - CA_Sscore( ss, *jt, dumm );
-		} else if ( dist_measure.compare("looprmsd") == 0 ) {}
+		} else if ( dist_measure.compare("looprmsd") == 0 ) {
+			// Nothing here.
+		}
 
 		TRDEBUG << "The dist: " << the_dist << std::endl;
 		if ( the_dist < closest_dist ) {

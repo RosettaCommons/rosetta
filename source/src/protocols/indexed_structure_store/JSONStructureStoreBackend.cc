@@ -132,11 +132,10 @@ void JSONStructureStoreBackend::write_store(std::string store_path, StructureSto
 
 	utility::io::ozstream outstream( store_path.c_str() );
 
-	auto res_start = store.residue_entries.begin();
 	auto res_end = store.residue_entries.begin();
 	for ( auto & structure : store.structure_entries ) {
 		TR.Debug << "writing structure: " << json(structure) << std::endl;
-		res_start = res_end;
+		auto res_start = res_end;
 		if ( res_start->structure_id != structure.id ) {
 			TR.Debug << "structure: " << json(structure) << " residue: " << json(*res_start) << std::endl;
 			utility_exit_with_message("Invalid store residue ordering.");

@@ -117,7 +117,6 @@ LegacyMonteCarloAssemblyMover::generate_assembly(){
 
 	//Main loop
 	core::Size starttime = time(nullptr);
-	core::Real random_action = numeric::random::rg().uniform();
 	core::Real current_add_probability = 0.0;
 	core::Real current_delete_probability = 0.0;
 	//core::Real current_switch_probability = 0.0;
@@ -156,7 +155,7 @@ LegacyMonteCarloAssemblyMover::generate_assembly(){
 			current_delete_probability = delete_probability_;
 		}
 
-		random_action = numeric::random::rg().uniform();
+		core::Real random_action = numeric::random::rg().uniform();
 		if ( TR.Debug.visible() ) {
 			TR.Debug << "random: " << random_action
 				<< " add: " << current_add_probability
