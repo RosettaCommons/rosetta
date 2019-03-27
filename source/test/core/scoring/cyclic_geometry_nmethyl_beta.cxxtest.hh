@@ -6,8 +6,8 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
-/// @file test/core/scoring/cyclic_geometry_betanov16.cxxtest.hh
-/// @brief Unit tests for cyclic peptide pose scoring, with the beta_nov16 score function and N-methylation.
+/// @file test/core/scoring/cyclic_geometry_beta.cxxtest.hh
+/// @brief Unit tests for cyclic peptide pose scoring, with the beta score function and N-methylation.
 /// @detials Cyclic permutations should score identically.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
@@ -51,14 +51,14 @@ using core::pose::Pose;
 using core::chemical::AA;
 
 
-static basic::Tracer TR("core.scoring.CyclicGeometry_nmethyl_betanov16_Tests.cxxtest");
+static basic::Tracer TR("core.scoring.CyclicGeometry_nmethyl_beta_Tests.cxxtest");
 
 class CyclicGeometry_nmethyl_betanov16_Tests : public CxxTest::TestSuite {
 
 public:
 
 	void setUp() {
-		core_init_with_additional_options( "-beta_nov16 -score:weights beta_nov16.wts -symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0 -output_virtual true" );
+		core_init_with_additional_options( "-beta -score:weights beta.wts -symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0 -output_virtual true" );
 
 		// Pull in the cyclic peptide pose (9 residues):
 		core::pose::PoseOP initial_pose( new core::pose::Pose );
@@ -403,13 +403,13 @@ public:
 		return;
 	}
 
-	/// @brief Tests cyclic permutation scoring with the full beta_nov16 scorefunction.
+	/// @brief Tests cyclic permutation scoring with the full beta scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_cyclic_permutation_beta_nov16() {
+	void test_cyclic_permutation_beta() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
-		scorefxn->add_weights_from_file("beta_nov16.wts");
-		TR << "Testing full beta_nov16 score function." << std::endl;
+		scorefxn->add_weights_from_file("beta.wts");
+		TR << "Testing full beta score function." << std::endl;
 		CyclicGeometryTestHelper helper;
 		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
