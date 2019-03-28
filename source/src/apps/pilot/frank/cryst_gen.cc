@@ -497,7 +497,12 @@ public:
 	std::string
 	as_string( ) {
 		std::ostringstream oss;
-		oss << axes[1][0] <<","<< axes[1][1] <<","<< axes[1][2] << " ";
+		if ( axes[1].length() > 1e-6 ) {
+			oss << axes[1][0] <<","<< axes[1][1] <<","<< axes[1][2] << " ";
+		} else {
+			oss << "- ";
+		}
+
 		if ( axes.size() == 2 ) {
 			oss << axes[2][0] <<","<< axes[2][1] <<","<< axes[2][2] << " ";
 		} else {
@@ -581,17 +586,29 @@ get_angle_and_offset(
 	core::Real &angle, core::Real &offset, core::Real &shift
 ) {
 	numeric::xyzVector<core::Real> Iaxis=hit_i.axes[1], Jaxis=hit_j.axes[1];
-	angle = RAD2DEG * acos( std::max( std::min( Iaxis.dot( Jaxis ), 1.0 ), -1.0) );
-	angle = std::min( 180-angle, angle );
-	offset=0;
-	shift=0;
+	offset=shift=0;
 
-	if ( angle <= 1e-6 ) {
+
+	// special cases for Ci (no axis, just an inversion through a point)
+	if ( Iaxis.length() == 0 ) {
+		angle = 0;
+		offset = ((hit_j.origin()-hit_i.origin()) - (hit_j.origin()-hit_i.origin()).dot( Jaxis )* Jaxis).length();
+		shift = (hit_j.origin()-hit_i.origin()).dot( Jaxis );
+	} else if ( Jaxis.length() == 0 ) {
+		angle = 0;
 		offset = ((hit_j.origin()-hit_i.origin()) - (hit_j.origin()-hit_i.origin()).dot( Iaxis )* Iaxis).length();
 		shift = (hit_j.origin()-hit_i.origin()).dot( Iaxis );
 	} else {
-		offset = std::fabs (
-			(hit_j.origin()-hit_i.origin()).dot( Iaxis.cross( Jaxis ) ) / Iaxis.cross( Jaxis ).length() );
+		angle = RAD2DEG * acos( std::max( std::min( Iaxis.dot( Jaxis ), 1.0 ), -1.0) );
+		angle = std::min( 180-angle, angle );
+
+		if ( angle <= 1e-6 ) {
+			offset = ((hit_j.origin()-hit_i.origin()) - (hit_j.origin()-hit_i.origin()).dot( Iaxis )* Iaxis).length();
+			shift = (hit_j.origin()-hit_i.origin()).dot( Iaxis );
+		} else {
+			offset = std::fabs (
+				(hit_j.origin()-hit_i.origin()).dot( Iaxis.cross( Jaxis ) ) / Iaxis.cross( Jaxis ).length() );
+		}
 	}
 }
 
@@ -1170,31 +1187,47 @@ main( int argc, char * argv [] ) {
 			mode = argv[1];
 		}
 
-		if ( mode!="pt" && mode!="gen1" && mode!="gen2" ) {
-			std::cerr << "USAGE: " << argv[0] << " (pt|gen1|gen2) [spacegroup]*" << std::endl;
+		if ( mode!="pt" && mode!="gen" ) {
+			std::cerr << "USAGE: " << argv[0] << " (pt|gen) [spacegroup]*" << std::endl;
 			exit(0);
 		}
 
 		bool user_spacegroups=false;
+		core::Size parallel_i=0, parallel_j=1; // split jobs
 		if ( argc>2 ) {
 			for ( int i=2; i<argc; ++i ) {
 				char chk=argv[i][0];
-				if ( chk=='P' || chk == 'F' || chk=='I' || chk=='H' || chk=='C' ) user_spacegroups = true;
+				if ( chk=='A' || chk == 'C' || chk=='F' || chk=='I' || chk=='P' || chk=='R' ) {
+					user_spacegroups = true;
+				} else {
+					if ( i==argc-2 ) {
+						parallel_i = std::atoi(argv[i]);
+					} else if ( i==argc-1 ) {
+						parallel_j = std::atoi(argv[i]);
+					}
+				}
 			}
 		}
+		parallel_i = parallel_i % parallel_j;
+
+		//if (parallel_j != 1) {
+		std::cout << "# parallel job " << parallel_i+1 << " of " << parallel_j << std::endl;
+		//}
 
 		if ( !user_spacegroups ) {
 			set_all_spacegroups( spacegroups );
 		} else {
 			for ( int i=2; i<argc; ++i ) {
 				char chk=argv[i][0];
-				if ( chk=='P' || chk == 'F' || chk=='I' || chk=='H' || chk=='C' ) {
+				if ( chk=='A' || chk == 'C' || chk=='F' || chk=='I' || chk=='P' || chk=='R' ) {
 					spacegroups.push_back(std::string(argv[i]));
 				}
 			}
 		}
 
+		int parallel_counter = 0;
 		for ( int sx=1; sx<=(int) spacegroups.size(); ++sx ) {
+			parallel_counter++;
 			std::string name=spacegroups[sx];
 
 			numeric::xyzMatrix<core::Real> skewM=numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
@@ -1224,48 +1257,54 @@ main( int argc, char * argv [] ) {
 					std::cout << spacegroups[sx] << " ";
 					hit_i.show(std::cout);
 				}
-			} else {
+			} else if ( mode == "gen" ) {
 				utility::vector1< latticeHit > finalHits;
-				std::cout << "Found " << pgs.size() << " point groups" << std::endl;
-				if ( mode == "gen2" ) {
-					// sample all pairs of point groups
-					for ( int i=1; i<=(int)pgs.size(); ++i ) {
-						for ( int j=i+1; j<=(int)pgs.size(); ++j ) {
-							pointGroupHit hit_i = pgs[i];
-							pointGroupHit hit_j = pgs[j];
+				std::cout << "# found " << pgs.size() << " point groups in " << name << std::endl;
+				// sample all pairs of point groups
+				for ( int i=1; i<=(int)pgs.size(); ++i ) {
+					for ( int j=i+1; j<=(int)pgs.size(); ++j ) {
+						// only "sub split" large spacegroups
+						if ( pgs.size() >= 16 ) {
+							parallel_counter++;
+						}
+						if ( parallel_counter % parallel_j != parallel_i ) {
+							continue;
+						}
 
-							// get RTs
-							utility::vector1<core::kinematics::RT> rts_symm;
-							rts_symm.reserve( hit_i.order() + hit_j.order() );
-							hit_i.append_symmops( rts_symm, rts );
-							hit_j.append_symmops( rts_symm, rts );
+						pointGroupHit hit_i = pgs[i];
+						pointGroupHit hit_j = pgs[j];
 
-							// expand
-							bool is_lattice = check_if_forms_lattice( rts_symm, rts );   // check if we are fully connected
+						// get RTs
+						utility::vector1<core::kinematics::RT> rts_symm;
+						rts_symm.reserve( hit_i.order() + hit_j.order() );
+						hit_i.append_symmops( rts_symm, rts );
+						hit_j.append_symmops( rts_symm, rts );
 
-							if ( is_lattice ) {
-								core::Real angle,offset,shift;
-								get_angle_and_offset( hit_i, hit_j, angle,offset,shift );
+						// expand
+						bool is_lattice = check_if_forms_lattice( rts_symm, rts );   // check if we are fully connected
 
-								bool dup = false;
-								for ( int q = 1; q<= (int)finalHits.size() && !dup; ++q ) {
-									bool name_match = (
-										(finalHits[q].hit1.name() == hit_i.name() && finalHits[q].hit2.name() == hit_j.name()) ||
-										(finalHits[q].hit2.name() == hit_i.name() && finalHits[q].hit1.name() == hit_j.name())
-									);
-									bool angle_match = std::fabs( angle - finalHits[q].angle ) < 1e-6;
-									if ( name_match && angle_match ) {
-										if ( (offset==0 && finalHits[q].offset == 0) || (offset!=0 && finalHits[q].offset != 0) ) {
-											dup = true;
-											if ( offset<finalHits[q].offset ) {
-												finalHits[q] = latticeHit( hit_i, hit_j, angle, offset, shift );
-											}
+						if ( is_lattice ) {
+							core::Real angle,offset,shift;
+							get_angle_and_offset( hit_i, hit_j, angle,offset,shift );
+
+							bool dup = false;
+							for ( int q = 1; q<= (int)finalHits.size() && !dup; ++q ) {
+								bool name_match = (
+									(finalHits[q].hit1.name() == hit_i.name() && finalHits[q].hit2.name() == hit_j.name()) ||
+									(finalHits[q].hit2.name() == hit_i.name() && finalHits[q].hit1.name() == hit_j.name())
+								);
+								bool angle_match = std::fabs( angle - finalHits[q].angle ) < 1e-6;
+								if ( name_match && angle_match ) {
+									if ( (offset==0 && finalHits[q].offset == 0) || (offset!=0 && finalHits[q].offset != 0) ) {
+										dup = true;
+										if ( offset<finalHits[q].offset ) {
+											finalHits[q] = latticeHit( hit_i, hit_j, angle, offset, shift );
 										}
 									}
 								}
-								if ( !dup ) {
-									finalHits.push_back( latticeHit( hit_i, hit_j, angle, offset, shift ));
-								}
+							}
+							if ( !dup ) {
+								finalHits.push_back( latticeHit( hit_i, hit_j, angle, offset, shift ));
 							}
 						}
 					}

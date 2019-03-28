@@ -113,19 +113,22 @@ int main(int argc, char **argv) {
 		ConstantLengthFragSet frags(fraglength);
 
 		// for each 9 mer get a frame
-		for (int i =  1; i <= nres - fraglength + 1; ++i) {
+		for ( int i =  1; i <= nres - fraglength + 1; ++i ) {
 			FrameOP frame_i = new core::fragment::Frame( i, fraglength );
 			utility::vector1< numeric::xyzVector< core::Real> > cas( fraglength );
 
 			// check for cutpoints
 			bool makefrags = true;
-			for (int k=0; k<fraglength; ++k)
-				if (native_pose.fold_tree().is_cutpoint( i+k ) || native_pose.residue(i+k).atom_index("CA") == 0)
+			for ( int k=0; k<fraglength; ++k ) {
+				if ( native_pose.fold_tree().is_cutpoint( i+k ) || native_pose.residue(i+k).atom_index("CA") == 0 ) {
 					makefrags=false;
+				}
+			}
 
-			if (makefrags) {
-				for (int k=0; k<fraglength; ++k)
+			if ( makefrags ) {
+				for ( int k=0; k<fraglength; ++k ) {
 					cas[k+1] = native_pose.residue(i+k).atom("CA").xyz();
+				}
 				std::string frag_seq = input_seq.substr( i-1, fraglength );
 				rms_vall.get_frags( nfrags, cas, frag_seq, '-', frame_i, 0.0, option[ OptionKeys::fpd::oversample ]() );
 				frags.add( frame_i );

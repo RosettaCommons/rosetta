@@ -87,16 +87,16 @@ map_morph()
 
 	// now perturb
 	core::scoring::electron_density::ElectronDensity edmNEW = edm;
-	for (int i_th=-2; i_th<=2; ++i_th) {
+	for ( int i_th=-2; i_th<=2; ++i_th ) {
 		ObjexxFCL::FArray3D< float > newdata = edm.data();
 
 		core::Real del_theta_per_A_rise = 0.005*i_th;
 
 
-		for (int z=1; z<=grid[2]; ++z) {
+		for ( int z=1; z<=grid[2]; ++z ) {
 			//std::cerr << z << "/" << grid[2] << std::endl;
-			for (int y=1; y<=grid[1]; ++y) {
-				for (int x=1; x<=grid[0]; ++x) {
+			for ( int y=1; y<=grid[1]; ++y ) {
+				for ( int x=1; x<=grid[0]; ++x ) {
 					numeric::xyzVector<core::Real> idx( x, y, z );
 					idx = idx-midpt;
 					numeric::xyzMatrix<core::Real> R = numeric::rotation_matrix_radians( numeric::xyzVector<core::Real>(0,0,1), del_theta_per_A_rise*idx[2] );

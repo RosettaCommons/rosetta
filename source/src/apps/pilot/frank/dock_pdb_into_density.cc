@@ -100,62 +100,62 @@ using namespace ObjexxFCL::format;
 
 // main
 int main(int argc, char* argv[]) {
-try {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	NEW_OPT( bw, "spharm bandwidth", 32 );
-	NEW_OPT( n_to_search, "how many translations to search", 100 );
-	NEW_OPT( searchsep, "min distance between search points", 3 );
-	NEW_OPT( n_filtered,  "how many solutions to take to refinement", 100 );
-	NEW_OPT( n_output, "how many solutions to output", 10 );
-	NEW_OPT( movestep, "grid spacing over which to search", 1 );
-	NEW_OPT( ncyc, "Min cycles", 1 );
-	NEW_OPT( clust_radius, "Cluster radius", 3.0 );
-	NEW_OPT( frag_dens, "Fragment density", 0.9 );
-	NEW_OPT( min_bb, "minimize backbone?", false );
-	NEW_OPT( min, "rb min?", true );
-	NEW_OPT( point_radius, "minimum translation point to point radius", 5 );
-	NEW_OPT( convolute_single_residue, "Convolute only on middle reside", false);
-	NEW_OPT( laplacian_offset, "Activates laplacian scoring, and sets laplacian filter offset distance ", 0 );
+		NEW_OPT( bw, "spharm bandwidth", 32 );
+		NEW_OPT( n_to_search, "how many translations to search", 100 );
+		NEW_OPT( searchsep, "min distance between search points", 3 );
+		NEW_OPT( n_filtered,  "how many solutions to take to refinement", 100 );
+		NEW_OPT( n_output, "how many solutions to output", 10 );
+		NEW_OPT( movestep, "grid spacing over which to search", 1 );
+		NEW_OPT( ncyc, "Min cycles", 1 );
+		NEW_OPT( clust_radius, "Cluster radius", 3.0 );
+		NEW_OPT( frag_dens, "Fragment density", 0.9 );
+		NEW_OPT( min_bb, "minimize backbone?", false );
+		NEW_OPT( min, "rb min?", true );
+		NEW_OPT( point_radius, "minimum translation point to point radius", 5 );
+		NEW_OPT( convolute_single_residue, "Convolute only on middle reside", false);
+		NEW_OPT( laplacian_offset, "Activates laplacian scoring, and sets laplacian filter offset distance ", 0 );
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	// force some options
-	option[ out::nooutput ].value(true);
+		// force some options
+		option[ out::nooutput ].value(true);
 
-	protocols::electron_density::DockIntoDensityMoverOP dock( new protocols::electron_density::DockIntoDensityMover );
-	dock->setB( option[ bw ] );
-	dock->setTopN( option[ n_to_search ] , option[ n_filtered ] , option[ n_output ] );
-	dock->setGridStep( option[ movestep ] );
-	dock->setMinDist( option[ searchsep ] );
-	dock->setNCyc(option[ ncyc ]());
-	dock->setClusterRadius(option[ clust_radius ]());
-	dock->setFragDens(option[ frag_dens ]());
-	dock->setMinBackbone(option[ min_bb ]());
-	dock->setDoRefine(option[ min ]());
-	dock->setMaxRotPerTrans( 10 );
-	dock->setPointRadius(option[ point_radius ]());
-	dock->setConvoluteSingleR( option[ convolute_single_residue ]());
-	dock->setLaplacianOffset( option[ laplacian_offset ]());
+		protocols::electron_density::DockIntoDensityMoverOP dock( new protocols::electron_density::DockIntoDensityMover );
+		dock->setB( option[ bw ] );
+		dock->setTopN( option[ n_to_search ] , option[ n_filtered ] , option[ n_output ] );
+		dock->setGridStep( option[ movestep ] );
+		dock->setMinDist( option[ searchsep ] );
+		dock->setNCyc(option[ ncyc ]());
+		dock->setClusterRadius(option[ clust_radius ]());
+		dock->setFragDens(option[ frag_dens ]());
+		dock->setMinBackbone(option[ min_bb ]());
+		dock->setDoRefine(option[ min ]());
+		dock->setMaxRotPerTrans( 10 );
+		dock->setPointRadius(option[ point_radius ]());
+		dock->setConvoluteSingleR( option[ convolute_single_residue ]());
+		dock->setLaplacianOffset( option[ laplacian_offset ]());
 
 
-	if( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose( new core::pose::Pose() );
-		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
-		dock->setNative( native_pose );
+		if ( option[ in::file::native ].user() ) {
+			core::pose::PoseOP native_pose( new core::pose::Pose() );
+			core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
+			dock->setNative( native_pose );
+		}
+
+		if ( option[ out::file::silent ].user() ) {
+			std::string silent_fn = option[ out::file::silent ]();
+			dock->setOutputSilent( silent_fn );
+		}
+
+		protocols::jd2::JobDistributor::get_instance()->go( dock );
+
+	} catch (utility::excn::Exception const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
 	}
-
-	if (option[ out::file::silent ].user()) {
-		std::string silent_fn = option[ out::file::silent ]();
-		dock->setOutputSilent( silent_fn );
-	}
-
-	protocols::jd2::JobDistributor::get_instance()->go( dock );
-
-} catch (utility::excn::Exception const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
-  return 0;
+	return 0;
 }

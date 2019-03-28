@@ -52,58 +52,61 @@
 
 
 int main(int argc, char **argv) {
-    try {
-    using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::io::silent;
-	using namespace core::import_pose::pose_stream;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
+		using namespace core::io::silent;
+		using namespace core::import_pose::pose_stream;
 
-	using core::Size;
-	using std::string;
+		using core::Size;
+		using std::string;
 
-	devel::init( argc,argv );
+		devel::init( argc,argv );
 
-	core::chemical::ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
-		option[ in::file::residue_type_set ]()
-	);
+		core::chemical::ResidueTypeSetCAP rsd_set;
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
+			option[ in::file::residue_type_set ]()
+		);
 
-	core::pose::Pose native_pose, current_pose;
-	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
-	}
-
-	// rbsegfile
-	utility::vector1< protocols::RBSegment::RBSegment > rbsegs;
-	protocols::loops::Loops loops;
-	std::string filename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );
-	protocols::RBSegment::read_RBSegment_file( rbsegs, loops, filename );
- 	std::list< core::Size > core_reses;
-	for ( core::Size i=1; i <= rbsegs.size(); ++i )
-		for ( core::Size j=1, j_end=rbsegs[i].nContinuousSegments(); j<=j_end; ++j)
-			for ( core::Size k=rbsegs[i][j].start(), k_end=rbsegs[i][j].end() ; k<=k_end; ++k)
-				core_reses.push_back( k );
-
-
-	MetaPoseInputStream input = streams_from_cmd_line();
-
-	SilentFileData sfd_out;
-	while( input.has_another_pose() ) {
-		input.fill_pose( current_pose, *rsd_set );
-
-
+		core::pose::Pose native_pose, current_pose;
 		if ( option[ in::file::native ].user() ) {
-			core::Real CA_rmsd = core::scoring::CA_rmsd( native_pose, current_pose );
-			core::Real CA_core_rmsd = core::scoring::CA_rmsd( native_pose, current_pose , core_reses );
-
-			std::cout << core::pose::extract_tag_from_pose( current_pose ) << "  " << CA_core_rmsd << "  " << CA_rmsd << std::endl;
+			core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 		}
 
-	} // while( input.has_another_pose() )
-    } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		// rbsegfile
+		utility::vector1< protocols::RBSegment::RBSegment > rbsegs;
+		protocols::loops::Loops loops;
+		std::string filename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );
+		protocols::RBSegment::read_RBSegment_file( rbsegs, loops, filename );
+		std::list< core::Size > core_reses;
+		for ( core::Size i=1; i <= rbsegs.size(); ++i ) {
+			for ( core::Size j=1, j_end=rbsegs[i].nContinuousSegments(); j<=j_end; ++j ) {
+				for ( core::Size k=rbsegs[i][j].start(), k_end=rbsegs[i][j].end() ; k<=k_end; ++k ) {
+					core_reses.push_back( k );
+				}
+			}
+		}
+
+
+		MetaPoseInputStream input = streams_from_cmd_line();
+
+		SilentFileData sfd_out;
+		while ( input.has_another_pose() ) {
+			input.fill_pose( current_pose, *rsd_set );
+
+
+			if ( option[ in::file::native ].user() ) {
+				core::Real CA_rmsd = core::scoring::CA_rmsd( native_pose, current_pose );
+				core::Real CA_core_rmsd = core::scoring::CA_rmsd( native_pose, current_pose , core_reses );
+
+				std::cout << core::pose::extract_tag_from_pose( current_pose ) << "  " << CA_core_rmsd << "  " << CA_rmsd << std::endl;
+			}
+
+		} // while( input.has_another_pose() )
+	} catch (utility::excn::Exception const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
+	}
 	return 0;
 }

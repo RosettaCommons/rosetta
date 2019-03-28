@@ -113,13 +113,13 @@ public:
 		score_ += DIST_WT*(dist*dist);
 
 		// angle
-		if (size()>=3) {
-				core::Real angle = numeric::angle_radians(calist[get(size())].X, calist[get(size()-1)].X, calist[get(size()-2)].X);
-				score_ += ANGLE_WT*(angle-1.57079633)*(angle-1.57079633);
+		if ( size()>=3 ) {
+			core::Real angle = numeric::angle_radians(calist[get(size())].X, calist[get(size()-1)].X, calist[get(size()-2)].X);
+			score_ += ANGLE_WT*(angle-1.57079633)*(angle-1.57079633);
 		}
 
 		// clash
-		for (int i=1; i<=(int)size()-3; ++i) {
+		for ( int i=1; i<=(int)size()-3; ++i ) {
 			core::Real overlap = std::max( 3.0 - (calist[get(1)].X-calist[get(i)].X).length() , 0.0);
 			score_ += OVERLAP_WT*(overlap*overlap);
 		}
@@ -134,13 +134,13 @@ public:
 		score_ += DIST_WT*(dist*dist);
 
 		// angle
-		if (size()>=3) {
-				core::Real angle = numeric::angle_radians(calist[get(1)].X, calist[get(2)].X, calist[get(3)].X);
-				score_ += ANGLE_WT*(angle-1.57079633)*(angle-1.57079633);
+		if ( size()>=3 ) {
+			core::Real angle = numeric::angle_radians(calist[get(1)].X, calist[get(2)].X, calist[get(3)].X);
+			score_ += ANGLE_WT*(angle-1.57079633)*(angle-1.57079633);
 		}
 
 		// clash
-		for (core::Size i=4; i<=size(); ++i) {
+		for ( core::Size i=4; i<=size(); ++i ) {
 			core::Real overlap = std::max( 3.0 - (calist[get(1)].X-calist[get(i)].X).length() , 0.0);
 			score_ += OVERLAP_WT*(overlap*overlap);
 		}
@@ -150,10 +150,11 @@ public:
 	core::Size get_N() { return traceB_[traceB_.size()]; }
 	core::Size size() const { return traceF_.size() + traceB_.size() - 1; }
 	core::Size get(core::Size i) {
-		if (i<=traceB_.size())
+		if ( i<=traceB_.size() ) {
 			return traceB_[traceB_.size()+1-i];
-		else
+		} else {
 			return traceF_[i-traceB_.size()+1];
+		}
 	}
 
 	core::Real score() const  {
@@ -161,19 +162,19 @@ public:
 	}
 
 	bool is_subset(const pseudoTrace& other) const {
-		if (size() > other.size()) return false;
+		if ( size() > other.size() ) return false;
 
 		// ensure every point I have is also in other
-		for (core::Size i=1; i<=traceF_.size(); ++i) {
-			if (!other.contains(traceF_[i])) return false;
+		for ( core::Size i=1; i<=traceF_.size(); ++i ) {
+			if ( !other.contains(traceF_[i]) ) return false;
 		}
 
 		return true;
 	}
 
 	bool contains(core::Size idx) const {
-		if (std::find( traceF_.begin(), traceF_.end(), idx ) != traceF_.end() ) return true;
-		if (std::find( traceB_.begin(), traceB_.end(), idx ) != traceB_.end() ) return true;
+		if ( std::find( traceF_.begin(), traceF_.end(), idx ) != traceF_.end() ) return true;
+		if ( std::find( traceB_.begin(), traceB_.end(), idx ) != traceB_.end() ) return true;
 		return false;
 	}
 };
@@ -190,20 +191,22 @@ public:
 
 	void
 	addTrace( pseudoTrace const &newtrace ) {
-		if (size() == N_ && newtrace.score() > data_[high_idx_].score() )
+		if ( size() == N_ && newtrace.score() > data_[high_idx_].score() ) {
 			return;
+		}
 
 		// equality check
-		for (core::Size i=1; i<=data_.size(); ++i) {
-			if (newtrace.is_subset( data_[i] ))
+		for ( core::Size i=1; i<=data_.size(); ++i ) {
+			if ( newtrace.is_subset( data_[i] ) ) {
 				return;
-			if (data_[i].is_subset( newtrace )) {
+			}
+			if ( data_[i].is_subset( newtrace ) ) {
 				data_[i] = newtrace;
 				find_highest_score();
 			}
 		}
 
-		if (size() < N_) {
+		if ( size() < N_ ) {
 			data_.push_back( newtrace );
 			find_highest_score();
 		} else {
@@ -212,7 +215,7 @@ public:
 		}
 	}
 
-	pseudoTrace get( core::Size i ) { return data_[i];	}
+	pseudoTrace get( core::Size i ) { return data_[i]; }
 
 	core::Size size() { return data_.size(); }
 
@@ -227,9 +230,10 @@ private:
 	void
 	find_highest_score( ) {
 		high_idx_ = 1;
-		for (core::Size i=2; i<=data_.size(); ++i) {
-			if (data_[i].score() > data_[high_idx_].score())
+		for ( core::Size i=2; i<=data_.size(); ++i ) {
+			if ( data_[i].score() > data_[high_idx_].score() ) {
 				high_idx_ = i;
+			}
 		}
 	}
 
@@ -242,15 +246,15 @@ private:
 
 
 bool operator<(const pseudoCA& lhs, const pseudoCA& rhs) {
-  return lhs.score < rhs.score;
+	return lhs.score < rhs.score;
 }
 
 bool operator<(const pseudoCAbond& lhs, const pseudoCAbond& rhs) {
-  return lhs.score < rhs.score;
+	return lhs.score < rhs.score;
 }
 
 bool operator<(const pseudoTrace& lhs, const pseudoTrace& rhs) {
-  return lhs.score() < rhs.score();
+	return lhs.score() < rhs.score();
 }
 
 
@@ -263,7 +267,7 @@ run_trace(utility::vector1<pseudoCA> selectPseudos, utility::vector1<pseudoTrace
 	pseudoTraceRecords Q(beamwidth), Qnew(beamwidth);
 
 	// start with single-point traces
-	for (core::Size i=1; i<=selectPseudos.size(); ++i) {
+	for ( core::Size i=1; i<=selectPseudos.size(); ++i ) {
 		Q.addTrace( pseudoTrace(i,selectPseudos) );
 	}
 
@@ -271,25 +275,25 @@ run_trace(utility::vector1<pseudoCA> selectPseudos, utility::vector1<pseudoTrace
 	std::cerr << "cycle 0 best score = " << best_score << std::endl;
 	core::Real last_score = 99999;
 	core::Size cyc=1;
-	while (last_score != best_score) {
+	while ( last_score != best_score ) {
 		last_score = best_score;
 
-		for (core::Size i=1; i<=Q.size(); ++i) {
+		for ( core::Size i=1; i<=Q.size(); ++i ) {
 			pseudoTrace Q_i = Q.get(i);
 
 			Qnew.addTrace( Q_i );
 
 			// try to grow
-			for (core::Size i=1; i<=selectPseudos.size(); ++i) {
+			for ( core::Size i=1; i<=selectPseudos.size(); ++i ) {
 				core::Real distN2 = (selectPseudos[i].X - selectPseudos[Q_i.get_N()].X).length_squared();
-				if (distN2 <= 4.3*4.3 && distN2 >= 3.3*3.3) {
+				if ( distN2 <= 4.3*4.3 && distN2 >= 3.3*3.3 ) {
 					pseudoTrace Q_i_N = Q_i;
 					Q_i_N.add_to_N(i, selectPseudos);
 					Qnew.addTrace( Q_i );
 				}
 
 				core::Real distC2 = (selectPseudos[i].X - selectPseudos[Q_i.get_C()].X).length_squared();
-				if (distC2 <= 4.3*4.3 && distC2 >= 3.3*3.3) {
+				if ( distC2 <= 4.3*4.3 && distC2 >= 3.3*3.3 ) {
 					Q_i.add_to_C(i, selectPseudos);
 					Qnew.addTrace( Q_i );
 				}
@@ -303,7 +307,7 @@ run_trace(utility::vector1<pseudoCA> selectPseudos, utility::vector1<pseudoTrace
 		std::cerr << "cycle " << cyc++ << " best score = " << best_score << std::endl;
 	}
 
-	for (core::Size i=1; i<=Q.size(); ++i) {
+	for ( core::Size i=1; i<=Q.size(); ++i ) {
 		pseudoTraces.push_back(Q.get(i));
 	}
 	std::sort( pseudoTraces.begin(), pseudoTraces.end() );
@@ -322,13 +326,13 @@ public:
 
 	virtual ~PseudoCAMultifunc() {}
 
-	virtual	core::Real
+	virtual core::Real
 	operator ()( core::optimization::Multivec const & vars ) const;
 
-	virtual	void
+	virtual void
 	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const;
 
-	virtual	void
+	virtual void
 	dump( core::optimization::Multivec const & vars1, core::optimization::Multivec const & vars2 ) const;
 
 private:
@@ -359,48 +363,50 @@ traceCAs() {
 
 	std::priority_queue<pseudoCA> Q;
 
-	for (core::Size nx = 0; nx<nsteps[0]; ++nx)
-	for (core::Size ny = 0; ny<nsteps[1]; ++ny)
-	for (core::Size nz = 0; nz<nsteps[2]; ++nz) {
-		core::Vector fX (
-			(core::Real)nx/(core::Real)nsteps[0],
-			(core::Real)ny/(core::Real)nsteps[1],
-			(core::Real)nz/(core::Real)nsteps[2]
-		);
-		core::Vector cX = edm.get_f2c()*fX;
-		core::Real score = -edm.matchPointFast( cX );
-		if (Q.size() < 20*ncas) {  // may be too permissive (?)
-			Q.push( pseudoCA(cX,score) );
-		} else {
-			if (score < Q.top().score) {
-				Q.pop();
-				Q.push( pseudoCA(cX,score) );
+	for ( core::Size nx = 0; nx<nsteps[0]; ++nx ) {
+		for ( core::Size ny = 0; ny<nsteps[1]; ++ny ) {
+			for ( core::Size nz = 0; nz<nsteps[2]; ++nz ) {
+				core::Vector fX (
+					(core::Real)nx/(core::Real)nsteps[0],
+					(core::Real)ny/(core::Real)nsteps[1],
+					(core::Real)nz/(core::Real)nsteps[2]
+				);
+				core::Vector cX = edm.get_f2c()*fX;
+				core::Real score = -edm.matchPointFast( cX );
+				if ( Q.size() < 20*ncas ) {  // may be too permissive (?)
+					Q.push( pseudoCA(cX,score) );
+				} else {
+					if ( score < Q.top().score ) {
+						Q.pop();
+						Q.push( pseudoCA(cX,score) );
+					}
+				}
 			}
 		}
 	}
 
 	// make a bit sparser
- 	core::Real cutoffdist = 1;
- 	utility::vector1<pseudoCA> topPseudos, selectPseudos;
- 	while (!Q.empty()) {
- 		topPseudos.push_back(Q.top());
- 		Q.pop();
- 	}
- 	std::sort(topPseudos.begin(), topPseudos.end());
- 	for (core::Size i=1; i<=topPseudos.size(); ++i) {
- 		bool tooclose=false;
- 		for (core::Size j=1; j<=selectPseudos.size() && !tooclose; ++j) {
- 			if ( (topPseudos[i].X - selectPseudos[j].X).length_squared() < cutoffdist*cutoffdist) tooclose=true;
- 		}
- 		if (!tooclose) {
- 			selectPseudos.push_back( topPseudos[i] );
- 			if (selectPseudos.size() >= ncas) break;
- 		}
+	core::Real cutoffdist = 1;
+	utility::vector1<pseudoCA> topPseudos, selectPseudos;
+	while ( !Q.empty() ) {
+		topPseudos.push_back(Q.top());
+		Q.pop();
+	}
+	std::sort(topPseudos.begin(), topPseudos.end());
+	for ( core::Size i=1; i<=topPseudos.size(); ++i ) {
+		bool tooclose=false;
+		for ( core::Size j=1; j<=selectPseudos.size() && !tooclose; ++j ) {
+			if ( (topPseudos[i].X - selectPseudos[j].X).length_squared() < cutoffdist*cutoffdist ) tooclose=true;
+		}
+		if ( !tooclose ) {
+			selectPseudos.push_back( topPseudos[i] );
+			if ( selectPseudos.size() >= ncas ) break;
+		}
 	}
 
 	// dump as pdb
 	std::ofstream oss( "ca_trace.pdb" );
-	for (core::Size i=1; i<=selectPseudos.size(); ++i) {
+	for ( core::Size i=1; i<=selectPseudos.size(); ++i ) {
 		oss << boost::format("%-6s%5d %4s%1s%3s %1s%4d%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s\n")
 			% "ATOM" % i % " CA " % " " % "ALA" % "A" % i % " " % selectPseudos[i].X[0] % selectPseudos[i].X[1] % selectPseudos[i].X[2] % 1.0 % 1.0 % " C" % "  ";
 	}
@@ -412,14 +418,14 @@ traceCAs() {
 	// minimize cycles
 	// TO DO
 
-	for (core::Size i=1; i<=std::min((core::Size)100,pseudoTraces.size()); ++i) {
+	for ( core::Size i=1; i<=std::min((core::Size)100,pseudoTraces.size()); ++i ) {
 		std::string name = "ca_trace_"+utility::to_string(i)+".pdb";
 		std::ofstream oss_i( name.c_str() );
-		for (core::Size j=1; j<=pseudoTraces[i].size(); ++j) {
-				oss_i << boost::format("%-6s%5d %4s%1s%3s %1s%4d%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s\n")
-					% "ATOM" % j % " CA " % " " % "ALA" % "A" % j % " "
-					% selectPseudos[pseudoTraces[i].get(j)].X[0] % selectPseudos[pseudoTraces[i].get(j)].X[1] % selectPseudos[pseudoTraces[i].get(j)].X[2]
-					% 1.0 % 1.0 % " C" % "  ";
+		for ( core::Size j=1; j<=pseudoTraces[i].size(); ++j ) {
+			oss_i << boost::format("%-6s%5d %4s%1s%3s %1s%4d%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s\n")
+				% "ATOM" % j % " CA " % " " % "ALA" % "A" % j % " "
+				% selectPseudos[pseudoTraces[i].get(j)].X[0] % selectPseudos[pseudoTraces[i].get(j)].X[1] % selectPseudos[pseudoTraces[i].get(j)].X[2]
+				% 1.0 % 1.0 % " C" % "  ";
 		}
 	}
 }
@@ -431,13 +437,13 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	// options, random initialization
-	NEW_OPT(pseudoca::ncas, "number of cas", 100);
-	NEW_OPT(pseudoca::ncycles, "number of cycles", 10);
-	NEW_OPT(pseudoca::beamwidth, "number of cycles", 100);
+		// options, random initialization
+		NEW_OPT(pseudoca::ncas, "number of cas", 100);
+		NEW_OPT(pseudoca::ncycles, "number of cycles", 10);
+		NEW_OPT(pseudoca::beamwidth, "number of cycles", 100);
 
-	devel::init( argc, argv );
-	traceCAs();
+		devel::init( argc, argv );
+		traceCAs();
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

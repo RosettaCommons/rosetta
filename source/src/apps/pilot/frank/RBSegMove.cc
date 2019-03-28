@@ -38,22 +38,23 @@ RBSegmentRelax_local_main( void* ) {
 int
 main( int argc, char * argv [] )
 {
-    try {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	NEW_OPT( fpd::viewer, "viewer?", false );
+		NEW_OPT( fpd::viewer, "viewer?", false );
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	if ( option[ fpd::viewer ]() )
-		protocols::viewer::viewer_main( RBSegmentRelax_local_main );
-	else
-		RBSegmentRelax_local_main ((void*)0);
-    } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		if ( option[ fpd::viewer ]() ) {
+			protocols::viewer::viewer_main( RBSegmentRelax_local_main );
+		} else {
+			RBSegmentRelax_local_main ((void*)0);
+		}
+	} catch (utility::excn::Exception const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-        return 0;
-    }
+	}
+	return 0;
+}
