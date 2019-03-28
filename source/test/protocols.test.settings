@@ -82,6 +82,7 @@ sources = {
 
 	"carbohydrates" : [
 		"RingPlaneFlipMover",
+		"TautomerizeAnomerMover",
 	],
 
 	"cluster" : [

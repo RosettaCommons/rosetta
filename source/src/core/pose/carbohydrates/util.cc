@@ -34,6 +34,7 @@
 #include <core/types.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
@@ -1344,6 +1345,67 @@ delete_leaf( Pose & pose, utility::vector1< Size > leaf, std::string ref_pose_na
 		//pose.delete_polymer_residue( new_resnum );
 		pose.delete_residue_slow( new_resnum );
 	}
+}
+
+
+/////////////////////////////   Tautomerization    /////////////////////////////
+
+/// @brief   Switch one saccharide sugar with its anomer.
+/// @note    This function does not care whether or not the sugar is a reducing end or glycoside.
+/// @author  Labonte <JWLabonte@jhu.edu>
+void
+tautomerize_anomer( Pose & pose, core::uint const seqpos )
+{
+	using namespace std;
+	using namespace chemical;
+	using namespace chemical::carbohydrates;
+	using namespace conformation;
+
+	Residue const & old_res( pose.residue( seqpos ) );
+	runtime_assert_string_msg( old_res.is_carbohydrate(),
+		"tautomerize_anomer( Pose & pose, core::uint const seqpos ): "
+		"Residue " + old_res.name() + " is not a saccharide!" );
+
+	ResidueTypeCOP new_type;
+	if ( old_res.type().has_property( ALPHA_SUGAR ) || old_res.type().has_property( BETA_SUGAR ) ) {
+		utility::vector1< string > const & variants( old_res.type().properties().get_list_of_variants() );
+		ResidueTypeSetCOP type_set( pose.residue_type_set_for_pose( old_res.type().mode() ) );
+		ResidueTypeCOPs types( type_set->get_all_types_with_variants_name3( old_res.name3(), variants ) );
+		for ( ResidueTypeCOP type_ptr : types ) {
+			CarbohydrateInfoCOP old_info( old_res.carbohydrate_info() );
+			CarbohydrateInfoCOP new_info( type_ptr->carbohydrate_info() );
+			// Compare the linkage prefix, e.g., ->4)-.
+			if ( new_info->mainchain_glycosidic_bond_acceptor() != old_info->mainchain_glycosidic_bond_acceptor() ) {
+				continue;
+			}
+			// Compare the strereochemical prefix, e.g., L- or D-.
+			if ( new_info->stereochem() != old_info->stereochem() ) {
+				continue;
+			}
+			// Compare the ring suffix, e.g., -f or -p.
+			if ( new_info->ring_size() != old_info->ring_size() ) {
+				continue;
+			}
+			// Compare the anomeric prefix, e.g., alpha- or beta-.
+			if ( new_info->anomer() == old_info->anomer() ) {
+				continue;
+			}
+			// If we get this far, we must have the anomer.
+			new_type = type_ptr;
+			break;
+		}
+		runtime_assert_string_msg( new_type,
+			"tautomerize_anomer( Pose & pose, core::uint const seqpos ): "
+			"No anomer found for reducing end sugar " + old_res.name() + "!" );
+	} else {
+		TR.Error << "Reducing end sugar " << old_res.name() << " has no anomeric property defined." << endl;
+		utility_exit();
+	}
+
+	// Actually create a new Residue and make the switch.
+	ResidueCOP new_res(
+		ResidueFactory::create_residue( *new_type, old_res, pose.conformation(), false, false ) );
+	pose.replace_residue( seqpos, *new_res, false );
 }
 
 }  // namespace carbohydrates

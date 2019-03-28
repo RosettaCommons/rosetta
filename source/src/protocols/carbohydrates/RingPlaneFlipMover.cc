@@ -107,6 +107,7 @@ RingPlaneFlipMover::show( std::ostream & output ) const
 	Mover::show( output );  // name, type, tag
 }
 
+
 // Mover methods
 /// @brief  Register options with the option system.
 void
@@ -143,9 +144,15 @@ RingPlaneFlipMover::parse_my_tag(
 	Pose const & )
 {
 	using namespace core::select::movemap;
+	using namespace rosetta_scripts;
+
+	// Parse the ResidueSelector tag.
+	if ( tag->hasOption( "residue_selector" ) ) {
+		selector_ = parse_residue_selector( tag, data );
+	}
 
 	// Parse the MoveMapFactory tag.
-	MoveMapFactoryOP mmf_legacy( protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data ) );
+	MoveMapFactoryOP mmf_legacy( parse_movemap_factory_legacy( tag, data ) );
 	MoveMapFactoryOP mmf( parse_movemap_factory( tag, data ) );
 	if ( mmf ) {
 		movemap_factory( mmf );
@@ -169,6 +176,8 @@ RingPlaneFlipMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, subelements );
 
 	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_residue_selector( attlist, "The name of a pre-defined ResidueSelector." );
 
 	core::select::movemap::attributes_for_parse_movemap_factory_default_attr_name(
 		attlist,
@@ -267,7 +276,8 @@ RingPlaneFlipMover::copy_data(
 	object_to_copy_to.movable_torsion_pairs_ = object_to_copy_from.movable_torsion_pairs_;
 }
 
-// Setup list of movable residues from MoveMap and/or ResidueSelector.
+
+// Setup list of movable TorsionID pairs from MoveMap and/or ResidueSelector.
 void
 RingPlaneFlipMover::setup_movable_torsion_pairs( core::pose::Pose const & pose )
 {

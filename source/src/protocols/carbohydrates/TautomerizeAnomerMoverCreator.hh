@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file    protocols/carbohydrates/RingPlaneFlipMoverCreator.hh
-/// @brief   Method declarations for RingPlaneFlipMoverCreator.
+/// @file    protocols/carbohydrates/TautomerizeAnomerMoverCreator.hh
+/// @brief   Method declarations for TautomerizeAnomerMoverCreator.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_protocols_carbohydrates_RingPlaneFlipMoverCreator_HH
-#define INCLUDED_protocols_carbohydrates_RingPlaneFlipMoverCreator_HH
+#ifndef INCLUDED_protocols_carbohydrates_TautomerizeAnomerMoverCreator_HH
+#define INCLUDED_protocols_carbohydrates_TautomerizeAnomerMoverCreator_HH
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>
@@ -22,13 +22,13 @@
 namespace protocols {
 namespace carbohydrates {
 
-/// @brief  MoverCreator allowing the MoverFactory to create a RingConformationMover
-class RingPlaneFlipMoverCreator: public protocols::moves::MoverCreator {
+/// @brief  MoverCreator allowing the MoverFactory to create a TautomerizeAnomerMover.
+class TautomerizeAnomerMoverCreator: public protocols::moves::MoverCreator {
 public:
 	/// @brief  Return an up-casted owning pointer (MoverOP) to the mover.
 	protocols::moves::MoverOP create_mover() const override;
 
-	/// @brief  Return the key name for the associated Mover (RingPlaneFlipMoverCreator).
+	/// @brief  Return the key name for the associated Mover (TautomerizeAnomerMoverCreator).
 	std::string keyname() const override;
 
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -37,4 +37,4 @@ public:
 }  // namespace carbohydrates
 }  // namespace protocols
 
-#endif  // INCLUDED_protocols_carbohydrates_RingPlaneFlipMoverCreator_HH
+#endif  // INCLUDED_protocols_carbohydrates_TautomerizeAnomerMoverCreator_HH

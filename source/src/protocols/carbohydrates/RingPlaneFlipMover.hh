@@ -121,7 +121,7 @@ private:  // Private methods //////////////////////////////////////////////////
 	void copy_data( RingPlaneFlipMover & object_to_copy_to, RingPlaneFlipMover const & object_to_copy_from);
 
 
-	// Setup list of movable residues from MoveMap and/or ResidueSelector.
+	// Setup list of movable TorsionID pairs from MoveMap and/or ResidueSelector.
 	void setup_movable_torsion_pairs( core::pose::Pose const & pose );
 
 

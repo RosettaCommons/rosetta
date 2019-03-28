@@ -84,6 +84,7 @@ static MoverRegistrator< carbohydrates::LinkageConformerMoverCreator > reg_Linka
 static MoverRegistrator< carbohydrates::IdealizeAnomericHydrogensCreator > reg_IdealizeAnomericHydrogensCreator;
 static MoverRegistrator< carbohydrates::RingPlaneFlipMoverCreator > reg_RingPlaneFlipMoverCreator;
 static MoverRegistrator< carbohydrates::SimpleGlycosylateMoverCreator > reg_SimpleGlycosylateMoverCreator;
+static MoverRegistrator< carbohydrates::TautomerizeAnomerMoverCreator > reg_TautomerizeAnomerMoverCreator;
 
 static MoverRegistrator< comparative_modeling::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
 

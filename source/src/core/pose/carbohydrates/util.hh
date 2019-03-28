@@ -42,9 +42,6 @@ namespace pose {
 namespace carbohydrates {
 
 ////////////////////////   Pose-Required Kinematics    ///////////////////////////////////
-///
-///
-///
 
 ///@brief
 ///
@@ -381,6 +378,13 @@ delete_leaf( Pose & pose, utility::vector1< Size > leaf, std::string ref_pose_na
 /// @brief Remove All/Any branch points from a carbohydrate or aa residue.
 void
 remove_carbohydrate_branch_point_variants( Pose & pose, core::Size const seqpos );
+
+
+/////////////////////////////   Tautomerization    /////////////////////////////
+
+/// @brief Switch one saccharide sugar with its anomer.
+void tautomerize_anomer( Pose & pose, core::uint const seqpos );
+
 
 }  // namespace carbohydrates
 }  // namespace pose
