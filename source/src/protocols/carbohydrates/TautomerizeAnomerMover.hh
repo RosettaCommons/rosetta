@@ -35,7 +35,7 @@ namespace carbohydrates {
 /// limited design case; however, reducing ends readily tautomerize in solution, in contrast to other cases, in which
 /// residues do not readily mutate into others!)  It is generally not certain which form is preferred (if any) in
 /// sugar-binding proteins, and crystal structures sometimes arbitrarily assign one anomer over another when fitting
-/// density, so this Mover can assure that each anomer is sampled. 
+/// density, so this Mover can assure that each anomer is sampled.
 /// If a ResidueSelector is set, the Mover will select from the subset at random; it will not guarantee
 /// tautomerization of every Residue in the subset.
 /// @note     This Mover assumes that, any time a new saccharide .params file is added to the Rosetta database, its
