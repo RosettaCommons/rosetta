@@ -1,0 +1,30 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+cd %(workdir)s
+
+[ -x %(bin)s/fixbb.%(binext)s ] || exit 1
+
+%(bin)s/fixbb.%(binext)s %(additional_flags)s -s cycpep_pre_stage_3.pdb -nstruct 5 -NCAA_expanded -resfile design.res -overwrite -ex1 -ex2 -use_input_sc -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log_cycpep_beta_aramid
+
+# Can't do this one until we start versioning at least one beta rotlib. not my call.
+#%(bin)s/fixbb.%(binext)s %(additional_flags)s -s bpeptide_octamer.pdb -nstruct 5 -NCAA_expanded -resfile design_bpep.res -overwrite -ex1 -ex2 -use_input_sc -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+#    | egrep -vf ../../ignore_list \
+#    > log_octamer
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+

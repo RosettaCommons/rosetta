@@ -681,6 +681,9 @@ enum ScoreType {
 	//MPHelicality,
 	membrane_span_constraint,
 	membrane_span_term_z_constraint,
+
+	aromatic_restraint, //Restraints for aromatic backbones
+
 	// etc etc
 	// Why is there a total score?
 	total_score,

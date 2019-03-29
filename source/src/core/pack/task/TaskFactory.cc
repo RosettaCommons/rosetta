@@ -22,7 +22,6 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/palette/PackerPalette.hh>
 #include <core/pack/palette/PackerPaletteFactory.hh>
-#include <core/pack/palette/DefaultPackerPalette.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 

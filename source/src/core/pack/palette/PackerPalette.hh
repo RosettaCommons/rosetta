@@ -159,6 +159,7 @@ public:
 
 	/// @brief Set up the default base types:
 	void set_up_default_base_types();
+	void set_up_expanded_base_types();
 
 	/// @brief Set the special behaviours to their default values.
 	void set_up_default_special_behaviours();

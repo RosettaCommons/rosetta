@@ -90,6 +90,7 @@
 #include <core/scoring/vdwaals/VDW_EnergyCreator.hh>
 #include <core/scoring/methods/GoapEnergyCreator.hh>
 #include <core/scoring/methods/RingClosureEnergyCreator.hh>
+#include <core/scoring/methods/AromaticBackboneRestraintEnergyCreator.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergyCreator.hh>
 #include <core/scoring/util_methods/DumpTrajectoryEnergyCreator.hh>
 #include <core/scoring/netcharge_energy/NetChargeEnergyCreator.hh>
@@ -475,6 +476,7 @@ static EnergyMethodRegistrator< scoring::methods::dfire::DFIRE_EnergyCreator > D
 static EnergyMethodRegistrator< scoring::vdwaals::VDW_EnergyCreator > VDW_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::GoapEnergyCreator > GoapEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RingClosureEnergyCreator > RingClosureEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::AromaticBackboneRestraintEnergyCreator > AromaticBackboneRestraintEnergyCreator_registrator;
 static EnergyMethodRegistrator< carbohydrates::SugarBackboneEnergyCreator > SugarBackboneEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::util_methods::DumpTrajectoryEnergyCreator > DumpTrajectoryEnergy_registrator;
 static EnergyMethodRegistrator< scoring::netcharge_energy::NetChargeEnergyCreator > NetChargeEnergyCreator_registrator;

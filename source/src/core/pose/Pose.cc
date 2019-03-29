@@ -964,18 +964,24 @@ Pose::phi( Size const seqpos ) const
 			return residue( seqpos ).mainchain_torsion(phi_torsion_pre_methylene_ortho_aramid );
 		} else if ( residue_type( seqpos ).is_post_methylene_ortho_aramid() ) {
 			return residue( seqpos ).mainchain_torsion(phi_torsion_post_methylene_ortho_aramid );
+		} else if ( residue_type( seqpos ).is_pre_methylene_post_methylene_ortho_aramid() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_pre_methylene_post_methylene_ortho_aramid );
 		} else if ( residue_type( seqpos ).is_meta_aramid() ) {
 			return residue( seqpos ).mainchain_torsion(phi_torsion_meta_aramid );
 		} else if ( residue_type( seqpos ).is_pre_methylene_meta_aramid() ) {
 			return residue( seqpos ).mainchain_torsion(phi_torsion_pre_methylene_meta_aramid );
 		} else if ( residue_type( seqpos ).is_post_methylene_meta_aramid() ) {
 			return residue( seqpos ).mainchain_torsion(phi_torsion_post_methylene_meta_aramid );
+		} else if ( residue_type( seqpos ).is_pre_methylene_post_methylene_meta_aramid() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_pre_methylene_post_methylene_meta_aramid );
 		} else if ( residue_type( seqpos ).is_para_aramid() ) {
 			return residue( seqpos ).mainchain_torsion(phi_torsion_para_aramid );
 		} else if ( residue_type( seqpos ).is_pre_methylene_para_aramid() ) {
 			return residue( seqpos ).mainchain_torsion(phi_torsion_pre_methylene_para_aramid );
 		} else if ( residue_type( seqpos ).is_post_methylene_para_aramid() ) {
 			return residue( seqpos ).mainchain_torsion(phi_torsion_post_methylene_para_aramid );
+		} else if ( residue_type( seqpos ).is_pre_methylene_post_methylene_para_aramid() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_pre_methylene_post_methylene_para_aramid );
 		} else { //Default case, including peptoids and alpha-amino acids:
 			return residue( seqpos ).mainchain_torsion( phi_torsion );
 		}
@@ -1014,18 +1020,24 @@ Pose::set_phi( Size const seqpos, Real const setting )
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_pre_methylene_ortho_aramid ), setting );
 		} else if ( residue_type(seqpos).is_post_methylene_ortho_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_post_methylene_ortho_aramid ), setting );
+		} else if ( residue_type(seqpos).is_pre_methylene_post_methylene_ortho_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_pre_methylene_post_methylene_ortho_aramid ), setting );
 		} else if ( residue_type(seqpos).is_meta_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_meta_aramid ), setting );
 		} else if ( residue_type(seqpos).is_pre_methylene_meta_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_pre_methylene_meta_aramid ), setting );
 		} else if ( residue_type(seqpos).is_post_methylene_meta_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_post_methylene_meta_aramid ), setting );
+		} else if ( residue_type(seqpos).is_pre_methylene_post_methylene_meta_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_pre_methylene_post_methylene_meta_aramid ), setting );
 		} else if ( residue_type(seqpos).is_para_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_para_aramid ), setting );
 		} else if ( residue_type(seqpos).is_pre_methylene_para_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_pre_methylene_para_aramid ), setting );
 		} else if ( residue_type(seqpos).is_post_methylene_para_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_post_methylene_para_aramid ), setting );
+		} else if ( residue_type(seqpos).is_pre_methylene_post_methylene_para_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_pre_methylene_post_methylene_para_aramid ), setting );
 		} else { //Default case, including peptoids and alpha-amino acids:
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion ), setting );
 		}
@@ -1060,18 +1072,24 @@ Pose::psi( Size const seqpos ) const
 			return residue(seqpos).mainchain_torsion(psi_torsion_pre_methylene_ortho_aramid);
 		} else if ( residue_type(seqpos).is_post_methylene_ortho_aramid() ) {
 			return residue(seqpos).mainchain_torsion(psi_torsion_post_methylene_ortho_aramid);
+		} else if ( residue_type(seqpos).is_pre_methylene_post_methylene_ortho_aramid() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_pre_methylene_post_methylene_ortho_aramid);
 		} else if ( residue_type(seqpos).is_meta_aramid() ) {
 			return residue(seqpos).mainchain_torsion(psi_torsion_meta_aramid);
 		} else if ( residue_type(seqpos).is_pre_methylene_meta_aramid() ) {
 			return residue(seqpos).mainchain_torsion(psi_torsion_pre_methylene_meta_aramid);
 		} else if ( residue_type(seqpos).is_post_methylene_meta_aramid() ) {
 			return residue(seqpos).mainchain_torsion(psi_torsion_post_methylene_meta_aramid);
+		} else if ( residue_type(seqpos).is_pre_methylene_post_methylene_meta_aramid() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_pre_methylene_post_methylene_meta_aramid);
 		} else if ( residue_type(seqpos).is_para_aramid() ) {
 			return residue(seqpos).mainchain_torsion(psi_torsion_para_aramid);
 		} else if ( residue_type(seqpos).is_pre_methylene_para_aramid() ) {
 			return residue(seqpos).mainchain_torsion(psi_torsion_pre_methylene_para_aramid);
 		} else if ( residue_type(seqpos).is_post_methylene_para_aramid() ) {
 			return residue(seqpos).mainchain_torsion(psi_torsion_post_methylene_para_aramid);
+		} else if ( residue_type(seqpos).is_pre_methylene_post_methylene_para_aramid() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_pre_methylene_post_methylene_para_aramid);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			return residue(seqpos).mainchain_torsion(psi_torsion);
 		}
@@ -1107,18 +1125,22 @@ Pose::set_psi( Size const seqpos, Real const setting )
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_pre_methylene_ortho_aramid ), setting);
 		} else if  ( residue_type(seqpos).is_post_methylene_ortho_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_post_methylene_ortho_aramid ), setting);
-		} else if  ( residue_type(seqpos).is_meta_aramid() ) {
-			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_meta_aramid ), setting);
+		} else if  ( residue_type(seqpos).is_pre_methylene_post_methylene_ortho_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_pre_methylene_post_methylene_ortho_aramid ), setting);
 		} else if  ( residue_type(seqpos).is_pre_methylene_meta_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_pre_methylene_meta_aramid ), setting);
 		} else if  ( residue_type(seqpos).is_post_methylene_meta_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_post_methylene_meta_aramid ), setting);
+		} else if  ( residue_type(seqpos).is_pre_methylene_post_methylene_meta_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_pre_methylene_post_methylene_meta_aramid ), setting);
 		} else if  ( residue_type(seqpos).is_para_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_para_aramid ), setting);
 		} else if  ( residue_type(seqpos).is_pre_methylene_para_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_pre_methylene_para_aramid ), setting);
 		} else if  ( residue_type(seqpos).is_post_methylene_para_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_post_methylene_para_aramid ), setting);
+		} else if  ( residue_type(seqpos).is_pre_methylene_post_methylene_para_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_pre_methylene_post_methylene_para_aramid ), setting);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion ), setting );
 		}
@@ -1154,18 +1176,24 @@ Real Pose::omega( Size const seqpos ) const
 			return residue(seqpos).mainchain_torsion(omega_torsion_pre_methylene_ortho_aramid);
 		} else if ( residue_type(seqpos).is_post_methylene_ortho_aramid() ) {
 			return residue(seqpos).mainchain_torsion(omega_torsion_post_methylene_ortho_aramid);
+		} else if ( residue_type(seqpos).is_pre_methylene_post_methylene_ortho_aramid() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_pre_methylene_post_methylene_ortho_aramid);
 		} else if ( residue_type(seqpos).is_meta_aramid() ) {
 			return residue(seqpos).mainchain_torsion(omega_torsion_meta_aramid);
 		} else if ( residue_type(seqpos).is_pre_methylene_meta_aramid() ) {
 			return residue(seqpos).mainchain_torsion(omega_torsion_pre_methylene_meta_aramid);
 		} else if ( residue_type(seqpos).is_post_methylene_meta_aramid() ) {
 			return residue(seqpos).mainchain_torsion(omega_torsion_post_methylene_meta_aramid);
+		} else if ( residue_type(seqpos).is_pre_methylene_post_methylene_meta_aramid() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_pre_methylene_post_methylene_meta_aramid);
 		} else if ( residue_type(seqpos).is_para_aramid() ) {
 			return residue(seqpos).mainchain_torsion(omega_torsion_para_aramid);
 		} else if ( residue_type(seqpos).is_pre_methylene_para_aramid() ) {
 			return residue(seqpos).mainchain_torsion(omega_torsion_pre_methylene_para_aramid);
 		} else if ( residue_type(seqpos).is_post_methylene_para_aramid() ) {
 			return residue(seqpos).mainchain_torsion(omega_torsion_post_methylene_para_aramid);
+		} else if ( residue_type(seqpos).is_pre_methylene_post_methylene_para_aramid() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_pre_methylene_post_methylene_para_aramid);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			return residue(seqpos).mainchain_torsion(omega_torsion);
 		}
@@ -1202,18 +1230,24 @@ Pose::set_omega( Size const seqpos, Real const setting )
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_pre_methylene_ortho_aramid ),  setting);
 		} else if ( residue_type(seqpos).is_post_methylene_ortho_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_post_methylene_ortho_aramid ),  setting);
+		} else if ( residue_type(seqpos).is_pre_methylene_post_methylene_ortho_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_pre_methylene_post_methylene_ortho_aramid ),  setting);
 		} else if ( residue_type(seqpos).is_meta_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_meta_aramid ),  setting);
 		} else if ( residue_type(seqpos).is_pre_methylene_meta_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_pre_methylene_meta_aramid ),  setting);
 		} else if ( residue_type(seqpos).is_post_methylene_meta_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_post_methylene_meta_aramid ),  setting);
+		} else if ( residue_type(seqpos).is_pre_methylene_post_methylene_meta_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_pre_methylene_post_methylene_meta_aramid ),  setting);
 		} else if ( residue_type(seqpos).is_para_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_para_aramid ),  setting);
 		} else if ( residue_type(seqpos).is_pre_methylene_para_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_pre_methylene_para_aramid ),  setting);
 		} else if ( residue_type(seqpos).is_post_methylene_para_aramid() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_post_methylene_para_aramid ),  setting);
+		} else if ( residue_type(seqpos).is_pre_methylene_post_methylene_para_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_pre_methylene_post_methylene_para_aramid ),  setting);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion ),  setting );
 		}

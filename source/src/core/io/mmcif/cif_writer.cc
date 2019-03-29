@@ -269,11 +269,10 @@ dump_cif(
 	ISTable* chem_comp = new ISTable( "chem_comp" );
 	chem_comp->AddColumn( "id" );
 	chem_comp->AddColumn( "name" );
-	for ( std::map< std::string, std::string >::const_iterator iter = sfr->heterogen_names().begin(),
-			end = sfr->heterogen_names().end(); iter != end; ++iter ) {
+	for ( auto const & elem : sfr->heterogen_names() ) {
 		std::vector< std::string > vec;
-		vec.push_back( iter->first );
-		vec.push_back( iter->second );
+		vec.push_back( elem.first );
+		vec.push_back( elem.second );
 		chem_comp->AddRow( vec );
 	}
 	block.WriteTable( chem_comp );
@@ -293,8 +292,8 @@ dump_cif(
 	struct_conn->AddColumn( "pdbx_dist_value" );
 	struct_conn->AddColumn( "conn_type_id" );
 
-	for ( std::map< std::string, utility::vector1< SSBondInformation > >::const_iterator iter = sfr->ssbond_map().begin(), end = sfr->ssbond_map().end(); iter != end; ++iter ) {
-		for ( auto const & iter2 : iter->second ) {
+	for ( auto const & elem : sfr->ssbond_map() ) {
+		for ( auto const & iter2 : elem.second ) {
 			std::vector< std::string > vec;
 
 			vec.push_back( iter2.name1 );
@@ -320,8 +319,8 @@ dump_cif(
 		}
 	}
 
-	for ( std::map< std::string, utility::vector1< LinkInformation > >::const_iterator iter = sfr->link_map().begin(), end = sfr->link_map().end(); iter != end; ++iter ) {
-		for ( auto const & iter2 : iter->second ) {
+	for ( auto const & elem : sfr->link_map() ) {
+		for ( auto const & iter2 : elem.second ) {
 			std::vector< std::string > vec;
 			vec.push_back( iter2.name1 );
 			vec.push_back( iter2.resName1 );

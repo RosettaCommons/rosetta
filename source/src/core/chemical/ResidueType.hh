@@ -1721,6 +1721,15 @@ public:
 	/// @brief Is this a para-aramid?
 	bool is_post_methylene_para_aramid() const { return properties_->has_property( POST_METHYLENE_PARA_ARAMID ); }
 
+	/// @brief Is this an ortho-aramid?
+	bool is_pre_methylene_post_methylene_ortho_aramid() const { return properties_->has_property( PRE_METHYLENE_POST_METHYLENE_ORTHO_ARAMID ); }
+
+	/// @brief Is this a meta-aramid?
+	bool is_pre_methylene_post_methylene_meta_aramid() const { return properties_->has_property( PRE_METHYLENE_POST_METHYLENE_META_ARAMID ); }
+
+	/// @brief Is this a para-aramid?
+	bool is_pre_methylene_post_methylene_para_aramid() const { return properties_->has_property( PRE_METHYLENE_POST_METHYLENE_PARA_ARAMID ); }
+
 	/// @brief Does this type have groups (not just single atoms) that are polymer-bond dependent?
 	/// @details Always returns false for non-polymeric residue types.
 	bool has_polymer_dependent_groups() const {

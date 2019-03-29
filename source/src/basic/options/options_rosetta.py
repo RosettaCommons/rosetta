@@ -2148,6 +2148,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'extra_base_type_file', 'File',
 				desc='PackerPalettes define the set of residue types with which one is designing, and TaskOperations allow types to be turned off at specific positinos.  The default PackerPalette includes the twenty canonical amino acids.  If this option is used to provide a file containing a whitespace-separated list of residue type names, the default PackerPalette will include these additional residue types.'
 			),
+			Option( 'NCAA_expanded', 'Boolean',
+				desc='Design positions like beta-AAs, oligoureas, and polyaramids with a default set of options'
+			),
 		), # -packing:packer_palette
 	), # -packing
 

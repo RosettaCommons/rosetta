@@ -516,6 +516,8 @@ fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) 
 	using namespace core::chemical;
 	using namespace core::pose::full_model_info;
 
+	if ( pose.residue_type( res ).has_variant_type( UPPERTERM_TRUNC_VARIANT ) ) return;
+
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
@@ -559,9 +561,12 @@ fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) 
 ////////////////////////////////////////////////////////////////////
 void
 fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const res ) {
-
 	using namespace core::chemical;
 	using namespace core::pose::full_model_info;
+
+	// Leave FMet alone
+	if ( pose.residue_type( res ).has_variant_type( N_FORMYLATION ) ) return;
+	if ( pose.residue_type( res ).has_variant_type( LOWERTERM_TRUNC_VARIANT ) ) return;
 
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
@@ -593,6 +598,7 @@ fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const 
 		remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, res );
 		// proteins...
 		if ( pose.residue_type( res ).is_protein() ) {
+
 			if ( res_list[ res ] > 1 &&
 					chains_full[ res_list[ res ] - 1 ] == chains_full[ res_list[ res ] ] &&
 					( res == 1 || res_list[ res ] - 1 > res_list[ res - 1 ] ) ) {

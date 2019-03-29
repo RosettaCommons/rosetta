@@ -132,6 +132,7 @@ sources = {
 	"core/pack/palette": [
 		"CustomBaseTypePackerPalette",
 		"DefaultPackerPalette",
+		"NCAADefaultPackerPalette",
 		"NoDesignPackerPalette",
 		"PackerPalette",
 		"PackerPaletteFactory",

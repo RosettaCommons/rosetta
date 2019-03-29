@@ -3439,16 +3439,46 @@ SimpleCycpepPredictApplication::genkic_close(
 	if ( pose->residue(first_loop_res).type().is_alpha_aa() || pose->residue(first_loop_res).is_peptoid() ) { at1="CA"; }
 	else if ( pose->residue_type(first_loop_res).is_beta_aa() || pose->residue_type(first_loop_res).is_oligourea() ) { at1="CM"; }
 	else if ( pose->residue(first_loop_res).type().is_gamma_aa() ) { at1="C3"; }
-	else { utility_exit_with_message( "Unrecognized residue type at loop start.  Currently, this app only works with alpha, beta, and gamma amino acids, peptoids, and oligoureas." ); }
+	else if ( pose->residue(first_loop_res).type().is_aramid() ) {
+		if ( pose->residue(first_loop_res).type().is_pre_methylene_ortho_aramid() ) { at1="CA"; }
+		else if ( pose->residue(first_loop_res).type().is_pre_methylene_meta_aramid() ) { at1="CA"; }
+		else if ( pose->residue(first_loop_res).type().is_pre_methylene_para_aramid() ) { at1="CA"; }
+		else if ( pose->residue(first_loop_res).type().is_post_methylene_ortho_aramid() ) { at1="Ca"; }
+		else if ( pose->residue(first_loop_res).type().is_post_methylene_meta_aramid() ) { at1="CA"; }
+		else if ( pose->residue(first_loop_res).type().is_post_methylene_para_aramid() ) { at1="CA"; }
+		else if ( pose->residue(first_loop_res).type().is_pre_methylene_post_methylene_ortho_aramid() ) { at1="CA"; }
+		else if ( pose->residue(first_loop_res).type().is_pre_methylene_post_methylene_meta_aramid() ) { at1="CA"; }
+		else if ( pose->residue(first_loop_res).type().is_pre_methylene_post_methylene_para_aramid() ) { at1="CA"; }
+	} else { utility_exit_with_message( "Unrecognized residue type at loop start.  Currently, this app only works with alpha, beta, and gamma amino acids, peptoids, and oligoureas. Polyaramids with a free methylene work, too." ); }
 	if ( cyclization_type() == SCPA_terminal_disulfide && (middle_loop_res == cyclization_point_start || middle_loop_res == cyclization_point_end )  ) { at2 = pose->residue_type(middle_loop_res).get_disulfide_atom_name(); }
 	else if ( pose->residue(middle_loop_res).type().is_alpha_aa() || pose->residue(middle_loop_res).is_peptoid() ) { at2="CA"; }
 	else if ( pose->residue_type(middle_loop_res).is_beta_aa() || pose->residue_type(middle_loop_res).is_oligourea() ) { at2="CM"; }
 	else if ( pose->residue(middle_loop_res).type().is_gamma_aa() ) { at2="C3"; }
-	else { utility_exit_with_message( "Unrecognized residue type at loop midpoint.  Currently, this app only works with alpha, beta, and gamma amino acids, peptoids, and oligoureas." ); }
+	else if ( pose->residue(middle_loop_res).type().is_aramid() ) {
+		if ( pose->residue(middle_loop_res).type().is_pre_methylene_ortho_aramid() ) { at2="CA"; }
+		else if ( pose->residue(middle_loop_res).type().is_pre_methylene_meta_aramid() ) { at2="CA"; }
+		else if ( pose->residue(middle_loop_res).type().is_pre_methylene_para_aramid() ) { at2="CA"; }
+		else if ( pose->residue(middle_loop_res).type().is_post_methylene_ortho_aramid() ) { at2="Ca"; }
+		else if ( pose->residue(middle_loop_res).type().is_post_methylene_meta_aramid() ) { at2="CA"; }
+		else if ( pose->residue(middle_loop_res).type().is_post_methylene_para_aramid() ) { at2="CA"; }
+		else if ( pose->residue(middle_loop_res).type().is_pre_methylene_post_methylene_ortho_aramid() ) { at2="CA"; }
+		else if ( pose->residue(middle_loop_res).type().is_pre_methylene_post_methylene_meta_aramid() ) { at2="CA"; }
+		else if ( pose->residue(middle_loop_res).type().is_pre_methylene_post_methylene_para_aramid() ) { at2="CA"; }
+	} else { utility_exit_with_message( "Unrecognized residue type at loop midpoint.  Currently, this app only works with alpha, beta, and gamma amino acids, peptoids, and oligoureas. Polyaramids with a free methylene work, too." ); }
 	if ( pose->residue(last_loop_res).type().is_alpha_aa() || pose->residue(last_loop_res).is_peptoid() ) { at3="CA"; }
 	else if ( pose->residue_type(last_loop_res).is_beta_aa() || pose->residue_type(last_loop_res).is_oligourea() ) { at3="CM"; }
 	else if ( pose->residue(last_loop_res).type().is_gamma_aa() ) { at3="C3"; }
-	else { utility_exit_with_message( "Unrecognized residue type at loop midpoint.  Currently, this app only works with alpha, beta, and gamma amino acids, peptoids, and oligoureas." ); }
+	else if ( pose->residue(middle_loop_res).type().is_aramid() ) {
+		if ( pose->residue(last_loop_res).type().is_pre_methylene_ortho_aramid() ) { at3="CA"; }
+		else if ( pose->residue(last_loop_res).type().is_pre_methylene_meta_aramid() ) { at3="CA"; }
+		else if ( pose->residue(last_loop_res).type().is_pre_methylene_para_aramid() ) { at3="CA"; }
+		else if ( pose->residue(last_loop_res).type().is_post_methylene_ortho_aramid() ) { at3="Ca"; }
+		else if ( pose->residue(last_loop_res).type().is_post_methylene_meta_aramid() ) { at3="CA"; }
+		else if ( pose->residue(last_loop_res).type().is_post_methylene_para_aramid() ) { at3="CA"; }
+		else if ( pose->residue(last_loop_res).type().is_pre_methylene_post_methylene_ortho_aramid() ) { at3="CA"; }
+		else if ( pose->residue(last_loop_res).type().is_pre_methylene_post_methylene_meta_aramid() ) { at3="CA"; }
+		else if ( pose->residue(last_loop_res).type().is_pre_methylene_post_methylene_para_aramid() ) { at3="CA"; }
+	} else { utility_exit_with_message( "Unrecognized residue type at loop midpoint.  Currently, this app only works with alpha, beta, and gamma amino acids, peptoids, and oligoureas. Polyaramids with a free methylene work, too." ); }
 	genkic->set_pivot_atoms( first_loop_res, at1, middle_loop_res, at2, last_loop_res, at3 );
 
 	//Close the bond:
@@ -3466,7 +3496,7 @@ SimpleCycpepPredictApplication::genkic_close(
 		} else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat && i == cyclization_point_end ) { continue; }
 		else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat && i == cyclization_point_start ) { continue; }
 
-		if ( pose->residue_type(i).is_alpha_aa() || pose->residue_type(i).is_oligourea() || pose->residue_type(i).is_peptoid() ) {
+		if ( pose->residue_type(i).is_alpha_aa() || pose->residue_type(i).is_oligourea() || pose->residue_type(i).is_peptoid() || pose->residue_type(i).is_aramid() ) {
 			core::Size const res_in_original( original_position(i, cyclic_offset, pose->size() ) ); //Get the index of this position in the original pose (prior to any circular permutation).
 			if ( user_set_alpha_dihedrals_.count(res_in_original) ) { //If this position is being set to a particular value...
 				runtime_assert_string_msg( pose->residue_type(i).is_alpha_aa(), "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication: dihedral setting currently only works for alpha-amino acids." );

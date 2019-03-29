@@ -144,6 +144,13 @@ static Size const theta_torsion_post_methylene_ortho_aramid( 3 );
 static Size const psi_torsion_post_methylene_ortho_aramid( 4 );
 static Size const omega_torsion_post_methylene_ortho_aramid( 5 );
 
+static Size const phi_torsion_pre_methylene_post_methylene_ortho_aramid( 1 );
+static Size const zeta_torsion_pre_methylene_post_methylene_ortho_aramid( 2 );
+static Size const eta_torsion_pre_methylene_post_methylene_ortho_aramid( 3 );
+static Size const theta_torsion_pre_methylene_post_methylene_ortho_aramid( 4 );
+static Size const psi_torsion_pre_methylene_post_methylene_ortho_aramid( 5 );
+static Size const omega_torsion_pre_methylene_post_methylene_ortho_aramid( 6 );
+
 //Torsion ids for meta-aramids:
 static Size const phi_torsion_meta_aramid( 1 );
 static Size const eta_torsion_meta_aramid( 2 );
@@ -164,6 +171,14 @@ static Size const eta_torsion_post_methylene_meta_aramid( 3 );
 static Size const theta_torsion_post_methylene_meta_aramid( 4 );
 static Size const psi_torsion_post_methylene_meta_aramid( 5 );
 static Size const omega_torsion_post_methylene_meta_aramid( 6 );
+
+static Size const phi_torsion_pre_methylene_post_methylene_meta_aramid( 1 );
+static Size const epsilon_torsion_pre_methylene_post_methylene_meta_aramid( 2 );
+static Size const zeta_torsion_pre_methylene_post_methylene_meta_aramid( 3 );
+static Size const eta_torsion_pre_methylene_post_methylene_meta_aramid( 4 );
+static Size const theta_torsion_pre_methylene_post_methylene_meta_aramid( 5 );
+static Size const psi_torsion_pre_methylene_post_methylene_meta_aramid( 6 );
+static Size const omega_torsion_pre_methylene_post_methylene_meta_aramid( 7 );
 
 //Torsion ids for para-aramids:
 static Size const phi_torsion_para_aramid( 1 );
@@ -188,6 +203,15 @@ static Size const eta_torsion_post_methylene_para_aramid( 4 );
 static Size const theta_torsion_post_methylene_para_aramid( 5 );
 static Size const psi_torsion_post_methylene_para_aramid( 6 );
 static Size const omega_torsion_post_methylene_para_aramid( 7 );
+
+static Size const phi_torsion_pre_methylene_post_methylene_para_aramid( 1 );
+static Size const epsilon_torsion_pre_methylene_post_methylene_para_aramid( 2 );
+static Size const zeta_torsion_pre_methylene_post_methylene_para_aramid( 3 );
+static Size const eta_torsion_pre_methylene_post_methylene_para_aramid( 4 );
+static Size const iota_torsion_pre_methylene_post_methylene_para_aramid( 5 );
+static Size const theta_torsion_pre_methylene_post_methylene_para_aramid( 6 );
+static Size const psi_torsion_pre_methylene_post_methylene_para_aramid( 7 );
+static Size const omega_torsion_pre_methylene_post_methylene_para_aramid( 8 );
 
 //@brief Mainchain Torsion Types.
 //  The names could be better, but these are taken and would need a large overhaul of Rosetta.

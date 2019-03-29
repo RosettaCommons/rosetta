@@ -594,6 +594,8 @@ ScoreTypeManager::setup_score_type_names()
 
 	name2score_type_[ "sidechain_neighbors" ] = sidechain_neighbors;
 
+	name2score_type_[ "aromatic_restraint" ] = aromatic_restraint;
+
 	name2score_type_[ "total_score" ] = total_score;
 
 	name2score_type_[ "dummy_score_type" ] = dummy_score_type;

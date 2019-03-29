@@ -227,6 +227,46 @@ PackerPalette::clear_base_residue_type_list() {
 	base_residue_type_names_.clear();
 }
 
+/// @brief   Set up the 'expanded' NCBB default base types
+/// @author Andy Watkins (amw579@stanford.edu)
+void
+PackerPalette::set_up_expanded_base_types() {
+	set_up_default_base_types();
+	// Design aramids
+	// Currently, it turns out, the only aramids added are the ones that should be defaults.
+	// Really, we are doing 12 additions here, one for each backbone.
+	add_base_residue_types_by_properties( utility::tools::make_vector1< chemical::ResidueProperty >( chemical::ARAMID ) );
+	// Ditto BAAs
+	add_base_residue_types_by_properties( utility::tools::make_vector1< chemical::ResidueProperty >( chemical::BETA_AA ) );
+	// Oligoureas
+	add_base_residue_types_by_properties( utility::tools::make_vector1< chemical::ResidueProperty >( chemical::OLIGOUREA ) );
+
+	// A limited number of peptoids -- there isn't quite so clean a set of 'canonical' peptoids.
+	/*
+	* This is actually a living nightmare b/c we don't version these libraries and bad things happen to good people
+	add_base_residue_type( "001" );
+	//add_base_residue_type( "017" );
+	add_base_residue_type( "3101" );
+	//add_base_residue_type( "201" ); AMW: sarcosine is dead, long live sarcosine
+	add_base_residue_type( "202" );
+	add_base_residue_type( "203" );
+	add_base_residue_type( "204" );
+	add_base_residue_type( "205" );
+	add_base_residue_type( "208" );
+	add_base_residue_type( "211" );
+	add_base_residue_type( "303" );
+	add_base_residue_type( "305" );
+	add_base_residue_type( "313" );
+	add_base_residue_type( "314" );
+	//add_base_residue_type( "317" );
+	//add_base_residue_type( "318" );
+	*/
+
+	// AMW: once there are "canonical aramids" versus ridiculous "noncanonical aramids" (and so forth),
+	// you should ensure that we only add the "canonical" ones here.
+
+}
+
 /// @brief   Set up the default base types:
 /// @details Clears the list of base types first.
 /// @author  Labonte <JWLabonte@jhu.edu>
@@ -654,17 +694,20 @@ PackerPalette::decide_what_to_do_with_base_type(
 	if ( special_behaviours_.at( ONLY_DESIGN_PROTEIN_PEPTIOID_DNA_AND_SACCHARIDES ) &&
 			! existing_residue.type().is_protein() &&
 			! existing_residue.type().is_peptoid() &&
+			! existing_residue.type().is_aramid() &&
 			! existing_residue.type().is_DNA() &&
 			! existing_residue.type().is_carbohydrate() ) {
 		return; //Do nothing if this isn't a protein/peptoid/DNA/sugar residue and if we're not designing non-protein/non-peptoid residues.
 	}
 
 	//Alpha amino acids and/or peptoids:
+	// AMW: now with the NCAA default packer palette, only-alpha-at-alpha-positions should not
+	// permit alpha-to-peptoid by default. That ought to require a separate TBD behavior.
 	if (
 			!( restore_pre_talaris_behaviour() || icoor_05_2009() ) &&
 			special_behaviours_.at( ONLY_ALPHA_AA_AT_ALPHA_POSITIONS ) &&
-			( existing_residue.type().is_alpha_aa() || existing_residue.type().is_peptoid() ) &&
-			!( candidate_base_type->is_alpha_aa() || candidate_base_type->is_peptoid() )
+			( ( existing_residue.type().is_alpha_aa() || existing_residue.type().is_peptoid() ) &&
+			!( candidate_base_type->is_alpha_aa() || candidate_base_type->is_peptoid() ) )
 			) {
 		return;
 	} else if ( //Special case -- old pre-talaris behaviour (which was also before the is_alpha_aa() property).
@@ -961,9 +1004,10 @@ PackerPalette::aramid_backbones_are_compatible(
 
 	if ( !existing_type.is_aramid() || !candidate_type.is_aramid() ) return false;
 
-	static const utility::fixedsizearray1< ResidueProperty, 9 > aramid_types ({ ORTHO_ARAMID, META_ARAMID, PARA_ARAMID,
+	static const utility::fixedsizearray1< ResidueProperty, 12 > aramid_types ({ ORTHO_ARAMID, META_ARAMID, PARA_ARAMID,
 		PRE_METHYLENE_ORTHO_ARAMID, PRE_METHYLENE_META_ARAMID, PRE_METHYLENE_PARA_ARAMID,
-		POST_METHYLENE_ORTHO_ARAMID, POST_METHYLENE_META_ARAMID, POST_METHYLENE_PARA_ARAMID
+		POST_METHYLENE_ORTHO_ARAMID, POST_METHYLENE_META_ARAMID, POST_METHYLENE_PARA_ARAMID,
+		PRE_METHYLENE_POST_METHYLENE_ORTHO_ARAMID, PRE_METHYLENE_POST_METHYLENE_META_ARAMID, PRE_METHYLENE_POST_METHYLENE_PARA_ARAMID
 		});
 
 	for ( ResidueProperty const & type : aramid_types ) {

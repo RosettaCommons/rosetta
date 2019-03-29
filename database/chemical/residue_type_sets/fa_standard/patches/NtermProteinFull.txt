@@ -304,7 +304,11 @@ ADD_BOND NV 2H
 ADD_BOND NV CAV
 SET_POLYMER_CONNECT LOWER NONE
 
+# The only way to make this functional is to make it a 'proton chi'
+# because that way it can be a DOF but we won't look for it in the
+# rotlib.
 ADD_CHI 4 CG CD NV CAV
+ADD_PROTON_CHI 4 SAMPLES 3 60 180 300 EXTRA 0
 
 SET_ICOOR CAV  0.00000  65.86899 1.383018 NV CD CA # these icoor give an okay placement when built from NV
 SET_ICOOR 1H  120 70.5 1.0 NV CD CAV

@@ -637,6 +637,7 @@ sources = {
     "MPSpanAngleEnergy",
 	],
 	"core/scoring/methods": [
+		"AromaticBackboneRestraintEnergy",
 		"AspartimidePenaltyEnergy",
 		"BranchEnergy",
 		"BurialEnergy",

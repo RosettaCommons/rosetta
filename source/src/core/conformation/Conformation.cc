@@ -3979,11 +3979,11 @@ Conformation::backbone_torsion_angle_atoms(
 	//Special case: for aramid, let's call a function instead of making this any longer or
 	//more incomprehensible.
 	if ( rsd.type().is_aramid() ) {
-		if ( rsd.type().is_ortho_aramid() || rsd.type().is_pre_methylene_ortho_aramid() || rsd.type().is_post_methylene_ortho_aramid() ) {
+		if ( rsd.type().is_ortho_aramid() || rsd.type().is_pre_methylene_ortho_aramid() || rsd.type().is_post_methylene_ortho_aramid() || rsd.type().is_pre_methylene_post_methylene_ortho_aramid() ) {
 			return backbone_torsion_angle_atoms_ortho_aramid( id, id1, id2, id3, id4 );
-		} else if ( rsd.type().is_meta_aramid() || rsd.type().is_pre_methylene_meta_aramid() || rsd.type().is_post_methylene_meta_aramid() ) {
+		} else if ( rsd.type().is_meta_aramid() || rsd.type().is_pre_methylene_meta_aramid() || rsd.type().is_post_methylene_meta_aramid() || rsd.type().is_pre_methylene_post_methylene_meta_aramid() ) {
 			return backbone_torsion_angle_atoms_meta_aramid( id, id1, id2, id3, id4 );
-		} else if ( rsd.type().is_para_aramid() || rsd.type().is_pre_methylene_para_aramid() || rsd.type().is_post_methylene_para_aramid() ) {
+		} else if ( rsd.type().is_para_aramid() || rsd.type().is_pre_methylene_para_aramid() || rsd.type().is_post_methylene_para_aramid() || rsd.type().is_pre_methylene_post_methylene_para_aramid() ) {
 			return backbone_torsion_angle_atoms_para_aramid( id, id1, id2, id3, id4 );
 		}
 	}
@@ -4329,7 +4329,132 @@ Conformation::backbone_torsion_angle_atoms_para_aramid(
 	debug_assert(seqpos > 0 && seqpos <= residues_.size() );
 	core::conformation::Residue const &rsd( const_residue_(seqpos) );
 	debug_assert( rsd.type().is_aramid() );
-	if ( rsd.type().is_post_methylene_para_aramid() ) {
+	if ( rsd.type().is_pre_methylene_post_methylene_para_aramid() ) {
+		switch( torsion ) {
+		case 1 :
+			//id1:
+			if ( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) {
+				id1.rsd() = seqpos; id1.atomno() = rsd.atom_index( "OVU1" );
+			} else if ( rsd.has_variant_type( chemical::N_ACETYLATION ) ) {
+				id1.rsd() = seqpos; id1.atomno() = rsd.atom_index( " CP " );
+			} else if ( rsd.has_lower_connect() && rsd.connected_residue_at_lower() != 0 ) {
+				id1.rsd() = rsd.connected_residue_at_lower();
+				if ( const_residue_( id1.rsd() ).connect_map_size() < rsd.residue_connection_conn_id( rsd.type().lower_connect_id() ) ) {
+					return true; //FAIL if this residue is improperly connected.
+				}
+				id1.atomno() = const_residue_( id1.rsd() ).residue_connect_atom_index( rsd.residue_connection_conn_id( rsd.type().lower_connect_id() ) );
+			} else {
+				return true; //FAILURE
+			}
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("N");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CZB");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CE1");
+			break;
+		case 2 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("N");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CZB");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CE1");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CD1");
+			break;
+		case 3 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CZB");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CE1");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CD1");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CG1");
+			break;
+		case 4 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CE1");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CD1");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CG1");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CB");
+			break;
+		case 5 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CD1");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CG1");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CB");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CA");
+			break;
+		case 6 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CG1");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CB");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CA");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("C");
+			break;
+		case 7 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CB");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CA");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("C");
+			// id4:
+			if ( rsd.has_variant_type(chemical::CUTPOINT_LOWER) ) {
+				id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("OVL1");
+			} else if ( rsd.has_variant_type(chemical::METHYLATED_CTERMINUS_VARIANT) ) {
+				id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("NM");
+			} else if ( rsd.has_upper_connect() && rsd.connected_residue_at_upper() != 0 ) {
+				id4.rsd() = rsd.connected_residue_at_upper();
+				if ( const_residue_(id4.rsd()).connect_map_size() < rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) ) {
+					return true; //FAIL if improperly connected.
+				}
+				id4.atomno() = const_residue_(id4.rsd()).residue_connect_atom_index( rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) );
+			} else {
+				return true; //FAILURE
+			}
+			break;
+		case 8 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CA");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("C");
+			// id3 and id4:
+			if ( rsd.has_variant_type(chemical::CUTPOINT_LOWER) ) {
+				id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("OVL1");
+				id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("OVL2");
+			} else if ( rsd.has_variant_type(chemical::METHYLATED_CTERMINUS_VARIANT) ) {
+				id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("NM");
+				id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CN");
+			} else if ( rsd.has_upper_connect() && rsd.connected_residue_at_upper() != 0 ) {
+				//Sigh.  This doesn't handle single-atom residues connected at the upper position.
+				id3.rsd() = rsd.connected_residue_at_upper();
+				if ( const_residue_(id3.rsd()).connect_map_size() < rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) ) {
+					return true; //FAIL if improperly connected.
+				}
+				id3.atomno() = const_residue_(id3.rsd()).residue_connect_atom_index( rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) );
+				if ( get_second_atom_from_connection( id4.rsd(), id4.atomno(), const_residue_(id3.rsd()), *this, rsd.residue_connection_conn_id( rsd.type().upper_connect_id() )  ) ) return true; //Fail if we can't get the second atom.
+			} else {
+				return true; //FAILURE
+			}
+			break;
+		default :
+			utility_exit_with_message( "Error in core::conformation::Conformation::backbone_torsion_angle_atoms_aramid(): The requested torsion id was greater than 4." );
+			break;
+		};
+		return false;
+	} else if ( rsd.type().is_post_methylene_para_aramid() ) {
 		switch( torsion ) {
 		case 1 :
 			//id1:
@@ -4684,7 +4809,113 @@ Conformation::backbone_torsion_angle_atoms_ortho_aramid(
 	debug_assert(seqpos > 0 && seqpos <= residues_.size() );
 	core::conformation::Residue const &rsd( const_residue_(seqpos) );
 	debug_assert( rsd.type().is_aramid() );
-	if ( rsd.type().is_pre_methylene_ortho_aramid() ) {
+	if ( rsd.type().is_pre_methylene_post_methylene_ortho_aramid() ) {
+		// ortho
+		switch( torsion ) {
+		case 1 :
+			//id1:
+			if ( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) {
+				id1.rsd() = seqpos; id1.atomno() = rsd.atom_index( "OVU1" );
+			} else if ( rsd.has_variant_type( chemical::N_ACETYLATION ) ) {
+				id1.rsd() = seqpos; id1.atomno() = rsd.atom_index( " CP " );
+			} else if ( rsd.has_lower_connect() && rsd.connected_residue_at_lower() != 0 ) {
+				id1.rsd() = rsd.connected_residue_at_lower();
+				if ( const_residue_( id1.rsd() ).connect_map_size() < rsd.residue_connection_conn_id( rsd.type().lower_connect_id() ) ) {
+					return true; //FAIL if this residue is improperly connected.
+				}
+				id1.atomno() = const_residue_( id1.rsd() ).residue_connect_atom_index( rsd.residue_connection_conn_id( rsd.type().lower_connect_id() ) );
+			} else {
+				return true; //FAILURE
+			}
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("N");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CX1");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CB1");
+			break;
+		case 2 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("N");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CX1");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CB1");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CB");
+			break;
+		case 3 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CX1");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CB1");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CB");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CA");
+			break;
+		case 4 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CB1");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CB");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CA");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("C");
+			break;
+		case 5 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CB");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CA");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("C");
+			// id4:
+			if ( rsd.has_variant_type(chemical::CUTPOINT_LOWER) ) {
+				id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("OVL1");
+			} else if ( rsd.has_variant_type(chemical::METHYLATED_CTERMINUS_VARIANT) ) {
+				id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("NM");
+			} else if ( rsd.has_upper_connect() && rsd.connected_residue_at_upper() != 0 ) {
+				id4.rsd() = rsd.connected_residue_at_upper();
+				if ( const_residue_(id4.rsd()).connect_map_size() < rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) ) {
+					return true; //FAIL if improperly connected.
+				}
+				id4.atomno() = const_residue_(id4.rsd()).residue_connect_atom_index( rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) );
+			} else {
+				return true; //FAILURE
+			}
+			break;
+		case 6 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CA");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("C");
+			// id3 and id4:
+			if ( rsd.has_variant_type(chemical::CUTPOINT_LOWER) ) {
+				id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("OVL1");
+				id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("OVL2");
+			} else if ( rsd.has_variant_type(chemical::METHYLATED_CTERMINUS_VARIANT) ) {
+				id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("NM");
+				id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CN");
+			} else if ( rsd.has_upper_connect() && rsd.connected_residue_at_upper() != 0 ) {
+				//Sigh.  This doesn't handle single-atom residues connected at the upper position.
+				id3.rsd() = rsd.connected_residue_at_upper();
+				if ( const_residue_(id3.rsd()).connect_map_size() < rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) ) {
+					return true; //FAIL if improperly connected.
+				}
+				id3.atomno() = const_residue_(id3.rsd()).residue_connect_atom_index( rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) );
+				if ( get_second_atom_from_connection( id4.rsd(), id4.atomno(), const_residue_(id3.rsd()), *this, rsd.residue_connection_conn_id( rsd.type().upper_connect_id() )  ) ) return true; //Fail if we can't get the second atom.
+			} else {
+				return true; //FAILURE
+			}
+			break;
+		default :
+			utility_exit_with_message( "Error in core::conformation::Conformation::backbone_torsion_angle_atoms_aramid(): The requested torsion id was greater than 6." );
+			break;
+		};
+		return false;
+	} else if ( rsd.type().is_pre_methylene_ortho_aramid() ) {
 		// ortho
 		switch( torsion ) {
 		case 1 :
@@ -4776,7 +5007,7 @@ Conformation::backbone_torsion_angle_atoms_ortho_aramid(
 			}
 			break;
 		default :
-			utility_exit_with_message( "Error in core::conformation::Conformation::backbone_torsion_angle_atoms_aramid(): The requested torsion id was greater than 4." );
+			utility_exit_with_message( "Error in core::conformation::Conformation::backbone_torsion_angle_atoms_aramid(): The requested torsion id was greater than 5." );
 			break;
 		};
 		return false;
@@ -4872,7 +5103,7 @@ Conformation::backbone_torsion_angle_atoms_ortho_aramid(
 			}
 			break;
 		default :
-			utility_exit_with_message( "Error in core::conformation::Conformation::backbone_torsion_angle_atoms_aramid(): The requested torsion id was greater than 4." );
+			utility_exit_with_message( "Error in core::conformation::Conformation::backbone_torsion_angle_atoms_aramid(): The requested torsion id was greater than 5." );
 			break;
 		};
 		return false;
@@ -4980,7 +5211,122 @@ Conformation::backbone_torsion_angle_atoms_meta_aramid(
 	debug_assert(seqpos > 0 && seqpos <= residues_.size() );
 	core::conformation::Residue const &rsd( const_residue_(seqpos) );
 	debug_assert( rsd.type().is_aramid() );
-	if ( rsd.type().is_pre_methylene_meta_aramid() ) {
+	if ( rsd.type().is_pre_methylene_post_methylene_meta_aramid() ) {
+		switch( torsion ) {
+		case 1 :
+			//id1:
+			if ( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) {
+				id1.rsd() = seqpos; id1.atomno() = rsd.atom_index( "OVU1" );
+			} else if ( rsd.has_variant_type( chemical::N_ACETYLATION ) ) {
+				id1.rsd() = seqpos; id1.atomno() = rsd.atom_index( " CP " );
+			} else if ( rsd.has_lower_connect() && rsd.connected_residue_at_lower() != 0 ) {
+				id1.rsd() = rsd.connected_residue_at_lower();
+				if ( const_residue_( id1.rsd() ).connect_map_size() < rsd.residue_connection_conn_id( rsd.type().lower_connect_id() ) ) {
+					return true; //FAIL if this residue is improperly connected.
+				}
+				id1.atomno() = const_residue_( id1.rsd() ).residue_connect_atom_index( rsd.residue_connection_conn_id( rsd.type().lower_connect_id() ) );
+			} else {
+				return true; //FAILURE
+			}
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("N");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CE1");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CD1");
+			break;
+		case 2 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("N");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CE1");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CD1");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CG1");
+			break;
+		case 3 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CE1");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CD1");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CG1");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CB");
+			break;
+		case 4 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CD1");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CG1");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CB");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CA");
+			break;
+		case 5 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CG1");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CB");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("CA");
+			// id4:
+			id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("C");
+			break;
+		case 6 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CB");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("CA");
+			// id3:
+			id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("C");
+			// id4:
+			if ( rsd.has_variant_type(chemical::CUTPOINT_LOWER) ) {
+				id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("OVL1");
+			} else if ( rsd.has_variant_type(chemical::METHYLATED_CTERMINUS_VARIANT) ) {
+				id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("NM");
+			} else if ( rsd.has_upper_connect() && rsd.connected_residue_at_upper() != 0 ) {
+				id4.rsd() = rsd.connected_residue_at_upper();
+				if ( const_residue_(id4.rsd()).connect_map_size() < rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) ) {
+					return true; //FAIL if improperly connected.
+				}
+				id4.atomno() = const_residue_(id4.rsd()).residue_connect_atom_index( rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) );
+			} else {
+				return true; //FAILURE
+			}
+			break;
+		case 7 :
+			// id1:
+			id1.rsd() = seqpos; id1.atomno() = rsd.atom_index("CA");
+			// id2:
+			id2.rsd() = seqpos; id2.atomno() = rsd.atom_index("C");
+			// id3 and id4:
+			if ( rsd.has_variant_type(chemical::CUTPOINT_LOWER) ) {
+				id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("OVL1");
+				id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("OVL2");
+			} else if ( rsd.has_variant_type(chemical::METHYLATED_CTERMINUS_VARIANT) ) {
+				id3.rsd() = seqpos; id3.atomno() = rsd.atom_index("NM");
+				id4.rsd() = seqpos; id4.atomno() = rsd.atom_index("CN");
+			} else if ( rsd.has_upper_connect() && rsd.connected_residue_at_upper() != 0 ) {
+				//Sigh.  This doesn't handle single-atom residues connected at the upper position.
+				id3.rsd() = rsd.connected_residue_at_upper();
+				if ( const_residue_(id3.rsd()).connect_map_size() < rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) ) {
+					return true; //FAIL if improperly connected.
+				}
+				id3.atomno() = const_residue_(id3.rsd()).residue_connect_atom_index( rsd.residue_connection_conn_id( rsd.type().upper_connect_id() ) );
+				if ( get_second_atom_from_connection( id4.rsd(), id4.atomno(), const_residue_(id3.rsd()), *this, rsd.residue_connection_conn_id( rsd.type().upper_connect_id() )  ) ) return true; //Fail if we can't get the second atom.
+			} else {
+				return true; //FAILURE
+			}
+			break;
+		default :
+			utility_exit_with_message( "Error in core::conformation::Conformation::backbone_torsion_angle_atoms_aramid(): The requested torsion id was greater than 5." );
+			break;
+		};
+		return false; //SUCCESS
+	} else if ( rsd.type().is_pre_methylene_meta_aramid() ) {
 		switch( torsion ) {
 		case 1 :
 			//id1:

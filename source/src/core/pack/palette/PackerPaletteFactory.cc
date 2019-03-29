@@ -14,6 +14,7 @@
 #include <core/pack/palette/PackerPaletteFactory.hh>
 
 #include <core/pack/palette/DefaultPackerPalette.hh>
+#include <core/pack/palette/NCAADefaultPackerPalette.hh>
 #include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 #include <core/pack/palette/PackerPalette.hh>
 #include <core/pack/palette/PackerPaletteCreator.hh>
@@ -195,8 +196,9 @@ PackerPaletteFactory::newPackerPalettes( PackerPaletteOPs & ppops, basic::dataca
 }
 
 /// @brief Create a packer palette based on global defaults, and return an owning pointer to it.
-/// @details By default, makes a DefaultPackePalette.  If the user provides options for additional residues,
-/// makes a CustomBaseTypePackerPalette.
+/// @details By default, makes a DefaultPackerPalette. (If the user provides -packer_palette:NCAA_expanded,
+/// or equivalent local options, makes a NCAADefaultPackerPalette.)
+/// If the user provides options for additional residues, makes a CustomBaseTypePackerPalette.
 PackerPaletteOP
 PackerPaletteFactory::create_packer_palette_from_global_defaults() const {
 	boost::function< PackerPaletteOP () > creator( boost::bind( &PackerPaletteFactory::initialize_packer_palette_from_global_defaults ) );
@@ -213,6 +215,12 @@ PackerPaletteFactory::initialize_packer_palette_from_global_defaults() {
 	using namespace basic::options::OptionKeys;
 
 	static const std::string errmsg( "Error in core::pack::palette::PackerPaletteFactory::initialize_packer_palette_from_global_defaults(): " );
+
+	// How will this interact with a NCAADefaultPackerPalette? I'd hope its universe would
+	// be strictly bigger, right?
+	runtime_assert_string_msg( !( option[ packing::packer_palette::extra_base_type_file ].user()
+		&& option[ packing::packer_palette::NCAA_expanded ].user() ),
+		errmsg + "The -extra_base_type_file and -NCAA_expanded flags are mutually incompatible for now." );
 
 	if ( option[ packing::packer_palette::extra_base_type_file ].user() ) {
 		std::string const filename( option[ packing::packer_palette::extra_base_type_file ].value() );
@@ -233,6 +241,11 @@ PackerPaletteFactory::initialize_packer_palette_from_global_defaults() {
 		}
 		return new_palette;
 	}
+
+	if ( option[ packing::packer_palette::NCAA_expanded ].user() ) {
+		return utility::pointer::make_shared< NCAADefaultPackerPalette >();
+	}
+
 	return utility::pointer::make_shared< DefaultPackerPalette >();
 }
 

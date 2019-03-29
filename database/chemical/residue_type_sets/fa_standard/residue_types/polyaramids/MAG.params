@@ -17,8 +17,9 @@ ATOM  CA  CH0  CA   -0.125
 ATOM  C   CObb C    0.51
 ATOM  O   OCbb O    -0.51
 
-ATOM  H   HNbb H    0.31
 ATOM  HE  Haro HP   0.125
+
+ATOM  H   HNbb H    0.31
 ATOM 1HB1 Haro HP   0.125
 ATOM 1HB2 Haro HP   0.125
 ATOM 1HD  Haro HP   0.125
@@ -35,7 +36,7 @@ BOND_TYPE  C    O   DOUBLE
 BOND_TYPE  CA   CB2 ARO
 BOND_TYPE  CB2  CG2 ARO
 BOND_TYPE  CG2  CD  ARO
-BOND  CD   CG1
+BOND_TYPE  CD   CG1 ARO
 CUT_BOND   CD   CG1
 BOND  CB1 1HB1
 BOND  CB2 1HB2
@@ -48,7 +49,8 @@ MAINCHAIN_ATOMS N CG1 CB1 CA C
 METAL_BINDING_ATOMS O
 NBR_ATOM CG2
 NBR_RADIUS 4.4473 #Increased slightly from GLY
-RAMA_PREPRO_FILENAME scoring/score_functions/rama/aramid/MAA_rama.txt scoring/score_functions/rama/aramid/MAA_rama.txt
+# No preproline distinction (yet?)
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/aramid/MAG_rama.txt scoring/score_functions/rama/aramid/MAG_rama.txt
 RAMA_PREPRO_RESNAME GENERIC_META_ARAMID_ALA
 FIRST_SIDECHAIN_ATOM NONE
 ICOOR_INTERNAL    N     0.000000    0.000000    0.000000   N     CG1   CB1

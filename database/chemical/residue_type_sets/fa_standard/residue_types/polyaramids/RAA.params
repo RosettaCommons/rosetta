@@ -43,7 +43,7 @@ BOND_TYPE  C    O   DOUBLE
 BOND_TYPE  CG2  CD2 ARO
 BOND_TYPE  CG2  CB  ARO
 BOND_TYPE  CB   CG1 ARO
-BOND       CD2  CE1 ARO 
+BOND_TYPE   CD2  CE1 ARO 
 CUT_BOND   CD2  CE1
 BOND  CG1 1HB1
 BOND  CG2 1HB2
@@ -63,6 +63,8 @@ NBR_ATOM CE
 NBR_RADIUS 4.4473 #Increased slightly from ALA
 #RAMA_PREPRO_FILENAME scoring/score_functions/rama/oligourea/OU3_ALA_rama.txt scoring/score_functions/rama/oligourea/OU3_ALA_rama_preproline.txt
 #RAMA_PREPRO_RESNAME GENERIC_OLIGOUREA_ALA
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/aramid/RAA_rama.txt scoring/score_functions/rama/aramid/RAA_rama.txt
+RAMA_PREPRO_RESNAME NCAA_NAME
 FIRST_SIDECHAIN_ATOM CE
 ICOOR_INTERNAL    N     0.000000    0.000000    0.000000   N     CE1   CD1
 ICOOR_INTERNAL    CE1   0.000000  180.000000    1.397414   N     CE1   CD1

@@ -74,6 +74,7 @@ core::Size OmegaTether::phi_index( core::conformation::Residue const &rsd ) cons
 	else if ( rsd.type().is_oligourea() ) return core::id::theta_torsion_oligourea; //Another special case
 	else if ( rsd.type().is_pre_methylene_ortho_aramid() ) return core::id::theta_torsion_pre_methylene_ortho_aramid; // two before peptide bond
 	else if ( rsd.type().is_post_methylene_ortho_aramid() ) return core::id::theta_torsion_post_methylene_ortho_aramid; // two before peptide bond
+	else if ( rsd.type().is_pre_methylene_post_methylene_ortho_aramid() ) return core::id::theta_torsion_pre_methylene_post_methylene_ortho_aramid; // two before peptide bond
 	else if ( rsd.type().is_ortho_aramid() ) return core::id::theta_torsion_ortho_aramid; // two before peptide bond
 	else if ( rsd.type().is_pre_methylene_meta_aramid() ) return core::id::theta_torsion_pre_methylene_meta_aramid; // two before peptide bond
 	else if ( rsd.type().is_post_methylene_meta_aramid() ) return core::id::theta_torsion_post_methylene_meta_aramid; // two before peptide bond
@@ -93,6 +94,7 @@ core::Size OmegaTether::psi_index( core::conformation::Residue const &rsd ) cons
 	else if ( rsd.type().is_oligourea() ) return core::id::psi_torsion_oligourea; //Another special case.
 	else if ( rsd.type().is_pre_methylene_ortho_aramid() ) return core::id::psi_torsion_pre_methylene_ortho_aramid; // two before peptide bond
 	else if ( rsd.type().is_post_methylene_ortho_aramid() ) return core::id::psi_torsion_post_methylene_ortho_aramid; // two before peptide bond
+	else if ( rsd.type().is_pre_methylene_post_methylene_ortho_aramid() ) return core::id::psi_torsion_pre_methylene_post_methylene_ortho_aramid; // two before peptide bond
 	else if ( rsd.type().is_ortho_aramid() ) return core::id::psi_torsion_ortho_aramid; // two before peptide bond
 	else if ( rsd.type().is_pre_methylene_meta_aramid() ) return core::id::psi_torsion_pre_methylene_meta_aramid; // two before peptide bond
 	else if ( rsd.type().is_post_methylene_meta_aramid() ) return core::id::psi_torsion_post_methylene_meta_aramid; // two before peptide bond
@@ -112,6 +114,7 @@ core::Size OmegaTether::omega_index( core::conformation::Residue const &rsd ) co
 	else if ( rsd.type().is_oligourea() ) return core::id::mu_torsion_oligourea; //Another special case.
 	else if ( rsd.type().is_pre_methylene_ortho_aramid() ) return core::id::omega_torsion_pre_methylene_ortho_aramid; // two before peptide bond
 	else if ( rsd.type().is_post_methylene_ortho_aramid() ) return core::id::omega_torsion_post_methylene_ortho_aramid; // two before peptide bond
+	else if ( rsd.type().is_pre_methylene_post_methylene_ortho_aramid() ) return core::id::omega_torsion_pre_methylene_post_methylene_ortho_aramid; // two before peptide bond
 	else if ( rsd.type().is_ortho_aramid() ) return core::id::omega_torsion_ortho_aramid; // two before peptide bond
 	else if ( rsd.type().is_pre_methylene_meta_aramid() ) return core::id::omega_torsion_pre_methylene_meta_aramid; // two before peptide bond
 	else if ( rsd.type().is_post_methylene_meta_aramid() ) return core::id::omega_torsion_post_methylene_meta_aramid; // two before peptide bond
