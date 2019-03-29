@@ -47,6 +47,7 @@ static basic::Tracer TR( "core.chemical.carbohydrates.stereochem.cxxtest" );
 typedef utility::vector1< core::chemical::rings::AxEqDesignation > Stereochemistries;
 typedef std::pair< std::string, Stereochemistries > TestKeyEntry;
 typedef std::map< std::string, TestKeyEntry > TestKey;
+typedef core::uint AtomIndex;
 
 
 class CarbohydrateStereochemTests : public CxxTest::TestSuite {
@@ -129,7 +130,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 				TR << "Testing: ->" << linkage << ")-" << code << endl;
 				pose::Pose pose;
 				make_pose_from_saccharide_sequence( pose, "->" + linkage + ")-" + code );
-				pose.dump_pdb( "/home/labonte/Dropbox/Transfer/Sugars/" + linkage + "-" + code + ".pdb" );  // TEMP
+				//pose.dump_pdb( "/home/labonte/Dropbox/Transfer/Sugars/" + linkage + "-" + code + ".pdb" );  // TEMP
 				conformation::Residue const & res( pose.residue( 1 ) );
 				TS_ASSERT( res.is_carbohydrate() );
 				carbohydrates::CarbohydrateInfoCOP info( res.carbohydrate_info() );
@@ -155,13 +156,14 @@ public: // Tests //////////////////////////////////////////////////////////////
 	void test_rings_and_stereochemistries()
 	{
 		using namespace std;
+		using namespace utility;
 		using namespace core;
 		using namespace chemical;
 		using namespace rings;
 		using namespace conformation;
 
 		TestKey const key( read_key_from_file( "core/chemical/carbohydrates/stereochem_test.key" ) );
-		TS_ASSERT_EQUALS( key.size(), 48 );  // 16 aldopentoses & 32 aldohexoses
+		TS_ASSERT_EQUALS( key.size(), 88 );  // 16 aldopentoses & 32 aldohexoses & 40 common modified sugars
 
 		pose::Pose pose;
 		GlobalResidueTypeSetCOP type_set( new GlobalResidueTypeSet(
@@ -182,6 +184,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 					TR << "Testing: " << name << endl;
 
 					// Make a disaccharide, to test both reducing and non-reducing ends.
+					// TODO: To test ketoses, this line needs to be changed.
 					make_pose_from_saccharide_sequence( pose, name + "-(1" + name );
 					Residue const & reducing_end( pose.residue( 1 ) );
 					Residue const & non_reducing_end( pose.residue( 2 ) );
@@ -196,30 +199,60 @@ public: // Tests //////////////////////////////////////////////////////////////
 					TS_ASSERT_EQUALS( non_reducing_end.ring_conformer( 1 ).specific_name, conformer );
 
 					// Check that the stereochemistries are as expected.
-					AtomIndices const & reducing_end_ring_atoms( reducing_end.type().ring_atoms( 1 ) );
-					AtomIndices const & non_reducing_end_ring_atoms( non_reducing_end.type().ring_atoms( 1 ) );
+					AtomIndices const & ring_atoms( reducing_end.type().ring_atoms( 1 ) );
 					for ( core::uint i( 1 ); i <= stereochemistries.size(); ++i ) {
-						core::uint const reducing_end_ring_atom( reducing_end_ring_atoms[ i ] );
-						core::uint const non_reducing_end_ring_atom( non_reducing_end_ring_atoms[ i ] );
+						AtomIndex const ring_atom( ring_atoms[ i ] );
 
 						TR << "  Testing stereochemistry at ";
-						TR << reducing_end.atom_name( reducing_end_ring_atom ) << ' ';
-						core::uint const reducing_end_substituent(
-							reducing_end.get_substituents_to_ring_atom( reducing_end_ring_atom )[ 1 ] );
-						core::uint const non_reducing_end_substituent(
-							reducing_end.get_substituents_to_ring_atom( non_reducing_end_ring_atom )[ 1 ] );
-						core::uint const reducing_end_hydrogen(
-							reducing_end.get_hydrogens_bonded_to_ring_atom( reducing_end_ring_atom )[ 1 ] );
-						core::uint const non_reducing_end_hydrogen(
-							non_reducing_end.get_hydrogens_bonded_to_ring_atom( non_reducing_end_ring_atom )[ 1 ] );
+						TR << reducing_end.atom_name( ring_atom ) << ' ';
 
-						TR << "using " << reducing_end.atom_name( reducing_end_substituent ) << endl;
+						AtomIndices const substituents( reducing_end.get_substituents_to_ring_atom( ring_atom ) );
+
+						// Hydrogen indices must be stored separately, because the indices change between internal and
+						// terminal residues, since heavy atoms are added in the latter case.
+						AtomIndices const reducing_end_hydrogens(
+							reducing_end.get_hydrogens_bonded_to_ring_atom( ring_atom ) );
+						AtomIndices const non_reducing_end_hydrogens(
+							non_reducing_end.get_hydrogens_bonded_to_ring_atom( ring_atom ) );
+
+						if ( substituents.size() == 0 ) {
+							TR << endl;
+							TS_ASSERT_EQUALS( reducing_end_hydrogens.size(), 2 );
+							TS_ASSERT_EQUALS( non_reducing_end_hydrogens.size(), 2 );
+
+							// If there is no substituent, this is a deoxy sugar.
+							// In that case, we just confirm that the designation is N/A and move on.
+							TS_ASSERT_EQUALS( stereochemistries.at( i ), NEITHER );
+							continue;
+						}
+
+						// Otherwise, we have at least 1 substituent.
+						AtomIndex const substituent( substituents[ 1 ] );
+
+						// TODO: I need to check if there are any whacky dehydro sugars.
+						AtomIndex const reducing_end_hydrogen( reducing_end_hydrogens[ 1 ] );
+						AtomIndex const non_reducing_end_hydrogen( non_reducing_end_hydrogens[ 1 ] );
+
+						TR << "using " << reducing_end.atom_name( substituent ) << endl;
 						TS_ASSERT_EQUALS(
-							is_atom_axial_or_equatorial( reducing_end, reducing_end_substituent ),
-							stereochemistries.at( i ) );
-						TS_ASSERT_EQUALS(
-							is_atom_axial_or_equatorial( non_reducing_end, non_reducing_end_substituent ),
-							stereochemistries.at( i ) );
+							is_atom_axial_or_equatorial( reducing_end, substituent ), stereochemistries.at( i ) );
+
+						// If this happens to be the anomeric carbon, we need to test the UPPER connect of a parent
+						// residue to confirm that the LOWER connection was placed properly.
+						// Since the atoms are on two distinct residues, we need to use coordinates.
+						if ( ring_atom == non_reducing_end.carbohydrate_info()->anomeric_carbon_index() ) {
+							Coords const linkage_atom_coords( reducing_end.xyz( reducing_end.upper_connect_atom() ) );
+							Coords const anomeric_carbon_coords( non_reducing_end.xyz( ring_atom ) );
+							Size const n_ring_atoms( ring_atoms.size() );
+							vector1< Coords > ring_atom_coords( n_ring_atoms );
+							for ( core::uint j( 1 ); j <= n_ring_atoms; ++j ) {
+								ring_atom_coords[ j ] = non_reducing_end.xyz( ring_atoms[ j ] );
+							}
+
+							TS_ASSERT_EQUALS( is_atom_axial_or_equatorial_to_ring(
+								linkage_atom_coords, anomeric_carbon_coords, ring_atom_coords ),
+								stereochemistries.at( i ) );
+						}
 
 						TR << "  Testing stereochemistry of the hydrogens." << endl;
 						TS_ASSERT_EQUALS( is_atom_axial_or_equatorial( reducing_end, reducing_end_hydrogen ),
@@ -228,11 +261,9 @@ public: // Tests //////////////////////////////////////////////////////////////
 							opposite_designation( stereochemistries.at( i ) ) );
 
 						TR << "  Testing placement of the hydrogens." << endl;
-						for ( core::uint ring_atom : reducing_end_ring_atoms ) {
+						for ( AtomIndex ring_atom : ring_atoms ) {
 							TS_ASSERT( reducing_end.xyz( reducing_end_hydrogen ).distance( reducing_end.xyz( ring_atom ) )
 								> 1.0 );  // If it's closer than 1 angstrom, it's certainly incorrectly placed.
-						}
-						for ( core::uint ring_atom : non_reducing_end_ring_atoms ) {
 							TS_ASSERT( non_reducing_end.xyz( non_reducing_end_hydrogen ).distance( non_reducing_end.xyz( ring_atom ) )
 								> 1.0 );  // If it's closer than 1 angstrom, it's certainly incorrectly placed.
 						}

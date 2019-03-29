@@ -1,6 +1,7 @@
 NAME ->4)-beta-D-Quip      # ->4)-beta-D-quinovopyranosyl [->4)-beta-D-6-deoxyglucopyranosyl]
 IO_STRING Qui Z            # Note lower case!
 TYPE POLYMER
+VARIANT C6_DEOXY_SUGAR     # Quinovose is a common glucose variant
 AA UNK
 
 # Main-chain atoms:
@@ -101,7 +102,6 @@ NU 4  C3   C4   C5   O5
 NU 5  C4   C5   O5   VC1
 #NU 6 is across the CUT_BOND
 LOWEST_RING_CONFORMER 1 4C1
-
 
 PROPERTIES  POLAR CYCLIC CARBOHYDRATE ALDOSE HEXOSE D_SUGAR PYRANOSE BETA_SUGAR DEOXY_SUGAR C6_MODIFIED
 
