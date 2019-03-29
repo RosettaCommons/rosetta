@@ -430,7 +430,7 @@ Residue::ring_conformer( core::uint const ring_num, core::Real limit/*=90*/ ) co
 		nus.push_back( nus_[ n_nus_on_previous_rings + i ] );
 	}
 
-	return rsd_type_.ring_conformer_set( ring_num )->get_ideal_conformer_from_nus( nus_, limit );
+	return rsd_type_.ring_conformer_set( ring_num )->get_ideal_conformer_from_nus( nus, limit ); // fd: nus_->nus
 }
 
 core::Size

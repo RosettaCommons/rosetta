@@ -44,7 +44,7 @@ public:
 
 	/// ctor
 	GenericBondedEnergy( GenericBondedEnergy const & src );
-	GenericBondedEnergy( core::scoring::methods::EnergyMethodOptions const & );
+	GenericBondedEnergy( core::scoring::methods::EnergyMethodOptions const & eopt );
 
 	/// clone
 	virtual
@@ -57,11 +57,11 @@ public:
 
 	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & sfxn ) const;
 
 	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const;
 
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
@@ -98,8 +98,8 @@ public:
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
-		pose::Pose const &,
-		ScoreFunction const &,
+		pose::Pose const & pose,
+		ScoreFunction const &sfxn,
 		EnergyMap & emap
 	) const;
 
@@ -107,14 +107,20 @@ public:
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
 		ResSingleMinimizationData const & /*res_data_cache*/,
-		pose::Pose const & /*pose*/,
+		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
 	) const;
 
+	virtual
 	bool
 	defines_residue_pair_energy( pose::Pose const &, Size , Size ) const { return ( true ); }
 
+	bool
+	defines_score_for_residue_pair(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		bool res_moving_wrt_eachother = false ) const;
 
 	methods::LongRangeEnergyType
 	long_range_type() const;
@@ -131,8 +137,11 @@ public:
 	Distance
 	atomic_interaction_cutoff() const { return 0.0; }
 
+	bool score_canonical_aas() const { return score_canonical_aas_; }
+
 private:
 	GenericBondedPotential const &potential_;
+	bool score_canonical_aas_;
 };
 
 } // methods

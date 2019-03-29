@@ -94,6 +94,7 @@ public:
 		LK_BALL_POSE_INFO, // a core::scoring::lkball::LKB_ResiduesInfo (aka LKB_PoseInfo); used by LK_BallEnergy
 		PB_LIFETIME_CACHE, // a core::scoring::methods::PBLifetimeCache; Poisson-boltzmann energy state dependent data (see PoissonBoltzmannEnergy)
 		FAELEC_CONTEXT_DATA, // a core::scoring::elec::FAElecContextData; used by FA_GrpElecEnergy
+		GEN_BONDED_EXCL_INFO, // a core::scoring::GenBondedExclInfo; used by GenericBondedPotential to get exclusion info
 		POSE_SEQUENCE, // a core::scoring::electron_density_atomwise::PoseSeqeunce
 		APPROXIMATE_UNSAT_POSE_INFO, // a basic::datacache::CacheableUint64MathMatrixFloatMap used by ApproximateBuriedUnsatPenalty
 		NMR_PCS_DATA, // a core::scoring::nmr::pcs::PCSData; stores pseudocontact shift data of the paramagnetic NMR framework (implemented in 2016)

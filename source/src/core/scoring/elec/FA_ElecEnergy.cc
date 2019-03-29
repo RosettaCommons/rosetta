@@ -223,6 +223,7 @@ FA_ElecEnergy::FA_ElecEnergy( methods::EnergyMethodOptions const & options ):
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
 	eval_intrares_ST_only_( options.eval_intrares_elec_ST_only() ),
 	count_pair_hybrid_( options.count_pair_hybrid() ),
+	count_pair_full_( options.count_pair_full() ),
 	cp_rep_map_( new CountPairRepMap ),
 	nres_monomer_( 0 )
 {
@@ -240,6 +241,7 @@ FA_ElecEnergy::FA_ElecEnergy( FA_ElecEnergy const & src ):
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
 	eval_intrares_ST_only_( src.eval_intrares_ST_only_ ),
 	count_pair_hybrid_( src.count_pair_hybrid_ ),
+	count_pair_full_( src.count_pair_full_ ),
 	cp_rep_map_( new CountPairRepMap ), //Do not copy the cp_rep_map_.  This is scratch space, and should exist on a per-instance basis.
 	nres_monomer_( 0 )
 {
@@ -430,7 +432,8 @@ FA_ElecEnergy::residue_pair_energy(
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
-		CountPairFunctionOP cpfxn =
+		CountPairFunctionOP cpfxn = count_pair_full_ ?
+			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3FULL ) :
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
 		Real d2;
@@ -555,7 +558,7 @@ FA_ElecEnergy::eval_intrares_energy(
 	// assuming only a single bond right now -- generalizing to arbitrary topologies
 	// also assuming crossover of 4, should be closest (?) to classic rosetta
 	bool const is_ligand( rsd.is_ligand() );
-	bool intra_xover3 = (is_ligand && count_pair_hybrid_);
+	bool intra_xover3 = ((is_ligand && count_pair_hybrid_) || count_pair_full_);
 	CountPairFunctionOP cpfxn = intra_xover3 ?
 		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_3FULL ) :
 		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_4 );
@@ -808,7 +811,8 @@ FA_ElecEnergy::eval_intrares_derivatives(
 			) return;
 
 	bool const is_ligand( rsd.is_ligand() );
-	bool intra_xover3 = (is_ligand && count_pair_hybrid_);
+	//bool intra_xover3 = (is_ligand && count_pair_hybrid_);
+	bool intra_xover3 = ((is_ligand && count_pair_hybrid_) || count_pair_full_);
 	CountPairFunctionOP cpfxn = intra_xover3 ?
 		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_3FULL ) :
 		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_4 );
@@ -950,8 +954,10 @@ FA_ElecEnergy::backbone_backbone_energy(
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
-		CountPairFunctionOP cpfxn =
+		CountPairFunctionOP cpfxn = count_pair_full_ ?
+			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3FULL ) :
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+		//CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
 		AtomIndices const & rsd1_bb_atoms( rsd1.type().all_bb_atoms() );
 		AtomIndices const & rsd2_bb_atoms( rsd2.type().all_bb_atoms() );
@@ -1017,8 +1023,10 @@ FA_ElecEnergy::backbone_sidechain_energy(
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
-		CountPairFunctionOP cpfxn =
+		CountPairFunctionOP cpfxn = count_pair_full_ ?
+			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3FULL ) :
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+		//CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
 		AtomIndices const & rsd1_bb_atoms( rsd1.type().all_bb_atoms() );
 		AtomIndices const & rsd2_sc_atoms( rsd2.type().all_sc_atoms() );
@@ -1086,8 +1094,10 @@ FA_ElecEnergy::sidechain_sidechain_energy(
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
-		CountPairFunctionOP cpfxn =
+		CountPairFunctionOP cpfxn = count_pair_full_ ?
+			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3FULL ) :
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+		//CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
 		AtomIndices const & rsd1_sc_atoms( rsd1.type().all_sc_atoms() );
 		AtomIndices const & rsd2_sc_atoms( rsd2.type().all_sc_atoms() );
@@ -1384,7 +1394,8 @@ FA_ElecEnergy::get_intrares_countpair(
 	using namespace etable::count_pair;
 
 	bool const is_ligand( res.is_ligand() );
-	bool intra_xover3 = (is_ligand && count_pair_hybrid_);
+	//bool intra_xover3 = (is_ligand && count_pair_hybrid_);
+	bool intra_xover3 = ((is_ligand && count_pair_hybrid_) || count_pair_full_);
 	CountPairFunctionOP reg_cpfxn = intra_xover3 ?
 		CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_3FULL ) :
 		CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_4 );
@@ -1435,7 +1446,10 @@ FA_ElecEnergy::get_count_pair_function(
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return utility::pointer::make_shared< CountPairNone >();
 
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
-		return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+		return count_pair_full_ ?
+			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3FULL ) :
+			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+		//return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 	}
 	return utility::pointer::make_shared< CountPairAll >();
 

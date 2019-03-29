@@ -176,6 +176,7 @@ build_rotated_water_rotamers(
 				ire = packer_neighbor_graph->get_node( seqpos )->const_edge_list_end();
 				ir != ire; ++ir ) {
 			int const neighbor_id( (*ir)->get_other_ind( seqpos ) );
+			if ( !pose.residue_type( neighbor_id ).is_protein() ) continue;
 			Residue const & neighbor( pose.residue( neighbor_id ) );
 			Vector neighborO =  neighbor.xyz("O");
 			Real dist = O.distance( neighborO );

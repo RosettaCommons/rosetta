@@ -751,6 +751,7 @@ protected:
 
 	inline bool do_classic_intrares() const { return do_classic_intrares_; }
 	inline bool count_pair_hybrid() const { return count_pair_hybrid_; }
+	inline bool count_pair_full() const { return count_pair_full_; }
 	inline bool put_intra_into_total() const { return put_intra_into_total_; }
 
 private:
@@ -764,6 +765,7 @@ private:
 	bool exclude_DNA_DNA_;
 	bool do_classic_intrares_;
 	bool count_pair_hybrid_;
+	bool count_pair_full_;
 	bool put_intra_into_total_;
 	bool exclude_intra_res_protein_;
 };

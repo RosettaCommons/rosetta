@@ -8,9 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   protocols/ligand_docking/GALigandDock/GridScorer.hh
-///
 /// @brief  Grid-based scoring for GA ligand docking
-///         **NOTE** Currently only wraps scorefunction with some caching, not yet grid-based!
 /// @author Hahnbeom Park and Frank DiMaio
 
 #ifndef INCLUDED_protocols_ligand_docking_GALigandDock_GriddedGriddedAtomTreeMultifunc_hh

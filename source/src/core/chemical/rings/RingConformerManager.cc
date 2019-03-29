@@ -23,6 +23,9 @@
 // Basic headers
 #include <basic/database/open.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/rings.OptionKeys.gen.hh>
+
 // C++ headers
 #include <map>
 #include <sstream>
@@ -55,11 +58,15 @@ RingConformerManager::get_conformers_for_ring_size( core::Size ring_size )
 {
 	using namespace std;
 	using namespace utility;
+	using namespace basic::options;
+
+	// fd make this a flag
+	std::string ring_conf_dbpath = option[ basic::options::OptionKeys::rings::ring_conformer_dbpath ]();
 
 	// Only create sets one time, as needed, for each ring size.
 	if ( ! conformers_.count( ring_size ) ) {
 		stringstream filename( stringstream::out );
-		filename << "chemical/ring_conformer_sets/" << ring_size << "-membered_ring_conformers.data";
+		filename << ring_conf_dbpath << "/" << ring_size << "-membered_ring_conformers.data";
 		vector1< RingConformer > conformers( read_conformers_from_database_file_for_ring_size(
 			basic::database::full_name( filename.str() ), ring_size ) );
 		conformers_.insert( make_pair( ring_size, conformers ) );

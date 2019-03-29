@@ -85,6 +85,7 @@ GAOptimizer::run( LigandConformers & genes ) {
 
 		// set up scorefunction for this stage
 		bool changed = scorefxn_->set_smoothing( stage_i.smoothing );
+		changed = changed || scorefxn_->set_elec_scale( stage_i.elec_scale );
 		scorefxn_->set_maxiter_minimize( stage_i.maxiter );
 		scorefxn_->set_packer_cycles( stage_i.packcycles );
 
@@ -103,7 +104,7 @@ GAOptimizer::run( LigandConformers & genes ) {
 
 		for ( core::Size j = 1; j <= stage_i.repeats; ++j ) {
 			update_tags( genes );
-			next_generation( genes, genes_new, stage_i.pool, stage_i.pmut );
+			next_generation( genes, genes_new, stage_i.pool, stage_i.pmut, stage_i.rb_maxrank );
 			optimize_generation( genes_new, stage_i.ramp_schedule );
 			show_status( genes_new, "generated in stage "+std::to_string(i)+" iter "+std::to_string(j) );
 
@@ -216,7 +217,8 @@ GAOptimizer::next_generation(
 	LigandConformers const & genes,
 	LigandConformers & genes_new,
 	core::Size npoolout,
-	core::Real pmut
+	core::Real pmut,
+	core::Size rb_maxrank
 ) {
 	genes_new.clear();
 	core::Size npoolin = genes.size();
@@ -231,6 +233,7 @@ GAOptimizer::next_generation(
 			newgene = mutate( newgene );
 			move = "mutate";
 			tag = "mut."+std::to_string(iparent)+" ["+newgene.generation_tag()+"]";
+
 		} else {
 			core::Size ipartner = iparent;
 			while ( ipartner == iparent ) {
@@ -242,8 +245,16 @@ GAOptimizer::next_generation(
 			} else {
 				newgene = crossover( newgene, genes[ipartner] );
 			}
+
 			move = "crossover";
 			tag = "cross."+std::to_string(iparent)+"."+std::to_string(ipartner)+" ["+newgene.generation_tag()+"]";
+		}
+
+		// just change RG by superimpose on different subset of atoms in reference structure
+		if ( rb_maxrank > 0 ) {
+			core::Size isuperimpose = numeric::random::rg().random_range(1, std::min(npoolin,rb_maxrank) );
+			newgene.superimpose_to_alternative_frame( genes[isuperimpose] );
+			tag += " rb."+std::to_string(isuperimpose);
 		}
 
 		newgene.set_generation_tag( tag );
@@ -564,6 +575,7 @@ GAOptimizer::initialize_rotamer_set_and_scores(
 
 					rotamer_energies_.energy2b( isc, irot, jsc, jrot ) =
 						scorefxn_->get_2b_energy(
+						*pose,
 						pose->residue( resid_i ), rotamer_data_[isc][irot].lkbrinfo,
 						pose->residue( resid_j ), rotamer_data_[jsc][jrot].lkbrinfo);
 				}

@@ -114,6 +114,7 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	exclude_DNA_DNA_(true),
 	exclude_intra_res_protein_(true), // rosetta++ default
 	count_pair_hybrid_(false),
+	count_pair_full_(false),
 	put_intra_into_total_(false ),
 	geom_sol_interres_path_distance_cutoff_( 0 ), // rosetta++ default -- should be 4.
 	geom_sol_intrares_path_distance_cutoff_( 7 ), // originally implemented for RNA base/phosphate.
@@ -130,6 +131,7 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	cartbonded_proton_(-1.0),
 	cartbonded_improper_(-1.0),
 	cartbonded_linear_(false),
+	genbonded_score_canonical_aas_(false),
 	pb_bound_tag_("bound"),
 	pb_unbound_tag_("unbound"),
 	ordered_wat_penalty_(1.5),
@@ -236,6 +238,7 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
 		exclude_intra_res_protein_ = src.exclude_intra_res_protein_;
 		count_pair_hybrid_ = src.count_pair_hybrid_;
+		count_pair_full_ = src.count_pair_full_;
 		put_intra_into_total_ = src.put_intra_into_total_;
 		geom_sol_interres_path_distance_cutoff_ = src.geom_sol_interres_path_distance_cutoff_;
 		geom_sol_intrares_path_distance_cutoff_ = src.geom_sol_intrares_path_distance_cutoff_;
@@ -254,6 +257,7 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		cartbonded_proton_ = src.cartbonded_proton_;
 		cartbonded_improper_ = src.cartbonded_improper_;
 		cartbonded_linear_ = src.cartbonded_linear_;
+		genbonded_score_canonical_aas_ = src.genbonded_score_canonical_aas_;
 		pb_bound_tag_ = src.pb_bound_tag_;
 		pb_unbound_tag_ = src.pb_unbound_tag_;
 		fastdens_perres_weights_ = src.fastdens_perres_weights_;
@@ -346,6 +350,7 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	exclude_DNA_DNA_ = options[ basic::options::OptionKeys::dna::specificity::exclude_dna_dna](); // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	exclude_intra_res_protein_ = !options[ basic::options::OptionKeys::score::include_intra_res_protein]();
 	count_pair_hybrid_ = options[ basic::options::OptionKeys::score::count_pair_hybrid]();
+	count_pair_full_ = options[ basic::options::OptionKeys::score::count_pair_full]();
 	put_intra_into_total( options[ basic::options::OptionKeys::score::put_intra_into_total]() );
 	geom_sol_interres_path_distance_cutoff_ = options[ basic::options::OptionKeys::score::geom_sol_interres_path_distance_cutoff]();
 	geom_sol_intrares_path_distance_cutoff_ = options[ basic::options::OptionKeys::score::geom_sol_intrares_path_distance_cutoff]();
@@ -354,6 +359,7 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	symmetric_gly_tables_ = options[ basic::options::OptionKeys::score::symmetric_gly_tables ]();
 	loop_close_use_6D_potential_ = options[ basic::options::OptionKeys::score::loop_close::use_6D_potential ]();
 	fa_stack_base_all_ = !options[ basic::options::OptionKeys::score::fa_stack_base_base_only ]();
+	genbonded_score_canonical_aas_ = options[ basic::options::OptionKeys::score::genbonded_score_canonical_aas ]();
 
 	//Options for the NMerSVMEnergy:
 	nmer_ref_seq_length_ = options[ basic::options::OptionKeys::score::nmer_ref_seq_length ]();
@@ -431,6 +437,7 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::aa_composition_setup_file
 		+ basic::options::OptionKeys::score::aspartimide_penalty_value
 		+ basic::options::OptionKeys::score::count_pair_hybrid
+		+ basic::options::OptionKeys::score::count_pair_full
 		+ basic::options::OptionKeys::score::elec_die
 		+ basic::options::OptionKeys::score::elec_group_file
 		+ basic::options::OptionKeys::score::covalent_labeling_input
@@ -460,6 +467,7 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::smooth_fa_elec
 		+ basic::options::OptionKeys::score::symmetric_gly_tables
 		+ basic::options::OptionKeys::score::loop_close::use_6D_potential
+		+ basic::options::OptionKeys::score::genbonded_score_canonical_aas
 		+ basic::options::OptionKeys::score::fa_stack_base_base_only
 		+ basic::options::OptionKeys::score::use_gen_kirkwood
 		+ basic::options::OptionKeys::score::use_polarization
@@ -834,6 +842,16 @@ EnergyMethodOptions::count_pair_hybrid() const {
 void
 EnergyMethodOptions::count_pair_hybrid( bool const setting) {
 	count_pair_hybrid_ = setting;
+}
+
+bool
+EnergyMethodOptions::count_pair_full() const {
+	return count_pair_full_;
+}
+
+void
+EnergyMethodOptions::count_pair_full( bool const setting) {
+	count_pair_full_ = setting;
 }
 
 bool
@@ -1616,6 +1634,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
 		( a.exclude_intra_res_protein_ == b.exclude_intra_res_protein_ ) &&
 		( a.count_pair_hybrid_ == b.count_pair_hybrid_ ) &&
+		( a.count_pair_full_ == b.count_pair_full_ ) &&
 		( a.put_intra_into_total_ == b.put_intra_into_total_ ) &&
 		( a.geom_sol_interres_path_distance_cutoff_ == b.geom_sol_interres_path_distance_cutoff_ ) &&
 		( a.geom_sol_intrares_path_distance_cutoff_ == b.geom_sol_intrares_path_distance_cutoff_ ) &&
@@ -1632,6 +1651,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.cartbonded_proton_ == b.cartbonded_proton_ ) &&
 		( a.cartbonded_improper_ == b.cartbonded_improper_ ) &&
 		( a.cartbonded_linear_ == b.cartbonded_linear_ ) &&
+		( a.genbonded_score_canonical_aas_ == b.genbonded_score_canonical_aas_ ) &&
 		( a.bond_angle_central_atoms_to_score_ == b.bond_angle_central_atoms_to_score_ ) &&
 		( a.bond_angle_residue_type_param_set_ == b.bond_angle_residue_type_param_set_ ) &&
 		( a.pb_bound_tag_ == b.pb_bound_tag_ ) &&
@@ -1764,6 +1784,8 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 		<< (exclude_intra_res_protein_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: count_pair_hybrid: "
 		<< (count_pair_hybrid_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: count_pair_full: "
+		<< (count_pair_full_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: put_intra_into_total: "
 		<< (put_intra_into_total_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: geom_sol_interres_path_distance_cutoff: "
@@ -1968,6 +1990,9 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_keys.push_back("count_pair_hybrid");
 	option_values.push_back(count_pair_hybrid_ ? "1" : "0");
 
+	option_keys.push_back("count_pair_full");
+	option_values.push_back(count_pair_full_ ? "1" : "0");
+
 	option_keys.push_back("put_intra_into_total");
 	option_values.push_back(put_intra_into_total_ ? "1" : "0");
 
@@ -2003,6 +2028,9 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 
 	option_keys.push_back("cartbonded_linear");
 	option_values.push_back(cartbonded_linear_ ? "1" : "0");
+
+	option_keys.push_back("genbonded_score_canonical_aas");
+	option_values.push_back(genbonded_score_canonical_aas_ ? "1" : "0");
 
 	option_keys.push_back("ordered_wat_penalty");
 	option_values.push_back(boost::lexical_cast<std::string>(ordered_wat_penalty_));
@@ -2087,6 +2115,7 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( exclude_DNA_DNA_ ) ); // _Bool
 	arc( CEREAL_NVP( exclude_intra_res_protein_ ) ); // _Bool
 	arc( CEREAL_NVP( count_pair_hybrid_ ) ); // _Bool
+	arc( CEREAL_NVP( count_pair_full_ ) ); // _Bool
 	arc( CEREAL_NVP( put_intra_into_total_ ) ); // _Bool
 	arc( CEREAL_NVP( geom_sol_interres_path_distance_cutoff_ ) ); // core::Size
 	arc( CEREAL_NVP( geom_sol_intrares_path_distance_cutoff_ ) ); // core::Size
@@ -2103,6 +2132,7 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( cartbonded_proton_ ) ); // core::Real
 	arc( CEREAL_NVP( cartbonded_improper_ ) ); // core::Real
 	arc( CEREAL_NVP( cartbonded_linear_ ) ); // _Bool
+	arc( CEREAL_NVP( genbonded_score_canonical_aas_ ) ); // _Bool
 	arc( CEREAL_NVP( pb_bound_tag_ ) ); // std::string
 	arc( CEREAL_NVP( pb_unbound_tag_ ) ); // std::string
 	arc( CEREAL_NVP( fastdens_perres_weights_ ) ); // utility::vector1<core::Real>
@@ -2198,6 +2228,7 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( exclude_DNA_DNA_ ); // _Bool
 	arc( exclude_intra_res_protein_ ); // _Bool
 	arc( count_pair_hybrid_ ); // _Bool
+	arc( count_pair_full_ ); // _Bool
 	arc( put_intra_into_total_ ); // _Bool
 	arc( geom_sol_interres_path_distance_cutoff_ ); // core::Size
 	arc( geom_sol_intrares_path_distance_cutoff_ ); // core::Size
@@ -2214,6 +2245,7 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( cartbonded_proton_ ); // core::Real
 	arc( cartbonded_improper_ ); // core::Real
 	arc( cartbonded_linear_ ); // _Bool
+	arc( genbonded_score_canonical_aas_ ); // _Bool
 	arc( pb_bound_tag_ ); // std::string
 	arc( pb_unbound_tag_ ); // std::string
 	arc( fastdens_perres_weights_ ); // utility::vector1<core::Real>

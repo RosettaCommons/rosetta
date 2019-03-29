@@ -22,10 +22,10 @@ namespace protocols {
 namespace ligand_docking {
 namespace ga_ligand_dock {
 
-// represent options for a single "phase" of ligand docking
+/// @brief represent options for a single "phase" of ligand docking
 struct GADockStageParams {
 	GADockStageParams() :
-		repeats(0), pool(0), rmsthreshold(0), pmut(0), maxiter(0), packcycles(0), smoothing(0)
+		repeats(0), pool(0), rmsthreshold(0), pmut(0), maxiter(0), packcycles(0), rb_maxrank(0), smoothing(0), elec_scale(1)
 	{}
 
 	GADockStageParams(
@@ -39,7 +39,9 @@ struct GADockStageParams {
 		pmut(pmut_in),
 		maxiter(maxiter_in),
 		packcycles(packcycles_in),
+		rb_maxrank(0),
 		smoothing(smoothing_in),
+		elec_scale(1.0), // let default untouch
 		ramp_schedule(ramp_schedule_in)
 	{}
 
@@ -50,10 +52,17 @@ struct GADockStageParams {
 	core::Real pmut;         // mutation probability for this stage
 	core::Real maxiter;      // maximum minimize iterations
 	core::Real packcycles;   // number of packer cycles (x nSCs)
+	core::Size rb_maxrank;   // topN in parents for motif-alignment reference; 0 means not using
 	core::Real smoothing;    // grid smoothing
+	core::Real elec_scale;   // scaling factor on hbond & elec terms
 	utility::vector1<core::Real> ramp_schedule;  // fa_rep ramping schedule in optimization
 };
 
+/// @brief
+/// Genetic Algorithm Optimizer called by GALigandDock
+/// @details
+/// Takes grid score & gene-representations of ligand (+flex sidechain) conformations
+/// returns multiple optimized gene-representations of ligand (+flex sidechain) conformations
 
 class GAOptimizer  {
 public:
@@ -66,7 +75,7 @@ public:
 
 	void set_native( LigandConformer const native ) { nativegene_ = native; }
 
-	// optimize one generation
+	/// @brief optimize one generation
 	void optimize_generation(
 		LigandConformers & genes,
 		utility::vector1<core::Real> const &ramping );
@@ -83,19 +92,19 @@ public:
 
 private:
 	//// HELPER FUNCTIONS
-	// set up rotamer set
+	/// @brief set up rotamer set
 	void
 	initialize_rotamer_set_and_scores(
 		LigandConformer lig
 	);
 
-	// reset tags for a generation
+	/// @brief reset tags for a generation
 	void update_tags( LigandConformers &genes ) const;
 
-	// generate putative next generation
-	void next_generation( LigandConformers const & genes, LigandConformers & genes_new, core::Size, core::Real );
+	/// @brief generate putative next generation
+	void next_generation( LigandConformers const & genes, LigandConformers & genes_new, core::Size, core::Real, core::Size rb_maxrank );
 
-	// update our pool
+	/// @brief update our pool
 	void update_pool( LigandConformers & genes, LigandConformers & genes_new, core::Size, core::Real );
 
 private:

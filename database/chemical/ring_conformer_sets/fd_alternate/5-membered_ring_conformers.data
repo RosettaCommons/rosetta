@@ -1,0 +1,64 @@
+# A list of ring conformation definitions for five-membered rings.
+
+# mod Frank DiMaio
+# This was generated in a modified procedure, where minimization in a \
+#    simple bonded forcefield rather than simple final-atom RMS was used 
+# This leads to differences in the high-energy strained conformers compared 
+#    to the Pople set in the subdirectory above
+
+# This also adds proper bond angles to the Pople set 
+#   (which only had them for 6-membered rings)
+
+# 31 confs
+
+# The names of common conformers are kept
+
+#                                      Ideal
+# Specific   General                Cremer-Pople
+# Conformer  Conformer               Parameters                           Ideal Angles (degrees)
+# Name       Name       Degeneracy     q    phi     nu1    nu2    nu3    nu4    nu0    tau1   tau2   tau3   tau4   tau5
+
+# 10 Envelope Conformations (Estrain~297)
+
+  OE         envelope            1   0.4    0.0    32.0    0.0  -32.0   57.0  -57.0   100.0  101.0  101.0  100.0  104.0
+  1E         envelope            1   0.4    0.0   -57.0   32.0    0.0  -32.0   57.0   104.0  100.0  101.0  101.0  100.0
+  2E         envelope            1   0.4    0.0    57.0  -57.0   32.0    0.0  -32.0   100.0  104.0  100.0  101.0  101.0
+  3E         envelope            1   0.4    0.0   -32.0   57.0  -57.0   32.0    0.0   101.0  100.0  104.0  100.0  101.0
+  4E         envelope            1   0.4    0.0     0.0  -32.0   57.0  -57.0   32.0   101.0  101.0  100.0  104.0  100.0
+
+  EO         envelope            1   0.4    0.0   -32.0    0.0   32.0  -57.0   57.0   100.0  101.0  101.0  100.0  104.0
+  E1         envelope            1   0.4    0.0    57.0  -32.0    0.0   32.0  -57.0   104.0  100.0  101.0  101.0  100.0
+  E2         envelope            1   0.4    0.0   -57.0   57.0  -32.0    0.0   32.0   100.0  104.0  100.0  101.0  101.0
+  E3         envelope            1   0.4    0.0    32.0  -57.0   57.0  -32.0    0.0   101.0  100.0  104.0  100.0  101.0
+  E4         envelope            1   0.4    0.0     0.0   32.0  -57.0   57.0  -32.0   101.0  101.0  100.0  104.0  100.0
+
+# 10 New group #1 (Estrain~304)
+
+  OX         new1                1   0.4    0.0   -34.0   34.0  -22.0    0.0   22.0   106.0  100.0  106.0  107.0  107.0
+  1X         new1                1   0.4    0.0    22.0  -34.0   34.0  -22.0    0.0   107.0  106.0  100.0  106.0  107.0 
+  2X         new1                1   0.4    0.0     0.0   22.0  -34.0   34.0  -22.0   107.0  107.0  106.0  100.0  106.0
+  3X         new1                1   0.4    0.0   -22.0    0.0   22.0  -34.0   34.0   106.0  107.0  107.0  106.0  100.0
+  4X         new1                1   0.4    0.0    34.0  -22.0    0.0   22.0  -34.0   100.0  106.0  107.0  107.0  106.0 
+
+  XO         new1                1   0.4    0.0    34.0  -34.0   22.0    0.0  -22.0   106.0  100.0  106.0  107.0  107.0
+  X1         new1                1   0.4    0.0   -22.0   34.0  -34.0   22.0    0.0   107.0  106.0  100.0  106.0  107.0 
+  X2         new1                1   0.4    0.0     0.0  -22.0   34.0  -34.0   22.0   107.0  107.0  106.0  100.0  106.0
+  X3         new1                1   0.4    0.0    22.0    0.0  -22.0   34.0  -34.0   106.0  107.0  107.0  106.0  100.0
+  X4         new1                1   0.4    0.0   -34.0   22.0    0.0  -22.0   34.0   100.0  106.0  107.0  107.0  106.0 
+
+# 10 Twist Conformations (Estrain=825)
+
+  OT1        twist               1   0.4    0.0    54.0  -22.0  -22.0   54.0  -64.0    92.0  105.0   99.0  105.0   92.0
+  1T2        twist               1   0.4    0.0   -64.0   54.0  -22.0  -22.0   54.0    92.0   92.0  105.0   99.0  105.0
+  2T3        twist               1   0.4    0.0    54.0  -64.0   54.0  -22.0  -22.0   105.0   92.0   92.0  105.0   99.0
+  3T4        twist               1   0.4    0.0   -22.0   54.0  -64.0   54.0  -22.0    99.0  105.0   92.0   92.0  105.0
+  4TO        twist               1   0.4    0.0   -22.0  -22.0   54.0  -64.0   54.0   105.0   99.0  105.0   92.0   92.0
+
+  1TO        twist               1   0.4    0.0   -54.0   22.0   22.0  -54.0   64.0    92.0  105.0   99.0  105.0   92.0
+  2T1        twist               1   0.4    0.0    64.0  -54.0   22.0   22.0  -54.0    92.0   92.0  105.0   99.0  105.0
+  3T2        twist               1   0.4    0.0   -54.0   64.0  -54.0   22.0   22.0   105.0   92.0   92.0  105.0   99.0
+  4T3        twist               1   0.4    0.0    22.0  -54.0   64.0  -54.0   22.0    99.0  105.0   92.0   92.0  105.0
+  OT4        twist               1   0.4    0.0    22.0   22.0  -54.0   64.0  -54.0   105.0   99.0  105.0   92.0   92.0
+
+# planar conformations (Estrain~7)
+  O          planar              5   0.4    0.0     0.0    0.0    0.0    0.0    0.0   108.0  108.0  108.0  108.0  108.0

@@ -29,6 +29,12 @@ namespace protocols {
 namespace ligand_docking {
 namespace ga_ligand_dock {
 
+/// @brief
+/// Gene representation of ligand & flexible sidechains in receptor
+/// @details
+/// Gene is preresented by rigid body (rb_), ligandchis, and receptorchis
+/// Also has functions to tranform back and forth to pose object
+/// Uses friend functions to perform mutation / crossovers with others within gene representation
 
 class LigandConformer : public utility::pointer::ReferenceCount {
 public:
@@ -60,6 +66,7 @@ public:
 		core::pose::PoseCOP pose,
 		core::Size ligid,
 		utility::vector1< core::Size > movingscs
+		//std::string runmode="dock"
 	);
 
 	// common pathway for parameter initialization
@@ -114,6 +121,10 @@ public:
 	core::conformation::Residue
 	protein_residue( core::Size ires ) const;
 
+	// generate only the protein residue based on this conformation
+	core::pose::PoseOP
+	receptor(  ) const;
+
 	// get the id of the ligand
 	core::Size
 	ligand_id() const { return ligid_; }
@@ -127,6 +138,8 @@ public:
 	// get the moving sidechains
 	utility::vector1< core::Size > const &
 	moving_scs() const { return movingscs_; }
+
+	void set_moving_scs( utility::vector1< core::Size > setting ){ movingscs_ = setting; }
 
 	// get sidechain chi info; ires should be the movingsc index (not protein seqpos)
 	void
@@ -142,6 +155,12 @@ public:
 		ligandxyz_synced_ = false;
 	}
 
+	void
+	set_sample_ring_conformers( bool setting ) { sample_ring_conformers_ = setting; }
+
+	bool
+	sample_ring_conformers() const { return sample_ring_conformers_; }
+
 	core::chemical::ResidueTypeCOP
 	get_protein_restype( core::Size ires ) const {
 		return proteinrestypes_[ires];
@@ -155,6 +174,9 @@ public:
 	// initial perturbation
 	void
 	randomize( core::Real transmax );
+
+	void
+	superimpose_to_alternative_frame( LigandConformer const &refconf );
 
 	void set_rotwidth   ( core::Real setting ){ rotmutWidth_ = setting; }
 	void set_transwidth ( core::Real setting ){ transmutWidth_ = setting; }
@@ -184,6 +206,15 @@ public:
 	std::string
 	to_string() const;
 
+	core::kinematics::FoldTree const &
+	get_reference_ft() const { return ref_pose_->fold_tree(); }
+
+	// fd returns true if the ligand is the last residue in the input pose
+	bool
+	is_ligand_terminal() const {
+		return (ref_pose_->total_residue()==ligid_);
+	}
+
 private:
 	// reference pose
 	core::pose::PoseCOP ref_pose_;
@@ -195,6 +226,7 @@ private:
 	utility::vector1< core::Size > movingscs_;
 	utility::vector1< core::chemical::ResidueTypeCOP > proteinrestypes_;
 	utility::vector1< utility::vector1< core::Real > > proteinchis_;
+	bool sample_ring_conformers_;
 
 	// the score
 	core::Real score_;
@@ -205,6 +237,8 @@ private:
 	// the internal representation of the pose
 	utility::vector1< core::Real > rb_;
 	utility::vector1< core::Real > ligandchis_;
+	utility::vector1< core::Real > ligandnus_;    // ring torsions
+	utility::vector1< core::Real > ligandtaus_; // ring angles
 	utility::vector1< utility::vector1< core::Size > > ligandchi_downstream_;
 
 	// radius of gyration of ligand

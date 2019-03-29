@@ -391,12 +391,19 @@ public:
 	void
 	exclude_intra_res_protein( bool const setting );
 
+	/// @brief Take full-1-5 countpairs for LIGAND/non-(POLYMER_or_PROTEIN) type
 	bool
 	count_pair_hybrid() const;
 
 	void
 	count_pair_hybrid( bool const setting );
 
+	/// @brief Take full-1-5 countpairs for any residue type
+	bool
+	count_pair_full() const;
+
+	void
+	count_pair_full( bool const setting );
 
 	bool
 	put_intra_into_total() const;
@@ -916,6 +923,16 @@ public:
 		cartbonded_linear_ = lin_in;
 	}
 
+	/// @brief allow scoring canonical aas with gen_bonded
+	bool genbonded_score_canonical_aas() const {
+		return genbonded_score_canonical_aas_;
+	}
+
+	/// @brief allow scoring canonical aas with gen_bonded
+	void genbonded_score_canonical_aas( bool setting ) {
+		genbonded_score_canonical_aas_ = setting;
+	}
+
 	core::Real
 	ordered_wat_penalty() const;
 
@@ -994,7 +1011,8 @@ private:
 	core::Real water_dielectric_;
 	bool exclude_DNA_DNA_;
 	bool exclude_intra_res_protein_;
-	bool count_pair_hybrid_;
+	bool count_pair_hybrid_; //Take full-1-5 countpairs for LIGAND/non-(POLYMER_or_PROTEIN) type
+	bool count_pair_full_; //Take full-1-5 countpairs for any residue type
 	bool put_intra_into_total_;
 	core::Size geom_sol_interres_path_distance_cutoff_;
 	core::Size geom_sol_intrares_path_distance_cutoff_;
@@ -1007,6 +1025,7 @@ private:
 	core::Size cst_max_seq_sep_;
 	core::Real cartbonded_len_, cartbonded_ang_, cartbonded_tors_, cartbonded_proton_, cartbonded_improper_;
 	bool cartbonded_linear_;
+	bool genbonded_score_canonical_aas_;
 	std::string pb_bound_tag_;
 	std::string pb_unbound_tag_;
 	utility::vector1< core::Real > fastdens_perres_weights_;

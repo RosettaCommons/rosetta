@@ -524,6 +524,7 @@ private:
 
 	bool eval_intrares_ST_only_; // hpark: intrares_elec for ST hydroxyl only
 	bool count_pair_hybrid_;
+	bool count_pair_full_; // full strength for everything
 
 	//fpd: countpair representative atoms
 	bool use_cp_rep_;

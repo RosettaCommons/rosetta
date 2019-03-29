@@ -18,6 +18,7 @@
 #include <core/scoring/methods/GenericBondedEnergyCreator.hh>
 
 // Package headers
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -72,13 +73,17 @@ GenericBondedEnergyCreator::score_types_for_method() const {
 /// ctor
 GenericBondedEnergy::GenericBondedEnergy( GenericBondedEnergy const & src ) :
 	parent( src ),
-	potential_( src.potential_ )
-{}
+	potential_( src.potential_ ),
+	score_canonical_aas_( src.score_canonical_aas() )
+{
+}
 
-GenericBondedEnergy::GenericBondedEnergy( EnergyMethodOptions const & ):
+GenericBondedEnergy::GenericBondedEnergy( EnergyMethodOptions const & eopt ):
 	parent( utility::pointer::make_shared< GenericBondedEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_GenericBondedPotential() )
-{}
+{
+	score_canonical_aas_ = eopt.genbonded_score_canonical_aas();
+}
 
 /// clone
 EnergyMethodOP
@@ -90,7 +95,7 @@ GenericBondedEnergy::clone() const
 void
 GenericBondedEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	ScoreFunction const &sfxn
 ) const {
 	using namespace methods;
 
@@ -126,7 +131,7 @@ GenericBondedEnergy::setup_for_scoring(
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
-	potential_.setup_for_scoring( pose );
+	potential_.setup_for_scoring( pose, sfxn );
 }
 
 methods::LongRangeEnergyType
@@ -135,20 +140,22 @@ GenericBondedEnergy::long_range_type() const { return methods::gen_bonded_lr; }
 void
 GenericBondedEnergy::setup_for_derivatives(
 	pose::Pose & pose,
-	ScoreFunction const &
+	ScoreFunction const &sfxn
 ) const {
-	potential_.setup_for_scoring( pose );
+	potential_.setup_for_scoring( pose, sfxn );
 }
 
 void
 GenericBondedEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & /*pose*/,
-	ScoreFunction const &,
+	pose::Pose const & pose,
+	ScoreFunction const & ,
 	EnergyMap & emap
 ) const {
-	potential_.residue_pair_energy( rsd1, rsd2, emap );
+
+	if ( !defines_score_for_residue_pair( rsd1, rsd2 ) ) return;
+	potential_.residue_pair_energy( rsd1, rsd2, pose, emap );
 }
 
 void
@@ -158,22 +165,51 @@ GenericBondedEnergy::eval_residue_pair_derivatives(
 	ResSingleMinimizationData const &,
 	ResSingleMinimizationData const &,
 	ResPairMinimizationData const & /*min_data*/,
-	pose::Pose const & /*pose*/, // provides context
+	pose::Pose const & pose, // provides context
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
 ) const {
-	potential_.residue_pair_derivatives( rsd1, rsd2, weights, r1_atom_derivs, r2_atom_derivs );
+
+	if ( !defines_score_for_residue_pair( rsd1, rsd2 ) ) return;
+
+	potential_.residue_pair_derivatives( rsd1, rsd2, pose, weights, r1_atom_derivs, r2_atom_derivs );
+}
+
+bool
+GenericBondedEnergy::defines_score_for_residue_pair(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	bool /*res_moving_wrt_eachother*/ ) const
+{
+	if ( !score_canonical_aas() ) {
+		bool rsd1_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd1.aa() ) ||
+			chemical::is_canonical_D_aa( rsd1.aa() );
+		bool rsd2_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd2.aa() ) ||
+			chemical::is_canonical_D_aa( rsd2.aa() );
+
+		// still allow scoring if either is non-canonical_aa
+		if ( rsd1_is_canonical_aa && rsd2_is_canonical_aa ) return false;
+	}
+
+	return true;
 }
 
 void
 GenericBondedEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
-	pose::Pose const &,
-	ScoreFunction const &,
+	pose::Pose const & pose,
+	ScoreFunction const & /*sfxn*/,
 	EnergyMap & emap
 ) const {
-	potential_.residue_energy( rsd, emap );
+
+	if ( !score_canonical_aas() ) {
+		bool rsd_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd.aa() ) ||
+			chemical::is_canonical_D_aa( rsd.aa() );
+		if ( rsd_is_canonical_aa ) return;
+	}
+
+	potential_.residue_energy( rsd, pose, emap );
 }
 
 // using atom derivs instead of dof derivates;
@@ -181,11 +217,18 @@ void
 GenericBondedEnergy::eval_intrares_derivatives(
 	conformation::Residue const & rsd,
 	ResSingleMinimizationData const & /*res_data_cache*/,
-	pose::Pose const & /*pose*/,
+	pose::Pose const & pose,
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const {
-	potential_.residue_derivatives( rsd, weights, atom_derivs );
+
+	if ( !score_canonical_aas() ) {
+		bool rsd_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd.aa() ) ||
+			chemical::is_canonical_D_aa( rsd.aa() );
+		if ( rsd_is_canonical_aa ) return;
+	}
+
+	potential_.residue_derivatives( rsd, pose, weights, atom_derivs );
 }
 
 void

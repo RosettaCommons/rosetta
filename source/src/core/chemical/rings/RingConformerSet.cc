@@ -276,9 +276,9 @@ RingConformerSet::get_ideal_conformer_from_nus( utility::vector1< core::Angle > 
 	if ( ring_size_ == 3 ) {
 		utility_exit_with_message( "A 3-membered ring can only be planar; exiting." );
 	}
-	if ( ring_size_ > 6 ) {
+	if ( ring_size_ > 8 ) {
 		utility_exit_with_message(
-			"Rosetta does not currently handle rings larger than size 6; exiting." );
+			"Rosetta does not currently handle rings larger than size 8; exiting." );
 	}
 
 	Size const n_angles( angles.size() );

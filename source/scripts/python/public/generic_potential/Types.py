@@ -1,9 +1,22 @@
-import copy
+#!/usr/bin/env python3
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+'''
+Definitions of the properties of generalized atom types.
+
+Author: Hahnbeom Park and Frank DiMaio 
+'''
 
 ############ Atom Class setup
 ATYPES_REG = ['Null','C','H','O','N','P','S','Br','I','F','Cl']
 POLAR_ATOMS = [3,4,5,6]
-SPECIAL_ATOMS = []#['B','Si','Se'] #brome, Silicon, Selenium
+SPECIAL_ATOMS = ['B','Si','Se', #Boron, Silicon, Selenium
+                 'Ca','Mg','Mn','Fe','Zn','Co','Cu','Ni','Cd' #coordinating metals
+]
 ATYPES = ATYPES_REG + SPECIAL_ATOMS
 
 ACLASS_ID = ['Null', #0: Unassigned
@@ -22,8 +35,7 @@ ACLASS_ID = ['Null', #0: Unassigned
              'CDp', #sp2, polar
              'CRp', #aromatic, polar
              'CTp', #sp1, polar
-             'CRb', #Aromatic(or conjugated) at Biaryl
-    
+             
              #Hydrogens, attached to C,CR,O,N,S,or Generic
              'HC',
              'HR',
@@ -46,7 +58,6 @@ ACLASS_ID = ['Null', #0: Unassigned
              'NG21', #Generic_sp2, 1-H
              'NG22', #Generic_sp2, 2-H
              'NG1',  #Generic_sp1 #cyanide
-             'NGb',  #Generic sp2 at biaryl
 
              #Oxygen
              'Ohx', # HydroXyl
@@ -63,6 +74,7 @@ ACLASS_ID = ['Null', #0: Unassigned
              #Sulfur, Phosphorus
              'Sth', #THiol
              'Ssl', #SuLfide
+             'SR',  #aromatic Sulfur
              'SG2', # Generic_sp2
              'SG3', # Generic_sp3
              'SG5', # Generic_sp5
@@ -71,7 +83,21 @@ ACLASS_ID = ['Null', #0: Unassigned
 
              # Halogens
              'Br','I','F','Cl', 
-             'BrR','IR','FR','ClR', 
+             'BrR','IR','FR','ClR',
+
+             # Metals
+             'Bsp2',
+             'Si',
+             'Se',
+             'Ca2p',
+             'Mg2p',
+             'Mn',
+             'Fe2p',
+             'Zn2p',
+             'Co2p',
+             'Cu2p',
+             'Ni',
+             'Cd',
              ]
 
 ATYPES_HYBRID = ['C','O','N','P','S'] #Any element hybrid state can be defined
@@ -83,6 +109,14 @@ ACLASS_HAPOL = ['HC','HR','HG']
 POLARCLASSES = ['Oat','Oad','Ohx','Oal','OG2','OG3',
                 'Nam','Ngu1','Ngu2','NG22',
                 'SG5','PG3','PG5']
+
+# Still can be rotable if included as in biaryl_pivots
+CONJUGATING_ACLASSES = ['CD','CD1','CD2','CR','CDp','CRp',
+                        'Nad','Nin','Nim','Ngu1','Ngu2','NG2','NG21','NG22', 
+                        'Ofu','OG2','Ssl','SG2']
+#dropped:
+#Nad3; tertiary amides can be more flexible
+#NG21: Nitrogen with 1H not part of aro-ring
 
 # atomtypes to assert nH
 ASSERT_NHYDROGENS = {'Nam2':[1,2],
@@ -121,26 +155,35 @@ SPECIAL_HYBRIDS = {'N.pl3':2, #let's assin as sp2 for now
                    'S.o':3, # with single O=, one lonepair
                    'S.o2':5, # with two O=
                    'N.4':3, # still is sp3
-                   # for another format
+                   
+                   # for GAFF format
                    'c':2, #crap... if not specified
                    'ca':9,
                    'c1':1,
                    'c2':2,
                    'c3':3,
-                   'cd':2,
                    'cc':2,
+                   'cd':2,
+                   'ce':2,
+                   'cf':2,
+                   'ch':1, 
+                   'cg':1, #cyanide
+                   'cp':2, #aromatic but no proton
+                   'cx':2, #3 membered ring
+                   'cy':3, #4 membered ring
                    'cz':2, #guanidinium
                    'o':2, #crap... if not specified
                    'os':3, #ether
                    'oh':3,
                    'n':2, #crap... if not specified
-                   'nh':2, #including guanidinium
                    'na':9,
                    'nb':2,
                    'no':2, 
                    'nc':2, #deprotonated sp2
                    'nd':2, #double bonded
                    'ne':2, #deprotonated sp2
+                   'nh':0, #including guanidinium; warning: this could be sometimes amine... 
+                   #'nh':2, #guanidinium style
                    'nf':2, #deprotonated sp2
                    'n1':1,
                    'n2':2,
@@ -154,6 +197,15 @@ SPECIAL_HYBRIDS = {'N.pl3':2, #let's assin as sp2 for now
                    'sy':5,
                    'S.O2':5,
                    }           
+
+# bond types read by Rosetta
+BOND_ORDERS = [1, # single
+               2, # double
+               3, # triple
+               4, # aromatic
+               5, # orbital, not used
+               9, # ring, not used; will be used once Rosetta machinery gets updated
+               ]
 
 MAP2STANDARD = {
     'CS':'CH1','CS1':'CH1','CS2':'CH2','CS3':'CH3',

@@ -385,6 +385,7 @@ sources = {
 
 	"pilot/hpark" : [
 		#"test_sampling",
+     	        #"gen_tripeptide",
 		"mpi_refinement",
 		#"serial_refinement"
 	],

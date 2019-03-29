@@ -123,6 +123,7 @@ OPT_1GRP_KEY(Boolean, ssm, interface)
 OPT_1GRP_KEY(Boolean, ssm, packing)
 OPT_1GRP_KEY(Boolean, ssm, verbose)
 OPT_1GRP_KEY(Boolean, ssm, with_ss)
+OPT_1GRP_KEY(Boolean, ssm, debug)
 OPT_1GRP_KEY(IntegerVector, ssm, parallel)
 
 
@@ -474,6 +475,10 @@ public:
 				Es.push_back( (*sfxn_)(pose_copy) );
 				ramas.push_back( Srama(pose_copy) );
 				paapps.push_back( Spaapp(pose_copy) );
+				if ( basic::options::option[basic::options::OptionKeys::ssm::debug].user() ) {
+					std::string prefix = basic::options::option[basic::options::OptionKeys::out::prefix]();
+					pose_copy.dump_pdb( prefix + std::to_string(i_res)+"."+core::chemical::name_from_aa( core::chemical::AA(i_aa) ) + ".pdb" );
+				}
 			} // foreach aa
 
 			for ( Size i_aa=1; i_aa <= (Size)core::chemical::num_canonical_aas; ++i_aa ) TR << Es[i_aa] << " ";
@@ -511,6 +516,7 @@ int main( int argc, char * argv [] )
 		NEW_OPT(ssm::verbose, "verbose", false);
 		NEW_OPT(ssm::with_ss, "with_ss", false);
 		NEW_OPT(ssm::parallel, "parallel", utility::vector1<core::Size>());
+		NEW_OPT(ssm::debug, "debug", false);
 
 		devel::init(argc, argv);
 

@@ -1,79 +1,84 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+'''
+Functions and executable for taking a ligand from an MDL Molfile
+and writing .params files with generalized atom types in Rosetta.
+See main() for usage or run with --help.
+
+Author: Hahnbeom Park and Frank DiMaio 
+'''
 from __future__ import print_function
 
 import sys,os
 
 from Types import *
+from BasicClasses import OptionClass
 from Molecule import MoleculeClass
-from AtomTypeClassifier import AtomTypeClassifier
-from TorsionAssigner import TorsionAssigner
+from AtomTypeClassifier import FunctionalGroupClassifier
 
+#### check if libraries are installed
+import importlib
+
+die_if_not_exist = ['numpy','scipy']
+for lib in die_if_not_exist:
+    die = (importlib.util.find_spec(lib) is None)
+    if die:
+        sys.exit('this script requires %s! die.'%lib)
+    
+############
 
 MYFILE = os.path.abspath(__file__)
 direc = MYFILE.replace('mol2genparams.py','')
 
-def run_mol2(mol2file, torsassigner, report=True, debug=False, prefix=''):
-    puckering_as_chi = False
-    if '--puckering_chi' in sys.argv: puckering_as_chi = True
+def run_mol2(mol2file,option):
+    # local prefix for the outputs
+    if option.opt.prefix == None:
+        prefix = mol2file.split('/')[-1].replace('.mol2','')
+    else:
+        prefix = option.opt.prefix
 
-    molecule = MoleculeClass(mol2file,verbose=debug)
+    molecule = MoleculeClass(mol2file,option)
 
-    classifier = AtomTypeClassifier()
-    classifier.apply_to_molecule(molecule)
-    classifier.assert_H(molecule)
-    
-    molecule.assign_rotable_torsions(verbose=debug)
-
-    torsassigner.assign(molecule,debug=debug)
-
-    if report:
-        molecule.report_paramsfile('%s.params'%prefix,
-                                   report_Hapol_chi=False,
-                                   report_puckering_chi=puckering_as_chi,
-                                   report_as_atype=True,
-                                   )
-
+    if not option.opt.no_output:
+        molecule.report_paramsfile('%s.params'%prefix)
         molecule.report_pdbfile('%s_0001.pdb'%prefix)
 
-    if '--elec_cp_rep' in sys.argv:
+    if option.opt.report_funcgrp:
+        classifier = FunctionalGroupClassifier()
+        classifier.apply_to_molecule(molecule)
+        molecule.report_functional_grps(sys.stdout)
+        
+    if option.opt.write_elec_cp_rep:
         molecule.report_elec_cp_rep('%s.elec_cp_rep'%prefix)
 
-    if '--elec_grp_def' in sys.argv:
+    if option.opt.write_elec_grpdef:
         molecule.report_grpdeffile('%s.grpdef'%prefix)
 
-def main(mol2files):
-    torsassigner = TorsionAssigner('%s/torsions.ref'%direc)
-
-    debug = False
-    report = True
-    prefix = False
-    if '--debug' in sys.argv: debug = True
-    if '--no_output' in sys.argv: report = False
-    if '--prefix' in sys.argv: prefix = sys.argv[sys.argv.index('--prefix')+1]
-
+def main(option):
+    mol2files = option.opt.inputs
+    
     for mol2file in mol2files:
         if mol2file.startswith('#'): continue
         print(mol2file)
+        if not os.path.exists(mol2file):
+            print("WARNING: Cannot find mol2file %s, skip!"%mol2file)
+            continue
         try:
-            if not prefix:
-                prefix_loc = mol2file.split('/')[-1].replace('.mol2','')
-                run_mol2(mol2file, torsassigner, report=report, debug=debug, prefix=prefix_loc)
-            else:
-                run_mol2(mol2file, torsassigner, report=report, debug=debug, prefix=prefix)
+            run_mol2(mol2file,option)
         except:
             print('failed on generating params file for ', mol2file)
-            if debug:
-                run_mol2(mol2file, torsassigner, report=report, debug=True)
+            if option.opt.debug:
+                run_mol2(mol2file,option)
+                
+        option.resname_counter += 1 #add counter
 
 if __name__ == "__main__":
-    if '-s' not in sys.argv and '-l' not in sys.argv:
-        print("usage: python mol2genparams.py [-s mol2file or -l mol2filelist]")
-    else:
-        if '-s' in sys.argv:
-            mol2file = sys.argv[sys.argv.index('-s')+1]
-            main([mol2file])
-        elif '-l' in sys.argv:
-            mol2list = sys.argv[sys.argv.index('-l')+1]
-            mol2s = [l[:-1] for l in file(mol2list)]
-            main(mol2s)
+    option = OptionClass(sys.argv)
+
+    main(option)
             

@@ -1594,7 +1594,7 @@ hb_energy_deriv(
 	HDunit *= inv_HDdis;
 
 	//car  B->A unit vector
-	Vector BAunit, B2Aunit;
+	Vector BAunit( 0.0 ), B2Aunit( 0.0 );
 	// the pseudo-base xyz coordinate
 	Vector PBxyz;
 	HBEvalType eval_type( hbt.eval_type() );

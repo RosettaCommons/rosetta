@@ -34,12 +34,13 @@ static basic::Tracer TS( "protocols.ligand_docking.GALigandDock.RotamerData" );
 
 float ReweightableRepEnergy::score( core::Real farep_scale ) {
 	return farep_scale*fa_rep_
-		+ (fa_atr_wtd_+fa_sol_wtd_+fa_elec_wtd_+lk_ball_wtd_+hbond_wtd_+oneb_wtd_+penalty_wtd_) + bonus_wtd_;
+		+ (fa_atr_wtd_+fa_sol_wtd_+fa_elec_wtd_+lk_ball_wtd_+hbond_wtd_+oneb_wtd_+cst_wtd_+penalty_wtd_) + bonus_wtd_;
 }
 
 void ReweightableRepEnergy::reset() {
 	fa_rep_ = fa_atr_wtd_ = fa_sol_wtd_ = fa_elec_wtd_ = 0.0;
 	lk_ball_wtd_ = hbond_wtd_ = oneb_wtd_ = penalty_wtd_ = bonus_wtd_ = 0.0;
+	cst_wtd_ = 0.0;
 }
 
 

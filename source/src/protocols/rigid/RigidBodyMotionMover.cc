@@ -92,7 +92,7 @@ void RigidBodyMotionMover::apply(core::pose::Pose& pose) {
 	jump.set_rb_delta(Jump::ROT_Z, 1, numeric::random::gaussian() * magnitude_rotation());
 
 	// translation
-	xyzVector<double> bias;
+	xyzVector<double> bias(0.0);
 	compute_bias(i, pose, &bias);
 
 	double tx = numeric::random::gaussian() * magnitude_translation() + bias.x();

@@ -24,6 +24,14 @@ class GenericBondedPotential;
 
 typedef utility::pointer::shared_ptr< GenericBondedPotential > GenericBondedPotentialOP;
 
+class ResidueExclParams;
+typedef utility::pointer::shared_ptr< ResidueExclParams > ResidueExclParamsOP;
+typedef utility::pointer::shared_ptr< ResidueExclParams const > ResidueExclParamsCOP;
+
+class GenBondedExclInfo;
+typedef utility::pointer::shared_ptr< GenBondedExclInfo > GenBondedExclInfoOP;
+typedef utility::pointer::shared_ptr< GenBondedExclInfo const > GenBondedExclInfoCOP;
+
 } // scoring
 } // core
 

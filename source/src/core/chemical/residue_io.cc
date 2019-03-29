@@ -814,6 +814,12 @@ read_topology_file(
 		} else if ( tag == "BOND_TYPE" ) {
 			l >> atom1 >> atom2 >> bond_type;
 			rsd->add_bond(atom1, atom2, convert_to_BondName(bond_type));
+			// fd optionally tag "ringness"
+			l >> tag;
+			if ( tag == "RING" ) {
+				core::chemical::Bond & bond_i = rsd->bond(atom1, atom2);
+				bond_i.ringness(core::chemical::BondInRing);
+			}
 		} else if ( tag == "CHARGE" ) {
 			l >> atom1;
 			// We should allow multiple charges on one line, but since we now just have the one, hold off.

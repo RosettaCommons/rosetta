@@ -27,6 +27,7 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/methods/CartesianBondedEnergy.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/conformation/Atom.hh>
 #include <core/optimization/MinimizerMap.hh>
@@ -52,16 +53,24 @@ namespace protocols {
 namespace ligand_docking {
 namespace ga_ligand_dock {
 
+/// @brief Grid representation of scorefunction
 class GridScorer {
 public:
+
 	GridScorer( core::scoring::ScoreFunctionOP sfxn );
 	~GridScorer();
 
-	// calulate the bounding box
+	/// @brief  calulate the bounding box
 	void
 	prepare_grid( core::pose::Pose const &pose, core::Size const lig_resid );
 
-	// initialize the grid
+	/// @brief  pass list of residue (acutually rsdtypes) to construct grids for
+	void
+	get_grid_atomtypes( utility::vector1< core::conformation::Residue > const & rsds );
+
+	void
+	get_grid_all_atomtypes();
+
 	void
 	calculate_grid(
 		core::pose::Pose const &pose,
@@ -69,11 +78,27 @@ public:
 		utility::vector1< core::Size > const &movingSCs
 	);
 
-	// calculate energies on the grid
+	/// @brief  calculate energies on the grid
 	core::Real
 	score( LigandConformer const &lig, bool soft=false );
 
-	// get a residue:background energy
+	/// @brief  gets the clash energy of a point
+	core::Real
+	point_clash_energy(
+		numeric::xyzVector< core::Real > X,
+		std::string atype_in="",
+		bool soft=false
+	);
+
+	/// @brief  gets the solvation energy of a point
+	core::Real
+	point_energy(
+		numeric::xyzVector< core::Real > X,
+		std::string atype_in="",
+		core::Real weightelec_in=0.0
+	);
+
+	/// @brief  get a residue:background energy
 	ReweightableRepEnergy
 	get_1b_energy(
 		core::conformation::Residue const &res_i,
@@ -81,9 +106,10 @@ public:
 		bool soft=false
 	);
 
-	// get a residue:residue energy
+	/// @brief  get a residue:residue energy
 	ReweightableRepEnergy
 	get_2b_energy(
+		core::pose::Pose &pose,
 		core::conformation::Residue const &res_i,
 		core::scoring::lkball::LKB_ResidueInfoOP lkbrinfo_i,
 		core::conformation::Residue const &res_j,
@@ -91,11 +117,11 @@ public:
 		bool soft=false
 	);
 
-	// calculate energies on the grid
+	/// @brief  calculate energies on the grid
 	core::Real
 	score( core::pose::Pose &pose, LigandConformer const &lig, bool soft=false ) ;
 
-	// calculate derivatives on the grid
+	/// @brief  calculate derivatives on the grid
 	void
 	derivatives(
 		core::pose::Pose &pose,
@@ -103,7 +129,7 @@ public:
 		core::optimization::MinimizerMap &min_map // pass by non-const ref so we can sum derivs inside
 	);
 
-	// (1b) dof derivatives
+	/// @brief  (1b) dof derivatives
 	core::Real
 	dof_derivative(
 		core::pose::Pose &pose,
@@ -122,7 +148,7 @@ public:
 	core::Real
 	clash_score( LigandConformer const &lig );
 
-	// minimize a ligand conformer
+	/// @brief  minimize a ligand conformer
 	core::Real
 	optimize(
 		LigandConformer &lig,
@@ -131,7 +157,7 @@ public:
 		RotamerPairEnergies &rot_energies                       // by non-const ref since we update "in place"
 	);
 
-	// subroutine: run packing
+	/// @brief  subroutine: run packing
 	core::Real
 	packer_loop(
 		LigandConformer &lig,
@@ -139,32 +165,38 @@ public:
 		RotamerPairEnergies &rotamer_energies                   // by non-const ref since we update "in place"
 	);
 
-	// subroutine: min loop
+	/// @brief  subroutine: min loop
 	core::Real
 	minimizer_loop(
 		LigandConformer &lig,
 		core::optimization::MinimizerOptions const &minopt
 	);
 
-	// check to see if sidechain lies within the grid
-	//   "angle buffer" makes sure residues near the edge point toward middle (higer values == stricter, 0 = no filter)
-	//   "padding buffer" adds a region on the outside where residues may not move
+	/// @brief  check to see if a point falls w/i the grid boundaries
+	bool
+	is_point_in_grid(
+		numeric::xyzVector< core::Real > x
+	) const;
+
+	/// @detail  check to see if sidechain lies within the grid
+	///   "angle buffer" makes sure residues near the edge point toward middle (higer values == stricter, 0 = no filter)
+	///   "padding buffer" adds a region on the outside where residues may not move
 	bool
 	is_residue_in_grid(
 		core::conformation::Residue const &res,
 		core::Real angle_buffer,
 		core::Real padding_buffer
-	);
+	) const;
 
-	// check to see if sidechain lies within the grid (ALTERNATE version)
-	//   similar to the above, but pass in eigenvalues/vectors that define pocket shape
+	/// @detail check to see if sidechain lies within the grid (ALTERNATE version)
+	///   similar to the above, but pass in eigenvalues/vectors that define pocket shape
 	bool
 	is_residue_in_grid(
 		core::conformation::Residue const &res,
 		core::Real padding_buffer,
 		numeric::xyzVector< core::Real > const &eigval,
 		numeric::xyzMatrix< core::Real > const &eigvec
-	);
+	) const;
 
 	core::Real get_padding() { return bbox_padding_; }
 
@@ -179,6 +211,8 @@ public:
 	void set_debug( bool debugin ) { debug_ = debugin; }
 	bool get_debug( ) { return debug_; }
 
+	void set_force_exact_min( bool setting ) { force_exact_min_ = setting; }
+
 	// protocol stuff
 	void set_maxiter_minimize( core::Size setting ) { maxiter_minimize_ = setting; }
 	bool get_maxiterminimize( ) { return maxiter_minimize_; }
@@ -188,10 +222,15 @@ public:
 	bool set_smoothing( core::Real setting );
 	core::Real get_smoothing( ) { return smoothing_; }
 
+	bool set_elec_scale( core::Real setting );
+	core::Real get_elec_scale( ) { return elec_scale_; }
+
 	// scalefactor on fa_rep
 	void set_w_rep( core::Real setting ) { w_rep_ = setting; }
 	core::Real get_w_rep( ) { return w_rep_; }
 
+	// out of boundary scale
+	void set_out_of_bound_e( core::Real setting ) { out_of_bound_e_ = setting; }
 
 	core::scoring::ScoreFunctionOP get_sfxn() const { return sfxn_->clone(); }
 
@@ -205,9 +244,10 @@ public:
 		pack_time_ = min_time_ = std::chrono::duration<double>{};
 	}
 
+	bool has_atom_type( int atype ){ return !(raw_faatr_.find( atype ) == raw_faatr_.end()); }
 
 private:
-	// apply the convolution specified in "smoothing_"
+	/// @brief apply the convolution specified in "smoothing_"
 	void
 	do_convolution_and_compute_coeffs(
 		ObjexxFCL::FArray3D< float > const &rawdata,
@@ -218,12 +258,12 @@ private:
 
 	// helper functions to move interpolated point to grid and compute an "out of bounds" penalty
 	core::Real
-	move_to_boundary( numeric::xyzVector< core::Real > &idxX );
+	move_to_boundary( numeric::xyzVector< core::Real > &idxX ) const;
 
 	core::Real
 	move_to_boundary( numeric::xyzVector< core::Real > &idxX, numeric::xyzVector< core::Real > &dpen );
 
-	// fast etable energies
+	/// @brief fast etable energies
 	inline void
 	fast_eval_etable_split_fasol(
 		core::scoring::etable::Etable const &etable,
@@ -235,7 +275,7 @@ private:
 		core::Real & fa_solE2
 	);
 
-	// fast lk_ball
+	/// @brief fast lk_ball
 	inline core::Real
 	fast_get_lk_fractional_contribution(
 		numeric::xyzVector< core::Real > const &at2,
@@ -246,7 +286,7 @@ private:
 		core::Real multiwater_fade
 	);
 
-	// fast lk_br
+	/// @brief fast lk_br
 	inline core::Real
 	fast_get_lkbr_fractional_contribution(
 		core::Size const atom1_n_attached_waters,
@@ -260,21 +300,26 @@ private:
 
 private:
 	// raw data
-	core::scoring::ScoreFunctionOP sfxn_, sfxn_clash_, sfxn_soft_;
+	core::scoring::ScoreFunctionOP sfxn_, sfxn_clash_, sfxn_soft_, sfxn_cart_, sfxn_cst_;
 	core::scoring::ScoreFunctionOP sfxn_1b_, sfxn_1b_clash_, sfxn_1b_soft_;
 	core::scoring::etable::Etable etable_;
 	core::pose::PoseOP ref_pose_;
+	bool has_cst_energies_;
 
 	// needed for scoring
 	core::scoring::lkball::LK_BallEnergyOP LKBe_;
 	core::scoring::etable::coulomb::CoulombOP coulomb_;
 	core::scoring::hbonds::HBondDatabaseCOP hb_database_;
+	core::scoring::methods::CartesianBondedEnergyOP cartbonded_;
 
 	// alternate modes
-	bool exact_, debug_;
+	bool exact_, debug_, force_exact_min_;
 
 	// reporting runtime
 	std::chrono::duration<double> min_time_, pack_time_;
+
+	//unique atoms grid calculated for
+	std::map< int, core::conformation::Atom > uniq_atoms_; // KEEP AS INT, IT IS NOT A SIZE
 
 
 	// gridded spline coeffs
@@ -297,11 +342,18 @@ private:
 
 	core::Real maxdis_;
 
+	// penalty factor when ligands hits boundary
+	core::Real out_of_bound_e_;
+
 	// fade function for lk ball
 	core::Real LK_fade_;
 
 	// weight on LJ repulsion b/w grid
 	core::Real w_rep_;
+
+	// original weight on elec & hbond /
+	core::Real w_fa_elec_, w_hbond_sc_, w_hbond_bb_sc_;
+	core::Real elec_scale_; //temporary scaling factor
 
 	// global smoothing factor
 	core::Real smoothing_;
@@ -311,7 +363,6 @@ private:
 
 	// for minimize
 	core::Size maxiter_minimize_;
-
 };
 
 typedef utility::pointer::shared_ptr< GridScorer > GridScorerOP;

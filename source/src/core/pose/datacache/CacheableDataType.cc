@@ -102,6 +102,7 @@ CacheableDataType::initialize_name_map() {
 	name2enum_()["NMR_PCS_DATA"] = NMR_PCS_DATA;
 	name2enum_()["NMR_RDC_DATA"] = NMR_RDC_DATA;
 	name2enum_()["NMR_PRE_DATA"] = NMR_PRE_DATA;
+	name2enum_()["GEN_BONDED_EXCL_INFO"] = GEN_BONDED_EXCL_INFO;
 	//name2enum_()["STRUCTURAL_CONSERVATION"] = STRUCTURAL_CONSERVATION;
 	//name2enum_()["SURFACE_PARAMS"] = SURFACE_PARAMS;
 	//name2enum_()["FLOATING_POINT_CLOUD_INFO"] = FLOATING_POINT_CLOUD_INFO;

@@ -30,6 +30,7 @@
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
+#include <basic/options/keys/rings.OptionKeys.gen.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <utility/options/OptionCollection.hh>
@@ -953,6 +954,11 @@ init_beta_july15_correction( utility::options::OptionCollection & options ) {
 		TR.Warning << "Flag -beta_july15 is set but -set_atom_properties are also specified.  Not changing atom properties!" << std::endl;
 	}
 
+	// cart_improper autogen is not necessary with beta_genpot
+	if ( ! options[ basic::options::OptionKeys::corrections::score::no_autogen_cart_improper ].user() ) {
+		options[ basic::options::OptionKeys::corrections::score::no_autogen_cart_improper ].value( true );
+	}
+
 	// hbonds
 	if ( ! options[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
 		utility::vector1< std::string > params;
@@ -963,6 +969,10 @@ init_beta_july15_correction( utility::options::OptionCollection & options ) {
 		params.push_back( "hbacc_IMD:1.05");
 		params.push_back( "hbacc_IME:0.94");
 		params.push_back( "hbacc_PBA:0.94");
+		params.push_back( "hbacc_GENERIC_SP2SC:1.19");
+		params.push_back( "hbacc_GENERIC_SP3SC:1.19");
+		params.push_back( "hbacc_GENERIC_RINGSC:1.19");
+
 		options[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_july15 is set but -hb_acc_strength are also specified.  Not changing atom properties!" << std::endl;
@@ -979,6 +989,7 @@ init_beta_july15_correction( utility::options::OptionCollection & options ) {
 		params.push_back( "hbdon_IME:1.31");
 		params.push_back( "hbdon_IND:1.14");
 		params.push_back( "hbdon_PBA:1.26");
+		params.push_back( "hbdon_GENERIC_SC:1.45");
 		options[ basic::options::OptionKeys::score::hb_don_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_july15 is set but -hb_don_strength are also specified.  Not changing atom properties!" << std::endl;
@@ -1833,6 +1844,9 @@ init_beta_nov16_correction( utility::options::OptionCollection & options, bool s
 		params.push_back( "hbacc_IME:1.17");
 		params.push_back( "hbacc_PBA:1.19");
 		params.push_back( "hbacc_H2O:1.23");
+		params.push_back( "hbacc_GENERIC_SP2SC:1.19");
+		params.push_back( "hbacc_GENERIC_SP3SC:1.19");
+		params.push_back( "hbacc_GENERIC_RINGSC:1.19");
 		options[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -hb_acc_strength are also specified.  Not changing atom properties!" << std::endl;
@@ -1850,6 +1864,7 @@ init_beta_nov16_correction( utility::options::OptionCollection & options, bool s
 		params.push_back( "hbdon_IND:1.15");
 		params.push_back( "hbdon_PBA:1.45");
 		params.push_back( "hbdon_H2O:1.26");
+		params.push_back( "hbdon_GENERIC_SC:1.45");
 		options[ basic::options::OptionKeys::score::hb_don_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -hb_don_strength are also specified.  Not changing atom properties!" << std::endl;
@@ -2070,6 +2085,11 @@ init_gen_potential_settings( utility::options::OptionCollection & options ) {
 	// load proper ATS
 	if ( ! options[ basic::options::OptionKeys::corrections::chemical::alternate_fullatom_ats ].user() ) {
 		options[ basic::options::OptionKeys::corrections::chemical::alternate_fullatom_ats ].value( "fa_standard_genpot" );
+	}
+
+	// load new ring conf libs
+	if ( ! options[ basic::options::OptionKeys::rings::ring_conformer_dbpath ].user() ) {
+		options[ basic::options::OptionKeys::rings::ring_conformer_dbpath ].value( "chemical/ring_conformer_sets/fd_alternate" );
 	}
 
 	// modified countpair logic for ligands

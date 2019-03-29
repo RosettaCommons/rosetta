@@ -258,6 +258,7 @@ BaseEtableEnergy< Derived >::BaseEtableEnergy(
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
 	do_classic_intrares_( do_classic_intrares ),
 	count_pair_hybrid_( options.count_pair_hybrid() ),
+	count_pair_full_( options.count_pair_full() ),
 	put_intra_into_total_( options.put_intra_into_total() ),
 	exclude_intra_res_protein_( options.exclude_intra_res_protein() )
 {}
@@ -274,6 +275,7 @@ BaseEtableEnergy< Derived >::BaseEtableEnergy( BaseEtableEnergy< Derived > const
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
 	do_classic_intrares_( src.do_classic_intrares_ ),
 	count_pair_hybrid_( src.count_pair_hybrid_ ),
+	count_pair_full_( src.count_pair_full_ ),
 	put_intra_into_total_( src.put_intra_into_total_ ),
 	exclude_intra_res_protein_( src.exclude_intra_res_protein_ )
 {
@@ -640,6 +642,9 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 		case CP_CROSSOVER_4 :
 			tcpfxn = utility::pointer::make_shared< TrieCountPair1BC4 >( conn1, conn2 );
 			break;
+		case CP_CROSSOVER_3FULL : // check
+			tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC3( conn1, conn2 ) );
+			break;
 		default :
 			utility_exit_with_message("Data consistency error in BaseEtableEnergy");
 			break;
@@ -711,7 +716,9 @@ BaseEtableEnergy< Derived >::determine_crossover_behavior(
 			//res1.polymeric_sequence_distance(res2) == 1 //VKM, 20 Feb 2016: Doesn't handle cyclic geometry properly.  The following code does, however:
 			res1.type().is_polymer() && res2.type().is_polymer() && res1.is_polymer_bonded(res2)
 			) {
-		if ( ( !sfxn.has_zero_weight( mm_twist ) && sfxn.has_zero_weight( rama )) ||
+		if ( count_pair_full_ ) {
+			return CP_CROSSOVER_3FULL;
+		} else if ( ( !sfxn.has_zero_weight( mm_twist ) && sfxn.has_zero_weight( rama )) ||
 				( ( ( !res1.is_protein() && !res1.is_peptoid() ) || ( !res2.is_protein() && !res2.is_peptoid() ) ) &&
 				( !res1.is_RNA() || !res2.is_RNA())
 				) ) {
@@ -722,7 +729,8 @@ BaseEtableEnergy< Derived >::determine_crossover_behavior(
 	} else if ( res1.seqpos() == res2.seqpos() ) {
 		// logic for controlling intra-residue count pair behavior goes here; for now, default to crossover 3
 		bool is_ligand = res1.is_ligand();
-		if ( is_ligand && count_pair_hybrid_ ) {
+		bool is_non_polymer = !(res1.is_protein() || res1.is_polymer()); //apply to any non-protein-polymers too
+		if ( ((is_ligand || is_non_polymer) && count_pair_hybrid_ ) || count_pair_full_ ) {
 			return CP_CROSSOVER_3FULL;
 		} else if ( do_classic_intrares_ ) {
 			return CP_CROSSOVER_3; // used by EtableIntraClassicEnergy

@@ -78,8 +78,6 @@ namespace ga_ligand_dock {
 using basic::Tracer;
 static basic::Tracer TR( "protocols.ligand_docking.GALigandDock.GridScorer" );
 
-static core::Real OUT_OF_BOUND_E = 100;
-
 // fast integer powers
 inline
 core::Real ipow(core::Real base, core::Size exp) {
@@ -165,7 +163,8 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 	sfxn_1b_ = core::scoring::ScoreFunctionFactory::create_score_function("empty.wts");
 	sfxn_1b_soft_ = core::scoring::ScoreFunctionFactory::create_score_function("empty.wts");
 	sfxn_1b_clash_ = core::scoring::ScoreFunctionFactory::create_score_function("empty.wts");
-
+	sfxn_cst_ = core::scoring::ScoreFunctionFactory::create_score_function("empty.wts");
+	sfxn_cart_ = core::scoring::ScoreFunctionFactory::create_score_function("empty.wts");
 
 	// copy options!
 	core::scoring::methods::EnergyMethodOptions e_opts = sfxn_->energy_method_options();
@@ -180,6 +179,8 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 	coulomb_->initialize();
 	core::scoring::hbonds::HBondOptions const & hbopt = e_opts.hbond_options();
 	hb_database_ = core::scoring::hbonds::HBondDatabase::get_database( hbopt.params_database_tag() );
+	cartbonded_ = core::scoring::methods::CartesianBondedEnergyOP (
+		new core::scoring::methods::CartesianBondedEnergy(e_opts) );
 
 	core::Real soft_rep_weight( 0.001 ), soft_intrarep_weight( 0.01 ), soft_gen_bonded_weight( 0.1 ); //run9 params
 
@@ -196,13 +197,18 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 	if ( (*sfxn_)[ core::scoring::gen_bonded ] > soft_gen_bonded_weight ) {
 		sfxn_soft_->set_weight( core::scoring::gen_bonded, soft_gen_bonded_weight );
 	}
+	if ( (*sfxn_)[ core::scoring::cart_bonded ] > 0.0 ) {
+		sfxn_soft_->set_weight( core::scoring::cart_bonded, soft_gen_bonded_weight );
+	}
+
 	// post-run9g: also increase fa_elec & hbond strength
-	core::Real w_fa_elec = (*sfxn_soft_)[ core::scoring::fa_elec ];
-	core::Real w_hbond_sc = (*sfxn_soft_)[ core::scoring::hbond_sc ];
-	core::Real w_hbond_bb_sc = (*sfxn_soft_)[ core::scoring::hbond_bb_sc ];
-	sfxn_soft_->set_weight( core::scoring::fa_elec, w_fa_elec*2.0 );
-	sfxn_soft_->set_weight( core::scoring::hbond_sc, w_hbond_sc*5.0 );
-	sfxn_soft_->set_weight( core::scoring::hbond_bb_sc, w_hbond_bb_sc*5.0 );
+	// store the original weights
+	w_fa_elec_ = (*sfxn_soft_)[ core::scoring::fa_elec ];
+	w_hbond_sc_ = (*sfxn_soft_)[ core::scoring::hbond_sc ];
+	w_hbond_bb_sc_ = (*sfxn_soft_)[ core::scoring::hbond_bb_sc ];
+	sfxn_soft_->set_weight( core::scoring::fa_elec, w_fa_elec_*2.0 );
+	sfxn_soft_->set_weight( core::scoring::hbond_sc, w_hbond_sc_*5.0 );
+	sfxn_soft_->set_weight( core::scoring::hbond_bb_sc, w_hbond_bb_sc_*5.0 );
 
 	// modify sf clash
 	if ( (*sfxn_)[ core::scoring::fa_rep ] > 0.0 ) {
@@ -223,6 +229,7 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 	sfxn_1b_->set_weight( core::scoring::fa_intra_sol_xover4, sfxn_->get_weight( core::scoring::fa_intra_sol_xover4 ) );
 	sfxn_1b_->set_weight( core::scoring::fa_intra_elec, sfxn_->get_weight( core::scoring::fa_intra_elec ) );
 	sfxn_1b_->set_weight( core::scoring::gen_bonded, sfxn_->get_weight( core::scoring::gen_bonded ) );
+	sfxn_1b_->set_weight( core::scoring::ring_close, sfxn_->get_weight( core::scoring::ring_close ) );
 
 	// modify sfxn 1body soft
 	sfxn_1b_soft_->set_weight( core::scoring::fa_dun, sfxn_soft_->get_weight( core::scoring::fa_dun ) );
@@ -235,15 +242,24 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 	sfxn_1b_soft_->set_weight( core::scoring::fa_intra_sol_xover4, sfxn_soft_->get_weight( core::scoring::fa_intra_sol_xover4 ) );
 	sfxn_1b_soft_->set_weight( core::scoring::fa_intra_elec, sfxn_soft_->get_weight( core::scoring::fa_intra_elec ) );
 	sfxn_1b_soft_->set_weight( core::scoring::gen_bonded, sfxn_soft_->get_weight( core::scoring::gen_bonded ) );
+	sfxn_1b_soft_->set_weight( core::scoring::ring_close, sfxn_->get_weight( core::scoring::ring_close ) );
 
 	// modify sfxn 1body clash
 	sfxn_1b_clash_->set_weight( core::scoring::fa_intra_rep, sfxn_soft_->get_weight( core::scoring::fa_intra_rep ) );
 	sfxn_1b_clash_->set_weight( core::scoring::fa_intra_rep_xover4, sfxn_soft_->get_weight( core::scoring::fa_intra_rep_xover4 ) );
 
+	// modify sfxn_cst_
+	sfxn_cst_->set_weight( core::scoring::coordinate_constraint, sfxn_soft_->get_weight( core::scoring::coordinate_constraint ) );
+	sfxn_cst_->set_weight( core::scoring::atom_pair_constraint, sfxn_soft_->get_weight( core::scoring::atom_pair_constraint ) );
+	has_cst_energies_ = (sfxn_cst_->get_nonzero_weighted_scoretypes().size() != 0);
+
+	sfxn_cart_->set_weight( core::scoring::cart_bonded, sfxn_soft_->get_weight( core::scoring::cart_bonded ) );
+
 	bbox_padding_ = 5.0;
 	voxel_spacing_ = 0.5;
 	hash_grid_ = 6.0;
 	hash_subgrid_ = 1;
+	out_of_bound_e_ = 100.0;
 
 	maxdis_ = 0; // initialized in build_grid
 
@@ -259,6 +275,7 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 	w_rep_ = 1.0;
 	smoothing_ = 0.0;
 	packer_cycles_ = 0;
+	force_exact_min_ = false;
 
 	pack_time_ = min_time_ = std::chrono::duration<double>{};
 }
@@ -287,6 +304,73 @@ GridScorer::prepare_grid( core::pose::Pose const &pose, core::Size const lig_res
 		<< voxel_spacing_ << " A grid spacing" << std::endl;
 }
 
+//// TODO
+void
+GridScorer::get_grid_atomtypes( utility::vector1< core::conformation::Residue > const & rsds )
+{
+	uniq_atoms_.clear();
+
+	// Get list of unique atom types from rsds
+	for ( core::Size i=1; i<= rsds.size(); ++i ) {
+		core::conformation::Residue const &res_i = rsds[i];
+
+		for ( core::Size j=1; j<=res_i.natoms(); ++j ) {
+			bool j_is_backbone = (j<=res_i.last_backbone_atom()
+				|| (j>res_i.nheavyatoms() && j<res_i.first_sidechain_hydrogen()) );
+
+			if ( j_is_backbone ) continue;
+
+			int atmtype_ij = res_i.atom(j).type();
+			if ( uniq_atoms_.find(atmtype_ij) == uniq_atoms_.end() ) {
+				uniq_atoms_[atmtype_ij] = res_i.atom(j);
+			}
+		}
+	}
+
+	// Add in hydroxyl & polarH terms as a reference (not lkball, however)
+	core::chemical::AtomTypeSetCOP ats = core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
+	int atmtype_OH = ats->atom_type_index("OH"); // hydroxyl as reference
+	if ( uniq_atoms_.find(atmtype_OH) == uniq_atoms_.end() ) {
+		uniq_atoms_[ atmtype_OH ] = core::conformation::Atom(atmtype_OH, 0);
+	}
+	int atmtype_Hpol = ats->atom_type_index("Hpol"); // polarH as reference
+	if ( uniq_atoms_.find(atmtype_Hpol) == uniq_atoms_.end() ) {
+		uniq_atoms_[ atmtype_Hpol ] = core::conformation::Atom(atmtype_Hpol, 0);
+	}
+
+	// report uniq atom index
+	TR << "Received " << rsds.size() << " residues for grid calculation: ";
+	for ( core::Size i=1; i<= rsds.size(); ++i ) TR << " " << rsds[i].name();
+	TR << std::endl;
+	TR.Debug << "atom type: " << std::endl;
+	for ( auto it=uniq_atoms_.begin(); it != uniq_atoms_.end(); ++it ) {
+		core::conformation::Atom a_i = it->second;
+		TR.Debug << it->first << ": " << (*ats)[a_i.type()].name() << std::endl;
+	}
+
+}
+
+void
+GridScorer::get_grid_all_atomtypes()
+{
+	uniq_atoms_.clear();
+	core::chemical::AtomTypeSetCOP ats = core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
+	core::Size n_atomtypes = ats->n_atomtypes();
+	// Get list of unique/all atom types from atom type sets
+	for ( core::Size i=1; i<= n_atomtypes; ++i ) {
+		uniq_atoms_[ i ] = core::conformation::Atom(i, 0);
+	}
+
+	// report uniq atom index
+	TR.Debug << "atom type: " << std::endl;
+	for ( auto it=uniq_atoms_.begin(); it != uniq_atoms_.end(); ++it ) {
+		core::conformation::Atom a_i = it->second;
+		TR.Debug << it->first << ": " << (*ats)[a_i.type()].name() << std::endl;
+	}
+
+}
+
+
 void
 GridScorer::calculate_grid(
 	core::pose::Pose const &pose,
@@ -297,6 +381,14 @@ GridScorer::calculate_grid(
 
 	// initialize the grid if it has not been already
 	if ( dims_[2]*dims_[1]*dims_[0] == 0 ) prepare_grid( pose, lig_resid );
+	if ( uniq_atoms_.size() == 0 ) {
+		utility::vector1< core::conformation::Residue > rsds;
+		rsds.push_back( pose.residue(lig_resid) );
+		for ( core::Size ires = 1; ires <= movingSCs.size(); ++ires ) {
+			rsds.push_back( pose.residue(movingSCs[ires]) );
+		}
+		get_grid_atomtypes( rsds );
+	}
 
 	core::pose::PoseOP trim_pose( new core::pose::Pose(pose) ); // pose with moving sidechains trimmed to GLY (used in grid calcs)
 
@@ -406,83 +498,55 @@ GridScorer::calculate_grid(
 			}
 			gridhash.add_point( info_b );
 		}
-
 	}
 
-	// find all unique atoms & initialize grids
-	// find don/acc _ligand_ heavyatoms
-	core::Size nSCs = movingSCs.size();
-	utility::vector1< utility::vector1<bool> > hbdon_acc( nSCs+1 );
-	for ( core::Size i=0; i<=nSCs; ++i ) {
-		core::Size resid = (i==0 ? lig_resid : movingSCs[i]);
-		core::conformation::Residue const &res_i = pose.residue( resid );
-		hbdon_acc[i+1].resize( res_i.natoms(), false );
-		for ( auto anum=res_i.accpt_pos().begin(),anume=res_i.accpt_pos().end(); anum!=anume; ++anum ) {
-			hbdon_acc[i+1][*anum] = true;
-		}
-		for ( auto hnum=res_i.Hpos_polar().begin(),hnume=res_i.Hpos_polar().end(); hnum!=hnume; ++hnum ) {
-			core::Size datm = res_i.atom_base( *hnum );
-			hbdon_acc[i+1][datm] = true;
-		}
+	core::chemical::AtomTypeSetCOP ats = core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
+	utility::vector1< bool > hbdon_acc( ats->n_atomtypes(), false );
+	for ( auto it=uniq_atoms_.begin(); it != uniq_atoms_.end(); ++it ) {
+		core::Size atype = core::Size(it->first);
+		core::chemical::AtomType at = (*ats)[atype];
+		if ( at.is_acceptor() && !at.is_virtual() ) hbdon_acc[atype] = true;
+		//if ( at.is_polar_hydrogen() && !at.is_virtual() ) hbdon_acc[atype] = true;
+		if ( at.is_donor() && !at.is_virtual() ) hbdon_acc[atype] = true;
 	}
 
-	std::map< int, core::conformation::Atom > uniq_atoms; // KEEP AS INT, IT IS NOT A SIZE
+	// Initialize grids for each atype
 	core::Size nLK=0;
-	for ( core::Size i=0; i<=nSCs; ++i ) {
-		core::Size resid = (i==0 ? lig_resid : movingSCs[i]);
-		core::conformation::Residue const &res_i = pose.residue( resid );
+	for ( auto it=uniq_atoms_.begin(); it != uniq_atoms_.end(); ++it ) {
+		int atype = it->first;
+		raw_faatr_[ atype ] = ObjexxFCL::FArray3D< float >();
+		raw_faatr_[ atype ].dimension(dims_[0],dims_[1],dims_[2], 0.0);
 
-		for ( core::Size j=1; j<=res_i.natoms(); ++j ) {
-			bool j_is_backbone = (i!=0) && (
-				j<=res_i.last_backbone_atom() || (j>res_i.nheavyatoms() && j<res_i.first_sidechain_hydrogen()) );
+		raw_farep_[ atype ] = ObjexxFCL::FArray3D< float >();
+		raw_farep_[ atype ].dimension(dims_[0],dims_[1],dims_[2], 0.0);
 
-			if ( j_is_backbone ) continue;
+		raw_fasol_[ atype ] = ObjexxFCL::FArray3D< float >();
+		raw_fasol_[ atype ].dimension(dims_[0],dims_[1],dims_[2], 0.0);
 
-			int atmtype_ij = res_i.atom(j).type();
-			if ( uniq_atoms.find(atmtype_ij) == uniq_atoms.end() ) {
-				uniq_atoms[atmtype_ij] = res_i.atom(j);
+		if ( !useLKB ) continue;
 
-				raw_faatr_[ atmtype_ij ] = ObjexxFCL::FArray3D< float >();
-				raw_faatr_[ atmtype_ij ].dimension(dims_[0],dims_[1],dims_[2], 0.0);
+		//fd we need this even for nonpolars (since they will desolvate polars through lkb)
+		raw_lkball_[ atype ] = ObjexxFCL::FArray3D< float >();
+		raw_lkball_[ atype ].dimension(dims_[0],dims_[1],dims_[2], 0.0);
 
-				raw_farep_[ atmtype_ij ] = ObjexxFCL::FArray3D< float >();
-				raw_farep_[ atmtype_ij ].dimension(dims_[0],dims_[1],dims_[2], 0.0);
-
-				raw_fasol_[ atmtype_ij ] = ObjexxFCL::FArray3D< float >();
-				raw_fasol_[ atmtype_ij ].dimension(dims_[0],dims_[1],dims_[2], 0.0);
-
-				if ( !useLKB ) continue;
-
-				//fd we need this even for nonpolars (since they will desolvate polars through lkb)
-				raw_lkball_[ atmtype_ij ] = ObjexxFCL::FArray3D< float >();
-				raw_lkball_[ atmtype_ij ].dimension(dims_[0],dims_[1],dims_[2], 0.0);
-
-				if ( hbdon_acc[i+1][j] ) {
-					raw_lkball_[ -atmtype_ij ] = ObjexxFCL::FArray3D< float >();
-					raw_lkball_[ -atmtype_ij ].dimension(dims_[0],dims_[1],dims_[2], 0.0);
-					if ( useLKBr ) {
-						raw_lkbridge_[ atmtype_ij ] = ObjexxFCL::FArray3D< float >();
-						raw_lkbridge_[ atmtype_ij ].dimension(dims_[0],dims_[1],dims_[2], 0.0);
-					}
-					nLK++;
-				}
+		if ( hbdon_acc[ core::Size(atype) ] ) {
+			raw_lkball_[ -atype ] = ObjexxFCL::FArray3D< float >();
+			raw_lkball_[ -atype ].dimension(dims_[0],dims_[1],dims_[2], 0.0);
+			if ( useLKBr ) {
+				raw_lkbridge_[ atype ] = ObjexxFCL::FArray3D< float >();
+				raw_lkbridge_[ atype ].dimension(dims_[0],dims_[1],dims_[2], 0.0);
 			}
+			nLK++;
 		}
 	}
+
 	raw_faelec_.dimension(dims_[0],dims_[1],dims_[2], 0.0);
 
-	// report uniq atom index
-	TR.Debug << "atom type: " << std::endl;
-	for ( auto it=uniq_atoms.begin(); it != uniq_atoms.end(); ++it ) {
-		core::conformation::Atom a_i = it->second;
-		TR.Debug << it->first << ": " << (*atom_set)[a_i.type()].name() << std::endl;
-	}
-
-	TR << "Calculating gridded energies for " << uniq_atoms.size() << " unique atom types" << std::endl;
+	TR << "Calculating gridded energies for " << uniq_atoms_.size() << " unique atom types" << std::endl;
 	TR << "  and lkb virtual parameters for " << nLK << " unique polar atom types" << std::endl;
-	utility::vector1<atmInfo> neighborlist;
 
 	// lkball setup stuff
+	utility::vector1<atmInfo> neighborlist;
 	core::Real heavyWatDist = 2.65;
 	if ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ].user() ) {
 		heavyWatDist = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ]()[1];
@@ -516,7 +580,7 @@ GridScorer::calculate_grid(
 
 							//////
 							// 1) etable
-							for ( auto it=uniq_atoms.begin(); it != uniq_atoms.end(); ++it ) {
+							for ( auto it=uniq_atoms_.begin(); it != uniq_atoms_.end(); ++it ) {
 								core::conformation::Atom a_i = it->second;
 								a_i.xyz( cart_xyz );
 
@@ -598,6 +662,8 @@ GridScorer::calculate_grid(
 							//////
 							// 2) fa_elec
 							core::Real faelecSum=0;
+
+							// TODO_HxlMeanfield
 							for ( core::Size i_neigh=1; i_neigh<=neighborlist.size(); ++i_neigh ) {
 								faelecSum += coulomb_->eval_atom_atom_fa_elecE(cart_xyz, 1.0, neighborlist[i_neigh].atom.xyz(), neighborlist[i_neigh].atomicCharge );
 							}
@@ -614,7 +680,7 @@ GridScorer::calculate_grid(
 		for ( core::Size y=1; y<=dims_[1]; y+=1 ) {
 			for ( core::Size x=1; x<=dims_[0]; x+=1 ) {
 				//int iatm(0);
-				for ( auto it=uniq_atoms.begin(); it != uniq_atoms.end(); ++it ) {
+				for ( auto it=uniq_atoms_.begin(); it != uniq_atoms_.end(); ++it ) {
 					float farep = raw_farep_[ it->first ](x,y,z);
 					raw_farep_[ it->first ](x,y,z) = xform_rep(farep);
 
@@ -625,7 +691,7 @@ GridScorer::calculate_grid(
 		}
 	}
 
-	for ( auto it=uniq_atoms.begin(); it != uniq_atoms.end(); ++it ) {
+	for ( auto it=uniq_atoms_.begin(); it != uniq_atoms_.end(); ++it ) {
 		int atmtype = (int)it->first;
 
 		do_convolution_and_compute_coeffs( raw_faatr_[ atmtype ], coeffs_faatr_[ atmtype ], 0.0 );
@@ -649,13 +715,39 @@ GridScorer::calculate_grid(
 	TR << "Grid calculation took " << (diff).count() << " seconds." << std::endl;
 }
 
-// check to see all rotamers lie within grid
+
+// check to see if a point is w/i the grid bounds
+bool
+GridScorer::is_point_in_grid(
+	numeric::xyzVector< core::Real > x
+) const {
+	// this fails when located at cubic edges...
+	/*
+	numeric::xyzVector< core::Real > midpoint( (dims_[0]-1.0)/2.0, (dims_[1]-1.0)/2.0, (dims_[2]-1.0)/2.0 );
+	midpoint = origin_ + midpoint * voxel_spacing_;
+	core::Real maxradius = 0.5*(dims_[0]-1.0)*voxel_spacing_;
+
+	core::Real dist = (x - midpoint).length();
+	if ( dist > maxradius ) return false; // CB too far from center
+	*/
+
+	numeric::xyzVector< core::Real > idxX = (x - origin_) / voxel_spacing_;
+	core::Real penalty = move_to_boundary(idxX);
+	if ( penalty > 0.0 ) return false;
+	return true;
+}
+
+// check to see if residue lies within grid [version 1]
+//   this version uses heuristics to see if the residue is likely pointing into the grid,
+//     based on the distance from the center of the grid and the CA-CB vector
+//   the direction-based cutoff becomes more strict as the residue gets further from the
+//     grid center
 bool
 GridScorer::is_residue_in_grid(
 	core::conformation::Residue const &res,
 	core::Real angle_buffer,
 	core::Real edge_buffer
-) {
+) const {
 	using namespace ObjexxFCL::format;
 
 	// check 1: is the residue CB not too close to the edge?
@@ -688,7 +780,7 @@ GridScorer::is_residue_in_grid(
 		if ( i>res.nheavyatoms() && i<res.first_sidechain_hydrogen() ) continue;
 		dist = (res.xyz( i ) - midpoint).length();
 		if ( dist > maxradius ) {
-			TR << "residue " << res.seqpos() << " fail placement check" << std::endl;
+			TR << "residue " << res.seqpos() << " fail placement check" << " " << res.atom_name(i) << " " << dist << std::endl;
 			return false;
 		}
 	}
@@ -696,13 +788,19 @@ GridScorer::is_residue_in_grid(
 	return true;
 }
 
+// check to see if residue lies within grid [version 2]
+//   an alternate version of the above function
+//   it takes an ellipsoid describing the shape of the ligand/pocket
+//   sidechains that intersect the ellipsoid are selected for packing
+//   this works significantly better than the version above _if_ the ligand
+//      orientation is initially approximately correct
 bool
 GridScorer::is_residue_in_grid(
 	core::conformation::Residue const &res,
 	core::Real edge_buffer,
 	numeric::xyzVector< core::Real > const &eigval,
 	numeric::xyzMatrix< core::Real > const &eigvec
-) {
+) const {
 	using namespace ObjexxFCL::format;
 
 	// check 1: does the residue neighbor-sphere overlap ellipsoid defined by input?
@@ -717,6 +815,9 @@ GridScorer::is_residue_in_grid(
 		std::sqrt( eigval[0] / eigval[1] ),
 		std::sqrt( eigval[0] / eigval[2] ) );
 
+	// shouldn't be normalized?
+	//eigvalN /= eigvalN.length();
+
 	numeric::xyzVector< core::Real > offsetEigspace = eigvec.transposed()*offset;
 
 	// proper intersection of nbr_radius sphere and eigenspace ellipse is difficult (and we don't need it)
@@ -730,10 +831,10 @@ GridScorer::is_residue_in_grid(
 		offsetEigspace[2]*eigvalN[2]).length();
 
 	if ( dEigenspace > maxradius ) {
-		//TR << "residue " << res.seqpos() << " fail intersect " << dEigenspace << " "
-		// << offsetEigspace.length() << " " << offsetEigspace[0]<<" "<<offsetEigspace[1]<<" "<<offsetEigspace[2]
-		// << " " << eigvalN[0]<<" "<<eigvalN[1]<<" "<<eigvalN[2]
-		// << std::endl;
+		//TR << "residue " << res.seqpos() << " fail intersect " << dEigenspace << " " << maxradius << "; "
+		//   << offsetEigspace.length() << " " << offsetEigspace[0]<<" "<<offsetEigspace[1]<<" "<<offsetEigspace[2]
+		//  << " " << eigvalN[0]<<" "<<eigvalN[1]<<" "<<eigvalN[2]
+		//  << std::endl;
 		return false;
 	}
 
@@ -752,16 +853,17 @@ GridScorer::is_residue_in_grid(
 
 
 core::Real
-GridScorer::move_to_boundary( numeric::xyzVector< core::Real > &idxX ) {
+GridScorer::move_to_boundary( numeric::xyzVector< core::Real > &idxX ) const
+{
 	core::Real penalty = 0.0;
 	for ( core::Size dim=0; dim<3; ++dim ) {
 		if ( idxX[dim]<0 ) {
 			core::Real offset = idxX[dim];
-			penalty += (OUT_OF_BOUND_E*voxel_spacing_)*offset*offset;
+			penalty += (out_of_bound_e_*voxel_spacing_)*offset*offset;
 			idxX[dim] = 0;
 		} else if ( idxX[dim]>dims_[dim]-1 ) {
 			core::Real offset = (idxX[dim]-dims_[dim]+1);
-			penalty += (OUT_OF_BOUND_E*voxel_spacing_)*offset*offset;
+			penalty += (out_of_bound_e_*voxel_spacing_)*offset*offset;
 			idxX[dim] = dims_[dim]-1;
 		}
 	}
@@ -775,13 +877,13 @@ GridScorer::move_to_boundary( numeric::xyzVector< core::Real > &idxX, numeric::x
 	for ( core::Size dim=0; dim<3; ++dim ) {
 		if ( idxX[dim]<0 ) {
 			core::Real offset = idxX[dim];
-			penalty += (OUT_OF_BOUND_E*voxel_spacing_)*offset*offset;
-			dpen_dx[dim] += 2*(OUT_OF_BOUND_E*voxel_spacing_)*offset;
+			penalty += (out_of_bound_e_*voxel_spacing_)*offset*offset;
+			dpen_dx[dim] += 2*(out_of_bound_e_*voxel_spacing_)*offset;
 			idxX[dim] = 0;
 		} else if ( idxX[dim]>dims_[dim]-1 ) {
 			core::Real offset = (idxX[dim]-dims_[dim]+1);
-			penalty += (OUT_OF_BOUND_E*voxel_spacing_)*offset*offset;
-			dpen_dx[dim] += 2*(OUT_OF_BOUND_E*voxel_spacing_)*offset;
+			penalty += (out_of_bound_e_*voxel_spacing_)*offset*offset;
+			dpen_dx[dim] += 2*(out_of_bound_e_*voxel_spacing_)*offset;
 			idxX[dim] = dims_[dim]-1;
 		}
 	}
@@ -822,6 +924,30 @@ GridScorer::set_smoothing( core::Real setting ) {
 	//do_convolution_and_compute_coeffs( raw_faelec_ , coeffs_faelec_, setting );
 
 	return true;
+}
+
+bool
+GridScorer::set_elec_scale( core::Real scale )
+{
+	core::Real w_fa_elec_curr = (*sfxn_)[ core::scoring::fa_elec ];
+	core::Real w_hbond_sc_curr = (*sfxn_)[ core::scoring::hbond_sc ];
+	core::Real w_hbond_bb_sc_curr = (*sfxn_)[ core::scoring::hbond_bb_sc ];
+
+	core::Real w_fa_elec_scaled( w_fa_elec_*scale );
+	core::Real w_hbond_sc_scaled( w_fa_elec_*scale );
+	core::Real w_hbond_bb_sc_scaled( w_fa_elec_*scale );
+
+	bool changed( false );
+	if ( std::abs(w_fa_elec_curr     - w_fa_elec_scaled    ) > 1.0e-6 ||
+			std::abs(w_hbond_sc_curr    - w_hbond_sc_scaled   ) > 1.0e-6 ||
+			std::abs(w_hbond_bb_sc_curr - w_hbond_bb_sc_scaled) > 1.0e-6 ) {
+		changed = true;
+		sfxn_->set_weight( core::scoring::fa_elec, w_fa_elec_scaled );
+		sfxn_->set_weight( core::scoring::hbond_sc, w_hbond_sc_scaled );
+		sfxn_->set_weight( core::scoring::hbond_bb_sc, w_hbond_bb_sc_scaled );
+	}
+
+	return changed;
 }
 
 void
@@ -902,7 +1028,7 @@ GridScorer::score( core::pose::Pose &pose, LigandConformer const &lig, bool soft
 	// exact
 	if ( exact_ ) {
 		core::scoring::ScoreFunctionOP sf = soft? sfxn_soft_ : sfxn_;
-		core::Real score_exact = (*sf)( *ref_pose_ );
+		core::Real score_exact = (*sf)( pose );
 		return score_exact;
 	}
 
@@ -937,7 +1063,7 @@ GridScorer::score( core::pose::Pose &pose, LigandConformer const &lig, bool soft
 				core::Size resid_j = lig.moving_scs()[j];
 				core::conformation::Residue const &res_j = pose.residue( resid_j );
 
-				ReweightableRepEnergy score_ij = get_2b_energy( res_i, alllkbrinfo[i+1], res_j, alllkbrinfo[j+1], soft );
+				ReweightableRepEnergy score_ij = get_2b_energy( pose, res_i, alllkbrinfo[i+1], res_j, alllkbrinfo[j+1], soft );
 				score_grid += score_ij.score( w_rep_ );
 			}
 		}
@@ -954,6 +1080,121 @@ GridScorer::score( core::pose::Pose &pose, LigandConformer const &lig, bool soft
 	return score_grid;
 }
 
+// one-body energies
+core::Real
+GridScorer::point_clash_energy(
+	numeric::xyzVector< core::Real > X,
+	std::string atype_in,
+	bool soft
+) {
+	core::scoring::ScoreFunctionOP sf = soft? sfxn_soft_ : sfxn_;
+	core::scoring::ScoreFunctionOP sf1b = soft? sfxn_1b_soft_ : sfxn_1b_;
+
+	ReweightableRepEnergy score_grid;
+
+	core::Real weightrep = sf->get_weight( core::scoring::fa_rep );
+
+	// 1 etable grid
+	core::chemical::AtomTypeSetCOP ats = core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
+
+	int atmtype_ij = (atype_in=="")?ats->atom_type_index("OH"):ats->atom_type_index(atype_in); // hydroxyl as reference
+
+	numeric::xyzVector< core::Real > idxX = (X - origin_) / voxel_spacing_;
+	core::Real penalty = move_to_boundary(idxX);
+	core::Real rep( 0.0 );
+	rep = core::scoring::electron_density::interp_spline(coeffs_farep_[ atmtype_ij ], idxX, true) ;
+	rep = ixform_rep( rep );
+
+	return (weightrep*rep+penalty);
+}
+
+// one-body energies
+/*
+core::Real
+GridScorer::point_solvation_energy(
+numeric::xyzVector< core::Real > X,
+bool soft
+) {
+core::scoring::ScoreFunctionOP sf = soft? sfxn_soft_ : sfxn_;
+core::scoring::ScoreFunctionOP sf1b = soft? sfxn_1b_soft_ : sfxn_1b_;
+
+ReweightableRepEnergy score_grid;
+
+// 1 etable grid
+core::chemical::AtomTypeSetCOP ats = core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
+int atmtype_ij = ats->atom_type_index("OH"); // hydroxyl as reference
+
+numeric::xyzVector< core::Real > idxX = (X - origin_) / voxel_spacing_;
+core::Real solv( 0.0 );
+solv = core::scoring::electron_density::interp_spline(coeffs_fasol_[ atmtype_ij ], idxX, true) ;
+
+return solv;
+}
+
+// one-body energies
+core::Real
+GridScorer::point_LJ_energy(
+numeric::xyzVector< core::Real > X,
+std::string atype_in,
+bool soft
+) {
+core::scoring::ScoreFunctionOP sf = soft? sfxn_soft_ : sfxn_;
+
+core::Real weightatr = sf->get_weight( core::scoring::fa_atr );
+core::Real weightrep = sf->get_weight( core::scoring::fa_rep );
+
+// 1 etable grid
+core::chemical::AtomTypeSetCOP ats = core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
+int atmtype_ij = ats->atom_type_index("OH"); // hydroxyl as reference
+
+numeric::xyzVector< core::Real > idxX = (X - origin_) / voxel_spacing_;
+core::Real atr( 0.0 ), rep( 0.0 );
+atr = core::scoring::electron_density::interp_spline(coeffs_fasol_[ atmtype_ij ], idxX, true) ;
+rep = core::scoring::electron_density::interp_spline(coeffs_farep_[ atmtype_ij ], idxX, true) ;
+
+atr = ixform_atr( atr );
+rep = ixform_atr( rep );
+return weightatr*atr+weightrep*rep;
+}
+*/
+
+// fast enumeration w/o hbond & LKball
+core::Real
+GridScorer::point_energy(
+	numeric::xyzVector< core::Real > X,
+	std::string atype_in,
+	core::Real weightelec_in
+) {
+	core::scoring::ScoreFunctionOP sf = sfxn_;
+
+	core::Real weightatr = sf->get_weight( core::scoring::fa_atr );
+	core::Real weightrep = sfxn_soft_->get_weight( core::scoring::fa_rep ); // just for repulsion...
+	core::Real weightsol = sf->get_weight( core::scoring::fa_sol );
+	core::Real weightelec = weightelec_in != 0.0 ? weightelec_in : sf->get_weight( core::scoring::fa_elec );
+	weightelec *= 1.5; // to approximate contribution from hbond term
+
+	// 1 etable grid
+	core::chemical::AtomTypeSetCOP ats = core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
+	int atmtype_ij = (atype_in=="")?ats->atom_type_index("OH"):ats->atom_type_index(atype_in); // hydroxyl as reference
+
+	// should die?
+	if ( raw_faatr_.find( atmtype_ij ) == raw_faatr_.end() ) return 0.0;
+
+	numeric::xyzVector< core::Real > idxX = (X - origin_) / voxel_spacing_;
+	core::Real penalty = move_to_boundary(idxX);
+	core::Real atr( 0.0 ), rep( 0.0 ), sol( 0.0 ), elec( 0.0 );
+
+	atr = core::scoring::electron_density::interp_spline(coeffs_faatr_[ atmtype_ij ], idxX, true) ;
+	rep = core::scoring::electron_density::interp_spline(coeffs_farep_[ atmtype_ij ], idxX, true) ;
+	sol = core::scoring::electron_density::interp_spline(coeffs_fasol_[ atmtype_ij ], idxX, true);
+	elec = core::scoring::electron_density::interp_spline(coeffs_faelec_, idxX, true)*0.5; // assume
+
+	atr = ixform_atr( atr );
+	rep = ixform_rep( rep );
+
+	//printf("DCMP: %8.3f %8.3f %8.3f %8.3f\n", atr, rep, sol, elec);
+	return (weightatr*atr+weightrep*rep+weightsol*sol+weightelec*elec+penalty);
+}
 
 // one-body energies
 ReweightableRepEnergy
@@ -979,6 +1220,7 @@ GridScorer::get_1b_energy(
 	bool useLKBr = ( weightLKbr != 0 || weightLKbru != 0 );
 
 	// 1 etable grid
+
 	for ( core::Size j=1; j<=res_i.natoms(); ++j ) {
 		bool j_is_backbone =
 			( j<=res_i.last_backbone_atom() || (j>res_i.nheavyatoms() && j<res_i.first_sidechain_hydrogen()) );
@@ -1012,11 +1254,16 @@ GridScorer::get_1b_energy(
 		score_grid.fa_elec_wtd_ += weightelec*res_i.atomic_charge(j)*elec;
 		score_grid.lk_ball_wtd_ += lkb;
 
+		if ( lkbrinfo==nullptr ) continue;
 		if ( j > lkbrinfo->n_attached_waters().size() || lkbrinfo->n_attached_waters()[j] == 0 ) continue;
 		core::Size const j_water_offset = lkbrinfo->water_offset_for_atom(j);
 
 		core::Real lk0=0, lkbr0=0, lk=0, lkbr=0;
 		for ( core::Size k=1; k<=lkbrinfo->n_attached_waters()[j]; ++k ) {
+			if ( coeffs_lkball_.find( -atmtype_ij ) == coeffs_lkball_.end() ) {
+				TR.Debug << "Non donor/acceptor but lkball defined: " << j << " " << res_i.atom_name(j) << std::endl;
+				continue; // CYS-SH1: why this one has lkball?
+			}
 			core::Size const k_wat_ind = k + j_water_offset;
 			numeric::xyzVector< core::Real > idxXj = (lkbrinfo->waters()[k_wat_ind] - origin_) / voxel_spacing_;
 			move_to_boundary(idxXj);
@@ -1100,6 +1347,16 @@ GridScorer::get_1b_energy(
 	sf1b->eval_ci_intrares_energy( res_i, pose, emap );
 	sf1b->eval_cd_intrares_energy( res_i, pose, emap );
 	core::Real intraE = emap.dot( sf1b->weights() );
+
+	// special case for cart_bonded
+	//   everything is torsion space, so it is not needed for protein
+	//   however, cyclic ligands need this term enabled
+	core::scoring::EnergyMap emapcart;
+	if ( res_i.is_ligand() ) {
+		cartbonded_->eval_intrares_energy( res_i, pose, *sfxn_cart_, emapcart );
+	}
+	intraE += emapcart.dot( sfxn_cart_->weights() );
+
 	//score_grid.energy_ += intraE;
 	score_grid.oneb_wtd_ += intraE;
 
@@ -1110,6 +1367,7 @@ GridScorer::get_1b_energy(
 // two-body energies
 ReweightableRepEnergy
 GridScorer::get_2b_energy(
+	core::pose::Pose &pose,
 	core::conformation::Residue const &res_i,
 	core::scoring::lkball::LKB_ResidueInfoOP lkbrinfo_i,
 	core::conformation::Residue const &res_j,
@@ -1133,8 +1391,6 @@ GridScorer::get_2b_energy(
 	utility::vector1<hbAcc> hbacc_neighborlist;
 	numeric::xyzVector<core::Real> D,H,A,B,B_0;
 	core::scoring::hbonds::HBondOptions const & hbopt = sf->energy_method_options().hbond_options();
-
-	//core::Real maxHbdis = 4.2; unused variable
 
 	// etable/lk/elec
 	for ( core::Size ii=1; ii<=res_i.natoms(); ++ii ) {
@@ -1218,7 +1474,6 @@ GridScorer::get_2b_energy(
 			hbt.don_type( core::scoring::hbonds::get_hb_don_chem_type( dnum, res_j ) );
 			if ( (A-H).length_squared() > core::scoring::hbonds::MAX_R2 ) continue;
 			core::Real hbe = get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B_0 );
-			//score_grid.energy_ += hbe;
 			score_grid.hbond_wtd_ += hbe;
 		}
 	}
@@ -1244,14 +1499,23 @@ GridScorer::get_2b_energy(
 			hbt.don_type( core::scoring::hbonds::get_hb_don_chem_type( dnum, res_i ) );
 			if ( (A-H).length_squared() > core::scoring::hbonds::MAX_R2 ) continue;
 			core::Real hbe = get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B_0 );
-			//score_grid.energy_ += hbe;
 			score_grid.hbond_wtd_ += hbe;
 		}
 	}
 
+	// constraint energies.  Computed exactly
+	// (if they are sparse they __should be__ efficient)
+	if ( has_cst_energies_ && !pose.constraint_set()->is_empty() ) {
+		// NOTE NOTE NOTE
+		// only 2b are implemented currently
+		// 1b (and multibody) should be straightforward but currently is not used!
+		core::scoring::EnergyMap emap;
+		pose.constraint_set()->residue_pair_energy(res_i,res_j, pose, *sfxn_cst_, emap);
+		score_grid.cst_wtd_ += emap.dot( sfxn_cst_->weights() );
+	}
+
 	return score_grid;
 }
-
 
 core::Real
 GridScorer::clash_score( LigandConformer const &lig ) {
@@ -1561,6 +1825,23 @@ GridScorer::derivatives(
 		core::scoring::eval_atom_derivatives_for_minnode(
 			minnode, res_i, pose, sfxn_1b_->weights(), min_map.atom_derivatives( resid ) );
 	}
+	// special case for cart_bonded
+	//   everything is torsion space, so it is not needed for protein
+	//   however, cyclic ligands need this term enabled
+	for ( core::Size i=0; i<=nSCs; ++i ) {
+		core::Size resid = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+		core::conformation::Residue const &res_i = pose.residue( resid );
+		if ( res_i.is_ligand() ) {
+			cartbonded_->eval_intrares_derivatives(
+				res_i,
+				core::scoring::ResSingleMinimizationData(),
+				pose,
+				sfxn_cart_->weights(),
+				min_map.atom_derivatives( resid )
+			);
+		}
+	}
+
 
 	// 4 : 2b derivs for ligand : sidechains
 	//      brute force calculations for interaction graph ... should be reasonable as long as too many sidechains are not allowed to move...
@@ -1723,6 +2004,46 @@ GridScorer::derivatives(
 		}
 	}
 
+	// 5 : cst derivs
+	if ( has_cst_energies_ && !pose.constraint_set()->is_empty() ) {
+		// NOTE NOTE NOTE
+		// only 2b are implemented currently
+		// 1b (and multibody) should be straightforward but currently is not used!
+		core::scoring::EnergyMap emap;
+
+		for ( core::Size i=0; i<=nSCs; ++i ) {
+			core::Size resid_i = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+			core::conformation::Residue const &res_i = pose.residue( resid_i );
+			for ( auto
+					iter = pose.constraint_set()->residue_pair_constraints_begin( resid_i ),
+					iter_end = pose.constraint_set()->residue_pair_constraints_end( resid_i );
+					iter  != iter_end; ++iter ) {
+				core::Size resid_j = iter->first;
+				if ( resid_j < resid_i ) continue; // constraint_set is symmetric, only traverse once
+				core::conformation::Residue const &res_j = pose.residue( resid_j );
+
+				core::scoring::constraints::ConstraintsOP csts = iter->second;
+				for ( core::Size ii = 1; ii <= res_i.natoms(); ++ii ) {
+					csts->eval_respair_atom_derivative(
+						core::id::AtomID( ii, resid_i ), res_i, res_j,
+						sfxn_cst_->weights(),
+						min_map.atom_derivatives( resid_i )[ ii ].f1(),
+						min_map.atom_derivatives( resid_i )[ ii ].f2()
+					);
+				}
+				for ( core::Size jj = 1; jj <= res_j.natoms(); ++jj ) {
+					csts->eval_respair_atom_derivative(
+						core::id::AtomID( jj, resid_j ), res_j, res_i,
+						sfxn_cst_->weights(),
+						min_map.atom_derivatives( resid_j )[ jj ].f1(),
+						min_map.atom_derivatives( resid_j )[ jj ].f2()
+					);
+				}
+			}
+		}
+	}
+
+
 	// now convert all to f1/f2s
 	for ( core::Size i=0; i<=nSCs; ++i ) {
 		core::Size resid = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
@@ -1833,55 +2154,56 @@ GridScorer::optimize(
 	minopt.max_iter( maxiter_minimize_ );
 
 	core::Real finalscore = 0.0;
-	if ( exact_ ) {
+	if ( exact_ && !force_exact_min_ ) {
 		//fpd relax will idealize sidechains, which are no longer accurately represented by the gene!
+		// make an exception with force_exact_min_ for ligand-only opt cases
 		TR.Error << "Exact optimization unsupported!" << std::endl;
 		utility_exit();
-	} else {
-		// ensure reasonable ramp schedule (move to parse time?)
-		if ( ramp_schedule.size() == 0 ) {
-			ramp_schedule.push_back(1.0);
-		}
-		if ( ramp_schedule[ ramp_schedule.size() ] != 1.0 ) {
-			TR.Warning << "Warning! ramp_schedule does not end with full weight (1.0)." << std::endl;
-		}
-
-		// temporarily turn off debug info
-		bool debug_orig = debug_;
-		debug_ = false;
-
-		// ramping is w.r.t. original rep weight
-		core::Real wbase = get_w_rep();
-
-		for ( core::Size iramp = 1; iramp <= ramp_schedule.size(); ++iramp ) {
-			//set_w_rep( wbase*ramp_schedule[iramp] );
-			// FD: commented out => always run for maxiter_minimize_
-			//if (iramp < ramp_schedule.size()) {
-			// minopt.max_iter( (core::Size) (maxiter_minimize_*0.25) ); // ? not sure about the 0.25 here
-			//} else {
-			// minopt.max_iter( maxiter_minimize_ );
-			//}
-
-			auto timer1 = std::chrono::system_clock::now();
-			set_w_rep( wbase*ramp_schedule[iramp] );
-			packer_loop( lig, placeable_rotdb, rot_energies );
-
-			auto timer2 = std::chrono::system_clock::now();
-			set_w_rep( wbase );
-			minimizer_loop( lig, minopt );
-
-			auto timer3 = std::chrono::system_clock::now();
-
-			pack_time_ += (timer2 - timer1);
-			min_time_ += (timer3 - timer2);
-		} // everything stored dofs
-
-		// restore original rep weight / debug state
-		//set_w_rep(wbase);
-		debug_ = debug_orig;
-
-		finalscore = score(lig);
 	}
+
+	// ensure reasonable ramp schedule (move to parse time?)
+	if ( ramp_schedule.size() == 0 ) {
+		ramp_schedule.push_back(1.0);
+	}
+	if ( ramp_schedule[ ramp_schedule.size() ] != 1.0 ) {
+		TR.Warning << "Warning! ramp_schedule does not end with full weight (1.0)." << std::endl;
+	}
+
+	// temporarily turn off debug info
+	bool debug_orig = debug_;
+	debug_ = false;
+
+	// ramping is w.r.t. original rep weight
+	core::Real wbase = get_w_rep();
+
+	for ( core::Size iramp = 1; iramp <= ramp_schedule.size(); ++iramp ) {
+		//set_w_rep( wbase*ramp_schedule[iramp] );
+		// FD: commented out => always run for maxiter_minimize_
+		//if (iramp < ramp_schedule.size()) {
+		// minopt.max_iter( (core::Size) (maxiter_minimize_*0.25) ); // ? not sure about the 0.25 here
+		//} else {
+		// minopt.max_iter( maxiter_minimize_ );
+		//}
+
+		auto timer1 = std::chrono::system_clock::now();
+		set_w_rep( wbase*ramp_schedule[iramp] );
+		packer_loop( lig, placeable_rotdb, rot_energies );
+
+		auto timer2 = std::chrono::system_clock::now();
+		set_w_rep( wbase );
+		minimizer_loop( lig, minopt );
+
+		auto timer3 = std::chrono::system_clock::now();
+
+		pack_time_ += (timer2 - timer1);
+		min_time_ += (timer3 - timer2);
+	} // everything stored dofs
+
+	// restore original rep weight / debug state
+	//set_w_rep(wbase);
+	debug_ = debug_orig;
+
+	finalscore = score(lig);
 
 	return finalscore;
 }
@@ -1906,6 +2228,9 @@ GridScorer::minimizer_loop(
 	for ( core::Size i=0; i<=nSCs; ++i ) {
 		core::Size resid = (i==0 ? minilig.ligand_id() : minilig.moving_scs()[i]);
 		mm->set_chi( resid, true );
+		if ( i==0 ) {
+			mm->set_nu( resid, true );
+		}
 	}
 
 	// fd : minimize on the grid
@@ -1916,13 +2241,16 @@ GridScorer::minimizer_loop(
 	core::optimization::Multivec dofs( min_map.nangles() );
 	min_map.copy_dofs_from_pose( *minipose, dofs );
 
-	GriddedAtomTreeMultifunc f_i( minilig, *minipose, *this, min_map );
-	core::optimization::Minimizer min_i( f_i, minopt );
-
-	min_i.run( dofs );
-
-	min_map.reset_jump_rb_deltas( *minipose, dofs );
-	min_map.copy_dofs_to_pose( *minipose, dofs );
+	if ( exact_ ) { // support for exact minimization; make sure this been only called with force_exact_min_
+		core::optimization::AtomTreeMinimizer minimizer;
+		minimizer.run( *minipose, *mm, *sfxn_, minopt );
+	} else {
+		GriddedAtomTreeMultifunc f_i( minilig, *minipose, *this, min_map );
+		core::optimization::Minimizer min_i( f_i, minopt );
+		min_i.run( dofs );
+		min_map.reset_jump_rb_deltas( *minipose, dofs );
+		min_map.copy_dofs_to_pose( *minipose, dofs );
+	}
 
 	lig.update_conf_from_minipose( minipose);
 	finalscore = score(lig);
@@ -1983,6 +2311,7 @@ GridScorer::packer_loop(
 				}
 
 				rotamer_energies.energy2b( ii, nrot_i, jj, jrot ) = this->get_2b_energy(
+					*ref_pose_,
 					ref_pose_->residue( resid_i ), placeable_rotdb[ii][nrot_i].lkbrinfo,
 					ref_pose_->residue( resid_j ), placeable_rotdb[jj][jrot].lkbrinfo
 				);
@@ -2006,6 +2335,7 @@ GridScorer::packer_loop(
 				ref_pose_->set_chi( ichi, resid_i, placeable_rotdb[ii][irot].chis[ichi] );
 			}
 			rotamer_energies.energyBG( ii, irot ) = this->get_2b_energy(
+				*ref_pose_,
 				ref_pose_->residue( resid_i ), placeable_rotdb[ii][irot].lkbrinfo,
 				ref_pose_->residue( lig.ligand_id() ), lkbr_lig
 			);
@@ -2093,7 +2423,6 @@ GridScorer::packer_loop(
 
 	return best_score;
 }
-
 
 } // ga_dock
 } // ligand_docking

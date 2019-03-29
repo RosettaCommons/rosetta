@@ -31,7 +31,11 @@ namespace protocols {
 namespace ligand_docking {
 namespace ga_ligand_dock {
 
-// two-component scores
+/// @brief
+/// Rotamer data used for packing in GALigandDock
+/// @details
+/// Stores energy information of rotamers to facilitate rotamer packing
+
 class ReweightableRepEnergy {
 public:
 	ReweightableRepEnergy() {
@@ -43,7 +47,7 @@ public:
 	void reset();
 
 	float fa_rep_;
-	float fa_atr_wtd_, fa_sol_wtd_, fa_elec_wtd_, lk_ball_wtd_, hbond_wtd_, oneb_wtd_, penalty_wtd_;
+	float fa_atr_wtd_, fa_sol_wtd_, fa_elec_wtd_, lk_ball_wtd_, hbond_wtd_, oneb_wtd_, cst_wtd_, penalty_wtd_;
 	float bonus_wtd_;
 };
 

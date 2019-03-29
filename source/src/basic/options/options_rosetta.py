@@ -1379,6 +1379,7 @@ Options = Option_Group( '',
 		Option( 'fa_Hatr', 'Boolean', desc='Turn on Lennard Jones attractive term for hydrogen atoms', default='true'),
 		Option( 'no_smooth_etables', 'Boolean',desc="Revert to old style etables" ),
 		Option( 'count_pair_hybrid', 'Boolean', desc='Use standard count-pair for non-ligands and cp3 w/ full-weight 1-4 for ligands', default='false' ),
+		Option( 'count_pair_full', 'Boolean', desc='Use cp3 w/ full-weight 1-4 for everything', default='false' ),
 		Option( 'no_lk_polar_desolvation', 'Boolean', desc="Disable the polar-desolvation component of the LK solvation model; effectively set dGfree for polar atoms to 0" ),
 		Option( 'lk_polar_without_proline_N' , 'Boolean', desc="Force class LK_PolarNonPolarEnergy to treat the N atom of proline as non-polar", default="false" ),
 		Option( 'input_etables' , 'String', desc="Read etables from files with given prefix" ),
@@ -1433,6 +1434,8 @@ Options = Option_Group( '',
 		Option( 'bonded_params', 'RealVector', desc="Default spring constants for bonded parameters [length,angle,torsion,proton-torsion,improper-torsion]"),
 		Option( 'bonded_params_dir', 'String', desc="Spring constants for bonded parameters [length,angle,torsion,proton-torsion,improper-torsion]", default="scoring/score_functions/bondlength_bondangle"),
 		Option( 'gen_bonded_params_file', 'String', desc="Parameters for [length,angle,torsion,improper-torsion]", default="scoring/score_functions/generic_potential/generic_bonded.round6p.txt"),
+		Option( 'gen_bonded_exclude_def_file', 'String', desc="Definitions for double-counting params with other energy terms", default="scoring/score_functions/generic_potential/params_exclude.txt"),
+		Option( 'genbonded_score_canonical_aas', 'Boolean', desc="Turn on gen_bonded term for canonical amino acids", default="false"),
 		Option( 'extra_improper_file', 'String', desc="Add extra parameters for improper torsions"),
 		Option( 'pro_close_planar_constraint', 'Real', desc="stdev of CD,N,CA,prevC trigonal planar constraint in pro_close energy method", default='0.1' ),
 		Option( 'no_pro_close_ring_closure', 'Boolean', desc="The pro_close term holds the proline ring closed, but also has some inter-residue energy associated with the psi value of the preceding residue.  If this flag is set to 'true', the term ONLY does the torsional stuff -- it doesn't hold the ring closed.  For use with cart_bonded or ring_close.  False by default.", default='false'),
@@ -2274,6 +2277,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	##########################################################################
 	Option_Group('rings',
+		Option( 'ring_conformer_dbpath', 'File', desc='Path to ring conformers in the Rosetta DB',
+					default='chemical/ring_conformer_sets' ),
 		Option('lock_rings', 'Boolean',
 			desc='Sets whether or not alternative ring conformations '
 				'will be sampled by the protocol, (e.g, ring flips or '

@@ -200,9 +200,9 @@ AtomHash::trim_to_heterogeneous_clusters(core::Real dlim) {
 }
 
 // 3 different distance criteria checks:
-//    1) identify i,j pairs with different resids and d<cut1 (1.5A)
-//    2) throw out pairs w.i cut2 of each other (0.35A)
-//    3) group into "rotamer clouds" w/i cut3 of each other (3A)
+//    1) identify i,j pairs with different resids and d<cut1
+//    2) throw out pairs w.i cut2 of each other
+//    3) group into "rotamer clouds" w/i cut3 of each other
 // this function carries out 2&3
 void
 AtomHash::reset_and_get_clusters(
