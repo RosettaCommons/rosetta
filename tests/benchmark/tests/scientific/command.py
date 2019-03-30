@@ -81,6 +81,6 @@ def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_dr
 
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     if test in ["cartesian_relax", "fast_relax", "fast_relax_5iter", 
-            "stepwise_rna_favorites", "rna_denovo_favorites", "enzyme_design" ]: return run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+            "stepwise_rna_favorites", "rna_denovo_favorites", "enzyme_design", "cofactor_binding_sites" ]: return run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     else: raise BenchmarkError(f'Unknown scripts test: {test}!')

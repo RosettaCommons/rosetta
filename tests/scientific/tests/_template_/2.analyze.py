@@ -73,7 +73,7 @@ def main(args):
 		val_cutoff = qm.check_all_values_below_cutoff( x, cutoffs_rmsd_dict[targets[i]], "rmsd", f )
 		target_results.update( val_cutoff )
 
-        # add to failues
+		# add to failues
 		if val_cutoff['All rmsds < cutoff'] == False:
 			failures.append( targets[i] )
 
@@ -82,7 +82,7 @@ def main(args):
 		val_cutoff = qm.check_all_values_below_cutoff( y, cutoffs_score_dict[targets[i]], "score", f )
 		target_results.update( val_cutoff )
 
-        # add to failures
+		# add to failures
 		if val_cutoff['All scores < cutoff'] == False:
 			failures.append( targets[i] )
 

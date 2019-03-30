@@ -232,6 +232,8 @@ void CoupledMovesProtocol::exclude_nonclashing_positions( core::pose::PoseOP pos
 } //exclude_nonclashing_positions()
 
 void CoupledMovesProtocol::setup_move_and_design_positions( core::pack::task::PackerTaskCOP task, core::pose::PoseCOP pose_copy ) {
+	move_positions_.clear();
+	design_positions_.clear();
 	for ( core::Size i = 1; i <= pose_copy->size(); ++i ) {
 		//std::cout << "res " << i << "\tdesign " << task->design_residue(i) << "\tpack\t" << task->pack_residue(i) << std::endl;
 		if ( ( task->design_residue(i) ) ) {
@@ -400,6 +402,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose & pose ){
 
 	//core::Size ntrials = option[ OptionKeys::coupled_moves::ntrials ];
 	std::map<std::string,core::pose::Pose> unique_structures;
+	unique_sequences_.clear();
 	for ( core::Size i = 1; i <= ntrials_; ++i ) {
 		//This assumes move_positions is not empty.  We have checked above, but let's check again.
 		runtime_assert_string_msg(!move_positions_.empty(), "move_positions empty in CoupledMovesProtocol. Probably you specified no design positions or set everything to unrepackable.");

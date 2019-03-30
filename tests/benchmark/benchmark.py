@@ -211,7 +211,7 @@ def main(args):
             else:
                 res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), config=config, hpc_driver=hpc_driver, verbose=True, debug=Options.debug)
 
-            if res[_StateKey_] not in _S_Values_: print( 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res[_StateKey_]) )
+            if res[_StateKey_] not in _S_Values_: print( 'Warning!!! Test {} failed with unknow result code: {}'.format(test_name, res[_StateKey_]) )
             else: print( 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2)) )
 
             print( 'Output and log of this test saved to {0}/output.results.json and {0}/output.log'.format(working_dir) )
