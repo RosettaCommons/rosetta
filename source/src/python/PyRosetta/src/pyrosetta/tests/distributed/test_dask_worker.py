@@ -19,11 +19,9 @@ class TestDaskArgs(unittest.TestCase):
 
     def test_worker_extra(self):
         """worker_extra worker plugin controls rosetta flags and local dir.
-
         pyrosetta.distributed.dask.worker_extra can be used to specify a set of
         PyRosetta initialization flags and local directory information that will be used to
         pre-initialize all worker processes in a dask cluster.
-
         This provides support for protocols which may require command line
         flags including (e.g. additional residue types, logging flags, ...).
         """

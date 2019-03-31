@@ -25,7 +25,6 @@ def e(cmd):
 test_suites = [
                 "pyrosetta.tests.distributed.test_smoke",
                 "pyrosetta.tests.distributed.test_dask",
-                "pyrosetta.tests.distributed.test_dask_worker",
                 "pyrosetta.tests.distributed.test_concurrency",
                 "pyrosetta.tests.distributed.test_gil",
                 "pyrosetta.tests.bindings.core.test_pose",
