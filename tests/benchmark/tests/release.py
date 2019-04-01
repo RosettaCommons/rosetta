@@ -456,7 +456,8 @@ _index_html_template_ = '''\
         <li>
         please add <fixed>graylab.jhu.edu/download/PyRosetta4/conda/{release_kind}</fixed> into your local <fixed>~/.condarc</fixed> file, like:<br/><br/>
 <fixed>channels:
-  - https://USERNAME:PASSWORD@https://graylab.jhu.edu/download/PyRosetta4/conda/{release_kind}
+  - https://USERNAME:PASSWORD@graylab.jhu.edu/download/PyRosetta4/conda/{release_kind}
+  - defaults
 </fixed>
 <br/><br/>(ask for user-name and password in RosettaCommons Slack <fixed>#PyRosetta</fixed> channel)
         </li>
