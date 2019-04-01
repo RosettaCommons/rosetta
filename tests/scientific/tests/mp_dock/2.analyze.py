@@ -9,8 +9,8 @@
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file  cartesian_relax/2.analyze.py
-## @brief this script is part of cartesian_relax scientific test
-## @author Sergey Lyskov
+## @brief this script is part of mp_dock scientific test
+## @author JKLeman
 
 import os, sys, subprocess, math
 import numpy as np
@@ -22,15 +22,14 @@ config = benchmark.config()
 
 results = {}
 scorefiles = []
-#logfiles = []
 cutoffs_rmsd_dict = {}
 cutoffs_score_dict = {}
 failures = []
 
 # inputs are header labels from the scorefile, for instance "total_score" and "rmsd"
 # => it figures out the column numbers from there
-x_label = "rmsd"
-y_label = "total_score"
+x_label = "rms"
+y_label = "I_sc"
 outfile = "result.txt"
 cutoffs = "cutoffs"
 
@@ -39,8 +38,12 @@ scorefiles.extend( [ f'{working_dir}/output/{t}/{t}.score' for t in targets ] )
 #logfiles.extend( [ f'{working_dir}/hpc-logs/hpc.{testname}-{t}.*.log' for t in targets ] )
 
 # get column numbers from labels, 1-indexed
-x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).split().index( x_label ) + 1 )
-y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).split().index( y_label ) + 1 )
+#	x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).split().index( x_label ) + 1 )
+#	y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).split().index( y_label ) + 1 )
+
+# don't use indices, because docking sometimes stops in centroid mode, messing up the header for the scorefile
+x_index = "3"	 # rms is in column 3 for high-res docking
+y_index = "6"	 # I_sc is in column 6
 
 # read cutoffs
 protein = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $1}'" ).splitlines()
@@ -60,8 +63,9 @@ for i in range( 0, len( scorefiles ) ):
 	target_results = {}
 
 	# read in score file, scores are sorted, first one is lowest
-	x = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | sort -nk2 | awk '{print $" + x_index + "}'" ).splitlines()
-	y = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | sort -nk2 | awk '{print $" + y_index + "}'" ).splitlines()
+	# also get rid of centroid docked models, which only have 18 score terms
+	x = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v total_score | sort -nk6 | awk '{if(NF>18)print $" + x_index + "}'" ).splitlines()
+	y = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v total_score | sort -nk6 | awk '{if(NF>18)print $" + y_index + "}'" ).splitlines()
 
 	# map values to floats (were strings)
 	x = list( map( float, x ))
@@ -69,19 +73,19 @@ for i in range( 0, len( scorefiles ) ):
 
 	# check for RMSDs below cutoff
 	f.write( targets[i] + "\t" )
-	val_cutoff = qm.check_all_values_below_cutoff( x, cutoffs_rmsd_dict[targets[i]], "rmsd", f )
+	val_cutoff = qm.check_xpercent_values_below_cutoff( x, cutoffs_rmsd_dict[targets[i]], "rmsd", f, 1 )
 	target_results.update( val_cutoff )
 
-    # add to failues
+	# add to failues
 	if val_cutoff['All rmsds < cutoff'] == False:
 		failures.append( targets[i] )
 
 	# check for scores below cutoff
 	f.write( targets[i] + "\t" )
-	val_cutoff = qm.check_all_values_below_cutoff( y, cutoffs_score_dict[targets[i]], "score", f )
+	val_cutoff = qm.check_xpercent_values_below_cutoff( y, cutoffs_score_dict[targets[i]], "score", f, 90 )
 	target_results.update( val_cutoff )
 
-    # add to failures
+	# add to failures
 	if val_cutoff['All scores < cutoff'] == False:
 		failures.append( targets[i] )
 
@@ -99,23 +103,6 @@ for i in range( 0, len( scorefiles ) ):
 	f.write( targets[i] + "\t" )
 	val_score = qm.check_range( y, "score", f )
 	target_results.update( val_score )
-
-	# check runtime
-	# runtime = subprocess.getoutput( "grep \"reported success\" " + logfiles[i] + " | awk '{print $6}'" ).splitlines()
-	# runtime = list( map( float, runtime ))
-	# if len(runtime) > 0:
-	# 	print (targets[i], "\t"),
-	# 	val_runtime = check_range( runtime, "runtime" )
-	# 	target_results.update( val_runtime )
-
-	# TODO: check discrimination score
-	# discrimination score is likely better for abinitio sampling + refinement
-	# few options:
-	# 1) ff_metric script in this directory: easy + simple but need to test the metric
-	# 2) discrimination score script in https://github.com/RosettaCommons/bakerlab_scripts/tree/master/boinc/scoring_methods
-	# => gives me 0, a little too complicated
-	# 3) https://github.com/RosettaCommons/bakerlab_scripts/blob/master/boinc/score_energy_landscape.py
-	# => requires lots of dependent scripts, even more complicated
 
 	results.update( {targets[i] : target_results} )
 	f.write( "\n" )

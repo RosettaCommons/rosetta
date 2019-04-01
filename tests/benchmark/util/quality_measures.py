@@ -12,7 +12,7 @@
 ## @brief  Helper functions for quality measures
 ## @author Sergey Lyskov
 
-import os, os.path, sys, imp, shutil, json
+import os, os.path, sys, imp, shutil, json, math
 import numpy as np
 
 #=======================================
@@ -28,7 +28,7 @@ def check_xpercent_values_below_cutoff( col, cutoff, tag, filehandle, percentage
 	
 	# sort the values from smallest to largest, then take the first x records
 	col = sorted(col)
-	partial_col = col[:int( percentage * len( col )/100 )]
+	partial_col = col[:int( math.ceil(percentage * len( col )/100.0) )]
 
 	if all( i <= cutoff for i in partial_col ):
 		value = True
