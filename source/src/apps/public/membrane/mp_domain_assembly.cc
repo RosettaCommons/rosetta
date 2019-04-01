@@ -789,7 +789,7 @@ void MPDomainAssembly::apply( Pose & pose ) {
 	align->apply( full_pose );
 
 	pose = full_pose;
-	
+
 	// compute RMSD to native and put it into scorefile
 	if ( option[in::file::native].user() ) {
 
@@ -798,17 +798,17 @@ void MPDomainAssembly::apply( Pose & pose ) {
 		// read in native
 		Pose native;
 		core::import_pose::pose_from_file( native, option[in::file::native].value_string() , core::import_pose::PDB_file);
-		
+
 		// add membrane to native
 		AddMembraneMoverOP addmem( new AddMembraneMover( option[OptionKeys::mp::setup::spanfiles]()[1] ) );
 		addmem->apply( native );
 
 		// compute RMSD without superimposition!!!
 		core::Real rmsd = core::scoring::rmsd_no_super( pose, native, core::scoring::is_protein_backbone );
-		
+
 		// add RMSD to scorefile
 		protocols::jd2::add_string_real_pair_to_current_job( "bb_rms", rmsd );
-		
+
 	}
 
 } // apply
@@ -871,7 +871,7 @@ void MPDomainAssembly::init_from_cmd() {
 	if ( option[OptionKeys::in::file::native].user() && ! option[OptionKeys::mp::setup::spanfiles].user() ) {
 		throw CREATE_EXCEPTION(utility::excn::Exception, "Please provide a spanfile with -mp:setup:spanfiles!");
 	}
-	
+
 } // init from commandline
 
 ////////////////////////////////////////////////////////////////////////////////
