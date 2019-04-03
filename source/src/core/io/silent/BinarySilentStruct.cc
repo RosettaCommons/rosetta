@@ -608,6 +608,11 @@ void BinarySilentStruct::fill_pose(
 		Size res2 = noncanonical_residue_connections_[i_conn].second.rsd();
 		std::string atom2 = noncanonical_residue_connections_[i_conn].second.atom();
 
+		if ( res2 == 0 || atom2 == "" ) {
+			tr.Warning << "Incomplete connection found: " << res1 << " " << atom1 << " to nothing." << std::endl;
+			continue;
+		}
+
 		pose.conformation().declare_chemical_bond(res1, atom1, res2, atom2);
 	}
 
