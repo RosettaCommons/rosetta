@@ -1,0 +1,32 @@
+<ROSETTASCRIPTS>
+<SCOREFXNS>
+	<ScoreFunction name="empty" weights="empty.wts">
+	</ScoreFunction>
+</SCOREFXNS>
+<RESIDUE_SELECTORS>	
+</RESIDUE_SELECTORS>	
+<TASKOPERATIONS>
+</TASKOPERATIONS>
+<SCOREFXNS>
+</SCOREFXNS>
+<FILTERS>
+</FILTERS>
+<MOVERS> 
+	<AppendAssemblyMover name="aam" model_file_name="%%SEGMENT_FILE%%" hashed="false" max_segments="9" minimum_cycles="1000" maximum_cycles="1000" recover_lowest_assembly="true" partner_pdb = "%%PARTNER_PDB%%">
+			<AssemblyRequirements>
+				<ClashRequirement clash_radius = "4" />
+				<SizeInSegmentsRequirement maximum_size="9" minimum_size="9"/>
+			</AssemblyRequirements>
+			<AssemblyScorers>
+				<MotifScorer weight="1"/>
+				<InterModelMotifScorer weight="10"/>
+				<PartnerMotifScorer weight="1"/>
+			</AssemblyScorers>
+	</AppendAssemblyMover>
+</MOVERS>
+<PROTOCOLS>
+	<Add mover="aam"/>
+</PROTOCOLS>
+<OUTPUT scorefxn="empty"/>
+</ROSETTASCRIPTS>
+
