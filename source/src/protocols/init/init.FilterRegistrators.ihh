@@ -191,6 +191,8 @@ static FilterRegistrator< protocols::simple_filters::ResidueSelectionDistanceFil
 static FilterRegistrator< protocols::simple_filters::ResidueLipophilicityFilterCreator > reg_ResidueLipophilicityFilterCreator;
 static FilterRegistrator< protocols::simple_filters::MPSpanAngleFilterCreator > reg_MPSpanAngleFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueSetChainEnergyFilterCreator > reg_ResidueSetChainEnergyFilterCreator;
+static FilterRegistrator< protocols::simple_filters::SecretionPredictionFilterCreator > reg_SecretionPredictionFilterCreator;
+static FilterRegistrator< protocols::simple_filters::SSElementLengthFilterCreator > reg_SSElementLengthFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SSElementMotifContactFilterCreator > reg_SSElementMotifContactFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SaveResfileToDiskFilterCreator > reg_SaveResfileToDiskFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SequenceDistanceFilterCreator > reg_SequenceDistanceFilterCreator;

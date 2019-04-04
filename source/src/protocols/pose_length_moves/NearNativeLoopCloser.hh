@@ -51,7 +51,7 @@ public:
 	void evaluate_distance_closure();
 	void generate_stub_rmsd();
 	void generate_uncached_stub_rmsd();
-	void generate_output_pose(bool output_closed, bool ideal_loop, core::Real rms_threshold,std::string closure_type);
+	void generate_output_pose(bool output_closed, bool ideal_loop, core::Real rms_threshold,std::string allowed_loop_abegos,std::string closure_type);
 	core::pose::PoseOP get_finalPoseOP();
 	core::Real get_stubRMSD(){return stub_rmsd_match_;}
 	core::Real get_uncached_stubRMSD(){return uncached_stub_rmsd_;}
@@ -64,6 +64,7 @@ public:
 private:
 	void trimRegion(core::pose::PoseOP & poseOP, Size resStart, Size resStop);
 	void extendRegion(bool towardCTerm, Size resStart, Size numberAddRes,core::pose::PoseOP & poseOP);
+	bool check_loop_abego(core::pose::PoseOP & poseOP, Size loopStart, Size loopStop, std::string allowed_loop_abegos,core::Real loop_rmsd);
 	void assign_phi_psi_omega_from_lookback(Size db_index, Size fragment_index, core::pose::PoseOP & poseOP);
 	std::vector<core::Real> get_center_of_mass( const core::Real* coordinates, int number_of_atoms);
 	void output_fragment_debug(std::vector< numeric::xyzVector<numeric::Real> > coordinates, std::string filename);
@@ -113,8 +114,7 @@ struct FinalRMSDComparator {
 class NearNativeLoopCloser : public protocols::moves::Mover {
 public:
 	NearNativeLoopCloser();
-	NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,Size loopLengthRangeLow, Size loopLengthRangeHigh,Size resBeforeLoop,Size resAfterLoop,
-		char chainBeforeLoop, char chainAfterLoop,core::Real rmsThreshold, core::Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed, std::string closure_type="lookback");
+	NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,Size loopLengthRangeLow, Size loopLengthRangeHigh,Size resBeforeLoop,Size resAfterLoop,char chainBeforeLoop, char chainAfterLoop,core::Real rmsThreshold, core::Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed, std::string closure_type="lookback",std::string allowed_loop_abegos="");
 	moves::MoverOP clone() const override { return utility::pointer::make_shared< NearNativeLoopCloser >( *this ); }
 	core::Real close_loop(Pose & pose);
 	void apply( Pose & pose ) override;
@@ -163,6 +163,7 @@ private:
 	std::string pose_name_;
 	protocols::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
 	utility::vector1<PossibleLoopOP> possibleLoops_;
+	std::string allowed_loop_abegos_;
 };
 
 

@@ -39,6 +39,8 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
@@ -102,6 +104,12 @@ StructProfileMover::StructProfileMover(Real rmsThreshold,Size consider_topN_frag
 	SSHashedFragmentStore_ = SSHashedFragmentStore::get_instance();
 	SSHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
 }
+
+void
+StructProfileMover::set_residue_selector( core::select::residue_selector::ResidueSelector const & selector ) {
+	residue_selector_ = selector.clone();
+}
+
 
 // XRW TEMP std::string StructProfileMoverCreator::keyname() const
 // XRW TEMP {
@@ -193,7 +201,10 @@ vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose:
 	vector1<vector<Real> > hits_cen;
 	vector1<Real> hits_rms;
 	vector1<std::string> hits_aa;
-	SSHashedFragmentStore_->get_hits_below_rms(pose,res,rmsThreshold_,hits_cen,hits_rms,hits_aa);
+
+	if ( pose.residue(res).is_protein() ) {
+		SSHashedFragmentStore_->get_hits_below_rms(pose,res,rmsThreshold_,hits_cen,hits_rms,hits_aa);
+	}
 	if ( hits_cen.size() == 0 ) {
 		return top_hits_aa;
 	}
@@ -242,17 +253,23 @@ vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose:
 	return(top_hits_aa);
 }
 
-vector1<vector1<std::string> > StructProfileMover::get_closest_sequences(core::pose::Pose const & pose,vector1<Real> cenList){
+vector1<vector1<std::string> > StructProfileMover::get_closest_sequences(core::pose::Pose const & pose,vector1<Real> cenList,core::select::residue_selector::ResidueSubset const & subset){
 	Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
 	vector1<vector1<std::string > > all_aa_hits;
 	Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	}
-	for ( Size ii=1; ii<nres1-fragment_length+1; ++ii ) {
-		vector1<Real>::const_iterator begin =cenList.begin();
-		vector1<Real> shortCenList(begin+ii-1, begin+ii+fragment_length-1);
-		vector1<std::string> aa_hits = get_closest_sequence_at_res(pose,ii,shortCenList);
+	debug_assert( subset.size() >= nres1 );
+	for ( Size ii=1; ii<=nres1-fragment_length+1; ++ii ) { // bcov is like 99% sure this should be <=
+		bool all_within_subset = true;
+		for ( Size jj=0; jj<fragment_length; ++jj ) { if ( ! subset[ii+jj] ) all_within_subset=false; }
+		vector1<std::string> aa_hits;
+		if ( all_within_subset ) {
+			vector1<Real>::const_iterator begin =cenList.begin();
+			vector1<Real> shortCenList(begin+ii-1, begin+ii+fragment_length-1);
+			aa_hits = get_closest_sequence_at_res(pose,ii,shortCenList);
+		}
 		all_aa_hits.push_back(aa_hits);
 	}
 	return(all_aa_hits);
@@ -384,7 +401,11 @@ void StructProfileMover::save_MSAcst_file(vector1<vector1<Real> > profile_score,
 		char aa_tmp = pose.residue(ii).name1();
 		profile_out << aa_tmp;
 		for ( Size jj=1; jj<=profile_score[ii].size(); ++jj ) {
-			profile_out << F(8,2,profile_score[ii][jj]);
+			Real tmp_score = profile_score[ii][jj];
+			if ( tmp_score==0.0 ) {
+				tmp_score=5.00; // For a Score of 0 just give an output of 5 so the output pssm can still be input if needed. The external pssm does not handle 0 well.
+			}
+			profile_out << F(8,2,tmp_score);
 		}
 		profile_out << std::endl;
 	}
@@ -400,6 +421,14 @@ void StructProfileMover::save_MSAcst_file(vector1<vector1<Real> > profile_score,
 void StructProfileMover::add_MSAcst_to_pose(vector1<vector1<Real> > profile_score,core::pose::Pose & pose){
 	using namespace core::sequence;
 	SequenceProfileOP profileOP = utility::pointer::make_shared< SequenceProfile >( profile_score, pose.sequence(), "structProfile" );
+
+	utility::vector1< std::string > alphabet_to_set;
+	for ( char aa : aa_order_ ) {
+		std::string aa_string = string(1, aa);
+		alphabet_to_set.push_back(aa_string );
+	}
+	profileOP->alphabet(alphabet_to_set);
+	profileOP->negative_better(true);
 	Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
@@ -422,7 +451,7 @@ vector1< Real> StructProfileMover::calc_cenlist(Pose const & pose){
 	using namespace core::scoring;
 	core::pose::PoseOP centroidPose = pose.clone();
 	if ( centroidPose->is_fullatom() ) {
-		core::util::switch_to_residue_type_set(*centroidPose, core::chemical::CENTROID_t );
+		core::util::switch_to_residue_type_set(*centroidPose, core::chemical::CENTROID,true,true,false );
 	}
 	ScoreFunctionOP sfcen=ScoreFunctionFactory::create_score_function("score3");
 	sfcen->score(*centroidPose);
@@ -433,16 +462,29 @@ vector1< Real> StructProfileMover::calc_cenlist(Pose const & pose){
 	}
 	for ( Size ii = 1; ii <= nres1; ++ii ) {
 		if ( cenType_ == 6 ) {
-			Real fcen6( core::scoring::EnvPairPotential::cenlist_from_pose( *centroidPose ).fcen6(ii));
-			cenlist.push_back(fcen6);
+			if ( pose.residue(ii).is_protein() ) {
+				Real fcen6( core::scoring::EnvPairPotential::cenlist_from_pose( *centroidPose ).fcen6(ii));
+				cenlist.push_back(fcen6);
+			} else {
+				cenlist.push_back(0);
+			}
+
 		}
 		if ( cenType_ == 10 ) {
-			Real const fcen10( core::scoring::EnvPairPotential::cenlist_from_pose( *centroidPose ).fcen10(ii));
-			cenlist.push_back(fcen10);
+			if ( pose.residue(ii).is_protein() ) {
+				Real const fcen10( core::scoring::EnvPairPotential::cenlist_from_pose( *centroidPose ).fcen10(ii));
+				cenlist.push_back(fcen10);
+			} else {
+				cenlist.push_back(0);
+			}
 		}
 		if ( cenType_ == 12 ) {
-			Real const fcen12( core::scoring::EnvPairPotential::cenlist_from_pose( *centroidPose ).fcen12(ii));
-			cenlist.push_back(fcen12);
+			if ( pose.residue(ii).is_protein() ) {
+				Real const fcen12( core::scoring::EnvPairPotential::cenlist_from_pose( *centroidPose ).fcen12(ii));
+				cenlist.push_back(fcen12);
+			} else {
+				cenlist.push_back(0);
+			}
 		}
 	}
 	return(cenlist);
@@ -450,10 +492,12 @@ vector1< Real> StructProfileMover::calc_cenlist(Pose const & pose){
 
 
 void StructProfileMover::apply(core::pose::Pose & pose) {
+	core::select::residue_selector::ResidueSubset subset(pose.size(), true);
+	if ( residue_selector_ ) subset = residue_selector_->apply(pose);
 	core::scoring::dssp::Dssp dssp_obj( pose );
 	dssp_obj.insert_ss_into_pose( pose );
 	vector1<Real> cenList = calc_cenlist(pose);
-	vector1<vector1<std::string> > top_frag_sequences = get_closest_sequences(pose,cenList);
+	vector1<vector1<std::string> > top_frag_sequences = get_closest_sequences(pose,cenList,subset);
 	vector1<vector1<Size> > res_per_pos = generate_counts(top_frag_sequences,pose);
 	vector1<vector1<Real> > profile_score;
 	if ( eliminate_background_ ) {
@@ -477,7 +521,7 @@ void StructProfileMover::apply(core::pose::Pose & pose) {
 void
 StructProfileMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & ){
@@ -495,6 +539,12 @@ StructProfileMover::parse_my_tag(
 	outputProfile_ = tag->getOption<bool>("outputProfile",false);
 	add_csts_to_pose_ = tag->getOption<bool>("add_csts_to_pose",true);
 	ignore_terminal_res_ = tag->getOption<bool>("ignore_terminal_residue",true);
+	if ( tag->hasOption( "residue_selector" ) ) {
+		core::select::residue_selector::ResidueSelectorCOP selector( core::select::residue_selector::parse_residue_selector( tag, data, "residue_selector" ) );
+		if ( selector != nullptr ) {
+			set_residue_selector( *selector );
+		}
+	}
 }
 
 std::string StructProfileMover::get_name() const {
@@ -520,7 +570,8 @@ void StructProfileMover::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		+ XMLSchemaAttribute::attribute_w_default( "cenType", xsct_non_negative_integer, "XRW TO DO",  "6")
 		+ XMLSchemaAttribute::attribute_w_default( "outputProfile", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "add_csts_to_pose", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "ignore_terminal_residue", xsct_rosetta_bool, "XRW TO DO", "true" );
+		+ XMLSchemaAttribute::attribute_w_default( "ignore_terminal_residue", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute( "residue_selector", xs_string, "Only compute structure profile for residues within residue selector" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Quickly generates a structure profile", attlist );
 }
 

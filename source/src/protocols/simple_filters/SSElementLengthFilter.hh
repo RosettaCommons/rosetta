@@ -7,29 +7,30 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/simple_ddg/SSElementBisectddGFilter.hh
-/// @brief  Disconnects a protein by secondary structure elements and calculates the DDG between the elements
+/// @file   protocols/simple_filters/SSElementLengthFilter.hh
+/// @brief filter structures by longest,shortest or avg length of a given secondary structure type
+
 /// @author TJ Brunette (tjbrunette@gmail.com)
 
 
-#ifndef INCLUDED_protocols_simple_ddg_SSElementBisectddGFilter_hh
-#define INCLUDED_protocols_simple_ddg_SSElementBisectddGFilter_hh
+#ifndef INCLUDED_protocols_simple_filters_SSElementLengthFilter_hh
+#define INCLUDED_protocols_simple_filters_SSElementLengthFilter_hh
 
 // Unit Headers
-#include <protocols/simple_ddg/SSElementBisectddGFilter.fwd.hh>
+#include <protocols/simple_filters/SSElementLengthFilter.fwd.hh>
 
 // Package Headers
 #include <protocols/filters/Filter.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 // Utility headers
 
 // Parser headers
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
+
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
@@ -41,9 +42,9 @@
 //// C++ headers
 
 namespace protocols {
-namespace simple_ddg {
+namespace simple_filters {
 
-class SSElementBisectddGFilter : public protocols::filters::Filter{
+class SSElementLengthFilter : public protocols::filters::Filter{
 public:
 
 	typedef protocols::filters::Filter Super;
@@ -61,23 +62,23 @@ public:
 
 public:// constructor/destructor
 
-	// @brief constructor w variables
-	SSElementBisectddGFilter(core::scoring::ScoreFunctionOP scorefxn,Real threshold,bool report_avg,Size ignore_terminal_SS,bool only_n_term,bool only_c_term,bool skip_ss_element,bool report_sasa_instead,bool convert_charged_res_to_ala,protocols::moves::MoverOP relax_mover);
 
 	// @brief default constructor
-	SSElementBisectddGFilter();
+	SSElementLengthFilter();
 
 	// @brief copy constructor
-	SSElementBisectddGFilter( SSElementBisectddGFilter const & rval );
+	SSElementLengthFilter( SSElementLengthFilter const & rval );
+
+	virtual ~SSElementLengthFilter();
 
 
-public:
+public:// virtual constructor
 
 
 	// @brief make clone
-	filters::FilterOP clone() const override { return utility::pointer::make_shared< SSElementBisectddGFilter >(*this);}
+	filters::FilterOP clone() const override { return filters::FilterOP(utility::pointer::make_shared<SSElementLengthFilter>(*this));}
 	// @brief make fresh instance
-	filters::FilterOP fresh_instance() const override { return utility::pointer::make_shared< SSElementBisectddGFilter >();}
+	filters::FilterOP fresh_instance() const override { return filters::FilterOP(utility::pointer::make_shared<SSElementLengthFilter>());}
 
 
 public:// accessor
@@ -92,8 +93,7 @@ public:// virtual main operation
 	Real report_sm(const Pose & pose ) const override;
 	void report( std::ostream & out,const Pose & pose ) const override;
 	protocols::loops::Loops get_ss_elements(const Pose & pose) const;
-	Real get_ddg_bisect_score(Size element,protocols::loops::Loops ssElements, const Pose & pose) const;
-	Real compute( const Pose & orig_pose ) const;
+	Real compute( const Pose & pose ) const;
 	bool apply(const Pose & pose ) const override;
 
 
@@ -102,7 +102,7 @@ public:// parser
 	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
 		filters::Filters_map const &,
-		Movers_map const & movers,
+		Movers_map const & ,
 		Pose const & ) override;
 
 	std::string
@@ -119,16 +119,11 @@ public:// parser
 
 
 private:
-	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL
-	Size ignore_terminal_SS_;
-	bool only_n_term_;
-	bool only_c_term_;
 	Real threshold_;
 	bool report_avg_;
-	bool skip_ss_element_;
-	bool report_sasa_instead_;
-	bool convert_charged_res_to_ala_;
-	protocols::moves::MoverOP relax_mover_; //dflt NULL; in the unbound state, prior to taking the energy, should we do any relaxation
+	bool report_longest_;
+	bool report_shortest_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 
 };
 

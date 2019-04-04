@@ -235,7 +235,7 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 	using namespace core::scoring;
 	vector1 < std::string > initial_labels;
 	protocols::moves::MoverOP tocen = protocols::moves::MoverOP(
-		new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
+		utility::pointer::make_shared<protocols::simple_moves::SwitchResidueTypeSetMover>( core::chemical::CENTROID ) );
 	utility::vector1<core::Size> res_in_chain = get_resnums_for_chain_id(pose,chain_id);
 	bool input_pose_symmetric = pose::symmetry::is_symmetric(pose);
 	core::scoring::ScoreFunctionOP sfxn0 = scoring::ScoreFunctionFactory::create_score_function( "score0" );
@@ -260,7 +260,7 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 		//remove_lower_terminus_type_from_pose_residue(*xml_input_pose_slice,1);
 		superimpose_pose(*xml_input_pose_,pose,atom_map);
 		//create subpose of xml_pose
-		core::pose::PoseOP output_poseOP( new core::pose::Pose() );
+		core::pose::PoseOP output_poseOP( utility::pointer::make_shared<core::pose::Pose>() );
 		core::pose::PoseOP tmp_xml_poseOP;
 		tmp_xml_poseOP=xml_input_pose_->clone();
 		Size end_steal_label_res = pose.size();
@@ -271,8 +271,8 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 		} else {
 			output_poseOP->detached_copy(pose);
 		}
-		core::pose::PoseOP backup_input_pose( new core::pose::Pose() );
-		core::pose::PoseOP backup_xml_pose( new core::pose::Pose() );
+		core::pose::PoseOP backup_input_pose( utility::pointer::make_shared<core::pose::Pose>() );
+		core::pose::PoseOP backup_xml_pose( utility::pointer::make_shared<core::pose::Pose>() );
 		if ( input_pose_symmetric ) {
 			pose::symmetry::extract_asymmetric_unit(pose,*backup_input_pose,false,false);
 		} else {

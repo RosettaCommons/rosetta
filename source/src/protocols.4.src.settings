@@ -61,14 +61,14 @@ sources = {
 		"SSElementBisectddGFilter",
 		"InterfaceBindingEnergyDensityFilter",
 	],
-	
+
 	"protocols/calc_taskop_movers" : [
 		"ForceDisulfidesMover",
 		"ConsensusDesignMover",
 		"DesignRepackMover",
 		"CreateSequenceMotifMover",
 	],
-	
+
 	"protocols/calc_taskop_filters" : [
 		"SigmoidFilter",
 		"MultipleSigmoidsFilter",
@@ -211,7 +211,7 @@ sources = {
 		"EvolutionaryDynamicsMover",
 		"NucleotideMutation",
 	],
-	
+
 	"protocols/constraint_filters": [
 		"ConstraintScoreCutoffFilter",
 		"ConstraintScoreFilter",
@@ -238,7 +238,7 @@ sources = {
 		"TwoDLattice",
 		"wallpaper"
 	],
-	
+
 	"protocols/pose_creation": [
 		"HelixFromSequence",
 		"ExtendedPoseMover",
@@ -249,8 +249,9 @@ sources = {
 		"RepeatPropagationMover",
 		"MergePDBatOverlapMover",
 		"MergePDBMover",
+		"SliceToMiniProteinMover",
 	],
-	
+
 	"protocols/symmetry": [
 		"SetupForSymmetryMover",
 		"DetectSymmetryMover",
@@ -259,7 +260,7 @@ sources = {
 		"SymmetricRMSMover",
 		"SymShakeStructureMover",
 	],
-	
+
 	"protocols/score_filters": [
 		"ScoreTypeFilter",
 		"ScoreCutoffFilter",

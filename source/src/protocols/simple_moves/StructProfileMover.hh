@@ -16,7 +16,9 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/StructProfileMover.fwd.hh>
 
+
 #include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
@@ -44,7 +46,7 @@ public:
 	Size ss_type_convert(char ss_type);
 	void read_P_AA_SS_cen6();
 	utility::vector1<std::string> get_closest_sequence_at_res(core::pose::Pose const & pose, Size res,utility::vector1<core::Real> cenList);
-	utility::vector1<utility::vector1<std::string> > get_closest_sequences(core::pose::Pose const & pose,utility::vector1<core::Real> cenList);
+	utility::vector1<utility::vector1<std::string> > get_closest_sequences(core::pose::Pose const & pose,utility::vector1<core::Real> cenList, core::select::residue_selector::ResidueSubset const & subset);
 	utility::vector1<utility::vector1<Size> >generate_counts(utility::vector1<utility::vector1<std::string> > top_frag_sequences,core::pose::Pose const & pose);
 	utility::vector1<utility::vector1<core::Real> >generate_profile_score(utility::vector1<utility::vector1<Size> > res_per_pos,core::pose::Pose const & pose);
 	utility::vector1<utility::vector1<core::Real> >generate_profile_score_wo_background(utility::vector1<utility::vector1<Size> > res_per_pos, utility::vector1<core::Real> cenList, core::pose::Pose const & pose);
@@ -55,6 +57,7 @@ public:
 	void apply( Pose & pose ) override;
 	moves::MoverOP clone() const override { return utility::pointer::make_shared< StructProfileMover >( *this ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void set_residue_selector( core::select::residue_selector::ResidueSelector const & selector );
 
 	std::string
 	get_name() const override;
@@ -83,6 +86,7 @@ private:
 	bool only_loops_;
 	bool eliminate_background_;
 	bool ignore_terminal_res_;
+	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
 
 };
 
