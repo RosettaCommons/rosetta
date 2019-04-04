@@ -24,6 +24,7 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 
@@ -73,28 +74,46 @@ void
 ForceDisulfidesMover::apply( Pose & pose ) {
 	TR<<"Fixing disulfides"<<std::endl;
 	utility::vector1< std::pair< core::Size, core::Size > > parsed_disulfides( disulfides(pose) );
+	utility::vector1< std::pair< core::Size, core::Size > > existing_disulfides;
 
-	pose.conformation().fix_disulfides( parsed_disulfides );
-
-	using namespace core::pack::task;
-	using namespace protocols::task_operations;
-	using core::pack::task::operation::TaskOperationCOP;
-	using namespace protocols::minimization_packing;
-
-	DesignAroundOperationOP dao( new DesignAroundOperation );
-	dao->design_shell( 0.0 );
-	dao->repack_shell( 6.0 );
-	for ( auto disulfide_pair: parsed_disulfides ) {
-		dao->include_residue( disulfide_pair.first );
-		dao->include_residue( disulfide_pair.second );
+	if ( remove_existing_ ) {
+		core::conformation::disulfide_bonds( pose.conformation(), existing_disulfides);
+		for ( auto disulfide_pair: existing_disulfides ) {
+			core::conformation::break_disulfide( pose.conformation(), disulfide_pair.first, disulfide_pair.second );
+		}
 	}
-	TaskFactoryOP tf( new TaskFactory );
-	tf->push_back( dao );
-	tf->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
-	PackerTaskOP ptask = tf->create_task_and_apply_taskoperations( pose );
-	PackRotamersMover prm( scorefxn(), ptask );
-	TR<<"repacking disulfide surroundings"<<std::endl;
-	prm.apply( pose );
+
+	if ( ! parsed_disulfides.empty() ) {
+		pose.conformation().fix_disulfides( parsed_disulfides );
+	}
+
+	if ( repack_ ) {
+		using namespace core::pack::task;
+		using namespace protocols::task_operations;
+		using core::pack::task::operation::TaskOperationCOP;
+		using namespace protocols::minimization_packing;
+
+		DesignAroundOperationOP dao( new DesignAroundOperation );
+		dao->design_shell( 0.0 );
+		dao->repack_shell( 6.0 );
+		for ( auto disulfide_pair: parsed_disulfides ) {
+			dao->include_residue( disulfide_pair.first );
+			dao->include_residue( disulfide_pair.second );
+		}
+		for ( auto disulfide_pair: existing_disulfides ) { // Will only be non-empty if we're removing things.
+			dao->include_residue( disulfide_pair.first );
+			dao->include_residue( disulfide_pair.second );
+		}
+		TaskFactoryOP tf( new TaskFactory );
+		tf->push_back( dao );
+		tf->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
+		tf->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() ); // Needed as DesignAround with 0 radius still designs focus residue
+		PackerTaskOP ptask = tf->create_task_and_apply_taskoperations( pose );
+		PackRotamersMover prm( scorefxn(), ptask );
+		TR<<"repacking disulfide surroundings"<<std::endl;
+		prm.apply( pose );
+	}
+
 }
 
 
@@ -123,17 +142,28 @@ ForceDisulfidesMover::parse_my_tag(
 )
 {
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
-	utility::vector1< std::string > const residue_pairs( utility::string_split( tag->getOption< std::string >( "disulfides" ), ',' ) );
-	TR<<"Setting fix disulfides on residues: ";
-	for ( std::string const & residue_pair : residue_pairs ) {
-		utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ));
-		runtime_assert( residues.size() == 2);
-		core::pose::ResidueIndexDescriptionCOP res1( core::pose::parse_resnum( residues[ 1 ] ) );
-		core::pose::ResidueIndexDescriptionCOP res2( core::pose::parse_resnum( residues[ 2 ] ) );
-		disulfides_.push_back( std::make_pair( res1, res2 ) );
-		TR<<res1<<':'<<res2<<',';
+	remove_existing( tag->getOption< bool >("remove_existing",false) );
+	repack( tag->getOption< bool >("repack",false) );
+
+	TR<<"Setting fix disulfides on residues: " << std::endl;
+	if ( tag->hasOption("disulfides") ) {
+		utility::vector1< std::string > const residue_pairs( utility::string_split( tag->getOption< std::string >( "disulfides" ), ',' ) );
+		for ( std::string const & residue_pair : residue_pairs ) {
+			utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ));
+			runtime_assert( residues.size() == 2);
+			core::pose::ResidueIndexDescriptionCOP res1( core::pose::parse_resnum( residues[ 1 ] ) );
+			core::pose::ResidueIndexDescriptionCOP res2( core::pose::parse_resnum( residues[ 2 ] ) );
+			disulfides_.push_back( std::make_pair( res1, res2 ) );
+			TR << "        " << *res1 << " : " << *res2 << std::endl;
+		}
 	}
-	TR<<std::endl;
+	if ( remove_existing_ ) {
+		TR << "    and removing any other disulfides." << std::endl;
+	} else {
+		if ( disulfides_.empty() ) {
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "ForceDisulfidesMover can't have both remove_existing false and an empty disulfides list.");
+		}
+	}
 }
 
 void
@@ -160,7 +190,7 @@ void ForceDisulfidesMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	AttributeList attlist;
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
 
-	std::string one_pair = refpose_enabled_residue_number_string() + ":" + refpose_enabled_residue_number_string();
+	std::string one_pair = "(" + refpose_enabled_residue_number_string() + "):(" + refpose_enabled_residue_number_string() + ")";
 	std::string set_of_pairs = one_pair + "(," + one_pair + ")*";
 
 	XMLSchemaRestriction pair_cslist;
@@ -169,11 +199,15 @@ void ForceDisulfidesMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	pair_cslist.add_restriction( xsr_pattern, set_of_pairs );
 	xsd.add_top_level_element( pair_cslist );
 
-	attlist + XMLSchemaAttribute::required_attribute( "disulfides", "colon_sep_respair_cslist",
+	attlist + XMLSchemaAttribute( "disulfides", "colon_sep_respair_cslist",
 		"For instance: 23A:88A,22B:91B. Can also take regular Rosetta (aka Pose) numbering as in: 24:88,23:91." );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "remove_existing", xsct_rosetta_bool, "Remove all existing disulfides before applying the new ones.",  "false" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "repack", xsct_rosetta_bool, "Repack residues around the added/removed disulfides?",  "true" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"Set a list of cysteine pairs to form disulfides and repack their surroundings."
-		" Useful for cases where the disulfides aren't recognized by Rosetta.", attlist );
+		" Useful for cases where the disulfides aren't recognized by Rosetta."
+		" By default the specified disulfides will be added to the existing set of disulfides.", attlist );
 }
 
 std::string ForceDisulfidesMoverCreator::keyname() const {

@@ -132,6 +132,10 @@ utility::pointer::shared_ptr<MoverSubclass> parse_tag(std::string tag_string) {
 	protocols::moves::Movers_map movers;
 	core::pose::Pose pose;
 
+	prime_Filters( filters );
+	prime_Movers( movers );
+	prime_Data( data );
+
 	protocols::moves::MoverOP base_mover(
 		protocols::moves::MoverFactory::get_instance()->newMover(
 		tag, data, filters, movers, pose ) );
@@ -152,6 +156,10 @@ utility::pointer::shared_ptr<FilterSubclass> parse_filter_tag(std::string tag_st
 	protocols::filters::Filters_map filters;
 	protocols::moves::Movers_map movers;
 	core::pose::Pose pose;
+
+	prime_Filters( filters );
+	prime_Movers( movers );
+	prime_Data( data );
 
 	protocols::filters::FilterOP base_filter(
 		protocols::filters::FilterFactory::get_instance()->newFilter(
@@ -187,6 +195,9 @@ utility::pointer::shared_ptr<TaskOperationSubclass> parse_taskop_tag(std::string
 template <class TaskOperationSubclass>
 utility::pointer::shared_ptr<TaskOperationSubclass> parse_taskop_tag(std::string tag_string) {
 	basic::datacache::DataMap data;
+
+	prime_Data(data);
+
 	return parse_taskop_tag<TaskOperationSubclass>(tag_string, data);
 }
 
@@ -213,6 +224,9 @@ utility::pointer::shared_ptr<ResidueSelectorSubclass> parse_selector_tag(std::st
 template <class ResidueSelectorSubclass>
 utility::pointer::shared_ptr<ResidueSelectorSubclass> parse_selector_tag(std::string tag_string) {
 	basic::datacache::DataMap data;
+
+	prime_Data(data);
+
 	return parse_selector_tag<ResidueSelectorSubclass>(tag_string, data);
 }
 

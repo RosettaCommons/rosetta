@@ -80,6 +80,10 @@ sources = {
 		"BranchAngleOptimizer",
 	],
 
+	"calc_taskop_movers" : [
+		"ForceDisulfidesMover",
+	],
+
 	"carbohydrates" : [
 		"RingPlaneFlipMover",
 		"TautomerizeAnomerMover",

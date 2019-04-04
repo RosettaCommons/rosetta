@@ -42,8 +42,15 @@ public:
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 
+	void remove_existing( bool setting ) { remove_existing_ = setting; }
+	bool remove_existing() const { return remove_existing_; }
+
+	void repack( bool setting ) { repack_ = setting; }
+	bool repack() const { return repack_; }
+
 	void disulfides( utility::vector1< std::pair< core::Size, core::Size > > );
 	utility::vector1< std::pair< core::Size, core::Size > > disulfides( core::pose::Pose const & pose ) const;
+
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP s );
 
@@ -60,6 +67,10 @@ public:
 
 private:
 
+	/// @brief Should we remove the existing disulfides before imposing the new ones?
+	bool remove_existing_ = false;
+	/// @brief Should we repack around the new (removed) disulfides?
+	bool repack_ = true;
 	utility::vector1< std::pair< core::pose::ResidueIndexDescriptionCOP, core::pose::ResidueIndexDescriptionCOP > > disulfides_;
 	core::scoring::ScoreFunctionOP scorefxn_;// for repacking
 };

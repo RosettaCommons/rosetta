@@ -22,9 +22,33 @@
 #include <map>
 #include <string>
 
+#include <protocols/moves/mover_schemas.hh> // For check_if_mover_tag_validates()
+
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR2( "schema_utilities" );
+
+/// @brief Check if the provided tag validates against the schema for the given class
+/// (It's assumed that the templated class has a static provide_xml_schema() function which provides the schema for the class.)
+/// @details - The restriction for Mover only is due soley to the need for the top-level element addition. If we could abstract that ...
+template< class C >
+void check_if_mover_tag_validates( std::string const & tag ) {
+	utility::tag::XMLSchemaDefinition xsd;
+	C::provide_xml_schema( xsd );
+
+	// Now need to add a top-level element
+	utility::tag::XMLSchemaElement top_element;
+	top_element.name( C::mover_name() )
+		.type_name( protocols::moves::complex_type_name_for_mover( C::mover_name() ));
+	xsd.add_top_level_element( top_element );
+
+	utility::tag::XMLValidationOutput validator_output;
+	utility::tag::XMLValidator validator;
+	validator_output = validator.set_schema(xsd.full_definition());
+	TSM_ASSERT( "Issue building schema for " + tag, validator_output.valid() );
+	validator_output = validator.validate_xml_against_schema( tag );
+	TSM_ASSERT( "Issue validating " + tag, validator_output.valid() );
+}
 
 inline
 void recurse_through_subtags_for_attribute_descriptions(
