@@ -636,7 +636,8 @@ VoidsPenaltyVoxelGrid::compute_burial(
 	core::Size & buried_volume
 ) const {
 	TR << "Computing voxel burial by method of sidechain neighbours..." << std::endl;
-	runtime_assert_string_msg( pose.total_residue() > 0, "Error in core::pack::voids_penalty_energy::VoidsPenaltyVoxelGrid::compute_burial():  The pose has no residues!"  );
+	static const std::string errmsg("Error in core::pack::voids_penalty_energy::VoidsPenaltyVoxelGrid::compute_burial():  ");
+	runtime_assert_string_msg( pose.total_residue() > 0, errmsg + "The pose has no residues!"  );
 
 	//Iterate over all residues and set up conevects ad conebases:
 	utility::vector1< numeric::xyzVector< core::Real > > conevects( pose.total_residue() );
@@ -649,7 +650,12 @@ VoidsPenaltyVoxelGrid::compute_burial(
 		}
 		core::id::AtomID at2( pose.residue_type(i).aa() == core::chemical::aa_gly ? pose.residue_type(i).atom_index("2HA") : pose.residue_type(i).first_sidechain_atom(), i );
 		core::id::AtomID at1( pose.residue_type(i).icoor(at2.atomno()).stub_atom1().atomno(), i );
-		conevects[i] = numeric::xyzVector< core::Real >( (pose.xyz(at2) - pose.xyz(at1)).normalize() );
+		runtime_assert_string_msg( at1 != at2, errmsg + "The first sidechain atom index matches the first sidechain atom's parent (" + std::to_string(at1.atomno()) + ") for residue type " + pose.residue_type(i).name() + ".  Does this residue type's params file have a FIRST_SIDECHAIN_ATOM line?" );
+		try {
+			conevects[i] = numeric::xyzVector< core::Real >( (pose.xyz(at2) - pose.xyz(at1)).normalize() );
+		} catch( utility::excn::Exception & excn ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception, errmsg + excn.msg() + "  Error occurred when trying to normalize coordinate vector between atoms \"" + pose.residue_type(i).atom_name(at1.atomno()) + "\" and \"" + pose.residue_type(i).atom_name(at2.atomno()) + "\" in residue " + pose.residue_type(i).name() + " at position " + std::to_string( i ) + " in the pose." );
+		}
 		conebases[i] = pose.xyz(at2);
 	}
 
@@ -681,8 +687,10 @@ VoidsPenaltyVoxelGrid::is_buried(
 	core::Size counter(0);
 	for ( core::Size i(1), imax(conevects.size()); i<=imax; ++i ) {
 		if ( skip_list[i] ) continue; //This residue is a ligand or is otherwise one to skip.
-		if ( (coords - conebases[i]).length_squared() > cone_distance_cutoff_sq_ ) continue; //Skip most of the cone checks.
-		if ( (coords - conebases[i]).normalize().dot_product( conevects[i] ) < cone_dotproduct_cutoff_ ) continue; //Skip cones pointing away.
+		numeric::xyzVector<core::Real> const conebase_coord_vect( coords - conebases[i] );
+		core::Real const lensq( conebase_coord_vect.length_squared() );
+		if ( lensq > cone_distance_cutoff_sq_ ) continue; //Skip most of the cone checks.
+		if ( lensq > 1e-12 && (coords - conebases[i]).normalize().dot_product( conevects[i] ) < cone_dotproduct_cutoff_ ) continue; //Skip cones pointing away.
 		++counter;
 		if ( counter >= containing_cones_cutoff_ ) return true;
 	}

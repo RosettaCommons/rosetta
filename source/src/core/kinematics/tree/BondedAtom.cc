@@ -208,7 +208,11 @@ BondedAtom::update_internal_coords(
 		//if ( d_ < 1e-1 ) {
 		//std::cerr << "WARNING:: small d but we are calculating phi,theta: " << d_ << std::endl;
 		//}
-		w.normalize();
+		try {
+			w.normalize();
+		} catch( utility::excn::Exception & excn ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception, "Error in BondedAtom::update_internal_coords(): " + excn.msg() + "  Error occurred when trying to update internal coordinates for a bonded atom with d=" + std::to_string( d_ ) + ", theta=" + std::to_string( theta_ ) + ", phi=" + std::to_string(phi_) + "." );
+		}
 		Real const x( dot( w, stub.M.col_x() ) );
 		Real const y( dot( w, stub.M.col_y() ) );
 		Real const z( dot( w, stub.M.col_z() ) );

@@ -667,7 +667,7 @@ public: // Methods
 		Value const length_ = length();
 		//assert ( length_ != Value ( 0 ));
 		if ( length_ == Value ( 0 ) ) {
-			throw CREATE_EXCEPTION(utility::excn::Exception, "Cannot normalize xyzVector of length() zero");
+			throw CREATE_EXCEPTION(utility::excn::Exception, "Cannot create normalized xyzVector from vector of length() zero.");
 		}
 
 		Value const inv_length( Value( 1 ) / length_ );
@@ -700,7 +700,9 @@ public: // Methods
 	normalized( xyzVector & a ) const
 	{
 		Value const length_ = length();
-		assert( length_ != Value ( 0 ) );
+		if ( length_ == Value ( 0 ) ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception, "Cannot normalize xyzVector of length() zero.");
+		}
 		Value const inv_length( Value( 1 ) / length_ );
 		a.x_ = x_ * inv_length;
 		a.y_ = y_ * inv_length;

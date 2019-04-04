@@ -1001,7 +1001,11 @@ PoseToStructFileRepConverter::grab_membrane_info(
 		core::Vector norm( pose.conformation().membrane_info()->membrane_normal(pose.conformation()) );
 
 		// Actually normalize the membrane residue to thk
-		norm.normalize();
+		try {
+			norm.normalize();
+		} catch( utility::excn::Exception & excn ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception, "Error in PoseToStructFileRepConverter::grab_membrane_info(): " + excn.msg() + "  Error occurred during pose output, when trying to normalize the membrane normal stored in the pose." );
+		}
 		norm.x( norm.x() * thkn);
 		norm.y( norm.y() * thkn);
 		norm.z( norm.z() * thkn);

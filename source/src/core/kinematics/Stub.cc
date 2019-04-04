@@ -69,7 +69,11 @@ Stub::from_four_points(
 )
 {
 	Vector e1( a - b);
-	e1.normalize();
+	try {
+		e1.normalize();
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Error in Stub::from_four_points(): " + excn.msg() + "  Error occurred when trying to normalize the vector between points A and B.  A=[" + std::to_string(a.x()) + "," + std::to_string(a.y()) + "," + std::to_string(a.z()) + "], B=[" + std::to_string(b.x()) + "," + std::to_string(b.y()) + "," + std::to_string(b.z()) + "]." );
+	}
 
 	Vector e3( cross( e1, c - b ) );
 	e3.normalize_or_zero();

@@ -737,7 +737,11 @@ Conformation::update_membrane_position( Vector center, Vector normal ) {
 	using namespace core::conformation::membrane;
 
 	// normalize normal vector
-	normal.normalize();
+	try {
+		normal.normalize();
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Error in Conformation::update_membrane_position(): " + excn.msg() + "  Error occurred when trying to normalize normal vector.  This is abnormal." );
+	}
 
 	// Set membrane center
 	residues_[ membrane_info_->membrane_rsd_num() ]->set_xyz( membrane::center, center );

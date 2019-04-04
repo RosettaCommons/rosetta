@@ -1310,17 +1310,29 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 
 	x = WC_coord - centroid;
 	//std::cout << "x: " << x.x() << " " << x.y() << " "  << x.z() << std::endl;
-	x.normalize();
+	try {
+		x.normalize();
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Error in core::chemical::rna::get_rna_base_coordinate_system(): " + excn.msg() + "  Error occurred when trying to normalize centroid-WC_coord vector.  WC_coord=[" + std::to_string( WC_coord.x() ) + "," + std::to_string( WC_coord.y() ) + "," + std::to_string( WC_coord.z() ) + "] centroid=[" + std::to_string( centroid.x() ) + "," + std::to_string( centroid.y() ) + "," + std::to_string( centroid.z() ) + "]" );
+	}
 
 	y = H_coord - centroid; //not orthonormal yet...
 	//std::cout << "y: " << y.x() << " " << y.y() << " "  << y.z() << std::endl;
 	z = cross( x, y );
 	//std::cout << "z: " << z.x() << " " << z.y() << " "  << z.z() << std::endl;
-	z.normalize(); // Should point roughly 5' to 3' if in a double helix.
+	try {
+		z.normalize(); // Should point roughly 5' to 3' if in a double helix.
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Error in core::chemical::rna::get_rna_base_coordinate_system(): " + excn.msg() + "  Error occurred when trying to normalize x cross y vector.  x=[" + std::to_string( x.x() ) + "," + std::to_string( x.y() ) + "," + std::to_string( x.z() ) + "] y=[" + std::to_string( y.x() ) + "," + std::to_string( y.y() ) + "," + std::to_string( y.z() ) + "]" );
+	}
 
 	y = cross( z, x );
 	//std::cout << "y: " << y.x() << " " << y.y() << " "  << y.z() << std::endl;
-	y.normalize(); //not necessary but doesn't hurt.
+	try {
+		y.normalize(); //not necessary but doesn't hurt.
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Error in core::chemical::rna::get_rna_base_coordinate_system(): " + excn.msg() + "  Error occurred when trying to normalize z cross x vector.  z=[" + std::to_string( z.x() ) + "," + std::to_string( z.y() ) + "," + std::to_string( z.z() ) + "] x=[" + std::to_string( x.x() ) + "," + std::to_string( x.y() ) + "," + std::to_string( x.z() ) + "]" );
+	}
 
 	numeric::xyzMatrix< core::Real > M = numeric::xyzMatrix< core::Real > ::cols( x, y, z );
 	return M;

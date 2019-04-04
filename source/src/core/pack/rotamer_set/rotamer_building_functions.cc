@@ -892,11 +892,25 @@ build_water_O_on_donor(
 	Real theta
 )
 {
+	static const std::string errmsg( "Error in core::pack::rotamer_set::build_water_O_on_donor(): " );
 	Vector const reference(10.0, 0.0, 0.0);
 
-	Vector parallel ( ( hxyz - dxyz ).normalize() );
-	Vector perpendicular_1 ( parallel.cross(reference).normalize() );
-	Vector perpendicular_2 ( parallel.cross(perpendicular_1).normalize() );
+	Vector parallel, perpendicular_1, perpendicular_2;
+	try {
+		parallel = ( ( hxyz - dxyz ).normalize() );
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, errmsg + excn.msg() + "  Error occurred when trying to normalize the difference vector between hxyz and dxyz.  hxyz=[" + std::to_string( hxyz.x() ) + "," + std::to_string( hxyz.y() ) + "," + std::to_string( hxyz.z() ) + "], dxyz=[" + std::to_string( dxyz.x() ) + "," + std::to_string( dxyz.y() ) + "," + std::to_string( dxyz.z() ) + "]." );
+	}
+	try {
+		perpendicular_1 = ( parallel.cross(reference).normalize() );
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, errmsg + excn.msg() + "  Error occurred when trying to normalize the cross-product of the donor-proton vector [" + std::to_string( parallel.x() ) + "," + std::to_string( parallel.y() ) + "," + std::to_string( parallel.z() ) + "] and the reference vector [10,0,0].  This means that these vectors are parallel, most likely." );
+	}
+	try {
+		perpendicular_2 = ( parallel.cross(perpendicular_1).normalize() );
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, errmsg + excn.msg() + "  Error occurred when trying to normalize the cross-product of the donor-proton vector [" + std::to_string( parallel.x() ) + "," + std::to_string( parallel.y() ) + "," + std::to_string( parallel.z() ) + "] with its own perpendicular vector [" + std::to_string( perpendicular_1.x() ) + "," + std::to_string( perpendicular_1.y() ) + "," + std::to_string( perpendicular_1.z() ) + "].  This shouldn't be possible." );
+	}
 	return ( hxyz + 1.8*( perpendicular_1*sin(phi)*sin(theta) + perpendicular_2*cos(phi)*sin(theta) + parallel*cos(theta) ) );
 }
 
@@ -923,9 +937,23 @@ build_optimal_hyp_H_for_donor(
 	Real angle
 )
 {
-	Vector parallel ((o1 - hatm1_xyz).normalize());
-	Vector perpendicular_1 ( parallel.cross(reference).normalize()  );
-	Vector perpendicular_2 ( parallel.cross(perpendicular_1).normalize()  );
+	static const std::string errmsg( "Error in core::pack::rotamer_set::build_optimal_hyp_H_for_donor(): " );
+	Vector parallel, perpendicular_1, perpendicular_2;
+	try {
+		parallel = ((o1 - hatm1_xyz).normalize());
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, errmsg + excn.msg() + "  Error occurred when trying to normalize the difference vector between o1 and hatm1.  o1=[" + std::to_string( o1.x() ) + "," + std::to_string( o1.y() ) + "," + std::to_string( o1.z() ) + "], hatm1=[" + std::to_string( hatm1_xyz.x() ) + "," + std::to_string( hatm1_xyz.y() ) + "," + std::to_string( hatm1_xyz.z() ) + "]." );
+	}
+	try {
+		perpendicular_1 = ( parallel.cross(reference).normalize()  );
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, errmsg + excn.msg() + "  Error occurred when trying to normalize the cross-product of the hatm1-o1 vector [" + std::to_string( parallel.x() ) + "," + std::to_string( parallel.y() ) + "," + std::to_string( parallel.z() ) + "] and the reference vector [" + std::to_string( reference.x() ) + "," + std::to_string( reference.y() ) + "," + std::to_string( reference.z() ) + "].  This means that these vectors are parallel, most likely." );
+	}
+	try {
+		perpendicular_2 = ( parallel.cross(perpendicular_1).normalize()  );
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, errmsg + excn.msg() + "  Error occurred when trying to normalize the cross-product of the hatm1-o1 vector [" + std::to_string( parallel.x() ) + "," + std::to_string( parallel.y() ) + "," + std::to_string( parallel.z() ) + "] with its own perpendicular vector [" + std::to_string( perpendicular_1.x() ) + "," + std::to_string( perpendicular_1.y() ) + "," + std::to_string( perpendicular_1.z() ) + "].  This shouldn't be possible." );
+	}
 	Vector new_h ( o1 + (perpendicular_1*sin(angle) + perpendicular_2*cos(angle))*1.650 + parallel*0.5833 );
 	// The numbers above build it at a 1.75 A distance from o1 to new_h and a 109.47 degree angle
 	// the angle between EP1 and EP2
@@ -941,9 +969,23 @@ build_optimal_hyp_H_for_acceptor(
 	Vector const & reference,
 	Real angle
 ){
-	Vector parallel ((o2 - aatm2_xyz).normalize());
-	Vector perpendicular_1 ( parallel.cross(reference).normalize()  );
-	Vector perpendicular_2 ( parallel.cross(perpendicular_1).normalize()  );
+	static const std::string errmsg( "Error in core::pack::rotamer_set::build_optimal_hyp_H_for_acceptor(): " );
+	Vector parallel, perpendicular_1, perpendicular_2;
+	try {
+		parallel = ((o2 - aatm2_xyz).normalize());
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, errmsg + excn.msg() + "  Error occurred when trying to normalize the difference vector between o2 and aatm2.  o2=[" + std::to_string( o2.x() ) + "," + std::to_string( o2.y() ) + "," + std::to_string( o2.z() ) + "], aatm2=[" + std::to_string( aatm2_xyz.x() ) + "," + std::to_string( aatm2_xyz.y() ) + "," + std::to_string( aatm2_xyz.z() ) + "]." );
+	}
+	try {
+		perpendicular_1 = ( parallel.cross(reference).normalize()  );
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, errmsg + excn.msg() + "  Error occurred when trying to normalize the cross-product of the aatm2-o2 vector [" + std::to_string( parallel.x() ) + "," + std::to_string( parallel.y() ) + "," + std::to_string( parallel.z() ) + "] and the reference vector [" + std::to_string( reference.x() ) + "," + std::to_string( reference.y() ) + "," + std::to_string( reference.z() ) + "].  This means that these vectors are parallel, most likely." );
+	}
+	try {
+		perpendicular_2 = ( parallel.cross(perpendicular_1).normalize()  );
+	} catch( utility::excn::Exception & excn ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, errmsg + excn.msg() + "  Error occurred when trying to normalize the cross-product of the aatm2-o2 vector [" + std::to_string( parallel.x() ) + "," + std::to_string( parallel.y() ) + "," + std::to_string( parallel.z() ) + "] with its own perpendicular vector [" + std::to_string( perpendicular_1.x() ) + "," + std::to_string( perpendicular_1.y() ) + "," + std::to_string( perpendicular_1.z() ) + "].  This shouldn't be possible." );
+	}
 	Vector new_h ( o2 + (perpendicular_1*sin(angle) + perpendicular_2*cos(angle))*1.637 + parallel*0.6186 );
 	// The numbers above build it at a 1.75 A distance from o2 to new_h and a 110.7 degree angle
 

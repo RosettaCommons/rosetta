@@ -846,7 +846,11 @@ SymmetricConformation::recalculate_transforms( ) {
 					Vector const ihat( ( coordframe_rsd.xyz("N") - orig ).normalized() );
 					Vector jhat( coordframe_rsd.xyz("C") - orig );
 					jhat -= ihat.dot( jhat )*ihat;
-					jhat.normalize();
+					try {
+						jhat.normalize();
+					} catch( utility::excn::Exception & excn ) {
+						throw CREATE_EXCEPTION(utility::excn::Exception, "Error in SymmetricConformation::recalculate transforms(): " + excn.msg() + "  Error occurred when trying to normalize coordinate vector for atom \"C\", residue " + std::to_string( coordframe_pos ) + "." );
+					}
 					runtime_assert( std::abs( ihat.dot( jhat ) ) < 1e-6 ); // should make this an assert
 					vrt_res_op->set_xyz("ORIG", orig );
 					vrt_res_op->set_xyz("X", orig + ihat );
