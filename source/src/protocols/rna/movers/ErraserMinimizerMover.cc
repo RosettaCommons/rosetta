@@ -123,7 +123,6 @@
 
 #include <numeric>
 
-
 static basic::Tracer TR( "protocols.rna.movers.ErraserMinimizerMover" );
 
 using namespace basic::options;
@@ -595,11 +594,20 @@ void
 identify_chunks(
 	Pose const & pose,
 	utility::vector1< std::set< Size > > & sliced_list_final,
-	Size const virtual_res_pos
+	Size const virtual_res_pos,
+	Size const nproc
 ) {
+	// Create at least one chunk per proc
+
 	TR << "Identifying chunks..." << std::endl;
 	Size const total_res = pose.size() - 1;
-	if ( total_res <= 150 ) {
+	// Historically, we permitted poses to be sliced up into 'chunks' for minimization.
+	// This is not a very good system in general, with modern scoring machinery. Here,
+	// we ensure that this doesn't happen if you have one core allocated.. If you have
+	// multiple, go to town (but only if the pose is very big -- I haven't seen this
+	// be worth it yet).
+	Size const enormous_pose_size = 15000;
+	if ( nproc == 1 || pose.size() < enormous_pose_size ) {
 		// All in one.
 		std::set< Size > res_set;
 		for ( Size i = 1; i <= total_res; ++i ) {
@@ -610,7 +618,7 @@ identify_chunks(
 	}
 
 	TR << "Found " << total_res << " residues." << std::endl;
-	Size const n_chunk = pose.size() / 100;
+	Size const n_chunk = std::max( nproc, pose.size() / 100 );
 	Size n_chunk_left = n_chunk;
 	Size chunk_size = 0;
 	std::set< Size > res_list_unsliced;
@@ -893,6 +901,31 @@ void
 ErraserMinimizerMover::apply(
 	Pose & pose
 ) {
+	// OK: if rank is zero and nproc is greater than one, then all you're doing is handing out chunks and merging results back in.
+	// Otherwise, all you're doing is acting on chunks.
+
+	if ( work_partition_ ) {
+		TR << "Running a work-partition scheme where we distribute entire poses." << std::endl;
+		pose_preliminaries( pose );
+		process_entire_pose( pose );
+	} else {
+#if defined USEMPI && defined SERIALIZATION
+		utility_exit_with_message( "Non-work partition schemes for minimization not supported");
+#else
+		utility_exit_with_message( "Somehow, you managed to get to work partition false even though you're not using MPI. That's bad!");
+#endif
+	}
+}
+
+/// @brief Some pose setup functions that can be separated from apply
+/// @details In erraser2, there are some conventional pose setup operations that
+/// are a bit of a distraction from the main body of the apply method; they
+/// represent establishing the correct internal representation of the pose more
+/// than any actual operation on the pose. So, they all live here.
+void
+ErraserMinimizerMover::pose_preliminaries(
+	Pose & pose
+) {
 	core::pose::rna::make_phosphate_nomenclature_matches_mini( pose );
 
 	if ( ready_set_only_ ) return;
@@ -906,12 +939,10 @@ ErraserMinimizerMover::apply(
 		}
 	}
 
-
 	// ARGH DIRECT OPTIONS ACCESS
 	auto specified_fixed_res = option[ fixed_res ].resnum_and_chain();
 	auto fixed_res_in_pose_numbering = core::pose::full_model_info::const_full_model_info( pose ).full_model_parameters()->conventional_to_full( specified_fixed_res );
 	std::copy( fixed_res_in_pose_numbering.begin(), fixed_res_in_pose_numbering.end(), std::inserter( fixed_res_list_, fixed_res_list_.end() ) );
-
 
 	// If this pose 'comes with' a particularly opinionated FT, don't change it.
 	if ( pose.fold_tree().num_cutpoint() == 0 ) {
@@ -925,10 +956,9 @@ ErraserMinimizerMover::apply(
 	//TR << pose.fold_tree();
 
 	// Add a virtual residue for density scoring
-	Size const virtual_res_pos = add_virtual_res( pose );
+	virtual_res_pos = add_virtual_res( pose );
 	pose::Pose const pose_full = pose;
-	Size const nres( pose.size() );
-	Size const nres_moving( nres - fixed_res_list_.size() );
+	//Size const nres( pose.size() );
 
 	// Output the sequence
 	std::string const & working_sequence = pose.sequence();
@@ -946,14 +976,24 @@ ErraserMinimizerMover::apply(
 	// Each minimization gets its own little output file. Notably, while we
 	// must figure out the chunks every time, we can skip chunks for which
 	// an appropriate output file exists.
-	utility::vector1< std::set< Size > > chunks;
+	//utility::vector1< std::set< Size > > chunks;
 	// AMW TODO: read chunks from temp file if exists
-	identify_chunks( pose, chunks, virtual_res_pos );
-	Size const n_chunk = chunks.size();
-	TR.Debug << "Identified " << n_chunk << " chunks" << std::endl;
-	for ( auto const & chunk : chunks ) {
+	// AMW: at least one chunk per proc.
+	identify_chunks( pose, chunks_, virtual_res_pos, nproc_ );
+	TR.Debug << "Identified " << chunks_.size() << " chunks" << std::endl;
+	for ( auto const & chunk : chunks_ ) {
 		TR.Trace << chunk << std::endl;
 	}
+}
+
+// Main workhorse function
+void
+ErraserMinimizerMover::process_entire_pose(
+	Pose & pose
+) {
+	Size const n_chunk = chunks_.size();
+	Size const nres( pose.size() );
+	Size const nres_moving( nres - fixed_res_list_.size() );
 
 	Size start_idx = 1;
 	// load_checkpoint: open a file that reads a chunk ordering
@@ -1042,11 +1082,11 @@ ErraserMinimizerMover::apply(
 		// Constrain bonded atom sets to the starting geometry
 		kinematics::MoveMap chunk_mm( mm );
 		if ( vary_bond_geometry_ ) {
-			vary_bond_geometry( chunk_mm, pose, allow_insert, chunks[ chunk_i ] );
+			vary_bond_geometry( chunk_mm, pose, allow_insert, chunks_[ chunk_i ] );
 		}
 		//Ensure OFF for chunks - probably not needed
 		if ( n_chunk != 1 ) {
-			turn_off_for_chunks( chunk_mm, pose, chunks[chunk_i] );
+			turn_off_for_chunks( chunk_mm, pose, chunks_[chunk_i] );
 		}
 		protocols::stepwise::modeler::output_movemap( chunk_mm, pose, TR.Debug );
 		scorefxn_->show( TR, pose );
@@ -1132,22 +1172,45 @@ ErraserMinimizerMover::apply(
 	++ii;
 }
 
-// XRW TEMP std::string
-// XRW TEMP ErraserMinimizerMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ErraserMinimizerMover::mover_name();
-// XRW TEMP }
+/// @brief Returns the MPI rank of the proc this Mover is running on
+int ErraserMinimizerMover::rank() const {
+#ifndef USEMPI
+	if ( rank_ > 0 ) {
+		utility_exit_with_message( "Somehow rank_ is greater than 0 in a non-MPI context!" );
+	}
+#endif
+	return rank_;
+}
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ErraserMinimizerMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ErraserMinimizerMover >();
-// XRW TEMP }
+/// @brief Returns the total MPI nproc
+int ErraserMinimizerMover::nproc() const {
+#ifndef USEMPI
+	if ( nproc_ > 1 ) {
+		utility_exit_with_message( "Somehow nproc_ is greater than 1 in a non-MPI context!" );
+	}
+#endif
+	return nproc_;
+}
 
-// XRW TEMP std::string
-// XRW TEMP ErraserMinimizerMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ErraserMinimizerMover";
-// XRW TEMP }
+/// @brief Sets the MPI rank of the proc this Mover is running on
+void ErraserMinimizerMover::rank( int const rank ) {
+#ifndef USEMPI
+	if ( rank_ > 0 || rank > 0 ) {
+		utility_exit_with_message( "Cannot set rank_ is greater than 0 in a non-MPI context!" );
+	}
+#endif
+	rank_ = rank;
+}
+
+/// @brief Sets the total MPI nproc
+void ErraserMinimizerMover::nproc( int const nproc ) {
+#ifndef USEMPI
+	if ( nproc_ > 1 || nproc > 1 ) {
+		utility_exit_with_message( "Cannot set nproc_ is greater than 1 in a non-MPI context!" );
+	}
+#endif
+	nproc_ = nproc;
+}
 
 std::string ErraserMinimizerMover::get_name() const {
 	return mover_name();

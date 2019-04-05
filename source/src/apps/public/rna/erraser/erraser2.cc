@@ -27,7 +27,7 @@
 // You may need to edit the above fasta file if your PDB contains any non-RNA, non-protein residues
 //
 
-#ifdef USEMPI
+#if defined USEMPI && defined SERIALIZATION
 #include <mpi.h>
 #endif
 
@@ -319,7 +319,28 @@ PoseOP obtain_start_pose( Size const nstruct, utility::vector1< Size > & unconve
 
 
 ///////////////////////////////////////////////////////////////////////////////
-void do_erraser2( Size const nstruct, /*PoseOP const & start_pose,*/ ScoreFunctionOP const & scorefxn ) {
+/// @brief Perform the erraser2 protocol in a working directory
+/// @details This function also does pose readin (because it could be resuming
+/// from checkpoints). In MPI contexts, this function is run on every core. (We
+/// use a work-partition job distribution framework by default, where each core
+/// is just assigned a fixed set of nstruct.) As a result, it needs to take two
+/// ints, which represent its rank and the total number of processors. Since MPI
+/// libraries use signed ints, we follow their convention rather than contorting
+/// ourselves to make them Sizes.
+void do_erraser2(
+	Size const nstruct,
+	/*PoseOP const & start_pose,*/
+	ScoreFunctionOP const & scorefxn,
+	int const rank,
+	int const nproc,
+	bool const work_partition = true
+) {
+
+#ifndef USEMPI
+	// for non-MPI, rank always 0, nproc 1
+
+	debug_assert( rank == 0 && nproc == 1 );
+#endif
 
 	// Outline:
 	// 1. Read in a pose.
@@ -333,6 +354,7 @@ void do_erraser2( Size const nstruct, /*PoseOP const & start_pose,*/ ScoreFuncti
 
 	utility::vector1< Size > unconverged_res;
 	PoseOP start_pose = obtain_start_pose( nstruct, unconverged_res, checkpoints_to_pass );
+	runtime_assert( start_pose );
 	(*scorefxn)(*start_pose);
 
 	// Need to switch after minimizer!
@@ -350,6 +372,11 @@ void do_erraser2( Size const nstruct, /*PoseOP const & start_pose,*/ ScoreFuncti
 	core::Size const nrounds = option[ rounds ].value();
 
 	ErraserMinimizerMover erraser_minimizer;
+	// if true: solely responsible for all chunks
+	// if false: node 0 coordinates, nodes 1-n min chunks.
+	erraser_minimizer.work_partition( work_partition );
+	erraser_minimizer.rank( rank );
+	erraser_minimizer.nproc( nproc );
 	erraser_minimizer.nstruct( nstruct );
 	erraser_minimizer.scorefxn( scorefxn );
 	erraser_minimizer.edens_scorefxn( scorefxn );
@@ -429,15 +456,31 @@ erraser2_test()
 	// in this scheme you do all nstruct with residue procid
 
 	int rank = 0, nproc = 1;
-#ifdef USEMPI
+#if defined USEMPI && defined SERIALIZATION
 	MPI_Comm_rank( MPI_COMM_WORLD, &rank );
 	MPI_Comm_size( MPI_COMM_WORLD, &nproc );
 #endif
 
 	utility::vector1< Size > my_nstruct;
-	for ( Size ii = rank + 1; ii <= nstruct; ii += nproc ) {
-		my_nstruct.push_back( ii );
+	bool work_partition = true;
+	if ( nstruct == 1 && nproc > 1 ) { // all procs split one nstruct
+		// There is one possible explanation for this: we want to assign the
+		// same nstruct to multiple cores, to speed up individual structures.
+		// This is, surprisingly, fine, but it does require coordination!
+		my_nstruct.push_back( 1 );
+		work_partition = false;
+	} else if ( nproc == 1 ) { // all nstruct go to this proc
+		for ( Size ii = rank + 1; ii <= nstruct; ++ii ) {
+			my_nstruct.push_back( ii );
+		}
+	} else if ( int( nstruct ) > nproc ) { // all procs pick from many nstruct
+		for ( Size ii = rank + 1; ii <= nstruct; ii += nproc ) {
+			my_nstruct.push_back( ii );
+		}
+	} else {
+		utility_exit_with_message( "We haven't yet figured out the case where we want to launch multiple parallel runs on one RNA, but we also want to subdivide those runs among multiple processors. Consider running multiple jobs manually (i.e., with 'bash-level' job distribution." );
 	}
+
 
 
 
@@ -450,19 +493,23 @@ erraser2_test()
 		utility_exit_with_message( "You must provide a scoring function via -score:weights. Try -score:weights stepwise/rna/rna_res_level_energy4.wts with -set_weights elec_dens_fast 10.0." );
 	}
 
+	TR << "made it 483 " << std::endl;
 	if ( option[ in::file::s ]().empty() ) {
 		utility_exit_with_message( "You must provide a starting model via -in:file:s in PDB format." );
 	}
 
+	TR << "made it 488 " << std::endl;
 
 	// Input is handled for each nstruct because of checkpoint naming...
 
 
 	for ( Size const job : my_nstruct ) {
-		do_erraser2( job, /*start_pose, */scorefxn );
+
+		TR << "made it 495 " << std::endl;
+		do_erraser2( job, /*start_pose, */scorefxn, rank, nproc, work_partition );
 	}
 
-#ifdef USEMPI
+#if defined USEMPI && defined SERIALIZATION
 	MPI_Barrier( MPI_COMM_WORLD );
 	MPI_Finalize();
 #endif

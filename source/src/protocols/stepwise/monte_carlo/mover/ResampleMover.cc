@@ -181,6 +181,7 @@ ResampleMover::apply( pose::Pose & pose,
 	using namespace core::pose::full_model_info;
 
 	TR << "About to remodel move_element " << swa_move << std::endl;
+	runtime_assert( full_model_info_defined( pose ) );
 	move_type = to_string( swa_move.move_type() );
 	std::transform(move_type.begin(), move_type.end(), move_type.begin(), ::tolower); // this is why we love C
 

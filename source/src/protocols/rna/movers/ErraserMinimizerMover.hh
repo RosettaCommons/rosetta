@@ -68,6 +68,9 @@ public:
 
 	void apply( Pose & pose ) override;
 
+	void process_entire_pose( Pose & pose );
+	void pose_preliminaries( Pose & pose );
+
 	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & /*data*/,
@@ -141,6 +144,24 @@ public:
 	void
 	constrain_phosphate( bool const setting ) { constrain_phosphate_ = setting; }
 
+	void
+	rank( int const rank );
+
+	int
+	rank() const;
+
+	void
+	nproc( int const nproc );
+
+	int
+	nproc() const;
+
+	void
+	work_partition( bool const work_partition ) { work_partition_ = work_partition; }
+
+	int
+	work_partition() const { return work_partition_; }
+
 private:
 
 	utility::vector1< std::pair< AtomID, AtomID > > bonded_atom_list_;
@@ -156,9 +177,15 @@ private:
 	utility::vector1< core::Size > cutpoint_list_;
 	std::string output_pdb_name_;
 	Size nstruct_ = 1;
+	int rank_ = 0;
+	int nproc_ = 1;
+	bool work_partition_ = true;
 
 	ScoreFunctionOP scorefxn_;
 	ScoreFunctionOP edens_scorefxn_;
+
+	utility::vector1< std::set< Size > > chunks_;
+	Size virtual_res_pos;
 };
 
 } //movers

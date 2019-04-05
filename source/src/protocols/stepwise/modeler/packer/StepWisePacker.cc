@@ -43,6 +43,9 @@
 #include <protocols/minimization_packing/GreenPacker.fwd.hh>
 
 #include <utility>
+#ifdef MULTI_THREADED
+#include <utility/pointer/memory.hh>
+#endif
 #include <utility/exit.hh>
 
 #include <string>

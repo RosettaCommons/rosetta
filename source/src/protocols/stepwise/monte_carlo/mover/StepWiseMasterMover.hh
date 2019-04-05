@@ -37,6 +37,13 @@ namespace stepwise {
 namespace monte_carlo {
 namespace mover {
 
+/// @brief Central mover of stepwise Monte Carlo protocols, handing work off to special move types.
+/// @details It's worth noting that one function that for historical reasons is a method of this
+/// class is capable of spawning threads. Notably, that method is not called by this Mover's apply
+/// function (rather, it calls this Mover's apply function!) and so you don't have to worry. If
+/// you are studying this class as an archetypical example of a Mover, for one thing, don't do that
+/// because it isn't; for another thing, don't multithread your apply function as a misguided
+/// inference from how this Mover has a multithreaded function that's not apply.
 class StepWiseMasterMover: public protocols::moves::Mover {
 
 public:
@@ -54,6 +61,10 @@ public:
 	virtual void apply( Pose & );
 
 	virtual std::string get_name() const { return "StepWiseMasterMover"; }
+
+	StepWiseMasterMover( StepWiseMasterMover const & src );
+
+	protocols::moves::MoverOP clone() const;
 
 	void
 	apply( core::pose::Pose & pose,

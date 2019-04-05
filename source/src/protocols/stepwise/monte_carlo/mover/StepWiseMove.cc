@@ -22,6 +22,7 @@
 #include <utility/string_util.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <basic/Tracer.hh>
+#include <utility/pointer/memory.hh>
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.StepWiseMove" );
 
@@ -41,6 +42,7 @@ StepWiseMove::StepWiseMove( MoveElement const & move_element,
 	utility::vector1< Attachment > const & attachments,
 	MoveType const & move_type ):
 	utility::pointer::ReferenceCount(),
+	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_element_( move_element ),
 	attachments_( attachments ),
 	move_type_( move_type )
@@ -53,6 +55,7 @@ StepWiseMove::StepWiseMove( MoveElement const & move_element,
 	MoveType const & move_type,
 	std::string const & submotif_tag ):
 	utility::pointer::ReferenceCount(),
+	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_element_( move_element ),
 	attachments_( attachments ),
 	move_type_( move_type ),
@@ -65,6 +68,7 @@ StepWiseMove::StepWiseMove( MoveElement const & move_element,
 	Attachment const & attachment,
 	MoveType const & move_type ):
 	utility::pointer::ReferenceCount(),
+	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_element_( move_element ),
 	attachments_( utility::tools::make_vector1( attachment ) ),
 	move_type_( move_type )
@@ -76,6 +80,7 @@ StepWiseMove::StepWiseMove( Size const res,
 	utility::vector1< Attachment > const & attachments,
 	MoveType const & move_type ):
 	utility::pointer::ReferenceCount(),
+	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_element_( utility::tools::make_vector1( res ) ),
 	attachments_( attachments ),
 	move_type_( move_type )
@@ -87,6 +92,7 @@ StepWiseMove::StepWiseMove( Size const res,
 	Attachment const & attachment,
 	MoveType const & move_type ):
 	utility::pointer::ReferenceCount(),
+	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_element_( utility::tools::make_vector1( res ) ),
 	attachments_( utility::tools::make_vector1( attachment ) ),
 	move_type_( move_type )
@@ -95,6 +101,7 @@ StepWiseMove::StepWiseMove( Size const res,
 
 StepWiseMove::StepWiseMove():
 	utility::pointer::ReferenceCount(),
+	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_type_( NO_MOVE )
 {
 }
@@ -102,6 +109,7 @@ StepWiseMove::StepWiseMove():
 StepWiseMove::StepWiseMove( std::string const & swa_move_string,
 	core::pose::full_model_info::FullModelParametersCOP full_model_parameters /* = 0 */ ):
 	utility::pointer::ReferenceCount(),
+	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_type_( NO_MOVE )
 {
 	// Obtain the move string vector
@@ -259,9 +267,16 @@ StepWiseMove::StepWiseMove( utility::vector1< std::string > const & swa_move_str
 StepWiseMove::~StepWiseMove() = default;
 
 StepWiseMove::StepWiseMove( StepWiseMove const & src ):
-	ReferenceCount( src )
+	ReferenceCount( src ),
+	utility::pointer::enable_shared_from_this< StepWiseMove >()
 {
 	*this = src;
+}
+
+StepWiseMoveOP
+StepWiseMove::clone() const
+{
+	return utility::pointer::make_shared< StepWiseMove >( *this );
 }
 
 Size

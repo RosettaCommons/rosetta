@@ -32,6 +32,7 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
+#include <core/id/AtomID.hh>
 
 #include <numeric/random/random.hh>
 #include <basic/Tracer.hh>
@@ -45,6 +46,18 @@
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+
+#ifdef MULTI_THREADED
+#include <basic/options/option.hh>
+#include <basic/options/keys/jd3.OptionKeys.gen.hh>
+#include <CTPL/ctpl_stl.h>
+#include <thread>
+#include <utility/pointer/memory.hh>
+#include <core/init/init.hh>
+
+using boolOP = utility::pointer::shared_ptr< bool >;
+
+#endif
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.StepWiseMasterMover" );
 
@@ -90,6 +103,22 @@ StepWiseMasterMover::StepWiseMasterMover( core::scoring::ScoreFunctionCOP scoref
 
 //Destructor
 StepWiseMasterMover::~StepWiseMasterMover() = default;
+
+protocols::moves::MoverOP StepWiseMasterMover::clone() const {
+	return utility::pointer::make_shared< StepWiseMasterMover >( *this );
+}
+
+//Constructor
+StepWiseMasterMover::StepWiseMasterMover( StepWiseMasterMover const & src ):
+	Mover(),
+	minimize_single_res_( src.minimize_single_res_ ), // changes during run
+	success_( src.success_ ),
+	proposal_density_ratio_( src.proposal_density_ratio_ ),
+	num_tested_moves_( src.num_tested_moves_ )
+{
+	initialize( src.scorefxn_->clone(), src.options_->clone() );
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -629,6 +658,271 @@ void ensure_appropriate_foldtree_for_move( StepWiseMove const & stepwise_move, P
 	}
 }
 
+#ifdef MULTI_THREADED
+std::map< Size, std::set< Size > >
+rebuild_edges(
+	pose::Pose const & start_pose,
+	utility::vector1< Size > const & residues_to_rebuild
+) {
+	std::map< Size, std::set< Size > > ss;
+	for ( Size const res1 : residues_to_rebuild ) {
+		std::set< Size > s;
+		for ( Size const res2 : residues_to_rebuild ) {
+			if ( start_pose.residue( res1 ).xyz( 1 ).distance_squared( start_pose.residue( res2 ).xyz( 1 ) ) < 225 ) {
+				// connected
+				s.insert( res2 );
+			}
+		}
+		ss[ res1 ] = s;
+	}
+	return ss;
+}
+
+Size
+allocate_residue(
+	utility::vector1< Size > const & residues_to_rebuild,
+	std::map< Size, boolOP > const & currently_rebuilding,
+	std::map< Size, std::set< Size > > const & edge_map,
+	std::set< Size > const & completed_res
+) {
+	// What's the next residue we can pass out?
+	for ( Size const res1 : residues_to_rebuild ) {
+		if ( currently_rebuilding.count( res1 ) != 0 )  continue;
+		if ( completed_res.find( res1 ) != completed_res.end() )  continue;
+		bool too_near_a_current = false;
+		//for ( Size const cur : currently_rebuilding ) {
+		for ( auto const & cr : currently_rebuilding ) {
+			Size const cur = cr.first;
+			if ( edge_map.at( cur ).find( res1 ) != edge_map.at( cur ).end() ) {
+				too_near_a_current = true;
+				break;
+			}
+		}
+		if ( too_near_a_current )  continue;
+
+		// OK, this one works.
+		return res1;
+	}
+
+	//TR.Info << "Could not find another residue. Returning zero; waiting for later." << std::endl;
+	return 0;
+}
+#endif
+
+void set_up_params_for_move( pose::Pose & output_pose, StepWiseMove const & stepwise_move ) {
+
+	// Set up the FullModelInfo so that -- at THIS MOMENT -- the only known sampled residue
+	// is the move element. This keeps stuff locked down better and makes the RMSD calculation
+	// sane.
+	auto & FMI = nonconst_full_model_info( output_pose );
+	FullModelParametersOP FMP = FMI.full_model_parameters()->clone();
+	auto rmsd_res = stepwise_move.move_element();
+	if ( stepwise_move.move_type() == RESAMPLE_INTERNAL_LOCAL ) {
+		// Also RMSD over prior. This is a suite thing after all. Saves superposition voes.
+		rmsd_res.push_back( stepwise_move.move_element()[ 1 ] - 1 );
+	}
+	FMP->set_parameter_as_res_list( SAMPLE, stepwise_move.move_element() );
+	FMP->set_parameter_as_res_list( CALC_RMS, rmsd_res );
+	FMI.set_full_model_parameters( FMP );
+}
+
+
+#ifdef MULTI_THREADED
+
+/// @brief this function just calls apply in child threads w/ an OP to its name.
+/// @details It's kind of gross to pass a lambda calling a member function directly to the
+/// CTPL thread pool, so instead I'm using a wrapper.
+void
+threaded_apply_fxn_wrapper(
+	StepWiseMasterMover* ths,
+	PoseOP thispose,
+	StepWiseMoveOP thismove ) {
+	// Actually clone.
+	StepWiseMasterMoverOP newptr = utility::pointer::dynamic_pointer_cast< StepWiseMasterMover >( ths->clone() );
+	//core::init::init();//_random_number_generators();
+	core::init::init_random_number_generators();
+	//
+	TR << "In threaded_apply_fxn_wrapper" << std::endl;
+	ensure_appropriate_foldtree_for_move( *thismove, *thispose );
+	set_up_params_for_move( *thispose, *thismove );
+	newptr->apply( *thispose, *thismove, true );
+	//ths->apply( *thispose, *thismove, true );
+}
+
+void
+StepWiseMasterMover::resample_full_model(
+	pose::Pose const & start_pose,
+	pose::Pose & output_pose,
+	bool const ,//checkpointing_breadcrumbs,
+	utility::vector1< Size > const & residues_to_rebuild,
+	Size const resample_round,
+	Size const nstruct
+) {
+
+	if ( ! basic::options::option[ basic::options::OptionKeys::jd3::nthreads ].active() ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "jd3::nthreads not specified" );
+	}
+
+	if ( basic::options::option[ basic::options::OptionKeys::jd3::nthreads ]() <= 0 ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "negative or zero value passed in for jd3::nthreads" );
+	}
+
+	Size nthreads_ = basic::options::option[ basic::options::OptionKeys::jd3::nthreads ]();
+	//std::shared_ptr< ctpl::thread_pool > =  thread_pool_.reset( new ctpl::thread_pool( nthreads_ ) );
+	auto thread_pool_ = utility::pointer::make_shared< ctpl::thread_pool >( nthreads_ );
+
+	TR << "Initialized thread pool." << std::endl;
+
+	// AMW: In this alpha-version of multithreading, we aren't going to checkpoint because
+	// that seems hard, but maybe we won't need it if runs are nproc-x faster.
+	//
+	// This will be streamlined + minimal compared to the other version.
+	using namespace options;
+	output_pose = start_pose;
+	initialize();
+
+	utility::vector1< StepWiseMove > stepwise_moves = moves_for_pose( output_pose, residues_to_rebuild );
+	//Size start_idx = 1;
+
+	TR << "Moves for pose determined." << std::endl;
+
+	// Here we make the simplifying assumption: each stepwise move actually has
+	// a single residue move element.
+	utility::vector1< Size > residues;
+	//std::map< Size, StepWiseMove > res_to_move;
+	std::map< Size, StepWiseMoveOP > res_to_move;
+	std::map< Size, PoseOP > res_to_pose;
+	for ( StepWiseMove const & stepwise_move : stepwise_moves ) {
+		residues.push_back( stepwise_move.move_element()[ 1 ] );
+		res_to_move[ stepwise_move.move_element()[ 1 ] ] = stepwise_move.clone();
+	}
+	auto res_connections = rebuild_edges( start_pose, residues );
+
+	Size queued = 0;
+	// the bool* get passed to the thread where they can be set to indicate job finished
+	std::map< Size, boolOP > currently_rebuilding;
+	std::set< Size > completed_moves;
+	while ( queued < nthreads_ && queued < residues.size() ) {
+		// queue a job
+		Size next_res = allocate_residue( residues, currently_rebuilding, res_connections, completed_moves );
+		if ( next_res == 0 ) {
+			// no additional jobs can be allocated for now
+			break;
+		}
+
+		if ( completed_moves.size() + currently_rebuilding.size() == residues.size() ) { break; }
+
+		currently_rebuilding[ next_res ] = utility::pointer::make_shared< bool >( false ); // // false until finished!
+		res_to_pose[ next_res ] = utility::pointer::make_shared< core::pose::Pose >();
+		res_to_pose[ next_res ]->detached_copy( output_pose );
+
+		TR << "Queuing thread for " << res_to_move[ next_res ] << "." << std::endl;
+		PoseOP & thispose = res_to_pose[ next_res ];
+		StepWiseMoveOP & thismove = res_to_move[ next_res ];
+		boolOP & marker = currently_rebuilding[ next_res ];
+		thread_pool_->push( [this, thispose, thismove, marker]( int id ){ std::cout << "inside " << id << std::endl; threaded_apply_fxn_wrapper( this, thispose, thismove ); (*marker) = true; } ); //, thispose, thismove );
+		++queued;
+	}
+
+	TR << "Completed " << completed_moves.size() << " moves of " << stepwise_moves.size() << std::endl;
+	while ( completed_moves.size() < stepwise_moves.size() ) {
+
+		while ( currently_rebuilding.size() <= 2*nthreads_ ) {
+			Size next_res = allocate_residue( residues, currently_rebuilding, res_connections, completed_moves );
+			if ( next_res == 0 ) {
+				// no additional jobs can be allocated for now! we must wait for some jobs to complete.
+				/*
+				* TR << "Failed to find anything good. State:" << std::endl;
+				TR << "Currently rebuilding: { ";
+				for ( auto const & elem : currently_rebuilding ) TR << elem << ", ";
+				TR << " }" << std::endl;
+				TR << "Moves completed: { ";
+				for ( auto const & elem : completed_moves ) TR << elem << ", ";
+				TR << " }" << std::endl;
+				TR << "Moves overall: { ";
+				for ( auto const & elem : stepwise_moves ) TR << elem << ", ";
+				TR << " }" << std::endl;
+				*/
+				break;
+			}
+
+			// next res is nonzero
+			currently_rebuilding[ next_res ] = utility::pointer::make_shared< bool >( false ); //*( currently_rebuilding[ next_res ] ) = false; // false until finished!
+			res_to_pose[ next_res ] = utility::pointer::make_shared< core::pose::Pose >();
+			res_to_pose[ next_res ]->detached_copy( output_pose );
+			TR << "Queuing thread for " << next_res << std::endl;
+			PoseOP & thispose = res_to_pose[ next_res ];
+			StepWiseMoveOP & thismove = res_to_move[ next_res ];
+			utility::pointer::shared_ptr< bool > & marker = currently_rebuilding[ next_res ];
+			thread_pool_->push( [this, thispose, thismove, marker]( int id ){ std::cout << "inside " << id << std::endl; threaded_apply_fxn_wrapper( this, thispose, thismove ); (*marker) = true; } );
+			++queued;
+
+			if ( currently_rebuilding.size() + completed_moves.size() == stepwise_moves.size() )  break;
+		}
+
+		// Scan the running jobs -- process and delete completed elements from the list
+		// as they are encountered
+		//bool job_finished( false );
+		for ( auto it = currently_rebuilding.begin(); it != currently_rebuilding.end(); /*nothing*/ ) {
+			bool finished_p = *( it->second ); // JobRunnerOP job_runner = *job_runner_iter;
+			if ( finished_p ) {
+				TR << "Processing thread for " << it->first << std::endl;
+
+				// merge back into output pose
+				using namespace core::id;
+				utility::vector1< AtomID > atom_ids;
+				utility::vector1< PointPosition > point_positions;
+				for ( Size const resi : res_to_move[ it->first ]->move_element() ) {
+					if ( resi > 0 ) {
+						for ( Size ai = 1; ai <= output_pose.residue( resi-1 ).natoms(); ++ai ) {
+							//output_pose.set_xyz( AtomID( ai, resi-1 ), res_to_pose[ it->first ]->residue( resi-1 ).xyz( ai ) );
+							atom_ids.emplace_back( ai, resi-1 );
+							point_positions.emplace_back( res_to_pose[ it->first ]->residue( resi-1 ).xyz( ai ) );
+						}
+					}
+					for ( Size ai = 1; ai <= output_pose.residue( resi ).natoms(); ++ai ) {
+						//output_pose.set_xyz( AtomID( ai, resi ), res_to_pose[ it->first ]->residue( resi ).xyz( ai ) );
+						atom_ids.emplace_back( ai, resi );
+						point_positions.emplace_back( res_to_pose[ it->first ]->residue( resi ).xyz( ai ) );
+					}
+					if ( resi < output_pose.size() ) {
+						for ( Size ai = 1; ai <= output_pose.residue( resi+1 ).natoms(); ++ai ) {
+							//output_pose.set_xyz( AtomID( ai, resi+1 ), res_to_pose[ it->first ]->residue( resi+1 ).xyz( ai ) );
+							atom_ids.emplace_back( ai, resi+1 );
+							point_positions.emplace_back( res_to_pose[ it->first ]->residue( resi+1 ).xyz( ai ) );
+						}
+					}
+				}
+				output_pose.batch_set_xyz( atom_ids, point_positions );
+
+				TR << "After executing move " << res_to_move[ it->first ]->move_element() << ", score is " << ( *scorefxn_ )( output_pose ) << std::endl;
+				completed_moves.insert( it->first );
+				TR << "Progress: completed " << completed_moves.size() << " of " << stepwise_moves.size() << std::endl;
+				auto to_delete = it;
+				++it;
+				--queued;
+				currently_rebuilding.erase( to_delete );
+				//job_finished = true;
+			} else {
+				++it;
+			}
+		}
+		// only sleep in above locations...
+		if ( currently_rebuilding.size() != 0 && completed_moves.size() != stepwise_moves.size() ) {
+			std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+		}
+		//if ( ! job_extractor_->job_queue_empty() && ! job_finished ) {
+		// std::this_thread::sleep_for( std::chrono::milliseconds( 10 ) );
+		//}
+
+	}
+
+	TR << "-------------------------------------------------------" << std::endl;
+	TR << "Resample round " << resample_round << " for nstruct " << nstruct << " is complete." << std::endl;
+	TR << "-------------------------------------------------------" << std::endl;
+}
+
+#else
 void
 StepWiseMasterMover::resample_full_model(
 	pose::Pose const & start_pose,
@@ -682,20 +976,7 @@ StepWiseMasterMover::resample_full_model(
 		TR << "[ " << ii << "/" << stepwise_moves.size() << " ] Applying Move: " << stepwise_move << "." << std::endl;
 
 		ensure_appropriate_foldtree_for_move( stepwise_move, output_pose );
-
-		// Set up the FullModelInfo so that -- at THIS MOMENT -- the only known sampled residue
-		// is the move element. This keeps stuff locked down better and makes the RMSD calculation
-		// sane.
-		auto & FMI = nonconst_full_model_info( output_pose );
-		FullModelParametersOP FMP = FMI.full_model_parameters()->clone();
-		auto rmsd_res = stepwise_move.move_element();
-		if ( stepwise_move.move_type() == RESAMPLE_INTERNAL_LOCAL ) {
-			// Also RMSD over prior. This is a suite thing after all. Saves superposition voes.
-			rmsd_res.push_back( stepwise_move.move_element()[ 1 ] - 1 );
-		}
-		FMP->set_parameter_as_res_list( SAMPLE, stepwise_move.move_element() );
-		FMP->set_parameter_as_res_list( CALC_RMS, rmsd_res );
-		FMI.set_full_model_parameters( FMP );
+		set_up_params_for_move( output_pose, stepwise_move );
 
 		//continue;
 		apply( output_pose, stepwise_move, true /* figure_out_all_possible_moves */ );
@@ -718,6 +999,7 @@ StepWiseMasterMover::resample_full_model(
 	TR << "Resample round " << resample_round << " for nstruct " << nstruct << " is complete." << std::endl;
 	TR << "-------------------------------------------------------" << std::endl;
 }
+#endif
 
 /////////////////////////////////////////////////////////
 // Called by build_full_model() in stepwise/monte_carlo/util.cc

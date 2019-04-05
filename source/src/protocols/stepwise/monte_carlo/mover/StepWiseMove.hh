@@ -100,12 +100,15 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////
-class StepWiseMove: public utility::pointer::ReferenceCount {
+class StepWiseMove: public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< StepWiseMove > {
 
 public:
 
 	//constructor
 	StepWiseMove();
+
+	StepWiseMoveOP
+	clone() const;
 
 	StepWiseMove( MoveElement const & move_element,
 		Attachments const & attachments,
