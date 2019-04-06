@@ -77,8 +77,6 @@ private:
 	bool reject_failed_loops_;
 	core::Size firstResidue_;
 	core::Size lastResidue_;
-	std::string allowed_loop_abegos_;
-	bool refix_loops_;
 	//time_t start_time_;
 
 	protocols::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;

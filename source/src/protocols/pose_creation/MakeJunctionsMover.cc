@@ -222,7 +222,7 @@ void MakeJunctionsMover::generate_start_pose(core::pose::Pose & pose, core::pose
 	}
 	trim_pose(pose,n_term_trim,c_term_trim);
 	if ( n_repeats>0 ) {
-		RepeatPropagationMoverOP propagateOP(utility::pointer::make_shared<RepeatPropagationMover>(n_repeats));
+		RepeatPropagationMoverOP propagateOP(new RepeatPropagationMover(n_repeats));
 		propagateOP->apply(pose);
 	}
 	sfxn_->score(pose); //necessary to run before assigning sequence in case re-assigning sequence
@@ -234,8 +234,7 @@ void MakeJunctionsMover::generate_start_pose(core::pose::Pose & pose, core::pose
 bool MakeJunctionsMover::attach_next_part(core::pose::Pose & pose, std::string attach_termini, std::string attach_description){
 	Size n_term_trim,c_term_trim,n_term_attach_length,c_term_attach_length,n_repeats;
 	std::string pdb_location,n_term_seq,c_term_seq;
-	char attach_chain;
-	parse_attach_description(attach_description,pdb_location,attach_chain,n_term_trim,c_term_trim,n_repeats,n_term_attach_length,c_term_attach_length,n_term_seq,c_term_seq);
+	parse_attach_description(attach_description,pdb_location,chain_,n_term_trim,c_term_trim,n_repeats,n_term_attach_length,c_term_attach_length,n_term_seq,c_term_seq);
 	core::pose::Pose attach_pose = get_and_cache_pdb(pdb_location);
 	core::Real pose_score = sfxn_->score(pose);
 	core::Real attach_score = sfxn_->score(attach_pose);
@@ -243,7 +242,7 @@ bool MakeJunctionsMover::attach_next_part(core::pose::Pose & pose, std::string a
 	//assumes only chain A in attach pose.
 	trim_pose(attach_pose,n_term_trim,c_term_trim);
 	if ( n_repeats>0 ) {
-		RepeatPropagationMoverOP propagateOP(utility::pointer::make_shared<RepeatPropagationMover>(n_repeats));
+		RepeatPropagationMoverOP propagateOP(new RepeatPropagationMover(n_repeats));
 		propagateOP->apply(attach_pose);
 		//if(relax_during_build_)
 	}
@@ -254,14 +253,14 @@ bool MakeJunctionsMover::attach_next_part(core::pose::Pose & pose, std::string a
 	attach_score = sfxn_->score(attach_pose);
 	std::cout << "score after assigning seq " << attach_score << std::endl;
 	core::scoring::ScoreFunctionOP tmp_sfxn = sfxn_->clone();
-	MergePDBatOverlapMoverOP mergePDBOP(utility::pointer::make_shared<MergePDBatOverlapMover>(tmp_sfxn));
+	MergePDBatOverlapMoverOP mergePDBOP(new MergePDBatOverlapMover(tmp_sfxn));
 	Size attachment_length=0;
 	if ( attach_termini=="n_term" ) {
 		attachment_length=c_term_attach_length;
 	} else {
 		attachment_length=n_term_attach_length;
 	}
-	bool success = mergePDBOP->makeJunctions_apply(pose,attach_pose,attachment_length,junction_rmsd_thresh_,attach_termini,attach_chain);
+	bool success = mergePDBOP->makeJunctions_apply(pose,attach_pose,attachment_length,junction_rmsd_thresh_,attach_termini);
 	pose_score = sfxn_->score(pose);
 	std::cout << "score after attach" << pose_score << std::endl;
 	if ( !success ) {
@@ -300,7 +299,7 @@ void MakeJunctionsMover::assign_seq(core::pose::Pose & pose, std::string n_term_
 			simple_moves::MutateResidueOP mutation_mover;
 			for ( Size ii=1; ii<=n_term_seq.size(); ii++ ) {
 				AA my_aa =aa_from_oneletter_code(n_term_seq.at(ii-1));
-				mutation_mover = simple_moves::MutateResidueOP ( utility::pointer::make_shared<simple_moves::MutateResidue> (
+				mutation_mover = simple_moves::MutateResidueOP ( new simple_moves::MutateResidue (
 					ii, //position
 					my_aa//residue
 					) );
@@ -316,7 +315,7 @@ void MakeJunctionsMover::assign_seq(core::pose::Pose & pose, std::string n_term_
 			simple_moves::MutateResidueOP mutation_mover;
 			for ( Size ii=1; ii<=c_term_seq.size(); ii++ ) {
 				AA my_aa =aa_from_oneletter_code(c_term_seq.at(ii-1));
-				mutation_mover = simple_moves::MutateResidueOP ( utility::pointer::make_shared<simple_moves::MutateResidue> (
+				mutation_mover = simple_moves::MutateResidueOP ( new simple_moves::MutateResidue (
 					pose.size()-c_term_seq.size()+ii, //position
 					my_aa//residue
 					) );
@@ -418,7 +417,6 @@ bool MakeJunctionsMover::make_pose_from_design(MakeJunctionsMover::Design design
 	while ( (!design.c_term_stack.empty())&& success ) {
 		std::string command = design.c_term_stack.top();
 		success = attach_next_part(pose,"c_term",command);
-		std::cout << "success" << success <<std::endl;
 		design.c_term_stack.pop();
 	}
 	if ( background_pose.size()>0 ) {

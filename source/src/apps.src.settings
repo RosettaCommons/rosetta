@@ -96,7 +96,7 @@ sources = {
 		"minirosetta",
 		"minirosetta_graphics",
 	],
-	"public/carbohydrates": [
+	"public/carbohydrates": [	
 		"dock_glycans",
 	],
 	"public/clustering": [
@@ -169,7 +169,7 @@ sources = {
 	],
 	"public/rna": [
 		"rna_denovo",
-		#"rna_design",
+		"rna_design",
 	],
 	"public/rna/erraser": [
 		"erraser_minimizer",

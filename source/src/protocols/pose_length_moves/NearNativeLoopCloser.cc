@@ -29,7 +29,6 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/sequence/ABEGOManager.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 #include <core/id/TorsionID.hh>
@@ -191,12 +190,11 @@ void PossibleLoop::extendRegion(bool towardCTerm, Size resStart, Size numberAddR
 			poseOP->conformation().safely_prepend_polymer_residue_before_seqpos( *new_rsd,resStart, true);
 		}
 	}
-	for ( Size ii=0; ii<numberAddRes; ++ii ) {
+	for ( Size ii=0; ii<=numberAddRes; ++ii ) {
 		poseOP->set_phi(resStart+ii, tmpPhi );
 		poseOP->set_psi(resStart+ii, tmpPsi );
 		poseOP->set_omega(resStart+ii, tmpOmega );
 	}
-	poseOP->set_phi(resStart+numberAddRes, tmpPhi );
 	ft = poseOP->fold_tree();
 	ft.clear();
 	ft.add_edge(1,poseOP->size(),core::kinematics::Edge::PEPTIDE);
@@ -291,7 +289,7 @@ core::pose::PoseOP PossibleLoop::get_finalPoseOP(){
 
 }
 
-void PossibleLoop::generate_output_pose(bool output_closed,bool ideal_loop, Real rms_threshold,std::string allowed_loop_abegos, std::string closure_type){
+void PossibleLoop::generate_output_pose(bool output_closed,bool ideal_loop, Real rms_threshold,std::string closure_type){
 	using namespace core::chemical;
 	//step 1 : generate trim pose.
 	//Size tmpResidueBeforeLoop = resBeforeLoop_+resAdjustmentBeforeLoop_;
@@ -403,33 +401,8 @@ void PossibleLoop::generate_output_pose(bool output_closed,bool ideal_loop, Real
 					final_rmsd_ = 999;
 				}
 			}
-			if ( allowed_loop_abegos!="" ) {
-				bool valid_loop_abego = check_loop_abego(working_poseOP,resBeforeLoop_,resAfterLoop_,allowed_loop_abegos,final_rmsd_);
-				if ( !valid_loop_abego ) {
-					final_rmsd_=999;
-				}
-			}
 		}
 	}
-}
-
-bool PossibleLoop::check_loop_abego(core::pose::PoseOP & poseOP, Size resBeforeLoop, Size resAfterLoop, std::string allowed_loop_abegos, Real loop_rmsd ){
-	utility::vector1< std::string > const abego_v = core::sequence::get_abego( *poseOP );
-	Size neighboring_residues = 3;
-	core::sequence::ABEGOManager am;
-	std::string abego = am.get_abego_string(abego_v);
-	Size loop_cut_length = resAfterLoop+neighboring_residues-(resBeforeLoop-neighboring_residues);
-	std::string loop_abego = abego.substr(resBeforeLoop-neighboring_residues-1,loop_cut_length);//1 is for the string conversion
-	utility::vector1< std::string > allowed_abegos_v( utility::string_split( allowed_loop_abegos , ',' ) );
-	bool found = false;
-	for ( auto & allowed_abego : allowed_abegos_v ) {
-		Size position = loop_abego.find(allowed_abego);
-		if ( position != std::string::npos ) {
-			found=true;
-			TR << "ABEGO loop found:" << allowed_abego << " with RMSD" << loop_rmsd << std::endl;
-		}
-	}
-	return(found);
 }
 
 
@@ -509,7 +482,7 @@ void PossibleLoop::add_coordinate_csts_from_lookback(Size stub_ss_index_match, S
 	typedef numeric::alignment::QCPKernel< numeric::Real > QCPKernel;
 
 	std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates = SSHashedFragmentStore_->get_fragment_coordinates(stub_ss_index_match,fragment_index);
-	std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates_rot(9);
+	std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates_rot;
 
 	if ( !match_stub_alone ) {
 		//full length fragment
@@ -572,7 +545,6 @@ void PossibleLoop::add_coordinate_csts_from_lookback(Size stub_ss_index_match, S
 		//output_fragment_debug(fragCoordinates_rot,"X3_fragCoords_rotate.pdb");
 		//In test simulations rmsd_v3 was 8.02771 and rmsd_v4 was 8.27703. The only difference is the removing of the COM of the coordintes. But I don't see any errors
 		//I'm ignoring this bug for now.  Maybe forever.
-		//I think I found this bug. It was due to fragCoordinates_rot not being defined
 	}
 
 	ConstraintCOPs csts;
@@ -613,21 +585,21 @@ void PossibleLoop::add_dihedral_csts_from_lookback(Size stub_ss_index_match,Size
 		// std::cout << "omega" << ii << "omega_v[ii-resBeforeLoop_+1]" << omega_v[ii-resBeforeLoop_+1] << std::endl;
 		Real phi_radians = radians(phi_v[ii-pose_residue]);
 		//std::cout << "phi" << phi_v[ii-resBeforeLoop_+1]  <<"," << phi_radians << std::endl;
-		CircularHarmonicFuncOP phi_func(utility::pointer::make_shared<CircularHarmonicFunc>( phi_radians, phi_sd_rad ) );
-		ConstraintOP phi_cst( utility::pointer::make_shared<DihedralConstraint>(
+		CircularHarmonicFuncOP phi_func(new CircularHarmonicFunc( phi_radians, phi_sd_rad ) );
+		ConstraintOP phi_cst( new DihedralConstraint(
 			c_0,n_1,ca_1,c_1, phi_func ) );
 		poseOP->add_constraint( scoring::constraints::ConstraintCOP( phi_cst ) );
 		//psi-----
 		Real psi_radians = radians(psi_v[ii-pose_residue]);
 		//std::cout << "psi" << psi_v[ii-resBeforeLoop_+1]  <<"," << psi_radians << std::endl;
-		CircularHarmonicFuncOP psi_func(utility::pointer::make_shared<CircularHarmonicFunc>( psi_radians, psi_sd_rad) );
-		ConstraintOP psi_cst( utility::pointer::make_shared<DihedralConstraint>(n_1,ca_1,c_1,n_2, psi_func  ) );
+		CircularHarmonicFuncOP psi_func(new CircularHarmonicFunc( psi_radians, psi_sd_rad) );
+		ConstraintOP psi_cst( new DihedralConstraint(n_1,ca_1,c_1,n_2, psi_func  ) );
 		poseOP->add_constraint( scoring::constraints::ConstraintCOP( psi_cst ) );
 		//omega-----
 		Real omega_radians = radians(omega_v[ii-pose_residue]);
 		//std::cout << "omega" << omega_v[ii-resBeforeLoop_+1]  <<"," << omega_radians << std::endl;
-		CircularHarmonicFuncOP omega_func(utility::pointer::make_shared<CircularHarmonicFunc>( omega_radians, omega_sd_rad) );
-		ConstraintOP omega_cst( utility::pointer::make_shared<DihedralConstraint>(ca_1,c_1,n_2,ca_2, omega_func ) );
+		CircularHarmonicFuncOP omega_func(new CircularHarmonicFunc( omega_radians, omega_sd_rad) );
+		ConstraintOP omega_cst( new DihedralConstraint(ca_1,c_1,n_2,ca_2, omega_func ) );
 		poseOP->add_constraint( scoring::constraints::ConstraintCOP( omega_cst ) );
 	}
 
@@ -684,7 +656,7 @@ bool PossibleLoop::kic_closure(core::scoring::ScoreFunctionOP scorefxn,core::pos
 	using namespace basic::options::OptionKeys;
 	using namespace chemical;
 	using namespace protocols::generalized_kinematic_closure;
-	GeneralizedKICOP genKIC(utility::pointer::make_shared<GeneralizedKIC>());
+	GeneralizedKICOP genKIC(new GeneralizedKIC());
 	kinematics::FoldTree ft;
 	ft = poseOP->fold_tree();
 	ft.clear();
@@ -785,7 +757,8 @@ NearNativeLoopCloser::NearNativeLoopCloser():moves::Mover("NearNativeLoopCloser"
 // XRW TEMP }
 
 
-NearNativeLoopCloser::NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,Size loopLengthRangeLow, Size loopLengthRangeHigh,Size resBeforeLoop,Size resAfterLoop,char chainBeforeLoop, char chainAfterLoop,Real rmsThreshold, Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed,std::string closure_type,std::string allowed_loop_abegos){
+NearNativeLoopCloser::NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,Size loopLengthRangeLow, Size loopLengthRangeHigh,Size resBeforeLoop,Size resAfterLoop,
+	char chainBeforeLoop, char chainAfterLoop,Real rmsThreshold, Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed,std::string closure_type){
 	resAdjustmentStartLow_=resAdjustmentStartLow;
 	resAdjustmentStartHigh_=resAdjustmentStartHigh;
 	resAdjustmentStopLow_=resAdjustmentStopLow;
@@ -808,13 +781,15 @@ NearNativeLoopCloser::NearNativeLoopCloser(int resAdjustmentStartLow,int resAdju
 	top_outputed_ = false;
 	max_vdw_change_ = max_vdw_change;
 	closure_type_ = closure_type;
-	allowed_loop_abegos_ = allowed_loop_abegos;
 	TR << "native loop closer init"<< resAdjustmentStartLow_ << "," << resAdjustmentStartHigh_ <<"," << resAdjustmentStopLow_ <<"," << resAdjustmentStopHigh_ << "," << loopLengthRangeLow_ << "," << loopLengthRangeHigh_ << std::endl;
 	SSHashedFragmentStore_ = protocols::indexed_structure_store::SSHashedFragmentStore::get_instance();
 	SSHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
 	SSHashedFragmentStore_->init_SS_stub_HashedFragmentStore();
 }
 
+// XRW TEMP std::string NearNativeLoopCloser::get_name() const {
+// XRW TEMP  return "NearNativeLoopCloser";
+// XRW TEMP }
 
 Real NearNativeLoopCloser::close_loop(core::pose::Pose & pose) {
 	//time_t start_time = time(NULL);
@@ -854,7 +829,7 @@ Real NearNativeLoopCloser::close_loop(core::pose::Pose & pose) {
 				scorefxn = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::PRE_TALARIS_2013_STANDARD_WTS);
 
 			}
-			simple_moves::SwitchChainOrderMoverOP switch_chains(utility::pointer::make_shared<simple_moves::SwitchChainOrderMover>());
+			simple_moves::SwitchChainOrderMoverOP switch_chains(new simple_moves::SwitchChainOrderMover());
 			switch_chains->scorefxn(scorefxn);
 			switch_chains->chain_order(new_chain_order);
 			switch_chains->apply(pose);
@@ -864,12 +839,12 @@ Real NearNativeLoopCloser::close_loop(core::pose::Pose & pose) {
 	possibleLoops_ = create_potential_loops(pose);
 	if ( !output_closed_ ) {
 		for ( Size ii=1; ii<=possibleLoops_.size(); ii++ ) {
-			possibleLoops_[ii]->generate_output_pose(false,ideal_,rmsThreshold_,allowed_loop_abegos_,closure_type_);
+			possibleLoops_[ii]->generate_output_pose(false,ideal_,rmsThreshold_,closure_type_);
 		}
 	} else {
 		if ( closure_type_ == "kic" ) {
 			for ( Size ii=1; ii<=possibleLoops_.size(); ii++ ) {
-				possibleLoops_[ii]->generate_output_pose(true,ideal_,rmsThreshold_,allowed_loop_abegos_,closure_type_);
+				possibleLoops_[ii]->generate_output_pose(true,ideal_,rmsThreshold_,closure_type_);
 			}
 		}
 		if ( closure_type_ == "lookback" ) {
@@ -888,7 +863,7 @@ Real NearNativeLoopCloser::close_loop(core::pose::Pose & pose) {
 			//-------get final output------------
 			for ( Size ii=1; ii<=possibleLoops_.size(); ++ii ) {
 				if ( possibleLoops_[ii]->get_uncached_stubRMSD() <rmsThreshold_+0.20 ) {
-					possibleLoops_[ii]->generate_output_pose(true,ideal_,rmsThreshold_,allowed_loop_abegos_,closure_type_);
+					possibleLoops_[ii]->generate_output_pose(true,ideal_,rmsThreshold_,closure_type_);
 				}
 			}
 			//debug code--------------------
@@ -950,7 +925,7 @@ void NearNativeLoopCloser::combine_chains(core::pose::Pose & pose){
 		}
 	}
 	std::string new_chain_order=int_to_string.str();
-	simple_moves::SwitchChainOrderMoverOP switch_chains(utility::pointer::make_shared<simple_moves::SwitchChainOrderMover>());
+	simple_moves::SwitchChainOrderMoverOP switch_chains(new simple_moves::SwitchChainOrderMover());
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("score3");
 	if ( pose.is_fullatom() ) {
 		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::PRE_TALARIS_2013_STANDARD_WTS);
@@ -1143,7 +1118,6 @@ NearNativeLoopCloser::parse_my_tag(
 	chainBeforeLoop_ = tag->getOption<char>("chainBeforeLoop",'A');
 	chainAfterLoop_ = tag->getOption<char>("chainAfterLoop",'A');
 	idealExtension_ = tag->getOption<bool>("idealExtension",true);
-	allowed_loop_abegos_ = tag->getOption< std::string >( "allowed_loop_abegos","");
 	if ( !idealExtension_ ) {
 		utility_exit_with_message("the ideal extension flag works but it seems to mess up the pose more than help so delete this line & recompile if you really want to use it");
 	}
@@ -1213,12 +1187,6 @@ core::pose::PoseOP NearNativeLoopCloser::get_additional_output_with_rmsd(Real & 
 		//std::cout << possibleLoops_[ii]->get_description() << std::endl;
 		if ( !possibleLoops_[ii]->outputed()&&(possibleLoops_[ii]->get_final_RMSD()<rmsThreshold_) ) {
 			TR << "Loop outputed with " << possibleLoops_[ii]->get_final_RMSD() << " rmsd" << std::endl;
-			if ( allowed_loop_abegos_!="" ) {
-				utility::vector1< std::string > const abego_v = core::sequence::get_abego( *possibleLoops_[ii]->get_finalPoseOP() );
-				core::sequence::ABEGOManager am;
-				std::string abego = am.get_abego_string(abego_v);
-				TR << "ABEGO of pose" << abego << std::endl;
-			}
 			possibleLoops_[ii]->outputed(true);
 			top_outputed_=true;
 			set_last_move_status(protocols::moves::MS_SUCCESS);
@@ -1301,7 +1269,6 @@ void NearNativeLoopCloser::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"closure_type", xs_string,
 		"type of closure, either kic or lookback", "lookback");
-	attlist + XMLSchemaAttribute::attribute_w_default( "allowed_loop_abegos", xs_string, "comma seperated string of allowed abegos, default=empty all abegos", "" );
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
 		"XSD_XRW: TO DO",

@@ -510,10 +510,8 @@ static MoverRegistrator< minimization_packing::symmetry::SymPackRotamersMoverCre
 static MoverRegistrator< minimization_packing::symmetry::SymRotamerTrialsMoverCreator > reg_SymRotamerTrialsMoverCreator;
 static MoverRegistrator< minimization_packing::symmetry::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
 
-static MoverRegistrator< pose_creation::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
 static MoverRegistrator< pose_creation::MakePolyXMoverCreator > reg_MakePolyXMoverCreator;
-static MoverRegistrator< pose_creation::SliceToMiniProteinMoverCreator > reg_SliceToMiniProteinMoverCreator;
-
+static MoverRegistrator< pose_creation::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
 
 static MoverRegistrator< simple_moves::AddChainMoverCreator > reg_AddChainMoverCreator;
 static MoverRegistrator< simple_moves::AddJobPairDataCreator > reg_AddJobPairDataCreator;

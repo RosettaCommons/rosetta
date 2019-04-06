@@ -19,17 +19,9 @@
 #include <numeric/xyzVector.hh>
 
 // Project Headers
-#include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
-
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-
-//#include <core/pack/task/TaskFactory.hh>
-
-
-#include <core/pose/chains_util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
@@ -37,8 +29,6 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-
-#include <core/select/residue_selector/ResidueNameSelector.hh>
 
 
 #include <core/types.hh>
@@ -55,12 +45,8 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_ddg/DdgFilter.hh>
-#include <protocols/simple_filters/InterfaceSasaFilter.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
-
 
 #include <utility/tag/Tag.hh>
 
@@ -84,44 +70,26 @@ using core::Size;
 using core::Real;
 using std::set;
 using namespace core;
-
-
-
 // @brief default constructor
-SSElementBisectddGFilter::SSElementBisectddGFilter(core::scoring::ScoreFunctionOP scorefxn,Real threshold,bool report_avg,Size ignore_terminal_SS,bool only_n_term,bool only_c_term,bool skip_ss_element,bool report_sasa_instead,bool convert_charged_res_to_ala,protocols::moves::MoverOP relax_mover):
-	Filter( "SSBisectddGFilter" )
-{
-	scorefxn_=scorefxn,
-		threshold_=threshold,
-		report_avg_=report_avg;
-	ignore_terminal_SS_=ignore_terminal_SS;
-	only_n_term_ =only_n_term;
-	only_c_term_=only_c_term;
-	skip_ss_element_=skip_ss_element;
-	report_sasa_instead_=report_sasa_instead;
-	convert_charged_res_to_ala_=convert_charged_res_to_ala;
-	relax_mover_=relax_mover;
-}
-
 SSElementBisectddGFilter::SSElementBisectddGFilter():
-	Filter( "SSBisectddGFilter" )
+	Filter( "SSBisectddGFilter" ),
+	filtered_value_( 99 )
 {}
-
 
 // @brief copy constructor
 SSElementBisectddGFilter::SSElementBisectddGFilter( SSElementBisectddGFilter const & rval ):
 	Super( rval ),
-	scorefxn_( rval.scorefxn_->clone() ), //CLONE the scorefunction, don't copy it.
-	ignore_terminal_SS_( rval.ignore_terminal_SS_ ),
-	only_n_term_(rval.only_n_term_),
-	only_c_term_(rval.only_c_term_),
-	threshold_(rval.threshold_),
-	report_avg_(rval.report_avg_),
-	skip_ss_element_(rval.skip_ss_element_),
-	report_sasa_instead_(rval.report_sasa_instead_),
-	convert_charged_res_to_ala_(rval.convert_charged_res_to_ala_),
-	relax_mover_(rval.relax_mover_)
+	filtered_value_( rval.filtered_value_ )
 {}
+
+// @brief destructor
+SSElementBisectddGFilter::~SSElementBisectddGFilter() = default;
+
+// @brief set filtered value
+void SSElementBisectddGFilter::filtered_value( Real const & value )
+{
+	filtered_value_ = value;
+}
 
 /// @brief
 SSElementBisectddGFilter::Real
@@ -197,79 +165,42 @@ Real SSElementBisectddGFilter::get_ddg_bisect_score(Size element, protocols::loo
 	for ( Size ii=1; ii<=ssElements[element].stop(); ++ii ) {
 		nTerm_positions.push_back(ii);
 	}
-	Size c_term_element_start = element+1;
-	if ( skip_ss_element_ ) {
-		c_term_element_start++;
-	}
-	for ( Size ii=ssElements[c_term_element_start].start(); ii<=pose_length; ++ii ) {
+	for ( Size ii=ssElements[element+1].start(); ii<=pose_length; ++ii ) {
 		cTerm_positions.push_back(ii);
-
 	}
-	std::cout << "***n_term 1:" << ssElements[element].stop() << std::endl;
-	std::cout << "***c_term " << ssElements[c_term_element_start].start() << ":" << pose_length << std::endl;
 	pdbslice(nTerm_pose,pose,nTerm_positions);
 	pdbslice(cTerm_pose,pose,cTerm_positions);
 	append_pose_to_pose(nTerm_pose,cTerm_pose,true);
-	for ( int ii=1; ii<=(int)nTerm_pose.size(); ++ii ) {
-		if ( !nTerm_pose.residue(ii).is_protein() ) continue;
-		if ( nTerm_pose.residue(ii).type().is_disulfide_bonded() ) {
-			core::conformation::change_cys_state( ii, "CYS", nTerm_pose.conformation() );
-		}
-	}
-	utility::vector1<core::Size> chain1 = get_resnums_for_chain_id(nTerm_pose,1);
-	utility::vector1<core::Size> chain2 = get_resnums_for_chain_id(nTerm_pose,2);
-	if ( relax_mover_!=NULL ) { //dflt NULL; in the unbound state, prior to taking the energy, should we do any relaxation
-		ddg_filter.relax_mover(relax_mover_);
-	}
-	Real ddG =0;
-	if ( !report_sasa_instead_ ) {
-		ddG = ddg_filter.compute( nTerm_pose );
-	} else {
-		protocols::simple_filters::InterfaceSasaFilter sasa_filter(0,true,false,100000000000,"");
-		ddG = sasa_filter.compute(nTerm_pose);
-	}
-	///SC code--
-	//protocols::simple_filters::ShapeComplementarityFilter sc_filter(0.0,0,1,false,false);
-	//Real ddG = sc_filter.report_sm(nTerm_pose);
-	///--------
+	nTerm_pose.dump_pdb("splitPose.pdb");
+	Real ddG = ddg_filter.compute( nTerm_pose );
 	return(ddG);
 }
 
 
 /// @brief
-Real SSElementBisectddGFilter::compute( const Pose & orig_pose ) const
+Real
+SSElementBisectddGFilter::compute( const Pose & pose ) const
 {
 	using protocols::loops::Loop;
-	protocols::loops::Loops ss_elements = get_ss_elements(orig_pose);
+	protocols::loops::Loops ss_elements = get_ss_elements(pose);
 	Size startElement = 1;
 	Size endElement = ss_elements.size();
 	if ( ignore_terminal_SS_>0 ) {
-		startElement=ignore_terminal_SS_;
+		startElement+=ignore_terminal_SS_;
 		endElement-=ignore_terminal_SS_;
 	}
-	if ( skip_ss_element_ ) {
-		endElement=endElement-1;
-	}
 	Real score = 0;
-	core::pose::PoseOP pose = orig_pose.clone();
-	if ( convert_charged_res_to_ala_ ) {
-		simple_moves::MutateResidueOP mutation_mover  = simple_moves::MutateResidueOP ( utility::pointer::make_shared<simple_moves::MutateResidue> () );
-		mutation_mover->set_res_name("ALA");
-		core::select::residue_selector::ResidueSelectorCOP type_selector(utility::pointer::make_shared<core::select::residue_selector::ResidueNameSelector>("LYS,ARG,HIS,GLU,GLN,ASP,SER,CYS,TYR,ASN,THR"));
-		mutation_mover->set_selector(type_selector);
-		mutation_mover->apply(*pose);
-	}
 	if ( only_n_term_ ) {
-		return(get_ddg_bisect_score(1,ss_elements,*pose));
+		return(get_ddg_bisect_score(1,ss_elements,pose));
 	}
 	if ( only_c_term_ ) {
-		return(get_ddg_bisect_score(ss_elements.size()-1,ss_elements,*pose));
+		return(get_ddg_bisect_score(ss_elements.size()-1,ss_elements,pose));
 	}
 	if ( report_avg_ ) {
 		Real tmpScore = 0;
 		Size ct = 0;
 		for ( Size ii=startElement; ii<=endElement; ++ii ) {
-			tmpScore+=get_ddg_bisect_score(ii,ss_elements,*pose);
+			tmpScore+=get_ddg_bisect_score(ii,ss_elements,pose);
 			ct+=1;
 		}
 		if ( ct!=0 ) {
@@ -278,8 +209,7 @@ Real SSElementBisectddGFilter::compute( const Pose & orig_pose ) const
 	} else {
 		Real tmpScore = -999999;
 		for ( Size ii=startElement; ii<=endElement; ++ii ) {
-			std::cout << "***start position" << ss_elements[ii].start() << std::endl;
-			Real tmp=get_ddg_bisect_score(ii,ss_elements,*pose);
+			Real tmp=get_ddg_bisect_score(ii,ss_elements,pose);
 			if ( tmp>tmpScore ) {
 				tmpScore=tmp;
 			}
@@ -296,7 +226,7 @@ bool SSElementBisectddGFilter::apply(const Pose & pose ) const
 {
 	Real value = compute( pose );
 	tr << "value" << value << "filtered_value_" << threshold_ << std::endl;
-	if ( value <= threshold_ ) {
+	if ( value >= threshold_ ) {
 		tr << "Successfully filtered: " << value << std::endl;
 		return true;
 	} else {
@@ -311,7 +241,7 @@ SSElementBisectddGFilter::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
 	filters::Filters_map const &,
-	moves::Movers_map const & movers,
+	Movers_map const &,
 	Pose const & )
 {
 	// set threshold
@@ -321,15 +251,6 @@ SSElementBisectddGFilter::parse_my_tag(
 	ignore_terminal_SS_ = tag->getOption<Size>("ignore_terminal_ss",0);
 	only_n_term_ = tag->getOption<bool>("only_n_term",false);
 	only_c_term_ = tag->getOption<bool>("only_c_term",false);
-	skip_ss_element_ = tag->getOption<bool>("skip_ss_element",false);
-	report_sasa_instead_ = tag->getOption<bool>("report_sasa_instead",false);
-	convert_charged_res_to_ala_ = tag->getOption<bool>("convert_charged_res_to_ala",false);
-	if ( tag->hasOption( "relax_mover" ) ) {
-		relax_mover_ = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover"), movers );
-	} else {
-		relax_mover_=NULL;
-	}
-
 }
 
 // XRW TEMP filters::FilterOP
@@ -357,11 +278,8 @@ void SSElementBisectddGFilter::provide_xml_schema( utility::tag::XMLSchemaDefini
 		+ XMLSchemaAttribute::attribute_w_default("report_avg", xsct_rosetta_bool, "XRW TO DO", "true")
 		+ XMLSchemaAttribute::attribute_w_default("ignore_terminal_ss", xsct_non_negative_integer, "XRW TO DO", "0")
 		+ XMLSchemaAttribute::attribute_w_default("only_n_term", xsct_rosetta_bool, "XRW TO DO", "false")
-		+ XMLSchemaAttribute::attribute_w_default("only_c_term", xsct_rosetta_bool, "XRW TO DO", "false")
-		+ XMLSchemaAttribute( "relax_mover" , xs_string , "Optionally define a mover which will be applied prior to computing the system energy in the unbound state." )
-		+ XMLSchemaAttribute::attribute_w_default("convert_charged_res_to_ala", xsct_rosetta_bool, "converts the charged residue to alanine", "false")
-		+ XMLSchemaAttribute::attribute_w_default("skip_ss_element", xsct_rosetta_bool, "skips a secondary structure element(sheet,helix) when calculating ddg", "false")
-		+ XMLSchemaAttribute::attribute_w_default( "report_sasa_instead", xsct_rosetta_bool, "reports sasa instead of ddg", "false");
+		+ XMLSchemaAttribute::attribute_w_default("only_c_term", xsct_rosetta_bool, "XRW TO DO", "false");
+
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
 }
 

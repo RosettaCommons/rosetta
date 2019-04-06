@@ -144,7 +144,7 @@ void RepeatPropagationMover::apply(core::pose::Pose & pose) {
 	if ( repeat_without_replacing_pose_ ) {
 		copy_phi_psi_omega(pose,pose);
 	} else {
-		core::pose::PoseOP repeat_poseOP=utility::pointer::make_shared< core::pose::Pose >();
+		core::pose::PoseOP repeat_poseOP( new core::pose::Pose() );
 		initialize_repeat_pose(pose,*repeat_poseOP);
 		copy_phi_psi_omega(pose,*repeat_poseOP); //**********************DO NOT ERASE
 		if ( maintain_cap_ ) {
@@ -236,10 +236,10 @@ void RepeatPropagationMover::add_cap_seq(Pose & pose, Pose & repeat_pose){
 			Size pose_res=pose.total_residue()-cTerm_cap_size_+ii;
 			Size repeat_pose_res=repeat_pose.total_residue()-cTerm_cap_size_+ii;
 			AA my_aa =aa_from_oneletter_code(cTerm_cap_seq.at(ii-1));
-			mutation_mover = utility::pointer::make_shared< simple_moves::MutateResidue >(
+			mutation_mover = simple_moves::MutateResidueOP ( new simple_moves::MutateResidue (
 				repeat_pose.total_residue()-cTerm_cap_size_+ii, //position
 				my_aa//residue
-			) ;
+				) );
 
 			mutation_mover->apply( repeat_pose );
 			//copy chi's if full_atom
@@ -263,10 +263,10 @@ void RepeatPropagationMover::add_cap_seq(Pose & pose, Pose & repeat_pose){
 				remove_lower_terminus_type_from_pose_residue(pose,1);
 			}
 			AA my_aa =aa_from_oneletter_code(nTerm_cap_seq.at(ii-1));
-			mutation_mover = utility::pointer::make_shared< simple_moves::MutateResidue >(
+			mutation_mover = simple_moves::MutateResidueOP ( new simple_moves::MutateResidue (
 				ii, //position
 				my_aa//residue
-			);
+				) );
 			mutation_mover->apply( repeat_pose );
 			if ( pose.is_fullatom() ) {
 				Size n_chi = pose.residue_type(pose_res).nchi();

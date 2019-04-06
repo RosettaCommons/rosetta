@@ -157,7 +157,7 @@ print_network( HBondNetStruct const & i, bool chainid /* true */ )
 	if ( i.is_native ) net_prefix = "native";
 	else if ( i.is_extended ) net_prefix = "extended";
 	std::stringstream output;
-	output << net_prefix << "#network_" << i.id << "\t" << print_list_to_string( i, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< network_size << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.percent_hbond_capacity << "\t" << i.num_unsat_Hpol << "\t";
+	output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( i, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< network_size << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.percent_hbond_capacity << "\t" << i.num_unsat_Hpol << "\t";
 	return output.str();
 }
 
@@ -169,14 +169,14 @@ print_network_w_pdb_numbering( Pose const & pose, HBondNetStruct const & i, bool
 	if ( i.is_native ) net_prefix = "native";
 	else if ( i.is_extended ) net_prefix = "extended";
 	std::stringstream output;
-	output << net_prefix << "#network_" << i.id << "\t" << print_list_to_string( pose, i, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< network_size << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.percent_hbond_capacity << "\t" << i.num_unsat_Hpol << "\t";
+	output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( pose, i, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< network_size << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.percent_hbond_capacity << "\t" << i.num_unsat_Hpol << "\t";
 	return output.str();
 }
 
 std::string
 print_headers()
 {
-	return "#HBNet_rank \t residues \t size \t score \t num_hbonds \t percent_hbond_capacity \t num_unsat_Hpol \t";
+	return "HBNet_rank \t residues \t size \t score \t num_hbonds \t percent_hbond_capacity \t num_unsat_Hpol \t";
 }
 
 utility::vector1< HBondResStructCOP >::const_iterator

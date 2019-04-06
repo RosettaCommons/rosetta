@@ -12,8 +12,8 @@
 /// @author TJ Brunette (tjbrunette@gmail.com)
 
 
-#ifndef INCLUDED_protocols_simple_ddg_SSElementBisectddGFilter_hh
-#define INCLUDED_protocols_simple_ddg_SSElementBisectddGFilter_hh
+#ifndef INCLUDED_protocols_simple_filters_SSElementBisectddGFilter_hh
+#define INCLUDED_protocols_simple_filters_SSElementBisectddGFilter_hh
 
 // Unit Headers
 #include <protocols/simple_ddg/SSElementBisectddGFilter.fwd.hh>
@@ -61,8 +61,6 @@ public:
 
 public:// constructor/destructor
 
-	// @brief constructor w variables
-	SSElementBisectddGFilter(core::scoring::ScoreFunctionOP scorefxn,Real threshold,bool report_avg,Size ignore_terminal_SS,bool only_n_term,bool only_c_term,bool skip_ss_element,bool report_sasa_instead,bool convert_charged_res_to_ala,protocols::moves::MoverOP relax_mover);
 
 	// @brief default constructor
 	SSElementBisectddGFilter();
@@ -70,14 +68,23 @@ public:// constructor/destructor
 	// @brief copy constructor
 	SSElementBisectddGFilter( SSElementBisectddGFilter const & rval );
 
+	virtual ~SSElementBisectddGFilter();
 
-public:
+
+public:// virtual constructor
 
 
 	// @brief make clone
 	filters::FilterOP clone() const override { return utility::pointer::make_shared< SSElementBisectddGFilter >(*this);}
 	// @brief make fresh instance
 	filters::FilterOP fresh_instance() const override { return utility::pointer::make_shared< SSElementBisectddGFilter >();}
+
+
+public:// mutator
+
+
+	// @brief
+	void filtered_value( Real const & value );
 
 
 public:// accessor
@@ -93,7 +100,7 @@ public:// virtual main operation
 	void report( std::ostream & out,const Pose & pose ) const override;
 	protocols::loops::Loops get_ss_elements(const Pose & pose) const;
 	Real get_ddg_bisect_score(Size element,protocols::loops::Loops ssElements, const Pose & pose) const;
-	Real compute( const Pose & orig_pose ) const;
+	Real compute( const Pose & pose ) const;
 	bool apply(const Pose & pose ) const override;
 
 
@@ -102,7 +109,7 @@ public:// parser
 	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
 		filters::Filters_map const &,
-		Movers_map const & movers,
+		Movers_map const &,
 		Pose const & ) override;
 
 	std::string
@@ -120,16 +127,12 @@ public:// parser
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL
+	Real filtered_value_;
 	Size ignore_terminal_SS_;
 	bool only_n_term_;
 	bool only_c_term_;
 	Real threshold_;
 	bool report_avg_;
-	bool skip_ss_element_;
-	bool report_sasa_instead_;
-	bool convert_charged_res_to_ala_;
-	protocols::moves::MoverOP relax_mover_; //dflt NULL; in the unbound state, prior to taking the energy, should we do any relaxation
-
 };
 
 } // filters

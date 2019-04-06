@@ -89,7 +89,6 @@ private:
 	core::Size loopLengthRangeHigh_;
 	core::Real rmsThreshold_;
 	std::string output_chains_;
-	std::string allowed_loop_abegos_;
 
 	//protocols::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
 };

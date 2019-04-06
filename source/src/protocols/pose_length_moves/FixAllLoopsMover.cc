@@ -117,8 +117,8 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 			resids.push_back(pose_loops[ii].start()+1);
 			resids.push_back(pose_loops[ii].start()+2);
 			Real loop_rmsd = SSHashedFragmentStore_->max_rmsd_in_region(pose,resids);
-			if ( loop_rmsd > rmsThreshold_ || refix_loops_ ) {
-				NearNativeLoopCloserOP loopCloserOP(utility::pointer::make_shared<NearNativeLoopCloser>(resAdjustmentStartLow_,resAdjustmentStartHigh_,resAdjustmentStopLow_,resAdjustmentStopHigh_,resAdjustmentStartLow_sheet_,resAdjustmentStartHigh_sheet_,resAdjustmentStopLow_sheet_,resAdjustmentStopHigh_sheet_,loopLengthRangeLow_,loopLengthRangeHigh_,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold_,max_vdw_change_,true,ideal_,true,"lookback",allowed_loop_abegos_));
+			if ( loop_rmsd > rmsThreshold_ ) {
+				NearNativeLoopCloserOP loopCloserOP(new NearNativeLoopCloser(resAdjustmentStartLow_,resAdjustmentStartHigh_,resAdjustmentStopLow_,resAdjustmentStopHigh_,resAdjustmentStartLow_sheet_,resAdjustmentStartHigh_sheet_,resAdjustmentStopLow_sheet_,resAdjustmentStopHigh_sheet_,loopLengthRangeLow_,loopLengthRangeHigh_,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold_,max_vdw_change_,true,ideal_,true));
 				loopCloserOP->apply(pose);
 				if ( reject_failed_loops_ ) {
 					if ( loopCloserOP->get_last_move_status()!=protocols::moves::MS_SUCCESS ) {
@@ -161,7 +161,6 @@ FixAllLoopsMover::parse_my_tag(
 	core::pose::Pose const & ){
 	//start_time_ = time(NULL);
 	std::string loopLengthRange( tag->getOption< std::string >( "loopLengthRange", "1,4") );
-	refix_loops_ = tag->getOption< bool >( "refix_loops", false);
 	rmsThreshold_ = tag->getOption< core::Real >( "RMSthreshold", 0.4 );
 	std::string resAdjustmentRange1( tag->getOption< std::string >( "resAdjustmentRangeSide1", "-3,3") );
 	std::string resAdjustmentRange2( tag->getOption< std::string >( "resAdjustmentRangeSide2","-3,3") );
@@ -169,7 +168,6 @@ FixAllLoopsMover::parse_my_tag(
 	std::string resAdjustmentRange2_sheet( tag->getOption< std::string >( "resAdjustmentRangeSide2_sheet","-1,1") );
 	std::string residueRange(tag->getOption<std::string> ( "residue_range","1,999999") );
 	max_vdw_change_ = tag->getOption<core::Real>("max_vdw_change",10.0);
-	allowed_loop_abegos_ = tag->getOption< std::string >( "allowed_loop_abegos","");
 	ideal_ = tag->getOption<bool>("ideal",false);
 	reject_failed_loops_ = tag->getOption<bool>("reject_failed_loops",true);//If one loop fails just skip that one.
 	utility::vector1< std::string > resAdjustmentRange1_split( utility::string_split( resAdjustmentRange1 , ',' ) );
@@ -243,38 +241,34 @@ void FixAllLoopsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"loopLengthRange", xs_string,
-		"Loops can range from 1 to 5 residue", "1,4");
+		"XSD_XRW: TO DO", "1,4");
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"RMSthreshold", xsct_real,
-		"loop must be within 0.4 angsrom to a pdb in the VALL", "0.4");
+		"XSD_XRW: TO DO", "0.4");
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"resAdjustmentRangeSide1", xs_string,
-		"residue adjustment applied before the loop", "-3,3");
+		"XSD_XRW: TO DO", "-3,3");
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"resAdjustmentRangeSide2", xs_string,
-		"residue adjustment applied after the loop", "-3,3");
+		"XSD_XRW: TO DO", "-3,3");
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"resAdjustmentRangeSide1_sheet", xs_string,
-		"residue adjustment applied before the loop if sheet", "-1,1");
+		"XSD_XRW: TO DO", "-1,1");
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"resAdjustmentRangeSide2_sheet", xs_string,
-		"residue adjustment applied after the loop if sheet", "-1,1");
+		"XSD_XRW: TO DO", "-1,1");
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"residue_range", xs_string,
-		"range to fix all loops", "1,999999");
+		"XSD_XRW: TO DO", "1,999999");
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"max_vdw_change", xsct_real,
-		"prunes out clashing loop", "10.0");
+		"XSD_XRW: TO DO", "10.0");
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"ideal", xsct_rosetta_bool,
-		"requires all the bonds to be perfect length and usees kic to perform final closure. Not recomended", "false");
-	attlist + XMLSchemaAttribute::attribute_w_default(
-		"refix_loops", xsct_rosetta_bool,
-		"refixes all loops in the residue range even if their rms is below the threshold", "false");
-	attlist+ XMLSchemaAttribute::attribute_w_default( "allowed_loop_abegos", xs_string, "comma seperated string of allowed abegos, default=empty all abegos", "" );
+		"XSD_XRW: TO DO", "false");
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"reject_failed_loops", xsct_rosetta_bool,
-		"allows the program to crash if the loops can't be fixed", "true");
+		"XSD_XRW: TO DO", "true");
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),

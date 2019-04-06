@@ -172,7 +172,7 @@ sources = {
 		#"repeat_dock",
 		"calc_ssm_energies_with_structure_profile",
 		#"outputRama",
-		#"cluster_alns",
+		#"cluster_alns", # /#TJ Brunette,Documentation Location,Demo Location */
 		#"identify_homolog_inaccuracies",
 		#"contact_map_from_homologs",
 	],
@@ -355,7 +355,7 @@ sources = {
 	#        "generate_starting_zinc_sites",
 	#        "backside_hbond_finder",
 	],
-
+	
 	"pilot/guangfeng" : [
 		"cryst_hbonds", # small molecule xtal dock hbonds reporter
 	],

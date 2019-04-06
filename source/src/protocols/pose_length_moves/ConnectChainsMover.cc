@@ -147,7 +147,7 @@ void ConnectChainsMover::assemble_missing_chain(map<std::string, Chain> & connec
 			core::pose::PoseOP chainA_plus = connected_chains.at(chain_assembled).poseOP->clone();
 			core::pose::PoseOP chainB = connected_chains.at(chain_remainder_split[1]).poseOP;
 			Real chainB_rmsd = connected_chains.at(chain_assembled).rmsd;
-			NearNativeLoopCloserOP loopCloserOP(utility::pointer::make_shared<NearNativeLoopCloser>(resAdjustmentStartLow_,resAdjustmentStartHigh_,resAdjustmentStopLow_,resAdjustmentStopHigh_,resAdjustmentStartLow_sheet_,resAdjustmentStartHigh_sheet_,resAdjustmentStopLow_sheet_,resAdjustmentStopHigh_sheet_,loopLengthRangeLow_,loopLengthRangeHigh_,1,1,'A','B',rmsThreshold_,0,true,false,true,"lookback",allowed_loop_abegos_));
+			NearNativeLoopCloserOP loopCloserOP(new NearNativeLoopCloser(resAdjustmentStartLow_,resAdjustmentStartHigh_,resAdjustmentStopLow_,resAdjustmentStopHigh_,resAdjustmentStartLow_sheet_,resAdjustmentStartHigh_sheet_,resAdjustmentStopLow_sheet_,resAdjustmentStopHigh_sheet_,loopLengthRangeLow_,loopLengthRangeHigh_,1,1,'A','B',rmsThreshold_,0,true,false,true));
 			append_pose_to_pose(*chainA_plus,*chainB,true);
 			renumber_pdbinfo_based_on_conf_chains(*chainA_plus,true,false,false,false);
 			utility::vector1< char > pdb_chains;
@@ -248,7 +248,6 @@ ConnectChainsMover::parse_my_tag(
 	std::string resAdjustmentRange2( tag->getOption< std::string >( "resAdjustmentRangeSide2","-3,3") );
 	std::string resAdjustmentRange1_sheet( tag->getOption< std::string >( "resAdjustmentRangeSide1_sheet", "-1,1") );
 	std::string resAdjustmentRange2_sheet( tag->getOption< std::string >( "resAdjustmentRangeSide2_sheet","-1,1") );
-	allowed_loop_abegos_ = tag->getOption< std::string >( "allowed_loop_abegos","");
 	output_chains_ = tag->getOption<std::string>("chain_connections");
 	utility::vector1< std::string > resAdjustmentRange1_split( utility::string_split( resAdjustmentRange1 , ',' ) );
 	utility::vector1< std::string > resAdjustmentRange2_split( utility::string_split( resAdjustmentRange2 , ',' ) );
@@ -312,18 +311,15 @@ void ConnectChainsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	// AMW: eventually we will want a better restriction
 	// but int_cslist is at least close
 	attlist
-		+ XMLSchemaAttribute::attribute_w_default( "loopLengthRange", xsct_size_cs_pair, "Loops can range from 1 to 5 residue", "1,4" )
-		+ XMLSchemaAttribute::attribute_w_default( "RMSthreshold", xsct_real, "loop must be within 0.4 angsrom to a pdb in the VALL", "0.4" )
-		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide1", xsct_int_cslist, "residue adjustment applied before the loop", "-3,3" )
-		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide2", xsct_int_cslist, "residue adjustment applied after the loop", "-3,3" )
-		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide1_sheet", xsct_int_cslist, "residue adjustment applied before the loop if sheet", "-1,1" )
-		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide2_sheet", xsct_int_cslist, "residue adjustment applied after the loop if sheet", "-1,1" )
-		+ XMLSchemaAttribute::attribute_w_default( "allowed_loop_abegos", xs_string, "comma seperated string of allowed abegos, default=empty all abegos", "" )
+		+ XMLSchemaAttribute::attribute_w_default( "loopLengthRange", xsct_size_cs_pair, "XRW TO DO", "1,4" )
+		+ XMLSchemaAttribute::attribute_w_default( "RMSthreshold", xsct_real, "XRW TO DO", "0.4" )
+		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide1", xsct_int_cslist, "XRW TO DO", "-3,3" )
+		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide2", xsct_int_cslist, "XRW TO DO", "-3,3" )
+		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide1_sheet", xsct_int_cslist, "XRW TO DO", "-1,1" )
+		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide2_sheet", xsct_int_cslist, "XRW TO DO", "-1,1" )
+		+ XMLSchemaAttribute::required_attribute( "chain_connections", xs_string, "XRW TO DO" );
 
-		+ XMLSchemaAttribute::required_attribute( "chain_connections", xs_string, "what chains to connect" );
-
-
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "only allow loops from the most frequent abegos", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
 }
 
 std::string ConnectChainsMoverCreator::keyname() const {

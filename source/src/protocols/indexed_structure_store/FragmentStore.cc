@@ -156,10 +156,6 @@ void FragmentStore::generate_residue_subset_fragment_store(std::vector<numeric::
 
 //done so that the fragmentLookup is cached when calculated.
 FragmentLookupOP FragmentStore::get_fragmentLookup(){
-
-	// Don't want multiple threads doing this at the same time
-	std::lock_guard<std::mutex> lock(frag_lookup_mutex);
-
 	if ( fragLookupOP_==nullptr ) {
 		fragLookupOP_ = utility::pointer::make_shared< FragmentLookup >(this->get_self_ptr());
 	}
