@@ -15,7 +15,7 @@
 import os, sys, subprocess, math
 import numpy as np
 import benchmark
-from benchmark import quality_measures as qm
+from benchmark.util import quality_measures as qm
 
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into 	s
 config = benchmark.config()

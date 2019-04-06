@@ -20,7 +20,7 @@ import subprocess
 import glob
 
 import benchmark
-from benchmark import quality_measures as qm
+from benchmark.util import quality_measures as qm
 
 background = { # background amino acid probability in all proteins. These numbers are taken from the analysis scripts used in Ollikainen, N., de Jong, R. M., and Kortemme, T. Coupling protein side-chain and backbone flexibility improves the re-design of protein-ligand specificity. PLoS Comput Biol, 2015.
 'A' : 0.0853130414059,
@@ -56,7 +56,7 @@ def get_RankTop( systems_Q, systems_P ):
 		design_count_dict = systems_Q[ pdb ][0]
 		length_Q = systems_Q[ pdb ][2]
 		natural_frequency_dict = systems_P[ pdb ][0]
-		
+
 		for position in range( 0, length_Q ):
 			max_natural_freq = 0
 			max_natural_aa = ''
@@ -127,7 +127,7 @@ def get_similarity( systems_Q, systems_P ):
 	#print("get_similarity")
 	#design_divergences = {}
 	design_similarity = {}
-	
+
 	for system in systems:
 		pdb = system.split()[0]
 		#print "system="+pdb
@@ -139,7 +139,7 @@ def get_similarity( systems_Q, systems_P ):
 		natural_frequency_dict = systems_P[ pdb ][0]
 		count_P = systems_P[ pdb ][1]
 		length_P = systems_P[ pdb ][2]
-		
+
 		assert (  length_Q == length_P ), "\nlength_Q != length_P\nlength_Q={0}\nlength_P={1}".format( length_Q, length_P )
 
 		for position in range( 0, length_Q ):
@@ -221,7 +221,7 @@ def slice_fasta( ):
 	natural_sequences_dict = {}
 	for system in sorted(systems):
 		pdb = system.split()[0]
-		
+
 		# vvv COMMENT THIS REGION WHEN ANALYZING COUPLED MOVES FIXBB WITH 0 TRIALS vvv
 		#     OR IF SLICED FASTAS ARE ALREADY PREPARED
 		fasta_files = system_fastas[ pdb ] #[:n_fasta]
@@ -230,7 +230,7 @@ def slice_fasta( ):
 		seq_list = get_cm_fasta( fasta_files, pdb )
 		#if sys.argv[2] == "f":
 		#	seq_list = get_f_seq( fasta_files, pdb )
-		
+
 		# Comment to prevent overwriting existing slices:
 		slice_file = f'{working_dir}/output/{pdb}.fasta'
 		if os.path.isfile(slice_file) == False or os.stat(slice_file).st_size == 0:
@@ -240,12 +240,12 @@ def slice_fasta( ):
 				output.write(seq_list[i]+"\n")
 			output.close()
 		# ^^^ COMMENT THIS REGION WHEN ANALYZING COUPLED MOVES FIXBB WITH 0 TRIALS ^^^
-		
+
 		# vvv DON'T COMMENT
 		designed_sequences = []
 		design_length = 0
 		fasta_file = f'{working_dir}/output/{pdb}.fasta' #'{0}/{1}.fasta'.format( dir, pdb )
-		
+
 		f = open(fasta_file)
 		for line in f:
 			if ">" not in line:
@@ -256,9 +256,9 @@ def slice_fasta( ):
 		#print('{0} {1} fasta files --> {2} design sequences'.format( pdb, len(fasta_files), len(designed_sequences) ) )
 		design_sequences_dict[ pdb ] = [ designed_sequences, design_length ]
 		### ^^^ DON'T COMMENT
-		
+
 		# Extract natural sequences
-		# Natural sequences are pre-sliced 
+		# Natural sequences are pre-sliced
 		natural_sequences = []
 		natural_length = 0
 		f = f'{rosetta_dir}/tests/scientific/data/{testname}/natural_seqs/{pdb}_binding_site.txt'
