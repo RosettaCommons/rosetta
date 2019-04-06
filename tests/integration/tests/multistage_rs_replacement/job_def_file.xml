@@ -1,0 +1,89 @@
+<JobDefinitionFile>
+
+	<Job>
+		<Input>
+			<PDB filename="1fok_0001.pdb" />
+		</Input>
+		<SCOREFXNS>
+			<ScoreFunction name="ref" weights="ref2015_cart" >
+				<Reweight scoretype="aromatic_restraint" weight="1.0" />
+				<Reweight scoretype="chainbreak" weight="1.0" />
+				<Reweight scoretype="linear_chainbreak" weight="1.0" />
+			</ScoreFunction>
+		</SCOREFXNS>
+		<MOVERS>
+			<ResidueReplacementRebuildMover name="rrrm" scorefxn="ref" seqpos="80" nres_additional="0" residue_name="ORTHO_POLYARAMID_ALA" /> 
+		</MOVERS>
+
+		<RESIDUE_SELECTORS/>
+	</Job>
+	<Job>
+		<Input>
+			<PDB filename="1fok_0001.pdb" />
+		</Input>
+		<SCOREFXNS>
+			<ScoreFunction name="ref" weights="ref2015_cart" >
+				<Reweight scoretype="aromatic_restraint" weight="1.0" />
+				<Reweight scoretype="chainbreak" weight="1.0" />
+				<Reweight scoretype="linear_chainbreak" weight="1.0" />
+			</ScoreFunction>
+		</SCOREFXNS>
+		<MOVERS>
+			<ResidueReplacementRebuildMover name="rrrm" scorefxn="ref" seqpos="82" nres_additional="0" residue_name="ORTHO_POLYARAMID_ALA" /> 
+		</MOVERS>
+
+		<RESIDUE_SELECTORS/>
+	</Job>
+	<Job>
+		<Input>
+			<PDB filename="1fok_0001.pdb" />
+		</Input>
+		<SCOREFXNS>
+			<ScoreFunction name="ref" weights="ref2015_cart" >
+				<Reweight scoretype="aromatic_restraint" weight="1.0" />
+				<Reweight scoretype="chainbreak" weight="1.0" />
+				<Reweight scoretype="linear_chainbreak" weight="1.0" />
+			</ScoreFunction>
+		</SCOREFXNS>
+		<MOVERS>
+			<ResidueReplacementRebuildMover name="rrrm" scorefxn="ref" seqpos="83" nres_additional="0" residue_name="ORTHO_POLYARAMID_ALA" /> 
+		</MOVERS>
+
+		<RESIDUE_SELECTORS/>
+	</Job>
+	<Common>
+
+		<SCOREFXNS>
+			<ScoreFunction name="ref" weights="ref2015_cart" >
+				<Reweight scoretype="aromatic_restraint" weight="1.0" />
+				<Reweight scoretype="chainbreak" weight="1.0" />
+				<Reweight scoretype="linear_chainbreak" weight="1.0" />
+			</ScoreFunction>
+		</SCOREFXNS>
+
+		<RESIDUE_SELECTORS/>
+
+		<TASKOPERATIONS/>
+
+		<FILTERS>
+			<ScoreType name="total_score" scorefxn="ref" score_type="total_score" threshold="9999" />
+		</FILTERS>
+
+		<MOVERS>
+			<FastRelax name="relax" scorefxn="ref" cartesian="true" repeats="1" />
+		</MOVERS>
+
+		<PROTOCOLS>
+			<Stage num_runs_per_input_struct="1" total_num_results_to_keep="2" >
+				<Add mover="rrrm" />
+				<Sort filter="total_score" />
+			</Stage>
+			<Stage num_runs_per_input_struct="2" total_num_results_to_keep="4" >
+				<Add mover="relax" />
+				<Sort filter="total_score" />
+			</Stage>
+		</PROTOCOLS>
+
+	</Common>
+
+</JobDefinitionFile>

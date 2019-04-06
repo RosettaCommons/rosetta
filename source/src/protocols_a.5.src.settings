@@ -103,9 +103,8 @@ sources = {
 	],
 	"protocols/ncbb": [
 		"NcbbDockDesignProtocol",
-		
 		"PeptideStapleMover",
-		
+		"ResidueReplacementRebuildMover",
 		"SecStructFinder",
 		"SecStructMinimizeMover",
 		"SecStructMinimizeMultiFunc",

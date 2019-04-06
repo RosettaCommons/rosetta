@@ -375,6 +375,7 @@ static MoverRegistrator< moves::FilterReportAsPoseExtraScoresMoverCreator > reg_
 // N //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< ncbb::SecStructMinimizeMoverCreator > reg_SecStructMinimizeMoverCreator;
 static MoverRegistrator< ncbb::NcbbDockDesignProtocolCreator > reg_NcbbDockDesignProtocolCreator;
+static MoverRegistrator< ncbb::ResidueReplacementRebuildMoverCreator > reg_ResidueReplacementRebuildMoverCreator ;
 static MoverRegistrator< ncbb::oop::OopDockDesignProtocolCreator > reg_OopDockDesignProtocolCreator;
 static MoverRegistrator< ncbb::oop::OopCreatorMoverCreator > reg_OopCreatorMoverCreator;
 

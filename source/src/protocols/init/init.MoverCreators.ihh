@@ -364,6 +364,7 @@
 
 // N //////////////////////////////////////////////////////////////////////////
 #include <protocols/ncbb/SecStructMinimizeMoverCreator.hh>
+#include <protocols/ncbb/ResidueReplacementRebuildMoverCreator.hh>
 #include <protocols/ncbb/NcbbDockDesignProtocolCreator.hh>
 #include <protocols/ncbb/oop/OopDockDesignProtocolCreator.hh>
 #include <protocols/ncbb/oop/OopCreatorMoverCreator.hh>
