@@ -1168,6 +1168,41 @@ settings = {
         },
     },
 
+    "gcc, tensorflow" : {
+        "appends" : {
+            "defines" : [
+		"USE_TENSORFLOW",
+		"USE_TENSORFLOW_CPU",
+            ],
+            "libraries" : [
+                "tensorflow",
+            ],
+        },
+        "flags" : {
+            "link" : [
+		"tensorflow",
+            ],
+	},
+    },
+
+    "gcc, tensorflow_gpu" : {
+        "appends" : {
+            "defines" : [
+		"USE_TENSORFLOW",
+		"USE_TENSORFLOW_GPU",
+            ],
+            "libraries" : [
+                "tensorflow",
+            ],
+        },
+        "flags" : {
+            "link" : [
+		"tensorflow",
+            ],
+	},
+    },
+
+
     "gcc, zeromq" : {
         "appends" : {
             "defines" : [
@@ -1583,6 +1618,40 @@ settings = {
 		"SERIALIZATION",
             ],
         },
+    },
+
+    "icc, tensorflow" : {
+        "appends" : {
+            "defines" : [
+		"USE_TENSORFLOW",
+		"USE_TENSORFLOW_CPU",
+            ],
+            "libraries" : [
+                "tensorflow",
+            ],
+        },
+        "flags" : {
+            "link" : [
+		"tensorflow",
+            ],
+	},
+    },
+
+    "icc, tensorflow_gpu" : {
+        "appends" : {
+            "defines" : [
+		"USE_TENSORFLOW",
+		"USE_TENSORFLOW_GPU",
+            ],
+            "libraries" : [
+                "tensorflow",
+            ],
+        },
+        "flags" : {
+            "link" : [
+		"tensorflow",
+            ],
+	},
     },
 
     "icc, zeromq" : {
@@ -2308,6 +2377,41 @@ settings = {
             ],
         },
     },
+
+    "clang, tensorflow" : {
+        "appends" : {
+            "defines" : [
+		"USE_TENSORFLOW",
+		"USE_TENSORFLOW_CPU",
+            ],
+            "libraries" : [
+                "tensorflow",
+            ],
+        },
+        "flags" : {
+            "link" : [
+		"tensorflow",
+            ],
+	},
+    },
+
+    "clang, tensorflow_gpu" : {
+        "appends" : {
+            "defines" : [
+		"USE_TENSORFLOW",
+		"USE_TENSORFLOW_GPU",
+            ],
+            "libraries" : [
+                "tensorflow",
+            ],
+        },
+        "flags" : {
+            "link" : [
+		"tensorflow",
+            ],
+	},
+    },
+
 
     "clang, zeromq" : {
         "appends" : {

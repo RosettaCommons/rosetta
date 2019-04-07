@@ -282,7 +282,8 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     elif test == 'debug':                    return run_integration_tests('debug',   rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'release_debug':            return run_integration_tests('release_debug', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'release_debug_no_symbols': return run_integration_tests('release_debug_no_symbols', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'mpi':                      return run_integration_tests('debug',   rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--mpi-tests')
+    elif test == 'mpi':                      return run_integration_tests('debug',   rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix mpi')
+    elif test == 'tensorflow':               return run_integration_tests('debug',   rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix tensorflow')
     elif test == 'addsan':                   return run_integration_tests('addsan',  rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'ubsan':
         os.environ["UBSAN_OPTIONS"]="print_stacktrace=1" # Get the backtrace in the log when running ubsan

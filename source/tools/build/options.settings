@@ -159,6 +159,21 @@ options = {
 
 	# Build with ZeroMQ library (also imply  serialization)
 	"zeromq",
+
+	# Build linking prebuilt Tensorflow CPU libraries.
+	# Note that these must be added to the LIBRARY_PATH and LD_LIBRARY_PATH environment variables,
+	# and the user.settings file must import the OS environment.  Alternatively, these libraries
+	# must be installed in /user/local/lib.
+	# Note that there's no check that we're actually linking the CPU library and not the GPU library.
+	"tensorflow",
+
+	# Build linking prebuilt Tensorflow GPU libraries.
+	# Note that these must be added to the LIBRARY_PATH and LD_LIBRARY_PATH environment variables,
+	# and the user.settings file must import the OS environment.  Alternatively, these libraries
+	# must be installed in /user/local/lib.  The GPU libraries have additional dependencies, such as
+	# CUDA and CUDNN.
+	# Note that there's no check that we're actually linking the GPU library and not the CPU library.
+	"tensorflow_gpu",
     ],
 
 

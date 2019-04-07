@@ -249,11 +249,19 @@ EXAMPLES For Running Demos/Tutorials
       action="store_true",
       help="Tell Valgrind to output details about memory leaks in addition to finding uninitialized variables. (default is no info, which is faster)",
     )
-    parser.add_option("--mpi-tests",
-      action="store_true",
-      dest="mpi_tests",
-      help="Run only those tests defined in command.mpi files.  This option implies --extras=mpi.",
+
+
+    parser.add_option("--suffix",
+      default=None,
+      help="Specify `command` suffix. When used only tests that have `command.<suffix>` is run. Default is None: run only plain test (command)",
     )
+
+    parser.add_option("--mpi-tests",
+      action="store_const", const='mpi', dest="suffix",
+      help="[DEPRECATED, USE `--suffix mpi` INSTEAD] Run only those tests defined in command.mpi files.  This option implies --extras=mpi.",
+    )
+
+
 
     parser.add_option("--demos",
       help="Signifiy we are testing the [public] demos.",
@@ -414,7 +422,7 @@ EXAMPLES For Running Demos/Tutorials
                 #print "Copying demo dir from "+test+" to "+ path.join(outdir, test)
                 local_copytree( test , path.join(outdir, testbase), accept=lambda src, dst: path.basename(src) != '.svn')
                 queue.put(testbase)
-            elif ((not Options.mpi_tests) or (Options.mpi_tests and os.path.isfile(path.join( test ,"command.mpi")))):
+            elif (not Options.suffix)  or  os.path.isfile(path.join( test , 'command.' + Options.suffix)):
                 #print "Copying " + test + " to " + outdir + "."
                 local_copytree( test , path.join(outdir, testbase), accept=lambda src, dst: path.basename(src) != '.svn')
                 queue.put(testbase)
@@ -489,8 +497,8 @@ EXAMPLES For Running Demos/Tutorials
             results = {}
             full_log = []
             for test in tests:
-                if Options.mpi_tests:
-                    test_valid = os.path.isfile( path.join( test, "command.mpi") )
+                if Options.suffix:
+                    test_valid = os.path.isfile( path.join( test, "command." + Options.suffix) )
                 else:
                     test_valid = os.path.isfile( path.join( test, "command") )
 
@@ -961,8 +969,8 @@ def get_binext():
     mode = Options.mode
     if Options.extras:
         extras = Options.extras
-    elif Options.mpi_tests:
-        extras='mpi'
+    elif Options.suffix:
+        extras = Options.suffix  # naive extras = Options.suffix for now, later use if needed: dict(mpi='mpi', tensorflow='tensorflow')[Options.suffix]
     else :
         extras='default'
 
@@ -1037,10 +1045,10 @@ def generateTestCommandline(test, outdir, options=None, host=None):
     if host is not None:
       cmd = 'PATH="%s"\n%s' % (os.environ["PATH"], cmd)
     cmd += '\n'
-    if options.mpi_tests :
-        if os.path.isfile( path.join(workdir,"command.mpi") ):
-            with open(path.join(workdir,"command.mpi")) as f:
-                cmd += f.read().strip()
+    if options.suffix:
+        command_file_name = path.join(workdir,"command." + options.suffix)
+        if os.path.isfile(command_file_name):
+            with open(command_file_name) as f: cmd += f.read().strip()
         else:
             return None, None #If the command.mpi file doesn't exist, then this isn't an MPI integration test and should be skipped.
     else :
@@ -1086,10 +1094,8 @@ def generateTestCommandline(test, outdir, options=None, host=None):
         # We also don't need the standard output restrictions (as we're not doing comparisons
         cmd = re.sub( r'egrep -vf ../../ignore_list', 'cat', cmd )
 
-    if options.mpi_tests:
-        cmd_line_sh = path.join(workdir, "command.mpi.sh")
-    else :
-        cmd_line_sh = path.join(workdir, "command.sh")
+    if options.suffix: cmd_line_sh = path.join(workdir, 'command.' + options.suffix + '.sh')
+    else : cmd_line_sh = path.join(workdir, 'command.sh')
 
     #Write the command.sh file
     # writing back so test can be easily re-run by user later...

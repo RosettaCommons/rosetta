@@ -1095,6 +1095,7 @@ sources = {
 		"fit_helixparams",
 		"plot_scoreterm",
 		#"simple_cycpep_predict",
+		"tensorflow_test1",
 		"make_mainchain_potential",
 		"symmetrize_old_ramamap",
 	],
