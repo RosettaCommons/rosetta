@@ -387,7 +387,6 @@ public:
 		TS_ASSERT_EQUALS( pose.residue_type(5).aa(), core::chemical::aa_asn );
 		TS_ASSERT_EQUALS( pose.residue_type(8).aa(), core::chemical::aa_asn );
 
-		(utility::pointer::static_pointer_cast< core::pack::guidance_scoreterms::buried_unsat_penalty::graph::BuriedUnsatPenaltyGraphContainer const >( pose.energies().data().get_ptr( core::scoring::EnergiesCacheableDataType::BURIED_UNSAT_HBOND_GRAPH ) ))->graph()->provide_pymol_commands_to_show_groups( TR, pose );
 		TR.flush();
 
 		//pose.dump_pdb( "BURIED_UNSAT_TESTPOSE_PACKRESULT.pdb" ); //DELETE ME.

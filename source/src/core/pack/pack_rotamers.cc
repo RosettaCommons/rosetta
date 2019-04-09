@@ -317,7 +317,7 @@ pack_rotamers_run(
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void
 pack_rotamers_cleanup(
-	core::pose::Pose pose,
+	core::pose::Pose & pose,
 	core::pack::interaction_graph::AnnealableGraphBaseOP annealable_graph
 ) {
 	annealable_graph->clean_up_after_packing(pose);
