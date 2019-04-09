@@ -121,8 +121,8 @@ ConformationViewer::display_func()
 
 	Vector const center_vector = center_vector_defined_ ? center_vector_ : residues_[ anchor_id_.rsd() ]->xyz( anchor_id_.atomno() );
 
-	if ( core::scoring::electron_density::getDensityMap().isMapLoaded() && 
-		 basic::options::option[ basic::options::OptionKeys::edensity::render_density ]() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::render_density ]()  &&
+			 core::scoring::electron_density::getDensityMap().isMapLoaded() ) {
 
 		const core::scoring::electron_density::ElectronDensity& edm = core::scoring::electron_density::getDensityMap();
 		draw_conformation_and_density( residues_, secstruct_, triangles_ , current_gs_, center_vector );

@@ -1017,9 +1017,10 @@ get_sequence_information(
 	// calebgeniesse: setup for edensity scoring, if map is provided via cmd-line
 	if ( option[ edensity::mapfile ].user() || append_virtual ) {
 		// update fasta_sequences accordingly
-		Size idx = fasta_sequences.size();
-		fasta_sequences[idx]->append_char('X');
-		fasta_sequences[idx]->id( fasta_sequences[idx]->id() + " z:1" );
+		fasta_sequences.push_back( core::sequence::SequenceOP( new core::sequence::Sequence( "X" /*seq*/, " z:1" /*id*/) ) );
+		//Size idx = fasta_sequences.size();
+		//fasta_sequences[idx]->append_char('X');
+		//fasta_sequences[idx]->id( fasta_sequences[idx]->id() + " z:1" );
 	}
 
 	look_for_dna( fasta_sequences );

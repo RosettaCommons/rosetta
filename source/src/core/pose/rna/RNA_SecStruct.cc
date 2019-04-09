@@ -82,6 +82,12 @@ RNA_SecStruct::RNA_SecStruct( std::string const & secstruct,
 	}
 
 	if ( secstruct_.size() == 0 ) blank_secstruct( sequence );
+
+	if ( ( sequence.size() == secstruct_.size() + 1 ) && sequence[ sequence.size()-1 ] == 'X' ) {
+		TR.Warning << "Expanding secstruct by one, as it looks like a virtual residue was appended to the sequence" << std::endl;
+		secstruct_ = secstruct_ + '.';
+	}
+
 	// We don't want to depend on the sequence here: could be a
 	// 'general' secstruct.
 	set_basepairs_from_secstruct();

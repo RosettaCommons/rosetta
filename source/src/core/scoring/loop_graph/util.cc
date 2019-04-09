@@ -113,6 +113,10 @@ get_6D_trans_rot_potential_evaluator( LoopCycle const & loop_cycle,
 
 	// Use RNA for DNA too
 	if ( rsd.is_NA() ) {
+		if ( !get_residue( landing_pos, pose ).is_NA() ) {
+			core::conformation::Residue const & landing_rsd = get_residue( landing_pos, pose );
+			TR << "PROBLEM! takeoff " << rsd.name() << " " << rsd.seqpos() << " --  landing " << landing_rsd.name() << " " << landing_rsd.seqpos() << std::endl;
+		}
 		runtime_assert( get_residue( landing_pos, pose ).is_NA() );
 		tag = "rna";
 	}

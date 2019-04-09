@@ -367,7 +367,8 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		bool append_virtual = false;
 		// AMW: hey Kalli, is this where we would want to also append a virtual... say, if -please_give_new_FT is true?
 		if ( opts[ basic::options::OptionKeys::edensity::mapfile ].user() ||
-				opts[ basic::options::OptionKeys::rna::denovo::rna_protein_docking ]() ) {
+				opts[ basic::options::OptionKeys::rna::denovo::rna_protein_docking ]() ||
+				opts[ OptionKeys::rna::denovo::virtual_anchor ].user() ) {
 			// if a density map was supplied by the user, the virtual residue would have been appended by default anyway
 			append_virtual = true;
 		}
@@ -428,8 +429,8 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	}
 	// AMW: Hey maybe there could be a single signifier for 'this is an edensity-or-docking-case'?
 	if ( opts[ basic::options::OptionKeys::edensity::mapfile ].user() ||
-			opts[ basic::options::OptionKeys::rna::denovo::rna_protein_docking ]() ) {
-
+			opts[ basic::options::OptionKeys::rna::denovo::rna_protein_docking ]() ||
+			opts[ OptionKeys::rna::denovo::virtual_anchor ].user() ) {
 		// double check that a cutpoint was added at the last residue (a virtual residue)
 		// essential for the fold tree to get set up properly
 		if ( !cutpoint_open_in_full_model.has_value( sequence.size() - 1 ) ) {

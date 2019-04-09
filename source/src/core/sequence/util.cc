@@ -228,7 +228,7 @@ get_conventional_chains_and_numbering( utility::vector1< SequenceCOP > const & f
 	utility::vector1< int > & conventional_numbering,
 	utility::vector1< std::string > & conventional_segids ) {
 	using utility::string_split;
-	bool found_info_in_previous_sequence( false );
+	// bool found_info_in_previous_sequence( false );
 	Size count( 0 );
 	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
 		utility::vector1< char > chains;
@@ -250,7 +250,8 @@ get_conventional_chains_and_numbering( utility::vector1< SequenceCOP > const & f
 			}
 			found_info = true;
 		}
-		if ( n > 1 ) runtime_assert( found_info == found_info_in_previous_sequence );
+		// this condition used to enforce that if one sequence had blank chains, all sequences should have blank chains. seems unnecessary now -- let's just fix the rest of the code. -- rhiju, 2019
+		// if ( n > 1 ) runtime_assert( found_info == found_info_in_previous_sequence );
 
 		Size const clean_len = core::pose::rna::remove_bracketed( fasta_sequences[n]->sequence() ).size();
 		if ( !found_info || resnum.size() != clean_len ) { /*happens with stray numbers*/
@@ -267,7 +268,7 @@ get_conventional_chains_and_numbering( utility::vector1< SequenceCOP > const & f
 		for ( Size q = 1; q <= clean_len; q++ ) conventional_numbering.push_back( resnum[q] );
 		for ( Size q = 1; q <= clean_len; q++ ) conventional_segids.push_back( segids[q] );
 
-		found_info_in_previous_sequence  = found_info;
+		//found_info_in_previous_sequence  = found_info;
 	}
 }
 

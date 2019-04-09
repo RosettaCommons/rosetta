@@ -649,7 +649,10 @@ ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, char cons
 		( force_pdb_info_mapping_in || ( option[ OptionKeys::constraints::force_pdb_info_mapping ]().size() ?
 		option[ OptionKeys::constraints::force_pdb_info_mapping ]()[1] : false ) );
 	if ( force_pdb_info_mapping && pose.pdb_info() ) {
-		return pose.pdb_info()->pdb2pose( 'A', resnum );
+		Size resnum_out = pose.pdb_info()->pdb2pose( 'A', resnum );
+		if ( resnum_out > 0 ) return resnum_out;
+		// some legacy PDB's have ' ' instead of 'A' remaining as default for chains...
+		return pose.pdb_info()->pdb2pose( ' ', resnum );
 	}
 	return Size( resnum );
 }
