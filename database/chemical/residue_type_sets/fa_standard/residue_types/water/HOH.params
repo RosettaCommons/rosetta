@@ -16,7 +16,8 @@ ATOM  H2  Hwat  H    0.417
 BOND O H1
 BOND O H2
 
-PROPERTIES SOLVENT WATER
+# This residue type can be converted to a virtual residue by the packer (effectively "packing" for water occupancy or lack of occupancy).
+PROPERTIES SOLVENT WATER VIRTUALIZABLE_BY_PACKER
 
 NBR_ATOM O
 

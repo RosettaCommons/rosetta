@@ -1688,6 +1688,9 @@ public:
 	/// @brief is this a water residue type?
 	bool is_water() const { return properties_->has_property( WATER ); }
 
+	/// @brief Is this a residue type that can be virtualized or devirtualized by the packer?
+	bool is_virtualizable_by_packer() const { return properties_->has_property( VIRTUALIZABLE_BY_PACKER ); }
+
 	/// @brief Is this an oligourea?
 	bool is_oligourea() const { return properties_->has_property( OLIGOUREA ); }
 

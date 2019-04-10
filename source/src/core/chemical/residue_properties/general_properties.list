@@ -61,6 +61,7 @@ METAL  # This residue type is a metal ion.
 SURFACE
 WATER
 TP3 # A particular type of water.  This is used by the residue type setup machinery for the packer, and having this as a property avoids some string parsing.
+VIRTUALIZABLE_BY_PACKER # Indicate that, during packing, this residue type can be converted to or from a virtual residue type.
 SOLVENT
 VIRTUAL_RESIDUE
 VRT1 # A particular type of virtual residue.  This is used by the residue type setup machinery for the packer, and having this as a property avoids some string parsing.

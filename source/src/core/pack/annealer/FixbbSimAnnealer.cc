@@ -16,6 +16,7 @@
 
 // Package Headers
 #include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack_basic/RotamerSetsBase.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
@@ -190,12 +191,10 @@ void FixbbSimAnnealer::run()
 			if ( rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
 
 			// for waters, set to virtual 50% of the time
-			std::string const & current_name3 = rotamer_sets()->rotamer_for_moltenres( moltenres_id, rotamer_state_on_moltenres )->name3();
-			if ( ( current_name3 == "HOH" ) && ( include_vrt ) ) {  // don't want to do this for waters without a virtual state, like TP3
-				double rand_num = numeric::random::rg().uniform();
-				double nrot = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
+			if ( ( include_vrt ) && ( rotamer_sets()->rotamer_for_moltenres( moltenres_id, rotamer_state_on_moltenres )->type().is_virtualizable_by_packer() ) ) {  // don't want to do this for waters without a virtual state, like TP3
+				core::Size const nrot = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
 				/// last state is the virtual state
-				if ( rand_num < (nrot/2.0-1)/nrot ) rotamer_state_on_moltenres = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
+				if ( numeric::random::rg().uniform() < (static_cast<core::Real>(nrot)/2.0-1)/static_cast<core::Real>(nrot) ) rotamer_state_on_moltenres = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
 			}
 
 			if ( rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration

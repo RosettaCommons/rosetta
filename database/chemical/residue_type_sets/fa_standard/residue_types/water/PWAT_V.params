@@ -12,7 +12,8 @@ ATOM  V2  VIRT H    0.000
 BOND O V1
 BOND O V2
 
-PROPERTIES WATER
+# This residue type can be converted from a virtual residue by the packer (effectively "packing" for water occupancy or lack of occupancy).
+PROPERTIES WATER VIRTUALIZABLE_BY_PACKER
 NBR_ATOM O
 NBR_RADIUS 3.2 ##
 FIRST_SIDECHAIN_ATOM ALL
