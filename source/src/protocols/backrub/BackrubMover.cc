@@ -1252,7 +1252,7 @@ void BackrubMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"maximum angular displacement slope for other atom segments (radians)",
 		std::to_string(numeric::conversions::radians(-1./3.)));
 	attlist + XMLSchemaAttribute::attribute_w_default(
-		"perserve_detailed_balance", xsct_rosetta_bool,
+		"preserve_detailed_balance", xsct_rosetta_bool,
 		"if set to true, does not change branching atom angles during apply and "
 		"sets ideal branch angles during initialization if used with MetropolisHastings",
 		"false");
