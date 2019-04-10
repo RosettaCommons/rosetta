@@ -31,7 +31,7 @@ def accuracies_from_bfactors( protein, file_real, file_pred, filehandle ):
 	acc = 0
 	sens = 0
 	spec = 0
-    
+	
 	# checking for file existence
 	if not os.path.exists( file_real ): 
 	   print ("File " + file_real + " doesn't exist.")
@@ -105,11 +105,11 @@ f = open( outfile, "w" )
 f.write( "protein\ttp\ttn\tfp\tfn\tacc\tsens\tspec\n" )
 
 # inialize variables for averages
-#	quality_measures = {}
+#quality_measures = {}
 
 # targets are already sorted by decreasing accuracies
 targets_sorted = targets
-    
+	
 acc_before = 100
 
 # go through targets, get accuracies
@@ -121,7 +121,7 @@ for i in range(0, len( targets_sorted )):
 	# get accuracies and append to dict
 	print (target, pdb_truth[i], pdb_pred[i])
 	acc = accuracies_from_bfactors( target, pdb_truth[i], pdb_pred[i], f )
-#		quality_measures[target] = acc['acc']
+#	quality_measures[target] = acc['acc']
 	target_results.update( acc )
 
 	accuracy = acc['acc']
@@ -129,7 +129,7 @@ for i in range(0, len( targets_sorted )):
 	# if new accuracies are not sorted any more, call this a failure
 	# i.e. if accuracy is larger than previous one in the list (i.e. they 
 	# are not sorted by decreasing values any more)
-	if accuracy > acc_before:
+	if accuracy > acc_before or accuracy == 0:
 		failures.append( target )
 	
 	# update overall results
