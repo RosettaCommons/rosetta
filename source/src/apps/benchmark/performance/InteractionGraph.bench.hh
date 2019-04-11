@@ -22,6 +22,7 @@
 #include <utility/graph/Graph.hh>
 
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 
@@ -37,11 +38,17 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/mistakes.OptionKeys.gen.hh>
+
 
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
+
+static basic::Tracer TR2( "apps.benchmark.performance.InteractionGraphPerformanceBenchmark" );
 
 enum interaction_graph_perf_benchmark {
 	interaction_graph_perfbench_linmemig_score12,
@@ -49,7 +56,10 @@ enum interaction_graph_perf_benchmark {
 	interaction_graph_perfbench_linmemig_sc12he,
 	interaction_graph_perfbench_linmemig_mmstd,
 	interaction_graph_perfbench_pdig_score12,
-	interaction_graph_perfbench_denseig_score12
+	interaction_graph_perfbench_denseig_score12,
+	interaction_graph_perfbench_linmemig_current_default_sfxn,
+	interaction_graph_perfbench_pdig_current_default_sfxn,
+	interaction_graph_perfbench_denseig_current_default_sfxn,
 };
 
 class InteractionGraphPerformanceBenchmark : public PerformanceBenchmark
@@ -67,6 +77,7 @@ public:
 	{}
 
 	virtual void setUp() {
+		configured_for_score12_ = basic::options::option[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ]();
 		pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file(*pose_, "test_in2.pdb", core::import_pose::PDB_file);
 		scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
@@ -101,6 +112,23 @@ public:
 			trajectory_fname_ = "interaction_graph_perfbench_denseig_score12.traj";
 			setup_for_denseig();
 			break;
+		case interaction_graph_perfbench_linmemig_current_default_sfxn :
+			setup_for_current_default_sfxn();
+			trajectory_fname_ = "interaction_graph_perfbench_linmemig_current_default_sfxn.traj";
+			setup_for_linmemig();
+			break;
+		case interaction_graph_perfbench_pdig_current_default_sfxn :
+			setup_for_current_default_sfxn();
+			trajectory_fname_ = "interaction_graph_perfbench_pdig_current_default_sfxn.traj";
+			setup_for_pdig();
+			break;
+		case interaction_graph_perfbench_denseig_current_default_sfxn :
+			setup_for_current_default_sfxn();
+			trajectory_fname_ = "interaction_graph_perfbench_denseig_current_default_sfxn.traj";
+			setup_for_denseig();
+			break;
+		default:
+			utility_exit_with_message( "Error in InteractionGraphPerformanceBenchmark::setUp(): An unrecognized benchtype_ value was passed to the constructor." );
 		}
 	}
 
@@ -164,6 +192,9 @@ public:
 
 	void setup_for_score12() {
 		using namespace core::scoring;
+		if ( !configured_for_score12_ ) {
+			TR2.Warning << "Warning!  Benchmarks were run without the \"-restore_pre_talaris_behavior\" flag.  Score12 weights will be used, but this will NOT represent true scoring with the score12 scoring function." << std::endl;
+		}
 
 		scorefxn_->set_weight( fa_atr, 0.8 );
 		scorefxn_->set_weight( fa_rep, 0.44 );
@@ -185,13 +216,22 @@ public:
 		scorefxn_->set_weight( pro_close, 1.0 );
 		scorefxn_->set_weight( omega, 0.5 );
 		scorefxn_->set_weight( rama, 0.2 );
+	}
 
+	void setup_for_current_default_sfxn() {
+		runtime_assert_string_msg( !configured_for_score12_, "Error in apps::benchmark::performance::InteractionGraphPerformanceBenchmark::setup_for_current_default_sfxn(): The current default scoring function is incompatible with the \"-restore_pre_talaris_behaviour\" flag." );
+		using namespace core::scoring;
+		scorefxn_ = core::scoring::get_score_function();
 	}
 
 	void setup_for_sc12sp2() {
 		using namespace core::scoring;
 		using namespace core::scoring::methods;
 		using namespace core::scoring::hbonds;
+
+		if ( !configured_for_score12_ ) {
+			TR2.Warning << "Warning!  Benchmarks were run without the \"-restore_pre_talaris_behavior\" flag.  The sc12sp2 weights will be used, but this will NOT represent true scoring with the sc12sp2 scoring function." << std::endl;
+		}
 
 		EnergyMethodOptions emo;
 		HBondOptions hbo;
@@ -226,6 +266,11 @@ public:
 
 	void setup_for_sc12he() {
 		using namespace core::scoring;
+
+
+		if ( !configured_for_score12_ ) {
+			TR2.Warning << "Warning!  Benchmarks were run without the \"-restore_pre_talaris_behavior\" flag.  The sc12he weights will be used, but this will NOT represent true scoring with the sc12he scoring function." << std::endl;
+		}
 
 		scorefxn_->set_weight( fa_atr, 0.8 );
 		scorefxn_->set_weight( fa_rep, 0.44 );
@@ -281,6 +326,11 @@ public:
 		using namespace core::scoring;
 		using namespace core::scoring::methods;
 		using namespace core::scoring::hbonds;
+
+		if ( !configured_for_score12_ ) {
+			TR2.Warning << "Warning!  Benchmarks were run without the \"-restore_pre_talaris_behavior\" flag.  The sp2hecart weights will be used, but this will NOT represent true scoring with the sp2hecart scoring function." << std::endl;
+		}
+
 
 		EnergyMethodOptions emo;
 		HBondOptions hbo;
@@ -391,13 +441,17 @@ private:
 	utility::graph::GraphOP packer_neighbor_graph_;
 	std::string trajectory_fname_;
 	core::Size base_scale_;
+	bool configured_for_score12_ = false;
 };
 
 InteractionGraphPerformanceBenchmark igpb_lmig_sc12( "core.pack.linmem_ig_score12", interaction_graph_perfbench_linmemig_score12, 1 );
 InteractionGraphPerformanceBenchmark igpb_lmig_sc12sp2( "core.pack.linmem_ig_sc12sp2", interaction_graph_perfbench_linmemig_sc12sp2, 1 );
 InteractionGraphPerformanceBenchmark igpb_lmig_sc12he( "core.pack.linmem_ig_sc12he", interaction_graph_perfbench_linmemig_sc12he, 1 );
 InteractionGraphPerformanceBenchmark igpb_lmig_mmstd( "core.pack.linmem_ig_mmstd", interaction_graph_perfbench_linmemig_mmstd, 1 );
+InteractionGraphPerformanceBenchmark igpb_lmig_current_default_sfxn( "core.pack.linmem_ig_current_default_sfxn", interaction_graph_perfbench_linmemig_current_default_sfxn, 1 );
 InteractionGraphPerformanceBenchmark igpb_pdig_sc12( "core.pack.pdig_score12", interaction_graph_perfbench_pdig_score12, 4 );
+InteractionGraphPerformanceBenchmark igpb_pdig_current_default_sfxn( "core.pack.pdig_current_default_sfxn", interaction_graph_perfbench_pdig_current_default_sfxn, 4 );
 InteractionGraphPerformanceBenchmark igpb_denseig_sc12( "core.pack.denseig_score12", interaction_graph_perfbench_denseig_score12, 7000 );
+InteractionGraphPerformanceBenchmark igpb_denseig_current_default_sfxn( "core.pack.denseig_current_default_sfxn", interaction_graph_perfbench_denseig_current_default_sfxn, 7000 );
 
 #endif
