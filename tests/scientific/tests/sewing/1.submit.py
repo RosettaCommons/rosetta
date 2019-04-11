@@ -36,15 +36,15 @@ command_line = '''
 -parser:protocol {working_dir}/{testname}.xml
 -out:file:scorefile {prefix}/{target}.score
 -detect_disulf false
--mh:score:use_ss1 true         
--mh:score:use_ss2 true         
--mh:score:use_aa1 false        
--mh:score:use_aa2 false        
+-mh:score:use_ss1 true
+-mh:score:use_ss2 true
+-mh:score:use_aa1 false
+-mh:score:use_aa2 false
 
 -mh:path:motifs       {rosetta_dir}/database/additional_protocol_data/sewing/xsmax_bb_ss_AILV_resl0.8_msc0.3/xsmax_bb_ss_AILV_resl0.8_msc0.3.rpm.bin.gz
 -mh:path:scores_BB_BB {rosetta_dir}/database/additional_protocol_data/sewing/xsmax_bb_ss_AILV_resl0.8_msc0.3/xsmax_bb_ss_AILV_resl0.8_msc0.3
 
--mh:gen_reverse_motifs_on_load false 
+-mh:gen_reverse_motifs_on_load false
 
 -multiple_processes_writing_to_one_directory
 -no_color
@@ -58,7 +58,7 @@ nstruct = 2 if debug else 100
 targets = 'VBS_helix'.split()
 targets = targets[:2] if debug else targets
 
-#print(f'extension: {extension}') 
+#print(f'extension: {extension}')
 #print(f'command_line: {command_line}')
 #print(f'config: {benchmark.config()}')
 #print(hpc_driver)
@@ -84,9 +84,10 @@ for target in targets:
     )
 
 
-if not debug:
-    hpc_driver.wait_until_complete(hpc_job_ids, silent=True)
-    time.sleep(64)  # waiting for NFS caching
+# if not debug:
+#     hpc_driver.wait_until_complete(hpc_job_ids, silent=True)
+#     time.sleep(64)  # waiting for NFS caching
+hpc_driver.wait_until_complete(hpc_job_ids, silent=True)
 
 #==> EDIT HERE
 benchmark.save_variables('targets nstruct working_dir testname')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

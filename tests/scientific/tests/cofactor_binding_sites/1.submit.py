@@ -53,7 +53,7 @@ command_line = '''
 -coupled_moves::backbone_mover backrub
 -coupled_moves::exclude_nonclashing_positions true
 -out:prefix {prefix}{id4}_
--out:suffix 
+-out:suffix
 '''.replace('\n', ' ').replace('  ', ' ')
 
 #==> EDIT HERE
@@ -95,9 +95,10 @@ for target in targets:
             block=False)
         )
 
-if not debug:
-    hpc_driver.wait_until_complete(hpc_job_ids, silent=True)
-    time.sleep(64)  # waiting for NFS caching
+# if not debug:
+#     hpc_driver.wait_until_complete(hpc_job_ids, silent=True)
+#     time.sleep(64)  # waiting for NFS caching
+hpc_driver.wait_until_complete(hpc_job_ids, silent=True)
 
 #==> EDIT HERE
 benchmark.save_variables('targets nstruct working_dir testname rosetta_dir')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
