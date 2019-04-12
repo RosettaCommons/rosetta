@@ -127,7 +127,7 @@ public:
 			trajectory_fname_ = "interaction_graph_perfbench_denseig_current_default_sfxn.traj";
 			setup_for_denseig();
 			break;
-		default:
+		default :
 			utility_exit_with_message( "Error in InteractionGraphPerformanceBenchmark::setUp(): An unrecognized benchtype_ value was passed to the constructor." );
 		}
 	}
