@@ -355,8 +355,8 @@ SetSecStructEnergies::parse_my_tag(
 	if ( tag->hasOption( "natbias_stwist" ) ) stwist_weight_ = tag->getOption< Real >( "natbias_stwist" );
 
 	/// original secondary structure potential except for sheet potential
-	if ( tag->hasOption( "hs_pair" ) ) hs_pair_weight_ = tag->getOption< Real >( "hs_pair" );
-	if ( tag->hasOption( "ss_pair" ) ) ss_pair_weight_ = tag->getOption< Real >( "ss_pair" );
+	if ( tag->hasOption( "hs_pair_weight" ) ) hs_pair_weight_ = tag->getOption< Real >( "hs_pair_weight", 2 );
+	if ( tag->hasOption( "ss_pair_weight" ) ) ss_pair_weight_ = tag->getOption< Real >( "ss_pair_weight", 2 );
 	if ( tag->hasOption( "rsigma"  ) ) rsigma_weight_  = tag->getOption< Real >( "rsigma" );
 
 	// params for NatbiasHelixPairPotential
@@ -489,7 +489,9 @@ void SetSecStructEnergies::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		+ XMLSchemaAttribute( "secstruct", xsct_dssp_string, "String specifying desired pose secondary structure" )
 		+ XMLSchemaAttribute( "use_dssp", xsct_rosetta_bool, "Use DSSP to determine ideal secondary structure (if not provided )? If false, pose secondary structure will be used" )
 		+ XMLSchemaAttribute( "hh_pair", xs_string, "String specifying helix pairings" )
+		+ XMLSchemaAttribute( "hh_pair_weight", xsct_real, "Weight for helix pairings" )
 		+ XMLSchemaAttribute( "ss_pair", xs_string, "String specifying strand pairings" )
+		+ XMLSchemaAttribute( "ss_pair_weight", xsct_real, "Weight for strand pairings" )
 		+ XMLSchemaAttribute( "hss_triplets", xs_string, "String specifying helix-strand-strand triplets" )
 		+ XMLSchemaAttribute::required_attribute( "scorefxn", xs_string, "Score function to use when scoring pose" )
 		+ XMLSchemaAttribute( "add_symmetry", xsct_rosetta_bool, "Add symmetry definition to pose" )

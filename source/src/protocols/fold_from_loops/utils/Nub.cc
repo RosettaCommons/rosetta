@@ -599,8 +599,8 @@ Nub::make_movemap()
 void
 Nub::fix_fragments()
 {
-	runtime_assert_msg( small_->size() > 0, "FragSet for small fragments provided is empty");
-	runtime_assert_msg( large_->size() > 0, "FragSet for large fragments provided is empty");
+	runtime_assert_msg( !small_->empty(), "FragSet for small fragments provided is empty");
+	runtime_assert_msg( !large_->empty(), "FragSet for large fragments provided is empty");
 	core::select::residue_selector::ResidueSubset unfolded_selection = insertion_selector_->apply( *unfolded_pose_ );
 	if ( not seqmap_.is_identity() ) {
 		small_ = fix_fragment( small_ );

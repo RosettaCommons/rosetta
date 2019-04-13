@@ -488,6 +488,7 @@ NubInitioMover::sanity_check( core::pose::Pose const & pose ) {
 	TR << TR.Blue <<  "Is the template a single chain?" << std::endl;
 	runtime_assert_msg(pose.num_chains() == 1 , "Template can only have a single chain." );
 	TR << TR.Green << " * Yes!" << std::endl;
+	TR << TR.Green << "PDBInfo summary: " << pose.pdb_info()->short_desc() << std::endl;
 
 	TR << TR.Blue << "Are there segments of the template that we will keep?" << std::endl;
 	ResidueSubset subset = used_template_selector()->apply( pose );
@@ -502,6 +503,16 @@ NubInitioMover::sanity_check( core::pose::Pose const & pose ) {
 	TR << TR.Blue << "Seems template a Protein Sequence" << std::endl;
 	TR << TR.Green << pose.sequence() << std::endl;
 	TR << TR.Green << pose.secstruct() << std::endl;
+
+	TR << TR.Blue << "Do we have Fragments?" << std::endl;
+	runtime_assert_msg( !nub_->small_fragments()->empty(), "FragSet for small fragments provided is empty");
+	TR << TR.Green << "Small fragments set (size " << nub_->small_fragments()->max_frag_length() << ")";
+	TR << " Frames: " << nub_->small_fragments()->nr_frames() << std::endl;
+	TR << TR.Green << "  From : " << nub_->small_fragments()->min_pos() << " To: " << nub_->small_fragments()->max_pos() << std::endl;
+	runtime_assert_msg( !nub_->large_fragments()->empty(), "FragSet for large fragments provided is empty");
+	TR << TR.Green << "Large fragments set (size "  << nub_->large_fragments()->max_frag_length() << ")";
+	TR << " Frames: " << nub_->large_fragments()->nr_frames() << std::endl;
+	TR << TR.Green << "  From : " << nub_->large_fragments()->min_pos() << " To: " << nub_->large_fragments()->max_pos() << std::endl;
 
 	TR << TR.Blue << "Does the template have alpha content?" << std::endl;
 	has_alphas_ = (pose.secstruct().find("H") != std::string::npos);
