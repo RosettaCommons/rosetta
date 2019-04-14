@@ -36,15 +36,40 @@ name = 'description'
 coordinates = [PA, LOA, HOA, D]
 
 # paths and command lines
-rosetta_path = os.environ.get('ROSETTA')
+# find Rosetta relative script dir:
+# Rosetta/main/source/scripts/python/public/plot_VL_VH_orientational_coordinates/
+rosetta_path = os.path.join(os.path.abspath(__file__), "..", "..", "..", "..", "..", "..", "..")
+rosetta_path = os.path.abspath(rosetta_path)
+
 if rosetta_path:
-    angles_file = rosetta_path + '/tools/antibody/angles.sc'
-    rosetta_LHOC = rosetta_path + '/main/source/bin/packing_angle.macosclangrelease'
+
     rosetta_database = rosetta_path + '/main/database/'
+
+    angles_file = rosetta_path + '/tools/antibody/angles.sc'
+    if not os.path.isfile(angles_file):
+        sys.exit("Could not find angles.sc at: {}".format(angles_file))
+
+    rosetta_LHOC = rosetta_path + '/main/source/bin/packing_angle.'
+
+    platform = {"darwin": "macos", "linux": "linux", "win64": "windows"}[sys.platform]
+
+    if platform=="windows":
+        sys.exit("Script only runs on mac or linux... check your sys.platform")
+
+    for compiler in ["gcc", "clang", "icc"]:
+        ext = platform + compiler + "release"
+        if os.path.isfile(rosetta_LHOC + ext):
+            rosetta_LHOC += ext
+            break
+
+    if not os.path.isfile(rosetta_LHOC):
+        sys.exit("Could not find packing_angle executable at: {}".format(rosetta_LHOC))
+
+
 else:
     sys.exit("""
-    Could not find environment variable ROSETTA.
-    Please `export ROSETTA=/path/to/Rosetta`.
+    Could not find Rosetta relative to this script.
+    If you have moved the script, please fix line 41, above.
     Thanks. Exiting.
     """)
 
