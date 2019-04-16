@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file src/core/scoring/func/HarmonicFunc.fwd.hh
+/// @file src/core/scoring/func/SigmoidFunc.fwd.hh
 /// @brief forward declaration for Mixture functions
 /// @author James Thompson
 
@@ -23,9 +23,9 @@ namespace core {
 namespace scoring {
 namespace func {
 
-class HarmonicFunc;
-typedef utility::pointer::shared_ptr< HarmonicFunc > HarmonicFuncOP;
-typedef utility::pointer::shared_ptr< HarmonicFunc const > HarmonicFuncCOP;
+class SigmoidFunc;
+typedef utility::pointer::shared_ptr< SigmoidFunc > SigmoidFuncOP;
+typedef utility::pointer::shared_ptr< SigmoidFunc const > SigmoidFuncCOP;
 
 } // constraints
 } // scoring
