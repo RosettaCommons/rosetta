@@ -939,11 +939,57 @@ residue_types/beta-peptide/transACPC.params
 #### Arabanoses
 residue_types/carbohydrates/aldoses/pentoses/arabinoses/to5-alpha-L-Araf.params
 residue_types/carbohydrates/aldoses/pentoses/arabinoses/to5-beta-L-Araf.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to2-alpha-D-Arap.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to2-beta-D-Arap.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to3-alpha-D-Arap.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to3-beta-D-Arap.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to4-alpha-D-Arap.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to4-beta-D-Arap.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to2-alpha-L-Arap.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to2-beta-L-Arap.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to3-alpha-L-Arap.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to3-beta-L-Arap.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to4-alpha-L-Arap.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to4-beta-L-Arap.params
+#### Lyxoses
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to2-alpha-D-Lyxp.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to2-beta-D-Lyxp.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to3-alpha-D-Lyxp.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to3-beta-D-Lyxp.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to4-alpha-D-Lyxp.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to4-beta-D-Lyxp.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to2-alpha-L-Lyxp.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to2-beta-L-Lyxp.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to3-alpha-L-Lyxp.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to3-beta-L-Lyxp.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to4-alpha-L-Lyxp.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to4-beta-L-Lyxp.params
+#### Riboses
+residue_types/carbohydrates/aldoses/pentoses/riboses/to2-alpha-D-Ribp.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to2-beta-D-Ribp.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to3-alpha-D-Ribp.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to3-beta-D-Ribp.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to4-alpha-D-Ribp.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to4-beta-D-Ribp.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to2-alpha-L-Ribp.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to2-beta-L-Ribp.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to3-alpha-L-Ribp.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to3-beta-L-Ribp.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to4-alpha-L-Ribp.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to4-beta-L-Ribp.params
 #### Xyloses
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to2-alpha-D-Xylp.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to2-beta-D-Xylp.params
 residue_types/carbohydrates/aldoses/pentoses/xyloses/to3-alpha-D-Xylp.params
 residue_types/carbohydrates/aldoses/pentoses/xyloses/to3-beta-D-Xylp.params
 residue_types/carbohydrates/aldoses/pentoses/xyloses/to4-alpha-D-Xylp.params
 residue_types/carbohydrates/aldoses/pentoses/xyloses/to4-beta-D-Xylp.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to2-alpha-L-Xylp.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to2-beta-L-Xylp.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to3-alpha-L-Xylp.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to3-beta-L-Xylp.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to4-alpha-L-Xylp.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to4-beta-L-Xylp.params
 ### Aldohexoses
 #### Glucoses
 residue_types/carbohydrates/aldoses/hexoses/glucoses/to2-alpha-D-Glcp.params
