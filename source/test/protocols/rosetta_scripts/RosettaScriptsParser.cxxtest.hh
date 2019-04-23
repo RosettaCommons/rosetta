@@ -20,6 +20,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/extra_pose_info_util.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreType.hh>
 
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
@@ -36,6 +38,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 // Numberic headers
 
@@ -181,12 +184,14 @@ public:
 		try {
 			protocols::rosetta_scripts::RosettaScriptsParser parser;
 			auto protocoltag = parser.create_tag_from_xml_string(report_at_end_protocol, utility::vector1<std::string>());
+
 			auto parsed_mover = parser.parse_protocol_tag(
 				test_pose,
 				parser.create_tag_from_xml_string(report_at_end_protocol, utility::vector1<std::string>()),
 				basic::options::option);
 
 			parsed_mover->apply(test_pose);
+
 		} catch (utility::excn::Exception & e ) {
 			// The XSD itself is faulty;
 			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
@@ -201,5 +206,117 @@ public:
 		TS_ASSERT(ala_pre == 0);
 		TS_ASSERT(ala_post == 12);
 		TS_ASSERT(ala_post_reported == 12);
+
 	}
+	void test_output_scoring()
+	{
+		core::pose::Pose test_pose;
+		core::pose::make_pose_from_sequence(test_pose, "TESTTESTTEST", "fa_standard", false);
+
+		std::string output_true_xml =
+			" <ROSETTASCRIPTS>"
+			"     <SCOREFXNS>"
+			"         <ScoreFunction name=\"test\" >"
+			"             <Reweight scoretype=\"fa_rep\" weight=\".22\" />"
+			"             <Reweight scoretype=\"fa_elec\" weight=\".20\" />"
+			"             <Reweight scoretype=\"fa_dun\"  weight=\"10\" />"
+			"         </ScoreFunction>"
+			"     </SCOREFXNS>"
+			"     <TASKOPERATIONS>"
+			"         <RestrictAbsentCanonicalAAS keep_aas=\"A\" name=\"to_ala\" resnum=\"0\"/>"
+			"     </TASKOPERATIONS>"
+			"     <FILTERS>"
+			"         <ResidueCount name=\"ala_pre\" residue_types=\"ALA\" />"
+			"         <ResidueCount name=\"ala_post_reported\" residue_types=\"ALA\" />"
+			"         <ResidueCount name=\"ala_post\" residue_types=\"ALA\" />"
+			"     </FILTERS>"
+			"     <MOVERS>"
+			"         <PackRotamersMover name=\"to_ala\" task_operations=\"to_ala\"/>"
+			"     </MOVERS>"
+			"     <PROTOCOLS>"
+			"         <Add filter_name=\"ala_pre\" report_at_end=\"false\"/>"
+			"         <Add filter_name=\"ala_post_reported\" />"
+			"         <Add mover_name=\"to_ala\" />"
+			"         <Add filter_name=\"ala_post\" report_at_end=\"false\"/>"
+			"     </PROTOCOLS>"
+			"     <OUTPUT scorefxn=\"test\"/>"
+			" </ROSETTASCRIPTS>";
+
+		std::string output_false_xml =
+			" <ROSETTASCRIPTS>"
+			"     <TASKOPERATIONS>"
+			"         <RestrictAbsentCanonicalAAS keep_aas=\"A\" name=\"to_ala\" resnum=\"0\"/>"
+			"     </TASKOPERATIONS>"
+			"     <FILTERS>"
+			"         <ResidueCount name=\"ala_pre\" residue_types=\"ALA\" />"
+			"         <ResidueCount name=\"ala_post_reported\" residue_types=\"ALA\" />"
+			"         <ResidueCount name=\"ala_post\" residue_types=\"ALA\" />"
+			"     </FILTERS>"
+			"     <MOVERS>"
+			"         <PackRotamersMover name=\"to_ala\" task_operations=\"to_ala\"/>"
+			"     </MOVERS>"
+			"     <PROTOCOLS>"
+			"         <Add filter_name=\"ala_pre\" report_at_end=\"false\"/>"
+			"         <Add filter_name=\"ala_post_reported\" />"
+			"         <Add mover_name=\"to_ala\" />"
+			"         <Add filter_name=\"ala_post\" report_at_end=\"false\"/>"
+			"     </PROTOCOLS>"
+			" </ROSETTASCRIPTS>";
+
+
+		try {
+
+			protocols::rosetta_scripts::RosettaScriptsParser parser;
+
+			//Test NO output.  Scorefunction in the ParsedProtocol mover should be null.
+			bool modified_pose;
+			std::string input_name = "test_pose_in";
+			std::string output_name = "test_pose_out";
+
+			auto parsed_mover = parser.generate_mover_and_apply_to_pose_xml_string(
+				test_pose,
+				basic::options::option,
+				modified_pose,
+				output_false_xml,
+				input_name,
+				output_name,
+				nullptr);
+
+			TS_ASSERT( parsed_mover->final_scorefxn() == nullptr);
+
+			//Test WITH scoring output
+
+			parsed_mover = parser.generate_mover_and_apply_to_pose_xml_string(
+				test_pose,
+				basic::options::option,
+				modified_pose,
+				output_true_xml,
+				input_name,
+				output_name,
+				nullptr);
+			TS_ASSERT( parsed_mover->final_scorefxn() != nullptr);
+
+
+			core::scoring::ScoreFunctionOP test_scorefxn = utility::pointer::make_shared< core::scoring::ScoreFunction >();
+			test_scorefxn->set_weight(core::scoring::fa_rep,  .22);
+			test_scorefxn->set_weight(core::scoring::fa_elec, .20);
+			test_scorefxn->set_weight(core::scoring::fa_dun,  10.0);
+
+
+			//Make sure the scorefunction set in the OUTPUT is the scorefunction set in the ParsedProtocol mover.
+			core::scoring::ScoreFunctionCOP scorefxn = parsed_mover->final_scorefxn();
+
+			for ( core::Size i=1; i <= core::Size( core::scoring::n_score_types); ++i ) {
+				core::scoring::ScoreType score_type = static_cast<core::scoring::ScoreType>(i);
+				TS_ASSERT(scorefxn->get_weight(score_type) == test_scorefxn->get_weight( score_type ));
+			}
+
+		} catch (utility::excn::Exception & e ) {
+			// The XSD itself is faulty;
+			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
+			TS_ASSERT( false );
+		}
+
+	}
+
 };

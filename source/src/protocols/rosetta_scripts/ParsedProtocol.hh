@@ -109,6 +109,8 @@ public:
 	);
 
 	void set_resid( core::Size const resid ) override;
+
+
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< ParsedProtocol >(); }
 	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override; // this is defined as public here, b/c I need to circumvent the name-check, since this is called both by the Movers section (as ParsedProtocol) and the PROTOCOLS section.
@@ -154,7 +156,7 @@ private:
 private:
 
 	MoverFilterVector movers_;
-	core::scoring::ScoreFunctionCOP final_scorefxn_;
+	core::scoring::ScoreFunctionCOP final_scorefxn_ = nullptr;
 	std::string mode_;
 	utility::vector1< core::Real > apply_probability_; // if mode_="single_random", assigns a probability of execution to each mover/filter pair. Defaults to equal probabilities to all.
 	core::Size last_attempted_mover_idx_; //index to last attempted mover; useful for adaptive monte carlo

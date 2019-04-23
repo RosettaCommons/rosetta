@@ -716,8 +716,6 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	if ( tag->hasTag("OUTPUT") ) {
 		TagCOP const output_tag( tag->getTag("OUTPUT") );
 		protocol->final_scorefxn( rosetta_scripts::parse_score_function( output_tag, data, "commandline" ) );
-	} else {
-		protocol->final_scorefxn( commandline_sfxn );
 	}
 
 	tag->die_for_unaccessed_options_recursively();

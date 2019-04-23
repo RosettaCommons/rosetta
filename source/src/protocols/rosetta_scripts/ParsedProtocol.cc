@@ -39,6 +39,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/Energies.hh>
 
 // JD2 headers
 #include <protocols/jd2/Job.hh>

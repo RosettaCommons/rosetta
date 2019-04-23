@@ -5,4 +5,5 @@
 <PROTOCOLS>
     <Add mover="add_10" />
 </PROTOCOLS>
+<OUTPUT scorefxn="commandline" />
 </ROSETTASCRIPTS>
