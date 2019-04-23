@@ -280,6 +280,7 @@ BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 
 	if ( use_reporter_behavior_ && !report_all_heavy_atom_unsats_ && !report_sc_heavy_atom_unsats_ && !report_bb_heavy_atom_unsats_ && !report_nonheavy_unsats_ && !report_all_unsats_ ) {
 		buried_unsat_hbond_filter_tracer << " WARNING! use_reporter_behavior=true, need to set one behavior to true; will use default report_all_heavy_atom_unsats: " << std::endl;
+		report_all_heavy_atom_unsats_ = true;
 	}
 	if ( use_reporter_behavior_ && ( report_sc_heavy_atom_unsats_ || report_bb_heavy_atom_unsats_ || report_nonheavy_unsats_ || report_all_unsats_ ) ) {
 		report_all_heavy_atom_unsats_ = false;
@@ -584,8 +585,10 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		if ( report_all_unsats_ ) {
 			return core::Real(all_unsats);
 		}
-		std::cout << "need to change one of the reporters to true"; // shouldn't ever happen now
-		return(911);
+		// If all of the report options are false, return the default all_heavy_atom_unsat (as per documentation).
+		// This should never happen in rosetta_scripts, but might happen in PyRosetta/C++.
+		buried_unsat_hbond_filter_tracer << " WARNING! use_reporter_behavior=true, need to set one behavior to true; will use default report_all_heavy_atom_unsats: " << std::endl;
+		return core::Real(all_heavy_atom_unsats);
 	} else if ( legacy_options_ ) {
 		buried_unsat_hbond_filter_tracer << " USING LEGACY OPTIONS: ALL UNSATS TREATED AS EQUIVALENT (NOT RECOMMENDED!);  all unsats = " << ( all_unsats ) << std::endl;
 		return core::Real( all_unsats );
