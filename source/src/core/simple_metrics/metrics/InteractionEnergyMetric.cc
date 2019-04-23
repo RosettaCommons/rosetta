@@ -213,6 +213,7 @@ InteractionEnergyMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	attributes_for_get_score_function_name( attlist );
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"A metric for measuring the short and long range interaction energy between residues using two sets of residue selectors. Will use the current energies of the pose, unless force_rescore option is set.", attlist);
 }
 

@@ -948,6 +948,7 @@ void AntibodyFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 	protocols::features::xsd_type_definition_w_attributes(
 		xsd, class_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"Collects data on an antibody including CDRs, interfaces of L_H, L_A, H_A, "
 		"and LH_A (this can be set), and other metrics.",
 		attlist );

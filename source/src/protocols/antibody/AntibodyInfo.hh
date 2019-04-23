@@ -88,6 +88,14 @@ public:
 	std::string
 	get_current_CDRDefinition()  const;
 
+	///@brief Get a const OP to the antibody enum manager
+	AntibodyEnumManagerCOP
+	get_antibody_enum_manager() const;
+
+	///@brief Get a const OP to the cluster enum manager
+	clusters::CDRClusterEnumManagerCOP
+	get_cdr_cluster_enum_manager() const;
+
 	/// @brief get the length of the cdr upon construction of AntibodyInfo
 	///
 	/// @details Does not work for proto CDR4 (DE loop)
@@ -129,6 +137,10 @@ public:
 	get_light_chain_type_enum() const {
 		return light_chain_type_;
 	}
+
+	///@brief Set the light chain type via enum
+	void
+	set_light_chain_type(LightChainTypeEnum light_chain);
 
 	/// @brief return whether this pose has antigen or not
 	bool
@@ -507,14 +519,6 @@ public:
 
 
 public:
-
-	/// @brief use the H3 cterm coordinates in the pose to calculate the cterminal type
-	//std::string calculate_H3_base_by_coordinates(pose::Pose const & pose) const;
-	AntibodyEnumManagerCOP
-	get_antibody_enum_manager() const;
-
-	clusters::CDRClusterEnumManagerCOP
-	get_cdr_cluster_enum_manager() const;
 
 	void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info ) ;

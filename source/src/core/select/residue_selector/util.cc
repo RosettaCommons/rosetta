@@ -380,6 +380,17 @@ OR_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 ) {
 	}
 }
 
+ResidueSubset
+OR_combine( ResidueSubset const & sele1, ResidueSubset const & sele2){
+	debug_assert(sele1.size() == sele2.size());
+
+	ResidueSubset new_subset;
+	for ( Size i = 1; i <= sele1.size(); ++i ) {
+		new_subset[ i ] = sele1[ i ] || sele2[ i ];
+	}
+	return new_subset;
+}
+
 ResidueSelectorOP
 AND_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 ) {
 	using namespace core::select::residue_selector;
@@ -397,6 +408,16 @@ AND_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 ) {
 	}
 }
 
+ResidueSubset
+AND_combine( ResidueSubset const & sele1, ResidueSubset const & sele2){
+	debug_assert( sele1.size() == sele2.size() );
+
+	ResidueSubset new_subset;
+	for ( Size i = 1; i <= sele1.size(); ++i ) {
+		new_subset[ i ] = sele1[ i ] && sele2[ i ];
+	}
+	return new_subset;
+}
 
 ResidueSelectorOP
 parse_residue_selector_logic_string(

@@ -131,6 +131,7 @@ TimingProfileMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	attlist + XMLSchemaAttribute::attribute_w_default("hours", xsct_rosetta_bool, "Boolean to set whether we report in hours.  Default is minutes", "false");
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"A metric for measuring a TimingProfile and adding it to the resulting score file.  The time is between construction and calls of apply.  If you use it in RosettaScripts, you can have multiple timings between mover sets and determine the time between them using separate TimingProfileMetrics.   Useful to get runtimes of new movers and applications. ", attlist);
 }
 

@@ -858,6 +858,7 @@ testinputfiles = [
 	"antibody/aho_with_antigen.pdb",
 	"antibody/4LGS_AHO.pdb",
 	"antibody/4dka.aho.pdb",
+	"antibody/camelid_with_antigen.pdb",
 	"antibody/database/cdr_set_instructions.txt",
 	"antibody/database/cdr_set_instructions_load_test.txt",
 	"antibody/design/graft_des_instructions.txt",

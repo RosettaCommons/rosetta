@@ -140,6 +140,7 @@ void RandomGlycanFoliageSelector::provide_xml_schema( utility::tag::XMLSchemaDef
 	AttributeList attributes;
 	attributes_for_parse_residue_selector(attributes);
 	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"Selects a random carbohydrate residue from a subset or selector, then selects the rest of the glycan foliage.  Used for sampling.",
 		attributes );
 

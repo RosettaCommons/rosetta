@@ -68,7 +68,6 @@ sources = {
 	"protocols/antibody/design":[
 		"AntibodyDesignEnumManager",
 		"AntibodyDesignMover",
-		"AntibodyDesignProtocol",
 		"AntibodySeqDesignTFCreator",
 		"CDRGraftDesignOptions",
 		"CDRSeqDesignOptions",

@@ -379,6 +379,7 @@ void AntibodyNumberingConverterMover::provide_xml_schema( utility::tag::XMLSchem
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"Converts numbering schemes of an antibody, independent of AntibodyInfo. "
 		"By default, works on a SINGLE antibody FAB with chains L and H, as the rest of Rosetta",
 		attlist );

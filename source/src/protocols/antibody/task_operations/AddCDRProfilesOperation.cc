@@ -203,6 +203,7 @@ void AddCDRProfilesOperation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 		+ XMLSchemaAttribute( "cdr_definition", xs_string , "Input CDR Definition - only works with North currently" );
 
 	std::string description =
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"@brief Add Cluster-based CDR Profiles as the task operation for the set of CDRs by default.\n"
 		" See ResidueProbTaskOperation for more.\n"
 		"\n"

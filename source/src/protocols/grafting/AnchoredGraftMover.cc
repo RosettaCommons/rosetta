@@ -745,7 +745,7 @@ void AnchoredGraftMover::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	using namespace utility::tag;
 	XMLSchemaComplexTypeGeneratorOP ct_gen = complex_type_generator_for_anchored_graft_mover( xsd );
 	ct_gen->element_name( mover_name() )
-		.description( "Class to graft a piece onto a pose" )
+		.description( "Authors: Jared Adolf-Bryfogle (jadolfbr@gmail.com) and Steven Lewis\n. Class to graft a pose onto a pose" )
 		.complex_type_naming_func( & moves::complex_type_name_for_mover )
 		.write_complex_type_to_schema( xsd );
 }

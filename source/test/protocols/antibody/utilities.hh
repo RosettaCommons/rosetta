@@ -142,6 +142,14 @@ assert_cdr_design_is_enabled_or_disabled(
 
 	for ( core::Size i = 1; i <= cdrs_to_check_disabled.size(); ++i ) {
 		protocols::antibody::CDRNameEnum cdr = static_cast<protocols::antibody::CDRNameEnum>( i );
+
+		TR_util << "Is Camelid: " << ab_info->is_camelid() << std::endl;
+		TR_util << "CDR: " << ab_info->get_CDR_name( cdr ) << std::endl;
+		TR_util << "CDR Chain: " << ab_info->get_CDR_chain( cdr ) << std::endl;
+
+		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
+
+
 		core::Size start = ab_info->get_CDR_start(cdr, pose);
 		core::Size end = ab_info->get_CDR_end(cdr, pose);
 		TR_util << "CDR: " << ab_info->get_CDR_name(cdr) <<" start: "<<start<<" end: "<< end << std::endl;
@@ -176,6 +184,13 @@ assert_cdr_design_disabled(
 	TR_util << "Checking CDR Design" << std::endl;
 	for ( core::Size i = 1; i <= cdrs_to_check_disabled.size(); ++i ) {
 		protocols::antibody::CDRNameEnum cdr = static_cast<protocols::antibody::CDRNameEnum>( i );
+
+		TR_util << "Is Camelid: " << ab_info->is_camelid() << std::endl;
+		TR_util << "CDR: " << ab_info->get_CDR_name( cdr ) << std::endl;
+		TR_util << "CDR Chain: " << ab_info->get_CDR_chain( cdr ) << std::endl;
+
+		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
+
 		core::Size start = ab_info->get_CDR_start(cdr, pose);
 		core::Size end = ab_info->get_CDR_end(cdr, pose);
 		for ( core::Size res = start; res <= end; ++res ) {
@@ -200,6 +215,13 @@ assert_cdr_packing_is_enabled_or_disabled(
 	TR_util << "Checking packing " << std::endl;
 	for ( core::Size i = 1; i <= cdrs_to_check_disabled.size(); ++i ) {
 		protocols::antibody::CDRNameEnum cdr = static_cast<protocols::antibody::CDRNameEnum>( i );
+
+		TR_util << "Is Camelid: " << ab_info->is_camelid() << std::endl;
+		TR_util << "CDR: " << ab_info->get_CDR_name( cdr ) << std::endl;
+		TR_util << "CDR Chain: " << ab_info->get_CDR_chain( cdr ) << std::endl;
+
+		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
+
 		core::Size start = ab_info->get_CDR_start(cdr, pose);
 		core::Size end = ab_info->get_CDR_end(cdr, pose);
 		for ( core::Size res = start; res <= end; ++res ) {

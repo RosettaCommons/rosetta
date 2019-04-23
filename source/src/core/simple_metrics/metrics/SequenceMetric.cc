@@ -229,6 +229,7 @@ SequenceMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 		"Output the sequence of only the selected residues." );
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"A metric for measuring ... and adding it to the resulting score file.", attlist);
 }
 

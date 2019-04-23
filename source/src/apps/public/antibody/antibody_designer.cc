@@ -12,7 +12,7 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/antibody/design/AntibodyDesignProtocol.hh>
+#include <protocols/antibody/design/AntibodyDesignMover.hh>
 #include <protocols/viewer/viewers.hh>
 
 #include <utility/excn/Exceptions.hh>
@@ -30,7 +30,7 @@ using namespace basic::options;
 void*
 my_main( void *)
 {
-	protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< AntibodyDesignProtocol >());
+	protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< AntibodyDesignMover >());
 	return nullptr ;
 }
 
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 		if ( option [ OptionKeys::antibody::design::view ]() ) {
 			protocols::viewer::viewer_main( my_main );
 		} else {
-			protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< AntibodyDesignProtocol >());
+			protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< AntibodyDesignMover >());
 		}
 
 	} catch (utility::excn::Exception& excn ) {

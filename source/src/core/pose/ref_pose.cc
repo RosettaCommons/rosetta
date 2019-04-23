@@ -28,6 +28,7 @@
 // Utility headers
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
+//#include <utility/file/file_sys_util.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/Tag.hh>
 
@@ -64,7 +65,7 @@ attributes_for_saved_reference_pose_w_description(
 	std::string const & attribute_name)
 {
 	attributes + utility::tag::XMLSchemaAttribute( attribute_name, utility::tag::xs_string,
-		( description == "" ? "Name of reference pose to use" : description ) );
+		( description == "" ? "Name of reference pose to use (Use the SavePoseMover to create a reference pose) " : description ) );
 }
 
 core::pose::PoseOP
@@ -73,6 +74,14 @@ saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataM
 	if ( in_tag->hasOption(tag_name) ) {
 		core::pose::PoseOP refpose(nullptr);
 		std::string refpose_name(in_tag->getOption<std::string>( tag_name) );
+
+		//Check if user has mistakenly provided a file name instead
+		/*
+		if (utility::file::file_exists(refpose_name)){
+		utility_exit_with_message("reference_name is not a path.  Please use the SavePoseMover to create a reference pose with a specific reference_name");
+		}
+		*/
+
 		TR<<"Loading PDB: "<<refpose_name<<std::endl;
 
 		if ( !data_map.has("spm_ref_poses",refpose_name) ) {

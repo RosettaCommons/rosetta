@@ -159,17 +159,17 @@ void AddCDRProfileSetsOperation::provide_xml_schema( utility::tag::XMLSchemaDefi
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute( "cdrs", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "limit_only_to_length", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "force_north_paper_db", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "use_outliers", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "include_native_restype", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "picking_rounds", xsct_non_negative_integer, "XRW TO DO", "1" )
-		+ XMLSchemaAttribute::attribute_w_default( "cutoff", xsct_non_negative_integer, "XRW TO DO", "10" )
-		+ XMLSchemaAttribute( "input_ab_scheme", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute( "cdr_definition", xs_string , "XRW TO DO" );
+		+ XMLSchemaAttribute( "cdrs", xs_string , "CDRs to apply this operation to." )
+		+ XMLSchemaAttribute::attribute_w_default( "limit_only_to_length", xsct_rosetta_bool, "Limit only to length, and not cluster", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "force_north_paper_db", xsct_rosetta_bool, "Force the use of the original db. Used for benchmarking.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_outliers", xsct_rosetta_bool, "Use cluster outliers in the profiles", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "include_native_restype", xsct_rosetta_bool, "Include the native restype", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "picking_rounds", xsct_non_negative_integer, "Number of times we sample from the sequence distribution.  Increase this to increase variability", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "cutoff", xsct_non_negative_integer, "Number of cluster members for which to use CDR profiles", "10" )
+		+ XMLSchemaAttribute( "input_ab_scheme", xs_string , "The Input Antibody Scheme" )
+		+ XMLSchemaAttribute( "cdr_definition", xs_string , "The CDR Definition used" );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n  Add CDR profiles based on whole sequences.");
 }
 
 

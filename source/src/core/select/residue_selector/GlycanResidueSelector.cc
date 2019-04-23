@@ -174,6 +174,7 @@ void GlycanResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		"Should we include the root (branch/branches) residues in our selection or just go from that?", "false");
 
 	xsd_type_definition_w_attributes( xsd, class_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmai.com)\n"
 		"A ResidueSelector for carbohydrates and individual carbohydrate trees. "
 		"Selects all Glycan residues if no option is given or the branch going out from the root residue. "
 		"Selecting from root residues allows you to choose the whole glycan branch or only tips, etc.", attributes );

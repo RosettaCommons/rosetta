@@ -505,16 +505,30 @@ AntibodyInfo::identify_light_chain(const pose::Pose& ) {
 	}
 }
 
+void
+AntibodyInfo::set_light_chain_type( LightChainTypeEnum light_chain ){
+	if ( is_camelid() ) {
+		TR <<"Camelid antibody present.  Setting light chain type as unknown." << std::endl;
+		light_chain_type_ = unknown;
+	} else {
+		light_chain_type_ = light_chain;
+	}
+}
+
 //Jadolfbr 3/2012  Refactored to be numbering scheme agnostic.
 void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 
-
+	chains_for_cdrs_.clear();
 	for ( Size i=1; i<=3; ++i ) {
 		chains_for_cdrs_.push_back('H');    // HEAVY chain first
 	}
 	for ( Size i=1; i<=3; ++i ) {
 		chains_for_cdrs_.push_back('L');    // light
 	}
+
+	//L4/H4
+	chains_for_cdrs_.push_back('H'); //H4
+	chains_for_cdrs_.push_back('L'); //L4
 
 	int loop_start_in_pose, loop_stop_in_pose, cut_position ;
 	loopsop_having_allcdrs_ = utility::pointer::make_shared< loops::Loops >();

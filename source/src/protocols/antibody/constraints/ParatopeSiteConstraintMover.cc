@@ -319,6 +319,7 @@ void ParatopeSiteConstraintMover::provide_xml_schema( utility::tag::XMLSchemaDef
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"Adds SiteConstraints from the Antibody Paratope to the antigen, "
 		"defined for simplicity as the CDRs. Individual residues of the paratope can be set, "
 		"or specific CDRs of the paratope can be set as well. These help to keep only the "

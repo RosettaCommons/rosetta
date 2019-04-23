@@ -293,6 +293,7 @@ void SimpleThreadingMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"This mover functions to thread the sequence of a region onto the given pose. "
 		"Nothing fancy here. Useful when combined with -parser:string_vars option "
 		"to replace strings within the RosettaScript. "

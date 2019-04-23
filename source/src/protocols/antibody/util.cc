@@ -143,14 +143,12 @@ get_cdr_loops(
 	debug_assert( cdrs.size() <= CDRNameEnum_proto_total );
 	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops() );
 	for ( core::Size i = 1; i <= cdrs.size(); ++i ) {
-		if ( cdrs[ i ] ) {
-			//TR <<"CDR: " << i << std::endl;
-			auto cdr = static_cast<CDRNameEnum>( i );
-			//TR << "Getting CDR Loop: "<<ab_info->get_CDR_name( cdr ) << std::endl;
-			if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
 
-			cdr_loops->add_loop(ab_info->get_CDR_loop(cdr, pose, stem_size));
-		}
+		if ( ! cdrs[ i ] ) continue;
+		auto cdr = static_cast<CDRNameEnum>( i );
+		if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
+
+		cdr_loops->add_loop(ab_info->get_CDR_loop(cdr, pose, stem_size));
 	}
 	return cdr_loops;
 }

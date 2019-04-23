@@ -202,7 +202,8 @@ void ResiduePropertySelector::provide_xml_schema( utility::tag::XMLSchemaDefinit
 
 	attributes + XMLSchemaAttribute::attribute_w_default(  "logic", "logic_types", logic_description, "and_logic" );
 
-	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), "A residue selector that selects based on set residue properties.  Default is to use OR logic for multiple properties.  This can be set via selection_logic option.", attributes );
+	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"A residue selector that selects based on set residue properties.  Default is to use OR logic for multiple properties.  This can be set via selection_logic option.", attributes );
 
 }
 

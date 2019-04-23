@@ -65,7 +65,7 @@ RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, 
 	ab_info_(std::move(ab_info))
 {
 	set_defaults();
-	cdrs_ = cdrs;
+	set_cdrs(cdrs);
 }
 
 RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, utility::vector1<bool> const & cdrs, bool allow_cdr_design):
@@ -133,7 +133,6 @@ RestrictToCDRsAndNeighbors::set_defaults() {
 	numbering_scheme_ = manager.numbering_scheme_string_to_enum(numbering_scheme);
 	cdr_definition_ = manager.cdr_definition_string_to_enum(cdr_definition);
 
-
 }
 
 void
@@ -172,26 +171,31 @@ void RestrictToCDRsAndNeighbors::provide_xml_schema( utility::tag::XMLSchemaDefi
 	attributes_for_get_cdr_bool_from_tag(attributes, "cdrs");
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default( "neighbor_dis", xsct_real, "XRW TO DO", "6.0" )
-		+ XMLSchemaAttribute::attribute_w_default( "design_cdrs", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "design_antigen", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "design_framework", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "stem_size", xsct_non_negative_integer, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "neighbor_dis", xsct_real, "Neighbor detection distance", "6.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "design_cdrs", xsct_rosetta_bool, "Should we allow design to the CDRs?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "design_antigen", xsct_rosetta_bool, "Shoule we allow design to neighboring antigen residues?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "design_framework", xsct_rosetta_bool, "Shoule we allow design to neighboring framework residues?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "stem_size", xsct_non_negative_integer, "Length of the stem to also select", "0" )
 		+ XMLSchemaAttribute( "cdr_definition", xs_string ,
-		"cdr_definition requires input_ab_scheme to be set" )
+		"The Specific CDR definition to use." )
 		+ XMLSchemaAttribute( "input_ab_scheme", xs_string ,
-		"input_ab_scheme requires cdr_definition to be set" );
+		"The Sepcific input antibody scheme to use" );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n  Restrict (design and/or packing) to specific CDRs and neighbors" );
 }
 
 void
 RestrictToCDRsAndNeighbors::set_cdrs(const utility::vector1<bool>& cdrs) {
-	cdrs_ = cdrs;
+
 	if ( cdrs.size() < CDRNameEnum_proto_total ) {
-		for ( core::Size i = cdrs.size() +1; i <= CDRNameEnum_proto_total; ++i ) {
-			cdrs_.push_back( false );
+		cdrs_.clear();
+		cdrs_.resize(8, false);
+
+		for ( core::Size i = cdrs.size() +1; i <= cdrs.size(); ++i ) {
+			cdrs_[i] = cdrs[i];
 		}
+	} else {
+		cdrs_ = cdrs;
 	}
 
 	debug_assert(cdrs_.size() == 8);
@@ -239,7 +243,6 @@ RestrictToCDRsAndNeighbors::apply(const core::pose::Pose& pose, core::pack::task
 	} else {
 		local_ab_info = ab_info_->clone();
 	}
-
 	LoopsOP cdr_loops_and_stems = get_cdr_loops(local_ab_info, pose, cdrs_, stem_size_);
 
 	core::pack::task::operation::PreventRepacking turn_off_packing;

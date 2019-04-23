@@ -101,6 +101,7 @@ PerResidueSasaMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	AttributeList attlist;
 
 	core::simple_metrics::xsd_per_residue_real_metric_type_definition_w_attributes(xsd, name_static(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"A metric for measuring per-residue SASA and adding it to the resulting score file..", attlist);
 }
 

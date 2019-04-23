@@ -143,7 +143,8 @@ PerResidueDensityFitMetric::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 
 	//core::select::residue_selector::attributes_for_parse_residue_selector_default_option_name(attlist, "A Residue selector mask.  Used to only compute Zscore among a set of residues.  Useful for protein vs glycan density.  Since match_res is NOT a zscore, the selector acts as an AND selector, so we only compute the correlations on this set. " );
 
-	std::string documentation = "Calculate either a correlation (match_res true) or zscore related to the fit to the density.  Uses internal density tools to do so.  Numbers and cutoffs match well with Coot's density fit analysis tool. Zscore uses weighted sum of density, density-compared-to-neighbors, rama (where applicable) and cart_bonded to compute)  Correlation is same values used to calculate density scores.  Zscore reference is here: eLife 2016, Dimaio";
+	std::string documentation = "Authors: Jared Adolf-Bryfogle (jadolfbr@gmail.com) and Frank Dimaio (fdimaio@gmail.com)\n"
+		"Calculate either a correlation (match_res true) or zscore related to the fit to the density.  Uses internal density tools to do so.  Numbers and cutoffs match well with Coot's density fit analysis tool. Zscore uses weighted sum of density, density-compared-to-neighbors, rama (where applicable) and cart_bonded to compute)  Correlation is same values used to calculate density scores.  Zscore reference is here: eLife 2016, Dimaio";
 
 	core::simple_metrics::xsd_per_residue_real_metric_type_definition_w_attributes(xsd, name_static(),
 		documentation, attlist);

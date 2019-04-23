@@ -186,7 +186,8 @@ TotalEnergyMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 	attributes_for_get_score_function_name( attlist );
 
-	std::string description = "A metric to report the total energy of the system or the delta total energy between another input pose or the cmd-line set native.  ";
+	std::string description = "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"A metric to report the total energy of the system or the delta total energy between another input pose or the cmd-line set native.  ";
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
 		description, attlist);
@@ -208,16 +209,22 @@ TotalEnergyMetric::calculate(const core::pose::Pose & pose) const {
 
 	e_metric.set_scorefunction(scorefxn_);
 
-	if ( ref_pose_ ) {
-		e_metric.set_comparison_pose(ref_pose_);
-	}
-
 	std::map< core::Size, core::Real > energies = e_metric.calculate( pose );
 	core::Real total_energy = 0;
 	for ( auto res_e_pair : energies ) {
 		total_energy+= res_e_pair.second;
 	}
-	return total_energy;
+
+	if ( ref_pose_ ) {
+		core::Real ref_pose_energy = 0;
+		energies = e_metric.calculate( *ref_pose_ );
+		for ( auto res_e_pair : energies ) {
+			ref_pose_energy+= res_e_pair.second;
+		}
+		return total_energy - ref_pose_energy;
+	} else {
+		return total_energy;
+	}
 }
 
 void

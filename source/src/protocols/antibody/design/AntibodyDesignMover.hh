@@ -250,6 +250,8 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	core::pose::PoseOP
+	get_additional_output() override;
 
 private:
 
@@ -331,6 +333,11 @@ private:
 	//void
 	//mutate_framework_residues(pose::Pose pose, CDRClusterEnum cluster);
 
+	///@brief Run a final IAM at the end of the protocol?
+	///  Default True.
+	void
+	run_final_IAM( bool run_IAM );
+
 private:
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Main Algorithms
@@ -346,11 +353,15 @@ private:
 	void
 	run_basic_mc_algorithm(core::pose::Pose & pose, utility::vector1<CDRNameEnum>& cdrs_to_design, AntibodyDesignProtocolEnum mc_algorithm);
 
-
-
 	void
 	print_str_vec(std::string const name, utility::vector1<std::string> const & vec, std::ostream & output=std::cout) const;
 
+	///@brief Add cluster comments, fixes CDR numbering for certain cases, runs IAM
+	void
+	finalize_pose(AntibodyInfoCOP ab_info, core::pose::Pose & pose );
+
+	AntibodyInfoOP
+	init_ab_info(core::pose::Pose const & pose );
 
 private:
 
@@ -459,6 +470,13 @@ private:
 	bool mc_optimize_dG_ = false;
 	core::Real mc_interface_weight_ = 1.0;
 	core::Real mc_total_weight_ = 0.0;
+
+	bool run_final_AIM_ = true;
+	bool remove_antigen_ = false;
+	std::string light_chain_ = "";
+	core::Size additional_outputs_returned_ = 0; //For get_additional_output() functionality in JD2.
+
+
 };
 
 }

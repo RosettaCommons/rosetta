@@ -132,6 +132,7 @@ SelectedResiduesMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		"Required.  Output those residues selected. " );
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"A utility metric that outputs the residue selection in Pose or PDB numbering.  Comma-Separated.", attlist);
 }
 

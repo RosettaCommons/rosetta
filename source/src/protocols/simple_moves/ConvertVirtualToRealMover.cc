@@ -93,6 +93,7 @@ ConvertVirtualToRealMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	protocols::rosetta_scripts::attributes_for_parse_residue_selector(attributes);
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com) and Sebastian Raemisch (raemisch@scripps.edu)\n"
 		"Mover for switching from VIRTUAL residues to REAL residues."
 		" A VIRTUAL residue is one that is not scored or output.",
 

@@ -51,7 +51,6 @@ static MoverRegistrator< antibody::constraints::ParatopeEpitopeSiteConstraintMov
 static MoverRegistrator< antibody::constraints::ParatopeSiteConstraintMoverCreator > reg_ParatopeSiteConstraintMoverCreator;
 
 static MoverRegistrator< antibody::design::AntibodyDesignMoverCreator > reg_AntibodyDesignMoverCreator;
-static MoverRegistrator< antibody::design::AntibodyDesignProtocolCreator > reg_AntibodyDesignProtocolCreator;
 
 static MoverRegistrator< antibody::snugdock::SnugDockCreator > reg_SnugDockCreator;
 

@@ -172,14 +172,14 @@ void DisableAntibodyRegionOperation::provide_xml_schema( utility::tag::XMLSchema
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute( "region", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "disable_packing_and_design", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute( "region", xs_string , "Region to apply this to: antibody_region, cdr_region, or framework_region" )
+		+ XMLSchemaAttribute::attribute_w_default( "disable_packing_and_design", xsct_rosetta_bool, "Disable packing AND design to this region", "true" )
 		+ XMLSchemaAttribute( "cdr_definition", xs_string,
-		"cdr_definition requires input_ab_scheme to be set" )
+		"The CDR Definition used for this operation" )
 		+ XMLSchemaAttribute( "input_ab_scheme", xs_string,
-		"input_ab_scheme requires cdr_definitio nto be set" );
+		"The antibody scheme used for this operation" );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n Disable specific antibody regions in an antibody");
 }
 
 

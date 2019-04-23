@@ -129,6 +129,7 @@ SecondaryStructureMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		"Use a residue selector to output the secondary structure of only residues in selection." );
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"A metric getting the Secondary Structure string of a pose or subset of residues via residue selector using DSSP", attlist);
 }
 

@@ -259,6 +259,7 @@ void CreateGlycanSequonMover::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	attributes_for_get_score_function_name( attlist );
 
 	std::string doc_string =
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		" @brief Mutates residues to create a potential glycosylation site using known sequence motifs of N- or C- linked glycans.\n"
 		"  Includes options for Enhanced Sequons for N-linked glycans that have been shown to have higher rates of glycosylation\n"
 		"  as well as other positions that have been shown to influence the glycosylation chemistry.\n"

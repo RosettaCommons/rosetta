@@ -848,7 +848,9 @@ void InterfaceFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute( "interface", "interface_features_string", "Specify the interface as ChainsSide1_ChainsSide2 (e.g. AB_C)" )
 		+ XMLSchemaAttribute( "interfaces", "interface_features_list", "Provide a comma-separated list of interfaces." );
 
-	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "FeaturesReporter wrapper for InterfaceAnalyzer", attlist );
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"FeaturesReporter wrapper for InterfaceAnalyzer", attlist );
 
 }
 

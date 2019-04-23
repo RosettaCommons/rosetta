@@ -159,7 +159,9 @@ void InsertPoseIntoPoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinit
 
 	rosetta_scripts::attributes_for_saved_reference_pose( attlist, "spm_reference_name" );
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Inserts a pose between the specified residues of a second pose", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Authors: Jared Adolf-Bryfogle (jadolfbr@gmail.com) and Steven Lewis\n"
+		"Inserts a pose between the specified residues of a second pose", attlist );
 }
 
 std::string InsertPoseIntoPoseMoverCreator::keyname() const {

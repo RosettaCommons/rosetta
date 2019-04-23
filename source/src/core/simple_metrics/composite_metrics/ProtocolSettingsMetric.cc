@@ -172,7 +172,8 @@ ProtocolSettingsMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	//attributes_for_parse_residue_selector( attlist, "residue_selector",
 	// "Selector specifying residues." );
 
-	std::string description = "This Metric reports options that have been set in the command line and splits script_vars."\
+	std::string description = "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"This Metric reports options that have been set in the command line and splits script_vars."\
 		"  Each option name is the type and the setting is the value in the map.  "\
 		"This is primarily aimed at benchmarking and record-keeping for large-scale rosetta runs or experiments.\n"\
 		"  It works with both the global and local OptionsCollection to enable its use in JD3.  \n" \

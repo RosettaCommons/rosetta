@@ -132,6 +132,7 @@ void GlycanLayerSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		"Set the layer as all residue less or equal to this number (the beginning of the tree)" );
 
 	xsd_type_definition_w_attributes( xsd, class_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com).\n"
 		"A selector for choosing glycan residues based on their layer - as measured by the residue distance to the start of the glycan tree."
 		"If no layer is set, will select all glycan residues.", attributes );
 

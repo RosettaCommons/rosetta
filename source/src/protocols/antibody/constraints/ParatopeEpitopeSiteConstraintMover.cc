@@ -392,6 +392,7 @@ void ParatopeEpitopeSiteConstraintMover::provide_xml_schema( utility::tag::XMLSc
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"Adds SiteConstraints from the Antibody Paratope to the Epitope on the antigen. "
 		"Individual residues of the paratope can be set, or specific CDRs of the paratope "
 		"can be set as well. The Epitope is auto-detected within the set interface distance, "

@@ -9,6 +9,7 @@
 
 /// @file DeleteChainsMover.cc
 /// @brief
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 // Unit headers
 #include <protocols/simple_moves/DeleteChainsMover.hh>
@@ -114,23 +115,25 @@ DeleteChainsMover::apply( Pose & pose )
 		core::Size chain_id = core::pose::get_chain_id_from_chain( chain, pose );
 
 		pose.conformation().delete_residue_range_slow( pose.conformation().chain_begin( chain_id ), pose.conformation().chain_end( chain_id ) );
+
+		//JAB - put this in inner loop to prevent segfaults.  Delete each chain one at a time.
+		pose.pdb_info()->obsolete( false );
+
+		if ( pose.is_fullatom() ) {
+
+			//Same order of detection as import pdb.
+			if ( detect_bonds_ ) {
+				pose.conformation().detect_bonds();
+			}
+			pose.conformation().detect_disulfides();
+			if ( detect_pseudobonds_ ) {
+				pose.conformation().detect_pseudobonds();
+			}
+		}
+		core::pose::set_reasonable_fold_tree( pose );
 	}
 
-	pose.pdb_info()->obsolete( false );
 
-	if ( pose.is_fullatom() ) {
-
-		//Same order of detection as import pdb.
-		if ( detect_bonds_ ) {
-			pose.conformation().detect_bonds();
-		}
-		pose.conformation().detect_disulfides();
-		if ( detect_pseudobonds_ ) {
-			pose.conformation().detect_pseudobonds();
-		}
-	}
-
-	core::pose::set_reasonable_fold_tree( pose );
 }
 
 
@@ -189,7 +192,8 @@ void DeleteChainsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute( "detect_bonds", xsct_rosetta_bool, "detect and delete broken bonds afterwards")
 		+ XMLSchemaAttribute( "detect_pseudobonds", xsct_rosetta_bool, "detect and delete broken pseudobonds afterwards");
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "remove chains from a pose", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"remove chains from a pose", attlist );
 }
 
 std::string DeleteChainsMoverCreator::keyname() const {

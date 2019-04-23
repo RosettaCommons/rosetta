@@ -306,6 +306,7 @@ GlycanTreeMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 	XMLSchemaSimpleSubelementList subelements;
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, "GlycanTreeMinMover",
 
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		" A class that selects the downstream branch from residues in a movemap/selector, and minimizes those residues if on in the primary glycan movemap. Multiple Applies randomly select a different residue in the movemap/selector", attlist, subelements );
 
 }

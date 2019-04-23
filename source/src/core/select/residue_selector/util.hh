@@ -185,28 +185,51 @@ get_embedded_residue_selectors( utility::tag::TagCOP tag, basic::datacache::Data
 ResidueSelectorOP
 OR_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 );
 
+///@brief Combine two residue subsets with OR logic
+ResidueSubset
+OR_combine( ResidueSubset const & sele1, ResidueSubset const & sele2 );
+
 /// @brief If sele1 is already an AndResidueSelector, add sele2 to it.
 /// If not, return a new AndResidueSelector which combines the two.
 /// @details If either of the selectors are a nullptr, just return the other.
 ResidueSelectorOP
 AND_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 );
 
+///@brief Combine two residue ssubsets with OR logic
+ResidueSubset
+AND_combine( ResidueSubset const & sele1, ResidueSubset const & sele2);
+
 /// @brief Returns True if all the positions in the ResidueSubset are False
-bool all_false_selection( ResidueSubset const & selection );
+bool
+all_false_selection( ResidueSubset const & selection );
+
 /// @brief Returns True if all the positions in the ResidueSubset are True
-bool all_true_selection( ResidueSubset const & selection );
+bool
+all_true_selection( ResidueSubset const & selection );
+
 /// @brief Returns True if at least one position in the ResidueSubset is False
-bool has_any_false_selection( ResidueSubset const & selection );
+bool
+has_any_false_selection( ResidueSubset const & selection );
+
 /// @brief Returns True if at least one position in the ResidueSubset is True
-bool has_any_true_selection( ResidueSubset const & selection );
+bool
+has_any_true_selection( ResidueSubset const & selection );
+
 /// @brief Returns the number of selected residues in the ResidueSubset
-core::Size count_selected( ResidueSubset const & selection );
+core::Size
+count_selected( ResidueSubset const & selection );
+
 /// @brief Returns the Rosetta Numbering corresponding to the selected residues
-utility::vector1< core::Size > selection_positions( ResidueSubset const & selection );
+utility::vector1< core::Size >
+selection_positions( ResidueSubset const & selection );
+
 /// @brief Evaluate if two ResidueSubsets are equal
-bool are_selections_equal( ResidueSubset const & selection1, ResidueSubset const & selection2 );
+bool
+are_selections_equal( ResidueSubset const & selection1, ResidueSubset const & selection2 );
+
 /// @brief Returns a string representing the ResidueSubset (- for non selected, * for selected)
-std::string represent_residue_selector( ResidueSubset const & selection, std::string const & is_true="*", std::string const & is_false="-" );
+std::string
+represent_residue_selector( ResidueSubset const & selection, std::string const & is_true="*", std::string const & is_false="-" );
 
 /// @brief Read a string from the input tag with the indicated attribute name and interpret it
 /// as boolean logical operations on a set of existing ResidueSelectors that are already stored

@@ -1885,7 +1885,9 @@ void InterfaceAnalyzerMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	attlist + XMLSchemaAttribute( "ligandchain", xs_string, "Move ONLY this PDB chain. " + exclusive_warning );
 	attlist + XMLSchemaAttribute( "jump", xsct_non_negative_integer, "Residues upstream/downstream of this Jump are on opposite sides of the interface; this Jump moves in the separation step. " + exclusive_warning );
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This mover reports scores and statistics useful for judging the quality of protein-protein interfaces", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Authors: Steven Lewis, Bryan Der, Ben Stranges, Jared Adolf-Bryfogle\n"
+		"This mover reports scores and statistics useful for judging the quality of protein-protein interfaces", attlist );
 }
 
 std::string InterfaceAnalyzerMoverCreator::keyname() const {

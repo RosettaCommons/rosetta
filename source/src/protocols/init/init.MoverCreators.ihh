@@ -48,7 +48,6 @@
 #include <protocols/antibody/constraints/ParatopeSiteConstraintMoverCreator.hh>
 
 #include <protocols/antibody/design/AntibodyDesignMoverCreator.hh>
-#include <protocols/antibody/design/AntibodyDesignProtocolCreator.hh>
 
 #include <protocols/antibody/snugdock/SnugDockCreator.hh>
 

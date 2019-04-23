@@ -287,7 +287,9 @@ private:
 	core::Size forced_total_rounds_ = 0;
 	bool use_shear_ = false;
 	bool randomize_first_ = true;
-	core::Size inner_ncycles_ = 1; //For individual bb movements, multiply this by n glycans.
+	core::Size inner_ncycles_ = 0; //For individual bb movements, multiply this by n glycans.
+	bool match_sampling_of_modeler_ = false; //For benchmarking
+	utility::vector1< bool > final_residue_subset_;
 
 };
 

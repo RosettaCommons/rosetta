@@ -285,6 +285,7 @@ void ConservativeDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDef
 
 	task_op_schema_w_attributes(
 		xsd, keyname(), attributes,
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"TaskOperation to allow only conservative mutations at designable residues");
 }
 

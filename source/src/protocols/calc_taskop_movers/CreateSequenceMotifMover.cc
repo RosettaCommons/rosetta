@@ -336,7 +336,8 @@ void CreateSequenceMotifMover::provide_xml_schema( utility::tag::XMLSchemaDefini
 
 	attlist + XMLSchemaAttribute::attribute_w_default("pack_rounds", xsct_non_negative_integer, "Number of rounds to run packing/design. ", "5");
 
-	std::string doc_string = "@brief Simple mover to Create a sequence motif in a region of protein using the\n" "SequenceMotifTaskOperation.  Uses psueo-regular expressions to define the motif.\n"
+	std::string doc_string = "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"@brief Simple mover to Create a sequence motif in a region of protein using the\n" "SequenceMotifTaskOperation.  Uses psueo-regular expressions to define the motif.\n"
 		"\n"
 		"@details"
 		" Simply calls the packer using the operation, optionally packing neighbor residues as it does so.\n"

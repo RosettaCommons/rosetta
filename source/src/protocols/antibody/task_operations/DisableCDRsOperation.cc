@@ -213,13 +213,13 @@ void DisableCDRsOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	attributes_for_get_cdr_bool_from_tag(attributes, "cdrs");
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "disable_packing_and_design", xsct_rosetta_bool, "XRW TO DO",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "disable_packing_and_design", xsct_rosetta_bool, "Disable packing AND design of these CDRs",  "true"  )
 		+ XMLSchemaAttribute( "cdr_definition", xs_string ,
-		"cdr_definition requires input_ab_scheme to be set" )
+		"The specific CDR definition" )
 		+ XMLSchemaAttribute( "input_ab_scheme", xs_string ,
-		"input_ab_scheme require cdr_definition to be set" );
+		"The numbering scheme of the antibody" );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n Disable specific CDRs");
 }
 
 core::pack::task::operation::TaskOperationOP

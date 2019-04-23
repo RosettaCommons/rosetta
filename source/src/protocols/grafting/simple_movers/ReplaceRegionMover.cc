@@ -160,7 +160,9 @@ void ReplaceRegionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		+ XMLSchemaAttribute::required_attribute( "target_pose_start", xs_string, "First residue to replace in the target pose" );
 	rosetta_scripts::attributes_for_saved_reference_pose( attlist, "spm_reference_name" );
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Replaces a region of length span in the target pose with a specified region of length span in the source pose.", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"Replaces a region of length span in the target pose with a specified region of length span in the source pose.", attlist );
 }
 
 std::string ReplaceRegionMoverCreator::keyname() const {

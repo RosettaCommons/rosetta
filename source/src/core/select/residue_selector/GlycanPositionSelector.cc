@@ -152,6 +152,7 @@ GlycanPositionSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	AttributeList attributes;
 
 	std::string description = " "
+		" Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		" @brief A Residue Selector for selecting specific parts of arbitrary glycans by 'position'."
 		" @details."
 

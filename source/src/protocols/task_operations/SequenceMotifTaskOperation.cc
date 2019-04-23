@@ -163,7 +163,9 @@ SequenceMotifTaskOperation::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 
 	attributes_for_parse_residue_selector( attlist );
 
-	core::pack::task::operation::task_op_schema_w_attributes( xsd, keyname(), attlist, "A TaskOp that takes a regex-like pattern and turns it into a set of design residues.  The string should identify what to do for each position.  Does not TURN OFF design or packing for ANY residue other than those specified in the motif as '-' or with specific resfile command!" );
+	core::pack::task::operation::task_op_schema_w_attributes( xsd, keyname(), attlist,
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"A TaskOp that takes a regex-like pattern and turns it into a set of design residues.  The string should identify what to do for each position.  Does not TURN OFF design or packing for ANY residue other than those specified in the motif as '-' or with specific resfile command!" );
 
 
 }

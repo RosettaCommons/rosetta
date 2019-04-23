@@ -208,7 +208,8 @@ PerResidueRMSDMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	attlist + XMLSchemaAttribute("rmsd_type", "rmsd_types", "Type of calculation.  Current choices are: \n" + utility::to_string(rmsd_type_names) );
 	attlist + XMLSchemaAttribute::attribute_w_default("desymmetrize_selector", xsct_rosetta_bool, "Should we desymmetrize the residue selector if we have a symmetric pose?", "true");
 
-	std::string description = "\tThis is the RMSD for each residue between the input and the set comparison pose.\n"
+	std::string description = "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"\tThis is the RMSD for each residue between the input and the set comparison pose.\n"
 		"  If native is set on the cmd-line and use_native is true, we will use that.\n"
 		"  Default is to calculate all_heavy atoms - but this can be set\n."
 		"\n"

@@ -95,56 +95,113 @@ public:
 	Mover& operator=( Mover const& other );
 
 
-	virtual core::Real last_proposal_density_ratio() {return 1;} //ek added 2/25/10
+	///////////////////////////////////////////////////////////////////
+	///////       Main Mover Methods
+	///////
+
+	///@brief Main Method
+	virtual void
+	apply( Pose & ) = 0;
 
 	/// @brief Overload this static method if you access options within the mover.
 	/// @details These options will end up in -help of your application if users of this mover call register_options.
 	/// Do this recursively!
 	/// If you use movers within your mover, call their register_options in your register_options() method.
-	static void register_options() {}
-
-	virtual void apply( Pose & ) = 0;
-
-	std::string const & type() const { return type_; }
-
-	void set_type( std::string const& setting ) {
-		type_ = setting;
-	}
-
-	/// @brief A tag is a unique identifier used to identify structures produced
-	/// by this Mover. get_current_tag() returns the tag, and set_current_tag( std::string tag )
-	/// sets the tag.  This functionality is not intended for use with the 2008 job distributor.
-	std::string get_current_tag() const {
-		//  if ( jd2::jd2_used() ) return jd2::current_output_name();
-		return current_tag_;
-	}
-
-	virtual void set_current_tag( std::string const & new_tag ) { current_tag_ = new_tag; }
-
-	/// @brief setter for poses contained for rms
-	virtual void set_input_pose( PoseCOP pose );
-
-	/// @brief setter for native poses contained for rms ---- we should get rid of this method? it is widely used, but a bit unsafe
-	virtual void set_native_pose( PoseCOP pose );
-
-	PoseCOP get_input_pose() const;
-	PoseCOP get_native_pose() const; // ---- we should get rid of this method? it is widely used, but a bit unsafe
+	static void
+	register_options() {}
 
 	/// @brief: Unit test support function.  Apply one move to a given pose.
 	///      Allows extra test specific functions to be called before applying
-	virtual void test_move( Pose & pose ) {
+	virtual void
+	test_move( Pose & pose ) {
 		apply( pose );
 	}
 
+	/// @brief Return a clone of the Mover object.
+	virtual MoverOP
+	clone() const /*= 0*/;
+
+	/// @brief Inform the Job Distributor (August '08 vintage) whether this object needs to be freshly regenerated on
+	/// each use.
+	virtual bool
+	reinitialize_for_each_job() const;
+
+	/// @brief Inform the Job Distributor (August '08 vintage) whether this object needs to be regenerated when the input
+	/// pose is about to change, (for example, if the Mover has special code on the first apply() that is only valid for
+	/// that one input pose).
+	virtual bool
+	reinitialize_for_new_input() const;
+
+	/// @brief Generates a new Mover object freshly created with the default ctor.
+	virtual MoverOP
+	fresh_instance() const /*= 0*/;
+
+	///end parser interface, start Job Distributor interface/////////////
+	//void output_intermediate_pose( Pose const & pose, std::string const & stage_tag );
+
+	/// @brief returns status after an apply().  The job distributor (august 08 vintage) will check this function to see if your protocol wants to filter its results - if your protocol wants to say "that run was no good, skip it" then use the protected last_move_status(MoverStatus) to change the value that this function will return.
+	MoverStatus
+	get_last_move_status() const;
+
+	/// @brief resets status to SUCCESS, meant to be used before an apply().  The job distributor (august 08 vintage) uses this to ensure non-accumulation of status across apply()s.
+	void
+	reset_status();
+
+	///fpd
+	/// @brief Mechanism by which a mover may return multiple output poses from a single input pose.
+	///
+	/// @details
+	///  Supported in JD2.  Will attempt to grab additional poses until a nullptr is returned.
+	///
+	virtual
+	core::pose::PoseOP
+	get_additional_output();
+
+	/////////////////////////////////////////////////////////////////
+	///////       'Type' Settings
+	///////
+
+	///@brief Set the 'type' string
+	void
+	set_type( std::string const& setting ) {
+		type_ = setting;
+	}
+
+	std::string
+	get_type() const { return( type_ ); }
+
+	///@brief Set the 'type' string
 	//protected:
 	//OL 4/23/08 made this public. it is not really a safety issue to have that
 	//protected and it allows more detail in MC diagnosis
-	void type( const std::string & type_in ) { type_ = type_in; }
+	void
+	type( const std::string & type_in ) { type_ = type_in; }
 
-	/// @brief Return a clone of the Mover object.
-	virtual MoverOP clone() const /*= 0*/;
+	///@brief Get the set 'type' string
+	std::string const &
+	type() const { return type_; }
 
-	//////////////////////////////////begin parser interface////////////////////////////
+	//////////////////////////////////////////////////////////////////
+	///////       Input/Native Poses
+	///////
+
+	/// @brief setter for poses contained for rms
+	virtual void
+	set_input_pose( PoseCOP pose );
+
+	/// @brief setter for native poses contained for rms ---- we should get rid of this method? it is widely used, but a bit unsafe
+	virtual void
+	set_native_pose( PoseCOP pose );
+
+	PoseCOP
+	get_input_pose() const;
+
+	PoseCOP
+	get_native_pose() const; // ---- we should get rid of this method? it is widely used, but a bit unsafe
+
+	/////////////////////////////////////////////////////////////////////
+	///////       Parser Interface
+	///////
 
 	/// @brief Called by MoverFactory when constructing new Movers. Takes care of the specific mover's parsing.
 	virtual
@@ -157,53 +214,56 @@ public:
 	);
 
 	/// @brief Each derived class must specify its name.  The class name.
-	virtual std::string get_name() const = 0;
-	std::string get_type() const { return( type_ ); }
+	virtual std::string
+	get_name() const = 0;
 
-	///end parser interface, start Job Distributor interface/////////////
-	//void output_intermediate_pose( Pose const & pose, std::string const & stage_tag );
 
-	/// @brief returns status after an apply().  The job distributor (august 08 vintage) will check this function to see if your protocol wants to filter its results - if your protocol wants to say "that run was no good, skip it" then use the protected last_move_status(MoverStatus) to change the value that this function will return.
-	MoverStatus get_last_move_status() const;
+	//////////////////////////////////////////////////////////////////////
+	///////       Deprecated (but still present) JD Interface
+	///////
 
-	/// @brief resets status to SUCCESS, meant to be used before an apply().  The job distributor (august 08 vintage) uses this to ensure non-accumulation of status across apply()s.
-	void reset_status();
+	void
+	set_current_job( protocols::jobdist::BasicJobCOP job );
 
-	///fpd
-	/// @brief Mechanism by which a mover may return multiple output poses from a single input pose.
-	virtual
-	core::pose::PoseOP get_additional_output();
+	jobdist::BasicJobCOP
+	get_current_job() const;
+
+	virtual void
+	set_current_tag( std::string const & new_tag ) { current_tag_ = new_tag; }
+
+	/// @brief A tag is a unique identifier used to identify structures produced
+	/// by this Mover. get_current_tag() returns the tag, and set_current_tag( std::string tag )
+	/// sets the tag.  This functionality is not intended for use with the 2008 job distributor.
+	std::string
+	get_current_tag() const {
+		//  if ( jd2::jd2_used() ) return jd2::current_output_name();
+		return current_tag_;
+	}
+
+	/// @brief Outputs details about the Mover, including current settings.
+	virtual void
+	show(std::ostream & output=std::cout) const;
+
+
+	////////////////////////////////////////////////////////////////////////
+	///////       Etc.
+	///////
+
+	virtual core::Real
+	last_proposal_density_ratio() {return 1;} //ek added 2/25/10
 
 	/// @brief Strings container can be used to return miscellaneous info (as std::string) from a mover, such as notes about the results of apply(). The job distributor (Apr 09 vintage) will check this function to see if your protocol wants to add string info to the Job that ran this mover. One way this can be useful is that later, a JobOutputter may include/append this info to an output file.
 	/// @brief clear_info is called by jd2 before calling apply
-	virtual void clear_info() { info_.clear(); }
+	virtual void
+	clear_info() { info_.clear(); }
 
 	/// @brief non-const accessor
-	virtual Strings & info() { return info_; }
+	virtual
+	Strings & info() { return info_; }
 
 	/// @brief const accessor
-	virtual Strings const & info() const { return info_; }
-
-	/// @brief Inform the Job Distributor (August '08 vintage) whether this object needs to be freshly regenerated on
-	/// each use.
-	virtual bool reinitialize_for_each_job() const;
-
-	/// @brief Inform the Job Distributor (August '08 vintage) whether this object needs to be regenerated when the input
-	/// pose is about to change, (for example, if the Mover has special code on the first apply() that is only valid for
-	/// that one input pose).
-	virtual bool reinitialize_for_new_input() const;
-
-	/// @brief Generates a new Mover object freshly created with the default ctor.
-	virtual MoverOP fresh_instance() const /*= 0*/;
-
-	///////////////////////////////end Job Distributor interface////////////////////////////////////////
-
-	void set_current_job( protocols::jobdist::BasicJobCOP job );
-
-	jobdist::BasicJobCOP get_current_job() const;
-
-	/// @brief Outputs details about the Mover, including current settings.
-	virtual void show(std::ostream & output=std::cout) const;
+	virtual
+	Strings const & info() const { return info_; }
 
 protected:
 	/// @brief nonvirtual setter for MoverStatus last_status_.  Protected means that only the mover itself will be able to change its own status.  The job distributor (august 08 vintage) is aware of status set with this function and will do what the MoverStatus says.
@@ -219,6 +279,7 @@ private:
 
 	/// @brief used to track if movers fail their filters - jobdist::BasicJob Distributor queries for this value
 	MoverStatus last_status_;
+
 	/// @brief miscellaneous info: optional notes about mover results. Fed to Job by JobDistributor (jd2), allowing JobOutputters to optionally report this information in some way.
 	Strings info_;
 

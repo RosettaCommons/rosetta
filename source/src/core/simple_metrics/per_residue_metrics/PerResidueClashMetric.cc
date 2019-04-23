@@ -180,6 +180,7 @@ PerResidueClashMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 	attributes_for_parse_residue_selector( attlist, "residue_selector2", "The residue selector to use for calculating clashes TO for each residue of the primary selector.  Default is to calculate clashes of each residue to ALL OTHER residues (including those in the primary selector)" );
 
 	std::string description =
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"A SimpleMetric that calculates the total number of atom-atom clashes from a residue in a residue selector\n"
 		" to all other residues defined in a second residue selector using the LJ radius of each atom \n"
 		"Can use a soft radius, which reduces it by 33% (by default - see dampening_percent option. \n"

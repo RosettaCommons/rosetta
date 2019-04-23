@@ -245,7 +245,8 @@ DihedralConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
 
-	std::string description = "A cst generator that creates Dihedral constraints for specified residues using a residue selector.\n"
+	std::string description = "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"A cst generator that creates Dihedral constraints for specified residues using a residue selector.\n"
 		" Uses CircularHarmonic constraints, since CircularGaussian func does not exist. \n"
 		" By default, works on Protein and carbohydrate BackBone dihedrals (see dihedral option), however CUSTOM ARBITRARY DIHEDRALS can be set. \n"
 		"  See the dihedral_atoms and dihedral_residues tags to set a custom dihedral.\n\n"

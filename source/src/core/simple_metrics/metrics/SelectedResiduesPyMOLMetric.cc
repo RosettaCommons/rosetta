@@ -119,6 +119,7 @@ SelectedResiduesPyMOLMetric::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		"Required.  Output those residues selected. " );
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"A utility metric that outputs the residue selection as a PyMOL selection. ", attlist);
 }
 

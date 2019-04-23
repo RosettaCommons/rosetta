@@ -641,7 +641,9 @@ void SimpleMetricFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.add_group_subelement( & SimpleMetricFactory::get_instance()->simple_metric_xml_schema_group_name );
 
-	protocols::features::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(), "Run a set of SimpleMetrics on the pose, and put the data into a features table ", attlist, subelements );
+	protocols::features::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"Run a set of SimpleMetrics on the pose, and put the data into a features table ", attlist, subelements );
 
 }
 

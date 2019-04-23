@@ -208,7 +208,9 @@ void DeleteRegionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	//Define things to do with the residue selector
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "ResidueSelector with region(s) to delete" );
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Deletes a region from a pose", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"Deletes a region from a pose", attlist );
 }
 
 std::string DeleteRegionMoverCreator::keyname() const {

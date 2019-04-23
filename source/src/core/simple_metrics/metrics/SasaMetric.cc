@@ -129,6 +129,7 @@ SasaMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	attributes_for_parse_residue_selector_default_option_name(attlist, description );
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"A metric for measuring SASA and adding it to the resulting score file.", attlist);
 }
 

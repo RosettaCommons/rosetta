@@ -215,7 +215,9 @@ void CDRClusterFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		+ XMLSchemaAttribute::attribute_w_default( "cdrs", xs_string, "Comma-separated list of CDRs for which to report features", "L1,L2,L3,H1,H2,H3" )
 		+ XMLSchemaAttribute( "input_ab_scheme", xs_string, "Numbering scheme for input antibody" );
 
-	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Reports clusters for the specified CDRs", attlist );
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"Reports clusters for the specified CDRs", attlist );
 }
 
 std::string CDRClusterFeaturesCreator::type_name() const {

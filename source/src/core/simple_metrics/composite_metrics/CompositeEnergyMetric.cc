@@ -185,7 +185,8 @@ CompositeEnergyMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 	attributes_for_get_score_function_name( attlist );
 
-	std::string description = "A metric to report/calculate all of the energies of a scorefunction that are not 0 or the delta of each energy between another input pose or the set native.";
+	std::string description = "Author: Jared Adolf-Bryfogle (jadolfbr@gmai.com)\n"
+		"A metric to report/calculate all of the energies of a scorefunction that are not 0 or the delta of each energy between another input pose or the set native.";
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
 		description, attlist);

@@ -106,6 +106,7 @@ void AsymmetricUnitSelector::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	//core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), "Description of residue selector here!", attributes );
 
 	xsd_type_definition_w_attributes( xsd, class_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com). \n"
 		"A ResidueSelector that selects only the master subunit of a symmetric pose or all of the residues in a non-symmetric pose", attributes );
 
 }

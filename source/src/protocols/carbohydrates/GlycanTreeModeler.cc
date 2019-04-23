@@ -246,6 +246,7 @@ void GlycanTreeModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute::attribute_w_default("shear", xsct_rosetta_bool, "Use the Shear Mover that is now compatible with glycans at an a probability of 10 percent", "false");
 
 	std::string documentation =
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"Brief: A protocol for optimizing glycan trees using the GlycanSampler from the base of the tree out to the leaves.\n"
 		"Details: Works by making all other residues virtual except the ones it is working on (current Layer).\n"
 		"A virtual residue is not scored.\n"

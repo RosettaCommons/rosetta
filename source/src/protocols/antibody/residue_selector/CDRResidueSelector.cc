@@ -210,7 +210,8 @@ void CDRResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		"Set the antibody numbering scheme. Requiresthe cdr_definition option. "
 		"Both options can also be set through the command line (recommended)");
 
-	xsd_type_definition_w_attributes( xsd, class_name(), "Select CDR residues.", attributes );
+	xsd_type_definition_w_attributes( xsd, class_name(), "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"Select CDR residues.", attributes );
 }
 
 ResidueSelectorOP

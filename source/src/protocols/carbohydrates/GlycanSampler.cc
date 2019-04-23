@@ -43,6 +43,8 @@
 #include <core/select/residue_selector/RandomGlycanFoliageSelector.hh>
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
 #include <core/select/residue_selector/GlycanResidueSelector.hh>
+#include <core/select/residue_selector/GlycanLayerSelector.hh>
+#include <core/select/residue_selector/AndResidueSelector.hh>
 #include <core/select/residue_selector/SymmetricalResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/util.hh>
@@ -159,6 +161,7 @@ GlycanSampler::parse_my_tag(
 	use_shear_ = tag->getOption< bool >("shear", use_shear_);
 	randomize_first_ = tag->getOption< bool >("randomize_torsions", randomize_first_);
 	inner_ncycles_ = tag->getOption< bool >("inner_bb_cycles", inner_ncycles_);
+	match_sampling_of_modeler_ = tag->getOption< bool >("match_sampling_of_modeler", match_sampling_of_modeler_);
 
 }
 
@@ -182,8 +185,8 @@ void GlycanSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 		+ XMLSchemaAttribute::attribute_w_default("min_rings", xsct_rosetta_bool, "Minimize Carbohydrate Rings during minimization. ", "false")
 		+ XMLSchemaAttribute::attribute_w_default("shear", xsct_rosetta_bool, "Use the Shear Mover that is now compatible with glycans at an a probability of 10 percent", "false")
 		+ XMLSchemaAttribute::attribute_w_default("randomize_torsions", xsct_rosetta_bool, "If NOT doing refinement, control whether we randomize torsions at the start, which helps to achieve low energy structures.", "true")
-		+ XMLSchemaAttribute::attribute_w_default("inner_bb_cycles", xsct_non_negative_integer, "Inner cycles for each time we call BB sampling either through small/medium/large moves or through the SugarBB Sampler.  This is multiplied by the number of glycans", "1");
-
+		+ XMLSchemaAttribute::attribute_w_default("match_sampling_of_modeler", xsct_rosetta_bool, "Option that matches the amount of sampling in a default GlycanTreeModeler run.  Used for benchmarking.", "0")
+		+ XMLSchemaAttribute::attribute_w_default("inner_bb_cycles", xsct_non_negative_integer, "Inner cycles for each time we call BB sampling either through small/medium/large moves or through the SugarBB Sampler.  This is multiplied by the number of glycans.  Scales poorly with GlycanModeler.  If 0 (default), we run the protocol normally", "0");
 	//Append for MoveMap, scorefxn, and task_operation tags.
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 	rosetta_scripts::attributes_for_get_score_function_name( attlist );
@@ -192,6 +195,7 @@ void GlycanSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 	XMLSchemaSimpleSubelementList subelements;
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
 
+		"Authors: Jared Adolf-Bryfogle (jadolfbr@gmail.com) and Jason Labonte (WLabonte@jhu.edu)\n"
 		"Main mover for Glycan Relax, which optimizes glycans in a pose. "
 		"Each round optimizes either one residue for BB sampling, linkage, or a [part of a ] branch for minimization and packing."
 		"Minimization and packing work by default by selecting a random glycan residue from any set movemap or all of them "
@@ -201,7 +205,6 @@ void GlycanSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 void
 GlycanSampler::set_defaults(){
-	rounds_ = 75; //Means absolutely nothing right now - Actually set from cmd line.
 	test_ = false;
 
 	final_min_ = true;
@@ -252,7 +255,9 @@ GlycanSampler::GlycanSampler( GlycanSampler const & src ):
 	forced_total_rounds_(src.forced_total_rounds_),
 	use_shear_(src.use_shear_),
 	randomize_first_(src.randomize_first_),
-	inner_ncycles_( src.inner_ncycles_)
+	inner_ncycles_( src.inner_ncycles_),
+	match_sampling_of_modeler_( src.match_sampling_of_modeler_),
+	final_residue_subset_( src.final_residue_subset_)
 {
 	if ( src.selector_ ) selector_ = src.selector_->clone();
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
@@ -575,14 +580,18 @@ GlycanSampler::setup_movers(
 			sugar_bb_sampler_weight = sugar_bb_sampler_weight - .10;
 		}
 
-		RationalMonteCarloOP mc_cycle = make_shared< RationalMonteCarlo >(
-			sugar_sampler_mover,
-			scorefxn_,
-			total_inner_cycles,
-			kt_,
-			false /*recover_low*/);
+		if ( total_inner_cycles != 0 ) {
+			RationalMonteCarloOP mc_cycle = make_shared< RationalMonteCarlo >(
+				sugar_sampler_mover,
+				scorefxn_,
+				total_inner_cycles,
+				kt_,
+				false /*recover_low*/);
 
-		weighted_random_mover_->add_mover(mc_cycle, sugar_bb_sampler_weight);
+			weighted_random_mover_->add_mover(mc_cycle, sugar_bb_sampler_weight);
+		} else {
+			weighted_random_mover_->add_mover(sugar_sampler_mover, sugar_bb_sampler_weight);
+		}
 	} else {
 		TR << "Increasing SmallMover weights as there is no data for SugarBB sampler to use..." << std::endl;
 		sugar_bb_offset = .30;
@@ -594,15 +603,18 @@ GlycanSampler::setup_movers(
 	shear_ = make_shared< ShearMover >();
 	shear_->set_residue_selector(return_subset_dihedral);
 	if ( use_shear_ ) {
+		if ( total_inner_cycles != 0 ) {
+			RationalMonteCarloOP mc_cycle_shear = make_shared< RationalMonteCarlo >(
+				shear_,
+				scorefxn_,
+				total_inner_cycles,
+				kt_,
+				false /*recover_low*/);
 
-		RationalMonteCarloOP mc_cycle_shear = make_shared< RationalMonteCarlo >(
-			shear_,
-			scorefxn_,
-			total_inner_cycles,
-			kt_,
-			false /*recover_low*/);
-
-		weighted_random_mover_->add_mover(mc_cycle_shear, .10);
+			weighted_random_mover_->add_mover(mc_cycle_shear, .10);
+		} else {
+			weighted_random_mover_->add_mover(shear_, .10);
+		}
 	}
 
 	//////        //////
@@ -657,34 +669,44 @@ GlycanSampler::setup_movers(
 	core::Real   large_prob =   X + sugar_bb_offset/3;
 
 	//Initialize inner MC movers
-	RationalMonteCarloOP mc_cycle_small = make_shared< RationalMonteCarlo >(
-		glycan_small_mover,
-		scorefxn_,
-		total_inner_cycles,
-		kt_,
-		false /*recover_low*/);
+	if ( total_inner_cycles != 0 ) {
+		RationalMonteCarloOP mc_cycle_small = make_shared< RationalMonteCarlo >(
+			glycan_small_mover,
+			scorefxn_,
+			total_inner_cycles,
+			kt_,
+			false /*recover_low*/);
 
-	RationalMonteCarloOP mc_cycle_medium = make_shared< RationalMonteCarlo >(
-		glycan_medium_mover,
-		scorefxn_,
-		total_inner_cycles,
-		kt_,
-		false /*recover_low*/);
+		RationalMonteCarloOP mc_cycle_medium = make_shared< RationalMonteCarlo >(
+			glycan_medium_mover,
+			scorefxn_,
+			total_inner_cycles,
+			kt_,
+			false /*recover_low*/);
 
-	RationalMonteCarloOP mc_cycle_large = make_shared< RationalMonteCarlo >(
-		glycan_large_mover,
-		scorefxn_,
-		total_inner_cycles,
-		kt_,
-		false /*recover_low*/);
+		RationalMonteCarloOP mc_cycle_large = make_shared< RationalMonteCarlo >(
+			glycan_large_mover,
+			scorefxn_,
+			total_inner_cycles,
+			kt_,
+			false /*recover_low*/);
 
-	//If we are refining, do not make huge random movements.
-	if ( ! refine_ ) {
-		weighted_random_mover_->add_mover( mc_cycle_small,  small_prob);
-		weighted_random_mover_->add_mover( mc_cycle_medium,  medium_prob);
-		weighted_random_mover_->add_mover( mc_cycle_large, large_prob );
+		//If we are refining, do not make huge random movements.
+		if ( ! refine_ ) {
+			weighted_random_mover_->add_mover( mc_cycle_small,  small_prob);
+			weighted_random_mover_->add_mover( mc_cycle_medium,  medium_prob);
+			weighted_random_mover_->add_mover( mc_cycle_large, large_prob );
+		} else {
+			weighted_random_mover_->add_mover( mc_cycle_small, total_prob);
+		}
 	} else {
-		weighted_random_mover_->add_mover( mc_cycle_small, total_prob);
+		if ( ! refine_ ) {
+			weighted_random_mover_->add_mover( glycan_small_mover,  small_prob);
+			weighted_random_mover_->add_mover( glycan_medium_mover,  medium_prob);
+			weighted_random_mover_->add_mover( glycan_large_mover, large_prob );
+		} else {
+			weighted_random_mover_->add_mover( glycan_small_mover, total_prob);
+		}
 	}
 
 	//////    //////
@@ -762,6 +784,8 @@ GlycanSampler::init_objects(core::pose::Pose & pose ){
 
 	TR << "initializing objects " << std::endl;
 
+	final_residue_subset_.clear();
+
 	setup_score_function();
 	scorefxn_->score(pose);
 
@@ -800,6 +824,8 @@ GlycanSampler::init_objects(core::pose::Pose & pose ){
 
 
 	total_glycan_residues_ = count_selected(subset);
+	final_residue_subset_ = subset;
+
 	TR << "Modeling " << total_glycan_residues_ << " glycan residues" << std::endl;
 
 	if ( total_glycan_residues_ == 0 ) {
@@ -840,6 +866,34 @@ GlycanSampler::apply( core::pose::Pose& pose ){
 	if ( forced_total_rounds_ == 0 ) {
 		total_rounds = total_glycan_residues_ * rounds_;
 		TR << "Total Rounds = "<< total_rounds << " ( " << total_glycan_residues_ << " glycans * " << rounds_ << " )"<<std::endl;
+	} else if ( match_sampling_of_modeler_ ) {
+		//Matches sampling to that of the GlycanTreeSampler with default settings (window_size 2, overlap 1)
+		// Used for benchmarking
+
+		//R*nL0 + R*nLm1 + R*(N-(nL0+nL1)*2
+		//
+		//R = Number of set rounds
+		//N = Number of total glycans
+		//nL0 = Number of glycan residues in layer 0
+		//nLm1 = Number of glycan residues in last Layer (-1 index)
+
+		//Setup
+		GlycanLayerSelector layer_selector = GlycanLayerSelector();
+		layer_selector.set_layer(0, 0);
+		utility::vector1< bool > const layer_0 = layer_selector.apply(pose);
+
+		core::Size max_end_layer = pose.glycan_tree_set()->get_largest_glycan_tree_layer( final_residue_subset_ );
+		layer_selector.set_layer(max_end_layer, max_end_layer);
+		utility::vector1< bool > const layer_m1  = layer_selector.apply(pose);
+
+		//Variables
+		core::Size const R = rounds_;
+		core::Size const N = total_glycan_residues_;
+		core::Size const nL0  = count_selected( AND_combine( final_residue_subset_, layer_0 ) );
+		core::Size const nLm1 = count_selected( AND_combine( final_residue_subset_, layer_m1) );
+
+		//Calculation
+		total_rounds = (R * nL0) + (R * nLm1) + (2 * R * (N - (nL0+nLm1) ));
 	} else {
 		total_rounds = forced_total_rounds_;
 		TR << "Custom total rounds: " << total_rounds << std::endl;

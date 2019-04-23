@@ -182,7 +182,9 @@ void KeepRegionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		+ XMLSchemaAttribute::required_attribute( "start", xs_string, "First residue to keep" )
 		+ XMLSchemaAttribute::required_attribute( "end", xs_string, "Last residue to keep" );
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Keeps a specified region of the current pose and deletes the rest", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"Keeps a specified region of the current pose and deletes the rest", attlist );
 }
 
 std::string KeepRegionMoverCreator::keyname() const {

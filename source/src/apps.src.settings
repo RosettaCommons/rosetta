@@ -98,6 +98,8 @@ sources = {
 	],
 	"public/carbohydrates": [	
 		"dock_glycans",
+		"glycan_info",
+		"glycan_clash_check",
 	],
 	"public/clustering": [
 		"calibur",

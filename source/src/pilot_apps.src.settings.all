@@ -182,8 +182,8 @@ sources = {
 	],
 	"pilot/carbohydrates" : [
     		"basic_glycan_sampler",
-		"glycan_clash_check",
-		"glycan_info",
+		#"glycan_clash_check",
+		#"glycan_info",
 		"test_glycan_trees",
 	],
 	"pilot/chen" : [

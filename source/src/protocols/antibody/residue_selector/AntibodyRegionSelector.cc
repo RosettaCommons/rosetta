@@ -169,7 +169,8 @@ void AntibodyRegionSelector::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		+ XMLSchemaAttribute(  "input_ab_scheme", xs_string,
 		"Set the antibody numbering scheme. Requires the cdr_definition XML option. "
 		"Both options can also be set through the command line (recommended). ");
-	xsd_type_definition_w_attributes( xsd, class_name(), "Select residues of particular antibody regions.", attributes );
+	xsd_type_definition_w_attributes( xsd, class_name(), "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"Select residues of particular antibody regions.", attributes );
 }
 
 ResidueSelectorOP

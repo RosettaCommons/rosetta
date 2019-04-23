@@ -192,7 +192,8 @@ DihedralDistanceMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector_ref",
 		"Selector for the reference pose (input native or passed reference pose. ).  Residues selected must be same number of residues selected for the main selector." );
 
-	std::string description =  "Calculate DihedralDistance metric.\n"
+	std::string description =  "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"Calculate DihedralDistance metric.\n"
 		"  This is the normalized metric in degrees\n"
 		"  Works on protein and carbohydrate backbones\n"
 		"\n"

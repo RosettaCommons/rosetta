@@ -51,7 +51,7 @@ AntibodyDesignEnumManager::setup() {
 
 	seq_design_strategy_to_enum_["CONSERVATIVE"] = seq_design_conservative;
 	seq_design_strategy_to_enum_["CONSERVED"] = seq_design_conservative;
-	seq_design_strategy_to_enum_["SEQ_DESIGN_CONSERVATIVE\""] = seq_design_conservative;
+	seq_design_strategy_to_enum_["SEQ_DESIGN_CONSERVATIVE"] = seq_design_conservative;
 
 	seq_design_strategy_to_enum_["PROFILE"] = seq_design_profiles;
 	seq_design_strategy_to_enum_["PROFILES"] = seq_design_profiles;

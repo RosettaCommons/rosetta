@@ -353,7 +353,9 @@ ResidueProbDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		"Allowed residue types can be sampled multiple times.",
 		"1");
 
-	task_op_schema_w_attributes(xsd, keyname(), attributes, "Randomly adds allowed residue types to the PackerTask. Based on the user specified weights [0.0-1.0] for each residue type per position this operation will add the residue type to the list of allowed design residues in a non-deterministic manner.");
+	task_op_schema_w_attributes(xsd, keyname(), attributes,
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"Randomly adds allowed residue types to the PackerTask. Based on the user specified weights [0.0-1.0] for each residue type per position this operation will add the residue type to the list of allowed design residues in a non-deterministic manner.");
 }
 
 } //task_operation

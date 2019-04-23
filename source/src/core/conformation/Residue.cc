@@ -1614,7 +1614,9 @@ Residue::first_adjacent_heavy_atom( uint const atom_index ) const
 	utility::vector1< uint > const atom_indices( get_adjacent_heavy_atoms( atom_index ) );
 
 	if ( atom_indices.empty() ) {
-		TR.Warning << "There are no adjacent heavy atoms to atom index " << atom_index << '!' << std::endl;
+		if ( TR.Debug.visible() ) {
+			TR.Warning << "There are no non-virtual adjacent heavy atoms to atom index " << atom_index << '!' << std::endl;
+		}
 		return 0;
 	}
 	return atom_indices[ 1 ];

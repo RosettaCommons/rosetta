@@ -172,7 +172,9 @@ void RunSimpleMetricsMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.add_group_subelement( & SimpleMetricFactory::get_instance()->simple_metric_xml_schema_group_name );
 
-	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Run a set of SimpleMetrics on the pose, with a particular prefix and suffix. (prefix + custom_type + _ + metric_name + suffix) ", attlist, subelements );
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"Run a set of SimpleMetrics on the pose, with a particular prefix and suffix. (prefix + custom_type + _ + metric_name + suffix) ", attlist, subelements );
 }
 
 std::string RunSimpleMetricsMoverCreator::keyname() const {

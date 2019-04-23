@@ -138,7 +138,9 @@ ResfileCommandOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	attlist + XMLSchemaAttribute("command", xs_string, command_doc);
 
 	attributes_for_parse_residue_selector( attlist );
-	task_op_schema_w_attributes( xsd, keyname(), attlist, "Applies the equivalent of a resfile line (without the resnums) to residues specified in a residue selector." );
+	task_op_schema_w_attributes( xsd, keyname(), attlist,
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"Applies the equivalent of a resfile line (without the resnums) to residues specified in a residue selector." );
 }
 
 TaskOperationOP

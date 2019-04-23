@@ -482,6 +482,7 @@ void CDRDihedralConstraintMover::provide_xml_schema( utility::tag::XMLSchemaDefi
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"Adds Circular Harmonic Dihedral Constraints to the Phi and Psi dihedral angles to a "
 		"particular CDR either using the current computed North/Dunbrack CDR Cluster "
 		"(requires AHo numbered antibody) or general constraints. These constraints keep the "

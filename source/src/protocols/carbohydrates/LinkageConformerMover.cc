@@ -342,7 +342,9 @@ void LinkageConformerMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		+ XMLSchemaAttribute::attribute_w_default("use_conformer_population_stats", xsct_rosetta_bool, "Use statistics about conformer populations for sampling", "true");
 
 	rosetta_scripts::attributes_for_parse_residue_selector( attlist );
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Mover to sample glycan linkages", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Authors: Jared Adolf-Bryfogle (jadolfbr@gmail.com)  and Jason W. Labonte (JWLabonte@jhu.edu)\n"
+		"Mover to sample glycan linkages using conformers generated from the PDB using adaptive kernal density estimates.", attlist );
 }
 
 

@@ -204,6 +204,7 @@ ResidueSummaryMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	attlist + XMLSchemaAttribute::attribute_w_default("fail_on_missing_cache", xsct_rosetta_bool, "If use_cached_data is True and cache is not found, should we fail?", "true");
 
 	std::string description =
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"A SimpleMetric that takes a PerResidueRealMetric and calculates different summaries of the overall data.\n"
 		"  This metric can calculate means, totals, or the number of residues (n_res) matching certain criteria. \n"
 		"  Useful for summarizing metrics or using more complex functionality in the SimpleMetricFilter\n"

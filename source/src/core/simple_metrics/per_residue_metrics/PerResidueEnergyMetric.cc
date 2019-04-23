@@ -159,7 +159,8 @@ PerResidueEnergyMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 
 	attributes_for_get_score_function_name( attlist );
 
-	std::string description = "A per-residue metric that will calculate/output per residue total energies or a specific score component. WEIGHTED."
+	std::string description = "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"A per-residue metric that will calculate/output per residue total energies or a specific score component. WEIGHTED."
 		"Correctly decomposes energies to per-residue.";
 
 	core::simple_metrics::xsd_per_residue_real_metric_type_definition_w_attributes(xsd, name_static(),

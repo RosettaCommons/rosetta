@@ -437,7 +437,9 @@ void SimpleGlycosylateMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 	XMLSchemaSimpleSubelementList subelements;
 
-	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Mover to add specified glycosylations to a pose in the specified positions", attlist, subelements );
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
+		"Authors: Jared Adolf-Bryfogle (jadolfbr@gmail.com) and Jason W. Labonte (JWLabonte@jhu.edu)\n"
+		"Mover to add specified glycosylations to a pose in the specified positions", attlist, subelements );
 }
 
 std::string SimpleGlycosylateMoverCreator::keyname() const {

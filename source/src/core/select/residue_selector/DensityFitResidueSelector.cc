@@ -238,7 +238,8 @@ void DensityFitResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefin
 
 	core::select::residue_selector::attributes_for_parse_residue_selector_default_option_name(attributes, "A Residue selector mask.  Used to only compute Zscore among a set of residues.  Useful for protein vs glycan density.  Since match_res is NOT a zscore, the selector acts as an AND selector, so we only compute the correlations on this set. " );
 
-	std::string documentation = "Select residues that have a good electron density fit. (Or bad fit using the invert option). Uses internal density tools to do so. \n"
+	std::string documentation = "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com) and Sebastian Raemish (raemish@scripps.edu).\n"
+		"Select residues that have a good electron density fit. (Or bad fit using the invert option). Uses internal density tools to do so. \n"
 		" Numbers and cutoffs match well with Coot's density fit analysis tool.\n"
 		" Zscore uses weighted sum of density, density-compared-to-neighbors, rama (where applicable) and cart_bonded to compute)  \n"
 		"Correlation is same values used to calculate density scores.  Zscore: eLife 2016, Dimaio"

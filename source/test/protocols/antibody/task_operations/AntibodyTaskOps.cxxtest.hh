@@ -61,9 +61,12 @@ class AntibodyTaskOps: public CxxTest::TestSuite {
 
 	core::pose::Pose pose_;
 	core::pose::Pose pose_chothia_;
+	core::pose::Pose pose_camelid_;
 
 	AntibodyInfoOP ab_info_;
 	AntibodyInfoOP ab_info_chothia_;
+	AntibodyInfoOP ab_info_camelid_;
+
 	bool first_run_;
 
 	//Outpath for new UTracers.  Can't figure out a better way then manually setting
@@ -79,6 +82,7 @@ public:
 		core_init();
 		core::import_pose::pose_from_file(pose_, "protocols/antibody/aho_with_antigen.pdb", core::import_pose::PDB_file); //AHO renumbered pose
 		core::import_pose::pose_from_file(pose_chothia_, "protocols/antibody/1bln_AB_chothia.pdb", core::import_pose::PDB_file);
+		core::import_pose::pose_from_file(pose_camelid_, "protocols/antibody/camelid_with_antigen.pdb", core::import_pose::PDB_file);
 
 		//TenA NeighborGraph setup
 		core::scoring::ScoreFunctionOP score = core::scoring::get_score_function();
@@ -90,18 +94,24 @@ public:
 		first_run_ = false;
 		ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose_, AHO_Scheme, North);
 		ab_info_chothia_ = utility::pointer::make_shared< AntibodyInfo >(pose_chothia_);
+		ab_info_camelid_ = utility::pointer::make_shared< AntibodyInfo >(pose_camelid_, AHO_Scheme, North);
 
 	}
 	void test_DisableCDRsOperation(){
 
 		utility::vector1< bool > cdrs(8, false);
 		utility::vector1< bool > all_cdrs(8, true);
+		utility::vector1< bool > heavy_cdrs(8, false);
 
 		cdrs[ l1 ] = true;
 		cdrs[ l2 ] = true;
 
 		all_cdrs[ l4 ] = false;
 		all_cdrs[ h4 ] = false;
+
+		heavy_cdrs[h1] = true;
+		heavy_cdrs[h2] = true;
+		heavy_cdrs[h3] = true;
 
 		//Test Constructions
 
@@ -144,6 +154,14 @@ public:
 			assert_cdr_design_is_enabled_or_disabled(pose_, task2->create_task_and_apply_taskoperations(pose_), ab_info_, cdrs);
 
 		}
+
+		//Test Camelid
+		//std::cout << "Checking camelid" << std::endl;
+		DisableCDRsOperationOP disable_cdrs_op_only_pack_camelid = DisableCDRsOperationOP(new DisableCDRsOperation(ab_info_camelid_, heavy_cdrs, false));
+		task->clear();
+		task->push_back(disable_cdrs_op_only_pack_camelid);
+		//std::cout << "Checking cdr design is enabled or disabled" << std::endl;
+		assert_cdr_design_is_enabled_or_disabled(pose_camelid_, task->create_task_and_apply_taskoperations(pose_camelid_), ab_info_camelid_, heavy_cdrs);
 
 	}
 	void test_DisableAntibodyRegionOperation(){
@@ -192,19 +210,36 @@ public:
 		task->push_back( default_pack_only);
 		assert_region_design_is_disabled(pose_, task->create_task_and_apply_taskoperations(pose_), ab_info_, antigen_region);
 
+		//Test camelid
+		DisableAntibodyRegionOperationOP default_camelid = utility::pointer::make_shared< DisableAntibodyRegionOperation >(ab_info_camelid_, cdr_region);
+		task->clear();
+		task->push_back( default_camelid );
+		assert_region_packing_is_disabled(pose_camelid_, task->create_task_and_apply_taskoperations(pose_camelid_), ab_info_camelid_, cdr_region);
+
 	}
 	void test_RestrictToCDRsAndNeighbors(){
 
 		utility::vector1< bool > cdrs(8, false);
 		utility::vector1< bool > all_cdrs(8, true);
+		utility::vector1< bool > heavy_cdrs(8, false);
+
+		utility::vector1< bool > heavy_cdrs2(6, false);
+
 		cdrs[ l1 ] = true;
 		cdrs[ l2 ] = true;
 
 		all_cdrs[ l4 ] = false;
 		all_cdrs[ h4 ] = false;
 
+		heavy_cdrs[h1] = true;
+		heavy_cdrs[h2] = true;
+		heavy_cdrs[h3] = true;
+
+		heavy_cdrs[h2] = true;
+
 		//UTracer 1
 		RestrictToCDRsAndNeighborsOP default_op = utility::pointer::make_shared< RestrictToCDRsAndNeighbors >();
+
 		TaskFactoryOP task = utility::pointer::make_shared< TaskFactory >();
 		task->push_back(default_op);
 		output_or_test(task, pose_chothia_, first_run_, "RestrictCDRsOperation_UTracer1",  inpath_, first_run_outpath_);
@@ -212,6 +247,7 @@ public:
 		//UTracer2
 		RestrictToCDRsAndNeighborsOP default_ab_info = utility::pointer::make_shared< RestrictToCDRsAndNeighbors >(ab_info_);
 		default_ab_info->set_cdrs(cdrs);
+
 		RestrictToCDRsAndNeighborsOP default_cdrs = utility::pointer::make_shared< RestrictToCDRsAndNeighbors >(ab_info_, cdrs);
 
 		task->clear();
@@ -244,6 +280,16 @@ public:
 		task->push_back(no_neighbors);
 		cdrs.flip();
 		assert_cdr_packing_is_enabled_or_disabled(pose_, task->create_task_and_apply_taskoperations(pose_), ab_info_, cdrs);
+
+		//Camelid, default
+		heavy_cdrs.flip();
+		RestrictToCDRsAndNeighborsOP no_neighbors_default = utility::pointer::make_shared< RestrictToCDRsAndNeighbors >(ab_info_camelid_);
+		no_neighbors_default->set_neighbor_distance(0);
+
+		//assert_cdr_packing_is_enabled_or_disabled(pose_camelid_, task->create_task_and_apply_taskoperations(pose_camelid_), ab_info_camelid_, heavy_cdrs);
+
+		//no_neighbors_default->set_cdrs(heavy_cdrs2);
+		//assert_cdr_packing_is_enabled_or_disabled(pose_camelid_, task->create_task_and_apply_taskoperations(pose_camelid_), ab_info_camelid_, heavy_cdrs2);
 
 
 	}
@@ -338,6 +384,13 @@ public:
 		task->clear();
 		task->push_back(pre_loaded_combined);
 		TS_ASSERT_THROWS_NOTHING(task->create_task_and_apply_taskoperations(pose_));
+
+		//Test no-crash with Camelid
+		AddCDRProfilesOperationOP camelid_profiles = utility::pointer::make_shared< AddCDRProfilesOperation >(ab_info_camelid_);
+		camelid_profiles->set_force_north_paper_db( true );
+		task->clear();
+		task->push_back(camelid_profiles);
+		TS_ASSERT_THROWS_NOTHING(task->create_task_and_apply_taskoperations(pose_camelid_));
 	}
 	void test_AddCDRProfileSetsOperation() {
 		utility::vector1< bool > cdrs(8, false);

@@ -106,6 +106,7 @@ PerResidueGlycanLayerMetric::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	// "Selector specifying residues." );
 
 	core::simple_metrics::xsd_per_residue_real_metric_type_definition_w_attributes(xsd, name_static(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"A metric for getting the layer of glycan residues.  The layer is defined as the residue distance to the start of the glycan tree", attlist);
 }
 

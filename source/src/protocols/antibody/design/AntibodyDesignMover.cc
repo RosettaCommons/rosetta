@@ -55,8 +55,10 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/monte_carlo/MonteCarloInterface.hh>
 
+#include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <protocols/moves/DsspMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/simple_moves/DeleteChainsMover.hh>
 #include <protocols/grafting/CCDEndsGraftMover.hh>
 #include <protocols/grafting/AnchoredGraftMover.hh>
 #include <protocols/grafting/util.hh>
@@ -180,12 +182,14 @@ AntibodyDesignMover::read_command_line_options(){
 
 	outer_kt_ = option [OptionKeys::antibody::design::outer_kt]();
 	inner_kt_ = option [OptionKeys::antibody::design::inner_kt]();
+	run_final_AIM_ = option [ OptionKeys::antibody::design::run_interface_analyzer ]();
 
 	//TR << "Design protocol: " << option[ OptionKeys::antibody::design::design_protocol]() << std::endl;
 	design_protocol_ = design_enum_manager_->design_protocol_string_to_enum(option[ OptionKeys::antibody::design::design_protocol]());
 
 	interface_dis_ = option [OptionKeys::antibody::design::interface_dis]();
 	neighbor_dis_ = option [OptionKeys::antibody::design::neighbor_dis]();
+	remove_antigen_ = option [OptionKeys::antibody::design::remove_antigen]();
 
 	mutate_framework_for_cluster_ = option [OptionKeys::antibody::design::mutate_framework_for_cluster]();
 
@@ -299,7 +303,11 @@ AntibodyDesignMover::AntibodyDesignMover( AntibodyDesignMover const & src ):
 	mintype_(src.mintype_),
 	mc_optimize_dG_( src.mc_optimize_dG_),
 	mc_interface_weight_( src.mc_interface_weight_),
-	mc_total_weight_( src.mc_total_weight_)
+	mc_total_weight_( src.mc_total_weight_),
+	run_final_AIM_( src.run_final_AIM_),
+	remove_antigen_( src.remove_antigen_),
+	light_chain_( src.light_chain_),
+	additional_outputs_returned_( src.additional_outputs_returned_)
 {
 	using namespace protocols::grafting;
 	using namespace protocols::minimization_packing;
@@ -377,12 +385,7 @@ AntibodyDesignMover::parse_my_tag(
 	//A little redundancy
 	if ( tag->hasOption("instruction_file") ) {
 		instruction_file_ = tag->getOption< std::string >("instruction_file");
-	} else if ( tag->hasOption("instructions_file") ) {
-		instruction_file_ = tag->getOption< std::string >("instructions_file");
-	} else if ( tag->hasOption("cdr_instructions_file") ) {
-		instruction_file_ = tag->getOption< std::string >("cdr_instructions_file");
 	}
-
 
 	if ( tag->hasOption( "design_protocol") ) {
 		design_protocol_ = design_enum_manager_->design_protocol_string_to_enum(tag->getOption< std::string >("design_protocol"));
@@ -405,12 +408,6 @@ AntibodyDesignMover::parse_my_tag(
 	//initial_perturb_ = basic::options::option [basic::options::OptionKeys::antibody::design::initial_perturb] ();
 	benchmark_ = tag->getOption< bool >("random_start", benchmark_);
 
-	adapt_graft_ = tag->getOption< bool >("adapt_graft", adapt_graft_);
-	enable_adapt_graft_cartesian_ = tag->getOption< bool >("enable_adapt_graft_cartesian", enable_adapt_graft_cartesian_);
-
-	idealize_graft_cdrs_ = tag->getOption< bool >("idealize_graft_cdrs", idealize_graft_cdrs_);
-	add_log_to_pose_ = tag->getOption< bool >("add_graft_log_to_pdb", add_log_to_pose_);
-
 	mutate_framework_for_cluster_ = tag->getOption< bool >("mutate_framework_for_cluster", mutate_framework_for_cluster_);
 
 	//Epitope Constraints
@@ -431,7 +428,8 @@ AntibodyDesignMover::parse_my_tag(
 	mc_optimize_dG_ = tag->getOption< bool >( "mc_optimize_dG", mc_optimize_dG_);
 	mc_interface_weight_ = tag->getOption< core::Real >( "mc_interface_weight", mc_interface_weight_);
 	mc_total_weight_ = tag->getOption< core::Real >( "mc_total_weight", mc_total_weight_);
-
+	light_chain_ = tag->getOption< std::string >("light_chain", light_chain_);
+	remove_antigen_ = tag->getOption< bool >("remove_antigen", remove_antigen_);
 }
 
 
@@ -544,7 +542,6 @@ void
 AntibodyDesignMover::initialize_cdr_set(core::pose::Pose const & pose){
 	db_manager_ = utility::pointer::make_shared< AntibodyDatabaseManager >(ab_info_);
 	cdr_set_ = db_manager_->load_cdr_poses(cdr_set_options_, pose);
-
 }
 
 void
@@ -862,15 +859,11 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 	core::pose::Pose original_pose = pose;
 	std::string graft_id;
 
-
-
 	if ( cdr_graft_design_options_[ cdr ]->design() ) {
 
 		try{
 
 			CDRDBPose & cdr_pose = cdr_set_[cdr][index];
-
-
 
 			TR << "Grafting CDR from cluster " << ab_info_->get_cluster_name(cdr_pose.cluster) << " fragment "<< cdr_pose.pdb << std::endl;
 
@@ -881,7 +874,6 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 			anchored_graft_mover_->set_insert_region(start, end);
 			Pose temp_pose = pose;
 			std::pair<bool, core::Size> cb;
-
 
 			///Pass cached pose or on-the-fly pose.  I don't want to store the on-the-fly pose anywhere, so this is why its like this.
 			if ( cdr_pose.pose == nullptr ) {
@@ -906,7 +898,6 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 					cb = run_graft(temp_pose, *cdr_pose.pose, cdr, cdr_pose.cluster, anchored_graft_mover_);
 				}
 			}
-
 
 			if ( ! cb.first ) {
 				pose = temp_pose;
@@ -1120,8 +1111,14 @@ AntibodyDesignMover::run_optimization_cycle(core::pose::Pose& pose, protocols::m
 	//Convert from vector of cdrs to vector1 bool.
 	cdrs_to_min[ cdr ] = true;
 	for ( core::Size i = 1; i <= neighbor_min.size(); ++i ) {
-		TR <<"Add min neighbors : "<< ab_info_->get_CDR_name( neighbor_min[ i ] )<<std::endl;
-		cdrs_to_min[ neighbor_min[ i ] ] = true;
+
+		if ( ab_info_->is_camelid() && ab_info_->get_CDR_chain( neighbor_min[ i ] ) == 'L' ) {
+			cdrs_to_min[ neighbor_min[ i ] ] = false;
+		} else {
+			TR <<"Add min neighbors : "<< ab_info_->get_CDR_name( neighbor_min[ i ] )<<std::endl;
+			cdrs_to_min[ neighbor_min[ i ] ] = true;
+		}
+
 	}
 
 	modeler_->set_cdrs(cdrs_to_min);
@@ -1473,7 +1470,17 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 	//}
 
 	if ( !ab_info_ ) {
-		ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose, AHO_Scheme, North);
+		ab_info_ = init_ab_info(pose);
+	}
+
+	if ( remove_antigen_ && ab_info_->antigen_present() ) {
+		DeleteChainsMover remove_chains_mover = DeleteChainsMover();
+
+		remove_chains_mover.set_chains(utility::to_string(ab_info_->get_antigen_chain_string()));
+		remove_chains_mover.apply( pose );
+
+		//Reinit AbInfo.  Will call reinit function once we actually have that.
+		ab_info_ = init_ab_info(pose);
 	}
 
 	ab_info_->show(std::cout);
@@ -1578,8 +1585,56 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 	}
 
 	//Needs to be called for RosettaScripts integration - should be called for each 'get_other_pose' or whatever it is.
-	add_cluster_comments_to_pose( pose, ab_info_ );
-	check_fix_aho_cdr_numbering(ab_info_, pose);
+	finalize_pose(ab_info_, pose);
+}
+
+core::pose::PoseOP
+AntibodyDesignMover::get_additional_output(){
+	if ( top_designs_.size() == 1 || (additional_outputs_returned_ + 1 ==top_designs_.size() ) ) {
+		return nullptr;
+	}
+
+	core::Size index = additional_outputs_returned_+2;
+	AntibodyInfoOP ab_info = init_ab_info(*(top_designs_[index]));
+	finalize_pose(ab_info_, *(top_designs_[index]));
+
+	//Increment
+	additional_outputs_returned_+=1;
+
+	return (top_designs_[index])->clone();
+}
+
+AntibodyInfoOP
+AntibodyDesignMover::init_ab_info(const core::pose::Pose &pose){
+	AntibodyInfoOP ab_info = utility::pointer::make_shared< AntibodyInfo >(pose, AHO_Scheme, North);
+	if ( ! light_chain_.empty() ) {
+		LightChainTypeEnum light_chain_enum = ab_info_->get_antibody_enum_manager()->light_chain_type_string_to_enum(light_chain_);
+		ab_info_->set_light_chain_type(light_chain_enum);
+	}
+	return ab_info;
+}
+
+void
+AntibodyDesignMover::finalize_pose(AntibodyInfoCOP ab_info, core::pose::Pose & pose ){
+
+	add_cluster_comments_to_pose( pose, ab_info);
+	check_fix_aho_cdr_numbering(ab_info, pose);
+
+	if ( run_final_AIM_ ) {
+		std::string chains_str = "A_" +ab_info->get_antibody_chain_string();
+
+		protocols::analysis::InterfaceAnalyzerMover analyzer = protocols::analysis::InterfaceAnalyzerMover(
+			get_dock_chains_from_ab_dock_chains(ab_info, chains_str),
+			false /* tracer */,
+			scorefxn_,
+			false /* compute_packstat */ ,
+			false /* pack_input */,
+			true /* pack_separated */);
+
+		analyzer.init_on_new_input(pose);
+		analyzer.apply(pose);
+		analyzer.add_score_info_to_pose(pose);
+	}
 }
 
 ////////////////////////////////////////////// Boiler Plate ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1714,19 +1769,16 @@ void AntibodyDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	attributes_for_get_ab_design_global_scorefxn(attlist);
 
 	attlist + XMLSchemaAttribute(
+		"light_chain", xs_string,
+		"Set the light chain if not a camelid antibody.  If not set here, it must be set on the cmd-line");
+
+	attlist + XMLSchemaAttribute(
 		"seq_design_cdrs", xs_string,
 		"CDR regions to be Sequence-Designed");
 
 	attlist + XMLSchemaAttribute(
 		"graft_design_cdrs", xs_string,
 		"CDR regions to be Graft-Designed");
-
-	attlist + XMLSchemaAttribute(
-		"primary_cdrs", xs_string,
-		"Manually set the CDRs which can be chosen in the outer cycle. \n"
-		"These should be on for either Sequence-Design or Graft-Design. \n"
-		"Normally, the outer cycles are whatever CDRs we are designing, including CDRs which are sequence-design only.  \n"
-		"Use this if you are primarily interested in specific CDRs (such as graft-designing H3 and allowing H1 and L3 to sequence design during the inner cycle.)");
 
 	attlist + XMLSchemaAttribute(
 		"mintype", xs_string,
@@ -1736,12 +1788,6 @@ void AntibodyDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	attlist + XMLSchemaAttribute(
 		"instruction_file", xs_string,
 		"Path to the CDR instruction file (see application documentation for format)");
-	attlist + XMLSchemaAttribute(
-		"instructions_file", xs_string,
-		"used if instruction_file attribute is not specified. Deprecated option.");
-	attlist + XMLSchemaAttribute(
-		"cdr_instructions_file", xs_string,
-		"used if instructions_file attribute is not specified. Deprecated option.");
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"mc_optimize_dG", xsct_rosetta_bool,
@@ -1760,6 +1806,25 @@ void AntibodyDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		"Weight of the classic total score if using mc_optimize_dG",
 		"0.0");
 
+	attlist + XMLSchemaAttribute(
+		"do_dock", xsct_rosetta_bool,
+		"Run RosettaDock during the inner cycles? Significantly increases run time. Default False");
+
+	attlist + XMLSchemaAttribute(
+		"use_epitope_csts", xsct_rosetta_bool,
+		"Use the ParatopeEpitopeSiteConstraintMover during design instead of just the ParatopeSiteConstraintMover. Default False");
+
+	attlist + XMLSchemaAttribute(
+		"epitope_residues", xs_string,
+		"Use these residues as the epitope residues.  Adds site constraints for dock-design. (auto-detects by default ). Comma separated.");
+
+	attributes_for_get_cdr_bool_from_tag(attlist, "paratope_cdrs", "Use these CDRs for Paratope Constraints instead of all of them. Useful if attempting to create or optimize the interface of a specific CDR, or keep a CDR in contact with a region of antigen. Comma separated.");
+
+	attlist + XMLSchemaAttribute(
+		"random_start", xsct_rosetta_bool,
+		"Start with random CDRs from the antibody design database for any undergoing GraftDesign");
+
+
 	XMLSchemaRestriction ABdesign_enum;
 	ABdesign_enum.name("ABdesign_protocols");
 	ABdesign_enum.base_type(xs_string);
@@ -1775,78 +1840,59 @@ void AntibodyDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		"EVEN_CLUSTER_MC");
 
 	attlist + XMLSchemaAttribute(
-		"interface_dis", xsct_real,
-		"Set the interface detection distance");
-
-	attlist + XMLSchemaAttribute(
-		"neighbor_dis", xsct_real,
-		"Set the neighbor detection distance");
-
-	attlist + XMLSchemaAttribute(
-		"outer_cycles", xsct_non_negative_integer,
-		"Set the number of outer cycles");
-
-	attlist + XMLSchemaAttribute(
-		"inner_cycles", xsct_non_negative_integer,
-		"Set the number of inner (minimization) cycles");
-
-	attlist + XMLSchemaAttribute(
-		"outer_kt", xsct_real,
-		"Temperature to use for outer cycle");
-
-	attlist + XMLSchemaAttribute(
-		"inner_kt", xsct_real,
-		"Temperature to use for inner cycle");
-
-	attlist + XMLSchemaAttribute(
-		"top_designs", xsct_non_negative_integer,
-		"Number of top designs to keep");
-
-	attlist + XMLSchemaAttribute(
-		"do_dock", xsct_rosetta_bool,
-		"Run RosettaDock during the inner cycles? Significantly increases run time");
+		"primary_cdrs", xs_string,
+		"Manually set the CDRs which can be chosen in the outer cycle. \n"
+		"These should be on for either Sequence-Design or Graft-Design. \n"
+		"Normally, the outer cycles are whatever CDRs we are designing, including CDRs which are sequence-design only.  \n"
+		"Use this if you are primarily interested in specific CDRs (such as graft-designing H3 and allowing H1 and L3 to sequence design during the inner cycle.)");
 
 	attlist + XMLSchemaAttribute(
 		"dock_cycles", xsct_non_negative_integer,
 		"Change the number of time the dock protocol is run");
 
 	attlist + XMLSchemaAttribute(
-		"random_start", xsct_rosetta_bool,
-		"Start with random CDRs from the antibody design database for any undergoing GraftDesign");
+		"interface_dis", xsct_real,
+		"Set the interface detection distance. Default 8A");
 
 	attlist + XMLSchemaAttribute(
-		"adapt_graft", xsct_rosetta_bool,
-		"Adapt graft closure?");
+		"neighbor_dis", xsct_real,
+		"Set the neighbor detection distance. Default 6A");
 
 	attlist + XMLSchemaAttribute(
-		"enable_adapt_graft_cartesian", xsct_rosetta_bool,
-		"Use cartesian minimization in adapt graft");
+		"outer_cycles", xsct_non_negative_integer,
+		"Set the number of outer cycles. Default 25.");
 
 	attlist + XMLSchemaAttribute(
-		"idealize_graft_cdrs", xsct_rosetta_bool,
-		"Idealize graft before inserting?");
-
-	attlist + XMLSchemaAttribute(
-		"add_graft_log_to_pdb", xsct_rosetta_bool,
-		"Add a full grafting log to the pose including origin PDBs, clusters, etc.");
+		"inner_cycles", xsct_non_negative_integer,
+		"Set the number of inner (minimization) cycles. Default 1.");
 
 	attlist + XMLSchemaAttribute(
 		"mutate_framework_for_cluster", xsct_rosetta_bool,
-		"Should we add framework mutations for the specified cdr?");
+		"Should we add framework mutations for the specified cdr? Default True.");
 
 	attlist + XMLSchemaAttribute(
-		"use_epitope_csts", xsct_rosetta_bool,
-		"Use the ParatopeEpitopeSiteConstraintMover during design instead of just the ParatopeSiteConstraintMover");
+		"outer_kt", xsct_real,
+		"Temperature to use for outer cycle. Default 1.0");
 
 	attlist + XMLSchemaAttribute(
-		"epitope_residues", xs_string,
-		"Use these residues as the epitope residues (auto-detects by default )");
+		"inner_kt", xsct_real,
+		"Temperature to use for inner cycle. Default 1.0");
 
-	attributes_for_get_cdr_bool_from_tag(attlist, "paratope_cdrs", "Specifically set the paratope as these cdrs.");
+	attlist + XMLSchemaAttribute(
+		"top_designs", xsct_non_negative_integer,
+		"Number of top designs to keep. Default is 1");
+
+	attlist + XMLSchemaAttribute(
+		"run_AIM", xsct_rosetta_bool,
+		"Run InterfaceAnalyzer at the end of the protocol on the pose?  Default True");
+
+	attlist + XMLSchemaAttribute(
+		"remove_antigen", xsct_rosetta_bool,
+		"Removes antigen at the very beginning of the protocol. Default False");
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
-		"Part of the RosettaAntibody and RosettaAntibodyDesign (RAbD) Framework. Runs the full Rosetta Antibody Design protocol.",
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n Main mover of RosettaAntibodyDesign (RAbD). One can set seq_design_cdrs if only sequence designing CDRs (which will use CDR cluster-profiles by default) and/or graft_design_cdrs to control which CDRs graft-designed through integrated antibody database sampling(if any).  A cdr instruction file can be set to further limit these options or set only specific lengths or clusters to be designed.  The interface will be analyzed at the end of the protocol and information added to the scorefile.  light_chain must be set either in the tag or on the cmd-line.  Please see the RAbD Manual for more information.",
 		attlist );
 }
 

@@ -181,6 +181,7 @@ RMSDMetric::parse_my_tag(
 
 	//Comparison pose.
 	if ( tag->hasOption("reference_name") ) {
+
 		ref_pose_ = saved_reference_pose(tag, datamap, "reference_name");
 		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<<" with "<<ref_pose_->size()<<" residues"<<std::endl;
 	} else if ( tag->getOption<bool>("use_native", false) && datamap.has_resource("native_pose") ) {
@@ -232,7 +233,8 @@ RMSDMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 	attlist + XMLSchemaAttribute("rmsd_type", "rmsd_types", "Type of calculation.  Current choices are: \n" + utility::to_string(rmsd_type_names) );
 
-	std::string description = "\tThis metric calculates the RMSD between the input and the set comparison pose.\n"
+	std::string description = "Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"\tThis metric calculates the RMSD between the input and the set comparison pose.\n"
 		"  You may use the cmd-line native if the option use_native is true.\n"
 		"  Default is to calculate all_heavy atoms - but this can be set using the option rmsd_types.\n"
 		"\n"

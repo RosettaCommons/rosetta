@@ -213,6 +213,10 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 		// First, what is the next residue?
 		uint const next_rsd( get_downstream_residue_that_this_torsion_moves( pose, torsion_id ) );
 
+		// If the connecting residue defining phi is virtual, phi scoring is undefined.
+		if ( pose.residue(next_rsd).is_virtual_residue() ) return deriv;
+		if ( next_rsd == 0 ) return deriv;
+
 		// Now, get the next residue's info and its phi.
 		CarbohydrateInfoCOP info( pose.residue( next_rsd ).carbohydrate_info() );
 		Angle phi( pose.phi( next_rsd ) );
@@ -245,6 +249,11 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 		// Third, we need to deal with L-sugars.
 		CarbohydrateInfoCOP info( rsd.carbohydrate_info() );
 		uint const next_rsd( get_downstream_residue_that_this_torsion_moves( pose, torsion_id ) );
+
+		// If the connecting residue defining psi/omega is virtual, scoring is undefined.
+		if ( pose.residue(next_rsd).is_virtual_residue() ) return deriv;
+		if ( next_rsd == 0 ) return deriv;
+
 		CarbohydrateInfoCOP next_info( pose.residue( next_rsd ).carbohydrate_info() );
 
 		bool const is_exocyclic_bond( pose.glycan_tree_set()->has_exocyclic_glycosidic_linkage( next_rsd ));
@@ -297,6 +306,10 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 
 		// Third, what is the next residue?
 		uint const next_rsd( get_downstream_residue_that_this_torsion_moves( pose, torsion_id ) );
+		if ( next_rsd == 0 ) return deriv;
+
+		// If the connecting residue defining phi is virtual, omega scoring is undefined.
+		if ( pose.residue(next_rsd).is_virtual_residue() ) return deriv;
 
 		deriv = E_opf_.evaluate_derivative( get_omega_preference_for_residue_in_pose( pose, next_rsd ), omega );
 

@@ -169,7 +169,9 @@ void GlycanInfoMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "A simple Mover that (currently) prints information about the glycan trees in the pose.", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"A simple Mover that (currently) prints information about the glycan trees in the pose.", attlist );
 }
 
 
