@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/enzymatic_movers/GlycosyltransferaseMover.hh
-/// @brief  Declarations and simple accessor/mutator definitions for GlycosyltransferaseMover
+/// @file   protocols/enzymatic_movers/KinaseMover.hh
+/// @brief  Declarations and simple accessor/mutator definitions for KinaseMover
 /// @author Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_protocols_enzymatic_movers_GlycosyltransferaseMover_HH
-#define INCLUDED_protocols_enzymatic_movers_GlycosyltransferaseMover_HH
+#ifndef INCLUDED_protocols_enzymatic_movers_KinaseMover_HH
+#define INCLUDED_protocols_enzymatic_movers_KinaseMover_HH
 
 // Unit headers
-#include <protocols/enzymatic_movers/GlycosyltransferaseMover.fwd.hh>
+#include <protocols/enzymatic_movers/KinaseMover.fwd.hh>
 #include <protocols/enzymatic_movers/EnzymaticMover.hh>
 
 // Project headers
@@ -26,21 +26,21 @@
 namespace protocols {
 namespace enzymatic_movers {
 
-/// @details  This Mover simulates the activity of a virtual glycosyltransferase enzyme on a Pose by
-///           glycosylating a residue at a biologically relevant sequon position.
-class GlycosyltransferaseMover : public EnzymaticMover {
+/// @details  This Mover simulates the activity of a virtual kinase enzyme on a Pose by phosphorylating a residue at a
+///           biologically relevant sequon position.
+class KinaseMover : public EnzymaticMover {
 public:  // Standard methods //////////////////////////////////////////////////
 	/// @brief  Default constructor
-	GlycosyltransferaseMover();
+	KinaseMover();
 
 	/// @brief  Copy constructor
-	GlycosyltransferaseMover( GlycosyltransferaseMover const & object_to_copy );
+	KinaseMover( KinaseMover const & object_to_copy );
 
 	// Assignment operator
-	GlycosyltransferaseMover & operator=( GlycosyltransferaseMover const & object_to_copy );
+	KinaseMover & operator=( KinaseMover const & object_to_copy );
 
 	// Destructor
-	~GlycosyltransferaseMover() override = default;
+	~KinaseMover() override = default;
 
 
 public: // Standard Rosetta methods ///////////////////////////////////////////
@@ -53,7 +53,7 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 	/// @brief  Return the name of the Mover.
 	std::string get_name() const override;
 
-	static std::string mover_name() { return "GlycosyltransferaseMover"; }
+	static std::string mover_name() { return "KinaseMover"; }
 
 
 	moves::MoverOP clone() const override;
@@ -69,12 +69,12 @@ protected:
 		core::pose::Pose & input_pose,
 		core::uint const site,
 		std::string const & cosubstrate ) override;
-};  // class GlycosyltransferaseMover
+};  // class KinaseMover
 
-// Insertion operator (overloaded so that GlycosyltransferaseMover can be "printed" in PyRosetta).
-std::ostream & operator<<( std::ostream & output, GlycosyltransferaseMover const & object_to_output );
+// Insertion operator (overloaded so that KinaseMover can be "printed" in PyRosetta).
+std::ostream & operator<<( std::ostream & output, KinaseMover const & object_to_output );
 
 }  // namespace enzymatic_movers
 }  // namespace protocols
 
-#endif  // INCLUDED_protocols_enzymatic_movers_GlycosyltransferaseMover_HH
+#endif  // INCLUDED_protocols_enzymatic_movers_KinaseMover_HH

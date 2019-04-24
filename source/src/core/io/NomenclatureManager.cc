@@ -294,7 +294,8 @@ NomenclatureManager::NomenclatureManager()
 
 	utility::vector1< string > const & file_list2 = option[ OptionKeys::in::name3_property_codes ]();
 	for ( Size jj = 1; jj <= file_list2.size(); ++jj ) {
-		utility::vector1< string > const lines( utility::io::get_lines_from_file_data( find_alternate_codes_file( file_list2[ jj ] ) ) );
+		utility::vector1< string > const lines(
+			utility::io::get_lines_from_file_data( find_alternate_codes_file( file_list2[ jj ] ) ) );
 		for ( Size ii = 1; ii <= lines.size(); ++ii ) {
 
 			if ( lines[ ii ].size() == 0 || lines[ ii ][ 0 ] == '#' ) continue;
@@ -321,7 +322,8 @@ NomenclatureManager::NomenclatureManager()
 			} else if ( value == "SUGAR" ) {
 				sugar_set_.insert( name3 );
 			} else {
-				utility_exit_with_message( "Line in name3 properties file \"" + file_list2[ jj ] + "\" malformed:\"" + lines[ ii ] + "\"" );
+				utility_exit_with_message(
+					"Line in name3 properties file \"" + file_list2[ jj ] + "\" malformed:\"" + lines[ ii ] + "\"" );
 			}
 		}
 	}
@@ -333,7 +335,8 @@ NomenclatureManager::NomenclatureManager()
 	//   one of the Modomics symbols.
 	//   NOTE: Moving to a single file for both of these purposes because we don't
 	//   want to have to update two places with annotated sequence entries
-	utility::vector1< string > const iupac_lines( utility::io::get_lines_from_file_data( basic::database::full_name( "input_output/modomics_and_iupac_to_ann.txt" ) ) );
+	utility::vector1< string > const iupac_lines( utility::io::get_lines_from_file_data(
+		basic::database::full_name( "input_output/modomics_and_iupac_to_ann.txt" ) ) );
 	for ( auto const &line : iupac_lines ) {
 		if ( line.size() == 0 || ( line[ 0 ] == '#' && line[ 1 ] == '/' ) ) continue;
 		istringstream word_by_word( line );

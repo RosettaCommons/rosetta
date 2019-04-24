@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/enzymatic_movers/GlycosyltransferaseMoverCreator.hh
-/// @brief  Method declarations for GlycosyltransferaseMoverCreator.
+/// @file   protocols/enzymatic_movers/KinaseMoverCreator.hh
+/// @brief  Method declarations for KinaseMoverCreator.
 /// @author Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_protocols_enzymatic_movers_GlycosyltransferaseMoverCreator_HH
-#define INCLUDED_protocols_enzymatic_movers_GlycosyltransferaseMoverCreator_HH
+#ifndef INCLUDED_protocols_enzymatic_movers_KinaseMoverCreator_HH
+#define INCLUDED_protocols_enzymatic_movers_KinaseMoverCreator_HH
 
 // Project header
 #include <protocols/moves/MoverCreator.hh>
@@ -22,13 +22,13 @@
 namespace protocols {
 namespace enzymatic_movers {
 
-/// @brief  MoverCreator allowing the MoverFactory to create a GlycosyltransferaseMover
-class GlycosyltransferaseMoverCreator : public moves::MoverCreator {
+/// @brief  MoverCreator allowing the MoverFactory to create a KinaseMover
+class KinaseMoverCreator : public moves::MoverCreator {
 public:
 	/// @brief  Return an up-casted owning pointer (MoverOP) to the mover.
 	protocols::moves::MoverOP create_mover() const override;
 
-	/// @brief  Return the key name for the associated Mover (GlycosyltransferaseMover).
+	/// @brief  Return the key name for the associated Mover (KinaseMover).
 	std::string keyname() const override;
 
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
@@ -37,4 +37,4 @@ public:
 }  // namespace enzymatic_movers
 }  // namespace protocols
 
-#endif  // INCLUDED_protocols_enzymatic_movers_GlycosyltransferaseMoverCreator_HH
+#endif  // INCLUDED_protocols_enzymatic_movers_KinaseMover_HH

@@ -18,18 +18,13 @@
 #include <core/enzymes/consensus_sequence_parsers.hh>
 #include <core/enzymes/database_io.hh>
 
-// Basic header
+// Basic headers
 #include <basic/database/open.hh>
+#include <basic/Tracer.hh>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
 
-// C++11 headers
-#include <atomic>
-#include <mutex>
-
-#endif
-#endif
+// Construct tracer.
+static basic::Tracer TR( "core.enzymes.EnzymeManager" );
 
 
 namespace core {
@@ -38,17 +33,18 @@ namespace enzymes {
 // Public methods /////////////////////////////////////////////////////////////
 // Static constant data access
 // Return the consensus sequence of the requested enzyme.
+/// @note  This function is designed to be threadsafe.
 std::string const &
 EnzymeManager::get_consensus_sequence(
 	std::string const & family,
 	std::string const & species,
 	std::string const & enzyme )
 {
-	return get_instance()->
-		enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.consensus_sequence;
+	return get_instance()->specific_enzyme_data( family, species, enzyme ).consensus_sequence;
 }
 
 // Return the consensus sequence type of the requested enzyme.
+/// @note    This function is designed to be threadsafe.
 /// @return  a ConsensusSequenceType enum value
 ConsensusSequenceType
 EnzymeManager::get_consensus_sequence_type(
@@ -56,91 +52,91 @@ EnzymeManager::get_consensus_sequence_type(
 	std::string const & species,
 	std::string const & enzyme )
 {
-	return get_instance()->enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.cs_type;
+	return get_instance()->specific_enzyme_data( family, species, enzyme ).cs_type;
 }
 
 // Return the efficiency of the requested enzyme.
+/// @note  This function is designed to be threadsafe.
 core::Real
 EnzymeManager::get_efficiency(
 	std::string const & family,
 	std::string const & species,
 	std::string const & enzyme )
 {
-	return get_instance()->enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.efficiency;
+	return get_instance()->specific_enzyme_data( family, species, enzyme ).efficiency;
 }
 
 // Return the second substrates or byproducts of the requested enzyme.
 /// @details  Depending on whether this is a transferase or hydrolase, this will return a list of possible substrates or
 /// possible byproducts, respectively.
+/// @note  This function is designed to be threadsafe.
 utility::vector1< std::string > const &
 EnzymeManager::get_second_substrates_or_byproducts(
 	std::string const & family,
 	std::string const & species,
 	std::string const & enzyme )
 {
-	return get_instance()->enzymes_.find( family )->second.find( species )->second.find( enzyme )->
-		second.second_substrates_or_byproducts;
+	return get_instance()->specific_enzyme_data( family, species, enzyme ).second_substrates_or_byproducts;
 }
 
 
 // Return the identifiers (such as 3-letter codes) of the residues of the consensus sequence.
 /// @return  a vector of vectors of strings, because each position may have more than one possible match.
+/// @note  This function is designed to be threadsafe.
 utility::vector1< utility::vector1< std::string > > const &
 EnzymeManager::get_consensus_residues(
 	std::string const & family,
 	std::string const & species,
 	std::string const & enzyme )
 {
-	return get_instance()->
-		enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.consensus_residues;
+	return get_instance()->specific_enzyme_data( family, species, enzyme ).consensus_residues;
 }
 
 // Return the position in the consensus sequence of the reactive residue.
+/// @note  This function is designed to be threadsafe.
 core::uint
 EnzymeManager::get_reactive_residue_consensus_sequence_position(
 	std::string const & family,
 	std::string const & species,
 	std::string const & enzyme )
 {
-	return get_instance()->enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.cs_resnum;
+	return get_instance()->specific_enzyme_data( family, species, enzyme ).cs_resnum;
 }
 
 // Return the name of the reactive site atom.
+/// @note  This function is designed to be threadsafe.
 std::string const &
 EnzymeManager::get_reactive_atom(
 	std::string const & family,
 	std::string const & species,
 	std::string const & enzyme )
 {
-	return get_instance()->
-		enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.atom_to_modify;
+	return get_instance()->specific_enzyme_data( family, species, enzyme ).atom_to_modify;
 }
 
 
 // Private methods ////////////////////////////////////////////////////////////
-// Empty constructor
-EnzymeManager::EnzymeManager()
+// Is the enzyme data not yet loaded from the database?
+// This private function is threadsafe but cannot be called from a write-locked context,
+// because it is read-locked.
+bool
+EnzymeManager::is_enzyme_not_yet_loaded(
+	std::string const & family,
+	std::string const & species,
+	std::string const & enzyme )
 {
-	// TODO: Refactor to lazily load based on the requested family-species-name combos in a thread-safe manner.
-	EnzymeData enzyme_data;
-
-	enzyme_data = read_enzyme_data_from_file( basic::database::full_name(
-		"virtual_enzymes/glycosyltransferases/h_sapiens/generic_N-glycosyltransferase" ) );  // TEMP
-	parse_consensus_sequence( enzyme_data );
-	enzymes_[ "glycosyltransferases" ][ "h_sapiens" ][ "generic_N-glycosyltransferase" ] = enzyme_data;  // TEMP
-
-	enzyme_data = read_enzyme_data_from_file( basic::database::full_name(
-		"virtual_enzymes/glycosyltransferases/c_jejuni/generic_N-glycosyltransferase" ) );  // TEMP
-	parse_consensus_sequence( enzyme_data );
-	enzymes_[ "glycosyltransferases" ][ "c_jejuni" ][ "generic_N-glycosyltransferase" ] = enzyme_data;  // TEMP
-
-
-	enzyme_data = read_enzyme_data_from_file( basic::database::full_name(
-		"virtual_enzymes/glycosyltransferases/c_jejuni/PglB" ) );  // TEMP
-	parse_consensus_sequence( enzyme_data );
-	enzymes_[ "glycosyltransferases" ][ "c_jejuni" ][ "PglB" ] = enzyme_data;  // TEMP
+#ifdef MULTI_THREADED
+	utility::thread::ReadLockGuard readlock( specific_enzyme_data_mutex_ );
+#endif
+	if ( enzymes_.count( family ) ) {
+		if ( enzymes_.find( family )->second.count( species ) ) {
+			if ( enzymes_.find( family )->second.find( species )->second.count( enzyme ) ) {
+				return false;
+			}
+		}
+	}
+	return true;
 }
-
 
 // Parse the consensus sequence within this EnzymeData and derive a list of consensus residues.
 void
@@ -160,6 +156,36 @@ EnzymeManager::parse_consensus_sequence( EnzymeData & enzyme_data ) const
 		break;
 	}
 }
+
+
+// Get the enzyme data for the specific enzyme requested, creating it if necessary.
+// This private function is threadsafe.
+EnzymeData const &
+EnzymeManager::specific_enzyme_data(
+	std::string const & family,
+	std::string const & species,
+	std::string const & enzyme )
+{
+	// Only create data one time, as needed.
+	if ( is_enzyme_not_yet_loaded( family, species, enzyme ) ) {
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( specific_enzyme_data_mutex_ );
+#endif
+		TR << "Loading enzyme data for " << species << ' ' << enzyme;
+		TR << " from the \"database/virtual_enzymes/" << family << "/\" directory..." << std::endl;
+		EnzymeData enzyme_data;
+		enzyme_data = read_enzyme_data_from_file( basic::database::full_name(
+			"virtual_enzymes/" + family + "/" + species + "/" + enzyme ) );
+		parse_consensus_sequence( enzyme_data );
+		enzymes_[ family ][ species ][ enzyme ] = enzyme_data;
+	}
+
+#ifdef MULTI_THREADED
+	utility::thread::ReadLockGuard readlock( specific_enzyme_data_mutex_ );
+#endif
+	return enzymes_.find( family )->second.find( species )->second.find( enzyme )->second;
+}
+
 
 }  // namespace enzymes
 }  // namespace core

@@ -1,0 +1,4 @@
+# Consensus                                                  Sequence  Residue of    Atom
+# Sequence                                                   Type      CS to Modify  To Modify  Efficiency
+  (N/R)(F/L/M)(K/R)(K/R)S(I/V/M/R)(I/V/M/R)(F/I/M/R)(F/I/M)  AA        5             O          1.00        # Atom name here doesn't matter, as the Mover will simply change the VariantType
+

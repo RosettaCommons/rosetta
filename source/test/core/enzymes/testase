@@ -1,0 +1,11 @@
+# THIS IS JUST A DUMMY FILE FOR UNIT TESTING!
+# Actual data for virtual enzymes are found in the various subdirectories of
+# database/virtual_enzymes/
+# If you edit this file, you must also edit core/enzymes/database_io.cxxtest.hh.
+
+# Consensus  Sequence  Residue of    Atom
+# Sequence   Type      CS to Modify  To Modify  Efficiency
+  SEQUON     AA        5             OG         1.00
+
+# Co-substrates
+# N/A

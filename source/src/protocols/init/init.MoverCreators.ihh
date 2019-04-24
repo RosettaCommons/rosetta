@@ -159,6 +159,7 @@
 #include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 
 #include <protocols/enzymatic_movers/GlycosyltransferaseMoverCreator.hh>
+#include <protocols/enzymatic_movers/KinaseMoverCreator.hh>
 
 #include <protocols/evolution/EvolutionaryDynamicsMoverCreator.hh>
 #include <protocols/evolution/NucleotideMutationCreator.hh>

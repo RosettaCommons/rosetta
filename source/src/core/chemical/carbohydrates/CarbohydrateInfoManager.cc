@@ -205,7 +205,8 @@ CarbohydrateInfoManager::code_to_root_map()
 	if ( isempty ) {
 		utility::thread::WriteLockGuard writelock(code_to_root_map_mutex_);
 		if ( code_to_root_map_.empty() ) {
-			code_to_root_map_ = read_codes_and_roots_from_database_file( basic::database::full_name( "chemical/carbohydrates/codes_to_roots.map" ) );
+			code_to_root_map_ = read_codes_and_roots_from_database_file(
+				basic::database::full_name( "chemical/carbohydrates/codes_to_roots.map" ) );
 		}
 	}
 #else
@@ -236,7 +237,8 @@ CarbohydrateInfoManager::ring_size_to_morphemes_map()
 	if ( isempty ) {
 		utility::thread::WriteLockGuard writelock(ring_size_to_morphemes_mutex_);
 		if ( ring_size_to_morphemes_map_.empty() ) {
-			ring_size_to_morphemes_map_ = read_ring_sizes_and_morphemes_from_database_file( basic::database::full_name( "chemical/carbohydrates/ring_size_to_morphemes.map" ) );
+			ring_size_to_morphemes_map_ = read_ring_sizes_and_morphemes_from_database_file(
+				basic::database::full_name( "chemical/carbohydrates/ring_size_to_morphemes.map" ) );
 		}
 	}
 #else

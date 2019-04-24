@@ -22,13 +22,20 @@
 // Project headers
 #include <core/types.hh>
 
+// Utility headers
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
 
 namespace protocols {
 namespace enzymatic_movers {
 
 typedef std::pair< core::uint, std::string > ReactionSite;
 
-/// @details  WiP
+/// @details  This is a base class for any Mover that modifies the sequence of a Pose in a way that simulates the
+/// action of an enzyme.
+/// Any Mover inheriting from this base class must provide an enzyme family corresponding to a directory of enzyme data
+/// and must implement the perform_reaction() method, which modifies, adds, or removes (a) Residue(s).
+/// The core machinery of this base class uses the enzymatic data to search for potential reaction sites.
 class EnzymaticMover : public moves::Mover {
 public:  // Standard methods //////////////////////////////////////////////////
 	/// @brief  Default constructor
@@ -44,7 +51,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 	EnzymaticMover & operator=( EnzymaticMover const & object_to_copy );
 
 	// Destructor
-	virtual ~EnzymaticMover();
+	virtual ~EnzymaticMover() = default;
 
 
 public: // Standard Rosetta methods ///////////////////////////////////////////
@@ -71,6 +78,9 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 		moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose );
 
+	static utility::tag::XMLSchemaComplexTypeGeneratorOP xml_schema_complex_type_generator();
+
+
 	/// @brief  Apply the corresponding move to <input_pose>.
 	virtual void apply( core::pose::Pose & input_pose );
 
@@ -79,10 +89,15 @@ protected: // Accessors/Mutators //////////////////////////////////////////////
 	/// @brief  Set the family name of this simulated enzyme.
 	void set_enzyme_family( std::string const & family_name );
 
+	/// @brief   Actually perform the virtual reaction for this specific EnzymaticMover.
+	/// @params  <input_pose>:  The Pose to be acted on.
+	/// @params  <site>:        An index for the reactive site to be acted on.
+	/// @params  <cosubstrate>: A string providing information to the Enzymatic Mover to add or subtract the proper
+	/// atoms or Residues from the Pose.  How this parameter is handled is specific to each distinct EnzymaticMover.
 	virtual void perform_reaction(
 		core::pose::Pose & input_pose,
-		core::uint const sepos,
-		std::string const & cosubstrate ) = 0;  // This method must be overridden.
+		core::uint const site,
+		std::string const & cosubstrate="" ) = 0;  // This method must be overridden.
 
 public:
 	/// @brief    Get the family name of this simulated enzyme.
@@ -260,17 +275,17 @@ private:  // Private methods //////////////////////////////////////////////////
 
 
 private:  // Private data /////////////////////////////////////////////////////
-	std::string enzyme_family_;  // e.g., "glycosyltransferases"
-	std::string species_name_;  // e.g., "e_coli" or "h_sapiens"
-	std::string enzyme_name_;  // for if we want to give this a real-life enzyme name
-	core::Real efficiency_;  // ratio of times this enzyme performs its reaction at a recognized site
+	std::string enzyme_family_ = "";  // e.g., "glycosyltransferases"
+	std::string species_name_ = "";  // e.g., "e_coli" or "h_sapiens"
+	std::string enzyme_name_ = "";  // for if we want to give this a real-life enzyme name
+	core::Real efficiency_ = 1.0;  // ratio of times this enzyme performs its reaction at a recognized site
 	utility::vector1< core::uint > excluded_sites_;  // user-specified sequence positions to be excluded from activity
 	utility::vector1< core::uint > ensured_sites_;  // user-specified sequence positions to guarantee activity
 	utility::vector1< ReactionSite > reaction_sites_;  // sequence positions and atoms to be reacted
 	utility::vector1< std::string > co_substrates_;  // descriptors of co-substrates
 
 	// Options
-	bool performs_major_reaction_only_;  // Only the most common reaction will occur.
+	bool performs_major_reaction_only_ = false;  // Only the most common reaction will occur.
 };  // class EnzymaticMover
 
 }  // namespace enzymatic_movers

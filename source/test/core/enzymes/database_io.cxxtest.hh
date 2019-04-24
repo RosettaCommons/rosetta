@@ -39,9 +39,10 @@ public: // Tests //////////////////////////////////////////////////////////////
 	// Confirm that peptide consensus sequences are parsed properly.
 	void test_read_enzyme_data_from_file()
 	{
+		using namespace std;
 		using namespace core::enzymes;
 
-		TR << "Testing read_enzyme_data_from_file()..." << std::endl;
+		TR << "Testing read_enzyme_data_from_file()..." << endl;
 
 		EnzymeData const rosettase_data( read_enzyme_data_from_file( "core/enzymes/rosettase" ) );
 
@@ -54,5 +55,11 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( rosettase_data.second_substrates_or_byproducts[ 1 ], "ARROW" );
 		TS_ASSERT_EQUALS( rosettase_data.second_substrates_or_byproducts[ 3 ], "BOLT" );
 		TS_ASSERT_EQUALS( rosettase_data.second_substrates_or_byproducts[ 5 ], "PROTONTORPEDO" );
+
+		TR << "Testing read_enzyme_data_from_file() with file with no cosubtrate(s) provided..." << endl;
+
+		EnzymeData const testase_data( read_enzyme_data_from_file( "core/enzymes/testase" ) );
+
+		TS_ASSERT_EQUALS( testase_data.second_substrates_or_byproducts.size(), 0 );
 	}
 };  // class DatabaseIOTests

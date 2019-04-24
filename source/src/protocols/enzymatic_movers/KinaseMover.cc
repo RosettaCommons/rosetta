@@ -7,20 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    protocols/enzymatic_movers/GlycosyltransferaseMover.cc
-/// @brief   Method definitions for GlycosyltransferaseMover.
+/// @file    protocols/enzymatic_movers/KinaseMover.cc
+/// @brief   Method definitions for KinaseMover.
 /// @author  Labonte  <JWLabonte@jhu.edu>
 
 
 // Unit headers
-#include <protocols/enzymatic_movers/GlycosyltransferaseMover.hh>
-#include <protocols/enzymatic_movers/GlycosyltransferaseMoverCreator.hh>
+#include <protocols/enzymatic_movers/KinaseMover.hh>
+#include <protocols/enzymatic_movers/KinaseMoverCreator.hh>
 #include <protocols/enzymatic_movers/EnzymaticMover.hh>
 
 // Project headers
-#include <core/pose/carbohydrates/util.hh>
-
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/chemical/VariantType.hh>
+#include <core/pose/variant_util.hh>
 
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -32,19 +33,18 @@ namespace enzymatic_movers {
 // Public methods /////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////
 // Default constructor
-GlycosyltransferaseMover::GlycosyltransferaseMover(): EnzymaticMover( "glycosyltransferases" )
+KinaseMover::KinaseMover(): EnzymaticMover( "kinases" )
 {
-	type( "GlycosyltransferaseMover" );
+	type( "KinaseMover" );
 }
 
 // Copy constructor
-GlycosyltransferaseMover::GlycosyltransferaseMover( GlycosyltransferaseMover const & object_to_copy ) :
-	EnzymaticMover( object_to_copy )
+KinaseMover::KinaseMover( KinaseMover const & object_to_copy ) : EnzymaticMover( object_to_copy )
 {}
 
 // Assignment operator
-GlycosyltransferaseMover &
-GlycosyltransferaseMover::operator=( GlycosyltransferaseMover const & object_to_copy )
+KinaseMover &
+KinaseMover::operator=( KinaseMover const & object_to_copy )
 {
 	// Abort self-assignment.
 	if ( this != &object_to_copy ) {
@@ -57,7 +57,7 @@ GlycosyltransferaseMover::operator=( GlycosyltransferaseMover const & object_to_
 // Standard Rosetta methods ///////////////////////////////////////////////////
 // General methods
 void
-GlycosyltransferaseMover::register_options()
+KinaseMover::register_options()
 {
 	EnzymaticMover::register_options();
 }
@@ -65,72 +65,71 @@ GlycosyltransferaseMover::register_options()
 
 // Mover methods
 std::string
-GlycosyltransferaseMover::get_name() const {
+KinaseMover::get_name() const {
 	return mover_name();
 }
 
 moves::MoverOP
-GlycosyltransferaseMover::clone() const
+KinaseMover::clone() const
 {
-	return utility::pointer::make_shared< GlycosyltransferaseMover >( *this );
+	return utility::pointer::make_shared< KinaseMover >( *this );
 }
 
 moves::MoverOP
-GlycosyltransferaseMover::fresh_instance() const
+KinaseMover::fresh_instance() const
 {
-	return utility::pointer::make_shared< GlycosyltransferaseMover >();
+	return utility::pointer::make_shared< KinaseMover >();
 }
 
 
 void
-GlycosyltransferaseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+KinaseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 
 	EnzymaticMover::xml_schema_complex_type_generator()->element_name( mover_name() )
 		.complex_type_naming_func( & moves::complex_type_name_for_mover )
-		.description( "Enzymatic mover to glycosylate a pose" )
+		.description( "Enzymatic mover to phosphorylate a pose" )
 		.write_complex_type_to_schema( xsd );
 }
 
 // Protected methods //////////////////////////////////////////////////////////
 void
-GlycosyltransferaseMover::perform_reaction(
+KinaseMover::perform_reaction(
 	core::pose::Pose & input_pose,
 	core::uint const site,
-	std::string const & cosubstrate )
+	std::string const & /*cosubstrate*/ )
 {
-	core::pose::carbohydrates::glycosylate_pose(
+	core::pose::add_variant_type_to_pose_residue(
 		input_pose,
-		get_reactive_site_sequence_position( site ),
-		get_reactive_site_atom_name( site ),
-		cosubstrate );
+		core::chemical::PHOSPHORYLATION,
+		get_reactive_site_sequence_position( site ) );
 }
 
 
 // Creator methods ////////////////////////////////////////////////////////////
 std::string
-GlycosyltransferaseMoverCreator::keyname() const {
-	return GlycosyltransferaseMover::mover_name();
+KinaseMoverCreator::keyname() const {
+	return KinaseMover::mover_name();
 }
 
 // Return an up-casted owning pointer (MoverOP) to the mover.
 protocols::moves::MoverOP
-GlycosyltransferaseMoverCreator::create_mover() const {
-	return utility::pointer::make_shared< GlycosyltransferaseMover >();
+KinaseMoverCreator::create_mover() const {
+	return utility::pointer::make_shared< KinaseMover >();
 }
 
 void
-GlycosyltransferaseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+KinaseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	GlycosyltransferaseMover::provide_xml_schema( xsd );
+	KinaseMover::provide_xml_schema( xsd );
 }
 
 
 // Helper methods /////////////////////////////////////////////////////////////
-// Insertion operator (overloaded so that GlycosyltransferaseMover can be "printed" in PyRosetta).
+// Insertion operator (overloaded so that KinaseMover can be "printed" in PyRosetta).
 std::ostream &
-operator<<( std::ostream & output, GlycosyltransferaseMover const & object_to_output )
+operator<<( std::ostream & output, KinaseMover const & object_to_output )
 {
 	object_to_output.show( output );
 	return output;

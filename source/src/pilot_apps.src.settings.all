@@ -1104,9 +1104,9 @@ sources = {
 	"pilot/zhezhang" : [
 		"extract_CA_coords",
 	],
-    "pilot/zibochen" : [
-        "pad_helices",
-    ],
+	"pilot/zibochen" : [
+		"pad_helices",
+	],
 	"pilot/shirst" : [
 		"TestTopologySampler",
 		"LoophashFilter"
@@ -1122,6 +1122,7 @@ sources = {
 		"test_EnergyMethodOptions",
 		"test_explicit_membrane_input",
 		"test_non-canonical_connectivities",
+		"test_phosphorylation",
 		"test_RingConformationMover",
 		"test_SiteConstraint",
 	],

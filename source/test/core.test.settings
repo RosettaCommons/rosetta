@@ -913,6 +913,7 @@ testinputfiles = [
 	"conformation/test_simple_conformation.u",
 	"database_location.txt",
 	"enzymes/rosettase",
+	"enzymes/testase",
 	"fragment/aat049603_05.200_v1_3.gz",
 	"fragment/picking/vall/vall_test.dat",
 	"grid/1dwc_3.gridbb.gz",

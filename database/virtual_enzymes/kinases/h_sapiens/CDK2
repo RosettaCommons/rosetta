@@ -1,0 +1,4 @@
+# Consensus          Sequence  Residue of    Atom
+# Sequence           Type      CS to Modify  To Modify  Efficiency
+  RXPM(S/T)PX(K/R)K  AA        5             O          1.00        # Atom name here doesn't matter, as the Mover will simply change the VariantType
+

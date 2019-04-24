@@ -21,16 +21,19 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/rosetta_scripts/util.hh>
+
+#include <protocols/moves/mover_schemas.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
 
 // Basic header
 #include <basic/options/option.hh>
+#include <basic/options/keys/enzymes.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 
@@ -73,9 +76,6 @@ EnzymaticMover::operator=( EnzymaticMover const & object_to_copy )
 	return *this;
 }
 
-// Destructor
-EnzymaticMover::~EnzymaticMover() = default;
-
 
 // Standard Rosetta methods ///////////////////////////////////////////////////
 // General methods
@@ -84,9 +84,11 @@ EnzymaticMover::register_options()
 {
 	using namespace basic::options;
 
-	//option.add_relevant( OptionKeys::foo::bar );
+	option.add_relevant( OptionKeys::enzymes::species );
+	option.add_relevant( OptionKeys::enzymes::enzyme );
 
-	moves::Mover::register_options();  // Mover's register_options() doesn't do anything; it's just here in principle.
+	// Mover's register_options() doesn't do anything; it's just here in principle.
+	moves::Mover::register_options();
 }
 
 void
@@ -111,7 +113,7 @@ EnzymaticMover::show( std::ostream & output ) const
 		output << ensured_sites_[ i ] << ' ';
 	}
 	output << endl;
-	if ( performs_major_reaction_only_ ) {
+	if ( ( get_n_co_substrates() ) && ( performs_major_reaction_only_ ) ) {
 		output << "Reaction limited to " << co_substrates_[ 1 ] << endl;
 	}
 }
@@ -119,16 +121,48 @@ EnzymaticMover::show( std::ostream & output ) const
 
 void
 EnzymaticMover::parse_my_tag(
-	TagCOP /*tag*/,
+	TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
 	Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
 	Pose const & /*pose*/ )
-{}
+{
+	set_species( tag->getOption< std::string >( "species", "h_sapiens" ) );
+	set_enzyme( tag->getOption< std::string >( "enzyme_name", "generic" ) );
+	set_efficiency( tag->getOption< core::Real >( "efficiency", 1.00 ) );
+	if ( tag->getOption< bool >( "perform_major_reaction_only", false ) ) { perform_major_reaction_only(); }
+	if ( tag->getOption< bool >( "perform_all_reactions", true ) ) { perform_all_reactions(); }
+}
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+EnzymaticMover::xml_schema_complex_type_generator()
+{
+	using namespace utility::tag;
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "species", xs_string, "Set the species name of this simulated enzyme." )
+		+ XMLSchemaAttribute( "enzyme_name", xs_string, "Set the specific name of this simulated enzyme." )
+		+ XMLSchemaAttribute( "efficiency", xsct_real, "Directly set the efficiency of this enzyme, ignoring whatever is in the database." )
+		+ XMLSchemaAttribute( "perform_major_reaction_only", xsct_rosetta_bool, "Set this EnzymaticMover to perform only its major reaction." )
+		+ XMLSchemaAttribute( "perform_all_reactions", xsct_rosetta_bool, "Allow this EnzymaticMover to be promiscuous, performing a random transfer from among its possible co-substrates." );
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen(
+		utility::pointer::make_shared< XMLSchemaComplexTypeGenerator >() );
+	ct_gen->
+		add_attributes( attlist )
+		.complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.add_optional_name_attribute();
+
+	return ct_gen;
+}
 
 
-/// @details  WiP
-/// @param    <input_pose>: the structure to be glycosylated, i.e., "substrate 1"
+/// @details  When applied, every EnzymaticMover first obtains a list of all possible reaction sites, using enzyme
+///           data.  Next, it loops through the sites and checks if they are ensured.  If not, it decides whether or
+///           not to modify the site based on the enzymes efficiency, as recorded in the database.  Then it performs
+///           the specific "reaction" of the particular EnzymaticMover at that site.
+/// @param    <input_pose>: the structure to be post-translationally modified, i.e., "substrate 1"
 void
 EnzymaticMover::apply( Pose & input_pose )
 {
@@ -138,25 +172,36 @@ EnzymaticMover::apply( Pose & input_pose )
 
 	set_pose_reactive_sites( input_pose );
 
-	TR << "Simulating " << get_enzyme() << " acting on the pose...." << endl;
-
 	Size const n_sites( get_n_reactive_sites() );
+
+	if ( ! n_sites ) {
+		set_last_move_status( moves::FAIL_DO_NOT_RETRY );
+		return;
+	}
+
+	TR << "Simulating " << get_enzyme() << " enzyme acting on the pose...." << endl;
+
 	for ( core::uint i( 1 ); i <= n_sites; ++i ) {
 		if ( ! get_ensured_sites().contains( get_reactive_site_sequence_position( i ) ) ) {
 			// If the site is not ensured, randomly decide whether or not to react.
 			if ( numeric::random::rg().uniform() > get_efficiency() ) {
+				TR << " Modification site " << i << " skipped because of low simulated enzyme efficiency." << endl;
 				continue;
 			}
 		}
-		core::uint j;
-		if ( performs_major_reaction_only() ) {
-			j = 1;
-		} else {
-			j = core::uint( numeric::random::rg().uniform() * get_n_co_substrates() + 1 );
+		if ( get_n_co_substrates() ) {
+			core::uint j;
+			if ( performs_major_reaction_only() ) {
+				j = 1;
+			} else {
+				j = core::uint( numeric::random::rg().uniform() * get_n_co_substrates() + 1 );
+			}
+			//ConsensusSequenceType const sequence_type(
+			//  EnzymeManager::get_consensus_sequence_type( species_name_, enzyme_name_ ) );
+			perform_reaction( input_pose, i, get_co_substrate( j ) );
+		} else /*This reaction does not require a cosubstrate from Rosetta's point of view.*/ {
+			perform_reaction( input_pose, i );
 		}
-		//ConsensusSequenceType const sequence_type(
-		//  EnzymeManager::get_consensus_sequence_type( species_name_, enzyme_name_ ) );
-		perform_reaction( input_pose, i, get_co_substrate( j ) );
 	}
 
 	TR << "Move(s) complete." << endl;
@@ -169,12 +214,11 @@ EnzymaticMover::apply( Pose & input_pose )
 void
 EnzymaticMover::set_enzyme_family( std::string const & family_name )
 {
-	// TODO: Check that this family exists.  If not, throw an exit with message.
 	enzyme_family_ = family_name;
 }
 
 
-// Set the species name of this simulated glycosyltransferase.
+// Set the species name of this simulated enzyme.
 /// @details  Setting the species name limits the behavior of this EnzymaticMover to reactions known to occur in the
 /// given species.
 /// @param    <setting>: A species name in the format "e_coli" or "h_sapiens", which must correspond to a directory
@@ -182,7 +226,6 @@ EnzymaticMover::set_enzyme_family( std::string const & family_name )
 void
 EnzymaticMover::set_species( std::string const & species_name )
 {
-	// TODO: Check that this species has the currently set enzyme.  If not, throw an exit with message.
 	species_name_ = species_name;
 	if ( ! enzyme_name_.empty() ) {
 		set_efficiency();
@@ -191,7 +234,7 @@ EnzymaticMover::set_species( std::string const & species_name )
 }
 
 
-// Set the specific enzyme name of this simulated glycosyltransferase.
+// Set the specific enzyme name of this simulated enzyme.
 /// @details  If set, this EnzymaticMover will use specific enzymatic details for this reaction from the database.
 /// If the species name has not been set, an enzyme from "h_sapiens" is assumed.
 /// @param    <setting>: An enzyme name as listed in an appropriate enzyme file in
@@ -199,7 +242,6 @@ EnzymaticMover::set_species( std::string const & species_name )
 void
 EnzymaticMover::set_enzyme( std::string const & enzyme_name )
 {
-	// TODO: Check that this enzyme is found in this species.  If not, throw an exit with message.
 	enzyme_name_ = enzyme_name;
 	if ( ! species_name_.empty() ) {
 		set_efficiency();
@@ -224,7 +266,7 @@ EnzymaticMover::ensure_site( core::uint seqpos )
 
 
 // Other Methods //////////////////////////////////////////////////////////////
-// Access the EnzymeManager to determine which sites on a given Pose are able to be glycosylated.
+// Access the EnzymeManager to determine which sites on a given Pose are able to be modified.
 void
 EnzymaticMover::set_pose_reactive_sites( core::pose::Pose const & pose )
 {
@@ -305,20 +347,18 @@ void
 EnzymaticMover::set_commandline_options()
 {
 	using namespace basic::options;
+
+	set_species( option[ OptionKeys::enzymes::species ] );
+	set_enzyme( option[ OptionKeys::enzymes::enzyme ] );
 }
 
 // Initialize data members from arguments.
 void
 EnzymaticMover::init( std::string const & enzyme_family )
 {
-	type( "EnzymaticMover" );
+	TR << "Initializing EnzymaticMover from the " << enzyme_family << " family..." << std::endl;
 	set_enzyme_family( enzyme_family );
 	set_commandline_options();
-
-	// Set defaults.
-	species_name_ = "";
-	enzyme_name_ = "";
-	performs_major_reaction_only_ = false;  // Allows for promiscuous enzymes by default.
 }
 
 // Copy all data members from <object_to_copy_from> to <object_to_copy_to>.

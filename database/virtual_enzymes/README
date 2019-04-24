@@ -1,0 +1,56 @@
+This directory is for enzyme data used by EnzymaticMovers.
+
+This directory should not contain any files, only subdirectories for enzyme
+families, with each family corresponding to a single EnzymaticMover subclass.
+
+Each enzyme family subdirectory should contain at least an h_sapiens
+subdirectory and potentially other subdirectories for other species.
+
+Each species subdirectory contains the actual enzyme data files, one of which
+must be named "generic" to represent the default enzyme of that species and
+family of reactions.
+
+The format for each enzyme data file is as follows:
+
+The first line is assumed to contain a whitespace-delimited list of the
+following, all of which are required:
+* Consensus sequence &mdash; This may be a 1-letter-code AA or NA sequence or an
+IUPAC carbohydrate sequence.
+* Sequence type &mdash; This value must be `AA`, `NA`, or SACCHARIDE`, for the 
+three types of sequences accepted.
+* Residue of CS to modify &mdash; An integer representing the sequence position
+of the residue _in the consensus sequence_ to be modified in some way by the
+`Mover`.
+* Atom to modify &mdash; A string for the atom name of the atom to be modified,
+if applicable. (Not all `EnzymaticMover`s will need this information and are 
+allowed to ignore it, but a string value must be present.)
+* Efficiency &mdash; A real value, where 1.00 is 100% efficiency. If set to
+0.50, an `EnzymaticMover` will only perform its modification 50% of the time. If
+not set to 1.00, please provide a comment of the source for the value used.
+
+Any further lines are assumed by the database reader to be cosubstrates. This is
+usually specified in the form of a sequence of some sort.
+
+If no further lines are provided, the enzyme either does not have a cosubstrate
+or else the cosubstrate is not needed by Rosetta to perform the modification.
+(For example, a kinase does not need to provide ATP as a cosubstrate, because,
+under the hood, Rosetta will simply modify a `Residue` to convert it into a
+phosphorylated `VariantType`. Whereas, a ligase would need to know the sequence
+of the structure to be joined to the `Pose`.)
+
+If multiple cosubstrate lines are provided, this means that the enzyme being
+simulated is promiscuous, that is, it will randomly select from the options
+when performing the reaction.
+
+An example file follows:
+
+# Consensus  Sequence  Residue of    Atom
+# Sequence   Type      CS to Modify  To Modify  Efficiency
+  TARGET     AA        4             CA         1.00        # Rosettase perfectly appends a glycine in the target sequence with a branch.
+
+# Co-substrates
+ARROW
+BULLET
+BOLT
+KNIFE
+PROTONTORPEDO

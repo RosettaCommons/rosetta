@@ -1,0 +1,13 @@
+-mute all
+-unmute core.enzymes
+-unmute protocols.enzymatic_movers
+-s input/THEKINASETARGET.pdb
+#-enzymes:species h_sapiens
+#-enzymes:enzyme GSK3B
+-overwrite
+-nstruct 10
+-out:prefix output/
+-out:pdb
+#-out:levels core.enzymes:500
+#-out:levels protocols.enzymatic_movers:500
+

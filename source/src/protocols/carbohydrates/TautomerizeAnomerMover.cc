@@ -112,13 +112,13 @@ TautomerizeAnomerMover::get_name() const {
 protocols::moves::MoverOP
 TautomerizeAnomerMover::clone() const
 {
-	return protocols::moves::MoverOP( new TautomerizeAnomerMover( *this ) );
+	return protocols::moves::MoverOP( utility::pointer::make_shared< TautomerizeAnomerMover >( *this ) );
 }
 
 protocols::moves::MoverOP
 TautomerizeAnomerMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new TautomerizeAnomerMover() );
+	return protocols::moves::MoverOP( utility::pointer::make_shared< TautomerizeAnomerMover >() );
 }
 
 void
@@ -264,7 +264,7 @@ TautomerizeAnomerMoverCreator::keyname() const
 protocols::moves::MoverOP
 TautomerizeAnomerMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new TautomerizeAnomerMover );
+	return protocols::moves::MoverOP( utility::pointer::make_shared< TautomerizeAnomerMover >() );
 }
 
 void

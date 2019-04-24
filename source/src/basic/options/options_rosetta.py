@@ -382,7 +382,7 @@ Options = Option_Group( '',
 			Option( 'check_all_PDB_components', 'Boolean',
 							desc="Check all PDB components even if they have a name3 that overlaps with a Rosetta type.",
 							default='false' ),
- 		  Option( 'extra_res_database', 'String',
+			Option( 'extra_res_database', 'String',
 					desc="the name of a database containing fullatom residue types (e.g. ligands)"),
 			Option( 'extra_res_pq_schema', 'String',
 					desc="the name of a postgreSQL schema in the database containing fullatom residue types "
@@ -506,7 +506,7 @@ Options = Option_Group( '',
 			Option( 'burial', 'FileVector', desc='WESA-formatted burial prediction' ),
 			#Option( 'covalent_labeling_input', 'File', desc='Input covalent labeling data in the form of neighbor counts'),
 			#Option( 'covalent_labeling_fa_input', 'File', desc='Input covalent labeling data in the form of neighbor counts for FA'),
-		  Option( 'hrf_ms_labeling', 'File', desc='Experimental Mass Spec HRF labeling data'),
+			Option( 'hrf_ms_labeling', 'File', desc='Experimental Mass Spec HRF labeling data'),
 			Option( 'vall', 'FileVector', desc='Fragment database file, e.g vall.dat.2006-05-05',
 					default='/sampling/filtered.vall.dat.2006-05-05' ),
 			Option( 'rescore', 'Boolean',
@@ -1220,7 +1220,7 @@ Options = Option_Group( '',
 			),
 		Option( 'min_type', 'String',
 			default='lbfgs_armijo_nonmonotone', desc='type of minimizer to use',
-      legal=legal_minimization_types,
+			legal=legal_minimization_types,
 			),
 		Option( 'min_tolerance', 'Real', default='0.000001', desc='minimizer tolerance' ),
 		#Why is this defaulted to false?  There is a good argument it should be true - certainly it should be true
@@ -1385,16 +1385,16 @@ Options = Option_Group( '',
 		Option( 'input_etables' , 'String', desc="Read etables from files with given prefix" ),
 		Option( 'output_etables', 'String', desc="Write out etables to files with given prefix" ),
 		Option( 'analytic_etable_evaluation', 'Boolean', desc="Instead of interpolating between bins, use an analytic evaluation of the lennard-jones and solvation energies", default="true" ),
-    Option( 'put_intra_into_total','Boolean', desc="Put intra-residue terms inside hbond, geom_sol_fast, fa_atr. (Contributions will not show up in hbond_intra, fa_atr_intra_xover4.) Off for proteins by default.", default="false" ),
-    Option( 'include_intra_res_protein','Boolean', desc="Include computation of intra-residue terms for proteins.", default="false" ),
-    Option( 'fa_stack_base_base_only','Boolean', desc="Only calculate fa_stack for RNA base/base.", default="true" ),
-    Option( 'fa_stack_include_rna_protein','Boolean', desc="Calculate fa_stack for RNA/protein", default="true" ),
-    Option( 'fa_stack_sol_prefactor','Real', desc="Strength of sol penalty in fa_stack_sol.", default="0.1" ),
-    Option( 'fa_stack_sol_stack_cutoff','Real', desc="distances below this get full sol stack.", default="5.5" ),
-    Option( 'fa_stack_sol_dist_cutoff' ,'Real', desc="distances below this get some sol stack.", default="6.5" ),
-    Option( 'fa_stack_lr_prefactor','Real', desc="Strength of lr penalty in fa_stack_lr.", default="-0.05" ),
-    Option( 'fa_stack_lr_stack_cutoff','Real', desc="distances below this get full lr stack.", default="6.5" ),
-    Option( 'fa_stack_lr_dist_cutoff' ,'Real', desc="distances below this get some lr stack.", default="7.5" ),
+		Option( 'put_intra_into_total','Boolean', desc="Put intra-residue terms inside hbond, geom_sol_fast, fa_atr. (Contributions will not show up in hbond_intra, fa_atr_intra_xover4.) Off for proteins by default.", default="false" ),
+		Option( 'include_intra_res_protein','Boolean', desc="Include computation of intra-residue terms for proteins.", default="false" ),
+		Option( 'fa_stack_base_base_only','Boolean', desc="Only calculate fa_stack for RNA base/base.", default="true" ),
+		Option( 'fa_stack_include_rna_protein','Boolean', desc="Calculate fa_stack for RNA/protein", default="true" ),
+		Option( 'fa_stack_sol_prefactor','Real', desc="Strength of sol penalty in fa_stack_sol.", default="0.1" ),
+		Option( 'fa_stack_sol_stack_cutoff','Real', desc="distances below this get full sol stack.", default="5.5" ),
+		Option( 'fa_stack_sol_dist_cutoff' ,'Real', desc="distances below this get some sol stack.", default="6.5" ),
+		Option( 'fa_stack_lr_prefactor','Real', desc="Strength of lr penalty in fa_stack_lr.", default="-0.05" ),
+		Option( 'fa_stack_lr_stack_cutoff','Real', desc="distances below this get full lr stack.", default="6.5" ),
+		Option( 'fa_stack_lr_dist_cutoff' ,'Real', desc="distances below this get some lr stack.", default="7.5" ),
 		Option( 'geom_sol_interres_path_distance_cutoff', 'Integer', desc="Minimum no. bonds between atoms in different residues to calculate geom_sol", default="0" ),
 		Option( 'geom_sol_intrares_path_distance_cutoff', 'Integer', desc="Minimum no. bonds between atoms in same residues to calculate geom_sol", default="6" ),
 		Option( 'rms_target', 'Real', desc='Target of RMS optimization for RMS_Energy EnergyMethod', default='0.0'),
@@ -1587,7 +1587,7 @@ Options = Option_Group( '',
 		Option( 'voids_penalty_energy_disabled_except_during_packing', "Boolean", desc="If true, then the voids_penalty term is only evaluated during packing (and not scoring or minimizing).  If false, then it is evaluated during packing and scoring (but not minimizing).  True by default.  Can be overridden for a particular ScoreFunction on a per-instance basis.", default='true' ),
 		Option( 'voids_penalty_energy_voxel_size', "Real", desc="The size, in Angstroms, of the voxels used in the voxel grid for the voids_penalty energy.  Defaults to 0.5 A (a cube with a side of 0.5 Angstroms).", default='0.5' ),
 		Option( 'voids_penalty_energy_voxel_grid_padding', "Real", desc="A parameter for the voids_penalty energy.  This is the enlargement (on all sides) of the bounding box for the pose when setting up the voxel grid.  Defaults to 1.0 A padding on all sides.", default='1.0' ),
-	  Option_Group( 'rna',
+		Option_Group( 'rna',
 	  		Option( 'rna_base_pair_xy_filename', 'String', desc="File name where the RNA pase pair XY potential is defined", default="scoring/rna/rna_base_pair_xy.dat"),
 		    Option( 'disable_orientation_dependent_rna_ch_o_bonds',   'Boolean', desc="Do not use orientation-dependent potential for RNA carbon hydrogen bonds" , default="false"),
 		    Option( 'rna_suite_potential', 'String', desc="In RNA calculation, directory containing suite potentials" , default="Richardson"),
@@ -2507,30 +2507,56 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'shap_p_aa_pp',   'String', desc="Name of the new Shapovalov's P_AA_PP potential file (search in the local directory first, then look in the database)" , default="scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa50/a20.prop" ),
 		), #-corrections:shapovalov_lib
 
-    # options related to point water and full-atom water behavior
-    Option_Group( 'water',
-      # options related to packing and processing of low-resolution PWAT water sites
-      Option( 'water_bump_check', 'Boolean', desc='exclude water rotamers that dont pass energy bump check', default='false' ),
-      Option( 'lkb_overlap_distance', 'Real', desc='intersection distance when solvating with lkball sites', default='0.750' ),
-      Option( 'lkb_cluster_radius', 'Real', desc='radius for clustering overlapping lkball sites', default='1.000' ),
-			Option( 'lkb_rotset_radius', 'Real', desc='radius for grouping clustered water sites into rotamer sets', default='3.000' ),
-      Option( 'wat_rot_params', 'String', desc='for statistical-based placement of potential water positions', default='sampling/waterrots/water.rots'),
-      Option( 'dwell_cutoff', 'Real', desc='dwell time cutoff value for PWAT rotamers kept after normalizing by number of MC steps', default='0.02' ),
-      Option( 'cluster_radius', 'Real', desc='radius from dwell-weighted centroid for growing PWAT rotamer clusters', default='1.52' ),
-      Option( 'cluster_cutoff', 'Real', desc='remove cluster if cumulative dwell time is not met', default='0.179' ),
-      Option( 'watlim_scale', 'Real', desc='scale factor for waters kept if using limit_water: scale factor * # molten residues', default='0.0' ),
-      Option( 'pointwater_params', 'String', desc='PWAT: directory name for pointwater potential databases', default='norm_trunc6' ),
-      Option( 'ordered_pt_wat_penalty', 'Real', desc='PWAT: Penalty for adding an ordered point water.  Implemented through pointwater scoreterm.', default='2.709' ),
-      Option( 'pointwat_wat_bonus', 'Real', desc='PWAT: water-water bonus for nearby PWAT residues', default='0.52' ),
-      Option( 'pointwat_wat_bonus_width', 'Real', desc='PWAT: factor determining width of water-water bonus exponential function', default='17.1' ),
-      Option( 'ordered_wat_penalty', 'Real', desc='HOH: Penalty for adding an ordered water; implemented through ref scoreterm', default='1.221' ),
-      # options related to packing HOH residue types
-      Option( 'wat_rot_sampling', 'Real', desc='Stepsize (in degrees) of rotatable waters', default='30.0' ),
-      Option( 'wat_axis_sampling', 'Boolean', desc='align O-H1 vector with nearby backbone O and sample about O-O axes', default='true' ),
-      Option( 'axis_rot_sampling', 'Real', desc='Stepsize (in degrees) of rotatable waters when wat_axis_sampling is used', default='15.0' ),
-      Option( 'include_vrt','Boolean', desc='allow for water virtualization', default='true' ),
-    ),
+		# options related to point water and full-atom water behavior
+		Option_Group( 'water',
+			# options related to packing and processing of low-resolution PWAT water sites
+			Option( 'water_bump_check', 'Boolean', desc='exclude water rotamers that dont pass energy bump check', default='false' ),
+			Option( 'lkb_overlap_distance', 'Real', desc='intersection distance when solvating with lkball sites', default='0.750' ),
+			Option( 'lkb_cluster_radius', 'Real', desc='radius for clustering overlapping lkball sites', default='1.000' ),
+					Option( 'lkb_rotset_radius', 'Real', desc='radius for grouping clustered water sites into rotamer sets', default='3.000' ),
+			Option( 'wat_rot_params', 'String', desc='for statistical-based placement of potential water positions', default='sampling/waterrots/water.rots'),
+			Option( 'dwell_cutoff', 'Real', desc='dwell time cutoff value for PWAT rotamers kept after normalizing by number of MC steps', default='0.02' ),
+			Option( 'cluster_radius', 'Real', desc='radius from dwell-weighted centroid for growing PWAT rotamer clusters', default='1.52' ),
+			Option( 'cluster_cutoff', 'Real', desc='remove cluster if cumulative dwell time is not met', default='0.179' ),
+			Option( 'watlim_scale', 'Real', desc='scale factor for waters kept if using limit_water: scale factor * # molten residues', default='0.0' ),
+			Option( 'pointwater_params', 'String', desc='PWAT: directory name for pointwater potential databases', default='norm_trunc6' ),
+			Option( 'ordered_pt_wat_penalty', 'Real', desc='PWAT: Penalty for adding an ordered point water.  Implemented through pointwater scoreterm.', default='2.709' ),
+			Option( 'pointwat_wat_bonus', 'Real', desc='PWAT: water-water bonus for nearby PWAT residues', default='0.52' ),
+			Option( 'pointwat_wat_bonus_width', 'Real', desc='PWAT: factor determining width of water-water bonus exponential function', default='17.1' ),
+			Option( 'ordered_wat_penalty', 'Real', desc='HOH: Penalty for adding an ordered water; implemented through ref scoreterm', default='1.221' ),
+			# options related to packing HOH residue types
+			Option( 'wat_rot_sampling', 'Real', desc='Stepsize (in degrees) of rotatable waters', default='30.0' ),
+			Option( 'wat_axis_sampling', 'Boolean', desc='align O-H1 vector with nearby backbone O and sample about O-O axes', default='true' ),
+			Option( 'axis_rot_sampling', 'Real', desc='Stepsize (in degrees) of rotatable waters when wat_axis_sampling is used', default='15.0' ),
+			Option( 'include_vrt','Boolean', desc='allow for water virtualization', default='true' ),
+		),
 	), # -corrections
+
+	# Evaluator Options ---------------------------------------------------------
+	Option_Group( 'enzymes' ,
+		Option('species', 'String',
+			desc='Setting the species name limits the behavior of the simulated '
+				'enzyme(s) used in this protocol to reactions known to occur in '
+				'the given species.  '
+				'A species name must be in the format \\"e_coli\\" or \\"h_sapiens\\", '
+				'(note the underscores,) which must also correspond to a '
+				'directory in the Rosetta database, e.g., '
+				'\\"database/virtual_enzymes/<enzyme_family>/h_sapiens/\\".',
+			short='Set the species name of this simulated enzyme.',
+			default='h_sapiens'
+		),
+		Option('enzyme', 'String',
+			desc='If set, the simulated enzyme used in this protocol will use '
+				'specific enzymatic details for this reaction from the '
+				'database.  '
+				'If the species name has not been set, a \\"generic\\" enzyme from '
+				'general family used in this protocol is assumed.  '
+				'An enzyme name must be as listed in an appropriate enzyme file '
+				'in \\"database/virtual_enzymes/<enzyme_family>/<species_name_>/\\".',
+			short='Set the specific enzyme name of this simulated enzyme.',
+			default='generic'
+		),
+	),  # -enzymes
 
 	# Evaluator Options ---------------------------------------------------------
 	Option_Group( 'evaluation' ,

@@ -26,6 +26,10 @@
 #include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 
+#ifdef MULTI_THREADED
+#include <utility/thread/ReadWriteMutex.hh>
+#endif
+
 // C++ headers
 #include <map>
 
@@ -33,6 +37,8 @@
 namespace core {
 namespace enzymes {
 
+// TODO: Change this to std::map< tuple< std::string, std::string, std::string >, EnzymeData > > or
+// std::map< tuple< std::string, std::string, std::string >, EnzymeDataOP > >
 /// @brief  A map of enzyme family to maps of species to maps of enzyme names to enzyme data.
 typedef std::map< std::string, std::map< std::string, std::map< std::string, EnzymeData > > > EnzymeDataSet;
 
@@ -91,15 +97,32 @@ public:  // Static constant data access ///////////////////////////////////////
 
 private:  // Private methods //////////////////////////////////////////////////
 	// Empty constructor
-	EnzymeManager();
+	EnzymeManager() = default;
 
+
+	// Is the enzyme data not yet loaded from the database?
+	bool is_enzyme_not_yet_loaded(
+		std::string const & family,
+		std::string const & species,
+		std::string const & enzyme );
 
 	// Parse the consensus sequence within this EnzymeData and derive a list of consensus residues.
 	void parse_consensus_sequence( EnzymeData & enzyme_data ) const;
 
 
+	// Get the enzyme data for the specific enzyme requested, creating it if necessary.
+	EnzymeData const & specific_enzyme_data(
+		std::string const & family,
+		std::string const & species,
+		std::string const & enzyme );
+
+
 private:  // Private data /////////////////////////////////////////////////////
 	EnzymeDataSet enzymes_;
+
+#ifdef MULTI_THREADED
+	utility::thread::ReadWriteMutex specific_enzyme_data_mutex_;
+#endif
 };  // class EnzymeManager
 
 }  // namespace enzymes
