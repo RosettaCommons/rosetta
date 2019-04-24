@@ -404,17 +404,27 @@ void MergePDBatOverlapMover::minimize_overlap(Pose & pose,Size overlap_start,Siz
 }
 
 
-bool MergePDBatOverlapMover::makeJunctions_apply(core::pose::Pose & pose, core::pose::Pose const & attach_pose, Size overlap_length,core::Real max_overlap_rmsd, std::string attachment_termini){
+bool MergePDBatOverlapMover::makeJunctions_apply(core::pose::Pose & pose, core::pose::Pose const & attach_pose, Size overlap_length,core::Real max_overlap_rmsd, std::string attachment_termini, char attachment_chain){
 	attach_pose_= attach_pose.clone();
 	overlap_length_ = overlap_length;
 	max_overlap_rmsd_ = max_overlap_rmsd;
 	attachment_termini_ = attachment_termini;
+	attachment_chain_ = attachment_chain;
 	minimize_after_overlap_ = true;
 	return(apply_helper(pose));
 }
 
 bool MergePDBatOverlapMover::apply_helper( Pose & pose ){
-	bool success = merge_poses(pose,*attach_pose_);
+	if ( !has_chain(attachment_chain_,*attach_pose_) ) {
+		std::stringstream err;
+		err << "\nCan't find chain name" << attachment_chain_ << "in pdb being attached" << std::endl;
+		throw CREATE_EXCEPTION(utility::excn::BadInput,err.str());
+	}
+	Size chain_id =  get_chain_id_from_chain(attachment_chain_,*attach_pose_);
+	core::pose::PoseOP desired_chain_pose = attach_pose_->split_by_chain(chain_id);
+
+	//bool success = merge_poses(pose,*attach_pose_);
+	bool success = merge_poses(pose,*desired_chain_pose);
 	if ( !success ) {
 		return false;
 	}

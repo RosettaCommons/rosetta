@@ -226,9 +226,9 @@ def get_terminal_pdb(options,dhrs_dict):
     n_term_res_trim = 0
     c_term_res_trim = 0
     if(options.n_term_dhr!=None):
-        c_term_res_trim = attach_dhr_length*options.terminal_dhr_trim-options.terminal_res_adjust
+        c_term_res_trim = attach_dhr_length*options.terminal_dhr_trim+options.terminal_res_adjust
     if(options.c_term_dhr!=None):
-        n_term_res_trim = attach_dhr_length*options.terminal_dhr_trim-options.terminal_res_adjust
+        n_term_res_trim = attach_dhr_length*options.terminal_dhr_trim+options.terminal_res_adjust
     tmp_pose = pose_from_file(options.terminal_pdb)
     length = tmp_pose.size()
     tmp_junction = Junction(attach_dhr,attach_dhr,length,options.terminal_pdb)
@@ -236,6 +236,7 @@ def get_terminal_pdb(options,dhrs_dict):
     terminal_pdb_component.junction = False
     terminal_pdb_component.n_term_res_trim = n_term_res_trim
     terminal_pdb_component.c_term_res_trim = c_term_res_trim
+    terminal_pdb_component.chain=options.terminal_chain
     n_term_seq = ""
     c_term_seq = ""
     if(options.terminal_pdb_seq_compatible):
@@ -638,6 +639,7 @@ if __name__=='__main__':
     parser.add_argument("--terminal_pdb",type=str,default="-",help="last connection")
     parser.add_argument("--terminal_pdb_attachment_dhr",type=str,default="-",help="DHR of N or C term. WARNING:Could fail if start structure allowed to expand in both directions" )
     parser.add_argument("--chain",type=str,default="A",help="chain of start pdb")
+    parser.add_argument("--terminal_chain",type=str,default="A",help="chain of terminal pdb")
     parser.add_argument("--start_pdb_seq_compatible",type=bool,default=False,help="does the starting pdb have a sequence compatible junction")
     parser.add_argument("--terminal_pdb_seq_compatible",type=bool,default=False,help="does the terminal pdb have a sequence compatible junction")
     parser.add_argument("-n", "--n_term_dhr",type=str,default=None, help="n_term_dhr")
@@ -664,11 +666,13 @@ if __name__=='__main__':
     parser.add_argument("--enumerate_tranform_db",type=bool,default=False,help="output two junction possibiities for building transform possibiities")
     options = parser.parse_args()
     current_machine = "jojo" #expects this to be set before running script
-    DHR_location_jojo = "/work/brunette/DBs/repeats/DHRs"
+    DHR_location_jojo = "/home/brunette/DBs/repeats/DHRs"
     #Junction_location_jojo = "/home/brunette/experiments/junction_assemblies/one_junction/test"
-    Junction_location_jojo="/home/brunette/experiments/junction_assemblies/oligomers/pentamer/bex2C5_G2/rd6_selected_blueprints/selected_junctions"
+    #Junction_location_jojo="/home/brunette/experiments/junction_assemblies/oligomers/pentamer/bex2C5_G2/rd6_selected_blueprints/selected_junctions"
     #Junction_location_jojo = "/home/brunette/DBs/repeats/junctions_verified/db_format"
     #Junction_location_jojo = "/work/brunette/DBs/repeats/junctions"
+    DHR_location_jojo = "/home/brunette/DBs/repeats/DHRs"
+    Junction_location_jojo = "/home/brunette/DBs/building_components/DHR_junctions_all_filters_plus_L1"
     DHR_location_hyak = "/gscratch/baker/brunette/DBs/repeats/DHRs"
     Junction_location_hyak = "/gscratch/baker/brunette/DBs/repeats/junctions"
     DHR_location_digs = "/work/brunette/DBs/repeats/DHRs"

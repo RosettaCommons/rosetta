@@ -2679,7 +2679,8 @@ HBNet::set_constraints( Pose & pose, core::scoring::constraints::ConstraintSet &
 			cst_output_stream << cst_str_stream.str();
 		}
 	}
-	core::pose::add_comment( pose, "HBNet constraints for network_" + utility::to_string(p.id) + ": ", "\n" + comment_str + "\n" );
+	comment_str.pop_back();//Remove last character from string to fix integration with silent files
+	core::pose::add_comment( pose, "HBNet constraints for network_" + utility::to_string(p.id) + ": ", "\n" + comment_str);
 	if ( write_cst_file  && !(p.cst_file_written ) ) {
 		cst_output_stream.close();
 		p.cst_file_written = true;
@@ -2813,7 +2814,7 @@ HBNet::get_additional_output()
 		out_pose->constraint_set(cst_op); // add constraints to the pose
 	}
 	if ( TR.visible() ) TR << std::endl;
-	core::pose::add_comment( *out_pose, "HBNet designed networks: ", "\n" + comment_str + "\n" );
+	core::pose::add_comment( *out_pose, "HBNet designed networks: ", "\n" + comment_str );
 
 	//(*out_pose).update_residue_neighbors(); // now taken care of in place_rots_on_pose()
 	( *scorefxn_ )( *out_pose ); // always want to return a scored pose; and set_constraints() clears energies!! so need to re-score before calling get_hbond_atom_pairs()
@@ -3471,7 +3472,7 @@ HBNet::apply( Pose & pose )
 		pose.constraint_set(cst_op); // add constraints to the pose
 	}
 	if ( TR.visible() ) TR << std::endl;
-	core::pose::add_comment( pose, "HBNet Design details: ", "\n" + comment_str + "\n" );
+	core::pose::add_comment( pose, "HBNet Design details: ", "\n" + comment_str );
 
 	//pose.update_residue_neighbors(); //now taken care of in place_rots_on_pose()
 	( *scorefxn_ )( pose );

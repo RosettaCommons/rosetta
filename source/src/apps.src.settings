@@ -96,7 +96,7 @@ sources = {
 		"minirosetta",
 		"minirosetta_graphics",
 	],
-	"public/carbohydrates": [	
+	"public/carbohydrates": [
 		"dock_glycans",
 		"glycan_info",
 		"glycan_clash_check",

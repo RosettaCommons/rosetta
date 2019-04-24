@@ -28,6 +28,7 @@
 #include <map>
 #include <set>
 #include <iosfwd>
+#include <mutex>
 
 #include <ctime>
 
@@ -111,7 +112,9 @@ public:
 	FragmentStoreOP residue_subset_fragment_store;
 
 private:
+	std::mutex frag_lookup_mutex; // Don't have two threads making this at the same time
 	FragmentLookupOP fragLookupOP_; //stored here to cache the removal of center of mass
+
 };
 
 }

@@ -171,6 +171,8 @@
 #include <protocols/simple_filters/ResidueSetChainEnergyFilterCreator.hh>
 #include <protocols/calc_taskop_filters/RotamerBoltzmannWeightFilterCreator.hh>
 #include <protocols/calc_taskop_filters/RotamerBoltzmannWeight2Creator.hh>
+#include <protocols/simple_filters/SecretionPredictionFilterCreator.hh>
+#include <protocols/simple_filters/SSElementLengthFilterCreator.hh>
 #include <protocols/simple_filters/SSElementMotifContactFilterCreator.hh>
 #include <protocols/simple_ddg/SSElementBisectddGFilterCreator.hh>
 #include <protocols/simple_filters/SaveResfileToDiskFilterCreator.hh>
