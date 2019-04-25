@@ -91,11 +91,11 @@ using namespace core;
 SSElementBisectddGFilter::SSElementBisectddGFilter(core::scoring::ScoreFunctionOP scorefxn,Real threshold,bool report_avg,Size ignore_terminal_SS,bool only_n_term,bool only_c_term,bool skip_ss_element,bool report_sasa_instead,bool convert_charged_res_to_ala,protocols::moves::MoverOP relax_mover):
 	Filter( "SSBisectddGFilter" )
 {
-	scorefxn_=scorefxn,
-		threshold_=threshold,
-		report_avg_=report_avg;
+	scorefxn_=scorefxn;
+	threshold_=threshold;
+	report_avg_=report_avg;
 	ignore_terminal_SS_=ignore_terminal_SS;
-	only_n_term_ =only_n_term;
+	only_n_term_=only_n_term;
 	only_c_term_=only_c_term;
 	skip_ss_element_=skip_ss_element;
 	report_sasa_instead_=report_sasa_instead;
