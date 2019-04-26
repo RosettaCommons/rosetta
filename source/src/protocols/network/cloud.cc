@@ -24,6 +24,7 @@
 
 #include <utility/io/base64.hh>
 #include <utility/io/zipstream.ipp>
+#include <utility/thread/backwards_thread_local.hh>
 
 #include <utility/json_utilities.hh>
 //#include <utility/string_util.hh>
@@ -168,7 +169,7 @@ NetworkQueue::~NetworkQueue()
 
 NetworkQueue & NetworkQueue::instance()
 {
-	static thread_local std::unique_ptr<NetworkQueue> queue(new NetworkQueue);  // note: thread_local here is IMPORTANT because otherwise we will get into delete-race-condition during ~NetworkQueue call (attempt to use regex after main termination)
+	static THREAD_LOCAL std::unique_ptr<NetworkQueue> queue(new NetworkQueue);  // note: thread_local here is IMPORTANT because otherwise we will get into delete-race-condition during ~NetworkQueue call (attempt to use regex after main termination)
 	return *queue;
 }
 
