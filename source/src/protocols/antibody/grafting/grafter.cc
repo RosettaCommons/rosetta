@@ -86,9 +86,10 @@ struct PDB_N
 /// @brief Construct Pose SCS_ResultSet as templates and superimpose 'orientation' template on results. Write results into specified output_prefix.
 core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet const &scs, string const & prefix, string const & suffix, string const & database)
 {
-	string frh_pdb_name = database + "/antibody_database/pdb" + scs.frh->pdb + "_chothia.pdb";
-	string frl_pdb_name = database + "/antibody_database/pdb" + scs.frl->pdb + "_chothia.pdb";
-	string orientation_pdb_name = database + "/antibody_database/pdb" + scs.orientation->pdb + "_chothia.pdb";
+
+	string frh_pdb_name = database + "/antibody_database/" + scs.frh->pdb + "_trunc.pdb";
+	string frl_pdb_name = database + "/antibody_database/" + scs.frl->pdb + "_trunc.pdb";
+	string orientation_pdb_name = database + "/antibody_database/" + scs.orientation->pdb + "_trunc.pdb";
 
 	PoseOP frh = core::import_pose::pose_from_file( frh_pdb_name, core::import_pose::PDB_file);
 	PoseOP frl = core::import_pose::pose_from_file( frl_pdb_name, core::import_pose::PDB_file);
@@ -107,13 +108,13 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 	AntibodyNumbering an( Chothia_Numberer().number(A, trimmed_heavy_fr, trimmed_light_fr) );
 
 	utility::vector1< core::Size > conserved_frh_residues;
-	for( auto i : {10,11,12,13,14,15,16,17,18,19,20,21,21,23,24,25,36,37,38,39,40,41,42,43,44,45,46,47,48,49,66,69,70,71,72,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,103,104,105} ){
+	for( auto i : {10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,36,37,38,39,40,41,42,43,44,45,46,47,48,49,66,69,70,71,72,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,103,104,105} ){
 		conserved_frh_residues.push_back(i);
 	}
 	TR.Debug << "Conserved FRH regions: " << conserved_frh_residues << std::endl;
 
 	utility::vector1< core::Size > conserved_frl_residues;
-	for( auto i : {10,11,12,13,14,15,16,17,18,19,20,21,21,23,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,57,58,59,60,61,62,63,64,65,66,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,98,99,100} ){
+	for( auto i : {10,11,12,13,14,15,16,17,18,19,20,21,22,23,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,57,58,59,60,61,62,63,64,65,66,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,98,99,100} ){
 		conserved_frl_residues.push_back(i);
 	}
 	TR.Debug << "Conserved FRL regions: " << conserved_frl_residues << std::endl;
@@ -240,7 +241,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 
 		TR << "Attaching CDR loop: " << TR.Bold << g.name << ", from pdb: " << g.pdb << std::endl;
 
-		string pdb_name = database + "/antibody_database/pdb" + g.pdb + "_chothia.pdb"; //These are FULL antibody structures...
+		string pdb_name = database + "/antibody_database/" + g.pdb + "_trunc.pdb";
 		core::pose::PoseOP cdr = core::import_pose::pose_from_file(pdb_name, core::import_pose::PDB_file);
 
 		if( !g.cdr_numbering.size() ) throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("Empty template:") + g.pdb +" supplied as cdr for region:" + g.name );

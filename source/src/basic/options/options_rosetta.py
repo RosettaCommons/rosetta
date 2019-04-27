@@ -4011,6 +4011,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
             desc = 'Orientational coordinate distance cutoff for templates. Introduces diversity when using multi-template grafting (0.5 is default).',
             default = '0.5'
             ),
+        Option('bfactor_cutoff', 'Real',
+            desc = 'Exclude templates regions with an average bfactor above the cutoff (80 is default).',
+            default = '80.0'
+            ),
         Option('n_multi_templates', 'Integer',
             desc = 'Number of multiple templates to use during grafting. Default is 10.',
             default = '10'

@@ -81,6 +81,7 @@ parse_plain_text_with_columns(
 	utility::vector0<string> legend;
 
 	std::ifstream f(file_name);
+    TR << "Reading file: " << file_name << std::endl;
 
 	string line;
 	while( std::getline(f, line) ) {

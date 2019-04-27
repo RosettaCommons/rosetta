@@ -695,11 +695,11 @@ void SCS_BlastFilter_by_template_bfactor::apply(AntibodySequence const& /* A */,
 			auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
 			if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_template_bfactor::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
-			// check if pdb is contained in bfactor list... somewhat worrying that list doesn't contain all pdbs
+			// some pdbs do not have regions/bfactors, ignore those
 			if( bfactor_map.find(br->pdb) == bfactor_map.end() ) {
 				TR.Trace << "SCS_BlastFilter_by_template_bfactor: Could not find " << br->pdb << " in outlier list." << std::endl;
 				++p;
-			}
+			} // otherwise, if the region bfactor is greater than the cutoff (true), delete
 			else if( bfactor_map.at(br->pdb).at(region.ab_region) ) {
 				TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_bfactor: Filtering " << br->pdb << CSI_Reset() << std::endl;
 				//region.r.erase( std::next(p++).base() );

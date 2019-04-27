@@ -46,7 +46,7 @@ public:
 	void setUp() {
 		// shared initialization goes here
 		// need options for a specific filter...
-		core_init_with_additional_options( "-antibody:exclude_homologs true -antibody:exclude_homologs_fr_cutoff 60 -out:level 500 -antibody:n_multi_templates 3 -antibody:ocd_cutoff 5 -antibody:exclude_pdb 1dlf" );
+		core_init_with_additional_options( "-antibody:exclude_homologs true -antibody:exclude_homologs_fr_cutoff 60 -out:level 500 -antibody:n_multi_templates 3 -antibody:ocd_cutoff 4.5 -antibody:exclude_pdb 1dlf -antibody:bfactor_cutoff 50" );
 		// sets sid on and cutoff to 80%
 		// sets sid cutoff to 60% for FR
 	} //setUp
@@ -520,14 +520,14 @@ public:
 		na_br->pdb="NA";
 
 		// set pdbs
-		dummy_brs[0]->pdb="1a4k"; // h1 outlier
-		dummy_brs[1]->pdb="3skj"; // h2 outlier
-		dummy_brs[2]->pdb="15c8"; // h3 outlier
-		dummy_brs[3]->pdb="1bbd"; // l1 outlier
-		dummy_brs[4]->pdb="1ahw"; // l2 & h2 outlier
-		dummy_brs[5]->pdb="1baf"; // l3 outlier
+		dummy_brs[0]->pdb="5n7w"; // h1 outlier
+		dummy_brs[1]->pdb="6icc"; // h2 + l1 outlier
+		dummy_brs[2]->pdb="5o04"; // h2 + h3 outlier (no light chain, gets filtered)
+		dummy_brs[3]->pdb="6cnr"; // l1 outlier
+		dummy_brs[4]->pdb="5t29"; // l2 outlier
+		dummy_brs[5]->pdb="1f4w"; // l1 + l3 outlier
 		good_br->pdb="12e8"; // no outliers
-		na_br->pdb="NOTL"; // should be delete, not in outlier list
+		na_br->pdb="NOTL"; // not in outlier list -- is ignored
 
 		// store BlastResults in ResultVector;
 		SCS_ResultVector results;
@@ -554,18 +554,18 @@ public:
 		TS_ASSERT_EQUALS(r->h1.size(),7)
 		TS_ASSERT_EQUALS(r->h2.size(),6)
 		TS_ASSERT_EQUALS(r->h3.size(),7)
-		TS_ASSERT_EQUALS(r->l1.size(),7)
-		TS_ASSERT_EQUALS(r->l2.size(),7)
-		TS_ASSERT_EQUALS(r->l3.size(),7)
+		TS_ASSERT_EQUALS(r->l1.size(),4)
+		TS_ASSERT_EQUALS(r->l2.size(),6)
+		TS_ASSERT_EQUALS(r->l3.size(),6)
 
 		// some dummies are ok for other regions, let's see if they remain as well as the good
 		TS_ASSERT_EQUALS(dummy_brs[1]->pdb.compare(r->h1[0]->pdb),0);
 		TS_ASSERT_EQUALS(dummy_brs[5]->pdb.compare(r->h2[3]->pdb),0);
 		TS_ASSERT_EQUALS(dummy_brs[4]->pdb.compare(r->h3[3]->pdb),0);
 		TS_ASSERT_EQUALS(dummy_brs[0]->pdb.compare(r->l1[0]->pdb),0);
-		TS_ASSERT_EQUALS(dummy_brs[5]->pdb.compare(r->l2[4]->pdb),0);
-		TS_ASSERT_EQUALS(good_br->pdb.compare(r->l3[5]->pdb),0);
-		TS_ASSERT_EQUALS(na_br->pdb.compare(r->l3[6]->pdb),0);
+		TS_ASSERT_EQUALS(dummy_brs[5]->pdb.compare(r->l2[3]->pdb),0);
+		TS_ASSERT_EQUALS(good_br->pdb.compare(r->l3[4]->pdb),0);
+		TS_ASSERT_EQUALS(na_br->pdb.compare(r->l3[5]->pdb),0);
 #endif //__ANTIBODY_GRAFTING__
 	}
 
@@ -599,12 +599,13 @@ public:
 			good_brs.push_back(br);
 		}
 
-		// set pdbs good are OCD 5 away from each other, whereas "bad" will be filtered out
+		// set pdbs good are OCD 4.5 away from each other, whereas "bad" will be filtered out
+		// OCD cutoff is set as an option flag!!
 		good_brs[0]->pdb="1a2y"; // everything is compared to this
-		dummy_brs[0]->pdb="15c8"; // OCD = 0.683
-		good_brs[1]->pdb="12e8"; // OCD = 13.4
-		dummy_brs[1]->pdb="1a14"; // OCD = 3.19
-		good_brs[2]->pdb="1a3r"; // OCD = 8.74
+		dummy_brs[0]->pdb="15c8"; // OCD = 0.714656
+		good_brs[1]->pdb="12e8"; // OCD = 4.59706
+		dummy_brs[1]->pdb="1a14"; // OCD = 3.40011
+		good_brs[2]->pdb="1a3r"; // OCD = 5.43956
 
 		// store BlastResults in ResultVector;
 		SCS_ResultVector results;
@@ -667,7 +668,7 @@ public:
 		r->l1 = results;
 		r->l2 = results;
 		r->l3 = results;
-		r->orientation = results; 
+		r->orientation = results;
 		r->frh = results;
 		r->frl = results;
 

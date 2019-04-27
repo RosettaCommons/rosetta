@@ -54,6 +54,7 @@
 
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
+#include <basic/database/open.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
@@ -412,16 +413,15 @@ int main(int argc, char * argv [])
 
 		string grafting_database = basic::options::option[basic::options::OptionKeys::antibody::grafting_database]();
 		if( grafting_database.size() == 0 ) {
-			string location = "../../tools/antibody";
-
-			if( std::ifstream(location+"/antibody_database/list").good() ) grafting_database = location;
+            // try location relative to database (last arg mutes error and returns empty string if the func fails)
+            string testfile = "README.md";
+            string abdb_dir = "additional_protocol_data/antibody/";
+            string readme_location = basic::database::find_database_path(abdb_dir, testfile, true);
+            if( readme_location.size() > 0 ) {
+			    grafting_database = readme_location.substr(0, readme_location.size() - testfile.size());
+            }
 			else {
-				if( char * r = std::getenv("ROSETTA") ) {
-					location = string(r) + "/tools/antibody";
-					TR << "Trying: " << location << std::endl;
-					if( std::ifstream(location+"/antibody_database/list").good() ) grafting_database = location;
-				}
-				if( grafting_database.size() == 0 ) utility_exit_with_message( "Could not guess location of antibody grafting_database (typically $ROSETTA/tools/antibody), please use -antibody::grafting_database option to specify it!");
+				utility_exit_with_message( "Could not guess location of antibody grafting_database (typically $ROSETTA/tools/antibody), please use -antibody::grafting_database option to specify it!");
 			}
 		}
 		basic::options::option[basic::options::OptionKeys::antibody::grafting_database](grafting_database);

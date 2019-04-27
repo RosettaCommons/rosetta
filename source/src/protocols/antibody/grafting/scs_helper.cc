@@ -25,6 +25,10 @@
 #include <core/types.hh>
 #include <basic/database/open.hh>
 
+// Options
+#include <basic/options/option.hh>
+#include <basic/options/keys/antibody.OptionKeys.gen.hh>
+
 // C++ headers
 #include <map>
 #include <string>
@@ -93,9 +97,11 @@ SCS_Helper::parse_bfactor_data()
 {
 	std::map< std::string, std::map<std::string, bool> > results;
 
-	std::string dir = "protocol_data/antibody/";
-	std::string filename = "list_bfactor50";
+
+	std::string dir = "additional_protocol_data/antibody/info/";
+	std::string filename = "bfactors.info";
 	std::string path = basic::database::find_database_path(dir, filename);
+    core::Real cutoff = basic::options::option[ basic::options::OptionKeys::antibody::bfactor_cutoff ]();
 
 	// should be a vector zero of string to string maps
 	auto lines( parse_plain_text_with_columns( path ) );
@@ -107,11 +113,15 @@ SCS_Helper::parse_bfactor_data()
 
 		std::string cdrs[] = { "l1", "l2", "l3", "h1", "h2", "h3" }; // is it ok to just use a list like this?
 		for (auto cdr: cdrs) {
-			debug_assert( fields.at(cdr) == "True" || fields.at(cdr) == "False");
-			cdr_bfactors[cdr] = fields.at(cdr) == "True";
+            if( fields.at(cdr) != "none" ) {
+                cdr_bfactors[cdr] = std::stof(fields.at(cdr)) > cutoff;
+            } else { // true here means do not graft
+                cdr_bfactors[cdr] = true;
+            }
 		}
 
-		results[fields.at("ab")] = cdr_bfactors;
+		//results[fields.at("ab")] = cdr_bfactors;
+        results[fields.at("pdb")] = cdr_bfactors;
 	}
 
 	return results;
@@ -133,8 +143,8 @@ SCS_Helper::parse_OCD_data()
 {
   std::map< std::string, std::map<std::string, core::Real> > results;
 
-	std::string dir = "protocol_data/antibody/";
-	std::string filename = "comparisons.txt";
+	std::string dir = "additional_protocol_data/antibody/info/";
+	std::string filename = "orientations.txt";
 	std::string path = basic::database::find_database_path(dir, filename);
 
   // should be a vector zero of string to string maps
@@ -147,12 +157,13 @@ SCS_Helper::parse_OCD_data()
 
     for (auto pairs : fields) {
       std::string key = pairs.first; // get column name
-			if (key.compare("pdb_code")!=0) { // skip first column
-				OCDs[key.substr(3,4)] = core::Real(std::stof(fields[key])); // OCDs[12e8] = 0.0;
+			if (key.compare("pdb")!=0) { // skip first column
+				OCDs[key] = core::Real(std::stof(fields[key])); // OCDs[12e8] = 0.0;
 			}
     }
 
-    results[fields.at("pdb_code").substr(3,4)] = OCDs;
+    //results[fields.at("pdb_code").substr(3,4)] = OCDs;
+		results[fields.at("pdb")] = OCDs;
   }
 
   return results;
@@ -180,7 +191,7 @@ SCS_Helper::parse_outlier_data()
 	//std::string temp_cdr;
 
 	// can we find the file?
-	std::string dir = "protocol_data/antibody/";
+	std::string dir = "additional_protocol_data/antibody/";
 	std::string filename = "outlier_list";
 	std::string path = basic::database::find_database_path(dir, filename);
 

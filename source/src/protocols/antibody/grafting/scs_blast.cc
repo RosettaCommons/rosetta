@@ -172,7 +172,7 @@ SCS_ResultsOP SCS_Base::select(uint n, AntibodySequence const &A)
 
 	pad_results(n, A, *r);
 
-	TR.Debug << "SCS_Base::select:                              Final results count: " << TR.Red << result_sizes(r) << TR.Reset << std::endl;
+	TR << "SCS_Base::select: Final results count: " << TR.Red << result_sizes(r) << TR.Reset << std::endl;
 
 	report(r, 1);  // by default report only one template and allow multi-template sub-class to report all templates if any
 
@@ -192,9 +192,7 @@ void SCS_LoopOverSCs::init_from_options()
 
 void populate_results_from_db( SCS_Antibody_Database_ResultOP const & result, std::map< string, std::map<string, string> > const & db )
 {
-	result->bio_type      = db.at(result->pdb).at("BioType");
-	result->light_type    = db.at(result->pdb).at("LightType");
-	result->struct_source = db.at(result->pdb).at("StructSource");
+
 	result->resolution    = std::stod( db.at(result->pdb).at("resolution") );
 
 	// include the sequences of the other SCs in the template PDB.
@@ -242,7 +240,7 @@ SCS_ResultVector parse_blastp_output(string const & file_name, string const & qu
 			throw CREATE_EXCEPTION(_AE_scs_failed_, "Could not identify BLAST field (either subject id or subject acc.ver).");
 		}
 
-		r->pdb = fields[subject_header].substr(3,4);  // pdb2adf_chothia.pdb → 2adf
+		r->pdb = fields[subject_header];
 
 		r->alignment_length = std::stoi( fields.at("alignment-length") );
 
@@ -250,18 +248,6 @@ SCS_ResultVector parse_blastp_output(string const & file_name, string const & qu
 		r->bit_score = std::stod( fields.at("bit-score") );
 
 		populate_results_from_db( r, db );
-
-		/*r->bio_type      = db.at(r->pdb).at("BioType");
-		r->light_type    = db.at(r->pdb).at("LightType");
-		r->struct_source = db.at(r->pdb).at("StructSource");
-
-		// include the sequences of the other SCs in the template PDB.
-		r->h1 = db[r->pdb].at("h1");  r->h2 = db[r->pdb].at("h2");  r->h3 = db[r->pdb].at("h3");  r->frh = db[r->pdb].at("frh");
-		r->l1 = db[r->pdb].at("l1");  r->l2 = db[r->pdb].at("l2");  r->l3 = db[r->pdb].at("l3");  r->frl = db[r->pdb].at("frl");
-
-		r->sequence = db[r->pdb][results.sequence];
-		//TR << "PDB:" << r->pdb << std::endl; */
-		//TR << "pdb:" << r->pdb << " l3: " << r->l3 << "  db.l3:" << db.at( r->pdb ).at("l3") << std::endl;
 
 		results.push_back(r);
 	}
@@ -423,10 +409,6 @@ void SCS_BlastPlus::pad_results(uint N, AntibodySequence const &A, SCS_Results &
 				r->alignment_length = 0;
 				r->identity  = 0;
 				r->bit_score = 0;
-
-				r->bio_type      = i->at("BioType");
-				r->light_type    = i->at("LightType");
-				r->struct_source = i->at("StructSource");
 
 				r->h1 = i->at("h1");  r->h2 = i->at("h2");  r->h3 = i->at("h3");  r->frh = i->at("frh");
 				r->l1 = i->at("l1");  r->l2 = i->at("l2");  r->l3 = i->at("l3");  r->frl = i->at("frl");
