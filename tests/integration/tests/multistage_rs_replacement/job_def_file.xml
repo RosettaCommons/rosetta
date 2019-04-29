@@ -78,7 +78,7 @@
 				<Add mover="rrrm" />
 				<Sort filter="total_score" />
 			</Stage>
-			<Stage num_runs_per_input_struct="2" total_num_results_to_keep="4" >
+			<Stage num_runs_per_input_struct="1" total_num_results_to_keep="1" >
 				<Add mover="relax" />
 				<Sort filter="total_score" />
 			</Stage>

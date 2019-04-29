@@ -194,7 +194,7 @@ RNA_PartitionEnergy::get_partition_score(
 ) const {
 	// Run Vienna
 	std::string command_line("echo " + global_sequence);
-	command_line = command_line + " | RNAfold -p";
+	command_line = command_line + " | RNAfold --noPS --noDP -p";
 
 	// Parse Vienna output
 
