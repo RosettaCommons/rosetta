@@ -25,6 +25,7 @@
 
 // C++ headers
 #include <sstream>
+#include <set>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR("test.protocols.jd3.JobGenealogistTests");
@@ -42,19 +43,19 @@ public:
 	) :
 		JobGenealogist( num_job_dag_nodes, num_input_sources ){}
 
-	JGJobNode const * _get_job_node( core::Size job_dag_node, core::Size global_job_id ) const {
+	JGJobNodeCOP _get_job_node( core::Size job_dag_node, core::Size global_job_id ) const {
 		return JobGenealogist::get_const_job_node( job_dag_node, global_job_id );
 	}
 
-	JGResultNode const * _get_result_node( core::Size node, core::Size global_job_id, core::Size result_id ) const{
+	JGResultNodeCAP _get_result_node( core::Size node, core::Size global_job_id, core::Size result_id ) const{
 		return JobGenealogist::get_const_result_node( node, global_job_id, result_id );
 	}
 
-	JGJobNode * _get_job_node( core::Size job_dag_node, core::Size global_job_id ){
+	JGJobNodeOP _get_job_node( core::Size job_dag_node, core::Size global_job_id ){
 		return JobGenealogist::get_job_node( job_dag_node, global_job_id );
 	}
 
-	JGResultNode * _get_result_node( core::Size node, core::Size global_job_id, core::Size result_id ) {
+	JGResultNodeAP _get_result_node( core::Size node, core::Size global_job_id, core::Size result_id ) {
 		return JobGenealogist::get_result_node( node, global_job_id, result_id );
 	}
 
@@ -118,15 +119,15 @@ public:
 		auto result2 = job2->children()[ 1 ];
 		auto result3 = job3->children()[ 1 ];
 
-		TS_ASSERT( result1 );
-		TS_ASSERT( result2 );
-		TS_ASSERT( result3 );
+		TS_ASSERT( result1.lock() != nullptr );
+		TS_ASSERT( result2.lock() != nullptr );
+		TS_ASSERT( result3.lock() != nullptr );
 
 		auto job5 = jobgen.register_new_job( 2, 5, result1 );
 		auto job6 = jobgen.register_new_job( 2, 6, result2 );
 
-		TS_ASSERT( job5 );
-		TS_ASSERT( job6 );
+		TS_ASSERT( job5 != nullptr );
+		TS_ASSERT( job6 != nullptr );
 
 		jobgen.note_job_completed( job5, 1 );
 		jobgen.note_job_completed( job6, 0 );
@@ -196,13 +197,13 @@ public:
 
 		JobGenealogist_ jobgen( 2, 1 );
 		auto job1 = jobgen.register_new_job( 1, 1, 1 );
-		TS_ASSERT( job1 );
+		TS_ASSERT( job1 != nullptr );
 		auto job2 = jobgen.register_new_job( 1, 2, 1 );
-		TS_ASSERT( job2 );
+		TS_ASSERT( job2 != nullptr );
 		auto job3 = jobgen.register_new_job( 1, 3, 1 );
-		TS_ASSERT( job3 );
+		TS_ASSERT( job3 != nullptr );
 		auto job4 = jobgen.register_new_job( 1, 4, 1 );
-		TS_ASSERT( job4 );
+		TS_ASSERT( job4 != nullptr );
 
 		jobgen.note_job_completed( job1, 2 );
 		jobgen.note_job_completed( job2, 2 );
@@ -219,10 +220,10 @@ public:
 		auto job7 = jobgen.register_new_job( 2, 7, 1, 2, 1 );//J7
 		auto job8 = jobgen.register_new_job( 2, 8, 1, 3, 2 );//J8
 
-		TS_ASSERT( job5 );
-		TS_ASSERT( job6 );
-		TS_ASSERT( job7 );
-		TS_ASSERT( job8 );
+		TS_ASSERT( job5 != nullptr );
+		TS_ASSERT( job6 != nullptr );
+		TS_ASSERT( job7 != nullptr );
+		TS_ASSERT( job8 != nullptr );
 
 		TS_ASSERT_EQUALS( job1->global_job_id(), 1 );
 		TS_ASSERT_EQUALS( job2->global_job_id(), 2 );
@@ -331,9 +332,9 @@ public:
 		JobGenealogist_ const * const_jobgen = & jobgen;
 
 		auto job1 = jobgen.register_new_job( 1, 1, 1 );
-		TS_ASSERT( job1 );
+		TS_ASSERT( job1 != nullptr );
 		auto job2 = jobgen.register_new_job( 1, 2, 2 );
-		TS_ASSERT( job2 );
+		TS_ASSERT( job2 != nullptr );
 
 		jobgen.note_job_completed( 1, 1, 1 );
 		jobgen.note_job_completed( 1, 2, 1 );
@@ -341,7 +342,7 @@ public:
 		auto result1 = jobgen._get_result_node( 1, 1, 1 );
 		auto result2 = jobgen._get_result_node( 1, 2, 1 );
 
-		TS_ASSERT_EQUALS( const_jobgen->_get_result_node(1,1,1), result1 );
+		TS_ASSERT_EQUALS( const_jobgen->_get_result_node(1,1,1).lock(), result1.lock() );
 
 		decltype( job1 ) job3;
 		if ( optionA ) {
@@ -354,13 +355,13 @@ public:
 			);
 			jobgen.note_job_completed( 2, 3, 1 );
 			TS_ASSERT_EQUALS( job3->parents().size(), 1 );
-			TS_ASSERT_EQUALS( job3->parents()[ 1 ], result1 );
+			TS_ASSERT_EQUALS( job3->parents()[ 1 ].lock(), result1.lock() );
 			TS_ASSERT_EQUALS( job3->input_source_id(), 1 );
 
 			job3->add_parent( result2, true );
 
 		} else {
-			utility::vector1< JGResultNode * > parents;
+			utility::vector1< JGResultNodeAP > parents;
 			parents.push_back( result1 );
 			parents.push_back( result2 );
 			job3 = jobgen.register_new_job( 2, 3, parents );
@@ -368,13 +369,13 @@ public:
 		}
 
 		TS_ASSERT_EQUALS( job3->parents().size(), 2 );
-		TS_ASSERT_EQUALS( job3->parents()[ 1 ], result1 );
-		TS_ASSERT_EQUALS( job3->parents()[ 2 ], result2 );
+		TS_ASSERT_EQUALS( job3->parents()[ 1 ].lock(), result1.lock() );
+		TS_ASSERT_EQUALS( job3->parents()[ 2 ].lock(), result2.lock() );
 		TS_ASSERT_EQUALS( job3->input_source_id(), 1 );
 
 		job3->remove_parent( result1, true );
 		TS_ASSERT_EQUALS( job3->parents().size(), 1 );
-		TS_ASSERT_EQUALS( job3->parents()[ 1 ], result2 );
+		TS_ASSERT_EQUALS( job3->parents()[ 1 ].lock(), result2.lock() );
 		TS_ASSERT_EQUALS( job3->input_source_id(), 2 );
 
 		//Check to make sure job1 has no link to job3
@@ -444,17 +445,30 @@ public:
 		jobgen.all_job_results_for_node( 1, container_for_output );
 		TS_ASSERT_EQUALS( container_for_output.size(), 10 );
 
-		unsigned int count = 0;
-		for ( std::pair< core::Size, core::Size > const & ipair : container_for_output ) {
-			++count;
-			TS_ASSERT_EQUALS( ipair.first, count );
-			TS_ASSERT_EQUALS( ipair.second, 1 );
+		{
+			std::set< core::Size > expected_output;
+			expected_output.insert( 1 );
+			expected_output.insert( 2 );
+			expected_output.insert( 3 );
+			expected_output.insert( 4 );
+			expected_output.insert( 5 );
+			expected_output.insert( 6 );
+			expected_output.insert( 7 );
+			expected_output.insert( 8 );
+			expected_output.insert( 9 );
+			expected_output.insert( 10 );
+			for ( std::pair< core::Size, core::Size > const & ipair : container_for_output ) {
+				auto iter = expected_output.find( ipair.first );
+				TS_ASSERT( iter != expected_output.end() );
+				expected_output.erase( iter );
+				TS_ASSERT_EQUALS( ipair.second, 1 );
+			}
 		}
 
 		std::list< std::pair< core::Size, core::Size > > container_for_discarded_result_ids;
 		jobgen.garbage_collection( 1, true, container_for_discarded_result_ids );
 		TS_ASSERT_EQUALS( container_for_discarded_result_ids.size(), 10 );
-		count = 0;
+		auto count = 0;
 		for ( std::pair< core::Size, core::Size > const & ipair : container_for_output ) {
 			++count;
 			TS_ASSERT_EQUALS( ipair.first, count );
@@ -567,7 +581,7 @@ public:
 			2, //node_id_of_parent
 			num_jobs_node1 + 1, //global_job_id_of_parent
 			1 //result_id_of_parent
-			)
+			) != nullptr
 		);
 		jobgen.note_job_completed( 3, num_jobs_node1 + num_jobs_node2 + 1, 1 );
 
@@ -644,7 +658,7 @@ public:
 				2, 10 + i,
 				1, i, 1
 			);
-			TS_ASSERT( job_node_ptr1 );
+			TS_ASSERT( job_node_ptr1 != nullptr );
 
 			jobgen.note_job_completed( 2, 10 + i, 2 );
 			auto const job_node_ptr2 = jobgen._get_job_node( 2, 10 + i );

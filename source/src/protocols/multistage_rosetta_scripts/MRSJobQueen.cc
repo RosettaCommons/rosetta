@@ -335,9 +335,9 @@ MRSJobQueen::completed_job_summary( core::Size job_id, core::Size result_index, 
 			node_managers_[ stage ]->register_result(
 				job_id, result_index, energy_summary.energy(), input_pose_id_for_jobid( job_id ), input_pose_id_for_jobid( job_id ) );
 		} else {
-			jd3::JGJobNode const * job_node = job_genealogist_->get_const_job_node( stage, job_id );
-			jd3::JGResultNode const * parent = job_node->parents()[ 1 ];
-			jd3::JGJobNode const * grandparent = parent->parent();
+			jd3::JGJobNodeCOP const job_node = job_genealogist_->get_const_job_node( stage, job_id );
+			jd3::JGResultNodeCOP const parent = job_node->parents()[ 1 ].lock();
+			jd3::JGJobNodeCOP const grandparent = parent->parent().lock();
 
 			//first 32 bits of token are result id, last 32 bits are job id
 			uint64_t token = parent->result_id();

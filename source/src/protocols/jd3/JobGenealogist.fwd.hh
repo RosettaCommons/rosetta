@@ -16,16 +16,26 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace protocols {
 namespace jd3 {
 
 class JGResultNode;
+using JGResultNodeOP = utility::pointer::shared_ptr< JGResultNode >;
+using JGResultNodeCOP = utility::pointer::shared_ptr< JGResultNode const >;
+using JGResultNodeAP = utility::pointer::weak_ptr< JGResultNode >;
+using JGResultNodeCAP = utility::pointer::weak_ptr< JGResultNode const >;
+
 class JGJobNode;
+using JGJobNodeOP = utility::pointer::shared_ptr< JGJobNode >;
+using JGJobNodeCOP = utility::pointer::shared_ptr< JGJobNode const >;
+using JGJobNodeAP = utility::pointer::weak_ptr< JGJobNode >;
+using JGJobNodeCAP = utility::pointer::weak_ptr< JGJobNode const >;
 
 class JobGenealogist;
-typedef utility::pointer::shared_ptr< JobGenealogist > JobGenealogistOP;
-typedef utility::pointer::shared_ptr< JobGenealogist const > JobGenealogistCOP;
+using JobGenealogistOP = utility::pointer::shared_ptr< JobGenealogist >;
+using JobGenealogistCOP = utility::pointer::shared_ptr< JobGenealogist const >;
 
 } // namespace jd3
 } // namespace protocols

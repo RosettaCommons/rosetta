@@ -67,22 +67,23 @@ returned in JobQueen::job_results_that_should_be_discarded()
 // Utility headers
 #include <utility/graph/Digraph.hh>
 #include <utility/vector1.hh>
-#include <utility/graph/unordered_object_pool.hpp>
-#include <boost/pool/pool.hpp>
 
 // Numeric headers
 #include <numeric/DiscreteIntervalEncodingTree.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <boost/container/flat_set.hpp>
+
 // C++ headers
 #include <map>
 #include <set>
+#include <unordered_set>
 #include <utility>
 
 namespace protocols {
 namespace jd3 {
 
-class JGJobNode{
+class JGJobNode : public utility::pointer::enable_shared_from_this< JGJobNode >{
 
 public:
 
@@ -91,7 +92,7 @@ public:
 	JGJobNode(
 		core::Size global_job,
 		unsigned int job_dag_node,
-		JGResultNode * parent_node,
+		JGResultNodeAP parent_node,
 		unsigned int input_source
 	);
 
@@ -104,10 +105,10 @@ public:
 
 	///@brief Like humans, the JGJobNode can have more than one parent.
 	///@details please only set tell_parent_to_add_child to false if you plan on adding this job node to p's vector of children. The parent/child relationship is very complicated when only one of the two parties knows about the relationship.
-	void add_parent( JGResultNode * p, bool tell_parent_to_add_child = true );
+	void add_parent( JGResultNodeAP p, bool tell_parent_to_add_child = true );
 
 	///@details please only set tell_parent_to_add_child to false if you plan on removing this job node from p's vector of children. The parent/child relationship is very complicated when only one of the two parties knows that the relationship has ended.
-	bool remove_parent( JGResultNode * p, bool tell_parent_to_remove_child = true );
+	bool remove_parent( JGResultNodeAP p, bool tell_parent_to_remove_child = true );
 
 public: //getters and setters
 
@@ -145,21 +146,21 @@ public: //getters and setters
 		input_source_id_ = input_source_id;
 	}
 
-	utility::vector1< JGResultNode * > & parents() {
+	utility::vector1< JGResultNodeAP > & parents() {
 		return parents_;
 	}
 
 	///@brief Be careful here! The vector is const but the elements are not
-	utility::vector1< JGResultNode * > const & parents() const {
+	utility::vector1< JGResultNodeAP > const & parents() const {
 		return parents_;
 	}
 
-	utility::vector1< JGResultNode * > & children() {
+	utility::vector1< JGResultNodeAP > & children() {
 		return children_;
 	}
 
 	///@brief Be careful here! The vector is const but the elements are not
-	utility::vector1< JGResultNode * > const & children() const {
+	utility::vector1< JGResultNodeAP > const & children() const {
 		return children_;
 	}
 
@@ -169,12 +170,34 @@ private:
 	unsigned int node_;
 	unsigned int input_source_id_;
 
-	utility::vector1< JGResultNode * > parents_;
-	utility::vector1< JGResultNode * > children_;
+	utility::vector1< JGResultNodeAP > parents_;
+	utility::vector1< JGResultNodeAP > children_;
 };
 
+struct compare_job_nodes :
+	public std::binary_function< JGJobNode const *, JGJobNode const *, bool > {
+	bool operator()( JGJobNodeCOP const & a, JGJobNodeCOP const & b) const {
+		return a->global_job_id() < b->global_job_id();
+	}
 
-class JGResultNode {
+	bool operator()( JGJobNodeOP const & a, JGJobNodeCOP const & b) const {
+		return a->global_job_id() < b->global_job_id();
+	}
+
+	bool operator()( JGJobNodeOP const & a, JGJobNode * const & b) const {
+		return a->global_job_id() < b->global_job_id();
+	}
+
+	bool operator()( JGJobNodeCOP const & a, JGJobNode const & b ) const {
+		return a->global_job_id() < b.global_job_id();
+	}
+
+	bool operator()( JGJobNodeOP const & a, JGJobNode const & b ) const {
+		return a->global_job_id() < b.global_job_id();
+	}
+};
+
+class JGResultNode : public utility::pointer::enable_shared_from_this< JGResultNode >{
 
 public:
 
@@ -183,22 +206,24 @@ public:
 
 	JGResultNode();
 
-	JGResultNode( unsigned int result, JGJobNode * par );
+	JGResultNode( unsigned int result, JGJobNodeAP par );
 
 	~JGResultNode() = default;
 
 	///@brief Some people like to sort. This is for sorting.
 	bool operator < ( JGResultNode const & rhs) const {
-		if ( parent_->node() != rhs.parent_->node() ) return parent_->node() < rhs.parent_->node();
+		auto const parent_node = parent_.lock()->node();
+		auto const rhs_parent_node = parent_.lock()->node();
+		if ( parent_node != rhs_parent_node ) return parent_node < rhs_parent_node;
 		return result_id_ < rhs.result_id_;
 	}
 
 	///@brief Like humans, the JGResultNode can have more than one child.
 	///@details please only set tell_child_to_add_parent to false if you plan on adding this result node to c's vector of parents. The parent/child relationship is very complicated when only one of the two parties knows about the relationship.
-	void add_child( JGJobNode * c, bool tell_child_to_add_parent = true );
+	void add_child( JGJobNodeAP c, bool tell_child_to_add_parent = true );
 
 	///@details please only set tell_child_to_remove_parent to false if you plan on removing this result node from c's vector of parents. The parent/child relationship is very complicated when only one of the two parties knows that the relationship has ended.
-	bool remove_child( JGJobNode * c, bool tell_child_to_remove_parent = true );
+	bool remove_child( JGJobNodeAP c, bool tell_child_to_remove_parent = true );
 public://getters and setters
 
 	unsigned int result_id() const {
@@ -209,46 +234,35 @@ public://getters and setters
 		result_id_ = result_id;
 	}
 
-	JGJobNode const * parent() const {
+	JGJobNodeCAP parent() const {
 		return parent_;
 	}
 
-	void parent( JGJobNode * parent ) {
+	void parent( JGJobNodeAP parent ) {
 		parent_ = parent;
 	}
 
 	///@brief Be careful here! The vector is const but the elements are not
-	utility::vector1< JGJobNode * > const & children() const {
+	utility::vector1< JGJobNodeAP > const & children() const {
 		return children_;
 	}
 
 protected: //nonconst getters
 
-	JGJobNode * parent() {
+	JGJobNodeAP parent() {
 		return parent_;
 	}
 
-	utility::vector1< JGJobNode * > & children() {
+	utility::vector1< JGJobNodeAP > & children() {
 		return children_;
 	}
 
 private:
 
 	unsigned int result_id_;
-	JGJobNode * parent_;
-	utility::vector1< JGJobNode * > children_;
+	JGJobNodeAP parent_;
+	utility::vector1< JGJobNodeAP > children_;
 };
-
-struct compare_job_nodes : public std::binary_function< JGJobNode const *, JGJobNode const *, bool >{
-	bool operator()( JGJobNode const * const a, JGJobNode const * const b) const {
-		return a->global_job_id() < b->global_job_id();
-	}
-
-	bool operator()( JGJobNode * const & a, const JGJobNode & b ) const {
-		return a->global_job_id() < b.global_job_id();
-	}
-};
-
 
 class JobGenealogist : public utility::pointer::ReferenceCount{
 
@@ -262,14 +276,14 @@ public:
 
 public:
 	///@brief register a new job that does not depend on a previous job result but rather takes a pose directly from an input source
-	JGJobNode * register_new_job(
+	JGJobNodeOP register_new_job(
 		core::Size job_dag_node_id,
 		core::Size global_job_id,
 		core::Size input_source_id
 	);
 
 	///@brief register a new job that depends on a single parent job result
-	JGJobNode * register_new_job(
+	JGJobNodeOP register_new_job(
 		core::Size job_dag_node_id,
 		core::Size global_job_id,
 		core::Size job_dag_node_id_of_parent,
@@ -278,7 +292,7 @@ public:
 	);
 
 	///@brief register a new job that depends on a single parent job result
-	JGJobNode * register_new_job(
+	JGJobNodeOP register_new_job(
 		core::Size job_dag_node_id,
 		core::Size global_job_id,
 		core::Size job_dag_node_id_of_parent,
@@ -288,26 +302,25 @@ public:
 	}
 
 	///@brief register a new job that depends on a single parent job result
-	JGJobNode * register_new_job(
+	JGJobNodeOP register_new_job(
 		core::Size job_dag_node_id,
 		core::Size global_job_id,
-		JGResultNode * parent
+		JGResultNodeAP parent
 	);
 
 	///@brief register a new job that depends on multiple parent job results
-	JGJobNode * register_new_job(
+	JGJobNodeOP register_new_job(
 		core::Size job_dag_node_id,
 		core::Size global_job_id,
-		utility::vector1< JGResultNode * > const & parents
+		utility::vector1< JGResultNodeAP > const & parents
 	);
 
 	///@brief Creates nresults new JGResultNodes for this job_node
-	void note_job_completed( JGJobNode * job_node, core::Size nresults );
+	void note_job_completed( JGJobNodeAP job_node, core::Size nresults );
 
 	///@brief wrapper for the other overload. This one is designed to more closely match the argument provided to JobQueen::note_job_completed
 	void note_job_completed( core::Size dag_node_id, core::Size global_job_id, core::Size nresults ) {
-		JGJobNode * job_node = get_job_node( dag_node_id, global_job_id );
-		debug_assert( job_node );
+		JGJobNodeAP job_node = get_job_node( dag_node_id, global_job_id );
 		note_job_completed( job_node, nresults );
 	}
 
@@ -340,61 +353,67 @@ public:
 
 	core::Size input_source_for_job( core::Size job_dag_node, core::Size global_job_id ) const;
 
-	JGJobNode const * get_const_job_node( core::Size job_dag_node, core::Size global_job_id ) const;
+	JGJobNodeCOP get_const_job_node( core::Size job_dag_node, core::Size global_job_id ) const;
 
-	JGResultNode const * get_const_result_node( core::Size node, core::Size global_job_id, core::Size result_id ) const;
+	JGResultNodeCAP get_const_result_node( core::Size node, core::Size global_job_id, core::Size result_id ) const;
 
 	///@brief This is more for debugging than anything. Print the global_job_ids for every job dag node to the screen
 	void print_all_nodes();
 
 protected:
 
-	JGJobNode * get_job_node( core::Size job_dag_node, core::Size global_job_id );
+	JGJobNodeOP get_job_node( core::Size job_dag_node, core::Size global_job_id );
 
-	JGResultNode * get_result_node( core::Size node, core::Size global_job_id, core::Size result_id );
-
-	///@brief Are you all done with this JGJobNode? If so, this method deletes it and removes all traces of it.
-	///THIS DOES NOT DELETE ANY OF THE CHILDREN
-	void delete_node( JGJobNode * job_node, unsigned int job_dag_node, bool delete_from_vec = true );
+	JGResultNodeAP get_result_node( core::Size node, core::Size global_job_id, core::Size result_id );
 
 	///@brief Are you all done with this JGJobNode? If so, this method deletes it and removes all traces of it.
 	///THIS DOES NOT DELETE ANY OF THE CHILDREN
-	void delete_node( JGJobNode * job_node, bool delete_from_vec = true ){
-		debug_assert( job_node->node() );
-		delete_node( job_node, job_node->node(), delete_from_vec );
+	void delete_node( JGJobNodeAP job_node, unsigned int job_dag_node, bool delete_from_vec = true );
+
+	///@brief Are you all done with this JGJobNode? If so, this method deletes it and removes all traces of it.
+	///THIS DOES NOT DELETE ANY OF THE CHILDREN
+	void delete_node( JGJobNodeAP job_node, bool delete_from_vec = true ){
+		debug_assert( job_node.lock()->node() != 0 );
+		delete_node( job_node, job_node.lock()->node(), delete_from_vec );
 	}
 
 	///@brief Are you all done with this JGResultNode? If so, this method deletes it and removes all traces of it.
 	///THIS DOES NOT DELETE ANY OF THE CHILDREN
-	void delete_node( JGResultNode * result_node ){
-		result_node_pool_.destroy( result_node );
+	void delete_node( JGResultNodeAP result_node ){
+		JGResultNodeOP node_op = result_node.lock();
+		//all_result_nodes_.erase( node_op );
+		auto const num_elements_removed = all_result_nodes_.erase( node_op );
+		debug_assert( num_elements_removed == 1 );
 	}
 
 	///@brief This is currently just a wrapper for JGJobNode::input_source_id(). I am leaving it as a method because it may become more complicated in the future.
-	unsigned int input_source_for_node( JGJobNode const * job_node ) const {
-		debug_assert( job_node );
-		return job_node->input_source_id();
+	unsigned int input_source_for_node( JGJobNodeCAP job_node ) const {
+		JGJobNodeCOP const job_node_op = job_node.lock();
+		debug_assert( job_node_op != nullptr );
+		return job_node_op->input_source_id();
 	}
 
 private:
 	///@brief recursive utility function for std::string newick_tree();
-	void add_newick_tree_for_node( JGResultNode const *, std::stringstream & ) const;
+	void add_newick_tree_for_node( JGResultNodeCAP, std::stringstream & ) const;
 
 private:
 	core::Size num_input_sources_;
 
-	utility::vector1< utility::vector1< JGJobNode * > > job_nodes_for_dag_node_;
+	utility::vector1< utility::vector1< JGJobNodeOP > > job_nodes_for_dag_node_;
 
-	boost::unordered_object_pool< JGJobNode > job_node_pool_;
-	boost::unordered_object_pool< JGResultNode > result_node_pool_;
+	std::unordered_set< JGJobNodeOP > all_job_nodes_;
+	std::unordered_set< JGResultNodeOP > all_result_nodes_;
 
-	compare_job_nodes sorter;
+	compare_job_nodes sorter_;
 };
 
 
-inline core::Size JobGenealogist::input_source_for_job( core::Size job_dag_node, core::Size global_job_id ) const {
-	JGJobNode const * const job_node = get_const_job_node( job_dag_node, global_job_id );
-	debug_assert( job_node );
+inline
+core::Size
+JobGenealogist::input_source_for_job( core::Size job_dag_node, core::Size global_job_id ) const {
+	JGJobNodeCAP const job_node = get_const_job_node( job_dag_node, global_job_id );
+	debug_assert( ! job_node.expired() );
 	return input_source_for_node( job_node );
 }
 
