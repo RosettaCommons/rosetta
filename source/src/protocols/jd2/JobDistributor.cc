@@ -627,8 +627,8 @@ JobDistributor::run_one_job(
 			// (i.e. NOT if only the mover changed)
 			if ( parser_->generate_mover_from_pose( pose, mover_copy, new_input,
 					"" /*empty xml_fname, this means go to options system*/,
-					"" /*empty input name; do not set this data in the data map*/,
-					"" /*empty output name; do not set thsi data in the data map*/,
+					current_job_->input_tag(),
+					job_outputter_->output_name(current_job_),
 					gaurantee_new_mover ) ) {
 
 				if ( allow_job_update && new_input ) {
