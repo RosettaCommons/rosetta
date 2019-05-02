@@ -77,7 +77,7 @@ AtomicContactCountFilter::~AtomicContactCountFilter() = default;
 protocols::filters::FilterOP AtomicContactCountFilter::clone() const { return utility::pointer::make_shared< AtomicContactCountFilter >( *this ); }
 protocols::filters::FilterOP AtomicContactCountFilter::fresh_instance() const { return utility::pointer::make_shared< AtomicContactCountFilter >(); }
 
-void AtomicContactCountFilter::initialize_all_atoms( core::pack::task::TaskFactoryOP task_factoryA, bool individual_tasks, core::pack::task::TaskFactoryOP task_factoryB, bool normalize_by_carbon_count)
+void AtomicContactCountFilter::initialize_all_atoms( core::pack::task::TaskFactoryOP task_factoryA, bool individual_tasks, core::pack::task::TaskFactoryOP task_factoryB, bool normalize_by_carbon_count, bool non_local, bool res_contact, bool count_SD_NE1)
 {
 	task_factoryA_ = task_factoryA;
 	individual_tasks_ = individual_tasks;
@@ -87,11 +87,14 @@ void AtomicContactCountFilter::initialize_all_atoms( core::pack::task::TaskFacto
 	sym_dof_name_ = "";
 	normalize_by_sasa_ = false;
 	ss_only_ = false;
+	non_local_ = non_local;
+	res_contact_ = res_contact;
+	count_SD_NE1_ = count_SD_NE1;
 
 	filter_mode_ = ALL;
 }
 
-void AtomicContactCountFilter::initialize_cross_jump(core::Size jump, std::string sym_dof_name, core::pack::task::TaskFactoryOP task_factoryA, bool normalize_by_sasa, bool individual_tasks, core::pack::task::TaskFactoryOP task_factoryB, bool normalize_by_carbon_count)
+void AtomicContactCountFilter::initialize_cross_jump(core::Size jump, std::string sym_dof_name, core::pack::task::TaskFactoryOP task_factoryA, bool normalize_by_sasa, bool individual_tasks, core::pack::task::TaskFactoryOP task_factoryB, bool normalize_by_carbon_count, bool non_local, bool res_contact, bool count_SD_NE1)
 {
 	jump_ = jump;
 	sym_dof_name_ = sym_dof_name;
@@ -100,10 +103,13 @@ void AtomicContactCountFilter::initialize_cross_jump(core::Size jump, std::strin
 	individual_tasks_ = individual_tasks;
 	task_factoryB_ = task_factoryB;
 	normalize_by_carbon_count_ = normalize_by_carbon_count;
+	non_local_ = non_local;
+	res_contact_ = res_contact;
+	count_SD_NE1_ = count_SD_NE1;
 
 	filter_mode_ = CROSS_JUMP;
 }
-void AtomicContactCountFilter::initialize_cross_chain( core::pack::task::TaskFactoryOP task_factoryA, bool normalize_by_sasa, bool detect_chains_for_interface, bool individual_tasks, core::pack::task::TaskFactoryOP task_factoryB, bool normalize_by_carbon_count)
+void AtomicContactCountFilter::initialize_cross_chain( core::pack::task::TaskFactoryOP task_factoryA, bool normalize_by_sasa, bool detect_chains_for_interface, bool individual_tasks, core::pack::task::TaskFactoryOP task_factoryB, bool normalize_by_carbon_count, bool non_local, bool res_contact, bool count_SD_NE1)
 {
 	task_factoryA_ = task_factoryA;
 	normalize_by_sasa_ = normalize_by_sasa;
@@ -112,6 +118,9 @@ void AtomicContactCountFilter::initialize_cross_chain( core::pack::task::TaskFac
 	jump_ = 0;
 	sym_dof_name_ = "";
 	normalize_by_carbon_count_ = normalize_by_carbon_count;
+	non_local_ = non_local;
+	res_contact_ = res_contact;
+	count_SD_NE1_ = count_SD_NE1;
 
 	filter_mode_ = detect_chains_for_interface ? CROSS_CHAIN_DETECTED : CROSS_CHAIN_ALL;
 }
@@ -125,7 +134,9 @@ void AtomicContactCountFilter::parse_my_tag(
 )
 {
 	distance_cutoff_ = tag->getOption< core::Real >( "distance", 4.5 );
-
+	non_local_ = tag->getOption< bool >( "non_local", false );
+	res_contact_ = tag->getOption< bool >( "res_contact", false );
+	count_SD_NE1_ = tag->getOption< bool >( "count_SD_NE1", false );
 	// comedy idiom
 	std::string specified_mode = tag->getOption< std::string >( "partition", "none" );
 	std::string specified_normalized_by_sasa = tag->getOption< std::string >( "normalize_by_sasa", "0" );
@@ -169,7 +180,10 @@ void AtomicContactCountFilter::parse_my_tag(
 			task_factoryA,
 			individual_tasks,
 			task_factoryB,
-			normalize_by_carbon_count);
+			normalize_by_carbon_count,
+			non_local_,
+			res_contact_,
+			count_SD_NE1_);
 	} else if ( specified_mode == "jump" ) {
 		initialize_cross_jump(
 			tag->getOption< core::Size >( "jump", 1 ),
@@ -178,7 +192,10 @@ void AtomicContactCountFilter::parse_my_tag(
 			specified_normalized_by_sasa != "0",
 			individual_tasks,
 			task_factoryB,
-			normalize_by_carbon_count);
+			normalize_by_carbon_count,
+			non_local_,
+			res_contact_,
+			count_SD_NE1_);
 	} else if ( specified_mode == "chain" ) {
 
 		initialize_cross_chain(
@@ -187,7 +204,10 @@ void AtomicContactCountFilter::parse_my_tag(
 			specified_normalized_by_sasa == "detect_by_task",
 			individual_tasks,
 			task_factoryB,
-			normalize_by_carbon_count);
+			normalize_by_carbon_count,
+			non_local_,
+			res_contact_,
+			count_SD_NE1_);
 	}
 
 	if ( filter_mode_ == ALL && specified_normalized_by_sasa != "0" ) {
@@ -313,6 +333,8 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 	// Count all cross-partition contacts
 	core::Size contact_count = 0;
 	core::Size carbon_count = 0;
+	core::Size res_contact_n = 0;
+
 	utility::vector1<bool>  indy_resis;
 	if ( symmetric ) {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
@@ -344,6 +366,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 		}
 		TR << "Entering inner loop" << std::endl;
 		for ( core::Size j = start_index; j <= setB.size(); j++ ) {
+			bool j_is_not_in( true );
 			//fpd ss filter
 			//jbb shouldn't this be target[i]-1 and target[j]-1 not i-1 and j-1?
 			//if (ss_only_ && (pose_ss[i-1] == 'L' || pose_ss[j-1] == 'L') ) continue;
@@ -353,21 +376,32 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 			//if (residue_partition[target[i]] != residue_partition[target[j]])
 			if ( residue_partition[setA[i]] != residue_partition[setB[j]] ) {
 				core::conformation::Residue const & residue_j = pose.residue(setB[j]);
+				if ( non_local_ && ( setA[i]+2 >= setB[j] ) && ( residue_j.chain() == residue_i.chain() ) ) continue;
 
 				for ( core::Size atom_i = residue_i.first_sidechain_atom(); atom_i <= residue_i.nheavyatoms(); atom_i++ ) {
 					if ( residue_i.atom_type(atom_i).element() != "C" ) {
-						continue;
+						if ( !count_SD_NE1_ or ( count_SD_NE1_ and ( ( residue_i.atom_name(atom_i) != " SD " ) and ( residue_i.atom_name(atom_i) != " NE1" ) ) ) ) {
+							continue;
+						}
 					}
 
 					for ( core::Size atom_j = residue_j.first_sidechain_atom(); atom_j <= residue_j.nheavyatoms(); atom_j++ ) {
 						if ( residue_j.atom_type(atom_j).element() != "C" ) {
-							continue;
+							if ( !count_SD_NE1_ or ( count_SD_NE1_ and ( ( residue_j.atom_name(atom_j) != " SD " ) and ( residue_j.atom_name(atom_j) != " NE1" ) ) ) ) {
+								continue;
+							}
 						}
 
 						if ( residue_i.xyz(atom_i).distance(residue_j.xyz(atom_j)) <= distance_cutoff_ ) {
 							TR << "select (resi " << setA[i] << " and name " << residue_i.atom_name(atom_i) << ") + (resi " << setB[j] << " and name " << residue_j.atom_name(atom_j) << ")" << std::endl;
 							//TR.Debug << "select (resi " << target[i] << " and name " << residue_i.atom_name(atom_i) << ") + (resi " << target[j] << "and name " << residue_j.atom_name(atom_j) << ")" << std::endl;
 							contact_count += 1;
+							if ( res_contact_ ) {
+								if ( j_is_not_in ) {
+									res_contact_n += 1;
+									j_is_not_in = false;
+								}
+							}
 						}
 					}
 				}
@@ -472,6 +506,8 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 		}
 	} else if ( normalize_by_carbon_count_ ) {
 		return (core::Real)(contact_count) / (core::Real)(carbon_count);
+	} else if ( res_contact_ ) {
+		return res_contact_n;
 	} else {
 		return contact_count;
 	}
@@ -506,6 +542,9 @@ void AtomicContactCountFilter::provide_xml_schema( utility::tag::XMLSchemaDefini
 
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::attribute_w_default( "distance", xsct_real, "Distance across which to count a contact", "4.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "non_local", xsct_rosetta_bool, "Detect only non-local contacts, i.e., sequence distance more than 2. Positions in separate chains are automatically considered non-local", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "res_contact", xsct_rosetta_bool, "Only count one atom contact per residue. This option ignores normalize_by_sasa and normalize_by_carbon_count", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "count_SD_NE1", xsct_rosetta_bool, "In addition to carbon atoms, count methionine SD and tryptophan NE1", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "partition", "partition_types", "Partition across which to define contacts", "none" )
 		+ XMLSchemaAttribute::attribute_w_default( "normalize_by_sasa", xsct_rosetta_bool, "Normalize contacts by sasa", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "normalize_by_carbon_count", xsct_rosetta_bool, "Normalize contacts by number of carbons", "0" )

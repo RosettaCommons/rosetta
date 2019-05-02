@@ -150,9 +150,107 @@ public:
 			"END\n";
 	}
 
+	std::string AtomicContactCount_pose2_string()
+	{
+		return
+			"ATOM      1  N   LYS A   6       1.272  21.035   1.792  1.00  0.00           N  \n"
+			"ATOM      2  CA  LYS A   6       0.648  20.378   0.652  1.00  0.00           C  \n"
+			"ATOM      3  C   LYS A   6       1.165  18.960   0.479  1.00  0.00           C  \n"
+			"ATOM      4  O   LYS A   6       0.386  18.047   0.201  1.00  0.00           O  \n"
+			"ATOM      5  CB  LYS A   6       0.868  21.184  -0.627  1.00  0.00           C  \n"
+			"ATOM      6  CG  LYS A   6       0.056  22.480  -0.700  1.00  0.00           C  \n"
+			"ATOM      7  CD  LYS A   6       0.346  23.244  -1.983  1.00  0.00           C  \n"
+			"ATOM      8  CE  LYS A   6      -0.438  24.543  -2.063  1.00  0.00           C  \n"
+			"ATOM      9  NZ  LYS A   6      -0.161  25.274  -3.335  1.00  0.00           N1+\n"
+			"ATOM     10  H   LYS A   6       1.825  21.878   1.651  1.00  0.00           H  \n"
+			"ATOM     11  HA  LYS A   6      -0.426  20.319   0.839  1.00  0.00           H  \n"
+			"ATOM     12 1HB  LYS A   6       1.926  21.450  -0.706  1.00  0.00           H  \n"
+			"ATOM     13 2HB  LYS A   6       0.617  20.572  -1.493  1.00  0.00           H  \n"
+			"ATOM     14 1HG  LYS A   6      -1.008  22.239  -0.662  1.00  0.00           H  \n"
+			"ATOM     15 2HG  LYS A   6       0.293  23.108   0.155  1.00  0.00           H  \n"
+			"ATOM     16 1HD  LYS A   6       1.411  23.482  -2.019  1.00  0.00           H  \n"
+			"ATOM     17 2HD  LYS A   6       0.098  22.624  -2.845  1.00  0.00           H  \n"
+			"ATOM     18 1HE  LYS A   6      -1.503  24.327  -2.001  1.00  0.00           H  \n"
+			"ATOM     19 2HE  LYS A   6      -0.156  25.179  -1.222  1.00  0.00           H  \n"
+			"ATOM     20 1HZ  LYS A   6      -0.691  26.133  -3.356  1.00  0.00           H  \n"
+			"ATOM     21 2HZ  LYS A   6       0.828  25.487  -3.395  1.00  0.00           H  \n"
+			"ATOM     22 3HZ  LYS A   6      -0.431  24.695  -4.121  1.00  0.00           H  \n"
+			"ATOM     23  N   ALA A   7       2.471  18.759   0.656  1.00  0.00           N  \n"
+			"ATOM     24  CA  ALA A   7       3.036  17.426   0.504  1.00  0.00           C  \n"
+			"ATOM     25  C   ALA A   7       2.433  16.459   1.519  1.00  0.00           C  \n"
+			"ATOM     26  O   ALA A   7       2.102  15.318   1.183  1.00  0.00           O  \n"
+			"ATOM     27  CB  ALA A   7       4.540  17.487   0.667  1.00  0.00           C  \n"
+			"ATOM     28  H   ALA A   7       3.084  19.546   0.865  1.00  0.00           H  \n"
+			"ATOM     29  HA  ALA A   7       2.797  17.062  -0.494  1.00  0.00           H  \n"
+			"ATOM     30 1HB  ALA A   7       4.960  16.504   0.536  1.00  0.00           H  \n"
+			"ATOM     31 2HB  ALA A   7       4.955  18.165  -0.079  1.00  0.00           H  \n"
+			"ATOM     32 3HB  ALA A   7       4.776  17.853   1.666  1.00  0.00           H  \n"
+			"ATOM     33  N   MET A   8       2.237  16.926   2.755  1.00  0.00           N  \n"
+			"ATOM     34  CA  MET A   8       1.643  16.070   3.774  1.00  0.00           C  \n"
+			"ATOM     35  C   MET A   8       0.210  15.704   3.414  1.00  0.00           C  \n"
+			"ATOM     36  O   MET A   8      -0.194  14.544   3.544  1.00  0.00           O  \n"
+			"ATOM     37  CB  MET A   8       1.678  16.755   5.135  1.00  0.00           C  \n"
+			"ATOM     38  CG  MET A   8       3.064  16.875   5.744  1.00  0.00           C  \n"
+			"ATOM     39  SD  MET A   8       3.029  17.426   7.458  1.00  0.00           S  \n"
+			"ATOM     40  CE  MET A   8       2.611  19.158   7.265  1.00  0.00           C  \n"
+			"ATOM     41  H   MET A   8       2.544  17.867   2.994  1.00  0.00           H  \n"
+			"ATOM     42  HA  MET A   8       2.216  15.148   3.828  1.00  0.00           H  \n"
+			"ATOM     43 1HB  MET A   8       1.273  17.759   5.031  1.00  0.00           H  \n"
+			"ATOM     44 2HB  MET A   8       1.040  16.217   5.834  1.00  0.00           H  \n"
+			"ATOM     45 1HG  MET A   8       3.580  15.924   5.695  1.00  0.00           H  \n"
+			"ATOM     46 2HG  MET A   8       3.640  17.589   5.171  1.00  0.00           H  \n"
+			"ATOM     47 1HE  MET A   8       2.567  19.632   8.245  1.00  0.00           H  \n"
+			"ATOM     48 2HE  MET A   8       3.368  19.654   6.655  1.00  0.00           H  \n"
+			"ATOM     49 3HE  MET A   8       1.641  19.244   6.784  1.00  0.00           H  \n"
+			"TER      50      MET A   8\n"
+			"ATOM     51  N   VAL B  68       8.058  16.020   7.969  1.00  0.00           N  \n"
+			"ATOM     52  CA  VAL B  68       8.142  16.549   6.612  1.00  0.00           C  \n"
+			"ATOM     53  C   VAL B  68       9.288  17.549   6.547  1.00  0.00           C  \n"
+			"ATOM     54  O   VAL B  68       9.487  18.310   7.495  1.00  0.00           O  \n"
+			"ATOM     55  CB  VAL B  68       6.807  17.224   6.205  1.00  0.00           C  \n"
+			"ATOM     56  CG1 VAL B  68       6.495  18.391   7.136  1.00  0.00           C  \n"
+			"ATOM     57  CG2 VAL B  68       6.878  17.722   4.753  1.00  0.00           C  \n"
+			"ATOM     58  H   VAL B  68       8.185  16.657   8.743  1.00  0.00           H  \n"
+			"ATOM     59  HA  VAL B  68       8.349  15.730   5.923  1.00  0.00           H  \n"
+			"ATOM     60  HB  VAL B  68       6.006  16.494   6.300  1.00  0.00           H  \n"
+			"ATOM     61 1HG1 VAL B  68       5.552  18.837   6.847  1.00  0.00           H  \n"
+			"ATOM     62 2HG1 VAL B  68       6.426  18.034   8.160  1.00  0.00           H  \n"
+			"ATOM     63 3HG1 VAL B  68       7.274  19.148   7.067  1.00  0.00           H  \n"
+			"ATOM     64 1HG2 VAL B  68       5.927  18.175   4.481  1.00  0.00           H  \n"
+			"ATOM     65 2HG2 VAL B  68       7.666  18.463   4.648  1.00  0.00           H  \n"
+			"ATOM     66 3HG2 VAL B  68       7.080  16.888   4.089  1.00  0.00           H  \n"
+			"TER      67      VAL B  68\n"
+			"ATOM     68  N   TRP C 109       1.904  20.372  -6.341  1.00  0.00           N  \n"
+			"ATOM     69  CA  TRP C 109       2.690  19.240  -5.863  1.00  0.00           C  \n"
+			"ATOM     70  C   TRP C 109       2.041  17.903  -6.189  1.00  0.00           C  \n"
+			"ATOM     71  O   TRP C 109       0.817  17.754  -6.118  1.00  0.00           O  \n"
+			"ATOM     72  CB  TRP C 109       2.895  19.326  -4.348  1.00  0.00           C  \n"
+			"ATOM     73  CG  TRP C 109       3.822  20.400  -3.930  1.00  0.00           C  \n"
+			"ATOM     74  CD1 TRP C 109       3.478  21.637  -3.508  1.00  0.00           C  \n"
+			"ATOM     75  CD2 TRP C 109       5.265  20.350  -3.890  1.00  0.00           C  \n"
+			"ATOM     76  CE2 TRP C 109       5.701  21.579  -3.442  1.00  0.00           C  \n"
+			"ATOM     77  CE3 TRP C 109       6.198  19.385  -4.206  1.00  0.00           C  \n"
+			"ATOM     78  NE1 TRP C 109       4.594  22.359  -3.213  1.00  0.00           N  \n"
+			"ATOM     79  CZ2 TRP C 109       7.050  21.867  -3.299  1.00  0.00           C  \n"
+			"ATOM     80  CZ3 TRP C 109       7.543  19.685  -4.064  1.00  0.00           C  \n"
+			"ATOM     81  CH2 TRP C 109       7.950  20.887  -3.627  1.00  0.00           C  \n"
+			"ATOM     82  H   TRP C 109       1.278  20.839  -5.700  1.00  0.00           H  \n"
+			"ATOM     83  HA  TRP C 109       3.664  19.271  -6.344  1.00  0.00           H  \n"
+			"ATOM     84 1HB  TRP C 109       1.939  19.504  -3.864  1.00  0.00           H  \n"
+			"ATOM     85 2HB  TRP C 109       3.280  18.376  -3.978  1.00  0.00           H  \n"
+			"ATOM     86  HD1 TRP C 109       2.464  22.002  -3.425  1.00  0.00           H  \n"
+			"ATOM     87  HE1 TRP C 109       4.600  23.335  -2.882  1.00  0.00           H  \n"
+			"ATOM     88  HE3 TRP C 109       5.882  18.424  -4.571  1.00  0.00           H  \n"
+			"ATOM     89  HZ2 TRP C 109       7.411  22.829  -2.957  1.00  0.00           H  \n"
+			"ATOM     90  HZ3 TRP C 109       8.269  18.942  -4.318  1.00  0.00           H  \n"
+			"ATOM     91  HH2 TRP C 109       9.019  21.086  -3.535  1.00  0.00           H  \n"
+			"END\n";
+	}
+
 	void test_AtomicContactCount_filter()
 	{
 		core::pose::Pose testpose = fullatom_pose_from_string(AtomicContactCount_pose_string());
+		core::pose::Pose testpose2 = fullatom_pose_from_string(AtomicContactCount_pose2_string());
 
 		using namespace protocols::protein_interface_design::filters;
 
@@ -257,6 +355,26 @@ public:
 
 		core::Real cross_chain_count_allsep = cross_chain_filter.compute(testpose);
 		TS_ASSERT_EQUALS(cross_chain_count_allsep, 0);
+
+		// Test non_local, res_contact and count_SD_NE1 options:
+		// One contact per residue, local, counting SD and NE1 atoms:
+		AtomicContactCountFilter non_local_res_filter;
+		non_local_res_filter.initialize_all_atoms( NULL, false, NULL, false, false, true, true);
+		core::Real non_local_res_filter_count = non_local_res_filter.compute(testpose2);
+		TS_ASSERT_EQUALS( non_local_res_filter_count, 2 );
+
+		// Counting all contacts per residue, local, counting SD and NE1 atoms:
+		AtomicContactCountFilter hphob_sc_contacts_local;
+		hphob_sc_contacts_local.initialize_all_atoms( NULL, false, NULL, false, false, false, true);
+		core::Real hphob_sc_contacts_local_count = hphob_sc_contacts_local.compute(testpose2);
+		TS_ASSERT_EQUALS( hphob_sc_contacts_local_count, 8 );
+
+		// Counting all contacts per residue, non local, not counting SD and NE1 atoms:
+		AtomicContactCountFilter hphob_sc_contacts_no_N_S_nonlocal;
+		hphob_sc_contacts_no_N_S_nonlocal.initialize_all_atoms( NULL, false, NULL, false, true, false, false);
+		core::Real hphob_sc_contacts_no_N_S_nonlocal_count = hphob_sc_contacts_no_N_S_nonlocal.compute(testpose2);
+		TS_ASSERT_EQUALS( hphob_sc_contacts_no_N_S_nonlocal_count, 6 );
+
 	}
 };
 }

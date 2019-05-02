@@ -46,11 +46,11 @@ public:
 
 	// @brief Filter name
 
-	void initialize_all_atoms( core::pack::task::TaskFactoryOP task_factoryA = NULL, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false);
+	void initialize_all_atoms( core::pack::task::TaskFactoryOP task_factoryA = NULL, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false, bool non_local = false, bool res_contact = false, bool count_SD_NE1 = false);
 
-	void initialize_cross_jump(core::Size jump = 0, std::string sym_dof_name = "", core::pack::task::TaskFactoryOP task_factoryA = NULL, bool normalize_by_sasa = false, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false);
+	void initialize_cross_jump(core::Size jump = 0, std::string sym_dof_name = "", core::pack::task::TaskFactoryOP task_factoryA = NULL, bool normalize_by_sasa = false, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false, bool non_local = false, bool res_contact = false, bool count_SD_NE1 = false);
 
-	void initialize_cross_chain( core::pack::task::TaskFactoryOP task_factoryA = NULL, bool normalize_by_sasa = false, bool detect_chains_for_interface_by_task = false, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false);
+	void initialize_cross_chain( core::pack::task::TaskFactoryOP task_factoryA = NULL, bool normalize_by_sasa = false, bool detect_chains_for_interface_by_task = false, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false, bool non_local = false, bool res_contact = false, bool count_SD_NE1 = false);
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
@@ -82,6 +82,9 @@ private:
 
 	core::pack::task::TaskFactoryOP task_factoryA_, task_factoryB_;
 	core::Real distance_cutoff_;
+	bool non_local_;
+	bool res_contact_;
+	bool count_SD_NE1_;
 
 	Mode filter_mode_;
 	bool normalize_by_sasa_, ss_only_, normalize_by_carbon_count_, individual_tasks_;
