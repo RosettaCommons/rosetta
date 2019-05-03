@@ -174,6 +174,19 @@ NetworkState::mres_has_heavy_unsats ( unsigned int mres ) const {
 
 	//These vectors are arranged in a way where all heavy atoms are listed before the hydrogens.
 	//If the first element is a hydrogen, there must be no heavy atoms
+
+#ifndef NDEBUG
+	//Assert sorted
+	bool we_have_hit_a_H = false;
+	for ( core::scoring::hbonds::graph::AtomInfo const & ai : * unsats ) {
+		if ( ai.is_hydrogen() ) {
+			we_have_hit_a_H = true;
+		} else {
+			debug_assert( ! we_have_hit_a_H );
+		}
+	}
+#endif
+
 	return ! unsats->begin()->is_hydrogen();
 }
 

@@ -3786,7 +3786,8 @@ bool HBNet::edge_can_yield_monte_carlo_seed( core::pack::interaction_graph::Edge
 	return edge_can_yield_monte_carlo_seed( resid1, resid2 );
 }
 
-HBondNode * HBNet::get_next_node( NetworkState & current_state ){
+HBondNode *
+HBNet::get_next_node( NetworkState & current_state ){
 
 	std::list< std::pair< core::Size, HBondNode * > > num_nbrs_per_node;
 	core::Size total_num_nbrs = 0;
@@ -3796,6 +3797,12 @@ HBondNode * HBNet::get_next_node( NetworkState & current_state ){
 		core::scoring::hbonds::graph::AtomInfoSet const & unsats = mres_atominfo_pair.second;
 		if ( ! unsats.empty() ) {
 			if ( ! unsats.begin()->is_hydrogen() ) {
+#ifndef NDEBUG
+				//Make sure that there is no heavy atom
+				for ( core::scoring::hbonds::graph::AtomInfo const & ai : unsats ) {
+					debug_assert( ai.is_hydrogen() );
+				}
+#endif
 				all_nodes_satisfied = false;
 				break;
 			}
@@ -3991,14 +3998,18 @@ void HBNet::add_residue_to_network_state( NetworkState & current_network_state, 
 					//node_being_added is donor
 					current_network_state.get_unsats_for_mres( existing_node_mres )->remove( local_atom_id_A );
 
-					current_network_state.get_unsats_for_mres( new_node_mres )->remove( local_atom_id_D );
-					current_network_state.get_unsats_for_mres( new_node_mres )->remove( local_atom_id_H );
+					core::scoring::hbonds::graph::AtomInfoSet * const donor_unsats =
+						current_network_state.get_unsats_for_mres( new_node_mres );
+					donor_unsats->remove( local_atom_id_D );
+					donor_unsats->remove( local_atom_id_H );
 				} else {
 					//node_being_added is acc
 					current_network_state.get_unsats_for_mres( new_node_mres )->remove( local_atom_id_A );
 
-					current_network_state.get_unsats_for_mres( existing_node_mres )->remove( local_atom_id_D );
-					current_network_state.get_unsats_for_mres( existing_node_mres )->remove( local_atom_id_H );
+					core::scoring::hbonds::graph::AtomInfoSet * const donor_unsats =
+						current_network_state.get_unsats_for_mres( existing_node_mres );
+					donor_unsats->remove( local_atom_id_D );
+					donor_unsats->remove( local_atom_id_H );
 				}
 
 				//unsatisfied_sc_atoms
@@ -4019,8 +4030,10 @@ void HBNet::add_residue_to_network_state( NetworkState & current_network_state, 
 			for ( HBondInfo const & hbond : hbond_edge->hbonds() ) {
 				current_network_state.get_unsats_for_mres( new_node_mres )->remove( hbond.local_atom_id_A() );
 
-				current_network_state.get_unsats_for_mres( new_node_mres )->remove( hbond.local_atom_id_D() );
-				current_network_state.get_unsats_for_mres( new_node_mres )->remove( hbond.local_atom_id_H() );
+				core::scoring::hbonds::graph::AtomInfoSet * const donor_unsats =
+					current_network_state.get_unsats_for_mres( new_node_mres );
+				donor_unsats->remove( hbond.local_atom_id_D() );
+				donor_unsats->remove( hbond.local_atom_id_H() );
 			}//hbond
 		}//hbond_edge
 	}//symm
@@ -4029,11 +4042,24 @@ void HBNet::add_residue_to_network_state( NetworkState & current_network_state, 
 	current_network_state.score( current_network_state.full_twobody_energy() / current_network_state.nodes().size() );
 }
 
-bool HBNet::network_state_is_satisfied( NetworkState & current_state ) const {
+bool
+HBNet::network_state_is_satisfied( NetworkState & current_state ) const {
 
 	for ( auto const & mres_atominfo_pair : current_state.unsatisfied_sc_atoms_const() ) {
 		core::scoring::hbonds::graph::AtomInfoSet const & unsats = mres_atominfo_pair.second;
 		if ( ! unsats.empty() ) {
+#ifndef NDEBUG
+			//Assert sorted
+			bool we_have_hit_a_H = false;
+			for ( core::scoring::hbonds::graph::AtomInfo const & ai : unsats ) {
+				if ( ai.is_hydrogen() ) {
+					we_have_hit_a_H = true;
+				} else {
+					debug_assert( ! we_have_hit_a_H );
+				}
+			}
+#endif
+
 			if ( ! unsats.begin()->is_hydrogen() ) {
 				//has unsat hydrogens, no heavy unsats
 				//TODO what do we do for hydrogens??? keep a running total?
@@ -4115,7 +4141,8 @@ bool HBNet::network_state_is_done_growing( NetworkState const & current_state, H
 	return true;
 }
 
-core::Real HBNet::estimate_saturation( NetworkState const & network_state ) const {
+core::Real
+HBNet::estimate_saturation( NetworkState const & network_state ) const {
 	using namespace core::scoring::hbonds::graph;
 	unsigned short int total_polar_groups_that_could_hbond( 0 );
 
@@ -4139,7 +4166,11 @@ core::Real HBNet::estimate_saturation( NetworkState const & network_state ) cons
 				if ( element == "O" ) {
 					num_lone_pairs = 2;
 				} else if ( element == "N" ) {
-					num_lone_pairs = 1;
+					if ( rotamer.heavyatom_is_an_acceptor( atomno ) ) {
+						num_lone_pairs = 1;
+					} else {
+						num_lone_pairs = 0;
+					}
 				} else {
 					TR << "MC HBNet is unprepared to handle this polar atom's element: " << element << std::endl;
 				}

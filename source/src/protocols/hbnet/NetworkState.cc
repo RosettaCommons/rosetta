@@ -58,13 +58,17 @@ NetworkState::NetworkState(
 		if ( first_node_is_donor ) {
 			get_unsats_for_mres( mres2 )->remove( local_atom_id_A );
 
-			get_unsats_for_mres( mres1 )->remove( local_atom_id_D );
-			get_unsats_for_mres( mres1 )->remove( local_atom_id_H );
+			core::scoring::hbonds::graph::AtomInfoSet * const donor_unsats =
+				get_unsats_for_mres( mres1 );
+			donor_unsats->remove( local_atom_id_D );
+			donor_unsats->remove( local_atom_id_H );
 		} else {
 			get_unsats_for_mres( mres1 )->remove( local_atom_id_A );
 
-			get_unsats_for_mres( mres2 )->remove( local_atom_id_D );
-			get_unsats_for_mres( mres2 )->remove( local_atom_id_H );
+			core::scoring::hbonds::graph::AtomInfoSet * const donor_unsats =
+				get_unsats_for_mres( mres2 );
+			donor_unsats->remove( local_atom_id_D );
+			donor_unsats->remove( local_atom_id_H );
 		}
 	}
 }
