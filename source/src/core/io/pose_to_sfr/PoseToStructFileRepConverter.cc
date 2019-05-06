@@ -1223,19 +1223,11 @@ PoseToStructFileRepConverter::grab_pdbinfo_labels(
 	// Added by Daniel-Adriano Silva, used to write the PDBInfoLabels to the REMARK
 	// First test that the pdb_info() is not empty
 	if ( pose.pdb_info() ) {
-		// Then output the labels
+		utility::vector1 < std::string > reslabel_lines;
+		pose.pdb_info()->write_pdbinfo_labels( reslabel_lines );
 		std::stringstream out;
-		for ( core::Size i=1; i<=pose.size(); ++i ) {
-			utility::vector1 < std::string > const tmp_v_reslabels( pose.pdb_info()->get_reslabels(i) ); //Ugh.  Passing a vector of strings by return value.
-			core::Size const numLables( tmp_v_reslabels.size() );
-			//Only write if the residue has any label (keep the file as small as possible)
-			if ( numLables > 0 ) {
-				out << "REMARK PDBinfo-LABEL: " << I( 4, i );
-				for ( core::Size lndx=1; lndx <= numLables; ++lndx ) {
-					out << " " << tmp_v_reslabels[lndx];
-				}
-				out << std::endl;
-			}
+		for ( std::string const & line : reslabel_lines ) {
+			out << line << std::endl;
 		}
 		sfr_->additional_string_output() = sfr_->additional_string_output() + out.str();
 	}

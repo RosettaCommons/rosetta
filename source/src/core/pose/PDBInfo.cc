@@ -23,6 +23,7 @@
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBPoseMap.hh>
+#include <core/pose/selection.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -661,6 +662,64 @@ PDBInfo::clear_reslabel(
 	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::icode( Size const res, ins_code ): res is not in this PDBInfo!" );
 	ResidueRecord & rr = residue_rec_[ res ];
 	rr.label.clear();
+}
+
+/// @brief parse PDBInfo-LABEL: lines from a collection of lines
+/// @details Lines not containing PDBInfo-LABEL are ignored
+/// @param[in] lines the lines to parse
+/// @param[in] pose the pose these lines belong to
+void
+PDBInfo::parse_pdbinfo_labels( utility::vector1 < std::string > const & lines, Pose const & pose ) {
+	for ( std::string const &line : lines ) {
+		if ( line.size() > 21 && line.substr(0,21) == "REMARK PDBinfo-LABEL:" ) {
+			//Parse and split string
+			utility::vector1 < std::string > remark_values;
+			utility::vector1 < std::string > tmp_remark_values = utility::string_split(line, ' ');
+			//Copy non-empty (i.e. !' ') elements to remark_values
+			if ( tmp_remark_values .size() > 3 ) {
+				for ( Size j=3; j<= tmp_remark_values.size(); ++j ) {
+					if ( tmp_remark_values[j] != "" ) {
+						remark_values.push_back(tmp_remark_values[j]);
+					}
+				}
+			}
+			//Check that we have at least two elements left ([1]=index, [2-n]=PDBinfo-labels)
+			if ( remark_values.size() > 1 ) {
+				core::Size tmp_ndx = parse_resnum(remark_values[1], pose);
+				TR.Debug << "pose_io:: PDBinfo-LABEL io: " << line << " parsed: " << tmp_ndx << std::endl;
+
+				//Parse resnum returns 0 on parse error
+				if ( (tmp_ndx != 0) && (tmp_ndx <= pose.size()) ) {
+					for ( Size j=2; j<= remark_values.size(); ++j ) {
+						add_reslabel(tmp_ndx,remark_values[j]);
+					}
+				} else {
+					TR.Fatal << "pose_io:: PDBinfo-LABEL io failure: " << line << ' ' << pose.size()  << std::endl;
+				}
+			} else {
+				TR.Fatal << "pose_io:: PDBinfo-LABEL io failure: " << line << ' ' << pose.size() << std::endl;
+			}
+		}
+	}
+}
+
+/// @brief write REMARK PDBInfo-LABEL: lines for output to pose
+/// @param[out] remark_lines the output container
+void
+PDBInfo::write_pdbinfo_labels( utility::vector1 < std::string > & remark_lines ) const {
+	for ( core::Size i=1; i<=residue_rec_.size(); ++i ) {
+		utility::vector1 < std::string > const tmp_v_reslabels( get_reslabels(i) ); //Ugh.  Passing a vector of strings by return value.
+		core::Size const numLables( tmp_v_reslabels.size() );
+		//Only write if the residue has any label (keep the file as small as possible)
+		if ( numLables > 0 ) {
+			std::stringstream out;
+			out << "REMARK PDBinfo-LABEL: " << I( 4, i );
+			for ( core::Size lndx=1; lndx <= numLables; ++lndx ) {
+				out << " " << tmp_v_reslabels[lndx];
+			}
+			remark_lines.push_back( out.str() );
+		}
+	}
 }
 
 /// @brief set all residue chain IDs to a single character

@@ -31,6 +31,9 @@
 
 //Auto Headers
 #include <core/id/AtomID_Mask.hh>
+#include <core/io/silent/SilentFileOptions.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentStruct.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/AtomPointer.hh>
 #include <core/kinematics/DomainMap.hh>
@@ -40,7 +43,9 @@
 #include <numeric/BodyPosition.fwd.hh>
 #include <numeric/Quaternion.fwd.hh>
 #include <numeric/all.fwd.hh>
+#include <basic/Tracer.hh>
 
+static basic::Tracer TR("core.pose.PDBInfoTests");
 
 // --------------- Test Class --------------- //
 
@@ -347,5 +352,62 @@ public:
 		TS_ASSERT_EQUALS( pose.pdb_info()->chain_sequences( 'P' ), seq_chain_P );
 
 	}
+
+	void assert_pose_has_label( Pose const & pose  ) {
+		TS_ASSERT( pose.pdb_info()->res_haslabel(1, "TEST") );
+	}
+
+	void pass_through_silent( Pose & pose, std::string const & silent_type ) {
+
+		std::ostringstream ostream;
+		core::io::silent::SilentFileOptions sf_option;
+		sf_option.in_fullatom( true );
+		core::io::silent::SilentFileData sfd("", false, false, silent_type, sf_option);
+		core::io::silent::SilentStructOP ss = sfd.create_SilentStructOP();
+		ss->fill_struct( pose, "my_tag" );
+		sfd._write_silent_struct(*ss, ostream);
+
+		std::string str = ostream.str();
+		// std::cout << str << std::endl;
+		// std::cout << "||" << std::endl;
+		std::stringstream istream( str );
+
+		core::io::silent::SilentFileData sfd_in("", false, false, silent_type, sf_option);
+		utility::vector1< std::string > tags { "my_tag" };
+		sfd_in.read_stream( istream, tags, false, "stream" );
+
+		pose.clear();
+		sfd_in.get_structure("my_tag").fill_pose( pose );
+	}
+
+	void test_PDBInfo_silent_files() {
+
+		Pose pose_copy = *pose.clone();
+
+		pose_copy.pdb_info()->add_reslabel(1, "TEST");
+
+		assert_pose_has_label( pose_copy );
+
+		// Supporting PDBInfo-Labels in "pdb" silent files is too hard.
+		// By convention, REMARK lines in silent files go above the data,
+		//  but PDBInfo-Labels come after the data.
+		// You'd have to hack to PDB writing machinery which I don't want to do -- bcov
+		utility::vector1< std::string > silent_types { "binary", "protein", /*"pdb",*/ "protein_float"
+			/*"rigid_body", "rna", "score", "score_jump"*/ };
+
+		for ( std::string const & silent_type : silent_types ) {
+			TR << "Silent PDBInfo: " << silent_type << std::endl;
+			Pose work_pose = *pose_copy.clone();
+			pass_through_silent( work_pose, silent_type );
+			assert_pose_has_label( work_pose );
+		}
+
+	}
+
+
+
+
+
+
 
 };

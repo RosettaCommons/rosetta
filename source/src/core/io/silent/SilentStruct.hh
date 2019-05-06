@@ -398,6 +398,7 @@ private:
 	std::map< std::string, std::string > silent_comments_;
 	utility::vector1< SilentEnergy > silent_energies_;
 	utility::vector1< std::string > cache_remarks_;
+	utility::vector1< std::string > pdbinfo_labels_;
 
 	utility::vector1< int > residue_numbers_; // can be derived from PDB info.
 	utility::vector1< char > chains_; // can be derived from PDB info.

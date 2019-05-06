@@ -203,37 +203,7 @@ read_additional_pdb_data(
 
 	//Added by Daniel-Adriano Silva, used to read PDBinfo-LABEL
 	//TR.Debug << "Setting PDBinfo-labels from PDB file." << std::endl;
-	for ( std::string const &line : lines ) {
-		if ( line.size() > 21 && line.substr(0,21) == "REMARK PDBinfo-LABEL:" ) {
-			//Parse and split string
-			utility::vector1 < std::string > remark_values;
-			utility::vector1 < std::string > tmp_remark_values = utility::string_split(line, ' ');
-			//Copy non-empty (i.e. !' ') elements to remark_values
-			if ( tmp_remark_values .size() > 3 ) {
-				for ( Size j=3; j<= tmp_remark_values.size(); ++j ) {
-					if ( tmp_remark_values[j] != "" ) {
-						remark_values.push_back(tmp_remark_values[j]);
-					}
-				}
-			}
-			//Check that we have at least two elements left ([1]=index, [2-n]=PDBinfo-labels)
-			if ( remark_values.size() > 1 ) {
-				core::Size tmp_ndx = parse_resnum(remark_values[1], pose);
-				TR.Debug << "pose_io:: PDBinfo-LABEL io: " << line << " parsed: " << tmp_ndx << std::endl;
-
-				//Parse resnum returns 0 on parse error
-				if ( (tmp_ndx != 0) && (tmp_ndx <= pose.size()) ) {
-					for ( Size j=2; j<= remark_values.size(); ++j ) {
-						pose.pdb_info()->add_reslabel(tmp_ndx,remark_values[j]);
-					}
-				} else {
-					TR.Fatal << "pose_io:: PDBinfo-LABEL io failure: " << line << ' ' << pose.size()  << std::endl;
-				}
-			} else {
-				TR.Fatal << "pose_io:: PDBinfo-LABEL io failure: " << line << ' ' << pose.size() << std::endl;
-			}
-		}
-	}
+	pose.pdb_info()->parse_pdbinfo_labels( lines, pose );
 
 	if ( (!read_fold_tree) && (!options.fold_tree_io()) ) return;
 

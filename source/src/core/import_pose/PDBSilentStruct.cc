@@ -170,7 +170,7 @@ bool PDBSilentStruct::init_from_lines(
 			if ( option[ out::file::silent_preserve_H ]() || iter->substr(13,1) != "H" ) {
 				// FileData needs \n's
 				concatenated_pdb_info += iter->substr( 0, 79 ) + '\n';
-				string temp_decoy_tag  = iter->substr( 80 );
+				// string temp_decoy_tag  = iter->substr( 80 );
 			}
 		} // else
 	} // for ( iter ... )

@@ -121,6 +121,7 @@ SilentStruct& SilentStruct::operator= ( SilentStruct const & src ) {
 		silent_comments_ = src.silent_comments_;
 		silent_energies_ = src.silent_energies_;
 		cache_remarks_ = src.cache_remarks_;
+		pdbinfo_labels_ = src.pdbinfo_labels_;
 		precision_ = src.precision_;
 		scoreline_prefix_ = src.scoreline_prefix_;
 		residue_numbers_ = src.residue_numbers_;
@@ -173,6 +174,11 @@ void SilentStruct::fill_struct( core::pose::Pose const & pose,
 	sequence( pose.annotated_sequence( true /* show-all-variants */ ) );
 
 	extract_writeable_cacheable_data( pose );
+
+	if ( pose.pdb_info() ) {
+		pdbinfo_labels_.clear();
+		pose.pdb_info()->write_pdbinfo_labels( pdbinfo_labels_ );
+	}
 
 }
 
@@ -239,6 +245,8 @@ void SilentStruct::finish_pose(
 
 		map[ data_type ].insert( data );
 	}
+
+	pose.pdb_info()->parse_pdbinfo_labels( pdbinfo_labels_, pose );
 }
 
 bool
@@ -354,7 +362,7 @@ SilentStruct::print_scores( std::ostream & out ) const {
 	int width = decoy_tag().size();
 	if ( width < 11 ) width = 11; // size of "description"
 	out << ' ' << A( width, decoy_tag() )  << "\n";
-	print_comments( out );
+	// print_comments( out ); // bcov is 80% sure this doesn't need to be here and would be better in SilentFileData.cc
 }
 
 void
@@ -369,6 +377,10 @@ SilentStruct::print_comments( std::ostream & out ) const {
 
 	for ( auto const & cache_remark : cache_remarks_ ) {
 		out << remark << ' ' << cache_remark << std::endl;
+	}
+
+	for ( auto const & pdbinfo_label : pdbinfo_labels_ ) {
+		out << pdbinfo_label << std::endl;
 	}
 
 } // print_comments
@@ -516,6 +528,8 @@ SilentStruct::copy_scores( const SilentStruct & src_ss ) {
 void SilentStruct::add_comment( std::string name, std::string value ) {
 	if ( name == "CACHEABLE_DATA" ) {
 		cache_remarks_.push_back( value );
+	} else if ( name == "PDBinfo-LABEL:" ) {
+		pdbinfo_labels_.push_back( value );
 	} else {
 		if ( silent_comments_.find( name ) != silent_comments_.end() ) {
 			tr.Debug << "SilentStruct::add_comment is overwriting comment with type "
@@ -567,6 +581,10 @@ void SilentStruct::comment_from_line( std::string const & line, bool const inclu
 	utility::trim( dummy, " " );
 	if ( !dummy.empty() ) {
 		val += " " + dummy;
+	}
+
+	if ( key == "PDBinfo-LABEL:" ) {
+		val = line;
 	}
 
 	add_comment( key, val );

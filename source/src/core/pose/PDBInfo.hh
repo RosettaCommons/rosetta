@@ -856,6 +856,16 @@ public: // single residue mutators
 		return ( std::find( residue_rec_[res].label.begin(), residue_rec_[res].label.end(), target_label ) != residue_rec_[res].label.end() );
 	}
 
+	/// @brief parse PDBInfo-LABEL: lines from a collection of lines
+	/// @details Lines not containing PDBInfo-LABEL are ignored
+	/// @param[in] lines the lines to parse
+	void
+	parse_pdbinfo_labels( utility::vector1 < std::string > const & lines, Pose const & pose );
+
+	/// @brief write REMARK PDBInfo-LABEL: lines for output to pose
+	/// @param[out] remark_lines the output container
+	void
+	write_pdbinfo_labels( utility::vector1 < std::string > & remark_lines ) const;
 
 public: // atom accessors
 
