@@ -630,14 +630,15 @@ Hasher::transform_model(
 	SewResidue const & basis_residue
 ) const {
 
-	utility::vector1<SewAtom> basis_atoms = basis_residue.basis_atoms_;
+	utility::vector1<SewAtom> const & basis_atoms = basis_residue.basis_atoms_;
 	numeric::HomogeneousTransform<core::Real> ht(basis_atoms[1].coords_,
 		basis_atoms[2].coords_, basis_atoms[3].coords_);
 
 	Model model = model_in;
 	ModelIterator<SewSegment> model_it = model.model_begin();
+	ModelIterator<SewSegment> const & model_end = model.model_end();
 	ModelIterator<SewSegment> erase_it;
-	for ( ; model_it != model.model_end(); ++model_it ) {
+	for ( ; model_it != model_end; ++model_it ) {
 		if ( model_it.segment_valid()
 				&& model_it.residue() != model_it.segment()->residues_.end()
 				&& model_it.residue()->resnum_ != basis_residue.resnum_ && model_it.segment()->hash_ ) {
