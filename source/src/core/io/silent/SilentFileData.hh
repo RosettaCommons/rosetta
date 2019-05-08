@@ -35,6 +35,12 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace io {
 namespace silent {
@@ -466,6 +472,12 @@ public:
 
 	protected:
 		Structure_Map::iterator it_; // keep track of my place in a Structure_Map
+
+		//#ifdef    SERIALIZATION
+		//public:
+		// template< class Archive > void save( Archive & arc ) const;
+		// template< class Archive > void load( Archive & arc );
+		//#endif // SERIALIZATION
 	}; // class iterator
 
 	/// @brief const_iterator class for SilentFileData container.
@@ -520,6 +532,12 @@ public:
 
 	private:
 		Structure_Map::const_iterator it_; // keeps track of my place in a Structure_Map
+
+		//#ifdef    SERIALIZATION
+		//public:
+		// template< class Archive > void save( Archive & arc ) const;
+		// template< class Archive > void load( Archive & arc );
+		//#endif // SERIALIZATION
 	}; // class iterator
 
 	//  void open_for_writing( utility::io::ozstream&, std::string const& filename, std::stringstream& ) const; //open silent-file and write header if first
@@ -557,10 +575,25 @@ public:
 	//const_iterator begin_const() const { return ( const_iterator( structure_map_.begin() ) ); }
 	// const_iterator end_const()   const { return ( const_iterator( structure_map_.end()   ) ); }
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SilentFileData();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // class SilentFileData
 
 } // namespace silent
 } // namespace io
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_io_silent_SilentFileData )
+#endif // SERIALIZATION
+
 
 #endif

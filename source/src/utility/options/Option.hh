@@ -32,6 +32,12 @@
 #endif
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace utility {
 namespace options {
 
@@ -491,6 +497,13 @@ private: // Private data members
 	/// accessing it through the resource manager?
 	bool restricted_access_;
 
+#ifdef    SERIALIZATION
+	friend class cereal::access;
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // Option
 
 
@@ -504,6 +517,11 @@ operator <( Option const & a, Option const & b );
 
 } // namespace options
 } // namespace utility
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( utility_options_Option )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_utility_options_Option_HH

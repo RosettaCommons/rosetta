@@ -51,6 +51,7 @@
 #include <set>
 #include <string>
 #include <fstream>
+#include <chrono>
 
 namespace protocols {
 namespace jd3 {
@@ -79,6 +80,9 @@ enum mpi_tags {
 	mpi_work_pool_jd_failed_to_retrieve_job_result, // didn't find it
 	mpi_work_pool_jd_retrieve_and_discard_job_result,
 	mpi_work_pool_jd_discard_job_result,
+	mpi_work_pool_jd_begin_checkpointing,
+	mpi_work_pool_jd_checkpointing_complete,
+	mpi_work_pool_jd_restore_from_checkpoint,
 	mpi_work_pool_jd_spin_down,
 	mpi_work_pool_jd_error
 };
@@ -105,6 +109,7 @@ public:
 	typedef std::map< core::Size, JobSetOP > OutstandingJobsForDigraphNodeMap;
 	typedef std::map< core::Size, core::Size > DigraphNodeForJobMap;
 	typedef std::map< core::Size, core::Size > WorkerNodeForJobMap;
+	typedef std::chrono::time_point< std::chrono::system_clock > TimePoint;
 
 public:
 
@@ -130,6 +135,24 @@ private:
 
 	void
 	master_setup();
+
+	core::Size
+	decide_restore_from_checkpoint();
+
+	bool
+	decide_checkpoint_now();
+
+	void
+	checkpoint_master();
+
+	void
+	checkpoint_archive();
+
+	void
+	restore_from_checkpoint_master(core::Size checkpoint_index);
+
+	void
+	restore_from_checkpoint_archive();
 
 	bool
 	node_is_archive( int node_rank ) const;
@@ -254,7 +277,7 @@ private:
 	any_worker_nodes_not_yet_spun_down();
 
 	bool
-	any_archive_nodes_not_yet_spun_down();
+	any_archive_node_still_outputting();
 
 	bool
 	jobs_ready_to_go();
@@ -378,6 +401,39 @@ private:
 
 	std::string filename_for_archive( Size job_id, Size result_index ) const;
 
+	std::string checkpoint_file_prefix( Size checkpoint_counter ) const;
+
+	std::string checkpoint_file_name_for_node( std::string const & prefix, int node_index ) const;
+
+	/// @brief Create a file in the checkpoint directory that states the number of
+	/// archive nodes in this execution.
+	void create_checkpoint_sanity_check_file() const;
+
+	/// @brief Returns true if the contents of the checkpoint directory describe the
+	/// right number of archive nodes.
+	bool checkpoint_sanity_check() const;
+
+	void delete_checkpoint( Size checkpoint_index ) const;
+
+	/// @throws std::string when the requested job result cannot be found.
+	void retrieve_job_result_and_act( JobResultID const & id, std::function< void (std::string const & ) > const & action);
+
+	/// @throws std::string when the requested job result cannot be found.
+	void retrieve_job_result_and_act_and_delete( JobResultID const & id, std::function< void (std::string const & ) > const & action );
+
+	void delete_job_result( JobResultID const & id );
+
+	/// @throws std::string if the contents could not be archived
+	void save_job_result( JobResultID const & id, utility::pointer::shared_ptr< std::string > const & job_result );
+
+public:
+	/// @brief Set the interval between checkpoint events, in seconds.
+	/// Useful for testing only. The JD will otherwise initialize this value
+	/// from the options system in its constructor.
+	void set_checkpoint_period( Size period_seconds );
+
+	/// @brief Retrieve the JobQueen from the JobDistributor; used only in testing.
+	JobQueenOP job_queen() { return job_queen_; }
 
 private:
 
@@ -451,6 +507,11 @@ private:
 
 	Size default_retry_limit_;
 
+	bool checkpoint_;
+	std::string checkpoint_directory_;
+	Size checkpoint_counter_;
+	Size checkpoint_period_;
+	TimePoint last_checkpoint_wall_clock_;
 };
 
 }//job_distributors

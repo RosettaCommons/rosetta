@@ -32,6 +32,11 @@
 
 //project headers
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
@@ -119,10 +124,21 @@ private:
 	utility::vector1< core::io::silent::SilentStructOP > buffered_lores_structs_;
 	bool dump_ = false;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace pose_outputters
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_pose_outputters_DeNovoSilentFilePoseOutputter )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_DeNovoSilentFilePoseOutputter_HH

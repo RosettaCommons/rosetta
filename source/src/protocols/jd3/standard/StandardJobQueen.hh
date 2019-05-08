@@ -60,12 +60,18 @@
 #include <protocols/jd3/pose_outputters/PoseOutputter.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterCreator.hh>
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 #endif
 
 //c++ headers
 #include <string>
 #include <map>
 #include <set>
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace protocols {
 namespace jd3 {
@@ -852,11 +858,22 @@ private:
 
 	bool load_starting_poses_only_once_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace standard
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_standard_StandardJobQueen )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_StandardJobQueen_HH

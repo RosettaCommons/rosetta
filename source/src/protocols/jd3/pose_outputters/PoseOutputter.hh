@@ -36,6 +36,11 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
@@ -99,10 +104,21 @@ public:
 		utility::tag::TagCOP outputter_tag // possibly null-pointing tag pointer
 	) = 0;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace pose_outputters
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_pose_outputters_PoseOutputter )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_pose_outputters_PoseOutputter_HH

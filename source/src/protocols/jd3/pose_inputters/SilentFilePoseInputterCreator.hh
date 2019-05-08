@@ -16,6 +16,11 @@
 
 #include <protocols/jd3/pose_inputters/PoseInputterCreator.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace pose_inputters {
@@ -26,11 +31,22 @@ public:
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 	void list_options_read( utility::options::OptionKeyList & read_options ) const override;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } //pose_inputters
 } //jd3
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_pose_inputters_SilentFilePoseInputterCreator )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_pose_inputters_SilentFilePoseInputterCreator_hh
 

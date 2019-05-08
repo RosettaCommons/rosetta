@@ -32,6 +32,11 @@
 #include <iostream>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace utility {
 namespace options {
 
@@ -138,11 +143,22 @@ protected: // Methods
 	}
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // RealVectorOption
 
 
 } // namespace options
 } // namespace utility
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( utility_options_RealVectorOption )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_utility_options_RealVectorOption_HH

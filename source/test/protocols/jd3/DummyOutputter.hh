@@ -61,6 +61,8 @@
 // Cereal headers
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/string.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/utility.hpp>
 #endif // SERIALIZATION
 
 
@@ -214,6 +216,18 @@ public:
 	std::shared_ptr< std::map< JobResultID, JobResultOP > > results_;
 	std::map< std::string, core::pose::PoseOP > named_poses_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const {
+		arc(results_);
+		arc(named_poses_);
+	}
+	template< class Archive > void load( Archive & arc ) {
+		arc(results_);
+		arc(named_poses_);
+	}
+#endif // SERIALIZATION
+
 };
 
 
@@ -250,5 +264,15 @@ public:
 		return basic::options::option[ basic::options::OptionKeys::dummy_outputter ];
 	}
 
+#ifdef SERIALIZATION
+public:
+	template< class Archive > void save( Archive & ) const {}
+	template< class Archive > void load( Archive & ) {}
+#endif
 
 };
+
+#ifdef SERIALIZATION
+CEREAL_REGISTER_TYPE( DummyOutputterCreator )
+CEREAL_REGISTER_TYPE( DummyPoseOutputter )
+#endif

@@ -80,6 +80,12 @@ returned in JobQueen::job_results_that_should_be_discarded()
 #include <unordered_set>
 #include <utility>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 
@@ -172,6 +178,12 @@ private:
 
 	utility::vector1< JGResultNodeAP > parents_;
 	utility::vector1< JGResultNodeAP > children_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 struct compare_job_nodes :
@@ -195,6 +207,11 @@ struct compare_job_nodes :
 	bool operator()( JGJobNodeOP const & a, JGJobNode const & b ) const {
 		return a->global_job_id() < b.global_job_id();
 	}
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class JGResultNode : public utility::pointer::enable_shared_from_this< JGResultNode >{
@@ -262,6 +279,12 @@ private:
 	unsigned int result_id_;
 	JGJobNodeAP parent_;
 	utility::vector1< JGJobNodeAP > children_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class JobGenealogist : public utility::pointer::ReferenceCount{
@@ -406,6 +429,16 @@ private:
 	std::unordered_set< JGResultNodeOP > all_result_nodes_;
 
 	compare_job_nodes sorter_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	JobGenealogist();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -419,5 +452,10 @@ JobGenealogist::input_source_for_job( core::Size job_dag_node, core::Size global
 
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_JobGenealogist )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_JobGenealogist_HH

@@ -14,6 +14,16 @@
 #include <protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.hh>
 #include <algorithm>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace dag_node_managers {
@@ -220,3 +230,58 @@ NodeManagerStorageMatrix::linear_vector_of_results() {
 } //dag_node_managers
 } //jd3
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::jd3::dag_node_managers::NodeManagerStorageMatrix::NodeManagerStorageMatrix() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::dag_node_managers::NodeManagerStorageMatrix::save( Archive & arc ) const {
+	arc( CEREAL_NVP( n_results_to_keep_for_partition_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( n_results_accessed_for_partition_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( results_for_partition_ ) ); // utility::vector1<utility::vector1<ResultElements> >
+	arc( CEREAL_NVP( return_results_depth_first_ ) ); // _Bool
+	arc( CEREAL_NVP( max_num_results_with_same_token_per_partition_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::dag_node_managers::NodeManagerStorageMatrix::load( Archive & arc ) {
+	arc( n_results_to_keep_for_partition_ ); // utility::vector1<core::Size>
+	arc( n_results_accessed_for_partition_ ); // utility::vector1<core::Size>
+	arc( results_for_partition_ ); // utility::vector1<utility::vector1<ResultElements> >
+	arc( return_results_depth_first_ ); // _Bool
+	arc( max_num_results_with_same_token_per_partition_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::dag_node_managers::NodeManagerStorageMatrix );
+CEREAL_REGISTER_TYPE( protocols::jd3::dag_node_managers::NodeManagerStorageMatrix )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::dag_node_managers::ResultElements::save( Archive & arc ) const {
+	arc( CEREAL_NVP( global_job_id ) ); // core::Size
+	arc( CEREAL_NVP( local_result_id ) ); // core::Size
+	arc( CEREAL_NVP( score ) ); // core::Real
+	arc( CEREAL_NVP( token ) ); // uint64_t
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::dag_node_managers::ResultElements::load( Archive & arc ) {
+	arc( global_job_id ); // core::Size
+	arc( local_result_id ); // core::Size
+	arc( score ); // core::Real
+	arc( token ); // uint64_t
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::dag_node_managers::ResultElements );
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_dag_node_managers_NodeManagerStorageMatrix )
+#endif // SERIALIZATION

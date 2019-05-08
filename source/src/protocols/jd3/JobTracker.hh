@@ -35,6 +35,11 @@
 #include <unordered_map>
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 
@@ -135,12 +140,23 @@ private:
 	// expand_job_list().
 	Size current_global_job_index_ = 0;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } //protocols
 } //jd3
 
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_JobTracker )
+#endif // SERIALIZATION
 
 
 #endif //INCLUDED_protocols_jd3_JobTracker_hh

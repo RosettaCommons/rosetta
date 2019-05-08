@@ -31,6 +31,11 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace pose_inputters {
@@ -75,10 +80,21 @@ public:
 	static void list_options_read( utility::options::OptionKeyList & read_options );
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // PDBPoseInputter
 
 } // namespace pose_inputters
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_pose_inputters_PDBPoseInputter )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_PDBPoseInputter_HH

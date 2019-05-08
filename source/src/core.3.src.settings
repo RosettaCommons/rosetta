@@ -89,6 +89,7 @@ sources = {
 		"RNA_SilentStruct",
 		"ScoreFileSilentStruct",
 		"ScoreJumpFileSilentStruct",
+                "SharedSilentData",
 		"SilentFileOptions",
 		"SilentFileData",
 		"SilentStruct",

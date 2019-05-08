@@ -38,6 +38,19 @@ static basic::Tracer TR( "protocols.multistage_rosetta_scripts.TagManager" );
 
 using namespace utility;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/list.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#include <cereal/types/vector.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace multistage_rosetta_scripts {
 
@@ -170,3 +183,96 @@ TagManager::generate_data_for_input_pose_id(
 
 } //multistage_rosetta_scripts
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::multistage_rosetta_scripts::TagManager::save( Archive & arc ) const {
+	arc( CEREAL_NVP( tag_list_for_input_pose_id_ ) ); // std::vector<TagListOP>
+	//arc( CEREAL_NVP( most_recent_request_ ) ); // ParsedTagCacheOP
+	// EXEMPT most_recent_request_
+	arc( CEREAL_NVP( dummy_pose_ ) ); // core::pose::Pose
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::multistage_rosetta_scripts::TagManager::load( Archive & arc ) {
+
+	std::vector< std::shared_ptr< std::list< utility::tag::TagOP > > > local_tag_list_for_input_pose_id;
+	arc( local_tag_list_for_input_pose_id ); // std::vector<TagListOP>
+	std::vector< std::shared_ptr< std::list< utility::tag::TagCOP > > > tmp;
+	tmp.reserve(local_tag_list_for_input_pose_id.size());
+	for ( auto taglist: local_tag_list_for_input_pose_id ) {
+		auto tags = std::make_shared< std::list< utility::tag::TagCOP > >();
+		for ( auto tag: *taglist ) {
+			tags->push_back(tag);
+		}
+		tmp.push_back(tags);
+	}
+	tag_list_for_input_pose_id_ = tmp; // copy the non-const pointer(s) into the const pointer(s)
+
+	//arc( most_recent_request_ ); // ParsedTagCacheOP
+	// EXEMPT most_recent_request_
+	arc( dummy_pose_ ); // core::pose::Pose
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::multistage_rosetta_scripts::TagManager );
+CEREAL_REGISTER_TYPE( protocols::multistage_rosetta_scripts::TagManager )
+
+
+/////// @brief Automatically generated serialization method
+////template< class Archive >
+////void
+////protocols::multistage_rosetta_scripts::NoFailDataMap::save( Archive & arc ) const {
+//// arc( cereal::base_class< basic::datacache::DataMap >( this ) );
+////}
+////
+/////// @brief Automatically generated deserialization method
+////template< class Archive >
+////void
+////protocols::multistage_rosetta_scripts::NoFailDataMap::load( Archive & arc ) {
+//// arc( cereal::base_class< basic::datacache::DataMap >( this ) );
+////}
+////
+////SAVE_AND_LOAD_SERIALIZABLE( protocols::multistage_rosetta_scripts::NoFailDataMap );
+////CEREAL_REGISTER_TYPE( protocols::multistage_rosetta_scripts::NoFailDataMap )
+
+
+/// @brief Automatically generated serialization method
+//// template< class Archive >
+//// void
+//// protocols::multistage_rosetta_scripts::ParsedTagCache::save( Archive & arc ) const {
+////  arc( CEREAL_NVP( input_pose_id ) ); // core::Size
+////  arc( CEREAL_NVP( data_map ) ); // NoFailDataMapOP
+////  arc( CEREAL_NVP( mover_tags ) ); // TagMapOP
+////  arc( CEREAL_NVP( filter_tags ) ); // TagMapOP
+////  arc( CEREAL_NVP( movers_map ) ); // utility::pointer::shared_ptr<moves::Movers_map>
+////  arc( CEREAL_NVP( filters_map ) ); // utility::pointer::shared_ptr<filters::Filters_map>
+//// }
+////
+//// /// @brief Automatically generated deserialization method
+//// template< class Archive >
+//// void
+//// protocols::multistage_rosetta_scripts::ParsedTagCache::load( Archive & arc ) {
+////  arc( input_pose_id ); // core::Size
+////  arc( data_map ); // NoFailDataMapOP
+////  std::shared_ptr< std::map< std::basic_string< char >, std::shared_ptr< utility::tag::Tag >, struct std::less< std::basic_string< char > > > > local_mover_tags;
+////  arc( local_mover_tags ); // TagMapOP
+////  mover_tags = local_mover_tags; // copy the non-const pointer(s) into the const pointer(s)
+////  std::shared_ptr< std::map< std::basic_string< char >, std::shared_ptr< utility::tag::Tag >, struct std::less< std::basic_string< char > > > > local_filter_tags;
+////  arc( local_filter_tags ); // TagMapOP
+////  filter_tags = local_filter_tags; // copy the non-const pointer(s) into the const pointer(s)
+////  std::shared_ptr< std::map< std::basic_string< char >, std::shared_ptr< protocols::moves::Mover >, struct std::less< std::basic_string< char > > > > local_movers_map;
+////  arc( local_movers_map ); // utility::pointer::shared_ptr<moves::Movers_map>
+////  movers_map = local_movers_map; // copy the non-const pointer(s) into the const pointer(s)
+////  std::shared_ptr< std::map< std::basic_string< char >, std::shared_ptr< protocols::filters::Filter >, struct std::less< std::basic_string< char > > > > local_filters_map;
+////  arc( local_filters_map ); // utility::pointer::shared_ptr<filters::Filters_map>
+////  filters_map = local_filters_map; // copy the non-const pointer(s) into the const pointer(s)
+//// }
+////
+//// SAVE_AND_LOAD_SERIALIZABLE( protocols::multistage_rosetta_scripts::ParsedTagCache );
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_multistage_rosetta_scripts_TagManager )
+#endif // SERIALIZATION

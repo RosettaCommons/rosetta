@@ -37,6 +37,9 @@
 #include <algorithm>
 #include <utility/assert.hh>
 
+#ifdef SERIALIZATION
+#include <utility/vector1.srlz.hh>
+#endif
 
 namespace utility {
 namespace keys {
@@ -716,6 +719,15 @@ private: // Fields
 	/// @brief Upper active index of active keys
 	Index u_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const {
+		arc( v_, m_, u_ );
+	}
+	template< class Archive > void load( Archive & arc ) {
+		arc( v_, m_, u_ );
+	}
+#endif // SERIALIZATION
 
 }; // SmallKeyVector
 

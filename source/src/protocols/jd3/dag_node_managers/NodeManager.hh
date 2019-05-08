@@ -51,6 +51,12 @@ To get the most out of this class, call:
 #include <protocols/jd3/JobSummary.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace dag_node_managers {
@@ -224,6 +230,16 @@ private:
 	core::Size max_num_results_with_same_token_per_partition_;
 
 	std::list< jd3::JobResultID > job_results_that_should_be_discarded_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	NodeManager();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 inline
@@ -253,5 +269,10 @@ NodeManager::get_nth_job_result_id( core::Size n ) {
 } //dag_node_managers
 } //jd3
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_dag_node_managers_NodeManager )
+#endif // SERIALIZATION
+
 
 #endif

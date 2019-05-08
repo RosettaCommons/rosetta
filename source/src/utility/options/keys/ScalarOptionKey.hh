@@ -23,6 +23,12 @@
 #include <utility/options/keys/OptionKey.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace utility {
 namespace options {
 
@@ -148,11 +154,23 @@ public: // Properties
 	}
 
 
+#ifdef    SERIALIZATION
+	friend class cereal::access;
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // ScalarOptionKey
 
 
 } // namespace options
 } // namespace utility
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( utility_options_keys_ScalarOptionKey )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_utility_options_keys_ScalarOptionKey_HH

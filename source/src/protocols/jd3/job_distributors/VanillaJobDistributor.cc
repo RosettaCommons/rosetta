@@ -57,6 +57,16 @@ VanillaJobDistributor::go( JobQueenOP queen ) {
 	using namespace utility::graph;
 	using SizeList = std::list<Size>;
 
+	// Warn about the Vanilla JQ not performing any checkpointing.
+	if ( basic::options::option[ basic::options::OptionKeys::jd3::checkpoint ] ||
+			basic::options::option[ basic::options::OptionKeys::jd3::checkpoint_period ].user() ||
+			basic::options::option[ basic::options::OptionKeys::jd3::checkpoint_directory ].user() ||
+			basic::options::option[ basic::options::OptionKeys::jd3::restore_from_checkpoint ] ||
+			basic::options::option[ basic::options::OptionKeys::jd3::keep_all_checkpoints ].user() ||
+			basic::options::option[ basic::options::OptionKeys::jd3::keep_checkpoint ].user() ) {
+		TR.Warning << "Checkpointing options detected on the command line, but VanillaJobDistributor does not perform any checkpointing" << std::endl;
+	}
+
 	if ( basic::options::option[ basic::options::OptionKeys::jd3::job_definition_schema ].user() ) {
 		std::string xsd = queen->job_definition_xsd();
 		std::string outfile_name = basic::options::option[ basic::options::OptionKeys::jd3::job_definition_schema ]();

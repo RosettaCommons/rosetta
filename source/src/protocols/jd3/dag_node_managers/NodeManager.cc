@@ -25,6 +25,18 @@
 
 static basic::Tracer TR( "protocols.jd3.dag_node_managers.NodeManager" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/list.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace dag_node_managers {
@@ -107,3 +119,58 @@ NodeManager::clear() {
 }
 } //jd3
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::jd3::dag_node_managers::NodeManager::NodeManager() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::dag_node_managers::NodeManager::save( Archive & arc ) const {
+	arc( CEREAL_NVP( job_offset_ ) ); // core::Size
+	arc( CEREAL_NVP( num_jobs_total_ ) ); // core::Size
+	arc( CEREAL_NVP( num_results_to_keep_ ) ); // core::Size
+	arc( CEREAL_NVP( num_results_to_keep_for_part_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( num_results_total_ ) ); // core::Size
+	arc( CEREAL_NVP( num_results_received_ ) ); // core::Size
+	arc( CEREAL_NVP( num_results_received_for_part_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( result_threshold_ ) ); // _Bool
+	arc( CEREAL_NVP( result_threshold_per_part_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( stopped_early_ ) ); // _Bool
+	arc( CEREAL_NVP( num_jobs_submitted_ ) ); // core::Size
+	arc( CEREAL_NVP( num_jobs_completed_ ) ); // core::Size
+	arc( CEREAL_NVP( num_partitions_ ) ); // core::Size
+	arc( CEREAL_NVP( results_to_keep_ ) ); // class protocols::jd3::dag_node_managers::NodeManagerStorageMatrix
+	arc( CEREAL_NVP( max_num_results_with_same_token_per_partition_ ) ); // core::Size
+	arc( CEREAL_NVP( job_results_that_should_be_discarded_ ) ); // std::list<jd3::JobResultID>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::dag_node_managers::NodeManager::load( Archive & arc ) {
+	arc( job_offset_ ); // core::Size
+	arc( num_jobs_total_ ); // core::Size
+	arc( num_results_to_keep_ ); // core::Size
+	arc( num_results_to_keep_for_part_ ); // utility::vector1<core::Size>
+	arc( num_results_total_ ); // core::Size
+	arc( num_results_received_ ); // core::Size
+	arc( num_results_received_for_part_ ); // utility::vector1<core::Size>
+	arc( result_threshold_ ); // _Bool
+	arc( result_threshold_per_part_ ); // utility::vector1<core::Size>
+	arc( stopped_early_ ); // _Bool
+	arc( num_jobs_submitted_ ); // core::Size
+	arc( num_jobs_completed_ ); // core::Size
+	arc( num_partitions_ ); // core::Size
+	arc( results_to_keep_ ); // class protocols::jd3::dag_node_managers::NodeManagerStorageMatrix
+	arc( max_num_results_with_same_token_per_partition_ ); // core::Size
+	arc( job_results_that_should_be_discarded_ ); // std::list<jd3::JobResultID>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::dag_node_managers::NodeManager );
+CEREAL_REGISTER_TYPE( protocols::jd3::dag_node_managers::NodeManager )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_dag_node_managers_NodeManager )
+#endif // SERIALIZATION

@@ -29,6 +29,11 @@
 // C++ headers
 #include <string>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace pose_inputters {
@@ -40,10 +45,21 @@ public:
 	virtual std::string keyname() const;
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 	virtual void list_options_read( utility::options::OptionKeyList & read_options ) const;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace pose_inputters
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_pose_inputters_PDBPoseInputterCreator )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_pose_inputters_PoseInputter_HH

@@ -41,6 +41,15 @@
 
 #include <boost/algorithm/string/erase.hpp>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace utility {
 namespace options {
 
@@ -1645,3 +1654,61 @@ OptionCollection::wrapped(
 
 } // namespace options
 } // namespace utility
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+utility::options::OptionCollection::save( Archive & arc ) const {
+	arc( CEREAL_NVP( booleans_ ) ); // Booleans
+	arc( CEREAL_NVP( integers_ ) ); // Integers
+	arc( CEREAL_NVP( reals_ ) ); // Reals
+	arc( CEREAL_NVP( strings_ ) ); // Strings
+	arc( CEREAL_NVP( files_ ) ); // Files
+	arc( CEREAL_NVP( paths_ ) ); // Paths
+	//arc( CEREAL_NVP( anys_ ) ); // Anys
+	// EXEMPT anys_
+	arc( CEREAL_NVP( boolean_vectors_ ) ); // BooleanVectors
+	arc( CEREAL_NVP( integer_vectors_ ) ); // IntegerVectors
+	arc( CEREAL_NVP( real_vectors_ ) ); // RealVectors
+	arc( CEREAL_NVP( residue_chain_vectors_ ) ); // ResidueChainVectors
+	arc( CEREAL_NVP( string_vectors_ ) ); // StringVectors
+	arc( CEREAL_NVP( file_vectors_ ) ); // FileVectors
+	arc( CEREAL_NVP( path_vectors_ ) ); // PathVectors
+	//arc( CEREAL_NVP( any_vectors_ ) ); // AnyVectors
+	// EXEMPT any_vectors_
+	arc( CEREAL_NVP( all_ ) ); // All
+	arc( CEREAL_NVP( argv_copy_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+utility::options::OptionCollection::load( Archive & arc ) {
+	arc( booleans_ ); // Booleans
+	arc( integers_ ); // Integers
+	arc( reals_ ); // Reals
+	arc( strings_ ); // Strings
+	arc( files_ ); // Files
+	arc( paths_ ); // Paths
+	// EXEMPT anys_
+	//arc( anys_ ); // Anys
+	arc( boolean_vectors_ ); // BooleanVectors
+	arc( integer_vectors_ ); // IntegerVectors
+	arc( real_vectors_ ); // RealVectors
+	arc( residue_chain_vectors_ ); // ResidueChainVectors
+	arc( string_vectors_ ); // StringVectors
+	arc( file_vectors_ ); // FileVectors
+	arc( path_vectors_ ); // PathVectors
+	// EXEMPT any_vectors_
+	//arc( any_vectors_ ); // AnyVectors
+	arc( all_ ); // All
+	arc( argv_copy_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( utility::options::OptionCollection );
+CEREAL_REGISTER_TYPE( utility::options::OptionCollection )
+
+CEREAL_REGISTER_DYNAMIC_INIT( utility_options_OptionCollection )
+#endif // SERIALIZATION

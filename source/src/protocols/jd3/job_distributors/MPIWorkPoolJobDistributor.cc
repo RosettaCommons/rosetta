@@ -54,11 +54,13 @@
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/list.hpp>
+#include <cereal/types/map.hpp>
 #include <cereal/types/utility.hpp>
 #include <cereal/details/helpers.hpp>
 
 // C++
 #include <utility>
+#include <cstdio>
 
 static basic::Tracer TR( "protocols.jd3.job_distributors.MPIWorkPoolJobDistributor" );
 
@@ -81,7 +83,11 @@ MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 	jobs_to_output_for_archives_( n_archives_ ),
 	n_outstanding_output_tasks_for_archives_( n_archives_ ),
 	output_list_empty_( true ),
-	default_retry_limit_( 1 )
+	default_retry_limit_( 1 ),
+	checkpoint_( false ),
+	checkpoint_counter_( 1 ),
+	checkpoint_period_( 1800 ),
+	last_checkpoint_wall_clock_( std::chrono::system_clock::now() )
 {
 	mpi_rank_ = utility::mpi_rank();
 	mpi_rank_string_ = utility::to_string( mpi_rank_ );
@@ -103,6 +109,19 @@ MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 		deallocation_messages_for_node_.resize( mpi_nprocs_ );
 	}
 
+	if ( basic::options::option[ basic::options::OptionKeys::jd3::checkpoint ] ||
+			basic::options::option[ basic::options::OptionKeys::jd3::checkpoint_period ].user() ||
+			basic::options::option[ basic::options::OptionKeys::jd3::checkpoint_directory ].user() ) {
+		checkpoint_ = true;
+		if ( basic::options::option[ basic::options::OptionKeys::jd3::checkpoint_period ].user() ) {
+			int checkpoint_period = basic::options::option[ basic::options::OptionKeys::jd3::checkpoint_period ];
+			if ( checkpoint_period <= 0 ) {
+				utility_exit_with_message("Positive values for checkpoint period must be given");
+			}
+			checkpoint_period_ = 60 * checkpoint_period;
+		}
+		checkpoint_directory_ = basic::options::option[ basic::options::OptionKeys::jd3::checkpoint_directory ];
+	}
 }
 
 MPIWorkPoolJobDistributor::~MPIWorkPoolJobDistributor() {}
@@ -132,7 +151,15 @@ void
 MPIWorkPoolJobDistributor::go_master()
 {
 	master_setup();
+	core::Size checkpoint_index = decide_restore_from_checkpoint();
+	if ( checkpoint_index > 0 ) {
+		restore_from_checkpoint_master(checkpoint_index);
+	}
 	while ( not_done() ) {
+		if ( decide_checkpoint_now() ) {
+			checkpoint_master();
+		}
+
 		int worker_node = utility::receive_integer_from_anyone();
 		int message = utility::receive_integer_from_node( worker_node );
 		switch ( message ) {
@@ -219,23 +246,21 @@ MPIWorkPoolJobDistributor::go_master()
 		}
 	}
 
-	for ( int ii = 1; ii <= n_archives_; ++ii ) {
-		if ( ! archive_currently_outputting_[ii] ) {
-			utility::send_integer_to_node( ii, 0 ); // archive is expecting a node ID
-			send_spin_down_signal_to_node( ii );
-		}
-	}
+	// for ( int ii = 1; ii <= n_archives_; ++ii ) {
+	//  if ( ! archive_currently_outputting_[ii] ) {
+	//   utility::send_integer_to_node( ii, 0 ); // archive is expecting a node ID
+	//   send_spin_down_signal_to_node( ii );
+	//  }
+	// }
 
 	// Finally, wait until all archives have completed their final output operations
 	// and then tell each of them to spin down.
-	while ( any_archive_nodes_not_yet_spun_down() ) {
+	while ( any_archive_node_still_outputting() ) {
 		int archive_node = utility::receive_integer_from_anyone();
 		int message = utility::receive_integer_from_node( archive_node );
 		switch ( message ) {
 		case mpi_work_pool_jd_output_completed :
 			process_output_complete_message( archive_node );
-			utility::send_integer_to_node( archive_node, 0 ); // archive is expecting a node ID
-			send_spin_down_signal_to_node( archive_node );
 			break;
 		default :
 			// error -- we should not have gotten here
@@ -245,8 +270,18 @@ MPIWorkPoolJobDistributor::go_master()
 		}
 	}
 
+	for ( int ii = 1; ii <= n_archives_; ++ii ) {
+		utility::send_integer_to_node( ii, 0 ); // archive is expecting a node ID
+		send_spin_down_signal_to_node( ii );
+	}
+
 
 	job_queen_->flush();
+
+	if ( checkpoint_ ) {
+		// Clean up any checkpoint files now that we are done
+		delete_checkpoint( checkpoint_counter_ - 1 );
+	}
 
 	TR << "Exiting go_master" << std::endl;
 }
@@ -282,6 +317,12 @@ MPIWorkPoolJobDistributor::go_archive()
 			break;
 		case mpi_work_pool_jd_spin_down :
 			keep_going = false; // exit the lister loop
+			break;
+		case mpi_work_pool_jd_begin_checkpointing :
+			checkpoint_archive();
+			break;
+		case mpi_work_pool_jd_restore_from_checkpoint :
+			restore_from_checkpoint_archive();
 			break;
 		default :
 			send_error_message_to_node0(
@@ -341,7 +382,578 @@ MPIWorkPoolJobDistributor::master_setup()
 			utility_exit_with_message( "Unable to find or create directory: " + archive_dir_name_ );
 		}
 	}
+	last_checkpoint_wall_clock_ = std::chrono::system_clock::now();
+
 }
+
+/// @details look for a complete set of checkpoint files in the
+/// checkpoint directory with the highest checkpoint index.
+Size
+MPIWorkPoolJobDistributor::decide_restore_from_checkpoint()
+{
+	if ( !checkpoint_ ) return 0;
+	if ( !basic::options::option[ basic::options::OptionKeys::jd3::restore_from_checkpoint ] ) return 0;
+
+	bool const quit_on_failure = ! basic::options::option[ basic::options::OptionKeys::jd3::continue_past_failed_checkpoint_restoration ];
+
+	TR << "Attempting to restore from checkpoints in directory " << checkpoint_directory_ << std::endl;
+
+	if ( !utility::file::is_directory(checkpoint_directory_) ) {
+		if ( quit_on_failure ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception, "Could not recover from checkpoint;"
+				" checkpoint directory '" + checkpoint_directory_ + "' does not exist");
+		}
+		return 0;
+	}
+
+	// Sanity check: does the file in the existing checkpoints directory
+	// list the right number of archive nodes?
+	if ( !checkpoint_sanity_check() ) {
+		TR << "Sanity check failed. Could not recover from checkpoint" << std::endl;
+		if ( quit_on_failure ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception, "Could not recover from checkpoint."
+				" Sanity check failed.");
+		}
+		return false;
+	}
+
+	utility::vector1< std::string > fnames;
+	int err_code = utility::file::list_dir( checkpoint_directory_, fnames );
+	if ( err_code != 0 ) {
+		if ( quit_on_failure ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception, "Could not recover from checkpoint."
+				" Unable to retreive contents of checkpoint directory '" + checkpoint_directory_ + "'");
+		}
+		return false;
+	}
+	utility::vector1< Size > candidates;
+	for ( auto const & fname : fnames ) {
+		// Let's break fname by _s
+		utility::vector1< std::string > cols = utility::string_split_simple(fname, '_');
+		if ( cols.size() != 3 ) continue;
+		if ( cols[1] != "chkpt" ) continue;
+		if ( cols[3] != "0.bin" ) continue;
+		candidates.push_back(utility::string2Size(cols[2]));
+	}
+	std::sort(candidates.begin(), candidates.end());
+	Size chosen(0);
+	for ( Size ii = candidates.size(); ii > 0; --ii ) {
+		Size cand = candidates[ii];
+		bool all_found = true;
+		for ( int jj = 1; jj <= n_archives_; ++jj ) {
+			std::string fname = checkpoint_file_name_for_node(
+				checkpoint_file_prefix( cand ), jj);
+			TR << "For candidate " << cand << " looking for file " << fname << std::endl;
+			if ( ! utility::file::file_exists( fname ) ) {
+				TR << "  " << fname << " not found!" << std::endl;
+				all_found = false;
+				break;
+			}
+		}
+		if ( all_found ) {
+			chosen = cand;
+			break;
+		}
+	}
+	if ( chosen != 0 ) {
+		TR << "Complete set of checkpoints found for checkpoint #" << chosen << std::endl;
+	} else {
+		TR << "No complete set of checkpoint files could be found" << std::endl;
+		if ( quit_on_failure ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception, "Could not recover from checkpoint."
+				" No complete set of checkpoint files could be found" );
+		}
+	}
+	return chosen;
+}
+
+bool
+MPIWorkPoolJobDistributor::decide_checkpoint_now()
+{
+	if ( ! checkpoint_ ) return false;
+	std::chrono::duration<double> time_diff = std::chrono::system_clock::now() - last_checkpoint_wall_clock_;
+	//TR << "DECIDE CHECKPOINT NOW: " << std::chrono::duration_cast< std::chrono::milliseconds >(time_diff).count() << std::endl;
+	auto diff_seconds = std::chrono::duration_cast< std::chrono::seconds >(time_diff);
+	return diff_seconds > std::chrono::seconds(checkpoint_period_);
+}
+
+
+
+/// @details
+/// This is the function node 0 will use as it checkpoints.
+///
+/// Steps:
+/// 1. Create the checkpoint directory if it doesn't exist;
+///    this has to happen before contacting the archives.
+/// 2. Rally all archive nodes. If any archive node is
+///    in the middle of outputting a result to disk, wait
+///    until the archive has completed its current output task,
+///    but do not give it its next output task until archival
+///    has completed (step 8 below).
+/// 3. Create binary archive and archive all data;
+///    if we are in archive_on_disk_ mode, then
+///    a) load in the binary job-result data that's stored on disk, and
+///    b) write that job-result data to the archive file; it would
+///    not be safe to expect that the data that's on disk now will
+///    still be on disk when we try to restore from a checkpoint later.
+/// 4. Write binary archive to checkpoint directory
+/// 5. Ensure all archives have completed their checkpointing
+/// 6. Delete old checkpoint files
+/// 7. Increment the checkpoint counter
+/// 8. Send the next output result to any archive that was
+///    in the middle of outputting its results when
+///    checkpointing began.
+///
+/// Node 0 will store the data it needs in order to restore from a checkpoint,
+/// but it will not be storing all of its data. Explainations for what will
+/// be left behind are given below.
+///
+/// Data not serialized:
+///   - worker_nodes_waiting_for_jobs_:
+///     When restoreing from a checkpoint, the workers will not have stored
+///     anything about what jobs they were running. Instead, they will ask
+///     the master node (node 0) for new jobs. The master node will
+///     redistribute the "in-flight" jobs at the time of the last archival,
+///     Information about what nodes are waiting to be assigned work and even
+///     how many workers there are should not be preserved.
+///   - worker_node_for_job_:
+///     As mentioned above, information about where jobs that are currently being
+///     executed at the time of the checkpoint will not be preserved and instead
+///     the set of in-flight jobs will be re-distributed.
+///   - nodes_spun_down_:
+///     If we are very close to the end of a run, then the job distributor will
+///     need to re-spin down nodes. Worker nodes will not know that they had
+///     been spun down in the previous execution.
+///   - deallocation_messages_for_node_:
+///     This is tricky and may need rethinking. The idea is something like this:
+///     If the only time that a deallocation message needs to be delivered to a
+///     node is after all of the jobs that use the thing (the Pose or the Resource)
+///     have completed, then when the process is relaunched from a checkpoint file,
+///     none of the in-flight jobs that the job distributor will assign will
+///     require that thing. Therefore that thing will not be loaded into memory,
+///     and therefore that thing will not need a deallocation message.
+///     Therefore none of the deallocation-message-passing machinery ought to
+///     be checkpointed.
+///   - deallocation_messages_:
+///     See deallocation_messages_for_node_ above.
+///   - n_remaining_nodes_for_deallocation_message_:
+///     See deallocation_messages_for_node_ above.
+///
+///
+void
+MPIWorkPoolJobDistributor::checkpoint_master()
+{
+	TR << "Creating checkpoint #" << checkpoint_counter_ << std::endl;
+	// 1.
+	if ( !utility::file::is_directory(checkpoint_directory_) ) {
+		bool success = utility::file::create_directory(checkpoint_directory_);
+		if ( !success ) {
+			utility_exit_with_message( "Unable to find or create checkpoint directory: " +
+				checkpoint_directory_);
+		}
+	}
+
+	if ( checkpoint_counter_ == 1 ) {
+		create_checkpoint_sanity_check_file();
+	} else {
+		if ( !checkpoint_sanity_check() ) {
+			TR << "Failed sanity check while trying to create checkpoint #" << checkpoint_counter_ << "\nSkipping checkpoint attempt" << std::endl;
+			return;
+		}
+	}
+
+	// 2.
+	for ( int ii = 1; ii <= n_archives_; ++ii ) {
+		// If node i is currently writing an output, wait until it has finished.
+		// This is essential if we are to avoid a deadlock.
+		// Make sure that we don't send yet another output message to the node.
+		// Do that after we have finished the archival process.
+		if ( node_outputter_is_outputting_for_[ ii ] >= 0 ) {
+			utility::receive_integer_from_node(ii);
+			int message = utility::receive_integer_from_node(ii);
+			runtime_assert( message == mpi_work_pool_jd_output_completed );
+		}
+
+		// Now tell the archive that it's time to run a checkpoint.
+		utility::send_integer_to_node(ii, 0 );
+		utility::send_integer_to_node(ii, mpi_work_pool_jd_begin_checkpointing);
+		utility::send_string_to_node(ii, checkpoint_file_prefix( checkpoint_counter_ ) );
+	}
+
+	// 3.
+	std::string fname = checkpoint_file_name_for_node(
+		checkpoint_file_prefix(checkpoint_counter_), mpi_rank_);
+	std::string fname_tmp = fname + ".tmp";
+	try {
+		std::ofstream out(fname_tmp,std::ios::binary);
+		cereal::BinaryOutputArchive arc(out);
+		arc(job_queen_);
+		arc(job_dag_);
+		arc(job_extractor_);
+		// Skip worker_nodes_waiting_for_jobs_
+
+		arc(job_results_);
+		arc( archive_on_disk_ );
+		if ( archive_on_disk_ ) {
+			for ( auto jr_pair: job_results_ ) {
+				TR << "Saving " << jr_pair.first << std::endl;
+				arc( jr_pair.first );
+				std::string contents = get_string_from_disk( jr_pair.first.first, jr_pair.first.second );
+				arc( contents );
+			}
+		}
+
+		arc(job_result_location_map_);
+		arc(n_results_per_archive_);
+		arc(jobs_to_output_for_archives_);
+		arc(n_outstanding_output_tasks_for_archives_);
+		arc(jobs_to_output_with_results_stored_on_node0_);
+		arc(output_list_empty_);
+		// Skip worker_node_for_job_
+		arc(in_flight_larval_jobs_);
+		// Skip nodes_spun_down_
+		arc(first_call_to_determine_job_list_);
+		// Skip deallocation_messages_for_node_
+		// Skip deallocation_messages_
+		// Skip n_remaining_nodes_for_deallocation_message_
+		arc(checkpoint_counter_);
+	} catch ( cereal::Exception & e ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  std::string("Failed to serialize the data"
+			" in the MPIWorkPoolJobDistributor master node while creating a checkpoint."
+			"\nError message from the cereal library:\n") + e.what() + "\n" );
+	} catch ( std::ios_base::failure& ex ) {
+		//std::cerr << "std::IO error detected... exiting..." << std::endl; // We can not longer use Tracer's at this point
+		//// Using pure exit instead of utility_exit_with_status to avoid infinite recursion
+		//std::exit( basic::options::option[ basic::options::OptionKeys::out::std_IO_exit_error_code]() );
+		throw CREATE_EXCEPTION(utility::excn::Exception,  std::string("Failed to serialize the data"
+			" in the MPIWorkPoolJobDistributor master node while creating a checkpoint."
+			"\nIO error message from STL:\n") + ex.what() + "\n" );
+	}
+	// 4.
+	// OK write the file to its permenent location on disk
+	std::rename(fname_tmp.c_str(), fname.c_str());
+
+	// 5.
+	for ( int ii = 1; ii <= n_archives_; ++ii ) {
+		int msg = utility::receive_integer_from_node(ii);
+		if ( msg == mpi_work_pool_jd_error ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Received error from node " +
+				utility::to_string(ii) + ": " + utility::receive_string_from_node(ii) );
+		} else if ( msg == mpi_work_pool_jd_checkpointing_complete ) {
+			// good!
+		} else {
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Unexpected message from archive node " +
+				utility::to_string(ii) + " encountered while creating checkpoint file: " +
+				utility::to_string( msg ));
+		}
+	}
+
+	// 6.
+	delete_checkpoint( checkpoint_counter_ - 1 );
+
+	// 7.
+	++checkpoint_counter_;
+
+	// 8.
+	for ( int ii = 1; ii <= n_archives_; ++ii ) {
+		if ( node_outputter_is_outputting_for_[ ii ] >= 0 ) {
+			process_output_complete_message(ii);
+		}
+	}
+
+	last_checkpoint_wall_clock_ = std::chrono::system_clock::now();
+	TR << "Wrote checkpoint #" << (checkpoint_counter_-1) << " to " << checkpoint_directory_ << std::endl;
+}
+
+/// @details After JD0 has instructed us to create a checkpoint,
+/// we will
+/// 1. Get the checkpoint-file prefix that we need in order to create the
+///    appropriate checkpoint file.
+/// 2. Create an archive with a temporary file on disk,
+/// 3. Serialize the job_results_ data that we are storing; if we
+///    are in archive_to_disk_ mode, then we will
+///    a) retrieve the contents of the job result data stored on disk, and
+///    b) write them out to the checkpoint archive
+/// 4. Move the temporary file to its final location, and
+/// 5. Tell JD0 that we have finished creating our checkpoint
+void
+MPIWorkPoolJobDistributor::checkpoint_archive()
+{
+	std::string checkpoint_prefix = utility::receive_string_from_node(0);
+	auto checkpoint_fname = checkpoint_file_name_for_node( checkpoint_prefix, mpi_rank_ );
+	auto checkpoint_fname_tmp = checkpoint_fname + ".tmp";
+	std::ofstream out( checkpoint_fname_tmp.c_str(), std::ios::binary );
+	if ( !out.is_open() ) {
+		utility::send_integer_to_node(0, mpi_work_pool_jd_error );
+		utility::send_string_to_node(0, "Failed to open checkpoint file " + checkpoint_fname_tmp );
+	}
+	try {
+		cereal::BinaryOutputArchive arc(out);
+		arc(job_results_);
+		arc( archive_on_disk_ );
+		if ( archive_on_disk_ ) {
+			for ( auto jr_pair: job_results_ ) {
+				auto archive_contents = [&] (std::string const & contents ) {
+					TR.Debug << "Saving " << jr_pair.first << std::endl;
+					arc( jr_pair.first );
+					arc( contents );
+				};
+				try {
+					retrieve_job_result_and_act( jr_pair.first, archive_contents );
+				} catch ( std::string errstring ) {
+					TR.Error << "Failed to retrieve archived job result " << jr_pair << std::endl;
+					TR.Error << "Quitting" << std::endl;
+					utility::send_integer_to_node(0, mpi_work_pool_jd_error );
+					utility::send_string_to_node(0, "Archive node " + utility::to_string(mpi_rank_) +
+						" failed to create checkpoint to file " + checkpoint_fname + " with error" +
+						"\n" + errstring + "\n");
+					return;
+				}
+			}
+		}
+
+	} catch ( cereal::Exception & e ) {
+		utility::send_integer_to_node(0, mpi_work_pool_jd_error );
+		utility::send_string_to_node(0, "Archive node " + utility::to_string(mpi_rank_) +
+			" failed to create checkpoint to file " + checkpoint_fname + " with a serialization" +
+			" error:\n" + e.what() + "\n");
+		return;
+	}
+	out.close();
+
+	std::rename(checkpoint_fname_tmp.c_str(), checkpoint_fname.c_str());
+
+	utility::send_integer_to_node(0, mpi_work_pool_jd_checkpointing_complete);
+}
+
+/// @brief Restore the state of JD0 from the archived data in the checkpoint file.
+///
+/// @details At this point, we know which checkpoint file we are going to recover from.
+///
+/// 1. Restore the data stored in the checkpoint file. This overwrites many of
+///    The data members in the JD, including the job queen.
+///    If the archive was created in archive_to_disk_ mode, then we need
+///    to unpack the archived job results one at a time from the archive;
+///    if we are currently in archive_to_disk_ mode, then we need to put
+///    the job results back out to disk. NOTE: you can switch between archival
+///    modes. If the checkpoint was created with archive_to_disk_ mode, you
+///    can turn off archive_to_disk_ mode when you are restoring. If the
+///    checkpoint was created when not in archive_to_disk_ mode, you can
+///    switch to archiving to disk.
+/// 2. Re-queue the jobs that were in-flight when the checkpoint was created.
+///    The jobs that were in-flight at the time of checkpoint creation will
+///    not be running when we restore from the checkpoint and they did not
+///    complete (or we can't assume they did). The JobQueen has no idea she
+///    was checkpointed and has woken up from the checkpoint. She will not
+///    ask a second time for these jobs to be executed. It is the JD's
+///    responsibility to make sure that the jobs the JQ has given it will
+///    be executed. Therefore, they must be re-queued.
+/// 3. Purge the job_result_location_map_ of the JobResults that belong
+///    to jobs that finished the 1st of the 2 step result-archival protocol.
+///    When a worker has finished a job, JD0 tells them where they should
+///    archive their results and the worker goes and processes the archival.
+///    JD0 writes down which archive the worker will be storing their results
+///    with. This is step 1. At this step, JD0 knows where the result will end
+///    up, but will not know whether that archival has happened. Once the worker
+///    has completed their archival, then they tell JD0 that the archival is
+///    complete, and at this point, JD0 can guarantee that the archive actually
+///    holds the result. This is step 2. If a job result is between steps 1
+///    and 2, then the job_result_location_map_ is saying that a result lives
+///    on an archive but it may not actually live there yet. To be safe,
+///    we must purge the location information for any job result whose job
+///    is listed as "in flight." Such job results are between stages 1 and 2.
+/// 4. Clear the in_flight_jobs_ list.
+/// 5. Now tell each archive which of its job results that it should preserve.
+///    The archives may be holding some of the job results that are in between
+///    stage 1 and stage 2; these results should not be recovered. New job
+///    results for these in-flight jobs will be generated when those jobs are
+///    re-run.
+/// 6. Resume any interrupted job-outputting steps that were in-progress at
+///    the time of checkpoint creation.
+/// 7. Increment the checkpoint counter.
+void
+MPIWorkPoolJobDistributor::restore_from_checkpoint_master(core::Size checkpoint_index )
+{
+	std::string checkpoint_prefix = checkpoint_file_prefix(checkpoint_index);
+	std::string fname = checkpoint_file_name_for_node(checkpoint_prefix, mpi_rank_);
+
+	TR << "Attempting to restore from checkpoint #" << checkpoint_index <<
+		" in directory " << checkpoint_directory_ << std::endl;
+
+	// 1.
+	std::ifstream ifs( fname.c_str(), std::ios::in|std::ios::binary );
+	{
+		cereal::BinaryInputArchive arc(ifs);
+		arc(job_queen_);
+		JobDigraphOP temp_job_dag;
+		arc(temp_job_dag);
+		job_dag_ = temp_job_dag;
+		arc(job_extractor_);
+		// Skip worker_nodes_waiting_for_jobs_
+
+		arc(job_results_);
+		bool prev_archived_on_disk;
+		arc( prev_archived_on_disk );
+		if ( prev_archived_on_disk ) {
+			for ( core::Size ii = 1; ii <= job_results_.size(); ++ii ) {
+				JobResultID id;
+				arc(id);
+				TR << "Restoring " << id << std::endl;
+				std::string contents;
+				arc(contents);
+				if ( archive_on_disk_ ) {
+					TR << "Writing out result " << id << std::endl;
+					job_results_[id] = nullptr;
+					std::string const filename = filename_for_archive( id.first, id.second );
+					std::ofstream out( filename );
+					debug_assert( out.is_open() );
+					out << contents;
+					out.close();
+				} else {
+					job_results_[id] = std::make_shared< std::string >(contents);
+				}
+			}
+		}
+
+		arc(job_result_location_map_);
+		arc(n_results_per_archive_);
+		arc(jobs_to_output_for_archives_);
+		arc(n_outstanding_output_tasks_for_archives_);
+		arc(jobs_to_output_with_results_stored_on_node0_);
+		arc(output_list_empty_);
+		// Skip worker_node_for_job_
+		arc(in_flight_larval_jobs_);
+		// Skip nodes_spun_down_
+		arc(first_call_to_determine_job_list_);
+		// Skip deallocation_messages_for_node_
+		// Skip deallocation_messages_
+		// Skip n_remaining_nodes_for_deallocation_message_
+		arc(checkpoint_counter_);
+	}
+
+	// 2.
+	for ( auto const & job_pair: in_flight_larval_jobs_ ) {
+		job_extractor_->push_job_to_front_of_queue(job_pair.second);
+	}
+
+	// 3.
+	// Purge records of job-results whose jobs were still considered
+	// "in flight" at the time of checkpointing.
+	for ( auto location_iter = job_result_location_map_.begin(); location_iter != job_result_location_map_.end(); /*no increment */ ) {
+		auto const & id = location_iter->first;
+		auto location_iter_next = location_iter;
+		++location_iter_next;
+
+		// Look to see if we still classify the job for this result-id
+		// as "in flight"
+		auto in_flight_iter = in_flight_larval_jobs_.find(id.first);
+		if ( in_flight_iter != in_flight_larval_jobs_.end() ) {
+			// Before checkpointing, we wrote down that this result would live
+			// on a particular archive, but we cannot guarantee that the
+			// result had been archived there. So we must remove this result
+			// from the job_result_location_map_.
+			job_result_location_map_.erase(location_iter);
+		}
+
+		location_iter = location_iter_next; // increment
+	}
+	// 4.
+	in_flight_larval_jobs_.clear();
+
+	// 5.
+	// Now we inform the archives what job results they ought to be holding;
+	// the archives are responsible for discarding the results that they do
+	// not need
+	utility::vector1< utility::vector1<Size> > results_first_for_archive(n_archives_);
+	utility::vector1< utility::vector1<Size> > results_second_for_archive(n_archives_);
+	for ( auto const & result_iter: job_result_location_map_ ) {
+		if ( result_iter.second > 0 ) {
+			results_first_for_archive[result_iter.second].push_back(result_iter.first.first);
+			results_second_for_archive[result_iter.second].push_back(result_iter.first.second);
+		}
+	}
+	for ( int ii = 1; ii <= n_archives_; ++ii ) {
+		utility::send_integer_to_node(ii, 0);
+		utility::send_integer_to_node(ii, mpi_work_pool_jd_restore_from_checkpoint);
+		utility::send_string_to_node(ii, checkpoint_prefix);
+		utility::send_sizes_to_node(ii, results_first_for_archive[ii]);
+		utility::send_sizes_to_node(ii, results_second_for_archive[ii]);
+	}
+
+	// 6.
+	// OK! well, the first thing we did after completing the archival was resume
+	// outputting of any results that had not yet been output, so we should do that
+	// now to get that process resumed.
+	for ( int ii = 1; ii <= n_archives_; ++ii ) {
+		if ( node_outputter_is_outputting_for_[ ii ] >= 0 ) {
+			process_output_complete_message(ii);
+		}
+	}
+
+	// 7.
+	++checkpoint_counter_;
+
+	TR << "Successfully restored from checkpoint" << std::endl;
+
+}
+
+/// @details Load the checkpointed job_results map, and store all of the
+/// job results that the master node thinks we ought to have.
+/// Note that it is possible that there are job results we are holding that
+/// the master node does not yet know about, and therefore would never
+/// ask this node to deallocate. Thus we ought to discard those results.
+void
+MPIWorkPoolJobDistributor::restore_from_checkpoint_archive()
+{
+	// OK, node 0 has just asked us to restore from a checkpoint file
+	std::string checkpoint_prefix = utility::receive_string_from_node(0);
+
+	utility::vector1<Size> results_to_keep_first = utility::receive_sizes_from_node(0);
+	utility::vector1<Size> results_to_keep_second = utility::receive_sizes_from_node(0);
+
+	std::string fname = checkpoint_file_name_for_node(checkpoint_prefix, mpi_rank_);
+	TR << "Attempting to restore from checkpoint file " << fname << std::endl;
+	std::ifstream ifs(fname.c_str(), std::ios::in|std::ios::binary);
+	SerializedJobResultMap temp_job_results;
+	try {
+		cereal::BinaryInputArchive arc(ifs);
+		arc(temp_job_results);
+		bool prev_archived_on_disk;
+		arc( prev_archived_on_disk );
+		if ( prev_archived_on_disk ) {
+			for ( core::Size ii = 1; ii <= temp_job_results.size(); ++ii ) {
+				JobResultID id;
+				arc(id);
+				TR << "Restoring " << id << std::endl;
+				std::string contents;
+				arc(contents);
+				temp_job_results[ id ] = std::make_shared< std::string >(contents);
+			}
+		}
+	} catch ( cereal::Exception & e ) {
+		utility::send_integer_to_node(0, mpi_work_pool_jd_error );
+		utility::send_string_to_node(0, "Archive node " + utility::to_string(mpi_rank_) +
+			" failed to restore from checkpoint file " + fname + " with a serialization" +
+			" error:\n" + e.what() + "\n");
+		return;
+	}
+
+	for ( Size ii = 1; ii <= results_to_keep_first.size(); ++ii ) {
+		JobResultID id{results_to_keep_first[ii], results_to_keep_second[ii]};
+		auto iter = temp_job_results.find(id);
+		if ( iter == temp_job_results.end() ) {
+			// Handle error!
+			utility::send_integer_to_node(0, mpi_work_pool_jd_error );
+			utility::send_string_to_node(0, "Archive node " + utility::to_string(mpi_rank_) +
+				" did not unpack result with id " + utility::to_string(id) + " from checkpoint"
+				" file with name " + fname + "; JD0 thinks we should have this file");
+			return;
+		}
+		save_job_result( id, iter->second );
+	}
+	TR << "Successfully restored from checkpoint file " << fname << std::endl;
+}
+
 
 bool
 MPIWorkPoolJobDistributor::node_is_archive( int node_rank ) const
@@ -590,32 +1202,18 @@ MPIWorkPoolJobDistributor::process_retrieve_job_result_request( int worker_node 
 	Size result_index = receive_size_from_node( worker_node );
 	JobResultID result_id = { job_id, result_index };
 
-	bool archive_does_not_exist = false;
+	auto send_to_worker = [&](std::string const & str ) {
+		TR.Debug << "Sending result " << job_id << " " << result_index << " to worker " << worker_node << std::endl;
+		send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
+		send_string_to_node( worker_node, str );
+	};
 
-	if ( archive_on_disk_ ) {
-		std::string const filename = filename_for_archive( job_id, result_index );
-		std::ifstream in ( filename );
-		if ( ! in.good() ) {
-			archive_does_not_exist = true;
-		} else {
-			std::string const content = utility::file_contents( filename );
-			send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
-			send_string_to_node( worker_node, content );
-		}
-		in.close();
-	} else {
-		SerializedJobResultMap::const_iterator iter = job_results_.find( result_id );
-		if ( iter == job_results_.end() ) {
-			archive_does_not_exist = true;
-		} else {
-			// ok -- we have found the (serialized) JobResult
-			send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
-			send_string_to_node( worker_node, * iter->second );
-			return;
-		}
-	}
-
-	if ( archive_does_not_exist ) {
+	try {
+		retrieve_job_result_and_act( result_id, send_to_worker );
+		return;
+	} catch ( std::string errstring ) {
+		TR << "Failed to retrieve result " << job_id << " " << result_index << " for worker " << worker_node << std::endl;
+		TR << "Error message:" << errstring << std::endl;
 		// fatal error: the requested job result is not present at this node.
 		// inform node 0 (if this isn't node 0 )
 		if ( mpi_rank_ == 0 ) {
@@ -657,67 +1255,41 @@ MPIWorkPoolJobDistributor::process_output_job_result_already_available_request( 
 	}
 	JobResultID result_id = spec->result_id();
 
-	std::string serialized_job_and_result;
-	//bool archive_does_not_exist = false;
-	if ( archive_on_disk_ ) {
-		std::string const filename = filename_for_archive( result_id.first, result_id.second );
-		std::ifstream in( filename );
-		if ( ! in.good() ) {
+	auto deserialize_and_write_output = [&] (std::string const & serialized_job_and_result ) {
+		LarvalJobAndResult job_and_result;
+		try {
+			job_and_result = deserialize_larval_job_and_result( serialized_job_and_result );
+		} catch ( cereal::Exception & e ) {
 			utility::send_integer_to_node( 0, mpi_rank_ );
 			utility::send_integer_to_node( 0, mpi_work_pool_jd_error );
 			std::ostringstream oss;
-			oss << "Error on archive node " << mpi_rank_ << " trying to find job result archived on disk in file \"" << filename;
-			oss << "\" for result id ( " << result_id.first << ", " << result_id.second << " )\n";
+			oss << "Error on archive node " << mpi_rank_ << " trying to deserialize larval job and job result";
+			oss << " for result id ( " << result_id.first << ", " << result_id.second << " )\n";
+			oss << "Error message from cereal library:\n";
+			oss << e.what() << "\n";
 			utility::send_string_to_node( 0, oss.str() );
 			// do not exit immediately as this will cause the MPI process to exit before
 			// the head node has a chance to flush its output
-			return;
-		} else {
-			serialized_job_and_result = utility::file_contents( filename );
-			remove( filename.c_str() );
 		}
-		in.close();
-	} else {
-		auto job_and_result_iter = job_results_.find( result_id );
-		if ( job_and_result_iter == job_results_.end() ) {
-			utility::send_integer_to_node( 0, mpi_rank_ );
-			utility::send_integer_to_node( 0, mpi_work_pool_jd_error );
-			std::ostringstream oss;
-			oss << "Error on archive node " << mpi_rank_ << " trying to find job result ";
-			oss << "for result id ( " << result_id.first << ", " << result_id.second << " )\n";
-			oss << "Job should be present in memory, but is not there. Has is already been output? ";
-			oss << "Has it already been discarded?\n";
-			utility::send_string_to_node( 0, oss.str() );
-			// do not exit immediately as this will cause the MPI process to exit before
-			// the head node has a chance to flush its output
-			return;
-		}
-		serialized_job_and_result = std::move( *job_and_result_iter->second );//move instead of copy
-		job_results_.erase( job_and_result_iter );
-	}
 
-	LarvalJobAndResult job_and_result;
+		write_output( spec, job_and_result );
+	};
+
 	try {
-		job_and_result = deserialize_larval_job_and_result( serialized_job_and_result );
-	} catch ( cereal::Exception & e ) {
+		retrieve_job_result_and_act_and_delete( result_id, deserialize_and_write_output );
+		// now tell node0 we are done
+		utility::send_integer_to_node( 0, mpi_rank_ );
+		utility::send_integer_to_node( 0, mpi_work_pool_jd_output_completed );
+		return;
+	} catch ( std::string errstr ) {
 		utility::send_integer_to_node( 0, mpi_rank_ );
 		utility::send_integer_to_node( 0, mpi_work_pool_jd_error );
 		std::ostringstream oss;
-		oss << "Error on archive node " << mpi_rank_ << " trying to deserialize larval job and job result";
-		oss << " for result id ( " << result_id.first << ", " << result_id.second << " )\n";
-		oss << "Error message from cereal library:\n";
-		oss << e.what() << "\n";
+		oss << "Error on archive node " << mpi_rank_ << " trying to write job result ";
+		oss << "for result id ( " << result_id.first << ", " << result_id.second << " )\n";
+		oss << "Error message:\n" << errstr << "\n";
 		utility::send_string_to_node( 0, oss.str() );
-		// do not exit immediately as this will cause the MPI process to exit before
-		// the head node has a chance to flush its output
-		return;
 	}
-
-	write_output( spec, job_and_result );
-
-	// now tell node0 we are done
-	utility::send_integer_to_node( 0, mpi_rank_ );
-	utility::send_integer_to_node( 0, mpi_work_pool_jd_output_completed );
 }
 
 /// @details Called by the archive node. The archive node should already have the indicated job
@@ -858,39 +1430,17 @@ MPIWorkPoolJobDistributor::process_retrieve_and_discard_job_result_request( int 
 
 	JobResultID job_result_id = { job_id, result_index };
 
-	bool archive_exists = false;
-	if ( archive_on_disk_ ) {
-		std::string const filename = filename_for_archive( job_id, result_index );
-		std::ifstream in ( filename );//as of now, this only checks to see if filename is good
-		if ( ! in.good() ) {
-			send_integer_to_node( worker_node, mpi_work_pool_jd_failed_to_retrieve_job_result );
-		} else {
-			archive_exists = true;
-			std::string const content = utility::file_contents( filename );
-			remove( filename.c_str() );
+	auto send_to_node = [&](std::string const & str ) {
+		TR.Debug << "Sending result " << job_result_id << " " << result_index << " to node " << worker_node << std::endl;
+		send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
+		send_string_to_node( worker_node, str );
+	};
 
-			send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
-			send_string_to_node( worker_node, content );
-		}
-		in.close();
+	try {
+		retrieve_job_result_and_act_and_delete(job_result_id, send_to_node);
+	} catch (std::string ) {
+		send_integer_to_node( worker_node, mpi_work_pool_jd_failed_to_retrieve_job_result );
 
-	} else {
-		SerializedJobResultMap::iterator iter = job_results_.find( job_result_id );
-		if ( iter == job_results_.end() ) {
-			// fatal error: the requested job result is not present at this node.
-			// inform node 0 (this isn't node 0, as this function is only called by archive nodes)
-			send_integer_to_node( worker_node, mpi_work_pool_jd_failed_to_retrieve_job_result );
-		} else {
-			archive_exists = true;
-			// ok -- we have found the (serialized) JobResult
-			send_integer_to_node( worker_node, mpi_work_pool_jd_job_result_retrieved );
-			send_string_to_node( worker_node, * iter->second );
-			job_results_.erase( iter );
-		}
-	}
-
-
-	if ( ! archive_exists ) {
 		// tell node 0 about failed retrieval
 		send_integer_to_node( 0, mpi_rank_ );
 		send_integer_to_node( 0, mpi_work_pool_jd_failed_to_retrieve_job_result );
@@ -908,22 +1458,8 @@ MPIWorkPoolJobDistributor::process_discard_job_result_request( int remote_node )
 	Size job_id = receive_size_from_node( remote_node ); // node 0
 	Size result_index = receive_size_from_node( remote_node );
 
-	if ( archive_on_disk_ ) {
-		std::string const filename = filename_for_archive( job_id, result_index );
-		if ( remove( filename.c_str() ) ) { //remove's name is not intuitive for its return value. non-zero return value means the remove failed
-			std::cerr << "Failed to discard job result (" << job_id << ", " << result_index << ") on node " << mpi_rank_ << std::endl;
-		}
-		return;
-	}
-
 	JobResultID job_result_id = { job_id, result_index };
-	SerializedJobResultMap::iterator iter = job_results_.find( job_result_id );
-	if ( iter == job_results_.end() ) {
-		// well, something has gone wrong, so we should probably print an error, but
-		// technically, we can keep going.
-		std::cerr << "Failed to discard job result (" << job_result_id.first << ", " << job_result_id.second << ") on node " << mpi_rank_ << std::endl;
-	}
-	job_results_.erase( iter );
+	delete_job_result(job_result_id);
 }
 
 void
@@ -933,16 +1469,10 @@ MPIWorkPoolJobDistributor::process_archive_job_result_request( int remote_node )
 	Size job_id = receive_size_from_node( remote_node );
 	Size result_index = receive_size_from_node( remote_node );
 	JobResultID result_id = { job_id, result_index };
-	std::string serialized_larval_job_and_result = receive_string_from_node( remote_node );
-	if ( archive_on_disk_ ) {
-		std::string const filename = filename_for_archive( job_id, result_index );
-		std::ofstream out ( filename );
-		debug_assert( out.is_open() );
-		out << serialized_larval_job_and_result;
-		out.close();
-	} else {
-		job_results_[ result_id ] = utility::pointer::make_shared< std::string > ( std::move( serialized_larval_job_and_result ) );
-	}
+	auto serialized_larval_job_and_result = std::make_shared< std::string >( receive_string_from_node( remote_node ));
+
+	save_job_result( result_id, serialized_larval_job_and_result );
+
 	utility::send_integer_to_node( remote_node, mpi_work_pool_jd_archival_completed );
 }
 
@@ -1062,6 +1592,7 @@ MPIWorkPoolJobDistributor::send_next_job_to_node( int worker_node )
 		// i.e. the job queue is empty
 		return false;
 	}
+	TR << "Sending job " << larval_job->job_index() << " to node " << worker_node << std::endl;
 
 	// serialize the LarvalJob and ship it to the worker node.
 	// Note that this could leave the worker hanging where it expects
@@ -1237,11 +1768,7 @@ MPIWorkPoolJobDistributor::potentially_discard_some_job_results()
 		LarvalJobAndResult job_and_result;
 		if ( node_housing_result == 0 ) {
 			// ok, we have the result on this node
-			if ( archive_on_disk_ ) {
-				remove( filename_for_archive( result_id.first, result_id.second ).c_str() );
-			} else {
-				job_results_.erase( result_id );
-			}
+			delete_job_result(result_id);
 		} else {
 			utility::send_integer_to_node( node_housing_result, 0 ); // say "I need to talk to you"
 			utility::send_integer_to_node( node_housing_result,
@@ -1281,39 +1808,50 @@ MPIWorkPoolJobDistributor::send_output_spec_and_job_result_to_remote(
 	node_outputter_is_outputting_for_[ node_id ] = 0;
 
 	JobResultID result_id = spec->result_id();
-	std::string serialized_job_and_result;
-	if ( archive_on_disk_ ) {
-		serialized_job_and_result = get_string_from_disk( result_id.first, result_id.second );
-		if ( serialized_job_and_result.empty() ) {
-			// OK -- exit
-			std::ostringstream oss;
-			oss << "Error trying to retrieve a serialized job result from disk for job result (";
-			oss << result_id.first << ", " << result_id.second << " ) which should have been in ";
-			oss << "\"" << filename_for_archive( result_id.first, result_id.second ) << "\"\n";
-			throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
-		}
-		remove( filename_for_archive( result_id.first, result_id.second ).c_str() );
-	} else {
-		auto job_and_result_iter = job_results_.find( result_id );
-		if ( job_and_result_iter == job_results_.end() ) {
-			std::ostringstream oss;
-			oss << "Error trying to find job result ( " << result_id.first << ", ";
-			oss << result_id.second << " ); node 0 thinks it ought to have this result.\n";
-			throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
-		}
-		serialized_job_and_result = std::move( *job_and_result_iter->second );
-		job_results_.erase( job_and_result_iter );
-	}
+	//std::string serialized_job_and_result;
+	//
+	//auto job_and_result_iter = job_results_.find( result_id );
+	//if ( job_and_result_iter == job_results_.end() ) {
+	// std::ostringstream oss;
+	// oss << "Error trying to find job result ( " << result_id.first << ", ";
+	// oss << result_id.second << " ); node 0 thinks it ought to have this result.\n";
+	// throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+	//} else {
+	// if ( archive_on_disk_ ) {
+	//  serialized_job_and_result = get_string_from_disk( result_id.first, result_id.second );
+	//  if ( serialized_job_and_result.empty() ) {
+	//   // OK -- exit
+	//   std::ostringstream oss;
+	//   oss << "Error trying to retrieve a serialized job result from disk for job result (";
+	//   oss << result_id.first << ", " << result_id.second << " ) which should have been in ";
+	//   oss << "\"" << filename_for_archive( result_id.first, result_id.second ) << "\"\n";
+	//   throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+	//  }
+	//  remove( filename_for_archive( result_id.first, result_id.second ).c_str() );
+	// } else {
+	//  serialized_job_and_result = std::move( *job_and_result_iter->second );
+	// }
+	// job_results_.erase( job_and_result_iter );
+	//}
 
-	if ( node_id <= (Size) n_archives_ ) {
-		utility::send_integer_to_node( node_id, 0 ); // say "I need to talk to you"
-	} // else, worker node is already expecting a message from node 0
+	auto send_result_and_spec_to_node = [&](std::string const & serialized_job_and_result ) {
+		if ( node_id <= (Size) n_archives_ ) {
+			utility::send_integer_to_node( node_id, 0 ); // say "I need to talk to you"
+		} // else, worker node is already expecting a message from node 0
 
-	utility::send_integer_to_node( node_id,
+		utility::send_integer_to_node( node_id,
 		mpi_work_pool_jd_accept_and_output_job_result );
-	utility::send_string_to_node( node_id, serialize_output_specification( spec ) );
-	utility::send_string_to_node( node_id, serialized_job_and_result );
+		utility::send_string_to_node( node_id, serialize_output_specification( spec ) );
+		utility::send_string_to_node( node_id, serialized_job_and_result );
+	};
 
+	try {
+		retrieve_job_result_and_act_and_delete( result_id, send_result_and_spec_to_node );
+	} catch ( std::string const & errstr ) {
+		std::ostringstream oss;
+		oss << "Failed to retrieve result id " << result_id << "\nError message:" << errstr;
+		throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+	}
 }
 
 void
@@ -1446,10 +1984,10 @@ MPIWorkPoolJobDistributor::any_worker_nodes_not_yet_spun_down()
 }
 
 bool
-MPIWorkPoolJobDistributor::any_archive_nodes_not_yet_spun_down()
+MPIWorkPoolJobDistributor::any_archive_node_still_outputting()
 {
 	for ( int ii = 1; ii <= n_archives_; ++ii ) {
-		if ( ! nodes_spun_down_[ ii ] ) return true;
+		if ( archive_currently_outputting_[ ii ] ) return true;
 	}
 	return false;
 }
@@ -1707,6 +2245,7 @@ MPIWorkPoolJobDistributor::retrieve_job_maturation_data()
 		// from archival node #(archival_nodes_for_job_results[ii])
 		core::Size archive_node = archival_nodes_for_job_results[ ii ];
 
+		TR << "Requesting job result " << larval_job->input_job_result_indices()[ ii ].first << " " << larval_job->input_job_result_indices()[ ii ].second << " from archive " << archive_node << std::endl;
 		utility::send_integer_to_node( archive_node, mpi_rank_ ); // tell the other node who is talking ..
 		utility::send_integer_to_node( archive_node, mpi_work_pool_jd_retrieve_job_result ); // .. and that we need a job result
 		utility::send_size_to_node( archive_node, larval_job->input_job_result_indices()[ ii ].first ); // .. of a particular job
@@ -1728,6 +2267,7 @@ MPIWorkPoolJobDistributor::retrieve_job_maturation_data()
 			}
 
 			job_results[ ii ] = job_and_result.second;
+			TR << "Success" << std::endl;
 		} else {
 			// ok -- nothing more we're going to do here. We can't run this job.
 			//  Node 0 is going to be notified and the job will spin down.
@@ -2065,6 +2605,170 @@ std::string MPIWorkPoolJobDistributor::filename_for_archive( Size job_id, Size r
 	return archive_dir_name_ + "/archive." + std::to_string( job_id ) + "." + std::to_string( result_index );
 }
 
+std::string MPIWorkPoolJobDistributor::checkpoint_file_prefix( Size checkpoint_counter ) const
+{
+	return checkpoint_directory_ + "/chkpt_" + utility::to_string(checkpoint_counter);
+}
+
+std::string MPIWorkPoolJobDistributor::checkpoint_file_name_for_node(
+	std::string const & prefix,
+	int node_index
+) const
+{
+	return prefix + "_" + utility::to_string(node_index) + ".bin";
+}
+
+void MPIWorkPoolJobDistributor::set_checkpoint_period( Size period_seconds )
+{
+	checkpoint_period_ = period_seconds;
+}
+
+/// @details Write out a file with a tiny bit of meta-data: the number of archive nodes.
+void MPIWorkPoolJobDistributor::create_checkpoint_sanity_check_file() const
+{
+	std::string fname = checkpoint_directory_ + "/sanity.txt";
+	std::ofstream os(fname.c_str());
+	os << "n_archives= " << n_archives_ << "\n";
+}
+
+bool MPIWorkPoolJobDistributor::checkpoint_sanity_check() const
+{
+	if ( !utility::file::is_directory(checkpoint_directory_) ) return false;
+	std::string fname = checkpoint_directory_ + "/sanity.txt";
+
+	if ( !utility::file::file_exists(fname) ) return false;
+
+	std::ifstream is(fname.c_str());
+	std::string n_archives_str;
+	int n_archives(0);
+
+	if ( !is.good() ) return false;
+	is >> n_archives_str;
+	if ( n_archives_str != "n_archives=" ) {
+		TR << "Checkpoint directory sanity check failed: expected to read 'n_archives= " << n_archives_ << "' but found the first line to begin with '" << n_archives_str << "' instead. Sanity file has been corrupted" << std::endl;
+		return false;
+	}
+	if ( !is.good() ) return false;
+	is >> n_archives;
+	if ( n_archives != n_archives_ ) {
+		TR << "Checkpoint directory sanity check failed: expected to read 'n_archives= " << n_archives_ << "' but found " << n_archives << " instead. Restoration from a checkpoint requires that the number of archives be consistent between runs (though, the number of workers is allowed to change)." << std::endl;
+		return false;
+	}
+	return true;
+}
+
+void
+MPIWorkPoolJobDistributor::delete_checkpoint( Size checkpoint_index ) const {
+	if ( checkpoint_index > 0 &&
+			! basic::options::option[ basic::options::OptionKeys::jd3::keep_all_checkpoints ] &&
+			( ! basic::options::option[ basic::options::OptionKeys::jd3::keep_checkpoint ].user() ||
+			basic::options::option[ basic::options::OptionKeys::jd3::keep_checkpoint ] != int(checkpoint_index) ) ) {
+		for ( int ii = 0; ii <= n_archives_; ++ii ) {
+			std::string fname = checkpoint_file_name_for_node(
+				checkpoint_file_prefix(checkpoint_index), ii );
+			TR << "Removing previous checkpoint file: " << fname << std::endl;
+			// Error checking here?
+			// It is entirely possible that the checkpoint file
+			// we mean to be deleting has been deleted by the user
+			remove( fname.c_str() );
+		}
+	}
+
+}
+
+void MPIWorkPoolJobDistributor::retrieve_job_result_and_act( JobResultID const & id, std::function< void (std::string const & ) > const & action )
+{
+	SerializedJobResultMap::const_iterator iter = job_results_.find( id );
+	if ( iter == job_results_.end() ) {
+		std::ostringstream oss;
+		oss << "Requested job result " << id << " does not live on archive " << mpi_rank_ << "\n";
+		throw oss.str();
+	} else {
+		if ( archive_on_disk_ ) {
+			std::string const filename = filename_for_archive( id.first, id.second );
+			std::ifstream in ( filename );
+			if ( ! in.good() ) {
+				std::ostringstream oss;
+				oss << "Failed to open binary archive on disk: ':" << filename << "'\n";
+				throw oss.str();
+			} else {
+				std::string const content = utility::file_contents( filename );
+				action( content );
+			}
+			in.close();
+		} else {
+			// ok -- we have found the (serialized) JobResult
+			action( * iter->second );
+		}
+	}
+}
+
+void MPIWorkPoolJobDistributor::retrieve_job_result_and_act_and_delete( JobResultID const & id, std::function< void (std::string const & ) > const & action )
+{
+	SerializedJobResultMap::const_iterator iter = job_results_.find( id );
+	if ( iter == job_results_.end() ) {
+		std::ostringstream oss;
+		oss << "Requested job result " << id << " does not live on archive " << mpi_rank_ << "\n";
+		TR << oss.str() << std::endl;
+		throw oss.str();
+	} else {
+		if ( archive_on_disk_ ) {
+			std::string const filename = filename_for_archive( id.first, id.second );
+			std::ifstream in ( filename );
+			if ( ! in.good() ) {
+				std::ostringstream oss;
+				oss << "Failed to open binary archive on disk: ':" << filename << "'\n";
+				TR << oss.str() << std::endl;
+				throw oss.str();
+			} else {
+				std::string const content = utility::file_contents( filename );
+				action( content );
+			}
+			in.close();
+			remove( filename.c_str() );
+		} else {
+			// ok -- we have found the (serialized) JobResult
+			action( * iter->second );
+		}
+	}
+	job_results_.erase( iter );
+}
+
+void MPIWorkPoolJobDistributor::delete_job_result( JobResultID const & result_id )
+{
+	auto iter = job_results_.find(result_id);
+	if ( iter != job_results_.end() ) {
+		job_results_.erase( result_id );
+	}
+	if ( archive_on_disk_ ) {
+		remove( filename_for_archive( result_id.first, result_id.second ).c_str() );
+	}
+}
+
+
+/// @throws std::string if the contents could not be archived
+void MPIWorkPoolJobDistributor::save_job_result(
+	JobResultID const & id,
+	utility::pointer::shared_ptr< std::string > const & contents
+)
+{
+	if ( archive_on_disk_ ) {
+		job_results_[id] = nullptr;
+		std::string const filename = filename_for_archive( id.first, id.second );
+		std::ofstream out( filename );
+		if ( !out.is_open() ) {
+			std::ostringstream oss;
+			oss << "Failed to open file for job result " << id << ".\n";
+			TR << oss.str() << std::endl;
+			throw oss.str();
+		}
+		out << *contents;
+		out.close();
+	} else {
+		job_results_[id] = contents;
+	}
+
+}
 
 }//job_distributors
 }//jd3

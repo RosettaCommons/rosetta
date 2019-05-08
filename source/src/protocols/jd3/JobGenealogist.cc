@@ -23,6 +23,18 @@
 
 static basic::Tracer TR( "protocols.jd3.JobGenealogist" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+//#include <cereal/types/hash.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/unordered_set.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 
@@ -584,3 +596,96 @@ JobGenealogist::delete_node(
 
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::JGResultNode::save( Archive & arc ) const {
+	arc( CEREAL_NVP( result_id_ ) ); // unsigned int
+	arc( CEREAL_NVP( parent_ ) ); // JGJobNodeAP
+	arc( CEREAL_NVP( children_ ) ); // utility::vector1<JGJobNodeAP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::JGResultNode::load( Archive & arc ) {
+	arc( result_id_ ); // unsigned int
+	arc( parent_ ); // JGJobNodeAP
+	arc( children_ ); // utility::vector1<JGJobNodeAP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::JGResultNode );
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::jd3::JobGenealogist::JobGenealogist() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::JobGenealogist::save( Archive & arc ) const {
+	arc( CEREAL_NVP( num_input_sources_ ) ); // core::Size
+	arc( CEREAL_NVP( job_nodes_for_dag_node_ ) ); // utility::vector1<utility::vector1<JGJobNodeOP> >
+	arc( CEREAL_NVP( all_job_nodes_ ) ); // std::unordered_set<JGJobNodeOP>
+	arc( CEREAL_NVP( all_result_nodes_ ) ); // std::unordered_set<JGResultNodeOP>
+	arc( CEREAL_NVP( sorter_ ) ); // struct protocols::jd3::compare_job_nodes
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::JobGenealogist::load( Archive & arc ) {
+	arc( num_input_sources_ ); // core::Size
+	arc( job_nodes_for_dag_node_ ); // utility::vector1<utility::vector1<JGJobNodeOP> >
+	arc( all_job_nodes_ ); // std::unordered_set<JGJobNodeOP>
+	arc( all_result_nodes_ ); // std::unordered_set<JGResultNodeOP>
+	arc( sorter_ ); // struct protocols::jd3::compare_job_nodes
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::JobGenealogist );
+CEREAL_REGISTER_TYPE( protocols::jd3::JobGenealogist )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::compare_job_nodes::save( Archive & arc ) const {
+	arc( cereal::base_class< struct std::binary_function<const class protocols::jd3::JGJobNode *, const class protocols::jd3::JGJobNode *, bool> >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::compare_job_nodes::load( Archive & arc ) {
+	arc( cereal::base_class< struct std::binary_function<const class protocols::jd3::JGJobNode *, const class protocols::jd3::JGJobNode *, bool> >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::compare_job_nodes );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::JGJobNode::save( Archive & arc ) const {
+	arc( CEREAL_NVP( global_job_id_ ) ); // core::Size
+	arc( CEREAL_NVP( node_ ) ); // unsigned int
+	arc( CEREAL_NVP( input_source_id_ ) ); // unsigned int
+	arc( CEREAL_NVP( parents_ ) ); // utility::vector1<JGResultNodeAP>
+	arc( CEREAL_NVP( children_ ) ); // utility::vector1<JGResultNodeAP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::JGJobNode::load( Archive & arc ) {
+	arc( global_job_id_ ); // core::Size
+	arc( node_ ); // unsigned int
+	arc( input_source_id_ ); // unsigned int
+	arc( parents_ ); // utility::vector1<JGResultNodeAP>
+	arc( children_ ); // utility::vector1<JGResultNodeAP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::JGJobNode );
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_JobGenealogist )
+#endif // SERIALIZATION

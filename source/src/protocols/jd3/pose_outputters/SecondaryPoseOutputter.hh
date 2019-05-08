@@ -34,6 +34,11 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
@@ -61,10 +66,21 @@ public:
 	/// PoseOutputter base class and will not / should not be asked of the SecondaryPoseOutputter.
 	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const override final;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace pose_outputters
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_pose_outputters_SecondaryPoseOutputter )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_pose_outputters_SecondaryPoseOutputter_HH

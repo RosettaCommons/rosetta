@@ -31,6 +31,11 @@
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKey.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
@@ -104,10 +109,21 @@ private:
 	utility::file::FileName scorefile_name_;
 	utility::vector1< std::string > scorefile_lines_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace pose_outputters
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_pose_outputters_ScoreFileOutputter )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_pose_outputters_ScoreFileOutputter_HH

@@ -29,6 +29,18 @@
 static basic::Tracer TR( "protocols.jd3.JobTracker" );
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+//#include <cereal/types/hash.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/unordered_map.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 
@@ -188,3 +200,41 @@ JobTracker::current_job_index() const {
 
 
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::JobTracker::save( Archive & arc ) const {
+	arc( CEREAL_NVP( completed_jobs_by_dag_node_ ) ); // std::unordered_map<core::Size, SizeDIET>
+	arc( CEREAL_NVP( started_jobs_by_dag_node_ ) ); // std::unordered_map<core::Size, SizeDIET>
+	arc( CEREAL_NVP( completed_jobs_ ) ); // SizeDIET
+	arc( CEREAL_NVP( started_jobs_ ) ); // SizeDIET
+	arc( CEREAL_NVP( successful_jobs_ ) ); // SizeDIET
+	arc( CEREAL_NVP( failed_jobs_ ) ); // SizeDIET
+	arc( CEREAL_NVP( previously_completed_jobs_ ) ); // SizeDIET
+	arc( CEREAL_NVP( last_job_for_input_source_ ) ); // std::map<core::Size, core::Size>
+	arc( CEREAL_NVP( current_global_job_index_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::JobTracker::load( Archive & arc ) {
+	arc( completed_jobs_by_dag_node_ ); // std::unordered_map<core::Size, SizeDIET>
+	arc( started_jobs_by_dag_node_ ); // std::unordered_map<core::Size, SizeDIET>
+	arc( completed_jobs_ ); // SizeDIET
+	arc( started_jobs_ ); // SizeDIET
+	arc( successful_jobs_ ); // SizeDIET
+	arc( failed_jobs_ ); // SizeDIET
+	arc( previously_completed_jobs_ ); // SizeDIET
+	arc( last_job_for_input_source_ ); // std::map<core::Size, core::Size>
+	arc( current_global_job_index_ ); // Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::JobTracker );
+CEREAL_REGISTER_TYPE( protocols::jd3::JobTracker )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_JobTracker )
+#endif // SERIALIZATION

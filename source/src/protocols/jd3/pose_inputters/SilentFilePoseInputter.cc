@@ -50,6 +50,14 @@
 
 static basic::Tracer tr( "protocols.jd3.SilentFilePoseInputter" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace pose_inputters {
@@ -289,3 +297,29 @@ void SilentFilePoseInputterCreator::list_options_read(
 } // pose_inputters
 } // jd3
 } // protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::pose_inputters::SilentFilePoseInputter::save( Archive & arc ) const {
+	arc( cereal::base_class< protocols::jd3::pose_inputters::PoseInputter >( this ) );
+	arc( CEREAL_NVP( sf_opts_ ) ); // core::io::silent::SilentFileOptionsOP
+	arc( CEREAL_NVP( sfd_ ) ); // core::io::silent::SilentFileDataOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::pose_inputters::SilentFilePoseInputter::load( Archive & arc ) {
+	arc( cereal::base_class< protocols::jd3::pose_inputters::PoseInputter >( this ) );
+	arc( sf_opts_ ); // core::io::silent::SilentFileOptionsOP
+	arc( sfd_ ); // core::io::silent::SilentFileDataOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::pose_inputters::SilentFilePoseInputter );
+CEREAL_REGISTER_TYPE( protocols::jd3::pose_inputters::SilentFilePoseInputter )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_pose_inputters_SilentFilePoseInputter )
+#endif // SERIALIZATION

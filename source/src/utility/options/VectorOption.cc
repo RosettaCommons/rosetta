@@ -18,6 +18,15 @@
 // Package headers
 #include <utility/string_util.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace utility {
 namespace options {
 
@@ -39,3 +48,25 @@ VectorOption::set_value( std::string const & value_str, bool reset ) {
 } // namespace options
 } // namespace utility
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+utility::options::VectorOption::save( Archive & arc ) const {
+	arc( cereal::base_class< utility::options::Option >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+utility::options::VectorOption::load( Archive & arc ) {
+	arc( cereal::base_class< utility::options::Option >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( utility::options::VectorOption );
+CEREAL_REGISTER_TYPE( utility::options::VectorOption )
+
+CEREAL_REGISTER_DYNAMIC_INIT( utility_options_VectorOption )
+#endif // SERIALIZATION

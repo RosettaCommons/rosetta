@@ -54,6 +54,16 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
@@ -379,3 +389,33 @@ SilentFilePoseOutputterCreator::outputter_specified_by_command_line() const
 } // namespace pose_outputters
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::pose_outputters::SilentFilePoseOutputter::save( Archive & arc ) const {
+	arc( cereal::base_class< protocols::jd3::pose_outputters::PoseOutputter >( this ) );
+	arc( CEREAL_NVP( fname_out_ ) ); // std::string
+	arc( CEREAL_NVP( buffer_limit_ ) ); // core::Size
+	arc( CEREAL_NVP( opts_ ) ); // core::io::silent::SilentFileOptionsOP
+	arc( CEREAL_NVP( buffered_structs_ ) ); // utility::vector1<core::io::silent::SilentStructOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::pose_outputters::SilentFilePoseOutputter::load( Archive & arc ) {
+	arc( cereal::base_class< protocols::jd3::pose_outputters::PoseOutputter >( this ) );
+	arc( fname_out_ ); // std::string
+	arc( buffer_limit_ ); // core::Size
+	arc( opts_ ); // core::io::silent::SilentFileOptionsOP
+	arc( buffered_structs_ ); // utility::vector1<core::io::silent::SilentStructOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::pose_outputters::SilentFilePoseOutputter );
+CEREAL_REGISTER_TYPE( protocols::jd3::pose_outputters::SilentFilePoseOutputter )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_pose_outputters_SilentFilePoseOutputter )
+#endif // SERIALIZATION

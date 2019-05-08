@@ -18,6 +18,14 @@
 
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 
@@ -71,3 +79,29 @@ JobQueen::get_job_tracker() const {
 
 
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::JobQueen::save( Archive & arc ) const {
+	arc( CEREAL_NVP( job_graph_ ) ); // JobDigraphCOP
+	arc( CEREAL_NVP( job_tracker_ ) ); // JobTrackerOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::JobQueen::load( Archive & arc ) {
+	std::shared_ptr< protocols::jd3::JobDigraph > local_job_graph;
+	arc( local_job_graph ); // JobDigraphCOP
+	job_graph_ = local_job_graph; // copy the non-const pointer(s) into the const pointer(s)
+	arc( job_tracker_ ); // JobTrackerOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::JobQueen );
+CEREAL_REGISTER_TYPE( protocols::jd3::JobQueen )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_JobQueen )
+#endif // SERIALIZATION

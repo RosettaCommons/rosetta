@@ -41,6 +41,9 @@
 // C++ headers
 #include <utility/assert.hh>
 
+#ifdef    SERIALIZATION
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
 
 namespace utility {
 namespace keys {
@@ -517,6 +520,22 @@ private: // Fields
 	/// @brief Code: Coded identifier
 	std::string code_;
 
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const {
+		arc(index_);
+		arc(id_);
+		arc(identifier_);
+		arc(code_);
+	}
+	template< class Archive > void load( Archive & arc ) {
+		arc(index_);
+		arc(id_);
+		arc(identifier_);
+		arc(code_);
+	}
+#endif // SERIALIZATION
 
 }; // AutoKey
 

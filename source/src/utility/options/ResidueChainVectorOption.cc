@@ -19,6 +19,16 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/char.functions.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace utility {
 namespace options {
 
@@ -108,3 +118,27 @@ ResidueChainVectorOption::values_of( std::string const & value_str ) const
 } // namespace utility
 
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+utility::options::ResidueChainVectorOption::save( Archive & arc ) const {
+	arc( cereal::base_class< utility::options::VectorOption_T_<class utility::options::ResidueChainVectorOptionKey, int> >( this ) );
+	arc( CEREAL_NVP( value_strings_ ) ); // utility::vector1<std::string>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+utility::options::ResidueChainVectorOption::load( Archive & arc ) {
+	arc( cereal::base_class< utility::options::VectorOption_T_<class utility::options::ResidueChainVectorOptionKey, int> >( this ) );
+	arc( value_strings_ ); // utility::vector1<std::string>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( utility::options::ResidueChainVectorOption );
+CEREAL_REGISTER_TYPE( utility::options::ResidueChainVectorOption )
+
+CEREAL_REGISTER_DYNAMIC_INIT( utility_options_ResidueChainVectorOption )
+#endif // SERIALIZATION

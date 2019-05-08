@@ -19,6 +19,16 @@
 // ObjexxFCL Headers
 
 // C++ Headers
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector0.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace utility {
 
 heap::heap( int max_items ) {
@@ -357,3 +367,30 @@ heap::index_for_val( int val ) const {
 
 
 } // ns utility
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+utility::heap::heap() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+utility::heap::save( Archive & arc ) const {
+	arc( CEREAL_NVP( heap_ ) ); // utility::vector0<int>
+	arc( CEREAL_NVP( coheap_ ) ); // utility::vector0<float>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+utility::heap::load( Archive & arc ) {
+	arc( heap_ ); // utility::vector0<int>
+	arc( coheap_ ); // utility::vector0<float>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( utility::heap );
+CEREAL_REGISTER_TYPE( utility::heap )
+
+CEREAL_REGISTER_DYNAMIC_INIT( utility_heap )
+#endif // SERIALIZATION

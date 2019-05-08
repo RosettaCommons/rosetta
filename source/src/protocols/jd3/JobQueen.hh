@@ -39,6 +39,11 @@
 // C++ headers
 #include <list>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 
@@ -239,11 +244,22 @@ private:
 	JobDigraphCOP job_graph_ = nullptr;
 	JobTrackerOP job_tracker_ = nullptr;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // JobQueen
 
 
 
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_JobQueen )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_JobQueen_HH

@@ -82,6 +82,19 @@ using namespace protocols::jd3;
 using namespace protocols::jd3::dag_node_managers;
 using namespace protocols::jd3::job_results;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/unordered_map.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace multistage_rosetta_scripts {
 
@@ -1033,3 +1046,103 @@ void MRSJobQueen::assign_output_index(
 
 } //multistage_rosetta_scripts
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::multistage_rosetta_scripts::MRSJobQueen::save( Archive & arc ) const {
+	arc( cereal::base_class< protocols::jd3::standard::StandardJobQueen >( this ) );
+	arc( CEREAL_NVP( has_been_initialized_ ) ); // _Bool
+	arc( CEREAL_NVP( sorter_ ) ); // struct protocols::multistage_rosetta_scripts::SortByLowEnergy
+	arc( CEREAL_NVP( num_input_structs_ ) ); // core::Size
+	arc( CEREAL_NVP( num_stages_ ) ); // core::Size
+	arc( CEREAL_NVP( num_total_jobs_for_stage_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( num_results_to_keep_for_stage_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( max_num_results_to_keep_per_instance_for_stage_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( max_num_results_to_keep_per_input_struct_for_stage_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( num_jobs_per_input_for_stage_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( result_cutoffs_for_stage_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( job_results_have_been_discarded_for_stage_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( node_managers_ ) ); // utility::vector1<jd3::dag_node_managers::NodeManagerOP>
+	arc( CEREAL_NVP( tag_for_stage_ ) ); // utility::vector1<utility::tag::TagCOP>
+	arc( CEREAL_NVP( tag_manager_ ) ); // class protocols::multistage_rosetta_scripts::TagManager
+	//arc( CEREAL_NVP( validator_ ) ); // utility::tag::XMLSchemaValidatorOP
+	arc( CEREAL_NVP( outputters_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( input_job_tags_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( num_structs_output_for_input_job_tag_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( current_inner_larval_job_for_stage_ ) ); // utility::vector1<std::pair<jd3::InnerLarvalJobOP, core::Size> >
+	arc( CEREAL_NVP( job_genealogist_ ) ); // jd3::JobGenealogistOP
+	arc( CEREAL_NVP( pose_output_specification_for_job_result_id_ ) ); // std::map<jd3::JobResultID, jd3::output::OutputSpecificationOP>
+	arc( CEREAL_NVP( most_recent_pose_id_ ) ); // struct protocols::multistage_rosetta_scripts::PoseForPoseID
+	arc( CEREAL_NVP( checkpoints_ ) ); // utility::vector1<std::pair<core::Size, utility::tag::TagCOP> >
+	arc( CEREAL_NVP( cluster_metric_tag_for_stage_ ) ); // utility::vector1<utility::tag::TagCOP>
+	arc( CEREAL_NVP( num_results_to_keep_after_clustering_for_stage_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( cluster_data_for_results_of_stage_ ) ); // utility::vector1<std::unordered_map<jd3::JobResultID, cluster::ClusterMetricCOP, JobResultID_hash> >
+	arc( CEREAL_NVP( most_recent_cluster_results_ ) ); // utility::vector1<jd3::JobResultID>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::multistage_rosetta_scripts::MRSJobQueen::load( Archive & arc ) {
+	arc( cereal::base_class< protocols::jd3::standard::StandardJobQueen >( this ) );
+	arc( has_been_initialized_ ); // _Bool
+	arc( sorter_ ); // struct protocols::multistage_rosetta_scripts::SortByLowEnergy
+	arc( num_input_structs_ ); // core::Size
+	arc( num_stages_ ); // core::Size
+	arc( num_total_jobs_for_stage_ ); // utility::vector1<core::Size>
+	arc( num_results_to_keep_for_stage_ ); // utility::vector1<core::Size>
+	arc( max_num_results_to_keep_per_instance_for_stage_ ); // utility::vector1<core::Size>
+	arc( max_num_results_to_keep_per_input_struct_for_stage_ ); // utility::vector1<core::Size>
+	arc( num_jobs_per_input_for_stage_ ); // utility::vector1<core::Size>
+	arc( result_cutoffs_for_stage_ ); // utility::vector1<core::Size>
+	arc( job_results_have_been_discarded_for_stage_ ); // utility::vector1<core::Size>
+	arc( node_managers_ ); // utility::vector1<jd3::dag_node_managers::NodeManagerOP>
+	utility::vector1< utility::tag::TagOP > local_tag_for_stage;
+	arc( local_tag_for_stage ); // utility::vector1<utility::tag::TagCOP>
+	tag_for_stage_ = local_tag_for_stage; // copy the non-const pointer(s) into the const pointer(s)
+	arc( tag_manager_ ); // class protocols::multistage_rosetta_scripts::TagManager
+	//arc( validator_ ); // utility::tag::XMLSchemaValidatorOP
+	arc( outputters_ ); // utility::vector1<std::string>
+	arc( input_job_tags_ ); // utility::vector1<std::string>
+	arc( num_structs_output_for_input_job_tag_ ); // utility::vector1<core::Size>
+	arc( current_inner_larval_job_for_stage_ ); // utility::vector1<std::pair<jd3::InnerLarvalJobOP, core::Size> >
+	arc( job_genealogist_ ); // jd3::JobGenealogistOP
+	arc( pose_output_specification_for_job_result_id_ ); // std::map<jd3::JobResultID, jd3::output::OutputSpecificationOP>
+	arc( most_recent_pose_id_ ); // struct protocols::multistage_rosetta_scripts::PoseForPoseID
+	utility::vector1< std::pair< core::Size, utility::tag::TagOP > > local_checkpoints;
+	arc( local_checkpoints ); // utility::vector1<std::pair<core::Size, utility::tag::TagCOP> >
+	checkpoints_ = local_checkpoints;
+	utility::vector1< std::shared_ptr< utility::tag::Tag > > local_cluster_metric_tag_for_stage;
+	arc( local_cluster_metric_tag_for_stage ); // utility::vector1<utility::tag::TagCOP>
+	cluster_metric_tag_for_stage_ = local_cluster_metric_tag_for_stage; // copy the non-const pointer(s) into the const pointer(s)
+	arc( num_results_to_keep_after_clustering_for_stage_ ); // utility::vector1<core::Size>
+	arc( cluster_data_for_results_of_stage_ ); // utility::vector1<std::unordered_map<jd3::JobResultID, cluster::ClusterMetricCOP, JobResultID_hash> >
+	arc( most_recent_cluster_results_ ); // utility::vector1<jd3::JobResultID>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::multistage_rosetta_scripts::MRSJobQueen );
+CEREAL_REGISTER_TYPE( protocols::multistage_rosetta_scripts::MRSJobQueen )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::multistage_rosetta_scripts::PoseForPoseID::save( Archive & arc ) const {
+	arc( CEREAL_NVP( pose_id ) ); // core::Size
+	arc( CEREAL_NVP( pose ) ); // core::pose::PoseOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::multistage_rosetta_scripts::PoseForPoseID::load( Archive & arc ) {
+	arc( pose_id ); // core::Size
+	arc( pose ); // core::pose::PoseOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::multistage_rosetta_scripts::PoseForPoseID );
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_multistage_rosetta_scripts_MRSJobQueen )
+#endif // SERIALIZATION

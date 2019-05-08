@@ -45,6 +45,14 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace pose_inputters {
@@ -199,3 +207,25 @@ void PDBPoseInputterCreator::list_options_read( utility::options::OptionKeyList 
 } // namespace jd3
 } // namespace protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::pose_inputters::PDBPoseInputter::save( Archive & arc ) const {
+	arc( cereal::base_class< protocols::jd3::pose_inputters::PoseInputter >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::pose_inputters::PDBPoseInputter::load( Archive & arc ) {
+	arc( cereal::base_class< protocols::jd3::pose_inputters::PoseInputter >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::pose_inputters::PDBPoseInputter );
+CEREAL_REGISTER_TYPE( protocols::jd3::pose_inputters::PDBPoseInputter )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_pose_inputters_PDBPoseInputter )
+#endif // SERIALIZATION

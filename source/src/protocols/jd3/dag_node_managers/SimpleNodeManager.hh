@@ -19,6 +19,12 @@
 #include <protocols/jd3/dag_node_managers/SimpleNodeManager.fwd.hh>
 #include <protocols/jd3/dag_node_managers/EvenlyPartitionedNodeManager.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace dag_node_managers {
@@ -76,10 +82,25 @@ public:
 	Other useful methods:
 	*/
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SimpleNodeManager();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } //dag_node_managers
 } //jd3
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_dag_node_managers_SimpleNodeManager )
+#endif // SERIALIZATION
+
 
 #endif

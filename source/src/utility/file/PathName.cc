@@ -24,6 +24,14 @@
 #include <cctype>
 #include <iostream> // PB fix gcc 4.2.1 error?
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace utility {
 namespace file {
 
@@ -172,3 +180,24 @@ PathName::equal( PathName const & name1, PathName const & name2 )
 
 } // namespace file
 } // namespace utility
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+utility::file::PathName::save( Archive & arc ) const {
+	arc( CEREAL_NVP( vol_ ) ); // std::string
+	arc( CEREAL_NVP( path_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+utility::file::PathName::load( Archive & arc ) {
+	arc( vol_ ); // std::string
+	arc( path_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( utility::file::PathName );
+#endif // SERIALIZATION

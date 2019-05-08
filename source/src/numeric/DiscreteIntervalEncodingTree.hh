@@ -27,6 +27,11 @@
 // C++ headers
 #include <list>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace numeric {
 
 template < class T >
@@ -208,6 +213,13 @@ private:
 	DietNodeOP left_;
 	DietNodeOP right_;
 
+#ifdef    SERIALIZATION
+public:
+	DietNode() : lower_(0), upper_(0) {}
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 template < class T >
@@ -255,6 +267,13 @@ public:
 
 private:
 	DietNodeOP root_;
+
+#ifdef    SERIALIZATION
+public:
+	DiscreteIntervalEncodingTree() {}
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 

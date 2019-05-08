@@ -26,6 +26,18 @@
 static basic::Tracer TR( "protocols.jd3.standard.PreliminaryLarvalJobTracker" );
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace standard {
@@ -201,3 +213,39 @@ PreliminaryLarvalJobTracker::get_input_poses_to_deallocate() const{
 
 
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::standard::PreliminaryLarvalJobTracker::save( Archive & arc ) const {
+	arc( CEREAL_NVP( preliminary_job_node_inds_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( pjn_job_ind_begin_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( pjn_job_ind_end_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( preliminary_job_nodes_assigned_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( outstanding_job_count_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( pjn_max_nstruct_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( incomplete_pjns_using_input_pose_ ) ); // std::map<core::Size, std::set<core::Size> >
+	arc( CEREAL_NVP( non_deallocated_input_poses_ ) ); // utility::vector1<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::standard::PreliminaryLarvalJobTracker::load( Archive & arc ) {
+	arc( preliminary_job_node_inds_ ); // utility::vector1<core::Size>
+	arc( pjn_job_ind_begin_ ); // utility::vector1<core::Size>
+	arc( pjn_job_ind_end_ ); // utility::vector1<core::Size>
+	arc( preliminary_job_nodes_assigned_ ); // utility::vector1<_Bool>
+	arc( outstanding_job_count_ ); // utility::vector1<core::Size>
+	arc( pjn_max_nstruct_ ); // utility::vector1<core::Size>
+	arc( incomplete_pjns_using_input_pose_ ); // std::map<core::Size, std::set<core::Size> >
+	arc( non_deallocated_input_poses_ ); // utility::vector1<core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::standard::PreliminaryLarvalJobTracker );
+CEREAL_REGISTER_TYPE( protocols::jd3::standard::PreliminaryLarvalJobTracker )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_standard_PreliminaryLarvalJobTracker )
+#endif // SERIALIZATION

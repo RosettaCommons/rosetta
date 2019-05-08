@@ -23,7 +23,6 @@
 #include <utility/options/VectorOption_T_.hh>
 #include <utility/options/keys/AnyVectorOptionKey.hh>
 
-
 namespace utility {
 namespace options {
 
@@ -119,7 +118,6 @@ public: // Properties
 	{
 		return "(A" + Super::size_constraint_string() + ')';
 	}
-
 
 }; // AnyVectorOption
 

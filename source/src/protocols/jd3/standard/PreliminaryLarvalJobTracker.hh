@@ -31,6 +31,11 @@
 #include <map>
 #include <set>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace standard {
@@ -149,6 +154,12 @@ private:
 
 	///A list of poses that are not deallocated.  These may be complete and not needed, but they have not been deallocated
 	utility::vector1< core::Size > non_deallocated_input_poses_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -156,6 +167,11 @@ private:
 } //jd3
 } //protocols
 
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_standard_PreliminaryLarvalJobTracker )
+#endif // SERIALIZATION
 
 
 #endif //INCLUDED_protocols_jd3_standard_PreliminaryLarvalJobTracker_hh

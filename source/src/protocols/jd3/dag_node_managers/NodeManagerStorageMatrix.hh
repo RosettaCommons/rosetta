@@ -38,11 +38,22 @@ Depth-First Order:   A B C D E F G H I J K L
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace dag_node_managers {
 
 struct ResultElements {
+
+	ResultElements() = default;
+
+	ResultElements( ResultElements const & ) = default;
+
 	ResultElements(
 		core::Size global_job_id_in,
 		core::Size local_result_id_in,
@@ -69,6 +80,11 @@ struct ResultElements {
 	bool operator < ( ResultElements const & other ) const{
 		return score < other.score;
 	}
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -132,10 +148,26 @@ private:
 	bool return_results_depth_first_;
 
 	core::Size max_num_results_with_same_token_per_partition_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	friend class NodeManager;
+	NodeManagerStorageMatrix();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } //dag_node_managers
 } //jd3
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_dag_node_managers_NodeManagerStorageMatrix )
+#endif // SERIALIZATION
+
 
 #endif

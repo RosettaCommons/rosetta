@@ -47,6 +47,11 @@
 #include <unordered_map>
 #include <boost/functional/hash/hash.hpp>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace multistage_rosetta_scripts {
 
@@ -58,6 +63,11 @@ struct JobResultID_hash {
 		boost::hash_combine( seed, id.second );
 		return seed;
 	}
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///@brief We do not want to load all of the input poses into memory at once. Instead we use this struct to keep track of the most recent pose loaded (which is assumed to be the most likely one we are going to need next)
@@ -69,6 +79,11 @@ struct PoseForPoseID
 	{}
 	core::Size pose_id;
 	core::pose::PoseOP pose;
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 struct SortByLowEnergy
@@ -79,6 +94,11 @@ struct SortByLowEnergy
 	) const {
 		return left.second->energy() < right.second->energy();
 	}
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & ) const {}
+	template< class Archive > void load( Archive & ) {}
+#endif // SERIALIZATION
+
 };
 
 ///@brief Job Queen for MultiStage Rosetta Scripts (MRS)
@@ -255,7 +275,7 @@ private:
 
 	TagManager tag_manager_;
 
-	utility::tag::XMLSchemaValidatorOP validator_;
+	//utility::tag::XMLSchemaValidatorOP validator_;
 
 	utility::vector1< std::string > outputters_;
 	utility::vector1< std::string > input_job_tags_;
@@ -278,6 +298,12 @@ private:
 
 	///@brief No need to store this data for more than one stage at a time
 	utility::vector1< jd3::JobResultID > most_recent_cluster_results_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 inline core::Size MRSJobQueen::stage_for_global_job_id( core::Size global_job_id ) const {
@@ -297,5 +323,10 @@ inline core::Size MRSJobQueen::input_pose_id_for_jobid( core::Size global_jobid 
 
 } //multistage_rosetta_scripts
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_multistage_rosetta_scripts_MRSJobQueen )
+#endif // SERIALIZATION
+
 
 #endif

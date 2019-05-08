@@ -57,6 +57,21 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+//#include <cereal/types/_Rb_tree_const_iterator.hpp>
+//#include <cereal/types/_Rb_tree_iterator.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace io {
 namespace silent {
@@ -1265,3 +1280,82 @@ SilentFileData::order_by_energy()
 } // namespace silent
 } // namespace io
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+///// @brief Automatically generated serialization method
+//template< class Archive >
+//void
+//core::io::silent::SilentFileData::const_iterator::save( Archive & arc ) const {
+// arc( CEREAL_NVP( it_ ) ); // Structure_Map::const_iterator
+//}
+//
+///// @brief Automatically generated deserialization method
+//template< class Archive >
+//void
+//core::io::silent::SilentFileData::const_iterator::load( Archive & arc ) {
+// arc( it_ ); // Structure_Map::const_iterator
+//}
+
+//SAVE_AND_LOAD_SERIALIZABLE( core::io::silent::SilentFileData::const_iterator );
+//
+///// @brief Automatically generated serialization method
+//template< class Archive >
+//void
+//core::io::silent::SilentFileData::iterator::save( Archive & arc ) const {
+// arc( CEREAL_NVP( it_ ) ); // Structure_Map::iterator
+//}
+//
+///// @brief Automatically generated deserialization method
+//template< class Archive >
+//void
+//core::io::silent::SilentFileData::iterator::load( Archive & arc ) {
+// arc( it_ ); // Structure_Map::iterator
+//}
+//
+//SAVE_AND_LOAD_SERIALIZABLE( core::io::silent::SilentFileData::iterator );
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::io::silent::SilentFileData::SilentFileData() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::io::silent::SilentFileData::save( Archive & arc ) const {
+	arc( CEREAL_NVP( structure_map_ ) ); // Structure_Map
+	arc( CEREAL_NVP( structure_list_ ) ); // utility::vector1<SilentStructOP>
+	arc( CEREAL_NVP( comment_lines_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( shared_silent_data_ ) ); // std::map<SharedSilentDataType, SharedSilentDataOP>
+	arc( CEREAL_NVP( filename_ ) ); // std::string
+	arc( CEREAL_NVP( store_argv_in_file_ ) ); // _Bool
+	arc( CEREAL_NVP( strict_column_mode_ ) ); // _Bool
+	arc( CEREAL_NVP( record_source_ ) ); // _Bool
+	arc( CEREAL_NVP( silent_struct_type_ ) ); // std::string
+	arc( CEREAL_NVP( verbose_ ) ); // _Bool
+	arc( CEREAL_NVP( full_model_parameters_ ) ); // core::pose::full_model_info::FullModelParametersOP
+	arc( CEREAL_NVP( options_ ) ); // class core::io::silent::SilentFileOptions
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::io::silent::SilentFileData::load( Archive & arc ) {
+	arc( structure_map_ ); // Structure_Map
+	arc( structure_list_ ); // utility::vector1<SilentStructOP>
+	arc( comment_lines_ ); // utility::vector1<std::string>
+	arc( shared_silent_data_ ); // std::map<SharedSilentDataType, SharedSilentDataOP>
+	arc( filename_ ); // std::string
+	arc( store_argv_in_file_ ); // _Bool
+	arc( strict_column_mode_ ); // _Bool
+	arc( record_source_ ); // _Bool
+	arc( silent_struct_type_ ); // std::string
+	arc( verbose_ ); // _Bool
+	arc( full_model_parameters_ ); // core::pose::full_model_info::FullModelParametersOP
+	arc( options_ ); // class core::io::silent::SilentFileOptions
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::io::silent::SilentFileData );
+CEREAL_REGISTER_TYPE( core::io::silent::SilentFileData )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_io_silent_SilentFileData )
+#endif // SERIALIZATION

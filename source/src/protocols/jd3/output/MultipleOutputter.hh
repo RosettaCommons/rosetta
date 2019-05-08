@@ -24,6 +24,11 @@
 // Utility headers
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace output {
@@ -55,10 +60,21 @@ public:
 
 private:
 	utility::vector1< ResultOutputterOP > outputters_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace output
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_output_MultipleOutputter )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_output_MultipleOutputter_HH

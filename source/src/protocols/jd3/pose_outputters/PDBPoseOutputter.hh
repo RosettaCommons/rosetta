@@ -25,6 +25,11 @@
 //project headers
 #include <core/pose/Pose.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
@@ -124,10 +129,21 @@ private:
 	// then the outputter_for_job_method must be updated to respect the job-distributor
 	// assigned suffix.
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace pose_outputters
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_pose_outputters_PDBPoseOutputter )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_PDBPoseOutputter_HH

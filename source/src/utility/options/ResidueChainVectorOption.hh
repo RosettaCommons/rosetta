@@ -36,6 +36,11 @@
 // returns chain information as well. Converts tags like A:1-4 B:1-3 into a pair of vectors,  [1 2 3 4 1 2 3], [A A A A B B B]
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace utility {
 namespace options {
 
@@ -135,11 +140,22 @@ private:
 
 	utility::vector1< std::string > value_strings_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // ResidueChainVectorOption
 
 
 } // namespace options
 } // namespace utility
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( utility_options_ResidueChainVectorOption )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_utility_options_ResidueChainVectorOption_HH

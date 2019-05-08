@@ -352,15 +352,15 @@ JobDigraph::create_new_edge( utility::graph::DirectedEdge const * example_edge )
 template < class Archive >
 void JobDirectedNode::save_to_archive( Archive & arc ) const
 {
-	// EXEMPT n_predecessors_w_outstanding_jobs_
 	arc( all_jobs_completed_, all_jobs_started_ );
+	arc(node_label_);
 }
 
 template < class Archive >
 void JobDirectedNode::load_from_archive( Archive & arc )
 {
-	// EXEMPT n_predecessors_w_outstanding_jobs_
 	arc( all_jobs_completed_, all_jobs_started_ );
+	arc(node_label_);
 }
 
 template < class Archive >

@@ -21,6 +21,11 @@
 // C++ Headers
 #include <string>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace io {
 namespace silent {
@@ -35,6 +40,11 @@ class SharedSilentData : public utility::pointer::ReferenceCount {
 public:
 	SharedSilentData() {}
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 }; // class SharedSilentData
 
 class SimpleSequenceData : public SharedSilentData {
@@ -55,11 +65,21 @@ public:
 
 private:
 	std::string sequence_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 }; // class SimpleSequenceData
 
 
 } // namespace silent
 } // namespace io
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_io_silent_SharedSilentData )
+#endif // SERIALIZATION
 
 #endif

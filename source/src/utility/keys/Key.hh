@@ -36,6 +36,11 @@
 #include <cstddef>
 #include <string>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace utility {
 namespace keys {
@@ -321,6 +326,12 @@ protected: // Comparison
 	bool
 	comparable( Key const & key ) const = 0;
 
+#ifdef    SERIALIZATION
+	friend class cereal::access;
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; // Key
 
@@ -365,6 +376,11 @@ comparable( Key const & a, Key const & b );
 
 } // namespace keys
 } // namespace utility
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( utility_keys_Key )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_utility_keys_Key_HH

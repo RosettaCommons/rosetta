@@ -37,6 +37,18 @@
 
 static basic::Tracer TR( "protocols.jd3.job_distributors.JobExtractor" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/list.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace job_distributors {
@@ -93,11 +105,11 @@ JobExtractor::pop_job_from_queue()
 
 	LarvalJobOP job = jobs_for_current_digraph_node_.front();
 	jobs_for_current_digraph_node_.pop_front();
-	digraph_node_for_job_[ job->job_index() ] = current_digraph_node_;
-	if ( jobs_running_for_digraph_nodes_.count( current_digraph_node_ ) == 0 ) {
-		jobs_running_for_digraph_nodes_[ current_digraph_node_ ] = utility::pointer::make_shared< JobSet >();
+	digraph_node_for_job_[ job->job_index() ] = job->job_node();
+	if ( jobs_running_for_digraph_nodes_.count( job->job_node() ) == 0 ) {
+		jobs_running_for_digraph_nodes_[ job->job_node() ] = utility::pointer::make_shared< JobSet >();
 	}
-	jobs_running_for_digraph_nodes_[ current_digraph_node_ ]->insert( job->job_index() );
+	jobs_running_for_digraph_nodes_[ job->job_node() ]->insert( job->job_index() );
 	running_jobs_[ job->job_index() ] = job;
 
 	if ( jobs_for_current_digraph_node_.empty() ) {
@@ -108,6 +120,12 @@ JobExtractor::pop_job_from_queue()
 
 	return job;
 }
+
+void
+JobExtractor::push_job_to_front_of_queue(LarvalJobOP job) {
+	jobs_for_current_digraph_node_.push_front(job);
+}
+
 
 void
 JobExtractor::note_job_no_longer_running( Size job_id )
@@ -245,9 +263,17 @@ JobExtractor::complete() const
 void
 JobExtractor::query_job_queen_for_more_jobs_for_current_node()
 {
+	if ( current_digraph_node_ == 0 ) {
+		// We got here because the JobDistributor pushed LarvalJobs back into
+		// the front of the queue after all jobs were extracted.
+		return;
+	}
 	debug_assert( current_digraph_node_ );
 
 	first_call_to_determine_job_list_ = false;
+
+	//TR << "query_job_queen_for_more_jobs_for_current_node " << current_digraph_node_ << " " <<
+	// job_queen_ << " " << job_dag_ << " " << std::endl;
 
 	LarvalJobs jobs_for_current_node = job_queen_->determine_job_list_and_track(
 		current_digraph_node_, maximum_jobs_to_hold_in_memory_ );
@@ -400,20 +426,57 @@ JobExtractor::queue_initial_digraph_nodes_and_jobs()
 	find_jobs_for_next_node();
 }
 
-///// @brief With the invariant that the jobs_for_current_digraph_node_ queue should
-///// never have anything in it if the jobs_for_current_digraph_node_ list is
-///// empty, then we can simply check whether the jobs_for_current_digraph_node_ queue
-///// is empty in order to decide if there are any jobs that are ready to be launched.
-//bool
-//JobExtractor::jobs_ready_to_go()
-//{
-// return ! jobs_for_current_digraph_node_.empty();
-//}
-
-
 
 } // namespace job_distributors
 } // namespace jd3
 } // namespace protocols
 
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::job_distributors::JobExtractor::save( Archive & arc ) const {
+	arc( CEREAL_NVP( job_queen_ ) ); // JobQueenOP
+	arc( CEREAL_NVP( job_dag_ ) ); // JobDigraphOP
+	arc( CEREAL_NVP( digraph_nodes_ready_to_be_run_ ) ); // SizeList
+	arc( CEREAL_NVP( worker_nodes_waiting_for_jobs_ ) ); // SizeList
+	arc( CEREAL_NVP( current_digraph_node_ ) ); // Size
+	arc( CEREAL_NVP( jobs_for_current_digraph_node_ ) ); // LarvalJobs
+	arc( CEREAL_NVP( running_jobs_ ) ); // JobMap
+	arc( CEREAL_NVP( digraph_node_for_job_ ) ); // DigraphNodeForJobMap
+	arc( CEREAL_NVP( jobs_running_for_digraph_nodes_ ) ); // OutstandingJobsForDigraphNodeMap
+	arc( CEREAL_NVP( first_call_to_determine_job_list_ ) ); // _Bool
+	arc( CEREAL_NVP( node_recently_completed_ ) ); // _Bool
+	arc( CEREAL_NVP( job_indices_seen_ ) ); // numeric::DiscreteIntervalEncodingTree<core::Size>
+	arc( CEREAL_NVP( complete_ ) ); // _Bool
+	arc( CEREAL_NVP( maximum_jobs_to_hold_in_memory_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::job_distributors::JobExtractor::load( Archive & arc ) {
+	arc( job_queen_ ); // JobQueenOP
+	arc( job_dag_ ); // JobDigraphOP
+	arc( digraph_nodes_ready_to_be_run_ ); // SizeList
+	arc( worker_nodes_waiting_for_jobs_ ); // SizeList
+	arc( current_digraph_node_ ); // Size
+	arc( jobs_for_current_digraph_node_ ); // LarvalJobs
+	arc( running_jobs_ ); // JobMap
+	arc( digraph_node_for_job_ ); // DigraphNodeForJobMap
+	arc( jobs_running_for_digraph_nodes_ ); // OutstandingJobsForDigraphNodeMap
+	arc( first_call_to_determine_job_list_ ); // _Bool
+	arc( node_recently_completed_ ); // _Bool
+	arc( job_indices_seen_ ); // numeric::DiscreteIntervalEncodingTree<core::Size>
+	arc( complete_ ); // _Bool
+	arc( maximum_jobs_to_hold_in_memory_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::job_distributors::JobExtractor );
+CEREAL_REGISTER_TYPE( protocols::jd3::job_distributors::JobExtractor )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_job_distributors_JobExtractor )
+#endif // SERIALIZATION

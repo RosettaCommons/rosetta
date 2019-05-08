@@ -18,6 +18,7 @@ sources = {
 		"constants",
 		"cubic_polynomial",
 		"cyclic_coordinate_descent",
+		"DiscreteIntervalEncodingTree",
 		"HomogeneousTransform.srlz",
 		"MathMatrix.srlz",
 		"MathVector.srlz",

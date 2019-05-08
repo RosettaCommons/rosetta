@@ -20,6 +20,13 @@
 #include <protocols/jd3/dag_node_managers/EvenlyPartitionedNodeManager.fwd.hh>
 #include <protocols/jd3/dag_node_managers/NodeManager.hh>
 
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace dag_node_managers {
@@ -41,6 +48,7 @@ inline utility::vector1< core::Size > determine_num_for_partition(
 	for ( core::Size ii = 1; ii <= mod_result; ++ii ) {
 		++num_per_partition[ ii ];
 	}
+
 	return num_per_partition;
 }
 
@@ -77,6 +85,15 @@ public:
 	Other useful methods:
 	*/
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	EvenlyPartitionedNodeManager();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -84,5 +101,10 @@ public:
 }
 } //jd3
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_dag_node_managers_EvenlyPartitionedNodeManager )
+#endif // SERIALIZATION
+
 
 #endif

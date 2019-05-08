@@ -72,6 +72,19 @@
 static basic::Tracer TR( "protocols.jd3.standard.StandardJobQueen" );
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/list.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace standard {
@@ -1633,3 +1646,111 @@ StandardJobQueen::current_job_index() const {
 } // namespace standard
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::standard::StandardJobQueen::save( Archive & arc ) const {
+	arc( cereal::base_class< protocols::jd3::JobQueen >( this ) );
+	// EXEMPT options_ inputter_options_ outputter_options_ secondary_outputter_options_
+	//arc( CEREAL_NVP( options_ ) ); // utility::options::OptionKeyList
+	//arc( CEREAL_NVP( inputter_options_ ) ); // utility::options::OptionKeyList
+	//arc( CEREAL_NVP( outputter_options_ ) ); // utility::options::OptionKeyList
+	//arc( CEREAL_NVP( secondary_outputter_options_ ) ); // utility::options::OptionKeyList
+	arc( CEREAL_NVP( use_factory_provided_pose_inputters_ ) ); // _Bool
+	arc( CEREAL_NVP( inputter_creators_ ) ); // std::map<std::string, pose_inputters::PoseInputterCreatorCOP>
+	arc( CEREAL_NVP( inputter_creator_list_ ) ); // std::list<pose_inputters::PoseInputterCreatorCOP>
+	arc( CEREAL_NVP( use_factory_provided_pose_outputters_ ) ); // _Bool
+	arc( CEREAL_NVP( outputter_creators_ ) ); // std::map<std::string, pose_outputters::PoseOutputterCreatorCOP>
+	arc( CEREAL_NVP( outputter_creator_list_ ) ); // std::list<pose_outputters::PoseOutputterCreatorCOP>
+	arc( CEREAL_NVP( override_default_outputter_ ) ); // _Bool
+	arc( CEREAL_NVP( default_outputter_creator_ ) ); // pose_outputters::PoseOutputterCreatorOP
+	arc( CEREAL_NVP( pose_outputters_ ) ); // std::map<std::string, pose_outputters::PoseOutputterOP>
+	arc( CEREAL_NVP( common_block_precedes_job_blocks_ ) ); // _Bool
+	arc( CEREAL_NVP( required_initialization_performed_ ) ); // _Bool
+	arc( CEREAL_NVP( job_definition_file_tags_ ) ); // utility::tag::TagCOP
+	arc( CEREAL_NVP( common_block_tags_ ) ); // utility::tag::TagCOP
+	arc( CEREAL_NVP( preliminary_larval_jobs_determined_ ) ); // _Bool
+	arc( CEREAL_NVP( preliminary_larval_jobs_ ) ); // utility::vector1<PreliminaryLarvalJob>
+	arc( CEREAL_NVP( prelim_job_tracker_ ) ); // PreliminaryLarvalJobTrackerOP
+	arc( CEREAL_NVP( inner_larval_jobs_for_curr_prelim_job_ ) ); // InnerLarvalJobs
+	arc( CEREAL_NVP( curr_inner_larval_job_index_ ) ); // Size
+	arc( CEREAL_NVP( njobs_made_for_curr_inner_larval_job_ ) ); // Size
+	arc( CEREAL_NVP( recent_successes_ ) ); // std::list<output::OutputSpecificationOP>
+	arc( CEREAL_NVP( representative_pose_outputter_map_ ) ); // RepresentativeOutputterMap
+	arc( CEREAL_NVP( representative_secondary_outputter_map_ ) ); // SecondaryRepresentativeOutputterMap
+	arc( CEREAL_NVP( pose_outputter_map_ ) ); // PoseOutputterMap
+	arc( CEREAL_NVP( secondary_outputter_map_ ) ); // SecondaryOutputterMap
+	arc( CEREAL_NVP( cl_outputters_ ) ); // std::list<pose_outputters::SecondaryPoseOutputterOP>
+	arc( CEREAL_NVP( input_pose_counter_ ) ); // core::Size
+	arc( CEREAL_NVP( input_pose_index_map_ ) ); // std::map<core::Size, core::pose::PoseOP>
+	arc( CEREAL_NVP( load_starting_poses_only_once_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::standard::StandardJobQueen::load( Archive & arc ) {
+	arc( cereal::base_class< protocols::jd3::JobQueen >( this ) );
+	// EXEMPT options_ inputter_options_ outputter_options_ secondary_outputter_options_
+	//arc( options_ ); // utility::options::OptionKeyList
+	//arc( inputter_options_ ); // utility::options::OptionKeyList
+	//arc( outputter_options_ ); // utility::options::OptionKeyList
+	//arc( secondary_outputter_options_ ); // utility::options::OptionKeyList
+	arc( use_factory_provided_pose_inputters_ ); // _Bool
+	arc( inputter_creators_ ); // std::map<std::string, pose_inputters::PoseInputterCreatorCOP>
+
+	std::list< std::shared_ptr< protocols::jd3::pose_inputters::PoseInputterCreator > > local_inputter_creator_list;
+	arc( local_inputter_creator_list ); // std::list<pose_inputters::PoseInputterCreatorCOP>
+	//inputter_creator_list_ = local_inputter_creator_list; // copy the non-const pointer(s) into the const pointer(s) - THIS FAILS
+	//Slow loop for now:
+	for ( std::shared_ptr< protocols::jd3::pose_inputters::PoseInputterCreator > const & element : local_inputter_creator_list ) {
+		inputter_creator_list_.push_back( element );
+	}
+
+
+	arc( use_factory_provided_pose_outputters_ ); // _Bool
+	arc( outputter_creators_ ); // std::map<std::string, pose_outputters::PoseOutputterCreatorCOP>
+
+	std::list< std::shared_ptr< protocols::jd3::pose_outputters::PoseOutputterCreator > > local_outputter_creator_list;
+	arc( local_outputter_creator_list ); // std::list<pose_outputters::PoseOutputterCreatorCOP>
+	//outputter_creator_list_ = local_outputter_creator_list; // copy the non-const pointer(s) into the const pointer(s)
+	for ( std::shared_ptr< protocols::jd3::pose_outputters::PoseOutputterCreator > const & element : local_outputter_creator_list ) {
+		outputter_creator_list_.push_back( element );
+	}
+
+	arc( override_default_outputter_ ); // _Bool
+	arc( default_outputter_creator_ ); // pose_outputters::PoseOutputterCreatorOP
+	arc( pose_outputters_ ); // std::map<std::string, pose_outputters::PoseOutputterOP>
+	arc( common_block_precedes_job_blocks_ ); // _Bool
+	arc( required_initialization_performed_ ); // _Bool
+	std::shared_ptr< utility::tag::Tag > local_job_definition_file_tags;
+	arc( local_job_definition_file_tags ); // utility::tag::TagCOP
+	job_definition_file_tags_ = local_job_definition_file_tags; // copy the non-const pointer(s) into the const pointer(s)
+	std::shared_ptr< utility::tag::Tag > local_common_block_tags;
+	arc( local_common_block_tags ); // utility::tag::TagCOP
+	common_block_tags_ = local_common_block_tags; // copy the non-const pointer(s) into the const pointer(s)
+	arc( preliminary_larval_jobs_determined_ ); // _Bool
+	arc( preliminary_larval_jobs_ ); // utility::vector1<PreliminaryLarvalJob>
+	arc( prelim_job_tracker_ ); // PreliminaryLarvalJobTrackerOP
+	arc( inner_larval_jobs_for_curr_prelim_job_ ); // InnerLarvalJobs
+	arc( curr_inner_larval_job_index_ ); // Size
+	arc( njobs_made_for_curr_inner_larval_job_ ); // Size
+	arc( recent_successes_ ); // std::list<output::OutputSpecificationOP>
+	arc( representative_pose_outputter_map_ ); // RepresentativeOutputterMap
+	arc( representative_secondary_outputter_map_ ); // SecondaryRepresentativeOutputterMap
+	arc( pose_outputter_map_ ); // PoseOutputterMap
+	arc( secondary_outputter_map_ ); // SecondaryOutputterMap
+	arc( cl_outputters_ ); // std::list<pose_outputters::SecondaryPoseOutputterOP>
+	arc( input_pose_counter_ ); // core::Size
+	arc( input_pose_index_map_ ); // std::map<core::Size, core::pose::PoseOP>
+	arc( load_starting_poses_only_once_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::standard::StandardJobQueen );
+CEREAL_REGISTER_TYPE( protocols::jd3::standard::StandardJobQueen )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_standard_StandardJobQueen )
+#endif // SERIALIZATION

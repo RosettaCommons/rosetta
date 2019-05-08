@@ -35,6 +35,15 @@
 #include <set>
 #include <sstream>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#include <cereal/types/set.hpp>
+#endif // SERIALIZATION
+
 
 namespace utility {
 namespace options {
@@ -1138,6 +1147,39 @@ private: // Fields
 
 	/// @brief Value
 	Value value_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const
+	{
+		cereal::base_class< utility::options::ScalarOption >( this );
+		arc(key_);
+		arc(description_);
+		arc(short_description_);
+		arc(legal_);
+		arc(lower_);
+		arc(upper_);
+		arc(default_state_);
+		arc(default_value_);
+		arc(state_);
+		arc(value_);
+	}
+	template< class Archive > void load( Archive & arc )
+	{
+		cereal::base_class< utility::options::ScalarOption >( this );
+		arc(key_);
+		arc(description_);
+		arc(short_description_);
+		arc(legal_);
+		arc(lower_);
+		arc(upper_);
+		arc(default_state_);
+		arc(default_value_);
+		arc(state_);
+		arc(value_);
+
+	}
+#endif // SERIALIZATION
 
 
 }; // ScalarOption_T_

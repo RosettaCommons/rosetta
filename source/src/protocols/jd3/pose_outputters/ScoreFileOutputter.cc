@@ -36,6 +36,16 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
@@ -287,3 +297,29 @@ bool ScoreFileOutputterCreator::outputter_specified_by_command_line() const {
 } // namespace pose_outputters
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::pose_outputters::ScoreFileOutputter::save( Archive & arc ) const {
+	arc( cereal::base_class< protocols::jd3::pose_outputters::SecondaryPoseOutputter >( this ) );
+	arc( CEREAL_NVP( scorefile_name_ ) ); // utility::file::FileName
+	arc( CEREAL_NVP( scorefile_lines_ ) ); // utility::vector1<std::string>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::pose_outputters::ScoreFileOutputter::load( Archive & arc ) {
+	arc( cereal::base_class< protocols::jd3::pose_outputters::SecondaryPoseOutputter >( this ) );
+	arc( scorefile_name_ ); // utility::file::FileName
+	arc( scorefile_lines_ ); // utility::vector1<std::string>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::pose_outputters::ScoreFileOutputter );
+CEREAL_REGISTER_TYPE( protocols::jd3::pose_outputters::ScoreFileOutputter )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_pose_outputters_ScoreFileOutputter )
+#endif // SERIALIZATION

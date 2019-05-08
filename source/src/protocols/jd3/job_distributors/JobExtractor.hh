@@ -40,6 +40,11 @@
 #include <set>
 #include <string>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace job_distributors {
@@ -73,6 +78,12 @@ public:
 
 	bool job_queue_empty() const;
 	LarvalJobOP pop_job_from_queue();
+
+	/// @brief The JD is allowed to pull jobs out of the queue and then
+	/// to reinsert them back into the queue, e.g., as it might do
+	/// when it has recovered from a checkpoint and needs to re-launch
+	/// jobs.
+	void push_job_to_front_of_queue(LarvalJobOP job);
 
 	void
 	note_job_no_longer_running( Size job_id );
@@ -108,9 +119,6 @@ private:
 
 	void
 	queue_initial_digraph_nodes_and_jobs();
-
-	//bool
-	//jobs_ready_to_go();
 
 private:
 
@@ -149,10 +157,21 @@ private:
 	bool complete_;
 
 	core::Size maximum_jobs_to_hold_in_memory_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }//job_distributors
 }//jd3
 }//protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_job_distributors_JobExtractor )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_protocols_jd3_job_distributors_JobExtractor_HH

@@ -14,6 +14,14 @@
 // Unit headers
 #include <protocols/jd3/output/ResultOutputter.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace output {
@@ -25,3 +33,21 @@ ResultOutputter::~ResultOutputter() = default;
 } // namespace jd3
 } // namespace protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::output::ResultOutputter::save( Archive & ) const {}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::output::ResultOutputter::load( Archive & ) {}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::output::ResultOutputter );
+CEREAL_REGISTER_TYPE( protocols::jd3::output::ResultOutputter )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_output_ResultOutputter )
+#endif // SERIALIZATION

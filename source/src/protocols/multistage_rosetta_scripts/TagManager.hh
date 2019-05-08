@@ -36,6 +36,13 @@
 #include <protocols/moves/Mover.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#include <cereal/types/list.hpp>
+#include <cereal/types/vector.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace multistage_rosetta_scripts {
 
@@ -52,6 +59,12 @@ public:
 		std::string const & name,
 		utility::pointer::ReferenceCountOP const op
 	) override;
+
+	//#ifdef    SERIALIZATION
+	//public:
+	// template< class Archive > void save( Archive & arc ) const;
+	// template< class Archive > void load( Archive & arc );
+	//#endif // SERIALIZATION
 
 };
 
@@ -78,6 +91,11 @@ struct ParsedTagCache{
 	TagMapOP filter_tags;
 	utility::pointer::shared_ptr< moves::Movers_map > movers_map;
 	utility::pointer::shared_ptr< filters::Filters_map > filters_map;
+	//#ifdef    SERIALIZATION
+	// template< class Archive > void save( Archive & arc ) const;
+	// template< class Archive > void load( Archive & arc );
+	//#endif // SERIALIZATION
+
 };
 
 class TagManager : public utility::pointer::ReferenceCount {
@@ -138,9 +156,20 @@ private:
 	ParsedTagCacheOP most_recent_request_;
 
 	core::pose::Pose dummy_pose_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } //multistage_rosetta_scripts
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_multistage_rosetta_scripts_TagManager )
+#endif // SERIALIZATION
+
 
 #endif

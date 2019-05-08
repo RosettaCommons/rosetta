@@ -32,6 +32,22 @@ msg_name( simulate_mpi_message_type msg_type ) {
 	return "unknown message type";
 }
 
+std::string
+payload( SimulateMPIMessageOP msg ) {
+	switch( msg->msg_type() ) {
+	case smpi_char  : return utility::to_string(msg->char_msg());
+	case smpi_integer : return utility::to_string(msg->integer_msg());
+	case smpi_size : return utility::to_string(msg->size_msg());
+	case smpi_string : return msg->string_msg();
+	case smpi_double : return utility::to_string(msg->double_msg());
+	case smpi_integers : return utility::to_string(msg->integers_msg());
+	case smpi_sizes : return utility::to_string(msg->sizes_msg());
+	case smpi_doubles : return utility::to_string(msg->doubles_msg());
+	}
+	return "unknown message type";
+
+}
+
 SimulateMPIMessage::SimulateMPIMessage() :
 	index_( 0 ),
 	src_( 0 ),
@@ -115,6 +131,7 @@ void SimulateMPIData::queue_message( SimulateMPIMessageOP msg )
 	messages_for_node_[ msg->dst() ].push_back( msg );
 	messages_from_node_[ msg->src() ].push_back( msg );
 	messages_[ msg->dst() ][ msg->src() ].push_back( msg );
+	//std::cout << "Queuing message " << msg->index() << " " << msg_name(msg->msg_type()) << " from " << msg->src() << " to " << msg->dst() << " values: " << payload(msg) << std::endl;
 }
 
 SimulateMPIMessageOP
@@ -249,6 +266,7 @@ int
 SimulateMPI::receive_integer_from_anyone()
 {
 	SimulateMPIMessageOP msg = simulation_->pop_next_message_for_node_of_type( rank_, smpi_integer );
+	//std::cout << "utility::recieve_integer_from_anyone() " << msg->index() << " " << msg->integer_msg() << std::endl;
 	return msg->integer_msg();
 }
 

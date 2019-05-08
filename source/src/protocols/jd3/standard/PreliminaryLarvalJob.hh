@@ -49,6 +49,11 @@ public:
 	utility::tag::TagCOP job_tag;
 	utility::options::OptionCollectionCOP job_options;
 	pose_inputters::PoseInputterOP pose_inputter;
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 

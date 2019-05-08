@@ -24,6 +24,11 @@
 #include <utility/options/keys/AnyOptionKey.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace utility {
 namespace options {
 
@@ -126,6 +131,11 @@ public: // Properties
 
 } // namespace options
 } // namespace utility
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( utility_options_AnyOption )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_utility_options_AnyOption_HH

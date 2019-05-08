@@ -210,6 +210,16 @@ private: // Fields
 	/// @brief Strict inequality (< or >) bound?
 	bool strict_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const {
+		arc(active_, value_, strict_);
+	}
+	template< class Archive > void load( Archive & arc ) {
+		arc(active_, value_, strict_);
+	}
+#endif // SERIALIZATION
+
 
 }; // Bound
 

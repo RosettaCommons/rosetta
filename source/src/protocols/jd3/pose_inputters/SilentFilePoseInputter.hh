@@ -32,6 +32,11 @@
 #include <utility/file/FileName.fwd.hh>
 #include <utility/options/keys/OptionKey.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace pose_inputters {
@@ -105,10 +110,21 @@ private:
 	core::io::silent::SilentFileOptionsOP sf_opts_;
 	core::io::silent::SilentFileDataOP sfd_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // SilentFilePoseInputter
 
 } // namespace pose_inputters
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_pose_inputters_SilentFilePoseInputter )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_SilentFilePoseInputter_HH

@@ -516,6 +516,12 @@ private: // Fields
 	std::string ver_;
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // FileName
 
 

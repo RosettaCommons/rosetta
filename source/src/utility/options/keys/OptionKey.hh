@@ -28,6 +28,12 @@
 #include <utility/keys/VariantKey.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace utility {
 namespace options {
 
@@ -167,11 +173,23 @@ public: // Properties
 	vector() const = 0;
 
 
+#ifdef    SERIALIZATION
+	friend class cereal::access;
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // OptionKey
 
 
 } // namespace options
 } // namespace utility
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( utility_options_keys_OptionKey )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_utility_options_keys_OptionKey_HH

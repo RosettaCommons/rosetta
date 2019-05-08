@@ -17,6 +17,15 @@
 // Package headers
 #include <protocols/jd3/output/MultipleOutputSpecification.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 namespace output {
@@ -63,3 +72,27 @@ utility::vector1< ResultOutputterOP > const & MultipleOutputter::outputters() co
 } // namespace output
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::output::MultipleOutputter::save( Archive & arc ) const {
+	arc( cereal::base_class< protocols::jd3::output::ResultOutputter >( this ) );
+	arc( CEREAL_NVP( outputters_ ) ); // utility::vector1<ResultOutputterOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::output::MultipleOutputter::load( Archive & arc ) {
+	arc( cereal::base_class< protocols::jd3::output::ResultOutputter >( this ) );
+	arc( outputters_ ); // utility::vector1<ResultOutputterOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::output::MultipleOutputter );
+CEREAL_REGISTER_TYPE( protocols::jd3::output::MultipleOutputter )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_output_MultipleOutputter )
+#endif // SERIALIZATION

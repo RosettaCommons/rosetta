@@ -30,6 +30,11 @@
 #include <iostream>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace utility {
 namespace options {
 
@@ -42,9 +47,7 @@ class BooleanOption :
 
 private: // Types
 
-
 	typedef  ScalarOption_T_< BooleanOptionKey, bool >  Super;
-
 
 public: // Creation
 
@@ -91,7 +94,6 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-
 	~BooleanOption() {}
 
 
@@ -215,11 +217,22 @@ private: // Creation
 	}
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // BooleanOption
 
 
 } // namespace options
 } // namespace utility
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( utility_options_BooleanOption )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_utility_options_BooleanOption_HH
