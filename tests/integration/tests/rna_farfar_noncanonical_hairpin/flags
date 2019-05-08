@@ -7,3 +7,6 @@
 -nstruct 1
 -score:weights rna/denovo/rna_hires.wts
 -superimpose_over_all false
+-bps_moves false
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions

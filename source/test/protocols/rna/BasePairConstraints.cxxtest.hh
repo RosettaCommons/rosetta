@@ -204,6 +204,11 @@ public:
 
 							if ( poses_.find( tag ) == poses_.end() ) continue;
 							Pose & pose = *( poses_.at( tag )[ 1 ] );
+							if ( pose.num_jump() < 1 ) {
+								TR << "Confusing! Pose for tag " << tag << " has " << pose.size() << " residues and no jumps." << std::endl;
+								continue;
+							}
+
 							rbtm.apply( pose );
 							auto bpc = utility::pointer::make_shared< BasePairConstraint >( 1, 2, BaseEdge( e1 ), BaseEdge( e2 ),
 								core::pose::rna::get_LW_orientation( BaseEdge( e1 ), BaseEdge( e2 ), BaseDoubletOrientation( o ) ) );

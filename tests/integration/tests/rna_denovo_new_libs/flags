@@ -13,3 +13,5 @@
 -vary_geometry
 -vall_torsions RNA18_HUB_2.154_2.5.torsions
 -jump_library_file RNA18_HUB_2.154_2.5.jump
+-bps_moves false
+-score:weights rna/denovo/rna_hires.wts

@@ -10,3 +10,7 @@
 -denovo:use_legacy_job_distributor true
 -edensity:mapfile mini_1a9n_map.mrc
 -edensity:mapreso 5.0
+-bps_moves false
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions
+-score:weights rna/denovo/rna_hires.wts

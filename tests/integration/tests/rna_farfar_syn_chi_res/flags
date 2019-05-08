@@ -7,3 +7,7 @@
 -score:weights rna/denovo/rna_hires.wts
 -force_syn_chi_res_list A:6-8
 -set_weights rna_torsion 10.0
+-bps_moves false
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions
+-score:weights rna/denovo/rna_hires.wts

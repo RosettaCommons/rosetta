@@ -170,7 +170,6 @@ public:
 		utility::vector1< JobResultCOP > const & // input_job_results
 	) {
 
-
 		MoverAndChunkLibraryJobOP mature_job( new MoverAndChunkLibraryJob );
 
 		core::pose::PoseOP poseop = pose_for_job( larval_job, *job_options );
@@ -191,6 +190,11 @@ public:
 		// rna_de_novo_setup->rna_params() );
 		rna_params_ = rna_de_novo_setup->rna_params();
 		options_ = rna_de_novo_setup->options();
+
+		// bps_moves and new_fold_tree_initializer are mutually exclusive
+		if ( options_->bps_moves() && options_->new_fold_tree_initializer() ) {
+			utility_exit_with_message( "If you want to supply -new_fold_tree_initializer true, as for an electron density case, you MUST supply -bps_moves false." );
+		}
 
 		if ( rna_params_ == nullptr ) {
 			if ( !options_->rna_params_file().empty() ) {

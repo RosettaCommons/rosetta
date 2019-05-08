@@ -17,3 +17,5 @@
 -output_jump_res 1 3
 -secstruct_legacy HLH
 -output_histogram_file HISTOGRAM.bin.gz
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions

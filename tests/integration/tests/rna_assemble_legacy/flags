@@ -12,3 +12,6 @@
 -input_res  1-9 63-71 13-18 28-33 42-47 55-60 1-18 28-47 55-71 13-33 42-60
 -minimize_rna false
 #-dump
+-bps_moves false
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions

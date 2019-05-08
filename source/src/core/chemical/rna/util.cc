@@ -473,7 +473,7 @@ get_base_pair_atoms(
 				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " O2 " );
 				atom_ids2.push_back( " N3 " );  atom_ids1.push_back( " H3 " );
 			} else if ( aa1 == na_rgu && aa2 == na_rgu ) {
-				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " O2 " );
+				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " O6 " );
 				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H1 " );
 			} else if ( aa1 == na_rgu && aa2 == na_ura ) {
 				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H3 " );
@@ -555,8 +555,8 @@ get_base_pair_atoms(
 				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " N7 " );
 				atom_ids1.push_back( " H21" );  atom_ids2.push_back( " O6 " );
 			} else if ( aa1 == na_rgu && aa2 == na_ura ) {
-				atom_ids1.push_back( " 06 " );  atom_ids2.push_back( " H5 " );
-				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " 04" );
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H5 " );
+				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " O4 " );
 			} else if ( aa1 == na_ura && aa2 == na_rad ) {
 				atom_ids1.push_back( " H3 " );  atom_ids2.push_back( " N7 " );
 				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " H62" );
@@ -631,14 +631,14 @@ get_base_pair_atoms(
 				atom_ids2.push_back( " N3 " );  atom_ids1.push_back( " H5 " );
 				atom_ids2.push_back( " O2 " );  atom_ids1.push_back( " H42" );
 			} else if ( aa2 == na_rcy && aa1 == na_rgu ) {
-				//atom_ids2.push_back( " N3 " );  atom_ids1.push_back( " 06 " ); // can't trust
+				//atom_ids2.push_back( " N3 " );  atom_ids1.push_back( " O6 " ); // can't trust
 				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " N7 " );
 			} else if ( aa2 == na_rgu && aa1 == na_rgu ) {
 				atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " N7 " );
 				atom_ids2.push_back( " H21" );  atom_ids1.push_back( " O6 " );
 			} else if ( aa2 == na_rgu && aa1 == na_ura ) {
-				atom_ids2.push_back( " 06 " );  atom_ids1.push_back( " H5 " );
-				atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " 04" );
+				atom_ids2.push_back( " O6 " );  atom_ids1.push_back( " H5 " );
+				atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " O4 " );
 			} else if ( aa2 == na_ura && aa1 == na_rad ) {
 				atom_ids2.push_back( " H3 " );  atom_ids1.push_back( " N7 " );
 				atom_ids2.push_back( " O2 " );  atom_ids1.push_back( " H62" );

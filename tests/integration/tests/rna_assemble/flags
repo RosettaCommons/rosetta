@@ -14,3 +14,6 @@
 -cutpoint_closed  9 18 47
 -minimize_rna false
 #-dump
+-bps_moves false
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions

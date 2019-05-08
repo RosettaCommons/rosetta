@@ -7,3 +7,6 @@
 -s MS2_protein.pdb helix_1.pdb helix_2.pdb
 -ignore_zero_occupancy false
 -obligate_pair A:258 B:1
+-bps_moves false
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions

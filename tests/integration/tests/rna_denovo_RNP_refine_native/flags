@@ -11,3 +11,6 @@
 -native center_0_r10_complex.pdb
 -superimpose_over_all false
 -rnp_high_res_cycles 0
+-bps_moves false
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions

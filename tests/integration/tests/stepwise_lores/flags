@@ -18,3 +18,6 @@
 -submotif_frequency 0.9
 -jump_res A:3 B:22 A:4 B:21 A:9 B:16 A:10 B:15
 -cutpoint_closed A:3 A:9
+
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions

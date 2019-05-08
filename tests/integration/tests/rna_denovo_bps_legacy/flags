@@ -14,3 +14,6 @@
 -score:rna_torsion_potential RNA11_based_new
 -output_res_num  1-22
 -denovo:use_legacy_job_distributor true
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions
+-score:weights rna/denovo/rna_hires.wts

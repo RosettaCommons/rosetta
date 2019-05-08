@@ -8,3 +8,7 @@
 -chemical::enlarge_H_lj
 -rna:denovo:symm_hack_arity 3
 -denovo:use_legacy_job_distributor
+-bps_moves false
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions
+-score:weights rna/denovo/rna_hires.wts

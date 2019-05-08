@@ -18,3 +18,6 @@
 -cutpoint_closed 2-9
 #-cutpoint_open 11
 #-obligate_pair 3 20   4 19   5 18   6 17   7 16   8 15   9 14
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions
+-score:weights rna/denovo/rna_hires.wts

@@ -75,6 +75,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 
 using namespace core;
@@ -858,7 +859,9 @@ get_rna_hires_scorefxn( bool const & include_protein_terms ) {
 	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
 		scorefxn_ = core::scoring::get_score_function();
 	} else if ( !include_protein_terms ) {
-		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
+		utility::options::OptionCollection options = basic::options::option;
+		options[ basic::options::OptionKeys::corrections::restore_talaris_behavior ].set_cl_value( "true" );
+		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( options, "stepwise/rna/rna_res_level_energy4.wts" );
 	} else {
 		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "rna/denovo/rna_hires_with_protein" );
 	}

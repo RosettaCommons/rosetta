@@ -247,6 +247,11 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	using namespace core::io::silent;
 	using namespace protocols::rna::denovo;
 
+	// bps_moves and new_fold_tree_initializer are mutually exclusive
+	if ( options_->bps_moves() && options_->new_fold_tree_initializer() ) {
+		utility_exit_with_message( "If you want to supply -new_fold_tree_initializer true, as for an electron density case, you MUST supply -bps_moves false." );
+	}
+
 	///////////////////////////////////////////////////////////////////////////
 	// A bunch of initialization
 	///////////////////////////////////////////////////////////////////////////

@@ -17,3 +17,6 @@
 # should probably instead inherit chain & residue numbering from 1LNT, which will make cutpoint placement obvious:
 -cut_at_rna_chainbreak
 -superimpose_over_all false
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions
+-score:weights rna/denovo/rna_hires.wts

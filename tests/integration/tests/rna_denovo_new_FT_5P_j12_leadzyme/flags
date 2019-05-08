@@ -12,3 +12,6 @@
 -nstruct 2
 -exclude_native_fragments true
 -fragment_homology_rmsd 1.5
+-bps_moves false
+-jump_library_file 1jj2_RNA_jump_library.dat
+-vall_torsions RICHARDSON_RNA09.torsions

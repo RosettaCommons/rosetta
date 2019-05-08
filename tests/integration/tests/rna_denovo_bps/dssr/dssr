@@ -1,0 +1,13 @@
+List of 11 base pairs
+     nt1            nt2            bp  name        Saenger   LW   DSSR
+   1 A.C1           A.G22          C-G WC          19-XIX    cWW  cW-W
+   2 A.C2           A.G21          C-G WC          19-XIX    cWW  cW-W
+   3 A.G3           A.A20          G-A Sheared     11-XI     tSH  tm-M
+   4 A.A4           A.U19          A-U rHoogsteen  24-XXIV   tHW  tM-W
+   5 A.U5           A.G18          U-G --          n/a       t.W  t.-W
+   6 A.G6           A.A17          G-A --          n/a       c.W  c.-W
+   7 A.G7           A.G16          G-G --          n/a       tWH  tW-M
+   8 A.U8           A.A15          U-A rHoogsteen  24-XXIV   tWH  tW-M
+   9 A.A9           A.G14          A-G Sheared     11-XI     tHS  tM-m
+  10 A.G10          A.C13          G-C WC          19-XIX    cWW  cW-W
+  11 A.U11          A.G12          U-G Wobble      28-XXVIII cWW  cW-W
