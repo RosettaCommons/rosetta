@@ -3,3 +3,5 @@
 -in:file:frag9 inputs/aat000_09_05.200_v1_3
 -mp:assembly:TM_pose_number 1
 -mp:assembly:poses inputs/FtsQ_tmd_oriented_cleaned_0001.pdb inputs/6h9o_onesubunit_0999_A.pdb
+-mp:scoring:hbond true
+-restore_lazaridis_imm_behavior true

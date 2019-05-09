@@ -42,6 +42,8 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/util.hh>
 
+#include <protocols/membrane/AddMembraneMover.hh>
+
 #include <core/scoring/electron_density/util.hh>
 
 #include <basic/options/option.hh>
@@ -55,6 +57,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.fwd.hh>
+#include <protocols/moves/MoverContainer.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
@@ -346,6 +349,12 @@ public:
 		using namespace protocols::moves;
 		using namespace scoring;
 
+		if (  option[ OptionKeys::in::membrane ].user() ) {
+			using namespace protocols::membrane;
+			AddMembraneMoverOP add_memb = AddMembraneMoverOP( new AddMembraneMover() );
+			add_memb->apply( pose );
+		}
+
 		// steal relax flags
 		scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		kinematics::MoveMap mm;
@@ -533,7 +542,6 @@ my_main( void* ) {
 			jobout->set_write_separate_scorefile(true);
 			protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
 		}
-
 		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< MinTestMover >() );
 	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception: " << std::endl;

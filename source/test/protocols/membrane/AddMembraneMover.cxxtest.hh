@@ -116,24 +116,17 @@ public: // test functions
 		AddMembraneMoverOP add_memb2( new AddMembraneMover( custom_topo, 50 ) );
 		add_memb2->apply( *anchored_pose_ );
 
-		// (3) Setup pose with custom membrane position
-		TR <<  "Setting up a pose with a custom membrane position"  << std::endl;
-		Vector test_center( 10, 10, 10 );
-		Vector test_normal( 0, 1, 0 ); // Normal along y axis
-		AddMembraneMoverOP add_memb3( new AddMembraneMover( test_center, test_normal, spanfile, 0 ) );
-		add_memb3->apply( *positioned_pose_ );
-
-		// (4) Setup the pose, directly pointing to the new membrane residue
+		// (3) Setup the pose, directly pointing to the new membrane residue
 		TR <<  "Setting up a pose, directly pointed to a new membrane residue already in the pose"  << std::endl;
 		AddMembraneMoverOP add_memb4( new AddMembraneMover( spanfile_2zup, 334 ) );
 		add_memb4->apply( *specially_positioned_pose1_ );
 
-		// (5) Ask add membrane mover to go on a scavenger hunt for the membrane residue
+		// (4) Ask add membrane mover to go on a scavenger hunt for the membrane residue
 		TR <<  "Setting up a membrane pose where you need to search for the membrane residue in the pose already"  << std::endl;
 		AddMembraneMoverOP add_memb5( new AddMembraneMover( spanfile_2zup, 334 ) );
 		add_memb5->apply( *specially_positioned_pose2_ );
 
-		// (6) Ask add membrane mover to do a special setup for single tm-span poses
+		// (5) Ask add membrane mover to do a special setup for single tm-span poses
 		TR << "Setting up a single TM-span pose" << std::endl;
 		AddMembraneMoverOP add_memb6( new AddMembraneMover( "single_TM_mode" ) );
 		add_memb6->apply( *single_tm_pose_ );
@@ -280,25 +273,6 @@ public: // test functions
 		TS_ASSERT_EQUALS( given_upstream, expected_upstream );
 		TR <<  "Checking downstream (pose first residue) residue number matches in the mmebrane jump"  << std::endl;
 		TS_ASSERT_EQUALS( given_downstream, expected_downstream );
-	}
-
-	/// @brief Checking custom setup of initial membrane position
-	void test_user_defined_membrane_position() {
-
-		TR <<  "Test for correct setup of a user defined membrane position"  << std::endl;
-
-		// Grab current center/normal from the pose
-		core::Vector current_center( positioned_pose_->conformation().membrane_info()->membrane_center( positioned_pose_->conformation() ) );
-		core::Vector current_normal( positioned_pose_->conformation().membrane_info()->membrane_normal( positioned_pose_->conformation() ) );
-
-		// Define expected center/normal
-		core::Vector expected_center(10,10,10);
-		core::Vector expected_normal(0,1,0);
-
-		TS_ASSERT( position_equal_within_delta( current_center, expected_center, 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( current_normal, expected_normal, 0.001 ) );
-
-
 	}
 
 	/// @brief Checking setup from existing membrane residue (case 4 and 5)

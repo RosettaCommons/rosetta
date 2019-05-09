@@ -156,8 +156,10 @@ sources = {
 		"util",
 	],
 	"core/conformation/membrane": [
+		"AqueousPoreParameters",
 		"Span",
 		"SpanningTopology",
+		"ImplicitLipidInfo",
 		"MembraneInfo",
 		"util",
 	],

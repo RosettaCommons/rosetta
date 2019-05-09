@@ -1,6 +1,7 @@
 -parser:protocol ./input/fnd.xml
 
 -overwrite
+-restore_lazaridis_imm_behavior true
 
 -parser:protocol ./input/fnd.xml
 -in:file:fasta ./input/gpa2.fasta
@@ -28,5 +29,5 @@
 -parser:script_vars membrane_core=10
 -parser:script_vars steepness=4
 
--mp:scoring:hbond
+-mp:scoring:hbond true
 -use_input_sc

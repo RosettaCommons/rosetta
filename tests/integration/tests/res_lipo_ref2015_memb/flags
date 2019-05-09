@@ -15,3 +15,4 @@
 -s input/gpa2.pdb
 -run:constant_seed
 -nodelay
+-restore_lazaridis_imm_behavior true

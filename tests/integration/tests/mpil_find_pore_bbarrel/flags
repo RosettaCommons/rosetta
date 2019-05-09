@@ -1,0 +1,4 @@
+-in:file:s inputs/1KMO_native.pdb
+-mp:setup:spanfiles from_structure
+-mp:lipids:composition DLPC 
+-mp:lipids:temperature 37 

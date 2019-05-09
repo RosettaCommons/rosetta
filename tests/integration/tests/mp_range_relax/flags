@@ -2,5 +2,7 @@
 -mp:setup:spanfiles inputs/1AFO__opm.span
 -relax:range:angle_max 1
 -relax:range:nmoves nres
+-mp:scoring:hbond true
 -nstruct 1
 -restore_talaris_behavior
+-restore_lazaridis_imm_behavior true

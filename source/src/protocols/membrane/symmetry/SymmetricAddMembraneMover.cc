@@ -218,7 +218,6 @@ SymmetricAddMembraneMover::register_options() {
 
 	option.add_relevant( OptionKeys::mp::setup::spanfiles );
 	option.add_relevant( OptionKeys::mp::setup::spans_from_structure );
-	option.add_relevant( OptionKeys::mp::setup::lipsfile );
 
 }
 
@@ -240,14 +239,6 @@ SymmetricAddMembraneMover::init_from_cmd() {
 		TR.Warning << "Spanfile not given, topology will be created from PDB!" << std::endl;
 		TR.Warning << "Make sure your PDB is transformed into membrane coordinates!!!" << std::endl;
 		spanfile( "from_structure" );
-	}
-
-	// Read in User-provided lipsfiles
-	if ( option[ OptionKeys::mp::setup::lipsfile ].user() ) {
-
-		// Set include lips to true and read in filename
-		include_lips( true );
-		lipsfile( option[ OptionKeys::mp::setup::lipsfile ]() );
 	}
 
 	// Read in user-provided membrane residue position
@@ -337,9 +328,7 @@ void SymmetricAddMembraneMover::provide_xml_schema( utility::tag::XMLSchemaDefin
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute( "include_lips", xsct_rosetta_bool, "Include lipid accessibility information from a lipsfile")
-		+ XMLSchemaAttribute( "spanfile", xs_string, "Path to input spanfile")
-		+ XMLSchemaAttribute( "lipsfile", xs_string, "Path to input lipsfile")
+	attlist + XMLSchemaAttribute( "spanfile", xs_string, "Path to input spanfile")
 		+ XMLSchemaAttribute( "anchor_rsd", xsct_non_negative_integer, "Index of membrane residue anchor")
 		+ XMLSchemaAttribute( "membrane_rsd", xsct_non_negative_integer, "Membrane residue position")
 		+ XMLSchemaAttribute( "thickness", xsct_real, "Thickness of membrane. Score function is optimized to 15 Angstroms.")

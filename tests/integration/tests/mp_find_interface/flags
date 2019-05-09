@@ -1,7 +1,6 @@
 -in:file:s inputs/mpdocking_setup_out.pdb 
 -in:file:native inputs/mpdocking_setup_out.pdb 
 -mp:setup:spanfiles inputs/mpdocking_setup_out.span 
--mp:scoring:hbond true 
 -mp:dock:lowres false 
 -mp:dock:allow_flips false
 -mp:dock:flexible_bb true
@@ -12,3 +11,4 @@
 -score::docking_interface_score true
 -packing:pack_missing_sidechains false 
 -restore_talaris_behavior
+-restore_lazaridis_imm_behavior true

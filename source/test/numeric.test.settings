@@ -76,6 +76,7 @@ sources = {
 	],
 	"linear_algebra": [
 		"GeneralizedEigenSolverTests",
+		"minimum_bounding_ellipse",
 	],
 	"random" : [
 		"DistributionSampler",

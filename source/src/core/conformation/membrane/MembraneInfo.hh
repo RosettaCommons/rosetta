@@ -7,24 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file  core/conformation/membrane/MembraneInfo.hh
+/// @file     core/conformation/membrane/MembraneInfo.hh
+/// @brief    Data describing the relationship between protein(s) and a membrane environment
 ///
-/// @brief  Information about the membrane bilayer and its relationship with the protein(s)
-/// @details MembraneInfo is responsible for describing attributes of the
-///    membrane bilayer *and* the position & orientation of the bilayer
-///    in 3D space. All of the data members work together to accomplish
-///    this representation. And the players are:
-///     = A pointer to the Pose Conformation, which includes an MEM residue
-///     = Topology of transmembrane spans
-///     = Per-residue lipophilicity
-///     = Membrane thickness & steepness - derived from chemical profiles
+/// @details  MembraneInfo is a container object that describes membrane-protein relationships
+///             1. Coordinates of the membrane
+///             2. A pointer to MEM which describes relative orientation (Residue)
+///             3. Topology of the transmembrane spans (SpanningTopology)
+///             4. Physical and chemical properties of the implicit lipid membrane (ImplicitLipidInfo)
 ///
-///    This object is a member of Conformation and should be accessed by
-///    pose.conofrmation().membrane_info(). DO NOT access the MEM residue
-///    outside of the framework!!!
+/// @note     This object is a member of Conformation and should only be accessed using
+///           pose.conformation().membrane_info(). Do not access MEM outside of the framework!
 ///
-///    Last Updated: 7/23/15
-/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author   Rebecca Alford (ralford3@jhu.edu)
 
 #ifndef INCLUDED_core_conformation_membrane_MembraneInfo_hh
 #define INCLUDED_core_conformation_membrane_MembraneInfo_hh
@@ -35,6 +30,7 @@
 // Package Headers
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/membrane/SpanningTopology.fwd.hh>
+#include <core/conformation/membrane/ImplicitLipidInfo.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -42,8 +38,8 @@
 #include <core/kinematics/FoldTree.hh>
 
 // Utility Headers
+#include <numeric/MathMatrix.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -56,7 +52,7 @@ namespace core {
 namespace conformation {
 namespace membrane {
 
-/// @brief MembraneInfo describes the membrane bilayer and its relationship with the protein
+/// @brief Data describing the relationship between protein(s) and a membrane environment
 class MembraneInfo : public utility::pointer::ReferenceCount {
 
 public: // Constructors & Setup
@@ -73,6 +69,20 @@ public: // Constructors & Setup
 		core::Real thickness,
 		core::Real steepness,
 		SpanningTopologyOP topology
+	);
+
+	/// @brief Create MembraneInfo from initialized data
+	/// @details Creates a MembraneInfo object by linking the conformation
+	/// to the pose, specify the  membrane residue number, membrane jump number,
+	/// spanning topology object and optional lipophilicity data. Thickness and
+	/// steepness are currently constants
+	MembraneInfo(
+		core::Size membrane_pos,
+		core::SSize membrane_jump,
+		core::Real steepness,
+		SpanningTopologyOP topology,
+		std::string lipid_composition_name,
+		core::Real lipid_composition_temp
 	);
 
 	/// @brief Create a deep copy of all data in this object.
@@ -93,89 +103,70 @@ public: // Constructors & Setup
 
 public: // Chemical information about this membrane
 
-	/// @brief Effective thickness of the membrane
-	/// @details For IMM = default is 15.
-	core::Real membrane_thickness() const;
+	/// @brief Effective thickness of the membrane (default = 15)
+	virtual core::Real membrane_thickness() const;
+
+	/// @brief Steepness of hydrophobic -> hydrophillic transition (defualt = 10)
+	virtual core::Real membrane_steepness() const;
 
 	/// @brief core membrane thickness
 	core::Real membrane_core() const;
 
-	/// @brief Steepness of hydrophobic -> hydrophillic transition
-	/// @details For IMM - default is 10
-	core::Real membrane_steepness() const;
-
 public: // membrane position & orientation
 
 	/// @brief Membrane center
-	/// @details Returns the xyzVector describing the center of the membrane
-	/// This is the same as the MPct atom of the membrane (MEM) residue.
 	Vector membrane_center( Conformation const & conf ) const;
 
 	/// @brief Membrane normal
-	/// @details Returns the membrane normal, which describes the membrane
-	/// orientation. This is the same as the xyzVector in the MPnm atom
-	/// in the membrane residue.
 	Vector membrane_normal( Conformation const & conf ) const;
 
-	/// @brief Is residue in the membrane? Takes CA coordinate
-	/// @details Uses the thickness stored in MembraneInfon and the residue_z_position
+	/// @brief Is residue in the membrane?
 	bool in_membrane( Conformation const & conf, core::Size resnum ) const;
 
 	/// @brief Compute residue position relative to membrane normal
-	/// @details Calculate the z coordinate of the residue, projected onto
-	/// the membrane normal axis. Objective is to maintain correct coordinates
-	/// in relative coordinate frame.
 	Real
 	residue_z_position( Conformation const & conf, core::Size resnum ) const;
 
 	/// @brief Compute atom position relative to membrane normal
-	/// @details Calculate the z coordinate of the atom, projected onto
-	/// the membrane normal axis. Objective is to maintain correct coordinates
-	/// in relative coordinate frame.
 	Real
 	atom_z_position( Conformation const & conf, core::Size resnum, core::Size atomnum ) const;
 
 	/// @brief Sequence position of the membrane residue
-	/// @details Return the residue number of MEM (rsd.seqpos()) in the pose
 	core::Size
 	membrane_rsd_num() const;
 
 	/// @brief Indeitifier for the membrane jump
-	/// @details Returns an integer (core::Size) denoting the jump number in the foldtree
-	/// representing the jump relating the membrane residue to the rest of the molecule
 	core::SSize
 	membrane_jump() const;
 
 	/// @brief Allow a protocol to set a new jump number for the membrane jump
-	/// @details Set the membrane jump number (core::SSize)
 	void
 	set_membrane_jump( core::SSize jumpnum );
 
-	/// @brief Somewhat weak check that a membrane foldtree is valid. Use checks in
-	/// protocols/membrane/util.hh instead!
+	/// @brief Somewhat weak check that a membrane foldtree is valid
 	bool check_membrane_fold_tree( core::kinematics::FoldTree const & ft_in ) const;
 
-public: // topology of TM spans and lipophilicity
+public: // topology of TM spans
 
 	/// @brief Transmembrane spaning topology
-	/// @details Return a SpanningTopology object, which includes a
-	/// list of Span objects, describing the start and end sequence
-	/// positions of each transmembrane span
 	SpanningTopologyOP spanning_topology() const;
+
+public: // implicit lipid information
+
+	/// @brief Get implicit lipid information
+	ImplicitLipidInfoOP implicit_lipids() const;
 
 private: // default constructor
 
 	/// @brief Create a default version of MembraneInfo (DONT USE)
-	/// @details Initializes all data members to dummy or empty values
-	/// Use the fully specified constructors instead. MembraneInfo is a
-	/// data container but is NOT responsible for initialization.
 	MembraneInfo();
 
 private: // data
 
-	// Fullatom constants
+	// membrane thickness & transition steepness
 	core::Real thickness_;
 	core::Real steepness_;
+
 	core::Real membrane_core_;
 
 	// membrane residue number in the pose
@@ -184,8 +175,11 @@ private: // data
 	// membrane jump position
 	core::SSize membrane_jump_;
 
-	// Topology Info
+	// Spanning Topology information
 	SpanningTopologyOP spanning_topology_;
+
+	// Implicit lipid information
+	ImplicitLipidInfoOP implicit_lipids_;
 
 #ifdef    SERIALIZATION
 public:
@@ -209,5 +203,6 @@ CEREAL_FORCE_DYNAMIC_INIT( core_conformation_membrane_MembraneInfo )
 
 
 #endif // INCLUDED_core_conformation_membrane_MembraneInfo_hh
+
 
 

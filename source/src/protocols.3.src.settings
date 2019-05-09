@@ -278,6 +278,7 @@ sources = {
 		"AddMembraneSpanConstraint",
 		"AddMembraneSpanTermZConstraint",
 		"AddMPLigandMover",
+		"AqueousPoreFinder",
 		"FlipMover",
 		"MembranePositionFromTopologyMover",
 		"MPLipidAccessibility",
@@ -292,6 +293,10 @@ sources = {
 		"TranslationRotationMover",
 		"util",
 	],
+	"protocols/membrane_benchmark" :[
+	        "MembraneEnergyLandscapeSampler",
+	        "PeptideOrientationMover",
+	],
 	"protocols/membrane/benchmark" :[
 		"MakeCanonicalHelix",
 		"SampleTiltAngles",
@@ -299,6 +304,10 @@ sources = {
 	"protocols/membrane/geometry" :[
 		"EmbeddingDef",
 		"Embedding",
+	],
+	"protocols/membrane/scoring" : [
+		"MEnvAtomParams",
+		"FaWaterToBilayerEnergy",
 	],
 	"protocols/membrane/symmetry" : [
 		"SymmetricAddMembraneMover",

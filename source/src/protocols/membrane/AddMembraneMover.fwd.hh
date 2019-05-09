@@ -7,25 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file       protocols/membrane/AddMembraneMover.hh
+/// @file    protocols/membrane/AddMembraneMover.fwd.hh
+/// @brief   Initialize the RosettaMP framework by adding representations of the membrane
+///          environemnt to the conformation data held by the pose
 ///
-/// @brief      Initialize the RosettaMP Framework by adding membrane representations to the pose
-/// @details Given a pose, initialize and configure with the RosettaMP framework by taking the
-///    following steps:
-///     (1) Add a membrane residue to the pose (type MEM)
-///      (a) Append residue to the pose or accept a new one
-///      (b) Update PDB info to acknowledge the membrane residue
-///      (c) Set the MEM residue at the root of the foldtree
-///     (2) Initialize transmembrane spanning topology (Object: SpanningTopology)
-///     (3) Initialize the MembraneInfo object.
-///     (4) Set the membrane starting position (either default or based on user input)
+/// @details Given a pose, configure RosettaMP by adding the following information:
+///             1. Create and append a membrane residue (MEM) to the pose
+///             2. Create and store a SpanningTopology object
+///             3. Setup the initial membrane coordinates (typically centered at the origin)
+///             4. (Optional) Initialize per-atom lipid accessibility data
+///             5. (Optional) Initialize dimensions of the aqueous pore
+///    6. Initialize the ImplicitLipidMembraneInfo
+///          Upon completion, the call pose.conformation().is_membrane() will return true
 ///
-///    This object does a massive amount of reading from CMD, RosettaScripts or Constructor. If you add
-///    a new piece of data - you must modify MembraneInfo, all of these channels for input AND the apply function!
-///    If and only if AddMembraneMover is applied to the pose, pose.conformation().is_membrane() MUST return true.
+/// @note    If you add a new step, please document and ensure all data is properly
+///          initialized by constructors, parse_my_tag, init_from_cmd, serialization
+///          routines, and xsd routines. This class is a data loading mammoth
 ///
-///    Last Updated: 7/23/15
 /// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author  JKLeman (julia.koehler.leman@gmail.com)
+
 
 #ifndef INCLUDED_protocols_membrane_AddMembraneMover_fwd_hh
 #define INCLUDED_protocols_membrane_AddMembraneMover_fwd_hh

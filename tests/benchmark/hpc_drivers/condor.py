@@ -56,7 +56,7 @@ class Condor_HPC_Driver(HPC_Driver):
         # Expected output: sergey@UT64 0.50 0.50 1.00 0 196.86 12/26/2010 23:30  9/27/2011 23:55
         for _ in range(8):
             try:
-                o = execute('', 'condor_userprio -all -allusers | grep {}'.format(user), return_='output', terminate_on_failure=False).split()
+                o = execute('', 'condor_userprio -all -allusers | grep {}'.format(user), return_='output', terminate_on_failure=False, silent=True).split()
                 if len(o) >= 6: return max(1.0, float( o[5] ) )
                 else: return 0.0
             except ValueError as _: pass

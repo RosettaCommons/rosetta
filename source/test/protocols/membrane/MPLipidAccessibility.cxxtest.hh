@@ -45,6 +45,7 @@ public: // test functions
 	/// @brief Setup the unit test
 	void setUp() {
 		core_init();
+		TR << "setup happened" << std::endl;
 	}
 
 	/// @brief Tear down the unit test
@@ -67,6 +68,7 @@ public: // test functions
 		std::string spanfile1 = "protocols/membrane/1U19__tr.span";
 
 		AddMembraneMoverOP mem1( new AddMembraneMover( spanfile1 ) );
+		mem1->restore_lazaridis_IMM1_behavior( true );
 		MPLipidAccessibilityOP lipid1( new MPLipidAccessibility() );
 		mem1->apply( pose1 );
 		lipid1->apply( pose1 );
@@ -83,6 +85,7 @@ public: // test functions
 		std::string spanfile2 = "protocols/membrane/4DXW__tr.span";
 
 		AddMembraneMoverOP mem2( new AddMembraneMover( spanfile2 ) );
+		mem2->restore_lazaridis_IMM1_behavior( true );
 		MPLipidAccessibilityOP lipid2( new MPLipidAccessibility() );
 		mem2->apply( pose2 );
 		lipid2->apply( pose2 );
@@ -99,6 +102,7 @@ public: // test functions
 		std::string spanfile3 = "protocols/membrane/4ENE__tr.span";
 
 		AddMembraneMoverOP mem3( new AddMembraneMover( spanfile3 ) );
+		mem3->restore_lazaridis_IMM1_behavior( true );
 		MPLipidAccessibilityOP lipid3( new MPLipidAccessibility() );
 		mem3->apply( pose3 );
 		lipid3->apply( pose3 );
@@ -114,7 +118,8 @@ public: // test functions
 		pose_from_file( pose4, "protocols/membrane/3TUI__tr.pdb" , core::import_pose::PDB_file );
 		std::string spanfile4 = "protocols/membrane/3TUI__tr.span";
 
-		AddMembraneMoverOP mem4( new AddMembraneMover( spanfile4 ) );
+		AddMembraneMoverOP mem4( new AddMembraneMover( spanfile4  ) );
+		mem4->restore_lazaridis_IMM1_behavior( true );
 		MPLipidAccessibilityOP lipid4( new MPLipidAccessibility() );
 		mem4->apply( pose4 );
 		lipid4->apply( pose4 );
@@ -131,6 +136,7 @@ public: // test functions
 		std::string spanfile5 = "protocols/membrane/3CSL__tr.span";
 
 		AddMembraneMoverOP mem5( new AddMembraneMover( spanfile5 ) );
+		mem5->restore_lazaridis_IMM1_behavior( true );
 		MPLipidAccessibilityOP lipid5( new MPLipidAccessibility() );
 		mem5->apply( pose5 );
 		lipid5->apply( pose5 );

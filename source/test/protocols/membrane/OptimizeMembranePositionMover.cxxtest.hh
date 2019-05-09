@@ -73,6 +73,7 @@ public: // test functions
 
 		// AddMembraneMover
 		AddMembraneMoverOP add_mem( new AddMembraneMover( spanfile ) );
+		add_mem->restore_lazaridis_IMM1_behavior( true );
 		add_mem->apply( pose_ );
 
 	}

@@ -75,33 +75,6 @@ public: // test functions
 
 		// Initialize core & options system
 		core_init();
-
-		// Test Cases for calc angles & moveable membranes:
-		// 1. TM domain of the M2 proton channel (single helix)
-		//        PoseOP m2_pose ( new Pose() );
-		//        pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
-		//        AddMembraneMoverOP add_memb1 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1mp6.span" );
-		//        add_memb1->apply( *m2_pose );
-		//
-		//        // 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
-		//        PoseOP glpA_pose( new Pose() );
-		//        pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
-		//        AddMembraneMoverOP add_memb2 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1AFO_AB.span" );
-		//        add_memb2->apply( *glpA_pose );
-		//
-		//  // Test Cases for membrane rmsd calculations
-		//  // 3. Native Glycophprin A
-		//  core::pose::PoseOP native_pose( new Pose() );
-		//        pose_from_file( *native_pose, "protocols/membrane/1afo_in.pdb" , core::import_pose::PDB_file);
-		//
-		//  // 4. Transformed glycophorin A
-		//        core::pose::PoseOP test_pose( new Pose() );
-		//        pose_from_file( *test_pose, "protocols/membrane/1afo_decoy.pdb" , core::import_pose::PDB_file);
-		//
-		//        AddMembraneMoverOP add_memb3( new AddMembraneMover( "protocols/membrane/1afo_tr.span", 1 ) );
-		//        add_memb3->apply( *native_pose );
-		//        add_memb3->apply( *test_pose );
-
 	}
 
 	/// @brief Tear down the unit test
@@ -112,16 +85,22 @@ public: // test functions
 
 		TR <<  "=========Testing the helix axes are correctly calculated for each span in the test set"  << std::endl;
 
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
 		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb1 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1mp6.span" );
+		add_memb1->restore_lazaridis_IMM1_behavior( true );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
 		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb2 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1AFO_AB.span" );
+		add_memb2->restore_lazaridis_IMM1_behavior( true );
 		add_memb2->apply( *glpA_pose );
 
 		// Calculate helix axis for each transembrane span
@@ -137,6 +116,8 @@ public: // test functions
 		position_equal_within_delta( glpA_first_span, glpA_first_expected, 0.005 );
 		position_equal_within_delta( glpA_second_span, glpA_second_expected, 0.005 );
 
+#endif
+
 	}
 
 
@@ -147,16 +128,22 @@ public: // test functions
 
 		TR <<  "=========Testing method for calculating the angle between a single helix and the membrane normal in a single helix pose"  << std::endl;
 
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
 		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb1 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1mp6.span" );
+		add_memb1->restore_lazaridis_IMM1_behavior( true );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
 		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb2 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1AFO_AB.span" );
+		add_memb2->restore_lazaridis_IMM1_behavior( true );
 		add_memb2->apply( *glpA_pose );
 
 		// Calculate helix tilt angles & compare
@@ -168,6 +155,7 @@ public: // test functions
 		TS_ASSERT_DELTA( glpA_first_angle, 8.49, 0.005 );
 		TS_ASSERT_DELTA( glpA_second_angle, 30.65, 0.005 );
 
+#endif
 	}
 
 
@@ -177,6 +165,10 @@ public: // test functions
 	void test_angle_rmsd_method() {
 
 		TR <<  "=========Testing method for calcuating the rms between a measured and reference angle value"  << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// Test ref = 0, measured = 0
 		Real rms1( calc_angle_rmsd(0, 0) );
@@ -198,6 +190,8 @@ public: // test functions
 		Real rms5( calc_angle_rmsd( -3, -5 ) );
 		TS_ASSERT_DELTA( rms5, 1.414, 0.005 );
 
+#endif
+
 	}
 
 	///// These tests are separate and should be moved down into membrane info after debugging ////
@@ -205,6 +199,10 @@ public: // test functions
 	void test_is_fixed_on_moveable_memb() {
 
 		TR <<  "=========Test is_membrane_fixed method on a moveable membrane"  << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
@@ -238,11 +236,17 @@ public: // test functions
 		glpA_foldtree->show( TR );
 		TS_ASSERT( !is_membrane_fixed( *glpA_pose ) );
 
+#endif
+
 	}
 
 	void test_is_fixed_on_fixed_memb() {
 
 		TR <<  "=========Test is_fixed method on a fixed membrane"  << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
@@ -261,11 +265,17 @@ public: // test functions
 		TS_ASSERT( is_membrane_fixed( *m2_pose ) );
 		TS_ASSERT( is_membrane_fixed( *glpA_pose ) );
 
+#endif
+
 	}
 
 	void test_is_independently_moveable_on_fixed_memb() {
 
 		TR <<  "=========Test is_independently_moveable on a fixed membrane"  << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
@@ -282,11 +292,17 @@ public: // test functions
 		TS_ASSERT( !is_membrane_moveable_by_itself( *m2_pose ) );
 		TS_ASSERT( !is_membrane_moveable_by_itself( *glpA_pose ) );
 
+#endif
+
 	}
 
 	void test_is_independently_moveable_on_independently_moveable_memb() {
 
 		TR <<  "=========Test is_independently_moveable on a moveable membrane"  << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
@@ -320,12 +336,18 @@ public: // test functions
 		glpA_foldtree->show( TR );
 		TS_ASSERT( is_membrane_moveable_by_itself( *glpA_pose ) );
 
+#endif
+
 	}
 
 	/// @brief Calculate membrane backbone rmsd with superposition
 	void test_membrane_bb_rmsd_with_super() {
 
 		TR <<  "=========Calculating membrane backbone rmsd with superposition"  << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// Test Cases for membrane rmsd calculations
 		// 3. Native Glycophprin A
@@ -343,12 +365,18 @@ public: // test functions
 		core::Real rms = mem_bb_rmsd_with_super( *native_pose, *test_pose );
 		TS_ASSERT_DELTA( rms, 0.0005, 0.0003 );
 
+
+#endif
 	}
 
 	/// @brief Calculate membrane backbone rmsd with superposition
 	void test_membrane_bb_rmsd_no_super() {
 
 		TR <<  "=========Calculating membrane backbone rmsd without superposition"  << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// Test Cases for membrane rmsd calculations
 		// 3. Native Glycophprin A
@@ -366,12 +394,18 @@ public: // test functions
 		core::Real rms = mem_bb_rmsd_no_super( *native_pose, *test_pose );
 		TS_ASSERT_DELTA( rms, 3.8042, 0.0003 );
 
+#endif
+
 	}
 
 	/// @brief Calculate membrane all atom rmsd with superposition
 	void test_membrane_bb_rmsd_with_super_allatom() {
 
 		TR <<  "=========Calculating membrane allatom rmsd with superposition"  << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// Test Cases for membrane rmsd calculations
 		// 3. Native Glycophprin A
@@ -389,12 +423,18 @@ public: // test functions
 		core::Real rms = mem_all_atom_rmsd_with_super( *native_pose, *test_pose );
 		TS_ASSERT_DELTA( rms, 0.5052, 0.0003 );
 
+#endif
+
 	}
 
 	/// @brief Calculate membrane all atom rmsd without superposition
 	void test_membrane_bb_rmsd_no_super_allatom() {
 
 		TR <<  "=========Calculating membrane backbone rmsd without superposition"  << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// Test Cases for membrane rmsd calculations
 		// 3. Native Glycophprin A
@@ -412,12 +452,20 @@ public: // test functions
 		core::Real rms = mem_all_atom_rmsd_no_super( *native_pose, *test_pose );
 		TS_ASSERT_DELTA( rms, 3.9376, 0.0003 );
 
+#endif
+
 	}
 
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding1() {
 
 		TR << "=========Test compute_structure_based_embedding 1" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
+
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
@@ -429,6 +477,7 @@ public: // test functions
 
 		// create membrane pose
 		AddMembraneMoverOP addmem1( new AddMembraneMover( "protocols/membrane/geometry/1AFO__tr.span" ) );
+		addmem1->restore_lazaridis_IMM1_behavior( true );
 		addmem1->apply( pose1 );
 
 		// define vectors and object
@@ -442,12 +491,19 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( embed1->center(), center1, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed1->normal(), normal1, 0.001 ) );
 
+#endif
+
 	}
 
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding2() {
 
 		TR << "=========Test compute_structure_based_embedding 2" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
@@ -458,6 +514,7 @@ public: // test functions
 		Pose pose2;
 		core::import_pose::pose_from_file( pose2, "protocols/membrane/geometry/1BL8_.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem2( new AddMembraneMover( "protocols/membrane/geometry/1BL8__tr.span" ) );
+		addmem2->restore_lazaridis_IMM1_behavior( true );
 		addmem2->apply(pose2);
 		Vector center2(73.9421, 26.7549, 24.4493);
 		Vector normal2(0.384026, -0.0403822, 0.922439);
@@ -465,12 +522,19 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( embed2->center(), center2, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed2->normal(), normal2, 0.001 ) );
 
+#endif
+
 	}
 
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding3() {
 
 		TR << "=========Test compute_structure_based_embedding 3" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
@@ -481,6 +545,7 @@ public: // test functions
 		Pose pose3;
 		core::import_pose::pose_from_file( pose3, "protocols/membrane/geometry/1QJP_.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem3( new AddMembraneMover( "protocols/membrane/geometry/1QJP__tr.span" ) );
+		addmem3->restore_lazaridis_IMM1_behavior( true );
 		addmem3->apply(pose3);
 		Vector center3(31.2161, 16.9685, 37.6119);
 		Vector normal3(0.877926, -0.47167, 0.0822946);
@@ -488,12 +553,19 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( embed3->center(), center3, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed3->normal(), normal3, 0.001 ) );
 
+#endif
+
 	}
 
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding4() {
 
 		TR << "=========Test compute_structure_based_embedding 4" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
@@ -504,6 +576,7 @@ public: // test functions
 		Pose pose4;
 		core::import_pose::pose_from_file( pose4, "protocols/membrane/geometry/2BS2_CF.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem4( new AddMembraneMover( "protocols/membrane/geometry/2BS2_CF_tr.span" ) );
+		addmem4->restore_lazaridis_IMM1_behavior( true );
 		addmem4->apply(pose4);
 		Vector center4(21.4326, 6.0464, -41.0573);
 		Vector normal4(0.0060, 0.0117348, 0.9999);
@@ -511,12 +584,19 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( embed4->center(), center4, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed4->normal(), normal4, 0.001 ) );
 
+#endif
+
 	}
 
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding5() {
 
 		TR << "=========Test compute_structure_based_embedding 5" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
@@ -527,6 +607,7 @@ public: // test functions
 		Pose pose5;
 		core::import_pose::pose_from_file( pose5, "protocols/membrane/geometry/2MPN_.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem5( new AddMembraneMover( "protocols/membrane/geometry/2MPN__tr.span" ) );
+		addmem5->restore_lazaridis_IMM1_behavior( true );
 		addmem5->apply(pose5);
 		Vector center5(0.3645, 3.66025, 41.345);
 		Vector normal5(0.006956, 0.996657, 0.0813998);
@@ -534,12 +615,19 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( embed5->center(), center5, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed5->normal(), normal5, 0.001 ) );
 
+#endif
+
 	}
 
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding6() {
 
 		TR << "=========Test compute_structure_based_embedding 6" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
@@ -550,6 +638,7 @@ public: // test functions
 		Pose pose6;
 		core::import_pose::pose_from_file( pose6, "protocols/membrane/geometry/2OAR_.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem6( new AddMembraneMover( "protocols/membrane/geometry/2OAR__tr.span" ) );
+		addmem6->restore_lazaridis_IMM1_behavior( true );
 		addmem6->apply(pose6);
 		Vector center6(18.8453, 122.117, 1.079);
 		Vector normal6(-0.755094, -0.655578, 0.00710981);
@@ -557,12 +646,20 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( embed6->center(), center6, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed6->normal(), normal6, 0.001 ) );
 
+#endif
+
 	}
 
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding7() {
 
 		TR << "=========Test compute_structure_based_embedding 7" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
+
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
@@ -573,6 +670,7 @@ public: // test functions
 		Pose pose7;
 		core::import_pose::pose_from_file( pose7, "protocols/membrane/geometry/2UUH__tr.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem7( new AddMembraneMover( "protocols/membrane/geometry/2UUH__tr.span" ) );
+		addmem7->restore_lazaridis_IMM1_behavior( true );
 		addmem7->apply(pose7);
 		Vector center7(-0.000166667, -0.000125, 0.295625);
 		Vector normal7(0, 0, 1);
@@ -580,12 +678,19 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( embed7->center(), center7, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed7->normal(), normal7, 0.001 ) );
 
+#endif
+
 	}
 
 	// compute_structure_based_embedding
 	void test_compute_structure_based_embedding8() {
 
 		TR << "=========Test compute_structure_based_embedding 8" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
@@ -596,6 +701,7 @@ public: // test functions
 		Pose pose8;
 		core::import_pose::pose_from_file( pose8, "protocols/membrane/geometry/3PXO_.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem8( new AddMembraneMover( "protocols/membrane/geometry/3PXO__tr.span" ) );
+		addmem8->restore_lazaridis_IMM1_behavior( true );
 		addmem8->apply(pose8);
 		Vector center8(-36.1201, -7.59636, 37.6713);
 		Vector normal8(-0.9862, -0.164797, 0.0158378);
@@ -603,12 +709,18 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( embed8->center(), center8, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed8->normal(), normal8, 0.001 ) );
 
+#endif
+
 	}
 
 	// check vector for reasonable size
 	void test_check_vector() {
 
 		TR << "=========Test check vector" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// define vectors and object
 		Vector v1(1, 2, 1000);
@@ -621,12 +733,18 @@ public: // test functions
 			std::string expected_error_message = "Unreasonable range for center or normal! Check your input vectors!";
 			TS_ASSERT( e.msg().find(expected_error_message) != std::string::npos );
 		}
+
+#endif
 	}
 
 	// average  embeddings
 	void test_average_embeddings() {
 
 		TR << "=========Test average embeddings" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// define vectors
 		Vector v1(1, 2, 3);
@@ -653,12 +771,19 @@ public: // test functions
 		// check for equality
 		TS_ASSERT( position_equal_within_delta( avg->center(), avg_center, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( avg->normal(), avg_normal, 0.001 ) );
+
+#endif
+
 	}
 
 	// average antiparallel embeddings
 	void test_average_antiparallel_embeddings() {
 
 		TR << "=========Test average antiparallel embeddings" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// define vectors
 		Vector v1(1, 2, 3);
@@ -683,12 +808,19 @@ public: // test functions
 		// check for equality
 		TS_ASSERT( position_equal_within_delta( avg->center(), avg_center, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( avg->normal(), avg_normal, 0.001 ) );
+
+#endif
+
 	}
 
 	// split topology by jump
 	void test_split_topology_by_jump() {
 
 		TR << "=========Test split topology by jump" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// read in pose and create topology object
 		Pose pose, pose_up, pose_down;
@@ -708,12 +840,18 @@ public: // test functions
 		TS_ASSERT_EQUALS( topo_up.span(1)->end(), 31 );
 		TS_ASSERT_EQUALS( topo_down.span(1)->start(), 15 );
 		TS_ASSERT_EQUALS( topo_down.span(1)->end(), 33 );
+
+#endif
 	}
 
 	// split topology by jump
 	void test_split_topology_by_jump_noshift() {
 
 		TR << "=========Test split topology by jump, no shift" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// read in pose and create topology object
 		Pose pose;
@@ -734,12 +872,19 @@ public: // test functions
 		TS_ASSERT_EQUALS( topo_up->span(1)->end(), 31 );
 		TS_ASSERT_EQUALS( topo_down->span(1)->start(), 55 );
 		TS_ASSERT_EQUALS( topo_down->span(1)->end(), 73 );
+
+#endif
+
 	}
 
 	// split topology by chain
 	void test_split_topology_by_chain_noshift() {
 
 		TR << "=========Test split topology by chain" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// read in pose and create topology object
 		Pose pose;
@@ -820,12 +965,18 @@ public: // test functions
 		TS_ASSERT_EQUALS( topos[13]->span(4)->start(), 1068 );
 		TS_ASSERT_EQUALS( topos[13]->span(4)->end(), 1087 );
 
+#endif
+
 	}
 
 	// compute embeddings by chain
 	void test_compute_embeddings_by_chain() {
 
 		TR << "=========Test compute embeddings by chain" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
 
 		// read in pose and create topology object
 		Pose pose;
@@ -893,12 +1044,20 @@ public: // test functions
 		position_equal_within_delta( embeddings->embedding(12)->normal(), normal12 , 0.001 );
 		position_equal_within_delta( embeddings->embedding(13)->center(), center13 , 0.001 );
 		position_equal_within_delta( embeddings->embedding(13)->normal(), normal13 , 0.001 );
+
+#endif
+
 	}
 
 	// chain center-of-mass
 	void test_chain_com() {
 
 		TR << "=========Test chain center-of-mass" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -936,12 +1095,20 @@ public: // test functions
 		position_equal_within_delta( com2, com_2 , 0.001 );
 		position_equal_within_delta( com3, com_3 , 0.001 );
 		position_equal_within_delta( com4, com_4 , 0.001 );
+
+#endif
+
 	}
 
 	// residue closest to chain center-of-mass
 	void test_rsd_closest_chain_com() {
 
 		TR << "=========Test residue closest to chain center-of-mass" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -969,12 +1136,18 @@ public: // test functions
 		TS_ASSERT_EQUALS( closest3, 366 );
 		TS_ASSERT_EQUALS( closest4, 505 );
 
+#endif
 	}
 
 	// per chain TM center-of-mass
 	void test_tm_com() {
 
 		TR << "=========Test per chain transmembrane center-of-mass" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1008,12 +1181,18 @@ public: // test functions
 		position_equal_within_delta( tmcom3, tm3center , 0.001 );
 		position_equal_within_delta( tmcom4, tm4center , 0.001 );
 
+#endif
 	}
 
 	// residue closest to chain tm center-of-mass
 	void test_rsd_closest_chain_tm_com() {
 
 		TR << "=========Test residue closest to chain TM center-of-mass" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1041,12 +1220,19 @@ public: // test functions
 		TS_ASSERT_EQUALS( closest3, 352 );
 		TS_ASSERT_EQUALS( closest4, 491 );
 
+#endif
+
 	} // rsd closest to chain TM COM
 
 	// create membrane foldtree anchor COM
 	void test_create_membrane_foldtree_anchor_com() {
 
 		TR << "=========Test create membrane foldtree anchor at center-of-mass" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1072,12 +1258,19 @@ public: // test functions
 		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 4 ), 88 );
 		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 4 ), 505 );
 
+#endif
+
 	} // create membrane foldtree anchor COM
 
 	// create membrane foldtree anchor TM COM
 	void test_create_membrane_foldtree_anchor_tmcom() {
 
 		TR << "=========Test create membrane foldtree anchor at TM center-of-mass" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1103,12 +1296,18 @@ public: // test functions
 		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 4 ), 19 );
 		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 4 ), 491 );
 
+#endif
 	} // create membrane foldtree anchor TM COM
 
 	// pose TM COM
 	void test_pose_tm_COM() {
 
 		TR << "=========Test pose TM center-of-mass" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1128,12 +1327,19 @@ public: // test functions
 		// test
 		position_equal_within_delta( pose_tm_com_is, pose_tm_com_shouldbe , 0.001 );
 
+#endif
+
 	} // pose TM COM
 
 	// residue closest to pose TM COM
 	void test_rsd_closest_pose_tm_COM() {
 
 		TR << "=========Test residue closest to pose TM center-of-mass" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1149,12 +1355,19 @@ public: // test functions
 		// test
 		TS_ASSERT_EQUALS( rsd_closest_to_pose_tm_com( pose ), 54 );
 
+#endif
+
 	} // rsd closest to pose TM COM
 
 	// create membrane foldtree anchor TM COM with root anchor at pose TM COM
 	void test_create_membrane_foldtree_anchor_pose_tmcom() {
 
 		TR << "=========Test create membrane foldtree anchor at TM center-of-mass and pose TM COM" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1180,6 +1393,8 @@ public: // test functions
 		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 4 ), 54 );
 		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 4 ), 491 );
 
+#endif
+
 	} // create membrane foldtree anchor TM COM
 
 
@@ -1187,6 +1402,11 @@ public: // test functions
 	void test_create_membrane_docking_foldtree_from_partners() {
 
 		TR << "=========Test create membrane docking foldtree from partners" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1213,12 +1433,19 @@ public: // test functions
 		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 4 ), 352 );
 		TS_ASSERT_EQUALS( i_jump, 4 );
 
+#endif
+
 	} // create membrane docking foldtree from partners
 
 	// create membrane foldtree anchor TM COM with root anchor at pose TM COM
 	void test_create_specific_membrane_foldtree() {
 
 		TR << "=========Test create specific membrane foldtree from anchors" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1257,12 +1484,18 @@ public: // test functions
 		TS_ASSERT_EQUALS( pose.conformation().membrane_info()->membrane_jump(), 1 );
 		TS_ASSERT_EQUALS( anchor, 76 );
 
+#endif
 	} // create specific membrane foldtree
 
 	// create_membrane_multi_partner_foldtree_anchor_tmcom
 	void test_create_membrane_multi_partner_foldtree_anchor_tmcom() {
 
 		TR << "=========Test create membrane multi-partner foldtree" << std::endl;
+
+		TS_ASSERT( true );
+
+#ifndef  SERIALIZATION
+
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
@@ -1291,6 +1524,8 @@ public: // test functions
 		TS_ASSERT_EQUALS( pose.conformation().membrane_info()->membrane_jump(), 1 );
 		TS_ASSERT_EQUALS( interface_jumps[1], 2 );
 		TS_ASSERT_EQUALS( interface_jumps[2], 3 );
+
+#endif
 
 	} // create membrane multi-partner foldtree
 

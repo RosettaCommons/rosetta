@@ -44,6 +44,7 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 #include <utility/tag/Tag.hh>
+
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -99,12 +100,6 @@ SetMembranePositionMover::~SetMembranePositionMover() = default;
 /////////////////////
 /// Mover Methods ///
 /////////////////////
-
-/// @brief Get the name of this mover
-// XRW TEMP std::string
-// XRW TEMP SetMembranePositionMover::get_name() const {
-// XRW TEMP  return "SetMembranePositionMover";
-// XRW TEMP }
 
 /// @brief Apply Rotation/Translation to Membrane
 /// @brief Translate the membrane position in this pose
@@ -166,24 +161,6 @@ SetMembranePositionMover::parse_my_tag(
 
 	read_center_normal_from_tag( center_, normal_, tag );
 }
-
-/// @brief Create a new copy of this mover
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetMembranePositionMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetMembranePositionMover >();
-// XRW TEMP }
-
-/// @brief Return the Name of this mover (as seen by Rscripts)
-// XRW TEMP std::string
-// XRW TEMP SetMembranePositionMoverCreator::keyname() const {
-// XRW TEMP  return SetMembranePositionMover::mover_name();
-// XRW TEMP }
-
-/// @brief Mover name for Rosetta Scripts
-// XRW TEMP std::string
-// XRW TEMP SetMembranePositionMover::mover_name() {
-// XRW TEMP  return "SetMembranePositionMover";
-// XRW TEMP }
 
 std::string SetMembranePositionMover::get_name() const {
 	return mover_name();

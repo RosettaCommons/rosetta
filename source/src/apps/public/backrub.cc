@@ -23,6 +23,9 @@
 #include <protocols/canonical_sampling/PDBTrajectoryRecorder.hh>
 #include <protocols/viewer/viewers.hh>
 
+#include <protocols/membrane/AddMembraneMover.hh>
+#include <protocols/moves/MoverContainer.hh>
+
 // Core Headers
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
@@ -101,8 +104,19 @@ void *
 my_main( void* )
 {
 
+	using namespace protocols::moves;
+	SequenceMoverOP seqmov( new SequenceMover() );
+
+	using namespace basic::options;
+	if ( option[ OptionKeys::in::membrane ].user() ) {
+		using namespace protocols::membrane;
+		AddMembraneMoverOP add_memb( new AddMembraneMover() );
+		seqmov->add_mover( add_memb );
+	}
+
 	protocols::backrub::BackrubProtocolOP backrub_protocol( new protocols::backrub::BackrubProtocol() );
-	protocols::jd2::JobDistributor::get_instance()->go( backrub_protocol );
+	seqmov->add_mover( backrub_protocol );
+	protocols::jd2::JobDistributor::get_instance()->go( seqmov );
 
 	// write parameters for any sets of branching atoms for which there were not optimization coefficients
 	backrub_protocol->write_database();

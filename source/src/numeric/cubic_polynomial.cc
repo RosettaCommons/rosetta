@@ -15,6 +15,11 @@
 
 #include <platform/types.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
 namespace numeric {
 
 CubicPolynomial
@@ -51,3 +56,50 @@ cubic_polynomial_deriv(
 } // numeric
 
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+numeric::SplineParameters::save( Archive & arc ) const {
+	arc( CEREAL_NVP( ylo ) ); // platform::Real
+	arc( CEREAL_NVP( yhi ) ); // platform::Real
+	arc( CEREAL_NVP( y2lo ) ); // platform::Real
+	arc( CEREAL_NVP( y2hi ) ); // platform::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+numeric::SplineParameters::load( Archive & arc ) {
+	arc( ylo ); // platform::Real
+	arc( yhi ); // platform::Real
+	arc( y2lo ); // platform::Real
+	arc( y2hi ); // platform::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( numeric::SplineParameters );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+numeric::CubicPolynomial::save( Archive & arc ) const {
+	arc( CEREAL_NVP( c0 ) ); // platform::Real
+	arc( CEREAL_NVP( c1 ) ); // platform::Real
+	arc( CEREAL_NVP( c2 ) ); // platform::Real
+	arc( CEREAL_NVP( c3 ) ); // platform::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+numeric::CubicPolynomial::load( Archive & arc ) {
+	arc( c0 ); // platform::Real
+	arc( c1 ); // platform::Real
+	arc( c2 ); // platform::Real
+	arc( c3 ); // platform::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( numeric::CubicPolynomial );
+#endif // SERIALIZATION

@@ -3135,12 +3135,15 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	#New Membrane Protein Option group (RosettaMP)
 	Option_Group( 'mp',
 
-		#Membrane options
+		# Option to restore previous energy function behavior (IMM1 - 2003)
+		Option( "restore_lazaridis_imm_behavior", "Boolean", desc="Restore energy function behavior to Lazaridis IMM1", default="false" ),
+
+		# Membrane options
 		Option( 'thickness', 'Real', desc='Thickness of the membrane used by the high resolution scoring function. Overwrites default thickness of 30A.'),
 		Option( 'membrane_core', 'Real', desc='set membrane core thickness for Lazaridis-Karplus. default is 10A, i.e (-10, 10)' ),
 		Option( 'steepness', 'Real', desc='Control transition region between polar and nonpoar phases for the membrane model used by the high resolution energy function. Default = 10 gives a 6A transition region.'),
 
-		#Embedding options - advanced (these are currently not used)
+		# Embedding options - advanced (these are currently not used)
 		Option( 'center_start', 'RealVector', desc='Starting point for center search. Example: 3 2 4.'),
 		Option( 'center_delta', 'Real', desc='Perturbation of center in Angstrom.'),
 		Option( 'center_search_cycles', 'Real', desc='Iterations for center search.'),
@@ -3167,6 +3170,13 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'spanning', 'Boolean', desc='Penalty if structure-based spanning doesn\'t match spanfile - on/off.'),
 		Option( 'wt_spanning', 'Real', desc='Weight for spanning penalty.'),
 
+		# Implicit Lipid Composition parameters
+		Option_Group( 'lipids', 
+			Option( 'composition', 'String', desc="Type of lipids to use in implicit model representation.", default="DLPC"),
+			Option( 'temperature', 'Real', desc="Temperature at which the lipid composition parameters were measured", default="37.0"),
+			Option( 'has_pore', 'Boolean', desc="Manual override don't use pore estimation" ),
+		),
+
 		Option_Group( 'viewer',
 			Option( 'thickness', 'Real', desc="Thickness of membrane to visualize", default='15' ),
 			Option( 'num_points', 'Integer', desc="Number of points to define the membrane planes. x >= 3" ),
@@ -3184,7 +3194,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		# Scoring options
 		Option_Group( 'scoring',
 			Option( 'hbond', 'Boolean',
-					desc="Hydrogen bonding energy correction for membrane proteins"),
+					desc="Hydrogen bonding energy correction for membrane proteins", default="false"),
 		),
 
 		# Setup Options
@@ -3204,13 +3214,13 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		),
 
 		Option_Group( 'lipid_acc',
-#			Option( 'radius_cutoff', 'Real', desc="Cutoff radius (from COM) to compute structure-based lipid accessibility, in Angstrom.", default='10' ),
-#			Option( 'rel_sasa_cutoff', 'Real', desc="Relative SASA cutoff to compute structure-based lipid accessibility.", default='0.2' ),
 			Option( 'angle_cutoff', 'Real', desc="Cutoff for CA-CB-COM angle to identify lipid accessible residues, in degrees. <90 faces towards COM, >90 faces away from COM.", default='65' ),
 			Option( 'slice_width', 'Real', desc="Width of the slice in Angstrom to compute hull.", default='10.0' ),
 			Option( 'shell_radius', 'Real', desc="Radius of shell from outermost atoms that are still counted as boundary, i.e. how thick is lipid-exposed layer from the outside.", default='5.0' ),
 			Option( 'dist_cutoff', 'Real', desc="Distances between boundary atoms longer than this cutoff (in 2D) will be cut in. Anything larger will be kept as boundary atoms.", default='5.0' ),
 			Option( 'tm_alpha', 'Boolean', desc="Is the main secondary structure in the membrane helical?", default='true' ),
+		  #Option( 'radius_cutoff', 'Real', desc="Cutoff radius (from COM) to compute structure-based lipid accessibility, in Angstrom.", default='10' ),
+		  #Option( 'rel_sasa_cutoff', 'Real', desc="Relative SASA cutoff to compute structure-based lipid accessibility.", default='0.2' ),
 		),
 
 		# For transforming protein into the membrane
@@ -3288,8 +3298,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	# Last Modified: 1/12/14
 	# @author Rebecca Alford
 	Option_Group( 'membrane',
-		# New Membrane Input Option Group
-#		Option( 'include_lips', 'Boolean', default='false', desc='Include lipid accessibility data for membrane protiens'),
 		# Scoring Options
 		Option( 'normal_cycles', 'Integer', default='100', desc='number of membrane normal cycles'),
 		Option( 'normal_mag', 'Real', default='5', desc='magnitude of membrane normal angle search (degrees)'),

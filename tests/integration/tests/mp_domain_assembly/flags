@@ -3,3 +3,5 @@
 -in:file:frag9 inputs/5xsy.frags.9.200_v1_3
 -mp:assembly:TM_pose_number 2
 -mp:assembly:poses inputs/5XSY_B_tr_opt_sol.pdb inputs/5XSY_B_tr_opt_tm.pdb
+-mp:scoring:hbond true
+-restore_lazaridis_imm_behavior true

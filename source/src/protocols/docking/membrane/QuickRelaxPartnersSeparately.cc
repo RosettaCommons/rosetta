@@ -329,7 +329,7 @@ void QuickRelaxPartnersSeparately::finalize_setup( Pose & pose ) {
 	TR << "anchor point: " << anchor << std::endl;
 
 	// Add Membrane to pose, appends MEM as jump1
-	AddMembraneMoverOP add_memb( new AddMembraneMover( anchor, 0 ) );
+	AddMembraneMoverOP add_memb( new AddMembraneMover( anchor, false, false ) );
 	add_memb->apply( pose );
 
 	// reorder foldtree to have membrane at root

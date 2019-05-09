@@ -1,0 +1,92 @@
+### Parameters for implicit lipid membranes
+### Author: Rebecca F. Alford (ralford3@jhu.edu)
+### Citation: Alford RF et al. (2019) "A thermodynamically-inspired, biologically-driven energy function 
+### 	      for membrane protein modeling and design" 
+###
+### Below are parameters describing different membrane lipid compositions. The parameters are derived from a combination of 
+### all-atom molecular dynamics simulations and X-Ray/Neutron scattering measurements of planar phospholipid bilayers. Each bilayer
+### contains the following parameter values: 
+### 	     LIPID_NAME = Four letter code describing the phospholipid type
+###	     LIPID_NAME_LONG = Full chemical name of the phospholipid type
+###	     HEAD_GROUP = 2 letter code describing the head group type (e.g. PC = phosphatidylcholine)
+###	     CHAIN_TYPE = Number of carbons on each acyl chain
+###	     WATER_THK = Bilayer thickness, given as 1/2 * the distance between the gibbs dividing surface between water and lipid
+###	     PARAM_A = Thickness proxy parameter A (see manuscript for conversion between WATER_THK and PARAM_A)
+###	     WATER_STP = Rate of change of water density along the membrane normal
+###	     TEMP = Temperature at which the bilayer thickness measurement was taken
+###	     DOS = Total degrees of saturation in the acyl chains
+###
+### The parameters in the implicit membrane can be changed using the following flags: 
+### 	-mp:lipids:composition <LIPID_NAME>
+###	-mp:lipids:temperature <TEMP> 
+###
+LIPID_NAME	LIPID_NAME_LONG	HEAD_GROUP	CHAIN_TYPE	WATER_THK	PARAM_A	WATER_STP	TEMP	DOS
+DAPC		1,2-diarachidonoyl-sn-glycero-3-phosphocholine	PC		20:4/20:4		17.15	356.642	0.343 30 4
+DDPC		1,2-didocosahexaenoyl-sn-glycero-3-[phospho-rac-(1-glycerol)]	PC			22:6/22:6	17.445	 394.579 0.343 30 6
+DLPC		1,2-dilauroyl-sn-glycero-3-phosphocholine			PC			12:0/12:0	16.5	 285.431 0.343 20 0
+DLPC		1,2-dilauroyl-sn-glycero-3-phosphocholine			PC			12:0/12:0	16.3	 266.525 0.343 30 0
+DLPC		1,2-dilauroyl-sn-glycero-3-phosphocholine			PC			12:0/12:0	17.25	 369.075 0.343 30 0
+DLPC		1,2-dilauroyl-sn-glycero-3-phosphocholine			PC			12:0/12:0	15.351	 199.570 0.343 37 0
+DLPC		1,2-dilauroyl-sn-glycero-3-phosphocholine			PC			12:0/12:0	15.5	 202.62	 0.343 50 0
+DLPC		1,2-dilauroyl-sn-glycero-3-phosphocholine			PC			12:0/12:0	15.35	 192.469 0.343 60 0
+DLPE		1,2-dilauroyl-sn-glycero-3-phosphoethanolamine			PE			12:0/12:0	17.436	 2383.28 0.446 35 0
+DLPE		1,2-dilauroyl-sn-glycero-3-phosphoethanolamine			PE			12:0/12:0	16.454	 1538.312      0.446 37 0
+DLPE		1,2-dilauroyl-sn-glycero-3-phosphoethanolamine			PE			12:0/12:0	16.877	 1857.374      0.446 45	0
+DLPE		1,2-dilauroyl-sn-glycero-3-phosphoethanolamine			PE			12:0/12:0	16.431	 1522.339      0.446 55	0
+DLPG		1,2-dilauroyl-sn-glycero-3-phospho-(1'-rac-glycerol)		PG			12:0/12:0	14.95	 477.883       0.413 20	0
+DLPG		1,2-dilauroyl-sn-glycero-3-phospho-(1'-rac-glycerol)		PG			12:0/12:0	14.55	 405.167       0.413 30	0
+DLPG		1,2-dilauroyl-sn-glycero-3-phospho-(1'-rac-glycerol)		PG			12:0/12:0	14.381	 457.668       0.413 37	0
+DLPG		1,2-dilauroyl-sn-glycero-3-phospho-(1'-rac-glycerol)		PG			12:0/12:0	13.9	 309.843       0.413 50	0
+DLPG		1,2-dilauroyl-sn-glycero-3-phospho-(1'-rac-glycerol)		PG			12:0/12:0	13.6	 273.764       0.413 60	0
+DMPC		1,2-dimyristoyl-sn-glycero-3-phosphocholine			PC			14:0/14:0	18.35	 538.04	       0.343 30	0
+DMPC		1,2-dimyristoyl-sn-glycero-3-phosphocholine			PC			14:0/14:0	19.7	 854.514       0.343 30	0
+DMPC		1,2-dimyristoyl-sn-glycero-3-phosphocholine			PC			14:0/14:0	17.974	 390.542       0.343 37	0
+DMPC		1,2-dimyristoyl-sn-glycero-3-phosphocholine			PC			14:0/14:0	17.6	 416.103       0.343 50	0
+DMPC		1,2-dimyristoyl-sn-glycero-3-phosphocholine			PC			14:0/14:0	17.1	 350.584       0.343 60	0
+DMPE		1,2-dimyristoyl-sn-glycero-3-phosphoethanolamine		PE			14:0/14:0	19.26	 7906.145      0.446 37	0
+DMPG		1,2-dimyristoyl-sn-glycero-3-phospho-(1'-rac-glycerol)		PG			14:0/14:0	16.25	 817.159       0.413 30	0
+DMPG		1,2-dimyristoyl-sn-glycero-3-phospho-(1'-rac-glycerol)		PG			14:0/14:0	15.7	 651.232       0.413 50	0
+DMPG		1,2-dimyristoyl-sn-glycero-3-phospho-(1'-rac-glycerol)		PG			14:0/14:0	15.45	 587.396       0.413 60	0
+DOPC		1,2-dioleoyl-sn-glycero-3-phosphocholine			PC			18:1/18:1	18	 477.231       0.343 30	1
+DOPC		1,2-dioleoyl-sn-glycero-3-phosphocholine			PC			18:1/18:1	18.639	 706.98	       0.343 37	2
+DOPE		1,2-dioleoyl-sn-glycero-3-phosphoethanolamine			PE			18:1/18:1	19.607	 3419.031      0.446 37	0
+DOPG		1,2-dioleoyl-sn-glycero-3-phospho-(1'-rac-glycerol) 		PG			18:1/18:1	18.15	 1789.873      0.413 20	1
+DOPG		1,2-dioleoyl-sn-glycero-3-phospho-(1'-rac-glycerol) 		PG			18:1/18:1	17.85	 1581.454      0.413 30	1
+DOPG		1,2-dioleoyl-sn-glycero-3-phospho-(1'-rac-glycerol) 		PG			18:1/18:1	17.974	 1233.722      0.413 37	1
+DOPG		1,2-dioleoyl-sn-glycero-3-phospho-(1'-rac-glycerol) 		PG			18:1/18:1	17.55	 1397.304      0.413 50	1
+DOPG		1,2-dioleoyl-sn-glycero-3-phospho-(1'-rac-glycerol) 		PG			18:1/18:1	17.5	 1368.768      0.413 60	1
+DPPC		1,2-dipalmitoyl-sn-glycero-3-phosphocholine			PC			16:0/16:0	20.029	 925.151       0.343 37	0
+DPPC		1,2-dipalmitoyl-sn-glycero-3-phosphocholine			PC			16:0/16:0	19.5	 797.913       0.343 50	0
+DPPC		1,2-dipalmitoyl-sn-glycero-3-phosphocholine			PC			16:0/16:0	19.05	 683.892       0.343 60	0
+DPPE		1,2-dipalmitoyl-sn-glycero-3-phosphoethanolamine		PE			16:0/16:0	22.106	 13436.13      0.446 37	0
+DPPG		1,2-dipalmitoyl-sn-glycero-3-phospho-(1'-rac-glycerol)		PG			16:0/16:0	18.921	 1229.494      0.413 37	0
+DPPG		1,2-dipalmitoyl-sn-glycero-3-phospho-(1'-rac-glycerol)		PG			16:0/16:0	17.75	 1517.521      0.413 50	0
+DPPG		1,2-dipalmitoyl-sn-glycero-3-phospho-(1'-rac-glycerol)		PG			16:0/16:0	17.25	 1234.597      0.413 60	0
+DSPC		1,2-distearoyl-sn-glycero-3-phosphocholine			PC			18:0/18:0	21.1	 1380.591      0.343 60	0
+DSPG		1,2-distearoyl-sn-glycero-3-phospho-(1'-rac-glycerol)		PG			18:0/18:0	19.1	 2648.989      0.413 60	0
+POPC		1-palmitoyl-2-oleoyl-glycero-3-phosphocholine			PC			16:0/18:1	19.9	 915.13	       0.343 20	1
+POPC		1-palmitoyl-2-oleoyl-glycero-3-phosphocholine			PC			16:0/18:1	19.55	 811.702       0.343 30	1
+POPC		1-palmitoyl-2-oleoyl-glycero-3-phosphocholine			PC			16:0/18:1	19.1	 815.943       0.343 37	1
+POPC		1-palmitoyl-2-oleoyl-glycero-3-phosphocholine			PC			16:0/18:1	19.35	 757.937       0.343 40	1
+POPC		1-palmitoyl-2-oleoyl-glycero-3-phosphocholine			PC			16:0/18:1	18.95	 660.854       0.343 50	1
+POPC		1-palmitoyl-2-oleoyl-glycero-3-phosphocholine			PC			16:0/18:1	18.85	 638.593       0.343 60	1
+POPE		1-palmitoyl-2-oleoyl-sn-glycero-3-phosphoethanolamine		PE			16:0/18:1	20.271	 8441.084      0.446 35	0
+POPE		1-palmitoyl-2-oleoyl-sn-glycero-3-phosphoethanolamine		PE			16:0/18:1	19.927	 7238.86       0.446 40	0
+POPE		1-palmitoyl-2-oleoyl-sn-glycero-3-phosphoethanolamine		PE			16:0/18:1	19.397	 5714.94       0.446 50	0
+POPG		1-palmitoyl-2-oleoyl-sn-glycero-3-phospho-(1'-rac-glycerol)	PG			16:0/18:1	18.65	 2200.046      0.413 20	1
+POPG		1-palmitoyl-2-oleoyl-sn-glycero-3-phospho-(1'-rac-glycerol)	PG			16:0/18:1	18.3	 1904.167      0.413 30	1
+POPG		1-palmitoyl-2-oleoyl-sn-glycero-3-phospho-(1'-rac-glycerol)	PG			16:0/18:1	18.688	 2379.131      0.413 37	1
+POPG		1-palmitoyl-2-oleoyl-sn-glycero-3-phospho-(1'-rac-glycerol)	PG			16:0/18:1	17.75	 1517.521      0.413 50	1
+POPG		1-palmitoyl-2-oleoyl-sn-glycero-3-phospho-(1'-rac-glycerol)	PG			16:0/18:1	17.45	 1340.816      0.413 60	1
+SOPE		1-stearoyl-2-oleoyl-sn-glycero-3-phosphoethanolamine		PE			18:0/18:1	21.562	 15009.356     0.446 35	0
+SOPE		1-stearoyl-2-oleoyl-sn-glycero-3-phosphoethanolamine		PE			18:0/18:1	21.286	 13273.914     0.446 40	0
+SOPE		1-stearoyl-2-oleoyl-sn-glycero-3-phosphoethanolamine		PE			18:0/18:1	20.671	 10089.656     0.446 50	0
+SOPC		1-stearoyl-2-oleoyl-sn-glycero-3-phosphocholine			PC			18:0/18:1	20.4	 1086.156      0.343 20	2
+SOPC		1-stearoyl-2-oleoyl-sn-glycero-3-phosphocholine			PC			18:0/18:1	20	 947.032       0.343 30	2
+SOPC		1-stearoyl-2-oleoyl-sn-glycero-3-phosphocholine			PC			18:0/18:1	19.5	 797.913       0.343 50	2
+SOPC		1-stearoyl-2-oleoyl-sn-glycero-3-phosphocholine			PC			18:0/18:1	19.25	 732.405       0.343 60	2
+SOPG		1-stearoyl-2-oleoyl-sn-glycero-3-phospho-(1'-rac-glycerol)	PG			18:0/18:1	19.4	 2998.098      0.413 20	2
+SOPG		1-stearoyl-2-oleoyl-sn-glycero-3-phospho-(1'-rac-glycerol)	PG			18:0/18:1	19.1	 2648.989      0.413 30	2
+SOPG		1-stearoyl-2-oleoyl-sn-glycero-3-phospho-(1'-rac-glycerol)	PG			18:0/18:1	18.55	 2111.105      0.413 50	2
+SOPG		1-stearoyl-2-oleoyl-sn-glycero-3-phospho-(1'-rac-glycerol)	PG			18:0/18:1	18.3	 1904.167      0.413 60	2
+TOCL		1',3'-bis[1,2-dioleoyl-sn-glycero-3-phospho]-glycerol		ToCdl			18:1/18:1/18:1/18:1	 18.35	       538.04	0.343 30 0

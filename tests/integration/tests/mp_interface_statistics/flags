@@ -1,4 +1,6 @@
 -in:file:s inputs/1AFO_AB.pdb
 -mp:setup:spanfiles inputs/1AFO_AB.span
 -docking:partners A_B
+-mp:scoring:hbond true
 -restore_talaris_behavior
+-restore_lazaridis_imm_behavior true

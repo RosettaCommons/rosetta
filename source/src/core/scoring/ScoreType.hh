@@ -482,6 +482,10 @@ enum ScoreType {
 	FaMPEnv,
 	FaMPEnvSmooth,
 
+	// New water to bilayer transfer free energy
+	// Added by @ralford 6/13/18
+	fa_water_to_bilayer,
+
 	MPResidueLipophilicity,
 	span_ins,
 	mp_span_ang,

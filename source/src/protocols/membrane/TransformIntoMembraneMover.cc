@@ -216,23 +216,6 @@ TransformIntoMembraneMover::parse_my_tag(
 
 } // parse my tag
 
-/// @brief Create a new copy of this mover
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP TransformIntoMembraneMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< TransformIntoMembraneMover >();
-// XRW TEMP }
-
-/// @brief Return the Name of this mover (as seen by Rscripts)
-// XRW TEMP std::string
-// XRW TEMP TransformIntoMembraneMoverCreator::keyname() const {
-// XRW TEMP  return TransformIntoMembraneMover::mover_name();
-// XRW TEMP }
-
-/// @brief Mover name for Rosetta Scripts
-// XRW TEMP std::string
-// XRW TEMP TransformIntoMembraneMover::mover_name() {
-// XRW TEMP  return "TransformIntoMembraneMover";
-// XRW TEMP }
 
 /////////////////////
 /// Mover Methods ///
@@ -243,12 +226,6 @@ TransformIntoMembraneMover::parse_my_tag(
 void TransformIntoMembraneMover::use_default_membrane( bool truefalse ) {
 	use_default_membrane_ = truefalse;
 }
-
-/// @brief Get the name of this Mover (TransformIntoMembraneMover)
-// XRW TEMP std::string
-// XRW TEMP TransformIntoMembraneMover::get_name() const {
-// XRW TEMP  return "TransformIntoMembraneMover";
-// XRW TEMP }
 
 /// @brief Move the pose into membrane coordinate frame
 void

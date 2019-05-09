@@ -3,4 +3,6 @@
 -docking:partners A_B
 -mp:setup:optimize1 1
 -mp:setup:optimize2 1
+-mp:scoring:hbond true
 -restore_talaris_behavior
+-restore_lazaridis_imm_behavior true

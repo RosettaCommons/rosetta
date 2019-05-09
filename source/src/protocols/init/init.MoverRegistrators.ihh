@@ -351,6 +351,8 @@ static MoverRegistrator< membrane::MPLipidAccessibilityCreator > reg_MPLipidAcce
 static MoverRegistrator< membrane::SetMembranePositionMoverCreator > reg_SetMembranePositionMoverCreator;
 static MoverRegistrator< membrane::TransformIntoMembraneMoverCreator > reg_TransformIntoMembraneMoverCreator;
 
+static MoverRegistrator< membrane_benchmark::MembraneEnergyLandscapeSamplerCreator > reg_MembraneEnergyLandscapeSamplerCreator;
+static MoverRegistrator< membrane_benchmark::PeptideOrientationMoverCreator > reg_PeptideOrientationMoverCreator;
 static MoverRegistrator< membrane::benchmark::SampleTiltAnglesCreator > reg_SampleTiltAnglesCreator;
 static MoverRegistrator< membrane::benchmark::MakeCanonicalHelixCreator > reg_MakeCanonicalHelixCreator;
 

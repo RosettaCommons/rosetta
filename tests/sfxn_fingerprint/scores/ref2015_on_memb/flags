@@ -1,0 +1,7 @@
+-in:file:s 1u19_A.pdb
+-mp:setup:spanfiles 1u19_A.span
+-score:weights ref2015
+-in:file:fullatom
+-out:nooutput
+-restore_lazaridis_imm_behavior true
+-mp:scoring:hbond true 

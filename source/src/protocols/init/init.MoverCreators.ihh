@@ -342,6 +342,8 @@
 #include <protocols/membrane/TiltMoverCreator.hh>
 #include <protocols/membrane/TransformIntoMembraneMoverCreator.hh>
 
+#include <protocols/membrane_benchmark/MembraneEnergyLandscapeSamplerCreator.hh>
+#include <protocols/membrane_benchmark/PeptideOrientationMoverCreator.hh>
 #include <protocols/membrane/benchmark/SampleTiltAnglesCreator.hh>
 #include <protocols/membrane/benchmark/MakeCanonicalHelixCreator.hh>
 

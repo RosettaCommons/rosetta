@@ -28,16 +28,21 @@
 //protocols library (Movers)
 #include <protocols/minimization_packing/MinPackMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
+
+#include <protocols/membrane/AddMembraneMover.hh>
 
 //utilities
 #include <protocols/jd2/JobDistributor.hh>
 #include <devel/init.hh>
 
 // option key includes
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
@@ -118,6 +123,13 @@ main( int argc, char * argv [] )
 			seq_mover->add_mover( utility::pointer::make_shared< protocols::symmetry::SetupForSymmetryMover >() );
 		}
 
+		// make membrane pose if necessary
+		if ( option[ in::membrane ].user() ) {
+			using namespace protocols::membrane;
+			using protocols::moves::MoverOP;
+			seq_mover->add_mover( MoverOP( new protocols::membrane::AddMembraneMover ) );
+		}
+
 		if ( option[ min_pack ] || option[ off_rotamer_pack ] ) {
 			protocols::minimization_packing::MinPackMoverOP minpack_mover( new protocols::minimization_packing::MinPackMover );
 			minpack_mover->task_factory( main_task_factory );
@@ -141,6 +153,7 @@ main( int argc, char * argv [] )
 			);
 			protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover( new protocols::minimization_packing::TaskAwareMinMover(min_mover, main_task_factory) );
 			seq_mover->add_mover( TAmin_mover );
+
 		} // end optional side chain minimization
 
 		protocols::jd2::JobDistributor::get_instance()->go(seq_mover);

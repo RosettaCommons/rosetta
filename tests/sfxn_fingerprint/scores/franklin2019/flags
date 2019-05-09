@@ -1,0 +1,6 @@
+-in:file:s 1U19_tr_ignorechain.pdb
+-mp:setup:spanfiles 1U19_tr_ignorechain.span
+-ignore_unrecognized_res
+-score:weights franklin2019
+-mp:lipids:composition DLPC
+-mp:lipids:temperature 37

@@ -72,9 +72,7 @@ public:
 		// Case: Glycophorin A
 		std::string pdbfile = "protocols/membrane/1AFO_AB_before_out.pdb";
 		pose_ = core::import_pose::pose_from_file( pdbfile , core::import_pose::PDB_file);
-		Vector m_center( 0, 0, 0 );
-		Vector m_normal( 0, 0, 1 );
-		AddMembraneMoverOP add_memb( new AddMembraneMover( m_center, m_normal, "protocols/membrane/1AFO_AB.span", 0 ) );
+		AddMembraneMoverOP add_memb( new AddMembraneMover( "protocols/membrane/1AFO_AB.span", 0 ) );
 		add_memb->apply( *pose_ );
 
 		// Test angle between single helix and normal azis is 0 after transformation

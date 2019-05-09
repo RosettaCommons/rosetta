@@ -1,3 +1,5 @@
 -in:file:s inputs/1C3W_TR_A.pdb
 -mp:setup:spanfiles inputs/1C3W_A.span
+-mp:scoring:hbond true
 -restore_talaris_behavior
+-restore_lazaridis_imm_behavior

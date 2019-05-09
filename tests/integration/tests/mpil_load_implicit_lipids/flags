@@ -1,0 +1,4 @@
+-in:file:s inputs/1U19_tr_ignorechain.pdb 
+-mp:setup:spanfiles inputs/1U19_tr_ignorechain.span
+-mp:lipids:composition DLPC
+-mp:lipids:temperature 37

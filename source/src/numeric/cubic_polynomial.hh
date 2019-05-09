@@ -21,6 +21,11 @@ namespace numeric {
 struct CubicPolynomial {
 	platform::Real c0, c1, c2, c3;
 	CubicPolynomial() : c0(0), c1(0), c2(0), c3(0) {}
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -38,6 +43,11 @@ struct SplineParameters {
 		y2lo(0.0),
 		y2hi(0.0)
 	{}
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /// @brief Compute cubic polynomial coefficients from a set of SplineParameters

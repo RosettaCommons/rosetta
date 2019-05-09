@@ -8,3 +8,4 @@
 -relax:range:nmoves nres
 -relax:range:cycles 1
 -restore_talaris_behavior
+-restore_lazaridis_imm_behavior true

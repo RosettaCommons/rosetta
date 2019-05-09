@@ -368,6 +368,9 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_mpsolv" ] = FaMPSolv;
 	name2score_type_[ "fa_mpenv_smooth" ] = FaMPEnvSmooth;
 
+	// new implicit lipid env energy
+	name2score_type_[ "fa_water_to_bilayer" ] = fa_water_to_bilayer;
+
 	name2score_type_[ "rg" ] = rg;
 	name2score_type_[ "rg_local" ] = rg_local;
 	name2score_type_[ "co" ] = co;

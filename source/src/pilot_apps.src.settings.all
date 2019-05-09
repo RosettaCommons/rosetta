@@ -801,8 +801,7 @@ sources = {
 		"version_mpscorefxn",
 		"enumerate_rotamers",
 		"mp_rsd_energies",
-		"sample_tilt_protocol",
-		"make_canonical_helix",
+		"color_by_lipid_type",
 	],
 	"pilot/rayyrw" : [
 		#"replonly",

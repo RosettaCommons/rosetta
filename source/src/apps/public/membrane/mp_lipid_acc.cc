@@ -31,9 +31,10 @@
 //#include <protocols/membrane/util.hh>
 
 #include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoverContainer.hh>
 #include <protocols/membrane/MPLipidAccessibility.hh>
-//#include <protocols/moves/MoverContainer.hh>
-//#include <protocols/membrane/AddMembraneMover.hh>
+#include <protocols/membrane/AddMembraneMover.hh>
+
 //// I have no idea why this is needed??? but it doesn't compile without it
 //#include <protocols/membrane/TranslationRotationMover.hh>
 //#include <basic/options/keys/mp.OptionKeys.gen.hh>
@@ -564,12 +565,19 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 
 		using namespace protocols::membrane;
+		using namespace protocols::moves;
 
 		protocols::jd2::register_options();
 
-		// Create and kick off a new load membrane mover
+		// Create movers for this application
+		AddMembraneMoverOP add_memb( new AddMembraneMover() );
 		MPLipidAccessibilityOP lipid_acc( new MPLipidAccessibility() );
-		protocols::jd2::JobDistributor::get_instance()->go( lipid_acc );
+
+		// Create and kick off sequence of mvoers
+		SequenceMoverOP seqmover( new SequenceMover() );
+		seqmover->add_mover( add_memb );
+		seqmover->add_mover( lipid_acc );
+		protocols::jd2::JobDistributor::get_instance()->go( seqmover );
 
 		return 0;
 

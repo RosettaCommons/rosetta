@@ -92,7 +92,9 @@ sources = {
 	],
     	"numeric/linear_algebra": [
         	"rgg",
-		"singular_value_decomposition",
+			"singular_value_decomposition",
+			"EllipseParameters",
+			"minimum_bounding_ellipse",
     	],
 	"numeric/model_quality": [
 		"functions",

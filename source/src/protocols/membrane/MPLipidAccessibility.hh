@@ -56,6 +56,7 @@ public:
 	/////////////////////
 
 public:
+
 	/// @brief Apply the mover
 	void
 	apply( core::pose::Pose & pose ) override;
@@ -73,10 +74,10 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose
 	) override;
 
 	//MPLipidAccessibility & operator=( MPLipidAccessibility const & src );
@@ -110,6 +111,9 @@ public:
 	/// @brief get slice width
 	core::Real get_slice_width() const;
 
+	/// @Brief Set slice width via commandline
+	void set_slice_width( core::Real width );
+
 	/// @brief get shell radius
 	core::Real get_shell_radius() const;
 
@@ -119,10 +123,8 @@ public:
 	/// @brief get tm_alpha
 	bool get_tm_alpha() const;
 
-	/// @brief Return a vector1 of vector1 matching the pose and atom counts with
-	/// the structure-based per-atom lipid accessibility
-	utility::vector1< utility::vector1< core::Real > >
-	get_per_atom_lipid_accessibility() const;
+	/// @brief Is this an alpha helical protein? (no >7 exception)
+	bool is_alpha_helical() const;
 
 private: // methods
 
@@ -155,6 +157,7 @@ private: // data
 	core::Real shell_radius_;
 	core::Real dist_cutoff_;
 	bool tm_alpha_;
+	bool is_alpha_helical_;
 
 	// define variables, the outer vector goes through the slices
 	// inner vector goes through residues in each slice

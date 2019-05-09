@@ -1,6 +1,7 @@
 -parser:protocol ./input/score.xml
 
--mp:scoring:hbond
+-mp:scoring:hbond true
+-restore_lazaridis_imm_behavior true
 -overwrite
 
 -parser:script_vars s1=1
