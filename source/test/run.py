@@ -29,6 +29,7 @@ UnitTestExecutable = ["protocols.test", "core.test", "basic.test", "ObjexxFCL.te
 
 # white list of unit tests for which we allow longer timeouts due to historical reasons
 # map lib:suite -> timeout-factor
+# Default for tests not listed is "1"
 _timeout_factors_ = {
     "core:SingleNCAARotamerLibraryTests_equivalency_no_voronoi" : 8,
     "core:SingleNCAARotamerLibraryTests_equivalency_voronoi" : 8,
@@ -41,6 +42,11 @@ _timeout_factors_ = {
     "core:ValidateTalarisBinariesTests": 20,
     "core:CyclicGeometry_beta_peptoid_TwoChainTests" : 5,
     "core:CyclicGeometry_peptoid_TwoChainTests" : 5,
+    "core:CyclicGeometry_betanov16_TwoChainTests" : 2,
+    "core:CyclicGeometry_nmethyl_betanov15_TwoChainTests" : 2,
+    "core:AtomicDepthTests" : 2,
+    "protocols:MembraneUtil" : 2,
+    "protocols:AddMembraneMoverTest" : 2,
 }
 
 def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False, silence_output=False, silence_output_on_errors=False, add_message_and_command_line_to_output=False):
