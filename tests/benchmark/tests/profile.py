@@ -48,10 +48,10 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         output_log_file = '{working_dir}/profile_py.log'.format( **vars() )
 
         # running profile script on HPC cluster
-        # hpc_driver.execute(executable='cd'.format(**vars()), arguments='{rosetta_dir}/tests/profile && ./profile.py --compiler={compiler} --daemon 2>&1 >{output_log_file}'.format(output_log_file=output_log_file, rosetta_dir=rosetta_dir, compiler=compiler),  # relax_native ligand_dock_script fixbb jd2test
+        # hpc_driver.execute(executable='cd'.format(**vars()), arguments='{rosetta_dir}/tests/profile && ./profile.py --compiler={compiler} --daemon >{output_log_file} 2>&1'.format(output_log_file=output_log_file, rosetta_dir=rosetta_dir, compiler=compiler),  # relax_native ligand_dock_script fixbb jd2test
         #                    working_dir=working_dir, name='profile', shell_wrapper=True)
 
-        execute('Running Profile tests...', 'cd {rosetta_dir}/tests/profile && ./profile.py --compiler={compiler} --daemon 2>&1 >{output_log_file}'.format(output_log_file=output_log_file, rosetta_dir=rosetta_dir, compiler=compiler) )
+        execute('Running Profile tests...', 'cd {rosetta_dir}/tests/profile && ./profile.py --compiler={compiler} --daemon >{output_log_file} 2>&1'.format(output_log_file=output_log_file, rosetta_dir=rosetta_dir, compiler=compiler) )
 
         files_location = '{rosetta_dir}//tests/profile/tests'.format( **vars() )
 

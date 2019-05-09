@@ -15,12 +15,12 @@ The top part of this document explains how to make a new test.  The bottom part 
 In your command files, it is a good idea to explicitly strip certain types of output from your log files.  In particular, file paths and timing info are not relevant to the integration test and case faux failures (the former when testing, the latter on the test server).  It's a good idea to remove them.  Here's how:
 
 This is what the basic execute command looks like:
-%(bin)s/AnchoredDesign.%(binext)s @options -database %(database)s 2>&1 > log
+%(bin)s/AnchoredDesign.%(binext)s @options -database %(database)s > log 2>&1
 
 This will put the output in a log file.  Next, there are some flags that should be in EVERY run, which are more convenient to put in the command file over the options file:
 
-%(bin)s/AnchoredDesign.%(binext)s @options -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
-    > log
+%(bin)s/AnchoredDesign.%(binext)s @options -database %(database)s -testing:INTEGRATION_TEST \
+    > log 2>&1
 
 -testing:INTEGRATION_TEST includes the -nodelay and -constant_seed flags, which prevent spurious failures and runtime inefficiencies.  Note the \ to continue the command on the next line.
 

@@ -61,8 +61,8 @@ date > start-time.ignore
 #
 # Or if you don't care whether the logging output changes:
 #
-## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
-##     > /dev/null
+## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST \
+##     > /dev/null 2>&1
 #
 
 date > finish-time.ignore

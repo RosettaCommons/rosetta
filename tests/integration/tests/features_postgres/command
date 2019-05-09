@@ -67,7 +67,7 @@ psql -h %(dbms_host)s -U %(dbms_user)s -p %(dbms_port)s -w -d %(dbms_database_na
 	-dbms:pq_schema %(dbms_pq_schema)s \
 	-testing:INTEGRATION_TEST 2>&1 \
 	| egrep -vf ../../ignore_list \
-	>> log_db_output 2>&1
+	>> log_db_output
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 
@@ -75,4 +75,4 @@ pg_dump -h %(dbms_host)s -U %(dbms_user)s -p %(dbms_port)s -w -n %(dbms_pq_schem
 
 echo "DROP SCHEMA %(dbms_pq_schema)s CASCADE;" >> log_db_output 2>&1 
 
-psql -h %(dbms_host)s -U %(dbms_user)s -p %(dbms_port)s -w -d %(dbms_database_name)s -c "DROP SCHEMA %(dbms_pq_schema)s CASCADE;" 2&>1 >> log_db_output
+psql -h %(dbms_host)s -U %(dbms_user)s -p %(dbms_port)s -w -d %(dbms_database_name)s -c "DROP SCHEMA %(dbms_pq_schema)s CASCADE;" >> log_db_output 2>&1

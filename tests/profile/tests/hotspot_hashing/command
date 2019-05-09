@@ -34,8 +34,8 @@ rm -f hashing_log
 rm -f testTRP.stubs
 
 [ -x %(bin)s/hotspot_hash.%(binext)s ] || exit 1
-%(bin)s/hotspot_hash.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
-	> output/hashing_log
+%(bin)s/hotspot_hash.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay \
+	> output/hashing_log 2>&1
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 

@@ -44,7 +44,7 @@ cd %(workdir)s
 #
 
 ##Test Unit Test template creation
- %(python)s %(template_dir)s/generate_unit_test_template.py --test --class_name TemplateUnitTests --brief "testing templates" --outdirs protocols test_templates --test_functions test_function_one test_function_two test_function_three 2>&1 >> log
+ %(python)s %(template_dir)s/generate_unit_test_template.py --test --class_name TemplateUnitTests --brief "testing templates" --outdirs protocols test_templates --test_functions test_function_one test_function_two test_function_three >> log 2>&1
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
