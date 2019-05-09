@@ -121,6 +121,10 @@ public:
 	/// is true.  Values X > 1 mean that cyclic permutations shifted by X residues will be clustered.
 	core::Size cyclic_permutation_offset_;
 
+	/// @brief If true, alpha-amino acid bin analysis is performed using the ABOXYZ bins defined in Hosseinzadeh, Bhardwaj,
+	/// Mulligan, et al. (2018).  False by default.
+	bool perform_ABOXYZ_bin_analysis_;
+
 	/// @brief If true, the input structures will be converted to a chain of alanines (L- or D-) before scoring.
 	/// Default false.
 	bool mutate_to_ala_;

@@ -51,6 +51,136 @@ public:
 
 	}
 
+	/// @brief Test that we're counting asymmetric binstrings correctly.
+	void test_num_asymmetric_binstrings() {
+		using namespace protocols::energy_based_clustering;
+		std::set< std::string > binstrings1;
+		binstrings1.insert( "AAXBYYBB" ); //Asymmetric
+		binstrings1.insert( "XXXBYYBB" ); //Asymmetric
+		binstrings1.insert( "YYBBBBYY" ); //Symmetric
+		binstrings1.insert( "AAXBAAXB" ); //Symmetric
+		binstrings1.insert( "YYXBBBAX" ); //Asymmetric
+		binstrings1.insert( "YYXBBBAY" ); //Asymmetric
+
+		std::set< std::string > binstrings2;
+		binstrings2.insert( "ABOZXYZO" ); //Symmetric
+		binstrings2.insert( "BBAZYYXO" ); //Symmetric
+		binstrings2.insert( "YYBBBBYY" ); //Symmetric
+		binstrings2.insert( "XXXBYYBB" ); //Asymmetric
+		binstrings2.insert( "AXXXXAAA" ); //Symmetric
+
+		std::set< std::string > binstrings3;
+		binstrings3.insert( "ABOZXYZO" ); //Symmetric
+		binstrings3.insert( "BBAZYYXO" ); //Symmetric
+
+		TS_ASSERT_EQUALS( binstrings1.size(), 6 );
+		TS_ASSERT_EQUALS( binstrings2.size(), 5 );
+		TS_ASSERT_EQUALS( binstrings3.size(), 2 );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::num_asymmetric_binstrings( binstrings1, true ), 4 );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::num_asymmetric_binstrings( binstrings2, true ), 1 );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::num_asymmetric_binstrings( binstrings3, true ), 0 );
+	}
+
+	/// @brief Test that we're correctly counting the number of asymmetric bin strings that have their mirror
+	/// counterpart represented in the set.
+	void test_num_asymmetric_binstrings_with_mirror_counterpart_represented() {
+		using namespace protocols::energy_based_clustering;
+		std::set< std::string > binstrings1;
+		binstrings1.insert( "AAXBYYBB" ); //Asymmetric -- paired
+		binstrings1.insert( "XAXBYYBB" ); //Asymmetric
+		binstrings1.insert( "YAXBYYBB" ); //Asymmetric --paired
+		binstrings1.insert( "BBAZYYXO" ); //Symmetric
+		binstrings1.insert( "YBBYYBXA" ); //Asymmetric -- paired
+		binstrings1.insert( "BYYXXAYB" ); //Asymmetric -- paired
+		binstrings1.insert( "AAXBYOBB" ); //Asymmetric
+		binstrings1.insert( "AAXBYZBB" ); //Asymmetric
+		binstrings1.insert( "ABOZXYZO" ); //Symmetric
+		binstrings1.insert( "AXXXXAAA" ); //Symmetric
+
+		std::set< std::string > binstrings2;
+		binstrings2.insert( "ABOOXYZZ" ); //Symmetric
+		binstrings2.insert( "XAXBYYBB" ); //Asymmetric
+		binstrings2.insert( "YAXBYOOB" ); //Asymmetric
+		binstrings2.insert( "BBAZYYXO" ); //Symmetric
+		binstrings2.insert( "YBBYYBXZ" ); //Asymmetric
+		binstrings2.insert( "BYYXXAYB" ); //Asymmetric
+		binstrings2.insert( "AAXBYOBB" ); //Asymmetric
+		binstrings2.insert( "AAXBYZBB" ); //Asymmetric
+		binstrings2.insert( "ABOZXYZO" ); //Symmetric
+		binstrings2.insert( "AXXXXAAA" ); //Symmetric
+
+		TS_ASSERT_EQUALS( binstrings1.size(), 10 );
+		TS_ASSERT_EQUALS( binstrings2.size(), 10 );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::num_asymmetric_binstrings_with_mirror_counterpart_represented( binstrings1, true ), 4 );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::num_asymmetric_binstrings_with_mirror_counterpart_represented( binstrings2, true ), 0 );
+	}
+
+	/// @brief Test that we're assigning ABOXYZ bins correctly.
+	void test_determine_ABOXYZ_bin() {
+		using namespace protocols::energy_based_clustering;
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( -61.1, -41.1, 182.3 ), 'A' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( -61.1, -41.1, 173.5 ), 'A' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( -61.1, -43.1, -173.5 ), 'A' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( 61.1, 41.1, 182.3 ), 'X' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( 61.1, 41.1, 173.5 ), 'X' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( 61.1, 43.1, -173.5 ), 'X' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( -135, 135, 173.5 ), 'B' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( 135-360.0, -135, 173.5 ), 'Y' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( -135+360.0, 50, 173.5 ), 'A' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( -135, -80, 173.5 ), 'B' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( 135, -50, 173.5 ), 'X' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( 135, -80, 173.5 ), 'Y' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( -135, -80, 3.5 ), 'O' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::determine_ABOXYZ_bin( 135, -80, 3.5 ), 'Z' );
+
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::get_mirror_bin('A'), 'X' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::get_mirror_bin('B'), 'Y' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::get_mirror_bin('O'), 'Z' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::get_mirror_bin('X'), 'A' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::get_mirror_bin('Y'), 'B' );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::get_mirror_bin('Z'), 'O' );
+		TR << "The following should throw..." << std::endl;
+		TS_ASSERT_THROWS_ANYTHING( EnergyBasedClusteringProtocol::get_mirror_bin('Q') );
+
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::get_mirror_bin_sequence( "BBABXYYBAXYBBYOBOZBYA", false ), "YYXYABBYXABYYBZYZOYBX" );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::get_mirror_bin_sequence( "BBABXYYBAXYBBYOBOZBYA", true ), "ABBYXABYYBZYZOYBXYYXY" );
+	}
+
+	/// @brief Test that the permute_string function works correctly.
+	void test_permute_string() {
+		using namespace protocols::energy_based_clustering;
+
+		std::string const string1(""), string2("Q"), string3("Toronto");
+		std::string const string1b( EnergyBasedClusteringProtocol::permute_string(string1) );
+		std::string const string2b( EnergyBasedClusteringProtocol::permute_string(string2) );
+		std::string const string3b( EnergyBasedClusteringProtocol::permute_string(string3) );
+		std::string const string3c( EnergyBasedClusteringProtocol::permute_string(string3b) );
+		std::string const string3d( EnergyBasedClusteringProtocol::permute_string(string3c) );
+		std::string const string3e( EnergyBasedClusteringProtocol::permute_string(string3d) );
+
+		TS_ASSERT_EQUALS( string1b, "" );
+		TS_ASSERT_EQUALS( string2b, "Q" );
+		TS_ASSERT_EQUALS( string3b, "orontoT" );
+		TS_ASSERT_EQUALS( string3c, "rontoTo" );
+		TS_ASSERT_EQUALS( string3d, "ontoTor" );
+		TS_ASSERT_EQUALS( string3e, "ntoToro" );
+	}
+
+	/// @brief Test that the get_circular_permutation_first_in_alphabetical_order() function works correctly.
+	void test_get_circular_permutation_first_in_alphabetical_order() {
+		using namespace protocols::energy_based_clustering;
+
+		std::string const input_string1( "XYYXBBAXABYY" );
+		std::string const input_string2( "ABYYXYYXBBAX" );
+		std::string const input_string3( "ABABABAXABAB" );
+		std::string const input_string4( "BABABABAXABA" );
+
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::get_circular_permutation_first_in_alphabetical_order(input_string1), "ABYYXYYXBBAX" );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::get_circular_permutation_first_in_alphabetical_order(input_string2), "ABYYXYYXBBAX" );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::get_circular_permutation_first_in_alphabetical_order(input_string3), "ABABABABABAX" );
+		TS_ASSERT_EQUALS( EnergyBasedClusteringProtocol::get_circular_permutation_first_in_alphabetical_order(input_string4), "ABABABABABAX" );
+	}
+
 	/// @brief Test the EnergyBasedClusteringProtocol::storeposedata() function.
 	void test_storeposedata(){
 		protocols::energy_based_clustering::EnergyBasedClusteringProtocol clusterer;

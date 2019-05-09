@@ -45,6 +45,7 @@ EnergyBasedClusteringOptions::EnergyBasedClusteringOptions( bool const initializ
 	cyclic_symmetry_threshold_specified_(false),
 	cluster_cyclic_permutations_(false),
 	cyclic_permutation_offset_(1),
+	perform_ABOXYZ_bin_analysis_(false),
 	mutate_to_ala_(false),
 	disulfide_positions_(),
 	homooligomer_swap_(false),
@@ -139,6 +140,8 @@ EnergyBasedClusteringOptions::initialize_from_global_options() {
 
 	runtime_assert_string_msg( option[cyclic_permutation_offset] > 0, "Error in global options: the -cluster:energy_based_clustering:cyclic_permutation_offset option must be set to a value greater than zero." );
 	cyclic_permutation_offset_ = static_cast<core::Size>(option[cyclic_permutation_offset]());
+
+	perform_ABOXYZ_bin_analysis_ = option[perform_ABOXYZ_bin_analysis].value();
 
 	mutate_to_ala_ = option[mutate_to_ala]();
 

@@ -40,6 +40,9 @@
 //Numeric headers
 #include <numeric/xyzVector.fwd.hh>
 
+//STL headers
+#include <set>
+
 namespace protocols {
 namespace energy_based_clustering {
 
@@ -76,7 +79,69 @@ public:
 private: //Functions
 
 	/// @brief Function to determine whether a value is in a list
-	bool is_in_list ( core::Size const val, utility::vector1 < core::Size > const &vallist ) const;
+	inline bool
+	is_in_list (
+		core::Size const val,
+		utility::vector1 < core::Size > const &vallist
+	) const {
+		return vallist.has_value(val); //This should have been used instead.
+	}
+
+	/// @brief Count the number of binstrings which are not the same as their mirror image.
+	static core::Size num_asymmetric_binstrings( std::set< std::string > const & binstrings, bool const circularly_permute );
+
+	/// @brief Count the number of asymmetric binstrings (binstrings which are not the same as their mirror image)
+	/// for which the mirror image is also in the set.
+	/// @details This should always be an even number.
+	static core::Size num_asymmetric_binstrings_with_mirror_counterpart_represented( std::set< std::string > const & binstrings, bool const circularly_permute );
+
+	/// @brief Given a string of the form "ABCDEFG", return "BCDEFGA".
+	static std::string
+	permute_string(
+		std::string const & string_in
+	);
+
+	/// @brief Given a bin, get its mirror.  (A--X, B--Y, O--Z).
+	static char get_mirror_bin( char const bin_in );
+
+	/// @brief Given a bin string, get its mirror.
+	/// @details  If the boolean is true, the sequence put through every circular permutation, and the one that's first alphabetically
+	/// is selected and returned.
+	static std::string get_mirror_bin_sequence( std::string const &binstring_in, bool const circularly_permuted_for_alphabetization );
+
+	/// @brief Given phi, psi, and omega, determine the ABOXYZ bin.
+	/// @details Based on the definition in David Baker's cyclic_utilities.py Python script from 2016, with slight
+	/// modification for symmetry
+	/// - If phi is in the interval (-180, 0], bin is A, B, or O.  If it's in the interval (0, 180], the bin is X, Y, or Z.
+	/// - In the negative phi case {
+	///     - If omega is in the range (-90, 90], it's O.
+	///  - If psi is in the range (-80, 50], it's B.
+	///     - Else, it's A.
+	/// }
+	/// - In the positive phi case {
+	///     - If omega is in the range [-90, 90), it's Z.
+	///  - If psi is in the range [-50, 80), it's Y.
+	///     - Else, it's X.
+	/// }
+	static char determine_ABOXYZ_bin( core::Real const &phi, core::Real const & psi, core::Real const & omega );
+
+	/// @brief Given a pose, generate a string for its ABOXYZ bins.
+	/// @details If the -cluster_cyclic_permutations flag is used, all cyclic permutations of the string are considered, and the
+	/// first in alphabetical order is returned.
+	/// @note Ignores ligands and virtual residues.
+	std::string do_ABOXYZ_bin_analysis( core::pose::Pose const & pose ) const;
+
+	/// @brief Given an alpha-amino acid bin string, figure out all circular permutations and return
+	/// the one that's first in alphabetical order.
+	/// @details Strings must be provided in uppercase only.
+	static std::string
+	get_circular_permutation_first_in_alphabetical_order(
+		std::string const & string_in
+	);
+
+	/// @brief Is a pose composed only of alpha amino acids and peptoid residues (returns true), or does it have other residues (returns false)?
+	/// @details Ignores virtual residues and ligands.
+	bool is_all_alpha_aa_or_peptoid( core::pose::Pose const & pose ) const;
 
 	/// @brief Align one pose to another with an offset in the residue count.
 	void align_with_offset (
@@ -230,6 +295,7 @@ private: //Functions
 		utility::vector1 <core::Real> &poseenergies, utility::vector1 < utility::vector1 <core::Real> > &posedata,
 		utility::vector1< utility::vector1< numeric::xyzVector< core::Real > > > &alignmentdata,
 		utility::vector1 < utility::vector1 <core::Real> > &dihedral_reconstruction_data,
+		utility::vector1 < std::string > &pose_binstrings,
 		utility::vector1 < core::Size > &cluster_assignments, utility::vector1 < core::Size > &cluster_offsets,
 		utility::vector1 < core::Size > &cluster_oligomer_permutations, core::scoring::ScoreFunctionOP sfxn,
 		utility::vector1 < core::id::NamedAtomID > const &extra_atom_list

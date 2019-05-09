@@ -64,6 +64,9 @@
 #include <numeric/constants.hh>
 #include <numeric/model_quality/rms.hh>
 
+//STL headers
+#include <set>
+
 static basic::Tracer TR( "protocols.cluster.energy_based_clustering.EnergyBasedClusteringProtocol" );
 
 #define CNCa_ANGLE 121.7
@@ -119,6 +122,7 @@ EnergyBasedClusteringProtocol::register_options() {
 	option.add_relevant( cyclic_symmetry_mirroring );
 	option.add_relevant( cyclic_symmetry_threshold );
 	option.add_relevant( cluster_cyclic_permutations );
+	option.add_relevant( perform_ABOXYZ_bin_analysis );
 	option.add_relevant( mutate_to_ala );
 	option.add_relevant( disulfide_positions );
 	option.add_relevant( homooligomer_swap );
@@ -169,8 +173,13 @@ EnergyBasedClusteringProtocol::go() {
 		symmfilter.set_angle_threshold( options_.cyclic_symmetry_threshold_ );
 	}
 
+	std::set <std::string> unique_binstrings_encountered, unique_binstrings_encountered_in_cluster_centres; //Used only for ABOXYZ bin analysis.  Left empty otherwise.
+	std::set <std::string> unique_binstrings_encountered_with_mirror_equivalency, unique_binstrings_encountered_in_cluster_centres_with_mirror_eqivalency; //Used only for ABOXYZ bin analysis.  Left empty otherwise.
+	utility::vector1 <std::string> pose_binstrings, cluster_centre_binstrings; //Used only for ABOXYZ bin analysis.  Left empty otherwise.
+	std::string curbinstring_mirror; //Temp container used only for ABOXYZ bin analysis.
+
 	//Import and score all structures:
-	do_initial_import_and_scoring( count, lowestE, lowestE_index, firstpose, symmfilter, poseenergies, posedata, alignmentdata, dihedral_reconstruction_data, cluster_assignments, cluster_offsets, cluster_oligomer_permutations, sfxn, extra_atom_list );
+	do_initial_import_and_scoring( count, lowestE, lowestE_index, firstpose, symmfilter, poseenergies, posedata, alignmentdata, dihedral_reconstruction_data, pose_binstrings, cluster_assignments, cluster_offsets, cluster_oligomer_permutations, sfxn, extra_atom_list );
 
 	TR << "Clustering, starting with lowest-energy structure as the center of the first cluster." << std::endl;
 
@@ -193,8 +202,18 @@ EnergyBasedClusteringProtocol::go() {
 		cluster_sortedbyenergy.push_back(lowestE_index);
 		unclustered_count--;
 
-		TR << "Started cluster " << cluster_count << " and added structure " << lowestE_index << " to it." << std::endl;
+		if ( options_.perform_ABOXYZ_bin_analysis_ ) {
+			curbinstring_mirror = get_mirror_bin_sequence( pose_binstrings[lowestE_index], options_.cluster_cyclic_permutations_ );
+			unique_binstrings_encountered.insert( pose_binstrings[lowestE_index] ); //Add if not already present.
+			unique_binstrings_encountered_in_cluster_centres.insert( pose_binstrings[lowestE_index] ); //Add if not already present.
+			unique_binstrings_encountered_with_mirror_equivalency.insert( pose_binstrings[lowestE_index] < curbinstring_mirror ? pose_binstrings[lowestE_index] : curbinstring_mirror );
+			unique_binstrings_encountered_in_cluster_centres_with_mirror_eqivalency.insert( pose_binstrings[lowestE_index] < curbinstring_mirror ? pose_binstrings[lowestE_index] : curbinstring_mirror );
+		}
+
+		TR << "Started cluster " << cluster_count << " and added structure " << lowestE_index << " to it." << ( options_.perform_ABOXYZ_bin_analysis_ ? "  Cluster centre binstring is " + pose_binstrings[lowestE_index] + " / mirror is " + curbinstring_mirror + "" : "" ) << std::endl;
 		utility::vector1 <core::Real> clustcenter = posedata[lowestE_index]; //Set the center of the current cluster
+
+
 
 		//Make a list of unassigned candidate structures:
 		utility::vector1 <core::Size> candidatelist;
@@ -214,7 +233,14 @@ EnergyBasedClusteringProtocol::go() {
 			if ( currentdist < options_.cluster_radius_ ) {
 				std::streamsize const old_precision(TR.precision());
 				TR.precision(6);
-				TR << "\tAdding structure " << candidatelist[istruct] << " (" << currentdist << " from the cluster centre)." << std::endl;
+
+				if ( options_.perform_ABOXYZ_bin_analysis_ ) {
+					curbinstring_mirror = get_mirror_bin_sequence( pose_binstrings[istruct], options_.cluster_cyclic_permutations_ );
+					unique_binstrings_encountered.insert( pose_binstrings[istruct] ); //Add if not already present.
+					unique_binstrings_encountered_with_mirror_equivalency.insert( pose_binstrings[istruct] < curbinstring_mirror ? pose_binstrings[istruct] : curbinstring_mirror );
+				}
+
+				TR << "\tAdding structure " << candidatelist[istruct] << " (" << currentdist << " from the cluster centre)." << ( options_.perform_ABOXYZ_bin_analysis_ ? "  Binstring is " + pose_binstrings[istruct] + " / mirror is " + curbinstring_mirror + "" : "" ) << std::endl;
 				TR.precision(old_precision);
 				cluster_assignments[candidatelist[istruct]]=cluster_count;
 				cluster_sortedbyenergy.push_back(candidatelist[istruct]);
@@ -250,6 +276,13 @@ EnergyBasedClusteringProtocol::go() {
 		if ( no_unassigned ) break; //If this is still true, there were no unassigned structures.
 	}
 
+
+	if ( options_.perform_ABOXYZ_bin_analysis_ ) {
+		TR << cluster_count << " clusters represent " << unique_binstrings_encountered_in_cluster_centres.size() << " unique binstrings (" << unique_binstrings_encountered_in_cluster_centres_with_mirror_eqivalency.size() << " if binstrings and their mirrors are equivalent)." << std::endl;
+		TR << "Of the " << num_asymmetric_binstrings( unique_binstrings_encountered_in_cluster_centres, options_.cluster_cyclic_permutations_ ) << " asymmetric binstrings among the cluster centres, " << num_asymmetric_binstrings_with_mirror_counterpart_represented( unique_binstrings_encountered_in_cluster_centres, options_.cluster_cyclic_permutations_ ) << " have their mirror counterpart represented." << std::endl;
+		TR << count << " structures represent " << unique_binstrings_encountered.size() << " unique binstrings (" << unique_binstrings_encountered_with_mirror_equivalency.size() << " if binstrings and their mirrors are equivalent)." << std::endl;
+		TR << "Of the " << num_asymmetric_binstrings( unique_binstrings_encountered, options_.cluster_cyclic_permutations_ ) << " asymmetric binstrings among all structures, " << num_asymmetric_binstrings_with_mirror_counterpart_represented( unique_binstrings_encountered, options_.cluster_cyclic_permutations_ ) << " have their mirror counterpart represented." << std::endl;
+	}
 
 	//Outputs:
 	TR << "Cluster\tStructure\tFile_out" << std::endl;
@@ -324,18 +357,200 @@ EnergyBasedClusteringProtocol::go() {
 
 /////////////////////// PRIVATE FUNCTIONS ///////////////////////
 
-/// @brief Function to determine whether a value is in a list
-bool
-EnergyBasedClusteringProtocol::is_in_list (
-	core::Size const val,
-	utility::vector1 < core::Size > const &vallist
-) const {
-	if ( vallist.size()>0 ) {
-		for ( core::Size i=1, listlength=vallist.size(); i<=listlength; ++i ) {
-			if ( vallist[i]==val ) return true;
+/// @brief Count the number of binstrings which are not the same as their mirror image.
+core::Size
+EnergyBasedClusteringProtocol::num_asymmetric_binstrings(
+	std::set< std::string > const & binstrings,
+	bool const circularly_permute
+) {
+	core::Size counter(0);
+	for ( std::set< std::string >::const_iterator it( binstrings.begin() ); it != binstrings.end(); ++it ) {
+		std::string const curstring( circularly_permute ? get_circular_permutation_first_in_alphabetical_order( *it ) : *it );
+		if ( curstring != get_mirror_bin_sequence( curstring, circularly_permute ) ) {
+			++counter;
 		}
 	}
-	return false;
+	return counter;
+}
+
+/// @brief Count the number of asymmetric binstrings (binstrings which are not the same as their mirror image)
+/// for which the mirror image is also in the set.
+/// @details This should always be an even number.
+core::Size
+EnergyBasedClusteringProtocol::num_asymmetric_binstrings_with_mirror_counterpart_represented(
+	std::set< std::string > const & binstrings,
+	bool const circularly_permute
+) {
+	core::Size counter(0);
+	for ( std::set< std::string >::const_iterator it( binstrings.begin() ); it != binstrings.end(); ++it ) {
+		std::string const curstring( circularly_permute ? get_circular_permutation_first_in_alphabetical_order( *it ) : *it );
+		if ( curstring != get_mirror_bin_sequence( curstring, circularly_permute ) ) {
+			for ( std::set< std::string >::const_iterator it2( binstrings.begin() ); it2 != binstrings.end(); ++it2 ) {
+				if ( curstring == get_mirror_bin_sequence( *it2, circularly_permute ) ) {
+					++counter;
+					break;
+				}
+			}
+		}
+	}
+	return counter;
+}
+
+/// @brief Given a string of the form "ABCDEFG", return "BCDEFGA".
+std::string
+EnergyBasedClusteringProtocol::permute_string(
+	std::string const & string_in
+) {
+	if ( string_in.empty() || string_in.length() == 1 ) return string_in;
+	return string_in.substr( 1 ) + string_in[0];  //Get the second position to the end, followed by the first position.
+}
+
+/// @brief Given a bin, get its mirror.  (A--X, B--Y, O--Z).
+char
+EnergyBasedClusteringProtocol::get_mirror_bin(
+	char const bin_in
+) {
+	switch( bin_in ) {
+	case 'A' :
+		return 'X';
+	case 'B' :
+		return 'Y';
+	case 'O' :
+		return 'Z';
+	case 'X' :
+		return 'A';
+	case 'Y' :
+		return 'B';
+	case 'Z' :
+		return 'O';
+	}
+
+	utility_exit_with_message( "Error in EnergyBasedClusteringProtocol::get_mirror_bin(): Bin \"" + std::string( 1, bin_in ) + "\" is not valid!" );
+
+	return 'Q'; //Should never reach here.
+}
+
+/// @brief Given a bin string, get its mirror.
+/// @details  If the boolean is true, the sequence put through every circular permutation, and the one that's first alphabetically
+/// is selected and returned.
+std::string
+EnergyBasedClusteringProtocol::get_mirror_bin_sequence(
+	std::string const &binstring_in,
+	bool const circularly_permuted_for_alphabetization
+) {
+	std::string outstring;
+	for ( core::Size i(0), imax(binstring_in.length()); i<imax; ++i ) {
+		outstring += std::string( 1, get_mirror_bin( binstring_in[i] ) );
+	}
+	if ( circularly_permuted_for_alphabetization ) {
+		outstring = get_circular_permutation_first_in_alphabetical_order( outstring );
+	}
+	return outstring;
+}
+
+/// @brief Given phi, psi, and omega, determine the ABOXYZ bin.
+/// @details Based on the definition in David Baker's cyclic_utilities.py Python script from 2016, with slight
+/// modification for symmetry
+/// - If phi is in the interval (-180, 0], bin is A, B, or O.  If it's in the interval (0, 180], the bin is X, Y, or Z.
+/// - In the negative phi case {
+///     - If omega is in the range (-90, 90], it's O.
+///  - If psi is in the range (-80, 50], it's B.
+///     - Else, it's A.
+/// }
+/// - In the positive phi case {
+///     - If omega is in the range [-90, 90), it's Z.
+///  - If psi is in the range [-50, 80), it's Y.
+///     - Else, it's X.
+/// }
+char
+EnergyBasedClusteringProtocol::determine_ABOXYZ_bin(
+	core::Real const &phi,
+	core::Real const & psi,
+	core::Real const & omega
+) {
+	if ( numeric::principal_angle_degrees( phi ) < 0.0 ) { //Negative phi -- ABO space
+		core::Real const omega_ranged( numeric::principal_angle_degrees( omega ) );
+		if ( omega_ranged <= 90 && omega_ranged > -90 ) {
+			return 'O';
+		}
+		core::Real const psi_ranged( numeric::principal_angle_degrees( psi ) );
+		if ( psi_ranged <= 50 && psi_ranged > -80 ) {
+			return 'A';
+		}
+		return 'B';
+	} else { //Positive phi -- XYZ space
+		core::Real const omega_ranged( numeric::principal_angle_degrees( omega ) );
+		if ( omega_ranged < 90 && omega_ranged >= -90 ) {
+			return 'Z';
+		}
+		core::Real const psi_ranged( numeric::principal_angle_degrees( psi ) );
+		if ( psi_ranged < 80 && psi_ranged >= -50 ) {
+			return 'X';
+		}
+		return 'Y';
+	}
+	utility_exit_with_message( "Program error in EnergyBasedClusteringProtocol::determine_ABOXYZ_bin(): This shouldn't be possible." );
+	return 'Q';
+}
+
+/// @brief Given a pose, generate a string for its ABOXYZ bins.
+/// @details If the -cluster_cyclic_permutations flag is used, all cyclic permutations of the string are considered, and the
+/// first in alphabetical order is returned.
+/// @note Ignores ligands and virtual residues.
+std::string
+EnergyBasedClusteringProtocol::do_ABOXYZ_bin_analysis(
+	core::pose::Pose const & pose
+) const {
+	std::string outstring;
+	if ( !pose.empty() ) {
+		for ( core::Size ir(1), irmax(pose.total_residue()); ir<=irmax; ++ir ) { //Loop through all residues
+			core::chemical::ResidueType const & restype( pose.residue_type(ir) );
+			if ( restype.is_virtual_residue() || restype.is_ligand() ) continue;
+			debug_assert( restype.is_alpha_aa() || restype.is_peptoid() );
+			outstring += determine_ABOXYZ_bin( pose.phi(ir), pose.psi(ir), pose.omega(ir) );
+		}
+	}
+
+	if ( options_.cluster_cyclic_permutations_ ) {
+		outstring = get_circular_permutation_first_in_alphabetical_order( outstring );
+	}
+
+	return outstring;
+}
+
+/// @brief Given an alpha-amino acid bin string, figure out all circular permutations and return
+/// the one that's first in alphabetical order.
+/// @details Strings must be provided in uppercase only.
+std::string
+EnergyBasedClusteringProtocol::get_circular_permutation_first_in_alphabetical_order(
+	std::string const & string_in
+) {
+	std::string permutation( permute_string( string_in ) );
+	std::string best_permutation( string_in );
+	for ( core::Size i(1), imax(string_in.length()); i<imax; ++i ) {
+		if ( permutation < best_permutation ) {
+			best_permutation = permutation;
+		}
+		permutation = permute_string( permutation );
+	}
+	return best_permutation;
+}
+
+/// @brief Is a pose composed only of alpha amino acids and peptoid residues (returns true), or does it have other residues (returns false)?
+/// @details Ignores virtual residues and ligands.
+bool
+EnergyBasedClusteringProtocol::is_all_alpha_aa_or_peptoid(
+	core::pose::Pose const & pose
+) const {
+	if ( pose.empty() ) return true;
+	for ( core::Size ir(1), irmax(pose.total_residue()); ir<=irmax; ++ir ) {
+		core::chemical::ResidueType const & restype( pose.residue_type(ir) );
+		if ( restype.is_virtual_residue() || restype.is_ligand() ) continue; //Skip virtuals and ligands.
+		if ( !(restype.is_alpha_aa() || restype.is_peptoid()) ) {
+			return false; //Found something that isn't a peptoid or an alpha-amino acid.
+		}
+	}
+	return true; //Found nothing that wasn't an alpha-amino acid or a peptoid.
 }
 
 /// @brief Align one pose to another with an offset in the residue count.
@@ -1331,6 +1546,7 @@ EnergyBasedClusteringProtocol::do_initial_import_and_scoring(
 	utility::vector1 < utility::vector1 <core::Real> > &posedata,
 	utility::vector1 < utility::vector1< numeric::xyzVector< core::Real > > > &alignmentdata,
 	utility::vector1 < utility::vector1 <core::Real> > &dihedral_reconstruction_data,
+	utility::vector1 < std::string > &pose_binstrings,
 	utility::vector1 < core::Size > &cluster_assignments,
 	utility::vector1 < core::Size > &cluster_offsets,
 	utility::vector1 < core::Size > &cluster_oligomer_permutations,
@@ -1375,6 +1591,11 @@ EnergyBasedClusteringProtocol::do_initial_import_and_scoring(
 
 		if ( count % 100 == 0 ) {
 			TR << count << " structures loaded..." << std::endl;
+		}
+
+		if ( options_.perform_ABOXYZ_bin_analysis_ ) {
+			runtime_assert_string_msg( is_all_alpha_aa_or_peptoid( pose ), "Error in EnergyBasedClusteringProtocol::do_initial_import_and_scoring(): One or more input poses contained residues that were not alpha amino acids or peptoids.  This is incompatible with the \"-perform_ABOXYZ_bin_analysis\" flag." );
+			pose_binstrings.push_back( do_ABOXYZ_bin_analysis(pose) );
 		}
 
 		cluster_assignments.push_back(0); //Initially, every structure is assigned to cluster 0 (unassigned).
@@ -1425,6 +1646,8 @@ EnergyBasedClusteringProtocol::do_initial_import_and_scoring(
 			lowestE_index = count;
 		}
 	} //Loop over all input structures.
+
+	debug_assert( pose_binstrings.empty() || pose_binstrings.size() == posedata.size() );  //Should be true.
 } //do_initial_import_and_scoring()
 
 /// @brief Remove cutpoint variants that add extraneous virtual atoms that mess up
