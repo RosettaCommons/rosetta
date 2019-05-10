@@ -1,0 +1,9 @@
+#region frac cutoff (A)
+frh_rms 0.95 1.0
+h1_rms 0.80 1.5
+h2_rms 0.80 1.5
+h3_rms 0.65 3.0
+frl_rms 0.95 1.0
+l1_rms 0.90 1.5
+l2_rms 0.90 1.5
+l3_rms 0.85 1.5

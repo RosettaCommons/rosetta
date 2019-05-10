@@ -49,6 +49,9 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/util.hh>
 
+#include <protocols/antibody/metrics.hh>
+#include <protocols/antibody/AntibodyInfo.hh>
+
 #include <basic/report.hh>
 #include <basic/execute.hh>
 
@@ -59,6 +62,7 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 #include <utility/file/file_sys_util.hh>
@@ -146,6 +150,7 @@ void relax_model(core::pose::PoseOP &pose)
 int antibody_main()
 {
 	using namespace utility;
+    using namespace basic::options;
 	using namespace protocols::antibody::grafting;
 	using protocols::antibody::grafting::uint;
 
@@ -153,9 +158,9 @@ int antibody_main()
 
 	string heavy_fasta_file, light_fasta_file, heavy_chain_sequence, light_chain_sequence;
 
-	int n_templates = basic::options::option[ basic::options::OptionKeys::antibody::n_multi_templates ];
+	int n_templates = option[ OptionKeys::antibody::n_multi_templates ];
 
-	string grafting_database = basic::options::option[basic::options::OptionKeys::antibody::grafting_database]();
+	string grafting_database = option[OptionKeys::antibody::grafting_database]();
 	TR << TR.Cyan << "Using antibody grafting_database at: " << TR.Bold << grafting_database << std::endl;
 
 	// add code to unpack PDBs here
@@ -180,25 +185,25 @@ int antibody_main()
 	TR << TR.Magenta << "Done unzipping." << TR.Reset << std::endl;
 
 	// parsing of heavy/light and associated options (there are a few)
-	if( basic::options::option[ basic::options::OptionKeys::vhh_only]) {
+	if( option[ OptionKeys::vhh_only]) {
 		// only need heavy chain specified
-		if( basic::options::option[ basic::options::OptionKeys::heavy ].user() and !basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
-			heavy_fasta_file = basic::options::option[ basic::options::OptionKeys::heavy ]();
-		} else if( basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
-			heavy_fasta_file = basic::options::option[ basic::options::OptionKeys::fasta ]();
-		} else if( basic::options::option[ basic::options::OptionKeys::heavy ].user() and basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
+		if( option[ OptionKeys::heavy ].user() and !option[ OptionKeys::fasta ].user() ) {
+			heavy_fasta_file = option[ OptionKeys::heavy ]();
+		} else if( option[ OptionKeys::fasta ].user() ) {
+			heavy_fasta_file = option[ OptionKeys::fasta ]();
+		} else if( option[ OptionKeys::heavy ].user() and option[ OptionKeys::fasta ].user() ) {
 			utility_exit_with_message( "Error: options --fasta and --heavy can't be specifed at the same time!");
 		} else {
 			utility_exit_with_message( "Error: no input sequence was specified!");
 		}
 	} else {
 		// need both
-		if( basic::options::option[ basic::options::OptionKeys::heavy ].user()  and  basic::options::option[ basic::options::OptionKeys::light ].user()  and  !basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
-			heavy_fasta_file = basic::options::option[ basic::options::OptionKeys::heavy ]();
-			light_fasta_file = basic::options::option[ basic::options::OptionKeys::light ]();
-		} else if( basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
-			heavy_fasta_file = light_fasta_file = basic::options::option[ basic::options::OptionKeys::fasta ]();
-		} else if( basic::options::option[ basic::options::OptionKeys::heavy ].user()  and  basic::options::option[ basic::options::OptionKeys::light ].user()  and  basic::options::option[ basic::options::OptionKeys::fasta ].user() ) {
+		if( option[ OptionKeys::heavy ].user()  and  option[ OptionKeys::light ].user()  and  !option[ OptionKeys::fasta ].user() ) {
+			heavy_fasta_file = option[ OptionKeys::heavy ]();
+			light_fasta_file = option[ OptionKeys::light ]();
+		} else if( option[ OptionKeys::fasta ].user() ) {
+			heavy_fasta_file = light_fasta_file = option[ OptionKeys::fasta ]();
+		} else if( option[ OptionKeys::heavy ].user()  and  option[ OptionKeys::light ].user()  and  option[ OptionKeys::fasta ].user() ) {
 			utility_exit_with_message( "Error: options --fasta and [--light, heavy] can't be specifed at the same time!");
 		} else {
 			utility_exit_with_message( "Error: no input sequences were specified!");
@@ -208,7 +213,7 @@ int antibody_main()
 	TR << TR.Green << "Heavy chain fasta input file: " << TR.Bold << heavy_fasta_file << TR.Reset << std::endl;
 	TR << TR.Blue  << "Light chain fasta input file: " << TR.Bold << light_fasta_file << TR.Reset << std::endl;
 
-	if( basic::options::option[ basic::options::OptionKeys::vhh_only] ) {
+	if( option[ OptionKeys::vhh_only] ) {
 		TR << TR.Red << TR.Bold << "Running with option \"-vhh_only\"! Using a dummy light chain!" << TR.Reset << std::endl;
 		// only heavy chain, give dummy light for now (later fix code to not model light
 		heavy_chain_sequence = core::sequence::read_fasta_file_section(heavy_fasta_file, "heavy");
@@ -223,7 +228,7 @@ int antibody_main()
 		TR << TR.Red << "Antibody grafting protocol" << TR.Reset << " Running with input:" << std::endl;
 		if( n_templates > 1 ) {
 			TR << TR.Red << "SCS_MultiTemplate protocol enabled" << TR.Reset << " multi-template regions: ";
-			for(auto & s : basic::options::option[basic::options::OptionKeys::multi_template_regions]() ) TR << s << " ";
+			for(auto & s : option[OptionKeys::multi_template_regions]() ) TR << s << " ";
 			TR << std::endl;
 		}
 
@@ -231,7 +236,7 @@ int antibody_main()
 		TR << TR.Blue  << "Light chain sequence: " << TR.Bold << light_chain_sequence << TR.Reset << std::endl;
 	}
 
-	string const prefix = basic::options::option[basic::options::OptionKeys::antibody::prefix]();
+	string const prefix = option[OptionKeys::antibody::prefix]();
 
 	// strip directory from prefix, then make it recursively
 	string const prefix_path = prefix.substr( 0, prefix.find_last_of( "/\\" ) );
@@ -246,7 +251,7 @@ int antibody_main()
 
 	//check if user provides JSON CDR definition, else try to predict
 	// if user defines input json but this compiler does not support json, throw exception
-	if( basic::options::option[ basic::options::OptionKeys::antibody::json_cdr ].user() ) {
+	if( option[ OptionKeys::antibody::json_cdr ].user() ) {
 #ifdef _NLOHMANN_JSON_ENABLED_
 		protocols::antibody::grafting::Json_based_CDR_Detector( report ).detect( as );
 #else
@@ -284,13 +289,13 @@ int antibody_main()
 		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_template_bfactor >() );
 		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_OCD >() );
 
-		if ( basic::options::option[ basic::options::OptionKeys::antibody::exclude_pdb ].user() ) {
+		if ( option[ OptionKeys::antibody::exclude_pdb ].user() ) {
 			blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_pdbid >() );
 		}
 
 		blast->set_sorter( utility::pointer::make_shared< SCS_BlastComparator_BitScore_Resolution >() );
 
-		SCS_BaseOP scs = n_templates == 1 ? blast : SCS_BaseOP(new SCS_MultiTemplate(blast, basic::options::option[basic::options::OptionKeys::multi_template_regions](), report) );
+		SCS_BaseOP scs = n_templates == 1 ? blast : SCS_BaseOP(new SCS_MultiTemplate(blast, option[OptionKeys::multi_template_regions](), report) );
 
 		SCS_ResultsOP scs_results { scs->select(n_templates, as) };
 
@@ -314,47 +319,47 @@ int antibody_main()
 				// override scs_resultset->resultop->pdb if user specifies a template
 				// needs to check for identical length, but how?
 				// all only for manual specification if single template grafting
-				if ( basic::options::option[ basic::options::OptionKeys::antibody::l1_template ].user() ) {
+				if ( option[ OptionKeys::antibody::l1_template ].user() ) {
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified L1 CDR!" << TR.Reset << std::endl;
-					r.l1->pdb = basic::options::option[ basic::options::OptionKeys::antibody::l1_template ].value().substr( 0, 4 );
+					r.l1->pdb = option[ OptionKeys::antibody::l1_template ].value().substr( 0, 4 );
 				}
-				if ( basic::options::option[ basic::options::OptionKeys::antibody::l2_template ].user() ) {
+				if ( option[ OptionKeys::antibody::l2_template ].user() ) {
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified L2 CDR!" << TR.Reset << std::endl;
-					r.l2->pdb = basic::options::option[ basic::options::OptionKeys::antibody::l2_template ].value().substr( 0, 4 );
+					r.l2->pdb = option[ OptionKeys::antibody::l2_template ].value().substr( 0, 4 );
 				}
-				if ( basic::options::option[ basic::options::OptionKeys::antibody::l3_template ].user() ) {
+				if ( option[ OptionKeys::antibody::l3_template ].user() ) {
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified L3 CDR!" << TR.Reset << std::endl;
-					r.l3->pdb = basic::options::option[ basic::options::OptionKeys::antibody::l3_template ].value().substr( 0, 4 );
+					r.l3->pdb = option[ OptionKeys::antibody::l3_template ].value().substr( 0, 4 );
 				}
 
-				if ( basic::options::option[ basic::options::OptionKeys::antibody::h1_template ].user() ) {
+				if ( option[ OptionKeys::antibody::h1_template ].user() ) {
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified H1 CDR!" << TR.Reset << std::endl;
-					r.h1->pdb = basic::options::option[ basic::options::OptionKeys::antibody::h1_template ].value().substr( 0, 4 );
+					r.h1->pdb = option[ OptionKeys::antibody::h1_template ].value().substr( 0, 4 );
 				}
-				if ( basic::options::option[ basic::options::OptionKeys::antibody::h2_template ].user() ) {
+				if ( option[ OptionKeys::antibody::h2_template ].user() ) {
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified H2 CDR!" << TR.Reset << std::endl;
-					r.h2->pdb = basic::options::option[ basic::options::OptionKeys::antibody::h2_template ].value().substr( 0, 4 );
+					r.h2->pdb = option[ OptionKeys::antibody::h2_template ].value().substr( 0, 4 );
 				}
-				if ( basic::options::option[ basic::options::OptionKeys::antibody::h3_template ].user() ) {
+				if ( option[ OptionKeys::antibody::h3_template ].user() ) {
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified H3 CDR!" << TR.Reset << std::endl;
-					r.h3->pdb = basic::options::option[ basic::options::OptionKeys::antibody::h3_template ].value().substr( 0, 4 );
+					r.h3->pdb = option[ OptionKeys::antibody::h3_template ].value().substr( 0, 4 );
 				}
 
-				if ( basic::options::option[ basic::options::OptionKeys::antibody::frl_template ].user() ) {
+				if ( option[ OptionKeys::antibody::frl_template ].user() ) {
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified light FR!" << TR.Reset << std::endl;
-					r.frl->pdb = basic::options::option[ basic::options::OptionKeys::antibody::frl_template ].value().substr( 0, 4 );
+					r.frl->pdb = option[ OptionKeys::antibody::frl_template ].value().substr( 0, 4 );
 				}
-				if ( basic::options::option[ basic::options::OptionKeys::antibody::frh_template ].user() ) {
+				if ( option[ OptionKeys::antibody::frh_template ].user() ) {
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified heavy FR!" << TR.Reset << std::endl;
-					r.frh->pdb = basic::options::option[ basic::options::OptionKeys::antibody::frh_template ].value().substr( 0, 4 );
+					r.frh->pdb = option[ OptionKeys::antibody::frh_template ].value().substr( 0, 4 );
 				}
 
-				if ( basic::options::option[ basic::options::OptionKeys::antibody::light_heavy_template ].user() and
+				if ( option[ OptionKeys::antibody::light_heavy_template ].user() and
 						 n_templates == 1 ) {
 					TR << TR.Bold << TR.Red << "Note: Grafting manually specified light-heavy orientation!" << TR.Reset << std::endl;
-					r.orientation->pdb = basic::options::option[ basic::options::OptionKeys::antibody::light_heavy_template ].value().substr( 0, 4 );
+					r.orientation->pdb = option[ OptionKeys::antibody::light_heavy_template ].value().substr( 0, 4 );
 				}
-				else if ( basic::options::option[ basic::options::OptionKeys::antibody::light_heavy_template ].user() and
+				else if ( option[ OptionKeys::antibody::light_heavy_template ].user() and
 									n_templates > 1 )
 				{
 					TR << "Cannot both do multi-template grafting and specify a single light-heavy orientation template!" << std::endl;
@@ -362,12 +367,12 @@ int antibody_main()
 					TR << "Please use -antibody:n_multi_templates 1 in conjuction with -antibody:light_heavy_template 1abc.pdb" << std::endl;
 				}
 
-				bool optimal_graft = basic::options::option[ basic::options::OptionKeys::optimal_graft]();
-				bool optimize_cdrs = basic::options::option[ basic::options::OptionKeys::optimize_cdrs]();
+				bool optimal_graft = option[ OptionKeys::optimal_graft]();
+				bool optimize_cdrs = option[ OptionKeys::optimize_cdrs]();
 
 				core::pose::PoseOP model = graft_cdr_loops(as, r, prefix, suffix, grafting_database, optimal_graft, optimize_cdrs );
 
-				if( basic::options::option[ basic::options::OptionKeys::vhh_only] ) {
+				if( option[ OptionKeys::vhh_only] ) {
 					// delete light chain
 					core::pose::PoseOP temp_pose = model->split_by_chain( core::pose::get_chain_id_from_chain( 'H', *model ) );
 					// over-write graft output with just heavy model
@@ -375,15 +380,36 @@ int antibody_main()
 					model->dump_pdb(prefix + "model" + suffix + ".pdb");
 				}
 
-				if( !basic::options::option[ basic::options::OptionKeys::no_relax ]() ) {
+				if( !option[ OptionKeys::no_relax ]() ) {
 					relax_model(model);
 					model->dump_pdb(prefix + "model" + suffix + ".relaxed.pdb");
 				}
 
-				if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user()){
+				if ( option[ OptionKeys::antibody::output_ab_scheme].user()){
 					protocols::antibody::AntibodyNumberingConverterMover converter = protocols::antibody::AntibodyNumberingConverterMover();
 					converter.apply(*model);
 				}
+                if ( option[ OptionKeys::in::file::native ].user() ) {
+                     // if native is given, load and compare, write to file
+                    basic::ReportOP report_native_aln = utility::pointer::make_shared<basic::Report>("native_comparison");
+
+                    core::pose::PoseOP native_pose( new core::pose::Pose() );
+
+                    core::import_pose::pose_from_file( *native_pose, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
+
+                    protocols::antibody::AntibodyInfoOP model_abi = utility::pointer::make_shared< protocols::antibody::AntibodyInfo >(*model);
+                    protocols::antibody::AntibodyInfoOP native_abi = utility::pointer::make_shared< protocols::antibody::AntibodyInfo >(*native_pose);
+
+                    utility::vector1<core::Real> results = protocols::antibody::cdr_backbone_rmsds(*model, *native_pose, model_abi, native_abi);
+                    // we know this order from the above function
+                    *report_native_aln << "ocd, frh_rms, h1_rms, h2_rms, h3_rms, frl_rms, l1_rms, l2_rms, l3_rms\n";
+                    *report_native_aln << results[1];
+                    for (core::Size i = 2; i<=9; ++i) {
+                        *report_native_aln << ", " << results[i];
+                    }
+                    *report_native_aln << "\n";
+                    report_native_aln->write(); // does not produce JSON because I am lazy
+                }
 
 			}
 		}

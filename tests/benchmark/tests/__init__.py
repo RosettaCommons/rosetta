@@ -551,10 +551,10 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
 
     bin=working_dir+'/bin'
 
-    if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip install {packages}'.format(**vars()) )
+    if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip install --upgrade pip && {bin}/pip install {packages}'.format(**vars()) )
     #if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip{python_environment.version} install {packages}'.format(**vars()) )
 
-    return NT(activate=activate, root=working_dir, bin=bin)
+    return NT(activate = activate, python = bin + '/python', root = working_dir, bin = bin)
 
 
 def generate_version_information(rosetta_dir, url=None, branch=None, package=None, revision=None, date=None, file_name=None):

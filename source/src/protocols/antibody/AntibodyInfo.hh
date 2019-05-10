@@ -202,6 +202,10 @@ public:
 	core::Size
 	get_CDR_end(CDRNameEnum const cdr_name, core::pose::Pose const & pose, CDRDefinitionEnum const & transform) const;
 
+	/// @brief Get the CDRNameEnum for region, if not in a CDR throw exception -- CDR can be id'ed with the "get_region_of_residue" function
+	CDRNameEnum
+	get_CDRNameEnum_of_residue( core::pose::Pose const & pose, core::Size resnum, bool de_as_framework = true) const;
+
 	/// @brief Get the region of the resnum - aka - antigen_region, cdr_region, or framework_region
 	///  By default, count the DE region (CDR4) as framework.
 	AntibodyRegionEnum

@@ -1219,6 +1219,28 @@ AntibodyInfo::get_CDR_end(CDRNameEnum const cdr_name, pose::Pose const & pose, C
 
 }
 
+CDRNameEnum
+AntibodyInfo::get_CDRNameEnum_of_residue( core::pose::Pose const & pose, core::Size resnum, bool de_as_framework /* true */) const {
+	char chain = core::pose::get_chain_from_chain_id(pose.chain(resnum), pose);
+
+	if ( chain == 'L' || chain == 'H' ) {
+
+		//Check if the resnum is part of a CDR:
+		for ( auto const & cdr : get_all_cdrs_present(! de_as_framework) ) {
+
+			core::Size start = this->get_CDR_start(cdr, pose);
+			core::Size end   = this->get_CDR_end(cdr, pose);
+
+			if ( resnum >= start && resnum <= end ) {
+				return cdr;
+			}
+		}
+	}
+
+	// if you have made it out here, something is wrong amigo
+	throw CREATE_EXCEPTION(utility::excn::BadInput, "You've asked for the CDRNameEnum of a non-CDR residue, please pre-filter for CDR with the get_region_of_residue function.");
+}
+
 AntibodyRegionEnum
 AntibodyInfo::get_region_of_residue(const core::pose::Pose& pose, core::Size resnum, bool de_as_framework /* true */) const {
 	char chain = core::pose::get_chain_from_chain_id(pose.chain(resnum), pose);

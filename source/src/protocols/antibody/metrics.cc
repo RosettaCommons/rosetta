@@ -15,6 +15,7 @@
 /// @author Jared Adolf-Bryfogle
 
 // Project Headers
+#include <protocols/antibody/util.hh>
 #include <protocols/antibody/metrics.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
@@ -27,16 +28,21 @@
 
 // Core
 //#include <core/pose/metrics/simple_calculators/SasaCalculator2.hh>
-#include <core/scoring/sasa/SasaCalc.hh>
+#include <core/id/SequenceMapping.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
+#include <core/sequence/Sequence.hh>
+#include <core/sequence/util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/sasa/SasaCalc.hh>
+#include <core/scoring/rms_util.hh>
 
 
 // Numeric Headers
@@ -385,6 +391,144 @@ cdr_CN_anchor_distance(core::pose::Pose const & pose, AntibodyInfoCOP ab_info, C
 	numeric::xyzVector<core::Real> c_pos = pose.residue(c_term_res).xyz("N");
 
 	return n_pos.distance(c_pos);
+}
+
+vector1< Real >
+cdr_backbone_rmsds(pose::Pose & p1, pose::Pose const & p2, AntibodyInfoOP const a1, AntibodyInfoOP const a2, Size aln_thresh /*10*/) {
+	// vector to store results h1, h2, h3, l1, l2, l3, ocd
+	vector1< Real > results_set(9, 0.0);
+
+	// calculate OCD before moving anything
+	vector1<Real> p1_OCDs = vl_vh_orientation_coords(p1, *a1);
+	vector1<Real> p2_OCDs = vl_vh_orientation_coords(p2, *a2);
+	// calculate OCD
+	/*
+	Calculated as a z-score. Mean/Stdev are from Nick's paper:
+	academic.oup.com/peds/article/29/10/409/2462315
+
+	Figure 3 is ths source of the below values:
+	distance:    14.6 +/- 0.32
+	H open:      97.2 +/- 2.55
+	L open:      99.4 +/- 1.93
+	pack angle: -52.3 +/- 3.83
+	*/
+	// is this the best practice? we need the st. devs calculated from database!
+	//utility::vector1<core::Real> means = {14.6, 97.2, 99.4, -52.3};
+	vector1<Real> sds = {0.32, 2.55, 1.93, 3.83};
+	Real ocd = 0.0;
+
+	//TR << "OCD X: mobile fixed" << std::endl;
+	for ( Size i=1; i<=4; ++i ) {
+		//TR << "OCD " << i << ": " << p1_OCDs[i] << " " << p2_OCDs[i] << std::endl;
+		ocd += ( (p1_OCDs[i] - p2_OCDs[i]) * (p1_OCDs[i] - p2_OCDs[i]) / sds[i]*sds[i] );
+	}
+	// ocd is sum of squared z-scores, so return square root
+	// Nick didn't do this in his paper, so a direct comparison is not possible
+	results_set[1] = std::sqrt(ocd);
+
+	// now for light/heavy RMSDs: p2 is fixed... p1 will move
+	TR << "Pose1: " << p1.sequence() << std::endl;
+	TR << "Pose2: " << p2.sequence() << std::endl;
+
+	// for the alignment generate sequence maps, then use the maps to map the frameworks
+	// this allows for residue mismatches here and there, but warn if there are too many
+	id::SequenceMapping seq_map = sequence::map_seq1_seq2( utility::pointer::make_shared< core::sequence::Sequence >(p1), utility::pointer::make_shared< sequence::Sequence >(p2) );
+
+	// construct atom maps of frh/frl/cdr residues from sequence mapping
+	std::map< CDRNameEnum, std::map< id::AtomID, id::AtomID > > cdr_maps;
+	std::map< char, id::AtomID_Map< id::AtomID > > fr_maps;
+
+	for ( auto const cdr_enum : {h1, h2, h3, l1, l2, l3} ) {
+		std::map< id::AtomID, id::AtomID > atomid_map;
+		cdr_maps[cdr_enum] = atomid_map;
+	}
+
+	for ( char const c : {'H', 'L'} ) {
+		id::AtomID_Map< id::AtomID > atomid_map;
+		initialize_atomid_map( atomid_map, p1, id::AtomID::BOGUS_ATOM_ID() );
+		fr_maps[c] = atomid_map;
+	}
+
+	Size n_zero = 0;
+
+	// define conserved residues for alignment in Chothia numbering
+	for ( auto i : get_conserved_residue_list('H') ) {
+		Size k = p1.pdb_info()->pdb2pose('H', i);
+		Size j = seq_map[k]; // map p1 to p2
+		if ( j==0 ) {
+			n_zero += 1;
+			continue;
+		} else {
+			TR.Debug << "Mapping H: " << i << " to " << p2.pdb_info()->pose2pdb(j) << std::endl;
+			// map N, CA, C, O
+			for ( std::string const atom_name : {"N", "CA", "C", "O"} ) {
+				id::AtomID const id1( p1.residue(k).atom_index(atom_name), k );
+				id::AtomID const id2( p2.residue(j).atom_index(atom_name), j );
+				fr_maps['H'].set(id1, id2);
+			}
+		}
+	}
+
+	for ( auto i : get_conserved_residue_list('L') ) {
+		Size k = p1.pdb_info()->pdb2pose('L', i);
+		Size j = seq_map[k]; // map p1 to p2
+		if ( j==0 ) {
+			n_zero += 1;
+			continue;
+		} else {
+			TR.Debug << "Mapping L:" << i << " to " << p2.pdb_info()->pose2pdb(j) << std::endl;
+			// map N, CA, C, O
+			for ( std::string const atom_name : {"N", "CA", "C", "O"} ) {
+				id::AtomID const id1( p1.residue(k).atom_index(atom_name), k );
+				id::AtomID const id2( p2.residue(j).atom_index(atom_name), j );
+				fr_maps['L'].set(id1, id2);
+			}
+		}
+	}
+
+	// loop over pose residues, check which region, generate atom maps for region
+	for ( Size i=1; i<=p1.size(); ++i ) {
+		Size j = seq_map[i]; // map p1 to p2
+		if ( a1->get_region_of_residue(p1, i) == cdr_region ) { // in CDR
+			// we must always map or something is very wrong
+			if ( j==0 ) {
+				throw CREATE_EXCEPTION(utility::excn::BadInput, "Could not map the first pose to the second pose in the CDRs, something is very wrong.");
+			}
+			CDRNameEnum region = a1->get_CDRNameEnum_of_residue(p1, i);
+			// map N, CA, C, O
+			TR.Debug << "CDR : " << region << std::endl;
+			TR.Debug << p1.pdb_info()->pose2pdb(i) << std::endl;
+			TR.Debug << p2.pdb_info()->pose2pdb(j) << std::endl;
+			for ( std::string const atom_name : {"N", "CA", "C", "O"} ) {
+				id::AtomID const id1( p1.residue(i).atom_index(atom_name), i );
+				id::AtomID const id2( p2.residue(j).atom_index(atom_name), j );
+				cdr_maps[region][id1] = id2;
+			}
+		}
+	}
+	//TR << cdr_maps << std::endl;
+
+	if ( n_zero > aln_thresh ) {
+		// or do we throw an exception?
+		TR << "With an alignment threshold of " << aln_thresh << ", there were too many (" << n_zero << ") mismatches." << std::endl;
+		//throw CREATE_EXCEPTION(utility::excn::BadInput, "Too many mismatches between the input poses. Alignment would be poor");
+	}
+
+	// align heavy, calc CDR H1, H2, H3 rmsd
+	results_set[2] = scoring::superimpose_pose( p1, p2, fr_maps['H'] );
+	results_set[3] = scoring::rms_at_corresponding_atoms_no_super( p1, p2, cdr_maps[h1] );
+	results_set[4] = scoring::rms_at_corresponding_atoms_no_super( p1, p2, cdr_maps[h2] );
+	results_set[5] = scoring::rms_at_corresponding_atoms_no_super( p1, p2, cdr_maps[h3] );
+
+	// align light, calc CDR L1, L2, L3 rmsd
+	if ( a1->is_camelid() == false && a2->is_camelid() == false ) {
+		results_set[6] = core::scoring::superimpose_pose( p1, p2, fr_maps['L'] );
+		results_set[7] = scoring::rms_at_corresponding_atoms_no_super( p1, p2, cdr_maps[l1] );
+		results_set[8] = scoring::rms_at_corresponding_atoms_no_super( p1, p2, cdr_maps[l2] );
+		results_set[9] = scoring::rms_at_corresponding_atoms_no_super( p1, p2, cdr_maps[l3] );
+	}
+
+	return results_set;
 }
 
 }

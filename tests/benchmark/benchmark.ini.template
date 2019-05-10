@@ -34,5 +34,7 @@ release_dir = ./results/_release_
 
 release_root = ./results/_release_
 
-
+# deprecated
 conda_token = your-conda-token
+
+ncbi_blast_plus = /Users/benchmark/prefix/ncbi-blast-2.9.0+/bin/blastp

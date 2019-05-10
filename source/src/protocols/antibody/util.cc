@@ -329,7 +329,6 @@ void align_to_native( core::pose::Pose & pose,
 		vector1<FrameWork> native_chain_frmwk = native_ab_info->get_AntibodyFrameworkInfo()[i_chain];
 
 		if (  (chain_frmwk[1].chain_name == reqeust_chain ) || (reqeust_chain =="LH")  ) {
-
 			// loop over the segments on the framework of one chain
 			for ( Size j_seg=1; j_seg<=chain_frmwk.size(); j_seg++ ) { // for loop of the framework segments
 				Size count=0;
@@ -339,7 +338,7 @@ void align_to_native( core::pose::Pose & pose,
 					count++;
 					Size res_counter = k_res;
 					Size nat_counter = native_chain_frmwk[j_seg].start+count-1;
-					//TR<<"Matching Residue "<< res_counter<<" with  "<<nat_counter<<std::endl;
+					//TR << "Matching Residue " << res_counter << " (" << pose.residue(res_counter).name() << ")" << " with  " << nat_counter << " (" << native_pose.residue(nat_counter).name() << ")" << std::endl;
 
 					// loop over the backbone atoms including Oxygen
 					for ( core::Size latm=1; latm <= 4; latm++ ) {
@@ -916,6 +915,25 @@ get_matching_landmark(
 	PDBLandmarkOP empty_landmark( new PDBLandmark('X', 0, ' ') );
 	return empty_landmark;
 
+}
+
+vector1< Real >
+get_conserved_residue_list( char chain ) {
+
+	vector1< Size > conserved_frh_residues{10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,36,37,38,39,40,41,42,43,44,45,46,47,48,49,66,69,70,71,72,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,103,104,105};
+
+	vector1< Size > conserved_frl_residues{10,11,12,13,14,15,16,17,18,19,20,21,22,23,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,57,58,59,60,61,62,63,64,65,66,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,98,99,100};
+
+	vector1< Size > conserved_residues;
+	if ( chain == 'H' ) {
+		conserved_residues = conserved_frh_residues;
+	}
+
+	if ( chain == 'L' ) {
+		conserved_residues = conserved_frl_residues;
+	}
+
+	return conserved_residues;
 }
 
 } // namespace antibody

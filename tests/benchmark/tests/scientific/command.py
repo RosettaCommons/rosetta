@@ -50,7 +50,7 @@ def symlink_tree(source, dest):
         for f in files: symlink(source + prefix + f, dest + prefix + f)
 
 
-def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_driver, verbose, debug):
+def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_driver, verbose, debug, python_packages):
     test_source_dir = f'{rosetta_dir}/tests/scientific/tests/{test}'
 
     symlink_tree(test_source_dir, working_dir)
@@ -58,6 +58,9 @@ def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_dr
     # os.mkdir( f'{working_dir}/benchmark' )
     # symlink(rosetta_dir + '/tests/benchmark/__init__.py', working_dir + '/benchmark/__init__.py')
     # symlink(rosetta_dir + '/tests/benchmark/hpc_drivers', working_dir + '/benchmark/hpc_drivers')
+
+    python_environment = local_python_install(platform, config)
+    python_virtual_environment = setup_python_virtual_environment(working_dir+'/.python_virtual_environment', python_environment, python_packages)
 
     multi_step_config = dict(config, test=test, rosetta_dir=rosetta_dir, working_dir=working_dir, platform=platform, verbose=verbose, debug=debug)
 
@@ -68,7 +71,7 @@ def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_dr
     scripts = sorted( f for f in os.listdir(working_dir) if f[0].isdigit() and f.endswith('.py') )
     for script in scripts:
         #print(script)
-        res, output = execute(f'Running {script}...', f'cd {working_dir} && {python} {script}', return_=tuple, add_message_and_command_line_to_output=True)
+        res, output = execute(f'Running {script}...', f'cd {working_dir} && {python_virtual_environment.python} {script}', return_=tuple, add_message_and_command_line_to_output=True)  # source {ve.activate}
 
         if res: return { _StateKey_ : _S_script_failed_,  _ResultsKey_ : {},
                          _LogKey_   : f'run_multi_step_test for {test} failed while running {script}...Aborting!\n\n{output}\n' }
@@ -80,16 +83,40 @@ def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_dr
 
 
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    tests = ['cartesian_relax', 'fast_relax', 'fast_relax_5iter',
-             'stepwise_rna_favorites', 'rna_denovo_favorites',
-             'enzyme_design', 'cofactor_binding_sites',
-             'mp_dock', 'mp_relax', 'mp_symdock', 'mp_lipid_acc', 'mp_domain_assembly', #'mp_ddg',
-             'sewing', 'docking',
-    ]
+    # map from test name to a space-separated-string-of-python-packages to be installed, for example: docking='numpy panda==0.23.4'
+    # If package have not-yet-stable-api please make sure to SPECIFY THE EXACT VERSION of package to use so our testing-scripts
+    # will not accidently break when a new version of upstream package got released in the future
+    tests = dict(
+        cartesian_relax        = 'numpy matplotlib',
+        fast_relax             = 'numpy matplotlib',
+        fast_relax_5iter       = 'numpy matplotlib',
+
+        stepwise_rna_favorites = 'numpy matplotlib',
+        rna_denovo_favorites   = 'numpy matplotlib',
+
+        enzyme_design          = 'numpy matplotlib',
+        cofactor_binding_sites = 'numpy matplotlib',
+
+        mp_dock                = 'numpy matplotlib',
+        mp_relax               = 'numpy matplotlib',
+        mp_symdock             = 'numpy matplotlib',
+        mp_lipid_acc           = 'numpy matplotlib',
+        mp_domain_assembly     = 'numpy matplotlib',
+
+        sewing                 = 'numpy matplotlib',
+
+        antibody_grafting      = 'numpy matplotlib',
+
+        #docking                = 'numpy matplotlib',
+    )
 
     if test.endswith('.debug'): test = test[:-len('.debug')];  debug = True
 
     if test in tests:
-        return run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+        return run_multi_step_test(
+            test = test, python_packages = tests[test],
+            rosetta_dir=rosetta_dir, working_dir=working_dir, platform=platform,
+            config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug
+        )
 
     else: raise BenchmarkError(f'Unknown scripts test: {test}!')

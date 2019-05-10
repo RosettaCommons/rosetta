@@ -123,6 +123,19 @@ cdr_energy(core::pose::Pose const & pose, AntibodyInfoCOP ab_info, core::scoring
 core::Real
 cdr_CN_anchor_distance(core::pose::Pose const & pose, AntibodyInfoCOP ab_info, CDRNameEnum const & cdr);
 
+/// @brief Align two sequence matching antibodies and calculate CDR rmsds (add OCD), then store in scores
+/// @details vector is made up of:
+/// OCD
+/// FRH
+/// H1 RMS
+/// H2 RMS
+/// H3 RMS
+/// FRL
+/// L1 RMS
+/// L2 RMS
+/// L3 RMS
+utility::vector1<core::Real>
+cdr_backbone_rmsds(core::pose::Pose & p1, core::pose::Pose const & p2, AntibodyInfoOP const a1, AntibodyInfoOP a2, core::Size aln_thresh = 10);
 
 }
 }

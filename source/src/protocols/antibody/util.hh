@@ -173,6 +173,10 @@ get_matching_landmark(
 	AntibodyNumberingSchemeEnum const from_scheme,
 	AntibodyNumberingSchemeEnum const to_scheme);
 
+///@brief return vector of Chothia-nubmered, conserved residues for grafting and alignment
+utility::vector1< core::Real >
+get_conserved_residue_list( char chain );
+
 } //namespace antibody
 } //namespace protocols
 
