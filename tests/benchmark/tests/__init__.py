@@ -456,7 +456,7 @@ def local_python_install(platform, config):
 
         '3.5' : 'https://www.python.org/ftp/python/3.5.5/Python-3.5.5.tgz',
         '3.6' : 'https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tgz',
-        '3.7' : 'https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz',
+        '3.7' : 'https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
