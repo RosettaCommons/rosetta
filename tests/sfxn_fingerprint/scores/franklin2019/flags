@@ -4,3 +4,4 @@
 -score:weights franklin2019
 -mp:lipids:composition DLPC
 -mp:lipids:temperature 37
+-out:nooutput
