@@ -100,30 +100,35 @@ public:
 		ScoreType scoretype = atom_pair_constraint
 	);
 
-	virtual ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
 	/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
 	/// to the new object. Intended to be implemented by derived classes.
-	virtual ConstraintOP remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map=NULL ) const;
+	ConstraintOP remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map=NULL ) const override;
 
-	virtual bool operator == ( Constraint const & rhs ) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	bool operator == ( Constraint const & rhs ) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
 	//@brief translates the atom-names into numbers
-	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const;
+	void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const override;
 
-	virtual void show_def( std::ostream& out, pose::Pose const& pose ) const;
+	void show_def( std::ostream& out, pose::Pose const& pose ) const override;
 	void show_def_nopose( std::ostream& out ) const;
 
-	virtual void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
+	void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory ) override;
 	// //@brief set constraint such that the pose doesn't violate it.
 	// virtual void steal( pose::Pose& );
 
-	/// @brief This overrride updates the sequence numbering but not the atom names.
+	/// @brief This override updates the sequence numbering but not the atom names.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	virtual ConstraintOP remap_resid( core::id::SequenceMapping const &seqmap ) const;
+	ConstraintOP remap_resid( core::id::SequenceMapping const &seqmap ) const override;
+
+	std::string type() const override {
+		return "NamedAtomPair";
+	}
+
 
 private:
 	id::NamedAtomID named_atom1_;

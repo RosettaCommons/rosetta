@@ -57,28 +57,27 @@ public:
 	);
 
 	/// @brief Create a deep copy of this %AtomPairConstraint, cloning its Func
-	virtual ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
 	/// @brief Create a deep copy of this %AtomPairConstraint except that the copy should
 	/// use the input Func instead of its existing one.
-	virtual
-	ConstraintOP clone( func::FuncOP func ) const;
+	ConstraintOP clone( func::FuncOP func ) const override;
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
 	/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
 	/// to the new object. Intended to be implemented by derived classes.
-	virtual ConstraintOP remapped_clone(
+	ConstraintOP remapped_clone(
 		pose::Pose const & src,
 		pose::Pose const & dest,
 		id::SequenceMappingCOP map = NULL
-	) const;
+	) const override;
 
 	/// @brief Compare a) the class types (w/ same_type_as_me), b) the atoms being constrained,
 	/// c) the score_type being used, and d) the Func objects (the FuncOPs may point at different
 	/// objects, but as long as those objects are equal, that counts)
-	virtual bool operator == ( Constraint const & other ) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	bool operator == ( Constraint const & other ) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
 	// Needed to get the base class overloads
 	using Constraint::score;
@@ -91,19 +90,15 @@ public:
 	) const;
 
 	void
-	score( core::scoring::func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	score( core::scoring::func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const override;
 
-	virtual
-	Real score( pose::Pose const& pose ) const;
+	Real score( pose::Pose const& pose ) const override;
 
-	virtual
-	Real dist( pose::Pose const& pose ) const;
+	Real dist( pose::Pose const& pose ) const override;
 
-	virtual
-	Real dist( core::scoring::func::XYZ_Func const & xyz ) const;
+	Real dist( core::scoring::func::XYZ_Func const & xyz ) const override;
 
 	// atom deriv
-	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,
@@ -111,26 +106,25 @@ public:
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
-	std::string type() const {
+	std::string type() const override {
 		return "AtomPair";
 	}
 
 
 	Size
-	natoms() const
+	natoms() const override
 	{
 		return 2;
 	}
 
-	virtual
 	ConstraintOP
-	remap_resid( core::id::SequenceMapping const &seqmap ) const;
+	remap_resid( core::id::SequenceMapping const &seqmap ) const override;
 
 
 	AtomID const &
-	atom( Size const n ) const
+	atom( Size const n ) const override
 	{
 		switch( n ) {
 		case 1 :
@@ -146,21 +140,21 @@ public:
 	AtomID const & atom1() const { return atom1_; }
 	AtomID const & atom2() const { return atom2_; }
 
-	void show( std::ostream& out ) const;
-	void show_def( std::ostream& out, pose::Pose const& pose ) const;
+	void show( std::ostream& out ) const override;
+	void show_def( std::ostream& out, pose::Pose const& pose ) const override;
 
-	void read_def( std::istream& in, pose::Pose const& pose, func::FuncFactory const & func_factory );
+	void read_def( std::istream& in, pose::Pose const& pose, func::FuncFactory const & func_factory ) override;
 	// //@brief set constraint such that the pose doesn't violate it.
 	// virtual void steal( pose::Pose& );
 
-	virtual Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;
+	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const override;
 
-	virtual func::Func const & get_func() const;
+	func::Func const & get_func() const override;
 
-	virtual
-	core::Size effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp ) const;
 
-	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const;
+	core::Size effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp ) const override;
+
+	void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const override;
 
 private:
 	// functions
