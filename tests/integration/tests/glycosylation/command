@@ -1,12 +1,16 @@
 cd %(workdir)s
 
 # Does the test actually exis?
-[ -x %(bin)s/glycosyltransferase.%(binext)s ] || exit 1
+[ -x %(bin)s/glycosyltransfer.%(binext)s ] || exit 1
 
 # Run, using options in flags file, constant seed with no delay.
 # Remove lines dependent on time and output to log file.
 # Then, check for errors.
-%(bin)s/glycosyltransferase.%(binext)s %(additional_flags)s @flags -database %(database)s \
+%(bin)s/glycosyltransfer.%(binext)s %(additional_flags)s @N.flags -database %(database)s \
+    -testing:INTEGRATION_TEST \
+    2>&1 | egrep -vf ../../ignore_list > info.log
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+%(bin)s/glycosyltransfer.%(binext)s %(additional_flags)s @O.flags -database %(database)s \
     -testing:INTEGRATION_TEST \
     2>&1 | egrep -vf ../../ignore_list > info.log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true

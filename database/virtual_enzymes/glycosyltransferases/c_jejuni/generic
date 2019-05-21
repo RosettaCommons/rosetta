@@ -1,5 +1,5 @@
-# Consensus  Sequence  Residue of    Atom
-# Sequence   Type      CS to Modify  To Modify  Efficiency
+# Consensus        Sequence  Residue of    Atom
+# Sequence         Type      CS to Modify  To Modify  Efficiency
   (D/E)XNX(S/T)    AA        3             ND2        1.00
 
 # Glycans to Transfer (first is primary)

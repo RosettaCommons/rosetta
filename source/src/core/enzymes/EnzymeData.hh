@@ -42,7 +42,7 @@ struct EnzymeData {
 	std::string consensus_sequence;
 	ConsensusSequenceType cs_type;
 	core::uint cs_resnum;  // the position in the consensus sequence that is potentially modified
-	std::string atom_to_modify;
+	std::string atom_to_modify;  // if set to "-", this tells an EnzymeMover to use the default atom for the ResidueType being modified
 	core::Real efficiency;  // ratio of times this enzyme acts on a recognized site
 	utility::vector1< std::string > second_substrates_or_byproducts;  // We do not know the kind of reaction yet.
 

@@ -399,10 +399,10 @@ GlycanTreeSet::on_length_change( core::conformation::signals::LengthEvent const 
 			Size parent = find_seqpos_of_saccharides_parent_residue( *event.residue );
 			if ( child == 0 &&  parent == 0 ) {
 				//Single-residue tree.
-				GlycanTreeOP new_tree = utility::pointer::make_shared< GlycanTree >( new_position );
+				GlycanTreeOP new_tree = utility::pointer::make_shared< GlycanTree >( *event.conformation, new_position );
 				new_trees[ new_position ] = new_tree;
 			} else if ( child == 0 && ! event.conformation->residue(parent).is_carbohydrate() ) {
-				GlycanTreeOP new_tree = utility::pointer::make_shared< GlycanTree >( new_position );
+				GlycanTreeOP new_tree = utility::pointer::make_shared< GlycanTree >( *event.conformation, new_position );
 				new_trees[ new_position ] = new_tree;
 			} else if ( parent == 0 ) {
 				///Beginning of tree, not connected to protein.
@@ -452,11 +452,13 @@ GlycanTreeSet::on_length_change( core::conformation::signals::LengthEvent const 
 		} else {
 			GT->update_on_length_change( event );
 		}
+	}
 
-		for ( core::Size res : GT->get_residues() ) {
-			glycan_res_to_tree_[res] = GT;
+	//Now that the trees are updated, update our res to tree mapping.
+	for ( auto & root_tree : glycan_tree_set_ ) {
+		for ( core::Size res : root_tree.second->get_residues() ) {
+			glycan_res_to_tree_[res] = root_tree.second;
 		}
-
 	}
 }
 

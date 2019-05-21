@@ -1,0 +1,14 @@
+-include_sugars
+-write_pdb_link_records
+-mute all
+-unmute core.enzymes
+-unmute protocols.enzymatic_movers
+#-enzymes:species h_sapiens
+#-enzymes:enzyme OGT
+-s input/NPC1_luminal_domain_C.pdb
+-overwrite
+-nstruct 5
+-out:prefix output/N-linked/
+-out:pdb
+#-out:levels core.enzymes:500
+#-out:levels protocols.enzymatic_movers:500

@@ -169,6 +169,10 @@ sources = {
 		"CstfileToTheozymePDB",
 		"enzyme_design",
 	],
+	"public/post-translational_modification": [
+		"glycosyltransfer",
+		"phosphorylation",
+	],
 	"public/rna": [
 		"rna_denovo",
 		"rna_design",

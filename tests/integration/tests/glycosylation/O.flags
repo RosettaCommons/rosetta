@@ -3,8 +3,12 @@
 -mute all
 -unmute core.enzymes
 -unmute protocols.enzymatic_movers
+-enzymes:species h_sapiens
+-enzymes:enzyme OGT
 -s input/NPC1_luminal_domain_C.pdb
 -overwrite
--nstruct 10
--out:prefix output/
+-nstruct 5
+-out:prefix output/O-linked/
 -out:pdb
+#-out:levels core.enzymes:500
+#-out:levels protocols.enzymatic_movers:500

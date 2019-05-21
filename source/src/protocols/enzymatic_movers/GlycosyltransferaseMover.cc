@@ -100,11 +100,16 @@ GlycosyltransferaseMover::perform_reaction(
 	core::uint const site,
 	std::string const & cosubstrate )
 {
-	core::pose::carbohydrates::glycosylate_pose(
-		input_pose,
-		get_reactive_site_sequence_position( site ),
-		get_reactive_site_atom_name( site ),
-		cosubstrate );
+	using namespace core::pose::carbohydrates;
+
+	std::string const atom( get_reactive_site_atom_name( site ) );
+	if ( ( atom == "O" ) || ( atom == "-" ) ) {
+		// "O" or "-" indicates the O of either Ser or Thr or another unspecified atom name, repsectively.
+		// Use the default atom name for the ResidueType being modified.
+		glycosylate_pose( input_pose, get_reactive_site_sequence_position( site ), cosubstrate );
+	} else {
+		glycosylate_pose( input_pose, get_reactive_site_sequence_position( site ), atom, cosubstrate );
+	}
 }
 
 
