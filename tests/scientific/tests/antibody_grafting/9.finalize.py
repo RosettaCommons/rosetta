@@ -22,7 +22,7 @@ benchmark.load_variables()  # Python black magic: load all variables saved by pr
 config = benchmark.config()
 
 # read readme
-readme = subprocess.getoutput( "cat readme.md" ).splitlines()
+with open("readme.md") as f: readme = f.readlines()
 
 # build up html from readme, start with the starting tag
 _index_html_template_ = "<html>\n"
@@ -32,18 +32,18 @@ _index_html_template_ += "<h3>FAILURES</h3>\n<p>\n"
 # if no regions fail
 if len(failures)==0:
     _index_html_template_ += "&nbsp;&nbsp;&nbsp;&nbsp;None<br>\n"
-    
+
 # add failures to html
 for k in failures.keys():
     _index_html_template_ +=  "{} \n fraction in test: {} \n fraction tolerated: {} <br>\n\t".format(k, failures[k], cutoffs_fraction_dict[k])
 
-# add regions off by more than 1A 
+# add regions off by more than 1A
 _index_html_template_ += "<h4>PDBs off by more than X A</h4>\n<p>\n"
 for k in off_by_more_than_X.keys():
     _index_html_template_ += "<u>" + str(k) + " > {} A </u><br>\n\t".format(cutoffs_rms_dict[k])
     for v in off_by_more_than_X[k]:
         _index_html_template_ += str(v) + ", "
-        
+
     _index_html_template_ += "\n<p>\n"
 
 

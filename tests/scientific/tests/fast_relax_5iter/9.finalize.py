@@ -22,7 +22,7 @@ benchmark.load_variables()  # Python black magic: load all variables saved by pr
 config = benchmark.config()
 
 # read readme
-readme = subprocess.getoutput( "cat readme.md" ).splitlines()
+with open("readme.md") as f: readme = f.readlines()
 
 # build up html from readme, start with the starting tag
 _index_html_template_ = "<html>\n"
@@ -43,11 +43,11 @@ for l in readme:
 	# headings
 	if l.startswith( "## " ):
 		_index_html_template_ += "<h3>" + l.replace( ">> ", "" ) + "</h3>\n"
-	
+
 	# ignore the description
 	elif l.startswith( "#### " ):
 		continue
-		
+
 	# insert the actual text as a paragraph
 	else:
 		_index_html_template_ += "<p>" + l + "</p>\n"

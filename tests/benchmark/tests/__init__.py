@@ -551,7 +551,7 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
 
     bin=working_dir+'/bin'
 
-    if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip install --upgrade pip && {bin}/pip install {packages}'.format(**vars()) )
+    if packages: execute('Installing packages: {}...'.format(packages), '{bin}/python {bin}/pip install --upgrade pip && {bin}/python {bin}/pip install {packages}'.format(**vars()) )
     #if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip{python_environment.version} install {packages}'.format(**vars()) )
 
     return NT(activate = activate, python = bin + '/python', root = working_dir, bin = bin)

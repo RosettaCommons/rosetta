@@ -22,7 +22,7 @@ benchmark.load_variables()  # Python black magic: load all variables saved by pr
 config = benchmark.config()
 
 # read readme
-readme = subprocess.getoutput( "cat readme.md" ).splitlines()
+with open("readme.md") as f: readme = f.readlines()
 
 # build up html from readme, start with the starting tag
 _index_html_template_ = "<html>\n"

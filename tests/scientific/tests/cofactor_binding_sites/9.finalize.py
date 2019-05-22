@@ -28,12 +28,12 @@ if failure == False:
     r[_StateKey_] = _S_passed_
     r[_LogKey_] = 'The test passed! You can learn more about CoupledMoves at https://www.rosettacommons.org/docs/latest/coupled-moves'
 elif failure == True:
-    
+
     r[_StateKey_] = _S_failed_
     r[_LogKey_] = 'The test failed! Here are some things that might have gone wrong. (1) Did you change code for CoupledMoves, BoltzmannRotamerMover, or Backrub mover? CoupledMoves uses the BoltzmannRotamerMover for side chain moves, and the Backrub mover for backbone moves. (2) Did CoupledMoves run correctly? Analysis requires fasta files which are written by CoupledMoves when it runs. Check that those exist. For a production run, each fasta file should contain thousands of unique sequences. You can learn more about CoupledMoves at https://www.rosettacommons.org/docs/latest/coupled-moves'
 
 # read readme
-readme = subprocess.getoutput( "cat readme.md" ).splitlines()
+with open("readme.md") as f: readme = f.readlines()
 
 # build up html from readme, start with the starting tag
 _index_html_template_ = "<html>\n"
@@ -78,7 +78,7 @@ write_html( failure, r[_LogKey_] )
 #         _ResultsKey_ : {},
 #         _LogKey_ : 'Done!',
 #     }
-# 
+#
 #     json.dump(r, f, sort_keys=True, indent=2)
 
 
