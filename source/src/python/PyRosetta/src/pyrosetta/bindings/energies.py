@@ -192,9 +192,10 @@ def nonzero_weights(energies, out=None):
 
 def nonzero_weights_dtype(weights):
     from pyrosetta.rosetta.core.scoring import ScoreType
+
     return numpy.dtype([
         (name, float) for (name, st) in ScoreType.__dict__.items()
-        if not name.startswith("_") and (weights.get(st) != 0 or name == "total_score")
+        if type(st) == ScoreType  and  (weights.get(st) != 0  or  name == "total_score")
     ])
 
 

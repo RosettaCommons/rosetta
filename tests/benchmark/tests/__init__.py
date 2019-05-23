@@ -425,7 +425,8 @@ def install_llvm_tool(name, source_location, config, clean=True):
 def get_python_include_and_lib(python):
     ''' calculate python include dir and lib dir from given python executable executable
     '''
-    info = execute('Getting python configuration info...', '{python}-config --prefix --includes'.format(**vars()), return_='output').replace('\r', '').split('\n')  # Python-3 only: --abiflags
+    python_bin_dir = python.rpartition('/')[0]
+    info = execute('Getting python configuration info...', 'unset __PYVENV_LAUNCHER__ && cd {python_bin_dir} && PATH=.:$PATH && {python}-config --prefix --includes'.format(**vars()), return_='output').replace('\r', '').split('\n')  # Python-3 only: --abiflags
     python_prefix = info[0]
     python_include_dir = info[1].split()[0][len('-I'):]
     python_lib_dir = python_prefix + '/lib'
@@ -433,6 +434,31 @@ def get_python_include_and_lib(python):
     #print(python_include_dir, python_lib_dir)
 
     return NT(python_include_dir=python_include_dir, python_lib_dir=python_lib_dir)
+
+
+def local_open_ssl_install(prefix, build_prefix, jobs):
+    ''' install OpenSSL at given prefix, return url of source archive
+    '''
+    #with tempfile.TemporaryDirectory('open_ssl_build', dir=prefix) as build_prefix:
+
+    url = 'https://www.openssl.org/source/openssl-1.1.1b.tar.gz'
+
+    archive = build_prefix + '/' + url.split('/')[-1]
+    build_dir = archive.rpartition('.tar.gz')[0]
+    if os.path.isdir(build_dir): shutil.rmtree(build_dir)
+
+    with open(archive, 'wb') as f:
+        response = urllib.request.urlopen(url)
+        f.write( response.read() )
+
+    execute('Unpacking {}'.format(archive), 'cd {build_prefix} && tar -xvzf {archive}'.format(**vars()) )
+
+    execute('Configuring...', f'cd {build_dir} && ./config --prefix={prefix}')
+    execute('Building...',    f'cd {build_dir} && make -j{jobs}')
+    execute('Installing...',  f'cd {build_dir} && make -j{jobs} install')
+
+    return url
+
 
 
 def local_python_install(platform, config):
@@ -445,23 +471,25 @@ def local_python_install(platform, config):
 
     python_version = platform.get('python', '3.6')
 
-    python_version = {'python2'   : '2.7',
-                      'python2.7' : '2.7',
-                      'python3'   : '3.5',
-    }.get(python_version, python_version)
+    # deprecated, no longer needed
+    # python_version = {'python2'   : '2.7',
+    #                   'python2.7' : '2.7',
+    #                   'python3'   : '3.5',
+    # }.get(python_version, python_version)
 
     # for security reasons we only allow installs for version listed here with hand-coded URL's
     python_sources = {
         '2.7' : 'https://www.python.org/ftp/python/2.7.14/Python-2.7.14.tgz',
 
         '3.5' : 'https://www.python.org/ftp/python/3.5.5/Python-3.5.5.tgz',
-        '3.6' : 'https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tgz',
+        '3.6' : 'https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz',
         '3.7' : 'https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
     extras = {
-        ('mac',) :          ('__PYVENV_LAUNCHER__="" MACOSX_DEPLOYMENT_TARGET={}'.format(platform_module.mac_ver()[0]), ''),
+        #('mac',) :          ('__PYVENV_LAUNCHER__="" MACOSX_DEPLOYMENT_TARGET={}'.format(platform_module.mac_ver()[0]), ''),  # __PYVENV_LAUNCHER__ now used by-default for all platform installs
+        ('mac',) :          ('MACOSX_DEPLOYMENT_TARGET={}'.format(platform_module.mac_ver()[0]), ''),
         ('linux',  '2.7') : ('', '--enable-unicode=ucs4'),
         ('ubuntu', '2.7') : ('', '--enable-unicode=ucs4'),
     }
@@ -473,7 +501,9 @@ def local_python_install(platform, config):
     extra = extras.get( (platform['os'],)  , ('', '') )
     extra = extras.get( (platform['os'], python_version) , extra)
 
-    signature = 'url: {url}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'.format( **vars() )
+    extra = ('unset __PYVENV_LAUNCHER__ && ' + extra[0], extra[1])
+
+    signature = 'v1.1 url: {url}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'.format( **vars() )
 
     machine_name = os.uname()[1]
     suffix = platform['os'] + '.' + machine_name
@@ -506,6 +536,10 @@ def local_python_install(platform, config):
 
         if not os.path.isdir(root): os.makedirs(root)
         if not os.path.isdir(build_prefix): os.makedirs(build_prefix)
+
+        if platform['os'] == 'mac' and python_version == '3.6':
+            open_ssl_url = local_open_ssl_install(root, build_prefix, jobs)
+            #signature += 'OpenSSL install: ' + open_ssl_url + '\n'
 
         archive = build_prefix + '/' + url.split('/')[-1]
         build_dir = archive.rpartition('.tgz')[0]

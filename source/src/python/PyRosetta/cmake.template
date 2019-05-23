@@ -86,7 +86,7 @@ set_property(GLOBAL PROPERTY POSITION_INDEPENDENT_CODE ON)
 include_directories(${PYTHON_INCLUDE_DIR})
 
 # Include path for pybind11 header files -- this may need to be changed depending on your setup
-include_directories(${PROJECT_SOURCE_DIR}/pybind11/include)
+#include_directories(${PROJECT_SOURCE_DIR}/pybind11/include)
 
 #%__Rosetta_cmake_instructions__%#
 

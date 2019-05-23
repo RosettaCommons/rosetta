@@ -19,8 +19,13 @@ if not hasattr(pyrosetta.rosetta, "cereal"):
     sys.exit(0)
 
 def e(cmd):
-    print(" ".join(map(shlex.quote, cmd)))
-    subprocess.check_call(cmd)
+    #print(" ".join(map(shlex.quote, cmd)))
+    #subprocess.check_call(cmd)
+
+    print('executing: ', cmd)
+    code, output = subprocess.getstatusoutput(cmd)
+    print(output)
+    if code: print('encounter error(s) while running: ', cmd, '\nterminating...' ); exit(1)
 
 test_suites = [
                 "pyrosetta.tests.distributed.test_smoke",
@@ -32,20 +37,7 @@ test_suites = [
               ]
 
 with tempfile.TemporaryDirectory(prefix="tmp_pyrosetta_env") as venv_dir:
-    venv.create(venv_dir, clear=True, system_site_packages=True, with_pip=True)
-    e(
-        [
-            venv_dir + "/bin/pip", "install",
-            "blosc", "dask", "distributed", "numpy", "pandas", "scipy", "traitlets"
-        ]
-    )
-    
-    for test_suite in test_suites:
-        e(
-            [
-                venv_dir + "/bin/python",
-                "-m",
-                "unittest",
-                test_suite,
-            ]
-        )
+    venv.create(venv_dir, clear=True, system_site_packages=False, with_pip=True)
+    e( 'source {venv}/bin/activate && {venv}/bin/pip install blosc dask distributed numpy pandas scipy traitlets'.format(venv = venv_dir) )
+
+    for test_suite in test_suites: e( 'source {venv}/bin/activate && {venv}/bin/python -m unittest {test_suite}'.format(venv = venv_dir, test_suite=test_suite) )

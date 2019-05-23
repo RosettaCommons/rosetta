@@ -105,7 +105,7 @@ inline core::scoring::ScoreFunctionOP PyReturnValuePolicyTest_ScoreFunctionOP(vo
 inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ); }
 inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP2(void) { return utility::pointer::make_shared< core::scoring::ScoreFunction >(); }
 
-
+inline void take_pose_op(core::pose::PoseOP const &) {}
 
 // test for out-of-bounds access handling
 void out_of_bounds_memory_access();

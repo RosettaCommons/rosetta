@@ -80,7 +80,7 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
         json_file = result.pyrosetta_path + '/build/.test.output/.test.results.json'
         with open(json_file) as f: results = json.load(f)
 
-        execute('Deleting PyRosetta tests output...', 'cd {pyrosetta_path}/build && {python} self-test.py --delete-tests-output'.format(pyrosetta_path=result.pyrosetta_path, python=result.python), return_='tuple')
+        execute('Deleting PyRosetta tests output...', 'cd {pyrosetta_path}/build && unset PYTHONPATH && unset __PYVENV_LAUNCHER__ && {python} self-test.py --delete-tests-output'.format(pyrosetta_path=result.pyrosetta_path, python=result.python), return_='tuple')
         extra_files = [f for f in os.listdir(result.pyrosetta_path+'/build') if f not in distr_file_list]  # not f.startswith('.test.')  and
         if extra_files:
             results['results']['tests']['self-test'] = dict(state='failed', log='self-test.py scripts failed to delete files: ' + ' '.join(extra_files))

@@ -10,7 +10,7 @@
 #pragma once
 
 #include <cstdlib>
-#include "ndarray.h"
+#include <ndarray.h>
 #include <numeric/types.hh>
 
 namespace numeric

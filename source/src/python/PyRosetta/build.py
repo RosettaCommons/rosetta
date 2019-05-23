@@ -264,7 +264,7 @@ def get_compiler_version():
 
     elif compiler == 'clang':
         _, version = execute('Getting clang version...'.format(**locals()), 'clang --version', return_='tuple', silent=True)
-        version = version.split()[2].split('-')[0]
+        version = version.split()[3] if version.startswith('Apple LLVM version') else version.split()[2].split('-')[0]
 
     else:
         version = 'unknown'
