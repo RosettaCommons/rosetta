@@ -254,6 +254,7 @@ StepWiseMonteCarlo::output_checkpoint_file( pose::Pose const & pose, pose::Pose 
 void
 StepWiseMonteCarlo::remove_checkpoint_file() const {
 	core::io::silent::remove_silent_file_if_it_exists( checkpoint_file_name() );
+	core::io::silent::remove_silent_file_if_it_exists( checkpoint_file_name_low() );
 }
 
 bool
