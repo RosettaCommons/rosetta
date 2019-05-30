@@ -190,39 +190,43 @@ public:
 
 	/// @brief += operator, for summing energies
 	inline
-	void
+	EMapVector &
 	operator += ( EMapVector const & src )
 	{
 		for ( int ii=0; ii< n_score_types; ++ii ) {
 			map_[ii] += src.map_[ii];
 		}
+		return *this;
 	}
 
 	/// @brief -= operator, for subtracting energies
-	void
+	EMapVector &
 	operator -= ( EMapVector const & src )
 	{
 		for ( int ii=0; ii< n_score_types; ++ii ) {
 			map_[ii] -= src.map_[ii];
 		}
+		return *this;
 	}
 
 	/// @brief *= operator, for performing multiplication of a vector by a scalar
-	void
+	EMapVector &
 	operator *= ( Real scalar )
 	{
 		for ( double & ii : map_ ) {
 			ii *= scalar;
 		}
+		return *this;
 	}
 
 	/// @brief *= operator, for performing element-by-element multiplication of two vectors
-	void
+	EMapVector &
 	operator *= ( EMapVector const & src )
 	{
 		for ( int ii = 0; ii < n_score_types; ++ii ) {
 			map_[ii] *= src.map_[ii];
 		}
+		return *this;
 	}
 
 
