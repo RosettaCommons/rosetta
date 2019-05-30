@@ -216,6 +216,8 @@ CountPairFactory::determine_residue_connection(
 	if ( res1.is_pseudo_bonded( res2.seqpos() ) ) {
 		return CP_MULTIPLE_BONDS_OR_PSEUDOBONDS;
 	} else if ( res1.is_bonded(res2) ) {
+		// We can run into some odd cases when bonding isn't symmetrical
+		runtime_assert( res2.is_bonded(res1) );
 		if ( res1.connections_to_residue( res2 ).size() == 1 ) {
 			return CP_ONE_BOND;
 		} else {

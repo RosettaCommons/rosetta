@@ -1059,7 +1059,7 @@ Conformation::append_residue_by_bond(
 			err << "Can't create a polymer bond after residue " << anchor_pos
 				<< " due to incompatible type: " << anchor_rsd.type().name();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
-		} else if ( !new_rsd.is_polymer() ) {
+		} else if ( !new_rsd.is_polymer() || !new_rsd.type().lower_connect_id() ) {
 			std::stringstream err;
 			err << "Can't create a polymer bond to new residue " << seqpos
 				<< " due to incompatible type: " << new_rsd.type().name();
@@ -5798,7 +5798,12 @@ Conformation::branch_connection_torsion_angle_atoms(
 		return fail;
 	}
 
-	Residue const & rsd2( *residues_[ rsd1.residue_connection_partner( n_mainchain_connections + branch ) ] );
+	Size const connection_partner = rsd1.residue_connection_partner( n_mainchain_connections + branch );
+	if ( connection_partner == 0 || connection_partner > residues_.size() ) {
+		TR.Warning << "Residue " << seqpos << " is not connected at branch " << branch << endl;
+		return fail;
+	}
+	Residue const & rsd2( *residues_[ connection_partner ] );
 
 	// Now, figure out the atoms involved, starting with the two atoms about the connection.
 	uint const atom2( rsd1.connect_atom( rsd2 ) );

@@ -339,6 +339,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 
 			using numeric::conversions::radians;
 			auto temp_vec = define_mainchain_atoms( restype );
+			runtime_assert_msg( temp_vec.size() >= 3, "Insufficient mainchain atoms for residue " + name_ );
 			if ( restype->is_d_aa() ) {
 				// TODO: correct internal coordinates, if possible? For H at least.
 				restype->set_icoor( "LOWER", radians(-149.999985), radians(63.800007), 1.328685,

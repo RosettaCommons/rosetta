@@ -120,7 +120,7 @@ PDBDiagnosticMover::apply( core::pose::Pose & pose ){
 
 	if ( !basic::options::option[ basic::options::OptionKeys::PDB_diagnostic::skip_pack_and_min ].value() ) {
 
-		//packing crashes on zero nres
+		// minimization and packing crashes on zero nres
 		if ( nres > 0 ) {
 
 			//step 4: packing
@@ -136,14 +136,15 @@ PDBDiagnosticMover::apply( core::pose::Pose & pose ){
 			pack_rotamers->task_factory( main_task_factory );
 			pack_rotamers->score_function( score_fxn );
 			pack_rotamers->apply(pose);
-		} //skip all this if no residues!
 
-		//step 5: minimizing
-		using protocols::minimization_packing::MinMoverOP;
-		using protocols::minimization_packing::MinMover;
-		MinMoverOP min_mover(new protocols::minimization_packing::MinMover());
-		min_mover->score_function( score_fxn );
-		min_mover->apply(pose);
+			//step 5: minimizing
+			using protocols::minimization_packing::MinMoverOP;
+			using protocols::minimization_packing::MinMover;
+			MinMoverOP min_mover(new protocols::minimization_packing::MinMover());
+			min_mover->score_function( score_fxn );
+			min_mover->apply(pose);
+
+		} //skip all this if no residues!
 	}//skip_pack_and_min
 
 	return;

@@ -213,18 +213,7 @@ Metapatch::atoms( ResidueType const & rsd_type ) const
 
 		if ( !meets_requirements( rsd_type, i ) ) continue;
 
-		Size first = rsd_type.atom_name( i ).find_first_not_of(' ');
-		Size last = rsd_type.atom_name( i ).find_last_not_of(' ');
-		std::string trimmed_atom = rsd_type.atom_name( i ).substr( first, last-first+1 );
-
-		bool cont = false;
-		for ( Size pn = 1; pn <= patch_names.size(); ++pn ) {
-			if ( patch_names[ pn ].find( rsd_type.name3() ) == std::string::npos ) continue;
-			utility::vector1< std::string > elems = utility::string_split( patch_names[pn], '-' );
-			if ( trimmed_atom < elems[2] ) cont = true;
-		}
-		if ( cont ) continue;
-
+		std::string const & trimmed_atom = utility::stripped_whitespace( rsd_type.atom_name( i ) );
 		good_atoms.push_back( trimmed_atom );
 	}
 	return good_atoms;

@@ -87,6 +87,7 @@ def download_all_input_files(kind, config):
 _index_html_template_ = '''\
 <html>
 <head>
+    <meta charset="utf-8"/>
     <title>Protein Data Bank Diagnostic test results</title>
 
   <style>
@@ -98,7 +99,7 @@ _index_html_template_ = '''\
     The PDB diagnostic was run on <b>{len_pdbs:,}</b> PDB files. <b>{len_passed:,}</b> files passed the test and <b>{len_failed:,}</b> failed!
     This test tries to load every PDB file in the PDB database and classifies the failures that occur.
     The command line below shows what was done; broadly all versions of this test examine load-time problems and more expensive versions
-    (<fixed>&#8209;PDB_diagnostic::skip_pack_and_min&nbsp;false</fixed>) also check for errors during scoring, packing, and minimization.
+    (<fixed>-PDB_diagnostic::skip_pack_and_min&nbsp;false</fixed>) also check for errors during scoring, packing, and minimization.
 </p>
 
 <p><i>"Hunting down these bugs is the most fun thing you can do on a Thursday morning"</i> - Andy Watkins, probably.</p>
@@ -230,6 +231,8 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
 
         results = dict(passed=[], failed=dict())
         for job in jobs:
+            if not os.path.exists( f'{job.path}/{job.name}.output.json' ):
+                raise RuntimeError(f'Output "output/{job.name}/{job.name}.output.json" for job {job.name} not found -- check output/.hpc-logs/.hpc.protein-data-bank-diagnostic-{job.name}.errors.0.log and output/.hpc-logs/.hpc.protein-data-bank-diagnostic-{job.name}.output.0.log in the file-list-view for more details.')
             with open(f'{job.path}/{job.name}.output.json') as f: r = json.load(f)
 
             for code, pdbs in r['failed'].items():
@@ -285,7 +288,7 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
 
             f.write(
                 _index_html_template_.format(
-                    command_line = command_line.replace('-', '&#8209;'),
+                    command_line = command_line,
                     len_pdbs = len(all_pdbs), len_passed = len(results['passed']), len_failed = len_failed,
                     failed = ''.join(failed), #failed = ''.join( ( f'<p>{len(results["failed"][c]):,6} <a href=pdbs.{c}.html>「{c}」</a></p>' for c in sorted( results['failed'].keys(), key=lambda k: -len(results['failed'][k]) ) ) )
                     explanation = explanation, explanations = explanations, mode=mode, note=note,
@@ -361,6 +364,28 @@ class PDB_Diagnostic_Codes(enum.Enum):
 
     missing_disulfide_partner    = enum.auto()
 
+    unknown_hbond_acceptor = enum.auto()
+    no_orient_atoms        = enum.auto()
+    pseudobond_connection_change = enum.auto()
+    rotlib_file            = enum.auto()
+    duplicate_atom_name    = enum.auto()
+    cutpoint_neighbour     = enum.auto()
+    multiple_residue_bonds = enum.auto()
+    abase2_nbrs            = enum.auto()
+    icoord_depends_on_missing = enum.auto()
+    no_usable_coords       = enum.auto()
+    merge_with_next        = enum.auto()
+    ld_chirality           = enum.auto()
+    insufficient_mainchain = enum.auto()
+    incompatible_w_polymer = enum.auto()
+    aa_difference          = enum.auto()
+    prepro_cyclic_pep      = enum.auto()
+    missing_connection     = enum.auto()
+    missing_bond           = enum.auto()
+    not_being_packed       = enum.auto()
+    no_hbond_deriv         = enum.auto()
+
+
 
 def classify_pdb_diagnostic_log(log):
     ''' Classify given log PDB_diagnostic log and return one of PDB_Diagnostic_Codes
@@ -385,6 +410,13 @@ def classify_pdb_diagnostic_log(log):
 
 
     error_map = OrderedDict( [ # Pattern → error_code, Note that order is slightly different from original code: it is now grouped by-pattern types for readability
+        # Pattern Types:
+        #   * line= -- The pattern is found in a line starting with ERROR:
+        #   * previous= -- The pattern is found in a line right before one starting with ERROR:
+        #   * next= -- The pattern is found in a line after one starting with ERROR:
+        #   * log= -- The pattern is found anywhere in the log (which also contains a line starting with ERROR:)
+        #              (Avoid when possible, as log is computationally more heavy.)
+
         #( P(previous='ace'), PDB_Diagnostic_Codes.ace ),
 
         ( P(line='unable to find desired variant residue:'),    PDB_Diagnostic_Codes.sugar_variant ),
@@ -404,6 +436,7 @@ def classify_pdb_diagnostic_log(log):
         ( P(splited='packed_rotno_conversion_data_current_'), PDB_Diagnostic_Codes.rotno ),
 
         ( P(log=('Cannot normalize xyzVector of length() zero', 'src/numeric/xyzVector.hh') ), PDB_Diagnostic_Codes.zero_length_xyzVector ),
+        ( P(log=('Cannot create normalized xyzVector from vector of length() zero') ),         PDB_Diagnostic_Codes.zero_length_xyzVector ),
 
         ( P(line='Cannot reroot a disconnected ResidueType'),                        PDB_Diagnostic_Codes.reroot_disconnected ),
         ( P(line="Attempted to inappropriately reset ICOOR root atom"),              PDB_Diagnostic_Codes.reset_icoor_root ),
@@ -419,6 +452,32 @@ def classify_pdb_diagnostic_log(log):
         ( P(line="Unable to add atom alias for non-existent atom"),                  PDB_Diagnostic_Codes.alias_missing_atom ),
 
         ( P(line="Can't find an atom to disulfide bond"),                            PDB_Diagnostic_Codes.missing_disulfide_partner ),
+        ( P(line="Could not find disulfide partner for residue"),                    PDB_Diagnostic_Codes.missing_disulfide_partner ),
+
+        ( P(line="unknown Hydrogen Bond acceptor type for"),                         PDB_Diagnostic_Codes.unknown_hbond_acceptor ),
+        ( P(line="Could not find three atoms to use for orienting residue type"),    PDB_Diagnostic_Codes.no_orient_atoms ),
+        ( P(line="Unable to handle change in the number of residue connections in the presence of pseudobonds"),  PDB_Diagnostic_Codes.pseudobond_connection_change ),
+
+        ( P(line="Error!  Could not open rotamer library file"),                     PDB_Diagnostic_Codes.rotlib_file ),
+        ( P(line=("Can't add atom named","as it already has one with that name.")),  PDB_Diagnostic_Codes.duplicate_atom_name ),
+
+        ( P(line="Error in core::conformation::check_good_cutpoint_neighbour()"),    PDB_Diagnostic_Codes.cutpoint_neighbour ),
+        ( P(line="dont add residue bonds more than once!"),                          PDB_Diagnostic_Codes.multiple_residue_bonds ),
+        ( P(line="failed to set abase2 for acceptor atom, it has no nbrs"),          PDB_Diagnostic_Codes.abase2_nbrs ),
+        ( P(line=("The internal coordinates of ResidueType","depend on a missing atom!")), PDB_Diagnostic_Codes.icoord_depends_on_missing ),
+        ( P(line="No usable coordinates for mmCIF file"),                            PDB_Diagnostic_Codes.no_usable_coords ),
+        ( P(line="has been indicated to merge with the next residue from the"),      PDB_Diagnostic_Codes.merge_with_next ),
+        ( P(line="Needed atoms missing for detect_ld_chirality_from_polymer_residue"), PDB_Diagnostic_Codes.ld_chirality ),
+        ( P(line="Insufficient mainchain atoms for residue"),                        PDB_Diagnostic_Codes.insufficient_mainchain ),
+        ( P(previous=("Can't create a polymer bond","due to incompatible type")),    PDB_Diagnostic_Codes.incompatible_w_polymer ),
+        ( P(line="Assertion `! found_aa_difference` failed"),                        PDB_Diagnostic_Codes.aa_difference ),
+        ( P(line="The RamaPrePro term is incompatible with cyclic dipeptides"),      PDB_Diagnostic_Codes.prepro_cyclic_pep ),
+        ( P(line="Residues which were assumed to be connected are not"),             PDB_Diagnostic_Codes.missing_connection ),
+        ( P(line="Assertion `res2.is_bonded(res1)` failed"),                         PDB_Diagnostic_Codes.missing_bond ),
+        ( P(line="Assertion `being_packed()` failed"),                               PDB_Diagnostic_Codes.not_being_packed ),
+        ( P(line="Cannot compute derivative for hbond interaction"),                 PDB_Diagnostic_Codes.no_hbond_deriv ),
+
+
     ] )
 
 

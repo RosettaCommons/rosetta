@@ -946,8 +946,12 @@ ResidueType::add_atom(
 	// signal that we need to update the derived data
 	finalized_ = false;
 
-	debug_assert(atom_name_to_vd_.find(atom_name) == atom_name_to_vd_.end());
-	debug_assert(atom_name_to_vd_.find( strip_whitespace(atom_name)) == atom_name_to_vd_.end());
+	if ( atom_name_to_vd_.find(atom_name) != atom_name_to_vd_.end() ) {
+		utility_exit_with_message("Can't add atom named `" + atom_name + "` to ResidueType " + name() + " as it already has one with that name.");
+	}
+	if ( atom_name_to_vd_.find( strip_whitespace(atom_name)) != atom_name_to_vd_.end() ) {
+		utility_exit_with_message("Can't add atom named `" + strip_whitespace(atom_name) + "` to ResidueType " + name() + " as it already has one with that name.");
+	}
 
 	// the next calls will fail if the type name is unrecognized
 	MMAtomTypeSetCOP mm_atom_types( mm_atom_types_ );
@@ -1002,8 +1006,12 @@ ResidueType::add_atom(
 	VD v = graph_.add_vertex( Atom() );
 
 	if ( atom_name.size() ) {
-		debug_assert(atom_name_to_vd_.find(atom_name) == atom_name_to_vd_.end());
-		debug_assert(atom_name_to_vd_.find( strip_whitespace(atom_name)) == atom_name_to_vd_.end());
+		if ( atom_name_to_vd_.find(atom_name) != atom_name_to_vd_.end() ) {
+			utility_exit_with_message("Can't add atom named `" + atom_name + "` to ResidueType " + name() + " as it already has one with that name.");
+		}
+		if ( atom_name_to_vd_.find( strip_whitespace(atom_name)) != atom_name_to_vd_.end() ) {
+			utility_exit_with_message("Can't add atom named `" + strip_whitespace(atom_name) + "` to ResidueType " + name() + " as it already has one with that name.");
+		}
 		graph_[v].name( atom_name);
 		atom_name_to_vd_[ atom_name ] = v;
 		atom_name_to_vd_[ strip_whitespace( atom_name ) ] = v;

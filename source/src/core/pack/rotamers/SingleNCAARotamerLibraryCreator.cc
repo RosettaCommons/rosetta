@@ -171,7 +171,7 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 		}
 	}
 
-	runtime_assert_string_msg( rotlib_in.good(), "Error!  Could not open file " + file_name + " for read." );
+	runtime_assert_string_msg( rotlib_in.good(), "Error!  Could not open rotamer library file " + file_name + " for read." );
 
 	TR << "Reading in rot lib " << full_path << "..." << std::endl;
 

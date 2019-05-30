@@ -327,7 +327,10 @@ def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=Fals
     jobs = config['cpu_count']
     skip_compile = config.get('skip_compile', False)
 
-    python = local_python_install(platform, config).python
+    if skip_compile:
+        python = "<python_executable>"
+    else:
+        python = local_python_install(platform, config).python # Will install a local python
 
     # removing all symlinks from bin/ and then building binaries...
     build_command_line = f'find bin -type l ! -name ".*" -exec rm {{}} \\; ; {python} ./scons.py bin mode={mode} cxx={compiler} extras={extras} -j{jobs}'

@@ -532,6 +532,7 @@ detect_ld_chirality_from_polymer_residue(
 		// We can't use H1' for angles, or first_base_atom (we don't know)
 		std::string o2prime_atom = "O2'";
 		if ( xyz.find( "F2'" ) != xyz.end() ) o2prime_atom = "F2'";
+		runtime_assert_msg( xyz.count("C1'") && xyz.count( "C3'" ) && xyz.count( o2prime_atom ), "Needed atoms missing for detect_ld_chirality_from_polymer_residue() on residue " + name3 );
 		characteristic_angle = numeric::dihedral_degrees( xyz.at( "C1'" ), xyz.at( "C3'" ), xyz.at( o2prime_atom ), xyz.at( "C2'" ) );
 
 		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;

@@ -1575,7 +1575,7 @@ Residue::connect_atom( Residue const & other ) const
 
 	TR.Error << "This residue (number " << seqpos() << ") is not bonded to the requested residue (" << other.seqpos() << ")!" << std::endl;
 	TR.Error << type().name() << " " << other.type().name() << std::endl;
-	utility_exit();
+	utility_exit_with_message("Residues which were assumed to be connected are not");
 	return 0;
 }
 
