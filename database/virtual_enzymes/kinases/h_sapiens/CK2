@@ -1,0 +1,5 @@
+# File created by Yuhan "Blair" Zhang
+
+# Consensus  Sequence  Residue of    Atom
+# Sequence   Type      CS to Modify  To Modify  Efficiency
+  SXX(E/D)   AA        1             O          1.00        # Atom name here doesn't matter, as the Mover will simply change the VariantType
