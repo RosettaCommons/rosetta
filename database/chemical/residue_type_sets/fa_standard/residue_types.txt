@@ -1268,6 +1268,7 @@ residue_types/pna/UPN.params
 residue_types/coenzymes/flavin_oxidized.params
 residue_types/coenzymes/flavin_reduced.params
 #residue_types/coenzymes/flavin_mononucleotide.params
+residue_types/coenzymes/ATP.params
 residue_types/coenzymes/UDP.params
 
 ## Polyaramids
