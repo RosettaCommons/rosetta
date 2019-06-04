@@ -1311,7 +1311,7 @@ residue_types/polyaramids/SAH.params
 residue_types/polyaramids/SAI.params
 residue_types/polyaramids/SAK.params
 residue_types/polyaramids/SAL.params
-residue_types/polyaramids/SAM.params
+#residue_types/polyaramids/SAM.params #uncommenting this will break the scientific benchmarks cofactor test because methyltransferase has a ligand SAM. see https://github.com/RosettaCommons/main/issues/3975#issuecomment-495798154
 residue_types/polyaramids/SAN.params
 residue_types/polyaramids/SAQ.params
 residue_types/polyaramids/SAR.params

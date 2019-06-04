@@ -92,7 +92,7 @@ def violinplot( system, data_for_pdb, fig ):
 	design_median = numpy.median(data_for_pdb['design_data'])
 	print( 'design_median = {0}'.format( design_median )  )
 	pass_='PASS'
-	if design_median < cutoff:
+	if design_median < cutoff and config['debug'] == False:
 		failure = True
 		pass_='FAIL'
 	ax_similarity.axhline(y=design_median, color='g', linestyle='-', linewidth=3, alpha=0.7, label='design median ({0})'.format(pass_) )
@@ -102,7 +102,7 @@ def violinplot( system, data_for_pdb, fig ):
 	design_25th_quartile = numpy.percentile( data_for_pdb['design_data'], 25 )
 	print( 'design_25th_quartile = {0}'.format( design_25th_quartile ) )
 	pass_='PASS'
-	if design_25th_quartile < cutoff:
+	if design_25th_quartile < cutoff and config['debug'] == False:
 		failure = True
 		pass_='FAIL'
 	ax_similarity.axhline(y=cutoff, color='b', linestyle='-', linewidth=3, alpha=0.7, label='design 25th quartile ({0})'.format(pass_) )

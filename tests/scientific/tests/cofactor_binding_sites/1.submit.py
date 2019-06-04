@@ -57,8 +57,8 @@ command_line = '''
 '''.replace('\n', ' ').replace('  ', ' ')
 
 #==> EDIT HERE
-nstruct = 3 if debug else 200
-ntrials = 10 if debug else 1000
+nstruct = 1 if debug else 200
+ntrials = 100 if debug else 1000
 
 #==> EDIT HERE
 targets = open( f'{rosetta_dir}/tests/scientific/data/{testname}/input/systems.txt' ).readlines()

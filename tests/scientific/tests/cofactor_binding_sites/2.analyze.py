@@ -140,7 +140,7 @@ def get_similarity( systems_Q, systems_P ):
 		count_P = systems_P[ pdb ][1]
 		length_P = systems_P[ pdb ][2]
 
-		assert (  length_Q == length_P ), "\nlength_Q != length_P\nlength_Q={0}\nlength_P={1}".format( length_Q, length_P )
+		assert (  length_Q == length_P ), "\nsystem is {2}\nlength_Q != length_P\nlength_Q={0}\nlength_P={1}".format( length_Q, length_P, system )
 
 		for position in range( 0, length_Q ):
 			similarity = {}
