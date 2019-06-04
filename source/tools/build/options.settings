@@ -66,15 +66,6 @@ options = {
     # ],
 
     "extras" : [
-        #Use c++14. Defines CXX14, CXX14_OR_LATER
-        "cxx14",
-
-        #Use c++17. Defines CXX17, CXX17_OR_LATER, CXX14_OR_LATER
-        "cxx17",
-
-        #Use c++20. Defines CXX20, CXX20_OR_LATER, CXX17_OR_LATER, CXX14_OR_LATER
-        "cxx20",
-
         # Enable BOINC.  Used by rosetta@home
         "boinc",
 

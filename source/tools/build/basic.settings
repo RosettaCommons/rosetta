@@ -862,48 +862,6 @@ settings = {
         },
     },
 
-    "gcc, cxx14" : {
-        "appends" : {
-            "defines" : [ "CXX14", "CXX14_OR_LATER" ],
-            "flags" : {
-                "cxx" : [ "std=c++1y" ],
-            },
-        },
-        "removes" : {
-            "flags" : {
-                "cxx" : [ "std=c++0x" ],
-            },
-        },
-    },
-
-    "gcc, cxx17" : {
-        "appends" : {
-            "defines" : [ "CXX17", "CXX17_OR_LATER", "CXX14_OR_LATER" ],
-            "flags" : {
-                "cxx" : [ "std=c++1z" ],
-            },
-        },
-        "removes" : {
-            "flags" : {
-                "cxx" : [ "std=c++0x" ],
-            },
-        },
-    },
-
-    "gcc, cxx20" : {
-        "appends" : {
-            "defines" : [ "CXX20", "CXX20_OR_LATER", "CXX17_OR_LATER", "CXX14_OR_LATER" ],
-            "flags" : {
-                "cxx" : [ "std=c++2a" ],
-            },
-        },
-        "removes" : {
-            "flags" : {
-                "cxx" : [ "std=c++0x" ],
-            },
-        },
-    },
-
     "gcc, hdf5" : {
         "appends" : {
             "defines" : [ "USEHDF5" ],
@@ -2464,48 +2422,6 @@ settings = {
 		"SERIALIZATION",
 		"ZEROMQ",
             ],
-        },
-    },
-
-    "clang, cxx14" : {
-        "appends" : {
-            "defines" : [ "CXX14", "CXX14_OR_LATER" ],
-            "flags" : {
-                "cxx" : [ "std=c++1y" ],
-            },
-        },
-        "removes" : {
-            "flags" : {
-                "cxx" : [ "std=c++0x" ],
-            },
-        },
-    },
-
-    "clang, cxx17" : {
-        "appends" : {
-            "defines" : [ "CXX17", "CXX17_OR_LATER", "CXX14_OR_LATER" ],
-            "flags" : {
-                "cxx" : [ "std=c++1z" ],
-            },
-        },
-        "removes" : {
-            "flags" : {
-                "cxx" : [ "std=c++0x" ],
-            },
-        },
-    },
-
-    "clang, cxx20" : {
-        "appends" : {
-            "defines" : [ "CXX20", "CXX20_OR_LATER", "CXX17_OR_LATER", "CXX14_OR_LATER" ],
-            "flags" : {
-                "cxx" : [ "std=c++2a" ],
-            },
-        },
-        "removes" : {
-            "flags" : {
-                "cxx" : [ "std=c++0x" ],
-            },
         },
     },
 
