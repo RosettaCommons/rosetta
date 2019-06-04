@@ -822,6 +822,36 @@ static ResourceLoaderRegistrator< core::import_pose::PoseResourceLoaderCreator >
 #endif
 
 
+//c++11: 201103L
+//c++14: 201402L
+//c++17: 201703L
+//c++20: not set yet, please update
+#ifdef CXX14
+static_assert( __cplusplus > 201103L, "CXX14 is defined but the compiler version is <= c++11" );
+#else
+static_assert( __cplusplus != 201402L, "The compiler is set up to run c++14 but CXX14 is not defined" );
+#endif
+
+#ifdef CXX14_OR_LATER
+//Using __cplusplus > 201103L instead of __cplusplus >= 201402L because there may be some early c++14 support in the versions between 201103L and 201402L
+static_assert( __cplusplus > 201103L, "CXX14_OR_LATER is defined but the compiler version is <= c++11" );
+#else
+static_assert( __cplusplus < 201402L, "The compiler is set up to run a version of c++ at least as recent as c++14 but CXX14_OR_LATER is not defined" );
+#endif
+
+#ifdef CXX17
+static_assert( __cplusplus > 201402L, "CXX17 is defined but the compiler version is <= c++14" );
+#else
+static_assert( __cplusplus != 201703L, "The compiler is set up to run c++17 but CXX17 is not defined" );
+#endif
+
+#ifdef CXX17_OR_LATER
+static_assert( __cplusplus > 201402L, "CXX17_OR_LATER is defined but the compiler version is <= c++14" );
+#else
+static_assert( __cplusplus < 201703L, "The compiler is set up to run a version of c++ at least as recent as c++17 but CXX17_OR_LATER is not defined" );
+#endif
+
+
 using namespace numeric::random;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
