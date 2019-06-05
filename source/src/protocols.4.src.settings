@@ -280,6 +280,7 @@ sources = {
 		"LinkResidues",
 		"ModifyAnnealer",
 		"MutationSetDesignOperation",
+		"pHVariantTaskOperation",
 		"PreventChainFromRepackingOperation",
 		"PreventResiduesFromRepackingOperation",
 		"ProteinCoreResFilter",
