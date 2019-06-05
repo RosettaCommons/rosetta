@@ -2383,11 +2383,12 @@ CartesianBondedEnergy::eval_singleres_ring_energies(
 	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
 		// get the conformer of the ring
 		core::chemical::rings::RingConformer rc;
-		if ( basic::options::option[ basic::options::OptionKeys::score::ideal_sugars ].user() ) {
+		if ( basic::options::option[ basic::options::OptionKeys::score::ideal_sugars ]() ) {
 			rc = rsd.type().ring_conformer_set(jj)->get_lowest_energy_conformer();
 		} else {
 			rc= rsd.ring_conformer( jj, 180.0 );
 		}
+
 
 		// now constrain each element of the ring
 		utility::vector1< core::Size > atms = rsd.type().ring_atoms( jj );
@@ -3290,7 +3291,7 @@ CartesianBondedEnergy::eval_singleres_ring_derivatives(
 	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
 		// get the conformer of the ring
 		core::chemical::rings::RingConformer rc;
-		if ( basic::options::option[ basic::options::OptionKeys::score::ideal_sugars ].user() ) {
+		if ( basic::options::option[ basic::options::OptionKeys::score::ideal_sugars ]() ) {
 			rc = rsd.type().ring_conformer_set(jj)->get_lowest_energy_conformer();
 		} else {
 			rc= rsd.ring_conformer( jj, 180.0 );
