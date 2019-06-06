@@ -179,7 +179,6 @@ endrepeat
 #include <protocols/hydrate/Hydrate.hh>
 
 //Basic Headers
-#include <basic/database/open.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -192,8 +191,6 @@ endrepeat
 
 //Utility Headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/io/GeneralFileManager.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
@@ -320,7 +317,7 @@ FastRelax::FastRelax(
 {
 	set_to_default();
 	if ( standard_repeats == 0 ) standard_repeats = default_repeats_;
-	read_script_file( script_file , standard_repeats );
+	read_script_file( script_file, standard_repeats );
 }
 
 /// @brief destructor - this class has no dynamic allocation, so
@@ -1003,11 +1000,6 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	}
 } //apply
 
-// XRW TEMP std::string
-// XRW TEMP FastRelax::get_name() const {
-// XRW TEMP  return "FastRelax";
-// XRW TEMP }
-
 // Override the stored script with the default script for batchrelax
 void FastRelax::set_script_to_batchrelax_default( core::Size repeats ) {
 	script_.clear();
@@ -1156,188 +1148,20 @@ FastRelax::get_possible_relax_script_names( std::string const & prefix ) const {
 	return possible_names;
 }
 
-void handle_script_file_with_period(
-	std::string const & script_file,
-	std::string::size_type position_of_first_period
-){
-	//In order to make a more helpful error message, check to see if basename exists in the database
-	std::string const basename = script_file.substr( 0, position_of_first_period );
-	std::string const basename_with_default_extension = basename + ".txt";
-
-	bool const file_exists_with_default_extension =
-		utility::file::file_exists( basic::database::full_name( "sampling/relax_scripts/" ) + basename_with_default_extension );
-	if ( file_exists_with_default_extension ) {
-		utility_exit_with_message(
-			"[ERROR] relaxscript argument should not have extensions. "
-			"Did you mean " + basename + " instead of " + script_file + "?" );
-	} else {
-		utility_exit_with_message(
-			"[ERROR] relaxscript argument " + script_file +
-			" should not have extensions. Additionally, " +
-			basename + " does not appear to be a valid script name. "
-			"Please look at main/database/sampling/relax_scripts/ or the wiki for valid names." );
-	}
-
-}
-
 void
-FastRelax::initialize_relax_scripts_in_database()
-{
-	std::string const filename =
-		basic::database::find_database_path( "sampling/relax_scripts/", "index.dat", false );
-	std::string const & index_file_contents =
-		utility::io::GeneralFileManager::get_instance()->get_file_contents( filename );
-	std::vector< std::string > const index_file_lines =
-		utility::split_by_newlines( index_file_contents );
-
-	bool reached_title_row = false;
-	std::string title, is_sfxn_dep, sfxns;
-
-	for ( std::string const & line : index_file_lines ) {
-		std::istringstream token_stream( line );
-		token_stream >> title;
-		if ( token_stream.fail() || title[0] == '#' ) continue;
-
-		if ( ! reached_title_row ) {
-			reached_title_row = true;
-			continue;
-		}
-
-		token_stream >> is_sfxn_dep;
-		if ( is_sfxn_dep == "Y" ) {
-			token_stream >> sfxns;
-			relax_scripts_in_database_.emplace_back( title, true, sfxns );
-		} else {
-			relax_scripts_in_database_.emplace_back( title, false );
-		}
-	}
-
-}
-
-core::Real distance(
-	core::scoring::EnergyMap const & target_weights,
-	core::scoring::EnergyMap const & candidate_weights
-){
-	core::Real distance = 0;
-	for ( core::Size ii = core::scoring::fa_atr; ii <= core::scoring::n_score_types; ++ii ) {
-		core::scoring::ScoreType ii_type = static_cast< core::scoring::ScoreType >( ii );
-		if ( target_weights[ ii_type ] == 0.0 && candidate_weights[ ii_type ] == 0.0 ) continue;
-
-		core::Real const difference = target_weights[ ii_type ] - candidate_weights[ ii_type ];
-		distance += difference * difference;
-	}
-
-	return distance;
-}
-
-std::string
-determine_closest_scorefunction(
-	core::scoring::ScoreFunction const & target,
-	utility::vector1< std::string > const & names_of_candidates
+FastRelax::read_script_file(
+	std::string const & script_file,
+	core::Size standard_repeats
 ) {
-	core::scoring::EnergyMap const & target_weights = target.weights();
-
-	core::Real best_distance = 9999999;
-	std::string best_candidate = "ref2015";
-
-	for ( std::string const & candidate : names_of_candidates ) {
-		std::string const filename =
-			basic::database::full_name( "scoring/weights/"+candidate+".wts", true );
-		core::scoring::EnergyMap const dummy_weights =
-			core::scoring::ScoreFunction::extract_weights_from_file( filename );
-
-		core::Real const score = distance( target_weights, dummy_weights );
-
-		if ( score < best_distance ) {
-			best_distance = score;
-			best_candidate = candidate;
-		}
-
-		TR << candidate << " : " << score << std::endl;
-	}
-
-	return best_candidate;
-}
-
-void FastRelax::read_script_file( std::string script_file, core::Size standard_repeats ){
 	using namespace ObjexxFCL;
-	using namespace basic::database;
 	using namespace basic::options;
 
 	runtime_assert( standard_repeats > 0 );
 	script_.clear();
 
-	if ( script_file == "" ) {
-		script_file = "default";
-	} else if ( script_file == "NO CST RAMPING" ) {
-		script_file = "no_cst_ramping";
-	}
-
-	std::string script_file_path = "";
-
-	//General Case: First check if file exists locally, then check database. Add dualspace extension if necessary
-	if ( utility::file::file_exists( script_file ) ) {
-		//the user is providing their own script
-		script_file_path = script_file;
-	} else { //let's look in the database
-
-		//1. Make sure the name has no extension (because we will provide the correct extension here)
-		std::string::size_type const position_of_first_period = script_file.find( '.' );
-		if ( position_of_first_period != std::string::npos ) {
-			handle_script_file_with_period( script_file, position_of_first_period );
-		}
-
-		//2. Make sure the database script info is loaded
-		if ( relax_scripts_in_database_.empty() ) {
-			initialize_relax_scripts_in_database();
-		}
-
-		//3. Check array to see if script is registered
-		bool found_match = false;
-		for ( DatabaseRelaxScript const & database_script : relax_scripts_in_database_ ) {
-			//TR << database_script.title << " ... " << script_file << std::endl;
-			if ( database_script.title != script_file ) continue;
-
-			found_match = true;
-			script_file_path = database_script.title;
-
-			if ( database_script.sfxn_specialized ) {
-				core::scoring::ScoreFunctionOP sfxn = get_scorefxn();
-				if ( sfxn == nullptr ) {
-					sfxn = core::scoring::get_score_function( true );
-				}
-				std::string const sfxn_name =
-					determine_closest_scorefunction( * sfxn, database_script.sfxns_supported );
-				script_file_path += "." + sfxn_name;
-			}
-
-			if ( dualspace_ ) {
-				script_file_path += ".dualspace";
-			}
-
-			script_file_path += ".txt";
-			break;
-		}
-
-		if ( ! found_match ) {
-			utility_exit_with_message( script_file + " does not appear to be a local file or a database match." );
-		}
-
-		TR << "Looking for " << script_file_path << std::endl;
-
-		script_file_path = find_database_path( "sampling/relax_scripts/", script_file_path, true );
-
-		if ( script_file_path.empty() ) {
-			std::string error_message = "Error! Could not find the following relax scripts in the database: " + script_file_path;
-			utility_exit_with_message( error_message );
-		}
-
-	}
-
-	//Okay, script_file_path is populated if we have made it this far
-
-	protocols::relax::RelaxScriptFileContents const & relax_script =
-		protocols::relax::RelaxScriptManager::get_instance()->get_relax_script( script_file_path );
+	protocols::relax::RelaxScriptFileContents const & relax_script (
+		protocols::relax::RelaxScriptManager::get_instance()->get_relax_script( script_file, get_scorefxn(), dualspace_ )
+	);
 	utility::vector1< std::string > const & reflines( relax_script.get_file_lines() );
 	std::vector< std::string > filelines;
 	filelines.reserve( reflines.size() );

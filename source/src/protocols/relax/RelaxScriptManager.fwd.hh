@@ -22,9 +22,12 @@
 namespace protocols {
 namespace relax {
 
+class EnergyMapContainer;
 class RelaxScriptManager;
 class RelaxScriptFileContents;
 
+typedef utility::pointer::shared_ptr< EnergyMapContainer > EnergyMapContainerOP;
+typedef utility::pointer::shared_ptr< EnergyMapContainer const > EnergyMapContainerCOP;
 typedef utility::pointer::shared_ptr< RelaxScriptManager > RelaxScriptManagerOP;
 typedef utility::pointer::shared_ptr< RelaxScriptManager const > RelaxScriptManagerCOP;
 typedef utility::pointer::shared_ptr< RelaxScriptFileContents > RelaxScriptFileContentsOP;
