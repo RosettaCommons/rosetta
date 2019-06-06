@@ -82,7 +82,7 @@ def run_test(test):
     started = datetime.datetime.today()
 
     #command_line = 'SET PYTHONPATH=%CD%;%PYTHONPATH%' if sys.platform == "win32" else 'export PYTHONPATH=`pwd`:$PYTHONPATH && ulimit -t 4096'
-    command_line = 'export PYTHONPATH=`pwd` && unset __PYVENV_LAUNCHER__ && ulimit -t 512'
+    command_line = 'export PYTHONPATH=`pwd` && unset __PYVENV_LAUNCHER__ && ulimit -t {}'.format(Options.timeout)
     command_line += ' && {0} {1} '.format(sys.executable, test)
 
     res, output = execute('\nExecuting %s...' % test, command_line, return_='tuple')
@@ -101,6 +101,11 @@ def main(args):
     parser.add_argument('-j', '--jobs',
       default=1, type=int,
       help="Number of processors to use on when building. (default: use all avaliable memory)",
+    )
+
+    parser.add_argument('--timeout',
+      default=512, type=int,
+      help="maximum time for individual tests to run in seconds",
     )
 
     parser.add_argument("--delete-tests-output", action="store_true", default=False, help="Do not run tests, instead delete tests output files and exit. [off by default]" )
