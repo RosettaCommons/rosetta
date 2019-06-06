@@ -401,6 +401,7 @@ sources = {
         "pilot/jackmaguire" : [
                 "benchmark_k_medoids",
                 "measure_sequence_similarity_to_native",
+                "tensorflow_test2",
         ],
 	"pilot/jadolfbr" : [
 		"rosetta_scripts_jd3",
