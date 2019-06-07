@@ -559,10 +559,10 @@ CoupledMovesProtocol::parse_my_tag(
 	using namespace basic::options::OptionKeys;
 
 	main_task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data_map );
-	score_fxn_ = protocols::rosetta_scripts::parse_score_function( tag, data_map );
+	score_fxn_ = protocols::rosetta_scripts::parse_score_function( tag, "score_fxn_", data_map );
 
 	// Set the backbone mover
-	if ( tag->hasOption( "backbone_mover" ) ) {
+	if ( tag->getOption< bool >( "backbone_mover", false ) ) {
 		std::string backbone_mover = option[ basic::options::OptionKeys::coupled_moves::backbone_mover ];
 
 		if ( backbone_mover == "kic" ) {
@@ -623,6 +623,10 @@ void CoupledMovesProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	attlist + XMLSchemaAttribute(
 		"score_fxn_", xs_string,
 		"score function");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"backbone_mover", xsct_rosetta_bool,
+		"make mover lisen to the coupled_moves related command line flags",
+		std::to_string( false ));
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
