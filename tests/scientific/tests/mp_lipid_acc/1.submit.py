@@ -35,6 +35,7 @@ command_line = '''
 -out:path:pdb {prefix}
 -run:multiple_processes_writing_to_one_directory 1
 -no_color
+-restore_lazaridis_imm_behavior true
 '''.replace('\n', ' ').replace('  ', ' ')
 
 #==> EDIT HERE

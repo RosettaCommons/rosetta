@@ -176,10 +176,10 @@ def write_html(results,thresholds) :
             )
         )
 
-    if len(fails) > 0:
-        return _S_failed_
-    else:
+    if len(fails) == 0 or config['debug']:
         return _S_passed_
+    else:
+        return _S_failed_
 
 with open(_multi_step_result_, 'w') as f:
     overall_result = write_html(results, thresholds)

@@ -19,6 +19,7 @@ import benchmark
 from benchmark import *
 
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into globals
+config = benchmark.config()
 
 def obtain_failures(results):
     fails = []
@@ -77,7 +78,7 @@ def state_of_results(results):
         )
 
     for key, value in results.items():
-        if "FALSE" in value.values():
+        if "FALSE" in value.values() and config['debug'] == False:
             return _S_failed_
 
     return _S_passed_

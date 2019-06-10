@@ -44,6 +44,8 @@ command_line = '''
 -docking::dock_ppk true
 -multiple_processes_writing_to_one_directory true
 -no_color
+-restore_talaris_behavior
+-restore_lazaridis_imm_behavior true
 '''.replace('\n', ' ').replace('  ', ' ')
 
 #==> EDIT HERE
