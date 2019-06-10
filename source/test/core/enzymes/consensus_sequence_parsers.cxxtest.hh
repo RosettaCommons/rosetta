@@ -29,6 +29,7 @@
 
 static basic::Tracer TR("ConcensusSequenceParserTests");
 
+
 class ConsensusSequenceParserTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////
 	// Initialization
@@ -51,12 +52,12 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		TR << "Testing get_3_letter_codes_from_peptide_consensus_sequence()..." << std::endl;
 
-		string const sequence( "HE(S/H/E)ISX" );
+		string const sequence( "HE(S/H/E)IS(A/X[ORN])BUTLOVESJAZZSAX" );
 		vector1< vector1< string > > consensus_residues;
 
 		consensus_residues = core::enzymes::get_3_letter_codes_from_peptide_consensus_sequence( sequence );
 
-		TS_ASSERT_EQUALS( consensus_residues.size(), 6 );
+		TS_ASSERT_EQUALS( consensus_residues.size(), 21 );
 		TS_ASSERT_EQUALS( consensus_residues[ 1 ].size(), 1 );
 		TS_ASSERT_EQUALS( consensus_residues[ 1 ][ 1 ], "HIS" );
 		TS_ASSERT_EQUALS( consensus_residues[ 3 ].size(), 3 );
@@ -64,6 +65,21 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( consensus_residues[ 3 ][ 2 ], "HIS" );
 		TS_ASSERT_EQUALS( consensus_residues[ 3 ][ 3 ], "GLU" );
 		TS_ASSERT_EQUALS( consensus_residues[ 4 ].size(), 1 );
-		TS_ASSERT_EQUALS( consensus_residues[ 6 ].size(), 20 );
+		TS_ASSERT_EQUALS( consensus_residues[ 6 ].size(), 2 );
+		TS_ASSERT_EQUALS( consensus_residues[ 6 ][ 2 ], "ORN" );
+		TS_ASSERT_EQUALS( consensus_residues[ 7 ].size(), 2 );  // B is Asx.
+		TS_ASSERT_EQUALS( consensus_residues[ 7 ][ 1 ], "ASP" );
+		TS_ASSERT_EQUALS( consensus_residues[ 7 ][ 2 ], "ASN" );
+		TS_ASSERT_EQUALS( consensus_residues[ 8 ].size(), 1 );  // U is Sec.
+		TS_ASSERT_EQUALS( consensus_residues[ 8 ][ 1 ], "SEC" );
+		TS_ASSERT_EQUALS( consensus_residues[ 11 ].size(), 1 );  // O is Pyl.
+		TS_ASSERT_EQUALS( consensus_residues[ 11 ][ 1 ], "PYL" );
+		TS_ASSERT_EQUALS( consensus_residues[ 15 ].size(), 2 );  // J is Xle.
+		TS_ASSERT_EQUALS( consensus_residues[ 15 ][ 1 ], "LEU" );
+		TS_ASSERT_EQUALS( consensus_residues[ 15 ][ 2 ], "ILE" );
+		TS_ASSERT_EQUALS( consensus_residues[ 17 ].size(), 2 );  // Z is Glx.
+		TS_ASSERT_EQUALS( consensus_residues[ 17 ][ 1 ], "GLU" );
+		TS_ASSERT_EQUALS( consensus_residues[ 17 ][ 2 ], "GLN" );
+		TS_ASSERT_EQUALS( consensus_residues[ 21 ].size(), 20 );  // X is any CAA.
 	}
 };  // class ConsensusSequenceParserTests

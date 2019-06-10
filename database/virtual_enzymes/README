@@ -16,6 +16,14 @@ The first line is assumed to contain a whitespace-delimited list of the
 following, all of which are required:
 * Consensus sequence &mdash; This may be a 1-letter-code AA or NA sequence or an
 IUPAC carbohydrate sequence.
+  * The parser recognizes the IUPAC-approved one-letter codes B, J, O, U, and Z,
+  which code for Asx, Xle, Pyl, Sec, and Glx, respectively.
+  * X alone is recognized to be any of the 20 canonical amino acids; X followed
+  by square brackets specifies a single non-canonical amino acid by 3-letter
+  code. For example, X[SEP] specifies phosphoserine.
+  * Parentheses are used to specify multiple possible residue types at that
+  site, separated by forward slashes, e.g., (A/G) specifies either Ala or Gly at
+  that position.
 * Sequence type &mdash; This value must be `AA`, `NA`, or SACCHARIDE`, for the 
 three types of sequences accepted.
 * Residue of CS to modify &mdash; An integer representing the sequence position
