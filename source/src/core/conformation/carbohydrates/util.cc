@@ -616,7 +616,7 @@ get_non_NU_TorsionID_from_AtomIDs( Conformation const & conf, utility::vector1< 
 
 		type = BB;
 		torsionnum = 1;
-	} else if ( upstream_bond_atom_parent.rsd() == downstream_bond_atom.rsd() ) {
+	} else if ( upstream_bond_atom.rsd() == downstream_bond_atom.rsd() ) {
 		// If both atoms across the bond are on the same residue, this is NOT a BRANCH torsion.
 		// Search the residue's main-chain atoms to find a match, followed by searching the chi atoms.
 

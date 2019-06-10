@@ -29,6 +29,8 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 
+#include <protocols/simple_moves/BackboneMover.hh>
+
 // Utility headers
 #include <utility/excn/Exceptions.hh>
 
@@ -52,7 +54,7 @@ main( int argc, char *argv[] )
 		using namespace core;
 		using namespace chemical;
 		using namespace pose;
-		//using namespace scoring;
+		using namespace scoring;
 		//using namespace pack::task;
 		//using namespace protocols::minimization_packing;
 
@@ -89,16 +91,22 @@ main( int argc, char *argv[] )
 		//starting_pose.set_psi( 8, 115.0 );
 		//starting_pose.set_omega( 8, 180.0 );
 
-		cout << "Idealized glycan." << endl;
+		//cout << "Idealized glycan." << endl;
 
 		starting_pose.dump_pdb( PATH + "N-linked_test.start.pdb" );
 
 		cout << "Output starting pose." << endl;
 
-		/*
 		// Set up ScoreFunction.
 		ScoreFunctionOP sf( get_score_function() );
+		cout << "Initial score: " << (*sf)( starting_pose ) << endl;
 
+		// Set up Movers.
+		protocols::simple_moves::ShearMover mover;
+		mover.apply( starting_pose );
+		cout << "Post-move score: " << (*sf)( starting_pose ) << endl;
+
+		/*
 		// Set up PackerTask.
 		PackerTaskOP task( TaskFactory::create_packer_task( starting_pose ) );
 		task->restrict_to_repacking();
