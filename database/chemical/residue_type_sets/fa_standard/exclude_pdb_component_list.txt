@@ -59,6 +59,7 @@ DC
 DG
 DT
 DI
+
 # We have a patch that does a better job at this.
 AS
 SC
@@ -68,6 +69,7 @@ RMP
 UFP
 2DT
 SMP
+ATP
 # dideoxy
 DOC
 2DA
