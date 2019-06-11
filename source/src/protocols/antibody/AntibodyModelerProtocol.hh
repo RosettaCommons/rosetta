@@ -27,6 +27,7 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyModelerProtocol.fwd.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.fwd.hh>
+#include <protocols/loops/Loop.fwd.hh>
 
 
 namespace protocols {
@@ -69,32 +70,14 @@ public:
 	void set_refine_h3(bool setting) {
 		refine_h3_ = setting;
 	}
-	void set_H3Filter(bool setting) {
-		h3_filter_ = setting;
-	}
-	void set_CterInsert (bool setting) {
-		cter_insert_ = setting;
-	}
 	void set_sc_min(bool setting) {
 		sc_min_ = setting ;
 	}
 	void set_rt_min(bool setting) {
 		rt_min_ = setting ;
 	}
-	void set_flank_residue_min (bool setting) {
-		flank_residue_min_ = setting;
-	}
 	void set_packonly_after_graft (bool setting) {
 		packonly_after_graft_ = setting;
-	}
-	void set_perturb_type(std::string remodel) {
-		h3_perturb_type_ = remodel;
-	}
-	void set_refine_type (std::string refine)  {
-		h3_refine_type_ = refine;
-	}
-	void set_H3Filter_Tolerance(core::Size const number) {
-		h3_filter_tolerance_ = number;
 	}
 	void set_cst_weight ( core::Real const cst_weight) {
 		cst_weight_ = cst_weight;
@@ -114,20 +97,11 @@ public:
 	void set_constrain_vlvh_qq(bool const setting) {
 		constrain_vlvh_qq_ = setting;
 	}
-	void set_flank_residue_size(core::Real const flank_residue_size) {
-		flank_residue_size_ = flank_residue_size;
-	}
 	void set_middle_pack_min( bool middle_pack_min) {
 		middle_pack_min_ = middle_pack_min;
 	}
-	void set_bad_nter(bool setting) {
-		bad_nter_ = setting;
-	}
 	void set_extend_h3_before_modeling(bool setting) {
 		extend_h3_before_modeling_ = setting;
-	}
-	void set_idealize_h3_stems_before_modeling(bool setting) {
-		idealize_h3_stems_before_modeling_ = setting;
 	}
 
 	void display_constraint_residues( core::pose::Pose & pose );
@@ -140,22 +114,14 @@ private:
 	bool model_h3_;
 	bool snugfit_;
 	bool refine_h3_;
-	bool h3_filter_;
-	bool cter_insert_;
 	bool LH_repulsive_ramp_;
 	bool sc_min_;
 	bool rt_min_;
 	bool camelid_constraints_;
-	bool flank_residue_min_;
-	core::Real flank_residue_size_;
 	bool middle_pack_min_;
 	bool packonly_after_graft_;
-	std::string h3_perturb_type_;
-	std::string h3_refine_type_;
 	core::Real cen_cst_, high_cst_;
-	bool bad_nter_;
 	bool extend_h3_before_modeling_;
-	bool idealize_h3_stems_before_modeling_;
 	bool use_csts_;
 	bool constrain_vlvh_qq_, constrain_cter_;
 	bool auto_constraint_;
@@ -168,8 +134,6 @@ private:
 	bool user_defined_; // for constructor options passed to init
 
 	bool flags_and_objects_are_in_sync_;
-	core::Size h3_filter_tolerance_;
-
 
 	// used as a flag to enable reading in of cst files
 	core::Real cst_weight_;
@@ -201,6 +165,9 @@ private:
 
 	/// @brief Output of various metrics of final model
 	void echo_metrics_to_output( core::pose::Pose & pose );
+
+	/// @brief Access AntibodyInfo to return loop for modeling, current 93-102 in Chothia numbering
+	protocols::loops::Loop get_cdr_h3_loop();
 
 }; // class
 

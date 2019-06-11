@@ -27,9 +27,8 @@
 
 // Package headers
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
-#include <protocols/antibody/RefineOneCDRLoop.fwd.hh>
 #include <protocols/antibody/CDRsMinPackMin.fwd.hh>
-
+#include <protocols/loop_modeler/LoopModeler.fwd.hh>
 
 // Project headers
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -113,6 +112,8 @@ private: // methods
 	void init();
 	void init_for_equal_operator_and_copy_constructor( SnugDock & lhs, SnugDock const & rhs);
 	void init_from_options();
+	// return KIC LoopModeler with some defaults (to avoid code duplication)
+	protocols::loop_modeler::LoopModelerOP refine_loop() const;
 
 private: // data
 	AntibodyInfoOP antibody_info_;
@@ -128,13 +129,9 @@ private: // data
 
 	// Movers
 	moves::MoverContainerOP high_resolution_step_;
-	std::string loop_refinement_method_;
 	antibody::CDRsMinPackMinOP pre_minimization_;
 
-	// H3 filter options
-	bool h3_filter_;
 	bool debug_;
-	Size h3_filter_tolerance_;
 
 	// kink constraint
 	bool high_res_kink_constraint_;

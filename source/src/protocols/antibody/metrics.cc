@@ -453,36 +453,48 @@ cdr_backbone_rmsds(pose::Pose & p1, pose::Pose const & p2, AntibodyInfoOP const 
 
 	// define conserved residues for alignment in Chothia numbering
 	for ( auto i : get_conserved_residue_list('H') ) {
+
 		Size k = p1.pdb_info()->pdb2pose('H', i);
-		Size j = seq_map[k]; // map p1 to p2
-		if ( j==0 ) {
+		if ( k == 0 ) { // res doesnt exist in p1
 			n_zero += 1;
 			continue;
-		} else {
-			TR.Debug << "Mapping H: " << i << " to " << p2.pdb_info()->pose2pdb(j) << std::endl;
-			// map N, CA, C, O
-			for ( std::string const atom_name : {"N", "CA", "C", "O"} ) {
-				id::AtomID const id1( p1.residue(k).atom_index(atom_name), k );
-				id::AtomID const id2( p2.residue(j).atom_index(atom_name), j );
-				fr_maps['H'].set(id1, id2);
-			}
+		}
+
+		Size j = seq_map[k]; // map p1 to p2
+		if ( j==0 ) { // res doesn't exist in p2
+			n_zero += 1;
+			continue;
+		}
+
+		TR.Debug << "Mapping H: " << i << " to " << p2.pdb_info()->pose2pdb(j) << std::endl;
+		// map N, CA, C, O
+		for ( std::string const atom_name : {"N", "CA", "C", "O"} ) {
+			id::AtomID const id1( p1.residue(k).atom_index(atom_name), k );
+			id::AtomID const id2( p2.residue(j).atom_index(atom_name), j );
+			fr_maps['H'].set(id1, id2);
 		}
 	}
 
 	for ( auto i : get_conserved_residue_list('L') ) {
+
 		Size k = p1.pdb_info()->pdb2pose('L', i);
+		if ( k == 0 ) { // res doesnt exist in p1
+			n_zero += 1;
+			continue;
+		}
+
 		Size j = seq_map[k]; // map p1 to p2
 		if ( j==0 ) {
 			n_zero += 1;
 			continue;
-		} else {
-			TR.Debug << "Mapping L:" << i << " to " << p2.pdb_info()->pose2pdb(j) << std::endl;
-			// map N, CA, C, O
-			for ( std::string const atom_name : {"N", "CA", "C", "O"} ) {
-				id::AtomID const id1( p1.residue(k).atom_index(atom_name), k );
-				id::AtomID const id2( p2.residue(j).atom_index(atom_name), j );
-				fr_maps['L'].set(id1, id2);
-			}
+		}
+
+		TR.Debug << "Mapping L:" << i << " to " << p2.pdb_info()->pose2pdb(j) << std::endl;
+		// map N, CA, C, O
+		for ( std::string const atom_name : {"N", "CA", "C", "O"} ) {
+			id::AtomID const id1( p1.residue(k).atom_index(atom_name), k );
+			id::AtomID const id2( p2.residue(j).atom_index(atom_name), j );
+			fr_maps['L'].set(id1, id2);
 		}
 	}
 

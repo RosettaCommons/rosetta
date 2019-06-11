@@ -74,7 +74,7 @@ public:
 		using namespace core;
 		using namespace numeric;
 		// load pose and setup foldtree -- first pose is just VH-VL-Ag, second is VH-Ag_C-Ag_D
-		protocols::antibody::AntibodyInfoOP ab_info( new protocols::antibody::AntibodyInfo(antibody_with_antigen) );
+		protocols::antibody::AntibodyInfoOP ab_info( new protocols::antibody::AntibodyInfo(antibody_with_antigen, protocols::antibody::North) );
 		protocols::antibody::snugdock::SnugDockProtocolOP snugdock( new protocols::antibody::snugdock::SnugDockProtocol() );
 		snugdock->setup_ab_ag_foldtree(antibody_with_antigen, ab_info);
 
@@ -156,43 +156,43 @@ public:
 		// edge #7 is a jump 5-254 (S-Nter) [chain L is 111 residues in size]
 		testEdgeConnectivity(jump_edges[7], 5, 254, 7);
 
-		// test CDR loops in FT start is old loop + 5 (n_vrts) - 3 (as in RefineOneCDRLoop)
-		// test CDR loops in FT stop is old loop + 5 (n_vrts) + 3 (as in RefineOneCDRLoop)
+		// test CDR loops in FT start is old loop + 5 (n_vrts)
+		// test CDR loops in FT stop is old loop + 5 (n_vrts)
 		// cut point is the old cutpoint + 5
 		testEdgeConnectivity( jump_edges[8],
-			(ab_info->get_CDR_loop(protocols::antibody::h1)).start() + 5 - 3,
-			(ab_info->get_CDR_loop(protocols::antibody::h1)).stop() + 5 + 3,
+			(ab_info->get_CDR_loop(protocols::antibody::h1)).start() + 5,
+			(ab_info->get_CDR_loop(protocols::antibody::h1)).stop() + 5,
 			8 );
 		// H2
 		testEdgeConnectivity( jump_edges[9],
-			(ab_info->get_CDR_loop(protocols::antibody::h2)).start() + 5 - 3,
-			(ab_info->get_CDR_loop(protocols::antibody::h2)).stop() + 5 + 3,
+			(ab_info->get_CDR_loop(protocols::antibody::h2)).start() + 5,
+			(ab_info->get_CDR_loop(protocols::antibody::h2)).stop() + 5,
 			9 );
 		// H3
 		testEdgeConnectivity( jump_edges[10],
-			(ab_info->get_CDR_loop(protocols::antibody::h3)).start() + 5 - 3,
-			(ab_info->get_CDR_loop(protocols::antibody::h3)).stop() + 5 + 3,
+			(ab_info->get_CDR_loop(protocols::antibody::h3)).start() + 5,
+			(ab_info->get_CDR_loop(protocols::antibody::h3)).stop() + 5,
 			10 );
 		// L1
 		testEdgeConnectivity( jump_edges[11],
-			(ab_info->get_CDR_loop(protocols::antibody::l1)).start() + 5 - 3,
-			(ab_info->get_CDR_loop(protocols::antibody::l1)).stop() + 5 + 3,
+			(ab_info->get_CDR_loop(protocols::antibody::l1)).start() + 5,
+			(ab_info->get_CDR_loop(protocols::antibody::l1)).stop() + 5,
 			11 );
 		// L2
 		testEdgeConnectivity( jump_edges[12],
-			(ab_info->get_CDR_loop(protocols::antibody::l2)).start() + 5 - 3,
-			(ab_info->get_CDR_loop(protocols::antibody::l2)).stop() + 5 + 3,
+			(ab_info->get_CDR_loop(protocols::antibody::l2)).start() + 5,
+			(ab_info->get_CDR_loop(protocols::antibody::l2)).stop() + 5,
 			12 );
 		// L3
 		testEdgeConnectivity( jump_edges[13],
-			(ab_info->get_CDR_loop(protocols::antibody::l3)).start() + 5 - 3,
-			(ab_info->get_CDR_loop(protocols::antibody::l3)).stop() + 5 + 3,
+			(ab_info->get_CDR_loop(protocols::antibody::l3)).start() + 5,
+			(ab_info->get_CDR_loop(protocols::antibody::l3)).stop() + 5,
 			13 );
 
 
 		// on to the next ab
 		core::import_pose::pose_from_file(antibody_with_antigen, "protocols/antibody/4dka.aho.pdb", core::import_pose::PDB_file);
-		protocols::antibody::AntibodyInfoOP ab_info_2 ( new protocols::antibody::AntibodyInfo(antibody_with_antigen) );
+		protocols::antibody::AntibodyInfoOP ab_info_2 ( new protocols::antibody::AntibodyInfo(antibody_with_antigen, protocols::antibody::North) );
 		protocols::antibody::snugdock::SnugDockProtocolOP snugdock_2( new protocols::antibody::snugdock::SnugDockProtocol() );
 		snugdock_2->setup_ab_ag_foldtree(antibody_with_antigen, ab_info_2);
 
@@ -273,22 +273,22 @@ public:
 		// edge #7 is a jump 5-219 (D-Nter) [chain C is 86 residues in size]
 		testEdgeConnectivity(jump_edges[7], 5, 219, 7);
 
-		// test CDR loops in FT start is old loop + 5 (n_vrts) - 3 (as in RefineOneCDRLoop)
-		// test CDR loops in FT stop is old loop + 5 (n_vrts) + 3 (as in RefineOneCDRLoop)
+		// test CDR loops in FT start is old loop + 5 (n_vrts)
+		// test CDR loops in FT stop is old loop + 5 (n_vrts)
 		// cut point is the old cutpoint + 5
 		testEdgeConnectivity( jump_edges[8],
-			(ab_info_2->get_CDR_loop(protocols::antibody::h1)).start() + 5 - 3,
-			(ab_info_2->get_CDR_loop(protocols::antibody::h1)).stop() + 5 + 3,
+			(ab_info_2->get_CDR_loop(protocols::antibody::h1)).start() + 5,
+			(ab_info_2->get_CDR_loop(protocols::antibody::h1)).stop() + 5,
 			8 );
 		// H2
 		testEdgeConnectivity( jump_edges[9],
-			(ab_info_2->get_CDR_loop(protocols::antibody::h2)).start() + 5 - 3,
-			(ab_info_2->get_CDR_loop(protocols::antibody::h2)).stop() + 5 + 3,
+			(ab_info_2->get_CDR_loop(protocols::antibody::h2)).start() + 5,
+			(ab_info_2->get_CDR_loop(protocols::antibody::h2)).stop() + 5,
 			9 );
 		// H3
 		testEdgeConnectivity( jump_edges[10],
-			(ab_info_2->get_CDR_loop(protocols::antibody::h3)).start() + 5 - 3,
-			(ab_info_2->get_CDR_loop(protocols::antibody::h3)).stop() + 5 + 3,
+			(ab_info_2->get_CDR_loop(protocols::antibody::h3)).start() + 5,
+			(ab_info_2->get_CDR_loop(protocols::antibody::h3)).stop() + 5,
 			10 );
 
 	}

@@ -3897,14 +3897,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='maximum number of tries for the filter',
 			default='5'
 			),
-		Option( 'cter_insert', 'Boolean',
-			desc='insert kind or extend Ab fragments to CDR H3',
-			default='true'
-			),
-		Option( 'flank_residue_min', 'Boolean',
-			desc='minimize flank residues of CDR H3 during high-reso refinement',
-			default='true'
-			),
 		Option( 'sc_min', 'Boolean',
 			desc='minimize the side chain after finishing the rotamer packing',
 			default='false'
@@ -3913,25 +3905,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='minimize the rotamer each packing',
 			default='false'
 			),
-		Option( 'bad_nter', 'Boolean',
-			desc='the n-terminal is bad because of bad H3 grafting',
-			default='true'
-			),
 		Option( 'extend_h3_before_modeling', 'Boolean',
 			desc='extend the H3 to forget the intial H3 configuration',
 			default='true'
-			),
-		Option( 'idealize_h3_stems_before_modeling', 'Boolean',
-			desc='idealize the H3 stem, H3 grafting does not copy the coordinates which makes the grafting bad ',
-			default='true'
-			),
-		Option('remodel', 'String',
-			desc='Choose a perturb method to model H3 in centroid mode',
-			default='legacy_perturb_ccd'
-			),
-		Option('refine', 'String',
-			desc='Choose a refine method to model H3 in high-resol model',
-			default='legacy_perturb_ccd'
 			),
 		Option('centroid_refine', 'String',
 			desc='Choose a refine method to refine a loop in centroid mode',

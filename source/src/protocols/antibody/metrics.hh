@@ -135,7 +135,7 @@ cdr_CN_anchor_distance(core::pose::Pose const & pose, AntibodyInfoCOP ab_info, C
 /// L2 RMS
 /// L3 RMS
 utility::vector1<core::Real>
-cdr_backbone_rmsds(core::pose::Pose & p1, core::pose::Pose const & p2, AntibodyInfoOP const a1, AntibodyInfoOP a2, core::Size aln_thresh = 10);
+cdr_backbone_rmsds(core::pose::Pose & p1, core::pose::Pose const & p2, AntibodyInfoOP const a1, AntibodyInfoOP const a2, core::Size aln_thresh = 10);
 
 }
 }

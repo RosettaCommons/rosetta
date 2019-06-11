@@ -27,7 +27,6 @@
 
 // Package headers
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
-#include <protocols/antibody/RefineOneCDRLoop.fwd.hh>
 
 // Project headers
 #include <core/conformation/Residue.fwd.hh>
@@ -35,6 +34,8 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/docking/DockingProtocol.fwd.hh>
+#include <protocols/loop_modeling/LoopProtocol.fwd.hh>
+#include <protocols/loop_modeler/LoopModeler.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
@@ -101,6 +102,8 @@ private: // methods
 	void set_default();
 
 	docking::DockingProtocolOP docking() const;
+	// return KIC LoopModeler with some defaults (to avoid code duplication)
+	protocols::loop_modeler::LoopModelerOP refine_loop() const;
 
 private: // data
 	AntibodyInfoOP antibody_info_;
@@ -114,15 +117,9 @@ private: // data
 	core::pack::task::TaskFactoryOP tf_;
 
 	// Movers
-	RefineOneCDRLoopOP low_res_refine_cdr_h2_;
-	RefineOneCDRLoopOP low_res_refine_cdr_h3_;
+	protocols::loop_modeler::LoopModelerOP low_res_refine_cdr_h2_;
+	protocols::loop_modeler::LoopModelerOP low_res_refine_cdr_h3_;
 	mutable docking::DockingProtocolOP docking_;
-
-	std::string loop_refinement_method_;
-
-	// H3 filter options
-	bool h3_filter_;
-	Size h3_filter_tolerance_;
 
 	// auto kink-constraint options
 	bool auto_generate_kink_constraint_;

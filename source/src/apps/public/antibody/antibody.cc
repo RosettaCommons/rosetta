@@ -102,7 +102,6 @@ void register_options()
 	NEW_OPT( heavy, "Name of fasta file with antibody heavy chain", "" );
 	NEW_OPT( light, "Name of fasta file with antibody light chain", "" );
 	NEW_OPT( fasta, "Name of fasta file from which both antibody heavy and light chain should be read", "" );
-	//NEW_OPT( n, "Number of templates to generate", 10);
 	NEW_OPT( multi_template_regions, "Specify sequence regions for which multi-template is generated. Avalible regions are: h1, h2, h3, l1, l2, l3, frh, frl, orientation", "orientation");
 	NEW_OPT( no_relax, "Do not relax grafted model", false);
 	NEW_OPT( optimal_graft, "If the graft is not closed, use a new graft mover.  Before any full relax, relax the CDRs with dihedral constraints to make them fit better.   May become default after testing", false);
@@ -129,7 +128,6 @@ void relax_model(core::pose::PoseOP &pose)
 	// I'm pretty sure that this is handled by FastRelax... Yet scary things happen when it is not included.
 	task_factory->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() ); // repack only, no design
 	task_factory->push_back( utility::pointer::make_shared< ExtraRotamers >( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) );
-	task_factory->push_back( utility::pointer::make_shared< ExtraRotamers >( 0 /*all*/, 2 /*ex1*/, 1 /*level*/ ) );
 
 	task_factory->push_back(utility::pointer::make_shared< IncludeCurrent >());
 
@@ -138,8 +136,6 @@ void relax_model(core::pose::PoseOP &pose)
 	// set relax defaults
 	relax_protocol->constrain_relax_to_start_coords( true );
 	relax_protocol->constrain_coords( true );
-	// removed since it slows the protocol down and does not fix all clashes
-	//relax_protocol->coord_constrain_sidechains( true );
 
 	relax_protocol->ramp_down_constraints( false );
 

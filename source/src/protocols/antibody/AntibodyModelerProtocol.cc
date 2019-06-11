@@ -21,6 +21,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -58,9 +59,7 @@
 #include <protocols/antibody/AntibodyModelerProtocol.hh>
 #include <protocols/antibody/AntibodyNumberingConverterMover.hh>
 #include <protocols/antibody/CDRsMinPackMin.hh>
-#include <protocols/antibody/ModelCDRH3.hh>
 #include <protocols/antibody/RefineBetaBarrel.hh>
-#include <protocols/antibody/RefineOneCDRLoop.hh>
 #include <protocols/antibody/metrics.hh>
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/snugdock/SnugDock.hh>
@@ -72,6 +71,8 @@
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/loop_modeling/LoopProtocol.hh>
+#include <protocols/loop_modeler/LoopModeler.hh>
 
 using namespace ObjexxFCL::format;
 
@@ -113,18 +114,13 @@ void AntibodyModelerProtocol::init() {
 void AntibodyModelerProtocol::set_default() {
 	TR <<  "Setting Up defaults.........." << std::endl;
 	model_h3_              = true;
-	h3_filter_         = true;
-	cter_insert_       = true;
 	snugfit_               = true;
 
 	LH_repulsive_ramp_ = true;
 	refine_h3_             = true;
-	flank_residue_min_ = true;
 	middle_pack_min_       = true;
 
-	bad_nter_  = true;
 	extend_h3_before_modeling_ = true;
-	idealize_h3_stems_before_modeling_ = false;
 
 	benchmark_ = false;
 	camelid_constraints_ = false;
@@ -138,14 +134,9 @@ void AntibodyModelerProtocol::set_default() {
 	cst_weight_ = 0.0;
 	cen_cst_ = 10.0;
 	high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
-	flank_residue_size_ = 2;
-	h3_filter_tolerance_ = 20;
 
 	sc_min_ = false;
 	rt_min_ = false;
-
-	h3_perturb_type_ = "legacy_perturb_ccd"; // legacy_perturb_ccd, kic, ccd
-	h3_refine_type_  = "legacy_refine_ccd"; // legacy_refine, kic, ccd
 
 	cdr_constraint_ = nullptr;
 }
@@ -167,19 +158,10 @@ void AntibodyModelerProtocol::register_options() {
 	option.add_relevant( OptionKeys::antibody::all_atom_mode_kink_constraint );
 	option.add_relevant( OptionKeys::in::file::native );
 	option.add_relevant( OptionKeys::antibody::refine_h3 );
-	option.add_relevant( OptionKeys::antibody::h3_filter );
-	option.add_relevant( OptionKeys::antibody::cter_insert );
 	option.add_relevant( OptionKeys::antibody::sc_min);
 	option.add_relevant( OptionKeys::antibody::rt_min);
-	option.add_relevant( OptionKeys::antibody::flank_residue_min);
-	//option.add_relevant( OptionKeys::antibody::flank_residue_size);
-	option.add_relevant( OptionKeys::antibody::remodel);
-	option.add_relevant( OptionKeys::antibody::refine);
 	//option.add_relevant( OptionKeys::antibody::middle_pack_min);
-	option.add_relevant( OptionKeys::antibody::h3_filter_tolerance);
-	option.add_relevant( OptionKeys::antibody::bad_nter);
 	option.add_relevant( OptionKeys::antibody::extend_h3_before_modeling);
-	option.add_relevant( OptionKeys::antibody::idealize_h3_stems_before_modeling);
 	option.add_relevant( OptionKeys::antibody::packonly_after_graft);
 	option.add_relevant( OptionKeys::antibody::run_snugdock);
 }
@@ -199,18 +181,6 @@ void AntibodyModelerProtocol::init_from_options() {
 	}
 	if ( option[ OptionKeys::antibody::refine_h3 ].user() ) {
 		set_refine_h3( option[ OptionKeys::antibody::refine_h3 ]()  );
-	}
-	if ( option[ OptionKeys::antibody::cter_insert ].user() ) {
-		set_CterInsert( option[ OptionKeys::antibody::cter_insert ]() );
-	}
-	if ( option[ OptionKeys::antibody::h3_filter ].user() ) {
-		set_H3Filter ( option[ OptionKeys::antibody::h3_filter ]() );
-	}
-	if ( option[ OptionKeys::antibody::h3_filter_tolerance ].user() ) {
-		set_H3Filter_Tolerance( option[ OptionKeys::antibody::h3_filter_tolerance ]()  );
-	}
-	if ( option[ OptionKeys::antibody::flank_residue_min ].user() ) {
-		set_flank_residue_min ( option[ OptionKeys::antibody::flank_residue_min ]() );
 	}
 	if ( option[ OptionKeys::run::benchmark ].user() ) {
 		set_BenchMark( option[ OptionKeys::run::benchmark ]() );
@@ -242,20 +212,8 @@ void AntibodyModelerProtocol::init_from_options() {
 	if ( option[ OptionKeys::antibody::rt_min ].user() ) {
 		set_rt_min( option[ OptionKeys::antibody::rt_min ]() );
 	}
-	if ( option[ OptionKeys::antibody::remodel ].user() ) {
-		set_perturb_type( option[ OptionKeys::antibody::remodel ]() );
-	}
-	if ( option[ OptionKeys::antibody::refine ].user() ) {
-		set_refine_type( option[ OptionKeys::antibody::refine ]() );
-	}
-	if ( option[ OptionKeys::antibody::bad_nter].user()  ) {
-		set_bad_nter(option[ OptionKeys::antibody::bad_nter]() );
-	}
 	if ( option[ OptionKeys::antibody::extend_h3_before_modeling].user()  ) {
 		set_extend_h3_before_modeling(option[ OptionKeys::antibody::extend_h3_before_modeling]() );
-	}
-	if ( option[ OptionKeys::antibody::idealize_h3_stems_before_modeling].user()  ) {
-		set_idealize_h3_stems_before_modeling(option[ OptionKeys::antibody::idealize_h3_stems_before_modeling]() );
 	}
 
 	run_snugdock_ = option[ OptionKeys::antibody::run_snugdock]();
@@ -423,33 +381,54 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 			}
 		}
 
-		ModelCDRH3OP model_cdrh3( new ModelCDRH3( ab_info_, loop_scorefxn_centroid_) );
-		model_cdrh3->set_perturb_type(h3_perturb_type_); //legacy_perturb_ccd, ccd, kic
-		if ( cter_insert_ ==false ) {
-			model_cdrh3->turn_off_cter_insert();
+		// ModelCDRH3-independent approach to loop modeling
+		protocols::loop_modeler::LoopModelerOP h3_loop_mover ( new protocols::loop_modeler::LoopModeler() );
+
+		// if fragments are given on the command-line, run fKIC, else just NGK (default)
+		if ( basic::options::option[ basic::options::OptionKeys::loops::frag_files ].user() ) {
+			h3_loop_mover->setup_kic_with_fragments_config();
 		}
-		if ( h3_filter_   ==false ) {
-			model_cdrh3->turn_off_H3_filter();
+		// Fyi, this can also be setup for loophash ...
+
+		// only run centroid
+		h3_loop_mover->disable_fullatom_stage();
+
+		// If testing, run reduced cycles
+		if ( basic::options::option[ basic::options::OptionKeys::run::test_cycles ] ) {
+			h3_loop_mover->centroid_stage()->mark_as_test_run();
 		}
-		model_cdrh3->set_bad_nter(bad_nter_);
-		model_cdrh3->set_extend_h3(extend_h3_before_modeling_ );
-		model_cdrh3->set_idealize_h3_stems(idealize_h3_stems_before_modeling_);
-		model_cdrh3->apply( pose );
-		//pose.dump_pdb("1st_finish_model_h3.pdb");
+
+		loops::Loop cdr_h3_loop = get_cdr_h3_loop();
+
+		// setting extended to true ensures LoopBuilder will idealize
+		// residue bond lengths and angles before closure
+		if ( extend_h3_before_modeling_ ) {
+			cdr_h3_loop.set_extended( true );
+		} else {
+			// do not extend loop before modeling
+			// do not rebuild loop before modeling
+			h3_loop_mover->disable_build_stage();
+		}
+
+		// pass loops and score function for both stages
+		h3_loop_mover->set_loop( cdr_h3_loop );
+		h3_loop_mover->set_cen_scorefxn( loop_scorefxn_centroid_ );
+
+		h3_loop_mover->apply( pose );
 
 		// back to fullatom
 		to_full_atom.apply( pose );
 
+		//recover sidechains from starting structures except H3
 		utility::vector1<bool> allow_chi_copy( pose.size(), true );
-		/// FIXME: JQX very redudent loops defition
-		for ( Size ii=ab_info_->get_CDR_loop(h3).start(); ii<=ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
+		for ( Size ii=cdr_h3_loop.start(); ii<=cdr_h3_loop.stop(); ++ii ) {
 			allow_chi_copy[ii] = false;
 		}
-		//recover sidechains from starting structures except H3
 		protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose, allow_chi_copy );
 		recover_sidechains.apply( pose );
 	}
 
+	// Repack loop in full atom
 	// call ConstraintSetMover
 	TR << "Full-atom cst_weight: " << cst_weight_ << std::endl;
 	if (  cst_weight_ != 0.0 && ! auto_constraint_ ) {
@@ -457,13 +436,11 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		cdr_constraint_->apply( pose );
 	}
 
-	//if(middle_pack_min_){
 	CDRsMinPackMinOP cdrs_min_pack_min( new CDRsMinPackMin(ab_info_) );
 	if ( sc_min_ ) cdrs_min_pack_min->set_sc_min(true);
 	if ( rt_min_ ) cdrs_min_pack_min->set_rt_min(true);
 	cdrs_min_pack_min -> set_turnoff_minimization(packonly_after_graft_);
 	cdrs_min_pack_min -> apply(pose);
-	//}
 
 	// Step 2: SnugFit: relieve the clashes between L-H
 	//JAB - Why are we refining the LH chain in a class called RefineBetaBarrel?????
@@ -487,15 +464,28 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 	// Step 3: Full Atom Relax
 	if ( refine_h3_ ) {
-		RefineOneCDRLoopOP cdr_highres_refine_( new RefineOneCDRLoop(ab_info_, h3_refine_type_, loop_scorefxn_highres_) );
-		cdr_highres_refine_ -> set_refine_mode(h3_refine_type_);
-		cdr_highres_refine_ -> set_h3_filter(h3_filter_);
-		cdr_highres_refine_ -> set_num_filter_tries(h3_filter_tolerance_);
-		cdr_highres_refine_ -> set_flank_relax(flank_residue_min_);
-		if ( flank_residue_min_ ) cdr_highres_refine_->set_flank_size(flank_residue_size_);
-		cdr_highres_refine_ -> pass_start_pose(start_pose_);
-		cdr_highres_refine_ -> apply(pose);
-		//pose.dump_pdb("3rd_finish_h3_refine.pdb");
+		loops::Loop cdr_h3_loop = get_cdr_h3_loop();
+
+		protocols::loop_modeler::LoopModelerOP refine_kic ( new protocols::loop_modeler::LoopModeler() );
+		// if fragments are given on the command-line, run fKIC, else just NGK (default)
+		if ( basic::options::option[ basic::options::OptionKeys::loops::frag_files ].user() ) {
+			refine_kic->setup_kic_with_fragments_config();
+		}
+		// do not build
+		refine_kic->disable_build_stage();
+		// pose is fullatom, disable centroid
+		refine_kic->disable_centroid_stage();
+		// pass cdrh3 loop, defined above
+		refine_kic->set_loop( cdr_h3_loop );
+		// pass scorefunction from above
+		refine_kic->set_fa_scorefxn( loop_scorefxn_highres_ );
+		// If testing, run reduced cycles
+		if ( basic::options::option[ basic::options::OptionKeys::run::test_cycles ] ) {
+			refine_kic->fullatom_stage()->mark_as_test_run();
+		}
+		// run
+		refine_kic->apply( pose );
+
 	}
 
 	//FoldTree, MoveMap, TaskFactory and Variants will be taken care of inside
@@ -506,6 +496,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose) ) ;
 
 	// Redefining CDR H3 cutpoint variants
+	// remove this if FT gymnastics are no longer a thing (they shouldn't be)
 	loops::remove_cutpoint_variants( pose, true );
 	loops::add_cutpoint_variants( pose );
 
@@ -555,6 +546,20 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 }// end apply
 
+
+loops::Loop AntibodyModelerProtocol::get_cdr_h3_loop() {
+	// get loop from antibody info
+	loops::Loop cdr_h3_loop( ab_info_->get_CDR_loop(h3) );
+	// Chothia is the default numbering and CDR definition convention
+	// under the Chothia definition of the CDR H3, structural divergence occurs
+	// at residue 93, not 95 (which is the defined loop start), so we alter this here.
+	cdr_h3_loop = loops::Loop( cdr_h3_loop.start() - 2,
+		cdr_h3_loop.stop(),
+		cdr_h3_loop.cut(),
+		0,
+		true );
+	return cdr_h3_loop;
+}
 
 void AntibodyModelerProtocol::echo_metrics_to_output(core::pose::Pose & pose) {
 
@@ -672,17 +677,11 @@ std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_
 	// Display the state of the antibody modeler protocol that will be used
 	out << line_marker << std::endl;
 	out << line_marker << " ******  model_h3  :  "          << ab_m.model_h3_            << std::endl;
-	out << line_marker << "         h3_perturb_type     = '"<< ab_m.h3_perturb_type_<<"'"<< std::endl;
-	out << line_marker << "         cter_insert         = " << ab_m.cter_insert_         << std::endl;
-	out << line_marker << "         h3_filter           = " << ab_m.h3_filter_           << std::endl;
 	out << line_marker << std::endl;
 	out << line_marker << " ******  snugfit   :  "          << ab_m.snugfit_             << std::endl;
 	out << line_marker << "         LH_repulsive_ramp   = " << ab_m.LH_repulsive_ramp_   << std::endl;
 	out << line_marker << std::endl;
 	out << line_marker << " ******  refine_h3 :  "          << ab_m.refine_h3_           << std::endl;
-	out << line_marker << "         h3_refine_type      = '"<< ab_m.h3_refine_type_<<"'" << std::endl;
-	out << line_marker << "         h3_filter           = " << ab_m.h3_filter_           << std::endl;
-	out << line_marker << "         h3_filter_tolerance = " << ab_m.h3_filter_tolerance_ << std::endl;
 	out << line_marker << std::endl;
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 	return out;

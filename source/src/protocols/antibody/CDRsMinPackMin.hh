@@ -28,7 +28,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 
-#include <protocols/antibody/ModelCDRH3.fwd.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/CDRsMinPackMin.fwd.hh>
 #include <protocols/antibody/RefineBetaBarrel.fwd.hh>

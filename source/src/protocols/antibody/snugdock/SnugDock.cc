@@ -23,9 +23,10 @@
 // Package headers
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
+#include <protocols/loop_modeling/LoopProtocol.hh>
+#include <protocols/loop_modeler/LoopModeler.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/CDRsMinPackMin.hh>
-#include <protocols/antibody/RefineOneCDRLoop.hh>
 #include <protocols/antibody/design/util.hh>
 
 // Project headers
@@ -51,6 +52,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -71,10 +73,7 @@ namespace snugdock {
 /// @brief default constructor
 SnugDock::SnugDock() :
 	docking::DockingHighRes(),
-	loop_refinement_method_( "refine_kic" ),
-	h3_filter_( false ),
 	debug_( false ),
-	h3_filter_tolerance_( 20 ),
 	high_res_kink_constraint_( false ),
 	number_of_high_resolution_cycles_( 50 )
 {
@@ -146,21 +145,14 @@ void SnugDock::init_for_equal_operator_and_copy_constructor(SnugDock & lhs, Snug
 
 	// Movers
 	lhs.high_resolution_step_ = rhs.high_resolution_step_;
-	lhs.loop_refinement_method_ = rhs.loop_refinement_method_;
 	lhs.pre_minimization_ = rhs.pre_minimization_;
 
-	// H3 filter options
-	lhs.h3_filter_ = rhs.h3_filter_;
 	lhs.debug_ = rhs.debug_;
-	lhs.h3_filter_tolerance_ = rhs.h3_filter_tolerance_;
 
 	lhs.number_of_high_resolution_cycles_ = rhs.number_of_high_resolution_cycles_;
 }
 void SnugDock::set_default() {
 
-	loop_refinement_method_ = "refine_kic";
-	h3_filter_ = false;
-	h3_filter_tolerance_= 20;
 	number_of_high_resolution_cycles_ = 50;
 	high_res_kink_constraint_ = false;
 
@@ -170,18 +162,7 @@ void SnugDock::init_from_options() {
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[ basic::options::OptionKeys::antibody::refine ].user() ) {
-		loop_refinement_method_  = option[ basic::options::OptionKeys::antibody::refine ]() ;
-	}
-	/// Allow h3_filter to be turned on at expense of extra loop modeling
-	if ( option[ basic::options::OptionKeys::antibody::h3_filter ].user() ) {
-		h3_filter_  = option[ basic::options::OptionKeys::antibody::h3_filter ]() ;
-	}
-	if ( option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ].user() ) {
-		h3_filter_tolerance_  = option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ]() ;
-	}
-
-	if ( option[ run::test_cycles ].user() ) {
+	if ( option[ run::test_cycles ] ) {
 		/// Ideally we would test a larger number of cycles because we are using a random mover in the apply,
 		/// but because each submove can be quite long, this would take far too long.
 		/// TODO: Create a scientific test for SnugDock that is run regularly.
@@ -338,11 +319,18 @@ void SnugDock::setup_objects( Pose const & pose ) {
 		high_res_loop_refinement_scorefxn->set_weight( scoring::angle_constraint, 1.0 );
 	}
 
-	RefineOneCDRLoopOP refine_cdr_h2_base( new RefineOneCDRLoop( CDR_loops_[h2], loop_refinement_method_, high_res_loop_refinement_scorefxn ) );
-	TrialMoverOP refine_cdr_h2( new TrialMover( refine_cdr_h2_base, mc_ ) );
+	protocols::loop_modeler::LoopModelerOP refine_kic_h3 = refine_loop();
+	protocols::loop_modeler::LoopModelerOP refine_kic_h2 = refine_loop();
 
-	RefineOneCDRLoopOP refine_cdr_h3_base( new RefineOneCDRLoop( CDR_loops_[h3], loop_refinement_method_, high_res_loop_refinement_scorefxn ) );
-	TrialMoverOP refine_cdr_h3( new TrialMover( refine_cdr_h3_base, mc_ ) );
+	// pass loops -- double check definition (is it -2, like Brians?)
+	refine_kic_h3->set_loop( CDR_loops_[h3] );
+	refine_kic_h2->set_loop( CDR_loops_[h2] );
+	// pass scorefunction from above
+	refine_kic_h3->set_fa_scorefxn( high_res_loop_refinement_scorefxn );
+	refine_kic_h2->set_fa_scorefxn( high_res_loop_refinement_scorefxn );
+
+	TrialMoverOP refine_cdr_h3( new TrialMover( refine_kic_h3, mc_ ) );
+	TrialMoverOP refine_cdr_h2( new TrialMover( refine_kic_h2, mc_ ) );
 
 
 	/// This is a very succinct description of what this mover does.  For a description in words, see the implementation
@@ -372,6 +360,39 @@ void SnugDock::setup_objects( Pose const & pose ) {
 	}
 }
 
+protocols::loop_modeler::LoopModelerOP SnugDock::refine_loop() const {
+	protocols::loop_modeler::LoopModelerOP refine_kic ( utility::pointer::make_shared<  protocols::loop_modeler::LoopModeler >() );
+
+	// if fragments are given on the command-line, run fKIC, else just NGK (default)
+	if ( basic::options::option[ basic::options::OptionKeys::loops::frag_files ].user() ) {
+		refine_kic->setup_kic_with_fragments_config();
+	}
+
+	// do not build
+	refine_kic->disable_build_stage();
+
+	// pose is fullatom, disable centroid
+	refine_kic->disable_centroid_stage();
+
+	// do not change FT during loop modeling
+	refine_kic->trust_fold_tree();
+
+	// emulate outer_cycles=2, inner_cycles=20
+	// outer_cycles corresponds to score function ramping
+	// inner_cycles corresponds to temperature ramping
+	// 5 is default
+	refine_kic->fullatom_stage()->set_sfxn_cycles(2);
+	// 10 * loop_length is default
+	refine_kic->fullatom_stage()->set_temp_cycles(20, false); // false = do not mutliply by loop len
+	// 2 is default
+	refine_kic->fullatom_stage()->set_mover_cycles(2); // has repacking which is slow
+	// If testing, run reduced cycles
+	if ( basic::options::option[ basic::options::OptionKeys::run::test_cycles ] ) {
+		refine_kic->fullatom_stage()->mark_as_test_run();
+	}
+	return refine_kic;
+}
+
 void
 SnugDock::show( std::ostream & out ) const {
 	out << *this;
@@ -398,11 +419,11 @@ std::ostream & operator<<(std::ostream& out, SnugDock const & ) {
 	out << "/// 3. 10% Select all CDRs for minimization" << std::endl;
 	out << "///        a. Apply CDRsMinPackMin" << std::endl;
 	out << "///        b. Monte Carlo accept or reject" << std::endl;
-	out << "/// 4.  5% Perturb CDR H2 loop by small, shear and CCD moves followed by minimization" << std::endl;
-	out << "///        a. Apply RefineOneCDRLoop (AntibodyInfo will setup the FoldTree for H2 refinement)" << std::endl;
+	out << "/// 4.  5% Perturb CDR H2 loop by small, shear and NGK moves followed by minimization" << std::endl;
+	out << "///        a. Apply LoopModeler (SnugDock will setup the FoldTree for H2 refinement)" << std::endl;
 	out << "///        b. Monte Carlo accept or reject" << std::endl;
 	out << "/// 5.  5% Perturb CDR H3 loop by small, shear and CCD moves followed by minimization" << std::endl;
-	out << "///        a. Apply RefineOneCDRLoop (AntibodyInfo will setup the FoldTree for H3 refinement)" << std::endl;
+	out << "///        a. Apply LoopModeler (SnugDock will setup the FoldTree for HH refinement)" << std::endl;
 	out << "///        b. Monte Carlo accept or reject" << std::endl;
 	out << "///" << std::endl;
 	out << "//////////////////////////////////////////////////////////////////////////////////////////////" << std::endl;

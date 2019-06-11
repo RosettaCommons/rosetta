@@ -23,10 +23,11 @@
 // Package headers
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyNumberingConverterMover.hh>
-#include <protocols/antibody/RefineOneCDRLoop.hh>
 #include <protocols/antibody/snugdock/SnugDock.hh>
 #include <protocols/antibody/util.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loop_modeling/LoopProtocol.hh>
+#include <protocols/loop_modeler/LoopModeler.hh>
 
 // Project headers
 #include <protocols/docking/DockingProtocol.hh>
@@ -60,6 +61,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/tools/make_vector1.hh>
@@ -128,7 +130,6 @@ bool SnugDockProtocol::reinitialize_for_new_input() const {
 void SnugDockProtocol::register_options() {
 	docking::DockingProtocol::register_options();
 	SnugDock::register_options();
-	RefineOneCDRLoop::register_options();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// END OF BOILER PLATE CODE //////////////////////////////////////
@@ -151,33 +152,17 @@ void SnugDockProtocol::init_for_equal_operator_and_copy_constructor( SnugDockPro
 	lhs.low_res_refine_cdr_h3_ = rhs.low_res_refine_cdr_h3_;
 	lhs.docking_ = rhs.docking_;
 
-	lhs.loop_refinement_method_ = rhs.loop_refinement_method_;
 }
 
 void SnugDockProtocol::set_default() {
-	loop_refinement_method_ = "refine_kic";
-	h3_filter_ = false; // TO DO, REMOVE THIS FILTER COMPLETELY (IF KINK CST WORKS)
-	h3_filter_tolerance_ = 20;
 	auto_generate_kink_constraint_ = false;
 	high_res_kink_constraint_ = false;
 	ab_has_light_chain_ = false;
 }
 
 void SnugDockProtocol::init_from_options() {
-	/// TODO: Allow the refinement method to be set via a mutator and from the options system
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-
-	if ( option[ OptionKeys::antibody::refine ].user() ) {
-		loop_refinement_method_  = option[ OptionKeys::antibody::centroid_refine ]() ;
-	}
-	/// Allow h3_filter to be turned on at cost of extra loop modeling
-	if ( option[ OptionKeys::antibody::h3_filter ].user() ) {
-		h3_filter_  = option[ OptionKeys::antibody::h3_filter ]() ;
-	}
-	if ( option[ OptionKeys::antibody::h3_filter_tolerance ].user() ) {
-		h3_filter_tolerance_  = option[ OptionKeys::antibody::h3_filter_tolerance ]() ;
-	}
 
 	if ( option[ OptionKeys::antibody::auto_generate_kink_constraint ].user() ) {
 		auto_generate_kink_constraint( option[ OptionKeys::antibody::auto_generate_kink_constraint ]() );
@@ -258,12 +243,13 @@ void SnugDockProtocol::setup_objects( Pose & pose ) {
 	docking()->add_additional_low_resolution_step( low_res_refine_cdr_h3_ );
 
 	SnugDockOP high_resolution_phase( new SnugDock );
+	// if debugging
+	//high_resolution_phase->debug();
 	// pass info on new FT here!
 	high_resolution_phase->set_CDR_loops(CDR_loops_);
 	high_resolution_phase->set_ab_has_light_chain(ab_has_light_chain_);
 	high_resolution_phase->set_task_factory(tf_);
 	if ( ab_has_light_chain_ ) { high_resolution_phase->set_vh_vl_jump( vh_vl_jump_ ); }
-	// high_resolution_phase->set_antibody_info( antibody_info_ ); // old way
 	// pass on kink constraint to high-res docking mover
 	if ( high_res_kink_constraint() ) { high_resolution_phase->high_res_kink_constraint( true ); }
 	docking()->set_docking_highres_mover( high_resolution_phase );
@@ -293,21 +279,15 @@ void SnugDockProtocol::setup_loop_refinement_movers() {
 		low_res_loop_refinement_scorefxn->set_weight( scoring::angle_constraint, 1.0 );
 	}
 
-	// these should use loops output from the new foldtree function
-	low_res_refine_cdr_h2_ = utility::pointer::make_shared< RefineOneCDRLoop >(
-		CDR_loops_[h2],
-		loop_refinement_method_,
-		low_res_loop_refinement_scorefxn
-	);
+	low_res_refine_cdr_h2_ = refine_loop();
+	low_res_refine_cdr_h3_ = refine_loop();
+	// pass Loop objects from above
+	low_res_refine_cdr_h2_->set_loop( CDR_loops_[h2] );
+	low_res_refine_cdr_h3_->set_loop( CDR_loops_[h3] );
+	// pass scorefunction from above
+	low_res_refine_cdr_h2_->set_cen_scorefxn( low_res_loop_refinement_scorefxn );
+	low_res_refine_cdr_h3_->set_cen_scorefxn( low_res_loop_refinement_scorefxn );
 
-	low_res_refine_cdr_h3_ = utility::pointer::make_shared< RefineOneCDRLoop >(
-		CDR_loops_[h3],
-		loop_refinement_method_,
-		low_res_loop_refinement_scorefxn
-	);
-
-	low_res_refine_cdr_h3_->set_h3_filter( h3_filter_ );
-	low_res_refine_cdr_h3_->set_num_filter_tries( h3_filter_tolerance_ );
 }
 
 // add function to set up the taskfactor with the new fold tree
@@ -417,11 +397,6 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 	// initialize PDBInfo
 	pose_vrt->pdb_info( utility::pointer::make_shared< PDBInfo >( *pose_vrt, true ) );
 
-	// Set number of flanking residues about CDR loops.
-	// If LoopOP is passed to any CDR mover, it cannot alter the FT and set flanking,
-	// so flanking residues have to be set here. Default is 2.
-	core::Size n_flanking_res = 2;
-
 	// counter for number of VRTs
 	core::Size n_vrts = 0;
 
@@ -476,30 +451,30 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 
 	// connect VRTs
 	// 1->2 is always VRT_AB_COM -- VRT_AG_COM
-	//TR << "Adding edge from Ab_COM (" << ab_com_resnum << ") to Ag_COM (" << ag_com_resnum << "), #" << current_jump_num << std::endl;
+	TR.Debug << "Adding edge from Ab_COM (" << ab_com_resnum << ") to Ag_COM (" << ag_com_resnum << "), #" << current_jump_num << std::endl;
 	ft->add_edge(ab_com_resnum, ag_com_resnum, current_jump_num);
 	++current_jump_num; // increment jump number (jump 1, initially)
 	// 2->3 will be Ab-VH
-	//TR << "Adding edge from Ab_COM (" << ab_com_resnum << ") to H (" << com_resnum_from_chain['H'] << "), #" << current_jump_num << std::endl;
+	TR.Debug << "Adding edge from Ab_COM (" << ab_com_resnum << ") to H (" << com_resnum_from_chain['H'] << "), #" << current_jump_num << std::endl;
 	ft->add_edge(ab_com_resnum, com_resnum_from_chain['H'], current_jump_num);
 	++current_jump_num;
 	// Vh-Vl is 3->4, if present
 	if ( ab_has_light_chain_ ) {
-		//TR << "Adding edge from H(" << com_resnum_from_chain['H'] << ") to L(" << com_resnum_from_chain['L'] << "), #" << current_jump_num << std::endl;
+		TR.Debug << "Adding edge from H(" << com_resnum_from_chain['H'] << ") to L(" << com_resnum_from_chain['L'] << "), #" << current_jump_num << std::endl;
 		ft->add_edge(com_resnum_from_chain['H'], com_resnum_from_chain['L'], current_jump_num);
 		vh_vl_jump_ = current_jump_num;
 		++current_jump_num;
 	}
 
 	// add edge for first antigen chain (ALWAYS present, special case jumps from COM)
-	//TR << "Adding edge from Ag_COM (" << ag_com_resnum << ") to Ag_X (" << com_resnum_from_chain[antigen_chain_chars.front()] << "), #" << current_jump_num << std::endl;
+	TR.Debug << "Adding edge from Ag_COM (" << ag_com_resnum << ") to Ag_X (" << com_resnum_from_chain[antigen_chain_chars.front()] << "), #" << current_jump_num << std::endl;
 	ft->add_edge(ag_com_resnum, com_resnum_from_chain[antigen_chain_chars.front()], current_jump_num);
 	++current_jump_num;
 	// add edges for all other antigen chains, jump from each other
 	// hence int iteration rather than auto
 	if ( antigen_chain_chars.size() > 1 ) {
 		for ( core::Size i = 2; i <= antigen_chain_chars.size(); ++i ) {
-			//TR << "Adding edge from Ag_X (" << com_resnum_from_chain[antigen_chain_chars[i-1]] << ") to Ag_Y (" << com_resnum_from_chain[antigen_chain_chars[i]] << "), #" << current_jump_num << std::endl;
+			TR.Debug << "Adding edge from Ag_X (" << com_resnum_from_chain[antigen_chain_chars[i-1]] << ") to Ag_Y (" << com_resnum_from_chain[antigen_chain_chars[i]] << "), #" << current_jump_num << std::endl;
 			ft->add_edge(com_resnum_from_chain[antigen_chain_chars[i-1]], com_resnum_from_chain[antigen_chain_chars[i]], current_jump_num);
 			++current_jump_num;
 		}
@@ -533,7 +508,7 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 	}
 
 	// since new pose only contains antibody residues, we can get antibody COM here!
-	TR << "Calculating Ab COM from residue " << n_vrts + 1 << " to " << pose_vrt->size() << std::endl;
+	TR.Debug << "Calculating Ab COM from residue " << n_vrts + 1 << " to " << pose_vrt->size() << std::endl;
 
 	ResidueOP ab_com_VRT = place_VRT_at_residue_COM( *pose_vrt, n_vrts + 1, pose_vrt->size() );
 
@@ -566,7 +541,7 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 	ResidueOP antigen_com_VRT = place_VRT_at_residue_COM( pose, res_in_antigen );
 
 	// print and set COMs
-	//TR << "VRT residue nearest to antibody COM is " << ab_com_VRT << std::endl;
+	TR.Debug << "VRT residue nearest to antibody COM is " << ab_com_VRT << std::endl;
 
 	// set ORIG to CA COM
 	pose_vrt->set_xyz( core::id::AtomID( 1, ab_com_resnum ), ab_com_VRT->xyz("ORIG") );
@@ -575,7 +550,7 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 	// set Y to C (of res - 1) COM (N parent)
 	pose_vrt->set_xyz( core::id::AtomID( 3, ab_com_resnum ), ab_com_VRT->xyz("Y"));
 
-	//TR << "VRT residue nearest to antigen COM is " << antigen_com_VRT << std::endl;
+	TR.Debug << "VRT residue nearest to antigen COM is " << antigen_com_VRT << std::endl;
 	// set ORIG to CA COM
 	pose_vrt->set_xyz( core::id::AtomID( 1, ag_com_resnum ), antigen_com_VRT->xyz("ORIG"));
 	// set X to N COM
@@ -585,7 +560,7 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 
 	// COMs for individual chains
 	for ( auto chain : antibody_chain_chars ) {
-		//TR << "VRT residue nearest to chain " << chain << " is " << com_VRT_from_chain[chain] << std::endl;
+		TR.Debug << "VRT residue nearest to chain " << chain << " is " << com_VRT_from_chain[chain] << std::endl;
 		// set ORIG to CA COM
 		pose_vrt->set_xyz( core::id::AtomID( 1, com_resnum_from_chain[chain] ), com_VRT_from_chain[chain]->xyz("ORIG"));
 		// set X to N COM
@@ -594,7 +569,7 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 		pose_vrt->set_xyz( core::id::AtomID( 3, com_resnum_from_chain[chain] ), com_VRT_from_chain[chain]->xyz("Y"));
 	}
 	for ( auto chain : antigen_chain_chars ) {
-		//TR << "VRT residue nearest to chain " << chain << " is " << com_VRT_from_chain[chain] << std::endl;
+		TR.Debug << "VRT residue nearest to chain " << chain << " is " << com_VRT_from_chain[chain] << std::endl;
 		// set ORIG to CA COM
 		pose_vrt->set_xyz( core::id::AtomID( 1, com_resnum_from_chain[chain] ), com_VRT_from_chain[chain]->xyz("ORIG"));
 		// set X to N COM
@@ -630,8 +605,8 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 
 	all_chain_ends.push_back(pose_vrt->size()); // last chain end
 
-	TR << "Chain starts: " << all_chain_starts << "." << std::endl;
-	TR << "Chain ends: " << all_chain_ends << "." << std::endl;
+	TR.Debug << "Chain starts: " << all_chain_starts << "." << std::endl;
+	TR.Debug << "Chain ends: " << all_chain_ends << "." << std::endl;
 
 	// sanity check
 	if ( all_chain_ends.size() != all_chain_starts.size() ) {
@@ -646,7 +621,7 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 		core::Size cter_resn = all_chain_ends[i];
 
 		// get com_vert resnum by matching chains, assumes correctly assigned chains
-		TR << "Adding jump from COM VRT to N-term: " << com_resnum_from_chain[pose_vrt->pdb_info()->chain(nter_resn)] << " " << nter_resn << "." << std::endl;
+		TR.Debug << "Adding jump from COM VRT to N-term: " << com_resnum_from_chain[pose_vrt->pdb_info()->chain(nter_resn)] << " " << nter_resn << "." << std::endl;
 		ft->add_edge(com_resnum_from_chain[pose_vrt->pdb_info()->chain(nter_resn)], nter_resn, current_jump_num);
 		++current_jump_num;
 
@@ -685,7 +660,7 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 	// first, get old CDR loops
 	// careful, this returns the default definition of the loops
 	//loops::LoopsOP old_cdr_loops = antibody_info->get_CDR_loops( pose );
-	AntibodyInfoOP HL_info( new AntibodyInfo(*ab_only) );
+	AntibodyInfoOP HL_info( new AntibodyInfo(*ab_only, North) );
 	loops::LoopsOP old_cdr_loops = HL_info->get_CDR_loops( *ab_only );
 	// try me if above fails
 	//loops::LoopsOp old_cdr_loops = loops::LoopsOp( new loops::Loops() );
@@ -700,10 +675,10 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 	for ( auto loops_it = old_cdr_loops->begin(); loops_it != old_cdr_loops->end(); ++loops_it ) {
 
 		loops::Loop loop = *loops_it;
-		//TR << "Adding loop: " << loop_enum_counter << std::endl;
+		TR.Debug << "Adding loop: " << loop_enum_counter << std::endl;
 
-		//TR << "Old loop position: " << loop.start() << " " << loop.stop() << " " << loop.cut() << std::endl;
-		//TR << "Old loop residues: " << ab_only->residue(loop.start()).name() << " " << ab_only->residue(loop.stop()).name() << " " << ab_only->residue(loop.cut()).name() << std::endl;
+		TR.Debug << "Old loop position: " << loop.start() << " " << loop.stop() << " " << loop.cut() << std::endl;
+		TR.Debug << "Old loop residues: " << ab_only->residue(loop.start()).name() << " " << ab_only->residue(loop.stop()).name() << " " << ab_only->residue(loop.cut()).name() << std::endl;
 		// create new loop
 		// loops are ordered by enum h1 (1), h2 (2), h3 (3), l1 (4), l2 (5), l3 (6) ...
 		// hence the counter
@@ -711,13 +686,11 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 		++loop_enum_counter;
 
 		// update fold tree
-		// add flanking residues, necessary for KIC/CCD flank relax
-		//TR << "New loop position: " << loop.start() + n_vrts << " " << loop.stop() + n_vrts << " " << loop.cut() + n_vrts << std::endl;
-		//TR << "New loop residues: " << pose_vrt->residue(loop.start() + n_vrts).name() << " " << pose_vrt->residue(loop.stop() + n_vrts).name() << " " << pose_vrt->residue(loop.cut() + n_vrts).name() << std::endl;
+		// do not add flanking residues, rely on North (structural) CDR definition
+		TR.Debug << "New loop position: " << loop.start() + n_vrts << " " << loop.stop() + n_vrts << " " << loop.cut() + n_vrts << std::endl;
+		TR.Debug << "New loop residues: " << pose_vrt->residue(loop.start() + n_vrts).name() << " " << pose_vrt->residue(loop.stop() + n_vrts).name() << " " << pose_vrt->residue(loop.cut() + n_vrts).name() << std::endl;
 
-		//TR << "New jump: " << loop.start() - 1 - n_flanking_res + n_vrts << " " << loop.stop() + 1 + n_flanking_res + n_vrts << " " << loop.cut() + n_vrts << std::endl;
-		// TR << "New residues: " << pose_vrt->residue(loop.start()).name() << " " << pose_vrt->residue(loop.stop()).name() << " " << pose_vrt->residue(loop.cut()).name() << std::endl;
-		ft->new_jump(loop.start() - 1 - n_flanking_res + n_vrts, loop.stop() + 1 + n_flanking_res + n_vrts, loop.cut() + n_vrts);
+		ft->new_jump(loop.start() + n_vrts, loop.stop() + n_vrts, loop.cut() + n_vrts);
 	}
 	// easy!
 
@@ -737,6 +710,31 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 	pose.pdb_info()->obsolete(false);
 	//pose.dump_pdb("universal_foldtree_pose.pdb");
 	// TODO: write function to remove VRTs and restore simple FT so -native flag doesn't break
+}
+
+protocols::loop_modeler::LoopModelerOP SnugDockProtocol::refine_loop() const {
+	protocols::loop_modeler::LoopModelerOP refine_kic ( utility::pointer::make_shared<  protocols::loop_modeler::LoopModeler >() );
+
+	// if fragments are given on the command-line, run fKIC, else just NGK (default)
+	if ( basic::options::option[ basic::options::OptionKeys::loops::frag_files ].user() ) {
+		refine_kic->setup_kic_with_fragments_config();
+	}
+
+	// do not build
+	refine_kic->disable_build_stage();
+
+	// pose is centroid, disable fullatom
+	refine_kic->disable_fullatom_stage();
+
+	// do not change FT during loop modeling
+	refine_kic->trust_fold_tree();
+
+	// If testing, run reduced cycles
+	if ( basic::options::option[ basic::options::OptionKeys::run::test_cycles ] ) {
+		refine_kic->centroid_stage()->mark_as_test_run();
+	}
+
+	return refine_kic;
 }
 
 docking::DockingProtocolOP SnugDockProtocol::docking() const {

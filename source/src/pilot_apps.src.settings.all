@@ -486,6 +486,10 @@ sources = {
 		"jd2test", # /* Steven Lewis, src/apps/pilot/jd2/jd2test.readme, test/integration/tests/jd2test/ */
 		#"jd2memtest",
 	],
+	"pilot/jeliazkov" : [
+		"calc_irms_despite_mismatch", 
+		"calc_cdr_rmsd", 
+	],
 	"pilot/jianqing" : [
 		#"antibody_assemble_CDRs",
 		#"antibody_model_CDR_H3",
