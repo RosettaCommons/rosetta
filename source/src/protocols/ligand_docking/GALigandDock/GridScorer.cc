@@ -230,6 +230,7 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 	sfxn_1b_->set_weight( core::scoring::fa_intra_elec, sfxn_->get_weight( core::scoring::fa_intra_elec ) );
 	sfxn_1b_->set_weight( core::scoring::gen_bonded, sfxn_->get_weight( core::scoring::gen_bonded ) );
 	sfxn_1b_->set_weight( core::scoring::ring_close, sfxn_->get_weight( core::scoring::ring_close ) );
+	sfxn_1b_->set_weight( core::scoring::elec_dens_fast, sfxn_->get_weight( core::scoring::elec_dens_fast ) );
 
 	// modify sfxn 1body soft
 	sfxn_1b_soft_->set_weight( core::scoring::fa_dun, sfxn_soft_->get_weight( core::scoring::fa_dun ) );
@@ -243,6 +244,7 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 	sfxn_1b_soft_->set_weight( core::scoring::fa_intra_elec, sfxn_soft_->get_weight( core::scoring::fa_intra_elec ) );
 	sfxn_1b_soft_->set_weight( core::scoring::gen_bonded, sfxn_soft_->get_weight( core::scoring::gen_bonded ) );
 	sfxn_1b_soft_->set_weight( core::scoring::ring_close, sfxn_->get_weight( core::scoring::ring_close ) );
+	sfxn_1b_soft_->set_weight( core::scoring::elec_dens_fast, sfxn_->get_weight( core::scoring::elec_dens_fast ) );
 
 	// modify sfxn 1body clash
 	sfxn_1b_clash_->set_weight( core::scoring::fa_intra_rep, sfxn_soft_->get_weight( core::scoring::fa_intra_rep ) );

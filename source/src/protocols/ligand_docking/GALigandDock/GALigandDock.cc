@@ -1484,7 +1484,7 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("altcrossover") ) { altcrossover_ = tag->getOption<core::Real>("altcrossover"); }
 
 	// input params
-	if ( tag->hasOption("use_phamacophore") ) { use_pharmacophore_ = tag->getOption<bool>("use_pharmacophore"); }
+	if ( tag->hasOption("use_pharmacophore") ) { use_pharmacophore_ = tag->getOption<bool>("use_pharmacophore"); }
 	if ( tag->hasOption("initial_pool") ) { initial_pool_ = tag->getOption<std::string>("initial_pool"); }
 	if ( tag->hasOption("reference_oversample") ) { reference_oversample_ = tag->getOption<core::Real>("reference_oversample"); }
 	if ( tag->hasOption("reference_pool") ) { reference_pool_ = tag->getOption<std::string>("reference_pool"); }
@@ -1636,11 +1636,6 @@ GALigandDock::setup_params_for_runmode( std::string runmode )
 	protocol_.resize( 0 );
 	fast_relax_lines_.resize( 0 );
 	bool die( false );
-
-	// commented below are default setups
-	//cartmin_lig_ = true;
-	//min_neighbor_ = true;
-	//use_pharmacophore_ = true;
 
 	if ( runmode == "dockrigid" ) {
 		GADockStageParams stage1( 10, 100, 1.0, // repeats, npool, rmsdthreshold
