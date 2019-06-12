@@ -71,7 +71,7 @@ for k in target_results.keys():
     if frac < cutoffs_fraction_dict[k]: # region has failed test
         failures[k] = frac
     for i in range( 0, len(targets) ):
-        if target_results[k][i] >= 1.0:
+        if target_results[k][i] >= cutoffs_rms_dict[k]:
             f.write("{},".format(targets[i]))
             off_by_more_than_X[k].append(targets[i])
     f.write("\n")

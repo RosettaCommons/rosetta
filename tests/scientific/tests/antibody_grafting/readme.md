@@ -27,7 +27,7 @@ For this benchmark, we ask what percentage of model regions are within X Angstro
 
 FRs: 95% sub-Angstrom
 non-H3 CDRs: 80--90% sub-1.5 A
-CDR H3: 65% sub-3 A
+CDR H3: 60% sub-3 A
 
 If the benchmark produces a lower percentage of sub-X-Angstrom models than described in the cutoffs, then the analysis scripts will signal "failure".
 
