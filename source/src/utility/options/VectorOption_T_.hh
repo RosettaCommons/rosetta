@@ -12,6 +12,7 @@
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
 /// @author Modified by Sergey Lyskov (Sergey.Lyskov@jhu.edu)
 /// @author Modified by Rhiju Das (rhiju@stanford.edu)
+/// @author Modified by Vikram K. Mulligan (vmulligan@flatironinstitute.org) for thread-safety.
 
 
 #ifndef INCLUDED_utility_options_VectorOption_T__HH
@@ -41,6 +42,10 @@
 #include <utility/vector1.srlz.hh>
 #include <cereal/types/set.hpp>
 #include <cereal/types/string.hpp>
+#endif
+
+#ifdef MULTI_THREADED
+#include <utility/thread/ReadWriteMutex.hh>
 #endif
 
 namespace utility {
@@ -98,21 +103,14 @@ protected: // Creation
 	/// @brief Copy constructor
 	inline
 	VectorOption_T_( VectorOption_T_ const & option ) :
-		Super( option ),
-		key_( option.key_ ),
-		description_( option.description_ ),
-		short_description_( option.short_description_ ),
-		legal_( option.legal_ ),
-		lower_( option.lower_ ),
-		upper_( option.upper_ ),
-		n_( option.n_ ),
-		n_lower_( option.n_lower_ ),
-		n_upper_( option.n_upper_ ),
-		default_state_( option.default_state_ ),
-		default_value_( option.default_value_ ),
-		state_( option.state_ ),
-		value_( option.value_ )
-	{}
+		Super( option )
+#ifdef MULTI_THREADED
+		,
+		mutex_()
+#endif
+	{
+		(*this) = option;
+	}
 
 
 	/// @brief Key + description constructor
@@ -121,6 +119,9 @@ protected: // Creation
 		Key const & key_a,
 		std::string const & description_a
 	) :
+#ifdef MULTI_THREADED
+		mutex_(),
+#endif
 		key_( key_a ),
 		description_( description_a ),
 		short_description_( description_a ),
@@ -151,13 +152,16 @@ protected: // Assignment
 
 
 	/// @brief Copy assignment
+	/// @details Threadsafe.
 	inline
 	VectorOption_T_ &
 	operator =( VectorOption_T_ const & option )
 	{
 		Option::operator=(option);
-
 		if ( this != &option ) {
+#ifdef MULTI_THREADED
+			utility::thread::PairedReadLockWriteLockGuard( option.mutex_ /*Gets read-lock.*/, mutex_ /*Gets write-lock.*/ );
+#endif
 			key_ = option.key_;
 			description_ = option.description_;
 			short_description_ = option.short_description_;
@@ -178,7 +182,7 @@ protected: // Assignment
 public: // copying
 
 	/// @brief Copy operation
-
+	/// #details Relies on assignment operator; does not lock mutexes itself.
 	void copy_from( Option const & other ) override {
 
 		debug_assert( dynamic_cast< VectorOption_T_ const * > ( & other ));
@@ -212,12 +216,14 @@ public: // Conversion
 	} */
 
 	/// @brief Iterator access for range for loops
+	/// @details Not threadsafe.
 	typename Values::const_iterator
 	begin() const {
 		return (*this)().begin();
 	}
 
 	/// @brief Iterator access for range for loops
+	/// @details Not threadsafe.
 	typename Values::const_iterator
 	end() const {
 		return (*this)().end();
@@ -231,6 +237,9 @@ public: // Methods
 	VectorOption_T_ &
 	activate() override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		state_ = USER;
 		return *this;
 	}
@@ -241,6 +250,9 @@ public: // Methods
 	VectorOption_T_ &
 	deactivate() override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		state_ = INACTIVE;
 		return *this;
 	}
@@ -251,6 +263,9 @@ public: // Methods
 	VectorOption_T_ &
 	to_default() override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		if ( default_state_ == DEFAULT ) {
 			state_ = DEFAULT;
 			value_ = default_value_;
@@ -264,6 +279,9 @@ public: // Methods
 	VectorOption_T_ &
 	clear() override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		n_ = 0;
 		n_lower_ = 0;
 		n_upper_ = 0;
@@ -280,6 +298,9 @@ public: // Methods
 	VectorOption_T_ &
 	legal( Value const & value_a )
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		legal_.insert( value_a );
 		return *this;
 	}
@@ -289,6 +310,9 @@ public: // Methods
 	VectorOption_T_ &
 	shortd( std::string const & s)
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		short_description_ = s ;
 		return *this;
 	}
@@ -298,6 +322,9 @@ public: // Methods
 	VectorOption_T_ &
 	lower( Value const & value_a )
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		lower_( value_a );
 		return *this;
 	}
@@ -308,6 +335,9 @@ public: // Methods
 	VectorOption_T_ &
 	strict_lower( Value const & value_a )
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		lower_( value_a, true );
 		return *this;
 	}
@@ -318,6 +348,9 @@ public: // Methods
 	VectorOption_T_ &
 	upper( Value const & value_a )
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		upper_( value_a );
 		return *this;
 	}
@@ -328,6 +361,9 @@ public: // Methods
 	VectorOption_T_ &
 	strict_upper( Value const & value_a )
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		upper_( value_a, true );
 		return *this;
 	}
@@ -338,6 +374,9 @@ public: // Methods
 	VectorOption_T_ &
 	n( Size const n_a ) override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		n_ = n_a;
 		return *this;
 	}
@@ -348,6 +387,9 @@ public: // Methods
 	VectorOption_T_ &
 	n_lower( Size const n_a ) override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		n_lower_ = n_a;
 		return *this;
 	}
@@ -358,6 +400,9 @@ public: // Methods
 	VectorOption_T_ &
 	n_upper( Size const n_a ) override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		n_upper_ = n_a;
 		return *this;
 	}
@@ -369,12 +414,17 @@ public: // Methods
 	VectorOption_T_ &
 	default_value( Value const & value_a )
 	{
-		default_state_ = DEFAULT;
-		default_value_.push_back( value_a );
-		if ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) ) {
-			state_ = DEFAULT;
-			value_.push_back( value_a );
-		}
+		{ //Scope for possible mutex lock
+#ifdef MULTI_THREADED
+			utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
+			default_state_ = DEFAULT;
+			default_value_.push_back( value_a );
+			if ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) ) {
+				state_ = DEFAULT;
+				value_.push_back( value_a );
+			}
+		} //End mutex lock guard scope
 		legal_default_check( value_a );
 		return *this;
 	}
@@ -386,12 +436,17 @@ public: // Methods
 	VectorOption_T_ &
 	def( Value const & value_a )
 	{
-		default_state_ = DEFAULT;
-		default_value_.push_back( value_a );
-		if ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) ) {
-			state_ = DEFAULT;
-			value_.push_back( value_a );
-		}
+		{ //Scope for possible mutex lock
+#ifdef MULTI_THREADED
+			utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
+			default_state_ = DEFAULT;
+			default_value_.push_back( value_a );
+			if ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) ) {
+				state_ = DEFAULT;
+				value_.push_back( value_a );
+			}
+		} //End mutex lock guard scope
 		legal_default_check( value_a );
 		return *this;
 	}
@@ -403,6 +458,9 @@ public: // Methods
 	VectorOption_T_ &
 	def()
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		default_state_ = DEFAULT;
 		if ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) ) {
 			state_ = DEFAULT;
@@ -416,11 +474,16 @@ public: // Methods
 	VectorOption_T_ &
 	default_value( Values const & value_a )
 	{
-		default_state_ = DEFAULT;
-		default_value_ = value_a;
-		if ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) ) {
-			state_ = DEFAULT;
-			value_ = value_a;
+		{
+#ifdef MULTI_THREADED
+			utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
+			default_state_ = DEFAULT;
+			default_value_ = value_a;
+			if ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) ) {
+				state_ = DEFAULT;
+				value_ = value_a;
+			}
 		}
 		legal_default_check();
 		return *this;
@@ -432,11 +495,16 @@ public: // Methods
 	VectorOption_T_ &
 	def( Values const & value_a )
 	{
-		default_state_ = DEFAULT;
-		default_value_ = value_a;
-		if ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) ) {
-			state_ = DEFAULT;
-			value_ = value_a;
+		{
+#ifdef MULTI_THREADED
+			utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
+			default_state_ = DEFAULT;
+			default_value_ = value_a;
+			if ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) ) {
+				state_ = DEFAULT;
+				value_ = value_a;
+			}
 		}
 		legal_default_check();
 		return *this;
@@ -448,6 +516,9 @@ public: // Methods
 	VectorOption_T_ &
 	cl_value( std::string const & value_str ) override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		std::string const stripped_value_str( ObjexxFCL::stripped( value_str, "\"'" ) );
 		if ( ! stripped_value_str.empty() ) {
 			if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaulted values
@@ -458,7 +529,7 @@ public: // Methods
 				Value v = vs[ i ];
 
 				value_.push_back( v );
-				if ( ! legal_value( v ) ) {
+				if ( ! legal_value( v, true /*mutex_ already locked*/ ) ) {
 					std::cerr << "ERROR: Illegal value specified for option -" << id()
 						<< " : " << value_str << std::endl;
 					std::exit( EXIT_FAILURE );
@@ -476,9 +547,14 @@ public: // Methods
 	VectorOption_T_ &
 	value( Value const & value_a )
 	{
-		if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaults
-		state_ = USER;
-		value_.push_back( value_a );
+		{
+#ifdef MULTI_THREADED
+			utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
+			if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaults
+			state_ = USER;
+			value_.push_back( value_a );
+		}
 		legal_check( value_a );
 		return *this;
 	}
@@ -489,7 +565,7 @@ public: // Methods
 	VectorOption_T_ &
 	push_back( Value const & value_a )
 	{
-		value( value_a );
+		value( value_a ); //Threadsafe
 		return *this;
 	}
 
@@ -500,9 +576,14 @@ public: // Methods
 	VectorOption_T_ &
 	operator ()( Value const & value_a )
 	{
-		if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaults
-		state_ = USER;
-		value_.push_back( value_a );
+		{
+#ifdef MULTI_THREADED
+			utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
+			if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaults
+			state_ = USER;
+			value_.push_back( value_a );
+		}
 		legal_check( value_a );
 		return *this;
 	}
@@ -513,9 +594,14 @@ public: // Methods
 	VectorOption_T_ &
 	value( Values const & value_a )
 	{
-		if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaults
-		state_ = USER;
-		value_ = value_a;
+		{
+#ifdef MULTI_THREADED
+			utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
+			if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaults
+			state_ = USER;
+			value_ = value_a;
+		}
 		legal_check();
 		return *this;
 	}
@@ -526,9 +612,14 @@ public: // Methods
 	VectorOption_T_ &
 	operator ()( Values const & value_a )
 	{
-		if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaults
-		state_ = USER;
-		value_ = value_a;
+		{
+#ifdef MULTI_THREADED
+			utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
+			if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaults
+			state_ = USER;
+			value_ = value_a;
+		}
 		legal_check();
 		return *this;
 	}
@@ -539,8 +630,15 @@ public: // Methods
 	VectorOption_T_ &
 	default_to( VectorOption_T_ const & option )
 	{
-		if ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) ) {
-			if ( option.active() ) default_value( option.value() );
+		bool do_default_value;
+		{ //Scope for thread.
+#ifdef MULTI_THREADED
+			utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
+			do_default_value = ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) );
+		}
+		if ( do_default_value ) {
+			if ( option.active() /*Internally threadsafe*/ ) default_value( option.value() ) /*Also internally threasafe*/;
 		}
 		return *this;
 	}
@@ -561,6 +659,9 @@ public: // Methods
 	legal_limits_report() const override
 	{
 		bool error( false );
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( ( lower_.active() ) && ( upper_.active() ) ) {
 			if ( ( lower_.strict() ) || ( upper_.strict() ) ) {
 				if ( lower_() >= upper_() ) error = true;
@@ -569,7 +670,7 @@ public: // Methods
 			}
 			if ( error ) {
 				std::cerr << "ERROR: Inconsistent lower and upper limits in option -" << id()
-					<< " : " << legal_string() << std::endl;
+					<< " : " << legal_string(true) << std::endl;
 			}
 		}
 		return ( ! error );
@@ -582,6 +683,9 @@ public: // Methods
 	legal_size_report() const override
 	{
 		bool error( false );
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( ( n_upper_ > 0 ) && ( n_lower_ > n_upper_ ) ) error = true;
 		if ( ( n_ > 0 ) && ( n_lower_ > 0 ) && ( n_ != n_lower_ ) ) error = true;
 		if ( ( n_ > 0 ) && ( n_upper_ > 0 ) && ( n_ != n_upper_ ) ) error = true;
@@ -600,12 +704,12 @@ public: // Methods
 		bool error( false );
 		if ( ! legal_default_size() ) {
 			std::cerr << "ERROR: Illegal number of default values in option -" << id()
-				<< " : " << default_string() << std::endl;
+				<< " : " << default_string(true) << std::endl;
 			error = true;
 		}
 		if ( ! legal_default_value() ) {
 			std::cerr << "ERROR: Illegal default value in option -" << id()
-				<< " : " << default_string() << std::endl;
+				<< " : " << default_string(true) << std::endl;
 			error = true;
 		}
 		return ( ! error );
@@ -620,12 +724,12 @@ public: // Methods
 		bool error( false );
 		if ( ! legal_default_size() ) {
 			std::cerr << "ERROR: Illegal number of default values in option -" << id()
-				<< " : " << default_string() << std::endl;
+				<< " : " << default_string(true) << std::endl;
 			error = true;
 		}
 		if ( ! legal_default_value() ) {
 			std::cerr << "ERROR: Illegal default value in option -" << id()
-				<< " : " << default_string() << std::endl;
+				<< " : " << default_string(true) << std::endl;
 			error = true;
 		}
 		if ( error ) std::exit( EXIT_FAILURE );
@@ -732,6 +836,9 @@ public: // Properties
 	Key const &
 	key() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return key_;
 	}
 
@@ -741,6 +848,9 @@ public: // Properties
 	std::string const &
 	id() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return key_.id();
 	}
 
@@ -750,6 +860,9 @@ public: // Properties
 	std::string const &
 	identifier() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return key_.identifier();
 	}
 
@@ -759,6 +872,9 @@ public: // Properties
 	std::string const &
 	code() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return key_.code();
 	}
 
@@ -768,6 +884,9 @@ public: // Properties
 	std::string const &
 	name() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return key_.id();
 	}
 
@@ -777,6 +896,9 @@ public: // Properties
 	std::string const &
 	description() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return description_;
 	}
 
@@ -785,11 +907,17 @@ public: // Properties
 	std::string const &
 	short_description() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return short_description_;
 	}
 
 	inline void short_description(std::string const & sd)
 	{
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		short_description_ = sd;
 	}
 
@@ -847,14 +975,22 @@ public: // Properties
 		return value_size_ok();
 	}
 
+private:
 
 	/// @brief Is the given value legal?
+	/// @details If already_locked is true, there is already a write-lock on mutex_, so additional
+	/// locking should not be done.
 	inline
 	bool
-	legal_value( Value const & value_a ) const
+	legal_value( Value const & value_a, bool const already_locked ) const
 	{
-		return ( ( unconstrained() ) || ( value_is_legal( value_a ) ) || ( value_obeys_bounds( value_a ) ) );
+		return ( ( unconstrained(already_locked) ) || ( value_is_legal( value_a, already_locked ) ) || ( value_obeys_bounds( value_a, already_locked ) ) );
 	}
+
+public:
+
+	/// @brief Overload of legal_value.  Assumes mutex_ is NOT locked, so that functions that this will call will obtain locks.
+	inline bool legal_value( Value const & value_a ) const { return legal_value( value_a, false ); }
 
 
 	/// @brief Has a default?
@@ -862,6 +998,9 @@ public: // Properties
 	bool
 	has_default() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return ( default_state_ == DEFAULT );
 	}
 
@@ -871,6 +1010,9 @@ public: // Properties
 	bool
 	default_active() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return ( default_state_ == DEFAULT );
 	}
 
@@ -880,6 +1022,9 @@ public: // Properties
 	bool
 	default_inactive() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return ( default_state_ == INACTIVE );
 	}
 
@@ -889,6 +1034,9 @@ public: // Properties
 	bool
 	active() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return ( state_ != INACTIVE );
 	}
 
@@ -900,6 +1048,9 @@ public: // Properties
 	user() const override
 	{
 		been_accessed();
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return ( state_ == USER );
 	}
 
@@ -909,7 +1060,10 @@ public: // Properties
 	bool
 	can_hold_another() const override
 	{
-		Size const s( size() );
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
+		Size const s( size(true) );
 		if ( ( n_ > 0 ) && ( s >= n_ ) ) return false;
 		if ( ( n_upper_ > 0 ) && ( s >= n_upper_ ) ) return false;
 		return true;
@@ -921,6 +1075,9 @@ public: // Properties
 	Size
 	default_size() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return ( default_state_ == INACTIVE ? 0u : default_value_.size() );
 	}
 
@@ -930,17 +1087,36 @@ public: // Properties
 	Size
 	n_default_value() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return ( default_state_ == INACTIVE ? 0u : default_value_.size() );
 	}
 
+private:
 
 	/// @brief Size (number of values)
+	/// @details Allows specification of whether mutex_ is already locked.
 	inline
 	Size
-	size() const override
-	{
+	size(
+#ifdef MULTI_THREADED
+		bool const already_locked
+#else
+		bool const
+#endif
+	) const {
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_, already_locked );
+#endif
 		return ( state_ == INACTIVE ? 0u : value_.size() );
 	}
+
+public:
+
+	/// @brief Size( number of values).
+	/// @details Assmues mutex_ is unlocked.
+	inline Size size() const override { return size( false ); }
 
 
 	/// @brief Number of values (size)
@@ -948,15 +1124,18 @@ public: // Properties
 	Size
 	n_value() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return ( state_ == INACTIVE ? 0u : value_.size() );
 	}
 
 	/// @brief Has Any Character of a std::string?
 	/// non ambiguous vesrion for Python binding
-	inline bool has_any_of_characters(std::string const & str_, std::string const & s ) const
+	inline bool has_any_of_characters(std::string const & str1, std::string const & s ) const
 	{
 		size_type const s_len( s.length() );
-		for ( char i : str_ ) {
+		for ( char i : str1 ) {
 			for ( size_type j = 0; j < s_len; ++j ) {
 				if ( i == s[ j ] ) return true;
 			}
@@ -964,11 +1143,22 @@ public: // Properties
 		return false; // No matches
 	}
 
-	/// @brief Legal value string representation
+private:
+
+	/// @brief Legal value string representation.
+	/// @details Allows specification of whether mutex_ is locked.
 	inline
 	std::string
-	legal_string() const override
-	{
+	legal_string(
+#ifdef MULTI_THREADED
+		bool const already_locked
+#else
+		bool const
+#endif
+	) const {
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_, already_locked );
+#endif
 		if ( ( legal_.empty() ) && ( lower_.inactive() ) && ( upper_.inactive() ) ) {
 			return std::string();
 		} else {
@@ -1006,6 +1196,16 @@ public: // Properties
 		}
 	}
 
+public:
+
+	/// @brief Legal value string representation.
+	/// @details Assumes that mutex_ is unlocked.
+	inline
+	std::string
+	legal_string() const override {
+		return legal_string(false);
+	}
+
 
 	/// @brief Size constraint string representation
 	inline
@@ -1033,12 +1233,21 @@ public: // Properties
 		return stream.str();
 	}
 
+private:
 
 	/// @brief Default value string representation
 	inline
 	std::string
-	default_string() const override
-	{
+	default_string(
+#ifdef MULTI_THREADED
+		bool const already_locked
+#else
+		bool const
+#endif
+	) const {
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard lock( mutex_, already_locked );
+#endif
 		if ( ( default_state_ == DEFAULT ) && ( ! default_value_.empty() ) ) {
 			//using ObjexxFCL::has_any_of;
 			std::ostringstream stream;
@@ -1060,11 +1269,30 @@ public: // Properties
 		}
 	}
 
+public:
+
+	/// @brief Default value string representation
+	inline
+	std::string
+	default_string() const override {
+		return default_string(false);
+	}
+
+private:
+
 	/// @brief Same as default_string, but without the "[" and "]"s wrapping the value list
 	inline
 	std::string
-	raw_default_string() const override
-	{
+	raw_default_string(
+#ifdef MULTI_THREADED
+		bool const already_locked
+#else
+		bool const
+#endif
+	) const {
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard lock( mutex_, already_locked );
+#endif
 		if ( ( default_state_ == DEFAULT ) && ( ! default_value_.empty() ) ) {
 			//using ObjexxFCL::has_any_of;
 			std::ostringstream stream;
@@ -1084,12 +1312,23 @@ public: // Properties
 		}
 	}
 
+public:
+
+	/// @brief Same as default_string, but without the "[" and "]"s wrapping the value list
+	inline
+	std::string
+	raw_default_string() const override {
+		return raw_default_string(false);
+	}
 
 	/// @brief Value string representation
 	inline
 	std::string
 	value_string() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( ( state_ != INACTIVE ) && ( ! value_.empty() ) ) {
 			//using ObjexxFCL::has_any_of;
 			std::ostringstream stream;
@@ -1121,6 +1360,9 @@ public: // Properties
 	std::string
 	equals_string() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( ( state_ != INACTIVE ) && ( ! value_.empty() ) ) {
 			return '=' + value_string();
 		} else { // Value inactive or empty
@@ -1134,6 +1376,9 @@ public: // Properties
 	LegalBound const &
 	lower() const
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return lower_;
 	}
 
@@ -1143,6 +1388,9 @@ public: // Properties
 	LegalBound const &
 	upper()
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return upper_;
 	}
 
@@ -1152,6 +1400,9 @@ public: // Properties
 	bool
 	fixed_size() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return ( n_ > 0 );
 	}
 
@@ -1161,6 +1412,9 @@ public: // Properties
 	Size
 	n() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return n_;
 	}
 
@@ -1170,6 +1424,9 @@ public: // Properties
 	Size
 	n_lower() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return n_lower_;
 	}
 
@@ -1179,6 +1436,9 @@ public: // Properties
 	Size
 	n_upper() const override
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		return n_upper_;
 	}
 
@@ -1188,6 +1448,9 @@ public: // Properties
 	Values const &
 	default_value() const
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( default_state_ == INACTIVE ) default_inactive_error();
 		return default_value_;
 	}
@@ -1198,6 +1461,9 @@ public: // Properties
 	Value const &
 	default_value( Size const i ) const
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( default_state_ == INACTIVE ) default_inactive_error();
 		return default_value_[ i ];
 	}
@@ -1209,6 +1475,9 @@ public: // Properties
 	value() const
 	{
 		been_accessed();
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( state_ == INACTIVE ) inactive_error();
 		return value_;
 	}
@@ -1220,6 +1489,9 @@ public: // Properties
 	operator ()() const
 	{
 		been_accessed();
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( state_ == INACTIVE ) inactive_error();
 		return value_;
 	}
@@ -1230,8 +1502,11 @@ public: // Properties
 	Values // Have to return by value: Not efficient for many or large Value types
 	value_or( Values const & value_a ) const
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( state_ != INACTIVE ) { // Return active value
-			been_accessed();
+			been_accessed(); //Threadsafe
 			return value_;
 		} else { // Return passed value
 			return value_a;
@@ -1244,8 +1519,11 @@ public: // Properties
 	Values // Have to return by value: Not efficient for many or large Value types
 	user_or( Values const & value_a ) const
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( state_ == USER ) { // Return user-specified value
-			been_accessed();
+			been_accessed(); //Threadsafe
 			return value_;
 		} else { // Return passed value
 			return value_a;
@@ -1258,7 +1536,10 @@ public: // Properties
 	Value const &
 	value( Size const i ) const
 	{
-		been_accessed();
+		been_accessed(); //Threadsafe
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		if ( state_ == INACTIVE ) inactive_error();
 		return value_[ i ];
 	}
@@ -1269,6 +1550,9 @@ public: // Properties
 	bool
 	has_value( Value const & value ) {
 		been_accessed();
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( state_ == INACTIVE ) inactive_error();
 		return value_.has_value( value );
 	}
@@ -1279,6 +1563,9 @@ public: // Properties
 	operator ()( Size const i ) const
 	{
 		been_accessed();
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( state_ == INACTIVE ) inactive_error();
 		return value_[ i ];
 	}
@@ -1290,6 +1577,9 @@ public: // Properties
 	operator []( Size const i ) const
 	{
 		been_accessed();
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( state_ == INACTIVE ) inactive_error();
 		return value_[ i ];
 	}
@@ -1300,6 +1590,9 @@ public: // Properties
 	Value // Have to return by value: Not efficient for large Value types
 	value_or( Size const i, Value const & value_a ) const
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( state_ != INACTIVE ) { // Return active value
 			return value_[ i ];
 		} else { // Return passed value
@@ -1314,6 +1607,9 @@ public: // Properties
 	user_or( Size const i, Value const & value_a ) const
 	{
 		been_accessed();
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( state_ == USER ) { // Return user-specified value
 			return value_[ i ];
 		} else { // Return passed value
@@ -1385,23 +1681,49 @@ protected: // Methods
 	{}
 
 
-protected: // Properties
+private: // Properties -- most are protected; first one is private.
 
 
 	/// @brief Value is unconstrained?
+	/// @details Pass true if mutex_ is already locked.
 	inline
 	bool
-	unconstrained() const
-	{
+	unconstrained(
+#ifdef MULTI_THREADED
+		bool const already_locked
+#else
+		bool const
+#endif
+	) const {
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_, already_locked );
+#endif
 		return ( ( legal_.empty() ) && ( lower_.inactive() ) && ( upper_.inactive() ) );
 	}
 
+protected:
+
+	/// @brief Value is unconstrained?
+	/// @details Assumes mutex_ is unlocked.
+	inline bool unconstrained() const { return unconstrained( false ); }
+
+private:
 
 	/// @brief Default value is a specified legal value?
+	/// @details Pass true if mutex_ is already locked.
 	inline
 	bool
-	default_is_legal() const
-	{
+	default_is_legal(
+#ifdef MULTI_THREADED
+		bool const already_locked
+#else
+		bool const
+#endif
+	) const {
+
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_, already_locked );
+#endif
 		if ( ( default_state_ == INACTIVE ) || ( default_value_.empty() ) ) {
 			return false;
 		} else {
@@ -1412,12 +1734,24 @@ protected: // Properties
 		}
 	}
 
+protected:
+
+	/// @brief Default value is a specified legal value?
+	/// @details Assumes mutex_ is unlocked.
+	inline
+	bool
+	default_is_legal() const {
+		return default_is_legal(false);
+	}
 
 	/// @brief Value is a specified legal value?
 	inline
 	bool
 	value_is_legal() const
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( ( state_ == INACTIVE ) || ( value_.empty() ) ) {
 			return false;
 		} else {
@@ -1428,13 +1762,35 @@ protected: // Properties
 		}
 	}
 
+private:
 
 	/// @brief Value is legal?
+	/// @details Pass true if mutex_ is already locked, false otherwise.
 	inline
 	bool
-	value_is_legal( Value const & value_a ) const
+	value_is_legal(
+		Value const & value_a,
+#ifdef MULTI_THREADED
+		bool const already_locked
+#else
+		bool const
+#endif
+	) const
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_, already_locked );
+#endif
 		return ( legal_.find( value_a ) != legal_.end() );
+	}
+
+protected:
+
+	/// @brief Value is legal?
+	/// @details Assumes mutex_ is not locked.
+	inline
+	bool
+	value_is_legal( Value const & value_a ) const {
+		return value_is_legal( value_a, false );
 	}
 
 
@@ -1443,6 +1799,9 @@ protected: // Properties
 	bool
 	default_obeys_bounds() const
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( default_state_ == INACTIVE ) {
 			return false;
 		} else {
@@ -1474,10 +1833,14 @@ protected: // Properties
 
 
 	/// @brief Value obeys specified bounds?
+	/// @details Assumes mutex_ is unlocked.
 	inline
 	bool
 	value_obeys_bounds() const
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( state_ == INACTIVE ) {
 			return false;
 		} else {
@@ -1507,12 +1870,24 @@ protected: // Properties
 		}
 	}
 
+private:
 
 	/// @brief Given value obeys specified bounds?
+	/// @details Allows specification of whether mutex_ is already locked.
 	inline
 	bool
-	value_obeys_bounds( Value const & value_a ) const
+	value_obeys_bounds(
+		Value const & value_a,
+#ifdef MULTI_THREADED
+		bool const already_locked
+#else
+		bool const
+#endif
+	) const
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_, already_locked );
+#endif
 		if ( lower_.active() ) {
 			if ( lower_.strict() ) {
 				if ( lower_() >= value_a ) return false;
@@ -1531,12 +1906,25 @@ protected: // Properties
 		return false; // No bounds specified
 	}
 
+protected:
+
+	/// @brief Given value obeys specified bounds?
+	/// @details Assumes mutex_ is unlocked.
+	inline
+	bool
+	value_obeys_bounds( Value const & value_a ) const {
+		return value_obeys_bounds( value_a, false );
+	}
+
 
 	/// @brief Default value size is OK?
 	inline
 	bool
 	default_size_ok() const
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( default_state_ == INACTIVE ) {
 			return true;
 		} else {
@@ -1554,6 +1942,9 @@ protected: // Properties
 	bool
 	value_size_ok() const
 	{
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		if ( state_ == INACTIVE ) {
 			return true;
 		} else {
@@ -1568,6 +1959,10 @@ protected: // Properties
 
 private: // Fields
 
+#ifdef MULTI_THREADED
+	/// @brief Mutex for controlling access.
+	mutable utility::thread::ReadWriteMutex mutex_;
+#endif
 
 	/// @brief Key
 	Key key_;
@@ -1603,6 +1998,9 @@ private: // Fields
 public:
 	template< class Archive > void save( Archive & arc ) const {
 		cereal::base_class< utility::options::VectorOption >( this );
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 		arc(key_);
 		arc(description_);
 		arc(short_description_);
@@ -1618,6 +2016,9 @@ public:
 
 	template< class Archive > void load( Archive & arc ) {
 		cereal::base_class< utility::options::VectorOption >( this );
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 		arc(key_);
 		arc(description_);
 		arc(short_description_);

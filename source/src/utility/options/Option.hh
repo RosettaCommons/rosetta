@@ -11,7 +11,7 @@
 /// @brief  Program option interface class
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
 /// @author Modified by Sergey Lyskov (Sergey.Lyskov@jhu.edu)
-
+/// @author Modified by Vikram K. Mulligan (vmulligan@flatironinstitute.org) for thread-safety.
 
 #ifndef INCLUDED_utility_options_Option_hh
 #define INCLUDED_utility_options_Option_hh
@@ -85,9 +85,15 @@ protected: // Creation
 	/// @brief Copy constructor
 	inline
 	Option( Option const & option) :
+#ifdef MULTI_THREADED
+		is_group_(option.is_group_.load()),
+		been_accessed_(false),
+		restricted_access_(option.restricted_access_.load())
+#else
 		is_group_(option.is_group_),
 		been_accessed_(false),
 		restricted_access_(option.restricted_access_)
+#endif
 	{}
 
 
@@ -115,13 +121,15 @@ protected: // Assignment
 	operator =( Option const & option )
 	{
 		if ( this != &option ) {
-			is_group_ = option.is_group_;
 #ifdef MULTI_THREADED
+			is_group_ = option.is_group_.load();
 			been_accessed_ = option.been_accessed_.load();
+			restricted_access_ = option.restricted_access_.load();
 #else
+			is_group_ = option.is_group_;
 			been_accessed_ = option.been_accessed_;
-#endif
 			restricted_access_ = option.restricted_access_;
+#endif
 		}
 		return *this;
 	}
@@ -229,7 +237,9 @@ public: // Properties
 
 	/// @brief Is this the synonymous option for an option group (e.g. -in:file:file)
 	bool
-	is_group() const { return is_group_; }
+	is_group() const {
+		return is_group_;
+	}
 
 	/// @brief Key
 	virtual
@@ -482,7 +492,11 @@ public: // Comparison
 private: // Private data members
 
 	/// @brief Is this a synonymous option for an option group (e.g. -in:file:file)
+#ifdef MULTI_THREADED
+	std::atomic_bool is_group_;
+#else
 	bool is_group_;
+#endif
 
 	/// @brief flag, will be true if application was trying to anyhow access/check option value.
 	///        Used to create option usage reports.
@@ -495,7 +509,11 @@ private: // Private data members
 
 	/// @brief Is directly accessing this option deprecated in favor of
 	/// accessing it through the resource manager?
+#ifdef MULTI_THREADED
+	std::atomic_bool restricted_access_;
+#else
 	bool restricted_access_;
+#endif
 
 #ifdef    SERIALIZATION
 	friend class cereal::access;
