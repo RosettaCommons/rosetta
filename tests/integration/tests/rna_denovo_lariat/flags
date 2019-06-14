@@ -1,0 +1,6 @@
+-sequence aaaaaaa
+-twoprime 5
+-minimize_rna true
+-out:file:silent twoprime.out
+-set_weights branch_conn 1.0 linear_branch_conn 1.0
+-nstruct 10

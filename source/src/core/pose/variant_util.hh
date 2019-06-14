@@ -129,6 +129,9 @@ correctly_add_cutpoint_variants(
 	bool const check_fold_tree = true,
 	Size const next_res_in = 0 );
 
+void
+correctly_add_2prime_connection_variants( pose::Pose & pose, Size const twoprime_res, Size const next_res );
+
 /// @brief Remove variant types incompatible with CUTPOINT_LOWER from a position in a pose.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 /// @param[in,out] pose The pose on which to operate.

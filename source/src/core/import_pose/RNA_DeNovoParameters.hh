@@ -65,6 +65,9 @@ public:
 	void set_cutpoints_cyclize( utility::vector1 <core::Size > const & setting ){ cutpoints_cyclize_ = setting; }
 	utility::vector1 <core::Size > cutpoints_cyclize() const { return cutpoints_cyclize_; }
 
+	void set_twoprime( utility::vector1 <core::Size > const & setting ){ twoprime_ = setting; }
+	utility::vector1 <core::Size > twoprime() const { return twoprime_; }
+
 	void set_block_stack_above_res( utility::vector1 <core::Size > const & setting ){ block_stack_above_res_ = setting; }
 	utility::vector1 <core::Size > block_stack_above_res() const { return block_stack_above_res_; }
 
@@ -140,6 +143,7 @@ private:
 	utility::vector1 <core::Size > cutpoints_open_;
 	utility::vector1 <core::Size > cutpoints_closed_;
 	utility::vector1 <core::Size > cutpoints_cyclize_;
+	utility::vector1 <core::Size > twoprime_;
 	utility::vector1 <core::Size > block_stack_above_res_;
 	utility::vector1 <core::Size > block_stack_below_res_;
 	utility::vector1 <core::Size > virtual_anchor_attachment_points_;

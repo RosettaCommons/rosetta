@@ -339,6 +339,8 @@ correctly_add_2prime_connection_variants( pose::Pose & pose, Size const twoprime
 	using namespace core::id;
 
 	correctly_remove_variants_incompatible_with_upper_cutpoint_variant( pose, next_res );
+	
+	if ( pose.residue_type( twoprime_res ).is_RNA() ) rna::position_cutpoint_phosphate_torsions( pose, twoprime_res, next_res );
 
 	// AMW: positioning TWO PRIME 'cutpoint phosphate torsions'
 	// since this is all about OP1/OP2, this actually works fine... I think. It might run into issues because of how
@@ -347,23 +349,23 @@ correctly_add_2prime_connection_variants( pose::Pose & pose, Size const twoprime
 	//if ( pose.residue_type( twoprime_res ).is_RNA() )  rna::position_cutpoint_phosphate_torsions( pose, twoprime_res, next_res );
 
 	// Manually reposition OP2, OP1 on next_res.
-	AtomID aidOP1( pose.residue( next_res ).atom_index("OP1"),  next_res );
-	AtomID aidOP2( pose.residue( next_res ).atom_index("OP2"),  next_res );
-	AtomID aidP( pose.residue( next_res ).atom_index("P"),  next_res );
-	AtomID aidO5P( pose.residue( next_res ).atom_index("O5'"),  next_res );
-	AtomID aidC5P( pose.residue( next_res ).atom_index("C5'"),  next_res );
+	//AtomID aidOP1( pose.residue( next_res ).atom_index("OP1"),  next_res );
+	//AtomID aidOP2( pose.residue( next_res ).atom_index("OP2"),  next_res );
+	//AtomID aidP( pose.residue( next_res ).atom_index("P"),  next_res );
+	//AtomID aidO5P( pose.residue( next_res ).atom_index("O5'"),  next_res );
+	//AtomID aidC5P( pose.residue( next_res ).atom_index("C5'"),  next_res );
 
-	Vector const & O2P_xyz( pose.residue( twoprime_res ).xyz( "O2'" ) );
-	Vector LOWER_xyz( pose.residue( next_res ).lower_connect().icoor().build( pose.residue( next_res ), pose.conformation() ) );
-	Vector const & P_xyz( pose.residue( next_res ).xyz( "P" ) );
-	Vector const & O5P_xyz( pose.residue( next_res ).xyz( "O5'" ) );
-	Vector const & C5P_xyz( pose.residue( next_res ).xyz( "C5'" ) );
+	//Vector const & O2P_xyz( pose.residue( twoprime_res ).xyz( "O2'" ) );
+	//Vector LOWER_xyz( pose.residue( next_res ).lower_connect().icoor().build( pose.residue( next_res ), pose.conformation() ) );
+	//Vector const & P_xyz( pose.residue( next_res ).xyz( "P" ) );
+	//Vector const & O5P_xyz( pose.residue( next_res ).xyz( "O5'" ) );
+	//Vector const & C5P_xyz( pose.residue( next_res ).xyz( "C5'" ) );
 
 	using namespace numeric::conversions;
 
-	Real O2P_torsion_correction = numeric::dihedral_degrees( O2P_xyz, P_xyz, O5P_xyz, C5P_xyz ) - numeric::dihedral_degrees( LOWER_xyz, P_xyz, O5P_xyz, C5P_xyz );
-	Real torsion_OP2 = degrees( pose.conformation().torsion_angle( aidOP2, aidP, aidO5P, aidC5P ) ) + O2P_torsion_correction;
-	pose.conformation().set_torsion_angle( aidOP2, aidP, aidO5P, aidC5P, radians( torsion_OP2 ) );
+	//Real O2P_torsion_correction = numeric::dihedral_degrees( O2P_xyz, P_xyz, O5P_xyz, C5P_xyz ) - numeric::dihedral_degrees( LOWER_xyz, P_xyz, O5P_xyz, C5P_xyz );
+	//Real torsion_OP2 = degrees( pose.conformation().torsion_angle( aidOP2, aidP, aidO5P, aidC5P ) ) + O2P_torsion_correction;
+	//pose.conformation().set_torsion_angle( aidOP2, aidP, aidO5P, aidC5P, radians( torsion_OP2 ) );
 
 	remove_variant_type_from_pose_residue( pose, VIRTUAL_RIBOSE, twoprime_res );
 	if ( !pose.residue( twoprime_res ).has_variant_type( C2_BRANCH_POINT ) ) {

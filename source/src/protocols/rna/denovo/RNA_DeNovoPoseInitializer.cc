@@ -1130,6 +1130,16 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 		core::pose::correctly_add_cutpoint_variants( pose, n, true, m );
 	}
 
+	for ( Size const n : rna_params_.twoprime() ) {
+		// Need to track partner -- move back along chain until we see open cutpoint.
+		Size m = 1;
+		for ( m = n; m > 1; m-- ) {
+			if ( cutpoints_open.has_value( m - 1 ) ) break;
+		}
+		TR << TR.Green << "Twoprime-cyclizing: " << n << " to " << m << std::endl;
+		core::pose::correctly_add_2prime_connection_variants( pose, n, m );
+	}
+
 	// Oh, this is a bummer. If this is empty, we have to separately check --
 	// since uint(0-1) > 1
 	for ( Size i = 1; !rna_params_.fiveprime_cap().empty() && i <= rna_params_.fiveprime_cap().size() - 1; i += 2 ) {
