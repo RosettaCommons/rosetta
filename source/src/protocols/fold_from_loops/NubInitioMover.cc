@@ -338,8 +338,7 @@ NubInitioMover::make_unfolded_pose( core::pose::Pose & pose ) {
 		if ( sse_ == "" ) {
 			protocols::moves::DsspMover dssp;
 			dssp.apply( pose );
-		}
-		else {
+		} else {
 			runtime_assert_msg(sse_.size() == pose.size() , "Provided SSE does not match template length." );
 			for ( core::Size i = 1; i <= sse_.size(); ++i ) {
 				char ss = sse_[i - 1];
@@ -429,8 +428,7 @@ NubInitioMover::refold_pose( core::pose::Pose & pose )
 				display.apply( pose );
 				return 0;
 			}
-		}
-		else {
+		} else {
 			// make a copy to apply the filter-specific score
 			core::pose::Pose cpose = pose;
 			(*filter_scorefxn_)( cpose );
