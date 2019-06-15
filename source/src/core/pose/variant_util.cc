@@ -339,7 +339,7 @@ correctly_add_2prime_connection_variants( pose::Pose & pose, Size const twoprime
 	using namespace core::id;
 
 	correctly_remove_variants_incompatible_with_upper_cutpoint_variant( pose, next_res );
-	
+
 	if ( pose.residue_type( twoprime_res ).is_RNA() ) rna::position_cutpoint_phosphate_torsions( pose, twoprime_res, next_res );
 
 	// AMW: positioning TWO PRIME 'cutpoint phosphate torsions'

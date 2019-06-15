@@ -191,7 +191,7 @@ std::string get_restag( core::chemical::ResidueType const & restype ) {
 		if ( rsdname.substr(0, rsdname.find(chemical::PATCH_LINKER)) == "DHIS_D" ) rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
 		else rsdname=core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //Otherwise, for D-amino acids, return the L-equivalent.
 		return rsdname;
-	} else if ( restype.name3() == "H2U" ){
+	} else if ( restype.name3() == "H2U" ) {
 		// H2U needs its own params so it doesn't end up with a planar ring
 		return restype.name3();
 	} else if ( restype.is_RNA() && restype.na_analogue() != core::chemical::aa_unk && restype.na_analogue() != core::chemical::aa_unp ) {
