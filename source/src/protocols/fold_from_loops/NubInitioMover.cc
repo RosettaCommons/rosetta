@@ -47,6 +47,8 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
+#include <protocols/filters/Filter.hh>
+#include <protocols/filters/BasicFilters.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -114,6 +116,7 @@ NubInitioMover::NubInitioMover():
 	template_selector_( default_template_selector() ),
 	fullatom_scorefxn_( default_fullatom_scorefxn() ),
 	nub_( new utils::Nub() ),
+	sse_( std::string() ),
 	use_cst_( default_use_cst() ),
 	clear_motif_cst_( default_clear_motif_cst() ),
 	rmsd_threshold_( default_rmsd_threshold() ),
@@ -136,6 +139,9 @@ NubInitioMover::NubInitioMover():
 	drop_unfolded_pose_( default_drop_unfolded_pose() ),
 	design_( default_design() ),
 	residue_type_( default_residue_type() ),
+	filter_( utility::pointer::make_shared< protocols::filters::TrueFilter >() ),
+	filter_defined_( false ),
+	filter_scorefxn_( default_filter_scorefxn() ),
 	pose_name_( std::string() )
 {}
 
@@ -167,7 +173,7 @@ void
 NubInitioMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &,
+	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & reference_pose )
 {
@@ -178,6 +184,8 @@ NubInitioMover::parse_my_tag(
 		fullatom_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, "fullatom_scorefxn", data ) );
 	}
 	max_trials( tag->getOption< core::Size >( "max_trials", default_max_trials() ) );
+
+	sse( tag->getOption< std::string >( "ss", default_sse() ) );
 
 	TR.Trace << TR.Green << "Loading constraint configuration..." << TR.Reset << std::endl;
 	use_cst( tag->getOption< bool >( "use_cst", default_use_cst() ) );
@@ -216,6 +224,18 @@ NubInitioMover::parse_my_tag(
 	dump_centroid( tag->getOption< bool >( "dump_centroid", default_dump_centroid() ) );
 	drop_unfolded_pose( tag->getOption< bool >( "drop_unfolded_pose", default_drop_unfolded_pose() ) );
 
+	filter_defined_ = tag->hasOption( "filter_name" );
+	std::string const filter_name( tag->getOption< std::string >( "filter_name", default_filter_name() ) );
+	auto find_filter( filters.find( filter_name ));
+	if ( find_filter == filters.end() ) {
+		TR.Error << "Filter \"" << filter_name << "\"not found in map.\n(Error in this context):\n" << tag << std::endl;
+		runtime_assert( find_filter != filters.end() );
+	}
+	filter( find_filter->second->clone() );
+	if ( tag->hasOption( "filter_scorefxn" ) ) {
+		filter_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, "filter_scorefxn", data ) );
+	}
+
 	nub_->parse_tag( tag, data, reference_pose );
 
 }
@@ -230,6 +250,7 @@ NubInitioMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute::attribute_w_default( "use_cst", xsct_rosetta_bool,
 		"Use constraints to guide the folding (RECOMENDED). Basically this is the difference between running ClassicAbinitio or FoldConstraints. "
 		"Be aware that the constraints MUST have been set into the Pose beforehand with a ConstraintGenerator.", std::to_string( default_use_cst() ) )
+		+ XMLSchemaAttribute::attribute_w_default( "ss", xsct_dssp_string, "Force assign SSE to the template (otherwise use DSSP)", default_sse() )
 		+ XMLSchemaAttribute::attribute_w_default( "max_trials", xs_integer,
 		"Defines how many times we should try to fold the protein under a RMSD threshold with the template before giving up.", std::to_string( default_max_trials() ))
 		+ XMLSchemaAttribute::attribute_w_default( "clear_motif_cst", xsct_rosetta_bool,
@@ -260,7 +281,9 @@ NubInitioMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"Allow backbone movements to try to fix disulfides.", std::to_string( default_disulfides_bb() ) )
 		+ XMLSchemaAttribute::attribute_w_default( "disulfides_side", xs_integer,
 		"Defines number of sequence neighbors around CYS residues allowed to pack/minimize in order to achieve the disulfide bridge.",
-		std::to_string( default_disulfides_side() ))
+		std::to_string( default_disulfides_side() ) )
+		+ XMLSchemaAttribute::attribute_w_default( "filter_name", xs_string, "Name of an alternative filter to use instead of RMSD distance (applied at CENTROID level).",
+		default_filter_name() )
 		+ XMLSchemaAttribute::required_attribute( "fragments_id", xs_string,
 		"Fragments are necessary to perform the ab initio run. They need to be included/created with StructFragmentMover. "
 		"The value set in the 'prefix' attribute of that Mover needs to be provided here again.")
@@ -274,6 +297,8 @@ NubInitioMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 	protocols::rosetta_scripts::attributes_for_parse_score_function_w_description( attlist, "fullatom_scorefxn",
 		"Full atom score for disulfide optimization and repacking, if needed. If not specified calls Rosetta's default full atom score." );
+	protocols::rosetta_scripts::attributes_for_parse_score_function_w_description( attlist, "filter_scorefxn",
+		"Score applied to the defined filter_name. Provide a CENTROID scoring function. If not specified calls Rosetta's default centroid atom score." );
 	core::select::residue_selector::attributes_for_parse_residue_selector_when_required( attlist, "template_motif_selector",
 		"Selector specifying the residues from the template that will be substituted for the Nub; i.e. everything from the template that"
 		"we WON'T KEEP. This region is dubed as the template's motif.");
@@ -309,8 +334,19 @@ void
 NubInitioMover::make_unfolded_pose( core::pose::Pose & pose ) {
 
 	if ( nub_->unfolded_pose()->empty() ) {
-		protocols::moves::DsspMover dssp;
-		dssp.apply( pose );
+
+		if ( sse_ == "" ) {
+			protocols::moves::DsspMover dssp;
+			dssp.apply( pose );
+		}
+		else {
+			runtime_assert_msg(sse_.size() == pose.size() , "Provided SSE does not match template length." );
+			for ( core::Size i = 1; i <= sse_.size(); ++i ) {
+				char ss = sse_[i - 1];
+				if ( ss == ' ' || ss == '\0' ) ss = 'L';
+				pose.set_secstruct( i, ss );
+			}
+		}
 
 		TR << "Evaluation of input data's coherence" << std::endl;
 		sanity_check( pose );
@@ -380,16 +416,38 @@ NubInitioMover::refold_pose( core::pose::Pose & pose )
 		TR << "Evaluating RMSD-threshold success" << std::endl;
 		core::Real rmsd = template_rmsd( pose );
 
-		if ( rmsd > rmsd_threshold_ ) {
-			TR << TR.Red << "RMSD of " << rmsd << ": over threshold" << TR.Reset << std::endl;
-			TR << max_trials_ - trials_ << " trials left" << std::endl;
-			pose.detached_copy( template_pose_ );  // reset pose
-			++trials_;
-		} else {
-			TR << TR.Green << "RMSD of " << rmsd << ": under threshold" << TR.Reset << std::endl;
-			core::pose::setPoseExtraScore( pose, nub_->design_chain() + "_ni_trials", trials_ );
-			display.apply( pose );
-			return 0;
+		if ( !filter_defined_ ) {
+			if ( rmsd > rmsd_threshold_ ) {
+				TR << TR.Red << "RMSD of " << rmsd << ": over threshold" << TR.Reset << std::endl;
+				TR << max_trials_ - trials_ << " trials left" << std::endl;
+				pose.detached_copy( template_pose_ );  // reset pose
+				++trials_;
+			} else {
+				TR << TR.Green << "RMSD of " << rmsd << ": under threshold" << TR.Reset << std::endl;
+				core::pose::setPoseExtraScore( pose, nub_->design_chain() + "_ni_trials", trials_ );
+				core::pose::setPoseExtraScore( pose, nub_->design_chain() + "_ni_extra_filter", 0 );
+				display.apply( pose );
+				return 0;
+			}
+		}
+		else {
+			// make a copy to apply the filter-specific score
+			core::pose::Pose cpose = pose;
+			(*filter_scorefxn_)( cpose );
+			core::Real filter_value = filter_->report_sm( cpose );
+			bool filter_pass = filter_->apply( cpose );
+			if ( !filter_pass ) {
+				TR << TR.Red << "Given filter with value " << filter_value << ": over threshold" << TR.Reset << std::endl;
+				TR << max_trials_ - trials_ << " trials left" << std::endl;
+				pose.detached_copy( template_pose_ );  // reset pose
+				++trials_;
+			} else {
+				TR << TR.Green << "Given filter with value " << filter_value << ": under threshold" << TR.Reset << std::endl;
+				core::pose::setPoseExtraScore( pose, nub_->design_chain() + "_ni_trials", trials_ );
+				core::pose::setPoseExtraScore( pose, nub_->design_chain() + "_ni_extra_filter", filter_value );
+				display.apply( pose );
+				return 0;
+			}
 		}
 	}
 	return 2;
@@ -625,6 +683,7 @@ NubInitioMover::apply_abinitio( core::pose::Pose & pose )
 	if ( use_cst_ ) {
 		abinitio = utility::pointer::make_shared< FoldConstraints >( nub_->small_fragments(), nub_->large_fragments() , nub_->movemap()->clone() );
 	}
+	TR << pose.secstruct() << std::endl;
 	abinitio->init( pose );
 	if ( use_correction_weights_ and has_alphas_ ) {
 		abinitio->set_score_weight( core::scoring::hbond_sr_bb, mc_correction_weights_ );
@@ -1090,6 +1149,32 @@ void
 NubInitioMover::residue_type( std::string pick ) {
 	residue_type_ = pick;
 }
+std::string
+NubInitioMover::sse() const {
+	return sse_;
+}
+void
+NubInitioMover::sse( std::string pick ) {
+	sse_ = pick;
+}
+protocols::filters::FilterOP
+NubInitioMover::filter() const {
+	return filter_;
+}
+void
+NubInitioMover::filter( protocols::filters::FilterOP pick ) {
+	filter_  = pick;
+}
+core::scoring::ScoreFunctionOP
+NubInitioMover::filter_scorefxn() const {
+	return filter_scorefxn_;
+}
+
+void
+NubInitioMover::filter_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn ) {
+	filter_scorefxn_ = scorefxn;
+}
+
 
 // -- COMMON WORKING SELECTORS -- //
 
@@ -1309,6 +1394,21 @@ NubInitioMover::default_design() {
 std::string
 NubInitioMover::default_residue_type() {
 	return std::string();
+}
+
+std::string
+NubInitioMover::default_sse() {
+	return std::string();
+}
+
+std::string
+NubInitioMover::default_filter_name() {
+	return "true_filter";
+}
+
+core::scoring::ScoreFunctionOP
+NubInitioMover::default_filter_scorefxn() {
+	return core::scoring::get_score_function( false );
 }
 
 // -- ROSETTASCRIPTS -- //

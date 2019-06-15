@@ -165,6 +165,15 @@ public:
 	/// @brief if given, design all designable residues to the provided one (TEMPLATE & COLDSPOT labels)
 	std::string residue_type() const;
 	void residue_type( std::string pick );
+	/// @brief if given, allows to define the secondary structure of the template (in case it comes for PeptideStubMover)
+	std::string sse() const;
+	void sse( std::string pick );
+	/// @brief if given, define an alternative filter to RMSD
+	protocols::filters::FilterOP filter() const;
+	void filter( protocols::filters::FilterOP pick );
+	/// @brief score function to use on provided filter
+	core::scoring::ScoreFunctionOP filter_scorefxn() const;
+	void filter_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
 
 
 public:
@@ -214,6 +223,9 @@ private:
 	static bool default_drop_unfolded_pose();
 	static bool default_design();
 	static std::string default_residue_type();
+	static std::string default_sse();
+	static std::string default_filter_name();
+	static core::scoring::ScoreFunctionOP default_filter_scorefxn();
 
 public:
 	// -- ROSETTASCRIPTS -- //
@@ -242,6 +254,7 @@ private:
 	core::scoring::ScoreFunctionOP fullatom_scorefxn_;
 	core::scoring::ScoreFunctionOP abinitio_score_; // internal
 	utils::NubOP nub_;
+	std::string sse_;
 	bool use_cst_;
 	bool clear_motif_cst_;
 	core::Real rmsd_threshold_;
@@ -265,6 +278,9 @@ private:
 	bool design_;
 	std::string residue_type_;
 	core::io::silent::SilentFileDataOP silent_score_file_;
+	protocols::filters::FilterOP filter_;
+	bool filter_defined_;
+	core::scoring::ScoreFunctionOP filter_scorefxn_;
 	std::string pose_name_; // internal
 
 };
