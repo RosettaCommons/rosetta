@@ -1,0 +1,28 @@
+# Cadmium.  Added 14 June 2019 by Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+# Copied from parameters for zinc.
+NAME CD
+IO_STRING  CD Z
+TYPE LIGAND
+PROPERTIES METAL
+AA UNK
+ROTAMERS BASIC
+ATOM CD   Cd    CD      2.00
+ATOM  V1  VIRT  VIRT    0.00
+ATOM  V2  VIRT  VIRT    0.00
+ATOM  V3  VIRT  VIRT    0.00
+ATOM  V4  VIRT  VIRT    0.00
+BOND CD    V1
+BOND CD    V2
+BOND CD    V3
+BOND CD    V4
+CHARGE CD FORMAL +2
+NET_FORMAL_CHARGE +2
+NBR_ATOM CD
+NBR_RADIUS 5.0
+# tetrahedral geometry with 2.2 distance from center to vertex
+# chirality is defined so that viewing from V1 to CD, V2-V3-V4 are in clockwise direction.
+ICOOR_INTERNAL   CD      0.000000    0.000000    0.000000  CD     V1    V2
+ICOOR_INTERNAL    V1     0.000000    0.000000    2.200000  CD     V1    V2
+ICOOR_INTERNAL    V2     0.000000   70.500000    2.200000  CD     V1    V2
+ICOOR_INTERNAL    V3   120.000000   70.500000    2.200000  CD     V1    V2
+ICOOR_INTERNAL    V4  -120.000000   70.500000    2.200000  CD     V1    V2

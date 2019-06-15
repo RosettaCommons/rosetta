@@ -555,7 +555,7 @@ residue_types/oligourea/OU3_TYR.params
 
 ## Metal Ion Types
 residue_types/metal_ions/CA.params
-#residue_types/metal_ions/CD.params
+residue_types/metal_ions/CD.params
 residue_types/metal_ions/CO.params
 residue_types/metal_ions/CU.params
 residue_types/metal_ions/FE.params
