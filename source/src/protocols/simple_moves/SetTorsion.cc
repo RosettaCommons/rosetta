@@ -224,7 +224,7 @@ void SetTorsion::apply( Pose & pose ) {
 				id::AtomID(pose.residue(torsion_atoms_[iset][2].rsd()).atom_index(torsion_atoms_[iset][2].atom()), torsion_atoms_[iset][2].rsd()),
 				id::AtomID(pose.residue(torsion_atoms_[iset][3].rsd()).atom_index(torsion_atoms_[iset][3].atom()), torsion_atoms_[iset][3].rsd()),
 				id::AtomID(pose.residue(torsion_atoms_[iset][4].rsd()).atom_index(torsion_atoms_[iset][4].atom()), torsion_atoms_[iset][4].rsd()),
-				radians( angle(iset, angle_in) )
+				radians( angle( iset, degrees( angle_in ) ) )
 			);
 		} else {
 			for ( core::Size ires=1; ires<=residue_list(iset, pose).size(); ++ires ) {
