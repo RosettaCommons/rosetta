@@ -211,4 +211,6 @@ La_ La 0 0 0 pi nb nan nan nan nan nan nan nan
 # type some of the odder structure representation
 S_TeTeTeTePi S 3 4 0 pi3 nb nan nan nan nan nan nan nan 
 S_TeTeTeTe S 3 4 0 pi nb nan nan nan nan nan nan nan
+# The following was added by Vikram K. Mulligan (copied from Zn_)
+Cd_ Cd 0 0 0 pi nb nan nan nan nan nan nan nan
 #
