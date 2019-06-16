@@ -2476,7 +2476,7 @@ settings = {
         },
         "removes" : {
             "flags" : {
-                "cxx" : [ "std=c++0x" ],
+                "cxx" : [ "std=c++11" ],
             },
         },
     },
@@ -2490,7 +2490,7 @@ settings = {
         },
         "removes" : {
             "flags" : {
-                "cxx" : [ "std=c++0x" ],
+                "cxx" : [ "std=c++11" ],
             },
         },
     },
@@ -2504,7 +2504,7 @@ settings = {
         },
         "removes" : {
             "flags" : {
-                "cxx" : [ "std=c++0x" ],
+                "cxx" : [ "std=c++11" ],
             },
         },
     },
