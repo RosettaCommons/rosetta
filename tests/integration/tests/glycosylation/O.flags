@@ -5,6 +5,7 @@
 -unmute protocols.enzymatic_movers
 -enzymes:species h_sapiens
 -enzymes:enzyme OGT
+-enzymes:efficiency 0.33
 -s input/NPC1_luminal_domain_C.pdb
 -overwrite
 -nstruct 5

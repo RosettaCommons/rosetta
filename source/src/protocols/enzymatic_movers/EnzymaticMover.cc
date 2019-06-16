@@ -86,6 +86,7 @@ EnzymaticMover::register_options()
 
 	option.add_relevant( OptionKeys::enzymes::species );
 	option.add_relevant( OptionKeys::enzymes::enzyme );
+	option.add_relevant( OptionKeys::enzymes::efficiency );
 
 	// Mover's register_options() doesn't do anything; it's just here in principle.
 	moves::Mover::register_options();
@@ -350,6 +351,9 @@ EnzymaticMover::set_commandline_options()
 
 	set_species( option[ OptionKeys::enzymes::species ] );
 	set_enzyme( option[ OptionKeys::enzymes::enzyme ] );
+	if ( option[ OptionKeys::enzymes::efficiency ].active() ) {
+		set_efficiency( option[ OptionKeys::enzymes::efficiency ] );
+	}
 }
 
 // Initialize data members from arguments.

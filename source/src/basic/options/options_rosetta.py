@@ -2540,7 +2540,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		),
 	), # -corrections
 
-	# Evaluator Options ---------------------------------------------------------
+	# EnzymaticMover Options ----------------------------------------------------
 	Option_Group( 'enzymes' ,
 		Option('species', 'String',
 			desc='Setting the species name limits the behavior of the simulated '
@@ -2563,6 +2563,16 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				'in \\"database/virtual_enzymes/<enzyme_family>/<species_name_>/\\".',
 			short='Set the specific enzyme name of this simulated enzyme.',
 			default='generic'
+		),
+		Option('efficiency', 'Real',
+			desc='If set, the simulated enzyme used in this protocol will have '
+				'the efficiency indicated, where 1.00 is 100%.  A virtual '
+				'enzyme with an efficiency of 0.50 will perform its reaction  '
+				'any given site 50% of the time.  If not set, the value given '
+				'in the database for this enzyme will be used.  '
+				'Enzyme efficiency data are found in '
+				'\\"database/virtual_enzymes/<enzyme_family>/<species_name_>/\\".',
+			short='Set the efficiency of this simulated enzyme.'
 		),
 	),  # -enzymes
 
