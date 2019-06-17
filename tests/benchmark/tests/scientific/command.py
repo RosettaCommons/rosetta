@@ -60,14 +60,22 @@ def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_dr
     # symlink(rosetta_dir + '/tests/benchmark/hpc_drivers', working_dir + '/benchmark/hpc_drivers')
 
     python_environment = local_python_install(platform, config)
-    python_virtual_environment = setup_python_virtual_environment(working_dir+'/.python_virtual_environment', python_environment, python_packages)
+    python_virtual_environment_path = working_dir+'/.python_virtual_environment'
+    python_virtual_environment = setup_python_virtual_environment(python_virtual_environment_path, python_environment, python_packages)
 
-    multi_step_config = dict(config, test=test, rosetta_dir=rosetta_dir, working_dir=working_dir, platform=platform, verbose=verbose, debug=debug)
+    multi_step_config = dict( config,
+                              test = test,
+                              rosetta_dir = rosetta_dir,
+                              working_dir = working_dir,
+                              platform = platform,
+                              python_virtual_environment = python_virtual_environment._as_dict,
+                              verbose=verbose,
+                              debug=debug,
+    )
 
     #print('multi_step_config:', multi_step_config)
     with open(f'{working_dir}/{_multi_step_config_}', 'w') as f: json.dump(multi_step_config, f, sort_keys=True, indent=2)
 
-    python = sys.executable
     scripts = sorted( f for f in os.listdir(working_dir) if f[0].isdigit() and f.endswith('.py') )
     for script in scripts:
         #print(script)
@@ -79,6 +87,8 @@ def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_dr
         if os.path.isfile(f'{working_dir}/{_multi_step_error_}'):
             with open(f'{working_dir}/{_multi_step_error_}') as f: return json.load(f)
 
+    if not config['emulation'] and os.path.isdir(python_virtual_environment_path): shutil.rmtree(python_virtual_environment_path)
+
     with open(f'{working_dir}/{_multi_step_result_}') as f: return json.load(f)
 
 
@@ -87,6 +97,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     # If package have not-yet-stable-api please make sure to SPECIFY THE EXACT VERSION of package to use so our testing-scripts
     # will not accidently break when a new version of upstream package got released in the future
     tests = dict(
+        _template_             = '',
         cartesian_relax        = 'numpy matplotlib',
         fast_relax             = 'numpy matplotlib',
         fast_relax_5iter       = 'numpy matplotlib',

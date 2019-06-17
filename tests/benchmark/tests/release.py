@@ -320,7 +320,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
     version_file = working_dir + '/version.json'
     generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='http://www.pyrosetta.org', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
 
-    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, debug=debug, version=version_file)
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, skip_compile=debug, version=version_file)
     build_command_line = result.command_line
     pyrosetta_path = result.pyrosetta_path
 
@@ -401,7 +401,7 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
     version_file = working_dir + '/version.json'
     generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=package_name, url='http://www.pyrosetta.org', file_name=version_file)   # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
 
-    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, debug=debug, version=version_file)
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, skip_compile=debug, version=version_file)
 
     res = result.exitcode
     output = result.output
@@ -519,7 +519,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
     version_file = working_dir + '/version.json'
     version = generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='http://www.pyrosetta.org', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
 
-    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, conda=conda, debug=debug, version=version_file, options='--multi-threaded --no-strip-module --binder-config rosetta.distributed.config --serialization')
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, conda=conda, skip_compile=debug, version=version_file, options='--multi-threaded --no-strip-module --binder-config rosetta.distributed.config --serialization')
     build_command_line = result.command_line
     pyrosetta_path = result.pyrosetta_path
 

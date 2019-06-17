@@ -71,8 +71,13 @@ class NT:  # named tuple
     def __repr__(self):
         r = 'NT: |'
         for i in dir(self):
-            if not i.startswith('__') and not isinstance(getattr(self, i), types_module.MethodType): r += '%s --> %s, ' % (i, getattr(self, i))
+            print(i)
+            if not i.startswith('__') and i != '_as_dict' and not isinstance(getattr(self, i), types_module.MethodType): r += '%s --> %s, ' % (i, getattr(self, i))
         return r[:-2]+'|'
+
+    @property
+    def _as_dict(self):
+        return { a: getattr(self, a) for a in dir(self) if not a.startswith('__') and a != '_as_dict' and not isinstance(getattr(self, a), types_module.MethodType)}
 
 
 def Tracer(verbose=False):
@@ -346,7 +351,7 @@ def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=Fals
     return res, output, build_command_line
 
 
-def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', options='', conda=None, verbose=False, debug=False, version=None):
+def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', options='', conda=None, verbose=False, skip_compile=False, version=None):
     ''' Compile Rosetta binaries on a given platform return NT(exitcode, output, build_command_line, pyrosetta_path, python) '''
 
     #binder = install_llvm_tool('binder', source_location='{}/source/src/python/PyRosetta/binder'.format(rosetta_dir), config=config)
@@ -369,8 +374,8 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
 
     pyrosetta_path = execute('Getting PyRosetta build path...', command_line + ' --print-build-root', return_='output').split()[0]
 
-    if debug:
-        res, output = 0, '__init__.py:build_pyrosetta: debug is enabled, skipping build...\n'
+    if skip_compile:
+        res, output = 0, '__init__.py:build_pyrosetta: skip_compile is enabled, skipping build...\n'
     else:
         res, output = execute('Building PyRosetta {}...'.format(mode), command_line, return_='tuple', add_message_and_command_line_to_output=True)
 

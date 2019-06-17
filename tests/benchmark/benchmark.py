@@ -114,7 +114,7 @@ def main(args):
     Config.set('DEFAULT', 'memory',    str(memory) )
 
     config = Config.items('config')
-    config = dict(config, cpu_count=Config.getint('DEFAULT', 'cpu_count'), memory=memory, debug=Options.debug)
+    config = dict(config, cpu_count=Config.getint('DEFAULT', 'cpu_count'), memory=memory, debug=Options.debug, emulation=True)
 
     if 'results_root' not in config: config['results_root'] = os.path.abspath('./results/')
 
@@ -212,9 +212,9 @@ def main(args):
                 res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), config=config, hpc_driver=hpc_driver, verbose=True, debug=Options.debug)
 
             if res[_StateKey_] not in _S_Values_: print( 'Warning!!! Test {} failed with unknow result code: {}'.format(test_name, res[_StateKey_]) )
-            else: print( 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2)) )
+            else: print( f'Test {test} finished output:\n{res[_LogKey_]}\n----------------------------------------------------------------\nState: {res[_StateKey_]!r} | ', end='')
 
-            print( 'Output and log of this test saved to {0}/output.results.json and {0}/output.log'.format(working_dir) )
+            print( 'Output and log of this test saved to:\n{0}/output.results.json\n{0}/output.log'.format(working_dir) )
 
             # Caution! Some of the strings in the result object may be unicode.
             with codecs.open(working_dir+'/output.log'.format(test), 'w', encoding='utf-8', errors='replace') as f: # Be robust to unicode in the log messages

@@ -79,7 +79,7 @@ def run_pyrosetta_test(rosetta_dir, working_dir, platform, config, hpc_driver=No
     python_environment = local_python_install(platform, config)
     ve = setup_python_virtual_environment(working_dir+'/ve', python_environment, 'pytest pytest-json')
 
-    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', debug=debug)
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', skip_compile=debug)
     #build_command_line = result.command_line
     #pyrosetta_path = result.pyrosetta_path
 

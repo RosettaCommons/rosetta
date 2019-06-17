@@ -37,4 +37,9 @@ release_root = ./results/_release_
 # deprecated
 conda_token = your-conda-token
 
+
+# path to local ncbi_blast_plus
 ncbi_blast_plus = /Users/benchmark/prefix/ncbi-blast-2.9.0+/bin/blastp
+
+# path to fragment_picking_database
+fragment_picking_database = /home/benchmark/prefix/fragment_picking_database/2019.05.19

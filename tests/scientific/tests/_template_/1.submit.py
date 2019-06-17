@@ -78,5 +78,22 @@ for target in targets:
 #     time.sleep(64)  # waiting for NFS caching
 hpc_driver.wait_until_complete(hpc_job_ids, silent=True)
 
+
+
+# Submitting PyRosetta job
+hpc_job_ids.append( hpc_driver.submit_hpc_job(
+    name=f'{testname}-{PyRosetta-example-job}',
+
+    #==> EDIT HERE, substitute <MyPythonScript.py> and <script-arguments-if-any> with name of your PyRosetta Python script (located inside your test dir) and command line flags for it
+    executable = config["python_virtual_environment"]["python"],
+    arguments = '<MyPythonScript.py> <script-arguments-if-any>',
+    working_dir = prefix,
+    jobs_to_queue = min(nstruct, 50),
+    log_dir = hpc_logs,
+    time=24,
+    block=False)
+)
+
+
 #==> EDIT HERE
 benchmark.save_variables('debug targets nstruct working_dir testname')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

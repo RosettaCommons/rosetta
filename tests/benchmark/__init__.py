@@ -50,9 +50,25 @@ def error(code, message):
 
 def build_rosetta(mode='release'):
     ''' Compile Rosetta binaries on configured platform and return (res, output, build_command_line) '''
-
     c = config()
     return benchmark.tests.build_rosetta(c['rosetta_dir'], c['platform'], c, mode=mode, build_unit=False, verbose=False)
+
+
+def build_and_install_pyrosetta(mode='Release'):
+    ''' Compile PyRosetta on configured platform and install it into current virtual environment and return (res, output, build_command_line) '''
+    c = config()
+
+    pyrosetta_package_path = c['python_virtual_environment']['root'] + '/.pyrosetta_package'
+
+    options = f'--create-package {pyrosetta_package_path}' + ( ' -sd' if c.get('skip_compile', False) else '' )
+    r = benchmark.tests.build_pyrosetta(rosetta_dir=c['rosetta_dir'], platform=c['platform'], jobs=c['cpu_count'], config=c, mode=mode, options=options, skip_compile=False)
+
+    if not r.exitcode: execute('Installing PyRosetta...', f'cd {pyrosetta_package_path}/setup && {c["python_virtual_environment"]["python"]} setup.py install')
+
+    #if not c['emulation']: shutil.rmtree(pyrosetta_package_path)
+
+    return r.exitcode, r.output, r.command_line
+
 
 
 def calculate_extension(mode='release'):

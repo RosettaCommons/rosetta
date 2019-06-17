@@ -33,9 +33,10 @@ class MultiCore_HPC_Driver(HPC_Driver):
                     r = os.waitpid(pid, os.WNOHANG)
                     if r == (pid, 0): self.pids.remove(pid)  # process have ended without error
                     elif r[0] == pid :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
-                        self.cancel_job()
-                        print('Some of the HPC jobs terminated abnormally!')
-                        sys.exit(1)
+                        #self.cancel_job()
+                        #sys.exit(1)
+                        self.pids.remove(pid)
+                        print('ERROR: Some of the HPC jobs terminated abnormally! Please see HPC logs for details.')
 
                 except ChildProcessError: self.pids.remove(pid)
 
@@ -90,9 +91,16 @@ class MultiCore_HPC_Driver(HPC_Driver):
             pid = mfork()
             if not pid: # we are child process
                 command_line = 'cd {} && {} {}'.format(working_dir, executable, arguments.format(process=process) )
-                log = execute('Running job {}.{}...'.format(name, i), command_line, tracer=self.tracer, return_='output')
-                with codecs.open(log_dir+'/hpc.{name}.{i}.log'.format(**vars()), 'w', encoding='utf-8', errors='replace') as f: f.write(command_line+'\n'+log)
+                exit_code, log = execute('Running job {}.{}...'.format(name, i), command_line, tracer=self.tracer, return_='tuple')
+                with codecs.open(log_dir+'/hpc.{name}.{i:02d}.log'.format(**vars()), 'w', encoding='utf-8', errors='replace') as f:
+                    f.write(command_line+'\n'+log)
+                    if exit_code:
+                        error_report = f'\n\n{command_line}\nERROR: PROCESS {name}.{i:02d} TERMINATED WITH NON-ZERO-EXIT-CODE {exit_code}!\n'
+                        f.write(error_report)
+                        print(log, error_report)
+
                 sys.exit(0)
+
             else: # we are parent!
                 current_job.add_pid(pid)
                 # Need to potentially re-add to list, as remove_completed_jobs() might trim it.

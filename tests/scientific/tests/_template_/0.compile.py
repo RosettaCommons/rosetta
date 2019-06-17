@@ -18,9 +18,16 @@ from benchmark import to_bytes
 from benchmark import _S_passed_, _S_failed_, _S_build_failed_, _S_script_failed_
 
 
+# Compile Rosetta
 res, output, build_command_line = benchmark.build_rosetta()
-with open('build-log.txt', 'wb') as f: f.write( to_bytes(output) )
+with open('build-log.rosetta.txt', 'wb') as f: f.write( to_bytes(output) )
+if res: benchmark.error(_S_build_failed_, f'Building Rosetta failed!\n{build_command_line}\n{output}\n')
 
-if res: benchmark.error(_S_build_failed_, f'Building rosetta failed!\n{build_command_line}\n{output}\n')
 
-benchmark.save_variables() # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+# Compile PyRosetta
+res, output, build_command_line = benchmark.build_and_install_pyrosetta()
+with open('build-log.PyRosetta.txt', 'wb') as f: f.write( to_bytes(output) )
+if res: benchmark.error(_S_build_failed_, f'Building PyRosetta failed!\n{build_command_line}\n{output}\n')
+
+
+benchmark.save_variables('') # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
