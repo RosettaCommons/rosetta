@@ -76,8 +76,10 @@ sources = {
 		"per_residue_solvent_exposure",
                 "ResidueDisorder",
 		"residue_energy_breakdown",
+		"report_hbonds_for_plugin",
 		"score",
 		"score_jd2",
+		"sc",
 		"shobuns",
 	],
 	"public/antibody": [
