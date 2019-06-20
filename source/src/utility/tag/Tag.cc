@@ -116,13 +116,6 @@ Tag::Tag() :
 	quote_options_( true )
 {}
 
-Tag::Tag( std::string const & tag_string) :
-	parentTag_(/* NULL */),
-	quote_options_( true )
-{
-	read( tag_string );
-}
-
 void Tag::clear() {
 	name_.clear();
 	mOptions_.clear();

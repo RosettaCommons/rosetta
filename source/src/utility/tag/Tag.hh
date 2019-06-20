@@ -50,7 +50,11 @@ public:
 
 public:
 	Tag();
-	Tag( std::string const & tag_string );
+
+	// BAD: Tag( std::string const & tag_string );
+	// It's tempting to have a direct constructor instead of doing a create/read two-step
+	// The problem is that we rely on enable_shared_from_this to add subtags.
+	// This only works if the Tag is in an OP already (e.g. it doesn't work in the constructor.)
 
 	/// self pointers
 	inline TagCOP get_self_ptr() const { return shared_from_this(); }
