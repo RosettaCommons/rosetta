@@ -305,6 +305,11 @@ EXAMPLES For Running Demos/Tutorials
         parse_valgrind_options(options)
 
     global Options;  Options = options
+
+    if Options.suffix == 'thread' and Options.jobs != 1:
+        print('WARNING: `--suffix thread` is only compatible with `--jobs 1`! Setting `jobs` to `1`...')
+        Options.jobs = 1
+
     Options.num_procs = Options.jobs
 
     print('Using Rosetta source dir at: ' + Options.mini_home)
@@ -970,7 +975,7 @@ def get_binext():
     if Options.extras:
         extras = Options.extras
     elif Options.suffix:
-        extras = Options.suffix  # naive extras = Options.suffix for now, later use if needed: dict(mpi='mpi', tensorflow='tensorflow')[Options.suffix]
+        extras =  dict(mpi='mpi', tensorflow='tensorflow', thread='cxx11thread')[Options.suffix]
     else :
         extras='default'
 
