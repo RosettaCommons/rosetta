@@ -388,7 +388,7 @@ const
 /// @brief Queries whether the user has set the -score::no_pro_close_ring_closure flag.
 /// If he/she has, this sets skip_ring_closure_ to 'true'.
 void ProClosureEnergy::set_skip_ring_closure_from_flags() {
-	skip_ring_closure_ = basic::options::option[ basic::options::OptionKeys::score::no_pro_close_ring_closure ].user();
+	skip_ring_closure_ = basic::options::option[ basic::options::OptionKeys::score::no_pro_close_ring_closure ].value();
 	return;
 }
 

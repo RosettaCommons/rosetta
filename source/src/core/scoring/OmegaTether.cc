@@ -295,7 +295,7 @@ OmegaTether::read_omega_tables() {
 		read_table_from_stream( stream, omega_mus_all_[i], omega_sigmas_all_[i] );
 	}
 
-	if ( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables].user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables].value() ) {
 		//fpd this is tricky because the function needs to be symmetric around both phi/psi and omega
 		//fpd there are two ways to do this:
 		//fpd   1) set everything to 180

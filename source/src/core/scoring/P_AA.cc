@@ -290,7 +290,7 @@ P_AA::read_P_AA_pp()
 	// }
 	//#endif
 
-	if ( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables].user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables].value() ) {
 		symmetrize_gly_table();
 	}
 

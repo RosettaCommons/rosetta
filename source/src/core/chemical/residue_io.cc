@@ -1202,7 +1202,7 @@ read_topology_file(
 
 			l >> child_atom >> phi >> theta >> d >> parent_atom >> angle_atom >> torsion_atom;
 
-			bool const symm_gly_corrections( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ].user() ); //Are we symmetrizing the glycine params file?
+			bool const symm_gly_corrections( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ].value() ); //Are we symmetrizing the glycine params file?
 			if ( icoor_reassignments.find( child_atom ) != icoor_reassignments.end() ) {
 				utility::vector1< std::string > const & new_params( icoor_reassignments.find( child_atom )->second );
 				phi   = ObjexxFCL::float_of( new_params[1] );

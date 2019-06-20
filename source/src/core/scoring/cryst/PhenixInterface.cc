@@ -893,7 +893,7 @@ void PhenixInterface::initialize_target_evaluator(
 	// obvious error check 1
 	//   check that the crystal refinement flag is specified
 	//   if not, don't die but warn the user
-	if (!basic::options::option[ basic::options::OptionKeys::cryst::crystal_refine ].user())
+	if (!basic::options::option[ basic::options::OptionKeys::cryst::crystal_refine ].value())
 		TR.Warning << "The flag -cryst::cryst_refine should be given for crystal refinement!  Continuing..." << std::endl;
 
 	// obvious error check 3

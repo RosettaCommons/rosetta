@@ -215,7 +215,7 @@ Real DipolarCoupling::compute_dcscore(core::pose::Pose & pose) {
 	Real total_dev=0.0;
 	numeric::xyzVector<Real> memnorm;
 	//Should we use the membrane normal?
-	if ( basic::options::option[ basic::options::OptionKeys::dc::useZ].user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::dc::useZ].user() &&  basic::options::option[ basic::options::OptionKeys::dc::useZ].value() ) {
 		memnorm=numeric::xyzVector<Real> (0.0,0.0,1.0);
 		memnorm.normalize();
 	} else {

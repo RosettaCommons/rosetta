@@ -476,7 +476,7 @@ get_score_function(
 	// for metalloproteins), and this is the best place to ensure that it happens consistently.
 
 	//Turn on constraints if the user has used the auto_setup_metals flag.  Constraints are added automatically on PDB import.
-	if ( options[in::auto_setup_metals].user() ) {
+	if ( options[in::auto_setup_metals].value() ) {
 		if ( scorefxn->get_weight(metalbinding_constraint) < 1.0e-10 ) {
 			TR << "The -auto_setup_metals flag was used with no metalbinding_constraint weight set in the weights file.  Setting to 1.0." << std::endl ;
 			scorefxn->set_weight(metalbinding_constraint, 1.0); // Turn on the atom_pair_constraint weight if and only if it isn't already turned on.
@@ -486,7 +486,7 @@ get_score_function(
 	}
 
 	// Turn on carbohydrate energy method weights if the user has supplied the -include_sugars flag.
-	if ( options[ in::include_sugars ].user() ) {
+	if ( options[ in::include_sugars ].value() ) {
 		if ( TR.Info.visible() ) {
 			TR.Info << "The -include_sugars flag was used with no sugar_bb weight set in the weights file.  " <<
 				"Setting sugar_bb weight to 1.0 by default." << std::endl;

@@ -156,7 +156,7 @@ GlobalResidueTypeSet::init_restypes_from_database() {
 		// This just means that the "enumerate RTs" app should run with pH mode
 		bool no_proton_states = false;
 		if ( line.size() > 20 ) {
-			if ( ( !option[ OptionKeys::pH::pH_mode ].user() ) &&
+			if ( ( !option[ OptionKeys::pH::pH_mode ].value() ) &&
 					( line.substr (14,6) == "proton" ) ) {
 				no_proton_states = true;
 			}
