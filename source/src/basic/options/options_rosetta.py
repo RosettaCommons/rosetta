@@ -642,6 +642,9 @@ Options = Option_Group( '',
 		Option( 'mmCIF', 'Boolean', desc="output mmCIF files (broadly, as opposed to PDB files)", default='false' ),
 		Option( 'mmCIF_gz', 'Boolean', desc="if outputting mmCIF files, gzip them", default='false' ),
 
+		Option( 'mmtf', 'Boolean', desc="output mmtf files (broadly, as opposed to PDB files)", default='false' ),
+		Option( 'mmtf_gz', 'Boolean', desc="if outputting mmtf files, gzip them", default='false' ),
+
 		# Database options ----------------------------------------------------
 		Option( 'use_database', 'Boolean',
 				desc="Write out structures to database.  Specify database via -inout:dbms:database_name and wanted "
@@ -876,6 +879,7 @@ Options = Option_Group( '',
 					desc="Put silent-output files in individual directory as determined by mpi-rank",
 					default='false'),
 			Option( 'mmCIF', 'Path', desc="if outputting mmCIF, mmCIF file output path" ),
+			Option( 'mmtf', 'Path', desc="mmtf file output path" ),
 		), # out:path
 	), # out
 

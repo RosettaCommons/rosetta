@@ -20,5 +20,6 @@
 #include <protocols/jd2/SerializedPoseJobOutputterCreator.hh>
 #include <protocols/jd2/SilentFileJobOutputterCreator.hh>
 #include <protocols/jd2/mmCIFJobOutputterCreator.hh>
+#include <protocols/jd2/mmtfJobOutputterCreator.hh>
 #include <protocols/enzdes/EnzdesJobOutputterCreator.hh>
 #include <protocols/features/DatabaseJobOutputterCreator.hh>

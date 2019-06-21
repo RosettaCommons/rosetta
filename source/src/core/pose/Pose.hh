@@ -152,6 +152,7 @@ Pose.atom_tree
 Pose.conformation
 Pose.dump_pdb
 Pose.dump_cif
+Pose.dump_mmtf
 Pose.dump_file
 Pose.energies
 Pose.fold_tree
@@ -1774,6 +1775,7 @@ public:
 	/// See also:
 	///     Pose
 	///     dump_cif
+	///     dump_mmtf
 	///     dump_file
 	void
 	dump_file( std::string const & file_name ) const;
@@ -1788,6 +1790,17 @@ public:
 	///     dump_file
 	void
 	dump_cif( std::string const & file_name) const;
+
+	/// @brief Export pose data to the mmtf file  <file_name>
+	///
+	/// example(s):
+	///     pose.dump_mmtf('new_01.mmtf')
+	/// See also:
+	///     Pose
+	///     pose_from_mmtf
+	///     dump_file
+	void
+	dump_mmtf( std::string const & file_name) const;
 
 
 	/// @brief Export pose data to the PDB file  <file_name>

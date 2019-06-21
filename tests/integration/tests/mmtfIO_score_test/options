@@ -1,0 +1,11 @@
+-s 1ubq.mmtf 1em7.mmtf 1qwe.mmtf
+-ignore_unrecognized_res
+-resfile resfile
+
+-ex1 
+-ex2
+-extrachi_cutoff 0
+
+-nstruct 2
+
+-out::mmtf true

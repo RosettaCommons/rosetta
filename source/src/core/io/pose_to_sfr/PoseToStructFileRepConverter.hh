@@ -192,6 +192,11 @@ private: //PRIVATE FUNCTIONS:
 		core::Size const new_atom_num,
 		core::Size const new_tercount);
 
+	/// @brief Determine chem_comp_type via ResidueType and VariantType combinations
+	///    http://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_chem_comp.type.html
+	std::string
+	get_chem_comp_type( core::conformation::Residue const & rsd ) const;
+
 	core::Size get_new_atom_serial_num() const;
 
 

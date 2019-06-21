@@ -56,6 +56,7 @@
 #include <core/io/StructFileReaderOptions.hh>  // TODO: Rename after refactor.
 #include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
 #include <core/io/mmcif/cif_reader.hh>
+#include <core/io/mmtf/mmtf_reader.hh>
 #include <core/io/StructFileRep.hh>
 #include <core/io/StructFileRepOptions.hh>
 
@@ -136,6 +137,9 @@ std::ostream & operator<<( std::ostream & stream, FileType type ) {
 		break;
 	case CIF_file :
 		stream << "mmCIF";
+		break;
+	case MMTF_file :
+		stream << "MMTF";
 		break;
 	case SRLZ_file :
 		stream << "SRLZ";
@@ -255,6 +259,7 @@ pose::PoseOP pose_from_file(chemical::ResidueTypeSet const & residue_set, std::s
 	return pose;
 }
 
+
 FileType
 determine_file_type( std::string const &contents_of_file) {
 	utility::vector1< std::string > lines( utility::split_by_newlines( contents_of_file ) );
@@ -304,11 +309,19 @@ void
 pose_from_file(
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
-	std::string const & filenames_string,
+	std::string const & filenames_string, // ???? why (s)
 	ImportPoseOptions const & options,
 	bool read_fold_tree,
 	FileType file_type
 ) {
+	utility::vector1<std::string> const split_filename(utility::string_split(filenames_string, '.'));
+	if ( file_type == MMTF_file ||
+			( split_filename.size() && utility::lower(split_filename[split_filename.size()]) == "mmtf" ) ) {
+		core::io::StructFileRepOP sfr( core::io::mmtf::create_sfr_from_mmtf_filename( filenames_string, options ) );
+		build_pose( sfr, pose, residue_set, options );
+		return;
+	}
+
 	utility::vector1< std::string > filenames = utility::split(filenames_string);
 
 	std::string contents_of_file;
@@ -333,7 +346,7 @@ pose_from_file(
 	}
 
 	if ( file_type == Unknown_file ) {
-		utility_exit_with_message( "Cannot determine file type. Current supported types are: PDB, CIF, SRLZ");
+		utility_exit_with_message( "Cannot determine file type. Current supported types are: PDB, CIF, SRLZ, MMTF");
 	} else if ( file_type == PDB_file ) {
 		//fpd If the conformation is not of type core::Conformation, reset it
 		conformation::ConformationOP conformation_op( new conformation::Conformation() );

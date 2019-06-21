@@ -11,6 +11,8 @@
 /// @brief   Commonly used string constants.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
+#ifndef INCLUDED_utility_string_constants_hh
+#define INCLUDED_utility_string_constants_hh
 
 // C++ Header
 #include <string>
@@ -28,3 +30,4 @@ static std::string const LOWERCASE_ALPHANUMERICS( LOWERCASE_LETTERS + NUMERALS )
 static std::string const ALPHANUMERICS( LETTERS + NUMERALS );
 
 }  // namespace utility
+#endif //

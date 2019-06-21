@@ -56,6 +56,7 @@
 #include <core/io/util.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/mmcif/cif_writer.hh>
+#include <core/io/mmtf/mmtf_writer.hh>
 
 // Basic headers
 #include <basic/init.hh>
@@ -2049,6 +2050,8 @@ Pose::dump_file(const std::string & file_name_string) const {
 	utility::file::FileName fname( file_name_string );
 	if ( fname.ext() == "cif" ) {
 		core::io::mmcif::dump_cif( *this, file_name_string );
+	} else if ( fname.ext() == "mmtf" ) {
+		core::io::mmtf::dump_mmtf( *this, file_name_string );
 	} else {
 		core::io::pdb::dump_pdb(*this, file_name_string );
 	}
@@ -2057,6 +2060,11 @@ Pose::dump_file(const std::string & file_name_string) const {
 void
 Pose::dump_cif(std::string const &file_name) const {
 	core::io::mmcif::dump_cif( *this, file_name );
+}
+
+void
+Pose::dump_mmtf(std::string const &file_name) const {
+	core::io::mmtf::dump_mmtf( *this, file_name );
 }
 
 

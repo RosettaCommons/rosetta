@@ -69,6 +69,9 @@ AtomTreeDiffJobOutputter::AtomTreeDiffJobOutputter():
 		if ( basic::options::option[ basic::options::OptionKeys::out::path::pdb ].user() ) {
 			outfile.path(basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().path());
 			outfile.vol(basic::options::option[ basic::options::OptionKeys::out::path::pdb ]().vol());
+		} else if ( basic::options::option[ basic::options::OptionKeys::out::path::mmtf ].user() ) {
+			outfile.path(basic::options::option[ basic::options::OptionKeys::out::path::mmtf ]().path());
+			outfile.vol(basic::options::option[ basic::options::OptionKeys::out::path::mmtf ]().vol());
 		} else if ( basic::options::option[ basic::options::OptionKeys::out::path::all ].user() ) {
 			outfile.path(basic::options::option[ basic::options::OptionKeys::out::path::all ]().path());
 			outfile.vol(basic::options::option[ basic::options::OptionKeys::out::path::all ]().vol());
@@ -77,31 +80,16 @@ AtomTreeDiffJobOutputter::AtomTreeDiffJobOutputter():
 			outfile.vol("");
 		}
 
-		if ( basic::options::option[ basic::options::OptionKeys::out::pdb_gz ] && outfile.ext() != "gz" ) {
-			outfile.ext( ".gz" ); // else use input extension
+		if ( ( basic::options::option[ basic::options::OptionKeys::out::pdb_gz ] ||
+				basic::options::option[ basic::options::OptionKeys::out::mmtf_gz ] ||
+				basic::options::option[ basic::options::OptionKeys::out::mmCIF_gz ] ) && outfile.ext() != "gz" ) {
+			outfile.ext( ".gz" );
 		}
 		outfile_name_ = outfile.name();
 	}
-
-	//Looks like we want to only have the file open when we're actually writing, moved this to dump_pose
-
-	/*
-	if( utility::file::file_exists(outfile_name) ) {
-	atom_tree_diff_.read_file(outfile_name);
-	out_.open_append( outfile_name.c_str() );
-	} else {
-	out_.open( outfile_name.c_str() );
-	if( basic::options::option[ basic::options::OptionKeys::run::version ] ) {
-	out_ << "# Mini-Rosetta version " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url() << "\n";
-	}
-	}
-	if ( !out_.good() ) {
-	utility_exit_with_message( "Unable to open file: " + outfile_name + "\n" );
-	}
-	*/
 }
 
-AtomTreeDiffJobOutputter::~AtomTreeDiffJobOutputter()= default;
+AtomTreeDiffJobOutputter::~AtomTreeDiffJobOutputter() = default;
 
 void
 AtomTreeDiffJobOutputter::final_pose( JobOP job, core::pose::Pose const & pose, std::string const & /*tag*/ ){

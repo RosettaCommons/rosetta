@@ -31,6 +31,8 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/ResidueProperty.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -415,6 +417,68 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 	return append_atom_info_to_sfr( pose, res_info, rsd, atom_index, use_pdb_info, get_new_atom_serial_num() /*atom index*/, pose.chain( rsd.seqpos() ) - 1 /*Number of termini before this atom*/);
 }
 
+std::string
+PoseToStructFileRepConverter::get_chem_comp_type( core::conformation::Residue const & rsd ) const {
+	chemical::ResidueTypeCOP type_ptr = rsd.type_ptr();
+	if ( type_ptr->has_property(core::chemical::D_AA) ) {
+		if ( type_ptr->base_name() == "GLY" ) {
+			return "PEPTIDE-LINKING";
+		} else if ( type_ptr->has_property(core::chemical::BETA_AA) ) {
+			return "D-BETA-PEPTIDE";
+		} else if ( type_ptr->has_variant_type(core::chemical::UPPER_TERMINUS_VARIANT) ) {
+			return "D-PEPTIDE COOH CARBOXY TERMINUS";
+		} else if ( type_ptr->has_variant_type(core::chemical::LOWER_TERMINUS_VARIANT) ) {
+			return "D-PEPTIDE NH3 AMINO TERMINUS";
+		} else {
+			return "D-PEPTIDE LINKING";
+		}
+	}
+
+	if ( type_ptr->has_property(core::chemical::L_AA) ) {
+		if ( type_ptr->base_name() == "GLY" ) {
+			return "PEPTIDE-LINKING";
+		} else if ( type_ptr->has_property(core::chemical::BETA_AA) ) {
+			return "L-BETA-PEPTIDE";
+		} else if ( type_ptr->has_variant_type(core::chemical::UPPER_TERMINUS_VARIANT) ) {
+			return "L-PEPTIDE COOH CARBOXY TERMINUS";
+		} else if ( type_ptr->has_variant_type(core::chemical::LOWER_TERMINUS_VARIANT) ) {
+			return "L-PEPTIDE NH3 AMINO TERMINUS";
+		} else {
+			return "L-PEPTIDE LINKING";
+		}
+	}
+
+	if ( type_ptr->has_property(core::chemical::RNA) ) {
+		if ( type_ptr->has_variant_type(core::chemical::UPPER_TERMINUS_VARIANT) ) {
+			return "RNA OH 3 PRIME TERMINUS";
+		} else if ( type_ptr->has_variant_type(core::chemical::LOWER_TERMINUS_VARIANT) ) {
+			return "RNA OH 3 PRIME TERMINUS";
+		} else if ( type_ptr->has_property(core::chemical::L_RNA) ) {
+			return "L-RNA LINKING";
+		} else {
+			return "RNA LINKING";
+		}
+	}
+
+	if ( type_ptr->has_property(core::chemical::DNA) ) {
+		if ( type_ptr->has_variant_type(core::chemical::UPPER_TERMINUS_VARIANT) ) {
+			return "DNA OH 3 PRIME TERMINUS";
+		} else if ( type_ptr->has_variant_type(core::chemical::LOWER_TERMINUS_VARIANT) ) {
+			return "DNA OH 3 PRIME TERMINUS";
+		} else {
+			return "DNA LINKING";
+		}
+	}
+
+	if ( !type_ptr->has_property(core::chemical::CARBOHYDRATE) ) {
+		return "SACCHARIDE";
+	} else if ( !type_ptr->has_property(core::chemical::POLYMER) ) {
+		return "NON-POLYMER";
+	} else if ( type_ptr->has_property(core::chemical::PEPTOID) ) {
+		return "PEPTIDE-LIKE";
+	}
+	return "OTHER";
+}
 
 bool
 PoseToStructFileRepConverter::append_atom_info_to_sfr(
@@ -491,6 +555,8 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 	// 'chains' is member data
 	if ( sfr_->chains().size() < static_cast <core::Size> (rsd.chain() + 1) ) sfr_->chains().resize( rsd.chain() + 1 );
 	sfr_->chains()[rsd.chain()].push_back(ai);
+
+	ai.chem_comp_type = get_chem_comp_type(rsd);
 
 	return true;
 }
@@ -1097,6 +1163,7 @@ PoseToStructFileRepConverter::grab_conect_records_for_atom(
 	bool const target_res_is_canonical_or_solvent( target_restype.is_canonical() || target_restype.is_solvent() );
 	core::Real const dist_cutoff_sq( options_.connect_info_cutoff()*options_.connect_info_cutoff() );
 	core::id::AtomID const target_atom_id( atom_index_in_rsd, res_index ); //The AtomID of this atom.
+	const core::chemical::VD target_atom_VD(target_restype.atom_vertex(atom_index_in_rsd));
 	utility::vector1< core::id::AtomID > const bonded_ids(  pose.conformation().bonded_neighbor_all_res( target_atom_id, write_virtuals, ! writeall ) ); //List of AtomIDs of atoms bound to this atom.
 
 	Vector target_atom_xyz( pose.xyz( target_atom_id ) );
@@ -1120,6 +1187,13 @@ PoseToStructFileRepConverter::grab_conect_records_for_atom(
 
 		if ( target_atom_xyz.distance_squared( pose.xyz( bonded_ids[ii] ) ) >= dist_cutoff_sq ) {
 			ai.connected_indices.push_back( atom_indices_[ bonded_ids[ ii ] ] );
+			if ( target_atom_id.rsd() == bonded_ids[ii].rsd() ) {  // Same rsd
+				const core::chemical::VD bonded_atom_VD(target_restype.atom_vertex(bonded_ids[ii].atomno()));
+				auto bond = target_restype.bond(target_atom_VD, bonded_atom_VD);
+				ai.connected_orders.push_back(bond.order());
+			} else {  // Rosetta doesn't store bond order outside of groups, assume 1
+				ai.connected_orders.push_back(1);
+			}
 		}
 	}
 

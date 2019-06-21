@@ -23,9 +23,8 @@ if [ ! -d ".git" ]; then
 fi
 
 # Update submodules used for all compilations
-
-# Don't have any currently
 # git submodule update --init -- source/external/foo/
+git submodule update --init -- source/external/mmtf/mmtf-cpp
 
 # Update submodules which are extras conditional
 

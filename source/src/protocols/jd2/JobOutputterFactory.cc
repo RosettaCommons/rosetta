@@ -106,6 +106,8 @@ JobOutputterFactory::get_new_JobOutputter( JobOutputterOP default_jobout ) {
 		return get_JobOutputter_from_string( "DatabaseJobOutputter" );
 	} else if ( basic::options::option[ basic::options::OptionKeys::out::mmCIF].value() ) {
 		return get_JobOutputter_from_string( "mmCIFJobOutputter" );
+	} else if ( basic::options::option[ basic::options::OptionKeys::out::mmtf].value() ) {
+		return get_JobOutputter_from_string( "mmtfJobOutputter" );
 	} else if ( default_jobout != nullptr ) {
 		return default_jobout;
 	} else {

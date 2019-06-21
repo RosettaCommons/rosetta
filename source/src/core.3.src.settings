@@ -35,6 +35,10 @@ sources = {
 		"cif_reader",
 		"cif_writer",
 	],
+	"core/io/mmtf": [
+		"mmtf_reader",
+		"mmtf_writer",
+	],
 	"core/io/nmr" : [
 		"ParaIon",
 		"ParamagneticDatabaseHandler",

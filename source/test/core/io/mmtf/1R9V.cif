@@ -1,0 +1,857 @@
+data_1R9V
+# 
+_entry.id   1R9V 
+# 
+_audit_conform.dict_name       mmcif_pdbx.dic 
+_audit_conform.dict_version    5.279 
+_audit_conform.dict_location   http://mmcif.pdb.org/dictionaries/ascii/mmcif_pdbx.dic 
+# 
+loop_
+_database_2.database_id 
+_database_2.database_code 
+PDB   1R9V         
+RCSB  RCSB020617   
+WWPDB D_1000020617 
+# 
+_pdbx_database_status.status_code                     REL 
+_pdbx_database_status.entry_id                        1R9V 
+_pdbx_database_status.recvd_initial_deposition_date   2003-10-31 
+_pdbx_database_status.deposit_site                    RCSB 
+_pdbx_database_status.process_site                    RCSB 
+_pdbx_database_status.status_code_mr                  REL 
+_pdbx_database_status.SG_entry                        . 
+_pdbx_database_status.status_code_sf                  ? 
+_pdbx_database_status.status_code_cs                  ? 
+_pdbx_database_status.methods_development_category    ? 
+_pdbx_database_status.pdb_format_compatible           Y 
+# 
+loop_
+_audit_author.name 
+_audit_author.pdbx_ordinal 
+'Navarro, E.' 1 
+'Celda, B.'   2 
+# 
+_citation.id                        primary 
+_citation.title                     'Solution NMR Structure of a D,L-Alternating Oligonorleucine as a Model of Beta-Helix' 
+_citation.journal_abbrev            Biopolymers 
+_citation.journal_volume            59 
+_citation.page_first                110 
+_citation.page_last                 119 
+_citation.year                      2001 
+_citation.journal_id_ASTM           BIPMAA 
+_citation.country                   US 
+_citation.journal_id_ISSN           0006-3525 
+_citation.journal_id_CSD            0161 
+_citation.book_publisher            ? 
+_citation.pdbx_database_id_PubMed   11373724 
+_citation.pdbx_database_id_DOI      '10.1002/1097-0282(200108)59:2<110::AID-BIP1010>3.3.CO;2-J' 
+# 
+loop_
+_citation_author.citation_id 
+_citation_author.name 
+_citation_author.ordinal 
+primary 'Navarro, E.' 1 
+primary 'Tejero, R.'  2 
+primary 'Fenude, E.'  3 
+primary 'Celda, B.'   4 
+# 
+_cell.entry_id           1R9V 
+_cell.length_a           1.000 
+_cell.length_b           1.000 
+_cell.length_c           1.000 
+_cell.angle_alpha        90.00 
+_cell.angle_beta         90.00 
+_cell.angle_gamma        90.00 
+_cell.Z_PDB              1 
+_cell.pdbx_unique_axis   ? 
+# 
+_symmetry.entry_id                         1R9V 
+_symmetry.space_group_name_H-M             'P 1' 
+_symmetry.pdbx_full_space_group_name_H-M   ? 
+_symmetry.cell_setting                     ? 
+_symmetry.Int_Tables_number                1 
+# 
+_entity.id                         1 
+_entity.type                       polymer 
+_entity.src_method                 syn 
+_entity.pdbx_description           'BOC-(D-NLE-L-NLE)4-D-NLE(METHYL)-L-NLE-D-NLE-L-NLE METHYL ESTER' 
+_entity.formula_weight             1504.076 
+_entity.pdbx_number_of_molecules   1 
+_entity.pdbx_ec                    ? 
+_entity.pdbx_mutation              ? 
+_entity.pdbx_fragment              ? 
+_entity.details                    ? 
+# 
+_entity_poly.entity_id                      1 
+_entity_poly.type                           'polypeptide(L)' 
+_entity_poly.nstd_linkage                   no 
+_entity_poly.nstd_monomer                   yes 
+_entity_poly.pdbx_seq_one_letter_code       '(BOC)(DNE)(NLE)(DNE)(NLE)(DNE)(NLE)(DNE)(NLE)(DNM)(NLE)(DNE)(NLO)' 
+_entity_poly.pdbx_seq_one_letter_code_can   XLLLLLLLLXLLL 
+_entity_poly.pdbx_strand_id                 A 
+_entity_poly.pdbx_target_identifier         ? 
+# 
+loop_
+_entity_poly_seq.entity_id 
+_entity_poly_seq.num 
+_entity_poly_seq.mon_id 
+_entity_poly_seq.hetero 
+1 1  BOC n 
+1 2  DNE n 
+1 3  NLE n 
+1 4  DNE n 
+1 5  NLE n 
+1 6  DNE n 
+1 7  NLE n 
+1 8  DNE n 
+1 9  NLE n 
+1 10 DNM n 
+1 11 NLE n 
+1 12 DNE n 
+1 13 NLO n 
+# 
+_pdbx_entity_src_syn.entity_id              1 
+_pdbx_entity_src_syn.pdbx_src_id            1 
+_pdbx_entity_src_syn.pdbx_alt_source_flag   sample 
+_pdbx_entity_src_syn.pdbx_beg_seq_num       ? 
+_pdbx_entity_src_syn.pdbx_end_seq_num       ? 
+_pdbx_entity_src_syn.organism_scientific    ? 
+_pdbx_entity_src_syn.organism_common_name   ? 
+_pdbx_entity_src_syn.ncbi_taxonomy_id       ? 
+_pdbx_entity_src_syn.details                'D,L-Alternating sequence as in Gramicidin A' 
+# 
+_struct_ref.id                         1 
+_struct_ref.entity_id                  1 
+_struct_ref.db_name                    PDB 
+_struct_ref.db_code                    1R9V 
+_struct_ref.pdbx_db_accession          ? 
+_struct_ref.pdbx_align_begin           ? 
+_struct_ref.pdbx_seq_one_letter_code   ? 
+_struct_ref.pdbx_db_isoform            ? 
+# 
+_struct_ref_seq.align_id                      1 
+_struct_ref_seq.ref_id                        1 
+_struct_ref_seq.pdbx_PDB_id_code              1R9V 
+_struct_ref_seq.pdbx_strand_id                A 
+_struct_ref_seq.seq_align_beg                 2 
+_struct_ref_seq.pdbx_seq_align_beg_ins_code   ? 
+_struct_ref_seq.seq_align_end                 13 
+_struct_ref_seq.pdbx_seq_align_end_ins_code   ? 
+_struct_ref_seq.pdbx_db_accession             ? 
+_struct_ref_seq.db_align_beg                  1 
+_struct_ref_seq.pdbx_db_align_beg_ins_code    ? 
+_struct_ref_seq.db_align_end                  13 
+_struct_ref_seq.pdbx_db_align_end_ins_code    ? 
+_struct_ref_seq.pdbx_auth_seq_align_beg       1 
+_struct_ref_seq.pdbx_auth_seq_align_end       12 
+# 
+loop_
+_chem_comp.id 
+_chem_comp.type 
+_chem_comp.mon_nstd_flag 
+_chem_comp.name 
+_chem_comp.pdbx_synonyms 
+_chem_comp.formula 
+_chem_comp.formula_weight 
+BOC non-polymer         . 'TERT-BUTYL HYDROGEN CARBONATE' ? 'C5 H10 O3'   118.131 
+DNE 'D-peptide linking' . D-NORLEUCINE                    ? 'C6 H13 N O2' 131.173 
+DNM 'D-peptide linking' . N-methyl-D-norleucine           ? 'C7 H15 N O2' 145.199 
+NLE 'L-peptide linking' n NORLEUCINE                      ? 'C6 H13 N O2' 131.173 
+NLO 'L-peptide linking' n O-METHYL-L-NORLEUCINE           ? 'C7 H15 N O2' 145.199 
+# 
+loop_
+_pdbx_nmr_exptl.experiment_id 
+_pdbx_nmr_exptl.solution_id 
+_pdbx_nmr_exptl.conditions_id 
+_pdbx_nmr_exptl.type 
+1 1 1 DQF-COSY   
+2 1 1 '2D TOCSY' 
+3 1 1 '2D ROESY' 
+# 
+_pdbx_nmr_exptl_sample_conditions.conditions_id       1 
+_pdbx_nmr_exptl_sample_conditions.temperature         298 
+_pdbx_nmr_exptl_sample_conditions.pressure            ambient 
+_pdbx_nmr_exptl_sample_conditions.pH                  ? 
+_pdbx_nmr_exptl_sample_conditions.ionic_strength      ? 
+_pdbx_nmr_exptl_sample_conditions.pressure_units      ? 
+_pdbx_nmr_exptl_sample_conditions.temperature_units   K 
+# 
+_pdbx_nmr_sample_details.solution_id      1 
+_pdbx_nmr_sample_details.contents         '5.5 mM ; chloroform-d' 
+_pdbx_nmr_sample_details.solvent_system   chloroform-d 
+# 
+_pdbx_nmr_spectrometer.spectrometer_id   1 
+_pdbx_nmr_spectrometer.type              ? 
+_pdbx_nmr_spectrometer.manufacturer      Varian 
+_pdbx_nmr_spectrometer.model             UNITY 
+_pdbx_nmr_spectrometer.field_strength    400 
+# 
+_pdbx_nmr_refine.entry_id           1R9V 
+_pdbx_nmr_refine.method             'molecular dynamics' 
+_pdbx_nmr_refine.details            
+'Structures based in 38 distance restraints deduced from NOE NMR data, 16 are backbone restraints.' 
+_pdbx_nmr_refine.software_ordinal   1 
+# 
+_pdbx_nmr_ensemble.entry_id                                      1R9V 
+_pdbx_nmr_ensemble.conformers_calculated_total_number            25 
+_pdbx_nmr_ensemble.conformers_submitted_total_number             5 
+_pdbx_nmr_ensemble.conformer_selection_criteria                  'structures with the lowest energy' 
+_pdbx_nmr_ensemble.average_constraints_per_residue               ? 
+_pdbx_nmr_ensemble.average_constraint_violations_per_residue     ? 
+_pdbx_nmr_ensemble.maximum_distance_constraint_violation         ? 
+_pdbx_nmr_ensemble.average_distance_constraint_violation         ? 
+_pdbx_nmr_ensemble.maximum_upper_distance_constraint_violation   ? 
+_pdbx_nmr_ensemble.maximum_lower_distance_constraint_violation   ? 
+_pdbx_nmr_ensemble.distance_constraint_violation_method          ? 
+_pdbx_nmr_ensemble.maximum_torsion_angle_constraint_violation    ? 
+_pdbx_nmr_ensemble.average_torsion_angle_constraint_violation    ? 
+_pdbx_nmr_ensemble.torsion_angle_constraint_violation_method     ? 
+# 
+_pdbx_nmr_representative.entry_id             1R9V 
+_pdbx_nmr_representative.conformer_id         1 
+_pdbx_nmr_representative.selection_criteria   'lowest energy' 
+# 
+loop_
+_pdbx_nmr_software.name 
+_pdbx_nmr_software.version 
+_pdbx_nmr_software.classification 
+_pdbx_nmr_software.authors 
+_pdbx_nmr_software.ordinal 
+DISCOVER 2.9.7 'structure solution' BIOSYM 1 
+DISCOVER 2.9.7 refinement           BIOSYM 2 
+# 
+_exptl.entry_id          1R9V 
+_exptl.method            'SOLUTION NMR' 
+_exptl.crystals_number   ? 
+# 
+_exptl_crystal.id                    1 
+_exptl_crystal.density_meas          ? 
+_exptl_crystal.density_percent_sol   ? 
+_exptl_crystal.description           ? 
+_exptl_crystal.density_Matthews      ? 
+# 
+_diffrn.id                     1 
+_diffrn.ambient_temp           ? 
+_diffrn.ambient_temp_details   ? 
+_diffrn.crystal_id             1 
+# 
+_diffrn_radiation.diffrn_id                        1 
+_diffrn_radiation.wavelength_id                    1 
+_diffrn_radiation.pdbx_monochromatic_or_laue_m_l   M 
+_diffrn_radiation.monochromator                    ? 
+_diffrn_radiation.pdbx_diffrn_protocol             'SINGLE WAVELENGTH' 
+_diffrn_radiation.pdbx_scattering_type             x-ray 
+# 
+_diffrn_radiation_wavelength.id           1 
+_diffrn_radiation_wavelength.wavelength   . 
+_diffrn_radiation_wavelength.wt           1.0 
+# 
+_struct.entry_id                  1R9V 
+_struct.title                     'NMR Structure of a D,L-Alternating Dodecamer of Norleucine' 
+_struct.pdbx_descriptor           'BOC-(D-NLE-L-NLE)4-D-NLE(METHYL)-L-NLE-D-NLE-L-NLE METHYL ESTER' 
+_struct.pdbx_model_details        ? 
+_struct.pdbx_CASP_flag            ? 
+_struct.pdbx_model_type_details   ? 
+# 
+_struct_keywords.entry_id        1R9V 
+_struct_keywords.pdbx_keywords   'DE NOVO PROTEIN' 
+_struct_keywords.text            'BETA HELIX, ION CHANNEL, DE NOVO PROTEIN' 
+# 
+_struct_asym.id                            A 
+_struct_asym.pdbx_blank_PDB_chainid_flag   N 
+_struct_asym.pdbx_modified                 N 
+_struct_asym.entity_id                     1 
+_struct_asym.details                       ? 
+# 
+_struct_biol.id        1 
+_struct_biol.details   ? 
+# 
+loop_
+_struct_conn.id 
+_struct_conn.conn_type_id 
+_struct_conn.pdbx_leaving_atom_flag 
+_struct_conn.pdbx_PDB_id 
+_struct_conn.ptnr1_label_asym_id 
+_struct_conn.ptnr1_label_comp_id 
+_struct_conn.ptnr1_label_seq_id 
+_struct_conn.ptnr1_label_atom_id 
+_struct_conn.pdbx_ptnr1_label_alt_id 
+_struct_conn.pdbx_ptnr1_PDB_ins_code 
+_struct_conn.pdbx_ptnr1_standard_comp_id 
+_struct_conn.ptnr1_symmetry 
+_struct_conn.ptnr2_label_asym_id 
+_struct_conn.ptnr2_label_comp_id 
+_struct_conn.ptnr2_label_seq_id 
+_struct_conn.ptnr2_label_atom_id 
+_struct_conn.pdbx_ptnr2_label_alt_id 
+_struct_conn.pdbx_ptnr2_PDB_ins_code 
+_struct_conn.ptnr1_auth_asym_id 
+_struct_conn.ptnr1_auth_comp_id 
+_struct_conn.ptnr1_auth_seq_id 
+_struct_conn.ptnr2_auth_asym_id 
+_struct_conn.ptnr2_auth_comp_id 
+_struct_conn.ptnr2_auth_seq_id 
+_struct_conn.ptnr2_symmetry 
+_struct_conn.pdbx_ptnr3_label_atom_id 
+_struct_conn.pdbx_ptnr3_label_seq_id 
+_struct_conn.pdbx_ptnr3_label_comp_id 
+_struct_conn.pdbx_ptnr3_label_asym_id 
+_struct_conn.pdbx_ptnr3_label_alt_id 
+_struct_conn.pdbx_ptnr3_PDB_ins_code 
+_struct_conn.details 
+_struct_conn.pdbx_dist_value 
+_struct_conn.pdbx_value_order 
+covale1  covale ? ? A DNE 2  C ? ? ? 1_555 A NLE 3  N ? ? A DNE 1  A NLE 2  1_555 ? ? ? ? ? ? ? 1.337 sing 
+covale2  covale ? ? A NLE 3  C ? ? ? 1_555 A DNE 4  N ? ? A NLE 2  A DNE 3  1_555 ? ? ? ? ? ? ? 1.335 sing 
+covale3  covale ? ? A DNE 4  C ? ? ? 1_555 A NLE 5  N ? ? A DNE 3  A NLE 4  1_555 ? ? ? ? ? ? ? 1.332 sing 
+covale4  covale ? ? A NLE 5  C ? ? ? 1_555 A DNE 6  N ? ? A NLE 4  A DNE 5  1_555 ? ? ? ? ? ? ? 1.333 sing 
+covale5  covale ? ? A DNE 6  C ? ? ? 1_555 A NLE 7  N ? ? A DNE 5  A NLE 6  1_555 ? ? ? ? ? ? ? 1.336 sing 
+covale6  covale ? ? A NLE 7  C ? ? ? 1_555 A DNE 8  N ? ? A NLE 6  A DNE 7  1_555 ? ? ? ? ? ? ? 1.333 sing 
+covale7  covale ? ? A DNE 8  C ? ? ? 1_555 A NLE 9  N ? ? A DNE 7  A NLE 8  1_555 ? ? ? ? ? ? ? 1.331 sing 
+covale8  covale ? ? A NLE 9  C ? ? ? 1_555 A DNM 10 N ? ? A NLE 8  A DNM 9  1_555 ? ? ? ? ? ? ? 1.344 sing 
+covale9  covale ? ? A DNM 10 C ? ? ? 1_555 A NLE 11 N ? ? A DNM 9  A NLE 10 1_555 ? ? ? ? ? ? ? 1.335 sing 
+covale10 covale ? ? A NLE 11 C ? ? ? 1_555 A DNE 12 N ? ? A NLE 10 A DNE 11 1_555 ? ? ? ? ? ? ? 1.332 sing 
+covale11 covale ? ? A DNE 12 C ? ? ? 1_555 A NLO 13 N ? ? A DNE 11 A NLO 12 1_555 ? ? ? ? ? ? ? 1.338 sing 
+# 
+_struct_conn_type.id          covale 
+_struct_conn_type.criteria    ? 
+_struct_conn_type.reference   ? 
+# 
+_struct_sheet.id               A 
+_struct_sheet.type             ? 
+_struct_sheet.number_strands   2 
+_struct_sheet.details          ? 
+# 
+_struct_sheet_order.sheet_id     A 
+_struct_sheet_order.range_id_1   1 
+_struct_sheet_order.range_id_2   2 
+_struct_sheet_order.offset       ? 
+_struct_sheet_order.sense        parallel 
+# 
+loop_
+_struct_sheet_range.sheet_id 
+_struct_sheet_range.id 
+_struct_sheet_range.beg_label_comp_id 
+_struct_sheet_range.beg_label_asym_id 
+_struct_sheet_range.beg_label_seq_id 
+_struct_sheet_range.pdbx_beg_PDB_ins_code 
+_struct_sheet_range.end_label_comp_id 
+_struct_sheet_range.end_label_asym_id 
+_struct_sheet_range.end_label_seq_id 
+_struct_sheet_range.pdbx_end_PDB_ins_code 
+_struct_sheet_range.beg_auth_comp_id 
+_struct_sheet_range.beg_auth_asym_id 
+_struct_sheet_range.beg_auth_seq_id 
+_struct_sheet_range.end_auth_comp_id 
+_struct_sheet_range.end_auth_asym_id 
+_struct_sheet_range.end_auth_seq_id 
+A 1 DNE A 4 ? NLE A 5 ? DNE A 3 NLE A 4 
+A 2 DNE A 8 ? NLE A 9 ? DNE A 7 NLE A 8 
+# 
+_pdbx_struct_sheet_hbond.sheet_id                A 
+_pdbx_struct_sheet_hbond.range_id_1              1 
+_pdbx_struct_sheet_hbond.range_id_2              2 
+_pdbx_struct_sheet_hbond.range_1_label_atom_id   O 
+_pdbx_struct_sheet_hbond.range_1_label_comp_id   DNE 
+_pdbx_struct_sheet_hbond.range_1_label_asym_id   A 
+_pdbx_struct_sheet_hbond.range_1_label_seq_id    4 
+_pdbx_struct_sheet_hbond.range_1_PDB_ins_code    ? 
+_pdbx_struct_sheet_hbond.range_1_auth_atom_id    O 
+_pdbx_struct_sheet_hbond.range_1_auth_comp_id    DNE 
+_pdbx_struct_sheet_hbond.range_1_auth_asym_id    A 
+_pdbx_struct_sheet_hbond.range_1_auth_seq_id     3 
+_pdbx_struct_sheet_hbond.range_2_label_atom_id   N 
+_pdbx_struct_sheet_hbond.range_2_label_comp_id   NLE 
+_pdbx_struct_sheet_hbond.range_2_label_asym_id   A 
+_pdbx_struct_sheet_hbond.range_2_label_seq_id    9 
+_pdbx_struct_sheet_hbond.range_2_PDB_ins_code    ? 
+_pdbx_struct_sheet_hbond.range_2_auth_atom_id    N 
+_pdbx_struct_sheet_hbond.range_2_auth_comp_id    NLE 
+_pdbx_struct_sheet_hbond.range_2_auth_asym_id    A 
+_pdbx_struct_sheet_hbond.range_2_auth_seq_id     8 
+# 
+_database_PDB_matrix.entry_id          1R9V 
+_database_PDB_matrix.origx[1][1]       1.000000 
+_database_PDB_matrix.origx[1][2]       0.000000 
+_database_PDB_matrix.origx[1][3]       0.000000 
+_database_PDB_matrix.origx[2][1]       0.000000 
+_database_PDB_matrix.origx[2][2]       1.000000 
+_database_PDB_matrix.origx[2][3]       0.000000 
+_database_PDB_matrix.origx[3][1]       0.000000 
+_database_PDB_matrix.origx[3][2]       0.000000 
+_database_PDB_matrix.origx[3][3]       1.000000 
+_database_PDB_matrix.origx_vector[1]   0.00000 
+_database_PDB_matrix.origx_vector[2]   0.00000 
+_database_PDB_matrix.origx_vector[3]   0.00000 
+# 
+_atom_sites.entry_id                    1R9V 
+_atom_sites.fract_transf_matrix[1][1]   1.000000 
+_atom_sites.fract_transf_matrix[1][2]   0.000000 
+_atom_sites.fract_transf_matrix[1][3]   0.000000 
+_atom_sites.fract_transf_matrix[2][1]   0.000000 
+_atom_sites.fract_transf_matrix[2][2]   1.000000 
+_atom_sites.fract_transf_matrix[2][3]   0.000000 
+_atom_sites.fract_transf_matrix[3][1]   0.000000 
+_atom_sites.fract_transf_matrix[3][2]   0.000000 
+_atom_sites.fract_transf_matrix[3][3]   1.000000 
+_atom_sites.fract_transf_vector[1]      0.00000 
+_atom_sites.fract_transf_vector[2]      0.00000 
+_atom_sites.fract_transf_vector[3]      0.00000 
+# 
+loop_
+_atom_type.symbol 
+C 
+H 
+N 
+O 
+# 
+loop_
+_atom_site.group_PDB 
+_atom_site.id 
+_atom_site.type_symbol 
+_atom_site.label_atom_id 
+_atom_site.label_alt_id 
+_atom_site.label_comp_id 
+_atom_site.label_asym_id 
+_atom_site.label_entity_id 
+_atom_site.label_seq_id 
+_atom_site.pdbx_PDB_ins_code 
+_atom_site.Cartn_x 
+_atom_site.Cartn_y 
+_atom_site.Cartn_z 
+_atom_site.occupancy 
+_atom_site.B_iso_or_equiv 
+_atom_site.pdbx_formal_charge 
+_atom_site.auth_seq_id 
+_atom_site.auth_comp_id 
+_atom_site.auth_asym_id 
+_atom_site.auth_atom_id 
+_atom_site.pdbx_PDB_model_num 
+HETATM 1    N N   . DNE A 1 2  ? 31.000 15.157 8.815  1.00 1.00 ? 1  DNE A N   1 
+HETATM 2    C CA  . DNE A 1 2  ? 29.604 15.535 8.503  1.00 1.00 ? 1  DNE A CA  1 
+HETATM 3    C C   . DNE A 1 2  ? 29.194 16.876 9.135  1.00 1.00 ? 1  DNE A C   1 
+HETATM 4    O O   . DNE A 1 2  ? 28.071 17.330 8.925  1.00 1.00 ? 1  DNE A O   1 
+HETATM 5    C CB  . DNE A 1 2  ? 29.414 15.569 6.980  1.00 1.00 ? 1  DNE A CB  1 
+HETATM 6    C CG  . DNE A 1 2  ? 29.620 14.191 6.335  1.00 1.00 ? 1  DNE A CG  1 
+HETATM 7    C CD  . DNE A 1 2  ? 29.498 14.247 4.806  1.00 1.00 ? 1  DNE A CD  1 
+HETATM 8    C CE  . DNE A 1 2  ? 28.071 14.548 4.338  1.00 1.00 ? 1  DNE A CE  1 
+HETATM 9    H H1  . DNE A 1 2  ? 31.149 15.122 9.829  1.00 1.00 ? 1  DNE A H1  1 
+HETATM 10   H H2  . DNE A 1 2  ? 31.649 15.870 8.449  1.00 1.00 ? 1  DNE A H2  1 
+HETATM 11   H HA  . DNE A 1 2  ? 28.939 14.774 8.914  1.00 1.00 ? 1  DNE A HA  1 
+HETATM 12   H HB2 . DNE A 1 2  ? 28.401 15.911 6.767  1.00 1.00 ? 1  DNE A HB2 1 
+HETATM 13   H HB3 . DNE A 1 2  ? 30.121 16.278 6.551  1.00 1.00 ? 1  DNE A HB3 1 
+HETATM 14   H HG2 . DNE A 1 2  ? 30.618 13.827 6.577  1.00 1.00 ? 1  DNE A HG2 1 
+HETATM 15   H HG3 . DNE A 1 2  ? 28.891 13.485 6.734  1.00 1.00 ? 1  DNE A HG3 1 
+HETATM 16   H HD2 . DNE A 1 2  ? 30.172 15.007 4.410  1.00 1.00 ? 1  DNE A HD2 1 
+HETATM 17   H HD3 . DNE A 1 2  ? 29.793 13.277 4.402  1.00 1.00 ? 1  DNE A HD3 1 
+HETATM 18   H HE1 . DNE A 1 2  ? 27.374 13.834 4.776  1.00 1.00 ? 1  DNE A HE1 1 
+HETATM 19   H HE2 . DNE A 1 2  ? 27.781 15.560 4.620  1.00 1.00 ? 1  DNE A HE2 1 
+HETATM 20   H HE3 . DNE A 1 2  ? 28.026 14.467 3.252  1.00 1.00 ? 1  DNE A HE3 1 
+HETATM 21   N N   . NLE A 1 3  ? 30.080 17.513 9.907  1.00 1.00 ? 2  NLE A N   1 
+HETATM 22   C CA  . NLE A 1 3  ? 29.845 18.787 10.573 1.00 1.00 ? 2  NLE A CA  1 
+HETATM 23   C C   . NLE A 1 3  ? 31.174 19.535 10.556 1.00 1.00 ? 2  NLE A C   1 
+HETATM 24   O O   . NLE A 1 3  ? 32.162 19.032 11.091 1.00 1.00 ? 2  NLE A O   1 
+HETATM 25   C CB  . NLE A 1 3  ? 29.365 18.570 12.016 1.00 1.00 ? 2  NLE A CB  1 
+HETATM 26   C CG  . NLE A 1 3  ? 28.007 17.861 12.081 1.00 1.00 ? 2  NLE A CG  1 
+HETATM 27   C CD  . NLE A 1 3  ? 27.503 17.807 13.527 1.00 1.00 ? 2  NLE A CD  1 
+HETATM 28   C CE  . NLE A 1 3  ? 26.154 17.088 13.596 1.00 1.00 ? 2  NLE A CE  1 
+HETATM 29   H H   . NLE A 1 3  ? 30.995 17.104 10.036 1.00 1.00 ? 2  NLE A H   1 
+HETATM 30   H HA  . NLE A 1 3  ? 29.101 19.367 10.024 1.00 1.00 ? 2  NLE A HA  1 
+HETATM 31   H HB2 . NLE A 1 3  ? 30.105 17.983 12.564 1.00 1.00 ? 2  NLE A HB2 1 
+HETATM 32   H HB3 . NLE A 1 3  ? 29.274 19.546 12.494 1.00 1.00 ? 2  NLE A HB3 1 
+HETATM 33   H HG2 . NLE A 1 3  ? 27.285 18.401 11.466 1.00 1.00 ? 2  NLE A HG2 1 
+HETATM 34   H HG3 . NLE A 1 3  ? 28.104 16.842 11.705 1.00 1.00 ? 2  NLE A HG3 1 
+HETATM 35   H HD2 . NLE A 1 3  ? 28.225 17.271 14.145 1.00 1.00 ? 2  NLE A HD2 1 
+HETATM 36   H HD3 . NLE A 1 3  ? 27.387 18.820 13.914 1.00 1.00 ? 2  NLE A HD3 1 
+HETATM 37   H HE1 . NLE A 1 3  ? 25.419 17.618 12.990 1.00 1.00 ? 2  NLE A HE1 1 
+HETATM 38   H HE2 . NLE A 1 3  ? 26.256 16.067 13.227 1.00 1.00 ? 2  NLE A HE2 1 
+HETATM 39   H HE3 . NLE A 1 3  ? 25.809 17.059 14.630 1.00 1.00 ? 2  NLE A HE3 1 
+HETATM 40   N N   . DNE A 1 4  ? 31.224 20.708 9.920  1.00 1.00 ? 3  DNE A N   1 
+HETATM 41   C CA  . DNE A 1 4  ? 32.485 21.397 9.697  1.00 1.00 ? 3  DNE A CA  1 
+HETATM 42   C C   . DNE A 1 4  ? 33.242 20.610 8.626  1.00 1.00 ? 3  DNE A C   1 
+HETATM 43   O O   . DNE A 1 4  ? 33.207 20.953 7.446  1.00 1.00 ? 3  DNE A O   1 
+HETATM 44   C CB  . DNE A 1 4  ? 32.253 22.859 9.309  1.00 1.00 ? 3  DNE A CB  1 
+HETATM 45   C CG  . DNE A 1 4  ? 31.486 23.598 10.411 1.00 1.00 ? 3  DNE A CG  1 
+HETATM 46   C CD  . DNE A 1 4  ? 31.575 25.104 10.169 1.00 1.00 ? 3  DNE A CD  1 
+HETATM 47   C CE  . DNE A 1 4  ? 30.804 25.872 11.245 1.00 1.00 ? 3  DNE A CE  1 
+HETATM 48   H H   . DNE A 1 4  ? 30.381 21.118 9.547  1.00 1.00 ? 3  DNE A H   1 
+HETATM 49   H HA  . DNE A 1 4  ? 33.074 21.414 10.616 1.00 1.00 ? 3  DNE A HA  1 
+HETATM 50   H HB2 . DNE A 1 4  ? 33.229 23.327 9.172  1.00 1.00 ? 3  DNE A HB2 1 
+HETATM 51   H HB3 . DNE A 1 4  ? 31.702 22.930 8.373  1.00 1.00 ? 3  DNE A HB3 1 
+HETATM 52   H HG2 . DNE A 1 4  ? 30.441 23.285 10.411 1.00 1.00 ? 3  DNE A HG2 1 
+HETATM 53   H HG3 . DNE A 1 4  ? 31.927 23.372 11.383 1.00 1.00 ? 3  DNE A HG3 1 
+HETATM 54   H HD2 . DNE A 1 4  ? 32.626 25.393 10.201 1.00 1.00 ? 3  DNE A HD2 1 
+HETATM 55   H HD3 . DNE A 1 4  ? 31.163 25.346 9.188  1.00 1.00 ? 3  DNE A HD3 1 
+HETATM 56   H HE1 . DNE A 1 4  ? 30.890 26.943 11.060 1.00 1.00 ? 3  DNE A HE1 1 
+HETATM 57   H HE2 . DNE A 1 4  ? 29.751 25.590 11.220 1.00 1.00 ? 3  DNE A HE2 1 
+HETATM 58   H HE3 . DNE A 1 4  ? 31.214 25.647 12.230 1.00 1.00 ? 3  DNE A HE3 1 
+HETATM 59   N N   . NLE A 1 5  ? 33.898 19.530 9.048  1.00 1.00 ? 4  NLE A N   1 
+HETATM 60   C CA  . NLE A 1 5  ? 34.637 18.635 8.175  1.00 1.00 ? 4  NLE A CA  1 
+HETATM 61   C C   . NLE A 1 5  ? 33.644 17.974 7.222  1.00 1.00 ? 4  NLE A C   1 
+HETATM 62   O O   . NLE A 1 5  ? 32.719 17.295 7.666  1.00 1.00 ? 4  NLE A O   1 
+HETATM 63   C CB  . NLE A 1 5  ? 35.393 17.589 9.002  1.00 1.00 ? 4  NLE A CB  1 
+HETATM 64   C CG  . NLE A 1 5  ? 36.477 18.243 9.869  1.00 1.00 ? 4  NLE A CG  1 
+HETATM 65   C CD  . NLE A 1 5  ? 37.232 17.219 10.726 1.00 1.00 ? 4  NLE A CD  1 
+HETATM 66   C CE  . NLE A 1 5  ? 38.058 16.240 9.885  1.00 1.00 ? 4  NLE A CE  1 
+HETATM 67   H H   . NLE A 1 5  ? 33.827 19.302 10.034 1.00 1.00 ? 4  NLE A H   1 
+HETATM 68   H HA  . NLE A 1 5  ? 35.365 19.205 7.599  1.00 1.00 ? 4  NLE A HA  1 
+HETATM 69   H HB2 . NLE A 1 5  ? 34.690 17.043 9.634  1.00 1.00 ? 4  NLE A HB2 1 
+HETATM 70   H HB3 . NLE A 1 5  ? 35.856 16.888 8.308  1.00 1.00 ? 4  NLE A HB3 1 
+HETATM 71   H HG2 . NLE A 1 5  ? 37.186 18.773 9.232  1.00 1.00 ? 4  NLE A HG2 1 
+HETATM 72   H HG3 . NLE A 1 5  ? 36.014 18.965 10.544 1.00 1.00 ? 4  NLE A HG3 1 
+HETATM 73   H HD2 . NLE A 1 5  ? 37.913 17.761 11.385 1.00 1.00 ? 4  NLE A HD2 1 
+HETATM 74   H HD3 . NLE A 1 5  ? 36.526 16.663 11.343 1.00 1.00 ? 4  NLE A HD3 1 
+HETATM 75   H HE1 . NLE A 1 5  ? 38.665 15.623 10.549 1.00 1.00 ? 4  NLE A HE1 1 
+HETATM 76   H HE2 . NLE A 1 5  ? 37.408 15.586 9.305  1.00 1.00 ? 4  NLE A HE2 1 
+HETATM 77   H HE3 . NLE A 1 5  ? 38.718 16.788 9.212  1.00 1.00 ? 4  NLE A HE3 1 
+HETATM 78   N N   . DNE A 1 6  ? 33.832 18.194 5.921  1.00 1.00 ? 5  DNE A N   1 
+HETATM 79   C CA  . DNE A 1 6  ? 32.998 17.660 4.858  1.00 1.00 ? 5  DNE A CA  1 
+HETATM 80   C C   . DNE A 1 6  ? 31.577 18.237 4.894  1.00 1.00 ? 5  DNE A C   1 
+HETATM 81   O O   . DNE A 1 6  ? 30.667 17.668 4.296  1.00 1.00 ? 5  DNE A O   1 
+HETATM 82   C CB  . DNE A 1 6  ? 33.025 16.123 4.825  1.00 1.00 ? 5  DNE A CB  1 
+HETATM 83   C CG  . DNE A 1 6  ? 34.462 15.581 4.831  1.00 1.00 ? 5  DNE A CG  1 
+HETATM 84   C CD  . DNE A 1 6  ? 34.526 14.096 4.455  1.00 1.00 ? 5  DNE A CD  1 
+HETATM 85   C CE  . DNE A 1 6  ? 33.757 13.215 5.443  1.00 1.00 ? 5  DNE A CE  1 
+HETATM 86   H H   . DNE A 1 6  ? 34.588 18.804 5.620  1.00 1.00 ? 5  DNE A H   1 
+HETATM 87   H HA  . DNE A 1 6  ? 33.444 18.014 3.934  1.00 1.00 ? 5  DNE A HA  1 
+HETATM 88   H HB2 . DNE A 1 6  ? 32.477 15.724 5.679  1.00 1.00 ? 5  DNE A HB2 1 
+HETATM 89   H HB3 . DNE A 1 6  ? 32.526 15.792 3.914  1.00 1.00 ? 5  DNE A HB3 1 
+HETATM 90   H HG2 . DNE A 1 6  ? 35.058 16.138 4.108  1.00 1.00 ? 5  DNE A HG2 1 
+HETATM 91   H HG3 . DNE A 1 6  ? 34.900 15.715 5.820  1.00 1.00 ? 5  DNE A HG3 1 
+HETATM 92   H HD2 . DNE A 1 6  ? 34.122 13.951 3.452  1.00 1.00 ? 5  DNE A HD2 1 
+HETATM 93   H HD3 . DNE A 1 6  ? 35.572 13.786 4.454  1.00 1.00 ? 5  DNE A HD3 1 
+HETATM 94   H HE1 . DNE A 1 6  ? 32.688 13.413 5.373  1.00 1.00 ? 5  DNE A HE1 1 
+HETATM 95   H HE2 . DNE A 1 6  ? 33.932 12.166 5.202  1.00 1.00 ? 5  DNE A HE2 1 
+HETATM 96   H HE3 . DNE A 1 6  ? 34.096 13.408 6.461  1.00 1.00 ? 5  DNE A HE3 1 
+HETATM 97   N N   . NLE A 1 7  ? 31.387 19.371 5.574  1.00 1.00 ? 6  NLE A N   1 
+HETATM 98   C CA  . NLE A 1 7  ? 30.128 20.102 5.603  1.00 1.00 ? 6  NLE A CA  1 
+HETATM 99   C C   . NLE A 1 7  ? 30.492 21.576 5.770  1.00 1.00 ? 6  NLE A C   1 
+HETATM 100  O O   . NLE A 1 7  ? 30.036 22.254 6.687  1.00 1.00 ? 6  NLE A O   1 
+HETATM 101  C CB  . NLE A 1 7  ? 29.238 19.546 6.726  1.00 1.00 ? 6  NLE A CB  1 
+HETATM 102  C CG  . NLE A 1 7  ? 27.807 20.109 6.769  1.00 1.00 ? 6  NLE A CG  1 
+HETATM 103  C CD  . NLE A 1 7  ? 27.017 19.953 5.461  1.00 1.00 ? 6  NLE A CD  1 
+HETATM 104  C CE  . NLE A 1 7  ? 26.948 18.498 4.989  1.00 1.00 ? 6  NLE A CE  1 
+HETATM 105  H H   . NLE A 1 7  ? 32.168 19.777 6.081  1.00 1.00 ? 6  NLE A H   1 
+HETATM 106  H HA  . NLE A 1 7  ? 29.631 19.978 4.641  1.00 1.00 ? 6  NLE A HA  1 
+HETATM 107  H HB2 . NLE A 1 7  ? 29.168 18.467 6.609  1.00 1.00 ? 6  NLE A HB2 1 
+HETATM 108  H HB3 . NLE A 1 7  ? 29.720 19.744 7.682  1.00 1.00 ? 6  NLE A HB3 1 
+HETATM 109  H HG2 . NLE A 1 7  ? 27.268 19.584 7.559  1.00 1.00 ? 6  NLE A HG2 1 
+HETATM 110  H HG3 . NLE A 1 7  ? 27.829 21.165 7.034  1.00 1.00 ? 6  NLE A HG3 1 
+HETATM 111  H HD2 . NLE A 1 7  ? 26.000 20.304 5.640  1.00 1.00 ? 6  NLE A HD2 1 
+HETATM 112  H HD3 . NLE A 1 7  ? 27.452 20.573 4.677  1.00 1.00 ? 6  NLE A HD3 1 
+HETATM 113  H HE1 . NLE A 1 7  ? 27.933 18.148 4.679  1.00 1.00 ? 6  NLE A HE1 1 
+HETATM 114  H HE2 . NLE A 1 7  ? 26.574 17.863 5.793  1.00 1.00 ? 6  NLE A HE2 1 
+HETATM 115  H HE3 . NLE A 1 7  ? 26.272 18.427 4.136  1.00 1.00 ? 6  NLE A HE3 1 
+HETATM 116  N N   . DNE A 1 8  ? 31.366 22.045 4.880  1.00 1.00 ? 7  DNE A N   1 
+HETATM 117  C CA  . DNE A 1 8  ? 32.013 23.344 4.948  1.00 1.00 ? 7  DNE A CA  1 
+HETATM 118  C C   . DNE A 1 8  ? 33.478 23.090 4.619  1.00 1.00 ? 7  DNE A C   1 
+HETATM 119  O O   . DNE A 1 8  ? 33.886 23.199 3.467  1.00 1.00 ? 7  DNE A O   1 
+HETATM 120  C CB  . DNE A 1 8  ? 31.361 24.373 4.011  1.00 1.00 ? 7  DNE A CB  1 
+HETATM 121  C CG  . DNE A 1 8  ? 29.843 24.464 4.206  1.00 1.00 ? 7  DNE A CG  1 
+HETATM 122  C CD  . DNE A 1 8  ? 29.260 25.568 3.318  1.00 1.00 ? 7  DNE A CD  1 
+HETATM 123  C CE  . DNE A 1 8  ? 27.741 25.641 3.487  1.00 1.00 ? 7  DNE A CE  1 
+HETATM 124  H H   . DNE A 1 8  ? 31.644 21.423 4.124  1.00 1.00 ? 7  DNE A H   1 
+HETATM 125  H HA  . DNE A 1 8  ? 31.970 23.748 5.958  1.00 1.00 ? 7  DNE A HA  1 
+HETATM 126  H HB2 . DNE A 1 8  ? 31.804 25.347 4.223  1.00 1.00 ? 7  DNE A HB2 1 
+HETATM 127  H HB3 . DNE A 1 8  ? 31.572 24.137 2.973  1.00 1.00 ? 7  DNE A HB3 1 
+HETATM 128  H HG2 . DNE A 1 8  ? 29.378 23.515 3.934  1.00 1.00 ? 7  DNE A HG2 1 
+HETATM 129  H HG3 . DNE A 1 8  ? 29.623 24.682 5.252  1.00 1.00 ? 7  DNE A HG3 1 
+HETATM 130  H HD2 . DNE A 1 8  ? 29.697 26.529 3.593  1.00 1.00 ? 7  DNE A HD2 1 
+HETATM 131  H HD3 . DNE A 1 8  ? 29.492 25.358 2.273  1.00 1.00 ? 7  DNE A HD3 1 
+HETATM 132  H HE1 . DNE A 1 8  ? 27.342 26.433 2.852  1.00 1.00 ? 7  DNE A HE1 1 
+HETATM 133  H HE2 . DNE A 1 8  ? 27.288 24.692 3.200  1.00 1.00 ? 7  DNE A HE2 1 
+HETATM 134  H HE3 . DNE A 1 8  ? 27.493 25.859 4.526  1.00 1.00 ? 7  DNE A HE3 1 
+HETATM 135  N N   . NLE A 1 9  ? 34.268 22.718 5.624  1.00 1.00 ? 8  NLE A N   1 
+HETATM 136  C CA  . NLE A 1 9  ? 35.686 22.460 5.440  1.00 1.00 ? 8  NLE A CA  1 
+HETATM 137  C C   . NLE A 1 9  ? 35.813 21.234 4.526  1.00 1.00 ? 8  NLE A C   1 
+HETATM 138  O O   . NLE A 1 9  ? 35.006 20.316 4.659  1.00 1.00 ? 8  NLE A O   1 
+HETATM 139  C CB  . NLE A 1 9  ? 36.349 22.214 6.802  1.00 1.00 ? 8  NLE A CB  1 
+HETATM 140  C CG  . NLE A 1 9  ? 36.307 23.461 7.695  1.00 1.00 ? 8  NLE A CG  1 
+HETATM 141  C CD  . NLE A 1 9  ? 36.739 23.149 9.134  1.00 1.00 ? 8  NLE A CD  1 
+HETATM 142  C CE  . NLE A 1 9  ? 38.182 22.645 9.220  1.00 1.00 ? 8  NLE A CE  1 
+HETATM 143  H H   . NLE A 1 9  ? 33.856 22.558 6.535  1.00 1.00 ? 8  NLE A H   1 
+HETATM 144  H HA  . NLE A 1 9  ? 36.128 23.342 4.977  1.00 1.00 ? 8  NLE A HA  1 
+HETATM 145  H HB2 . NLE A 1 9  ? 35.837 21.396 7.304  1.00 1.00 ? 8  NLE A HB2 1 
+HETATM 146  H HB3 . NLE A 1 9  ? 37.387 21.922 6.640  1.00 1.00 ? 8  NLE A HB3 1 
+HETATM 147  H HG2 . NLE A 1 9  ? 36.958 24.230 7.275  1.00 1.00 ? 8  NLE A HG2 1 
+HETATM 148  H HG3 . NLE A 1 9  ? 35.292 23.856 7.733  1.00 1.00 ? 8  NLE A HG3 1 
+HETATM 149  H HD2 . NLE A 1 9  ? 36.656 24.064 9.723  1.00 1.00 ? 8  NLE A HD2 1 
+HETATM 150  H HD3 . NLE A 1 9  ? 36.071 22.401 9.564  1.00 1.00 ? 8  NLE A HD3 1 
+HETATM 151  H HE1 . NLE A 1 9  ? 38.468 22.554 10.268 1.00 1.00 ? 8  NLE A HE1 1 
+HETATM 152  H HE2 . NLE A 1 9  ? 38.276 21.667 8.750  1.00 1.00 ? 8  NLE A HE2 1 
+HETATM 153  H HE3 . NLE A 1 9  ? 38.854 23.351 8.730  1.00 1.00 ? 8  NLE A HE3 1 
+HETATM 154  C C   . DNM A 1 10 ? 35.451 20.153 1.789  1.00 1.00 ? 9  DNM A C   1 
+HETATM 155  N N   . DNM A 1 10 ? 36.788 21.183 3.603  1.00 1.00 ? 9  DNM A N   1 
+HETATM 156  O O   . DNM A 1 10 ? 35.175 21.133 1.096  1.00 1.00 ? 9  DNM A O   1 
+HETATM 157  C C1  . DNM A 1 10 ? 37.846 22.189 3.504  1.00 1.00 ? 9  DNM A C1  1 
+HETATM 158  C CA  . DNM A 1 10 ? 36.766 20.130 2.582  1.00 1.00 ? 9  DNM A CA  1 
+HETATM 159  C CB  . DNM A 1 10 ? 37.129 18.756 3.182  1.00 1.00 ? 9  DNM A CB  1 
+HETATM 160  C CD  . DNM A 1 10 ? 38.887 17.426 4.462  1.00 1.00 ? 9  DNM A CD  1 
+HETATM 161  C CE  . DNM A 1 10 ? 38.084 17.122 5.732  1.00 1.00 ? 9  DNM A CE  1 
+HETATM 162  C CG  . DNM A 1 10 ? 38.514 18.780 3.845  1.00 1.00 ? 9  DNM A CG  1 
+HETATM 163  H HA  . DNM A 1 10 ? 37.506 20.360 1.825  1.00 1.00 ? 9  DNM A HA  1 
+HETATM 164  H HB  . DNM A 1 10 ? 37.139 18.013 2.383  1.00 1.00 ? 9  DNM A HB  1 
+HETATM 165  H HBA . DNM A 1 10 ? 36.386 18.454 3.917  1.00 1.00 ? 9  DNM A HBA 1 
+HETATM 166  H H1  . DNM A 1 10 ? 38.237 22.435 4.491  1.00 1.00 ? 9  DNM A H1  1 
+HETATM 167  H H1A . DNM A 1 10 ? 37.456 23.093 3.037  1.00 1.00 ? 9  DNM A H1A 1 
+HETATM 168  H H1B . DNM A 1 10 ? 38.685 21.827 2.909  1.00 1.00 ? 9  DNM A H1B 1 
+HETATM 169  H HD  . DNM A 1 10 ? 39.944 17.452 4.730  1.00 1.00 ? 9  DNM A HD  1 
+HETATM 170  H HDA . DNM A 1 10 ? 38.736 16.630 3.731  1.00 1.00 ? 9  DNM A HDA 1 
+HETATM 171  H HE  . DNM A 1 10 ? 37.026 17.009 5.506  1.00 1.00 ? 9  DNM A HE  1 
+HETATM 172  H HEA . DNM A 1 10 ? 38.446 16.192 6.171  1.00 1.00 ? 9  DNM A HEA 1 
+HETATM 173  H HEB . DNM A 1 10 ? 38.214 17.927 6.457  1.00 1.00 ? 9  DNM A HEB 1 
+HETATM 174  H HG  . DNM A 1 10 ? 38.550 19.540 4.627  1.00 1.00 ? 9  DNM A HG  1 
+HETATM 175  H HGA . DNM A 1 10 ? 39.256 19.030 3.086  1.00 1.00 ? 9  DNM A HGA 1 
+HETATM 176  N N   . NLE A 1 11 ? 34.643 19.092 1.847  1.00 1.00 ? 10 NLE A N   1 
+HETATM 177  C CA  . NLE A 1 11 ? 33.409 19.048 1.077  1.00 1.00 ? 10 NLE A CA  1 
+HETATM 178  C C   . NLE A 1 11 ? 32.481 20.175 1.540  1.00 1.00 ? 10 NLE A C   1 
+HETATM 179  O O   . NLE A 1 11 ? 32.297 20.389 2.739  1.00 1.00 ? 10 NLE A O   1 
+HETATM 180  C CB  . NLE A 1 11 ? 32.745 17.666 1.129  1.00 1.00 ? 10 NLE A CB  1 
+HETATM 181  C CG  . NLE A 1 11 ? 33.772 16.551 0.875  1.00 1.00 ? 10 NLE A CG  1 
+HETATM 182  C CD  . NLE A 1 11 ? 33.113 15.191 0.615  1.00 1.00 ? 10 NLE A CD  1 
+HETATM 183  C CE  . NLE A 1 11 ? 32.413 15.120 -0.746 1.00 1.00 ? 10 NLE A CE  1 
+HETATM 184  H H   . NLE A 1 11 ? 34.887 18.317 2.439  1.00 1.00 ? 10 NLE A H   1 
+HETATM 185  H HA  . NLE A 1 11 ? 33.679 19.226 0.034  1.00 1.00 ? 10 NLE A HA  1 
+HETATM 186  H HB2 . NLE A 1 11 ? 32.254 17.505 2.087  1.00 1.00 ? 10 NLE A HB2 1 
+HETATM 187  H HB3 . NLE A 1 11 ? 31.977 17.651 0.357  1.00 1.00 ? 10 NLE A HB3 1 
+HETATM 188  H HG2 . NLE A 1 11 ? 34.416 16.825 0.037  1.00 1.00 ? 10 NLE A HG2 1 
+HETATM 189  H HG3 . NLE A 1 11 ? 34.400 16.440 1.759  1.00 1.00 ? 10 NLE A HG3 1 
+HETATM 190  H HD2 . NLE A 1 11 ? 33.893 14.427 0.632  1.00 1.00 ? 10 NLE A HD2 1 
+HETATM 191  H HD3 . NLE A 1 11 ? 32.397 14.969 1.407  1.00 1.00 ? 10 NLE A HD3 1 
+HETATM 192  H HE1 . NLE A 1 11 ? 31.547 15.780 -0.774 1.00 1.00 ? 10 NLE A HE1 1 
+HETATM 193  H HE2 . NLE A 1 11 ? 33.108 15.398 -1.539 1.00 1.00 ? 10 NLE A HE2 1 
+HETATM 194  H HE3 . NLE A 1 11 ? 32.072 14.098 -0.919 1.00 1.00 ? 10 NLE A HE3 1 
+HETATM 195  N N   . DNE A 1 12 ? 31.933 20.916 0.579  1.00 1.00 ? 11 DNE A N   1 
+HETATM 196  C CA  . DNE A 1 12 ? 31.205 22.152 0.813  1.00 1.00 ? 11 DNE A CA  1 
+HETATM 197  C C   . DNE A 1 12 ? 32.057 23.282 0.227  1.00 1.00 ? 11 DNE A C   1 
+HETATM 198  O O   . DNE A 1 12 ? 31.663 23.927 -0.739 1.00 1.00 ? 11 DNE A O   1 
+HETATM 199  C CB  . DNE A 1 12 ? 29.810 22.066 0.180  1.00 1.00 ? 11 DNE A CB  1 
+HETATM 200  C CG  . DNE A 1 12 ? 28.984 20.952 0.839  1.00 1.00 ? 11 DNE A CG  1 
+HETATM 201  C CD  . DNE A 1 12 ? 27.515 20.977 0.398  1.00 1.00 ? 11 DNE A CD  1 
+HETATM 202  C CE  . DNE A 1 12 ? 27.351 20.700 -1.099 1.00 1.00 ? 11 DNE A CE  1 
+HETATM 203  H H   . DNE A 1 12 ? 32.061 20.634 -0.381 1.00 1.00 ? 11 DNE A H   1 
+HETATM 204  H HA  . DNE A 1 12 ? 31.073 22.327 1.879  1.00 1.00 ? 11 DNE A HA  1 
+HETATM 205  H HB2 . DNE A 1 12 ? 29.302 23.021 0.327  1.00 1.00 ? 11 DNE A HB2 1 
+HETATM 206  H HB3 . DNE A 1 12 ? 29.908 21.881 -0.890 1.00 1.00 ? 11 DNE A HB3 1 
+HETATM 207  H HG2 . DNE A 1 12 ? 29.414 19.978 0.600  1.00 1.00 ? 11 DNE A HG2 1 
+HETATM 208  H HG3 . DNE A 1 12 ? 29.012 21.084 1.922  1.00 1.00 ? 11 DNE A HG3 1 
+HETATM 209  H HD2 . DNE A 1 12 ? 26.977 20.207 0.953  1.00 1.00 ? 11 DNE A HD2 1 
+HETATM 210  H HD3 . DNE A 1 12 ? 27.075 21.946 0.638  1.00 1.00 ? 11 DNE A HD3 1 
+HETATM 211  H HE1 . DNE A 1 12 ? 27.840 19.761 -1.361 1.00 1.00 ? 11 DNE A HE1 1 
+HETATM 212  H HE2 . DNE A 1 12 ? 26.289 20.624 -1.336 1.00 1.00 ? 11 DNE A HE2 1 
+HETATM 213  H HE3 . DNE A 1 12 ? 27.780 21.510 -1.688 1.00 1.00 ? 11 DNE A HE3 1 
+HETATM 214  N N   . NLO A 1 13 ? 33.252 23.492 0.791  1.00 1.00 ? 12 NLO A N   1 
+HETATM 215  C CA  . NLO A 1 13 ? 34.241 24.410 0.239  1.00 1.00 ? 12 NLO A CA  1 
+HETATM 216  C C   . NLO A 1 13 ? 34.651 23.916 -1.149 1.00 1.00 ? 12 NLO A C   1 
+HETATM 217  O O   . NLO A 1 13 ? 34.718 24.708 -2.085 1.00 1.00 ? 12 NLO A O   1 
+HETATM 218  C CB  . NLO A 1 13 ? 35.455 24.483 1.182  1.00 1.00 ? 12 NLO A CB  1 
+HETATM 219  C CG  . NLO A 1 13 ? 36.562 25.440 0.719  1.00 1.00 ? 12 NLO A CG  1 
+HETATM 220  C CD  . NLO A 1 13 ? 36.094 26.899 0.680  1.00 1.00 ? 12 NLO A CD  1 
+HETATM 221  C CE  . NLO A 1 13 ? 37.274 27.826 0.380  1.00 1.00 ? 12 NLO A CE  1 
+HETATM 222  O OH  . NLO A 1 13 ? 34.922 22.583 -1.236 1.00 1.00 ? 12 NLO A OH  1 
+HETATM 223  H H   . NLO A 1 13 ? 33.500 22.983 1.637  1.00 1.00 ? 12 NLO A H   1 
+HETATM 224  H HA  . NLO A 1 13 ? 33.783 25.395 0.151  1.00 1.00 ? 12 NLO A HA  1 
+HETATM 225  H HB2 . NLO A 1 13 ? 35.131 24.782 2.180  1.00 1.00 ? 12 NLO A HB2 1 
+HETATM 226  H HB3 . NLO A 1 13 ? 35.899 23.493 1.263  1.00 1.00 ? 12 NLO A HB3 1 
+HETATM 227  H HG2 . NLO A 1 13 ? 37.389 25.351 1.426  1.00 1.00 ? 12 NLO A HG2 1 
+HETATM 228  H HG3 . NLO A 1 13 ? 36.928 25.148 -0.266 1.00 1.00 ? 12 NLO A HG3 1 
+HETATM 229  H HD2 . NLO A 1 13 ? 35.345 27.031 -0.101 1.00 1.00 ? 12 NLO A HD2 1 
+HETATM 230  H HD3 . NLO A 1 13 ? 35.662 27.173 1.643  1.00 1.00 ? 12 NLO A HD3 1 
+HETATM 231  H HE1 . NLO A 1 13 ? 38.032 27.733 1.158  1.00 1.00 ? 12 NLO A HE1 1 
+HETATM 232  H HE2 . NLO A 1 13 ? 37.712 27.569 -0.585 1.00 1.00 ? 12 NLO A HE2 1 
+HETATM 233  H HE3 . NLO A 1 13 ? 36.924 28.859 0.346  1.00 1.00 ? 12 NLO A HE3 1 
+HETATM 234  H HXT . NLO A 1 13 ? 34.879 22.167 -0.367 1.00 1.00 ? 12 NLO A HXT 1 
+#
+_database_PDB_caveat.id     1 
+_database_PDB_caveat.text   
+;CHIRALITY ERROR AT C-ALPHA ATOM OF DNE5A AND DNM9A. BOTH SHOULD BE D-AMINO ACID ACCORDING TO THE PUBLICATION BUT WERE BUILD AS L-AMINO ACID.
+;
+# 
+loop_
+_pdbx_poly_seq_scheme.asym_id 
+_pdbx_poly_seq_scheme.entity_id 
+_pdbx_poly_seq_scheme.seq_id 
+_pdbx_poly_seq_scheme.mon_id 
+_pdbx_poly_seq_scheme.ndb_seq_num 
+_pdbx_poly_seq_scheme.pdb_seq_num 
+_pdbx_poly_seq_scheme.auth_seq_num 
+_pdbx_poly_seq_scheme.pdb_mon_id 
+_pdbx_poly_seq_scheme.auth_mon_id 
+_pdbx_poly_seq_scheme.pdb_strand_id 
+_pdbx_poly_seq_scheme.pdb_ins_code 
+_pdbx_poly_seq_scheme.hetero 
+A 1 1  BOC 1  0  ?  ?   ?   A . n 
+A 1 2  DNE 2  1  1  DNE NLE A . n 
+A 1 3  NLE 3  2  2  NLE NLE A . n 
+A 1 4  DNE 4  3  3  DNE NLE A . n 
+A 1 5  NLE 5  4  4  NLE NLE A . n 
+A 1 6  DNE 6  5  5  DNE NLE A . n 
+A 1 7  NLE 7  6  6  NLE NLE A . n 
+A 1 8  DNE 8  7  7  DNE NLE A . n 
+A 1 9  NLE 9  8  8  NLE NLE A . n 
+A 1 10 DNM 10 9  9  DNM NLE A . n 
+A 1 11 NLE 11 10 10 NLE NLE A . n 
+A 1 12 DNE 12 11 11 DNE NLE A . n 
+A 1 13 NLO 13 12 12 NLO NLE A . n 
+# 
+_pdbx_molecule_features.prd_id    PRD_000106 
+_pdbx_molecule_features.name      'BOC-(D-NLE-L-NLE)4-D-NLE(METHYL)-L-NLE-D-NLE-L-NLE METHYL ESTER' 
+_pdbx_molecule_features.type      Polypeptide 
+_pdbx_molecule_features.class     Antibiotic 
+_pdbx_molecule_features.details   ? 
+# 
+_pdbx_molecule.instance_id   1 
+_pdbx_molecule.prd_id        PRD_000106 
+_pdbx_molecule.asym_id       A 
+# 
+loop_
+_pdbx_struct_mod_residue.id 
+_pdbx_struct_mod_residue.label_asym_id 
+_pdbx_struct_mod_residue.label_comp_id 
+_pdbx_struct_mod_residue.label_seq_id 
+_pdbx_struct_mod_residue.auth_asym_id 
+_pdbx_struct_mod_residue.auth_comp_id 
+_pdbx_struct_mod_residue.auth_seq_id 
+_pdbx_struct_mod_residue.PDB_ins_code 
+_pdbx_struct_mod_residue.parent_comp_id 
+_pdbx_struct_mod_residue.details 
+1 A NLE 3  A NLE 2  ? LEU NORLEUCINE            
+2 A NLE 5  A NLE 4  ? LEU NORLEUCINE            
+3 A NLE 7  A NLE 6  ? LEU NORLEUCINE            
+4 A NLE 9  A NLE 8  ? LEU NORLEUCINE            
+5 A NLE 11 A NLE 10 ? LEU NORLEUCINE            
+6 A NLO 13 A NLO 12 ? LEU O-METHYL-L-NORLEUCINE 
+# 
+_pdbx_struct_assembly.id                   1 
+_pdbx_struct_assembly.details              author_defined_assembly 
+_pdbx_struct_assembly.method_details       ? 
+_pdbx_struct_assembly.oligomeric_details   monomeric 
+_pdbx_struct_assembly.oligomeric_count     1 
+# 
+_pdbx_struct_assembly_gen.assembly_id       1 
+_pdbx_struct_assembly_gen.oper_expression   1 
+_pdbx_struct_assembly_gen.asym_id_list      A 
+# 
+_pdbx_struct_oper_list.id                   1 
+_pdbx_struct_oper_list.type                 'identity operation' 
+_pdbx_struct_oper_list.name                 1_555 
+_pdbx_struct_oper_list.symmetry_operation   x,y,z 
+_pdbx_struct_oper_list.matrix[1][1]         1.0000000000 
+_pdbx_struct_oper_list.matrix[1][2]         0.0000000000 
+_pdbx_struct_oper_list.matrix[1][3]         0.0000000000 
+_pdbx_struct_oper_list.vector[1]            0.0000000000 
+_pdbx_struct_oper_list.matrix[2][1]         0.0000000000 
+_pdbx_struct_oper_list.matrix[2][2]         1.0000000000 
+_pdbx_struct_oper_list.matrix[2][3]         0.0000000000 
+_pdbx_struct_oper_list.vector[2]            0.0000000000 
+_pdbx_struct_oper_list.matrix[3][1]         0.0000000000 
+_pdbx_struct_oper_list.matrix[3][2]         0.0000000000 
+_pdbx_struct_oper_list.matrix[3][3]         1.0000000000 
+_pdbx_struct_oper_list.vector[3]            0.0000000000 
+# 
+loop_
+_pdbx_audit_revision_history.ordinal 
+_pdbx_audit_revision_history.data_content_type 
+_pdbx_audit_revision_history.major_revision 
+_pdbx_audit_revision_history.minor_revision 
+_pdbx_audit_revision_history.revision_date 
+1 'Structure model' 1 0 2003-12-02 
+2 'Structure model' 1 1 2008-04-29 
+3 'Structure model' 1 2 2011-07-13 
+4 'Structure model' 1 3 2012-12-12 
+# 
+_pdbx_audit_revision_details.ordinal             1 
+_pdbx_audit_revision_details.revision_ordinal    1 
+_pdbx_audit_revision_details.data_content_type   'Structure model' 
+_pdbx_audit_revision_details.provider            repository 
+_pdbx_audit_revision_details.type                'Initial release' 
+_pdbx_audit_revision_details.description         ? 
+# 
+loop_
+_pdbx_audit_revision_group.ordinal 
+_pdbx_audit_revision_group.revision_ordinal 
+_pdbx_audit_revision_group.data_content_type 
+_pdbx_audit_revision_group.group 
+1 2 'Structure model' 'Version format compliance' 
+2 3 'Structure model' 'Version format compliance' 
+3 4 'Structure model' Other                       
+# 
+loop_
+_pdbx_validate_torsion.id 
+_pdbx_validate_torsion.PDB_model_num 
+_pdbx_validate_torsion.auth_comp_id 
+_pdbx_validate_torsion.auth_asym_id 
+_pdbx_validate_torsion.auth_seq_id 
+_pdbx_validate_torsion.PDB_ins_code 
+_pdbx_validate_torsion.label_alt_id 
+_pdbx_validate_torsion.phi 
+_pdbx_validate_torsion.psi 
+1 1 NLE A 6  ? ? -149.28 53.09  
+2 1 DNE A 11 ? ? 111.96  -63.93 
+3 2 NLE A 6  ? ? -148.93 52.85  
+4 2 DNE A 11 ? ? 111.12  -64.80 
+5 3 NLE A 6  ? ? -165.03 69.19  
+6 4 NLE A 6  ? ? -163.06 64.51  
+7 5 NLE A 6  ? ? -162.97 64.27  
+# 
+loop_
+_pdbx_validate_chiral.id 
+_pdbx_validate_chiral.PDB_model_num 
+_pdbx_validate_chiral.auth_atom_id 
+_pdbx_validate_chiral.label_alt_id 
+_pdbx_validate_chiral.auth_asym_id 
+_pdbx_validate_chiral.auth_comp_id 
+_pdbx_validate_chiral.auth_seq_id 
+_pdbx_validate_chiral.PDB_ins_code 
+_pdbx_validate_chiral.details 
+_pdbx_validate_chiral.omega 
+1  1 CA ? A DNE 5 ? 'WRONG HAND' . 
+2  1 CA ? A DNM 9 ? 'WRONG HAND' . 
+3  2 CA ? A DNE 5 ? 'WRONG HAND' . 
+4  2 CA ? A DNM 9 ? 'WRONG HAND' . 
+5  3 CA ? A DNE 5 ? 'WRONG HAND' . 
+6  3 CA ? A DNM 9 ? 'WRONG HAND' . 
+7  4 CA ? A DNE 5 ? 'WRONG HAND' . 
+8  4 CA ? A DNM 9 ? 'WRONG HAND' . 
+9  5 CA ? A DNE 5 ? 'WRONG HAND' . 
+10 5 CA ? A DNM 9 ? 'WRONG HAND' . 
+# 
+loop_
+_pdbx_unobs_or_zero_occ_atoms.id 
+_pdbx_unobs_or_zero_occ_atoms.PDB_model_num 
+_pdbx_unobs_or_zero_occ_atoms.polymer_flag 
+_pdbx_unobs_or_zero_occ_atoms.occupancy_flag 
+_pdbx_unobs_or_zero_occ_atoms.auth_asym_id 
+_pdbx_unobs_or_zero_occ_atoms.auth_comp_id 
+_pdbx_unobs_or_zero_occ_atoms.auth_seq_id 
+_pdbx_unobs_or_zero_occ_atoms.PDB_ins_code 
+_pdbx_unobs_or_zero_occ_atoms.auth_atom_id 
+_pdbx_unobs_or_zero_occ_atoms.label_alt_id 
+_pdbx_unobs_or_zero_occ_atoms.label_asym_id 
+_pdbx_unobs_or_zero_occ_atoms.label_comp_id 
+_pdbx_unobs_or_zero_occ_atoms.label_seq_id 
+_pdbx_unobs_or_zero_occ_atoms.label_atom_id 
+1 1 Y 1 A NLO 12 ? C1 ? A NLO 13 C1 
+2 2 Y 1 A NLO 12 ? C1 ? A NLO 13 C1 
+3 3 Y 1 A NLO 12 ? C1 ? A NLO 13 C1 
+4 4 Y 1 A NLO 12 ? C1 ? A NLO 13 C1 
+5 5 Y 1 A NLO 12 ? C1 ? A NLO 13 C1 
+# 
+loop_
+_pdbx_unobs_or_zero_occ_residues.id 
+_pdbx_unobs_or_zero_occ_residues.PDB_model_num 
+_pdbx_unobs_or_zero_occ_residues.polymer_flag 
+_pdbx_unobs_or_zero_occ_residues.occupancy_flag 
+_pdbx_unobs_or_zero_occ_residues.auth_asym_id 
+_pdbx_unobs_or_zero_occ_residues.auth_comp_id 
+_pdbx_unobs_or_zero_occ_residues.auth_seq_id 
+_pdbx_unobs_or_zero_occ_residues.PDB_ins_code 
+_pdbx_unobs_or_zero_occ_residues.label_asym_id 
+_pdbx_unobs_or_zero_occ_residues.label_comp_id 
+_pdbx_unobs_or_zero_occ_residues.label_seq_id 
+1 1 Y 1 A BOC 0 ? A BOC 1 
+2 2 Y 1 A BOC 0 ? A BOC 1 
+3 3 Y 1 A BOC 0 ? A BOC 1 
+4 4 Y 1 A BOC 0 ? A BOC 1 
+5 5 Y 1 A BOC 0 ? A BOC 1 
+# 

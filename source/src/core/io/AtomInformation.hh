@@ -71,8 +71,13 @@ struct AtomInformation {
 	signed short int formalcharge;
 	int terCount; //< number of TER or END cards encountered prior to this
 
+	/// @brief our best mapping to mmcif chem_comp.type
+	std::string chem_comp_type;
+
 	/// @brief List of lower-numbered atoms that this atom is connected to.
 	utility::vector1< core::Size > connected_indices;
+	/// @brief bond order list that matches connected_indices
+	utility::vector1< core::Size > connected_orders;
 };  // struct AtomInformation
 
 } // namespace io

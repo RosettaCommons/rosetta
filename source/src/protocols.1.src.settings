@@ -103,6 +103,7 @@ sources = {
 		"LargeNstructJobInputter",
 		"LazySilentFileJobInputter",
 		"mmCIFJobOutputter",
+		"mmtfJobOutputter",
 		"MpiFileBuffer",
 		"MPIFileBufJobDistributor",
 		"MPIMultiCommJobDistributor",
@@ -170,7 +171,7 @@ sources = {
 	],
 	"protocols/jd3/job_distributors": [
 		"JobExtractor",
-	#	"MPIWorkPartitionJobDistributor",
+		# "MPIWorkPartitionJobDistributor",
 		"MPIWorkPoolJobDistributor",
 		"MultiThreadedJobDistributor",
 		"VanillaJobDistributor",

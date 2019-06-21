@@ -24,6 +24,7 @@ static JobOutputterRegistrator< ScoreOnlyJobOutputterCreator > reg_ScoreOnlyJobO
 static JobOutputterRegistrator< SerializedPoseJobOutputterCreator > reg_SerializedPoseJobOutputterCreator;
 static JobOutputterRegistrator< SilentFileJobOutputterCreator > reg_SilentFileJobOutputterCreator;
 static JobOutputterRegistrator< mmCIFJobOutputterCreator > reg_mmCIFJobOutputterCreator;
+static JobOutputterRegistrator< mmtfJobOutputterCreator > reg_mmtfJobOutputterCreator;
 static JobOutputterRegistrator< enzdes::EnzdesJobOutputterCreator > reg_EnzdesJobOutputterCreator;
 static JobOutputterRegistrator< features::DatabaseJobOutputterCreator > reg_DatabaseJobOutputterCreator;
 
