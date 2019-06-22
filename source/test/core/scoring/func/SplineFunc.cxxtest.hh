@@ -71,7 +71,39 @@ public:
 
 		// Call the read_data function of the SplineFunc to get the input histogram
 		// Need this to read in the input KB potential
-		func->read_data( test_input);
+		func->read_data( test_input );
+		TR << "HERE" << std::endl;
+		func->show_definition(TR);
+
+		{ // test this constructor works
+			SplineFuncOP nfunc(
+				new SplineFunc(
+				func->get_KB_description(),
+				func->get_weight(),
+				func->get_exp_val(),
+				func->get_bin_size(),
+				func->get_bins_vect(),
+				func->get_potential_vect() ) );
+			// CUSTOM == because we dont want to check filename
+			float const TOLERATED_ERROR( 0.0001 );
+			TS_ASSERT( func->get_exp_val() == nfunc->get_exp_val() );
+			TS_ASSERT( func->get_KB_description() == nfunc->get_KB_description() );
+			TS_ASSERT( func->get_bin_size() == nfunc->get_bin_size() );
+			TS_ASSERT( func->get_bins_vect_size() == nfunc->get_bins_vect_size() );
+			TS_ASSERT( func->get_potential_vect_size() == nfunc->get_potential_vect_size() );
+			TS_ASSERT_DELTA( func->get_weight(), nfunc->get_weight(), TOLERATED_ERROR );
+			TS_ASSERT_DELTA( func->get_lower_bound_x(), nfunc->get_lower_bound_x(), TOLERATED_ERROR );
+			TS_ASSERT_DELTA( func->get_lower_bound_y(), nfunc->get_lower_bound_y(), TOLERATED_ERROR );
+			TS_ASSERT_DELTA( func->get_upper_bound_x(), nfunc->get_upper_bound_x(), TOLERATED_ERROR );
+			TS_ASSERT_DELTA( func->get_upper_bound_y(), nfunc->get_upper_bound_y(), TOLERATED_ERROR );
+			TS_ASSERT_DELTA( func->get_lower_bound_dy(), nfunc->get_lower_bound_dy(), TOLERATED_ERROR );
+			TS_ASSERT_DELTA( func->get_upper_bound_dy(), nfunc->get_upper_bound_dy(), TOLERATED_ERROR );
+
+			for ( core::Size i=1; i<= func->get_bins_vect().size(); ++i ) {
+				TS_ASSERT_DELTA( func->get_bins_vect()[i], nfunc->get_bins_vect()[i], TOLERATED_ERROR);
+				TS_ASSERT_DELTA( func->get_potential_vect()[i], nfunc->get_potential_vect()[i], TOLERATED_ERROR);
+			}
+		}
 
 		// Print out read-in data and bounds of histogram
 		TR << "exp_val:\t" << func->get_exp_val() << std::endl;

@@ -74,6 +74,38 @@ SplineFunc::SplineFunc():
 	interpolator_()
 {}
 
+
+SplineFunc::SplineFunc(
+	std::string const & KB_description,
+	core::Real const weight,
+	core::Real const exp_val,
+	core::Real const bin_size,
+	utility::vector1<core::Real> const & bins_vect,
+	utility::vector1<core::Real> const & potential_vect,
+	utility::vector1<std::tuple<std::string, platform::Real, platform::Real, platform::Real>> const & boundary_functions):
+	exp_val_(exp_val),
+	KB_description_(KB_description),
+	weight_(weight),
+	bin_size_(bin_size),
+	bins_vect_(bins_vect),
+	bins_vect_size_(bins_vect.size()),
+	potential_vect_(potential_vect),
+	potential_vect_size_(potential_vect.size())
+{
+	numeric::interpolation::spline::SplineGenerator common_spline( numeric::interpolation::make_spline( bins_vect, potential_vect, bin_size, boundary_functions ) );
+
+	interpolator_ = common_spline.get_interpolator();
+	lower_bound_x_ = common_spline.get_lbx();
+	upper_bound_x_ = common_spline.get_ubx();
+	lower_bound_y_ = common_spline.get_lby();
+	upper_bound_y_ = common_spline.get_uby();
+	upper_bound_x_ = common_spline.get_ubx();
+	lower_bound_dy_ = common_spline.get_lbdy();
+	upper_bound_dy_ = common_spline.get_ubdy();
+}
+
+
+
 SplineFunc::~SplineFunc() = default;
 
 bool SplineFunc::operator == ( Func const & other ) const
@@ -111,66 +143,84 @@ bool SplineFunc::same_type_as_me( Func const & other ) const
 
 
 // get_ functions to obtain values of member variables (mostly for unit test)
-core::Real SplineFunc::get_exp_val()
+core::Real SplineFunc::get_exp_val() const
 {
 	return exp_val_;
 }
 
-std::string SplineFunc::get_filename()
+std::string const & SplineFunc::get_filename() const
 {
 	return filename_;
 }
 
-std::string SplineFunc::get_KB_description()
+std::string const & SplineFunc::get_KB_description() const
 {
 	return KB_description_;
 }
 
-core::Real SplineFunc::get_weight()
+core::Real SplineFunc::get_weight() const
 {
 	return weight_;
 }
 
-core::Real SplineFunc::get_bin_size()
+core::Real SplineFunc::get_bin_size() const
 {
 	return bin_size_;
 }
 
-core::Real SplineFunc::get_lower_bound_x()
+core::Size SplineFunc::get_bins_vect_size() const
+{
+	return bins_vect_size_;
+}
+
+core::Size SplineFunc::get_potential_vect_size() const
+{
+	return potential_vect_size_;
+}
+
+core::Real SplineFunc::get_lower_bound_x() const
 {
 	return lower_bound_x_;
 }
 
-core::Real SplineFunc::get_upper_bound_x()
+core::Real SplineFunc::get_upper_bound_x() const
 {
 	return upper_bound_x_;
 }
 
-core::Real SplineFunc::get_lower_bound_y()
+core::Real SplineFunc::get_lower_bound_y() const
 {
 	return lower_bound_y_;
 }
 
-core::Real SplineFunc::get_upper_bound_y()
+core::Real SplineFunc::get_upper_bound_y() const
 {
 	return upper_bound_y_;
 }
 
-core::Real SplineFunc::get_lower_bound_dy()
+core::Real SplineFunc::get_lower_bound_dy() const
 {
 	return lower_bound_dy_;
 }
 
-core::Real SplineFunc::get_upper_bound_dy()
+core::Real SplineFunc::get_upper_bound_dy() const
 {
 	return upper_bound_dy_;
 }
 
-// Read in data (e.g., experimental distance), weight, and histogram filename.  Bind filename to stream.
-void SplineFunc::read_data( std::istream &in)
+utility::vector1<core::Real> const & SplineFunc::get_bins_vect() const
 {
-	utility::io::izstream potential_file;
+	return bins_vect_;
+}
 
+utility::vector1<core::Real> const & SplineFunc::get_potential_vect() const
+{
+	return potential_vect_;
+}
+
+// Read in data (e.g., experimental distance), weight, and histogram filename.  Bind filename to stream.
+void SplineFunc::read_data( std::istream &in )
+{
 	// If constraints::epr_distance specified, read in histogram from database
 	if ( basic::options::option[ basic::options::OptionKeys::constraints::epr_distance]() ) {
 		in >> KB_description_ >> exp_val_ >> weight_ >> bin_size_;
@@ -189,12 +239,19 @@ void SplineFunc::read_data( std::istream &in)
 	//std::cout << "histogram_ubx: " << upper_bound_x_ << std::endl;
 	lower_bound_y_ = common_spline.get_lby();
 	//std::cout << "histogram_lby: " << lower_bound_y_ << std::endl;
+	upper_bound_y_ = common_spline.get_uby();
 	upper_bound_x_ = common_spline.get_ubx();
 	//std::cout << "" << "histogram_uby: " << upper_bound_y_ << std::endl;
 	lower_bound_dy_ = common_spline.get_lbdy();
 	upper_bound_dy_ = common_spline.get_ubdy();
 	bins_vect_size_ = common_spline.get_num_points();
+	potential_vect_size_ = common_spline.get_num_points();
 
+	utility::vector1<numeric::interpolation::spline::Point> const & points(common_spline.get_points());
+	for ( auto const & point : points ) {
+		bins_vect_.push_back(point.x);
+		potential_vect_.push_back(point.y);
+	}
 } // read_data()
 
 /// @brief Returns the value of this SplineFunc evaluated at distance x.
@@ -284,8 +341,9 @@ core::Real SplineFunc::dfunc( core::Real const x) const
 /// @brief show the definition of this SplineFunc to the specified output stream.
 void SplineFunc::show_definition( std::ostream &out ) const
 {
-	out << "SPLINEFUNC:" << "\t" << "filename:  " << filename_ << "\t" << "Description:  " << KB_description_ << "\t"
-		<< "exp_val:  " << exp_val_ << "\t" << "weight:  " << weight_ << "\t" << "bin_size:  " << bin_size_ << std::endl;
+	out << "SPLINEFUNC:" << "\t" << "filename: " << filename_ << "\t" << "Description: " << KB_description_ << "\t"
+		<< "exp_val: " << exp_val_ << "\t" << "weight: " << weight_ << "\t" << "bin_size: " << bin_size_ << "\t"
+		<< "bins_vect: " << bins_vect_ << "\t" << "potential_vect: " << potential_vect_ << std::endl;
 }
 
 /// @brief show some sort of stringified representation of the violations for this constraint.

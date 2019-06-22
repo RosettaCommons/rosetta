@@ -65,39 +65,49 @@ public:
 	InterpolatorOP get_interpolator();
 
 	//getters for the rest of the private data
-	Real get_lbx()
+	Real get_lbx() const
 	{
 		return lbx_;
 	}
 
-	Real get_lby()
+	Real get_lby() const
 	{
 		return lby_;
 	}
 
-	Real get_lbdy()
+	Real get_lbdy() const
 	{
 		return lbdy_;
 	}
 
-	Real get_ubx()
+	Real get_ubx() const
 	{
 		return ubx_;
 	}
 
-	Real get_uby()
+	Real get_uby() const
 	{
 		return uby_;
 	}
 
-	Real get_ubdy()
+	Real get_ubdy() const
 	{
 		return ubdy_;
 	}
 
-	numeric::Size get_num_points()
+	numeric::Size get_num_points() const
 	{
 		return points_.size();
+	}
+
+	utility::vector1<Point> const & get_points() const
+	{
+		return points_;
+	}
+
+	std::map<std::string,LinearFunction> const & get_boundary_functions() const
+	{
+		return boundary_functions_;
 	}
 
 private:

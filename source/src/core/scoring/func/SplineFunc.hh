@@ -32,6 +32,7 @@
 // Utility and Numeric Headers
 #include <utility/vector1.hh>
 #include <numeric/interpolation/spline/Interpolator.hh>
+#include <numeric/interpolation/spline/SplineGenerator.hh>
 
 // C++ Headers
 #include <iostream>
@@ -46,12 +47,25 @@ namespace core {
 namespace scoring {
 namespace func {
 
-class SplineFunc : public Func {
+// TAG, cutoff, slope, intercept
+typedef utility::vector1<std::tuple<std::string, platform::Real, platform::Real, platform::Real>> boundary_fn_type;
 
+class SplineFunc : public Func {
 public:
 
 	// @brief SplineFunc construction and destruction
 	SplineFunc();
+
+	// @brief SplineFunc construction from code
+	SplineFunc(
+		std::string const & KB_description,
+		core::Real const weight,
+		core::Real const exp_val,
+		core::Real const bin_size,
+		utility::vector1<core::Real> const & bins_vect,
+		utility::vector1<core::Real> const & potential_vect,
+		boundary_fn_type const & boundary_functions = boundary_fn_type());
+
 	~SplineFunc();
 
 	/// @brief returns a clone of this SplineFunc
@@ -61,31 +75,39 @@ public:
 	virtual bool same_type_as_me( Func const & other ) const;
 
 	/// @brief return SplineFunc member variables
-	core::Real get_exp_val();
+	core::Real get_exp_val() const;
 
-	std::string get_filename();
+	std::string const & get_filename() const;
 
-	std::string get_KB_description();
+	std::string const & get_KB_description() const;
 
-	core::Real get_weight();
+	core::Real get_weight() const;
 
-	core::Real get_bin_size();
+	core::Real get_bin_size() const;
 
-	core::Real get_lower_bound_x();
+	core::Size get_bins_vect_size() const;
 
-	core::Real get_upper_bound_x();
+	core::Size get_potential_vect_size() const;
 
-	core::Real get_lower_bound_y();
+	core::Real get_lower_bound_x() const;
 
-	core::Real get_upper_bound_y();
+	core::Real get_upper_bound_x() const;
 
-	core::Real get_lower_bound_dy();
+	core::Real get_lower_bound_y() const;
 
-	core::Real get_upper_bound_dy();
+	core::Real get_upper_bound_y() const;
+
+	core::Real get_lower_bound_dy() const;
+
+	core::Real get_upper_bound_dy() const;
+
+	utility::vector1<core::Real> const & get_bins_vect() const;
+
+	utility::vector1<core::Real> const & get_potential_vect() const;
 
 	/// @brief initialize this SplineFunc from the given izstream.
 	virtual
-	void read_data ( std::istream &in );
+	void read_data( std::istream &in );
 
 	/// @brief Returns the value of this SplineFunc evaluated at distance x.
 	virtual
