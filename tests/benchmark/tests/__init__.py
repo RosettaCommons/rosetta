@@ -366,6 +366,7 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
     #     python_prefix = execute('Getting {} prefix path...'.format(platform['python']), '{}-config --prefix'.format(platform['python']), return_='output')
     #     extra += ' --python-include-dir={0}/include/python3.5m --python-lib={0}/lib/libpython3.5.dylib'.format(python_prefix)
 
+    if 'cxx11thread'   in platform['extras']: extra += ' --multi-threaded'
     if 'serialization' in platform['extras']: extra += ' --serialization'
 
     if version: extra += " --version '{version}'".format(**vars())
