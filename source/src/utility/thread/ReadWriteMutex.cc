@@ -10,16 +10,12 @@
 /// @file   utility/thread/ReadWriteMutex.cc
 /// @brief  Classes to manage data that can be read by multiple threads and written to by only one thread
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
-/// @author Modified by Vikram K. Mulligan (vmulligan@flatironinstitute.org) to add additional options for
-/// conditionally locking mutexes or for locking multiple mutexes simultaneously without deadlock.
 
 #ifdef MULTI_THREADED
 
 // Unit headers
 #include <utility/thread/ReadWriteMutex.hh>
 
-// Error messages
-#include <utility/exit.hh>
 
 // C++ Headers
 #include <cassert>
@@ -68,76 +64,26 @@ void ReadWriteMutex::release_write_lock()
 }
 
 
-ReadLockGuard::ReadLockGuard( ReadWriteMutex & rwm, bool const do_nothing /*= false*/ ) :
-	rwm_( rwm ),
-	did_nothing_( do_nothing )
+ReadLockGuard::ReadLockGuard( ReadWriteMutex & rwm ) :
+	rwm_( rwm )
 {
-	if ( !do_nothing ) {
-		rwm_.obtain_read_lock();
-	}
+	rwm_.obtain_read_lock();
 }
 
 ReadLockGuard::~ReadLockGuard()
 {
-	if ( !did_nothing_ ) {
-		rwm_.release_read_lock();
-	}
+	rwm_.release_read_lock();
 }
 
-WriteLockGuard::WriteLockGuard( ReadWriteMutex & rwm, bool const do_nothing /*= false*/ ) :
-	rwm_( rwm ),
-	did_nothing_( do_nothing )
+WriteLockGuard::WriteLockGuard( ReadWriteMutex & rwm ) :
+	rwm_( rwm )
 {
-	if ( !do_nothing ) {
-		rwm_.obtain_write_lock();
-	}
+	rwm_.obtain_write_lock();
 }
 
 WriteLockGuard::~WriteLockGuard()
 {
-	if ( !did_nothing_ ) {
-		rwm_.release_write_lock();
-	}
-}
-
-/// @brief Constructor.  If read_mode is true, this obtains a read lock on the mutex.  If it's false,
-/// it obtains a write-lock.  If do_nothing is true, the behaviour is overridden and the lock guard
-/// does nothing.
-ReadOrWriteLockGuard::ReadOrWriteLockGuard(
-	ReadWriteMutex & rwm,
-	bool const read_mode,
-	bool const do_nothing /*=false*/
-) {
-	if ( !do_nothing ) {
-		if ( read_mode ) {
-			read_guard_ = utility::pointer::make_shared< ReadLockGuard >( rwm );
-		} else {
-			write_guard_ = utility::pointer::make_shared< WriteLockGuard >( rwm );
-		}
-	}
-}
-
-/// @brief Constructor.  The first mutex gets a read lock, and the second gets a write lock.  If do_nothing is true,
-/// the behaviour is overridden and the lock guard does nothing.
-PairedReadLockWriteLockGuard::PairedReadLockWriteLockGuard(
-	ReadWriteMutex & mutex_to_read_lock,
-	ReadWriteMutex & mutex_to_write_lock,
-	bool const do_nothing /*= false*/
-) {
-	if ( !do_nothing ) {
-		runtime_assert_string_msg( &mutex_to_read_lock != &mutex_to_write_lock, "Error in utility::thread::PairedReadLockWriteLockGuard(): Two copies of the same mutex were passed to this function, which will inevitibly cause deadlock!" );
-
-		//Objective criterion for chosing which mutex to lock first (ensuring that all threads try to lock the same mutex first):
-		bool const read_mutex_is_greater( &mutex_to_read_lock > &mutex_to_write_lock );
-		//The following may look odd, but it's necessary to ensure that deadlock doesn't occur if ever
-		//two different threads do a=b and b=a simultaneously.  Basically, we're ensuring that both threads
-		//try to lock the same mutex first, so that there isn't a deadlock scenario in which X hold mutex A
-		//and is waiting to acquire mutex B while Y holds mutex B and is waiting to acquire mutex A.  This way,
-		//either X or Y will get mutex A, then will proceed to acquire mutex B and the other will block until
-		//the first is done.
-		first_guard_ = utility::pointer::make_shared< ReadOrWriteLockGuard >( read_mutex_is_greater ? mutex_to_write_lock : mutex_to_read_lock, !read_mutex_is_greater );
-		second_guard_ = utility::pointer::make_shared< ReadOrWriteLockGuard >( read_mutex_is_greater ? mutex_to_read_lock : mutex_to_write_lock, read_mutex_is_greater );
-	}
+	rwm_.release_write_lock();
 }
 
 }
