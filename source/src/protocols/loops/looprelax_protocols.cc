@@ -253,7 +253,7 @@ bool LoopRebuild::build_random_loops( core::pose::Pose & pose ) {
 		inter_res.clear();
 		int selected_loop, def_loop_begin, def_loop_end, combine_number;
 		bool loops_combined( false );
-		bool extend_this_loop = option[ OptionKeys::loops::extended ].user();
+		bool extend_this_loop = option[ OptionKeys::loops::extended ].value();
 		bool use_selected_loop =
 			select_one_loop( nres, selected_loop, folded_loops,
 			inter_res, def_loop_begin, def_loop_end, cutpoint, extend_this_loop,

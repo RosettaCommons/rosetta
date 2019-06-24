@@ -281,7 +281,7 @@ FlexbbRotamerSets::build_rotamers(
 	update_offset_data() ;
 
 
-	if ( basic::options::option[basic::options::OptionKeys::packing::dump_rotamer_sets].user() ) {
+	if ( basic::options::option[basic::options::OptionKeys::packing::dump_rotamer_sets].value() ) {
 
 		this->dump_pdbs( pose, "flex_rotamers");
 	}

@@ -151,7 +151,7 @@ VisualizeEmbeddingMover::apply( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[ OptionKeys::mp::visualize::embedding ].user() ) {
+	if ( option[ OptionKeys::mp::visualize::embedding ].value() ) {
 
 		TR << "Adding virtual residues to the pose to visualize embeddings of TMspans" << std::endl;
 

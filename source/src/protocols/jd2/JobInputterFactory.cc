@@ -103,7 +103,7 @@ JobInputterFactory::get_new_JobInputter()
 		if ( basic::options::option[ basic::options::OptionKeys::enzdes::parser_read_cloud_pdb ].user() ) {
 			return get_JobInputter_from_string( "EnzdesJobInputter" );
 		}
-		if ( option[ OptionKeys::jd2::dd_parser ].user() && option[ OptionKeys::parser::patchdock ].user() ) {
+		if ( option[ OptionKeys::jd2::dd_parser ].value() && option[ OptionKeys::parser::patchdock ].user() ) {
 			return get_JobInputter_from_string( "ParserJobInputter" );
 		} else if ( option[ OptionKeys::jd2::grid_ensemble]() || option[ OptionKeys::jd2::seed_ensemble]() ||
 				option[ OptionKeys::jd2::seed_ensemble_weights].user() || option[ basic::options::OptionKeys::jd2::seed_ensemble_weights_file].user() ) {
@@ -113,7 +113,7 @@ JobInputterFactory::get_new_JobInputter()
 		}
 		//silent file block
 	} else if ( option[ OptionKeys::in::file::silent ].user() ) {
-		if ( option[ OptionKeys::jd2::lazy_silent_file_reader ].user() ) {
+		if ( option[ OptionKeys::jd2::lazy_silent_file_reader ].value() ) {
 			return get_JobInputter_from_string( "LazySilentFileJobInputter" );
 		} else {
 			return get_JobInputter_from_string( "SilentFileJobInputter" );
@@ -123,7 +123,7 @@ JobInputterFactory::get_new_JobInputter()
 		return get_JobInputter_from_string( "AtomTreeDiffJobInputter" );
 	} else if ( option[ OptionKeys::in::file::template_pdb ].user() || option[ OptionKeys::in::file::template_silent ].user() ) {
 		return get_JobInputter_from_string( "ThreadingJobInputter" );
-	} else if ( option[OptionKeys::in::use_database].user() ) {
+	} else if ( option[OptionKeys::in::use_database].user() && option[OptionKeys::in::use_database].value() ) {
 		return get_JobInputter_from_string( "DatabaseJobInputter" );
 	} else if ( option[ OptionKeys::make_rot_lib::options_file ].user() ) {
 		return get_JobInputter_from_string( "MakeRotLibJobInputter" );

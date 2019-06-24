@@ -400,7 +400,7 @@ int universal_main(
 				the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, utility::pointer::make_shared< CacheableString >(curr_job->output_tag(curr_nstruct)));
 
 				// Membrane protein specific scoring - only centroid score function here:
-				if ( option[ OptionKeys::score::weights ]() == "score_membrane" && option[in::file::spanfile].user() && option[ in::file::centroid_input ].user() ) {
+				if ( option[ OptionKeys::score::weights ]() == "score_membrane" && option[in::file::spanfile].user() && option[ in::file::centroid_input ].value() ) {
 					std::string const spanfile = option[ in::file::spanfile ]();
 					core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );
 					the_pose->data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
@@ -415,7 +415,8 @@ int universal_main(
 
 				//////////////////////////////////////////////////////////////////////////////////////
 				////  Maybe idealize the structure before relax ?
-				if ( option[ OptionKeys::run::idealize_before_protocol ].user() ) {
+				if ( option[ OptionKeys::run::idealize_before_protocol ].user() &&
+						option[ OptionKeys::run::idealize_before_protocol ].value() ) {
 					protocols::idealize::IdealizeMover idealizer;
 					idealizer.fast( false );
 					idealizer.apply( *the_pose );
@@ -527,7 +528,7 @@ int universal_main(
 			/// Load in input pose.
 			if ( utility::file::file_exists( curr_job->native_tag() ) ) {
 
-				if ( option[ in::file::centroid_input ].user() ) {
+				if ( option[ in::file::centroid_input ].value() ) {
 					core::import_pose::centroid_pose_from_pdb( native_pose, curr_job->native_tag() , core::import_pose::PDB_file);
 				} else {
 					core::import_pose::pose_from_file( native_pose, curr_job->native_tag() , core::import_pose::PDB_file);
@@ -549,7 +550,7 @@ int universal_main(
 			// we read each PDB just once to save on disk I/O
 			if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
 				input_pose = utility::pointer::make_shared< core::pose::Pose >();
-				if ( option[ in::file::centroid_input ].user() ) {
+				if ( option[ in::file::centroid_input ].value() ) {
 					core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 				} else {
 					core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
@@ -568,7 +569,7 @@ int universal_main(
 			the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, utility::pointer::make_shared< CacheableString >(curr_job->output_tag(curr_nstruct)));
 
 			// Membrane protein specific scoring - only centroid score function here:
-			if ( option[ OptionKeys::score::weights ]() == "score_membrane" && option[in::file::spanfile].user() && option[ in::file::centroid_input ].user() ) {
+			if ( option[ OptionKeys::score::weights ]() == "score_membrane" && option[in::file::spanfile].user() && option[ in::file::centroid_input ].value() ) {
 				std::string const spanfile = option[ in::file::spanfile ]();
 				core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );
 				the_pose->data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
@@ -582,7 +583,8 @@ int universal_main(
 #endif
 			//////////////////////////////////////////////////////////////////////////////////////
 			////  Maybe idealize the structure before relax ?
-			if ( option[ OptionKeys::run::idealize_before_protocol ].user() ) {
+			if ( option[ OptionKeys::run::idealize_before_protocol ].user() &&
+					option[ OptionKeys::run::idealize_before_protocol ].value() ) {
 				protocols::idealize::IdealizeMover idealizer;
 				idealizer.fast( false );
 				idealizer.apply( *the_pose );
@@ -715,7 +717,7 @@ int main_plain_mover(
 		// we read each PDB just once to save on disk I/O
 		if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
 			input_pose = utility::pointer::make_shared< core::pose::Pose >();
-			if ( option[ in::file::centroid_input ].user() ) {
+			if ( option[ in::file::centroid_input ].value() ) {
 				core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 				native_pose = utility::pointer::make_shared< core::pose::Pose >();
 				core::import_pose::centroid_pose_from_pdb( *native_pose, curr_job->native_tag() , core::import_pose::PDB_file);
@@ -821,7 +823,7 @@ int main_plain_pdb_mover(
 		// we read each PDB just once to save on disk I/O
 		if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
 			input_pose = utility::pointer::make_shared< core::pose::Pose >();
-			if ( option[ in::file::centroid_input ].user() ) {
+			if ( option[ in::file::centroid_input ].value() ) {
 				core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 			} else {
 				core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);

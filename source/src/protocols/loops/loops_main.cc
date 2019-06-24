@@ -544,8 +544,8 @@ loops_set_move_map(
 	using namespace basic::options;
 	loops_set_move_map(
 		pose, loops, fix_template_sc, mm, neighbor_dist,
-		option[OptionKeys::loops::allow_omega_move].user(),
-		option[OptionKeys::loops::allow_takeoff_torsion_move].user());
+		option[OptionKeys::loops::allow_omega_move].value(),
+		option[OptionKeys::loops::allow_takeoff_torsion_move].value());
 }
 
 void
@@ -582,8 +582,8 @@ loops_set_move_map(
 	using namespace basic::options;
 	loops_set_move_map(
 		loops, allow_sc_move, mm,
-		option[OptionKeys::loops::allow_omega_move].user(),
-		option[OptionKeys::loops::allow_takeoff_torsion_move].user());
+		option[OptionKeys::loops::allow_omega_move].value(),
+		option[OptionKeys::loops::allow_takeoff_torsion_move].value());
 }
 
 void
@@ -699,8 +699,8 @@ set_move_map_for_centroid_loop(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	bool const allow_omega_move = basic::options::option[ OptionKeys::loops::allow_omega_move ].user();
-	bool const allow_takeoff_torsion_move = basic::options::option[ OptionKeys::loops::allow_takeoff_torsion_move ].user();
+	bool const allow_omega_move = basic::options::option[ OptionKeys::loops::allow_omega_move ].value();
+	bool const allow_takeoff_torsion_move = basic::options::option[ OptionKeys::loops::allow_takeoff_torsion_move ].value();
 
 	mm.set_bb( false );
 	mm.set_chi( false );
@@ -720,7 +720,7 @@ set_move_map_for_centroid_loop(
 
 	// chu in case we have ligand attached in fold tree and they need to move. Assuming that
 	// loop jumps come first followed by lig jumps.
-	if ( basic::options::option[ OptionKeys::loops::allow_lig_move ].user() ) {
+	if ( basic::options::option[ OptionKeys::loops::allow_lig_move ].value() ) {
 		mm.set_jump( true );
 		mm.set_jump( 1, false ); //jump for the single loop
 	}

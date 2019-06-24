@@ -53,7 +53,7 @@ std::string BasicJob::output_tag(int struct_n) const
 	utility::vector1<std::string> temp_out_names= utility::split(input_id_);
 	utility::file::FileName out_name = utility::file::combine_names( temp_out_names);
 	//jobs_tracer<< out_name.base()<< std::endl;
-	if ( option[ run::shuffle ].user() ) out_name = "S_shuffle";
+	if ( option[ run::shuffle ].value() ) out_name = "S_shuffle";
 	std::ostringstream oss;
 
 	std::string user_tag("");

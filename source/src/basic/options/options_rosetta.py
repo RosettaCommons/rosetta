@@ -1742,7 +1742,8 @@ Options = Option_Group( '',
 			desc="Use electrostatic repulsion"
 			),
 		Option( 'dump_rotamer_sets', 'Boolean',
-			desc="Output NMR-style PDB's with the rotamer sets used during packing"
+			desc="Output NMR-style PDB's with the rotamer sets used during packing",
+			default="false",
 			),
 		Option( 'dunbrack_prob_buried', 'Real', default='0.98', lower='0', upper='1',
 			desc="fraction of possible dunbrack rotamers to include in each single residue rotamer set, for \'buried\' residues"

@@ -98,7 +98,8 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 
 	// set rmsd native
 	if ( native_pose && option[ in::file::native ].user() ) {
-		if ( option[ OptionKeys::symmetry::symmetric_rmsd ].user() ) {
+		if ( option[ OptionKeys::symmetry::symmetric_rmsd ].user() &&
+				option[ OptionKeys::symmetry::symmetric_rmsd ].value() ) {
 			eval.add_evaluation( utility::pointer::make_shared< SymmetricRmsdEvaluator >( native_pose, "" ) );
 		}
 

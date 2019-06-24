@@ -81,7 +81,7 @@ Hydrate::Hydrate(): Mover(),
 
 	// Setting up scorefxn and constraints
 	score_fxn_ = scoring::get_score_function();
-	if ( option[ in::file::centroid_input ].user() ) {
+	if ( option[ in::file::centroid_input ].value() ) {
 		scoring::constraints::add_constraints_from_cmdline_to_scorefxn(*score_fxn_);
 	} else {
 		scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn_);
@@ -129,7 +129,7 @@ Hydrate::Hydrate(
 	// Setting up scorefxn and constraints
 	score_fxn_ = scorefxn;
 
-	if ( option[ in::file::centroid_input ].user() ) {
+	if ( option[ in::file::centroid_input ].value() ) {
 		scoring::constraints::add_constraints_from_cmdline_to_scorefxn(*score_fxn_);
 	} else {
 		scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn_);

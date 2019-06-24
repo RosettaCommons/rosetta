@@ -87,24 +87,26 @@ JobOutputterFactory::get_new_JobOutputter()
 /// @brief return JobOutputter defined by output parameters (contained in option system and #defines for MPI, etc).  The difference is that if the option system, etc, says nothing about output (which as of this writing defaults to PDBJobOutputter), this function leaves the input Outputter unchanged.  This allows overriding the default outputter choice in your executable (without abusing the mutability of the options system)
 JobOutputterOP
 JobOutputterFactory::get_new_JobOutputter( JobOutputterOP default_jobout ) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-	if ( basic::options::option[ basic::options::OptionKeys::out::file::silent ].user() ) {
+	if ( option[ out::file::silent ].user() ) {
 		return get_JobOutputter_from_string( "SilentFileJobOutputter" );
-	} else if ( basic::options::option[basic::options::OptionKeys::out::pdb].user() ) {
+	} else if ( option[ out::pdb ].user() && option[ out::pdb ].value() ) {
 		return get_JobOutputter_from_string( "PDBJobOutputter" );
-	} else if ( basic::options::option[basic::options::OptionKeys::out::file::srlz].user() ) {
+	} else if ( option[ out::file::srlz ].user() && option[ out::file::srlz ].value() ) {
 		return get_JobOutputter_from_string( "SerializedPoseJobOutputter" );
-	} else if ( basic::options::option[basic::options::OptionKeys::out::file::atom_tree_diff].user() ) {
+	} else if ( option[ out::file::atom_tree_diff ].user() ) {
 		return get_JobOutputter_from_string( "AtomTreeDiffJobOutputter" );
-	} else if ( basic::options::option[basic::options::OptionKeys::out::file::score_only].user() ) {
+	} else if ( option[ out::file::score_only ].user() ) {
 		return get_JobOutputter_from_string( "ScoreOnlyJobOutputter" );
-	} else if ( basic::options::option[ basic::options::OptionKeys::jd2::no_output ].value() || basic::options::option[ basic::options::OptionKeys::out::nooutput ] ) {
+	} else if ( option[ OptionKeys::jd2::no_output ].value() || basic::options::option[ out::nooutput ] ) {
 		return get_JobOutputter_from_string( "NoOutputJobOutputter" );
-	} else if ( basic::options::option[ basic::options::OptionKeys::jd2::enzdes_out].user() ) {
+	} else if ( option[ OptionKeys::jd2::enzdes_out ].user() && option[ OptionKeys::jd2::enzdes_out ].value() ) {
 		return get_JobOutputter_from_string( "EnzdesJobOutputter" );
-	} else if ( basic::options::option[ basic::options::OptionKeys::out::use_database].user() ) {
+	} else if ( option[ out::use_database ].user() && option[ out::use_database ].value() ) {
 		return get_JobOutputter_from_string( "DatabaseJobOutputter" );
-	} else if ( basic::options::option[ basic::options::OptionKeys::out::mmCIF].value() ) {
+	} else if ( option[ out::mmCIF ].value() ) {
 		return get_JobOutputter_from_string( "mmCIFJobOutputter" );
 	} else if ( basic::options::option[ basic::options::OptionKeys::out::mmtf].value() ) {
 		return get_JobOutputter_from_string( "mmtfJobOutputter" );

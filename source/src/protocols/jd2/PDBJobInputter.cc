@@ -79,7 +79,7 @@ void protocols::jd2::PDBJobInputter::pose_from_job( core::pose::Pose & pose, Job
 		TR << "filling pose from saved copy " << job->input_tag() << std::endl;
 		pose = *(job->inner_job()->get_pose());
 
-		if ( option[in::auto_setup_metals].user()
+		if ( option[in::auto_setup_metals].value()
 				&& (option[in::metals_distance_constraint_multiplier]() > 1.0e-10 ||
 				option[in::metals_angle_constraint_multiplier]() > 1.0e-10) ) {
 

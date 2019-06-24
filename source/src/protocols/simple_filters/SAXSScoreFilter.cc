@@ -80,7 +80,8 @@ bool SAXSScoreFilter::apply( core::pose::Pose const & pose ) const {
 	if ( !pose.is_fullatom() ) {
 		core::util::switch_to_residue_type_set( fa_pose, core::chemical::FULL_ATOM_t );
 	}
-	if ( option[ casp::repack ].user() ) {
+	if ( option[ casp::repack ].user() &&
+			option[ casp::repack ].value() ) {
 		core::pack::task::PackerTaskOP task(
 			core::pack::task::TaskFactory::create_packer_task( fa_pose ));
 		task->initialize_from_command_line();

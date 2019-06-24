@@ -183,7 +183,7 @@ bool BaseJobDistributor::next_job(BasicJobOP & job, int & struct_n)
 /// whichever available job it finds first.  Returns false if no job can be found.
 bool BaseJobDistributor::find_available_job()
 {
-	bool shuffle_mode = basic::options::option[ basic::options::OptionKeys::run::shuffle ].user() ;
+	bool shuffle_mode = basic::options::option[ basic::options::OptionKeys::run::shuffle ].value() ;
 
 	while ( current_job_ <= jobs_.size() ) {
 
@@ -273,7 +273,7 @@ void BaseJobDistributor::shutdown()
 #endif
 
 #ifdef BOINC
-	bool shuffle_mode = basic::options::option[ basic::options::OptionKeys::run::shuffle ].user() ;
+	bool shuffle_mode = basic::options::option[ basic::options::OptionKeys::run::shuffle ].value() ;
 	if( shuffle_mode ){
 		protocols::boinc::Boinc::worker_finish_summary( curr_jobid_-1, curr_jobid_-1, jobs_.size() );
 	}else{

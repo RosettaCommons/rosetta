@@ -227,7 +227,7 @@ LoopMover_Refine_CCD::read_options()
 		temp_final_ = option[ OptionKeys::MonteCarlo::temp_final ]();
 	}
 
-	debug_ = option[ OptionKeys::loops::debug ].user();
+	debug_ = option[ OptionKeys::loops::debug ].value();
 
 	repack_neighbors_ = (! basic::options::option[ basic::options::OptionKeys::loops::fix_natsc ]);
 }

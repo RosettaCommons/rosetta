@@ -66,8 +66,9 @@ PDBPoseOutputter::~PDBPoseOutputter() = default;
 bool
 PDBPoseOutputter::outputter_specified_by_command_line()
 {
-	return basic::options::option[ basic::options::OptionKeys::out::pdb ].user() ||
-		basic::options::option[ basic::options::OptionKeys::out::pdb_gz ].user();
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	return ( option[ out::pdb ].user() && option[ out::pdb ].value() );
 }
 
 void

@@ -99,7 +99,7 @@ void
 MPIWorkPoolJobDistributor::go( protocols::moves::MoverOP mover )
 {
 #ifdef USEMPI
-	set_sequential_distribution( option[ OptionKeys::jd2::sequential_mpi_job_distribution	].user() ); //Set whether we're sending jobs to slaves in sequence (1,2,3,etc.) or whether slaves request jobs as they become available.
+	set_sequential_distribution( option[ OptionKeys::jd2::sequential_mpi_job_distribution	].value() ); //Set whether we're sending jobs to slaves in sequence (1,2,3,etc.) or whether slaves request jobs as they become available.
 #endif
 
 	if ( rank_ == 0 ) {

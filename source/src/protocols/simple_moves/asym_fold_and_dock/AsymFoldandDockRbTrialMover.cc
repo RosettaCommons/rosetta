@@ -118,7 +118,8 @@ AsymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 		rigid_body_cycles_ = ( option[ OptionKeys::fold_and_dock::rigid_body_cycles ] );
 	}
 
-	if ( option[ OptionKeys::fold_and_dock::rigid_body_disable_mc ].user() ) {
+	if ( option[ OptionKeys::fold_and_dock::rigid_body_disable_mc ].user() &&
+			option[ OptionKeys::fold_and_dock::rigid_body_disable_mc ].value() ) {
 		mc_filter_ = false;
 	}
 

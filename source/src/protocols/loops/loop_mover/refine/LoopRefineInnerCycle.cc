@@ -168,7 +168,7 @@ void LoopRefineInnerCycle::init_options()
 	using namespace basic::options;
 
 	// Set options here.
-	set_debug( option[ OptionKeys::loops::debug ].user() );
+	set_debug( option[ OptionKeys::loops::debug ].value() );
 }
 
 bool LoopRefineInnerCycle::debug() const
