@@ -25,6 +25,7 @@ fi
 # Update submodules used for all compilations
 # git submodule update --init -- source/external/foo/
 git submodule update --init -- source/external/mmtf/mmtf-cpp
+git submodule update --init -- source/external/msgpack/msgpack-c.upstream
 
 # Update submodules which are extras conditional
 
@@ -35,7 +36,6 @@ while test $# -gt 0; do
     # with multiple extras. So 1) do a substring search and 2) don't stop at the first match.
     if [[ "$1" == *zeromq* ]]; then
         git submodule update --init -- source/external/libzmq
-        git submodule update --init -- source/external/msgpack/msgpack-c.upstream
     fi
     #if [[ "$1" == "*FOO*" ]]; then
     #    git submodule update --init -- source/exteranl/foo/
