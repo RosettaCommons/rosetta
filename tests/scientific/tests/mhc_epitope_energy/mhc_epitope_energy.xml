@@ -1,0 +1,145 @@
+<ROSETTASCRIPTS>
+Keywords: protein de-immunization, scientific tests
+Author: Brahm Yachnin
+Email: brahm.yachnin@rutgers.edu
+
+This script runs ProPred-based computational de-immunization for the Rosetta scientific
+benchmark set. Conceptually, this is quite simple: we define a scorefunction (ref_deimm_aacomp)
+that uses the ref2015 scorefunction (with constraints) and turns on the mhc_epitope scoreterm to
+a weight of 1.0.  It configures this file using the propred8_5.mhc config file that is provided
+in the Rosetta database.
+
+The scorefunction also includes the aa_composition scoreterm, which is configured using .comp
+files (provided on a per-pdb basis) that restrict the number of positively- and negatively-
+charged residues to be similar to the WT.  (This is a common problem with de-immunization, as
+negatively-charged residues tend to not be immunogenic.)
+
+After that, we turn on FavorNative constraints and run three cycles of packing (all residue
+design) and sidechain minimization.  The only unusual thing about this is that we use a
+resfile task operation to restrict design space based on a PSI-BLAST-derived PSSM.
+
+There are a whole pile of filters and simple metrics that are there for post-design analysis.
+  <SCOREFXNS>
+	<ScoreFunction name="ref" weights="ref2015_cst.wts"/>
+	<ScoreFunction name="ref_deimm_aacomp" weights="ref2015_cst.wts">
+      <Reweight scoretype="mhc_epitope" weight="1.0"/>
+	  <Reweight scoretype="aa_composition" weight="0.5"/>
+      <Set mhc_epitope_setup_file="propred8_5.mhc"/>
+	  <Set aa_composition_setup_file="%%aacomp_setup%%"/>
+    </ScoreFunction>
+  </SCOREFXNS>
+  
+  <RESIDUE_SELECTORS>
+	<True name="full_pose"/>
+	
+	<ResidueName name="poscharge" residue_name3="ARG,LYS"/>
+	<ResidueName name="negcharge" residue_name3="ASP,GLU"/>
+	<ResidueName name="hydrophobic" residue_name3="PHE,ILE,LEU,MET,PRO,VAL,TRP,TYR"/>
+	
+	<Layer name="core" select_core="true"/>
+	<Layer name="boundary" select_boundary="true"/>
+	<Layer name="surface" select_surface="true"/>
+	
+	<And name="core_hydrophobic" selectors="core,hydrophobic"/>
+  </RESIDUE_SELECTORS>
+	
+  <TASKOPERATIONS>
+    <InitializeFromCommandline name="init"/>
+    <IncludeCurrent name="inccurrent"/>
+    <ExtraRotamersGeneric name="ex" ex1="1" ex2="1" ex1aro="1" ex1_sample_level="1" ex2_sample_level="1" ex1aro_sample_level="1" extrachi_cutoff="1"/>
+	
+    <ReadResfile name="resfile" filename="%%resfile%%"/>
+  </TASKOPERATIONS>
+  
+  <SIMPLE_METRICS>
+	<TimingProfileMetric name="timer"/>
+	
+	<TotalEnergyMetric name="base_total_energy" scorefxn="ref" custom_type="base"/>
+	<TotalEnergyMetric name="delta_base_total_energy" use_native="true" scorefxn="ref" custom_type="delta"/>
+	<SequenceRecoveryMetric name="seq_recovery" use_native="true" residue_selector="full_pose" residue_selector_ref="full_pose" custom_type="seqrec"/>
+	<SequenceSimilarityMetric name="seq_similarity"/>
+	<SelectedResidueCountMetric name="num_poscharges" residue_selector="poscharge" custom_type="pos"/>
+	<SelectedResidueCountMetric name="num_negcharges" residue_selector="negcharge" custom_type="neg"/>
+	
+	Metrics for location of mutations
+	<SelectedResidueCountMetric name="num_residues" custom_type="num_residues"/>
+	<SelectedResidueCountMetric name="num_core" custom_type="num_core" residue_selector="core"/>
+	<SelectedResidueCountMetric name="num_boundary" custom_type="num_boundary" residue_selector="boundary"/>
+	<SelectedResidueCountMetric name="num_surface" custom_type="num_surface" residue_selector="surface"/>
+	<SequenceRecoveryMetric name="seqrec_core" use_native="true" residue_selector="core" custom_type="seqrec_core"/>
+	<SequenceRecoveryMetric name="seqrec_boundary" use_native="true" residue_selector="boundary" custom_type="seqrec_boundary"/>
+	<SequenceRecoveryMetric name="seqrec_surface" use_native="true" residue_selector="surface" custom_type="seqrec_surface"/>
+  </SIMPLE_METRICS>
+  
+  <FILTERS>
+	<NetCharge name="netcharge" confidence="0"/>
+	<PackStat name="packstat" confidence="0"/>
+	<ExposedHydrophobics name="exposed_hydrophobics" confidence="0"/>
+	<BuriedUnsatHbonds name="buried_unsat" scorefxn="ref_deimm_aacomp" report_all_heavy_atom_unsats="1" confidence="0"/>
+	
+	<ResidueCount name="core_hydrophobic_residues" residue_selector="core_hydrophobic" confidence="0"/>
+	<ResidueCount name="core_residues" residue_selector="core" confidence="0"/>
+	<CalculatorFilter name="percent_core_hydrophobic" equation="phobic/core" confidence="0">
+		<Var name="phobic" filter="core_hydrophobic_residues"/>
+		<Var name="core" filter="core_residues"/>
+	</CalculatorFilter>
+	
+	Get the scoretype (for calculating delta only)
+	<ScoreType name="mhc_epitope_score" scorefxn="ref_deimm_aacomp" score_type="mhc_epitope" confidence="0" threshold="9999"/>
+	
+	Delta filters
+	<Delta name="delta_netcharge" filter="netcharge" reference_pdb="%%pdb%%" confidence="0"/>
+	<Delta name="delta_packstat" filter="packstat" reference_pdb="%%pdb%%" confidence="0"/>
+	<Delta name="delta_exposed_hydrophobics" filter="exposed_hydrophobics" reference_pdb="%%pdb%%" confidence="0"/>
+	<Delta name="delta_buried_unsat" filter="buried_unsat" reference_pdb="%%pdb%%" confidence="0"/>
+	<Delta name="delta_core_hydrophobic_residues" filter="core_hydrophobic_residues" reference_pdb="%%pdb%%" confidence="0"/>
+	<Delta name="delta_core_residues" filter="core_residues" reference_pdb="%%pdb%%" confidence="0"/>
+	<Delta name="delta_percent_core_hydrophobic" filter="percent_core_hydrophobic" reference_pdb="%%pdb%%" confidence="0"/>
+	<Delta name="delta_mhc_epitope" filter="mhc_epitope_score" reference_pdb="%%pdb%%" confidence="0"/>
+  </FILTERS>
+	
+  <MOVERS>
+	<FavorNativeResidue name="favour_native"/>
+	
+	Fixed backbone movers
+    <PackRotamersMover name="pack" scorefxn="ref_deimm_aacomp" task_operations="init,inccurrent,ex,resfile"/>
+    <TaskAwareMinMover name="min" scorefxn="ref_deimm_aacomp" chi="1" bb="0" task_operations="init,inccurrent,ex,resfile"/>
+	<ParsedProtocol name="fixedbb" mode="sequence">
+		<Add mover_name="pack"/>
+		<Add mover_name="min"/>
+	</ParsedProtocol>
+	<LoopOver name="fixedbbX3" mover_name="fixedbb" iterations="3"/>
+	
+	<RunSimpleMetrics name="stop_timer" metrics="timer"/>
+	<RunSimpleMetrics name="run_metrics" metrics="seq_recovery,seq_similarity,num_poscharges,num_negcharges,base_total_energy,delta_base_total_energy,num_residues,num_core,num_boundary,num_surface,seqrec_core,seqrec_boundary,seqrec_surface"/>
+  </MOVERS>
+
+  <PROTOCOLS>
+    <Add mover_name="favour_native"/>
+    <Add mover_name="fixedbb"/>
+	
+	Timer for how long the design mover took (particularly useful for when we limit design space)
+	<Add mover_name="stop_timer"/>
+	
+	Filters and metrics
+	<Add mover_name="run_metrics"/>
+	<Add filter_name="netcharge"/>
+	<Add filter_name="packstat"/>
+	<Add filter_name="exposed_hydrophobics"/>
+	<Add filter_name="buried_unsat"/>
+	<Add filter_name="core_hydrophobic_residues"/>
+	<Add filter_name="core_residues"/>
+	<Add filter_name="percent_core_hydrophobic"/>
+	
+	Delta filters
+	<Add filter_name="delta_netcharge"/>
+	<Add filter_name="delta_packstat"/>
+	<Add filter_name="delta_exposed_hydrophobics"/>
+	<Add filter_name="delta_buried_unsat"/>
+	<Add filter_name="delta_core_hydrophobic_residues"/>
+	<Add filter_name="delta_core_residues"/>
+	<Add filter_name="delta_percent_core_hydrophobic"/>
+	<Add filter_name="delta_mhc_epitope"/>
+  </PROTOCOLS>
+  <OUTPUT scorefxn="ref_deimm_aacomp"/>
+</ROSETTASCRIPTS>

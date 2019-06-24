@@ -59,3 +59,68 @@ def check_range( col, tag, filehandle ):
 	value = { "min" : round(min( col ), 4), "max" : round(max( col ), 4), "avg" : round(np.mean( col ), 4), "std" : round(np.std( col ), 4) }
 	return {tag : value}
 
+#=======================================
+def check_for_2d_top_values( xcol, ycol, xtag, ytag, xcutoff, ycutoff, filehandle, xminimize = True, yminimize = True, xabsolute = True, yabsolute = True ):
+	"""
+	Check if there are decoys that are in both the top xcutoff% and top ycutoff%.
+	Returns a tuple, containing (number of passes, x_absolute_cutoff, y_absolute_cutoff).
+	xcol, ycol = Arrays of scoreterm values to be checked
+	xtag, ytag = Used to genereate the out tag.  Should usually be the scoreterm names being checked (but is arbitrary)
+	xcutoff, ycutoff = The absolute or percentile cutoff for xcol and ycol, respectively.  If percentile, should be between 0 and 100.
+	filehandle = The result file to write to.
+	xminimize, yminimize = By default (True), the "top" values are those less than the cutoff.  If false, the "top" values are those greater than the cutoff.
+	xabsolute, yabsolute = Should the threshold be using an absolute cutoff (True) or a percentile cutoff (False).
+	"""
+	
+	assert(len(xcol) == len(ycol))
+	
+	out = "Num decoys with " + xtag + " and " + ytag + " better than cutoffs"
+	filehandle.write( out + " " + str(xcutoff) + " and " + str(ycutoff) + ":\t" )
+	
+	#Set the cutoff values in x and y
+	x_val = xcutoff
+	y_val = ycutoff
+	#Get the percentile values for xcol and ycol if we ask for it
+	if not xabsolute: x_val = np.percentile( xcol, xcutoff )
+	if not yabsolute: y_val = np.percentile( ycol, ycutoff )
+	
+	#Check each value in xcol to see if it is greater/less than xperc_val
+	#Then check if the corresponding value in ycol is greater/less than yperc_val
+	#If both passing conditions are met, append True to passed.  If either condition fails, append False to passed.
+	passed = []
+	for idx in range(len(xcol)):
+		if xminimize:
+			if xcol[idx] <= x_val:
+				if yminimize:
+					if ycol[idx] <= y_val:
+						passed.append(True)
+					else:
+						passed.append(False)
+				else: #ymaximize
+					if ycol[idx] >= y_val:
+						passed.append(True)
+					else:
+						passed.append(False)
+			else:
+				passed.append(False)
+		else: #xmaximize
+			if xcol[idx] >= x_val:
+				if yminimize:
+					if ycol[idx] <= y_val:
+						passed.append(True)
+					else:
+						passed.append(False)
+				else: #ymaximize
+					if ycol[idx] >= y_val:
+						passed.append(True)
+					else:
+						passed.append(False)
+			else:
+				passed.append(False)
+	assert(len(passed) == len(xcol))
+	assert(len(passed) == len(ycol))
+				
+	#The number of passes is the sum of passed (true = 1, false = 0)
+	npasses = sum(passed)
+	filehandle.write( str( npasses ) + " (" + str(x_val) + ", " + str(y_val) + ")\n" )
+	return {out : (npasses,x_val,y_val)}

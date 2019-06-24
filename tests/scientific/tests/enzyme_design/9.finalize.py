@@ -20,6 +20,7 @@ from benchmark import *
 from benchmark.tests import _PlotsKey_, _TestsKey_
 
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into globals
+config = benchmark.config()
 
 # read readme
 with open("readme.md") as f: readme = f.readlines()

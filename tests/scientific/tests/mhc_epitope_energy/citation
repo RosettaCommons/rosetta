@@ -1,0 +1,15 @@
+The primary manuscript describing the mhc_epitope scoreterm is currently (June 2019) in preparation.  This information will be updated when it is published.
+
+The Predictor used in de-immunization in this scientific test is Propred, and is decribed here:
+Singh H, Raghava GPS. ProPred: prediction of HLA-DR binding sites. Bioinformatics 2001;17:1236–7. https://doi.org/10.1093/bioinformatics/17.12.1236.
+
+The benchmark set, and a previous implementation of a packer-compatible de-immunization scoreterm, is described in the following article:
+Choi Y, Griswold KE, Bailey-Kellogg C. Structure-based redesign of proteins for minimal T-cell epitope content. J Comput Chem 2013;34:879–91. https://doi.org/10.1002/jcc.23213.
+
+The "nmer" SVM-based method of de-immunizing using Rosetta is NOT packer compatible in its original form, but can now be used with mhc_epitope in a packer-compatible manner.  It is NOT used in this benchmark.  It is described here:
+King C, Garza EN, Mazor R, Linehan JL, Pastan I, Pepper M, et al. Removing T-cell epitopes with computational protein design. Proc Natl Acad Sci U S A 2014;111:8577–82. https://doi.org/10.1073/pnas.1321126111.
+
+Additional Predictors, not written for Rosetta but accessible through mhc_epitope, are described below.  Note that these are NOT used in this benchmark.
+Jensen KK, Andreatta M, Marcatili P, Buus S, Greenbaum JA, Yan Z, et al. Improved methods for predicting peptide binding affinity to MHC class II molecules. Immunology 2018;154:394–406. https://doi.org/10.1111/imm.12889.
+
+Vita R, Mahajan S, Overton JA, Dhanda SK, Martini S, Cantrell JR, et al. The Immune Epitope Database (IEDB): 2018 update. Nucleic Acids Res 2019;47:D339–43. https://doi.org/10.1093/nar/gky1006.
