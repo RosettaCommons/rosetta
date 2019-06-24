@@ -427,6 +427,11 @@ HBond::show(
 		<< F(7, 3, weight()) << F(7, 3, energy()) << std::endl;
 }
 
+void HBond::show(pose::Pose const & pose, bool const print_header) const
+{
+	show(pose, print_header, t);
+}
+
 
 std::ostream &
 operator<< ( std::ostream & out, const HBond & hbond ){
@@ -975,6 +980,12 @@ HBondSet::show(
 		out << hbond(i);
 	}
 }
+
+void HBondSet::show(pose::Pose const & pose, bool const print_header) const
+{
+	show(pose, print_header, t);
+}
+
 
 
 bool

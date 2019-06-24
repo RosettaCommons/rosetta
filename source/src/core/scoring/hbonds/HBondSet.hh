@@ -191,7 +191,7 @@ public:
 		std::ostream & out) const;
 
 	// PyRosetta friendly version
-	void show(pose::Pose const & pose, bool const print_header=true) const  { show(pose, print_header, std::cout); }
+	void show(pose::Pose const & pose, bool const print_header=true) const;
 
 
 	////////////////////////////////////////////////////////////////////////////
@@ -521,9 +521,7 @@ public:
 		std::ostream & out) const;
 
 	// PyRosetta friendly version
-	void show(
-		pose::Pose const & pose,
-		bool const print_header=true) const { show(pose, print_header, std::cout); }
+	void show(pose::Pose const & pose, bool const print_header=true) const;
 
 
 	/// @brief Print nicely formated summary of all the hbonds to a

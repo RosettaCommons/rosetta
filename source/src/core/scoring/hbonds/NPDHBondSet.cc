@@ -243,6 +243,8 @@ NPDHBondSet::show(
 	}
 }
 
+void NPDHBondSet::show() const { show(TR); };
+
 
 bool
 operator==(NPDHBondSet const & a, NPDHBondSet const & b)
@@ -268,6 +270,8 @@ NPDHBondSet::show(
 
 }
 
+void NPDHBondSet::show(pose::Pose const & pose, bool const print_header) const { show(pose, print_header, TR); }
+
 
 /// @detail Optionally print a header, and then a row for each hydrogen
 ///bond in the set using the iterprable version of the hbond show
@@ -290,6 +294,9 @@ NPDHBondSet::show(
 		}
 	}
 }
+
+void NPDHBondSet::show(pose::Pose const & pose, Size const residue, bool const print_header) const { show(pose, residue, print_header, TR); }
+
 
 Real NPDHBondSet::hbond_weight( id::AtomID const & id, Size hbond_index ) const
 {

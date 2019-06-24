@@ -155,7 +155,7 @@ public:
 	void show(std::ostream & out) const;
 
 	// PyRosetta friendly version
-	void show() const { show(std::cout); };
+	void show() const;
 
 
 	/// @brief Print nicely formated summary of the hbonds and their geometry in the pose.
@@ -165,9 +165,7 @@ public:
 		std::ostream & out) const;
 
 	// PyRosetta friendly version
-	void show(
-		pose::Pose const & pose,
-		bool const print_header=true) const { show(pose, print_header, std::cout); }
+	void show(pose::Pose const & pose, bool const print_header=true) const;
 
 
 	/// @brief Print nicely formated summary of all the hbonds to a
@@ -179,10 +177,7 @@ public:
 		std::ostream & out) const;
 
 	// PyRosetta friendly version
-	void show(
-		pose::Pose const & pose,
-		Size const residue,
-		bool const print_header=true) const { show(pose, residue, print_header, std::cout); }
+	void show(pose::Pose const & pose, Size const residue, bool const print_header=true) const;
 
 	/// @brief Return the non-pairwise-decomposable weight for a particular atom for a particular
 	/// hbond (by index for that atom -- stored in HBond::acc_index() or HBond::don_index())
