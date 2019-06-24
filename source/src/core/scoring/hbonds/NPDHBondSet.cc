@@ -243,7 +243,7 @@ NPDHBondSet::show(
 	}
 }
 
-void NPDHBondSet::show() const { show(TR); };
+void NPDHBondSet::show() const { show(TR); }
 
 
 bool
