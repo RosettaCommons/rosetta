@@ -121,14 +121,14 @@ void ImportPoseOptions::init_from_options( utility::options::OptionCollection co
 		tr.Warning << "conflicting command line flags for centroid/full-atom input. Choosing fullatom!" << std::endl;
 		set_centroid( false );
 	}
-	set_fold_tree_io( options[ inout::fold_tree_io ].user());
-	set_membrane( options[ in::membrane ].user() );
+	set_fold_tree_io( options[ inout::fold_tree_io ].value());
+	set_membrane( options[ in::membrane ].value() );
 	set_no_optH( options[ packing::no_optH ]());
 	set_pack_missing_sidechains( options[ packing::pack_missing_sidechains ].value());
 	set_read_fold_tree( false ); // no option for this parameter - it can only be set to true if you call pose_from_pdd.
 	set_skip_set_reasonable_fold_tree( options[ run::skip_set_reasonable_fold_tree ].value());
 
-	set_set_up_metal_bonds( options[in::auto_setup_metals].user() );
+	set_set_up_metal_bonds( options[in::auto_setup_metals].value() );
 	set_metal_bond_LJ_multiplier( options[in::metals_detection_LJ_multiplier]() );
 	set_metal_bond_dist_constraint_multiplier( options[in::metals_distance_constraint_multiplier]() );
 	set_metal_bond_angle_constraint_multiplier( options[in::metals_angle_constraint_multiplier]() );

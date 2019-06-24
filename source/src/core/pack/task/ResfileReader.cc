@@ -1435,7 +1435,7 @@ parse_resfile(
 	try {
 		parse_resfile_string( pose, the_task, filename, resfile );
 	} catch ( ResfileReaderException & ) {
-		if ( basic::options::option[ basic::options::OptionKeys::run::interactive ].user() ) {
+		if ( basic::options::option[ basic::options::OptionKeys::run::interactive ].value() ) {
 			throw;
 		} else {
 			utility_exit();

@@ -219,8 +219,11 @@ void ResidueLevelTask_::initialize_from_options( utility::options::OptionCollect
 	initialize_extra_rotamer_flags_from_options( options );
 
 	if ( options[ use_input_sc ] ) or_include_current( true );
-	if ( options[ OptionKeys::packing::preserve_c_beta ].user() ) or_preserve_c_beta( true );
+	if ( options[ OptionKeys::packing::preserve_c_beta ].user() ) or_preserve_c_beta( options[ OptionKeys::packing::preserve_c_beta ].value());
+
 	if ( options[ OptionKeys::packing::prevent_repacking ].value() ) prevent_repacking();
+
+
 
 }
 
