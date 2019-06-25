@@ -9,7 +9,6 @@ set -x
 echo "--- Env"
 build_args=(
 --create-package `pwd`/pyrosetta
---version `pwd`/source/.version.json
 --binder-config rosetta.config
 --binder-config rosetta.distributed.config
 --serialization
@@ -17,19 +16,31 @@ build_args=(
 --no-zmq
 --no-strip-module
 --binder `which pyrosetta-binder`
+--pybind11 `pwd`/source/external/pybind11/include
 )
 
-if [[ ! -z "${GCC:-}" ]]; then
-  # Build via gcc/g++ rather than conda cc c++ compiler aliases
-  # binder invokation still targets system C++ standard library
-  # see linux-anvil for system gcc/g++ installation
-  build_args+=(--compiler ${GCC})
-  export CC=${GCC}
-  export CXX=${GXX}
+if test -f "`pwd`/source/.version.json"; then
+  build_args+=(--version `pwd`/source/.version.json)
+elif test -f "`pwd`/.release.json"; then
+  build_args+=(--version `pwd`/.release.json)
+fi
 
+if [[ ! -z "${GCC:-}" ]]; then
   # Override flags to just include prefix
   export CFLAGS="-I${PREFIX}/include"
   export CXXFLAGS="-I${PREFIX}/include"
+
+  # Symlink conda-provided gcc into "gcc"; pyrosetta build.py only properly
+  # detects compilers named `gcc`/`g++` or `clang`/`clang++`
+  mkdir -p bin
+  ln -s -f ${GCC} bin/gcc
+  ln -s -f ${GXX} bin/g++
+
+  export PATH=$(pwd)/bin:$PATH
+  export CC=gcc
+  export CXX=g++
+
+  build_args+=(--compiler gcc)
 fi
 
 if [[ ! -z "${CLANG:-}" ]]; then
@@ -43,7 +54,6 @@ if [[ ! -z "${CLANG:-}" ]]; then
 fi
 
 echo "--- Build"
-cat source/.version.json
 
 pushd source/src/python/PyRosetta
 

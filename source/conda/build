@@ -14,18 +14,28 @@ logging.basicConfig(
     datefmt='%Y-%m-%dT%H:%M:%S'
 )
 
-def get_versions(main):
-    version_json = main + "/source/.version.json"
-    full_version = json.load(open(version_json, "r"))
+_version_files = ["source/.version.json", ".release.json"]
+_script_root = os.path.dirname(os.path.abspath(__file__))
+_default_main = os.path.abspath(os.path.join(_script_root, "../../"))
 
-    return full_version
+
+def get_versions(main):
+    subprocess.call(os.path.join(main, "source/version.py"))
+    candidates = [os.path.join(main, v) for v in _version_files]
+    for version_json in candidates:
+        if os.path.exists(version_json):
+            return json.load(open(version_json, "r"))
+    else:
+        raise ValueError("No version specifier found, candidiates: %s" % candidates)
 
 def setup_conda_versions(main, versions):
+    recipes = os.path.join(_script_root, "recipes")
+
     logging.info('versions:\n%s', json.dumps(versions, indent=2))
     binder_version = versions["source"]["binder"]
     rosetta_version = versions["version"]
 
-    with open("recipes/pyrosetta-binder/meta.version.yaml", "w") as of:
+    with open(recipes + "/pyrosetta-binder/meta.version.yaml", "w") as of:
         of.write("""
 package:
   version: {binder_version}
@@ -34,7 +44,7 @@ source:
   path: '{main}/source/src/python/PyRosetta/binder'
 """.format(**locals()))
 
-    with open("recipes/rosetta/meta.version.yaml", "w") as of:
+    with open(recipes + "/rosetta/meta.version.yaml", "w") as of:
         of.write("""
 package:
   version: {rosetta_version}
@@ -43,7 +53,7 @@ source:
   path: '{main}'
 """.format(**locals()))
 
-    with open("recipes/pyrosetta/meta.version.yaml", "w") as of:
+    with open(recipes+ "/pyrosetta/meta.version.yaml", "w") as of:
         of.write("""
 package:
   version: {rosetta_version}
@@ -57,6 +67,8 @@ requirements:
 """.format(**locals()))
 
 def format_command(target, conda_args):
+    recipe = os.path.join(_script_root , "recipes", target)
+
     def normarg(a):
         if a.count(" ") != 0 and not a.startswith('"'):
             return '"' + a + '"'
@@ -64,7 +76,7 @@ def format_command(target, conda_args):
             return a
 
     return (
-       "conda build --append-file recipes/{target}/meta.version.yaml recipes/{target} ".format(**locals()) +
+       "conda build --append-file {recipe}/meta.version.yaml {recipe} ".format(**locals()) +
        " ".join(map(normarg, conda_args))
    )
 
@@ -73,7 +85,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Build rosetta conda packages.')
     parser.add_argument(
         '--main',
-        type=str, default='../..', help='Rosetta main source path.')
+        type=str, default=_default_main, help='Rosetta main source path. [%s]' % _default_main)
     parser.add_argument(
         '-n', '--dry-run',
         default=False, action='store_true', help='Version and print build commands, do not build.')

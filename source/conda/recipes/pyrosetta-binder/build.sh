@@ -29,7 +29,7 @@ cp -r build/pybind11/include ${LIB}/pybind11/include
 mkdir -p ${PREFIX}/bin
 pushd ${PREFIX}/bin
 cat > pyrosetta-binder.${PKG_VERSION} <<SHIM
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import sys
 import os

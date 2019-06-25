@@ -9,5 +9,13 @@ requirements:
     - cmake
     - ninja
 
+  run:
+    - python
+
+test:
+  commands:
+    - pyrosetta-binder --help
+
+
 about:
   home: https://github.com/rosettacommons/binder

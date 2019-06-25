@@ -6,17 +6,26 @@ set -e
 echo "--- Env"
 unset MACOSX_DEPLOYMENT_TARGET
 
-TARGET_APPS="rosetta_scripts score relax AbinitioRelax"
+TARGET_APPS="apps"
 
 if [[ ! -z "${GCC:-}" ]]; then
-  # Build via system gcc/g++ rather than conda compilers.
-  # Seeing unresolvable errors on gcc 7
-  export CC=`which gcc`
-  export CXX=`which g++`
+  # Override flags to just include prefix
+  export CFLAGS="-I${PREFIX}/include"
+  export CXXFLAGS="-I${PREFIX}/include"
 
   # Override flags to just include prefix
   export CFLAGS="-I${PREFIX}/include"
   export CXXFLAGS="-I${PREFIX}/include"
+
+  # Symlink conda-provided gcc into "gcc"; pyrosetta build.py only properly
+  # detects compilers named `gcc`/`g++` or `clang`/`clang++`
+  mkdir -p bin
+  ln -s -f ${GCC} bin/gcc
+  ln -s -f ${GXX} bin/g++
+
+  export PATH=$(pwd)/bin:$PATH
+  export CC=gcc
+  export CXX=g++
 fi
 
 if [[ ! -z "${CLANG:-}" ]]; then
@@ -34,7 +43,6 @@ if [[ ! -z "${CLANG:-}" ]]; then
 fi
 
 echo "--- Configure"
-cat source/.version.json
 
 pushd source/cmake
 ./make_project.py all

@@ -37,7 +37,7 @@ def get_package_version():
             "source/.version.json")
         if os.path.isfile(root_version_file):
             with open(root_version_file) as f: version_info = json.load(f)
-    except subprocess.CalledProcessError:
+    except (subprocess.CalledProcessError, FileNotFoundError):
         pass
 
     if version_info and version_info["version"]:
