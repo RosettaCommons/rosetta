@@ -1338,7 +1338,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 	// add constraints if available
 	add_constraints( extended_pose );
 
-	if ( option[OptionKeys::abinitio::membrane].user() ) {
+	if ( option[OptionKeys::abinitio::membrane].value() ) {
 		if ( option[in::file::spanfile].user() ) {
 			std::string spanfile(option[OptionKeys::in::file::spanfile]());
 			std::cout << "Reading spanfile " << spanfile <<"\n";

@@ -189,7 +189,7 @@ void AntibodyModelerProtocol::init_from_options() {
 		set_cst_weight( option[ OptionKeys::constraints::cst_weight ]() );
 	}
 	if ( option[ OptionKeys::constraints::cst_file].user() ) {
-		set_use_constraints( option[ OptionKeys::constraints::cst_file ].user() ); // .user here??
+		set_use_constraints( option[ OptionKeys::constraints::cst_file ].user() );
 	}
 	if ( option[ OptionKeys::antibody::constrain_cter ].user() ) {
 		set_constrain_cter( option[ OptionKeys::antibody::constrain_cter ]() );

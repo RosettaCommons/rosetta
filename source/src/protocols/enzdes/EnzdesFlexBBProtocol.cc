@@ -677,7 +677,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 
 	(*reduced_scorefxn())( pose );
 
-	minimize_cats_ = !( basic::options::option[basic::options::OptionKeys::enzdes::no_catres_min_in_loopgen].user()) && flex_regions_[region]->contains_catalytic_res();
+	minimize_cats_ = !( basic::options::option[basic::options::OptionKeys::enzdes::no_catres_min_in_loopgen].value()) && flex_regions_[region]->contains_catalytic_res();
 
 	if ( minimize_cats_ ) setup_catalytic_residue_minimization_for_region( pose, region );
 

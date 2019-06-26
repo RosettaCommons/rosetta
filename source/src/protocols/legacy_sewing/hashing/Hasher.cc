@@ -246,6 +246,8 @@ Hasher::score_basis(
 					BasisPair basis_pair = std::make_pair(reference_bp, Basis(cur_hit.model_id, cur_hit.basis_resnum));
 					if ( cur_atom.atomno_ == cur_hit.atomno ) {
 						using namespace basic::options;
+
+						//JAB - setting options within protocols is BAD!
 						if ( ! option[OptionKeys::legacy_sewing::score_between_opposite_terminal_segments].user() ) {
 							option[OptionKeys::legacy_sewing::score_between_opposite_terminal_segments].value( false );
 						}
@@ -368,6 +370,7 @@ Hasher::trim_scores(
 	using namespace basic::options;
 
 	// Doonam introduced this disregard_num_segment_matches option for development purpose
+	//JAB - setting option values in protocols is bad!
 	if ( ! option[OptionKeys::legacy_sewing::disregard_num_segment_matches].user() ) {
 		option[OptionKeys::legacy_sewing::disregard_num_segment_matches].value( false );
 	}

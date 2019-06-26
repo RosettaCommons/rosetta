@@ -443,7 +443,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 				}
 			}
 
-			if ( passed_highres_filter_ && option[ OptionKeys::docking::kick_relax ].user() ) {
+			if ( passed_highres_filter_ && option[ OptionKeys::docking::kick_relax ].value() ) {
 				protocols::relax::relax_pose( pose, core::scoring::get_score_function(), "s" );
 			}
 		}

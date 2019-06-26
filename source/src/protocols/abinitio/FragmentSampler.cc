@@ -206,7 +206,8 @@ void FragmentSampler::apply( pose::Pose & pose ) {
 		checkpointed_cycle_block( pose, STAGE_1, &FragmentSampler::do_stage1_cycles );
 
 		//loophashing things
-		if ( option[OptionKeys::abinitio::use_loophash_filter].user() ) {
+		if ( option[OptionKeys::abinitio::use_loophash_filter].user() &&
+				option[OptionKeys::abinitio::use_loophash_filter].value() ) {
 			tr.Info << "calling check_loops(pose)!" << std::endl;
 			if ( !check_loops(pose) ) {
 				tr.Info << "loophash didn't find hits so returning!" << std::endl;

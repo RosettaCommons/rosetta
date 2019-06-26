@@ -149,12 +149,12 @@ void TCRmodel::setup_templates() {
 	if ( !use_user_templates_ ) {
 		initialize_template_db_files(tsinfo->atcr(), tsinfo->btcr(), atmplt_, btmplt_, tseq_db_);
 		initialize_template_ignore_list(tsinfo->atcr(), tsinfo->btcr(), ignore_lists_, blastp_identity_cutoff_, tseq_db_);
-		if ( !option[ OptionKeys::tcrmodel::use_alpha_germline_templates ].user() ) {
+		if ( !option[ OptionKeys::tcrmodel::use_alpha_germline_templates ].value() ) {
 			if ( check_seq_match_from_multiple_input_db(tsinfo->atcr().gm, atmplt_.gm.tdb, ignore_lists_) ) {
 				set_use_gma_templates(true);
 			}
 		}
-		if ( !option[ OptionKeys::tcrmodel::use_beta_germline_templates ].user() ) {
+		if ( !option[ OptionKeys::tcrmodel::use_beta_germline_templates ].value() ) {
 			if ( check_seq_match_from_multiple_input_db(tsinfo->btcr().gm, btmplt_.gm.tdb, ignore_lists_) ) {
 				set_use_gmb_templates(true);
 			}

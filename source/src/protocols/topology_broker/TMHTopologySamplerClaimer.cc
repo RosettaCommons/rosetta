@@ -546,7 +546,7 @@ TMHTopologySamplerClaimer::output_membrane_vector(core::pose::Pose& pose)
 	core::conformation::ResidueOP membrane_center_res = core::conformation::ResidueFactory::create_residue( *(rsd_type) ) ;
 	core::conformation::ResidueOP membrane_normal_res = core::conformation::ResidueFactory::create_residue( *(rsd_type) ) ;
 
-	if ( option[basic::options::OptionKeys::out::file::output_virtual].user() ) {
+	if ( option[basic::options::OptionKeys::out::file::output_virtual].value() ) {
 		for ( Size j=1; j<= membrane_center_res->natoms(); ++j ) {
 			membrane_center_res->atom(j).xyz( membrane_center_res->atom(j).xyz() + membrane_center);
 		}

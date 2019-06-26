@@ -130,7 +130,8 @@ void AbrelaxMover::set_defaults() {
 
 	//  Idealize the structure before relax
 	bool bIdeal( true );
-	if ( option[ OptionKeys::loops::idealize_before_loop_close ].user() ) {
+	if ( option[ OptionKeys::loops::idealize_before_loop_close ].user() &&
+			option[ OptionKeys::loops::idealize_before_loop_close ].value() ) {
 		IdealizeMoverOP idealizer( new IdealizeMover );
 		idealizer->fast( false );
 		pre_loop_closure_protocol( idealizer );
@@ -158,7 +159,8 @@ void AbrelaxMover::set_defaults() {
 	}
 
 	//  Idealize the structure after relax
-	if ( option[ OptionKeys::loops::idealize_after_loop_close ].user() ) {
+	if ( option[ OptionKeys::loops::idealize_after_loop_close ].user() &&
+			option[ OptionKeys::loops::idealize_after_loop_close ].value() ) {
 		IdealizeMoverOP idealizer( new IdealizeMover );
 		idealizer->fast( false );
 		post_loop_closure_protocol( idealizer );

@@ -105,15 +105,15 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 	using namespace core::scoring;
 	reduced_sfxn_ = ScoreFunctionFactory::create_score_function( "enzdes_polyA_min", option[ OptionKeys::score::patch ]() );
 
-	if ( basic::options::option[basic::options::OptionKeys::enzdes::chi_min].user() ) chi_min_ = true;
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::chi_min].value() ) chi_min_ = true;
 	else chi_min_= false;
 
-	if ( basic::options::option[basic::options::OptionKeys::enzdes::bb_min].user() ) bb_min_ = true;
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::bb_min].value() ) bb_min_ = true;
 	else bb_min_= false;
 
 	bb_backrub_ = false; //not really used here so false, but can be set to true using the set_minimize_options function
 
-	if ( basic::options::option[basic::options::OptionKeys::enzdes::min_all_jumps].user() ) min_all_jumps_ = true;
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::min_all_jumps].value() ) min_all_jumps_ = true;
 	else min_all_jumps_ = false;
 
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::minimize_ligand_torsions].user() ) {
@@ -131,7 +131,7 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 			lig_min_stddev_= 0.0;
 		}
 	}
-	if ( basic::options::option[basic::options::OptionKeys::enzdes::fix_catalytic_aa].user() ) fix_catalytic_aa_ = true;
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::fix_catalytic_aa].value() ) fix_catalytic_aa_ = true;
 	else fix_catalytic_aa_= false;
 
 	//if( basic::options::option[basic::options::OptionKeys::score::weights].user() ){
@@ -311,12 +311,12 @@ EnzdesBaseProtocol::create_enzdes_pack_task(
 	if ( toolbox::match_enzdes_util::get_enzdes_observer( pose ) ) {
 		taskfactory.push_back( utility::pointer::make_shared< AddRigidBodyLigandConfs >() );
 	}
-	if ( basic::options::option[basic::options::OptionKeys::enzdes::detect_design_interface].user() ) {
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::detect_design_interface].value() ) {
 		SetCatalyticResPackBehaviorOP catpack( new SetCatalyticResPackBehavior() );
 		catpack->set_fix_catalytic_aa( this->fix_catalytic_aa_ );
 		taskfactory.push_back( catpack );
 	}
-	if ( basic::options::option[basic::options::OptionKeys::enzdes::run_ligand_motifs].user() ) {
+	if ( basic::options::option[basic::options::OptionKeys::enzdes::run_ligand_motifs].value() ) {
 		taskfactory.push_back( utility::pointer::make_shared< AddLigandMotifRotamers >() );
 	}
 

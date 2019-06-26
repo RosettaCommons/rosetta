@@ -176,7 +176,7 @@ void PrepackMover::apply( pose::Pose & pose )
 	// pre-minimize sidechains
 	min_mover.apply( pose );
 
-	if ( basic::options::option[basic::options::OptionKeys::docking::dock_rtmin].user() ) {
+	if ( basic::options::option[basic::options::OptionKeys::docking::dock_rtmin].value() ) {
 		protocols::minimization_packing::RotamerTrialsMinMover rtmin( scorefxn_, tf );
 		rtmin.apply( pose );
 	} else {

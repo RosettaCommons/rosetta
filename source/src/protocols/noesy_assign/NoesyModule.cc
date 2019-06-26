@@ -91,6 +91,8 @@ bool protocols::noesy_assign::NoesyModule::options_registered_( false );
 bool protocols::noesy_assign::NoesyModule::cmdline_options_activated() {
 	using namespace basic::options;
 	using namespace OptionKeys;
+
+	//JAB - Note that these options are not in options_rosetta!
 	return ( option[ noesy::in::resonances ].user() && option[ noesy::in::peaks ].user() )
 		|| option[ noesy::in::peak_resonance_pairs ].user();
 }

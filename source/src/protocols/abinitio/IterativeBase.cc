@@ -786,6 +786,8 @@ core::Size IterativeBase::generate_batch( jd2::archive::Batch& batch, core::Size
 	if ( stage_ == CEN2FULLATOM ) {
 		if ( repeat_id == 1  ) {
 			gen_cen2fullatom( batch );
+
+			//JAB - NOTE - this safety_hatch_scorecut option DOES NOT EXIST in options_rosetta.py
 			if ( option[ iterative::safety_hatch_scorecut ].user() ) repeat_id = 3; //we subtract 1 from repeat_id at end of sub-routine and thus return 2.
 		} else if ( repeat_id == 2 ) {
 			gen_cen2fullatom_non_pool_decoys( batch );

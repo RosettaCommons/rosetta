@@ -141,7 +141,7 @@ FibrilModelingClaimer::add_mover(
 
 	core::Real move_anchor_weight(1.0), rb_weight, slide_weight;
 
-	if ( option( move_anchor_points ).user() ) {
+	if ( option( move_anchor_points ).value() ) {
 		moves::MoverOP move_anchor_mover( new symmetric_docking::SymFoldandDockMoveRbJumpMover );
 		random_mover.add_mover( move_anchor_mover, move_anchor_weight );
 	}

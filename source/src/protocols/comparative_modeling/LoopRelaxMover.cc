@@ -454,7 +454,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	//// regions etc. Then repeat with a more aggressive approach to make sure the loops are closed etc.
 	//// This makes sure all the missing density is gone before doing proper loop building.
 	////
-	if ( option[ OptionKeys::loops::build_initial ].user() ) {
+	if ( option[ OptionKeys::loops::build_initial ].value() ) {
 		TR << "====================================================================================" << std::endl;
 		TR << "===" << std::endl;
 		TR << "===   Initial Building     " << std::endl;
@@ -589,7 +589,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					Size sfxn_cycles = option[ OptionKeys::loops::perturb_outer_cycles ]();
 					Size temp_cycles = min<Size>(20 * loops->loop_size(), 1000);
 
-					if ( option[ OptionKeys::loops::fast ].user() ) { ;
+					if ( option[ OptionKeys::loops::fast ].value() ) { ;
 						temp_cycles = min<Size>(5 * loops->loop_size(), 250);
 					}
 					if ( option[ OptionKeys::loops::max_inner_cycles ].user() ) {
@@ -608,7 +608,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					}
 
 					TR << "Beginning centroid-mode loop rebuilding..." << endl;
-					if ( ! option[OptionKeys::loops::skip_initial_loop_build].user() ) {
+					if ( ! option[OptionKeys::loops::skip_initial_loop_build].value() ) {
 						//start RAP: work-around for making sure the initial loop build doesn't fail by calling the legacy KIC loop builder
 						loops::loop_mover::IndependentLoopMoverOP remodel_mover( utility::pointer::static_pointer_cast< loops::loop_mover::IndependentLoopMover > ( loops::LoopMoverFactory::get_instance()->create_loop_mover( "perturb_kic", loops ) ) );
 						core::kinematics::FoldTree f_orig=pose.fold_tree();
@@ -793,7 +793,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		// if no centroid modelling was done at all, then grab the original
 		// fullatom pose.
 		if ( remodel() == "no" &&
-				!option[ OptionKeys::loops::build_initial ].user() &&
+				!option[ OptionKeys::loops::build_initial ].value() &&
 				fullatom_input
 				) {
 			pose = start_pose;
@@ -1038,7 +1038,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		TR << "===" << std::endl;
 
 		core::kinematics::FoldTree f_new, f_orig=pose.fold_tree();
-		if ( option[ OptionKeys::loops::relax_with_foldtree ].user() ) {
+		if ( option[ OptionKeys::loops::relax_with_foldtree ].value() ) {
 			loops::fold_tree_from_loops( pose, *loops, f_new );
 			pose.fold_tree( f_new );
 			loops::add_cutpoint_variants( pose );
@@ -1265,7 +1265,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	////  Maybe idealize the structure before relax ?
 	////
 	////
-	if ( option[ OptionKeys::loops::idealize_after_loop_close ].user() && (all_loops_closed) ) {
+	if ( option[ OptionKeys::loops::idealize_after_loop_close ].user()  &&
+			option[ OptionKeys::loops::idealize_after_loop_close ].value() && (all_loops_closed) ) {
 
 		if ( debug ) {
 			pose.dump_pdb(curr_job_tag + "_before_idealize.pdb");
@@ -1292,7 +1293,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		TR << "===" << std::endl;
 
 		core::kinematics::FoldTree f_new, f_orig=pose.fold_tree();
-		if ( option[ OptionKeys::loops::relax_with_foldtree ].user() ) {
+		if ( option[ OptionKeys::loops::relax_with_foldtree ].value() ) {
 			loops::fold_tree_from_loops( pose, *loops, f_new );
 			pose.fold_tree( f_new );
 			loops::add_cutpoint_variants( pose );

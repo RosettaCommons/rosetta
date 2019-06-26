@@ -198,7 +198,7 @@ LegacyEnumerateAssemblyMover::generate_assembly(){
 		assembly->add_model(graph_, n_term_node->model());
 		// now current model is made as a starting assembly and dumping as a pdb shows appropriate xyzs well
 
-		if ( option[basic::options::OptionKeys::legacy_sewing::dump_every_model].user() ) {
+		if ( option[basic::options::OptionKeys::legacy_sewing::dump_every_model].value() ) {
 			core::pose::Pose to_be_dumped_pose = get_fullatom_pose(assembly);
 			to_be_dumped_pose.dump_pdb( "model_id_" + utility::to_string(cur_model.model_id_) + ".pdb" );
 			continue;

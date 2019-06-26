@@ -130,11 +130,11 @@ EllipsoidalRandomizationMover::init_from_options()
 		set_partners(option[ OptionKeys::docking::partners ]());
 	}
 
-	if ( option[ OptionKeys::docking::randomize1 ].user() ) {
+	if ( option[ OptionKeys::docking::randomize1 ].value() ) {
 		ellipsoid_is_first_partner_ = true;
 	}
 
-	if ( option[ OptionKeys::docking::randomize2 ].user() ) {
+	if ( option[ OptionKeys::docking::randomize2 ].value() ) {
 		ellipsoid_is_first_partner_ = false;
 	}
 }

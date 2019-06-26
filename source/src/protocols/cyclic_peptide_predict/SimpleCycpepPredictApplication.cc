@@ -589,7 +589,7 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	hbond_energy_cutoff_ = static_cast<core::Real>( option[basic::options::OptionKeys::cyclic_peptide::hbond_energy_cutoff]() );
 	fast_relax_rounds_ = static_cast<core::Size>( option[basic::options::OptionKeys::cyclic_peptide::fast_relax_rounds]() );
 	count_sc_hbonds_ = option[basic::options::OptionKeys::cyclic_peptide::count_sc_hbonds]();
-	try_all_disulfides_ = option[basic::options::OptionKeys::cyclic_peptide::require_disulfides].user();
+	try_all_disulfides_ = option[basic::options::OptionKeys::cyclic_peptide::require_disulfides].value();
 	disulf_energy_cutoff_prerelax_ = static_cast<core::Real>( option[basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_prerelax]() );
 	disulf_energy_cutoff_postrelax_ = static_cast<core::Real>( option[basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_postrelax]() );
 

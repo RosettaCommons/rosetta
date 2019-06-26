@@ -66,7 +66,8 @@ EnzdesJobOutputter::EnzdesJobOutputter()
 	core::io::silent::SilentFileOptions opts;
 	scorefile_writer_ = utility::pointer::make_shared< core::io::silent::SilentFileData >( opts );
 	enz_scofile_ = utility::pointer::make_shared< protocols::enzdes::EnzdesScorefileFilter >();
-	if ( basic::options::option[ basic::options::OptionKeys::out::overwrite ].user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::out::overwrite ].user() &&
+			basic::options::option[ basic::options::OptionKeys::out::overwrite ].value() ) {
 		if ( utility::file::file_exists( scorefile_name().name() ) ) utility::file::file_delete( scorefile_name().name() );
 	}
 }

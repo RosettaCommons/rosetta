@@ -685,8 +685,8 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 	// In a 2-body case this separates 1 & 2 based on the only cutpoint
 	// In a multibody case, this separates 1 & 2 based on the first cutpoint
 	using namespace protocols::task_operations;
-	if ( option[ OptionKeys::docking::norepack1 ].user() ) local_tf->push_back( utility::pointer::make_shared< DockingNoRepack1 >( movable_jumps()[1] ) );
-	if ( option[ OptionKeys::docking::norepack2 ].user() ) local_tf->push_back( utility::pointer::make_shared< DockingNoRepack2 >( movable_jumps()[1] ) );
+	if ( option[ OptionKeys::docking::norepack1 ].value() ) local_tf->push_back( utility::pointer::make_shared< DockingNoRepack1 >( movable_jumps()[1] ) );
+	if ( option[ OptionKeys::docking::norepack2 ].value() ) local_tf->push_back( utility::pointer::make_shared< DockingNoRepack2 >( movable_jumps()[1] ) );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
