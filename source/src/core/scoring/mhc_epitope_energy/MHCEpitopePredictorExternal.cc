@@ -92,14 +92,24 @@ core::Real MHCEpitopePredictorExternal::score(std::string const &pep)
 
 void MHCEpitopePredictorExternal::connect(std::string const & filename)
 {
-	TR << "Connecting to " << filename << " external database." << std::endl;
-	filename_ = filename;
+	std::string db_filename = ""; //Actual location of the db filename
+	// Look for a copy of the file
+	utility::io::izstream infile;
+	infile.open( filename );
+	// If the filename is found, store in db_filename.  Otherwise, look in the database.
+	if ( infile.good() ) {
+		db_filename = filename;
+	} else {
+		db_filename = basic::database::full_name("scoring/score_functions/mhc_epitope/"+filename);
+	}
+	TR << "Connecting to " << db_filename << " external database." << std::endl;
+	filename_ = db_filename;
 
 	try {
 		// Establish the connection
 		DatabaseSessionManager * scm( DatabaseSessionManager::get_instance() );
 
-		session_ = sessionOP( scm->get_session_sqlite3( filename, utility::sql_database::TransactionMode::standard, 0, true, -1 ) ); // readonly set to true here, everything else is default settings.
+		session_ = sessionOP( scm->get_session_sqlite3( db_filename, utility::sql_database::TransactionMode::standard, 0, true, -1 ) ); // readonly set to true here, everything else is default settings.
 
 		// Fetch the metadata
 		// TODO: anything else important here?
@@ -116,7 +126,7 @@ void MHCEpitopePredictorExternal::connect(std::string const & filename)
 		if ( get_peptide_length() == 0 ) utility_exit_with_message("Database didn't specify peptide length");
 	}
 catch (std::exception const &e) {
-	utility_exit_with_message("Unable to open valid database " + filename + ": " + e.what());
+	utility_exit_with_message("Unable to open valid database " + db_filename + ": " + e.what());
 }
 }
 

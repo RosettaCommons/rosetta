@@ -48,7 +48,7 @@ using namespace utility::sql_database;
 using namespace cppdb;
 
 /// @brief Check for the size of a file and print a warning if appropriate.
-void MHCEpitopePredictorPreLoaded::check_file_size( std::string const &filename, core::Size warn_threshold ) {
+void MHCEpitopePredictorPreLoaded::check_file_size( std::string const &filename, core::Size warn_threshold ) const {
 	core::Real filesize = 0; // Will be used to store the file's size, in bytes.
 
 	// If we switch to C++17, re-write from here to replace stat() function with std::filesystem::file_size()
@@ -85,12 +85,21 @@ void MHCEpitopePredictorPreLoaded::load_database(std::string const &filename)
 {
 	filetype_ = LOAD_DATABASE;
 
-	// TODO: use basic::database to try looking for a standard one?
-	TR << "Connecting to " << filename << " external database." << std::endl;
-	// Output a warning if filename is bigger than 1 GB (1073741824 bytes).
-	check_file_size( filename, 1073741824 );
+	std::string db_filename = ""; //Actual location of the db filename
+	// Look for a copy of the file
+	utility::io::izstream infile;
+	infile.open( filename );
+	// If the filename is found, store in db_filename.  Otherwise, look in the database.
+	if ( infile.good() ) {
+		db_filename = filename;
+	} else {
+		db_filename = basic::database::full_name("scoring/score_functions/mhc_epitope/"+filename);
+	}
+	TR << "Connecting to " << db_filename << " external database." << std::endl;
+	// Output a warning if db_filename is bigger than 1 GB (1073741824 bytes).
+	check_file_size( db_filename, 1073741824 );
 
-	filename_ = filename;
+	filename_ = db_filename;
 
 	// Basic SQL stuff following test/utility/sql_database/DatabaseSessionManagerTests.cxxtest.hh
 
@@ -98,7 +107,7 @@ void MHCEpitopePredictorPreLoaded::load_database(std::string const &filename)
 		// Establish the connection
 		DatabaseSessionManager * scm( DatabaseSessionManager::get_instance() );
 
-		utility::sql_database::sessionOP session(scm->get_session_sqlite3( filename, utility::sql_database::TransactionMode::standard, 0, true, -1 )); // readonly set to true here, everything else is default settings.
+		utility::sql_database::sessionOP session(scm->get_session_sqlite3( db_filename, utility::sql_database::TransactionMode::standard, 0, true, -1 )); // readonly set to true here, everything else is default settings.
 
 		// Fetch the metadata
 		// TODO: anything else important here?
@@ -124,7 +133,7 @@ void MHCEpitopePredictorPreLoaded::load_database(std::string const &filename)
 		}
 	}
 catch (std::exception const &e) {
-	utility_exit_with_message("Unable to open valid database " + filename + ": " + e.what());
+	utility_exit_with_message("Unable to open valid database " + db_filename + ": " + e.what());
 }
 }
 
@@ -134,17 +143,27 @@ void MHCEpitopePredictorPreLoaded::load_csv(std::string const &filename)
 
 	filetype_ = LOAD_CSV;
 
-	// TODO: use basic::database to try looking for a standard one?
-	TR << "Reading epitopes from file " << filename << std::endl;
-	// Output a warning if filename is bigger than 1 GB (1073741824 bytes).
-	check_file_size( filename, 1073741824 );
-
-	filename_ = filename;
-
-	// TODO: very simple csv parsing (but that's presumably all we need). if is there a robust library, wouldn't hurt to use it instead
+	std::string db_filename = ""; //Actual location of the db filename
+	// Look for a copy of the file
 	izstream infile;
 	infile.open( filename );
-	if ( !infile.good() ) utility_exit_with_message("ERROR: Unable to open file " + filename);
+	// If the filename is found, store in db_filename.  Otherwise, look in the database.
+	if ( infile.good() ) {
+		db_filename = filename;
+	} else {
+		db_filename = basic::database::full_name("scoring/score_functions/mhc_epitope/"+filename);
+	}
+	infile.close();
+	TR << "Reading epitopes from file " << db_filename << std::endl;
+	// Output a warning if filename is bigger than 1 GB (1073741824 bytes).
+	check_file_size( db_filename, 1073741824 );
+
+	filename_ = db_filename;
+
+	// TODO: very simple csv parsing (but that's presumably all we need). if is there a robust library, wouldn't hurt to use it instead
+	//izstream infile;
+	infile.open( db_filename );
+	if ( !infile.good() ) utility_exit_with_message("ERROR: Unable to open file " + db_filename);
 
 	std::string curline(""); //Buffer for current line.
 	bool got_header = false;

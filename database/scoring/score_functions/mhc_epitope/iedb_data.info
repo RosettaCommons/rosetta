@@ -1,0 +1,15 @@
+Git user Brahm Yachnin (brahm.yachnin@rutgers.edu) downloaded a fresh copy of the IEDB on Sun Jun 23 23:48:16 EDT 2019.
+The database was then used to generate iedb_data.db using the following command:
+mhc_data_db.py --iedb_mysql <LOCAL_MYSQL_DATABASE_NAME> --mysql_user <LOCAL_MYSQL_USERNAME> --mysql_pw <LOCAL_MYSQL_PASSWORD> --allele_set hlaII --assay_mhc_ligand_binding all --assay_mhc_ligand_elution all --cores all --db iedb_data.db --overwrite
+(Values in <> are suppressed to protect the user's local mysql credentials.)
+
+A rudimentary check has been made to ensure that a valid database file has been generated.
+It should be safe to commit the updated database (ALONG WITH THIS FILE) to the Rosetta GitHub
+repository.  Before doing so, make sure that unit test core:MHCEpitopeEnergySetupTests_initialization:test_iedb_database_integrity passes.
+
+Any unit test failures should be carefully checked to make sure that they are caused by
+changes in the database, and not a corrupt database.  Such occurrences should be very rare,
+but not impossible.
+
+Version of Rosetta main repository during update: a3b36731c935008cfb1965989747489fa2702605
+Version of Rosetta tools repository during update: 0355aaf932afa9ea2b68f482001d6150f69e6f5a

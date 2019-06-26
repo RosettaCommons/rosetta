@@ -15,11 +15,14 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergySetup.hh>
+#include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorPreLoaded.hh>
 
 // Package Headers
 #include <test/core/init_util.hh>
 
 #include <basic/Tracer.hh>
+#include <basic/database/open.hh>
+#include <utility/io/izstream.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -304,5 +307,81 @@ public:
 		TS_ASSERT_EQUALS( xformed_rel_zeroed, mhc_rel_xform->score( "FRILAAIGI", native ) );
 
 		TR << "End of test_mhc_xformed_relative_multiplicative." << std::endl;
+	}
+
+	/// @brief This test checks that the iedb_data.db file in the database is valid.
+	/// @author Brahm Yachnin
+	/// @details This makes some "spot-checks" on database entries, but updates to IEDB may make some of these fail.
+	/// @details Updating the peptide list to account for underlying changes in the database is acceptable, as long as database integrity is carefully checked.
+	void test_iedb_database_integrity() {
+		//Create a new MHCEpitopeEnergySetup class object
+		MHCEpitopeEnergySetupOP iedb_predictor( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
+
+		//Initialize from the database iedb_user.mhc config file
+		iedb_predictor->initialize_from_file("iedb_data.mhc");
+
+		//Grab the scoring map from the Predictor
+		MHCEpitopePredictorPreLoadedOP iedb_predictor_pred = utility::pointer::dynamic_pointer_cast<MHCEpitopePredictorPreLoaded>(iedb_predictor->get_predictor());
+		TS_ASSERT(iedb_predictor_pred);
+		std::map< std::string, core::Real > scores_map = iedb_predictor_pred->get_scores_map();
+
+		//The IEDB database probably should only get bigger, not smaller.  As such, this map should only get bigger with database updates.
+		//Add a unit test to make sure that the database is at least as big as it was when downloaded on June 21, 2019.
+		//As the database grows, this test can be incremented accordingly.  A smaller size should be double-checked carefully.
+		const core::Size min_db_size = 190594; //Can be increased, but probably not decreased.
+		TR << "Current iedb_data.db database size: " << scores_map.size() << std::endl;
+		TS_ASSERT_LESS_THAN_EQUALS(min_db_size, scores_map.size() );
+
+		//Let's check a few peptides that are in the database.
+		//Because we have set up the IEDB database to score binders as 1 and non-binders as 0, all binders in the db should be 1.
+
+		//First, set up vectors of assay_mhc_ligand_binding peptides and assay_mhc_ligand_elution peptides (15mers).
+		//Additional peptides in the database can be added here, though there isn't a compelling reason to do so.
+		const utility::vector1 < std::string > binding_peps = {"FYKETSYTT", "SHCNEMSWI", "YLVSTQEFR", "LLVLAVLCS", "FVSPTPGQR", "APGGAKKPL", "SWQTYVDEH", "KAFLETSNN", "TSTRTYSLG", "MKRYSAPSE", "FMLVAHYAI", "EDLGNCLNK", "QPSSGNYVH", "AGCSEQEVN", "LYAVATTIL"};
+		const utility::vector1 < std::string > elution_peps = {"NSSPSAKDI", "AKLSYYDGM", "GPGVPQASG", "EEHASADVE", "DMKNVPEAF", "LNSIKDVEQ", "DLQTIHSRE", "YSLSSVVTV", "YRLHRALDA", "KEDGVITAS"};
+		//Finally, set up the same for unseen peptides.  In theory, some of these peptides could appear in the db and make the test fail.
+		//As long as the peptide has really been added to the database, this is OK.
+		const utility::vector1 < std::string > unknown_peps = {"FYAETSYWT", "SHWNEDSWI", "YEVSTNEFR", "LDVLAVNCS", "FVWPTPMQR", "DCKNVPSAF", "LQSIKDVDQ", "DLYTIHTRE", "YSISSVWTV", "YRLRRALDM"};
+
+		//Starting off with assay_mhc_ligand_binding peptides
+		for ( core::Size i=1; i <= binding_peps.size(); ++i ) {
+			TS_ASSERT_EQUALS(iedb_predictor->raw_score(binding_peps[i]), 1);
+		}
+
+		//Now, the assay_mhc_ligand_elution peptides
+		for ( core::Size i=1; i <= elution_peps.size(); ++i ) {
+			TS_ASSERT_EQUALS(iedb_predictor->raw_score(elution_peps[i]), 1);
+		}
+
+		//Now, some peptides that shouldn't be in the database.  These should have scores of 0.
+		for ( core::Size i=1; i <= unknown_peps.size(); ++i ) {
+			TS_ASSERT_EQUALS(iedb_predictor->raw_score(unknown_peps[i]), 0);
+		}
+
+		//Test that the .info file is OK.  We will check if the file exists, has the right type of info.
+		//It is still possible for a user to commit only the db file, and not the info file.
+		//This can make this test seem to pass, even though it shouldn't.
+		const std::string info_file = basic::database::full_name("scoring/score_functions/mhc_epitope/iedb_data.info");
+		const std::string db_file = basic::database::full_name("scoring/score_functions/mhc_epitope/iedb_data.db");
+
+		//Check that iedb_data.info exists.
+		utility::io::izstream info_filestream;
+		info_filestream.open(info_file);
+		TS_ASSERT(info_filestream);
+
+		//Check that the file has text consistent with a successful database refresh.
+		//We first check that the first line is not empty, an that it does NOT match the first line of an 'in-progress' db refresh.
+		//Since the first line of a successfully refreshed db .info file varies (git username and date), check for a match with the second line.
+		std::string firstline = "";
+		std::string secondline = "";
+		utility::io::getline(info_filestream, firstline); //Get the first line of the .info file.
+		utility::io::getline(info_filestream, secondline); //Get the second line of the .info file.
+		TS_ASSERT_DIFFERS(firstline, "");
+		TS_ASSERT_DIFFERS(firstline, "DO NOT COMMIT THIS FILE AND iedb_data.db.  There may be a problem with iedb_data.db.");
+		TS_ASSERT_EQUALS(secondline, "The database was then used to generate iedb_data.db using the following command:");
+
+		info_filestream.close();
+
+		TR << "End of test_iedb_database_integrity." << std::endl;
 	}
 };

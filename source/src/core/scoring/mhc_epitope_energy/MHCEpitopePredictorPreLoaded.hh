@@ -55,11 +55,14 @@ public:
 	void set_unseen_score(core::Size us) { unseen_score_ = us; }
 
 	/// @brief Accessor for the unseen_score_
-	core::Size get_unseen_score() { return unseen_score_; }
+	core::Size get_unseen_score() const { return unseen_score_; }
+
+	/// @brief Accessor for the peptide->score map object
+	std::map< std::string, core::Real > get_scores_map() const { return scores_; }
 
 private:
 	/// @brief Check for the size of a file and print a warning if appropriate.
-	void check_file_size( std::string const &filename, core::Size warn_threshold );
+	void check_file_size ( std::string const &filename, core::Size warn_threshold ) const;
 
 private:
 	/// @brief peptide->score
