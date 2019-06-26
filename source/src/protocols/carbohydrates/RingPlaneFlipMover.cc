@@ -206,7 +206,7 @@ RingPlaneFlipMover::apply( Pose & input_pose )
 	setup_movable_torsion_pairs( input_pose );
 
 	if ( movable_torsion_pairs_.empty() ) {
-		TR.Warning << "There are no movable torsions available in the given pose." << endl;
+		TR.Warning << "There are no movable torsions available for " << type() << " in the given pose." << endl;
 		set_last_move_status( moves::FAIL_DO_NOT_RETRY );
 		return;
 	}
@@ -249,7 +249,10 @@ RingPlaneFlipMover::movemap( core::pose::Pose const & pose ) const
 		if ( movemap_factory_ ) {
 			movemap_ = movemap_factory_->create_movemap_from_pose( pose );
 		} else {
+			// If no MoveMap or MoveMapFactory given, instantiate a default MoveMap
+			// Where the BB of every residue is allowed to move
 			movemap_ = utility::pointer::make_shared< MoveMap >();
+			movemap_->set_bb( true );
 		}
 	}
 	return movemap_;
