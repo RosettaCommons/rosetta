@@ -94,7 +94,7 @@ def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_co
     if re.search("--valgrind", additional_flags):
         timeout = 24*60*60  # If we've spent a full day on it, and it's still running, we're probably hosed.
 
-    command_line = 'cd {}/tests/integration && ./integration.py --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs} {additional_flags}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout, additional_flags=additional_flags)
+    command_line = 'cd {}/tests/integration && {python} ./integration.py --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs} {additional_flags}'.format(rosetta_dir, python=sys.executable, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout, additional_flags=additional_flags)
     TR( 'Running integration script: {}'.format(command_line) )
 
     #JAB - Why is this not run in debug mode, isn't this half the point?

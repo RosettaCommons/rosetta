@@ -242,10 +242,16 @@ class GenerateRosettaTemplates(object):
             return None
 
     def get_name(self):
-        return subprocess.check_output("git config user.name", shell=True).strip()
+        name = subprocess.check_output("git config user.name", shell=True).strip()
+        if sys.version_info[0] > 2:
+           name = name.decode(encoding="utf-8", errors="replace")
+        return name
 
     def get_email(self):
-        return subprocess.check_output("git config user.email", shell=True).strip()
+        email = subprocess.check_output("git config user.email", shell=True).strip()
+        if sys.version_info[0] > 2:
+            email = email.decode(encoding="utf-8", errors="replace")
+        return email
 
     def get_outname(self):
 

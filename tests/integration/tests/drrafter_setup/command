@@ -51,7 +51,7 @@ date > start-time.ignore
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 
-%(python)s %(minidir)s/src/apps/public/DRRAFTER/DRRAFTER.py -fasta fasta.txt -secstruct secstruct.txt -start_struct protein_and_RNA_helix_fit_into_density.pdb -map_file 1wsu_simulated_7A.mrc -map_reso 7.0 -residues_to_model E:1-23 -include_as_rigid_body_structures protein_fit_into_density.pdb RNA_helix.pdb -absolute_coordinates_rigid_body_structure protein_fit_into_density.pdb -job_name demo_run -dock_into_density -demo_settings  2>&1 \
+%(python2)s %(minidir)s/src/apps/public/DRRAFTER/DRRAFTER.py -fasta fasta.txt -secstruct secstruct.txt -start_struct protein_and_RNA_helix_fit_into_density.pdb -map_file 1wsu_simulated_7A.mrc -map_reso 7.0 -residues_to_model E:1-23 -include_as_rigid_body_structures protein_fit_into_density.pdb RNA_helix.pdb -absolute_coordinates_rigid_body_structure protein_fit_into_density.pdb -job_name demo_run -dock_into_density -demo_settings  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

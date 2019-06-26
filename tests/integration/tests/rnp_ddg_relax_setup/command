@@ -51,7 +51,7 @@ date > start-time.ignore
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 
-%(python)s %(minidir)s/src/apps/public/rnp_ddg/relax_starting_structure.py --start_struct relaxed_1ZDH.pdb --nstructs 1 --rosetta_prefix %(raw_bin_dir)s 2>&1 \
+%(python2)s %(minidir)s/src/apps/public/rnp_ddg/relax_starting_structure.py --start_struct relaxed_1ZDH.pdb --nstructs 1 --rosetta_prefix %(raw_bin_dir)s 2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

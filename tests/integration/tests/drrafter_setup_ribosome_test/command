@@ -51,7 +51,7 @@ date > start-time.ignore
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 
-%(python)s %(minidir)s/src/apps/public/DRRAFTER/DRRAFTER.py -fasta full_fasta.txt -secstruct full_secstruct_fix.txt -map_file empty_emd_2490.mrc -map_reso 4.9 -residues_to_model A:883-893 -job_name test -no_csts -start_struct start_thread_3.pdb -no_initial_structures  2>&1 \
+%(python2)s %(minidir)s/src/apps/public/DRRAFTER/DRRAFTER.py -fasta full_fasta.txt -secstruct full_secstruct_fix.txt -map_file empty_emd_2490.mrc -map_reso 4.9 -residues_to_model A:883-893 -job_name test -no_csts -start_struct start_thread_3.pdb -no_initial_structures  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

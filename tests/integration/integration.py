@@ -16,6 +16,7 @@ if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
 
 import os, shutil, threading, subprocess, signal, time, re, random, datetime, copy
+import io
 import json
 import glob
 from os import path
@@ -448,7 +449,7 @@ EXAMPLES For Running Demos/Tutorials
                 if f == 'command.mpi.sh': continue
                 fname = dir_ + '/' + f
                 try:
-                    with open(fname, 'r') as f:
+                    with io.open(fname, 'r', encoding="UTF-8") as f:
                         data = f.read()
                 except UnicodeDecodeError:
                     # binary files will not work with the replacements
@@ -474,7 +475,7 @@ EXAMPLES For Running Demos/Tutorials
                     data = data.replace( params['rosetta_demos'], "ROSETTA/demos")
                     mod = True
                 if mod:
-                    with open(fname, 'w') as f:
+                    with io.open(fname, 'w', encoding="UTF-8") as f:
                         f.write( data )
 
     # Analyze results
@@ -827,7 +828,7 @@ def order_tests(tests):
         else:
             ordered.append( (9999, test) )
     ordered.sort(reverse=True)
-    print([ test for (time, test) in ordered ])
+    #print([ test for (time, test) in ordered ])
     return [ test for (time, test) in ordered ]
 
 # -------------------------------------
@@ -985,6 +986,16 @@ def get_binext():
 def generateIntegrationTestGlobalSubstitutionParameters(host=None):
     # Variables that may be referenced in the cmd string:
     python = sys.executable
+    if sys.version_info[0] == 2:
+        python2 = sys.executable
+        python3 = execute("Find python3","which python3",return_="output",print_output=False,verbose=False).strip()
+    elif sys.version_info[0] == 3:
+        python3 = sys.executable
+        python2 = execute("Find python2","which python2",return_="output",print_output=False,verbose=False).strip()
+    else:
+        print("ERROR: Unrecognized Python version!")
+        sys.exit(-1)
+
     minidir = Options.mini_home
     database = Options.database
 
@@ -1058,10 +1069,10 @@ def generateTestCommandline(test, outdir, options=None, host=None):
             return None, None #If the command.mpi file doesn't exist, then this isn't an MPI integration test and should be skipped.
     else :
         if os.path.isfile( path.join(workdir, "command" ) ):
-            with open(path.join(workdir, "command"), 'r') as f:
+            with io.open(path.join(workdir, "command"), 'r', encoding="UTF-8") as f:
                 cmd += f.read().strip()
         elif os.path.isfile( path.join(workdir, "command.new") ):
-            with open(path.join(workdir, "command.new"), 'r') as f:
+            with io.open(path.join(workdir, "command.new"), 'r', encoding="UTF-8") as f:
                 cmd += f.read().strip()
         else:
           return None, None #If the command file doesn't exist, we skip it.  It may only be an MPI integration test.
@@ -1104,7 +1115,7 @@ def generateTestCommandline(test, outdir, options=None, host=None):
 
     #Write the command.sh file
     # writing back so test can be easily re-run by user later...
-    with open(cmd_line_sh, 'w') as f:
+    with io.open(cmd_line_sh, 'w', encoding="UTF-8") as f:
         f.write(cmd)
 
     #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")

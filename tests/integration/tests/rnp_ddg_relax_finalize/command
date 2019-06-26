@@ -51,7 +51,7 @@ date > start-time.ignore
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 
-%(python)s %(minidir)s/src/apps/public/rnp_ddg/get_lowest_scoring_relaxed_models.py --relax_dir relax_1ZDH_chainA_B_R/ -n 20 2>&1 \
+%(python2)s %(minidir)s/src/apps/public/rnp_ddg/get_lowest_scoring_relaxed_models.py --relax_dir relax_1ZDH_chainA_B_R/ -n 20 2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 
