@@ -310,7 +310,7 @@ void ClassicRelax::set_default_moveset_phase2()
 	moveset_phase2_temp ->add_mover( shear_mover );
 
 	// setup the move object
-	if ( basic::options::option[ basic::options::OptionKeys::relax::wobblemoves ].user() &&
+	if ( basic::options::option[ basic::options::OptionKeys::relax::wobblemoves ].value() &&
 			basic::options::option[ basic::options::OptionKeys::in::file::frag3 ].user() ) {
 		std::string frag3_file  = basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]();
 		core::fragment::ConstantLengthFragSetOP fragset3mer( new core::fragment::ConstantLengthFragSet( 3 ) );

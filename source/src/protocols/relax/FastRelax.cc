@@ -1316,6 +1316,7 @@ void FastRelax::batch_apply(
 				bool const repack = basic::options::option[ basic::options::OptionKeys::relax::chi_move]();
 				utility::vector1<bool> allow_repack( pose.size(), repack);
 
+				// If the user has not set chi, setup according to local_movemap.
 				if ( !basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ) {
 					for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 						allow_repack[ pos ] = local_movemap->get_chi( pos );
@@ -1527,7 +1528,8 @@ void FastRelax::batch_apply(
 				}
 
 				if ( get_native_pose() ) {
-					if ( core::pose::symmetry::is_symmetric( pose ) && option[ basic::options::OptionKeys::evaluation::symmetric_rmsd ].user() ) {
+					if ( core::pose::symmetry::is_symmetric( pose ) && option[ basic::options::OptionKeys::evaluation::symmetric_rmsd ].user() &&
+							option[ basic::options::OptionKeys::evaluation::symmetric_rmsd ].value() ) {
 						core::Real rms = CA_rmsd_symmetric( *get_native_pose() , pose );
 						TR << "MRP: " << index << " " << relax_decoys[index].accept_count << "  " << score << "  " << relax_decoys[index].best_score << "  "
 							<< rms << "  "

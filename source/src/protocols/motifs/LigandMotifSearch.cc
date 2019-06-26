@@ -1497,17 +1497,20 @@ LigandMotifSearch::init_options()
 	} else {
 		data_ = false;
 	}
-	if ( (basic::options::option[ basic::options::OptionKeys::motifs::quick_and_dirty ]).user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::motifs::quick_and_dirty ].user() &&
+			basic::options::option[ basic::options::OptionKeys::motifs::quick_and_dirty ].value() ) {
 		quick_and_dirty_ = true;
 	} else {
 		quick_and_dirty_ = false;
 	}
-	if ( (basic::options::option[ basic::options::OptionKeys::motifs::dump_motifs ]).user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::motifs::dump_motifs ].user() &&
+			basic::options::option[ basic::options::OptionKeys::motifs::dump_motifs ].value() ) {
 		dump_motifs_ = true;
 	} else {
 		dump_motifs_ = false;
 	}
-	if ( basic::options::option[ basic::options::OptionKeys::motifs::clear_bprots ].user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::motifs::clear_bprots ].user() &&
+			basic::options::option[ basic::options::OptionKeys::motifs::clear_bprots ].value() ) {
 		clear_bprots_ = true;
 	} else {
 		clear_bprots_ = false;

@@ -1612,13 +1612,13 @@ void FragmentPicker::parse_command_line() {
 	}
 
 	//-------- collector & selector set up
-	if ( option[frags::quota_protocol].user() || option[frags::picking::quota_config_file].user() ) {
+	if ( option[frags::quota_protocol].value() || option[frags::picking::quota_config_file].user() ) {
 		// This setup is a bit more complicated when user needs quota.
 		// The quota version of this code was moved into a separate method
 		parse_quota_command_line();
 		// This setup is a bit more complicated, when user needs quota. The quota version of this code was moved into a separate method
 	} else {
-		if ( option[frags::keep_all_protocol].user() ) {
+		if ( option[frags::keep_all_protocol].value() ) {
 			for ( core::Size i = 1; i <= frag_sizes_.size(); ++i ) {
 				CandidatesCollectorOP collector( new GrabAllCollector(size_of_query()) );
 				set_candidates_collector(frag_sizes_[i], collector);
@@ -2123,12 +2123,12 @@ void FragmentPicker::output_fragments( core::Size const fragment_size, utility::
 	using namespace ObjexxFCL;
 
 	// find and output nonlocal pairs
-	if ( option[frags::nonlocal_pairs].user() ) {
+	if ( option[frags::nonlocal_pairs].value() ) {
 		nonlocal_pairs( fragment_size, final_fragments );
 	}
 
 	// find and output fragment contacts
-	if ( option[frags::fragment_contacts].user() ) {
+	if ( option[frags::fragment_contacts].value() ) {
 		fragment_contacts( fragment_size, final_fragments );
 	}
 

@@ -1030,17 +1030,20 @@ MotifSearch::init_options()
 	} else {
 		data_ = false;
 	}
-	if ( (basic::options::option[ basic::options::OptionKeys::motifs::quick_and_dirty ]).user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::motifs::quick_and_dirty ].user() &&
+			basic::options::option[ basic::options::OptionKeys::motifs::quick_and_dirty ].value() ) {
 		quick_and_dirty_ = true;
 	} else {
 		quick_and_dirty_ = false;
 	}
-	if ( (basic::options::option[ basic::options::OptionKeys::motifs::dump_motifs ]).user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::motifs::dump_motifs ].user() &&
+			basic::options::option[ basic::options::OptionKeys::motifs::dump_motifs ].value() ) {
 		dump_motifs_ = true;
 	} else {
 		dump_motifs_ = false;
 	}
-	if ( basic::options::option[ basic::options::OptionKeys::motifs::clear_bprots ].user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::motifs::clear_bprots ].user() &&
+			basic::options::option[ basic::options::OptionKeys::motifs::clear_bprots ].value() ) {
 		clear_bprots_ = true;
 	} else {
 		clear_bprots_ = false;
@@ -1050,17 +1053,20 @@ MotifSearch::init_options()
 	} else {
 		rots2add_ = 100;
 	}
-	if ( (basic::options::option[ basic::options::OptionKeys::motifs::restrict_to_wt ]).user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::motifs::restrict_to_wt ].user() &&
+			basic::options::option[ basic::options::OptionKeys::motifs::restrict_to_wt ].value() ) {
 		restrict_to_wt_ = true;
 	} else {
 		restrict_to_wt_ = false;
 	}
-	if ( (basic::options::option[ basic::options::OptionKeys::motifs::rerun_motifsearch ]).user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::motifs::rerun_motifsearch ].user() &&
+			basic::options::option[ basic::options::OptionKeys::motifs::rerun_motifsearch ].value() ) {
 		rerun_motifsearch_ = true;
 	} else {
 		rerun_motifsearch_ = false;
 	}
-	if ( (basic::options::option[ basic::options::OptionKeys::motifs::no_rotamer_bump ]).user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::motifs::no_rotamer_bump ].user() &&
+			basic::options::option[ basic::options::OptionKeys::motifs::no_rotamer_bump ].value() ) {
 		bump_check_ = false;
 	} else {
 		bump_check_ = true;

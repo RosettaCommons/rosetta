@@ -351,7 +351,7 @@ AbscriptMover::parse_my_tag(
 		cycles_prefactor = option[ OptionKeys::abinitio::increase_cycles ];
 	}
 
-	if ( option[ OptionKeys::run::test_cycles ].user() ) {
+	if ( option[ OptionKeys::run::test_cycles ].value() ) {
 		// This has to go here rather than in the above if block so that we don't get die for unaccessed tags problems.
 		tr.Info << "Found -run:test_cycles; overriding cycles behavior to test mode." << std::endl;
 		cycles_prefactor = 0.01;

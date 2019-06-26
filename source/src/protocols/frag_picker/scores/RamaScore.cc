@@ -140,7 +140,7 @@ RamaScore::SetupRamaTables()
 		}
 
 		utility::io::ozstream outtable;
-		if ( option[frags::write_rama_tables].user() ) {
+		if ( option[frags::write_rama_tables].value() ) {
 			std::string res = ObjexxFCL::string_of( i );
 			outtable.open("res"+res+"_"+aa_type+".rama_table");
 		}
@@ -174,14 +174,14 @@ RamaScore::SetupRamaTables()
 				temp[i][x][y] = std::log(temp[i][x][y]);
 				temp[i][x][y] = 1.0 / ( 1 + std::exp( C + B*temp[i][x][y] ) );
 
-				if ( option[frags::write_rama_tables].user() ) {
+				if ( option[frags::write_rama_tables].value() ) {
 					auto xf( static_cast< float >( x ));
 					auto yf( static_cast< float >( y ));
 					outtable << ((xf-1)*10)-175 << " " << ((yf-1)*10)-175 << " " << temp[i][x][y] << std::endl;
 				}
 			}
 			//This blank line is so I can plot the tables in gnuplot. Don't judge me! -rv
-			if ( option[frags::write_rama_tables].user() ) outtable << std::endl;
+			if ( option[frags::write_rama_tables].value() ) outtable << std::endl;
 		}
 	}
 

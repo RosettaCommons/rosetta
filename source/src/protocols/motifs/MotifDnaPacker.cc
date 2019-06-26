@@ -359,18 +359,22 @@ MotifDnaPacker::apply( Pose & pose )
 
 		if ( run_motifs_ && ( ! target_dna_empty ) ) {
 			motif_search_->run( pose, design_positions );
-			if ( option[ OptionKeys::motifs::quick_and_dirty ].user() ) break;
+			if ( option[ OptionKeys::motifs::quick_and_dirty ].user() &&
+					option[ OptionKeys::motifs::quick_and_dirty ].value() ) break;
 			run_motifs( pose, design_positions, src_pos, rotamer_map, types_map, info_lines, taskfactory1 );
 		} else {
-			if ( option[ OptionKeys::motifs::quick_and_dirty ].user() ) break;
+			if ( option[ OptionKeys::motifs::quick_and_dirty ].user() &&
+					option[ OptionKeys::motifs::quick_and_dirty ].value() ) break;
 			run_motifs( pose, design_positions, src_pos, rotamer_map, types_map, info_lines, taskfactory1 );
 		}
 		if ( run_motifs_ && expand_motifs_ ) {
-			if ( option[ OptionKeys::motifs::quick_and_dirty ].user() ) break;
+			if ( option[ OptionKeys::motifs::quick_and_dirty ].user() &&
+					option[ OptionKeys::motifs::quick_and_dirty ].value() ) break;
 			expand_motifs( pose, design_positions, src_pos, rotamer_map, types_map, info_lines, taskfactory1 );
 		}
 		if ( run_motifs_ && aromatic_motifs_ ) {
-			if ( option[ OptionKeys::motifs::quick_and_dirty ].user() ) break;
+			if ( option[ OptionKeys::motifs::quick_and_dirty ].user() &&
+					option[ OptionKeys::motifs::quick_and_dirty ].value() ) break;
 			aromatic_motifs( pose, design_positions, src_pos, rotamer_map, types_map, info_lines, taskfactory1 );
 		}
 	}
@@ -482,15 +486,30 @@ skip_mutation_moves_in_first_cycle,*/
 void
 MotifDnaPacker::init_options()
 {
-	if ( option[ OptionKeys::motifs::run_motifs ].user() ) run_motifs_ = true;
-	if ( option[ OptionKeys::motifs::expand_motifs ].user() ) expand_motifs_ = true;
-	if ( option[ OptionKeys::motifs::aromatic_motifs ].user() ) aromatic_motifs_ = true;
-	if ( option[ OptionKeys::motifs::special_rotweight ].user() ) special_rotweight_ = option[ OptionKeys::motifs::special_rotweight ]();
-	if ( option[ OptionKeys::motifs::num_repacks ].user() ) num_repacks_ = option[ OptionKeys::motifs::num_repacks ]();
-	if ( option[ OptionKeys::motifs::minimize_dna ].user() ) minimize_dna_ = true;
-	if ( option[ OptionKeys::motifs::flex_sugar ].user() ) flex_dna_sugar_ = true;
-	//if( option[ OptionKeys::motifs::quick_and_dirty ].user() );
-	if ( option[ OptionKeys::motifs::target_dna_defs ].user() ) dna_design_ = true;
+	if ( option[ OptionKeys::motifs::run_motifs ].user() ) {
+		run_motifs_ = option[ OptionKeys::motifs::run_motifs ]();
+	}
+	if ( option[ OptionKeys::motifs::expand_motifs ].user() ) {
+		expand_motifs_ = option[ OptionKeys::motifs::expand_motifs ]();
+	}
+	if ( option[ OptionKeys::motifs::aromatic_motifs ].user() ) {
+		aromatic_motifs_ = option[ OptionKeys::motifs::aromatic_motifs ]();
+	}
+	if ( option[ OptionKeys::motifs::special_rotweight ].user() ) {
+		special_rotweight_ = option[ OptionKeys::motifs::special_rotweight ]();
+	}
+	if ( option[ OptionKeys::motifs::num_repacks ].user() ) {
+		num_repacks_ = option[ OptionKeys::motifs::num_repacks ]();
+	}
+	if ( option[ OptionKeys::motifs::minimize_dna ].user() ) {
+		minimize_dna_ = option[ OptionKeys::motifs::minimize_dna ]();
+	}
+	if ( option[ OptionKeys::motifs::flex_sugar ].user() ) {
+		flex_dna_sugar_ = option[ OptionKeys::motifs::flex_sugar ]();
+	}
+	if ( option[ OptionKeys::motifs::target_dna_defs ].user() ) {
+		dna_design_ = option[ OptionKeys::motifs::target_dna_defs ].user();
+	}
 }
 
 void

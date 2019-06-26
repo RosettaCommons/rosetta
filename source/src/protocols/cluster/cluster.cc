@@ -186,7 +186,7 @@ GatherPosesMover::get_distance_measure(
 		}
 		return scoring::CA_rmsd( pose1, pose2, residues );
 	}
-	if ( option[ OptionKeys::cluster::skip_align ].user() && option[ OptionKeys::cluster::rna_P ]() ) {
+	if ( option[ OptionKeys::cluster::skip_align ]() && option[ OptionKeys::cluster::rna_P ]() ) {
 
 		// RNA backbone atoms:
 		utility::vector1< std::string > RNA_atoms;
@@ -211,12 +211,12 @@ GatherPosesMover::get_distance_measure(
 		// no residues excluded from the native.
 		if ( option[ basic::options::OptionKeys::symmetry::symmetric_rmsd ]() &&
 				core::pose::symmetry::is_symmetric( pose1 ) ) return scoring::CA_rmsd_symmetric( pose1, pose2 );
-		if ( option[ basic::options::OptionKeys::cluster::skip_align ].user() && pose1.residue(1).is_RNA() ) return scoring::all_atom_rmsd_nosuper( pose1, pose2 );
-		if ( option[ basic::options::OptionKeys::cluster::skip_align ].user() ) return scoring::rmsd_no_super( pose1, pose2, scoring::is_protein_backbone );
+		if ( option[ basic::options::OptionKeys::cluster::skip_align ]() && pose1.residue(1).is_RNA() ) return scoring::all_atom_rmsd_nosuper( pose1, pose2 );
+		if ( option[ basic::options::OptionKeys::cluster::skip_align ]() ) return scoring::rmsd_no_super( pose1, pose2, scoring::is_protein_backbone );
 		if ( pose1.residue(1).is_RNA() ) return scoring::all_atom_rmsd( pose1, pose2 );
 		if ( cluster_by_all_atom_ ) return scoring::all_atom_rmsd( pose1, pose2 );
 		if ( cluster_by_protein_backbone_ ) return scoring::rmsd_with_super( pose1, pose2, scoring::is_protein_backbone );
-		if ( option[ basic::options::OptionKeys::cluster::skip_align ].user() ) return scoring::rmsd_no_super( pose1, pose2, scoring::is_protein_backbone );
+		if ( option[ basic::options::OptionKeys::cluster::skip_align ]() ) return scoring::rmsd_no_super( pose1, pose2, scoring::is_protein_backbone );
 		return scoring::CA_rmsd( pose1, pose2 );
 	}
 
@@ -795,7 +795,7 @@ void ClusterBase::print_clusters_silentfile( std::string prefix ) {
 	ss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 	std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
 
-	if ( option[ OptionKeys::cluster::write_centers ].user() ) {
+	if ( option[ OptionKeys::cluster::write_centers ]() ) {
 		ss_center = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( opts );
 		std::string silent_file_center_ = "centers_" + silent_file_;
 		for ( i=0; i<(int)clusterlist.size(); ++i ) {
@@ -830,7 +830,7 @@ void ClusterBase::print_clusters_silentfile( std::string prefix ) {
 
 			ss->fill_struct( pose, tag );
 
-			if ( option[ OptionKeys::cluster::write_centers ].user() && i<10 ) { // this could be its own option
+			if ( option[ OptionKeys::cluster::write_centers ]() && i<10 ) { // this could be its own option
 				std::string separate_file_name = "c" + string_of( i ) + "_" + silent_file_;
 				sfd.write_silent_struct( *ss, separate_file_name );
 			}
