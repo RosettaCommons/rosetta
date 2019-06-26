@@ -181,7 +181,8 @@ OptEMultifunc::operator()( Multivec const & vars ) const
 		else if ( utility::isnan(s) ) { std::cerr << "Introduced NAN score with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl; bad=true; }
 		else score += s;
 		if ( bad ) {
-			if ( basic::options::option[ basic::options::OptionKeys::optE::limit_bad_scores ].user() ) {     //NaN and inf errors can accumulate into the gigabytes if optE is left unattended
+			if ( basic::options::option[ basic::options::OptionKeys::optE::limit_bad_scores ].user() &&
+					basic::options::option[ basic::options::OptionKeys::optE::limit_bad_scores ].value() ) {     //NaN and inf errors can accumulate into the gigabytes if optE is left unattended
 				static Size count = 0;
 				++count;
 				if ( count > 100000 ) {

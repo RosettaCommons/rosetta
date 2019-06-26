@@ -865,7 +865,7 @@ PSSMOptEPositionData::get_score(
 	optimization::Multivec dpartition( vars.size(), 0.0 );
 	optimization::Multivec dpssm_partition( vars.size(), 0.0 );
 	Real partition( 0.0 ), pssm_partition( 0.0 );
-	if ( option[ optE::sqrt_pssm ].user() ) {
+	if ( option[ optE::sqrt_pssm ].user() && option[ optE::sqrt_pssm ].value() ) {
 
 		utility::vector1< Real > boltz_coeff( aa_range, 0.0 );
 		for ( Size ii = 1; ii <= aa_range; ++ii ) {
@@ -990,7 +990,7 @@ PSSMOptEPositionData::print_score(
 	optimization::Multivec dpartition( vars.size(), 0.0 );
 	optimization::Multivec dpssm_partition( vars.size(), 0.0 );
 	Real partition( 0.0 ), pssm_partition( 0.0 );
-	if ( option[ optE::sqrt_pssm ].user() ) {
+	if ( option[ optE::sqrt_pssm ].user() && option[ optE::sqrt_pssm ].value() ) {
 
 		utility::vector1< Real > boltz_coeff( aa_range, 0.0 );
 		for ( Size ii = 1; ii <= aa_range; ++ii ) {
@@ -1106,7 +1106,7 @@ PSSMOptEPositionData::set_pssm_probabilities(
 
 	// Store the squareroot of the input probabilities if we're optimizing using the
 	// dot product of unit vectors.
-	if ( option[ optE::sqrt_pssm ].user() ) {
+	if ( option[ optE::sqrt_pssm ].user() && option[ optE::sqrt_pssm ].value() ) {
 		for ( Size ii = 1; ii <= pssm_probs.size(); ++ii ) {
 			pssm_probabilities_[ ii ] = std::sqrt( pssm_probs[ ii ] );
 		}

@@ -1034,7 +1034,7 @@ void RemodelDesignMover::mode5_packertask(Pose & pose){ // manual with auto desi
 	CalculatorFactory::Instance().remove_calculator( "neighborhood_calc" );
 
 	std::set<Size> ligand_positions;
-	if ( option[OptionKeys::remodel::design_around_ligand].user() ) {
+	if ( option[OptionKeys::remodel::design_around_ligand].value() ) {
 		//find the ligand position
 		ligand_positions.insert(asym_length);
 		CalculatorFactory::Instance().register_calculator( "neighborhood_calc", utility::pointer::make_shared< NeighborhoodByDistanceCalculator >( ligand_positions ));

@@ -954,7 +954,7 @@ void NonPlaidFingerprint::setup_from_EggshellGrid() {
 		}
 
 		using namespace basic::options;
-		if (!option[ OptionKeys::fingerprint::darc_shape_only ].user()) {
+		if (!option[ OptionKeys::fingerprint::darc_shape_only ].value()) {
 			gpu_.AllocateMemoryReuse(gpu_memory_.elec_scores, gpu_memory_.elec_scores_size, sizeof(float) * gpu_memory_.num_particles * gpu_memory_.num_ligatoms_elstscalc);
 			if(!gpu_.ExecuteKernel("CALC_ELECTROSTATICS_SCORE", gpu_memory_.num_totatoms_elstscalc, gpu_memory_.num_totatoms_elstscalc, 64,
 														 GPU_DEVMEM, gpu_memory_.atomcoords_elstscalc,

@@ -252,7 +252,7 @@ IterativeOptEDriver::IterativeOptEDriver() :
 	MPI_nprocs_ = mpi_nprocs;
 
 	// only init the refE vector1's if we're using reference energies
-	if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+	if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 		before_minimization_reference_energies_.resize( chemical::num_canonical_aas, 0.0 );
 		after_minimization_reference_energies_.resize( chemical::num_canonical_aas, 0.0 );
 		reference_energies_inner_loop_.resize( chemical::num_canonical_aas, 0.0 );
@@ -829,7 +829,7 @@ IterativeOptEDriver::collect_rotamer_energies()
 
 	/// Don't bother collecting rotamer optE data if we're not going to optimize
 	/// weights.  Just skip straight to the design step.
-	//if ( outer_loop_counter_ == 1 && option[ optE::design_first ].user() ) {
+	//if ( outer_loop_counter_ == 1 && option[ optE::design_first ].user() && option[ optE::design_first ]()) {
 	// TR_VERBOSE << "collect_rotamer_energies(): design_first flag in use. leaving method" << std::endl;
 	// return;
 	//}
@@ -857,7 +857,7 @@ IterativeOptEDriver::collect_rotamer_energies()
 		score_position_data();
 
 		// extra option for testing sequence recovery with a weight set
-		if ( option[ optE::rescore::measure_sequence_recovery ].user() ) {
+		if ( option[ optE::rescore::measure_sequence_recovery ].value() ) {
 			// optimize_weights();  // leaving this line to be extra clear; definitely don't optimize the weights!
 
 			// score_position_data() leaves all the weights in the vars and fixed_terms vectors. need to move the values
@@ -1888,7 +1888,7 @@ void IterativeOptEDriver::intialize_free_and_fixed_energy_terms() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+	if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 		if ( MPI_rank_ == 0 ) {
 			//for ( Size ii = 1; ii <= n_score_types; ++ii ) {
 			// if ( free_parameters_[ (ScoreType) ii ] != 0.0 ) {
@@ -1946,7 +1946,7 @@ void IterativeOptEDriver::optimize_weights()
 	/// Skip weight optimization in the context of the native protein if the
 	/// "design first" flag is on the command line, but only after
 	/// free_weights_before_mininmization_ has been updated.
-	if ( outer_loop_counter_ == 1 && option[ optE::design_first ].user() ) {
+	if ( outer_loop_counter_ == 1 && option[ optE::design_first ].user() && option[ optE::design_first ]() ) {
 		TR << "optimize_weights(): design_first flag in use. node " << MPI_rank_ << " leaving method." << std::endl;
 		return;
 	}
@@ -2164,7 +2164,7 @@ void IterativeOptEDriver::optimize_weights()
 		test_weight_sensitivity(opt_min, start_dofs);
 
 		// set the after_min refE vector
-		if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+		if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 			//for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {   // 20 should not be hardcoded here!
 			// after_minimization_reference_energies_[ ii ] = start_dofs[ free_count_+ii ]; // save them in non-negated form
 			//}
@@ -2198,7 +2198,7 @@ void IterativeOptEDriver::optimize_weights()
 				<< F(8,4,free_weights_after_minimization_[ free_score_list_[ ii ] ]) << std::endl;
 		}
 
-		if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+		if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 			for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 				vars[ ii + free_count_ ] = after_minimization_reference_energies_[ ii ];
 			}
@@ -2441,7 +2441,7 @@ IterativeOptEDriver::score_position_data()
 			free_parameters_[ free_score_list_[ ii ] ] = weight_set[ free_score_list_[ ii ] ];
 		}
 
-		if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+		if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 			TR_VERBOSE << "setting reference energies ";
 			for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 				TR_VERBOSE << ii << " " << reference_energies[ ii ] << ", ";
@@ -2570,7 +2570,7 @@ void IterativeOptEDriver::write_new_scorefile()
 				} else {
 
 					if ( outer_loop_counter_ == 1 && option[ optE::design_first ].user() ) { mixing_factor_ = 0.0; alpha = 1.0; }
-					if ( option[ optE::rescore::measure_sequence_recovery ].user() ) { mixing_factor_ = 1.0; alpha = 0.0; } // the right wts are in after_min vector
+					if ( option[ optE::rescore::measure_sequence_recovery ].value() ) { mixing_factor_ = 1.0; alpha = 0.0; } // the right wts are in after_min vector
 					if ( option[ optE::optimize_ddGmutation ].user() && ! ( option[ optE::optimize_nat_aa ].user() ) ) { mixing_factor_ = 1.0; alpha = 0.0; }
 
 					for ( Size kk = 1; kk <= n_score_types; ++kk ) {
@@ -2684,7 +2684,7 @@ void IterativeOptEDriver::write_new_scorefile()
 
 			} else { // don't use the wrapped multifunc optimizer
 
-				if ( outer_loop_counter_ == 1 && option[ optE::design_first ].user() ) { mixing_factor_ = 0.0; alpha = 1.0; }
+				if ( outer_loop_counter_ == 1 && option[ optE::design_first ].user() && option[ optE::design_first ]() ) { mixing_factor_ = 0.0; alpha = 1.0; }
 				if ( option[ optE::rescore::measure_sequence_recovery ].user() ) { mixing_factor_ = 1.0; alpha = 0.0; } // the right wts are in after_min vector
 				if ( option[ optE::optimize_ddGmutation ].user() && ! ( option[ optE::optimize_nat_aa ].user() ) ) { mixing_factor_ = 1.0; alpha = 0.0; }
 
@@ -2702,7 +2702,7 @@ void IterativeOptEDriver::write_new_scorefile()
 					}
 				}
 
-				if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+				if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 					for ( Size kk = 1; kk <= before_minimization_reference_energies_.size(); ++kk ) {
 						reference_energies_inner_loop_[ kk ] = ( 1.0 - mixing_factor_ ) * before_minimization_reference_energies_[ kk ];
 						reference_energies_inner_loop_[ kk ] += mixing_factor_ * after_minimization_reference_energies_[ kk ];
@@ -2733,7 +2733,7 @@ void IterativeOptEDriver::write_new_scorefile()
 
 		for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 			MPI_Send( free_wts, n_score_types, MPI_DOUBLE, ii, tag_, MPI_COMM_WORLD );
-			if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+			if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 				MPI_Send( & n_ref_Es, 1, MPI_UNSIGNED_LONG, ii, tag_, MPI_COMM_WORLD );
 				MPI_Send( ref_Es, n_ref_Es, MPI_DOUBLE, ii, tag_, MPI_COMM_WORLD );
 			}
@@ -2753,7 +2753,7 @@ void IterativeOptEDriver::write_new_scorefile()
 		delete [] free_wts; free_wts = 0;
 
 		// don't bother with the reference energies if the user doesn't want them
-		if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+		if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 
 			Size n_ref_Es( 0 );
 			MPI_Recv( & n_ref_Es, 1, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD, &stat_ );
@@ -2781,11 +2781,11 @@ void IterativeOptEDriver::write_new_scorefile()
 		std::ofstream fout( scorefile_name.c_str() );
 
 		/// Ensure the score file includes soft rep if its requested.
-		if ( option[ optE::optE_soft_rep ].user() ) {
+		if ( option[ optE::optE_soft_rep ].user() && option[ optE::optE_soft_rep ].value() ) {
 			fout << "ETABLE FA_STANDARD_SOFT" << std::endl;
 		}
 
-		if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+		if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 			/// Weight file output:
 			fout << "METHOD_WEIGHTS ref ";
 			for ( Size ii = 1; ii <= reference_energies_inner_loop_.size(); ++ii ) {
@@ -2806,7 +2806,7 @@ void IterativeOptEDriver::write_new_scorefile()
 			}
 		}
 
-		if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+		if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 			fout << "ref 1\n"; // DONT FORGET TO USE THE REFERENCE ENERGIES YOU JUST CALCULATED!
 		}
 
@@ -2930,7 +2930,7 @@ IterativeOptEDriver::free_weights_and_refEs_from_vars(
 ) const
 {
 	// conditional needed because if reference_energies is accessed when refE's are not being optimized, errors will occur
-	if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+	if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 			reference_energies[ ii ] = vars[ free_count_ + ii ]; // save them in non-negated form
 		}
@@ -2950,7 +2950,7 @@ ScoreFunctionOP
 IterativeOptEDriver::configure_new_scorefunction() const
 {
 	ScoreFunctionOP scorefxn( new ScoreFunction );
-	if ( option[ optE::optE_soft_rep ].user() ) {
+	if ( option[ optE::optE_soft_rep ].user() && option[ optE::optE_soft_rep ].value() ) {
 		methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
 		options.etable_type( FA_STANDARD_SOFT );
 		scorefxn->set_energy_method_options( options );
@@ -3234,7 +3234,7 @@ void IterativeOptEDriver::run_design_on_assigned_pdbs()
 		sfxn->set_method_weights( scoring::unfolded, wts_vector );
 	}
 
-	if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+	if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 		sfxn->set_method_weights( ref, reference_energies_inner_loop_ );
 		sfxn->set_weight( ref, 1.0 );
 	}
@@ -3281,7 +3281,7 @@ void IterativeOptEDriver::repack_assigned_pdbs()
 		}
 	}
 
-	if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+	if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 		// sfxn->energy_method_options().set_method_weights( ref, reference_energies_inner_loop_ );
 		sfxn->set_method_weights( ref, reference_energies_inner_loop_ );
 		sfxn->set_weight( ref, 1.0 );
@@ -3419,7 +3419,7 @@ bool IterativeOptEDriver::decide_if_sequence_recovery_improved()
 	/// if we're going to accept this weight set, prepare for the next round of sequence optimization
 	if ( accept_new_weight_set != 0 && MPI_rank_ == 0 ) {
 
-		if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+		if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 			before_minimization_reference_energies_ = reference_energies_inner_loop_;
 		}
 
@@ -3443,7 +3443,7 @@ bool IterativeOptEDriver::decide_if_sequence_recovery_improved()
 		// accept_new_weight_set is 0
 		//ronj accept the refEs BUT NOT THE OTHER FREE TERMS on the last iteration to avoid redoing the same entropy work
 		if ( inner_loop_counter_ == num_inner_iterations() && option[ optE::fit_reference_energies_to_aa_profile_recovery ] ) {
-			if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+			if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 				before_minimization_reference_energies_ = reference_energies_inner_loop_;
 			}
 		}
@@ -4785,7 +4785,7 @@ IterativeOptEDriver::measure_sequence_recovery(
 		// the native_poses_ vector1 gets set in compute_energies,
 		// but that doesn't get called if design_first is on the command line
 		// so either set the native_poses_ array or load the pdb correctly
-		if ( option[ optE::design_first ].user() && outer_loop_counter_ == 1 ) {
+		if ( option[ optE::design_first ].user() && option[ optE::design_first ].value() && outer_loop_counter_ == 1 ) {
 			TR << "measure_sequence_recovery(): design_first in use! pushing "
 				<< native_pdb_names[poseindex] << " onto native_poses_ vector." << std::endl;
 			core::pose::Pose native_pose;
@@ -5010,7 +5010,7 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 			utility::vector1< std::string > line_tokens = core::pack::task::tokenize_line( input_free );
 			if ( line_tokens.size() == 0 ) {
 				// noop
-			} else if ( line_tokens.size() == 1 && ! option[ optE::design_first ].user() ) {
+			} else if ( line_tokens.size() == 1 && ! option[ optE::design_first ].value() ) {
 				// free value randomized
 				ScoreType free_score_type = ScoreTypeManager::score_type_from_name( line_tokens[ 1 ] );
 				free_parameters[ free_score_type ] = numeric::random::rg().uniform();
@@ -5026,7 +5026,7 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 					}
 				}
 			} else {
-				if ( option[ optE::design_first ].user()  ) {
+				if ( option[ optE::design_first ].user() && option[ optE::design_first ].value() ) {
 					std::cerr << "\n\n";
 					std::cerr << "Error reading weight file line: " << free_line_number << " ";
 					for ( Size ii = 1; ii <= line_tokens.size(); ++ii ) {
@@ -5148,7 +5148,7 @@ IterativeOptEDriver::converged(
 {
 	using namespace core::scoring;
 
-	if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+	if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 		runtime_assert( reference_energies_prev.size() == reference_energies_curr.size() );
 	}
 
@@ -5158,7 +5158,7 @@ IterativeOptEDriver::converged(
 		}
 	}
 
-	if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+	if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 		for ( Size ii = 1; ii <= reference_energies_prev.size(); ++ii ) {
 			if ( std::abs( reference_energies_prev[ ii ] - reference_energies_curr[ ii ]) > 0.001 ) {
 				return false;
@@ -5173,7 +5173,7 @@ IterativeOptEDriver::converged(
 		}
 	}
 
-	if ( ! option[ optE::dont_use_reference_energies ].user() ) {
+	if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 		for ( Size ii = 1; ii <= reference_energies_prev.size(); ++ii ) {
 			TR <<  ii << " prev " << reference_energies_prev[ ii ] << " curr " << reference_energies_curr[ ii ] << std::endl;
 		}

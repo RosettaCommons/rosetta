@@ -561,7 +561,7 @@ void RemodelMover::apply( Pose & pose ) {
 				remodel_data.getLoopsToBuildFromBlueprint(ad_hoc_blueprint.str());
 			}
 		}
-		if ( option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() ) {
+		if ( option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].value() ) {
 			remodel_data = setup_remodel_data_for_loop_btw_parametric_components(pose);
 		}
 
@@ -604,7 +604,7 @@ void RemodelMover::apply( Pose & pose ) {
 		}
 		*/
 
-		if ( option[OptionKeys::remodel::repeat_structure].user() && !option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() ) {
+		if ( option[OptionKeys::remodel::repeat_structure].user() && !option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].value() ) {
 			//for cases involve jxn, need to make pose longer so manager won't complain
 			//about missing residues
 
@@ -628,7 +628,7 @@ void RemodelMover::apply( Pose & pose ) {
 				}
 			}
 		}
-		if ( option[OptionKeys::remodel::repeat_structure].user() && option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() ) {
+		if ( option[OptionKeys::remodel::repeat_structure].user() && option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].value() ) {
 			core::pose::PoseOP chain1 = pose.split_by_chain(1);
 			core::pose::PoseOP chain2 = pose.split_by_chain(2);
 			pose.delete_residue_range_slow(chain1->total_residue()+1,pose.total_residue());

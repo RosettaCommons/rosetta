@@ -1101,7 +1101,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		}
 		//initialize movemap for initial residues
 		for ( Size i = 1; i <= pose.size(); ++i ) {
-			if ( option[OptionKeys::remodel::staged_sampling::sample_over_loops].user() ) {
+			if ( option[OptionKeys::remodel::staged_sampling::sample_over_loops].value() ) {
 				Size ssIndex = i-1;
 				if ( ssIndex>=singleRepeat ) {
 					ssIndex = i-singleRepeat-1;
@@ -1116,7 +1116,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		ScoreFunctionOP sfxStage2_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
 		ScoreFunctionOP sfxStage3_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
 		ScoreFunctionOP sfxStage4_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
-		// if(option[OptionKeys::remodel::staged_sampling::fa_mode].user()){
+		// if(option[OptionKeys::remodel::staged_sampling::fa_mode].value()){
 		//  //experimental code
 		//  sfxStage1_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_fa" ) );
 		//  sfxStage3_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_fa" ) );
@@ -1195,9 +1195,9 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			abinitio_stage( pose, 3, movemap,sfxStage1_OP,3,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
 			abinitio_stage( pose, 9, movemapAll,sfxStage3_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
 		}
-		if ( option[OptionKeys::remodel::staged_sampling::fa_mode].user() ) {
+		if ( option[OptionKeys::remodel::staged_sampling::fa_mode].value() ) {
 			//compact the structure in centroid
-			if ( option[OptionKeys::remodel::staged_sampling::pre_centroid].user() ) {
+			if ( option[OptionKeys::remodel::staged_sampling::pre_centroid].value() ) {
 				abinitio_stage( pose, 9, movemap,sfxStage1_OP,1,stage1_cycles,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
 				abinitio_stage( pose, 3, movemap,sfxStage1_OP,1,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
 			}
@@ -1210,7 +1210,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			abinitio_stage( pose, 9, movemapAll,sfxStage3_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
 			abinitio_stage( pose, 3, movemapAll,sfxStage3_OP,3,stage4_cycles,sampleAllResidues,true,"3mers_allPos",false,fragScoreThreshold);
 		}
-		if ( !option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() && !option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() ) {
+		//JAB - This is probably buggy code.  A second option should be accessed here, but the code was not completed.  If you are getting odd behavior, email TJBrunette about this code.
+		if ( !option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].value() ) {
 			abinitio_stage( pose, 9, movemap,sfxStage1_OP,1,stage1_cycles,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
 			abinitio_stage( pose, 3, movemap,sfxStage2_OP,1,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
 			abinitio_stage( pose, 9, movemapAll,sfxStage3_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
@@ -1715,13 +1716,13 @@ void RemodelLoopMover::set_segment_stage(
 		// alter cutpoint to one before the end of the loop (either direction,
 		// based on option) if closure is bypassed.  this is already set in VLB,
 		// but reenforce here.
-		if ( option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
-			// if(option[OptionKeys::RemodelLoopMover::force_cutting_N].user()){
-			//  loop.set_cut(loop.start()+1); //1 because remodel needs one residue flanking
-			// }
-			// else {
-			// }
-		}
+		//if ( option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].value() ) {
+		// if(option[OptionKeys::RemodelLoopMover::force_cutting_N].value()){
+		//  loop.set_cut(loop.start()+1); //1 because remodel needs one residue flanking
+		// }
+		// else {
+		// }
+		//}
 
 		// movemap
 		MoveMap movemap;
@@ -1779,7 +1780,7 @@ void RemodelLoopMover::set_segment_stage(
 		ScoreFunctionOP sfxOP = mc.score_function().clone();
 		sfxOP->set_weight( core::scoring::linear_chainbreak, 1);
 
-		if ( option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
+		if ( option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].value() ) {
 			sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 		}
 
@@ -1834,7 +1835,7 @@ void RemodelLoopMover::set_segment_stage(
 			repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 
 			//pass every build through ccd for now
-			if ( !option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
+			if ( !option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].value() ) {
 				//ccd_moves( 50, repeat_pose_, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
 			}
 			repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
@@ -2323,7 +2324,7 @@ void RemodelLoopMover::abinitio_stage(
 	}
 	// Had fold and dock protocol put together but the library levels have issue with this
 	// protocols::symmetric_docking::SymDockProtocolOP symdock;
-	// if(sym_dock_moves && option[OptionKeys::remodel::staged_sampling::sym_move].user()){
+	// if(sym_dock_moves && option[OptionKeys::remodel::staged_sampling::sym_move].value()){
 	//  core::scoring::ScoreFunctionOP  docking_score_low  = ScoreFunctionFactory::create_score_function(  "interchain_cen" );
 	//  core::scoring::ScoreFunctionOP  docking_score_high  = ScoreFunctionFactory::create_score_function( "docking" );
 	//  symdock =  utility::pointer::make_shared< protocols::symmetric_docking::SymDockProtocol >( false, false, false, docking_score_low, docking_score_high );
@@ -2442,7 +2443,7 @@ void RemodelLoopMover::abinitio_stage(
 			}
 		}
 		// part of the sym dock protocol that was removed
-		// if(sym_dock_moves && option[OptionKeys::remodel::staged_sampling::sym_move].user()){
+		// if(sym_dock_moves && option[OptionKeys::remodel::staged_sampling::sym_move].value()){
 		//  symdock->apply(repeat_pose_);
 		// }
 	}
@@ -2799,7 +2800,7 @@ void RemodelLoopMover::simultaneous_stage(
 						CCDLoopClosureMover ccd_mover( l, utility::pointer::make_shared< MoveMap >( movemap ) );
 						ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 						if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-							if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() || option[OptionKeys::remodel::no_jumps].user() ) ) {
+							if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].value() || option[OptionKeys::remodel::no_jumps].value() ) ) {
 								ccd_mover.apply( repeat_pose_ );
 							}
 							repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
@@ -2945,7 +2946,7 @@ void RemodelLoopMover::independent_stage(
 		// based on option) if closure is bypassed.  this is already set in VLB,
 		// but reenforce here.
 		if ( option[OptionKeys::remodel::RemodelLoopMover::bypass_closure]() ) {
-			// if(option[OptionKeys::RemodelLoopMover::force_cutting_N].user()){
+			// if(option[OptionKeys::RemodelLoopMover::force_cutting_N].value()){
 			//  loop.set_cut(loop.start()+1); //1 because remodel needs one residue flanking
 			// }
 			// else {
@@ -3004,7 +3005,7 @@ void RemodelLoopMover::independent_stage(
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			}
 
-			if ( option[OptionKeys::remodel::no_jumps].user() && option[OptionKeys::remodel::two_chain_tree].user() ) {
+			if ( option[OptionKeys::remodel::no_jumps].value() && option[OptionKeys::remodel::two_chain_tree].user() ) {
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			}
 

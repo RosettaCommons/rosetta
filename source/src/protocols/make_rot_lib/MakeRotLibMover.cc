@@ -147,7 +147,7 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 	TR << "Clustering..." << std::endl;
 
 
-	if ( option[ k_medoids ].user() ) {
+	if ( option[ k_medoids ].value() ) {
 		seed_centroids( mrlod->get_semirotameric() );
 	}
 
@@ -163,7 +163,7 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 		++num_iter;
 		calc_all_dist();
 		clusters_changed = calc_rotamer_clusters();
-		if ( option[ k_medoids ].user() ) {
+		if ( option[ k_medoids ].value() ) {
 			centroids_changed = calc_medoids();
 		} else {
 			centroids_changed = calc_centroids();

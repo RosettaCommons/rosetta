@@ -94,7 +94,7 @@ void DarcParticleSwarmMinimizer::score_all_particles(core::optimization::Multifu
 		core::Size conformer=((core::Size)(floor(vars[7])) % nconformers);
 		core::conformation::ResidueCOP ligand_rsd = pfp_.select_conf_and_move_ligand_( nfp_, origin_offset, vars[4], vars[5], vars[6], conformer );
 		fill_atom_arrays_(j-1, ligand_rsd, atoms, atom_maxmin_phipsi);
-		if ( !option[ OptionKeys::fingerprint::darc_shape_only ].user() ) {
+		if ( !option[ OptionKeys::fingerprint::darc_shape_only ].value() ) {
 			core::pose::Pose ligand_pose_for_elec_calc = pfp_.get_oriented_pose( nfp_, vars[4], vars[5], vars[6], origin_offset, conformer );
 			fill_atom_arrays_for_electrostatics_(j-1, ligand_pose_for_elec_calc, eatoms );
 		}
@@ -104,7 +104,7 @@ void DarcParticleSwarmMinimizer::score_all_particles(core::optimization::Multifu
 		core::Real particle_score(0.);
 		particle_score = DarcPSO_fp_compare_( j-1, missing_pt_, steric_, extra_pt_, atoms, atom_maxmin_phipsi );
 		//calculate Electorstatics score and add to DARC-shape-only score
-		if ( !option[ OptionKeys::fingerprint::darc_shape_only ].user() ) {
+		if ( !option[ OptionKeys::fingerprint::darc_shape_only ].value() ) {
 			std::vector < std::vector < std::vector <core::Real> > > espGrid = nfp_.espGrid_;
 			std::vector < std::vector < std::vector <ElectrostaticpotentialGrid::PtType> > > typGrid = nfp_.typGrid_;
 			core::Real spacing = nfp_.esp_spacing_;

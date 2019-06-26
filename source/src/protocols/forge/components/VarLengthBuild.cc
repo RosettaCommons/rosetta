@@ -800,7 +800,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		cstOP->enable_constraint_scoreterms(sfx_);
 	}
 
-	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() && !basic::options::option[basic::options::OptionKeys::remodel::cst_fa_only].user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() && !basic::options::option[basic::options::OptionKeys::remodel::cst_fa_only].value() ) {
 		//safety
 		//pose.remove_constraints();
 

@@ -84,19 +84,19 @@ void RotamerDumpMover::apply(core::pose::Pose & pose)
 
 	std::list<std::string> job_data;
 
-	if ( basic::options::option[basic::options::OptionKeys::rotamerdump::one_body].user() ) {
+	if ( basic::options::option[basic::options::OptionKeys::rotamerdump::one_body].value() ) {
 		RotamerTracer << "Generating one body energy table"<<std::endl;
 		job_data.push_back(get_onebody_energy_table(ig,rotamer_sets));
 	}
-	if ( basic::options::option[basic::options::OptionKeys::rotamerdump::xyz].user() ) {
+	if ( basic::options::option[basic::options::OptionKeys::rotamerdump::xyz].value() ) {
 		RotamerTracer << "Generating XYZ rotamer table"<<std::endl;
 		job_data.push_back(get_xyz_coord_table(rotamer_sets));
 	}
-	if ( basic::options::option[basic::options::OptionKeys::rotamerdump::two_body].user() ) {
+	if ( basic::options::option[basic::options::OptionKeys::rotamerdump::two_body].value() ) {
 		RotamerTracer << "Generating two body energy table"<<std::endl;
 		job_data.push_back(get_twobody_energy_table(ig,rotamer_sets));
 	}
-	if ( basic::options::option[basic::options::OptionKeys::rotamerdump::annealer].user() ) {
+	if ( basic::options::option[basic::options::OptionKeys::rotamerdump::annealer].value() ) {
 		RotamerTracer <<"Running Annealer" <<std::endl;
 		job_data.push_back(get_annealer_pick_table(ig,rotamer_sets,pose,packer_task));
 	}
