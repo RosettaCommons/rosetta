@@ -108,6 +108,9 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         enzyme_design          = 'numpy matplotlib',
         cofactor_binding_sites = 'numpy matplotlib',
 
+        mp_f19_energy_landscape = 'numpy matplotlib scipy', 
+        mp_f19_sequence_recovery = 'numpy matplotlib', 
+
         mp_dock                = 'numpy matplotlib',
         mp_relax               = 'numpy matplotlib',
         mp_symdock             = 'numpy matplotlib',

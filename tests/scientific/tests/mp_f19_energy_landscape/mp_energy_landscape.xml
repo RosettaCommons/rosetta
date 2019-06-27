@@ -1,0 +1,23 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="s" weights="%%sfxn_weights%%"/>
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+			<RestrictToRepacking name="rtrp"/>
+			<ExtraRotamersGeneric name="extra_chi" ex1="1" ex2="1" extrachi_cutoff="0"/>
+	</TASKOPERATIONS>
+	<MOVERS>
+		<AddMembraneMover name="add_memb" />
+		<TransformIntoMembraneMover name="transform_into_memb" />
+		<PackRotamersMover name="pack_rotamers" scorefxn="s" task_operations="rtrp"/>
+		<MinMover name="minimize_struc" scorefxn="s" chi="1" bb="1" jump="0" type="dfpmin_armijo_nonmonotone" tolerance="0.01" />
+		<MembraneEnergyLandscapeSampler name="landscape_test" scorefxn="s" interface="0" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name="add_memb"/>
+		<Add mover_name="transform_into_memb"/>
+		<Add mover_name="pack_rotamers"/>
+		<Add mover_name="minimize_struc"/>
+		<Add mover_name="landscape_test"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
