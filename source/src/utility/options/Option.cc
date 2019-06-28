@@ -10,6 +10,7 @@
 /// @file   utility/options/Option.cc
 /// @brief  Auto-generated serialization template functions
 /// @author Andrew Leaver-Fay (aleavefay@gmail.com)
+/// @author Modified by Vikram K. Mulligan (vmulligan@flatironinstitute.org) for thread-safety.
 
 // Unit headers
 #include <utility/options/Option.hh>
@@ -27,29 +28,39 @@
 template< class Archive >
 void
 utility::options::Option::save( Archive & arc ) const {
-	arc( CEREAL_NVP( is_group_ ) ); // _Bool
+
 #ifdef MULTI_THREADED
-	bool been_accessed( been_accessed_.load() );
+	bool is_group( is_group_ );
+	bool been_accessed( been_accessed_ );
+	bool restricted_access( restricted_access_ );
+	arc( CEREAL_NVP( is_group ) ); // _Bool
 	arc( CEREAL_NVP( been_accessed ) ); // _Bool
+	arc( CEREAL_NVP( restricted_access ) ); // _Bool
 #else
+	arc( CEREAL_NVP( is_group_ ) ); // _Bool
 	arc( CEREAL_NVP( been_accessed_ ) ); // _Bool
-#endif
 	arc( CEREAL_NVP( restricted_access_ ) ); // _Bool
+#endif
 }
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
 utility::options::Option::load( Archive & arc ) {
-	arc( is_group_ ); // _Bool
-	bool been_accessed;
-	arc( been_accessed ); // _Bool
+
 #ifdef MULTI_THREADED
-	been_accessed_.store(been_accessed);
-#else
+	bool is_group, been_accessed, restricted_access;
+	arc( is_group ); // _Bool
+	arc( been_accessed ); // _Bool
+	arc( restricted_access ); // _Bool
+	is_group_ = is_group;
 	been_accessed_ = been_accessed;
-#endif
+	restricted_access_ = restricted_access;
+#else
+	arc( is_group_ ); // _Bool
+	arc( been_accessed_);
 	arc( restricted_access_ ); // _Bool
+#endif
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( utility::options::Option );

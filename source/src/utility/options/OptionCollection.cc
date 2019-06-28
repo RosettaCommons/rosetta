@@ -11,7 +11,7 @@
 /// @brief  Program options collection
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
 /// @author Modified by Sergey Lyskov (Sergey.Lyskov@jhu.edu)
-
+/// @author Modified by Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- added thread safety.
 
 // Unit headers
 #include <utility/options/OptionCollection.hh>
@@ -48,6 +48,7 @@
 // Cereal headers
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/string.hpp>
+#include <cereal/types/vector.hpp>
 #endif // SERIALIZATION
 
 namespace utility {
@@ -62,24 +63,78 @@ void std_exit_wrapper( const int error_code ){
 	throw CREATE_EXCEPTION(utility::excn::Exception, "std::exit() was called" );
 }
 
+/// @brief Copy constructor.
+/// @details Needed because the mutex can't be copied.
+OptionCollection::OptionCollection(
+	OptionCollection const & src
+) :
+	utility::pointer::ReferenceCount( src )
+{
+	(*this) = src;
+}
 
-/// @brief Flag indicating that list of accessed option should be printed when destructor of OptionCollection is called.
-bool OptionCollection::show_accessed_options_ = false;
-
-/// @brief Flag indicating that list of user set but not accessed option should be printed when destructor of OptionCollection is called.
-bool OptionCollection::show_unused_options_ = false;
-
-std::vector< OptionKey const *> OptionCollection::relevant_;
-
-
+/// @brief Destructor.
 OptionCollection::~OptionCollection()
 {
+#ifdef MULTI_THREADED
+	bool show_accessed_options_val, show_unused_options_val;
+	{
+		//Lock mutex and copy from globals.
+		utility::thread::ReadLockGuard readlock( relevant_accessed_unused_mutex_ );
+		show_accessed_options_val = show_accessed_options_;
+		show_unused_options_val = show_unused_options_;
+	}
+	if ( show_accessed_options_val ) show_accessed_options(std::cout);
+	if ( show_unused_options_val ) show_unused_options(std::cout);
+#else
 	if ( show_accessed_options_ ) show_accessed_options(std::cout);
 	if ( show_unused_options_ ) show_unused_options(std::cout);
+#endif
+}
+
+/// @brief Copy assignment operator.
+/// @details Needed because the mutext can't be copied.
+OptionCollection &
+OptionCollection::operator=(
+	OptionCollection const & src
+) {
+	if ( this == &src ) return *this;
+	{
+#ifdef MULTI_THREADED
+		utility::thread::PairedReadLockWriteLockGuard( src.mutex_ /*Gets read-lock.*/, mutex_ /*Gets write-lock.*/ );
+#endif
+		booleans_ = src.booleans_;
+		integers_ = src.integers_;
+		reals_ = src.reals_;
+		strings_ = src.strings_;
+		files_ = src.files_;
+		paths_ = src.paths_;
+		anys_ = src.anys_;
+		boolean_vectors_ = src.boolean_vectors_;
+		integer_vectors_ = src.integer_vectors_;
+		real_vectors_ = src.real_vectors_;
+		residue_chain_vectors_ = src.residue_chain_vectors_;
+		string_vectors_ = src.string_vectors_;
+		file_vectors_ = src.file_vectors_;
+		path_vectors_ = src.path_vectors_;
+		any_vectors_ = src.any_vectors_;
+		all_ = src.all_;
+		argv_copy_ = src.argv_copy_;
+	} {
+#ifdef MULTI_THREADED
+		utility::thread::PairedReadLockWriteLockGuard( src.relevant_accessed_unused_mutex_ /*Gets read-lock.*/, relevant_accessed_unused_mutex_ /*Gets write-lock.*/ );
+#endif
+		relevant_ = src.relevant_;
+		show_accessed_options_ = src.show_accessed_options_;
+		show_unused_options_ = src.show_unused_options_;
+	}
+	return *this;
 }
 
 
-/// @brief Add the built-in options
+/// @brief Add the built-in options.
+/// @note This function calls only threadsafe functions (that lock appropriate mutexes), so it doesn't
+/// need to lock any mutexes itself.
 void
 OptionCollection::add_built_in_options()
 {
@@ -105,8 +160,11 @@ OptionCollection::add_built_in_options()
 
 
 /// @brief Checks is option has been registered as relevant.
-bool
+/*static*/ bool
 OptionCollection::is_relevant( OptionKey const & key ){
+#ifdef MULTI_THREADED
+	utility::thread::ReadLockGuard readlock( relevant_accessed_unused_mutex_ );
+#endif
 	for ( auto & i : relevant_ ) {
 		if ( i->id() == key.id() ) return true;
 	}
@@ -129,6 +187,8 @@ OptionCollection::is_relevant( OptionKey const & key ){
 
 
 /// @brief Check for problems in the option specifications
+/// @note This function calls only threadsafe functions (that lock appropriate mutexes), so it doesn't
+/// need to lock any mutexes itself.
 void
 OptionCollection::check_specs() const
 {
@@ -160,10 +220,15 @@ OptionCollection::load(
 	if ( args.size() == 0 ) return;
 	// Put the arguments strings in a list
 	ValueStrings arg_strings;
-	for ( auto const & arg : args ) {
-		arg_strings.push_back( arg );
-		argv_copy_ += " " + arg;
-	}
+	{ //Scope for possible mutex lock
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
+		for ( auto const & arg : args ) {
+			arg_strings.push_back( arg );
+			argv_copy_ += " " + arg;
+		}
+	} //Mutex lock scope
 
 	load( "", arg_strings, free_args);
 } // load
@@ -181,16 +246,23 @@ OptionCollection::load(
 
 	// Put the arguments strings in a list
 	ValueStrings arg_strings;
-	for ( int iarg = 1; iarg < argc; ++iarg ) {
-		arg_strings.emplace_back(argv[ iarg ] );
-		std::string temp( argv[ iarg ] );
-		argv_copy_ += " " + temp;
+	{ //Mutex scope
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
+		for ( int iarg = 1; iarg < argc; ++iarg ) {
+			arg_strings.emplace_back(argv[ iarg ] );
+			std::string temp( argv[ iarg ] );
+			argv_copy_ += " " + temp;
+		}
 	}
 
 	load( std::string(argv[0]), arg_strings, free_args);
 } // load
 
 
+/// @note This function calls only threadsafe functions (that lock appropriate mutexes), so it doesn't
+/// need to lock any mutexes itself.
 void
 OptionCollection::load(
 	std::string executable_name, // usually argv[ 0 ]
@@ -300,7 +372,14 @@ OptionCollection::load(
 
 
 /// @brief Load all options in a flags file
-void OptionCollection::load_options_from_stream(std::istream& stream, std::string const & file_string, std::string const & cid, bool print_lines /* false */) {
+/// @note This function calls only threadsafe functions (that lock appropriate mutexes), so it doesn't
+/// need to lock any mutexes itself.
+void OptionCollection::load_options_from_stream(
+	std::istream& stream,
+	std::string const & file_string,
+	std::string const & cid,
+	bool print_lines /* false */
+) {
 	using std::string;
 	using size_type = std::string::size_type;
 
@@ -445,6 +524,8 @@ void OptionCollection::load_options_from_stream(std::istream& stream, std::strin
 }
 
 /// @brief Load all options in a flags file
+/// @note This function calls only threadsafe functions (that lock appropriate mutexes), so it doesn't
+/// need to lock any mutexes itself.
 void OptionCollection::load_options_from_file(std::string const & file_string, std::string const & cid){
 	try {
 		load_options_from_file_exception( file_string, cid );
@@ -454,6 +535,8 @@ void OptionCollection::load_options_from_file(std::string const & file_string, s
 }
 
 /// @brief Load all options in a flags file
+/// @note This function calls only threadsafe functions (that lock appropriate mutexes), so it doesn't
+/// need to lock any mutexes itself.
 void OptionCollection::load_options_from_file_exception(std::string const & file_string, std::string const & cid){
 
 	utility::io::izstream stream( file_string.c_str() );
@@ -465,6 +548,8 @@ void OptionCollection::load_options_from_file_exception(std::string const & file
 
 
 /// @brief Load one option from user specified file
+/// @note This function calls only threadsafe functions (that lock appropriate mutexes), so it doesn't
+/// need to lock any mutexes itself.
 void OptionCollection::load_option_from_file(
 	std::string const & arg_string_, // Lead argument string
 	ValueStrings & arg_strings, // Argument strings: Value string(s) in front
@@ -514,6 +599,8 @@ void OptionCollection::load_option_from_file(
 
 
 /// @brief Check for problems in the option values
+/// @note This function calls only threadsafe functions (that lock appropriate mutexes), so it doesn't
+/// need to lock any mutexes itself.
 void
 OptionCollection::check_values() const
 {
@@ -534,7 +621,8 @@ OptionCollection::check_values() const
 }
 
 
-
+/// @note This function calls only threadsafe functions (that lock appropriate mutexes), so it doesn't
+/// need to lock any mutexes itself.
 void OptionCollection::show_option_help(OptionKey const &key, std::string &group, std::ostream & stream )
 {
 	using std::string;
@@ -568,6 +656,9 @@ OptionCollection::show_help( std::ostream & stream )
 	stream << "\nOptions:   [Specify on command line or in @file]\n";
 	string group; // Previous option group name
 
+#ifdef MULTI_THREADED
+	utility::thread::ReadLockGuard readlock( relevant_accessed_unused_mutex_ );
+#endif
 	if ( relevant_.size() > 0 ) {
 		stream << "\nShowing only relevant options...";
 		for ( auto & i : relevant_ ) {
@@ -586,6 +677,8 @@ OptionCollection::show_help( std::ostream & stream )
 #define COL2 25
 #define COL3 30
 
+/// @note This function calls only threadsafe functions (that lock appropriate mutexes), so it doesn't
+/// need to lock any mutexes itself.
 void OptionCollection::show_option_help_hier(OptionKey const &key, std::string &group, std::ostream & stream )
 {
 	using std::string;
@@ -617,41 +710,6 @@ void OptionCollection::show_option_help_hier(OptionKey const &key, std::string &
 				<< " |" + A(4,opt.type_string())+ "| "
 				<<  wrapped( opt.description(), 2, COL3, empty_separator.str() ) << "\n";
 		}
-		//stream << RJ( COL1, "" ) << " | " << A( COL2, "" ) << " | " << A(3,"") << " | \n";
-
-
-		/*
-		size_type const d( 2 + opt.id().length() + 3 ); // Description indent spaces
-		stream << '\n' // Spacer line between groups
-		<< wrapped(
-		" -" + opt.id() + opt.equals_string() + " " +
-		opt.default_string() +
-		" |" + opt.type_string()+ "| " +
-		// opt.description() +
-		// Thu Jun 14 12:14:54 EDT 2007 @718 /Internet Time/
-		// moved from descripton -> short_description
-		opt.short_description() +
-		space_prefixed( opt.legal_string(), 2 )
-		//+ space_prefixed( opt.default_string(), 2 )
-		,
-		std::min( d, size_type( 20 ) ) )
-		<< '\n';
-		group = opt_group;
-		} else { // Indent and remove prefix in common with previous id
-		//size_type const l( n_part( opt.id() ) - 1 ); // Indent level
-		//size_type const d( l + 2 + suffix( opt.id() ).length() + 3 ); // Description indent spaces
-		stream
-		<< wrapped(
-		string( l, ' ' ) + " -" + suffix( opt.id() ) + "   " +
-		// Opt.description() +
-		// Thu Jun 14 12:14:54 EDT 2007 @718 /Internet Time/
-		// moved from descripton -> short_description
-		opt.short_description() +
-		space_prefixed( opt.legal_string(), 2 ) +
-		space_prefixed( opt.default_string(), 2 ),
-		std::min( d, size_type( 20 ) ) )
-		<< '\n'; */
-
 	}
 }
 
@@ -663,6 +721,11 @@ OptionCollection::show_help_hier( std::ostream & stream )
 	using namespace ObjexxFCL::format;
 	stream << "\nOptions:   [Specify on command line or in @file]\n";
 	string group; // Previous option group name
+
+#ifdef MULTI_THREADED
+	utility::thread::ReadLockGuard readlock( relevant_accessed_unused_mutex_ );
+#endif
+
 	if ( relevant_.size() > 0 ) {
 		stream << "\nShowing only relevant options...\n\n\n";
 		stream << RJ( COL1, "Option" ) << " | " << A( COL2, " Setting " ) << " |" << A(4,"Type") << "| "  << LJ( COL3, " Description" ) << "\n";
@@ -866,6 +929,10 @@ void OptionCollection::show_accessed_options(std::ostream & stream) const {
 
 	stream << "OptionCollection::show_accessed_options flag has been set, listing all accessed options..." << std::endl;
 
+#ifdef MULTI_THREADED
+	utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
+
 	std::vector< std::string > sv;
 	show_accessed_options_T(booleans_.begin(),        booleans_.end(), sv);
 	show_accessed_options_T(integers_.begin(),        integers_.end(), sv);
@@ -909,6 +976,10 @@ void show_unused_options_T(T i, T e, std::vector< std::string > &sv) {
 void OptionCollection::show_unused_options(std::ostream & stream) const {
 	using std::string;
 
+#ifdef MULTI_THREADED
+	utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
+
 	std::vector< std::string > sv;
 	show_unused_options_T(booleans_.begin(),        booleans_.end(), sv);
 	show_unused_options_T(integers_.begin(),        integers_.end(), sv);
@@ -937,6 +1008,9 @@ void OptionCollection::show_unused_options(std::ostream & stream) const {
 
 std::string
 OptionCollection::get_argv() const {
+#ifdef MULTI_THREADED
+	utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 	return argv_copy_;
 }
 
@@ -1236,7 +1310,7 @@ OptionCollection::find_key_cl(
 		bool done( false );
 		while ( ! done ) {
 			string const tid( merged( pid, key_string ) );
-			//std::cout << __LINE__ << " tid: " << tid << std::endl;
+			//std::cout << _LINE_ << " tid: " << tid << std::endl;
 			if ( OptionKeys::has( tid ) ) { // Valid option identifier
 				if ( ! kid.empty() ) { // Already found a match
 					if ( tid != kid ) { // Different id match
@@ -1274,15 +1348,15 @@ OptionCollection::find_key_cl(
 			}
 			if ( ! sid.empty() ) {
 				size_type p_part( n_part_prefix_match( cid, sid ) );
-				bool is_relevant_ = is_relevant( key );
-				if ( !found_relevant && ( p_part > m_part || is_relevant_ ) ) { // New best prefix match level
+				bool this_is_relevant = is_relevant( key );
+				if ( !found_relevant && ( p_part > m_part || this_is_relevant ) ) { // New best prefix match level
 					m_part = p_part;
 					n_best = 0;
 					possible_matches.clear();
 					bid = sid;
 				}
-				if ( is_relevant_ ) found_relevant = true;
-				if ( (!found_relevant && p_part == m_part) || is_relevant_ ) { // Another match at this prefix match level
+				if ( this_is_relevant ) found_relevant = true;
+				if ( (!found_relevant && p_part == m_part) || this_is_relevant ) { // Another match at this prefix match level
 					++n_best;
 					possible_matches.push_back(sid);
 					if ( bid.empty() ) bid = sid; // First match at zero level
@@ -1661,6 +1735,9 @@ OptionCollection::wrapped(
 template< class Archive >
 void
 utility::options::OptionCollection::save( Archive & arc ) const {
+#ifdef MULTI_THREADED
+	utility::thread::ReadLockGuard readlock( mutex_ );
+#endif
 	arc( CEREAL_NVP( booleans_ ) ); // Booleans
 	arc( CEREAL_NVP( integers_ ) ); // Integers
 	arc( CEREAL_NVP( reals_ ) ); // Reals
@@ -1679,13 +1756,20 @@ utility::options::OptionCollection::save( Archive & arc ) const {
 	//arc( CEREAL_NVP( any_vectors_ ) ); // AnyVectors
 	// EXEMPT any_vectors_
 	arc( CEREAL_NVP( all_ ) ); // All
+	// EXEMPT relevant_
+	//arc( CEREAL_NVP( relevant_ ) ); //CANNOT ARCHIVE relevant_; nor should we.
 	arc( CEREAL_NVP( argv_copy_ ) ); // std::string
+	arc( CEREAL_NVP( show_accessed_options_ ) );
+	arc( CEREAL_NVP( show_unused_options_ ) );
 }
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
 utility::options::OptionCollection::load( Archive & arc ) {
+#ifdef MULTI_THREADED
+	utility::thread::WriteLockGuard writelock( mutex_ );
+#endif
 	arc( booleans_ ); // Booleans
 	arc( integers_ ); // Integers
 	arc( reals_ ); // Reals
@@ -1704,7 +1788,11 @@ utility::options::OptionCollection::load( Archive & arc ) {
 	// EXEMPT any_vectors_
 	//arc( any_vectors_ ); // AnyVectors
 	arc( all_ ); // All
+	// EXEMPT relevant_
+	//arc( relevant_ ); //CANNOT ARCHIVE relevant_; nor should we.
 	arc( argv_copy_ ); // std::string
+	arc( show_accessed_options_ );
+	arc( show_unused_options_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( utility::options::OptionCollection );

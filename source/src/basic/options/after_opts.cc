@@ -41,7 +41,7 @@ namespace options {
 OptionKey const &
 key( std::string const & str )
 {
-	return OptionKeys::key( OptionCollection::find_key_cl( str, std::string(), true ) );
+	return OptionKeys::key( option.find_key_cl( str, std::string(), true ) );
 }
 
 

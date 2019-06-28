@@ -894,8 +894,8 @@ init_complex_options()
 	process();
 
 	// Set option system global
-	OptionCollection::set_show_accessed_options_flag( option[ out::show_accessed_options ].value() );
-	OptionCollection::set_show_unused_options_flag( option[ out::show_unused_options ].value() );
+	basic::options::option.set_show_accessed_options_flag( option[ out::show_accessed_options ].value() );
+	basic::options::option.set_show_unused_options_flag( option[ out::show_unused_options ].value() );
 
 	// Immediate stop if requested by options (used for testing purposes).
 	if ( option[ testing::HCF ]() ) {
