@@ -24,4 +24,4 @@
 	url = git@github.com:RosettaCommons/scientific_benchmark_data.git
 [submodule "source/external/mmtf/mmtf-cpp"]
 	path = source/external/mmtf/mmtf-cpp
-	url = https://github.com/RosettaCommons/mmtf-cpp.git
+	url = git@github.com:RosettaCommons/mmtf-cpp.git
