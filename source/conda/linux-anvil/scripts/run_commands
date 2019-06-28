@@ -22,7 +22,7 @@ curl -s -L https://repo.continuum.io/miniconda/$condapkg > miniconda.sh && \
     bash miniconda.sh -b -p /opt/conda && \
     rm miniconda.sh
 
-touch /opt/conda/conda-meta/pinned && \
+echo "conda =4.6" >> /opt/conda/conda-meta/pinned && \
     export PATH=/opt/conda/bin:$PATH && \
     conda config --set show_channel_urls True && \
     conda update --all --yes && \
