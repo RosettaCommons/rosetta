@@ -1004,21 +1004,22 @@ ConstraintInfo::define_receptor_phores( utility::vector1< std::pair< core::Real,
 		[&](std::pair<core::Real,core::Size> const &a,std::pair<core::Real,core::Size> const &b)
 		{ return a.first < b.first; } );
 
-	// calculate Zscore
-	core::Real meanD( 0.0 ), sdevD( 1.0e-6 ), meanA( 0.0 ), sdevA( 1.0e-6 );
-	if ( Vdonor_sort.size() > 1 ) {
-		for ( auto a = Vdonor_sort.begin(); a != Vdonor_sort.end(); ++a ) meanD += a->first;
-		meanD /= Vdonor_sort.size();
-		for ( auto a = Vdonor_sort.begin(); a != Vdonor_sort.end(); ++a ) sdevD += (a->first-meanD)*(a->first-meanD);
-		sdevD /= Vdonor_sort.size(); sdevD = std::sqrt(sdevD);
-	}
+	// None of these values are being used
+	//// calculate Zscore
+	//core::Real meanD( 0.0 ), sdevD( 1.0e-6 ), meanA( 0.0 ), sdevA( 1.0e-6 );
+	//if ( Vdonor_sort.size() > 1 ) {
+	// for ( auto a = Vdonor_sort.begin(); a != Vdonor_sort.end(); ++a ) meanD += a->first;
+	// meanD /= Vdonor_sort.size();
+	// for ( auto a = Vdonor_sort.begin(); a != Vdonor_sort.end(); ++a ) sdevD += (a->first-meanD)*(a->first-meanD);
+	// sdevD /= Vdonor_sort.size(); sdevD = std::sqrt(sdevD);
+	//}
 
-	if ( Vacceptor_sort.size() > 1 ) {
-		for ( auto a = Vacceptor_sort.begin(); a != Vacceptor_sort.end(); ++a ) meanA += a->first;
-		meanA /= Vacceptor_sort.size();
-		for ( auto a = Vacceptor_sort.begin(); a != Vacceptor_sort.end(); ++a ) sdevA += (a->first-meanA)*(a->first-meanA);
-		sdevA /= Vacceptor_sort.size(); sdevA = std::sqrt(sdevA);
-	}
+	//if ( Vacceptor_sort.size() > 1 ) {
+	// for ( auto a = Vacceptor_sort.begin(); a != Vacceptor_sort.end(); ++a ) meanA += a->first;
+	// meanA /= Vacceptor_sort.size();
+	// for ( auto a = Vacceptor_sort.begin(); a != Vacceptor_sort.end(); ++a ) sdevA += (a->first-meanA)*(a->first-meanA);
+	// sdevA /= Vacceptor_sort.size(); sdevA = std::sqrt(sdevA);
+	//}
 
 	// put into a shared store; set inverse Zscore so that it ranges +0.5~+1.0 & more positive the better
 	utility::vector1< std::pair< core::Real, core::Size > > Vtotal_sort;
