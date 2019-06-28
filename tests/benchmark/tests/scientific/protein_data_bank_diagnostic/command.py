@@ -268,7 +268,7 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
         explanation = '' if state == _S_passed_ else '<p>Test marked as <b>FAILED</b> due to following errors:</p>'
 
 
-        # Generating new blacklist based on PBD's in `exceed_timeout` and old blacklist
+        # Generating new blacklist based on PDB's in `exceed_timeout` and old blacklist
         blacklist = get_blacklist(rosetta_dir, mode)['ignore']
         for p in results['failed'].get('exceed_timeout', []): blacklist.append(p)
         with open(f'{working_dir}/blacklist.{mode}.new.json', 'w') as f: json.dump( dict(ignore = sorted( set(blacklist) ) ), f, sort_keys=True, indent=2)
@@ -299,9 +299,24 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
             with open(f'{working_dir}/pdbs.{c}.html', 'w') as f:
                 f.write(_code_html_template_.format(code = c, logs = ''.join( ( f'<a href={log}>{pdb.upper()}</a>\n' for pdb, log in results['failed'][c].items() ) ) ) )
 
+        # Here we overwrite pass/fail status with a percentage bar.
+        # The original design of this code was very strict, failure occurred if any
+        # PDB failed that used to pass.  This is too fragile.
+        # Now we impose that 5% of the total number of PDBs can fail before failing
+        # the whole test.
+        # We leave all preceding logic in place to make the detailed HTML report.
+        # Hard failures like a compilation problem should have already returned by now
+        # so resetting `state` is ok.
+        threshold_percent = 0.05  # up to 5% failure allowed
+        threshold = float(len(all_pdbs)) * threshold_percent
+        if (len_failed > threshold):
+            state = _S_failed_
+        else:
+            state = _S_passed_
+
 
         return { _StateKey_  : state, _ResultsKey_ : {},
-                 _LogKey_ : f'Protein Data Bank Diagnostic is finished.\n{len(results["passed"]):,} PDB files tested - {len_failed:,} structures failed.\nPlease see HTML output for details.',
+                 _LogKey_ : f'Protein Data Bank Diagnostic is finished.\n{len(results["passed"]):,} PDB files tested - {len_failed:,} structures failed.\nPlease see HTML output for details.  The test passes if more than 95% of PDBs pass.',
                  _IgnoreKey_ : [ os.path.basename(hpc_logs) + '/' + f for f in os.listdir(hpc_logs)]
         }
 
