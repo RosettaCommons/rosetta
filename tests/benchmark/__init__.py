@@ -13,7 +13,7 @@
 ## @author Sergey Lyskov
 
 
-import json, inspect, os.path
+import sys, json, inspect, os.path, shutil
 
 import benchmark.hpc_drivers
 
@@ -43,7 +43,7 @@ def error(code, message):
     '''
     with open(_multi_step_error_, 'w') as f:
         r = { _StateKey_ : _S_build_failed_,  _ResultsKey_ : {}, _LogKey_ : message}
-        f.write( json.dump(r, f, sort_keys=True, indent=2) )
+        json.dump(r, f, sort_keys=True, indent=2)
 
     sys.exit(1)
 
@@ -59,13 +59,12 @@ def build_and_install_pyrosetta(mode='Release'):
     c = config()
 
     pyrosetta_package_path = c['python_virtual_environment']['root'] + '/.pyrosetta_package'
+    if os.path.isdir(pyrosetta_package_path): shutil.rmtree(pyrosetta_package_path)
 
     options = f'--create-package {pyrosetta_package_path}' + ( ' -sd' if c.get('skip_compile', False) else '' )
     r = benchmark.tests.build_pyrosetta(rosetta_dir=c['rosetta_dir'], platform=c['platform'], jobs=c['cpu_count'], config=c, mode=mode, options=options, skip_compile=False)
 
     if not r.exitcode: execute('Installing PyRosetta...', f'cd {pyrosetta_package_path}/setup && {c["python_virtual_environment"]["python"]} setup.py install')
-
-    #if not c['emulation']: shutil.rmtree(pyrosetta_package_path)
 
     return r.exitcode, r.output, r.command_line
 

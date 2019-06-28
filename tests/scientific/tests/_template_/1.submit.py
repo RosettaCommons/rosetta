@@ -82,7 +82,7 @@ hpc_driver.wait_until_complete(hpc_job_ids, silent=True)
 
 # Submitting PyRosetta job
 hpc_job_ids.append( hpc_driver.submit_hpc_job(
-    name=f'{testname}-{PyRosetta-example-job}',
+    name=f'{testname}-PyRosetta-example-job',
 
     #==> EDIT HERE, substitute <MyPythonScript.py> and <script-arguments-if-any> with name of your PyRosetta Python script (located inside your test dir) and command line flags for it
     executable = config["python_virtual_environment"]["python"],
