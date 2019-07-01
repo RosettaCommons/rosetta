@@ -117,6 +117,8 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         mp_lipid_acc           = 'numpy matplotlib',
         mp_domain_assembly     = 'numpy matplotlib',
 
+        mp_f19_decoy_discrimination = 'numpy matplotlib',
+
         sewing                 = 'numpy matplotlib',
 
         antibody_grafting      = 'numpy matplotlib',
