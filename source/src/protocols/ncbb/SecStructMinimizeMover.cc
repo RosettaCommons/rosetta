@@ -111,7 +111,7 @@ SecStructMinimizeMover::apply( core::pose::Pose & pose )
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	MinimizerOptions minoptions( option[ run::min_type ], 0.0001, true, false, false ); // investigate the final bools?
+	MinimizerOptions minoptions( option[ run::min_type ], 0.000000001, true, true, true ); // investigate the final bools?
 	pose.energies().set_use_nblist( pose, min_map.domain_map(), false );
 	Minimizer minimizer( ssmmf, minoptions );
 

@@ -251,11 +251,29 @@ SecStructFinder::uniq_refers_to_beta (
 }
 
 void
-SecStructFinder::initialize_rtype_vector( utility::vector1< ResidueType > & restypes ) {
-
+SecStructFinder::initialize_pose( core::pose::Pose & pose ) {
 	core::chemical::ResidueTypeSetCOP residue_set_cap = core::chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
-	for ( Size resi = 0; resi < min_length_; ++resi ) {
+	std::string name;
+	std::string npatch;
+	std::string cpatch;
+
+	if ( alpha_beta_pattern_[ 0 ] == 'B' ) {
+		name = alpha_to_beta( residue_ );
+		npatch = ":AcetylatedNtermProteinFull";
+	} else if ( alpha_beta_pattern_[ 0 ] == 'A' ) {
+		name = residue_;
+		npatch = ":AcetylatedNtermProteinFull";
+	} else {
+		name = "201";
+		npatch = ":AcetylatedNtermPeptoidFull";
+	}
+	name += npatch;
+
+	//restypes.push_back( residue_set_cap->name_map( name ) );
+	pose.append_residue_by_jump( core::conformation::Residue( residue_set_cap->name_map( name ), true ), 1 );
+
+	for ( Size resi = 1; resi < min_length_; ++resi ) {
 		std::string name;
 		std::string npatch;
 		std::string cpatch;
@@ -283,7 +301,8 @@ SecStructFinder::initialize_rtype_vector( utility::vector1< ResidueType > & rest
 			name += cpatch;
 		}
 
-		restypes.push_back( residue_set_cap->name_map( name ) );
+		//restypes.push_back( residue_set_cap->name_map( name ) );
+		pose.append_residue_by_bond( core::conformation::Residue( residue_set_cap->name_map( name ), true ), true );
 	}
 }
 
@@ -319,6 +338,23 @@ SecStructFinder::too_similar( Size i, Size j, utility::vector1< Real > dihedrals
 	return similar;
 }
 
+bool
+increment_dihedrals(
+	utility::vector1< Real > & dihedrals,
+	Real const dihedral_min_,
+	Real const dihedral_max_,
+	Real const bin_size_
+) {
+	dihedrals[ 1 ] += bin_size_;
+	Size p = 1;
+	while ( dihedrals[ p ] >= dihedral_max_ ) {
+		if ( p == dihedrals.size() ) return false;
+		dihedrals[ p ] = dihedral_min_;
+		dihedrals[ ++p ] += bin_size_;
+	}
+	return true;
+}
+
 void
 SecStructFinder::show_current_dihedrals( Size number_dihedral_sets, utility::vector1< char > uniqs, utility::vector1< Real > dihedrals ) {
 	TR << "Presently ";
@@ -343,22 +379,7 @@ SecStructFinder::apply( Pose & pose )
 	Size number_dihedrals = get_number_dihedrals( uniqs, dihedral_pattern_, alpha_beta_pattern_ );//2 * number_dihedral_sets; // plus one per beta AA!
 	TR << "Investigating dihedral pattern " << dihedral_pattern_ << " with " << number_dihedral_sets << " uniques " << std::endl;
 
-	utility::vector1< ResidueType > restypes;
-	initialize_rtype_vector( restypes );
-	TR << "Restype vector: ";
-	for ( Size ii = 1; ii <= restypes.size(); ++ii ) {
-		TR << restypes[ ii ].name() << ", ";
-	}
-	TR << std::endl;
-
-
-	core::conformation::ResidueOP new_rsd( nullptr );
-	new_rsd = conformation::ResidueFactory::create_residue( restypes[1] );
-	pose.append_residue_by_jump( *new_rsd, 1 );
-	for ( Size i = 2; i <= min_length_; ++i ) {
-		new_rsd = conformation::ResidueFactory::create_residue( restypes[ i ] );
-		pose.append_residue_by_bond( *new_rsd, true );
-	}
+	initialize_pose( pose );
 
 	kinematics::MoveMapOP min_mm( new kinematics::MoveMap );
 	min_mm->set_bb( true );
@@ -374,8 +395,7 @@ SecStructFinder::apply( Pose & pose )
 	utility::vector1< Real > dihedrals( number_dihedrals+1, dihedral_min_ );
 
 	// while loop idiom for looping through every layer of a vector of indices
-	Size p = 1;
-	while ( dihedrals[ number_dihedrals+1 ] == dihedral_min_ ) {
+	do {
 
 		// skip if the dihedrals for A are the same as B, etc.
 		// break after first example found
@@ -422,7 +442,7 @@ SecStructFinder::apply( Pose & pose )
 
 			Real score = ( *score_fxn_ ) ( pose );
 			TR << "score is " << score << std::endl;
-
+			score_fxn_->show(pose);
 			if ( min_everything_ ) {
 
 				if ( score_fxn_->has_zero_weight( core::scoring::dihedral_constraint ) ) {
@@ -441,13 +461,15 @@ SecStructFinder::apply( Pose & pose )
 
 				score_fxn_->set_weight( core::scoring::dihedral_constraint, 0.0 );
 				Real score = ( ( *score_fxn_ ) ( minpose ) );
-
+				score_fxn_->show(minpose);
 				TR << " and minned is " << score << std::endl;
 				if ( score <= dump_threshold_ ) {
 					TR << "Thus, dumping ";
 					std::string filename = make_filename( number_dihedrals, dihedrals );
 
 					minpose.dump_scored_pdb( filename.c_str(), ( *score_fxn_ ) );
+					pose.dump_scored_pdb( "fuck.pdb", ( *score_fxn_ ) );
+
 					if ( minpose.residue_type( 1 ).is_beta_aa() ) {
 						TR << " ( " << minpose.torsion( TorsionID( 1, BB, 1 ) ) << ", "<< minpose.torsion( TorsionID( 1, BB, 2 ) ) << ", " << minpose.torsion( TorsionID( 1, BB, 3 ) ) << " ), ";
 					} else {
@@ -486,14 +508,8 @@ SecStructFinder::apply( Pose & pose )
 				}
 			}
 		}
+	} while ( increment_dihedrals( dihedrals, dihedral_min_, dihedral_max_, bin_size_ ) );
 
-		dihedrals[ 1 ] += bin_size_;
-		while ( dihedrals[ p ] == dihedral_max_ ) {
-			dihedrals[ p ] = dihedral_min_;
-			dihedrals[ ++p ] += bin_size_;
-			if ( dihedrals[ p ] != dihedral_max_ ) p = 1;
-		}
-	}
 
 	// now min all our poses to min
 	if ( poses_to_min.size() == 0 ) return;
@@ -564,74 +580,38 @@ void SecStructFinder::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & ) {
 
-	if ( tag->hasOption( "residue" ) ) {
-		this->residue_ = tag->getOption<std::string>("residue", residue_);
-	} else {
-		residue_ = "ALA";
+	residue_ = tag->getOption<std::string>("residue", "ALA" );
+	min_length_ = tag->getOption<Size>("min_length", 5 );
+	max_length_ = tag->getOption<Size>("max_length", 5 );
+
+	if ( max_length_ < min_length_ ) {
+		TR.Warning << "Provided max_length was less than min_length, setting max equal to min" << std::endl;
+		max_length_ = min_length_;
 	}
 
-	if ( tag->hasOption( "min_length" ) ) {
-		this->min_length_ = tag->getOption<Size>("min_length", min_length_);
-	} else {
-		min_length_ = 5;
+	bin_size_ = tag->getOption<Real>( "bin_size", 10 );
+	dissimilarity_ = tag->getOption<Real>( "dissimilarity", 10 );
+
+	if ( dissimilarity_ < bin_size_ ) {
+		TR.Warning << "Provided a dissimilarity score less than the bin size, which is meaningless. Setting equal to bin size." << std::endl;
+		dissimilarity_ = bin_size_;
 	}
 
-	if ( tag->hasOption( "max_length" ) ) {
-		this->max_length_ = tag->getOption<Size>("max_length", max_length_);
-	} else {
-		max_length_ = 5;
-	}
+	dump_threshold_ = tag->getOption<Real>( "dump_threshold", 10 );
+	dihedral_pattern_ = tag->getOption<std::string>( "dihedral_pattern", "A" );
 
-	if ( max_length_ < min_length_ ) max_length_ = min_length_;
-
-	if ( tag->hasOption( "bin_size" ) ) {
-		this->bin_size_ = tag->getOption<Real>("bin_size", bin_size_);
-	} else {
-		bin_size_ = 10;
-	}
-
-	if ( tag->hasOption( "dissimilarity" ) ) {
-		this->dissimilarity_ = tag->getOption<Real>("dissimilarity", dissimilarity_);
-	} else {
-		dissimilarity_ = 10;
-	}
-
-	if ( dissimilarity_ < bin_size_ ) dissimilarity_ = bin_size_;
-
-	if ( tag->hasOption( "dump_threshold" ) ) {
-		this->dump_threshold_ = tag->getOption<Real>("dump_threshold", dump_threshold_);
-	} else {
-		dump_threshold_ = 10;
-	}
-
-	if ( tag->hasOption( "dihedral_pattern" ) ) {
-		this->dihedral_pattern_ = tag->getOption<std::string>("dihedral_pattern", dihedral_pattern_);
-	} else {
-		dihedral_pattern_ = "A";
-	}
-
+	TR << "Expanding dihedral pattern to fit the length provided: ";
 	dihedral_pattern_ = expand_pattern_to_fit( dihedral_pattern_, min_length_ );
+	TR << dihedral_pattern_ << std::endl;
 
-	if ( tag->hasOption( "alpha_beta_pattern" ) ) {
-		this->alpha_beta_pattern_ = tag->getOption<std::string>("alpha_beta_pattern", alpha_beta_pattern_);
-	} else {
-		alpha_beta_pattern_ = "A";
-	}
+	alpha_beta_pattern_ = tag->getOption<std::string>("alpha_beta_pattern", "A" );
 
+	TR << "Expanding alpha/beta pattern to fit the length provided: ";
 	alpha_beta_pattern_ = expand_pattern_to_fit( alpha_beta_pattern_, min_length_ );
+	TR << alpha_beta_pattern_ << std::endl;
 
-	if ( tag->hasOption( "min_everything" ) ) {
-		this->min_everything_ = tag->getOption<bool>("min_everything", min_everything_);
-	} else {
-		min_everything_ = false;
-	}
-
-	if ( tag->hasOption( "cart" ) ) {
-		this->cart_ = tag->getOption<bool>("cart", cart_);
-	} else {
-		cart_ = false;
-	}
-
+	min_everything_ = tag->getOption<bool>( "min_everything", false );
+	cart_ = tag->getOption<bool>("cart", false );
 }
 
 // MoverCreator

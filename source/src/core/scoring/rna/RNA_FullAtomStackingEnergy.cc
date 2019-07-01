@@ -367,7 +367,7 @@ bool
 RNA_FullAtomStackingEnergy::check_base_base_OK(
 	conformation::Residue const & rsd1, // harbors nucleobase
 	conformation::Residue const & rsd2,
-	Size const & m, Size const & n ) const {
+	Size const m, Size const n ) const {
 
 	// must be in RNA base.
 	if ( m < rsd1.first_sidechain_atom()  || m > rsd1.nheavyatoms() ) return false;

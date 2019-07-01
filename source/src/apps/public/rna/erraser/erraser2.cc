@@ -84,6 +84,8 @@
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
+#include <core/id/AtomID.hh>
+
 #include <ObjexxFCL/format.hh>
 
 // C++ headers
@@ -106,6 +108,8 @@ using namespace core::conformation;
 using namespace core::pose;
 using namespace core::pose::full_model_info;
 using namespace protocols::stepwise::monte_carlo;
+
+using namespace core::id;
 
 
 
@@ -382,19 +386,22 @@ void do_erraser2(
 	erraser_minimizer.edens_scorefxn( scorefxn );
 	erraser_minimizer.minimize_protein( option[ minimize_protein ] );
 
+	using namespace core::scoring::constraints;
+	using namespace core::scoring::func;
+
 	if ( checkpoints_to_pass < 1 ) { // First pass: constrain P, initial FT
 		TR << "First pass preminimization..." << std::endl;
 		//if ( !utility::file::file_exists( minimized_name.str() ) ) {
 		erraser_minimizer.constrain_phosphate( true );
 		erraser_minimizer.apply( *start_pose );
-		start_pose->dump_pdb( first_preminimized_namer( option[ in::file::s ]()[1], nstruct ) );
+		start_pose->dump_scored_pdb( first_preminimized_namer( option[ in::file::s ]()[1], nstruct ), *scorefxn );
 	}
 
 	if ( checkpoints_to_pass < 2 ) { // Second pass: constrain P, fun FT
 		if ( emm_ft.nres() == start_pose->size() ) start_pose->fold_tree( emm_ft ); // no-op if none specified
 		erraser_minimizer.constrain_phosphate( true );
 		erraser_minimizer.apply( *start_pose );
-		start_pose->dump_pdb( second_preminimized_namer( option[ in::file::s ]()[1], nstruct ) );
+		start_pose->dump_scored_pdb( second_preminimized_namer( option[ in::file::s ]()[1], nstruct ), *scorefxn );
 		if ( resample_fold_tree.nres() == start_pose->size() ) start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
 	}
 
@@ -419,16 +426,17 @@ void do_erraser2(
 	for ( Size ii = 1; ii <= nrounds; ++ii ) {
 		if ( checkpoints_to_pass < 3 + 2 * ii - 1 ) {
 			if ( emm_ft.nres() == start_pose->size() ) start_pose->fold_tree( emm_ft ); // no-op if none specified
+			erraser_minimizer.constrain_phosphate( false );
 			erraser_minimizer.apply( *start_pose );
 			show_accuracy_report( *start_pose, "Minimized", ii/*, TR*/ );
-			start_pose->dump_pdb( round_minimized_namer( option[ in::file::s ]()[1], ii, nstruct ) );
+			start_pose->dump_scored_pdb( round_minimized_namer( option[ in::file::s ]()[1], ii, nstruct ), *scorefxn );
 		}
 
 		if ( checkpoints_to_pass < 3 + 2 * ii ) {
 			if ( resample_fold_tree.nres() == start_pose->size() ) start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
 			resample_full_model( ii, *start_pose, scorefxn, unconverged_res, nstruct );
 			show_accuracy_report( *start_pose, "Resampled", ii/*, TR*/ );
-			start_pose->dump_pdb( round_resampled_namer( option[ in::file::s ]()[1], ii, nstruct ) );
+			start_pose->dump_scored_pdb( round_resampled_namer( option[ in::file::s ]()[1], ii, nstruct ), *scorefxn );
 		}
 	}
 
@@ -440,10 +448,6 @@ void do_erraser2(
 	filename_stream << option[ in::file::s ]()[1] << "FINISHED_" << nstruct << ".pdb";
 	start_pose->dump_pdb( filename_stream.str() );
 }
-
-
-
-
 
 
 void
@@ -594,9 +598,10 @@ bump_check( pose::Pose const & pose, Size const ii ) {
 				Real aj_r = pose.residue_type( jj ).atom_type( aj ).lj_radius();
 
 				if ( pose.residue( ii ).xyz( ai ).distance_squared( pose.residue( jj ).xyz( aj ) ) <
-						( aj_r + ai_r - 0.35 ) * ( aj_r + ai_r - 0.35 ) ) {
-					TR.Trace << "Bump check failed because residue " << ii << " atom " << pose.residue( ii ).atom_name( ai ) << " (lj_radius " << ai_r << ") is within "
-						<< ( aj_r + ai_r - 0.35 ) * ( aj_r + ai_r - 0.35 ) << " of residue " << jj << " atom " << pose.residue( jj ).atom_name( aj ) << " (lj_radius " << aj_r << ")" << std::endl;
+						( aj_r + ai_r - 0.40 ) * ( aj_r + ai_r - 0.40 ) ) {
+					//( aj_r + ai_r - 0.35 ) * ( aj_r + ai_r - 0.35 ) ) {
+					TR.Trace << "Bump check failed because residue " << pose.pdb_info()->chain( ii ) << ":" << pose.pdb_info()->number( ii ) << " atom " << pose.residue( ii ).atom_name( ai ) << " (lj_radius " << ai_r << ") is within "
+						<< ( aj_r + ai_r - 0.40 ) * ( aj_r + ai_r - 0.40 ) << " of residue " << pose.pdb_info()->chain( jj ) << ":" << pose.pdb_info()->number( jj ) << " atom " << pose.residue( jj ).atom_name( aj ) << " (lj_radius " << aj_r << ") -- " << pose.residue( ii ).xyz( ai ).distance_squared( pose.residue( jj ).xyz( aj ) ) << std::endl;
 					return true;
 				}
 			}
@@ -626,12 +631,18 @@ determine_residues_to_rebuild(
 	for ( Size ii = 1; ii <= start_pose.size(); ++ii ) {
 		if ( fixed_res.contains( ii ) ) continue;
 
-		if ( !option[ minimize_protein ].value() && start_pose.residue_type( ii ).is_protein() ) continue;
+		//if ( !option[ minimize_protein ].value() && start_pose.residue_type( ii ).is_protein() ) continue;
+		// can minimize protein but can't rebuild it
+		if ( start_pose.residue_type( ii ).is_protein() ) continue;
 
 		// This should pick up bad torsions
 		Real const torsion_score = start_pose.energies().residue_total_energies( ii )[ rna_torsion ];
 		if ( torsion_score > 1.2 ) {
 			TR.Debug << "Rebuilding residue " << ii <<" for a bad torsion score of " << torsion_score << std::endl;
+			residues_to_rebuild.push_back( ii );
+		}
+
+		if ( start_pose.residue_type( ii ).is_RNA() && start_pose.residue_type( ii ).is_canonical_nucleic() ) {
 			residues_to_rebuild.push_back( ii );
 		}
 

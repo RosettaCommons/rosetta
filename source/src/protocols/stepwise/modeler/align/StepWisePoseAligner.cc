@@ -622,6 +622,15 @@ StepWisePoseAligner::do_checks( std::string const & atom_name, Size const n, pos
 		if ( idx >  pose.residue_type( n ).first_sidechain_hydrogen()  && idx <= pose.residue_type( n ).natoms() ) return false;
 	}
 
+	// Don't superimpose over chemically modified nucleotides' 'sidechains' -- these
+	// extra chis -- we let them move in let_neighboring_side_chains_minimize I think
+	if ( !pose.residue_type( n ).is_canonical_nucleic() ) {
+		if ( pose.residue_type( n ).last_controlling_chi( pose.residue_type( n ).atom_index( atom_name ) ) > 4 ) {
+			return false;
+		}
+	}
+
+
 	// no terminal phosphates... (or more generally connection atoms)
 	if ( extra_suite_atoms_upper.find( atom_name ) != extra_suite_atoms_upper.end() &&
 			!pose.residue_type( n ).has_variant_type( "CUTPOINT_UPPER" ) &&
@@ -634,8 +643,8 @@ StepWisePoseAligner::do_checks( std::string const & atom_name, Size const n, pos
 	// Do not align over the fourth chi atom. This is either a hydroxyl H (i.e.
 	// fails the no heavy atom check, basically not a "backbone atom") or it is
 	// a methyl in a noncanonical (heavy, but not gonna stay too fixed ideally)
-	//if ( pose.residue_type( n ).is_RNA() &&
-	//  atom_name == pose.residue_type( n ).atom_name( pose.residue_type( n ).chi_atoms( 4 )[ 4 ] ) ) return false;
+	if ( pose.residue_type( n ).is_RNA() &&
+			atom_name == pose.residue_type( n ).atom_name( pose.residue_type( n ).chi_atoms( 4 )[ 4 ] ) ) return false;
 
 	return true;
 }

@@ -422,11 +422,16 @@ read_checkpoint_log( utility::vector1< StepWiseMove > & stepwise_moves, Size & s
 	while ( logstream.good() ) {
 		std::string line;
 		logstream.getline( line );
+		if ( line == "" ) break;
+		if ( line == "\n" ) break;
 		if ( line.find( "START HERE" ) != std::string::npos ) {
 			// Starting index should be current vector length ('next move')
-			start_idx = stepwise_moves.size();
+			//TR << "ok " << line << std::endl;
+			start_idx = stepwise_moves.size() + 1;
 		} else {
+			//TR << line << std::endl;
 			stepwise_moves.emplace_back( line, const_full_model_info( start_pose ).full_model_parameters() );
+			//TR << stepwise_moves[ stepwise_moves.size() ] << std::endl;
 		}
 	}
 	logstream.close();
@@ -952,7 +957,8 @@ StepWiseMasterMover::resample_full_model(
 	Size start_idx = 1;
 	if ( utility::file::file_exists( residue_rebuild_log_namer( resample_round, nstruct ) ) ) {
 		read_checkpoint_log( stepwise_moves, start_idx, resample_round, nstruct, start_pose );
-
+		TR << "Restored list of " << stepwise_moves.size() << " moves; starting at idx " << start_idx << std::endl;
+		//return;
 		if ( start_idx != 1 ) {
 			// Load silent into output_pose
 			ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
@@ -971,7 +977,9 @@ StepWiseMasterMover::resample_full_model(
 	// do moves in serial
 	Size ii = 1;
 	for ( StepWiseMove const & stepwise_move : stepwise_moves ) {
-		if ( ii < start_idx ) continue;
+		if ( ii < start_idx ) {
+			++ii; continue;
+		}
 
 		TR << "[ " << ii << "/" << stepwise_moves.size() << " ] Applying Move: " << stepwise_move << "." << std::endl;
 

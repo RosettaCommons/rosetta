@@ -390,6 +390,12 @@ StepWiseMinimizer::move_side_chain( core::kinematics::MoveMap & mm,
 		}
 	} else if ( pose.residue(j).is_RNA() ) {
 		mm.set( id::TorsionID( j, id::CHI, 4), true ); // 2'-OH.
+		if ( pose.residue_type(j).nchi() > 4 ) {
+			// Some kind of chemically modified base
+			for ( Size ii = 5; ii <= pose.residue_type(j).nchi(); ++ii ) {
+				mm.set( id::TorsionID( j, id::CHI, ii), true );
+			}
+		}
 	}
 	// how about terminal phosphates?
 	if ( options_->vary_polar_hydrogen_geometry() ) {

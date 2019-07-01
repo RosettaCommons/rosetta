@@ -86,7 +86,7 @@ private:
 	std::string alpha_to_beta( std::string alpha );
 	std::string expand_pattern_to_fit( std::string pattern, core::Size length );
 	bool uniq_refers_to_beta ( char uniq );
-	void initialize_rtype_vector( utility::vector1< core::chemical::ResidueType > & restypes );
+	void initialize_pose( core::pose::Pose & pose );
 	std::string make_filename ( core::Size number_dihedrals, utility::vector1< core::Real > dihedrals );
 	bool too_similar( core::Size i, core::Size j, utility::vector1< core::Real > dihedrals );
 	void show_current_dihedrals( core::Size number_dihedral_sets, utility::vector1< char > uniqs, utility::vector1< core::Real > dihedrals );

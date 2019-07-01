@@ -1084,11 +1084,6 @@ get_root_residue_root_atomno(
 	kinematics::FoldTree const & fold_tree
 )
 {
-	// AMW TODO: Right now, we assume that this should be 1 for pdb_GAI.
-	// That's not necessarily true for all ligand residues, so we are keeping it
-	// this way.
-	if ( rsd.type().name() == "pdb_GAI" ) return 1;
-
 	if ( !rsd.type().is_polymer() ) return 1;
 
 

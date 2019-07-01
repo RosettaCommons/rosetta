@@ -219,6 +219,15 @@ RNA_Info::figure_out_chi_order() const {
 	chi_order.push_back( 3 );  //chi_3 is 3rd furthest (the choice between chi_4 and chi 3 is somewhat arbitrary) [nu1]
 	chi_order.push_back( 2 );  //chi_4 is 2nd furthest (the choice between chi_4 and chi 3 is somewhat arbitrary) [2'-OH]
 
+	// further chis get bigger numbers?
+	ResidueTypeCOP residue_type( residue_type_ );
+	if ( residue_type->nchi() > 4 ) {
+		for ( Size ii = 5; ii <= residue_type->nchi(); ++ii ) {
+			// This might go poorly for multi-sidechain modifications but this is rarely an issue. Important to start from something!
+			chi_order.push_back( ii );
+		}
+	}
+
 	chi_order.push_back( 1 );  //chi_5 pseudo-gamma   for packable 5' phosphate
 	chi_order.push_back( 2 );  //chi_6 pseudo-beta    for packable 5' phosphate
 	chi_order.push_back( 3 );  //chi_7 pseudo-alpha   for packable 5' phosphate
@@ -230,7 +239,6 @@ RNA_Info::figure_out_chi_order() const {
 
 ////////////////////////////////////////////////////////////
 ///WARNING THIS FUNCTION SHOULD NOT ACCESS ANY DATA of the RNA_Info object itself since at this point it is not yet updated!
-///ALSO SHOULD MAKE THIS FUNCTION A CONST FUNCTION!
 void
 RNA_Info::rna_note_chi_controls_atom( Size const chi, Size const atomno,
 	utility::vector1< core::Size >  & last_controlling_chi,
@@ -291,7 +299,9 @@ RNA_Info::rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in,
 	for ( Size ii = nchi; ii >= 1; --ii ) {
 
 		// This doesn't matter SO much and can break some residues.
-		if ( ii > chi_order.size() ) continue;
+		// AMW: don't skip this for chemically modified residues. Then you miss
+		// all their important extra chis!
+		if ( residue_type->is_canonical_nucleic() && ii > chi_order.size() ) continue;
 
 		/// Note children of atom 3 of chi_ii as being controlled by chi ii.
 		if ( residue_type->chi_atoms( ii ).size() == 0 ) continue;
@@ -301,8 +311,7 @@ RNA_Info::rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in,
 		Size const iiat3base = residue_type->atom_base( iiat3 ); // don't go back to base of atom.
 		AtomIndices const & ii_nbrs( residue_type->bonded_neighbor( iiat3 ) );
 
-		for ( Size jj = 1; jj <= ii_nbrs.size(); ++jj ) {
-			Size const jj_atom = ii_nbrs[ jj ];
+		for ( Size const jj_atom : ii_nbrs ) {
 			if ( residue_type->atom_base( jj_atom ) == iiat3 &&
 					iiat3base != jj_atom  &&
 					iiat2 != jj_atom ) {

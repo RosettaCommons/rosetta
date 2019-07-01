@@ -143,8 +143,10 @@ CountPairFactory::create_count_pair_function_and_invoke(
 			try {
 				debug_assert( res1.connections_to_residue( res2 ).size() == 1 );
 				// Is it possible to be asymmetric -- could res2 have no connections to res1?
-				//std::cout << res1.seqpos() << " " << res2.seqpos() << std::endl;
-				//std::cout << res1.type().name() << " " << res2.type().name() << std::endl;
+				if ( res2.connections_to_residue( res1 ).size() == 0 ) {
+					std::cout << res1.seqpos() << " " << res2.seqpos() << std::endl;
+					std::cout << res1.type().name() << " " << res2.type().name() << std::endl;
+				}
 				debug_assert( res2.connections_to_residue( res1 ).size() == 1 );
 				res1connat = res1.residue_connection( res1.connections_to_residue( res2 )[ 1 ] ).atomno();
 				res2connat = res2.residue_connection( res2.connections_to_residue( res1 )[ 1 ] ).atomno();

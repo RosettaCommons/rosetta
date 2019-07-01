@@ -204,7 +204,7 @@ private:
 	check_base_base_OK(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		Size const & m, Size const & n ) const;
+		Size const m, Size const n ) const;
 
 	virtual
 	core::Size version() const;

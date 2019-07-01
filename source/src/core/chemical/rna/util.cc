@@ -1172,7 +1172,8 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 	//SML PHENIX conference
 	if ( !rsd.is_NA() ) {
 		std::cout << "name " << rsd.type().name() << std::endl;
-		if ( rsd.is_carbohydrate() || basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
+		// rna_prot_erraser is true now
+		if ( rsd.is_carbohydrate() || true ) { //basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
 			return Vector( 0.0, 0.0, 0.0 );
 		} else { //if not option
 			utility_exit_with_message( "non - RNA residue inside get_rna_base_centroid" );
@@ -1247,7 +1248,7 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 
 	//SML PHENIX conference
 	if ( !rsd.is_NA() && rsd.type().name() != "pdb_GAI" ) {
-		if ( rsd.is_carbohydrate() || basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
+		if ( rsd.is_carbohydrate() || true ) { //basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
 			return numeric::xyzMatrix< core::Real > ::identity();
 		} else if ( rsd.is_polymer() && !rsd.has_lower_connect() && !rsd.has_upper_connect() ) {
 			return numeric::xyzMatrix< core::Real > ::identity();

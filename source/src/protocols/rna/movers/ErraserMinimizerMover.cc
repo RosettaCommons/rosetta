@@ -599,6 +599,8 @@ identify_chunks(
 ) {
 	// Create at least one chunk per proc
 
+	sliced_list_final.clear();
+
 	TR << "Identifying chunks..." << std::endl;
 	Size const total_res = pose.size() - 1;
 	// Historically, we permitted poses to be sliced up into 'chunks' for minimization.
@@ -980,9 +982,9 @@ ErraserMinimizerMover::pose_preliminaries(
 	// AMW TODO: read chunks from temp file if exists
 	// AMW: at least one chunk per proc.
 	identify_chunks( pose, chunks_, virtual_res_pos, nproc_ );
-	TR.Debug << "Identified " << chunks_.size() << " chunks" << std::endl;
+	TR << "Identified " << chunks_.size() << " chunks" << std::endl;
 	for ( auto const & chunk : chunks_ ) {
-		TR.Trace << chunk << std::endl;
+		TR << chunk << std::endl;
 	}
 }
 
@@ -1002,6 +1004,7 @@ ErraserMinimizerMover::process_entire_pose(
 	utility::vector1< Size > chunk_indices( n_chunk );
 	std::iota( chunk_indices.begin(), chunk_indices.end(), 1 );
 	if ( utility::file::file_exists( min_checkpoint_namer( nstruct_ ) ) ) {
+		chunk_indices.clear();
 		load_checkpoint( nstruct_, chunk_indices, pose, start_idx );
 	} else {
 		// Keep start_idx as 1, but we have to set our special permutation of
@@ -1042,6 +1045,8 @@ ErraserMinimizerMover::process_entire_pose(
 			allow_insert( fixed_res_num ) = true;
 		}
 	}
+
+	ConstraintSetOP noP_cst_set = pose.constraint_set()->clone();
 
 	// Handle phosphate constraints
 	if ( constrain_phosphate_ ) {
@@ -1170,6 +1175,7 @@ ErraserMinimizerMover::process_entire_pose(
 	utility::file::file_delete( min_log_namer( nstruct_ ) );
 
 	++ii;
+	pose.constraint_set( noP_cst_set );
 }
 
 /// @brief Returns the MPI rank of the proc this Mover is running on
