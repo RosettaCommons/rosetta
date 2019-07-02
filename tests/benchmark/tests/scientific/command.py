@@ -81,15 +81,22 @@ def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_dr
         #print(script)
         res, output = execute(f'Running {script}...', f'cd {working_dir} && {python_virtual_environment.python} {script}', return_=tuple, add_message_and_command_line_to_output=True)  # source {ve.activate}
 
-        if res: return { _StateKey_ : _S_script_failed_,  _ResultsKey_ : {},
-                         _LogKey_   : f'run_multi_step_test for {test} failed while running {script}...Aborting!\n\n{output}\n' }
+        if res:
+            result = { _StateKey_ : _S_script_failed_,  _ResultsKey_ : {},
+                       _LogKey_   : f'run_multi_step_test for {test} failed while running {script}...Aborting!\n\n{output}\n'
+            }
+            break
 
         if os.path.isfile(f'{working_dir}/{_multi_step_error_}'):
-            with open(f'{working_dir}/{_multi_step_error_}') as f: return json.load(f)
+            with open(f'{working_dir}/{_multi_step_error_}') as f: result = json.load(f)
+            break
+
+    else:
+        with open(f'{working_dir}/{_multi_step_result_}') as f: result = json.load(f)
 
     if not config['emulation'] and os.path.isdir(python_virtual_environment_path): shutil.rmtree(python_virtual_environment_path)
 
-    with open(f'{working_dir}/{_multi_step_result_}') as f: return json.load(f)
+    return result
 
 
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
@@ -97,35 +104,34 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     # If package have not-yet-stable-api please make sure to SPECIFY THE EXACT VERSION of package to use so our testing-scripts
     # will not accidently break when a new version of upstream package got released in the future
     tests = dict(
-        _template_             = '',
-        cartesian_relax        = 'numpy matplotlib',
-        fast_relax             = 'numpy matplotlib',
-        fast_relax_5iter       = 'numpy matplotlib',
+        _template_               = '',
+        cartesian_relax          = 'numpy matplotlib',
+        fast_relax               = 'numpy matplotlib',
+        fast_relax_5iter         = 'numpy matplotlib',
 
-        stepwise_rna_favorites = 'numpy matplotlib',
-        rna_denovo_favorites   = 'numpy matplotlib',
+        stepwise_rna_favorites   = 'numpy matplotlib',
+        rna_denovo_favorites     = 'numpy matplotlib',
 
-        enzyme_design          = 'numpy matplotlib',
-        cofactor_binding_sites = 'numpy matplotlib',
+        enzyme_design            = 'numpy matplotlib',
+        cofactor_binding_sites   = 'numpy matplotlib',
 
-        mp_f19_energy_landscape = 'numpy matplotlib scipy', 
-        mp_f19_sequence_recovery = 'numpy matplotlib', 
-
-        mp_dock                = 'numpy matplotlib',
-        mp_relax               = 'numpy matplotlib',
-        mp_symdock             = 'numpy matplotlib',
-        mp_lipid_acc           = 'numpy matplotlib',
-        mp_domain_assembly     = 'numpy matplotlib',
-
+        mp_f19_energy_landscape  = 'numpy matplotlib scipy',
+        mp_f19_sequence_recovery = 'numpy matplotlib',
         mp_f19_decoy_discrimination = 'numpy matplotlib',
 
-        sewing                 = 'numpy matplotlib',
+        mp_dock                  = 'numpy matplotlib',
+        mp_relax                 = 'numpy matplotlib',
+        mp_symdock               = 'numpy matplotlib',
+        mp_lipid_acc             = 'numpy matplotlib',
+        mp_domain_assembly       = 'numpy matplotlib',
 
-        antibody_grafting      = 'numpy matplotlib',
+        sewing                   = 'numpy matplotlib',
 
-        mhc_epitope_energy     = 'numpy matplotlib',
+        antibody_grafting        = 'numpy matplotlib',
 
-        #docking                = 'numpy matplotlib',
+        mhc_epitope_energy       = 'numpy matplotlib',
+
+        #docking                  = 'numpy matplotlib',
     )
 
     if test.endswith('.debug'): test = test[:-len('.debug')];  debug = True

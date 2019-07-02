@@ -71,7 +71,7 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
         #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
         gui_flag, res, output = '', result.exitcode, result.output
-        command_line = 'cd {pyrosetta_path}/build && {python} self-test.py {gui_flag} -j{jobs}'.format(pyrosetta_path=result.pyrosetta_path, python=result.python, jobs=jobs, gui_flag=gui_flag)
+        command_line = f'cd {result.pyrosetta_path}/build && {rosetta_dir}/source/test/timelimit.py 60 {result.python} self-test.py {gui_flag} -j{jobs}'
         output += '\nRunning PyRosetta tests: ' + command_line + '\n'
         if not res:
             res, o = execute('Running PyRosetta tests...', command_line, return_='tuple')
