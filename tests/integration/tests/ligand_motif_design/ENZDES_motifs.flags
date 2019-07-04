@@ -1,6 +1,6 @@
 -parser:protocol lite_enzdes.xml
 -s 2p09.pdb
--extra_res_fa 2p09.params
+#-extra_res_fa 2p09.params
 #-resfile 2p09.resfile
 -out::overwrite true
 #-database /work/mdsmith/minirosetta_database/
