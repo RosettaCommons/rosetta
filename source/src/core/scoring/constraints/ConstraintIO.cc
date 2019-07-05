@@ -643,7 +643,18 @@ ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, char cons
 		}
 	}
 	if ( chain != 0 && pose.pdb_info() ) {
-		return pose.pdb_info()->pdb2pose( chain, resnum );
+		// Enter this option if user provided a PDB chain ID and a residue number in the cst file
+		Size resnum_out( pose.pdb_info()->pdb2pose( chain, resnum ) );
+		// If resnum_out == 0, then user did not specify a Pose residue that (currently) exists
+		// Inform user of the error via a Warning
+		// Note: a constraint to a residue that does not exist may exist later during Stepwise RNA protocol
+		// Each Constraint method should then Warn user that it cannot add the specified constraint
+		if ( resnum_out == 0 ) {
+			tr.Warning << "Residue specified by constraint file does not exist. "
+				"Does residue number " + utility::to_string(resnum) +
+				" chain " + chain + " exist in both your Pose and constraint file?" << std::endl;
+		}
+		return resnum_out;
 	}
 	bool force_pdb_info_mapping = pose.pdb_info() &&
 		( force_pdb_info_mapping_in || ( option[ OptionKeys::constraints::force_pdb_info_mapping ]().size() ?
@@ -654,6 +665,22 @@ ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, char cons
 		// some legacy PDB's have ' ' instead of 'A' remaining as default for chains...
 		return pose.pdb_info()->pdb2pose( ' ', resnum );
 	}
+	// Return the input resnum if user provided a Pose residue number in the cst file
+	// If resnum > pose.size(), then user did not specify a Pose residue that (currently) exists
+	// Inform user of the error via a Warning
+	// Note: a constraint to a residue that does not exist may exist later during Stepwise RNA protocol
+	// Each Constraint method should then Warn user that it cannot add the specified constraint
+	if ( Size(resnum) > pose.size() ) {
+		tr.Warning << "Residue specified by constraint file does not exist. "
+			"Does Pose residue number " + utility::to_string(resnum) +
+			" exist in both your Pose and constraint file?" << std::endl;
+	}
+	// However, if user specified to constrain to Pose residue 0, exit as that does not make sense
+	if ( Size(resnum) == 0 ) {
+		utility_exit_with_message("Constraint file specified to constrain using Pose residue 0."
+			" That cannot be possible! Rosetta numbering starts at 1");
+	}
+
 	return Size( resnum );
 }
 

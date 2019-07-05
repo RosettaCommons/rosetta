@@ -107,9 +107,21 @@ SiteConstraint::read_def(
 	data >> atm_name >> tempres >> chain >> func_type;
 
 	ConstraintIO::parse_residue( pose, tempres, res );
-	TR.Info << "read: " << atm_name << " " << res << " " << "constrain to chain: " << chain <<
-		" func: " << func_type << std::endl;
+	TR.Info << "read: atom " << atm_name << " residue " << res << " inputted as " << tempres <<
+		" constrain to chain: " << chain << " func: " << func_type << std::endl;
 
+	// If given constraint chain does not exist, it will be caught during setup_csts and Rosetta will exit
+
+	// If the residue number determined by parse_residue is 0 or > pose.size(),
+	// That residue does not exist
+	// Warn user that the constraint cannot be set
+	if ( res > pose.size() || res == 0 ) {
+		TR.Warning  << "ignored constraint (no such residue in pose!)"
+			<< " pose residue: " << res
+			<< " (read from cst file as " << tempres << ")" << std::endl;
+		data.setstate( std::ios_base::failbit );
+		return;
+	}
 
 	func::FuncOP aFunc = func_factory.new_func( func_type );
 	aFunc->read_data( data );

@@ -221,10 +221,8 @@ BasePairConstraint::read_def(
 	tr.Debug << "read: " << res1_ << " " << res2_ << std::endl;
 
 	if ( res1_ > pose.size() || res2_ > pose.size() || res1_ == 0 || res2_ == 0 ) {
-		tr.Warning  << "ignored constraint (requested residue numbers exceed numbers of residues in pose): " << "Total in Pose: " << pose.size() << " "
-			<< res1_ << " " << res2_ << std::endl;
-		tr.Warning  << "Also possible that you provided resnum-chain information,"
-			<< " and the residue isn't found in the pose so the mapping returned zero." << std::endl;
+		tr.Warning  << "ignored constraint (requested residue does not currently exist in pose): "
+			<< " res1: " << res1_ << " res2: " << res2_ << std::endl;
 		// We can't set this. It nukes parent constraints that might just not be 'right yet'
 		//data.setstate( std::ios_base::failbit );
 		return;
