@@ -1,0 +1,9 @@
+-nstruct 10
+-ex1
+-ex2
+-ignore_zero_occupancy false
+#-keep_input_scores false
+#-out:pdb_gz
+#-out:levels all:warning core.init:info protocols.jd2.JobDistributor:info protocols.ligand_docking.Transform:info core.chemical:info protocols.rosetta_scripts.RosettaScriptsParser:info 
+#-out:levels protocols.enzdes.EnzdesTaskOperations:info
+-overwrite
