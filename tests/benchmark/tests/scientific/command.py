@@ -129,7 +129,9 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
 
         antibody_grafting        = 'numpy matplotlib',
 
-        mhc_epitope_energy       = 'numpy matplotlib',
+	ligand_docking		= 'numpy matplotlib',
+	ligand_scoring_ranking = 'numpy matplotlib pandas==0.23.4 sklearn scipy ',
+        mhc_epitope_energy     = 'numpy matplotlib',
 
         #docking                  = 'numpy matplotlib',
     )
