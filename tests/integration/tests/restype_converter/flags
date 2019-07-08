@@ -1,0 +1,9 @@
+-types URA:UpperRNA:5PrimePackTriPhos pdb_TTL
+-name3 TRP
+-extra_res_fa input/7cpa.params  
+-extra_res_mol input/XST.sdf
+
+-out:path:all output
+-out:pdb
+-params_out
+-sdf_out

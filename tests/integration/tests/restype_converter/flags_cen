@@ -1,0 +1,10 @@
+-in:file:centroid
+-types URA:UpperRNA:5PrimePackTriPhos pdb_TTL
+-name3 TRP
+-extra_res_mol input/XST.sdf
+
+-out:path:all output
+-out:prefix CEN_
+-out:pdb
+-params_out
+-sdf_out
