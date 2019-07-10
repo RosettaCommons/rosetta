@@ -1,4 +1,11 @@
+
 import os, sys, os.path, json, subprocess
+
+# defining FileNotFoundError in Python-2.*
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
 
 # Assert or bootstrap minimum setuptools version required for find_packages
 import ez_setup
