@@ -400,6 +400,7 @@ class PDB_Diagnostic_Codes(enum.Enum):
     not_being_packed       = enum.auto()
     no_hbond_deriv         = enum.auto()
 
+    bad_patch              = enum.auto()
 
 
 def classify_pdb_diagnostic_log(log):
@@ -492,7 +493,7 @@ def classify_pdb_diagnostic_log(log):
         ( P(line="Assertion `being_packed()` failed"),                               PDB_Diagnostic_Codes.not_being_packed ),
         ( P(line="Cannot compute derivative for hbond interaction"),                 PDB_Diagnostic_Codes.no_hbond_deriv ),
 
-
+        ( P(log=("Patch","implies it can apply to residue type", "but actually applying it fails")), PDB_Diagnostic_Codes.bad_patch ),
     ] )
 
 

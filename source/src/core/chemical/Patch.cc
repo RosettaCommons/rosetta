@@ -633,7 +633,24 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 	for ( auto const & iter : cases_ ) {
 		if ( iter->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
-			ResidueTypeOP patched_rsd_type( iter->apply( rsd_type, instantiate ) );
+			ResidueTypeOP patched_rsd_type;
+			try {
+				patched_rsd_type = iter->apply( rsd_type, instantiate );
+			} catch ( utility::excn::Exception & excn ) {
+				tr.Warning << "Patch " << name() << " implies it can apply to residue type " << rsd_type.name() << ", but actually applying it fails with error message:" << std::endl;
+				tr.Warning << excn.msg() << std::endl;
+				tr.Warning << "   You may want to check your patch definitions." << std::endl;
+				continue;
+			} catch ( std::exception const & excn ) {
+				tr.Warning << "Patch " << name() << " implies it can apply to residue type " << rsd_type.name() << ", but actually applying it fails with error message:" << std::endl;
+				tr.Warning << excn.what() << std::endl;
+				tr.Warning << "   You may want to check your patch definitions." << std::endl;
+				throw;
+			} catch (...) {
+				tr.Warning << "Patch " << name() << " implies it can apply to residue type " << rsd_type.name() << ", but actually applying it fails with an unknown exception." << std::endl;
+				tr.Warning << "   You may want to check your patch definitions." << std::endl;
+				throw;
+			}
 
 			if ( ! patched_rsd_type ) {
 				tr.Warning << "Patch " << name() << " implies it can apply to residue type " << rsd_type.name() << ", but actually applying it fails." << std::endl;

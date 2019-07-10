@@ -124,6 +124,9 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 	//store the atom_id_type we will be using. atom id should be the atom name
 	std::string atom_name_type( atom_comp.IsColumnPresent( "atom_id" ) ? "atom_id" : "pdbx_component_atom_id" );
 
+	// A map of atom names to their chemical symbols
+	std::map< std::string, std::string > name_to_element_map;
+
 	bool N_found = false;
 	bool P_found = false;
 	bool is_peptide_linking = true;
@@ -131,6 +134,8 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 	for ( Size ii = 0; ii < atom_comp.GetNumRows(); ++ii ) {
 		//set atom name
 		std::string atom_name( atom_comp( ii, atom_name_type ) );
+		name_to_element_map[ atom_name ] = atom_comp( ii, "type_symbol" );
+
 		if ( atom_name == "N" ) N_found = true;
 		if ( atom_name == "P" ) P_found = true;
 	}
@@ -180,13 +185,16 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 				std::string source( bond_comp( ii, "atom_id_1" ) ); //atom 1
 				std::string target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
 
-				// Could imagine getting 'all Hs' by finding, instead, the
-				// names that match H[number] -- but why not wait, for now.
-				// Really should build a dict of name-to-element from the atom block before this
-				// so we can just require 'C' or at least 'not H'
-				if ( source == "OXT" && target != "C" && target != "HXT" && target != "HOT" /* don't catch dead H */ ) {
+				// If we already have a "C", then don't rename something else to it (even if our 'C' isn't bonded to OXT)
+				if ( source == "C" || target == "C" ) {
+					rename_to_C = "C";
+					break;
+				}
+
+				// We only want to rename carbons. Ignore any hydrogens attached, or any non-carbon atoms
+				if ( source == "OXT" && name_to_element_map[ target ] == "C" ) {
 					rename_to_C = target;
-				} else if ( target == "OXT" && source != "C" && source != "HXT" && source != "HOT"  /* don't catch dead H */ ) {
+				} else if ( target == "OXT" && name_to_element_map[ source ] == "C" ) {
 					rename_to_C = source;
 				}
 			}
