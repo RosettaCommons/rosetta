@@ -22,6 +22,8 @@ from benchmark.tests import _TestsKey_
 
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into globals
 config = benchmark.config()
+debug  = config['debug']
+
 
 # read readme
 readme = subprocess.getoutput( "cat readme.md" ).splitlines()
@@ -40,10 +42,10 @@ if len( failures ) > 0:
     for failedpdb, failedtests in failures_dict.items():
         _index_html_template_ += str(failedpdb) + ": " + ", ".join(failedtests) + "<br>\n"
         for subtest in failedtests:
-            subtest_dict.update({subtest:{_StateKey_:_S_failed_, _LogKey_:subtest + " test ran with failures!"}})
+            if not debug: subtest_dict.update({subtest:{_StateKey_:_S_failed_, _LogKey_:subtest + " test ran with failures!"}})
 else:
     _index_html_template_ += "&nbsp;&nbsp;&nbsp;&nbsp;None<br>\n"
-	
+
 _index_html_template_ += "</p>\n<h3>README</h3>\n"
 
 # add text from readme
@@ -60,7 +62,7 @@ for l in readme:
     # insert the actual text as a paragraph
     else:
         _index_html_template_ += "<p>" + l + "</p>\n"
-		
+
 _index_html_template_ += "</p>\n<h3>RESULTS</h3>\n"
 
 #List of results
