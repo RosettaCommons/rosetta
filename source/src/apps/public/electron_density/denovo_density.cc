@@ -131,6 +131,7 @@ OPT_KEY( Real, delR )
 OPT_KEY( Real, clust_radius )
 OPT_KEY( Real, scale_cycles )
 OPT_KEY( Real, point_radius )
+OPT_KEY( Boolean, convolute_single_residue )
 OPT_KEY( Integer, clust_oversample )
 OPT_KEY( Integer, n_matches )
 OPT_KEY( Real, frag_dens )
@@ -539,15 +540,16 @@ void DockFragmentsMover::run() {
 	protocols::electron_density::DockIntoDensityMover dock;
 	dock.setDelR(option[ delR ]); // option?
 	dock.setB( option[ bw ]() );
-	dock.setTopN( option[ n_to_search ]() , option[ n_filtered ]() , option[ n_output ]() ); //y
-	dock.setGridStep(option[ movestep ]()); //y
-	dock.setMinBackbone(option[ min_bb ]()); //y
-	dock.setNCyc(option[ ncyc ]()); //y
-	dock.setClusterRadius(option[ clust_radius ]()); //y
-	dock.setPointRadius(option[ point_radius ]()); //y
-	dock.setFragDens(option[ frag_dens ]()); //y
+	dock.setTopN( option[ n_to_search ]() , option[ n_filtered ]() , option[ n_output ]() );
+	dock.setGridStep(option[ movestep ]());
+	dock.setMinBackbone(option[ min_bb ]());
+	dock.setNCyc(option[ ncyc ]());
+	dock.setClusterRadius(option[ clust_radius ]());
+	dock.setPointRadius(option[ point_radius ]());
+	dock.setFragDens(option[ frag_dens ]());
 	dock.setNormScores(option[ norm_scores ]());
-	dock.setClusterOversamp(option[ clust_oversample ]()); //y
+	dock.setClusterOversamp(option[ clust_oversample ]());
+	dock.setConvoluteSingleR(option[ convolute_single_residue ]());
 
 	auto maxRotPerTrans = (int)std::ceil( (core::Real)option[ n_filtered ]() / (core::Real)option[ n_to_search ]() );
 	dock.setMaxRotPerTrans( maxRotPerTrans );
@@ -1596,6 +1598,7 @@ int main(int argc, char* argv[]) {
 		NEW_OPT( frag_len, "Trim fragments to this length (0=use input length)", utility::vector1<int>() );
 		NEW_OPT( native_placements , "Generate native placements only", false );
 		NEW_OPT( point_radius , "Filters the grid points to be searched to be at least this distance appart", 0 );
+		NEW_OPT( convolute_single_residue , "Don't blur the map during point selection", false );
 
 		// scoring and assembly options
 		NEW_OPT( scorefile, "Scorefile name", "fragscores.sc" );

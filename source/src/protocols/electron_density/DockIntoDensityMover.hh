@@ -202,7 +202,7 @@ public:
 	void setClusterOversamp( core::Size cluster_oversample ) { cluster_oversample_=cluster_oversample; }
 	void setMaxRotPerTrans( core::Size max_rot_per_trans ) { max_rot_per_trans_=max_rot_per_trans; }
 	void setSymminfo( DensitySymmInfo const & symminfo ) { symminfo_=symminfo; }
-	void setConvoluteSingleR( bool convolute_single_residue ) { convolute_single_residue_ = convolute_single_residue; } // how to make default true?
+	void setConvoluteSingleR( bool convolute_single_residue ) { convolute_single_residue_ = convolute_single_residue; }
 	void setLaplacianOffset( core::Real laplacian_offset ) { laplacian_offset_ = laplacian_offset; }
 
 
