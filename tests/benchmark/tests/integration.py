@@ -100,7 +100,7 @@ def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_co
     #JAB - Why is this not run in debug mode, isn't this half the point?
     # RM - the "debug" variable is debug of the benchmark machinery. Debug mode is mode=="debug"
     if debug: res, output = 0, 'integration.py: debug is enabled, skipping integration script run...\n'
-    else: res, output = execute('Running integration script...', command_line, return_='tuple')
+    else: res, output = execute('Running integration script...', command_line, return_='tuple', add_message_and_command_line_to_output=True)
     full_log += output
 
     if res:

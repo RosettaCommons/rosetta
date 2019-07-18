@@ -15,12 +15,13 @@ import sys
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
 
-import os, shutil, threading, subprocess, signal, time, re, random, datetime, copy
+import os, shutil, threading, subprocess, signal, time, re, random, datetime, copy, traceback
 import io
 import json
 import glob
 from os import path
 from optparse import OptionParser, IndentedHelpFormatter
+
 
 
 class NT:  # named tuple
@@ -449,7 +450,7 @@ EXAMPLES For Running Demos/Tutorials
                 if f == 'command.mpi.sh': continue
                 fname = dir_ + '/' + f
                 try:
-                    with io.open(fname, 'r', encoding="UTF-8") as f:
+                    with io.open(fname, 'r', encoding="UTF-8", errors='backslashreplace') as f:
                         data = f.read()
                 except UnicodeDecodeError:
                     # binary files will not work with the replacements
@@ -475,7 +476,7 @@ EXAMPLES For Running Demos/Tutorials
                     data = data.replace( params['rosetta_demos'], "ROSETTA/demos")
                     mod = True
                 if mod:
-                    with io.open(fname, 'w', encoding="UTF-8") as f:
+                    with io.open(fname, 'w', encoding="UTF-8", errors='backslashreplace') as f:
                         f.write( data )
 
     # Analyze results
@@ -529,7 +530,7 @@ EXAMPLES For Running Demos/Tutorials
 
             if options.yaml:
                 try:
-                  data = dict(total=len(tests), failed=errors, details=results, brief=makeBriefResults(full_log).decode('utf8', 'backslashreplace'))
+                  data = dict(total=len(tests), failed=errors, details=results, brief = makeBriefResults(full_log) )
                   with open(options.yaml, 'w') as f:
                       json.dump(data, f, sort_keys=True, indent=2)
                   '''
@@ -540,8 +541,10 @@ EXAMPLES For Running Demos/Tutorials
                   f.write("{total : %s, failed : %s, details : %s, brief : %s}" % (len(tests), errors, results, brief) )
                   f.close()
                   '''
-                except:
-                  pass
+                except Exception as e:
+                    trace = traceback.format_exc()
+                    print( 'Integration script failed with exception while wriitng results:{}\n{}... Skipping results writing...'.format(trace, e) )
+
 
         if not options.compareonly: write_runtimes(runtimes, outdir)
         if not options.valgrind:
@@ -751,6 +754,13 @@ def format_demo_line(command, demo_subdir):
     return new_command, executables
 
 
+
+def to_string(b):
+    ''' Conver bytes to string and handle the errors. If argument is already string - do nothing
+    '''
+    return b if type(b) == str else str(b, 'utf-8', errors='backslashreplace')
+
+
 #
 # Generate brief version of results, only ~20 first lines of difference will be shown.
 #
@@ -765,7 +775,7 @@ def makeBriefResults(results):
 
     r = re.compile( r'FAIL .*?^$', re.DOTALL | re.MULTILINE)
     res = r.sub(replace_fun, results)
-    return res
+    return to_string( res )
 
 
 # Wrap new line simbols inside given strings by using '\' character
@@ -1069,10 +1079,10 @@ def generateTestCommandline(test, outdir, options=None, host=None):
             return None, None #If the command.mpi file doesn't exist, then this isn't an MPI integration test and should be skipped.
     else :
         if os.path.isfile( path.join(workdir, "command" ) ):
-            with io.open(path.join(workdir, "command"), 'r', encoding="UTF-8") as f:
+            with io.open(path.join(workdir, "command"), 'r', encoding="UTF-8", errors='backslashreplace') as f:
                 cmd += f.read().strip()
         elif os.path.isfile( path.join(workdir, "command.new") ):
-            with io.open(path.join(workdir, "command.new"), 'r', encoding="UTF-8") as f:
+            with io.open(path.join(workdir, "command.new"), 'r', encoding="UTF-8", errors='backslashreplace') as f:
                 cmd += f.read().strip()
         else:
           return None, None #If the command file doesn't exist, we skip it.  It may only be an MPI integration test.
@@ -1115,7 +1125,7 @@ def generateTestCommandline(test, outdir, options=None, host=None):
 
     #Write the command.sh file
     # writing back so test can be easily re-run by user later...
-    with io.open(cmd_line_sh, 'w', encoding="UTF-8") as f:
+    with io.open(cmd_line_sh, 'w', encoding="UTF-8", errors='backslashreplace') as f:
         f.write(cmd)
 
     #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
@@ -1207,7 +1217,7 @@ def analyze_valgrind_test( test, outdir, results, full_log ):
                 continue
             if (not os.path.isfile( fn )) or fn.endswith("valgrind.out"):
                 continue
-            f = open( fn )
+            f = io.open(fn, encoding="UTF-8", errors='backslashreplace')
             try:
                 for line in f:
                     if line.startswith("=="):
