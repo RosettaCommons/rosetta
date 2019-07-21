@@ -99,7 +99,7 @@
 #include <cereal/types/string.hpp>
 #endif // SERIALIZATION
 
-static basic::Tracer tr( "core.scoring" );
+static basic::Tracer tr( "core.scoring.ScoreFunction" );
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
