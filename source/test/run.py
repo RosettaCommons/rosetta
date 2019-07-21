@@ -19,7 +19,8 @@ import os, re, subprocess, time, os.path
 from os import path
 from optparse import OptionParser
 
-import json
+import json, codecs
+
 
 #The factor by which to multiply the single test timeout value for a suite
 SUITE_FACTOR = 3
@@ -48,6 +49,13 @@ _timeout_factors_ = {
     "protocols:MembraneUtil" : 2,
     "protocols:AddMembraneMoverTest" : 2,
 }
+
+def to_unicode(b):
+    ''' Conver bytes to string and handle the errors. If argument is already in string - do nothing
+    '''
+    if not hasattr(sys, "version_info") or sys.version_info < (3, 0): return b if type(b) == unicode else unicode(b, 'utf-8', errors='backslashreplace')
+    else: return b if type(b) == str else str(b, 'utf-8', errors='backslashreplace')
+
 
 def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False, silence_output=False, silence_output_on_errors=False, add_message_and_command_line_to_output=False):
     if not silent: print(message);  print(command_line); sys.stdout.flush();
@@ -118,7 +126,10 @@ class Tester:
                 if r == (p, 0):  # process have ended without error
                     self.jobs.remove(p)
                 elif r[0] == p :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
-                    for p in self.jobs: os.waitpid(p, 0)
+                    for p in self.jobs:
+                        try:
+                            os.waitpid(p, 0)
+                        except OSError: pass
                     print('Some of the unit test suite terminate abnormally!')
                     sys.exit(1)
 
@@ -150,7 +161,7 @@ class Tester:
         if Options.cxx_ver:
             cmd_str += " cxx_ver=%s" % (Options.cxx_ver)
 
-        pl = subprocess.check_output(cmd_str, shell=True).decode('utf-8', errors="replace")
+        pl = subprocess.check_output(cmd_str, shell=True).decode('utf-8', errors="backslashreplace")
         lines = pl.split('\n')
         for s in lines:
             if  len( s.split() ) > 1 and s.split()[0] == 'Platform:':
@@ -230,14 +241,13 @@ class Tester:
 
         f.close()
 
-        # saving log to a file...
-        with open(log_file, 'w') as f:
-            f.write(''.join(output))
+        output = [ to_unicode(s) for s in output ]
+        with codecs.open(log_file, 'w', encoding='utf-8', errors='backslashreplace') as f: f.write(''.join(output))
 
     def parseOneLib(self, f, output):
         '''Parse output for OneLib run for regular unit tests.'''
         for line in f:
-            l = line.decode('utf-8', errors="replace")
+            l = line.decode('utf-8', errors="backslashreplace")
             print(l, end='')
             output.append(l)
             sys.stdout.flush()
@@ -299,14 +309,15 @@ class Tester:
             self.parseOneSuite(f, output)
         f.close()
 
-        # saving log to a file...
-        with open(log_file, 'w') as f:
-            f.write(''.join(output))
+        output = [ to_unicode(s) for s in output ]
+        with codecs.open(log_file, 'w', encoding='utf-8', errors='backslashreplace') as f: f.write(''.join(output))
+
+
 
 
     def parseOneSuite(self, f, output):
         for line in f:
-            l = line.decode('utf-8', errors="replace")
+            l = line.decode('utf-8', errors="backslashreplace")
             if l != 'All tests passed!\n':
                 print(l, end='')
                 output.append(l)
