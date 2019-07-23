@@ -241,7 +241,7 @@ add_per_residue_simple_metric_schema( utility::tag::XMLSchemaComplexTypeGenerato
 	AttributeList attlist;
 
 	attlist
-		+ XMLSchemaAttribute( "output_as_pdb_nums", xs_string, "If outputting to scorefile use PDB numbering instead of Rosetta (default)" );
+		+ XMLSchemaAttribute::attribute_w_default( "output_as_pdb_nums", xsct_rosetta_bool, "If outputting to scorefile use PDB numbering+chain instead of Rosetta (1 - N numbering)", "false" );
 
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector",
 		"If a residue selector is present, we only calculate and output metrics for the subset of residues selected." );
