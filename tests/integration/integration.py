@@ -345,6 +345,12 @@ EXAMPLES For Running Demos/Tutorials
     print("DEMOS: " + get_git_sha1(root_demos_dir))
     print("\n")
 
+    globalparams = generateIntegrationTestGlobalSubstitutionParameters()
+    print("Python: `"+globalparams.get("python","")+"`")
+    print("Python2: `"+globalparams.get("python2","")+"`")
+    print("Python3: `"+globalparams.get("python3","")+"`")
+    print("\n")
+
     #All tests are in a subdirectory.  We set these up here.
     test_subdir = "tests"
     demo_subdir = "public"
@@ -437,9 +443,9 @@ EXAMPLES For Running Demos/Tutorials
                 continue
 
         if options.fork or options.jobs==1:
-            simple_job_running( generateTestCommandline, queue, outdir, runtimes, options )
+            simple_job_running( generateTestCommandline, queue, outdir, runtimes, options, globalparams )
         else:
-            parallel_job_running(  generateTestCommandline, queue, outdir, runtimes, options )
+            parallel_job_running( generateTestCommandline, queue, outdir, runtimes, options, globalparams )
 
     # removing absolute paths to root Rosetta checkout from tests results and replacing it with 'ROSETTA'
     for test in tests:
@@ -850,16 +856,14 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
     while True:
         #(res, output) = commands.getstatusoutput(commandline)
 
-        po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        #po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        f = po.stderr
-        output = ''
-        for line in f:
-            #po.poll()
-            if print_output: print(line.decode('utf-8', errors="backslashreplace"), end='')
-            output += line.decode('utf-8', errors="backslashreplace")
-            sys.stdout.flush()
-        f.close()
+        po = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        (stdout, stderr) = po.communicate()
+        stdout = stdout.decode('utf-8', errors="backslashreplace")
+        stderr = stderr.decode('utf-8', errors="backslashreplace")
+        if print_output:
+            print( stdout )
+            print( stderr )
+
         while po.returncode is None: po.wait()
         res = po.returncode
         #print('_____________________' + res)
@@ -875,7 +879,9 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
         if print_output: print("\nEncounter error while executing: " + command_line)
         if not return_: sys.exit(1)
 
-    if return_ == 'output': return output
+    if return_ == 'output': return stdout + stderr
+    elif return_ == 'stdout': return stdout
+    elif return_ == 'stderr': return stderr
     else: return res
 
 def print_(msg, color=None, background=None, bright=False, blink=False, action='print', endline=True):
@@ -993,17 +999,24 @@ def get_binext():
     binext = extras.replace(',', '')+"."+platform+compiler+mode
     return binext, dict(locals())
 
-def generateIntegrationTestGlobalSubstitutionParameters(host=None):
+def generateIntegrationTestGlobalSubstitutionParameters():
     # Variables that may be referenced in the cmd string:
     python = sys.executable
     if sys.version_info[0] == 2:
         python2 = sys.executable
-        python3 = execute("Find python3","which python3",return_="output",print_output=False,verbose=False).strip()
+        python3 = execute("Find python3","which python3",return_="stdout",print_output=False,verbose=False).strip()
     elif sys.version_info[0] == 3:
         python3 = sys.executable
-        python2 = execute("Find python2","which python2",return_="output",print_output=False,verbose=False).strip()
+        python2 = execute("Find python2","which python2",return_="stdout",print_output=False,verbose=False).strip()
+        if python2 == "":
+            # On the Mac test servers, there isn't a `python2`, but the regular `python` should be python2
+            python2 = execute("Find python (assume python2)", "which python",return_="stdout",print_output=False,verbose=False).strip()
     else:
         print("ERROR: Unrecognized Python version!")
+        sys.exit(-1)
+
+    if python2 == "" or python3 == "":
+        print("ERROR: Unable to find Python executables")
         sys.exit(-1)
 
     minidir = Options.mini_home
@@ -1031,24 +1044,28 @@ def generateIntegrationTestGlobalSubstitutionParameters(host=None):
     del local_vars['local_vars']
     return local_vars
 
-def generateIntegrationTestSubstitutionParameters(test, outdir, host=None):
+def generateIntegrationTestSubstitutionParameters(test, outdir, host=None, globalparams=None):
     """
     Generate substitution parameters for integration command generation.
     """
 
-    params = generateIntegrationTestGlobalSubstitutionParameters(host)
+    if globalparams is None:
+        params = generateIntegrationTestGlobalSubstitutionParameters()
+    else:
+        params = globalparams.copy()
+    params["host"] = host
     params["dbms_database_name"] = Options.dbms_database_name % { 'test': test }
     params["dbms_pq_schema"] = Options.dbms_pq_schema % { 'test': test }
     params["workdir"] = path.abspath( path.join(outdir, test) )
 
     return params
 
-def generateTestCommandline(test, outdir, options=None, host=None):
+def generateTestCommandline(test, outdir, globalparams=None, options=None, host=None):
     """
     Generate and write command.sh and return command line that will run given integration test
     """
 
-    params = generateIntegrationTestSubstitutionParameters(test, outdir, host)
+    params = generateIntegrationTestSubstitutionParameters(test, outdir, host=host, globalparams=globalparams)
     workdir = params["workdir"]
     if options.valgrind:
         # We need to adjust the "bin" variable to use valgrind instead
@@ -1275,12 +1292,12 @@ def analyze_valgrind_test( test, outdir, results, full_log ):
 
         return 1
 
-def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
+def simple_job_running( GenerateJob, queue, outdir, runtimes, options, globalparams ):
     """
     Using the function GenerateJob to generate the job commandlines, run the jobs in queue with the given options.
 
     GenerateJob signature:
-      cmd_line_sh, workdir = GenerateJob(test, outdir)
+      cmd_line_sh, workdir = GenerateJob(test, outdir, globalparams=None, options=None, host=None)
 
     """
 
@@ -1295,7 +1312,7 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
         test = queue.get()
         if test is None: break
 
-        cmd_line_sh, workdir = GenerateJob(test, outdir, options);
+        cmd_line_sh, workdir = GenerateJob(test, outdir, globalparams=globalparams, options=options);
 
         if ( ( cmd_line_sh is None ) or (workdir is None) ) :
             print("No correct command.sh file found for %s.  Skipping." % test)
@@ -1370,10 +1387,10 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
 
     mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
 
-def parallel_job_running(GenerateJob, queue, outdir, runtimes, options ):
+def parallel_job_running(GenerateJob, queue, outdir, runtimes, options, globalparams ):
     # Start worker thread(s)
     for i in range(options.num_procs):
-        worker = Worker(queue, outdir, options, times=runtimes, timeout_minutes=options.timeout, GenerateJob=GenerateJob)
+        worker = Worker(queue, outdir, options, times=runtimes, timeout_minutes=options.timeout, GenerateJob=GenerateJob, globalparams=globalparams)
         thread = threading.Thread(target=worker.work)
         #thread.setDaemon(True) # shouldn't be necessary here
         thread.start()
@@ -1388,7 +1405,7 @@ def parallel_job_running(GenerateJob, queue, outdir, runtimes, options ):
           host= parts[0]
           nodes= int(parts[1])
         for node in range(nodes):
-          worker = Worker(queue, outdir, options, times=runtimes, host=host, timeout_minutes=options.timeout,GenerateJob=GenerateJob)
+          worker = Worker(queue, outdir, options, times=runtimes, host=host, timeout_minutes=options.timeout,GenerateJob=GenerateJob, globalparams=globalparams)
           thread = threading.Thread(target=worker.work)
           #thread.setDaemon(True) # shouldn't be necessary here
           thread.start()
@@ -1397,7 +1414,7 @@ def parallel_job_running(GenerateJob, queue, outdir, runtimes, options ):
     queue.join()
 
 class Worker:
-    def __init__(self, queue, outdir, opts, times, host=None, timeout_minutes=0, GenerateJob=generateTestCommandline):
+    def __init__(self, queue, outdir, opts, times, host=None, timeout_minutes=0, GenerateJob=generateTestCommandline, globalparams=None):
         self.queue = queue
         self.outdir = outdir
         self.opts = opts
@@ -1405,6 +1422,7 @@ class Worker:
         self.timeout = timeout_minutes * 60
         self.times = times
         self.GenerateJob = GenerateJob
+        self.globalparams = globalparams
 
     def work(self):
         running=0
@@ -1414,7 +1432,7 @@ class Worker:
                 try: # Actually catch exception and ignore it.  Python 2.4 can't use "except" and "finally" together.
                     start = time.time() # initial guess at start time, in case of exception
                     try: # Make sure job is marked done even if we throw an exception
-                        cmd_line_sh, workdir = self.GenerateJob(test, self.outdir, options=self.opts, host=self.host)
+                        cmd_line_sh, workdir = self.GenerateJob(test, self.outdir, options=self.opts, host=self.host, globalparams=self.globalparams)
 
                         if ( ( cmd_line_sh is None ) or ( workdir is None ) ) :
                             print("No command file found for %s.  Skipping." % test)
