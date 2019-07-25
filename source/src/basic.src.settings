@@ -94,6 +94,10 @@ sources = {
 		"OptionKeys14",
 		"OptionKeys15",
 	],
+	"basic/random" : [
+		"init_random_generator",
+		"RandomGeneratorSettings",
+	],
 	"basic/resource_manager" : [
 		"loader_schemas",
 		"ResourceLoader",
@@ -119,6 +123,13 @@ sources = {
 	],
 	"basic/svd": [
 		"SVD_Solver",
+	],
+	"basic/thread_manager" : [
+		"RosettaThread",
+		"RosettaThreadAssignmentInfo",
+		"RosettaThreadPool",
+		"RosettaThreadManager",
+		"RosettaThreadManagerInitializationTracker",
 	],
 }
 include_path = [

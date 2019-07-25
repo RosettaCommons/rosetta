@@ -26,4 +26,12 @@ cat %(minidir)s/src/protocols/jd2/JobDistributor.hh > JobDistributor.hh
 [ -a %(minidir)s/src/protocols/jd2/JobDistributor.cc ] || exit 1
 cat %(minidir)s/src/protocols/jd2/JobDistributor.cc > JobDistributor.cc
 
+#Check RosettaThreadManager machinery.
+[ -a %(minidir)s/src/basic/thread_manager/RosettaThreadManager.hh ] || exit 1
+cat %(minidir)s/src/basic/thread_manager/RosettaThreadManager.hh > RosettaThreadManager.hh
+[ -a %(minidir)s/src/basic/thread_manager/RosettaThreadPool.hh ] || exit 1
+cat %(minidir)s/src/basic/thread_manager/RosettaThreadPool.hh > RosettaThreadPool.hh
+[ -a %(minidir)s/src/basic/thread_manager/RosettaThread.hh ] || exit 1
+cat %(minidir)s/src/basic/thread_manager/RosettaThread.hh > RosettaThread.hh
+
 #check JD3 machinery??

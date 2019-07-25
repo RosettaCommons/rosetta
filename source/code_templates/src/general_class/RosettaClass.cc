@@ -11,38 +11,36 @@
 /// @brief --brief--
 /// @author --name-- (--email--)
 
+// Project headers:
 #include <--path--/--class--.hh>
+
+// Basic headers:
 #include <basic/Tracer.hh>
+
+// Utility headers:
+#include <utility/pointer/memory.hh>
 
 static basic::Tracer TR( "--namespace_dot--.--class--" );
 
 
 --namespace--
 
+/// @brief Default constructor.
 --class--::--class--():
  utility::pointer::ReferenceCount()
-{
+{}
 
-}
+/// @brief Copy constructor.  Keep default unless deep copying is needed (and in that case,
+/// consider using DeepCopyOPs.)
+--class--::--class--( --class-- const & )=default;
 
+/// @brief Destructor.
 --class--::~--class--(){}
 
---class--::--class--( --class-- const & ) {
-
-}
-
-
-
+/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 --class--OP
 --class--::clone() const {
-	return --class--OP( new --class--( *this ) );
+	return utility::pointer::make_shared< --class-- >( *this );
 }
 
-
 --end_namespace--
-
-
-
-
-
-

@@ -36,6 +36,7 @@
 
 #include <numeric/random/random.hh>
 #include <basic/Tracer.hh>
+#include <basic/random/init_random_generator.hh>
 #include <fstream>
 
 // Just for resample_full_model checkpointing -- gross, maybe should refactor later
@@ -745,7 +746,7 @@ threaded_apply_fxn_wrapper(
 	// Actually clone.
 	StepWiseMasterMoverOP newptr = utility::pointer::dynamic_pointer_cast< StepWiseMasterMover >( ths->clone() );
 	//core::init::init();//_random_number_generators();
-	core::init::init_random_number_generators();
+	basic::random::init_random_number_generators();
 	//
 	TR << "In threaded_apply_fxn_wrapper" << std::endl;
 	ensure_appropriate_foldtree_for_move( *thismove, *thispose );

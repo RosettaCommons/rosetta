@@ -1096,11 +1096,13 @@ sources = {
 	"pilot/vmullig" : [
 		"cycpep_analysis",
 		"fit_helixparams",
+		"make_mainchain_potential",
 		"plot_scoreterm",
 		#"simple_cycpep_predict",
-		"tensorflow_test1",
-		"make_mainchain_potential",
 		"symmetrize_old_ramamap",
+		"tensorflow_test1",
+		"test_rosetta_thread_manager_advanced_API",
+		"test_rosetta_thread_manager_basic_API",
 	],
 
 	# Z ######################################################################

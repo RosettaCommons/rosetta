@@ -1,0 +1,7 @@
+-multithreading:total_threads 1
+-level1_threads 5
+-level1_delay 1000000
+-level2_threads 3
+-level2_delay 1000000
+-level3_threads 3
+-level3_delay 1000000

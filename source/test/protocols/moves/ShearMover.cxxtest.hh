@@ -63,7 +63,7 @@ public:
 			"b-D-Glcp-(1->4)-b-D-Glcp-(1->4)-[b-D-Glcp-(1->4)-[b-D-Glcp-(1->6)]-b-D-Glcp-(1->6)]-"
 			"b-D-Glcp-(1->4)-b-D-Glcp-(1->4)-b-D-Glcp" );
 
-		core::init::init_random_generators(1000, "mt19937");
+		basic::random::init_random_generators(1000, "mt19937");
 	}
 
 	void tearDown() {

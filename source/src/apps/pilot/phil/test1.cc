@@ -103,6 +103,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/phil.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/random/init_random_generator.hh>
 
 // Utility headers
 #include <utility/vector0.hh>
@@ -2210,7 +2211,7 @@ void
 simple_benchmark()
 {
 	// this should improve stability of the tests
-	core::init::init_random_generators( 1000, "mt19937" );
+	basic::random::init_random_generators( 1000, "mt19937" );
 
 	//ccd_test(  );
 	//exit(0);

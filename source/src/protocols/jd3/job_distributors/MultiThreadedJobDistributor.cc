@@ -34,6 +34,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/jd3.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/random/RandomGeneratorSettings.hh>
+#include <basic/random/init_random_generator.hh>
 
 // Utility headers
 #include <utility/SingletonBase.hh>
@@ -274,18 +276,17 @@ void JobRunner::run( int thread_index )
 	running_thread_ = thread_index;
 	// The RNG needs to be set up for the thread
 
-	core::init::RandomGeneratorSettings rgs;
+	basic::random::RandomGeneratorSettings rgs;
 	rgs.initialize_from_options( basic::options::option );
 
 	if ( ! rgs.const_seed() ) {
 		if ( ! numeric::random::rg().initialized() ) {
-			rgs.seed_offset( rgs.seed_offset() + thread_index );
 			rgs.mpi_bcast_seed_from_node0( false );
-			int seed = core::init::determine_random_number_seed( rgs );
-			core::init::init_random_generators( seed, rgs.rng_type() );
+			int seed = basic::random::determine_random_number_seed( rgs, thread_index );
+			basic::random::init_random_generators( seed, rgs.rng_type() );
 		}
 	} else {
-		core::init::init_random_generators(
+		basic::random::init_random_generators(
 			rgs.seed() + rgs.seed_offset() + retry_limit_ * larval_job_->job_index() + attempt_count_,
 			rgs.rng_type() );
 	}

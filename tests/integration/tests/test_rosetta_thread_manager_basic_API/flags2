@@ -1,0 +1,4 @@
+-multithreading:total_threads 20
+-whole_row_mode
+-level1_threads 5
+-level2_threads 5

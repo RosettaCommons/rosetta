@@ -57,7 +57,7 @@ public:
 		//test::UTracer UT("core/io/atom_tree_diffs/atom_tree_diff_test.u", &TR);
 
 		/// Init random generators system to insure that random number sequence is the same for each run.
-		core::init::init_random_generators(1000, "mt19937");
+		basic::random::init_random_generators(1000, "mt19937");
 
 
 		pose::Pose start_pose( create_test_in_pdb_pose()), modified_pose, restored_pose;

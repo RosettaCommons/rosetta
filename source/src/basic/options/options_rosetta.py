@@ -1703,6 +1703,14 @@ Options = Option_Group( '',
  		), #-score:loop_close
 	), # -score
 
+	# Global options for multi-threading using the RosettaThreadManager ---------------------------------------
+	Option_Group( 'multithreading',
+		Option( 'total_threads', 'Integer',
+			desc='The number of threads to launch in the global thread pool.  All thread-parallelized work will be distributed over these threads.',
+			default='1'
+		), #-multithreading:total_threads
+	), # -multithreading
+
 	# for recon design application ---------------------------------------
 	Option_Group( 'recon',
     Option( 'randomize', 'Boolean',

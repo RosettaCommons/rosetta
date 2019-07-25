@@ -79,7 +79,7 @@ public:
 		// read pdb file
 		core::import_pose::pose_from_file( pose, "protocols/simple_moves/chiral/AAdAdA.pdb" , core::import_pose::PDB_file);
 
-		core::init::init_random_generators(1000, "mt19937");
+		basic::random::init_random_generators(1000, "mt19937");
 	}
 
 	void tearDown() {

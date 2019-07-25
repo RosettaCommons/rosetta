@@ -101,7 +101,7 @@ public:
 
 		// init/reset seeds in all RG objects we have to do this inside the test it self function since
 		// user could request to run just one singel test.
-		core::init::init_random_generators(1101, "mt19937");
+		basic::random::init_random_generators(1101, "mt19937");
 
 		ScoreFunction scorefxn;
 		scorefxn.set_weight( fa_atr, 0.80 );

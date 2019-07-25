@@ -75,7 +75,7 @@ public:
 		const char *fileIn, const char *fileOut, const char *nativeFileIn=0 ) {
 		//TR_I << "MoversTest: Testing " << mover->type().c_str() << "...\n";
 
-		core::init::init_random_generators(1000, "mt19937");
+		basic::random::init_random_generators(1000, "mt19937");
 
 		const std::string original_file_name( fileIn );
 

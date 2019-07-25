@@ -136,7 +136,7 @@ UBQ_GTPaseMover::UBQ_GTPaseMover():
 	amide_mm_(/* NULL */),
 	loop_(), //we want default ctor
 	atomIDs(8, core::id::AtomID::BOGUS_ATOM_ID() ),
-	InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
+	InterfaceSasaDefinition_("InterfaceSasaDefinition_" + std::to_string(1)),
 	IAM_(utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >()),
 	extra_bodies_(false),
 	n_tail_res_(3),

@@ -60,7 +60,7 @@ public:
 		the_sugar_pose = utility::pointer::make_shared< Pose >();
 		make_pose_from_saccharide_sequence( *the_sugar_pose, "->6)-a-D-Glcp-(1->6)-a-D-Glcp" );
 
-		core::init::init_random_generators(1000, "mt19937");
+		basic::random::init_random_generators(1000, "mt19937");
 	}
 
 	void tearDown() {

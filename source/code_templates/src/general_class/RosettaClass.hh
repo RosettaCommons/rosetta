@@ -28,26 +28,22 @@ class --class-- : public utility::pointer::ReferenceCount {
 
 public:
 
+	/// @brief Default constructor.
 	--class--();
+
+	/// @brief Copy constructor.
 	--class--(--class-- const & src);
 
+	/// @brief Destructor.
 	virtual ~--class--();
 
-	--class--OP
-	clone() const;
+	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
+	--class--OP clone() const;
 
 private:
 
 };
 
-
 --end_namespace--
 
-
-
 #endif //INCLUDED_--path_underscore--_--class--_hh
-
-
-
-
-

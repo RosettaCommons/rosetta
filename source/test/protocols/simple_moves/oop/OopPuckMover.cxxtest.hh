@@ -84,7 +84,7 @@ public:
 		core::import_pose::pose_from_file( pose, *residue_set, "protocols/simple_moves/oop/oop_test.pdb" , core::import_pose::PDB_file);
 		//scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
-		core::init::init_random_generators(1000, "mt19937");
+		basic::random::init_random_generators(1000, "mt19937");
 	}
 
 	void tearDown() {

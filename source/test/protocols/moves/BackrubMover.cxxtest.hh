@@ -152,7 +152,7 @@ public:
 		the_pose = utility::pointer::make_shared< Pose >();
 		core::import_pose::pose_from_file( *the_pose, "protocols/moves/test_in.pdb" , core::import_pose::PDB_file);
 
-		core::init::init_random_generators(1000, "mt19937");
+		basic::random::init_random_generators(1000, "mt19937");
 	}
 
 	void tearDown() {

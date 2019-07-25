@@ -15,6 +15,7 @@
 #define INCLUDED_core_init_util_HH
 
 #include <core/init/init.hh>
+#include <basic/random/init_random_generator.hh>
 
 #include <string.h> // strncpy
 #include <string>
@@ -53,8 +54,8 @@ create_pseudo_commandline( std::string const & cmdin, int & pseudo_argc )
 
 	/*
 	for ( int ii = 0; ii < pseudo_argc; ++ii ) {
-		cout << "string " << ii << " with start pos: " << string_start[ ii ] << ", length: " << string_length[ ii ] << " of \"";
-		cout << cmdin.substr( string_start[ ii ], string_length[ ii ] ) << "\"" << endl;
+	cout << "string " << ii << " with start pos: " << string_start[ ii ] << ", length: " << string_length[ ii ] << " of \"";
+	cout << cmdin.substr( string_start[ ii ], string_length[ ii ] ) << "\"" << endl;
 	}
 	*/
 
@@ -70,9 +71,9 @@ create_pseudo_commandline( std::string const & cmdin, int & pseudo_argc )
 		strncpy(pseudo_argv[ii], cmdline[ii].c_str(), cmdline[ii].size());
 		pseudo_argv[ii][ cmdline[ii].size() ] = '\0';
 	}
-	 /*
+	/*
 	for ( int ii = 0; ii < pseudo_argc; ++ii ) {
-		cout << "string " << ii << pseudo_argv[ii] << "\n";
+	cout << "string " << ii << pseudo_argv[ii] << "\n";
 	}*/
 
 	return pseudo_argv;
@@ -101,7 +102,7 @@ inline void core_init_from_string( std::string const & commandline )
 
 	int pseudo_argc;
 	char** pseudo_argv = create_pseudo_commandline( std::string(command_line_argv[0]) + " "
-													 + commandline, pseudo_argc );
+		+ commandline, pseudo_argc );
 	core::init::init( pseudo_argc, pseudo_argv );
 	destroy_pseudo_commandline( pseudo_argc, pseudo_argv );
 
@@ -112,7 +113,7 @@ inline std::string get_commandline_with_additional_options( std::string const & 
 	extern int command_line_argc; extern char ** command_line_argv;
 
 	std::string commandline(" ");
-	for(int i=1; i<command_line_argc; i++) {
+	for ( int i=1; i<command_line_argc; i++ ) {
 		commandline = commandline + command_line_argv[i] + " ";
 	}
 	commandline = commandline + commandline_in;
@@ -156,18 +157,17 @@ inline void core_init()
 	extern int command_line_argc;
 	extern char ** command_line_argv;
 
-	if( command_line_argc > 1 ) {
+	if ( command_line_argc > 1 ) {
 		core::init::init(command_line_argc, command_line_argv);
 		initialize_rng();
-	}
-	else {
+	} else {
 		std::string commandline = "core.test -mute all";
 		initialize_from_commandline_w_db( commandline );
 	}
 }
 
 inline void initialize_rng() {
-	core::init::init_random_generators(1000, "mt19937");
+	basic::random::init_random_generators(1000, "mt19937");
 }
 
 #endif
