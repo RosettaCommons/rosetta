@@ -1574,13 +1574,8 @@ tokenize_line( std::string const & input_line){
 }
 
 void onError( std::string message ){
-	static bool interactive = basic::options::option[ basic::options::OptionKeys::run::interactive ].value();
 	TR << message << std::endl;
-	if ( interactive ) {
-		throw CREATE_EXCEPTION(ResfileReaderException, message);
-	} else {
-		utility_exit();
-	}
+	throw CREATE_EXCEPTION(ResfileReaderException, message);
 }
 
 
