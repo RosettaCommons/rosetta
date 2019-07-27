@@ -213,6 +213,7 @@ RingConformationMover::apply( Pose & input_pose )
 	if ( locked_ ) {
 		TR.Warning << "Rings were locked from the command line with the -lock_rings flag.  " <<
 			"Did you intend to call this Mover?" << endl;
+		set_last_move_status( moves::FAIL_DO_NOT_RETRY );
 		return;
 	}
 
@@ -255,6 +256,7 @@ RingConformationMover::apply( Pose & input_pose )
 	}
 
 	TR << "Move(s) complete." << endl;
+	set_last_move_status( moves::MS_SUCCESS );
 }
 
 

@@ -1252,7 +1252,8 @@ Pose::set_omega( Size const seqpos, Real const setting )
 		} else { //Default case, including peptoids and alpha-amino acids:
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion ),  setting );
 		}
-	} else if ( residue_type( seqpos ).is_terminus() ) {
+	} else if ( ( residue_type( seqpos ).is_terminus() ) && ( ! residue_type( seqpos ).is_carbohydrate() ) ) {
+		// All carbohydrate residues should use the below else statement and call set_glycosidic_torsion
 		conformation_->set_torsion( TorsionID( seqpos, BB, 1 ),  setting ); // Only one for ACE.
 	} else /*is carbohydrate*/ {
 		carbohydrates::set_glycosidic_torsion(omega_torsion, *this, seqpos, setting);
