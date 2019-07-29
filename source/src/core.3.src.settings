@@ -38,6 +38,7 @@ sources = {
 	"core/io/mmtf": [
 		"mmtf_reader",
 		"mmtf_writer",
+		"util",
 	],
 	"core/io/nmr" : [
 		"ParaIon",

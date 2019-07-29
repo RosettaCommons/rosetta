@@ -557,7 +557,7 @@ create_records_from_sfr(
 			last_resseq = ai.resSeq;
 
 		}
-		if ( ! no_chainend_ter && i > 0 ) {
+		if ( ! no_chainend_ter ) {
 			VR.push_back( T );
 		}
 	}

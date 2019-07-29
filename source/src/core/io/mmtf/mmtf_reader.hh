@@ -34,6 +34,7 @@
 
 #include <core/pose/PDBInfo.hh>
 #include <core/io/pdb/Field.hh>
+#include <core/io/AtomInformation.hh>
 #include <core/io/HeaderInformation.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/io/StructFileRep.hh>
@@ -41,6 +42,7 @@
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
 
 #include <core/io/Remarks.hh>
+#include <core/io/mmtf/util.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -70,6 +72,7 @@
 // External headers
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
+#include <mmtf.hpp>
 
 // C++ headers
 #include <cstdlib>
@@ -80,9 +83,67 @@ namespace core {
 namespace io {
 namespace mmtf {
 
+// @brief This actually adds the SSBondInformation/LinkInformation
+//        templated to work only with LinkInformation and SSBondInformation
+template < typename T >
+inline void
+add_xbond_information(
+	std::map< std::string, utility::vector1< T > >& xbond_map,
+	core::io::AtomInformation const & atm_1,
+	core::io::AtomInformation const & atm_2);
+
+/// @brief This distributes what type of bonds to make based on the mmtf bonds via add_xbond_information
+void
+add_link_and_ss_information(
+	::mmtf::StructureData const & sd,
+	core::io::StructFileRep & sfr,
+	std::vector< core::io::AtomInformation > const & all_AIs,
+	core::Size const atmSerial);
+
+
+/// @brief This adds actuals bonds from the mmtf object to connected_indicies/connected_orders
+void
+add_bond_information(::mmtf::StructureData const & sd,
+	std::vector< core::io::AtomInformation > & all_AIs,
+	std::map<core::Size, sd_index> const & atom_num_to_sd_map,
+	core::Size const atomSerialMax);
+
+/// @brief This adds TERs based on what is bound to the C of each AA.
+//         if something isn't bound, add a TER!
+void
+add_ters_via_bonds(std::vector< core::io::AtomInformation > & all_AIs);
+
+/// @brief load heterogen data: heterogen_names && residue_type_base_names
+//  @note this is stored in extraProperties["rosetta::heterogen_names"] and
+//        extraProperties["rosetta::residue_type_base_names"]
+void
+load_heterogen_info(
+	::mmtf::MapDecoder const & md,
+	core::io::StructFileRep & sfr);
+
+/// @brief makes a linear vector of all AtomInformation from the mmtf data
+std::vector< core::io::AtomInformation >
+make_all_atom_information(::mmtf::StructureData const & sd,
+	core::Size & atomSerial,
+	StructFileReaderOptions const & options );
+
+/// @brief makes a single AtomInformation from the mmtf data
+core::io::AtomInformation
+make_atom_information(
+	::mmtf::StructureData const &sd,
+	::mmtf::GroupType const & group,
+	int const groupAtomIndex,
+	core::Size const atomIndex,
+	core::Size const atomSerial,
+	core::Size const groupIndex,
+	core::Size const chainIndex,
+	utility::vector1<char> & known_chainIDs,
+	core::io::StructFileReaderOptions const & options );
+
+/// @brief master create sfr
 core::io::StructFileRepOP
 create_sfr_from_mmtf_filename(
-	std::string stream_in,
+	std::string const & filename,
 	core::io::StructFileReaderOptions const & options);
 
 } // core

@@ -75,14 +75,15 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		core::io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
 		pose_to_sfr.init_from_pose( *testpose );
 		//testpose->dump_pdb("vtemp.pdb");
-		for ( core::Size i=1, imax=pose_to_sfr.sfr()->chains()[1].size(); i<=imax; ++i ) {
-			TS_ASSERT_EQUALS( pose_to_sfr.sfr()->chains()[1][i-1].serial, i); //Atoms should be numbered sequentially.
-			//TR << "Atom " << i << ": serial=" << pose_to_sfr.sfr()->chains[1][i-1].serial << " connections=" << pose_to_sfr.sfr()->chains[1][i-1].connected_indices.size() << std::endl;
+		// chains is vector0
+		for ( core::Size i=0; i<pose_to_sfr.sfr()->chains()[0].size(); ++i ) {
+			TS_ASSERT_EQUALS( pose_to_sfr.sfr()->chains()[0][i].serial, i+1); // Atoms should be numbered sequentially.
+			// TR << "Atom " << i+1 << ": serial=" << pose_to_sfr.sfr()->chains[1][i-1].serial << " connections=" << pose_to_sfr.sfr()->chains[1][i-1].connected_indices.size() << std::endl;
 			TR.flush();
-			if ( i == 154 ) {
-				TS_ASSERT_EQUALS( pose_to_sfr.sfr()->chains()[1][i-1].connected_indices.size(), 2 ); //Atom 154 is bound to two atoms.
-				TS_ASSERT_EQUALS( pose_to_sfr.sfr()->chains()[1][i-1].connected_indices[1], 6 ); //Atom 154 is bound to atom 6 (disulfide SG-SG).
-				TS_ASSERT_EQUALS( pose_to_sfr.sfr()->chains()[1][i-1].connected_indices[2], 153 ); //Atom 154 is bound to atom 154 (SG-CB).
+			if ( i == 153 ) {
+				TS_ASSERT_EQUALS( pose_to_sfr.sfr()->chains()[0][i].connected_indices.size(), 2 ); //Atom 154 is bound to two atoms.
+				TS_ASSERT_EQUALS( pose_to_sfr.sfr()->chains()[0][i].connected_indices[1], 6 ); //Atom 154 is bound to atom 6 (disulfide SG-SG).
+				TS_ASSERT_EQUALS( pose_to_sfr.sfr()->chains()[0][i].connected_indices[2], 153 ); //Atom 154 is bound to atom 154 (SG-CB).
 			}
 		}
 	}
@@ -102,7 +103,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		pose_to_sfr.grab_membrane_info( *pose, true );
 
 		core::Size const maxchain( pose_to_sfr.sfr()->chains().size() - 1 );
-		TS_ASSERT_EQUALS( maxchain, 3 );
+		TS_ASSERT_EQUALS( maxchain, 2 );
 
 		for ( core::Size i=0; i<=maxchain; ++i ) {
 			for ( core::Size j=0, jmax=pose_to_sfr.sfr()->chains()[i].size(); j<jmax; ++j ) {
@@ -208,10 +209,10 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		StructFileRepCOP sfr( pose_to_sfr_converter.sfr() );
 		utility::vector0< utility::vector0< AtomInformation > > const & chains( sfr->chains() );
 
-		TS_ASSERT_EQUALS( chains[ 1 ][ 0 ].chainID, 'A' );  // Why are these vector0s if 0 is skipped?  ~ Labonte
-		TS_ASSERT_EQUALS( chains[ 2 ][ 0 ].chainID, 'C' );
-		TS_ASSERT_EQUALS( chains[ 3 ][ 0 ].chainID, 'D' );
-		TS_ASSERT_EQUALS( chains[ 4 ][ 0 ].chainID, 'B' );
+		TS_ASSERT_EQUALS( chains[ 0 ][ 0 ].chainID, 'A' );
+		TS_ASSERT_EQUALS( chains[ 1 ][ 0 ].chainID, 'C' );
+		TS_ASSERT_EQUALS( chains[ 2 ][ 0 ].chainID, 'D' );
+		TS_ASSERT_EQUALS( chains[ 3 ][ 0 ].chainID, 'B' );
 	}
 
 	//SEE ALSO StructFileRep.cxxtest.hh; unclear if test_generate_secondary_structure_informations belongs here or there

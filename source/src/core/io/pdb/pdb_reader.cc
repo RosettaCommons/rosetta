@@ -480,9 +480,7 @@ store_heterogen_name_record_in_sfr( Record hetnam_record, StructFileRep & sfr )
 		sfr.heterogen_names()[ hetID ] = text;
 	} else {
 		// Check whether we are continuing a hyphenated word or adding a new one.
-		if ( sfr.heterogen_names()[ hetID ][ sfr.heterogen_names()[ hetID ].size() - 1 ] == '-' ) {
-			// The last character is a hyphen.
-			// (If we were using C++11, I would just call back()....)
+		if ( sfr.heterogen_names()[ hetID ].back() == '-' ) {
 			sfr.heterogen_names()[ hetID ] += text;
 		} else {
 			sfr.heterogen_names()[ hetID ] += " " + text;

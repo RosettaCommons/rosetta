@@ -147,5 +147,15 @@ std::ostream & operator<<( std::ostream & os, LinkInformation const & li ) {
 	return os;
 }
 
+/// @brief Debugging output for LinkInformation
+std::ostream & operator<<( std::ostream & os, SSBondInformation const & ssb ) {
+	// Debugging-style output - we're not overly concerned with column alignment
+	os << "SSBOND ";
+	os << ssb.name1 << " " << ssb.resName1 << " " << ssb.chainID1 << " " << ssb.resSeq1 << ssb.iCode1 << "  " << ssb.sym1 << " : ";
+	os << ssb.name2 << " " << ssb.resName2 << " " << ssb.chainID2 << " " << ssb.resSeq2 << ssb.iCode2 << "  " << ssb.sym2;
+	os << ssb.length;
+	return os;
+}
+
 } // namespace io
 } // namespace core

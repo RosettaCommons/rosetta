@@ -76,6 +76,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/io/mmtf/mmtf_writer.hh>
+#include <core/io/mmtf/util.hh>
 
 static basic::Tracer TR( "core.io.mmtf.mmtf_writer" );
 
@@ -202,46 +203,18 @@ make_current_group(aiGroup const & ai_group) {
 }
 
 bool
-is_in_bondAtomList(std::vector<int32_t> const & bondAtomList, core::Size lower_atom, core::Size upper_atom) {
-	int32_t lower_candidate = std::min(lower_atom, upper_atom);
-	int32_t upper_candidate = std::max(lower_atom, upper_atom);
+is_in_bondAtomList(std::vector<int32_t> const & bondAtomList, core::Size const lower_atom, core::Size const upper_atom) {
+	int32_t const lower_candidate = std::min(lower_atom, upper_atom);
+	int32_t const upper_candidate = std::max(lower_atom, upper_atom);
 	for ( core::Size i=0; i<bondAtomList.size(); i += 2 ) {
-		int32_t lower_known = std::min(bondAtomList[i], bondAtomList[i+1]);
-		int32_t upper_known = std::max(bondAtomList[i], bondAtomList[i+1]);
+		int32_t const lower_known = std::min(bondAtomList[i], bondAtomList[i+1]);
+		int32_t const upper_known = std::max(bondAtomList[i], bondAtomList[i+1]);
 		if ( lower_candidate == lower_known && upper_candidate == upper_known )  {
 			return true;
 		}
 	}
 	return false;
 }
-
-std::map<core::Size, sd_index>
-make_atom_num_to_sd_map(::mmtf::StructureData const & sd) {
-	int32_t modelIndex = 0;
-	int32_t chainIndex = 0;
-	int32_t groupIndex = 0;
-	core::Size atomSerial = 0;
-
-	std::map<core::Size, sd_index> ret_map;
-
-	for ( int32_t i = 0; i < sd.numModels; i++, modelIndex++ ) {
-		// traverse chains
-		for ( int32_t j = 0; j < sd.chainsPerModel[modelIndex]; j++, chainIndex++ ) {
-			// traverse groups
-			for ( int32_t k = 0; k < sd.groupsPerChain[chainIndex]; k++, groupIndex++ ) {
-				const ::mmtf::GroupType& group =
-					sd.groupList[sd.groupTypeList[groupIndex]];
-				int groupAtomCount = group.atomNameList.size();
-				for ( int32_t l = 0; l < groupAtomCount; l++, atomSerial++ ) {
-					sd_index this_sd_index(chainIndex, groupIndex, l);
-					ret_map[atomSerial] = this_sd_index;
-				}
-			}
-		}
-	}
-	return ret_map;
-}
-
 
 aiChain
 make_chain(utility::vector0<AtomInformation> const & chain_atoms) {
@@ -272,7 +245,7 @@ aiPose_from_sfr(core::io::StructFileRep const & sfr) {
 
 void
 add_bonds_to_sd(::mmtf::StructureData & sd,
-	aiPose & AIP, std::map<core::Size, sd_index> & atom_num_to_sd_map) {
+	aiPose const & AIP, std::map<core::Size, sd_index> const & atom_num_to_sd_map) {
 	int32_t groupIndex = 0;
 	int32_t chainIndex = 0;
 	unsigned int atomIndex = 0;
@@ -280,14 +253,14 @@ add_bonds_to_sd(::mmtf::StructureData & sd,
 		for ( core::Size j=0; j<AIP[i].size(); ++j, ++groupIndex ) {  // for each group
 			for ( core::Size k=0; k<AIP[i][j].size(); ++k, ++atomIndex ) {  // for each atom
 				AtomInformation const & ai = AIP[i][j][k];
-				sd_index upper_connect = atom_num_to_sd_map[atomIndex];
+				sd_index const upper_connect = atom_num_to_sd_map.at(atomIndex);
 				for ( core::Size l=1; l<=ai.connected_indices.size(); ++l ) {
-					core::Size link_buddy = ai.connected_indices[l];
+					core::Size const link_buddy = ai.connected_indices[l];
 					if ( link_buddy > atomIndex+1 ) continue;
-					sd_index lower_connect = atom_num_to_sd_map[link_buddy-1];
+					sd_index const lower_connect = atom_num_to_sd_map.at(link_buddy-1);
 					if ( upper_connect.group_index == lower_connect.group_index ) {  // same group
 						::mmtf::GroupType& group = sd.groupList[sd.groupTypeList[groupIndex]];
-						bool already_in_grouplist = is_in_bondAtomList(group.bondAtomList, lower_connect.group_atom_index,
+						bool const already_in_grouplist = is_in_bondAtomList(group.bondAtomList, lower_connect.group_atom_index,
 							upper_connect.group_atom_index); // based on group atom number
 						if ( !already_in_grouplist ) {
 							group.bondAtomList.push_back(lower_connect.group_atom_index);
@@ -302,7 +275,7 @@ add_bonds_to_sd(::mmtf::StructureData & sd,
 						}
 						++sd.numBonds;
 					} else {  // Not same group
-						bool already_in_bondAtomList = is_in_bondAtomList(sd.bondAtomList, atomIndex,
+						bool const already_in_bondAtomList = is_in_bondAtomList(sd.bondAtomList, atomIndex,
 							link_buddy-1);  // based on overall atom number
 						if ( !already_in_bondAtomList ) {
 							sd.bondAtomList.push_back(atomIndex);
@@ -319,6 +292,26 @@ add_bonds_to_sd(::mmtf::StructureData & sd,
 		}
 	}
 }
+
+
+void
+add_heterogen_info_to_sd(
+	::mmtf::StructureData & sd,
+	core::io::StructFileRep const & sfr,
+	core::io::StructFileRepOptions const & options
+)
+{
+	if ( options.use_pdb_format_HETNAM_records() ) {
+		if ( !sfr.heterogen_names().empty() ) {
+			sd.extraProperties["rosetta::heterogen_names"] = msgpack::object(sfr.heterogen_names(), sd.msgpack_zone);
+		}
+	} else if ( !options.write_glycan_pdb_codes() ) {
+		if ( !sfr.residue_type_base_names().empty() ) {
+			sd.extraProperties["rosetta::residue_type_base_names"] = msgpack::object(sfr.residue_type_base_names(), sd.msgpack_zone);
+		}
+	}
+}
+
 
 void
 dump_mmtf(
@@ -344,7 +337,7 @@ dump_mmtf(
 	// Add basic easy info
 	for ( core::Size i=0; i<AIP.size(); ++i ) {  // for each chain
 		for ( core::Size j=0; j<AIP[i].size(); ++j ) {  // for each group
-			::mmtf::GroupType gt = make_current_group(AIP[i][j]);
+			::mmtf::GroupType const gt = make_current_group(AIP[i][j]);
 			auto it = std::find(sd.groupList.begin(), sd.groupList.end(), gt);
 			if ( it == sd.groupList.end() ) {
 				sd.groupList.push_back(gt);
@@ -359,6 +352,8 @@ dump_mmtf(
 				sd.xCoordList.push_back(ai.x);
 				sd.yCoordList.push_back(ai.y);
 				sd.zCoordList.push_back(ai.z);
+				sd.bFactorList.push_back(ai.temperature);
+				sd.occupancyList.push_back(ai.occupancy);
 				++sd.numAtoms;
 			}
 			++sd.numGroups;
@@ -372,10 +367,11 @@ dump_mmtf(
 
 	// Bond information
 	// atom num to chain->group->atom map
-	std::map<core::Size, sd_index> atom_num_to_sd_map =  make_atom_num_to_sd_map(sd);
+	std::map<core::Size, sd_index> const atom_num_to_sd_map =  core::io::mmtf::make_atom_num_to_sd_map(sd);
 
 	// Add bonds to sd
 	add_bonds_to_sd(sd, AIP, atom_num_to_sd_map);
+	add_heterogen_info_to_sd(sd, *sfr, options);
 	// TODO
 	if ( options.preserve_header() ) {
 		TR << "mmtf preserve_header not implemented yet!" << std::endl;

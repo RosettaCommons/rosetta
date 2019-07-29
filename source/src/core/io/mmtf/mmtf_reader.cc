@@ -34,6 +34,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/io/pdb/Field.hh>
 #include <core/io/HeaderInformation.hh>
+#include <core/io/AtomInformation.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/io/StructFileRep.hh>
 
@@ -82,31 +83,196 @@ static basic::Tracer TR( "core.io.mmtf.mmtf_reader" );
 using basic::Error;
 using basic::Warning;
 
+// NOTE: this is templated to work with AtomInformation or LinkInformation
+// LinkInformation is similar enough to work, but if you ever want to use
+// sym1 or sym2 it will have to be split from this function
+template < typename T >
+inline void
+core::io::mmtf::add_xbond_information(
+	std::map< std::string, utility::vector1< T > >& xbond_map,
+	core::io::AtomInformation const & atm_1,
+	core::io::AtomInformation const & atm_2)
+{
+	numeric::xyzVector<core::Real> const atm_1_xyz(atm_1.x, atm_1.y, atm_1.z);
+	numeric::xyzVector<core::Real> const atm_2_xyz(atm_2.x, atm_2.y, atm_2.z);
 
-core::io::StructFileRepOP
-core::io::mmtf::create_sfr_from_mmtf_filename( std::string mmtf_filename,
-	StructFileReaderOptions const & options ) {
-
-	if ( options.read_pdb_header() ) {
-		TR.Warning << "read_pdb_header set, but not used in reading mmtf_file" << std::endl;
-		// TODO
+	T xbond;
+	xbond.name1 = utility::pad_atom_name(atm_1.name);
+	xbond.resName1 = atm_1.resName;
+	xbond.chainID1 = atm_1.chainID;
+	xbond.resSeq1 = atm_1.resSeq;
+	xbond.iCode1 = atm_1.iCode;
+	{
+		std::stringstream strstr;
+		strstr << std::setw( 4 ) << std::right << xbond.resSeq1 << xbond.iCode1 << xbond.chainID1;
+		xbond.resID1 = strstr.str();
 	}
 
-	::mmtf::StructureData sd;
-	::mmtf::decodeFromFile(sd, mmtf_filename);
+	xbond.name2 = utility::pad_atom_name(atm_2.name);
+	xbond.resName2 = atm_2.resName;
+	xbond.chainID2 = atm_2.chainID;
+	xbond.resSeq2 = atm_2.resSeq;
+	xbond.iCode2 = atm_2.iCode;
+	xbond.resID2 = std::to_string(xbond.resSeq2) + xbond.iCode2 + xbond.chainID2;
+	{
+		std::stringstream strstr;
+		strstr << std::setw( 4 ) << std::right << xbond.resSeq2 << xbond.iCode2 << xbond.chainID2;
+		xbond.resID2 = strstr.str();
+	}
+	xbond.length = atm_1_xyz.distance(atm_2_xyz);
 
-	core::io::StructFileRepOP sfr( new core::io::StructFileRep );
+	if ( xbond_map.count( xbond.resID1 ) ) {
+		xbond_map[ xbond.resID1 ].push_back(xbond);
+		//links.push_back();
+	} else {
+		utility::vector1< T > links;
+		links.push_back( xbond );
+		xbond_map[ xbond.resID1 ] = links;
+	}
+}
 
-	std::map<char, core::io::ChainAtoms> atom_chain_map;
-	std::vector< char > chain_list; // preserve order
-	std::map<char, core::Size> chain_to_idx;
+template < typename T >
+bool
+sort_xbond_func( T const & lhs, T const & rhs ) {
+	return ( lhs.chainID2 < rhs.chainID2 ) || ( lhs.chainID2 == rhs.chainID2 && lhs.resSeq2 < rhs.resSeq2 );
+}
 
+/* Warning! We currently only load the first model. However,
+* we have all of the bonds from the other atoms too.  We select
+* based on the atmSerial given.
+*/
+void
+core::io::mmtf::add_link_and_ss_information(
+	::mmtf::StructureData const & sd,
+	core::io::StructFileRep & sfr,
+	std::vector< core::io::AtomInformation > const & all_AIs,
+	core::Size const atmSerial
+) {
+	auto ai_sort_func = []( core::io::AtomInformation const & lhs, core::io::AtomInformation const & rhs ) {
+		return ( lhs.chainID < rhs.chainID ) || ( lhs.chainID == rhs.chainID && lhs.resSeq < rhs.resSeq );
+	};
+	for ( core::Size i=0; i < sd.bondAtomList.size(); i += 2 ) {
+		if ( sd.bondAtomList[i] >= (int)atmSerial || sd.bondAtomList[i+1] >= (int)atmSerial ) continue;
+		// Make sure atm_1 is less than atm_2
+		bool const less_than(ai_sort_func(all_AIs[sd.bondAtomList[i]], all_AIs[sd.bondAtomList[i+1]]));
+		core::io::AtomInformation const &atm_1((less_than) ? all_AIs[sd.bondAtomList[i]] : all_AIs[sd.bondAtomList[i+1]]);
+		core::io::AtomInformation const &atm_2((less_than) ? all_AIs[sd.bondAtomList[i+1]] : all_AIs[sd.bondAtomList[i]]);
+		// remove unnecessary between N and C
+		if ( (atm_2.resSeq - atm_1.resSeq == 1) && (atm_1.name == " C  ") && (atm_2.name == " N  " ) ) continue;
+		// Try SSBond first
+		if ( (atm_1.name == " SG ") && (atm_2.name == " SG " ) ) core::io::mmtf::add_xbond_information(sfr.ssbond_map(), atm_1, atm_2);
+		else core::io::mmtf::add_xbond_information(sfr.link_map(), atm_1, atm_2);
+	}
+
+	// sort all links
+	for ( auto & map_result : sfr.link_map() ) {
+		std::sort( map_result.second.begin(), map_result.second.end(), sort_xbond_func<core::io::LinkInformation> );
+	}
+	for ( auto & map_result : sfr.ssbond_map() ) {
+		std::sort( map_result.second.begin(), map_result.second.end(), sort_xbond_func<core::io::SSBondInformation> );
+	}
+}
+
+
+void
+core::io::mmtf::load_heterogen_info(
+	::mmtf::MapDecoder const & md,
+	core::io::StructFileRep & sfr)
+{
+	md.decode("rosetta::heterogen_names", false, sfr.heterogen_names());
+	md.decode("rosetta::residue_type_base_names", false, sfr.residue_type_base_names());
+}
+
+
+
+core::io::AtomInformation
+core::io::mmtf::make_atom_information(
+	::mmtf::StructureData const &sd,
+	::mmtf::GroupType const & group,
+	int const groupAtomIndex,
+	core::Size const atomIndex,
+	core::Size const atomSerial,
+	core::Size const groupIndex,
+	core::Size const chainIndex,
+	utility::vector1<char> & known_chainIDs,
+	core::io::StructFileReaderOptions const & options )
+{
+	core::io::AtomInformation ai;
+	if ( !sd.entityList.empty() ) {
+		ai.isHet = ::mmtf::is_hetatm(chainIndex, sd.entityList, group);
+	} else ai.isHet = ::mmtf::is_hetatm(group.chemCompType.c_str());
+
+	if ( !::mmtf::isDefaultValue(sd.atomIdList) ) {
+		ai.serial = sd.atomIdList[atomIndex];
+	} else ai.serial = atomSerial;
+
+	if ( group.atomNameList[groupAtomIndex].size() > 4 ) {
+		throw CREATE_EXCEPTION(utility::excn::BadInput,
+			"We do not support atom names with size > 4. Failed at >" + group.atomNameList[groupAtomIndex] + "<");
+	}
+	// ** TODO for some brave soul: The majority of Rosetta can handle the stripped atom_names. However
+	// The glycan code seems unable to do that.
+	ai.name = utility::pad_atom_name(group.atomNameList[groupAtomIndex]); // can be up to 5 characters
+	if ( !::mmtf::isDefaultValue(sd.altLocList) ) {
+		ai.altLoc = sd.altLocList[atomIndex]==0x00 ? ' ' : sd.altLocList[atomIndex];
+	} else ai.altLoc = ' ';
+	ai.resName = group.groupName; // can be up to 5 characters
+
+	// NOTE we default to chainNameList because that's consistent with pdbs.
+	// However, they are not required. so we always take chainName if it's available, but
+	// otherwise use chainId
+	if ( !::mmtf::isDefaultValue(sd.chainNameList) ) {
+		ai.chainID = sd.chainNameList[chainIndex].at(0); // TODO can be up to 4 characters
+	} else ai.chainID = sd.chainIdList[chainIndex].at(0); // TODO can be up to 4 characters
+
+	if ( options.new_chain_order() ) {
+		auto chainID_find = std::find(known_chainIDs.begin(), known_chainIDs.end(), ai.chainID);
+		core::Size distance = 0;
+		if ( chainID_find == known_chainIDs.end() ) {
+			known_chainIDs.push_back(ai.chainID);
+			distance = known_chainIDs.size();
+		} else distance = std::distance(known_chainIDs.begin(), chainID_find);
+		ai.chainID = utility::ALPHANUMERICS.at(distance);
+	}
+
+	ai.resSeq = sd.groupIdList[groupIndex];
+
+	if ( !::mmtf::isDefaultValue(sd.insCodeList) ) {
+		ai.iCode = sd.insCodeList[groupIndex]==0x00 ? ' ' : sd.insCodeList[groupIndex];
+	} else ai.iCode = ' ';
+
+	if ( !::mmtf::isDefaultValue(sd.occupancyList) ) {
+		ai.occupancy = sd.occupancyList[atomIndex];
+	} else ai.occupancy = 1.0;
+
+	ai.x = sd.xCoordList[atomIndex];
+	ai.y = sd.yCoordList[atomIndex];
+	ai.z = sd.zCoordList[atomIndex];
+
+	if ( !::mmtf::isDefaultValue(sd.bFactorList) ) {
+		ai.temperature = sd.bFactorList[atomIndex];
+	} else ai.temperature = 1.0;
+	ai.segmentID = "    "; // what should this be?
+	ai.element = group.elementList[groupAtomIndex];
+	ai.terCount = 0;  // what should this be? maybe each chain?
+	return ai;
+}
+
+
+
+std::vector< core::io::AtomInformation >
+core::io::mmtf::make_all_atom_information(::mmtf::StructureData const & sd,
+	core::Size & atomSerial,
+	StructFileReaderOptions const & options ) {
 	core::Size modelIndex = 0;
 	core::Size chainIndex = 0;
 	core::Size groupIndex = 0;
 	core::Size atomIndex = 0;
-	core::Size atomSerial = 0;
+	atomSerial = 0;
 	utility::vector1<char> known_chainIDs;
+
+	// Just make the bare-bones atom information
+	std::vector< core::io::AtomInformation > all_AIs;
 
 	// Ignore anything past first MODEL
 	// for ( int i = 0; i < sd.numModels; i++, modelIndex++ ) {
@@ -120,66 +286,163 @@ core::io::mmtf::create_sfr_from_mmtf_filename( std::string mmtf_filename,
 				int groupAtomCount = group.atomNameList.size();
 				for ( int l = 0; l < groupAtomCount; l++, atomIndex++ ) {
 					++atomSerial;
-					core::io::AtomInformation ai;
+					all_AIs.push_back(
+						core::io::mmtf::make_atom_information(
+						sd, group, l, atomIndex, atomSerial, groupIndex, chainIndex, known_chainIDs, options));
+				}
+			}
+		}
+	}
+	return all_AIs;
+}
 
-					if ( !sd.entityList.empty() ) {
-						ai.isHet = ::mmtf::is_hetatm(chainIndex, sd.entityList, group);
-					} else ai.isHet = ::mmtf::is_hetatm(group.chemCompType.c_str());
 
-					if ( !::mmtf::isDefaultValue(sd.atomIdList) ) {
-						ai.serial = sd.atomIdList[atomIndex];
-					} else ai.serial = atomSerial;
-					ai.name = group.atomNameList[l]; // can be up to 5 characters
-					if ( !::mmtf::isDefaultValue(sd.altLocList) ) {
-						ai.altLoc = sd.altLocList[atomIndex]==0x00 ? ' ' : sd.altLocList[atomIndex];
-					} else ai.altLoc = ' ';
-					ai.resName = group.groupName; // can be up to 5 characters
 
-					// TODO we default to chainNameList because that's consistent with pdbs.
-					// However, they are not required. so we always take chainName if it's available, but
-					// otherwise use chainId
-					if ( !::mmtf::isDefaultValue(sd.chainNameList) ) {
-						ai.chainID = sd.chainNameList[chainIndex].at(0); // TODO can be up to 4 characters
-					} else ai.chainID = sd.chainIdList[chainIndex].at(0); // TODO can be up to 4 characters
 
-					if ( options.new_chain_order() ) {
-						auto chainID_find = std::find(known_chainIDs.begin(), known_chainIDs.end(), ai.chainID);
-						core::Size distance = 0;
-						if ( chainID_find == known_chainIDs.end() ) {
-							known_chainIDs.push_back(ai.chainID);
-							distance = known_chainIDs.size();
-						} else distance = std::distance(known_chainIDs.begin(), chainID_find);
-						ai.chainID = utility::ALPHANUMERICS.at(distance);
+
+/// A warning for this function:
+/// mmtf has following bond order options
+/// Bond-order   Resonance  Explanation
+/// -1             1  kekulized form is unavailable, but resonance is known
+/// 1(or 2,3,4)    1  kekulized form is known, and resonance is known and exists
+/// 1(or 2,3,4)    0  kekulized form is known, but resonance is nonexistant
+/// 1(or 2,3,4)   -1  kekulized form is known, but resonance is not known
+/// -Warning pt 2- mmtf supports up to 4 bonds, rosetta  only up to 3
+///       i set 4x bonds to be 0 (unk) in rosetta
+void
+core::io::mmtf::add_bond_information(::mmtf::StructureData const & sd,
+	std::vector< core::io::AtomInformation > & all_AIs,
+	std::map<core::Size, sd_index> const & atom_num_to_sd_map,
+	core::Size const atomSerialMax)
+{
+	for ( core::Size i=0; i<all_AIs.size(); ++i ) {
+		sd_index const & c_sd_index(atom_num_to_sd_map.at(i));
+		::mmtf::GroupType const & group(
+			sd.groupList[sd.groupTypeList[c_sd_index.group_index]]);
+		for ( core::Size j=0,k=0; j<group.bondAtomList.size(); j+=2, ++k ) {
+			if ( c_sd_index.group_atom_index == group.bondAtomList[j] ) {
+				int const difference((group.bondAtomList[j+1]-group.bondAtomList[j]));
+				all_AIs[i].connected_indices.push_back(i+difference+1);
+				// bond orders are NOT required for mmtf
+				// bond Resonance is also not required
+				if ( !::mmtf::isDefaultValue(group.bondOrderList) && !::mmtf::isDefaultValue(group.bondResonanceList) ) {
+					if ( group.bondOrderList[k] == -1 || group.bondOrderList[k] == 4 ) {
+						all_AIs[i].connected_orders.push_back(0);
+					} else {
+						all_AIs[i].connected_orders.push_back(group.bondOrderList[k]);
 					}
-
-					ai.resSeq = sd.groupIdList[groupIndex];
-
-					if ( !::mmtf::isDefaultValue(sd.insCodeList) ) {
-						ai.iCode = sd.insCodeList[groupIndex]==0x00 ? ' ' : sd.insCodeList[groupIndex];
-					} else ai.iCode = ' ';
-
-					if ( !::mmtf::isDefaultValue(sd.occupancyList) ) {
-						ai.occupancy = sd.occupancyList[atomIndex];
-					} else ai.occupancy = 1.0;
-
-					ai.x = sd.xCoordList[atomIndex];
-					ai.y = sd.yCoordList[atomIndex];
-					ai.z = sd.zCoordList[atomIndex];
-
-					if ( !::mmtf::isDefaultValue(sd.bFactorList) ) {
-						ai.temperature = sd.bFactorList[atomIndex];
-					} else ai.temperature = 1.0;
-					ai.segmentID = "    "; // what should this be?
-					ai.element = group.elementList[l];
-					ai.terCount = 0;  // what should this be? maybe each chain?
-					atom_chain_map[ai.chainID].push_back(ai);
-					if ( std::find( chain_list.begin(), chain_list.end(), ai.chainID ) == chain_list.end() ) {
-						chain_list.push_back( ai.chainID );
+				}
+			} else if ( c_sd_index.group_atom_index == group.bondAtomList[j+1] ) {
+				int const difference((group.bondAtomList[j]-group.bondAtomList[j+1]));
+				all_AIs[i].connected_indices.push_back(i+difference+1);
+				// bond orders are NOT required for mmtf
+				// bond Resonance is also not required
+				if ( !::mmtf::isDefaultValue(group.bondOrderList) ) {
+					if ( group.bondOrderList[k] == -1 || group.bondOrderList[k] == 4 ) {
+						all_AIs[i].connected_orders.push_back(0);
+					} else {
+						all_AIs[i].connected_orders.push_back(group.bondOrderList[k]);
 					}
 				}
 			}
 		}
 	}
+	for ( core::Size i=0, j=0; i<sd.bondAtomList.size(); i+=2, ++j ) {
+		if ( sd.bondAtomList[i] > (int)atomSerialMax ||  sd.bondAtomList[i+1] > (int)atomSerialMax ) continue;
+		core::io::AtomInformation & atm1(all_AIs[sd.bondAtomList[i]]);
+		core::io::AtomInformation & atm2(all_AIs[sd.bondAtomList[i+1]]);
+		atm1.connected_indices.push_back(sd.bondAtomList[i+1]+1);
+		atm2.connected_indices.push_back(sd.bondAtomList[i]+1);
+		if ( !::mmtf::isDefaultValue(sd.bondOrderList) && !::mmtf::isDefaultValue(sd.bondResonanceList) ) {
+			if ( sd.bondOrderList[j] == -1 || sd.bondOrderList[j] == 4 ) {
+				atm1.connected_orders.push_back(0);
+				atm2.connected_orders.push_back(0);
+			} else {
+				atm1.connected_orders.push_back(sd.bondOrderList[j]);
+				atm2.connected_orders.push_back(sd.bondOrderList[j]);
+			}
+		}
+	}
+}
+
+
+// mmtf doesn't have TER... so instead look for bonds to the C term and
+// use that to set terCount
+// I'm sure there's a better way to do this, but thatll do pig... thatll do.
+void
+core::io::mmtf::add_ters_via_bonds(std::vector< core::io::AtomInformation > & all_AIs)
+{
+	// 1. Find all things bound to N and all Cs
+	std::vector< core::Size > all_things_bound_to_N, all_Cs, terminal_Cs;
+	for ( core::Size i=0; i<all_AIs.size(); ++i ) {
+		if ( all_AIs[i].name == " C  " ) all_Cs.push_back(i);
+		else if ( all_AIs[i].name == " N  " ) {
+			for ( core::Size const & bound_idx : all_AIs[i].connected_indices ) {
+				all_things_bound_to_N.push_back(bound_idx-1);
+			}
+		}
+	}
+	// 2. find the Cs not bound to Ns via checking all things bound to N
+	for ( core::Size const & C : all_Cs ) {
+		auto it(std::find(all_things_bound_to_N.begin(), all_things_bound_to_N.end(), C));
+		if ( it == all_things_bound_to_N.end() ) terminal_Cs.push_back(C);
+	}
+
+	// 3. Use Terminal Cs to set AtomInformation terCount.  it accumulates
+	// so you have to loop through all.
+	int terCount(0), current_residue(0);
+	char current_chain('^');
+	for ( core::Size i=0; i<all_AIs.size(); ++i ) {
+		auto it = std::find(terminal_Cs.begin(), terminal_Cs.end(), i);
+		if ( it != terminal_Cs.end() ) {
+			current_residue = all_AIs[i].resSeq;
+			current_chain = all_AIs[i].chainID;
+		}
+		if ( current_residue != 0 && (current_residue != all_AIs[i].resSeq || current_chain != all_AIs[i].chainID) ) {
+			current_residue = 0;
+			current_chain = '^';
+			++terCount;
+		}
+		all_AIs[i].terCount = terCount;
+	}
+}
+
+
+core::io::StructFileRepOP
+core::io::mmtf::create_sfr_from_mmtf_filename( std::string const & mmtf_filename,
+	StructFileReaderOptions const & options ) {
+
+	if ( options.read_pdb_header() ) {
+		TR.Warning << "read_pdb_header set, but not used in reading mmtf_file" << std::endl;
+		// TODO
+	}
+
+	::mmtf::StructureData sd;
+	::mmtf::decodeFromFile(sd, mmtf_filename);
+	// bonds are setup as: 1,2 == 2,1 --  pre sort so we dont have to later
+	//core::io::mmtf::pre_sort_bond_info(sd);
+
+	core::io::StructFileRepOP sfr( utility::pointer::make_shared<core::io::StructFileRep>() );
+
+	std::map<char, core::io::ChainAtoms> atom_chain_map;
+	core::Size atomSerial(0);
+	std::map<core::Size, sd_index> const atom_num_to_sd_map(make_atom_num_to_sd_map(sd));
+	std::vector< core::io::AtomInformation > all_AIs(core::io::mmtf::make_all_atom_information(sd, atomSerial, options));
+
+	core::io::mmtf::add_bond_information(sd, all_AIs, atom_num_to_sd_map, atomSerial);
+	core::io::mmtf::add_ters_via_bonds(all_AIs);
+
+	std::vector< char > chain_list; // preserve order
+	for ( auto const & ai : all_AIs ) {
+		atom_chain_map[ai.chainID].push_back(ai);
+		if ( std::find( chain_list.begin(), chain_list.end(), ai.chainID ) == chain_list.end() ) {
+			chain_list.push_back( ai.chainID );
+		}
+	}
+
+	::mmtf::MapDecoder const extraProperties_MD(sd.extraProperties);
+	add_link_and_ss_information(sd, *sfr, all_AIs, atomSerial);
+	core::io::mmtf::load_heterogen_info(extraProperties_MD, *sfr);
 
 	for ( char i : chain_list ) { // std::vector
 		sfr->chains().push_back( atom_chain_map.find( i )->second );

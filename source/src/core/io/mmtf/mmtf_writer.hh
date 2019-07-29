@@ -22,6 +22,7 @@
 
 // Project header
 #include <core/pose/Pose.hh>
+#include <core/io/mmtf/util.hh>
 
 #include <utility/io/ozstream.hh>
 
@@ -30,11 +31,6 @@
 namespace core {
 namespace io {
 namespace mmtf {
-
-//  AtomInformation Group/Chain/Pose
-typedef utility::vector0<core::io::AtomInformation> aiGroup;
-typedef utility::vector0<aiGroup> aiChain;
-typedef utility::vector0<aiChain> aiPose;
 
 //////////////////////////////////////////////////////////////
 // dump_mmtf setup functions
@@ -84,33 +80,6 @@ dump_mmtf(
 // dump_mmtf helper functions
 //////////////////////////////////////////////////////////////
 
-/// @brief storage for indicies to something in a mmtf struct
-struct sd_index {
-	sd_index() {
-		chain_index = -1;
-		group_index = -1;
-		group_atom_index = -1;
-	}
-	sd_index(int32_t ci, int32_t gi, int32_t gai) {
-		chain_index = ci;
-		group_index = gi;
-		group_atom_index = gai;
-	}
-	core::Size chain_index, group_index, group_atom_index;
-};
-
-
-
-/// @brief
-std::map<core::Size, sd_index>
-make_atom_num_to_sd_map(::mmtf::StructureData const & sd);
-
-/// @brief simple comparator for AtomInformation when grouping by residue/grp
-struct ai_cmp {
-	bool operator()(AtomInformation const & A, AtomInformation const & B) const {
-		return std::tie(A.chainID, A.resSeq) < std::tie(B.chainID, B.resSeq);
-	}
-};
 
 
 /// @brief Set StructFileRepOptions defauls for mmtf
@@ -132,6 +101,18 @@ make_chain(utility::vector0<AtomInformation> const & chain_atoms);
 ///
 aiPose
 aiPose_from_sfr(core::io::StructFileRep const & sfr);
+
+///
+/// @brief Add heterogen info to the structureData if we are asked to add it
+///
+/// @param core::io::StructFileRep const& to get heterogens from
+/// @param ::mmtf::StructureData const& the StructureData to add to
+///
+void
+add_heterogen_info_to_sd(
+	::mmtf::StructureData & sd,
+	core::io::StructFileRep const & sfr,
+	core::io::StructFileRepOptions const & options);
 
 //////////////////////////////////////////////////////////////
 // real dump_mmtf function

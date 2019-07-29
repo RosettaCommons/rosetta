@@ -291,12 +291,10 @@ GlycanTreeSet::setup_glycan_trees( conformation::Conformation const & conf )
 	// find the first residue of all glycans and use them to populate the set.
 
 	TR << "Setting up Glycan Trees" << std::endl;
-	utility::vector1< bool > start_points =  conformation::carbohydrates::get_glycan_start_points( conf );
-
+	utility::vector1< bool > const start_points = conformation::carbohydrates::get_glycan_start_points( conf );
 
 	for ( core::Size i = 1; i <= conf.size(); ++i ) {
 		if ( start_points[ i ] ) {
-			//TR << "Setting up " << start_points[i] << std::endl;
 			GlycanTreeOP GT = utility::pointer::make_shared< GlycanTree >( conf, i );
 			glycan_tree_set_[ i ] = GT;
 
@@ -307,9 +305,9 @@ GlycanTreeSet::setup_glycan_trees( conformation::Conformation const & conf )
 		}
 	}
 	TR << "Found " << glycan_tree_set_.size() << " glycan trees." << std::endl;
-
-	//pose.reference_pose_from_current(ref_pose_name_, true /*Replace any currently set refpose*/);
 }
+
+
 void
 GlycanTreeSet::on_length_change( core::conformation::signals::LengthEvent const & event ){
 

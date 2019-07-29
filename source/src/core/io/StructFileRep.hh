@@ -73,6 +73,12 @@ struct LinkInformation {
 	char iCode2;
 	std::string resID2;
 	core::Distance length;
+
+	bool operator ==(const LinkInformation &rhs) const
+	{
+		return std::tie(name1, resName1, chainID1, resSeq1, iCode1, resID1, name2, resName2, chainID2, resSeq2, iCode2, resID2, length) ==
+			std::tie(rhs.name1, rhs.resName1, rhs.chainID1, rhs.resSeq1, rhs.iCode1, rhs.resID1, rhs.name2, rhs.resName2, rhs.chainID2, rhs.resSeq2, rhs.iCode2, rhs.resID2, rhs.length);
+	}
 };  // struct LinkInformation
 
 /// @brief Do these link information correspond to the same connection (ignoring order)
@@ -99,6 +105,12 @@ struct SSBondInformation {
 	core::Distance length;
 	std::string sym1;
 	std::string sym2;
+
+	bool operator ==(const SSBondInformation &rhs) const
+	{
+		return std::tie(name1, resName1, chainID1, resSeq1, iCode1, resID1, sym1, name2, resName2, chainID2, resSeq2, iCode2, resID2, length, sym2) ==
+			std::tie(rhs.name1, rhs.resName1, rhs.chainID1, rhs.resSeq1, rhs.iCode1, rhs.resID1, rhs.sym1, rhs.name2, rhs.resName2, rhs.chainID2, rhs.resSeq2, rhs.iCode2, rhs.resID2, rhs.length, rhs.sym2);
+	}
 };  // struct SSBondInformation
 
 
@@ -406,6 +418,9 @@ std::ostream & operator<<( std::ostream & os, StructFileRep const & sfr );
 
 /// @brief Debugging output for LinkInformation
 std::ostream & operator<<( std::ostream & os, LinkInformation const & li );
+
+/// @brief Debugging output for SSBondInformation
+std::ostream & operator<<( std::ostream & os, SSBondInformation const & li );
 
 } // namespace io
 } // namespace core

@@ -393,11 +393,6 @@ void PoseToStructFileRepConverter::append_residue_info_to_sfr(
 		String const & hetID( rsd.name3() );
 		String const & base_name( rsd.type().base_name() );
 
-		String resSeq( utility::pad_left( res_info.resSeq(), 4 ) ); //("%4d", res_info.resSeq);
-		String const resID = String( 1, res_info.chainID() ) + resSeq + String( 1, res_info.iCode() );
-
-		String const text = resID + " " + base_name;
-
 		if ( ! sfr_->heterogen_names().count( hetID ) && !options_.write_glycan_pdb_codes() ) {
 			sfr_->heterogen_names()[ hetID ] = base_name;
 		}
@@ -553,8 +548,8 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 	if ( ai.element.length() == 1 ) ai.element = " "+ai.element;
 
 	// 'chains' is member data
-	if ( sfr_->chains().size() < static_cast <core::Size> (rsd.chain() + 1) ) sfr_->chains().resize( rsd.chain() + 1 );
-	sfr_->chains()[rsd.chain()].push_back(ai);
+	if ( sfr_->chains().size() < rsd.chain() ) sfr_->chains().resize( rsd.chain() );
+	sfr_->chains()[rsd.chain()-1].push_back(ai);
 
 	ai.chem_comp_type = get_chem_comp_type(rsd);
 

@@ -203,6 +203,19 @@ public:
 
 	}
 
+	void test_pad_atom_name() { 
+		utility::vector1< std::pair<std::string, std::string> > query_sol;
+		query_sol.push_back(std::make_pair("CA", " CA "));
+		query_sol.push_back(std::make_pair("N", " N  "));
+		query_sol.push_back(std::make_pair("CG1", " CG1"));
+		query_sol.push_back(std::make_pair("PDCA", "PDCA"));
+		query_sol.push_back(std::make_pair("", "    "));
+		for ( auto const & q_s : query_sol) {
+			TS_ASSERT_EQUALS(utility::pad_atom_name(q_s.first), q_s.second);
+		}
+		TS_ASSERT_THROWS(utility::pad_atom_name("12345"), utility::excn::Exception);
+	}
+
 	void test_padding() {
 		std::string sL = "padL";
 		std::string new_strL = utility::pad_left(sL, 6, ' ');

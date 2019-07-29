@@ -262,6 +262,9 @@ trim( std::string const & s, std::string const & drop = " " ) {
 bool
 trimmed_compare( std::string const & s1, std::string const & s2 );
 
+///@brief Pad an atom name to the pdb format
+std::string
+pad_atom_name( std::string const & s);
 
 ///@brief Add char to the left of the string
 std::string

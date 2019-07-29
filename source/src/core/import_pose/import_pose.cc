@@ -316,8 +316,9 @@ pose_from_file(
 ) {
 	utility::vector1<std::string> const split_filename(utility::string_split(filenames_string, '.'));
 	if ( file_type == MMTF_file ||
-			( split_filename.size() && utility::lower(split_filename[split_filename.size()]) == "mmtf" ) ) {
+			( split_filename.size() && utility::lower(split_filename.back()) == "mmtf" ) ) {
 		core::io::StructFileRepOP sfr( core::io::mmtf::create_sfr_from_mmtf_filename( filenames_string, options ) );
+		sfr->filename() = filenames_string;
 		build_pose( sfr, pose, residue_set, options );
 		return;
 	}
@@ -414,7 +415,7 @@ pose_from_file(
 	FileType type
 ) {
 	ImportPoseOptions options;
-	pose_from_file( pose, filename, options, read_fold_tree , type);
+	pose_from_file( pose, filename, options, read_fold_tree, type);
 }
 
 void

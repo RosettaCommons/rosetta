@@ -77,7 +77,6 @@ find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue
 {
 	debug_assert( residue.is_carbohydrate() );
 
-
 	if ( ! residue.is_lower_terminus() ) {
 		uint const id_of_connection_to_parent(
 			residue.type().residue_connection_id_for_atom( residue.carbohydrate_info()->anomeric_carbon_index() ) );
@@ -87,16 +86,13 @@ find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue
 		return 0;
 	}
 
-
 	//JAB - this fails during pose loading, even though the residue types should be finalized.
 	// Not sure exactly why this would fail.  So, for now, we use the original code.
 	core::Size anomeric_carbon = residue.carbohydrate_info()->anomeric_carbon_index();
 	uint const id_of_connection_to_parent(
 		residue.type().residue_connection_id_for_atom( anomeric_carbon ) );
 
-
 	return residue.residue_connection_partner( id_of_connection_to_parent );
-
 }
 
 
@@ -1172,7 +1168,7 @@ core::Size
 get_largest_glycan_tree_size( conformation::Conformation const & conf ){
 
 	utility::vector1< core::Size > tree_sizes;
-	utility::vector1< bool > glycan_start_points = get_glycan_start_points( conf );
+	utility::vector1< bool > const glycan_start_points(get_glycan_start_points( conf ));
 	for ( core::Size glycan_start = 1; glycan_start <= glycan_start_points.size(); ++glycan_start ) {
 		if ( glycan_start_points[ glycan_start ] ) {
 			core::Size glycan_length = get_glycan_tree_size( conf, glycan_start );
@@ -1181,6 +1177,7 @@ get_largest_glycan_tree_size( conformation::Conformation const & conf ){
 	}
 	return utility::max( tree_sizes );
 }
+
 
 core::Size
 get_distance_to_start( conformation::Conformation const & conf, core::Size const position){
@@ -1200,7 +1197,6 @@ utility::vector1< bool >
 get_glycan_start_points( conformation::Conformation const & conf )
 {
 	utility::vector1< bool > glycan_start_points( conf.size(), false );
-
 	for ( core::Size i = 1; i <= conf.size(); ++i ) {
 		Residue const & residue( conf.residue( i ) );
 		if ( residue.is_carbohydrate() ) {

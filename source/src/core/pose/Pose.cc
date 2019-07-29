@@ -2438,7 +2438,7 @@ std::ostream & operator << ( std::ostream & os, Pose const & pose)
 	if ( p ) {
 		os << "PDB file name: "<< p->name() << std::endl;
 	}
-	os << "Total residues:" << pose.size() << std::endl;
+	os << "Total residues: " << pose.size() << std::endl;
 	os << "Sequence: " << pose.sequence() << std::endl;
 	os << "Fold tree:" << std::endl << pose.fold_tree();
 

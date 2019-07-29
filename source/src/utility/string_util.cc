@@ -420,6 +420,18 @@ strip( std::string const & s, std::string const & drop )
 }
 
 std::string
+pad_atom_name( std::string const & s) {
+	if ( s.size() > 4 ) {
+		throw CREATE_EXCEPTION(excn::Exception, "Could not pad atom_name >" + s + "<"  );
+	}
+	if ( s.size() == 4 ) return s;
+	else if ( s.size() == 3 ) return " " + s;
+	else if ( s.size() == 2 ) return " " + s + " ";
+	else if ( s.size() == 1 ) return " " + s + "  ";
+	else return "    ";
+}
+
+std::string
 pad_left( std::string const & s, platform::Size const newlen, char pad_with ){
 
 	std::ostringstream converter;
