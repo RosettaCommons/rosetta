@@ -549,7 +549,7 @@ EXAMPLES For Running Demos/Tutorials
                   '''
                 except Exception as e:
                     trace = traceback.format_exc()
-                    print( 'Integration script failed with exception while wriitng results:{}\n{}... Skipping results writing...'.format(trace, e) )
+                    print( 'Integration script failed with exception while writing results:{}\n{}... Skipping results writing...'.format(trace, e) )
 
 
         if not options.compareonly: write_runtimes(runtimes, outdir)
@@ -1075,7 +1075,7 @@ def generateTestCommandline(test, outdir, globalparams=None, options=None, host=
         if options.leakcheck:
             preamble = preamble + " --leak-check=full"
         # Certain tests need extended stack sizes
-        NEEDS_EXPANDED_STACK = ['fragment_picker','ligand_dock_ensemble','repeat_propagate']
+        NEEDS_EXPANDED_STACK = ['fragment_picker','fragmentpicker_integration_demo','ligand_dock_ensemble','repeat_propagate']
         if test in NEEDS_EXPANDED_STACK:
             preamble = preamble + " --main-stacksize=" + str( 64*1024*1024 ) # Default is ~32 MB, try ~64 MB stack
         params["bin"] = preamble + " " + params["bin"]

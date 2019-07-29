@@ -236,7 +236,13 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, config, hpc_dri
     # Copy just the valgrind output to the archive directory - we don't need the other output
     for d, dirnames, filenames in os.walk(files_location):
         for filename in filenames:
-            if filename.endswith("valgrind.out"):
+            keep_file = filename.endswith("valgrind.out")
+            keep_file = keep_file or filename.startswith(".test") # Also keep .test_did_not_run.log or .test_got_timeout_kill.log
+
+            # For debugging purposes, keep the expanded command shell and the log files
+            keep_file = keep_file or filename == 'command.sh' or 'log' in filename
+
+            if keep_file:
                 relpath = os.path.relpath(d, files_location)
                 try:
                     os.makedirs(working_dir + '/' + relpath)
@@ -289,8 +295,8 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     elif test == 'ubsan':
         os.environ["UBSAN_OPTIONS"]="print_stacktrace=1" # Get the backtrace in the log when running ubsan
         return run_integration_tests('ubsan',   rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'valgrind':          return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml') # 'release_debug' for line # information
-    elif test == 'valgrind_detailed': return run_valgrind_tests('release_debug', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml --trackorigins') # 'release_debug' for line # information
+    elif test == 'valgrind':          return run_valgrind_tests('release_symbols', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml') # 'release_symbols' for line # information
+    elif test == 'valgrind_detailed': return run_valgrind_tests('release_symbols', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml --trackorigins') # 'release_symbols' for line # information
     elif test == 'demos':                    return run_demo_tests('release', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--demos')
     elif test == 'tutorials':                return run_demo_tests('release', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--tutorials')
     else: raise BenchmarkError('Integration Test script does not support run with test="{}"!'.format(test))
