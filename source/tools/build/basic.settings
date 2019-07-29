@@ -535,6 +535,7 @@ settings = {
             },
             "defines" : [
                 "NDEBUG",
+                "NOCRASHREPORT",
                 "PYROSETTA",
                 "PYROSETTA3",
                 'BOOST_THREAD_DONT_USE_CHRONO',
@@ -568,6 +569,7 @@ settings = {
                 ],
             },
             "defines" : [
+                "NOCRASHREPORT",
                 "PYROSETTA",
                 "PYROSETTA3",
                 'BOOST_THREAD_DONT_USE_CHRONO'
@@ -761,7 +763,10 @@ settings = {
                 "boinc",
                 "boinc_zip"
             ],
-            "defines" : [ "BOINC" ],
+            "defines" : [ 
+                "BOINC",
+                "NOCRASHREPORT",
+            ],
             "flags" : {
                 "compile" : [ "pthread" ],
                 "warn" : [ "Wno-write-strings", "Wno-uninitialized", ],
@@ -796,7 +801,10 @@ settings = {
                 "#external/boinc/lib",
                 "#external/boinc/zip",
             ],
-            "defines"  : [ "BOINC_GRAPHICS" ],
+            "defines" : [ 
+                "BOINC_GRAPHICS",
+                "NOCRASHREPORT",
+            ],
             "flags" : {
                 "warn" : [
                     "Wno-unused-variable",
@@ -824,7 +832,8 @@ settings = {
             "defines" : [
                 "MAC",
                 "BOINC_GRAPHICS",
-                "GL_GRAPHICS"
+                "GL_GRAPHICS",
+                "NOCRASHREPORT",
             ],
             "flags" : {
                 "link" : [
@@ -1282,7 +1291,10 @@ settings = {
                 "#external/androidarm-tc/arm-linux-androideabi/lib",
                 "#external/androidarm-tc/sysroot/usr/lib",
             ],
-	    "defines"   : [ "ANDROID", ],
+	    "defines"   : [ 
+                "ANDROID", 
+                "NOCRASHREPORT",
+            ],
             "flags" : {
                 "cc"        : [
                     "Wall",
@@ -2635,6 +2647,7 @@ settings = {
                 "MAC",
 		"BOINC",
                 "BOINC_GRAPHICS",
+                "NOCRASHREPORT",
             ],
             "flags" : {
 		"warn" : [

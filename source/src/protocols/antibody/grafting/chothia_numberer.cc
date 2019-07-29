@@ -32,20 +32,17 @@ namespace grafting {
 
 using std::string;
 
-_AE_unexpected_region_length_ unexpected_region_length_error(string const& region, int length, string const& msg)
-{
-	std::stringstream s;
-	s << "ERROR: Unxpected length of " << region << " [length=" << length << "] " << msg;
-	return CREATE_EXCEPTION(_AE_unexpected_region_length_, s.str() );
-}
+// As std::to_string doesn't work robustly when fed a string
+template<class T> std::string to_string( T const & v ) { return std::to_string( v ); }
+template<> std::string to_string( std::string const & v ) { return v; }
 
+/// These need to be a macros, for CREATE_EXCEPTION to grab the __LINE__ and __FILE__ infomation appropriately.
+#define unexpected_region_length_error(region, length, msg) \
+	CREATE_EXCEPTION( _AE_unexpected_region_length_, "ERROR: Unxpected length of " + to_string(region) + " [length=" + to_string(length) + "] " + to_string(msg) )
 
-_AE_unexpected_region_length_ numbering_region_lengths_error(string const& region, int length1, int length2)
-{
-	std::stringstream s;
-	s << "ERROR: Length of numbering array for region " << region << " does not match does not match length of same region in AntibodyChain/AntibodyFramework! [" << length1 << "!=" << length2 <<"]";
-	return CREATE_EXCEPTION(_AE_unexpected_region_length_, s.str() );
-}
+#define numbering_region_lengths_error(region, length1, length2) \
+	CREATE_EXCEPTION( _AE_unexpected_region_length_, "ERROR: Length of numbering array for region " + to_string( region ) + \
+	" does not match does not match length of same region in AntibodyChain/AntibodyFramework! [" + to_string( length1 ) + "!=" + to_string( length2 ) + "]" )
 
 
 

@@ -1271,6 +1271,9 @@ Options = Option_Group( '',
 		Option( 'interactive', 'Boolean',
 			default='false', desc="Signal Rosetta is to be run as a library in an interactive application. In particular, favor throwing exceptions on bad inputs rather than exiting."),
 
+		Option( 'nosignal', 'Boolean',
+			default='false', desc="Don't install the signal handler to catch segfaults, etc. in the crash reporter. Useful for running under a debugger."),
+
 		Option( 'condor',   'Boolean',      desc='if condor say yes -- proc_id counting starts at 0',     default='false' ),
 		Option( 'nproc',    'Integer',      desc='number of process... needed if proc_id is specified',     default='0' ),
 		Option( 'proc_id',  'Integer',      desc='give process number... Jobdistributor will only work on proc_id mod nproc part of work ',     default='0' ),
@@ -3194,7 +3197,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'wt_spanning', 'Real', desc='Weight for spanning penalty.'),
 
 		# Implicit Lipid Composition parameters
-		Option_Group( 'lipids', 
+		Option_Group( 'lipids',
 			Option( 'composition', 'String', desc="Type of lipids to use in implicit model representation.", default="DLPC"),
 			Option( 'temperature', 'Real', desc="Temperature at which the lipid composition parameters were measured", default="37.0"),
 			Option( 'has_pore', 'Boolean', desc="Manual override don't use pore estimation" ),

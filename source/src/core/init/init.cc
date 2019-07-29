@@ -393,6 +393,7 @@ using basic::Warning;
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/CSI_Sequence.hh>
+#include <utility/crash_report.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
@@ -885,6 +886,22 @@ init_options(int argc, char * argv []) {
 	pre_tracer_process();
 }
 
+/// @brief Setup crash reporter
+void init_crash_reporter(int argc, char * argv [])
+{
+	if ( argc >= 1 ) {
+		utility::set_application_name(argv[0]);
+	}
+
+	std::stringstream option_stream;
+	option_stream << basic::options::option;
+	utility::set_options_string( option_stream.str() );
+
+	if ( ! option[ run::nosignal ]() ) {
+		utility::install_crash_handler(); // Install the signal listener
+	}
+}
+
 /// @brief After the tracers have been initialized, now go back and modify some of the
 /// values in the options system based on (hard coded) inter-flag relationships.
 /// Some of these relationships are set in the basic::options::process() function, some
@@ -900,7 +917,7 @@ init_complex_options()
 
 	// Immediate stop if requested by options (used for testing purposes).
 	if ( option[ testing::HCF ]() ) {
-		utility_exit_with_message("Do not pass go. Do not collect $200.");
+		user_fixable_issue_exit("Option -HCF set. Do not pass go. Do not collect $200.");
 	}
 }
 
@@ -1176,65 +1193,59 @@ void init(int argc, char * argv [])
 
 	core::id::initialize_core_id_globals();
 
-	try{
-		//Initialize MPI
-		init_mpi(argc, argv);
+	//Initialize MPI
+	init_mpi(argc, argv);
 
-		//The options system manages command line options
-		init_options(argc, argv);
+	//The options system manages command line options
+	init_options(argc, argv);
 
-		//Tracers control output to std::cout and std::cerr
-		init_tracers();
+	//Setup the crash reporter system (if we're using it)
+	// We do this after the option initialization so we can output option information
+	init_crash_reporter(argc, argv);
 
-		//Read flag config file (common options/custom setup)
-		check_load_fconfig();
+	//Tracers control output to std::cout and std::cerr
+	init_tracers();
 
-		// Invoke basic::options::process() which holds a set of complex logic
-		// for option system modifications; this function requires that the
-		// tracers first be initialized.
-		init_complex_options();
+	//Read flag config file (common options/custom setup)
+	check_load_fconfig();
 
-		//Initialize the latest and greatest score function parameters
-		init_score_function_corrections( basic::options::option );
+	// Invoke basic::options::process() which holds a set of complex logic
+	// for option system modifications; this function requires that the
+	// tracers first be initialized.
+	init_complex_options();
 
-		//Choose to output source version control information?
-		init_source_revision();
+	//Initialize the latest and greatest score function parameters
+	init_score_function_corrections( basic::options::option );
 
-		//Setup basic search paths
-		init_paths();
+	//Choose to output source version control information?
+	init_source_revision();
 
-		//Check for deprecated flags specified by the user and output error messages if necessary
-		check_deprecated_flags();
+	//Setup basic search paths
+	init_paths();
 
-		//Describe the application execution command
-		report_application_command(argc, argv);
+	//Check for deprecated flags specified by the user and output error messages if necessary
+	check_deprecated_flags();
 
-		//Initalize random number generators
-		basic::random::init_random_number_generators();
+	//Describe the application execution command
+	report_application_command(argc, argv);
 
-		//Choose to randomly delay execution to desyncronize parallel execution
-		random_delay();
+	//Initalize random number generators
+	basic::random::init_random_number_generators();
 
-		//Locate rosetta_database
-		locate_rosetta_database();
+	//Choose to randomly delay execution to desyncronize parallel execution
+	random_delay();
 
-		//Profiling measures execution performance
-		init_profiling();
+	//Locate rosetta_database
+	locate_rosetta_database();
 
-		//Set up system resources
-		init_resources();
+	//Profiling measures execution performance
+	init_profiling();
 
-		// help out user...
-		if  ( argc == 1 )  TR << std::endl << "USEFUL TIP: Type -help to get the options for this Rosetta executable." << std::endl << std::endl;
+	//Set up system resources
+	init_resources();
 
-	}
-// Catch any Rosetta exceptions
-catch( utility::excn::Exception &e){
-	// print the error message to standard error
-	e.show( std::cerr );
-	// and rethrow to make sure we quit (or give caller opportunity to clean up or catch)
-	throw;
-}
+	// help out user...
+	if  ( argc == 1 )  TR << std::endl << "USEFUL TIP: Type -help to get the options for this Rosetta executable." << std::endl << std::endl;
 
 }
 

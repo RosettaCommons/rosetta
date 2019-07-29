@@ -14,17 +14,23 @@
 
 // Unit Headers
 #include <utility/excn/Exceptions.hh>
+#include <utility/backtrace.hh>
+#include <utility/crash_report.hh>
 
 // Package Headers
 #include <string>
 #include <ostream>
+#include <iostream>
 
 namespace utility {
 namespace excn {
 
 
 Exception::Exception(char const *file, int line, std::string const &msg) :
-	msg_ ( std::string("\n\nFile: ") + file + ':' + std::to_string(line) + "\n" + msg )
+	msg_ ( msg ),
+	file_( file ),
+	line_( line ),
+	traceback_( backtrace_string() )
 {
 
 	//would like to add an option run:no_exceptions
@@ -43,10 +49,42 @@ Exception::Exception(char const *file, int line, std::string const &msg) :
 	/* IN RELEASE MODE THIS HAS CONSTRUCTOR MUST NOT FAIL! --- otherwise the ERROR Msg get's lost! */
 }
 
+std::string
+Exception::msg() const {
+	return std::string("\n\nFile: ") + file_ + ':' + std::to_string(line_) + "\n" + msg_;
+}
+
+void
+Exception::display() const {
+	std::cerr << utility::CSI_Magenta(); // set color of cerr to magenta
+	std::cerr << "\n[ ERROR ]: Caught exception:\n";
+	std::cerr << msg();
+	std::cerr << utility::CSI_Reset() << '\n';
+	crash_log();
+}
+
+void
+Exception::crash_log() const {
+	save_crash_report( msg_, file_, line_, traceback_ );
+}
+
 
 void Exception::show( std::ostream& os ) const {
 	os << msg() << std::endl;
 }
+
+void UserCorrectableIssue::display() const {
+	std::cerr << utility::CSI_Magenta(); // set color of cerr to magenta
+	std::cerr << "\n---------------------------------------------------------------\n";
+	std::cerr << "[ ERROR ]: An issue with your Rosetta run was detected\n";
+	std::cerr << "Please correct the following issue and retry:\n\n";
+	std::cerr << raw_msg() << "\n";
+	std::cerr << "---------------------------------------------------------------\n";
+	std::cerr << utility::CSI_Reset() << '\n';
+}
+
+void UserCorrectableIssue::crash_log() const {}
+
 
 }
 }

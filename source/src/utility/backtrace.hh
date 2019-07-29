@@ -130,20 +130,29 @@ demangle( std::string trace ) {
 ////////////////////////////////////////////////////////////////////
 
 inline
-bool
-print_backtrace( char const * /*unused*/ ) {
+std::string
+backtrace_string(int skip=0) {
+	std::string bt_str;
 
 	size_t const callstack_size = 128;
 	void* callstack[callstack_size];
-	int i, frames = backtrace(callstack, callstack_size);
+	int frames = backtrace(callstack, callstack_size);
 	char** strs = backtrace_symbols(callstack, frames);
+	for ( int i = skip; i < frames; ++i ) {
+		bt_str += demangle(strs[i]);
+		bt_str += '\n';
+	}
+	free(strs);
+	return bt_str;
+}
+
+inline
+bool
+print_backtrace( char const * /*unused*/ ) {
 	std::cerr << utility::CSI_Magenta(); // set color of cerr to magenta
 	std::cerr << "BACKTRACE:\n";
-	for ( i = 0; i < frames; ++i ) {
-		std::cerr << demangle( strs[i] ).c_str() << std::endl;
-	}
-	std::cerr << utility::CSI_Reset(); // reset color of cerr
-	free(strs);
+	std::cerr <<  backtrace_string();
+	std::cerr << utility::CSI_Reset();
 	return false; // allows use in debug_assert
 }
 
@@ -151,6 +160,12 @@ print_backtrace( char const * /*unused*/ ) {
 // _WIN32, etc.
 #include <assert.h>
 #include <string>
+
+inline
+std::string
+backtrace_string(int skip=0) {
+	return "";
+}
 
 inline
 bool

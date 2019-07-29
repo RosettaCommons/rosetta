@@ -30,12 +30,63 @@
 // C++ headers
 #include <string>
 
+namespace utility_exit_detail {
+
+class Stringy {
+public:
+	Stringy( std::string const & in ):
+		val_( in )
+	{}
+
+	Stringy( char const * const in ):
+		val_( in )
+	{}
+
+	template< class T >
+	Stringy( T const & in ):
+		val_( std::to_string( in ) ) // Only works for numeric values
+	{}
+
+	std::string const & get_string() const { return val_; }
+private:
+	std::string val_;
+};
+
+class Stringifier {
+public:
+	Stringifier( std::initializer_list< Stringy > const & initlist)
+	{
+		for ( auto const & entry: initlist ) {
+			val_ += entry.get_string();
+		}
+	}
+
+	std::string const & get_string() const { return val_; }
+private:
+	std::string val_;
+};
+
+}
+
+/// @brief Macro for an exit with an issue which doesn't trigger the crash reporter system
+/// These *need* to have parameters, which are used to create the user message.
+///
+/// As a convenience, you can pass multiple parameters to these macros,
+/// all of which will be stringified and concatenated into the message. E.g.:
+///
+/// user_fixable_issue_exit( "Loops file `", filename, "` has only ", num_entry, " entries on line ", lineno, ". It needs at least 3.");
+///
+/// @note Since C++11, variadic macros are part of C++
+#define user_fixable_issue_exit(...) utility::exit_with_user_fixable_issue( __FILE__, __LINE__, utility_exit_detail::Stringifier{ __VA_ARGS__ }.get_string() )
+
+
+#define user_fixable_issue_assert( _Expression, ... ) \
+	if ( !(_Expression) ) utility::exit_with_user_fixable_issue(__FILE__, __LINE__, utility_exit_detail::Stringifier{ __VA_ARGS__ }.get_string() )
 
 /// @brief Macro function wrappers for utility::exit
 ///
 /// @note Convenience macros that fills in the file and line
 /// @note These have to be macros to get the file and line from the point of call
-/// @note Don't use variadic macros to reduce the "overloads": They aren't standard C++
 
 /// @brief Exit with file + line
 #define utility_exit() utility::exit( __FILE__, __LINE__ )
@@ -83,6 +134,14 @@ namespace utility {
 #  define NORETURN
 #endif
 #endif
+
+/// @brief Exit in cases where there's a clear issue the user can fix.
+void
+exit_with_user_fixable_issue(
+	char const * file,
+	int line,
+	std::string const & message
+) NORETURN;
 
 /// @brief Exit with file + line + message + optional status
 void

@@ -33,6 +33,9 @@ void init_mpi(int argc, char * argv []);
 /// @brief Initialize the option system, which manages command line options
 void init_options(int argc, char * argv []);
 
+/// @brief Setup crash reporter
+void init_crash_reporter(int argc, char * argv []);
+
 /// @brief Tracers control output to std::cout and std::cerr
 void init_tracers();
 

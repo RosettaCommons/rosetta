@@ -838,6 +838,7 @@ sources = {
 	"pilot/rmoretti" : [
 		#"bcl_type_check", # internal, never intended for release
 		#"bootstrap_bcl_types", # internal, never intended for release
+		"crash_report_test",
 		#"molfile_read_test", # internal, never intended for release
 		"extract_atomtree_diffs_jd1", # /* Old, jd1 version of extract_atomtree_diffs, in case someone really needs it.*/
 		"ligand_rpkmin_jd1", # /* Old, jd1 version of ligand_rpkmin, in case someone really needs it. */

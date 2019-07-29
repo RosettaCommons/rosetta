@@ -13,6 +13,7 @@ sources = {
 	"utility": [
 		"backtrace",
 		"Binary_Util",
+		"crash_report",
 		"CSI_Sequence",
 		"curl",
 		"dating",

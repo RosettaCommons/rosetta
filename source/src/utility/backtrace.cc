@@ -13,10 +13,12 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #include <utility/backtrace.hh>
+#include <utility/crash_report.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/CSI_Sequence.hh>
 
 #include <iostream>
+#include <sstream>
 
 static bool throw_the_next_time_an_assertion_failure_is_hit( false );
 
@@ -41,14 +43,18 @@ handle_assert_failure( char const * condition, std::string const & file, int con
 	// Look, don't rely on this functionality in anything besides your unit tests.
 	maybe_throw_on_next_assertion_failure( condition );
 
+	std::ostringstream oss;
+	oss << "\nERROR: Assertion `" << condition << "` failed.\n";
+	oss << "ERROR:: Exit from: " << file << " line: " << line << "\n";
+
 	std::cerr << utility::CSI_Reset() << utility::CSI_Red() << utility::CSI_Bold();
-	std::cerr << "\nERROR: Assertion `" << condition << "` failed.\n";
-	std::cerr << "ERROR:: Exit from: " << file << " line: " << line << "\n";
+	std::cerr << oss.str();
 	std::cerr << utility::CSI_Reset();
-
-	print_backtrace( condition );
-
 	std::cerr << std::endl;
+
+	//print_backtrace( condition );
+	utility::save_crash_report(oss.str(), file, line);
+
 
 #ifdef __clang_analyzer__
 	abort(); // To make the compiler happy on release-mode builds

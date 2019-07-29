@@ -49,36 +49,60 @@ public:
 	//
 	// intended usage is CREATE_EXCEPTION(Exception, "something went wrong: ...");
 	// or if you need to avoid macro Exception(__FILE__, __LINE__, "something went wrong: ...")
+	// Avoid the latter, though, as it circumvents the crash log handling
 	Exception(char const *file, int line, std::string const &msg);
 
 	virtual ~Exception() {}
 
+	/// @brief Present this exception to the user.
+	/// Will invoke crash log reporting, if applicable
+	virtual void display() const;
+
+	/// @brief Invoke a crash log for throwing this exception.
+	/// If your exception is one which is a "non-error" exception,
+	/// override this function to do nothing.
+	virtual void crash_log() const;
 
 	void show( std::ostream& ) const;
 
-	std::string msg() const { return msg_; };
+	/// @brief Will return a formatted message (with file/line information)
+	std::string msg() const;
 
+	/// @brief Will return the raw message (without file/line information)
+	std::string raw_msg() const { return msg_; };
+
+	/// @brief Will set the *raw* message.
 	void msg(std::string const &m) { msg_ = m; };
 
 	void add_msg( std::string const& str ) {
 		msg_ = msg_ + '\n' + str;
 	}
 
+	std::string const & file() { return file_; }
+	int line() { return line_; }
+	std::string const & traceback() { return traceback_; }
+
 private:
 	// disabling access to what in favor of msg()
 	char const * what() const noexcept override {
-		return msg_.c_str();
+		// As msg returns a temp string, we need to keep a reference to it
+		// in order to return a pointer to the contents.
+		whatstring_ = msg();
+		return whatstring_.c_str();
 	}
 
 private:
 	std::string msg_;
+	std::string file_;
+	int line_;
+	std::string traceback_;
+	mutable std::string whatstring_; // only used by what()
 };
 
 inline std::ostream& operator << ( std::ostream& os, Exception const & excn ) {
 	excn.show( os );
 	return os;
 }
-
 
 class IOError : public Exception {
 protected:
@@ -91,11 +115,14 @@ class BadInput : public IOError {
 public:
 	using IOError::IOError;
 
+	// Should be a user error, but I'm not yet confident the error messages are all that revealing yet -- wait until they're better to turn off crash reporting - RM
+	// void crash_log() const override {}
 };
 
 class FileNotFound : public IOError {
 public:
 	FileNotFound(char const * file, int line, std::string const& not_found_file_name ) : IOError(file, line, std::string("unable to open file ") + file ), file_( not_found_file_name ) {};
+	void crash_log() const override {} // User error, not crash, & fix should be clear from error message.
 private:
 	std::string file_;
 };
@@ -116,14 +143,25 @@ public:
 	using RangeError::RangeError;
 };
 
-class RosettaScriptsOptionError : public Exception {
+class JD2Failure : public Exception {
 public:
 	using Exception::Exception;
 };
 
-class JD2Failure : public Exception {
+////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class UserCorrectableIssue: public Exception {
 public:
 	using Exception::Exception;
+
+	void display() const override;
+
+	void crash_log() const override;
+};
+
+class RosettaScriptsOptionError : public UserCorrectableIssue {
+public:
+	using UserCorrectableIssue::UserCorrectableIssue;
 };
 
 }

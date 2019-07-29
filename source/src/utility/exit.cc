@@ -19,6 +19,7 @@
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/backtrace.hh>
+#include <utility/crash_report.hh>
 #include <utility/CSI_Sequence.hh>
 
 // C++ headers
@@ -46,7 +47,6 @@
 #endif
 
 namespace utility {
-
 
 struct UtilityExitException : excn::Exception //noboday should be allowed to throw this... that's why its privately hidden in this modul...
 {
@@ -86,17 +86,12 @@ void remove_exit_callback( UtilityExitCallBack cb )
 	}
 }
 
-
-
-/// @brief Exit with file + line + message + optional status
 void
-exit(
+exit_handler(
 	char const * file,
 	int const line,
-	std::string const & message,
-	int const status
-)
-{
+	std::string const & message
+) {
 
 	// Calling all preset exit-callback's
 	for ( auto it=get_all_exit_callbacks().begin(); it < get_all_exit_callbacks().end(); ++it ) {
@@ -104,7 +99,8 @@ exit(
 	}
 
 	std::ostringstream oss;
-	if ( ! message.empty() ) oss << "\n" << "ERROR: " << message << "\n";
+	oss << "\n";
+	if ( ! message.empty() ) oss << "ERROR: " << message << "\n";
 	oss << "ERROR:: Exit from: " << file << " line: " << line << "\n";
 	std::string failure_message = oss.str();
 	maybe_throw_on_next_assertion_failure( failure_message.c_str() );
@@ -112,17 +108,12 @@ exit(
 	std::cerr << CSI_Reset() << CSI_Red() << CSI_Bold();
 	std::cerr << failure_message << std::flush;
 	std::cerr << CSI_Reset();
-	print_backtrace( message.c_str() );
 	std::cerr.flush();
 
-#ifndef BOINC
-	// why did this get placed here basically skipping the logic below?!
-	throw UtilityExitException(file, line,  message);
-#endif
-
-#ifdef USEMPI
-	MPI_Abort( MPI_COMM_WORLD, 911 );
-#endif
+	// This was disabled in preference to throwing an exception.
+	//#ifdef USEMPI
+	// MPI_Abort( MPI_COMM_WORLD, 911 );
+	//#endif
 
 #ifdef BOINC
 
@@ -153,20 +144,32 @@ exit(
 		boinc_finish( status );
 	}
 
-#else // Not BOINC
-	if ( main_exit_callback ) {
-		main_exit_callback();
-		std::exit( status );
-	} else {
-#ifndef _WIN32
-		assert( false ); // Force a core dump for post-mortem debugging
-#endif // Not _WIN32
-		std::exit( status );
-	}
 #endif // BOINC
 
-	throw UtilityExitException(file, line,  message);
+}
 
+void
+exit_with_user_fixable_issue(
+	char const * file,
+	int line,
+	std::string const & message
+)
+{
+	exit_handler( file, line, message );
+	throw utility::excn::UserCorrectableIssue(file, line, message);
+}
+
+/// @brief Exit with file + line + message + optional status
+void
+exit(
+	char const * file,
+	int const line,
+	std::string const & message,
+	int const
+)
+{
+	exit_handler( file, line, message );
+	throw UtilityExitException(file, line, message);
 }
 
 

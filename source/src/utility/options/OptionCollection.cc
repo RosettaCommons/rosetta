@@ -272,52 +272,48 @@ OptionCollection::load(
 	using std::string;
 	using size_type = std::string::size_type;
 
-	try {
-		// Load the options
-		string cid; // Context option id
-		while ( ! arg_strings.empty() ) { // Process the next option
-			string arg_string( arg_strings.front() ); // Lead argument string
-			arg_strings.pop_front(); // Remove lead argument
+	// Load the options
+	string cid; // Context option id
+	while ( ! arg_strings.empty() ) { // Process the next option
+		string arg_string( arg_strings.front() ); // Lead argument string
+		arg_strings.pop_front(); // Remove lead argument
 
-			char const arg_first( arg_string[ 0 ] );
-			if ( ( arg_first == '-' ) && ( ! ObjexxFCL::is_double( arg_string ) ) ) { // - prefix: Treat as an option
+		char const arg_first( arg_string[ 0 ] );
+		if ( ( arg_first == '-' ) && ( ! ObjexxFCL::is_double( arg_string ) ) ) { // - prefix: Treat as an option
 
-				// Load the option
-				//std::cout << "load_option_c: arg_string=" << arg_string << "\n";
-				//for(ValueStrings::iterator it=arg_strings.begin(); it!=arg_strings.end(); it++)
-				// std::cout << "arg_strings[] =" << *it << "\n";
+			// Load the option
+			//std::cout << "load_option_c: arg_string=" << arg_string << "\n";
+			//for(ValueStrings::iterator it=arg_strings.begin(); it!=arg_strings.end(); it++)
+			// std::cout << "arg_strings[] =" << *it << "\n";
 
-				// Taking care of '-@MyOption' case
-				if ( arg_string.size() > 1 ) {
-					if ( arg_string[1] == '@' ) {
-						load_option_from_file(arg_string, arg_strings, cid); //this function still has std_exit_wrapper for failures
-						continue;
-					} else if ( arg_string[1] == '-' ) {
-						arg_string = arg_string.substr(1);
-					}
+			// Taking care of '-@MyOption' case
+			if ( arg_string.size() > 1 ) {
+				if ( arg_string[1] == '@' ) {
+					load_option_from_file(arg_string, arg_strings, cid); //this function still has std_exit_wrapper for failures
+					continue;
+				} else if ( arg_string[1] == '-' ) {
+					arg_string = arg_string.substr(1);
 				}
-				load_option_cl( arg_string, arg_strings, cid ); //might throw exception
-			} else if ( arg_first == '@' ) { // @ prefix: Treat as an option file
-				// Parse argument to get file specification string
-				size_type const fb( arg_string.find_first_not_of( "@\"" ) );
-				string file_string;
-				if ( fb == string::npos ) { // -...-
-					// This should be the "@ ../filename" 'tab-completion' case
-					file_string = arg_strings.front();
-					arg_strings.pop_front(); // remove next argument
-				} else {
-					size_type const fe( arg_string.find_last_not_of( '"' ) );
-					file_string = ( fb <= fe ? arg_string.substr( fb, fe - fb + 1 ) : string() );
-				}
-
-				load_options_from_file(ObjexxFCL::trim(file_string), cid);
-
-			} else if ( ! free_args ) { // Warn about free argument
-				throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Unused \"free\" argument specified: " + arg_string ));
 			}
+			load_option_cl( arg_string, arg_strings, cid ); //might throw exception
+		} else if ( arg_first == '@' ) { // @ prefix: Treat as an option file
+			// Parse argument to get file specification string
+			size_type const fb( arg_string.find_first_not_of( "@\"" ) );
+			string file_string;
+			if ( fb == string::npos ) { // -...-
+				// This should be the "@ ../filename" 'tab-completion' case
+				file_string = arg_strings.front();
+				arg_strings.pop_front(); // remove next argument
+			} else {
+				size_type const fe( arg_string.find_last_not_of( '"' ) );
+				file_string = ( fb <= fe ? arg_string.substr( fb, fe - fb + 1 ) : string() );
+			}
+
+			load_options_from_file(ObjexxFCL::trim(file_string), cid);
+
+		} else if ( ! free_args ) { // Warn about free argument
+			throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Unused \"free\" argument specified: " + arg_string ));
 		}
-	} catch ( excn::Exception &excn ) {
-		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: " + excn.msg() ));
 	}
 
 	// Check for problems in the option values
@@ -527,11 +523,7 @@ void OptionCollection::load_options_from_stream(
 /// @note This function calls only threadsafe functions (that lock appropriate mutexes), so it doesn't
 /// need to lock any mutexes itself.
 void OptionCollection::load_options_from_file(std::string const & file_string, std::string const & cid){
-	try {
-		load_options_from_file_exception( file_string, cid );
-	} catch ( excn::Exception& excn ) {
-		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: " + excn.msg() ) );
-	}
+	load_options_from_file_exception( file_string, cid );
 }
 
 /// @brief Load all options in a flags file
@@ -587,12 +579,7 @@ void OptionCollection::load_option_from_file(
 	//std::cout << "F:load_option_c: arg_string=" << arg_string << "\n";
 	//for(ValueStrings::iterator it=f_args.begin(); it!=f_args.end(); it++)
 	// std::cout << "F:arg_strings[] =" << *it << "\n";
-	try{
-		load_option_cl( arg_string, f_args, cid );
-	} catch ( excn::Exception &excn ) {
-		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: " + excn.msg() ));
-	}
-
+	load_option_cl( arg_string, f_args, cid );
 }
 
 
@@ -757,7 +744,6 @@ OptionCollection::show_user( std::ostream & stream ) const
 			Option const & opt( option( key ) );
 			bool const save_access_status( opt.is_been_accessed() );
 			if ( opt.user() ) { //user changes access status ... here clearly not wanted.
-				opt.set_accessed( save_access_status );
 				string const opt_group( prefix( opt.id() ) );
 				if ( opt_group != group ) { // New group
 					stream << '\n'; // Spacer line between groups
@@ -765,6 +751,7 @@ OptionCollection::show_user( std::ostream & stream ) const
 				}
 				stream << "-" << opt.id() << " " << opt.value_string() << '\n';
 			}
+			opt.set_accessed( save_access_status );
 		}
 	}
 	stream << '\n';
@@ -1022,7 +1009,11 @@ operator <<( std::ostream & stream, OptionCollection const & options )
 		OptionKey const & key( *i );
 		if ( options.has( key ) ) { // Active option
 			Option const & opt( options.option( key ) );
-			if ( opt.user() ) stream << " -" << opt.id() << opt.equals_string();
+			bool const save_access_status( opt.is_been_accessed() );
+			if ( opt.user() ) { // Will change access status -- probably not what we want for this sort of general printing
+				stream << " -" << opt.id() << opt.equals_string();
+			}
+			opt.set_accessed( save_access_status );
 		}
 	}
 	return stream;

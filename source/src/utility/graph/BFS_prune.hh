@@ -33,6 +33,7 @@ namespace graph {
 /// ONLY THROW FROM WITHIN A VISITOR PASSED TO breadth_first_visit_prune/breadth_first_search_prune
 class EXCN_Stop_BFS : public utility::excn::Exception {
 	using utility::excn::Exception::Exception;
+	void crash_log() const override {} // Control flow, not error exception
 };
 
 
