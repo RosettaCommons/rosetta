@@ -2,13 +2,34 @@
 # provided by this residue type set with name3 which match
 # the official PDB ligand ID. 
 #
-# The primary purpose of this list is to help with loading
-# of PDB components - if an ligand ID is on this list, we
-# shouldn't load it from the components file.
+# It isn't simply a list of three letter codes that are provided by the Rosetta database,
+# or the CCD codes which have Rosetta-equivalent residues.
+#
+# The principle here is that when reading a from-RCSB structure - with no editing -
+# with a residue with one of the following three letter codes, 
+# Rosetta should be able to read that residue in correctly with the correct chemical identity.
+#
+# If Rosetta can read it in but doesn't recognize it as the correct chemical structure,
+# or if it could be read in but would require manually changing the three letter code in the PDB,
+# or if the three letter code and chemical structure match Rosetta/CCD, but the atom naming conventions don't
+# then don't list the code here.
+#
+# **IF YOU LIST A THREE LETTER CODE HERE, YOU ARE ASSERTING THAT
+# EVERYONE WHO LOADS A FROM-RCSB STRUCTURE USING THAT THREE LETTER CODE
+# SHOULD BE USING THE ROSETTA-DATABASE-PROVIDED VERSION**
+#
+# As such, only list a three letter code here if the database residue
+# (either params file or patched type) is chemically equivalent to
+# the official wwPDB CCD definition for that ligand, with the same atom naming conventions.
+#
+# Only include entries here if the corresponding Rosetta type 
+# is enabled in residue_types.txt 
+# (or patches.txt - patches which enable a different IO_STRING for reading are good)
 #
 # These entries are not whitespace padded.
+#
 
-# The 20 cannonical amino acids
+## The 20 canonical amino acids
 ALA
 CYS
 ASP
@@ -30,49 +51,90 @@ VAL
 TRP
 TYR
 
-# Particular D amino acids. For now let's say all of them.
-DAL
-DCY
-DAS
-DGL
-DPH
-DHI
-DIL
-DLY
-DLE
-MED
-DAN
-DPR
-DGN
-DAR
-DSN
-DTH
-DVA
-DTR
-DTY
-
-# DNA
+## DNA
 DA
 DC
 DG
 DT
-DI
-# We have a patch that does a better job at this.
-AS
-SC
-DGP
-CMR
-RMP
-UFP
-2DT
+# MCY has a phosphate in Rosetta version, but none in the CCD version.
 
-# RNA
+## RNA
 A
 C
 G
 U
 
-# Metal Ions
+## RNA non-natural
+IC  # type ICY
+I   # type INO
+1AP
+1MA
+2MA
+2MG
+2MU
+4OC
+5MC
+5MU
+BRU
+7MG
+7DA
+M2G
+MA6
+PSU
+UR3
+6MZ
+1MG
+4SU
+3TD
+H2U
+MIA
+
+OMC
+OMG
+OMU
+# FM* - different Rosetta/CCD
+# SR* - different Rosetta/CCD
+# SS* - different Rosetta/CCD
+# S4* - not enabled
+
+# 1PU - different Rosetta/CCD
+# 2ST - slightly different Rosetta/CCD
+# 2SU - different Rosetta/CCD
+# 31U - different Rosetta/CCD
+# 52U - different Rosetta/CCD
+# I6A - doesn't exist CCD
+# M1I - doesn't exist CCD
+# MPU - different Rosetta/CCD
+T6A
+# S2C - different Rosetta/CCD
+# 3MC - different Rosetta/CCD
+# A4C - different Rosetta/CCD
+# K2C - different Rosetta/CCD
+# F5C - different Rosetta/CCD
+# 52C - different Rosetta/CCD
+# FA7 - different Rosetta/CCD
+# IHA - different Rosetta/CCD
+RIA
+# Q   - doesn't exist CCD
+YYG # yW.params
+# O2W - different Rosetta/CCD 
+# NMT - slightly different Rosetta/CCD
+# NST - different Rosetta/CCD
+# C5T - doesn't exist CCD
+# CMT - different Rosetta/CCD
+# MOT - different Rosetta/CCD
+# MST - different Rosetta/CCD
+# CNT - different Rosetta/CCD
+# CNS - different Rosetta/CCD
+# CNM - different Rosetta/CCD
+# APU - different Rosetta/CCD
+# OAU - doesn't exist CCD
+# MOU - different Rosetta/CCD
+# MHU - different Rosetta/CCD
+# M3G - doesn't exist CCD
+# M26 - doesn't exist CCD
+
+## Metal Ions
 CA
 CO
 CU
@@ -83,5 +145,266 @@ MN
 NA
 ZN
 
-# Water
+## Spin labels
+R1A
+# Others don't match Rosetta/CCD
+
+## Mineral Surface
+# Not loaded by default - skip
+
+## Water
 HOH
+
+## cyclosporin
+BMT
+# LMA - different Rosetta/CCD
+
+## L-NCAA Types
+# In general, the NCAA types don't match chemically between the CCD and Rosetta.
+
+0TD
+ABA
+BCS
+BIF  # 4-phenyl-phenylalanine_tyr_rot.params
+
+# V01
+# V02
+# V03
+# V04
+# APA
+# HLU
+# YPN
+# HPR
+# HTY
+# MPA
+# MTP
+# NLU
+# NVL
+# BZP
+# SAL
+# A04  # 1-amino-cyclopentane-carboxylic_acid.params
+# A06  # 1-methyl-histidine.params
+# A07  # 1-methyl-histidine_prot.params
+# A12  # 2.4-dimethyl-phenylalanine.params
+# A20  # 2-allyl-glycine.params
+# A24  # 2-amino-2-phenylbutyric_acid.params
+# BMA  # 2-amino-3-methylamino-propanoic_acid.params
+# A30  # 2-amino-4-bromo-4-pentenoic_acid.params
+# A31  # 2-amino-5-phenyl-pentanoic_acid.params
+# A33  # 2-amino-heptanoic_acid.params
+# A34  # 2-aminomethyl-phenylalanine.params
+# A32  # 2-amino-octanoic_acid.params
+# A43  # 2-hydroxy-phenylalanine.params
+# A45  # 2-indanyl-glycine_puck2.params
+# A48  # 2-methyl-phenylalanine.params
+# A68  # 3-aminomethyl-phenylalanine.params
+# A69  # 3-amino-tyrosine.params
+# C95  # 3-chloro-phenylalanine.params
+# A78  # 3-hydroxy-phenylalanine.params
+# A80  # 3-hydroxy-tyrosine.params
+# A82  # 3-methyl-histidine.params
+# A83  # 3-methyl-histidine_prot.params
+# A84  # 3-methyl-phenylalanine.params
+# A91  # 4.5-dehydro-leucine.params
+# A92  # 4.5-dehydro-lysine.params
+# dhI  # 4.5-dihydroxy-isoleucine.params
+# A94  # 4-aminomethyl-phenylalanine.params
+# A98  # 4-amino-piperidine-4-carboxylic-acid.params
+# B02  # 4-amino-tetrahydropyran-4-carboxylic_acid.params
+# B06  # 4-amino-tetrahydrothiopyran-4-carboxylic_acid.params
+# B12  # 4-carboxy-phenylalanine.params
+# B19  # 4-fluoro-proline.params
+# B19  # 4-fluoro-proline.params_rot
+# C89  # 4-fluoro-proline_puck.params
+# C89  # 4-fluoro-proline_puck.params_rot
+# C90  # 4-fluoro-tryptophan.params
+# B21  # 4-hydroxy-phenylglycine.params
+# B27  # 4-methyl-phenylalanine.params
+# B28  # 4-methyl-tryptophan.params
+# B30  # 4-phenyl-phenylalanine.params
+# B31  # 4-tert-butyl-phenylalanine.params
+# C80  # 5-bromo-tryptophan.params
+# C81  # 5-chloro-tryptophan.params
+# B35  # 5-fluoro-tryptophan.params
+# B36  # 5-hydroxy-tryptophan.params
+# B38  # 5-methyl-tryptophan.params
+# C83  # 6-bromo-tryptophan.params
+# C84  # 6-chloro-tryptophan.params
+# C85  # 6-fluoro-tryptophan.params
+# B40  # 6-methyl-tryptophan.params
+# C86  # 7-azatryptophan.params
+# C87  # 7-bromo-tryptophan.params
+# C88  # 7-methyl-tryptophan.params
+# B44  # 9-anthryl-alanine.params
+# B47  # allo-isoleucine.params
+# B48  # allo-threonine.params
+# B49  # alpha-aminoadipic_acid.params
+# B50  # alpha-amino-glycine.params
+# B54  # alpha-methyl-3-hydroxy-tyrosine.params
+# B56  # alpha-methyl-histidine.params
+# B57  # alpha-methyl-leucine.params
+# B58  # alpha-methyl-phenylalanine.params
+# B59  # alpha-methyl-proline.params
+# B60  # alpha-methyl-tryptophan.params
+# B61  # alpha-methyl-tyrosine.params
+# B62  # alpha-methyl-valine.params
+# B63  # amino-ethyl-cysteine.params
+# B67  # beta-(1-naphthyl)-alanine.params
+# B74  # beta-(2-naphthyl)-alanine.params
+# B95  # beta-beta-dicyclohexyl-alanine.params
+# B96  # beta.beta-diphenyl-alanine.params
+# B97  # beta-chloro-alanine.params
+# C00  # beta-cyclohexyl-alanine.params
+# C01  # beta-cyclopentyl-alanine.params
+# C03  # beta-fluoro-alanine.params
+# C04  # beta-hydroxy-norvaline.params
+# C05  # beta-iodo-alanine.params
+# C12  # cyclohexyl-glycine.params
+# C15  # diphenylglycine.params
+# C16  # dipropyl-glycine.params
+# C20  # ethionine.params
+# C91  # fluoro-leucine_ent1.params
+# C92  # fluoro-leucine_ent2.params
+# C93  # hexafluoro-leucine.params
+# C26  # homocysteine.params
+# C27  # homophenylalanine.params
+# C30  # homoserine.params
+# C36  # n-in-methyl-tryptophan.params
+# C41  # penicillamine.params
+# C42  # phenylglycine.params
+# C53  # tert-butyl-alanine.params
+# C54  # tert-butyl-cysteine.params
+# C55  # tert-butyl-glycine.params
+# C60  # trifluoro-alanine.params
+# C94  # trifluoro-leucine_ent2.params
+# C61  # trifluoro-leucine.params
+# TES
+# S56
+# 4J5
+
+## Metal-binding NCAA types
+# none active
+
+## Peptoid Types
+# None match the CCD
+
+## Beta-peptides
+
+B3A
+# B3C - different Rosetta/CCD
+B3D
+B3E
+# B3F - not in CCD
+# B3G - different Rosetta/CCD
+# B3H - different Rosetta/CCD
+# B3I - different Rosetta/CCD
+B3K
+B3L
+B3M
+# B3N - different Rosetta/CCD
+# B3O - not in CCD
+# B3P - different Rosetta/CCD
+B3Q
+# B3R - different Rosetta/CCD
+B3S
+B3T
+# B3V - different Rosetta/CCD
+# B3W - different Rosetta/CCD
+# B3X - different Rosetta/CCD
+B3Y
+# cisACHC - different Rosetta/CCD
+# cisACPC - different Rosetta/CCD
+# transACPC - different Rosetta/CCD
+
+## Gamma-peptide Types
+# none active yet
+
+## Carbohydrates
+# None listed, as they aren't loaded by default. 
+# Note for when they are: CCD component names are case sensitive and (currently) all upper case.
+# A three letter code of `Glc` does not shadow a three letter code of `GLC`
+
+## Lipids
+# None listed, as they aren't loaded by default. 
+
+## Terpenes
+# DMA - CCD version is diphosphate version
+
+## Terminal types
+ACE
+NME
+# BZO - different Rosetta/CCD
+# BZA - different Rosetta/CCD
+
+## Peptide nucleic acids
+APN
+CPN
+GPN
+TPN
+# UPN - different Rosetta/CCD
+
+## Coenzymes
+
+## Polyaramids
+# No correspondence between Rosetta & CCD for polyaramids
+
+##########################################
+# ResidueTypes covered by patching
+# Note that you should only list a patch here 
+# if the patch sets the IO_STRING three letter code to the matching code
+# (And only if both the CCD and Rosetta agree on naming)
+###########################################
+
+## D amino acids - this is handled by the CHIRAL_FLIP_NAMING operation 
+DAL
+# DCY -- CCD D-CYS is DCY; Rosetta uses DCS, which is CCD D-[3-HYDROXY-2-METHYL-5-PHOSPHONOOXYMETHYL-PYRIDIN-4-YLMETHYL]-N,O-CYCLOSERYLAMIDE
+DAS 
+# DGL -- CCD D-GLU is DGL; Rosetta uses DGU, which is CCD D-galacturonic acid
+# DPH -- CCD D-PHE is DPN; Rosetta uses DPH, which is CCD DEAMINO-METHYL-PHENYLALANINE
+DHI
+DIL
+DLY
+DLE
+# MED -- CCD D-MET is MED; Rosetta uses DME, which is CCD DECAMETHONIUM ION
+# DAN -- CCD D-ASN is DSG; ROsetta uses DAN, which is CCD 2-DEOXY-2,3-DEHYDRO-N-ACETYL-NEURAMINIC ACID
+DPR
+DGN
+DAR
+# DSN -- CCD D-SER is DSN; Rosetta uses DSE, which is CCD N-METHYL-D-SERINE
+DTH
+DVA
+DTR
+DTY
+
+## L RNA - handled by CHIRAL_FLIP_NAMING
+0A
+0C
+0G
+0U
+
+## Canonical amino acid modifications (individual patch cases)
+SCY # CYS:acetylated
+HIC # HIS:methylated
+ALY # LYS:acetylated
+M3L # LYS:lys_trimethylated
+MLY # LYS:dimethylated
+MLZ # LYS:monomethylated
+FME # MET:N_formylated
+0AZ # PRO:pro_hydroxylated_case2  (though there may be a chirality issue)
+HYP # PRO:pro_hydroxylated_case1
+SEP # SER:phosphorylated
+PTR # TYR:phosphorylated
+TPO # THR:phosphorylated
+TYI # TYR:diiodinated
+TYS # TYR:sulfated
+
+## RNA patches
+
+# 7DA # A:7_Deaza  # Disabled
+
+U33 # BRU:5prime_end_OH
+
+#DA; DC; DG; DT - already treated above, for the DNA base types
+DU # URA:deoxy_O2prime
+
+## DNA patches

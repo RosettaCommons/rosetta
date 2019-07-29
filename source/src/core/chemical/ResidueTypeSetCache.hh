@@ -227,6 +227,11 @@ public:
 	std::map< std::string, std::set< std::string > > const &
 	interchangeability_group_generated_by_base_residue_name();
 
+	/// @brief Does this cache already have a residue with the given name3
+	/// This is likely to be slow, as it looks at all the generated residue types.
+	bool
+	has_restype_with_name3( std::string const & name3 ) const;
+
 #ifdef MULTI_THREADED
 	/// @brief The %ResidueTypeSet will lock this instance for read and write opperations
 	/// by accessing the mutex that this RTSC stores.

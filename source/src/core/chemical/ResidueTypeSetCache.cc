@@ -324,6 +324,16 @@ ResidueTypeSetCache::interchangeability_group_generated_by_base_residue_name() {
 	return interchangeability_group_generated_by_base_residue_name_;
 }
 
+bool
+ResidueTypeSetCache::has_restype_with_name3( std::string const & name3 ) const {
+	for ( auto const & pair: name_map_ ) {
+		if ( pair.second && pair.second->name3() == name3 ) {
+			return true;
+		}
+	}
+	return false;
+}
+
 /// @details following assumes that all new name3 and interchangeability groups for residue types
 ///    can be discovered by applying patches to base residue types -- i.e. on the 'first patch'.
 ///    Probably should set up a runtime_assert in ResidueTypeFinder to check this assumption.

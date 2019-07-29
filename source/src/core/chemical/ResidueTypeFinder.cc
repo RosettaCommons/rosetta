@@ -82,7 +82,8 @@ ResidueTypeFinder::ResidueTypeFinder( core::chemical::ResidueTypeSet const & res
 	ignore_atom_named_H_( false ),
 	disallow_carboxyl_conjugation_at_glu_asp_( false ),
 	check_nucleic_acid_virtual_phosphates_( false ),
-	no_metapatches_(false)
+	no_metapatches_(false),
+	no_CCD_on_name3_match_( ! option[ OptionKeys::in::file::check_all_PDB_components ]() )
 {}
 
 //Destructor
@@ -191,10 +192,10 @@ ResidueTypeFinder::get_possible_base_residue_types(
 	}
 
 	//Otherwise, load the whole set of base types and start pruning:
+	initialize_relevant_pdb_components();
 
 	ResidueTypeCOPs rsd_types = residue_type_set_.base_residue_types();
 
-	append_relevant_pdb_components( rsd_types );
 
 	if ( include_unpatchable ) {
 		rsd_types.append( get_possible_base_unpatchable_residue_types() );
@@ -202,31 +203,30 @@ ResidueTypeFinder::get_possible_base_residue_types(
 	rsd_types = apply_basic_filters( rsd_types );
 	if ( apply_all_filters ) {
 		rsd_types = apply_filters_after_patches( rsd_types );
+		rsd_types = apply_preferences_and_discouragements( rsd_types );
 	}
 	return rsd_types;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// @brief Also load the PDB component, if we're specifying a name3 search
+// @brief Load the PDB component into the RTS's base residue type list, if we're specifying a name3 search
 void
-ResidueTypeFinder::append_relevant_pdb_components( ResidueTypeCOPs & rsd_types ) const
+ResidueTypeFinder::initialize_relevant_pdb_components() const
 {
-	if ( name3_.size() ) {
-		// if there's already a Rosetta type with the name3 probably don't need to dig into PDB components;
-		//   they will be screened out anyway later by prioritize_rosetta_types_over_pdb_components().
-		bool rosetta_type_has_name3( false );
-		for ( auto rsd_type : rsd_types ) {
+	if ( name3_.empty() ) { return; } // Only take components for name3 searches
+
+	if ( no_CCD_on_name3_match_ ) {
+		// if there's already a Rosetta type with the name3 in the base residue types, don't bother loading the component.
+		for ( auto rsd_type : residue_type_set_.base_residue_types() ) {
 			if ( rsd_type->name3() == name3_ ||
 					residue_type_set_.generates_patched_residue_type_with_name3( residue_type_base_name( *rsd_type ), name3_ ) ) {
-				rosetta_type_has_name3 = true;
-				break;
+				return; // Don't bother with component loading.
 			}
 		}
-		if ( !rosetta_type_has_name3 || option[ OptionKeys::in::file::check_all_PDB_components ]() ) {
-			ResidueTypeCOP pdb_component( residue_type_set_.name_mapOP( "pdb_" + utility::strip(name3_) ) );
-			if ( pdb_component ) rsd_types.push_back( pdb_component );
-		}
 	}
+
+	// Will cause the RTS to load the PDB component into its base residue types
+	residue_type_set_.name_mapOP( "pdb_" + utility::strip(name3_) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -298,7 +298,7 @@ ResidueTypeCOPs
 ResidueTypeFinder::apply_preferences_and_discouragements( ResidueTypeCOPs const & rsd_types ) const {
 	if ( rsd_types.empty() ) return rsd_types;
 
-	if ( preferred_properties_.empty() && discouraged_properties_.empty() ) {
+	if ( preferred_properties_.empty() && discouraged_properties_.empty() && ! no_CCD_on_name3_match_ ) {
 		return rsd_types; // nothing to do
 	}
 
@@ -381,29 +381,28 @@ ResidueTypeFinder::apply_preferences_and_discouragements( ResidueTypeCOPs const 
 }
 
 ////////////////////////////////////////////////////////
-// @brief pdb_components file ('components.cif') provides 'backup' types labeled "pdb_XXX"
-//   but should only be used if Rosetta can't figure out what this is by itself.
-//     -- rhiju, 2017
+// @brief if no_CCD_on_name3_match_ is on, then any pdb components should be ignored if we have an otherwise qualifying
+// Rosetta database file, even if there's no chemical match.
+// (Note that the components which are chemically equivalent to Rosetta types should be handled by the
+// exclude_pdb_component_list.txt file in the database, along with the exclude_pdb_component_ids_ functionality in
+// the GlobalResidueType set.)
 ResidueTypeCOPs
 ResidueTypeFinder::prioritize_rosetta_types_over_pdb_components( ResidueTypeCOPs const & rsd_types ) const
 {
-	bool has_rosetta_type = false;
+	if ( ! no_CCD_on_name3_match_ ) { return rsd_types; } // Shouldn't do any filtering.
+
+	ResidueTypeCOPs filtered_rsd_types;
 	for ( auto const & rsd_type : rsd_types ) {
 		if ( rsd_type->name().size() < 4 || !( rsd_type->name().substr(0,4) == "pdb_" ) ) {
-			has_rosetta_type = true;
-			break;
+			filtered_rsd_types.push_back( rsd_type );
 		}
 	}
-	if ( has_rosetta_type ) {
-		ResidueTypeCOPs filtered_rsd_types;
-		for ( auto const & rsd_type : rsd_types ) {
-			if ( rsd_type->name().size() < 4 || !( rsd_type->name().substr(0,4) == "pdb_" ) ) {
-				filtered_rsd_types.push_back( rsd_type );
-			}
-		}
+
+	if ( filtered_rsd_types.empty() ) {
+		return rsd_types; // Only have the components.
+	} else {
 		return filtered_rsd_types;
 	}
-	return rsd_types;
 }
 
 

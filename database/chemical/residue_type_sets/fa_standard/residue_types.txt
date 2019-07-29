@@ -901,13 +901,7 @@ residue_types/peptoids/633.params
 #residue_types/peptoids/320.params
 #residue_types/peptoids/413.params
 
-## Gamma-peptide Types
-#residue_types/gamma-peptide/GABA.params
-#residue_types/gamma-peptide/G2ALA.params
-#residue_types/gamma-peptide/G3ALA.params
-#residue_types/gamma-peptide/G4ALA.params
-#residue_types/gamma-peptide/4D3L_GALA.params
-#residue_types/gamma-peptide/4L3L_GALA.params
+## Beta peptides
 residue_types/beta-peptide/B3A.params
 residue_types/beta-peptide/B3C.params
 residue_types/beta-peptide/B3D.params
@@ -933,6 +927,14 @@ residue_types/beta-peptide/B3Y.params
 residue_types/beta-peptide/cisACHC.params
 residue_types/beta-peptide/cisACPC.params
 residue_types/beta-peptide/transACPC.params
+
+## Gamma-peptide Types
+#residue_types/gamma-peptide/GABA.params
+#residue_types/gamma-peptide/G2ALA.params
+#residue_types/gamma-peptide/G3ALA.params
+#residue_types/gamma-peptide/G4ALA.params
+#residue_types/gamma-peptide/4D3L_GALA.params
+#residue_types/gamma-peptide/4L3L_GALA.params
 
 ## Saccharide Types (require -include_sugars flag to be loaded in)
 ### Aldopentoses

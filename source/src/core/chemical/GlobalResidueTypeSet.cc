@@ -732,9 +732,15 @@ GlobalResidueTypeSet::load_exclude_pdb_component_ids( std::string const & direct
 	std::string line;
 	getline( file, line );
 	while ( file.good() ) {
-		utility::trim( line ); // inplace;
-		if ( line[0] != '#' ) {
-			exclude_pdb_component_ids_.insert( line );
+		if ( !line.empty() && line[0] != '#' ) {
+			utility::vector1< std::string > split_string( utility::split_whitespace( line ) );
+			if ( !split_string.empty() && !split_string[1].empty() && split_string[1][0] != '#' ) {
+				if ( split_string[1].size() > 3 ) {
+					TR.Warning << "For ResidueTypeSet " << name() << " the component exclusion filename has entry '" << split_string[1] << "'" << std::endl;
+					TR.Warning << " Entries with more than three characters are almost certainly a mistake." << std::endl;
+				}
+				exclude_pdb_component_ids_.insert( split_string[1] );
+			}
 		}
 		getline( file, line );
 	}
@@ -767,7 +773,10 @@ GlobalResidueTypeSet::lazy_load_base_type_already_write_locked( std::string cons
 				// Duplicate detection is handled by the exclude_pdb_component file -- if it's not exclude_pdb_component, we load the component
 				new_rsd_type->name( "pdb_" + short_name );
 				new_rsd_type->base_name( short_name );
-				TR << "Loading '" << short_name << "' from the PDB components dictionary for residue type '" << rsd_base_name << "'" << std::endl;
+				TR << "Loading (but possibly not actually using) '" << short_name << "' from the PDB components dictionary for residue type '" << rsd_base_name << "'" << std::endl;
+			} else {
+				TR.Debug << "Attempted to load '" << short_name << "' from PDB components dictionary, but the appropriate entry wasn't found." << std::endl;
+				cache_object()->add_prohibited( rsd_base_name ); // Don't attempt again, as we'll just fail again.
 			}
 		} else {
 			if ( exclude_pdb_component_ids_.size() == 0 ) {
@@ -862,18 +871,19 @@ GlobalResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 	}
 
 	// Read each line of the overrides.
-	utility::io::izstream data;
+	std::string override_file;
 	if ( pdb_components_directory_ != "" ) {
 		// User provided overrides
-		data.open( basic::database::full_name( pdb_components_directory_ + "/override.txt" ).c_str() );
+		override_file = basic::database::full_name( pdb_components_directory_ + "/override.txt" );
 	} else {
-		data.open( basic::database::full_name( "chemical/pdb_components/override.txt" ).c_str() );
+		override_file = basic::database::full_name( "chemical/pdb_components/override.txt" );
 	}
-	if ( !data.good() ) {
-		utility_exit_with_message( "Unable to open file: " + basic::database::full_name( "chemical/pdb_components/override.txt" ) + '\n' );
+	utility::io::izstream override_data( override_file.c_str() );
+	if ( !override_data.good() ) {
+		utility_exit_with_message( "Unable to open file: " + override_file + '\n' );
 	}
 	std::string line, tag;
-	while ( getline( data, line ) ) {
+	while ( getline( override_data, line ) ) {
 		// Skip empty lines and comments.
 		if ( line.size() < 1 || line[0] == '#' ) continue;
 
@@ -913,8 +923,16 @@ GlobalResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 			TR.Warning << "update_components.sh in the directory database/chemical/pdb_components/" << std::endl;
 		}
 
-		TR.Warning << "Could not find: '" << pdb_id << "' in pdb components files " << pdb_components_overrides_
-			<< "! Skipping residue..." << std::endl;
+		if ( cache_object()->has_restype_with_name3( pdb_id ) ) { // Caution! Don't use ResidueTypeSet::has_name3() as that can lead to recursion.
+			TR.Debug << "Residue '" << pdb_id << "' not found in pdb components file, but is in regular ResidueTypeSet. Ignoring components." << std::endl;
+		} else {
+			TR.Warning << "Could not find: '" << pdb_id << "' in pdb components files";
+			if ( pdb_components_overrides_.size() ) {
+				TR.Warning << " " << pdb_components_overrides_;
+			}
+			TR.Warning << "! Skipping residue..." << std::endl;
+		}
+
 	}
 	return ResidueTypeOP( nullptr );
 

@@ -39,6 +39,13 @@ public:
 	//destructor
 	~ResidueTypeFinder() override;
 
+	/// @brief Don't consider CCD components if we already have a Rosetta type with the same three letter code,
+	/// even if the two residue types have completely different chemical structure.
+	/// Note we already have a mechanism (the exclude_pdb_component_list.txt file in the database) to exclude
+	/// CCD components which chemically match the Rosetta type (and this exclusion is always on).
+	void
+	set_no_CCD_on_name3_match( bool setting ) { no_CCD_on_name3_match_ = setting; }
+
 public:
 
 	///////////////////////////////////////
@@ -253,7 +260,7 @@ private:
 	prioritize_rosetta_types_over_pdb_components( ResidueTypeCOPs const & rsd_types ) const;
 
 	void
-	append_relevant_pdb_components( ResidueTypeCOPs & rsd_types ) const;
+	initialize_relevant_pdb_components() const;
 
 	utility::vector1< ResidueTypeCOP >
 	apply_patches_recursively( utility::vector1< ResidueTypeCOP > const & rsd_types,
@@ -388,6 +395,8 @@ private:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	bool no_metapatches_ = false;
 
+	/// @brief Don't consider CCD components if we already have a Rosetta type with the same three letter code.
+	bool no_CCD_on_name3_match_ = false;
 };
 
 } //chemical

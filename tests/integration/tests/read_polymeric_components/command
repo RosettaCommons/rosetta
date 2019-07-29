@@ -11,9 +11,10 @@ cd %(workdir)s
 %(bin)s/dump_capped_residue.%(binext)s -dumper::residue_name pdb_125 -load_PDB_components -extra_patch_fa %(database)s/chemical/residue_type_sets/fa_standard/patches/nucleic/rna/3prime5prime_methyl_phosphate.txt -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
      | egrep -vf ../../ignore_list \
      > log2
-%(bin)s/dump_capped_residue.%(binext)s -dumper::residue_name pdb_0C -load_PDB_components -extra_patch_fa %(database)s/chemical/residue_type_sets/fa_standard/patches/nucleic/rna/3prime5prime_methyl_phosphate.txt -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
-     | egrep -vf ../../ignore_list \
-     > log3
+# 0C is on the exclusion list, as we can handle that with the L_RNA patch.
+#%(bin)s/dump_capped_residue.%(binext)s -dumper::residue_name pdb_0C -load_PDB_components -extra_patch_fa %(database)s/chemical/residue_type_sets/fa_standard/patches/nucleic/rna/3prime5prime_methyl_phosphate.txt -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+#     | egrep -vf ../../ignore_list \
+#     > log3
 
 # test to see if exe terminated abnormaly
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true

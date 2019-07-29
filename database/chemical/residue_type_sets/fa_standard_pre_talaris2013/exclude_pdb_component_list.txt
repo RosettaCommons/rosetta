@@ -2,13 +2,34 @@
 # provided by this residue type set with name3 which match
 # the official PDB ligand ID. 
 #
-# The primary purpose of this list is to help with loading
-# of PDB components - if an ligand ID is on this list, we
-# shouldn't load it from the components file.
+# It isn't simply a list of three letter codes that are provided by the Rosetta database,
+# or the CCD codes which have Rosetta-equivalent residues.
+#
+# The principle here is that when reading a from-RCSB structure - with no editing -
+# with a residue with one of the following three letter codes, 
+# Rosetta should be able to read that residue in correctly with the correct chemical identity.
+#
+# If Rosetta can read it in but doesn't recognize it as the correct chemical structure,
+# or if it could be read in but would require manually changing the three letter code in the PDB,
+# or if the three letter code and chemical structure match Rosetta/CCD, but the atom naming conventions don't
+# then don't list the code here.
+#
+# **IF YOU LIST A THREE LETTER CODE HERE, YOU ARE ASSERTING THAT
+# EVERYONE WHO LOADS A FROM-RCSB STRUCTURE USING THAT THREE LETTER CODE
+# SHOULD BE USING THE ROSETTA-DATABASE-PROVIDED VERSION**
+#
+# As such, only list a three letter code here if the database residue
+# (either params file or patched type) is chemically equivalent to
+# the official wwPDB CCD definition for that ligand, with the same atom naming conventions.
+#
+# Only include entries here if the corresponding Rosetta type 
+# is enabled in residue_types.txt 
+# (or patches.txt - patches which enable a different IO_STRING for reading are good)
 #
 # These entries are not whitespace padded.
+#
 
-# The 20 cannonical amino acids
+## The 20 canonical amino acids
 ALA
 CYS
 ASP
@@ -30,49 +51,115 @@ VAL
 TRP
 TYR
 
-# Particular D amino acids. For now let's say all of them.
-DAL
-DCY
-DAS
-DGL
-DPH
-DHI
-DIL
-DLY
-DLE
-MED
-DAN
-DPR
-DGN
-DAR
-DSN
-DTH
-DVA
-DTR
-DTY
-
-# DNA
+## DNA
 DA
 DC
 DG
 DT
-DI
-# We have a patch that does a better job at this.
-AS
-SC
-DGP
-CMR
-RMP
-UFP
-2DT
 
-# Metal Ions
+## Metal Ions
 CA
-CO
 CU
 FE
 K 
 MG
 MN
 NA
-ZN
+
+## Spin labels
+R1A
+# Others don't match Rosetta/CCD
+
+## Mineral Surface
+# Not loaded by default - skip
+
+## Water
+HOH
+
+## L-NCAA Types
+# In general, the NCAA types don't match chemically between the CCD and Rosetta.
+
+ABA
+
+## Peptoid Types
+# None match the CCD
+
+## Beta-peptides
+
+B3A
+# B3C - different Rosetta/CCD
+B3D
+B3E
+# B3F - not in CCD
+# B3G - different Rosetta/CCD
+# B3H - different Rosetta/CCD
+# B3I - different Rosetta/CCD
+B3K
+B3L
+B3M
+# B3N - different Rosetta/CCD
+# B3O - not in CCD
+# B3P - different Rosetta/CCD
+B3Q
+# B3R - different Rosetta/CCD
+B3S
+B3T
+# B3V - different Rosetta/CCD
+# B3W - different Rosetta/CCD
+# B3X - different Rosetta/CCD
+B3Y
+# cisACHC - different Rosetta/CCD
+# cisACPC - different Rosetta/CCD
+# transACPC - different Rosetta/CCD
+
+## Carbohydrates
+# None listed, as they aren't loaded by default. 
+# Note for when they are: CCD component names are case sensitive and (currently) all upper case.
+# A three letter code of `Glc` does not shadow a three letter code of `GLC`
+
+## Lipids
+# None listed, as they aren't loaded by default. 
+
+##########################################
+# ResidueTypes covered by patching
+# Note that you should only list a patch here 
+# if the patch sets the IO_STRING three letter code to the matching code
+# (And only if both the CCD and Rosetta agree on naming)
+###########################################
+
+## D amino acids - this is handled by the CHIRAL_FLIP_NAMING operation 
+DAL
+# DCY -- CCD D-CYS is DCY; Rosetta uses DCS, which is CCD D-[3-HYDROXY-2-METHYL-5-PHOSPHONOOXYMETHYL-PYRIDIN-4-YLMETHYL]-N,O-CYCLOSERYLAMIDE
+DAS 
+# DGL -- CCD D-GLU is DGL; Rosetta uses DGU, which is CCD D-galacturonic acid
+# DPH -- CCD D-PHE is DPN; Rosetta uses DPH, which is CCD DEAMINO-METHYL-PHENYLALANINE
+DHI
+DIL
+DLY
+DLE
+# MED -- CCD D-MET is MED; Rosetta uses DME, which is CCD DECAMETHONIUM ION
+# DAN -- CCD D-ASN is DSG; ROsetta uses DAN, which is CCD 2-DEOXY-2,3-DEHYDRO-N-ACETYL-NEURAMINIC ACID
+DPR
+DGN
+DAR
+# DSN -- CCD D-SER is DSN; Rosetta uses DSE, which is CCD N-METHYL-D-SERINE
+DTH
+DVA
+DTR
+DTY
+
+## Canonical amino acid modifications (individual patch cases)
+SCY # CYS:acetylated
+HIC # HIS:methylated
+ALY # LYS:acetylated
+M3L # LYS:lys_trimethylated
+MLY # LYS:dimethylated
+MLZ # LYS:monomethylated
+0AZ # PRO:pro_hydroxylated_case2  (though there may be a chirality issue)
+HYP # PRO:pro_hydroxylated_case1
+SEP # SER:phosphorylated
+PTR # TYR:phosphorylated
+TPO # THR:phosphorylated
+TYI # TYR:diiodinated
+TYS # TYR:sulfated
+
