@@ -69,8 +69,13 @@ class MultiCore_HPC_Driver(HPC_Driver):
         return sum( map(len, self.jobs) )
 
 
-    def submit_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=512, time=12, block=True):
+    def submit_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=512, time=12, block=True, shell_wrapper=False):
         cpu_usage = -time_module.time()/60./60.
+
+        if shell_wrapper:
+            shell_wrapper_sh = os.path.abspath(self.working_dir + f'/hpc.{name}.shell_wrapper.sh')
+            with open(shell_wrapper_sh, 'w') as f: f.write('#!/bin/bash\n{} {}\n'.format(executable, arguments));  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+            executable, arguments = shell_wrapper_sh, ''
 
         def mfork():
             ''' Check if number of child process is below cpu_count. And if it is - fork the new pocees and return its pid.

@@ -114,7 +114,7 @@ class Condor_HPC_Driver(HPC_Driver):
 
 
 
-    def submit_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=512, time=12, block=True):
+    def submit_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=512, time=12, block=True, shell_wrapper=False):
         self.cpu_usage -= self.get_condor_accumulated_usage()
 
         # creating shell wrapper in order to reliably capture output
@@ -123,6 +123,11 @@ class Condor_HPC_Driver(HPC_Driver):
 
         arguments = arguments.format(process='$(Process)')
         run_time=int(time*60*60)
+
+        if shell_wrapper:
+            shell_wrapper_sh = os.path.abspath(self.working_dir + f'/hpc.{name}.shell_wrapper.sh')
+            with open(shell_wrapper_sh, 'w') as f: f.write('#!/bin/bash\n{} {}\n'.format(executable, arguments));  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+            executable, arguments = shell_wrapper_sh, ''
 
         #jobs = []
         #???? p = dict(j, , arguments=j['arguments'].format(process='$(Process)') )

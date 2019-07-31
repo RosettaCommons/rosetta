@@ -117,6 +117,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
 
         mp_f19_energy_landscape  = 'numpy matplotlib scipy',
         mp_f19_sequence_recovery = 'numpy matplotlib',
+        mp_f19_ddG_of_mutation = 'numpy matplotlib', 
         mp_f19_decoy_discrimination = 'numpy matplotlib',
 
         mp_dock                  = 'numpy matplotlib',
