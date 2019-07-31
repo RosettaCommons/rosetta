@@ -125,8 +125,14 @@ VoxelSpacingMultifunc::operator ()( core::optimization::Multivec const & vars ) 
 
 	core::Real varC = (sumC2 - sumC*sumC / N );
 	core::Real varO = (sumO2 - sumO*sumO / N ) ;
-	runtime_assert ( varC != 0 && varO != 0 );
-	core::Real CC = (sumCO - sumC*sumO/N) / sqrt( varC * varO );
+
+	//fd Sometimes the initially min step can lead to moving completely outside of density
+	//  Just return 0 rather than hard fail (assert is still in dfunc)
+	//runtime_assert ( varC != 0 && varO != 0 );
+	core::Real CC = 0.0;
+	if ( varC!=0 && varO!=0 ) {
+		CC = (sumCO - sumC*sumO/N) / sqrt( varC * varO );
+	}
 
 	return -100*CC;
 }
