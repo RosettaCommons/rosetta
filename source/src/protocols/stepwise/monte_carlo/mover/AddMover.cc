@@ -642,7 +642,7 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 	} else {
 		// Otherwise, we need to look at the fasta. Get the relevant character.
 		char newrestype = full_sequence[ res_to_add_in_full_model_numbering_ - 1 ];
-		if ( newrestype == 'n' ) {
+		if ( newrestype == 'n' || newrestype == 'h' || newrestype == 'd' || newrestype == 'v' || newrestype == 'b' || newrestype == 'y' || newrestype == 'r' || newrestype == 'w' || newrestype == 's' || newrestype == 'k' || newrestype == 'm' ) {
 			if ( ! designing_with_noncanonicals_ ) {
 				// output parameter is also newrestype
 				modeler::rna::choose_random_if_unspecified_nucleotide( newrestype );

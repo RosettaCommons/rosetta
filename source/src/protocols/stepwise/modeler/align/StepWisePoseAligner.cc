@@ -231,7 +231,9 @@ StepWisePoseAligner::update_reference_pose_local( pose::Pose const & pose ){
 		//TR << "Evaluating residue " << n << pose.residue_type(n).name1() << std::endl;
 		//TR << "Compare to " << n - 1 + offset << " due to offset " << offset << ": " << full_sequence[ n - 1 + offset ] << std::endl;
 
-		if ( full_sequence_stripped[ res_list[ n ] - 1 ] == 'n' ) {
+		if ( full_sequence_stripped[ res_list[ n ] - 1 ] == 'n'
+				|| full_sequence_stripped[ res_list[ n ] - 1 ] == 'b' || full_sequence_stripped[ res_list[ n ] - 1 ] == 'd' || full_sequence_stripped[ res_list[ n ] - 1 ] == 'h' || full_sequence_stripped[ res_list[ n ] - 1 ] == 'v'
+				|| full_sequence_stripped[ res_list[ n ] - 1 ] == 'y' || full_sequence_stripped[ res_list[ n ] - 1 ] == 'r' || full_sequence_stripped[ res_list[ n ] - 1 ] == 'w' || full_sequence_stripped[ res_list[ n ] - 1 ] == 's' || full_sequence_stripped[ res_list[ n ] - 1 ] == 'k' || full_sequence_stripped[ res_list[ n ] - 1 ] == 'm' ) {
 			if ( !mod_reference_pose_local_ ) mod_reference_pose_local_ = reference_pose_.clone();
 			runtime_assert( mod_reference_pose_local_ );
 

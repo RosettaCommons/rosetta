@@ -1520,8 +1520,59 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 ////////////////////////////////////////////////////////////////////
 void
 choose_random_if_unspecified_nucleotide( char & newrestype ) {
-	std::string const rna_chars = "acgu";
 	if ( newrestype == 'n' ) {
+		// n for any
+		static std::string const rna_chars = "acgu";
+		newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
+		TR << "Choosing random nucleotide: " << newrestype << std::endl;
+	} else if ( newrestype ==  'b' ) {
+		// not a (b follows a)
+		static std::string const rna_chars = "cgu";
+		newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
+		TR << "Choosing random nucleotide: " << newrestype << std::endl;
+	} else if ( newrestype ==  'd' ) {
+		// not c (d follows c)
+		static std::string const rna_chars = "agu";
+		newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
+		TR << "Choosing random nucleotide: " << newrestype << std::endl;
+	} else if ( newrestype ==  'h' ) {
+		// not g (h follows g)
+		static std::string const rna_chars = "acu";
+		newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
+		TR << "Choosing random nucleotide: " << newrestype << std::endl;
+	} else if ( newrestype ==  'v' ) {
+		// not u/t (v follows t)
+		static std::string const rna_chars = "acg";
+		newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
+		TR << "Choosing random nucleotide: " << newrestype << std::endl;
+	} else if ( newrestype ==  'k' ) {
+		// gu; 'keto'
+		static std::string const rna_chars = "gu";
+		newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
+		TR << "Choosing random nucleotide: " << newrestype << std::endl;
+	} else if ( newrestype ==  'm' ) {
+		// ac; 'amino'
+		static std::string const rna_chars = "ac";
+		newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
+		TR << "Choosing random nucleotide: " << newrestype << std::endl;
+	} else if ( newrestype ==  'y' ) {
+		// uc; pyrimidine
+		static std::string const rna_chars = "cu";
+		newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
+		TR << "Choosing random nucleotide: " << newrestype << std::endl;
+	} else if ( newrestype ==  'r' ) {
+		// ag; purine
+		static std::string const rna_chars = "ag";
+		newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
+		TR << "Choosing random nucleotide: " << newrestype << std::endl;
+	} else if ( newrestype ==  'w' ) {
+		// au; weak
+		static std::string const rna_chars = "au";
+		newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
+		TR << "Choosing random nucleotide: " << newrestype << std::endl;
+	} else if ( newrestype ==  's' ) {
+		// gc; strong
+		static std::string const rna_chars = "gc";
 		newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
 		TR << "Choosing random nucleotide: " << newrestype << std::endl;
 	}

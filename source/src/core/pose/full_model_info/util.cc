@@ -433,6 +433,16 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		char sequence_char = clean_seq[ res_num   - 1 ];
 
 		if ( sequence_char == 'n' ) continue; // any nucleotide
+		if ( sequence_char == 'b' && pose.residue_type( n ).name1() != 'a' ) continue;
+		if ( sequence_char == 'd' && pose.residue_type( n ).name1() != 'c' ) continue;
+		if ( sequence_char == 'h' && pose.residue_type( n ).name1() != 'g' ) continue;
+		if ( sequence_char == 'v' && pose.residue_type( n ).name1() != 'u' && pose.residue_type( n ).name1() != 't' ) continue;
+		if ( sequence_char == 'y' && pose.residue_type( n ).name1() != 'c' && pose.residue_type( n ).name1() != 'u' && pose.residue_type( n ).name1() != 't' ) continue;
+		if ( sequence_char == 'r' && pose.residue_type( n ).name1() != 'a' && pose.residue_type( n ).name1() != 'g' ) continue;
+		if ( sequence_char == 'w' && pose.residue_type( n ).name1() != 'a' && pose.residue_type( n ).name1() != 'u' && pose.residue_type( n ).name1() != 't' ) continue;
+		if ( sequence_char == 's' && pose.residue_type( n ).name1() != 'g' && pose.residue_type( n ).name1() != 'c' ) continue;
+		if ( sequence_char == 'k' && pose.residue_type( n ).name1() != 'g' && pose.residue_type( n ).name1() != 'u' && pose.residue_type( n ).name1() != 't' ) continue;
+		if ( sequence_char == 'm' && pose.residue_type( n ).name1() != 'c' && pose.residue_type( n ).name1() != 'a' ) continue;
 		if ( sequence_char != pose.residue_type( n ).name1() ) {
 			TR << res_list << std::endl;
 			TR << "no match at " << n << " conventional numbering: " << res_num << "  sequence: " << sequence_char << " pose sequence: " <<  pose.residue_type( n ).name1() << std::endl;
