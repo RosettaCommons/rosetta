@@ -92,10 +92,11 @@ bool
 dump_mmtf(
 	core::pose::Pose const & pose,
 	std::string const & file_name,
-	core::io::StructFileRepOptionsOP options )
+	StructFileRepOptionsCOP options )
 {
-	set_mmtf_default_options(*options);
-	core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter( *options );
+	StructFileRepOptionsOP local_options = options->clone();
+	set_mmtf_default_options(*local_options);
+	pose_to_sfr::PoseToStructFileRepConverter converter = pose_to_sfr::PoseToStructFileRepConverter( *local_options );
 
 	converter.init_from_pose( pose );
 	core::io::StructFileRepOP sfr =  converter.sfr();
@@ -105,7 +106,7 @@ dump_mmtf(
 		TR.Error << "mmtf_writer:dump_mmtf Unable to open file:" << file_name << " for writing!!!" << std::endl;
 		return false;
 	}
-	dump_mmtf( file, sfr, *options);
+	dump_mmtf( file, sfr, *local_options);
 	file.close();
 	return true;
 }
@@ -116,7 +117,7 @@ core::io::StructFileRepOP
 dump_mmtf(
 	core::pose::Pose const & pose,
 	std::ostream & out,
-	core::io::StructFileRepOptionsCOP options)
+	StructFileRepOptionsCOP options)
 {
 
 	core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter( *options );

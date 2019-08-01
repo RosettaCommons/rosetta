@@ -41,6 +41,7 @@ namespace jd3 {
 namespace pose_inputters {
 
 /// @brief This is the simplest implementation of PoseInputter, which reads from -s/-l and PDB files.
+///  These can be any Protein Data Bank file type: .pdb, .cif, .mmtf
 class PDBPoseInputter : public PoseInputter
 {
 public:

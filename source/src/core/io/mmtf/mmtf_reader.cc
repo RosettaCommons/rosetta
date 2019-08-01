@@ -447,5 +447,6 @@ core::io::mmtf::create_sfr_from_mmtf_filename( std::string const & mmtf_filename
 	for ( char i : chain_list ) { // std::vector
 		sfr->chains().push_back( atom_chain_map.find( i )->second );
 	}
+	sfr->filename() = mmtf_filename;
 	return sfr;
 }

@@ -41,7 +41,7 @@ namespace mmtf {
 bool
 dump_mmtf( core::pose::Pose const & pose,
 	std::string const & file_name,
-	StructFileRepOptionsOP options =  StructFileRepOptionsOP( new StructFileRepOptions ) );
+	StructFileRepOptionsCOP options =  StructFileRepOptionsCOP( new StructFileRepOptions ) );
 
 
 ///@brief Dump mmtf to an outstream, optionally passing options and returning a StructFileRep for further processing

@@ -17,12 +17,16 @@
 
 // Unit headers
 #include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
+#include <protocols/jd3/pose_outputters/mmTFPoseOutputter.hh>
 
 // Package headers
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/JobOutputIndex.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/pose_inputters/PoseInputSource.hh>
+#include <protocols/jd3/job_results/PoseJobResult.hh>
+#include <protocols/jd3/pose_outputters/mmTFPoseOutputSpecification.hh>
+#include <core/import_pose/import_pose.hh>
 
 // basic headers
 #include <basic/options/option.hh>
@@ -38,6 +42,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/pointer/memory.hh>
+#include <utility/file/file_sys_util.hh>
 
 // C++ headers
 #include <sstream>
@@ -46,6 +51,7 @@ using namespace utility::tag;
 using namespace protocols::jd3;
 using namespace protocols::jd3::pose_inputters;
 using namespace protocols::jd3::pose_outputters;
+using namespace protocols::jd3::job_results;
 
 
 class PDBPoseOutputterTests : public CxxTest::TestSuite
@@ -77,8 +83,8 @@ public:
 		JobOutputIndex output_index;
 		// initialize the output index
 
-		std::string output_pdb_name = outputter.output_pdb_name( job, output_index, *job_options, null_tag );
-		TS_ASSERT_EQUALS( output_pdb_name, "dummy_0001.pdb" );
+		std::string output_name = outputter.output_name( job, output_index, *job_options, null_tag );
+		TS_ASSERT_EQUALS( output_name, "dummy_0001.pdb" );
 
 	}
 
@@ -102,8 +108,8 @@ public:
 		JobOutputIndex output_index;
 		// initialize the output index
 
-		std::string output_pdb_name = outputter.output_pdb_name( job, output_index, *job_options, null_tag );
-		TS_ASSERT_EQUALS( output_pdb_name, "some_dir/dummy_0001.pdb" );
+		std::string output_name = outputter.output_name( job, output_index, *job_options, null_tag );
+		TS_ASSERT_EQUALS( output_name, "some_dir/dummy_0001.pdb" );
 
 	}
 
@@ -127,8 +133,8 @@ public:
 		JobOutputIndex output_index;
 		// initialize the output index
 
-		std::string output_pdb_name = outputter.output_pdb_name( job, output_index, *job_options, null_tag );
-		TS_ASSERT_EQUALS( output_pdb_name, "some_dir2/dummy_0001.pdb" );
+		std::string output_name = outputter.output_name( job, output_index, *job_options, null_tag );
+		TS_ASSERT_EQUALS( output_name, "some_dir2/dummy_0001.pdb" );
 
 	}
 
@@ -152,8 +158,8 @@ public:
 		JobOutputIndex output_index;
 		// initialize the output index
 
-		std::string output_pdb_name = outputter.output_pdb_name( job, output_index, *job_options, null_tag );
-		TS_ASSERT_EQUALS( output_pdb_name, "some_dir3/dummy_0001.pdb" );
+		std::string output_name = outputter.output_name( job, output_index, *job_options, null_tag );
+		TS_ASSERT_EQUALS( output_name, "some_dir3/dummy_0001.pdb" );
 
 	}
 
@@ -178,8 +184,8 @@ public:
 		// initialize the output index
 
 		outputter.determine_job_tag(null_tag, *job_options, *inner_job);
-		std::string output_pdb_name = outputter.output_pdb_name( job, output_index, *job_options, null_tag );
-		TS_ASSERT_EQUALS( output_pdb_name, "some_dir3/pre_dummy_end_0001.pdb" );
+		std::string output_name = outputter.output_name( job, output_index, *job_options, null_tag );
+		TS_ASSERT_EQUALS( output_name, "some_dir3/pre_dummy_end_0001.pdb" );
 
 	}
 
@@ -210,8 +216,8 @@ public:
 
 		outputter.determine_job_tag(out_tag, *job_options, *inner_job);
 
-		std::string output_pdb_name = outputter.output_pdb_name( job, output_index, *job_options, null_tag );
-		TS_ASSERT_EQUALS( output_pdb_name, "some_dir3/pre_dummy_end_0001.pdb" );
+		std::string output_name = outputter.output_name( job, output_index, *job_options, null_tag );
+		TS_ASSERT_EQUALS( output_name, "some_dir3/pre_dummy_end_0001.pdb" );
 
 	}
 
@@ -243,8 +249,8 @@ public:
 		// initialize the output index
 
 		outputter.determine_job_tag(out_tag, *job_options, *inner_job);
-		std::string output_pdb_name = outputter.output_pdb_name( job, output_index, *job_options, null_tag );
-		TS_ASSERT_EQUALS( output_pdb_name, "some_dir3/pre_additional_dummy_end_0001.pdb" );
+		std::string output_name = outputter.output_name( job, output_index, *job_options, null_tag );
+		TS_ASSERT_EQUALS( output_name, "some_dir3/pre_additional_dummy_end_0001.pdb" );
 	}
 
 	void test_output_path_handling_priority_1() {
@@ -267,8 +273,44 @@ public:
 		JobOutputIndex output_index;
 		// initialize the output index
 
-		std::string output_pdb_name = outputter.output_pdb_name( job, output_index, *job_options, null_tag );
-		TS_ASSERT_EQUALS( output_pdb_name, "some_dir4/dummy_0001.pdb" );
+		std::string output_name = outputter.output_name( job, output_index, *job_options, null_tag );
+		TS_ASSERT_EQUALS( output_name, "some_dir4/dummy_0001.pdb" );
+
+	}
+	void test_mmTF_output() {
+		core_init_with_additional_options( "-out::path some_dir3" );
+
+		mmTFPoseOutputter outputter;
+		utility::options::OptionKeyList pdb_outputter_options;
+		mmTFPoseOutputter::list_options_read( pdb_outputter_options );
+
+		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
+		dummy_input_source->input_tag( "dummy" );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1,1 );
+		inner_job->input_source( dummy_input_source );
+		LarvalJob job( inner_job, 1, 1 );
+
+		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
+
+		utility::tag::TagCOP null_tag;
+
+		JobOutputIndex output_index;
+		// initialize the output index
+
+		TS_ASSERT_EQUALS( outputter.class_key(), "mmTF");
+
+		std::string output_name = outputter.output_name( job, output_index, *job_options, null_tag );
+		TS_ASSERT_EQUALS( output_name, "some_dir3/dummy_0001.mmtf" );
+
+		//Test Actual Output
+		core::pose::PoseOP pdb_pose = core::import_pose::pose_from_file( "core/io/1QYS.pdb", false , core::import_pose::PDB_file);
+		PoseJobResult result = PoseJobResult(pdb_pose);
+		mmTFPoseOutputSpecification spec = mmTFPoseOutputSpecification();
+		spec.out_fname(output_name);
+
+		TS_ASSERT_THROWS_NOTHING(outputter.write_output(spec, result));
+		TS_ASSERT( utility::file::file_exists(output_name));
+
 
 	}
 

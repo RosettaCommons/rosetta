@@ -162,14 +162,14 @@ PDBPoseInputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 	AttributeList input_pdb_attributes;
 	input_pdb_attributes
-		+ XMLSchemaAttribute( "filename", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute( "listfile", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute( "path", xs_string , "XRW TO DO" );
+		+ XMLSchemaAttribute( "filename", xs_string , "A specific file name to read" )
+		+ XMLSchemaAttribute( "listfile", xs_string , "A file with a list of PDBs, one per line" )
+		+ XMLSchemaAttribute( "path", xs_string , "A path for the filenames given in filename or listfile (if not given there)." );
 
 	pose_inputter_xsd_type_definition_w_attributes(
 		xsd,
 		keyname(),
-		"XRW TO DO",
+		"Input Poses of ANY RCSB file type: .pdb, .cif, .mmtf",
 		input_pdb_attributes );
 
 }

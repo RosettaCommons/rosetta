@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd3/pose_outputters/PDBPoseOutputSpecification.cc
-/// @brief  Method definitions of the %PDBPoseOutputSpecification class
+/// @file   protocols/jd3/pose_outputters/mmTFPoseOutputSpecification.cc
+/// @brief  Method definitions of the %mmTFPoseOutputSpecification class
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 // Unit headers
-#include <protocols/jd3/pose_outputters/PDBPoseOutputSpecification.hh>
+#include <protocols/jd3/pose_outputters/mmTFPoseOutputSpecification.hh>
 
 // Package headers
-#include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
+#include <protocols/jd3/pose_outputters/mmTFPoseOutputter.hh>
 
 // Project headers
 #include <core/io/StructFileRepOptions.hh>
@@ -33,46 +33,45 @@ namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
 
-PDBPoseOutputSpecification::PDBPoseOutputSpecification():
+mmTFPoseOutputSpecification::mmTFPoseOutputSpecification():
 	sfr_opts_(new core::io::StructFileRepOptions())
 {
-
-	outputter_type( PDBPoseOutputter::keyname() );
+	outputter_type( mmTFPoseOutputter::keyname() );
 }
 
-PDBPoseOutputSpecification::PDBPoseOutputSpecification(
+mmTFPoseOutputSpecification::mmTFPoseOutputSpecification(
 	JobResultID const & result_id,
 	JobOutputIndex const & output_index
 ) :
 	PoseOutputSpecification( result_id, output_index )
 {
-	outputter_type( PDBPoseOutputter::keyname() );
+	outputter_type( mmTFPoseOutputter::keyname() );
 }
 
-PDBPoseOutputSpecification::~PDBPoseOutputSpecification() = default;
+mmTFPoseOutputSpecification::~mmTFPoseOutputSpecification() = default;
 
 
 core::io::StructFileRepOptionsCOP
-PDBPoseOutputSpecification::sfr_opts() const
+mmTFPoseOutputSpecification::sfr_opts() const
 {
 	debug_assert( sfr_opts_ );
 	return sfr_opts_;
 }
 
 void
-PDBPoseOutputSpecification::sfr_opts( core::io::StructFileRepOptions const & setting )
+mmTFPoseOutputSpecification::sfr_opts( core::io::StructFileRepOptions const & setting )
 {
 	sfr_opts_.reset( new core::io::StructFileRepOptions( setting ) );
 }
 
 std::string
-PDBPoseOutputSpecification::out_fname() const
+mmTFPoseOutputSpecification::out_fname() const
 {
 	return out_fname_;
 }
 
 void
-PDBPoseOutputSpecification::out_fname( std::string const & setting )
+mmTFPoseOutputSpecification::out_fname( std::string const & setting )
 {
 	out_fname_ = setting;
 }
@@ -89,7 +88,7 @@ PDBPoseOutputSpecification::out_fname( std::string const & setting )
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-protocols::jd3::pose_outputters::PDBPoseOutputSpecification::save( Archive & arc ) const {
+protocols::jd3::pose_outputters::mmTFPoseOutputSpecification::save( Archive & arc ) const {
 	arc( cereal::base_class< protocols::jd3::pose_outputters::PoseOutputSpecification >( this ) );
 	arc( CEREAL_NVP( sfr_opts_ ) ); // core::io::StructFileRepOptionsOP
 	arc( CEREAL_NVP( out_fname_ ) ); // std::string
@@ -98,14 +97,14 @@ protocols::jd3::pose_outputters::PDBPoseOutputSpecification::save( Archive & arc
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-protocols::jd3::pose_outputters::PDBPoseOutputSpecification::load( Archive & arc ) {
+protocols::jd3::pose_outputters::mmTFPoseOutputSpecification::load( Archive & arc ) {
 	arc( cereal::base_class< protocols::jd3::pose_outputters::PoseOutputSpecification >( this ) );
 	arc( sfr_opts_ ); // core::io::StructFileRepOptionsOP
 	arc( out_fname_ ); // std::string
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::pose_outputters::PDBPoseOutputSpecification );
-CEREAL_REGISTER_TYPE( protocols::jd3::pose_outputters::PDBPoseOutputSpecification )
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::pose_outputters::mmTFPoseOutputSpecification );
+CEREAL_REGISTER_TYPE( protocols::jd3::pose_outputters::mmTFPoseOutputSpecification )
 
-CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_pose_outputters_PDBPoseOutputSpecification )
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_pose_outputters_mmTFPoseOutputSpecification )
 #endif // SERIALIZATION

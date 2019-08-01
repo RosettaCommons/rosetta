@@ -170,7 +170,7 @@ bool PDBPoseOutputter::job_has_already_completed( LarvalJob const & job, utility
 	// Assume that each job is only going to produce a single PDB file -- if a job were
 	// to form more than one PDB file output, then the output structures that it would write
 	// would have different file names.
-	std::string filename( output_pdb_name( job, options, pdb_output_tag ));
+	std::string filename( output_name( job, options, pdb_output_tag ));
 
 	bool exists = utility::file::file_exists( filename );
 	if ( exists ) {
@@ -195,7 +195,7 @@ PDBPoseOutputter::create_output_specification(
 )
 {
 	PDBPoseOutputSpecificationOP spec( new PDBPoseOutputSpecification );
-	spec->out_fname( output_pdb_name( job, output_index, job_options, pdb_output_tag ) );
+	spec->out_fname( output_name( job, output_index, job_options, pdb_output_tag ) );
 	spec->sfr_opts( core::io::StructFileRepOptions( job_options ) );
 	return spec;
 }
@@ -218,7 +218,7 @@ void PDBPoseOutputter::write_output(
 }
 
 std::string
-PDBPoseOutputter::output_pdb_name(
+PDBPoseOutputter::output_name(
 	LarvalJob const & job,
 	utility::options::OptionCollection const & options,
 	utility::tag::TagCOP tag
@@ -227,11 +227,11 @@ PDBPoseOutputter::output_pdb_name(
 	JobOutputIndex faux_output_index;
 	faux_output_index.primary_output_index = job.nstruct_index();
 	faux_output_index.n_primary_outputs = job.nstruct_max();
-	return output_pdb_name( job, faux_output_index, options, tag );
+	return output_name( job, faux_output_index, options, tag );
 }
 
 std::string
-PDBPoseOutputter::output_pdb_name(
+PDBPoseOutputter::output_name(
 	LarvalJob const & job,
 	JobOutputIndex const & output_index,
 	utility::options::OptionCollection const & options,

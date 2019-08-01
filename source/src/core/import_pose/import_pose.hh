@@ -136,7 +136,7 @@ pose::PoseOP pose_from_file(
 /// there should only be one function that calls this, pose_from_file
 /// and only calls it when the filetype is unknown
 FileType
-determine_file_type( std::string const &contents_of_file);
+determine_file_type( std::string const & contents_of_file);
 
 void
 pose_from_file(

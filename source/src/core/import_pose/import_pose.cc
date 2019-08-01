@@ -85,7 +85,6 @@
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
-#include <utility/string_util.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
 // External headers
@@ -309,41 +308,51 @@ void
 pose_from_file(
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
-	std::string const & filenames_string, // ???? why (s)
+	std::string const & filename,
 	ImportPoseOptions const & options,
 	bool read_fold_tree,
 	FileType file_type
 ) {
-	utility::vector1<std::string> const split_filename(utility::string_split(filenames_string, '.'));
+
+	//mmTF must go first as its contents are binary and opened by the mmTF machinery, IE not IZstream.
 	if ( file_type == MMTF_file ||
-			( split_filename.size() && utility::lower(split_filename.back()) == "mmtf" ) ) {
-		core::io::StructFileRepOP sfr( core::io::mmtf::create_sfr_from_mmtf_filename( filenames_string, options ) );
-		sfr->filename() = filenames_string;
+			boost::algorithm::ends_with( utility::lower(filename), ".mmtf") ) {
+		core::io::StructFileRepOP sfr( core::io::mmtf::create_sfr_from_mmtf_filename( filename, options ) );
 		build_pose( sfr, pose, residue_set, options );
 		return;
 	}
 
-	utility::vector1< std::string > filenames = utility::split(filenames_string);
+	if ( boost::algorithm::ends_with( filename, ".mmtf.gz") ) {
+		utility_exit_with_message(filename + " mmtf.gz reading is currently not supported.  You must first decompress you file(s)");
+	}
 
+
+
+
+	//JAB 7/23/19 - There can be paired ligands and receptors that can be concatonated on the fly using this code.
+	//  This is done for large-scale screening jobs. For example: Some users do -s "some_ligand.pdb some_receptor.pdb"
+	//  In the interest of not break existing use cases, I am leaving this functionality in after MUCH confusion.
+	utility::vector1< std::string > filenames = utility::split(filename);
 	std::string contents_of_file;
-
-	for ( std::string const & filename : filenames ) {
-		utility::io::izstream file( filename );
+	for ( std::string const & fname : filenames ) {
+		utility::io::izstream file( fname );
 		if ( !file ) {
 			TR.Error << "File: " << filename << " not found!" << std::endl;
 			utility_exit_with_message( "Cannot open file \"" + filename + "\"" );
 		} else {
 			TR.Debug << "read file: " << filename << std::endl;
+			utility::slurp( file, contents_of_file );
 		}
-		utility::slurp( file, contents_of_file );
-		if ( file_type == Unknown_file && boost::algorithm::ends_with( filename, ".srlz" ) ) {
-			file_type = SRLZ_file;
-		}
+	}
+
+
+	if ( file_type == Unknown_file && boost::algorithm::ends_with( filenames[1], ".srlz" ) ) {
+		file_type = SRLZ_file;
 	}
 
 	if ( file_type == Unknown_file ) {
 		file_type = determine_file_type( contents_of_file );
-		TR << "File '" << filenames_string << "' automatically determined to be of type " << file_type << std::endl;
+		TR << "File '" << filename << "' automatically determined to be of type " << file_type << std::endl;
 	}
 
 	if ( file_type == Unknown_file ) {
@@ -396,13 +405,13 @@ void
 pose_from_file(
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
-	std::string const & filenames_string,
+	std::string const & filename,
 	bool read_fold_tree,
 	FileType type
 )
 {
 	ImportPoseOptions options;
-	pose_from_file(pose, residue_set, filenames_string, options, read_fold_tree, type);
+	pose_from_file(pose, residue_set, filename, options, read_fold_tree, type);
 }
 
 

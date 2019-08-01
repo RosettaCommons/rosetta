@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd3/PDBPoseOutputter.hh
-/// @brief  Definition of the %PDBPoseOutputter class
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @file   protocols/jd3/mmTFPoseOutputter.hh
+/// @brief  Definition of the %mmTFPoseOutputter class
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @author Andrew Leaver-Fay (aleaverfay@gmail.com) - PDBPoseOutputter bases of this class
 
-
-#ifndef INCLUDED_protocols_jd3_pose_outputters_PDBPoseOutputter_HH
-#define INCLUDED_protocols_jd3_pose_outputters_PDBPoseOutputter_HH
+#ifndef INCLUDED_protocols_jd3_pose_outputters_mmTFPoseOutputter_HH
+#define INCLUDED_protocols_jd3_pose_outputters_mmTFPoseOutputter_HH
 
 //unit headers
-#include <protocols/jd3/pose_outputters/PDBPoseOutputter.fwd.hh>
-
+#include <protocols/jd3/pose_outputters/mmTFPoseOutputter.fwd.hh>
+#include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
 //package headers
 #include <protocols/jd3/pose_outputters/PoseOutputter.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
@@ -34,41 +34,19 @@ namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
 
-/// @brief The %PDBPoseOutputter
-class PDBPoseOutputter : public PoseOutputter
+/// @brief The %mmTFPoseOutputter
+class mmTFPoseOutputter : public PDBPoseOutputter
 {
 public:
 
-	PDBPoseOutputter();
-	virtual ~PDBPoseOutputter();
+	mmTFPoseOutputter();
+	virtual ~mmTFPoseOutputter();
 
 	static
 	bool
 	outputter_specified_by_command_line();
 
-	void
-	determine_job_tag(
-		utility::tag::TagCOP output_tag,
-		utility::options::OptionCollection const & job_options,
-		InnerLarvalJob & job
-	) const override;
-
-	std::string
-	outputter_for_job(
-		utility::tag::TagCOP output_tag,
-		utility::options::OptionCollection const & job_options,
-		InnerLarvalJob const & job
-	) const override;
-
-	std::string
-	outputter_for_job(
-		PoseOutputSpecification const & spec
-	) const override;
-
-	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
-
 	/// @brief Create the PoseOutputSpecification for a particular job
-	virtual
 	PoseOutputSpecificationOP
 	create_output_specification(
 		LarvalJob const & job,
@@ -78,18 +56,11 @@ public:
 	) override;
 
 	/// @brief Write a pose out to permanent storage (whatever that may be).
-	virtual
 	void write_output(
 		output::OutputSpecification const & specification,
 		JobResult const & result
 	) override;
 
-	/// @brief Currently a no-op since the "write output pose" method sends all
-	/// outputs to disk.
-	void flush() override;
-
-	/// @brief Return the stiring used by the PDBPoseOutputterCreator for this class
-	virtual
 	std::string
 	class_key() const override;
 
@@ -105,33 +76,20 @@ public:
 	void
 	list_options_read( utility::options::OptionKeyList & read_options );
 
-	/// @brief Guess on the name of the output PDB using just the LarvalJob -- i.e. in the absence of
-	/// the JobOutputIndex
-	/// @details Public for testing
-	virtual
-	std::string
-	output_name(
-		LarvalJob const & job,
-		utility::options::OptionCollection const & options,
-		utility::tag::TagCOP tag // possibly null-pointing tag pointer
-	) const;
-
-	///@details Public for testing
-	virtual
 	std::string
 	output_name(
 		LarvalJob const & job,
 		JobOutputIndex const & output_index,
 		utility::options::OptionCollection const & options,
 		utility::tag::TagCOP tag // possibly null-pointing tag pointer
-	) const;
+	) const override;
 
 private:
 
 
 
 	// NOTE THERE IS NO PRIVATE DATA AND THERE SHOULD NOT BE:
-	// The PDBPoseOutputter should not accumulate state unless the behavior of
+	// The mmTFPoseOutputter should not accumulate state unless the behavior of
 	// its outputter_for_job method changes. Currently, this method returns the empty string
 	// signifying to the StandardJobQueen that it has no state, and therefore, it
 	// is safe to use the same instance of the class in multiple threads. If that pledge
@@ -152,8 +110,8 @@ public:
 } // namespace protocols
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_pose_outputters_PDBPoseOutputter )
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_pose_outputters_mmTFPoseOutputter )
 #endif // SERIALIZATION
 
 
-#endif //INCLUDED_protocols_jd3_PDBPoseOutputter_HH
+#endif //INCLUDED_protocols_jd3_mmTFPoseOutputter_HH
