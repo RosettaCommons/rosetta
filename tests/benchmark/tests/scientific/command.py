@@ -129,6 +129,11 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         sewing                   = 'numpy matplotlib',
 
         antibody_grafting        = 'numpy matplotlib',
+        loop_modeling_ngk_12res = 'numpy matplotlib',
+        loop_modeling_kic_fragments_12res = 'numpy matplotlib',
+        loop_modeling_kic_12res = 'numpy matplotlib',
+        loop_modeling_ccd_12res = 'numpy matplotlib',
+
 
 	ligand_docking		= 'numpy matplotlib',
 	ligand_scoring_ranking = 'numpy matplotlib pandas==0.23.4 sklearn scipy ',
