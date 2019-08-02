@@ -1,0 +1,24 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="ref2015" weights="ref2015" />
+  </SCOREFXNS>
+  <TASKOPERATIONS>
+    <RestrictToLoops name="loop" loops_file="%%loop%%"/>
+  </TASKOPERATIONS>
+  <RESIDUE_SELECTORS>
+    <Chain name="chA" chains="A"/>
+    <Index name="loop_region" resnums="%%loop_res%%"/>
+  </RESIDUE_SELECTORS>
+  <SIMPLE_METRICS>
+    RMSD calculation vs the native, no superposition. Except the building loop, the protocol does not move other parts of protein 
+    <RMSDMetric name="rmsd" rmsd_type="rmsd_protein_bb_heavy" residue_selector="loop_region" use_native="1"/>
+  </SIMPLE_METRICS>
+  <MOVERS>
+    <LoopModeler name="modeler" config="kic_with_frags" loops_file="%%loop%%" fast="%%fast%%"/>
+    <RunSimpleMetrics name="run_metrics" metrics="rmsd"/>
+  </MOVERS>
+  <PROTOCOLS>
+    <Add mover_name="modeler"/>
+    <Add mover="run_metrics" />
+  </PROTOCOLS>
+</ROSETTASCRIPTS>
