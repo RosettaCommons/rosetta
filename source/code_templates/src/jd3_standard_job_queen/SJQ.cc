@@ -146,7 +146,7 @@ protocols::jd3::JobOP
 	TR << "Completing larval job maturation" << std::endl;
 
 	/// This is the core of your code.  Most likely, you will need the lines below.
-	MoverJobOP mature_job( new MoverJob );
+	MoverJobOP mature_job( utility::pointer::make_shared< MoverJob >() );
 	core::pose::PoseOP pose = StandardJobQueen::pose_for_job( larval_job, *job_options );
 	mature_job->pose( pose );
 

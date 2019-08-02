@@ -16,6 +16,7 @@
 
 //XSD includes
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/pointer/memory.hh>
 #include <protocols/filters/filter_schemas.hh>
 
 #include <basic/Tracer.hh>
@@ -48,14 +49,14 @@ void
 protocols::filters::FilterOP
 --class--::clone() const
 {
-	return protocols::filters::FilterOP( new --class--( *this ) );
+	return utility::pointer::make_shared< --class-- >( *this );
 }
 
 
 protocols::filters::FilterOP
 --class--::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new --class-- );
+	return utility::pointer::make_shared< --class-- >();
 }
 
 bool
@@ -103,7 +104,7 @@ void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 protocols::filters::FilterOP
 --class--Creator::create_filter() const
 {
-	return protocols::filters::FilterOP( new --class-- );
+	return utility::pointer::make_shared< --class-- >( );
 }
 
 std::string

@@ -28,6 +28,7 @@
 // Utility Headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/pointer/memory.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -116,7 +117,7 @@ void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & /*xsd*/ 
 
 core::select::residue_selector::ResidueSelectorOP
 --class--Creator::create_residue_selector() const {
-	return core::select::residue_selector::ResidueSelectorOP( new --class-- );
+	return utility::pointer::make_shared< --class-- >();
 }
 
 std::string

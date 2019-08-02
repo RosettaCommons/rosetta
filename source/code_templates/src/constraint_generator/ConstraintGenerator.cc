@@ -20,6 +20,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/pointer/memory.hh>
 
 static basic::Tracer TR( "--namespace_dot--.--class--" );
 
@@ -28,7 +29,7 @@ static basic::Tracer TR( "--namespace_dot--.--class--" );
 protocols::constraint_generator::ConstraintGeneratorOP
 --class--Creator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new --class-- );
+	return utility::pointer::make_shared< --class-- >();
 }
 
 std::string
@@ -48,7 +49,7 @@ std::string
 protocols::constraint_generator::ConstraintGeneratorOP
 --class--::clone() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new --class--( *this ) );
+	return utility::pointer::make_shared< --class-- >( *this );
 }
 
 std::string

@@ -27,6 +27,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
+#include <utility/pointer/memory.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -63,8 +64,7 @@ static basic::Tracer TR( "--namespace_dot--.--class--" );
 
 core::simple_metrics::SimpleMetricOP
 --class--::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new --class--( *this ) );
-
+	return utility::pointer::make_shared< --class-- >( *this );
 }
 
 std::string
@@ -130,8 +130,7 @@ std::string
 
 core::simple_metrics::SimpleMetricOP
 --class--Creator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new --class-- );
-
+	return utility::pointer::make_shared< --class-- >( );
 }
 
 --end_namespace--

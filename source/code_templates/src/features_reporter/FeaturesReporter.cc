@@ -22,6 +22,7 @@
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 #include <basic/database/sql_utils.hh>
 
 #include <basic/Tracer.hh>
@@ -44,7 +45,7 @@ static basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --class--OP
 --class--::clone() const {
-	return --class--OP( new --class--( *this ) );
+	return utility::pointer::make_shared< --class-- >( *this );
 }
 
 void
@@ -94,7 +95,7 @@ void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 FeaturesReporterOP
 --class--Creator::create_features_reporter() const {
-	return FeaturesReporterOP( new --class-- );
+	return utility::pointer::make_shared< --class-- >();
 }
 
 std::string

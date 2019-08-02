@@ -288,7 +288,8 @@ class GenerateRosettaTemplates(object):
         Get the end of the namespace declaration at end of file.
         :rtype: str
         """
-        return "\n".join(["} //"+n for n in self.get_option("namespace", fail_on_none=True)])
+        
+        return "\n".join(["} //"+n for n in self.get_option("namespace", fail_on_none=True)][::-1])
 
     def get_path_list(self):
         """

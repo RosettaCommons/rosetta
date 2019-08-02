@@ -26,6 +26,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/pointer/memory.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 static basic::Tracer TR( "--namespace_dot--.--class--" );
@@ -86,7 +87,7 @@ void
 TaskOperationOP
 --class--Creator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new --class-- );
+	return utility::pointer::make_shared< --class-- >();
 }
 
 std::string

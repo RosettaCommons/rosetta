@@ -21,6 +21,7 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/pointer/memory.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -103,14 +104,14 @@ void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 protocols::moves::MoverOP
 --class--::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new --class-- );
+	return utility::pointer::make_shared< --class-- >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 --class--::clone() const
 {
-	return protocols::moves::MoverOP( new --class--( *this ) );
+	return utility::pointer::make_shared< --class-- >( *this );
 }
 
 std::string --class--::get_name() const {
@@ -128,7 +129,7 @@ std::string --class--::mover_name() {
 protocols::moves::MoverOP
 --class--Creator::create_mover() const
 {
-	return protocols::moves::MoverOP( new --class-- );
+	return utility::pointer::make_shared< --class-- >();
 }
 
 std::string

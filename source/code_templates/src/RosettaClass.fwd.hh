@@ -23,8 +23,8 @@
 
 class --class--;
 
-typedef utility::pointer::shared_ptr< --class-- > --class--OP;
-typedef utility::pointer::shared_ptr< --class-- const > --class--COP;
+using --class--OP = utility::pointer::shared_ptr< --class-- >;
+using --class--COP = utility::pointer::shared_ptr< --class-- const >;
 
 --end_namespace--
 
