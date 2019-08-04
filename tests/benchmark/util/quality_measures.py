@@ -17,7 +17,7 @@ import numpy as np
 
 #=======================================
 def check_all_values_below_cutoff( col, cutoff, tag, filehandle ):
-	
+
 	return check_xpercent_values_below_cutoff( col, cutoff, tag, filehandle, 100 )
 
 #=======================================
@@ -25,7 +25,7 @@ def check_xpercent_values_below_cutoff( col, cutoff, tag, filehandle, percentage
 
 	out = "All " + tag + "s < cutoff"
 	filehandle.write( out + " " + str(cutoff) + "\t" )
-	
+
 	# sort the values from smallest to largest, then take the first x records
 	col = sorted(col)
 	partial_col = col[:int( math.ceil(percentage * len( col )/100.0) )]
@@ -37,6 +37,45 @@ def check_xpercent_values_below_cutoff( col, cutoff, tag, filehandle, percentage
 
 	filehandle.write( str( value ) + "\n" )
 	return {out : value}
+
+#=======================================
+def calc_Conway_discrim_score( rmss, scores, offsets=[0, 0.5, 1, 1.5, 2, 4] ):
+	# calculate funnel discrimination metric from Conway 2014
+	# "Relaxation of backbone bond geometry improves protein
+	# energy landscape modeling"
+	# with a slight twist, rms cuts are based on min rms + an offset
+
+	scores = norm_Conway(scores)
+	rmss = np.array(rmss) # must be np.array for indexing
+
+	D = 0.0 # discrimination score
+	cuts = [min(rmss) + x for x in offsets]
+	for r in cuts:
+		# lowest score below rms threshold is set to 0 to avoid NAs
+		below = 0
+		if len(scores[rmss <= r]) > 0:
+			below = min(scores[rmss <= r])
+		above = below # get lowest score above rms threshold, default to below so diff is 0 if NAs
+		if len(scores[rmss > r]) > 0:
+			above = min(scores[rmss > r])
+		D += below - above # difference in scores across thresholds is the disrcim
+
+	return round(D, 3)
+
+#=======================================
+def norm_Conway( scores ):
+	# from Conway 2014 "Relaxation of backbone bond geometry
+	# improves protein energy landscape modeling"
+	# normalize scores 95th percent = 1, 5th percent = 0
+
+	s_scores = sorted(scores) # sort low to high
+
+	high_score = s_scores[ int(0.95 * len(s_scores)) ]
+	low_score  = s_scores[ int(0.05 * len(s_scores)) ]
+
+	scores = ( np.array(scores) - low_score ) / ( high_score - low_score )
+
+	return scores
 
 #=======================================
 def check_rmsd_of_topscoring( rmsd_col_sorted, cutoff, filehandle ):
