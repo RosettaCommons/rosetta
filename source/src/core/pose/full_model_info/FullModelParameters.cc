@@ -516,6 +516,15 @@ operator <<( std::ostream & os, FullModelParameters const & t )
 	os << "FULL_MODEL_PARAMETERS";
 
 	os << "  FULL_SEQUENCE " << t.full_sequence();
+	if ( t.global_sequence().compare("") ) {
+		os << "  GLOBAL_SEQUENCE " << t.global_sequence();
+		os << "  GLOBAL_MAPPING ";
+		for (Size i = 1; i <= t.global_mapping_.size() - 1; i++) {
+			os << t.global_mapping_[i] << ','; 
+		}
+		if (t.global_mapping_.size() > 0) os << t.global_mapping_.back();
+	}
+
 	if ( t.conventional_chains().size() > 0 && t.conventional_segids().size() > 0 ) {
 		os << "  CONVENTIONAL_RES_CHAIN "  << make_tag_with_dashes( t.conventional_numbering(), t.conventional_chains(), t.conventional_segids(), ',' );
 	} else {
@@ -581,6 +590,17 @@ operator >>( std::istream & is, FullModelParameters & t )
 	initialize_parameters( t ); // depends on size of full_sequence
 
 	is >> tag;
+	if ( !is.fail() && tag == "GLOBAL_SEQUENCE" ) {
+		is >> t.global_sequence_;
+		is >> tag;
+		runtime_assert( !is.fail() && (tag == "GLOBAL_MAPPING") );
+		is >> tag;
+		utility::vector1< std::string > global_idxs = string_split( tag, ',');
+		for (Size i = 1; i <= global_idxs.size(); i++) {
+			t.global_mapping_.push_back( string2int(global_idxs[i]) );
+		}
+		is >> tag;
+	}
 	std::tuple< std::vector<int>, std::vector<char>, std::vector< std::string > > resnum_chain;
 	runtime_assert ( !is.fail() && ( tag == "CONVENTIONAL_RES_CHAIN_SEGID" || tag == "CONVENTIONAL_RES_CHAIN" ) );
 	for ( bool ok = true; ok ; ) {
@@ -740,7 +760,7 @@ FullModelParameters::read_global_seq_info( std::string const & global_seq_file )
 
 	// Fill in global sequence
 	global_sequence_ = fasta_sequences[ 1 ]->sequence();
-
+	
 	// Fill in global mapping
 	utility::vector1< char > global_to_pdb_chains;
 	utility::vector1< std::string > global_to_pdb_segids;

@@ -38,7 +38,7 @@ command_line = '''
 -score:weights stepwise/rna/rna_res_level_energy4.wts
 -restore_talaris_behavior
 -motif_mode
--cycles 200
+-cycles 400
 -save_times
 -out:path {prefix}
 -out:file:silent {target}.out

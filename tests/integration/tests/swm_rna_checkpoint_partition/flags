@@ -1,0 +1,10 @@
+-fasta 2r8s_start_5n.fasta 
+-s start_5n.pdb 
+-out:file:silent swm_rebuild.out 
+-motif_mode 
+-full_model:global_seq_file 2r8s.fasta 
+-score:weights stepwise/rna/rna_res_level_energy4.wts 
+-restore_talaris_behavior
+-set_weights rna_partition 1.0 
+-cycles 10
+-use_legacy_stepwise_job_distributor true

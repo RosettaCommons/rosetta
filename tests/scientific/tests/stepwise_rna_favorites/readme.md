@@ -11,7 +11,7 @@ The benchmark set contains the 12 loop modeling problems from favorites.txt, a b
 See Watkins et al., Science Advances 2018 for a description of the SWM protocol. The benchmark takes 6 hours on the test server (~240 CPU-hours).
 
 ## PERFORMANCE METRICS
-Benchmark performance is based on the minimum RMSD sampled and minimum energy sampled; each case has a separate threshold. Since sampling is limited for each test, cutoffs are determined conservatively through repeated runs..
+Benchmark performance is based on the minimum RMSD sampled and minimum energy sampled; each case has a separate threshold. Since sampling is limited for each test, cutoffs are determined conservatively through repeated runs. Generally speaking, SWM should be able to achieve near-atomic accuract in one of its top 5 lowest energy cluster centers if run for long enough on nearly every one of these cases; as is, we're just tracking some best-effort characteristics to see if the performance changes a *lot*.
 
 ## KEY RESULTS
 n/a

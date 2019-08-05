@@ -47,7 +47,7 @@ command_line = '''
 -no_color
 '''.replace('\n', ' ').replace('  ', ' ')
 
-nstruct = 2 if debug else 50  # testing temp # 5000 split over 40 jobs
+nstruct = 2 if debug else 200  # testing temp # 5000 split over 40 jobs
 
 targets = 'gagua_pentaloop gcaa_tetraloop gg_mismatch j44a_p4p6 r2_4x4 srl_fixed srl_free_bulgedG srp_domainIV srp_domainIV_fixed tandem_ga_imino tandem_ga_sheared uucg_tetraloop'.split()
 targets = targets[:2] if debug else targets
