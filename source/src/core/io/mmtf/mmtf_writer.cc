@@ -183,16 +183,15 @@ make_current_group(aiGroup const & ai_group) {
 
 	// basic parts from first atom
 	::mmtf::GroupType gt;
-	gt.groupName = ai_1.resName;
-	bool is_unknown = core::chemical::is_aa_name_unknown(
-		utility::strip(ai_1.resName));
+	gt.groupName = utility::strip(ai_1.resName);
+	bool const is_unknown = core::chemical::is_aa_name_unknown(gt.groupName);
 
 	if ( !is_unknown ) {
-		gt.singleLetterCode = core::chemical::oneletter_code_from_aa(
-			core::chemical::aa_from_name(utility::strip(ai_1.resName)));
-	} else {
-		gt.singleLetterCode = 'X'; // should be '?' for non-polymer types
-	}
+		core::chemical::AA const aa(core::chemical::aa_from_name(gt.groupName));
+		if ( core::chemical::is_canonical_L_aa_or_gly(aa) ) {
+			gt.singleLetterCode = core::chemical::oneletter_code_from_aa(aa);
+		} else gt.singleLetterCode = 'X';  // how do you get DNA slc?
+	} else gt.singleLetterCode = 'X';  // should be '?' for non-polymer types
 	gt.chemCompType = ai_1.chem_comp_type;
 
 	for ( auto ai : ai_group ) {
@@ -217,14 +216,32 @@ is_in_bondAtomList(std::vector<int32_t> const & bondAtomList, core::Size const l
 	return false;
 }
 
+
+///@warning groups (aka residues) are made by grouping together identical ai.{chain,resSeq,resName,iCode}
+///         I don't think there's a better way than that.
 aiChain
 make_chain(utility::vector0<AtomInformation> const & chain_atoms) {
 	aiChain AIC_out;
-	decltype(chain_atoms.end()) upper;
-	for ( auto lower=chain_atoms.begin(); lower != chain_atoms.end(); lower = upper ) {
-		upper = std::upper_bound(chain_atoms.begin(), chain_atoms.end(), *lower, ai_cmp());
-		AIC_out.emplace_back(lower, upper);
+	std::map< std::tuple< char, core::Size, std::string, char >, core::Size >rsd_map;
+
+	core::Size current_index(0);
+	for ( core::Size i=0; i<chain_atoms.size(); ++i ) {
+		core::io::AtomInformation const & ai(chain_atoms[i]);
+		std::tuple< char, core::Size, std::string, char > const current_id(ai.chainID, ai.resSeq, ai.resName, ai.iCode);
+		auto const search(rsd_map.find(current_id));
+		if ( search != rsd_map.end() ) AIC_out[search->second].push_back(chain_atoms[i]);
+		else {
+			rsd_map[current_id] = current_index;
+			if ( current_index >= AIC_out.size() ) AIC_out.resize(AIC_out.size()+50);  // try to cut down on resize
+			AIC_out[current_index].push_back(chain_atoms[i]);
+			++current_index;
+		}
 	}
+
+	// remove unused, will happen if things aren't in sequence.
+	AIC_out.erase(std::remove_if(AIC_out.begin(), AIC_out.end(),
+		[](utility::vector0<AtomInformation> const & grp) { return grp.empty(); }), AIC_out.end());
+
 	return AIC_out;
 }
 
@@ -235,150 +252,337 @@ make_chain(utility::vector0<AtomInformation> const & chain_atoms) {
 aiPose
 aiPose_from_sfr(core::io::StructFileRep const & sfr) {
 	aiPose AIP;
-	for ( Size i = 0; i < sfr.chains().size(); ++i ) {
+	for ( core::Size i = 0; i < sfr.chains().size(); ++i ) {
 		if ( sfr.chains()[i].size() == 0 ) continue;
-		aiChain this_chain = make_chain(sfr.chains()[i]);
+		aiChain this_chain = make_chain(sfr.chains().at(i));
 		AIP.push_back(this_chain);
 	}
 	return AIP;
 }
 
+aiModels
+aiModels_from_sfrs(utility::vector1< core::io::StructFileRepOP > const & sfrs)
+{
+	aiModels AIM;
+	for ( auto const & sfr : sfrs ) {
+		AIM.push_back(aiPose_from_sfr(*sfr));
+	}
+	return AIM;
+}
+
+
+int
+get_num_bonds(::mmtf::StructureData & sd) {
+	int bond_count_from_order = 0;
+	int chain_idx = 0; // will be count at end of loop
+	int group_idx = 0; // will be count at end of loop
+	int atom_idx = 0;  // will be count at end of loop
+	// traverse models
+	for ( int model_idx = 0; model_idx < 1/*sd.numModels*/; ++model_idx ) {
+		// traverse chains
+		for ( int j = 0; j < sd.chainsPerModel[model_idx]; ++j, ++chain_idx ) {
+			// check chain names (fixed length)
+			// traverse groups
+			for ( int k = 0; k < sd.groupsPerChain[chain_idx]; ++k, ++group_idx ) {
+				const ::mmtf::GroupType& group = sd.groupList[sd.groupTypeList[group_idx]];
+				atom_idx += group.atomNameList.size();
+				bond_count_from_order += group.bondOrderList.size();
+				TR << "at: " << group.groupName << " " << sd.groupIdList[group_idx] << " " << group_idx << " " << bond_count_from_order << std::endl;
+			}
+		}
+	}
+	TR << "gcount: " << bond_count_from_order << std::endl;
+	TR << "scount: " << sd.bondOrderList.size() << std::endl;
+	bond_count_from_order += sd.bondOrderList.size();
+	return bond_count_from_order;
+}
 
 void
 add_bonds_to_sd(::mmtf::StructureData & sd,
-	aiPose const & AIP, std::map<core::Size, sd_index> const & atom_num_to_sd_map) {
+	aiModels const & AIM, std::map<core::Size, sd_index> const & atom_num_to_sd_map)
+{
 	int32_t groupIndex = 0;
-	int32_t chainIndex = 0;
+	int32_t chainIndex = 0; // unused
+	int32_t modelIndex = 0;
 	unsigned int atomIndex = 0;
-	for ( core::Size i=0; i<AIP.size(); ++i, ++chainIndex ) {  // for each chain
-		for ( core::Size j=0; j<AIP[i].size(); ++j, ++groupIndex ) {  // for each group
-			for ( core::Size k=0; k<AIP[i][j].size(); ++k, ++atomIndex ) {  // for each atom
-				AtomInformation const & ai = AIP[i][j][k];
-				sd_index const upper_connect = atom_num_to_sd_map.at(atomIndex);
-				for ( core::Size l=1; l<=ai.connected_indices.size(); ++l ) {
-					core::Size const link_buddy = ai.connected_indices[l];
-					if ( link_buddy > atomIndex+1 ) continue;
-					sd_index const lower_connect = atom_num_to_sd_map.at(link_buddy-1);
-					if ( upper_connect.group_index == lower_connect.group_index ) {  // same group
-						::mmtf::GroupType& group = sd.groupList[sd.groupTypeList[groupIndex]];
-						bool const already_in_grouplist = is_in_bondAtomList(group.bondAtomList, lower_connect.group_atom_index,
-							upper_connect.group_atom_index); // based on group atom number
-						if ( !already_in_grouplist ) {
-							group.bondAtomList.push_back(lower_connect.group_atom_index);
-							group.bondAtomList.push_back(upper_connect.group_atom_index);
-							if ( ai.connected_orders[l] == 0 ) {
-								group.bondOrderList.push_back((int8_t)-1);
-								group.bondResonanceList.push_back((int8_t)1);
-							} else {
-								group.bondOrderList.push_back(ai.connected_orders[l]);
-								group.bondResonanceList.push_back((int8_t)0);
+	int group_bonds(0), inter_bonds(0);
+	std::vector<core::Size>type_check;
+	// TODO this function sucks :(
+	for ( core::Size i=0; i<AIM.size(); ++i, ++modelIndex ) {  // for each model
+		aiPose const & AIP(AIM[i]);
+		for ( core::Size j=0; j<AIP.size(); ++j, ++chainIndex ) {  // for each chain
+			for ( core::Size k=0; k<AIP[j].size(); ++k, ++groupIndex ) {  // for each group
+				//TR << "at grp: " << groupIndex << " pnb: " << sd.numBonds << std::endl;
+				//core::Size const type(sd.groupTypeList[groupIndex]);
+				//core::Size og_bo_size(0);
+				//if (type >= type_check.size() ) {
+				// type_check.resize(type+1);
+				//} else {
+				// og_bo_size=type_check[type];
+				//}
+				for ( core::Size l=0; l<AIP[j][k].size(); ++l, ++atomIndex ) {  // for each atom
+					AtomInformation const & ai = AIP[j][k][l];
+					//TR << "Hk: " << 1+atomIndex << " " << ai.name << " " << ai.connected_indices <<  " " << ai.connected_orders << std::endl;
+					//
+					sd_index const upper_connect = atom_num_to_sd_map.at(atomIndex);
+					for ( core::Size m=1; m<=ai.connected_indices.size(); ++m ) {
+						core::Size const& link_buddy(ai.connected_indices[m]);
+						if ( link_buddy > atomIndex+1 ) continue;
+						sd_index const lower_connect = atom_num_to_sd_map.at(link_buddy-1);
+						if ( upper_connect.group_index == lower_connect.group_index ) {  // same group
+							::mmtf::GroupType& group = sd.groupList[sd.groupTypeList[groupIndex]];
+							bool const already_in_grouplist = is_in_bondAtomList(group.bondAtomList, lower_connect.group_atom_index,
+								upper_connect.group_atom_index); // based on group atom number
+							if ( !already_in_grouplist ) {
+								group.bondAtomList.push_back(lower_connect.group_atom_index);
+								group.bondAtomList.push_back(upper_connect.group_atom_index);
+								if ( ai.connected_orders[m] == 0 ) {
+									group.bondOrderList.push_back((int8_t)-1);
+									group.bondResonanceList.push_back((int8_t)1);
+								} else {
+									group.bondOrderList.push_back((int8_t)ai.connected_orders[m]);
+									group.bondResonanceList.push_back((int8_t)0);
+								}
 							}
+							++group_bonds;
+						} else {  // Not same group
+							bool const already_in_bondAtomList = is_in_bondAtomList(sd.bondAtomList, atomIndex,
+								link_buddy-1);  // based on overall atom number
+							if ( !already_in_bondAtomList ) {
+								sd.bondAtomList.push_back(link_buddy-1);
+								sd.bondAtomList.push_back(atomIndex);
+								// Rosetta only has single bonds inter-group
+								// TODO should a peptide bond be single/not resonate?
+								sd.bondOrderList.push_back((int8_t)1);
+								sd.bondResonanceList.push_back((int8_t)-1);
+							}
+							++inter_bonds;
 						}
-						++sd.numBonds;
-					} else {  // Not same group
-						bool const already_in_bondAtomList = is_in_bondAtomList(sd.bondAtomList, atomIndex,
-							link_buddy-1);  // based on overall atom number
-						if ( !already_in_bondAtomList ) {
-							sd.bondAtomList.push_back(atomIndex);
-							sd.bondAtomList.push_back(link_buddy-1);
-							// Rosetta only has single bonds inter-group
-							// TODO should a peptide bond be single?
-							sd.bondOrderList.push_back((int8_t)1);
-							sd.bondResonanceList.push_back((int8_t)-1);
-						}
+						//TR << "ADding to numBonds: " << ai.name << " " << ai.resSeq << " " << m << ai.connected_indices << std::endl;
 						++sd.numBonds;
 					}
+					//TR << "ci: " << ai.connected_indices.size() << " " << upper_connect.group_atom_index <<  std::endl;
+					//for ( auto x : sd.groupList[sd.groupTypeList[groupIndex]].bondAtomList) TR <<  (int)x << ", ";
+					//TR << std::endl;
+					//for ( auto x : sd.groupList[sd.groupTypeList[groupIndex]].bondOrderList) TR <<  (int)x << ", ";
+					//TR << std::endl;
+				}
+				//TR << "og bo: " << type << " " << og_bo_size << " " << sd.groupList[sd.groupTypeList[groupIndex]].bondOrderList.size() << std::endl;
+				//if (og_bo_size != 0 && sd.groupList[sd.groupTypeList[groupIndex]].bondOrderList.size() != og_bo_size) {
+				// TR << "broked at groupIndex " << groupIndex << " " <<  sd.groupList[sd.groupTypeList[groupIndex]].bondOrderList.size() << " != " << og_bo_size << std::endl;
+				//}
+				//if (og_bo_size == 0) type_check[type] = sd.groupList[sd.groupTypeList[groupIndex]].bondOrderList.size();
+			}
+		}
+	}
+	// TR << "tgroups: " << groupIndex << " sdgrps: " << sd.numGroups << std::endl;
+	// TR << "grp: " << group_bonds << std::endl;
+	// TR << "inter_bonds: " << inter_bonds << std::endl;
+	//
+	//       int nbb = get_num_bonds(sd);
+	//       if (sd.numBonds != nbb) {
+	//        TR << "nb: " << sd.numBonds << std::endl;
+	//        TR << "gnb: " << nbb << std::endl;
+	//        for (auto const & g : sd.groupList ) {
+	//         TR << "g: " << g.groupName << std::endl;
+	//         for (auto x : g.bondAtomList) TR << (int)x << ", ";
+	//         TR << " : " << g.bondAtomList.size() << std::endl;
+	//         for (auto x : g.bondOrderList) TR << (int)x << ", ";
+	//         TR << " : " << g.bondOrderList.size() << std::endl;
+	//        }
+	//  throw CREATE_EXCEPTION(
+	//   utility::excn::BadInput,
+	//   "FEK");
+	//       }
+}
+
+
+template< typename T >
+void
+add_if_not_empty(
+	std::string const & given_name,
+	T const & content,
+	std::map<std::string, msgpack::object> & target_map,
+	msgpack::zone & zone)
+{
+	if ( !content.empty() ) {
+		target_map[given_name] = msgpack::object(content, zone);
+	}
+}
+
+
+template< typename T >
+void
+resize_and_add_if_not_empty(
+	T const & data,
+	std::vector< T > & destination,
+	core::Size const & data_index,
+	core::Size const & max_size)
+{
+	if ( !data.empty() ) {
+		if ( data_index+1 > destination.size() ) destination.resize(max_size);
+		destination[data_index] = data;
+	}
+}
+
+
+
+void
+add_extra_data(
+	::mmtf::StructureData & sd,
+	utility::vector1< core::io::StructFileRepOP > const & sfrs,
+	core::io::StructFileRepOptions const & options)
+{
+
+	std::vector< std::map< std::string, std::string > > model_heterogen_names;
+	std::vector< std::map< std::string, std::pair< std::string, std::string > > > model_residue_type_base_names;
+	for ( core::Size i=1; i<=sfrs.size(); ++i ) {
+		core::Size const std_i(i-1);
+		if ( options.use_pdb_format_HETNAM_records() ) {
+			resize_and_add_if_not_empty(sfrs[i]->heterogen_names(), model_heterogen_names, std_i, sfrs.size());
+		} else if ( !options.write_glycan_pdb_codes() ) {
+			resize_and_add_if_not_empty(sfrs[i]->residue_type_base_names(), model_residue_type_base_names, std_i, sfrs.size());
+		}
+	}
+	add_if_not_empty("rosetta::residue_type_base_names", model_residue_type_base_names, sd.modelProperties, sd.msgpack_zone);
+	add_if_not_empty("rosetta::heterogen_names", model_heterogen_names, sd.modelProperties, sd.msgpack_zone);
+}
+
+std::map<std::tuple<core::Size, core::Size, core::Size, core::Size>, core::Size>
+make_AIM_to_atom_num(aiModels const & AIM) {
+	core::Size idx(0);
+	std::map<std::tuple<core::Size, core::Size, core::Size, core::Size>, core::Size> AIM_to_atom_num;
+	for ( core::Size i=0; i<AIM.size(); ++i ) {  // for each model
+		aiPose const & AIP(AIM[i]);
+		for ( core::Size j=0; j<AIP.size(); ++j ) {  // for each chain
+			for ( core::Size k=0; k<AIP[j].size(); ++k ) {  // for each group
+				for ( core::Size l=0; l<AIP[j][k].size(); ++l ) {  // for each atom
+					std::tuple<core::Size, core::Size, core::Size, core::Size> const mytup(i, j, k, l);
+					AIM_to_atom_num[mytup] = idx;
+					++idx;
 				}
 			}
 		}
 	}
+	return AIM_to_atom_num;
 }
-
 
 void
-add_heterogen_info_to_sd(
-	::mmtf::StructureData & sd,
-	core::io::StructFileRep const & sfr,
-	core::io::StructFileRepOptions const & options
-)
+dump_mmtf(
+	std::ostream & out,
+	utility::vector1< core::io::StructFileRepOP > sfrs,
+	core::io::StructFileRepOptions const & options)
 {
-	if ( options.use_pdb_format_HETNAM_records() ) {
-		if ( !sfr.heterogen_names().empty() ) {
-			sd.extraProperties["rosetta::heterogen_names"] = msgpack::object(sfr.heterogen_names(), sd.msgpack_zone);
-		}
-	} else if ( !options.write_glycan_pdb_codes() ) {
-		if ( !sfr.residue_type_base_names().empty() ) {
-			sd.extraProperties["rosetta::residue_type_base_names"] = msgpack::object(sfr.residue_type_base_names(), sd.msgpack_zone);
-		}
-	}
+	::mmtf::StructureData sd(sfrs_to_sd(sfrs, options));
+	sd.hasConsistentData(true, 4);
+	::mmtf::encodeToStream(sd, out);
 }
-
 
 void
 dump_mmtf(
 	std::ostream & out,
 	core::io::StructFileRepOP sfr,
-	core::io::StructFileRepOptions const & options
-) {
+	core::io::StructFileRepOptions const & options)
+{
+	::mmtf::StructureData sd(sfr_to_sd(sfr, options));
+	sd.hasConsistentData(true, 4);
+	::mmtf::encodeToStream(sd, out);
+}
+
+
+::mmtf::StructureData
+sfrs_to_sd(
+	utility::vector1< core::io::StructFileRepOP > sfrs,
+	core::io::StructFileRepOptions const & options)
+{
+	aiModels AIM(aiModels_from_sfrs(sfrs));
 	::mmtf::StructureData sd;
-	aiPose AIP = aiPose_from_sfr(*sfr);
 
-	// ATOM/HETATM
-	// hard set: will not change
-	sd.numModels = 1;
-
-	// will change
 	sd.numBonds = 0;
 	sd.numAtoms = 0;
 	sd.numGroups = 0;
 	sd.numChains = 0;
-	sd.chainsPerModel.push_back((int32_t)AIP.size());
+	sd.numModels = 0;
+	for ( aiPose const & AIP : AIM ) sd.chainsPerModel.push_back((int32_t)AIP.size());
+
 	std::string current_chain = "";
+	core::Size current_model_prefix(0);
 
 	// Add basic easy info
-	for ( core::Size i=0; i<AIP.size(); ++i ) {  // for each chain
-		for ( core::Size j=0; j<AIP[i].size(); ++j ) {  // for each group
-			::mmtf::GroupType const gt = make_current_group(AIP[i][j]);
-			auto it = std::find(sd.groupList.begin(), sd.groupList.end(), gt);
-			if ( it == sd.groupList.end() ) {
-				sd.groupList.push_back(gt);
-				sd.groupTypeList.push_back(sd.groupList.size()-1);
-			} else {
-				auto index = std::distance(sd.groupList.begin(), it);
-				sd.groupTypeList.push_back(index);
-			}
-			for ( core::Size k=0; k<AIP[i][j].size(); ++k ) {  // for each atom
-				AtomInformation const & ai = AIP[i][j][k];
-				current_chain = ai.chainID;
-				sd.xCoordList.push_back(ai.x);
-				sd.yCoordList.push_back(ai.y);
-				sd.zCoordList.push_back(ai.z);
-				sd.bFactorList.push_back(ai.temperature);
-				sd.occupancyList.push_back(ai.occupancy);
-				++sd.numAtoms;
-			}
-			++sd.numGroups;
-			sd.groupIdList.push_back(AIP[i][j][0].resSeq);
-		}
-		sd.groupsPerChain.push_back(AIP[i].size());
-		sd.chainIdList.push_back(current_chain);
-		sd.chainNameList.push_back(current_chain);
-		++sd.numChains;
-	}
+	for ( core::Size i=0; i<AIM.size(); ++i ) {  // for each model
+		current_model_prefix = sd.numAtoms;
+		aiPose const & AIP(AIM[i]);
+		for ( core::Size j=0; j<AIP.size(); ++j ) {  // for each chain
+			for ( core::Size k=0; k<AIP[j].size(); ++k ) {  // for each group
+				// It is possible to set bonds here too, but no matter how you set them
+				// it will be complicated, so might as well do it later :D
+				::mmtf::GroupType const gt = make_current_group(AIP[j][k]);
+				auto it = std::find(sd.groupList.begin(), sd.groupList.end(), gt);
+				if ( it == sd.groupList.end() ) {
+					//TR << "made a group: " << gt.groupName << std::endl;
+					//TR << gt.atomNameList << std::endl;
+					sd.groupList.push_back(gt);
+					sd.groupTypeList.push_back(sd.groupList.size()-1);
+				} else {
+					//TR << "found another group: " << gt.groupName << std::endl;
+					//TR << gt.atomNameList << std::endl;
+					auto const index = std::distance(sd.groupList.begin(), it);
+					sd.groupTypeList.push_back(index);
+				}
 
+				for ( core::Size l=0; l<AIP[j][k].size(); ++l ) {  // for each atom
+					{ // alter bonding parterners for models>0
+						AtomInformation & ai = AIM[i][j][k][l];
+						if ( current_model_prefix != 0 ) {
+							for ( auto & bp : ai.connected_indices ) bp += current_model_prefix;
+						}
+					}
+					AtomInformation const & ai = AIP[j][k][l];
+					current_chain = ai.chainID;
+					sd.xCoordList.push_back(ai.x);
+					sd.yCoordList.push_back(ai.y);
+					sd.zCoordList.push_back(ai.z);
+					sd.bFactorList.push_back(ai.temperature);
+					sd.occupancyList.push_back(ai.occupancy);
+					++sd.numAtoms;
+
+					// Add insertion code always (it's easily compressed to 2 ints if not used)
+					if ( l == 0 ) {
+						if ( ai.iCode == ' ' ) sd.insCodeList.push_back(0x00);
+						else sd.insCodeList.push_back(ai.iCode);
+					}
+				}
+				++sd.numGroups;
+				sd.groupIdList.push_back(AIP[j][k][0].resSeq);
+			}
+			sd.groupsPerChain.push_back(AIP[j].size());
+			sd.chainIdList.push_back(current_chain);
+			sd.chainNameList.push_back(current_chain);
+			++sd.numChains;
+		}
+		++sd.numModels;
+	}
 	// Bond information
 	// atom num to chain->group->atom map
-	std::map<core::Size, sd_index> const atom_num_to_sd_map =  core::io::mmtf::make_atom_num_to_sd_map(sd);
+	std::map<core::Size, sd_index> const atom_num_to_sd_map(core::io::mmtf::make_atom_num_to_sd_map(sd));
 
 	// Add bonds to sd
-	add_bonds_to_sd(sd, AIP, atom_num_to_sd_map);
-	add_heterogen_info_to_sd(sd, *sfr, options);
-	// TODO
-	if ( options.preserve_header() ) {
-		TR << "mmtf preserve_header not implemented yet!" << std::endl;
-	}
+	add_bonds_to_sd(sd, AIM, atom_num_to_sd_map);
 
-	::mmtf::encodeToStream(sd, out);
+	// Add extra data!
+	add_extra_data(sd, sfrs, options);
+	return sd;
+}
+
+
+::mmtf::StructureData
+sfr_to_sd(
+	core::io::StructFileRepOP sfr,
+	core::io::StructFileRepOptions const & options
+) {
+	utility::vector1< core::io::StructFileRepOP > sfrs;
+	sfrs.push_back(sfr);
+	return sfrs_to_sd(sfrs, options);
 }
 
 } // mmtf

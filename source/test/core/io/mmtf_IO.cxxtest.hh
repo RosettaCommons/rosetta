@@ -70,7 +70,8 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		core_init_with_additional_options("-ignore_zero_occupancy false -ignore_unrecognized_res -packing::pack_missing_sidechains false");
-		pdb_pose = core::import_pose::pose_from_file( "core/io/1QYS.pdb", false , core::import_pose::PDB_file);
+		pdb_pose = core::import_pose::pose_from_file( "core/io/1QYS.pdb", false, core::import_pose::PDB_file);
+		if ( !mmtf_test_files.empty() ) return;
 		// "173D", "1BNA", // missing group name
 		// "1IGT", // has BMA hetatm
 		mmtf_test_files.push_back("1MSH");
@@ -100,7 +101,74 @@ public:
 	void tearDown() {
 	}
 
-	void test_add_heterogen_info_to_sd() {
+	void test_mmtf_model_io() {
+		// core_init_with_additional_options("-ignore_zero_occupancy false -ignore_unrecognized_res -packing::pack_missing_sidechains false -include_sugars -auto_detect_glycan_connections -alternate_3_letter_codes pdb_sugar -ignore_unrecognized_res -load_PDB_components false -write_glycan_pdb_codes");
+		std::string const pdb1_fn("core/io/5FYL.pdb");
+		std::string const mmtf1_ofn("core/io/5FYL_m_io.mmtf");
+		std::string const pdb1_ofn("core/io/5FYL_m_io.pdb");
+		core::pose::PoseOP pose1 = pose_from_file(pdb1_fn, false,
+			core::import_pose::FileType::PDB_file);
+		pose1->dump_mmtf(mmtf1_ofn);
+		std::string const pdb2_fn("core/io/1QYS.pdb");
+		std::string const mmtf2_ofn("core/io/1QYS_m_io.mmtf");
+		std::string const pdb2_ofn("core/io/1QYS_m_io.pdb");
+		core::pose::PoseOP pose2 = core::import_pose::pose_from_file(pdb2_fn, false,
+			core::import_pose::PDB_file);
+		pose2->dump_mmtf(mmtf2_ofn);
+
+		core::io::StructFileReaderOptions opts;
+		utility::vector1< core::io::StructFileRepOP > sfrs;
+		core::io::StructFileRepOptionsOP options =  core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions );
+		core::io::mmtf::set_mmtf_default_options( *options );
+
+		// 1. Instantiate our SFRs from mmtfs so we base our info only on the capabilities
+		// of the mmtf_reader.  We are testing the ability to recreate 2 sfrs, after loading
+		// them from a multi-model mmtf.
+		core::io::StructFileRepOP sfr1(core::io::mmtf::create_sfr_from_mmtf_filename( mmtf1_ofn, opts ));
+		core::io::StructFileRepOP sfr2(core::io::mmtf::create_sfr_from_mmtf_filename( mmtf2_ofn, opts ));
+		sfrs.push_back(sfr1);
+		sfrs.push_back(sfr2);
+
+		// 2. Generate our multi-model mmtf from 2 sfrs
+		std::string const out_mmtf_fn("core/io/5fyl_1qys.mmtf");
+		utility::io::ozstream file(out_mmtf_fn.c_str(), std::ios::out | std::ios::binary);
+		core::io::mmtf::dump_mmtf(file, sfrs, *options);
+		file.close();
+
+		// 3. load back our multi-model sfrs
+		utility::vector1< core::io::StructFileRepOP > sfrs_in(core::io::mmtf::create_sfrs_from_mmtf_filename(
+			out_mmtf_fn, opts, utility::vector1< core::Size >({0, 1})));
+		// 4. compare input and output sfrs
+		TS_ASSERT_EQUALS(sfrs.size(), sfrs_in.size());
+		for ( core::Size i=1; i<=sfrs.size(); ++i ) {
+			TS_ASSERT_EQUALS(sfrs[i]->chains().size(), sfrs_in[i]->chains().size());
+			for ( core::Size j=0; j<sfrs[i]->chains().size(); ++j ) {
+				for ( core::Size k=0; k<sfrs[i]->chains()[j].size(); ++k ) {
+					core::io::AtomInformation const & ogai(sfrs[i]->chains()[j][k]);
+					core::io::AtomInformation const & cbai(sfrs_in[i]->chains()[j][k]);
+					TS_ASSERT_EQUALS(ogai.isHet, cbai.isHet);
+					TS_ASSERT_EQUALS(ogai.serial, cbai.serial);
+					TS_ASSERT_EQUALS(ogai.name, cbai.name);
+					TS_ASSERT_EQUALS(ogai.altLoc, cbai.altLoc);
+					TS_ASSERT_EQUALS(ogai.resName, cbai.resName);
+					TS_ASSERT_EQUALS(ogai.chainID, cbai.chainID);
+					TS_ASSERT_EQUALS(ogai.resSeq, cbai.resSeq);
+					TS_ASSERT_EQUALS(ogai.iCode, cbai.iCode);
+					TS_ASSERT_DELTA(ogai.x, cbai.x, 0.0003);
+					TS_ASSERT_DELTA(ogai.y, cbai.y, 0.0003);
+					TS_ASSERT_DELTA(ogai.z, cbai.z, 0.0003);
+					TS_ASSERT_EQUALS(ogai.occupancy, cbai.occupancy);
+					TS_ASSERT_EQUALS(ogai.temperature, cbai.temperature);
+					TS_ASSERT_EQUALS(ogai.segmentID, cbai.segmentID);
+					TS_ASSERT_EQUALS(ogai.element, cbai.element);
+					TS_ASSERT_EQUALS(ogai.formalcharge, cbai.formalcharge);
+					TS_ASSERT_EQUALS(ogai.terCount, cbai.terCount);
+				}
+			}
+		}
+	}
+
+	void test_add_or_read_extra_data() {
 		std::string const pdb_fn("core/io/5FYL.pdb");
 		core::pose::PoseOP og_pose = pose_from_file(pdb_fn, false,
 			core::import_pose::FileType::PDB_file);
@@ -111,15 +179,19 @@ public:
 			core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter( *options );
 			converter.init_from_pose( *og_pose );
 			core::io::StructFileRepOP sfr(converter.sfr());
+			utility::vector1< core::io::StructFileRepOP > sfrs;
+			sfrs.push_back(sfr);
 			{ // Stage 1: check if it works in a vacuum
 				::mmtf::StructureData sd;
-				core::io::mmtf::add_heterogen_info_to_sd(sd, *sfr, *options);
 
-				TS_ASSERT_EQUALS(sd.extraProperties.count("rosetta::residue_type_base_names"), 1);
-				std::map< std::string, std::pair< std::string, std::string > > returned;
-				::mmtf::MapDecoder const ep_MD(sd.extraProperties);
+				core::io::mmtf::add_extra_data(sd, sfrs, *options);
+
+				TS_ASSERT_EQUALS(sd.modelProperties.count("rosetta::residue_type_base_names"), 1);
+				std::vector< std::map< std::string, std::pair< std::string, std::string > > > returned;
+				::mmtf::MapDecoder const ep_MD(sd.modelProperties);
 				ep_MD.decode("rosetta::residue_type_base_names", true, returned);
-				for ( auto const & k_v : returned ) {
+				TS_ASSERT_EQUALS(returned.size(), 1);
+				for ( auto const & k_v : returned.at(0) ) {
 					TS_ASSERT_EQUALS(k_v.second, sfr->residue_type_base_names().at(k_v.first));
 				}
 			}
@@ -130,7 +202,7 @@ public:
 				{ // simple
 					::mmtf::StructureData sd;
 					::mmtf::decodeFromFile(sd, mmtf1_fn);
-					TS_ASSERT_EQUALS(sd.extraProperties.count("rosetta::residue_type_base_names"), 1);
+					TS_ASSERT_EQUALS(sd.modelProperties.count("rosetta::residue_type_base_names"), 1);
 				}
 
 				core::io::StructFileReaderOptions opts;
@@ -154,6 +226,8 @@ public:
 			core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter( *options );
 			converter.init_from_pose( *og_pose );
 			core::io::StructFileRepOP sfr(converter.sfr());
+			utility::vector1< core::io::StructFileRepOP > sfrs;
+			sfrs.push_back(sfr);
 			// Stage 3: do this for heterogen_names
 			{  // remove namespace
 				// Also stolen from pdb io tests
@@ -184,20 +258,21 @@ public:
 			{ // Stage 4: check if it works in a vacuum
 				std::string const mmtf2_fn("core/io/5FYL_io2.mmtf");
 				::mmtf::StructureData sd;
-				core::io::mmtf::add_heterogen_info_to_sd(sd, *sfr, *options);
-				TS_ASSERT_EQUALS(sd.extraProperties.count("rosetta::heterogen_names"), 1);
+				core::io::mmtf::add_extra_data(sd, sfrs, *options);
+				TS_ASSERT_EQUALS(sd.modelProperties.count("rosetta::heterogen_names"), 1);
 
-				std::map< std::string, std::string > returned;
-				::mmtf::MapDecoder const ep_MD(sd.extraProperties);
+				std::vector< std::map< std::string, std::string > > returned;
+				::mmtf::MapDecoder const ep_MD(sd.modelProperties);
 				ep_MD.decode("rosetta::heterogen_names", true, returned);
+				TS_ASSERT_EQUALS(returned.size(), 1);
 
-				for ( auto const & k_v : returned ) {
+				for ( auto const & k_v : returned.at(0) ) {
 					TS_ASSERT_EQUALS(k_v.second, sfr->heterogen_names().at(k_v.first));
 				}
 				for ( auto const & k_v : sfr->heterogen_names() ) {
-					TS_ASSERT_EQUALS(k_v.second, returned.at(k_v.first));
+					TS_ASSERT_EQUALS(k_v.second, returned.at(0).at(k_v.first));
 				}
-				TS_ASSERT_EQUALS(returned.at("Krp"), "X  13Z Kryptonite, which will kill Superman -- Bwahaha!");
+				TS_ASSERT_EQUALS(returned.at(0).at("Krp"), "X  13Z Kryptonite, which will kill Superman -- Bwahaha!");
 			}
 			{ // test in context of dumping pose
 				std::string const mmtf3_fn("core/io/5FYL_io3.mmtf");
@@ -289,8 +364,9 @@ public:
 			all_AIs.push_back(ai2);
 			all_AIs.push_back(ai3);
 		}
+		std::vector< core::Size > ai_to_model({0, 0, 0, 0});
 
-		core::io::mmtf::add_link_and_ss_information(sd, *sfr, all_AIs, 99);
+		core::io::mmtf::add_link_and_ss_information(sd, *sfr, all_AIs, ai_to_model, 0);
 
 		std::map< std::string, utility::vector1< core::io::LinkInformation > > const &
 			link_map(sfr->link_map());
@@ -506,4 +582,5 @@ public:
 			++group_num;
 		}
 	}
+
 };

@@ -98,33 +98,52 @@ add_link_and_ss_information(
 	::mmtf::StructureData const & sd,
 	core::io::StructFileRep & sfr,
 	std::vector< core::io::AtomInformation > const & all_AIs,
-	core::Size const atmSerial);
+	std::vector< core::Size > const & ai_to_model,
+	core::Size const & current_model);
 
 
 /// @brief This adds actuals bonds from the mmtf object to connected_indicies/connected_orders
 void
 add_bond_information(::mmtf::StructureData const & sd,
 	std::vector< core::io::AtomInformation > & all_AIs,
-	std::map<core::Size, sd_index> const & atom_num_to_sd_map,
-	core::Size const atomSerialMax);
+	std::map<core::Size, sd_index> const & atom_num_to_sd_map);
 
 /// @brief This adds TERs based on what is bound to the C of each AA.
 //         if something isn't bound, add a TER!
 void
-add_ters_via_bonds(std::vector< core::io::AtomInformation > & all_AIs);
+add_ters_via_bonds(std::vector< core::io::AtomInformation > & all_AIs,
+	std::vector< core::Size > const & ai_to_model);
+
+
+/// @brief set_model_index_if_not_empty does what the name says :p
+/// useful for loading various datas from modelProperties
+template < typename T >
+void
+set_model_index_if_not_empty(core::Size const model_index,
+	std::string const & info_tag,
+	std::vector< T > const & all_model_data, T & target_data);
+
+
+void
+read_extra_data(utility::vector1< core::io::StructFileRepOP > & sfrs,
+	::mmtf::StructureData const & sd);
+
 
 /// @brief load heterogen data: heterogen_names && residue_type_base_names
-//  @note this is stored in extraProperties["rosetta::heterogen_names"] and
-//        extraProperties["rosetta::residue_type_base_names"]
+//  @note this is stored in modelProperties["rosetta::heterogen_names"] and
+//        modelProperties["rosetta::residue_type_base_names"]
 void
 load_heterogen_info(
 	::mmtf::MapDecoder const & md,
-	core::io::StructFileRep & sfr);
+	core::io::StructFileRep & sfr,
+	core::Size const model_index);
+
 
 /// @brief makes a linear vector of all AtomInformation from the mmtf data
 std::vector< core::io::AtomInformation >
 make_all_atom_information(::mmtf::StructureData const & sd,
-	core::Size & atomSerial,
+	std::vector< core::Size > & model_indexes,
+	std::map< core::Size, core::Size > & model_index_to_starting_index,
 	StructFileReaderOptions const & options );
 
 /// @brief makes a single AtomInformation from the mmtf data
@@ -140,11 +159,21 @@ make_atom_information(
 	utility::vector1<char> & known_chainIDs,
 	core::io::StructFileReaderOptions const & options );
 
-/// @brief master create sfr
+/// @brief create sfr from create_sfrs_from_mmtf_filename
 core::io::StructFileRepOP
 create_sfr_from_mmtf_filename(
-	std::string const & filename,
+	std::string const & mmtf_filename,
 	core::io::StructFileReaderOptions const & options);
+
+/// @brief master sfr creator
+/// @note: mmtf format requires us to iterate completely because order
+///        doesn't matter.  So it makes more sense to iterate over all
+///        and then trim back your selection at the end.
+utility::vector1< core::io::StructFileRepOP >
+create_sfrs_from_mmtf_filename(
+	std::string const & mmtf_filename,
+	core::io::StructFileReaderOptions const & options,
+	utility::vector1< core::Size > const & model_indexes);
 
 } // core
 } // io

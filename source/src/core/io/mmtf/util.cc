@@ -56,7 +56,7 @@ make_atom_num_to_sd_map(::mmtf::StructureData const & sd) {
 			for ( int32_t k = 0; k < sd.groupsPerChain[chainIndex]; k++, groupIndex++ ) {
 				const ::mmtf::GroupType& group =
 					sd.groupList[sd.groupTypeList[groupIndex]];
-				int groupAtomCount = group.atomNameList.size();
+				int const groupAtomCount = group.atomNameList.size();
 				for ( int32_t l = 0; l < groupAtomCount; l++, atomSerial++ ) {
 					ret_map[atomSerial] = sd_index(modelIndex, chainIndex, groupIndex, l);
 				}

@@ -234,6 +234,7 @@ sources = {
 	],
 	"pilot/danpf" : [
 		"mmtf2pdb",
+		"mmtfs2mmtf",
 	],
 	"pilot/dekim" : [
 		"score_nonlocal_frags",

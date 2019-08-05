@@ -35,6 +35,7 @@ namespace mmtf {
 typedef utility::vector0<core::io::AtomInformation> aiGroup;
 typedef utility::vector0<aiGroup> aiChain;
 typedef utility::vector0<aiChain> aiPose;
+typedef utility::vector0<aiPose> aiModels;
 
 /// @brief storage for indicies to something in a mmtf struct
 ///        this makes it easier to iterate the struct in relation to

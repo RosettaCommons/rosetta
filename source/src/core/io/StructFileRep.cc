@@ -102,13 +102,16 @@ StructFileRep::clone() const {
 std::ostream &
 operator<<( std::ostream &os, AtomInformation const & ai )
 {
-	os << "<AtomInformation>{" << "isHet=" << ai.isHet << " serial=" << ai.serial << " name=" << ai.name << " resName=" << ai.resName
-		<< " chainID=" << ai.chainID << " resSeq=" << ai.resSeq
+	os << "<AtomInformation>{" << "isHet=" << ai.isHet << " serial=" << ai.serial << " name=" << ai.name << " altLoc=" << ai.altLoc
+		<< " resName=" << ai.resName
+		<< " chainID=" << ai.chainID << " resSeq=" << ai.resSeq << " icode=" << ai.iCode
 		<< " x=" << ai.x << " y=" << ai.y << " z=" << ai.z
-		<< " temperature=" << ai.temperature
 		<< " occupancy=" << ai.occupancy
+		<< " temperature=" << ai.temperature
 		<< " segmentID=" << ai.segmentID
 		<< " element=" << ai.element
+		<< " formalcharge=" << (int)ai.formalcharge
+		<< " terCount=" << ai.terCount
 		<< "}";
 	return os;
 }
