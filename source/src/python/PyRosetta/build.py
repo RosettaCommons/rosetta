@@ -715,7 +715,7 @@ def generate_documentation(rosetta_source_path, path, version):
     execute('Generating Sphinx files for PyRosetta Python code...', '{python} {generator} -o {documentation_source_prefix} --javascript-path {documentation_source_prefix}/_static --javascript-web-path _static/ {build_prefix}/pyrosetta'.format(**vars()))
     execute('Generating Sphinx files for PyRosetta Rosetta code...', '{python} {generator} -o {documentation_source_prefix} --javascript-path {documentation_source_prefix}/_static --javascript-web-path _static/ --root pyrosetta.rosetta {source_prefix}/rosetta.modules'.format(**vars()))  # --depth 1
 
-    execute('Building documentation...', 'cd {documentation_prefix} && PATH={python_path}:$PATH && PYTHONPATH={build_prefix}:PYTHONPATH && make clean && make html'.format(python_path=os.path.dirname(python), **vars()))
+    execute('Building documentation...', 'cd {documentation_prefix} && make clean && PATH={python_path}:$PATH PYTHONPATH={build_prefix}:$PYTHONPATH make html'.format(python_path=os.path.dirname(python), **vars()))
 
     distutils.dir_util.copy_tree(documentation_prefix + '/build/html', path, update=False)
 
