@@ -519,10 +519,10 @@ operator <<( std::ostream & os, FullModelParameters const & t )
 	if ( t.global_sequence().compare("") ) {
 		os << "  GLOBAL_SEQUENCE " << t.global_sequence();
 		os << "  GLOBAL_MAPPING ";
-		for (Size i = 1; i <= t.global_mapping_.size() - 1; i++) {
-			os << t.global_mapping_[i] << ','; 
+		for ( Size i = 1; i <= t.global_mapping_.size() - 1; i++ ) {
+			os << t.global_mapping_[i] << ',';
 		}
-		if (t.global_mapping_.size() > 0) os << t.global_mapping_.back();
+		if ( t.global_mapping_.size() > 0 ) os << t.global_mapping_.back();
 	}
 
 	if ( t.conventional_chains().size() > 0 && t.conventional_segids().size() > 0 ) {
@@ -596,7 +596,7 @@ operator >>( std::istream & is, FullModelParameters & t )
 		runtime_assert( !is.fail() && (tag == "GLOBAL_MAPPING") );
 		is >> tag;
 		utility::vector1< std::string > global_idxs = string_split( tag, ',');
-		for (Size i = 1; i <= global_idxs.size(); i++) {
+		for ( Size i = 1; i <= global_idxs.size(); i++ ) {
 			t.global_mapping_.push_back( string2int(global_idxs[i]) );
 		}
 		is >> tag;
@@ -760,7 +760,7 @@ FullModelParameters::read_global_seq_info( std::string const & global_seq_file )
 
 	// Fill in global sequence
 	global_sequence_ = fasta_sequences[ 1 ]->sequence();
-	
+
 	// Fill in global mapping
 	utility::vector1< char > global_to_pdb_chains;
 	utility::vector1< std::string > global_to_pdb_segids;
