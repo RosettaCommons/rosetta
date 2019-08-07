@@ -190,7 +190,7 @@ SimpleThreadingMover::apply(core::pose::Pose& pose){
 	std::map< core::Size, core::chemical::AA >::iterator it;
 
 	core::Size seq_position = 0;
-	for ( core::Size resnum = start_position_; resnum <= start_position_+thread_sequence_.size() -1; ++resnum ) {
+	for ( core::Size resnum = start_position_; resnum <= std::min(pose.size(), start_position_+thread_sequence_.size() -1); ++resnum ) {
 
 		mutant_resnums[ resnum ] = true;
 

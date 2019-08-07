@@ -172,6 +172,9 @@ sources = {
 		"AlignmentFileGeneratorMover",
 	        "LigandBindingResPlacer",
 	],
+	"protocols/switches": [
+		"GraftSwitchMover",
+	],
 
 }
 include_path = [

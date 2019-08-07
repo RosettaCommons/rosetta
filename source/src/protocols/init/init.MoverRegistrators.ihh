@@ -608,6 +608,8 @@ static MoverRegistrator< struct_fragment::StructFragmentMoverCreator > reg_Struc
 static MoverRegistrator< simple_moves::asym_fold_and_dock::AsymFoldandDockMoveRbJumpMoverCreator > reg_AsymFoldandDockMoveRbJumpMoverCreator;
 static MoverRegistrator< simple_moves::asym_fold_and_dock::AsymFoldandDockRbTrialMoverCreator > reg_AsymFoldandDockRbTrialMoverCreator;
 
+static MoverRegistrator< switches::GraftSwitchMoverCreator > reg_GraftSwitchMoverCreator;
+
 static MoverRegistrator< symmetric_docking::SymDockProtocolCreator > SymDockProtocolCreator;
 static MoverRegistrator< symmetric_docking::SymFoldandDockMoveRbJumpMoverCreator > SymFoldandDockMoveRbJumpMoverCreator;
 static MoverRegistrator< symmetric_docking::SymFoldandDockSlideTrialMoverCreator > SymFoldandDockSlideTrialMoverCreator;

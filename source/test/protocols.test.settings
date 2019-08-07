@@ -715,6 +715,9 @@ sources = {
 	"surface_docking" : [
 		"SurfaceVectorLoader",
 	],
+    "switches" : [
+        "GraftSwitchMover",
+    ],
 
 	"task_operations" : [
 		#"AlignedThreadOperation", requires file input for alignment... not for now.
@@ -1266,6 +1269,7 @@ testinputfiles = [
 	"stepwise/modeler/align/seq_with_AAmismatch.fasta",
 	"stepwise/monte_carlo/mover/up_to_ua_handle_t_loop_3l0u_RNA.pdb",
 	"stepwise/monte_carlo/mover/t_loop.fasta",
+	"switches/GraftSwitchMoverTest.pdb",
 	"task_operations/arg_and_two_ser.pdb",
 	"task_operations/asn_to_bb.pdb",
 	"task_operations/asn_to_satisfied_bb.pdb",

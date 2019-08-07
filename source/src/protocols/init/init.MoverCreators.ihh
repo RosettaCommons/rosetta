@@ -585,6 +585,8 @@
 
 #include <protocols/struct_fragment/StructFragmentMoverCreator.hh>
 
+#include <protocols/switches/GraftSwitchMoverCreator.hh>
+
 #include <protocols/symmetric_docking/SymDockProtocolCreator.hh>
 #include <protocols/symmetric_docking/SymFoldandDockCreators.hh>
 
