@@ -13,7 +13,7 @@
 /// Phil Bradley
 /// Steven Combs
 /// Vikram K. Mulligan - properties for D-, beta- and other noncanonicals
-/// Jason W. Labonte (code related to rings, properties, lipids, carbohydrates, and other non-AAs)
+/// Jason W. Labonte (code related to rings, properties, rings, lipids, carbohydrates, and other non-AAs)
 
 // Unit headers
 #include <core/chemical/ResidueType.hh>
@@ -253,6 +253,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	orbitals_index_ = residue_type.orbitals_index_;
 	chi_rotamers_ = residue_type.chi_rotamers_;
 	rotamer_library_specification_ = residue_type.rotamer_library_specification_;
+	ring_saturation_types_ = residue_type.ring_saturation_types_;
 	lowest_ring_conformer_ = residue_type.lowest_ring_conformer_;
 	low_ring_conformers_ = residue_type.low_ring_conformers_;
 	properties_ = utility::pointer::make_shared< ResidueProperties >( *residue_type.properties_, this );
@@ -1624,7 +1625,7 @@ ResidueType::add_cut_bond(
 	if ( i1_nbrs_iter != cut_bond_neighbor_.end() ) {
 		utility::vector1<VD> const i1_nbrs(i1_nbrs_iter->second);
 		if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), vd_target ) != i1_nbrs.end() ) {
-			utility_exit_with_message( "don't add cut bonds more than once!" );
+			utility_exit_with_message( "A single atom cannot be part of more than one cut bond." );
 		}
 	}
 	cut_bond_neighbor_[vd_source].push_back(vd_target);
@@ -1740,7 +1741,10 @@ ResidueType::add_nu( core::uint const nu_index,
 
 // Add a ring definition.
 void
-ResidueType::add_ring( core::uint const ring_num, utility::vector1< std::string > const & ring_atoms )
+ResidueType::add_ring(
+	core::uint const ring_num,
+	utility::vector1< std::string > const & ring_atoms,
+	core::chemical::rings::RingSaturationType const saturation_type )
 {
 	// Signal that we need to update the derived data.
 	finalized_ = false;
@@ -1757,6 +1761,9 @@ ResidueType::add_ring( core::uint const ring_num, utility::vector1< std::string 
 	if ( ring_atoms_.size() < ring_num ) {
 		ring_atoms_.resize( ring_num );
 	}
+	if ( ring_saturation_types_.size() < ring_num ) {
+		ring_saturation_types_.resize( ring_num );
+	}
 	if ( lowest_ring_conformer_.size() < ring_num ) {
 		lowest_ring_conformer_.resize( ring_num );
 	}
@@ -1764,6 +1771,7 @@ ResidueType::add_ring( core::uint const ring_num, utility::vector1< std::string 
 		low_ring_conformers_.resize( ring_num );
 	}
 	ring_atoms_[ ring_num ] = atoms;
+	ring_saturation_types_[ ring_num ] = saturation_type;
 }
 
 // Add alternate atoms for anomeric  pseudo torsion
@@ -3035,6 +3043,39 @@ ResidueType::add_actcoord_atom( std::string const & atom )
 
 ///////////////////////////////////////////////////////////////////////////////
 
+/// If a ring has been added but no nu angles have been defined, automatically assign them.
+/// @details  Don't even bother trying if there are multiple rings.
+/// The creator of the .params file needs to add the definitions manually.
+/// @author   Labonte <JWLabonte@jhu.edu>
+void
+ResidueType::auto_assign_nu_atoms()
+{
+	finalized_ = false;
+
+	if ( n_rings() == 0 ) { return; }  // Nothing to do here.
+	if ( n_nus() != 0 ) { return; }  // Nus are already set, hopefully correctly.
+	if ( n_rings() > 1 ) {
+		utility_exit_with_message( "ResidueType::auto_assign_nu_atoms: "
+			"ResidueTypes with more than one ring must explicitly define their nu angles." );
+	}
+
+	utility::vector1< VD > const & ring_atoms( ring_atoms_[ 1 ] );
+	Size const n_ring_atoms( ring_atoms.size() );
+	nu_atoms_.resize( n_ring_atoms );
+
+	utility::vector1< VD > nu_atoms( 4 );  //  exactly 4 atoms per torsion definition
+	for ( core::uint i( 1 ); i <= n_ring_atoms; ++i ) {
+		// In the conditional operations below, the value, if zero, becomes n_ring_atoms.
+		// (Bummer, using GNU ?: conditional expressions throws a warning.  Now the math has to be done twice; lame.)
+		nu_atoms[ 1 ] = ring_atoms[ ( i - 1 ) ? ( i - 1 ) : n_ring_atoms ];
+		nu_atoms[ 2 ] = ring_atoms[ i ];
+		nu_atoms[ 3 ] = ring_atoms[ ( ( i + 1 ) % n_ring_atoms ) ? ( ( i + 1 ) % n_ring_atoms ) : n_ring_atoms ];
+		nu_atoms[ 4 ] = ring_atoms[ ( ( i + 2 ) % n_ring_atoms ) ? ( ( i + 2 ) % n_ring_atoms ) : n_ring_atoms ];
+		nu_atoms_[ i ] = nu_atoms;
+	}
+}
+
+
 /// @brief After deleting a connection, update the icoors of any atoms dependent on HIGHER-numbered
 /// connections.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -3745,7 +3786,8 @@ ResidueType::update_derived_data()
 		conformer_sets_.resize( n_rings() );
 		for ( uint i( 1 ); i <= n_rings(); ++i ) {
 			conformer_sets_[ i ] = utility::pointer::make_shared< rings::RingConformerSet >(
-				ring_atoms_[ i ].size(), lowest_ring_conformer_[ i ], low_ring_conformers_[ i ] );
+				ring_atoms_[ i ].size(), ring_saturation_types_[ i ],
+				lowest_ring_conformer_[ i ], low_ring_conformers_[ i ] );
 		}
 	}
 
@@ -4021,6 +4063,7 @@ property that depends on atom-indices that will have to be updated below.
 void
 ResidueType::finalize()
 {
+	auto_assign_nu_atoms();  // only occurs if a ring has been added with no nu angles defined
 
 	// We've made substantial changes to this ResidueType.
 	// On the off chance any observers has cached data about it,
@@ -5229,7 +5272,7 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	arc( CEREAL_NVP( orbitals_index_ ) ); // std::map<std::string, int>
 	arc( CEREAL_NVP( chi_rotamers_ ) ); // utility::vector1<utility::vector1<std::pair<Real, Real> > >
 	arc( CEREAL_NVP( rotamer_library_specification_ ) ); // rotamers::RotamerLibrarySpecificationOP
-	arc( CEREAL_NVP( ring_sizes_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( ring_saturation_types_ ) );  // utility::vector1< core::chemical::rings::RingSaturationType >
 	arc( CEREAL_NVP( lowest_ring_conformer_ ) ); // utility::vector1<std::string>
 	arc( CEREAL_NVP( low_ring_conformers_ ) ); // utility::vector1<utility::vector1<std::string> >
 	arc( CEREAL_NVP( properties_ ) ); // ResiduePropertiesOP
@@ -5441,7 +5484,7 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	arc( orbitals_index_ ); // std::map<std::string, int>
 	arc( chi_rotamers_ ); // utility::vector1<utility::vector1<std::pair<Real, Real> > >
 	arc( rotamer_library_specification_ ); // rotamers::RotamerLibrarySpecificationOP
-	arc( ring_sizes_ ); // utility::vector1<Size>
+	arc( ring_saturation_types_ );  // utility::vector1< core::chemical::rings::RingSaturationType >
 	arc( lowest_ring_conformer_ ); // utility::vector1<std::string>
 	arc( low_ring_conformers_ ); // utility::vector1<utility::vector1<std::string> >
 	arc( properties_ ); // ResiduePropertiesOP

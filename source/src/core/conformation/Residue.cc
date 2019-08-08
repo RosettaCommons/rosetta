@@ -230,7 +230,15 @@ Residue::Residue(
 		chi_[ chino ] = current_chi;
 	}
 
+	// If the new rotamer has a different number of nus than the original,
+	// this means that we have lost or gained a ring in the side chain and
+	// that we need to redefine our nus.
+	Size const n_nus( rsd_type_in.n_nus() );
+	if ( n_nus != current_rsd.n_nus() ) {
+		nus_.resize( n_nus, 0.0 );  // Reset the vector.
+	}
 	update_nus();
+
 	assign_orbitals();
 }
 
@@ -417,20 +425,25 @@ Residue::ring_conformer( core::uint const ring_num, core::Real limit/*=90*/ ) co
 		"Residue::ring_conformer(core::uint const ring_num): variable ring_num is out of range!" );
 	debug_assert( rsd_type_.is_cyclic() );
 
-	// First, figure out which nus belong to this ring.
-	Size n_nus_on_previous_rings( 0 );
-	for ( uint previous_ring_num( ring_num -1 ); previous_ring_num > 0; --previous_ring_num ) {
-		// ( Each ring has one fewer nus associated with it than the size of the ring. )
-		n_nus_on_previous_rings += rsd_type_.ring_atoms( previous_ring_num ).size() - 1;
-	}
+	if ( rsd_type_.ring_saturation_type( ring_num ) == core::chemical::rings::AROMATIC ) {
+		// An aromatic ring can only be planar, so it will only have one conformer in its set.
+		return rsd_type_.ring_conformer_set( ring_num )->get_lowest_energy_conformer();
+	} else {
+		// We need to analyze the nu angles to determine which conformer we have.
+		// First, figure out which nus belong to this ring.
+		Size n_nus_on_previous_rings( 0 );
+		for ( uint previous_ring_num( ring_num - 1 ); previous_ring_num > 0; --previous_ring_num ) {
+			n_nus_on_previous_rings += rsd_type_.ring_atoms( previous_ring_num ).size();
+		}
 
-	Size const n_nus( rsd_type_.ring_atoms( ring_num ).size() - 1 );
-	utility::vector1< Angle > nus;
-	for ( uint i( 1 ); i <= n_nus; ++i ) {
-		nus.push_back( nus_[ n_nus_on_previous_rings + i ] );
-	}
+		Size const n_nus( rsd_type_.ring_atoms( ring_num ).size() - 1 );
+		utility::vector1< Angle > nus;
+		for ( uint i( 1 ); i <= n_nus; ++i ) {
+			nus.push_back( nus_[ n_nus_on_previous_rings + i ] );
+		}
 
-	return rsd_type_.ring_conformer_set( ring_num )->get_ideal_conformer_from_nus( nus, limit ); // fd: nus_->nus
+		return rsd_type_.ring_conformer_set( ring_num )->get_ideal_conformer_from_nus( nus, limit ); // fd: nus_->nus
+	}
 }
 
 core::Size

@@ -16,8 +16,11 @@
 #define INCLUDED_core_chemical_rings_RingConformerSet_HH
 
 // Unit header
-#include <core/chemical/rings/RingConformer.hh>
 #include <core/chemical/rings/RingConformerSet.fwd.hh>
+
+// Package header
+#include <core/chemical/rings/RingConformer.hh>
+#include <core/chemical/rings/RingSaturationType.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -50,8 +53,9 @@ public:
 	/// @brief  Standard constructor
 	RingConformerSet(
 		core::Size const ring_size,
-		std::string const & lowest_conformer,
-		utility::vector1< std::string > const & low_conformers );
+		core::chemical::rings::RingSaturationType const saturation_type=core::chemical::rings::ALIPHATIC,
+		std::string const & lowest_conformer="",
+		utility::vector1< std::string > const & low_conformers=utility::vector1< std::string >() );
 
 	/// @brief  Copy constructor
 	RingConformerSet( RingConformerSet const & object_to_copy );
@@ -118,6 +122,7 @@ private:
 	// Initialize data members for the given ring size.
 	void init(
 		core::Size const ring_size,
+		core::chemical::rings::RingSaturationType const saturation_type,
 		std::string const & lowest_conformer_in,
 		utility::vector1< std::string > const & low_conformers );
 

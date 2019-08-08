@@ -140,7 +140,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		Pose to6_beta_sugar;
 		make_pose_from_saccharide_sequence( to6_beta_sugar,
 			"b-D-Glcp-(1->6)-b--D-Glcp-(1->6)-b-D-Glcp-(1->6)-b-D-Glcp", "fa_standard" );
-		RingConformerSet const conformers( 6, "", vector1< string >() );
+		RingConformerSet const conformers( 6 );
 		RingConformer const & flipped_chair( conformers.get_ideal_conformer_by_name( "1C4" ) );
 
 		for ( core::uint i( 1 ); i <= 4; ++i ) {

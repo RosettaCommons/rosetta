@@ -13,7 +13,7 @@
 /// Phil Bradley
 /// Steven Combs
 /// Vikram K. Mulligan - properties for D-, beta- and other noncanonicals
-/// Jason W. Labonte (code related to properties, lipids, carbohydrates, and other non-AAs)
+/// Jason W. Labonte (code related to properties, rings, lipids, carbohydrates, and other non-AAs)
 
 
 #ifndef INCLUDED_core_chemical_ResidueType_hh
@@ -60,6 +60,7 @@
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.fwd.hh>
 #include <core/chemical/rings/RingConformerSet.fwd.hh>
+#include <core/chemical/rings/RingSaturationType.hh>
 #include <core/chemical/VariantType.hh>
 
 // Project headers
@@ -465,9 +466,16 @@ public:
 		return ring_atoms_indices_;
 	}
 
-	/// @brief Return whether this atom is in a particular ring
-	bool
-	is_ring_atom( uint const ring_num, uint const atom_id ) const;
+	/// @brief Return whether this atom is in a particular ring.
+	bool is_ring_atom( uint const ring_num, uint const atom_id ) const;
+
+	/// @brief  Return the saturation level of this residue's nth cycle.
+	core::chemical::rings::RingSaturationType
+	ring_saturation_type( uint const ring_num ) const
+	{
+		return ring_saturation_types_[ ring_num ];
+	}
+
 
 	/// @brief Gets indices of all atoms that can form bonds to metals
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1514,7 +1522,10 @@ public:
 	void set_anomeric_sidechain( utility::vector1< std::string > const & anomeric_sidechain );
 
 	/// @brief  Add a ring definition.
-	void add_ring( core::uint const ring_num, utility::vector1< std::string > const & ring_atoms );
+	void add_ring(
+		core::uint const ring_num,
+		utility::vector1< std::string > const & ring_atoms,
+		core::chemical::rings::RingSaturationType const saturation_type=core::chemical::rings::ALIPHATIC );
 
 	/// @brief  Set this cyclic residue's lowest-energy ring conformer for the nth ring by IUPAC name.
 	void set_lowest_energy_ring_conformer( core::uint const ring_num, std::string const & conformer );
@@ -2470,6 +2481,9 @@ public:
 	// private methods
 private:
 
+	/// @brief  If a ring has been added but no nu angles have been defined, automatically assign them.
+	void auto_assign_nu_atoms();
+
 	/// @brief After deleting a connection, update the icoors of any atoms dependent on HIGHER-numbered
 	/// connections.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -2818,8 +2832,8 @@ private:
 
 	///////////////////////////////////////////////////////////////////////////
 
-	/// @brief The size of each ring in this residue -- Primary
-	utility::vector1< Size > ring_sizes_;  // indexed by ring number
+	/// @brief The saturation type of each ring in this residue -- Primary
+	utility::vector1< core::chemical::rings::RingSaturationType > ring_saturation_types_;  // indexed by ring number
 
 	/// @brief   Lowest-energy ring conformer for each ring -- Primary
 	/// @details used for setting up the RingConformerSets
@@ -2828,7 +2842,6 @@ private:
 	/// @brief   Low-energy ring conformers for each ring -- Primary
 	/// @details used for setting up the RingConformerSets
 	utility::vector1< utility::vector1< std::string > > low_ring_conformers_;  // indexed by ring number
-
 
 	///////////////////////////////////////////////////////////////////////////
 

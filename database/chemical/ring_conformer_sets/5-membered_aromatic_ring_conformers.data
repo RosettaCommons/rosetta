@@ -1,0 +1,25 @@
+# A list of ring conformation definitions for aromatic five-membered rings.
+
+# nu1 is defined using only internal ring atoms, so for a ring of all carbons,
+# nu1 is the C5-C1-C2-C3 angle.
+
+# Since these are internal ring torsions, the sum must be 0 degrees.
+
+# tau1 is defined as the internal ring bond angle about C1, so for a ring of all
+# carbons, tau1 is the C5-C1-C2 angle.
+
+# Degeneracy is the number of copies to load into a degenerate conformer set.
+# It does not apply for a set with one conformer.
+
+# q is in Angstroms; phi is in degrees.  However, these values are meaningless
+# for a planar aromatic system.
+
+# There is only 1 possible ring conformer for an aromatic ring system.
+
+#                                      Ideal
+# Specific   General                Cremer-Pople
+# Conformer  Conformer               Parameters                           Ideal Angles (degrees)
+# Name       Name       Degeneracy     q    phi     nu1    nu2    nu3    nu4    nu0    tau1   tau2   tau3   tau4   tau5
+
+# 1 Planar Conformation
+  P          planar              1   0.0    0.0     0.0    0.0    0.0    0.0    0.0   108.0  108.0  108.0  108.0  108.0

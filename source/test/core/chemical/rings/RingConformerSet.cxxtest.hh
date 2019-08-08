@@ -15,8 +15,9 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 
-// Unit header
+// Unit headers
 #include <core/chemical/rings/RingConformerSet.hh>
+#include <core/chemical/rings/RingSaturationType.hh>
 
 // Utility header
 #include <utility/vector1.hh>
@@ -35,7 +36,7 @@ public:
 	{
 		using namespace std;
 		using namespace utility;
-		using namespace core::chemical;
+		using namespace core::chemical::rings;
 
 		core_init_with_additional_options( "-out:levels core.chemical.rings.RingConformerSet:400" );
 
@@ -46,8 +47,9 @@ public:
 		lows.push_back( "3E" );
 		lows.push_back( "PINEAPPLE" );  // should be ignored by RingConformerSet
 
-		set5_ = utility::pointer::make_shared< rings::RingConformerSet >( 5, "1E", lows );
-		set6_ = utility::pointer::make_shared< rings::RingConformerSet >( 6, "", lows );  // should default to 4C1
+		set5_ = pointer::make_shared< RingConformerSet >( 5, ALIPHATIC, "1E", lows );
+		set6_ = pointer::make_shared< RingConformerSet >( 6, ALIPHATIC, "", lows );  // should default to 4C1
+		set6aro_ = pointer::make_shared< RingConformerSet >( 6, AROMATIC );
 	}
 
 	// Destruction
@@ -62,6 +64,7 @@ public:
 			"Testing get_all_nondegenerate_conformers() method of RingConformerSet for 5- and 6-membered rings." << std::endl;
 		TS_ASSERT_EQUALS( set5_->get_all_nondegenerate_conformers().size(), 20 );
 		TS_ASSERT_EQUALS( set6_->size(), 38 );
+		TS_ASSERT_EQUALS( set6aro_->size(), 1 );
 	}
 
 	// Confirm that the proper conformers are loaded by get_ideal_conformer_by_name() and
@@ -234,6 +237,7 @@ public:
 		TR << "Testing that RingConformer subsets have been populated correctly."  << std::endl;
 		TS_ASSERT_EQUALS( set5_->get_lowest_energy_conformer().specific_name, "1E" );
 		TS_ASSERT_EQUALS( set6_->get_lowest_energy_conformer().specific_name, "4C1" );
+		TS_ASSERT_EQUALS( set6aro_->get_lowest_energy_conformer().specific_name, "P" );
 
 		vector1< string > expected_lows;
 		expected_lows.push_back( "1E" );
@@ -254,5 +258,6 @@ private:
 	// Private data ////////////////////////////////////////////////////////////
 	core::chemical::rings::RingConformerSetOP set5_;
 	core::chemical::rings::RingConformerSetOP set6_;
+	core::chemical::rings::RingConformerSetOP set6aro_;
 
 };  // class RingConformerSetTests

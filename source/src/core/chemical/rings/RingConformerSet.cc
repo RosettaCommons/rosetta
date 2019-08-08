@@ -44,21 +44,20 @@ namespace core {
 namespace chemical {
 namespace rings {
 
-using namespace core;
-
-
 // Public methods /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Standard constructor
-/// @param    <ring_size>: an unsigned integer expressing the size of the ring
-/// @param    <lowest_conformer>: IUPAC name for the lowest-energy ring conformer, if known
-/// @param    <low_conformers>: IUPAC name for other low-energy ring conformers
+/// @param    <ring_size>:        an unsigned integer expressing the size of the ring
+/// @param    <saturation_type>:  ALIPHATIC, AROMATIC, etc.  Default is ALIPHATIC.
+/// @param    <lowest_conformer>: IUPAC name for the lowest-energy ring conformer, if known.  Default "".
+/// @param    <low_conformers>:   IUPAC name for other low-energy ring conformers.  Default empty vector.
 RingConformerSet::RingConformerSet(
 	core::Size const ring_size,
+	core::chemical::rings::RingSaturationType const saturation_type,
 	std::string const & lowest_conformer,
 	utility::vector1< std::string > const & low_conformers ) : utility::pointer::ReferenceCount()
 {
-	init( ring_size, lowest_conformer, low_conformers );
+	init( ring_size, saturation_type, lowest_conformer, low_conformers );
 }
 
 // Copy constructor
@@ -91,6 +90,7 @@ void
 RingConformerSet::show( std::ostream & output ) const
 {
 	using namespace std;
+	using namespace core;
 
 	output << "Possible ring conformers:" << endl;
 
@@ -115,8 +115,8 @@ RingConformerSet::size() const
 bool
 RingConformerSet::low_energy_conformers_are_known() const
 {
-	// energy_minima_conformers_ should always include at least energy_minimum_conformer_, but then there is only one
-	// option to select from, so return false.
+	// energy_minima_conformers_ should always include at least energy_minimum_conformer_,
+	// but then there is only one option to select from, so return false.
 	return ( energy_minima_conformers_.size() > 1 );
 }
 
@@ -141,6 +141,7 @@ RingConformer const &
 RingConformerSet::get_ideal_conformer_by_name( std::string const & name ) const
 {
 	using namespace std;
+	using namespace core;
 
 	Size const n_conformers( size() );
 	for ( uint i( 1 ); i <= n_conformers; ++i ) {
@@ -172,6 +173,7 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 {
 	using namespace std;
 	using namespace numeric;
+	using namespace core;
 
 	// Drop out if this is not a 4- to 6-membered ring set.
 	if ( ring_size_ == 3 ) {
@@ -271,6 +273,7 @@ RingConformerSet::get_ideal_conformer_from_nus( utility::vector1< core::Angle > 
 {
 	using namespace std;
 	using namespace numeric;
+	using namespace core;
 
 	// Drop out if this is not a 4- to 6-membered ring set.
 	if ( ring_size_ == 3 ) {
@@ -365,22 +368,31 @@ RingConformerSet::get_local_min_conformers() const
 void
 RingConformerSet::init(
 	core::uint const ring_size,
+	core::chemical::rings::RingSaturationType const saturation_type,
 	std::string const & lowest_conformer_in,
 	utility::vector1< std::string > const & low_conformers )
 {
 	using namespace utility;
+	using namespace core;
 
 	ring_size_ = ring_size;
 	std::string lowest_conformer( lowest_conformer_in );
 
-	// For 6-membered rings, assume 4C1, if lowest conformer is not provided or known.
-	if ( lowest_conformer == "" && ring_size_ == 6 ) {
-		lowest_conformer = "4C1";
+	if ( lowest_conformer == "" ) {
+		if ( saturation_type == AROMATIC ) {
+			// For aromatic rings, no matter the ring size, there is only one conformation.
+			lowest_conformer = "P";  // planar
+		} else if ( ring_size_ == 6 ) {
+			// For 6-membered rings, assume 4C1, if lowest conformer is not provided or known.
+			lowest_conformer = "4C1";
+		}
 	}
 
-	Size const n_conformers( RingConformerManager::conformers_for_ring_size( ring_size_ ).size() );
+	Size const n_conformers(
+		RingConformerManager::conformers_for_ring_size_and_type( ring_size_, saturation_type ).size() );
 	for ( uint i( 1 ); i <= n_conformers; ++i ) {
-		RingConformer const & conformer( RingConformerManager::conformers_for_ring_size( ring_size_ ).at( i ) );
+		RingConformer const & conformer(
+			RingConformerManager::conformers_for_ring_size_and_type( ring_size_, saturation_type ).at( i ) );
 		nondegenerate_conformers_.push_back( conformer );
 		for ( uint copy_num( 1 ); copy_num <= conformer.degeneracy; ++copy_num ) {
 			degenerate_conformers_.push_back( conformer );
@@ -429,6 +441,8 @@ operator!=( RingConformer const & ring1, RingConformer const & ring2 )
 std::ostream &
 operator<<( std::ostream & output, RingConformer const & object_to_output )
 {
+	using namespace core;
+
 	output << object_to_output.specific_name << " (" << object_to_output.general_name << "): ";
 	Size const n_CP_parameters( object_to_output.CP_parameters.size() );
 	if ( n_CP_parameters == 2 /* (for 5-membered rings) */ ||

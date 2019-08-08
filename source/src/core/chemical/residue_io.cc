@@ -32,6 +32,7 @@
 #include <core/chemical/rotamers/DunbrackRotamerLibrarySpecification.hh>
 #include <core/chemical/rotamers/PDBRotamerLibrarySpecification.hh>
 #include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
+#include <core/chemical/rings/RingSaturationType.hh>
 
 // Project headers
 #include <core/id/AtomID.hh>
@@ -249,6 +250,11 @@ read_topology_file(
 /// Lists the atoms that define the "action coordinate" which is used
 /// by the fa_pair potential followed by the "END" token. E.g.,
 /// "ACT_COORD_ATOMS OG END" from SER.params.
+///
+/// ADD_RING:
+/// Declares a ring within the residue, its index, its saturation type
+/// (optional) and the atoms that define it.  E.g.,
+/// " ADD_RING 1 AROMATIC  CG   CD1  CE1  CZ   CE2  CD2"  from TYR.params.
 ///
 /// ADDUCT:
 /// Defines an adduct as part of this residue type giving: a) the name, b)
@@ -626,7 +632,6 @@ read_topology_file(
 	chemical::MMAtomTypeSetCAP mm_atom_types,
 	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types )
 {
-
 	using id::AtomID;
 	using id::DOF_ID;
 	using numeric::conversions::radians;
@@ -843,14 +848,22 @@ read_topology_file(
 			rsd->add_nu(nu_num, atom1, atom2, atom3, atom4);
 		} else if ( tag == "ADD_RING" ) {
 			uint ring_num;
+			rings::RingSaturationType saturation;
 			l >> ring_num;
 			utility::vector1< std::string > ring_atoms;
 			l >> atom1;
+			if ( atom1 == "AROMATIC" ) {
+				saturation = rings::AROMATIC;
+				l >> atom1;
+			} else {
+				saturation = rings::ALIPHATIC;
+			}
 			while ( !l.fail() ) {
 				ring_atoms.push_back( atom1 );
 				l >> atom1;
 			}
-			rsd->add_ring( ring_num, ring_atoms );
+			rsd->add_ring( ring_num, ring_atoms, saturation );
+			rsd->add_property( CYCLIC );
 		} else if ( tag == "ANOMERIC_PSEUDOTORSION" ) {
 			l >> atom1 >> atom2 >> atom3 >> atom4;
 			utility::vector1< std::string > atoms = {atom1,atom2,atom3,atom4};

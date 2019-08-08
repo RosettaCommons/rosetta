@@ -41,9 +41,11 @@ using namespace core;
 // Public methods /////////////////////////////////////////////////////////////
 // Static constant data access
 utility::vector1< RingConformer > const &
-RingConformerManager::conformers_for_ring_size( core::Size ring_size )
+RingConformerManager::conformers_for_ring_size_and_type(
+	core::Size const ring_size,
+	core::chemical::rings::RingSaturationType const type )
 {
-	return get_instance()->get_conformers_for_ring_size( ring_size );
+	return get_instance()->get_conformers_for_ring_size_and_type( ring_size, type );
 }
 
 
@@ -54,24 +56,26 @@ RingConformerManager::RingConformerManager() = default;
 // Get the conformers requested, creating them if necessary.
 // Called by the public static method conformers_for_ring_size().
 utility::vector1< RingConformer > const &
-RingConformerManager::get_conformers_for_ring_size( core::Size ring_size )
+RingConformerManager::get_conformers_for_ring_size_and_type(
+	core::Size const ring_size,
+	core::chemical::rings::RingSaturationType const type )
 {
 	using namespace std;
 	using namespace utility;
 	using namespace basic::options;
 
-	// fd make this a flag
-	std::string ring_conf_dbpath = option[ basic::options::OptionKeys::rings::ring_conformer_dbpath ]();
-
-	// Only create sets one time, as needed, for each ring size.
-	if ( ! conformers_.count( ring_size ) ) {
+	// Only create sets one time, as needed, for each ring size and saturation type.
+	if ( ! conformers_.count( make_pair( ring_size, type ) ) ) {
 		stringstream filename( stringstream::out );
-		filename << ring_conf_dbpath << "/" << ring_size << "-membered_ring_conformers.data";
+		filename << option[ OptionKeys::rings::ring_conformer_dbpath ]();
+		filename << "/" << ring_size << "-membered_";
+		// TODO: Switch to a switch or function when other saturation types are added.
+		filename << ( ( type == ALIPHATIC ) ? "aliphatic" : "aromatic" ) << "_ring_conformers.data";
 		vector1< RingConformer > conformers( read_conformers_from_database_file_for_ring_size(
 			basic::database::full_name( filename.str() ), ring_size ) );
-		conformers_.insert( make_pair( ring_size, conformers ) );
+		conformers_.insert( make_pair( make_pair( ring_size, type ), conformers ) );
 	}
-	return conformers_[ ring_size ];
+	return conformers_[ make_pair( ring_size, type ) ];
 }
 
 }  // namespace rings

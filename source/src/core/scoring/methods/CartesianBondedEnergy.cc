@@ -2107,6 +2107,7 @@ CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 
 	eval_interresidue_improper_derivatives( rsd1, rsd2, res1params, res2params, weights, r1_atom_derivs, r2_atom_derivs );
 
+	// A misnomer: technically, this only functions for a limited set of aldohexopyranoses. ~Labonte
 	eval_interresidue_ring_derivatives( rsd1, rsd2, weights, r1_atom_derivs, r2_atom_derivs );
 
 	eval_interresidue_angle_derivs_two_from_rsd1(
@@ -2378,7 +2379,11 @@ CartesianBondedEnergy::eval_singleres_ring_energies(
 	using numeric::constants::d::pi;
 
 	Size const n_rings( rsd.type().n_rings() );
-	if ( n_rings==0 ) return;
+	if ( n_rings == 0 ) { return; }
+	if ( rsd.is_protein() ) {
+		// This maintains the original behavior before aromatic ring conformers were added. ~Labonte
+		return;
+	}
 
 	core::Real Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
 	core::Real Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
@@ -2389,7 +2394,7 @@ CartesianBondedEnergy::eval_singleres_ring_energies(
 		if ( basic::options::option[ basic::options::OptionKeys::score::ideal_sugars ]() ) {
 			rc = rsd.type().ring_conformer_set(jj)->get_lowest_energy_conformer();
 		} else {
-			rc= rsd.ring_conformer( jj, 180.0 );
+			rc = rsd.ring_conformer( jj, 180.0 );
 		}
 
 		// now constrain each element of the ring
@@ -2565,10 +2570,12 @@ CartesianBondedEnergy::eval_singleres_angle_energies(
 		// ring angle?  Let cart_bonded_ring handle it
 		Size const n_rings( rsd.type().n_rings() );
 		bool skip_this_angle=false;
-		for ( core::uint i( 1 ); i <= n_rings && !skip_this_angle; ++i ) {
-			if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
-					&& rsd.type().is_ring_atom( i, atids[3] ) ) {
-				skip_this_angle=true;
+		if ( ! rsd.is_protein() ) { // This maintains the original behavior before aromatic ring conformers were added. ~Labonte
+			for ( core::uint i( 1 ); i <= n_rings && !skip_this_angle; ++i ) {
+				if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
+						&& rsd.type().is_ring_atom( i, atids[3] ) ) {
+					skip_this_angle=true;
+				}
 			}
 		}
 		if ( skip_this_angle ) continue;
@@ -2658,7 +2665,7 @@ CartesianBondedEnergy::eval_residue_pair_energies(
 	eval_interresidue_angle_energies_two_from_rsd1( rsd1, rsd2, rsd1params, rsd2params, phi1, psi1, pose, emap );
 	eval_interresidue_angle_energies_two_from_rsd2( rsd1, rsd2, rsd1params, rsd2params, phi2, psi2, pose, emap );
 	eval_interresidue_bond_energy( rsd1, rsd2, rsd1params, rsd2params, phi2, psi2, pose, emap );
-	eval_interresidue_ring_energy( rsd1, rsd2, pose, emap );
+	eval_interresidue_ring_energy( rsd1, rsd2, pose, emap );  // A misnomer: technically, this only functions for a limited set of aldohexopyranoses. ~Labonte
 }
 
 void
@@ -3174,7 +3181,8 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 	}
 }
 
-//Evaluate the torsion constraints for alpha/beta sugars. rsd2 should be the structure being evaluated and rsd1 should be the lower connection
+// Evaluate the torsion constraints for alpha/beta aldohexopyranoses.
+// rsd2 should be the structure being evaluated and rsd1 should be the lower connection
 void
 CartesianBondedEnergy::eval_interresidue_ring_energy(
 	conformation::Residue const & rsd1,
@@ -3191,10 +3199,15 @@ CartesianBondedEnergy::eval_interresidue_ring_energy(
 	//core::Real Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
 
 	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
+		// Even though aldohexopyranoses only ever have a single ring, I'm leaving this here in case someone ever wants
+		// to expand this to be more general for other kinds of rings.
 
-		//only apply this to 6 residue rings
-		if ( rsd2.type().ring_atoms( jj ).size() != 6 ) continue;
-
+		// Only apply this to aldohexopyranose rings.
+		// The hard-coded atom names below are not a good idea and should be fixed.
+		// The ResidueType stores the indices of all its ring atoms. ~ Labonte
+		if ( ! rsd2.is_carbohydrate() ) { continue; }
+		chemical::carbohydrates::CarbohydrateInfoCOP info( rsd2.carbohydrate_info() );
+		if ( ( ! info->is_aldose() ) || ( ! info->is_hexose() ) || ( ! info->is_pyranose() ) ) { continue; }
 		// 2 constrain torsion
 		core::Size atom1, atom2, atom3, atom4;
 		utility::vector1< std::string > alternate_atoms = rsd2.type().get_anomeric_pseudotorsion();
@@ -3283,7 +3296,11 @@ CartesianBondedEnergy::eval_singleres_ring_derivatives(
 	using numeric::constants::d::pi;
 
 	Size const n_rings( rsd.type().n_rings() );
-	if ( n_rings==0 ) return;
+	if ( n_rings == 0 ) { return; }
+	if ( rsd.is_protein() ) {
+		// This maintains the original behavior before aromatic ring conformers were added. ~Labonte
+		return;
+	}
 
 	core::Real Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
 	core::Real Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
@@ -3398,10 +3415,12 @@ CartesianBondedEnergy::eval_singleres_angle_derivatives(
 		// ring angle?  Let cart_bonded_ring handle it
 		Size const n_rings( rsd.type().n_rings() );
 		bool skip_this_angle=false;
-		for ( core::uint i( 1 ); i <= n_rings && !skip_this_angle; ++i ) {
-			if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
-					&& rsd.type().is_ring_atom( i, atids[3] ) ) {
-				skip_this_angle=true;
+		if ( ! rsd.is_protein() ) { // This maintains the original behavior before aromatic ring conformers were added. ~Labonte
+			for ( core::uint i( 1 ); i <= n_rings && !skip_this_angle; ++i ) {
+				if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
+						&& rsd.type().is_ring_atom( i, atids[3] ) ) {
+					skip_this_angle=true;
+				}
 			}
 		}
 		if ( skip_this_angle ) continue;
@@ -3563,10 +3582,12 @@ CartesianBondedEnergy::eval_singleres_torsion_derivatives(
 		// ring tors?  Let cart_bonded_ring handle it
 		Size const n_rings( rsd.type().n_rings() );
 		bool skip_this_torsion=false;
-		for ( core::uint i( 1 ); i <= n_rings && !skip_this_torsion; ++i ) {
-			if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
-					&& rsd.type().is_ring_atom( i, atids[2] ) && rsd.type().is_ring_atom( i, atids[3] ) ) {
-				skip_this_torsion=true;
+		if ( ! rsd.is_protein() ) { // This maintains the original behavior before aromatic ring conformers were added. ~Labonte
+			for ( core::uint i( 1 ); i <= n_rings && !skip_this_torsion; ++i ) {
+				if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
+						&& rsd.type().is_ring_atom( i, atids[2] ) && rsd.type().is_ring_atom( i, atids[3] ) ) {
+					skip_this_torsion=true;
+				}
 			}
 		}
 		if ( skip_this_torsion ) continue;
@@ -4173,7 +4194,9 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 }
 
 
-//Evaluate the torsion constraints for alpha/beta sugars. rsd2 should be the structure being evaluated and rsd1 should be the lower connection
+// Evaluate the torsion constraints for alpha/beta aldohexopyranoses.
+// rsd2 should be the structure being evaluated and rsd1 should be the lower connection
+// There is a lot of duplicated code here that could be consolidated. ~Labonte
 void
 CartesianBondedEnergy::eval_interresidue_ring_derivatives(
 	conformation::Residue const & rsd1,
@@ -4192,9 +4215,16 @@ CartesianBondedEnergy::eval_interresidue_ring_derivatives(
 	Real const weight = weights[ cart_bonded_ring ] + weights[ cart_bonded ];
 
 	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
+		// Even though aldohexopyranoses only ever have a single ring, I'm leaving this here in case someone ever wants
+		// to expand this to be more general for other kinds of rings.
 
-		//only apply this to 6 residue rings
-		if ( rsd2.type().ring_atoms( jj ).size() != 6 ) continue;
+		// Only apply this to aldohexopyranose rings.
+		// The hard-coded atom names below are not a good idea and should be fixed.
+		// The ResidueType stores the indices of all its ring atoms. ~ Labonte
+		if ( ! rsd2.is_carbohydrate() ) { continue; }
+		chemical::carbohydrates::CarbohydrateInfoCOP info( rsd2.carbohydrate_info() );
+		if ( ( ! info->is_aldose() ) || ( ! info->is_hexose() ) || ( ! info->is_pyranose() ) ) { continue; }
+
 		core::Size atom1, atom2, atom3, atom4;
 		utility::vector1< std::string > alternate_atoms = rsd2.type().get_anomeric_pseudotorsion();
 		if ( alternate_atoms.size() == 0 ) {

@@ -1034,10 +1034,24 @@ setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const &
 			if ( mm_setting == PHI_default ) { continue; }
 			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( torsion ) );
 			if ( id.valid() ) {
-				dof_mask[ id ] = mm_setting;
+				if  ( rsd.is_aromatic() || rsd.aa() == chemical::aa_his ) {
+					// For now, I am locking all aromatic nus, to preserve the original behavior.
+					// In the future, someone may want to change this, because she or he might want to minimize an
+					// aromatic ring perhaps, and one could suppose a funky residue with both an aliphatic and an
+					// aromatic ring on the same residue.
+					// His has to be called out specifically, which is ridiculous, but it does not have the AROMATIC
+					// property set. This irks me to no end.
+					// ~Labonte
+					dof_mask[ id ] = false;
+				} else {
+					dof_mask[ id ] = mm_setting;
+				}
 			} else {
-				TR.Warning << "Unable to find atom_tree atom for this " <<
-					"Rosetta nu angle: residue " << i << " NU " << j << std::endl;
+				if  ( ! rsd.is_aromatic() && rsd.aa() != chemical::aa_his ) {
+					// There is no point warning about aromatic CAAs; we don't need to minimize their nus; see above.
+					TR.Warning << "Unable to find atom_tree atom for this " <<
+						"Rosetta nu angle: residue " << i << " NU " << j << std::endl;
+				}
 			}
 		} // j=1, n_nu_torsions
 

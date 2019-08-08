@@ -8759,17 +8759,15 @@ Optimizing: atomno= 6 rsd= 11  CG   atomno= 7 rsd= 11  CD1  atomno= 9 rsd= 11  N
 Got branching index: 16
 Optimizing: atomno= 7 rsd= 11  CD1  atomno= 9 rsd= 11  NE1  atomno= 10 rsd= 11  CE2
 Got branching index: 15
-Optimizing: atomno= 9 rsd= 11  NE1  atomno= 10 rsd= 11  CE2  atomno= 8 rsd= 11  CD2
+Optimizing: atomno= 9 rsd= 11  NE1  atomno= 10 rsd= 11  CE2  atomno= 12 rsd= 11  CZ2
 Got branching index: 0
-Optimizing: atomno= 10 rsd= 11  CE2  atomno= 8 rsd= 11  CD2  atomno= 11 rsd= 11  CE3
-Got branching index: 0
-Optimizing: atomno= 8 rsd= 11  CD2  atomno= 11 rsd= 11  CE3  atomno= 13 rsd= 11  CZ3
+Optimizing: atomno= 10 rsd= 11  CE2  atomno= 12 rsd= 11  CZ2  atomno= 14 rsd= 11  CH2
 Got branching index: 11
-Optimizing: atomno= 11 rsd= 11  CE3  atomno= 13 rsd= 11  CZ3  atomno= 14 rsd= 11  CH2
+Optimizing: atomno= 12 rsd= 11  CZ2  atomno= 14 rsd= 11  CH2  atomno= 13 rsd= 11  CZ3
 Got branching index: 5
-Optimizing: atomno= 13 rsd= 11  CZ3  atomno= 14 rsd= 11  CH2  atomno= 12 rsd= 11  CZ2
+Optimizing: atomno= 14 rsd= 11  CH2  atomno= 13 rsd= 11  CZ3  atomno= 11 rsd= 11  CE3
 Got branching index: 5
-Optimizing: atomno= 14 rsd= 11  CH2  atomno= 12 rsd= 11  CZ2  atomno= 22 rsd= 11  HZ2
+Optimizing: atomno= 13 rsd= 11  CZ3  atomno= 11 rsd= 11  CE3  atomno= 8 rsd= 11  CD2
 Got branching index: 0
 Optimizing: atomno= 2 rsd= 11  CA   atomno= 3 rsd= 11  C    atomno= 1 rsd= 12  N  
 Got branching index: 14
@@ -9063,17 +9061,15 @@ Optimizing: atomno= 6 rsd= 34  CG   atomno= 7 rsd= 34  CD1  atomno= 9 rsd= 34  N
 Got branching index: 16
 Optimizing: atomno= 7 rsd= 34  CD1  atomno= 9 rsd= 34  NE1  atomno= 10 rsd= 34  CE2
 Got branching index: 15
-Optimizing: atomno= 9 rsd= 34  NE1  atomno= 10 rsd= 34  CE2  atomno= 8 rsd= 34  CD2
+Optimizing: atomno= 9 rsd= 34  NE1  atomno= 10 rsd= 34  CE2  atomno= 12 rsd= 34  CZ2
 Got branching index: 0
-Optimizing: atomno= 10 rsd= 34  CE2  atomno= 8 rsd= 34  CD2  atomno= 11 rsd= 34  CE3
-Got branching index: 0
-Optimizing: atomno= 8 rsd= 34  CD2  atomno= 11 rsd= 34  CE3  atomno= 13 rsd= 34  CZ3
+Optimizing: atomno= 10 rsd= 34  CE2  atomno= 12 rsd= 34  CZ2  atomno= 14 rsd= 34  CH2
 Got branching index: 11
-Optimizing: atomno= 11 rsd= 34  CE3  atomno= 13 rsd= 34  CZ3  atomno= 14 rsd= 34  CH2
+Optimizing: atomno= 12 rsd= 34  CZ2  atomno= 14 rsd= 34  CH2  atomno= 13 rsd= 34  CZ3
 Got branching index: 5
-Optimizing: atomno= 13 rsd= 34  CZ3  atomno= 14 rsd= 34  CH2  atomno= 12 rsd= 34  CZ2
+Optimizing: atomno= 14 rsd= 34  CH2  atomno= 13 rsd= 34  CZ3  atomno= 11 rsd= 34  CE3
 Got branching index: 5
-Optimizing: atomno= 14 rsd= 34  CH2  atomno= 12 rsd= 34  CZ2  atomno= 22 rsd= 34  HZ2
+Optimizing: atomno= 13 rsd= 34  CZ3  atomno= 11 rsd= 34  CE3  atomno= 8 rsd= 34  CD2
 Got branching index: 0
 Optimizing: atomno= 2 rsd= 34  CA   atomno= 3 rsd= 34  C    atomno= 1 rsd= 35  N  
 Got branching index: 14
@@ -10438,8 +10434,8 @@ ATOM    171 1HB  TRP A  11      -9.044  35.951  86.111  1.00  0.00           H
 ATOM    172 2HB  TRP A  11      -7.646  35.075  86.746  1.00  0.00           H  
 ATOM    173  HD1 TRP A  11     -11.474  35.439  87.362  1.00  0.00           H  
 ATOM    174  HE1 TRP A  11     -12.350  33.242  88.426  1.00  0.00           H  
-ATOM    175  HE3 TRP A  11      -6.970  33.063  88.091  1.00  0.00           H  
-ATOM    176  HZ2 TRP A  11     -11.288  30.888  89.415  1.00  0.00           H  
+ATOM    175  HE3 TRP A  11      -6.958  33.041  88.097  1.00  0.00           H  
+ATOM    176  HZ2 TRP A  11     -11.255  30.836  89.438  1.00  0.00           H  
 ATOM    177  HZ3 TRP A  11      -6.982  30.817  89.098  1.00  0.00           H  
 ATOM    178  HH2 TRP A  11      -9.098  29.722  89.760  1.00  0.00           H  
 ATOM    179  N   ILE A  12      -6.366  35.987  89.259  1.00  0.00           N  
@@ -10805,8 +10801,8 @@ ATOM    538 1HB  TRP A  34       1.254  21.568  79.275  1.00  0.00           H
 ATOM    539 2HB  TRP A  34       2.863  21.613  79.996  1.00  0.00           H  
 ATOM    540  HD1 TRP A  34       3.116  20.194  82.400  1.00  0.00           H  
 ATOM    541  HE1 TRP A  34       2.174  17.845  82.951  1.00  0.00           H  
-ATOM    542  HE3 TRP A  34      -0.793  20.037  78.989  1.00  0.00           H  
-ATOM    543  HZ2 TRP A  34       0.121  16.186  82.085  1.00  0.00           H  
+ATOM    542  HE3 TRP A  34      -0.815  20.023  78.981  1.00  0.00           H  
+ATOM    543  HZ2 TRP A  34       0.073  16.154  82.060  1.00  0.00           H  
 ATOM    544  HZ3 TRP A  34      -2.186  17.993  78.902  1.00  0.00           H  
 ATOM    545  HH2 TRP A  34      -1.772  16.097  80.439  1.00  0.00           H  
 ATOM    546  N   HIS A  35       0.618  24.326  79.312  1.00  0.00           N  
@@ -12435,17 +12431,15 @@ Optimizing: atomno= 6 rsd= 18  CG   atomno= 7 rsd= 18  CD1  atomno= 9 rsd= 18  N
 Got branching index: 0
 Optimizing: atomno= 7 rsd= 18  CD1  atomno= 9 rsd= 18  NE1  atomno= 10 rsd= 18  CE2
 Got branching index: 0
-Optimizing: atomno= 9 rsd= 18  NE1  atomno= 10 rsd= 18  CE2  atomno= 8 rsd= 18  CD2
+Optimizing: atomno= 9 rsd= 18  NE1  atomno= 10 rsd= 18  CE2  atomno= 12 rsd= 18  CZ2
 Got branching index: 0
-Optimizing: atomno= 10 rsd= 18  CE2  atomno= 8 rsd= 18  CD2  atomno= 11 rsd= 18  CE3
+Optimizing: atomno= 10 rsd= 18  CE2  atomno= 12 rsd= 18  CZ2  atomno= 14 rsd= 18  CH2
 Got branching index: 0
-Optimizing: atomno= 8 rsd= 18  CD2  atomno= 11 rsd= 18  CE3  atomno= 13 rsd= 18  CZ3
+Optimizing: atomno= 12 rsd= 18  CZ2  atomno= 14 rsd= 18  CH2  atomno= 13 rsd= 18  CZ3
 Got branching index: 0
-Optimizing: atomno= 11 rsd= 18  CE3  atomno= 13 rsd= 18  CZ3  atomno= 14 rsd= 18  CH2
+Optimizing: atomno= 14 rsd= 18  CH2  atomno= 13 rsd= 18  CZ3  atomno= 11 rsd= 18  CE3
 Got branching index: 0
-Optimizing: atomno= 13 rsd= 18  CZ3  atomno= 14 rsd= 18  CH2  atomno= 12 rsd= 18  CZ2
-Got branching index: 0
-Optimizing: atomno= 14 rsd= 18  CH2  atomno= 12 rsd= 18  CZ2  atomno= 22 rsd= 18  HZ2
+Optimizing: atomno= 13 rsd= 18  CZ3  atomno= 11 rsd= 18  CE3  atomno= 8 rsd= 18  CD2
 Got branching index: 0
 Optimizing: atomno= 2 rsd= 18  CA   atomno= 3 rsd= 18  C    atomno= 1 rsd= 19  N  
 Got branching index: 75

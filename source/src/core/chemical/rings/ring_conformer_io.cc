@@ -64,9 +64,8 @@ read_conformers_from_database_file_for_ring_size( std::string const & filename, 
 		// We need 3 less than the number of nu angles to define a ring conformer by Cremer-Pople parameters.
 		conformer.CP_parameters.resize( ring_size - 3 );
 
-		// We need 1 less than the number of nu angles to define a ring conformer by internal angles.
-		//conformer.nu_angles.resize( ring_size - 1 );
-		//fd let's keep all of them anyway (cart_bonded_ring needs them)
+		// We need 1 less than the number of nu angles to define a ring conformer by internal angles;
+		// however, all of them are used for the cart_bonded_ring term
 		conformer.nu_angles.resize( ring_size );
 
 		// We need all the tau angles.
@@ -81,9 +80,6 @@ read_conformers_from_database_file_for_ring_size( std::string const & filename, 
 		for ( uint nu( 1 ); nu <= ring_size; ++nu ) {
 			line_word_by_word >> conformer.nu_angles[ nu ];
 		}
-
-		// Ignore the last nu angle value.
-		//line_word_by_word >> junk;
 
 		for ( uint tau( 1 ); tau <= ring_size; ++tau ) {
 			line_word_by_word >> conformer.tau_angles[ tau ];

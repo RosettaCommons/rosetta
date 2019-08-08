@@ -16,10 +16,13 @@
 #define INCLUDED_core_chemical_rings_RingConformerManager_HH
 
 // Unit header
+#include <core/chemical/rings/RingConformerManager.fwd.hh>
+
+// Package headers
 // No fwd.hh of RingConformer exists
 namespace core { namespace chemical { namespace rings { struct RingConformer; } } }
 //#include <core/chemical/rings/RingConformer.hh>
-#include <core/chemical/rings/RingConformerManager.fwd.hh>
+#include <core/chemical/rings/RingSaturationType.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -45,7 +48,9 @@ public:  // Declare friends ///////////////////////////////////////////////////
 
 public:  // Static constant data access ///////////////////////////////////////
 	/// @brief  Return a set of ring conformers for the requested ring size.
-	static utility::vector1< RingConformer > const & conformers_for_ring_size( core::Size ring_size );
+	static utility::vector1< RingConformer > const & conformers_for_ring_size_and_type(
+		core::Size const ring_size,
+		core::chemical::rings::RingSaturationType const type );
 
 
 private:  // Private methods //////////////////////////////////////////////////
@@ -54,11 +59,14 @@ private:  // Private methods //////////////////////////////////////////////////
 
 	// Get the conformers requested, creating them if necessary.
 	// Called by the public static method conformers_for_ring_size().
-	utility::vector1< RingConformer > const & get_conformers_for_ring_size( core::Size ring_size );
+	utility::vector1< RingConformer > const & get_conformers_for_ring_size_and_type(
+		core::Size const ring_size,
+		core::chemical::rings::RingSaturationType const type );
 
 
 private:  // Private data /////////////////////////////////////////////////////
-	std::map< core::uint, utility::vector1< RingConformer > > conformers_;
+	std::map< std::pair< core::uint, core::chemical::rings::RingSaturationType >, utility::vector1< RingConformer > >
+		conformers_;
 };
 
 }  // namespace rings
