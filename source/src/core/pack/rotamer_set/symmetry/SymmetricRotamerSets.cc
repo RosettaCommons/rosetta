@@ -97,23 +97,27 @@ SymmetricRotamerSets::compute_energies(
 
 }
 
+/*
+// Note: The following is identical to the same function in the base class, and should
+// not be overridden.  This is unnecessary code duplication.  VKM, 6 Aug. 2019.
 // @details compute all rotamer one-body interactions for a symmetrical rotamer_sets
 void
 SymmetricRotamerSets::compute_one_body_energies(
-	pose::Pose const & pose,
-	scoring::ScoreFunction const & scfxn,
-	utility::graph::GraphCOP packer_neighbor_graph,
-	interaction_graph::InteractionGraphBaseOP ig
+pose::Pose const & pose,
+scoring::ScoreFunction const & scfxn,
+utility::graph::GraphCOP packer_neighbor_graph,
+interaction_graph::InteractionGraphBaseOP ig
 )
 {
-	// One body energies -- shared between pigs and otfigs
-	for ( uint ii = 1; ii <= nmoltenres(); ++ii ) {
-		utility::vector1< core::PackerEnergy > one_body_energies( rotamer_set_for_moltenresidue( ii )->num_rotamers() );
-		rotamer_set_for_moltenresidue( ii )->compute_one_body_energies(
-			pose, scfxn, *task(), packer_neighbor_graph, one_body_energies );
-		ig->add_to_nodes_one_body_energy( ii, one_body_energies );
-	}
+// One body energies -- shared between pigs and otfigs
+for ( uint ii = 1; ii <= nmoltenres(); ++ii ) {
+utility::vector1< core::PackerEnergy > one_body_energies( rotamer_set_for_moltenresidue( ii )->num_rotamers() );
+rotamer_set_for_moltenresidue( ii )->compute_one_body_energies(
+pose, scfxn, *task(), packer_neighbor_graph, one_body_energies );
+ig->add_to_nodes_one_body_energy( ii, one_body_energies );
 }
+}
+*/
 
 // @details calculate all rotamer two body interactions and place them in a ig. Adds in
 // energies for symmetrical clone residues into the energy of the master residues. The

@@ -61,13 +61,15 @@ public:
 		interaction_graph::InteractionGraphBaseOP ig
 	) override;
 
-	void
+	// Note: The following is identical to the same function in the base class, and should
+	// not be overridden.  This is unnecessary code duplication.  VKM, 6 Aug. 2019.
+	/*void
 	compute_one_body_energies(
-		pose::Pose const & pose,
-		scoring::ScoreFunction const & scfxn,
-		utility::graph::GraphCOP packer_neighbor_graph,
-		interaction_graph::InteractionGraphBaseOP ig
-	) override;
+	pose::Pose const & pose,
+	scoring::ScoreFunction const & scfxn,
+	utility::graph::GraphCOP packer_neighbor_graph,
+	interaction_graph::InteractionGraphBaseOP ig
+	) override;*/
 
 	/// @brief precomputes all rotamer pair energies between neighboring RotamerSets( residues )
 	/// and stores those energies in an intereaction graph capable of storing them
