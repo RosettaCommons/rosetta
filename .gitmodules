@@ -25,3 +25,6 @@
 [submodule "source/external/mmtf/mmtf-cpp"]
 	path = source/external/mmtf/mmtf-cpp
 	url = git@github.com:RosettaCommons/mmtf-cpp.git
+[submodule "PyRosetta.notebooks"]
+	path = PyRosetta.notebooks
+	url = git@github.com:RosettaCommons/PyRosetta.notebooks.git

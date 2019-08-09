@@ -384,6 +384,25 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
 
 
 
+def build_and_install_pyrosetta(working_dir, rosetta_dir, platform, jobs, config, mode='MinSizeRel', options='', packages='', conda=None, verbose=False, skip_compile=False, version=None):
+    ''' Compile PyRosetta on configured platform and install it into current virtual environment and return (res, output, build_command_line) '''
+
+    python_environment = local_python_install(platform, config)
+    python_virtual_environment_path = working_dir+'/.python_virtual_environment'
+    python_virtual_environment = setup_python_virtual_environment(python_virtual_environment_path, python_environment, packages=packages)
+
+    pyrosetta_package_path = python_environment.root + '/.pyrosetta_package'
+    if os.path.isdir(pyrosetta_package_path): shutil.rmtree(pyrosetta_package_path)
+
+    options = f'--create-package {pyrosetta_package_path}' + ( ' -sd' if skip_compile else '' )
+    r = build_pyrosetta(rosetta_dir=rosetta_dir, platform=platform, jobs=config['cpu_count'], config=config, mode=mode, options=options, skip_compile=False)
+
+    if not r.exitcode: execute('Installing PyRosetta...', f'cd {pyrosetta_package_path}/setup && {python_virtual_environment.python} setup.py install')
+
+    return NT(exitcode = r.exitcode, output = r.output, command_line = r.command_line, python_virtual_environment = python_virtual_environment)
+
+
+
 def install_llvm_tool(name, source_location, config, clean=True):
     ''' Install and update (if needed) custom LLVM tool at given prefix (from config).
         Return absolute path to executable on success and raise BenchmarkError exception on failure (do not catch this! if you really need 'normal' exit from this function on failure - refactor it instead)

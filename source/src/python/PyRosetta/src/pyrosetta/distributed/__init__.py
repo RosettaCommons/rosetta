@@ -5,6 +5,7 @@ import random
 import traceback
 
 import pyrosetta
+import pyrosetta.rosetta.basic.random
 
 _logger = logging.getLogger("pyrosetta.distributed")
 
@@ -53,10 +54,9 @@ def maybe_init(**kwargs):
     if not rgen.initialized():
         _logger.info("maybe_init performing per-thread rng initialization")
         options = pyrosetta.rosetta.basic.options.process()
-        rgs = pyrosetta.rosetta.core.init.RandomGeneratorSettings()
+        rgs = pyrosetta.rosetta.basic.random.RandomGeneratorSettings()
         rgs.initialize_from_options(options)
-        pyrosetta.rosetta.core.init.init_random_generators(
-                random.randint(0, 0xFFFFFF), rgs.rng_type())
+        pyrosetta.rosetta.basic.random.init_random_generators(random.randint(0, 0xFFFFFF), rgs.rng_type())
 
 
 def requires_init(func):

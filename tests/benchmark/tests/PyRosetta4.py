@@ -99,6 +99,42 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
 
 
+def run_notebook_tests(rosetta_dir, working_dir, platform, config, hpc_driver, verbose, debug):
+    memory = config['memory'];  jobs = config['cpu_count'];  skip_compile = config.get('skip_compile', False)
+    TR = Tracer(verbose)
+
+    P = build_and_install_pyrosetta(working_dir, rosetta_dir, platform, jobs, config, mode='MinSizeRel', packages='ipython nbconvert', skip_compile=skip_compile)
+
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(P.output)
+
+    if P.exitcode:
+        results = {_StateKey_ : _S_build_failed_,  _ResultsKey_ : {},  _LogKey_ : P.output }
+
+    else:
+        notebooks_source_prefix = f'{rosetta_dir}/PyRosetta.notebooks/notebooks'
+        notebooks_path = f'{working_dir}/notebooks'
+        shutil.copytree(notebooks_source_prefix, notebooks_path)
+
+        notebooks = [ f[:-len('.ipynb')] for f in os.listdir(notebooks_path) if f.endswith('.ipynb') ]
+        TR(f'notebooks: {notebooks}')
+
+        sub_tests = {}
+        test_state = False
+        for n in notebooks:
+            command_line = f'cd {notebooks_path} && {P.python_virtual_environment.python} -m nbconvert --to script {n}.ipynb && {P.python_virtual_environment.python} {n}.py'
+            res, output = execute(f'Running converting and running notebook {n}...', command_line, return_='tuple', add_message_and_command_line_to_output=True)
+            sub_tests[n] = {_StateKey_ : _S_failed_ if res else _S_passed_, _LogKey_ : output }
+            test_state |= res
+            with open(f'{notebooks_path}/{n}.output', 'w') as f: f.write(output)
+
+        results = {_StateKey_ : _S_failed_ if test_state else _S_passed_, _ResultsKey_: {_TestsKey_ : sub_tests}, _LogKey_ : P.output }
+
+    if not config['emulation'] and os.path.isdir(P.python_virtual_environment.root): shutil.rmtree(P.python_virtual_environment.root)
+
+    with open(working_dir+'/output.json', 'w') as f: json.dump(results, f, sort_keys=True, indent=2)
+
+    return results
+
 
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     ''' Run single test.
@@ -106,4 +142,5 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     '''
     if   test =='build': return run_build_test(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='unit':  return run_unit_tests(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='notebook':  return run_notebook_tests(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Unknow PyRosetta test: {}!'.format(test))

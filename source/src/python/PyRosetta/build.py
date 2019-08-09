@@ -625,7 +625,8 @@ def generate_bindings(rosetta_source_path):
         includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1'
         if int( platform.mac_ver()[0].split('.')[1] ) > 13 : includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include'
 
-    if Options.binder_extra_options: includes += ' ' + Options.binder_extra_options
+    if Options.binder_options:      include  += ' ' + Options.binder_options
+    if Options.binder_llvm_options: includes += ' ' + Options.binder_llvm_options
 
     binder_command_line_options = '--config {config} --root-module rosetta --prefix {prefix}{annotate}{trace} {include} -- -std=c++11 {includes} {defines}'.format(
         prefix=prefix, include=include, includes=includes, defines=defines,
@@ -804,7 +805,8 @@ def main(args):
     parser.add_argument('--multi-threaded', action="store_true", help="Build PyRosetta with multi_threaded enabled (off by default)")
     #parser.add_argument('--hdf5', action="store_true", help="Build PyRosetta with HDF5 enabled (off by default)")
 
-    parser.add_argument('--binder-extra-options', default=None, help='Specify Binder extra (LLVM) options. Use this to point Binder to additional include dir or add/change LLVM flags. For example on Mac with no Xcode install set this to "-isystem /Library/Developer/CommandLineTools/usr/include/c++/v1" to point Binder to correct location of system includes.')
+    parser.add_argument('--binder-options', default=None, help='Specify Binder extra (non LLVM) options. Use this to specify options specific to Binder.')
+    parser.add_argument('--binder-llvm-options', default=None, help='Specify Binder extra (LLVM) options. Use this to point Binder to additional include dir or add/change LLVM flags. For example on Mac with no Xcode install set this to "-isystem /Library/Developer/CommandLineTools/usr/include/c++/v1" to point Binder to correct location of system includes.')
 
     parser.add_argument('--documentation', help='Generate PyRosetta documentation at specified path (default is to skip documentation creation). Note that Sphinx package need to be installed for this to work correctly.')
 
