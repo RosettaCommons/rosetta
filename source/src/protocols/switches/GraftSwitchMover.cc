@@ -164,7 +164,7 @@ GraftSwitchMover::apply( Pose & pose )
 		utility_exit_with_message("Sequence not set for threading.  Cannot continue.");
 	}
 
-	if( !scorefxn_ ){
+	if ( !scorefxn_ ) {
 		TR << "Using default score function" << std::endl;
 		scorefxn_ = core::scoring::get_score_function();
 	}
@@ -285,7 +285,7 @@ GraftSwitchMover::apply( Pose & pose )
 		threader->apply( pose );
 	}
 
-	if( pack_min_ ) {
+	if ( pack_min_ ) {
 		//TaskOps
 		core::pack::task::operation::PreventRepackingOP turn_off_packing = core::pack::task::operation::PreventRepackingOP( new core::pack::task::operation::PreventRepacking() );
 		core::pack::task::operation::RestrictToRepackingOP turn_off_design = core::pack::task::operation::RestrictToRepackingOP( new core::pack::task::operation::RestrictToRepacking() );
@@ -359,7 +359,7 @@ GraftSwitchMover::get_additional_output() {
 		threader->apply( *out_pose );
 	}
 
-	if( pack_min_ ) {
+	if ( pack_min_ ) {
 		//TaskOps
 		core::pack::task::operation::PreventRepackingOP turn_off_packing = core::pack::task::operation::PreventRepackingOP( new core::pack::task::operation::PreventRepacking() );
 		core::pack::task::operation::RestrictToRepackingOP turn_off_design = core::pack::task::operation::RestrictToRepackingOP( new core::pack::task::operation::RestrictToRepacking() );
