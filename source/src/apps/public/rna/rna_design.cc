@@ -35,6 +35,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/init/init.hh>
+#include <core/id/AtomID.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
@@ -61,7 +62,6 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-
 
 // option key includes
 #include <basic/options/option.hh>

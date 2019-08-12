@@ -79,13 +79,6 @@ protected: // Creation
 	{}
 
 
-	/// @brief Copy constructor
-	inline
-	OptionKey( OptionKey const & key ) :
-		Super( key )
-	{}
-
-
 	/// @brief Copy + identifier constructor
 	inline
 	OptionKey(

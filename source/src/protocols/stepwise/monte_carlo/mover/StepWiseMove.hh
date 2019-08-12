@@ -75,14 +75,9 @@ public:
 	Attachment( Size const attachment_res,
 		AttachmentType const attachment_type );
 
-	Attachment( Attachment const & src );
-
 	friend
 	bool
 	operator==( Attachment const & a, Attachment const & b );
-
-	//destructor
-	~Attachment();
 
 public:
 
@@ -131,8 +126,6 @@ public:
 		Attachment const & attachment,
 		MoveType const & move_type );
 
-	StepWiseMove( StepWiseMove const & src );
-
 	StepWiseMove( utility::vector1< std::string > const & swa_move_string_vector,
 		core::pose::full_model_info::FullModelParametersCOP full_model_parameters = 0 /* to convert resnum, chain to Rosetta res */ );
 
@@ -150,9 +143,6 @@ public:
 	operator!=( StepWiseMove const & a, StepWiseMove const & b ) {
 		return !( a == b );
 	}
-
-	//destructor
-	~StepWiseMove();
 
 public:
 

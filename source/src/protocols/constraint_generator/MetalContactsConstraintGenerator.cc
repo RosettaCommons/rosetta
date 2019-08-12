@@ -72,31 +72,6 @@ MetalContactsConstraintGenerator::MetalContactsConstraintGenerator():
 {
 }
 
-MetalContactsConstraintGenerator::~MetalContactsConstraintGenerator() = default;
-
-MetalContactsConstraintGenerator::MetalContactsConstraintGenerator( MetalContactsConstraintGenerator const & src ):
-	protocols::constraint_generator::ConstraintGenerator( src )
-{
-	dist_cutoff_multiplier_ = src.dist_cutoff_multiplier_;
-	use_ligand_selector_ = src.use_ligand_selector_;
-	ligand_atom_name_ = src.ligand_atom_name_;
-	ligand_selector_ = src.ligand_selector_;
-	ligand_resnum_string_ = src.ligand_resnum_string_;
-	use_contact_selector_ = src.use_contact_selector_;
-	contact_selector_ = src.contact_selector_;
-	contact_resnum_string_ = src.contact_resnum_string_;
-	base_atom_name_ = src.base_atom_name_;
-	base_base_atom_name_ = src.base_base_atom_name_;
-	ideal_distance_ = src.ideal_distance_;
-	ideal_angle_about_contact_ = src.ideal_angle_about_contact_;
-	ideal_dihedral_about_contact_ = src.ideal_dihedral_about_contact_;
-	ideal_angle_about_metal_ = src.ideal_angle_about_metal_;
-	ideal_dihedral_about_metal_ = src.ideal_dihedral_about_metal_;
-	ideal_dihedral_3_ = src.ideal_dihedral_3_;
-	score_against_internal_contacts_ = src.score_against_internal_contacts_;
-	constrain_to_closest_= src.constrain_to_closest_;
-}
-
 
 protocols::constraint_generator::ConstraintGeneratorOP
 MetalContactsConstraintGenerator::clone() const

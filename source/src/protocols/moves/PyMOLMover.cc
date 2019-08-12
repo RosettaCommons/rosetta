@@ -330,16 +330,6 @@ PyMOLMover::PyMOLMover(std::string const & address, unsigned int port, unsigned 
 	pymol_name_()
 {}
 
-/// @brief cctor
-PyMOLMover::PyMOLMover( PyMOLMover const & ) = default;
-
-PyMOLMover::~PyMOLMover() = default;
-
-// XRW TEMP std::string PyMOLMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "PyMOL_Mover";
-// XRW TEMP }
-
 void PyMOLMover::set_PyMOL_model_name( std::string name ){
 	pymol_name_ = name;
 }

@@ -235,6 +235,22 @@ struct HBondNetStruct : public utility::pointer::ReferenceCount {
 		//network()
 	{};
 
+	/// @brief Move constructor (mainly for copy/swap idiom)
+	/// We're just moving the structure from one address to the other, so a default bitwise copy is appropriate.
+	HBondNetStruct( HBondNetStruct && ) = default;
+
+	/// @brief Move assignment operator (mainly for copy/swap idiom)
+	HBondNetStruct & operator =( HBondNetStruct && ) = default;
+
+	/// @brief Assigment operator, needed as copy constructor is specified
+	HBondNetStruct & operator =( HBondNetStruct const & rhs) {
+		// Use the copy/swap idiom
+		HBondNetStruct cpy( rhs );
+		std::swap( *this, cpy );
+		return *this;
+	}
+
+
 	bool operator<( HBondNetStruct const & a ) const
 	{
 		if ( sort_first_by_tot_unsat ) {

@@ -50,16 +50,6 @@ StepWiseMoveSelectorOptions::StepWiseMoveSelectorOptions():
 {
 }
 
-//Destructor
-StepWiseMoveSelectorOptions::~StepWiseMoveSelectorOptions() = default;
-
-/// @brief copy constructor
-StepWiseMoveSelectorOptions::StepWiseMoveSelectorOptions( StepWiseMoveSelectorOptions const & src ) :
-	ReferenceCount()
-{
-	*this = src;
-}
-
 /// @brief clone the options
 StepWiseMoveSelectorOptionsOP
 StepWiseMoveSelectorOptions::clone() const

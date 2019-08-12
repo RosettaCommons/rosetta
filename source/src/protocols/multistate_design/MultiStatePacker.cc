@@ -111,18 +111,15 @@ bool PosType::operator == ( EntityElement const & rhs ) const
 }
 
 genetic_algorithm::EntityElement &
-PosType::operator =  ( EntityElement const & rhs )
+PosType::operator = ( EntityElement const & rhs ) noexcept
 {
-	if ( this != &rhs ) {
-		parent::operator = ( rhs );
-
-		if ( ! dynamic_cast< PosType const * > ( &rhs ) ) {
-			utility_exit_with_message( "operator < unable to compare a " + name() + " object to a " + rhs.name() + " object!" );
-		}
-		auto const & pt_rhs( static_cast< PosType const & > ( rhs ) );
-
-		type_ = pt_rhs.type_;
+	PosType const * pos_rhs = dynamic_cast< PosType const * > ( &rhs );
+	if ( ! pos_rhs ) {
+		utility_exit_with_message( "operator < unable to compare a " + name() + " object to a " + rhs.name() + " object!" );
 	}
+
+	*this = *pos_rhs; // Default PosType assignment, will handle self assignment properly
+
 	return *this;
 }
 

@@ -75,8 +75,10 @@ public:
 	/// @brief Copy constructor.
 	TemperatureController( TemperatureController const& );
 
-	/// @brief No-op implemented only to satisfy the Mover interface.
+	/// This has *substantially* different behavior than the copy constructor.
+	TemperatureController & operator =( TemperatureController const& ) = default;
 
+	/// @brief No-op implemented only to satisfy the Mover interface.
 	void apply( core::pose::Pose& ) override {};
 
 	/// @brief Return the name of this class.

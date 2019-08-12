@@ -101,21 +101,6 @@ TemperingBase::TemperingBase() :
 	set_defaults();
 }
 
-TemperingBase::TemperingBase( TemperingBase const & other ) :
-	protocols::canonical_sampling::TemperatureController(other)
-{
-	temperatures_ = other.temperatures_;
-	temperature_stride_ = other.temperature_stride_;
-	trust_current_temp_ = other.trust_current_temp_ ;
-	stats_line_output_ = other.stats_line_output_;
-	stats_silent_output_ = other.stats_silent_output_;
-	stats_file_ = other.stats_file_;
-
-	instance_initialized_ = other.instance_initialized_;
-	current_temp_ = other.current_temp_;
-	temp_trial_count_ = other.temp_trial_count_;
-}
-
 Size TemperingBase::n_temp_levels() const { return temperatures_.size(); }
 
 core::Real

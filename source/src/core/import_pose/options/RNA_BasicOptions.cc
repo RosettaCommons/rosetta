@@ -40,17 +40,6 @@ RNA_BasicOptions::RNA_BasicOptions():
 	verbose_( true )
 {}
 
-//Destructor
-RNA_BasicOptions::~RNA_BasicOptions() = default;
-
-
-/// @brief copy constructor
-RNA_BasicOptions::RNA_BasicOptions( RNA_BasicOptions const & src ) :
-	ReferenceCount()
-{
-	*this = src;
-}
-
 /// @brief clone the options
 RNA_BasicOptionsOP
 RNA_BasicOptions::clone() const

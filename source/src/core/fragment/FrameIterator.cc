@@ -81,16 +81,6 @@ ConstFrameIterator& ConstFrameIterator::operator+ ( Size offset ) {
 }
 
 
-FrameIterator & FrameIterator::operator = ( FrameIterator const& itr ) {
-	it_=itr.it_; //copy the pointers to the real iterators
-	return *this;
-}
-
-ConstFrameIterator & ConstFrameIterator::operator = ( ConstFrameIterator const& itr ) {
-	it_=itr.it_; //copy the pointers to the real iterators
-	return *this;
-}
-
 FrameOP FrameIterator::operator* () {
 	return frame_ptr();
 }

@@ -50,10 +50,6 @@ public:
 		bool const map_to_vanilla_pose = false,
 		utility::vector1< Size > const & allow_insert_res = utility::vector1< Size >() /* do not have to specify this*/ );
 
-	~AtomLevelDomainMap() override;
-
-	AtomLevelDomainMap( AtomLevelDomainMap const & src );
-
 	virtual AtomLevelDomainMapOP clone() const;
 
 public:

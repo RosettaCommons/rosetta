@@ -34,7 +34,7 @@
 
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/mm/MMBondAngleLibrary.fwd.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParam.fwd.hh>
+#include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <utility/vector1_bool.hh>
 #include <string>
 
@@ -55,13 +55,6 @@ class MMBondAngleResidueTypeParamSet  : public utility::pointer::ReferenceCount
 public:
 	/// @brief ctor
 	MMBondAngleResidueTypeParamSet();
-
-	/// @brief copy ctor
-	MMBondAngleResidueTypeParamSet(
-		MMBondAngleResidueTypeParamSet const & src
-	);
-
-	virtual ~MMBondAngleResidueTypeParamSet();
 
 	/// @brief get bond angle library for newly created ResidueTypeParam objects
 	MMBondAngleLibrary const *

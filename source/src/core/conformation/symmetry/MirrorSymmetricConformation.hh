@@ -54,10 +54,6 @@ public:
 		Conformation const & conf,
 		SymmetryInfo const & symm_info);
 
-	/// @brief  Copy CTOR
-	MirrorSymmetricConformation(
-		MirrorSymmetricConformation const & conf);
-
 	/// @brief virtual assignment operator
 	Conformation &
 	operator=( Conformation const & src ) override;

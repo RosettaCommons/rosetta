@@ -76,13 +76,6 @@ public:
 	// destructor
 	~BinarySilentStruct();
 
-	/// @brief Test if this BinarySilentStruct is equal to the given
-	/// BinarySilentStruct in terms of conformation.  Doesn't check
-	/// energies.
-	BinarySilentStruct & operator= (
-		BinarySilentStruct const & src
-	);
-
 	/// @brief Initialize object from a set of lines.
 	/// @details Does not skip read from container.
 	bool init_from_lines(

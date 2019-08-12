@@ -49,9 +49,6 @@ class JobTracker : public utility::pointer::ReferenceCount {
 public:
 
 	JobTracker();
-	JobTracker(JobTracker const & src);
-
-	virtual ~JobTracker();
 
 	JobTrackerOP
 	clone() const;

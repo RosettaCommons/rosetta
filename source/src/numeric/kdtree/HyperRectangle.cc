@@ -64,13 +64,6 @@ numeric::Size HyperRectangle::ndim() const {
 	return upper().size();
 }
 
-HyperRectangle & HyperRectangle::operator = ( HyperRectangle const & src ) {
-	upper_ = src.upper();
-	lower_ = src.lower();
-
-	return *this;
-}
-
 void HyperRectangle::extend(
 	utility::vector1< numeric::Real > const & pt
 ) {

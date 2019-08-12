@@ -45,6 +45,14 @@ private:
 public:
 	SmallMol() : molName("no_name"), pdbContent(""), cen(3), s(1), parent(this), visited(0) { }
 	SmallMol(const SmallMol &other);
+	SmallMol( SmallMol && ) = default; // (mainly for copy/swap idiom)
+	SmallMol & operator =( SmallMol && ) = default; // (mainly for copy/swap idiom)
+	SmallMol & operator =( SmallMol const & rhs ) {
+		// Use the copy/swap idiom
+		SmallMol cpy( rhs );
+		std::swap( *this, cpy );
+		return *this;
+	}
 	~SmallMol();
 	void add_atom(std::string line);
 	void update_center();

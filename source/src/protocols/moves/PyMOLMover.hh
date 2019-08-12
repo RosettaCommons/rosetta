@@ -300,12 +300,6 @@ public:
 	/// @brief ctor
 	PyMOLMover(std::string const & address = default_address(), unsigned int port = default_port(), unsigned int max_packet_size = 0);
 
-	/// @brief cctor
-	PyMOLMover( PyMOLMover const & other );
-
-	/// @brief dtor
-	~PyMOLMover() override;
-
 	void apply( Pose & ) override;
 
 	using protocols::moves::Mover::apply;

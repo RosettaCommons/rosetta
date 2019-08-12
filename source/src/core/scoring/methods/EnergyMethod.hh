@@ -58,12 +58,6 @@ public:
 	/// types that this energy method is responsible for.
 	EnergyMethod( EnergyMethodCreatorOP creator );
 
-	/// @brief Copy constructor copies over the score types of the source
-	EnergyMethod( EnergyMethod const & src );
-
-	virtual
-	~EnergyMethod();
-
 	virtual
 	EnergyMethodOP
 	clone() const = 0;

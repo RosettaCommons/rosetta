@@ -40,11 +40,6 @@ UltraLightResidue::UltraLightResidue( ResidueCOP residue )
 	center_ = numeric::center_of_mass(coords_);
 }
 
-UltraLightResidue::UltraLightResidue(UltraLightResidue const & src) : ReferenceCount(),
-	atom_ids_(src.atom_ids_), coords_(src.coords_),heavy_coords_(src.heavy_coords_),residue_(src.residue_),center_(src.center_)
-
-{}
-
 void UltraLightResidue::update_conformation(Conformation & conformation) const
 {
 	conformation.batch_set_xyz(atom_ids_,coords_);

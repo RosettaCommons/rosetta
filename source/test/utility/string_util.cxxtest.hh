@@ -203,7 +203,7 @@ public:
 
 	}
 
-	void test_pad_atom_name() { 
+	void test_pad_atom_name() {
 		utility::vector1< std::pair<std::string, std::string> > query_sol;
 		query_sol.push_back(std::make_pair("CA", " CA "));
 		query_sol.push_back(std::make_pair("N", " N  "));
@@ -213,7 +213,7 @@ public:
 		for ( auto const & q_s : query_sol) {
 			TS_ASSERT_EQUALS(utility::pad_atom_name(q_s.first), q_s.second);
 		}
-		TS_ASSERT_THROWS(utility::pad_atom_name("12345"), utility::excn::Exception);
+		TS_ASSERT_THROWS(utility::pad_atom_name("12345"), utility::excn::Exception & );
 	}
 
 	void test_padding() {

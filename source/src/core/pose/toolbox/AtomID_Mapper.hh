@@ -38,12 +38,6 @@ public:
 	AtomID_Mapper( core::pose::Pose const & pose,
 		bool const map_to_vanilla_pose = false );
 
-	//destructor
-	~AtomID_Mapper() override;
-
-	//constructor
-	AtomID_Mapper( AtomID_Mapper const & src );
-
 	AtomID_MapperOP
 	clone() const;
 

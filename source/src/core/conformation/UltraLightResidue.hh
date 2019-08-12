@@ -35,10 +35,6 @@ class UltraLightResidue : public utility::pointer::ReferenceCount {
 public:
 	UltraLightResidue(ResidueCOP residue);
 
-	UltraLightResidue(UltraLightResidue const & src);
-
-	~UltraLightResidue() override = default;
-
 	/// @brief update conformation with current coords. Slow.
 	void update_conformation(Conformation & conformation) const;
 

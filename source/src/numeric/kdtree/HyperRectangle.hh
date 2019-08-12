@@ -44,8 +44,6 @@ public:
 
 	numeric::Size ndim() const;
 
-	HyperRectangle & operator = ( HyperRectangle const & src );
-
 	void extend( utility::vector1< numeric::Real > const & pt );
 
 	void show( std::ostream & out ) const;

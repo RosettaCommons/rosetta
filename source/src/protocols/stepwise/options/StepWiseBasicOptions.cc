@@ -44,16 +44,6 @@ StepWiseBasicOptions::StepWiseBasicOptions()
 	initialize_variables();
 }
 
-//Destructor
-StepWiseBasicOptions::~StepWiseBasicOptions() = default;
-
-/// @brief copy constructor
-StepWiseBasicOptions::StepWiseBasicOptions( StepWiseBasicOptions const & src ) :
-	ReferenceCount()
-{
-	*this = src;
-}
-
 /////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseBasicOptions::initialize_variables(){

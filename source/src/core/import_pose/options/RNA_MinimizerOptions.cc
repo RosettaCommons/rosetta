@@ -51,18 +51,6 @@ RNA_MinimizerOptions::RNA_MinimizerOptions():
 	nblist_auto_update_( true )
 {}
 
-//Destructor
-RNA_MinimizerOptions::~RNA_MinimizerOptions() = default;
-
-
-/// @brief copy constructor
-RNA_MinimizerOptions::RNA_MinimizerOptions( RNA_MinimizerOptions const & src ) :
-	ReferenceCount(),
-	RNA_BasicOptions( src )
-{
-	*this = src;
-}
-
 /// @brief clone the options
 RNA_MinimizerOptionsOP
 RNA_MinimizerOptions::clone() const

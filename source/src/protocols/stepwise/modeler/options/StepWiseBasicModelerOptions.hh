@@ -32,11 +32,6 @@ public:
 	//constructor
 	StepWiseBasicModelerOptions();
 
-	StepWiseBasicModelerOptions( StepWiseBasicModelerOptions const & src );
-
-	//destructor
-	~StepWiseBasicModelerOptions();
-
 public:
 
 	StepWiseBasicModelerOptionsOP clone() const;

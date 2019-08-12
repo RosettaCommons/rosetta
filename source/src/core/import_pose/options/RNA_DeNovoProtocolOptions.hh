@@ -32,11 +32,6 @@ public:
 	//constructor
 	RNA_DeNovoProtocolOptions();
 
-	RNA_DeNovoProtocolOptions( RNA_DeNovoProtocolOptions const & src );
-
-	//destructor
-	~RNA_DeNovoProtocolOptions();
-
 public:
 
 	RNA_DeNovoProtocolOptionsOP clone() const;

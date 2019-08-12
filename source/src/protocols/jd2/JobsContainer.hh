@@ -53,6 +53,8 @@ public:
 	///
 	~JobsContainer() override;
 
+	/// Default (shallow copy) copy constructor/assignment operator is the desired behavior
+
 	/// @brief Get self const owning pointers.
 	///
 	inline JobsContainerCOP get_self_ptr() const { return shared_from_this(); }
@@ -70,11 +72,6 @@ public:
 	/// @details Should work even if jobs have been deleted, since this uses a
 	/// map instead of an array.
 	JobCOP operator [](core::Size const index) const;
-
-	/// @brief Assignment operator.
-	///
-	JobsContainer &
-	operator=( JobsContainer const & src );
 
 	/// @brief Get the total number of jobs.
 	/// @details Might not be the number in the joblist_ map, if we're only holding

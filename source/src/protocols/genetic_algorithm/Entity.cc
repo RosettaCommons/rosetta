@@ -76,15 +76,6 @@ EntityElement::operator == ( EntityElement const & rhs ) const {
 	return index_ == rhs.index_;
 }
 
-EntityElement &
-EntityElement::operator =  ( EntityElement const & rhs )
-{
-	if ( this != &rhs ) {
-		index_ = rhs.index_;
-	}
-	return *this;
-}
-
 std::string EntityElement::to_string() const
 {
 	std::ostringstream oss;

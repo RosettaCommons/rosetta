@@ -52,11 +52,6 @@ public:
 
 	~DereferenceIterator() {}
 
-	DereferenceIterator& operator=( const DereferenceIterator& src ) {
-		it_ = src.it_;
-		return (*this);
-	}
-
 	bool operator==( const DereferenceIterator& other ) const {
 		return ( it_ == other.it_ );
 	}

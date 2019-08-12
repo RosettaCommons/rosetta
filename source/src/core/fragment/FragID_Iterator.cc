@@ -51,8 +51,6 @@ FragID_Iterator::FragID_Iterator( ConstFrameIterator it ) : it_( it.it_ ), ipos_
 FragID_Iterator::FragID_Iterator( FrameIteratorWorker_OP it ) : it_(std::move( it )), ipos_(1) {}
 FragID_Iterator::FragID_Iterator( FrameList::iterator it ) : it_( FrameIteratorWorker_OP( new FrameListIterator_( it ) ) ), ipos_( 1 ) {}
 
-FragID_Iterator::~FragID_Iterator() = default;
-
 FragID_Iterator::FragID_Iterator() : it_( /* NULL */ ) {}
 
 bool FragID_Iterator::operator != ( FragID_Iterator const& fi) const {
@@ -83,12 +81,6 @@ FragID_Iterator& FragID_Iterator::operator++ () {
 
 FragID_Iterator& FragID_Iterator::operator+ ( Size offset ) {
 	for ( Size i = 1; i<=offset ; i++ ) operator++();
-	return *this;
-}
-
-FragID_Iterator& FragID_Iterator::operator = ( FragID_Iterator const& itr ) {
-	it_=itr.it_; //copy the pointers to the real iterators
-	ipos_= itr.ipos_;
 	return *this;
 }
 

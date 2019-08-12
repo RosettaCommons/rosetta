@@ -43,13 +43,6 @@ public:
 	GraftMoverBase(core::Size const start, core::Size const end, std::string mover_name,
 		core::pose::Pose const & piece, core::Size Nter_overhang_length=0, core::Size Cter_overhang_length=0);
 
-	GraftMoverBase(GraftMoverBase const & src);
-
-	~GraftMoverBase() override;
-
-	//@brief copy ctor
-	//GraftMoverBase( GraftMoverBase const & rhs);
-
 	/// @brief Sets the piece that will be inserted, and any overhang residues.
 	/// @details Overhang residues are residues not being inserted into the scaffold.
 	/// These residues are deleted before insertion and are used by classes usually for superposition or

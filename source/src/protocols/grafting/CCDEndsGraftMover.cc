@@ -92,11 +92,6 @@ CCDEndsGraftMover::CCDEndsGraftMover(
 	copy_pdbinfo(copy_pdb_info);
 }
 
-CCDEndsGraftMover::CCDEndsGraftMover(const CCDEndsGraftMover & ) = default;
-
-
-CCDEndsGraftMover::~CCDEndsGraftMover() = default;
-
 // XRW TEMP std::string
 // XRW TEMP CCDEndsGraftMover::get_name() const { return "CCDEndsGraftMover"; }
 

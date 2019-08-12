@@ -117,8 +117,6 @@ public:
 	/// @brief Alternative constructor to hold numbering scheme type as well.
 	PDBLandmark(char chain, core::Size resnum, char insertion_code, AntibodyNumberingSchemeEnum scheme);
 
-	~PDBLandmark() override;
-
 	core::Size
 	resnum() const { return resnum_;}
 
@@ -128,12 +126,8 @@ public:
 	char
 	insertion_code() const  {return insertion_code_;}
 
-
 	AntibodyNumberingSchemeEnum
 	numbering_scheme() const { return numbering_scheme_;}
-
-	PDBLandmark &
-	operator=(const PDBLandmark & src);
 
 	// Equivalent operators do not check scheme, since scheme is optional and we want to compare data with different schemes..
 	bool

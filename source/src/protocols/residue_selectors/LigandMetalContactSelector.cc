@@ -59,20 +59,6 @@ LigandMetalContactSelector::LigandMetalContactSelector():
 {
 }
 
-/// @brief Destructor.
-///
-LigandMetalContactSelector::~LigandMetalContactSelector() = default;
-
-/// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
-LigandMetalContactSelector::LigandMetalContactSelector(LigandMetalContactSelector const & src):
-	core::select::residue_selector::ResidueSelector( src )
-{
-	using_a_resselect_ = src.using_a_resselect_;
-	dist_cutoff_multiplier_  = src.dist_cutoff_multiplier_;
-	input_set_selector_ = src.input_set_selector_;
-	resnum_string_ = src.resnum_string_;
-
-}
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).

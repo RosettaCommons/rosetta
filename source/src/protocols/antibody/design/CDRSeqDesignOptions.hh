@@ -178,7 +178,11 @@ private:
 
 };
 
-
+inline
+CDRSeqDesignOptionsOP
+deep_copy( CDRSeqDesignOptions const & source ) {
+	return source.clone();
+}
 
 }
 }

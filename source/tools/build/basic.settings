@@ -84,7 +84,7 @@ settings = {
                 "#external/dbio",
                 "/usr/include",
                 "/usr/local/include",
-			],
+                        ],
             "library_path" : [
                 "/usr/lib",
                 "/usr/local/lib",
@@ -147,7 +147,7 @@ settings = {
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
-		    "isystem external/libxml2/include",
+                    "isystem external/libxml2/include",
                 ],
                 "cxx" : [
                     "std=c++0x",
@@ -157,7 +157,7 @@ settings = {
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
-		    "isystem external/libxml2/include",
+                    "isystem external/libxml2/include",
 
                     #"fno-omit-frame-pointer", # -- useful for profiling on linux using RotateRight's Zoom profiler
                 ],
@@ -235,9 +235,9 @@ settings = {
                 # XXX: march=k8 is (?) the default.  There may be a speedup
                 # XXX: with =nocona on Intel EM64T or =opteron on Opteron.
                 "compile" : [
-		    "march=core2",
-		    "mtune=generic",
-	        ],
+                    "march=core2",
+                    "mtune=generic",
+                ],
             },
         },
     },
@@ -316,7 +316,7 @@ settings = {
                     #"Wshadow",
                 ],
             },
-	    # enable STL debug mode, see https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
+            # enable STL debug mode, see https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
             "defines" : [ "_GLIBCXX_DEBUG" ],
         },
     },
@@ -425,23 +425,33 @@ settings = {
             },
             #"defines" : [ "NDEBUG" ],
 
-	    # enable STL debug mode, see https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
+            # enable STL debug mode, see https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
             "defines" : [ "_GLIBCXX_DEBUG" ],
         },
     },
 
-	"gcc, 8.1" : {
-		"appends" : {
-			"flags" : {
-				"link" : [
-					"--no-as-needed",
-				],
-				"compile" : [
-					"--no-as-needed",
-				],
-			},
-		},
-	},
+    "gcc, 9.1" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
+
+    "gcc, 8.1" : {
+        "appends" : {
+            "flags" : {
+                "link" : [
+                    "--no-as-needed",
+                ],
+                "compile" : [
+                    "--no-as-needed",
+                ],
+            },
+        },
+    },
 
     "gcc, 4.9, release_debug" : {
         "appends" : {
@@ -463,7 +473,7 @@ settings = {
                     "finline-functions",
                     "finline-limit=20000",
                     "s",
-		    "ffloat-store", # "mfpmath=sse", "msse2",  WARNING WARNING WARNING this flags SIGNIFICANTLY degrade performance and only used to improved stability for integration tests, they should NEVER be enabled for production code
+                    "ffloat-store", # "mfpmath=sse", "msse2",  WARNING WARNING WARNING this flags SIGNIFICANTLY degrade performance and only used to improved stability for integration tests, they should NEVER be enabled for production code
                 ],
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
@@ -474,7 +484,7 @@ settings = {
             },
             #"defines" : [ "NDEBUG" ],
 
-	    # enable STL debug mode, see https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
+            # enable STL debug mode, see https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
             "defines" : [ "_GLIBCXX_DEBUG" ],
         },
     },
@@ -580,7 +590,7 @@ settings = {
     "gcc, macos, pyrosetta" : {
         "appends" : {
            "libraries"  : [ "stdc++", ],
-	},
+        },
         "removes" : {
             "flags" : {
                 "warn" : [
@@ -599,7 +609,7 @@ settings = {
     "gcc, macos, pyrosetta_debug" : {
         "appends" : {
            "libraries"  : [ "stdc++", ],
-	},
+        },
         "removes" : {
             "flags" : {
                 "warn" : [
@@ -622,14 +632,14 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile" : [
-		    "O1",
+                    "O1",
                     "fsanitize=address",
                     "fno-optimize-sibling-calls",
-		],
+                ],
                 "mode" : [
                     "g",
                     "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
-		],
+                ],
                 "link" : [
                     "fsanitize=address",
                 ],
@@ -650,16 +660,16 @@ settings = {
 #        "appends" : {
 #            "flags" : {
 #                "compile" : [
-#		    "O1",
+#                    "O1",
 #                    "fsanitize=memory",
 #                    "fno-optimize-sibling-calls",
 #                    "fPIE",
 #                    "pie",
-#		],
+#                ],
 #                "mode" : [
 #                    "g",
 #                    "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
-#		],
+#                ],
 #                "link" : [
 #                    "fsanitize=memory",
 #                ],
@@ -682,18 +692,18 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile" : [
-		    "O1",
+                    "O1",
                     "fsanitize=undefined",
                     "fno-sanitize-recover=all", # Error out immediately once an error is encountered
                     "fno-sanitize=alignment", # x86 (where these tests are run) is fine with misaligned data, and the compilers don't bother padding.
                     "fno-optimize-sibling-calls",
                     "fPIE",
                     "pie",
-		],
+                ],
                 "mode" : [
                     "g",
                     "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
-		],
+                ],
                 "link" : [
                     "fsanitize=undefined",
                 ],
@@ -793,7 +803,7 @@ settings = {
                 #"/usr/include/GL"
             ],
             "libraries" : [
-		"pthread",
+                "pthread",
                 "boinc_graphics2",
             ],
             "library_path" : [
@@ -810,7 +820,7 @@ settings = {
                     "Wno-unused-variable",
                     "Wno-unused-parameter",
                     "Wno-parentheses",
-		    #"Wno-unused-but-set-variable",
+                    #"Wno-unused-but-set-variable",
                 ],
                 #"link" : [ "Wl,-Bdynamic -lglut -lGL -lGLU -Wl,--dynamic-linker=/lib64/ld-linux-x86-64.so.2"  ],
             },
@@ -1214,7 +1224,7 @@ settings = {
     "gcc, serialization" : {
         "appends" : {
             "defines" : [
-		"SERIALIZATION",
+                "SERIALIZATION",
             ],
         },
     },
@@ -1222,8 +1232,8 @@ settings = {
     "gcc, tensorflow" : {
         "appends" : {
             "defines" : [
-		"USE_TENSORFLOW",
-		"USE_TENSORFLOW_CPU",
+                "USE_TENSORFLOW",
+                "USE_TENSORFLOW_CPU",
             ],
             "libraries" : [
                 "tensorflow",
@@ -1231,16 +1241,16 @@ settings = {
         },
         "flags" : {
             "link" : [
-		"tensorflow",
+                "tensorflow",
             ],
-	},
+        },
     },
 
     "gcc, tensorflow_gpu" : {
         "appends" : {
             "defines" : [
-		"USE_TENSORFLOW",
-		"USE_TENSORFLOW_GPU",
+                "USE_TENSORFLOW",
+                "USE_TENSORFLOW_GPU",
             ],
             "libraries" : [
                 "tensorflow",
@@ -1248,17 +1258,17 @@ settings = {
         },
         "flags" : {
             "link" : [
-		"tensorflow",
+                "tensorflow",
             ],
-	},
+        },
     },
 
 
     "gcc, zeromq" : {
         "appends" : {
             "defines" : [
-		"SERIALIZATION",
-		"ZEROMQ",
+                "SERIALIZATION",
+                "ZEROMQ",
             ],
         },
     },
@@ -1291,7 +1301,7 @@ settings = {
                 "#external/androidarm-tc/arm-linux-androideabi/lib",
                 "#external/androidarm-tc/sysroot/usr/lib",
             ],
-	    "defines"   : [ 
+            "defines"   : [ 
                 "ANDROID", 
                 "NOCRASHREPORT",
             ],
@@ -1392,7 +1402,7 @@ settings = {
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
-		    "isystem external/libxml2/include",
+                    "isystem external/libxml2/include",
                 ],
                 "cxx" : [
                     "std=c++11",
@@ -1401,26 +1411,26 @@ settings = {
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
-		    "isystem external/libxml2/include",
+                    "isystem external/libxml2/include",
                 ],
                 "warn" : [
                     "Wall",
                     # When we ICC on the test server, we should probably turn on warnings-as-errors
-		    "w2", # More verbose warnings
+                    "w2", # More verbose warnings
                     "Wp64",
-		    # Disable Specific warinings
-		    # 188: enumerated type mixed with another type
-		    # 279: controlling expression is constant
-		    # 300: const variable requires an initializer
-		    # 488: constant is not used in declaring the parameter types of function template
-		    # 654: partial override warning
-		    # 1682: implicit conversion of a 64-bit integral type to a smaller integral type
-		    # 1684: conversion from pointer to same-sized integral type -- Boost has issues with this
-		    # 1170: invalid redeclaration of nested class -- Boost has issues with this
-		    # 2196: routine is both "inline" and "noinline" -- Boost has issues with this
-		    # 2259: non-pointer conversion from "type" to "type" may lose significant bits
-		    # 3656: variable may be used before its value is set
-		    # 3682: always error warning
+                    # Disable Specific warinings
+                    # 188: enumerated type mixed with another type
+                    # 279: controlling expression is constant
+                    # 300: const variable requires an initializer
+                    # 488: constant is not used in declaring the parameter types of function template
+                    # 654: partial override warning
+                    # 1682: implicit conversion of a 64-bit integral type to a smaller integral type
+                    # 1684: conversion from pointer to same-sized integral type -- Boost has issues with this
+                    # 1170: invalid redeclaration of nested class -- Boost has issues with this
+                    # 2196: routine is both "inline" and "noinline" -- Boost has issues with this
+                    # 2259: non-pointer conversion from "type" to "type" may lose significant bits
+                    # 3656: variable may be used before its value is set
+                    # 3682: always error warning
                     "wd188,279,300,488,654,1682,1684,1170,2196,2259,3656,3682",
                 ],
                 "link" : [ "lsvml", "shared-intel", ],
@@ -1669,7 +1679,7 @@ settings = {
     "icc, serialization" : {
         "appends" : {
             "defines" : [
-		"SERIALIZATION",
+                "SERIALIZATION",
             ],
         },
     },
@@ -1677,8 +1687,8 @@ settings = {
     "icc, tensorflow" : {
         "appends" : {
             "defines" : [
-		"USE_TENSORFLOW",
-		"USE_TENSORFLOW_CPU",
+                "USE_TENSORFLOW",
+                "USE_TENSORFLOW_CPU",
             ],
             "libraries" : [
                 "tensorflow",
@@ -1686,16 +1696,16 @@ settings = {
         },
         "flags" : {
             "link" : [
-		"tensorflow",
+                "tensorflow",
             ],
-	},
+        },
     },
 
     "icc, tensorflow_gpu" : {
         "appends" : {
             "defines" : [
-		"USE_TENSORFLOW",
-		"USE_TENSORFLOW_GPU",
+                "USE_TENSORFLOW",
+                "USE_TENSORFLOW_GPU",
             ],
             "libraries" : [
                 "tensorflow",
@@ -1703,16 +1713,16 @@ settings = {
         },
         "flags" : {
             "link" : [
-		"tensorflow",
+                "tensorflow",
             ],
-	},
+        },
     },
 
     "icc, zeromq" : {
         "appends" : {
             "defines" : [
-		"SERIALIZATION",
-		"ZEROMQ",
+                "SERIALIZATION",
+                "ZEROMQ",
             ],
         },
     },
@@ -2019,7 +2029,7 @@ settings = {
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
-		    "isystem external/libxml2/include",
+                    "isystem external/libxml2/include",
                 ],
                 "cxx" : [
                     "std=c++11",
@@ -2028,11 +2038,11 @@ settings = {
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
-		    "isystem external/libxml2/include",
+                    "isystem external/libxml2/include",
                 ],
                 "compile" : [
-		    "march=core2",
-		    "mtune=generic",
+                    "march=core2",
+                    "mtune=generic",
                     "pipe",
                     "Qunused-arguments",
                     'DUNUSUAL_ALLOCATOR_DECLARATION',
@@ -2162,7 +2172,7 @@ settings = {
                 ],
             },
         },
-	"prepends" : {
+        "prepends" : {
             # This makes clang use libstdc++ 4.4.0 on CentOS.
             # (requires gcc44-c++ and libstdc++44-devel)
             #"library_path" : [ "/usr/lib/gcc/x86_64-redhat-linux6E/4.4.0" ],
@@ -2199,8 +2209,8 @@ settings = {
                 "mode" : [ "g" ],
             },
 
-	    # looks like debug mode is broken in Xcode 9.0, disbaling this for now
-	    # enable STL debug mode, see https://libcxx.llvm.org/docs/DesignDocs/DebugMode.html and https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
+            # looks like debug mode is broken in Xcode 9.0, disbaling this for now
+            # enable STL debug mode, see https://libcxx.llvm.org/docs/DesignDocs/DebugMode.html and https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
         # I had played around with keeping _GLIBCXX_DEBUG for mac, but it's not strictly necessary
         # as long as SOME tests are running with the stricter settings, and it was hell on a few
         # tests for some reason
@@ -2245,7 +2255,7 @@ settings = {
                 "mode" : [
                     "g",
                     "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
-		],
+                ],
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
                 "warn" : [
@@ -2264,7 +2274,7 @@ settings = {
                 "mode" : [
                     "g",
                     "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
-		],
+                ],
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
                 "warn" : [
@@ -2274,8 +2284,8 @@ settings = {
             },
             #"defines" : [ "NDEBUG" ],
 
-	    # looks like debug mode is broken in Xcode 9.0, disbaling this for now
-	    # enable STL debug mode, see https://libcxx.llvm.org/docs/DesignDocs/DebugMode.html and https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
+            # looks like debug mode is broken in Xcode 9.0, disbaling this for now
+            # enable STL debug mode, see https://libcxx.llvm.org/docs/DesignDocs/DebugMode.html and https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
             #"defines" : [ "_LIBCPP_DEBUG", "_GLIBCXX_DEBUG" ],
         },
     },
@@ -2284,9 +2294,9 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile" : [
-		    "O3",
-		    "ffloat-store", # "mfpmath=sse", "msse2",  WARNING WARNING WARNING this flags SIGNIFICANTLY degrade performance and only used to improved stability for integration tests, they should NEVER be enabled for production code
-		],
+                    "O3",
+                    "ffloat-store", # "mfpmath=sse", "msse2",  WARNING WARNING WARNING this flags SIGNIFICANTLY degrade performance and only used to improved stability for integration tests, they should NEVER be enabled for production code
+                ],
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
                 "warn" : [
@@ -2296,8 +2306,8 @@ settings = {
             },
             #"defines" : [ "NDEBUG" ],
 
-	    # looks like debug mode is broken in Xcode 9.0, disbaling this for now
-	    # enable STL debug mode, see https://libcxx.llvm.org/docs/DesignDocs/DebugMode.html and https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
+            # looks like debug mode is broken in Xcode 9.0, disbaling this for now
+            # enable STL debug mode, see https://libcxx.llvm.org/docs/DesignDocs/DebugMode.html and https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
             #"defines" : [ "_LIBCPP_DEBUG", "_GLIBCXX_DEBUG" ],
         },
     },
@@ -2308,14 +2318,14 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile" : [
-		    "O1",
+                    "O1",
                     "fsanitize=address",
                     "fno-optimize-sibling-calls",
-		],
+                ],
                 "mode" : [
                     "g",
                     "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
-		],
+                ],
                 "link" : [
                     "fsanitize=address",
                 ],
@@ -2336,16 +2346,16 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile" : [
-		    "O1",
+                    "O1",
                     "fsanitize=memory",
                     "fno-optimize-sibling-calls",
                     "fPIE",
                     "pie",
-		],
+                ],
                 "mode" : [
                     "g",
                     "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
-		],
+                ],
                 "link" : [
                     "fsanitize=memory",
                 ],
@@ -2368,7 +2378,7 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile" : [
-		    "O1",
+                    "O1",
                     "fsanitize=undefined",
                     "fno-sanitize-recover=all", # Error out immediately once an error is encountered
                     "fsanitize-undefined-trap-on-error", # Die on error, rather than exiting gracefully (for debugging)
@@ -2376,11 +2386,11 @@ settings = {
                     "fno-optimize-sibling-calls",
                     "fPIE",
                     "pie",
-		],
+                ],
                 "mode" : [
                     "g",
                     "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
-		],
+                ],
                 "link" : [
                     "fsanitize=undefined",
                 ],
@@ -2427,7 +2437,7 @@ settings = {
                 "warn" : [ "Wno-unused-function", ],
             },
             "defines" : [
-		"SERIALIZATION",
+                "SERIALIZATION",
             ],
         },
     },
@@ -2435,8 +2445,8 @@ settings = {
     "clang, tensorflow" : {
         "appends" : {
             "defines" : [
-		"USE_TENSORFLOW",
-		"USE_TENSORFLOW_CPU",
+                "USE_TENSORFLOW",
+                "USE_TENSORFLOW_CPU",
             ],
             "libraries" : [
                 "tensorflow",
@@ -2444,16 +2454,16 @@ settings = {
         },
         "flags" : {
             "link" : [
-		"tensorflow",
+                "tensorflow",
             ],
-	},
+        },
     },
 
     "clang, tensorflow_gpu" : {
         "appends" : {
             "defines" : [
-		"USE_TENSORFLOW",
-		"USE_TENSORFLOW_GPU",
+                "USE_TENSORFLOW",
+                "USE_TENSORFLOW_GPU",
             ],
             "libraries" : [
                 "tensorflow",
@@ -2461,9 +2471,9 @@ settings = {
         },
         "flags" : {
             "link" : [
-		"tensorflow",
+                "tensorflow",
             ],
-	},
+        },
     },
 
 
@@ -2473,8 +2483,8 @@ settings = {
                 "warn" : [ "Wno-unused-function", ],
             },
             "defines" : [
-		"SERIALIZATION",
-		"ZEROMQ",
+                "SERIALIZATION",
+                "ZEROMQ",
             ],
         },
     },
@@ -2616,15 +2626,15 @@ settings = {
     "clang, macos, boinc" : {
         "appends" : {
             "libraries" : [
-		"boinc_graphics2",
+                "boinc_graphics2",
                 "boinc_api",
                 "boinc",
                 "boinc_zip",
-		"freetype",
-		"ftgl",
-		"bz2",
-		"png",
-	    ],
+                "freetype",
+                "ftgl",
+                "bz2",
+                "png",
+            ],
             "library_path" : [
                 "#external/boinc/mac_build/build/Deployment",
                 "#external/boinc/zip",
@@ -2638,31 +2648,31 @@ settings = {
                 "#external/boinc",
                 "#external/boinc/lib",
                 "#external/boinc/zip",
-		"#external/boinc/3rdParty/mac/ftgl-2.1.3~rc5/src/",
-		"#external/boinc/3rdParty/mac/freetype-2.6.2/include/",
-		"/System/Library/Frameworks/OpenGL.framework/Headers/",
-		"/System/Library/Frameworks/IOSurface.framework/Headers/",
+                "#external/boinc/3rdParty/mac/ftgl-2.1.3~rc5/src/",
+                "#external/boinc/3rdParty/mac/freetype-2.6.2/include/",
+                "/System/Library/Frameworks/OpenGL.framework/Headers/",
+                "/System/Library/Frameworks/IOSurface.framework/Headers/",
             ],
             "defines" : [
                 "MAC",
-		"BOINC",
+                "BOINC",
                 "BOINC_GRAPHICS",
                 "NOCRASHREPORT",
             ],
             "flags" : {
-		"warn" : [
-		    "Wno-deprecated-declarations",
-		    "Wno-c++11-narrowing",
-		],
+                "warn" : [
+                    "Wno-deprecated-declarations",
+                    "Wno-c++11-narrowing",
+                ],
                 "link" : [
-		    "stdlib=libc++",
+                    "stdlib=libc++",
                     "framework GLUT",
                     "framework OpenGL",
                     "framework Cocoa",
                     "framework IOSurface",
                 ],
                 "shlink" : [
-		    "stdlib=libc++",
+                    "stdlib=libc++",
                     "framework GLUT",
                     "framework OpenGL",
                     "framework Cocoa",

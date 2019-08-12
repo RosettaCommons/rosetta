@@ -32,19 +32,6 @@ namespace fragment {
 
 static basic::Tracer tr( "core.fragment" );
 
-/// @brief copy assignment
-BBTorsionSRFD & BBTorsionSRFD::operator =( BBTorsionSRFD const & rval ) {
-	if ( this != &rval ) {
-		Parent::operator =( rval );
-
-		// copy local data
-		torsions_ = rval.torsions_;
-		coords_ = rval.coords_;
-		has_coords_ = rval.has_coords_;
-	}
-	return *this;
-}
-
 /// @brief insert all backbone torsions into pose at position seq_pos
 bool BBTorsionSRFD::apply( pose::Pose& pose, Size seqpos ) const {
 	bool const success ( Parent::apply( pose, seqpos ) );

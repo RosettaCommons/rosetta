@@ -42,11 +42,6 @@ public:
 	//constructor
 	StepWiseBasicOptions();
 
-	StepWiseBasicOptions( StepWiseBasicOptions const & src );
-
-	//destructor
-	~StepWiseBasicOptions();
-
 public:
 
 	StepWiseBasicOptionsOP clone() const;

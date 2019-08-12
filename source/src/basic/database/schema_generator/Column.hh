@@ -35,10 +35,6 @@ public:
 
 	Column(std::string const & name, DbDataTypeOP type, bool allow_null, bool auto_increment, platform::Size auto_increment_base = 0);
 
-	Column(Column const & src);
-
-	virtual ~Column();
-
 	std::string name() const;
 
 	bool auto_increment() const;

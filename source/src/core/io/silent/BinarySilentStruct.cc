@@ -852,14 +852,6 @@ Real BinarySilentStruct::CA_rmsd( BinarySilentStruct other_pss ) {
 	return rmsd;
 }
 
-BinarySilentStruct & BinarySilentStruct::operator= (
-	BinarySilentStruct const &
-)
-{
-	utility_exit_with_message( "called BinarySilentStruct::operator=)" );
-	exit(1);
-}
-
 } // namespace silent
 } // namespace io
 } // namespace core

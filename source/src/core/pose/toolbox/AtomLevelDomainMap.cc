@@ -89,21 +89,11 @@ AtomLevelDomainMap::AtomLevelDomainMap( core::pose::Pose const & pose,
 }
 
 //////////////////////////////////////////////////////////////////
-AtomLevelDomainMap::~AtomLevelDomainMap() = default;
-
-//////////////////////////////////////////////////////////////////
 AtomLevelDomainMapOP
 AtomLevelDomainMap::clone() const
 {
 	AtomLevelDomainMapOP new_atom_level_domain_map( new AtomLevelDomainMap( *this ) );
 	return new_atom_level_domain_map;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-AtomLevelDomainMap::AtomLevelDomainMap( AtomLevelDomainMap const & src ):
-	ReferenceCount()
-{
-	*this = src;
 }
 
 //////////////////////////////////////////////////////////////////

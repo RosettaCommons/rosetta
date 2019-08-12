@@ -90,19 +90,6 @@ FoldTreeSketch::FoldTreeSketch( core::kinematics::FoldTree const& ft ):
 	}
 }
 
-FoldTreeSketch::FoldTreeSketch( FoldTreeSketch const& rhs ):
-	ReferenceCount(),
-	nodes_(utility::vector1< NodeOP >()),
-	n_jumps_( 0 ),
-	n_cuts_( rhs.n_cuts_ )
-{
-
-	for ( core::Size i = 1; i <= rhs.nodes_.size(); ++i ) {
-		nodes_.push_back( utility::pointer::make_shared< Node >( *rhs.nodes_[ i ] ) );
-	}
-	n_jumps_ = rhs.n_jumps_;
-}
-
 bool FoldTreeSketch::has_cut( Size const p ) const {
 	range_check( p );
 	if ( p == nres() ) {

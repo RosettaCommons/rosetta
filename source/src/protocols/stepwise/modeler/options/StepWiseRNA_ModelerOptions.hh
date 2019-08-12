@@ -37,11 +37,6 @@ public:
 	//constructor
 	StepWiseRNA_ModelerOptions();
 
-	StepWiseRNA_ModelerOptions( StepWiseRNA_ModelerOptions const & src );
-
-	//destructor
-	~StepWiseRNA_ModelerOptions();
-
 public:
 
 	StepWiseRNA_ModelerOptionsOP clone() const;

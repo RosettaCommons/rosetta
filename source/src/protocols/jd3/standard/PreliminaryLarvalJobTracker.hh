@@ -47,9 +47,6 @@ class PreliminaryLarvalJobTracker : public utility::pointer::ReferenceCount {
 public:
 
 	PreliminaryLarvalJobTracker();
-	PreliminaryLarvalJobTracker(PreliminaryLarvalJobTracker const & src);
-
-	virtual ~PreliminaryLarvalJobTracker();
 
 public:
 

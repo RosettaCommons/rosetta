@@ -82,15 +82,6 @@ MirrorSymmetricConformation::MirrorSymmetricConformation(
 	//update_residue_identities();
 }
 
-MirrorSymmetricConformation::MirrorSymmetricConformation(
-	MirrorSymmetricConformation const & conf
-):
-	SymmetricConformation(conf, *conf.Symmetry_Info())
-{
-	res_is_mirrored_=conf.res_is_mirrored_;
-	jump_is_mirrored_=conf.jump_is_mirrored_;
-}
-
 Conformation &
 MirrorSymmetricConformation::operator=( Conformation const & src )
 {

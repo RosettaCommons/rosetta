@@ -69,19 +69,10 @@ AtomID_Mapper::AtomID_Mapper( core::pose::Pose const & pose,
 }
 
 //constructor
-AtomID_Mapper::AtomID_Mapper( AtomID_Mapper const & src ) {
-	*this = src;
-}
-
-//constructor
 AtomID_MapperOP
 AtomID_Mapper::clone() const {
 	return utility::pointer::make_shared< AtomID_Mapper >( *this );
 }
-
-
-//Destructor
-AtomID_Mapper::~AtomID_Mapper() = default;
 
 
 //////////////////////////////////////////////////////////////////

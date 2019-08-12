@@ -105,6 +105,8 @@ public:
 		simple_tree( nres_in );
 	}
 
+	FoldTree( FoldTree const & ) = default;
+
 	/// @brief operator=
 	/// @note this version doesn't copy any of the derived data!
 	/// will this be too slow? it will trigger re-calculating of everything

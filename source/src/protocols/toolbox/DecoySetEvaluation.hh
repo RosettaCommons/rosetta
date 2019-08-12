@@ -50,13 +50,6 @@ public:
 		it_ = s_iter;
 	}
 
-	~OP_const_iterator() = default;
-
-	OP_const_iterator& operator=( const OP_const_iterator& src ) {
-		it_ = src.it_;
-		return (*this);
-	}
-
 	bool operator==( const OP_const_iterator& other ) {
 		return ( it_ == other.it_ );
 	}

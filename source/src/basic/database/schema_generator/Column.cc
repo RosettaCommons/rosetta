@@ -50,17 +50,6 @@ Column::Column(std::string const & name, DbDataTypeOP type, bool allow_null, boo
 	auto_increment_base_(auto_increment_base)
 {}
 
-Column::Column(Column const & src) :
-	ReferenceCount(),
-	name_(src.name_),
-	type_(src.type_),
-	allow_null_(src.allow_null_),
-	auto_increment_(src.auto_increment_),
-	auto_increment_base_(src.auto_increment_base_)
-{}
-
-Column::~Column() = default;
-
 std::string Column::name() const{
 	return name_;
 }

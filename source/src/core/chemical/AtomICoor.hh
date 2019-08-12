@@ -77,8 +77,6 @@ public:
 		ResidueType const & rsd_type
 	);
 
-	ICoorAtomID( ICoorAtomID const & id );
-
 	/// @brief Update the internal VDs based on the provide mapping
 	void remap_atom_vds( std::map< VD, VD > const & old_to_new );
 

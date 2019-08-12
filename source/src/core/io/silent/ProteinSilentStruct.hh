@@ -102,8 +102,11 @@ public:
 	// destructor
 	~ProteinSilentStruct_Template() {}
 
-	/// @brief Test if this ProteinSilentStruct is equal to the given
+	ProteinSilentStruct_Template( ProteinSilentStruct_Template<T> const & ) = default;
+
+	/// @brief Test if this ProteinSilentStruct is equal to the given -- [sic]!!
 	/// ProteinSilentStruct_Template<T> in terms of conformation. Doesn't check energies.
+	/// (This is substantially different than the behavior of the copy constructor)
 	ProteinSilentStruct_Template<T> & operator= (
 		ProteinSilentStruct_Template<T> const & src
 	);

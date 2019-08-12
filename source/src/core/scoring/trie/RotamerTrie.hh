@@ -92,20 +92,6 @@ public:
 		rotamers_in_subtree_( 0 )
 	{}
 
-	TrieNode( TrieNode< AT, CPDATA > const & other ) :
-		atom_( other.atom_ ),
-		cp_data_( other.cp_data_ ),
-		subtree_intxn_sphere_radius_sqr_( other.subtree_intxn_sphere_radius_sqr_ ),
-		first_atom_in_branch_( other.first_atom_in_branch_ ),
-		is_hydrogen_( other.is_hydrogen_ ),
-		is_term_( other.is_term_ ),
-		sibling_( other.sibling_ ),
-		rotamers_in_subtree_( other.rotamers_in_subtree_ )
-	{}
-
-	//DSTOR
-	~TrieNode() {}
-
 	/// Properties
 	bool first_atom_in_branch() const { return first_atom_in_branch_; }
 	bool has_sibling() const { return sibling_ != 0; }

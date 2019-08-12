@@ -657,6 +657,11 @@ private:
 
 };
 
+inline
+AntibodyInfoOP
+deep_copy( AntibodyInfo const & source) {
+	return source.clone();
+}
 
 } //namespace antibody
 } //namespace protocols

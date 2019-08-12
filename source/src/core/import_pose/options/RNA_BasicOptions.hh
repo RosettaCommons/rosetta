@@ -36,11 +36,6 @@ public:
 	//constructor
 	RNA_BasicOptions();
 
-	RNA_BasicOptions( RNA_BasicOptions const & src );
-
-	//destructor
-	~RNA_BasicOptions();
-
 public:
 
 	RNA_BasicOptionsOP clone() const;

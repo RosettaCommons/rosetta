@@ -30,14 +30,6 @@ EnergyMethod::EnergyMethod( EnergyMethodCreatorOP creator ) :
 {
 }
 
-EnergyMethod::EnergyMethod( EnergyMethod const & src ) :
-	parent(),
-	score_types_( src.score_types_ )
-{
-}
-
-EnergyMethod::~EnergyMethod() = default;
-
 bool
 EnergyMethod::minimize_in_whole_structure_context( pose::Pose const & ) const
 {

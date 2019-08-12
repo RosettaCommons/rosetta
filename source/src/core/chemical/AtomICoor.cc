@@ -118,8 +118,6 @@ ICoorAtomID::ICoorAtomID(
 	vd_ = vd;
 }
 
-ICoorAtomID::ICoorAtomID( ICoorAtomID const & ) = default;
-
 void
 ICoorAtomID::remap_atom_vds( std::map< VD, VD > const & old_to_new ) {
 	if ( old_to_new.count( vd_ ) == 1 ) {

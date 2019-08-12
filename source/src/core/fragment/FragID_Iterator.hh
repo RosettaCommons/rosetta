@@ -50,7 +50,6 @@ public:
 	FragID_Iterator( FrameIterator it );
 	FragID_Iterator( FrameIteratorWorker_OP it );
 	FragID_Iterator( FrameList::iterator it );
-	~FragID_Iterator();
 
 	FragID_Iterator();
 
@@ -61,8 +60,6 @@ public:
 	FragID_Iterator& operator++ ();
 
 	FragID_Iterator& operator+ ( Size offset );
-
-	FragID_Iterator& operator = ( FragID_Iterator const& itr );
 
 	FragID frag_id();
 

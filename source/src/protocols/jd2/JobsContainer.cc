@@ -134,19 +134,6 @@ JobCOP JobsContainer::operator [](core::Size const index) const {
 	return joblist_.at(index);
 }
 
-/// @brief Assignment operator.
-///
-JobsContainer &
-JobsContainer::operator=( JobsContainer const & src ) {
-	joblist_ = src.joblist_;
-	highest_job_index_=src.highest_job_index_;
-	total_jobs_=src.total_jobs_;
-	total_jobs_set_=src.total_jobs_set_;
-	job_inputter_=src.job_inputter_; //Do not clone!  Use OP directly!
-	force_job_purging_=src.force_job_purging_;
-	return *this;
-}
-
 /// @brief Add a job to the list of jobs.
 ///
 void JobsContainer::push_back( JobOP new_job ) {

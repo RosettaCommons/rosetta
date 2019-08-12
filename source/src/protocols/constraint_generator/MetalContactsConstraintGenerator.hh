@@ -37,10 +37,6 @@ class MetalContactsConstraintGenerator : public protocols::constraint_generator:
 public:
 	MetalContactsConstraintGenerator();
 
-	MetalContactsConstraintGenerator( MetalContactsConstraintGenerator const & src );
-
-	virtual ~MetalContactsConstraintGenerator();
-
 	static std::string
 	class_name();
 

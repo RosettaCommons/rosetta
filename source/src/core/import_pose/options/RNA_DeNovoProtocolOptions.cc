@@ -48,19 +48,6 @@ RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions():
 	dump_stems_( false )
 {}
 
-//Destructor
-RNA_DeNovoProtocolOptions::~RNA_DeNovoProtocolOptions() = default;
-
-/// @brief copy constructor
-RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions( RNA_DeNovoProtocolOptions const & src ) :
-	ReferenceCount(),
-	RNA_BasicOptions( src ),
-	RNA_MinimizerOptions( src ),
-	RNA_FragmentMonteCarloOptions( src )
-{
-	*this = src;
-}
-
 /// @brief clone the options
 RNA_DeNovoProtocolOptionsOP
 RNA_DeNovoProtocolOptions::clone() const

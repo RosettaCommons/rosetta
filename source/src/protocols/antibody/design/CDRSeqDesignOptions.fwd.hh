@@ -38,6 +38,9 @@ typedef utility::pointer::shared_ptr< CDRSeqDesignOptionsParser const > CDRSeqDe
 
 typedef utility::vector1<CDRSeqDesignOptionsOP> AntibodyCDRSeqDesignOptions;
 
+
+CDRSeqDesignOptionsOP deep_copy( CDRSeqDesignOptions const & );
+
 }
 }
 }

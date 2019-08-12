@@ -55,29 +55,6 @@ namespace scoring {
 
 static basic::Tracer TR( "core.scoring.MembraneTopology" );
 
-MembraneTopology::MembraneTopology( MembraneTopology const & src ) :
-	CacheableData()
-{
-	helix_id_=src.helix_id_;
-	span_=src.span_;
-	full_span_=src.full_span_;
-	relative_tmh_ori_=src.relative_tmh_ori_;
-	total_tmhelix_=src.total_tmhelix_;
-	N_term_inside_=src.N_term_inside_;
-	beta_barrel_=src.beta_barrel_;
-	depth_=src.depth_;
-	LipidExposure_=src.LipidExposure_;
-	LipidBurial_=src.LipidBurial_;
-	LipoDefined_=src.LipoDefined_;
-	tmregion_=src.tmregion_;
-	allow_scoring_=src.allow_scoring_;
-	allow_tmh_scoring_=src.allow_tmh_scoring_;
-	tmh_inserted_=src.tmh_inserted_;
-	init_=src.init_;
-	initialized_=src.initialized_;
-	spanfile_=src.spanfile_;
-}
-
 std::string
 MembraneTopology::read_in_spanfile()
 {

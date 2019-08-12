@@ -50,6 +50,9 @@ public:
 	EntityElement();
 	EntityElement( Size index );
 	EntityElement( std::string & word ); // This constructor nibbles away at the input string
+	EntityElement( EntityElement const & ) = default;
+	// Need virtual operator= to avoid slicing with respect to subtype assignments
+	virtual EntityElement & operator = ( EntityElement const & ) = default;
 	~EntityElement() override;
 
 	virtual EntityElementOP clone() = 0;
@@ -61,7 +64,6 @@ public:
 
 	virtual bool operator <  ( EntityElement const & rhs ) const;
 	virtual bool operator == ( EntityElement const & rhs ) const;
-	virtual EntityElement & operator = ( EntityElement const & rhs );
 
 	virtual std::string to_string() const;
 	virtual std::string name() const = 0; // Each entity element must have a distinct name

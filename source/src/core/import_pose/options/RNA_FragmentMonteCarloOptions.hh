@@ -33,11 +33,6 @@ public:
 	//constructor
 	RNA_FragmentMonteCarloOptions();
 
-	RNA_FragmentMonteCarloOptions( RNA_FragmentMonteCarloOptions const & src );
-
-	//destructor
-	~RNA_FragmentMonteCarloOptions();
-
 public:
 
 	RNA_FragmentMonteCarloOptionsOP clone() const;

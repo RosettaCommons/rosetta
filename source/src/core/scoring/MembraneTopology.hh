@@ -48,8 +48,6 @@ class MembraneTopology : public basic::datacache::CacheableData {
 public:
 	MembraneTopology(): LipoDefined_(false),init_(false),beta_barrel_(false),N_term_inside_(false),initialized_(false) {};
 
-	MembraneTopology( MembraneTopology const & src);
-
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{

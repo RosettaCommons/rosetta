@@ -172,16 +172,6 @@ template < Size S, Size N, class P >
 class DunbrackRotamerMeanSD {
 public:
 
-	DunbrackRotamerMeanSD( DunbrackRotamerMeanSD< S, N, P > const & rhs ) :
-		rotamer_probability_( P( 0.0 ) )
-	{
-		n_derivs_ = rhs.n_derivs();
-		for ( Size ii = 1; ii <= S; ++ii ) {
-			chi_mean_[ ii ] = rhs.chi_mean( ii );
-			chi_sd_[ ii ]   = rhs.chi_sd( ii );
-		}
-	}
-
 	DunbrackRotamerMeanSD(
 		typename utility::vector1< P > const & chimean_in,
 		typename utility::vector1< P > const & chisd_in,
@@ -345,21 +335,6 @@ public:
 	) :
 		parent( sibling ),
 		packed_rotno_( 0 )
-	{}
-
-	PackedDunbrackRotamer(
-		PackedDunbrackRotamer const & rhs
-	) :
-		parent( rhs ),
-		packed_rotno_( rhs.packed_rotno() )
-	{}
-
-
-	PackedDunbrackRotamer(
-		PackedDunbrackRotamer & rhs
-	) :
-		parent( rhs ),
-		packed_rotno_( rhs.packed_rotno() )
 	{}
 
 

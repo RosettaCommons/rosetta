@@ -42,11 +42,6 @@ public:
 	//constructor
 	StepWiseProteinModelerOptions();
 
-	StepWiseProteinModelerOptions( StepWiseProteinModelerOptions const & src );
-
-	//destructor
-	~StepWiseProteinModelerOptions();
-
 public:
 
 	StepWiseProteinModelerOptionsOP clone() const;

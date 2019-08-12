@@ -39,11 +39,6 @@ public:
 	//constructor
 	RECCES_Options();
 
-	RECCES_Options( RECCES_Options const & src );
-
-	//destructor
-	~RECCES_Options();
-
 public:
 
 	RECCES_OptionsOP clone() const;

@@ -45,13 +45,15 @@ public:
 	~PosType() override;
 	PosType( core::Size index, core::chemical::AA type );
 	PosType( std::string word );
+	PosType( PosType const & ) = default;
+	PosType & operator = ( PosType const & ) = default;
 
 	EntityElementOP clone() override;
 	EntityElementOP fresh_instance() override;
 	Size hash() const override;
 	bool operator <  ( EntityElement const & rhs ) const override;
 	bool operator == ( EntityElement const & rhs ) const override;
-	EntityElement & operator =  ( EntityElement const & rhs ) override;
+	EntityElement & operator = ( EntityElement const & rhs ) noexcept override;
 	std::string to_string() const override;
 	std::string name() const override; // Each entity element must have a distinct name
 

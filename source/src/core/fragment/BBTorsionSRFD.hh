@@ -48,9 +48,6 @@ public:
 	BBTorsionSRFD( Size const nbb_in = 3, char secstruct = 'X', char sequence = 'X')
 	: SecstructSRFD(secstruct, sequence), torsions_(nbb_in), coords_(3), has_coords_(false) {}
 
-	/// @brief copy assignment
-	BBTorsionSRFD & operator =( BBTorsionSRFD const & rval );
-
 	/// @brief clone this object
 	SingleResidueFragDataOP clone() const override {
 		return utility::pointer::make_shared< BBTorsionSRFD >( *this );

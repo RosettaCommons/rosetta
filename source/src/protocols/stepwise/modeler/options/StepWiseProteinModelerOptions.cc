@@ -44,18 +44,6 @@ StepWiseProteinModelerOptions::StepWiseProteinModelerOptions()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-//Destructor
-StepWiseProteinModelerOptions::~StepWiseProteinModelerOptions() = default;
-
-/// @brief copy constructor
-StepWiseProteinModelerOptions::StepWiseProteinModelerOptions( StepWiseProteinModelerOptions const & src ) :
-	ReferenceCount()
-{
-	*this = src;
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseProteinModelerOptions::initialize_variables(){
 

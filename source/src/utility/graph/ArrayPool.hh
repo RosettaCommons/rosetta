@@ -188,13 +188,6 @@ public:
 		neg_ptr_( neg_ptr )
 	{}
 
-	ArrayPoolElement( ArrayPoolElement< T > const & other ) :
-		array_( other.array_ ),
-		neg_ptr_( other.neg_ptr_ )
-	{}
-
-	~ArrayPoolElement() = default;
-
 	T const & operator [] ( platform::Size index ) const {
 		debug_assert( neg_ptr_->allocated() );
 		return array_[ index ];

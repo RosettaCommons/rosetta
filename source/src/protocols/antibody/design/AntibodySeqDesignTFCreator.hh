@@ -32,6 +32,7 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/deep_copy.hh>
 #include <utility/vector1.hh>
 
 #include <map>
@@ -58,12 +59,6 @@ public:
 		bool force_north_paper_db = false,
 		core::Size stem_size = 2);
 
-
-	//AntibodySeqDesignTFCreator(AntibodySeqDesignTFCreator const & src);
-
-	virtual ~AntibodySeqDesignTFCreator();
-
-	AntibodySeqDesignTFCreator( AntibodySeqDesignTFCreator const & src );
 
 	AntibodySeqDesignTFCreatorOP
 	clone () const;
@@ -253,9 +248,9 @@ private:
 
 private:
 
-	AntibodyInfoCOP ab_info_;
+	utility::pointer::DeepCopyOP< AntibodyInfo const > ab_info_;
 
-	utility::vector1<CDRSeqDesignOptionsOP> cdr_design_options_;
+	utility::vector1< utility::pointer::DeepCopyOP< CDRSeqDesignOptions > > cdr_design_options_;
 
 	core::Real zero_prob_weight_;
 	core::Real neighbor_dis_;

@@ -65,10 +65,14 @@ public:
 
 	FoldTreeSketch( core::kinematics::FoldTree const& );
 
-	/// @brief copy the FoldTreeSketch
-	/// @warning This is not a full deep copy. It doesn't copy the Node pointers deeply, which means
-	//           you can accidentally modify the parent FTS through this one.
-	FoldTreeSketch( FoldTreeSketch const& );
+	FoldTreeSketch( FoldTreeSketch && ) = default;
+
+	/// @brief We (apparently) want this to be a deep copy, but that would require re-annotating the forward and backward pointers for the nodes.
+	FoldTreeSketch( FoldTreeSketch const & ) = delete;
+	FoldTreeSketch & operator =( FoldTreeSketch const & ) = delete;
+
+	/// @brief For move assignment, we can just steal the existing Nodes.
+	FoldTreeSketch & operator =( FoldTreeSketch && ) = default;
 
 	/// @brief insert a jump between positions p1 and p2 in the graph
 	void insert_jump( Size const p1,
@@ -115,10 +119,14 @@ private:
 
 	void visit( NodeCAP n, NodeCAP parent ) const;
 
+private:
+
 	utility::vector1< NodeOP > nodes_;
 
 	core::Size n_jumps_;
 	int n_cuts_;
+
+private:
 
 	class Node : public ReferenceCount {
 	public:

@@ -51,24 +51,6 @@ SetupMetalsMover::SetupMetalsMover():
 	add_constraints_ = true;
 	this->set_defaults_from_command_line();
 }
-/// @brief Copy constructor
-SetupMetalsMover::SetupMetalsMover( SetupMetalsMover const & src ):
-	protocols::moves::Mover( src )
-{
-	//prevent_setup_metal_bb_variants_ = src.get_prevent_setup_metal_bb_variants();
-	metals_detection_LJ_multiplier_ = src.get_metals_detection_LJ_multiplier();
-	metals_distance_constraint_multiplier_ = src.get_metals_distance_constraint_multiplier();
-	metals_angle_constraint_multiplier_ = src.get_metals_angle_constraint_multiplier();
-	metal_selector_ = src.get_metal_selector();
-	metal_resnums_string_ = src.get_metal_resnums_string();
-	remove_hydrogens_ = src.get_remove_hydrogens();
-	constraints_only_ = src.get_constraints_only();
-	add_constraints_ = src.add_constraints_;
-	contact_selector_ = src.contact_selector_;
-	contact_resnums_string_ = src.contact_resnums_string_;
-}
-
-SetupMetalsMover::~SetupMetalsMover()= default;
 
 
 //General mover methods

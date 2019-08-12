@@ -67,7 +67,6 @@ public:
 
 
 public:
-	virtual ~PackerTask() = 0;
 
 	virtual PackerTaskOP clone() const = 0;
 
@@ -319,12 +318,6 @@ public:
 	virtual
 	bool
 	symmetrize_by_intersection() const = 0;
-
-private:
-
-	virtual
-	PackerTask &
-	operator=(PackerTask const &) = 0;
 
 #ifdef    SERIALIZATION
 public:

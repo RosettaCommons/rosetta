@@ -81,11 +81,6 @@ public:
 		core::Size const start, core::Size const end,
 		core::pose::Pose const & piece, core::Size Nter_overhang=2, core::Size Cter_overhang=2, bool copy_pdbinfo = false);
 
-	CCDEndsGraftMover(CCDEndsGraftMover const & src);
-
-	~CCDEndsGraftMover() override;
-
-
 	void
 	apply(core::pose::Pose & pose) override;
 

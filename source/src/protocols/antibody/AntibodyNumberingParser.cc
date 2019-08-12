@@ -341,22 +341,6 @@ PDBLandmark::PDBLandmark(char chain, core::Size resnum, char insertion_code) {
 	insertion_code_ = insertion_code;
 }
 
-PDBLandmark::~PDBLandmark()= default;
-
-
-PDBLandmark &
-PDBLandmark::operator =(const PDBLandmark& src){
-	if ( this == &src ) {
-		return *this;
-	}
-	numbering_scheme_ = src.numbering_scheme_;
-	resnum_ = src.resnum_;
-	chain_ = src.chain_;
-	insertion_code_ = src.insertion_code_;
-
-	return *this;
-}
-
 bool
 PDBLandmark::operator ==(const PDBLandmark& compare) const {
 

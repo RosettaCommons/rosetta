@@ -107,14 +107,6 @@ GraftMoverBase::GraftMoverBase(const Size start, const Size end, std::string mov
 }
 
 
-/// @brief copy ctor
-GraftMoverBase::GraftMoverBase( GraftMoverBase const & ) = default;
-
-
-// Destructor
-GraftMoverBase::~GraftMoverBase() = default;
-
-
 void
 GraftMoverBase::set_piece(Pose const & piece, Size Nter_overhang_length, Size Cter_overhang_length){
 	piece_ = utility::pointer::make_shared< core::pose::Pose >(piece);

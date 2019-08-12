@@ -40,12 +40,6 @@ public:
 	//constructor
 	StepWiseMoveSelector( options::StepWiseMoveSelectorOptionsCOP options );
 
-	//constructor
-	StepWiseMoveSelector( StepWiseMoveSelector const & src );
-
-	//destructor
-	~StepWiseMoveSelector();
-
 public:
 
 	StepWiseMoveSelectorOP clone() const;

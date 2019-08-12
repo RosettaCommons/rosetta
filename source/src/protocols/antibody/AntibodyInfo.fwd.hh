@@ -32,6 +32,7 @@ typedef utility::pointer::shared_ptr< AntibodyInfo const > AntibodyInfoCOP;
 typedef  utility::pointer::weak_ptr< AntibodyInfo >  AntibodyInfoAP;
 typedef  utility::pointer::weak_ptr< AntibodyInfo const >  AntibodyInfoCAP;
 
+AntibodyInfoOP deep_copy( AntibodyInfo const & source);
 
 } //namespace antibody
 } //namespace protocols

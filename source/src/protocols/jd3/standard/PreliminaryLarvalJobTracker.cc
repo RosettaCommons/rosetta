@@ -48,10 +48,6 @@ PreliminaryLarvalJobTracker::PreliminaryLarvalJobTracker():
 
 }
 
-PreliminaryLarvalJobTracker::~PreliminaryLarvalJobTracker(){}
-
-PreliminaryLarvalJobTracker::PreliminaryLarvalJobTracker( PreliminaryLarvalJobTracker const & ) = default;
-
 
 void
 PreliminaryLarvalJobTracker::initialize_tracker( utility::vector1< PreliminaryLarvalJob > const & prelim_jobs ){

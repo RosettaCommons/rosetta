@@ -263,16 +263,6 @@ StepWiseMove::StepWiseMove( utility::vector1< std::string > const & swa_move_str
 }
 
 
-//Destructor
-StepWiseMove::~StepWiseMove() = default;
-
-StepWiseMove::StepWiseMove( StepWiseMove const & src ):
-	ReferenceCount( src ),
-	utility::pointer::enable_shared_from_this< StepWiseMove >()
-{
-	*this = src;
-}
-
 StepWiseMoveOP
 StepWiseMove::clone() const
 {
@@ -316,15 +306,6 @@ Attachment::Attachment( Size const attached_res,
 	attached_res_( attached_res ),
 	attachment_type_( attachment_type )
 {
-}
-
-//Destructor
-Attachment::~Attachment() = default;
-
-Attachment::Attachment( Attachment const & src ):
-	ReferenceCount( src )
-{
-	*this = src;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////

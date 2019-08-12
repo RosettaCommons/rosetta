@@ -67,17 +67,6 @@ MMBondAngleResidueTypeParamSet::MMBondAngleResidueTypeParamSet() :
 	use_residue_type_theta0_( false )
 { }
 
-/// @brief copy ctor
-MMBondAngleResidueTypeParamSet::MMBondAngleResidueTypeParamSet(
-	MMBondAngleResidueTypeParamSet const & src
-) :
-	utility::pointer::ReferenceCount( src )
-{
-	*this = src;
-}
-
-MMBondAngleResidueTypeParamSet::~MMBondAngleResidueTypeParamSet() = default;
-
 /// @brief lookup a param object for a given ResidueType
 MMBondAngleResidueTypeParam const &
 MMBondAngleResidueTypeParamSet::get(

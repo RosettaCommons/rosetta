@@ -439,11 +439,6 @@ public:
 
 		~iterator() {}
 
-		iterator& operator=( const iterator& src ) {
-			it_ = src.it_;
-			return (*this);
-		}
-
 		bool operator==( const iterator& other ) const {
 			return ( it_ == other.it_ );
 		}
@@ -498,11 +493,6 @@ public:
 		{}
 
 		~const_iterator() {}
-
-		const_iterator& operator=( const const_iterator& src ) {
-			it_ = src.it_;
-			return (*this);
-		}
 
 		bool operator==( const const_iterator& other ) {
 			return ( it_ == other.it_ );

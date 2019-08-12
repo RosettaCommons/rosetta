@@ -93,18 +93,6 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	set_silent_file( "default.out" );
 }
 
-//Destructor
-StepWiseMonteCarloOptions::~StepWiseMonteCarloOptions() = default;
-
-/// @brief copy constructor
-StepWiseMonteCarloOptions::StepWiseMonteCarloOptions( StepWiseMonteCarloOptions const & src ) :
-	ReferenceCount(),
-	StepWiseBasicOptions( src ),
-	StepWiseMoveSelectorOptions( src )
-{
-	*this = src;
-}
-
 /// @brief clone the options
 StepWiseMonteCarloOptionsOP
 StepWiseMonteCarloOptions::clone() const

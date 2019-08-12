@@ -73,16 +73,6 @@ RECCES_Options::RECCES_Options():
 	sample_jump_( false )
 {}
 
-//Destructor
-RECCES_Options::~RECCES_Options() = default;
-
-/// @brief copy constructor
-RECCES_Options::RECCES_Options( RECCES_Options const & src ) :
-	ReferenceCount()
-{
-	*this = src;
-}
-
 /// @brief clone the options
 RECCES_OptionsOP
 RECCES_Options::clone() const

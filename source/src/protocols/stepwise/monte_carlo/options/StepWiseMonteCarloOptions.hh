@@ -45,11 +45,6 @@ public:
 	//constructor
 	StepWiseMonteCarloOptions();
 
-	StepWiseMonteCarloOptions( StepWiseMonteCarloOptions const & src );
-
-	//destructor
-	~StepWiseMonteCarloOptions();
-
 public:
 
 	/// @brief Describe this instance to a given output stream

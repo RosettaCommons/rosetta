@@ -34,11 +34,6 @@ public:
 	//constructor
 	RNA_MinimizerOptions();
 
-	RNA_MinimizerOptions( RNA_MinimizerOptions const & src );
-
-	//destructor
-	~RNA_MinimizerOptions();
-
 public:
 
 	RNA_MinimizerOptionsOP clone() const;

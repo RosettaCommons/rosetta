@@ -51,11 +51,6 @@ JobTracker::JobTracker():
 	started_jobs_by_dag_node_.max_load_factor( 0.7 );
 }
 
-JobTracker::~JobTracker(){}
-
-JobTracker::JobTracker( JobTracker const & ) = default;
-
-
 
 JobTrackerOP
 JobTracker::clone() const {

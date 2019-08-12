@@ -239,7 +239,7 @@ public:
 			//for ( Size jj = 1; jj <= leu_geom.nonchitip_atoms()[ ii ].size(); ++jj ) {
 			// std::cout << "   " << jj << " " << leu_geom.nonchitip_atoms()[ ii ][ jj ] << std::endl;
 			//}
-			UpstreamResTypeGeometry::HTReal ht = leu_geom.ht_for_chitip_atoms()[ ii ];
+			//UpstreamResTypeGeometry::HTReal ht = leu_geom.ht_for_chitip_atoms()[ ii ];
 			//std::cout << "ht:" << ii << std::endl;
 			//std::cout << "  " << ht.xx() << " " << ht.yx() << " " << ht.zx() << " " << ht.px() << std::endl;
 			//std::cout << "  " << ht.xy() << " " << ht.yy() << " " << ht.zy() << " " << ht.py() << std::endl;

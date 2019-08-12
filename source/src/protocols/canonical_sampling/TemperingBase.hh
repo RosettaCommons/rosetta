@@ -57,9 +57,6 @@ public:
 	/// @brief Default constructor.
 	TemperingBase();
 
-	/// @brief Copy constructor.
-	TemperingBase( TemperingBase const& );
-
 	/// @brief No-op implemented only to satisfy the Mover interface.
 
 	void apply( core::pose::Pose& ) override {};

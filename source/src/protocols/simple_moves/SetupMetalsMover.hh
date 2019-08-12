@@ -44,11 +44,6 @@ public:
 	/// @brief Constructs a SetupMetalsMover
 	SetupMetalsMover();
 
-	/// @brief Copy constructor
-	SetupMetalsMover( SetupMetalsMover const & src );
-
-	~SetupMetalsMover() override;
-
 
 	//General mover methods
 	void apply( core::pose::Pose & pose ) override;

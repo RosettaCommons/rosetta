@@ -54,13 +54,6 @@ protected: // Creation
 	{}
 
 
-	/// @brief Copy constructor
-	inline
-	VectorOptionKey( VectorOptionKey const & key ) :
-		Super( key )
-	{}
-
-
 	/// @brief Copy + identifier constructor
 	inline
 	VectorOptionKey(

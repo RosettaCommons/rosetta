@@ -144,27 +144,6 @@ public:
 		assert( orthonormal() );
 	}
 
-	~HomogeneousTransform() {}
-
-	HomogeneousTransform< T > const &
-	operator = ( HomogeneousTransform< T > const & rhs ) {
-		if ( this != & rhs ) {
-			xx_ = rhs.xx_;
-			xy_ = rhs.xy_;
-			xz_ = rhs.xz_;
-			yx_ = rhs.yx_;
-			yy_ = rhs.yy_;
-			yz_ = rhs.yz_;
-			zx_ = rhs.zx_;
-			zy_ = rhs.zy_;
-			zz_ = rhs.zz_;
-			px_ = rhs.px_;
-			py_ = rhs.py_;
-			pz_ = rhs.pz_;
-		}
-		return *this;
-	}
-
 public:
 	//Accessors
 

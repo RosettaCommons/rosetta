@@ -44,18 +44,6 @@ namespace options {
 RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions()
 {}
 
-//Destructor
-RNA_FragmentMonteCarloOptions::~RNA_FragmentMonteCarloOptions() = default;
-
-/// @brief copy constructor
-RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions( RNA_FragmentMonteCarloOptions const & src ) :
-	ReferenceCount(),
-	RNA_BasicOptions( src ),
-	RNA_MinimizerOptions( src )
-{
-	*this = src;
-}
-
 /// @brief clone the options
 RNA_FragmentMonteCarloOptionsOP
 RNA_FragmentMonteCarloOptions::clone() const

@@ -49,13 +49,7 @@ public:
 	/// @brief Constructor.
 	LigandMetalContactSelector();
 
-	/// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
-	LigandMetalContactSelector(LigandMetalContactSelector const & src);
-
 public:
-
-	/// @brief Destructor.
-	~LigandMetalContactSelector() override;
 
 	/// @brief Clone operator.
 	/// @details Copy the current object (creating the copy on the heap) and return an owning pointer

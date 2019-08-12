@@ -61,6 +61,11 @@ public:
 		other.clone( *this );
 	}
 
+	CartGrid & operator=( CartGrid<T> const & other ) {
+		other.clone( *this );
+		return *this;
+	}
+
 	~CartGrid() override = default;
 
 	/*

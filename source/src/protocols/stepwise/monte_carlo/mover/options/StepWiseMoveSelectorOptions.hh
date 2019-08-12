@@ -43,11 +43,6 @@ public:
 	//constructor
 	StepWiseMoveSelectorOptions();
 
-	//destructor
-	virtual ~StepWiseMoveSelectorOptions();
-
-	StepWiseMoveSelectorOptions( StepWiseMoveSelectorOptions const & src );
-
 public:
 
 
