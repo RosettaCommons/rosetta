@@ -118,16 +118,9 @@ main( int argc, char * argv [] )
 		// file and nothing else.
 		protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
 
-		try{
-			JobDistributor::get_instance()->go( mymover );
-		} catch (utility::excn::Exception& excn ) {
-			std::cerr << "Exception: " << std::endl;
-			excn.show( std::cerr );
-			std::cout << "Exception: " << std::endl;
-			excn.show( std::cout ); //so its also seen in a >LOG file
-		}
+		JobDistributor::get_instance()->go( mymover );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

@@ -202,7 +202,7 @@ main( int argc, char * argv[] )
 		protocols::viewer::viewer_main( MSA_design_main );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 }

@@ -99,92 +99,92 @@ int
 main( int argc, char* argv [] ) {
 	try {
 
-	using core::Real;
-	using core::Size;
+		using core::Real;
+		using core::Size;
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	// query and template profiles
-	FileName fn1( option[ in::file::pssm ]()[1] );
-	FileName fn2( option[ in::file::pssm ]()[2] );
+		// query and template profiles
+		FileName fn1( option[ in::file::pssm ]()[1] );
+		FileName fn2( option[ in::file::pssm ]()[2] );
 
-	SequenceProfileOP prof1( new SequenceProfile );
-	prof1->read_from_file( fn1 );
-	prof1->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
+		SequenceProfileOP prof1( new SequenceProfile );
+		prof1->read_from_file( fn1 );
+		prof1->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
 
-	SequenceProfileOP prof2( new SequenceProfile );
-	prof2->read_from_file( fn2 );
-	prof2->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
+		SequenceProfileOP prof2( new SequenceProfile );
+		prof2->read_from_file( fn2 );
+		prof2->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
 
-	// eliminate leading paths from prof1 and prof2
-	prof1->id( FileName( prof1->id() ).base() );
-	prof2->id( FileName( prof2->id() ).base() );
+		// eliminate leading paths from prof1 and prof2
+		prof1->id( FileName( prof1->id() ).base() );
+		prof2->id( FileName( prof2->id() ).base() );
 
-	// scoring scheme for aligning profiles
-	//std::string const scoring_scheme_type( option[ cm::seq_score ]() );
-	std::string const scoring_scheme_type( option[ cm::seq_score ]()[1] );
-	ScoringSchemeFactory ssf;
-	ScoringSchemeOP ss( ssf.get_scoring_scheme( scoring_scheme_type ) );
+		// scoring scheme for aligning profiles
+		//std::string const scoring_scheme_type( option[ cm::seq_score ]() );
+		std::string const scoring_scheme_type( option[ cm::seq_score ]()[1] );
+		ScoringSchemeFactory ssf;
+		ScoringSchemeOP ss( ssf.get_scoring_scheme( scoring_scheme_type ) );
 
-	// for the ProfSim scoring scheme, the optimal opening and extension
-	// penalties were 2 and 0.2, with a scoring shift of -0.45 applied to
-	// all ungapped aligned pairs.
-	//Real const max_gap_open    (  option[ cm::max_gap_open ]() );
-	Real const min_gap_open    (  option[ cm::min_gap_open ]() );
-	//Real const max_gap_extend  (  option[ cm::max_gap_open ]() );
-	Real const min_gap_extend  (  option[ cm::min_gap_open ]() );
-	//Real const open_step_size  (   0.5 );
-	//Real const extend_step_size(   0.1 );
+		// for the ProfSim scoring scheme, the optimal opening and extension
+		// penalties were 2 and 0.2, with a scoring shift of -0.45 applied to
+		// all ungapped aligned pairs.
+		//Real const max_gap_open    (  option[ cm::max_gap_open ]() );
+		Real const min_gap_open    (  option[ cm::min_gap_open ]() );
+		//Real const max_gap_extend  (  option[ cm::max_gap_open ]() );
+		Real const min_gap_extend  (  option[ cm::min_gap_open ]() );
+		//Real const open_step_size  (   0.5 );
+		//Real const extend_step_size(   0.1 );
 
-	SWAligner sw_aligner;
+		SWAligner sw_aligner;
 
-	std::string output_fn = option[ out::file::alignment ]();
-	utility::io::ozstream output( output_fn );
+		std::string output_fn = option[ out::file::alignment ]();
+		utility::io::ozstream output( output_fn );
 
-	AlignmentSet align_set;
-	Real const arbitrarily_big_score( 1e5 );
-	for ( core::Size i = 1; i <= prof1->length(); ++i ) {
-	for ( core::Size j = 1; j <= prof2->length(); ++j ) {
-		core::sequence::CompositeScoringSchemeOP css(
-			new CompositeScoringScheme()
-		);
+		AlignmentSet align_set;
+		Real const arbitrarily_big_score( 1e5 );
+		for ( core::Size i = 1; i <= prof1->length(); ++i ) {
+			for ( core::Size j = 1; j <= prof2->length(); ++j ) {
+				core::sequence::CompositeScoringSchemeOP css(
+					new CompositeScoringScheme()
+				);
 
-		css->add_scoring_scheme( ss->clone() );
-		css->gap_open  ( min_gap_open   );
-		css->gap_extend( min_gap_extend );
+				css->add_scoring_scheme( ss->clone() );
+				css->gap_open  ( min_gap_open   );
+				css->gap_extend( min_gap_extend );
 
-		// setup extra-special aligner that guarantees that i,j are aligned
-		PairScoringSchemeOP enforcer( new PairScoringScheme() );
-		enforcer->add_scored_pair( i, j, arbitrarily_big_score );
-		css->add_scoring_scheme( enforcer );
+				// setup extra-special aligner that guarantees that i,j are aligned
+				PairScoringSchemeOP enforcer( new PairScoringScheme() );
+				enforcer->add_scored_pair( i, j, arbitrarily_big_score );
+				css->add_scoring_scheme( enforcer );
 
-		SequenceAlignment local_align = sw_aligner.align( prof1, prof2, css );
-		local_align.score( local_align.score() - arbitrarily_big_score );
+				SequenceAlignment local_align = sw_aligner.align( prof1, prof2, css );
+				local_align.score( local_align.score() - arbitrarily_big_score );
 
-		//output << "local_align (" << i << "," << j << ")" << std::endl
-		//	<< local_align << std::endl << "--" << std::endl;
-		align_set.insert( local_align );
-		//std::cout << "done with " << i << "," << j << std::endl;
-	} // i
-	std::cout << "done with " << i * prof2->length() << " / " << prof1->length() * prof2->length()
-		<< ", have " << align_set.size() << " distinct alignments."
-		<< std::endl;
-	} // j
+				//output << "local_align (" << i << "," << j << ")" << std::endl
+				// << local_align << std::endl << "--" << std::endl;
+				align_set.insert( local_align );
+				//std::cout << "done with " << i << "," << j << std::endl;
+			} // i
+			std::cout << "done with " << i * prof2->length() << " / " << prof1->length() * prof2->length()
+				<< ", have " << align_set.size() << " distinct alignments."
+				<< std::endl;
+		} // j
 
-	using utility::vector1;
-	using core::sequence::SequenceAlignment;
-	vector1< SequenceAlignment > aligns = align_set.alignments();
-	std::cout << "have " << align_set.size() << " distinct alignments." << std::endl;
-	for ( vector1< SequenceAlignment >::iterator it = aligns.begin(),
-			end = aligns.end();
-			it != end; ++it
-	) {
-		output << *it << std::endl;
-	} // for ( it in aligns )
+		using utility::vector1;
+		using core::sequence::SequenceAlignment;
+		vector1< SequenceAlignment > aligns = align_set.alignments();
+		std::cout << "have " << align_set.size() << " distinct alignments." << std::endl;
+		for ( vector1< SequenceAlignment >::iterator it = aligns.begin(),
+				end = aligns.end();
+				it != end; ++it
+				) {
+			output << *it << std::endl;
+		} // for ( it in aligns )
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

@@ -236,14 +236,7 @@ main( int argc, char * argv [] )
 
 		JDmoverOP jd_mover( new JDmover );
 
-		try {
-			protocols::jd2::JobDistributor::get_instance()->go(jd_mover);
-		} catch (utility::excn::Exception& excn ) {
-			std::cerr << "Exception: " << std::endl;
-			excn.show( std::cerr );
-			std::cout << "Exception: " << std::endl;
-			excn.show( std::cout ); //so its also seen in a >LOG file
-		}
+		protocols::jd2::JobDistributor::get_instance()->go(jd_mover);
 
 		if ( option[in::file::native].user() ) {
 			core::pose::PoseOP nativePose( new core::pose::Pose );
@@ -291,7 +284,7 @@ main( int argc, char * argv [] )
 		TR << "*********************successful completion**************************" << std::endl;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

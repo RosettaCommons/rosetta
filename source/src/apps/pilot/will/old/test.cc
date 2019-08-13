@@ -27,18 +27,18 @@ int main(int argc, char *argv[]) {
 
 	try {
 
-	devel::init(argc,argv);
-	core::pose::Pose p,q;
-	core::import_pose::pose_from_file(p,basic::options::option[basic::options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
-	core::import_pose::pose_from_file(q,basic::options::option[basic::options::OptionKeys::in::file::s]()[2], core::import_pose::PDB_file);
-	// core::pose::symmetry::make_symmetric_pose(p);
-	// core::pose::symmetry::make_symmetric_pose(q);
-	core::Real x = core::scoring::CA_rmsd(p,q);
-	std::cout << x << std::endl;
-	return 0;
+		devel::init(argc,argv);
+		core::pose::Pose p,q;
+		core::import_pose::pose_from_file(p,basic::options::option[basic::options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
+		core::import_pose::pose_from_file(q,basic::options::option[basic::options::OptionKeys::in::file::s]()[2], core::import_pose::PDB_file);
+		// core::pose::symmetry::make_symmetric_pose(p);
+		// core::pose::symmetry::make_symmetric_pose(q);
+		core::Real x = core::scoring::CA_rmsd(p,q);
+		std::cout << x << std::endl;
+		return 0;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

@@ -166,31 +166,31 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-    try {
-	using namespace core::options;
+	try {
+		using namespace core::options;
 
-	utility::vector1< Size > blank_size_vector;
-	utility::vector1< std::string > blank_string_vector;
+		utility::vector1< Size > blank_size_vector;
+		utility::vector1< std::string > blank_string_vector;
 
-	//Uh, options?
-	NEW_OPT( frag_res, "residues for file", blank_size_vector ); //I am here.
+		//Uh, options?
+		NEW_OPT( frag_res, "residues for file", blank_size_vector ); //I am here.
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-				return -1;
-    }
-    return 0;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
+	}
+	return 0;
 	//exit( 0 );
 
 	////////////////////////////////////////////////////////////////////////////

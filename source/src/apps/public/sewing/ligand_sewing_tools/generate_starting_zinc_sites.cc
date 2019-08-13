@@ -286,7 +286,7 @@ int main( int argc, char* argv[] ){
 		return 0;
 	}
 catch ( utility::excn::Exception const &e ){
-	std::cout << "Caught exception " << e.msg() << std::endl;
+	e.display();
 	return -1;
 }
 }

@@ -166,7 +166,7 @@ int main( int argc, char* argv[] )
 		test_talaris( *pose ); // function I am going to write
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 }

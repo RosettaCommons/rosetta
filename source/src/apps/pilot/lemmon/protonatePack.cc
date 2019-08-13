@@ -41,44 +41,44 @@
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-    try {
-  devel::init(argc, argv);
+	try {
+		devel::init(argc, argv);
 
-  utility::vector0<std::string> pdbs;
+		utility::vector0<std::string> pdbs;
 
-  {// process the options
-    using namespace basic::options::OptionKeys;
-    using basic::options::option;
-    pdbs= option[in::file::s]();
-  }
+		{// process the options
+			using namespace basic::options::OptionKeys;
+			using basic::options::option;
+			pdbs= option[in::file::s]();
+		}
 
-  core::pose::Pose pose; // starts NULL, coords *never* modified!
-  std::string pdb=pdbs[0];
-  core::import_pose::pose_from_file( pose, pdb, core::import_pose::PDB_file);
+		core::pose::Pose pose; // starts NULL, coords *never* modified!
+		std::string pdb=pdbs[0];
+		core::import_pose::pose_from_file( pose, pdb, core::import_pose::PDB_file);
 
-	protocols::ligand_docking::LigandBaseProtocol protocol();
+		protocols::ligand_docking::LigandBaseProtocol protocol();
 
-	// the next lines uses Eon's code to deal with protonation states
-	//ObjexxFCL::FArray1D_bool allow_repack(num_residues, false);
-	//core::pack::task::PackerTaskOP task = protocol.make_packer_task(pose, allow_repack, ligand_protonation);
-//OR
-	// Let the ligand_docking protocol do the work
-	bool ligand_protonation=true;
-	bool include_all_rsds=true;
-	core::Real sc_padding= 0;
-	int jump_id=1;
+		// the next lines uses Eon's code to deal with protonation states
+		//ObjexxFCL::FArray1D_bool allow_repack(num_residues, false);
+		//core::pack::task::PackerTaskOP task = protocol.make_packer_task(pose, allow_repack, ligand_protonation);
+		//OR
+		// Let the ligand_docking protocol do the work
+		bool ligand_protonation=true;
+		bool include_all_rsds=true;
+		core::Real sc_padding= 0;
+		int jump_id=1;
 
-	core::pack::task::PackerTaskOP task=
-		protocol.make_packer_task(pose, jump_id, sc_padding, allow_repack);
-//OR
-	//core::pack::task::PackerTaskOP task=
-	//protocol.make_packer_task_ligand_only(pose, jump_id, ligand_protonation);
+		core::pack::task::PackerTaskOP task=
+			protocol.make_packer_task(pose, jump_id, sc_padding, allow_repack);
+		//OR
+		//core::pack::task::PackerTaskOP task=
+		//protocol.make_packer_task_ligand_only(pose, jump_id, ligand_protonation);
 
-  const std::string output("output.pdb");
-  pose.dump_pdb(output);
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-	return -1;
-    }
-    return 0;
+		const std::string output("output.pdb");
+		pose.dump_pdb(output);
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
+	}
+	return 0;
 }

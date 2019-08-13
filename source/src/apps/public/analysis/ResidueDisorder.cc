@@ -270,7 +270,7 @@ main( int argc, char * argv [] )
 			output_results( num_res, sequence, PREDICTION, ORDER_RES_Score, average_res_scores);
 		}
 	} catch (utility::excn::Exception const & e ) {
-		TR << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

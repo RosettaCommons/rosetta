@@ -69,23 +69,23 @@ void test() {
 	pose::Pose pose;
 	pose::make_pose_from_sequence( pose, "g", *rsd_set );
 	ResidueOP new_res1(
-			core::conformation::ResidueFactory::create_residue(
-				rsd_set->name_map( "INO" ) ) );
+		core::conformation::ResidueFactory::create_residue(
+		rsd_set->name_map( "INO" ) ) );
 	pose.append_residue_by_jump( *new_res1, pose.size() );
 
 	ResidueOP new_res2(
-			core::conformation::ResidueFactory::create_residue(
-				rsd_set->name_map( "IGU" ) ) );
+		core::conformation::ResidueFactory::create_residue(
+		rsd_set->name_map( "IGU" ) ) );
 	pose.append_residue_by_jump( *new_res2, pose.size() );
 
 	ResidueOP new_res3(
-			core::conformation::ResidueFactory::create_residue(
-				rsd_set->name_map( "ICY" ) ) );
+		core::conformation::ResidueFactory::create_residue(
+		rsd_set->name_map( "ICY" ) ) );
 	pose.append_residue_by_jump( *new_res3, pose.size() );
 
 	ResidueOP new_res4(
-			core::conformation::ResidueFactory::create_residue(
-				rsd_set->name_map( "1AP" ) ) );
+		core::conformation::ResidueFactory::create_residue(
+		rsd_set->name_map( "1AP" ) ) );
 	pose.append_residue_by_jump( *new_res4, pose.size() );
 
 	pose.dump_pdb( "all.pdb" );
@@ -104,7 +104,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-  try {
+	try {
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup
@@ -112,10 +112,10 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 
 		protocols::viewer::viewer_main( my_main );
-  } catch (utility::excn::Exception const & e ) {
-    std::cout << "caught exception " << e.msg() << std::endl;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-  }
-  return 0;
+	}
+	return 0;
 }
 

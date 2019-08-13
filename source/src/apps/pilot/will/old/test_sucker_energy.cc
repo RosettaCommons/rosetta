@@ -39,21 +39,21 @@ main (int argc, char *argv[])
 	try {
 
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	vector1<file::FileName> files( option[ in::file::s ]() );
-	for( size_t i = 1; i <= files.size(); ++i ) {
-  	test_sucker_energy( files[i] );
-	}
+		vector1<file::FileName> files( option[ in::file::s ]() );
+		for ( size_t i = 1; i <= files.size(); ++i ) {
+			test_sucker_energy( files[i] );
+		}
 
-	return 0;
+		return 0;
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

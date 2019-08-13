@@ -97,7 +97,7 @@ int main(int argc, char * argv[]) {
 	std::cout << *it;
     }
     } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+                              e.display();
 		return -1;
                                   }
         return 0;
@@ -476,7 +476,7 @@ void jacobi(Real a[5][5], Real d[], Real v[5][5], int *nrot) {
 		}
 	}
 	//probably different type of Exception is better suited
-	throw ( CREATE_EXCEPTION(utility::excn::BadInput, 
+	throw ( CREATE_EXCEPTION(utility::excn::BadInput,
 			" too many iterations in Jacobi when compute RDC tensor"));
 }
 

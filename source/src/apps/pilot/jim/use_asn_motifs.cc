@@ -136,21 +136,21 @@ void
 place_waters_and_minimize( Pose & pose )
 {
 
-  ScoreFunction scorefxn;
-  scorefxn.set_weight( fa_atr, 0.80 );
-  scorefxn.set_weight( fa_rep, 0.44 );
-  scorefxn.set_weight( fa_sol, 0.65 );
-//  scorefxn.set_weight( gb_elec, 0.20 );
+	ScoreFunction scorefxn;
+	scorefxn.set_weight( fa_atr, 0.80 );
+	scorefxn.set_weight( fa_rep, 0.44 );
+	scorefxn.set_weight( fa_sol, 0.65 );
+	//  scorefxn.set_weight( gb_elec, 0.20 );
 
-  scorefxn.set_weight( h2o_intra, 0.01 );
-  scorefxn.set_weight( h2o_hbond, 1.0 );
+	scorefxn.set_weight( h2o_intra, 0.01 );
+	scorefxn.set_weight( h2o_hbond, 1.0 );
 
-  scorefxn.set_weight( hbond_sr_bb, 1.0 );
-  scorefxn.set_weight( hbond_lr_bb, 1.0 );
-  scorefxn.set_weight( hbond_bb_sc, 1.0 );
-  scorefxn.set_weight( hbond_sc, 1.0 );
+	scorefxn.set_weight( hbond_sr_bb, 1.0 );
+	scorefxn.set_weight( hbond_lr_bb, 1.0 );
+	scorefxn.set_weight( hbond_bb_sc, 1.0 );
+	scorefxn.set_weight( hbond_sc, 1.0 );
 
-//  scorefxn.set_weight( pro_close, 1.0 );
+	//  scorefxn.set_weight( pro_close, 1.0 );
 
 	Energy score_orig = scorefxn( pose );
 
@@ -159,23 +159,23 @@ place_waters_and_minimize( Pose & pose )
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
 	task->set_bump_check( true );
-//	pack::pack_rotamers( pose, scorefxn, task);
+	// pack::pack_rotamers( pose, scorefxn, task);
 
 	Energy end_score = scorefxn( pose );
 	std::cout << "Score after pack " << end_score << std::endl;
 
-    kinematics::MoveMap mm;
-    mm.set_bb( false );
-    mm.set_chi( true );
+	kinematics::MoveMap mm;
+	mm.set_bb( false );
+	mm.set_chi( true );
 
-  	{
-    // setup the options
-    MinimizerOptions options( "lbfgs_armijo_nonmonotone", 1.0e-3, true /*use_nblist*/, false /*deriv_check*/ );
+	{
+		// setup the options
+		MinimizerOptions options( "lbfgs_armijo_nonmonotone", 1.0e-3, true /*use_nblist*/, false /*deriv_check*/ );
 
 		AtomTreeMinimizer minimizer;
-//    minimizer.run( pose, mm, scorefxn, options );
-//    dump_pdb( pose, "post_minimization.pdb" );
-    }
+		//    minimizer.run( pose, mm, scorefxn, options );
+		//    dump_pdb( pose, "post_minimization.pdb" );
+	}
 
 	Energy min_score = scorefxn( pose );
 	std::cout << "Score after minimization " << min_score << std::endl;
@@ -204,8 +204,8 @@ build_asn_motifs()
 	Pose pose;
 	core::import_pose::pose_from_file( pose, "2GTX_asn_ala3.pdb" , core::import_pose::PDB_file);
 
-  std::string weights( "soft_rep_design" );
-  ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( weights ) );
+	std::string weights( "soft_rep_design" );
+	ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( weights ) );
 
 	protocols::motifs::MotifLibrary motif_lib;
 
@@ -241,7 +241,7 @@ main( int argc, char * argv [] )
 
 		build_asn_motifs();
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

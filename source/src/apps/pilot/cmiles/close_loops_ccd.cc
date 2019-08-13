@@ -31,50 +31,50 @@
 int main(int argc, char* argv[]) {
 	try {
 
-  using core::fragment::FragSetOP;
-  using core::fragment::FragSetOP;
-  using core::pose::PoseOP;
-  using protocols::comparative_modeling::LoopRelaxMover;
-  using protocols::loops::Loops;
-  using protocols::loops::LoopsOP;
-  using protocols::simple_moves::SwitchResidueTypeSetMover;
-  using utility::vector1;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+		using core::fragment::FragSetOP;
+		using core::fragment::FragSetOP;
+		using core::pose::PoseOP;
+		using protocols::comparative_modeling::LoopRelaxMover;
+		using protocols::loops::Loops;
+		using protocols::loops::LoopsOP;
+		using protocols::simple_moves::SwitchResidueTypeSetMover;
+		using utility::vector1;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-  devel::init(argc, argv);
+		devel::init(argc, argv);
 
-  FragSetOP frag_sm = core::fragment::FragmentIO().read_data(option[in::file::frag3]());
-  FragSetOP frag_lg = core::fragment::FragmentIO().read_data(option[in::file::frag9]());
+		FragSetOP frag_sm = core::fragment::FragmentIO().read_data(option[in::file::frag3]());
+		FragSetOP frag_lg = core::fragment::FragmentIO().read_data(option[in::file::frag9]());
 
-  PoseOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
-  SwitchResidueTypeSetMover to_centroid(core::chemical::CENTROID);
-  to_centroid.apply(*pose);
-  pose->dump_pdb("starting_ccd.pdb");
+		PoseOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
+		SwitchResidueTypeSetMover to_centroid(core::chemical::CENTROID);
+		to_centroid.apply(*pose);
+		pose->dump_pdb("starting_ccd.pdb");
 
-  // Choose chainbreaks automatically
-  LoopsOP empty = new protocols::loops::Loops();
-  protocols::comparative_modeling::LoopRelaxMover closure;
-  closure.remodel("quick_ccd");
-  closure.intermedrelax("no");
-  closure.refine("no");
-  closure.relax("no");
-  closure.loops(empty);
+		// Choose chainbreaks automatically
+		LoopsOP empty = new protocols::loops::Loops();
+		protocols::comparative_modeling::LoopRelaxMover closure;
+		closure.remodel("quick_ccd");
+		closure.intermedrelax("no");
+		closure.refine("no");
+		closure.relax("no");
+		closure.loops(empty);
 
-  utility::vector1<core::fragment::FragSetOP> fragments;
-  fragments.push_back(frag_lg);
-  fragments.push_back(frag_sm);
-  closure.frag_libs(fragments);
+		utility::vector1<core::fragment::FragSetOP> fragments;
+		fragments.push_back(frag_lg);
+		fragments.push_back(frag_sm);
+		closure.frag_libs(fragments);
 
-  // Use atom pair constraints when available
-  closure.cmd_line_csts(option[constraints::cst_fa_file].user());
+		// Use atom pair constraints when available
+		closure.cmd_line_csts(option[constraints::cst_fa_file].user());
 
-  // Simple kinematics
-  closure.apply(*pose);
-  pose->dump_pdb("ending_ccd.pdb");
+		// Simple kinematics
+		closure.apply(*pose);
+		pose->dump_pdb("ending_ccd.pdb");
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

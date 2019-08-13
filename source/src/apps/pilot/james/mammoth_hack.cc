@@ -391,7 +391,7 @@ public:
 			core::id::NamedAtomID atom_ii( atom_name, ii );
 			coords_.push_back( pose.xyz( atom_ii ) );
 			//std::cerr << "idx " << ii << ": "
-			//	<< coords_[ii].x() << "," << coords_[ii].y() << "," << coords_[ii].z() << std::endl;
+			// << coords_[ii].x() << "," << coords_[ii].y() << "," << coords_[ii].z() << std::endl;
 		}
 		//std::cerr << "have " << coords_.size() << " coords." << std::endl;
 		sequence( pose.sequence() );
@@ -400,8 +400,8 @@ public:
 	core::PointPosition coord( Size const idx ) const {
 		runtime_assert( idx <= coords_.size() );
 		//std::cerr << "idx " << idx << " returning "
-		//	<< coords_[idx].x() << "," << coords_[idx].y() << "," << coords_[idx].z()
-		//	<< std::endl;
+		// << coords_[idx].x() << "," << coords_[idx].y() << "," << coords_[idx].z()
+		// << std::endl;
 		return coords_[ idx ];
 	}
 
@@ -418,7 +418,7 @@ public:
 		for ( Size ii = 1; ii <= coords_.size(); ++ii ) {
 			std::cerr << "idx " << ii << ": "
 				<< coords_[ii].x() << "," << coords_[ii].y() << "," << coords_[ii].z()
-					<< std::endl;
+				<< std::endl;
 		}
 	}
 
@@ -426,7 +426,7 @@ public:
 		return new SequenceCoords( *this );
 	}
 
-	  /// @brief copy ctor
+	/// @brief copy ctor
 	SequenceCoords( SequenceCoords const & src ):
 		Sequence()
 	{
@@ -480,8 +480,8 @@ public:
 		}
 
 		//for ( Size ii = 1; ii <= length(); ++ii ) {
-		//	std::cerr << "p1 " << p1[ii].x() << "," << p1[ii].y() << "," << p1[ii].z() << std::endl;
-		//	std::cerr << "p2 " << p2[ii].x() << "," << p2[ii].y() << "," << p2[ii].z() << std::endl;
+		// std::cerr << "p1 " << p1[ii].x() << "," << p1[ii].y() << "," << p1[ii].z() << std::endl;
+		// std::cerr << "p2 " << p2[ii].x() << "," << p2[ii].y() << "," << p2[ii].z() << std::endl;
 		//}
 
 		using std::min;
@@ -558,9 +558,7 @@ core::id::SequenceMapping extend_mapping_by_threshold(
 	utility::vector1< core::PointPosition > & /*p2*/,
 	core::id::SequenceMapping const & map
 ) {
-	for ( Size ii = 1; ii <= map.size1(); ++ii ) {
-
-	}
+	for ( Size ii = 1; ii <= map.size1(); ++ii ) {}
 	core::id::SequenceMapping extended_map( map );
 	return extended_map;
 }
@@ -608,7 +606,7 @@ core::id::SequenceMapping maxsub_align(
 	numeric::model_quality::center_atoms_at_origin< numeric::Real > ( p1 );
 	numeric::model_quality::center_atoms_at_origin< numeric::Real > ( p2 );
 
-	while( !( new_map == last_map ) ) {
+	while ( !( new_map == last_map ) ) {
 		// create copies of p1 and p2 based on map
 		utility::vector1< core::PointPosition > current_p1;
 		utility::vector1< core::PointPosition > current_p2;
@@ -636,80 +634,80 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	using namespace core::chemical;
-	using namespace core::sequence;
-	using namespace core::import_pose::pose_stream;
+		using namespace core::chemical;
+		using namespace core::sequence;
+		using namespace core::import_pose::pose_stream;
 
-	using namespace basic::options::OptionKeys;
-	using namespace basic::options;
-	using std::string;
+		using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using std::string;
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	// setup residue types
-	ResidueTypeSetCAP rsd_set =
-		ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	// read in native and template poses
-	core::pose::Pose native_pose, template_pose;
-	core::import_pose::pose_from_file(
-		native_pose, *rsd_set, option[ in::file::native ]()
-	);
-	core::import_pose::pose_from_file(
-		template_pose, *rsd_set, option[ in::file::template_pdb ]()[1]
-	);
+		// setup residue types
+		ResidueTypeSetCAP rsd_set =
+			ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		// read in native and template poses
+		core::pose::Pose native_pose, template_pose;
+		core::import_pose::pose_from_file(
+			native_pose, *rsd_set, option[ in::file::native ]()
+		);
+		core::import_pose::pose_from_file(
+			template_pose, *rsd_set, option[ in::file::template_pdb ]()[1]
+		);
 
-	protocols::jumping::assign_ss_dssp( template_pose );
-	protocols::jumping::assign_ss_dssp( native_pose   );
+		protocols::jumping::assign_ss_dssp( template_pose );
+		protocols::jumping::assign_ss_dssp( native_pose   );
 
-	SequenceCoordsOP template_seq( new SequenceCoords( template_pose ) );
-	template_seq->id( option[ in::file::template_pdb ]()[1] );
-	SequenceCoordsOP native_seq( new SequenceCoords( native_pose ) );
-	native_seq->id( option[ in::file::native ]() );
+		SequenceCoordsOP template_seq( new SequenceCoords( template_pose ) );
+		template_seq->id( option[ in::file::template_pdb ]()[1] );
+		SequenceCoordsOP native_seq( new SequenceCoords( native_pose ) );
+		native_seq->id( option[ in::file::native ]() );
 
-	std::cout << "template " << template_pose.secstruct() << std::endl;
-	std::cout << "native   " << native_pose.secstruct() << std::endl;
-	std::cout << "template " << template_pose.sequence() << std::endl;
-	std::cout << "native   " << native_pose.sequence() << std::endl;
-	SequenceOP template_ss(
-		new Sequence( template_pose.secstruct(), template_seq->id(), template_seq->start() )
-	);
-	SequenceOP native_ss(
-		new Sequence( native_pose.secstruct(), native_seq->id(), native_seq->start() )
-	);
+		std::cout << "template " << template_pose.secstruct() << std::endl;
+		std::cout << "native   " << native_pose.secstruct() << std::endl;
+		std::cout << "template " << template_pose.sequence() << std::endl;
+		std::cout << "native   " << native_pose.sequence() << std::endl;
+		SequenceOP template_ss(
+			new Sequence( template_pose.secstruct(), template_seq->id(), template_seq->start() )
+		);
+		SequenceOP native_ss(
+			new Sequence( native_pose.secstruct(), native_seq->id(), native_seq->start() )
+		);
 
-	std::cout << template_pose.secstruct() << std::endl;
-	std::cout << native_pose.secstruct() << std::endl;
+		std::cout << template_pose.secstruct() << std::endl;
+		std::cout << native_pose.secstruct() << std::endl;
 
-	SWAligner sw_align;
-	ScoringSchemeOP ss( new RMS_ScoringScheme( 7 ) );
-	ss->gap_open  ( -7.00 );
-	ss->gap_extend( -0.35 );
-	SequenceAlignment current_align(
-		sw_align.align( native_seq, template_seq, ss )
-	);
+		SWAligner sw_align;
+		ScoringSchemeOP ss( new RMS_ScoringScheme( 7 ) );
+		ss->gap_open  ( -7.00 );
+		ss->gap_extend( -0.35 );
+		SequenceAlignment current_align(
+			sw_align.align( native_seq, template_seq, ss )
+		);
 
-	// iteratively update alignment using Maxsub algorithm
+		// iteratively update alignment using Maxsub algorithm
 
-	//string outfile( option[ out::file::alignment ]() );
-	//std::ofstream output( outfile.c_str() );
-	//if ( !output.is_open() ) {
-	//	utility_exit_with_message( "Unable to open file: " + outfile + '\n' );
-	//}
+		//string outfile( option[ out::file::alignment ]() );
+		//std::ofstream output( outfile.c_str() );
+		//if ( !output.is_open() ) {
+		// utility_exit_with_message( "Unable to open file: " + outfile + '\n' );
+		//}
 
-	//output << current_align << std::endl;
-	std::cout << current_align << std::endl;
-	//using namespace core::sequence;
-	//SequenceAlignment ss_align(
-	//	mapping_to_alignment(
-	//		current_align.sequence_mapping(1,2),
-	//		native_ss,
-	//		template_ss
-	//	)
-	//);
-	//std::cout << ss_align << std::endl;
+		//output << current_align << std::endl;
+		std::cout << current_align << std::endl;
+		//using namespace core::sequence;
+		//SequenceAlignment ss_align(
+		// mapping_to_alignment(
+		//  current_align.sequence_mapping(1,2),
+		//  native_ss,
+		//  template_ss
+		// )
+		//);
+		//std::cout << ss_align << std::endl;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

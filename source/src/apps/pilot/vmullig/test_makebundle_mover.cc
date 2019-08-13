@@ -264,8 +264,7 @@ main( int argc, char * argv [] )
 		}
 
 	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception : " << std::endl;
-		excn.show( std::cerr );
+		e.display();
 		return -1;
 	}
 	return 0;

@@ -1385,7 +1385,7 @@ int main(int argc, char** argv) {
 	  boinc_finish_diag();
 #endif
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 }

@@ -445,17 +445,10 @@ main( int argc, char * argv [] )
 		LoopHash_AnalyzeOP lh_analyze = new LoopHash_Analyze( loop_hash_library );
 
 		// Normal mode with external loophash library
-		try{
-			protocols::jd2::JobDistributor::get_instance()->go( lh_analyze );
-		} catch (utility::excn::Exception& excn ) {
-			std::cerr << "Exception: " << std::endl;
-			excn.show( std::cerr );
-			std::cout << "Exception: " << std::endl;
-			excn.show( std::cout ); //so its also seen in a >LOG file
-		}
+		protocols::jd2::JobDistributor::get_instance()->go( lh_analyze );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

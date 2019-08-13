@@ -170,7 +170,7 @@ main( int argc, char * argv [] )
 		core::io::pdb::traced_dump_pdb(TR, pose, output_fname);
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

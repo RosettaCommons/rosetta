@@ -186,8 +186,7 @@ main( int argc, char* argv [] ) {
 		// start the job
 		protocols::jd2::JobDistributor::get_instance()->go( mover );
 	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception: " << std::endl;
-		excn.show( std::cerr );
+		excn.display();
 		return -1;
 	}
 	return 0;

@@ -148,15 +148,7 @@ my_main( void *)
 	SequenceMoverOP seq( new SequenceMover() );
 	seq->add_mover( new CustomMover() );
 
-	try
-{
-		protocols::jd2::JobDistributor::get_instance()->go( seq );
-	}
-catch (utility::excn::Exception &excn )
-{
-	std::cerr << "Exception: " << std::endl;
-	excn.show( std::cerr );
-}
+	protocols::jd2::JobDistributor::get_instance()->go( seq );
 
 	return 0;
 }
@@ -171,11 +163,9 @@ main( int argc, char *argv [] )
 		// initialize option and random number system
 		devel::init( argc, argv );
 		protocols::viewer::viewer_main( my_main );
+	} catch (utility::excn::Exception const &e ) {
+		e.display();
+		return -1;
 	}
-catch (utility::excn::Exception const &e )
-{
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
 	return 0;
 }

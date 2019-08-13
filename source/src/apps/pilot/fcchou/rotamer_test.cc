@@ -49,13 +49,13 @@ void test() {
 
 	chemical::ResidueTypeSetCAP rsd_set;
 	rsd_set = chemical::ChemicalManager::get_instance()->
-	          residue_type_set( chemical::RNA );
+		residue_type_set( chemical::RNA );
 	Pose pose;
 	make_pose_from_sequence( pose, "aaa", *rsd_set );
 
 	//A-form torsion
 	chemical::rna::RNA_FittedTorsionInfo const torsion_info;
-	for (Size i = 1; i <= pose.size(); ++i) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		pose.set_torsion( TorsionID( i, id::BB, 1 ), torsion_info.alpha_aform() );
 		pose.set_torsion( TorsionID( i, id::BB, 2 ), torsion_info.beta_aform() );
 		pose.set_torsion( TorsionID( i, id::BB, 3 ), torsion_info.gamma_aform() );
@@ -64,7 +64,7 @@ void test() {
 	}
 
 
-/*
+	/*
 	RNA_ChiStepWiseSampler chi_rotamer(2, WHATEVER, NORTH);
 	RNA_SugarStepWiseSampler sugar_rotamer(2, WHATEVER);
 
@@ -74,23 +74,23 @@ void test() {
 	sugar_rotamer.init();
 
 	while (chi_rotamer.has_more()) {
-		++chi_rotamer;
-		std::cout << chi_rotamer.value() << std::endl;
+	++chi_rotamer;
+	std::cout << chi_rotamer.value() << std::endl;
 	}
 
 	while (sugar_rotamer.has_more()) {
-		++sugar_rotamer;
-		std::cout << sugar_rotamer.pucker() << std::endl;
+	++sugar_rotamer;
+	std::cout << sugar_rotamer.pucker() << std::endl;
 	}
 
 	chi_rotamer.apply(pose);
 	sugar_rotamer.apply(pose);
-*/
+	*/
 	utility::vector1< core::Size > const suite_list( 1, 2 );
 
 	Pose pose_copy = pose;
 	StepWiseRNA_StepWiseSamplerGeneratorWrapper rotamer_generator(
-			pose_copy, suite_list, false, true );
+		pose_copy, suite_list, false, true );
 	rotamer_generator.set_include_syn_chi( true );
 	rotamer_generator.set_allow_syn_pyrimidine( true );
 	rotamer_generator.initialize_rotamer_generator_list();
@@ -163,8 +163,9 @@ void test() {
 			std::cout << "BUG" << std::endl;
 		}
 	}
-	if ( rotamer_generator.has_another_rotamer() )
+	if ( rotamer_generator.has_another_rotamer() ) {
 		std::cout << "BUG" << std::endl;
+	}
 
 	std::cout << sum1 << ' ' << sum2 << std::endl;
 	pose.dump_pdb( "test.pdb" );
@@ -180,11 +181,11 @@ my_main ( void* ) {
 ///////////////////////////////////////////////////////////////////////////////
 int
 main ( int argc, char * argv [] ) {
-  try {
+	try {
 		devel::init ( argc, argv );
 		protocols::viewer::viewer_main ( my_main );
-  } catch (utility::excn::Exception const & e ) {
-    std::cout << "caught exception " << e.msg() << std::endl;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-  }
+	}
 }

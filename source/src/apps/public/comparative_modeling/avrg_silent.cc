@@ -530,7 +530,7 @@ int main( int argc, char *argv [] )
 		calc_rmsf_and_avrg();
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

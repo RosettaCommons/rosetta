@@ -169,7 +169,7 @@ catch (int k) {
 		clk2 = clock();
 		TR<<"The entire process took: "<<(clk2-clk1)/CLOCKS_PER_SEC<<std::endl;
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

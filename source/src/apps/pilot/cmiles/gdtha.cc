@@ -29,26 +29,26 @@
 int main(int argc, char* argv[]) {
 	try {
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace core::pose;
-  using namespace std;
-  devel::init(argc, argv);
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::pose;
+		using namespace std;
+		devel::init(argc, argv);
 
-  PoseOP ref = core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
-  utility::vector1<PoseOP> models = core::import_pose::poseOPs_from_files(option[OptionKeys::in::file::s](), core::import_pose::PDB_file);
+		PoseOP ref = core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
+		utility::vector1<PoseOP> models = core::import_pose::poseOPs_from_files(option[OptionKeys::in::file::s](), core::import_pose::PDB_file);
 
-  map<core::Size, core::Size> all_residues;
-  for (core::Size i = 1; i <= ref->size(); ++i) {
-    all_residues[i] = i;
-  }
+		map<core::Size, core::Size> all_residues;
+		for ( core::Size i = 1; i <= ref->size(); ++i ) {
+			all_residues[i] = i;
+		}
 
-  for (utility::vector1<PoseOP>::const_iterator i = models.begin(); i != models.end(); ++i) {
-    cout << core::scoring::gdtha(*ref, **i, all_residues) << endl;
-  }
+		for ( utility::vector1<PoseOP>::const_iterator i = models.begin(); i != models.end(); ++i ) {
+			cout << core::scoring::gdtha(*ref, **i, all_residues) << endl;
+		}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

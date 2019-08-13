@@ -12,7 +12,7 @@
 ///         an existing fingerprint using the membrane framework supported terms
 ///
 /// @author Original:Andrew Leaver-Fay (aleaverfay@gmail.com)
-/// @author Phil Bradley 
+/// @author Phil Bradley
 /// @author Brian Weitzner
 /// @author Extended for membrane by: Rebecca Alford (rfalford12@gmail.com)
 
@@ -34,7 +34,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
-#include <protocols/membrane/CreateMembranePoseMover.hh> 
+#include <protocols/membrane/CreateMembranePoseMover.hh>
 
 /// basic headers
 #include <basic/options/option.hh>
@@ -232,12 +232,12 @@ typedef utility::pointer::owning_ptr< ScoreFunctionFingerprintMover > ScoreFunct
 class MPScoreFunctionFingerprintMover : public protocols::moves::Mover {
 
 public:
-    
+
 	MPScoreFunctionFingerprintMover();
 	virtual ~MPScoreFunctionFingerprintMover();
-	virtual std::string get_name() const; 
+	virtual std::string get_name() const;
 
-	virtual void apply( pose::Pose & pose ); 
+	virtual void apply( pose::Pose & pose );
 };
 
 MPScoreFunctionFingerprintMover::MPScoreFunctionFingerprintMover() {}
@@ -250,18 +250,18 @@ void MPScoreFunctionFingerprintMover::apply( pose::Pose & pose ) {
 	using namespace protocols::membrane;
 
 	// Apply Membrane Mover
-	CreateMembranePoseMoverOP cpm = new CreateMembranePoseMover(); 
-	cpm->apply(pose); 
-	core::pose::PoseOP mppose = cpm->get_membrane_pose(); 
+	CreateMembranePoseMoverOP cpm = new CreateMembranePoseMover();
+	cpm->apply(pose);
+	core::pose::PoseOP mppose = cpm->get_membrane_pose();
 
 	// Apply fingerprint mover
 	ScoreFunctionFingerprintMoverOP sffm = new ScoreFunctionFingerprintMover;
 	sffm->sfxn( core::scoring::getScoreFunction() );
-	sffm->apply( *mppose ); 
+	sffm->apply( *mppose );
 }
 
 // Tyepdef to owning pointer
-typedef utility::pointer::owning_ptr< MPScoreFunctionFingerprintMover > MPScoreFunctionFingerprintMoverOP; 
+typedef utility::pointer::owning_ptr< MPScoreFunctionFingerprintMover > MPScoreFunctionFingerprintMoverOP;
 
 
 int main( int argc, char ** argv )
@@ -273,7 +273,7 @@ int main( int argc, char ** argv )
 		using namespace basic::options::OptionKeys;
 
 		NEW_OPT( sfxnfprnt::output_fingerprint_file, "Fingerprint file destination", "" );
-		
+
 		devel::init( argc, argv );
 		if ( ! option[ sfxnfprnt::output_fingerprint_file ].user() ) {
 			utility_exit_with_message( "Must specify either an output fingerprint file" );
@@ -294,7 +294,7 @@ int main( int argc, char ** argv )
 		}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

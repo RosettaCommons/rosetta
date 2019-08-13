@@ -92,7 +92,7 @@ main( int argc, char *argv[] )
 		cout << pose.residue( 1 ) << endl;
 
 	} catch (excn::Exception const & e ) {
-		cerr << "Caught exception: " << e.msg() << endl;
+		e.display();
 		return -1;
 	}
 	return 0;

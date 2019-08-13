@@ -151,9 +151,7 @@ main( int argc, char * argv [] )
 
 		main_local(nullptr);
 	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception caught: " << std::endl;
-		excn.show( std::cerr );
-		std::cerr.flush();
+		excn.display();
 		return -1;
 	}
 

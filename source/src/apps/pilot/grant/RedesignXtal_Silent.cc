@@ -364,7 +364,7 @@ main( int argc, char * argv [] )
 		// when we are done will everything we can do some more stuff
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

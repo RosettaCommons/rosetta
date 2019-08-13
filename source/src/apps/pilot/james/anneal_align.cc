@@ -58,12 +58,12 @@ MultipleSequenceAlignment random_alignment_move( MultipleSequenceAlignment const
 	// if there's a gap here, either delete it or extend it
 	// Real delete_prob = 0.5;
 	// if ( new_msa.sequence(sequence_idx).is_gap(position) ) {
-	// 	if ( numeric::random::uniform() > delete_prob ) {
+	//  if ( numeric::random::uniform() > delete_prob ) {
 	//
-	// 	}
+	//  }
 	// }
 	// std::cout << "inserting gap into sequence " << sequence_idx
-	//  					<< ", position " << position << std::endl;
+	//       << ", position " << position << std::endl;
 
 	new_msa.insert_gap_into_sequence( sequence_idx, position );
 	return new_msa;
@@ -85,7 +85,7 @@ Real blosum_score_alignment( MultipleSequenceAlignment & msa ) {
 
 		string line;
 		vector1< AA > order;
-		while( getline( input, line ) ) {
+		while ( getline( input, line ) ) {
 			if ( line.substr(0,1) == "#" ) continue; // skip comments
 
 			std::istringstream line_stream( line );
@@ -93,8 +93,9 @@ Real blosum_score_alignment( MultipleSequenceAlignment & msa ) {
 				while ( !line_stream.fail() ) {
 					char aa;
 					line_stream >> aa;
-					if ( oneletter_code_specifies_aa( aa ) )
+					if ( oneletter_code_specifies_aa( aa ) ) {
 						order.push_back( aa_from_oneletter_code(aa) );
+					}
 				}
 			} else {
 				char aa_name;
@@ -103,8 +104,8 @@ Real blosum_score_alignment( MultipleSequenceAlignment & msa ) {
 				AA aa = aa_from_oneletter_code(aa_name);
 
 				for ( vector1< AA >::const_iterator it = order.begin(), end = order.end();
-							it != end; ++it
-				) {
+						it != end; ++it
+						) {
 					Real score;
 					line_stream >> score;
 					scoring_matrix[ aa ][ *it ] = score;
@@ -176,111 +177,113 @@ main( int argc, char* argv [] )
 {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	Sequence seq1(
-		// "VDKF",
-		// "VDDNKFAGLMLVGTIEILHDRASKEMLWTDGCEIYYPLGIDDPDYTALCFTAEWGNYYRH",
-		"IDEKFLIESNELVESSKIVMVGTNGENGYPNIKAMMRLKHDGLKKFWLSTNTSTRMVERLKKNNKICLYFVDDNKFAGLMLVGTIEILHDRASKEMLWTDGCEIYYPLGIDDPDYTALCFTAEWGNYYRHLKNITFKIDEIY",
-		"t380_"
-	);
+		Sequence seq1(
+			// "VDKF",
+			// "VDDNKFAGLMLVGTIEILHDRASKEMLWTDGCEIYYPLGIDDPDYTALCFTAEWGNYYRH",
+			"IDEKFLIESNELVESSKIVMVGTNGENGYPNIKAMMRLKHDGLKKFWLSTNTSTRMVERLKKNNKICLYFVDDNKFAGLMLVGTIEILHDRASKEMLWTDGCEIYYPLGIDDPDYTALCFTAEWGNYYRHLKNITFKIDEIY",
+			"t380_"
+		);
 
-	Sequence seq2(
-		// "VDDQQQNKF",
-		// "QE--KGDSVALXGEVEVVTDEKLKQELWQDWFIEHFPGGPTDPGYVLLKFTANHATYWIE",
-		"TKTMKEKAVELLQKCEVVTLASVNKEGYPRPVPMSKIAAEGISTIWMSTGADSLKTIDFLSNPKAGLCFQEKGDSVALMGEVEVVTDEKLKQELWQDWFIEHFPGGPTDPGYVLLKFTANHATYWIEGTFIHKKL",
-		"2fhqA"
-	);
+		Sequence seq2(
+			// "VDDQQQNKF",
+			// "QE--KGDSVALXGEVEVVTDEKLKQELWQDWFIEHFPGGPTDPGYVLLKFTANHATYWIE",
+			"TKTMKEKAVELLQKCEVVTLASVNKEGYPRPVPMSKIAAEGISTIWMSTGADSLKTIDFLSNPKAGLCFQEKGDSVALMGEVEVVTDEKLKQELWQDWFIEHFPGGPTDPGYVLLKFTANHATYWIEGTFIHKKL",
+			"2fhqA"
+		);
 
-	vector1< MultipleSequenceAlignment > results;
+		vector1< MultipleSequenceAlignment > results;
 
-	for ( Size run_count = 1; run_count <= 100; ++run_count ) {
-		MultipleSequenceAlignment msa, last_accepted_msa, best_msa;
+		for ( Size run_count = 1; run_count <= 100; ++run_count ) {
+			MultipleSequenceAlignment msa, last_accepted_msa, best_msa;
 
-		msa.add_sequence( seq1 );
-		msa.add_sequence( seq2 );
+			msa.add_sequence( seq1 );
+			msa.add_sequence( seq2 );
 
-		score_alignment( msa );
-
-		std::cout << msa << std::endl;
-
-		best_msa = msa;
-		last_accepted_msa = msa;
-
-		Size nmoves    = 2;
-		Size n_iter    = 10000;
-		Size n_accepts = 0;
-		for ( Size i = 1; i <= n_iter; ++i ) {
-			// for ( Size j = 1; j <= 80; ++j ) {
-			// 	std::cout << '*';
-			// }
-			// std::cout << std::endl;
-
-			// std::cout << "iteration: " << i << std::endl;
-			for ( Size k = 1; k <= nmoves; ++k )
-				msa = random_alignment_move( msa );
 			score_alignment( msa );
 
-			std::cout << "scores(current,last_accepted,best) = ("
-								<< msa.score() << ","
-								<< last_accepted_msa.score() << ","
-								<< best_msa.score() << ")"
-								<< std::endl;
 			std::cout << msa << std::endl;
 
-			if ( msa.score() < best_msa.score() ) {
-				std::cout << "accept (best)" << std::endl;
-				std::cout << msa << std::endl;
-				best_msa          = msa;
-				last_accepted_msa = best_msa;
-				++n_accepts;
+			best_msa = msa;
+			last_accepted_msa = msa;
 
-				std::cout << "best_msa: " << best_msa << std::endl;
-			} else {
-				// score is worse (higher) than last_accepted_score.
-				Real const temperature = get_temp( n_accepts, n_iter );
-				Real const boltz_factor = ( last_accepted_msa.score() - msa.score() ) / temperature;
-				Real const dice_roll    = numeric::random::uniform();
-				Real const probability  = exp( min( 40.0, max( -40.0, boltz_factor ) ) );
+			Size nmoves    = 2;
+			Size n_iter    = 10000;
+			Size n_accepts = 0;
+			for ( Size i = 1; i <= n_iter; ++i ) {
+				// for ( Size j = 1; j <= 80; ++j ) {
+				//  std::cout << '*';
+				// }
+				// std::cout << std::endl;
 
-				std::cout << "trying (" << last_accepted_msa.score() << " -> " << msa.score()
-									<< ") with probability " << probability << std::endl;
-
-				if ( dice_roll >= probability ) {
-					// std::cout << "rejected" << std::endl;
-					msa = last_accepted_msa;
-				} else {
-					// std::cout << "accept (lucked out with probability "
-					// 					<< dice_roll << " <= " << probability	<<  ")"
-					// 					<< " temp = " << temperature
-					// 					<< std::endl;
-					last_accepted_msa = msa;
-					++n_accepts;
+				// std::cout << "iteration: " << i << std::endl;
+				for ( Size k = 1; k <= nmoves; ++k ) {
+					msa = random_alignment_move( msa );
 				}
-			} // else
+				score_alignment( msa );
 
-			// std::cout << msa << std::endl;
-		} // for n_iter
+				std::cout << "scores(current,last_accepted,best) = ("
+					<< msa.score() << ","
+					<< last_accepted_msa.score() << ","
+					<< best_msa.score() << ")"
+					<< std::endl;
+				std::cout << msa << std::endl;
 
-		std::cout << "done (" << n_accepts << " accepts)" << std::endl;
-		results.push_back( best_msa );
-	} // k
+				if ( msa.score() < best_msa.score() ) {
+					std::cout << "accept (best)" << std::endl;
+					std::cout << msa << std::endl;
+					best_msa          = msa;
+					last_accepted_msa = best_msa;
+					++n_accepts;
+
+					std::cout << "best_msa: " << best_msa << std::endl;
+				} else {
+					// score is worse (higher) than last_accepted_score.
+					Real const temperature = get_temp( n_accepts, n_iter );
+					Real const boltz_factor = ( last_accepted_msa.score() - msa.score() ) / temperature;
+					Real const dice_roll    = numeric::random::uniform();
+					Real const probability  = exp( min( 40.0, max( -40.0, boltz_factor ) ) );
+
+					std::cout << "trying (" << last_accepted_msa.score() << " -> " << msa.score()
+						<< ") with probability " << probability << std::endl;
+
+					if ( dice_roll >= probability ) {
+						// std::cout << "rejected" << std::endl;
+						msa = last_accepted_msa;
+					} else {
+						// std::cout << "accept (lucked out with probability "
+						//      << dice_roll << " <= " << probability <<  ")"
+						//      << " temp = " << temperature
+						//      << std::endl;
+						last_accepted_msa = msa;
+						++n_accepts;
+					}
+				} // else
+
+				// std::cout << msa << std::endl;
+			} // for n_iter
+
+			std::cout << "done (" << n_accepts << " accepts)" << std::endl;
+			results.push_back( best_msa );
+		} // k
 
 
-	for ( vector1< MultipleSequenceAlignment >::iterator
+		for ( vector1< MultipleSequenceAlignment >::iterator
 				it = results.begin(), end = results.end();
-	 			it != end; ++it
-	) {
-		for ( Size j = 1; j <= 80; ++j )
-			std::cout << '*';
-		std::cout << std::endl;
+				it != end; ++it
+				) {
+			for ( Size j = 1; j <= 80; ++j ) {
+				std::cout << '*';
+			}
+			std::cout << std::endl;
 
-		std::cout << *it << std::endl;
-	}
+			std::cout << *it << std::endl;
+		}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

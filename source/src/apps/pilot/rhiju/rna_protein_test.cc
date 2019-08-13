@@ -148,14 +148,14 @@ rna_protein_repack_test()
 
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
-	for (Size i = 1; i <= pose.size(); ++i) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		task->nonconst_residue_task( i ).restrict_to_repacking();
 	}
 
 	ScoreFunctionOP scorefxn = get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS );
 	scorefxn->set_weight( fa_pair, 0.0 );
 	scorefxn->set_weight( fa_elec, 0.5 );
-	//	scorefxn->energy_method_options().exclude_DNA_DNA( false );
+	// scorefxn->energy_method_options().exclude_DNA_DNA( false );
 
 	(*scorefxn)( pose );
 	scorefxn->show( std::cout, pose );
@@ -191,14 +191,14 @@ rna_protein_prepack_test()
 	ScoreFunctionOP scorefxn = get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS );
 	scorefxn->set_weight( fa_pair, 0.0 );
 	scorefxn->set_weight( fa_elec, 0.5 );
-	//	scorefxn->energy_method_options().exclude_DNA_DNA( false );
+	// scorefxn->energy_method_options().exclude_DNA_DNA( false );
 
 
 	//First push the protein and the RNA far apart.
 	utility::vector1<Size> rna_residues, protein_residues;
-	for (Size i = 1; i <= pose.size(); ++i) {
-		if (pose.residue(i).is_RNA() ) rna_residues.push_back( i );
-		if (pose.residue(i).is_protein() ) protein_residues.push_back( i );
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		if ( pose.residue(i).is_RNA() ) rna_residues.push_back( i );
+		if ( pose.residue(i).is_protein() ) protein_residues.push_back( i );
 	}
 
 	Size const num_protein = protein_residues.size() ;
@@ -208,7 +208,7 @@ rna_protein_prepack_test()
 	Size const downstream_residue = rna_residues[ num_rna/2 ];
 
 	Size cutpoint( rna_residues[1] - 1 );
-	if (protein_residues[1] > rna_residues[1] )  cutpoint = protein_residues[1]-1;
+	if ( protein_residues[1] > rna_residues[1] )  cutpoint = protein_residues[1]-1;
 
 	kinematics::FoldTree f_original = pose.fold_tree();
 	kinematics::FoldTree f_separate_protein_rna( pose.size() );
@@ -226,7 +226,7 @@ rna_protein_prepack_test()
 	////////////////////////////////////////////////////////////
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
-	for (Size i = 1; i <= pose.size(); ++i) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		task->nonconst_residue_task( i ).restrict_to_repacking();
 	}
 	(*scorefxn)( pose );
@@ -257,7 +257,7 @@ pack_interface( pose::Pose & pose, scoring::ScoreFunction & scorefxn, ObjexxFCL:
 	pose.fold_tree( f );
 
 	std::cout << "Packing residues: " ;
-	for (Size i = 1; i <= nres; ++i) {
+	for ( Size i = 1; i <= nres; ++i ) {
 		task->nonconst_residue_task( i ).restrict_to_repacking();
 		if ( interface_residue( i ) )  {
 			std::cout << ' ' << i;
@@ -294,9 +294,9 @@ create_random_pose( pose::Pose & pose ){
 	// Keep jump atoms close, within some Gaussian sphere.
 	Real trans_sigma = 4.0;
 	if ( options::option[capri15] ) trans_sigma = 3.0;
-	//	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover(
-	//																															 pose, 1 /*jump_num*/, 0.0 /*rot*/, trans_sigma );
-	//	rb_mover->apply( pose );
+	// rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover(
+	//                                pose, 1 /*jump_num*/, 0.0 /*rot*/, trans_sigma );
+	// rb_mover->apply( pose );
 	using namespace numeric::random;
 	Real const r = 2.5 + 1.0*uniform();
 	Real const cos_theta = 2 * uniform() - 1;
@@ -319,16 +319,16 @@ check_protein_rna_clash( pose::Pose const & pose, ObjexxFCL::FArray1D< bool > & 
 	interface_residue.dimension( nres );
 	interface_residue  = false;
 
-	for (Size i=1; i <= nres; i++ ) {
+	for ( Size i=1; i <= nres; i++ ) {
 		conformation::Residue const & rsd1 = pose.residue(i);
-		if (!rsd1.is_RNA()) continue;
+		if ( !rsd1.is_RNA() ) continue;
 
 		//Quick check.
 		Vector const & nbr_i( rsd1.xyz( rsd1.nbr_atom() ) );
 
-		for (Size j=1; j <= pose.size(); j++ ) {
+		for ( Size j=1; j <= pose.size(); j++ ) {
 			conformation::Residue const & rsd2 = pose.residue(j);
-			if (rsd2.is_RNA()) continue;
+			if ( rsd2.is_RNA() ) continue;
 
 			//Quick check.
 			Vector const & nbr_j( rsd2.xyz( rsd2.nbr_atom() ) );
@@ -342,7 +342,7 @@ check_protein_rna_clash( pose::Pose const & pose, ObjexxFCL::FArray1D< bool > & 
 			interface_residue( j ) = true;
 
 			//Now check for clashes between all RNA heavy atoms and protein backbone atoms.
-			for (Size m = 1; m <= rsd1.nheavyatoms(); m++ ) {
+			for ( Size m = 1; m <= rsd1.nheavyatoms(); m++ ) {
 
 				Vector const & atom_i( rsd1.xyz( m ) );
 
@@ -352,7 +352,7 @@ check_protein_rna_clash( pose::Pose const & pose, ObjexxFCL::FArray1D< bool > & 
 				//What if its the ligand? Look over all heavy atoms.
 				if ( !rsd2.is_protein() ) atom_num_max = rsd2.nheavyatoms();
 
-				for (Size n = 1; n <= atom_num_max; n++ ) {
+				for ( Size n = 1; n <= atom_num_max; n++ ) {
 
 					Vector const & atom_j( rsd2.xyz( n ) );
 
@@ -395,7 +395,7 @@ rna_protein_rb_test(){
 		f.new_jump( 5, 284+10, 10 );
 		f.set_jump_atoms( 1, " N1 ", " CE ");
 		f.new_jump( 102+10, 284+10, 283+10 );
-	} else 	{
+	} else  {
 		std::cout << "Setting up 1zdi (MS2 coat protein/RNA) fold tree " << nres << std::endl;
 		f.new_jump( 214, 267, 258 );
 		f.set_jump_atoms( 1, " CB ", " O2'" );
@@ -406,13 +406,13 @@ rna_protein_rb_test(){
 	//Phil's suggestion for a fast score function
 	ScoreFunctionOP scorefxn = get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS );
 
-	if (option[soft_rep]) {
+	if ( option[soft_rep] ) {
 		scorefxn = ScoreFunctionFactory::create_score_function( SOFT_REP_WTS );
 	}
 
 	scorefxn->set_weight( fa_pair, 0.0 );
 	scorefxn->set_weight( fa_elec, 0.5 );
-	//	scorefxn->energy_method_options().exclude_DNA_DNA( false );
+	// scorefxn->energy_method_options().exclude_DNA_DNA( false );
 
 	dump_pdb( pose, "start.pdb");
 
@@ -434,7 +434,7 @@ rna_protein_rb_test(){
 	{
 		pose = start_pose;
 		std::cout << "Is start pose clashing? " << check_protein_rna_clash( pose, interface_residue ) << std::endl;
-		//		pack_interface( pose, *scorefxn, interface_residue );
+		//  pack_interface( pose, *scorefxn, interface_residue );
 		std::string const tag( "START" );
 		std::map< std::string, core::Real > scores;
 		core::io::atom_tree_diffs::map_of_weighted_scores(pose, *scorefxn, scores);
@@ -447,18 +447,18 @@ rna_protein_rb_test(){
 	//  hey, this probably goes well in the job distributor? anyway.
 	pose::Pose native_pose;
 	bool const use_native = option[in::file::native].active();
-	if (use_native) 	io::pdb::pose_from_file( native_pose, option( in::file::native ) , core::import_pose::PDB_file);
+	if ( use_native )  io::pdb::pose_from_file( native_pose, option( in::file::native ) , core::import_pose::PDB_file);
 
 	////////////////////////////////////////////////////////////////////
 	// MAIN LOOP
 	Size const nstruct = option[ out::nstruct ];
 	Size const num_tries = 50000;
-	for ( Size n = 1; n <= nstruct; n++ ){
+	for ( Size n = 1; n <= nstruct; n++ ) {
 
 		std::cout << "Decoy time: " << n << std::endl;
 
 		Size i( 1 );
-		for ( i = 1; i <= num_tries; i++ ){
+		for ( i = 1; i <= num_tries; i++ ) {
 			pose = start_pose;
 			create_random_pose( pose );
 			if ( check_protein_rna_clash( pose, interface_residue ) ) continue;
@@ -466,14 +466,14 @@ rna_protein_rb_test(){
 		}
 
 		std::cout << "Doing the repack after " << i << " orientations tested for clashes" <<  std::endl;
-		if (!option[ no_repack] )	 pack_interface( pose, *scorefxn, interface_residue );
+		if ( !option[ no_repack] )  pack_interface( pose, *scorefxn, interface_residue );
 
 
 		//dump it.
 		std::string const tag( "S_" + lead_zero_string_of( n, 5 ) );
 		std::map< std::string, core::Real > scores;
 		core::io::atom_tree_diffs::map_of_weighted_scores(pose, *scorefxn, scores);
-		if ( use_native ){
+		if ( use_native ) {
 			Real const rmsd = all_atom_rmsd( native_pose, pose );
 			std::cout << "All atom rmsd: " << rmsd  << std::endl;
 			scores[ "rms" ] =  rmsd;
@@ -481,13 +481,13 @@ rna_protein_rb_test(){
 		jobdist.dump_pose( tag, scores, start_pose, pose );
 
 
-		if (option[ dump_the_pdb] ) dump_pdb( pose, tag + ".pdb" );
+		if ( option[ dump_the_pdb] ) dump_pdb( pose, tag + ".pdb" );
 	}
 
-	//	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover(
-	//			pose, 1 /*jump_num*/, 60.0 /*rot*/, 0.0 /*trans*/ );
-	//	rb_mover->apply( pose );
-	//	dump_pdb( pose, "perturb.pdb" );
+	// rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover(
+	//   pose, 1 /*jump_num*/, 60.0 /*rot*/, 0.0 /*trans*/ );
+	// rb_mover->apply( pose );
+	// dump_pdb( pose, "perturb.pdb" );
 
 
 	return;
@@ -504,74 +504,74 @@ Vector
 get_centroid( conformation::Residue const & rsd )
 {
 
-  Vector centroid( 0.0 );
-  Size numatoms = 0;
-  for ( Size i=rsd.first_sidechain_atom(); i<= rsd.nheavyatoms(); ++i ) {
-    centroid += rsd.xyz(i);
-    numatoms++;
-  }
-  if (numatoms > 0 ) {
+	Vector centroid( 0.0 );
+	Size numatoms = 0;
+	for ( Size i=rsd.first_sidechain_atom(); i<= rsd.nheavyatoms(); ++i ) {
+		centroid += rsd.xyz(i);
+		numatoms++;
+	}
+	if ( numatoms > 0 ) {
 		centroid /= static_cast< Real >( numatoms );
 	} else { //Yo, is this a glycine?
 		assert( rsd.aa() == chemical::aa_gly );
 		centroid = rsd.xyz( "CA" );
 	}
 
-  return centroid;
+	return centroid;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 kinematics::Stub
 get_base_coordinate_system( conformation::Residue const & rsd, Vector const & centroid )
 {
-  using namespace chemical;
-  Size res_type = rsd.aa();
+	using namespace chemical;
+	Size res_type = rsd.aa();
 
-  assert( rsd.is_RNA() );
+	assert( rsd.is_RNA() );
 
-  Vector x,y,z;
+	Vector x,y,z;
 
-  // Make an axis pointing from base centroid to Watson-Crick edge.
-  std::string WC_atom;
-  if ( res_type == na_rad ) WC_atom = " N1 ";
-  if ( res_type == na_rcy ) WC_atom = " N3 ";
-  if ( res_type == na_rgu ) WC_atom = " N1 ";
-  if ( res_type == na_ura ) WC_atom = " N3 ";
+	// Make an axis pointing from base centroid to Watson-Crick edge.
+	std::string WC_atom;
+	if ( res_type == na_rad ) WC_atom = " N1 ";
+	if ( res_type == na_rcy ) WC_atom = " N3 ";
+	if ( res_type == na_rgu ) WC_atom = " N1 ";
+	if ( res_type == na_ura ) WC_atom = " N3 ";
 
-  Vector const WC_coord (rsd.xyz( WC_atom ) );
-  x = WC_coord - centroid;
-  x.normalize();
+	Vector const WC_coord (rsd.xyz( WC_atom ) );
+	x = WC_coord - centroid;
+	x.normalize();
 
-  // Make a perpendicular axis pointing from centroid towards
-  // Hoogstein edge (e.g., major groove in a double helix).
-  std::string H_atom;
-  if ( res_type == na_rad ) H_atom = "N7";
-  if ( res_type == na_rcy ) H_atom = "C5";
-  if ( res_type == na_rgu ) H_atom = "N7";
-  if ( res_type == na_ura ) H_atom = "C5";
+	// Make a perpendicular axis pointing from centroid towards
+	// Hoogstein edge (e.g., major groove in a double helix).
+	std::string H_atom;
+	if ( res_type == na_rad ) H_atom = "N7";
+	if ( res_type == na_rcy ) H_atom = "C5";
+	if ( res_type == na_rgu ) H_atom = "N7";
+	if ( res_type == na_ura ) H_atom = "C5";
 
-  Vector const H_coord (rsd.xyz( H_atom ) );
-  y = H_coord - centroid; //not orthonormal yet...
-  z = cross(x, y);
-  z.normalize(); // Should poSize roughly 5' to 3' if in a double helix.
+	Vector const H_coord (rsd.xyz( H_atom ) );
+	y = H_coord - centroid; //not orthonormal yet...
+	z = cross(x, y);
+	z.normalize(); // Should poSize roughly 5' to 3' if in a double helix.
 
-  y = cross(z, x);
-  y.normalize(); //not necessary but doesn't hurt.
+	y = cross(z, x);
+	y.normalize(); //not necessary but doesn't hurt.
 
-  //  std::cout << "WC : " << WC_coord << "   H : " << H_coord << "    centroid: " << centroid << std::endl;
+	//  std::cout << "WC : " << WC_coord << "   H : " << H_coord << "    centroid: " << centroid << std::endl;
 
-  return kinematics::Stub( Matrix::cols( x, y, z ), centroid );
+	return kinematics::Stub( Matrix::cols( x, y, z ), centroid );
 }
 
 
 void
 check_contact_and_output( conformation::Residue const & rsd1,
-													conformation::Residue const & rsd2,
-													Vector const & centroid_i,
-													kinematics::Stub const & stub_i,
-													Vector const & atom_j,
-													Size const & n,
-													utility::io::ozstream & base_out )
+	conformation::Residue const & rsd2,
+	Vector const & centroid_i,
+	kinematics::Stub const & stub_i,
+	Vector const & atom_j,
+	Size const & n,
+	utility::io::ozstream & base_out )
 {
 
 	static Real const Z_CUTOFF = 5.0;
@@ -599,14 +599,14 @@ check_contact_and_output( conformation::Residue const & rsd1,
 	// Now loop over atoms to see if there's a contact.
 	bool there_is_a_contact = false;
 	static Real const CONTACT_CUTOFF2 = 5.0*5.0;
-	for (Size m = rsd1.first_sidechain_atom(); m <= rsd1.nheavyatoms(); m++ ) {
+	for ( Size m = rsd1.first_sidechain_atom(); m <= rsd1.nheavyatoms(); m++ ) {
 		Vector const & atom_i( rsd1.xyz( m ) );
-		if ( (atom_i - atom_j).length_squared() < CONTACT_CUTOFF2 ){
+		if ( (atom_i - atom_j).length_squared() < CONTACT_CUTOFF2 ) {
 			there_is_a_contact = true;
 			break;
 		}
 	}
-	if (!there_is_a_contact) return;
+	if ( !there_is_a_contact ) return;
 
 
 	base_out <<
@@ -623,24 +623,24 @@ check_contact_and_output( conformation::Residue const & rsd1,
 ///////////////////////////////////////////////////////////////////////////////
 void
 check_oxygen_contact_and_output( conformation::Residue const & rsd1,
-																 conformation::Residue const & rsd2,
-																 Vector const & atom_i, Vector const & atom_j,
-																 Size const & m,
-																 Size const & n,
-																 utility::io::ozstream & oxygen_out )
+	conformation::Residue const & rsd2,
+	Vector const & atom_i, Vector const & atom_j,
+	Size const & m,
+	Size const & n,
+	utility::io::ozstream & oxygen_out )
 {
 	static Real const DIST_CUTOFF2 = 8.0;
 	Distance dist = (atom_i-atom_j).length();
 	if ( dist < DIST_CUTOFF2 ) {
-	oxygen_out <<
-		I(3, Size( rsd1.aa() )) << " " <<
-		I(4, rsd1.seqpos()) <<  " " <<
-		I(3, Size( rsd2.aa() ) ) << " " <<
-		I(4, rsd2.seqpos()) <<  " " <<
-		I(3, m) << " " <<
-		I(3, n) << " " <<
-		F(8,4,dist) <<
-		std::endl;
+		oxygen_out <<
+			I(3, Size( rsd1.aa() )) << " " <<
+			I(4, rsd1.seqpos()) <<  " " <<
+			I(3, Size( rsd2.aa() ) ) << " " <<
+			I(4, rsd2.seqpos()) <<  " " <<
+			I(3, m) << " " <<
+			I(3, n) << " " <<
+			F(8,4,dist) <<
+			std::endl;
 
 	}
 
@@ -663,11 +663,11 @@ rna_protein_pdbstats_test(){
 
 	Size const nres = pose.size();
 
-	if (nres < 1000 ) dump_pdb( pose, "start.pdb" );
+	if ( nres < 1000 ) dump_pdb( pose, "start.pdb" );
 
 	//////////////////////////
 	// Silly guide for me:
-	for (Size i = 1; i < num_aa_types; i++ ){
+	for ( Size i = 1; i < num_aa_types; i++ ) {
 		std::cout << I(3,i) << " ==> " <<
 			name_from_aa( chemical::AA(i) ) << std::endl;
 	}
@@ -684,7 +684,7 @@ rna_protein_pdbstats_test(){
 	//////////////////////////
 	// Silly guide for me:
 	std::cout << std::endl;
-	for (Size i = 1; i <= num_RNA_backbone_oxygen_atoms; i++ ){
+	for ( Size i = 1; i <= num_RNA_backbone_oxygen_atoms; i++ ) {
 		std::cout << I(3,i) << " ==> " <<
 			RNA_backbone_oxygen_atoms[i] << std::endl;
 	}
@@ -692,7 +692,7 @@ rna_protein_pdbstats_test(){
 
 	//Precalculate centroids.
 	utility::vector1 < Vector> centroids;
-	for (Size i=1; i <= nres; i++ ) {
+	for ( Size i=1; i <= nres; i++ ) {
 		conformation::Residue const & rsd1 = pose.residue(i);
 		centroids.push_back( get_centroid( rsd1 ) );
 	}
@@ -702,9 +702,9 @@ rna_protein_pdbstats_test(){
 	utility::io::ozstream base_out( outfile );
 	utility::io::ozstream oxygen_out( "oxygen_"+outfile );
 
-	for (Size i=1; i <= nres; i++ ) {
+	for ( Size i=1; i <= nres; i++ ) {
 		conformation::Residue const & rsd1 = pose.residue(i);
-		if (!rsd1.is_RNA()) continue;
+		if ( !rsd1.is_RNA() ) continue;
 
 		Vector const & centroid_i = centroids[i];
 		kinematics::Stub const & stub_i = get_base_coordinate_system( rsd1, centroid_i );
@@ -712,9 +712,9 @@ rna_protein_pdbstats_test(){
 		//Quick check.
 		Vector const & nbr_i( rsd1.xyz( rsd1.nbr_atom() ) );
 
-		for (Size j=1; j <= pose.size(); j++ ) {
+		for ( Size j=1; j <= pose.size(); j++ ) {
 			conformation::Residue const & rsd2 = pose.residue(j);
-			if (!rsd2.is_protein()) continue;
+			if ( !rsd2.is_protein() ) continue;
 
 			//Quick check.
 			Vector const & nbr_j( rsd2.xyz( rsd2.nbr_atom() ) );
@@ -730,7 +730,7 @@ rna_protein_pdbstats_test(){
 			// BASE stuff
 			//Save info on x,y,z position of N, CA, CB, C, O, centroid --> to text file.
 			// 5 atoms (up to C-alpha), except for glycine, I guess.
-			for (Size n = 1; n <= std::min( Size( 5 ), rsd2.nheavyatoms() ); n++ ) {
+			for ( Size n = 1; n <= std::min( Size( 5 ), rsd2.nheavyatoms() ); n++ ) {
 				Vector const & atom_j( rsd2.xyz( n ) );
 				check_contact_and_output( rsd1, rsd2, centroid_i, stub_i, atom_j, n, base_out );
 			} // backbone atoms.
@@ -740,9 +740,9 @@ rna_protein_pdbstats_test(){
 			//////////////////////////////////////////////////////////////
 			//Also distances to important RNA backbone oxygen atoms...
 			//////////////////////////////////////////////////////////////
-			for (Size m = 1 ; m <= num_RNA_backbone_oxygen_atoms; m++ ){
+			for ( Size m = 1 ; m <= num_RNA_backbone_oxygen_atoms; m++ ) {
 				Vector const & atom_i( rsd1.xyz( RNA_backbone_oxygen_atoms[m] ) );
-				for (Size n = 1; n <= std::min( Size( 5 ), rsd2.nheavyatoms() ); n++ ) {
+				for ( Size n = 1; n <= std::min( Size( 5 ), rsd2.nheavyatoms() ); n++ ) {
 					Vector const & atom_j( rsd2.xyz( n ) );
 					check_oxygen_contact_and_output( rsd1, rsd2, atom_i, atom_j, m, n, oxygen_out );
 				} // backbone atoms.
@@ -776,7 +776,7 @@ juke_sam_test(){
 	pose::Pose pose;
 	utility::vector1 <std::string> pdb_files ( option[ in::file::s ]() );
 
-	for (Size n = 1; n <= pdb_files.size(); n++ ){
+	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 
 		std::string const pdb_file = pdb_files[n];
 		io::pdb::pose_from_file( pose, pdb_file , core::import_pose::PDB_file);
@@ -799,38 +799,38 @@ juke_sam_test(){
 		ConstraintSetOP cst_set( new ConstraintSet() );
 		Residue const  & sam_rsd = pose.residue( sam );
 		cst_set->add_constraint( new AtomPairConstraint( AtomID( sam_rsd.atom_index( " C5'" ), sam ),
-																										 AtomID( pose.residue(169).atom_index( " CG ") /*pro*/,  169 ) ,
-																										 new HarmonicFunc( 3.5 /*anchor*/, 0.4 /*stdev*/) ) );
+			AtomID( pose.residue(169).atom_index( " CG ") /*pro*/,  169 ) ,
+			new HarmonicFunc( 3.5 /*anchor*/, 0.4 /*stdev*/) ) );
 		cst_set->add_constraint( new AtomPairConstraint( AtomID( sam_rsd.atom_index( " N6 " ), sam ),
-																										 AtomID( pose.residue(149).atom_index( " OD1") /*asp*/,  149 ) ,
-																										 new HarmonicFunc( 3.01 /*anchor*/, 0.4 /*stdev*/) ) );
+			AtomID( pose.residue(149).atom_index( " OD1") /*asp*/,  149 ) ,
+			new HarmonicFunc( 3.01 /*anchor*/, 0.4 /*stdev*/) ) );
 		cst_set->add_constraint( new AtomPairConstraint( AtomID( sam_rsd.atom_index( " N1 " ), sam ),
-																										 AtomID( pose.residue(150).atom_index( " N  ") /*ile*/,  150 ) ,
-																										 new HarmonicFunc( 3.01 /*anchor*/, 0.4 /*stdev*/) ) );
+			AtomID( pose.residue(150).atom_index( " N  ") /*ile*/,  150 ) ,
+			new HarmonicFunc( 3.01 /*anchor*/, 0.4 /*stdev*/) ) );
 		cst_set->add_constraint( new AtomPairConstraint( AtomID( sam_rsd.atom_index( " C4 " ), sam ),
-																										 AtomID( pose.residue(126).atom_index( " CG2") /*ile*/,  126 ) ,
-																										 new HarmonicFunc( 3.44 /*anchor*/, 0.4 /*stdev*/) ) );
+			AtomID( pose.residue(126).atom_index( " CG2") /*ile*/,  126 ) ,
+			new HarmonicFunc( 3.44 /*anchor*/, 0.4 /*stdev*/) ) );
 		cst_set->add_constraint( new AtomPairConstraint( AtomID( sam_rsd.atom_index( " N1 " ), sam ),
-																										 AtomID( pose.residue(126).atom_index( " CD1") /*ile*/,  126 ) ,
-																										 new HarmonicFunc( 4.34 /*anchor*/, 0.4 /*stdev*/) ) );
+			AtomID( pose.residue(126).atom_index( " CD1") /*ile*/,  126 ) ,
+			new HarmonicFunc( 4.34 /*anchor*/, 0.4 /*stdev*/) ) );
 		cst_set->add_constraint( new AtomPairConstraint( AtomID( sam_rsd.atom_index( " O2'" ), sam ),
-																										 AtomID( pose.residue(125).atom_index( " OD2") /*asp*/,  125 ) ,
-																										 new HarmonicFunc( 2.44 /*anchor*/, 0.4 /*stdev*/) ) );
+			AtomID( pose.residue(125).atom_index( " OD2") /*asp*/,  125 ) ,
+			new HarmonicFunc( 2.44 /*anchor*/, 0.4 /*stdev*/) ) );
 		cst_set->add_constraint( new AtomPairConstraint( AtomID( sam_rsd.atom_index( " C1'" ), sam ),
-																										 AtomID( pose.residue(102).atom_index( " CA ") /*gly*/,  102 ) ,
-																										 new HarmonicFunc( 3.79 /*anchor*/, 0.4 /*stdev*/) ) );
+			AtomID( pose.residue(102).atom_index( " CA ") /*gly*/,  102 ) ,
+			new HarmonicFunc( 3.79 /*anchor*/, 0.4 /*stdev*/) ) );
 		cst_set->add_constraint( new AtomPairConstraint( AtomID( sam_rsd.atom_index( " O3'" ), sam ),
-																										 AtomID( pose.residue(104).atom_index( " CA ") /*gly*/,  104 ) ,
-																										 new HarmonicFunc( 2.93 /*anchor*/, 0.4 /*stdev*/) ) );
+			AtomID( pose.residue(104).atom_index( " CA ") /*gly*/,  104 ) ,
+			new HarmonicFunc( 2.93 /*anchor*/, 0.4 /*stdev*/) ) );
 		cst_set->add_constraint( new AtomPairConstraint( AtomID( sam_rsd.atom_index( " O4'" ), sam ),
-																										 AtomID( pose.residue(102).atom_index( " CA ") /*gly*/,  102 ) ,
-																										 new HarmonicFunc( 3.11 /*anchor*/, 0.4 /*stdev*/) ) );
+			AtomID( pose.residue(102).atom_index( " CA ") /*gly*/,  102 ) ,
+			new HarmonicFunc( 3.11 /*anchor*/, 0.4 /*stdev*/) ) );
 		cst_set->add_constraint( new AtomPairConstraint( AtomID( sam_rsd.atom_index( " O3'" ), sam ),
-																										 AtomID( pose.residue(100).atom_index( " OD2") /*asp*/,  100 ) ,
-																										 new HarmonicFunc( 3.64 /*anchor*/, 0.4 /*stdev*/) ) );
+			AtomID( pose.residue(100).atom_index( " OD2") /*asp*/,  100 ) ,
+			new HarmonicFunc( 3.64 /*anchor*/, 0.4 /*stdev*/) ) );
 		cst_set->add_constraint( new AtomPairConstraint( AtomID( sam_rsd.atom_index( " SD " ), sam ),
-																										 AtomID( pose.residue(100).atom_index( " O  ") /*phe*/,  167 ) ,
-																										 new HarmonicFunc( 3.68 /*anchor*/, 0.4 /*stdev*/) ) );
+			AtomID( pose.residue(100).atom_index( " O  ") /*phe*/,  167 ) ,
+			new HarmonicFunc( 3.68 /*anchor*/, 0.4 /*stdev*/) ) );
 		pose.constraint_set( cst_set );
 
 		// Turn off rep and minimize.
@@ -872,7 +872,7 @@ juke_sam_test(){
 		dump_pdb( pose, "first_min.pdb" );
 
 		scorefxn_hard->show( std::cout, pose );
-		//	return;
+		// return;
 
 		// soft repack
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
@@ -924,45 +924,45 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace core::options;
+		using namespace core::options;
 
-	//Uh, options?
-	NEW_OPT( repack_test, "Test repack with RNA/protein system", false );
-	NEW_OPT( prepack_test, "Slide faraway and repack RNA/protein system", false );
-	NEW_OPT( rb_test,     "Move RNA relative to protein", false );
-	NEW_OPT( pdbstats,    "Get stats for RNA/protein interactions", false );
-	NEW_OPT( juke_sam,    "Juke SAM for CAPRI15", false );
-	NEW_OPT( soft_rep,    "Soft repulsive instead of hard rep", false );
-	NEW_OPT( capri15,    "Simulation parameters for CAPRI15 Target T033", false );
-	NEW_OPT( no_repack, "HACK OPTION", false );
-	NEW_OPT( dump_the_pdb, "HACK OPTION", false );
+		//Uh, options?
+		NEW_OPT( repack_test, "Test repack with RNA/protein system", false );
+		NEW_OPT( prepack_test, "Slide faraway and repack RNA/protein system", false );
+		NEW_OPT( rb_test,     "Move RNA relative to protein", false );
+		NEW_OPT( pdbstats,    "Get stats for RNA/protein interactions", false );
+		NEW_OPT( juke_sam,    "Juke SAM for CAPRI15", false );
+		NEW_OPT( soft_rep,    "Soft repulsive instead of hard rep", false );
+		NEW_OPT( capri15,    "Simulation parameters for CAPRI15 Target T033", false );
+		NEW_OPT( no_repack, "HACK OPTION", false );
+		NEW_OPT( dump_the_pdb, "HACK OPTION", false );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	if ( option[ repack_test ] ) {
-		rna_protein_repack_test();
-	} else if ( option[ rb_test ] ) {
-		rna_protein_rb_test();
-	}	else if ( option[ prepack_test ] ) {
-		rna_protein_prepack_test();
-	} else if ( option[ pdbstats ] ) {
-		rna_protein_pdbstats_test();
-	} else if ( option[ juke_sam ] ) {
-		juke_sam_test();
-	}
-	exit( 0 );
+		if ( option[ repack_test ] ) {
+			rna_protein_repack_test();
+		} else if ( option[ rb_test ] ) {
+			rna_protein_rb_test();
+		} else if ( option[ prepack_test ] ) {
+			rna_protein_prepack_test();
+		} else if ( option[ pdbstats ] ) {
+			rna_protein_pdbstats_test();
+		} else if ( option[ juke_sam ] ) {
+			juke_sam_test();
+		}
+		exit( 0 );
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

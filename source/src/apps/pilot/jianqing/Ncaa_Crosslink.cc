@@ -34,19 +34,19 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace basic::options;
-	using namespace protocols::ncaa_crosslink;
-	using namespace protocols::jd2;
+		using namespace basic::options;
+		using namespace protocols::ncaa_crosslink;
+		using namespace protocols::jd2;
 
-//	NcaaPreCrosslink::register_options();
-	// initialize core
-//	devel::init(argc, argv);
+		// NcaaPreCrosslink::register_options();
+		// initialize core
+		// devel::init(argc, argv);
 
-//	NcaaPreCrosslinkOP npc;
-//	npc = new NcaaPreCrosslink();
+		// NcaaPreCrosslinkOP npc;
+		// npc = new NcaaPreCrosslink();
 
- 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
 	}
 
@@ -57,30 +57,30 @@ main( int argc, char * argv [] )
 /*
 
 int main( int argc, char * argv [] ) {
-	devel::init(argc, argv);
+devel::init(argc, argv);
 
-	core::pose::PoseOP pose = new core::pose::Pose();
-	core::import_pose::pose_from_file( *pose, "./5A_low_1", core::import_pose::PDB_file);
-
-
-	core::scoring::ScoreFunctionCOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "mm_std") ;
+core::pose::PoseOP pose = new core::pose::Pose();
+core::import_pose::pose_from_file( *pose, "./5A_low_1", core::import_pose::PDB_file);
 
 
-	core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory;
-
-	tf->push_back( new core::pack::task::operation::RestrictToRepacking );
-	tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
-	tf->push_back( new core::pack::task::operation::IncludeCurrent );
-	tf->push_back( new core::pack::task::operation::NoRepackDisulfides );
+core::scoring::ScoreFunctionCOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "mm_std") ;
 
 
-	utility::vector1< core::Size > const movable_jumps(1);
+core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory;
 
-//	protocols::docking::DockJumps const movable_jumps  =  utility::vector1<core::Size> ;
-//	tf->push_back( new RestrictToInterface( movable_jumps() ) );
+tf->push_back( new core::pack::task::operation::RestrictToRepacking );
+tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+tf->push_back( new core::pack::task::operation::IncludeCurrent );
+tf->push_back( new core::pack::task::operation::NoRepackDisulfides );
 
 
-//	protocols::docking::setup_foldtree( pose, "LH_J", movable_jumps );
+utility::vector1< core::Size > const movable_jumps(1);
+
+// protocols::docking::DockJumps const movable_jumps  =  utility::vector1<core::Size> ;
+// tf->push_back( new RestrictToInterface( movable_jumps() ) );
+
+
+// protocols::docking::setup_foldtree( pose, "LH_J", movable_jumps );
 }
 
 

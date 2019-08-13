@@ -113,29 +113,29 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	using namespace core::chemical;
-	using namespace basic::options::OptionKeys;
-	using namespace basic::options;
-	using namespace protocols::moves;
-	using namespace protocols::jobdist;
+		using namespace core::chemical;
+		using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace protocols::moves;
+		using namespace protocols::jobdist;
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	// setup residue types
-	ResidueTypeSetCAP rsd_set =
-		ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	// read in a native pose
-	core::pose::Pose native_pose;
-	core::import_pose::pose_from_file(
-		native_pose, *rsd_set, option[ in::file::native ]()
-	);
+		// setup residue types
+		ResidueTypeSetCAP rsd_set =
+			ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		// read in a native pose
+		core::pose::Pose native_pose;
+		core::import_pose::pose_from_file(
+			native_pose, *rsd_set, option[ in::file::native ]()
+		);
 
-	SuperDeviationMoverOP mover ( new SuperDeviationMover( native_pose ) );
-	not_universal_main( *mover );
-	mover->print_stats();
+		SuperDeviationMoverOP mover ( new SuperDeviationMover( native_pose ) );
+		not_universal_main( *mover );
+		mover->print_stats();
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

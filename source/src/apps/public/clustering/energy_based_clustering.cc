@@ -93,8 +93,7 @@ int main( int argc, char * argv [] ) {
 
 		TR << "Terminating energy_based_clustering application with exit code 0 (no errors)." << std::endl;
 	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Terminating energy_based_clustering application with errors:" << std::endl;
-		excn.show( std::cerr );
+		excn.display();
 		return -1;
 	}
 

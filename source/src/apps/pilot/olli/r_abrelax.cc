@@ -104,17 +104,12 @@ main( int argc, char * argv [] )
 			std::cerr << " @ register_options" << std::endl;
 		}
 
-		try {
-			devel::init( argc, argv );//
-			mem_tr << "devel::init" << std::endl;
-			//    protocols::abinitio::Broker_main();
-			protocols::jd2::JobDistributor::get_instance()->go( NULL );
-		} catch (utility::excn::Exception& excn ) {
-			std::cerr << "Exception : " << std::endl;
-			excn.show( std::cerr );
-		}
+		devel::init( argc, argv );//
+		mem_tr << "devel::init" << std::endl;
+		//    protocols::abinitio::Broker_main();
+		protocols::jd2::JobDistributor::get_instance()->go( NULL );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

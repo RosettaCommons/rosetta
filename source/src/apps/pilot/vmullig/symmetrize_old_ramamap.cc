@@ -153,8 +153,7 @@ main( int argc, char * argv [] )
 		symmetrize_map(input_filename, output_filename);
 
 	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception : " << std::endl;
-		excn.show( std::cerr );
+		excn.display();
 		return -1;
 	}
 	return 0;

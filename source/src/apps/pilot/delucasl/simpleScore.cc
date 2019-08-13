@@ -33,45 +33,44 @@
 
 int main(int argc, char* argv[])
 {
-    try {
-	devel::init(argc, argv);
+	try {
+		devel::init(argc, argv);
 
-	utility::vector0<std::string> pdbs;
-	{
-		using namespace basic::options::OptionKeys;
-		using basic::options::option;
-		pdbs = option[in::file::l]();
-	}
+		utility::vector0<std::string> pdbs;
+		{
+			using namespace basic::options::OptionKeys;
+			using basic::options::option;
+			pdbs = option[in::file::l]();
+		}
 
-	core::scoring::ScoreFunction scoreFunction;
-	{
-		using namespace basic::options::OptionKeys;
-		using basic::options::option;
-		const std::string weightstag(option[score::weights]());
-		scoreFunction.initialize_from_file(basic::database::full_name("scoring/weights/"+weightstag+".wts"));
-	}
+		core::scoring::ScoreFunction scoreFunction;
+		{
+			using namespace basic::options::OptionKeys;
+			using basic::options::option;
+			const std::string weightstag(option[score::weights]());
+			scoreFunction.initialize_from_file(basic::database::full_name("scoring/weights/"+weightstag+".wts"));
+		}
 
-	core::pose::Pose pose;
-	for(int structIndex = 0; structIndex < pdbs.size(); ++structIndex)
-	{
-		core::import_pose::pose_from_file(pose,pdbs[structIndex], core::import_pose::PDB_file);
-		pose.dump_scored_pdb(pdbs[structIndex],scoreFunction);
-	}
-	/*
-	 {
-	 std::string pdb = pdbs[0];
-	 core::import_pose::pose_from_file(pose,pdb, core::import_pose::PDB_file);
-	 }
+		core::pose::Pose pose;
+		for ( int structIndex = 0; structIndex < pdbs.size(); ++structIndex ) {
+			core::import_pose::pose_from_file(pose,pdbs[structIndex], core::import_pose::PDB_file);
+			pose.dump_scored_pdb(pdbs[structIndex],scoreFunction);
+		}
+		/*
+		{
+		std::string pdb = pdbs[0];
+		core::import_pose::pose_from_file(pose,pdb, core::import_pose::PDB_file);
+		}
 
-	 {
-	 const std::string output("output.pdb");
-	 pose.dump_scored_pdb(output,scoreFunction);
-	 }
-	 */
-    } catch (utility::excn::Exception const & e ) {
-                             std::cout << "caught exception " << e.msg() << std::endl;
+		{
+		const std::string output("output.pdb");
+		pose.dump_scored_pdb(output,scoreFunction);
+		}
+		*/
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-                                }
+	}
 	return(0);
 }
 

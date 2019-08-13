@@ -458,8 +458,7 @@ int main( int argc, char ** argv )
 			try {
 				daf->initialize_from_input_file( ds, daf_file );
 			} catch (utility::excn::Exception & e ) {
-				std::cerr << "Caught exception" << std::endl;
-				std::cerr << e.msg() << std::endl;
+				e.display();
 				exit(1);
 			}
 			func->daemon_set( ds );
@@ -604,7 +603,7 @@ int main( int argc, char ** argv )
 #endif
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

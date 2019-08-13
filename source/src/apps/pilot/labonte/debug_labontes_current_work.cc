@@ -125,7 +125,7 @@ main( int argc, char *argv[] )
 
 		//pose.dump_pdb( "" );
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

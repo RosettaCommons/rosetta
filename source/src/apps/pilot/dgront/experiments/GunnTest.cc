@@ -112,7 +112,7 @@ int main(int argc, char * argv[]) {
 		GunnTest test;
 		not_universal_main( test );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

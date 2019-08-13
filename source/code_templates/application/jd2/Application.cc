@@ -35,7 +35,7 @@ static basic::Tracer TR("--app_name--");
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 	--app_options--
 
 }
@@ -49,10 +49,10 @@ main( int argc, char * argv [] )
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
+		--new_app_options_in--
+
 		devel::init( argc, argv );
 		register_options();
-
-		--new_app_options_in--
 
 		if ( ( ! option [ in::file::l ].user() ) && ( ! option [ in::file::s ].user() ) ) {
 			utility_exit_with_message("Please specify either -s or -l to specify the input PDB.");
@@ -65,7 +65,7 @@ main( int argc, char * argv [] )
 
 
 	} catch ( utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

@@ -29,16 +29,16 @@ using utility::operator <<;
 void*
 my_main( void* )
 {
-  utility::vector1< int >  res_vector = utility::tools::make_vector1( -5, -4, -3, 1, 2, 3, 1, 2);
-  utility::vector1< char > chain_vector = utility::tools::make_vector1( 'A','A','A','A','A','A',' ','B' );
-  std::string tag = make_tag_with_dashes( res_vector, chain_vector );
-  std::cout << "CHECK IT: " << tag << std::endl;
+	utility::vector1< int >  res_vector = utility::tools::make_vector1( -5, -4, -3, 1, 2, 3, 1, 2);
+	utility::vector1< char > chain_vector = utility::tools::make_vector1( 'A','A','A','A','A','A',' ','B' );
+	std::string tag = make_tag_with_dashes( res_vector, chain_vector );
+	std::cout << "CHECK IT: " << tag << std::endl;
 
-  bool string_is_ok;
-  std::cout << utility::get_resnum_and_chain( tag, string_is_ok ).first << std::endl;
-  std::cout << utility::get_resnum_and_chain( tag, string_is_ok ).second << std::endl;
+	bool string_is_ok;
+	std::cout << utility::get_resnum_and_chain( tag, string_is_ok ).first << std::endl;
+	std::cout << utility::get_resnum_and_chain( tag, string_is_ok ).second << std::endl;
 
-  exit( 0 );
+	exit( 0 );
 }
 
 
@@ -46,24 +46,24 @@ int
 main( int argc, char * argv [] )
 {
 
-  try {
+	try {
 
 
-    ////////////////////////////////////////////////////////////////////////////
-    // setup
-    ////////////////////////////////////////////////////////////////////////////
-    devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-    ////////////////////////////////////////////////////////////////////////////
-    // end of setup
-    ////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-    protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
 
 	} catch (utility::excn::Exception const & e ) {
-    std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
-  }
+	}
 
 }

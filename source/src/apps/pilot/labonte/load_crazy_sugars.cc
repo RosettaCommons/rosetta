@@ -46,7 +46,7 @@ main( int argc, char *argv[] )
 		cout << crazy_sugar << endl;
 
 	} catch (utility::excn::Exception const & e ) {
-		cerr << "Caught exception: " << e.msg() << endl;
+		e.display();
 		return -1;
 	}
 	return 0;

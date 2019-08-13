@@ -273,7 +273,7 @@ main( int argc, char * argv [] )
 		std::cout << "Successfully finished relaxing backbone around central residue" << std::endl;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

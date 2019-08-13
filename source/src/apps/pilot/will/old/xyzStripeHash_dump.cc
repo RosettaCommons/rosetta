@@ -54,14 +54,14 @@ get_surface_points(core::pose::Pose const & p, Real /*DIST*/) {
 	ss.pdb_from_level(6,"test6.pdb");
 	ss.pdb_from_level(7,"test7.pdb");
 
-	utility::vector1<Vec>	points;
-	for(Size ir = 1; ir <= p.size(); ++ir) {
-		for(Size ia = 1; ia <= p.residue(ir).nheavyatoms(); ++ia){
+	utility::vector1<Vec> points;
+	for ( Size ir = 1; ir <= p.size(); ++ir ) {
+		for ( Size ia = 1; ia <= p.residue(ir).nheavyatoms(); ++ia ) {
 			points.push_back(p.xyz(AtomID(ia,ir)));
 		}
 	}
 
-//	for(Size )
+	// for(Size )
 	return points;
 }
 
@@ -70,48 +70,48 @@ int main(int argc, char *argv[]) {
 
 	try {
 
-	register_options();
-	devel::init(argc,argv);
-	using namespace basic::options;
+		register_options();
+		devel::init(argc,argv);
+		using namespace basic::options;
 
 
-	Real const DIST(option[OptionKeys::clash_dis]());
-	//Real const DIST2(DIST*DIST);  // unused ~Labonte
+		Real const DIST(option[OptionKeys::clash_dis]());
+		//Real const DIST2(DIST*DIST);  // unused ~Labonte
 
-	core::pose::Pose p;
-	core::import_pose::pose_from_file(p,option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
-	if(false) {
-		for(Size ir = 1; ir <= p.size(); ++ir) {
-			if( p.residue(ir).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(p,ir);
-			if( p.residue(ir).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(p,ir);
+		core::pose::Pose p;
+		core::import_pose::pose_from_file(p,option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
+		if ( false ) {
+			for ( Size ir = 1; ir <= p.size(); ++ir ) {
+				if ( p.residue(ir).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(p,ir);
+				if ( p.residue(ir).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(p,ir);
+			}
 		}
-	}
 
-	utility::vector1<Vec> points = get_surface_points(p,DIST);
+		utility::vector1<Vec> points = get_surface_points(p,DIST);
 
-	utility_exit_with_message("TEST GET SURF PTS");
+		utility_exit_with_message("TEST GET SURF PTS");
 
-	protocols::sic_dock::xyzStripeHashPoseWithMeta xyzhash(DIST,p,protocols::sic_dock::ALL);
-	xyzhash.sanity_check();
+		protocols::sic_dock::xyzStripeHashPoseWithMeta xyzhash(DIST,p,protocols::sic_dock::ALL);
+		xyzhash.sanity_check();
 
-	using namespace ObjexxFCL::format;
-	std::cout << xyzhash.grid_size() << std::endl;
-	std::cout << xyzhash.natom() << std::endl;
-	std::cout << xyzhash.xdim() << " " << xyzhash.ydim() << " " << xyzhash.zdim() << std::endl;
-	for(Size j = 0; j < (Size)xyzhash.natom(); ++j) {
-		std::cout << F(12,7,xyzhash.grid_atoms()[j].x) << " ";
-		std::cout << F(12,7,xyzhash.grid_atoms()[j].y) << " ";
-		std::cout << F(12,7,xyzhash.grid_atoms()[j].z) << std::endl;
-	}
-	for(Size j = 0; j < Size(xyzhash.xdim()*xyzhash.ydim()*xyzhash.zdim()); ++j) {
-		std::cout << xyzhash.grid_stripe()[j].x << " ";
-		std::cout << xyzhash.grid_stripe()[j].y << std::endl;
-	}
-	return 0;
+		using namespace ObjexxFCL::format;
+		std::cout << xyzhash.grid_size() << std::endl;
+		std::cout << xyzhash.natom() << std::endl;
+		std::cout << xyzhash.xdim() << " " << xyzhash.ydim() << " " << xyzhash.zdim() << std::endl;
+		for ( Size j = 0; j < (Size)xyzhash.natom(); ++j ) {
+			std::cout << F(12,7,xyzhash.grid_atoms()[j].x) << " ";
+			std::cout << F(12,7,xyzhash.grid_atoms()[j].y) << " ";
+			std::cout << F(12,7,xyzhash.grid_atoms()[j].z) << std::endl;
+		}
+		for ( Size j = 0; j < Size(xyzhash.xdim()*xyzhash.ydim()*xyzhash.zdim()); ++j ) {
+			std::cout << xyzhash.grid_stripe()[j].x << " ";
+			std::cout << xyzhash.grid_stripe()[j].y << std::endl;
+		}
+		return 0;
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

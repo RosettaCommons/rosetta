@@ -109,18 +109,18 @@ public:
 		//using protocols::loops::Loops;
 
 		//Loops loops = protocols::comparative_modeling::loops_from_alignment(
-		//	query_pose.size(), alignment(), min_loop_size()
+		// query_pose.size(), alignment(), min_loop_size()
 		//);
 
 		//// foreach loop
 		//using core::Size;
 		//for ( Size loop_idx = 1; loop_idx <= loops.num_loop(); ++loop_idx ) {
-		//	// do a quick ccd closure on the loop residues so long as the loop is not
-		//	// at a terminus.
-		//	protocols::loops::Loop loop = loops[loop_idx];
-		//	if ( loop.start() != 1 ) {
-		//		ccd_close_loop(query_pose,loop);
-		//	}
+		// // do a quick ccd closure on the loop residues so long as the loop is not
+		// // at a terminus.
+		// protocols::loops::Loop loop = loops[loop_idx];
+		// if ( loop.start() != 1 ) {
+		//  ccd_close_loop(query_pose,loop);
+		// }
 		//}
 		std::cout << "DEBUG(sequence2) = " << query_pose.sequence() << std::endl;
 		query_pose.dump_pdb("after_loop_model.pdb");
@@ -147,8 +147,8 @@ public:
 					using namespace core::scoring::constraints;
 					query_pose.add_constraint(
 						new CoordinateConstraint(
-							AtomID(ii,idx), AtomID(1,nres), nat_i_rsd.xyz(ii),
-							new HarmonicFunc(0.0,coord_sdev)
+						AtomID(ii,idx), AtomID(1,nres), nat_i_rsd.xyz(ii),
+						new HarmonicFunc(0.0,coord_sdev)
 						)
 					);
 				} // ii
@@ -190,63 +190,63 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
-	core::import_pose::pose_stream::MetaPoseInputStream input
-		= core::import_pose::pose_stream::streams_from_cmd_line();
+		// options, random initialization
+		devel::init( argc, argv );
+		core::import_pose::pose_stream::MetaPoseInputStream input
+			= core::import_pose::pose_stream::streams_from_cmd_line();
 
-	using std::map;
-	using std::string;
-	using core::pose::Pose;
-	using utility::vector1;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::sequence;
-	using namespace core::io::silent;
-	using namespace protocols::comparative_modeling;
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+		using std::map;
+		using std::string;
+		using core::pose::Pose;
+		using utility::vector1;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
+		using namespace core::sequence;
+		using namespace core::io::silent;
+		using namespace protocols::comparative_modeling;
+		ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
 
-	vector1< std::string > aln_fns = option[ in::file::alignment ]();
-	vector1< SequenceAlignment > alns = core::sequence::read_aln(
-		option[ cm::aln_format ](), aln_fns.front()
-	);
-	std::map< string, Pose > poses = poses_from_cmd_line(
-		option[ in::file::template_pdb ]()
-	);
+		vector1< std::string > aln_fns = option[ in::file::alignment ]();
+		vector1< SequenceAlignment > alns = core::sequence::read_aln(
+			option[ cm::aln_format ](), aln_fns.front()
+		);
+		std::map< string, Pose > poses = poses_from_cmd_line(
+			option[ in::file::template_pdb ]()
+		);
 
-	core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentFileData sfd;
 
-	while( input.has_another_pose() ) {
-		core::pose::Pose pose;
-		input.fill_pose( pose, *rsd_set );
-		std::cout << "sequence = " << pose.sequence() << std::endl;
+		while ( input.has_another_pose() ) {
+			core::pose::Pose pose;
+			input.fill_pose( pose, *rsd_set );
+			std::cout << "sequence = " << pose.sequence() << std::endl;
 
-		for ( vector1< SequenceAlignment >::iterator aln_it = alns.begin(),
-				end = alns.end();
-				aln_it != end; ++aln_it
-		) {
-			string const template_id( aln_it->sequence(2)->id().substr(0,5) );
-			map< string, Pose >::iterator pose_it = poses.find( template_id );
-			if ( pose_it == poses.end() ) {
-				string msg( "Error: can't find pose (id = "
-					+ template_id + ")"
-				);
-				//utility_exit_with_message(msg);
-				std::cerr << msg << std::endl;
-			} else {
-				Pose template_pose = pose_it->second;
-				FastThreadingMover mover( *aln_it, template_pose );
-				mover.apply( pose );
-				SilentStructOP ss_out( SilentStructFactory::get_instance()->get_silent_struct_out() );
-				ss_out->fill_struct(pose);
-				sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() );
+			for ( vector1< SequenceAlignment >::iterator aln_it = alns.begin(),
+					end = alns.end();
+					aln_it != end; ++aln_it
+					) {
+				string const template_id( aln_it->sequence(2)->id().substr(0,5) );
+				map< string, Pose >::iterator pose_it = poses.find( template_id );
+				if ( pose_it == poses.end() ) {
+					string msg( "Error: can't find pose (id = "
+						+ template_id + ")"
+					);
+					//utility_exit_with_message(msg);
+					std::cerr << msg << std::endl;
+				} else {
+					Pose template_pose = pose_it->second;
+					FastThreadingMover mover( *aln_it, template_pose );
+					mover.apply( pose );
+					SilentStructOP ss_out( SilentStructFactory::get_instance()->get_silent_struct_out() );
+					ss_out->fill_struct(pose);
+					sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() );
+				}
 			}
 		}
-	}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

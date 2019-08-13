@@ -99,7 +99,7 @@ main( int argc, char *argv[] )
 		pose.set_omega(3, 180.0);
 		cout << "Omega is now " << pose.omega(3) << endl << endl;
 	} catch (utility::excn::Exception const & e ) {
-		cerr << "caught exception " << e.msg() << endl;
+		e.display();
 		return -1;
 	}
 	return 0;

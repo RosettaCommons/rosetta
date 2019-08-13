@@ -108,8 +108,7 @@ int main(int argc, char* argv[])
 
 
 	} catch (utility::excn::Exception & excn){
-		std::cout << "Exception"<<std::endl;
-		excn.show(std::cerr);
+		excn.display();
 		return -1;
 	}
 

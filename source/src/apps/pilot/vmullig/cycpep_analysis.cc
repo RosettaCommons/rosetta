@@ -164,9 +164,7 @@ main( int argc, char * argv [] )
 		TR << "Starting cycpep_analysis.cc.\nPilot app created by Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory, on 13 October 2016." << std::endl;
 		do_cycpep_analysis();
 	} catch (utility::excn::Exception& excn ) {
-		TR.Error << "Exception caught: " << std::endl;
-		excn.show( TR.Error );
-		TR.Error.flush();
+		excn.display();
 		return -1;
 	}
 

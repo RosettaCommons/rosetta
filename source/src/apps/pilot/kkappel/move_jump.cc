@@ -132,7 +132,7 @@ int main( int argc, char ** argv ) {
 		devel::init( argc, argv );
 		score_rnp();
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

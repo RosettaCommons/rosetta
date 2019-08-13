@@ -62,17 +62,17 @@ main( int argc, char* argv [] ) {
 
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	core::scoring::disulfides::FullatomDisulfidePotentialOP potent( new core::scoring::disulfides::FullatomDisulfidePotential );
+		core::scoring::disulfides::FullatomDisulfidePotentialOP potent( new core::scoring::disulfides::FullatomDisulfidePotential );
 
-	potent->print_score_functions();
+		potent->print_score_functions();
 
-	return 0;
+		return 0;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

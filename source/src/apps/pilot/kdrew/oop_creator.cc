@@ -192,7 +192,7 @@ main( int argc, char* argv[] )
 		protocols::jd2::JobDistributor::get_instance()->go( OC_mover );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

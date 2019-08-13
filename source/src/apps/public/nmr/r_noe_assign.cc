@@ -362,13 +362,9 @@ main( int argc, char * argv [] )
 		protocols::noesy_assign::PeakFileFormat_xeasy::register_options();
 		devel::init( argc, argv );
 		protocols::noesy_assign::PeakAssignmentParameters::get_instance();
-		try{
-			run();
-		} catch (utility::excn::Exception& anExcn ) {
-			anExcn.show( std::cerr );
-		}
+		run();
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

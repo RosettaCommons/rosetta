@@ -258,7 +258,7 @@ main( int argc, char * argv [] )
 		protocols::jd2::JobDistributor::get_instance()->go(sample_tilt);
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "Caught Exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

@@ -41,7 +41,7 @@ main( int argc, char * argv [] )
 		protocols::jobdist::main_plain_mover( *e2ubdock );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

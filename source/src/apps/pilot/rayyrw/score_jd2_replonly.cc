@@ -155,13 +155,7 @@ main( int argc, char * argv [] )
 		//The following lines are to ensure one can rescore the pcs energy term (that uses TopologyClaimer)
 		if ( option[ broker::setup ].user() ) {
 			protocols::topology_broker::TopologyBrokerOP top_bro_OP = new  topology_broker::TopologyBroker();
-			try{
-				add_cmdline_claims(*top_bro_OP, false /*do_I_need_fragments */);
-			}
-catch (utility::excn::Exception &excn )  {
-	excn.show( TR.Error );
-	utility_exit();
-}
+			add_cmdline_claims(*top_bro_OP, false /*do_I_need_fragments */);
 		}
 
 		//MyScoreMover* scoremover = new MyScoreMover;
@@ -189,16 +183,9 @@ catch (utility::excn::Exception &excn )  {
 		// file and nothing else.
 		protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
 
-		try{
-			JobDistributor::get_instance()->go( container );
-		} catch (utility::excn::Exception& excn ) {
-			std::cerr << "Exception: " << std::endl;
-			excn.show( std::cerr );
-			std::cout << "Exception: " << std::endl;
-			excn.show( std::cout ); //so its also seen in a >LOG file
-		}
+		JobDistributor::get_instance()->go( container );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

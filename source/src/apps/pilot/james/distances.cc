@@ -168,7 +168,7 @@ main( int argc, char* argv [] )
 		} //  for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

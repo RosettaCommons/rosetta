@@ -287,8 +287,7 @@ int main(int argc, char* argv[])
 
 		tr << "Finished TMH sampling.  Outputting " << output_final << std::endl;
 	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception : " << std::endl;
-		excn.show( std::cerr );
+		excn.display();
 		return -1;
 	}
 	return(0);

@@ -181,13 +181,9 @@ main( int argc, char * argv [] )
 		core::pose::make_pose_from_sequence( pose,"CASEDELVAEFLQDQN", core::chemical::FA_STANDARD, true );
 		pose.dump_pdb();
 
-		//  try{
 		//   run();
-		//  } catch (utility::excn::Exception& excn ) {
-		//   excn.show( std::cerr );
-		//  }
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

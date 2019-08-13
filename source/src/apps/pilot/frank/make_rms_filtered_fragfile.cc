@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
 		FragmentIO().write_data( oss.str() , frags );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

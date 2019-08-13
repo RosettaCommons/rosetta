@@ -207,59 +207,59 @@ int
 main( int argc, char* argv [] ) {
 	try {
 
-	using core::Real;
-	using core::Size;
+		using core::Real;
+		using core::Size;
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	// query and template profiles
-	FileName pssm_file( option[ in::file::pssm ]()[1] );
-	SequenceProfileOP query_prof( new SequenceProfile );
-	query_prof->read_from_file( pssm_file );
-	query_prof->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
+		// query and template profiles
+		FileName pssm_file( option[ in::file::pssm ]()[1] );
+		SequenceProfileOP query_prof( new SequenceProfile );
+		query_prof->read_from_file( pssm_file );
+		query_prof->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
 
-	FileName pssm_db  ( option[ in::file::pssm ]()[2] );
-	SequenceProfileDB prof_db( pssm_db );
+		FileName pssm_db  ( option[ in::file::pssm ]()[2] );
+		SequenceProfileDB prof_db( pssm_db );
 
-	// scoring scheme for aligning profiles
-	std::string const scoring_scheme_type( option[ frags::scoring::profile_score ]() );
-	ScoringSchemeFactory ssf;
-	ScoringSchemeOP ss( ssf.get_scoring_scheme( scoring_scheme_type ) );
-	//ScoringSchemeOP ss( new MatrixScoringScheme( -4, -1, FileName("BLOSUM62") );
+		// scoring scheme for aligning profiles
+		std::string const scoring_scheme_type( option[ frags::scoring::profile_score ]() );
+		ScoringSchemeFactory ssf;
+		ScoringSchemeOP ss( ssf.get_scoring_scheme( scoring_scheme_type ) );
+		//ScoringSchemeOP ss( new MatrixScoringScheme( -4, -1, FileName("BLOSUM62") );
 
-	// for the ProfSim scoring scheme, the optimal opening and extension
-	// penalties were 2 and 0.2, with a scoring shift of -0.45 applied to
-	// all ungapped and aligned pairs.
-	Real const gap_open    (  -2   );
-	Real const gap_extend  (  -0.5 );
-	ss->gap_open  ( gap_open   );
-	ss->gap_extend( gap_extend );
+		// for the ProfSim scoring scheme, the optimal opening and extension
+		// penalties were 2 and 0.2, with a scoring shift of -0.45 applied to
+		// all ungapped and aligned pairs.
+		Real const gap_open    (  -2   );
+		Real const gap_extend  (  -0.5 );
+		ss->gap_open  ( gap_open   );
+		ss->gap_extend( gap_extend );
 
-	// construct alignments
-	SWAligner sw_aligner;
-	NWAligner nw_aligner;
+		// construct alignments
+		SWAligner sw_aligner;
+		NWAligner nw_aligner;
 
-	std::string output_fn = option[ out::file::alignment ]();
-	utility::io::ozstream output( output_fn );
+		std::string output_fn = option[ out::file::alignment ]();
+		utility::io::ozstream output( output_fn );
 
-	query_prof->convert_profile_to_probs();
-	while ( prof_db.has_another_profile() ) {
-		SequenceProfileOP db_prof = prof_db.get_next_profile();
-		db_prof->convert_profile_to_probs();
-		std::cout << "generating alignment of " << query_prof->id() << " with "
-			<< db_prof->id() << std::endl;
-		SequenceAlignment local_align = sw_aligner.align( query_prof, db_prof, ss );
-		output << local_align << "--" << std::endl;
-		//SequenceAlignment global_align = nw_aligner.align( query_prof, db_prof, ss );
-		//output << global_align << "--" << std::endl;
-		//output << *db_prof << std::endl;
-	}
+		query_prof->convert_profile_to_probs();
+		while ( prof_db.has_another_profile() ) {
+			SequenceProfileOP db_prof = prof_db.get_next_profile();
+			db_prof->convert_profile_to_probs();
+			std::cout << "generating alignment of " << query_prof->id() << " with "
+				<< db_prof->id() << std::endl;
+			SequenceAlignment local_align = sw_aligner.align( query_prof, db_prof, ss );
+			output << local_align << "--" << std::endl;
+			//SequenceAlignment global_align = nw_aligner.align( query_prof, db_prof, ss );
+			//output << global_align << "--" << std::endl;
+			//output << *db_prof << std::endl;
+		}
 
-	output.close();
+		output.close();
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

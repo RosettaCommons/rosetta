@@ -113,10 +113,10 @@ void invert_exclude_residues( Size nres, utility::vector1<int> const& exclude_li
 
 	residue_selection.clear();
 
-	for( Size ir = 1; ir <= nres; ++ir ) {
+	for ( Size ir = 1; ir <= nres; ++ir ) {
 		bool exclude_residue = false;
-		for( Size ex = 1; ex <= exclude_list.size(); ex ++ ){
-			if( int(exclude_list[ex]) == int(ir) ) {
+		for ( Size ex = 1; ex <= exclude_list.size(); ex ++ ) {
+			if ( int(exclude_list[ex]) == int(ir) ) {
 				exclude_residue = true;
 				break;
 			}
@@ -135,238 +135,238 @@ main( int argc, char* argv [] )
 
 	try {
 
-	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::io::silent;
+		using namespace core::scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::io::silent;
 
-	using namespace core::scoring::methods::pcs;
+		using namespace core::scoring::methods::pcs;
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	// setup residue types
-	core::chemical::ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
-		option[ in::file::residue_type_set ]()
-	);
-
-	// configure score function
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-	core::scoring::EnergyMap emap;
-	emap.zero();
-
-	core::io::silent::SilentFileData sfd;
-
-	std::string infile	= *(option[ in::file::silent ]().begin());
-
-	Size const window_size(30);
-
-	utility::io::ozstream outfile(infile+".30.zscores");
-
-	if ( option[ in::file::silent ].user() ) {
-		sfd.read_file( infile );
-	}
-
-	core::Real const grid_edge = 16;
-	core::Real const grid_step = 1.5;
-	core::Real const grid_small_cutoff = 4;
-	core::Real const grid_large_cutoff = 8;
-	core::Real const grid_cone_angle_cutoff = 91;
-	std::string const grid_atom_name_1 = "CB";
-	std::string const grid_atom_name_2 = "CA";
-	core::SSize const grid_residue_num_1 = 12;
-	core::SSize const grid_residue_num_2 = 12;
-	core::Real const grid_k_vector = 0;
-	bool const minimize_best_tensor = true;
-	core::Real const pcs_weight = 10;
-
-	PCS_Energy_parameters_manager::get_instance()->set_grid_param(grid_edge,
-																																grid_step,
-																																grid_small_cutoff,
-																																grid_large_cutoff,
-																																grid_cone_angle_cutoff,
-																																grid_atom_name_1,
-																																grid_atom_name_2,
-																																grid_residue_num_1,
-																																grid_residue_num_2,
-																																grid_k_vector,
-																																minimize_best_tensor,
-																																pcs_weight
-																																);
-
-	utility::vector1<std::string> vec_filename;
-	vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Dy_CNH.npc.4rescore");
-	vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Er_CNH.npc.4rescore");
-	vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Tb_CNH.npc.4rescore");
-
-	utility::vector1<core::Real> vec_individual_weight;
-	vec_individual_weight.push_back(1.0);
-	vec_individual_weight.push_back(1.0);
-	vec_individual_weight.push_back(1.0);
-
-	PCS_Energy_parameters_manager::get_instance()->set_vector_name_and_weight(vec_filename,
-																																						vec_individual_weight);
-
-	core::pose::Pose native_pose, pose;
-
-	if ( option[ in::file::native ].user() ) {
-		// read in pdb and constraints if necessary
-		core::import_pose::pose_from_file(
-			native_pose, *rsd_set, option[ in::file::native ]()
+		// setup residue types
+		core::chemical::ResidueTypeSetCAP rsd_set;
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
+			option[ in::file::residue_type_set ]()
 		);
-	}
 
-	utility::vector1< utility::vector1< Real > > all_pcs_avgs;
-	utility::vector1< utility::vector1< Real > > all_rms_avgs;
+		// configure score function
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+		core::scoring::EnergyMap emap;
+		emap.zero();
 
-	utility::vector1< utility::vector1< Real > > all_phi;
-	utility::vector1< utility::vector1< Real > > all_psi;
+		core::io::silent::SilentFileData sfd;
 
+		std::string infile = *(option[ in::file::silent ]().begin());
 
-	outfile << "START SCORING:" << std::endl;
+		Size const window_size(30);
 
-	for ( SilentFileData::iterator iter = sfd.begin(), end = sfd.end();
-				iter != end; ++iter
-	) {
+		utility::io::ozstream outfile(infile+".30.zscores");
 
-		iter->fill_pose( pose, *rsd_set );
-
-		utility::vector1< Real > pcs_tot(pose.size(), 0.0);
-		utility::vector1< Real > pcs_num(pose.size(), 0.0);
-		utility::vector1< Real > rms_tot(pose.size(), 0.0);
-		utility::vector1< Real > rms_num(pose.size(), 0.0);
-
-		utility::vector1< Real > phi(pose.size(), 0.0);
-		utility::vector1< Real > psi(pose.size(), 0.0);
-
-
-		for (Size i = 1; i <= pose.size() - window_size; ++i) {
-
-			Size r_start(i), r_end(i+window_size);
-
-			utility::vector1< Size > vec_exclude;
-
-			for (Size o = 1; o < r_start; ++o) {
-				vec_exclude.push_back(o);
-			}
-
-			for (Size o = (r_end + 1); o <= pose.size(); ++o) {
-				vec_exclude.push_back(o);
-			}
-
-			PCS_Energy_parameters_manager::get_instance()->set_vector_exclude_residues(vec_exclude);
-
-			PCS_Energy pcs_energy;
-
-			core::Real pcs = pcs_energy.calculate_pcs_score(pose, false);
-
-			for (Size o = r_start; o <= r_end; ++o) {
-				pcs_tot[o] += pcs;
-				pcs_num[o] += 1;
-			}
-
-			if ( option[ in::file::native ].user() ) {
-				protocols::simple_filters::ResidueSelection residues;
-				invert_exclude_residues( native_pose.size(), vec_exclude, residues );
-				core::Real rmsd = core::scoring::CA_rmsd( pose, native_pose, residues );
-
-				for (Size o = r_start; o <= r_end; ++o) {
-					rms_tot[o] += rmsd;
-					rms_num[o] += 1;
-				}
-			}
+		if ( option[ in::file::silent ].user() ) {
+			sfd.read_file( infile );
 		}
 
-		for (Size i = 1; i <= pose.size(); ++i) {
-			runtime_assert(pcs_num[i] != 0.0);
+		core::Real const grid_edge = 16;
+		core::Real const grid_step = 1.5;
+		core::Real const grid_small_cutoff = 4;
+		core::Real const grid_large_cutoff = 8;
+		core::Real const grid_cone_angle_cutoff = 91;
+		std::string const grid_atom_name_1 = "CB";
+		std::string const grid_atom_name_2 = "CA";
+		core::SSize const grid_residue_num_1 = 12;
+		core::SSize const grid_residue_num_2 = 12;
+		core::Real const grid_k_vector = 0;
+		bool const minimize_best_tensor = true;
+		core::Real const pcs_weight = 10;
 
-			pcs_tot[i] = pcs_tot[i] / pcs_num[i];
+		PCS_Energy_parameters_manager::get_instance()->set_grid_param(grid_edge,
+			grid_step,
+			grid_small_cutoff,
+			grid_large_cutoff,
+			grid_cone_angle_cutoff,
+			grid_atom_name_1,
+			grid_atom_name_2,
+			grid_residue_num_1,
+			grid_residue_num_2,
+			grid_k_vector,
+			minimize_best_tensor,
+			pcs_weight
+		);
 
-			if ( option[ in::file::native ].user() ) {
-				runtime_assert(rms_num[i] != 0.0);
-				rms_tot[i] = rms_tot[i] / rms_num[i];
-			}
+		utility::vector1<std::string> vec_filename;
+		vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Dy_CNH.npc.4rescore");
+		vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Er_CNH.npc.4rescore");
+		vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Tb_CNH.npc.4rescore");
 
-			phi[i] = pose.phi(i);
-			psi[i] = pose.psi(i);
-		}
+		utility::vector1<core::Real> vec_individual_weight;
+		vec_individual_weight.push_back(1.0);
+		vec_individual_weight.push_back(1.0);
+		vec_individual_weight.push_back(1.0);
 
-		all_pcs_avgs.push_back(pcs_tot);
+		PCS_Energy_parameters_manager::get_instance()->set_vector_name_and_weight(vec_filename,
+			vec_individual_weight);
+
+		core::pose::Pose native_pose, pose;
 
 		if ( option[ in::file::native ].user() ) {
-			all_rms_avgs.push_back(rms_tot);
+			// read in pdb and constraints if necessary
+			core::import_pose::pose_from_file(
+				native_pose, *rsd_set, option[ in::file::native ]()
+			);
 		}
 
-		all_phi.push_back(phi);
-		all_psi.push_back(psi);
+		utility::vector1< utility::vector1< Real > > all_pcs_avgs;
+		utility::vector1< utility::vector1< Real > > all_rms_avgs;
 
-		std::cout << "DONE #" << all_pcs_avgs.size() << std::endl;
-	}
-
-	runtime_assert(all_pcs_avgs.size() > 0);
-
-	utility::vector1< Real > pcs_avg(all_pcs_avgs[1].size(), 0.0);
-	utility::vector1< Real > pcs_sdv(all_pcs_avgs[1].size(), 0.0);
-
-	for (Size i = 1; i <= all_pcs_avgs[1].size(); ++i) {
-		for (Size j = 1; j <= all_pcs_avgs.size(); ++j) {
-			pcs_avg[i] += all_pcs_avgs[j][i];
-		}
-		pcs_avg[i] /= all_pcs_avgs.size();
-	}
-
-	for (Size i = 1; i <= all_pcs_avgs[1].size(); ++i) {
-		for (Size j = 1; j <= all_pcs_avgs.size(); ++j) {
-			pcs_sdv[i] += (all_pcs_avgs[j][i] - pcs_avg[i])*(all_pcs_avgs[j][i] - pcs_avg[i]);
-		}
-		pcs_sdv[i] = std::sqrt( pcs_avg[i] / all_pcs_avgs.size() );
-	}
+		utility::vector1< utility::vector1< Real > > all_phi;
+		utility::vector1< utility::vector1< Real > > all_psi;
 
 
-	utility::vector1< Real > rms_avg(all_pcs_avgs[1].size(), 0.0);
-	utility::vector1< Real > rms_sdv(all_pcs_avgs[1].size(), 0.0);
+		outfile << "START SCORING:" << std::endl;
 
-	if ( option[ in::file::native ].user() ) {
+		for ( SilentFileData::iterator iter = sfd.begin(), end = sfd.end();
+				iter != end; ++iter
+				) {
 
-		for (Size i = 1; i <= all_rms_avgs[1].size(); ++i) {
-			for (Size j = 1; j <= all_rms_avgs.size(); ++j) {
-				rms_avg[i] += all_rms_avgs[j][i];
+			iter->fill_pose( pose, *rsd_set );
+
+			utility::vector1< Real > pcs_tot(pose.size(), 0.0);
+			utility::vector1< Real > pcs_num(pose.size(), 0.0);
+			utility::vector1< Real > rms_tot(pose.size(), 0.0);
+			utility::vector1< Real > rms_num(pose.size(), 0.0);
+
+			utility::vector1< Real > phi(pose.size(), 0.0);
+			utility::vector1< Real > psi(pose.size(), 0.0);
+
+
+			for ( Size i = 1; i <= pose.size() - window_size; ++i ) {
+
+				Size r_start(i), r_end(i+window_size);
+
+				utility::vector1< Size > vec_exclude;
+
+				for ( Size o = 1; o < r_start; ++o ) {
+					vec_exclude.push_back(o);
+				}
+
+				for ( Size o = (r_end + 1); o <= pose.size(); ++o ) {
+					vec_exclude.push_back(o);
+				}
+
+				PCS_Energy_parameters_manager::get_instance()->set_vector_exclude_residues(vec_exclude);
+
+				PCS_Energy pcs_energy;
+
+				core::Real pcs = pcs_energy.calculate_pcs_score(pose, false);
+
+				for ( Size o = r_start; o <= r_end; ++o ) {
+					pcs_tot[o] += pcs;
+					pcs_num[o] += 1;
+				}
+
+				if ( option[ in::file::native ].user() ) {
+					protocols::simple_filters::ResidueSelection residues;
+					invert_exclude_residues( native_pose.size(), vec_exclude, residues );
+					core::Real rmsd = core::scoring::CA_rmsd( pose, native_pose, residues );
+
+					for ( Size o = r_start; o <= r_end; ++o ) {
+						rms_tot[o] += rmsd;
+						rms_num[o] += 1;
+					}
+				}
 			}
-			rms_avg[i] /= all_rms_avgs.size();
-		}
 
-		for (Size i = 1; i <= all_rms_avgs[1].size(); ++i) {
-			for (Size j = 1; j <= all_rms_avgs.size(); ++j) {
-				rms_sdv[i] += (all_rms_avgs[j][i] - rms_avg[i])*(all_rms_avgs[j][i] - rms_avg[i]);
+			for ( Size i = 1; i <= pose.size(); ++i ) {
+				runtime_assert(pcs_num[i] != 0.0);
+
+				pcs_tot[i] = pcs_tot[i] / pcs_num[i];
+
+				if ( option[ in::file::native ].user() ) {
+					runtime_assert(rms_num[i] != 0.0);
+					rms_tot[i] = rms_tot[i] / rms_num[i];
+				}
+
+				phi[i] = pose.phi(i);
+				psi[i] = pose.psi(i);
 			}
-			rms_sdv[i] = std::sqrt( rms_avg[i] / all_rms_avgs.size() );
-		}
-	}
 
+			all_pcs_avgs.push_back(pcs_tot);
 
-	// for (Size i = 1; i <= pcs_avg.size(); ++i) {
-// 		std::cout << "AVERAGES: " << i << " " << pcs_avg[i] << " +/- " << pcs_sdv[i];
-// 		if ( option[ in::file::native ].user() ) {
-// 			std::cout << " " << rms_avg[i] << " +/- " << rms_sdv[i];
-// 		}
-// 		std::cout << std::endl;
-// 	}
-
-
-	for (Size j = 1; j <= all_pcs_avgs.size(); ++j) {
-		for (Size i = 1; i <= all_pcs_avgs[1].size(); ++i) {
-			outfile << "ZSCORES T_" << j << " " << i << " " << (all_pcs_avgs[j][i] - pcs_avg[i])/pcs_sdv[i] << " " << all_pcs_avgs[j][i];
 			if ( option[ in::file::native ].user() ) {
-				outfile << " " << (all_rms_avgs[j][i] - rms_avg[i])/rms_sdv[i] << " " << all_rms_avgs[j][i];
+				all_rms_avgs.push_back(rms_tot);
 			}
-			outfile << " " << all_phi[j][i] << " " << all_psi[j][i] << std::endl;
+
+			all_phi.push_back(phi);
+			all_psi.push_back(psi);
+
+			std::cout << "DONE #" << all_pcs_avgs.size() << std::endl;
 		}
-	}
+
+		runtime_assert(all_pcs_avgs.size() > 0);
+
+		utility::vector1< Real > pcs_avg(all_pcs_avgs[1].size(), 0.0);
+		utility::vector1< Real > pcs_sdv(all_pcs_avgs[1].size(), 0.0);
+
+		for ( Size i = 1; i <= all_pcs_avgs[1].size(); ++i ) {
+			for ( Size j = 1; j <= all_pcs_avgs.size(); ++j ) {
+				pcs_avg[i] += all_pcs_avgs[j][i];
+			}
+			pcs_avg[i] /= all_pcs_avgs.size();
+		}
+
+		for ( Size i = 1; i <= all_pcs_avgs[1].size(); ++i ) {
+			for ( Size j = 1; j <= all_pcs_avgs.size(); ++j ) {
+				pcs_sdv[i] += (all_pcs_avgs[j][i] - pcs_avg[i])*(all_pcs_avgs[j][i] - pcs_avg[i]);
+			}
+			pcs_sdv[i] = std::sqrt( pcs_avg[i] / all_pcs_avgs.size() );
+		}
+
+
+		utility::vector1< Real > rms_avg(all_pcs_avgs[1].size(), 0.0);
+		utility::vector1< Real > rms_sdv(all_pcs_avgs[1].size(), 0.0);
+
+		if ( option[ in::file::native ].user() ) {
+
+			for ( Size i = 1; i <= all_rms_avgs[1].size(); ++i ) {
+				for ( Size j = 1; j <= all_rms_avgs.size(); ++j ) {
+					rms_avg[i] += all_rms_avgs[j][i];
+				}
+				rms_avg[i] /= all_rms_avgs.size();
+			}
+
+			for ( Size i = 1; i <= all_rms_avgs[1].size(); ++i ) {
+				for ( Size j = 1; j <= all_rms_avgs.size(); ++j ) {
+					rms_sdv[i] += (all_rms_avgs[j][i] - rms_avg[i])*(all_rms_avgs[j][i] - rms_avg[i]);
+				}
+				rms_sdv[i] = std::sqrt( rms_avg[i] / all_rms_avgs.size() );
+			}
+		}
+
+
+		// for (Size i = 1; i <= pcs_avg.size(); ++i) {
+		//   std::cout << "AVERAGES: " << i << " " << pcs_avg[i] << " +/- " << pcs_sdv[i];
+		//   if ( option[ in::file::native ].user() ) {
+		//    std::cout << " " << rms_avg[i] << " +/- " << rms_sdv[i];
+		//   }
+		//   std::cout << std::endl;
+		//  }
+
+
+		for ( Size j = 1; j <= all_pcs_avgs.size(); ++j ) {
+			for ( Size i = 1; i <= all_pcs_avgs[1].size(); ++i ) {
+				outfile << "ZSCORES T_" << j << " " << i << " " << (all_pcs_avgs[j][i] - pcs_avg[i])/pcs_sdv[i] << " " << all_pcs_avgs[j][i];
+				if ( option[ in::file::native ].user() ) {
+					outfile << " " << (all_rms_avgs[j][i] - rms_avg[i])/rms_sdv[i] << " " << all_rms_avgs[j][i];
+				}
+				outfile << " " << all_phi[j][i] << " " << all_psi[j][i] << std::endl;
+			}
+		}
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

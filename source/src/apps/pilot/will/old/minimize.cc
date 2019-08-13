@@ -21,14 +21,14 @@
 #include <numeric/xyz.functions.hh>
 
 // core::kinematics::Stub getxform(core::conformation::Residue const & downstream_resi, core::conformation::Residue const & upstream_resi) {
-// 	core::kinematics::Stub s;
-// 	numeric::xyzVector<Real> A1 = downstream_resi.xyz("N" ) - downstream_resi.xyz("C");
-// 	numeric::xyzVector<Real> B1 = downstream_resi.xyz("CA") - downstream_resi.xyz("C");
-// 	numeric::xyzVector<Real> A2 =   upstream_resi.xyz("C" ) -   upstream_resi.xyz("N");
-// 	numeric::xyzVector<Real> B2 =   upstream_resi.xyz("CA") -   upstream_resi.xyz("N");
-// 	s.M = alignVectorSets( A1,B1, A2,B2 );
-// 	s.v = upstream_resi.xyz("N")-s.M*downstream_resi.xyz("C");
-// 	return s;
+//  core::kinematics::Stub s;
+//  numeric::xyzVector<Real> A1 = downstream_resi.xyz("N" ) - downstream_resi.xyz("C");
+//  numeric::xyzVector<Real> B1 = downstream_resi.xyz("CA") - downstream_resi.xyz("C");
+//  numeric::xyzVector<Real> A2 =   upstream_resi.xyz("C" ) -   upstream_resi.xyz("N");
+//  numeric::xyzVector<Real> B2 =   upstream_resi.xyz("CA") -   upstream_resi.xyz("N");
+//  s.M = alignVectorSets( A1,B1, A2,B2 );
+//  s.v = upstream_resi.xyz("N")-s.M*downstream_resi.xyz("C");
+//  return s;
 // }
 
 using core::Real;
@@ -53,10 +53,10 @@ core::kinematics::Stub getxform(core::conformation::Residue const & move_resi, c
 
 
 void pose2frags(core::pose::Pose const & pose, Size minlen, Size maxlen, std::string tag) {
-	for(Size i = 1; i <= pose.size()-minlen; ++i) {
-		for(Size l = minlen; l <= maxlen; ++l) {
+	for ( Size i = 1; i <= pose.size()-minlen; ++i ) {
+		for ( Size l = minlen; l <= maxlen; ++l ) {
 			Size j = i+l+1;
-			if(j > pose.size()) continue;
+			if ( j > pose.size() ) continue;
 			core::kinematics::Stub s = getxform( pose.residue(i), pose.residue(j) );
 			Quat q(s.M);
 			TR << "loop " << tag << " " << i << " " << j << " " << s.v << " " << q.w << " " << q.x << " " << q.y << " " << q.z << std::endl;
@@ -70,24 +70,24 @@ main (int argc, char *argv[])
 
 	try {
 
-	using namespace basic::options;
+		using namespace basic::options;
 
-	devel::init( argc, argv );
-
-
-	utility::vector1<std::string> files = option[in::file::s]();
-	for(Size i = 1; i <= files.size(); ++i) {
-		core::pose::Pose pose;
-		core::import_pose::pose_from_file(pose,files[i], core::import_pose::PDB_file);
-
-	}
+		devel::init( argc, argv );
 
 
-	return 0;
+		utility::vector1<std::string> files = option[in::file::s]();
+		for ( Size i = 1; i <= files.size(); ++i ) {
+			core::pose::Pose pose;
+			core::import_pose::pose_from_file(pose,files[i], core::import_pose::PDB_file);
+
+		}
+
+
+		return 0;
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

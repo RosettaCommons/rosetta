@@ -35,18 +35,18 @@ main( int argc, char * argv [] ){
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		using namespace core::chemical;
-		
+
 		devel::init(argc, argv);
-		
-		utility::options::FileVectorOption & fvec 
+
+		utility::options::FileVectorOption & fvec
 			= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
-			
+
 		core::chemical::ChemicalManager * chem_mang = core::chemical::ChemicalManager::get_instance();
 		core::chemical::AtomTypeSetCAP atom_types = chem_mang->atom_type_set("fa_standard");
 		core::chemical::ElementSetCAP elements = chem_mang->element_set("default");
 		core::chemical::MMAtomTypeSetCAP mm_atom_types = chem_mang->mm_atom_type_set("fa_standard");
 		core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = chem_mang->orbital_type_set("fa_standard");
-		
+
 		for ( core::Size i = 1, e = fvec.size(); i <= e; ++i ) {
 			utility::file::FileName fname = fvec[i];
 			std::string filename = fname.name();
@@ -57,7 +57,7 @@ main( int argc, char * argv [] ){
 			restype->print_dihedrals();
 
 	} catch (utitlity::excn::Exception const & e) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

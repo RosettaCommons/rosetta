@@ -186,7 +186,7 @@ main( int argc, char * argv [] )
 		// output fragments
 		FragmentIO().write_data( option[ output ], *fragset );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

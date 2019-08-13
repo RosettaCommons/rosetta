@@ -72,8 +72,7 @@ main( int argc, char* argv [] ) {
 		write_schema_to_db(db_session);
 
 	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception: " << std::endl;
-		excn.show( std::cerr );
+		excn.display();
 		return -1;
 	}
 	return 0;

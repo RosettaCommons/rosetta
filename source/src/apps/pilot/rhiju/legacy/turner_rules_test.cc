@@ -228,9 +228,9 @@ get_suite_ideal_A_form_torsions(){
 
 	ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_epsilon_north()[1].center );
 	ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_sc_minus()[1].center );
-  ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_alpha()[1].center );
-  ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_beta()[1].center );
-  ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_gamma()[1].center );
+	ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_alpha()[1].center );
+	ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_beta()[1].center );
+	ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_gamma()[1].center );
 
 	return ideal_A_form_torsions;
 }
@@ -253,7 +253,7 @@ apply_ideal_A_form_torsions( pose::Pose & pose ){
 	base_sugar_rotamer->get_next_rotamer();
 	base_sugar_rotamer->get_next_rotamer();
 
-	for ( Size i = 1; i <= pose.size(); i++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		pose.set_torsion( TorsionID( i, id::BB, DELTA ), base_sugar_rotamer->delta() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU2 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu2() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU1 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu1() );
@@ -265,9 +265,9 @@ apply_ideal_A_form_torsions( pose::Pose & pose ){
 	pose.set_torsion( TorsionID( 1,   id::BB, ALPHA ),    torsion_set[3] );
 	pose.set_torsion( TorsionID( 1,   id::BB, BETA ),     torsion_set[4] );
 	pose.set_torsion( TorsionID( 1,   id::BB, GAMMA ),    torsion_set[5] );
-	//		pose.set_torsion( TorsionID( moving_suite+1, id::BB, ALPHA ),    torsion_set[3] );
-	//		pose.set_torsion( TorsionID( moving_suite+1, id::BB, BETA ),     torsion_set[4] );
-	//		pose.set_torsion( TorsionID( moving_suite+1, id::BB, GAMMA ),    torsion_set[5] );
+	//  pose.set_torsion( TorsionID( moving_suite+1, id::BB, ALPHA ),    torsion_set[3] );
+	//  pose.set_torsion( TorsionID( moving_suite+1, id::BB, BETA ),     torsion_set[4] );
+	//  pose.set_torsion( TorsionID( moving_suite+1, id::BB, GAMMA ),    torsion_set[5] );
 }
 
 
@@ -292,49 +292,49 @@ apply_south_syn_to_dinucleotide_pose( pose::Pose & pose ){
 
 
 	// fix the chi angles
-	if ( option[ syn_chi1 ]() ){
-		if( option[ south1 ]() ){
+	if ( option[ syn_chi1 ]() ) {
+		if ( option[ south1 ]() ) {
 			pose.set_torsion( TorsionID( 1,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
-												rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[2].center );
+				rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[2].center );
 		} else {
 			pose.set_torsion( TorsionID( 1,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
-												rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[2].center );
+				rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[2].center );
 		}
 	} else {
-		if( option[ south1 ]() ){
+		if ( option[ south1 ]() ) {
 			pose.set_torsion( TorsionID( 1,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
-												rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[1].center );
+				rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[1].center );
 		} else {
 			pose.set_torsion( TorsionID( 1,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
-												rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center );
+				rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center );
 		}
 	}
 
-	if ( option[ syn_chi2 ]() ){
-		if( option[ south2 ]() ){
+	if ( option[ syn_chi2 ]() ) {
+		if ( option[ south2 ]() ) {
 			pose.set_torsion( TorsionID( 2,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
-												rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[2].center );
+				rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[2].center );
 		} else {
 			pose.set_torsion( TorsionID( 2,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
-												rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[2].center );
+				rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[2].center );
 		}
 	} else {
-		if( option[ south2 ]() ){
+		if ( option[ south2 ]() ) {
 			pose.set_torsion( TorsionID( 2,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
-												rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[1].center );
+				rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[1].center );
 		} else {
 			pose.set_torsion( TorsionID( 2,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
-												rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center );
+				rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center );
 		}
 	}
 
-	if ( option[ chi1 ].user() ){
-			pose.set_torsion( TorsionID( 1,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
-												option[ chi1 ]() );
+	if ( option[ chi1 ].user() ) {
+		pose.set_torsion( TorsionID( 1,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+			option[ chi1 ]() );
 	}
-	if ( option[ chi2 ].user() ){
-			pose.set_torsion( TorsionID( 2,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
-												option[ chi2 ]() );
+	if ( option[ chi2 ].user() ) {
+		pose.set_torsion( TorsionID( 2,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+			option[ chi2 ]() );
 	}
 
 	std::cout << "### CHI ANGLES: " << pose.torsion( TorsionID( 1, id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ) ) <<
@@ -346,9 +346,9 @@ apply_south_syn_to_dinucleotide_pose( pose::Pose & pose ){
 ///////////////////////////////////////////////////////////////
 void
 initialize_base_pair( pose::Pose & pose,
-											utility::vector1< Size >  & moving_res1,
-											utility::vector1< Size >  & moving_res2
-											){
+	utility::vector1< Size >  & moving_res1,
+	utility::vector1< Size >  & moving_res2
+){
 
 	using namespace options;
 	using namespace options::OptionKeys;
@@ -365,7 +365,7 @@ initialize_base_pair( pose::Pose & pose,
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	// Create C-G base pair.
-	make_pose_from_sequence( pose, option[ seq ](),	*rsd_set );
+	make_pose_from_sequence( pose, option[ seq ](), *rsd_set );
 
 	apply_ideal_A_form_torsions( pose );
 
@@ -374,10 +374,10 @@ initialize_base_pair( pose::Pose & pose,
 	FoldTree f( 2 );
 	f.new_jump( 1, 2, 1);
 	f.set_jump_atoms( 1,
-										chemical::rna::chi1_torsion_atom( pose.residue( 1) ),
-										chemical::rna::chi1_torsion_atom( pose.residue( 2) )   );
+		chemical::rna::chi1_torsion_atom( pose.residue( 1) ),
+		chemical::rna::chi1_torsion_atom( pose.residue( 2) )   );
 	pose.fold_tree( f );
-	//	pose.dump_pdb( "start.pdb" );
+	// pose.dump_pdb( "start.pdb" );
 
 	// Virtualize backbone
 	if ( option[ virtualize_phosphate ]() ) {
@@ -387,7 +387,7 @@ initialize_base_pair( pose::Pose & pose,
 		add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1PRIME", 1 );
 		add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1PRIME", 2 );
 	}
-	//	pose.dump_pdb( "virtualize.pdb" );
+	// pose.dump_pdb( "virtualize.pdb" );
 
 	moving_res1 = make_vector1( 1 );
 	moving_res2 = make_vector1( 2 );
@@ -402,7 +402,7 @@ initialize_base_pair( pose::Pose & pose,
 Matrix
 cycle( Matrix const & M0 ){
 	Matrix M;
-	for ( Size k = 1; k <= 3; k++ ){
+	for ( Size k = 1; k <= 3; k++ ) {
 		M(k,1) = M0(k,3);
 		M(k,2) = M0(k,2);
 		M(k,3) = M0(k,1);
@@ -414,7 +414,7 @@ cycle( Matrix const & M0 ){
 //////////////////////////////////////////////////////////////////////////////////////
 protocols::stepwise::RigidBodySamplerOP
 initialize_rigid_body_sampler( utility::vector1< Size > const & moving_res1,
-															 utility::vector1< Size > const & moving_res2 ){
+	utility::vector1< Size > const & moving_res2 ){
 
 	using namespace options;
 	using namespace options::OptionKeys;
@@ -427,11 +427,11 @@ initialize_rigid_body_sampler( utility::vector1< Size > const & moving_res1,
 	using namespace io::silent;
 	using namespace protocols::swa;
 
-	//	RNA_CentroidInfo rna_centroid_info;
-	//	Vector centroid1 = rna_centroid_info.get_base_centroid( pose.residue(1) );
-	//	Stub s1 = rna_centroid_info.get_base_coordinate_system( pose.residue(1), centroid1 );
-	//	Matrix axes = s1.M;
-	//	if ( option[ cycle_axes ]() ) axes = cycle( axes );
+	// RNA_CentroidInfo rna_centroid_info;
+	// Vector centroid1 = rna_centroid_info.get_base_centroid( pose.residue(1) );
+	// Stub s1 = rna_centroid_info.get_base_coordinate_system( pose.residue(1), centroid1 );
+	// Matrix axes = s1.M;
+	// if ( option[ cycle_axes ]() ) axes = cycle( axes );
 
 	// Hey is it necessary to input centroid?
 	// Also, are axes necessary? The code basically assumes these are the origin and the identity matrix.
@@ -444,22 +444,22 @@ initialize_rigid_body_sampler( utility::vector1< Size > const & moving_res1,
 	rigid_body_sampler->set_n_sample_cosbeta_full_range( option[ n_sample_beta ]() );
 	rigid_body_sampler->set_n_sample_gamma_full_range( option[ n_sample ]() );
 
-	if ( option[ alpha_min ].user() ){
-		 rigid_body_sampler->set_alpha_min( option[ alpha_min ]() );
-		 rigid_body_sampler->set_alpha_max( option[ alpha_max ]() );
-		 rigid_body_sampler->set_alpha_increment( option[ alpha_increment ]() );
+	if ( option[ alpha_min ].user() ) {
+		rigid_body_sampler->set_alpha_min( option[ alpha_min ]() );
+		rigid_body_sampler->set_alpha_max( option[ alpha_max ]() );
+		rigid_body_sampler->set_alpha_increment( option[ alpha_increment ]() );
 
-		 rigid_body_sampler->set_cosbeta_min( option[ cosbeta_min ]() );
-		 rigid_body_sampler->set_cosbeta_max( option[ cosbeta_max ]() );
-		 rigid_body_sampler->set_cosbeta_increment( option[ cosbeta_increment ]() );
+		rigid_body_sampler->set_cosbeta_min( option[ cosbeta_min ]() );
+		rigid_body_sampler->set_cosbeta_max( option[ cosbeta_max ]() );
+		rigid_body_sampler->set_cosbeta_increment( option[ cosbeta_increment ]() );
 
-		 rigid_body_sampler->set_gamma_min( option[ gamma_min ]() );
-		 rigid_body_sampler->set_gamma_max( option[ gamma_max ]() );
-		 rigid_body_sampler->set_gamma_increment( option[ gamma_increment ]() );
+		rigid_body_sampler->set_gamma_min( option[ gamma_min ]() );
+		rigid_body_sampler->set_gamma_max( option[ gamma_max ]() );
+		rigid_body_sampler->set_gamma_increment( option[ gamma_increment ]() );
 	}
 
 	rigid_body_sampler->set_translation_sample( option[ box_radius ](), option[ xyz_sample ]() );
-	if ( option[ x_min ].user() ){
+	if ( option[ x_min ].user() ) {
 		rigid_body_sampler->set_x_min( option[ x_min ]() );
 		rigid_body_sampler->set_x_max( option[ x_max ]() );
 		rigid_body_sampler->set_x_increment( option[ x_increment ]() );
@@ -499,7 +499,7 @@ initialize_rigid_body_sampler( utility::vector1< Size > const & moving_res1,
 	rigid_body_sampler->set_o2prime_trials( option[ o2prime_trials ]() );
 
 	SilentFileDataOP sfd;
-	if ( option[ out::file::silent ].user() ){
+	if ( option[ out::file::silent ].user() ) {
 		sfd = new SilentFileData;
 		rigid_body_sampler->set_silent_file_data( sfd );
 	}
@@ -548,19 +548,19 @@ cluster_silent_file_data( io::silent::SilentFileDataOP & sfd ){
 	// Cluster lowest energy states and output.
 	protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer( sfd );
 	Size max_decoys( 400 );
-	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
+	if ( option[ out::nstruct].user() )  max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer.set_max_decoys( max_decoys );
 	stepwise_clusterer.set_cluster_by_all_atom_rmsd( true );
 	stepwise_clusterer.set_rename_tags( true /*option[ rename_tags ]*/ );
 
-	if ( !option[ superimpose_over_all_res ]() ){
+	if ( !option[ superimpose_over_all_res ]() ) {
 		utility::vector1< Size > moving_res2 = make_vector1( 2 );
 		stepwise_clusterer.set_calc_rms_res( moving_res2 );
 	}
 
 	Real cluster_radius( 0.25 );
 	if ( option[ OptionKeys::cluster::radius ].user() ) cluster_radius = option[ OptionKeys::cluster::radius ]();
-	stepwise_clusterer.set_cluster_radius( cluster_radius	);
+	stepwise_clusterer.set_cluster_radius( cluster_radius );
 	stepwise_clusterer.set_score_diff_cut( option[ score_diff_cut ]() );
 
 	std::cout << "Clustering..." << std::endl;
@@ -573,8 +573,8 @@ cluster_silent_file_data( io::silent::SilentFileDataOP & sfd ){
 ///////////////////////////////////////////////////////////////
 void
 adjust_pose_chi( core::pose::Pose & pose,
-								 Size const res,
-								 Real const delstd ){
+	Size const res,
+	Real const delstd ){
 
 	using namespace core::chemical::rna;
 	using namespace protocols::stepwise::modeler::rna;
@@ -588,16 +588,16 @@ adjust_pose_chi( core::pose::Pose & pose,
 	bool is_syn = ( numeric::principal_angle_degrees( current_chi ) < 0.0 );
 	Size const which_chi = ( is_syn ?  2 : 1 );
 
-	//	std::cout << "CHECK_THIS. RES: " << res << " PUCKER: " << pucker << " CHI: " << which_chi << std::endl;
+	// std::cout << "CHECK_THIS. RES: " << res << " PUCKER: " << pucker << " CHI: " << which_chi << std::endl;
 
-	if ( pucker == NORTH ){
+	if ( pucker == NORTH ) {
 		pose.set_torsion( TorsionID( res,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
-											rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[which_chi].center +
-											delstd * rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[which_chi].width );
+			rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[which_chi].center +
+			delstd * rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[which_chi].width );
 	} else {
 		pose.set_torsion( TorsionID( res,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
-											rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[which_chi].center +
-											delstd * rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[which_chi].width );
+			rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[which_chi].center +
+			delstd * rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[which_chi].width );
 	}
 
 }
@@ -612,15 +612,15 @@ expand_chi_for_silent_structs( core::io::silent::SilentFileDataOP & sfd, core::s
 
 	Size count( 0 );
 	for ( core::io::silent::SilentFileData::iterator iter = sfd->begin(),
-					end = sfd->end(); iter != end; ++iter ) {
+			end = sfd->end(); iter != end; ++iter ) {
 
 		pose::Pose pose;
 		iter->fill_pose( pose );
 
-		for ( int i = -1; i <= 1; i++ ){
+		for ( int i = -1; i <= 1; i++ ) {
 			adjust_pose_chi( pose, 1, static_cast<Real>(i) );
 
-			for ( int j = -1; j <= 1; j++ ){
+			for ( int j = -1; j <= 1; j++ ) {
 				adjust_pose_chi( pose, 2, static_cast<Real>(j) );
 
 				(*scorefxn)( pose );
@@ -642,13 +642,13 @@ expand_chi_for_silent_structs( core::io::silent::SilentFileDataOP & sfd, core::s
 ///////////////////////////////////////////////////////////////
 void
 split_silent_file_data( core::io::silent::SilentFileDataOP & sfd,
-												utility::vector1< core::io::silent::SilentFileDataOP > & split_sfds )
+	utility::vector1< core::io::silent::SilentFileDataOP > & split_sfds )
 
 {
 	using namespace core::io::silent;
 	split_sfds.clear();
 	for ( core::io::silent::SilentFileData::iterator iter = sfd->begin(),
-					end = sfd->end(); iter != end; ++iter ) {
+			end = sfd->end(); iter != end; ++iter ) {
 		SilentFileDataOP sfd_new= new SilentFileData;
 		sfd_new->add_structure(  *iter );
 		split_sfds.push_back( sfd_new );
@@ -685,7 +685,7 @@ define_states_test(){
 	// Use input parameters to define fineness of modeler -- will look for convergence.
 	// Save lowest energy states.
 	///////////////////////////////////////////////
-	if ( option[ rigid_body_samples ].user() ){
+	if ( option[ rigid_body_samples ].user() ) {
 		rigid_body_sampler->apply_input_samples( pose, option[ rigid_body_samples ]() );
 	} else {
 		rigid_body_sampler->do_the_modeler( pose );
@@ -701,9 +701,9 @@ define_states_test(){
 	// Clustering!
 	///////////////////////////////////////////////
 	SilentFileDataOP sfd = rigid_body_sampler->silent_file_data();
-	if ( sfd ){
+	if ( sfd ) {
 
-		if ( option[ cluster_poses ]() )	cluster_silent_file_data( sfd );
+		if ( option[ cluster_poses ]() ) cluster_silent_file_data( sfd );
 
 		if ( option[ split_silent_files ]() ) {
 			utility::vector1< SilentFileDataOP > split_sfds;
@@ -732,20 +732,20 @@ define_states_test(){
 	//std::cout << "modeler concentration " << concentration << std::endl;
 
 	//Real const additional_probability = Z * xyz_increment * xyz_increment * xyz_increment * alpha_increment / ( N_SAMPLE * N_SAMPLE_COSBETA * N_SAMPLE );
-	//	std::cout << "additional_probability: " <<  additional_probability << std::endl;
+	// std::cout << "additional_probability: " <<  additional_probability << std::endl;
 
 	//Real const Kd = concentration * (1.0 / additional_probability);
-	//	std::cout << "Kd " << Kd << std::endl;
+	// std::cout << "Kd " << Kd << std::endl;
 
 }
 
 ///////////////////////////////////////////////////////////////
 Real
-msd_base_doublet(	Matrix const & MA,
-									Matrix const & MB,
-									Vector const & vA,
-									Vector const & vB,
-									Matrix const & moments ){
+msd_base_doublet( Matrix const & MA,
+	Matrix const & MB,
+	Vector const & vA,
+	Vector const & vB,
+	Matrix const & moments ){
 
 	Real dev2( 0.0 );
 
@@ -760,10 +760,10 @@ msd_base_doublet(	Matrix const & MA,
 ///////////////////////////////////////////////////////////////
 Real
 rmsd_base_doublet( Matrix const & MA,
-									 Matrix const & MB,
-									 Vector const & vA,
-									 Vector const & vB,
-									 Matrix const & moments ){
+	Matrix const & MB,
+	Vector const & vA,
+	Vector const & vB,
+	Matrix const & moments ){
 	return std::sqrt( msd_base_doublet( MA, MB, vA, vB, moments ) );
 }
 
@@ -771,11 +771,11 @@ rmsd_base_doublet( Matrix const & MA,
 ///////////////////////////////////////////////////////////////
 Real
 msd_base_doublet_symmetric( Matrix const & MA,
-														Matrix const & MB,
-														Vector const & vA,
-														Vector const & vB,
-														Matrix const & moments1,
-														Matrix const & moments2 ){
+	Matrix const & MB,
+	Vector const & vA,
+	Vector const & vB,
+	Matrix const & moments1,
+	Matrix const & moments2 ){
 	Real dev2( 0.0 );
 
 	// moments2 because we assume M1, M2, v1, v2 define rigid body transformation
@@ -794,11 +794,11 @@ msd_base_doublet_symmetric( Matrix const & MA,
 ///////////////////////////////////////////////////////////////
 Real
 rmsd_base_doublet_symmetric( Matrix const & MA,
-														 Matrix const & MB,
-														 Vector const & vA,
-														 Vector const & vB,
-														 Matrix const & moments1,
-														 Matrix const & moments2 ){
+	Matrix const & MB,
+	Vector const & vA,
+	Vector const & vB,
+	Matrix const & moments1,
+	Matrix const & moments2 ){
 
 	Real const dev2 = msd_base_doublet_symmetric( MA, MB, vA, vB, moments1, moments2 );
 
@@ -844,16 +844,16 @@ calculate_moments( conformation::Residue const & rsd ){
 	Size natoms( 0 );
 	for ( Size n = rsd_scratch.first_sidechain_atom()+1; n <= rsd_scratch.nheavyatoms(); n++ ) {
 		if ( rsd_scratch.is_virtual( n ) ) continue;
-		for ( Size i = 1; i <= 3; i++ ){
-			for ( Size j = 1; j <= 3; j++ ){
+		for ( Size i = 1; i <= 3; i++ ) {
+			for ( Size j = 1; j <= 3; j++ ) {
 				M( i, j ) += rsd_scratch.xyz( n )( i ) * rsd_scratch.xyz( n )( j );
 			}
 		}
-		//		std::cout << "IS THIS A BASE ATOM? " << rsd_scratch.atom_name( n ) << std::endl;
+		//  std::cout << "IS THIS A BASE ATOM? " << rsd_scratch.atom_name( n ) << std::endl;
 		natoms++;
 	}
 
-	//	std::cout << "HEY! NATOMS: " << natoms << std::endl;
+	// std::cout << "HEY! NATOMS: " << natoms << std::endl;
 
 	return M/ natoms;
 
@@ -895,7 +895,7 @@ base_doublet_rmsd_test(){
 	// Define alpha, beta, gamma, x, y, z of pose 1
 	Real alpha1( 50.0 ), beta1( 50.0 ), gamma1( 190.0 ), x1( -0.5 ), y1( 3.0 ), z1( 0.8 );
 	rigid_body_sampler->apply_rigid_body_settings( pose1, pose, alpha1, beta1, gamma1, x1, y1, z1 );
-  create_euler_rotation( M1, alpha1, beta1, gamma1, axis1, axis2, axis3 );
+	create_euler_rotation( M1, alpha1, beta1, gamma1, axis1, axis2, axis3 );
 
 	// Define alpha, beta, gamma, x, y, z of pose 2
 	Real alpha2( -5.0 ), beta2( 95.0 ), gamma2( 10.0 ), x2( -2.0 ), y2( -2.0 ), z2( -2.0 );
@@ -916,24 +916,24 @@ base_doublet_rmsd_test(){
 ////////////////////////////////////////////////////////////////
 void
 read_rigid_body_settings( std::string const infile,
-													utility::vector1< utility::vector1< Real > > & input_rigid_body_settings ){
-		using namespace io::silent;
-		using namespace utility::io;
-		izstream input( infile );
+	utility::vector1< utility::vector1< Real > > & input_rigid_body_settings ){
+	using namespace io::silent;
+	using namespace utility::io;
+	izstream input( infile );
 
-		if ( !input ) {
-			std::cerr << "No file: " << infile << std::endl;
-			utility_exit_with_message( "No file" );
-		}
+	if ( !input ) {
+		std::cerr << "No file: " << infile << std::endl;
+		utility_exit_with_message( "No file" );
+	}
 
-		utility::vector1< Real >  vals;
-		for ( Size i = 1; i <= 8; i++ ) vals.push_back( 0.0 );
-		//Real alpha, beta, gamma, x, y, z, energy, volume;
+	utility::vector1< Real >  vals;
+	for ( Size i = 1; i <= 8; i++ ) vals.push_back( 0.0 );
+	//Real alpha, beta, gamma, x, y, z, energy, volume;
 
-		while ( input >> vals[1] ) {
-			input >> vals[2] >> vals[3] >> vals[4] >> vals[5] >> vals[6] >> vals[7] >> vals[8] >> skip;
-			input_rigid_body_settings.push_back( vals );
-		}
+	while ( input >> vals[1] ) {
+		input >> vals[2] >> vals[3] >> vals[4] >> vals[5] >> vals[6] >> vals[7] >> vals[8] >> skip;
+		input_rigid_body_settings.push_back( vals );
+	}
 }
 
 ////////////////////////////////////////////////////////////////
@@ -973,7 +973,7 @@ cluster_rigid_body_settings_test(){
 	// sort by energy.
 	std::cout << "Setting up vectors and matrices for " <<  input_rigid_body_settings.size() << " rigid body settings. " << std::endl;
 	std::list< std::pair< Real, Size > > all_energies;
-	for ( Size n = 1; n <= input_rigid_body_settings.size(); n++ ){
+	for ( Size n = 1; n <= input_rigid_body_settings.size(); n++ ) {
 		all_energies.push_back( std::make_pair( input_rigid_body_settings[n][7], n ) );
 	}
 	all_energies.sort();
@@ -986,8 +986,8 @@ cluster_rigid_body_settings_test(){
 	Vector axis2( 0.0, 1.0, 0.0 );
 	Vector axis3( 0.0, 0.0, 1.0 );
 	Matrix M;
-	for ( 	std::list< std::pair< Real, Size > >::iterator iter = all_energies.begin();
-					iter != all_energies.end(); ++iter ) {
+	for (  std::list< std::pair< Real, Size > >::iterator iter = all_energies.begin();
+			iter != all_energies.end(); ++iter ) {
 
 		Size const & i = iter->second;
 		sort_index.push_back( i );
@@ -1005,13 +1005,13 @@ cluster_rigid_body_settings_test(){
 	utility::vector1< Size > cluster_index;
 	std::cout << "Clustering " << sort_index.size() << " models " << std::endl;
 	Real rmsd( 0.0 );
-	for ( Size n = 1; n <= sort_index.size(); n++ ){
+	for ( Size n = 1; n <= sort_index.size(); n++ ) {
 
 		bool found_neighbor( false );
 		Vector const & v1( sort_v[ n ] );
 		Matrix const & M1( sort_M[ n ] );
 
-		for ( Size j = 1; j <= cluster_index.size(); j++ ){
+		for ( Size j = 1; j <= cluster_index.size(); j++ ) {
 			Vector const & v2( sort_v[ cluster_index[j] ] );
 			Matrix const & M2( sort_M[ cluster_index[j] ] );
 
@@ -1027,9 +1027,9 @@ cluster_rigid_body_settings_test(){
 
 		Real const & energy = input_rigid_body_settings[ sort_index[ n ] ][ 7 ];
 
-		//		std::cout << "CHECKING " << sort_index[ n ] << " with score " << energy << " against list of size " << cluster_index.size();
+		//  std::cout << "CHECKING " << sort_index[ n ] << " with score " << energy << " against list of size " << cluster_index.size();
 
-		if ( !found_neighbor ){
+		if ( !found_neighbor ) {
 			//std::cout << "... added " << std::endl;
 			cluster_index.push_back( n );
 			std::cout << "Adding cluster " << cluster_index.size() << " with energy " <<
@@ -1050,10 +1050,10 @@ cluster_rigid_body_settings_test(){
 	ScoreFunctionOP scorefxn = get_score_function();
 
 	std::cout << "Outputting  " << cluster_index.size() << " clusters to " << outfile << std::endl;
-	for ( Size i = 1; i <= cluster_index.size(); i++ ){
+	for ( Size i = 1; i <= cluster_index.size(); i++ ) {
 
 		utility::vector1< Real > const & rbs = input_rigid_body_settings[ sort_index[ cluster_index[ i ]  ] ];
-		for ( Size n = 1; n <= 8; n++ )	out << ' ' << rbs[ n ];
+		for ( Size n = 1; n <= 8; n++ ) out << ' ' << rbs[ n ];
 		out << std::endl;
 
 		rigid_body_sampler->apply_rigid_body_settings( pose, pose_start, rbs[1],rbs[2],rbs[3],rbs[4],rbs[5],rbs[6] );
@@ -1147,9 +1147,9 @@ finely_sample_base_pair_test(){
 
 	Real const cosbeta_range = -cos( radians( beta_center ) ) + cos( radians( beta_center - degree_range ) );
 	Real cosbeta_min = cos( radians( beta_center ) ) - cosbeta_range;
-	//	if ( cosbeta_min < -1.0 ) cosbeta_min = -1.0;
+	// if ( cosbeta_min < -1.0 ) cosbeta_min = -1.0;
 	Real cosbeta_max = cos( radians( beta_center ) ) + cosbeta_range;
-	//	if ( cosbeta_max >  1.0 ) cosbeta_max = 1.0;
+	// if ( cosbeta_max >  1.0 ) cosbeta_max = 1.0;
 	Real const cosbeta_increment = cosbeta_range * (degree_increment/degree_range);
 
 	rigid_body_sampler->set_cosbeta_min( cosbeta_min );
@@ -1180,9 +1180,9 @@ finely_sample_base_pair_test(){
 ////////////////////////////////////////////////////////////////
 void
 fill_v_and_M( utility::vector1< utility::vector1< Real > > & rigid_body_settings,
-							utility::vector1< Vector > & v_list,
-							utility::vector1< Matrix > & M_list
-							){
+	utility::vector1< Vector > & v_list,
+	utility::vector1< Matrix > & M_list
+){
 
 	using namespace protocols::swa;
 
@@ -1190,7 +1190,7 @@ fill_v_and_M( utility::vector1< utility::vector1< Real > > & rigid_body_settings
 	Vector axis2( 0.0, 1.0, 0.0 );
 	Vector axis3( 0.0, 0.0, 1.0 );
 	Matrix M;
-	for ( Size i = 1; i <= rigid_body_settings.size(); i++ ){
+	for ( Size i = 1; i <= rigid_body_settings.size(); i++ ) {
 
 		utility::vector1< Real > const & rbs = rigid_body_settings[ i ];
 		v_list.push_back( Vector( rbs[4], rbs[5], rbs[6] ) );
@@ -1256,7 +1256,7 @@ assign_rigid_body_settings_to_clusters_test(){
 
 	std::cout << "Clustering " << input_rigid_body_settings.size() << " models into " << cluster_indices.size() << " clusters." << std::endl;
 
-	for ( Size n = 1; n <= input_rigid_body_settings.size(); n++ ){
+	for ( Size n = 1; n <= input_rigid_body_settings.size(); n++ ) {
 
 		Size closest_neighbor( 0 );
 		Real closest_rmsd( 99999.9 );
@@ -1264,7 +1264,7 @@ assign_rigid_body_settings_to_clusters_test(){
 		Vector const & v1( v[ n ] );
 		Matrix const & M1( M[ n ] );
 
-		for ( Size j = 1; j <= reference_rigid_body_settings.size(); j++ ){
+		for ( Size j = 1; j <= reference_rigid_body_settings.size(); j++ ) {
 			Vector const & v2( v_reference[ j ] );
 			Matrix const & M2( M_reference[ j ] );
 
@@ -1273,7 +1273,7 @@ assign_rigid_body_settings_to_clusters_test(){
 
 			//if ( n == j ) std::cout << n << ' ' << j << "  rmsd: " << rmsd << std::endl;
 
-			if ( rmsd < closest_rmsd || j == 1){
+			if ( rmsd < closest_rmsd || j == 1 ) {
 				closest_rmsd = rmsd;
 				closest_neighbor = j;
 			}
@@ -1293,7 +1293,7 @@ assign_rigid_body_settings_to_clusters_test(){
 
 	std::cout << "Outputting  " << cluster_indices.size() << " clusters to " << outfile+".cluster*" << std::endl;
 
-	for ( Size i = 1; i <= cluster_indices.size(); i++ ){
+	for ( Size i = 1; i <= cluster_indices.size(); i++ ) {
 
 		utility::vector1< Size > const & cluster_index = cluster_indices[ i ];
 
@@ -1303,9 +1303,9 @@ assign_rigid_body_settings_to_clusters_test(){
 
 		ozstream out( outfile_cluster );
 
-		for ( Size j = 1; j <= cluster_index.size(); j++ ){
+		for ( Size j = 1; j <= cluster_index.size(); j++ ) {
 			utility::vector1< Real > const & rbs = input_rigid_body_settings[ cluster_index[j] ];
-			for ( Size n = 1; n <= 8; n++ )	out << ' ' << rbs[ n ];
+			for ( Size n = 1; n <= 8; n++ ) out << ' ' << rbs[ n ];
 			out << std::endl;
 		}
 
@@ -1335,8 +1335,8 @@ setup_two_base_pair_pose( pose::Pose & pose ){
 	FoldTree f( 4 );
 	f.new_jump( 1, 4, 2 );
 	f.set_jump_atoms( 1,
-										chemical::rna::chi1_torsion_atom( pose.residue( 1 ) ),
-										chemical::rna::chi1_torsion_atom( pose.residue( 4 ) )   );
+		chemical::rna::chi1_torsion_atom( pose.residue( 1 ) ),
+		chemical::rna::chi1_torsion_atom( pose.residue( 4 ) )   );
 	pose.fold_tree( f );
 
 	add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
@@ -1367,7 +1367,7 @@ setup_two_base_pair_pose( pose::Pose & pose ){
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 
-	for ( Size i = 1; i <= pose.size(); i++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		pose.set_torsion( TorsionID( i, id::BB, DELTA ), base_sugar_rotamer->delta() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU2 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu2() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU1 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu1() );
@@ -1378,8 +1378,8 @@ setup_two_base_pair_pose( pose::Pose & pose ){
 ///////////////////////////////////////////////////////////////
 Real
 initialize_fa_rep( pose::Pose const & pose,
-									 utility::vector1< Size > const & moving_suites,
-									 scoring::ScoreFunctionOP rep_scorefxn ) {
+	utility::vector1< Size > const & moving_suites,
+	scoring::ScoreFunctionOP rep_scorefxn ) {
 
 	using namespace pose;
 	using namespace kinematics;
@@ -1388,7 +1388,7 @@ initialize_fa_rep( pose::Pose const & pose,
 
 	Pose pose_expand = pose;
 
-	for ( Size n = 1; n <= moving_suites.size(); n++ ){
+	for ( Size n = 1; n <= moving_suites.size(); n++ ) {
 		Size const jump_at_moving_suite = make_cut_at_moving_suite( pose_expand, moving_suites[n] );
 		Jump j = pose_expand.jump( jump_at_moving_suite );
 		j.set_translation( Vector( 1.0e4 * n, 0.0, 0.0 ) );
@@ -1405,9 +1405,9 @@ initialize_fa_rep( pose::Pose const & pose,
 ///////////////////////////////////////////////////////////////
 bool
 check_clash( pose::Pose & pose,
-						 Real const & fa_rep_score_baseline,
-						 Real const & rep_cutoff_,
-						 scoring::ScoreFunctionOP rep_scorefxn ){
+	Real const & fa_rep_score_baseline,
+	Real const & rep_cutoff_,
+	scoring::ScoreFunctionOP rep_scorefxn ){
 
 	using namespace scoring;
 	using namespace options;
@@ -1417,14 +1417,14 @@ check_clash( pose::Pose & pose,
 	EnergyMap const & energy_map=pose.energies().total_energies();
 	Real const fa_rep_score = energy_map[ fa_rep ] * rep_scorefxn->get_weight( fa_rep );
 
-	//	std::cout << fa_rep_score << " " << fa_rep_score_baseline << std::endl;
+	// std::cout << fa_rep_score << " " << fa_rep_score_baseline << std::endl;
 
 	if ( (fa_rep_score - fa_rep_score_baseline) > rep_cutoff_ ) return false;
 
 	static Real const tolerance( 1.0e-3 );
 	if ( (fa_rep_score - fa_rep_score_baseline) < -1.0 * tolerance ) {
 		std::cout << fa_rep_score << " " << fa_rep_score_baseline << std::endl;
-		//		utility_exit_with_message( "Weird fa_rep?" );
+		//  utility_exit_with_message( "Weird fa_rep?" );
 	}
 
 	return true;
@@ -1433,8 +1433,8 @@ check_clash( pose::Pose & pose,
 ///////////////////////////////////////////////////////////////
 void
 save_torsions( pose::Pose const & pose,
-							 Size const & moving_suite,
-							 utility::vector1< utility::vector1< Real > > & torsion_list ){
+	Size const & moving_suite,
+	utility::vector1< utility::vector1< Real > > & torsion_list ){
 
 	using namespace id;
 	using namespace chemical::rna;
@@ -1453,11 +1453,11 @@ save_torsions( pose::Pose const & pose,
 ///////////////////////////////////////////////////////////////
 void
 save_torsion_M_v( pose::Pose const & pose,
-									Size const & moving_suite,
-									Size const & moving_base,
-									utility::vector1< utility::vector1< Real > > & torsion_list,
-									utility::vector1< Matrix > & M_list,
-									utility::vector1< Vector > & v_list ) {
+	Size const & moving_suite,
+	Size const & moving_base,
+	utility::vector1< utility::vector1< Real > > & torsion_list,
+	utility::vector1< Matrix > & M_list,
+	utility::vector1< Vector > & v_list ) {
 
 	using namespace kinematics;
 	using namespace protocols::swa;
@@ -1490,11 +1490,11 @@ get_bin_size(){
 ///////////////////////////////////////////////////////////////
 void
 sample_new_base_in_two_base_pair_pose( pose::Pose & pose,
-																			 Size const which_strand,
-																			 utility::vector1< utility::vector1< Real > > & torsion_list,
-																			 utility::vector1< Matrix > & M_list,
-																			 utility::vector1< Vector > & v_list,
-																			 scoring::ScoreFunctionOP rep_scorefxn	) {
+	Size const which_strand,
+	utility::vector1< utility::vector1< Real > > & torsion_list,
+	utility::vector1< Matrix > & M_list,
+	utility::vector1< Vector > & v_list,
+	scoring::ScoreFunctionOP rep_scorefxn ) {
 
 	using namespace options;
 	using namespace options::OptionKeys;
@@ -1510,7 +1510,7 @@ sample_new_base_in_two_base_pair_pose( pose::Pose & pose,
 	Pose pose_start = pose;
 
 	Size moving_suite, moving_base;
-	if ( which_strand == 2 ){
+	if ( which_strand == 2 ) {
 		moving_suite = 3;
 		moving_base = 3;
 		add_variant_type_to_pose_residue( pose, "VIRTUAL_RNA_RESIDUE", 2 ); // this residue is not in the game.
@@ -1522,21 +1522,21 @@ sample_new_base_in_two_base_pair_pose( pose::Pose & pose,
 	}
 
 	utility::vector1< Size > suite_res_list = make_vector1( moving_suite );
-	//	suite_res_list.push_back( 1 );
+	// suite_res_list.push_back( 1 );
 
 	Real const bin_size = get_bin_size();
 	StepWiseRNA_RotamerGeneratorWrapperOP rotamer_generator = new StepWiseRNA_RotamerGeneratorWrapper( pose,
-																																																			 suite_res_list,
-																																																			 false /*sample_sugar_and_base1*/,
-																																																			 false /*sample_sugar_and_base2*/,
-																																																			 bin_size );
+		suite_res_list,
+		false /*sample_sugar_and_base1*/,
+		false /*sample_sugar_and_base2*/,
+		bin_size );
 	Size count( 0 );
 	Size count_saved( 0 );
 
 	Real const fa_rep_score_baseline = initialize_fa_rep( pose, make_vector1( moving_suite ), rep_scorefxn );
 	Real const rep_cutoff_ = option[ rep_cutoff ]();
 
-	while( rotamer_generator->has_another_rotamer() ){
+	while ( rotamer_generator->has_another_rotamer() ) {
 
 		count++;
 
@@ -1560,10 +1560,10 @@ sample_new_base_in_two_base_pair_pose( pose::Pose & pose,
 
 ///////////////////////////////////////////////////////////////
 void
-input_torsion_M_v_lists( 	utility::vector1< utility::vector1< Real > > & torsion_list,
-													utility::vector1< Matrix > & M_list,
-													utility::vector1< Vector > & v_list,
-													std::string const infile ){
+input_torsion_M_v_lists(  utility::vector1< utility::vector1< Real > > & torsion_list,
+	utility::vector1< Matrix > & M_list,
+	utility::vector1< Vector > & v_list,
+	std::string const infile ){
 
 	using namespace utility::io;
 
@@ -1581,12 +1581,12 @@ input_torsion_M_v_lists( 	utility::vector1< utility::vector1< Real > > & torsion
 	for ( Size n = 1; n <= 5; n++ ) torsion_set.push_back( 0.0 );
 
 	izstream input_stream( infile );
-	while( input_stream >> torsion_set[1] ){
+	while ( input_stream >> torsion_set[1] ) {
 
 		input_stream >> torsion_set[2] >> torsion_set[3] >> torsion_set[4] >> torsion_set[5];
 
-		for ( Size i = 1; i <= 3; i++ ){
-			for ( Size k = 1; k <= 3; k++ ){
+		for ( Size i = 1; i <= 3; i++ ) {
+			for ( Size k = 1; k <= 3; k++ ) {
 				input_stream >> M(i,k);
 			}
 		}
@@ -1607,22 +1607,22 @@ input_torsion_M_v_lists( 	utility::vector1< utility::vector1< Real > > & torsion
 
 ///////////////////////////////////////////////////////////////
 void
-output_torsion_M_v_lists( 	utility::vector1< utility::vector1< Real > > const & torsion_list,
-														utility::vector1< Matrix > const & M_list,
-														utility::vector1< Vector > const & v_list,
-														std::string const outfile ){
+output_torsion_M_v_lists(  utility::vector1< utility::vector1< Real > > const & torsion_list,
+	utility::vector1< Matrix > const & M_list,
+	utility::vector1< Vector > const & v_list,
+	std::string const outfile ){
 
 	using namespace utility::io;
 
 	ozstream out( outfile );
 	if ( not out ) utility_exit_with_message( "Could not make outfile" );
 
-	for ( Size n = 1; n <= torsion_list.size(); n++ ){
+	for ( Size n = 1; n <= torsion_list.size(); n++ ) {
 
 		for ( Size i = 1; i <= torsion_list[n].size(); i++ ) out << ' ' << torsion_list[n][i];
 
-		for ( Size i = 1; i <= 3; i++ ){
-			for ( Size k = 1; k <= 3; k++ ){
+		for ( Size i = 1; i <= 3; i++ ) {
+			for ( Size k = 1; k <= 3; k++ ) {
 				out << ' ' << M_list[n](i,k);
 			}
 		}
@@ -1653,24 +1653,24 @@ apply_suite_torsions( utility::vector1< Real > const & torsion_set, pose::Pose &
 ///////////////////////////////////////////////////////////////
 void
 do_the_match(
-						 utility::vector1< utility::vector1< utility::vector1< Real > > > & strand1_strand2_info_for_each_cluster,
-						 utility::vector1< Size > const & strand2_index,
-						 utility::vector1< Size > const & reference_index,
-						 pose::Pose & pose,
-						 Matrix const & moments1, Matrix const & moments2,
-						 utility::vector1< Real > strand1_torsion_set,
-						 Matrix const & M1, Vector const & v1,
-						 utility::vector1< utility::vector1< Real > > const & torsion_list,
-						 utility::vector1< Matrix > const & M_list,
-						 utility::vector1< Vector > const & v_list,
-						 utility::vector1< utility::vector1< Real > > const & reference_rigid_body_settings,
-						 pose::Pose const & ideal_pose,
-						 scoring::ScoreFunctionOP scorefxn,
-						 std::string const & silent_file,
-						 Real const rmsd_cutoff_,
-						 Real const rep_cutoff_,
-						 Real const fa_rep_score_baseline,
-						 scoring::ScoreFunctionOP rep_scorefxn ){
+	utility::vector1< utility::vector1< utility::vector1< Real > > > & strand1_strand2_info_for_each_cluster,
+	utility::vector1< Size > const & strand2_index,
+	utility::vector1< Size > const & reference_index,
+	pose::Pose & pose,
+	Matrix const & moments1, Matrix const & moments2,
+	utility::vector1< Real > strand1_torsion_set,
+	Matrix const & M1, Vector const & v1,
+	utility::vector1< utility::vector1< Real > > const & torsion_list,
+	utility::vector1< Matrix > const & M_list,
+	utility::vector1< Vector > const & v_list,
+	utility::vector1< utility::vector1< Real > > const & reference_rigid_body_settings,
+	pose::Pose const & ideal_pose,
+	scoring::ScoreFunctionOP scorefxn,
+	std::string const & silent_file,
+	Real const rmsd_cutoff_,
+	Real const rep_cutoff_,
+	Real const fa_rep_score_baseline,
+	scoring::ScoreFunctionOP rep_scorefxn ){
 
 	using namespace chemical;
 	using namespace scoring;
@@ -1692,7 +1692,7 @@ do_the_match(
 	// Find torsion angle combinations that might fit into a cluster. Build those poses
 	// and save energies.
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	for ( Size m = 1; m <= strand2_index.size(); m++ ){
+	for ( Size m = 1; m <= strand2_index.size(); m++ ) {
 
 		Size const i = strand2_index[ m ];
 
@@ -1700,18 +1700,18 @@ do_the_match(
 
 		Matrix const & M2 = M_list[ i ];
 		Vector const & v2 = v_list[ i ];
-		//		std::cout << "V2" << ' ' <<  v2(1) << ' ' <<  v2(2) << ' ' <<  v2(3) << std::endl;
+		//  std::cout << "V2" << ' ' <<  v2(1) << ' ' <<  v2(2) << ' ' <<  v2(3) << std::endl;
 
 		//Oooh, linear algebra.
 		Matrix const M2_in_M1_frame = M1.transposed() * M2;
 		Vector const v2_in_v1_frame = M1.transposed() * ( v2 - v1 );
-		//		std::cout << "V2_IN_V1_frame" << ' ' <<  v2_in_v1_frame(1) << ' ' <<  v2_in_v1_frame(2) << ' ' <<  v2_in_v1_frame(3) << std::endl;
+		//  std::cout << "V2_IN_V1_frame" << ' ' <<  v2_in_v1_frame(1) << ' ' <<  v2_in_v1_frame(2) << ' ' <<  v2_in_v1_frame(3) << std::endl;
 
 		// How close is this rigid body arrangement to any of the reference states?
 		Real closest_rmsd( 0.0 );
 		Size closest_neighbor( 0 );
 
-		for ( Size n = 1; n <= reference_index.size(); n++ ){
+		for ( Size n = 1; n <= reference_index.size(); n++ ) {
 
 			Size const j = reference_index[ n ];
 
@@ -1721,12 +1721,12 @@ do_the_match(
 			create_euler_rotation( M_ref, rbs[1],rbs[2],rbs[3] );
 			Vector const v_ref( rbs[4], rbs[5], rbs[6] );
 
-			//			std::cout << "V_REF" << ' ' <<  v_ref(1) << ' ' <<  v_ref(2) << ' ' <<  v_ref(3) << std::endl;
+			//   std::cout << "V_REF" << ' ' <<  v_ref(1) << ' ' <<  v_ref(2) << ' ' <<  v_ref(3) << std::endl;
 
 			Real const rmsd = rmsd_base_doublet_symmetric( M2_in_M1_frame, M_ref, v2_in_v1_frame, v_ref,
-																										 moments1, moments2 );
+				moments1, moments2 );
 
-			if ( rmsd < closest_rmsd || n == 1){
+			if ( rmsd < closest_rmsd || n == 1 ) {
 				closest_rmsd = rmsd;
 				closest_neighbor = j;
 			}
@@ -1746,9 +1746,9 @@ do_the_match(
 			Real const score = ( *scorefxn )( pose );
 			strand1_strand2_info.push_back( score );
 
-			//			if( score > 100.0 )	scorefxn->show( std::cout, pose );
+			//   if( score > 100.0 ) scorefxn->show( std::cout, pose );
 
-			if ( silent_file.size() > 0  ){
+			if ( silent_file.size() > 0  ) {
 
 				std::string const tag = "S_" + ObjexxFCL::lead_zero_string_of( i, 6 ) + "_" +
 					ObjexxFCL::lead_zero_string_of( closest_neighbor, 6 );
@@ -1767,28 +1767,28 @@ do_the_match(
 		}
 
 	}
-	}
+}
 
 
 ///////////////////////////////////////////////////////////////
 void
-brute_force_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real > > > & strand1_strand2_info_for_each_cluster,
-											pose::Pose & pose,
-											utility::vector1< Real > strand1_torsion_set,
-											utility::vector1< utility::vector1< Real > > const & torsion_list,
-											utility::vector1< Matrix > const & M_list,
-											utility::vector1< Vector > const & v_list,
-											utility::vector1< utility::vector1< Real > > const & reference_rigid_body_settings,
-											pose::Pose const & ideal_pose,
-											scoring::ScoreFunctionOP scorefxn,
-											scoring::ScoreFunctionOP rep_scorefxn,
-											std::string const & silent_file ){
+brute_force_matcher(  utility::vector1< utility::vector1< utility::vector1< Real > > > & strand1_strand2_info_for_each_cluster,
+	pose::Pose & pose,
+	utility::vector1< Real > strand1_torsion_set,
+	utility::vector1< utility::vector1< Real > > const & torsion_list,
+	utility::vector1< Matrix > const & M_list,
+	utility::vector1< Vector > const & v_list,
+	utility::vector1< utility::vector1< Real > > const & reference_rigid_body_settings,
+	pose::Pose const & ideal_pose,
+	scoring::ScoreFunctionOP scorefxn,
+	scoring::ScoreFunctionOP rep_scorefxn,
+	std::string const & silent_file ){
 
 	using namespace options;
 	using namespace options::OptionKeys;
 	using namespace protocols::swa;
 
-	Vector v1; 	Matrix M1;
+	Vector v1;  Matrix M1;
 	get_base_centroid_and_rotation_matrix( pose, 2, v1, M1);
 
 	Matrix moments1 = calculate_moments( pose.residue( 2 ) );
@@ -1803,28 +1803,28 @@ brute_force_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real
 	Real const rep_cutoff_ = 3 * option[ rep_cutoff ](); //to allow weak base/pose and base/base clashes.
 
 	do_the_match( strand1_strand2_info_for_each_cluster,
-								strand2_index, reference_index,
-								pose,
-								moments1, moments2,
-								strand1_torsion_set, M1, v1,
-								torsion_list, M_list, v_list,
-								reference_rigid_body_settings,
-								ideal_pose,
-								scorefxn,
-								silent_file,
-								rmsd_cutoff_,
-								rep_cutoff_,
-								fa_rep_score_baseline,
-								rep_scorefxn );
+		strand2_index, reference_index,
+		pose,
+		moments1, moments2,
+		strand1_torsion_set, M1, v1,
+		torsion_list, M_list, v_list,
+		reference_rigid_body_settings,
+		ideal_pose,
+		scorefxn,
+		silent_file,
+		rmsd_cutoff_,
+		rep_cutoff_,
+		fa_rep_score_baseline,
+		rep_scorefxn );
 
 }
 
 
 ///////////////////////////////////////////////////////////////
 void
-initialize_for_grid_matcher(	Real & box_size, Real & box_spacing,
-															ObjexxFCL::FArray3D< utility::vector1< Size > > & grid_strand2_index,
-															utility::vector1< Vector > const & v_list ){
+initialize_for_grid_matcher( Real & box_size, Real & box_spacing,
+	ObjexxFCL::FArray3D< utility::vector1< Size > > & grid_strand2_index,
+	utility::vector1< Vector > const & v_list ){
 
 	box_size = 20.0;
 	box_spacing = 0.5;
@@ -1834,7 +1834,7 @@ initialize_for_grid_matcher(	Real & box_size, Real & box_spacing,
 
 	//centroids of strand2 base, based on modeler torsions in strand2
 	std::cout << "Filling grid_strand2_index... " << std::endl;
-	for ( Size n = 1; n <= v_list.size(); n++ ){
+	for ( Size n = 1; n <= v_list.size(); n++ ) {
 
 		Real const & x = v_list[n](1);
 		int const x_index = floor( ( x + box_size ) / box_spacing );
@@ -1858,20 +1858,20 @@ initialize_for_grid_matcher(	Real & box_size, Real & box_spacing,
 
 ///////////////////////////////////////////////////////////////
 void
-grid_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real > > > & strand1_strand2_info_for_each_cluster,
-								pose::Pose & pose,
-								utility::vector1< Real > strand1_torsion_set,
-								utility::vector1< utility::vector1< Real > > const & torsion_list,
-								utility::vector1< Matrix > const & M_list,
-								utility::vector1< Vector > const & v_list,
-								utility::vector1< utility::vector1< Real > > const & reference_rigid_body_settings,
-								pose::Pose const & ideal_pose,
-								scoring::ScoreFunctionOP scorefxn,
-								scoring::ScoreFunctionOP rep_scorefxn,
-								std::string const & silent_file,
-								Real const box_size, Real const box_spacing,
-								ObjexxFCL::FArray3D< utility::vector1< Size > > const &  grid_strand2_index
-								){
+grid_matcher(  utility::vector1< utility::vector1< utility::vector1< Real > > > & strand1_strand2_info_for_each_cluster,
+	pose::Pose & pose,
+	utility::vector1< Real > strand1_torsion_set,
+	utility::vector1< utility::vector1< Real > > const & torsion_list,
+	utility::vector1< Matrix > const & M_list,
+	utility::vector1< Vector > const & v_list,
+	utility::vector1< utility::vector1< Real > > const & reference_rigid_body_settings,
+	pose::Pose const & ideal_pose,
+	scoring::ScoreFunctionOP scorefxn,
+	scoring::ScoreFunctionOP rep_scorefxn,
+	std::string const & silent_file,
+	Real const box_size, Real const box_spacing,
+	ObjexxFCL::FArray3D< utility::vector1< Size > > const &  grid_strand2_index
+){
 
 	using namespace options;
 	using namespace options::OptionKeys;
@@ -1888,7 +1888,7 @@ grid_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real > > > 
 	using namespace chemical::rna;
 	using namespace protocols::stepwise::modeler::rna;
 
-	Vector v1; 	Matrix M1;
+	Vector v1;  Matrix M1;
 	get_base_centroid_and_rotation_matrix( pose, 2, v1, M1);
 
 	Real const rmsd_cutoff_ = option[ rmsd_cutoff ]();
@@ -1917,7 +1917,7 @@ grid_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real > > > 
 	//
 	Real const rmsd_cutoff2 = (rmsd_cutoff_ * rmsd_cutoff_); //  / 2.0;
 
-	for ( Size n = 1; n <= reference_rigid_body_settings.size(); n++ ){
+	for ( Size n = 1; n <= reference_rigid_body_settings.size(); n++ ) {
 
 		utility::vector1< Real > const & rbs = reference_rigid_body_settings[n];
 
@@ -1948,27 +1948,27 @@ grid_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real > > > 
 		int k_center = floor( ( z + box_size ) / box_spacing ) - k_min + 1;
 		mask_box( i_center, j_center, k_center ) = true;
 
-		for ( int i = i_min; i <= i_max; i++ ){
+		for ( int i = i_min; i <= i_max; i++ ) {
 			if ( i < 1 || i > numbins ) continue;
 			Real const x_mask = -box_size + (i-1)*box_spacing;
 
-			for ( int j = j_min; j <= j_max; j++ ){
+			for ( int j = j_min; j <= j_max; j++ ) {
 				if ( j < 1 || j > numbins ) continue;
 				Real const y_mask = -box_size + (j-1)*box_spacing;
 
-				for ( int k = k_min; k <= k_max; k++ ){
+				for ( int k = k_min; k <= k_max; k++ ) {
 					if ( k < 1 || k > numbins ) continue;
 					Real const z_mask = -box_size + (k-1)*box_spacing;
 
 					Real const dist2 = ( Vector( x_mask, y_mask, z_mask ) - v2_centroid ).length_squared();
-					if ( dist2 < rmsd_cutoff2 ){
-						for ( int o1 = 0; o1 <= 1; o1++ ){
-							for ( int o2 = 0; o2 <= 1; o2++ ){
-								for ( int o3 = 0; o3 <= 1; o3++ ){
+					if ( dist2 < rmsd_cutoff2 ) {
+						for ( int o1 = 0; o1 <= 1; o1++ ) {
+							for ( int o2 = 0; o2 <= 1; o2++ ) {
+								for ( int o3 = 0; o3 <= 1; o3++ ) {
 									// this doesn't quite look right -- are the indices ever zero?
 									mask_box( i - i_min + o1,
-														j - j_min + o2,
-														k - k_min + o3 ) = true;
+										j - j_min + o2,
+										k - k_min + o3 ) = true;
 								}
 							}
 						}
@@ -1977,18 +1977,18 @@ grid_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real > > > 
 			}
 		}
 
-		for ( int i = i_min; i <= i_max; i++ ){
+		for ( int i = i_min; i <= i_max; i++ ) {
 			if ( i < 1 || i > numbins ) continue;
 
-			for ( int j = j_min; j <= j_max; j++ ){
+			for ( int j = j_min; j <= j_max; j++ ) {
 				if ( j < 1 || j > numbins ) continue;
 
-				for ( int k = k_min; k <= k_max; k++ ){
+				for ( int k = k_min; k <= k_max; k++ ) {
 					if ( k < 1 || k > numbins ) continue;
 
 					if ( !mask_box( i - i_min + 1,
-													j - j_min + 1,
-													k - k_min + 1 ) ) continue;
+							j - j_min + 1,
+							k - k_min + 1 ) ) continue;
 
 					grid_reference_index( i, j, k ).push_back( n );
 
@@ -2000,30 +2000,30 @@ grid_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real > > > 
 
 
 	std::cout << "Checking matches... " << std::endl;
-	for ( int i = 1; i <= numbins; i++ ){
-		for ( int j = 1; j <= numbins; j++ ){
-			for ( int k = 1; k <= numbins; k++ ){
+	for ( int i = 1; i <= numbins; i++ ) {
+		for ( int j = 1; j <= numbins; j++ ) {
+			for ( int k = 1; k <= numbins; k++ ) {
 
-					utility::vector1< Size > const & reference_index = grid_reference_index( i, j, k );
-					if ( reference_index.size() == 0 ) continue;
+				utility::vector1< Size > const & reference_index = grid_reference_index( i, j, k );
+				if ( reference_index.size() == 0 ) continue;
 
-					utility::vector1< Size > const & strand2_index = grid_strand2_index( i, j, k );
-					if ( strand2_index.size() == 0 ) continue;
+				utility::vector1< Size > const & strand2_index = grid_strand2_index( i, j, k );
+				if ( strand2_index.size() == 0 ) continue;
 
-					do_the_match( strand1_strand2_info_for_each_cluster,
-												strand2_index, reference_index,
-												pose,
-												moments1, moments2,
-												strand1_torsion_set, M1, v1,
-												torsion_list, M_list, v_list,
-												reference_rigid_body_settings,
-												ideal_pose,
-												scorefxn,
-												silent_file,
-												rmsd_cutoff_,
-												rep_cutoff_,
-												fa_rep_score_baseline,
-												rep_scorefxn );
+				do_the_match( strand1_strand2_info_for_each_cluster,
+					strand2_index, reference_index,
+					pose,
+					moments1, moments2,
+					strand1_torsion_set, M1, v1,
+					torsion_list, M_list, v_list,
+					reference_rigid_body_settings,
+					ideal_pose,
+					scorefxn,
+					silent_file,
+					rmsd_cutoff_,
+					rep_cutoff_,
+					fa_rep_score_baseline,
+					rep_scorefxn );
 			}
 		}
 	}
@@ -2034,25 +2034,25 @@ grid_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real > > > 
 ///////////////////////////////////////////////////////////////
 void
 output_strand1_strand2_info( std::string const & outfile_prefix,
-														 utility::vector1< utility::vector1< utility::vector1< Real > > > const & strand1_strand2_info_for_each_cluster ){
+	utility::vector1< utility::vector1< utility::vector1< Real > > > const & strand1_strand2_info_for_each_cluster ){
 
 	using namespace options;
 	using namespace options::OptionKeys;
 	using namespace utility::io;
 
-	//	std::string const outfile = outfile_prefix + ".cluster" + ObjexxFCL::lead_zero_string_of( n, 5 );
+	// std::string const outfile = outfile_prefix + ".cluster" + ObjexxFCL::lead_zero_string_of( n, 5 );
 	std::string const outfile = outfile_prefix;
 	ozstream out( outfile );
 
-	for ( Size n = 1; n <= strand1_strand2_info_for_each_cluster.size(); n++ ){
+	for ( Size n = 1; n <= strand1_strand2_info_for_each_cluster.size(); n++ ) {
 
 		utility::vector1< utility::vector1< Real > > const & info = strand1_strand2_info_for_each_cluster[ n ];
 
-		if (info.size() == 0 ) continue;
+		if ( info.size() == 0 ) continue;
 
 		std::cout << "Cluster " << n << ": Outputting " << info.size() << " torsion sets to " << outfile << std::endl;
 
-		for ( Size i = 1; i <= info.size(); i++ ){
+		for ( Size i = 1; i <= info.size(); i++ ) {
 			out << n;
 			for ( Size j = 1; j <= info[ i ].size(); j++ ) out << ' ' << info[i][j];
 			out << std::endl;
@@ -2114,7 +2114,7 @@ two_base_pairs_test(){
 
 
 	std::string silent_file = "";
-	if ( option[ out::file::silent ].user() )	silent_file = option[ out::file::silent ]();
+	if ( option[ out::file::silent ].user() ) silent_file = option[ out::file::silent ]();
 
 	// Need to iterate through suite conformations for residue 1.
 	utility::vector1< utility::vector1< Real > > torsion_list1, torsion_list2;
@@ -2123,7 +2123,7 @@ two_base_pairs_test(){
 
 	//////////////////////////////////////////////////////////
 	// either sample explicitly -- or compute once and read from disk?
-	if ( option[ input_base1_torsion_M_v_lists ].user() ){
+	if ( option[ input_base1_torsion_M_v_lists ].user() ) {
 		input_torsion_M_v_lists( torsion_list1, M_list1, v_list1,  option[ input_base1_torsion_M_v_lists ]() );
 	} else {
 		sample_new_base_in_two_base_pair_pose( pose, 1 /*second base*/, torsion_list1, M_list1, v_list1, scorefxn );
@@ -2131,7 +2131,7 @@ two_base_pairs_test(){
 	if ( option[ output_base1_torsion_M_v_lists ].user() ) output_torsion_M_v_lists( torsion_list1, M_list1, v_list1, option[ output_base1_torsion_M_v_lists ] );
 
 	//////////////////////////////////////////////////////////
-	if ( option[ input_base2_torsion_M_v_lists ].user() ){
+	if ( option[ input_base2_torsion_M_v_lists ].user() ) {
 		input_torsion_M_v_lists( torsion_list2, M_list2, v_list2,  option[ input_base2_torsion_M_v_lists ]() );
 	} else {
 		sample_new_base_in_two_base_pair_pose( pose, 2 /*second base*/, torsion_list2, M_list2, v_list2, scorefxn );
@@ -2167,18 +2167,18 @@ two_base_pairs_test(){
 	FArray3D< utility::vector1< Size > > grid_strand2_index;
 	initialize_for_grid_matcher( box_size, box_spacing, grid_strand2_index, v_list2);
 
-	if ( option[ test_ideal ]() ){
+	if ( option[ test_ideal ]() ) {
 		// Assume that base 1 is in ideal A-form helix conformation -- don't sample it.
 		// This was useful for testing.
 		clock_t const time_start( clock() );
 
-		//	brute_force_matcher( strand1_strand2_info_for_each_cluster,
+		// brute_force_matcher( strand1_strand2_info_for_each_cluster,
 		grid_matcher( strand1_strand2_info_for_each_cluster,
-									pose,
-									strand1_torsion_set,
-									torsion_list2, M_list2, v_list2,
-									reference_rigid_body_settings, ideal_pose, scorefxn, rep_scorefxn, silent_file,
-									box_size, box_spacing, grid_strand2_index );
+			pose,
+			strand1_torsion_set,
+			torsion_list2, M_list2, v_list2,
+			reference_rigid_body_settings, ideal_pose, scorefxn, rep_scorefxn, silent_file,
+			box_size, box_spacing, grid_strand2_index );
 		std::cout << "Total time in matcher: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
 	} else {
@@ -2188,17 +2188,17 @@ two_base_pairs_test(){
 		Size num_torsion_list1_ = torsion_list1.size();
 		if ( option[ num_torsion_list1 ].user() ) num_torsion_list1_ = option[ num_torsion_list1 ]();
 
-		for( Size n = 1; n <= num_torsion_list1_; n++ ){
+		for ( Size n = 1; n <= num_torsion_list1_; n++ ) {
 			std::cout << "strand torsion1: " << n << " of " <<  num_torsion_list1_ << std::endl;
 			strand1_torsion_set = torsion_list1[n];
 			apply_suite_torsions( strand1_torsion_set , pose, 1 );
 			clock_t const time_start( clock() );
 			grid_matcher( strand1_strand2_info_for_each_cluster,
-										pose,
-										strand1_torsion_set,
-										torsion_list2, M_list2, v_list2,
-										reference_rigid_body_settings, ideal_pose, scorefxn, rep_scorefxn, silent_file,
-										box_size, box_spacing, grid_strand2_index );
+				pose,
+				strand1_torsion_set,
+				torsion_list2, M_list2, v_list2,
+				reference_rigid_body_settings, ideal_pose, scorefxn, rep_scorefxn, silent_file,
+				box_size, box_spacing, grid_strand2_index );
 			Real const time_in_matcher = static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC;
 			std::cout << "Time in matcher: " <<  time_in_matcher << std::endl;
 			total_time_in_matcher += time_in_matcher;
@@ -2217,7 +2217,7 @@ two_base_pairs_test(){
 ////////////////////////////////////////////////////////////////////////
 void
 setup_two_base_pair_pose_with_chainbreak( pose::Pose & pose,
-																					Size const chainbreak_suite = 3){
+	Size const chainbreak_suite = 3){
 
 	using namespace options;
 	using namespace options::OptionKeys;
@@ -2243,12 +2243,12 @@ setup_two_base_pair_pose_with_chainbreak( pose::Pose & pose,
 	FoldTree f( 4 );
 	f.new_jump( 1, 4, chainbreak_suite );
 	f.set_jump_atoms( 1,
-										chemical::rna::chi1_torsion_atom( pose.residue( 1 ) ),
-										chemical::rna::chi1_torsion_atom( pose.residue( 4 ) )   );
+		chemical::rna::chi1_torsion_atom( pose.residue( 1 ) ),
+		chemical::rna::chi1_torsion_atom( pose.residue( 4 ) )   );
 	f.new_jump( 2, 3, 2 );
 	f.set_jump_atoms( 2,
-										chemical::rna::chi1_torsion_atom( pose.residue( 2 ) ),
-										chemical::rna::chi1_torsion_atom( pose.residue( 3 ) )   );
+		chemical::rna::chi1_torsion_atom( pose.residue( 2 ) ),
+		chemical::rna::chi1_torsion_atom( pose.residue( 3 ) )   );
 	pose.fold_tree( f );
 
 	add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
@@ -2266,7 +2266,7 @@ setup_two_base_pair_pose_with_chainbreak( pose::Pose & pose,
 	StepWiseRNA_BaseSugarRotamerOP base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( ANTI, NORTH, rna_fitted_torsion_info, 20.0, 3 );
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
-	for ( Size i = 1; i <= pose.size(); i++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		pose.set_torsion( TorsionID( i, id::BB, DELTA ), base_sugar_rotamer->delta() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU2 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu2() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU1 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu1() );
@@ -2282,9 +2282,9 @@ using protocols::stepwise::PoseList;
 //////////////////////////////////////////////////////////////////////////
 void
 minimize_poses( pose::Pose & pose,
-								PoseList & minimize_pose_list,
-								core::io::silent::SilentFileData & minimize_silent_file_data,
-								core::scoring::ScoreFunctionOP scorefxn )
+	PoseList & minimize_pose_list,
+	core::io::silent::SilentFileData & minimize_silent_file_data,
+	core::scoring::ScoreFunctionOP scorefxn )
 {
 
 	using namespace core::optimization;
@@ -2321,7 +2321,7 @@ minimize_poses( pose::Pose & pose,
 	mm.set( TorsionID( 4, id::BB, GAMMA ),   true );
 
 	utility::vector1< Size > const minimize_sidechain_set = option[ minimize_sidechain_res ]();
-	for (Size n = 1; n <= minimize_sidechain_set.size(); n++ ){
+	for ( Size n = 1; n <= minimize_sidechain_set.size(); n++ ) {
 		std::cout << "ENABLING sidechain movement for " << minimize_sidechain_set[n] << std::endl;
 		mm.set_chi( minimize_sidechain_set[n], true );
 	}
@@ -2359,8 +2359,8 @@ bool check_filter_base_stack( pose::Pose const & pose ){
 	Vector centroid2 = rna_centroid_info.get_base_centroid( pose.residue(2) );
 	Stub s2 = rna_centroid_info.get_base_coordinate_system( pose.residue(2), centroid2 );
 
-	if( dot( s1.M.col_z(),  centroid2 - centroid1 ) < 0.0 ) return false;
-	if( dot( s2.M.col_z(),  centroid1 - centroid2 ) > 0.0 ) return false;
+	if ( dot( s1.M.col_z(),  centroid2 - centroid1 ) < 0.0 ) return false;
+	if ( dot( s2.M.col_z(),  centroid1 - centroid2 ) > 0.0 ) return false;
 	return true;
 }
 
@@ -2405,9 +2405,9 @@ apply_filter_base_stack_direction( protocols::stepwise::PoseList & minimize_pose
 
 
 	PoseList new_pose_list;
-	for ( PoseList::iterator iter = minimize_pose_list.begin(); iter != minimize_pose_list.end(); iter++ ){
+	for ( PoseList::iterator iter = minimize_pose_list.begin(); iter != minimize_pose_list.end(); iter++ ) {
 		Pose & pose = *(iter->second);
-		if (!check_filter_base_stack( pose ) ) continue;
+		if ( !check_filter_base_stack( pose ) ) continue;
 		new_pose_list[ iter->first ] = iter->second;
 	}
 
@@ -2426,10 +2426,10 @@ apply_filter_base_stack_direction( core::io::silent::SilentFileDataOP &  sfd ){
 
 	SilentFileDataOP sfd_new = new SilentFileData;
 	for ( core::io::silent::SilentFileData::iterator iter = sfd->begin(),
-					end = sfd->end(); iter != end; ++iter ) {
+			end = sfd->end(); iter != end; ++iter ) {
 		Pose pose;
 		iter->fill_pose( pose );
-		if (!check_filter_base_stack( pose ) ) continue;
+		if ( !check_filter_base_stack( pose ) ) continue;
 		sfd_new->add_structure( *iter );
 	}
 
@@ -2465,7 +2465,7 @@ base_pair_to_base_pair_test(){
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 	std::string silent_file = "";
-	if ( option[ out::file::silent ].user() )	silent_file = option[ out::file::silent ]();
+	if ( option[ out::file::silent ].user() ) silent_file = option[ out::file::silent ]();
 
 	////////////////////////////////////////////////////////////////////
 	utility::vector1< InputStreamWithResidueInfoOP > input_streams;
@@ -2491,10 +2491,10 @@ base_pair_to_base_pair_test(){
 	rna_loop_close_sampler.set_scorefxn( scorefxn );
 	rna_loop_close_sampler.set_bin_size( get_bin_size() );
 	rna_loop_close_sampler.set_rep_cutoff ( 3 * option[ rep_cutoff ]() );
-	//	rna_loop_close_sampler.set_silent_file( "raw_"+silent_file );
+	// rna_loop_close_sampler.set_silent_file( "raw_"+silent_file );
 
 
-	while( sample_generator->has_another_sample() ){
+	while ( sample_generator->has_another_sample() ) {
 
 		sample_generator->get_next_sample( pose );
 
@@ -2508,25 +2508,25 @@ base_pair_to_base_pair_test(){
 		// did we get anything out?
 		SilentFileDataOP silent_file_data = rna_loop_close_sampler.silent_file_data();
 
-		if ( silent_file_data->size() > 0 ){
+		if ( silent_file_data->size() > 0 ) {
 
-			//			if ( option[ filter_base_stack_direction ]() ) {
-			//				apply_filter_base_stack_direction( silent_file_data );
-			//			}
+			//   if ( option[ filter_base_stack_direction ]() ) {
+			//    apply_filter_base_stack_direction( silent_file_data );
+			//   }
 
 			//cluster
 			protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer( silent_file_data );
 			Size max_decoys( 1000 );
-			if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
+			if ( option[ out::nstruct].user() )  max_decoys =  option[ out::nstruct ];
 			stepwise_clusterer.set_max_decoys( max_decoys );
 			stepwise_clusterer.set_cluster_by_all_atom_rmsd( true );
 			stepwise_clusterer.set_rename_tags( true /*option[ rename_tags ]*/ );
 			Real cluster_radius( 0.25 );
 			if ( option[ OptionKeys::cluster::radius ].user() ) cluster_radius = option[ OptionKeys::cluster::radius ]();
-			stepwise_clusterer.set_cluster_radius( cluster_radius	);
+			stepwise_clusterer.set_cluster_radius( cluster_radius );
 
 			stepwise_clusterer.cluster();
-			//		stepwise_clusterer.output_silent_file( silent_file );
+			//  stepwise_clusterer.output_silent_file( silent_file );
 
 			//minimize. Probably need to specify movemap explicitly!
 			PoseList minimize_pose_list = stepwise_clusterer.clustered_pose_list();
@@ -2536,11 +2536,11 @@ base_pair_to_base_pair_test(){
 			SilentFileDataOP minimize_silent_file_data = new SilentFileData;
 			minimize_poses( pose, minimize_pose_list, *minimize_silent_file_data, minimize_scorefxn );
 
-			//			if ( minimize_silent_file_data->size() == 0 ) { //need a garbage pose -- must output something.
-			//				(*minimize_scorefxn)( start_pose );
-			//				BinarySilentStruct s( start_pose, "GARBAGE" );
-			//				minimize_silent_file_data->add_structure( s );
-			//			}
+			//   if ( minimize_silent_file_data->size() == 0 ) { //need a garbage pose -- must output something.
+			//    (*minimize_scorefxn)( start_pose );
+			//    BinarySilentStruct s( start_pose, "GARBAGE" );
+			//    minimize_silent_file_data->add_structure( s );
+			//   }
 
 			//cluster again. This isn't really necessary.
 			//save lowest energy state --> note that we need some kind of tag of: parent outfiles, parent tags.
@@ -2553,7 +2553,7 @@ base_pair_to_base_pair_test(){
 			assign_stack_faces( best_model );
 			silent_file_data->write_silent_struct( *best_model, silent_file, false /*write score only*/ );
 
-			if (option[ output_all ]() ) stepwise_clusterer.output_silent_file( "ALL_"+silent_file );
+			if ( option[ output_all ]() ) stepwise_clusterer.output_silent_file( "ALL_"+silent_file );
 
 		} else {
 			// this is just a 'garbage' pose.
@@ -2604,11 +2604,11 @@ rna_close_loop_test(){
 ///////////////////////////////////////////////////////////////
 void
 sample_state_to_state(
-											pose::Pose & pose,
-											Size const moving_suite,
-											Size const chainbreak_suite,
-											utility::vector1< Real > const & rbs_new_pair /*is this necessary?*/,
-											utility::vector1< utility::vector1< Real > > & all_torsion_info ){
+	pose::Pose & pose,
+	Size const moving_suite,
+	Size const chainbreak_suite,
+	utility::vector1< Real > const & rbs_new_pair /*is this necessary?*/,
+	utility::vector1< utility::vector1< Real > > & all_torsion_info ){
 
 	using namespace options;
 	using namespace options::OptionKeys;
@@ -2631,12 +2631,12 @@ sample_state_to_state(
 
 	/////////////////////////////////////////////////
 	std::string silent_file = "";
-	if ( option[ out::file::silent ].user() )	silent_file = option[ out::file::silent ]();
+	if ( option[ out::file::silent ].user() ) silent_file = option[ out::file::silent ]();
 	rna_loop_close_sampler.set_silent_file( silent_file );
 
 	/////////////////////////////////////////////////
 	PoseOP native_pose;
-	if ( option[ in::file::native ].user() )	{
+	if ( option[ in::file::native ].user() ) {
 		native_pose = new Pose;
 		ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		io::pdb::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
@@ -2663,10 +2663,10 @@ sample_state_to_state(
 ///////////////////////////////////////////////////////////////
 void
 two_base_pairs_via_loop_closure_test(
-																		 utility::vector1< utility::vector1< Real > > const & reference_rigid_body_settings_fixed_pair,
-																		 utility::vector1< utility::vector1< Real > > const & reference_rigid_body_settings_new_pair,
-																		 utility::vector1< Size > const & which_rigid_body_settings_fixed_pair,
-																		 utility::vector1< Size > const & which_rigid_body_settings_new_pair) {
+	utility::vector1< utility::vector1< Real > > const & reference_rigid_body_settings_fixed_pair,
+	utility::vector1< utility::vector1< Real > > const & reference_rigid_body_settings_new_pair,
+	utility::vector1< Size > const & which_rigid_body_settings_fixed_pair,
+	utility::vector1< Size > const & which_rigid_body_settings_new_pair) {
 
 	using namespace options;
 	using namespace options::OptionKeys;
@@ -2690,13 +2690,13 @@ two_base_pairs_via_loop_closure_test(
 	utility::vector1< std::pair<Size,Size> > which_state;
 	utility::vector1< utility::vector1< Real > > all_torsion_info;
 
-	for ( Size m = 1; m <= which_rigid_body_settings_fixed_pair.size(); m++ ){
+	for ( Size m = 1; m <= which_rigid_body_settings_fixed_pair.size(); m++ ) {
 
 		Size const & fixed_pair_setting = which_rigid_body_settings_fixed_pair[ m ];
 		utility::vector1< Real > rbs_fixed_pair = reference_rigid_body_settings_fixed_pair[ fixed_pair_setting ];
 		std::cout << "Fixed pair --> state: " << fixed_pair_setting << std::endl;
 
-		for ( Size n = 1; n <= which_rigid_body_settings_new_pair.size(); n++ ){
+		for ( Size n = 1; n <= which_rigid_body_settings_new_pair.size(); n++ ) {
 
 			Size const & new_pair_setting = which_rigid_body_settings_new_pair[ n ];
 			utility::vector1< Real > rbs_new_pair = reference_rigid_body_settings_new_pair[ which_rigid_body_settings_new_pair[ n ]  ];
@@ -2709,11 +2709,11 @@ two_base_pairs_via_loop_closure_test(
 			utility::vector1< utility::vector1< Real > > torsion_info;
 
 			sample_state_to_state( pose,
-														 moving_suite, chainbreak_suite,
-														 rbs_new_pair,
-														 torsion_info );
+				moving_suite, chainbreak_suite,
+				rbs_new_pair,
+				torsion_info );
 
-			for ( Size i = 1; i <= torsion_info.size(); i++ ){
+			for ( Size i = 1; i <= torsion_info.size(); i++ ) {
 				which_state.push_back( std::make_pair( fixed_pair_setting, new_pair_setting ) );
 				all_torsion_info.push_back( torsion_info[ i ] );
 			}
@@ -2723,12 +2723,12 @@ two_base_pairs_via_loop_closure_test(
 
 	ozstream out( outfile );
 	Size const MAX_TRIES = 100;
-	for ( Size n = 1; n <= MAX_TRIES; n++ ){
+	for ( Size n = 1; n <= MAX_TRIES; n++ ) {
 		if ( out.good() ) break;
 		sleep( 5 );
 		out.open( outfile );
 	}
-	for ( Size i = 1; i <= all_torsion_info.size(); i++ ){
+	for ( Size i = 1; i <= all_torsion_info.size(); i++ ) {
 		out << which_state[i].first << ' ' << which_state[i].second;
 		utility::vector1< Real > const & info = all_torsion_info[i];
 		for ( Size j = 1; j <= info.size(); j++ ) out << ' ' << info[j];
@@ -2760,15 +2760,15 @@ two_base_pairs_via_loop_closure_test(){
 		for ( Size n = 1; n <= reference_rigid_body_settings_new_pair.size(); n++ ) which_rigid_body_settings_new_pair.push_back( n );
 	} else if ( option[ num_new_pair_states ].user() ) {
 		for ( int n = 1; n <= option[ num_new_pair_states ](); n++ ) which_rigid_body_settings_new_pair.push_back( n );
-	} else{
+	} else {
 		if ( !option[ new_pair_state_number ]()  ) utility_exit_with_message( "Must supply -new_pair_state_number or -all_new_pair_states" );
 		which_rigid_body_settings_new_pair.push_back(  option[ new_pair_state_number ]() );
 	}
 
 	two_base_pairs_via_loop_closure_test( reference_rigid_body_settings_fixed_pair,
-																				reference_rigid_body_settings_new_pair,
-																				which_rigid_body_settings_fixed_pair,
-																				which_rigid_body_settings_new_pair);
+		reference_rigid_body_settings_new_pair,
+		which_rigid_body_settings_fixed_pair,
+		which_rigid_body_settings_new_pair);
 
 }
 
@@ -2777,7 +2777,7 @@ two_base_pairs_via_loop_closure_test(){
 void
 check_determinant_test(){
 
-	//	using namespace arma;
+	// using namespace arma;
 
 	// mat m;
 	// m.zeros( 6, 6 );
@@ -2791,13 +2791,13 @@ check_determinant_test(){
 
 	// utility::vector1< utility::vector1< Real > > m_rosetta;
 	// for ( Size i = 0; i < 6; i++ ) {
-	// 	utility::vector1< Real > v;
-	// 	for ( Size j = 0; j < 6; j++ ) {
-	// 		std::cout << ' ' << m( i, j );
-	// 		v.push_back( m( i, j ) );
-	// 	}
-	// 	std::cout << std::endl;
-	// 	m_rosetta.push_back( v );
+	//  utility::vector1< Real > v;
+	//  for ( Size j = 0; j < 6; j++ ) {
+	//   std::cout << ' ' << m( i, j );
+	//   v.push_back( m( i, j ) );
+	//  }
+	//  std::cout << std::endl;
+	//  m_rosetta.push_back( v );
 	// }
 
 	// std::cout << "TAKING DETERMINANT: " << det( m ) << std::endl;
@@ -2817,8 +2817,8 @@ reverse( utility::vector1< Real > const rbs ){
 	Real const & gamma = rbs[3];
 
 	//Real const alpha_new = -rbs[3];
-	//	Real const beta_new  = -rbs[2];
-	//	Real const gamma_new = -rbs[1];
+	// Real const beta_new  = -rbs[2];
+	// Real const gamma_new = -rbs[1];
 	Real const alpha_new = 180.0-rbs[3];
 	Real const beta_new  = rbs[2];
 	Real const gamma_new = 180.0-rbs[1];
@@ -2829,10 +2829,10 @@ reverse( utility::vector1< Real > const rbs ){
 
 	// Matrix M_check = M * M_new;
 	// for ( Size i = 1; i <= 3; i++ ){
-	// 	for ( Size j = 1; j <= 3; j++ ){
-	// 		std::cout << ' ' << M_check( i, j );
-	// 	}
-	// 	std::cout << std::endl;
+	//  for ( Size j = 1; j <= 3; j++ ){
+	//   std::cout << ' ' << M_check( i, j );
+	//  }
+	//  std::cout << std::endl;
 	// }
 	// std::cout << std::endl;
 
@@ -2872,7 +2872,7 @@ reverse_rbs_test(){
 
 	for ( Size n = 1; n <= rigid_body_settings.size(); n++ ) {
 		utility::vector1< Real > const & rbs = rigid_body_settings_reverse[ n ];
-		for ( Size n = 1; n <= 8; n++ )	out << ' ' << rbs[ n ];
+		for ( Size n = 1; n <= 8; n++ ) out << ' ' << rbs[ n ];
 		out << std::endl;
 	}
 
@@ -2913,7 +2913,7 @@ setup_dinucleotide_pose( pose::Pose & pose ){
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 
-	for ( Size i = 1; i <= pose.size(); i++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		pose.set_torsion( TorsionID( i, id::BB, DELTA ), base_sugar_rotamer->delta() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU2 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu2() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU1 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu1() );
@@ -2931,24 +2931,24 @@ setup_dinucleotide_pose( pose::Pose & pose ){
 ///////////////////////////////////////////////////////////////
 void
 output_torsion_list( std::string const & outfile,
-										 utility::vector1< utility::vector1< Real > > const & torsion_info,
-										 utility::vector1< Real > const & scores,
-										 Real const bin_size ){
+	utility::vector1< utility::vector1< Real > > const & torsion_info,
+	utility::vector1< Real > const & scores,
+	Real const bin_size ){
 
 	using namespace utility::io;
 
-	//	std::string const outfile = outfile_prefix + ".cluster" + ObjexxFCL::lead_zero_string_of( n, 5 );
+	// std::string const outfile = outfile_prefix + ".cluster" + ObjexxFCL::lead_zero_string_of( n, 5 );
 	ozstream out( outfile );
 
 	Real bin_size_in_radians = radians( bin_size );
 	Real volume_element = 1.0;
-	for( Size i = 1; i <= 5; i++ )  volume_element *= bin_size_in_radians;
+	for ( Size i = 1; i <= 5; i++ )  volume_element *= bin_size_in_radians;
 
-	for ( Size n = 1; n <= torsion_info.size(); n++ ){
+	for ( Size n = 1; n <= torsion_info.size(); n++ ) {
 
 		utility::vector1< Real > const & info = torsion_info[ n ];
 
-		for ( Size i = 1; i <= info.size(); i++ ){
+		for ( Size i = 1; i <= info.size(); i++ ) {
 			out << ' ' << info[i];
 		}
 
@@ -3000,7 +3000,7 @@ dinucleotide_test(){
 	rep_scorefxn->set_weight( fa_rep, 0.12 );
 
 	std::string silent_file = "";
-	if ( option[ out::file::silent ].user() )	silent_file = option[ out::file::silent ]();
+	if ( option[ out::file::silent ].user() ) silent_file = option[ out::file::silent ]();
 	bool const just_score = option[ just_output_score ]();
 
 	// Need to iterate through suite conformations for residue 1.
@@ -3011,16 +3011,16 @@ dinucleotide_test(){
 
 	Real const bin_size = get_bin_size();
 	StepWiseRNA_RotamerGeneratorWrapperOP rotamer_generator = new StepWiseRNA_RotamerGeneratorWrapper( pose,
-																																																			 suite_res_list,
-																																																			 false /*sample_sugar_and_base1*/,
-																																																			 false /*sample_sugar_and_base2*/,
-																																																			 bin_size );
+		suite_res_list,
+		false /*sample_sugar_and_base1*/,
+		false /*sample_sugar_and_base2*/,
+		bin_size );
 	Real const fa_rep_score_baseline = initialize_fa_rep( pose, make_vector1( moving_suite ), rep_scorefxn );
 	Real const rep_cutoff_ = option[ rep_cutoff ]();
 
 	// initialize for o2prime rotamer trials. Probably should stuff this into an initialization function.
 	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
-	for (Size i = 1; i <= pose.size(); i++) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		o2prime_pack_task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
 		o2prime_pack_task->nonconst_residue_task(i).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
 		o2prime_pack_task->nonconst_residue_task(i).or_include_current( true );
@@ -3045,7 +3045,7 @@ dinucleotide_test(){
 	utility::vector1< utility::vector1< Real > > torsion_list;
 	utility::vector1< Real > score_list;
 
-	while( rotamer_generator->has_another_rotamer() ){
+	while ( rotamer_generator->has_another_rotamer() ) {
 
 		count++;
 
@@ -3064,7 +3064,7 @@ dinucleotide_test(){
 		// Save torsion angles, centroid, and base coordinate system.
 		count_saved++;
 
-		if ( silent_file.size() > 0  ){
+		if ( silent_file.size() > 0  ) {
 
 			std::string const tag = "S_" + ObjexxFCL::lead_zero_string_of( count, 6 );
 			BinarySilentStruct s( pose, tag ); // this is RNA-centric -- could make it OK for proteins.
@@ -3120,12 +3120,12 @@ delta_chi_correction_test(){
 	std::string const outfile = option[ out::file::o ];
 	ozstream out( outfile );
 
-	for ( Size n = 1; n <= nts.size(); n++ ){
+	for ( Size n = 1; n <= nts.size(); n++ ) {
 
 		Pose pose;
 
 		std::string const & seq = nts[n];
-		make_pose_from_sequence( pose, seq,	*rsd_set );
+		make_pose_from_sequence( pose, seq, *rsd_set );
 
 		std::cout << "--------------------------------------" << std::endl;
 		std::cout << "--------------------------------------" << std::endl;
@@ -3196,7 +3196,7 @@ reverse_doublet_test(){
 	Pose pose;
 
 	for ( core::io::silent::SilentFileData::iterator iter = silent_file_data.begin(),
-					end = silent_file_data.end(); iter != end; ++iter ) {
+			end = silent_file_data.end(); iter != end; ++iter ) {
 
 		std::string tag = iter->decoy_tag();
 		iter->fill_pose( pose );
@@ -3231,32 +3231,32 @@ my_main( void* )
 
 	using namespace options;
 
-	if ( option[ base_doublet_rmsd ]() ){
+	if ( option[ base_doublet_rmsd ]() ) {
 		base_doublet_rmsd_test();
-	} else if ( option[ cluster_rigid_body_settings ]() ){
+	} else if ( option[ cluster_rigid_body_settings ]() ) {
 		cluster_rigid_body_settings_test();
-	} else if ( option[ assign_to_clusters ]() ){
+	} else if ( option[ assign_to_clusters ]() ) {
 		assign_rigid_body_settings_to_clusters_test();
-	} else if ( option[ two_base_pairs ]() ){
+	} else if ( option[ two_base_pairs ]() ) {
 		two_base_pairs_test();
-	} else if ( option[ two_base_pairs_via_loop_closure ]() ){
+	} else if ( option[ two_base_pairs_via_loop_closure ]() ) {
 		two_base_pairs_via_loop_closure_test();
-	} else if ( option[ close_loop_test ]() ){
-	  rna_close_loop_test();
-	} else if ( option[ check_determinant ]() ){
-	  check_determinant_test();
-	} else if ( option[ reverse_rbs ]() ){
-	  reverse_rbs_test();
-	} else if ( option[ dinucleotide ]() ){
-	  dinucleotide_test();
-	} else if ( option[ delta_chi_correction ]() ){
-	  delta_chi_correction_test();
-	} else if ( option[ finely_sample_base_pair ]() ){
-	  finely_sample_base_pair_test();
-	} else if ( option[ base_pair_to_base_pair ]() ){
-	  base_pair_to_base_pair_test();
-	} else if ( option[ reverse_doublet ]() ){
-	  reverse_doublet_test();
+	} else if ( option[ close_loop_test ]() ) {
+		rna_close_loop_test();
+	} else if ( option[ check_determinant ]() ) {
+		check_determinant_test();
+	} else if ( option[ reverse_rbs ]() ) {
+		reverse_rbs_test();
+	} else if ( option[ dinucleotide ]() ) {
+		dinucleotide_test();
+	} else if ( option[ delta_chi_correction ]() ) {
+		delta_chi_correction_test();
+	} else if ( option[ finely_sample_base_pair ]() ) {
+		finely_sample_base_pair_test();
+	} else if ( option[ base_pair_to_base_pair ]() ) {
+		base_pair_to_base_pair_test();
+	} else if ( option[ reverse_doublet ]() ) {
+		reverse_doublet_test();
 	} else {
 		define_states_test();
 	}
@@ -3274,120 +3274,120 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace options;
+		using namespace options;
 
-	utility::vector1< Size > blank_size_vector;
+		utility::vector1< Size > blank_size_vector;
 
-	NEW_OPT( n_sample, "number of samples per torsion angle", 18 );
-	NEW_OPT( n_sample_beta, "number of samples in tilt angle beta", 18 );
-	NEW_OPT( xyz_sample, "spacing in xyz search, in Angstroms", 1.0 );
-	NEW_OPT( box_radius, "spacing in xyz search, in Angstroms", 10.0 );
-	NEW_OPT( score_cutoff, "Scoring cutoff", 10.0 );
-	NEW_OPT( temperature, "Temperature", 3.0 );
-	NEW_OPT( contact_cutoff, "how close atoms need to be to define contact", 4.5 );
-	NEW_OPT( steric_dist_cutoff, "how close heavy atoms need to be to define clash", 2.5 );
-	NEW_OPT( bin_sample, "Torsion bin size (in degrees)", 20 );
-	NEW_OPT( RBangle_range, "rigid body angle range for alpha, gamma (in degrees)", 20.0 );
-	NEW_OPT( RBangle_increment, "rigid body angle increment for alpha, gamma (in degrees)", 2.0 );
-	NEW_OPT( torsion_range, "Torsion range for alpha, gamma (in degrees)", 20.0 );
-	NEW_OPT( torsion_increment, "Torsion increment for alpha, gamma (in degrees)", 2.0 );
-	NEW_OPT( min_contacts, "minimum number of contacts", 1 );
-	NEW_OPT( min_hbonds, "minimum number of H-bonds", 0 );
-	NEW_OPT( fa_rep_cutoff, "fa rep cutoff for rigid bdy modeler", 0.0 );
-	NEW_OPT( fixed_pair_state_number, "from reference file, which rigid body setting to use", 1 );
-	NEW_OPT( new_pair_state_number, "from reference file, which rigid body setting to use", 1 );
-	NEW_OPT( only_positive_Z, "only allow positive contributions to partition function", false );
-	NEW_OPT( o2prime_trials, "in dinucleotide test, do rotamer trials", false );
-	NEW_OPT( cycle_axes, "different coordinate system", false );
-	NEW_OPT( do_not_rotate_base2, "consistency test -- leave base 2 in arbitrary rotation", false );
-	NEW_OPT( cluster_poses, "Cluster after modeler", false );
-	NEW_OPT( filter_base_stack_direction, "filter base stack directionality in base_pair_to_base_pair", false );
-	NEW_OPT( expand_chi, "Expand chi after state definition", false );
-	NEW_OPT( base_doublet_rmsd, "Testing base doublet rmsd", false );
-	NEW_OPT( cluster_rigid_body_settings, "Cluster list of rigid body settings", false );
-	NEW_OPT( two_base_pairs, "Build next base pair on existing base pair", false );
-	NEW_OPT( two_base_pairs_via_loop_closure, "Build next base pair on existing base pair, using loop closure for speed", false );
-	NEW_OPT( dinucleotide, "Build two bases", false );
-	NEW_OPT( test_ideal, "Build next base pair on existing base pair", false );
-	NEW_OPT( fine_torsions, "Fine torsions", false );
-	NEW_OPT( super_fine_torsions, "Super fine torsions", false );
-	NEW_OPT( gzip_out, "Gzip outfile", false );
-	NEW_OPT( close_loop_test, "RNA loop close test", false );
-	NEW_OPT( check_determinant, "Check determinant test", false );
-	NEW_OPT( assign_to_clusters, "Assign list of rigid body settings to clusters defined by another list of rigid body settings", false );
-	NEW_OPT( all_new_pair_states, "In two base pair run, iterate over all states of new pair", false );
-	NEW_OPT( num_new_pair_states, "In two base pair run, iterate over all states of new pair", 0 );
-	NEW_OPT( reverse_rbs, "Take a list of rigid body settings and reverse it", false );
-	NEW_OPT( switch_chainbreak, "switch chainbreak", false );
-	NEW_OPT( delta_chi_correction, "delta_chi_correction", false );
-	NEW_OPT( finely_sample_base_pair, "finely sample base pair", false );
-	NEW_OPT( base_pair_to_base_pair, "connect base pair to next base pair", false );
-	NEW_OPT( just_output_score, "just output score", false );
-	NEW_OPT( force_antiparallel_bases, "force antiparallel bases", false );
-	NEW_OPT( force_parallel_bases, "force parallel bases", false );
-	NEW_OPT( center_around_native, "center around native", false );
-	NEW_OPT( ignore_o2prime_hbonds_in_filter, "Ignore O2' hbonds in cutoff of rigid body sampler", false );
-	NEW_OPT( assign_WC_edges, "Ignore O2' hbonds in cutoff of rigid body sampler", false );
-	NEW_OPT( virtualize_phosphate,   "virtualize phosphate instead of backbone", false );
-	NEW_OPT( superimpose_over_all_res,   "during clustering, calculate rms over all residues", false );
-	NEW_OPT( south1,   "", false );
-	NEW_OPT( south2,   "", false );
-	NEW_OPT( syn_chi1, "", false );
-	NEW_OPT( syn_chi2, "", false );
-	NEW_OPT( chi1, "", 0.0 );
-	NEW_OPT( chi2, "", 0.0 );
-	NEW_OPT( rigid_body_samples, "input file with alpha, beta, gamma, x, y, and z", "" );
-	NEW_OPT( reference_rigid_body_samples, "input file with alpha, beta, gamma, x, y, and z", "rbs_cluster.txt" );
-	NEW_OPT( reference_rigid_body_samples_fixed_pair, "input file with alpha, beta, gamma, x, y, and z", "rbs_cluster.txt" );
-	NEW_OPT( reference_rigid_body_samples_new_pair  , "input file with alpha, beta, gamma, x, y, and z", "rbs_cluster.txt" );
-	NEW_OPT( x_min, "input parameter", 0.0 );
-	NEW_OPT( x_max, "input parameter", 0.0 );
-	NEW_OPT( x_increment, "input parameter", 1.0 );
-	NEW_OPT( y_min, "input parameter", 0.0 );
-	NEW_OPT( y_max, "input parameter", 0.0 );
-	NEW_OPT( y_increment, "input parameter", 1.0 );
-	NEW_OPT( z_min, "input parameter", 0.0 );
-	NEW_OPT( z_max, "input parameter", 0.0 );
-	NEW_OPT( z_increment, "input parameter", 1.0);
-	NEW_OPT( alpha_min, "input parameter", 0.0 );
-	NEW_OPT( alpha_max, "input parameter", 0.0 );
-	NEW_OPT( alpha_increment, "input parameter", 1.0 );
-	NEW_OPT( cosbeta_min, "input parameter", 0.0 );
-	NEW_OPT( cosbeta_max, "input parameter", 0.0 );
-	NEW_OPT( cosbeta_increment, "input parameter", 1.0 );
-	NEW_OPT( gamma_min, "input parameter", 0.0 );
-	NEW_OPT( gamma_max, "input parameter", 0.0 );
-	NEW_OPT( gamma_increment, "input parameter", 1.0 );
-	NEW_OPT( seq, "sequence to model", "cg" );
-	NEW_OPT( rmsd_cutoff, "Cutoff for rigid body clustering", 3.0 );
-	NEW_OPT( rep_cutoff, "Cutoff in steric check on fa_rep", 2.0 );
-	NEW_OPT( input_base1_torsion_M_v_lists, "input list for base1 in two_base_pair", "blah.txt" );
-	NEW_OPT( output_base1_torsion_M_v_lists, "input list for base1 in two_base_pair", "blah.txt" );
-	NEW_OPT( input_base2_torsion_M_v_lists, "input list for base2 in two_base_pair", "blah.txt" );
-	NEW_OPT( output_base2_torsion_M_v_lists, "input list for base2 in two_base_pair", "blah.txt" );
-	NEW_OPT( num_torsion_list1, "for test runs on two base pairs, number of strand1 torsions to sample", 400 );
-	NEW_OPT( score_diff_cut, "score difference cut for clustering", 10.0 );
-	NEW_OPT( minimize_sidechain_res, "in base_pair_to_base_pair, also minimize chi,pucker of these side-chains", blank_size_vector );
-	NEW_OPT( minimize_jump, "in base_pair_to_base_pair, also minimize jump", false );
-	NEW_OPT( reverse_doublet, "take a base doublet silent file and siwtch residues 1 and 2", false );
-	NEW_OPT( output_all, "output all decoys from base pair to base pair", false );
-	NEW_OPT( split_silent_files, "output clustered states in separate silent files", false );
+		NEW_OPT( n_sample, "number of samples per torsion angle", 18 );
+		NEW_OPT( n_sample_beta, "number of samples in tilt angle beta", 18 );
+		NEW_OPT( xyz_sample, "spacing in xyz search, in Angstroms", 1.0 );
+		NEW_OPT( box_radius, "spacing in xyz search, in Angstroms", 10.0 );
+		NEW_OPT( score_cutoff, "Scoring cutoff", 10.0 );
+		NEW_OPT( temperature, "Temperature", 3.0 );
+		NEW_OPT( contact_cutoff, "how close atoms need to be to define contact", 4.5 );
+		NEW_OPT( steric_dist_cutoff, "how close heavy atoms need to be to define clash", 2.5 );
+		NEW_OPT( bin_sample, "Torsion bin size (in degrees)", 20 );
+		NEW_OPT( RBangle_range, "rigid body angle range for alpha, gamma (in degrees)", 20.0 );
+		NEW_OPT( RBangle_increment, "rigid body angle increment for alpha, gamma (in degrees)", 2.0 );
+		NEW_OPT( torsion_range, "Torsion range for alpha, gamma (in degrees)", 20.0 );
+		NEW_OPT( torsion_increment, "Torsion increment for alpha, gamma (in degrees)", 2.0 );
+		NEW_OPT( min_contacts, "minimum number of contacts", 1 );
+		NEW_OPT( min_hbonds, "minimum number of H-bonds", 0 );
+		NEW_OPT( fa_rep_cutoff, "fa rep cutoff for rigid bdy modeler", 0.0 );
+		NEW_OPT( fixed_pair_state_number, "from reference file, which rigid body setting to use", 1 );
+		NEW_OPT( new_pair_state_number, "from reference file, which rigid body setting to use", 1 );
+		NEW_OPT( only_positive_Z, "only allow positive contributions to partition function", false );
+		NEW_OPT( o2prime_trials, "in dinucleotide test, do rotamer trials", false );
+		NEW_OPT( cycle_axes, "different coordinate system", false );
+		NEW_OPT( do_not_rotate_base2, "consistency test -- leave base 2 in arbitrary rotation", false );
+		NEW_OPT( cluster_poses, "Cluster after modeler", false );
+		NEW_OPT( filter_base_stack_direction, "filter base stack directionality in base_pair_to_base_pair", false );
+		NEW_OPT( expand_chi, "Expand chi after state definition", false );
+		NEW_OPT( base_doublet_rmsd, "Testing base doublet rmsd", false );
+		NEW_OPT( cluster_rigid_body_settings, "Cluster list of rigid body settings", false );
+		NEW_OPT( two_base_pairs, "Build next base pair on existing base pair", false );
+		NEW_OPT( two_base_pairs_via_loop_closure, "Build next base pair on existing base pair, using loop closure for speed", false );
+		NEW_OPT( dinucleotide, "Build two bases", false );
+		NEW_OPT( test_ideal, "Build next base pair on existing base pair", false );
+		NEW_OPT( fine_torsions, "Fine torsions", false );
+		NEW_OPT( super_fine_torsions, "Super fine torsions", false );
+		NEW_OPT( gzip_out, "Gzip outfile", false );
+		NEW_OPT( close_loop_test, "RNA loop close test", false );
+		NEW_OPT( check_determinant, "Check determinant test", false );
+		NEW_OPT( assign_to_clusters, "Assign list of rigid body settings to clusters defined by another list of rigid body settings", false );
+		NEW_OPT( all_new_pair_states, "In two base pair run, iterate over all states of new pair", false );
+		NEW_OPT( num_new_pair_states, "In two base pair run, iterate over all states of new pair", 0 );
+		NEW_OPT( reverse_rbs, "Take a list of rigid body settings and reverse it", false );
+		NEW_OPT( switch_chainbreak, "switch chainbreak", false );
+		NEW_OPT( delta_chi_correction, "delta_chi_correction", false );
+		NEW_OPT( finely_sample_base_pair, "finely sample base pair", false );
+		NEW_OPT( base_pair_to_base_pair, "connect base pair to next base pair", false );
+		NEW_OPT( just_output_score, "just output score", false );
+		NEW_OPT( force_antiparallel_bases, "force antiparallel bases", false );
+		NEW_OPT( force_parallel_bases, "force parallel bases", false );
+		NEW_OPT( center_around_native, "center around native", false );
+		NEW_OPT( ignore_o2prime_hbonds_in_filter, "Ignore O2' hbonds in cutoff of rigid body sampler", false );
+		NEW_OPT( assign_WC_edges, "Ignore O2' hbonds in cutoff of rigid body sampler", false );
+		NEW_OPT( virtualize_phosphate,   "virtualize phosphate instead of backbone", false );
+		NEW_OPT( superimpose_over_all_res,   "during clustering, calculate rms over all residues", false );
+		NEW_OPT( south1,   "", false );
+		NEW_OPT( south2,   "", false );
+		NEW_OPT( syn_chi1, "", false );
+		NEW_OPT( syn_chi2, "", false );
+		NEW_OPT( chi1, "", 0.0 );
+		NEW_OPT( chi2, "", 0.0 );
+		NEW_OPT( rigid_body_samples, "input file with alpha, beta, gamma, x, y, and z", "" );
+		NEW_OPT( reference_rigid_body_samples, "input file with alpha, beta, gamma, x, y, and z", "rbs_cluster.txt" );
+		NEW_OPT( reference_rigid_body_samples_fixed_pair, "input file with alpha, beta, gamma, x, y, and z", "rbs_cluster.txt" );
+		NEW_OPT( reference_rigid_body_samples_new_pair  , "input file with alpha, beta, gamma, x, y, and z", "rbs_cluster.txt" );
+		NEW_OPT( x_min, "input parameter", 0.0 );
+		NEW_OPT( x_max, "input parameter", 0.0 );
+		NEW_OPT( x_increment, "input parameter", 1.0 );
+		NEW_OPT( y_min, "input parameter", 0.0 );
+		NEW_OPT( y_max, "input parameter", 0.0 );
+		NEW_OPT( y_increment, "input parameter", 1.0 );
+		NEW_OPT( z_min, "input parameter", 0.0 );
+		NEW_OPT( z_max, "input parameter", 0.0 );
+		NEW_OPT( z_increment, "input parameter", 1.0);
+		NEW_OPT( alpha_min, "input parameter", 0.0 );
+		NEW_OPT( alpha_max, "input parameter", 0.0 );
+		NEW_OPT( alpha_increment, "input parameter", 1.0 );
+		NEW_OPT( cosbeta_min, "input parameter", 0.0 );
+		NEW_OPT( cosbeta_max, "input parameter", 0.0 );
+		NEW_OPT( cosbeta_increment, "input parameter", 1.0 );
+		NEW_OPT( gamma_min, "input parameter", 0.0 );
+		NEW_OPT( gamma_max, "input parameter", 0.0 );
+		NEW_OPT( gamma_increment, "input parameter", 1.0 );
+		NEW_OPT( seq, "sequence to model", "cg" );
+		NEW_OPT( rmsd_cutoff, "Cutoff for rigid body clustering", 3.0 );
+		NEW_OPT( rep_cutoff, "Cutoff in steric check on fa_rep", 2.0 );
+		NEW_OPT( input_base1_torsion_M_v_lists, "input list for base1 in two_base_pair", "blah.txt" );
+		NEW_OPT( output_base1_torsion_M_v_lists, "input list for base1 in two_base_pair", "blah.txt" );
+		NEW_OPT( input_base2_torsion_M_v_lists, "input list for base2 in two_base_pair", "blah.txt" );
+		NEW_OPT( output_base2_torsion_M_v_lists, "input list for base2 in two_base_pair", "blah.txt" );
+		NEW_OPT( num_torsion_list1, "for test runs on two base pairs, number of strand1 torsions to sample", 400 );
+		NEW_OPT( score_diff_cut, "score difference cut for clustering", 10.0 );
+		NEW_OPT( minimize_sidechain_res, "in base_pair_to_base_pair, also minimize chi,pucker of these side-chains", blank_size_vector );
+		NEW_OPT( minimize_jump, "in base_pair_to_base_pair, also minimize jump", false );
+		NEW_OPT( reverse_doublet, "take a base doublet silent file and siwtch residues 1 and 2", false );
+		NEW_OPT( output_all, "output all decoys from base pair to base pair", false );
+		NEW_OPT( split_silent_files, "output clustered states in separate silent files", false );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

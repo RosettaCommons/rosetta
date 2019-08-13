@@ -62,30 +62,30 @@ int main( int argc, char** argv ) {
 		util::switch_to_residue_type_set( native, chemical::CENTROID );
 
 		Size N_frag( option[ decoys_frag_len ]().size() );
-		for (Size n=1; n<=N_frag; n++) {
-				//for each frag length
-				Size len_pose(native.size());
-				Size len_frag = option[ decoys_frag_len ]()[n];
-				std::stringstream fn;
-				utility::file::FileName pdbfn(option[ in::file::native ]());
-				fn << pdbfn.base() << "." << len_frag << "mers.frag.rms";
-				utility::io::ozstream outfn( fn.str() );
+		for ( Size n=1; n<=N_frag; n++ ) {
+			//for each frag length
+			Size len_pose(native.size());
+			Size len_frag = option[ decoys_frag_len ]()[n];
+			std::stringstream fn;
+			utility::file::FileName pdbfn(option[ in::file::native ]());
+			fn << pdbfn.base() << "." << len_frag << "mers.frag.rms";
+			utility::io::ozstream outfn( fn.str() );
 
-				for (Size fi=1; fi <= len_pose-len_frag+1; ++fi) {
-					// for each position
-					for (Size pi=1; pi <= models.size(); ++pi) {
-						// for each decoys
-						Real rmsd = scoring::CA_rmsd( native, *(models[pi]), fi, fi+len_frag-1 );
-						outfn << len_frag << "\t" << fi << "\t" << pi << "\t" << rmsd << "\t0\t0" << endl;
-					}
-					outfn << endl;
+			for ( Size fi=1; fi <= len_pose-len_frag+1; ++fi ) {
+				// for each position
+				for ( Size pi=1; pi <= models.size(); ++pi ) {
+					// for each decoys
+					Real rmsd = scoring::CA_rmsd( native, *(models[pi]), fi, fi+len_frag-1 );
+					outfn << len_frag << "\t" << fi << "\t" << pi << "\t" << rmsd << "\t0\t0" << endl;
 				}
-				outfn.close();
+				outfn << endl;
+			}
+			outfn.close();
 		}
 	}
-	catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+catch (utility::excn::Exception const & e ) {
+	e.display();
+	return -1;
+}
 }
 

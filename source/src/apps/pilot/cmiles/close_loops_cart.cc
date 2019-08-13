@@ -32,40 +32,40 @@
 int main(int argc, char* argv[]) {
 	try {
 
-  using core::kinematics::MoveMap;
-  using core::optimization::CartesianMinimizer;
-  using core::optimization::MinimizerOptions;
-  using core::pose::PoseOP;
-  using core::scoring::ScoreFunctionFactory;
-  using core::scoring::ScoreFunctionOP;
-  using protocols::simple_moves::SwitchResidueTypeSetMover;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  devel::init(argc, argv);
+		using core::kinematics::MoveMap;
+		using core::optimization::CartesianMinimizer;
+		using core::optimization::MinimizerOptions;
+		using core::pose::PoseOP;
+		using core::scoring::ScoreFunctionFactory;
+		using core::scoring::ScoreFunctionOP;
+		using protocols::simple_moves::SwitchResidueTypeSetMover;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		devel::init(argc, argv);
 
-  PoseOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
-  SwitchResidueTypeSetMover to_centroid(core::chemical::CENTROID);
-  to_centroid.apply(*pose);
-  pose->dump_pdb("starting_cart.pdb");
+		PoseOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
+		SwitchResidueTypeSetMover to_centroid(core::chemical::CENTROID);
+		to_centroid.apply(*pose);
+		pose->dump_pdb("starting_cart.pdb");
 
-  ScoreFunctionOP score = ScoreFunctionFactory::create_score_function("score4_smooth_cart");
-  core::scoring::constraints::add_constraints_from_cmdline(*pose, *score);
-  (*score)(*pose);
+		ScoreFunctionOP score = ScoreFunctionFactory::create_score_function("score4_smooth_cart");
+		core::scoring::constraints::add_constraints_from_cmdline(*pose, *score);
+		(*score)(*pose);
 
-  MinimizerOptions options_lbfgs("lbfgs_armijo_nonmonotone", 0.01, true, false, false);
-  options_lbfgs.max_iter(1000);
+		MinimizerOptions options_lbfgs("lbfgs_armijo_nonmonotone", 0.01, true, false, false);
+		options_lbfgs.max_iter(1000);
 
-  MoveMap mm;
-  mm.set_bb(true);
-  mm.set_chi(true);
-  mm.set_jump(true);
+		MoveMap mm;
+		mm.set_bb(true);
+		mm.set_chi(true);
+		mm.set_jump(true);
 
-  CartesianMinimizer minimizer;
-  minimizer.run(*pose, mm, *score, options_lbfgs);
-  pose->dump_pdb("ending_cart.pdb");
+		CartesianMinimizer minimizer;
+		minimizer.run(*pose, mm, *score, options_lbfgs);
+		pose->dump_pdb("ending_cart.pdb");
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

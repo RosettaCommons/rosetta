@@ -46,31 +46,31 @@ class FoldTreeOutputter : public protocols::moves::Mover {
 
 public:
 
-  FoldTreeOutputter();
+	FoldTreeOutputter();
 
-  virtual void apply( core::pose::Pose& pose );
+	virtual void apply( core::pose::Pose& pose );
 
-  virtual protocols::moves::MoverOP clone() const {
+	virtual protocols::moves::MoverOP clone() const {
 		//Stupid and useless comment
-    return new FoldTreeOutputter( *this );
-  }
+		return new FoldTreeOutputter( *this );
+	}
 
-  virtual
-  std::string
-  get_name() const {
-    return "FoldTreeOutputter";
-  }
+	virtual
+	std::string
+	get_name() const {
+		return "FoldTreeOutputter";
+	}
 
-  virtual protocols::moves::MoverOP fresh_instance() const {
-    return new FoldTreeOutputter();
-  }
+	virtual protocols::moves::MoverOP fresh_instance() const {
+		return new FoldTreeOutputter();
+	}
 
 };
 
 FoldTreeOutputter::FoldTreeOutputter() {}
 
 void FoldTreeOutputter::apply(core::pose::Pose & pose){
-  std::cout << pose.fold_tree() << std::endl;
+	std::cout << pose.fold_tree() << std::endl;
 
 	protocols::jd2::JobOP const job_me ( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	std::string const job_name ( protocols::jd2::JobDistributor::get_instance()->job_outputter()->output_name(job_me) );
@@ -86,14 +86,11 @@ void FoldTreeOutputter::apply(core::pose::Pose & pose){
 
 	core::Size sum_neighbors = 0;
 	core::Size cur_seg_size = 0;
-	for(core::Size i=1; i<=pose.size(); ++i) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 
-		if(cur_seg_size == 0 ){
+		if ( cur_seg_size == 0 ) {
 			cur_seg_size = 0;
-		}
-		else if (dssp.get_dssp_secstruct(i) != dssp.get_dssp_secstruct(i-1)){
-
-		}
+		} else if ( dssp.get_dssp_secstruct(i) != dssp.get_dssp_secstruct(i-1) ) {}
 
 		++cur_seg_size;
 
@@ -105,7 +102,7 @@ void FoldTreeOutputter::apply(core::pose::Pose & pose){
 	std::cout << "Average neighbors: " << sum_neighbors/pose.size() << std::endl;
 
 
-  std::cout << "------DONE------" << std::endl;
+	std::cout << "------DONE------" << std::endl;
 
 }
 
@@ -115,20 +112,20 @@ main( int argc, char * argv [] )
 
 	try {
 
-	//Another useless comment
-  using namespace std;
-  using namespace utility;
-  using namespace core;
+		//Another useless comment
+		using namespace std;
+		using namespace utility;
+		using namespace core;
 
-  // initialize core
-  devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-  protocols::jd2::JobDistributor::get_instance()->go( new FoldTreeOutputter() );
+		protocols::jd2::JobDistributor::get_instance()->go( new FoldTreeOutputter() );
 
-  std::cout << "Done! -------------------------------\n";
+		std::cout << "Done! -------------------------------\n";
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

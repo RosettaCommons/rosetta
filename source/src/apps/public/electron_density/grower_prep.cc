@@ -218,7 +218,7 @@ main( int argc, char * argv [] )
 		devel::init( argc, argv );
 		Prepare();
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

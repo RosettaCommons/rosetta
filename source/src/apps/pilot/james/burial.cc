@@ -61,67 +61,67 @@ main( int argc, char* argv [] )
 {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using core::Size;
-	using core::Real;
-	using utility::vector1;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::import_pose::pose_stream;
+		using core::Size;
+		using core::Real;
+		using utility::vector1;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
+		using namespace core::import_pose::pose_stream;
 
-	ResidueTypeSetCAP rsd_set =
-		ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	MetaPoseInputStream input = streams_from_cmd_line();
+		ResidueTypeSetCAP rsd_set =
+			ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		MetaPoseInputStream input = streams_from_cmd_line();
 
-	utility::vector1< Real > cutoffs;
-	//Size const lower(  5 );
-	//Size const upper( 12 );
-	//for ( Size ii = lower; ii <= upper; ++ii ) {
-	//	cutoffs.push_back( static_cast< Real > ( ii ) );
-	//}
-	cutoffs.push_back(  6 );
-	cutoffs.push_back( 10 );
-	cutoffs.push_back( 12 );
+		utility::vector1< Real > cutoffs;
+		//Size const lower(  5 );
+		//Size const upper( 12 );
+		//for ( Size ii = lower; ii <= upper; ++ii ) {
+		// cutoffs.push_back( static_cast< Real > ( ii ) );
+		//}
+		cutoffs.push_back(  6 );
+		cutoffs.push_back( 10 );
+		cutoffs.push_back( 12 );
 
-	while( input.has_another_pose() ) {
-		core::pose::Pose pose;
-		input.fill_pose( pose, *rsd_set );
+		while ( input.has_another_pose() ) {
+			core::pose::Pose pose;
+			input.fill_pose( pose, *rsd_set );
 
-		std::ostream & output( std::cout );
+			std::ostream & output( std::cout );
 
-		output 	<< A( 10, "resi_idx" )
-						<< A(  6, "resi"     );
+			output  << A( 10, "resi_idx" )
+				<< A(  6, "resi"     );
 
-		typedef vector1< Real >::const_iterator iter;
-		for ( iter it = cutoffs.begin(), end = cutoffs.end(); it != end; ++it ) {
-			std::string const column_title( "cen" + string_of(*it) );
-			output << A( 10, column_title );
-		}
-		output << std::endl;
-
-		// calculate burial
-		vector1< vector1< int > > burial;
-		for ( Size ii = 1; ii <= cutoffs.size(); ++ii ) {
-			vector1< int > this_burial = calculate_burial( pose, cutoffs[ii] );
-			burial.push_back( this_burial );
-		}
-
-		for ( unsigned int ii = 1; ii <= pose.size(); ++ii ) {
-			core::conformation::Residue resi = pose.residue(ii);
-			output << I( 10, ii ) << A(  6, resi.name1() );
-			for ( Size jj = 1; jj <= cutoffs.size(); ++jj ) {
-				output << I( 10, burial[jj][ii] );
+			typedef vector1< Real >::const_iterator iter;
+			for ( iter it = cutoffs.begin(), end = cutoffs.end(); it != end; ++it ) {
+				std::string const column_title( "cen" + string_of(*it) );
+				output << A( 10, column_title );
 			}
 			output << std::endl;
-		}	// for ( unsigned int i = 1; i <= pose.size(); ++i )
-	} // 	for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
+
+			// calculate burial
+			vector1< vector1< int > > burial;
+			for ( Size ii = 1; ii <= cutoffs.size(); ++ii ) {
+				vector1< int > this_burial = calculate_burial( pose, cutoffs[ii] );
+				burial.push_back( this_burial );
+			}
+
+			for ( unsigned int ii = 1; ii <= pose.size(); ++ii ) {
+				core::conformation::Residue resi = pose.residue(ii);
+				output << I( 10, ii ) << A(  6, resi.name1() );
+				for ( Size jj = 1; jj <= cutoffs.size(); ++jj ) {
+					output << I( 10, burial[jj][ii] );
+				}
+				output << std::endl;
+			} // for ( unsigned int i = 1; i <= pose.size(); ++i )
+		} //  for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
 
 	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

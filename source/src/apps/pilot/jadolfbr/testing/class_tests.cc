@@ -233,8 +233,7 @@ int main(int argc, char* argv[]){
 		devel::init(argc, argv);
 		protocols::jd2::JobDistributor::get_instance()->go(new InterfaceFeaturesTests);
 	} catch (utility::excn::Exception& excn ) {
-		std::cout << "Exception: " << std::endl;
-		excn.show( std::cerr );
+		excn.display();
 		return -1;
 	}
 

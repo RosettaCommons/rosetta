@@ -112,10 +112,10 @@ void invert_exclude_residues( Size nres, utility::vector1<int> const& exclude_li
 
 	residue_selection.clear();
 
-	for( Size ir = 1; ir <= nres; ++ir ) {
+	for ( Size ir = 1; ir <= nres; ++ir ) {
 		bool exclude_residue = false;
-		for( Size ex = 1; ex <= exclude_list.size(); ex ++ ){
-			if( int(exclude_list[ex]) == int(ir) ) {
+		for ( Size ex = 1; ex <= exclude_list.size(); ex ++ ) {
+			if ( int(exclude_list[ex]) == int(ir) ) {
 				exclude_residue = true;
 				break;
 			}
@@ -134,276 +134,276 @@ main( int argc, char* argv [] )
 
 	try {
 
-	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::io::silent;
+		using namespace core::scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::io::silent;
 
-	using namespace core::scoring::methods::pcs;
+		using namespace core::scoring::methods::pcs;
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	// setup residue types
-	core::chemical::ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
-		option[ in::file::residue_type_set ]()
-	);
-
-	// configure score function
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-	core::scoring::EnergyMap emap;
-	emap.zero();
-
-	core::io::silent::SilentFileData sfd;
-
-	std::string infile	= *(option[ in::file::silent ]().begin());
-
-	if ( option[ in::file::silent ].user() ) {
-		sfd.read_file( infile );
-	}
-
-	utility::io::ozstream outfile(infile+".30.helix");
-
-	core::Real const grid_edge = 16;
-	core::Real const grid_step = 1.5;
-	core::Real const grid_small_cutoff = 4;
-	core::Real const grid_large_cutoff = 8;
-	core::Real const grid_cone_angle_cutoff = 91;
-	std::string const grid_atom_name_1 = "CB";
-	std::string const grid_atom_name_2 = "CA";
-	core::SSize const grid_residue_num_1 = 12;
-	core::SSize const grid_residue_num_2 = 12;
-	core::Real const grid_k_vector = 0;
-	bool const minimize_best_tensor = true;
-	core::Real const pcs_weight = 10;
-
-	PCS_Energy_parameters_manager::get_instance()->set_grid_param(grid_edge,
-																																grid_step,
-																																grid_small_cutoff,
-																																grid_large_cutoff,
-																																grid_cone_angle_cutoff,
-																																grid_atom_name_1,
-																																grid_atom_name_2,
-																																grid_residue_num_1,
-																																grid_residue_num_2,
-																																grid_k_vector,
-																																minimize_best_tensor,
-																																pcs_weight
-																																);
-
-	utility::vector1<std::string> vec_filename;
-	vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Dy_CNH.npc.4rescore");
-	vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Er_CNH.npc.4rescore");
-	vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Tb_CNH.npc.4rescore");
-
-	vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Ce_NH.npc.4rescore");
-	vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Dy2_CNH.npc.4rescore");
-	//vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Yb_H.npc.4rescore");
-
-	utility::vector1<core::Real> vec_individual_weight;
-	vec_individual_weight.push_back(1.0);
-	vec_individual_weight.push_back(1.0);
-	vec_individual_weight.push_back(1.0);
-
-	PCS_Energy_parameters_manager::get_instance()->set_vector_name_and_weight(vec_filename,
-																																						vec_individual_weight);
-
-
-// 	utility::vector1< Size > vec_exclude;
-// 	vec_exclude = option[ in::file::native_exclude_res ]();
-// 	PCS_Energy_parameters_manager::get_instance()->set_vector_exclude_residues(vec_exclude);
-
-// 	utility::vector1< bool > vec_exclude_bool;
-
-// 	vec_exclude_bool = PCS_Energy_parameters_manager::get_instance()->get_vector_exclude_residues();
-
-	core::pose::Pose native_pose, pose;
-
-	if ( option[ in::file::native ].user() ) {
-		// read in pdb and constraints if necessary
-		core::import_pose::pose_from_file(
-			native_pose, *rsd_set, option[ in::file::native ]()
+		// setup residue types
+		core::chemical::ResidueTypeSetCAP rsd_set;
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
+			option[ in::file::residue_type_set ]()
 		);
-	}
 
-	core::Size H1_start = 100;
-	core::Size H1_end = 112;
-	core::Size H2_start = 164;
-	core::Size H2_end = 178;
+		// configure score function
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+		core::scoring::EnergyMap emap;
+		emap.zero();
 
-	utility::vector1< Size > vec_exclude;
-	for ( Size i = 1; i <= native_pose.size(); ++i ) {
-		if ( ((( i >= H1_start) && ( i <= H1_end)) || (( i >= H2_start) && ( i <= H2_end))) == false ) {
-			vec_exclude.push_back(i);
-		}
-	}
+		core::io::silent::SilentFileData sfd;
 
-	utility::vector1< bool > vec_exclude_bool;
-	vec_exclude_bool = PCS_Energy_parameters_manager::get_instance()->get_vector_exclude_residues();
+		std::string infile = *(option[ in::file::silent ]().begin());
 
-
-	core::Real N1_h1t(0), N1_h2t(0), N2_h1t(0), N2_h2t(0), N1_mt(0), N2_mt(0);
-	numeric::xyzVector< core::Real > N1_h1(0), N1_h2(0), N2_h1(0), N2_h2(0), N1_m(0), N2_m(0);
-
-	for ( Size i = 1; i <= native_pose.size(); ++i ) {
-
-		if ( ( i >= H1_start) && ( i <= (H1_start+((H1_end-H1_start)/2))) ) {
-			N1_h1t += 1.0;
-			N1_h1 += native_pose.residue(i).xyz("CA");
+		if ( option[ in::file::silent ].user() ) {
+			sfd.read_file( infile );
 		}
 
-		if ( ( i >= (H1_start+((H1_end-H1_start)/2))) && ( i <= H1_end) ) {
-			N1_h2t += 1.0;
-			N1_h2 += native_pose.residue(i).xyz("CA");
+		utility::io::ozstream outfile(infile+".30.helix");
+
+		core::Real const grid_edge = 16;
+		core::Real const grid_step = 1.5;
+		core::Real const grid_small_cutoff = 4;
+		core::Real const grid_large_cutoff = 8;
+		core::Real const grid_cone_angle_cutoff = 91;
+		std::string const grid_atom_name_1 = "CB";
+		std::string const grid_atom_name_2 = "CA";
+		core::SSize const grid_residue_num_1 = 12;
+		core::SSize const grid_residue_num_2 = 12;
+		core::Real const grid_k_vector = 0;
+		bool const minimize_best_tensor = true;
+		core::Real const pcs_weight = 10;
+
+		PCS_Energy_parameters_manager::get_instance()->set_grid_param(grid_edge,
+			grid_step,
+			grid_small_cutoff,
+			grid_large_cutoff,
+			grid_cone_angle_cutoff,
+			grid_atom_name_1,
+			grid_atom_name_2,
+			grid_residue_num_1,
+			grid_residue_num_2,
+			grid_k_vector,
+			minimize_best_tensor,
+			pcs_weight
+		);
+
+		utility::vector1<std::string> vec_filename;
+		vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Dy_CNH.npc.4rescore");
+		vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Er_CNH.npc.4rescore");
+		vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Tb_CNH.npc.4rescore");
+
+		vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Ce_NH.npc.4rescore");
+		vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Dy2_CNH.npc.4rescore");
+		//vec_filename.push_back("/work/rvernon/christophe/targets_v4/epsilon/PCS_eps_Yb_H.npc.4rescore");
+
+		utility::vector1<core::Real> vec_individual_weight;
+		vec_individual_weight.push_back(1.0);
+		vec_individual_weight.push_back(1.0);
+		vec_individual_weight.push_back(1.0);
+
+		PCS_Energy_parameters_manager::get_instance()->set_vector_name_and_weight(vec_filename,
+			vec_individual_weight);
+
+
+		//  utility::vector1< Size > vec_exclude;
+		//  vec_exclude = option[ in::file::native_exclude_res ]();
+		//  PCS_Energy_parameters_manager::get_instance()->set_vector_exclude_residues(vec_exclude);
+
+		//  utility::vector1< bool > vec_exclude_bool;
+
+		//  vec_exclude_bool = PCS_Energy_parameters_manager::get_instance()->get_vector_exclude_residues();
+
+		core::pose::Pose native_pose, pose;
+
+		if ( option[ in::file::native ].user() ) {
+			// read in pdb and constraints if necessary
+			core::import_pose::pose_from_file(
+				native_pose, *rsd_set, option[ in::file::native ]()
+			);
 		}
 
-		if ( ( i >= H1_start) && ( i <= H1_end) ) {
-			N1_mt += 1.0;
-			N1_m += native_pose.residue(i).xyz("CA");
+		core::Size H1_start = 100;
+		core::Size H1_end = 112;
+		core::Size H2_start = 164;
+		core::Size H2_end = 178;
+
+		utility::vector1< Size > vec_exclude;
+		for ( Size i = 1; i <= native_pose.size(); ++i ) {
+			if ( ((( i >= H1_start) && ( i <= H1_end)) || (( i >= H2_start) && ( i <= H2_end))) == false ) {
+				vec_exclude.push_back(i);
+			}
 		}
 
-		if ( ( i >= H2_start) && ( i <= (H2_start+((H2_end-H2_start)/2))) ) {
-			N2_h1t += 1.0;
-			N2_h1 += native_pose.residue(i).xyz("CA");
-		}
-
-		if ( ( i >= (H2_start+((H2_end-H2_start)/2))) && ( i <= H2_end) ) {
-			N2_h2t += 1.0;
-			N2_h2 += native_pose.residue(i).xyz("CA");
-		}
-
-		if ( ( i >= H2_start) && ( i <= H2_end) ) {
-			N2_mt += 1.0;
-			N2_m += native_pose.residue(i).xyz("CA");
-		}
-	}
-
-	N1_h1[0] /= N1_h1t;
-	N1_h1[1] /= N1_h1t;
-	N1_h1[2] /= N1_h1t;
-
-	N1_h2[0] /= N1_h2t;
-	N1_h2[1] /= N1_h2t;
-	N1_h2[2] /= N1_h2t;
-
-	N1_m[0] /= N1_mt;
-	N1_m[1] /= N1_mt;
-	N1_m[2] /= N1_mt;
-
-	N2_h1[0] /= N2_h1t;
-	N2_h1[1] /= N2_h1t;
-	N2_h1[2] /= N2_h1t;
-
-	N2_h2[0] /= N2_h2t;
-	N2_h2[1] /= N2_h2t;
-	N2_h2[2] /= N2_h2t;
-
-	N2_m[0] /= N2_mt;
-	N2_m[1] /= N2_mt;
-	N2_m[2] /= N2_mt;
+		utility::vector1< bool > vec_exclude_bool;
+		vec_exclude_bool = PCS_Energy_parameters_manager::get_instance()->get_vector_exclude_residues();
 
 
-	Size const window_size(30);
+		core::Real N1_h1t(0), N1_h2t(0), N2_h1t(0), N2_h2t(0), N1_mt(0), N2_mt(0);
+		numeric::xyzVector< core::Real > N1_h1(0), N1_h2(0), N2_h1(0), N2_h2(0), N1_m(0), N2_m(0);
 
-	Size count = 0;
-	for ( SilentFileData::iterator iter = sfd.begin(), end = sfd.end();
-				iter != end; ++iter
-	) {
-		count++;
-
-		iter->fill_pose( pose, *rsd_set );
-
-		core::Real H1_h1t(0), H1_h2t(0), H2_h1t(0), H2_h2t(0), H1_mt(0), H2_mt(0);
-		numeric::xyzVector< core::Real > H1_h1(0), H1_h2(0), H2_h1(0), H2_h2(0), H1_m(0), H2_m(0);
-
-		for ( Size i = 1; i <= pose.size(); ++i ) {
+		for ( Size i = 1; i <= native_pose.size(); ++i ) {
 
 			if ( ( i >= H1_start) && ( i <= (H1_start+((H1_end-H1_start)/2))) ) {
-				H1_h1t += 1.0;
-				H1_h1 += pose.residue(i).xyz("CA");
+				N1_h1t += 1.0;
+				N1_h1 += native_pose.residue(i).xyz("CA");
 			}
 
 			if ( ( i >= (H1_start+((H1_end-H1_start)/2))) && ( i <= H1_end) ) {
-				H1_h2t += 1.0;
-				H1_h2 += pose.residue(i).xyz("CA");
+				N1_h2t += 1.0;
+				N1_h2 += native_pose.residue(i).xyz("CA");
 			}
 
 			if ( ( i >= H1_start) && ( i <= H1_end) ) {
-				H1_mt += 1.0;
-				H1_m += pose.residue(i).xyz("CA");
+				N1_mt += 1.0;
+				N1_m += native_pose.residue(i).xyz("CA");
 			}
 
 			if ( ( i >= H2_start) && ( i <= (H2_start+((H2_end-H2_start)/2))) ) {
-				H2_h1t += 1.0;
-				H2_h1 += pose.residue(i).xyz("CA");
+				N2_h1t += 1.0;
+				N2_h1 += native_pose.residue(i).xyz("CA");
 			}
 
 			if ( ( i >= (H2_start+((H2_end-H2_start)/2))) && ( i <= H2_end) ) {
-				H2_h2t += 1.0;
-				H2_h2 += pose.residue(i).xyz("CA");
+				N2_h2t += 1.0;
+				N2_h2 += native_pose.residue(i).xyz("CA");
 			}
 
 			if ( ( i >= H2_start) && ( i <= H2_end) ) {
-				H2_mt += 1.0;
-				H2_m += pose.residue(i).xyz("CA");
+				N2_mt += 1.0;
+				N2_m += native_pose.residue(i).xyz("CA");
 			}
 		}
 
-		H1_h1[0] /= H1_h1t;
-		H1_h1[1] /= H1_h1t;
-		H1_h1[2] /= H1_h1t;
+		N1_h1[0] /= N1_h1t;
+		N1_h1[1] /= N1_h1t;
+		N1_h1[2] /= N1_h1t;
 
-		H1_h2[0] /= H1_h2t;
-		H1_h2[1] /= H1_h2t;
-		H1_h2[2] /= H1_h2t;
+		N1_h2[0] /= N1_h2t;
+		N1_h2[1] /= N1_h2t;
+		N1_h2[2] /= N1_h2t;
 
-		H1_m[0] /= H1_mt;
-		H1_m[1] /= H1_mt;
-		H1_m[2] /= H1_mt;
+		N1_m[0] /= N1_mt;
+		N1_m[1] /= N1_mt;
+		N1_m[2] /= N1_mt;
 
-		H2_h1[0] /= H2_h1t;
-		H2_h1[1] /= H2_h1t;
-		H2_h1[2] /= H2_h1t;
+		N2_h1[0] /= N2_h1t;
+		N2_h1[1] /= N2_h1t;
+		N2_h1[2] /= N2_h1t;
 
-		H2_h2[0] /= H2_h2t;
-		H2_h2[1] /= H2_h2t;
-		H2_h2[2] /= H2_h2t;
+		N2_h2[0] /= N2_h2t;
+		N2_h2[1] /= N2_h2t;
+		N2_h2[2] /= N2_h2t;
 
-		H2_m[0] /= H2_mt;
-		H2_m[1] /= H2_mt;
-		H2_m[2] /= H2_mt;
+		N2_m[0] /= N2_mt;
+		N2_m[1] /= N2_mt;
+		N2_m[2] /= N2_mt;
 
-		PCS_Energy pcs_energy;
 
-		core::Real pcs = pcs_energy.calculate_pcs_score(pose, false);
+		Size const window_size(30);
 
-		float dot_t = dot_product( (H1_h1-H1_h2).normalize(), ((H2_h1-H2_h2).normalize() ));
-		float dot_n = dot_product( (N1_h1-N1_h2).normalize(), ((N2_h1-N2_h2).normalize() ));
+		Size count = 0;
+		for ( SilentFileData::iterator iter = sfd.begin(), end = sfd.end();
+				iter != end; ++iter
+				) {
+			count++;
 
-		//float dot_t = dot_product( (H1_h1-H1_h2), ((H2_h1-H2_h2) ));
-		//float dot_n = dot_product( (N1_h1-N1_h2), ((N2_h1-N2_h2) ));
+			iter->fill_pose( pose, *rsd_set );
 
-		//numeric::xyzVector< core::Real > temp(H2_h1-H2_h2);
+			core::Real H1_h1t(0), H1_h2t(0), H2_h1t(0), H2_h2t(0), H1_mt(0), H2_mt(0);
+			numeric::xyzVector< core::Real > H1_h1(0), H1_h2(0), H2_h1(0), H2_h2(0), H1_m(0), H2_m(0);
 
-		outfile << "WINDOW T_" << count << " " << pcs << " " << H1_m.distance(H2_m) << " " << dot_t << " " << N1_m.distance(N1_m) << " " << dot_n << " ";
+			for ( Size i = 1; i <= pose.size(); ++i ) {
 
-		if ( option[ in::file::native ].user() ) {
-			protocols::simple_filters::ResidueSelection residues;
-			invert_exclude_residues( native_pose.size(), vec_exclude, residues );
-			core::Real rmsd = core::scoring::CA_rmsd( pose, native_pose, residues );
-			core::Real gdtmm = core::scoring::CA_gdtmm( pose, native_pose, residues );
+				if ( ( i >= H1_start) && ( i <= (H1_start+((H1_end-H1_start)/2))) ) {
+					H1_h1t += 1.0;
+					H1_h1 += pose.residue(i).xyz("CA");
+				}
 
-			outfile << rmsd << " " << gdtmm;
+				if ( ( i >= (H1_start+((H1_end-H1_start)/2))) && ( i <= H1_end) ) {
+					H1_h2t += 1.0;
+					H1_h2 += pose.residue(i).xyz("CA");
+				}
+
+				if ( ( i >= H1_start) && ( i <= H1_end) ) {
+					H1_mt += 1.0;
+					H1_m += pose.residue(i).xyz("CA");
+				}
+
+				if ( ( i >= H2_start) && ( i <= (H2_start+((H2_end-H2_start)/2))) ) {
+					H2_h1t += 1.0;
+					H2_h1 += pose.residue(i).xyz("CA");
+				}
+
+				if ( ( i >= (H2_start+((H2_end-H2_start)/2))) && ( i <= H2_end) ) {
+					H2_h2t += 1.0;
+					H2_h2 += pose.residue(i).xyz("CA");
+				}
+
+				if ( ( i >= H2_start) && ( i <= H2_end) ) {
+					H2_mt += 1.0;
+					H2_m += pose.residue(i).xyz("CA");
+				}
+			}
+
+			H1_h1[0] /= H1_h1t;
+			H1_h1[1] /= H1_h1t;
+			H1_h1[2] /= H1_h1t;
+
+			H1_h2[0] /= H1_h2t;
+			H1_h2[1] /= H1_h2t;
+			H1_h2[2] /= H1_h2t;
+
+			H1_m[0] /= H1_mt;
+			H1_m[1] /= H1_mt;
+			H1_m[2] /= H1_mt;
+
+			H2_h1[0] /= H2_h1t;
+			H2_h1[1] /= H2_h1t;
+			H2_h1[2] /= H2_h1t;
+
+			H2_h2[0] /= H2_h2t;
+			H2_h2[1] /= H2_h2t;
+			H2_h2[2] /= H2_h2t;
+
+			H2_m[0] /= H2_mt;
+			H2_m[1] /= H2_mt;
+			H2_m[2] /= H2_mt;
+
+			PCS_Energy pcs_energy;
+
+			core::Real pcs = pcs_energy.calculate_pcs_score(pose, false);
+
+			float dot_t = dot_product( (H1_h1-H1_h2).normalize(), ((H2_h1-H2_h2).normalize() ));
+			float dot_n = dot_product( (N1_h1-N1_h2).normalize(), ((N2_h1-N2_h2).normalize() ));
+
+			//float dot_t = dot_product( (H1_h1-H1_h2), ((H2_h1-H2_h2) ));
+			//float dot_n = dot_product( (N1_h1-N1_h2), ((N2_h1-N2_h2) ));
+
+			//numeric::xyzVector< core::Real > temp(H2_h1-H2_h2);
+
+			outfile << "WINDOW T_" << count << " " << pcs << " " << H1_m.distance(H2_m) << " " << dot_t << " " << N1_m.distance(N1_m) << " " << dot_n << " ";
+
+			if ( option[ in::file::native ].user() ) {
+				protocols::simple_filters::ResidueSelection residues;
+				invert_exclude_residues( native_pose.size(), vec_exclude, residues );
+				core::Real rmsd = core::scoring::CA_rmsd( pose, native_pose, residues );
+				core::Real gdtmm = core::scoring::CA_gdtmm( pose, native_pose, residues );
+
+				outfile << rmsd << " " << gdtmm;
+			}
+
+			outfile << std::endl;
+
 		}
-
-		outfile << std::endl;
-
-	}
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

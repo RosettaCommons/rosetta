@@ -130,14 +130,14 @@ public:
 			char ss;
 			std::string id, aa, dummy;
 			Real x, y, z, phi, psi, omega;
-			//			utility::vector1< Real > profile_row( 0.0, order.size() );
+			//   utility::vector1< Real > profile_row( 0.0, order.size() );
 			utility::vector1< Real > profile_row;
 			profile_row.resize( order.size() );
-			ls 	>> id >> aa >> ss >> resi
-					>> dummy >> dummy
-					>> x >> y >> z
-					>> phi >> psi >> omega
-					>> dummy >> dummy >> dummy >> dummy;
+			ls  >> id >> aa >> ss >> resi
+				>> dummy >> dummy
+				>> x >> y >> z
+				>> phi >> psi >> omega
+				>> dummy >> dummy >> dummy >> dummy;
 			aa_seq += aa;
 
 			Size index(1);
@@ -200,11 +200,11 @@ public:
 			std::string id, aa, dummy;
 			Real x, y, z, phi, psi, omega;
 			utility::vector1< Real > profile_row;
-			ls 	>> id >> aa >> ss >> resi
-					>> dummy >> dummy
-					>> x >> y >> z
-					>> phi >> psi >> omega
-					>> dummy >> dummy >> dummy >> dummy;
+			ls  >> id >> aa >> ss >> resi
+				>> dummy >> dummy
+				>> x >> y >> z
+				>> phi >> psi >> omega
+				>> dummy >> dummy >> dummy >> dummy;
 
 			Real aa_prob;
 			ls >> aa_prob;
@@ -231,7 +231,7 @@ public:
 private:
 	void read_lines( FileName const & fn ) {
 		lines_.clear();
-    utility::io::izstream input( fn );
+		utility::io::izstream input( fn );
 		if ( !input ) {
 			utility_exit_with_message( "ERROR: Unable to open file (" + fn.name() + ")" );
 		}
@@ -276,15 +276,15 @@ private:
 
 
 struct compare_VallIndex_lt {
-  bool operator()( VallIndex const & a, VallIndex const & b ) {
+	bool operator()( VallIndex const & a, VallIndex const & b ) {
 		return( a.value() < b.value() );
-  }
+	}
 };
 
 struct compare_VallIndex_gt {
-  bool operator()( VallIndex const & a, VallIndex const & b ) {
+	bool operator()( VallIndex const & a, VallIndex const & b ) {
 		return( a.value() > b.value() );
-  }
+	}
 };
 
 // Silly little class to hold a sorted list of values. Handles the logic of
@@ -367,125 +367,126 @@ main( int argc, char* argv [] )
 {
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	std::string name( option[ in::file::vall ]() );
-	FileName fn( name );
-	VallReader vall( name );
+		std::string name( option[ in::file::vall ]() );
+		FileName fn( name );
+		VallReader vall( name );
 
-	// query profile
-	core::sequence::SequenceProfileOP q_prof( new core::sequence::SequenceProfile );
-	q_prof->read_from_checkpoint( option[ in::file::fasta ]()[1] );
+		// query profile
+		core::sequence::SequenceProfileOP q_prof( new core::sequence::SequenceProfile );
+		q_prof->read_from_checkpoint( option[ in::file::fasta ]()[1] );
 
-	// scoring scheme for picking fragments
-	std::string const scoring_scheme_type( option[ frags::scoring::profile_score ]() );
-	core::sequence::ScoringSchemeFactory ssf;
-	core::sequence::ScoringSchemeOP ss( ssf.get_scoring_scheme( scoring_scheme_type ) );
+		// scoring scheme for picking fragments
+		std::string const scoring_scheme_type( option[ frags::scoring::profile_score ]() );
+		core::sequence::ScoringSchemeFactory ssf;
+		core::sequence::ScoringSchemeOP ss( ssf.get_scoring_scheme( scoring_scheme_type ) );
 
-	std::cout << "picking fragments for query sequence: "
-						<< q_prof->sequence() << std::endl;
-	Size const frags_per_position( option[ frags::n_frags ]() );
+		std::cout << "picking fragments for query sequence: "
+			<< q_prof->sequence() << std::endl;
+		Size const frags_per_position( option[ frags::n_frags ]() );
 
-	utility::vector1< Size > frag_sizes;
-	frag_sizes.push_back( 1 );
-	frag_sizes.push_back( 3 );
-	frag_sizes.push_back( 9 );
+		utility::vector1< Size > frag_sizes;
+		frag_sizes.push_back( 1 );
+		frag_sizes.push_back( 3 );
+		frag_sizes.push_back( 9 );
 
-	utility::vector1< core::Real > dummy2( vall.size(), -99.0 );
-	utility::vector1< utility::vector1< core::Real > > single_per_pos_scores( q_prof->length(), dummy2 );
+		utility::vector1< core::Real > dummy2( vall.size(), -99.0 );
+		utility::vector1< utility::vector1< core::Real > > single_per_pos_scores( q_prof->length(), dummy2 );
 
-	typedef utility::vector1< Size > sizelist;
-	for ( sizelist::const_iterator it = frag_sizes.begin(), end = frag_sizes.end();
+		typedef utility::vector1< Size > sizelist;
+		for ( sizelist::const_iterator it = frag_sizes.begin(), end = frag_sizes.end();
 				it != end; ++it
-	) {
+				) {
 
-		Size const frag_size( *it );
-		HeapContainer< VallIndex, compare_VallIndex_lt > dummy( frags_per_position );
-		utility::vector1< HeapContainer< VallIndex, compare_VallIndex_lt > >
-			per_position_scores( q_prof->length() - frag_size + 1, dummy );
+			Size const frag_size( *it );
+			HeapContainer< VallIndex, compare_VallIndex_lt > dummy( frags_per_position );
+			utility::vector1< HeapContainer< VallIndex, compare_VallIndex_lt > >
+				per_position_scores( q_prof->length() - frag_size + 1, dummy );
 
-		std::cerr << "picking fragments of length " << frag_size
-							<< " in vall of size " << vall.size() << "." << std::endl;
+			std::cerr << "picking fragments of length " << frag_size
+				<< " in vall of size " << vall.size() << "." << std::endl;
 
 
-		bool vall_err( false );
-		PROF_START( basic::SEQUENCE_COMPARISON );
+			bool vall_err( false );
+			PROF_START( basic::SEQUENCE_COMPARISON );
 
-		for ( Size i = 1, vall_size = vall.size(); i <= vall_size - frag_size + 1; ++i ) {
-			// get profile from vall
-			vall_err = false;
-			core::sequence::SequenceOP vall_profile = vall.make_nmer_profile( i, frag_size, vall_err );
+			for ( Size i = 1, vall_size = vall.size(); i <= vall_size - frag_size + 1; ++i ) {
+				// get profile from vall
+				vall_err = false;
+				core::sequence::SequenceOP vall_profile = vall.make_nmer_profile( i, frag_size, vall_err );
 
-			// skip profiles that cross chain break or protein boundaries
-			if ( !vall_err ) {
-				// score query and vall profiles across all positions
-				for ( Size insert_pos = 1; insert_pos <= q_prof->length() - frag_size + 1; ++insert_pos ) {
-					Real score( 0.0 );
-					for ( Size j = 1; j <= frag_size; ++j ) {
-						Real this_score( 0.0 );
-						// check to see if we know about this score
-						if ( single_per_pos_scores[ insert_pos ][ i ] != -99.0 ) {
-							this_score = single_per_pos_scores[ insert_pos ][ i ];
-						} else {
-							this_score = ss->score( q_prof, vall_profile, insert_pos + j - 1, j );
-							if ( ! option[ james::debug ]() )
-								single_per_pos_scores[ insert_pos ][ i ] = this_score;
+				// skip profiles that cross chain break or protein boundaries
+				if ( !vall_err ) {
+					// score query and vall profiles across all positions
+					for ( Size insert_pos = 1; insert_pos <= q_prof->length() - frag_size + 1; ++insert_pos ) {
+						Real score( 0.0 );
+						for ( Size j = 1; j <= frag_size; ++j ) {
+							Real this_score( 0.0 );
+							// check to see if we know about this score
+							if ( single_per_pos_scores[ insert_pos ][ i ] != -99.0 ) {
+								this_score = single_per_pos_scores[ insert_pos ][ i ];
+							} else {
+								this_score = ss->score( q_prof, vall_profile, insert_pos + j - 1, j );
+								if ( ! option[ james::debug ]() ) {
+									single_per_pos_scores[ insert_pos ][ i ] = this_score;
+								}
+							}
+
+							score += this_score;
 						}
 
-						score += this_score;
-					}
+						VallIndex idx( i, score );
+						per_position_scores[ insert_pos ].add_value( idx );
+					} // insert_pos
+				}
 
-					VallIndex idx( i, score );
-					per_position_scores[ insert_pos ].add_value( idx );
-				} // insert_pos
-			}
+				if ( i % 10000 == 0 ) {
+					core::Real const percent_done( static_cast< Real > ( i / vall.size() ) );
+					std::cerr << "done with " << i << " / " << vall.size() << " (" << percent_done << "%)"
+						<< " scoring operations." << std::endl;
+					//prof_show();
+				}
+			} // vall_size
+			PROF_STOP( basic::SEQUENCE_COMPARISON );
 
-			if ( i % 10000 == 0 ) {
-				core::Real const percent_done( static_cast< Real > ( i / vall.size() ) );
-				std::cerr << "done with " << i << " / " << vall.size() << " (" << percent_done << "%)"
-									<< " scoring operations." << std::endl;
-				//prof_show();
-			}
-		} // vall_size
-		PROF_STOP( basic::SEQUENCE_COMPARISON );
+			// output
+			std::string output_fn =
+				option[ out::file::frag_prefix ]() + "." + string_of(frag_size) + "mers";
 
-		// output
-		std::string output_fn =
-			option[ out::file::frag_prefix ]() + "." + string_of(frag_size) + "mers";
-
-		utility::io::ozstream output( output_fn );
-		for ( core::Size insert_pos = 1;
+			utility::io::ozstream output( output_fn );
+			for ( core::Size insert_pos = 1;
 					insert_pos <= q_prof->length() - frag_size + 1;
 					++insert_pos
-		) {
-			output 	<<  "position: " 		<< I( 12, insert_pos )
-							<< " neighbors:   " << I( 10, frags_per_position )
-							<< std::endl << std::endl;
-			for ( Size i = 1; i <= frags_per_position; ++i ) {
-				core::Size vall_idx = per_position_scores[insert_pos][i].index();
-				core::Real score    = per_position_scores[insert_pos][i].value();
-				utility::vector1< std::string > lines
-					= vall.make_fragment_lines( vall_idx, frag_size );
+					) {
+				output  <<  "position: "   << I( 12, insert_pos )
+					<< " neighbors:   " << I( 10, frags_per_position )
+					<< std::endl << std::endl;
+				for ( Size i = 1; i <= frags_per_position; ++i ) {
+					core::Size vall_idx = per_position_scores[insert_pos][i].index();
+					core::Real score    = per_position_scores[insert_pos][i].value();
+					utility::vector1< std::string > lines
+						= vall.make_fragment_lines( vall_idx, frag_size );
 
-				for ( utility::vector1< std::string >::const_iterator it = lines.begin(), end = lines.end();
+					for ( utility::vector1< std::string >::const_iterator it = lines.begin(), end = lines.end();
 							it != end; ++it
-				) {
-					output << *it << " " << F( 8, 3, score ) << std::endl;
-				} // lines
-				output << std::endl;
-			} // frags_per_position
-		}
-		output.close();
-	} // frag_sizes
+							) {
+						output << *it << " " << F( 8, 3, score ) << std::endl;
+					} // lines
+					output << std::endl;
+				} // frags_per_position
+			}
+			output.close();
+		} // frag_sizes
 
-	std::cout << "end of program." << std::endl;
+		std::cout << "end of program." << std::endl;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

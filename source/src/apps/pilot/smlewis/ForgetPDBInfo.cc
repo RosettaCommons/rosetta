@@ -48,17 +48,17 @@ main( int argc, char* argv[] )
 
 	try {
 
-	using basic::options::option;
-	devel::init(argc, argv);
+		using basic::options::option;
+		devel::init(argc, argv);
 
-	protocols::jd2::JobDistributor::get_instance()->go(new ForgetMover);
+		protocols::jd2::JobDistributor::get_instance()->go(new ForgetMover);
 
-	basic::T("done") << "************************d**o**n**e**************************************" << std::endl;
+		basic::T("done") << "************************d**o**n**e**************************************" << std::endl;
 
-	return 0;
+		return 0;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

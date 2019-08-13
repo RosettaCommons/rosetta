@@ -117,9 +117,10 @@ int main( int argc, char *argv [] )
 		devel::init(argc, argv);
 		protocols::viewer::viewer_main( my_main );
 	}
-	catch (utility::excn::Exception const &e) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-	}
+catch (utility::excn::Exception const &e) {
+	e.display();
+	return -1;
+}
 
 	return 0;
 }
@@ -151,7 +152,7 @@ public:
 	void apply( Pose &pose )
 	{
 		//setup locker
-		if (locker_.size()==0) {
+		if ( locker_.size()==0 ) {
 			setup_locker(pose);
 			assert(locker_.size()==2);
 			TR << "CYD: " << locker_[1] << "<-->" << locker_[2] << std::endl;
@@ -159,10 +160,10 @@ public:
 
 		//select pivot residues
 		// Real rA, rB, rC, rD;
-		// 	rA = 2;
-		// 	rB = 5;
-		// 	rC = 8;
-		// 	rD = 11;
+		//  rA = 2;
+		//  rB = 5;
+		//  rC = 8;
+		//  rD = 11;
 		// std::cout << rA << "," << rB << "," << rC << "," << rD << std::endl;
 
 		//bbg move
@@ -201,14 +202,14 @@ public:
 		Vector end_xyz = lock.atom("SG").xyz();
 
 		Size ndof = 0;
-		for (Size i=first; i<=last; i++) {
+		for ( Size i=first; i<=last; i++ ) {
 			conformation::Residue const & rsd( pose.residue( i ) );
-			if (i>first) {
+			if ( i>first ) {
 				//N-CA
 				ndof++;
 				matrix_dRdPhi[1][ndof] = get_dRdPhi(rsd.atom("N").xyz(), rsd.atom("CA").xyz(), end_xyz);
 			}
-			if (i<last) {
+			if ( i<last ) {
 				//CA-C
 				ndof++;
 				matrix_dRdPhi[1][ndof] = get_dRdPhi(rsd.atom("CA").xyz(), rsd.atom("C").xyz(), end_xyz);
@@ -219,22 +220,22 @@ public:
 
 	void get_G()
 	{
-		for (Size i=1; i<=n_dof_angle_; i++) {
-			for (Size j=i; j<=n_dof_angle_; j++) {
+		for ( Size i=1; i<=n_dof_angle_; i++ ) {
+			for ( Size j=i; j<=n_dof_angle_; j++ ) {
 				matrix_G[i][j] = matrix_dRdPhi[1][i].dot(matrix_dRdPhi[1][j]);
-				if (i<j) matrix_G[j][i] = matrix_G[i][j];
+				if ( i<j ) matrix_G[j][i] = matrix_G[i][j];
 			}
 		}
 	}
 
 	void get_A()
 	{
-		for (Size i=1; i<=n_dof_angle_; i++) {
-			for (Size j=i; j<=n_dof_angle_; j++) {
+		for ( Size i=1; i<=n_dof_angle_; i++ ) {
+			for ( Size j=i; j<=n_dof_angle_; j++ ) {
 				matrix_A[i][j] = factorB_ * matrix_G[i][j];
-				if (i==j) matrix_A[i][j] += 1.0;
+				if ( i==j ) matrix_A[i][j] += 1.0;
 				matrix_A[i][j] *= factorA_ / 2.0;
-				if (i<j) matrix_A[j][i] = matrix_A[i][j];
+				if ( i<j ) matrix_A[j][i] = matrix_A[i][j];
 			}
 		}
 	}
@@ -243,27 +244,27 @@ public:
 	{
 		//gerate a Gaussian dx vector
 		utility::vector1<Real> delta(n_dof_angle_);
-		for (Size i=1; i<=n_dof_angle_; i++) delta[i]=RG.gaussian();
+		for ( Size i=1; i<=n_dof_angle_; i++ ) delta[i]=RG.gaussian();
 		//calculate d^2 = delta^2
 		Real d2=0.0;
-		for (Size i=1; i<=n_dof_angle_; i++) d2+=delta[i]*delta[i];
+		for ( Size i=1; i<=n_dof_angle_; i++ ) d2+=delta[i]*delta[i];
 		//cholesky, get L^t, L^-1
 		Real detL = cholesky_fw(matrix_A, n_dof_angle_, delta, dphi);
-		
+
 		//W_old *= exp(-d^2)
 		Real W_old = detL*exp(-d2/2.0);
 		//set the new phi,psi (above all called phi, actually 4 phi, 4 psi)
 		Size first = locker_[1];
 		Size last = locker_[2];
 		Size ndof = 0;
-		for (Size i=first; i<=last; i++) {
+		for ( Size i=first; i<=last; i++ ) {
 			conformation::Residue const & rsd( pose.residue( i ) );
-			if (i>first) {
+			if ( i>first ) {
 				//N-CA
 				ndof++;
 				pose.set_phi(i, basic::periodic_range( pose.phi(i)+dphi[ndof], 360.0 ) );
 			}
-			if (i<last) {
+			if ( i<last ) {
 				//CA-C
 				ndof++;
 				pose.set_psi(i, basic::periodic_range( pose.psi(i)+dphi[ndof], 360.0 ) );
@@ -281,7 +282,7 @@ public:
 		//delta = L^t * dphi
 		//calculate d^2 = delta^2
 		Real d2=0.0;
-		for (Size i=1; i<=n_dof_angle_; i++) d2 += delta[i]*delta[i];
+		for ( Size i=1; i<=n_dof_angle_; i++ ) d2 += delta[i]*delta[i];
 		Real W_new = detL * exp(-d2/2.0);
 		return W_new;
 	}
@@ -296,23 +297,23 @@ public:
 	void setup_locker( Pose &pose )
 	{
 		bool fix_fail = false;
-		while (true) {
+		while ( true ) {
 			locker_.erase(locker_.begin(),locker_.end());
 
 			//go through all residues, lock the first and the last CYD
-			for (Size i=1; i<=pose.size(); i++) {
+			for ( Size i=1; i<=pose.size(); i++ ) {
 				//TR << pose.residue(i).name().substr(0,3) << std::endl;
-				if (pose.residue(i).name3() == "CYS" && pose.residue(i).is_disulfide_bonded() ) {
+				if ( pose.residue(i).name3() == "CYS" && pose.residue(i).is_disulfide_bonded() ) {
 					locker_.push_back(i);
 					TR << "Add CYD: " << i << std::endl;
 				}
 			}
 
-			if (locker_.size()==2) {
+			if ( locker_.size()==2 ) {
 				break;
 			}
-			
-			if (fix_fail) utility_exit_with_message("Can not identify CYD-CYD correctly!");
+
+			if ( fix_fail ) utility_exit_with_message("Can not identify CYD-CYD correctly!");
 			fix_disulf(pose);
 			fix_fail = true; //just try once
 		}
@@ -320,10 +321,9 @@ public:
 
 	void fix_disulf( Pose &pose )
 	{
-		if (option[ in::fix_disulf ].user()) {
+		if ( option[ in::fix_disulf ].user() ) {
 			core::pose::initialize_disulfide_bonds(pose);
-		}
-		else {
+		} else {
 			utility_exit_with_message("Can not identify CYD-CYD correctly!");
 		}
 	}
@@ -362,7 +362,7 @@ public:
 		core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
 
 		//task
-		
+
 		TaskFactoryOP main_task_factory = new TaskFactory;
 		main_task_factory->push_back( new operation::InitializeFromCommandline );
 		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
@@ -391,7 +391,7 @@ public:
 		Real deltaB = 0;
 		Size sa_step = option[mc_temp_step]();
 		Size sa_intv = nsteps / (sa_step+1);
-		if (option[mc_temp_annealing].user() && sa_step>0) {
+		if ( option[mc_temp_annealing].user() && sa_step>0 ) {
 			temp_end = option[mc_temp_annealing]();
 			deltaB = (1.0/temp_end - 1.0/temp_start) / sa_step;
 		}
@@ -403,13 +403,13 @@ public:
 		bool traj_flag = option[save_trajectory]();
 		Size traj_intv = option[traj_interval]();
 		protocols::canonical_sampling::PDBTrajectoryRecorder trajectory;
-		if (traj_flag) {
+		if ( traj_flag ) {
 			trajectory.file_name(output_tag + "_traj.pdb");
 			trajectory.stride(traj_intv);
 			trajectory.reset(*mc);
 		}
-		
-		for (Size i=1; i<=nsteps; i++) {
+
+		for ( Size i=1; i<=nsteps; i++ ) {
 
 			randmover->apply(pose);
 			Real proposal_density_ratio=randmover->last_proposal_density_ratio();
@@ -417,12 +417,12 @@ public:
 			//TR << "Pratio: " << randmover->type() << " " << proposal_density_ratio << std::endl;
 
 			mc->boltzmann(pose, randmover->type(), proposal_density_ratio);
-			if (traj_flag) trajectory.update_after_boltzmann(*mc);
+			if ( traj_flag ) trajectory.update_after_boltzmann(*mc);
 			if ( sa_step>0 && i%sa_intv==0 ) {
 				mc->show_counters();
 				mc->reset_counters();
 
-				if (i<nsteps) {
+				if ( i<nsteps ) {
 					beta += deltaB;
 					TR << "Set temperature to " << 1.0/beta << std::endl;
 					mc->set_temperature(1.0/beta);
@@ -431,7 +431,7 @@ public:
 		}
 
 		//report if haven't
-		if (sa_step==0) {
+		if ( sa_step==0 ) {
 			mc->show_counters();
 		}
 
@@ -444,7 +444,7 @@ public:
 };
 
 void *my_main( void * )
-{	
+{
 	protocols::jd2::JobDistributor::get_instance()->go( new MyProtocol() );
 	return 0;
 }

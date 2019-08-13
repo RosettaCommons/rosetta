@@ -97,7 +97,7 @@
 class InteractionDistMinimizer : public protocols::moves::Mover {
 public:
 	InteractionDistMinimizer( core::Real const dist, core::Real const sdev )
-		: dist_( dist ), sdev_( sdev )
+	: dist_( dist ), sdev_( sdev )
 	{}
 
 	// 1. For each pair of residues, define a constraint that
@@ -123,42 +123,42 @@ public:
 		std::string const min_type("lbfgs_armijo_nonmonotone");
 
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		for ( Size jj = ii+1; jj <= pose.size(); ++jj ) {
-			std::cout << ii << "," << jj << std::endl;
-			core::pose::Pose pose_copy = pose;
-			ResidueType const & res_type_ii( pose_copy.residue_type(ii) );
-			ResidueType const & res_type_jj( pose_copy.residue_type(jj) );
+			for ( Size jj = ii+1; jj <= pose.size(); ++jj ) {
+				std::cout << ii << "," << jj << std::endl;
+				core::pose::Pose pose_copy = pose;
+				ResidueType const & res_type_ii( pose_copy.residue_type(ii) );
+				ResidueType const & res_type_jj( pose_copy.residue_type(jj) );
 
-			Size const nbr_atom_ii( res_type_ii.nbr_atom() );
-			Size const nbr_atom_jj( res_type_jj.nbr_atom() );
+				Size const nbr_atom_ii( res_type_ii.nbr_atom() );
+				Size const nbr_atom_jj( res_type_jj.nbr_atom() );
 
-			AtomID id1( nbr_atom_ii, ii );
-			AtomID id2( nbr_atom_jj, jj );
+				AtomID id1( nbr_atom_ii, ii );
+				AtomID id2( nbr_atom_jj, jj );
 
-			ConstraintSetOP cstset( new core::scoring::constraints::ConstraintSet );
-			FuncOP func( new HarmonicFunc( dist_, sdev_ ) );
-			ConstraintOP cst( new AtomPairConstraint( id1, id2, func ) );
-			cstset->clear();
-			cstset->add_constraint( cst );
+				ConstraintSetOP cstset( new core::scoring::constraints::ConstraintSet );
+				FuncOP func( new HarmonicFunc( dist_, sdev_ ) );
+				ConstraintOP cst( new AtomPairConstraint( id1, id2, func ) );
+				cstset->clear();
+				cstset->add_constraint( cst );
 
-			pose_copy.constraint_set( cstset );
-      AtomTreeMinimizer().run(
-				 pose_copy, mm, (*scorefxn), MinimizerOptions(min_type,0.001,true)
-      );
-
-			core::Real const dist( pose_copy.residue(ii).xyz(nbr_atom_ii).distance(
-				pose_copy.residue(jj).xyz(nbr_atom_jj)
-			) );
-			core::Real const dist_cutoff(
-				res_type_ii.nbr_radius() + res_type_jj.nbr_radius()
-			);
-			if ( dist <= dist_cutoff ) {
-				std::string key(
-					"INTERACTION_DIST_" + string_of(ii) + "_" + string_of(jj)
+				pose_copy.constraint_set( cstset );
+				AtomTreeMinimizer().run(
+					pose_copy, mm, (*scorefxn), MinimizerOptions(min_type,0.001,true)
 				);
-				add_comment( pose, key, F( 8, 3, dist ) );
-			}
-		} // ii
+
+				core::Real const dist( pose_copy.residue(ii).xyz(nbr_atom_ii).distance(
+					pose_copy.residue(jj).xyz(nbr_atom_jj)
+					) );
+				core::Real const dist_cutoff(
+					res_type_ii.nbr_radius() + res_type_jj.nbr_radius()
+				);
+				if ( dist <= dist_cutoff ) {
+					std::string key(
+						"INTERACTION_DIST_" + string_of(ii) + "_" + string_of(jj)
+					);
+					add_comment( pose, key, F( 8, 3, dist ) );
+				}
+			} // ii
 		} // jj
 	} // apply
 
@@ -182,12 +182,12 @@ main( int argc, char* argv [] )
 {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
-	protocols::viewer::viewer_main( my_main );
+		// options, random initialization
+		devel::init( argc, argv );
+		protocols::viewer::viewer_main( my_main );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

@@ -38,59 +38,59 @@ using utility::vector1;
 
 /// @detail Ensure that the lengths of the models to evaluate match the reference
 void check_lengths(PoseCOP reference, const vector1<PoseCOP>& models) {
-  const Size n = reference->size();
+	const Size n = reference->size();
 
-  for (Size i = 1; i <= models.size(); ++i) {
-    const Size m = models[i]->size();
-    if (m != n) {
-      std::cerr << "Residues in reference: " << n << std::endl;
-      std::cerr << "Residues in model[" << i << "]: " << m << std::endl;
-      utility_exit_with_message("Reference structure and model have unequal number of residues");
-    }
-  }
+	for ( Size i = 1; i <= models.size(); ++i ) {
+		const Size m = models[i]->size();
+		if ( m != n ) {
+			std::cerr << "Residues in reference: " << n << std::endl;
+			std::cerr << "Residues in model[" << i << "]: " << m << std::endl;
+			utility_exit_with_message("Reference structure and model have unequal number of residues");
+		}
+	}
 }
 
 void compute_windowed_rmsd(const Pose& reference, const Pose& model, Size window, vector1<Real>* rmsds) {
-  assert(rmsds);
-  const Size k = (window - 1) / 2;
-  const Size n = reference.size();
+	assert(rmsds);
+	const Size k = (window - 1) / 2;
+	const Size n = reference.size();
 
-  rmsds->resize(n);
-  for (Size residue = 1 + k; residue <= (n - k); ++residue) {
-    (*rmsds)[residue] = core::scoring::CA_rmsd(reference, model, residue - k, residue + k);
-  }
+	rmsds->resize(n);
+	for ( Size residue = 1 + k; residue <= (n - k); ++residue ) {
+		(*rmsds)[residue] = core::scoring::CA_rmsd(reference, model, residue - k, residue + k);
+	}
 }
 
 void show(const string& filename, const vector1<Real>& rmsds) {
-  for (Size i = 1; i <= rmsds.size(); ++i) {
-    std::cout << filename << " " << i << " " << rmsds[i] << std::endl;
-  }
+	for ( Size i = 1; i <= rmsds.size(); ++i ) {
+		std::cout << filename << " " << i << " " << rmsds[i] << std::endl;
+	}
 }
 
 int main(int argc, char* argv[]) {
-  try {
-    using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  devel::init(argc, argv);
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		devel::init(argc, argv);
 
-  PoseOP reference = core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
-  vector1<PoseOP> models = core::import_pose::poseOPs_from_files(option[OptionKeys::in::file::s](), core::import_pose::PDB_file);
-  check_lengths(reference, models);
+		PoseOP reference = core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
+		vector1<PoseOP> models = core::import_pose::poseOPs_from_files(option[OptionKeys::in::file::s](), core::import_pose::PDB_file);
+		check_lengths(reference, models);
 
-  const Size window = option[OptionKeys::evaluation::window_size]();
+		const Size window = option[OptionKeys::evaluation::window_size]();
 
-  std::cout << "filename resi rmsd" << std::endl;
-  for (Size i = 1; i <= models.size(); ++i) {
-    const string& filename = option[OptionKeys::in::file::s]()[i];
-    const Pose& model = *(models[i]);
+		std::cout << "filename resi rmsd" << std::endl;
+		for ( Size i = 1; i <= models.size(); ++i ) {
+			const string& filename = option[OptionKeys::in::file::s]()[i];
+			const Pose& model = *(models[i]);
 
-    vector1<Real> rmsds;
-    compute_windowed_rmsd(*reference, model, window, &rmsds);
-    show(filename, rmsds);
-  }
-  } catch (utility::excn::Exception const & e ) {
-                            std::cout << "caught exception " << e.msg() << std::endl;
+			vector1<Real> rmsds;
+			compute_windowed_rmsd(*reference, model, window, &rmsds);
+			show(filename, rmsds);
+		}
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-                                }
-      return 0;
+	}
+	return 0;
 }

@@ -60,8 +60,7 @@ int main(int argc, char* argv[]){
 
 		protocols::jd2::JobDistributor::get_instance()->go(new Designer);
 	} catch (utility::excn::Exception& excn ) {
-		std::cout << "Exception: " << std::endl;
-		excn.show( std::cerr );
+		excn.display();
 		return -1;
 	}
 

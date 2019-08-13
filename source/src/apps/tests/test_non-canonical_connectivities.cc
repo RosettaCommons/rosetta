@@ -54,7 +54,7 @@ main( int argc, char *argv[] )
 
 		lactam.dump_pdb( OUTPATH + "lactam.pdb" );
 	} catch (utility::excn::Exception const & e ) {
-		cerr << "caught exception " << e.msg() << endl;
+		e.display();
 		return -1;
 	}
 	return 0;

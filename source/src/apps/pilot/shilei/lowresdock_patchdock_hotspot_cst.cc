@@ -263,12 +263,7 @@ void* my_main( void* ) {
 		throw ( CREATE_EXCEPTION(utility::excn::BadInput, "expected hostspot_filename and hotspot_distcb_weight this app and their size should be equal") );
 	}
 
-	try{
-		protocols::jd2::JobDistributor::get_instance()->go( seq );
-	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception: " << std::endl;
-		excn.show( std::cerr );
-	}
+	protocols::jd2::JobDistributor::get_instance()->go( seq );
 
 	return nullptr;
 }
@@ -296,7 +291,7 @@ int main( int argc, char * argv [] )
 		protocols::viewer::viewer_main( my_main );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

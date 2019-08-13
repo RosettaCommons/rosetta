@@ -287,7 +287,7 @@ main( int argc, char* argv [] ) {
 		} // if option[ in::file::template_pdb ].user()
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

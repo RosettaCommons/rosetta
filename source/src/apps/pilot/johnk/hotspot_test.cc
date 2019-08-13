@@ -80,121 +80,121 @@ void register_metrics() {
 int
 main( int argc, char * argv [] )
 {
-    try {
-	devel::init(argc, argv);
+	try {
+		devel::init(argc, argv);
 
-	register_metrics();
+		register_metrics();
 
-	std::cout << "JK Starting hotspot test" << std::endl;
+		std::cout << "JK Starting hotspot test" << std::endl;
 
-	pose::Pose pose;
-	core::import_pose::pose_from_file( pose, "LJ111.pdb" , core::import_pose::PDB_file);
+		pose::Pose pose;
+		core::import_pose::pose_from_file( pose, "LJ111.pdb" , core::import_pose::PDB_file);
 
-	std::cout << "JK about to print total SASA directly as a string" << std::endl;
-	std::string sasa_val = pose.print_metric("sasa","total_sasa");
-	std::cout << "JK Total SASA is: " << sasa_val << std::endl;
+		std::cout << "JK about to print total SASA directly as a string" << std::endl;
+		std::string sasa_val = pose.print_metric("sasa","total_sasa");
+		std::cout << "JK Total SASA is: " << sasa_val << std::endl;
 
-	std::cout << "JK about to request total SASA in a MetricValue" << std::endl;
-	basic::MetricValue<Real> mv_sasa;
-	pose.metric("sasa","total_sasa",mv_sasa);
-	std::cout << "JK Total SASA is: " << mv_sasa.value() << std::endl;
+		std::cout << "JK about to request total SASA in a MetricValue" << std::endl;
+		basic::MetricValue<Real> mv_sasa;
+		pose.metric("sasa","total_sasa",mv_sasa);
+		std::cout << "JK Total SASA is: " << mv_sasa.value() << std::endl;
 
-	std::cout << "JK about to print total SASA from a MetricValue" << std::endl;
-	pose.metric("sasa","total_sasa",mv_sasa);
-	std::cout << "JK Total SASA is: " << mv_sasa.print() << std::endl;
+		std::cout << "JK about to print total SASA from a MetricValue" << std::endl;
+		pose.metric("sasa","total_sasa",mv_sasa);
+		std::cout << "JK Total SASA is: " << mv_sasa.print() << std::endl;
 
-	std::cout << "JK about to request list_interface" << std::endl;
-	basic::MetricValue< std::pair< utility::vector1<Size>, utility::vector1<Size> > > mv_li;
-	pose.metric("interface_1_2","list_interface",mv_li);
-	std::cout << "JK li first is: " << (mv_li.value()).first << std::endl;
-	std::cout << "JK li second is: " << (mv_li.value()).second << std::endl;
+		std::cout << "JK about to request list_interface" << std::endl;
+		basic::MetricValue< std::pair< utility::vector1<Size>, utility::vector1<Size> > > mv_li;
+		pose.metric("interface_1_2","list_interface",mv_li);
+		std::cout << "JK li first is: " << (mv_li.value()).first << std::endl;
+		std::cout << "JK li second is: " << (mv_li.value()).second << std::endl;
 
-	std::cout << "JK about to request delta SASA" << std::endl;
-	basic::MetricValue< Real > mv_delta_sasa;
-	pose.metric("sasa_interface_1_2","delta_sasa",mv_delta_sasa);
-	std::cout << "JK delta_sasa is: " << mv_delta_sasa.value() << std::endl;
+		std::cout << "JK about to request delta SASA" << std::endl;
+		basic::MetricValue< Real > mv_delta_sasa;
+		pose.metric("sasa_interface_1_2","delta_sasa",mv_delta_sasa);
+		std::cout << "JK delta_sasa is: " << mv_delta_sasa.value() << std::endl;
 
-	// Setup for scoring/repacking
-	std::cout << "JK About to score the pose" << std::endl;
-	protocols::simple_moves::ScoreMover *score_mover = new protocols::simple_moves::ScoreMover;
-	score_mover->apply( pose );
-	Real score = pose.energies().total_energy();
-	std::cout << "JK Total score is: " << score << std::endl;
+		// Setup for scoring/repacking
+		std::cout << "JK About to score the pose" << std::endl;
+		protocols::simple_moves::ScoreMover *score_mover = new protocols::simple_moves::ScoreMover;
+		score_mover->apply( pose );
+		Real score = pose.energies().total_energy();
+		std::cout << "JK Total score is: " << score << std::endl;
 
-	std::cout << "JK about to request interface_delta weighted_total" << std::endl;
-	basic::MetricValue< Real > mv_delta_total;
-	pose.metric("interface_delta_energies","weighted_total",mv_delta_total);
-	std::cout << "JK delta_weighted_total is: " << mv_delta_total.value() << std::endl;
+		std::cout << "JK about to request interface_delta weighted_total" << std::endl;
+		basic::MetricValue< Real > mv_delta_total;
+		pose.metric("interface_delta_energies","weighted_total",mv_delta_total);
+		std::cout << "JK delta_weighted_total is: " << mv_delta_total.value() << std::endl;
 
-	std::cout << "JK about to request interface_delta fa_atr" << std::endl;
-	basic::MetricValue< Real > mv_delta_atr;
-	pose.metric("interface_delta_energies","fa_atr",mv_delta_atr);
-	std::cout << "JK delta_atr is: " << mv_delta_atr.value() << std::endl;
+		std::cout << "JK about to request interface_delta fa_atr" << std::endl;
+		basic::MetricValue< Real > mv_delta_atr;
+		pose.metric("interface_delta_energies","fa_atr",mv_delta_atr);
+		std::cout << "JK delta_atr is: " << mv_delta_atr.value() << std::endl;
 
-	std::cout << "JK about to request interface_delta fa_rep" << std::endl;
-	basic::MetricValue< Real > mv_delta_rep;
-	pose.metric("interface_delta_energies","fa_rep",mv_delta_rep);
-	std::cout << "JK delta_rep is: " << mv_delta_rep.value() << std::endl;
+		std::cout << "JK about to request interface_delta fa_rep" << std::endl;
+		basic::MetricValue< Real > mv_delta_rep;
+		pose.metric("interface_delta_energies","fa_rep",mv_delta_rep);
+		std::cout << "JK delta_rep is: " << mv_delta_rep.value() << std::endl;
 
-	std::cout << "JK about to request interface_delta fa_sol" << std::endl;
-	basic::MetricValue< Real > mv_delta_sol;
-	pose.metric("interface_delta_energies","fa_sol",mv_delta_sol);
-	std::cout << "JK delta_sol is: " << mv_delta_sol.value() << std::endl;
+		std::cout << "JK about to request interface_delta fa_sol" << std::endl;
+		basic::MetricValue< Real > mv_delta_sol;
+		pose.metric("interface_delta_energies","fa_sol",mv_delta_sol);
+		std::cout << "JK delta_sol is: " << mv_delta_sol.value() << std::endl;
 
-	std::cout << "JK about to request interface_delta fa_pair" << std::endl;
-	basic::MetricValue< Real > mv_delta_pair;
-	pose.metric("interface_delta_energies","fa_pair",mv_delta_pair);
-	std::cout << "JK delta_pair is: " << mv_delta_pair.value() << std::endl;
+		std::cout << "JK about to request interface_delta fa_pair" << std::endl;
+		basic::MetricValue< Real > mv_delta_pair;
+		pose.metric("interface_delta_energies","fa_pair",mv_delta_pair);
+		std::cout << "JK delta_pair is: " << mv_delta_pair.value() << std::endl;
 
-	//	std::cout << "JK about to request interface_delta fa_junk" << std::endl;
-	//	basic::MetricValue< Real > mv_delta_junk;
-	//	pose.metric("interface_delta_energies","fa_junk",mv_delta_junk);
-	//	std::cout << "JK delta_junk is: " << mv_delta_junk.value() << std::endl;
+		// std::cout << "JK about to request interface_delta fa_junk" << std::endl;
+		// basic::MetricValue< Real > mv_delta_junk;
+		// pose.metric("interface_delta_energies","fa_junk",mv_delta_junk);
+		// std::cout << "JK delta_junk is: " << mv_delta_junk.value() << std::endl;
 
-	//	std::cout << "JK Moving phi angle and rescoring" << std::endl;
-	//	pose.set_psi( 5, 4.5 );
-	//	std::cout << "JK about to request total SASA after moving phi angle" << std::endl;
-	//	pose.metric("sasa","total_sasa",mv_sasa);
-	//	std::cout << "JK Total SASA is: " << mv_sasa.value() << std::endl;
-	//	std::cout << "JK about to request total SASA again" << std::endl;
-	//	pose.metric("sasa","total_sasa",mv_sasa);
-	//	std::cout << "JK Total SASA is: " << mv_sasa.value() << std::endl;
-	//	std::cout << "JK about to request total SASA again" << std::endl;
-	//	pose.metric("sasa","total_sasa",mv_sasa);
-	//	std::cout << "JK Total SASA is: " << mv_sasa.value() << std::endl;
+		// std::cout << "JK Moving phi angle and rescoring" << std::endl;
+		// pose.set_psi( 5, 4.5 );
+		// std::cout << "JK about to request total SASA after moving phi angle" << std::endl;
+		// pose.metric("sasa","total_sasa",mv_sasa);
+		// std::cout << "JK Total SASA is: " << mv_sasa.value() << std::endl;
+		// std::cout << "JK about to request total SASA again" << std::endl;
+		// pose.metric("sasa","total_sasa",mv_sasa);
+		// std::cout << "JK Total SASA is: " << mv_sasa.value() << std::endl;
+		// std::cout << "JK about to request total SASA again" << std::endl;
+		// pose.metric("sasa","total_sasa",mv_sasa);
+		// std::cout << "JK Total SASA is: " << mv_sasa.value() << std::endl;
 
-	//	std::cout << "JK about to request total SASA as an int" << std::endl;
-	//	basic::MetricValue<int> mv_int_sasa;
-	//	pose.metric("sasa","total_sasa",mv_int_sasa);
-	//	std::cout << "JK Total SASA is: " << mv_int_sasa.value() << std::endl;
+		// std::cout << "JK about to request total SASA as an int" << std::endl;
+		// basic::MetricValue<int> mv_int_sasa;
+		// pose.metric("sasa","total_sasa",mv_int_sasa);
+		// std::cout << "JK Total SASA is: " << mv_int_sasa.value() << std::endl;
 
-	std::cout << "JK about to request first_chain_first_resnum" << std::endl;
-	basic::MetricValue<Size> mv_fcfr;
-	pose.metric("interface_1_2","first_chain_first_resnum",mv_fcfr);
-	std::cout << "JK mv_fcfr is: " << mv_fcfr.value() << std::endl;
+		std::cout << "JK about to request first_chain_first_resnum" << std::endl;
+		basic::MetricValue<Size> mv_fcfr;
+		pose.metric("interface_1_2","first_chain_first_resnum",mv_fcfr);
+		std::cout << "JK mv_fcfr is: " << mv_fcfr.value() << std::endl;
 
-	std::cout << "JK about to request first_chain_last_resnum" << std::endl;
-	basic::MetricValue<Size> mv_fclr;
-	pose.metric("interface_1_2","first_chain_last_resnum",mv_fclr);
-	std::cout << "JK mv_fclr is: " << mv_fclr.value() << std::endl;
+		std::cout << "JK about to request first_chain_last_resnum" << std::endl;
+		basic::MetricValue<Size> mv_fclr;
+		pose.metric("interface_1_2","first_chain_last_resnum",mv_fclr);
+		std::cout << "JK mv_fclr is: " << mv_fclr.value() << std::endl;
 
-	std::cout << "JK about to request second_chain_first_resnum" << std::endl;
-	basic::MetricValue<Size> mv_scfr;
-	pose.metric("interface_1_2","second_chain_first_resnum",mv_scfr);
-	std::cout << "JK mv_scfr is: " << mv_scfr.value() << std::endl;
+		std::cout << "JK about to request second_chain_first_resnum" << std::endl;
+		basic::MetricValue<Size> mv_scfr;
+		pose.metric("interface_1_2","second_chain_first_resnum",mv_scfr);
+		std::cout << "JK mv_scfr is: " << mv_scfr.value() << std::endl;
 
-	std::cout << "JK about to request second_chain_last_resnum" << std::endl;
-	basic::MetricValue<Size> mv_sclr;
-	pose.metric("interface_1_2","second_chain_last_resnum",mv_sclr);
-	std::cout << "JK mv_sclr is: " << mv_sclr.value() << std::endl;
+		std::cout << "JK about to request second_chain_last_resnum" << std::endl;
+		basic::MetricValue<Size> mv_sclr;
+		pose.metric("interface_1_2","second_chain_last_resnum",mv_sclr);
+		std::cout << "JK mv_sclr is: " << mv_sclr.value() << std::endl;
 
-	std::cout << "JK Successfully finishing hotspot test" << std::endl;
+		std::cout << "JK Successfully finishing hotspot test" << std::endl;
 
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
+	}
+	return 0;
 
 }
 

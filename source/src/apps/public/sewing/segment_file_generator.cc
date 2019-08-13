@@ -441,7 +441,7 @@ main( int argc, char * argv [] )
 	try {
 		status = apps::pilot::frankdt::main( argc, argv );
 	} catch ( utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return status;
 	}
 	return status;

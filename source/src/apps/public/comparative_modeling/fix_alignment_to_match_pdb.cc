@@ -214,7 +214,7 @@ main( int argc, char * argv [] ) {
 			} // for alns
 		} // for aln_fn
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 } // main

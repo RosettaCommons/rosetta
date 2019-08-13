@@ -34,7 +34,7 @@ cartesian_product(
 		if ( it == sets.begin() ) {
 			for ( set_iter s_it = it->begin(), s_end = it->end();
 					s_it != s_end; ++s_it
-			) {
+					) {
 				vector1< T > new_set( 1, *s_it );
 				product.push_back( new_set );
 			}
@@ -42,10 +42,10 @@ cartesian_product(
 			vector1< vector1< T > > new_product;
 			for ( set_iter s_it = it->begin(), s_end = it->end();
 					s_it != s_end; ++s_it
-			) {
+					) {
 				for ( vec_iter v_it = product.begin(), v_end = product.end();
-					v_it != v_end; ++v_it
-				) {
+						v_it != v_end; ++v_it
+						) {
 					vector1< T > new_vector( *v_it );
 					new_vector.push_back( *s_it );
 					new_product.push_back( new_vector );
@@ -62,38 +62,38 @@ int
 main( int /*argc*/, char* /*argv*/ [] ) {
 	try {
 
-	using std::set;
-	using utility::vector1;
-	set< char > set1;
-	set< char > set2;
+		using std::set;
+		using utility::vector1;
+		set< char > set1;
+		set< char > set2;
 
-	set1.insert( 'A' );
-	set1.insert( 'B' );
-	set1.insert( 'C' );
+		set1.insert( 'A' );
+		set1.insert( 'B' );
+		set1.insert( 'C' );
 
-	set2.insert( '1' );
-	set2.insert( '2' );
-	set2.insert( '3' );
+		set2.insert( '1' );
+		set2.insert( '2' );
+		set2.insert( '3' );
 
-	vector1< set< char > > sets;
-	sets.push_back( set1 );
-	sets.push_back( set2 );
+		vector1< set< char > > sets;
+		sets.push_back( set1 );
+		sets.push_back( set2 );
 
-	vector1< vector1< char > > product
-		= cartesian_product< char > ( sets );
+		vector1< vector1< char > > product
+			= cartesian_product< char > ( sets );
 
-	typedef vector1< vector1< char > >::const_iterator iter;
-	for ( iter it = product.begin(), end = product.end(); it != end; ++it ) {
-		for ( vector1< char >::const_iterator it2 = it->begin(), end2 = it->end();
-				it2 != end2; ++it2
-		) {
-			std::cout << *it2;
+		typedef vector1< vector1< char > >::const_iterator iter;
+		for ( iter it = product.begin(), end = product.end(); it != end; ++it ) {
+			for ( vector1< char >::const_iterator it2 = it->begin(), end2 = it->end();
+					it2 != end2; ++it2
+					) {
+				std::cout << *it2;
+			}
+			std::cout << std::endl;
 		}
-		std::cout << std::endl;
-	}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

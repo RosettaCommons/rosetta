@@ -112,8 +112,8 @@ public:
 					<< F( width, precision, decoy_satisfactions_[resi][resj] )
 					<< F( width, precision, decoy_violations_[resi][resj] )
 					<< F(
-						width, precision,
-						std::abs( native_distances_ [resi][resj] - dist_mins_[resi][resj] )
+					width, precision,
+					std::abs( native_distances_ [resi][resj] - dist_mins_[resi][resj] )
 					)
 					<< std::endl;
 			}
@@ -154,7 +154,7 @@ public:
 				}
 
 				//cstset_->residue_pair_energy(
-				//	resi, resj, pose, *scorefxn, emap
+				// resi, resj, pose, *scorefxn, emap
 				//);
 				//local_score = emap[ core::scoring::atom_pair_constraint ];
 				//if ( local_score == 0 ) continue;
@@ -162,9 +162,9 @@ public:
 				//distances [i][j] = dist;
 				//cst_scores[i][j] = local_score;
 				//if ( local_score <= cst_threshold_ ) {
-				//	decoy_satisfactions_[i][j]++;
+				// decoy_satisfactions_[i][j]++;
 				//} else {
-				//	decoy_violations_[i][j]++;
+				// decoy_violations_[i][j]++;
 				//}
 			} // j
 		} // i
@@ -274,51 +274,51 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace core::scoring::constraints;
-	using namespace core::chemical;
-	using namespace basic::options::OptionKeys;
-	using namespace basic::options;
-	using namespace protocols::moves;
-	using namespace protocols::jobdist;
-	using namespace core::import_pose::pose_stream;
-	using std::string;
+		using namespace core::scoring::constraints;
+		using namespace core::chemical;
+		using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace protocols::moves;
+		using namespace protocols::jobdist;
+		using namespace core::import_pose::pose_stream;
+		using std::string;
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	// setup residue types
-	ResidueTypeSetCAP rsd_set =
-		ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	// read in a native pose
-	core::pose::Pose native_pose;
-	core::import_pose::pose_from_file(
-		native_pose, *rsd_set, option[ in::file::native ]()
-	);
-	MetaPoseInputStream input = streams_from_cmd_line();
+		// setup residue types
+		ResidueTypeSetCAP rsd_set =
+			ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		// read in a native pose
+		core::pose::Pose native_pose;
+		core::import_pose::pose_from_file(
+			native_pose, *rsd_set, option[ in::file::native ]()
+		);
+		MetaPoseInputStream input = streams_from_cmd_line();
 
-	// read in constraints
-	ConstraintSetOP cstset;
-	std::string cstfile = core::scoring::constraints::get_cst_file_option();
-	cstset = ConstraintIO::read_constraints( cstfile, new ConstraintSet, native_pose );
+		// read in constraints
+		ConstraintSetOP cstset;
+		std::string cstfile = core::scoring::constraints::get_cst_file_option();
+		cstset = ConstraintIO::read_constraints( cstfile, new ConstraintSet, native_pose );
 
-	string outfile( option[ out::file::silent ]() );
-	std::ofstream output( outfile.c_str() );
-	if ( !output.is_open() ) {
-		utility_exit_with_message( "Unable to open file: " + outfile + '\n' );
-	}
+		string outfile( option[ out::file::silent ]() );
+		std::ofstream output( outfile.c_str() );
+		if ( !output.is_open() ) {
+			utility_exit_with_message( "Unable to open file: " + outfile + '\n' );
+		}
 
-	MoverOP mover ( new ConstraintStatsMover( cstset, native_pose ) );
-	while( input.has_another_pose() ) {
-		core::pose::Pose pose;
-		input.fill_pose( pose, *rsd_set );
-		mover->apply( pose );
-	}
+		MoverOP mover ( new ConstraintStatsMover( cstset, native_pose ) );
+		while ( input.has_another_pose() ) {
+			core::pose::Pose pose;
+			input.fill_pose( pose, *rsd_set );
+			mover->apply( pose );
+		}
 
-	ConstraintStatsMoverOP downcast
-		= ConstraintStatsMoverOP( static_cast< ConstraintStatsMover * > ( mover() ) );
-	downcast->print_stats( output );
+		ConstraintStatsMoverOP downcast
+			= ConstraintStatsMoverOP( static_cast< ConstraintStatsMover * > ( mover() ) );
+		downcast->print_stats( output );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

@@ -209,7 +209,7 @@ main( int argc, char * argv [] )
 		// (*scorefxn)(*pose);
 		// scorefxn->show(std::cout, *pose);
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

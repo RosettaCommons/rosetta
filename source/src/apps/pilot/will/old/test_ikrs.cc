@@ -1666,7 +1666,7 @@ int main (int argc, char *argv[]) {
 		TR << "MATCHES: " << nhit << std::endl;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

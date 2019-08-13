@@ -174,8 +174,8 @@ benzene_pair_score_test()
 	std::string const silent_file = option[ out::file::silent  ]();
 
 	Size n( 0 );
-	for (int i = -240; i <= 240; i++ ) {
-		for (int j = 1; j <= 320; j++ ) {
+	for ( int i = -240; i <= 240; i++ ) {
+		for ( int j = 1; j <= 320; j++ ) {
 			Real const x = 0.000001; //arcane thing, rosetta can't handle (0.0,0.0,0.0)
 			Real const y = i / 40.0;
 			Real const z = j / 40.0;
@@ -216,27 +216,27 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace core::options;
+		using namespace core::options;
 
-	//Uh, options?
-	NEW_OPT( blah, "blah", false );
-
-
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		//Uh, options?
+		NEW_OPT( blah, "blah", false );
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-	protocols::viewer::viewer_main( my_main );
+
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+
+		protocols::viewer::viewer_main( my_main );
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

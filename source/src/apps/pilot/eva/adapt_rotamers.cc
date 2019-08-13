@@ -123,7 +123,7 @@ main( int argc, char * argv [] )
 		pose_adpt.dump_pdb( "adapted.pdb");
 		pose_ori.dump_pdb( "ori.pdb");
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

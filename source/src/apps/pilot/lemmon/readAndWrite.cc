@@ -8,13 +8,13 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /** @page readAndWrite
-	This simple file describes reading and writing a PDB with Rosetta
-	Run it like this:
-	"readAndWritePDB.cc -in::file::s <PDB file name> -in::path::database <database root dir>"
+This simple file describes reading and writing a PDB with Rosetta
+Run it like this:
+"readAndWritePDB.cc -in::file::s <PDB file name> -in::path::database <database root dir>"
 
-	If you provide a PDB with a ligand that has multiple residues, this code will "glue" them together
-	Of course you would need to provide information about these additional residues:
-		in::file::extra_res_fa <list of extra params files, one per residue type>
+If you provide a PDB with a ligand that has multiple residues, this code will "glue" them together
+Of course you would need to provide information about these additional residues:
+in::file::extra_res_fa <list of extra params files, one per residue type>
 */
 
 /// @file   apps/pilot/lemmon/readAndWrite.cc
@@ -46,27 +46,27 @@
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-    try {
-  devel::init(argc, argv);
+	try {
+		devel::init(argc, argv);
 
-  utility::vector0<std::string> pdbs;
-  {// process the options
-    using namespace basic::options::OptionKeys;
-    using basic::options::option;
-    pdbs= option[in::file::s]();
-  }
-  core::pose::Pose pose; // starts NULL, coords *never* modified!
-	{
-		std::string pdb=pdbs[0];
-		core::import_pose::pose_from_file( pose, pdb, core::import_pose::PDB_file);
+		utility::vector0<std::string> pdbs;
+		{// process the options
+			using namespace basic::options::OptionKeys;
+			using basic::options::option;
+			pdbs= option[in::file::s]();
+		}
+		core::pose::Pose pose; // starts NULL, coords *never* modified!
+		{
+			std::string pdb=pdbs[0];
+			core::import_pose::pose_from_file( pose, pdb, core::import_pose::PDB_file);
+		}
+		{
+			const std::string output("output.pdb");
+			pose.dump_pdb(output);
+		}
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
 	}
-	{
-		const std::string output("output.pdb");
-		pose.dump_pdb(output);
-	}
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-	return -1;
-    }
-    return 0;
+	return 0;
 }

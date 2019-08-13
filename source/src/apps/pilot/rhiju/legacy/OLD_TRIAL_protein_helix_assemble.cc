@@ -138,23 +138,23 @@ OPT_KEY( String,  seq )
 void
 set_helix_torsions( pose::Pose & pose, Size const & n )
 {
-  pose.set_psi  ( n, -30.0  );
-  pose.set_omega( n, 180.0  );
-  pose.set_phi  ( n+1, -70.0  );
+	pose.set_psi  ( n, -30.0  );
+	pose.set_omega( n, 180.0  );
+	pose.set_phi  ( n+1, -70.0  );
 }
 
 //////////////////////////////////////////////////////
 void
 build_on_helix( pose::Pose & pose, Size const n, char const & seq1  ){
 
-  using namespace core::chemical;
-  using namespace core::conformation;
+	using namespace core::chemical;
+	using namespace core::conformation;
 
-  static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-  ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( seq1 ) )[1] ) ) );
-  pose.append_polymer_residue_after_seqpos(   *rsd1, n - 1, true /*build_ideal_geometry*/ );
-  set_helix_torsions( pose, n-1 );
+	ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( seq1 ) )[1] ) ) );
+	pose.append_polymer_residue_after_seqpos(   *rsd1, n - 1, true /*build_ideal_geometry*/ );
+	set_helix_torsions( pose, n-1 );
 
 }
 
@@ -162,19 +162,19 @@ build_on_helix( pose::Pose & pose, Size const n, char const & seq1  ){
 void
 put_constraints_on_helix( pose::Pose & pose, Size const n ){
 
-  using namespace core::scoring::constraints;
-  using namespace core::id;
+	using namespace core::scoring::constraints;
+	using namespace core::id;
 
-  Real const helix_distance( 3.0 );
-  Real const distance_stddev( 0.25 ); //Hmm. Maybe try linear instead?
-  FuncOP const distance_func( new HarmonicFunc( helix_distance, distance_stddev ) );
+	Real const helix_distance( 3.0 );
+	Real const distance_stddev( 0.25 ); //Hmm. Maybe try linear instead?
+	FuncOP const distance_func( new HarmonicFunc( helix_distance, distance_stddev ) );
 
-  if ( n > 3 ) {
-    pose.add_constraint( new AtomPairConstraint(
-						id::AtomID( id::NamedAtomID( " O  ", n-3), pose ),
-						id::AtomID( id::NamedAtomID( " N  ", n  ), pose ),
-						distance_func ) );
-  }
+	if ( n > 3 ) {
+		pose.add_constraint( new AtomPairConstraint(
+			id::AtomID( id::NamedAtomID( " O  ", n-3), pose ),
+			id::AtomID( id::NamedAtomID( " N  ", n  ), pose ),
+			distance_func ) );
+	}
 
 }
 
@@ -182,29 +182,29 @@ put_constraints_on_helix( pose::Pose & pose, Size const n ){
 void
 minimize_helix( pose::Pose & pose, Size const n ){
 
-  using namespace core::scoring;
-  using namespace core::optimization;
+	using namespace core::scoring;
+	using namespace core::optimization;
 
-  AtomTreeMinimizer minimizer;
-  float const dummy_tol( 0.0000025);
-  bool const use_nblist( true );
-  MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false, false );
-  options.nblist_auto_update( true );
+	AtomTreeMinimizer minimizer;
+	float const dummy_tol( 0.0000025);
+	bool const use_nblist( true );
+	MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false, false );
+	options.nblist_auto_update( true );
 
-  kinematics::MoveMap mm;
-  //  mm.set_bb( false );
-  //  mm.set_chi( false );
-  //  mm.set_jump( false );
-  //  for (Size i = n-1; i <= n+2; i++ ) {
-  mm.set_bb(  true );
-  mm.set_chi(  true );
-    //  }
-  //mm.set_jump( true );
+	kinematics::MoveMap mm;
+	//  mm.set_bb( false );
+	//  mm.set_chi( false );
+	//  mm.set_jump( false );
+	//  for (Size i = n-1; i <= n+2; i++ ) {
+	mm.set_bb(  true );
+	mm.set_chi(  true );
+	//  }
+	//mm.set_jump( true );
 
-  std::cout << "minimizing" << std::endl;
-  ScoreFunctionOP scorefxn =  core::scoring::get_score_function();
-  minimizer.run( pose, mm, *scorefxn, options );
-  (*scorefxn)( pose );
+	std::cout << "minimizing" << std::endl;
+	ScoreFunctionOP scorefxn =  core::scoring::get_score_function();
+	minimizer.run( pose, mm, *scorefxn, options );
+	(*scorefxn)( pose );
 
 }
 
@@ -212,27 +212,27 @@ minimize_helix( pose::Pose & pose, Size const n ){
 void
 pack_sidechains( pose::Pose & pose ){
 
-  using namespace core::scoring;
-  using namespace core::pack::task;
+	using namespace core::scoring;
+	using namespace core::pack::task;
 
-  PackerTaskOP pack_task_ = pack::task::TaskFactory::create_packer_task( pose );
-  pack_task_->restrict_to_repacking();
-  for (Size i = 1; i <= pose.size(); i++) {
-    if ( !pose.residue(i).is_protein() ) continue;
-    pack_task_->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
-    pack_task_->nonconst_residue_task(i).or_ex1( true );
-    pack_task_->nonconst_residue_task(i).or_ex2( true );
-    pack_task_->nonconst_residue_task(i).or_ex3( true );
-    pack_task_->nonconst_residue_task(i).or_ex4( true );
-    pack_task_->nonconst_residue_task(i).or_include_current( true );
-    if ( pose.residue(i).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) {
-    	pack_task_->nonconst_residue_task(i).prevent_repacking();
-    }
-  }
+	PackerTaskOP pack_task_ = pack::task::TaskFactory::create_packer_task( pose );
+	pack_task_->restrict_to_repacking();
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		if ( !pose.residue(i).is_protein() ) continue;
+		pack_task_->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
+		pack_task_->nonconst_residue_task(i).or_ex1( true );
+		pack_task_->nonconst_residue_task(i).or_ex2( true );
+		pack_task_->nonconst_residue_task(i).or_ex3( true );
+		pack_task_->nonconst_residue_task(i).or_ex4( true );
+		pack_task_->nonconst_residue_task(i).or_include_current( true );
+		if ( pose.residue(i).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) {
+			pack_task_->nonconst_residue_task(i).prevent_repacking();
+		}
+	}
 
 
-  ScoreFunctionOP scorefxn_ =  core::scoring::get_score_function();
-  pack::rotamer_trials( pose, *scorefxn_, pack_task_ );
+	ScoreFunctionOP scorefxn_ =  core::scoring::get_score_function();
+	pack::rotamer_trials( pose, *scorefxn_, pack_task_ );
 
 }
 
@@ -241,44 +241,44 @@ pack_sidechains( pose::Pose & pose ){
 void
 protein_helix_test(){
 
-  using namespace core::scoring;
-  using namespace core::chemical;
-  using namespace core::options;
-  using namespace core::options::OptionKeys;
-  using namespace core::pose;
-  using namespace core::kinematics;
-  using namespace core::io::silent;
-  using namespace protocols::rna::denovo;
+	using namespace core::scoring;
+	using namespace core::chemical;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
+	using namespace core::pose;
+	using namespace core::kinematics;
+	using namespace core::io::silent;
+	using namespace protocols::rna::denovo;
 
-  // What is the sequence?
-  std::string full_sequence;
-  full_sequence = option[ seq ]();
+	// What is the sequence?
+	std::string full_sequence;
+	full_sequence = option[ seq ]();
 
-  ResidueTypeSetCAP rsd_set;
-  rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	ResidueTypeSetCAP rsd_set;
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-  // Starting two-residues.
-  Pose pose;
-  make_pose_from_sequence( pose, full_sequence.substr(0,2), *rsd_set );
-  remove_upper_terminus_type_from_pose_residue( pose, 2 );
+	// Starting two-residues.
+	Pose pose;
+	make_pose_from_sequence( pose, full_sequence.substr(0,2), *rsd_set );
+	remove_upper_terminus_type_from_pose_residue( pose, 2 );
 
-  protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 
-  set_helix_torsions( pose, 1 );
+	set_helix_torsions( pose, 1 );
 
-  Size const numres = full_sequence.size();
-  for ( Size n = 3; n <= numres; n++ ) {
+	Size const numres = full_sequence.size();
+	for ( Size n = 3; n <= numres; n++ ) {
 
-    std::cout << "Building on residue: " << n << std::endl;
-    build_on_helix( pose, n, full_sequence[n-1] );
-    put_constraints_on_helix( pose, n );
-    pack_sidechains( pose );
-    minimize_helix( pose, n );
+		std::cout << "Building on residue: " << n << std::endl;
+		build_on_helix( pose, n, full_sequence[n-1] );
+		put_constraints_on_helix( pose, n );
+		pack_sidechains( pose );
+		minimize_helix( pose, n );
 
-  }
+	}
 
-  pose.dump_pdb( full_sequence + ".pdb" );
+	pose.dump_pdb( full_sequence + ".pdb" );
 
 }
 
@@ -287,12 +287,12 @@ void*
 my_main( void* )
 {
 
-  using namespace core::options;
+	using namespace core::options;
 
-  protein_helix_test();
+	protein_helix_test();
 
-  protocols::viewer::clear_conformation_viewers();
-  exit( 0 );
+	protocols::viewer::clear_conformation_viewers();
+	exit( 0 );
 
 }
 
@@ -304,21 +304,21 @@ main( int argc, char * argv [] )
 
 	try {
 
-  using namespace core::options;
+		using namespace core::options;
 
-  //Uh, options?
-  NEW_OPT( seq, "Input sequence", "" );
-  devel::init(argc, argv);
+		//Uh, options?
+		NEW_OPT( seq, "Input sequence", "" );
+		devel::init(argc, argv);
 
-  ////////////////////////////////////////////////////////////////////////////
-  // end of setup
-  ////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-  protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

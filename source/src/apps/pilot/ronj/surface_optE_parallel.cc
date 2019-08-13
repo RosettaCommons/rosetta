@@ -33,10 +33,10 @@ main( int argc, char * argv [] ) {
 	MPI_Init(&argc, &argv);
 #endif
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	protocols::optimize_weights::IterativeOptEDriver driver;
-	driver.go();
+		protocols::optimize_weights::IterativeOptEDriver driver;
+		driver.go();
 
 #ifdef USEMPI
 	MPI_Finalize();
@@ -44,7 +44,7 @@ main( int argc, char * argv [] ) {
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

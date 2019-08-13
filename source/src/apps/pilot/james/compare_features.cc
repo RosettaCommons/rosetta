@@ -65,18 +65,18 @@ get_dm_features(
 	Size feat_idx(1);
 	Size const step_size( 1 + skip_res );
 	for ( Size ii = 1; ii <= pose.size(); ii += step_size ) {
-	for ( Size jj = ii + min_seqsep; jj <= pose.size(); jj += step_size ) {
-		Real const dist_sq(
-			pose.residue(ii).xyz(atom_name).distance_squared(
+		for ( Size jj = ii + min_seqsep; jj <= pose.size(); jj += step_size ) {
+			Real const dist_sq(
+				pose.residue(ii).xyz(atom_name).distance_squared(
 				pose.residue(jj).xyz(atom_name)
-			)
-		);
+				)
+			);
 
-		if ( dist_sq < dist_threshold_sq ) {
-			features[feat_idx] = 1;
-		}
-		feat_idx++;
-	} // jj
+			if ( dist_sq < dist_threshold_sq ) {
+				features[feat_idx] = 1;
+			}
+			feat_idx++;
+		} // jj
 	} // ii
 
 	return features;
@@ -107,8 +107,8 @@ core::Real pct_features_in_common(
 	using core::Real;
 
 	boost::dynamic_bitset<> result = (set1 & set2);
-		//( set1 &  set2) |
-		//(~set1 & ~set2);
+	//( set1 &  set2) |
+	//(~set1 & ~set2);
 	//std::string s1, s2;
 	//boost::to_string(set1,s1);
 	//boost::to_string(set2,s2);
@@ -126,57 +126,57 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	using namespace core::chemical;
-	using namespace basic::options::OptionKeys;
-	using namespace basic::options;
-	using namespace core::import_pose::pose_stream;
-	using namespace core::io::silent;
+		using namespace core::chemical;
+		using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace core::import_pose::pose_stream;
+		using namespace core::io::silent;
 
-	using std::string;
-	using utility::vector1;
-	using core::pose::Pose;
+		using std::string;
+		using utility::vector1;
+		using core::pose::Pose;
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
-	MetaPoseInputStream input = streams_from_cmd_line();
+		ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+		MetaPoseInputStream input = streams_from_cmd_line();
 
-  Pose native;
-  core::import_pose::pose_from_file(
-    native, option[ in::file::native ]()
-  );
+		Pose native;
+		core::import_pose::pose_from_file(
+			native, option[ in::file::native ]()
+		);
 
-	boost::dynamic_bitset<> native_features = get_dm_features( native, 12, "CA", 5 );
-	vector1< boost::dynamic_bitset<> > feature_strings;
+		boost::dynamic_bitset<> native_features = get_dm_features( native, 12, "CA", 5 );
+		vector1< boost::dynamic_bitset<> > feature_strings;
 
-	vector1< SilentStructOP > structs;
-	std::map< boost::dynamic_bitset<>, unsigned long > counts;
+		vector1< SilentStructOP > structs;
+		std::map< boost::dynamic_bitset<>, unsigned long > counts;
 
-	std::cout << "ca_rmsd ca_gdtmm feat_score" << std::endl;
-	while( input.has_another_pose() ) {
-		core::pose::Pose pose;
-		input.fill_pose( pose, *rsd_set );
+		std::cout << "ca_rmsd ca_gdtmm feat_score" << std::endl;
+		while ( input.has_another_pose() ) {
+			core::pose::Pose pose;
+			input.fill_pose( pose, *rsd_set );
 
-		PROF_START( basic::STAGE1 );
-		core::Real const ca_rmsd( core::scoring::CA_rmsd(pose,native) );
-		PROF_STOP ( basic::STAGE1 );
+			PROF_START( basic::STAGE1 );
+			core::Real const ca_rmsd( core::scoring::CA_rmsd(pose,native) );
+			PROF_STOP ( basic::STAGE1 );
 
-		PROF_START( basic::STAGE2 );
-		core::Real const ca_gdtmm( core::scoring::CA_gdtmm(pose,native) );
-		PROF_STOP ( basic::STAGE2 );
+			PROF_START( basic::STAGE2 );
+			core::Real const ca_gdtmm( core::scoring::CA_gdtmm(pose,native) );
+			PROF_STOP ( basic::STAGE2 );
 
-		PROF_START( basic::STAGE3 );
-		boost::dynamic_bitset<> features = get_dm_features( pose, 12, "CA", 5 );
-		core::Real feat_score = pct_features_in_common(features,native_features);
-		PROF_STOP ( basic::STAGE3 );
-		//std::cout << gdtmm << " " << dist << std::endl;
-		std::cout << ca_rmsd << " " << ca_gdtmm << " " << feat_score << std::endl;
-	}
+			PROF_START( basic::STAGE3 );
+			boost::dynamic_bitset<> features = get_dm_features( pose, 12, "CA", 5 );
+			core::Real feat_score = pct_features_in_common(features,native_features);
+			PROF_STOP ( basic::STAGE3 );
+			//std::cout << gdtmm << " " << dist << std::endl;
+			std::cout << ca_rmsd << " " << ca_gdtmm << " " << feat_score << std::endl;
+		}
 
-	basic::prof_show();
+		basic::prof_show();
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

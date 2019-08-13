@@ -178,13 +178,9 @@ main( int argc, char * argv [] )
 		devel::init( argc, argv );
 		tr.Trace << "test in main" << std::endl;
 
-		try{
-			run();
-		} catch (utility::excn::Exception& excn ) {
-			excn.show( std::cerr );
-		}
+		run();
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

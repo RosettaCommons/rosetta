@@ -110,7 +110,7 @@ rna_helix_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Si
 
 	static bool init( false );
 
-	for (Size i = 1; i <= nres; i++) {
+	for ( Size i = 1; i <= nres; i++ ) {
 		// get beginning and end points of helices.
 	}
 
@@ -136,20 +136,20 @@ rhiju_pdbstats()
 	using namespace core::chemical;
 	using namespace core::import_pose;
 
-	//	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
+	// utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 	std::string const file_path( option[ in::path::pdb ]( 1 ) );
 	std::string const pdb_list( option[ in::file::l ](1) );
 
 	utility::io::izstream instream( pdb_list );
-	if (!instream){
+	if ( !instream ) {
 		std::cerr  << "Can't find list file " << pdb_list << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 		return;
 	}
 
 	ResidueTypeSetCAP rsd_set;
-	if ( option[rna_stack]() ){
-  	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	if ( option[rna_stack]() ) {
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	} else {
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
@@ -157,8 +157,8 @@ rhiju_pdbstats()
 	std::string outfile  = option[ out::file::o ];
 	utility::io::ozstream out( outfile );
 
-	//	for (Size i = 1; i <= pdb_files.size(); i++) {
-	//	std::string const pdb_file = pdb_files[i];
+	// for (Size i = 1; i <= pdb_files.size(); i++) {
+	// std::string const pdb_file = pdb_files[i];
 	std::string pdb_file;
 	char chain(' ');
 	Size count( 0 );
@@ -167,7 +167,7 @@ rhiju_pdbstats()
 	Size total_residues( 0 );
 
 	std::string line;
-	while ( 	getline( instream, line )  ) {
+	while (  getline( instream, line )  ) {
 		std::istringstream line_stream( line );
 
 		line_stream >> pdb_file;
@@ -175,11 +175,11 @@ rhiju_pdbstats()
 		line_stream >> chain;
 
 		if ( line_stream.fail() ) chain = '?';
-		//		chain =  pdb_file.at(4) ;
-		//		pdb_file = pdb_file.substr(0,4);
-		//		lowercase( pdb_file );
+		//  chain =  pdb_file.at(4) ;
+		//  pdb_file = pdb_file.substr(0,4);
+		//  lowercase( pdb_file );
 
-		if (chain == '_' ) chain = ' ';
+		if ( chain == '_' ) chain = ' ';
 
 		pose_from_file( pose, *rsd_set, file_path + '/' + pdb_file , core::import_pose::PDB_file);
 
@@ -203,24 +203,24 @@ main( int argc, char * argv [] )
 	try {
 
 
-	using namespace basic::options;
+		using namespace basic::options;
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	rhiju_pdbstats();
+		rhiju_pdbstats();
 
-	exit( 0 );
+		exit( 0 );
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

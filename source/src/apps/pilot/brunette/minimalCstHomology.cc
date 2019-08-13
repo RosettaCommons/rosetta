@@ -288,7 +288,7 @@ int main( int argc, char * argv [] ) {
 		calc_outputCoordCsts(fastaSequenceOP[1],alnDataMapped,poseData,coordCstData,N_RES_FROM_GAP_EXCLUDE,MIN_NUM_COORDCSTS,option[minimalCstHomology::only_res_out]());
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

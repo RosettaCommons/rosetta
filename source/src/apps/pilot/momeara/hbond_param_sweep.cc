@@ -852,7 +852,7 @@ main( int argc, char ** argv )
 			("SER", "HG", "GLY", "O", steps));
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

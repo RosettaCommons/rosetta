@@ -105,7 +105,7 @@ class ConstraintMinimizer : public protocols::moves::Mover {
 		using namespace core::scoring::constraints;
 
 		ConstraintSetOP orig_cstset = ConstraintIO::read_constraints(
-				get_cst_file_option(), new ConstraintSet, pose
+			get_cst_file_option(), new ConstraintSet, pose
 		);
 
 		MaxSeqSepConstraintSetOP mss_cstset;
@@ -156,12 +156,12 @@ main( int argc, char* argv [] )
 {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
-	protocols::viewer::viewer_main( my_main );
+		// options, random initialization
+		devel::init( argc, argv );
+		protocols::viewer::viewer_main( my_main );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

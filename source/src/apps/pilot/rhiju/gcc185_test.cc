@@ -178,14 +178,14 @@ rhiju_pack( pose::Pose & pose, scoring::ScoreFunctionOP & scorefxn )
 
 
 	std::cout << "Completed pack_rotamers_test() with new score: " << design_score << " vs orig: " << score_orig << std::endl;
-	//	std::cout << "emap_orig" << std::endl;
-	//	emap_orig.print();
+	// std::cout << "emap_orig" << std::endl;
+	// emap_orig.print();
 	std::cout << "emap_final:" << std::endl;
 	emap_final.print();
 	//std::cout << "diff" << std::endl;
 	EnergyMap ediff( emap_final );
 	ediff -= emap_orig;
-	//	ediff.print();
+	// ediff.print();
 
 	return design_score;
 }
@@ -235,16 +235,16 @@ hard_minimize( pose::Pose & pose ){
 		Residue const & i_rsd( pose.residue(i) );
 		for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
 			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i),
-																												 AtomID(1,my_anchor),
-																												 i_rsd.xyz(ii),
-																												 new HarmonicFunc( 0.0, coord_sdev ) ) );
+				AtomID(1,my_anchor),
+				i_rsd.xyz(ii),
+				new HarmonicFunc( 0.0, coord_sdev ) ) );
 		}
 	}
 
-// Turn on hard fa_rep
-// Minimize chi angles
-// Minimize backbone angles
-// Minimize rigid body
+	// Turn on hard fa_rep
+	// Minimize chi angles
+	// Minimize backbone angles
+	// Minimize rigid body
 
 	ScoreFunctionOP scorefxn( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 
@@ -278,13 +278,13 @@ hard_minimize( pose::Pose & pose ){
 
 	mm.set_bb(  true );
 	mm.set_chi( true );
-	//	mm.set_jump( true );
+	// mm.set_jump( true );
 
 	std::cout << "Minimizing... jumps+backbone+chi" << std::endl;
 	minimizer.run( pose, mm, *scorefxn, options );
 
 	scorefxn->set_weight( coordinate_constraint, 0.0 );
- 	minimizer.run( pose, mm, *scorefxn, options );
+	minimizer.run( pose, mm, *scorefxn, options );
 
 
 }
@@ -292,8 +292,8 @@ hard_minimize( pose::Pose & pose ){
 ///////////////////////////////////////////////////////////////////////////////
 void
 get_subpose( pose::Pose & pose, pose::Pose & subpose,
-						 Size const start1, Size const end1,
-						 Size const start2, Size const end2)
+	Size const start1, Size const end1,
+	Size const start2, Size const end2)
 {
 
 	using namespace conformation;
@@ -309,12 +309,12 @@ get_subpose( pose::Pose & pose, pose::Pose & subpose,
 
 	std::cout << "About to create a subpose " << std::endl;
 
-	for (Size i=start1; i <= end1; ++i ) {
+	for ( Size i=start1; i <= end1; ++i ) {
 		conformation::Residue const & rsd( pose.residue( i ) );
 		subpose.append_residue_by_jump( rsd, 1 );
 	}
 
-	for (Size i=start2; i <= end2; ++i ) {
+	for ( Size i=start2; i <= end2; ++i ) {
 		conformation::Residue const & rsd( pose.residue( i ) );
 		subpose.append_residue_by_jump( rsd, 1 );
 	}
@@ -326,7 +326,7 @@ get_subpose( pose::Pose & pose, pose::Pose & subpose,
 	FoldTree f( nres );
 	std::cout << "SUBPOSE TOTAL RES " << nres << std::endl;
 	subpose.fold_tree( f );
-	//	create_subpose( pose, positions, f, subpose );
+	// create_subpose( pose, positions, f, subpose );
 
 	std::cout << "Finished creating a subpose " << std::endl;
 
@@ -335,9 +335,9 @@ get_subpose( pose::Pose & pose, pose::Pose & subpose,
 ///////////////////////////////////////////////////////////////////////////////
 void
 find_closest_points( pose::Pose & pose,
-										 Size const start1, Size const end1,
-										 Size const start2, Size const end2,
-										 Size & closest_i, Size & closest_j )
+	Size const start1, Size const end1,
+	Size const start2, Size const end2,
+	Size & closest_i, Size & closest_j )
 {
 	using namespace chemical;
 	using namespace conformation;
@@ -351,9 +351,9 @@ find_closest_points( pose::Pose & pose,
 			Residue const & j_rsd( pose.residue(j) );
 
 			Real dist2 = ( i_rsd.xyz( i_rsd.atom_index("CA") )
-										 - j_rsd.xyz( j_rsd.atom_index("CA") )  ).length_squared();
+				- j_rsd.xyz( j_rsd.atom_index("CA") )  ).length_squared();
 
-			if (dist2 < closest_dist2 ){
+			if ( dist2 < closest_dist2 ) {
 				closest_i = i;
 				closest_j = j;
 				closest_dist2 = dist2;
@@ -366,8 +366,8 @@ find_closest_points( pose::Pose & pose,
 ///////////////////////////////////////////////////////////////////////////////
 void
 get_useful_fold_trees_for_gcc185( pose::Pose & pose,
-											kinematics::FoldTree & f_minimize,
-											kinematics::FoldTree & f_repack)
+	kinematics::FoldTree & f_minimize,
+	kinematics::FoldTree & f_repack)
 // Set up fold tree
 {
 	int const num_jump_in( 3 );
@@ -377,30 +377,30 @@ get_useful_fold_trees_for_gcc185( pose::Pose & pose,
 	// MAGIC NUMBERS. In principle this could be much more flexible,
 	// looking at chainbreaks within input PDB to figure out what's going on.
 
-	Size gtpase1_start,	gtpase1_end  ,	coiledcoil1_start,	coiledcoil1_end  ,	gtpase2_start,	gtpase2_end  ,	coiledcoil2_start,	coiledcoil2_end  ;
+	Size gtpase1_start, gtpase1_end  , coiledcoil1_start, coiledcoil1_end  , gtpase2_start, gtpase2_end  , coiledcoil2_start, coiledcoil2_end  ;
 
-	if ( false )
-	{ // appropriate for mini_3bbp
-	gtpase1_start = 1;
-	gtpase1_end   = 6;
-	coiledcoil1_start = 7;
-	coiledcoil1_end   = 13;
+	if ( false ) {
+		// appropriate for mini_3bbp
+		gtpase1_start = 1;
+		gtpase1_end   = 6;
+		coiledcoil1_start = 7;
+		coiledcoil1_end   = 13;
 
-	gtpase2_start = 14;
-	gtpase2_end   = 19;
-	coiledcoil2_start = 20;
-	coiledcoil2_end   = 26;
-	} else
-	{ // appropriate for 3bbp_threecoiledcoilturns
-	gtpase1_start = 1;
-	gtpase1_end   = 161;
-	coiledcoil1_start = 162;
-	coiledcoil1_end   = 189;
+		gtpase2_start = 14;
+		gtpase2_end   = 19;
+		coiledcoil2_start = 20;
+		coiledcoil2_end   = 26;
+	} else {
+		// appropriate for 3bbp_threecoiledcoilturns
+		gtpase1_start = 1;
+		gtpase1_end   = 161;
+		coiledcoil1_start = 162;
+		coiledcoil1_end   = 189;
 
-	gtpase2_start = 190;
-	gtpase2_end   = 350;
-	coiledcoil2_start = 351;
-	coiledcoil2_end   = 378;
+		gtpase2_start = 190;
+		gtpase2_end   = 350;
+		coiledcoil2_start = 351;
+		coiledcoil2_end   = 378;
 	}
 
 	Size const nres = pose.size();
@@ -411,25 +411,25 @@ get_useful_fold_trees_for_gcc185( pose::Pose & pose,
 	Size i,j;
 
 	find_closest_points( pose,
-											 gtpase1_start, gtpase1_end,
-											 coiledcoil1_start, coiledcoil1_end,
-											 i, j );
+		gtpase1_start, gtpase1_end,
+		coiledcoil1_start, coiledcoil1_end,
+		i, j );
 	jump_point( 1, 1) = i;
 	jump_point( 2, 1) = j;
 	cuts( 1 ) = gtpase1_end;
 
 	find_closest_points( pose,
-											 coiledcoil1_start, coiledcoil1_end,
-											 coiledcoil2_start, coiledcoil2_end,
-											 i, j );
+		coiledcoil1_start, coiledcoil1_end,
+		coiledcoil2_start, coiledcoil2_end,
+		i, j );
 	jump_point( 1, 2) = i;
 	jump_point( 2, 2) = j;
 	cuts( 2 ) = coiledcoil1_end;
 
 	find_closest_points( pose,
-											 gtpase2_start, gtpase2_end,
-											 coiledcoil2_start, coiledcoil2_end,
-											 i, j );
+		gtpase2_start, gtpase2_end,
+		coiledcoil2_start, coiledcoil2_end,
+		i, j );
 	jump_point( 1, 3) = i;
 	jump_point( 2, 3) = j;
 	cuts( 3 ) = gtpase2_end;
@@ -441,23 +441,23 @@ get_useful_fold_trees_for_gcc185( pose::Pose & pose,
 	// This connects GTPase2 <--> GTPase1 <--> coil1 <--> coil2
 	//////////////////////////////////////////////////////////////
 	find_closest_points( pose,
-											 gtpase1_start, gtpase1_end,
-											 coiledcoil1_start, coiledcoil1_end,
-											 i, j );
+		gtpase1_start, gtpase1_end,
+		coiledcoil1_start, coiledcoil1_end,
+		i, j );
 	cuts( 1 ) = gtpase1_end;
 
 	find_closest_points( pose,
-											 coiledcoil1_start, coiledcoil1_end,
-											 coiledcoil2_start, coiledcoil2_end,
-											 i, j );
+		coiledcoil1_start, coiledcoil1_end,
+		coiledcoil2_start, coiledcoil2_end,
+		i, j );
 	jump_point( 1, 2) = i;
 	jump_point( 2, 2) = j;
 	cuts( 2 ) = gtpase2_end;
 
 	find_closest_points( pose,
-											 gtpase1_start, gtpase1_end,
-											 gtpase2_start, gtpase2_end,
-											 i, j );
+		gtpase1_start, gtpase1_end,
+		gtpase2_start, gtpase2_end,
+		i, j );
 	jump_point( 1, 3) = i;
 	jump_point( 2, 3) = j;
 	cuts( 3 ) = coiledcoil1_end;
@@ -512,7 +512,7 @@ repack_minimize_test( ){
 
 	std::string pdb  = option[ in ::file::s ][1];
 
-	//	std::string const pdb = "3bbp_threecoiledcoilturns";
+	// std::string const pdb = "3bbp_threecoiledcoilturns";
 
 	io::pdb::pose_from_file( pose, pdb+".pdb" , core::import_pose::PDB_file);
 
@@ -558,25 +558,25 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+		using namespace core::options;
+		using namespace core::options::OptionKeys;
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// setup
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// setup
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	repack_minimize_test();
-	exit(0);
+		repack_minimize_test();
+		exit(0);
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

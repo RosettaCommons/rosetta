@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 			core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
 	}catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

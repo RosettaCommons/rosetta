@@ -232,7 +232,7 @@ main( int argc, char* argv[] )
 		//call job distributor
 		protocols::jd2::JobDistributor::get_instance()->go( tddm_mover );
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

@@ -37,40 +37,40 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::sequence;
-	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set(
-		option[ in::file::residue_type_set ]()
-	);
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
+		using namespace core::sequence;
+		ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set(
+			option[ in::file::residue_type_set ]()
+		);
 
-	core::pose::Pose query_pose, template_pose;
-	core::import_pose::pose_from_file(
-		template_pose,
-		*rsd_set,
-		option[ in::file::template_pdb ]()[1]
-	);
+		core::pose::Pose query_pose, template_pose;
+		core::import_pose::pose_from_file(
+			template_pose,
+			*rsd_set,
+			option[ in::file::template_pdb ]()[1]
+		);
 
-	SequenceAlignment aln;
-	if ( option[ in::file::alignment ].user() ) {
-		std::string align_fn  = option[ in::file::alignment ]()[1];
-		aln.read_from_file( align_fn );
-	}
-	std::cout << aln << std::endl;
+		SequenceAlignment aln;
+		if ( option[ in::file::alignment ].user() ) {
+			std::string align_fn  = option[ in::file::alignment ]()[1];
+			aln.read_from_file( align_fn );
+		}
+		std::cout << aln << std::endl;
 
-	protocols::moves::MoverOP mover(
-		new protocols::comparative_modeling::StealSideChainsMover(
+		protocols::moves::MoverOP mover(
+			new protocols::comparative_modeling::StealSideChainsMover(
 			template_pose, aln.sequence_mapping(1,2)
-		)
-	);
-	protocols::jobdist::not_universal_main( *mover );
+			)
+		);
+		protocols::jobdist::not_universal_main( *mover );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

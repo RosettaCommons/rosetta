@@ -302,7 +302,8 @@ int main(int argc, char* argv[])
 		buns_stats(pdb_list, AHdist, hb_geom_strat1, vsasa_calc, burial_cutoff);
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
+		return -1;
 	}
 	return 0;
 }

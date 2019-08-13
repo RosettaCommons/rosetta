@@ -8,10 +8,10 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /** @page simpleScore
-	This simple script scores a PDB
-	It reads in a PDB, scores it and prints out the scored PDB
-	Run it by typing:
-		scorePDB.cc -in::file::s <pdb file> -in::path::database <DB root dir>
+This simple script scores a PDB
+It reads in a PDB, scores it and prints out the scored PDB
+Run it by typing:
+scorePDB.cc -in::file::s <pdb file> -in::path::database <DB root dir>
 */
 
 /// @file   apps/pilot/lemmon/simpleScore.cc
@@ -45,32 +45,32 @@
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-    try {
-  devel::init(argc, argv);
+	try {
+		devel::init(argc, argv);
 
-  utility::vector0<std::string> pdbs;
-  {// process the options
-    using namespace basic::options::OptionKeys;
-    using basic::options::option;
-    pdbs= option[in::file::s]();
-  }
-	core::scoring::ScoreFunction scoreFunction;
-	{
-		const std::string weightsPath("/scoring/weights/standard.wts");
-		scoreFunction.initialize_from_file(basic::database::full_name(weightsPath));
+		utility::vector0<std::string> pdbs;
+		{// process the options
+			using namespace basic::options::OptionKeys;
+			using basic::options::option;
+			pdbs= option[in::file::s]();
+		}
+		core::scoring::ScoreFunction scoreFunction;
+		{
+			const std::string weightsPath("/scoring/weights/standard.wts");
+			scoreFunction.initialize_from_file(basic::database::full_name(weightsPath));
+		}
+		core::pose::Pose pose; // starts NULL, coords *never* modified!
+		{
+			std::string pdb=pdbs[0];
+			core::import_pose::pose_from_file( pose, pdb, core::import_pose::PDB_file);
+		}
+		{
+			const std::string output("output.pdb");
+			pose.dump_scored_pdb(output, scoreFunction);
+		}
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
 	}
-  core::pose::Pose pose; // starts NULL, coords *never* modified!
-	{
-		std::string pdb=pdbs[0];
-		core::import_pose::pose_from_file( pose, pdb, core::import_pose::PDB_file);
-	}
-	{
-		const std::string output("output.pdb");
-		pose.dump_scored_pdb(output, scoreFunction);
-	}
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-	return -1;
-    }
-    return 0;
+	return 0;
 }

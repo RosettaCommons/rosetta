@@ -435,7 +435,7 @@ int main( int argc, char *argv[])
 		// Do not adjust this line without altering the daemon code because it will look for it as signal of normal ending!
 		TR << "Performance Benchmark ended.   --------------------------------" << std::endl;
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

@@ -128,7 +128,7 @@ get_opte_data(
 	vector1< bool > task_mask( pose.size(), false );
 	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
 		if ( pose.residue_type(pos).is_DNA() ) continue; // skip DNA
-//		if ( !main_task->nonconst_residue_task( pos ).being_designed() ) continue;
+		//  if ( !main_task->nonconst_residue_task( pos ).being_designed() ) continue;
 		if ( !main_task->nonconst_residue_task( pos ).being_packed() ) continue;
 
 		task::PackerTaskOP position_task = task::TaskFactory::create_packer_task( pose );
@@ -176,12 +176,12 @@ get_opte_data(
 			vector1< Real > energy_info, fixed_energy_info;
 
 			for ( ScoreTypes::iterator score_type_iter = score_list.begin(),
-							end_iter = score_list.end() ; score_type_iter != end_iter; ++score_type_iter ) {
+					end_iter = score_list.end() ; score_type_iter != end_iter; ++score_type_iter ) {
 				energy_info.push_back( emap_total[ *score_type_iter ] );
 			}
 
 			for ( ScoreTypes::iterator score_type_iter = fixed_score_vec.begin(),
-							end_iter = fixed_score_vec.end() ; score_type_iter != end_iter; ++score_type_iter ) {
+					end_iter = fixed_score_vec.end() ; score_type_iter != end_iter; ++score_type_iter ) {
 				fixed_energy_info.push_back( emap_total[ *score_type_iter ] );
 			}
 
@@ -191,8 +191,8 @@ get_opte_data(
 			this_pos_data->add_rotamer_line_data( new_rot_line );
 		}
 
-	// Done with rotamers for this position, store this position data object
-	opte_data.add_position_data( this_pos_data );
+		// Done with rotamers for this position, store this position data object
+		opte_data.add_position_data( this_pos_data );
 
 	}
 }
@@ -230,7 +230,7 @@ simple_opte_test()
 		user_scorefxn.initialize_from_file( optE_weights );
 		ScoreTypes score_types( user_scorefxn.get_nonzero_weighted_scoretypes() );
 		for ( ScoreTypes::const_iterator score_type( score_types.begin() );
-		      score_type != score_types.end(); ++score_type ) {
+				score_type != score_types.end(); ++score_type ) {
 			if ( user_scorefxn.has_zero_weight( *score_type ) ) {
 				// useful for pesky weights like fa_intra_rep?
 				unweighted_scorefxn.set_weight( *score_type, 0. );
@@ -240,14 +240,14 @@ simple_opte_test()
 		}
 	} else  {
 		// a common (default) scheme
-	  unweighted_scorefxn.set_weight( fa_atr, 1. );
-	  unweighted_scorefxn.set_weight( fa_rep, 1. );
-	  unweighted_scorefxn.set_weight( fa_sol, 1. );
-	  unweighted_scorefxn.set_weight( fa_pair, 1. );
-	  unweighted_scorefxn.set_weight( hbond_bb_sc, 1. );
-	  unweighted_scorefxn.set_weight( hbond_sc, 1. );
-	  unweighted_scorefxn.set_weight( fa_dun, 1. );
-	  unweighted_scorefxn.set_weight( p_aa_pp, 1. );
+		unweighted_scorefxn.set_weight( fa_atr, 1. );
+		unweighted_scorefxn.set_weight( fa_rep, 1. );
+		unweighted_scorefxn.set_weight( fa_sol, 1. );
+		unweighted_scorefxn.set_weight( fa_pair, 1. );
+		unweighted_scorefxn.set_weight( hbond_bb_sc, 1. );
+		unweighted_scorefxn.set_weight( hbond_sc, 1. );
+		unweighted_scorefxn.set_weight( fa_dun, 1. );
+		unweighted_scorefxn.set_weight( p_aa_pp, 1. );
 	}
 
 	// Make two EnergyMaps - one is the set of weights which are included in the optimization, the other indicates which should be fixed at a certain non-zero value
@@ -257,11 +257,11 @@ simple_opte_test()
 		// command-line fixing of weights (that also appear in the command-line-supplied weight file)
 		vector1< std::string > fixed_types( option[ optE::fix ]() );
 		for ( vector1< std::string >::const_iterator fixed_type( fixed_types.begin() );
-		      fixed_type != fixed_types.end(); ++fixed_type ) {
+				fixed_type != fixed_types.end(); ++fixed_type ) {
 			ScoreType fixed_score_type( score_type_from_name( *fixed_type ) );
 			if ( !user_scorefxn.has_nonzero_weight( fixed_score_type ) ) {
 				std::cout << "score type to fix: \"" << fixed_score_type
-				          << "\" not found in user-defined scorefxn!" << std::endl;
+					<< "\" not found in user-defined scorefxn!" << std::endl;
 			}
 			fixed_terms.set( fixed_score_type, user_scorefxn.get_weight( fixed_score_type ) );
 		}
@@ -275,16 +275,16 @@ simple_opte_test()
 	int include_count( 0 );
 	int fixed_count( 0 );
 	int score_index( 1 );
-	for( EnergyMap::const_iterator include_itr = include_terms.begin(),
-							end_include_itr = include_terms.end(),
-							fixed_itr = fixed_terms.begin() ;
-				include_itr != end_include_itr ; ++include_itr, ++fixed_itr, ++score_index ) {
-		if( (*include_itr) != 0.0 ) {
+	for ( EnergyMap::const_iterator include_itr = include_terms.begin(),
+			end_include_itr = include_terms.end(),
+			fixed_itr = fixed_terms.begin() ;
+			include_itr != end_include_itr ; ++include_itr, ++fixed_itr, ++score_index ) {
+		if ( (*include_itr) != 0.0 ) {
 			++include_count;
 		}
-		if( (*fixed_itr) != 0.0 ) {
+		if ( (*fixed_itr) != 0.0 ) {
 			++fixed_count;
-			if( (*include_itr) == 0.0 ) {
+			if ( (*include_itr) == 0.0 ) {
 				utility_exit_with_message( "ERROR:  Fixed energy term not included!" );
 			}
 		}
@@ -297,35 +297,35 @@ simple_opte_test()
 	std::cout << "Optimizing " << free_count << " energy terms" << std::endl;
 
 	ScoreTypes score_list;
-	for( int i=1 ; i <= n_score_types ; ++i ) {
-		if( include_terms[ ScoreType(i) ] != 0.0 ) {
+	for ( int i=1 ; i <= n_score_types ; ++i ) {
+		if ( include_terms[ ScoreType(i) ] != 0.0 ) {
 			score_list.push_back( ScoreType(i) );
 		}
 	}
 
 	ScoreTypes fixed_score_list;
-	for( int i=1 ; i <= n_score_types ; ++i ) {
-		if( fixed_terms[ ScoreType(i) ] != 0.0 ) {
+	for ( int i=1 ; i <= n_score_types ; ++i ) {
+		if ( fixed_terms[ ScoreType(i) ] != 0.0 ) {
 			fixed_score_list.push_back( ScoreType(i) );
 		}
 	}
 
-	for( ScoreTypes::const_iterator it = score_list.begin(), e_it = score_list.end() ;
-				it != e_it ; ++it ) {
+	for ( ScoreTypes::const_iterator it = score_list.begin(), e_it = score_list.end() ;
+			it != e_it ; ++it ) {
 		std::cout << "Including " << name_from_score_type( *it ) << std::endl;
 	}
 
-	for( ScoreTypes::iterator it = score_list.begin(), e_it = score_list.end() ;
-				it != e_it ; ++it ) {
-		if( std::find( fixed_score_list.begin(), fixed_score_list.end(),  *it ) != fixed_score_list.end() ) {
+	for ( ScoreTypes::iterator it = score_list.begin(), e_it = score_list.end() ;
+			it != e_it ; ++it ) {
+		if ( std::find( fixed_score_list.begin(), fixed_score_list.end(),  *it ) != fixed_score_list.end() ) {
 			// Check the syntax here
 			std::cout << "Removing " << name_from_score_type( *it ) << std::endl;
 			score_list.erase( it );
 		}
 	}
 
-	for( ScoreTypes::const_iterator it = score_list.begin(), e_it = score_list.end() ;
-				it != e_it ; ++it ) {
+	for ( ScoreTypes::const_iterator it = score_list.begin(), e_it = score_list.end() ;
+			it != e_it ; ++it ) {
 		std::cout << "Revised Including " << name_from_score_type( *it ) << std::endl;
 	}
 
@@ -340,7 +340,7 @@ simple_opte_test()
 
 		vector1< std::string > pdb_files( start_files() );
 		for ( vector1< std::string >::const_iterator pdb_file( pdb_files.begin() );
-		      pdb_file != pdb_files.end(); ++pdb_file ) {
+				pdb_file != pdb_files.end(); ++pdb_file ) {
 
 			std::cout << "Working on file: " << *pdb_file << std::endl;
 
@@ -357,8 +357,8 @@ simple_opte_test()
 			get_opte_data( pose, unweighted_scorefxn, score_list, fixed_score_list, full_data_set );
 
 			std::cout << "Have data from " << full_data_set.num_rotamers() << " rotamers at "
-			          << full_data_set.num_positions() << " positions " << std::endl;
-	//		utility_exit_with_message( "DONE AFTER FIRST FILE" );
+				<< full_data_set.num_positions() << " positions " << std::endl;
+			//  utility_exit_with_message( "DONE AFTER FIRST FILE" );
 		}
 	}
 
@@ -392,7 +392,7 @@ simple_opte_test()
 	optimization::Multivec start_dofs = opt_min.get_dofs_from_energy_map( include_terms );
 
 	for ( optimization::Multivec::const_iterator it( start_dofs.begin() ); it != start_dofs.end();
-	      ++it ) {
+			++it ) {
 		std::cout << F(3,2,*it) << " ";
 	}
 	std::cout << std::endl;
@@ -410,7 +410,7 @@ simple_opte_test()
 
 		std::cout << "Using starting weights from " << optE_weights << ":" << std::endl;
 		for ( optimization::Multivec::const_iterator it( start_dofs.begin() ); it != start_dofs.end();
-		      ++it ) {
+				++it ) {
 			std::cout << F(3,2,*it) << " ";
 		}
 		std::cout << std::endl;
@@ -432,20 +432,20 @@ simple_opte_test()
 
 	weight_file << "# fixed params:";
 	for ( ScoreTypes::const_iterator st( fixed_score_list.begin() );
-	      st != fixed_score_list.end(); ++st ) {
+			st != fixed_score_list.end(); ++st ) {
 		weight_file << " " << *st;
 	}
 	weight_file << std::endl;
 
 	weight_file << "# free params:";
 	for ( ScoreTypes::const_iterator st( score_list.begin() );
-	      st != score_list.end(); ++st ) {
+			st != score_list.end(); ++st ) {
 		weight_file << " " << *st;
 	}
 	weight_file << std::endl;
 
-	for( int i(1); i <= n_score_types; ++i ) {
-		if( fixed_terms[ ScoreType(i) ] != 0.0 ) {
+	for ( int i(1); i <= n_score_types; ++i ) {
+		if ( fixed_terms[ ScoreType(i) ] != 0.0 ) {
 			weight_file << ScoreType(i) << " " << fixed_terms[ ScoreType(i) ] << std::endl;
 		}
 	}
@@ -462,7 +462,7 @@ simple_opte_test()
 	}
 	weight_file << "ref 1" << std::endl;
 	weight_file << "METHOD_WEIGHTS ref";
-	for( Size ii = free_count+1 ; ii <= Size( free_count+20 ) ; ++ii ) {
+	for ( Size ii = free_count+1 ; ii <= Size( free_count+20 ) ; ++ii ) {
 		weight_file << " " << start_dofs[ ii ];
 	}
 	weight_file << std::endl;
@@ -477,12 +477,12 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	//using namespace core;
-	devel::init( argc, argv );
+		//using namespace core;
+		devel::init( argc, argv );
 
-	simple_opte_test();
+		simple_opte_test();
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

@@ -78,52 +78,52 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
-	using namespace core::scoring::constraints;
-	using namespace basic::options::OptionKeys;
-	using namespace basic::options;
+		// options, random initialization
+		devel::init( argc, argv );
+		using namespace core::scoring::constraints;
+		using namespace basic::options::OptionKeys;
+		using namespace basic::options;
 
-  // setup residue types
-  core::chemical::ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		// setup residue types
+		core::chemical::ResidueTypeSetCAP rsd_set;
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
-	// read in a dummy pose
-  core::pose::Pose native_pose;
-  if ( option[ in::file::native ].user() ) {
-    core::import_pose::pose_from_file(
-			native_pose,
-			*rsd_set,
-			option[ in::file::native ]()
-		);
-  }
-
-  // read in constraints
-  ConstraintSetOP cstset_;
-  std::string cstfile = core::scoring::constraints::get_cst_file_option();
-  cstset_ = ConstraintIO::read_constraints(
-		cstfile,
-		new ConstraintSet,
-		native_pose
-	);
-
-	// print the constraints out to a file.
-	std::string filename = option[ out::file::silent ]();
-	if ( !utility::file::file_exists( filename ) ) {
-		utility::io::ozstream output;
-		output.open( filename );
-		if ( option[ james::debug ]() ) {
-			cstset_->show_definition( output, native_pose );
-		} else {
-			cstset_->show(output);
+		// read in a dummy pose
+		core::pose::Pose native_pose;
+		if ( option[ in::file::native ].user() ) {
+			core::import_pose::pose_from_file(
+				native_pose,
+				*rsd_set,
+				option[ in::file::native ]()
+			);
 		}
-		output.close();
-	} else {
-		utility_exit_with_message( "Error: file exists: " + filename  );
-	}
+
+		// read in constraints
+		ConstraintSetOP cstset_;
+		std::string cstfile = core::scoring::constraints::get_cst_file_option();
+		cstset_ = ConstraintIO::read_constraints(
+			cstfile,
+			new ConstraintSet,
+			native_pose
+		);
+
+		// print the constraints out to a file.
+		std::string filename = option[ out::file::silent ]();
+		if ( !utility::file::file_exists( filename ) ) {
+			utility::io::ozstream output;
+			output.open( filename );
+			if ( option[ james::debug ]() ) {
+				cstset_->show_definition( output, native_pose );
+			} else {
+				cstset_->show(output);
+			}
+			output.close();
+		} else {
+			utility_exit_with_message( "Error: file exists: " + filename  );
+		}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

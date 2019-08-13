@@ -112,9 +112,7 @@ main( int argc, char * argv [] )
 			}
 		}
 	} catch (utility::excn::Exception& excn ) {
-		basic::Error()
-			<< "Exception caught by rosetta_scripts application:"
-			<< excn << std::endl;
+		excn.display();
 		std::exit( 1 );
 	}
 }

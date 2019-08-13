@@ -20,35 +20,34 @@ int main(int argc, char *argv[])
 
 	try {
 
-	using namespace core;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace protocols::moves::mc_convergence_checks;
+		using namespace core;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace protocols::moves::mc_convergence_checks;
 
-	devel::init(argc, argv);
-	HPool_RMSD_OP hp = new HPool_RMSD(option[mc::known_structures]);
+		devel::init(argc, argv);
+		HPool_RMSD_OP hp = new HPool_RMSD(option[mc::known_structures]);
 
-	//hp->debug();
+		//hp->debug();
 
-    io::silent::SilentFileData sfd;
-    sfd.read_file( option[ in::file::silent ]()[1] );
+		io::silent::SilentFileData sfd;
+		sfd.read_file( option[ in::file::silent ]()[1] );
 
-    std::string tag;
-    core::Real best_rmsd;
+		std::string tag;
+		core::Real best_rmsd;
 
-    for ( io::silent::SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it )
-    {
-        //hp->evaluate(**it, option[ cluster::K_radius ]()[1], tag, best_rmsd);
-        hp->evaluate(**it, option[ cluster::K_threshold ](), tag, best_rmsd);
-        std::cout << "decoy:" << it->decoy_tag() << " " << tag << " " << best_rmsd << std::endl;
-    }
+		for ( io::silent::SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
+			//hp->evaluate(**it, option[ cluster::K_radius ]()[1], tag, best_rmsd);
+			hp->evaluate(**it, option[ cluster::K_threshold ](), tag, best_rmsd);
+			std::cout << "decoy:" << it->decoy_tag() << " " << tag << " " << best_rmsd << std::endl;
+		}
 
-    std::cout << "number of centers: " << hp->size() << std::endl;
+		std::cout << "number of centers: " << hp->size() << std::endl;
 
-	return 0;
+		return 0;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

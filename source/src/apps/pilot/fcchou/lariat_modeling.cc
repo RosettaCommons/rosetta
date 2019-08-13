@@ -86,7 +86,7 @@ get_torsion_set( Pose const & pose )
 	utility::vector1 < Real > torsion;
 	Size moving_suite;
 
-	for (Size i = 1; i <= 3; ++i) {
+	for ( Size i = 1; i <= 3; ++i ) {
 		moving_suite = total_res - 4 + i;
 		torsion.clear();
 		torsion.push_back( pose.torsion( TorsionID( moving_suite, id::BB, 5 ) ) );
@@ -110,7 +110,7 @@ apply_torsion_set( Pose & pose, utility::vector1 < utility::vector1 < Real > > c
 	Size const total_res = pose.size();
 	Size moving_suite;
 
-	for (Size i = 1; i <= 3; ++i) {
+	for ( Size i = 1; i <= 3; ++i ) {
 		moving_suite = total_res - 4 + i;
 		utility::vector1 < Real > const & torsion = torsion_set[i];
 		pose.set_torsion( TorsionID( moving_suite, id::BB, 5 ), torsion[1] );
@@ -120,12 +120,12 @@ apply_torsion_set( Pose & pose, utility::vector1 < utility::vector1 < Real > > c
 		pose.set_torsion( TorsionID( moving_suite+1, id::BB, 3 ), torsion[5]  );
 		pose.set_torsion( TorsionID( moving_suite+1, id::CHI, 1 ), torsion[7]  );
 		pose.set_torsion( TorsionID( moving_suite+1, id::CHI, 4 ), torsion[8]  );
-		if (torsion[6] < 115) {
-			if ( pose.torsion( TorsionID( moving_suite+1, id::BB, 4 ) ) > 115) {
+		if ( torsion[6] < 115 ) {
+			if ( pose.torsion( TorsionID( moving_suite+1, id::BB, 4 ) ) > 115 ) {
 				ideal_coord_rna.apply(pose, moving_suite+1, true);
 			}
 		} else {
-			if ( pose.torsion( TorsionID( moving_suite+1, id::BB, 4 ) ) < 115) {
+			if ( pose.torsion( TorsionID( moving_suite+1, id::BB, 4 ) ) < 115 ) {
 				ideal_coord_rna.apply(pose, moving_suite+1, false);
 			}
 		}
@@ -135,11 +135,11 @@ apply_torsion_set( Pose & pose, utility::vector1 < utility::vector1 < Real > > c
 void
 update_torsion_set( utility::vector1 < utility::vector1 < Real > > & torsion_set, Real const stdev )
 {
-	for (Size i = 1; i <= torsion_set.size(); ++i) {
-		for (Size j = 1; j <= torsion_set[i].size(); ++j) {
-			if (i == 1 && (j == 1 || j == 2) )  {
+	for ( Size i = 1; i <= torsion_set.size(); ++i ) {
+		for ( Size j = 1; j <= torsion_set[i].size(); ++j ) {
+			if ( i == 1 && (j == 1 || j == 2) )  {
 				continue;
-			} else if ( j == 6 && numeric::random::rg().uniform() < 0.2) {
+			} else if ( j == 6 && numeric::random::rg().uniform() < 0.2 ) {
 				torsion_set[i][j] = (numeric::random::rg().uniform() < 0.5) ? 82 : 130;
 			} else {
 				torsion_set[i][j] += numeric::random::rg().gaussian() * stdev;
@@ -172,7 +172,7 @@ lariat_modeling ()
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->
-	          residue_type_set ( RNA );
+		residue_type_set ( RNA );
 
 	Pose pose;
 	std::string pdb_name;
@@ -191,11 +191,11 @@ lariat_modeling ()
 		std::cout << "User passed in score:weight option: " << score_weight_file << std::endl;
 	}
 	core::scoring::ScoreFunctionOP scorefxn =
-			ScoreFunctionFactory::create_score_function ( score_weight_file );
+		ScoreFunctionFactory::create_score_function ( score_weight_file );
 
 	protocols::rna::denovo::RNA_IdealCoord const ideal_coord_rna;
 	Size const total_res = pose.size();
-	for (Size i = total_res - 2; i <= total_res; ++i) {
+	for ( Size i = total_res - 2; i <= total_res; ++i ) {
 		ideal_coord_rna.apply( pose, i );
 	}
 
@@ -206,8 +206,8 @@ lariat_modeling ()
 	Vector const PO3_bond_norm = (coord_O3prime - coord_P).normalize();
 	Vector const coord_O2prime = coord_P - PO3_bond_norm * 3.7;
 	cst_set->add_constraint( new CoordinateConstraint( AtomID(atm_indexO2prime, total_res),
-																						AtomID(1, 1), coord_O2prime,
-																						new HarmonicFunc( 0.0, 0.5 ) ) );
+		AtomID(1, 1), coord_O2prime,
+		new HarmonicFunc( 0.0, 0.5 ) ) );
 	pose.constraint_set ( cst_set );
 
 	Real kT = 1.0;
@@ -217,16 +217,16 @@ lariat_modeling ()
 	utility::vector1 < utility::vector1 < Real > > torsion_set_new = torsion_set;
 	Real score, score_new;
 
-	for (Size i = 0; i != 11; ++ i) {
+	for ( Size i = 0; i != 11; ++ i ) {
 		Real const cst_weight = i * 0.1;
 		scorefxn -> set_weight( coordinate_constraint, cst_weight );
 		score = (*scorefxn) (pose);
 		Size n_accept = 0;
-		for (Size j = 0; j != n_steps_per_cycle; ++j) {
+		for ( Size j = 0; j != n_steps_per_cycle; ++j ) {
 			update_torsion_set( torsion_set_new, stdev );
 			apply_torsion_set(pose, torsion_set_new);
 			score_new = (*scorefxn) (pose);
-			if (score_new < score || numeric::random::rg().uniform() < exp( (score - score_new) / kT) ){
+			if ( score_new < score || numeric::random::rg().uniform() < exp( (score - score_new) / kT) ) {
 				score = score_new;
 				torsion_set = torsion_set_new;
 				++n_accept;
@@ -247,15 +247,15 @@ lariat_modeling ()
 	Pose lowest_pose;
 	Real lowest_score = 99999;
 
-	for (Size j = 0; j != n_step; ++j) {
+	for ( Size j = 0; j != n_step; ++j ) {
 		update_torsion_set( torsion_set_new, stdev );
 		apply_torsion_set(pose, torsion_set_new);
 		score_new = (*scorefxn) (pose);
-		if (score_new < score || numeric::random::rg().uniform() < exp( (score - score_new) / kT) ){
+		if ( score_new < score || numeric::random::rg().uniform() < exp( (score - score_new) / kT) ) {
 			++n_accept;
 			score = score_new;
 			torsion_set = torsion_set_new;
-			if (score < lowest_score) {
+			if ( score < lowest_score ) {
 				lowest_score = score;
 				lowest_pose = pose;
 			}
@@ -263,7 +263,7 @@ lariat_modeling ()
 			torsion_set_new = torsion_set;
 		}
 		++n_step_after_save;
-		if (n_step_after_save == n_step_per_save) {
+		if ( n_step_after_save == n_step_per_save ) {
 			pose_list.push_back( std::pair <Real, Pose> (0.0, pose) );
 			n_step_after_save = 0;
 		}
@@ -280,13 +280,13 @@ lariat_modeling ()
 	mm.set_bb ( false );
 	mm.set_chi ( false );
 	mm.set_jump ( false );
-	for (Size i = 1; i <= 3; ++i) {
+	for ( Size i = 1; i <= 3; ++i ) {
 		Size const moving_res = total_res - 3 + i;
 		mm.set_bb ( moving_res, true );
 		mm.set_chi ( moving_res, true );
 	}
 
-	for (Size i = 1; i <= pose_list.size(); ++i) {
+	for ( Size i = 1; i <= pose_list.size(); ++i ) {
 		Pose & pose = pose_list[i].second;
 		minimizer.run ( pose, mm, *scorefxn, min_options1 );
 		Real const score = (*scorefxn) (pose);
@@ -298,7 +298,7 @@ lariat_modeling ()
 	core::io::silent::SilentFileData silent_file_data;
 	std::string const silent_file = option[ out::file::silent  ]();
 
-	for (Size j = 1; j <= pose_list.size(); ++j) {
+	for ( Size j = 1; j <= pose_list.size(); ++j ) {
 		std::ostringstream oss;
 		oss << "decoy_" << j;
 		core::io::silent::BinarySilentStruct s( pose_list[j].second, oss.str() );
@@ -310,22 +310,22 @@ lariat_modeling ()
 int
 main( int argc, char * argv [] )
 {
-    try {
-	using namespace core;
+	try {
+		using namespace core;
 
-	/////////////////////////////
-	// setup
-	//////////////////////////////
-	devel::init ( argc, argv );
-	//////////////////////////////
-	// end of setup
-	//////////////////////////////
+		/////////////////////////////
+		// setup
+		//////////////////////////////
+		devel::init ( argc, argv );
+		//////////////////////////////
+		// end of setup
+		//////////////////////////////
 
-	lariat_modeling();
-    } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		lariat_modeling();
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-                                  }
-        return 0;
+	}
+	return 0;
 
 }

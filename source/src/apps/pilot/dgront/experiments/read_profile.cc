@@ -27,36 +27,36 @@ OPT_1GRP_KEY( File, out, pdb )
 
 
 void register_options() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  NEW_OPT( chk_file, "input file - binary checkpoint from psi-blast","aaa");
-  NEW_OPT( out::pdb, "provides a file name for the output PDB file","out_pose.pdb" );
-//  option.add_relevant(chk_file);
+	NEW_OPT( chk_file, "input file - binary checkpoint from psi-blast","aaa");
+	NEW_OPT( out::pdb, "provides a file name for the output PDB file","out_pose.pdb" );
+	//  option.add_relevant(chk_file);
 }
 
 int main( int argc, char * argv [] ) {
 
-    try {
-	using namespace core;
-        using namespace basic::options;
-        using namespace basic::options::OptionKeys;
+	try {
+		using namespace core;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	register_options();
-	devel::init(argc, argv);
+		register_options();
+		devel::init(argc, argv);
 
-//------------- Read the native pose  ----------
-    if ( option[ chk_file ].user() ) {
-                std::cout << "reading " << option[chk_file]()<< std::endl;
-                core::sequence::SequenceProfile q_prof;
-                q_prof.read_from_binary_chk(option[chk_file]());
-    }
+		//------------- Read the native pose  ----------
+		if ( option[ chk_file ].user() ) {
+			std::cout << "reading " << option[chk_file]()<< std::endl;
+			core::sequence::SequenceProfile q_prof;
+			q_prof.read_from_binary_chk(option[chk_file]());
+		}
 
 
-    } catch (utility::excn::Exception const & e ) {
-              std::cout << "caught exception " << e.msg() << std::endl;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-    }
-    return 0;
+	}
+	return 0;
 }
 

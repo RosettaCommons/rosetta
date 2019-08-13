@@ -160,7 +160,7 @@ int main( int argc, char * argv [] ) {
 			output << F(8,3,score) << " " << F(8,3,holesScore) <<" "<< I(4,alaCt) << " "<< I(4,gluCt) << " " << I(4,tyrCt) << " " << tag << " " << std::endl;
 		}
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

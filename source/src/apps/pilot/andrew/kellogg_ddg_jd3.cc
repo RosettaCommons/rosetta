@@ -338,7 +338,7 @@ main( int argc, char * argv [] )
 		//std::cout << "Fixbb job definition file\n" << queen->job_definition_xsd() << std::endl;
 		jd->go( queen );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 }

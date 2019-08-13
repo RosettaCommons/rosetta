@@ -45,14 +45,10 @@ int main( int argc, char * argv [] ) {
 		//    register_options();
 		devel::init(argc, argv);
 
-		try {
-			protocols::abinitio::AbrelaxMover runMe;
-			not_universal_main( runMe );
-		} catch (utility::excn::Exception &excn ) {
-			std::cerr<< excn.msg() <<std::endl;
-		}
+		protocols::abinitio::AbrelaxMover runMe;
+		not_universal_main( runMe );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

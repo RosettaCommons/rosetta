@@ -86,127 +86,127 @@ main( int argc, char* argv [] )
 {
 	try {
 
-	using core::Real;
-	using core::Size;
-	// options, random initialization
-	devel::init( argc, argv );
+		using core::Real;
+		using core::Size;
+		// options, random initialization
+		devel::init( argc, argv );
 
-	Real scoring_threshold( 0.9 );
+		Real scoring_threshold( 0.9 );
 
-	NWAligner nw_aligner;
-	//Real gap_open  ( -10 );
-	//Real gap_extend(  -2 );
-	FileName matrix_fn( "BLOSUM62" );
+		NWAligner nw_aligner;
+		//Real gap_open  ( -10 );
+		//Real gap_extend(  -2 );
+		FileName matrix_fn( "BLOSUM62" );
 
-	ScoringSchemeOP ss(
-		//new MatrixScoringScheme( gap_open, gap_extend, matrix_fn )
-		new SimpleScoringScheme()
-	);
+		ScoringSchemeOP ss(
+			//new MatrixScoringScheme( gap_open, gap_extend, matrix_fn )
+			new SimpleScoringScheme()
+		);
 
-	typedef vector1< Sequence > seqlist;
-	seqlist seqs( read_fasta_file( option[ in::file::fasta ]()[1] ) );
+		typedef vector1< Sequence > seqlist;
+		seqlist seqs( read_fasta_file( option[ in::file::fasta ]()[1] ) );
 
-	map< string, Sequence > represent;
-	vector1< string > two_letter_codes;
-	for ( seqlist::iterator it = seqs.begin(), end = seqs.end();
-				it != end; ++it
-	) {
-		string pdbid = it->id().substr(0,4);
-		string two_letter = pdbid.substr(1,2);
-		two_letter_codes.push_back( two_letter );
-	}
-
-	Size n_done( 0 );
-	Size const n_max( 2000 );
-	std::cout << "have " << two_letter_codes.size() << " codes total." << std::endl;
-	for ( vector1< string >::const_iterator two_letter = two_letter_codes.begin(),
-	 			two_letter_end = two_letter_codes.end();
-				two_letter != two_letter_end && n_done <= n_max; ++two_letter
-	) {
-
-		std::set< Sequence > unique_seqs;
-		string mapname = *two_letter + ".map";
-		if ( is_locked(mapname) ) continue;
-
+		map< string, Sequence > represent;
+		vector1< string > two_letter_codes;
 		for ( seqlist::iterator it = seqs.begin(), end = seqs.end();
-					it != end; ++it
-		) {
+				it != end; ++it
+				) {
 			string pdbid = it->id().substr(0,4);
-			string chain = it->id().substr(4,1);
-			string this_two_letter = pdbid.substr(1,2);
+			string two_letter = pdbid.substr(1,2);
+			two_letter_codes.push_back( two_letter );
+		}
 
-			if ( *two_letter != this_two_letter ) continue;
+		Size n_done( 0 );
+		Size const n_max( 2000 );
+		std::cout << "have " << two_letter_codes.size() << " codes total." << std::endl;
+		for ( vector1< string >::const_iterator two_letter = two_letter_codes.begin(),
+				two_letter_end = two_letter_codes.end();
+				two_letter != two_letter_end && n_done <= n_max; ++two_letter
+				) {
 
-			PROF_START( SEQUENCE_COMPARISON );
-			Sequence longest_seq( *it );
+			std::set< Sequence > unique_seqs;
+			string mapname = *two_letter + ".map";
+			if ( is_locked(mapname) ) continue;
 
-			for ( seqlist::iterator inner = seqs.begin(), inner_end = seqs.end();
+			for ( seqlist::iterator it = seqs.begin(), end = seqs.end();
+					it != end; ++it
+					) {
+				string pdbid = it->id().substr(0,4);
+				string chain = it->id().substr(4,1);
+				string this_two_letter = pdbid.substr(1,2);
+
+				if ( *two_letter != this_two_letter ) continue;
+
+				PROF_START( SEQUENCE_COMPARISON );
+				Sequence longest_seq( *it );
+
+				for ( seqlist::iterator inner = seqs.begin(), inner_end = seqs.end();
 						inner != inner_end; ++inner
-			) {
-				if ( inner->id() == it->id() ) continue; // skip self-alignments
-
-				string inner_pdbid  = inner->id().substr(0,4);
-				string inner_fullid = inner->id().substr(0,5);
-				if ( pdbid == inner_pdbid ) {
-					//std::cout << "aligning " << std::endl << *it << std::endl << *inner << std::endl;
-					SequenceOP this_seq ( new Sequence( *it ) );
-					SequenceOP inner_seq( new Sequence( *inner ) );
-					SequenceAlignment align_ij = nw_aligner.align( this_seq, inner_seq, ss );
-					Real percentage_identity
-						= static_cast < Real > (align_ij.identities()) / static_cast < Real > (align_ij.length());
-					align_ij.score( percentage_identity );
-
-					//std::cout << align_ij.identities() << " / " << align_ij.length() << std::endl;
-					//std::cout << align_ij << std::endl << std::endl;
-
-					if ( align_ij.score() >= scoring_threshold ) {
-						// stupid hack: sort lexicographically if sequences have the same size!
-						if ( inner->length() == longest_seq.length() &&
-							 		inner->id() < longest_seq.id()
 						) {
-							longest_seq = *inner;
-						}
+					if ( inner->id() == it->id() ) continue; // skip self-alignments
 
-						if ( inner->length() > longest_seq.length() ) {
-							longest_seq = *inner;
-						}
-					} // if score >= threshold
-				} // if ( pdbid == inner_pdbid )
-			} // for inner
+					string inner_pdbid  = inner->id().substr(0,4);
+					string inner_fullid = inner->id().substr(0,5);
+					if ( pdbid == inner_pdbid ) {
+						//std::cout << "aligning " << std::endl << *it << std::endl << *inner << std::endl;
+						SequenceOP this_seq ( new Sequence( *it ) );
+						SequenceOP inner_seq( new Sequence( *inner ) );
+						SequenceAlignment align_ij = nw_aligner.align( this_seq, inner_seq, ss );
+						Real percentage_identity
+							= static_cast < Real > (align_ij.identities()) / static_cast < Real > (align_ij.length());
+						align_ij.score( percentage_identity );
 
-			represent[ it->id() ] = longest_seq;
-		} // for seqs
+						//std::cout << align_ij.identities() << " / " << align_ij.length() << std::endl;
+						//std::cout << align_ij << std::endl << std::endl;
 
-		utility::io::ozstream out( mapname );
-		out << "pdbid representative" << std::endl;
-		for ( map< string, Sequence >::const_iterator it = represent.begin(), end = represent.end();
+						if ( align_ij.score() >= scoring_threshold ) {
+							// stupid hack: sort lexicographically if sequences have the same size!
+							if ( inner->length() == longest_seq.length() &&
+									inner->id() < longest_seq.id()
+									) {
+								longest_seq = *inner;
+							}
+
+							if ( inner->length() > longest_seq.length() ) {
+								longest_seq = *inner;
+							}
+						} // if score >= threshold
+					} // if ( pdbid == inner_pdbid )
+				} // for inner
+
+				represent[ it->id() ] = longest_seq;
+			} // for seqs
+
+			utility::io::ozstream out( mapname );
+			out << "pdbid representative" << std::endl;
+			for ( map< string, Sequence >::const_iterator it = represent.begin(), end = represent.end();
 					it != end; ++it
-		) {
-			out << it->first << " " << it->second.id() << std::endl;
-			unique_seqs.insert( it->second );
-		}
-		out.close();
+					) {
+				out << it->first << " " << it->second.id() << std::endl;
+				unique_seqs.insert( it->second );
+			}
+			out.close();
 
-		std::string unique_listfile( *two_letter + ".unique" );
-		out.open( unique_listfile );
-		out << "pdbid representative" << std::endl;
-		for ( std::set< Sequence >::const_iterator it = unique_seqs.begin(), end = unique_seqs.end();
+			std::string unique_listfile( *two_letter + ".unique" );
+			out.open( unique_listfile );
+			out << "pdbid representative" << std::endl;
+			for ( std::set< Sequence >::const_iterator it = unique_seqs.begin(), end = unique_seqs.end();
 					it != end; ++it
-		) {
-			out << *it << std::endl;
-		}
-		out.close();
+					) {
+				out << *it << std::endl;
+			}
+			out.close();
 
 
-		std::cout << "done with " << mapname << "." << std::endl;
-		++n_done;
+			std::cout << "done with " << mapname << "." << std::endl;
+			++n_done;
 
-		PROF_STOP( SEQUENCE_COMPARISON );
-		prof_show();
-	} // for two_letter_codes
+			PROF_STOP( SEQUENCE_COMPARISON );
+			prof_show();
+		} // for two_letter_codes
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

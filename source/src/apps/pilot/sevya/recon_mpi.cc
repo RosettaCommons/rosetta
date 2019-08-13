@@ -71,7 +71,7 @@ public:
 	protocols::jd2::JobOP current_job() const { return this_nodes_job_; }
 	void mark_current_job_id_for_repetition() {};
 	void job_failed( core::pose::Pose & ,
-			bool  ) {};
+		bool  ) {};
 	void handle_interrupt() {};
 	// TODO add something to these pure virtual methods
 
@@ -88,12 +88,12 @@ public:
 				char constrained_AA = other_pose_sequence[ jj-1 ]; // string is zero indexed but designable_residues is one indexed
 				std::string constrained_AA_3letter = core::chemical::name_from_aa( core::chemical::aa_from_oneletter_code( constrained_AA ) );
 				TR << "adding linking constraint to position " <<
-						current_position <<
-						" for residue " <<
-						constrained_AA_3letter <<
-						" for weight " <<
-						constraint_weight <<
-						std::endl;
+					current_position <<
+					" for residue " <<
+					constrained_AA_3letter <<
+					" for weight " <<
+					constraint_weight <<
+					std::endl;
 				ResidueTypeConstraintCOP temp_cst ( new ResidueTypeConstraint(
 					*pose,
 					current_position, //seqpos
@@ -151,7 +151,7 @@ public:
 					core::Size number_designable_positions = utility::receive_integer_from_node( rank_to_receive );
 					if ( number_designable_positions != my_designable_residues_.size() ) {
 						TR << "Rank " << rank_to_receive << " has " << number_designable_positions <<
-								" and rank 0 has " << my_designable_residues_.size() << std::endl;
+							" and rank 0 has " << my_designable_residues_.size() << std::endl;
 						utility_exit_with_message( "Error: all states must have the same number of designable residues" );
 					}
 				}
@@ -166,7 +166,7 @@ public:
 
 		/// Make a string out of the AAs at my designable positions in the current state
 		std::string my_sequence = "";
-		for ( core::Size resno = 1; resno <= my_designable_residues_.size(); ++resno ){
+		for ( core::Size resno = 1; resno <= my_designable_residues_.size(); ++resno ) {
 			my_sequence += pose->residue( my_designable_residues_[ resno ] ).name1();
 		}
 		/// END Make a string
@@ -203,7 +203,7 @@ public:
 		for ( core::Size ii = 1; ii <= other_pose_sequences.size(); ++ii ) {
 			char current_state_AA = other_pose_sequences[ ii ][ zero_index ];
 			if ( std::find(candidate_AAs.begin(), candidate_AAs.end(), current_state_AA)
-						== candidate_AAs.end() ) candidate_AAs.push_back( current_state_AA );
+					== candidate_AAs.end() ) candidate_AAs.push_back( current_state_AA );
 		}
 
 		utility::vector1<core::Real> candidate_AA_scores;
@@ -224,9 +224,9 @@ public:
 		for ( core::Size ii = 1; ii <= candidate_AAs.size(); ++ii ) {
 			std::string trial_AA = core::chemical::name_from_aa( core::chemical::aa_from_oneletter_code( candidate_AAs[ ii ] ) );
 			mutation_mover = protocols::simple_moves::MutateResidueOP ( new protocols::simple_moves::MutateResidue (
-					my_designable_residues_[ zero_index+1 ], //position
-					trial_AA //residue
-					) );
+				my_designable_residues_[ zero_index+1 ], //position
+				trial_AA //residue
+				) );
 			core::pose::PoseOP tmp_pose = this_nodes_pose->clone();
 			mutation_mover->apply( *tmp_pose );
 			post_packer->apply( *tmp_pose );
@@ -267,9 +267,9 @@ public:
 
 		/// Thread best AA over my state
 		mutation_mover = protocols::simple_moves::MutateResidueOP ( new protocols::simple_moves::MutateResidue (
-				my_designable_residues_[ zero_index+1 ], //position
-				best_AA //residue
-				) );
+			my_designable_residues_[ zero_index+1 ], //position
+			best_AA //residue
+			) );
 		mutation_mover->apply( *this_nodes_pose );
 		post_packer->apply( *this_nodes_pose );
 		/// END thread best AA over state
@@ -279,7 +279,7 @@ public:
 
 		/// Make a string out of the AAs at my designable positions in the current state
 		std::string my_sequence = "";
-		for ( core::Size resno = 1; resno <= my_designable_residues_.size(); ++resno ){
+		for ( core::Size resno = 1; resno <= my_designable_residues_.size(); ++resno ) {
 			my_sequence += this_nodes_pose->residue( my_designable_residues_[ resno ] ).name1();
 		}
 		/// END Make a string
@@ -389,12 +389,12 @@ public:
 
 			using namespace protocols::rosetta_scripts;
 
-//				RosettaScriptsParser parser;
-//
-//				parser.generate_mover_from_pose( this_nodes_job, *this_nodes_pose, mover, 1,
-//					option[ parser::protocol ]() );
-//				ParsedProtocolOP this_nodes_protocol =
-//					utility::pointer::dynamic_pointer_cast< ParsedProtocol > ( mover );
+			//    RosettaScriptsParser parser;
+			//
+			//    parser.generate_mover_from_pose( this_nodes_job, *this_nodes_pose, mover, 1,
+			//     option[ parser::protocol ]() );
+			//    ParsedProtocolOP this_nodes_protocol =
+			//     utility::pointer::dynamic_pointer_cast< ParsedProtocol > ( mover );
 
 			/// As of now, don't support XML input - just run a typical RECON run
 			utility::vector1< core::Real > constraint_weights;
@@ -417,7 +417,7 @@ public:
 
 			if ( passed ) {
 				for ( core::Size i = 1; i <= current_jobs.size(); ++i ) {
-//						protocols[ i ]->final_score( *this_nodes_pose );
+					//      protocols[ i ]->final_score( *this_nodes_pose );
 					job_outputter->final_pose( this_nodes_job_, *this_nodes_pose, "");
 					job_outputter->flush();
 				}
@@ -592,84 +592,84 @@ main( int argc, char * argv [] )
 #ifdef USEMPI
   TR << "I'm using MPI ;-)" << std::endl;
 #else
-  TR << "I'm not using MPI ;-(" << std::endl;
+		TR << "I'm not using MPI ;-(" << std::endl;
 #endif
 		protocols::jd2::RECONMPIJobDistributor jobdist;
 		core::Size rank = utility::mpi_rank();
 		core::Size n_procs = utility::mpi_nprocs();
 		jobdist.go( mover );
 	} catch( utility::excn::EXCN_Base& excn ) {
-		TR << "ERROR: Exception caught by recon_mpi application:"
-			<< excn << std::endl;
+		excn.display();
 		std::exit( 1 );
 	}
+	return 0;
 }
 
 //bool apply_parsed_protocol( utility::vector1< core::pose::PoseOP > & working_poses,
-//	utility::vector1<protocols::rosetta_scripts::ParsedProtocolOP> & protocols,
-//	utility::vector1< core::Size > & pose_order ) {
+// utility::vector1<protocols::rosetta_scripts::ParsedProtocolOP> & protocols,
+// utility::vector1< core::Size > & pose_order ) {
 //
-//	for ( core::Size mover_it = 1; mover_it <= protocols[ 1 ]->size(); ++mover_it ) {
+// for ( core::Size mover_it = 1; mover_it <= protocols[ 1 ]->size(); ++mover_it ) {
 //
-//		// If flag is passed to randomize input pose order, randomize the list
-//		if ( randomize_input_ ) {
-//			numeric::random::random_permutation( pose_order, numeric::random::rg() );
-//		}
-//
-//
-//		for ( core::Size i = 1; i <= pose_order.size(); ++i ) {
-//
-//			current_pose_ = pose_order[ i ];
-//
-//			protocols::moves::MoverOP current_mover = protocols[ current_pose_ ]->
-//				get_mover_filter_pair( mover_it ).first.first;
-//			protocols::filters::FilterOP current_filter = protocols[ current_pose_ ]->
-//				get_mover_filter_pair( mover_it ).second;
-//			TR << "=================running mover " << current_mover->get_name() << " - "
-//				<< protocols[ current_pose_ ]->get_mover_filter_pair( mover_it ).first.second
-//				<< "======================" << std::endl;
-//
-//			// i refers to mover type -> j refers to each pose
-//
-//			// Check if current mover is a VectorPoseMover
-//			// if so hand it the working poses
-//			moves::VectorPoseMoverOP msd_mover = utility::pointer::dynamic_pointer_cast< moves::VectorPoseMover >( current_mover );
-//			core::pose::PoseOP temp_pose = working_poses[ current_pose_ ]->clone();
-//
-//			if ( msd_mover ) {
-//				msd_mover->set_poses( working_poses );
-//				msd_mover->apply( *temp_pose );
-//			} else {
-//				current_mover->apply( *temp_pose );
-//			}
+//  // If flag is passed to randomize input pose order, randomize the list
+//  if ( randomize_input_ ) {
+//   numeric::random::random_permutation( pose_order, numeric::random::rg() );
+//  }
 //
 //
-//			TR << "=================end mover " << "======================" << std::endl;
-//			TR << "=================running filter " << current_filter->get_type() << "======================" << std::endl;
+//  for ( core::Size i = 1; i <= pose_order.size(); ++i ) {
 //
-//			// Check if current filter is a VectorPoseFilter
-//			// if so hand it the working poses
-//			filters::VectorPoseFilterOP msd_filter = utility::pointer::dynamic_pointer_cast< filters::VectorPoseFilter >( current_filter );
+//   current_pose_ = pose_order[ i ];
 //
-//			bool filter_passed;
+//   protocols::moves::MoverOP current_mover = protocols[ current_pose_ ]->
+//    get_mover_filter_pair( mover_it ).first.first;
+//   protocols::filters::FilterOP current_filter = protocols[ current_pose_ ]->
+//    get_mover_filter_pair( mover_it ).second;
+//   TR << "=================running mover " << current_mover->get_name() << " - "
+//    << protocols[ current_pose_ ]->get_mover_filter_pair( mover_it ).first.second
+//    << "======================" << std::endl;
 //
-//			if ( msd_filter ) {
-//				msd_filter->set_poses( working_poses );
-//				filter_passed = msd_filter->apply( *temp_pose );
-//			} else {
-//				filter_passed = current_filter->apply( *temp_pose );
-//			}
+//   // i refers to mover type -> j refers to each pose
 //
-//			TR << "=================end filter " << current_filter->get_type() <<": " << (filter_passed ? " passed! " : " failed ;-(" ) << "======================" << std::endl;
-//			if ( filter_passed ) {
-//				working_poses[ current_pose_ ] = temp_pose;
+//   // Check if current mover is a VectorPoseMover
+//   // if so hand it the working poses
+//   moves::VectorPoseMoverOP msd_mover = utility::pointer::dynamic_pointer_cast< moves::VectorPoseMover >( current_mover );
+//   core::pose::PoseOP temp_pose = working_poses[ current_pose_ ]->clone();
 //
-//			} else {
-//				return false;
-//			}
+//   if ( msd_mover ) {
+//    msd_mover->set_poses( working_poses );
+//    msd_mover->apply( *temp_pose );
+//   } else {
+//    current_mover->apply( *temp_pose );
+//   }
 //
-//		}
-//	}
 //
-//	return true;
+//   TR << "=================end mover " << "======================" << std::endl;
+//   TR << "=================running filter " << current_filter->get_type() << "======================" << std::endl;
+//
+//   // Check if current filter is a VectorPoseFilter
+//   // if so hand it the working poses
+//   filters::VectorPoseFilterOP msd_filter = utility::pointer::dynamic_pointer_cast< filters::VectorPoseFilter >( current_filter );
+//
+//   bool filter_passed;
+//
+//   if ( msd_filter ) {
+//    msd_filter->set_poses( working_poses );
+//    filter_passed = msd_filter->apply( *temp_pose );
+//   } else {
+//    filter_passed = current_filter->apply( *temp_pose );
+//   }
+//
+//   TR << "=================end filter " << current_filter->get_type() <<": " << (filter_passed ? " passed! " : " failed ;-(" ) << "======================" << std::endl;
+//   if ( filter_passed ) {
+//    working_poses[ current_pose_ ] = temp_pose;
+//
+//   } else {
+//    return false;
+//   }
+//
+//  }
+// }
+//
+// return true;
 //}

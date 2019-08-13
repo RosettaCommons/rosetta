@@ -61,29 +61,29 @@ main( int argc, char * argv [] )
 
 	try {
 
-  using namespace basic::options;
-  using utility::file::FileName;
+		using namespace basic::options;
+		using utility::file::FileName;
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	core::pose::Pose pose;
+		core::pose::Pose pose;
 
-	core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
 
-	core::scoring::ScoreFunctionOP fullfxn(core::scoring::get_score_function());
+		core::scoring::ScoreFunctionOP fullfxn(core::scoring::get_score_function());
 
-	core::pack::task::TaskFactoryOP designtaskfactory( new core::pack::task::TaskFactory );
+		core::pack::task::TaskFactoryOP designtaskfactory( new core::pack::task::TaskFactory );
 
-	devel::denovo_protein_design::design_setup( pose, designtaskfactory );
+		devel::denovo_protein_design::design_setup( pose, designtaskfactory );
 
-	devel::denovo_protein_design::DesignRelaxMover designrelaxmover( designtaskfactory );
+		devel::denovo_protein_design::DesignRelaxMover designrelaxmover( designtaskfactory );
 
-	protocols::jobdist::main_plain_pdb_mover( designrelaxmover, fullfxn);
+		protocols::jobdist::main_plain_pdb_mover( designrelaxmover, fullfxn);
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 
-  return 0;
+	return 0;
 }

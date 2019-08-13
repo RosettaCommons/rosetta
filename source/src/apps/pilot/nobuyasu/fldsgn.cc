@@ -70,9 +70,9 @@ void * graphics_main( void * ) {
 	using core::scoring::ScoreFunctionOP;
 	using core::scoring::ScoreFunctionFactory;
 	using utility::file::FileName;
- 	using protocols::flxbb::BluePrint;
+	using protocols::flxbb::BluePrint;
 	using protocols::flxbb::BluePrintOP;
- 	using protocols::fldsgn::BluePrintBDR;
+	using protocols::fldsgn::BluePrintBDR;
 	using protocols::fldsgn::BluePrintBDR_OP;
 	using protocols::moves::SequenceMover;
 	using protocols::moves::SequenceMoverOP;
@@ -123,15 +123,15 @@ void * graphics_main( void * ) {
 
 int main( int argc, char * argv [] ) {
 	try{
-	using namespace basic::options::OptionKeys;
-	using basic::options::option;
+		using namespace basic::options::OptionKeys;
+		using basic::options::option;
 
-	// initialize rosetta
-	devel::init( argc, argv );
+		// initialize rosetta
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( graphics_main );
+		protocols::viewer::viewer_main( graphics_main );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

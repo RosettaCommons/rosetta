@@ -184,7 +184,7 @@ int main( int argc, char * argv [] ) {
 		std::cout<<"width : "<<x_width<<" "<<y_width<<" "<<z_width<<std::endl;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

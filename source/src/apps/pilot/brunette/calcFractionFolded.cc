@@ -147,7 +147,7 @@ int main( int argc, char * argv [] ) {
 			output << I(4,ii) << F(8,2,avgRmsd) << F(8,2,pctBelowThresh) << std::endl;
 		}
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

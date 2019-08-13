@@ -9,8 +9,8 @@
 
 /// @file
 /// @brief
-//	@author Will Sheffler
-//	@author Ray Wang
+// @author Will Sheffler
+// @author Ray Wang
 
 
 // libRosetta headers
@@ -47,10 +47,10 @@ main (int argc, char *argv[])
 		scoring::ScoreFunctionOP score = scoring::get_score_function();
 
 		pose::Pose pose;
-	//changing fa_standard to centroid
+		//changing fa_standard to centroid
 		chemical::ResidueTypeSetCAP centroid_residue_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::CENTROID );
 
-	//Will changed the sequence of the argument here by checking out src/core/io/pdb/pose_io.hh
+		//Will changed the sequence of the argument here by checking out src/core/io/pdb/pose_io.hh
 		core::import_pose::pose_from_file( pose, *centroid_residue_set, basic::options::option[basic::options::OptionKeys::in::file::s][1]) ;
 
 
@@ -62,9 +62,9 @@ main (int argc, char *argv[])
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
-		return 0;
+	return 0;
 
 }

@@ -105,8 +105,8 @@ public:
 	Protocol_MolecularDynamics(
 		core::scoring::ScoreFunctionOP scorefxn_in
 	) : Mover(),
-			scorefxn_(scorefxn_in),
-			native_set_(false)
+		scorefxn_(scorefxn_in),
+		native_set_(false)
 	{
 
 	}
@@ -130,7 +130,7 @@ public:
 
 		// setup the options
 		MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.000010, true ,
-				false , false );
+			false , false );
 		AtomTreeMinimizer minimizer;
 		std::cout << "MINTEST: p_aa_pp" << "\n";
 		std::cout << "start score: " << (*scorefxn_)( *pose ) << "\n";
@@ -172,42 +172,35 @@ protected:
 int
 main( int argc, char * argv [] )
 {
-    try {
-	devel::init(argc, argv);
+	try {
+		devel::init(argc, argv);
 
-	using namespace protocols::jobdist;
-	using namespace protocols::moves;
-	using namespace scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using namespace scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	core::scoring::ScoreFunctionOP scorefxn;
-	scorefxn = get_score_function();
+		core::scoring::ScoreFunctionOP scorefxn;
+		scorefxn = get_score_function();
 
-	// Build overall docking protocol Mover
-	Protocol_MolecularDynamics *md;
-	md = new Protocol_MolecularDynamics( scorefxn );
+		// Build overall docking protocol Mover
+		Protocol_MolecularDynamics *md;
+		md = new Protocol_MolecularDynamics( scorefxn );
 
-	if(  option[ OptionKeys::in::file::native ].active() ){
-		pose::PoseOP npose = new pose::Pose;
-		core::import_pose::pose_from_file( *npose, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file); // default is standard fullatom residue_set
-		md->set_native_pose( npose );
+		if (  option[ OptionKeys::in::file::native ].active() ) {
+			pose::PoseOP npose = new pose::Pose;
+			core::import_pose::pose_from_file( *npose, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file); // default is standard fullatom residue_set
+			md->set_native_pose( npose );
+		}
+
+		MoverOP protocol = md;
+
+		protocols::jd2::JobDistributor::get_instance()->go( protocol );
+
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
 	}
-
-	MoverOP protocol = md;
-
-	try{
-    protocols::jd2::JobDistributor::get_instance()->go( protocol );
-  } catch (utility::excn::Exception& excn ) {
-    std::cerr << "Exception: " << std::endl;
-    excn.show( std::cerr );
-    std::cout << "Exception: " << std::endl;
-    excn.show( std::cout ); //so its also seen in a >LOG file
-  }
-
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	return 0;
 }

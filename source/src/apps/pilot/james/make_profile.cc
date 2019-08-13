@@ -76,38 +76,38 @@ main( int argc, char* argv [] )
 {
 	try {
 
-	using core::Real;
-	using core::Size;
+		using core::Real;
+		using core::Size;
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	typedef vector1< Sequence > seqlist;
-	seqlist query_seqs( read_fasta_file( option[ in::file::fasta ]()[1] ) );
-	seqlist seq_db    ( read_fasta_file( option[ in::file::fasta ]()[2] ) );
+		typedef vector1< Sequence > seqlist;
+		seqlist query_seqs( read_fasta_file( option[ in::file::fasta ]()[1] ) );
+		seqlist seq_db    ( read_fasta_file( option[ in::file::fasta ]()[2] ) );
 
-	Size count( 0 );
-	//Size max_compare( 1000 );
-	NWAligner nw_aligner;
-	SWAligner sw_aligner;
-	Real gap_open       = -8;
-	Real gap_extend     = -1;
-	FileName matrix_fn( "BLOSUM62" );
-	ScoringSchemeOP ss( new MatrixScoringScheme( gap_open, gap_extend, matrix_fn ) );
+		Size count( 0 );
+		//Size max_compare( 1000 );
+		NWAligner nw_aligner;
+		SWAligner sw_aligner;
+		Real gap_open       = -8;
+		Real gap_extend     = -1;
+		FileName matrix_fn( "BLOSUM62" );
+		ScoringSchemeOP ss( new MatrixScoringScheme( gap_open, gap_extend, matrix_fn ) );
 
-	//Real threshold( 0 );
-	vector1< Real > scores;
-	for ( seqlist::iterator q_it = query_seqs.begin(), q_end = query_seqs.end();
+		//Real threshold( 0 );
+		vector1< Real > scores;
+		for ( seqlist::iterator q_it = query_seqs.begin(), q_end = query_seqs.end();
 				q_it != q_end; ++q_it
-	) {
+				) {
 
-		SequenceOP query_seq( new Sequence( *q_it ) );
-		if ( query_seq->sequence().find( 'X' ) != string::npos ) continue;
+			SequenceOP query_seq( new Sequence( *q_it ) );
+			if ( query_seq->sequence().find( 'X' ) != string::npos ) continue;
 
-		//std::cout << "query_seq = " << (*query_seq) << std::endl;
-		for ( seqlist::iterator db_it = seq_db.begin(), db_end = seq_db.end();
+			//std::cout << "query_seq = " << (*query_seq) << std::endl;
+			for ( seqlist::iterator db_it = seq_db.begin(), db_end = seq_db.end();
 					db_it != db_end; ++db_it
-		) {
+					) {
 				SequenceOP db_seq( new Sequence( *db_it ) );
 				if ( db_seq->sequence().find( 'X' ) != string::npos ) continue;
 
@@ -115,26 +115,26 @@ main( int argc, char* argv [] )
 				SequenceAlignment global_align = nw_aligner.align( query_seq, db_seq, ss );
 				scores.push_back( global_align.score() );
 				//if ( global_align.score() > threshold )
-				//	std::cout << "global alignment: " << global_align << std::endl;
+				// std::cout << "global alignment: " << global_align << std::endl;
 
 				//SequenceAlignment local_align = sw_aligner.align( query_seq, db_seq, ss );
 				//std::cout << "local alignment: " << local_align << std::endl;
-		} // db sequences
+			} // db sequences
 
-		++count;
-	} // query sequences
+			++count;
+		} // query sequences
 
-	Size const width( 12 );
-	Size const precision( 6 );
-	utility::io::ozstream out( option[ out::file::silent ]() );
-	for ( utility::vector1< Real >::iterator it = scores.begin(), end = scores.end();
+		Size const width( 12 );
+		Size const precision( 6 );
+		utility::io::ozstream out( option[ out::file::silent ]() );
+		for ( utility::vector1< Real >::iterator it = scores.begin(), end = scores.end();
 				it != end; ++it ) {
-		out << F( width, precision, *it ) << std::endl;
-	}
-	out.close();
+			out << F( width, precision, *it ) << std::endl;
+		}
+		out.close();
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

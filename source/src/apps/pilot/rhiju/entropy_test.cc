@@ -173,11 +173,11 @@ OPT_KEY( StringVector, silent_file_parent_build_Nterm )
 /////////////////////////////////////////////////////////////
 Real
 sidechain_sample( pose::Pose & pose,
-									utility::vector1< Real > const & temperatures,
-									utility::vector1< Real > & deltaG_diff_tot,
-									Real & min_delta_score_tot,
-									bool ignore_current_sidechain
-									)
+	utility::vector1< Real > const & temperatures,
+	utility::vector1< Real > & deltaG_diff_tot,
+	Real & min_delta_score_tot,
+	bool ignore_current_sidechain
+)
 {
 
 	using namespace core::chemical;
@@ -205,10 +205,10 @@ sidechain_sample( pose::Pose & pose,
 		// Figure out how many alternative rotamers there might be.
 		core::chemical::ResidueTypeCOP residue_type( pose.residue( n ).type() );
 
-		SingleResidueRotamerLibraryCAP residue_rotamer_library	( rotamer_library_.get_rsd_library(*residue_type) );
-		SingleResidueDunbrackLibraryCAP	residue_dunbrack_library( dynamic_cast< core::scoring::dunbrack::SingleResidueDunbrackLibrary const * >(residue_rotamer_library.get())	);
+		SingleResidueRotamerLibraryCAP residue_rotamer_library ( rotamer_library_.get_rsd_library(*residue_type) );
+		SingleResidueDunbrackLibraryCAP residue_dunbrack_library( dynamic_cast< core::scoring::dunbrack::SingleResidueDunbrackLibrary const * >(residue_rotamer_library.get()) );
 
-		if ( !residue_dunbrack_library){
+		if ( !residue_dunbrack_library ) {
 			//std::cout << " no rotamers for position " << n << std::endl;
 			continue;
 		}
@@ -216,7 +216,7 @@ sidechain_sample( pose::Pose & pose,
 		utility::vector1< DunbrackRotamerSampleData> rotamer_samples = residue_dunbrack_library->get_all_rotamer_samples(pose.phi(n), pose.psi(n) );
 
 		Size const nrots( rotamer_samples.size() );
-		//		std::cout << "FOUND " << nrots << " rotamers for position  " << n << " with amino acid " << residue_type->name1() << std::endl;
+		//  std::cout << "FOUND " << nrots << " rotamers for position  " << n << " with amino acid " << residue_type->name1() << std::endl;
 
 		// Cycle through rotamers -- gobbledygook from protocols/SidechainMover.cc
 		Size closest_rot( 0 );
@@ -225,7 +225,7 @@ sidechain_sample( pose::Pose & pose,
 
 		Real min_delta_score = 0.0;
 
-		for (Size rotnum = 1; rotnum <= nrots ; rotnum++) {
+		for ( Size rotnum = 1; rotnum <= nrots ; rotnum++ ) {
 
 			DunbrackRotamerSampleData const & rotamer_sample_data = rotamer_samples[ rotnum ];
 
@@ -234,7 +234,7 @@ sidechain_sample( pose::Pose & pose,
 			// closest rotamer check?
 			Real chi_dist( 0.0 );
 
-			for ( Size chinum = 1; chinum <= rotamer_sample_data.nchi(); ++chinum) {
+			for ( Size chinum = 1; chinum <= rotamer_sample_data.nchi(); ++chinum ) {
 				Real const chi_val = chi_means[ chinum ];
 				//std::cout << " " << F(8,3,chi_val);
 				pose.set_chi(chinum, n, chi_val );
@@ -262,7 +262,7 @@ sidechain_sample( pose::Pose & pose,
 		for ( Size i = 1; i <= temperatures.size(); i++ ) {
 			Real const temperature = temperatures[ i ];
 			Real Z( 0.0 );
-			for (Size rotnum = 1; rotnum <= nrots ; rotnum++) {
+			for ( Size rotnum = 1; rotnum <= nrots ; rotnum++ ) {
 				Z += exp( -1.0 * ( delta_scores[ rotnum ] - min_delta_score ) / temperature );
 			}
 			Real const delG_diff = - temperature * log( Z ) + min_delta_score;
@@ -282,13 +282,13 @@ sidechain_sample( pose::Pose & pose,
 ////////////////////////////////////////////////////////////////
 void
 output_stuff( Real const start_score, Real const min_delta_score_tot,
-							utility::vector1< Real > const & temperatures,
-							utility::vector1< Real > const & deltaG_diff_tot,
-							std::ostream & out )
+	utility::vector1< Real > const & temperatures,
+	utility::vector1< Real > const & deltaG_diff_tot,
+	std::ostream & out )
 {
-		out << start_score << "   " << min_delta_score_tot << "   ";
-		for ( Size i = 1; i <= temperatures.size(); i++ ) out << ' ' << deltaG_diff_tot[ i ];
-		out << std::endl;
+	out << start_score << "   " << min_delta_score_tot << "   ";
+	for ( Size i = 1; i <= temperatures.size(); i++ ) out << ' ' << deltaG_diff_tot[ i ];
+	out << std::endl;
 }
 ////////////////////////////////////////////////////////////////
 void
@@ -320,7 +320,7 @@ entropy_calculate_test() {
 	for ( Size i = 1; i <= 40; i++ ) temperatures.push_back( i * 0.05 );
 
 	Pose pose;
-	while( input->has_another_pose() ) {
+	while ( input->has_another_pose() ) {
 
 		///////////////////////////////////////////////////////////////
 		input->fill_pose( pose, *rsd_set );
@@ -357,7 +357,7 @@ each_aa_test(){
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	std::string aas = "ACDEFGHIKLMNPQRSTVWY";
-	//	std::string aas = "R";
+	// std::string aas = "R";
 
 	utility::vector1< Real > temperatures;
 	for ( Size i = 1; i <= 40; i++ ) temperatures.push_back( i * 0.05 );
@@ -373,8 +373,8 @@ each_aa_test(){
 		std::string const seq = aas.substr(n-1,1);
 
 		// old style
-    //ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( aas[n-1] ) )[1] ) ) );
-    //pose.append_residue_by_bond( *rsd1, true /*build_ideal_geometry*/ );
+		//ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( aas[n-1] ) )[1] ) ) );
+		//pose.append_residue_by_bond( *rsd1, true /*build_ideal_geometry*/ );
 		//chemical::add_variant_type_to_pose_residue( pose, "N_ACETYLATION", 1 );
 		//chemical::add_variant_type_to_pose_residue( pose, "C_METHYLAMIDATION", 1 );
 
@@ -382,8 +382,8 @@ each_aa_test(){
 		utility::vector1< InputStreamWithResidueInfoOP > input_streams; // empty
 		utility::vector1< core::Size > const moving_res_list = utility::tools::make_vector1( 1 );
 		StepWiseProteinPoseSetupOP stepwise_pose_setup = new StepWiseProteinPoseSetup( moving_res_list, seq,
-																																		 input_streams,
-																																		 blank_size_vector, blank_size_vector /*cutpoint_closed*/ );
+			input_streams,
+			blank_size_vector, blank_size_vector /*cutpoint_closed*/ );
 		stepwise_pose_setup->set_add_peptide_plane_variants( true );
 		stepwise_pose_setup->set_remove_nterminus_variant( true );
 		stepwise_pose_setup->set_remove_cterminus_variant( true );
@@ -398,7 +398,7 @@ each_aa_test(){
 		stepwise_screener.apply( pose );
 		StepWisePoseSampleGeneratorOP sample_generator;
 		sample_generator = new StepWiseProteinMainChainSampleGenerator( stepwise_screener.which_torsions(),
-																																		stepwise_screener.main_chain_torsion_set_lists_real() );
+			stepwise_screener.main_chain_torsion_set_lists_real() );
 		std::cout << "Using StepWiseProteinMainChainSampleGenerator. Num poses: " << stepwise_screener.main_chain_torsion_set_lists_real().size() << std::endl;
 
 
@@ -409,12 +409,12 @@ each_aa_test(){
 
 		// keep track of free energies vs. temperature.
 		utility::vector1< utility::vector1<Real >  > all_deltaG_diff_tot;
-		utility::vector1< Real > all_start_score,	all_min_delta_score_tot, all_min_score;
+		utility::vector1< Real > all_start_score, all_min_delta_score_tot, all_min_score;
 
 
 		// sample backbone residues, and sidechain.
 		sample_generator->reset();
-		while( sample_generator->has_another_sample() ){
+		while ( sample_generator->has_another_sample() ) {
 
 			sample_generator->get_next_sample( pose );
 
@@ -436,14 +436,14 @@ each_aa_test(){
 
 		// First need to figure out min score.
 		Real min_score_overall = all_min_score[1];
-		for ( Size i = 1; i <= all_min_score.size(); i++ ){	 if ( all_min_score[i] < min_score_overall ) min_score_overall = all_min_score[i]; }
+		for ( Size i = 1; i <= all_min_score.size(); i++ ) {  if ( all_min_score[i] < min_score_overall ) min_score_overall = all_min_score[i]; }
 
 		utility::vector1< Real > deltaG_diff_overall;
 
 		for ( Size j = 1; j <= temperatures.size(); j++ ) {
 			Real Z_across_backbone_rotamers = 0.0;
 
-			for ( Size i = 1; i <= all_min_score.size(); i++ ){
+			for ( Size i = 1; i <= all_min_score.size(); i++ ) {
 				Real const deltaG_diff = all_deltaG_diff_tot[i][j] + all_start_score[i] - min_score_overall;
 				Z_across_backbone_rotamers += exp( - deltaG_diff / temperatures[j] );
 			}
@@ -468,10 +468,10 @@ each_aa_test(){
 ///////////////////////////////////////////////////////////////
 void
 output_connect( std::ostream & out,
-								Size const & count_child,
-								Real const & best_rmsd,
-								Size const & count_parent,
-								Real const build_direction ){
+	Size const & count_child,
+	Real const & best_rmsd,
+	Size const & count_parent,
+	Real const build_direction ){
 
 	out << count_child << "      " << build_direction << " " << count_parent << "   " << best_rmsd << std::endl;
 
@@ -480,9 +480,9 @@ output_connect( std::ostream & out,
 ///////////////////////////////////////////////////////////////
 void
 setup_atom_id_map( std::map< id::AtomID, id::AtomID > & atom_id_map,
-									 pose::Pose const & pose_child,
-									 pose::Pose const & pose_parent,
-									 int const build_direction ){
+	pose::Pose const & pose_child,
+	pose::Pose const & pose_parent,
+	int const build_direction ){
 
 	using namespace core::id;
 
@@ -493,15 +493,15 @@ setup_atom_id_map( std::map< id::AtomID, id::AtomID > & atom_id_map,
 	atom_names.push_back( " O  " );
 
 	Size parent_count = 0;
-	for ( Size i = 1; i <= pose_child.size(); i++ ){
+	for ( Size i = 1; i <= pose_child.size(); i++ ) {
 		if ( build_direction == +1 && i == pose_child.size() ) continue;
 		if ( build_direction == -1 && i == 1                          ) continue;
 		parent_count++;
 		if ( pose_child.sequence()[i-1] != pose_parent.sequence()[parent_count-1] ) utility_exit_with_message( "Mismatch between parent and child." );
 
-		for ( Size n = 1; n <= atom_names.size(); n++ ){
+		for ( Size n = 1; n <= atom_names.size(); n++ ) {
 			atom_id_map[ AtomID( pose_child.residue_type(i).atom_index( atom_names[ n ] ), i ) ] =
-									 AtomID( pose_parent.residue_type(parent_count).atom_index( atom_names[ n ] ), parent_count );
+				AtomID( pose_parent.residue_type(parent_count).atom_index( atom_names[ n ] ), parent_count );
 		}
 	}
 
@@ -510,12 +510,12 @@ setup_atom_id_map( std::map< id::AtomID, id::AtomID > & atom_id_map,
 ///////////////////////////////////////////////////////////////
 void
 find_close_parents( pose::Pose const & pose_child,
-										Size const count_child,
-										utility::vector1< pose::PoseOP > & pose_parent_list,
-										int const build_direction,
-										std::ostream & out,
-										Size & total_connect,
-										Real & best_rmsd, Size & best_count, int & best_parent )
+	Size const count_child,
+	utility::vector1< pose::PoseOP > & pose_parent_list,
+	int const build_direction,
+	std::ostream & out,
+	Size & total_connect,
+	Real & best_rmsd, Size & best_count, int & best_parent )
 {
 	using namespace core::pose;
 	using namespace core::id;
@@ -529,7 +529,7 @@ find_close_parents( pose::Pose const & pose_child,
 	std::map< AtomID, AtomID > atom_id_map;
 	setup_atom_id_map( atom_id_map, pose_child, *(pose_parent_list[1]), build_direction );
 
-	for ( Size n = 1; n <= pose_parent_list.size(); n++ ){
+	for ( Size n = 1; n <= pose_parent_list.size(); n++ ) {
 
 		Real const rmsd = rms_at_corresponding_atoms( pose_child, *(pose_parent_list[n]), atom_id_map );
 		if ( rmsd < rmsd_cutoff ) {
@@ -549,15 +549,15 @@ find_close_parents( pose::Pose const & pose_child,
 
 ///////////////////////////////////////////////////////////////
 void
-fill_pose_list( 	utility::vector1< pose::PoseOP > & pose_list,
-									core::io::pose_stream::PoseInputStreamOP input_parent,
-									core::chemical::ResidueTypeSetCAP rsd_set ){
+fill_pose_list(  utility::vector1< pose::PoseOP > & pose_list,
+	core::io::pose_stream::PoseInputStreamOP input_parent,
+	core::chemical::ResidueTypeSetCAP rsd_set ){
 
 	using namespace core::pose;
 
 	input_parent->reset();
 
-	while( input_parent->has_another_pose() ) {
+	while ( input_parent->has_another_pose() ) {
 		PoseOP pose_op = new Pose;
 		input_parent->fill_pose( *pose_op, *rsd_set );
 		pose_list.push_back( pose_op );
@@ -586,10 +586,10 @@ connectivity_test(){
 	PoseInputStreamOP input_child, input_parent_build_Cterm, input_parent_build_Nterm;
 	input_child = new SilentFilePoseInputStream( silent_files, true );
 
-	if ( option[ silent_file_parent_build_Cterm ].user() ){
+	if ( option[ silent_file_parent_build_Cterm ].user() ) {
 		input_parent_build_Cterm = new SilentFilePoseInputStream( option[ silent_file_parent_build_Cterm ](), true );
 	}
-	if ( option[ silent_file_parent_build_Nterm ].user() ){
+	if ( option[ silent_file_parent_build_Nterm ].user() ) {
 		input_parent_build_Nterm = new SilentFilePoseInputStream( option[ silent_file_parent_build_Nterm ](), true );
 	}
 
@@ -604,7 +604,7 @@ connectivity_test(){
 	fill_pose_list( pose_list_build_Cterm, input_parent_build_Cterm, rsd_set );
 	fill_pose_list( pose_list_build_Nterm, input_parent_build_Nterm, rsd_set );
 
-	while( input_child->has_another_pose() ){
+	while ( input_child->has_another_pose() ) {
 
 		count_child++;
 		input_child->fill_pose( pose_child, *rsd_set );
@@ -616,16 +616,16 @@ connectivity_test(){
 
 		if ( pose_list_build_Cterm.size() > 0 ) {
 			find_close_parents( pose_child, count_child,
-													pose_list_build_Cterm,
-													+1, out, total_connect,
-													best_rmsd, best_count, best_parent );
+				pose_list_build_Cterm,
+				+1, out, total_connect,
+				best_rmsd, best_count, best_parent );
 		}
 
 		if ( pose_list_build_Nterm.size() > 0 ) {
 			find_close_parents( pose_child, count_child,
-													pose_list_build_Nterm,
-													-1, out, total_connect,
-													best_rmsd, best_count, best_parent );
+				pose_list_build_Nterm,
+				-1, out, total_connect,
+				best_rmsd, best_count, best_parent );
 		}
 
 		if ( total_connect == 0 )  output_connect( out, count_child, best_rmsd, best_count, best_parent );
@@ -690,7 +690,7 @@ dist_matrix_test(){
 
 	Pose pose;
 
-	while( input->has_another_pose() ) {
+	while ( input->has_another_pose() ) {
 		input->fill_pose( pose, *rsd_set );
 		output_distance_matrix( pose, out );
 	}
@@ -708,11 +708,11 @@ my_main( void* )
 
 	using namespace core::options;
 
-	if ( option[ each_aa ]() ){
+	if ( option[ each_aa ]() ) {
 		each_aa_test();
-	} else if ( option[ connectivity ]() ){
+	} else if ( option[ connectivity ]() ) {
 		connectivity_test();
-	} else if ( option[ dist_matrix ]() ){
+	} else if ( option[ dist_matrix ]() ) {
 		dist_matrix_test();
 	} else {
 		entropy_calculate_test();
@@ -730,35 +730,35 @@ main( int argc, char * argv [] )
 	try {
 
 
-	using namespace core::options;
+		using namespace core::options;
 
-	utility::vector1< std::string > blank_string_vector;
+		utility::vector1< std::string > blank_string_vector;
 
-	NEW_OPT( each_aa, "Scan through each AA", false );
-	NEW_OPT( connectivity, "Figure out connectivity between models", false );
-	NEW_OPT( dist_matrix, "Output distance matrix for pose", false );
-	NEW_OPT( silent_file_parent_build_Cterm, "silent file for parent", blank_string_vector );
-	NEW_OPT( silent_file_parent_build_Nterm, "silent file for parent", blank_string_vector );
+		NEW_OPT( each_aa, "Scan through each AA", false );
+		NEW_OPT( connectivity, "Figure out connectivity between models", false );
+		NEW_OPT( dist_matrix, "Output distance matrix for pose", false );
+		NEW_OPT( silent_file_parent_build_Cterm, "silent file for parent", blank_string_vector );
+		NEW_OPT( silent_file_parent_build_Nterm, "silent file for parent", blank_string_vector );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
-	exit( 0 );
+		exit( 0 );
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

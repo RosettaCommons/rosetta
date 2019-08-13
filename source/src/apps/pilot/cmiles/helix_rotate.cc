@@ -27,29 +27,29 @@
 #include <protocols/viewer/viewers.hh>
 
 void* viewer_main(void* ) {
-  using core::pose::Pose;
-  using core::scoring::ScoreFunctionOP;
-  using core::scoring::ScoreFunctionFactory;
-  using protocols::loops::Loop;
-  using protocols::moves::HelixRotate;
-  using protocols::moves::MoverOP;
-  using protocols::simple_moves::rational_mc::RationalMonteCarlo;
+	using core::pose::Pose;
+	using core::scoring::ScoreFunctionOP;
+	using core::scoring::ScoreFunctionFactory;
+	using protocols::loops::Loop;
+	using protocols::moves::HelixRotate;
+	using protocols::moves::MoverOP;
+	using protocols::simple_moves::rational_mc::RationalMonteCarlo;
 
-  Pose input  = *core::import_pose::pose_from_file("/work/tex/casp9_benchmark/meval/fast_cm/T0538/2kruA_1.pdb_full_length.pdb", core::import_pose::PDB_file);
-  Pose output = *core::import_pose::pose_from_file("/work/tex/casp9_benchmark/meval/fast_cm/T0538/2kruA_1.pdb_full_length.pdb", core::import_pose::PDB_file);
+	Pose input  = *core::import_pose::pose_from_file("/work/tex/casp9_benchmark/meval/fast_cm/T0538/2kruA_1.pdb_full_length.pdb", core::import_pose::PDB_file);
+	Pose output = *core::import_pose::pose_from_file("/work/tex/casp9_benchmark/meval/fast_cm/T0538/2kruA_1.pdb_full_length.pdb", core::import_pose::PDB_file);
 
-  core::util::switch_to_residue_type_set(input, core::chemical::CENTROID);
-  core::util::switch_to_residue_type_set(output, core::chemical::CENTROID);
+	core::util::switch_to_residue_type_set(input, core::chemical::CENTROID);
+	core::util::switch_to_residue_type_set(output, core::chemical::CENTROID);
 
-  // Translate the specified sheet
-  Loop helix(41, 52);
-  double dist = 10.0;
+	// Translate the specified sheet
+	Loop helix(41, 52);
+	double dist = 10.0;
 
-  MoverOP base_mover = new HelixRotate(helix, dist);
-  ScoreFunctionOP score = ScoreFunctionFactory::create_score_function("score0");
+	MoverOP base_mover = new HelixRotate(helix, dist);
+	ScoreFunctionOP score = ScoreFunctionFactory::create_score_function("score0");
 
-  RationalMonteCarlo mc(base_mover, score, 10000, 2.0, false);
-  mc.apply(output);
+	RationalMonteCarlo mc(base_mover, score, 10000, 2.0, false);
+	mc.apply(output);
 }
 
 int main(int argc, char* argv[]) {
@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
 		devel::init(argc, argv);
 		protocols::viewer::viewer_main(viewer_main);
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

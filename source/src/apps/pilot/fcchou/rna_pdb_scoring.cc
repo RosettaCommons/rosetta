@@ -106,7 +106,7 @@ pdb_scoring() {
 	using namespace core::scoring;
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->
-	          residue_type_set ( RNA );
+		residue_type_set ( RNA );
 	// Read in the pose from pdb.
 	PoseOP pose;
 
@@ -135,7 +135,7 @@ my_main ( void* ) {
 ///////////////////////////////////////////////////////////////////////////////
 int
 main ( int argc, char * argv [] ) {
-  try {
+	try {
 		using namespace basic::options;
 		NEW_OPT ( force_field_file, "score_file", "stepwise/stepwise/rna/rna/denovo/rna_hires_elec_dens" );
 		////////////////////////////////////////////////////////////////////////////
@@ -146,10 +146,10 @@ main ( int argc, char * argv [] ) {
 		// end of setup
 		////////////////////////////////////////////////////////////////////////////
 		protocols::viewer::viewer_main ( my_main );
-  } catch (utility::excn::Exception const & e ) {
-    std::cout << "caught exception " << e.msg() << std::endl;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-  }
-  return 0;
+	}
+	return 0;
 }
 

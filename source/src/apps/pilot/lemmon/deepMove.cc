@@ -8,10 +8,10 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /** @page deepMove
-	Read a PDB, move it, print it
-	In this version, move using Jump methods
-	Try:
-		"readPDB.cc -in::file::s <pdb file> -in::path::database <DB root dir>"
+Read a PDB, move it, print it
+In this version, move using Jump methods
+Try:
+"readPDB.cc -in::file::s <pdb file> -in::path::database <DB root dir>"
 */
 
 
@@ -48,56 +48,56 @@
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-    try {
-	devel::init(argc, argv);
+	try {
+		devel::init(argc, argv);
 
-	utility::vector0<std::string> pdbs;
-	{// process the options
-		using namespace basic::options::OptionKeys;
-		using basic::options::option;
-		pdbs= option[in::file::s]();
-	}
-	core::pose::Pose pose; // starts NULL, coords *never* modified!
-	{
-		std::string pdb=pdbs[0];
-		core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
-	}
-	core::kinematics::Jump jump;
-	int jump_num=1; // this assumes there is only 1 jump (2 molecules) in this PDB
-	{
-		jump= pose.jump(jump_num);
-	}
-	{
-		int xAxis=1; // use 2-6 for y,z and xyz rotation
-		{
-			numeric::xyzVector< core::Real > translation  = jump.get_translation();
-			double x= translation[xAxis];
-			translation[xAxis]=  x+x*.2; // move the ligand an arbitrary amount along x axis
-			jump.set_translation(translation);
+		utility::vector0<std::string> pdbs;
+		{// process the options
+			using namespace basic::options::OptionKeys;
+			using basic::options::option;
+			pdbs= option[in::file::s]();
 		}
-		// prefer the 3 lines below over the 4 lines above
-		int const downstream=1;// anything else is upstream
+		core::pose::Pose pose; // starts NULL, coords *never* modified!
 		{
-			core::Real const length= 100;// angstrom?
-			jump.set_rb_delta(xAxis, downstream, length);
+			std::string pdb=pdbs[0];
+			core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
 		}
-		int alphaAxis=4;// 5&6 are beta and gamma (euler angles)
+		core::kinematics::Jump jump;
+		int jump_num=1; // this assumes there is only 1 jump (2 molecules) in this PDB
 		{
-			core::Real const radians=numeric::NumericTraits<Real>::pi();// not sure if this is degree or radians
-			jump.set_rb_delta(alphaAxis, downstream, radians);
+			jump= pose.jump(jump_num);
 		}
-		jump.fold_in_rb_deltas();// adjusts the center accordingly
-	}
-	pose.set_jump(jump_num, jump);
-	// pose.set_jump(jumpNum, jump); // this form updates xyz coords of downstream atoms
-	{
-		const std::string output("output.pdb");
-		pose.dump_pdb(output);
-	}
+		{
+			int xAxis=1; // use 2-6 for y,z and xyz rotation
+			{
+				numeric::xyzVector< core::Real > translation  = jump.get_translation();
+				double x= translation[xAxis];
+				translation[xAxis]=  x+x*.2; // move the ligand an arbitrary amount along x axis
+				jump.set_translation(translation);
+			}
+			// prefer the 3 lines below over the 4 lines above
+			int const downstream=1;// anything else is upstream
+			{
+				core::Real const length= 100;// angstrom?
+				jump.set_rb_delta(xAxis, downstream, length);
+			}
+			int alphaAxis=4;// 5&6 are beta and gamma (euler angles)
+			{
+				core::Real const radians=numeric::NumericTraits<Real>::pi();// not sure if this is degree or radians
+				jump.set_rb_delta(alphaAxis, downstream, radians);
+			}
+			jump.fold_in_rb_deltas();// adjusts the center accordingly
+		}
+		pose.set_jump(jump_num, jump);
+		// pose.set_jump(jumpNum, jump); // this form updates xyz coords of downstream atoms
+		{
+			const std::string output("output.pdb");
+			pose.dump_pdb(output);
+		}
 
-    } catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-    }
-    return 0;
+	}
+	return 0;
 }

@@ -77,7 +77,7 @@ morph_by_internal_coords(
 	using namespace core::pose;
 	using namespace protocols::simple_moves;
 
-	//	morph_poses.push_back( pose_start );
+	// morph_poses.push_back( pose_start );
 
 	std::map< Size, Size > res_map;
 	for ( Size n = 1; n <= pose_start->size(); n++ ) res_map[ n ] = n;
@@ -193,7 +193,7 @@ main( int argc, char * argv [] )
 
 		protocols::viewer::viewer_main( my_main );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

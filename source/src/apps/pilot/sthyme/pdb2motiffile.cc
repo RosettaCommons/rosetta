@@ -28,20 +28,20 @@ main( int argc, char * argv [] )
 
 	try {
 
-	devel::init( argc, argv );
-	protocols::motifs::MotifLibrary motifs( protocols::motifs::get_MotifLibrary_user() );
-	protocols::motifs::MotifCOPs motifcops = motifs.library();
+		devel::init( argc, argv );
+		protocols::motifs::MotifLibrary motifs( protocols::motifs::get_MotifLibrary_user() );
+		protocols::motifs::MotifCOPs motifcops = motifs.library();
 
-	std::string filename( "MotifLibrary.motifs" );
-	utility::io::ozstream motif_output_file( filename );
-	for( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motifcops.begin(), end_itr = motifcops.end();
-			motifcop_itr != end_itr; ++motifcop_itr ) {
+		std::string filename( "MotifLibrary.motifs" );
+		utility::io::ozstream motif_output_file( filename );
+		for ( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motifcops.begin(), end_itr = motifcops.end();
+				motifcop_itr != end_itr; ++motifcop_itr ) {
 			protocols::motifs::MotifCOP motifcop( *motifcop_itr );
 			motif_output_file << *motifcop;
-	}
+		}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

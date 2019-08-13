@@ -358,7 +358,7 @@ main( int argc, char *argv[] )
 		cout << ".pdb file with bad LINK records imported successfully." << endl;
 
 	} catch ( utility::excn::Exception const & e ) {
-		cerr << "Caught exception: " << e.msg() << endl;
+		e.display();
 		return FAILURE;
 	}
 	return SUCCESS;

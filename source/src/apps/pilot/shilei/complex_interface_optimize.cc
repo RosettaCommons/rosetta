@@ -178,13 +178,7 @@ my_main( void* ) {
 	//seq->add_mover(protocols::medal::Medal_main);
 	seq->add_mover( new complex_interface_optimize() );
 
-	try{
-		protocols::jd2::JobDistributor::get_instance()->go( seq );
-	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception: " << std::endl;
-		excn.show( std::cerr );
-	}
-
+	protocols::jd2::JobDistributor::get_instance()->go( seq );
 	return 0;
 }
 
@@ -193,8 +187,14 @@ my_main( void* ) {
 int
 main( int argc, char * argv [] ) {
 
-	// initialize option and random number system
-	devel::init( argc, argv );
+	try{
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
+	} catch (utility::excn::Exception& excn ) {
+		e.display();
+		return -1;
+	}
+
 }

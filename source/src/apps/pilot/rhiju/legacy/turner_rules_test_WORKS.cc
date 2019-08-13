@@ -124,15 +124,15 @@ OPT_KEY( Boolean, only_positive_Z )
 ///////////////////////////////////////////////////////////////////////
 void
 setup_heavy_atoms( pose::Pose const & pose,
-									 utility::vector1< Vector > & pose_atoms,
-									 utility::vector1< Size > const & subset_res ){
+	utility::vector1< Vector > & pose_atoms,
+	utility::vector1< Size > const & subset_res ){
 
 	pose_atoms.clear();
 
 	for ( Size n = 1; n <= subset_res.size(); n++ ) {
 		Size const i = subset_res[ n ];
 
-		for ( Size j = 1; j <= pose.residue_type( i ).nheavyatoms(); j++ ){
+		for ( Size j = 1; j <= pose.residue_type( i ).nheavyatoms(); j++ ) {
 			if ( pose.residue(i).is_virtual( j ) ) continue;
 			pose_atoms.push_back( pose.xyz( core::id::AtomID(j,i) ) );
 		}
@@ -145,9 +145,9 @@ setup_heavy_atoms( pose::Pose const & pose,
 ///////////////////////////////////////////////////////////////////////
 bool
 check_contact( Vector const & translation,
-							 utility::vector1< Vector > const & moving_atoms,
-							 utility::vector1< Vector > const & partner_atoms
-							 ){
+	utility::vector1< Vector > const & moving_atoms,
+	utility::vector1< Vector > const & partner_atoms
+){
 
 	using namespace core::options;
 	using namespace core::options::OptionKeys;
@@ -180,9 +180,9 @@ check_contact( Vector const & translation,
 ///////////////////////////////////////////////////////////////////////
 bool
 check_steric_overlap( Vector const & translation,
-											utility::vector1< Vector > const & moving_atoms,
-											utility::vector1< Vector > const & partner_atoms
-											){
+	utility::vector1< Vector > const & moving_atoms,
+	utility::vector1< Vector > const & partner_atoms
+){
 
 	using namespace core::options;
 	using namespace core::options::OptionKeys;
@@ -206,14 +206,14 @@ check_steric_overlap( Vector const & translation,
 ///////////////////////////////////////////////////////////////
 void
 search_translations( pose::Pose & pose,
-										 pose::Pose const & pose_to_translate,
-										 utility::vector1< Size > const & moving_res,
-										 utility::vector1< Size > const & partner_res,
-										 Size & count,
-										 Size & positive_Z_count,
-										 Real & best_energy,
-										 Real & Z,
-										 core::io::silent::SilentFileDataOP sfd = 0 ){
+	pose::Pose const & pose_to_translate,
+	utility::vector1< Size > const & moving_res,
+	utility::vector1< Size > const & partner_res,
+	Size & count,
+	Size & positive_Z_count,
+	Real & best_energy,
+	Real & Z,
+	core::io::silent::SilentFileDataOP sfd = 0 ){
 
 	using namespace core::io::silent;
 	using namespace core::options;
@@ -271,7 +271,7 @@ search_translations( pose::Pose & pose,
 				}
 				Z += Z_increment;
 
-				if ( energy < (best_energy + energy_cutoff) && sfd ){
+				if ( energy < (best_energy + energy_cutoff) && sfd ) {
 					BinarySilentStruct s( pose, tag );
 					sfd->add_structure( s );
 				}
@@ -304,12 +304,12 @@ define_states_test(){
 
 	// Create C-G base pair.
 	Pose pose;
-	make_pose_from_sequence( pose, "cg",	*rsd_set );
+	make_pose_from_sequence( pose, "cg", *rsd_set );
 	FoldTree f( 2 );
 	f.new_jump( 1, 2, 1);
 	f.set_jump_atoms( 1,
-										core::chemical::rna::chi1_torsion_atom( pose.residue( 1) ),
-										core::chemical::rna::chi1_torsion_atom( pose.residue( 2) )   );
+		core::chemical::rna::chi1_torsion_atom( pose.residue( 1) ),
+		core::chemical::rna::chi1_torsion_atom( pose.residue( 2) )   );
 	pose.dump_pdb( "start.pdb" );
 
 	// Virtualize backbone
@@ -360,7 +360,7 @@ define_states_test(){
 	Real gamma_increment = alpha_increment;
 	Real cos_beta_increment = radians( alpha_increment );
 	Size N_SAMPLE_COSBETA = 2.0 / cos_beta_increment;
-	if ( option[ n_sample_beta ].user() ){ //override default
+	if ( option[ n_sample_beta ].user() ) { //override default
 		N_SAMPLE_COSBETA = option[ n_sample_beta ]();
 		cos_beta_increment = 2.0 / N_SAMPLE_COSBETA;
 	}
@@ -369,22 +369,22 @@ define_states_test(){
 	clock_t const time_start( clock() );
 	Pose pose_start = pose;
 
-  SilentFileDataOP sfd = new SilentFileData;
+	SilentFileDataOP sfd = new SilentFileData;
 	Real best_energy( 999.9 );
 	Size count( 0 );
 	Size positive_Z_count( 0 );
 	Real Z( 0.0 );
 
-	for ( Size i = 1; i <= N_SAMPLE; i++ ){
+	for ( Size i = 1; i <= N_SAMPLE; i++ ) {
 
 		Real const alpha = static_cast<Real>( i ) * alpha_increment;
 		std::cout << i << " out of " << N_SAMPLE << ". Current count: " << count << ". num poses with positive Z: " << positive_Z_count << std::endl;
 
-		for ( Size j = 1; j <= N_SAMPLE_COSBETA; j++ ){
+		for ( Size j = 1; j <= N_SAMPLE_COSBETA; j++ ) {
 			Real const cos_beta = -1.0 + ( j - 0.5 ) * cos_beta_increment;
 			Real const beta = degrees( std::acos( cos_beta ) );
 
-			for ( Size k = 1; k <= N_SAMPLE; k++ ){
+			for ( Size k = 1; k <= N_SAMPLE; k++ ) {
 				Real const gamma = static_cast< Real >( k ) * gamma_increment + 0.01;
 
 				create_euler_rotation( M, alpha, beta, gamma, axis1, axis2, axis3 );
@@ -394,14 +394,14 @@ define_states_test(){
 				Pose pose_to_translate = pose;
 
 				search_translations( pose,
-														 pose_to_translate,
-														 moving_res2,
-														 moving_res1,
-														 count,
-														 positive_Z_count,
-														 best_energy,
-														 Z,
-														 sfd );
+					pose_to_translate,
+					moving_res2,
+					moving_res1,
+					count,
+					positive_Z_count,
+					best_energy,
+					Z,
+					sfd );
 
 			}
 		}
@@ -411,14 +411,14 @@ define_states_test(){
 	// Cluster lowest energy states and output.
 	protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer(  sfd );
 	Size max_decoys( 400 );
-	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
+	if ( option[ out::nstruct].user() )  max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer.set_max_decoys( max_decoys );
 	stepwise_clusterer.set_cluster_by_all_atom_rmsd( true );
 	stepwise_clusterer.set_rename_tags( true /*option[ rename_tags ]*/ );
 	stepwise_clusterer.set_calc_rms_res( moving_res2 );
 	Real cluster_radius( 0.25 );
 	if ( option[ OptionKeys::cluster::radius ].user() ) cluster_radius = option[ OptionKeys::cluster::radius ]();
-	stepwise_clusterer.set_cluster_radius( cluster_radius	);
+	stepwise_clusterer.set_cluster_radius( cluster_radius );
 	stepwise_clusterer.cluster();
 	std::string const silent_file = option[ out::file::silent]();
 	stepwise_clusterer.output_silent_file( silent_file );
@@ -446,7 +446,7 @@ turner_rules_test(){
 	// Add on next C base
 	// Sample its conformation [epsilon,zeta,alpha,beta,gamma]
 	// Disallow steric clashes.
-  // Save torsion angles, centroid, and base coordinate system.
+	// Save torsion angles, centroid, and base coordinate system.
 
 	// Add on next G base -- same thing as above.
 
@@ -479,35 +479,35 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace core::options;
+		using namespace core::options;
 
 
-	NEW_OPT( n_sample, "number of samples per torsion angle", 18 );
-	NEW_OPT( n_sample_beta, "number of samples in tilt angle beta", 18 );
-	NEW_OPT( xyz_sample, "spacing in xyz search, in Angstroms", 1.0 );
-	NEW_OPT( box_radius, "spacing in xyz search, in Angstroms", 10.0 );
-	NEW_OPT( score_cutoff, "Scoring cutoff", 10.0 );
-	NEW_OPT( temperature, "Temperature", 3.0 );
-	NEW_OPT( contact_cutoff, "how close atoms need to be to define contact", 4.5 );
-	NEW_OPT( steric_dist_cutoff, "how close heavy atoms need to be to define clash", 2.5 );
-	NEW_OPT( min_contacts, "minimum number of contacts", 1 );
-	NEW_OPT( only_positive_Z, "only allow positive contributions to partition function", false );
+		NEW_OPT( n_sample, "number of samples per torsion angle", 18 );
+		NEW_OPT( n_sample_beta, "number of samples in tilt angle beta", 18 );
+		NEW_OPT( xyz_sample, "spacing in xyz search, in Angstroms", 1.0 );
+		NEW_OPT( box_radius, "spacing in xyz search, in Angstroms", 10.0 );
+		NEW_OPT( score_cutoff, "Scoring cutoff", 10.0 );
+		NEW_OPT( temperature, "Temperature", 3.0 );
+		NEW_OPT( contact_cutoff, "how close atoms need to be to define contact", 4.5 );
+		NEW_OPT( steric_dist_cutoff, "how close heavy atoms need to be to define clash", 2.5 );
+		NEW_OPT( min_contacts, "minimum number of contacts", 1 );
+		NEW_OPT( only_positive_Z, "only allow positive contributions to partition function", false );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

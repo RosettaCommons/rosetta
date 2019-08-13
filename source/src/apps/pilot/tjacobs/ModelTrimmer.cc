@@ -375,8 +375,7 @@ main( int argc, char * argv [] ) {
 		write_model_file(comments.str(), models, new_model_filename);
 	} //try
 catch (utility::excn::Exception& excn ) {
-	std::cerr << "Exception : " << std::endl;
-	excn.show( std::cerr );
+	excn.display();
 	return -1;
 }
 	return 0;

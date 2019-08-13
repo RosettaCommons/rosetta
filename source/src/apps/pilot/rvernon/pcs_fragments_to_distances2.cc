@@ -99,9 +99,9 @@ largest_cluster( utility::vector1< pose::Pose > lowscore_poses, utility::vector1
 	Real maxsub_rms( basic::options::option[ robert::pcs_maxsub_rmsd ]() );//Default 4.0
 
 	Size most_hits(0), most_id(0);
-	for ( Size ii = 1; ii <= lowscore_poses.size(); ++ii) {
+	for ( Size ii = 1; ii <= lowscore_poses.size(); ++ii ) {
 		Size hits(0);
-		for ( Size jj = 1; jj <= pose_list.size(); ++jj) {
+		for ( Size jj = 1; jj <= pose_list.size(); ++jj ) {
 
 			Real maxsub = core::scoring::CA_maxsub( lowscore_poses[ii], pose_list[jj], maxsub_rms );
 
@@ -112,16 +112,16 @@ largest_cluster( utility::vector1< pose::Pose > lowscore_poses, utility::vector1
 			}
 		}
 
-		if (hits > most_hits) {
+		if ( hits > most_hits ) {
 			most_hits = hits;
 			most_id = ii;
 		}
 
-		//		std::cout << "COMPARISON " << ii << " " << core::scoring::CA_maxsub( lowscore_poses[ii], native, maxsub_rms ) << " " << hits << std::endl;
+		//  std::cout << "COMPARISON " << ii << " " << core::scoring::CA_maxsub( lowscore_poses[ii], native, maxsub_rms ) << " " << hits << std::endl;
 	}
 
 	utility::vector1< pose::Pose > topcluster;
-	for ( Size jj = 1; jj <= pose_list.size(); ++jj) {
+	for ( Size jj = 1; jj <= pose_list.size(); ++jj ) {
 		Real maxsub = core::scoring::CA_maxsub( lowscore_poses[most_id], pose_list[jj], maxsub_rms );
 
 		Real maxsub_coverage = maxsub / ( static_cast< Real >(pose_list[most_id].size() ) );
@@ -141,242 +141,242 @@ main( int argc, char* argv [] )
 
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::sequence;
-	using namespace utility;
-	// options, random initialization
-	devel::init( argc, argv );
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
+		using namespace core::sequence;
+		using namespace utility;
+		// options, random initialization
+		devel::init( argc, argv );
 
-	ResidueTypeSetCAP rsd_set =
-		ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID );
+		ResidueTypeSetCAP rsd_set =
+			ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID );
 
-	std::string const pdb_file_list( option[ robert::pairdata_input_pdb_list ]() );
-	//std::string const pdb_file_list("list");
+		std::string const pdb_file_list( option[ robert::pairdata_input_pdb_list ]() );
+		//std::string const pdb_file_list("list");
 
-	utility::io::ozstream outstream(pdb_file_list+".distances");
+		utility::io::ozstream outstream(pdb_file_list+".distances");
 
-	utility::io::izstream infile(pdb_file_list);
-	//utility::io::ozstream outfile(pdb_file_list+".FAangle.data");
+		utility::io::izstream infile(pdb_file_list);
+		//utility::io::ozstream outfile(pdb_file_list+".FAangle.data");
 
-	std::string fasta;
-	bool has_native(false);
-	pose::Pose native;
-	if (basic::options::option[ basic::options::OptionKeys::in::file::native ].user()) {
-		core::import_pose::pose_from_file( native, *rsd_set, basic::options::option[ in::file::native ]()
-		);
-		has_native = true;
-		fasta = native.sequence();
+		std::string fasta;
+		bool has_native(false);
+		pose::Pose native;
+		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
+			core::import_pose::pose_from_file( native, *rsd_set, basic::options::option[ in::file::native ]()
+			);
+			has_native = true;
+			fasta = native.sequence();
 
-		if ( basic::options::option[ basic::options::OptionKeys::in::file::fasta ].user()) {
-			std::string fasta_file( read_fasta_file_str( option[ OptionKeys::in::file::fasta ]()[1] )[1] );
-			runtime_assert( fasta == fasta_file );
+			if ( basic::options::option[ basic::options::OptionKeys::in::file::fasta ].user() ) {
+				std::string fasta_file( read_fasta_file_str( option[ OptionKeys::in::file::fasta ]()[1] )[1] );
+				runtime_assert( fasta == fasta_file );
+			}
+		} else {
+			fasta = read_fasta_file_str( option[ OptionKeys::in::file::fasta ]()[1] )[1];
 		}
-	} else {
-		fasta = read_fasta_file_str( option[ OptionKeys::in::file::fasta ]()[1] )[1];
-	}
-	runtime_assert( fasta != "");
+		runtime_assert( fasta != "");
 
 
-	std::cout << "SEQUENCE " << fasta << std::endl;
+		std::cout << "SEQUENCE " << fasta << std::endl;
 
-	Size res1, res2;
-	std::string outfile_location, native_location;
-	infile >> outfile_location;// >> res1 >> res2 >> native_location;
+		Size res1, res2;
+		std::string outfile_location, native_location;
+		infile >> outfile_location;// >> res1 >> res2 >> native_location;
 
-	//vector1< core::Real > temp(0, 0.0);
-	//vector1< vector1< vector1< core::Real > > > vec2d;
+		//vector1< core::Real > temp(0, 0.0);
+		//vector1< vector1< vector1< core::Real > > > vec2d;
 
-	//bool iterate = true;
-	while (infile.good()) {
+		//bool iterate = true;
+		while ( infile.good() ) {
 
-		core::io::silent::SilentFileData sfd;
+			core::io::silent::SilentFileData sfd;
 
-		sfd.read_file(outfile_location);
+			sfd.read_file(outfile_location);
 
-		//utility::vector1< Real > pcs_scores;
-		//for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end();
-		//			iter != end; ++iter ) {
-		//	pcs_scores.push_back( iter->get_energy("pcs") );
-		//}
-		//std::sort( pcs_scores.begin(), pcs_scores.end() );
+			//utility::vector1< Real > pcs_scores;
+			//for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end();
+			//   iter != end; ++iter ) {
+			// pcs_scores.push_back( iter->get_energy("pcs") );
+			//}
+			//std::sort( pcs_scores.begin(), pcs_scores.end() );
 
-		//Size index = static_cast< Size >( static_cast< Real >( pcs_scores.size() ) * 0.05 );
+			//Size index = static_cast< Size >( static_cast< Real >( pcs_scores.size() ) * 0.05 );
 
-		pose::Pose pose;
+			pose::Pose pose;
 
-		utility::vector1< pose::Pose > allpose_list;
-		utility::vector1< pose::Pose > pose_list;
-		utility::vector1< pose::Pose > lowscore_list;
-		utility::vector1< Real > score_list;
-		//utility::vector1< Real > rms_list;
+			utility::vector1< pose::Pose > allpose_list;
+			utility::vector1< pose::Pose > pose_list;
+			utility::vector1< pose::Pose > lowscore_list;
+			utility::vector1< Real > score_list;
+			//utility::vector1< Real > rms_list;
 
-		for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end();
+			for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end();
 					iter != end; ++iter ) {
-			iter->fill_pose( pose, *rsd_set );
-			allpose_list.push_back( pose );
-			score_list.push_back( iter->get_energy("pcs") );
-			//rms_list.push_back( iter->get_energy("rms") );
-		}
+				iter->fill_pose( pose, *rsd_set );
+				allpose_list.push_back( pose );
+				score_list.push_back( iter->get_energy("pcs") );
+				//rms_list.push_back( iter->get_energy("rms") );
+			}
 
-		utility::vector1< Real > pcs_scores( score_list );
-		std::sort( pcs_scores.begin(), pcs_scores.end() );
+			utility::vector1< Real > pcs_scores( score_list );
+			std::sort( pcs_scores.begin(), pcs_scores.end() );
 
-		if (	basic::options::option[ robert::pcs_cluster_lowscoring ]() ) {//Default true
-			Size index_20 = static_cast< Size >( static_cast< Real >( pcs_scores.size() ) * 0.2 );
-			Size index_median = static_cast< Size >( static_cast< Real >( pcs_scores.size() ) * 0.5 );
+			if ( basic::options::option[ robert::pcs_cluster_lowscoring ]() ) { //Default true
+				Size index_20 = static_cast< Size >( static_cast< Real >( pcs_scores.size() ) * 0.2 );
+				Size index_median = static_cast< Size >( static_cast< Real >( pcs_scores.size() ) * 0.5 );
 
-			for ( Size pp=1; pp <= allpose_list.size(); ++pp ) {
-				if (score_list[pp] <= pcs_scores[index_20]) {
-					if ( lowscore_list.size() <= index_20 ) {
-						lowscore_list.push_back( allpose_list[pp] );
+				for ( Size pp=1; pp <= allpose_list.size(); ++pp ) {
+					if ( score_list[pp] <= pcs_scores[index_20] ) {
+						if ( lowscore_list.size() <= index_20 ) {
+							lowscore_list.push_back( allpose_list[pp] );
+						}
+					}
+
+					if ( score_list[pp] <= pcs_scores[index_median] ) {
+						pose_list.push_back( allpose_list[pp] );
 					}
 				}
+			} else {
 
-				if (score_list[pp] <= pcs_scores[index_median]) {
+				for ( Size pp=1; pp <= allpose_list.size(); ++pp ) {
+					lowscore_list.push_back( allpose_list[pp] );
 					pose_list.push_back( allpose_list[pp] );
 				}
 			}
-		} else {
-
-			for ( Size pp=1; pp <= allpose_list.size(); ++pp ) {
-				lowscore_list.push_back( allpose_list[pp] );
-				pose_list.push_back( allpose_list[pp] );
-			}
-		}
 
 
-		std::string outfile_fasta( pose_list[1].sequence() );
-		res1 = 0;
-		res2 = 0;
-		Size matches(0);
-		for ( int ff=0; ff < static_cast<int>(fasta.length()); ++ff ) {
-			if ( (ff+outfile_fasta.length()) <= fasta.length() ) {
-				bool all_match(true);
-				for (int oo=0; oo < static_cast<int>(outfile_fasta.length()); ++oo ) {
-					if (fasta[ff+oo] != outfile_fasta[oo]) {
-						all_match = false;
-						std::cout << "FASTA_MISMATCH " << ff << " " << oo << std::endl;
-					}
-				}
-
-				if ( all_match == true ) {
-					res1 = static_cast< Size >( ff+1 );
-					res2 = static_cast< Size >( ff+outfile_fasta.length() );
-					matches += 1;
-				}
-			}
-		}
-
-		if (matches == 0 ) {
-			std::cout << "FASTA:   " << fasta << std::endl;
-			std::cout << "OUTFILE: " << outfile_fasta << std::endl;
-		}
-
-		runtime_assert( matches == 1 );
-
-
-		utility::vector1< pose::Pose > cluster_list( largest_cluster( lowscore_list, pose_list ) );//, fragnative ) );
-
-		if ( has_native ) {
-			pose::Pose fragnative(cluster_list[1]);
-
-			for ( Size fn=1; fn <= fragnative.size(); ++fn ) {
-				fragnative.set_phi(fn, native.phi(res1+fn-1));
-				fragnative.set_psi(fn, native.psi(res1+fn-1));
-				fragnative.set_omega(fn, native.omega(res1+fn-1));
-			}
-
-			Real maxsub_rms( basic::options::option[ robert::pcs_maxsub_rmsd ]() );//Default 4.0
-			Real natmaxsub = core::scoring::CA_maxsub( cluster_list[1], fragnative, maxsub_rms );
-
-			std::cout << "CLUSTERING: " << outfile_location << " " << cluster_list.size() << " / " << pose_list.size() << "   " << natmaxsub << " / " << fragnative.size() << std::endl;
-		} else {
-			std::cout << "CLUSTERING: " << outfile_location << " " << cluster_list.size() << " / " << pose_list.size() << std::endl;
-		}
-
-		if (basic::options::option[ basic::options::OptionKeys::robert::pcs_dump_cluster ] ) {
-			for ( Size pp=1; pp <= cluster_list.size(); ++pp ) {
-				cluster_list[pp].dump_pdb("cluster_" + ObjexxFCL::right_string_of(pp,2,'0') + ".pdb");
-			}
-		}
-
-		Real cluster_coverage( static_cast< Real >( cluster_list.size() ) / static_cast< Real >( pose_list.size() ) );
-
-		std::cout << "CLUSTER_COVERAGE = " << cluster_coverage << std::endl;
-
-		if (cluster_coverage >= basic::options::option[ robert::pcs_cluster_coverage ]() ) {
-			for ( Size pp=1; pp <= cluster_list.size(); ++pp ) {
-				pose = cluster_list[pp];
-
-				for ( Size ii=1; ii <= pose.size(); ++ii ) {
-					for ( Size jj=1; jj <= pose.size(); ++jj ) {
-						Real pose_distance( distance( pose.residue(ii).atom("CA").xyz(), pose.residue(jj).atom("CA").xyz()) );
-
-						//Real pose_dotproduct( dot_product( (pose.residue(ii).xyz("N")-pose.residue(ii).xyz("CA")).normalize(),
-						//																	 (pose.residue(jj).xyz("N")-pose.residue(jj).xyz("CA")).normalize() ) );
-
-				    //Real pose_dotproduct2( dot_product( (pose.residue(ii).xyz("N")-pose.residue(ii).xyz("C")).normalize(),
-						//																	 (pose.residue(jj).xyz("N")-pose.residue(jj).xyz("C")).normalize() ) );
-				    //Real pose_dotproduct3( dot_product( (pose.residue(ii).xyz("CEN")-pose.residue(ii).xyz("CA")).normalize(),
-						//																	 (pose.residue(jj).xyz("CEN")-pose.residue(jj).xyz("CA")).normalize() ) );
-
-
-						outstream << "DISTANCE " << res1 << " " << res2 << " " << ii + res1 - 1 << " " << jj + res1 - 1<< " " << pose_distance;// << " " << pose_dotproduct << " " << pose_dotproduct2 << " " << pose_dotproduct3;
-
-						if ( has_native ) {
-							Real native_distance( distance( native.residue(ii+res1-1).atom("CA").xyz(), native.residue(jj+res1-1).atom("CA").xyz()) );
-							//Real native_dotproduct( dot_product( (native.residue(ii).xyz("N")-native.residue(ii).xyz("CA")).normalize(),
-							//																		 (native.residue(jj).xyz("N")-native.residue(jj).xyz("CA")).normalize() ) );
-
-							//Real native_dotproduct2( dot_product( (native.residue(ii).xyz("N")-native.residue(ii).xyz("C")).normalize(),
-							//																		 (native.residue(jj).xyz("N")-native.residue(jj).xyz("C")).normalize() ) );
-							//Real native_dotproduct3( dot_product( (native.residue(ii).xyz("CEN")-native.residue(ii).xyz("CA")).normalize(),
-							//																		 (native.residue(jj).xyz("CEN")-native.residue(jj).xyz("CA")).normalize() ) );
-							outstream << " " << native_distance;// << " " << native_dotproduct << " " << native_dotproduct2 << " " << native_dotproduct3;
+			std::string outfile_fasta( pose_list[1].sequence() );
+			res1 = 0;
+			res2 = 0;
+			Size matches(0);
+			for ( int ff=0; ff < static_cast<int>(fasta.length()); ++ff ) {
+				if ( (ff+outfile_fasta.length()) <= fasta.length() ) {
+					bool all_match(true);
+					for ( int oo=0; oo < static_cast<int>(outfile_fasta.length()); ++oo ) {
+						if ( fasta[ff+oo] != outfile_fasta[oo] ) {
+							all_match = false;
+							std::cout << "FASTA_MISMATCH " << ff << " " << oo << std::endl;
 						}
-						outstream << std::endl;
+					}
 
-						//vec2d[ii][jj].push_back(pose_distance);
+					if ( all_match == true ) {
+						res1 = static_cast< Size >( ff+1 );
+						res2 = static_cast< Size >( ff+outfile_fasta.length() );
+						matches += 1;
 					}
 				}
 			}
-		}
 
-		/*
-		for ( Size ii=1; ii <= pose.size(); ++ii ) {
+			if ( matches == 0 ) {
+				std::cout << "FASTA:   " << fasta << std::endl;
+				std::cout << "OUTFILE: " << outfile_fasta << std::endl;
+			}
+
+			runtime_assert( matches == 1 );
+
+
+			utility::vector1< pose::Pose > cluster_list( largest_cluster( lowscore_list, pose_list ) );//, fragnative ) );
+
+			if ( has_native ) {
+				pose::Pose fragnative(cluster_list[1]);
+
+				for ( Size fn=1; fn <= fragnative.size(); ++fn ) {
+					fragnative.set_phi(fn, native.phi(res1+fn-1));
+					fragnative.set_psi(fn, native.psi(res1+fn-1));
+					fragnative.set_omega(fn, native.omega(res1+fn-1));
+				}
+
+				Real maxsub_rms( basic::options::option[ robert::pcs_maxsub_rmsd ]() );//Default 4.0
+				Real natmaxsub = core::scoring::CA_maxsub( cluster_list[1], fragnative, maxsub_rms );
+
+				std::cout << "CLUSTERING: " << outfile_location << " " << cluster_list.size() << " / " << pose_list.size() << "   " << natmaxsub << " / " << fragnative.size() << std::endl;
+			} else {
+				std::cout << "CLUSTERING: " << outfile_location << " " << cluster_list.size() << " / " << pose_list.size() << std::endl;
+			}
+
+			if ( basic::options::option[ basic::options::OptionKeys::robert::pcs_dump_cluster ] ) {
+				for ( Size pp=1; pp <= cluster_list.size(); ++pp ) {
+					cluster_list[pp].dump_pdb("cluster_" + ObjexxFCL::right_string_of(pp,2,'0') + ".pdb");
+				}
+			}
+
+			Real cluster_coverage( static_cast< Real >( cluster_list.size() ) / static_cast< Real >( pose_list.size() ) );
+
+			std::cout << "CLUSTER_COVERAGE = " << cluster_coverage << std::endl;
+
+			if ( cluster_coverage >= basic::options::option[ robert::pcs_cluster_coverage ]() ) {
+				for ( Size pp=1; pp <= cluster_list.size(); ++pp ) {
+					pose = cluster_list[pp];
+
+					for ( Size ii=1; ii <= pose.size(); ++ii ) {
+						for ( Size jj=1; jj <= pose.size(); ++jj ) {
+							Real pose_distance( distance( pose.residue(ii).atom("CA").xyz(), pose.residue(jj).atom("CA").xyz()) );
+
+							//Real pose_dotproduct( dot_product( (pose.residue(ii).xyz("N")-pose.residue(ii).xyz("CA")).normalize(),
+							//                  (pose.residue(jj).xyz("N")-pose.residue(jj).xyz("CA")).normalize() ) );
+
+							//Real pose_dotproduct2( dot_product( (pose.residue(ii).xyz("N")-pose.residue(ii).xyz("C")).normalize(),
+							//                  (pose.residue(jj).xyz("N")-pose.residue(jj).xyz("C")).normalize() ) );
+							//Real pose_dotproduct3( dot_product( (pose.residue(ii).xyz("CEN")-pose.residue(ii).xyz("CA")).normalize(),
+							//                  (pose.residue(jj).xyz("CEN")-pose.residue(jj).xyz("CA")).normalize() ) );
+
+
+							outstream << "DISTANCE " << res1 << " " << res2 << " " << ii + res1 - 1 << " " << jj + res1 - 1<< " " << pose_distance;// << " " << pose_dotproduct << " " << pose_dotproduct2 << " " << pose_dotproduct3;
+
+							if ( has_native ) {
+								Real native_distance( distance( native.residue(ii+res1-1).atom("CA").xyz(), native.residue(jj+res1-1).atom("CA").xyz()) );
+								//Real native_dotproduct( dot_product( (native.residue(ii).xyz("N")-native.residue(ii).xyz("CA")).normalize(),
+								//                   (native.residue(jj).xyz("N")-native.residue(jj).xyz("CA")).normalize() ) );
+
+								//Real native_dotproduct2( dot_product( (native.residue(ii).xyz("N")-native.residue(ii).xyz("C")).normalize(),
+								//                   (native.residue(jj).xyz("N")-native.residue(jj).xyz("C")).normalize() ) );
+								//Real native_dotproduct3( dot_product( (native.residue(ii).xyz("CEN")-native.residue(ii).xyz("CA")).normalize(),
+								//                   (native.residue(jj).xyz("CEN")-native.residue(jj).xyz("CA")).normalize() ) );
+								outstream << " " << native_distance;// << " " << native_dotproduct << " " << native_dotproduct2 << " " << native_dotproduct3;
+							}
+							outstream << std::endl;
+
+							//vec2d[ii][jj].push_back(pose_distance);
+						}
+					}
+				}
+			}
+
+			/*
+			for ( Size ii=1; ii <= pose.size(); ++ii ) {
 			for ( Size jj=ii+1; jj <= pose.size(); ++jj ) {
-				Real average(0.0);
-				for ( Size nn=1; nn <= vec2d[ii][jj].size(); ++nn ) {
-					average += vec2d[ii][jj][nn];
-				}
-				average /= static_cast< Real >( vec2d[ii][jj].size() );
-				Real sdev(0.0);
-				for ( Size nn=1; nn <= vec2d[ii][jj].size(); ++nn ) {
-					sdev += std::pow( vec2d[ii][jj][nn] - average, 2);
-				}
-				sdev = std::sqrt( sdev / static_cast< Real >( vec2d[ii][jj].size() ) );
+			Real average(0.0);
+			for ( Size nn=1; nn <= vec2d[ii][jj].size(); ++nn ) {
+			average += vec2d[ii][jj][nn];
+			}
+			average /= static_cast< Real >( vec2d[ii][jj].size() );
+			Real sdev(0.0);
+			for ( Size nn=1; nn <= vec2d[ii][jj].size(); ++nn ) {
+			sdev += std::pow( vec2d[ii][jj][nn] - average, 2);
+			}
+			sdev = std::sqrt( sdev / static_cast< Real >( vec2d[ii][jj].size() ) );
 
-				std::cout << "AVERAGE " << ii << " " << jj << " " << average << " " << sdev;
+			std::cout << "AVERAGE " << ii << " " << jj << " " << average << " " << sdev;
 
-				if ( has_native ) {
-					Real native_distance( distance( native.residue(ii).atom("CA").xyz(), native.residue(jj).atom("CA").xyz()) );
-					std::cout << " " << native_distance;
-				}
+			if ( has_native ) {
+			Real native_distance( distance( native.residue(ii).atom("CA").xyz(), native.residue(jj).atom("CA").xyz()) );
+			std::cout << " " << native_distance;
+			}
 
-				std::cout << std::endl;
+			std::cout << std::endl;
 			}
 			}*/
 
-		//std::cout << "HEYO " << outfile_location << " " << res1 << " " << res2 << " " << index << " " << pcs_scores[index] << std::endl;
+			//std::cout << "HEYO " << outfile_location << " " << res1 << " " << res2 << " " << index << " " << pcs_scores[index] << std::endl;
 
 
-		infile >> outfile_location;// >> res1 >> res2 >> native_location;
-	}
+			infile >> outfile_location;// >> res1 >> res2 >> native_location;
+		}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

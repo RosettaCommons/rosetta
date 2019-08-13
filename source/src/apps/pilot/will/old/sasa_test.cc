@@ -40,8 +40,8 @@ typedef utility::vector1<Vec>    Vecs;
 typedef numeric::xyzMatrix<Real> Mat;
 
 inline void rot_pose( core::pose::Pose & pose, Mat const & rot ) {
-	for(Size ir = 1; ir <= pose.size(); ++ir) {
-		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, rot * pose.xyz(aid) );
 		}
@@ -49,9 +49,9 @@ inline void rot_pose( core::pose::Pose & pose, Mat const & rot ) {
 }
 
 // inline void rot_pose( core::pose::Pose & pose, Mat const & rot, Vec const & cen ) {
-// 	trans_pose(pose,-cen);
-// 	rot_pose(pose,rot);
-// 	trans_pose(pose,cen);
+//  trans_pose(pose,-cen);
+//  rot_pose(pose,rot);
+//  trans_pose(pose,cen);
 // }
 
 inline void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & ang ) {
@@ -59,7 +59,7 @@ inline void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & an
 }
 
 // inline void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & ang, Vec const & cen ) {
-// 	rot_pose(pose,rotation_matrix_degrees(axis,ang),cen);
+//  rot_pose(pose,rotation_matrix_degrees(axis,ang),cen);
 // }
 
 
@@ -91,32 +91,32 @@ int main (int argc, char *argv[])
 	try {
 
 
-	devel::init(argc,argv);
+		devel::init(argc,argv);
 
-	Pose pose;
-	core::import_pose::pose_from_file(pose,core::options::option[core::options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
+		Pose pose;
+		core::import_pose::pose_from_file(pose,core::options::option[core::options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
 
-	clock_t tot1=0,tot2=0;
-	for(Size i = 1; i <= 10; ++i){
-		rot_pose(pose,numeric::xyzVector<Real>(uniform(),uniform(),uniform()),uniform()*360);
-		// for(Size j = 1; j <= pose.size(); ++j) {
-		// 	pose.set_phi(j,pose.phi(j)+gaussian()/10.0);
-		// 	pose.set_psi(j,pose.psi(j)+gaussian()/10.0);
-		// }
-		clock_t t1,t2;
-		Real SASAdab = dab_sasa(pose,t1);
-		Real SASAdot = dot_sasa(pose,t2);
-		tot1 += t1; tot2 += t2;
-		std::cerr << "DOTS vs DAB: dab/dot " << (Real)tot1/(Real)tot2 << " " << (Real)t1/(Real)t2 << " " << t1 << " " << t2 << " values: " << SASAdab << " " << SASAdot << std::endl;
-	}
-	std::cerr << "PROFILE info:" << std::endl;
-	basic::prof_show();
+		clock_t tot1=0,tot2=0;
+		for ( Size i = 1; i <= 10; ++i ) {
+			rot_pose(pose,numeric::xyzVector<Real>(uniform(),uniform(),uniform()),uniform()*360);
+			// for(Size j = 1; j <= pose.size(); ++j) {
+			//  pose.set_phi(j,pose.phi(j)+gaussian()/10.0);
+			//  pose.set_psi(j,pose.psi(j)+gaussian()/10.0);
+			// }
+			clock_t t1,t2;
+			Real SASAdab = dab_sasa(pose,t1);
+			Real SASAdot = dot_sasa(pose,t2);
+			tot1 += t1; tot2 += t2;
+			std::cerr << "DOTS vs DAB: dab/dot " << (Real)tot1/(Real)tot2 << " " << (Real)t1/(Real)t2 << " " << t1 << " " << t2 << " values: " << SASAdab << " " << SASAdot << std::endl;
+		}
+		std::cerr << "PROFILE info:" << std::endl;
+		basic::prof_show();
 
 
-	return 0;
+		return 0;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

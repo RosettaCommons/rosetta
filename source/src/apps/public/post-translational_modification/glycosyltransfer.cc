@@ -51,7 +51,7 @@ main( int argc, char *argv[] )
 		// Distribute the mover.
 		jd2::JobDistributor::get_instance()->go( protocol );
 	} catch (utility::excn::Exception const & e ) {
-		cerr << "Caught exception: " << e.msg() << endl;
+		e.display();
 		return FAILURE;
 	}
 	return SUCCESS;

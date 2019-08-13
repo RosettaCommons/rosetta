@@ -108,7 +108,7 @@ main( int argc, char * argv[] )
 		devel::init( argc, argv );
 		protocols::viewer::viewer_main( sequence_tolerance_main );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

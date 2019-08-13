@@ -281,9 +281,7 @@ main( int argc, char * argv [] )
 		this_app.run();
 
 	} catch (utility::excn::Exception& excn ) {
-		TR.Error << "Exception caught: " << std::endl;
-		excn.show( TR.Error );
-		TR.Error.flush();
+		excn.display();
 		return -1;
 	}
 

@@ -21,16 +21,16 @@
 
 int
 main( int argc, char * argv [] ){
-    try {
+	try {
 
-	protocols::canonical_sampling::CanonicalSamplingMover::register_options();
+		protocols::canonical_sampling::CanonicalSamplingMover::register_options();
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	protocols::canonical_sampling::canonical_sampling_main();
+		protocols::canonical_sampling::canonical_sampling_main();
 
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
+	}
 }

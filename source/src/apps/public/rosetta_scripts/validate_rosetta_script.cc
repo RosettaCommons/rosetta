@@ -68,9 +68,7 @@ main( int argc, char * argv [] )
 		std::exit(0);
 
 	} catch (utility::excn::Exception& excn ) {
-		basic::Error()
-			<< "ERROR: Exception caught by validate_rosetta_script application:"
-			<< excn << std::endl;
+		excn.display();
 		std::exit( 1 );
 	}
 }

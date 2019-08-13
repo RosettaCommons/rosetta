@@ -13,20 +13,20 @@
 int
 main( int argc, char * argv [] )
 {
-  try{
-    utility::io::ozstream(output);
-    output.open("bus_error3");
-    output << "TEST1\n"  << std::endl;
-    output.close();
+	try{
+		utility::io::ozstream(output);
+		output.open("bus_error3");
+		output << "TEST1\n"  << std::endl;
+		output.close();
 
-    std::ofstream output2 ("bus_error.std3");
-    output2 << "TEST2\n";
-    output2.close();
+		std::ofstream output2 ("bus_error.std3");
+		output2 << "TEST2\n";
+		output2.close();
 
-  } catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-  }
+	}
 
-  return 0;
+	return 0;
 }

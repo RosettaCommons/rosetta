@@ -30,31 +30,31 @@
 
 
 void register_options() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-  OPT(in::file::silent);
-  OPT(in::file::s);
-  OPT(in::file::residue_type_set);
-  OPT(out::nooutput);
+	OPT(in::file::silent);
+	OPT(in::file::s);
+	OPT(in::file::residue_type_set);
+	OPT(out::nooutput);
 }
 
 int
 main( int argc, char * argv [] ) {
-    try {
-        using namespace basic::options;
-        using namespace basic::options::OptionKeys;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	devel::init(argc, argv);
-	register_options();
+		devel::init(argc, argv);
+		register_options();
 
-	protocols::domain_assembly::CombineChainsMoverOP  mover = new protocols::domain_assembly::CombineChainsMover;
+		protocols::domain_assembly::CombineChainsMoverOP  mover = new protocols::domain_assembly::CombineChainsMover;
 
-	// execution
-	protocols::jd2::JobDistributor::get_instance()->go(mover);
-    } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		// execution
+		protocols::jd2::JobDistributor::get_instance()->go(mover);
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-                                  }
-        return 0;
-    }
+	}
+	return 0;
+}

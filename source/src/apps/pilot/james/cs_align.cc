@@ -105,84 +105,84 @@ int
 main( int argc, char* argv [] ) {
 	try {
 
-	using core::Size;
-	using core::Real;
-	using utility::vector1;
-	using core::sequence::SequenceAlignment;
+		using core::Size;
+		using core::Real;
+		using utility::vector1;
+		using core::sequence::SequenceAlignment;
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	Real const gap_open  ( option[ cm::min_gap_open   ]() );
-	Real const gap_extend( option[ cm::min_gap_extend ]() );
-	std::string const scoring_scheme_type( option[ cm::seq_score ]()[1] );
-	ScoringSchemeFactory ssf;
-	ScoringSchemeOP ss( ssf.get_scoring_scheme( scoring_scheme_type ) );
-	ss->gap_open  ( gap_open   );
-	ss->gap_extend( gap_extend );
+		Real const gap_open  ( option[ cm::min_gap_open   ]() );
+		Real const gap_extend( option[ cm::min_gap_extend ]() );
+		std::string const scoring_scheme_type( option[ cm::seq_score ]()[1] );
+		ScoringSchemeFactory ssf;
+		ScoringSchemeOP ss( ssf.get_scoring_scheme( scoring_scheme_type ) );
+		ss->gap_open  ( gap_open   );
+		ss->gap_extend( gap_extend );
 
-	std::string output_fn = option[ out::file::alignment ]();
-	utility::io::ozstream output( output_fn );
+		std::string output_fn = option[ out::file::alignment ]();
+		utility::io::ozstream output( output_fn );
 
-	vector1< FileName > const pssm_fns( option[ in::file::pssm ]() );
-	ChemicalShiftSequenceOP seq1( new ChemicalShiftSequence( pssm_fns[1] ) );
-	seq1->id( FileName( seq1->id() ).base() );
+		vector1< FileName > const pssm_fns( option[ in::file::pssm ]() );
+		ChemicalShiftSequenceOP seq1( new ChemicalShiftSequence( pssm_fns[1] ) );
+		seq1->id( FileName( seq1->id() ).base() );
 
-	std::cout << "starting to generate alignments" << std::endl;
-	std::cout << seq1->to_string() << std::endl;
+		std::cout << "starting to generate alignments" << std::endl;
+		std::cout << seq1->to_string() << std::endl;
 
-	AlignmentSet align_set;
-	vector1< SequenceAlignment > aligns;
-	CompositeScoringSchemeOP css(
-		new CompositeScoringScheme()
-	);
-	css->add_scoring_scheme( ss );
-	if ( option[ james::debug ]() ) {
-		css->add_scoring_scheme( new MatrixScoringScheme(
-			gap_open, gap_extend,
-			FileName("/work/tex/minirosetta_database/sequence/BLOSUM62") )
+		AlignmentSet align_set;
+		vector1< SequenceAlignment > aligns;
+		CompositeScoringSchemeOP css(
+			new CompositeScoringScheme()
 		);
-	}
-	css->gap_open  ( gap_open   );
-	css->gap_extend( gap_extend );
+		css->add_scoring_scheme( ss );
+		if ( option[ james::debug ]() ) {
+			css->add_scoring_scheme( new MatrixScoringScheme(
+				gap_open, gap_extend,
+				FileName("/work/tex/minirosetta_database/sequence/BLOSUM62") )
+			);
+		}
+		css->gap_open  ( gap_open   );
+		css->gap_extend( gap_extend );
 
-	for ( Size jj = 2; jj <= pssm_fns.size(); ++jj ) {
-		ChemicalShiftSequenceOP seq2( new ChemicalShiftSequence(pssm_fns[jj]) );
-		seq2->id( FileName( seq2->id() ).base() );
-		std::cout << seq2->to_string() << std::endl;
-		string out_fn( seq2->id() + ".dat" );
-		print_matrix_to_file(out_fn,seq1,seq2,css);
+		for ( Size jj = 2; jj <= pssm_fns.size(); ++jj ) {
+			ChemicalShiftSequenceOP seq2( new ChemicalShiftSequence(pssm_fns[jj]) );
+			seq2->id( FileName( seq2->id() ).base() );
+			std::cout << seq2->to_string() << std::endl;
+			string out_fn( seq2->id() + ".dat" );
+			print_matrix_to_file(out_fn,seq1,seq2,css);
 
-		// scoring scheme for aligning profiles
-		SWAligner sw_aligner;
-		SequenceAlignment local_align( sw_aligner.align( seq1, seq2, css ) );
-		std::cout << local_align;
-		aligns.push_back(local_align);
-		//align_set.insert(local_align);
+			// scoring scheme for aligning profiles
+			SWAligner sw_aligner;
+			SequenceAlignment local_align( sw_aligner.align( seq1, seq2, css ) );
+			std::cout << local_align;
+			aligns.push_back(local_align);
+			//align_set.insert(local_align);
 
-		NWAligner nw_aligner;
-		SequenceAlignment global_align( nw_aligner.align( seq1, seq2, css ) );
-		std::cout << global_align;
-		aligns.push_back(global_align);
-		//align_set.insert(global_align);
-		//std::cout << "have " << align_set.size() << " distinct alignments."
-		//	<< std::endl;
-	}
+			NWAligner nw_aligner;
+			SequenceAlignment global_align( nw_aligner.align( seq1, seq2, css ) );
+			std::cout << global_align;
+			aligns.push_back(global_align);
+			//align_set.insert(global_align);
+			//std::cout << "have " << align_set.size() << " distinct alignments."
+			// << std::endl;
+		}
 
-	std::cout << "done generating alignments." << std::endl;
+		std::cout << "done generating alignments." << std::endl;
 
-	//vector1< SequenceAlignment > aligns = align_set.alignments();
-	std::cout << "have " << align_set.size() << " distinct alignments."
-		<< std::endl;
-	for ( vector1< SequenceAlignment >::iterator it = aligns.begin(),
-			end = aligns.end();
-			it != end; ++it
-	) {
-		output << *it << std::endl;
-	} // for ( it in aligns )
+		//vector1< SequenceAlignment > aligns = align_set.alignments();
+		std::cout << "have " << align_set.size() << " distinct alignments."
+			<< std::endl;
+		for ( vector1< SequenceAlignment >::iterator it = aligns.begin(),
+				end = aligns.end();
+				it != end; ++it
+				) {
+			output << *it << std::endl;
+		} // for ( it in aligns )
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

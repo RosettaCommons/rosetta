@@ -144,7 +144,7 @@ main( int argc, char * argv [] )
 		MoverOP protocol = new RamaTestMover();
 		protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

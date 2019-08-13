@@ -73,7 +73,7 @@ calculate_backbone_sasa(core::id::AtomID_Map< core::Real > & atom_sasa, core::po
 	backbone_sasa += atom_sasa[id_c];
 	backbone_sasa += atom_sasa[id_o];
 
-	if (core::chemical::name_from_aa(current_pose.aa(resn)) == "GLY") {
+	if ( core::chemical::name_from_aa(current_pose.aa(resn)) == "GLY" ) {
 		core::id::AtomID const id_1ha( current_pose.residue_type(resn).atom_index("1HA"),resn);
 		core::id::AtomID const id_2ha( current_pose.residue_type(resn).atom_index("2HA"),resn);
 		backbone_sasa += atom_sasa[id_1ha];
@@ -91,107 +91,107 @@ main( int argc, char* argv [] ) {
 
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using core::Size;
-	using core::Real;
-	using core::pose::Pose;
-	using namespace core::chemical;
-	using utility::vector1;
-	using namespace basic;
-	using namespace core::io::silent;
-	using namespace core::import_pose::pose_stream;
-	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace ObjexxFCL;
+		using core::Size;
+		using core::Real;
+		using core::pose::Pose;
+		using namespace core::chemical;
+		using utility::vector1;
+		using namespace basic;
+		using namespace core::io::silent;
+		using namespace core::import_pose::pose_stream;
+		using namespace core::scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace ObjexxFCL;
 
-	MetaPoseInputStream input = streams_from_cmd_line();
-	core::chemical::ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
-		option[ in::file::residue_type_set ]()
-	);
+		MetaPoseInputStream input = streams_from_cmd_line();
+		core::chemical::ResidueTypeSetCAP rsd_set;
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
+			option[ in::file::residue_type_set ]()
+		);
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 
-	utility::vector1< Size > exposed_residues;
-	if ( option[ score::sidechain_exposed ].user() ) {
-		exposed_residues = option[ score::sidechain_exposed ]();
-	}
-
-	utility::vector1< Size > buried_residues;
-	if ( option[ score::sidechain_buried ].user() ) {
-		buried_residues = option[ score::sidechain_buried ]();
-	}
-
-	runtime_assert( ( exposed_residues.size() + buried_residues.size() ) != 0 );
-
-	SilentFileData sfd;
-	core::pose::Pose current_pose;
-	while ( input.has_another_pose() ) {
-		input.fill_pose( current_pose, *rsd_set );
-		(*scorefxn)(current_pose);
-		EnergyMap weights( current_pose.energies().weights() );
-
-		core::scoring::dssp::Dssp dssp( current_pose );
-		dssp.insert_ss_into_pose( current_pose );
-		std::string secstruct(current_pose.secstruct());
-
-		core::id::AtomID_Map< bool > atom_subset;
-		core::pose::initialize_atomid_map( atom_subset, current_pose, true );
-
-		core::id::AtomID_Map< Real > atom_sasa;
-		utility::vector1< Real > rsd_sasa;
-
-		core::Real probe_radius = 1.5;
-		bool use_big_polar_H = false;
-
-		core::scoring::calc_per_atom_sasa( current_pose, atom_sasa, rsd_sasa, probe_radius, use_big_polar_H, atom_subset );
-
-
-		core::Real sasa_score(0.0);
-		SilentStructOP ss( new ScoreFileSilentStruct );
-
-		for ( Size ti = 1; ti <= exposed_residues.size(); ++ti ) {
-
-			Size tr = exposed_residues[ti];
-
-			runtime_assert( tr <= current_pose.size() );
-
-			core::Real sc_sasa = rsd_sasa[tr] - calculate_backbone_sasa(atom_sasa,current_pose,tr);
-
-			if ( sc_sasa == 0.0 ) {
-				sasa_score += 1;
-			}
-
+		utility::vector1< Size > exposed_residues;
+		if ( option[ score::sidechain_exposed ].user() ) {
+			exposed_residues = option[ score::sidechain_exposed ]();
 		}
 
-		for ( Size ti = 1; ti <= buried_residues.size(); ++ti ) {
-
-			Size tr = buried_residues[ti];
-
-			runtime_assert( tr <= current_pose.size() );
-
-			core::Real sc_sasa = rsd_sasa[tr] - calculate_backbone_sasa(atom_sasa,current_pose,tr);
-
-			if ( sc_sasa >= 0.0 ) {
-				sasa_score += 1;
-			}
-
+		utility::vector1< Size > buried_residues;
+		if ( option[ score::sidechain_buried ].user() ) {
+			buried_residues = option[ score::sidechain_buried ]();
 		}
 
-		ss->add_energy("sasa_score", sasa_score );
-		ss->set_decoy_tag( core::pose::tag_from_pose(current_pose) );
+		runtime_assert( ( exposed_residues.size() + buried_residues.size() ) != 0 );
 
-		sfd.write_silent_struct( *ss, option[ out::file::scorefile ]() );
+		SilentFileData sfd;
+		core::pose::Pose current_pose;
+		while ( input.has_another_pose() ) {
+			input.fill_pose( current_pose, *rsd_set );
+			(*scorefxn)(current_pose);
+			EnergyMap weights( current_pose.energies().weights() );
 
-	} // while ( input.has_another_pose() )
+			core::scoring::dssp::Dssp dssp( current_pose );
+			dssp.insert_ss_into_pose( current_pose );
+			std::string secstruct(current_pose.secstruct());
 
-	return 0;
+			core::id::AtomID_Map< bool > atom_subset;
+			core::pose::initialize_atomid_map( atom_subset, current_pose, true );
+
+			core::id::AtomID_Map< Real > atom_sasa;
+			utility::vector1< Real > rsd_sasa;
+
+			core::Real probe_radius = 1.5;
+			bool use_big_polar_H = false;
+
+			core::scoring::calc_per_atom_sasa( current_pose, atom_sasa, rsd_sasa, probe_radius, use_big_polar_H, atom_subset );
+
+
+			core::Real sasa_score(0.0);
+			SilentStructOP ss( new ScoreFileSilentStruct );
+
+			for ( Size ti = 1; ti <= exposed_residues.size(); ++ti ) {
+
+				Size tr = exposed_residues[ti];
+
+				runtime_assert( tr <= current_pose.size() );
+
+				core::Real sc_sasa = rsd_sasa[tr] - calculate_backbone_sasa(atom_sasa,current_pose,tr);
+
+				if ( sc_sasa == 0.0 ) {
+					sasa_score += 1;
+				}
+
+			}
+
+			for ( Size ti = 1; ti <= buried_residues.size(); ++ti ) {
+
+				Size tr = buried_residues[ti];
+
+				runtime_assert( tr <= current_pose.size() );
+
+				core::Real sc_sasa = rsd_sasa[tr] - calculate_backbone_sasa(atom_sasa,current_pose,tr);
+
+				if ( sc_sasa >= 0.0 ) {
+					sasa_score += 1;
+				}
+
+			}
+
+			ss->add_energy("sasa_score", sasa_score );
+			ss->set_decoy_tag( core::pose::tag_from_pose(current_pose) );
+
+			sfd.write_silent_struct( *ss, option[ out::file::scorefile ]() );
+
+		} // while ( input.has_another_pose() )
+
+		return 0;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

@@ -242,10 +242,9 @@ int main( int argc, char* argv[] )
 		protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< AnchorFinderMover >() );
 
 		TR << "************************d**o**n**e**************************************" << std::endl;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
 	}
-catch (utility::excn::Exception const & e ) {
-	std::cout << "caught exception" << e.msg() << std::endl;
-	return -1;
-}
 	return 0;
 }

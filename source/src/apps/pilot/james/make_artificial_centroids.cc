@@ -87,83 +87,83 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	using namespace core::chemical;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::import_pose::pose_stream;
-	using namespace core::io::silent;
+		using namespace core::chemical;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::import_pose::pose_stream;
+		using namespace core::io::silent;
 
-	using core::Real;
-	using core::Size;
-	using std::string;
-	using utility::vector1;
-	using core::pose::Pose;
-	using core::PointPosition;
+		using core::Real;
+		using core::Size;
+		using std::string;
+		using utility::vector1;
+		using core::pose::Pose;
+		using core::PointPosition;
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
-	MetaPoseInputStream input = streams_from_cmd_line();
+		ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+		MetaPoseInputStream input = streams_from_cmd_line();
 
-	vector1< vector1< vector1< PointPosition > > > all_coords; // all_coords[struct_i][resi][atom_i] = coord
-	core::pose::Pose pose; // will use the last pose later
-	while( input.has_another_pose() ) {
-		input.fill_pose( pose, *rsd_set );
+		vector1< vector1< vector1< PointPosition > > > all_coords; // all_coords[struct_i][resi][atom_i] = coord
+		core::pose::Pose pose; // will use the last pose later
+		while ( input.has_another_pose() ) {
+			input.fill_pose( pose, *rsd_set );
 
-		//Size const n_backbone( count_backbone_atoms(pose) );
-		//if ( all_coords.size() != 0 ) {
-		//	runtime_assert( n_backbone == all_coords.front().size() );
-		//}
+			//Size const n_backbone( count_backbone_atoms(pose) );
+			//if ( all_coords.size() != 0 ) {
+			// runtime_assert( n_backbone == all_coords.front().size() );
+			//}
 
-		vector1< vector1< PointPosition > > pose_coords( pose.size() );
-		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-			core::conformation::Residue const & res(pose.residue(ii));
-			vector1< PointPosition > res_coords;
-			for ( int jj = 1; jj <= res.natoms(); ++jj ) {
-				//if ( res.atom_is_backbone(jj) ) res_coords.push_back(res.xyz(jj));
-				res_coords.push_back(res.xyz(jj));
+			vector1< vector1< PointPosition > > pose_coords( pose.size() );
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+				core::conformation::Residue const & res(pose.residue(ii));
+				vector1< PointPosition > res_coords;
+				for ( int jj = 1; jj <= res.natoms(); ++jj ) {
+					//if ( res.atom_is_backbone(jj) ) res_coords.push_back(res.xyz(jj));
+					res_coords.push_back(res.xyz(jj));
+				}
+				pose_coords.push_back( res_coords );
 			}
-			pose_coords.push_back( res_coords );
+
+			all_coords.push_back( pose_coords );
 		}
 
-		all_coords.push_back( pose_coords );
-	}
+		Size const nstruct( all_coords.size() );
+		//vector1< vector1< PointPosition > > avg_coords(
+		// all_coords.front().size(), vector1< PointPosition >(
+		//  all_coords.front().front().size(), PointPosition(0,0,0)
+		// )
+		//); // avg_coords[res_jj][atom_kk] = coord
+		vector1< vector1< PointPosition > > avg_coords;
+		for ( Size jj = 1; jj <= all_coords.front().size(); ++jj ) { // res jj
+			avg_coords.push_back( vector1< PointPosition >( all_coords.front().size() ) );
+		}
 
-	Size const nstruct( all_coords.size() );
-	//vector1< vector1< PointPosition > > avg_coords(
-	//	all_coords.front().size(), vector1< PointPosition >(
-	//		all_coords.front().front().size(), PointPosition(0,0,0)
-	//	)
-	//); // avg_coords[res_jj][atom_kk] = coord
-	vector1< vector1< PointPosition > > avg_coords;
-	for ( Size jj = 1; jj <= all_coords.front().size(); ++jj ) { // res jj
-		avg_coords.push_back( vector1< PointPosition >( all_coords.front().size() ) );
-	}
-
-	for ( Size ii = 1; ii <= all_coords.size(); ++ii ) { // struct ii
-		for ( Size jj = 1; jj <= all_coords[ii].size(); ++jj ) { // res jj
-			for ( Size kk = 1; kk <= all_coords[ii][jj].size(); ++kk ) { // atom kk
-				avg_coords[jj][kk] += all_coords[ii][jj][kk].x() / nstruct;
-				avg_coords[jj][kk] += all_coords[ii][jj][kk].y() / nstruct;
-				avg_coords[jj][kk] += all_coords[ii][jj][kk].z() / nstruct;
+		for ( Size ii = 1; ii <= all_coords.size(); ++ii ) { // struct ii
+			for ( Size jj = 1; jj <= all_coords[ii].size(); ++jj ) { // res jj
+				for ( Size kk = 1; kk <= all_coords[ii][jj].size(); ++kk ) { // atom kk
+					avg_coords[jj][kk] += all_coords[ii][jj][kk].x() / nstruct;
+					avg_coords[jj][kk] += all_coords[ii][jj][kk].y() / nstruct;
+					avg_coords[jj][kk] += all_coords[ii][jj][kk].z() / nstruct;
+				}
 			}
 		}
-	}
 
-	pose.dump_pdb( "debug.pdb" );
+		pose.dump_pdb( "debug.pdb" );
 
-	for ( Size jj = 1; jj <= pose.size(); ++jj ) {
-		core::conformation::Residue const & res(pose.residue(jj));
-		for ( Size kk = 1; kk <= res.natoms(); ++kk ) {
-			using core::id::AtomID;
-			pose.set_xyz( AtomID(kk,jj), avg_coords[jj][kk] );
-			//if ( res.atom_is_backbone(jj) ) pose.set_xyz( id, avg_coords[ii+jj] );
+		for ( Size jj = 1; jj <= pose.size(); ++jj ) {
+			core::conformation::Residue const & res(pose.residue(jj));
+			for ( Size kk = 1; kk <= res.natoms(); ++kk ) {
+				using core::id::AtomID;
+				pose.set_xyz( AtomID(kk,jj), avg_coords[jj][kk] );
+				//if ( res.atom_is_backbone(jj) ) pose.set_xyz( id, avg_coords[ii+jj] );
+			}
 		}
-	}
-	pose.dump_pdb( "artificial_centroid.pdb" );
+		pose.dump_pdb( "artificial_centroid.pdb" );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

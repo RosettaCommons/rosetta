@@ -205,12 +205,7 @@ my_main( void* ) {
 	SequenceMoverOP seq( new SequenceMover() );
 	seq->add_mover( utility::pointer::make_shared< compute_Irmsd >() );
 
-	try{
-		protocols::jd2::JobDistributor::get_instance()->go( seq );
-	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception: " << std::endl;
-		excn.show( std::cerr );
-	}
+	protocols::jd2::JobDistributor::get_instance()->go( seq );
 
 	return nullptr;
 }
@@ -226,7 +221,7 @@ main( int argc, char * argv [] ) {
 
 		protocols::viewer::viewer_main( my_main );
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

@@ -19,14 +19,14 @@ int
 main( int argc, char * argv [] )
 {
 
-  try {
+	try {
 
-    devel::init(argc, argv);
-    protocols::jd2::JobDistributor::get_instance()->go( new ThreeHelixBundleFinderMover() );
+		devel::init(argc, argv);
+		protocols::jd2::JobDistributor::get_instance()->go( new ThreeHelixBundleFinderMover() );
 
-  } catch (utility::excn::Exception const & e ) {
-    std::cout << "caught exception " << e.msg() << std::endl;
-    return -1;
-  }
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
+	}
 
 }

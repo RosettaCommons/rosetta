@@ -8,9 +8,9 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /** @page pack
-	This code reads in, packs, and prints a PDB
-	Run it by typing:
-	packPDB -in::file::s <pdb file> -in::path::database <DB root dir>
+This code reads in, packs, and prints a PDB
+Run it by typing:
+packPDB -in::file::s <pdb file> -in::path::database <DB root dir>
 */
 
 /// @file   apps/pilot/lemmon/pack.cc
@@ -45,31 +45,31 @@
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-  try {
-  devel::init(argc, argv);
+	try {
+		devel::init(argc, argv);
 
-  utility::vector0<std::string> pdbs;
-  {// process the options
-    using namespace basic::options::OptionKeys;
-    using basic::options::option;
-    pdbs= option[in::file::s]();
-  }
-  core::pose::Pose pose; // starts NULL, coords *never* modified!
-	{
-		std::string pdb=pdbs[0];
-		core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
-	}
-	protocols::minimization_packing::PackRotamersMover mover;
-	mover.apply(pose);
-	{
-		const std::string output("output.pdb");
-		core::scoring::ScoreFunctionCOP score_fxn= mover.score_function();
-		pose.dump_scored_pdb(output, *score_fxn);
-	}
+		utility::vector0<std::string> pdbs;
+		{// process the options
+			using namespace basic::options::OptionKeys;
+			using basic::options::option;
+			pdbs= option[in::file::s]();
+		}
+		core::pose::Pose pose; // starts NULL, coords *never* modified!
+		{
+			std::string pdb=pdbs[0];
+			core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
+		}
+		protocols::minimization_packing::PackRotamersMover mover;
+		mover.apply(pose);
+		{
+			const std::string output("output.pdb");
+			core::scoring::ScoreFunctionCOP score_fxn= mover.score_function();
+			pose.dump_scored_pdb(output, *score_fxn);
+		}
 
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-	return -1;
-    }
-    return 0;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
+	}
+	return 0;
 }

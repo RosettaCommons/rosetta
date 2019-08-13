@@ -39,8 +39,9 @@ main( int argc, char * argv [] )
 		//Create dummy mover for job distributor
 		protocols::moves::MoverOP mover;
 		protocols::jd2::JobDistributor::get_instance()->go( mover );
-		return 1;
 	} catch (utility::excn::Exception const & e ) {
-		utility_exit_with_message("caught exception " + e.msg());
+		e.display();
+		return -1;
 	}
+	return 0;
 }

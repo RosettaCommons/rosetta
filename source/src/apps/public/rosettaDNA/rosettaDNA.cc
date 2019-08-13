@@ -66,7 +66,7 @@ main( int argc, char * argv [] )
 		devel::init( argc, argv );
 		viewer_main( my_main );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 }

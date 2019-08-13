@@ -49,10 +49,10 @@ RDCScoreMover::RDCScoreMover(ResidualDipolarCouplingRigidSegmentsOP rdcrs ):
 void RDCScoreMover::apply( core::pose::Pose& pose ) {
 
 
-	//	core::scoring::constraints::add_constraints_from_cmdline( pose, *sfxn_ );
-  // print jobname and score to screen
+	// core::scoring::constraints::add_constraints_from_cmdline( pose, *sfxn_ );
+	// print jobname and score to screen
 	std::cout  << protocols::jd2::current_output_name() << ' ' << rdcrs_->compute_total_score(pose) << ' ' <<rdcrs_->compute_pairwise_score()
-   <<std::endl;
+		<<std::endl;
 }
 
 
@@ -60,40 +60,33 @@ int main( int argc, char * argv []   ){
 
 	try {
 
-	using namespace protocols::scoring;
-	using namespace protocols::jd2;
+		using namespace protocols::scoring;
+		using namespace protocols::jd2;
 
-	using namespace core;
+		using namespace core;
 
-  devel::init( argc, argv );
+		devel::init( argc, argv );
 
 
-	  ResidualDipolarCouplingRigidSegmentsOP my_rdcs = new ResidualDipolarCouplingRigidSegments ;
+		ResidualDipolarCouplingRigidSegmentsOP my_rdcs = new ResidualDipolarCouplingRigidSegments ;
 		std::cout << *my_rdcs;
-	//  cout <<"hello";
+		//  cout <<"hello";
 
 
-	try{
 		RDCScoreMover* scoremover = new RDCScoreMover( my_rdcs );
 
-			/*		if ( option[ in::file::keep_input_scores ]() ){
-			scoremover->set_keep_input_scores();
+		/*  if ( option[ in::file::keep_input_scores ]() ){
+		scoremover->set_keep_input_scores();
 		}
 		if ( option[ rescore::skip]() ){
-			scoremover->set_skip_scoring();
-			} */
+		scoremover->set_skip_scoring();
+		} */
 
 
 		protocols::jd2::JobDistributor::get_instance()->go( scoremover );
-	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception: " << std::endl;
-		excn.show( std::cerr );
-		std::cout << "Exception: " << std::endl;
-		excn.show( std::cout ); //so its also seen in a >LOG file
-	}
 
- 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
 	}
 

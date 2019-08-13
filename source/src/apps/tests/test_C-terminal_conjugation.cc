@@ -105,7 +105,7 @@ main( int argc, char *argv[] )
 		O_linked_glycan_pose.dump_pdb( OUTPATH + "O-linked_glycopeptide.pdb" );
 		O_linked_centroid_glycan_pose.dump_pdb( OUTPATH + "O-linked_centroid_glycopeptide.pdb" );
 	} catch (utility::excn::Exception const & e ) {
-		cerr << "caught exception " << e.msg() << endl;
+		e.display();
 		return -1;
 	}
 	return 0;

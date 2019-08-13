@@ -236,12 +236,7 @@ my_main( void* ) {
 	using namespace protocols::moves;
 	using namespace protocols::symmetry;
 
-	try{
-		protocols::jd2::JobDistributor::get_instance()->go( new MinTestMover() );
-	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception: " << std::endl;
-		excn.show( std::cerr );
-	}
+	protocols::jd2::JobDistributor::get_instance()->go( new MinTestMover() );
 
 	return 0;
 }
@@ -257,7 +252,13 @@ main( int argc, char * argv [] )
 	NEW_OPT(min::cartesian, "cartesian minimization?", false);
 	NEW_OPT(min::minimizer, "minimizer?", "lbfgs_armijo_nonmonotone");
 
-	devel::init(argc, argv);
+	try{
+		devel::init(argc, argv);
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
+	} catch (utility::excn::Exception& excn ) {
+		excn.display();
+		return -1;
+	}
+	return 0;
 }

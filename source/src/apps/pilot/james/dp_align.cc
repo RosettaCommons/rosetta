@@ -83,40 +83,40 @@ main( int argc, char* argv [] )
 {
 	try {
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	utility::vector1< utility::file::FileName >
-		align_files( option[ in::file::alignment ]() );
+		utility::vector1< utility::file::FileName >
+			align_files( option[ in::file::alignment ]() );
 
 
-	typedef utility::vector1< SequenceAlignment > alignlist;
-	alignlist aligns
-		= read_general_aln_file( option[ in::file::alignment ]()[1] );
+		typedef utility::vector1< SequenceAlignment > alignlist;
+		alignlist aligns
+			= read_general_aln_file( option[ in::file::alignment ]()[1] );
 
-	core::pose::Pose template_pose;
+		core::pose::Pose template_pose;
 
-	using namespace protocols::comparative_modeling;
-	using namespace protocols::jobdist;
+		using namespace protocols::comparative_modeling;
+		using namespace protocols::jobdist;
 
-	SequenceAlignment true_aln;
-	if ( align_files.size() > 1 ) {
-		std::string align_fn  = option[ in::file::alignment ]()[2];
-		true_aln.read_from_file( align_fn );
-		std::cout << true_aln << std::endl;
-		true_aln.comment( "mammoth_alignment" );
+		SequenceAlignment true_aln;
+		if ( align_files.size() > 1 ) {
+			std::string align_fn  = option[ in::file::alignment ]()[2];
+			true_aln.read_from_file( align_fn );
+			std::cout << true_aln << std::endl;
+			true_aln.comment( "mammoth_alignment" );
 
-		protocols::comparative_modeling::ThreadingMover m(
-			true_aln,
-			template_pose
-		);
-		protocols::jobdist::not_universal_main( m );
-	}
+			protocols::comparative_modeling::ThreadingMover m(
+				true_aln,
+				template_pose
+			);
+			protocols::jobdist::not_universal_main( m );
+		}
 
-	std::cout << "aligns.size() = " << aligns.size() << std::endl;
-	for ( alignlist::iterator it = aligns.begin(), end = aligns.end();
-			it != end; ++it
-	) {
+		std::cout << "aligns.size() = " << aligns.size() << std::endl;
+		for ( alignlist::iterator it = aligns.begin(), end = aligns.end();
+				it != end; ++it
+				) {
 			std::string template_id = it->sequence(2).id();
 			core::import_pose::pose_from_file(
 				template_pose,
@@ -131,10 +131,10 @@ main( int argc, char* argv [] )
 			);
 
 			protocols::jobdist::not_universal_main( mover );
-	}
+		}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

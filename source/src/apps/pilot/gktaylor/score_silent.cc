@@ -158,7 +158,7 @@ main( int argc, char* argv [] )
 		std::cout << "NATIVE" << '\t' << gdtmm_score << '\t' << constraint_score << '\t' << score << '\n';
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

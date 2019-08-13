@@ -49,31 +49,31 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace protocols;
-	using namespace protocols::jobdist;
-	using namespace protocols::moves;
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
+		using namespace protocols;
+		using namespace protocols::jobdist;
+		using namespace protocols::moves;
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
 
 
-	register_options();
-	devel::init(argc, argv);
+		register_options();
+		devel::init(argc, argv);
 
-	protocols::IdealizeMover idealizer;
+		protocols::IdealizeMover idealizer;
 
-	// set some options
-	if ( option[ coordinate_constraint_weight ].user() ) {
-		idealizer.coordinate_constraint_weight( option[ coordinate_constraint_weight ]() ) ;
-	}
-	if ( option[ atom_pair_constraint_weight ].user() ) {
-		idealizer.atom_pair_constraint_weight( option[ atom_pair_constraint_weight ]() );
-	}
-	idealizer.fast( option[ fast ]() );
+		// set some options
+		if ( option[ coordinate_constraint_weight ].user() ) {
+			idealizer.coordinate_constraint_weight( option[ coordinate_constraint_weight ]() ) ;
+		}
+		if ( option[ atom_pair_constraint_weight ].user() ) {
+			idealizer.atom_pair_constraint_weight( option[ atom_pair_constraint_weight ]() );
+		}
+		idealizer.fast( option[ fast ]() );
 
-	not_universal_main( idealizer );
+		not_universal_main( idealizer );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

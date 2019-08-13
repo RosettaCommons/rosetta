@@ -16,27 +16,27 @@
 
 int main(int argc, char* argv[])
 {
-    try {
-	devel::init(argc,argv);
+	try {
+		devel::init(argc,argv);
 
 
-	protocols::qsar::qsarMoverOP mover = new protocols::qsar::qsarMover(40,0.25);
+		protocols::qsar::qsarMoverOP mover = new protocols::qsar::qsarMover(40,0.25);
 
-	mover->add_grid("atr");
-	mover->add_grid("rep");
-	mover->add_grid("hba");
-	mover->add_grid("hbd");
-	mover->add_grid("polariz");
+		mover->add_grid("atr");
+		mover->add_grid("rep");
+		mover->add_grid("hba");
+		mover->add_grid("hbd");
+		mover->add_grid("polariz");
 
-	mover->set_chain("X");
-	protocols::jd2::JobDistributor::get_instance()->go(mover);
+		mover->set_chain("X");
+		protocols::jd2::JobDistributor::get_instance()->go(mover);
 
-	mover->write_all_grids("test_");
+		mover->write_all_grids("test_");
 
-	//protocols::ligand_docking::qsar::qsarMoverOP
-    } catch (utility::excn::Exception const & e ) {
-                             std::cout << "caught exception " << e.msg() << std::endl;
+		//protocols::ligand_docking::qsar::qsarMoverOP
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-                                }
-    return 0;
+	}
+	return 0;
 }

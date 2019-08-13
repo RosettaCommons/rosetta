@@ -65,16 +65,17 @@ main( int argc, char * argv [] )
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
+		--new_app_options_in--
+
 		devel::init( argc, argv );
 
-		--new_app_options_in--
 		protocols::jd3::JobDistributorOP jd = protocols::jd3::JobDistributorFactory::create_job_distributor();
 
 		protocols::jd3::JobQueenOP queen( new --class--JobQueen );
 		jd->go( queen );
 
 	} catch ( utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

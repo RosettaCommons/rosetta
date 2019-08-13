@@ -86,7 +86,7 @@ public:
 		}
 
 
-// break down the input data
+		// break down the input data
 		std::cout <<  data << std::endl;
 
 		// we only take the first job (we also only ever ask for 1 job).
@@ -121,7 +121,7 @@ catch (utility::excn::Exception &excn ){
 	TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
 }
 
-//std::cout << payload << std::endl;
+		//std::cout << payload << std::endl;
 		utility::json_spirit::mObject parsed_payload;
 
 		try{
@@ -150,7 +150,7 @@ catch (utility::excn::Exception &excn ){
 	return false;
 }
 
-//std::cout << "Inputdata: " << job_data_string << std::endl;
+		//std::cout << "Inputdata: " << job_data_string << std::endl;
 		std::cout << "Inputdata: " << job_data_string.size() << " bytes received" << std::endl;
 
 		try{
@@ -162,7 +162,7 @@ catch (utility::excn::Exception& excn ) {
 	return false;
 }
 
-// since a null operation would leave the pose unchanged:
+		// since a null operation would leave the pose unchanged:
 		initialized_ = true;
 		return true;
 	}
@@ -327,7 +327,7 @@ main( int argc, char * argv [] )
 
 		backend.run();
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "Caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

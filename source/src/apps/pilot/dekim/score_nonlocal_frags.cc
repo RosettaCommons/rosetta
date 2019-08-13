@@ -317,10 +317,7 @@ main( int argc, char * argv [] )
 
 		JobDistributor::get_instance()->go( scoremover );
 	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception: " << std::endl;
-		excn.show( std::cerr );
-		std::cout << "Exception: " << std::endl;
-		excn.show( std::cout ); //so its also seen in a >LOG file
+		excn.display();
 		return -1;
 	}
 	return 0;

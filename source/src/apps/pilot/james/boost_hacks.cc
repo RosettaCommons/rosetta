@@ -33,50 +33,50 @@ bool parse_numbers( char const* str, utility::vector1< core::Real > & v ) {
 		( real_p[push_back_a(v)] >> *( ',' >> real_p[push_back_a(v)] ) ),
 		// End grammar
 		space_p
-	).full;
+		).full;
 }
 
 //bool parse_range(
-//	char const* str,
-//	utility::vector1< std::pair< core::Real, core::Real > > & v
+// char const* str,
+// utility::vector1< std::pair< core::Real, core::Real > > & v
 //) {
-//	return parse(str,
-//		// Begin grammar
-//		( real_p[ push_back_a(v) ] >> *( '-' >> real_p[push_back_a(v)] ) ),
-//		// End grammar
-//		space_p
-//	).full;
+// return parse(str,
+//  // Begin grammar
+//  ( real_p[ push_back_a(v) ] >> *( '-' >> real_p[push_back_a(v)] ) ),
+//  // End grammar
+//  space_p
+// ).full;
 //}
 
 int
 main( int argc, char * argv [] ) {
 	try {
 
-	using std::pair;
-	using core::Real;
-	using utility::vector1;
-	devel::init( argc, argv );
-	// parsing a list of comma-separated numbers
-	std::string s( "5.0,3,2.1,0" );
-	utility::vector1< core::Real > numbers;
-	parse_numbers( s.c_str(), numbers );
-	for ( vector1< Real >::const_iterator it = numbers.begin(),
+		using std::pair;
+		using core::Real;
+		using utility::vector1;
+		devel::init( argc, argv );
+		// parsing a list of comma-separated numbers
+		std::string s( "5.0,3,2.1,0" );
+		utility::vector1< core::Real > numbers;
+		parse_numbers( s.c_str(), numbers );
+		for ( vector1< Real >::const_iterator it = numbers.begin(),
 				end = numbers.end(); it != end; ++it
-	) {
-		std::cout << *it << std::endl;
-	}
+				) {
+			std::cout << *it << std::endl;
+		}
 
-	// parse a list of ranges
-	//s = "1-5,3-9,11-27";
-	//vector1< pair< Real, Real > > ranges;
-	//for ( vector1< pair< Real, Real > >::const_iterator it = ranges.begin(),
-	//			end = ranges.end(); it != end; ++it
-	//) {
-	//	std::cout << it->first() << " => " << it->secong() << std::endl;
-	//}
+		// parse a list of ranges
+		//s = "1-5,3-9,11-27";
+		//vector1< pair< Real, Real > > ranges;
+		//for ( vector1< pair< Real, Real > >::const_iterator it = ranges.begin(),
+		//   end = ranges.end(); it != end; ++it
+		//) {
+		// std::cout << it->first() << " => " << it->secong() << std::endl;
+		//}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

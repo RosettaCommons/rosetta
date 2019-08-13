@@ -202,14 +202,14 @@ RT RT_from_epos( FArray2A_float Epos1, FArray2A_float Epos2)
 	rotation = m1.transposed() * m2;
 	/************************Phil's legacy code *********************/
 	// rotation(j,*) is the j-th unit vector of 2nd coord sys written in 1st coord-sys
-	// 	for ( int i=1; i<=3; ++i ) {
-	// 			for ( int j=1; j<=3; ++j ) {
-	// 				// DANGER: not sure about the order... ////////////////////////
-	// 				// should sync with make_jump
-	//  				rotation(j,i) = Ddotprod( m1(1,i), m2(1,j) ); // 2nd guess
-	//  				//rotation(j,i) = Ddotprod( m1(1,j), m2(1,i) ); // 1st guess
-	// 			}
-	// 		}
+	//  for ( int i=1; i<=3; ++i ) {
+	//    for ( int j=1; j<=3; ++j ) {
+	//     // DANGER: not sure about the order... ////////////////////////
+	//     // should sync with make_jump
+	//      rotation(j,i) = Ddotprod( m1(1,i), m2(1,j) ); // 2nd guess
+	//      //rotation(j,i) = Ddotprod( m1(1,j), m2(1,i) ); // 1st guess
+	//    }
+	//   }
 	/************************Phil's legacy code ********************/
 	RT rt;
 	rt.set_translation( translation );
@@ -224,149 +224,149 @@ main( int argc, char* argv [] )
 
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	std::string const pdb_file_list( option[ robert::pairdata_input_pdb_list ]() );
-	//std::string const pdb_file_list("list");
+		std::string const pdb_file_list( option[ robert::pairdata_input_pdb_list ]() );
+		//std::string const pdb_file_list("list");
 
-	utility::io::izstream infile(pdb_file_list);
-	utility::io::ozstream outfile(pdb_file_list+".distance.data");
+		utility::io::izstream infile(pdb_file_list);
+		utility::io::ozstream outfile(pdb_file_list+".distance.data");
 
-	Size res1, res2;
-	std::string pdb_file_location;
-	infile >> pdb_file_location >> res1 >> res2;
-
-	outfile << "DISULF PDB RES1 RES1 AA1 AA2 SS1 SS2 SEQ_SEP PHI1 PSI1 PHI2 PSI2 SG_DIS CB_DIS CA_DIS" << std::endl;
-
-	//bool iterate = true;
-	while (infile.good()) {
-
-		Size const MAX_POS( 5 );
-		FArray2D_float Epos1(3, MAX_POS), Epos2(3,MAX_POS);
-
-		pose::Pose pdb;
-
-		std::cout << "PROCESSING PDB: " << pdb_file_location << std::endl;
-		core::import_pose::pose_from_file( pdb, pdb_file_location , core::import_pose::PDB_file);
-		std::cout << "PROCESSING COMPLETE: " << pdb_file_location << std::endl;
-
-		core::scoring::dssp::Dssp dssp( pdb );
-		dssp.insert_ss_into_pose( pdb );
-
-
-		Epos1(1,2) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("CA")).xyz()(1);
- 		Epos1(2,2) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("CA")).xyz()(2);
-		Epos1(3,2) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("CA")).xyz()(3);
-
-		Epos1(1,1) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("N")).xyz()(1);
-		Epos1(2,1) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("N")).xyz()(2);
-		Epos1(3,1) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("N")).xyz()(3);
-
-		Epos1(1,4) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("C")).xyz()(1);
-		Epos1(2,4) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("C")).xyz()(2);
-		Epos1(3,4) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("C")).xyz()(3);
-
-		Epos2(1,2) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("CA")).xyz()(1);
-		Epos2(2,2) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("CA")).xyz()(2);
-		Epos2(3,2) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("CA")).xyz()(3);
-
-		Epos2(1,1) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("N")).xyz()(1);
-		Epos2(2,1) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("N")).xyz()(2);
-		Epos2(3,1) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("N")).xyz()(3);
-
-		Epos2(1,4) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("C")).xyz()(1);
-		Epos2(2,4) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("C")).xyz()(2);
-		Epos2(3,4) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("C")).xyz()(3);
-
-		core::kinematics::RT this_rt(RT_from_epos(Epos1,Epos2));
-
-
-		// COLUMNS:
-		// DISULF PDB RES1 RES1 AA1 AA2 SS1 SS2 SEQ_SEP SG_DIS CA1CB1CB2_angle1 CA2CB2CB1_angle2 CACBCBCA_dihedral NCACAC_dihedral
-
-		outfile << "DISULF ";
-
- 		outfile << pdb_file_location << " ";
- 		outfile << res1 << " " << res2 << " ";
-
- 		outfile << pdb.residue(res1).aa() << " ";
- 		outfile << pdb.residue(res2).aa() << " ";
-
-		outfile << pdb.secstruct(res1) << " ";
-		outfile << pdb.secstruct(res2) << " ";
-
-		outfile << std::abs(res1-res2) << " ";
-
-		outfile << pdb.phi(res1) << " " << pdb.psi(res1) << " ";
-		outfile << pdb.phi(res2) << " " << pdb.psi(res2) << " ";
-
-		outfile << pdb.residue(res1).xyz("SG").distance(pdb.residue(res2).xyz("SG")) << " ";
-
-		outfile << pdb.residue(res1).xyz("CB").distance(pdb.residue(res2).xyz("CA")) << " ";
-
-		outfile << pdb.residue(res1).xyz("CA").distance(pdb.residue(res2).xyz("CA")) << " ";
-
-		outfile << std::endl;
-
-// 		Vector const& calpha_1 ( pdb.residue(res1).xyz("CA") );
-// 		Vector const& cbeta_1  ( pdb.residue(res1).xyz("CB") );
-// 		Vector const& n_1      ( pdb.residue(res1).xyz("N")  );
-// 		Vector const& calpha_2 ( pdb.residue(res2).xyz("CA") );
-// 		Vector const& cbeta_2  ( pdb.residue(res2).xyz("CB") );
-// 		Vector const& c_2      ( pdb.residue(res2).xyz("C")  );
-
-// 		Vector const& sg_1  ( pdb.residue(res1).xyz("SG") );
-// 		Vector const& sg_2  ( pdb.residue(res2).xyz("SG") );
-
-
-// 		using numeric::constants::d::radians_to_degrees;
-
-// 		std::cout << cbeta_1[1] << " " << sg_1[1] << " " << sg_2[1] << " " << angle_of( cbeta_1, sg_1, sg_2) << std::endl;
-
-// 		core::Real cbsgsg_angle_1      = angle_of( cbeta_1, sg_1, sg_2);
-// 		core::Real cbsgsg_angle_2      = angle_of( cbeta_2, sg_2, sg_1);
-// 		cbsgsg_angle_1 *= radians_to_degrees; // convert
-// 		cbsgsg_angle_2 *= radians_to_degrees; // convert
-// 		core::Real cbsgsgcb_dihedral   = dihedral_degrees(cbeta_1,sg_1,sg_2,cbeta_2);
-// 		//cbsgsgcb_dihedral *= radians_to_degrees;
-
-// 		core::Real cacbsgsg_dihedral   = dihedral_degrees(calpha_1,cbeta_1,sg_1,sg_2);
-// 		//cacbsgsg_dihedral *= radians_to_degrees;
-
-// 		core::Real sgsgcbca_dihedral   = dihedral_degrees(calpha_2,cbeta_2,sg_2,sg_1);
-// 		//sgsgcbca_dihedral *= radians_to_degrees;
-
-
-// 		outfile << cbsgsg_angle_1 << " ";
-// 		outfile << cbsgsg_angle_2 << " ";
-
-// 		outfile << cbsgsgcb_dihedral << " ";
-// 		outfile << cacbsgsg_dihedral << " ";
-// 		outfile << sgsgcbca_dihedral << " ";
-
-
-// 		outfile << std::endl;
-
-		//outfile << "DISULF PDB RES1 RES1 AA1 AA2 SS1 SS2 SEQ_SEP SG_DIS CBSGSG SGSGCB CBSGSGCB CACBSGSG SGSGCBCA" << std::endl;
-
-
-		pdb_file_location = "";
+		Size res1, res2;
+		std::string pdb_file_location;
 		infile >> pdb_file_location >> res1 >> res2;
 
-	}
-	//if (pdb_file_location == "") iterate = false;
+		outfile << "DISULF PDB RES1 RES1 AA1 AA2 SS1 SS2 SEQ_SEP PHI1 PSI1 PHI2 PSI2 SG_DIS CB_DIS CA_DIS" << std::endl;
+
+		//bool iterate = true;
+		while ( infile.good() ) {
+
+			Size const MAX_POS( 5 );
+			FArray2D_float Epos1(3, MAX_POS), Epos2(3,MAX_POS);
+
+			pose::Pose pdb;
+
+			std::cout << "PROCESSING PDB: " << pdb_file_location << std::endl;
+			core::import_pose::pose_from_file( pdb, pdb_file_location , core::import_pose::PDB_file);
+			std::cout << "PROCESSING COMPLETE: " << pdb_file_location << std::endl;
+
+			core::scoring::dssp::Dssp dssp( pdb );
+			dssp.insert_ss_into_pose( pdb );
+
+
+			Epos1(1,2) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("CA")).xyz()(1);
+			Epos1(2,2) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("CA")).xyz()(2);
+			Epos1(3,2) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("CA")).xyz()(3);
+
+			Epos1(1,1) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("N")).xyz()(1);
+			Epos1(2,1) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("N")).xyz()(2);
+			Epos1(3,1) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("N")).xyz()(3);
+
+			Epos1(1,4) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("C")).xyz()(1);
+			Epos1(2,4) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("C")).xyz()(2);
+			Epos1(3,4) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("C")).xyz()(3);
+
+			Epos2(1,2) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("CA")).xyz()(1);
+			Epos2(2,2) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("CA")).xyz()(2);
+			Epos2(3,2) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("CA")).xyz()(3);
+
+			Epos2(1,1) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("N")).xyz()(1);
+			Epos2(2,1) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("N")).xyz()(2);
+			Epos2(3,1) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("N")).xyz()(3);
+
+			Epos2(1,4) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("C")).xyz()(1);
+			Epos2(2,4) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("C")).xyz()(2);
+			Epos2(3,4) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("C")).xyz()(3);
+
+			core::kinematics::RT this_rt(RT_from_epos(Epos1,Epos2));
+
+
+			// COLUMNS:
+			// DISULF PDB RES1 RES1 AA1 AA2 SS1 SS2 SEQ_SEP SG_DIS CA1CB1CB2_angle1 CA2CB2CB1_angle2 CACBCBCA_dihedral NCACAC_dihedral
+
+			outfile << "DISULF ";
+
+			outfile << pdb_file_location << " ";
+			outfile << res1 << " " << res2 << " ";
+
+			outfile << pdb.residue(res1).aa() << " ";
+			outfile << pdb.residue(res2).aa() << " ";
+
+			outfile << pdb.secstruct(res1) << " ";
+			outfile << pdb.secstruct(res2) << " ";
+
+			outfile << std::abs(res1-res2) << " ";
+
+			outfile << pdb.phi(res1) << " " << pdb.psi(res1) << " ";
+			outfile << pdb.phi(res2) << " " << pdb.psi(res2) << " ";
+
+			outfile << pdb.residue(res1).xyz("SG").distance(pdb.residue(res2).xyz("SG")) << " ";
+
+			outfile << pdb.residue(res1).xyz("CB").distance(pdb.residue(res2).xyz("CA")) << " ";
+
+			outfile << pdb.residue(res1).xyz("CA").distance(pdb.residue(res2).xyz("CA")) << " ";
+
+			outfile << std::endl;
+
+			//   Vector const& calpha_1 ( pdb.residue(res1).xyz("CA") );
+			//   Vector const& cbeta_1  ( pdb.residue(res1).xyz("CB") );
+			//   Vector const& n_1      ( pdb.residue(res1).xyz("N")  );
+			//   Vector const& calpha_2 ( pdb.residue(res2).xyz("CA") );
+			//   Vector const& cbeta_2  ( pdb.residue(res2).xyz("CB") );
+			//   Vector const& c_2      ( pdb.residue(res2).xyz("C")  );
+
+			//   Vector const& sg_1  ( pdb.residue(res1).xyz("SG") );
+			//   Vector const& sg_2  ( pdb.residue(res2).xyz("SG") );
+
+
+			//   using numeric::constants::d::radians_to_degrees;
+
+			//   std::cout << cbeta_1[1] << " " << sg_1[1] << " " << sg_2[1] << " " << angle_of( cbeta_1, sg_1, sg_2) << std::endl;
+
+			//   core::Real cbsgsg_angle_1      = angle_of( cbeta_1, sg_1, sg_2);
+			//   core::Real cbsgsg_angle_2      = angle_of( cbeta_2, sg_2, sg_1);
+			//   cbsgsg_angle_1 *= radians_to_degrees; // convert
+			//   cbsgsg_angle_2 *= radians_to_degrees; // convert
+			//   core::Real cbsgsgcb_dihedral   = dihedral_degrees(cbeta_1,sg_1,sg_2,cbeta_2);
+			//   //cbsgsgcb_dihedral *= radians_to_degrees;
+
+			//   core::Real cacbsgsg_dihedral   = dihedral_degrees(calpha_1,cbeta_1,sg_1,sg_2);
+			//   //cacbsgsg_dihedral *= radians_to_degrees;
+
+			//   core::Real sgsgcbca_dihedral   = dihedral_degrees(calpha_2,cbeta_2,sg_2,sg_1);
+			//   //sgsgcbca_dihedral *= radians_to_degrees;
+
+
+			//   outfile << cbsgsg_angle_1 << " ";
+			//   outfile << cbsgsg_angle_2 << " ";
+
+			//   outfile << cbsgsgcb_dihedral << " ";
+			//   outfile << cacbsgsg_dihedral << " ";
+			//   outfile << sgsgcbca_dihedral << " ";
+
+
+			//   outfile << std::endl;
+
+			//outfile << "DISULF PDB RES1 RES1 AA1 AA2 SS1 SS2 SEQ_SEP SG_DIS CBSGSG SGSGCB CBSGSGCB CACBSGSG SGSGCBCA" << std::endl;
+
+
+			pdb_file_location = "";
+			infile >> pdb_file_location >> res1 >> res2;
+
+		}
+		//if (pdb_file_location == "") iterate = false;
 
 
 		//std::string name( option[ in::file::vall ]() );
-	//FileName fn( name );
-	//VallReader vall( name );
+		//FileName fn( name );
+		//VallReader vall( name );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

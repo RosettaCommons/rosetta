@@ -55,41 +55,41 @@ int main( int argc, char * argv [] )
 
 	try {
 
-	intSP a;
-	foo_const_intSP(a);
+		intSP a;
+		foo_const_intSP(a);
 
-	BaseCOP base_cop;
-	//foo_baseOP(base_cop);  <-- Does not work...
-	foo_baseCOP(base_cop);
+		BaseCOP base_cop;
+		//foo_baseOP(base_cop);  <-- Does not work...
+		foo_baseCOP(base_cop);
 
-	SonCOP son_cop;
-	//foo_baseOP(son_cop);  <-- Does not work...
-	foo_baseCOP(son_cop);
+		SonCOP son_cop;
+		//foo_baseOP(son_cop);  <-- Does not work...
+		foo_baseCOP(son_cop);
 
-	BaseCSP base_csp;
-	//foo_baseSP(base_csp);  <-- Does not work...
-	foo_baseCSP(base_csp);
+		BaseCSP base_csp;
+		//foo_baseSP(base_csp);  <-- Does not work...
+		foo_baseCSP(base_csp);
 
-	SonCSP son_csp;
-	SonSP son_sp;
-	//foo_baseSP(son_csp);  <-- Does not work...
-	foo_baseSP( boost::dynamic_pointer_cast<Base>(son_sp) );
-	foo_baseCSP(son_csp);
+		SonCSP son_csp;
+		SonSP son_sp;
+		//foo_baseSP(son_csp);  <-- Does not work...
+		foo_baseSP( boost::dynamic_pointer_cast<Base>(son_sp) );
+		foo_baseCSP(son_csp);
 
-	BaseSP baseSP = boost::dynamic_pointer_cast<Base>(son_sp);
-	SonSP  _2 = boost::dynamic_pointer_cast<Son>(baseSP);
+		BaseSP baseSP = boost::dynamic_pointer_cast<Base>(son_sp);
+		SonSP  _2 = boost::dynamic_pointer_cast<Son>(baseSP);
 
-    /*
-	boost::weak_ptr<Son const> SonCWP(son_csp);
-	SonCSP son_csp1 = SonCWP.lock();
-	if(son_csp1) {
+		/*
+		boost::weak_ptr<Son const> SonCWP(son_csp);
+		SonCSP son_csp1 = SonCWP.lock();
+		if(son_csp1) {
 		// Object was not released!
-	} */
+		} */
 
-	return 0;
+		return 0;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

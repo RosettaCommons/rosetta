@@ -72,22 +72,22 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	using namespace core::chemical;
-	using namespace basic::options::OptionKeys;
-	using namespace basic::options;
-	using namespace protocols::moves;
-	using namespace protocols::jobdist;
+		using namespace core::chemical;
+		using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace protocols::moves;
+		using namespace protocols::jobdist;
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	option[ out::nooutput ].value( true );
+		option[ out::nooutput ].value( true );
 
-	PrintSequenceMoverOP mover ( new PrintSequenceMover() );
-	not_universal_main( *mover );
-	mover->print_seqs( std::cout );
+		PrintSequenceMoverOP mover ( new PrintSequenceMover() );
+		not_universal_main( *mover );
+		mover->print_seqs( std::cout );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

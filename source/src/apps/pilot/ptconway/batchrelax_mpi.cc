@@ -427,7 +427,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << endl;
+		e.display();
 		return -1;
 	}
 

@@ -176,7 +176,7 @@ Real myuniform() {
 numeric::xyzVector<Real> randvec()
 {
 	numeric::xyzVector<Real> xyz(myuniform(),myuniform(),myuniform());
-	while( xyz.length() > 1.0 )	{
+	while ( xyz.length() > 1.0 ) {
 		xyz = numeric::xyzVector<Real>(myuniform(),myuniform(),myuniform());
 	}
 	xyz.normalize();
@@ -187,7 +187,7 @@ numeric::xyzMatrix<Real> rand_rot()
 {
 	using numeric::random::uniform;
 	numeric::xyzVector<core::Real> axis(uniform(),uniform(),uniform());
-	while( axis.length() > 1.0 ) axis = numeric::xyzVector<core::Real>(uniform(),uniform(),uniform());
+	while ( axis.length() > 1.0 ) axis = numeric::xyzVector<core::Real>(uniform(),uniform(),uniform());
 	core::Real mag = uniform() * 2.0 * numeric::NumericTraits<Real>::pi();
 	return numeric::rotation_matrix<core::Real>( axis, mag );
 }
@@ -195,9 +195,9 @@ numeric::xyzMatrix<Real> rand_rot()
 Real get_dots_area( core::scoring::packstat::Spheres spheres, Real probe_radius, Size N = 10, bool csa=false )
 {
 	Real area = 0.0;
-	for( Size i = 1; i <= N; ++i ) {
+	for ( Size i = 1; i <= N; ++i ) {
 		numeric::xyzMatrix<Real> rot = rand_rot();
-		for( core::scoring::packstat::SphereIter s = spheres.begin(); s != spheres.end(); ++s ){
+		for ( core::scoring::packstat::SphereIter s = spheres.begin(); s != spheres.end(); ++s ) {
 			numeric::xyzVector<Real> tmp = s->xyz;
 			tmp = rot * tmp;
 			s->xyz = tmp;
@@ -218,12 +218,15 @@ void test_known_value()
 	PosePackDataOP pd = new PosePackData;
 
 	pd->spheres.clear();
-	for( int i = 0; i < 10; ++i )
-		for( int j = 0; j < 10; ++j )
-			for( int k = 0; k < 10; ++k )
+	for ( int i = 0; i < 10; ++i ) {
+		for ( int j = 0; j < 10; ++j ) {
+			for ( int k = 0; k < 10; ++k ) {
 				pd->spheres.push_back( Sphere( numeric::xyzVector<Real>( i*2.0, j*4.0 , k*4.0 ), 2.0 ) );
+			}
+		}
+	}
 
-	for( Real pr = 0.0; pr < 3.01; pr += 0.1 ) {
+	for ( Real pr = 0.0; pr < 3.01; pr += 0.1 ) {
 		bool CSA = true;
 		std::cerr << pr << " " << get_dots_area(pd->spheres,pr,1,CSA) << " " <<
 			compute_surface_area_leerichards(pd,0.1,pr,CSA) << std::endl;
@@ -238,16 +241,16 @@ void test_vs_dots( std::string fname )
 	using namespace scoring;
 	using namespace packstat;
 
-  SimplePDB pdb;
-  utility::io::izstream in(fname.c_str());
-  in >> pdb;
+	SimplePDB pdb;
+	utility::io::izstream in(fname.c_str());
+	in >> pdb;
 	PosePackDataOP pd( pdb.get_pose_pack_data() );
 
 	Reals slices;
-	slices.push_back(1.0);	slices.push_back(0.5);	slices.push_back(0.2);
-	slices.push_back(0.1);	slices.push_back(0.05);//	slices.push_back(0.02);	slices.push_back(0.01);
-	for( Size i = 1; i <= slices.size(); ++i ) {
-		for( Size j = 1; j <= 50; ++j ) {
+	slices.push_back(1.0); slices.push_back(0.5); slices.push_back(0.2);
+	slices.push_back(0.1); slices.push_back(0.05);// slices.push_back(0.02); slices.push_back(0.01);
+	for ( Size i = 1; i <= slices.size(); ++i ) {
+		for ( Size j = 1; j <= 50; ++j ) {
 			time_t t1 = clock();
 			Real ps  = compute_packing_score_leerichards(pd,slices[i],randvec());
 			t1 = clock() - t1;
@@ -255,8 +258,8 @@ void test_vs_dots( std::string fname )
 			Real ps2 = compute_packing_score( *pd, i-1 );
 			t2 = clock() - t2;
 			std::cerr << "LeeRichards packing score: " << fname << " " << pd->spheres.size() << " " << pd->centers.size() << " "
-								<< slices[i] << " " << ps  << " " << Real(t1)/1000000.0
-								<< i-1       << " " << ps2 << " " << Real(t2)/1000000.0 << std::endl;
+				<< slices[i] << " " << ps  << " " << Real(t1)/1000000.0
+				<< i-1       << " " << ps2 << " " << Real(t2)/1000000.0 << std::endl;
 		}
 	}
 
@@ -288,7 +291,7 @@ void *do_work(void *dat) {
 	accum->set_pr_idx(pri);
 	time_t t = clock();
 	LeeRichards *lr = new LeeRichards(pose,accum,spacing,alpha,true,randvec());
-	while( accum->failed() ) {
+	while ( accum->failed() ) {
 		std::cerr << "LR failed trying again!" << std::endl;
 		delete lr;
 		accum->set_pr_idx(pri);
@@ -315,14 +318,14 @@ void test( std::string fname )
 	// core::import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
 	// PosePackDataOP pd = new PosePackData( pose_to_pack_data(pose) );
 
-	if(1) {
+	if ( 1 ) {
 
 		init_myuniform();
 
 		std::string pdbid = fname.substr(fname.rfind('/')+1).substr(3,4);
 		std::string outname = ("out/"+pdbid.substr(1,2)+"/"+pdbid);
 		std::cerr << "checking for " << outname << std::endl;
-		if( utility::file::file_exists(outname) ) {
+		if ( utility::file::file_exists(outname) ) {
 			std::cerr << "file exists! skipping " << fname << std::endl;
 			return;
 		};
@@ -337,10 +340,10 @@ void test( std::string fname )
 		Real spacing = 0.05;
 
 		Reals prs;
-		prs.push_back(0.0); prs.push_back(0.1);	prs.push_back(0.2);	prs.push_back(0.3);	prs.push_back(0.4);
-		prs.push_back(0.5);	prs.push_back(0.6);	prs.push_back(0.7);	prs.push_back(0.8);	prs.push_back(0.9);
-		prs.push_back(1.0);	prs.push_back(1.1);	prs.push_back(1.2);	prs.push_back(1.4);	prs.push_back(1.6);
-		prs.push_back(1.8);	prs.push_back(2.1);	prs.push_back(2.4);	prs.push_back(2.7);	prs.push_back(3.0);
+		prs.push_back(0.0); prs.push_back(0.1); prs.push_back(0.2); prs.push_back(0.3); prs.push_back(0.4);
+		prs.push_back(0.5); prs.push_back(0.6); prs.push_back(0.7); prs.push_back(0.8); prs.push_back(0.9);
+		prs.push_back(1.0); prs.push_back(1.1); prs.push_back(1.2); prs.push_back(1.4); prs.push_back(1.6);
+		prs.push_back(1.8); prs.push_back(2.1); prs.push_back(2.4); prs.push_back(2.7); prs.push_back(3.0);
 
 
 		Reals alphas; // produce the probe growth schedule commented above if r0=1.85 ~ average radius
@@ -357,14 +360,14 @@ void test( std::string fname )
 
 		time_t ttot = clock();
 		int num_threads = option[ OptionKeys::packstat::threads ]();
-		if( num_threads ) {
+		if ( num_threads ) {
 			pthread_t threads[20];
-		  	pthread_attr_t attr;
-		  	pthread_attr_init(&attr);
-		  	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-			for( Size pri = 1; pri <= prs.size(); ++pri ) {
+			pthread_attr_t attr;
+			pthread_attr_init(&attr);
+			pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+			for ( Size pri = 1; pri <= prs.size(); ++pri ) {
 				Real alpha = alphas[pri];
-				if(pri > 10) spacing *= 1.1;
+				if ( pri > 10 ) spacing *= 1.1;
 				WorkDat *d = new WorkDat;
 				d->pose = &pose;
 				d->accum = accum;
@@ -374,20 +377,20 @@ void test( std::string fname )
 				// do_work(d);
 				pthread_create(&threads[pri-1], &attr, do_work, (void *) d);
 			}
-			for(int i=0;i<20;++i) {
+			for ( int i=0; i<20; ++i ) {
 				pthread_join(threads[i],NULL);
 			}
 			pthread_attr_destroy(&attr);
 			// pthread_exit(NULL);
 		} else {
-			for( Size pri = 1; pri <= prs.size(); ++pri ) {
+			for ( Size pri = 1; pri <= prs.size(); ++pri ) {
 				Real alpha = alphas[pri];
 				accum->set_pr_idx(pri);
 				time_t t = clock();
 				// if( pri > 12 ) adj_spacing *= 2; if( pri > 15 ) adj_spacing *= 2; if( pri > 18 ) adj_spacing *= 2;
-				if(pri > 10) spacing *= 1.1;
+				if ( pri > 10 ) spacing *= 1.1;
 				LeeRichards *lr = new LeeRichards(pose,accum,spacing,alpha,true,randvec());
-				while( accum->failed() ) {
+				while ( accum->failed() ) {
 					std::cerr << "LR failed trying again!" << std::endl;
 					delete lr;
 					accum->set_pr_idx(pri);
@@ -408,10 +411,10 @@ void test( std::string fname )
 		return;
 	}
 
-	if(1) {
-	  SimplePDB pdb;
-	  utility::io::izstream in(fname.c_str());
-	  in >> pdb;
+	if ( 1 ) {
+		SimplePDB pdb;
+		utility::io::izstream in(fname.c_str());
+		in >> pdb;
 		PosePackDataOP pd = pdb.get_pose_pack_data();
 		Real slice = 0.2;
 		// bool CSA = true;
@@ -421,11 +424,11 @@ void test( std::string fname )
 		return;
 	}
 
-	if( 1 ) {
-		for( Real pr = 0.0; pr <= 3.01; pr += 0.2 ) {
-		  SimplePDB pdb;
-		  utility::io::izstream in(fname.c_str());
-		  in >> pdb;
+	if ( 1 ) {
+		for ( Real pr = 0.0; pr <= 3.01; pr += 0.2 ) {
+			SimplePDB pdb;
+			utility::io::izstream in(fname.c_str());
+			in >> pdb;
 			PosePackDataOP pd = pdb.get_pose_pack_data();
 			Real slice = 0.2;
 			Real probe = pr;
@@ -440,8 +443,8 @@ void test( std::string fname )
 
 			std::cerr << "PR " << pr << " " << area << " " << buried_area << std::endl;
 			// for( Size i = 1; i <= check.size(); ++i ) {
-			// 	std::cerr << i << " " << deriv[i].x() << " " << deriv[i].y() << " " << deriv[i].z()
-			// 	           << "     " << check[i].x() << " " << check[i].y() << " " << check[i].z() << std::endl;
+			//  std::cerr << i << " " << deriv[i].x() << " " << deriv[i].y() << " " << deriv[i].z()
+			//             << "     " << check[i].x() << " " << check[i].y() << " " << check[i].z() << std::endl;
 			// }
 		}
 		return;
@@ -450,7 +453,7 @@ void test( std::string fname )
 	PosePackDataOP pd = new PosePackData;//pdb.get_pose_pack_data();
 
 	Real ST = 0.001, SP = 3.999;
-	for( Real sep = ST; sep <= SP; sep += (SP-ST)/9.0 ) {
+	for ( Real sep = ST; sep <= SP; sep += (SP-ST)/9.0 ) {
 
 		pd->spheres.clear();
 		Real SCALE = 1.0;
@@ -472,15 +475,15 @@ void test( std::string fname )
 
 		// std::cerr << "area " << area << std::endl;
 		// for( Size i = 1; i <= deriv.size(); i++ ) {
-		// 	std::cerr << "deriv " << i << " " << deriv[i] << std::endl;
-		// 	std::cerr << "check " << i << " " << check[i] << std::endl;
+		//  std::cerr << "deriv " << i << " " << deriv[i] << std::endl;
+		//  std::cerr << "check " << i << " " << check[i] << std::endl;
 		// }
 
 		std::cerr << "area " << area << std::endl;
 		std::cerr << sep << " " << deriv[1].x() << " " << deriv[1].y() << " " << deriv[1].z()
-		             << "     " << check[1].x() << " " << check[1].y() << " " << check[1].z() << std::endl;
+			<< "     " << check[1].x() << " " << check[1].y() << " " << check[1].z() << std::endl;
 		std::cerr << sep << " " << deriv[2].x() << " " << deriv[2].y() << " " << deriv[2].z()
-		             << "     " << check[2].x() << " " << check[2].y() << " " << check[2].z() << std::endl;
+			<< "     " << check[2].x() << " " << check[2].y() << " " << check[2].z() << std::endl;
 	}
 
 	// std::cerr << fname << " " << compute_packing_score_leerichards(pd,0.33,randvec()) << std::endl;
@@ -495,47 +498,47 @@ main (int argc, char *argv[])
 	try {
 
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace utility;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace utility;
 
-  // test_io();
+		// test_io();
 
-	// test_sasa_dots();
+		// test_sasa_dots();
 
-	// core::pose::Pose native_pose;
-	// core::import_pose::pose_from_file( native_pose, core::options::option[ core::options::OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
+		// core::pose::Pose native_pose;
+		// core::import_pose::pose_from_file( native_pose, core::options::option[ core::options::OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 
-	if( option[ in::file::s ].user() ) {
-  	vector1<file::FileName> files( option[ in::file::s ]() );
-  	for( size_t i = 1; i <= files.size(); ++i ) {
-    	test( files[i] );
-  	}
-	} else if( option[ in::file::l ].user() ) {
-  		vector1<file::FileName> files( option[ in::file::l ]() );
-  		for( size_t i = 1; i <= files.size(); ++i ) {
-			utility::io::izstream list( files[i] );
-			std::string fname;
-			while( list >> fname ) {
-				// std::cerr << "'" << fname << "'" << std::endl;
-    		test( fname );
+		if ( option[ in::file::s ].user() ) {
+			vector1<file::FileName> files( option[ in::file::s ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
+				test( files[i] );
 			}
-  		}
-	}
+		} else if ( option[ in::file::l ].user() ) {
+			vector1<file::FileName> files( option[ in::file::l ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
+				utility::io::izstream list( files[i] );
+				std::string fname;
+				while ( list >> fname ) {
+					// std::cerr << "'" << fname << "'" << std::endl;
+					test( fname );
+				}
+			}
+		}
 
-	for( std::map<std::string,utility::io::ozstream*>::iterator i = outs.begin(); i != outs.end(); ++i ) {
-		i->second->close();
-		delete i->second;
-	}
+		for ( std::map<std::string,utility::io::ozstream*>::iterator i = outs.begin(); i != outs.end(); ++i ) {
+			i->second->close();
+			delete i->second;
+		}
 
-	pthread_exit(NULL);
-	return 0;
+		pthread_exit(NULL);
+		return 0;
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

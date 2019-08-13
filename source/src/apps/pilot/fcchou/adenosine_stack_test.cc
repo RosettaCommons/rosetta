@@ -133,9 +133,9 @@ rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 	Matrix M = get_rna_base_coordinate_system( rsd, centroid );
 	kinematics::Stub stub( M, centroid );
 
-	for (Size i = 1; i <= pose.size(); ++i) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		Residue const & res = pose.residue(i);
-		for (Size j = 1; j <= res.natoms(); j++ ){
+		for ( Size j = 1; j <= res.natoms(); j++ ) {
 			Vector xyz_new = stub.global2local( res.xyz( j ) ); // it is either this or M-inverse.
 			pose.set_xyz( AtomID( j, i ), xyz_new );
 		}
@@ -201,23 +201,23 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-    try {
+	try {
 
-	NEW_OPT( sample_water, "use a water probe instead of carbon", false );
-	NEW_OPT( alpha_increment, "input parameter", 40.0 );
-	NEW_OPT( cosbeta_increment, "input parameter", 0.25 );
-	NEW_OPT( gamma_increment, "input parameter", 40.0 );
+		NEW_OPT( sample_water, "use a water probe instead of carbon", false );
+		NEW_OPT( alpha_increment, "input parameter", 40.0 );
+		NEW_OPT( cosbeta_increment, "input parameter", 0.25 );
+		NEW_OPT( gamma_increment, "input parameter", 40.0 );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-  protocols::viewer::viewer_main( my_main );
-    } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		protocols::viewer::viewer_main( my_main );
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-                                  }
-        return 0;
+	}
+	return 0;
 
 }

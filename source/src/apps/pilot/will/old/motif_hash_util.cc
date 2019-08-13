@@ -1177,7 +1177,8 @@ int main(int argc, char *argv[]) {
 		// utility::io::ozstream ofs2("test2.txt"); ofs2 << mh2 << endl; ofs2.close();
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
+		return -1;
 	}
 	return 0;
 }

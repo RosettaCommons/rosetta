@@ -85,15 +85,16 @@ public:
 			// make a copy of the Pose, convert all positions to alanine
 			core::pose::Pose poly_ala_pose = pose;
 			utility::vector1< core::Size > positions;
-			for ( Size i = 1; i <= pose.size(); ++i )
+			for ( Size i = 1; i <= pose.size(); ++i ) {
 				positions.push_back( i );
+			}
 
 			protocols::toolbox::pose_manipulation::construct_poly_ala_pose(
 				poly_ala_pose, positions, false, false, false
 			);
 
 			//std::cout << "starting with sequence " << poly_ala_pose.sequence()
-				//<< std::endl;
+			//<< std::endl;
 
 			// run fixbb design on the poly_ala_pose
 			pack_mover->apply( poly_ala_pose );
@@ -104,32 +105,32 @@ public:
 			core::sequence::Sequence design_seq( poly_ala_pose.sequence(), seq_id );
 			aln.add_sequence( design_seq );
 			//std::cout << "designed sequence " << design_seq
-			//					<< " with score " << design_score << std::endl;
+			//     << " with score " << design_score << std::endl;
 		} // n_designs
 
 		//std::cout << "sequences are:" << std::endl << aln << std::endl;
 	} // apply
 
-	private:
-		Size const n_designs_;
-		bool const start_from_poly_ala_;
+private:
+	Size const n_designs_;
+	bool const start_from_poly_ala_;
 }; // ComputeProfileMover
 
 int
 main( int argc, char * argv [] ) {
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	core::Size const n_designs( option[ james::n_designs ]() );
-	ComputeProfileMover mover( n_designs );
-	protocols::jobdist::not_universal_main( mover );
+		core::Size const n_designs( option[ james::n_designs ]() );
+		ComputeProfileMover mover( n_designs );
+		protocols::jobdist::not_universal_main( mover );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

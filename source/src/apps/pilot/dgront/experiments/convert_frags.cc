@@ -27,32 +27,32 @@
 
 
 void register_options() {
-  using namespace core::options;
-  using namespace core::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 
-  OPT(in::file::silent);
-  OPT(in::file::s);
-  OPT(in::file::residue_type_set);
-  OPT(out::nooutput);
+	OPT(in::file::silent);
+	OPT(in::file::s);
+	OPT(in::file::residue_type_set);
+	OPT(out::nooutput);
 }
 
 int
 main( int argc, char * argv [] ) {
-    try {
-        using namespace core::options;
-        using namespace core::fragment;
-        using namespace core::options::OptionKeys;
+	try {
+		using namespace core::options;
+		using namespace core::fragment;
+		using namespace core::options::OptionKeys;
 
-	devel::init(argc, argv);
-	register_options();
+		devel::init(argc, argv);
+		register_options();
 
-	ConstantLengthFragSetOP frags = new ConstantLengthFragSet;
-	std::string filename = "frags.9mers";
-	frags->read_fragment_file( filename );
-    } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		ConstantLengthFragSetOP frags = new ConstantLengthFragSet;
+		std::string filename = "frags.9mers";
+		frags->read_fragment_file( filename );
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-                                  }
-        return 0;
+	}
+	return 0;
 
 }

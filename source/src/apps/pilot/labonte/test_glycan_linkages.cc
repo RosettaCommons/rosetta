@@ -129,7 +129,7 @@ main( int argc, char *argv[] )
 		*/
 
 	} catch ( utility::excn::Exception const & e ) {
-		cerr << "Caught exception: " << e.msg() << endl;
+		e.display();
 		return FAILURE;
 	}
 	return SUCCESS;

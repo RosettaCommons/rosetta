@@ -209,7 +209,7 @@ int main( int argc, char * argv [] )
 			write_buns_and_dots_kinemage( outname + "_buried_unsats.kin", outname, pose, rotamer_dots, buns );
 		}
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

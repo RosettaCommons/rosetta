@@ -199,98 +199,98 @@ void
 rebuild_test()
 {
 
-  using namespace core::scoring;
-  using namespace core::scoring::constraints;
-  using namespace core::chemical;
-  using namespace core::options;
-  using namespace core::options::OptionKeys;
-  using namespace core::pose;
-  using namespace core::kinematics;
-  using namespace core::conformation;
-  using namespace core::pack;
-  using namespace core::pack::task;
-  using namespace core::optimization;
+	using namespace core::scoring;
+	using namespace core::scoring::constraints;
+	using namespace core::chemical;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
+	using namespace core::pose;
+	using namespace core::kinematics;
+	using namespace core::conformation;
+	using namespace core::pack;
+	using namespace core::pack::task;
+	using namespace core::optimization;
 
-  // read in user defined sequence
-  std::string const sequence = option[ seq ]();
+	// read in user defined sequence
+	std::string const sequence = option[ seq ]();
 
-  // create a starting pose with residue 1
-  ResidueTypeSetCAP rsd_set;
-  rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	// create a starting pose with residue 1
+	ResidueTypeSetCAP rsd_set;
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-  Pose pose;
-  core::chemical::make_pose_from_sequence(
-					  pose,
-					  sequence.substr(0,1),
-					  *rsd_set );
+	Pose pose;
+	core::chemical::make_pose_from_sequence(
+		pose,
+		sequence.substr(0,1),
+		*rsd_set );
 
-  // visualize
-  protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
-  remove_upper_terminus_type_from_pose_residue( pose, 1 );
+	// visualize
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+	remove_upper_terminus_type_from_pose_residue( pose, 1 );
 
-  // Main loop!
-  // build residues 2 through n
-  for ( Size i = 2; i <= sequence.size(); i++ ){
+	// Main loop!
+	// build residues 2 through n
+	for ( Size i = 2; i <= sequence.size(); i++ ) {
 
-    std::cout << "Building on residue " << i << std::endl;
+		std::cout << "Building on residue " << i << std::endl;
 
-    //append the i-th residue
-    ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( sequence[i-1] ) )[1] ) ) );
-    pose.append_polymer_residue_after_seqpos(  *rsd1, i - 1, true /*build_ideal_geometry*/ );
+		//append the i-th residue
+		ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( sequence[i-1] ) )[1] ) ) );
+		pose.append_polymer_residue_after_seqpos(  *rsd1, i - 1, true /*build_ideal_geometry*/ );
 
-    // set phi,psi,omega to be close to helical.
-    pose.set_psi(   i-1, -30.0 );
-    pose.set_omega( i-1, 180.0 );
-    pose.set_phi(   i,   -70.0 );
+		// set phi,psi,omega to be close to helical.
+		pose.set_psi(   i-1, -30.0 );
+		pose.set_omega( i-1, 180.0 );
+		pose.set_phi(   i,   -70.0 );
 
-    // Put on a constraint?
-    Real const helix_distance( 3.0 );
-    Real const distance_stddev( 0.25 );
-    FuncOP const distance_func( new HarmonicFunc( helix_distance, distance_stddev ) );
-    if ( i > 3 ) {
-      pose.add_constraint( new AtomPairConstraint(
-						  id::AtomID( id::NamedAtomID( " O  ", i-3), pose ),
-						  id::AtomID( id::NamedAtomID( " N  ", i  ), pose ),
-						  distance_func ) );
-    }
-
-
-    // rotamer trials
-    PackerTaskOP pack_task_ = pack::task::TaskFactory::create_packer_task( pose );
-    pack_task_->restrict_to_repacking();
-    for (Size i = 1; i <= pose.size(); i++) {
-      if ( !pose.residue(i).is_protein() ) continue;
-      pack_task_->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
-      pack_task_->nonconst_residue_task(i).or_ex1( true );
-      pack_task_->nonconst_residue_task(i).or_ex2( true );
-      pack_task_->nonconst_residue_task(i).or_ex3( true );
-      pack_task_->nonconst_residue_task(i).or_ex4( true );
-      pack_task_->nonconst_residue_task(i).or_include_current( true );
-    }
+		// Put on a constraint?
+		Real const helix_distance( 3.0 );
+		Real const distance_stddev( 0.25 );
+		FuncOP const distance_func( new HarmonicFunc( helix_distance, distance_stddev ) );
+		if ( i > 3 ) {
+			pose.add_constraint( new AtomPairConstraint(
+				id::AtomID( id::NamedAtomID( " O  ", i-3), pose ),
+				id::AtomID( id::NamedAtomID( " N  ", i  ), pose ),
+				distance_func ) );
+		}
 
 
-    ScoreFunctionOP scorefxn =  core::scoring::get_score_function();
-    pack::rotamer_trials( pose, *scorefxn, pack_task_ );
+		// rotamer trials
+		PackerTaskOP pack_task_ = pack::task::TaskFactory::create_packer_task( pose );
+		pack_task_->restrict_to_repacking();
+		for ( Size i = 1; i <= pose.size(); i++ ) {
+			if ( !pose.residue(i).is_protein() ) continue;
+			pack_task_->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
+			pack_task_->nonconst_residue_task(i).or_ex1( true );
+			pack_task_->nonconst_residue_task(i).or_ex2( true );
+			pack_task_->nonconst_residue_task(i).or_ex3( true );
+			pack_task_->nonconst_residue_task(i).or_ex4( true );
+			pack_task_->nonconst_residue_task(i).or_include_current( true );
+		}
 
-    // minimize the whole thing
-    AtomTreeMinimizer minimizer;
-    float const dummy_tol( 0.0000025);
-    bool const use_nblist( true );
-    MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false, false );
-    options.nblist_auto_update( true );
 
-    kinematics::MoveMap mm;
+		ScoreFunctionOP scorefxn =  core::scoring::get_score_function();
+		pack::rotamer_trials( pose, *scorefxn, pack_task_ );
 
-    mm.set_bb(  true );
-    mm.set_chi( true );
-    mm.set_jump( true );
+		// minimize the whole thing
+		AtomTreeMinimizer minimizer;
+		float const dummy_tol( 0.0000025);
+		bool const use_nblist( true );
+		MinimizerOptions options( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false, false );
+		options.nblist_auto_update( true );
 
-    minimizer.run( pose, mm, *scorefxn, options );
+		kinematics::MoveMap mm;
 
-  }
+		mm.set_bb(  true );
+		mm.set_chi( true );
+		mm.set_jump( true );
 
-  // dump to pdb.
-  pose.dump_pdb( sequence+".pdb" );
+		minimizer.run( pose, mm, *scorefxn, options );
+
+	}
+
+	// dump to pdb.
+	pose.dump_pdb( sequence+".pdb" );
 
 }
 
@@ -299,12 +299,12 @@ void*
 my_main( void* )
 {
 
-  using namespace core::options;
+	using namespace core::options;
 
-  rebuild_test();
+	rebuild_test();
 
-  protocols::viewer::clear_conformation_viewers();
-  exit( 0 );
+	protocols::viewer::clear_conformation_viewers();
+	exit( 0 );
 
 }
 
@@ -315,30 +315,30 @@ main( int argc, char * argv [] )
 
 	try {
 
-  using namespace core::options;
+		using namespace core::options;
 
-  NEW_OPT( seq, "sequence", "" );
+		NEW_OPT( seq, "sequence", "" );
 
-  ////////////////////////////////////////////////////////////////////////////
-  // setup
-  ////////////////////////////////////////////////////////////////////////////
-  devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
 
-  ////////////////////////////////////////////////////////////////////////////
-  // end of setup
-  ////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-  protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
-  exit( 0 );
+		exit( 0 );
 
-  ////////////////////////////////////////////////////////////////////////////
-  // end of setup
-  ////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

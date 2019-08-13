@@ -50,7 +50,7 @@ main( int argc, char *argv[] )
 		constraint_setter.apply( in_pose );
 
 	} catch (utility::excn::Exception const & e ) {
-		cerr << "Caught exception: " << e.msg() << endl;
+		e.display();
 		return -1;
 	}
 	return 0;

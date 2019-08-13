@@ -42,32 +42,32 @@
 int main(int argc, char* argv[])
 {
 	try{
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	core::chemical::ResidueTypeSelector rs;
-	rs.set_property("PHOSPHONATE");
-	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
-	core::chemical::ResidueTypeSetCAP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
-	core::chemical::ResidueTypeCOPs fragment_types= rs.select( *rsd_set );
+		core::chemical::ResidueTypeSelector rs;
+		rs.set_property("PHOSPHONATE");
+		core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
+		core::chemical::ResidueTypeSetCAP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
+		core::chemical::ResidueTypeCOPs fragment_types= rs.select( *rsd_set );
 
-	core::chemical::ResidueTypeCOPs::const_iterator begin= fragment_types.begin();
-	for(; begin!= fragment_types.end(); ++begin){
-		core::conformation::Residue temp= core::conformation::Residue(**begin, true);
-		std::string name= temp.name();
-		name.append(".pdb");
-		utility::io::ozstream out(name.c_str(), std::ios::out | std::ios::binary);
-		//if(!out) {
-		//	basic::Tracer::Error() << "FileData::dump_pdb: Unable to open file:" << name << " for writing!!!" << std::endl;
-		//	return false;
-		//}
+		core::chemical::ResidueTypeCOPs::const_iterator begin= fragment_types.begin();
+		for ( ; begin!= fragment_types.end(); ++begin ) {
+			core::conformation::Residue temp= core::conformation::Residue(**begin, true);
+			std::string name= temp.name();
+			name.append(".pdb");
+			utility::io::ozstream out(name.c_str(), std::ios::out | std::ios::binary);
+			//if(!out) {
+			// basic::Tracer::Error() << "FileData::dump_pdb: Unable to open file:" << name << " for writing!!!" << std::endl;
+			// return false;
+			//}
 
-		core::Size start=1;
-		core::io::pdb::dump_pdb_residue(temp, start, out);
-		out.close();
-	}
+			core::Size start=1;
+			core::io::pdb::dump_pdb_residue(temp, start, out);
+			out.close();
+		}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

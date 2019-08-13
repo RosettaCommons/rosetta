@@ -340,7 +340,7 @@ main( int argc, char* argv [] ) {
 		tr.Debug << "finished rescoring alignments." << std::endl;
 		tr.flush_all_channels();
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 } // int main( int argc, char * argv [] )

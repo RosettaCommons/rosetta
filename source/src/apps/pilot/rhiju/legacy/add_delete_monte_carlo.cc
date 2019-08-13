@@ -187,8 +187,8 @@ OPT_KEY( Boolean, sample_both_sugar_base_rotamer)
 OPT_KEY( Boolean, reinitialize_CCD_torsions)
 OPT_KEY( Boolean, PBP_clustering_at_chain_closure)
 OPT_KEY( Boolean, finer_modeler_at_chain_closure)
-OPT_KEY( StringVector, 	VDW_rep_screen_info)
-OPT_KEY( Real, 	VDW_rep_alignment_RMSD_CUTOFF)
+OPT_KEY( StringVector,  VDW_rep_screen_info)
+OPT_KEY( Real,  VDW_rep_alignment_RMSD_CUTOFF)
 OPT_KEY( Boolean, graphic )
 OPT_KEY( Real, Real_parameter_one )
 OPT_KEY( Boolean, add_lead_zero_to_tag )
@@ -244,13 +244,13 @@ OPT_KEY( IntegerVector, force_north_sugar_list )
 OPT_KEY( IntegerVector, force_south_sugar_list )
 OPT_KEY( IntegerVector, protonated_H1_adenosine_list )
 OPT_KEY( Boolean,  output_pdb )
-OPT_KEY( String, 	start_silent)
-OPT_KEY( String, 	start_tag)
+OPT_KEY( String,  start_silent)
+OPT_KEY( String,  start_tag)
 OPT_KEY( Boolean,  simple_full_length_job_params )
 OPT_KEY( Real, sampler_cluster_rmsd )
-OPT_KEY( Boolean, 	output_extra_RMSDs)
-OPT_KEY( Boolean, 	integration_test)
-OPT_KEY( Boolean, 	add_virt_root ) //For Fang's electron density code.
+OPT_KEY( Boolean,  output_extra_RMSDs)
+OPT_KEY( Boolean,  integration_test)
+OPT_KEY( Boolean,  add_virt_root ) //For Fang's electron density code.
 
 OPT_KEY( Real, stddev_small )
 OPT_KEY( Real, stddev_large )
@@ -275,12 +275,12 @@ void
 swa_rna_sample()
 {
 
-  using namespace core::pose;
-  using namespace core::chemical;
-  using namespace core::kinematics;
-  using namespace core::scoring;
-  using namespace core::io::silent;
-  using namespace core::pose::full_model_info;
+	using namespace core::pose;
+	using namespace core::chemical;
+	using namespace core::kinematics;
+	using namespace core::scoring;
+	using namespace core::io::silent;
+	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::modeler::rna;
 	using namespace protocols::stepwise::modeler::rna::legacy;
 	using namespace protocols::stepwise::monte_carlo::rna;
@@ -298,7 +298,7 @@ swa_rna_sample()
 	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
 	else scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna/denovo/rna_hires_07232011_with_intra_base_phosphate.wts" ); // Parin's latest weights.
 
-	if ( !scorefxn->has_nonzero_weight( unfolded ) ) { 	// must have unfolded term!
+	if ( !scorefxn->has_nonzero_weight( unfolded ) ) {  // must have unfolded term!
 		std::cout << "Putting 'unfolded' term into scorefunction! Use -unfolded_weight to reduce weight or turn off." << std::endl;
 		scorefxn->set_weight( unfolded, 1.0 );
 	}
@@ -306,11 +306,11 @@ swa_rna_sample()
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  Pose setup -- shared with SWA stuff, for now. Gets native_pose, sample_res, etc. -- put into its own little function?
-	working_parameters::StepWiseWorkingParametersOP	working_parameters = setup_rna_working_parameters(); // note -- hacked this to include option skip_complicated_stuff
+	working_parameters::StepWiseWorkingParametersOP working_parameters = setup_rna_working_parameters(); // note -- hacked this to include option skip_complicated_stuff
 	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class(working_parameters);
 	stepwise_rna_pose_setup->set_align_to_native( true );
 
-  Pose pose;
+	Pose pose;
 	stepwise_rna_pose_setup->apply( pose );
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
 
@@ -325,7 +325,7 @@ swa_rna_sample()
 	std::string const & full_sequence = working_parameters->full_sequence();
 	utility::vector1< Size > const start_moving_res_list = working_parameters->working_moving_res_list();
 
-	FullModelInfoOP full_model_info_op =	new FullModelInfo( pose, full_sequence, option[ cutpoint_open](), option[ input_res ]()  );
+	FullModelInfoOP full_model_info_op = new FullModelInfo( pose, full_sequence, option[ cutpoint_open](), option[ input_res ]()  );
 	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info_op );
 
 	// put this into its own little function?
@@ -363,7 +363,7 @@ swa_rna_sample()
 
 	rna_swa_montecarlo_mover->apply( pose );
 
-	if ( option[ out::file::o].user()	) pose.dump_pdb( option[ out::file::o ]() );
+	if ( option[ out::file::o].user() ) pose.dump_pdb( option[ out::file::o ]() );
 
 	std::cout << "Total time for monte carlo: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
@@ -384,7 +384,7 @@ my_main( void* )
 
 	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
-  exit( 0 );
+	exit( 0 );
 
 }
 
@@ -396,144 +396,144 @@ main( int argc, char * argv [] )
 
 	try {
 
-  using namespace basic::options;
+		using namespace basic::options;
 
-	utility::vector1< Size > blank_size_vector;
-	utility::vector1< std::string > blank_string_vector;
+		utility::vector1< Size > blank_size_vector;
+		utility::vector1< std::string > blank_string_vector;
 
-	////////////////////////////////////////////////////
-	// should be able to get rid of all the following,
-	// once job setup is in its own .cc file, shared by
-	// swa, swa_monte_carlo.
-	////////////////////////////////////////////////////
+		////////////////////////////////////////////////////
+		// should be able to get rid of all the following,
+		// once job setup is in its own .cc file, shared by
+		// swa, swa_monte_carlo.
+		////////////////////////////////////////////////////
 
-	//////////////General/////////////////////////////
-	NEW_OPT( graphic, "Turn graphic on/off", true);
-	NEW_OPT( Real_parameter_one, "free_variable for testing purposes ", 0.0);
-	NEW_OPT( distinguish_pucker, "distinguish pucker when cluster:both in sampler and clusterer", true);
-	NEW_OPT( output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", false); //Sept 24, 2011
+		//////////////General/////////////////////////////
+		NEW_OPT( graphic, "Turn graphic on/off", true);
+		NEW_OPT( Real_parameter_one, "free_variable for testing purposes ", 0.0);
+		NEW_OPT( distinguish_pucker, "distinguish pucker when cluster:both in sampler and clusterer", true);
+		NEW_OPT( output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", false); //Sept 24, 2011
 
-	//////////////Job_Parameters///////////
-	NEW_OPT( sample_res, "residues to build, the first element is the actual sample res while the other are the bulge residues", blank_size_vector );
-	NEW_OPT( input_res, "Residues already present in starting pose_1", blank_size_vector );
-	NEW_OPT( input_res2, "Residues already present in starting  pose_2", blank_size_vector );
-	NEW_OPT( missing_res, "Residues missing in starting pose_1, alternative to input_res", blank_size_vector );
-	NEW_OPT( missing_res2, "Residues missing in starting pose_2, alternative to input_res2", blank_size_vector );
-	NEW_OPT( rmsd_res, "residues that will be use to calculate rmsd (for clustering as well as RMSD to native_pdb if specified)", blank_size_vector );
-	NEW_OPT( alignment_res , "align_res_list", blank_string_vector ); // can this be a size vector now?
-	NEW_OPT( global_sample_res_list, "A list of all the nucleotide to be build/sample over the entire dag.", blank_size_vector); //March 20, 2011
+		//////////////Job_Parameters///////////
+		NEW_OPT( sample_res, "residues to build, the first element is the actual sample res while the other are the bulge residues", blank_size_vector );
+		NEW_OPT( input_res, "Residues already present in starting pose_1", blank_size_vector );
+		NEW_OPT( input_res2, "Residues already present in starting  pose_2", blank_size_vector );
+		NEW_OPT( missing_res, "Residues missing in starting pose_1, alternative to input_res", blank_size_vector );
+		NEW_OPT( missing_res2, "Residues missing in starting pose_2, alternative to input_res2", blank_size_vector );
+		NEW_OPT( rmsd_res, "residues that will be use to calculate rmsd (for clustering as well as RMSD to native_pdb if specified)", blank_size_vector );
+		NEW_OPT( alignment_res , "align_res_list", blank_string_vector ); // can this be a size vector now?
+		NEW_OPT( global_sample_res_list, "A list of all the nucleotide to be build/sample over the entire dag.", blank_size_vector); //March 20, 2011
 
-	NEW_OPT( cutpoint_open, "optional: chainbreak in full sequence", blank_size_vector );
-	NEW_OPT( cutpoint_closed, "optional: cutpoint at which to apply chain closure", 0 );
-	NEW_OPT( jump_point_pairs , "optional: extra jump_points specified by the user for setting up the fold_tree ", blank_string_vector );
+		NEW_OPT( cutpoint_open, "optional: chainbreak in full sequence", blank_size_vector );
+		NEW_OPT( cutpoint_closed, "optional: cutpoint at which to apply chain closure", 0 );
+		NEW_OPT( jump_point_pairs , "optional: extra jump_points specified by the user for setting up the fold_tree ", blank_string_vector );
 
-	NEW_OPT( native_virtual_res , " optional: native_virtual_res ", blank_size_vector );
-	NEW_OPT( native_alignment_res , "optional: native_alignment_res ", blank_size_vector );
-	NEW_OPT( fixed_res, "optional: residues to be held fixed in minimizer", blank_size_vector );
-	NEW_OPT( minimize_res, "optional: residues to be minimize in minimizer, alternative to fixed_res", blank_size_vector );
-	NEW_OPT( virtual_res, "optional: residues to be made virtual", blank_size_vector );
-	NEW_OPT( terminal_res, "optional: residues that are not allowed to stack during modeler", blank_size_vector );
-	NEW_OPT( bulge_res, "optional: residues to be turned into a bulge variant", blank_size_vector );
-	NEW_OPT( force_syn_chi_res_list, "optional: sample only syn chi for the res in sampler.", blank_size_vector); //April 29, 2011
-	NEW_OPT( force_north_sugar_list, "optional: sample only north sugar for the res in sampler.", blank_size_vector); //April 29, 2011
-	NEW_OPT( force_south_sugar_list, "optional: sample only south sugar for the res in sampler.", blank_size_vector); //April 29, 2011
-	NEW_OPT( protonated_H1_adenosine_list, "optional: protonate_H1_adenosine_list", blank_size_vector); //May 02, 2011
+		NEW_OPT( native_virtual_res , " optional: native_virtual_res ", blank_size_vector );
+		NEW_OPT( native_alignment_res , "optional: native_alignment_res ", blank_size_vector );
+		NEW_OPT( fixed_res, "optional: residues to be held fixed in minimizer", blank_size_vector );
+		NEW_OPT( minimize_res, "optional: residues to be minimize in minimizer, alternative to fixed_res", blank_size_vector );
+		NEW_OPT( virtual_res, "optional: residues to be made virtual", blank_size_vector );
+		NEW_OPT( terminal_res, "optional: residues that are not allowed to stack during modeler", blank_size_vector );
+		NEW_OPT( bulge_res, "optional: residues to be turned into a bulge variant", blank_size_vector );
+		NEW_OPT( force_syn_chi_res_list, "optional: sample only syn chi for the res in sampler.", blank_size_vector); //April 29, 2011
+		NEW_OPT( force_north_sugar_list, "optional: sample only north sugar for the res in sampler.", blank_size_vector); //April 29, 2011
+		NEW_OPT( force_south_sugar_list, "optional: sample only south sugar for the res in sampler.", blank_size_vector); //April 29, 2011
+		NEW_OPT( protonated_H1_adenosine_list, "optional: protonate_H1_adenosine_list", blank_size_vector); //May 02, 2011
 
-	//////////////Pose setup///////
-	NEW_OPT( job_queue_ID, " swa_rna_sample()/combine_long_loop mode: Specify the tag pair in filter_output_filename to be read in and imported (start from 0!)" , 0);
+		//////////////Pose setup///////
+		NEW_OPT( job_queue_ID, " swa_rna_sample()/combine_long_loop mode: Specify the tag pair in filter_output_filename to be read in and imported (start from 0!)" , 0);
 
-	///////////////Sampler////////////
-	NEW_OPT( rebuild_bulge_mode, "rebuild_bulge_mode", false);
-	NEW_OPT( floating_base , " floating_base ", false ); //DO NOT CHANGE TO TRUE, since single-nucleotide modeler need this to be false! April 9th, 2011
+		///////////////Sampler////////////
+		NEW_OPT( rebuild_bulge_mode, "rebuild_bulge_mode", false);
+		NEW_OPT( floating_base , " floating_base ", false ); //DO NOT CHANGE TO TRUE, since single-nucleotide modeler need this to be false! April 9th, 2011
 
-	//////////////CombineLongLoopFilterer/////////////
-	NEW_OPT( filter_output_filename, "CombineLongLoopFilterer: filter_output_filename", "filter_struct.txt"); //Sept 12, 2010
-	NEW_OPT( filter_for_previous_contact, "CombineLongLoopFilterer: filter_for_previous_contact", false); //Sept 12, 2010
-	NEW_OPT( filter_for_previous_clash, "CombineLongLoopFilterer: filter_for_previous_clash", false); //Sept 12, 2010
-	NEW_OPT( combine_helical_silent_file, "CombineLongLoopFilterer: combine_helical_silent_file", false); //Nov 27, 2010
+		//////////////CombineLongLoopFilterer/////////////
+		NEW_OPT( filter_output_filename, "CombineLongLoopFilterer: filter_output_filename", "filter_struct.txt"); //Sept 12, 2010
+		NEW_OPT( filter_for_previous_contact, "CombineLongLoopFilterer: filter_for_previous_contact", false); //Sept 12, 2010
+		NEW_OPT( filter_for_previous_clash, "CombineLongLoopFilterer: filter_for_previous_clash", false); //Sept 12, 2010
+		NEW_OPT( combine_helical_silent_file, "CombineLongLoopFilterer: combine_helical_silent_file", false); //Nov 27, 2010
 
-	//////////////post_rebuild_bulge_assembly//////
-	NEW_OPT( start_silent, "start_silent", ""); //Oct 22, 2011
-	NEW_OPT( start_tag, "start_tag", ""); //Oct 22, 2011
+		//////////////post_rebuild_bulge_assembly//////
+		NEW_OPT( start_silent, "start_silent", ""); //Oct 22, 2011
+		NEW_OPT( start_tag, "start_tag", ""); //Oct 22, 2011
 
-	///////The options below are for testing purposes. Please do not make any changes without first consulting/////////////
-	///////Parin Sripakdeevong (sripakpa@stanford.edu) or Rhiju Das (rhiju@stanford.edu) //////////////////////////////////
-	//////////////General/////////////////////////////
-	NEW_OPT( VERBOSE, "VERBOSE", false );
-	NEW_OPT( parin_favorite_output , " parin_favorite_output ", true ); //Change to true on Oct 10, 2010
-	NEW_OPT( integration_test , " integration_test ", false ); //March 16, 2012
-
-
-	//////////////Job_Parameters///////////
-	NEW_OPT( filter_user_alignment_res, " filter_user_alignment_res ", true ); //General want this to be true except for special cases! June 13, 2011
-	NEW_OPT( simple_append_map , "simple_append_map", false);
-	NEW_OPT( add_virt_root, "add_virt_root", false); //For Fang's electron density code.
-	NEW_OPT( allow_chain_boundary_jump_partner_right_at_fixed_BP, "mainly just to get Hermann nano-square RNA modeling to work", false);
-	NEW_OPT( allow_fixed_res_at_moving_res, "mainly just to get Hermann Duplex modeling to work", false); //Nov 15, 2010
-	NEW_OPT( simple_full_length_job_params, "simple_full_length_job_params", false); //Oct 31, 2011
-	NEW_OPT( output_extra_RMSDs, "output_extra_RMSDs", false); //March 16, 2012
-
-	///////////////Sampler////////////
-	NEW_OPT( sampler_cluster_rmsd, " Clustering rmsd of conformations in the sampler", 0.5); //DO NOT CHANGE THIS!
-	NEW_OPT( skip_modeler, "no modeler step in rna_swa residue modeler", false );
-	NEW_OPT( do_not_sample_multiple_virtual_sugar, " Samplerer: do_not_sample_multiple_virtual_sugar " , false);
-	NEW_OPT( sample_ONLY_multiple_virtual_sugar, " Samplerer: sample_ONLY_multiple_virtual_sugar " , false);
-	NEW_OPT( filterer_undercount_sugar_rotamers, "Undercount all sugar_rotamers as 1 count", false); //July 29, 2011
-	NEW_OPT( exclude_alpha_beta_gamma_modeler, "Speed up the debug eplison south sugar mode", false);
-	NEW_OPT( debug_eplison_south_sugar_mode, "Check why when eplison is roughly -160 and pucker is south, energy is not favorable", false);
-	NEW_OPT( sampler_extra_anti_chi_rotamer, "Samplerer: extra_anti_chi_rotamer", false);
-	NEW_OPT( sampler_extra_syn_chi_rotamer, "Samplerer: extra_syn_chi_rotamer", false);
-	NEW_OPT( sampler_extra_beta_rotamer, "Samplerer: extra_beta_rotamer", false);
-	NEW_OPT( sampler_extra_epsilon_rotamer, "Samplerer: extra_epsilon_rotamer", true); //Change this to true on April 9, 2011
-	NEW_OPT( sample_both_sugar_base_rotamer, "Samplerer: Super hacky for SQAURE_RNA", false);
-	NEW_OPT( reinitialize_CCD_torsions, "Samplerer: reinitialize_CCD_torsions: Reinitialize_CCD_torsion to zero before every CCD chain closure", false);
-	NEW_OPT( PBP_clustering_at_chain_closure, "Samplerer: PBP_clustering_at_chain_closure", false);
-	NEW_OPT( finer_modeler_at_chain_closure, "Samplerer: finer_modeler_at_chain_closure", false); //Jun 9, 2010
-	NEW_OPT( sampler_include_torsion_value_in_tag, "Samplerer:include_torsion_value_in_tag", true);
-	NEW_OPT( include_syn_chi, "include_syn_chi", true); //Change to true on Oct 10, 2010
-	NEW_OPT( sampler_allow_syn_pyrimidine, "sampler_allow_syn_pyrimidine", false); //Nov 15, 2010
-	NEW_OPT( fast, "quick runthrough for debugging", false );
-	NEW_OPT( medium_fast, "quick runthrough for debugging (keep more poses and not as fast as fast option)", false );
-	NEW_OPT( centroid_screen, "centroid_screen", true);
-	NEW_OPT( allow_base_pair_only_centroid_screen, "allow_base_pair_only_centroid_screen", false); //This only effect floating base modeler + dinucleotide.. deprecate option
-	NEW_OPT( sampler_perform_o2prime_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
-	NEW_OPT( allow_bulge_at_chainbreak, "Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", true );
-
-	NEW_OPT( add_lead_zero_to_tag, "Add lead zero to clusterer output tag ", false);
-	NEW_OPT( n_sample, "Sample number for Random modeler", 0 );
-	NEW_OPT( output_period, "How often to output structure", 5000 );
-	NEW_OPT( stddev_small, "Sampling standard deviation in degree", 5.0 );
-	NEW_OPT( stddev_large, "Sampling standard deviation in degree", 40.0 );
-	NEW_OPT( output_score_cutoff, "Score cutoff for output to disk", 0.0 );
-	NEW_OPT( kT, "kT of simulation in RU", 2.0 );
-	NEW_OPT( unfolded_weight, "weight on unfolded term", 1.0 );
-	NEW_OPT( skip_randomize, "do not randomize...", false );
-	NEW_OPT( sample_all_o2prime, "do not focus o2prime modeler at residue of interest...", false );
-	NEW_OPT( start_added_residue_in_aform, "on add move, take starting configuration to be A-form, not random", false );
-	NEW_OPT( do_add_delete, "try add & delete moves...", false );
-	NEW_OPT( presample_added_residue, "when adding a residue, do a little monte carlo to try to get it in place", false );
-	NEW_OPT( presample_internal_cycles, "when adding a residue, number of monte carlo cycles", 100 );
-	NEW_OPT( skip_delete, "normally wipe out all residues before building", false );
-	NEW_OPT( disallow_deletion_of_last_residue, "in add/delete allow complete erasure of moving residues during modeler", false );
+		///////The options below are for testing purposes. Please do not make any changes without first consulting/////////////
+		///////Parin Sripakdeevong (sripakpa@stanford.edu) or Rhiju Das (rhiju@stanford.edu) //////////////////////////////////
+		//////////////General/////////////////////////////
+		NEW_OPT( VERBOSE, "VERBOSE", false );
+		NEW_OPT( parin_favorite_output , " parin_favorite_output ", true ); //Change to true on Oct 10, 2010
+		NEW_OPT( integration_test , " integration_test ", false ); //March 16, 2012
 
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////Job_Parameters///////////
+		NEW_OPT( filter_user_alignment_res, " filter_user_alignment_res ", true ); //General want this to be true except for special cases! June 13, 2011
+		NEW_OPT( simple_append_map , "simple_append_map", false);
+		NEW_OPT( add_virt_root, "add_virt_root", false); //For Fang's electron density code.
+		NEW_OPT( allow_chain_boundary_jump_partner_right_at_fixed_BP, "mainly just to get Hermann nano-square RNA modeling to work", false);
+		NEW_OPT( allow_fixed_res_at_moving_res, "mainly just to get Hermann Duplex modeling to work", false); //Nov 15, 2010
+		NEW_OPT( simple_full_length_job_params, "simple_full_length_job_params", false); //Oct 31, 2011
+		NEW_OPT( output_extra_RMSDs, "output_extra_RMSDs", false); //March 16, 2012
 
-  ////////////////////////////////////////////////////////////////////////////
-  // setup
-  ////////////////////////////////////////////////////////////////////////////
-  devel::init(argc, argv);
+		///////////////Sampler////////////
+		NEW_OPT( sampler_cluster_rmsd, " Clustering rmsd of conformations in the sampler", 0.5); //DO NOT CHANGE THIS!
+		NEW_OPT( skip_modeler, "no modeler step in rna_swa residue modeler", false );
+		NEW_OPT( do_not_sample_multiple_virtual_sugar, " Samplerer: do_not_sample_multiple_virtual_sugar " , false);
+		NEW_OPT( sample_ONLY_multiple_virtual_sugar, " Samplerer: sample_ONLY_multiple_virtual_sugar " , false);
+		NEW_OPT( filterer_undercount_sugar_rotamers, "Undercount all sugar_rotamers as 1 count", false); //July 29, 2011
+		NEW_OPT( exclude_alpha_beta_gamma_modeler, "Speed up the debug eplison south sugar mode", false);
+		NEW_OPT( debug_eplison_south_sugar_mode, "Check why when eplison is roughly -160 and pucker is south, energy is not favorable", false);
+		NEW_OPT( sampler_extra_anti_chi_rotamer, "Samplerer: extra_anti_chi_rotamer", false);
+		NEW_OPT( sampler_extra_syn_chi_rotamer, "Samplerer: extra_syn_chi_rotamer", false);
+		NEW_OPT( sampler_extra_beta_rotamer, "Samplerer: extra_beta_rotamer", false);
+		NEW_OPT( sampler_extra_epsilon_rotamer, "Samplerer: extra_epsilon_rotamer", true); //Change this to true on April 9, 2011
+		NEW_OPT( sample_both_sugar_base_rotamer, "Samplerer: Super hacky for SQAURE_RNA", false);
+		NEW_OPT( reinitialize_CCD_torsions, "Samplerer: reinitialize_CCD_torsions: Reinitialize_CCD_torsion to zero before every CCD chain closure", false);
+		NEW_OPT( PBP_clustering_at_chain_closure, "Samplerer: PBP_clustering_at_chain_closure", false);
+		NEW_OPT( finer_modeler_at_chain_closure, "Samplerer: finer_modeler_at_chain_closure", false); //Jun 9, 2010
+		NEW_OPT( sampler_include_torsion_value_in_tag, "Samplerer:include_torsion_value_in_tag", true);
+		NEW_OPT( include_syn_chi, "include_syn_chi", true); //Change to true on Oct 10, 2010
+		NEW_OPT( sampler_allow_syn_pyrimidine, "sampler_allow_syn_pyrimidine", false); //Nov 15, 2010
+		NEW_OPT( fast, "quick runthrough for debugging", false );
+		NEW_OPT( medium_fast, "quick runthrough for debugging (keep more poses and not as fast as fast option)", false );
+		NEW_OPT( centroid_screen, "centroid_screen", true);
+		NEW_OPT( allow_base_pair_only_centroid_screen, "allow_base_pair_only_centroid_screen", false); //This only effect floating base modeler + dinucleotide.. deprecate option
+		NEW_OPT( sampler_perform_o2prime_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
+		NEW_OPT( allow_bulge_at_chainbreak, "Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", true );
+
+		NEW_OPT( add_lead_zero_to_tag, "Add lead zero to clusterer output tag ", false);
+		NEW_OPT( n_sample, "Sample number for Random modeler", 0 );
+		NEW_OPT( output_period, "How often to output structure", 5000 );
+		NEW_OPT( stddev_small, "Sampling standard deviation in degree", 5.0 );
+		NEW_OPT( stddev_large, "Sampling standard deviation in degree", 40.0 );
+		NEW_OPT( output_score_cutoff, "Score cutoff for output to disk", 0.0 );
+		NEW_OPT( kT, "kT of simulation in RU", 2.0 );
+		NEW_OPT( unfolded_weight, "weight on unfolded term", 1.0 );
+		NEW_OPT( skip_randomize, "do not randomize...", false );
+		NEW_OPT( sample_all_o2prime, "do not focus o2prime modeler at residue of interest...", false );
+		NEW_OPT( start_added_residue_in_aform, "on add move, take starting configuration to be A-form, not random", false );
+		NEW_OPT( do_add_delete, "try add & delete moves...", false );
+		NEW_OPT( presample_added_residue, "when adding a residue, do a little monte carlo to try to get it in place", false );
+		NEW_OPT( presample_internal_cycles, "when adding a residue, number of monte carlo cycles", 100 );
+		NEW_OPT( skip_delete, "normally wipe out all residues before building", false );
+		NEW_OPT( disallow_deletion_of_last_residue, "in add/delete allow complete erasure of moving residues during modeler", false );
 
 
-  ////////////////////////////////////////////////////////////////////////////
-  // end of setup
-  ////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  protocols::viewer::viewer_main( my_main );
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
+
+
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+
+		protocols::viewer::viewer_main( my_main );
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

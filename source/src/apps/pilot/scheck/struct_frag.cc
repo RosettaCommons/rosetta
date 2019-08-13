@@ -146,9 +146,7 @@ main( int argc, char* argv [] )
 
 
 	} catch ( ue::EXCN_Base const & e ) {
-		TR.Fatal << TR.Red   << "[    FATAL ERROR    ]" << TR.Reset << std::endl;
-		TR.Fatal << TR.Red   << "[ EXECUTION STOPPED ]" << TR.Reset << std::endl;
-		TR.Fatal << TR.Bold  << e.msg() << TR.Reset << std::endl;
+		e.display();
 		return -1;
 	}
 

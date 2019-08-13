@@ -117,10 +117,10 @@ test_suck_res( std::string fname ) {
 	core::import_pose::pose_from_file( pose, fname , core::import_pose::PDB_file);
 
 	kinematics::MoveMapOP mm = new kinematics::MoveMap;
-	mm->set_bb ( true ); mm->set_chi( true );	mm->set_jump( true );
+	mm->set_bb ( true ); mm->set_chi( true ); mm->set_jump( true );
 
-  ScoreFunctionOP sfstd( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
-  ScoreFunctionOP sf( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
+	ScoreFunctionOP sfstd( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
+	ScoreFunctionOP sf( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 	// ScoreFunctionOP sf( new ScoreFunction );
 	sf->set_weight( suck , 1.0 );
 	sf->set_weight( coordinate_constraint, 1.0 );
@@ -132,15 +132,15 @@ test_suck_res( std::string fname ) {
 
 	core::Real ps = compute_packing_score(pose,0);
 	std::cerr << "SC " << I(2,-1) << " "
-		 								 << I(2,-1) << " "
-		 								 << F(7,3,0.0) << " "
-										 << F(7,3,0.0) << " "
-									   << F(8,2,(*sfstd)(pose) ) << " "
-										 << F(8,2,(*sf)(pose) ) << " "
-										 << F(8,2,pose.energies().total_energies()[suck]) << " "
-										 << F(8,2,pose.energies().total_energies()[coordinate_constraint]) << " "
-										 << F(8,4,ps ) << " "
-										 << std::endl;
+		<< I(2,-1) << " "
+		<< F(7,3,0.0) << " "
+		<< F(7,3,0.0) << " "
+		<< F(8,2,(*sfstd)(pose) ) << " "
+		<< F(8,2,(*sf)(pose) ) << " "
+		<< F(8,2,pose.energies().total_energies()[suck]) << " "
+		<< F(8,2,pose.energies().total_energies()[coordinate_constraint]) << " "
+		<< F(8,4,ps ) << " "
+		<< std::endl;
 
 	protocols::minimization_packing::MinMover minstd( mm, sfstd , "lbfgs_armijo_nonmonotone", 0.001, true, false, false );
 	minstd.min_options()->nblist_auto_update(true);
@@ -155,15 +155,15 @@ test_suck_res( std::string fname ) {
 
 	ps = compute_packing_score(pose,0);
 	std::cerr << "SC " << I(2, 0) << " "
-		 								 << I(2, 0) << " "
-		 								 << F(7,3,0.0) << " "
-										 << F(7,3,0.0) << " "
-									   << F(8,2,(*sfstd)(pose) ) << " "
-										 << F(8,2,(*sf)(pose) ) << " "
-										 << F(8,2,pose.energies().total_energies()[suck]) << " "
-										 << F(8,2,pose.energies().total_energies()[coordinate_constraint]) << " "
-										 << F(8,4,ps ) << " "
-										 << std::endl;
+		<< I(2, 0) << " "
+		<< F(7,3,0.0) << " "
+		<< F(7,3,0.0) << " "
+		<< F(8,2,(*sfstd)(pose) ) << " "
+		<< F(8,2,(*sf)(pose) ) << " "
+		<< F(8,2,pose.energies().total_energies()[suck]) << " "
+		<< F(8,2,pose.energies().total_energies()[coordinate_constraint]) << " "
+		<< F(8,4,ps ) << " "
+		<< std::endl;
 
 	protocols::minimization_packing::MinMover min( mm, sf , "lbfgs_armijo_nonmonotone", 0.001, true, false, false );
 	min.min_options()->nblist_auto_update(true);
@@ -174,11 +174,11 @@ test_suck_res( std::string fname ) {
 
 	// vector1<Real> pscores;
 	// pscores.push_back(ps_before);
-	for( int sucker_iter = 1; sucker_iter <= 3; ++sucker_iter ) {
+	for ( int sucker_iter = 1; sucker_iter <= 3; ++sucker_iter ) {
 
 		// std::cerr << "add cavs" << std::endl;
 		rem_cav.apply( pose );
-		add_cav.apply( pose );	// will remove if already there
+		add_cav.apply( pose ); // will remove if already there
 		dump_pdb( pose, fname + "_with_suckers_before" + to_string<int>( sucker_iter ) + ".pdb" );
 
 		taskstd = pack::task::TaskFactory::create_packer_task( pose );
@@ -188,9 +188,9 @@ test_suck_res( std::string fname ) {
 		task->restrict_to_repacking();
 		pack = protocols::minimization_packing::RotamerTrialsMover( sf, *task );
 
-		core::Real sckwts[] =	{ 0, 1.0, 5, 12.0, 35.5,  3.0, 1.5, 0.0 };
+		core::Real sckwts[] = { 0, 1.0, 5, 12.0, 35.5,  3.0, 1.5, 0.0 };
 		core::Real cc_wts[] = { 0, 1.0, 2,  5.0,  9.0, 16.0, 3.0, 0.0 };
-		for( int i = 1; i <= 7; ++i ) {
+		for ( int i = 1; i <= 7; ++i ) {
 			sf->set_weight( suck                 , sckwts[i] );
 			sf->set_weight( coordinate_constraint, cc_wts[i] );
 			// std::cerr << "pack" << std::endl;
@@ -200,15 +200,15 @@ test_suck_res( std::string fname ) {
 			// std::cerr << "score" << std::endl;
 			ps = compute_packing_score(pose,0);
 			std::cerr << "SC " << I(2,sucker_iter) << " "
-												 << I(2, i) << " "
-												 << F(7,3,sckwts[i]) << " "
-												 << F(7,3,cc_wts[i]) << " "
-											   << F(8,2,(*sfstd)(pose) ) << " "
-												 << F(8,2,(*sf)(pose) ) << " "
-												 << F(8,2,pose.energies().total_energies()[suck]) << " "
-												 << F(8,2,pose.energies().total_energies()[coordinate_constraint]) << " "
-												 << F(8,4,ps ) << " "
-												 << std::endl;
+				<< I(2, i) << " "
+				<< F(7,3,sckwts[i]) << " "
+				<< F(7,3,cc_wts[i]) << " "
+				<< F(8,2,(*sfstd)(pose) ) << " "
+				<< F(8,2,(*sf)(pose) ) << " "
+				<< F(8,2,pose.energies().total_energies()[suck]) << " "
+				<< F(8,2,pose.energies().total_energies()[coordinate_constraint]) << " "
+				<< F(8,4,ps ) << " "
+				<< std::endl;
 			// std::cerr << pose.energies() << std::endl;
 		}
 		// std::cerr << "rm cav" << std::endl;
@@ -227,112 +227,112 @@ test_suck_res( std::string fname ) {
 		// std::cerr << "score" << std::endl;
 		ps = compute_packing_score(pose,0);
 		std::cerr << "SC " << I(2,99) << " "
-											 << I(2,99) << " "
-											 << F(7,3,0.0) << " "
-											 << F(7,3,0.0) << " "
-										   << F(8,2,(*sfstd)(pose) ) << " "
-											 << F(8,2,(*sf)(pose) ) << " "
-											 << F(8,2,pose.energies().total_energies()[suck]) << " "
-											 << F(8,2,pose.energies().total_energies()[coordinate_constraint]) << " "
-											 << F(8,4,ps ) << " "
-											 << std::endl;
+			<< I(2,99) << " "
+			<< F(7,3,0.0) << " "
+			<< F(7,3,0.0) << " "
+			<< F(8,2,(*sfstd)(pose) ) << " "
+			<< F(8,2,(*sf)(pose) ) << " "
+			<< F(8,2,pose.energies().total_energies()[suck]) << " "
+			<< F(8,2,pose.energies().total_energies()[coordinate_constraint]) << " "
+			<< F(8,4,ps ) << " "
+			<< std::endl;
 
 		dump_pdb( pose, fname + "_with_suckers_after" + to_string<int>( sucker_iter ) + ".pdb" );
 
 	}
 	// std::cerr << "packing scores: " << pscores.size() << endl;
 	// for( int i = 1; 1 <= pscores.size(); ++i ) {
-	// 	std::cerr << pscores[i] << " ";
+	//  std::cerr << pscores[i] << " ";
 	// }
 	// std::cerr << std::endl;
 }
 
 // void
 // test_min_cav( string fname ){
-// 	using namespace core::scoring;
-// 	using namespace constraints;
+//  using namespace core::scoring;
+//  using namespace constraints;
 //
-// 	Pose pose;
-// 	core::import_pose::pose_from_file( pose, fname , core::import_pose::PDB_file);
+//  Pose pose;
+//  core::import_pose::pose_from_file( pose, fname , core::import_pose::PDB_file);
 //
-// 	kinematics::MoveMapOP mm = new kinematics::MoveMap;
-// 	mm->set_bb ( true );
-// 	mm->set_chi( true );
+//  kinematics::MoveMapOP mm = new kinematics::MoveMap;
+//  mm->set_bb ( true );
+//  mm->set_chi( true );
 //
 //   ScoreFunctionOP sf( get_score_function() );
-// 	sf->set_weight( atom_pair_constraint, 1.0 );
+//  sf->set_weight( atom_pair_constraint, 1.0 );
 //
 //   ScoreFunctionOP sfnoc( get_score_function() );
-// 	sfnoc->set_weight( atom_pair_constraint, 0.0 );
+//  sfnoc->set_weight( atom_pair_constraint, 0.0 );
 //
-// 	std::cerr << "get cavities" << std::endl;
-// 	CavBalls cbs = get_cavities( pose, 10.0, 150, 3.0 );
-// 	int Ncb = 5;
+//  std::cerr << "get cavities" << std::endl;
+//  CavBalls cbs = get_cavities( pose, 10.0, 150, 3.0 );
+//  int Ncb = 5;
 //
-// 	std::cerr << "make constraints" << std::endl;
-// 	ConstraintSetOP cstset = new ConstraintSet();
-// 	FuncOP h08 = new HarmonicFunc( 4.0, 6.0 );
-// 	for( int i = 1; i <= Ncb; ++i ) {
-// 		if( cbs[i].radius() < 1.8 ) {
-// 			Ncb = i-1;
-// 			break;
-// 		}
-// 		std::cerr << "adding cb" << cbs[i].str() << std::endl;
-// 		add_surrounding_constraints( pose, cbs[i].xyz(), cbs[i].radius()+3.2, h08, cstset );
-// 	}
-// 	pose.constraint_set( cstset );
+//  std::cerr << "make constraints" << std::endl;
+//  ConstraintSetOP cstset = new ConstraintSet();
+//  FuncOP h08 = new HarmonicFunc( 4.0, 6.0 );
+//  for( int i = 1; i <= Ncb; ++i ) {
+//   if( cbs[i].radius() < 1.8 ) {
+//    Ncb = i-1;
+//    break;
+//   }
+//   std::cerr << "adding cb" << cbs[i].str() << std::endl;
+//   add_surrounding_constraints( pose, cbs[i].xyz(), cbs[i].radius()+3.2, h08, cstset );
+//  }
+//  pose.constraint_set( cstset );
 //
-// 	protocols::minimization_packing::MinMover mincst( mm, sf   , "lbfgs_armijo_nonmonotone", 0.1, true );
-// 	mincst.min_options()->nblist_auto_update(true);
-// 	protocols::minimization_packing::MinMover minnoc( mm, sfnoc, "lbfgs_armijo_nonmonotone", 0.1, true );
-// 	minnoc.min_options()->nblist_auto_update(true);
+//  protocols::minimization_packing::MinMover mincst( mm, sf   , "lbfgs_armijo_nonmonotone", 0.1, true );
+//  mincst.min_options()->nblist_auto_update(true);
+//  protocols::minimization_packing::MinMover minnoc( mm, sfnoc, "lbfgs_armijo_nonmonotone", 0.1, true );
+//  minnoc.min_options()->nblist_auto_update(true);
 //
-// 	pack::task::PackerTaskOP task = pack::task::TaskFactory::create_packer_task( pose );
-// 	task->restrict_to_repacking();
-// 	// protocols::minimization_packing::PackRotamersMover packcst( sf, *task );
-// 	// protocols::minimization_packing::PackRotamersMover packnoc( sfnoc, *task );
-// 	protocols::minimization_packing::RotamerTrialsMover packcst( sf, *task );
-// 	protocols::minimization_packing::RotamerTrialsMover packnoc( sfnoc, *task );
+//  pack::task::PackerTaskOP task = pack::task::TaskFactory::create_packer_task( pose );
+//  task->restrict_to_repacking();
+//  // protocols::minimization_packing::PackRotamersMover packcst( sf, *task );
+//  // protocols::minimization_packing::PackRotamersMover packnoc( sfnoc, *task );
+//  protocols::minimization_packing::RotamerTrialsMover packcst( sf, *task );
+//  protocols::minimization_packing::RotamerTrialsMover packnoc( sfnoc, *task );
 //
-// 	ofstream out( (fname.substr(0,fname.size()-4)+"_before.pdb").c_str(), ios_base::app );
-// 	dump_pdb( pose, out );
-// 	for( int i = 1; i <= Ncb; ++i )
-// 		out << cbs[i].hetero_atom_line() << std::endl;
-// 	out.close();
+//  ofstream out( (fname.substr(0,fname.size()-4)+"_before.pdb").c_str(), ios_base::app );
+//  dump_pdb( pose, out );
+//  for( int i = 1; i <= Ncb; ++i )
+//   out << cbs[i].hetero_atom_line() << std::endl;
+//  out.close();
 //
-// 	Real CST_WEIGHT = 50.0;
-// 	Real FA_REP_WT  = sf->get_weight( fa_rep );
+//  Real CST_WEIGHT = 50.0;
+//  Real FA_REP_WT  = sf->get_weight( fa_rep );
 //
-// 	for( int i = 0; i <= 9; ++i ) {
-// 		std::cerr << "applying... " << i << " " << (*sf)(pose) << " " << (*sfnoc)(pose)
-//       	      << " SCORE FUNC: " << sf->get_weight(fa_rep) << " " << sf->get_weight(atom_pair_constraint)
-//     					<< " SCORE FUNC2: " << sfnoc->get_weight(fa_rep) << " " << sfnoc->get_weight(atom_pair_constraint) << std::endl;
-// 		sf->set_weight( atom_pair_constraint, ((Real)i) * 0.1 * CST_WEIGHT );
-// 		sf->set_weight( fa_rep, ((Real)(10-i)) * 0.10 * FA_REP_WT );
-// 		// std::cerr << "========================= about to pack =======================" << std::endl;
-// 		packcst.apply( pose );
-// 		// std::cerr << "========================== about to min =======================" << std::endl;
-// 		mincst.apply( pose );
-// 		// std::cerr << "============================ done min =========================" << std::endl;
-// 		dump_pdb( pose, fname.substr(0,fname.size()-4)+"_after"+string_of(i)+".pdb" );
-// 	}
-// 	for( int i = 10; i <= 19; ++i ) {
-// 		std::cerr << "applying... " << i << " " << (*sf)(pose) << " " << (*sfnoc)(pose)
-// 			        << " SCORE FUNC: " << sf->get_weight(fa_rep) << " " << sf->get_weight(atom_pair_constraint) << std::endl;
-// 		sf->set_weight( fa_rep, ((Real)(i-10)+1) * 0.1 * FA_REP_WT );
-// 		sf->set_weight( atom_pair_constraint, ((Real)(19-i)) * 0.1 * CST_WEIGHT );
-// 		// std::cerr << "========================= about to pack =======================" << std::endl;
-// 		packcst.apply( pose );
-// 		// std::cerr << "========================== about to min =======================" << std::endl;
-// 		mincst.apply( pose );
-// 		// std::cerr << "============================ done min =========================" << std::endl;
-// 		dump_pdb( pose, fname.substr(0,fname.size()-4)+"_after"+string_of(i)+".pdb" );
-// 	}
-// 	std::cerr << "applying... " << 20 << " " << (*sf)(pose) << " " << (*sfnoc)(pose) << std::endl;
-// 	packnoc.apply( pose );
-// 	minnoc.apply( pose );
-// 	dump_pdb( pose, fname.substr(0,fname.size()-4)+"_after20.pdb" );
-// 	std::cerr << "done... " << (*sf)(pose) << " " << (*sfnoc)(pose) << std::endl;
+//  for( int i = 0; i <= 9; ++i ) {
+//   std::cerr << "applying... " << i << " " << (*sf)(pose) << " " << (*sfnoc)(pose)
+//              << " SCORE FUNC: " << sf->get_weight(fa_rep) << " " << sf->get_weight(atom_pair_constraint)
+//          << " SCORE FUNC2: " << sfnoc->get_weight(fa_rep) << " " << sfnoc->get_weight(atom_pair_constraint) << std::endl;
+//   sf->set_weight( atom_pair_constraint, ((Real)i) * 0.1 * CST_WEIGHT );
+//   sf->set_weight( fa_rep, ((Real)(10-i)) * 0.10 * FA_REP_WT );
+//   // std::cerr << "========================= about to pack =======================" << std::endl;
+//   packcst.apply( pose );
+//   // std::cerr << "========================== about to min =======================" << std::endl;
+//   mincst.apply( pose );
+//   // std::cerr << "============================ done min =========================" << std::endl;
+//   dump_pdb( pose, fname.substr(0,fname.size()-4)+"_after"+string_of(i)+".pdb" );
+//  }
+//  for( int i = 10; i <= 19; ++i ) {
+//   std::cerr << "applying... " << i << " " << (*sf)(pose) << " " << (*sfnoc)(pose)
+//            << " SCORE FUNC: " << sf->get_weight(fa_rep) << " " << sf->get_weight(atom_pair_constraint) << std::endl;
+//   sf->set_weight( fa_rep, ((Real)(i-10)+1) * 0.1 * FA_REP_WT );
+//   sf->set_weight( atom_pair_constraint, ((Real)(19-i)) * 0.1 * CST_WEIGHT );
+//   // std::cerr << "========================= about to pack =======================" << std::endl;
+//   packcst.apply( pose );
+//   // std::cerr << "========================== about to min =======================" << std::endl;
+//   mincst.apply( pose );
+//   // std::cerr << "============================ done min =========================" << std::endl;
+//   dump_pdb( pose, fname.substr(0,fname.size()-4)+"_after"+string_of(i)+".pdb" );
+//  }
+//  std::cerr << "applying... " << 20 << " " << (*sf)(pose) << " " << (*sfnoc)(pose) << std::endl;
+//  packnoc.apply( pose );
+//  minnoc.apply( pose );
+//  dump_pdb( pose, fname.substr(0,fname.size()-4)+"_after20.pdb" );
+//  std::cerr << "done... " << (*sf)(pose) << " " << (*sfnoc)(pose) << std::endl;
 //
 // }
 
@@ -344,38 +344,38 @@ main (int argc, char *argv[])
 	try {
 
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-  using namespace core::scoring::packstat;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace utility;
+		using namespace core::scoring::packstat;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace utility;
 
-  // test_io();
+		// test_io();
 
-	// test_sasa_dots();
+		// test_sasa_dots();
 
-	if( option[ in::file::s ].user() ) {
-  	vector1<file::FileName> files( option[ in::file::s ]() );
-  	for( size_t i = 1; i <= files.size(); ++i ) {
-    	test_suck_res( files[i] );
-  	}
-	} else if( option[ in::file::l ].user() ) {
-  	vector1<file::FileName> files( option[ in::file::l ]() );
-  	for( size_t i = 1; i <= files.size(); ++i ) {
-			utility::io::izstream list( files[i] );
-			std::string fname;
-			while( list >> fname ) {
-				// std::cerr << "'" << fname << "'" << std::endl;
-    		test_suck_res( fname );
+		if ( option[ in::file::s ].user() ) {
+			vector1<file::FileName> files( option[ in::file::s ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
+				test_suck_res( files[i] );
 			}
-  	}
-	}
-	return 0;
+		} else if ( option[ in::file::l ].user() ) {
+			vector1<file::FileName> files( option[ in::file::l ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
+				utility::io::izstream list( files[i] );
+				std::string fname;
+				while ( list >> fname ) {
+					// std::cerr << "'" << fname << "'" << std::endl;
+					test_suck_res( fname );
+				}
+			}
+		}
+		return 0;
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

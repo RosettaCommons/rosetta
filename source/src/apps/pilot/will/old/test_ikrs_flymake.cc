@@ -203,7 +203,8 @@ void ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 				count++;
 				if ( clash/*||count!=20*/ ) { if ( clash ) count--;
 					for ( Size i=5; i<=pose.residue_type(rsd1).natoms(); ++i ) pose.set_xyz(AtomID(i,rsd1),M.transposed()*(pose.xyz(AtomID(i,rsd1))-CA)+CA);
-					continue;}
+					continue;
+				}
 
 				HitOP hitop = new Hit( pose.residue(rsd1), pose.residue(rsd2));
 				Hit & hit(*hitop);
@@ -722,7 +723,7 @@ int main (int argc, char *argv[]) {
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

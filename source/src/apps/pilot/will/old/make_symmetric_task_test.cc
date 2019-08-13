@@ -44,22 +44,22 @@ int main (int argc, char *argv[]) {
 
 	try {
 
-	devel::init(argc,argv);
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
-	utility::vector1<std::string> files = option[in::file::s]();
-	for(int ifile = 1; ifile <= (int)files.size(); ++ifile) {
-		core::pose::Pose pose;
-		core::import_pose::pose_from_file(pose,files[ifile], core::import_pose::PDB_file);
-		Size nres = pose.size();
-		Pose init(pose);
-		core::pose::symmetry::make_symmetric_pose(pose);
+		devel::init(argc,argv);
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
+		utility::vector1<std::string> files = option[in::file::s]();
+		for ( int ifile = 1; ifile <= (int)files.size(); ++ifile ) {
+			core::pose::Pose pose;
+			core::import_pose::pose_from_file(pose,files[ifile], core::import_pose::PDB_file);
+			Size nres = pose.size();
+			Pose init(pose);
+			core::pose::symmetry::make_symmetric_pose(pose);
 
-	}
-	return 0;
+		}
+		return 0;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

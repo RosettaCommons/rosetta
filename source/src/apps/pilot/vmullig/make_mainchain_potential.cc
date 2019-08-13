@@ -60,7 +60,7 @@ main( int argc, char * argv [] )
 		generator.run();
 		generator.write_last_generated_to_disk();
 	} catch ( utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

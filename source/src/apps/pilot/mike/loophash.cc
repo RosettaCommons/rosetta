@@ -569,18 +569,11 @@ main( int argc, char * argv [] )
 
 		// Normal mode with external loophash library
 		loop_hash_library->load_db();
-		try{
-			//protocols::jd2::JobDistributor::get_instance()->go( loop_hash_library );
-			protocols::jd2::JobDistributor::get_instance()->go( lh_sampler );
-		} catch (utility::excn::Exception& excn ) {
-			std::cerr << "Exception: " << std::endl;
-			excn.show( std::cerr );
-			std::cout << "Exception: " << std::endl;
-			excn.show( TR.Info ); //so its also seen in a >LOG file
-		}
+		//protocols::jd2::JobDistributor::get_instance()->go( loop_hash_library );
+		protocols::jd2::JobDistributor::get_instance()->go( lh_sampler );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

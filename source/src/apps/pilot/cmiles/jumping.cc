@@ -29,23 +29,23 @@
 int main(int argc, char* argv[]) {
 	try {
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  devel::init(argc, argv);
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		devel::init(argc, argv);
 
-  core::pose::PoseCOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
+		core::pose::PoseCOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
 
-  core::Size i = option[OptionKeys::cmiles::jumping::resi]();
-  core::Size j = option[OptionKeys::cmiles::jumping::resj]();
+		core::Size i = option[OptionKeys::cmiles::jumping::resi]();
+		core::Size j = option[OptionKeys::cmiles::jumping::resj]();
 
-  core::Size orientation, pleating;
-  protocols::jumping::get_pleating(*pose, i, j, orientation, pleating);
+		core::Size orientation, pleating;
+		protocols::jumping::get_pleating(*pose, i, j, orientation, pleating);
 
-  std::cout << "orientation: " << orientation << std::endl;
-  std::cout << "pleating: " << pleating << std::endl;
+		std::cout << "orientation: " << orientation << std::endl;
+		std::cout << "pleating: " << pleating << std::endl;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

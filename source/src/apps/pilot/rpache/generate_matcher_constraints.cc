@@ -339,7 +339,7 @@ int main( int argc, char * argv [] )
 		TR << "torsion_B " << numeric::constants::d::radians_to_degrees * numeric::dihedral_radians( vu3, vu2, vu1, vd1 ) << std::endl;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

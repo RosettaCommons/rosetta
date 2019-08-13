@@ -63,12 +63,7 @@ void* star_main(void*) {
 	check_required();
 	MoverOP mover( new StarAbinitio() );
 
-	try {
-		JobDistributor::get_instance()->go(mover);
-	} catch (utility::excn::Exception& e) {
-		std::cerr << "Exception: " << std::endl;
-		e.show(std::cerr);
-	}
+	JobDistributor::get_instance()->go(mover);
 	return nullptr;
 }
 
@@ -77,7 +72,7 @@ int main(int argc, char* argv[]) {
 		devel::init(argc, argv);
 		protocols::viewer::viewer_main(star_main);
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

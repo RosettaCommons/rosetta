@@ -18,22 +18,22 @@
 
 int main(int argc, char* argv[])
 {
-    try {
-	devel::init(argc,argv);
+	try {
+		devel::init(argc,argv);
 
-	numeric::RocCurve roc;
+		numeric::RocCurve roc;
 
-	roc.insert_point(false,true,"a",0.2);
-	roc.insert_point(true,true,"b",0.1);
-	roc.insert_point(true,false,"c",0.0);
+		roc.insert_point(false,true,"a",0.2);
+		roc.insert_point(true,true,"b",0.1);
+		roc.insert_point(true,false,"c",0.0);
 
-	roc.generate_roc_curve();
-	roc.print_roc_curve();
-	std::cout <<roc.calculate_auc() <<std::endl;
+		roc.generate_roc_curve();
+		roc.print_roc_curve();
+		std::cout <<roc.calculate_auc() <<std::endl;
 
-    } catch (utility::excn::Exception const & e ) {
-                             std::cout << "caught exception " << e.msg() << std::endl;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-                                }
-       return 0;
+	}
+	return 0;
 }

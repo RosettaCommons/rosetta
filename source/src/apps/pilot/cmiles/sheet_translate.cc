@@ -27,52 +27,52 @@
 #include <protocols/viewer/viewers.hh>
 
 void run(protocols::moves::MoverOP base_mover, core::pose::Pose* pose) {
-  using core::scoring::ScoreFunctionFactory;
-  using protocols::simple_moves::rational_mc::RationalMonteCarlo;
-  assert(pose);
+	using core::scoring::ScoreFunctionFactory;
+	using protocols::simple_moves::rational_mc::RationalMonteCarlo;
+	assert(pose);
 
-  RationalMonteCarlo mc(
-      base_mover,
-      ScoreFunctionFactory::create_score_function("score0"),
-      800,
-      10.0,
-      false);
+	RationalMonteCarlo mc(
+		base_mover,
+		ScoreFunctionFactory::create_score_function("score0"),
+		800,
+		10.0,
+		false);
 
-  mc.apply(*pose);
+	mc.apply(*pose);
 }
 
 void* viewer_main(void* ) {
-  using core::pose::Pose;
-  using protocols::loops::Loop;
-  using protocols::moves::MoverOP;
-  using protocols::moves::SheetTranslate;
+	using core::pose::Pose;
+	using protocols::loops::Loop;
+	using protocols::moves::MoverOP;
+	using protocols::moves::SheetTranslate;
 
-  Pose input  = *core::import_pose::pose_from_file("/work/tex/casp9_benchmark/meval/fast_cm/T0552/2oxgZ_1.pdb_full_length.pdb", core::import_pose::PDB_file);
-  Pose output = *core::import_pose::pose_from_file("/work/tex/casp9_benchmark/meval/fast_cm/T0552/2oxgZ_1.pdb_full_length.pdb", core::import_pose::PDB_file);
+	Pose input  = *core::import_pose::pose_from_file("/work/tex/casp9_benchmark/meval/fast_cm/T0552/2oxgZ_1.pdb_full_length.pdb", core::import_pose::PDB_file);
+	Pose output = *core::import_pose::pose_from_file("/work/tex/casp9_benchmark/meval/fast_cm/T0552/2oxgZ_1.pdb_full_length.pdb", core::import_pose::PDB_file);
 
-  core::util::switch_to_residue_type_set(input, core::chemical::CENTROID);
-  core::util::switch_to_residue_type_set(output, core::chemical::CENTROID);
+	core::util::switch_to_residue_type_set(input, core::chemical::CENTROID);
+	core::util::switch_to_residue_type_set(output, core::chemical::CENTROID);
 
-  // Translate the specified sheet
-  Loop sheet(51, 53);
-  double dist = 0.01;
+	// Translate the specified sheet
+	Loop sheet(51, 53);
+	double dist = 0.01;
 
-  MoverOP fw_mover = new SheetTranslate(sheet, +dist);
-  MoverOP bw_mover = new SheetTranslate(sheet, -dist);
+	MoverOP fw_mover = new SheetTranslate(sheet, +dist);
+	MoverOP bw_mover = new SheetTranslate(sheet, -dist);
 
-  for (unsigned i = 1; i <= 10; ++i) {
-    run(fw_mover, &output);
-    run(bw_mover, &output);
-  }
+	for ( unsigned i = 1; i <= 10; ++i ) {
+		run(fw_mover, &output);
+		run(bw_mover, &output);
+	}
 }
 
 int main(int argc, char* argv[]) {
-    try{
-  devel::init(argc, argv);
-  protocols::viewer::viewer_main(viewer_main);
-    } catch (utility::excn::Exception const & e ) {
-                             std::cout << "caught exception " << e.msg() << std::endl;
+	try{
+		devel::init(argc, argv);
+		protocols::viewer::viewer_main(viewer_main);
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-                                }
-       return 0;
+	}
+	return 0;
 }

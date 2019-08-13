@@ -78,6 +78,10 @@ public:
 		msg_ = msg_ + '\n' + str;
 	}
 
+	void prepend_to_msg( std::string const& str ) {
+		msg_ = str + '\n' + msg_;
+	}
+
 	std::string const & file() { return file_; }
 	int line() { return line_; }
 	std::string const & traceback() { return traceback_; }

@@ -166,7 +166,7 @@ using namespace id;
 ScoreFunction&
 reduce_fa_rep(float fraction_fa_rep, ScoreFunction & s){
 	s.set_weight( core::scoring::score_type_from_name("fa_rep"),
-								s.get_weight(core::scoring::score_type_from_name("fa_rep"))*fraction_fa_rep);
+		s.get_weight(core::scoring::score_type_from_name("fa_rep"))*fraction_fa_rep);
 	return s;
 }
 
@@ -175,31 +175,31 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 	//create constraints for all residues
 	//type: HARMONIC
 	//static float const CA_cutoff(9.0);
-	if(!basic::options::option[OptionKeys::ddg::sc_min_only]()){
-	int nres = pose.size();
-	if(basic::options::option[basic::options::OptionKeys::constraints::cst_file].user()){
-		core::scoring::constraints::ConstraintSetOP cstset(new
-																											 core::scoring::constraints::ConstraintSet());
-		cstset = core::scoring::constraints::ConstraintIO::read_constraints(
-																																				option[basic::options::OptionKeys::constraints::cst_file][1],cstset,
-																																				pose);
-		pose.constraint_set(cstset);
-	}else{
-		for(int i = 1; i <= nres; i++){
-			Vector const CA_i( pose.residue(i).xyz(" CA "));
-			for(int j = 1; j < i; j++){
-				Vector const CA_j(pose.residue(j).xyz(" CA "));
-				Real const CA_dist = (CA_i - CA_j).length();
-				if(CA_dist < CA_cutoff){
-					std::cout << "c-alpha constraints added to residues " << i << " and " << j << " dist " << CA_dist << " and tol " << cst_tol << std::endl;
-					ConstraintCOP cst(new AtomPairConstraint( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j),new HarmonicFunc(CA_dist, cst_tol)));
-					pose.add_constraint(cst);
+	if ( !basic::options::option[OptionKeys::ddg::sc_min_only]() ) {
+		int nres = pose.size();
+		if ( basic::options::option[basic::options::OptionKeys::constraints::cst_file].user() ) {
+			core::scoring::constraints::ConstraintSetOP cstset(new
+				core::scoring::constraints::ConstraintSet());
+			cstset = core::scoring::constraints::ConstraintIO::read_constraints(
+				option[basic::options::OptionKeys::constraints::cst_file][1],cstset,
+				pose);
+			pose.constraint_set(cstset);
+		} else {
+			for ( int i = 1; i <= nres; i++ ) {
+				Vector const CA_i( pose.residue(i).xyz(" CA "));
+				for ( int j = 1; j < i; j++ ) {
+					Vector const CA_j(pose.residue(j).xyz(" CA "));
+					Real const CA_dist = (CA_i - CA_j).length();
+					if ( CA_dist < CA_cutoff ) {
+						std::cout << "c-alpha constraints added to residues " << i << " and " << j << " dist " << CA_dist << " and tol " << cst_tol << std::endl;
+						ConstraintCOP cst(new AtomPairConstraint( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j),new HarmonicFunc(CA_dist, cst_tol)));
+						pose.add_constraint(cst);
+					}
 				}
 			}
 		}
-	}
 
-	s.set_weight(atom_pair_constraint, basic::options::option[OptionKeys::ddg::constraint_weight]());
+		s.set_weight(atom_pair_constraint, basic::options::option[OptionKeys::ddg::constraint_weight]());
 	}
 }
 
@@ -215,7 +215,7 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 	bool write_silent_file = false;
 	core::io::silent::SilentFileData sfd;
 	std::string silentfilename="";
-	if( basic::options::option[out::file::silent].user() ){
+	if ( basic::options::option[out::file::silent].user() ) {
 		sfd.set_filename(basic::options::option[out::file::silent]());
 		silentfilename=basic::options::option[out::file::silent]();
 		write_silent_file = true;
@@ -223,26 +223,26 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 
 	struct stat stFileInfo;
 	int file_stat = stat((output_directory + "/" + out_pdb_prefix+"."+output_tag+"_0001.pdb").c_str(),
-											 &stFileInfo);
-	if(file_stat != 0){
+		&stFileInfo);
+	if ( file_stat != 0 ) {
 		core::optimization::AtomTreeMinimizer min_struc;
 		float minimizer_tol = 0.000001;
 
 		core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", minimizer_tol, true /*use_nb_list*/,
-																									false /*deriv_check_in*/, true /*deriv_check_verbose_in*/);
+			false /*deriv_check_in*/, true /*deriv_check_verbose_in*/);
 		options.nblist_auto_update( true );
 		options.max_iter(5000); //otherwise, they don't seem to converge
 		core::kinematics::MoveMap mm;
 		mm.set_bb(true);
 		mm.set_chi(true);
-		if(basic::options::option[OptionKeys::ddg::sc_min_only]()){
+		if ( basic::options::option[OptionKeys::ddg::sc_min_only]() ) {
 			minimizer_tol = 0.0001;
 			mm.set_bb(false);
 		}
 		s.show(std::cout, p);
 
 
-		if(basic::options::option[OptionKeys::ddg::ramp_repulsive]()){
+		if ( basic::options::option[OptionKeys::ddg::ramp_repulsive]() ) {
 			//set scorefxn fa_rep to 1/10 of original weight and then minimize
 			ScoreFunction one_tenth_orig(s);
 			reduce_fa_rep(0.1,one_tenth_orig);
@@ -263,34 +263,34 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 
 		min_struc.run(p,mm,s,options);
 
-		if(basic::options::option[OptionKeys::ddg::initial_repack]()){
+		if ( basic::options::option[OptionKeys::ddg::initial_repack]() ) {
 			//repack
-		std::cout << "repacking" << std::endl;
+			std::cout << "repacking" << std::endl;
 			ScoreFunctionOP spack = ScoreFunctionFactory::create_score_function("soft_rep_design.wts");
 			pack::task::PackerTaskOP repack(pack::task::TaskFactory::create_packer_task(p));
 			repack->restrict_to_repacking();
-			for(unsigned int i = 1; i <= p.size(); i++){
-			repack->nonconst_residue_task(i).or_include_current(true);
-			repack->nonconst_residue_task(i).or_ex1(true);
-			repack->nonconst_residue_task(i).or_ex2(true);
+			for ( unsigned int i = 1; i <= p.size(); i++ ) {
+				repack->nonconst_residue_task(i).or_include_current(true);
+				repack->nonconst_residue_task(i).or_ex1(true);
+				repack->nonconst_residue_task(i).or_ex2(true);
 			}
 			pack::pack_rotamers(p,(*spack),repack);
 		}
 
 		s.show(std::cout, p);
-		while( std::abs(s(p)-s(before)) > 1 ){ //make sure furhter minimizations lead to same answer
+		while ( std::abs(s(p)-s(before)) > 1 ) { //make sure furhter minimizations lead to same answer
 			std::cout << "running another iteration of minimization. difference is: " << (s(p)-s(before)) << std::endl;
 			before = p;
 			min_struc.run(p,mm,s,options);
 		}
 
-		if(write_silent_file){
+		if ( write_silent_file ) {
 			core::io::silent::BinarySilentStruct ss(p,(out_pdb_prefix+"."+output_tag+"_0001.pdb"));
 			sfd.write_silent_struct(ss,silentfilename,false);
-		}else{
+		} else {
 			p.dump_pdb(output_directory + "/" + out_pdb_prefix+"."+output_tag+"_0001.pdb");
 		}
-	}else{
+	} else {
 		std::cout << "file " << output_directory + "/" + out_pdb_prefix+"."+output_tag+"_0001.pdb" << " already exists! skipping" << std::endl;
 	}
 }
@@ -298,13 +298,13 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 void
 optimize_pose(pose::Pose & p, ScoreFunctionOP scorefxn,std::string output_tag){
 	Real cst_tol;
-	if(basic::options::option[OptionKeys::ddg::harmonic_ca_tether].user()){
+	if ( basic::options::option[OptionKeys::ddg::harmonic_ca_tether].user() ) {
 		cst_tol = basic::options::option[ OptionKeys::ddg::harmonic_ca_tether ]();
-	}else{
+	} else {
 		cst_tol = 0.5;
 	}
-	if(!basic::options::option[OptionKeys::ddg::no_constraints].user() || //flag not present
-		 !basic::options::option[OptionKeys::ddg::no_constraints]()){ //flag set to false
+	if ( !basic::options::option[OptionKeys::ddg::no_constraints].user() || //flag not present
+			!basic::options::option[OptionKeys::ddg::no_constraints]() ) { //flag set to false
 		setup_ca_constraints(p,(*scorefxn),9.0,cst_tol);
 	}
 	minimize_with_constraints(p, (*scorefxn),output_tag);
@@ -313,9 +313,9 @@ optimize_pose(pose::Pose & p, ScoreFunctionOP scorefxn,std::string output_tag){
 bool
 already_minimized(std::string query,utility::vector1<std::string> check){
 	//std::cout << "query is " << query << std::endl;
-	for(unsigned int i=1;i <= check.size(); i++){
+	for ( unsigned int i=1; i <= check.size(); i++ ) {
 		//std::cout << "DEBUG: tag" << check[i] << std::endl;
-		if(check[i].compare(query) == 0){
+		if ( check[i].compare(query) == 0 ) {
 			//std::cout << "query " << query << " totall matches " << check[i] << std::endl;
 			return true;
 		}
@@ -326,98 +326,98 @@ already_minimized(std::string query,utility::vector1<std::string> check){
 int
 main( int argc, char* argv [] )
 {
-    try {
-	using namespace core;
-	using namespace core::pose;
-	using namespace utility;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::scoring;
-	using namespace core::scoring::constraints;
-	using namespace core::io::silent;
-	// options, random initialization. MAKE SURE THIS COMES BEFORE OPTIONS
-	devel::init( argc, argv );
+	try {
+		using namespace core;
+		using namespace core::pose;
+		using namespace utility;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::scoring;
+		using namespace core::scoring::constraints;
+		using namespace core::io::silent;
+		// options, random initialization. MAKE SURE THIS COMES BEFORE OPTIONS
+		devel::init( argc, argv );
 
-	core::chemical::ResidueTypeSetCAP rsd_set;
-	if ( option[ in::file::fullatom ]() ) {
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	} else {
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-	}
-
-	//	io::pdb::pose_from_file( pose, options::start_file() , core::import_pose::PDB_file); // gets filename from -s option
-
-	ScoreFunctionOP scorefxn = get_score_function();
-
-	if(basic::options::option[score::patch].user()){
-		scorefxn->apply_patch_from_file(basic::options::option[score::patch]);
-	}
-	bool read_from_silent = false;
-	vector1<std::string> files;
-	//	utility::vector1<std::string> tags;
-	utility::vector1<file::FileName> list;
-	if(basic::options::option[in::file::s].user()){
-		std::cout << "using -s option" << std::endl;
-		list = option[in::file::s]();
-	}else if( option[in::file::l].user()){
-		std::cout << "using -l option " << std::endl;
-		list = basic::options::option[ in::file::l ]();
-	}else if(option[in::file::silent].user()){
-		read_from_silent = true;
-		//list = basic::options::option[in::file::silent]();
-	}
-	for(unsigned int h=1;h<=list.size();h++){
-		utility::io::izstream pdbs(list[h]);
-		std::string fname;
-		while(pdbs >> fname){
-			files.push_back(fname);
+		core::chemical::ResidueTypeSetCAP rsd_set;
+		if ( option[ in::file::fullatom ]() ) {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		} else {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 		}
-	}
-	if(read_from_silent){
-		files.push_back(*(option[in::file::silent]().begin()));
-	}
 
-	utility::vector1<std::string> tags_done;
-	//if outputting silent files as well:
-	if(basic::options::option[out::file::silent].user()){
-		std::string out = basic::options::option[out::file::silent]();
-		SilentFileData out_sfd(out,false,false,"binary");
-		if(utility::file::file_exists(out)){
-			out_sfd.read_file(out);
-			tags_done = out_sfd.tags();
+		// io::pdb::pose_from_file( pose, options::start_file() , core::import_pose::PDB_file); // gets filename from -s option
+
+		ScoreFunctionOP scorefxn = get_score_function();
+
+		if ( basic::options::option[score::patch].user() ) {
+			scorefxn->apply_patch_from_file(basic::options::option[score::patch]);
 		}
-	}
-	std::string prefix = basic::options::option[OptionKeys::ddg::out_pdb_prefix ]();
-	for(unsigned int f=1; f<=files.size();f++){
-		pose::Pose pose;
-		std::cout << "examining file: " << files[f] << std::endl;
-		if(read_from_silent){
-			SilentFileData in_sfd(files[f],false,false,"binary");
-			in_sfd.read_file(files[f]);
-			utility::vector1<std::string> tags = in_sfd.tags();
-			for(unsigned int t=1;t <= tags.size(); t++){
-				if(!already_minimized(prefix+"."+tags[t]+"_0001",tags_done)){
-					SilentStructOP ss = in_sfd[tags[t]];
-					ss->fill_pose(pose,*rsd_set);
-					scorefxn->show(std::cout, pose);
-					std::cout << "tag assigned to pose: " << ss->decoy_tag() << std::endl;
-					optimize_pose(pose,scorefxn,ss->decoy_tag());
-				}else{
-					std::cout << "tag " << tags[t] << " exists in outfile. skipping!" << std::endl;
-				}
+		bool read_from_silent = false;
+		vector1<std::string> files;
+		// utility::vector1<std::string> tags;
+		utility::vector1<file::FileName> list;
+		if ( basic::options::option[in::file::s].user() ) {
+			std::cout << "using -s option" << std::endl;
+			list = option[in::file::s]();
+		} else if ( option[in::file::l].user() ) {
+			std::cout << "using -l option " << std::endl;
+			list = basic::options::option[ in::file::l ]();
+		} else if ( option[in::file::silent].user() ) {
+			read_from_silent = true;
+			//list = basic::options::option[in::file::silent]();
+		}
+		for ( unsigned int h=1; h<=list.size(); h++ ) {
+			utility::io::izstream pdbs(list[h]);
+			std::string fname;
+			while ( pdbs >> fname ) {
+				files.push_back(fname);
 			}
-		}else{
-			core::import_pose::pose_from_file(pose, files[f], core::import_pose::PDB_file);
-			std::string output = pose.pdb_info()->name();
-			optimize_pose(pose,scorefxn,(output.erase(output.find(".pdb",0))));
-			//create constraints for all residues
-			//type: HARMONIC
-			//then minimize
 		}
+		if ( read_from_silent ) {
+			files.push_back(*(option[in::file::silent]().begin()));
+		}
+
+		utility::vector1<std::string> tags_done;
+		//if outputting silent files as well:
+		if ( basic::options::option[out::file::silent].user() ) {
+			std::string out = basic::options::option[out::file::silent]();
+			SilentFileData out_sfd(out,false,false,"binary");
+			if ( utility::file::file_exists(out) ) {
+				out_sfd.read_file(out);
+				tags_done = out_sfd.tags();
+			}
+		}
+		std::string prefix = basic::options::option[OptionKeys::ddg::out_pdb_prefix ]();
+		for ( unsigned int f=1; f<=files.size(); f++ ) {
+			pose::Pose pose;
+			std::cout << "examining file: " << files[f] << std::endl;
+			if ( read_from_silent ) {
+				SilentFileData in_sfd(files[f],false,false,"binary");
+				in_sfd.read_file(files[f]);
+				utility::vector1<std::string> tags = in_sfd.tags();
+				for ( unsigned int t=1; t <= tags.size(); t++ ) {
+					if ( !already_minimized(prefix+"."+tags[t]+"_0001",tags_done) ) {
+						SilentStructOP ss = in_sfd[tags[t]];
+						ss->fill_pose(pose,*rsd_set);
+						scorefxn->show(std::cout, pose);
+						std::cout << "tag assigned to pose: " << ss->decoy_tag() << std::endl;
+						optimize_pose(pose,scorefxn,ss->decoy_tag());
+					} else {
+						std::cout << "tag " << tags[t] << " exists in outfile. skipping!" << std::endl;
+					}
+				}
+			} else {
+				core::import_pose::pose_from_file(pose, files[f], core::import_pose::PDB_file);
+				std::string output = pose.pdb_info()->name();
+				optimize_pose(pose,scorefxn,(output.erase(output.find(".pdb",0))));
+				//create constraints for all residues
+				//type: HARMONIC
+				//then minimize
+			}
+		}
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
 	}
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	return 0;
 }

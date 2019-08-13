@@ -47,7 +47,7 @@ void ThisApplication::register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	NEW_OPT( fragment_file_in, "fragment file in", "" );
-  NEW_OPT( fragment_file_out, "fragment file out", "" );
+	NEW_OPT( fragment_file_out, "fragment file out", "" );
 }
 
 int main( int argc, char * argv [] ) {
@@ -59,10 +59,10 @@ int main( int argc, char * argv [] ) {
 		using namespace ObjexxFCL::format;
 		ThisApplication::register_options();
 		devel::init(argc, argv);
-    FragSetOP orig_frags = FragmentIO().read_data( option[ fragment_file_in ]() );
+		FragSetOP orig_frags = FragmentIO().read_data( option[ fragment_file_in ]() );
 		FragmentIO().write_data(option[fragment_file_out](),*orig_frags);
- 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
 	}
 	return 0;

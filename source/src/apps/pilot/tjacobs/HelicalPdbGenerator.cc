@@ -35,65 +35,65 @@ class HelicalPdbGeneratorMover : public protocols::moves::Mover {
 
 public:
 
-  HelicalPdbGeneratorMover();
+	HelicalPdbGeneratorMover();
 
-  virtual void apply( core::pose::Pose& pose );
+	virtual void apply( core::pose::Pose& pose );
 
-  virtual protocols::moves::MoverOP clone() const {
-    return new HelicalPdbGeneratorMover( *this );
-  }
+	virtual protocols::moves::MoverOP clone() const {
+		return new HelicalPdbGeneratorMover( *this );
+	}
 
-  virtual
-  std::string
-  get_name() const {
-    return "HelicalPdbGeneratorMover";
-  }
+	virtual
+	std::string
+	get_name() const {
+		return "HelicalPdbGeneratorMover";
+	}
 
-  virtual protocols::moves::MoverOP fresh_instance() const {
-    return new HelicalPdbGeneratorMover();
-  }
+	virtual protocols::moves::MoverOP fresh_instance() const {
+		return new HelicalPdbGeneratorMover();
+	}
 
 };
 
 HelicalPdbGeneratorMover::HelicalPdbGeneratorMover() {}
 
 void HelicalPdbGeneratorMover::apply(core::pose::Pose & pose){
-  //set up dssp info - necessary in order to find helices based on secondary structure
+	//set up dssp info - necessary in order to find helices based on secondary structure
 	//....duh
 
-  if(pose.size() > 0){
+	if ( pose.size() > 0 ) {
 
-    core::scoring::dssp::Dssp dssp( pose );
-    dssp.insert_ss_into_pose( pose );
+		core::scoring::dssp::Dssp dssp( pose );
+		dssp.insert_ss_into_pose( pose );
 
-    utility::vector1< std::pair< Size,Size > > helix_endpts;
-    for(Size i=1; i<=pose.size(); i++){
+		utility::vector1< std::pair< Size,Size > > helix_endpts;
+		for ( Size i=1; i<=pose.size(); i++ ) {
 
-          //find all the strands in the structure
-          Size helix_start(0);
-          Size helix_end(0);
-          if(pose.secstruct(i) == 'H'){
+			//find all the strands in the structure
+			Size helix_start(0);
+			Size helix_end(0);
+			if ( pose.secstruct(i) == 'H' ) {
 
-              helix_start=i;
-              while(i<=pose.size() && pose.secstruct(i)=='H'){
-                  i++;
-              }
-              helix_end=i;
+				helix_start=i;
+				while ( i<=pose.size() && pose.secstruct(i)=='H' ) {
+					i++;
+				}
+				helix_end=i;
 
-              helix_endpts.push_back(std::make_pair(helix_start, helix_end));
-          }
-      }
+				helix_endpts.push_back(std::make_pair(helix_start, helix_end));
+			}
+		}
 
-    Pose outputPose;
-    for(Size i=1; i<=helix_endpts.size(); ++i){
-        outputPose.append_residue_by_jump(pose.residue(helix_endpts[i].first), outputPose.size(), "", "", false);
-        for(Size j=helix_endpts[i].first; j<=helix_endpts[i].second; ++j){
-            outputPose.append_residue_by_bond(pose.residue(j));
-        }
-    }
+		Pose outputPose;
+		for ( Size i=1; i<=helix_endpts.size(); ++i ) {
+			outputPose.append_residue_by_jump(pose.residue(helix_endpts[i].first), outputPose.size(), "", "", false);
+			for ( Size j=helix_endpts[i].first; j<=helix_endpts[i].second; ++j ) {
+				outputPose.append_residue_by_bond(pose.residue(j));
+			}
+		}
 
-    pose = outputPose;
-  }
+		pose = outputPose;
+	}
 }
 
 int
@@ -102,19 +102,19 @@ main( int argc, char * argv [] )
 
 	try {
 
-  using namespace std;
-  using namespace utility;
-  using namespace core;
+		using namespace std;
+		using namespace utility;
+		using namespace core;
 
-  // initialize core
-  devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-  protocols::jd2::JobDistributor::get_instance()->go( new HelicalPdbGeneratorMover() );
+		protocols::jd2::JobDistributor::get_instance()->go( new HelicalPdbGeneratorMover() );
 
-  std::cout << "Done! -------------------------------\n";
+		std::cout << "Done! -------------------------------\n";
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

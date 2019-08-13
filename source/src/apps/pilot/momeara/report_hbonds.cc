@@ -516,7 +516,7 @@ int main( int argc, char* argv[] )
 		devel::init(argc, argv);
 		JobDistributor::get_instance()->go(new HBondReporter);
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 }

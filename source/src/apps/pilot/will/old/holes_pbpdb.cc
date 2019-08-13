@@ -64,9 +64,9 @@ void test( std::string fname ) {
 
 	// Real m,a,d = 0.00001;
 	// while( d < 1.0 ) {
-	// 	test_deriv(d,m,a);
-	// 	std::cout << d << " " << m << " " << a << std::endl;
-	// 	d *= 10;
+	//  test_deriv(d,m,a);
+	//  std::cout << d << " " << m << " " << a << std::endl;
+	//  d *= 10;
 	// }
 	// return;
 
@@ -95,37 +95,37 @@ main (int argc, char *argv[])
 	try {
 
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace utility;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace utility;
 
-	// test_gradient();
-	// return 0;
+		// test_gradient();
+		// return 0;
 
-	if( option[ in::file::s ].user() ) {
-  	vector1<file::FileName> files( option[ in::file::s ]() );
-  	for( size_t i = 1; i <= files.size(); ++i ) {
-    	test( files[i] );
-  	}
-	} else if( option[ in::file::l ].user() ) {
-  		vector1<file::FileName> files( option[ in::file::l ]() );
-  		for( size_t i = 1; i <= files.size(); ++i ) {
-			utility::io::izstream list( files[i] );
-			std::string fname;
-			while( list >> fname ) {
-				// std::cerr << "'" << fname << "'" << std::endl;
-    		test( fname );
+		if ( option[ in::file::s ].user() ) {
+			vector1<file::FileName> files( option[ in::file::s ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
+				test( files[i] );
 			}
-  		}
-	}
+		} else if ( option[ in::file::l ].user() ) {
+			vector1<file::FileName> files( option[ in::file::l ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
+				utility::io::izstream list( files[i] );
+				std::string fname;
+				while ( list >> fname ) {
+					// std::cerr << "'" << fname << "'" << std::endl;
+					test( fname );
+				}
+			}
+		}
 
-	return 0;
+		return 0;
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

@@ -137,7 +137,7 @@ int main( int argc, char * argv [] ) {
 			std::cout<<"RMSD:"<<"\t"<<inp_ligand<<"\t"<<ref_ligand<<"\t"<<rmsd<<std::endl;
 		}
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

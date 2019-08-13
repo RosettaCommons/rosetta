@@ -286,169 +286,170 @@ int
 main( int argc, char * argv [] ) {
 	try {
 
-	using core::Size;
-	using core::Real;
-	using utility::vector1;
-	using std::string;
-	using namespace core::scoring::constraints;
-	using namespace basic::options::OptionKeys;
-	using namespace basic::options;
-	devel::init( argc, argv );
+		using core::Size;
+		using core::Real;
+		using utility::vector1;
+		using std::string;
+		using namespace core::scoring::constraints;
+		using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		devel::init( argc, argv );
 
-	string const atom_name( "CA" );
-	int output_width = 16;
-	int precision = 4;
-	Real dist_upper( 10.0 );
-	Size const min_seqsep( 3 );
+		string const atom_name( "CA" );
+		int output_width = 16;
+		int precision = 4;
+		Real dist_upper( 10.0 );
+		Size const min_seqsep( 3 );
 
-	utility::vector1< core::Real > dist_thresholds;
-	utility::vector1< core::Real > torsion_thresholds;
-	if ( option[ james::dist_thresholds ].user() ) {
-		dist_thresholds = option[ james::dist_thresholds ]();
-	} else {
-		dist_thresholds.clear();
-		dist_thresholds.push_back(  1.0 );
-		dist_thresholds.push_back(  2.0 );
-		dist_thresholds.push_back(  5.0 );
-	}
-	if ( option[ james::torsion_thresholds ].user() ) {
-		torsion_thresholds = option[ james::torsion_thresholds ]();
-	} else {
-		torsion_thresholds.clear();
-		torsion_thresholds.push_back(  15.0 );
-		torsion_thresholds.push_back(  30.0 );
-		torsion_thresholds.push_back(  60.0 );
-		torsion_thresholds.push_back(  90.0 );
-	}
+		utility::vector1< core::Real > dist_thresholds;
+		utility::vector1< core::Real > torsion_thresholds;
+		if ( option[ james::dist_thresholds ].user() ) {
+			dist_thresholds = option[ james::dist_thresholds ]();
+		} else {
+			dist_thresholds.clear();
+			dist_thresholds.push_back(  1.0 );
+			dist_thresholds.push_back(  2.0 );
+			dist_thresholds.push_back(  5.0 );
+		}
+		if ( option[ james::torsion_thresholds ].user() ) {
+			torsion_thresholds = option[ james::torsion_thresholds ]();
+		} else {
+			torsion_thresholds.clear();
+			torsion_thresholds.push_back(  15.0 );
+			torsion_thresholds.push_back(  30.0 );
+			torsion_thresholds.push_back(  60.0 );
+			torsion_thresholds.push_back(  90.0 );
+		}
 
-	// setup residue types
-	core::chemical::ResidueTypeSetCAP rsd_set =
-		core::chemical::ChemicalManager::get_instance()->residue_type_set(
+		// setup residue types
+		core::chemical::ResidueTypeSetCAP rsd_set =
+			core::chemical::ChemicalManager::get_instance()->residue_type_set(
 			option[ in::file::residue_type_set ]()
 		);
 
-	// read in a native pose
-	core::pose::Pose native_pose;
-	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_file(
-			native_pose,
-			*rsd_set,
-			option[ in::file::native ]()
+		// read in a native pose
+		core::pose::Pose native_pose;
+		if ( option[ in::file::native ].user() ) {
+			core::import_pose::pose_from_file(
+				native_pose,
+				*rsd_set,
+				option[ in::file::native ]()
+			);
+		} else {
+			utility_exit_with_message( "Error: must provide in::file::native!" );
+		}
+		string outfile_prefix = option[ out::file::silent ]();
+		string dist_outfile = outfile_prefix + ".dist_features";
+		string torsion_outfile = outfile_prefix + ".torsion_features";
+		std::ofstream dist_output( dist_outfile.c_str() );
+		std::ofstream torsion_output( torsion_outfile.c_str() );
+		if ( ! dist_output.is_open() ) {
+			utility_exit_with_message( "Unable to open file: " + dist_outfile + '\n' );
+		}
+		if ( ! torsion_output.is_open() ) {
+			utility_exit_with_message( "Unable to open file: " + torsion_outfile + '\n' );
+		}
+
+		TorsionList native_torsions( native_pose );
+		DistanceMatrix native_dist( native_pose, atom_name );
+		Size const nres( native_pose.size() );
+		core::import_pose::pose_stream::MetaPoseInputStream input
+			= core::import_pose::pose_stream::streams_from_cmd_line();
+		Size const n_torsions( native_torsions.n_torsions() );
+
+		// torsion_counts[ thresholds ][ n_torsions ][ nres ]
+		vector1< vector1< vector1< Size > > > torsion_counts(
+			torsion_thresholds.size(), vector1< vector1< Size > > ( n_torsions, vector1< Size >( nres, 0 ) )
 		);
-	} else {
-		utility_exit_with_message( "Error: must provide in::file::native!" );
-	}
-	string outfile_prefix = option[ out::file::silent ]();
-	string dist_outfile = outfile_prefix + ".dist_features";
-	string torsion_outfile = outfile_prefix + ".torsion_features";
-	std::ofstream dist_output( dist_outfile.c_str() );
-	std::ofstream torsion_output( torsion_outfile.c_str() );
-	if ( ! dist_output.is_open() ) {
-		utility_exit_with_message( "Unable to open file: " + dist_outfile + '\n' );
-	}
-	if ( ! torsion_output.is_open() ) {
-		utility_exit_with_message( "Unable to open file: " + torsion_outfile + '\n' );
-	}
 
-	TorsionList native_torsions( native_pose );
-	DistanceMatrix native_dist( native_pose, atom_name );
-	Size const nres( native_pose.size() );
-	core::import_pose::pose_stream::MetaPoseInputStream input
-		= core::import_pose::pose_stream::streams_from_cmd_line();
-	Size const n_torsions( native_torsions.n_torsions() );
+		// distance_counts[ thresholds ][ nres ][ nres ]
+		vector1< vector1< vector1< Size > > > distance_counts(
+			dist_thresholds.size(), vector1< vector1< Size > >( nres, vector1< Size >( nres, 0 ) )
+		);
+		Size decoy_count( 0 );
+		while ( input.has_another_pose() ) {
+			core::pose::Pose pose;
+			input.fill_pose( pose, *rsd_set );
+			runtime_assert( pose.sequence() == native_pose.sequence() );
 
-	// torsion_counts[ thresholds ][ n_torsions ][ nres ]
-	vector1< vector1< vector1< Size > > > torsion_counts(
-		torsion_thresholds.size(), vector1< vector1< Size > > ( n_torsions, vector1< Size >( nres, 0 ) )
-	);
+			TorsionList pose_torsions( pose );
+			DistanceMatrix pose_dist( pose, atom_name );
+			for ( Size ii = 1; ii <= nres; ++ii ) {
+				for ( Size jj = ii + 1; jj <= nres; ++jj ) {
+					if ( native_dist.distance( ii, jj ) >= dist_upper ) continue;
+					if ( (jj - ii) < min_seqsep ) continue;
+					Real const dist_delta(
+						std::abs(
+						native_dist.distance( ii, jj ) - pose_dist.distance( ii, jj )
+						)
+					);
+					for ( Size kk = 1; kk <= dist_thresholds.size(); ++kk ) {
+						if ( dist_delta <= dist_thresholds[kk] ) distance_counts[kk][ii][jj]++;
+					}
+				} // jj
 
-	// distance_counts[ thresholds ][ nres ][ nres ]
-	vector1< vector1< vector1< Size > > > distance_counts(
-		dist_thresholds.size(), vector1< vector1< Size > >( nres, vector1< Size >( nres, 0 ) )
-	);
-	Size decoy_count( 0 );
-	while( input.has_another_pose() ) {
-		core::pose::Pose pose;
-		input.fill_pose( pose, *rsd_set );
-		runtime_assert( pose.sequence() == native_pose.sequence() );
+				for ( Size kk = 1; kk <= n_torsions; ++kk ) {
+					Real const torsion_delta( std::abs(
+						native_torsions.torsion( ii, kk ) - pose_torsions.torsion( ii, kk )
+						) );
 
-		TorsionList pose_torsions( pose );
-		DistanceMatrix pose_dist( pose, atom_name );
+					for ( Size ll = 1; ll <= torsion_thresholds.size(); ++ll ) {
+						if ( torsion_delta <= torsion_thresholds[ll] ) {
+							++torsion_counts[ll][kk][ii];
+						}
+					}
+				}
+			} // ii
+			++decoy_count;
+		} // while ( input.has_another_pose() )
+
+		dist_output << A( output_width, "resi" ) << A( output_width, "resj" )
+			<< A( output_width, "native_dist" );
+		for ( Size ii = 1; ii <= dist_thresholds.size(); ++ii ) {
+			dist_output << A( output_width, "ndec_" + string_of( dist_thresholds[ii] ) );
+		}
+		dist_output << std::endl;
+
 		for ( Size ii = 1; ii <= nres; ++ii ) {
 			for ( Size jj = ii + 1; jj <= nres; ++jj ) {
 				if ( native_dist.distance( ii, jj ) >= dist_upper ) continue;
 				if ( (jj - ii) < min_seqsep ) continue;
-				Real const dist_delta(
-					std::abs(
-						native_dist.distance( ii, jj ) - pose_dist.distance( ii, jj )
-					)
-				);
+				dist_output << I( output_width, ii ) << I( output_width, jj )
+					<< F( output_width, precision, native_dist.distance( ii, jj ) );
 				for ( Size kk = 1; kk <= dist_thresholds.size(); ++kk ) {
-					if ( dist_delta <= dist_thresholds[kk] ) distance_counts[kk][ii][jj]++;
+					dist_output << I( output_width, distance_counts[kk][ii][jj] );
 				}
-			} // jj
+				dist_output << std::endl;
+			}
+		}
 
+		torsion_output << A( output_width, "resi" ) << A( output_width, "tors_idx" )
+			<< A( output_width, "nat_tors" );
+		for ( Size tt = 1; tt <= torsion_thresholds.size(); ++tt ) {
+			torsion_output << A( output_width, "tors_" + string_of( torsion_thresholds[tt] ) );
+		}
+		torsion_output << std::endl;
+		for ( Size ii = 1; ii <= nres; ++ii ) {
 			for ( Size kk = 1; kk <= n_torsions; ++kk ) {
-				Real const torsion_delta( std::abs(
-					native_torsions.torsion( ii, kk ) - pose_torsions.torsion( ii, kk )
-				) );
+				torsion_output << I( output_width, ii )  << I( output_width, kk )
+					<< F( output_width, precision, native_torsions.torsion( ii, kk ) ) ;
 
-				for ( Size ll = 1; ll <= torsion_thresholds.size(); ++ll ) {
-					if ( torsion_delta <= torsion_thresholds[ll] )
-					++torsion_counts[ll][kk][ii];
+				for ( Size tt = 1; tt <= torsion_thresholds.size(); ++tt ) {
+					torsion_output << I( output_width, torsion_counts[tt][kk][ii] );
 				}
-			}
-		} // ii
-		++decoy_count;
-	} // while ( input.has_another_pose() )
 
-	dist_output << A( output_width, "resi" ) << A( output_width, "resj" )
-		<< A( output_width, "native_dist" );
-	for ( Size ii = 1; ii <= dist_thresholds.size(); ++ii ) {
-		dist_output << A( output_width, "ndec_" + string_of( dist_thresholds[ii] ) );
-	}
-	dist_output << std::endl;
-
-	for ( Size ii = 1; ii <= nres; ++ii ) {
-		for ( Size jj = ii + 1; jj <= nres; ++jj ) {
-			if ( native_dist.distance( ii, jj ) >= dist_upper ) continue;
-			if ( (jj - ii) < min_seqsep ) continue;
-			dist_output << I( output_width, ii ) << I( output_width, jj )
-				<< F( output_width, precision, native_dist.distance( ii, jj ) );
-			for ( Size kk = 1; kk <= dist_thresholds.size(); ++kk ) {
-				dist_output << I( output_width, distance_counts[kk][ii][jj] );
+				torsion_output << std::endl;
 			}
-			dist_output << std::endl;
 		}
-	}
 
-	torsion_output << A( output_width, "resi" ) << A( output_width, "tors_idx" )
-		<< A( output_width, "nat_tors" );
- 	for ( Size tt = 1; tt <= torsion_thresholds.size(); ++tt ) {
-		torsion_output << A( output_width, "tors_" + string_of( torsion_thresholds[tt] ) );
-	}
-	torsion_output << std::endl;
-	for ( Size ii = 1; ii <= nres; ++ii ) {
-		for ( Size kk = 1; kk <= n_torsions; ++kk ) {
-			torsion_output << I( output_width, ii )  << I( output_width, kk )
-				<< F( output_width, precision, native_torsions.torsion( ii, kk ) ) ;
+		dist_output  << "# total of " << decoy_count << " decoys." << std::endl;
+		torsion_output  << "# total of " << decoy_count << " decoys." << std::endl;
 
-		 	for ( Size tt = 1; tt <= torsion_thresholds.size(); ++tt ) {
-				torsion_output << I( output_width, torsion_counts[tt][kk][ii] );
-			}
-
-			torsion_output << std::endl;
-		}
-	}
-
-	dist_output 	<< "# total of " << decoy_count << " decoys." << std::endl;
-	torsion_output 	<< "# total of " << decoy_count << " decoys." << std::endl;
-
-	dist_output.close();
-	torsion_output.close();
+		dist_output.close();
+		torsion_output.close();
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

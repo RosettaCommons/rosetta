@@ -36,54 +36,54 @@ using core::pose::PoseCOP;
 using utility::vector1;
 
 void compute_windowed_rama(PoseCOP pose, FragSetCOP fragments, Size window, vector1<Real>* ramas) {
-  using core::chemical::AA;
-  using core::scoring::Ramachandran;
-  assert(pose);
-  assert(ramas);
-  assert(fragments);
+	using core::chemical::AA;
+	using core::scoring::Ramachandran;
+	assert(pose);
+	assert(ramas);
+	assert(fragments);
 
-  const Size k = (window - 1) / 2;
-  const Size n = pose->size();
-  ramas->resize(n);
+	const Size k = (window - 1) / 2;
+	const Size n = pose->size();
+	ramas->resize(n);
 
-  Ramachandran scorer;
+	Ramachandran scorer;
 
-  for (Size center = (1 + k); center <= (n - k); ++center) {
-    Real score = 0;
+	for ( Size center = (1 + k); center <= (n - k); ++center ) {
+		Real score = 0;
 
-    for (Size residue = (center - k); residue <= (center + k); ++residue) {
-      AA amino = pose->aa(residue);
-      Real phi = pose->phi(residue);
-      Real psi = pose->psi(residue);
+		for ( Size residue = (center - k); residue <= (center + k); ++residue ) {
+			AA amino = pose->aa(residue);
+			Real phi = pose->phi(residue);
+			Real psi = pose->psi(residue);
 
-      score += scorer.eval_rama_score_residue(amino, phi, psi);
-    }
+			score += scorer.eval_rama_score_residue(amino, phi, psi);
+		}
 
-    (*ramas)[center] = score;
-  }
+		(*ramas)[center] = score;
+	}
 }
 
 int main(int argc, char* argv[]) {
-    try {
-  using core::fragment::FragmentIO;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  devel::init(argc, argv);
+	try {
+		using core::fragment::FragmentIO;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		devel::init(argc, argv);
 
-  FragSetCOP fragments = core::fragment::FragmentIO().read_data(option[in::file::frag3]());
-  PoseCOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
+		FragSetCOP fragments = core::fragment::FragmentIO().read_data(option[in::file::frag3]());
+		PoseCOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
 
-  const Size window = fragments->max_frag_length();
+		const Size window = fragments->max_frag_length();
 
-  vector1<Real> ramas;
-  compute_windowed_rama(pose, fragments, window, &ramas);
+		vector1<Real> ramas;
+		compute_windowed_rama(pose, fragments, window, &ramas);
 
-  for (Size i = 1; i <= ramas.size(); ++i) {
-    std::cout << "rama " << i << " " << ramas[i] << std::endl;
-  }
-    } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		for ( Size i = 1; i <= ramas.size(); ++i ) {
+			std::cout << "rama " << i << " " << ramas[i] << std::endl;
+		}
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-                                  }
-        return 0;
+	}
+	return 0;
 }

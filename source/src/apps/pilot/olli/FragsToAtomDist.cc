@@ -58,7 +58,7 @@ int main( int argc, char * argv [])
 		Atomdist1.generate_from_frag_file( option[ fragments ](), full_sequence, option[ cycles ](), option[ freq ]() );
 		Atomdist1.write_hist_to_file( option[ OptionKeys::distances ]() );
 	} catch (utility::excn::Exception& excn ) {
-		excn.show( std::cerr );
+		excn.display();
 		std::exit( 1 );
 	}
 

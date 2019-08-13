@@ -47,6 +47,7 @@
 #include <utility/thread/threadsafe_creation.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/crash_report.hh>
 
 // Basic headers
 #include <basic/options/option.hh>
@@ -219,9 +220,7 @@ void JobDistributor::init_jd()
 				<< JobInputter::job_inputter_input_source_to_string(
 				job_inputter_->input_source())
 				<< "'" << std::endl;
-			basic::Error()
-				<< excn << std::endl;
-			utility_exit();
+			throw; // excn will be displayed when caught again.
 		}
 	}
 
@@ -529,11 +528,12 @@ JobDistributor::run_one_job(
 	} catch (utility::excn::Exception& excn) {
 		basic::Error()
 			<< "ERROR: Exception caught by JobDistributor while trying to get pose from job "
-			<< "'" << job_outputter_->output_name(current_job_) << "'" << std::endl
-			<< excn << std::endl;
+			<< "'" << job_outputter_->output_name(current_job_) << "'" << std::endl;
 		basic::Error()
 			<< "Treating failure as bad input; canceling similar jobs"
 			<< std::endl;
+		excn.display();
+
 		remove_bad_inputs_from_job_list();
 		job_failed(pose, false);
 		current_job_->end_timing();
@@ -650,12 +650,12 @@ JobDistributor::run_one_job(
 		} catch (utility::excn::Exception& excn) {
 			basic::Error()
 				<< "ERROR: Exception caught by JobDistributor while trying to get pose from job '"
-				<< job_outputter_->output_name(current_job_) << "'" << std::endl
-				<< excn
-				<< std::endl;
+				<< job_outputter_->output_name(current_job_) << "'" << std::endl;
 			basic::Error()
 				<< "Treating failure as bad input; canceling similar jobs"
 				<< std::endl;
+			excn.display();
+
 			remove_bad_inputs_from_job_list();
 			job_failed(pose, false);
 			current_job_->end_timing();
@@ -713,23 +713,25 @@ JobDistributor::run_one_job(
 		// This info may be output later by a JobOutputter.
 		current_job_->add_strings(mover_copy->info());
 
-	} catch (std::ios_base::failure& ex) {
+	} catch (std::ios_base::failure& ex) { // Should this really be caught here, or should we just let the handling bubble up to the crash_reporter's default terminate?
 		std::cerr << "std::IO error detected... exiting..." << std::endl; // We can not longer use Tracer's at this point
+		std::cerr << "        error message: " << ex.what() << std::endl;
+		utility::save_crash_report( ex.what(), typeid( ex ).name() );
 		// Using pure exit instead of utility_exit_with_status to avoid infinite recursion
 		std::exit( basic::options::option[basic::options::OptionKeys::out::std_IO_exit_error_code]());
 
 	} catch (utility::excn::BadInput& excn) {
 		tr.Error
 			<< "\n\n[ERROR] Exception caught by JobDistributor for job "
-			<< job_outputter_->output_name(current_job_) << excn
-			<< std::endl;
-		status = protocols::moves::FAIL_BAD_INPUT;
+			<< job_outputter_->output_name(current_job_) << std::endl;
+		excn.display();
 
+		status = protocols::moves::FAIL_BAD_INPUT;
 	} catch (utility::excn::Exception& excn) {
 		tr.Error
 			<< "\n\n[ERROR] Exception caught by JobDistributor for job "
-			<< job_outputter_->output_name(current_job_) << excn
-			<< std::endl;
+			<< job_outputter_->output_name(current_job_) << std::endl;
+		excn.display();
 		status = protocols::moves::FAIL_DO_NOT_RETRY;
 	}
 	std::cout.exceptions(std::ios_base::goodbit); // Disabling std::IO exceptions
@@ -1174,9 +1176,7 @@ void JobDistributor::get_job_list_from_job_inputter() {
 			<< "ERROR: Exception caught by JobDistributor while trying to fill the input jobs with JobInputter of type type '"
 			<< JobInputter::job_inputter_input_source_to_string( job_inputter_->input_source() )
 			<< "'" << std::endl;
-		basic::Error()
-			<< excn << std::endl;
-		utility_exit();
+		throw; // excn will be displayed by outter handling.
 	}
 }
 

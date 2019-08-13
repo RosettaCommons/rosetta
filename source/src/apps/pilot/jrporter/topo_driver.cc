@@ -56,113 +56,113 @@ std::string const FRAGFILE_LOCATION = "/Users/jrporter/Rosetta/main/source/test/
 void test_chunk( core::pose::Pose const pose );
 
 void test_chunk( core::pose::Pose const pose ) {
-  
-  utility::vector1< core::Real > init_phis;
-  for( core::Size i = 1; i <= pose.size(); ++i ){
-    init_phis.push_back( pose.phi( i ) );
-  }
+
+	utility::vector1< core::Real > init_phis;
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+		init_phis.push_back( pose.phi( i ) );
+	}
 
 
-  TS_TRACE( "Beginning: test_single_phi_moves" );
-  using namespace protocols::environment;
-  using namespace core::environment;
+	TS_TRACE( "Beginning: test_single_phi_moves" );
+	using namespace protocols::environment;
+	using namespace core::environment;
 
-  //Tests that
-  TorsionMoverOP allowed_mover( new TorsionMover( true, true ) );
-  TorsionMoverOP duplicate_claim_mover( new TorsionMover( true, true ) );
-  TorsionMoverOP no_claim_mover( new TorsionMover( false, true ) );
-  TorsionMoverOP unreg_mover( new TorsionMover( true, true ) );
+	//Tests that
+	TorsionMoverOP allowed_mover( new TorsionMover( true, true ) );
+	TorsionMoverOP duplicate_claim_mover( new TorsionMover( true, true ) );
+	TorsionMoverOP no_claim_mover( new TorsionMover( false, true ) );
+	TorsionMoverOP unreg_mover( new TorsionMover( true, true ) );
 
-  EnvironmentOP env_op( new Environment( "torsion" ) );
-  Environment & env = *env_op;
+	EnvironmentOP env_op( new Environment( "torsion" ) );
+	Environment & env = *env_op;
 
-  env.register_mover( allowed_mover );
-  env.register_mover( duplicate_claim_mover );
-  env.register_mover( no_claim_mover );
-  //don't register unreg_mover
+	env.register_mover( allowed_mover );
+	env.register_mover( duplicate_claim_mover );
+	env.register_mover( no_claim_mover );
+	//don't register unreg_mover
 
-  core::pose::Pose final_pose;
+	core::pose::Pose final_pose;
 
-  {
-    core::pose::Pose protected_pose = env.start( pose );
-    // Verify conformation got copied into protected_pose pose.
-    TS_ASSERT_EQUALS( protected_pose.size(), pose.size() );
+	{
+		core::pose::Pose protected_pose = env.start( pose );
+		// Verify conformation got copied into protected_pose pose.
+		TS_ASSERT_EQUALS( protected_pose.size(), pose.size() );
 
-    // Verify no_claim_mover can't change anything -- it shouldn't have a passport for this environment (NullPointer excn)
-    TS_ASSERT_THROWS( no_claim_mover->apply( protected_pose ), EXCN_Env_Security_Exception );
-    TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
+		// Verify no_claim_mover can't change anything -- it shouldn't have a passport for this environment (NullPointer excn)
+		TS_ASSERT_THROWS( no_claim_mover->apply( protected_pose ), EXCN_Env_Security_Exception );
+		TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
 
-    // Verify no_lock_mover can't change anything -- protected_pose shouldn't have a passport on its unlock stack
-    TS_ASSERT_THROWS( allowed_mover->missing_unlock_apply( protected_pose ), EXCN_Env_Security_Exception );
-    TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
+		// Verify no_lock_mover can't change anything -- protected_pose shouldn't have a passport on its unlock stack
+		TS_ASSERT_THROWS( allowed_mover->missing_unlock_apply( protected_pose ), EXCN_Env_Security_Exception );
+		TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
 
-    // Verify that unregistered mover lacks a passport for protected_pose conformation
-    TS_ASSERT_THROWS( unreg_mover->apply( protected_pose ), utility::excn::EXCN_NullPointer );
-    TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
+		// Verify that unregistered mover lacks a passport for protected_pose conformation
+		TS_ASSERT_THROWS( unreg_mover->apply( protected_pose ), utility::excn::EXCN_NullPointer );
+		TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
 
-    // Verify that allowed_mover can change it's claimed angle
-    TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( protected_pose ) );
-    TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), NEW_PHI, 1e-12 );
+		// Verify that allowed_mover can change it's claimed angle
+		TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( protected_pose ) );
+		TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), NEW_PHI, 1e-12 );
 
-    // Verify that allowed_mover can do it again.
-    TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( protected_pose ) );
-    TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), NEW_PHI, 1e-10 );
+		// Verify that allowed_mover can do it again.
+		TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( protected_pose ) );
+		TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), NEW_PHI, 1e-10 );
 
-    //Verify that duplicate mover *also* can make the change without throwing an error
-    TS_ASSERT_THROWS_NOTHING( duplicate_claim_mover->apply( protected_pose ) );
-    //Verify that allowed can't change 9 while claiming CLAIMED_RESID
-    TS_ASSERT_THROWS( allowed_mover->apply( protected_pose, UNCLAIMED_RESID ), EXCN_Env_Security_Exception );
-    TS_ASSERT_THROWS( duplicate_claim_mover->apply( protected_pose, UNCLAIMED_RESID ), EXCN_Env_Security_Exception );
-    TS_ASSERT_DELTA( protected_pose.phi( UNCLAIMED_RESID ), init_phis[ UNCLAIMED_RESID ], 1e-12 );
+		//Verify that duplicate mover *also* can make the change without throwing an error
+		TS_ASSERT_THROWS_NOTHING( duplicate_claim_mover->apply( protected_pose ) );
+		//Verify that allowed can't change 9 while claiming CLAIMED_RESID
+		TS_ASSERT_THROWS( allowed_mover->apply( protected_pose, UNCLAIMED_RESID ), EXCN_Env_Security_Exception );
+		TS_ASSERT_THROWS( duplicate_claim_mover->apply( protected_pose, UNCLAIMED_RESID ), EXCN_Env_Security_Exception );
+		TS_ASSERT_DELTA( protected_pose.phi( UNCLAIMED_RESID ), init_phis[ UNCLAIMED_RESID ], 1e-12 );
 
-    //Verify angles 1-9 are untouched in protected_pose
-    for( core::Size i = 1; i <= pose.size()-1; ++i ){
-      TS_ASSERT_DELTA( pose.phi( i ), init_phis[i], 1e-12 );
-    }
+		//Verify angles 1-9 are untouched in protected_pose
+		for ( core::Size i = 1; i <= pose.size()-1; ++i ) {
+			TS_ASSERT_DELTA( pose.phi( i ), init_phis[i], 1e-12 );
+		}
 
-    TS_ASSERT_THROWS_NOTHING( final_pose = env.end( protected_pose ) );
-  }
+		TS_ASSERT_THROWS_NOTHING( final_pose = env.end( protected_pose ) );
+	}
 
-  // Verify angles 1-9 are untouched in pose and final_pose;
-  // Phi 1 is not well-defined, so skip that one.
-  for( core::Size i = 2; i <= pose.size(); ++i ){
-    if( i != CLAIMED_RESID ){
-      TS_ASSERT_DELTA( pose.phi( i ), final_pose.phi( i ), 1e-12 );
-      TS_ASSERT_DELTA( pose.phi( i ), init_phis[i], 1e-12 );
-    }
-  }
+	// Verify angles 1-9 are untouched in pose and final_pose;
+	// Phi 1 is not well-defined, so skip that one.
+	for ( core::Size i = 2; i <= pose.size(); ++i ) {
+		if ( i != CLAIMED_RESID ) {
+			TS_ASSERT_DELTA( pose.phi( i ), final_pose.phi( i ), 1e-12 );
+			TS_ASSERT_DELTA( pose.phi( i ), init_phis[i], 1e-12 );
+		}
+	}
 
-  //Finish verification inital pose is unaffected
-  TS_ASSERT_DELTA( pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
+	//Finish verification inital pose is unaffected
+	TS_ASSERT_DELTA( pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
 
-  //Verify angle changes propagate out of environment
-  TS_ASSERT_DELTA( final_pose.phi( CLAIMED_RESID ), NEW_PHI, 0.001 );
+	//Verify angle changes propagate out of environment
+	TS_ASSERT_DELTA( final_pose.phi( CLAIMED_RESID ), NEW_PHI, 0.001 );
 
-  //Verify other angle changes don't back-propagate to original pose
-  TS_ASSERT_DIFFERS( pose.phi( CLAIMED_RESID ), final_pose.phi( CLAIMED_RESID ) );
+	//Verify other angle changes don't back-propagate to original pose
+	TS_ASSERT_DIFFERS( pose.phi( CLAIMED_RESID ), final_pose.phi( CLAIMED_RESID ) );
 
-  TS_TRACE( "End: test_single_phi_moves" );
+	TS_TRACE( "End: test_single_phi_moves" );
 }
 
 int main( int argc, char** argv ){
-  devel::init( argc, argv );
+	try {
+		devel::init( argc, argv );
 
-  core::pose::Pose pose;
-  core::pose::make_pose_from_sequence(pose, "FRMQIFVYFRIENDS", core::chemical::FA_STANDARD);
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence(pose, "FRMQIFVYFRIENDS", core::chemical::FA_STANDARD);
 
-  for( core::Size i = 1; i <= pose.size(); ++i ){
-    pose.set_phi( i, -65 );
-    pose.set_psi( i, -41 );
-    pose.set_omega( i, 180 );
-  }
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
+			pose.set_phi( i, -65 );
+			pose.set_psi( i, -41 );
+			pose.set_omega( i, 180 );
+		}
 
-  try {
-    test_chunk( pose );
-  } catch (utility::excn::Exception excn ){
-    std::cout << excn << std::endl;
-    std::exit( 1 );
-  }
+		test_chunk( pose );
+	} catch (utility::excn::Exception excn ){
+		excn.display();
+		std::exit( 1 );
+	}
 
-  std::cout << "Success!" << std::endl;
+	std::cout << "Success!" << std::endl;
 
 }

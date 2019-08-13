@@ -127,21 +127,13 @@ int main( int argc, char * argv [] ) {
 			option[ jd2::ntrials ].value( 1 );
 		}
 
-		try {
-			if ( view ) {
-				protocols::viewer::viewer_main( my_main );
-			} else {
-				protocols::jd2::JobDistributor::get_instance()->go( mover );
-			}
-		} catch (utility::excn::Exception& excn ) {
-			basic::Error()
-				<< "ERROR: Exception caught by rosetta_scripts application:"
-				<< excn << std::endl;
-			assert(false); // core dump in debug mode
-			std::exit( 1 );
+		if ( view ) {
+			protocols::viewer::viewer_main( my_main );
+		} else {
+			protocols::jd2::JobDistributor::get_instance()->go( mover );
 		}
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 }

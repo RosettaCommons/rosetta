@@ -98,7 +98,7 @@ main( int argc, char * argv [] )
 		motif_dna_packer_design();
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

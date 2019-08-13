@@ -399,7 +399,7 @@ main( int argc, char * argv [] )
 		process_file_list();
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

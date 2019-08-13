@@ -476,7 +476,7 @@ main( int argc, char* argv [] )
 			create_ensemble(pose, scorefxn , (no_pdb.erase(0,(no_pdb.find_last_of("/")+1))));
 		}
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

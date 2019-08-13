@@ -160,7 +160,7 @@ main( int argc, char * argv [] )
 		protocols::jobdist::main_plain_pdb_mover(*dockingProtocol, dockingProtocol->get_scorefxn());
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

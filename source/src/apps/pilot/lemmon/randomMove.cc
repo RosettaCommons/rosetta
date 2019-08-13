@@ -8,10 +8,10 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /** @page randomMove
-	Read a PDB with at least one jump, move a chain/ligand (this is a rigid body move; no packing),
-	print the PDB
-	Try:
-		"readPDB.cc -in::file::s <pdb file> -in::path::database <DB root dir>"
+Read a PDB with at least one jump, move a chain/ligand (this is a rigid body move; no packing),
+print the PDB
+Try:
+"readPDB.cc -in::file::s <pdb file> -in::path::database <DB root dir>"
 */
 
 
@@ -47,31 +47,31 @@
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-    try {
-  devel::init(argc, argv);
+	try {
+		devel::init(argc, argv);
 
-  utility::vector0<std::string> pdbs;
-  {// process the options
-    using namespace basic::options::OptionKeys;
-    using basic::options::option;
-    pdbs= option[in::file::s]();
-  }
-  core::pose::Pose pose; // starts NULL, coords *never* modified!
-	{
-		std::string pdb=pdbs[0];
-		core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
+		utility::vector0<std::string> pdbs;
+		{// process the options
+			using namespace basic::options::OptionKeys;
+			using basic::options::option;
+			pdbs= option[in::file::s]();
+		}
+		core::pose::Pose pose; // starts NULL, coords *never* modified!
+		{
+			std::string pdb=pdbs[0];
+			core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
+		}
+		///  Randomly Perturb with a default rotational magnitude of 3.0 and a translational
+		///  magnitude of 8.0; You can change this with constructor args.
+		protocols::rigid::RigidBodyPerturbMover mover;
+		mover.apply(pose);
+		{
+			const std::string output("output.pdb");
+			pose.dump_scored_pdb(output, *mover.scorefxn());
+		}
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
 	}
-	///  Randomly Perturb with a default rotational magnitude of 3.0 and a translational
-	///  magnitude of 8.0; You can change this with constructor args.
-	protocols::rigid::RigidBodyPerturbMover mover;
-	mover.apply(pose);
-	{
-		const std::string output("output.pdb");
-		pose.dump_scored_pdb(output, *mover.scorefxn());
-	}
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-	return -1;
-    }
-    return 0;
+	return 0;
 }

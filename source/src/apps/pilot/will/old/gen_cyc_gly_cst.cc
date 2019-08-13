@@ -59,27 +59,27 @@ using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 
 struct AbsFunc : public core::scoring::constraints::Func {
-  AbsFunc( Real const x0_in, Real const sd_in ): x0_( x0_in ), sd_( sd_in ){}
-  core::scoring::constraints::FuncOP
-  clone() const { return new AbsFunc( *this ); }
-  Real func( Real const x ) const {
-    Real const z = ( x-x0_ )/sd_;
-    if(z < 0) return -z;
-    else return z;
-  }
-  Real dfunc( Real const x ) const {
-    if(x-x0_ < 0) return -1.0/sd_;
-    else return 1.0/sd_;
-  }
-  void read_data( std::istream & in ){ in >> x0_ >> sd_;  }
-  void show_definition( std::ostream &out ) const { out << "ABS " << x0_ << " " << sd_ << std::endl; }
-  Real x0() const { return x0_; }
-  Real sd() const { return sd_; }
-  void x0( Real x ) { x0_ = x; }
-  void sd( Real sd ) { sd_ = sd; }
+	AbsFunc( Real const x0_in, Real const sd_in ): x0_( x0_in ), sd_( sd_in ){}
+	core::scoring::constraints::FuncOP
+	clone() const { return new AbsFunc( *this ); }
+	Real func( Real const x ) const {
+		Real const z = ( x-x0_ )/sd_;
+		if ( z < 0 ) return -z;
+		else return z;
+	}
+	Real dfunc( Real const x ) const {
+		if ( x-x0_ < 0 ) return -1.0/sd_;
+		else return 1.0/sd_;
+	}
+	void read_data( std::istream & in ){ in >> x0_ >> sd_;  }
+	void show_definition( std::ostream &out ) const { out << "ABS " << x0_ << " " << sd_ << std::endl; }
+	Real x0() const { return x0_; }
+	Real sd() const { return sd_; }
+	void x0( Real x ) { x0_ = x; }
+	void sd( Real sd ) { sd_ = sd; }
 private:
-  Real x0_;
-  Real sd_;
+	Real x0_;
+	Real sd_;
 };
 
 
@@ -91,7 +91,7 @@ public:
 	void apply(core::pose::Pose & pose) {
 		using namespace numeric::random;
 		Size i = start_-1 + std::ceil(uniform()*(stop_-start_+1));
-		if(uniform()<0.5) pose.set_phi(i,pose.phi(i)+gaussian()*mag_);
+		if ( uniform()<0.5 ) pose.set_phi(i,pose.phi(i)+gaussian()*mag_);
 		else              pose.set_psi(i,pose.psi(i)+gaussian()*mag_);
 	}
 	std::string get_name() const { return "BBMover"; }
@@ -99,53 +99,53 @@ public:
 
 
 void bb_sample(Pose & pose, ScoreFunctionOP sf, Size niter) {
-  protocols::moves::MoverOP bbmove = new BBMover(1,pose.size(),10.0);
-  protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *sf, 2.0 );
-  mc->set_autotemp( true, 2.0 );
-  mc->set_temperature( 2.0 );
-  protocols::moves::RepeatMover( new protocols::moves::TrialMover(bbmove,mc), niter ).apply( pose );
+	protocols::moves::MoverOP bbmove = new BBMover(1,pose.size(),10.0);
+	protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *sf, 2.0 );
+	mc->set_autotemp( true, 2.0 );
+	mc->set_temperature( 2.0 );
+	protocols::moves::RepeatMover( new protocols::moves::TrialMover(bbmove,mc), niter ).apply( pose );
 }
 
 void minimize(Pose & pose, ScoreFunctionOP sf) {
-  core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-  movemap->set_bb(true);
-  movemap->set_chi(true);
-  movemap->set_jump(true);
-  protocols::minimization_packing::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
-  m.apply(pose);
+	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	movemap->set_bb(true);
+	movemap->set_chi(true);
+	movemap->set_jump(true);
+	protocols::minimization_packing::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+	m.apply(pose);
 }
 
 Pose cyclic_perm(Pose const & orig, Size start) {
-  Pose pose;
-  pose.append_residue_by_jump(orig.residue(start),1);
-  for(Size i = 1; i <= orig.size()-1; ++i) {
-    // std::cout << "appending res " << (i+start-1)%orig.size()+1 << std::endl;
-    pose.append_residue_by_bond(orig.residue((start+i-1)%orig.size()+1));
-  }
-  return pose;
+	Pose pose;
+	pose.append_residue_by_jump(orig.residue(start),1);
+	for ( Size i = 1; i <= orig.size()-1; ++i ) {
+		// std::cout << "appending res " << (i+start-1)%orig.size()+1 << std::endl;
+		pose.append_residue_by_bond(orig.residue((start+i-1)%orig.size()+1));
+	}
+	return pose;
 }
 
 Real cyclic_all_atom_rms(Pose const & pose, Pose const & other) {
-  Real mr = 9e9;
-  for(Size i = 1; i <= pose.size(); ++i) {
-    Real r = core::scoring::all_atom_rmsd( cyclic_perm(pose,i), other );
-    if( r < mr ) mr = r;
-  }
-  return mr;
+	Real mr = 9e9;
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		Real r = core::scoring::all_atom_rmsd( cyclic_perm(pose,i), other );
+		if ( r < mr ) mr = r;
+	}
+	return mr;
 }
 
 void cyclic_superimpose(Pose & move, Pose const & ref) {
-  Real mr = 9e9;
-  Size am = 0;
-  for(Size i = 1; i <= move.size(); ++i) {
-    Real r = core::scoring::CA_rmsd( cyclic_perm(move,i), ref );
-    if( r < mr ) {
-      mr = r;
-      am = i;
-    }
-  }
-  move = cyclic_perm(move,am);
-  core::scoring::calpha_superimpose_pose(move,ref);
+	Real mr = 9e9;
+	Size am = 0;
+	for ( Size i = 1; i <= move.size(); ++i ) {
+		Real r = core::scoring::CA_rmsd( cyclic_perm(move,i), ref );
+		if ( r < mr ) {
+			mr = r;
+			am = i;
+		}
+	}
+	move = cyclic_perm(move,am);
+	core::scoring::calpha_superimpose_pose(move,ref);
 }
 
 int main( int argc, char * argv [] ) {
@@ -153,68 +153,68 @@ int main( int argc, char * argv [] ) {
 	try {
 
 
-  using basic::options::option;
-  using namespace basic::options::OptionKeys;
-  using namespace core::scoring::constraints;
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
+		using namespace core::scoring::constraints;
 
-  const Real PI = numeric::NumericTraits<Real>::pi();
+		const Real PI = numeric::NumericTraits<Real>::pi();
 
-  devel::init(argc,argv);
+		devel::init(argc,argv);
 
-  std::string seq = "G"; while((int)seq.size() < option[cyclic::nres]()) seq += "G";
+		std::string seq = "G"; while ( (int)seq.size() < option[cyclic::nres]() ) seq += "G";
 
-  // score functions
-  ScoreFunctionOP sf = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
-  sf->set_weight(core::scoring::rama,1.0);
-  ScoreFunctionOP sfc = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
-  sfc->set_weight(core::scoring::rama,1.0);
-  sfc->set_weight(core::scoring::atom_pair_constraint,1.0);
-  sfc->set_weight(core::scoring::angle_constraint    ,1.0);
-  sfc->set_weight(core::scoring::dihedral_constraint ,1.0);
-  ScoreFunctionOP sffa = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
-  sffa->set_weight(core::scoring::atom_pair_constraint,1.0);
-  sfc->set_weight(core::scoring::angle_constraint     ,1.0);
-  sfc->set_weight(core::scoring::dihedral_constraint  ,1.0);
-  sffa->set_weight(core::scoring::omega,2.0);
-  ScoreFunctionOP sffastd = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
-  sffa->set_weight(core::scoring::omega,2.0);
+		// score functions
+		ScoreFunctionOP sf = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
+		sf->set_weight(core::scoring::rama,1.0);
+		ScoreFunctionOP sfc = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
+		sfc->set_weight(core::scoring::rama,1.0);
+		sfc->set_weight(core::scoring::atom_pair_constraint,1.0);
+		sfc->set_weight(core::scoring::angle_constraint    ,1.0);
+		sfc->set_weight(core::scoring::dihedral_constraint ,1.0);
+		ScoreFunctionOP sffa = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+		sffa->set_weight(core::scoring::atom_pair_constraint,1.0);
+		sfc->set_weight(core::scoring::angle_constraint     ,1.0);
+		sfc->set_weight(core::scoring::dihedral_constraint  ,1.0);
+		sffa->set_weight(core::scoring::omega,2.0);
+		ScoreFunctionOP sffastd = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+		sffa->set_weight(core::scoring::omega,2.0);
 
-  for(Size ITER = 1; ITER <= (Size)option[out::nstruct](); ++ITER) {
-    while(true) {
+		for ( Size ITER = 1; ITER <= (Size)option[out::nstruct](); ++ITER ) {
+			while ( true ) {
 
-      // setup pose
-      Pose pose;
-      core::pose::make_pose_from_sequence(pose,seq,core::chemical::CENTROID,false);
-			core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_GLY",1);
-			Size N = pose.size();
-			pose.add_constraint(new AtomPairConstraint(            AtomID(1,1),AtomID(3,N)            ,new core::scoring::constraints::HarmonicFunc(1.3       ,0.001)));
-			pose.add_constraint(new AngleConstraint   (AtomID(5,1),AtomID(1,1),AtomID(3,N)            ,new core::scoring::constraints::HarmonicFunc(2.08      ,0.0001)));
-			pose.add_constraint(new AngleConstraint   (            AtomID(1,1),AtomID(3,N),AtomID(4,N),new core::scoring::constraints::HarmonicFunc(2.1467    ,0.0001)));
-			pose.add_constraint(new DihedralConstraint(AtomID(5,1),AtomID(1,1),AtomID(3,N),AtomID(4,N),new core::scoring::constraints::HarmonicFunc(PI   ,0.0001)));
+				// setup pose
+				Pose pose;
+				core::pose::make_pose_from_sequence(pose,seq,core::chemical::CENTROID,false);
+				core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_GLY",1);
+				Size N = pose.size();
+				pose.add_constraint(new AtomPairConstraint(            AtomID(1,1),AtomID(3,N)            ,new core::scoring::constraints::HarmonicFunc(1.3       ,0.001)));
+				pose.add_constraint(new AngleConstraint   (AtomID(5,1),AtomID(1,1),AtomID(3,N)            ,new core::scoring::constraints::HarmonicFunc(2.08      ,0.0001)));
+				pose.add_constraint(new AngleConstraint   (            AtomID(1,1),AtomID(3,N),AtomID(4,N),new core::scoring::constraints::HarmonicFunc(2.1467    ,0.0001)));
+				pose.add_constraint(new DihedralConstraint(AtomID(5,1),AtomID(1,1),AtomID(3,N),AtomID(4,N),new core::scoring::constraints::HarmonicFunc(PI   ,0.0001)));
 
-      // gen structure
-      for(Size i = 1; i <= pose.size(); ++i) pose.set_omega(i,180.0);
-      bb_sample(pose,sf,100);
-      bb_sample(pose,sfc,1000);
-      protocols::toolbox::switch_to_residue_type_set(pose,"fa_standard");
-      minimize(pose,sffa);
+				// gen structure
+				for ( Size i = 1; i <= pose.size(); ++i ) pose.set_omega(i,180.0);
+				bb_sample(pose,sf,100);
+				bb_sample(pose,sfc,1000);
+				protocols::toolbox::switch_to_residue_type_set(pose,"fa_standard");
+				minimize(pose,sffa);
 
-      if( (*sffastd)(pose)/(pose.size()) > -1.0 ) {
-				std::cout << "retry!" << (*sffastd)(pose) << std::endl;
-				continue;
-      }
+				if ( (*sffastd)(pose)/(pose.size()) > -1.0 ) {
+					std::cout << "retry!" << (*sffastd)(pose) << std::endl;
+					continue;
+				}
 
-      //pose.delete_polymer_residue(pose.size());
-      //pose.delete_polymer_residue(pose.size());
-      pose.dump_pdb("cyc_gly_"+ObjexxFCL::string_of(pose.size())+"_"+ObjexxFCL::string_of(ITER)+".pdb");
+				//pose.delete_polymer_residue(pose.size());
+				//pose.delete_polymer_residue(pose.size());
+				pose.dump_pdb("cyc_gly_"+ObjexxFCL::string_of(pose.size())+"_"+ObjexxFCL::string_of(ITER)+".pdb");
 
-      std::cout << "finish " << ITER << std::endl;
-      break;
-    }
-  }
+				std::cout << "finish " << ITER << std::endl;
+				break;
+			}
+		}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

@@ -372,27 +372,22 @@ main( int argc, char * argv [] )
 	try{
 		ThisApplication::register_options();
 		devel::init( argc, argv );
-		try {
-			//   if ( option[ OptionKeys::in::file::s ].user() ) {
-			//    core::pose::Pose pose;
-			//    core::import_pose::pose_from_file( pose, *core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
-			//     option[ OptionKeys::in::file::s ]()[ 1 ] );
-			//    compute_chi( pose );
-			//   }
+		//   if ( option[ OptionKeys::in::file::s ].user() ) {
+		//    core::pose::Pose pose;
+		//    core::import_pose::pose_from_file( pose, *core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
+		//     option[ OptionKeys::in::file::s ]()[ 1 ] );
+		//    compute_chi( pose );
+		//   }
 
-			ThisApplication app;
-			if ( option[ pick_frags ].user() ) {
-				app.pick_frags();
-			}
-			//  else if ( option[ pick_chunks ].user() ) {
-			//   app.pick_chunks();
-			// } else app.run();
-		} catch (utility::excn::Exception& excn ) {
-			std::cerr << "Exception : " << std::endl;
-			excn.show( std::cerr );
+		ThisApplication app;
+		if ( option[ pick_frags ].user() ) {
+			app.pick_frags();
 		}
+		//  else if ( option[ pick_chunks ].user() ) {
+		//   app.pick_chunks();
+		// } else app.run();
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

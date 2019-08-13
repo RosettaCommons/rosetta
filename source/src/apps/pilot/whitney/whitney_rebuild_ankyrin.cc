@@ -55,44 +55,44 @@ main( int argc, char * argv [] )
 	try {
 
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	std::cout << "Starting to build fasta sequence" << std::endl;
+		std::cout << "Starting to build fasta sequence" << std::endl;
 
-	// create pose for wild type native
-	pose::Pose native_pose;
+		// create pose for wild type native
+		pose::Pose native_pose;
 
-	//read in pdb file from command line
-	std::string const input_pdb_name ( basic::options::start_file() );
-	core::import_pose::pose_from_file( native_pose, input_pdb_name , core::import_pose::PDB_file);
+		//read in pdb file from command line
+		std::string const input_pdb_name ( basic::options::start_file() );
+		core::import_pose::pose_from_file( native_pose, input_pdb_name , core::import_pose::PDB_file);
 
- 	scoring::ScoreFunctionOP scorefxn( get_score_function() );
-	scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
+		scoring::ScoreFunctionOP scorefxn( get_score_function() );
+		scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
 
 
-	//output file
-	utility::io::ozstream seq_outstream;
-	seq_outstream.open( "sequence.out", std::ios::out );
+		//output file
+		utility::io::ozstream seq_outstream;
+		seq_outstream.open( "sequence.out", std::ios::out );
 
-	for( core::Size i = 1, nres = native_pose.size(); i <= nres; i++ ) {
+		for ( core::Size i = 1, nres = native_pose.size(); i <= nres; i++ ) {
 
-		std::ostringstream data_stream;
-		chemical::AA const wt_aa( native_pose.residue(i).aa() );
-		data_stream << oneletter_code_from_aa( wt_aa );
+			std::ostringstream data_stream;
+			chemical::AA const wt_aa( native_pose.residue(i).aa() );
+			data_stream << oneletter_code_from_aa( wt_aa );
 
-		seq_outstream << data_stream.str();
+			seq_outstream << data_stream.str();
 
-	}
+		}
 
-	seq_outstream.close();
-	seq_outstream.clear();
+		seq_outstream.close();
+		seq_outstream.clear();
 
-	std::cout << "Finished printing sequence" << std::endl;
+		std::cout << "Finished printing sequence" << std::endl;
 
-	return 0;
+		return 0;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

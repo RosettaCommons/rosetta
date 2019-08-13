@@ -22,7 +22,7 @@ def find_lactams(pose):
 	    if pose.residue_type(ii + 1).has_property("BRANCH_POINT"): continue
             num_NC = len(resid_2_NC.keys())
 	    resid_2_NC[ii + 1] = num_NC + 1
-    
+
     if len(resid_2_NC.keys()) == 0: return
     print "Looking for lactam partners for", len(resid_2_NC.keys()), "residues."
 
@@ -45,7 +45,7 @@ def find_lactams(pose):
     # two Angstrom extra radius for finding bonds... very generous
     maxd += 2.0
     neighbor_cutoff = maxrad + maxd
-    
+
     #find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( pg, neighbor_cutoff )
 
     # Iterate across neighbors of incomplete residues compare incomplete connection points against each other.
@@ -343,7 +343,7 @@ main( int argc, char* argv[] )
 			pose.dump_pdb( outfile )
 		}
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl
+		e.display();
 		return -1
 	}
 	return 0

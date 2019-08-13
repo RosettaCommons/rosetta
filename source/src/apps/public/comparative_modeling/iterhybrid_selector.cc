@@ -663,7 +663,7 @@ int main( int argc, char * argv [] )
 		// dump out into silent
 		report_and_dump( library_inout, pose0, dump_cst, is_iterative_selection );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

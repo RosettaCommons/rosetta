@@ -64,7 +64,7 @@ main( int argc, char * argv [] )
 		return relax::Relax_main( false );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 }

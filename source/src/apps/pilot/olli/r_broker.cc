@@ -51,12 +51,7 @@ void run() {
 }
 
 void* rBroker_main_local( void* ) {
-	try{
-		run();
-	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception : " << std::endl;
-		excn.show( std::cerr );
-	}
+	run();
 	return nullptr;
 }
 
@@ -66,7 +61,7 @@ int main( int argc, char * argv [] ) {
 		devel::init( argc, argv ); //d
 		protocols::viewer::viewer_main( rBroker_main_local );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 }

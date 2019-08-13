@@ -60,8 +60,8 @@
 using core::Size;
 using core::Real;
 namespace aln_to_disulf {
-  basic::options::FileVectorOptionKey coordCstFiles("minimalCstHomology:coordCstFiles");
-	basic::options::BooleanOptionKey only_res_out("minimalCstHomology:only_res_out");
+basic::options::FileVectorOptionKey coordCstFiles("minimalCstHomology:coordCstFiles");
+basic::options::BooleanOptionKey only_res_out("minimalCstHomology:only_res_out");
 }
 utility::vector1< std::pair< Size, Size> > get_disulfides_from_aln( core::pose::Pose templatePose, core::sequence::SequenceAlignment aln){
 	using std::string;
@@ -73,10 +73,10 @@ utility::vector1< std::pair< Size, Size> > get_disulfides_from_aln( core::pose::
 	vector1<Size> potential_disulf;
 	Size seqPos = aln.sequence(1)->start()-1;
 	for ( core::Size ii = 1; ii <= aln.sequence(1)->length(); ++ii ) {
-		if(aln.sequence(1)->at(ii) != '-'){
+		if ( aln.sequence(1)->at(ii) != '-' ) {
 			seqPos++;
 		}
-		if((aln.sequence(1)->at(ii) == 'C') && (aln.sequence(2)->at(ii) == 'C')){
+		if ( (aln.sequence(1)->at(ii) == 'C') && (aln.sequence(2)->at(ii) == 'C') ) {
 			potential_disulf.push_back(seqPos);
 		}
 	}
@@ -85,10 +85,10 @@ utility::vector1< std::pair< Size, Size> > get_disulfides_from_aln( core::pose::
 	Real const typical_disulfide_distance = fullatom? 2.02 : 3.72;
 	Real const tolerance = fullatom? 0.25 : 1.0;
 	std::string const distance_atom = fullatom? "SG" : "CB";
-	for(iter it1 = potential_disulf.begin(), end = potential_disulf.end(); it1 != end; ++it1){
-		for(iter it2 = it1+1; it2 != end; ++it2){
+	for ( iter it1 = potential_disulf.begin(), end = potential_disulf.end(); it1 != end; ++it1 ) {
+		for ( iter it2 = it1+1; it2 != end; ++it2 ) {
 			Real dist = templatePose.residue(aln_map[*it1]).xyz(distance_atom).distance(templatePose.residue(aln_map[*it2]).xyz(distance_atom));
-			if(dist < typical_disulfide_distance+tolerance){
+			if ( dist < typical_disulfide_distance+tolerance ) {
 				disulfides.push_back(std::pair<Size,Size>(*it1,*it2));
 			}
 		}
@@ -128,113 +128,117 @@ poses_from_cmd_line(
 int
 main( int argc, char* argv [] ) {
 	try {
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	using std::map;
-	using std::multimap;
-	using std::string;
-	using core::Real;
-	using core::Size;
-	using core::pose::Pose;
-	using core::pose::PoseOP;
-	using utility::vector1;
-	using core::import_pose::pose_from_file;
-	using core::pose::make_pose_from_sequence;
+		using std::map;
+		using std::multimap;
+		using std::string;
+		using core::Real;
+		using core::Size;
+		using core::pose::Pose;
+		using core::pose::PoseOP;
+		using utility::vector1;
+		using core::import_pose::pose_from_file;
+		using core::pose::make_pose_from_sequence;
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::sequence;
-	basic::Tracer tr( "aln_to_disulf" );
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
+		using namespace core::sequence;
+		basic::Tracer tr( "aln_to_disulf" );
 
 
-	vector1< string > align_fns = option[ in::file::alignment ]();
+		vector1< string > align_fns = option[ in::file::alignment ]();
 
-	map< string, Pose > poses = poses_from_cmd_line(
+		map< string, Pose > poses = poses_from_cmd_line(
 			option[ in::file::template_pdb ]()
-	);
-
-	//-----Loop through alignments and get potential disulfides
-	typedef vector1< string >::const_iterator aln_iter;
-	vector1<std::pair <Size,Size> > disulfides;
-	for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
-				aln_fn != aln_end; ++aln_fn
-	) {
-		vector1< SequenceAlignment > alns = core::sequence::read_aln(
-			option[ cm::aln_format ](), *aln_fn
 		);
 
-		for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
-				end = alns.end();
-				it != end; ++it
-		) {
-			string const template_id( it->sequence(2)->id().substr(0,5) );
-			tr << *it << std::endl;
-			tr << "id " << it->sequence(2)->id() << " => " << template_id
-				<< std::endl;
-			map< string, Pose >::iterator pose_it = poses.find( template_id );
-			if ( pose_it == poses.end() ) {
-				string msg( "Error: can't find pose (id = "
-					+ template_id + ")"
-				);
-				utility_exit_with_message(msg);
-				//tr.Error << msg << std::endl;
-			} else {
-				Pose template_pose;
-				template_pose = pose_it->second;
-				vector1<std::pair <Size,Size> > tmp_disulfides = get_disulfides_from_aln(template_pose,*it);
-				disulfides.insert(disulfides.begin(),tmp_disulfides.begin(),tmp_disulfides.end());
+		//-----Loop through alignments and get potential disulfides
+		typedef vector1< string >::const_iterator aln_iter;
+		vector1<std::pair <Size,Size> > disulfides;
+		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
+				aln_fn != aln_end; ++aln_fn
+				) {
+			vector1< SequenceAlignment > alns = core::sequence::read_aln(
+				option[ cm::aln_format ](), *aln_fn
+			);
+
+			for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
+					end = alns.end();
+					it != end; ++it
+					) {
+				string const template_id( it->sequence(2)->id().substr(0,5) );
+				tr << *it << std::endl;
+				tr << "id " << it->sequence(2)->id() << " => " << template_id
+					<< std::endl;
+				map< string, Pose >::iterator pose_it = poses.find( template_id );
+				if ( pose_it == poses.end() ) {
+					string msg( "Error: can't find pose (id = "
+						+ template_id + ")"
+					);
+					utility_exit_with_message(msg);
+					//tr.Error << msg << std::endl;
+				} else {
+					Pose template_pose;
+					template_pose = pose_it->second;
+					vector1<std::pair <Size,Size> > tmp_disulfides = get_disulfides_from_aln(template_pose,*it);
+					disulfides.insert(disulfides.begin(),tmp_disulfides.begin(),tmp_disulfides.end());
+				}
 			}
 		}
-	}
-	typedef vector1< std::pair < Size, Size > >::const_iterator disulf_iter;
-	typedef map< std::pair < Size, Size >, Size>::iterator disulf_map_iter;
-	typedef multimap< Size , std::pair < Size, Size > >::reverse_iterator ct_disulf_map_iter;
-	map< std::pair<Size ,Size> , Size> disulfides_ct_map;
-	//Store in map to get a count for each observed contact
-	for ( disulf_iter disulf_it = disulfides.begin(), disulf_end = disulfides.end(); disulf_it != disulf_end; ++disulf_it){
-		disulf_map_iter disulfide_map_loc = disulfides_ct_map.find(*disulf_it);
-		if( disulfide_map_loc == disulfides_ct_map.end())
-			disulfides_ct_map[*disulf_it] = 1;
-		else{
-			disulfide_map_loc->second++;
+		typedef vector1< std::pair < Size, Size > >::const_iterator disulf_iter;
+		typedef map< std::pair < Size, Size >, Size>::iterator disulf_map_iter;
+		typedef multimap< Size , std::pair < Size, Size > >::reverse_iterator ct_disulf_map_iter;
+		map< std::pair<Size ,Size> , Size> disulfides_ct_map;
+		//Store in map to get a count for each observed contact
+		for ( disulf_iter disulf_it = disulfides.begin(), disulf_end = disulfides.end(); disulf_it != disulf_end; ++disulf_it ) {
+			disulf_map_iter disulfide_map_loc = disulfides_ct_map.find(*disulf_it);
+			if ( disulfide_map_loc == disulfides_ct_map.end() ) {
+				disulfides_ct_map[*disulf_it] = 1;
+			} else {
+				disulfide_map_loc->second++;
+			}
 		}
-	}
-	//convert to multimap so the cts are ordered. Then go through the list and get rid of lower ct contacts.
-	multimap< Size , std::pair < Size, Size > > ct_disulf_map;
-	for ( disulf_map_iter disulf_map_it = disulfides_ct_map.begin(); disulf_map_it != disulfides_ct_map.end(); ++disulf_map_it)
-		ct_disulf_map.insert(std::pair<Size , std::pair<Size , Size > >(disulf_map_it->second, std::pair<Size,Size>(disulf_map_it->first.first,disulf_map_it->first.second)));
-	vector1<std::pair < Size,Size> > final_disulf_pairs;
+		//convert to multimap so the cts are ordered. Then go through the list and get rid of lower ct contacts.
+		multimap< Size , std::pair < Size, Size > > ct_disulf_map;
+		for ( disulf_map_iter disulf_map_it = disulfides_ct_map.begin(); disulf_map_it != disulfides_ct_map.end(); ++disulf_map_it ) {
+			ct_disulf_map.insert(std::pair<Size , std::pair<Size , Size > >(disulf_map_it->second, std::pair<Size,Size>(disulf_map_it->first.first,disulf_map_it->first.second)));
+		}
+		vector1<std::pair < Size,Size> > final_disulf_pairs;
 
-	for (ct_disulf_map_iter ct_disulf_map_it = 	ct_disulf_map.rbegin(); ct_disulf_map_it  !=  ct_disulf_map.rend(); ++ct_disulf_map_it){
-		bool found = false;
-		if(ct_disulf_map_it->first <= 1)
-			found = true;
-		for ( disulf_iter disulf_it = final_disulf_pairs.begin(), disulf_end = final_disulf_pairs.end(); disulf_it != disulf_end; ++disulf_it){
-			if ( ct_disulf_map_it->second.first == disulf_it->first || ct_disulf_map_it->second.second == disulf_it->first || ct_disulf_map_it->second.first == disulf_it->second || ct_disulf_map_it->second.second == disulf_it->second)
+		for ( ct_disulf_map_iter ct_disulf_map_it =  ct_disulf_map.rbegin(); ct_disulf_map_it  !=  ct_disulf_map.rend(); ++ct_disulf_map_it ) {
+			bool found = false;
+			if ( ct_disulf_map_it->first <= 1 ) {
 				found = true;
+			}
+			for ( disulf_iter disulf_it = final_disulf_pairs.begin(), disulf_end = final_disulf_pairs.end(); disulf_it != disulf_end; ++disulf_it ) {
+				if ( ct_disulf_map_it->second.first == disulf_it->first || ct_disulf_map_it->second.second == disulf_it->first || ct_disulf_map_it->second.first == disulf_it->second || ct_disulf_map_it->second.second == disulf_it->second ) {
+					found = true;
+				}
+			}
+			if ( found == false ) {
+				final_disulf_pairs.push_back(ct_disulf_map_it->second);
+			}
 		}
-		if(found == false)
-			final_disulf_pairs.push_back(ct_disulf_map_it->second);
-	}
-	if(final_disulf_pairs.size() > 0){
-		string out_nametag = "disulf.txt";
-		if ( basic::options::option[ out::file::o ].user() ) {
-			out_nametag = option[out::file::o ]();
+		if ( final_disulf_pairs.size() > 0 ) {
+			string out_nametag = "disulf.txt";
+			if ( basic::options::option[ out::file::o ].user() ) {
+				out_nametag = option[out::file::o ]();
+			}
+
+			utility::io::ozstream output(out_nametag);
+
+			for ( disulf_iter disulf_it = final_disulf_pairs.begin(), disulf_end = final_disulf_pairs.end(); disulf_it != disulf_end; ++disulf_it ) {
+
+				output << disulf_it->first << " " <<  disulf_it->second << std::endl;
+			}
 		}
-
-		utility::io::ozstream output(out_nametag);
-
-		for ( disulf_iter disulf_it = final_disulf_pairs.begin(), disulf_end = final_disulf_pairs.end(); disulf_it != disulf_end; ++disulf_it){
-
-			output << disulf_it->first << " " <<  disulf_it->second << std::endl;
-		}
-	}
-	tr << "disulfide detection completed successfully" << std::endl;
+		tr << "disulfide detection completed successfully" << std::endl;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

@@ -107,150 +107,150 @@ int
 main( int argc, char* argv [] ) {
 	try {
 
-	using core::Real;
-	using core::Size;
+		using core::Real;
+		using core::Size;
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	// query and template profiles
-	FileName fn1( option[ in::file::pssm ]()[1] );
-	FileName fn2( option[ in::file::pssm ]()[2] );
+		// query and template profiles
+		FileName fn1( option[ in::file::pssm ]()[1] );
+		FileName fn2( option[ in::file::pssm ]()[2] );
 
-	SequenceProfileOP prof1( new SequenceProfile );
-	prof1->read_from_file( fn1 );
-	prof1->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
+		SequenceProfileOP prof1( new SequenceProfile );
+		prof1->read_from_file( fn1 );
+		prof1->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
 
-	SequenceProfileOP prof2( new SequenceProfile );
-	prof2->read_from_file( fn2 );
-	prof2->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
+		SequenceProfileOP prof2( new SequenceProfile );
+		prof2->read_from_file( fn2 );
+		prof2->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
 
-	// pdbs
-	using namespace core::chemical;
-	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set(
-		option[ in::file::residue_type_set ]()
-	);
-
-	core::pose::Pose template_pose;
-	if ( option[ in::file::template_pdb ].user() ) {
-		core::import_pose::pose_from_file(
-			template_pose,
-			*rsd_set,
-			option[ in::file::template_pdb ]()[1]
+		// pdbs
+		using namespace core::chemical;
+		ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set(
+			option[ in::file::residue_type_set ]()
 		);
-	}
 
-	// scoring scheme for aligning profiles
-	std::string const scoring_scheme_type( option[ frags::scoring::profile_score ]() );
-	ScoringSchemeFactory ssf;
-	ScoringSchemeOP ss( ssf.get_scoring_scheme( scoring_scheme_type ) );
-
-	// for the ProfSim scoring scheme, the optimal opening and extension
-	// penalties were 2 and 0.2, with a scoring shift of -0.45 applied to
-	// all ungapped aligned pairs.
-	Real const max_gap_open    (  -1   );
-	Real const min_gap_open    (  -5   );
-	Real const max_gap_extend  (  -0.5 );
-	Real const min_gap_extend  (  -4   );
-	Real const open_step_size  (   1   );
-	Real const extend_step_size(   0.5 );
-
-	// construct alignments
-	NWAligner nw_aligner;
-	SWAligner sw_aligner;
-
-	std::string output_fn = option[ out::file::alignment ]();
-	utility::io::ozstream output( output_fn );
-
-	for ( Real g_open = min_gap_open; g_open <= max_gap_open; g_open += open_step_size ) {
-		for ( Real g_extend = min_gap_extend; g_extend <= max_gap_extend; g_extend += extend_step_size ) {
-			std::cout << "evaluating " << g_open << "," << g_extend << std::endl;
-			ss->gap_open  ( g_open   );
-			ss->gap_extend( g_extend );
-
-			SequenceAlignment local_align  = sw_aligner.align( prof1, prof2, ss );
-			SequenceAlignment global_align = nw_aligner.align( prof1, prof2, ss );
-
-			output << "local_align (gap_open = " << g_open << ", "
-				<< "g_extend = " << g_extend << ")" << std::endl
-				<< local_align << "--" << std::endl;
-			output << "global_align (gap_open = " << g_open << ", "
-				<< "g_extend = " << g_extend << ")" << std::endl
-				<< global_align << "--" << std::endl;
-
-			global_align.comment(
-				"nwalign_" + string_of(-1 * g_open) + "_" + string_of(-1 *g_extend)
+		core::pose::Pose template_pose;
+		if ( option[ in::file::template_pdb ].user() ) {
+			core::import_pose::pose_from_file(
+				template_pose,
+				*rsd_set,
+				option[ in::file::template_pdb ]()[1]
 			);
-			local_align.comment(
-				"swalign_" + string_of(-1 * g_open) + "_" + string_of(-1 *g_extend)
-			);
+		}
 
-			if ( option[ in::file::template_pdb ].user() ) {
-				// build a threading model of the query pose given the template
-				protocols::moves::CompositionMover l_container;
+		// scoring scheme for aligning profiles
+		std::string const scoring_scheme_type( option[ frags::scoring::profile_score ]() );
+		ScoringSchemeFactory ssf;
+		ScoringSchemeOP ss( ssf.get_scoring_scheme( scoring_scheme_type ) );
 
-				l_container.add_mover(
-					new protocols::comparative_modeling::ThreadingMover(
-						local_align,
-						template_pose
-					)
+		// for the ProfSim scoring scheme, the optimal opening and extension
+		// penalties were 2 and 0.2, with a scoring shift of -0.45 applied to
+		// all ungapped aligned pairs.
+		Real const max_gap_open    (  -1   );
+		Real const min_gap_open    (  -5   );
+		Real const max_gap_extend  (  -0.5 );
+		Real const min_gap_extend  (  -4   );
+		Real const open_step_size  (   1   );
+		Real const extend_step_size(   0.5 );
+
+		// construct alignments
+		NWAligner nw_aligner;
+		SWAligner sw_aligner;
+
+		std::string output_fn = option[ out::file::alignment ]();
+		utility::io::ozstream output( output_fn );
+
+		for ( Real g_open = min_gap_open; g_open <= max_gap_open; g_open += open_step_size ) {
+			for ( Real g_extend = min_gap_extend; g_extend <= max_gap_extend; g_extend += extend_step_size ) {
+				std::cout << "evaluating " << g_open << "," << g_extend << std::endl;
+				ss->gap_open  ( g_open   );
+				ss->gap_extend( g_extend );
+
+				SequenceAlignment local_align  = sw_aligner.align( prof1, prof2, ss );
+				SequenceAlignment global_align = nw_aligner.align( prof1, prof2, ss );
+
+				output << "local_align (gap_open = " << g_open << ", "
+					<< "g_extend = " << g_extend << ")" << std::endl
+					<< local_align << "--" << std::endl;
+				output << "global_align (gap_open = " << g_open << ", "
+					<< "g_extend = " << g_extend << ")" << std::endl
+					<< global_align << "--" << std::endl;
+
+				global_align.comment(
+					"nwalign_" + string_of(-1 * g_open) + "_" + string_of(-1 *g_extend)
+				);
+				local_align.comment(
+					"swalign_" + string_of(-1 * g_open) + "_" + string_of(-1 *g_extend)
 				);
 
-				// mapping from template -> query
-				core::id::SequenceMapping map = local_align.sequence_mapping(2,1);
-				core::Size t_resi( 59 ); // ALA59 in 2a62
-				core::Size q_resi( map[ t_resi ] );
-				core::id::NamedAtomID query_anchor( "CA", q_resi );
-				core::id::NamedAtomID template_anchor( "CA", t_resi );
-				utility::vector1< core::id::NamedAtomID > ligand_indices;
-				//ligand_indices.push_back( core::id::NamedAtomID( "CA", 320 ) );
-				//ligand_indices.push_back( core::id::NamedAtomID( "CA", 321 ) );
-				//ligand_indices.push_back( core::id::NamedAtomID( "CA", 322 ) );
-				ligand_indices.push_back( core::id::NamedAtomID( "CA", 211 ) );
-				ligand_indices.push_back( core::id::NamedAtomID( "CA", 212 ) );
-				ligand_indices.push_back( core::id::NamedAtomID( "CA", 213 ) );
+				if ( option[ in::file::template_pdb ].user() ) {
+					// build a threading model of the query pose given the template
+					protocols::moves::CompositionMover l_container;
 
-				if ( q_resi == 0 ) {
-					std::cerr << "Warning: no mapping for template residue " << t_resi << "." << std::endl;
-					std::cerr << "Mapping:" << std::endl << map << std::endl;
-				} else {
 					l_container.add_mover(
-						new protocols::comparative_modeling::StealLigandMover(
+						new protocols::comparative_modeling::ThreadingMover(
+						local_align,
+						template_pose
+						)
+					);
+
+					// mapping from template -> query
+					core::id::SequenceMapping map = local_align.sequence_mapping(2,1);
+					core::Size t_resi( 59 ); // ALA59 in 2a62
+					core::Size q_resi( map[ t_resi ] );
+					core::id::NamedAtomID query_anchor( "CA", q_resi );
+					core::id::NamedAtomID template_anchor( "CA", t_resi );
+					utility::vector1< core::id::NamedAtomID > ligand_indices;
+					//ligand_indices.push_back( core::id::NamedAtomID( "CA", 320 ) );
+					//ligand_indices.push_back( core::id::NamedAtomID( "CA", 321 ) );
+					//ligand_indices.push_back( core::id::NamedAtomID( "CA", 322 ) );
+					ligand_indices.push_back( core::id::NamedAtomID( "CA", 211 ) );
+					ligand_indices.push_back( core::id::NamedAtomID( "CA", 212 ) );
+					ligand_indices.push_back( core::id::NamedAtomID( "CA", 213 ) );
+
+					if ( q_resi == 0 ) {
+						std::cerr << "Warning: no mapping for template residue " << t_resi << "." << std::endl;
+						std::cerr << "Mapping:" << std::endl << map << std::endl;
+					} else {
+						l_container.add_mover(
+							new protocols::comparative_modeling::StealLigandMover(
 							template_pose,
 							query_anchor,
 							template_anchor,
 							ligand_indices
-						)
-					);
+							)
+						);
+					}
+
+					//core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+					//l_container.add_mover(
+					// new protocols::minimization_packing::MinMover(
+					//  new core::kinematics::MoveMap, scorefxn, "lbfgs_armijo_nonmonotone", 1e-5, true
+					// )
+					//);
+
+					//protocols::comparative_modeling::ThreadingMover g_mover(
+					// global_align,
+					// template_pose
+					//);
+
+					// skip alignments that have more than 40% gaps
+					if ( local_align.max_gap_percentage() < 0.4 ) {
+						//std::cout << "local_align.max_gap_percentage() = "
+						// << local_align.max_gap_percentage() << std::endl;
+						protocols::jobdist::not_universal_main( l_container );
+					} else {
+						std::cout << "rejected alignment with "
+							<< local_align.max_gap_percentage() << " percent gaps." << std::endl;
+					}
 				}
-
-				//core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-				//l_container.add_mover(
-				//	new protocols::minimization_packing::MinMover(
-				//		new core::kinematics::MoveMap, scorefxn, "lbfgs_armijo_nonmonotone", 1e-5, true
-				//	)
-				//);
-
-				//protocols::comparative_modeling::ThreadingMover g_mover(
-				//	global_align,
-				//	template_pose
-				//);
-
-				// skip alignments that have more than 40% gaps
-				if ( local_align.max_gap_percentage() < 0.4 ) {
-					//std::cout << "local_align.max_gap_percentage() = "
-					//	<< local_align.max_gap_percentage() << std::endl;
-					protocols::jobdist::not_universal_main( l_container );
-				} else {
-					std::cout << "rejected alignment with "
-						<< local_align.max_gap_percentage() << " percent gaps." << std::endl;
-				}
-			}
-		} // gap_extend
-	} // gap_open
+			} // gap_extend
+		} // gap_open
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

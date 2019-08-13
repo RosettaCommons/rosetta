@@ -132,13 +132,7 @@ main( int argc, char * argv [] )
 		//The following lines are to ensure one can rescore the pcs energy term (that uses TopologyClaimer)
 		if ( option[ broker::setup ].user() ) {
 			protocols::topology_broker::TopologyBrokerOP top_bro_OP( new  topology_broker::TopologyBroker() );
-			try {
-				add_cmdline_claims(*top_bro_OP, false /* do_I_need_fragments */);
-			}
-catch ( utility::excn::Exception &excn )  {
-	excn.show( TR.Error );
-	utility_exit();
-}
+			add_cmdline_claims(*top_bro_OP, false /* do_I_need_fragments */);
 		}
 
 		// do not output pdb by default, unless with -out:output flag
@@ -247,7 +241,7 @@ catch ( utility::excn::Exception &excn )  {
 		protocols::jobdist::universal_main( *mover );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

@@ -74,75 +74,75 @@ int
 main( int argc, char* argv [] ) {
 	try {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::sequence;
-	using namespace core::fragment;
-	using namespace core::import_pose::pose_stream;
-	using namespace protocols::comparative_modeling;
-	using namespace core::scoring;
-	using namespace core::pack;
-	using namespace core::kinematics;
-	using core::Size;
-	using utility::vector1;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
+		using namespace core::sequence;
+		using namespace core::fragment;
+		using namespace core::import_pose::pose_stream;
+		using namespace protocols::comparative_modeling;
+		using namespace core::scoring;
+		using namespace core::pack;
+		using namespace core::kinematics;
+		using core::Size;
+		using utility::vector1;
 
-	basic::Tracer tr( "full_length_model" );
+		basic::Tracer tr( "full_length_model" );
 
-	// options, random initialization
-	devel::init( argc, argv );
+		// options, random initialization
+		devel::init( argc, argv );
 
-	protocols::loophash::FastGapMover fast_gap;
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
-	MetaPoseInputStream input = streams_from_cmd_line();
-	std::string sequence = core::sequence::read_fasta_file(
-		option[ in::file::fasta ]()[1]
-	)[1]->sequence();
-	NWAligner nw_align;
+		protocols::loophash::FastGapMover fast_gap;
+		ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+		MetaPoseInputStream input = streams_from_cmd_line();
+		std::string sequence = core::sequence::read_fasta_file(
+			option[ in::file::fasta ]()[1]
+			)[1]->sequence();
+		NWAligner nw_align;
 
-	while ( input.has_another_pose() ) {
-		core::pose::Pose start_pose;
-		input.fill_pose( start_pose, *rsd_set );
+		while ( input.has_another_pose() ) {
+			core::pose::Pose start_pose;
+			input.fill_pose( start_pose, *rsd_set );
 
-		// make an alignment from the input pose to the full-length fasta
-		ScoringSchemeOP ss( new SimpleScoringScheme( 6, 1, -4, -1 ) );
-		SequenceOP full_length( new Sequence(
-			sequence, "full_length", 1
-		) );
-		SequenceOP pdb_seq( new Sequence(
-			start_pose.sequence(), "pdb", 1
-		) );
-		SequenceAlignment aln = nw_align.align( full_length, pdb_seq, ss );
-		tr.Debug << "rebuilding pose with alignment: " << std::endl;
-		tr.Debug << aln << std::endl;
-		tr.flush();
+			// make an alignment from the input pose to the full-length fasta
+			ScoringSchemeOP ss( new SimpleScoringScheme( 6, 1, -4, -1 ) );
+			SequenceOP full_length( new Sequence(
+				sequence, "full_length", 1
+				) );
+			SequenceOP pdb_seq( new Sequence(
+				start_pose.sequence(), "pdb", 1
+				) );
+			SequenceAlignment aln = nw_align.align( full_length, pdb_seq, ss );
+			tr.Debug << "rebuilding pose with alignment: " << std::endl;
+			tr.Debug << aln << std::endl;
+			tr.flush();
 
-		// build a model using threading (copy aligned regions)
-		ThreadingMover threader(aln,start_pose);
-		threader.build_loops(false);
-		core::pose::Pose full_length_pose;
-		core::pose::make_pose_from_sequence( full_length_pose, sequence, *rsd_set );
-		threader.apply(full_length_pose);
+			// build a model using threading (copy aligned regions)
+			ThreadingMover threader(aln,start_pose);
+			threader.build_loops(false);
+			core::pose::Pose full_length_pose;
+			core::pose::make_pose_from_sequence( full_length_pose, sequence, *rsd_set );
+			threader.apply(full_length_pose);
 
-		full_length_pose.dump_pdb("here.pdb");
+			full_length_pose.dump_pdb("here.pdb");
 
-		fast_gap.apply(full_length_pose);
+			fast_gap.apply(full_length_pose);
 
-		std::string output_prefix( core::pose::tag_from_pose(start_pose) );
-		// output PDB
-		alignment_into_pose( aln, full_length_pose );
-		utility::io::ozstream output( output_prefix + "_full_length.pdb" );
-		output << "REMARK REBUILT_RESIDUES";
-		output << std::endl;
-		output << "REMARK query_aln    " << aln.sequence(1)->to_string() << std::endl;
-		output << "REMARK template_aln " << aln.sequence(2)->to_string()<< std::endl;
-		output << std::endl;
-		core::io::pdb::dump_pdb( full_length_pose, output );
-		output.close();
-		//full_length_pose.dump_pdb( output_prefix + "_full_length.pdb" );
-	} // has_another_pose()
-	 } catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+			std::string output_prefix( core::pose::tag_from_pose(start_pose) );
+			// output PDB
+			alignment_into_pose( aln, full_length_pose );
+			utility::io::ozstream output( output_prefix + "_full_length.pdb" );
+			output << "REMARK REBUILT_RESIDUES";
+			output << std::endl;
+			output << "REMARK query_aln    " << aln.sequence(1)->to_string() << std::endl;
+			output << "REMARK template_aln " << aln.sequence(2)->to_string()<< std::endl;
+			output << std::endl;
+			core::io::pdb::dump_pdb( full_length_pose, output );
+			output.close();
+			//full_length_pose.dump_pdb( output_prefix + "_full_length.pdb" );
+		} // has_another_pose()
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
 	}
 } // int main( int argc, char * argv [] )

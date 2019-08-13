@@ -40,9 +40,9 @@ void test( std::string fname )
 	Pose pose;
 	core::import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
 
-  ScoreFunctionOP sf( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
+	ScoreFunctionOP sf( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 
-  ScoreFunction sfpack;
+	ScoreFunction sfpack;
 	sfpack.set_weight(pack_stat,1.0);
 
 	std::cerr << fname << " " << sf->score(pose) << std::endl;
@@ -57,37 +57,37 @@ main (int argc, char *argv[])
 	try {
 
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace utility;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace utility;
 
-  // test_io();
+		// test_io();
 
-	// test_sasa_dots();
+		// test_sasa_dots();
 
-	if( option[ in::file::s ].user() ) {
-  	vector1<file::FileName> files( option[ in::file::s ]() );
-  	for( size_t i = 1; i <= files.size(); ++i ) {
-    	test( files[i] );
-  	}
-	} else if( option[ in::file::l ].user() ) {
-  	vector1<file::FileName> files( option[ in::file::l ]() );
-  	for( size_t i = 1; i <= files.size(); ++i ) {
-			utility::io::izstream list( files[i] );
-			std::string fname;
-			while( list >> fname ) {
-				// std::cerr << "'" << fname << "'" << std::endl;
-    		test( fname );
+		if ( option[ in::file::s ].user() ) {
+			vector1<file::FileName> files( option[ in::file::s ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
+				test( files[i] );
 			}
-  	}
-	}
-	return 0;
+		} else if ( option[ in::file::l ].user() ) {
+			vector1<file::FileName> files( option[ in::file::l ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
+				utility::io::izstream list( files[i] );
+				std::string fname;
+				while ( list >> fname ) {
+					// std::cerr << "'" << fname << "'" << std::endl;
+					test( fname );
+				}
+			}
+		}
+		return 0;
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

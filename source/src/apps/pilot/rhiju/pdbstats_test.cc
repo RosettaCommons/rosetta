@@ -93,15 +93,15 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 // Look more than four atoms away.
 bool
 path_distance_OK(
-			conformation::Residue const & rsd1,
-			conformation::Residue const & rsd2,
-			Size const ii,
-			Size const jj )
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	Size const ii,
+	Size const jj )
 {
 	Size const & i( rsd1.seqpos() );
 	Size const & j( rsd2.seqpos() );
-	//	std::cout << i << " " << j << " " << ii << " " << jj << std::endl;
-	if ( i == j && rsd1.path_distance(ii,jj) <= 4) return false;
+	// std::cout << i << " " << j << " " << ii << " " << jj << std::endl;
+	if ( i == j && rsd1.path_distance(ii,jj) <= 4 ) return false;
 	if ( i == j - 1 ) {
 		Size const path_size =
 			rsd1.path_distance( ii, rsd1.upper_connect_atom() ) +
@@ -131,17 +131,17 @@ ch_o_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Size co
 	Size res_count( 0 );
 
 	// Go over acceptors on each residue.
-	for (Size i = 1; i <= nres; i++) {
+	for ( Size i = 1; i <= nres; i++ ) {
 
 		if ( chain !='?' && pose.pdb_info()->chain(i) != chain ) continue;
-		//		std::cout << pose.pdb_resid(i).first << " " << pose.pdb_resid(i).second  << " " << chain <<  std::endl;
+		//  std::cout << pose.pdb_resid(i).first << " " << pose.pdb_resid(i).second  << " " << chain <<  std::endl;
 		res_count++;
 
 		conformation::Residue const & rsd1( pose.residue( i ) ) ;
 
 		for ( chemical::AtomIndices::const_iterator
-						anum  = rsd1.accpt_pos().begin(),
-						anume = rsd1.accpt_pos().end(); anum != anume; ++anum ) {
+				anum  = rsd1.accpt_pos().begin(),
+				anume = rsd1.accpt_pos().end(); anum != anume; ++anum ) {
 
 			Size const acc_atm( *anum );
 			Size const base_atm ( rsd1.atom_base( acc_atm ) );
@@ -155,22 +155,22 @@ ch_o_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Size co
 			Vector const x_temp = base_atm2_xyz - base_atm_xyz;
 			Vector const y = (cross(z,x_temp) ).normalized();
 			Vector const x = cross(y, z);
-			//			std::cout << "NORMALIZED? " << x.length() << std::endl;
+			//   std::cout << "NORMALIZED? " << x.length() << std::endl;
 
 			// Go over hydrogens on all residues.
-			for (Size j = 1; j <= nres; j++) {
+			for ( Size j = 1; j <= nres; j++ ) {
 
 				if ( chain !='?' && pose.pdb_info()->chain(j) != chain ) continue;
 
 				conformation::Residue const & rsd2( pose.residue( j ) ) ;
 
-				for (Size don_h_atm = rsd2.nheavyatoms() + 1; don_h_atm <= rsd2.natoms(); don_h_atm++ ){
+				for ( Size don_h_atm = rsd2.nheavyatoms() + 1; don_h_atm <= rsd2.natoms(); don_h_atm++ ) {
 
 					Vector const & don_h_atm_xyz( rsd2.atom( don_h_atm ).xyz() );
 					Size const don_atm ( rsd2.atom_base( don_h_atm ) );
 					Vector const & don_atm_xyz( rsd2.atom( don_atm ).xyz() );
 
-					//					if ( i==j && don_atm == acc_atm) continue;
+					//     if ( i==j && don_atm == acc_atm) continue;
 					if ( !path_distance_OK( rsd1, rsd2, acc_atm, don_atm ) ) continue; // Look more than four atoms away.
 
 					if ( ( don_h_atm_xyz - acc_atm_xyz ).length_squared() > DIST_CUTOFF2 ) continue;
@@ -194,11 +194,11 @@ ch_o_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Size co
 					//This could be a matrix, I guess.
 					Vector const don_h_atm_xyz_rel = don_h_atm_xyz - acc_atm_xyz;
 					Vector const don_h_atm_xyz_rel_rotate =
-            Vector( dot(x,don_h_atm_xyz_rel), dot(y,don_h_atm_xyz_rel), dot(z,don_h_atm_xyz_rel) );
+						Vector( dot(x,don_h_atm_xyz_rel), dot(y,don_h_atm_xyz_rel), dot(z,don_h_atm_xyz_rel) );
 
 					Vector const don_atm_xyz_rel = don_atm_xyz - acc_atm_xyz;
 					Vector const don_atm_xyz_rel_rotate =
-            Vector( dot(x,don_atm_xyz_rel), dot(y,don_atm_xyz_rel), dot(z,don_atm_xyz_rel) );
+						Vector( dot(x,don_atm_xyz_rel), dot(y,don_atm_xyz_rel), dot(z,don_atm_xyz_rel) );
 
 					out <<
 						count << "    " <<
@@ -239,27 +239,27 @@ Vector
 get_centroid( conformation::Residue const & rsd )
 {
 
-  Vector centroid( 0.0 );
-  Size numatoms = 0;
-  for ( Size i=rsd.first_sidechain_atom(); i<= rsd.nheavyatoms(); ++i ) {
-    centroid += rsd.xyz(i);
-    numatoms++;
-  }
-  if (numatoms > 0 ) {
+	Vector centroid( 0.0 );
+	Size numatoms = 0;
+	for ( Size i=rsd.first_sidechain_atom(); i<= rsd.nheavyatoms(); ++i ) {
+		centroid += rsd.xyz(i);
+		numatoms++;
+	}
+	if ( numatoms > 0 ) {
 		centroid /= static_cast< Real >( numatoms );
 	} else { //Yo, is this a glycine?
 		assert( rsd.aa() == chemical::aa_gly );
 		centroid = rsd.xyz( "CA" );
 	}
 
-  return centroid;
+	return centroid;
 }
 
 
 namespace centroid_stats {
-	Real const bin_width( 0.25 );
-	Size const max_bins( 120 );
-	ObjexxFCL::FArray2D< Size > centroid_counts( 20, max_bins );
+Real const bin_width( 0.25 );
+Size const max_bins( 120 );
+ObjexxFCL::FArray2D< Size > centroid_counts( 20, max_bins );
 }
 
 
@@ -276,14 +276,14 @@ fa_cenpack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, S
 
 	// First, precalculate all centroids.
 	utility::vector1 < Vector> centroids;
-	for (Size i=1; i <= nres; i++ ) {
+	for ( Size i=1; i <= nres; i++ ) {
 		conformation::Residue const & rsd1 = pose.residue(i);
 		centroids.push_back( get_centroid( rsd1 ) );
 	}
 	pose.conformation().update_actcoords(); //Probably not necessary.
 
 
-	for (Size i = 1; i <= nres; i++) {
+	for ( Size i = 1; i <= nres; i++ ) {
 
 		if ( chain !='?' && pose.pdb_info()->chain(i) != chain ) continue;
 		res_count++;
@@ -291,7 +291,7 @@ fa_cenpack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, S
 		Vector const & centroid_i( centroids[i] );
 		Vector const & actcoord_i( rsd1.actcoord() );
 
-		for (Size j = i+1; j <= nres; j++) {
+		for ( Size j = i+1; j <= nres; j++ ) {
 
 			if ( chain !='?' && pose.pdb_info()->chain(j) != chain ) continue;
 			conformation::Residue const & rsd2( pose.residue( j ) ) ;
@@ -313,7 +313,7 @@ fa_cenpack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, S
 
 			Distance cendist = (centroid_i - centroid_j).length();
 
-			if (cendist < DIST_CUTOFF  && false ) {
+			if ( cendist < DIST_CUTOFF  && false ) {
 				out <<
 					count << "    " <<
 					I(3, i) << " " <<
@@ -327,7 +327,7 @@ fa_cenpack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, S
 			}
 
 			Size cenbin = static_cast<Size> ( cendist / centroid_stats::bin_width) + 1;
-			if (cenbin <= centroid_stats::max_bins ) {
+			if ( cenbin <= centroid_stats::max_bins ) {
 				centroid_stats::centroid_counts( Size(rsd1.aa() ), cenbin )++;
 				centroid_stats::centroid_counts( Size(rsd2.aa() ), cenbin )++;
 			}
@@ -346,50 +346,50 @@ fa_cenpack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, S
 kinematics::Stub
 get_base_coordinate_system( conformation::Residue const & rsd, Vector const & centroid )
 {
-  using namespace chemical;
-  Size res_type = rsd.aa();
+	using namespace chemical;
+	Size res_type = rsd.aa();
 
-  Vector x,y,z;
+	Vector x,y,z;
 
-  // Make an axis pointing from base centroid to Watson-Crick edge.
-  std::string WC_atom;
-  if ( res_type == aa_phe ) WC_atom = " CZ ";
-  if ( res_type == aa_tyr ) WC_atom = " CZ ";
-  if ( res_type == aa_trp ) WC_atom = " CZ2";
+	// Make an axis pointing from base centroid to Watson-Crick edge.
+	std::string WC_atom;
+	if ( res_type == aa_phe ) WC_atom = " CZ ";
+	if ( res_type == aa_tyr ) WC_atom = " CZ ";
+	if ( res_type == aa_trp ) WC_atom = " CZ2";
 
-  Vector const WC_coord (rsd.xyz( WC_atom ) );
-  x = WC_coord - centroid;
-  x.normalize();
+	Vector const WC_coord (rsd.xyz( WC_atom ) );
+	x = WC_coord - centroid;
+	x.normalize();
 
-  // Make a perpendicular axis pointing from centroid towards
-  // Hoogstein edge (e.g., major groove in a double helix).
-  std::string H_atom;
-  if ( res_type == aa_phe ) H_atom = " CD1";
-  if ( res_type == aa_tyr ) H_atom = " CD1";
-  if ( res_type == aa_trp ) H_atom = " CD1";
+	// Make a perpendicular axis pointing from centroid towards
+	// Hoogstein edge (e.g., major groove in a double helix).
+	std::string H_atom;
+	if ( res_type == aa_phe ) H_atom = " CD1";
+	if ( res_type == aa_tyr ) H_atom = " CD1";
+	if ( res_type == aa_trp ) H_atom = " CD1";
 
-  Vector const H_coord (rsd.xyz( H_atom ) );
-  y = H_coord - centroid; //not orthonormal yet...
-  z = cross(x, y);
-  z.normalize(); // Should poSize roughly 5' to 3' if in a double helix.
+	Vector const H_coord (rsd.xyz( H_atom ) );
+	y = H_coord - centroid; //not orthonormal yet...
+	z = cross(x, y);
+	z.normalize(); // Should poSize roughly 5' to 3' if in a double helix.
 
-  y = cross(z, x);
-  y.normalize(); //not necessary but doesn't hurt.
+	y = cross(z, x);
+	y.normalize(); //not necessary but doesn't hurt.
 
-  //  std::cout << "WC : " << WC_coord << "   H : " << H_coord << "    centroid: " << centroid << std::endl;
+	//  std::cout << "WC : " << WC_coord << "   H : " << H_coord << "    centroid: " << centroid << std::endl;
 
-  return kinematics::Stub( Matrix::cols( x, y, z ), centroid );
+	return kinematics::Stub( Matrix::cols( x, y, z ), centroid );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void
 aro_pack_output(utility::io::ozstream & out, Size const & count,
-								Size const & i, Size const & j,
-								kinematics::Stub const & stub1,
-								conformation::Residue const &  rsd1,
-								conformation::Residue const &  rsd2,
-								Vector const & centroid2,
-								kinematics::Stub const & stub2 )
+	Size const & i, Size const & j,
+	kinematics::Stub const & stub1,
+	conformation::Residue const &  rsd1,
+	conformation::Residue const &  rsd2,
+	Vector const & centroid2,
+	kinematics::Stub const & stub2 )
 {
 	using namespace chemical;
 
@@ -404,34 +404,34 @@ aro_pack_output(utility::io::ozstream & out, Size const & count,
 	// output centroid and stub for second base.
 	Vector centroid = stub1.global2local( centroid2 );
 	out << F( 8,3,centroid(1) ) << " "
-			<< F( 8,3,centroid(2) ) << " "
-			<< F( 8,3,centroid(3) ) << "    ";
+		<< F( 8,3,centroid(2) ) << " "
+		<< F( 8,3,centroid(3) ) << "    ";
 
 	Vector z_vec2( stub2.M.col_z() );
 	Vector centroid_plus_z_vec2 = centroid2 + z_vec2;
 
 	Vector centroid_plus_z_vec = stub1.global2local( centroid_plus_z_vec2 );
 	out << F( 8,3,centroid_plus_z_vec(1) ) << " "
-			<< F( 8,3,centroid_plus_z_vec(2) ) << " "
-			<< F( 8,3,centroid_plus_z_vec(3) ) << "    ";
+		<< F( 8,3,centroid_plus_z_vec(2) ) << " "
+		<< F( 8,3,centroid_plus_z_vec(3) ) << "    ";
 
 	// output coordinates for second base.
-  utility::vector1< std::string > output_atoms;
+	utility::vector1< std::string > output_atoms;
 	// Doesn't really matter too much...
 	if ( rsd2.aa() == aa_phe ) {
-		output_atoms = utility::tools::make_vector1< std::string >( " CG ",	" CD1",	" CD2",	" CE1",	" CE2",	" CZ ",	" HD1",	" HE1",	" HZ ",	" HE2",	" HD2");
+		output_atoms = utility::tools::make_vector1< std::string >( " CG ", " CD1", " CD2", " CE1", " CE2", " CZ ", " HD1", " HE1", " HZ ", " HE2", " HD2");
 	} else if ( rsd2.aa() == aa_tyr ) {
-		output_atoms = utility::tools::make_vector1< std::string >( " CG ",	" CD1",	" CD2",	" CE1",	" CE2",	" CZ ",	" HD1",	" HE1",	" OH ",	" HE2",	" HD2");
+		output_atoms = utility::tools::make_vector1< std::string >( " CG ", " CD1", " CD2", " CE1", " CE2", " CZ ", " HD1", " HE1", " OH ", " HE2", " HD2");
 	} else if ( rsd2.aa() == aa_trp ) {
-		output_atoms = utility::tools::make_vector1< std::string >( " CG ",	" CD1",	" CD2",	" NE1",	" CE2",	" CE3",	" CZ2",	" CZ3",	" CH2",	" HE1",	" HD1");
+		output_atoms = utility::tools::make_vector1< std::string >( " CG ", " CD1", " CD2", " NE1", " CE2", " CE3", " CZ2", " CZ3", " CH2", " HE1", " HD1");
 	}
 
 
 	for ( Size n = 1; n <= output_atoms.size(); n++ ) {
 		Vector const local_xyz = stub1.global2local( rsd2.xyz( output_atoms[ n ] ) );
 		out << F( 8,3,local_xyz(1) ) << " "
-				<< F( 8,3,local_xyz(2) ) << " "
-				<< F( 8,3,local_xyz(3) ) << "    ";
+			<< F( 8,3,local_xyz(2) ) << " "
+			<< F( 8,3,local_xyz(3) ) << "    ";
 	}
 	out << std::endl;
 }
@@ -453,31 +453,31 @@ aro_pack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Siz
 
 	static bool init( false );
 
-	for (Size i = 1; i <= nres; i++) {
+	for ( Size i = 1; i <= nres; i++ ) {
 
 		if ( chain !='?' && pose.pdb_info()->chain(i) != chain ) continue;
 		res_count++;
 		conformation::Residue const & rsd1( pose.residue( i ) ) ;
 
-		if ( rsd1.aa() != aa_phe && rsd1.aa() != aa_trp && rsd1.aa() != aa_tyr) continue;
+		if ( rsd1.aa() != aa_phe && rsd1.aa() != aa_trp && rsd1.aa() != aa_tyr ) continue;
 
 		// set up coordinate system for first base.
 		Vector centroid1 = get_centroid( rsd1 );
 		kinematics::Stub stub1 = get_base_coordinate_system( rsd1, centroid1 );
 
-		if (!init ) {
+		if ( !init ) {
 			aro_pack_output( out, count, i, i, stub1, rsd1, rsd1, centroid1, stub1 );
 			init = true;
 		}
 
-		for (Size j = 1; j <= nres; j++) {
+		for ( Size j = 1; j <= nres; j++ ) {
 
 			if ( i == j ) continue;
 
 			if ( chain !='?' && pose.pdb_info()->chain(j) != chain ) continue;
 			conformation::Residue const & rsd2( pose.residue( j ) ) ;
 
-			if ( rsd2.aa() != aa_phe && rsd2.aa() != aa_trp && rsd2.aa() != aa_tyr) continue;
+			if ( rsd2.aa() != aa_phe && rsd2.aa() != aa_trp && rsd2.aa() != aa_tyr ) continue;
 
 			Vector centroid2 = get_centroid( rsd2 );
 			kinematics::Stub stub2 = get_base_coordinate_system( rsd2, centroid2 );
@@ -513,7 +513,7 @@ proline_rama_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose,
 
 	static bool init( false );
 
-	for (Size i = 2; i <= nres; i++) {
+	for ( Size i = 2; i <= nres; i++ ) {
 
 		if ( chain !='?' && pose.pdb_info()->chain(i) != chain ) continue;
 
@@ -522,10 +522,10 @@ proline_rama_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose,
 		res_count++;
 
 		out << I(4, count )
-				<< " " << F(8,3,pose.omega( i - 1 ))
-				<< " " << F(8,3,pose.phi( i )) << " " << F(8,3,pose.psi( i ))
-				<< " " << F(8,3,pose.omega( i ))
-				<< std::endl;
+			<< " " << F(8,3,pose.omega( i - 1 ))
+			<< " " << F(8,3,pose.phi( i )) << " " << F(8,3,pose.psi( i ))
+			<< " " << F(8,3,pose.omega( i ))
+			<< std::endl;
 
 	} // i
 
@@ -548,7 +548,7 @@ utility::vector1< utility::vector1< std::string > > get_ring_atoms( core::confor
 
 	utility::vector1< std::string > ring_atom_set1, ring_atom_set2;
 
-	if (res_type == na_rad){
+	if ( res_type == na_rad ) {
 		ring_atom_set1.push_back( " C4 " );
 		ring_atom_set1.push_back( " C5 " );
 		ring_atom_set1.push_back( " N7 " );
@@ -563,7 +563,7 @@ utility::vector1< utility::vector1< std::string > > get_ring_atoms( core::confor
 		ring_atom_set2.push_back( " C2 " );
 	}
 
-	if (res_type == na_rcy){
+	if ( res_type == na_rcy ) {
 		ring_atom_set1.push_back( " N1 " );
 		ring_atom_set1.push_back( " C2 " );
 		ring_atom_set1.push_back( " N3 " );
@@ -573,7 +573,7 @@ utility::vector1< utility::vector1< std::string > > get_ring_atoms( core::confor
 
 	}
 
-	if (res_type == na_rgu){
+	if ( res_type == na_rgu ) {
 		ring_atom_set1.push_back( " C4 " );
 		ring_atom_set1.push_back( " C5 " );
 		ring_atom_set1.push_back( " N7 " );
@@ -589,7 +589,7 @@ utility::vector1< utility::vector1< std::string > > get_ring_atoms( core::confor
 
 	}
 
-	if (res_type == na_ura){
+	if ( res_type == na_ura ) {
 		ring_atom_set1.push_back( " N1 " );
 		ring_atom_set1.push_back( " C2 " );
 		ring_atom_set1.push_back( " N3 " );
@@ -599,7 +599,7 @@ utility::vector1< utility::vector1< std::string > > get_ring_atoms( core::confor
 	}
 
 	ring_atom_sets.push_back( ring_atom_set1 );
-	if ( ring_atom_set2.size() > 0 ) 	ring_atom_sets.push_back( ring_atom_set2 );
+	if ( ring_atom_set2.size() > 0 )  ring_atom_sets.push_back( ring_atom_set2 );
 
 	return ring_atom_sets;
 
@@ -631,8 +631,8 @@ std::string get_H_atom( core::chemical::AA const & res_type ){
 ///////////////////////////////////////////////////////////////////////////////
 void
 get_ring_centroids_and_stubs( core::conformation::Residue const & rsd,
-															utility::vector1< Vector > & ring_centroids,
-															utility::vector1< core::kinematics::Stub > & ring_stubs ){
+	utility::vector1< Vector > & ring_centroids,
+	utility::vector1< core::kinematics::Stub > & ring_stubs ){
 
 	using namespace core::chemical;
 	using namespace core::chemical::rna;
@@ -646,12 +646,12 @@ get_ring_centroids_and_stubs( core::conformation::Residue const & rsd,
 	Vector const overall_centroid = get_rna_base_centroid( rsd, false );
 	Stub   const overall_stub( get_rna_base_coordinate_system( rsd, overall_centroid ), overall_centroid );
 
-	for ( Size n = 1; n <= ring_atom_sets.size(); n++ ){
+	for ( Size n = 1; n <= ring_atom_sets.size(); n++ ) {
 
 		utility::vector1< std::string > ring_atom_set = ring_atom_sets[ n ];
 		Vector centroid( 0 );
 
-		for ( Size i = 1; i <= ring_atom_set.size(); i++ ){
+		for ( Size i = 1; i <= ring_atom_set.size(); i++ ) {
 			centroid += rsd.xyz( ring_atom_set[ i ] );
 		}
 		centroid /= static_cast< Real >( ring_atom_set.size() );
@@ -698,7 +698,7 @@ rna_stack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Si
 	utility::vector1< Vector  > all_base_centroids;
 	utility::vector1< Stub  >   all_base_stubs;
 
-	for (Size i = 1; i <= nres; i++) {
+	for ( Size i = 1; i <= nres; i++ ) {
 
 		utility::vector1< Vector > ring_centroids; // can have 1 or 2 depending on whether base is pyrimidine or purine.
 		utility::vector1< Stub > ring_stubs;
@@ -726,21 +726,21 @@ rna_stack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Si
 
 	utility::vector1< Size > secstruct_nums;
 	char secstruct;
-	for ( Size i = 1; i <= nres; i++ ){
+	for ( Size i = 1; i <= nres; i++ ) {
 		get_base_pairing_info( pose, i, secstruct, edge_is_base_pairing );
 		Size secstruct_num( 0 );
-		if (secstruct == 'H' ) secstruct_num = 1;
+		if ( secstruct == 'H' ) secstruct_num = 1;
 		secstruct_nums.push_back( secstruct_num );
 	}
 
-	for (Size i = 1; i <= nres; i++) {
+	for ( Size i = 1; i <= nres; i++ ) {
 
 		res_count++;
 
 		Vector const & base_centroid1 = all_base_centroids[ i ];
 		Stub const & base_stub1    = all_base_stubs[ i ];
 
-		for (Size j = 1; j <= nres; j++) {
+		for ( Size j = 1; j <= nres; j++ ) {
 
 			if ( i == j ) continue;
 
@@ -775,17 +775,17 @@ rna_stack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Si
 				Distance y =  dot( ring_centroid2 - base_centroid1, base_stub1.M.col_y() );
 
 				out << I(4, count )
-						<< " " << I(4, i )
-						<< " " << I(4, j )
-						<< "      " << base_type_num( pose.residue(i).aa() )
-						<< " " << base_type_num( pose.residue(j).aa() )
-						<< " " << F(5,2,orientation)
-						<< " " << secstruct_nums[ j ]
-						<< " " << n
-						<< " " << F(8,3,x)
-						<< " " << F(8,3,y)
-						<< " " << F(8,3,z)
-						<< std::endl;
+					<< " " << I(4, i )
+					<< " " << I(4, j )
+					<< "      " << base_type_num( pose.residue(i).aa() )
+					<< " " << base_type_num( pose.residue(j).aa() )
+					<< " " << F(5,2,orientation)
+					<< " " << secstruct_nums[ j ]
+					<< " " << n
+					<< " " << F(8,3,x)
+					<< " " << F(8,3,y)
+					<< " " << F(8,3,z)
+					<< std::endl;
 			} // n
 
 		} // j
@@ -801,8 +801,8 @@ rna_stack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Si
 void output_centroid_stats( utility::io::ozstream & out )
 {
 	using namespace centroid_stats;
-	for (Size i = 1; i <= centroid_counts.size1() ; i++ ) {
-		for (Size j = 1; j <= centroid_counts.size2() ; j++ ) {
+	for ( Size i = 1; i <= centroid_counts.size1() ; i++ ) {
+		for ( Size j = 1; j <= centroid_counts.size2() ; j++ ) {
 			out << ' ' << I(7,centroid_counts( i,j ));
 		}
 		out << std::endl;
@@ -813,10 +813,10 @@ void output_centroid_stats( utility::io::ozstream & out )
 void lowercase(char string[])
 { int i = 0;
 	while ( string[i] )
-		{
-			string[i] = tolower(string[i]);
-			i++;
-		}
+			{
+		string[i] = tolower(string[i]);
+		i++;
+	}
 }
 
 
@@ -829,20 +829,20 @@ rhiju_pdbstats()
 	using namespace core::chemical;
 	using namespace core::import_pose;
 
-	//	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
+	// utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 	std::string const file_path( option[ in::path::pdb ]( 1 ) );
 	std::string const pdb_list( option[ in::file::l ](1) );
 
 	utility::io::izstream instream( pdb_list );
-	if (!instream){
+	if ( !instream ) {
 		std::cerr  << "Can't find list file " << pdb_list << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 		return;
 	}
 
 	ResidueTypeSetCAP rsd_set;
-	if ( option[rna_stack]() ){
-  	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	if ( option[rna_stack]() ) {
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	} else {
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
@@ -850,8 +850,8 @@ rhiju_pdbstats()
 	std::string outfile  = option[ out::file::o ];
 	utility::io::ozstream out( outfile );
 
-	//	for (Size i = 1; i <= pdb_files.size(); i++) {
-	//	std::string const pdb_file = pdb_files[i];
+	// for (Size i = 1; i <= pdb_files.size(); i++) {
+	// std::string const pdb_file = pdb_files[i];
 	std::string pdb_file;
 	char chain(' ');
 	Size count( 0 );
@@ -860,7 +860,7 @@ rhiju_pdbstats()
 	Size total_residues( 0 );
 
 	std::string line;
-	while ( 	getline( instream, line )  ) {
+	while (  getline( instream, line )  ) {
 		std::istringstream line_stream( line );
 
 		line_stream >> pdb_file;
@@ -868,11 +868,11 @@ rhiju_pdbstats()
 		line_stream >> chain;
 
 		if ( line_stream.fail() ) chain = '?';
-		//		chain =  pdb_file.at(4) ;
-		//		pdb_file = pdb_file.substr(0,4);
-		//		lowercase( pdb_file );
+		//  chain =  pdb_file.at(4) ;
+		//  pdb_file = pdb_file.substr(0,4);
+		//  lowercase( pdb_file );
 
-		if (chain == '_' ) chain = ' ';
+		if ( chain == '_' ) chain = ' ';
 
 		pose_from_file( pose, *rsd_set, file_path + '/' + pdb_file , core::import_pose::PDB_file);
 
@@ -881,7 +881,7 @@ rhiju_pdbstats()
 
 		if ( option[ ch_o_bonds] ) {
 			ch_o_pdbstats_from_pose( out, pose, count, chain, total_residues );
-		}	else if ( option[ fa_cenpack ] ) {
+		} else if ( option[ fa_cenpack ] ) {
 			fa_cenpack_pdbstats_from_pose( out, pose, count, chain, total_residues );
 		} else if ( option[ aro_pack ] ) {
 			aro_pack_pdbstats_from_pose( out, pose, count, chain, total_residues );
@@ -896,7 +896,7 @@ rhiju_pdbstats()
 
 	std::cout << "FINISHED ==> TOTAL RESIDUES Processed: " << total_residues << std::endl;
 
-	if (option[fa_cenpack]) {
+	if ( option[fa_cenpack] ) {
 		utility::io::ozstream out2( "histo_"+outfile );
 		output_centroid_stats( out2 );
 	}
@@ -911,30 +911,30 @@ main( int argc, char * argv [] )
 	try {
 
 
-	using namespace basic::options;
+		using namespace basic::options;
 
-	NEW_OPT( ch_o_bonds, "Testing existence of CH<-->O bonds", false );
-	NEW_OPT( fa_cenpack, "Centroid-centroid pairwise correlations", false );
-	NEW_OPT( aro_pack, "Aromatic geometry", false );
-	NEW_OPT( proline_rama, "Proline ramachandran inference", false );
-	NEW_OPT( rna_stack, "RNA stack -- revisit at level of rings", false );
+		NEW_OPT( ch_o_bonds, "Testing existence of CH<-->O bonds", false );
+		NEW_OPT( fa_cenpack, "Centroid-centroid pairwise correlations", false );
+		NEW_OPT( aro_pack, "Aromatic geometry", false );
+		NEW_OPT( proline_rama, "Proline ramachandran inference", false );
+		NEW_OPT( rna_stack, "RNA stack -- revisit at level of rings", false );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	rhiju_pdbstats();
+		rhiju_pdbstats();
 
-	exit( 0 );
+		exit( 0 );
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

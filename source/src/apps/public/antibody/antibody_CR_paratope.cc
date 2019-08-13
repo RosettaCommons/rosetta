@@ -69,7 +69,7 @@ main( int argc, char* argv[] ){
 		ParatopeMetric< core::SSize>p_charge = paratope_charge( pose, abinfo );
 		std::cout << "paratope charge " << p_charge.paratope << std::endl;
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

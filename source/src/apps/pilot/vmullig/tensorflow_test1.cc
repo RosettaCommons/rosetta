@@ -30,8 +30,7 @@ main( int argc, char * argv [] ) {
 		utility_exit_with_message("This application requires tensorflow!\n");
 #endif
 	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception : " << std::endl;
-		excn.show( std::cerr );
+		excn.display();
 		return -1;
 	}
 	return 0;

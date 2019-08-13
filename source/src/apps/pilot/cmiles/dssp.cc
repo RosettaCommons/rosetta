@@ -29,23 +29,23 @@
 int main(int argc, char* argv[]) {
 	try {
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-  devel::init(argc, argv);
-  core::pose::PoseCOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
-  core::pose::PDBInfoCOP info = pose->pdb_info();
+		devel::init(argc, argv);
+		core::pose::PoseCOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
+		core::pose::PDBInfoCOP info = pose->pdb_info();
 
-  core::scoring::dssp::Dssp dssp(*pose);
-  dssp.dssp_reduced();
+		core::scoring::dssp::Dssp dssp(*pose);
+		dssp.dssp_reduced();
 
-  std::cout << "Rosetta_Residue" << "\t" << "PDB_Residue" << "\t" << "Secondary_Structure" << std::endl;
-  for (core::Size i = 1; i <= pose->size(); ++i) {
-    std::cout << i << "\t" << info->number(i) << "\t" << dssp.get_dssp_secstruct(i) << std::endl;
-  }
+		std::cout << "Rosetta_Residue" << "\t" << "PDB_Residue" << "\t" << "Secondary_Structure" << std::endl;
+		for ( core::Size i = 1; i <= pose->size(); ++i ) {
+			std::cout << i << "\t" << info->number(i) << "\t" << dssp.get_dssp_secstruct(i) << std::endl;
+		}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

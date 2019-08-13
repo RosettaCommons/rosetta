@@ -35,6 +35,7 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
+#include <utility/crash_report.hh>
 
 // C++ headers
 #include <string>
@@ -173,14 +174,22 @@ VanillaJobDistributor::run_mature_job(
 		job_output = mature_job->run();
 	} catch ( utility::excn::Exception & e ) {
 		// An exception thrown by this job.  Inform the JobQueen that it's a badie.
-		TR.Error << "Job " << larval_job->job_index() << " named " << larval_job->job_tag() << " threw an exception:\n" <<
-			e.msg() << std::endl;
+		TR.Error << "Job " << larval_job->job_index() << " named " << larval_job->job_tag() << " threw an exception:\n" << std::endl;
+		e.display();
+
+		job_queen_->note_job_completed_and_track( larval_job, jd3_job_status_failed_w_exception, 0 );
+	} catch( std::exception const & e ) {
+		// An exception thrown by this job.  Inform the JobQueen that it's a badie.
+		TR.Error << "Job " << larval_job->job_index() << " named " << larval_job->job_tag() << " threw an exception:\n" << std::endl;
+		std::cerr << "        error message: " << e.what() << std::endl;
+		utility::save_crash_report( e.what(), typeid( e ).name() );
+
 		job_queen_->note_job_completed_and_track( larval_job, jd3_job_status_failed_w_exception, 0 );
 	} catch ( ... ) {
 		// An exception thrown by this job.  Inform the JobQueen that it's a badie.
-		job_queen_->note_job_completed_and_track( larval_job, jd3_job_status_failed_w_exception, 0 );
 		TR.Error << "Job " << larval_job->job_index() << " named " << larval_job->job_tag() << " threw an unrecognized exception."
 			<< std::endl;
+		job_queen_->note_job_completed_and_track( larval_job, jd3_job_status_failed_w_exception, 0 );
 	}
 	return job_output;
 }

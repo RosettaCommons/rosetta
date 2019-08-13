@@ -53,13 +53,13 @@ void test( std::string fname ) {
 	// neighbor counts
 	std::cout << fname << " neighbor counts" << std::endl;
 	utility::vector1<Size> anb5(pb.nballs()),anb10(pb.nballs()),anb15(pb.nballs()),anb20(pb.nballs());
-	for( Size i = 1; i <= pb.nballs(); i++ ) {
-		for( Size j = 1; j < i; j++ ) {
+	for ( Size i = 1; i <= pb.nballs(); i++ ) {
+		for ( Size j = 1; j < i; j++ ) {
 			Real dis2 = numeric::distance_squared(pb.ball(i).xyz(),pb.ball(j).xyz());
-			if(  25 >= dis2 ) anb5 [i]++;
-			if( 100 >= dis2 ) anb10[i]++;
-			if( 225 >= dis2 ) anb15[i]++;
-			if( 400 >= dis2 ) anb20[i]++;
+			if (  25 >= dis2 ) anb5 [i]++;
+			if ( 100 >= dis2 ) anb10[i]++;
+			if ( 225 >= dis2 ) anb15[i]++;
+			if ( 400 >= dis2 ) anb20[i]++;
 		}
 	}
 	// int infp,outfp,status;
@@ -71,13 +71,13 @@ void test( std::string fname ) {
 	string cmd("/Users/sheffler/project/koehl/DAlphaBall_new/DAlphaBall_surf.mactel");
 	redi::pstream proc(cmd);
 	proc << "NPOINTS" << endl << pb.nballs() << endl << "COORDS" << endl;
-	for( Size i = 1; i <= pb.nballs(); i++ ) {
+	for ( Size i = 1; i <= pb.nballs(); i++ ) {
 		Ball b(pb.ball(i));
-	// 	// cout << "PoseBalls " << i << " " << pb.index_to_id(i) << " " << b.x() << " " << b.y() << " " << b.z() << " " << b.r() <<  endl;
+		//  // cout << "PoseBalls " << i << " " << pb.index_to_id(i) << " " << b.x() << " " << b.y() << " " << b.z() << " " << b.r() <<  endl;
 		proc << b.x() << " " << b.y() << " " << b.z() << " " << b.r() << " " << endl;
 	}
 	proc << "WEIGHTS" << endl;
-	for( Size i = 1; i <= pb.nballs(); i++ ) {
+	for ( Size i = 1; i <= pb.nballs(); i++ ) {
 		proc << "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1" << endl;
 	}
 	proc << "END" << endl << redi::peof;
@@ -87,8 +87,8 @@ void test( std::string fname ) {
 	// while( proc >> buf ) result += buf + "\n";
 	// std::cout << result << std::endl;
 
-	for( Size a = 1; a <= 20; a++ ) {
-		for( Size i = 1; i <= pb.nballs(); i++ ) {
+	for ( Size a = 1; a <= 20; a++ ) {
+		for ( Size i = 1; i <= pb.nballs(); i++ ) {
 			proc >> ialpha >> index >> val;
 			pb.set_surf(i,a,val);
 		}
@@ -102,31 +102,31 @@ void test( std::string fname ) {
 
 	Size old_resnum = 0;
 	string tag;
-	for( Size i = 1; i <= pb.nballs(); i++ ) {
+	for ( Size i = 1; i <= pb.nballs(); i++ ) {
 		Size resnum = pb.res_num(i);
 		tag = pb.res_name(i);
-		if( resnum <= pose.size() && pose.residue(resnum).is_upper_terminus() )	tag += "_Cterm";
-		if( resnum <= pose.size() && pose.residue(resnum).is_lower_terminus() )	tag += "_Nterm";
-		if( pb.res_num(i) > pose.size() ) {
+		if ( resnum <= pose.size() && pose.residue(resnum).is_upper_terminus() ) tag += "_Cterm";
+		if ( resnum <= pose.size() && pose.residue(resnum).is_lower_terminus() ) tag += "_Nterm";
+		if ( pb.res_num(i) > pose.size() ) {
 			tag = "UNK";
-			if( resnum == old_resnum ) lines[tag] += "\n" + pb.res_name(i) +" "+ fname +" "+ string_of(resnum) + " ";
+			if ( resnum == old_resnum ) lines[tag] += "\n" + pb.res_name(i) +" "+ fname +" "+ string_of(resnum) + " ";
 		}
-		if( old_resnum != resnum ) {
-			if( lines[tag].size() ) lines[tag] += "\n";
+		if ( old_resnum != resnum ) {
+			if ( lines[tag].size() ) lines[tag] += "\n";
 			old_resnum = resnum;
 			lines[tag] += pb.res_name(i) +" "+ fname +" "+ string_of(resnum) + " ";
 		}
 		lines[tag] += pb.atom_name(i) + " ";
-		for( Size a = 1; a <=20; a++ ) lines[tag] += string_of(pb.surf(i,a)) + " ";
+		for ( Size a = 1; a <=20; a++ ) lines[tag] += string_of(pb.surf(i,a)) + " ";
 	}
 	// lines[tag] += "\n";
 	std::cerr << "time: " << Real(clock()-t)/Real(CLOCKS_PER_SEC) << std::endl;
 
 	// for( map<string,string>::iterator i = lines.begin(); i != lines.end(); i++ ) {
-	// 	cout << "writing: " << i->first << endl;
-	// 	utility::io::ozstream out( prefix+'/'+i->first+".lr", std::ios_base::app );
-	// 	out << i->second << endl;
-	// 	out.close();
+	//  cout << "writing: " << i->first << endl;
+	//  utility::io::ozstream out( prefix+'/'+i->first+".lr", std::ios_base::app );
+	//  out << i->second << endl;
+	//  out.close();
 	// }
 
 }
@@ -138,39 +138,39 @@ main (int argc, char *argv[])
 	try {
 
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace utility;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace utility;
 
-	if( option[ in::file::s ].user() ) {
-  	vector1<file::FileName> files( option[ in::file::s ]() );
-  	for( size_t i = 1; i <= files.size(); ++i ) {
-    	test( files[i] );
-  	}
-	} else if( option[ in::file::l ].user() ) {
-  		vector1<file::FileName> files( option[ in::file::l ]() );
-  		for( size_t i = 1; i <= files.size(); ++i ) {
-			utility::io::izstream list( files[i] );
-			std::string fname;
-			while( list >> fname ) {
-				// std::cerr << "'" << fname << "'" << std::endl;
-    		test( fname );
+		if ( option[ in::file::s ].user() ) {
+			vector1<file::FileName> files( option[ in::file::s ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
+				test( files[i] );
 			}
-  		}
-	}
+		} else if ( option[ in::file::l ].user() ) {
+			vector1<file::FileName> files( option[ in::file::l ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
+				utility::io::izstream list( files[i] );
+				std::string fname;
+				while ( list >> fname ) {
+					// std::cerr << "'" << fname << "'" << std::endl;
+					test( fname );
+				}
+			}
+		}
 
-	for( std::map<std::string,utility::io::ozstream*>::iterator i = outs.begin(); i != outs.end(); ++i ) {
-		i->second->close();
-		delete i->second;
-	}
+		for ( std::map<std::string,utility::io::ozstream*>::iterator i = outs.begin(); i != outs.end(); ++i ) {
+			i->second->close();
+			delete i->second;
+		}
 
-	return 0;
+		return 0;
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

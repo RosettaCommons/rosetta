@@ -184,22 +184,22 @@ main( int argc, char * argv [] )
 
 		// std::cout << "MINIMIZING" << std::endl;
 
-	// core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+		// core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 
-	// movemap->set_bb( true );
-	// movemap->set_chi( true );
+		// movemap->set_bb( true );
+		// movemap->set_chi( true );
 
-	// protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( movemap, score_fxn, basic::options::option[ basic::options::OptionKeys::run::min_type ].value(), 0.01, true );
+		// protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( movemap, score_fxn, basic::options::option[ basic::options::OptionKeys::run::min_type ].value(), 0.01, true );
 
-	// min_mover->apply( pose );
+		// min_mover->apply( pose );
 
-	// std::string after_min_filename( "after_min.pdb" );
-	// pose.dump_scored_pdb( after_min_filename, *score_fxn );
+		// std::string after_min_filename( "after_min.pdb" );
+		// pose.dump_scored_pdb( after_min_filename, *score_fxn );
 
 		std::cout << "************************************d**o**n**e***********************************" << std::endl;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

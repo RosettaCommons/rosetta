@@ -40,10 +40,10 @@
 
 
 class MPI_LoopHash_Launcher {
- public:
+public:
 
 
-  void run(){
+	void run(){
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		using namespace protocols::wum;
@@ -90,23 +90,19 @@ class MPI_LoopHash_Launcher {
 		const core::Size emperor_node = 0;
 		core::Size n_masters = 1;
 
-		if( option[ OptionKeys::wum::n_masters ].user() ){
+		if ( option[ OptionKeys::wum::n_masters ].user() ) {
 			n_masters = option[ OptionKeys::wum::n_masters ]();
-		}else{
+		} else {
 			n_masters = mpi_npes() / option[ OptionKeys::wum::n_slaves_per_master ]();
 		}
 
 
-		if ( mpi_rank() == 0 ){
+		if ( mpi_rank() == 0 ) {
 			wu_manager = new MPI_LoopHashRefine_Emperor( );
-		}
-		else if ( (int(mpi_rank()) > int(0)) && int(mpi_rank()) <= int(n_masters) )
-		{
+		} else if ( (int(mpi_rank()) > int(0)) && int(mpi_rank()) <= int(n_masters) ) {
 			core::Size master_rank =  mpi_rank() - 1; // master rank, just a serial number identifying the master
 			wu_manager = new MPI_LoopHashRefine_Master( emperor_node , master_rank );
-		}
-		else
-		{
+		} else {
 			core::Size slave_master = (mpi_rank() %n_masters)+1;  // which master does this slave belong to ?
 			wu_manager = new MPI_WorkUnitManager_Slave( slave_master );
 		}
@@ -124,22 +120,22 @@ class MPI_LoopHash_Launcher {
 int
 main( int argc, char * argv [] )
 {
-    try {
-	// initialize core
-	devel::init(argc, argv);
+	try {
+		// initialize core
+		devel::init(argc, argv);
 
-	MPI_LoopHash_Launcher launch_mpi_loophash;
-	launch_mpi_loophash.run();
+		MPI_LoopHash_Launcher launch_mpi_loophash;
+		launch_mpi_loophash.run();
 
-	#ifdef USEMPI
+#ifdef USEMPI
 		MPI_Barrier( MPI_COMM_WORLD );
 		MPI_Finalize();
-	#endif
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+#endif
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
+	}
+	return 0;
 }
 
 

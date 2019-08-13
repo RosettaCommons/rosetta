@@ -236,7 +236,7 @@ int main(int argc, char** argv)
 
 		ic->showClusters(2);
 	} catch (utility::excn::Exception const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

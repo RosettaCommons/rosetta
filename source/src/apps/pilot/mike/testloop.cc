@@ -27,22 +27,22 @@
 int
 main( int argc, char * argv [] )
 {
-    try {
-    	devel::init(argc, argv);
-    	using namespace basic::options;
-    	using namespace basic::options::OptionKeys;
+	try {
+		devel::init(argc, argv);
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-    	// parse loops file Loops
-    	//protocols::loops::Loops loops;
-    	//std::string filename( option[ OptionKeys::loops::loop_file ]().name() );
-    	//loops.read_loop_file( filename );   // <== TODO: select these using density score
-    		protocols::loops::Loops myloops;
-    		myloops.read_loop_file("testloops.loopfile" );
-    		myloops.grow_all_loops(202, 4.0 );
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+		// parse loops file Loops
+		//protocols::loops::Loops loops;
+		//std::string filename( option[ OptionKeys::loops::loop_file ]().name() );
+		//loops.read_loop_file( filename );   // <== TODO: select these using density score
+		protocols::loops::Loops myloops;
+		myloops.read_loop_file("testloops.loopfile" );
+		myloops.grow_all_loops(202, 4.0 );
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
+	}
+	return 0;
 }
 

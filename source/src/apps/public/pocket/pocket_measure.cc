@@ -181,7 +181,7 @@ main( int argc, char * argv [] )
 		std::cout << "Pocket score (unweighted) is: " << constraint_pocket_score << std::endl;
 		std::cout << "Largest pocket score (unweighted) is: " << largest_pocket_score << std::endl;
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

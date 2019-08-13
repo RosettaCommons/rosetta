@@ -9,8 +9,8 @@
 
 /// @file
 /// @brief
-//	@author Will Sheffler
-//	@author Ray Wang
+// @author Will Sheffler
+// @author Ray Wang
 
 
 // libRosetta headers
@@ -48,22 +48,22 @@
 int
 main ( int argc, char *argv[] ) {
 	try{
-	using namespace core;
-	using namespace protocols;
-	using namespace protocols::jd2;
-	using namespace protocols::moves;
+		using namespace core;
+		using namespace protocols;
+		using namespace protocols::jd2;
+		using namespace protocols::moves;
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	scoring::ScoreFunctionOP score = scoring::get_score_function();
+		scoring::ScoreFunctionOP score = scoring::get_score_function();
 
-	CompositionMoverOP container( new CompositionMover );
-	container->add_mover( new protocols::simple_moves::RepulsiveOnlyMover() );
-	container->add_mover( new protocols::relax::FastRelax(score) );
+		CompositionMoverOP container( new CompositionMover );
+		container->add_mover( new protocols::simple_moves::RepulsiveOnlyMover() );
+		container->add_mover( new protocols::relax::FastRelax(score) );
 
-	JobDistributor::get_instance()->go(container);
+		JobDistributor::get_instance()->go(container);
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

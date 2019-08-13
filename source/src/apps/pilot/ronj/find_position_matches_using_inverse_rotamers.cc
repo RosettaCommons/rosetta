@@ -778,7 +778,7 @@ main( int argc, char * argv [] ) {
 		TR << "Done." << std::endl;
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

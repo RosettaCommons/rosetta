@@ -275,7 +275,7 @@ main( int argc, char * argv [] )
 		}
 
 	} catch (utility::excn::Exception const & e ) {
-		TR << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

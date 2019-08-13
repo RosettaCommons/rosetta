@@ -294,7 +294,7 @@ main( int argc, char* argv [] ) {
 		prof_show();
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

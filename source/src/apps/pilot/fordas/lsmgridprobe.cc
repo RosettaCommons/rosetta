@@ -82,7 +82,7 @@ bool tryParseLSMSpec(std::string lsmstring, core::Size & id, VectorPair & lsmspe
 	std::vector< std::string > vectors;
 	boost::split( vectors, lsmstring, boost::is_any_of(":") );
 
-	if(vectors.size() != 3){
+	if ( vectors.size() != 3 ) {
 		return false;
 	}
 
@@ -92,7 +92,7 @@ bool tryParseLSMSpec(std::string lsmstring, core::Size & id, VectorPair & lsmspe
 	boost::split( position, vectors[1], boost::is_any_of(",") );
 	boost::split( direction, vectors[2], boost::is_any_of(",") );
 
-	if(position.size() != 3 || direction.size() != 3){
+	if ( position.size() != 3 || direction.size() != 3 ) {
 		return false;
 	}
 
@@ -101,14 +101,14 @@ bool tryParseLSMSpec(std::string lsmstring, core::Size & id, VectorPair & lsmspe
 	id = lexical_cast<core::Size>(vectors[0]);
 
 	lsmspec = VectorPair(
-			Vector(
-				lexical_cast<core::Real>(position[0]),
-				lexical_cast<core::Real>(position[1]),
-				lexical_cast<core::Real>(position[2])),
-			Vector(
-				lexical_cast<core::Real>(direction[0]),
-				lexical_cast<core::Real>(direction[1]),
-				lexical_cast<core::Real>(direction[2])));
+		Vector(
+		lexical_cast<core::Real>(position[0]),
+		lexical_cast<core::Real>(position[1]),
+		lexical_cast<core::Real>(position[2])),
+		Vector(
+		lexical_cast<core::Real>(direction[0]),
+		lexical_cast<core::Real>(direction[1]),
+		lexical_cast<core::Real>(direction[2])));
 
 	return true;
 }
@@ -116,134 +116,127 @@ bool tryParseLSMSpec(std::string lsmstring, core::Size & id, VectorPair & lsmspe
 }
 }
 
-namespace basic{
-	namespace options{
-		namespace OptionKeys{
-			basic::options::StringOptionKey const lsmdef("lsmdef");
+namespace basic {
+namespace options {
+namespace OptionKeys {
+basic::options::StringOptionKey const lsmdef("lsmdef");
 
-			basic::options::RealOptionKey const angle_sampling("angle_sampling");
-			basic::options::RealOptionKey const translocation_sampling("translocation_sampling");
-			basic::options::RealOptionKey const max_radius("max_radius");
-			basic::options::RealOptionKey const distance_sampling("distance_sampling");
-			basic::options::RealOptionKey const max_distance("max_distance");
+basic::options::RealOptionKey const angle_sampling("angle_sampling");
+basic::options::RealOptionKey const translocation_sampling("translocation_sampling");
+basic::options::RealOptionKey const max_radius("max_radius");
+basic::options::RealOptionKey const distance_sampling("distance_sampling");
+basic::options::RealOptionKey const max_distance("max_distance");
 
-			basic::options::BooleanOptionKey const constrain_grid("constrain_grid");
-		}
-	}
+basic::options::BooleanOptionKey const constrain_grid("constrain_grid");
+}
+}
 }
 
 int main( int argc, char * argv [] )
 {
-    try {
-	using namespace protocols::hotspot_hashing;
+	try {
+		using namespace protocols::hotspot_hashing;
 
-	using basic::options::option;
-  using namespace basic::options::OptionKeys;
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
 
-  option.add( lsmdef, "lsmdef");
-  option.add( angle_sampling, "angle_sampling");
-  option.add( translocation_sampling, "translocation_sampling");
-  option.add( max_radius, "max_radius");
-  option.add( distance_sampling, "distance_sampling");
-  option.add( max_distance, "max_distance");
+		option.add( lsmdef, "lsmdef");
+		option.add( angle_sampling, "angle_sampling");
+		option.add( translocation_sampling, "translocation_sampling");
+		option.add( max_radius, "max_radius");
+		option.add( distance_sampling, "distance_sampling");
+		option.add( max_distance, "max_distance");
 
-  option.add( constrain_grid, "constrain_grid").def(false);
+		option.add( constrain_grid, "constrain_grid").def(false);
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	// Turn on extra rotamers
-	option[ packing::ex1::ex1 ].value( true );
-	option[ packing::ex2::ex2 ].value( true );
-	option[ packing::extrachi_cutoff ].value( 0 );
+		// Turn on extra rotamers
+		option[ packing::ex1::ex1 ].value( true );
+		option[ packing::ex2::ex2 ].value( true );
+		option[ packing::extrachi_cutoff ].value( 0 );
 
-	// Necessary to make sure NANs in hbonding don't cause an exit
-	option[ in::file::fail_on_bad_hbond ].value( false );
+		// Necessary to make sure NANs in hbonding don't cause an exit
+		option[ in::file::fail_on_bad_hbond ].value( false );
 
-	// Read target pose
-	std::string targetFilename;
-	core::pose::Pose targetPose;
+		// Read target pose
+		std::string targetFilename;
+		core::pose::Pose targetPose;
 
-	if ( option[hotspot::target].user() )
-	{
-		targetFilename = option[ hotspot::target ]();
-		core::import_pose::pose_from_file( targetPose, targetFilename , core::import_pose::PDB_file);
-	}
-	else
-	{
-		utility_exit_with_message("Must specify a target structure using -target <filename>");
-	}
+		if ( option[hotspot::target].user() ) {
+			targetFilename = option[ hotspot::target ]();
+			core::import_pose::pose_from_file( targetPose, targetFilename , core::import_pose::PDB_file);
+		} else {
+			utility_exit_with_message("Must specify a target structure using -target <filename>");
+		}
 
-	// Read starting residue
-	std::string resname;
-	if (option[ hotspot::residue ].user() ) {
-		resname = option[ hotspot::residue ]()[1];
-	}
-	else
-	{
-		utility_exit_with_message("You must specify probe residue identity using -residue <3Letter>");
-	}
+		// Read starting residue
+		std::string resname;
+		if ( option[ hotspot::residue ].user() ) {
+			resname = option[ hotspot::residue ]()[1];
+		} else {
+			utility_exit_with_message("You must specify probe residue identity using -residue <3Letter>");
+		}
 
-	// Initialize residue representation
-	core::conformation::ResidueOP residue;
-	core::chemical::ResidueTypeSet const & residue_set ( targetPose.residue(1).residue_type_set() );
-	core::chemical::ResidueType const & restype( residue_set.name_map( resname ) );
-	residue = core::conformation::ResidueFactory::create_residue( restype );
+		// Initialize residue representation
+		core::conformation::ResidueOP residue;
+		core::chemical::ResidueTypeSet const & residue_set ( targetPose.residue(1).residue_type_set() );
+		core::chemical::ResidueType const & restype( residue_set.name_map( resname ) );
+		residue = core::conformation::ResidueFactory::create_residue( restype );
 
-	// Read LSM definition
-	std::string lsmstring;
-	core::Size lsmid;
-	VectorPair lsmspec;
+		// Read LSM definition
+		std::string lsmstring;
+		core::Size lsmid;
+		VectorPair lsmspec;
 
-	if (option[ lsmdef ].user() ) {
-		lsmstring = option[ lsmdef ]();
-	}
-	else{
-		utility_exit_with_message("You must specify lsm spec (id:location:normal) using -lsmdef <id>:<x>,<y>,<z>:<x>,<y>,<z>");
-	}
+		if ( option[ lsmdef ].user() ) {
+			lsmstring = option[ lsmdef ]();
+		} else {
+			utility_exit_with_message("You must specify lsm spec (id:location:normal) using -lsmdef <id>:<x>,<y>,<z>:<x>,<y>,<z>");
+		}
 
-	if (!tryParseLSMSpec(lsmstring, lsmid, lsmspec)){
-		utility_exit_with_message("Invalid lsm spec, use format (id:location:normal)  <id>:<x>,<y>,<z>:<x>,<y>,<z>");
-	}
+		if ( !tryParseLSMSpec(lsmstring, lsmid, lsmspec) ) {
+			utility_exit_with_message("Invalid lsm spec, use format (id:location:normal)  <id>:<x>,<y>,<z>:<x>,<y>,<z>");
+		}
 
-	// Generate output filename
-	utility::file::FileName output_file(targetPose.pdb_info()->name());
-	output_file.ext(resname + "." + boost::lexical_cast<std::string>(lsmid));
+		// Generate output filename
+		utility::file::FileName output_file(targetPose.pdb_info()->name());
+		output_file.ext(resname + "." + boost::lexical_cast<std::string>(lsmid));
 
-	utility::file::PathName	output_directory( option[out::path::all]() );
+		utility::file::PathName output_directory( option[out::path::all]() );
 
-	utility::file::FileName output_basename(output_file, output_directory);
+		utility::file::FileName output_basename(output_file, output_directory);
 
-	// Initialize score function
-	core::scoring::ScoreFunctionOP scorefxn;
-	if( option[ score::weights ].user() ) {
-		scorefxn = core::scoring::get_score_function();
-	}
-	else {
-		scorefxn = core::scoring::get_score_function_legacy( "score13" );
-		scorefxn->set_weight( core::scoring::envsmooth, 0 );
-	}
+		// Initialize score function
+		core::scoring::ScoreFunctionOP scorefxn;
+		if ( option[ score::weights ].user() ) {
+			scorefxn = core::scoring::get_score_function();
+		} else {
+			scorefxn = core::scoring::get_score_function_legacy( "score13" );
+			scorefxn->set_weight( core::scoring::envsmooth, 0 );
+		}
 
-	core::scoring::methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
-	options.hbond_options().use_hb_env_dep( option[ hotspot::envhb]() );
-	scorefxn->set_energy_method_options( options );
+		core::scoring::methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
+		options.hbond_options().use_hb_env_dep( option[ hotspot::envhb]() );
+		scorefxn->set_energy_method_options( options );
 
-	LSMSearchPattern lsm(
+		LSMSearchPattern lsm(
 			lsmspec,
 			option[ angle_sampling ],
 			option[ translocation_sampling ],
 			option[ max_radius ],
 			option[ distance_sampling ],
 			option[ max_distance]
-			);
+		);
 
-	SearchPattern& pattern = lsm;
+		SearchPattern& pattern = lsm;
 
-	MinimizingPatternSearch search(output_basename.name(), targetPose, residue, pattern, scorefxn, option[ constrain_grid ] );
-	search.execute();
-    } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		MinimizingPatternSearch search(output_basename.name(), targetPose, residue, pattern, scorefxn, option[ constrain_grid ] );
+		search.execute();
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
 		return -1;
-                                  }
-        return 0;
+	}
+	return 0;
 
 }

@@ -50,15 +50,9 @@ main( int argc, char * argv [] )
 
 		//YL, create abrelax application then run it.
 		protocols::abinitio::AbrelaxApplication abrelax;
-		try{
-			abrelax.run();
-		} catch (utility::excn::Exception& excn ) {
-			std::cerr << "Exception : " << std::endl;
-			excn.show( std::cerr );
-		}
+		abrelax.run();
 	} catch (utility::excn::Exception& excn ) {
-		std::cerr << "Exception : " << std::endl;
-		excn.show( std::cerr );
+		excn.display();
 		return -1;
 	}
 	return 0;

@@ -205,13 +205,8 @@ int main( int argc, char ** argv )
 			devel::pack_daemon::DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
 			daf->set_num_entity_elements( ds->entity_task()->size() );
 			utility::io::izstream daf_file( daf_filename );
-			try {
-				daf->initialize_from_input_file( ds, daf_file );
-			} catch (utility::excn::Exception & e ) {
-				std::cerr << "Caught exception" << std::endl;
-				std::cerr << e.msg() << std::endl;
-				exit(1);
-			}
+			daf->initialize_from_input_file( ds, daf_file );
+
 			func->daemon_set( ds );
 			func->set_num_pack_daemons( daf->num_states() );
 			func->aggregate_function( daf );
@@ -325,7 +320,7 @@ int main( int argc, char ** argv )
 #endif
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

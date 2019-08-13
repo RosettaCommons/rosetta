@@ -134,7 +134,7 @@ main( int argc, char * argv [] )
 		man9_copy->dump_pdb("man9_trim_at_1.pdb");
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

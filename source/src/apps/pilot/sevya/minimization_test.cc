@@ -628,6 +628,8 @@ main( int argc, char * argv [] )
 
 		}
 	} catch (utility::excn::Exception const & e ) {
-		utility_exit_with_message("caught exception " + e.msg());
+		e.display();
+		return -1;
 	}
+	return 0;
 }

@@ -138,7 +138,7 @@ output_single_motif(
 		output_path +
 		src_pose.residue_type( prot_pos ).name3() + string_of( prot_pos_pdb ) + string_of( prot_pos_chain ) + delimiter );
 
-	for( Size ic(1) ; ic <= contacts.size() ; ++ic ) {
+	for ( Size ic(1) ; ic <= contacts.size() ; ++ic ) {
 		protocols::motifs::Motif motif( src_pose.residue( prot_pos ), src_pose.residue( contacts[ic] ) );
 		conformation::ResidueOP refdnares = core::conformation::ResidueFactory::create_residue( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )->name_map( protocols::dna::dna_full_name3(motif.restype_name2()) ) );
 		conformation::Residue protres( src_pose.residue( prot_pos ) );
@@ -170,20 +170,20 @@ void
 place_waters_and_minimize( Pose & pose )
 {
 
-  ScoreFunction scorefxn;
-  // Jim had these weights in his original motif collecting app - I'll leave them
+	ScoreFunction scorefxn;
+	// Jim had these weights in his original motif collecting app - I'll leave them
 	scorefxn.set_weight( fa_atr, 1.0806 );
-  scorefxn.set_weight( fa_rep, 0.65 );
-  scorefxn.set_weight( fa_sol, 0.5842 );
-  scorefxn.set_weight( fa_dun, 0.7506 );
+	scorefxn.set_weight( fa_rep, 0.65 );
+	scorefxn.set_weight( fa_sol, 0.5842 );
+	scorefxn.set_weight( fa_dun, 0.7506 );
 
-  scorefxn.set_weight( h2o_intra, 0.01 );
-  scorefxn.set_weight( h2o_hbond, 1.0 );
+	scorefxn.set_weight( h2o_intra, 0.01 );
+	scorefxn.set_weight( h2o_hbond, 1.0 );
 
-  scorefxn.set_weight( hbond_sr_bb, 3.1097 );
-  scorefxn.set_weight( hbond_lr_bb, 3.1097 );
-  scorefxn.set_weight( hbond_bb_sc, 3.1097 );
-  scorefxn.set_weight( hbond_sc, 3.1097 );
+	scorefxn.set_weight( hbond_sr_bb, 3.1097 );
+	scorefxn.set_weight( hbond_lr_bb, 3.1097 );
+	scorefxn.set_weight( hbond_bb_sc, 3.1097 );
+	scorefxn.set_weight( hbond_sc, 3.1097 );
 
 	Energy score_orig = scorefxn( pose );
 
@@ -193,9 +193,9 @@ place_waters_and_minimize( Pose & pose )
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
 	kinematics::MoveMap mm;
-  mm.set_bb( false );
-  mm.set_chi( false );
-	for (Size i = 1; i <= pose.size(); ++i) {
+	mm.set_bb( false );
+	mm.set_chi( false );
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).is_protein() ) {
 			task->nonconst_residue_task(i).prevent_repacking();
 			// only allowing protein minimization because I saw strange DNA changes when I allowed everything to minimize
@@ -214,7 +214,7 @@ place_waters_and_minimize( Pose & pose )
 
 	//AtomTreeMinimizer minimizer;
 	//minimizer.run( pose, mm, scorefxn, options );
-  //io::pdb::dump_pdb( pose, "post_minimization.pdb" );
+	//io::pdb::dump_pdb( pose, "post_minimization.pdb" );
 
 	//Energy min_score = scorefxn( pose );
 	//std::cout << "Score after minimization " << min_score << std::endl;
@@ -234,8 +234,8 @@ get_packing_score(
 {
 
 	ScoreFunction pack_score;
-  pack_score.set_weight( fa_atr, 0.80 );
-  pack_score.set_weight( fa_rep, 0.44 );
+	pack_score.set_weight( fa_atr, 0.80 );
+	pack_score.set_weight( fa_rep, 0.44 );
 
 	//TwoBodyEnergyMap pack_map;
 
@@ -253,7 +253,7 @@ get_hbond_score(
 {
 
 	ScoreFunction hbond_score;
-  hbond_score.set_weight( hbond_sc, 1.0 );
+	hbond_score.set_weight( hbond_sc, 1.0 );
 
 	//TwoBodyEnergyMap hbond_map;
 
@@ -271,7 +271,7 @@ get_water_hbond_score(
 {
 
 	ScoreFunction water_hbond_score;
-  water_hbond_score.set_weight( h2o_hbond, 1.0 );
+	water_hbond_score.set_weight( h2o_hbond, 1.0 );
 
 	//TwoBodyEnergyMap water_hbond_map;
 
@@ -298,24 +298,24 @@ process_for_motifs(
 	//place_waters_and_minimize( pose );
 
 	// Loop over positions, skipping non-amino acid
-	for( int prot_pos = 1 ; prot_pos <= nres ; ++prot_pos ) {
+	for ( int prot_pos = 1 ; prot_pos <= nres ; ++prot_pos ) {
 		ResidueType const & prot_type( pose.residue_type( prot_pos ) );
-		if(  !prot_type.is_protein() ) continue;
+		if (  !prot_type.is_protein() ) continue;
 
 		// map will automatically sort the "contacts" with the lowest total_score at the front of map
 		std::map< Real, Size > contacts;
 
 		// Loop over positions, skipping non-ligand
-		for( int lig_pos = 1 ; lig_pos <= nres ; ++lig_pos ) {
+		for ( int lig_pos = 1 ; lig_pos <= nres ; ++lig_pos ) {
 			ResidueType const & lig_type( pose.residue_type( lig_pos ) );
-			if(  !lig_type.is_ligand() ) continue;
+			if (  !lig_type.is_ligand() ) continue;
 
 			Real pack_score = get_packing_score( pose, lig_pos, prot_pos );
 			Real hb_score = get_hbond_score( pose, lig_pos, prot_pos );
 			Real water_score = get_water_hbond_score( pose, lig_pos, prot_pos );
 
 			Real total_score = pack_score + hb_score + water_score;
-			if( pack_score < -0.5 || hb_score < -0.3 || water_score < -0.3 ) {
+			if ( pack_score < -0.5 || hb_score < -0.3 || water_score < -0.3 ) {
 				contacts[total_score] = lig_pos;
 				std::cout << "Energies between " << prot_pos << " and " << lig_pos << "are total: " << total_score << " pack: " << pack_score << " hbond: " << hb_score << " water: " << water_score << std::endl;
 			}
@@ -323,19 +323,19 @@ process_for_motifs(
 		} // End loop over ligand residues
 
 		Size contactssize( contacts.size() );
-		if( contactssize != 0 ) {
+		if ( contactssize != 0 ) {
 			std::vector< Size > final_contacts;
 			Size contactssize( contacts.size() );
-			for( std::map< Real, Size >::const_iterator it( contacts.begin() ),
+			for ( std::map< Real, Size >::const_iterator it( contacts.begin() ),
 					end( contacts.end() ); it != end; ++it ) {
-				if( contactssize == 1 ) {
+				if ( contactssize == 1 ) {
 					final_contacts.push_back( it->second );
 					break;
 				}
 				Real first( (it)->first );
 				Real firstb( (++it)->first );
 				Real divided( first / firstb );
-				if( divided > 1.5 ) {
+				if ( divided > 1.5 ) {
 					final_contacts.push_back( it->second );
 					break;
 				} else {
@@ -351,14 +351,14 @@ process_for_motifs(
 			char prot_pos_chain( pose.pdb_info()->chain( prot_pos ) );
 			std::string delimiter( "_" );
 
-			for( Size ic=0; ic < final_contacts.size(); ++ic ) {
-				if( pose.residue( prot_pos ).name3() == "GLY" ) continue;
+			for ( Size ic=0; ic < final_contacts.size(); ++ic ) {
+				if ( pose.residue( prot_pos ).name3() == "GLY" ) continue;
 				//protocols::motifs::Motif motif( pose.residue( prot_pos ), pose.residue( final_contacts[ic] ) );
 				//conformation::ResidueOP protres = core::conformation::ResidueFactory::create_residue( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )->name_map( motif.restype_name1() ) );
 				//conformation::ResidueOP dnares = core::conformation::ResidueFactory::create_residue( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )->name_map( protocols::dna::dna_full_name3(motif.restype_name2()) ) );
 				//conformation::ResidueOP dnares2 = core::conformation::ResidueFactory::create_residue( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )->name_map( protocols::dna::dna_full_name3(motif.restype_name2()) ) );
 				//motif.place_residue( *protres, *dnares );
-			//	bool broke( false );
+				// bool broke( false );
 
 				Size dna_pos = final_contacts[ ic ];
 				int dna_pos_pdb( pose.pdb_info()->number( dna_pos ) );
@@ -366,29 +366,29 @@ process_for_motifs(
 				std::string motif_name = pose.residue_type( prot_pos ).name3() + string_of( prot_pos_pdb ) + string_of( prot_pos_chain) + delimiter +  pose.residue_type( dna_pos ).name1() + string_of( dna_pos_pdb ) + string_of( dna_pos_chain ) + delimiter + pdb_name;
 				//motif.store_remark( motif_name );
 
-		//		for( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motifs.begin(), end_itr = motifs.end();
-		//				motifcop_itr != end_itr; ++motifcop_itr ) {
-		//			protocols::motifs::MotifCOP motifcop( *motifcop_itr );
-		//			if( motifcop->restype_name1() != motif.restype_name1() ) continue;
-		//			if( motifcop->restype_name2() != motif.restype_name2() ) continue;
-		//			motifcop->place_residue( *protres, *dnares2 );
-		//			Real rmsdtest = scoring::automorphic_rmsd( *dnares, *dnares2, false );
-					// will get appropriate name and add to motifs as well as outputting to file
-					//std::cout << "RMSD = " << rmsdtest << " for motif at positions " << prot_pos << " and " << final_contacts[ic] << std::endl;
-		//			if( rmsdtest < 0.2 ) {
-		//				std::cout << "Skipping motif " << motif.remark() << " because it matches motif " << motifcop->remark() << " already in motif library, with an RMSD = " << rmsdtest << std::endl;
-		//				broke = true;
-			//			break;
-			//		}
-				}
-				//if( !broke ) {
-				//	std::cout << "Adding motif " << motif.remark() << std::endl;
-				//	final_final_contacts.push_back( final_contacts[ic] );
-			//		motifs.add_to_library( motif );
-			//	}
+				//  for( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motifs.begin(), end_itr = motifs.end();
+				//    motifcop_itr != end_itr; ++motifcop_itr ) {
+				//   protocols::motifs::MotifCOP motifcop( *motifcop_itr );
+				//   if( motifcop->restype_name1() != motif.restype_name1() ) continue;
+				//   if( motifcop->restype_name2() != motif.restype_name2() ) continue;
+				//   motifcop->place_residue( *protres, *dnares2 );
+				//   Real rmsdtest = scoring::automorphic_rmsd( *dnares, *dnares2, false );
+				// will get appropriate name and add to motifs as well as outputting to file
+				//std::cout << "RMSD = " << rmsdtest << " for motif at positions " << prot_pos << " and " << final_contacts[ic] << std::endl;
+				//   if( rmsdtest < 0.2 ) {
+				//    std::cout << "Skipping motif " << motif.remark() << " because it matches motif " << motifcop->remark() << " already in motif library, with an RMSD = " << rmsdtest << std::endl;
+				//    broke = true;
+				//   break;
+				//  }
+			}
+			//if( !broke ) {
+			// std::cout << "Adding motif " << motif.remark() << std::endl;
+			// final_final_contacts.push_back( final_contacts[ic] );
+			//  motifs.add_to_library( motif );
+			// }
 			//}  // End loop that adds motifs to the MotifLibrary and skips the motif if a very similar motif has already been found
 			//if( final_final_contacts.size() >= 1 ) {
-			//	output_single_motif( pose, pdb_name, prot_pos, final_final_contacts );
+			// output_single_motif( pose, pdb_name, prot_pos, final_final_contacts );
 			//}
 		} // if there were actually contacts found for the particular protein residue
 	} // End loop over protein residues
@@ -412,21 +412,21 @@ process_file_list()
 	using namespace basic::options::OptionKeys;
 	using namespace optimization;
 
-  ScoreFunction scorefxn;
+	ScoreFunction scorefxn;
 
-  scorefxn.set_weight( fa_atr, 1.00 );
-  scorefxn.set_weight( fa_rep, 1.00 );
-  scorefxn.set_weight( fa_sol, 1.00 );
-  scorefxn.set_weight( fa_dun, 1.00 );
-  scorefxn.set_weight( fa_pair, 1.00 );
-  scorefxn.set_weight( p_aa_pp, 1.00 );
-  scorefxn.set_weight( hbond_bb_sc, 1.0 );
-  scorefxn.set_weight( hbond_sc, 1.0 );
+	scorefxn.set_weight( fa_atr, 1.00 );
+	scorefxn.set_weight( fa_rep, 1.00 );
+	scorefxn.set_weight( fa_sol, 1.00 );
+	scorefxn.set_weight( fa_dun, 1.00 );
+	scorefxn.set_weight( fa_pair, 1.00 );
+	scorefxn.set_weight( p_aa_pp, 1.00 );
+	scorefxn.set_weight( hbond_bb_sc, 1.0 );
+	scorefxn.set_weight( hbond_sc, 1.0 );
 
 	utility::vector1< std::string > pdb_files( start_files() );
 	protocols::motifs::MotifLibrary motifs;
 	for ( utility::vector1< std::string >::const_iterator pdb_file( pdb_files.begin() );
-	      pdb_file != pdb_files.end(); ++pdb_file ) {
+			pdb_file != pdb_files.end(); ++pdb_file ) {
 		std::string pdb_name( *pdb_file );
 
 		std::cout << "Working on file: " << pdb_name << std::endl;
@@ -449,13 +449,13 @@ main( int argc, char * argv [] )
 
 	try {
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-	process_file_list();
+		process_file_list();
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

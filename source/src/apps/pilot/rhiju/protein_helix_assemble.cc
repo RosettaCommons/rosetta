@@ -196,76 +196,76 @@ OPT_KEY( String, seq )
 void
 build_helix_test(){
 
-  // Read in pdb.
-  using namespace core::options;
-  using namespace core::options::OptionKeys;
-  using namespace core::chemical;
-  using namespace core::conformation;
-  using namespace core::optimization;
-  using namespace core::pose;
-  using namespace core::id;
-  using namespace core::scoring;
-  using namespace core::kinematics;
-  using namespace protocols::rna::denovo;
+	// Read in pdb.
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
+	using namespace core::chemical;
+	using namespace core::conformation;
+	using namespace core::optimization;
+	using namespace core::pose;
+	using namespace core::id;
+	using namespace core::scoring;
+	using namespace core::kinematics;
+	using namespace protocols::rna::denovo;
 
-  ResidueTypeSetCAP rsd_set;
-  rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	ResidueTypeSetCAP rsd_set;
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-  // REad in desired sequence
-  std::string const sequence = option[ seq ]();
+	// REad in desired sequence
+	std::string const sequence = option[ seq ]();
 
-  // Make pose with the first residue
-  Pose pose;
-  make_pose_from_sequence( pose, sequence.substr(0,1),  *rsd_set );
-  protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
-  remove_upper_terminus_type_from_pose_residue( pose, 1 );
-
-
-  // Main loop
-  for (Size n = 2; n <= sequence.size(); ++n ) {
-
-    // Append one residue
-    /////////////////////////////////////
-    ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( sequence[n-1] ) )[1] ) ) );
-    pose.append_polymer_residue_after_seqpos( *rsd1, n - 1, true /*build_ideal_geometry*/ );
-
-    pose.set_psi( n-1, -40.0 );
-    pose.set_omega( n-1, 180.0 );
-    pose.set_phi  ( n, -64.0  );
-
-    // Pack rotamers
-    pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
-    task->initialize_from_command_line();
-    Size const nres( pose.size() );
-    for ( Size i = 1; i <= nres; ++i ) {
-	task->nonconst_residue_task( i ).restrict_to_repacking();
-	task->nonconst_residue_task(i).or_ex1( true );
-	task->nonconst_residue_task(i).or_ex2( true );
-	task->nonconst_residue_task(i).or_ex3( true );
-	task->nonconst_residue_task(i).or_ex4( true );
-	task->nonconst_residue_task(i).or_ex1aro( true );
-	task->nonconst_residue_task(i).or_ex1aro_sample_level( pack::task::EX_THREE_THIRD_STEP_STDDEVS );
-	task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
-    }
-
-    ScoreFunctionOP scorefxn = get_score_function();
-    pack::rotamer_trials( pose, *scorefxn, task );
-
-    // minimize
-    MoveMap mm;
-    mm.set_bb( true );
-    mm.set_chi( true );
-    mm.set_jump( true );
+	// Make pose with the first residue
+	Pose pose;
+	make_pose_from_sequence( pose, sequence.substr(0,1),  *rsd_set );
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+	remove_upper_terminus_type_from_pose_residue( pose, 1 );
 
 
-    MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.01, true /*use_nblist*/ );
-    AtomTreeMinimizer minimizer;
-    minimizer.run( pose, mm, *scorefxn, options );
+	// Main loop
+	for ( Size n = 2; n <= sequence.size(); ++n ) {
 
-  }
+		// Append one residue
+		/////////////////////////////////////
+		ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( sequence[n-1] ) )[1] ) ) );
+		pose.append_polymer_residue_after_seqpos( *rsd1, n - 1, true /*build_ideal_geometry*/ );
 
-  // dump pdb
-  pose.dump_pdb( sequence+".pdb" );
+		pose.set_psi( n-1, -40.0 );
+		pose.set_omega( n-1, 180.0 );
+		pose.set_phi  ( n, -64.0  );
+
+		// Pack rotamers
+		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
+		task->initialize_from_command_line();
+		Size const nres( pose.size() );
+		for ( Size i = 1; i <= nres; ++i ) {
+			task->nonconst_residue_task( i ).restrict_to_repacking();
+			task->nonconst_residue_task(i).or_ex1( true );
+			task->nonconst_residue_task(i).or_ex2( true );
+			task->nonconst_residue_task(i).or_ex3( true );
+			task->nonconst_residue_task(i).or_ex4( true );
+			task->nonconst_residue_task(i).or_ex1aro( true );
+			task->nonconst_residue_task(i).or_ex1aro_sample_level( pack::task::EX_THREE_THIRD_STEP_STDDEVS );
+			task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
+		}
+
+		ScoreFunctionOP scorefxn = get_score_function();
+		pack::rotamer_trials( pose, *scorefxn, task );
+
+		// minimize
+		MoveMap mm;
+		mm.set_bb( true );
+		mm.set_chi( true );
+		mm.set_jump( true );
+
+
+		MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.01, true /*use_nblist*/ );
+		AtomTreeMinimizer minimizer;
+		minimizer.run( pose, mm, *scorefxn, options );
+
+	}
+
+	// dump pdb
+	pose.dump_pdb( sequence+".pdb" );
 
 }
 
@@ -274,13 +274,13 @@ void*
 my_main( void* )
 {
 
-  using namespace core::options;
+	using namespace core::options;
 
-  build_helix_test();
+	build_helix_test();
 
 
-  protocols::viewer::clear_conformation_viewers();
-  exit( 0 );
+	protocols::viewer::clear_conformation_viewers();
+	exit( 0 );
 
 }
 
@@ -292,27 +292,27 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace core::options;
+		using namespace core::options;
 
-	//Uh, options?
-	NEW_OPT( seq, "sequence", "" );
-
-
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		//Uh, options?
+		NEW_OPT( seq, "sequence", "" );
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-	protocols::viewer::viewer_main( my_main );
+
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+
+		protocols::viewer::viewer_main( my_main );
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

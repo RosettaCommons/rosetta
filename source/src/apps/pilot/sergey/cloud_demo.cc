@@ -161,7 +161,7 @@ int main(int argc, char * argv [])
 		std::cerr << "main(): done!" << std::endl;
 		return 1;
 	} catch (utility::excn::Exception const & e ) {
-		TR << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 }

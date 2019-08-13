@@ -53,9 +53,9 @@ void test( std::string fname ) {
 
 	// Real m,a,d = 0.00001;
 	// while( d < 1.0 ) {
-	// 	test_deriv(d,m,a);
-	// 	std::cout << d << " " << m << " " << a << std::endl;
-	// 	d *= 10;
+	//  test_deriv(d,m,a);
+	//  std::cout << d << " " << m << " " << a << std::endl;
+	//  d *= 10;
 	// }
 	// return;
 
@@ -73,22 +73,22 @@ void test( std::string fname ) {
 	core::import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
 
 	utility::vector1<Size> cst_rsd( option[ in::target_residues ]() );
-	if( cst_rsd.size() == 0 ) {
+	if ( cst_rsd.size() == 0 ) {
 		utility_exit_with_message( "You need to specify -target_residue stupid!" );
 	}
 
 	PoseOP native;
-	if( option[ in::file::native ].user() ) {
+	if ( option[ in::file::native ].user() ) {
 		native = new Pose;
 		core::import_pose::pose_from_file(*native,option[ in::file::native ](), core::import_pose::PDB_file);
 		core::scoring::calpha_superimpose_pose( *native, pose );
 	}
 
 	utility::vector1<std::map<id::AtomID,Real> > cst_dat = cavity_distance_constraint( pose, cst_rsd, native );
-	for( Size j = 1; j <= cst_dat.size(); ++j ) {
+	for ( Size j = 1; j <= cst_dat.size(); ++j ) {
 		std::ofstream out((fname+".res_"+string_of(cst_rsd[j])+"_cav_dist.cst").c_str());
 		std::map<id::AtomID,Real>::iterator i;
-		for( i = cst_dat[j].begin(); i != cst_dat[j].end(); ++i ) {
+		for ( i = cst_dat[j].begin(); i != cst_dat[j].end(); ++i ) {
 			id::AtomID id = i->first;
 			Real dist     = i->second;
 			string aname1 = pose.residue(id.rsd()).atom_name(id.atomno());
@@ -106,37 +106,37 @@ main (int argc, char *argv[])
 	try {
 
 
-	devel::init( argc, argv );
+		devel::init( argc, argv );
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace utility;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace utility;
 
-	// test_gradient();
-	// return 0;
+		// test_gradient();
+		// return 0;
 
-	if( option[ in::file::s ].user() ) {
-  	vector1<file::FileName> files( option[ in::file::s ]() );
-  	for( size_t i = 1; i <= files.size(); ++i ) {
-    	test( files[i] );
-  	}
-	} else if( option[ in::file::l ].user() ) {
-  		vector1<file::FileName> files( option[ in::file::l ]() );
-  		for( size_t i = 1; i <= files.size(); ++i ) {
+		if ( option[ in::file::s ].user() ) {
+			vector1<file::FileName> files( option[ in::file::s ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
+				test( files[i] );
+			}
+		} else if ( option[ in::file::l ].user() ) {
+			vector1<file::FileName> files( option[ in::file::l ]() );
+			for ( size_t i = 1; i <= files.size(); ++i ) {
 				utility::io::izstream list( files[i] );
 				std::string fname;
-				while( list >> fname ) {
+				while ( list >> fname ) {
 					// std::cerr << "'" << fname << "'" << std::endl;
 					test( fname );
 				}
-  		}
-	}
+			}
+		}
 
-	return 0;
+		return 0;
 
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

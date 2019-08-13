@@ -104,7 +104,7 @@ main( int argc, char* argv [] )
 			core::io::pdb::dump_pdb( pose , filename );
 		}
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

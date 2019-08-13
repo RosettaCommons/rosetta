@@ -51,8 +51,8 @@ class SimpleCstMover : public moves::Mover
 {
 public:
 	/// @brief
-	/// 	empty constructor fills values with the values
-	///		read in from the commandline
+	///  empty constructor fills values with the values
+	///  read in from the commandline
 	SimpleCstMover( Size length) :
 		Mover(),
 		length_( length )
@@ -60,8 +60,8 @@ public:
 		Mover::type( "SimpleCstMover" );
 		distmin_matrix = new Real[length * length ];
 		distmax_matrix = new Real[length * length ];
-		for( Size i=0; i < length*length; i ++ ) distmin_matrix[i] = 1000000.0;
-		for( Size i=0; i < length*length; i ++ ) distmax_matrix[i] = 0;
+		for ( Size i=0; i < length*length; i ++ ) distmin_matrix[i] = 1000000.0;
+		for ( Size i=0; i < length*length; i ++ ) distmax_matrix[i] = 0;
 	}
 
 
@@ -72,7 +72,7 @@ public:
 
 	virtual void apply( pose::Pose & pose );
 	virtual void test_move( pose::Pose & pose ){apply(pose);}
- 	virtual std::string get_name() const { return "MyMover"; }
+	virtual std::string get_name() const { return "MyMover"; }
 
 	void write( const std::string &filename );
 
@@ -103,27 +103,27 @@ void SimpleCstMover::apply( pose::Pose & pose )
 	std::cout << "Stealing .. " << std::endl;
 	static int count=0;
 
-	for( Size i = 1;  i < pose.size(); i ++ ){
-		for( Size j = i+3;  j < pose.size(); j ++ ){
+	for ( Size i = 1;  i < pose.size(); i ++ ) {
+		for ( Size j = i+3;  j < pose.size(); j ++ ) {
 			Real dist;
- 			dist = pose.xyz(  core::id::AtomID( 3, i ) ).distance( pose.xyz(  core::id::AtomID( 3, j  ) ) );
+			dist = pose.xyz(  core::id::AtomID( 3, i ) ).distance( pose.xyz(  core::id::AtomID( 3, j  ) ) );
 			if ( dist < get_distmin( i, j ) ) set_distmin( i, j, dist );
 			if ( dist > get_distmax( i, j ) ) set_distmax( i, j, dist );
 			std::cout << "C " << count << " I " << i << " J " << j << " D " << distmin << std::endl;
 		}
 	}
- count++;
+	count++;
 
 }
 
 void SimpleCstMover::write( const std::string &filename )
 {
-  Real dist_limit = 12;
-	for( Size i = 1;  i < pose.size(); i ++ ){
-		for( Size j = i+3;  j < pose.size(); j ++ ){
+	Real dist_limit = 12;
+	for ( Size i = 1;  i < pose.size(); i ++ ) {
+		for ( Size j = i+3;  j < pose.size(); j ++ ) {
 
-			if( get_distmax( i, j ) < 12 ){
-				if( get_distmax( i, j ) > get_distmin( i, j ) ) { std::cerr "ASSERTION"; }
+			if ( get_distmax( i, j ) < 12 ) {
+				if ( get_distmax( i, j ) > get_distmin( i, j ) ) { std::cerr "ASSERTION"; }
 
 
 			}
@@ -146,26 +146,19 @@ void SimpleCstMover::write( const std::string &filename )
 int
 main( int argc, char * argv [] )
 {
-    try {
-    	devel::init(argc, argv);
-    	using namespace protocols::moves;
-    	SimpleCstMoverOP capture3mers =  new SimpleCstMover( 300 );
-    	SequenceMoverOP seqmov = new SequenceMover;
-    	seqmov->add_mover( capture3mers );
-    	MoverOP mover = seqmov;
-    	using namespace protocols::jd2;
-    	try{
-    		JobDistributor::get_instance()->go( mover );
-    	} catch (utility::excn::Exception& excn ) {
-    		std::cerr << "Exception: " << std::endl;
-    		excn.show( std::cerr );
-    		std::cout << "Exception: " << std::endl;
-    		excn.show( std::cout ); //so its also seen in a >LOG file
-    	}
-    } catch (utility::excn::Exception const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-        return -1;
-    }
-    return 0;
+	try {
+		devel::init(argc, argv);
+		using namespace protocols::moves;
+		SimpleCstMoverOP capture3mers =  new SimpleCstMover( 300 );
+		SequenceMoverOP seqmov = new SequenceMover;
+		seqmov->add_mover( capture3mers );
+		MoverOP mover = seqmov;
+		using namespace protocols::jd2;
+		JobDistributor::get_instance()->go( mover );
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
+	}
+	return 0;
 }
 

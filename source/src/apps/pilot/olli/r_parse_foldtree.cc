@@ -205,7 +205,7 @@ int main( int argc, char** argv ) {
 		ThisApplication app;
 		app.run();
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

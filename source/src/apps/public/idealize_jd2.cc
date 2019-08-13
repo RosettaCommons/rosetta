@@ -85,15 +85,10 @@ int main( int argc, char * argv [] ) {
 		}
 
 		// start the job
-		try {
-			JobDistributor::get_instance()->go( mover );
-		} catch (utility::excn::Exception& excn ) {
-			std::cerr << "Exception: " << std::endl;
-			excn.show( std::cerr );
-		}
+		JobDistributor::get_instance()->go( mover );
+
+	} catch (utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
 	}
-catch (utility::excn::Exception const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl;
-	return -1;
-}
 }

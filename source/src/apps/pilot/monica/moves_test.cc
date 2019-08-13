@@ -119,37 +119,37 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-	using namespace chemical;
-	using namespace pose;
-	using namespace kinematics;
-	using namespace scoring;
-	using namespace io::pdb;
-	// options, random initialization
-	devel::init( argc, argv );
+		using namespace chemical;
+		using namespace pose;
+		using namespace kinematics;
+		using namespace scoring;
+		using namespace io::pdb;
+		// options, random initialization
+		devel::init( argc, argv );
 
-	// after devel::init to regenerate as constant seed after initial initialization
-	numeric::random::RandomGenerator::initializeRandomGenerators(
-		1000, numeric::random::_RND_TestRun_, "ran3" );
+		// after devel::init to regenerate as constant seed after initial initialization
+		numeric::random::RandomGenerator::initializeRandomGenerators(
+			1000, numeric::random::_RND_TestRun_, "ran3" );
 
-	Pose pose, start_pose;
-	ResidueTypeSet const & residue_set( *(ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) ) );
-	core::import_pose::pose_from_file( pose, residue_set, "input/test_in.pdb" , core::import_pose::PDB_file);
+		Pose pose, start_pose;
+		ResidueTypeSet const & residue_set( *(ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) ) );
+		core::import_pose::pose_from_file( pose, residue_set, "input/test_in.pdb" , core::import_pose::PDB_file);
 
-	scoring_test( pose );
+		scoring_test( pose );
 
-	FoldTree f( pose.size() );
-	pose.fold_tree( f );
-	std::cout << pose.fold_tree() << std::endl;
+		FoldTree f( pose.size() );
+		pose.fold_tree( f );
+		std::cout << pose.fold_tree() << std::endl;
 
-	std::cout << pose.sequence() << std::endl;
+		std::cout << pose.sequence() << std::endl;
 
-	start_pose = pose;
+		start_pose = pose;
 
-	small_moves_test( pose );
-	pose = start_pose;
-	shear_moves_test( pose );
+		small_moves_test( pose );
+		pose = start_pose;
+		shear_moves_test( pose );
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 }

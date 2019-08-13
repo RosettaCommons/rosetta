@@ -281,10 +281,7 @@ main( int argc, char * argv [] )
 	utility_exit_with_message( "reached end of minirosetta::main() after worker_shutdown(); " );
 #endif
 		} catch (utility::excn::Exception& excn ) {
-			std::cerr << "std::cerr: Exception was thrown: " << std::endl;
-			excn.show( std::cerr );
-			std::cout << "std::cout: Exception was thrown: " << std::endl;
-			excn.show( std::cout ); //so its also seen in a >LOG file
+			excn.display();
 #ifdef USEMPI
 		MPI_Abort( MPI_COMM_WORLD, 911 );
 #endif
@@ -292,7 +289,7 @@ main( int argc, char * argv [] )
 		}
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 	return 0;

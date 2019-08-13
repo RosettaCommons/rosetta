@@ -64,9 +64,7 @@ main( int argc, char * argv [] )
 		TR << "Successfully constructed and initialized all objects specified in the " << option[ parser::protocol ]() << " script" << std::endl;
 
 	} catch (utility::excn::Exception& excn ) {
-		basic::Error()
-			<< "ERROR: Exception caught by parse_rosetta_script application:"
-			<< excn << std::endl;
+		excn.display();
 		std::exit( 1 );
 	}
 }

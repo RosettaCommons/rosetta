@@ -68,9 +68,9 @@ save_ss_info( FArray2D< Real > & ds, pose::Pose & pose ){
 	dssp_obj.insert_ss_into_pose( pose );
 
 	for ( Size i = 1; i <= pose.size(); i++ ) {
-		if ( pose.secstruct( i ) == 'H' ){
+		if ( pose.secstruct( i ) == 'H' ) {
 			ds( i,1 ) += 1.0;
-		} else if ( pose.secstruct( i ) == 'E' ){
+		} else if ( pose.secstruct( i ) == 'E' ) {
 			ds( i,2 ) += 1.0;
 		} else {
 			ds( i,3 ) += 1.0;
@@ -96,7 +96,7 @@ save_contact_info( FArray2D< Real > & ds, pose::Pose & pose ){
 		for ( Size j = i; j <= pose.size(); j++ ) {
 			Vector const & vec_j = pose.xyz( NamedAtomID( " CA ", j ) );
 
-			if ( ( vec_i - vec_j ).length() < DIST_CUTOFF ){
+			if ( ( vec_i - vec_j ).length() < DIST_CUTOFF ) {
 				ds( i, j ) += 1.0;
 			}
 
@@ -117,9 +117,9 @@ save_contact_info( FArray2D< Real > & ds, pose::Pose & pose ){
 
 	fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
 
-	//	std::cout << "NUM HBONDS: " << hbond_set->nhbonds() << std::endl;
+	// std::cout << "NUM HBONDS: " << hbond_set->nhbonds() << std::endl;
 
-	for (Size i = 1; i <= hbond_set->nhbonds(); i++ ) {
+	for ( Size i = 1; i <= hbond_set->nhbonds(); i++ ) {
 		HBond const & hbond( hbond_set->hbond( i ) );
 
 		if ( !hbond.don_hatm_is_protein_backbone() ) continue;
@@ -154,8 +154,8 @@ normalize_info( FArray2D< Real > & ds, Size const count ){
 
 	assert( count > 0 );
 
-	for ( Size i = 1; i <= ds.size1(); i++ ){
-		for ( Size j = 1; j <= ds.size2(); j++ ){
+	for ( Size i = 1; i <= ds.size1(); i++ ) {
+		for ( Size j = 1; j <= ds.size2(); j++ ) {
 			ds(i,j) /= count;
 		}
 	}
@@ -164,15 +164,15 @@ normalize_info( FArray2D< Real > & ds, Size const count ){
 
 ////////////////////////////////////////////////////////////////////////////////////
 void
-output_ss_info( FArray2D< Real > & ds, 	utility::io::ozstream & out){
-	for ( Size i = 1; i <= ds.size1(); i++ ){
+output_ss_info( FArray2D< Real > & ds,  utility::io::ozstream & out){
+	for ( Size i = 1; i <= ds.size1(); i++ ) {
 		out << "DS " << (i-1) << "  H " << ds(i,1) << "  E " << ds(i,2) << "  L " << ds(i,3) << std::endl;
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 void
-output_native_ss_info( pose::Pose & pose, 	utility::io::ozstream & out){
+output_native_ss_info( pose::Pose & pose,  utility::io::ozstream & out){
 
 	// get DSSP, assign secondary structure
 	protocols::jumping::Dssp dssp_obj( pose );
@@ -190,7 +190,7 @@ void
 output_contact_info( FArray2D< Real > & dc,  utility::io::ozstream & out, std::string const tag = "DC"){
 	for ( Size i = 1; i <= dc.size1(); i++ ) {
 		for ( Size j = 1; j <= dc.size2(); j++ ) {
-			if( dc(i,j) > 0.0 ) {
+			if ( dc(i,j) > 0.0 ) {
 				out << tag << ' ' << i << ' ' << j << ' ' << dc(i,j) << std::endl;
 			}
 		}
@@ -211,15 +211,15 @@ output_csts( FArray2D< Real > & dc,  utility::io::ozstream & out ){
 		for ( Size j = 1; j <= dc.size2(); j++ ) {
 
 
-			if( (dc(i,j) > FREQ_CUTOFF) && ( j > i ) && ( (j - i) > SEQ_SEP_CUTOFF )  ) {
+			if ( (dc(i,j) > FREQ_CUTOFF) && ( j > i ) && ( (j - i) > SEQ_SEP_CUTOFF )  ) {
 
 				Real const cst_strength = -1.0 * MAX_CST_STRENGTH * ( dc(i,j) - FREQ_CUTOFF );
 
 				out << " CA " << I(3,i) << " CA " << I(3,j)
-						<< "  FADE " << F(8,3, (-1 * FADE) )
-						<< " " << F(8,3, (DIST_CUTOFF + FADE))
-						<< " " << F(8,3,FADE) << " "
-						<< F(8,3,cst_strength) << std::endl;
+					<< "  FADE " << F(8,3, (-1 * FADE) )
+					<< " " << F(8,3, (DIST_CUTOFF + FADE))
+					<< " " << F(8,3,FADE) << " "
+					<< F(8,3,cst_strength) << std::endl;
 
 			}
 
@@ -258,7 +258,7 @@ get_info_test(){
 		input =  new PDBPoseInputStream( option[ in::file::s]() );
 	}
 
-	if (!input) utility_exit_with_message( "Must specify -in::file::s or -in::file::silent" );
+	if ( !input ) utility_exit_with_message( "Must specify -in::file::s or -in::file::silent" );
 
 	core::pose::Pose pose;
 	Size count( 0 );
@@ -269,7 +269,7 @@ get_info_test(){
 
 		input->fill_pose( pose, *rsd_set );
 
-		if ( count == 0 ){
+		if ( count == 0 ) {
 			nres = pose.size();
 			ds.dimension( nres, 3, 0.0 );
 			dc.dimension( nres, nres, 0.0 );
@@ -299,7 +299,7 @@ get_info_test(){
 	//////////////////////////////////////////////
 	// Need to also put in native info
 	//////////////////////////////////////////////
-	if ( option[ in::file::native ].user() ){
+	if ( option[ in::file::native ].user() ) {
 
 		io::pdb::pose_from_file( pose, *rsd_set, option[ in::file::native ](), core::import_pose::PDB_file);
 
@@ -334,33 +334,33 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace core::options;
+		using namespace core::options;
 
-	NEW_OPT( seq_sep_cutoff, "for constraints, minimum sequence separation", 8 );
-	NEW_OPT( max_cst_strength, "for constraints, maximum constraint strength", 1.0 );
-	NEW_OPT( freq_cutoff, "for constraints, minimum frequency to output constraint", 0.2 );
-
-
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		NEW_OPT( seq_sep_cutoff, "for constraints, minimum sequence separation", 8 );
+		NEW_OPT( max_cst_strength, "for constraints, maximum constraint strength", 1.0 );
+		NEW_OPT( freq_cutoff, "for constraints, minimum frequency to output constraint", 0.2 );
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
-	protocols::viewer::viewer_main( my_main );
 
-	exit( 0 );
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		protocols::viewer::viewer_main( my_main );
+
+		exit( 0 );
+
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

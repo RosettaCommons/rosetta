@@ -254,7 +254,7 @@ int main( int argc, char * argv [] ) {
 		protocols::viewer::viewer_main( ligand_test );
 
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 

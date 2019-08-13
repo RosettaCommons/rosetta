@@ -73,14 +73,13 @@ std::string readFile(std::string fname)
 	std::string res;
 
 	std::ifstream file(fname.c_str(), std::ios::in | std::ios::binary | std::ios::ate);
-	if( file.is_open() )  {
+	if ( file.is_open() )  {
 		fsize = file.tellg();
 		res.resize( fsize );
 		file.seekg(0, std::ios::beg);
 		file.read(&res[0], fsize);
 		file.close();
-	}
-	else std::cout << "file not found!";
+	} else std::cout << "file not found!";
 	return res;
 }
 
@@ -98,7 +97,7 @@ rb_test ()
 	// PHIL temporarily hacking for Jeff until file_data is rehabilitated
 
 	//chemical::ResidueTypeSetCAP residue_set
-	//	( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
+	// ( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
 
 	std::cout << "---------------------"<< std::endl;
 
@@ -125,8 +124,8 @@ rb_test ()
 	std::cout << "total_residue = " << pose.size() << "\n";
 	int cutpoint ( pose.size() );
 	pose.dump_pdb( "pose1.pdb" );
-//	pose.copy_segment( tmp_pose.size(), tmp_pose, 1, pose.size()+1 );
-//	TO DO fix me!!
+	// pose.copy_segment( tmp_pose.size(), tmp_pose, 1, pose.size()+1 );
+	// TO DO fix me!!
 	for ( Size i=1; i<=tmp_pose.size(); ++i ) {
 		conformation::ResidueCOP new_rsd = tmp_pose.residue(i).clone();
 		if ( i == 1 ) {
@@ -187,17 +186,17 @@ int
 main( int argc, char * argv [] )
 {
 	try{
-	using namespace core;
+		using namespace core;
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-// 	rb_test( residue_set );
-	rb_test();
+		//  rb_test( residue_set );
+		rb_test();
 
-	std::cout << "Done! -------------------------------\n";
+		std::cout << "Done! -------------------------------\n";
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		e.display();
 		return -1;
 	}
 
