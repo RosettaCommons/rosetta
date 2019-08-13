@@ -84,26 +84,17 @@ RelaxScriptFileContents::clone() const {
 /// @details Threadsafe and lazily loaded.  Requires the FastRelax or FastDesign mover's scorefunction to be provided.
 RelaxScriptFileContents const &
 RelaxScriptManager::get_relax_script(
-	std::string const &filename,
-	core::scoring::ScoreFunctionCOP mover_sfxn,
+	std::string const & filename,
+	core::scoring::ScoreFunctionCOP const & mover_sfxn,
 	bool const dualspace
 ) const {
 	initialize_relax_scripts_in_database(); //Does nothing if already initialized.
 
-	std::string filename_prime;
-	if ( filename == "" ) {
-		filename_prime = "default";
-	} else if ( filename == "NO CST RAMPING" ) {
-		filename_prime = "no_cst_ramping";
-	} else {
-		filename_prime = filename;
-	}
-
 	core::scoring::ScoreFunctionCOP sfxn( mover_sfxn == nullptr ? core::scoring::get_score_function( true ) : mover_sfxn );
-	std::string const nearest_sfxn( get_nearest_sfxn_if_in_database( filename_prime, sfxn ) );
+	std::string const nearest_sfxn( get_nearest_sfxn_if_in_database( filename, sfxn ) );
 
-	boost::function< RelaxScriptFileContentsOP () > creator( boost::bind( &RelaxScriptManager::create_relax_script_instance, this, boost::cref( filename_prime ), nearest_sfxn, dualspace ) );
-	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( relax_script_mutex_ ), std::make_tuple( filename_prime, nearest_sfxn, dualspace ), filename_to_filecontents_map_ ) );
+	boost::function< RelaxScriptFileContentsOP () > creator( boost::bind( &RelaxScriptManager::create_relax_script_instance, this, boost::cref( filename ), nearest_sfxn, dualspace ) );
+	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( relax_script_mutex_ ), std::make_tuple( filename, nearest_sfxn, dualspace ), filename_to_filecontents_map_ ) );
 }
 
 // RelaxScriptManager Private methods ////////////////////////////////////////////////////////////
@@ -296,20 +287,20 @@ RelaxScriptManager::initialize_relax_scripts_in_database() const
 
 /// @brief Get the difference between two EnergyMaps.
 core::Real
-RelaxScriptManager::distance(
+RelaxScriptManager::sfxn_distance_squared(
 	core::scoring::EnergyMap const & target_weights,
 	core::scoring::EnergyMap const & candidate_weights
 ){
-	core::Real distance = 0;
+	core::Real sfxn_distance_squared = 0;
 	for ( core::Size ii = core::scoring::fa_atr; ii <= core::scoring::n_score_types; ++ii ) {
 		core::scoring::ScoreType ii_type = static_cast< core::scoring::ScoreType >( ii );
 		if ( target_weights[ ii_type ] == 0.0 && candidate_weights[ ii_type ] == 0.0 ) continue;
 
 		core::Real const difference = target_weights[ ii_type ] - candidate_weights[ ii_type ];
-		distance += difference * difference;
+		sfxn_distance_squared += difference * difference;
 	}
 
-	return distance;
+	return sfxn_distance_squared;
 }
 
 /// @brief Create an instance of an EnergyMapContainer.  Needed for threadsafe lazy loading.
@@ -332,7 +323,7 @@ RelaxScriptManager::determine_closest_scorefunction(
 	core::scoring::EnergyMap const & target_weights = target.weights();
 
 	bool first(true);
-	core::Real best_distance( 0 );
+	core::Real best_sfxn_distance_squared( 0 );
 	std::string best_candidate = "ref2015";
 
 	for ( std::string const & candidate : names_of_candidates ) {
@@ -341,11 +332,11 @@ RelaxScriptManager::determine_closest_scorefunction(
 		boost::function< EnergyMapContainerCOP () > creator( boost::bind( &RelaxScriptManager::create_energy_map_instance, boost::cref( candidate ) ) );
 		core::scoring::EnergyMap const & dummy_weights( (utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( energy_maps_mutex_ ), candidate, energy_maps_map_ ) )->get_energy_map() );
 
-		core::Real const score( distance( target_weights, dummy_weights ) );
+		core::Real const score( sfxn_distance_squared( target_weights, dummy_weights ) );
 
-		if ( first || score < best_distance ) {
+		if ( first || score < best_sfxn_distance_squared ) {
 			first = false;
-			best_distance = score;
+			best_sfxn_distance_squared = score;
 			best_candidate = candidate;
 		}
 

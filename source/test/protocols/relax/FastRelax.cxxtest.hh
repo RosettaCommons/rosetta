@@ -74,20 +74,20 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-	void test_default_script() {
-		TR << "test_default_script" << std::endl;
+	void test_legacy_script() {
+		TR << "test_legacy_script" << std::endl;
 
 		using namespace basic::options;
 		option[ OptionKeys::corrections::beta_nov16 ]( false );
 
-		impl_test_default_script< protocols::relax::FastRelax >();
-		impl_test_default_script< protocols::denovo_design::movers::FastDesign >();
+		impl_test_legacy_script< protocols::relax::FastRelax >();
+		impl_test_legacy_script< protocols::denovo_design::movers::FastDesign >();
 	}
 
 	template < typename T >
-	void impl_test_default_script(){
+	void impl_test_legacy_script(){
 		std::stringstream ss;
-		ss << "<" << T::mover_name() << " name=\"name\" scorefxn=\"dummy\"/>" << std::endl;
+		ss << "<" << T::mover_name() << " name=\"name\" scorefxn=\"dummy\" relaxscript=\"legacy\"/>" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 
@@ -97,7 +97,7 @@ public:
 		core::pose::Pose pose;
 
 		std::stringstream ss2;
-		ss2 << "<SCOREFXNS>\n<ScoreFunction name=\"dummy\"/>\n</SCOREFXNS>" << std::endl; //use default weights
+		ss2 << "<SCOREFXNS>\n<ScoreFunction name=\"dummy\"/>\n</SCOREFXNS>" << std::endl; //use legacy weights
 		utility::tag::TagOP sfxn_tag( new utility::tag::Tag() );
 		sfxn_tag->read( ss2 );
 		protocols::parser::ScoreFunctionLoader loader;
@@ -111,24 +111,20 @@ public:
 		check_fa_rep_weights_in_script( mover.script_, expected_weights );
 	}
 
-
-
-
-
-	void test_dualspace_script() {
+	void test_legacy_dualspace_script() {
 		TR << "test_dualspace_script" << std::endl;
 
 		using namespace basic::options;
 		option[ OptionKeys::corrections::beta_nov16 ]( false );
 
-		impl_test_dualspace_script< protocols::relax::FastRelax >();
-		impl_test_dualspace_script< protocols::denovo_design::movers::FastDesign >();
+		impl_test_legacy_dualspace_script< protocols::relax::FastRelax >();
+		impl_test_legacy_dualspace_script< protocols::denovo_design::movers::FastDesign >();
 	}
 
 	template < typename T >
-	void impl_test_dualspace_script(){
+	void impl_test_legacy_dualspace_script(){
 		std::stringstream ss;
-		ss << "<" << T::mover_name() << " name=\"name\" scorefxn=\"dummy\" dualspace=\"true\"/>" << std::endl;
+		ss << "<" << T::mover_name() << " name=\"name\" scorefxn=\"dummy\" dualspace=\"true\" relaxscript=\"legacy\"/>" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 
@@ -151,50 +147,6 @@ public:
 		std::vector< core::Real > expected_weights = { 0.02, 0.25, 0.55, 1.0, 0.02, 0.25, 0.55, 1.0 };
 		check_fa_rep_weights_in_script( mover.script_, expected_weights );
 	}
-
-
-
-
-
-	void test_beta_dualspace_script() {
-		TR << "test_beta_dualspace_script" << std::endl;
-
-		//using namespace basic::options;
-		//option[ OptionKeys::corrections::beta_nov16 ] = true;
-
-		protocols_init_with_additional_options( "-beta_nov16" );
-
-		impl_test_beta_dualspace_script< protocols::relax::FastRelax >();
-		impl_test_beta_dualspace_script< protocols::denovo_design::movers::FastDesign >();
-	}
-
-	template < typename T >
-	void impl_test_beta_dualspace_script(){
-		std::stringstream ss;
-		ss << "<" << T::mover_name() << " name=\"name\" scorefxn=\"dummy\" dualspace=\"true\"/>" << std::endl;
-		utility::tag::TagOP tag( new utility::tag::Tag() );
-		tag->read( ss );
-
-		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
-		core::pose::Pose pose;
-
-		std::stringstream ss2;
-		ss2 << "<SCOREFXNS>\n<ScoreFunction name=\"dummy\"/>\n</SCOREFXNS>" << std::endl; //use default weights
-		utility::tag::TagOP sfxn_tag( new utility::tag::Tag() );
-		sfxn_tag->read( ss2 );
-		protocols::parser::ScoreFunctionLoader loader;
-		TS_ASSERT_THROWS_NOTHING( loader.load_data( pose, sfxn_tag, dm ) );
-
-		//protocols::relax::FastRelax mover;
-		T mover;
-		mover.parse_my_tag( tag, dm, fm, mm, pose );
-
-		std::vector< core::Real > expected_weights = { 0.02, 0.25, 0.55, 1.0, 0.02, 0.25, 0.55, 1.0 };
-		check_fa_rep_weights_in_script( mover.script_, expected_weights );
-	}
-
 
 
 	void test_beta_custom_script() {
@@ -269,8 +221,6 @@ public:
 		std::vector< core::Real > expected_weights = { 0.1, 0.2, 0.5, 1 };
 		check_fa_rep_weights_in_script( mover.script_, expected_weights );
 	}
-
-
 
 
 

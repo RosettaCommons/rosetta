@@ -130,7 +130,10 @@ public: // Public methods //////////////////////////////////////////////////
 
 	/// @brief Get a relax script.  Load it from disk if it has not already been loaded.
 	/// @details Threadsafe and lazily loaded.  Requires the FastRelax or FastDesign mover's scorefunction to be provided.
-	RelaxScriptFileContents const & get_relax_script( std::string const & filename, core::scoring::ScoreFunctionCOP mover_sfxn, bool const dualspace ) const;
+	RelaxScriptFileContents const & get_relax_script(
+		std::string const & filename,
+		core::scoring::ScoreFunctionCOP const & mover_sfxn,
+		bool const dualspace ) const;
 
 private:  // Private methods //////////////////////////////////////////////////
 
@@ -168,7 +171,7 @@ private:  // Private methods //////////////////////////////////////////////////
 
 
 	/// @brief Get the difference between two EnergyMaps.
-	static core::Real distance( core::scoring::EnergyMap const & target_weights, core::scoring::EnergyMap const & candidate_weights );
+	static core::Real sfxn_distance_squared( core::scoring::EnergyMap const & target_weights, core::scoring::EnergyMap const & candidate_weights );
 
 	/// @brief Create an instance of an EnergyMapContainer.  Needed for threadsafe lazy loading.
 	/// @details Peforms onetime read from disk.

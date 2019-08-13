@@ -205,6 +205,10 @@ protected:
 		core::scoring::ScoreFunctionOP local_scorefxn
 	);
 
+	///@brief default is currently MonomerDesign2019 or MonomerRelax2019, depending on the state of enable_design_
+	std::string
+	determine_default_relax_script();
+
 protected: //getters and setters
 	bool script_file_specified() const {
 		return script_file_specified_;
@@ -219,7 +223,10 @@ private:
 	utility::vector1< std::string >
 	get_possible_relax_script_names( std::string const & prefix ) const;
 
-	void read_script_file( std::string const & script_file, core::Size standard_repeats = 5  );
+	void read_script_file(
+		std::string script_file,//pass-by-value on purpose
+		core::Size standard_repeats = 5
+	);
 
 	void check_nonideal_mintype();
 

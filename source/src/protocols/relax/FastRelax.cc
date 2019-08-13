@@ -195,6 +195,7 @@ endrepeat
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 
 #include <numeric/random/random.fwd.hh>
 
@@ -368,7 +369,7 @@ FastRelax::parse_my_tag(
 		set_task_factory( tf );
 	}
 
-	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+	core::kinematics::MoveMapOP mm( utility::pointer::make_shared< core::kinematics::MoveMap >() );
 	mm->set_chi( true );
 	mm->set_bb( true );
 	mm->set_jump( true );
@@ -638,7 +639,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 	//Change behavior of Task to be initialized in PackRotamersMover to allow design directly within FastRelax
 	// Jadolfbr 5/2/2013
-	TaskFactoryOP local_tf( new TaskFactory() );
+	TaskFactoryOP local_tf( utility::pointer::make_shared< TaskFactory >() );
 
 	//If a user gives a TaskFactory, completely respect it.
 
@@ -654,7 +655,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			//Though, as mentioned in the doc, movemap now overrides chi_move as it was supposed to.
 
 			local_tf->push_back(utility::pointer::make_shared< RestrictToRepacking >());
-			PreventRepackingOP turn_off_packing( new PreventRepacking() );
+			PreventRepackingOP turn_off_packing( utility::pointer::make_shared< PreventRepacking >() );
 			for ( Size pos = 1; pos <= pose.size(); ++pos ) {
 				if ( ! local_movemap->get_chi(pos) ) {
 					turn_off_packing->include_residue(pos);
@@ -670,7 +671,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		local_tf->push_back(utility::pointer::make_shared< task_operations::LimitAromaChi2Operation >());
 	}
 
-	protocols::minimization_packing::PackRotamersMoverOP pack_full_repack_( new protocols::minimization_packing::PackRotamersMover( local_scorefxn ) );
+	minimization_packing::PackRotamersMoverOP pack_full_repack_( utility::pointer::make_shared< minimization_packing::PackRotamersMover >( local_scorefxn ) );
 	pack_full_repack_->task_factory(local_tf);
 
 	(*local_scorefxn)( pose );
@@ -765,7 +766,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 					//  basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( false );
 					// }
 					//}
-					protocols::hydrate::HydrateOP hydrate_protocol( new protocols::hydrate::Hydrate( local_scorefxn ) );
+					hydrate::HydrateOP hydrate_protocol( utility::pointer::make_shared< hydrate::Hydrate >( local_scorefxn ) );
 					hydrate_protocol->apply( pose );
 				} else {
 					pack_full_repack_->apply( pose );
@@ -898,7 +899,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 					//  basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( false );
 					// }
 					//}
-					protocols::hydrate::HydrateOP hydrate_protocol( new protocols::hydrate::Hydrate( local_scorefxn ) );
+					hydrate::HydrateOP hydrate_protocol( utility::pointer::make_shared< hydrate::Hydrate >( local_scorefxn ) );
 					hydrate_protocol->apply( pose );
 				} else {
 					pack_full_repack_->apply( pose );
@@ -995,7 +996,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	if ( constrain_coords() ) {
 		if ( delete_virtual_residues_after_FastRelax_ ) {
 			// remove extra virtual atom cooordinate constraints
-			protocols::relax::delete_virtual_residues( pose );
+			relax::delete_virtual_residues( pose );
 		}
 	}
 } //apply
@@ -1148,9 +1149,19 @@ FastRelax::get_possible_relax_script_names( std::string const & prefix ) const {
 	return possible_names;
 }
 
+///@author Jack Maguire, jackmaguire1444@gmail.com
+std::string
+FastRelax::determine_default_relax_script(){
+	if ( enable_design_ ) {
+		return "MonomerDesign2019";
+	} else {
+		return "MonomerRelax2019";
+	}
+}
+
 void
 FastRelax::read_script_file(
-	std::string const & script_file,
+	std::string script_file,//pass-by-value on purpose
 	core::Size standard_repeats
 ) {
 	using namespace ObjexxFCL;
@@ -1159,15 +1170,24 @@ FastRelax::read_script_file(
 	runtime_assert( standard_repeats > 0 );
 	script_.clear();
 
-	protocols::relax::RelaxScriptFileContents const & relax_script (
-		protocols::relax::RelaxScriptManager::get_instance()->get_relax_script( script_file, get_scorefxn(), dualspace_ )
+	if ( script_file == "" || script_file == "default" || script_file == "auto" ) {
+		script_file = determine_default_relax_script();
+	} else if ( script_file == "NO CST RAMPING" ) {
+		script_file = "no_cst_ramping";
+	}
+
+	RelaxScriptFileContents const & relax_script (
+		RelaxScriptManager::get_instance()->get_relax_script( script_file, get_scorefxn(), dualspace_ )
 	);
+
 	utility::vector1< std::string > const & reflines( relax_script.get_file_lines() );
 	std::vector< std::string > filelines;
 	filelines.reserve( reflines.size() );
 
-	core::Size const num_repeats_for_substitution = ( dualspace_ ? standard_repeats - 1 : standard_repeats );
-	VariableSubstitutionPair const repeat_subst = { "%%nrepeats%%", string_of( num_repeats_for_substitution ) };
+	core::Size const num_repeats_for_substitution =
+		( dualspace_ ? standard_repeats - 1 : standard_repeats );
+	VariableSubstitutionPair const repeat_subst =
+		{ "%%nrepeats%%", string_of( num_repeats_for_substitution ) };
 
 	//perform variable substitution
 	//Taken from https://stackoverflow.com/questions/1494399/how-do-i-search-find-and-replace-in-a-standard-string
@@ -1742,7 +1762,7 @@ FastRelax::complex_type_generator_for_fast_relax( utility::tag::XMLSchemaDefinit
 	XMLSchemaSimpleSubelementList subelements;
 	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy(xsd, subelements);
 
-	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
+	XMLSchemaComplexTypeGeneratorOP ct_gen( utility::pointer::make_shared< XMLSchemaComplexTypeGenerator >() );
 	ct_gen->add_attributes( attlist )
 		.set_subelements_repeatable( subelements, 0, 1)
 		.complex_type_naming_func( & moves::complex_type_name_for_mover );

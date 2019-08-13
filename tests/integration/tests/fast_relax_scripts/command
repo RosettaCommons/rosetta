@@ -42,9 +42,20 @@ echo -e "script\tdualspace\texpected_result\tresult" > log
 # DEFAULT #
 ###########
 
+script="legacy"
+dualspace="0"
+expected_filename="legacy.txt"
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" > temp1
+filename=`cat temp1 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
+if [ "$filename" != "$expected_filename" ]; then
+    echo "FAIL " `date` >> log
+fi
+
+
 script="default"
 dualspace="0"
-expected_filename="default.txt"
+expected_filename="MonomerRelax2019.txt"
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" > temp1
 filename=`cat temp1 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
@@ -54,7 +65,7 @@ fi
 
 script="default"
 dualspace="1"
-expected_filename="default.dualspace.txt"
+expected_filename="MonomerRelax2019.dualspace.txt"
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" sfxn="ref2015_cart" dualspace="$dualspace" -score::set_weights cart_bonded 1.0 > temp2
 filename=`cat temp2 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
@@ -65,7 +76,7 @@ fi
 #beta_nov16 test
 script="default"
 dualspace="0"
-expected_filename="default.txt"
+expected_filename="MonomerRelax2019.txt"
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16 > temp3
 filename=`cat temp3 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
@@ -76,7 +87,7 @@ fi
 #beta_nov16 test
 script="default"
 dualspace="1"
-expected_filename="default.dualspace.txt"
+expected_filename="MonomerRelax2019.dualspace.txt"
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16_cart > temp4
 filename=`cat temp4 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
