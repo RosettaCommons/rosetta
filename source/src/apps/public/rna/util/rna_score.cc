@@ -61,6 +61,8 @@
 #include <core/scoring/etable/atom_pair_energy_inline.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
+#include <protocols/moves/Mover.hh>
+
 // C++ headers
 #include <iostream>
 #include <string>
@@ -68,6 +70,8 @@
 #include <numeric/conversions.hh>
 
 // option key includes
+#include <basic/Tracer.hh>
+#include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
@@ -76,7 +80,13 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 
+#include <protocols/jd2/util.hh>
+#include <protocols/jd2/internal_util.hh>
+#include <protocols/jd2/JobDistributor.hh>
+
 #include <utility/excn/Exceptions.hh>
+
+static basic::Tracer TR( "apps.public.rna.util.rna_score" );
 
 
 using namespace core;
@@ -167,7 +177,7 @@ do_color_by_score( core::pose::Pose & pose ) {
 				Residue const & res2 = pose.residue( n );
 
 				// costly, but I'm having problems with CountPairFactory output.
-				// std::cout << m << " " << n << std::endl;
+				// TR << m << " " << n << std::endl;
 				CountPairGeneric count_pair( res1, res2 );
 				count_pair.set_crossover( 4 );
 				Size const res2_start( 1 ), res2_end( res2.nheavyatoms() );
@@ -181,7 +191,7 @@ do_color_by_score( core::pose::Pose & pose ) {
 					//     if ( ! count_pair( i, j, weight, path_dist ) ) continue;
 					//     eval.atom_pair_energy( atom1, atom2, weight, emap, dsq );
 
-					//     if ( dsq < 16.0 ) std::cout << dsq << " " << weight << " " << emap[ fa_atr ] << std::endl;
+					//     if ( dsq < 16.0 ) TR << dsq << " " << weight << " " << emap[ fa_atr ] << std::endl;
 					//check if virtual
 					bool atom2_virtual(res2.atom_type(j).is_virtual());
 					weight = 1.0;
@@ -221,7 +231,7 @@ do_color_by_score( core::pose::Pose & pose ) {
 	for ( Size n = 1; n <= n_score_types; n++ ) {
 		auto st( static_cast< ScoreType >( n ) );
 		if ( scorefxn.has_nonzero_weight( st ) ) {
-			std::cout << st << ":   conventional score function " << pose.energies().total_energies()[ st ] << "   atomwise " << emap_total[ st ] << std::endl;
+			TR << st << ":   conventional score function " << pose.energies().total_energies()[ st ] << "   atomwise " << emap_total[ st ] << std::endl;
 		}
 	}
 
@@ -238,6 +248,8 @@ calc_dihedral_rms( core::pose::Pose const & pose, core::pose::Pose const & nativ
 	Real accumulator = 0;
 	Size count = 0;
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		if ( pose.residue_type( ii ).is_virtual_residue() ) continue;
+
 		Size n_mainchain = pose.residue( ii ).n_mainchain_atoms();
 
 		if ( pose.residue( ii ).has_lower_connect() && native_pose.residue( ii ).has_lower_connect() ) {
@@ -247,7 +259,7 @@ calc_dihedral_rms( core::pose::Pose const & pose, core::pose::Pose const & nativ
 				// * ( pose.residue( ii ).mainchain_torsion( 1 ) - native_pose.residue( ii ).mainchain_torsion( 1 ) );
 			}
 			if ( verbose ) {
-				std::cout << "pose " << pose.residue( ii ).mainchain_torsion( 1 ) << " native " << native_pose.residue( ii ).mainchain_torsion( 1 ) << std::endl;
+				TR << "pose " << pose.residue( ii ).mainchain_torsion( 1 ) << " native " << native_pose.residue( ii ).mainchain_torsion( 1 ) << std::endl;
 			}
 			count++;
 		}
@@ -259,7 +271,7 @@ calc_dihedral_rms( core::pose::Pose const & pose, core::pose::Pose const & nativ
 				// * ( pose.residue( ii ).mainchain_torsion( jj ) - native_pose.residue( jj ).mainchain_torsion( 1 ) );
 			}
 			if ( verbose ) {
-				std::cout << "pose " << pose.residue( ii ).mainchain_torsion( jj ) << " native " << native_pose.residue( ii ).mainchain_torsion( jj ) << std::endl;
+				TR << "pose " << pose.residue( ii ).mainchain_torsion( jj ) << " native " << native_pose.residue( ii ).mainchain_torsion( jj ) << std::endl;
 			}
 			count++;
 		}
@@ -271,7 +283,7 @@ calc_dihedral_rms( core::pose::Pose const & pose, core::pose::Pose const & nativ
 				// * ( pose.residue( ii ).mainchain_torsion( n_mainchain ) - native_pose.residue( ii ).mainchain_torsion( n_mainchain ) );
 			}
 			if ( verbose ) {
-				std::cout << "pose " << pose.residue( ii ).mainchain_torsion( n_mainchain ) << " native " << native_pose.residue( ii ).mainchain_torsion( n_mainchain ) << std::endl;
+				TR << "pose " << pose.residue( ii ).mainchain_torsion( n_mainchain ) << " native " << native_pose.residue( ii ).mainchain_torsion( n_mainchain ) << std::endl;
 			}
 			count++;
 		}
@@ -283,9 +295,93 @@ calc_dihedral_rms( core::pose::Pose const & pose, core::pose::Pose const & nativ
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void
-rna_score_test()
+
+
+using namespace  protocols::moves;
+
+class RNA_ScoreMover : public Mover {
+public:
+	RNA_ScoreMover( core::scoring::ScoreFunctionOP const & sfxn,
+		core::pose::PoseOP const & native_pose,
+		core::chemical::ResidueTypeSetCOP const & rsd_set//,
+		//utility::vector1< pose::PoseOP > const & other_poses = utility::vector1< pose::PoseOP >()
+	);//,
+	//core::pose::full_model_info::FullModelInfoOP const & my_model
+	// );
+
+	void apply( core::pose::Pose& pose ) override;
+	std::string get_name() const override { return "RNA_ScoreMover"; }
+
+	MoverOP clone() const override {
+		return MoverOP( new RNA_ScoreMover( *this ) );
+	}
+
+	MoverOP fresh_instance() const override {
+		return MoverOP( new RNA_ScoreMover( nullptr, nullptr, nullptr ) );
+	}
+
+private:
+	core::scoring::ScoreFunctionOP sfxn_;
+	core::pose::PoseOP native_pose_;
+	core::pose::full_model_info::FullModelInfoOP my_model_;
+	core::chemical::ResidueTypeSetCOP rsd_set_;
+	utility::vector1< pose::PoseOP > other_poses_;
+	core::scoring::rna::data::RNA_ChemicalMappingEnergyOP rna_chemical_mapping_energy_ = nullptr;
+	core::io::rna::RNA_DataReaderOP rna_data_reader_ = nullptr;
+};
+
+RNA_ScoreMover::RNA_ScoreMover( core::scoring::ScoreFunctionOP const & sfxn,
+	core::pose::PoseOP const & native_pose,//,
+	core::chemical::ResidueTypeSetCOP const & rsd_set
+	//utility::vector1< pose::PoseOP > const & other_poses
+) :
+	sfxn_( sfxn ),
+	native_pose_( native_pose ),//,
+	//other_poses_( other_poses )//,
+	//my_model_( my_model ),
+	rsd_set_( rsd_set )
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core;
+
+	// get scorefxn and add constraints if defined
+	sfxn_ = core::scoring::get_score_function();
+	//rsd_set_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD /*RNA*/ );
+
+	utility::vector1< pose::PoseOP > other_poses;
+
+	if ( option[ original_input ].user() ) {
+		utility::vector1< std::string > const & original_files = option[ original_input ]();
+		utility::vector1< pose::PoseOP > original_poses;
+
+		for ( Size n = 1; n <= original_files.size(); n++ ) {
+			original_poses.push_back( core::import_pose::get_pdb_and_cleanup( original_files[ n ], rsd_set_ ) );
+		}
+		if ( option[ full_model::other_poses ].user() ) core::import_pose::get_other_poses( original_poses, option[ full_model::other_poses ](), rsd_set_ );
+
+		//FullModelInfo (minimal object needed for add/delete)
+		core::import_pose::FullModelPoseBuilder builder;
+		builder.set_input_poses( original_poses );
+		builder.set_options( option );
+		builder.initialize_further_from_options();
+		builder.build(); // hope this will update original_poses[ 1 ]
+		//fill_full_model_info_from_command_line( original_poses );
+		my_model_ = core::pose::full_model_info::const_full_model_info( *original_poses[ 1 ] ).clone_info();
+
+	} else {
+		// other poses -- for scoring collections of poses connected by (virtual) loops, using full_model_info.
+		if ( option[ full_model::other_poses ].user() ) core::import_pose::get_other_poses( other_poses_, option[ full_model::other_poses ](), rsd_set_ );
+	}
+
+	if ( native_pose_ ) ( *sfxn_ )( *native_pose_ );
+
+
+	rna_data_reader_ = utility::pointer::make_shared< core::io::rna::RNA_DataReader>( option[OptionKeys::rna::data_file ]() );
+}
+
+void RNA_ScoreMover::apply( core::pose::Pose & pose ) {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
@@ -298,30 +394,167 @@ rna_score_test()
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::modeler;
 
-	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD /*RNA*/ );
-
-	// input stream
-	PoseInputStreamOP input;
-	if ( option[ in::file::silent ].user() ) {
-		if ( option[ in::file::tags ].user() ) {
-			input = utility::pointer::make_shared< SilentFilePoseInputStream >(
-				option[ in::file::silent ](),
-				option[ in::file::tags ]()
-			);
-		} else {
-			input = utility::pointer::make_shared< SilentFilePoseInputStream >( option[ in::file::silent ]() );
-		}
-	} else {
-		input = utility::pointer::make_shared< PDBPoseInputStream >( option[ in::file::s ]() );
+	if ( option[ convert_protein_centroid ]() ) {
+		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, false /* no sloppy match */, true /* only switch protein residues */ );
 	}
+
+	if ( option[ virtualize_free ]() ) core::pose::rna::virtualize_free_rna_moieties( pose ); // purely for testing.
+
+	if ( !option[ in::file::silent ].user() ) {
+		// If we didn't input this pose from a silent file, some work probably needs to be done on it.
+		cleanup( pose );
+	}
+
+	if ( !full_model_info_defined( pose ) || option[ in::file::fasta ].user() ) {
+		if ( ! option[ original_input ].user() ) {
+			FullModelPoseBuilder builder;
+			utility::vector1< pose::PoseOP > input_poses;
+			input_poses.push_back( utility::pointer::make_shared< Pose >( pose ) );
+			builder.set_input_poses( input_poses );
+			builder.set_options( option );
+			builder.initialize_further_from_options();
+			builder.build(); // hope this will update original_poses[ 1 ]
+			pose = *input_poses[ 1 ];
+			//fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
+		} else {
+			// allows for scoring of PDB along with 'other_poses' supplied from command line. Was used to test loop_close score term.
+			utility::vector1< Size > resnum;
+			core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
+			if ( pdb_info ) {
+				//TR << std::endl << "PDB Info available for this pose..." << std::endl << std::endl;
+				for ( Size n = 1; n <= pose.size(); n++ ) resnum.push_back( pdb_info->number( n ) );
+			} else {
+				for ( Size n = 1; n <= pose.size(); n++ ) resnum.push_back( n );
+			}
+			my_model_->set_res_list( resnum );
+			my_model_->set_other_pose_list( other_poses_ );
+			set_full_model_info( pose, my_model_ );
+		}
+	}
+
+
+	if ( option[params_file].user() ) utility_exit_with_message( " -params_file not supported in rna_minimize anymore." );
+	// if ( option[params_file].user() ) {
+	//  parameters.initialize_for_de_novo_protocol(pose, option[params_file],
+	//   basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
+	//   false /*ignore_secstruct*/ );
+	//  parameters.setup_base_pair_constraints( pose );
+	// }
+
+	// do it
+	if ( ! option[ score::just_calc_rmsd]() && !rna_data_reader_->has_reactivities() ) {
+		(*sfxn_)( pose );
+	}
+
+	// tag
+	std::string tag = tag_from_pose( pose );
+	//BinarySilentStruct s( opts, pose, tag );
+
+	std::map< Size, Size > resmap;
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) resmap[ ii ] = ii;
+
+	if ( native_pose_ ) {
+		Real rmsd;
+		if ( option[ rmsd_nosuper ]() ) {
+			if ( option[ rmsd_residues ].user() ) {
+				rmsd = protocols::stepwise::modeler::align::get_rmsd( pose, *native_pose_, option[ rmsd_residues ]() );
+			} else {
+				rmsd = all_atom_rmsd_nosuper( *native_pose_, pose );
+			}
+		} else {
+			rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, *native_pose_, option[ OptionKeys::stepwise::superimpose_over_all ]() );
+			if ( option[ rmsd_residues ].user() ) {
+				rmsd = protocols::stepwise::modeler::align::get_rmsd( pose, *native_pose_, option[ rmsd_residues ]() );
+			}
+		}
+		TR << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
+		setPoseExtraScore( pose, "new_rms", rmsd );
+		//s.add_energy( "new_rms", rmsd );
+
+		// dihedral rms
+		if ( option[ dihedral_rms ]() ) {
+			//s.add_energy( "dih_rms", calc_dihedral_rms( pose, *native_pose_, false ) );
+			setPoseExtraScore( pose, "dih_rms", calc_dihedral_rms( pose, *native_pose_, false ) );
+		}
+		if ( option[ gdt_ha ]() ) {
+			// requires perfect correspondence!
+			//s.add_energy( "gdt_ha", gdtsc( pose, *native_pose_, resmap ) );
+			setPoseExtraScore( pose, "gdt_ha", gdtsc( pose, *native_pose_, resmap ) );
+		}
+
+		// Stem RMSD
+		// if ( option[params_file].user() ) {
+		//  std::list< Size > stem_residues( parameters.get_stem_residues( pose ) );
+		//  if ( !stem_residues.empty()/*size() > 0*/ ) {
+		//   Real const rmsd_stems = all_atom_rmsd( *native_pose_, pose, stem_residues );
+		//   s.add_energy( "rms_stem", rmsd_stems );
+		//   TR << "Stems rmsd: " << rmsd_stems << std::endl;
+		//  }
+		// }
+	}
+
+	// for data_file, don't actually re-score, just compute rna_chem_map score for now.
+	if ( rna_data_reader_->has_reactivities() ) {
+		if ( !rna_chemical_mapping_energy_ ) rna_chemical_mapping_energy_ = utility::pointer::make_shared< RNA_ChemicalMappingEnergy >();
+		rna_data_reader_->fill_rna_data_info( pose );
+		pose.update_residue_neighbors();
+		//s.add_energy(  "rna_chem_map",       rna_chemical_mapping_energy_->calculate_energy( pose, false /*use_low_res*/ ) );
+		//s.add_energy(  "rna_chem_map_lores", rna_chemical_mapping_energy_->calculate_energy( pose , true /*use_low_res*/ ) );
+		setPoseExtraScore( pose, "rna_chem_map", rna_chemical_mapping_energy_->calculate_energy( pose, false /*use_low_res*/ ) );
+		setPoseExtraScore( pose, "rna_chem_map_lores", rna_chemical_mapping_energy_->calculate_energy( pose , true /*use_low_res*/ ) );
+
+	}
+
+	TR << "Outputting " << tag << " to silent file: " << option[ out::file::silent ].value() << std::endl;
+	//silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
+
+	if ( option[ score::just_calc_rmsd ]() && tag.find( ".pdb" ) != std::string::npos ) {
+		std::string out_pdb_file = utility::replace_in( tag, ".pdb", ".sup.pdb" );
+		TR << "Creating: " << out_pdb_file << std::endl;
+		pose.dump_pdb( out_pdb_file );
+	}
+	if ( option[ color_by_score ]() ) {
+		do_color_by_score( pose );
+		pose.dump_pdb( "COLOR_BY_SCORE.pdb" );
+	}
+
+
+
+}
+
+
+
+
+///////////////////////////////////////////////////////////////
+void*
+my_main( void* )
+{
+	using namespace protocols;
+	using namespace protocols::jd2;
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core;
+
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::chemical;
+	using namespace core::scoring::rna::data;
+	using namespace core::scoring;
+	using namespace core::kinematics;
+	using namespace core::io::silent;
+	using namespace core::import_pose::pose_stream;
+	using namespace core::import_pose;
+	using namespace core::pose::full_model_info;
+	using namespace protocols::stepwise::modeler;
+
+	auto rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD /*RNA*/ );
 
 	// native pose setup
 	pose::PoseOP native_pose;
-	bool native_exists( false );
 	if ( option[ in::file::native ].user() ) {
 		native_pose = get_pdb_with_full_model_info( option[ in::file::native ](), rsd_set );
-		native_exists = true;
 		//native_pose->dump_pdb("native_pose_dump.pdb");
 
 		if ( option[ convert_protein_centroid ]() ) {
@@ -345,8 +578,9 @@ rna_score_test()
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
 	if ( option[ out::overwrite ]() ) core::io::silent::remove_silent_file_if_it_exists( silent_file );
-	SilentFileOptions opts; // initialized from the command line
-	SilentFileData silent_file_data(opts);
+
+	//SilentFileOptions opts; // initialized from the command line
+	//SilentFileData silent_file_data(opts);
 
 	FullModelInfoOP my_model;
 	utility::vector1< pose::PoseOP > other_poses;
@@ -371,154 +605,24 @@ rna_score_test()
 
 	} else {
 		// other poses -- for scoring collections of poses connected by (virtual) loops, using full_model_info.
-		if ( option[ full_model::other_poses ].user() ) get_other_poses( other_poses, option[ full_model::other_poses ](), rsd_set );
+		if ( basic::options::option[ full_model::other_poses ].user() ) get_other_poses( other_poses, option[ full_model::other_poses ](), rsd_set );
 	}
 
 	// if trying to compute stem RMSD
-	core::io::rna::RNA_DataReader rna_data_reader( option[OptionKeys::rna::data_file ]() );
-	RNA_ChemicalMappingEnergyOP rna_chemical_mapping_energy;
-	pose::PoseOP pose( new pose::Pose );
-	pose::Pose start_pose;
-
-	Size i( 0 );
-
-	if ( native_exists ) ( *scorefxn)( *native_pose );
-
-	while ( input->has_another_pose() ) {
-
-		input->fill_pose( *pose, *rsd_set );
-		i++;
-
-		if ( option[ convert_protein_centroid ]() ) {
-			core::util::switch_to_residue_type_set( *pose, core::chemical::CENTROID, false /* no sloppy match */, true /* only switch protein residues */ );
-		}
-
-		if ( option[ virtualize_free ]() ) core::pose::rna::virtualize_free_rna_moieties( *pose ); // purely for testing.
-
-		if ( !option[ in::file::silent ].user() ) cleanup( *pose );
-
-		if ( !full_model_info_defined( *pose ) || option[ in::file::fasta ].user() ) {
-			if ( ! option[ original_input ].user() ) {
-				FullModelPoseBuilder builder;
-				utility::vector1< pose::PoseOP > input_poses;
-				input_poses.push_back( pose );
-				builder.set_input_poses( input_poses );
-				builder.set_options( option );
-				builder.initialize_further_from_options();
-				builder.build(); // hope this will update original_poses[ 1 ]
-				//fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
-			} else {
-				// allows for scoring of PDB along with 'other_poses' supplied from command line. Was used to test loop_close score term.
-				utility::vector1< Size > resnum;
-				core::pose::PDBInfoCOP pdb_info = pose->pdb_info();
-				if ( pdb_info ) {
-					//std::cout << std::endl << "PDB Info available for this pose..." << std::endl << std::endl;
-					for ( Size n = 1; n <= pose->size(); n++ ) resnum.push_back( pdb_info->number( n ) );
-				} else {
-					for ( Size n = 1; n <= pose->size(); n++ ) resnum.push_back( n );
-				}
-				my_model->set_res_list( resnum );
-				my_model->set_other_pose_list( other_poses );
-				set_full_model_info( *pose, my_model );
-			}
-		}
+	//pose::PoseOP pose( new pose::Pose );
+	//pose::Pose start_pose;
 
 
-		if ( option[params_file].user() ) utility_exit_with_message( " -params_file not supported in rna_minimize anymore." );
-		// if ( option[params_file].user() ) {
-		//  parameters.initialize_for_de_novo_protocol(pose, option[params_file],
-		//   basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
-		//   false /*ignore_secstruct*/ );
-		//  parameters.setup_base_pair_constraints( pose );
-		// }
+	auto scoremover = utility::pointer::make_shared< RNA_ScoreMover >( scorefxn, native_pose, rsd_set );
 
-		// do it
-		if ( ! option[ score::just_calc_rmsd]() && !rna_data_reader.has_reactivities() ) {
-			(*scorefxn)( *pose );
-		}
-
-		// tag
-		std::string tag = tag_from_pose( *pose );
-		BinarySilentStruct s( opts, *pose, tag );
-
-		Real test_dihrms = calc_dihedral_rms( *pose, *pose, false );
-		if ( test_dihrms != 0 ) {
-			utility_exit_with_message( "Something is wrong with calc_dihedral_rms" );
-		}
-
-
-		std::map< Size, Size > resmap;
-		for ( Size ii = 1; ii <= pose->size(); ++ii ) resmap[ ii ] = ii;
-
-		if ( native_exists ) {
-			Real rmsd;
-			if ( option[ rmsd_nosuper ]() ) {
-				if ( option[ rmsd_residues ].user() ) {
-					rmsd = protocols::stepwise::modeler::align::get_rmsd( *pose, *native_pose, option[ rmsd_residues ]() );
-				} else {
-					rmsd = all_atom_rmsd_nosuper( *native_pose, *pose );
-				}
-			} else {
-				rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( *pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
-				if ( option[ rmsd_residues ].user() ) {
-					rmsd = protocols::stepwise::modeler::align::get_rmsd( *pose, *native_pose, option[ rmsd_residues ]() );
-				}
-			}
-			std::cout << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
-			s.add_energy( "new_rms", rmsd );
-
-			// dihedral rms
-			if ( option[ dihedral_rms ]() ) {
-				s.add_energy( "dih_rms", calc_dihedral_rms( *pose, *native_pose, false ) );
-			}
-			if ( option[ gdt_ha ]() ) {
-				// requires perfect correspondence!
-				s.add_energy( "gdt_ha", gdtsc( *pose, *native_pose, resmap ) );
-			}
-
-			// Stem RMSD
-			// if ( option[params_file].user() ) {
-			//  std::list< Size > stem_residues( parameters.get_stem_residues( pose ) );
-			//  if ( !stem_residues.empty()/*size() > 0*/ ) {
-			//   Real const rmsd_stems = all_atom_rmsd( *native_pose, pose, stem_residues );
-			//   s.add_energy( "rms_stem", rmsd_stems );
-			//   std::cout << "Stems rmsd: " << rmsd_stems << std::endl;
-			//  }
-			// }
-		}
-
-		// for data_file, don't actually re-score, just compute rna_chem_map score for now.
-		if ( rna_data_reader.has_reactivities() ) {
-			if ( rna_chemical_mapping_energy == nullptr ) rna_chemical_mapping_energy = utility::pointer::make_shared< RNA_ChemicalMappingEnergy >();
-			rna_data_reader.fill_rna_data_info( *pose );
-			pose->update_residue_neighbors();
-			s.add_energy(  "rna_chem_map",       rna_chemical_mapping_energy->calculate_energy( *pose, false /*use_low_res*/ ) );
-			s.add_energy(  "rna_chem_map_lores", rna_chemical_mapping_energy->calculate_energy( *pose , true /*use_low_res*/ ) );
-		}
-
-		std::cout << "Outputting " << tag << " to silent file: " << silent_file << std::endl;
-		silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
-
-		if ( option[ score::just_calc_rmsd ]() && tag.find( ".pdb" ) != std::string::npos ) {
-			std::string out_pdb_file = utility::replace_in( tag, ".pdb", ".sup.pdb" );
-			std::cout << "Creating: " << out_pdb_file << std::endl;
-			pose->dump_pdb( out_pdb_file );
-		}
-		if ( option[ color_by_score ]() ) {
-			do_color_by_score( *pose );
-			pose->dump_pdb( "COLOR_BY_SCORE.pdb" );
-		}
-
+	try {
+		JobDistributor::get_instance()->go( scoremover );
+	} catch (utility::excn::Exception& excn ) {
+		std::cerr << "Exception: " << std::endl;
+		excn.show( std::cerr );
+		std::cout << "Exception: " << std::endl;
+		excn.show( std::cout ); //so its also seen in a >LOG file
 	}
-
-}
-
-
-///////////////////////////////////////////////////////////////
-void*
-my_main( void* )
-{
-	rna_score_test();
 
 	protocols::viewer::clear_conformation_viewers();
 	exit( 0 );
@@ -531,10 +635,6 @@ main( int argc, char * argv [] )
 {
 	try {
 		using namespace basic::options;
-
-		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
-		std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
-		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
 		utility::vector1< Size > blank_size_vector;
 		utility::vector1< std::string > blank_string_vector;
@@ -565,11 +665,16 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
+		jd2::register_options();
 		devel::init(argc, argv);
 
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup
 		////////////////////////////////////////////////////////////////////////////
+		TR << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
+		TR              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
+		TR << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+
 		protocols::viewer::viewer_main( my_main );
 	} catch (utility::excn::Exception const & e ) {
 		e.display();

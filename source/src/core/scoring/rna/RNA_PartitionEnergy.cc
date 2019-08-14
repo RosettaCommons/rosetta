@@ -13,6 +13,8 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/testing.OptionKeys.gen.hh>
 
 // Unit headers
 #include <core/scoring/rna/RNA_PartitionEnergy.hh>
@@ -192,6 +194,18 @@ RNA_PartitionEnergy::get_partition_score(
 	std::string const & global_sequence,
 	Real & partition_score
 ) const {
+
+	// If running in integration test mode, don't bother. We don't
+	// care about this specifically, just certain elements of how it
+	// is controlled. (For example, does use of the global sequence
+	// work.)
+	using namespace basic::options;
+	using namespace  basic::options::OptionKeys;
+	if ( option[ testing::INTEGRATION_TEST ].user() ) {
+		partition_score = 1;
+		return;
+	}
+
 	// Run Vienna
 	std::string command_line("echo " + global_sequence);
 	command_line = command_line + " | RNAfold --noPS --noDP -p";
