@@ -245,7 +245,7 @@ NMerRefEnergy::get_residue_energy_by_table(
 		rsd_energy_sum = 0.;
 		for ( Size i = 1; i <= n_tables(); ++i ) {
 
-			std::map < std::string, core::Real > const nmer_ref_energy( nmer_ref_energies_[ i ] );
+			std::map < std::string, core::Real > const & nmer_ref_energy( nmer_ref_energies_[ i ] );
 			if ( nmer_ref_energy.empty() ) return;
 			//skip if not a NMer center, make sure seqpos is in the pose and also inside a whole Nmer
 			if ( ( seqpos < 1 ) || ( seqpos > ( pose.size() - nmer_cterm_ ) ) ) return;
