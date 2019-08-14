@@ -46,7 +46,13 @@ namespace scoring {
 class MembraneTopology : public basic::datacache::CacheableData {
 
 public:
-	MembraneTopology(): LipoDefined_(false),init_(false),beta_barrel_(false),N_term_inside_(false),initialized_(false) {};
+	MembraneTopology():
+		LipoDefined_(false),
+		init_(false),
+		//beta_barrel_(false),
+		//N_term_inside_(false),
+		initialized_(false)
+	{};
 
 	basic::datacache::CacheableDataOP
 	clone() const override
@@ -246,8 +252,8 @@ private: // data
 	utility::vector1< core::Real > LipidBurial_;
 	bool LipoDefined_;
 	bool init_;
-	bool beta_barrel_;
-	bool N_term_inside_;
+	//bool beta_barrel_;
+	//bool N_term_inside_;
 	bool initialized_; //pba
 	utility::vector1< bool > tmregion_; //stores if the residue is in the TM or not
 	utility::vector1< bool > allow_scoring_;

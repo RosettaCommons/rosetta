@@ -290,8 +290,8 @@ core::scoring::MembraneTopology::save( Archive & arc ) const {
 	arc( CEREAL_NVP( LipidBurial_ ) ); // utility::vector1<core::Real>
 	arc( CEREAL_NVP( LipoDefined_ ) ); // _Bool
 	arc( CEREAL_NVP( init_ ) ); // _Bool
-	arc( CEREAL_NVP( beta_barrel_ ) ); // _Bool
-	arc( CEREAL_NVP( N_term_inside_ ) ); // _Bool
+	//arc( CEREAL_NVP( beta_barrel_ ) ); // _Bool
+	//arc( CEREAL_NVP( N_term_inside_ ) ); // _Bool
 	arc( CEREAL_NVP( initialized_ ) ); // _Bool
 	arc( CEREAL_NVP( tmregion_ ) ); // utility::vector1<_Bool>
 	arc( CEREAL_NVP( allow_scoring_ ) ); // utility::vector1<_Bool>
@@ -315,8 +315,8 @@ core::scoring::MembraneTopology::load( Archive & arc ) {
 	arc( LipidBurial_ ); // utility::vector1<core::Real>
 	arc( LipoDefined_ ); // _Bool
 	arc( init_ ); // _Bool
-	arc( beta_barrel_ ); // _Bool
-	arc( N_term_inside_ ); // _Bool
+	//arc( beta_barrel_ ); // _Bool
+	//arc( N_term_inside_ ); // _Bool
 	arc( initialized_ ); // _Bool
 	arc( tmregion_ ); // utility::vector1<_Bool>
 	arc( allow_scoring_ ); // utility::vector1<_Bool>
