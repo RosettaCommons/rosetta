@@ -118,7 +118,7 @@ core::Size lig_res_num;
 void define_interface( core::pose::Pose & ref_pose ) {
 	lig_res_num =0;
 	for ( int j = 1, resnum = ref_pose.size(); j <= resnum; ++j ) {
-		if ( !ref_pose.residue(j).is_protein() ) {
+		if ( !(ref_pose.residue(j).is_protein() || ref_pose.residue(j).is_metal()) ) {
 			lig_res_num = j;
 			break;
 		}
@@ -387,7 +387,7 @@ int main( int argc, char * argv [] ){
 					bound_pose.dump_scored_pdb( init_pdb, *scorefxn );
 				}
 
-				ConstraintSetOP cst_set( new ConstraintSet() );
+				//    ConstraintSetOP cst_set( new ConstraintSet() );
 				core::scoring::func::HarmonicFuncOP spring(
 					new core::scoring::func::HarmonicFunc( 0 /*mean*/, coord_sdev /*std-dev*/));
 				conformation::Conformation const & conformation( bound_pose.conformation() );
@@ -408,10 +408,10 @@ int main( int argc, char * argv [] ){
 						ConstraintOP cst(new CoordinateConstraint(
 							CAi, AtomID(1,my_anchor), conformation.xyz( CAi ), spring ));
 
-						cst_set->add_constraint(cst);
+						bound_pose.add_constraint(cst);
 					}
 				}
-				bound_pose.constraint_set( cst_set );
+				//    bound_pose.constraint_set( cst_set );
 				scorefxn->set_weight( coordinate_constraint, cst_weight );
 
 				TR << "Starting minimization...." << std::endl;

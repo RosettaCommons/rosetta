@@ -3795,8 +3795,8 @@ bool PocketGrid::autoexpanding_pocket_eval( core::conformation::Residue const & 
 	core::pose::Pose tmp_pose;
 	int term=1;
 	for ( Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
-		if ( term ) {
-			tmp_pose.append_residue_by_jump(xyz_func.residue(j), 1);
+		if ( term || !xyz_func.residue(j).is_protein() ) {
+			tmp_pose.append_residue_by_jump(xyz_func.residue(j), j-1);
 		} else tmp_pose.append_residue_by_bond(xyz_func.residue(j));
 		if ( xyz_func.residue(j).is_terminus() ) {
 			term=1;
@@ -3813,8 +3813,8 @@ bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::Res
 	core::pose::Pose tmp_pose;
 	int term=1;
 	for ( Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
-		if ( term ) {
-			tmp_pose.append_residue_by_jump(xyz_func.residue(j), 1);
+		if ( term || !xyz_func.residue(j).is_protein() ) {
+			tmp_pose.append_residue_by_jump(xyz_func.residue(j), j-1);
 		} else tmp_pose.append_residue_by_bond(xyz_func.residue(j));
 		if ( xyz_func.residue(j).is_terminus() ) {
 			term=1;

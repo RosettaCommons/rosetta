@@ -67,8 +67,11 @@ static basic::Tracer TR( "apps.pilot.david_recompute_score_and_rmsd.main" );
 
 
 OPT_KEY( Integer, max_residues )
+OPT_KEY( Integer, limit_resi_dist )
 OPT_KEY( Real, min_sasa )
 OPT_KEY( String, contact_list )
+OPT_KEY( Boolean, limit_scan_ss )
+OPT_KEY( Boolean, limit_scan_iface )
 
 //set to store pdb info keys
 std::vector<std::string> surface;
@@ -106,6 +109,9 @@ main( int argc, char * argv [] )
 		NEW_OPT( max_residues, "Maximum number of residues to return", 1000);
 		NEW_OPT( min_sasa, "Minimum SASA to classify a residue as surface", 10);
 		NEW_OPT ( contact_list, "File name for optional list of contact residues to check","");
+		NEW_OPT( limit_scan_ss, "Limit scan to elements with defined secondary structure", false);
+		NEW_OPT( limit_scan_iface, "Limit scan to residues away from an interface", false);
+		NEW_OPT( limit_resi_dist, "When not all surface residues are selected, set the minimum distance threshold in Angstroms for selection", 12);
 
 		using namespace core;
 		using namespace core::scoring;
@@ -117,6 +123,9 @@ main( int argc, char * argv [] )
 		core::import_pose::pose_from_file( pose, input_pdb_name , core::import_pose::PDB_file);
 
 		std::string const cfilename = option[ contact_list ];
+		bool const limit_ss = option[ limit_scan_ss ];
+		bool const limit_iface = option[ limit_scan_ss ];
+
 		if ( cfilename != "" ) {
 			std::ifstream ifs(cfilename.c_str(), std::ifstream::in);
 			if ( !ifs.is_open() ) {
@@ -132,8 +141,8 @@ main( int argc, char * argv [] )
 			}
 		}
 
-		core::Size sasa_threshold = option [ min_sasa ];
-		core::Size max_resi = option [ max_residues ];
+		core::Size const sasa_threshold = option [ min_sasa ];
+		core::Size const max_resi = option [ max_residues ];
 		basic::MetricValue< utility::vector1< Real > > resisasa;
 		pose.metric( "sasa", "residue_sasa", resisasa );
 		setup_secstruct_dssp(pose);
@@ -152,15 +161,17 @@ main( int argc, char * argv [] )
 						break;
 					}
 				}
-				//make sure it's not within 12A of a *meric interface
 				if ( pose.pdb_info()->chain(i) == pose.pdb_info()->chain(j) ) continue;
+				//make sure it's not within 12A of a *meric interface
 				if ( pose.residue(i).xyz( pose.residue(i).nbr_atom() ).distance( pose.residue(j).xyz( pose.residue(j).nbr_atom() ) ) <= 12 ) {
-					close = 1;
+					if ( limit_iface ) {
+						close = 1;
+					}
 				}
 
 			}
 			if ( !close ) {
-				if ( resisasa.value()[i]>= sasa_threshold && pose.secstruct(i) != 'L' ) {
+				if ( resisasa.value()[i]>= sasa_threshold && (pose.secstruct(i) != 'L' || !limit_ss) ) {
 					std::ostringstream residuestream;
 					residuestream << pose.pdb_info()->chain(i) << pose.pdb_info()->number(i);
 					std::string res_id = residuestream.str();
@@ -180,8 +191,10 @@ main( int argc, char * argv [] )
 
 
 		if ( max_resi < surface.size() ) {
+			core::Size const resi_dist = option [ limit_resi_dist ];
+			core::Size num_resi = max_resi;
 			std::set<std::string> indeces;
-			for ( core::Size i = 0; i < max_resi; i++ ) {
+			for ( core::Size i = 0; i < num_resi; i++ ) {
 				auto r=(int) (numeric::random::uniform() * surface.size());
 				std::string rname(surface[r]);
 				if ( indeces.find(surface[r]) == indeces.end() ) {
@@ -210,10 +223,10 @@ main( int argc, char * argv [] )
 							}
 						}
 						if ( pos == pos2 ) continue;
-						if ( pose.residue(pos).xyz( pose.residue(pos).nbr_atom() ).distance( pose.residue(pos2).xyz( pose.residue(pos2).nbr_atom() ) ) <= 12 ) {
+						if ( pose.residue(pos).xyz( pose.residue(pos).nbr_atom() ).distance( pose.residue(pos2).xyz( pose.residue(pos2).nbr_atom() ) ) <= resi_dist ) {
 							if ( it2 != surface.begin() ) --it2;
 							surface.erase(it2);
-							if ( max_resi == surface.size() ) max_resi--;
+							if ( num_resi == surface.size() ) num_resi--;
 						}
 
 					}

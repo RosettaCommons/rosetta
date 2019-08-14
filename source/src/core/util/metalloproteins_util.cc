@@ -202,6 +202,10 @@ find_metalbinding_atoms_helper(
 	//For each metal atom in the ligand:
 	numeric::xyzVector< core::Real > const & metal_xyz = pose.residue( metal_position ).xyz( metal_atom_number );
 	core::Size nres = pose.total_residue();
+
+	using namespace basic::options::OptionKeys;
+	bool const prevent_auto_setup_metal_bb_variants =  basic::options::option[ in::prevent_auto_setup_metal_bb_variants ].value();
+
 	// Loop through all metalbinding residues, skipping the metal itself
 	// AMW: does not necessarily avoid ALL metal positions, just the one in question
 	for ( Size ir = 1; ir <= nres; ++ir ) {
@@ -210,6 +214,11 @@ find_metalbinding_atoms_helper(
 		utility::vector1< Size > binding_atom_list;
 		pose.residue( ir ).get_metal_binding_atoms( binding_atom_list );
 		for ( Size const binding_atom : binding_atom_list ) {
+			if ( prevent_auto_setup_metal_bb_variants ) {
+				if ( pose.residue( ir ).atom_is_backbone(binding_atom) ) {
+					continue;
+				}
+			}
 			numeric::xyzVector< Real > binding_atom_xyz = pose.residue( ir ).xyz( binding_atom );
 			Real distsq = metal_xyz.distance_squared( binding_atom_xyz );
 			Real metal_rad = pose.residue( metal_position ).atom_type( metal_atom_number ).lj_radius();
