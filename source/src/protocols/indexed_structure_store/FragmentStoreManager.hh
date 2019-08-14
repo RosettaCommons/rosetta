@@ -19,6 +19,8 @@
 #include <protocols/indexed_structure_store/FragmentStoreManager.fwd.hh>
 #include <protocols/indexed_structure_store/FragmentLookup.fwd.hh>
 #include <protocols/indexed_structure_store/FragmentStore.fwd.hh>
+#include <protocols/indexed_structure_store/FragmentStoreProvider.fwd.hh>
+
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
@@ -27,6 +29,7 @@
 #include <numeric/types.hh>
 #include <string>
 #include <map>
+#include <mutex>
 #include <utility/vector1.hh>
 
 namespace protocols
@@ -60,11 +63,17 @@ public:
 	std::map<numeric::Size,FragmentStoreOP> load_grouped_fragment_store(std::string group_field, std::string lookup_name, std::string store_path, utility::vector1<std::string> fields_to_load, utility::vector1<std::string> fields_to_load_types);
 
 	std::string resolve_store_path(std::string store_path);
+
+	void register_store_provider(core::SSize priority, std::string name, FragmentStoreProviderOP backend);
+
 private:
 
 	FragmentStoreManager();
 
 	GroupedFragmentMap grouped_fragment_map_;
+
+	std::map<std::tuple<core::SSize, std::string>, FragmentStoreProviderOP> store_providers;
+	std::mutex cache_mutex;
 
 };
 

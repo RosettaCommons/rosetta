@@ -36,10 +36,14 @@ namespace indexed_structure_store
 
 static basic::Tracer TR( "core.indexed_structure_store.BinaryFragmentStoreBackend" );
 
-BinaryFragmentStoreBackend::BinaryFragmentStoreBackend(std::string target_path) :
-	target_path_(target_path)
+BinaryFragmentStoreBackend::BinaryFragmentStoreBackend(std::string target_path)
 {
-	TR.Info << "Loading backend: " << target_path << std::endl;
+	set_target_filename(target_path);
+}
+
+void BinaryFragmentStoreBackend::set_target_filename(std::string target_filename) {
+	TR.Info << "Loading backend: " << target_filename << std::endl;
+	target_path_ = target_filename;
 }
 
 FragmentStoreOP BinaryFragmentStoreBackend::get_fragment_store(std::string store_name)
@@ -107,5 +111,8 @@ FragmentStoreOP BinaryFragmentStoreBackend::get_fragment_store(std::string store
 	return fragment_store;
 }
 
+void BinaryFragmentStoreBackend::append_to_fragment_store(FragmentStoreOP /*fragment_store*/, std::string /*store_name*/, std::string /*group_field*/, std::string /*group_type*/){
+	return;
+}
 }
 }
