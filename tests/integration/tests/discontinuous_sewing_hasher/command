@@ -36,15 +36,18 @@ cd %(workdir)s
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 
-%(bin)s/sewing_hasher.%(binext)s @flags_hash -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
-	| egrep -vf ../../ignore_list \
-	> hash_output_log
+## The rest of this test is disabled because it takes **forever** to run on the test server.
+## There might be a way to make it faster, but so far no one shows interest in doing so for the legacy sewing hasher.
 
-test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
-
-%(bin)s/sewing_hasher.%(binext)s @flags_convert -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
-	| egrep -vf ../../ignore_list \
-	> convert_output_log
-
-test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
+#%(bin)s/sewing_hasher.%(binext)s @flags_hash -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
+#	| egrep -vf ../../ignore_list \
+#	> hash_output_log
+#
+#test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
+#
+#%(bin)s/sewing_hasher.%(binext)s @flags_convert -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
+#	| egrep -vf ../../ignore_list \
+#	> convert_output_log
+#
+#test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 
