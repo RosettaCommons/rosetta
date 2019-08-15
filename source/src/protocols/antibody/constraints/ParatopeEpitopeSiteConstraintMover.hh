@@ -51,6 +51,9 @@ public:
 
 	ParatopeEpitopeSiteConstraintMover( ParatopeEpitopeSiteConstraintMover const & src );
 
+	/// @brief Copy this object and return a pointer to the copy.
+	///
+	protocols::moves::MoverOP clone() const override;
 
 	void
 	parse_my_tag(

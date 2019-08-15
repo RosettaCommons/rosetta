@@ -68,6 +68,9 @@ ParatopeSiteConstraintMover::ParatopeSiteConstraintMover( ParatopeSiteConstraint
 	if ( src.current_func_ ) current_func_ = current_func_->clone();
 }
 
+/// @brief Copy this object and return a pointer to the copy.
+///
+protocols::moves::MoverOP ParatopeSiteConstraintMover::clone() const { return utility::pointer::make_shared< protocols::antibody::constraints::ParatopeSiteConstraintMover >( *this ); }
 
 void
 ParatopeSiteConstraintMover::set_defaults() {
@@ -96,7 +99,7 @@ ParatopeSiteConstraintMover::parse_my_tag(
 		cdrs_to_apply_.resize(6, true);
 	}
 
-	interface_distance_ = tag->getOption< core::Real >("interface_dis", interface_distance_);
+	interface_distance_ = tag->getOption< core::Real >("interface_distance", interface_distance_);
 
 	if ( tag->hasOption("antigen_chains") ) {
 		utility::vector1<std::string> chain_strings = utility::string_split_multi_delim(tag->getOption<std::string>("antigen_chains"), ":,'`~+*&|;.");

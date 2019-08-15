@@ -92,6 +92,9 @@ ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover( Paratope
 	if ( src.current_func_ ) current_func_ = current_func_->clone();
 }
 
+/// @brief Copy this object and return a pointer to the copy.
+///
+protocols::moves::MoverOP ParatopeEpitopeSiteConstraintMover::clone() const { return utility::pointer::make_shared< protocols::antibody::constraints::ParatopeEpitopeSiteConstraintMover >( *this ); }
 
 void
 ParatopeEpitopeSiteConstraintMover::set_defaults(){
@@ -120,7 +123,7 @@ ParatopeEpitopeSiteConstraintMover::parse_my_tag(
 		paratope_cdrs_.resize(6, true);
 	}
 
-	interface_distance_ = tag->getOption< core::Real >("interface_dis", interface_distance_);
+	interface_distance_ = tag->getOption< core::Real >("interface_distance", interface_distance_);
 
 
 	if ( tag->hasOption("paratope_residues_pdb") && tag->hasOption("paratope_residues") ) {
