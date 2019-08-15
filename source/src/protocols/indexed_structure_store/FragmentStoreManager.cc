@@ -39,13 +39,8 @@ static basic::Tracer TR( "core.indexed_structure_store.FragmentStoreManager" );
 using namespace basic::options;
 using utility::vector1;
 
-FragmentStoreManager::FragmentStoreManager()  : store_providers()
+FragmentStoreManager::FragmentStoreManager()
 {
-	typedef std::tuple<core::SSize, std::string> Key;
-#ifdef USEHDF5
-		store_providers[Key(0, "hdf5")] = FragmentStoreProviderOP(new H5FragmentStoreBackend());
-#endif
-	store_providers[Key(10, "binary")] = utility::pointer::make_shared< BinaryFragmentStoreBackend >();
 }
 
 FragmentLookupOP FragmentStoreManager::load_fragment_lookup(std::string lookup_name)
@@ -76,48 +71,45 @@ FragmentLookupOP FragmentStoreManager::load_fragment_lookup(std::string lookup_n
 		utility_exit_with_message("Unable to resolve specified store: " + store_path);
 	}
 
-	for ( auto & provider : store_providers ) {
-		auto & prio = std::get<0>(provider.first);
-		auto & name = std::get<1>(provider.first);
-		auto backend = provider.second;
-		TR.Debug << "Checking backend: " << name << " prio: " << prio << std::endl;
-		backend->set_target_filename(store_path);
-
-		FragmentStoreOP target_store = backend->get_fragment_store(lookup_name);
-		FragmentLookupOP lookup( new FragmentLookup(target_store) );
-		return lookup;
-	}
-
-	if ( utility::file::file_extension(store_path) == "h5" ) {
-#ifndef USEHDF5
-		utility_exit_with_message("StructureStoreManager::load_structure_store without HDF5 support, unable to load: " + store_path);
+	if ( utility::file::file_extension(resolved_path) == "h5" ) {
+#ifdef USEHDF5
+		H5FragmentStoreBackend backend(store_path);
+		target_store = backend.get_fragment_store(lookup_name);
+#else
+		utility_exit_with_message("FragmentStoreManager::load_fragment_lookup without HDF5 support, unable to load lookup: " + lookup_name + " resolved from: " + store_path);
 #endif
+	} else {
+		BinaryFragmentStoreBackend backend(resolved_path);
+		target_store = backend.get_fragment_store(lookup_name);
 	}
-	utility_exit_with_message("Unable to load specified store: " + store_path);
+
+	FragmentLookupOP lookup( new FragmentLookup(target_store) );
+	return lookup;
 }
 
 //considered caching at this level but I would get double storage
 FragmentStoreOP FragmentStoreManager::load_fragment_store(std::string lookup_name, std::string store_path, vector1<std::string> fields_to_load, vector1<std::string> fields_to_load_types){
+	FragmentStoreOP target_store(nullptr);
 	std::string resolved_path = resolve_store_path(store_path);
 	if ( resolved_path.empty() ) {
 		utility_exit_with_message("Unable to resolve specified store: " + store_path);
 		TR << fields_to_load.size() << "," << fields_to_load_types.size() << std::endl; //For the testing server. Line should never be accessed.
 	}
-	for ( auto & provider : store_providers ) {
-		auto & prio = std::get<0>(provider.first);
-		auto & name = std::get<1>(provider.first);
-		auto backend = provider.second;
-		TR.Debug << "Checking backend: " << name << " prio: " << prio << std::endl;
-		backend->set_target_filename(store_path);
-
-		FragmentStoreOP target_store = backend->get_fragment_store(lookup_name);
-		for ( numeric::Size ii=1; ii<=fields_to_load.size(); ++ii ) {
-			backend->append_to_fragment_store(target_store,lookup_name,fields_to_load[ii],fields_to_load_types[ii]);
-		}
-		TR << "database loaded!" << std::endl;
-		return target_store;
+#ifndef USEHDF5
+	utility_exit_with_message("FragmentStoreManager::load_fragment_lookup without HDF5 support, unable to load lookup: " + lookup_name + " resolved from: " + store_path);
+#endif
+#ifdef USEHDF5
+	if ( utility::file::file_extension(resolved_path) == "h5" ) {
+		H5FragmentStoreBackend backend(resolved_path);
+		target_store = backend.get_fragment_store(lookup_name);
+		for(numeric::Size ii=1; ii<=fields_to_load.size(); ++ii)
+			backend.append_to_fragment_store(target_store,lookup_name,fields_to_load[ii],fields_to_load_types[ii]);
 	}
-	utility_exit_with_message("No valid FragmentStoreProvider found for file " + store_path);
+	else
+		utility_exit_with_message("FragmentStoreManager::requires h5 file extension resolved from: " + store_path);
+	TR << "database loaded!" << std::endl;
+#endif
+	return(target_store);
 }
 
 
@@ -277,22 +269,6 @@ std::string FragmentStoreManager::resolve_store_path(std::string target_path)
 
 	return "";
 }
-
-
-void FragmentStoreManager::register_store_provider(core::SSize priority, std::string name, FragmentStoreProviderOP backend) {
-
-	std::lock_guard<std::mutex> cache_lock(cache_mutex);
-
-	for ( auto & provider : store_providers ) {
-		auto & existing_name = std::get<1>(provider.first);
-		if ( name == existing_name ) {
-			utility_exit_with_message("Attempting to register duplicate provider name in FragmentStoreManager.");
-		}
-
-		store_providers[std::make_tuple(priority, name)] = backend;
-	}
-}
-
 
 }
 

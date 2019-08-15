@@ -37,7 +37,7 @@ template<typename Module> void bind_StructureStore(Module & m)
 	// isn't available or numpy version < 1.9.
 	try {
 		auto numpy = py::module::import("numpy");
-		std::string version_check = "[int(x) for x in __version__.split('.')[:2]] < [int(x) for x in '1.9'.split('.')]";
+		std::string version_check = "__version__.split('.') < '1.9'.split('.')";
 		if ( py::eval(version_check, numpy.attr("__dict__")).cast<bool>() ) {
 			return;
 		}

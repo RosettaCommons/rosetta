@@ -120,10 +120,6 @@ H5::DataType H5FragmentStoreBackend::FragmentString5PerResGroupEntryDatatype(std
 
 H5FragmentStoreBackend::H5FragmentStoreBackend(std::string target_filename)
 {
-	set_target_filename(target_filename);
-}
-
-void H5FragmentStoreBackend::set_target_filename(std::string target_filename) {
 	using namespace H5;
 	TR.Info << "Loading backend: " << target_filename << std::endl;
 

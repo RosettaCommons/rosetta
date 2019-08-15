@@ -177,7 +177,6 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
     if not silent: print( version() )
     logger.info( version() )
     rosetta.protocols.init.init(v)
-    pyrosetta.protocols.h5_fragment_store_provider.init_H5FragmentStoreProvider()
 
 # FIXME: create 'version' struct in utility instead
 def _version_string():

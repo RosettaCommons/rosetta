@@ -22,7 +22,6 @@
 
 #include <platform/types.hh>
 
-#include <protocols/indexed_structure_store/FragmentStoreProvider.hh>
 #include <protocols/indexed_structure_store/H5FragmentStoreBackend.fwd.hh>
 #include <protocols/indexed_structure_store/FragmentStore.fwd.hh>
 
@@ -35,7 +34,7 @@ namespace indexed_structure_store
 
 // @brief Core database handle.
 // Encapsulates reading Structure/Residue data from data store and manages retrieval on indices on store.
-class H5FragmentStoreBackend : public FragmentStoreProvider
+class H5FragmentStoreBackend
 {
 public:
 	// Structure database contains structure data and structure geometry indices for a collection
@@ -46,12 +45,9 @@ public:
 	// Opens file handle
 	H5FragmentStoreBackend(std::string target_filename);
 
-	H5FragmentStoreBackend() = default;
-
 	// @brief Retrieves fragment store from backend.
-	FragmentStoreOP get_fragment_store(std::string store_name) override;
-	void append_to_fragment_store(FragmentStoreOP fragment_store, std::string store_name, std::string group_field, std::string group_type) override;
-	void set_target_filename(std::string target_filename) override;
+	FragmentStoreOP get_fragment_store(std::string store_name);
+	void append_to_fragment_store(FragmentStoreOP fragment_store, std::string store_name, std::string group_field, std::string group_type);
 
 
 	//H5 DataTypes for store datatypes.

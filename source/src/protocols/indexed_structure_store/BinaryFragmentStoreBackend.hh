@@ -23,7 +23,6 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <protocols/indexed_structure_store/FragmentStoreProvider.hh>
 #include <protocols/indexed_structure_store/BinaryFragmentStoreBackend.fwd.hh>
 #include <protocols/indexed_structure_store/FragmentStore.fwd.hh>
 
@@ -35,7 +34,7 @@ namespace indexed_structure_store
 
 // @brief Core database handle.
 // Encapsulates reading Structure/Residue data from data store and manages retrieval on indices on store.
-class BinaryFragmentStoreBackend : public FragmentStoreProvider
+class BinaryFragmentStoreBackend
 {
 public:
 	// Structure database contains structure data and structure geometry indices for a collection
@@ -44,13 +43,9 @@ public:
 	//
 	// Opens file handle
 	BinaryFragmentStoreBackend(std::string target_path);
-	BinaryFragmentStoreBackend() = default;
 
 	// @brief Retrieves fragment store from backend.
-	FragmentStoreOP get_fragment_store(std::string store_name) override;
-
-	void set_target_filename(std::string target_filename) override;
-	void append_to_fragment_store(FragmentStoreOP fragment_store, std::string store_name, std::string group_field, std::string group_type) override;
+	FragmentStoreOP get_fragment_store(std::string store_name);
 
 private:
 	std::string target_path_;
