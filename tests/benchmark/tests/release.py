@@ -362,8 +362,11 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
         results[_LogKey_] = output
 
         if results[_StateKey_] == 'failed':
+            with open(working_dir+'/output.json', 'w') as f: json.dump(results, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+
             # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
-            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
+            #with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
+
         else:
 
             TR('Running PyRosetta4 release test: Build and Unit tests passged! Now creating package...')
@@ -376,9 +379,11 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
             if os.path.isdir(package_dir): shutil.rmtree(package_dir)  # removing package to keep size of database small
 
-            res_code = _S_passed_
-            results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
-            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+            results[_StateKey_] = _S_passed_
+            results[_LogKey_]   = output
+
+            #with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+            with open(working_dir+'/output.json', 'w') as f: json.dump(results, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
     return results
 
@@ -626,7 +631,8 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
 
             # res_code = _S_passed_
             # results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
-            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+            #with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+            with open(working_dir+'/output.json', 'w') as f: json.dump(results, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
 
             '''
