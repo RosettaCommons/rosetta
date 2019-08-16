@@ -20,13 +20,13 @@ resfile task operation to restrict design space based on a PSI-BLAST-derived PSS
 
 There are a whole pile of filters and simple metrics that are there for post-design analysis.
   <SCOREFXNS>
-	<ScoreFunction name="ref" weights="ref2015_cst.wts"/>
+	<ScoreFunction name="ref" weights="ref2015.wts"/>
 	<ScoreFunction name="ref_deimm_aacomp" weights="ref2015_cst.wts">
-      <Reweight scoretype="mhc_epitope" weight="1.0"/>
-	  <Reweight scoretype="aa_composition" weight="0.5"/>
-      <Set mhc_epitope_setup_file="propred8_5.mhc"/>
-	  <Set aa_composition_setup_file="%%aacomp_setup%%"/>
-    </ScoreFunction>
+		<Reweight scoretype="mhc_epitope" weight="1.0"/>
+		<Reweight scoretype="aa_composition" weight="0.5"/>
+		<Set mhc_epitope_setup_file="propred8_5.mhc"/>
+		<Set aa_composition_setup_file="%%aacomp_setup%%"/>
+	</ScoreFunction>
   </SCOREFXNS>
   
   <RESIDUE_SELECTORS>
@@ -99,11 +99,11 @@ There are a whole pile of filters and simple metrics that are there for post-des
   </FILTERS>
 	
   <MOVERS>
-	<FavorNativeResidue name="favour_native"/>
+	<FavorSequenceProfile name="favour_native" weight="1.5" use_current="true" matrix="IDENTITY"/>
 	
 	Fixed backbone movers
-    <PackRotamersMover name="pack" scorefxn="ref_deimm_aacomp" task_operations="init,inccurrent,ex,resfile"/>
-    <TaskAwareMinMover name="min" scorefxn="ref_deimm_aacomp" chi="1" bb="0" task_operations="init,inccurrent,ex,resfile"/>
+	<PackRotamersMover name="pack" scorefxn="ref_deimm_aacomp" task_operations="init,inccurrent,ex,resfile"/>
+	<TaskAwareMinMover name="min" scorefxn="ref_deimm_aacomp" chi="1" bb="0" task_operations="init,inccurrent,ex,resfile"/>
 	<ParsedProtocol name="fixedbb" mode="sequence">
 		<Add mover_name="pack"/>
 		<Add mover_name="min"/>
@@ -115,8 +115,8 @@ There are a whole pile of filters and simple metrics that are there for post-des
   </MOVERS>
 
   <PROTOCOLS>
-    <Add mover_name="favour_native"/>
-    <Add mover_name="fixedbb"/>
+	<Add mover_name="favour_native"/>
+	<Add mover_name="fixedbb"/>
 	
 	Timer for how long the design mover took (particularly useful for when we limit design space)
 	<Add mover_name="stop_timer"/>

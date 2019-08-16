@@ -33,7 +33,7 @@ First, we assess whether the "degree" of de-immunization is maintained by compar
 In addition to mhc_epitope, which is used to measure "how deimmunized" the protein is, we looked at five orthogonal metrics to measure the "goodness" of the resulting designs.  For a subtest to be considered a pass, a certain fraction of poses (determined for each subtest) must have a sufficient percent drop in mhc_epitope score (determined for each target, and indicated by the RED lines in the plots below) AND must ALSO meet the following thresholds (denoted by the GREEN lines in the plots below):
 1. total_score (ref2015 without any contributions from constraints) must be in the top 50th percentile
 2. Sequence recovery (is the sequence native-like?) must be greater than 80%, and sequence recovery of "core" regions must be greater than 87%.
-3. packstat (is the protein well-packed?) must be better than native.
+3. packstat (is the protein well-packed?) must be no more than 0.01 worse than native.
 4. Buried unsatisfied hydrogen bonds (are more of these introduced as a result of de-immunization?) must increase by no more than 3.
 5. Net charge (does de-immunization of the protein introduce extra charges?) must change by no more than 3 in either direction.
 

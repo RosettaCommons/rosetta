@@ -185,9 +185,9 @@ for i in range( 0, len( scorefiles ) ):
 	results.update( {targets[i] : target_results} )
 	
 	###Subtest 6: delta_packstat vs. mhc_epitope
-	# check for at least one decoy with delta_packstat greater than 0 and has decoys below the mhc_epitope percent drop cutoff
+	# check for at least one decoy with delta_packstat greater than -0.01 and has decoys below the mhc_epitope percent drop cutoff
 	f_delta_packstat.write( targets[i] + "\t" )
-	result = qm.check_for_2d_top_values( pct_drop_mhc, delta_packstat, "pct_drop_mhc", "delta_packstat", cutoffs_mhc_pct_drop_dict[targets[i]], 0, f_delta_packstat, yminimize = False)
+	result = qm.check_for_2d_top_values( pct_drop_mhc, delta_packstat, "pct_drop_mhc", "delta_packstat", cutoffs_mhc_pct_drop_dict[targets[i]], -0.01, f_delta_packstat, yminimize = False)
 	target_results.update( result )
 
     # add to failures if there are no decoys within both cutoffs (reading from position 0 of the result tuple)
