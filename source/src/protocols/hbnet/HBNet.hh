@@ -717,6 +717,14 @@ protected:
 	core::pack::task::PackerTaskOP create_ptask( core::pose::Pose const & pose, bool initialize_from_commandline=false );
 	bool task_is_valid( core::pose::Pose const & pose ) const;
 
+	bool store_network_scores_in_pose() const {
+		return store_network_scores_in_pose_;
+	}
+
+	void store_network_scores_in_pose( bool setting ) {
+		store_network_scores_in_pose_ = setting;
+	}
+
 	// // writes out enzdes .cst constraint file for the h-bond network
 	//    void write_cst_files( core::pose::Pose & in_pose, core::pose::Pose & out_pose, HBondNetStructOP o,
 	//  std::string cst_fname, bool use_enzdes_cst, bool write_pymol_file=false, bool dump_resfile=false );

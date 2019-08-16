@@ -147,7 +147,7 @@ HBNet::HBNet( ) :
 	write_network_pdbs_(false),
 	write_cst_files_(true),
 	output_poly_ala_background_(false),
-	store_network_scores_in_pose_( false ),
+	store_network_scores_in_pose_( true ),
 	find_native_(false),
 	only_native_(false),
 	keep_existing_networks_(false),
@@ -213,7 +213,7 @@ HBNet::HBNet( std::string const name ) :
 	write_network_pdbs_(false),
 	write_cst_files_(true),
 	output_poly_ala_background_(false),
-	store_network_scores_in_pose_( false ),
+	store_network_scores_in_pose_( true ),
 	find_native_(false),
 	only_native_(false),
 	keep_existing_networks_(false),
@@ -294,7 +294,7 @@ HBNet::HBNet(
 	write_network_pdbs_(false),
 	write_cst_files_(true),
 	output_poly_ala_background_(false),
-	store_network_scores_in_pose_( false ),
+	store_network_scores_in_pose_( true ),
 	find_native_(find_native),
 	only_native_(only_native),
 	keep_existing_networks_(keep_existing),
@@ -397,7 +397,7 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 	write_network_pdbs_ = tag->getOption< bool >( "write_network_pdbs", false );
 	write_cst_files_ = tag->getOption< bool >( "write_cst_files", true );
 	output_poly_ala_background_ = tag->getOption< bool >( "output_poly_ala_background", false );
-	store_network_scores_in_pose_ = tag->getOption< bool >( "store_network_scores_in_pose", false );
+	store_network_scores_in_pose_ = tag->getOption< bool >( "store_network_scores_in_pose", store_network_scores_in_pose_ );
 	max_rep_ = tag->getOption< Size >( "max_replicates", 1 );
 	max_replicates_before_branch_ = tag->getOption< Size >( "max_replicates_before_branch", 0 );
 	max_replicates_before_unsat_check_ = tag->getOption< Size >( "max_replicates_before_unsat_check", 1 );
@@ -3532,7 +3532,7 @@ HBNet::attributes_for_hbnet( utility::tag::AttributeList & attlist )
 		"store_network_scores_in_pose", xsct_rosetta_bool,
 		"Will store internal evaluation metrics in the pose so they will be included in score.sc files"
 		"and accessible via ReadPoseExtraScoreFilter.",
-		"false")
+		"true")
 		+ XMLSchemaAttribute::attribute_w_default(
 		"output_poly_ala_background", xsct_rosetta_bool,
 		"for returned poses, rather than place network onto input pose, place into poly-ALA background; "
