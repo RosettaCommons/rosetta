@@ -78,9 +78,9 @@ class TestDaskArgs(unittest.TestCase):
 
             # Unformatted PyRosetta command line flags
             flags = """
-               -extra_res_fa   {0}
-            -ignore_unrecognized_res 1
-             -ex4
+               -extra_res_fa   {0}   #Test flag comment
+            -ignore_unrecognized_res 1   -use_input_sc  1
+             -ex4 ### Test flag comment
             """.format(
                 HBI_fa_params_path
             )

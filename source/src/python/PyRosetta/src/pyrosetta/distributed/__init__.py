@@ -43,6 +43,8 @@ def maybe_init(**kwargs):
     #TODO In multithreaded builds the python-based logging handler appears to fail...
     if "extra_options" not in kwargs:
         kwargs["extra_options"] = "-out:levels all:warning"
+    if "silent" not in kwargs:
+        kwargs["silent"] = True
 
     if not pyrosetta.rosetta.basic.was_init_called():
         _logger.info("maybe_init performing pyrosetta initialization: %s", kwargs)

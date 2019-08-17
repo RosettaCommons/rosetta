@@ -14,8 +14,7 @@ def _normflags(flags):
     """Normalize tuple/list/str of flags into str."""
     if not isinstance(flags, str):
         flags = " ".join(flags)
-
-    return " ".join(flags.replace("\n", " ").split())
+    return " ".join(" ".join([line.split("#")[0] for line in flags.split("\n")]).split())
 
 
 def worker_extra(init_flags=None, local_directory=None):
