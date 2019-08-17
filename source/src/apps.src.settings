@@ -127,6 +127,7 @@ sources = {
 		"coupled_moves",
 	],
 	"public/cyclic_peptide": [
+		"count_cycpep_sequences",
 		"simple_cycpep_predict",
 	],
 	"public/darc": [
