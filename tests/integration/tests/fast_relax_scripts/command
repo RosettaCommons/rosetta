@@ -66,7 +66,7 @@ fi
 script="default"
 dualspace="1"
 expected_filename="MonomerRelax2019.dualspace.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" sfxn="ref2015_cart" dualspace="$dualspace" -score::set_weights cart_bonded 1.0 > temp2
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" sfxn="ref2015_cart" dualspace="$dualspace" sfxn="ref2015_cart" > temp2
 filename=`cat temp2 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
@@ -112,7 +112,7 @@ fi
 script="KillA2019"
 dualspace="1"
 expected_filename="KillA2019.ref2015.dualspace.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -score::set_weights cart_bonded 1.0 > temp6
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" dualspace="$dualspace" sfxn="ref2015_cart" > temp6
 filename=`cat temp6 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
@@ -174,3 +174,4 @@ fi
 
 #cleanup
 rm temp*
+#rm ROSETTA_CRASH.log
