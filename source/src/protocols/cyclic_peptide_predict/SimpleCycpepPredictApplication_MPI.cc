@@ -58,6 +58,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/string_util.hh>
 #include <utility/numbers.hh>
+#include <basic/random/init_random_generator.hh>
 
 // option key includes
 #include <basic/options/option_macros.hh>
@@ -1700,7 +1701,7 @@ SimpleCycpepPredictApplication_MPI::slave_carry_out_njobs_in_thread(
 		seed = time(nullptr);
 	}
 	seed += (thread_index - 1)*MPI_n_procs_ + MPI_rank_ + (threads_per_slave_proc_ * MPI_n_procs_ * (batch_index - 1) ); //Unique seed for each proc, thread, and job batch.
-	core::init::init_random_generators( seed, rgtype_ );
+	basic::random::init_random_generators( seed, rgtype_ );
 	TR.Debug << "Using random seed " << seed << " for worker thread " << thread_index << " from slave process " << MPI_rank_ << std::endl;
 
 	utility::vector1< SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > local_jobsummaries;
