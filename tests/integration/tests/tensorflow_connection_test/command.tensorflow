@@ -33,8 +33,7 @@ cd %(workdir)s
 sleep 10 #To ensure we don't get a short test error.
 
 %(bin)s/tensorflow_test1.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
-    | egrep -v 'Finished.+in [0-9]+ seconds.' \
-    | egrep -v 'Dunbrack library took .+ seconds to load' \
+    | egrep -vf ../../ignore_list \
     > log
 
 
