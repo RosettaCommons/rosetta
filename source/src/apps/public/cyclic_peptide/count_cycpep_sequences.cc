@@ -33,6 +33,9 @@
 // Boost headers
 #include <boost/math/common_factor_rt.hpp>
 
+// C++ headers
+#include <cmath> //For std::pow
+
 static basic::Tracer TR( "apps.public.cyclic_peptide.count_cycpep_sequences" );
 static const std::string errmsg( "Error in count_cycpep_sequence application:  " );
 
@@ -384,7 +387,11 @@ count_analytically_cyclic(
 
 	TR << " )" << std::endl;
 
-	runtime_assert( accumulator % asymm_unit_size == 0 );
+	if ( asymm_unit_size != 0 /*Silly -- to keep code quality tests happy.*/ ) {
+		runtime_assert( accumulator % asymm_unit_size == 0 );
+	} else {
+		utility_exit_with_message( errmsg + "Division by zero in count_analytically_cyclic()!" );
+	}
 	return accumulator / asymm_unit_size;
 }
 
@@ -408,7 +415,7 @@ count_semi_analytically_improper_rotational(
 	for ( core::Size i(1); i<=asymm_unit_size; ++i ) {
 		core::Size const cur_invariants( invariants_for_cyclic_permutation( asymm_unit_size, i ) );
 		if ( cur_invariants != 0 ) {
-			accumulator += pow(noptions, cur_invariants);
+			accumulator += std::pow(noptions, cur_invariants);
 			if ( first ) {
 				first = false;
 			} else {
@@ -418,7 +425,11 @@ count_semi_analytically_improper_rotational(
 		}
 	}
 	TR << " )" << std::endl;
-	runtime_assert( accumulator % asymm_unit_size == 0 );
+	if ( asymm_unit_size != 0 /*Silly -- to keep code quality tests happy.*/ ) {
+		runtime_assert( accumulator % asymm_unit_size == 0 );
+	} else {
+		utility_exit_with_message( errmsg + "Division by zero in count_semi_analytically_improper_rotational()!" );
+	}
 	return accumulator / asymm_unit_size;
 }
 
