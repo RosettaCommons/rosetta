@@ -56,10 +56,15 @@ lists of strings.
 
 """
 
-import os, subprocess
+import os, os.path, subprocess
 
 #shell_gcc = subprocess.getoutput('which gcc').split()[0]
 shell_gcc = subprocess.check_output(["which", "gcc"]).split()[0]
+
+add_on_libraries = ''
+
+# checking if we compiling under Alpine Linux
+if os.path.isfile('/etc/alpine-release'): add_on_libraries = 'execinfo'
 
 settings = {
     "base" : {
@@ -95,6 +100,9 @@ settings = {
                 "BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS",
                 "PTR_STD",
             ],
+	    "libraries" : add_on_libraries.split(),
+            "flags" : {
+	    },
         },
     },
 
@@ -773,7 +781,7 @@ settings = {
                 "boinc",
                 "boinc_zip"
             ],
-            "defines" : [ 
+            "defines" : [
                 "BOINC",
                 "NOCRASHREPORT",
             ],
@@ -811,7 +819,7 @@ settings = {
                 "#external/boinc/lib",
                 "#external/boinc/zip",
             ],
-            "defines" : [ 
+            "defines" : [
                 "BOINC_GRAPHICS",
                 "NOCRASHREPORT",
             ],
@@ -1307,8 +1315,8 @@ settings = {
                 "#external/androidarm-tc/arm-linux-androideabi/lib",
                 "#external/androidarm-tc/sysroot/usr/lib",
             ],
-            "defines"   : [ 
-                "ANDROID", 
+            "defines"   : [
+                "ANDROID",
                 "NOCRASHREPORT",
             ],
             "flags" : {
