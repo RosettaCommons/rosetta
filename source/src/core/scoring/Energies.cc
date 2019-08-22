@@ -793,6 +793,28 @@ Energies::show_totals( std::ostream & out ) const
 	}
 }
 
+
+/// @details
+/// The Energies object does a lot of bookkeeping to figure out when things are
+/// out of date and when they are not out of date. If you change the conformation
+/// of the Pose, then when the Pose is next scored, only the energies that were
+/// invalidated by the move are recalculated. Similarly, if you change which score
+/// function you're using (e.g. adding a new term, but notably, not when simply
+/// reweighting an existing term), then the Energies object will reset itself
+/// into an empty state. The Energies object goes to great lengths to make sure
+/// that you do not ever need to call its clear function.
+///
+/// There are truly only a handful of reasons to call clear() on an Energies object:
+///
+/// - You are getting ready to serialize the Pose and want to cut down on its
+///   memory footprint,
+/// - You are using a term where you've told the energy function it's pairwise
+///   decomposable, but it really isn't (i.e. it's a whole structure energy
+///   masquerading as a 2body energy) and you suspect you have accumulated enough
+///   "error" in your approximation of the structure that rescoring it completely
+///   from scratch will help. (I don't know of any terms that fit this bill), or
+/// - You are trying to measure runtime performance of a particular term and need
+///   the term to be re-evaluated across the whole Pose.
 void
 Energies::clear()
 {

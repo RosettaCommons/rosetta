@@ -487,6 +487,8 @@ SmallMover::setup_list( core::pose::Pose & pose )
 	// Mask by ResidueSelector.
 	select::residue_selector::ResidueSubset const subset( compute_selected_residues( pose ) );
 
+	core::kinematics::MoveMapCOP mm = movemap(pose);
+
 	for ( core::uint i = 1; i <= pose.size(); ++i ) {
 		if ( ! subset[ i ] ) { continue; }  // Skip residues masked by the ResidueSelector.
 
@@ -500,7 +502,7 @@ SmallMover::setup_list( core::pose::Pose & pose )
 		if ( mx > 0.0 ) {
 			// Check if the residue has free main-chain torsions as determined by the MoveMap.
 			utility::vector1< id::TorsionID > const torsions( get_mainchain_TorsionIDs( pose.conformation(), i ) );
-			if ( are_torsions_allowed( torsions, movemap( pose ) ) ) {
+			if ( are_torsions_allowed( torsions, mm ) ) {
 				move_pos_list_.push_back( std::make_tuple( i, torsions, mx ) );
 			}
 		}
@@ -529,7 +531,6 @@ SmallMover::move_with_scorefxn( core::pose::Pose & pose )
 		pose.set_torsion( torsion, new_angle );
 	}
 
-	pose.energies().clear();
 	new_rama_score_ = ( *scorefxn() )( pose );
 	TR.Debug << "Using score function to evaluate ramas. Old=" << old_rama_score_ << " New=" << new_rama_score_
 		<< " Temp=" << temperature() << std::endl;
@@ -540,7 +541,6 @@ SmallMover::move_with_scorefxn( core::pose::Pose & pose )
 		pose.set_torsion( torsion.first, torsion.second );
 	}
 
-	pose.energies().clear();
 	TR.Debug << "Reject: reverted score = " << ( *scorefxn() )( pose ) << std::endl;
 	return false;
 }
@@ -709,6 +709,7 @@ ShearMover::setup_list( core::pose::Pose & pose )
 
 	// Mask by ResidueSelector.
 	core::select::residue_selector::ResidueSubset const subset( compute_selected_residues( pose ) );
+	core::kinematics::MoveMapCOP mm = movemap(pose);
 
 	Size const n_rsd( pose.size() );
 	for ( core::uint i = 2; i <= n_rsd; ++i ) {
@@ -753,7 +754,7 @@ ShearMover::setup_list( core::pose::Pose & pose )
 				TorsionID const counter_move_torsion(
 					find_bond_torsion_with_nearest_orientation( conf, torsions_to_search, move_torsion ) );
 				vector1< TorsionID > const torsions = { move_torsion, counter_move_torsion };
-				if ( are_torsions_allowed( torsions, movemap( pose ) ) ) {
+				if ( are_torsions_allowed( torsions, mm ) ) {
 					move_pos_list_.push_back( make_tuple( i, torsions, mx ) );
 				}
 			}
