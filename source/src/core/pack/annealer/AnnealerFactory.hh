@@ -22,7 +22,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
-
+#include <core/pose/Pose.fwd.hh>
 
 /// ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -43,13 +43,14 @@ public:
 	static
 	SimAnnealerBaseOP
 	create_annealer(
-		task::PackerTaskCOP task,
-		utility::vector0<int> & rot_to_pack,
+		core::pose::Pose const & pose,
+		task::PackerTaskCOP const & task,
+		utility::vector0< int > & rot_to_pack,
 		ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 		core::PackerEnergy & bestenergy,
 		bool start_with_current, // start simulation with current rotamers
-		interaction_graph::AnnealableGraphBaseOP ig,
-		rotamer_set::FixbbRotamerSetsCOP rotamer_sets,
+		interaction_graph::AnnealableGraphBaseOP const & ig,
+		rotamer_set::FixbbRotamerSetsCOP const & rotamer_sets,
 		ObjexxFCL::FArray1_int & current_rot_index,
 		bool calc_rot_freq,
 		ObjexxFCL::FArray1D< core::PackerEnergy > & rot_freq

@@ -369,8 +369,8 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 	int r_start = static_cast< int > ( std::floor(   static_cast< double > (last_peptide_res) /3. ) );
 	int r_end   = static_cast< int > ( std::ceil ( 2.* static_cast< double > (last_peptide_res)/3. ) );
 #else
-	auto r_start = static_cast< int > ( std::floor(   last_peptide_res/3 ) );
-	auto r_end   = static_cast< int > ( std::ceil ( 2*last_peptide_res/3 ) );
+	int r_start = static_cast< int > ( std::floor(   last_peptide_res/3 ) );
+	int r_end   = static_cast< int > ( std::ceil ( 2*last_peptide_res/3 ) );
 #endif
 
 	// If less than three total residues, reset starting residue

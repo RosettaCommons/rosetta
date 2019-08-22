@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/pack/task/operation/TaskOperation.fwd.hh
+/// @file   core/pack/task/operation/TaskOperations.fwd.hh
 /// @brief  Forward declaration of a class that performs an operation on a packer task,
 ///         usually, by a PackerTaskFactory right after the task's construction
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)

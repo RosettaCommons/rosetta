@@ -298,8 +298,8 @@ pack_rotamers_run(
 	/// completion of sim annealing.
 
 	SimAnnealerBaseOP annealer = AnnealerFactory::create_annealer(
-		task, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
-		rotsets, current_rot_index, calc_rot_freq, rot_freq );
+		pose, task, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current,
+		ig, rotsets, current_rot_index, calc_rot_freq, rot_freq );
 
 	// Following additional initialization would be cleaner if above suggestion
 	// regarding the removal of "too many parameters" is implemented properly.

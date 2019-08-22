@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file SetIGTypeOperation.cc
+/// @file protocols/task_operations/SetIGTypeOperation.cc
 ///
 /// @brief Task operation to set interaction graph type (linmem, lazy or double lazy)
 /// @author Sagar Khare
@@ -35,6 +35,12 @@ SetIGTypeOperation::SetIGTypeOperation():
 	lin_mem_(false),
 	lazy_(false),
 	double_lazy_(false)
+{}
+
+SetIGTypeOperation::SetIGTypeOperation( bool lin_mem, bool lazy, bool double_lazy ) :
+	lin_mem_( lin_mem ),
+	lazy_( lazy ),
+	double_lazy_( double_lazy )
 {}
 
 SetIGTypeOperation::~SetIGTypeOperation()= default;

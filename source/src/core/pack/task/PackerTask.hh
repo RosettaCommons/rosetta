@@ -201,6 +201,14 @@ public:
 
 	virtual
 	bool
+	keep_sequence_symmetry() const = 0;
+
+	virtual
+	void
+	keep_sequence_symmetry( bool const setting ) = 0;
+
+	virtual
+	bool
 	rotamer_couplings_exist() const = 0;
 
 	virtual

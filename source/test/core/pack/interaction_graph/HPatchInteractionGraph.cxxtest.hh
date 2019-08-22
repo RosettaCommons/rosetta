@@ -191,7 +191,7 @@ public:
 		utility::vector0<int> rot_to_pack;
 
 		annealer = annealer::AnnealerFactory::create_annealer(
-			designtask, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, utility::pointer::dynamic_pointer_cast<interaction_graph::AnnealableGraphBase>(pdhig), rotsets, current_rot_index, calc_rot_freq, rot_freq );
+			pose, designtask, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, utility::pointer::dynamic_pointer_cast<interaction_graph::AnnealableGraphBase>(pdhig), rotsets, current_rot_index, calc_rot_freq, rot_freq );
 
 		// temperature isn't so important, but to make things easy use the SA setup_temp() method
 		ObjexxFCL::FArray1D_float loopenergy( 500, 0.0 );  // hardcore the number of loops for this array to the maxnumberofouteriterations
@@ -783,8 +783,10 @@ public:
 		ObjexxFCL::FArray1D< PackerEnergy > rot_freq; rot_freq.dimension( pdhig->get_num_total_states(), 0.0 );
 		utility::vector0<int> rot_to_pack;
 
+		core::pose::Pose dummy_pose;
+
 		annealer::SimAnnealerBaseOP redesign_annealer = annealer::AnnealerFactory::create_annealer(
-			designtask, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, utility::pointer::dynamic_pointer_cast<interaction_graph::AnnealableGraphBase>(pdhig), rotsets, current_rot_index, calc_rot_freq, rot_freq );
+			dummy_pose, designtask, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, utility::pointer::dynamic_pointer_cast<interaction_graph::AnnealableGraphBase>(pdhig), rotsets, current_rot_index, calc_rot_freq, rot_freq );
 
 		// temperature isn't so important, but to make things easy use the SA setup_temp() method
 		ObjexxFCL::FArray1D_float loopenergy( 500, 0.0 );  // hardcore the number of loops for this array to the maxnumberofouteriterations
@@ -888,7 +890,7 @@ public:
 		utility::vector0<int> rot_to_pack;
 
 		annealer::SimAnnealerBaseOP redesign_annealer = annealer::AnnealerFactory::create_annealer(
-			designtask, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, utility::pointer::dynamic_pointer_cast<interaction_graph::AnnealableGraphBase>(lmhig),
+			pose, designtask, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, utility::pointer::dynamic_pointer_cast<interaction_graph::AnnealableGraphBase>(lmhig),
 			rotsets, current_rot_index, calc_rot_freq, linmem_ig_test_rot_freq );
 
 		redesign_annealer->run();

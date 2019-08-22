@@ -16,6 +16,7 @@
 
 /// Package headers
 #include <core/pack/annealer/FixbbSimAnnealer.hh>
+#include <core/pack/annealer/SequenceSymmetricAnnealer.hh>
 #include <core/pack/annealer/FixbbCoupledRotamerSimAnnealer.hh>
 #include <core/pack/annealer/FixbbLinkingRotamerSimAnnealer.hh>
 #include <core/pack/annealer/MultiCoolAnnealer.hh>
@@ -26,12 +27,15 @@
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 
 #include <core/pack/task/PackerTask.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <basic/Tracer.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 
 namespace core {
 namespace pack {
@@ -41,19 +45,25 @@ static basic::Tracer TR( "core.pack.annealer.AnnealerFactory" );
 
 SimAnnealerBaseOP
 AnnealerFactory::create_annealer(
-	task::PackerTaskCOP task,
-	utility::vector0<int> & rot_to_pack,
+	core::pose::Pose const & pose,
+	task::PackerTaskCOP const & task,
+	utility::vector0< int > & rot_to_pack,
 	ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 	core::PackerEnergy & bestenergy,
 	bool start_with_current,
-	interaction_graph::AnnealableGraphBaseOP ig,
-	rotamer_set::FixbbRotamerSetsCOP rotamer_sets,
+	interaction_graph::AnnealableGraphBaseOP const & ig,
+	rotamer_set::FixbbRotamerSetsCOP const & rotamer_sets,
 	ObjexxFCL::FArray1_int & current_rot_index,
 	bool calc_rot_freq,
 	ObjexxFCL::FArray1D< core::PackerEnergy > & rot_freq
 )
 {
-	if ( task->rotamer_couplings_exist() ) {
+	if ( task->keep_sequence_symmetry() ) {
+		TR.Debug << "Creating SequenceSymmetricAnnealer" << std::endl;
+		return utility::pointer::make_shared< SequenceSymmetricAnnealer >(
+			pose, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
+			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq );
+	} else if ( task->rotamer_couplings_exist() ) {
 		TR.Debug << "Creating FixbbCoupledRotamerSimAnnealer" << std::endl;
 		return utility::pointer::make_shared< FixbbCoupledRotamerSimAnnealer >(
 			rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,

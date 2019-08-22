@@ -265,6 +265,18 @@ public:
 	utility::vector1< bool >
 	designing_residues() const;
 
+	virtual
+	bool
+	keep_sequence_symmetry() const {
+		return keep_sequence_symmetry_;
+	}
+
+	virtual
+	void
+	keep_sequence_symmetry( bool const setting ) {
+		keep_sequence_symmetry_ = setting;
+	}
+
 	/// @brief is there at RotamerCouplings object to worry about? (for DNA GC AT pairing, etc)
 	virtual
 	bool
@@ -471,6 +483,8 @@ private:
 
 	bool multi_cool_annealer_ = false;
 	Size mca_history_size_ = 1;
+
+	bool keep_sequence_symmetry_ = false;
 
 	/// @brief keep track: are we optimizing H at all positions?
 	/// don't use linmem_ig_ if so.

@@ -78,7 +78,7 @@ VirtualRootMover::apply( core::pose::Pose & pose ) {
 			if ( removable_ ) {
 				core::Size virtroot = pose.fold_tree().root();
 				debug_assert( virtroot == pose.size() && pose.residue(virtroot).aa() == core::chemical::aa_vrt );
-				core::pose::setPoseExtraScore( pose, "VirtualRootMover_root", virtroot );
+				core::pose::setPoseExtraScore( pose, "VirtualRootMover_root", virtroot ); //This is pretty hacky
 			}
 		} else {
 			TR << "Pose already virtually rooted. Not changing root." << std::endl;

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file
+/// @file protocols/minimization_packing/PackRotamersMover.cc
 /// @brief
 /// @author Monica Berrondo
 /// @author Modified by Sergey Lyskov
@@ -266,6 +266,17 @@ PackRotamersMover::parse_task_operations(
 {
 	TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
 	if ( new_task_factory == nullptr ) return;
+	task_factory( new_task_factory );
+}
+
+void
+PackRotamersMover::initialize_task_factory_with_operations(
+	std::list< core::pack::task::operation::TaskOperationCOP > const & operations
+){
+	TaskFactoryOP new_task_factory( utility::pointer::make_shared< TaskFactory >() );
+	for ( auto const & operation : operations ) {
+		new_task_factory->push_back( operation );
+	}
 	task_factory( new_task_factory );
 }
 

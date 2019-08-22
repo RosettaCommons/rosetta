@@ -146,6 +146,8 @@ PackerTask_::update_commutative(
 	multi_cool_annealer_ |= o.multi_cool_annealer_;
 	mca_history_size_ = std::max( mca_history_size_, o.mca_history_size_ );
 
+	keep_sequence_symmetry_ |= o.keep_sequence_symmetry_;
+
 	optimize_H_ |= o.optimize_H_;
 
 	bump_check_ = o.bump_check_; /// <-- apparently bump check setting is not commutative!
@@ -695,6 +697,9 @@ PackerTask_::initialize_from_options( utility::options::OptionCollection const &
 		or_multi_cool_annealer( true );
 		increase_multi_cool_annealer_history_size( options[ packing::multi_cool_annealer ] );
 	}
+	if ( options[ packing::sequence_symmetric_annealer ]()  ) {
+		keep_sequence_symmetry( true );
+	}
 
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].initialize_from_options( options );
@@ -747,6 +752,7 @@ PackerTask::list_options_read( utility::options::OptionKeyList & read_options )
 		+ packing::lazy_ig
 		+ packing::double_lazy_ig
 		+ packing::multi_cool_annealer
+		+ packing::sequence_symmetric_annealer
 		+ packing::fix_his_tautomer
 		+ packing::repack_only
 		+ packing::max_rotbump_energy;
@@ -1123,6 +1129,7 @@ core::pack::task::PackerTask_::save( Archive & arc ) const {
 	arc( CEREAL_NVP( double_lazy_ig_ ) ); // _Bool
 	arc( CEREAL_NVP( dlig_mem_limit_ ) ); // Size
 	arc( CEREAL_NVP( multi_cool_annealer_ ) ); // _Bool
+	arc( CEREAL_NVP( keep_sequence_symmetry_ ) ); // _Bool
 	arc( CEREAL_NVP( mca_history_size_ ) ); // Size
 	arc( CEREAL_NVP( optimize_H_ ) ); // _Bool
 	arc( CEREAL_NVP( bump_check_ ) ); // _Bool
@@ -1156,6 +1163,7 @@ core::pack::task::PackerTask_::load( Archive & arc ) {
 	arc( double_lazy_ig_ ); // _Bool
 	arc( dlig_mem_limit_ ); // Size
 	arc( multi_cool_annealer_ ); // _Bool
+	arc( keep_sequence_symmetry_ ); // _Bool
 	arc( mca_history_size_ ); // Size
 	arc( optimize_H_ ); // _Bool
 	arc( bump_check_ ); // _Bool

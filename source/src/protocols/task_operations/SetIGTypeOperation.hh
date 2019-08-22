@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file SetIGTypeOperation.hh
+/// @file protocols/task_operations/SetIGTypeOperation.hh
 ///
 /// @brief Task operation to set interaction graph type (linear memory, lazy or double lazy)
 /// @author Sagar Khare
@@ -36,6 +36,8 @@ class SetIGTypeOperation : public core::pack::task::operation::TaskOperation
 {
 public:
 	SetIGTypeOperation();
+
+	SetIGTypeOperation( bool lin_mem, bool lazy, bool double_lazy );
 
 	virtual ~SetIGTypeOperation();
 

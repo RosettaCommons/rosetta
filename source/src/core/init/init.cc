@@ -281,6 +281,7 @@
 #include <core/pack/task/operation/DesignRestrictionsCreator.hh>
 #include <core/pack/task/operation/ClashBasedRepackShellCreator.hh>
 #include <core/pack/task/operation/EnableMultiCoolAnnealerCreator.hh>
+#include <core/pack/task/operation/KeepSequenceSymmetryCreator.hh>
 #include <core/pack/task/operation/OperateOnCertainResiduesCreator.hh>
 #include <core/pack/task/operation/OperateOnResidueSubsetCreator.hh>
 #include <core/pack/task/operation/NoRepackDisulfidesCreator.hh>
@@ -733,6 +734,7 @@ static TaskOperationRegistrator< NoRepackDisulfidesCreator > NoRepackDisulfidesC
 static TaskOperationRegistrator< ClashBasedRepackShellCreator > ClashBasedRepackShellCreator_registrator;
 static TaskOperationRegistrator< OptCysHGCreator > OptCysHGCreator_registrator;
 static TaskOperationRegistrator< OptHCreator > OptHCreator_registrator;
+static TaskOperationRegistrator< KeepSequenceSymmetryCreator > KeepSequenceSymmetryCreator_registrator;
 // register ResLvlTaskOperationCreators
 static ResLvlTaskOperationRegistrator< RestrictToRepackingRLTCreator > RestrictToRepackingRLTCreator_registrator;
 static ResLvlTaskOperationRegistrator< RestrictAbsentCanonicalAASRLTCreator > RestrictAbsentCanonicalAASRLTCreator_registrator;

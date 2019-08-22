@@ -1957,7 +1957,16 @@ Options = Option_Group( '',
 			desc="Alternate annealer for packing.  Runs multiple quence cycles in a first cooling stage, and tracks \
 			the N best network states it observes.  It then runs low-temperature rotamer substitutions with repeated \
 			quenching starting from each of these N best network states.  10 is recommended.",
-			),
+		),
+		Option( 'sequence_symmetric_annealer', 'Boolean',
+			desc="When used, the packer will enforce that all chains end up with the same sequence. \
+			It uses pdb info to link residues together, \
+			so all residues with the same pdb number will be the same amino acid in the end. \
+			If a residue does not have a partner on every chain, it will not be allowed to mutate. \
+			Like traditional symmetry, this assumes that all chains are part of the same symmetric system. \
+			It is impossible to have, say, chains A+B+C where A+B are symmetric and C is separate.",
+		  default='false'
+		),
 
 		Option( 'minpack_temp_schedule', 'RealVector',
 			desc="Alternate annealing schedule for min_pack.",
