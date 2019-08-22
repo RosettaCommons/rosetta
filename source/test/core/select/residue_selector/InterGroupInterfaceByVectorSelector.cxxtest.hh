@@ -163,6 +163,39 @@ public:
 		}
 	}
 
+	void test_InterGroupInterfaceByVectorSelector_order_independence() {
+		std::string tag_string1 = "<InterfaceByVector name=int_rs grp1_selector=res1to20 grp2_selector=res45to66 />";
+		std::string tag_string2 = "<InterfaceByVector name=int_rs grp2_selector=res1to20 grp1_selector=res45to66 />";
+		std::stringstream ss1( tag_string1 ), ss2( tag_string2 );
+		utility::tag::TagOP tag1( new utility::tag::Tag() ), tag2( new utility::tag::Tag() );
+		tag1->read( ss1 );
+		tag2->read( ss2 );
+		basic::datacache::DataMap dm;
+		ResidueSelectorOP range1_rs( new ResRangeSelector( 1, 20 ) );
+		ResidueSelectorOP range2_rs( new ResRangeSelector( 45, 66 ) );
+		dm.add( "ResidueSelector", "res1to20", range1_rs );
+		dm.add( "ResidueSelector", "res45to66", range2_rs );
+
+		ResidueSelectorOP igibv_rs1( new InterGroupInterfaceByVectorSelector );
+		ResidueSelectorOP igibv_rs2( new InterGroupInterfaceByVectorSelector );
+		try {
+			igibv_rs1->parse_my_tag( tag1, dm );
+			igibv_rs2->parse_my_tag( tag2, dm );
+		} catch (utility::excn::Exception & e ) {
+			std::cerr << "Exception!" << e.msg() << std::endl;
+			TS_ASSERT( false ); // this parsing should succeed
+			return;
+		}
+
+		core::pose::Pose pose = create_test_in_pdb_pose();
+		ResidueSubset subset1 =  igibv_rs1->apply( pose );
+		ResidueSubset subset2 =  igibv_rs1->apply( pose );
+
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+			TS_ASSERT( subset1[ ii ] == subset2[ ii ] );
+		}
+	}
+
 
 	/// @brief Test that an excpetion is thrown if the InterGroupInterfaceByVectorSelector is ever initialized
 	/// from parse_my_tag where no ResidueSelectors have been provided.
@@ -180,6 +213,7 @@ public:
 		ResidueSelectorOP igibv_rs( new InterGroupInterfaceByVectorSelector );
 		try {
 			igibv_rs->parse_my_tag( tag, dm );
+
 			TS_ASSERT( false ); // this parsing should not succeed
 		} catch (utility::excn::Exception & e ) {
 			//std::cerr << "Exception!" << e.msg() << std::endl;

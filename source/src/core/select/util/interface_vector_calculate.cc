@@ -37,6 +37,9 @@
 
 // Utility headers
 #include <utility/string_util.hh>
+#include <utility/graph/Graph.hh>
+
+// Numeric headers
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/HomogeneousTransform.hh>
@@ -191,21 +194,30 @@ utility::vector1_bool calc_interacting_vector(
 	std::set<core::Size> side1_within_cutoff, side2_within_cutoff;
 	//use neighbor atoms from point graph
 	conformation::PointGraphOP pg( new conformation::PointGraph );
+	utility::graph::Graph g(pose.size());
 	core::conformation::residue_point_graph_from_conformation( pose.conformation(), *pg);
 	core::conformation::find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( pg, CB_dist_cutoff );
+	// copy the edges from the PointGraph into the utility::Graph
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		for ( auto edge_it = pg->get_vertex(ii).const_upper_edge_list_begin();
+				edge_it != pg->get_vertex(ii).const_upper_edge_list_end(); ++edge_it ) {
+			g.add_edge(ii, edge_it->upper_vertex());
+		}
+	}
 
 	// for all nodes in chain1 == for all residues in chain 1
 	// all this is setup by verify_chain_setup in InterfaceDefinitionBase
 	for ( unsigned long part1re : part1res ) {
-		for ( conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( part1re ).upper_edge_list_begin(),
-				edge_end_iter = pg->get_vertex( part1re ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
+		for ( auto edge_iter = g.get_node( part1re )->const_edge_list_begin(),
+				edge_end_iter = g.get_node( part1re )->const_edge_list_end();
+				edge_iter != edge_end_iter; ++edge_iter ) {
 			// get node on other edge of that node == 2nd residue index
-			Size const edge_res = edge_iter->upper_vertex();
+			Size const edge_res = (*edge_iter)->get_other_ind(part1re);
 			// if that node(residue) is in the second set of residues
 			if ( part2res.count( edge_res ) ) {
 				side1_within_cutoff.insert( part1re ); // add partner1 residue
 				side2_within_cutoff.insert( edge_res ); // add partner2 residue
-			} else continue;
+			}
 		} // end - for all edges of node
 	} // end - for all nodes in chain1
 
