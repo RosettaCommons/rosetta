@@ -206,7 +206,7 @@ LeGrandSasa::calculate(
 		for ( Size iia = 1; iia <= rsd.natoms(); ++iia ) {
 
 			AtomID const id( iia, ii );
-			if ( ! atom_subset[ id ] ) {
+			if ( ! atom_subset[ id ] || skip_atom( rsd, iia, sasa_method_hp_mode() ) ) {
 				continue; // jk skip this atom if not part of the subset
 			}
 

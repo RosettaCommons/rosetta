@@ -1,0 +1,1 @@
+{"decoy":"2r0l_1_1_0001","cached_hydrophobic_sasa":214.9105822100178,"cached_polar_sasa":245.8416485226929,"cached_total_sasa":460.7522307327107,"sasa_filter1a":460.7522277832031,"sasa_filter1b":460.7522277832031,"sasa_filter2a":245.8416442871094,"sasa_filter2b":245.8416442871094,"sasa_filter3a":214.9105834960938,"sasa_filter3b":214.9105834960938,"total_score":0.0}

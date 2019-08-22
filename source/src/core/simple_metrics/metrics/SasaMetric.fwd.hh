@@ -10,6 +10,7 @@
 /// @file core/metrics/SasaMetric.fwd.hh
 /// @brief A Metric to cacluate overall sasa of a pose.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added support for polar or hydrophobic SASA.
 
 #ifndef INCLUDED_core_simple_metrics_metrics_SasaMetric_fwd_hh
 #define INCLUDED_core_simple_metrics_metrics_SasaMetric_fwd_hh

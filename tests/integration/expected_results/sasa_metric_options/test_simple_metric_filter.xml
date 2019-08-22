@@ -1,0 +1,45 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<CDR name="L1" cdrs="L1"/>
+	</RESIDUE_SELECTORS>
+	<MOVE_MAP_FACTORIES>
+		<MoveMapFactory name="movemap_L1" bb="0" chi="0">
+			<Backbone residue_selector="L1" />
+			<Chi residue_selector="L1" />
+		</MoveMapFactory>
+	</MOVE_MAP_FACTORIES>
+	<SIMPLE_METRICS>
+		<SasaMetric name="sasa" residue_selector="L1"/>
+		<SasaMetric name="sasa_polar" residue_selector="L1" sasa_metric_mode="polar_sasa" />
+		<SasaMetric name="sasa_hydrophobic" residue_selector="L1" sasa_metric_mode="hydrophobic_sasa" />
+	</SIMPLE_METRICS>
+	<MOVERS>
+		<RunSimpleMetrics name="cache_metrics1" metrics="sasa" prefix="cached_total_" />
+		<RunSimpleMetrics name="cache_metrics2" metrics="sasa_polar" prefix="cached_polar_" />
+		<RunSimpleMetrics name="cache_metrics3" metrics="sasa_hydrophobic" prefix="cached_hydrophobic_" />
+	</MOVERS>
+	<FILTERS>
+		
+		<!-- Use filters on Cached Data -->
+		<SimpleMetricFilter name="sasa_filter1a"   use_cached_data="1" cache_prefix="cached_total_" metric="sasa" cutoff="460" comparison_type="gt" />
+		<SimpleMetricFilter name="sasa_filter1b"   use_cached_data="1" cache_prefix="cached_total_" metric="sasa" cutoff="461" comparison_type="lt" />
+		<SimpleMetricFilter name="sasa_filter2a"   use_cached_data="1" cache_prefix="cached_polar_" metric="sasa" cutoff="245" comparison_type="gt" />
+		<SimpleMetricFilter name="sasa_filter2b"   use_cached_data="1" cache_prefix="cached_polar_" metric="sasa" cutoff="246" comparison_type="lt" />
+		<SimpleMetricFilter name="sasa_filter3a"   use_cached_data="1" cache_prefix="cached_hydrophobic_" metric="sasa" cutoff="214" comparison_type="gt" />
+		<SimpleMetricFilter name="sasa_filter3b"   use_cached_data="1" cache_prefix="cached_hydrophobic_" metric="sasa" cutoff="215" comparison_type="lt" />
+
+	</FILTERS>
+	<PROTOCOLS>
+		<Add mover="cache_metrics1" />
+		<Add mover="cache_metrics2" />
+		<Add mover="cache_metrics3" />
+		<Add filter="sasa_filter1a" />
+		<Add filter="sasa_filter1b" />
+		<Add filter="sasa_filter2a" />
+		<Add filter="sasa_filter2b" />
+		<Add filter="sasa_filter3a" />
+		<Add filter="sasa_filter3b" />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

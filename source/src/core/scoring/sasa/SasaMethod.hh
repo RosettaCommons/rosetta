@@ -19,6 +19,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/id/AtomID_Map.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -29,6 +30,19 @@
 namespace core {
 namespace scoring {
 namespace sasa {
+
+/// @brief The selection mode.  Allows selecting polar SASA only,
+/// hydrophobic SASA only, polar SASA only, etc.
+/// @details If you add to this list, update the SasaMethod::sasa_metric_name_from_mode() function!
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+enum class
+	SasaMethodHPMode {
+	ALL_SASA = 1, //Keep first
+	POLAR_SASA,
+	HYDROPHOBIC_SASA,
+	INVALID_MODE, //Keep second-to-last
+	END_OF_LIST = INVALID_MODE //Keep last
+};
 
 /// @brief Type of Radii to use.
 /// @details
@@ -84,6 +98,30 @@ public:
 	void
 	set_radii_set(SasaRadii radii_set);
 
+public:
+
+	/// @brief Given the name of the SasaMethodHPMode, get the mode.
+	/// @returns SasaMethodHPMode::INVALID_MODE if the string can't be parsed; the correct
+	/// SasaMethodHPMode if it can.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	static SasaMethodHPMode sasa_metric_mode_from_name( std::string const &mode_name );
+
+	/// @brief Given the SasaMethodHPMode, get the name.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	static std::string sasa_metric_name_from_mode( SasaMethodHPMode const mode );
+
+	/// @brief Construct a comma-separeted string listing all of the sasa metric modes.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	static std::string list_sasa_method_hp_modes();
+
+	/// @brief Set whether we're counting all SASA (default), polar SASA, or hydrophobic SASA.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void set_sasa_method_hp_mode( SasaMethodHPMode const mode_in );
+
+	/// @brief Get whether we're counting all SASA (default), polar SASA, or hydrophobic SASA.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	inline SasaMethodHPMode sasa_method_hp_mode() const { return sasa_method_hp_mode_; }
+
 
 	///////////Legacy Options ///////////
 public:
@@ -94,6 +132,14 @@ public:
 	void
 	set_use_big_polar_hydrogen(bool big_polar_h);
 
+public:
+
+	/// @brief Given a residue, an atom index, and a SasaMethodHPMode, determine whether the atom is one to skip (returns true)
+	/// or count (returns false).
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	static bool
+	skip_atom( core::conformation::Residue const & rsd, core::Size const atom_index, SasaMethodHPMode const hp_mode );
+
 
 protected:
 	Real probe_radius_;
@@ -101,6 +147,13 @@ protected:
 
 	bool include_probe_radius_;
 	bool use_big_polar_H_;
+
+private:
+
+	/// @brief Are we counting all SASA (default), polar SASA, or hydrophobic SASA?
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	SasaMethodHPMode sasa_method_hp_mode_ = SasaMethodHPMode::ALL_SASA;
+
 #ifdef    SERIALIZATION
 protected:
 	friend class cereal::access;

@@ -10,6 +10,7 @@
 /// @file core/metrics/SasaMetric.hh
 /// @brief A Metric to cacluate overall sasa of a pose.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added support for polar or hydrophobic SASA.
 
 
 #ifndef INCLUDED_core_simple_metrics_metrics_SasaMetric_hh
@@ -20,6 +21,7 @@
 
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/scoring/sasa/SasaCalc.fwd.hh>
+#include <core/scoring/sasa/SasaMethod.hh>
 
 // Utility headers
 #include <core/types.hh>
@@ -29,17 +31,19 @@
 namespace core {
 namespace simple_metrics {
 namespace metrics {
+
 /// @brief A Metric to cacluate overall sasa of a pose.
 /// @details Use the Apply method to calculate and add the metric to the pose score to be written
 class SasaMetric : public core::simple_metrics::RealMetric{
 
 public:
 
-	SasaMetric();
+	/// @brief Default constructor.
+	SasaMetric() = default;
 
-	SasaMetric( select::residue_selector::ResidueSelectorCOP selector );
+	SasaMetric( select::residue_selector::ResidueSelectorCOP selector, core::scoring::sasa::SasaMethodHPMode const mode = core::scoring::sasa::SasaMethodHPMode::ALL_SASA );
 
-	SasaMetric(SasaMetric const & src);
+	SasaMetric( SasaMetric const & ) = default;
 
 	~SasaMetric() override;
 
@@ -78,6 +82,21 @@ public:
 	std::string
 	metric() const override;
 
+	/// @brief Set the behaviour of this metric (count all SASA, count polar SASA, count hydrophobic SASA, etc.).
+	/// @details Default is to compute all SASA.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void set_sasa_metric_mode( core::scoring::sasa::SasaMethodHPMode const mode_in );
+
+	/// @brief Set the behaviour of this metric (count all SASA, count polar SASA, count hydrophobic SASA, etc.).
+	/// @details Default is to compute all SASA.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void set_sasa_metric_mode( std::string const & mode_in );
+
+	/// @brief Get the behaviour of this metric (count all SASA, count polar SASA, count hydrophobic SASA, etc.).
+	/// @details Default is to compute all SASA.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	inline core::scoring::sasa::SasaMethodHPMode sasa_metric_mode() const { return sasa_metric_mode_; }
+
 public:
 	/// @brief called by parse_my_tag -- should not be used directly
 	void
@@ -96,6 +115,10 @@ public:
 private:
 
 	core::select::residue_selector::ResidueSelectorCOP selector_;
+
+	/// @brief The mode for this metric.  Default is to count all solvent-accessible
+	/// surface area.
+	core::scoring::sasa::SasaMethodHPMode sasa_metric_mode_ = core::scoring::sasa::SasaMethodHPMode::ALL_SASA;
 
 };
 

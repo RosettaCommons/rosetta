@@ -10,6 +10,7 @@
 /// @file core/simple_metrics/per_residue_metrics/PerResidueSasaMetric.cc
 /// @brief A per-residue metric that will calculate SASA for each residue given in a selector.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added support for polar or hydrophobic
 
 // Unit headers
 #include <core/simple_metrics/per_residue_metrics/PerResidueSasaMetric.hh>
@@ -47,18 +48,17 @@ using namespace core::scoring::sasa;
 /// Constructors  ///
 /////////////////////
 
-/// @brief Default constructor
-PerResidueSasaMetric::PerResidueSasaMetric():
-	core::simple_metrics::PerResidueRealMetric()
-{}
+/// @brief Mode constructor.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+PerResidueSasaMetric::PerResidueSasaMetric(
+	core::scoring::sasa::SasaMethodHPMode const mode
+) {
+	set_mode( mode );
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
 PerResidueSasaMetric::~PerResidueSasaMetric(){}
-
-////////////////////////////////////////////////////////////////////////////////
-/// @brief Copy constructor
-PerResidueSasaMetric::PerResidueSasaMetric( PerResidueSasaMetric const &  ) = default;
 
 core::simple_metrics::SimpleMetricOP
 PerResidueSasaMetric::clone() const {
@@ -87,27 +87,31 @@ PerResidueSasaMetric::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap)
 {
-
 	SimpleMetric::parse_base_tag( tag );
 	PerResidueRealMetric::parse_per_residue_tag( tag, datamap );
 
+	set_mode( tag->getOption<std::string>("mode", "all_sasa") );
 }
 
 void
 PerResidueSasaMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	using namespace core::select::residue_selector;
+	using namespace core::scoring::sasa;
 
 	AttributeList attlist;
 
+	attlist + XMLSchemaAttribute::attribute_w_default( "mode", xs_string, "Sets the behaviour of the calculator (the subset of the SASA that is counted).  Options include: " + SasaMethod::list_sasa_method_hp_modes() + ".", "all_sasa" );
+
 	core::simple_metrics::xsd_per_residue_real_metric_type_definition_w_attributes(xsd, name_static(),
 		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
-		"A metric for measuring per-residue SASA and adding it to the resulting score file..", attlist);
+		"A metric for measuring per-residue SASA and adding it to the resulting score file.  Modified 19 Aug. 2019 by Vikram K. Mulligan to add options for polar or hydrophobic SASA.", attlist);
 }
 
 std::map< core::Size, core::Real >
 PerResidueSasaMetric::calculate(const pose::Pose & pose) const {
-	SasaCalc calc = SasaCalc();
+	SasaCalc calc;
+	calc.set_sasa_method_hp_mode( mode_ );
 	calc.calculate( pose );
 
 	std::map< core::Size, core::Real > result;
@@ -116,6 +120,31 @@ PerResidueSasaMetric::calculate(const pose::Pose & pose) const {
 		result[res] = rsd_sasa[res];
 	}
 	return result;
+}
+
+/// @brief Set the SASA mode (all SASA, polar only, hydrophobic only, etc.).
+/// @note The enum class is defined in core/simple_metrics/metrics/SasaMetric.hh.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+PerResidueSasaMetric::set_mode(
+	core::scoring::sasa::SasaMethodHPMode const mode_in
+) {
+	using namespace core::scoring::sasa;
+	runtime_assert_string_msg( mode_in < SasaMethodHPMode::END_OF_LIST && static_cast< core::Size >(mode_in) > 0, "Error in PerResidueSasaMetric::set_mode(): Unrecognized mode provided!" );
+	mode_ = mode_in;
+}
+
+/// @brief Set the SASA mode (all SASA, polar only, hydrophobic only, etc.).
+/// @note The enum class is defined in core/simple_metrics/metrics/SasaMetric.hh.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+PerResidueSasaMetric::set_mode(
+	std::string const & mode_in
+) {
+	using namespace core::scoring::sasa;
+	SasaMethodHPMode const mode( SasaMethod::sasa_metric_mode_from_name( mode_in ) );
+	runtime_assert_string_msg( mode != SasaMethodHPMode::INVALID_MODE, "Error in PerResidueSasaMetric::set_mode(): Could not parse \"" + mode_in + "\" as a valid mode." );
+	set_mode( mode );
 }
 
 void

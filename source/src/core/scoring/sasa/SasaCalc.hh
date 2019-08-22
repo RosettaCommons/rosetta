@@ -39,7 +39,6 @@ public:
 
 	SasaCalc(SasaMethodEnum method);
 
-
 	virtual ~SasaCalc();
 
 	/// @brief Calculate Sasa.  Atoms not calculated have -1 sasa in AtomID_Map.  This is carried over for compatability purposes.
@@ -168,6 +167,18 @@ public:
 	void
 	set_defaults();
 
+	/// @brief Set whether we're counting all SASA (default), polar SASA, or hydrophobic SASA.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void
+	set_sasa_method_hp_mode( SasaMethodHPMode const mode_in );
+
+	/// @brief Get whether we're counting all SASA (default), polar SASA, or hydrophobic SASA.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	inline SasaMethodHPMode
+	sasa_method_hp_mode() const {
+		return sasa_method_hp_mode_;
+	}
+
 	void
 	set_calculation_method(SasaMethodEnum method);
 
@@ -245,6 +256,11 @@ private:
 
 	SasaMethodEnum method_type_;
 	SasaMethodOP method_;
+
+	/// @brief Are we counting all SASA, hydrophobic only, or hydrophilic only?
+	/// @details Defaults to all.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org).
+	SasaMethodHPMode sasa_method_hp_mode_ = SasaMethodHPMode::ALL_SASA;
 
 	SasaRadii implicit_radii_set_; //Radii to use when not including hydrogens implicitly
 	SasaRadii explicit_radii_set_; //Radii to use when including hydrogens explicity

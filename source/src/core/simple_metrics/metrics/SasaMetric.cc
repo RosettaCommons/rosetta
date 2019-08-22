@@ -10,6 +10,7 @@
 /// @file core/metrics/SasaMetric.cc
 /// @brief A Metric to cacluate overall sasa of a pose.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added support for polar or hydrophobic SASA.
 
 #include <core/simple_metrics/metrics/SasaMetric.hh>
 #include <core/simple_metrics/simple_metric_creators.hh>
@@ -38,25 +39,17 @@ namespace metrics {
 using namespace core::scoring::sasa;
 using namespace core::select::residue_selector;
 
-SasaMetric::SasaMetric():
-	RealMetric()
-{
-
-}
-
-SasaMetric::SasaMetric( select::residue_selector::ResidueSelectorCOP selector):
+SasaMetric::SasaMetric(
+	select::residue_selector::ResidueSelectorCOP selector,
+	core::scoring::sasa::SasaMethodHPMode const mode /*= core::scoring::sasa::SasaMethodHPMode::ALL_SASA*/
+):
 	RealMetric()
 {
 	set_residue_selector( selector );
+	set_sasa_metric_mode( mode );
 }
 
 SasaMetric::~SasaMetric(){}
-
-SasaMetric::SasaMetric( SasaMetric const & src):
-	RealMetric( src )
-{
-	selector_ = src.selector_;
-}
 
 
 std::string
@@ -74,6 +67,29 @@ SasaMetric::metric() const {
 	return "sasa";
 }
 
+/// @brief Set the behaviour of this metric (count all SASA, count polar SASA, count hydrophobic SASA, etc.).
+/// @details Default is to compute all SASA.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+SasaMetric::set_sasa_metric_mode(
+	core::scoring::sasa::SasaMethodHPMode const mode_in
+) {
+	runtime_assert_string_msg( mode_in < core::scoring::sasa::SasaMethodHPMode::END_OF_LIST && static_cast< core::Size >(mode_in) > 0, "Error in SasaMetric::set_sasa_metric_mode(): Unrecognized mode provided!" );
+	sasa_metric_mode_ = mode_in;
+}
+
+/// @brief Set the behaviour of this metric (count all SASA, count polar SASA, count hydrophobic SASA, etc.).
+/// @details Default is to compute all SASA.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+SasaMetric::set_sasa_metric_mode(
+	std::string const & mode_in
+) {
+	core::scoring::sasa::SasaMethodHPMode const mode( core::scoring::sasa::SasaMethod::sasa_metric_mode_from_name( mode_in ) );
+	runtime_assert_string_msg( mode != core::scoring::sasa::SasaMethodHPMode::INVALID_MODE, "Error in SasaMetric::set_sasa_metric_mode(): Could not parse \"" + mode_in + "\" as a valid mode." );
+	set_sasa_metric_mode( mode );
+}
+
 void
 SasaMetric::set_residue_selector(core::select::residue_selector::ResidueSelectorCOP selector){
 	selector_ = selector;
@@ -83,7 +99,7 @@ core::Real
 SasaMetric::calculate(const pose::Pose &pose) const {
 	using namespace core::simple_metrics::per_residue_metrics;
 
-	PerResidueSasaMetric core_metric = PerResidueSasaMetric();
+	PerResidueSasaMetric core_metric( sasa_metric_mode_ );
 
 	if ( selector_ ) {
 		core_metric.set_residue_selector( selector_);
@@ -109,6 +125,7 @@ SasaMetric::parse_my_tag(
 		set_residue_selector(select::residue_selector::parse_residue_selector( tag, datamap ));
 	}
 
+	set_sasa_metric_mode( tag->getOption<std::string>("sasa_metric_mode", "all_sasa") );
 }
 
 SimpleMetricOP
@@ -128,9 +145,11 @@ SasaMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 	attributes_for_parse_residue_selector_default_option_name(attlist, description );
 
+	attlist + XMLSchemaAttribute::attribute_w_default( "sasa_metric_mode", xs_string, "Sets the behaviour of the calculator (the subset of the SASA that is counted).  Options include: " + core::scoring::sasa::SasaMethod::list_sasa_method_hp_modes() + ".", "all_sasa" );
+
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
 		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
-		"A metric for measuring SASA and adding it to the resulting score file.", attlist);
+		"A metric for measuring SASA and adding it to the resulting score file.  Modified 19 Aug. 2019 by Vikram K. Mulligan to add options for polar or hydrophobic SASA.", attlist);
 }
 
 void

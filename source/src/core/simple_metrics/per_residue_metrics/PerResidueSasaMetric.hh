@@ -10,6 +10,7 @@
 /// @file core/simple_metrics/per_residue_metrics/PerResidueSasaMetric.hh
 /// @brief A per-residue metric that will calculate SASA for each residue given in a selector.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added support for polar or hydrophobic SASA.
 
 #ifndef INCLUDED_core_simple_metrics_per_residue_metrics_PerResidueSasaMetric_HH
 #define INCLUDED_core_simple_metrics_per_residue_metrics_PerResidueSasaMetric_HH
@@ -19,6 +20,7 @@
 
 // Core headers
 #include <core/types.hh>
+#include <core/scoring/sasa/SasaMethod.hh>
 
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -40,10 +42,14 @@ public:
 	/////////////////////
 
 	/// @brief Default constructor
-	PerResidueSasaMetric();
+	PerResidueSasaMetric() = default;
+
+	/// @brief Mode constructor.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	PerResidueSasaMetric( core::scoring::sasa::SasaMethodHPMode const mode );
 
 	/// @brief Copy constructor (not needed unless you need deep copies)
-	PerResidueSasaMetric( PerResidueSasaMetric const & src );
+	PerResidueSasaMetric( PerResidueSasaMetric const & ) = default;
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	~PerResidueSasaMetric() override;
@@ -106,6 +112,30 @@ public:
 
 	core::simple_metrics::SimpleMetricOP
 	clone() const override;
+
+public:
+
+	/// @brief Set the SASA mode (all SASA, polar only, hydrophobic only, etc.).
+	/// @note The enum class is defined in core/simple_metrics/metrics/SasaMetric.hh.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void set_mode( core::scoring::sasa::SasaMethodHPMode const mode_in );
+
+	/// @brief Set the SASA mode (all SASA, polar only, hydrophobic only, etc.).
+	/// @note The enum class is defined in core/simple_metrics/metrics/SasaMetric.hh.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void set_mode( std::string const & mode_in );
+
+	/// @brief Get the SASA mode (all SASA, polar only, hydrophobic only, etc.).
+	/// @note The enum class is defined in core/simple_metrics/metrics/SasaMetric.hh.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	inline core::scoring::sasa::SasaMethodHPMode mode() const { return mode_; }
+
+private:
+
+	/// @brief The SASA mode (all SASA, polar only, hydrophobic only, etc.).
+	/// @note The enum class is defined in core/simple_metrics/metrics/SasaMetric.hh.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	core::scoring::sasa::SasaMethodHPMode mode_ = core::scoring::sasa::SasaMethodHPMode::ALL_SASA;
 };
 
 } //core

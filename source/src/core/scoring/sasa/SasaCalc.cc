@@ -75,6 +75,21 @@ SasaCalc::set_defaults() {
 	set_explicit_hydrogen_included_radii_set(get_sasa_radii_set_from_string(option[OptionKeys::sasa::explicit_hydrogen_radii_set]()));
 
 	set_use_big_polar_hydrogen(false);
+
+	set_sasa_method_hp_mode( SasaMethodHPMode::ALL_SASA );
+}
+
+/// @brief Set whether we're counting all SASA (default), polar SASA, or hydrophobic SASA.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+SasaCalc::set_sasa_method_hp_mode(
+	SasaMethodHPMode const mode_in
+) {
+	runtime_assert_string_msg( static_cast<core::Size>(mode_in) > 0 && mode_in < SasaMethodHPMode::END_OF_LIST, "Error in SasaCalc::set_sasa_method_hp_mode(): Did not recognize setting!");
+	sasa_method_hp_mode_ = mode_in;
+	if ( method_ != nullptr ) {
+		method_->set_sasa_method_hp_mode( mode_in );
+	}
 }
 
 void
@@ -108,6 +123,7 @@ SasaCalc::setup_sasa_method(SasaRadii radii_set) {
 	method_ = create_sasa_method(method_type_, probe_radius_, radii_set);
 	method_->set_include_probe_radius_in_calc(include_probe_radius_);
 	method_->set_use_big_polar_hydrogen(big_polar_h_);
+	method_->set_sasa_method_hp_mode( sasa_method_hp_mode_ );
 }
 
 void
@@ -345,6 +361,7 @@ void
 core::scoring::sasa::SasaCalc::save( Archive & arc ) const {
 	arc( CEREAL_NVP( method_type_ ) ); // enum core::scoring::sasa::SasaMethodEnum
 	arc( CEREAL_NVP( method_ ) ); // SasaMethodOP
+	arc( CEREAL_NVP( sasa_method_hp_mode_ ) ); //SasaMethodHPMode
 	arc( CEREAL_NVP( implicit_radii_set_ ) ); // enum core::scoring::sasa::SasaRadii
 	arc( CEREAL_NVP( explicit_radii_set_ ) ); // enum core::scoring::sasa::SasaRadii
 	arc( CEREAL_NVP( include_hydrogens_ ) ); // _Bool
@@ -374,6 +391,7 @@ void
 core::scoring::sasa::SasaCalc::load( Archive & arc ) {
 	arc( method_type_ ); // enum core::scoring::sasa::SasaMethodEnum
 	arc( method_ ); // SasaMethodOP
+	arc( sasa_method_hp_mode_ ); //SasaMethodHPMode
 	arc( implicit_radii_set_ ); // enum core::scoring::sasa::SasaRadii
 	arc( explicit_radii_set_ ); // enum core::scoring::sasa::SasaRadii
 	arc( include_hydrogens_ ); // _Bool

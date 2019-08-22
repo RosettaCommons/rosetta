@@ -1,0 +1,360 @@
+core.init: command: ROSETTA/main/source/bin/rosetta_scripts.default.macosclangrelease @flags -database ROSETTA/main/database -parser:protocol test_simple_metric_filter.xml -testing:INTEGRATION_TEST
+basic.random.init_random_generator: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+basic.random.init_random_generator: RandomGenerator:init: Normal mode, seed=1111111 RG_type=mt19937
+protocols.jd2.PDBJobInputter: Instantiate PDBJobInputter
+protocols.jd2.PDBJobInputter: PDBJobInputter::fill_jobs
+protocols.jd2.PDBJobInputter: pushed 2r0l_1_1.pdb nstruct index 1
+core.import_pose.import_pose: File '2r0l_1_1.pdb' automatically determined to be of type PDB
+core.io.pdb.pdb_reader: Parsing 0 .pdb records with unknown format to search for Rosetta-specific comments.
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue ARG:CtermProteinFull 108
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue SER:CtermProteinFull 225
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue ARG:CtermProteinFull 464
+core.conformation.Conformation: Found disulfide between residues 23 88
+core.conformation.Conformation: current variant for 23 CYS
+core.conformation.Conformation: current variant for 88 CYS
+core.conformation.Conformation: current variant for 23 CYD
+core.conformation.Conformation: current variant for 88 CYD
+core.conformation.Conformation: Found disulfide between residues 130 204
+core.conformation.Conformation: current variant for 130 CYS
+core.conformation.Conformation: current variant for 204 CYS
+core.conformation.Conformation: current variant for 130 CYD
+core.conformation.Conformation: current variant for 204 CYD
+core.conformation.Conformation: Found disulfide between residues 250 266
+core.conformation.Conformation: current variant for 250 CYS
+core.conformation.Conformation: current variant for 266 CYS
+core.conformation.Conformation: current variant for 250 CYD
+core.conformation.Conformation: current variant for 266 CYD
+core.conformation.Conformation: Found disulfide between residues 258 328
+core.conformation.Conformation: current variant for 258 CYS
+core.conformation.Conformation: current variant for 328 CYS
+core.conformation.Conformation: current variant for 258 CYD
+core.conformation.Conformation: current variant for 328 CYD
+core.conformation.Conformation: Found disulfide between residues 353 422
+core.conformation.Conformation: current variant for 353 CYS
+core.conformation.Conformation: current variant for 422 CYS
+core.conformation.Conformation: current variant for 353 CYD
+core.conformation.Conformation: current variant for 422 CYD
+core.conformation.Conformation: Found disulfide between residues 385 401
+core.conformation.Conformation: current variant for 385 CYS
+core.conformation.Conformation: current variant for 401 CYS
+core.conformation.Conformation: current variant for 385 CYD
+core.conformation.Conformation: current variant for 401 CYD
+core.conformation.Conformation: Found disulfide between residues 412 440
+core.conformation.Conformation: current variant for 412 CYS
+core.conformation.Conformation: current variant for 440 CYS
+core.conformation.Conformation: current variant for 412 CYD
+core.conformation.Conformation: current variant for 440 CYD
+protocols.evaluation.ChiWellRmsdEvaluatorCreator: Evaluation Creator active ... 
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+protocols.jd2.PDBJobInputter: filling pose from PDB 2r0l_1_1.pdb
+core.import_pose.import_pose: File '2r0l_1_1.pdb' automatically determined to be of type PDB
+core.io.pdb.pdb_reader: Parsing 0 .pdb records with unknown format to search for Rosetta-specific comments.
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue ARG:CtermProteinFull 108
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue SER:CtermProteinFull 225
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue ARG:CtermProteinFull 464
+core.conformation.Conformation: Found disulfide between residues 23 88
+core.conformation.Conformation: current variant for 23 CYS
+core.conformation.Conformation: current variant for 88 CYS
+core.conformation.Conformation: current variant for 23 CYD
+core.conformation.Conformation: current variant for 88 CYD
+core.conformation.Conformation: Found disulfide between residues 130 204
+core.conformation.Conformation: current variant for 130 CYS
+core.conformation.Conformation: current variant for 204 CYS
+core.conformation.Conformation: current variant for 130 CYD
+core.conformation.Conformation: current variant for 204 CYD
+core.conformation.Conformation: Found disulfide between residues 250 266
+core.conformation.Conformation: current variant for 250 CYS
+core.conformation.Conformation: current variant for 266 CYS
+core.conformation.Conformation: current variant for 250 CYD
+core.conformation.Conformation: current variant for 266 CYD
+core.conformation.Conformation: Found disulfide between residues 258 328
+core.conformation.Conformation: current variant for 258 CYS
+core.conformation.Conformation: current variant for 328 CYS
+core.conformation.Conformation: current variant for 258 CYD
+core.conformation.Conformation: current variant for 328 CYD
+core.conformation.Conformation: Found disulfide between residues 353 422
+core.conformation.Conformation: current variant for 353 CYS
+core.conformation.Conformation: current variant for 422 CYS
+core.conformation.Conformation: current variant for 353 CYD
+core.conformation.Conformation: current variant for 422 CYD
+core.conformation.Conformation: Found disulfide between residues 385 401
+core.conformation.Conformation: current variant for 385 CYS
+core.conformation.Conformation: current variant for 401 CYS
+core.conformation.Conformation: current variant for 385 CYD
+core.conformation.Conformation: current variant for 401 CYD
+core.conformation.Conformation: Found disulfide between residues 412 440
+core.conformation.Conformation: current variant for 412 CYS
+core.conformation.Conformation: current variant for 440 CYS
+core.conformation.Conformation: current variant for 412 CYD
+core.conformation.Conformation: current variant for 440 CYD
+protocols.rosetta_scripts.RosettaScriptsParser: dock_design_filename=test_simple_metric_filter.xml
+protocols.rosetta_scripts.RosettaScriptsParser: Generating XML Schema for rosetta_scripts...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Initializing schema validator...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Validating input script...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
+<ROSETTASCRIPTS>
+	<SCOREFXNS/>
+	<RESIDUE_SELECTORS>
+		<CDR cdrs="L1" name="L1"/>
+	</RESIDUE_SELECTORS>
+	<MOVE_MAP_FACTORIES>
+		<MoveMapFactory bb="0" chi="0" name="movemap_L1">
+			<Backbone residue_selector="L1"/>
+			<Chi residue_selector="L1"/>
+		</MoveMapFactory>
+	</MOVE_MAP_FACTORIES>
+	<SIMPLE_METRICS>
+		<SasaMetric name="sasa" residue_selector="L1"/>
+		<SasaMetric name="sasa_polar" residue_selector="L1" sasa_metric_mode="polar_sasa"/>
+		<SasaMetric name="sasa_hydrophobic" residue_selector="L1" sasa_metric_mode="hydrophobic_sasa"/>
+	</SIMPLE_METRICS>
+	<MOVERS>
+		<RunSimpleMetrics metrics="sasa" name="cache_metrics1" prefix="cached_total_"/>
+		<RunSimpleMetrics metrics="sasa_polar" name="cache_metrics2" prefix="cached_polar_"/>
+		<RunSimpleMetrics metrics="sasa_hydrophobic" name="cache_metrics3" prefix="cached_hydrophobic_"/>
+	</MOVERS>
+	<FILTERS>
+		<SimpleMetricFilter cache_prefix="cached_total_" comparison_type="gt" cutoff="460" metric="sasa" name="sasa_filter1a" use_cached_data="1"/>
+		<SimpleMetricFilter cache_prefix="cached_total_" comparison_type="lt" cutoff="461" metric="sasa" name="sasa_filter1b" use_cached_data="1"/>
+		<SimpleMetricFilter cache_prefix="cached_polar_" comparison_type="gt" cutoff="245" metric="sasa" name="sasa_filter2a" use_cached_data="1"/>
+		<SimpleMetricFilter cache_prefix="cached_polar_" comparison_type="lt" cutoff="246" metric="sasa" name="sasa_filter2b" use_cached_data="1"/>
+		<SimpleMetricFilter cache_prefix="cached_hydrophobic_" comparison_type="gt" cutoff="214" metric="sasa" name="sasa_filter3a" use_cached_data="1"/>
+		<SimpleMetricFilter cache_prefix="cached_hydrophobic_" comparison_type="lt" cutoff="215" metric="sasa" name="sasa_filter3b" use_cached_data="1"/>
+	</FILTERS>
+	<PROTOCOLS>
+		<Add mover="cache_metrics1"/>
+		<Add mover="cache_metrics2"/>
+		<Add mover="cache_metrics3"/>
+		<Add filter="sasa_filter1a"/>
+		<Add filter="sasa_filter1b"/>
+		<Add filter="sasa_filter2a"/>
+		<Add filter="sasa_filter2b"/>
+		<Add filter="sasa_filter3a"/>
+		<Add filter="sasa_filter3b"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
+protocols.rosetta_scripts.RosettaScriptsParser: Loading native resource as native_pose to the datamap 
+core.import_pose.import_pose: File '2r0l_1_1.pdb' automatically determined to be of type PDB
+core.io.pdb.pdb_reader: Parsing 0 .pdb records with unknown format to search for Rosetta-specific comments.
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue ARG:CtermProteinFull 108
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue SER:CtermProteinFull 225
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue ARG:CtermProteinFull 464
+core.conformation.Conformation: Found disulfide between residues 23 88
+core.conformation.Conformation: current variant for 23 CYS
+core.conformation.Conformation: current variant for 88 CYS
+core.conformation.Conformation: current variant for 23 CYD
+core.conformation.Conformation: current variant for 88 CYD
+core.conformation.Conformation: Found disulfide between residues 130 204
+core.conformation.Conformation: current variant for 130 CYS
+core.conformation.Conformation: current variant for 204 CYS
+core.conformation.Conformation: current variant for 130 CYD
+core.conformation.Conformation: current variant for 204 CYD
+core.conformation.Conformation: Found disulfide between residues 250 266
+core.conformation.Conformation: current variant for 250 CYS
+core.conformation.Conformation: current variant for 266 CYS
+core.conformation.Conformation: current variant for 250 CYD
+core.conformation.Conformation: current variant for 266 CYD
+core.conformation.Conformation: Found disulfide between residues 258 328
+core.conformation.Conformation: current variant for 258 CYS
+core.conformation.Conformation: current variant for 328 CYS
+core.conformation.Conformation: current variant for 258 CYD
+core.conformation.Conformation: current variant for 328 CYD
+core.conformation.Conformation: Found disulfide between residues 353 422
+core.conformation.Conformation: current variant for 353 CYS
+core.conformation.Conformation: current variant for 422 CYS
+core.conformation.Conformation: current variant for 353 CYD
+core.conformation.Conformation: current variant for 422 CYD
+core.conformation.Conformation: Found disulfide between residues 385 401
+core.conformation.Conformation: current variant for 385 CYS
+core.conformation.Conformation: current variant for 401 CYS
+core.conformation.Conformation: current variant for 385 CYD
+core.conformation.Conformation: current variant for 401 CYD
+core.conformation.Conformation: Found disulfide between residues 412 440
+core.conformation.Conformation: current variant for 412 CYS
+core.conformation.Conformation: current variant for 440 CYS
+core.conformation.Conformation: current variant for 412 CYD
+core.conformation.Conformation: current variant for 440 CYD
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: ref2015
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/DonStrength.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/AccStrength.csv
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/all.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/prepro.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.all.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.gly.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.pro.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.valile.txt
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+core.scoring.P_AA: shapovalov_lib::shap_p_aa_pp_smooth_level of 1( aka low_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/PairEPotential/pdb_pair_stats_fine
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+core.scoring.ramachandran: shapovalov_lib::shap_rama_smooth_level of 4( aka highest_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb
+protocols.antibody.residue_selector.CDRResidueSelector: Setting CDRs from settings
+core.select.residue_selector.util: Found residue selector L1
+core.select.residue_selector.util: Found residue selector L1
+protocols.jd2.parser.MoveMapFactoryLoader: Defined MoveMap named "movemap_L1"
+core.select.residue_selector.util: Found residue selector L1
+core.select.residue_selector.util: Found residue selector L1
+core.select.residue_selector.util: Found residue selector L1
+core.simple_metrics.util: Added simple metric SasaMetric.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "cache_metrics1" of type RunSimpleMetrics
+core.simple_metrics.util: Added simple metric SasaMetric.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "cache_metrics2" of type RunSimpleMetrics
+core.simple_metrics.util: Added simple metric SasaMetric.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "cache_metrics3" of type RunSimpleMetrics
+protocols.simple_filters.SimpleMetricFilter: Attempting to use cached data with set prefix/suffix:cached_total_ 
+protocols.rosetta_scripts.RosettaScriptsParser: Defined filter named "sasa_filter1a" of type SimpleMetricFilter
+protocols.simple_filters.SimpleMetricFilter: Attempting to use cached data with set prefix/suffix:cached_total_ 
+protocols.rosetta_scripts.RosettaScriptsParser: Defined filter named "sasa_filter1b" of type SimpleMetricFilter
+protocols.simple_filters.SimpleMetricFilter: Attempting to use cached data with set prefix/suffix:cached_polar_ 
+protocols.rosetta_scripts.RosettaScriptsParser: Defined filter named "sasa_filter2a" of type SimpleMetricFilter
+protocols.simple_filters.SimpleMetricFilter: Attempting to use cached data with set prefix/suffix:cached_polar_ 
+protocols.rosetta_scripts.RosettaScriptsParser: Defined filter named "sasa_filter2b" of type SimpleMetricFilter
+protocols.simple_filters.SimpleMetricFilter: Attempting to use cached data with set prefix/suffix:cached_hydrophobic_ 
+protocols.rosetta_scripts.RosettaScriptsParser: Defined filter named "sasa_filter3a" of type SimpleMetricFilter
+protocols.simple_filters.SimpleMetricFilter: Attempting to use cached data with set prefix/suffix:cached_hydrophobic_ 
+protocols.rosetta_scripts.RosettaScriptsParser: Defined filter named "sasa_filter3b" of type SimpleMetricFilter
+protocols.rosetta_scripts.ParsedProtocol: ParsedProtocol mover with the following movers and filters
+protocols.rosetta_scripts.ParsedProtocol: added mover "cache_metrics1" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "cache_metrics2" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "cache_metrics3" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "NULL_MOVER" with filter "sasa_filter1a"
+protocols.rosetta_scripts.ParsedProtocol: added mover "NULL_MOVER" with filter "sasa_filter1b"
+protocols.rosetta_scripts.ParsedProtocol: added mover "NULL_MOVER" with filter "sasa_filter2a"
+protocols.rosetta_scripts.ParsedProtocol: added mover "NULL_MOVER" with filter "sasa_filter2b"
+protocols.rosetta_scripts.ParsedProtocol: added mover "NULL_MOVER" with filter "sasa_filter3a"
+protocols.rosetta_scripts.ParsedProtocol: added mover "NULL_MOVER" with filter "sasa_filter3b"
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+protocols.jd2.PDBJobInputter: filling pose from saved copy 2r0l_1_1.pdb
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER RunSimpleMetrics - cache_metrics1=======================
+protocols.analysis.simple_metrics.RunSimpleMetricsMover: Running: SasaMetric - calculating sasa
+basic.io.database: Database file opened: sampling/antibodies/cluster_center_dihedrals.txt
+protocols.antibody.AntibodyNumberingParser: Antibody numbering scheme definitions read successfully
+protocols.antibody.AntibodyNumberingParser: Antibody CDR definition read successfully
+antibody.AntibodyInfo: Successfully finished the CDR definition
+antibody.AntibodyInfo: AC Detecting Regular CDR H3 Stem Type
+antibody.AntibodyInfo: ARFWWRSFDYW
+antibody.AntibodyInfo: AC Finished Detecting Regular CDR H3 Stem Type: KINKED
+antibody.AntibodyInfo: AC Finished Detecting Regular CDR H3 Stem Type: Kink: 1 Extended: 0
+antibody.AntibodyInfo: Setting up CDR Cluster for H1
+protocols.antibody.cluster.CDRClusterMatcher: Length: 13 Omega: TTTTTTTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for H2
+protocols.antibody.cluster.CDRClusterMatcher: Length: 10 Omega: TTTTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for H3
+protocols.antibody.cluster.CDRClusterMatcher: Length: 10 Omega: TTTTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for L1
+protocols.antibody.cluster.CDRClusterMatcher: Length: 11 Omega: TTTTTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for L2
+protocols.antibody.cluster.CDRClusterMatcher: Length: 8 Omega: TTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for L3
+protocols.antibody.cluster.CDRClusterMatcher: Length: 9 Omega: TTTTTTCTT
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER RunSimpleMetrics - cache_metrics2=======================
+protocols.analysis.simple_metrics.RunSimpleMetricsMover: Running: SasaMetric - calculating sasa
+basic.io.database: Database file opened: sampling/antibodies/cluster_center_dihedrals.txt
+protocols.antibody.AntibodyNumberingParser: Antibody numbering scheme definitions read successfully
+protocols.antibody.AntibodyNumberingParser: Antibody CDR definition read successfully
+antibody.AntibodyInfo: Successfully finished the CDR definition
+antibody.AntibodyInfo: AC Detecting Regular CDR H3 Stem Type
+antibody.AntibodyInfo: ARFWWRSFDYW
+antibody.AntibodyInfo: AC Finished Detecting Regular CDR H3 Stem Type: KINKED
+antibody.AntibodyInfo: AC Finished Detecting Regular CDR H3 Stem Type: Kink: 1 Extended: 0
+antibody.AntibodyInfo: Setting up CDR Cluster for H1
+protocols.antibody.cluster.CDRClusterMatcher: Length: 13 Omega: TTTTTTTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for H2
+protocols.antibody.cluster.CDRClusterMatcher: Length: 10 Omega: TTTTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for H3
+protocols.antibody.cluster.CDRClusterMatcher: Length: 10 Omega: TTTTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for L1
+protocols.antibody.cluster.CDRClusterMatcher: Length: 11 Omega: TTTTTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for L2
+protocols.antibody.cluster.CDRClusterMatcher: Length: 8 Omega: TTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for L3
+protocols.antibody.cluster.CDRClusterMatcher: Length: 9 Omega: TTTTTTCTT
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER RunSimpleMetrics - cache_metrics3=======================
+protocols.analysis.simple_metrics.RunSimpleMetricsMover: Running: SasaMetric - calculating sasa
+basic.io.database: Database file opened: sampling/antibodies/cluster_center_dihedrals.txt
+protocols.antibody.AntibodyNumberingParser: Antibody numbering scheme definitions read successfully
+protocols.antibody.AntibodyNumberingParser: Antibody CDR definition read successfully
+antibody.AntibodyInfo: Successfully finished the CDR definition
+antibody.AntibodyInfo: AC Detecting Regular CDR H3 Stem Type
+antibody.AntibodyInfo: ARFWWRSFDYW
+antibody.AntibodyInfo: AC Finished Detecting Regular CDR H3 Stem Type: KINKED
+antibody.AntibodyInfo: AC Finished Detecting Regular CDR H3 Stem Type: Kink: 1 Extended: 0
+antibody.AntibodyInfo: Setting up CDR Cluster for H1
+protocols.antibody.cluster.CDRClusterMatcher: Length: 13 Omega: TTTTTTTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for H2
+protocols.antibody.cluster.CDRClusterMatcher: Length: 10 Omega: TTTTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for H3
+protocols.antibody.cluster.CDRClusterMatcher: Length: 10 Omega: TTTTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for L1
+protocols.antibody.cluster.CDRClusterMatcher: Length: 11 Omega: TTTTTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for L2
+protocols.antibody.cluster.CDRClusterMatcher: Length: 8 Omega: TTTTTTTT
+antibody.AntibodyInfo: Setting up CDR Cluster for L3
+protocols.antibody.cluster.CDRClusterMatcher: Length: 9 Omega: TTTTTTCTT
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER sasa_filter1a=======================
+protocols.simple_filters.SimpleMetricFilter: 460.752 gt 460 ? 
+protocols.simple_filters.SimpleMetricFilter: Filter passed: 1
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER sasa_filter1a=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER sasa_filter1b=======================
+protocols.simple_filters.SimpleMetricFilter: 460.752 lt 461 ? 
+protocols.simple_filters.SimpleMetricFilter: Filter passed: 1
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER sasa_filter1b=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER sasa_filter2a=======================
+protocols.simple_filters.SimpleMetricFilter: 245.842 gt 245 ? 
+protocols.simple_filters.SimpleMetricFilter: Filter passed: 1
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER sasa_filter2a=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER sasa_filter2b=======================
+protocols.simple_filters.SimpleMetricFilter: 245.842 lt 246 ? 
+protocols.simple_filters.SimpleMetricFilter: Filter passed: 1
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER sasa_filter2b=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER sasa_filter3a=======================
+protocols.simple_filters.SimpleMetricFilter: 214.911 gt 214 ? 
+protocols.simple_filters.SimpleMetricFilter: Filter passed: 1
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER sasa_filter3a=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER sasa_filter3b=======================
+protocols.simple_filters.SimpleMetricFilter: 214.911 lt 215 ? 
+protocols.simple_filters.SimpleMetricFilter: Filter passed: 1
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER sasa_filter3b=======================
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for sasa_filter1a==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for sasa_filter1a==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for sasa_filter1b==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for sasa_filter1b==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for sasa_filter2a==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for sasa_filter2a==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for sasa_filter2b==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for sasa_filter2b==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for sasa_filter3a==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for sasa_filter3a==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for sasa_filter3b==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for sasa_filter3b==================
+protocols.jd2.JobDistributor: no more batches to process... 
+protocols.jd2.JobDistributor: [ WARNING ] The following options have been set, but have not yet been used:
+	-antibody:output_ab_scheme AHo_Scheme
+	-run:nblist_autoupdate 
+	-run:other_pose_to_scorefile 
+

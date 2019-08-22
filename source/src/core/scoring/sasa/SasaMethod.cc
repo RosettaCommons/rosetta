@@ -13,6 +13,11 @@
 
 #include <core/scoring/sasa/SasaMethod.hh>
 
+//Core headers:
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/Atom.hh>
+#include <core/conformation/Residue.hh>
+
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
@@ -51,9 +56,104 @@ SasaMethod::set_radii_set(SasaRadii radii_set) {
 	radii_set_ = radii_set;
 }
 
+/// @brief Given the name of the SasaMethodHPMode, get the mode.
+/// @returns SasaMethodHPMode::INVALID_MODE if the string can't be parsed; the correct
+/// SasaMethodHPMode if it can.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+SasaMethodHPMode
+SasaMethod::sasa_metric_mode_from_name(
+	std::string const &mode_name
+) {
+	for ( core::Size i(1); i < static_cast<core::Size>( SasaMethodHPMode::END_OF_LIST ); ++i ) {
+		if ( sasa_metric_name_from_mode( static_cast< SasaMethodHPMode >(i) ) == mode_name ) {
+			return static_cast< SasaMethodHPMode >( i );
+		}
+	}
+	return SasaMethodHPMode::INVALID_MODE;
+}
+
+/// @brief Given the SasaMethodHPMode, get the name.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+SasaMethod::sasa_metric_name_from_mode(
+	SasaMethodHPMode const mode
+) {
+	switch( mode ) {
+	case SasaMethodHPMode::ALL_SASA :
+		return std::string( "all_sasa" );
+	case SasaMethodHPMode::POLAR_SASA :
+		return std::string( "polar_sasa" );
+	case SasaMethodHPMode::HYDROPHOBIC_SASA :
+		return std::string( "hydrophobic_sasa" );
+	default :
+		utility_exit_with_message( "Error in SasaMetric::sasa_metric_name_from_mode(): Invalid SasaMethodHPMode provided." );
+	};
+	return std::string(""); //Keep compiler happy.
+}
+
+/// @brief Construct a comma-separeted string listing all of the sasa metric modes.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+SasaMethod::list_sasa_method_hp_modes() {
+	std::stringstream ostream;
+	for ( core::Size i(1); i < static_cast<core::Size>(SasaMethodHPMode::END_OF_LIST); ++i ) {
+		if ( i > 1 ) {
+			ostream << ", ";
+		}
+		ostream << sasa_metric_name_from_mode( static_cast<SasaMethodHPMode>(i) );
+	}
+	return ostream.str();
+}
+
+/// @brief Set whether we're counting all SASA (default), polar SASA, or hydrophobic SASA.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+SasaMethod::set_sasa_method_hp_mode(
+	SasaMethodHPMode const mode_in
+) {
+	runtime_assert_string_msg( static_cast< core::Size >(mode_in) > 0 && mode_in < SasaMethodHPMode::END_OF_LIST, "Error in SasaMethod::set_sasa_method_hp_mode():  Mode not recognized!" );
+	sasa_method_hp_mode_ = mode_in;
+}
+
 void
 SasaMethod::set_use_big_polar_hydrogen(bool big_polar_h){
 	use_big_polar_H_ = big_polar_h;
+}
+
+/// @brief Given a residue, an atom index, and a SasaMethodHPMode, determine whether the atom is one to skip (returns true)
+/// or count (returns false).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+bool
+SasaMethod::skip_atom(
+	core::conformation::Residue const & rsd,
+	core::Size const atom_index,
+	SasaMethodHPMode const hp_mode
+) {
+	switch( hp_mode ) {
+	case SasaMethodHPMode::ALL_SASA :
+		return false;
+	case SasaMethodHPMode::POLAR_SASA :
+		{
+		core::chemical::Atom const & curatom( rsd.type().atom(atom_index) );
+		if ( curatom.heavyatom_has_polar_hydrogens() || curatom.is_acceptor() || curatom.is_polar_hydrogen() ) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	case SasaMethodHPMode::HYDROPHOBIC_SASA :
+		{
+		core::chemical::Atom const & curatom( rsd.type().atom(atom_index) );
+		if ( curatom.heavyatom_has_polar_hydrogens() || curatom.is_acceptor() || curatom.is_polar_hydrogen() ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	default :
+		utility_exit_with_message( "Error in SasaMethod::skip_atom(): Unknown SasaMethodHPMode!" );
+	};
+	return false; //Keep the compiler happy.
 }
 
 
@@ -74,6 +174,7 @@ core::scoring::sasa::SasaMethod::save( Archive & arc ) const {
 	arc( CEREAL_NVP( radii_set_ ) ); // enum core::scoring::sasa::SasaRadii
 	arc( CEREAL_NVP( include_probe_radius_ ) ); // _Bool
 	arc( CEREAL_NVP( use_big_polar_H_ ) ); // _Bool
+	arc( CEREAL_NVP( sasa_method_hp_mode_ ) ); //SasaMethodHPMode enum class
 }
 
 /// @brief Automatically generated deserialization method
@@ -84,6 +185,7 @@ core::scoring::sasa::SasaMethod::load( Archive & arc ) {
 	arc( radii_set_ ); // enum core::scoring::sasa::SasaRadii
 	arc( include_probe_radius_ ); // _Bool
 	arc( use_big_polar_H_ ); // _Bool
+	arc( sasa_method_hp_mode_ ); //SasaMethodHPMode enum class
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::sasa::SasaMethod );

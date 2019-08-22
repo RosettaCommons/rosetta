@@ -370,13 +370,28 @@ public:
 		cdr_selector->set_cdr( l1 );
 
 		SasaMetric sasa_metric = SasaMetric ( );
-		core::Real sas = sasa_metric.calculate( ab_pose );
+		core::Real const sas = sasa_metric.calculate( ab_pose );
+		TR << "Total sasa: " << sas << std::endl;
 		TS_ASSERT( sas > 496.5 );
 
 		sasa_metric.set_residue_selector( cdr_selector );
-		sas = sasa_metric.calculate( ab_pose );
-		TS_ASSERT_DELTA( sas, 496.49, 1.0 );
+		core::Real const sas_subset = sasa_metric.calculate( ab_pose );
+		TR << "Subset sasa: " << sas_subset << std::endl;
+		TS_ASSERT_DELTA( sas_subset, 496.49, 1.0 );
 
+		sasa_metric.set_sasa_metric_mode( core::scoring::sasa::SasaMethodHPMode::POLAR_SASA );
+		core::Real const sas_subset_polar( sasa_metric.calculate( ab_pose ) );
+		TR << "Subset polar sasa: " << sas_subset_polar << std::endl;
+		TS_ASSERT_LESS_THAN( sas_subset_polar, sas_subset );
+		TS_ASSERT_DELTA( sas_subset_polar, 270.297, 1.0 );
+
+		sasa_metric.set_sasa_metric_mode( core::scoring::sasa::SasaMethodHPMode::HYDROPHOBIC_SASA );
+		core::Real const sas_subset_apolar( sasa_metric.calculate( ab_pose ) );
+		TR << "Subset apolar sasa: " << sas_subset_apolar << std::endl;
+		TS_ASSERT_LESS_THAN( sas_subset_apolar, sas_subset );
+		TS_ASSERT_DELTA( sas_subset_apolar, 226.196, 1.0 );
+
+		TS_ASSERT_DELTA( sas_subset_apolar + sas_subset_polar, sas_subset, 0.01 );
 	}
 
 	void test_glycan_layer_metric() {
