@@ -42,7 +42,6 @@ external/DAlpahBall/DAlphaBall.*
 /TAGS
 TAGS
 tags
-/.vscode
 GTAGS
 GPATH
 GSYMS
@@ -52,6 +51,7 @@ get_commit_id.sh
 /diffs*
 /compile*
 .vscode/
+.vscode/c_cpp_properties.json
 .unit_test_results.json
 _performance_
 *~

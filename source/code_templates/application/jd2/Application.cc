@@ -32,6 +32,7 @@
 static basic::Tracer TR("--app_name--");
 
 
+/// @brief Indicate which commandline flags are relevant to this application.
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -42,6 +43,7 @@ void register_options() {
 
 --new_app_options_out--
 
+/// @brief Program entry point.
 int
 main( int argc, char * argv [] )
 {

@@ -67,6 +67,7 @@
 //Application-specific includes
 #ifdef USEMPI
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI.hh>
+#include <protocols/cyclic_peptide_predict/util.hh>
 #endif
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
 
@@ -75,151 +76,6 @@
 
 //Tracer:
 static basic::Tracer TR( "apps.public.cyclic_peptide.simple_cycpep_predict" );
-
-/*************************/
-/* FUNCTION PROTOTYPES:  */
-/*************************/
-
-#ifdef USEMPI
-/// @brief If rank > 0, wait for a message from proc 0 to continue.  If rank
-/// is zero, send the message.
-/// #details Only used in MPI mode.
-void wait_for_proc_zero();
-#endif
-
-#ifdef USEMPI
-/// @brief In MPI mode, set the MPI-specific variables that the parallel version
-/// of the protocol will need.
-void
-set_MPI_vars(
-	int &MPI_rank,
-	int &MPI_n_procs,
-	core::Size &total_hierarchy_levels,
-	utility::vector1 < core::Size > &procs_per_hierarchy_level,
-	utility::vector1< core::Size > &batchsize_by_level,
-	std::string &sort_by,
-	bool &select_highest,
-	core::Real &output_fraction,
-	std::string &output_filename,
-	core::Real &lambda,
-	core::Real &kbt,
-	core::Size &threads_per_slave
-);
-#endif
-
-/*************************/
-/* FUNCTION DEFINITIONS: */
-/*************************/
-
-#ifdef USEMPI
-/// @brief If rank > 0, wait for a message from proc 0 to continue.  If rank
-/// is zero, send the message.
-/// #details Only used in MPI mode.
-void
-wait_for_proc_zero() {
-	char mybuf('A'); //A dummy piece of information to send.
-	MPI_Bcast( &mybuf, 1, MPI_CHAR, 0, MPI_COMM_WORLD );
-}
-#endif
-
-#ifdef USEMPI
-/// @brief In MPI mode, set the MPI-specific variables that the parallel version
-/// of the protocol will need.
-void
-set_MPI_vars(
-	int &MPI_rank,
-	int &MPI_n_procs,
-	core::Size &total_hierarchy_levels,
-	utility::vector1 < core::Size > &procs_per_hierarchy_level,
-	utility::vector1< core::Size > &batchsize_by_level,
-	std::string &sort_by,
-	bool &select_highest,
-	core::Real &output_fraction,
-	std::string &output_filename,
-	core::Real &lambda,
-	core::Real &kbt,
-	core::Size &threads_per_slave
-) {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	std::string const errormsg( "Error in simple_cycpep_predict application: ");
-
-	//Get the rank and number of processes.
-	MPI_Comm_rank( MPI_COMM_WORLD, &MPI_rank );
-	MPI_Comm_size( MPI_COMM_WORLD, &MPI_n_procs );
-
-	if (TR.Debug.visible()) {
-		TR.Debug << "MPI rank " << MPI_rank << " of " << MPI_n_procs << " reporting for duty." << std::endl;
-	}
-
-	if(MPI_rank == 0 ) {
-		runtime_assert_string_msg( option[cyclic_peptide::MPI_processes_by_level].user(), errormsg + "In MPI mode, the user MUST specify the number of communication levels, and the number of processes in each level, with the \"-cyclic_peptide:MPI_processes_by_level\" flag." );
-	}
-	utility::vector1< long int > user_specified_hierarchy_levels( option[cyclic_peptide::MPI_processes_by_level]() );
-	if(MPI_rank == 0 ) {
-		runtime_assert_string_msg( user_specified_hierarchy_levels.size() > 1, errormsg + "The number of communication levels specified with the \"-cyclic_peptide:MPI_processes_by_level\" flag must be greater than one." );
-		runtime_assert_string_msg( user_specified_hierarchy_levels.size() <= static_cast<core::Size>(MPI_n_procs), errormsg + "The number of communication levels specified with the \"-cyclic_peptide:MPI_processes_by_level\" flag must be less than or equal to the number of processes launched." );
-		runtime_assert_string_msg( user_specified_hierarchy_levels[1] == 1, errormsg + "The first communication level must have a single, master process.");
-		core::Size proccount(0);
-		for(core::Size i=1; i<=user_specified_hierarchy_levels.size(); ++i) {
-			runtime_assert_string_msg( user_specified_hierarchy_levels[i] > 0, errormsg + "Each level of communication specified with the \"-cyclic_peptide:MPI_processes_by_level\" flag must have at least one process associated with it." );
-			proccount += static_cast<core::Size>( user_specified_hierarchy_levels[i] );
-			if(i>1) {
-				runtime_assert_string_msg( user_specified_hierarchy_levels[i] >= user_specified_hierarchy_levels[i-1], errormsg + "Each level of communication specified with the \"-cyclic_peptide:MPI_processes_by_level\" flag must have an equal or greater number of processes as compared to its parent." );
-			}
-		}
-		runtime_assert_string_msg( proccount == static_cast<core::Size>(MPI_n_procs), errormsg + "The total number of processes specified with the \"-cyclic_peptide:MPI_processes_by_level\" flag must match the total number of processes launched." );
-	}
-	total_hierarchy_levels = static_cast< core::Size >( user_specified_hierarchy_levels.size() );
-	procs_per_hierarchy_level.clear();
-	procs_per_hierarchy_level.reserve( total_hierarchy_levels );
-	for(core::Size i=1; i<=total_hierarchy_levels; ++i) {
-		procs_per_hierarchy_level.push_back( static_cast< core::Size >( user_specified_hierarchy_levels[i] ) );
-	}
-
-	if(MPI_rank == 0 ) {
-		runtime_assert_string_msg( option[cyclic_peptide::MPI_batchsize_by_level].user(), errormsg + "Batch sizes for each level must be specified." );
-		runtime_assert_string_msg( option[cyclic_peptide::MPI_batchsize_by_level]().size() == total_hierarchy_levels - 1, errormsg + "The number of values provided with -cyclic_peptide::MPI_batchsize_by_level must be one less than the number of communication levels." );
-		for(core::Size i=1; i<total_hierarchy_levels; ++i) {
-			runtime_assert_string_msg( option[cyclic_peptide::MPI_batchsize_by_level]()[i] > 0, errormsg + "The batch size must be greater than zero." );
-			if(i>1) {
-				runtime_assert_string_msg( option[cyclic_peptide::MPI_batchsize_by_level]()[i] <= option[cyclic_peptide::MPI_batchsize_by_level]()[i-1], errormsg + "The lower level batch sizes must be smaller than the upper level batch sizes." );
-			}
-		}
-	}
-	batchsize_by_level.clear();
-	batchsize_by_level.reserve( total_hierarchy_levels - 1 );
-	for(core::Size i=1; i<total_hierarchy_levels; ++i) {
-		batchsize_by_level.push_back ( static_cast< core::Size >( option[cyclic_peptide::MPI_batchsize_by_level]()[i] ) );
-	}
-
-	sort_by = option[cyclic_peptide::MPI_sort_by]();
-	select_highest = option[cyclic_peptide::MPI_choose_highest]();
-	output_fraction = static_cast<core::Real>( option[cyclic_peptide::MPI_output_fraction]() );
-
-	if( MPI_rank == 0) {
-		runtime_assert_string_msg( !option[out::file::o].user(), errormsg + "The -out:file:o option cannot be used with the simple_cycpep_predict app in MPI mode.  Only silent file output is permitted." );
-		runtime_assert_string_msg( option[out::file::silent].user(), errormsg + "A silent file for output must be specified for the simple_cycpep_predict app in MPI mode." );
-	}
-	output_filename = option[out::file::silent]();
-
-	lambda = option[cyclic_peptide::MPI_pnear_lambda]();
-	kbt = option[cyclic_peptide::MPI_pnear_kbt]();
-	if( MPI_rank == 0 ) {
-		runtime_assert_string_msg( lambda > 0, errormsg + "The -cyclic_peptide:MPI_pnear_lambda option must be greater than zero." );
-		runtime_assert_string_msg( kbt > 0, errormsg + "The -cyclic_peptide:MPI_pnear_kbt option must be greater than zero." );
-	}
-
-#ifdef MULTI_THREADED
-	runtime_assert_string_msg( option[cyclic_peptide::threads_per_slave]() > 0, errormsg + "The -cyclic_peptide:threads_per_slave option's value must be greater than zero." );
-	threads_per_slave = static_cast<core::Size>( option[cyclic_peptide::threads_per_slave]() );
-#else
-	threads_per_slave = 1;
-#endif
-	wait_for_proc_zero();
-}
-#endif
 
 
 /*************************/
@@ -247,7 +103,7 @@ main( int argc, char * argv [] )
 		core::Real lambda( 0.5 );
 		core::Real kbt( 1.0 );
 		core::Size threads_per_slave(1);
-		set_MPI_vars( MPI_rank, MPI_n_procs, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename, lambda, kbt, threads_per_slave ); //Get the values of these vars (only used in MPI mode).
+		protocols::cyclic_peptide_predict::set_MPI_vars( MPI_rank, MPI_n_procs, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename, lambda, kbt, threads_per_slave, "simple_cycpep_predict" ); //Get the values of these vars (only used in MPI mode).
 #endif
 
 		if ( TR.visible() ) {

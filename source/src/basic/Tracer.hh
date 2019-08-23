@@ -121,6 +121,20 @@ public:
 		return (tracer_impl())(priority); // Call operator() on the TracerImpl class
 	}
 
+	/// @brief Set whether we're printing the channel name.
+	/// @details This overrides the *local* setting, but does not alter the *global* setting.
+	/// @note In practice, if the local setting is true then the global setting is used.  If the local setting
+	/// is false, it overrides the global setting.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	inline void set_local_print_channel_name( bool const setting ) { tracer_impl().set_local_print_channel_name(setting); }
+
+	/// @brief Get whether we're printing the channel name.
+	/// @details This looks at the *local* setting, but does not check the *global* setting.
+	/// @note In practice, if the local setting is true then the global setting is used.  If the local setting
+	/// is false, it overrides the global setting.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	inline bool get_local_print_channel_name() { return tracer_impl().get_local_print_channel_name(); }
+
 	//// The IOS manipulators
 
 	std::streamsize width() { return tracer_impl().width(); }
@@ -213,7 +227,7 @@ public:
 protected:
 
 	/// @brief The function which handles the construct-on-first use
-	// Not virtual for speed in the usual (non-creation) case.
+	/// Not virtual for speed in the usual (non-creation) case.
 	TracerImpl & tracer_impl();
 
 	virtual // virtual for MemTracer

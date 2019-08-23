@@ -67,7 +67,9 @@ sources = {
 	"antibody/task_operations":[
 		"AntibodyTaskOps",
 	],
-
+	"backbone_moves" : [
+		"RandomizeBBByRamaPreProTests",
+	],
 	"backbone_moves/local_backbone_mover":[
 		"LocalBackboneMoverTests",
 	],
@@ -323,6 +325,10 @@ sources = {
 		"HelicalBundlePDBInfoTests",
 		"params_data_storage",
 		"PerturbBundleTests",
+	],
+
+	"helical_bundle_predict" : [
+		"HBPHelixAssignmentsTests",
 	],
 
 	"hotspot_hashing" : [
@@ -993,6 +999,7 @@ testinputfiles = [
 	"grafting/2aabL_L1.pdb",
 	"hbnet/SB13.pdb",
 	"helical_bundle/helical_bundle_input.pdb",
+	"helical_bundle_predict/three_helix.helix_assignments",
 	"hotspot_hashing/3ve0_IJ.pdb",
 	"indexed_structure_store/test_structure.pdb",
 	"indexed_structure_store/test_store.h5",

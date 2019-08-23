@@ -3955,6 +3955,18 @@ Conformation::setup_atom_tree()
 /// Sincerely,
 /// Labonte
 ///
+/// Dear Dougs, Andy, and Jason:
+///
+/// It's 2018, now, and this is STILL a mess.  We really should clean this up and have ResidueTypes
+/// properly cache their torsion IDs at some point.  It's becoming more and more of a headache as we
+/// add more noncanonical types.
+///
+/// Sincerely,
+/// 2018 Vikram
+///
+/// P.S.  2017 Vikram: why didn't you insist on cleaning this up at the noncanonicals XRW?  Head injury
+/// is no excuse!
+///
 /// @note returns TRUE for FAILURE
 bool
 Conformation::backbone_torsion_angle_atoms(

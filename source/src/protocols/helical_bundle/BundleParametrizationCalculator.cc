@@ -565,6 +565,27 @@ BundleParametrizationCalculator::set_perturbation_type_globally(
 	}
 }
 
+/// @brief Get the number of repeats needed to go one full turn.
+/// @details This is rounded UP.  So for an alpha helix, with about 3.6 repeating units (residues)
+/// per turn, this function returns 4.
+core::Size
+BundleParametrizationCalculator::repeats_per_turn() const {
+	return static_cast< core::Size >( std::ceil( numeric::constants::d::pi_2 / std::abs(real_parameter_cop( BPC_omega1 )->value()) ) );
+}
+
+/// @brief The number of residues per repeating unit.
+core::Size
+BundleParametrizationCalculator::residues_per_repeat() const {
+	return size_parameter_cop( BPC_residues_per_repeat )->value();
+}
+
+/// @brief The number of residues needed for one full turn.
+/// @details This is repeats_per_turn() * residues_per_repeat().
+core::Size
+BundleParametrizationCalculator::residues_per_turn() const {
+	return repeats_per_turn() * residues_per_repeat();
+}
+
 /// @brief Update whether certain parameters expect their inputs in degrees.
 void
 BundleParametrizationCalculator::set_use_degrees_for_parameters() {

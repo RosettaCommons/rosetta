@@ -206,6 +206,17 @@ public: // Public static member functions
 	/// @brief set tracer options - global options for Tracer IO.
 	static void set_tracer_options( TracerOptions const & to );
 
+	/// @brief Set whether we're printing the channel name.
+	/// @details This overrides the *local* setting, but does not alter the *global* setting.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	void set_local_print_channel_name( bool const setting );
+
+	/// @brief Get whether we're printing the channel name.
+	/// @details This gets the *local* setting, but does not look at the *global* setting.  (In practice,
+	/// if the local setting is true then the global setting is used.)
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	inline bool get_local_print_channel_name() const { return local_print_channel_name_; }
+
 	/// @brief global super mute flag that allow to mute all io no matter what.
 	static bool super_mute() { return super_mute_(); }
 	static void super_mute(bool f) { super_mute_() = f; }
@@ -303,6 +314,12 @@ private: /// Data members
 
 	/// @brief channel name
 	std::string channel_;
+
+	/// @brief Allows local override of whether channel name is printed.  This is true by default, in which
+	/// case the global setting is used.  Setting this to false prevents channel name from being printed for
+	/// this tracer only.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	bool local_print_channel_name_;
 
 	/// @brief default colors for tracer output and tracer channel-name string (ie color of string such as: 'core.pose:')
 	utility::CSI_Sequence channel_color_, channel_name_color_;

@@ -18,7 +18,7 @@
 
 // Unit Headers
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.fwd.hh>
-#include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI_JobResultsSummary.fwd.hh>
+#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.fwd.hh>
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
@@ -129,7 +129,7 @@ public:
 
 	/// @brief Allows external code to specify that output should be appended to a list of SilentStructureOPs, so that the
 	/// SimpleCycpepPredictApplication doesn't have to write directly to disk.
-	void set_silentstructure_outputlist( utility::vector1 < core::io::silent::SilentStructOP > * silentlist, utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > * summarylist );
+	void set_silentstructure_outputlist( utility::vector1 < core::io::silent::SilentStructOP > * silentlist, utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > * summarylist );
 
 	/// @brief Allows external code to suppress checkpointing, to prevent direct file I/O from disk.
 	/// @details Useful on Blue Gene.
@@ -756,7 +756,7 @@ private:
 
 	/// @brief If silentlist_out_ is used, this is the list of job summaries to which summaries should be appended.
 	/// @details Note that this is a non-const pointer to a vector.
-	utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > * summarylist_;
+	utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > * summarylist_;
 
 	/// @brief A native pose, provided by external code.
 	/// @details If provided, this prevents the app from reading from the filesystem in the run() function.

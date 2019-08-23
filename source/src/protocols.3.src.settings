@@ -22,6 +22,9 @@ sources = {
 		"ClearCompositionConstraintsMover",
 		"util",
 	],
+	"protocols/backbone_moves" : [
+		"RandomizeBBByRamaPrePro",
+	],
 	"protocols/backbone_moves/local_backbone_mover":[
 		"LocalBackboneMover",
 		"FreePeptide",

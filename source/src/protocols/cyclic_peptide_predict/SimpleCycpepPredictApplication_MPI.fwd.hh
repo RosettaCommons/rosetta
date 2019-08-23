@@ -7,30 +7,31 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI.fwd.hh
-/// @brief  Defines owning pointers for the MPI version of the SimpleCycpepPredictApplication class.
-/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
+/// @file protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI.fwd.hh
+/// @brief Wrapper for SimpleCycpepPredictApplication that allows the app to use hierarchical MPI/pthreads based job distribution.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
 #ifdef USEMPI
 
 #ifndef INCLUDED_protocols_cyclic_peptide_predict_SimpleCycpepPredictApplication_MPI_fwd_hh
 #define INCLUDED_protocols_cyclic_peptide_predict_SimpleCycpepPredictApplication_MPI_fwd_hh
 
+// Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.hh>
 
+
+// Forward
 namespace protocols {
 namespace cyclic_peptide_predict {
 
-class SimpleCycpepPredictApplication_MPI; // fwd declaration
+class SimpleCycpepPredictApplication_MPI;
+
 typedef utility::pointer::shared_ptr< SimpleCycpepPredictApplication_MPI > SimpleCycpepPredictApplication_MPIOP;
 typedef utility::pointer::shared_ptr< SimpleCycpepPredictApplication_MPI const > SimpleCycpepPredictApplication_MPICOP;
-typedef utility::vector1<SimpleCycpepPredictApplication_MPIOP> SimpleCycpepPredictApplication_MPIOPs;
-typedef utility::vector1<SimpleCycpepPredictApplication_MPICOP> SimpleCycpepPredictApplication_MPICOPs;
 
-} // namespace cyclic_peptide_predict
-} // namespace protocols
+} //protocols
+} //cyclic_peptide_predict
 
-#endif // INCLUDED_protocols_cyclic_peptide_predict_SimpleCycpepPredictApplication_MPI_fwd_hh
+#endif //INCLUDED_protocols_cyclic_peptide_predict_SimpleCycpepPredictApplication_MPI_fwd_hh
 
-#endif // USEMPI
+#endif //USEMPI

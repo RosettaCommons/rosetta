@@ -1,0 +1,32 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+/// @file protocols/backbone_moves/RandomizeBBByRamaPreProCreator.hh
+/// @brief A simple mover to randomize a backbone, or a portion of a backbone, biased by the rama_prepro score of each residue.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+
+#ifndef INCLUDED_protocols_backbone_moves_RandomizeBBByRamaPreProCreator_HH
+#define INCLUDED_protocols_backbone_moves_RandomizeBBByRamaPreProCreator_HH
+
+#include <protocols/moves/MoverCreator.hh>
+
+namespace protocols {
+namespace backbone_moves {
+
+class RandomizeBBByRamaPreProCreator : public protocols::moves::MoverCreator {
+public:
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
+};
+
+} //protocols
+} //backbone_moves
+
+#endif //INCLUDED_protocols_backbone_moves_RandomizeBBByRamaPreProCreator_HH

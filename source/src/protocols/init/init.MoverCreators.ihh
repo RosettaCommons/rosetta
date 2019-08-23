@@ -52,6 +52,7 @@
 #include <protocols/antibody/snugdock/SnugDockCreator.hh>
 
 // B //////////////////////////////////////////////////////////////////////////
+#include <protocols/backbone_moves/RandomizeBBByRamaPreProCreator.hh>
 #include <protocols/backbone_moves/local_backbone_mover/LocalBackboneMoverCreator.hh>
 #include <protocols/backrub/BackrubMoverCreator.hh>
 #include <protocols/backrub/BackrubProtocolCreator.hh>

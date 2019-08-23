@@ -41,6 +41,23 @@
 
 namespace utility {
 
+/// @brief Given a stringstream in which the next block of text is any string representing "true" or any
+/// string representing "false", parse this as a Boolean, and return an informative error message if we fail.
+/// @author Vikram K. Mulligan
+bool
+parse_boolean(
+	std::stringstream &stream,
+	std::string const &errmsg /* = "" */
+) {
+	std::string recipient;
+	stream >> recipient;
+	runtime_assert_string_msg( !stream.bad() && !stream.fail(), (errmsg.empty() ? std::string("Error in utility::parse_boolean(): ") : errmsg ) + "Could not parse " + stream.str() );
+	if ( is_true_string(recipient) ) {
+		return true;
+	}
+	runtime_assert_string_msg( is_false_string(recipient), (errmsg.empty() ? std::string("Error in utility::parse_boolean(): ") : errmsg ) + "Could not interpret \"" + recipient + "\" as a Boolean value in line \"" + stream.str() + "\"." );
+	return false;
+}
 
 utility::vector1< std::string > split(const std::string &s)
 {
@@ -975,6 +992,5 @@ remove_from_string( std::string const & source, std::string const & remove){
 	std::string new_s = boost::algorithm::erase_all_copy( source, remove);
 	return new_s;
 }
-
 
 } // namespace utility

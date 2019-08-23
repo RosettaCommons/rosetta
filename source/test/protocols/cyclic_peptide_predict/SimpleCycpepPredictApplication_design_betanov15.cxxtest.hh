@@ -18,7 +18,7 @@
 
 // GeneralizedKIC headers:
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
-#include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI_JobResultsSummary.hh>
+#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.hh>
 #include <protocols/cyclic_peptide_predict/util.hh>
 
 // Other Rosetta libraries:

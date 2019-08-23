@@ -185,6 +185,18 @@ public: //Functions
 	/// @brief Set the perturbation type for all parameters.
 	void set_perturbation_type_globally( std::string const & perturbation_type_in );
 
+	/// @brief Get the number of repeats needed to go one full turn.
+	/// @details This is rounded UP.  So for an alpha helix, with about 3.6 repeating units (residues)
+	/// per turn, this function returns 4.
+	core::Size repeats_per_turn() const;
+
+	/// @brief The number of residues per repeating unit.
+	core::Size residues_per_repeat() const;
+
+	/// @brief The number of residues needed for one full turn.
+	/// @details This is repeats_per_turn() * residues_per_repeat().
+	core::Size residues_per_turn() const;
+
 private: //Private functions
 
 	/// @brief Update whether certain parameters expect their inputs in degrees.

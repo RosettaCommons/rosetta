@@ -108,6 +108,45 @@ string_split (std::string const &in,char splitchar,T)
 }
 
 
+/// @brief Parse out some data of type T from a stringstream, and throw an error with a message if the
+/// operation fails.
+/// @details Version with a custom error message.
+/// @author Vikram K. Mulligan.
+template< class T >
+inline
+void
+parse_out(
+	std::stringstream &stream,
+	T &recipient,
+	std::string const &errmsg
+) {
+	stream >> recipient;
+	runtime_assert_string_msg( !stream.bad() && !stream.fail(), (errmsg.empty() ? std::string("Error in utility::parse_out(): ") : errmsg ) + "Could not parse " + stream.str() );
+}
+
+/// @brief Parse out some data of type T from a stringstream, and throw an error with a message if the
+/// operation fails.
+/// @details Version with a default error message.
+/// @author Vikram K. Mulligan.
+template< class T >
+inline
+void
+parse_out(
+	std::stringstream &stream,
+	T &recipient
+) {
+	parse_out( stream, recipient, "" );
+}
+
+/// @brief Given a stringstream in which the next block of text is any string representing "true" or any
+/// string representing "false", parse this as a Boolean, and return an informative error message if we fail.
+/// @author Vikram K. Mulligan
+bool
+parse_boolean(
+	std::stringstream &stream,
+	std::string const &errmsg = ""
+);
+
 /// @brief split given std::string using ' ' symbol.
 utility::vector1< std::string >
 split(std::string const & s);

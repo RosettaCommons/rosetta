@@ -109,9 +109,10 @@ sources = {
 	        "UBQ_GTPaseMover",
         ],
 	"protocols/cyclic_peptide_predict" : [
+		"HierarchicalHybridJDApplication",
+		"HierarchicalHybridJD_JobResultsSummary",
 		"SimpleCycpepPredictApplication",
 		"SimpleCycpepPredictApplication_MPI",
-		"SimpleCycpepPredictApplication_MPI_JobResultsSummary",
 		"util",
 	],
 	"protocols/enzdes": [
@@ -132,6 +133,16 @@ sources = {
 		"PackRotamersMoverPartGreedy",
 		"SecondaryMatchProtocol",
 		"RemoveLigandFilter",
+	],
+	"protocols/helical_bundle_predict" : [
+		"HBPHelixAssignments",
+		"HBP_FinalFullatomRefinementMoveGenerator",
+		"HBP_HelixCoilMoveGenerator",
+		"HBP_MoveGenerator",
+		"HBP_SigmoidalTemperatureScheduleGenerator",
+		"HBP_TemperatureScheduleGenerator",
+		"HelicalBundlePredictApplication",
+		"HelicalBundlePredictApplication_MPI",
 	],
 	"protocols/hbnet": [
                 "HBNet",

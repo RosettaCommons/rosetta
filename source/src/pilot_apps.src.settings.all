@@ -1101,6 +1101,7 @@ sources = {
 	"pilot/vmullig" : [
 		"cycpep_analysis",
 		"fit_helixparams",
+		"helical_bundle_predict",
 		"make_mainchain_potential",
 		"plot_scoreterm",
 		#"simple_cycpep_predict",

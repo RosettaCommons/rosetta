@@ -85,6 +85,12 @@ void write_minor_helix_params (
 	utility::vector1 < core::Real > const &delta_z1
 );
 
+/// @brief Given a Crick params filename stub (e.g. "alpha_helix_100"), get the string with the
+/// full path and extension (e.g. "protocol_data/crick_parameters/alpha_helix_100.crick_params").
+/// @details Checks a few locations (current path, database path), so this necessarily involves a
+/// read from disk!
+std::string get_crick_params_filename_formatted( std::string const & basename );
+
 /// @brief Read minor helix parameters from a crick_params file.
 ///
 void read_minor_helix_params (
@@ -102,6 +108,7 @@ void read_minor_helix_params (
 /// @details Coordinates will be returned as a vector of vectors of xyzVectors.  The outer
 /// index will refer to residue number, and the inner index will refer to atom number.
 /// Returns failed=true if coordinates could not be generated, false otherwise.
+/// @note The pose is just used to look up mainchain atom counts in residues.
 void generate_atom_positions(
 	utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > &outvector,
 	core::pose::Pose const &helixpose,

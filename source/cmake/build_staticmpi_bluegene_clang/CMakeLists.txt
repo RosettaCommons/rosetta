@@ -126,6 +126,22 @@ SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--relax")
 #protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5
 #protocols.6 protocols.7 devel)
 
+### helical_bundle_predict
+ADD_EXECUTABLE(helical_bundle_predict.cxx11threadmpi.linuxbgclangrelease
+../../src/apps/pilot/vmullig/helical_bundle_predict.cc)
+TARGET_LINK_LIBRARIES(helical_bundle_predict.cxx11threadmpi.linuxbgclangrelease "${LINK_ALL_LIBS}" )
+SET_TARGET_PROPERTIES(helical_bundle_predict.cxx11threadmpi.linuxbgclangrelease PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
+SET_TARGET_PROPERTIES(helical_bundle_predict.cxx11threadmpi.linuxbgclangrelease PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
+# Dependencies are set so that binaries are created after rosetta libraries
+# are built
+ADD_DEPENDENCIES(helical_bundle_predict.cxx11threadmpi.linuxbgclangrelease ObjexxFCL cifparse libxml2 utility numeric
+basic core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2
+protocols_b.2 protocols.3 protocols.4 protocols_a.5 protocols_b.5 protocols_c.5
+protocols_d.5 protocols_e.5 protocols_f.5 protocols_g.5 protocols_h.5
+protocols_a.6 protocols_b.6 protocols_c.6 protocols_d.6 protocols_e.6
+protocols.7 protocols.8 devel)
+
+
 ### simple_cycpep_predict
 ADD_EXECUTABLE(simple_cycpep_predict.cxx11threadmpi.linuxbgclangrelease
 ../../src/apps/public/cyclic_peptide/simple_cycpep_predict.cc)

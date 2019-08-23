@@ -143,6 +143,14 @@ void TracerImpl::set_tracer_options( TracerOptions const & to) {
 	tracer_options_ = utility::pointer::make_shared< TracerOptions >( to );
 }
 
+/// @brief Set whether we're printing the channel name.
+/// @details This overrides the *local* setting, but does not alter the *global* setting.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+void
+TracerImpl::set_local_print_channel_name( bool const setting ) {
+	local_print_channel_name_ = setting;
+}
+
 bool & TracerImpl::super_mute_()
 {
 	static bool mute = false;
@@ -244,6 +252,7 @@ void TracerImpl::init(std::string const & channel, utility::CSI_Sequence const &
 	muted_by_default_ = muted_by_default;
 
 	channel_ = channel;
+	local_print_channel_name_ = true;
 	priority_ = priority;
 
 	channel_color_ = channel_color;
@@ -537,7 +546,7 @@ void TracerImpl::prepend_channel_name( out_stream & sout, std::string const &str
 
 	sout << output_prefix_;
 
-	if ( tracer_options_ && tracer_options_->print_channel_name ) {
+	if ( local_print_channel_name_ && tracer_options_ && tracer_options_->print_channel_name ) {
 		sout << channel_name_color_;
 		sout << channel_ << ": ";
 	}

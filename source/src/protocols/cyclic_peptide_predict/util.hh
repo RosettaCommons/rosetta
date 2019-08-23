@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_cyclic_peptide_predict_util_hh
 
 // Unit Headers
-#include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI_JobResultsSummary.fwd.hh>
+#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.fwd.hh>
 
 // Package Headers
 #include <core/types.hh>
@@ -37,20 +37,48 @@
 namespace protocols {
 namespace cyclic_peptide_predict {
 
-enum SIMPLE_CYCPEP_PREDICT_MPI_SORT_TYPE {
+enum HIERARCHICAL_HYBRID_JD_MPI_SORT_TYPE {
 	SORT_BY_ENERGIES=1,
 	SORT_BY_RMSD,
 	SORT_BY_HBONDS,
 	SORT_BY_CIS_PEPTIDE_BONDS
 };
 
+#ifdef USEMPI
+/// @brief If rank > 0, wait for a message from proc 0 to continue.  If rank
+/// is zero, send the message.
+/// @details Only used in MPI mode.
+void wait_for_proc_zero();
+#endif //USEMPI
+
+#ifdef USEMPI
+/// @brief In MPI mode, set the MPI-specific variables that the parallel version
+/// of the protocol will need.
+void
+set_MPI_vars(
+	int &MPI_rank,
+	int &MPI_n_procs,
+	core::Size &total_hierarchy_levels,
+	utility::vector1 < core::Size > &procs_per_hierarchy_level,
+	utility::vector1< core::Size > &batchsize_by_level,
+	std::string &sort_by,
+	bool &select_highest,
+	core::Real &output_fraction,
+	std::string &output_filename,
+	core::Real &lambda,
+	core::Real &kbt,
+	core::Size &threads_per_slave,
+	std::string const & app_name
+);
+#endif //USEMPI
+
 /// @brief Given a list of job summaries, sort these by some criterion (e.g. energies, rmsd, etc.) from lowest to highest.
 /// @brief Uses the quicksort algorithm (recursive).
 /// @param[in,out] jobsummaries The list of job summaries.  At the end of this operation, this is sorted from lowest to highest by the criterion specified.
 /// @param[in] sort_type The criterion based on which we're sorting the list.
 void sort_jobsummaries_list(
-	utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > &jobsummaries,
-	SIMPLE_CYCPEP_PREDICT_MPI_SORT_TYPE const sort_type
+	utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > &jobsummaries,
+	HIERARCHICAL_HYBRID_JD_MPI_SORT_TYPE const sort_type
 );
 
 /// @brief Given an existing, sorted list of job summaries and a new, sorted list of job summaries, merge the two lists
@@ -59,9 +87,9 @@ void sort_jobsummaries_list(
 /// @param[in] additional_list These are the new job summaries (presorted), which will be merged with the existing list.
 /// @param[in] sort_type The criterion based on which we're sorting the list.
 void mergesort_jobsummaries_list (
-	utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > &list_to_sort_into,
-	utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > const &additional_list,
-	SIMPLE_CYCPEP_PREDICT_MPI_SORT_TYPE const sort_type
+	utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > &list_to_sort_into,
+	utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > const &additional_list,
+	HIERARCHICAL_HYBRID_JD_MPI_SORT_TYPE const sort_type
 );
 
 /// @brief Given a filename, read and parse the file, returning a list of canonical residues allowed at each position

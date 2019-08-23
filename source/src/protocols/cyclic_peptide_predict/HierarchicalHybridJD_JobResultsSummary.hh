@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI_JobResultsSummary.hh
+/// @file protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.hh
 /// @brief A small helper class used by the SimpleCycpepPredict_MPI class -- headers.
 /// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
 
-#ifndef INCLUDED_protocols_cyclic_peptide_predict_SimpleCycpepPredictApplication_MPI_JobResultsSummary_hh
-#define INCLUDED_protocols_cyclic_peptide_predict_SimpleCycpepPredictApplication_MPI_JobResultsSummary_hh
+#ifndef INCLUDED_protocols_cyclic_peptide_predict_HierarchicalHybridJD_JobResultsSummary_hh
+#define INCLUDED_protocols_cyclic_peptide_predict_HierarchicalHybridJD_JobResultsSummary_hh
 
 // Unit Headers
-#include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI_JobResultsSummary.fwd.hh>
+#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.fwd.hh>
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
@@ -35,16 +35,16 @@ namespace cyclic_peptide_predict {
 
 /// @brief A class for summarizing the result of an MPI-mode job run with the SimpleCycpepPredictApplication.
 /// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
-class SimpleCycpepPredictApplication_MPI_JobResultsSummary : public utility::pointer::ReferenceCount
+class HierarchicalHybridJD_JobResultsSummary : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Constructor
 	///
-	SimpleCycpepPredictApplication_MPI_JobResultsSummary();
+	HierarchicalHybridJD_JobResultsSummary();
 
 	/// @brief Constructor with options
 	///
-	SimpleCycpepPredictApplication_MPI_JobResultsSummary(
+	HierarchicalHybridJD_JobResultsSummary(
 		int const originating_node_MPI_rank,
 		core::Size const jobindex_on_originating_node,
 		core::Real const &pose_energy,
@@ -55,7 +55,7 @@ public:
 
 	/// @brief Explicit virtual destructor.
 	///
-	~SimpleCycpepPredictApplication_MPI_JobResultsSummary() override;
+	~HierarchicalHybridJD_JobResultsSummary() override;
 
 public:
 	/// ------------- Getters -------------------------------
@@ -164,5 +164,5 @@ private:
 } //cyclic_peptide
 } //protocols
 
-#endif //INCLUDED_protocols_cyclic_peptide_predict_SimpleCycpepPredictApplication_MPI_JobResultsSummary_hh
+#endif //INCLUDED_protocols_cyclic_peptide_predict_HierarchicalHybridJD_JobResultsSummary_hh
 

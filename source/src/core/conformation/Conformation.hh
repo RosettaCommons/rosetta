@@ -1516,6 +1516,7 @@ private:
 	Real
 	atom_tree_torsion( TorsionID const & tor_id ) const;
 
+public:
 
 	/// @brief get four backbone atoms which define this backbone torsion
 	/// @note  Returns TRUE to signal FAILURE
@@ -1527,6 +1528,8 @@ private:
 		AtomID & id3,
 		AtomID & id4
 	) const;
+
+private:
 
 	/// @brief Get four backbone atoms which define this backbone torsion, if this residue is an oligourea.
 	/// @details I'm adding this function because backbone_torsion_angle_atoms() is an Escherian labyrinth.

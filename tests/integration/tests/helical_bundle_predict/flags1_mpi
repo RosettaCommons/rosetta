@@ -1,0 +1,12 @@
+-nstruct 5
+-symmetric_gly_tables true
+-inout:write_all_connect_info true
+-in:file:fasta inputs/seq.fasta
+-in:file:native inputs/2nd2_state1.pdb
+-in:file:fullatom
+-helical_bundle_predict:helix_assignment_file inputs/2nd2.helix_assignments
+-helical_bundle_predict:num_steps_per_simulated_annealing_round_centroid 100
+-helical_bundle_predict:num_simulated_annealing_rounds_centroid 3
+-cyclic_peptide:MPI_processes_by_level 1 3
+-cyclic_peptide:MPI_batchsize_by_level 1
+-out:file:silent output.silent

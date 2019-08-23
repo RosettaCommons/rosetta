@@ -24,6 +24,7 @@
 --namespace--
 
 /// @brief --brief--
+/// @author --name-- (--email--)
 class --class-- : public utility::pointer::ReferenceCount {
 
 public:

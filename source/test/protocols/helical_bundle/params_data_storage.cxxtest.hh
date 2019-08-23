@@ -165,6 +165,10 @@ public:
 		makebundle->helix(2)->calculator_op()->boolean_parameter( protocols::helical_bundle::BPC_invert_helix )->set_value( true );
 		makebundle->helix(2)->set_helix_length(12);
 
+		TS_ASSERT_EQUALS( makebundle->helix(1)->calculator_op()->residues_per_turn(), 4);
+		TS_ASSERT_EQUALS( makebundle->helix(1)->calculator_op()->residues_per_repeat(), 1);
+		TS_ASSERT_EQUALS( makebundle->helix(1)->calculator_op()->repeats_per_turn(), 4);
+
 		//Apply the mover:
 		makebundle->apply(*testpose_);
 

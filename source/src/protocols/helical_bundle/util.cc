@@ -204,6 +204,30 @@ void write_minor_helix_params (
 	return;
 }
 
+/// @brief Given a Crick params filename stub (e.g. "alpha_helix_100"), get the string with the
+/// full path and extension (e.g. "protocol_data/crick_parameters/alpha_helix_100.crick_params").
+/// @details Checks a few locations (current path, database path), so this necessarily involves a
+/// read from disk!
+std::string
+get_crick_params_filename_formatted(
+	std::string const & basename
+) {
+	using namespace utility::io;
+	std::string filename_formatted( basename );
+	if ( utility::file::file_extension(filename_formatted)!="crick_params" ) filename_formatted+= ".crick_params";
+
+	izstream infile;
+	infile.open( filename_formatted );
+	if ( !infile.good() ) {
+		filename_formatted = "protocol_data/crick_parameters/" + utility::file::file_basename(filename_formatted) + ".crick_params";
+		basic::database::open( infile, filename_formatted );
+		runtime_assert_string_msg( infile.good(), "In protocols::helical_bundle::get_crick_params_filename_formatted(): Unable to open .crick_params file \"" + basename + "\" for read!" );
+	}
+
+	infile.close();
+	return filename_formatted;
+}
+
 /// @brief Read minor helix parameters from a crick_params file.
 ///
 void read_minor_helix_params (
@@ -225,16 +249,14 @@ void read_minor_helix_params (
 	omega1 = 0.0;
 	z1 = 0.0;
 
-	std::string filename_formatted = filename;
-	if ( utility::file::file_extension(filename_formatted)!="crick_params" ) filename_formatted+= ".crick_params";
+	std::string const filename_formatted( get_crick_params_filename_formatted(filename) );
 
 	izstream infile;
 	infile.open( filename_formatted );
 	if ( !infile.good() ) {
-		filename_formatted = "protocol_data/crick_parameters/" + utility::file::file_basename(filename_formatted) + ".crick_params";
 		basic::database::open( infile, filename_formatted );
-		runtime_assert_string_msg( infile.good(), "In protocols::helical_bundle::read_minor_helix_params: Unable to open .crick_params file for read!" );
 	}
+	runtime_assert_string_msg( infile.good(), "In protocols::helical_bundle::read_minor_helix_params(): Unable to open .crick_params file \"" + filename_formatted + "\" for read!" );
 
 	if ( TR.Debug.visible() ) TR.Debug << "Reading " << filename_formatted << std::endl;
 
@@ -337,6 +359,7 @@ void read_minor_helix_params (
 /// @details Coordinates will be returned as a vector of vectors of xyzVectors.  The outer
 /// index will refer to residue number, and the inner index will refer to atom number.
 /// Returns failed=true if coordinates could not be generated, false otherwise.
+/// @note The pose is just used to look up mainchain atom counts in residues.
 void generate_atom_positions(
 	utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > &outvector,
 	core::pose::Pose const &helixpose,

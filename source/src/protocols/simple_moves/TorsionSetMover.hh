@@ -32,17 +32,25 @@ class TorsionSetMover: public moves::Mover {
 
 public:
 
-	//constructor
+	/// @brief Default constructor -- explicitly deleted.
+	TorsionSetMover() = delete;
+
+	/// @brief Constructor.
 	TorsionSetMover(
 		utility::vector1< core::id::TorsionID >  torsion_ids,
 		utility::vector1< core::Real > torsion_values );
 
-	//destructor
+	/// @brief Destructor.
 	~TorsionSetMover() override;
+
+	/// @brief Clone function: create a copy of this object and return an owning pointer to the copy.
+	protocols::moves::MoverOP clone() const override;
 
 public:
 
+	/// @brief Apply function: apply this mover to a pose.
 	void apply( core::pose::Pose & pose ) override;
+
 	std::string get_name() const override { return "TorsionSetMover"; }
 
 private:

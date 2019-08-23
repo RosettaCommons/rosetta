@@ -16,7 +16,7 @@
 #include <protocols/simple_moves/TorsionSetMover.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <utility>
+#include <utility/pointer/memory.hh>
 
 static basic::Tracer TR( "protocols.simple_moves.TorsionSetMover" );
 
@@ -25,17 +25,18 @@ using namespace core;
 namespace protocols {
 namespace simple_moves {
 
-//Constructor
+/// @brief Constructor.
 TorsionSetMover::TorsionSetMover(
 	utility::vector1< id::TorsionID >  torsion_ids,
-	utility::vector1< Real > torsion_values ):
+	utility::vector1< Real > torsion_values
+):
 	torsion_ids_(std::move( torsion_ids )),
 	torsion_values_(std::move( torsion_values ))
 {
 	runtime_assert( torsion_ids_.size() == torsion_values_.size() );
 }
 
-//Destructor
+/// @brief Destructor.
 TorsionSetMover::~TorsionSetMover() = default;
 
 void
@@ -43,6 +44,12 @@ TorsionSetMover::apply( core::pose::Pose & pose ) {
 	for ( Size n = 1; n <= torsion_ids_.size(); n++ ) {
 		pose.set_torsion( torsion_ids_[ n ], torsion_values_[ n ] );
 	}
+}
+
+/// @brief Clone function: create a copy of this object and return an owning pointer to the copy.
+protocols::moves::MoverOP
+TorsionSetMover::clone() const {
+	return utility::pointer::make_shared< TorsionSetMover >( *this );
 }
 
 } //simple_moves
