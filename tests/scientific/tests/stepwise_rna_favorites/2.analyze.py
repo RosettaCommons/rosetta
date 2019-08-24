@@ -28,7 +28,7 @@ rmsd_cutoffs = {}
 
 # TODO: populate me for each target.
 min_e_cutoffs = {'gagua_pentaloop': -3, 'gcaa_tetraloop': -7, 'gg_mismatch': -9, 'j44a_p4p6': -14, 'r2_4x4': -14, 'srl_fixed': -6, 'srl_free_bulgedG': -8, 'srp_domainIV': -10, 'srp_domainIV_fixed': -9, 'tandem_ga_imino': -14, 'tandem_ga_sheared': -16, 'uucg_tetraloop': 0.5 }
-min_e_rmsd_cutoffs = { 'gagua_pentaloop': 3, 'gcaa_tetraloop': 1.6, 'gg_mismatch': 1.8, 'j44a_p4p6': 4, 'r2_4x4': 4, 'srl_fixed': 6, 'srl_free_bulgedG': 6, 'srp_domainIV': 4, 'srp_domainIV_fixed': 3.5, 'tandem_ga_imino': 3, 'tandem_ga_sheared': 2, 'uucg_tetraloop': 3 }
+min_e_rmsd_cutoffs = { 'gagua_pentaloop': 3, 'gcaa_tetraloop': 1.6, 'gg_mismatch': 1.8, 'j44a_p4p6': 4, 'r2_4x4': 4, 'srl_fixed': 6.2, 'srl_free_bulgedG': 6, 'srp_domainIV': 4, 'srp_domainIV_fixed': 3.5, 'tandem_ga_imino': 3, 'tandem_ga_sheared': 2, 'uucg_tetraloop': 3 }
 
 def main(args):
     # inputs are header labels from the scorefile, for instance "score" and "rmsd"
@@ -40,14 +40,15 @@ def main(args):
     scorefiles.extend( [ f'{working_dir}/output/{t}/{t}.out' for t in targets ] )
     #logfiles.extend( [ f'{working_dir}/hpc-logs/hpc.{testname}-{t}.*.log' for t in targets ] )
 
-    # get column numbers from labels, 1-indexed
-    x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).split().index( x_label ) + 1 )
-    y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).split().index( y_label ) + 1 )
 
     # go through scorefiles of targets
     for i in range( 0, len( scorefiles ) ):
 
         target_results = {}
+        
+        # get column numbers from labels, 1-indexed
+        x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).split().index( x_label ) + 1 )
+        y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).split().index( y_label ) + 1 )
 
         # read in score file, scores are sorted, first one is lowest
         x = subprocess.getoutput( "grep \"^SCORE:\" " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + x_label + " | sort -nk2 | awk '{print $" + x_index + "}'" ).splitlines()

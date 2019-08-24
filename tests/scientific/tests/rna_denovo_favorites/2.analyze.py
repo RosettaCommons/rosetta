@@ -37,22 +37,33 @@ def main(args):
     scorefiles.extend( [ f'{working_dir}/output/{t}/{t}.out' for t in targets ] )
     #logfiles.extend( [ f'{working_dir}/hpc-logs/hpc.{testname}-{t}.*.log' for t in targets ] )
 
-    # get column numbers from labels, 1-indexed
-    x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).split().index( x_label ) + 1 )
-    y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).split().index( y_label ) + 1 )
-
     # go through scorefiles of targets
     for i in range( 0, len( scorefiles ) ):
 
         target_results = {}
+        
+        # get column numbers from labels, 1-indexed
+        # We do this in the inner loop because it's fast, and also because it's possible for the index 
+        # to change because there is a bizarre instability in how the numbers get set.
+        x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).split().index( x_label ) + 1 )
+        y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).split().index( y_label ) + 1 )
+
 
         # read in score file, scores are sorted, first one is lowest
         x = subprocess.getoutput( "grep \"^SCORE:\" " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + x_label + " | sort -nk2 | awk '{print $" + x_index + "}'" ).splitlines()
         y = subprocess.getoutput( "grep \"^SCORE:\" " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " | sort -nk2 | awk '{print $" + y_index + "}'" ).splitlines()
 
         # map values to floats (were strings)
-        x = list( map( float, x ))
-        y = list( map( float, y ))
+        # skip any failures??
+        newx, newy = [], []
+        for x_, y_ in zip(x,y):
+            try:
+                fx_, fy_ = float(x_), float(y_)
+                newx.append(fx_)
+                newy.append(fy_)
+            except:
+                continue
+        x, y = newx, newy
 
         # check for lowest score below cutoff
         print (targets[i], "\t", end=""),

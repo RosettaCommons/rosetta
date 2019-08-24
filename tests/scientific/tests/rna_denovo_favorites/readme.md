@@ -11,10 +11,10 @@ The benchmark set contains the 12 loop modeling problems from favorites.txt, a b
 See Das et al., Nat. Methods 2010 for a description of the FARFAR protocol. The benchmark takes 6 hours on the test server (~120 CPU-hours).
 
 ## PERFORMANCE METRICS
-Benchmark performance is based on the minimum RMSD sampled and minimum energy sampled; each case has a separate threshold. Since sampling is limited for each test, cutoffs are determined conservatively through repeated runs. A superior measure, at least in theory, might be 
+Benchmark performance is based on the minimum RMSD sampled and minimum energy sampled; each case has a separate threshold. Since sampling is limited for each test, cutoffs are determined conservatively through repeated runs. A superior measure, at least in theory, might be to compute pnear and compare it to some threshold value.
 
 ## KEY RESULTS
-n/a
+Because of the high-energy outliers endemic to the fragment assembly method, real "funnel-like" energy surfaces won't be visible for this test. That said, the lowest energy overall should lie to the left of the RMSD threshold and below the scoring threshold for each test; stochastic failures where a low-energy model or two appear slightly past the RMSD threshold should be unsurprising, but a failure to return sufficiently low-energy models at all should be viewed with suspicion.
 
 ## DEFINITIONS AND COMMENTS
 n/a
