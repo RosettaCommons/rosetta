@@ -17,3 +17,4 @@
 -out:nstruct 1
 -out:level 300
 -out:file:scorefile score.sc
+-out:levels core.io.silent:Debug

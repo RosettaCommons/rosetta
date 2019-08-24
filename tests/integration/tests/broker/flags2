@@ -21,3 +21,4 @@
 -nstruct 1
 -out:level 300
 -out:file:scorefile score2.fsc
+-out:levels core.io.silent:Debug

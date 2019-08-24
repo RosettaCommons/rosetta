@@ -22,6 +22,15 @@
 
 namespace utility {
 
+void swap4_aligned(void *v, long ndata) {
+	uint32_t *data = (uint32_t *) v; // Unsigned as there's issues with bitshifting signed types
+	for ( long i=0; i<ndata; i++ ) {
+		uint32_t *N;
+		N = data + i;
+		*N=(((*N>>24)&0xff) | ((*N&0xff)<<24) | ((*N>>8)&0xff00) | ((*N&0xff00)<<8));
+	}
+}
+
 void encode6bit(const unsigned char* memory, unsigned int length, std::string &jar){
 	jar = "";
 	unsigned int i;

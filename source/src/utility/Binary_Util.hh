@@ -21,23 +21,13 @@
 // Could be iosfwd, except for Windows PyRosetta.
 #include <string>
 
-
 namespace utility {
 
 ///////////////////////////////////
 // Endianness swap
 // Only works with aligned 4-byte quantities, will cause a bus error
 //    on some platforms if used on unaligned data.
-inline void swap4_aligned(void *v, long ndata) {
-	int *data = (int *) v;
-	long i;
-	for ( i=0; i<ndata; i++ ) {
-		int *N;
-		N = data + i;
-		*N=(((*N>>24)&0xff) | ((*N&0xff)<<24) | ((*N>>8)&0xff00) | ((*N&0xff00)<<8));
-	}
-}
-
+void swap4_aligned(void *v, long ndata);
 
 //////////////////////////
 ///

@@ -16,3 +16,4 @@
 -run:intermediate_structures
 -nstruct 1
 -out:level 300
+-out:levels core.io.silent:Debug

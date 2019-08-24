@@ -71,9 +71,10 @@
 #include <boost/lexical_cast.hpp>
 
 #include <utility/vector1.hh>
+#include <utility/stream_util.hh>
 #include <utility/Binary_Util.hh>
 #include <utility/pointer/owning_ptr.hh>
-
+#include <numeric/xyzVector.io.hh>
 
 static basic::Tracer tr( "core.io.silent" );
 
@@ -472,18 +473,22 @@ bool BinarySilentStruct::init_from_lines(
 			}
 
 			// endianness check ...
-			//   check the dist between atoms 1 and 2 as well as atoms 2 and 3 if
-			//   EITHER is unreasonable .. and flipping fixes BOTH then turn bitflip on
-			// [ hey wait, len23 assumed protein -- only look at atoms 1 and 2 -- rhiju ]
+			//   check the dist between atoms 1 and 2. If unreasonable and flipping fixes them, then turn bitflip on.
+			//   (Distance between atoms 1 and 2 is somewhat arbitrary - we used to check more, but that didn't work with all structures.)
+			runtime_assert_msg( sizeof( float ) == 4, "Silent file readin requires floats to be 4 bytes." );
+			runtime_assert_msg( sizeof( numeric::xyzVector<float> ) == 3*4, "xyzVector has padding incompatible with silent file readin" );
 			if ( currpos == 1 && !bitflip ) {
 				core::Real len_check12 = (atm_buff[1]-atm_buff[2]).length();
 				if ( len_check12 < 0.5 || len_check12 > 2.0 || ! utility::isfinite( len_check12 ) ) {
 					utility::swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
 
-					// recheck; if not better flip back
-					len_check12 = (atm_buff[1]-atm_buff[2]).length();
+					// recheck; if not better then flip back
+					core::Real len_check12_flip = (atm_buff[1]-atm_buff[2]).length();
 
-					if ( len_check12 < 0.5 || len_check12 > 2.0 || !utility::isfinite( len_check12 ) ) { //|| len_check23 < 0.5 || len_check23 > 2.0 ) {
+					if ( len_check12_flip < 0.5 || len_check12_flip > 2.0 || !utility::isfinite( len_check12_flip ) ) {
+						// Oops, we were probably wrong - flip back.
+						tr.Warning << "Coordinates in silent file are odd. Unable to properly do endianness check; assuming native endianness." << std::endl;
+						tr << "Native endianness check length is " << len_check12 << " flipped is " << len_check12_flip << ". Use `-force_silent_bitflip_on_read` to force flipped endianness." << std::endl;
 						utility::swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
 					} else {
 						tr.Warning << "Reading binary silent file with inverted endian-ness!  Will attempt to flip automatically. Tag: " << decoy_tag() << std::endl;
