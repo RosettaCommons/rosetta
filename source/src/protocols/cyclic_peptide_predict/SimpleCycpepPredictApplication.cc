@@ -1767,7 +1767,7 @@ SimpleCycpepPredictApplication::run() const {
 			if ( silentlist_out_ ) {
 				silentlist_->push_back(ss);
 				core::Size curjob( summarylist_->size() + 1 );
-				summarylist_->push_back( HierarchicalHybridJD_JobResultsSummaryOP( utility::pointer::make_shared< HierarchicalHybridJD_JobResultsSummary >( my_rank_, curjob, pose->energies().total_energy(), (native_pose ? native_rmsd : 0), static_cast< core::Size >( std::round(-1.0*final_hbonds) ), cis_peptide_bonds ) ) );
+				summarylist_->push_back( utility::pointer::make_shared< HierarchicalHybridJD_JobResultsSummary >( my_rank_, curjob, pose->energies().total_energy(), (native_pose ? native_rmsd : 0), static_cast< core::Size >( std::round(-1.0*final_hbonds) ), cis_peptide_bonds ) );
 			}
 		} else { //if pdb output
 			char outstring[512];

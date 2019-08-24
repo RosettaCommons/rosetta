@@ -524,7 +524,10 @@ HelicalBundlePredictApplication::do_a_simulated_annealing_round(
 ) const {
 	protocols::rosetta_scripts::ParsedProtocolOP curmove(nullptr);
 	core::Real old_energy( sfxn(*pose) );
-	core::Real new_energy( old_energy ), lowest_energy( old_energy );
+	core::Real new_energy/*( old_energy )*/, lowest_energy( old_energy );
+	//Note: I'm commenting out the initialization on new_energy to keep the clang analysis test happy, above,
+	//but developers should be aware that this could create uninitialized errors down the road if anything
+	//changes that causes new_energy to be read before anything is assigned to it, below.
 
 	core::pose::PoseOP lowestE_pose( pose->clone() );
 
@@ -580,7 +583,10 @@ HelicalBundlePredictApplication::do_simulated_annealing(
 ) const {
 	core::pose::PoseOP lowestE_pose( pose->clone() );
 	core::Real lowest_energy( sfxn(*pose)  );
-	core::Real current_energy( lowest_energy );
+	core::Real current_energy/*( lowest_energy )*/;
+	//Note: I'm commenting out the initialization on current_energy to keep the clang analysis test happy, above,
+	//but developers should be aware that this could create uninitialized errors down the road if anything
+	//changes that causes current_energy to be read before anything is assigned to it, below.
 
 	temperature_generator->set_max_rounds( num_rounds );
 	move_generator->set_max_rounds( num_rounds );
