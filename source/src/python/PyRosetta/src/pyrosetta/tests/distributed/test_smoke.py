@@ -54,6 +54,12 @@ class SmokeTestDistributed(unittest.TestCase):
 
         Which is to say, turn on the power and look for magic smoke.
         """
+        flags = """
+            -ignore_unrecognized_res  1
+               -ex4 # Test comment 1
+             -out:level     300   ### Test comment 2
+            """
+        pyrosetta.distributed.init(flags)
 
         score_task = score.ScorePoseTask()
         rs_task = rosetta_scripts.SingleoutputRosettaScriptsTask(self.min_rs)

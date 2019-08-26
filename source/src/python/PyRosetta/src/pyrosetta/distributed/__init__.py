@@ -1,3 +1,12 @@
+# :noTabs=true:
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org.
+# (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
+
+
 import functools
 import logging
 import threading
@@ -9,12 +18,19 @@ import pyrosetta.rosetta.basic.random
 
 _logger = logging.getLogger("pyrosetta.distributed")
 
-__all__ = ["maybe_init", "requires_init", "with_lock"]
+__all__ = ["init", "maybe_init", "requires_init", "with_lock"]
 
 # Access lock for any non-threadsafe calls into rosetta internals.
 # Intended to provide a threadsafe api surface area to `distributed`.
 _access_lock = threading.RLock()
 
+
+def _normflags(flags):
+    """Normalize tuple/list/str of flags into str."""
+    if not isinstance(flags, str):
+        flags = " ".join(flags)
+    return " ".join(" ".join([line.split("#")[0] for line in flags.split("\n")]).split())
+    
 
 def with_lock(func):
     """Function decorator that protects access to rosetta internals."""
@@ -71,3 +87,10 @@ def requires_init(func):
         return func(*args, **kwargs)
 
     return fwrap
+
+
+def init(options=None, **kwargs):
+    """Initialize PyRosetta with command line options."""
+    if options and ("extra_options" not in kwargs):
+        kwargs["extra_options"] = _normflags(options)
+    maybe_init(**kwargs)

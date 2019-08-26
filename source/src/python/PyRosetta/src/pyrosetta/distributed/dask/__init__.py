@@ -10,13 +10,6 @@ import pyrosetta
 import pyrosetta.distributed
 
 
-def _normflags(flags):
-    """Normalize tuple/list/str of flags into str."""
-    if not isinstance(flags, str):
-        flags = " ".join(flags)
-    return " ".join(" ".join([line.split("#")[0] for line in flags.split("\n")]).split())
-
-
 def worker_extra(init_flags=None, local_directory=None):
     """Format flags and local directory for dask worker preload.
 
@@ -39,7 +32,6 @@ def worker_extra(init_flags=None, local_directory=None):
         extra=pyrosetta.distributed.dask.worker_extra(init_flags, local_directory)
     )
     """
-
     extras = []
     if local_directory:
         extras.extend(["--local-directory", local_directory])
@@ -51,7 +43,7 @@ def worker_extra(init_flags=None, local_directory=None):
         extras.extend(
             [
                 "--preload pyrosetta.distributed.dask.worker ' {0}'".format(
-                    _normflags(init_flags)
+                    pyrosetta.distributed._normflags(init_flags)
                 )
             ]
         )
@@ -67,11 +59,4 @@ def init_notebook(init_flags=None):
     import pyrosetta.distributed.dask
     pyrosetta.distributed.dask.init_notebook(init_flags)
     """
-    kwargs = {}
-
-    if init_flags:
-        kwargs["extra_options"] = _normflags(init_flags)
-    else:
-        kwargs["extra_options"] = ""
-
-    pyrosetta.distributed.maybe_init(**kwargs)
+    pyrosetta.distributed.init(options=init_flags)
