@@ -69,7 +69,6 @@ initialize_ncbbs (
 		}
 		if ( pose.residue(i).has_variant_type(chemical::OOP_POST)== 1 ) {
 			ncbb_seq_positions.push_back( i );
-			// Do we want to check if this is a dangling variant?
 		}
 		if ( pose.residue(i).has_variant_type(chemical::TRIAZOLAMERC) == 1 ) {
 			ncbb_seq_positions.push_back( i );
@@ -77,7 +76,6 @@ initialize_ncbbs (
 		}
 		if ( pose.residue(i).has_variant_type(chemical::TRIAZOLAMERN)== 1 ) {
 			ncbb_seq_positions.push_back( i );
-			// Do we want to check if this is a dangling variant?
 		}
 		if ( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1 ) {
 			ncbb_seq_positions.push_back( i );
@@ -87,7 +85,6 @@ initialize_ncbbs (
 		if ( pose.residue(i).has_variant_type(chemical::HBS_POST) == 1 ) {
 			ncbb_seq_positions.push_back( i );
 			hbs = 0;
-			// Do we want to check if this is a dangling variant?
 		}
 
 		if ( hbs == 1 ) { // we're inside the hbs macrocycle; even though these residues are unpatched
@@ -140,15 +137,6 @@ add_generic_hbs_constraint(
 	Size const postn = hbs_pre_position+2;
 	conformation::Residue const & pre = pose.residue( hbs_pre_position );
 	conformation::Residue const & post = pose.residue( hbs_pre_position+2 );
-
-	if  ( ! pre.has_variant_type(chemical::HBS_PRE) ) {
-		TR.Error << "Residue " << pren << " of type " << pre.name() << " is being used as the first residue in an HBS interaction, but isn't of the the correct type." << std::endl;
-		utility_exit_with_message( "Residue used in HBS constraint is not set up as a proper HBS_PRE type." );
-	}
-	if  ( ! post.has_variant_type(chemical::HBS_POST) ) {
-		TR.Error << "Residue " << pren << " of type " << pre.name() << " is being used as the first residue in an HBS interaction, but partner residue " << postn << " has OOP-incompatible type " << post.name() << std::endl;
-		utility_exit_with_message( "Residue used in HBS constraint is not set up as a proper HBS_POST type." );
-	}
 
 	HarmonicFuncOP harm_func( new HarmonicFunc( distance, std ) );
 	HarmonicFuncOP harm_func_0( new HarmonicFunc( 0, std ) );
@@ -233,14 +221,8 @@ void add_triazole_constraint( core::pose::Pose & pose, core::Size i /* triazole_
 	using namespace core::scoring;
 	using namespace core::scoring::func;
 	using namespace core::scoring::constraints;
-	if  ( ! pose.residue( i ).has_variant_type(core::chemical::TRIAZOLAMERC) ) {
-		TR.Error << "Residue " << i << " of type " << pose.residue( i ).name() << " is being used as the first residue in a triazolamer interaction, but isn't of the the correct type." << std::endl;
-		utility_exit_with_message( "Residue used in triazolamer constraint is not set up as a proper TRIAZOLAMERC type." );
-	}
-	if  ( ! pose.residue( i+1 ).has_variant_type(core::chemical::TRIAZOLAMERN) ) {
-		TR.Error << "Residue " << i << " of type " << pose.residue( i ).name() << " is being used as the first residue in a triazolamer interaction, but partner residue " << i+1 << " has triazolamer-incompatible type " << pose.residue( i+1 ).name() << std::endl;
-		utility_exit_with_message( "Residue used in triazolamer constraint is not set up as a proper TRIAZOLAMERN type." );
-	}
+	runtime_assert_msg( pose.residue( i ).has_variant_type(core::chemical::TRIAZOLAMERC), "residue must have TRIAZOLAMERC variant type" );
+	runtime_assert_msg( pose.residue( i+1 ).has_variant_type(core::chemical::TRIAZOLAMERN), "next residue must have TRIAZOLAMERN variant type" );
 
 	HarmonicFuncOP hf( new HarmonicFunc( 1.347, 0.05 ) );
 	HarmonicFuncOP zf( new HarmonicFunc( 0.000, 0.01 ) );
@@ -348,14 +330,7 @@ void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, c
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
 
-	if  ( ! pose.residue(oop_seq_position).has_variant_type(chemical::OOP_PRE) ) {
-		TR.Error << "Residue " << oop_seq_position << " of type " << pose.residue(oop_seq_position).name() << " is being used as the first residue in an OOP interaction, but isn't of the the correct type." << std::endl;
-		utility_exit_with_message( "Residue used in OOP constraint is not set up as a proper OOP_PRE type." );
-	}
-	if  ( ! pose.residue(oop_seq_position+1).has_variant_type(chemical::OOP_POST) ) {
-		TR.Error << "Residue " << oop_seq_position << " of type " << pose.residue(oop_seq_position).name() << " is being used as the first residue in an OOP interaction, but partner residue " << oop_seq_position+1 << " has OOP-incompatible type " << pose.residue(oop_seq_position+1).name() << std::endl;
-		utility_exit_with_message( "Residue used in OOP constraint is not set up as a proper OOP_POST type." );
-	}
+	runtime_assert_msg( pose.residue(oop_seq_position).has_variant_type(chemical::OOP_PRE) == 1, "residue must have OOP_PRE variant type" );
 
 	//kdrew: add constraint
 	core::scoring::func::HarmonicFuncOP harm_func( new core::scoring::func::HarmonicFunc( distance, std ) );
