@@ -139,6 +139,8 @@ public:
 	///  Simple Metric data
 	void grab_pose_cache_data( core::pose::Pose const & pose);
 
+	///@brief Grab RAW simple_metric data for SM IO
+	void grab_simple_metric_data( core::pose::Pose const & pose);
 
 	/// @brief Debug printing
 	friend std::ostream& operator <<(std::ostream &os, StructFileRep const &);

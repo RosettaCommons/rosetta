@@ -13,8 +13,10 @@
 /// @author Andrew Leaver-Fay
 
 
-#ifndef INCLUDED_core_io_pose_builder_PoseFromSFRBuilder_HH
-#define INCLUDED_core_io_pose_builder_PoseFromSFRBuilder_HH
+#ifndef INCLUDED_core_io_pose_from_sfr_PoseFromSFRBuilder_HH
+#define INCLUDED_core_io_pose_from_sfr_PoseFromSFRBuilder_HH
+
+#include <core/io/pose_from_sfr/PoseFromSFRBuilder.fwd.hh>
 
 // Package headers
 #include <core/io/StructFileRep.hh>

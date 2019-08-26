@@ -45,6 +45,8 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/simple_metrics/SimpleMetricData.hh>
+#include <core/simple_metrics/util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -245,6 +247,10 @@ PoseToStructFileRepConverter::init_from_pose(
 	}
 	if ( options_.output_pose_cache() ) {
 		grab_pose_cache_data( input_pose);
+	}
+
+	if ( simple_metrics::has_sm_data(input_pose) ) {
+		grab_simple_metric_data(input_pose);
 	}
 
 	//JAB - here to be able to de-symmetrize pose to output master subunit data.
@@ -925,7 +931,7 @@ PoseToStructFileRepConverter::grab_additional_pose_data( core::pose::Pose const 
 	grab_membrane_info( pose, options_.normalize_to_thk() );
 	grab_foldtree( pose, options_.fold_tree_io() );
 	grab_pdb_parents( pose, options_.pdb_parents() );
-	grab_pdb_comments( pose, options_.pdb_comments() );
+	grab_pdb_comments( pose, true );
 	grab_torsion_records( pose, options_.output_torsions() );
 	grab_pdbinfo_labels( pose );
 
@@ -1382,6 +1388,16 @@ PoseToStructFileRepConverter::grab_pose_cache_data(const core::pose::Pose &pose)
 
 }
 
+void
+PoseToStructFileRepConverter::grab_simple_metric_data( core::pose::Pose const & pose ){
+	using namespace core::simple_metrics;
+
+	if ( has_sm_data(pose) ) {
+		SimpleMetricDataCOP sm_data = get_sm_data(pose);
+		SimpleMetricStruct sm_struct = sm_data->get_all_sm_data();
+		sfr_->simple_metric_data() = sm_struct;
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Get the total number of atoms in the SFR.

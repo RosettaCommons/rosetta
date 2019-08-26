@@ -15,6 +15,7 @@
 #include <core/simple_metrics/SimpleMetricData.hh>
 
 #include <utility/excn/Exceptions.hh>
+#include <utility/string_util.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -68,19 +69,19 @@ SimpleMetricData::shared_from_this() {
 void
 SimpleMetricData::clear(){
 	//Simple Metrics
-	string_data_.clear();
-	real_data_.clear();
+	data_.string_data_.clear();
+	data_.real_data_.clear();
 
 	//CompositeMetrics
-	composite_string_data_.clear();
-	composite_real_data_.clear();
+	data_.composite_string_data_.clear();
+	data_.composite_real_data_.clear();
 
 	//PerResidueMetrics
-	per_residue_string_data_.clear();
-	per_residue_real_data_.clear();
+	data_.per_residue_string_data_.clear();
+	data_.per_residue_real_data_.clear();
 
-	per_residue_string_output_.clear();
-	per_residue_real_output_.clear();
+	data_.per_residue_string_output_.clear();
+	data_.per_residue_real_output_.clear();
 }
 
 /////////////////////////////////////////////
@@ -90,8 +91,8 @@ SimpleMetricData::clear(){
 ///@brief Get RealMetric data.  Return success status.
 bool
 SimpleMetricData::get_value(std::string const & name, Real & value) const{
-	if ( real_data_.count(name) ) {
-		value = real_data_.at(name);
+	if ( data_.real_data_.count(name) ) {
+		value = data_.real_data_.at(name);
 		return true;
 	} else {
 		return false;
@@ -101,8 +102,8 @@ SimpleMetricData::get_value(std::string const & name, Real & value) const{
 ///@brief Get StringMetric data.  Return success status.
 bool
 SimpleMetricData::get_value(std::string const & name, std::string & value) const{
-	if ( string_data_.count(name) ) {
-		value = string_data_.at(name);
+	if ( data_.string_data_.count(name) ) {
+		value = data_.string_data_.at(name);
 		return true;
 	} else {
 		return false;
@@ -117,8 +118,8 @@ SimpleMetricData::get_value(std::string const & name, std::string & value) const
 ///@brief Get CompositeRealMetric data.  Return success status.
 bool
 SimpleMetricData::get_value(std::string const & name, std::map< std::string, Real > & value) const {
-	if ( composite_real_data_.count(name) ) {
-		value = composite_real_data_.at(name);
+	if ( data_.composite_real_data_.count(name) ) {
+		value = data_.composite_real_data_.at(name);
 		return true;
 	} else {
 		return false;
@@ -128,8 +129,8 @@ SimpleMetricData::get_value(std::string const & name, std::map< std::string, Rea
 ///@brief Get CompositeStringMetric data.  Return success status.
 bool
 SimpleMetricData::get_value(std::string const & name, std::map< std::string, std::string > & value) const {
-	if ( composite_string_data_.count(name) ) {
-		value = composite_string_data_.at(name);
+	if ( data_.composite_string_data_.count(name) ) {
+		value = data_.composite_string_data_.at(name);
 		return true;
 	} else {
 		return false;
@@ -144,8 +145,8 @@ SimpleMetricData::get_value(std::string const & name, std::map< std::string, std
 ///@brief Get PerResidueRealMetric data.  Return success status.
 bool
 SimpleMetricData::get_value( std::string const & name, std::map< Size, Real > & value) const {
-	if ( per_residue_real_data_.count(name) ) {
-		value = per_residue_real_data_.at(name);
+	if ( data_.per_residue_real_data_.count(name) ) {
+		value = data_.per_residue_real_data_.at(name);
 		return true;
 	} else {
 		return false;
@@ -155,8 +156,8 @@ SimpleMetricData::get_value( std::string const & name, std::map< Size, Real > & 
 ///@brief Get PerResidueStringMetric data.  Return success status.
 bool
 SimpleMetricData::get_value( std::string const & name, std::map< Size, std::string > & value) const {
-	if ( per_residue_string_data_.count(name) ) {
-		value = per_residue_string_data_.at(name);
+	if ( data_.per_residue_string_data_.count(name) ) {
+		value = data_.per_residue_string_data_.at(name);
 		return true;
 	} else {
 		return false;
@@ -172,9 +173,9 @@ SimpleMetricData::get_value( std::string const & name, std::map< Size, Real > & 
 	}
 
 
-	if ( per_residue_real_data_.count(name) ) {
+	if ( data_.per_residue_real_data_.count(name) ) {
 		std::map< Size, Real > ref_values;
-		for ( auto const & res_pair: per_residue_real_data_.at(name) ) {
+		for ( auto const & res_pair: data_.per_residue_real_data_.at(name) ) {
 			core::Size new_res = pose.corresponding_residue_in_current( res_pair.first, name);
 			if ( new_res != 0 ) {
 				ref_values[new_res] = res_pair.second;
@@ -195,9 +196,9 @@ SimpleMetricData::get_value( std::string const & name, std::map< Size, std::stri
 		return get_value(name, value);
 	}
 
-	if ( per_residue_string_data_.count(name) ) {
+	if ( data_.per_residue_string_data_.count(name) ) {
 		std::map< Size, std::string > ref_values;
-		for ( auto const & res_pair: per_residue_string_data_.at(name) ) {
+		for ( auto const & res_pair: data_.per_residue_string_data_.at(name) ) {
 			core::Size new_res = pose.corresponding_residue_in_current( res_pair.first, name);
 			if ( new_res != 0 ) {
 				ref_values[new_res] = res_pair.second;
@@ -210,56 +211,62 @@ SimpleMetricData::get_value( std::string const & name, std::map< Size, std::stri
 	}
 }
 
+
 /////////////////////////////////////////////
 /////         All Data Access           /////
 /////////////////////////////////////////////
 
+SimpleMetricStruct const &
+SimpleMetricData::get_all_sm_data() const {
+	return data_;
+}
+
 ///@brief Get all RealMetric data
 std::map< std::string, Real > const &
 SimpleMetricData::get_real_metric_data() const {
-	return real_data_;
+	return data_.real_data_;
 }
 
 ///@brief Get all StringMetric data
 std::map< std::string, std::string > const &
 SimpleMetricData::get_string_metric_data() const {
-	return string_data_;
+	return data_.string_data_;
 }
 
 ///@brief Get all CompositeRealMetric data
 std::map< std::string, std::map< std::string, Real >> const &
 SimpleMetricData::get_composite_real_metric_data() const {
-	return composite_real_data_;
+	return data_.composite_real_data_;
 }
 
 ///@brief Get all CompositeStringMetric data
 std::map< std::string, std::map< std::string, std::string >> const &
 SimpleMetricData::get_composite_string_metric_data() const {
-	return composite_string_data_;
+	return data_.composite_string_data_;
 }
 
 ///@brief Get all PerResidueRealMetric data
 std::map< std::string, std::map< core::Size, Real >> const &
 SimpleMetricData::get_per_residue_real_metric_data() const {
-	return per_residue_real_data_;
+	return data_.per_residue_real_data_;
 }
 
 ///@brief Get all PerResidueStringMetric data
 std::map< std::string, std::map< core::Size, std::string >> const &
 SimpleMetricData::get_per_residue_string_metric_data() const {
-	return per_residue_string_data_;
+	return data_.per_residue_string_data_;
 }
 
 ///@brief Get all PerResidueRealMetric data
 std::map< std::string, std::map< std::string, Real >> const &
 SimpleMetricData::get_per_residue_real_metric_output() const {
-	return per_residue_real_output_;
+	return data_.per_residue_real_output_;
 }
 
 ///@brief Get all PerResidueStringMetric data
 std::map< std::string, std::map< std::string, std::string >> const &
 SimpleMetricData::get_per_residue_string_metric_output() const {
-	return per_residue_string_output_;
+	return data_.per_residue_string_output_;
 }
 
 /////////////////////////////////////////////
@@ -269,13 +276,13 @@ SimpleMetricData::get_per_residue_string_metric_output() const {
 ///@brief Set RealMetric data
 void
 SimpleMetricData::set_value( MetricKey , std::string const & name, Real value){
-	real_data_[name] = value;
+	data_.real_data_[name] = value;
 }
 
 ///@brief Set StringMetric data
 void
 SimpleMetricData::set_value( MetricKey, std::string const & name, std::string const & value){
-	string_data_[name] = value;
+	data_.string_data_[name] = value;
 }
 
 
@@ -286,13 +293,13 @@ SimpleMetricData::set_value( MetricKey, std::string const & name, std::string co
 ///@brief Set CompositeRealMetric data
 void
 SimpleMetricData::set_value( MetricKey, std::string const & name, std::map< std::string, Real > const & value){
-	composite_real_data_[name] = value;
+	data_.composite_real_data_[name] = value;
 }
 
 ///@brief Set CompositeStringMetric data
 void
 SimpleMetricData::set_value( MetricKey, std::string const & name, std::map< std::string, std::string > const & value){
-	composite_string_data_[name] = value;
+	data_.composite_string_data_[name] = value;
 }
 
 
@@ -323,8 +330,8 @@ SimpleMetricData::set_value(
 		output[out_res] = pair.second;
 	}
 
-	per_residue_real_data_[name] = value;
-	per_residue_real_output_[name] = output;
+	data_.per_residue_real_data_[name] = value;
+	data_.per_residue_real_output_[name] = output;
 	pose.reference_pose_from_current(name, true /*override*/);
 	TR.Debug << "Created reference pose with name: " << name << std::endl;
 }
@@ -351,12 +358,51 @@ SimpleMetricData::set_value(
 		output[out_res] = pair.second;
 	}
 
-	per_residue_string_data_[name] = value;
-	per_residue_string_output_[name] = output;
+	data_.per_residue_string_data_[name] = value;
+	data_.per_residue_string_output_[name] = output;
 	pose.reference_pose_from_current(name, true /*override*/);
 	TR << "Created reference pose with name: " << name << std::endl;
 }
 
+void
+SimpleMetricData::set_all_data(core::simple_metrics::MetricKey , SimpleMetricStruct const & data){
+	data_ = data;
+}
+
+void
+SimpleMetricData::show() const {
+
+	TR << std::endl << "String Data" << std::endl;
+	for ( auto const & kv : data_.real_data_ ) {
+		TR << kv.first<<" " << kv.second << std::endl;
+	}
+
+	TR << std::endl << "Real Data" << std::endl;
+	for ( auto const & kv : data_.string_data_ ) {
+		TR << kv.first<< " " << kv.second << std::endl;
+	}
+
+	TR << std::endl << "CompositeString Data" << std::endl;
+	for ( auto const & kv : data_.composite_string_data_ ) {
+		TR << kv.first<< " " << utility::to_string(kv.second) << std::endl;
+	}
+
+	TR << std::endl << "CompositeReal Data" << std::endl;
+	for ( auto const & kv : data_.composite_real_data_ ) {
+		TR << kv.first<< " " << utility::to_string(kv.second) << std::endl;
+	}
+
+	TR << "PerResidueString Data" << std::endl;
+	for ( auto const & kv : data_.per_residue_string_data_ ) {
+		TR << kv.first<< " " << utility::to_string(kv.second) << std::endl;
+	}
+
+	TR << "PerResidueReal Data" << std::endl;
+	for ( auto const & kv : data_.per_residue_real_data_ ) {
+		TR << kv.first<< " " << utility::to_string(kv.second) << std::endl;
+	}
+
+}
 
 } // namespace datacache
 } // namespace basic
@@ -369,14 +415,8 @@ template< class Archive >
 void
 core::simple_metrics::SimpleMetricData::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
-	arc(string_data_);
-	arc(real_data_);
-	arc(composite_string_data_);
-	arc(composite_real_data_);
-	arc(per_residue_string_data_);
-	arc(per_residue_real_data_);
-	arc(per_residue_string_output_);
-	arc(per_residue_real_output_);
+	arc(data_);
+
 }
 
 /// @brief Automatically generated deserialization method
@@ -384,14 +424,8 @@ template< class Archive >
 void
 core::simple_metrics::SimpleMetricData::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
-	arc(string_data_);
-	arc(real_data_);
-	arc(composite_string_data_);
-	arc(composite_real_data_);
-	arc(per_residue_string_data_);
-	arc(per_residue_real_data_);
-	arc(per_residue_string_output_);
-	arc(per_residue_real_output_);
+	arc(data_);
+
 }
 
 SAVE_AND_LOAD_SERIALIZABLE(core::simple_metrics::SimpleMetricData );

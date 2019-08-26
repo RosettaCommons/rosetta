@@ -24,6 +24,9 @@
 #include <core/io/StructFileReaderOptions.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
+#include <core/types.hh>
+#include <utility/string_util.hh>
+#include <utility/version.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -34,6 +37,21 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/extra_pose_info_util.hh>
+
+#include <core/simple_metrics/util.hh>
+#include <core/simple_metrics/SimpleMetricData.hh>
+#include <core/simple_metrics/StringMetric.hh>
+#include <core/simple_metrics/RealMetric.hh>
+
+#include <core/simple_metrics/CompositeStringMetric.hh>
+#include <core/simple_metrics/CompositeRealMetric.hh>
+
+#include <core/simple_metrics/PerResidueRealMetric.hh>
+#include <core/simple_metrics/PerResidueStringMetric.hh>
+
+#include <core/simple_metrics/test_classes.hh>
+#include <core/simple_metrics/test_classes.fwd.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 #include <basic/Tracer.hh>
@@ -41,6 +59,9 @@
 #include <mmtf.hpp>
 #include <cifparse/CifFile.h>
 #include <cifparse/CifParserBase.h>
+#include <utility/string_util.hh>
+
+#include <utility/version.hh>
 
 static basic::Tracer TR("core.io.mmtf_IO.cxxtest");
 
@@ -70,7 +91,8 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		core_init_with_additional_options("-ignore_zero_occupancy false -ignore_unrecognized_res -packing::pack_missing_sidechains false");
-		pdb_pose = core::import_pose::pose_from_file( "core/io/1QYS.pdb", false, core::import_pose::PDB_file);
+
+		pdb_pose = core::import_pose::pose_from_file( "core/io/1QYS.pdb", false , core::import_pose::PDB_file);
 		if ( !mmtf_test_files.empty() ) return;
 		// "173D", "1BNA", // missing group name
 		// "1IGT", // has BMA hetatm
@@ -99,6 +121,72 @@ public:
 
 	// Shared finalization goes here.
 	void tearDown() {
+	}
+
+	void test_mmtf_noncanonicals() {
+		utility::vector1< std::string > noncanonical_pdbs({
+			"core/io/mmtf/binselector_input_S_0002.pdb",
+			"core/io/mmtf/crosslinkermover_octahedral_s2_symm_S_0008.pdb",
+			"core/io/mmtf/ncbb_packer_palette_cycpep_pre_stage_3.pdb",
+			"core/io/mmtf/oligourea_predict_native.pdb",
+			});
+		std::map< std::string, std::string > noncanonical_pdb_to_mmtf({
+			{"core/io/mmtf/binselector_input_S_0002.pdb", "core/io/mmtf/binselector_input_S_0002.io.mmtf"},
+			{"core/io/mmtf/crosslinkermover_octahedral_s2_symm_S_0008.pdb", "core/io/mmtf/crosslinkermover_octahedral_s2_symm_S_0008.io.mmtf"},
+			{"core/io/mmtf/ncbb_packer_palette_cycpep_pre_stage_3.pdb", "core/io/mmtf/ncbb_packer_palette_cycpep_pre_stage_3.io.mmtf"},
+			{"core/io/mmtf/oligourea_predict_native.pdb", "core/io/mmtf/oligourea_predict_native.io.mmtf"},
+			});
+		for ( auto const & test_file : noncanonical_pdbs ) {
+			TR << "Working on noncanonical test file: " << test_file << std::endl;
+
+			// 1. load pdb file
+			core::pose::PoseOP og_pose = pose_from_file(test_file, false,
+				core::import_pose::FileType::PDB_file);
+			og_pose->dump_pdb(test_file + ".io.pdb");
+
+			// 2. create the sfr
+			core::io::StructFileRepOptionsOP options =  core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions );
+			core::io::mmtf::set_mmtf_default_options( *options );
+			core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter( *options );
+			converter.init_from_pose( *og_pose );
+			core::io::StructFileRepOP sfr = converter.sfr();
+
+			// 3. write mmtf via sfr
+			utility::io::ozstream file(noncanonical_pdb_to_mmtf[test_file].c_str(), std::ios::out | std::ios::binary);
+			core::io::mmtf::dump_mmtf(file, sfr, *options);
+			file.close();
+
+			// 4. load sfr from written mmtf
+			core::io::StructFileReaderOptions opts;
+			core::io::StructFileRepOP sfr_in(core::io::mmtf::create_sfr_from_mmtf_filename(
+				noncanonical_pdb_to_mmtf[test_file], opts));
+
+			// 5. compare 2 and 4
+			TS_ASSERT_EQUALS(sfr->chains().size(), sfr_in->chains().size());
+			for ( core::Size i=0; i<sfr->chains().size(); ++i ) {
+				for ( core::Size j=0; j<sfr->chains()[i].size(); ++j ) {
+					core::io::AtomInformation const & ogai(sfr->chains()[i][j]);
+					core::io::AtomInformation const & cbai(sfr_in->chains()[i][j]);
+					TS_ASSERT_EQUALS(ogai.isHet, cbai.isHet);
+					TS_ASSERT_EQUALS(ogai.serial, cbai.serial);
+					TS_ASSERT_EQUALS(utility::strip(ogai.name), utility::strip(cbai.name));
+					TS_ASSERT_EQUALS(ogai.altLoc, cbai.altLoc);
+					TS_ASSERT_EQUALS(ogai.resName, cbai.resName);
+					TS_ASSERT_EQUALS(ogai.chainID, cbai.chainID);
+					TS_ASSERT_EQUALS(ogai.resSeq, cbai.resSeq);
+					TS_ASSERT_EQUALS(ogai.iCode, cbai.iCode);
+					TS_ASSERT_DELTA(ogai.x, cbai.x, 0.001); // extra large beacause might add atoms etc
+					TS_ASSERT_DELTA(ogai.y, cbai.y, 0.001);
+					TS_ASSERT_DELTA(ogai.z, cbai.z, 0.001);
+					TS_ASSERT_EQUALS(ogai.occupancy, cbai.occupancy);
+					TS_ASSERT_EQUALS(ogai.temperature, cbai.temperature);
+					TS_ASSERT_EQUALS(ogai.segmentID, cbai.segmentID);
+					TS_ASSERT_EQUALS(utility::strip(ogai.element), cbai.element);
+					TS_ASSERT_EQUALS(ogai.formalcharge, cbai.formalcharge);
+					TS_ASSERT_EQUALS(ogai.terCount, cbai.terCount);
+				}
+			}
+		}
 	}
 
 	void test_mmtf_model_io() {
@@ -179,16 +267,17 @@ public:
 			core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter( *options );
 			converter.init_from_pose( *og_pose );
 			core::io::StructFileRepOP sfr(converter.sfr());
+
 			utility::vector1< core::io::StructFileRepOP > sfrs;
 			sfrs.push_back(sfr);
 			{ // Stage 1: check if it works in a vacuum
 				::mmtf::StructureData sd;
-
 				core::io::mmtf::add_extra_data(sd, sfrs, *options);
 
 				TS_ASSERT_EQUALS(sd.modelProperties.count("rosetta::residue_type_base_names"), 1);
 				std::vector< std::map< std::string, std::pair< std::string, std::string > > > returned;
 				::mmtf::MapDecoder const ep_MD(sd.modelProperties);
+
 				ep_MD.decode("rosetta::residue_type_base_names", true, returned);
 				TS_ASSERT_EQUALS(returned.size(), 1);
 				for ( auto const & k_v : returned.at(0) ) {
@@ -289,6 +378,35 @@ public:
 				}
 			}
 		} // END heterogen_names ONLY
+		{ // TEST for versioning info
+			core::io::StructFileRepOptionsOP options(core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions ));
+			core::io::mmtf::set_mmtf_default_options( *options );
+			core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter( *options );
+			converter.init_from_pose( *og_pose );
+			core::io::StructFileRepOP sfr(converter.sfr());
+			std::string const mmtf_fn("core/io/5FYL_versioning_io.mmtf");
+			core::io::mmtf::dump_mmtf(mmtf_fn, sfr, *options);
+			::mmtf::StructureData sd;
+			::mmtf::decodeFromFile(sd, mmtf_fn);
+			::mmtf::MapDecoder const extraProperties_MD(sd.extraProperties);
+			std::string io_rosetta_version, io_rosetta_commit, io_rosetta_date, io_rosetta_package, io_rosetta_revision;
+			extraProperties_MD.decode("rosetta::version", true, io_rosetta_version);
+			TS_ASSERT_EQUALS(utility::Version::version(), io_rosetta_version);
+			extraProperties_MD.decode("rosetta::commit", true, io_rosetta_commit);
+			TS_ASSERT_EQUALS(utility::Version::commit(), io_rosetta_commit);
+			extraProperties_MD.decode("rosetta::date_created", true, io_rosetta_date);
+			TS_ASSERT_EQUALS(utility::Version::date(), io_rosetta_date);
+			// I'm not exactly sure how to test this, since it will change for a non-devel package i think right?
+			if ( utility::Version::package() != "devel" ) {
+				extraProperties_MD.decode("rosetta::package", true, io_rosetta_package);
+				TS_ASSERT_EQUALS(utility::Version::package(), io_rosetta_package);
+			}
+			if ( utility::Version::revision() != "None" ) {
+				extraProperties_MD.decode("rosetta::revision", true, io_rosetta_revision);
+				TS_ASSERT_EQUALS(utility::Version::revision(), io_rosetta_revision);
+				sd.extraProperties["rosetta::revision"] = msgpack::object(utility::Version::revision(), sd.msgpack_zone);
+			}
+		}
 	}
 
 	void test_bond_info_io() {
@@ -583,4 +701,145 @@ public:
 		}
 	}
 
+	void test_mmtf_string_float_map_IO() {
+		using namespace core::pose;
+		///TODO: Make sure option is on here.
+
+		///Test Comment, and String/Float map
+		add_comment(*pdb_pose, "test1", "comment1");
+		add_comment(*pdb_pose, "test2", "comment2");
+
+		setPoseExtraScore(*pdb_pose, "sscore1", "value1");
+		setPoseExtraScore(*pdb_pose, "sscore2", "value2");
+
+		setPoseExtraScore(*pdb_pose, "rscore1", 1);
+		setPoseExtraScore(*pdb_pose, "rscore2", 2);
+
+		std::string mmtf_file_1 = "extra_out.mmtf";
+		pdb_pose->dump_mmtf(mmtf_file_1);
+
+		core::pose::PoseOP mmtf_pose_1 = pose_from_file(mmtf_file_1, false,
+			core::import_pose::FileType::MMTF_file);
+
+		std::string c1; std::string c2;
+		std::string v1; std::string v2;
+		core::Real r1; core::Real r2;
+
+		//Retrieval
+		getPoseExtraScore(*mmtf_pose_1, "sscore1", v1);
+		getPoseExtraScore(*mmtf_pose_1, "sscore2", v2);
+		TS_ASSERT(v1 == "value1");
+		TS_ASSERT(v2 == "value2");
+
+		getPoseExtraScore(*mmtf_pose_1, "rscore1", r1);
+		getPoseExtraScore(*mmtf_pose_1, "rscore2", r2);
+
+		TS_ASSERT_DELTA(r1, 1.0, .001);
+		TS_ASSERT_DELTA(r2, 2.0, .001);
+
+		std::map< std::string, std::string > comments = get_all_comments(*mmtf_pose_1);
+		TS_ASSERT(comments.size() > 0);
+
+		get_comment(*mmtf_pose_1, "test1", c1);
+		get_comment(*mmtf_pose_1, "test2", c2);
+		TS_ASSERT(c1 == "comment1");
+		TS_ASSERT(c2 == "comment2");
+
+	}
+	void test_mmtf_simple_metric_IO() {
+		using namespace core::simple_metrics;
+
+		//Setup SimpleMetrics
+		TestStringMetric test_string = TestStringMetric();
+		test_string.apply(*pdb_pose);
+
+		TestRealMetric test_real = TestRealMetric();
+		test_real.apply(*pdb_pose);
+
+		TestCompositeStringMetric test_composite_string = TestCompositeStringMetric();
+		test_composite_string.apply(*pdb_pose);
+
+		TestCompositeRealMetric test_composite_real = TestCompositeRealMetric();
+		test_composite_real.apply(*pdb_pose);
+
+
+		TestPerResidueRealMetric test_per_residue_real = TestPerResidueRealMetric();
+		test_per_residue_real.apply(*pdb_pose);
+
+
+		TestPerResidueStringMetric test_per_residue_string = TestPerResidueStringMetric();
+		test_per_residue_string.apply(*pdb_pose);
+
+		//Ouptut mmTF and Read back in
+		std::string mmtf_file_1 = "extra_out2.mmtf";
+		pdb_pose->dump_mmtf(mmtf_file_1);
+
+		core::pose::PoseOP new_pose = pose_from_file(mmtf_file_1, false,
+			core::import_pose::FileType::MMTF_file);
+
+
+		//Assert all values are present.
+		TS_ASSERT( has_sm_data(*new_pose));
+
+		//get_sm_data(*new_pose)->show();
+
+		///StringMetric
+		std::string svalue;
+		bool present = get_sm_data(*new_pose)->get_value( "SomeString", svalue );
+		TS_ASSERT( present );
+		TS_ASSERT( svalue == "TESTING");
+
+		///RealMetric
+		core::Real rvalue;
+		present = get_sm_data(*new_pose)->get_value( "SomeReal", rvalue );
+		TS_ASSERT( present );
+		TS_ASSERT_DELTA( rvalue, 1.0, .001 );
+
+		///CompositeStringMetric
+		std::map< std::string, std::string > csvalues;
+		present = get_sm_data(*new_pose)->get_value("SomeCompositeString", csvalues );
+		TS_ASSERT( present );
+		if ( present ) {
+			TS_ASSERT( csvalues["s_data1"] == "value1");
+			TS_ASSERT( csvalues["s_data2"] == "value2");
+		}
+
+		///CompositeRealMetric
+		std::map< std::string, core::Real > crvalues;
+		present = get_sm_data( *new_pose )->get_value( "SomeCompositeReal", crvalues );
+		TS_ASSERT( present );
+		if ( present ) {
+			TS_ASSERT_DELTA( crvalues["r_data1"], 1.0, .001);
+			TS_ASSERT_DELTA( crvalues["r_data2"], 2.0, .001);
+		}
+
+		///PerResidueStringMetric
+		std::map< core::Size, std::string > res_str_values;
+		present = get_sm_data(*new_pose)->get_value( "SomePerResidueString", res_str_values);
+		TS_ASSERT(present);
+		if ( present ) {
+			TS_ASSERT( res_str_values.at(1) == "value1");
+			TS_ASSERT( res_str_values.at(2) == "value2");
+		}
+
+		///PerResidueRealMetric
+		std::map< core::Size, core::Real > res_r_values;
+		present = get_sm_data(*new_pose)->get_value( "SomePerResidueReal", res_r_values);
+		TS_ASSERT(present);
+		if ( present ) {
+			TS_ASSERT_DELTA( res_r_values.at(1), 1.0, .001);
+			TS_ASSERT_DELTA( res_r_values.at(2), 2.0, .001);
+		}
+
+		//Assert per-res output makes round-trip
+		std::map< std::string, std::map< std::string, core::Real >> const & real_output = get_sm_data(*new_pose)->get_per_residue_real_metric_output();
+		TS_ASSERT(real_output.size());
+		TS_ASSERT(real_output.count("SomePerResidueReal"));
+
+
+		std::map< std::string, std::map< std::string, std::string >> const & string_output = get_sm_data(*new_pose)->get_per_residue_string_metric_output();
+		TS_ASSERT(string_output.size());
+		TS_ASSERT(string_output.count("SomePerResidueString"));
+
+	}
 };

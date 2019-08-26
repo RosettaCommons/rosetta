@@ -36,6 +36,7 @@ sources = {
 		"cif_writer",
 	],
 	"core/io/mmtf": [
+		"ExtraDataEnumManager",
 		"mmtf_reader",
 		"mmtf_writer",
 		"util",

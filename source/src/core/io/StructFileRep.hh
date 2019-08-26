@@ -24,6 +24,7 @@
 #include <core/io/Remarks.fwd.hh>
 #include <core/io/CrystInfo.hh>
 #include <core/io/AtomInformation.hh>
+#include <core/simple_metrics/SimpleMetricStruct.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -168,6 +169,7 @@ struct SHEETInformation {
 	int strandClass = 0; //always 0, although actually it's an enum on -1:1 according to PDB
 	//ignoring the rest of the stuff in the definition because it's hard to calculate, I don't need it, and it's unnecessary for strandClass 0 anyway (first strand of sheet)
 };
+
 
 //NOT IMPLEMENTED.  struct TURNInformation {}
 
@@ -373,6 +375,9 @@ public:  // Accessors /////////////////////////////////////////////////////////
 	std::string const & additional_string_output() const { return additional_string_output_; };
 	std::string       & additional_string_output()       { return additional_string_output_; };
 
+	simple_metrics::SimpleMetricStruct const & simple_metric_data() const { return simple_metric_data_;};
+	simple_metrics::SimpleMetricStruct       & simple_metric_data()       { return simple_metric_data_;};
+
 	/// @brief   Append more string data to the additional_string_output_ string in the SFR.
 	void append_to_additional_string_output( std::string const & input_string );
 
@@ -408,6 +413,10 @@ private:
 	std::map< std::string, Real > pose_cache_real_data_;
 
 	std::string additional_string_output_;
+
+	//Simple Metrics
+	simple_metrics::SimpleMetricStruct simple_metric_data_;
+
 };  // class StructFileRep
 
 /// @brief  Debug printing, serializing to Tracer like object

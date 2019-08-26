@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file core/io/mmtf/mmtf_writer.cc
-/// @brief Functions for MMCIF writing.
+/// @brief Functions for MMTF writing.
 /// @author Daniel Farrell (danpf@uw.edu)
 
 
@@ -25,12 +25,16 @@
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
+#include <utility/version.hh>
 #include <numeric/random/random.hh>
 
 #include <core/pose/PDBInfo.hh>
 #include <core/io/pdb/Field.hh>
 #include <core/io/HeaderInformation.hh>
 #include <core/io/StructFileRep.hh>
+#include <core/io/mmtf/ExtraDataEnum.hh>
+#include <core/io/mmtf/ExtraDataEnumManager.hh>
+#include <core/simple_metrics/SimpleMetricStruct.hh>
 
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
 
@@ -76,7 +80,6 @@
 #include <basic/Tracer.hh>
 
 #include <core/io/mmtf/mmtf_writer.hh>
-#include <core/io/mmtf/util.hh>
 
 static basic::Tracer TR( "core.io.mmtf.mmtf_writer" );
 
@@ -216,11 +219,11 @@ is_in_bondAtomList(std::vector<int32_t> const & bondAtomList, core::Size const l
 	return false;
 }
 
-
 ///@warning groups (aka residues) are made by grouping together identical ai.{chain,resSeq,resName,iCode}
 ///         I don't think there's a better way than that.
 aiChain
-make_chain(utility::vector0<AtomInformation> const & chain_atoms) {
+make_chain(utility::vector0<AtomInformation> const & chain_atoms)
+{
 	aiChain AIC_out;
 	std::map< std::tuple< char, core::Size, std::string, char >, core::Size >rsd_map;
 
@@ -237,11 +240,9 @@ make_chain(utility::vector0<AtomInformation> const & chain_atoms) {
 			++current_index;
 		}
 	}
-
 	// remove unused, will happen if things aren't in sequence.
 	AIC_out.erase(std::remove_if(AIC_out.begin(), AIC_out.end(),
 		[](utility::vector0<AtomInformation> const & grp) { return grp.empty(); }), AIC_out.end());
-
 	return AIC_out;
 }
 
@@ -270,33 +271,6 @@ aiModels_from_sfrs(utility::vector1< core::io::StructFileRepOP > const & sfrs)
 	return AIM;
 }
 
-
-int
-get_num_bonds(::mmtf::StructureData & sd) {
-	int bond_count_from_order = 0;
-	int chain_idx = 0; // will be count at end of loop
-	int group_idx = 0; // will be count at end of loop
-	int atom_idx = 0;  // will be count at end of loop
-	// traverse models
-	for ( int model_idx = 0; model_idx < 1/*sd.numModels*/; ++model_idx ) {
-		// traverse chains
-		for ( int j = 0; j < sd.chainsPerModel[model_idx]; ++j, ++chain_idx ) {
-			// check chain names (fixed length)
-			// traverse groups
-			for ( int k = 0; k < sd.groupsPerChain[chain_idx]; ++k, ++group_idx ) {
-				const ::mmtf::GroupType& group = sd.groupList[sd.groupTypeList[group_idx]];
-				atom_idx += group.atomNameList.size();
-				bond_count_from_order += group.bondOrderList.size();
-				TR << "at: " << group.groupName << " " << sd.groupIdList[group_idx] << " " << group_idx << " " << bond_count_from_order << std::endl;
-			}
-		}
-	}
-	TR << "gcount: " << bond_count_from_order << std::endl;
-	TR << "scount: " << sd.bondOrderList.size() << std::endl;
-	bond_count_from_order += sd.bondOrderList.size();
-	return bond_count_from_order;
-}
-
 void
 add_bonds_to_sd(::mmtf::StructureData & sd,
 	aiModels const & AIM, std::map<core::Size, sd_index> const & atom_num_to_sd_map)
@@ -312,18 +286,8 @@ add_bonds_to_sd(::mmtf::StructureData & sd,
 		aiPose const & AIP(AIM[i]);
 		for ( core::Size j=0; j<AIP.size(); ++j, ++chainIndex ) {  // for each chain
 			for ( core::Size k=0; k<AIP[j].size(); ++k, ++groupIndex ) {  // for each group
-				//TR << "at grp: " << groupIndex << " pnb: " << sd.numBonds << std::endl;
-				//core::Size const type(sd.groupTypeList[groupIndex]);
-				//core::Size og_bo_size(0);
-				//if (type >= type_check.size() ) {
-				// type_check.resize(type+1);
-				//} else {
-				// og_bo_size=type_check[type];
-				//}
 				for ( core::Size l=0; l<AIP[j][k].size(); ++l, ++atomIndex ) {  // for each atom
 					AtomInformation const & ai = AIP[j][k][l];
-					//TR << "Hk: " << 1+atomIndex << " " << ai.name << " " << ai.connected_indices <<  " " << ai.connected_orders << std::endl;
-					//
 					sd_index const upper_connect = atom_num_to_sd_map.at(atomIndex);
 					for ( core::Size m=1; m<=ai.connected_indices.size(); ++m ) {
 						core::Size const& link_buddy(ai.connected_indices[m]);
@@ -358,45 +322,15 @@ add_bonds_to_sd(::mmtf::StructureData & sd,
 							}
 							++inter_bonds;
 						}
-						//TR << "ADding to numBonds: " << ai.name << " " << ai.resSeq << " " << m << ai.connected_indices << std::endl;
 						++sd.numBonds;
 					}
-					//TR << "ci: " << ai.connected_indices.size() << " " << upper_connect.group_atom_index <<  std::endl;
-					//for ( auto x : sd.groupList[sd.groupTypeList[groupIndex]].bondAtomList) TR <<  (int)x << ", ";
-					//TR << std::endl;
-					//for ( auto x : sd.groupList[sd.groupTypeList[groupIndex]].bondOrderList) TR <<  (int)x << ", ";
-					//TR << std::endl;
 				}
-				//TR << "og bo: " << type << " " << og_bo_size << " " << sd.groupList[sd.groupTypeList[groupIndex]].bondOrderList.size() << std::endl;
-				//if (og_bo_size != 0 && sd.groupList[sd.groupTypeList[groupIndex]].bondOrderList.size() != og_bo_size) {
-				// TR << "broked at groupIndex " << groupIndex << " " <<  sd.groupList[sd.groupTypeList[groupIndex]].bondOrderList.size() << " != " << og_bo_size << std::endl;
-				//}
-				//if (og_bo_size == 0) type_check[type] = sd.groupList[sd.groupTypeList[groupIndex]].bondOrderList.size();
 			}
 		}
 	}
-	// TR << "tgroups: " << groupIndex << " sdgrps: " << sd.numGroups << std::endl;
-	// TR << "grp: " << group_bonds << std::endl;
-	// TR << "inter_bonds: " << inter_bonds << std::endl;
-	//
-	//       int nbb = get_num_bonds(sd);
-	//       if (sd.numBonds != nbb) {
-	//        TR << "nb: " << sd.numBonds << std::endl;
-	//        TR << "gnb: " << nbb << std::endl;
-	//        for (auto const & g : sd.groupList ) {
-	//         TR << "g: " << g.groupName << std::endl;
-	//         for (auto x : g.bondAtomList) TR << (int)x << ", ";
-	//         TR << " : " << g.bondAtomList.size() << std::endl;
-	//         for (auto x : g.bondOrderList) TR << (int)x << ", ";
-	//         TR << " : " << g.bondOrderList.size() << std::endl;
-	//        }
-	//  throw CREATE_EXCEPTION(
-	//   utility::excn::BadInput,
-	//   "FEK");
-	//       }
 }
 
-
+// currently unused, but might be useful
 template< typename T >
 void
 add_if_not_empty(
@@ -410,42 +344,108 @@ add_if_not_empty(
 	}
 }
 
-
 template< typename T >
 void
 resize_and_add_if_not_empty(
-	T const & data,
-	std::vector< T > & destination,
-	core::Size const & data_index,
-	core::Size const & max_size)
+	utility::vector1< core::io::StructFileRepOP > const & sfrs,
+	std::string const & key,
+	std::map<std::string, msgpack::object> & xxxProperties,
+	msgpack::zone & zone,
+	T const & fn)
 {
-	if ( !data.empty() ) {
-		if ( data_index+1 > destination.size() ) destination.resize(max_size);
-		destination[data_index] = data;
+	std::vector< msgpack::object > outdata;
+	for ( core::Size i=1; i<=sfrs.size(); ++i ) {
+		core::io::StructFileRepOP const & sfr(sfrs[i]);
+		core::Size c_idx(i-1);
+		auto const & c_data(fn(sfr));
+		if ( c_data.empty() ) continue;
+		else if ( outdata.empty() ) outdata.resize(sfrs.size(), msgpack::object());
+		outdata[c_idx] = msgpack::object(fn(sfr), zone);
 	}
+	if ( !outdata.empty() ) xxxProperties[key] = msgpack::object(outdata, zone);
 }
 
-
-
+/* insert function here */
+/*T const & input_data,*/ // might not need
+/* core::Size const index, */
 void
 add_extra_data(
 	::mmtf::StructureData & sd,
 	utility::vector1< core::io::StructFileRepOP > const & sfrs,
-	core::io::StructFileRepOptions const & options)
+	core::io::StructFileRepOptions const & options )
 {
-
+	// extra sfr data
 	std::vector< std::map< std::string, std::string > > model_heterogen_names;
 	std::vector< std::map< std::string, std::pair< std::string, std::string > > > model_residue_type_base_names;
-	for ( core::Size i=1; i<=sfrs.size(); ++i ) {
-		core::Size const std_i(i-1);
-		if ( options.use_pdb_format_HETNAM_records() ) {
-			resize_and_add_if_not_empty(sfrs[i]->heterogen_names(), model_heterogen_names, std_i, sfrs.size());
-		} else if ( !options.write_glycan_pdb_codes() ) {
-			resize_and_add_if_not_empty(sfrs[i]->residue_type_base_names(), model_residue_type_base_names, std_i, sfrs.size());
-		}
+
+	// 1. IO type helpers
+	if ( options.use_pdb_format_HETNAM_records() ) {
+		resize_and_add_if_not_empty(sfrs, "rosetta::heterogen_names", sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->heterogen_names();});
+	} else if ( !options.write_glycan_pdb_codes() ) {
+		resize_and_add_if_not_empty(sfrs, "rosetta::residue_type_base_names", sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->residue_type_base_names();});
 	}
-	add_if_not_empty("rosetta::residue_type_base_names", model_residue_type_base_names, sd.modelProperties, sd.msgpack_zone);
-	add_if_not_empty("rosetta::heterogen_names", model_heterogen_names, sd.modelProperties, sd.msgpack_zone);
+
+	// 2. reproducibility / logging info
+	sd.extraProperties["rosetta::version"] = msgpack::object(utility::Version::version(), sd.msgpack_zone);
+	sd.extraProperties["rosetta::commit"] = msgpack::object(utility::Version::commit(), sd.msgpack_zone);
+	sd.extraProperties["rosetta::date_created"] = msgpack::object(utility::Version::date(), sd.msgpack_zone);
+	if ( utility::Version::package() != "devel" ) {
+		sd.extraProperties["rosetta::package"] = msgpack::object(utility::Version::package(), sd.msgpack_zone);
+	}
+	if ( utility::Version::revision() != "None" ) {
+		sd.extraProperties["rosetta::revision"] = msgpack::object(utility::Version::revision(), sd.msgpack_zone);
+	}
+
+	/// 3. SimpleMetrics -- These are experimental and may change!
+	if ( options.mmtf_extra_data_io() ) {
+		TR.Trace << "Writing extra data" << std::endl;
+		ExtraDataEnumManager manager = ExtraDataEnumManager();
+
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(pose_cache_string_data), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->pose_cache_string_data();});
+
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(pose_cache_real_data), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->pose_cache_real_data();});
+
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(pdb_comments), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->pdb_comments();});
+
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(pose_cache_string_data), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->pose_cache_string_data();});
+
+		//SimpleMetric Data conversion
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(simple_metric_real_data), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->simple_metric_data().real_data_;});
+
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(simple_metric_string_data), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->simple_metric_data().string_data_;});
+
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(simple_metric_composite_real_data), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->simple_metric_data().composite_real_data_;});
+
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(simple_metric_composite_real_data), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->simple_metric_data().composite_real_data_;});
+
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(simple_metric_composite_string_data), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->simple_metric_data().composite_string_data_;});
+
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(simple_metric_per_residue_real_data), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->simple_metric_data().per_residue_real_data_;});
+
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(simple_metric_per_residue_string_data), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->simple_metric_data().per_residue_string_data_;});
+
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(simple_metric_per_residue_real_output), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->simple_metric_data().per_residue_real_output_;});
+
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(simple_metric_per_residue_string_data), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->simple_metric_data().per_residue_string_data_;});
+
+		resize_and_add_if_not_empty(sfrs, manager.enum_to_string(simple_metric_per_residue_string_output), sd.modelProperties, sd.msgpack_zone,
+			[](core::io::StructFileRepOP const & sfr) {return sfr->simple_metric_data().per_residue_string_output_;});
+	}
 }
 
 std::map<std::tuple<core::Size, core::Size, core::Size, core::Size>, core::Size>
@@ -491,6 +491,17 @@ dump_mmtf(
 
 
 ::mmtf::StructureData
+sfr_to_sd(
+	core::io::StructFileRepOP sfr,
+	core::io::StructFileRepOptions const & options
+) {
+	utility::vector1< core::io::StructFileRepOP > sfrs;
+	sfrs.push_back(sfr);
+	return sfrs_to_sd(sfrs, options);
+}
+
+
+::mmtf::StructureData
 sfrs_to_sd(
 	utility::vector1< core::io::StructFileRepOP > sfrs,
 	core::io::StructFileRepOptions const & options)
@@ -519,13 +530,9 @@ sfrs_to_sd(
 				::mmtf::GroupType const gt = make_current_group(AIP[j][k]);
 				auto it = std::find(sd.groupList.begin(), sd.groupList.end(), gt);
 				if ( it == sd.groupList.end() ) {
-					//TR << "made a group: " << gt.groupName << std::endl;
-					//TR << gt.atomNameList << std::endl;
 					sd.groupList.push_back(gt);
 					sd.groupTypeList.push_back(sd.groupList.size()-1);
 				} else {
-					//TR << "found another group: " << gt.groupName << std::endl;
-					//TR << gt.atomNameList << std::endl;
 					auto const index = std::distance(sd.groupList.begin(), it);
 					sd.groupTypeList.push_back(index);
 				}
@@ -574,16 +581,6 @@ sfrs_to_sd(
 	return sd;
 }
 
-
-::mmtf::StructureData
-sfr_to_sd(
-	core::io::StructFileRepOP sfr,
-	core::io::StructFileRepOptions const & options
-) {
-	utility::vector1< core::io::StructFileRepOP > sfrs;
-	sfrs.push_back(sfr);
-	return sfrs_to_sd(sfrs, options);
-}
 
 } // mmtf
 } // io

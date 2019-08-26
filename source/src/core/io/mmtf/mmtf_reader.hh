@@ -128,7 +128,6 @@ void
 read_extra_data(utility::vector1< core::io::StructFileRepOP > & sfrs,
 	::mmtf::StructureData const & sd);
 
-
 /// @brief load heterogen data: heterogen_names && residue_type_base_names
 //  @note this is stored in modelProperties["rosetta::heterogen_names"] and
 //        modelProperties["rosetta::residue_type_base_names"]
@@ -159,6 +158,12 @@ make_atom_information(
 	utility::vector1<char> & known_chainIDs,
 	core::io::StructFileReaderOptions const & options );
 
+template < typename T >
+void
+set_model_index_if_not_empty(core::Size const model_index,
+	std::string const & info_tag,
+	std::vector< T > const & all_model_data, T & target_data);
+
 /// @brief create sfr from create_sfrs_from_mmtf_filename
 core::io::StructFileRepOP
 create_sfr_from_mmtf_filename(
@@ -175,7 +180,15 @@ create_sfrs_from_mmtf_filename(
 	core::io::StructFileReaderOptions const & options,
 	utility::vector1< core::Size > const & model_indexes);
 
+///@brief Read extra data from StructureData into the SFR
+///@details SD non-const as the decode method of mmTF is NOT CONST!
+void
+read_extra_data(
+	::mmtf::StructureData & sd,
+	core::io::StructFileRep & sfr);
+
 } // core
 } // io
 } // mmtf
+
 #endif  // INCLUDED_core_io_mmtf_mmtf_reader_HH

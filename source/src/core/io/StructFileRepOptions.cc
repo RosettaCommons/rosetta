@@ -123,6 +123,8 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_show_all_fixes( tag->getOption< bool >( "show_all_fixes", false ) );
 	set_constraints_from_link_records( tag->getOption< bool >( "constraints_from_link_records", false ) );
 	set_integration_test_mode( tag->getOption< bool >( "integration_test_mode", false ) );
+	set_mmtf_extra_data_io( tag->getOption< bool >("mmtf_extra_data_io", true));
+
 }
 
 std::string StructFileRepOptions::type() const { return "file_data_options"; }
@@ -185,6 +187,7 @@ bool StructFileRepOptions::output_pose_cache() const { return output_pose_cache_
 bool StructFileRepOptions::output_pose_energies_table() const { return output_pose_energies_table_; }
 bool StructFileRepOptions::output_only_asymmetric_unit() const { return output_only_asymmetric_unit_; }
 bool StructFileRepOptions::integration_test_mode() const { return integration_test_mode_; }
+bool StructFileRepOptions::mmtf_extra_data_io() const { return mmtf_extra_data_io_; }
 
 // mutators
 
@@ -335,6 +338,9 @@ void StructFileRepOptions::set_write_all_connect_info( bool const setting )
 void StructFileRepOptions::set_write_seqres_records(bool const setting )
 { write_seqres_records_ = setting; }
 
+void StructFileRepOptions::set_mmtf_extra_data_io(bool const setting )
+{ mmtf_extra_data_io_ = setting; }
+
 void StructFileRepOptions::set_chains_whose_residues_are_separate_chemical_entities( std::string const & chains_whose_residues_are_separate_chemical_entities )
 { chains_whose_residues_are_separate_chemical_entities_ = chains_whose_residues_are_separate_chemical_entities; }
 
@@ -415,7 +421,8 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ in::min_bond_length
 		+ in::read_only_ATOM_entries
 		+ out::file::write_seqres_records
-		+ testing::INTEGRATION_TEST;
+		+ testing::INTEGRATION_TEST
+		+ inout::mmtf_extra_data_io;
 
 }
 
@@ -479,7 +486,8 @@ StructFileRepOptions::append_schema_attributes( utility::tag::AttributeList & at
 		+ Attr::attribute_w_default( "remap_pdb_atom_names_for", xs_string, "Comma separated list of atom names to remap to other names", "" )
 		+ Attr::attribute_w_default( "show_all_fixes", xsct_rosetta_bool, "TO DO",  "0" )
 		+ Attr::attribute_w_default( "constraints_from_link_records", xsct_rosetta_bool, "TO DO", "0" )
-		+ Attr::attribute_w_default( "integration_test_mode", xsct_rosetta_bool, "Is this script running as part of an integration test?",  "0" );
+		+ Attr::attribute_w_default( "integration_test_mode", xsct_rosetta_bool, "Is this script running as part of an integration test?",  "0" )
+		+ Attr::attribute_w_default( "mmtf_extra_data_io", xsct_rosetta_bool, "If reading/writing mmTF, read/write extra data including pdb_comments, extra scores, and SimpleMetrics?", "true");
 
 
 
@@ -566,6 +574,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_output_pose_cache_data(options[ OptionKeys::out::file::output_pose_cache_data ]()); //JD2 only?
 	set_fold_tree_io( options[ OptionKeys::out::file::output_pose_fold_tree]());
 	set_integration_test_mode( options[ OptionKeys::testing::INTEGRATION_TEST ]() );
+	set_mmtf_extra_data_io( options[ OptionKeys::inout::mmtf_extra_data_io]());
 }
 
 bool
@@ -622,6 +631,7 @@ StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 	if ( max_bond_length_                                       != other.max_bond_length_                                      ) return false;
 	if ( min_bond_length_                                       != other.min_bond_length_                                      ) return false;
 	if ( integration_test_mode_                                 != other.integration_test_mode_                                ) return false;
+	if ( mmtf_extra_data_io_                                    != other.mmtf_extra_data_io_                                   ) return false;
 	return true;
 }
 
@@ -731,6 +741,7 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	if ( min_bond_length_                                       != other.min_bond_length_                                      ) return false;
 	if ( integration_test_mode_                                 <  other.integration_test_mode_                                ) return true;
 	if ( integration_test_mode_                                 != other.integration_test_mode_                                ) return false;
+	if ( mmtf_extra_data_io_                                    != other.mmtf_extra_data_io_                                   ) return false;
 	return false;
 }
 
@@ -799,6 +810,7 @@ core::io::StructFileRepOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( output_pose_energies_table_ ) ); // _Bool
 	arc( CEREAL_NVP( output_pose_cache_data_ ) ); // _Bool
 	arc( CEREAL_NVP( integration_test_mode_ ) );  // _Bool
+	arc( CEREAL_NVP( mmtf_extra_data_io_) ); // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -860,6 +872,7 @@ core::io::StructFileRepOptions::load( Archive & arc ) {
 	arc( output_pose_energies_table_ ); // _Bool
 	arc( output_pose_cache_data_ ); // _Bool
 	arc( integration_test_mode_ );  // _Bool
+	arc( mmtf_extra_data_io_ ); // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::io::StructFileRepOptions );

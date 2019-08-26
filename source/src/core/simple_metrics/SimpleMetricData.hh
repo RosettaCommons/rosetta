@@ -23,12 +23,14 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <core/simple_metrics/SimpleMetricStruct.hh>
 #include <core/simple_metrics/RealMetric.fwd.hh>
 #include <core/simple_metrics/StringMetric.fwd.hh>
 #include <core/simple_metrics/CompositeRealMetric.fwd.hh>
 #include <core/simple_metrics/CompositeStringMetric.fwd.hh>
 #include <core/simple_metrics/PerResidueRealMetric.fwd.hh>
 #include <core/simple_metrics/PerResidueStringMetric.fwd.hh>
+#include <core/io/pose_from_sfr/PoseFromSFRBuilder.fwd.hh>
 
 // C++ headers
 #include <map>
@@ -70,6 +72,9 @@ private:
 	friend PerResidueRealMetric;
 	friend PerResidueStringMetric;
 
+	//For IO
+	friend io::pose_from_sfr::PoseFromSFRBuilder;
+
 };
 
 
@@ -77,6 +82,8 @@ private:
 class SimpleMetricData : public basic::datacache::CacheableData
 {
 public:
+
+	///@brief Default constructor
 	SimpleMetricData();
 
 	~SimpleMetricData() override;
@@ -186,6 +193,10 @@ public:
 	/////         All Data Access           /////
 	/////////////////////////////////////////////
 
+	///@brief Geet ALL RAW SimpleMetric information for IO/PyRosetta
+	SimpleMetricStruct const &
+	get_all_sm_data() const;
+
 	///@brief Get all RealMetric data
 	std::map< std::string, Real > const &
 	get_real_metric_data() const;
@@ -279,23 +290,18 @@ public:
 		std::map< Size, std::string> const & value,
 		bool output_as_pdb_nums=true);
 
+	///@brief Set all SimpleMetric data for IO
+	void
+	set_all_data(
+		MetricKey mk,
+		SimpleMetricStruct const & data);
+
+	void
+	show() const;
 
 private:
 
-	//Simple Metrics
-	std::map< std::string, std::string > string_data_;
-	std::map< std::string, core::Real > real_data_;
-
-	//CompositeMetrics
-	std::map< std::string, std::map< std::string, std::string >> composite_string_data_;
-	std::map< std::string, std::map< std::string, core::Real >> composite_real_data_;
-
-	//PerResidueMetrics
-	std::map< std::string, std::map< core::Size, std::string >> per_residue_string_data_;
-	std::map< std::string, std::map< core::Size, core::Real >> per_residue_real_data_;
-
-	std::map< std::string, std::map< std::string, std::string >> per_residue_string_output_;
-	std::map< std::string, std::map< std::string, core::Real >> per_residue_real_output_;
+	SimpleMetricStruct data_;
 
 #ifdef    SERIALIZATION
 public:

@@ -132,6 +132,21 @@ make_chain(utility::vector0<AtomInformation> const & chain_atoms);
 aiPose
 aiPose_from_sfr(core::io::StructFileRep const & sfr);
 
+/// @brief add_if_not_empty -- adds to a sd {string: msgpack::object}
+///  templated to allow us to add a variety of containers
+///
+/// @param  given_name  The name to use in the data map if not empty
+/// @param  content     The content to add if not empty
+/// @param  target_map  Where to add the content if it's not empty
+/// @param  zone        Required zone to keep msgpack happy
+template< typename T >
+void
+add_if_not_empty(
+	std::string const & given_name,
+	T const & content,
+	std::map<std::string, msgpack::object> & target_map,
+	msgpack::zone & zone);
+
 ///
 /// @brief Convert linear sfr to vec0[vec0[vec0[vec0[AtomInformation]]]]
 ///
@@ -150,7 +165,7 @@ void
 add_extra_data(
 	::mmtf::StructureData & sd,
 	utility::vector1< core::io::StructFileRepOP > const & sfrs,
-	core::io::StructFileRepOptions const & options);
+	core::io::StructFileRepOptions const & options );
 
 //////////////////////////////////////////////////////////////
 // real dump_mmtf function
@@ -168,8 +183,17 @@ sfr_to_sd(
 	core::io::StructFileRepOptions const & options);
 
 
-/// @brief Main dump_mmtf function.
-///  Create the sfr from pose using the PoseToStructFileRepConverter class.
+void
+dump_mmtf(
+	std::ostream & out,
+	utility::vector1< core::io::StructFileRepOP > sfrs,
+	core::io::StructFileRepOptions const & options);
+
+
+/// @brief dump single mmtf function.
+/// @note  We sadly have to use this to call the function
+///        that dumps a vector of SFRs due to the mmtf file format.
+///        It only makes sense because of the compression scheme used.
 void
 dump_mmtf(
 	std::ostream & out,

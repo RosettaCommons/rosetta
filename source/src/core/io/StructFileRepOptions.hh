@@ -117,6 +117,7 @@ public:
 	bool output_pose_cache() const;
 
 	bool integration_test_mode() const;
+	bool mmtf_extra_data_io() const;
 
 	// mutators
 	void set_check_if_residues_are_Ntermini( std::string const & check_if_residues_are_Ntermini );
@@ -174,6 +175,7 @@ public:
 	void set_output_pose_energies_table(bool const setting);
 	void set_output_pose_cache_data(bool const setting);
 	void set_integration_test_mode( bool const setting );
+	void set_mmtf_extra_data_io( bool const setting );
 
 	/// @brief Declare the list of options that are read in the process of reading a PDB (or SDF) and converting
 	/// it into a Pose.
@@ -257,6 +259,7 @@ private:
 	bool output_pose_energies_table_;
 	bool output_pose_cache_data_;
 	bool integration_test_mode_;
+	bool mmtf_extra_data_io_;
 
 #ifdef    SERIALIZATION
 public:

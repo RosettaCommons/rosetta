@@ -501,7 +501,7 @@ dump_cif(
 	}
 
 	//Even more pose info.
-	if ( sfr->pdb_comments().size() > 0 ) {
+	if ( sfr->pdb_comments().size() > 0 && options.pdb_comments() ) {
 		ISTable* pose_comments = new ISTable( "pose_comments" );
 		pose_comments->AddColumn( "type" );
 		pose_comments->AddColumn( "comment" );

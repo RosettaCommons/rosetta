@@ -37,6 +37,9 @@
 #include <core/io/AtomInformation.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/io/StructFileRep.hh>
+#include <core/io/mmtf/ExtraDataEnum.hh>
+#include <core/io/mmtf/ExtraDataEnumManager.hh>
+#include <core/simple_metrics/SimpleMetricStruct.hh>
 
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
 
@@ -71,6 +74,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <mmtf.hpp>
+//#include <mmtf/map_decoder.hpp>
 
 // C++ headers
 #include <cstdlib>
@@ -80,6 +84,10 @@
 
 static basic::Tracer TR( "core.io.mmtf.mmtf_reader" );
 
+namespace core {
+namespace io {
+namespace mmtf {
+
 using basic::Error;
 using basic::Warning;
 
@@ -88,7 +96,7 @@ using basic::Warning;
 // sym1 or sym2 it will have to be split from this function
 template < typename T >
 inline void
-core::io::mmtf::add_xbond_information(
+add_xbond_information(
 	std::map< std::string, utility::vector1< T > >& xbond_map,
 	core::io::AtomInformation const & atm_1,
 	core::io::AtomInformation const & atm_2)
@@ -137,12 +145,8 @@ sort_xbond_func( T const & lhs, T const & rhs ) {
 	return ( lhs.chainID2 < rhs.chainID2 ) || ( lhs.chainID2 == rhs.chainID2 && lhs.resSeq2 < rhs.resSeq2 );
 }
 
-/* Warning! We currently only load the first model. However,
-* we have all of the bonds from the other atoms too.  We select
-* based on the atmSerial given.
-*/
 void
-core::io::mmtf::add_link_and_ss_information(
+add_link_and_ss_information(
 	::mmtf::StructureData const & sd,
 	core::io::StructFileRep & sfr,
 	std::vector< core::io::AtomInformation > const & all_AIs,
@@ -176,7 +180,7 @@ core::io::mmtf::add_link_and_ss_information(
 
 
 core::io::AtomInformation
-core::io::mmtf::make_atom_information(
+make_atom_information(
 	::mmtf::StructureData const &sd,
 	::mmtf::GroupType const & group,
 	int const groupAtomIndex,
@@ -205,7 +209,7 @@ core::io::mmtf::make_atom_information(
 	// The glycan code seems unable to do that.
 	ai.name = utility::pad_atom_name(group.atomNameList[groupAtomIndex]); // can be up to 5 characters
 	if ( !::mmtf::isDefaultValue(sd.altLocList) ) {
-		ai.altLoc = sd.altLocList[atomIndex]==0x00 ? ' ' : sd.altLocList[atomIndex];
+		ai.altLoc = sd.altLocList[atomIndex] == 0x00 ? ' ' : sd.altLocList[atomIndex];
 	} else ai.altLoc = ' ';
 	ai.resName = group.groupName; // can be up to 5 characters
 
@@ -245,17 +249,17 @@ core::io::mmtf::make_atom_information(
 	} else ai.temperature = 1.0;
 	ai.segmentID = "    "; // what should this be?
 	ai.element = utility::strip(group.elementList[groupAtomIndex]);
-	ai.terCount = 0;
+	ai.terCount = 0;  // this gets set later
 	return ai;
 }
 
 
-
 std::vector< core::io::AtomInformation >
-core::io::mmtf::make_all_atom_information(::mmtf::StructureData const & sd,
+make_all_atom_information(::mmtf::StructureData const & sd,
 	std::vector< core::Size > & model_indexes,
 	std::map< core::Size, core::Size > & model_index_to_starting_index,
-	StructFileReaderOptions const & options ) {
+	StructFileReaderOptions const & options )
+{
 	core::Size modelIndex = 0;
 	core::Size chainIndex = 0;
 	core::Size groupIndex = 0;
@@ -303,7 +307,7 @@ core::io::mmtf::make_all_atom_information(::mmtf::StructureData const & sd,
 /// -Warning pt 2- mmtf supports up to 4 bonds, rosetta  only up to 3
 ///       i set 4x bonds to be 0 (unk) in rosetta
 void
-core::io::mmtf::add_bond_information(::mmtf::StructureData const & sd,
+add_bond_information(::mmtf::StructureData const & sd,
 	std::vector< core::io::AtomInformation > & all_AIs,
 	std::map<core::Size, sd_index> const & atom_num_to_sd_map)
 {
@@ -364,7 +368,7 @@ core::io::mmtf::add_bond_information(::mmtf::StructureData const & sd,
 // TODO carbohydrates and DNA/RNA? ideally we could use a smarter graph system
 //      to do this, since we can trace where polymers start and stop.
 void
-core::io::mmtf::add_ters_via_bonds(std::vector< core::io::AtomInformation > & all_AIs,
+add_ters_via_bonds(std::vector< core::io::AtomInformation > & all_AIs,
 	std::vector< core::Size > const & ai_to_model)
 {
 	// 1. Find all things bound to N and all Cs
@@ -410,9 +414,11 @@ core::io::mmtf::add_ters_via_bonds(std::vector< core::io::AtomInformation > & al
 }
 
 
+
 core::io::StructFileRepOP
-core::io::mmtf::create_sfr_from_mmtf_filename( std::string const & mmtf_filename,
-	StructFileReaderOptions const & options ) {
+create_sfr_from_mmtf_filename( std::string const & mmtf_filename,
+	StructFileReaderOptions const & options )
+{
 	utility::vector1<core::Size> const first_only({0});
 	utility::vector1< core::io::StructFileRepOP > sfrs(
 		create_sfrs_from_mmtf_filename(mmtf_filename, options, first_only));
@@ -422,7 +428,7 @@ core::io::mmtf::create_sfr_from_mmtf_filename( std::string const & mmtf_filename
 
 template < typename T >
 void
-core::io::mmtf::set_model_index_if_not_empty(core::Size const model_index,
+set_model_index_if_not_empty(core::Size const model_index,
 	std::string const & info_tag,
 	std::vector< T > const & all_model_data, T & target_data)
 {
@@ -444,33 +450,91 @@ core::io::mmtf::set_model_index_if_not_empty(core::Size const model_index,
 }
 
 
+/// Warning. This *might* be inefficient! time will tell
+/// We access and decode map_key for every model... that could be
+/// expensive... but maybe it's not that bad! otherwise we have to
+/// find a way to decode all at once....
+template < typename T >
 void
-core::io::mmtf::read_extra_data(utility::vector1< core::io::StructFileRepOP > & sfrs,
-	::mmtf::StructureData const & sd)
+map_decode_from_model(
+	::mmtf::MapDecoder const & md,
+	std::string const & map_key,
+	bool const required,
+	core::Size const model_index,
+	T & target)
 {
-	// ::mmtf::MapDecoder const extraProperties_MD(sd.extraProperties); // to use at some point
-	::mmtf::MapDecoder const modelProperties_MD(sd.modelProperties);
+	// We could T here, but I think it will be cheaper to keep as
+	// msgpack::object.
+	std::vector< msgpack::object > target_model_data;
+	md.decode(map_key, required, target_model_data);
 
-	std::vector< std::map< std::string, std::string > > per_model_heterogen_names;
-	modelProperties_MD.decode("rosetta::heterogen_names", false, per_model_heterogen_names);
-
-	std::vector< std::map< std::string, std::pair< std::string, std::string > > > per_model_residue_type_base_names;
-	modelProperties_MD.decode("rosetta::residue_type_base_names", false, per_model_residue_type_base_names);
-
-	for ( core::Size i=1; i<=sfrs.size(); ++i ) {
-		core::Size const std_i = i-1;
-
-		core::io::mmtf::set_model_index_if_not_empty(
-			std_i, "heterogen_names",
-			per_model_heterogen_names, sfrs[i]->heterogen_names());
-
-		core::io::mmtf::set_model_index_if_not_empty(
-			std_i, "residue_type_base_names",
-			per_model_residue_type_base_names, sfrs[i]->residue_type_base_names());
+	if ( model_index+1 <= target_model_data.size() ) {
+		target_model_data[model_index].convert_if_not_nil(target);
+	} else if ( required ) {
+		std::stringstream ss;
+		ss << "Unable to load model index: " << model_index <<
+			" for key: " << map_key << " and it was set to be required..." <<
+			" found size: " << target_model_data.size() << std::endl;
+		throw CREATE_EXCEPTION(
+			utility::excn::BadInput,
+			ss.str());
 	}
 }
 
 
+void
+read_extra_data(
+	core::io::StructFileRepOP & sfr,
+	::mmtf::StructureData const & sd,
+	core::Size const model_index )
+{
+	// ::mmtf::MapDecoder const extraProperties_MD(sd.extraProperties); // to use at some point
+	::mmtf::MapDecoder const modelProperties_MD(sd.modelProperties);
+
+	///// 1. Rosetta IO
+	map_decode_from_model(modelProperties_MD, "rosetta::heterogen_names", false,
+		model_index, sfr->heterogen_names());
+	map_decode_from_model(modelProperties_MD, "rosetta::residue_type_base_names", false,
+		model_index, sfr->residue_type_base_names());
+
+	///// 2. SimpleMetrics
+	ExtraDataEnumManager manager = ExtraDataEnumManager();
+
+	map_decode_from_model(modelProperties_MD, manager.enum_to_string(pose_cache_string_data),
+		false /*required*/, model_index, sfr->pose_cache_string_data());
+
+	map_decode_from_model(modelProperties_MD, manager.enum_to_string(pose_cache_real_data),
+		false /*required*/, model_index, sfr->pose_cache_real_data());
+
+	map_decode_from_model(modelProperties_MD, manager.enum_to_string(pdb_comments),
+		false /*required*/, model_index, sfr->pdb_comments());
+
+	core::simple_metrics::SimpleMetricStruct & sm_info = sfr->simple_metric_data();
+
+	map_decode_from_model(modelProperties_MD, manager.enum_to_string(simple_metric_real_data),
+		false /*required*/, model_index, sm_info.real_data_);
+
+	map_decode_from_model(modelProperties_MD, manager.enum_to_string(simple_metric_string_data),
+		false /*required*/, model_index, sm_info.string_data_);
+
+	map_decode_from_model(modelProperties_MD, manager.enum_to_string(simple_metric_composite_real_data),
+		false /*required*/, model_index, sm_info.composite_real_data_);
+
+	map_decode_from_model(modelProperties_MD, manager.enum_to_string(simple_metric_composite_string_data),
+		false /*required*/, model_index, sm_info.composite_string_data_);
+
+	map_decode_from_model(modelProperties_MD, manager.enum_to_string(simple_metric_per_residue_real_data),
+		false /*required*/, model_index, sm_info.per_residue_real_data_);
+
+	map_decode_from_model(modelProperties_MD, manager.enum_to_string(simple_metric_per_residue_string_data),
+		false /*required*/, model_index, sm_info.per_residue_string_data_);
+
+	map_decode_from_model(modelProperties_MD, manager.enum_to_string(simple_metric_per_residue_real_output),
+		false /*required*/, model_index, sm_info.per_residue_real_output_);
+
+	map_decode_from_model(modelProperties_MD, manager.enum_to_string(simple_metric_per_residue_string_output),
+		false /*required*/, model_index, sm_info.per_residue_string_output_);
+}
 
 
 std::map<core::Size, core::Size>
@@ -503,8 +567,9 @@ update_bond_indices(core::io::StructFileRep & sfr,
 }
 
 
+
 utility::vector1< core::io::StructFileRepOP >
-core::io::mmtf::create_sfrs_from_mmtf_filename(
+create_sfrs_from_mmtf_filename(
 	std::string const & mmtf_filename,
 	core::io::StructFileReaderOptions const & options,
 	utility::vector1< core::Size > const & model_indexes)
@@ -513,17 +578,17 @@ core::io::mmtf::create_sfrs_from_mmtf_filename(
 		TR.Warning << "read_pdb_header set, but not used in reading mmtf_file" << std::endl;
 		// TODO
 	}
-
 	::mmtf::StructureData sd;
 	::mmtf::decodeFromFile(sd, mmtf_filename);
 
 	std::vector< core::Size > ai_to_model;
 	std::map< core::Size, core::Size > model_index_to_starting_index;
+
 	std::map<core::Size, sd_index> const atom_num_to_sd_map(make_atom_num_to_sd_map(sd));
 	std::vector< core::io::AtomInformation > all_AIs(core::io::mmtf::make_all_atom_information(sd, ai_to_model, model_index_to_starting_index, options));
 
 	// OK this is a little hairy, but I think we can handle it.
-	// - mmtf has connected_indices (bonds) based on the index of the atom in the mmtf file
+	// - mmtf has connected_indices (bonds) based on the index of the atom in the mmtf file + the current group
 	// - Rosetta takes the atoms and sorts them into different chains thereby invalidating some bonds
 	// - To bring the bonds back into a validated state we have to alter the connected_indices to the new indicies
 	core::io::mmtf::add_bond_information(sd, all_AIs, atom_num_to_sd_map);
@@ -564,9 +629,13 @@ core::io::mmtf::create_sfrs_from_mmtf_filename(
 		}
 		std::map<core::Size, core::Size> const old_to_new_idx(make_old_to_new_mapping(atom_idx_chains, model_index_to_starting_index[model_index]));
 		update_bond_indices(*sfr, old_to_new_idx);
+		sfr->filename() = mmtf_filename;
+		read_extra_data(sfr, sd, model_index);
 		sfrs.push_back(sfr);
 	}
-
-	core::io::mmtf::read_extra_data(sfrs, sd);
 	return sfrs;
 }
+
+} //mmtf
+} //io
+} //core

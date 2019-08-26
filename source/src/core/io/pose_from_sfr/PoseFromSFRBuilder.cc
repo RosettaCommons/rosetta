@@ -70,6 +70,8 @@
 #include <core/pose/carbohydrates/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/cryst/util.hh>
+#include <core/simple_metrics/util.hh>
+#include <core/simple_metrics/SimpleMetricData.hh>
 
 // Basic headers
 #include <basic/options/option.hh>
@@ -1166,13 +1168,32 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 		core::scoring::cryst::fix_bfactorsH( pose );
 	}
 
-	if ( options_.pdb_comments() ) {
+	if ( sfr_.pdb_comments().size() ) {
 		std::map< std::string, std::string > const & pdb_comments( sfr_.pdb_comments() );
 		for ( auto const & pdb_comment : pdb_comments ) {
 			core::pose::add_comment( pose, pdb_comment.first, pdb_comment.second );
 		}
 	}
 
+	if ( sfr_.pose_cache_string_data().size() ) {
+		std::map< std::string, std::string > const & string_data( sfr_.pose_cache_string_data());
+		for ( auto const & data : string_data ) {
+			core::pose::setPoseExtraScore(pose, data.first, data.second);
+		}
+	}
+
+	if ( sfr_.pose_cache_real_data().size() ) {
+		std::map< std::string, core::Real > const & real_data( sfr_.pose_cache_real_data());
+		for ( auto const & data: real_data ) {
+			core::pose::setPoseExtraScore(pose, data.first, data.second);
+		}
+	}
+
+	if ( sfr_.simple_metric_data().has_data() ) {
+		core::simple_metrics::MetricKey mk;
+		core::simple_metrics::SimpleMetricDataOP sm_data = core::simple_metrics::get_sm_data(pose);
+		sm_data->set_all_data(mk, sfr_.simple_metric_data());
+	}
 	TR.Trace << "Pose refined successfully:" << std::endl;
 	TR.Trace << pose << std::endl;
 }

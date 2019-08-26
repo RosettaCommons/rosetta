@@ -19,6 +19,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 
 // Utility headers
@@ -59,6 +60,7 @@ void StructFileReaderOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_obey_ENDMDL(  tag->getOption< bool >( "obey_ENDMDL", false ) );
 	set_read_pdb_header( tag->getOption< bool >( "preserve_header", false ) );
 	set_glycam_pdb_format( tag->getOption< bool >( "glycam_pdb_format", false ) );
+	set_mmtf_extra_data_io( tag->getOption< bool >( "read_mmtf_extra_data", true));
 }
 
 std::string StructFileReaderOptions::type() const { return "StructFileReaderOptions"; }
@@ -68,13 +70,14 @@ bool StructFileReaderOptions::new_chain_order() const { return new_chain_order_;
 bool StructFileReaderOptions::obey_ENDMDL() const { return obey_ENDMDL_; }
 bool StructFileReaderOptions::read_pdb_header() const { return read_pdb_header_; }
 bool StructFileReaderOptions::glycam_pdb_format() const { return glycam_pdb_format_; }
+bool StructFileReaderOptions::mmtf_extra_data_io() const { return mmtf_extra_data_io_; }
 
 // mutators
 void StructFileReaderOptions::set_new_chain_order( bool setting ) { new_chain_order_ = setting; }
 void StructFileReaderOptions::set_obey_ENDMDL( bool setting ) { obey_ENDMDL_ = setting; }
 void StructFileReaderOptions::set_read_pdb_header( bool setting ) { read_pdb_header_ = setting; }
 void StructFileReaderOptions::set_glycam_pdb_format( bool setting ) { glycam_pdb_format_ = setting; }
-
+void StructFileReaderOptions::set_mmtf_extra_data_io( bool setting ) { mmtf_extra_data_io_ = setting; }
 void
 StructFileReaderOptions::list_options_read( utility::options::OptionKeyList & read_options )
 {
@@ -84,7 +87,8 @@ StructFileReaderOptions::list_options_read( utility::options::OptionKeyList & re
 		+ in::file::new_chain_order
 		+ in::file::obey_ENDMDL
 		+ run::preserve_header
-		+ carbohydrates::glycam_pdb_format;
+		+ carbohydrates::glycam_pdb_format
+		+ inout::mmtf_extra_data_io;
 }
 
 void
@@ -98,7 +102,8 @@ StructFileReaderOptions::append_schema_attributes( utility::tag::AttributeList &
 		+ Attr::attribute_w_default( "new_chain_order", xsct_rosetta_bool, "TO DO", "false" )
 		+ Attr::attribute_w_default( "obey_ENDMDL", xsct_rosetta_bool, "TO DO", "false" )
 		// + Attr::attribute_w_default( "preserve_header", xsct_rosetta_bool, "TO DO", "false" ) // already done by base class
-		+ Attr::attribute_w_default( "glycam_pdb_format", xsct_rosetta_bool, "TO DO", "false" );
+		+ Attr::attribute_w_default( "glycam_pdb_format", xsct_rosetta_bool, "TO DO", "false" )
+		+ Attr::attribute_w_default( "read_mmtf_extra_data", xsct_rosetta_bool, "Read any extra data fields including ExtraScoreData and SimpleMetrics into the pose?", "true");
 
 }
 
@@ -112,6 +117,7 @@ void StructFileReaderOptions::init_from_options( utility::options::OptionCollect
 	set_obey_ENDMDL( options[ in::file::obey_ENDMDL ].value() );
 	set_read_pdb_header( options[ run::preserve_header ]() );
 	set_glycam_pdb_format( options[ carbohydrates::glycam_pdb_format ]() );
+	set_mmtf_extra_data_io( options[ inout::mmtf_extra_data_io]() );
 }
 
 bool
@@ -123,6 +129,7 @@ StructFileReaderOptions::operator == ( StructFileReaderOptions const & other ) c
 	if ( obey_ENDMDL_ != other.obey_ENDMDL_  ) return false;
 	if ( read_pdb_header_ != other.read_pdb_header_  ) return false;
 	if ( glycam_pdb_format_ != other.glycam_pdb_format_  ) return false;
+	if ( mmtf_extra_data_io_ != other.mmtf_extra_data_io_ ) return false;
 
 	return true;
 }
@@ -140,6 +147,9 @@ StructFileReaderOptions::operator < ( StructFileReaderOptions const & other ) co
 	if ( read_pdb_header_ <  other.read_pdb_header_  ) return true;
 	if ( read_pdb_header_ == other.read_pdb_header_  ) return false;
 	if ( glycam_pdb_format_ <  other.glycam_pdb_format_  ) return true;
+	if ( mmtf_extra_data_io_ < other.mmtf_extra_data_io_ ) return true;
+	if ( mmtf_extra_data_io_ == other.mmtf_extra_data_io_ ) return false;
+
 	//if ( glycam_pdb_format_ == other.glycam_pdb_format_  ) return false;
 	return false;
 
@@ -160,6 +170,7 @@ core::io::StructFileReaderOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( obey_ENDMDL_ ) ); // _Bool
 	arc( CEREAL_NVP( read_pdb_header_ ) ); // _Bool
 	arc( CEREAL_NVP( glycam_pdb_format_ ) ); // _Bool
+	arc( CEREAL_NVP( mmtf_extra_data_io_ )); // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -171,6 +182,7 @@ core::io::StructFileReaderOptions::load( Archive & arc ) {
 	arc( obey_ENDMDL_ ); // _Bool
 	arc( read_pdb_header_ ); // _Bool
 	arc( glycam_pdb_format_ ); // _Bool
+	arc( mmtf_extra_data_io_ ); // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::io::StructFileReaderOptions );

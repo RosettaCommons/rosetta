@@ -643,7 +643,7 @@ create_records_from_sfr(
 	}
 
 	// PDB Comments
-	if ( sfr.pdb_comments().size() > 0 ) {
+	if ( sfr.pdb_comments().size() > 0 && options->pdb_comments() ) {
 		std::stringstream out;
 		out << "##Begin comments##" << std::endl;
 		using namespace std;

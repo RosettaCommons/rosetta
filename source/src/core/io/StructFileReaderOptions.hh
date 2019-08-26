@@ -55,12 +55,14 @@ public:
 	bool obey_ENDMDL() const;
 	bool read_pdb_header() const;
 	bool glycam_pdb_format() const;
+	bool mmtf_extra_data_io() const;
 
 	// mutators
 	void set_new_chain_order( bool setting );
 	void set_obey_ENDMDL( bool setting );
 	void set_read_pdb_header( bool setting );
 	void set_glycam_pdb_format( bool setting );
+	void set_mmtf_extra_data_io( bool setting );
 
 	/// @brief Declare the list of options that are read in the process of reading a PDB (or SDF) and converting
 	/// it into a Pose.
@@ -87,6 +89,8 @@ private:
 	bool obey_ENDMDL_;
 	bool read_pdb_header_;
 	bool glycam_pdb_format_;
+	bool mmtf_extra_data_io_; //Can be generalized for other formats, but with lots of difficulty.
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

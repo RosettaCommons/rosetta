@@ -574,6 +574,10 @@ Options = Option_Group( '',
 				desc="The atom separation cutoff above which bonded atoms have explicit CONECT records written so "
 						"that programs like PyMOL know the atomic connectivity.  Default 0.0 Angstroms (write all records).",
 				default='0.0' ),
+		Option( 'mmtf_extra_data_io', 'Boolean',
+				desc="If reading/writing mmTF, read/write extra data including pdb_comments, extra scores, and SimpleMetrics?",
+				default='true'),
+
         Option( 'output_alternate_atomids', 'Boolean',
             desc="Use the alternate atom IDS as stored in the params files when available",
             default='false'),
