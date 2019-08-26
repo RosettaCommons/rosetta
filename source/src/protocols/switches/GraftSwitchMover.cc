@@ -456,7 +456,7 @@ GraftSwitchMover::parse_my_tag(
 	pack_neighbors_ = tag->getOption< bool >("pack_neighbors", true);
 	seq_in_any_order_ = tag->getOption< bool >("any_order", true);
 	pack_min_ = tag->getOption< bool >("pack_min", true);
-	burial_cutoff_ = tag->getOption< core::Size >("burial_cutoff", 6);
+	burial_cutoff_ = tag->getOption< core::Real >("burial_cutoff", 6);
 	sequences_ = utility::string_split( tag->getOption<std::string>("sequence", ""), ',' );
 
 	std::string important_residues_string( tag->getOption<std::string>("important_residues", "") );
