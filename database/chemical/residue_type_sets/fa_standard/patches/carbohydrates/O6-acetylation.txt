@@ -1,0 +1,62 @@
+## full-atom 6-acetyl sugar patch
+## partial charges from charmm 27
+
+NAME 6-Ac
+TYPES O6_ACETYL_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+NOT UPPER_ATOM O6
+NOT VARIANT_TYPE C6_BRANCH_POINT
+NOT PROPERTY C6_MODIFIED
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, make the H invisible.
+SET_ATOM_TYPE HO6 VIRT
+SET_MM_ATOM_TYPE HO6 VIRT
+SET_ATOMIC_CHARGE HO6 0.00
+
+# Next, change the oxygen atom type
+SET_ATOM_TYPE  O6  OOC  # We really need an ester atom type in Rosetta.
+SET_MM_ATOM_TYPE  O6   OS
+SET_ATOMIC_CHARGE  O6  -0.34
+
+# Next, add the new atoms
+ADD_ATOM  CO6 CObb C    0.11
+ADD_ATOM CAO6 CH3  CT3 -0.17
+ADD_ATOM OCO6 OCbb O    0.00
+ADD_ATOM 1HC6 Hapo HA   0.09   # 1st H on CA of the acetyl on O6
+ADD_ATOM 2HC6 Hapo HA   0.09
+ADD_ATOM 3HC6 Hapo HA   0.09
+
+# No aliases to add, because I cannot find any examples in the PDB.
+
+# Now, the bonds
+ADD_BOND  O6   CO6
+ADD_BOND_TYPE  CO6 OCO6 DOUBLE
+ADD_BOND  CO6 CAO6
+ADD_BOND CAO6 1HC6
+ADD_BOND CAO6 2HC6
+ADD_BOND CAO6 3HC6
+
+# Since the saccharide ResidueType we are patching can have any number of side
+# chains, we want to add the new torsion introduced by the patch to the end of
+# the current list of chis, i.e., CHI N+1.  We then wish to provide rotamer
+# samples for this new chi, which now has the index of N.
+ADD_CHI N+1  C6   O6   CO6 CAO6
+ADD_CHI_ROTAMER N    0 0
+ADD_CHI_ROTAMER N  180 0
+
+SET_ICOOR  CO6  180.0   71.7   1.41   O6   C6   C5
+SET_ICOOR CAO6  180.0   58.5   1.53   CO6  O6   C6
+SET_ICOOR OCO6    0.0   61.1   1.24   CO6  O6   C6
+SET_ICOOR 1HC6  180.0   69.7   1.10  CAO6  CO6  O6
+SET_ICOOR 2HC6   60.0   69.7   1.10  CAO6  CO6  O6
+SET_ICOOR 3HC6  -60.0   69.7   1.10  CAO6  CO6  O6
+
+ADD_PROPERTY C6_MODIFIED
+ADD_PROPERTY ACETYL_SUGAR
+
+END_CASE

@@ -92,7 +92,7 @@ main( int argc, char *argv[] )
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
 			O_linked, psicose, neuraminate, bacillosamine, Lex, SLex, GalCer, UDP_D_Glc, target57, maltobiose,
-			Me_glycoside, C_linked, whacky_sugar, pdb_code_pdb, bad_pdb;
+			Me_glycoside, C_linked, Ac_sugar, whacky_sugar, pdb_code_pdb, bad_pdb;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -329,6 +329,14 @@ main( int argc, char *argv[] )
 		pose::carbohydrates::glycosylate_pose( C_linked, 2, "a-D-Manp-" );
 
 		test_sugar( C_linked );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating an O-acetylated sugar from sequence:" << endl;
+
+		make_pose_from_saccharide_sequence( Ac_sugar, "alpha-d-Glcp6Ac", *residue_set );
+
+		test_sugar( Ac_sugar );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

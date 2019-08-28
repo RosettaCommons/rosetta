@@ -1,0 +1,17 @@
+This documentation is a work in progress....
+
+ResidueTypes
+Blah blah blah, blah, blah
+
+Be sure to register your new ResidueType in the appropriate residue_types.txt file in the parent ResidueTypeSet directory.
+
+
+Patches
+Blah blah blah, blah, blah
+
+Be sure to register your new patch in the appropriate patches.txt file in the parent ResidueTypeSet directory.
+
+
+Miscellaneous Information
+A list of all allowed VariantTypes and Properties can be found here:
+source/src/core/chemical/residue_properties/
