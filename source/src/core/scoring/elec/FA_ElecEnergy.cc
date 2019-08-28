@@ -180,17 +180,6 @@ CountPairRepMap::cp_byname() {
 	return *cp_rep_map_byname_;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 /////////////////////////////////////////////////////////////////////////////////////////
 
 /// @details This must return a fresh instance of the FA_ElecEnergy class,
@@ -432,9 +421,22 @@ FA_ElecEnergy::residue_pair_energy(
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
-		CountPairFunctionOP cpfxn = count_pair_full_ ?
+
+		bool const is_rsd1_ncaa_polymer = rsd1.is_polymer() && !rsd1.type().is_base_type();
+		bool const is_rsd2_ncaa_polymer = rsd2.is_polymer() && !rsd2.type().is_base_type();
+		bool const is_cp3full = count_pair_full_ ||
+			(count_pair_hybrid_ && ( rsd1.is_ligand() || rsd2.is_ligand() || is_rsd1_ncaa_polymer || is_rsd2_ncaa_polymer )); // if any of rsd1/rsd2 is ncaa_polymer
+
+		CountPairFunctionOP cpfxn = is_cp3full ?
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3FULL ) :
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+
+		/*
+		TR.Debug << "CPfxn " << rsd1.seqpos() << "-" << rsd2.seqpos() << ": "
+		<< (is_cp3full?"3full":"4") << "; " << count_pair_hybrid_
+		<< " " << is_rsd1_ncaa_polymer << " " << is_rsd2_ncaa_polymer
+		<< std::endl;
+		*/
 
 		Real d2;
 		for ( Size ii = 1; ii <= rsd1.nheavyatoms(); ++ii ) {
@@ -446,6 +448,8 @@ FA_ElecEnergy::residue_pair_energy(
 				Size path_dist( 0 );
 				if ( cpfxn->count( ii_rep, jj_rep, weight, path_dist ) ) {
 					score += score_atom_pair( rsd1, rsd2, ii, jj, emap, weight, d2 );
+					//std::cout << rsd1.seqpos() << " " << rsd2.seqpos() << " " << ii << " " << jj << " "
+					//<< weight << " " << std::sqrt(d2) << " " << score << std::endl;
 				} else {
 					d2 = rsd1.xyz(ii).distance_squared( rsd2.xyz(jj) );
 				}
@@ -461,6 +465,8 @@ FA_ElecEnergy::residue_pair_energy(
 					path_dist = 0;
 					if ( cpfxn->count( kk_rep, jj_rep, weight, path_dist ) ) {
 						score += score_atom_pair( rsd1, rsd2, kk, jj, emap, weight, d2 );
+						//std::cout << rsd1.seqpos() << " " << rsd2.seqpos() << " " << kk << " " << jj << " "
+						// << weight << " " << std::sqrt(d2) << " " << score << std::endl;
 					}
 				}
 				for ( Size kk = jj_hatbegin; kk <= jj_hatend; ++kk ) {
@@ -470,6 +476,8 @@ FA_ElecEnergy::residue_pair_energy(
 					path_dist = 0;
 					if ( cpfxn->count( ii_rep, kk_rep, weight, path_dist ) ) {
 						score += score_atom_pair( rsd1, rsd2, ii, kk, emap, weight, d2 );
+						//std::cout << rsd1.seqpos() << " " << rsd2.seqpos() << " " << ii << " " << kk << " "
+						//<< weight << " " << std::sqrt(d2) << " " << score << std::endl;
 					}
 				}
 				for ( Size kk = ii_hatbegin; kk <= ii_hatend; ++kk ) {
@@ -481,6 +489,8 @@ FA_ElecEnergy::residue_pair_energy(
 						path_dist = 0;
 						if ( cpfxn->count( kk_rep, ll_rep, weight, path_dist ) ) {
 							score += score_atom_pair( rsd1, rsd2, kk, ll, emap, weight, d2 );
+							//std::cout << rsd1.seqpos() << " " << rsd2.seqpos() << " " << kk << " " << ll << " "
+							//     << weight << " " << std::sqrt(d2) << " " << score << std::endl;
 						}
 					}
 				}
@@ -558,10 +568,21 @@ FA_ElecEnergy::eval_intrares_energy(
 	// assuming only a single bond right now -- generalizing to arbitrary topologies
 	// also assuming crossover of 4, should be closest (?) to classic rosetta
 	bool const is_ligand( rsd.is_ligand() );
-	bool intra_xover3 = ((is_ligand && count_pair_hybrid_) || count_pair_full_);
+	// check if corresponds to base-type L/D-AA -- is there any better way to get base-type D-AA?
+	//bool const is_rsd_baseAA = (rsd.type().is_canonical_aa() || (core::chemical::is_canonical_D_aa(rsd.type().aa())) && rsd.type().is_base_type());
+	bool const is_rsd_baseAA = rsd.type().is_base_type();
+	bool const is_ncaa_polymer = rsd.is_polymer() && !is_rsd_baseAA;
+
+	bool intra_xover3 = ( ((is_ligand || is_ncaa_polymer) && count_pair_hybrid_) || count_pair_full_);
 	CountPairFunctionOP cpfxn = intra_xover3 ?
 		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_3FULL ) :
 		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_4 );
+	/*
+	TR.Debug << "CPfxn " << rsd.seqpos() << ": " << (intra_xover3?"3full":"4")
+	<< "; " << count_pair_hybrid_
+	<< " " << is_ncaa_polymer
+	<< std::endl;
+	*/
 	Real d2;
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 		Size ii_rep = get_countpair_representative_atom( rsd.type(), ii );
@@ -811,11 +832,20 @@ FA_ElecEnergy::eval_intrares_derivatives(
 			) return;
 
 	bool const is_ligand( rsd.is_ligand() );
-	//bool intra_xover3 = (is_ligand && count_pair_hybrid_);
-	bool intra_xover3 = ((is_ligand && count_pair_hybrid_) || count_pair_full_);
+	//bool const is_rsd_baseAA = (rsd.type().is_canonical_aa() || (core::chemical::is_canonical_D_aa(rsd.type().aa())) && rsd.type().is_base_type());
+	bool const is_rsd_baseAA = rsd.type().is_base_type();
+	bool const is_ncaa_polymer = rsd.is_polymer() && !is_rsd_baseAA;
+
+	bool intra_xover3 = (((is_ligand || is_ncaa_polymer) && count_pair_hybrid_) || count_pair_full_);
 	CountPairFunctionOP cpfxn = intra_xover3 ?
 		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_3FULL ) :
 		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_4 );
+	/*
+	TR.Debug << "CPfxn,deriv" << rsd.seqpos() << ": " << (intra_xover3?"3full":"4")
+	<< "; " << count_pair_hybrid_
+	<< " " << is_ncaa_polymer
+	<< std::endl;
+	*/
 
 	Size iN=0, iHG=0, iOG=0;
 	utility::vector1< Size > iHs;
@@ -954,7 +984,18 @@ FA_ElecEnergy::backbone_backbone_energy(
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
-		CountPairFunctionOP cpfxn = count_pair_full_ ?
+		//bool const is_rsd1_baseAA = (rsd1.type().is_canonical_aa() || (core::chemical::is_canonical_D_aa(rsd1.type().aa())) && rsd1.type().is_base_type());
+		//bool const is_rsd2_baseAA = (rsd2.type().is_canonical_aa() || (core::chemical::is_canonical_D_aa(rsd2.type().aa())) && rsd2.type().is_base_type());
+		bool const is_rsd1_baseAA = rsd1.type().is_base_type();
+		bool const is_rsd2_baseAA = rsd2.type().is_base_type();
+
+		bool const is_rsd1_ncaa_polymer = rsd1.is_polymer() && !is_rsd1_baseAA;
+		bool const is_rsd2_ncaa_polymer = rsd2.is_polymer() && !is_rsd2_baseAA;
+
+		bool const is_cp3full = count_pair_full_ ||
+			(count_pair_hybrid_ && ( is_rsd1_ncaa_polymer || is_rsd2_ncaa_polymer )); // if any of rsd1/rsd2 is ncaa_polymer
+
+		CountPairFunctionOP cpfxn = is_cp3full ?
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3FULL ) :
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 		//CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
@@ -1023,7 +1064,17 @@ FA_ElecEnergy::backbone_sidechain_energy(
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
-		CountPairFunctionOP cpfxn = count_pair_full_ ?
+		//bool const is_rsd1_baseAA = (rsd1.type().is_canonical_aa() || (core::chemical::is_canonical_D_aa(rsd1.type().aa())) && rsd1.type().is_base_type());
+		//bool const is_rsd2_baseAA = (rsd2.type().is_canonical_aa() || (core::chemical::is_canonical_D_aa(rsd2.type().aa())) && rsd2.type().is_base_type());
+		bool const is_rsd1_baseAA = rsd1.type().is_base_type();
+		bool const is_rsd2_baseAA = rsd2.type().is_base_type();
+
+		bool const is_rsd1_ncaa_polymer = rsd1.is_polymer() && !is_rsd1_baseAA;
+		bool const is_rsd2_ncaa_polymer = rsd2.is_polymer() && !is_rsd2_baseAA;
+		bool const is_cp3full = count_pair_full_ ||
+			(count_pair_hybrid_ && ( is_rsd1_ncaa_polymer || is_rsd2_ncaa_polymer )); // if any of rsd1/rsd2 is ncaa_polymer
+
+		CountPairFunctionOP cpfxn = is_cp3full ?
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3FULL ) :
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 		//CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
@@ -1094,7 +1145,17 @@ FA_ElecEnergy::sidechain_sidechain_energy(
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
-		CountPairFunctionOP cpfxn = count_pair_full_ ?
+		//bool const is_rsd1_baseAA = (rsd1.type().is_canonical_aa() || (core::chemical::is_canonical_D_aa(rsd1.type().aa())) && rsd1.type().is_base_type());
+		//bool const is_rsd2_baseAA = (rsd2.type().is_canonical_aa() || (core::chemical::is_canonical_D_aa(rsd2.type().aa())) && rsd2.type().is_base_type());
+		bool const is_rsd1_baseAA = rsd1.type().is_base_type();
+		bool const is_rsd2_baseAA = rsd2.type().is_base_type();
+
+		bool const is_rsd1_ncaa_polymer = rsd1.is_polymer() && !is_rsd1_baseAA;
+		bool const is_rsd2_ncaa_polymer = rsd2.is_polymer() && !is_rsd2_baseAA;
+
+		bool const is_cp3full = count_pair_full_ ||
+			(count_pair_hybrid_ && ( is_rsd1_ncaa_polymer || is_rsd2_ncaa_polymer )); // if any of rsd1/rsd2 is ncaa_polymer
+		CountPairFunctionOP cpfxn = is_cp3full ?
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3FULL ) :
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 		//CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
@@ -1394,8 +1455,12 @@ FA_ElecEnergy::get_intrares_countpair(
 	using namespace etable::count_pair;
 
 	bool const is_ligand( res.is_ligand() );
+	//bool const is_rsd_baseAA = (rsd.type().is_canonical_aa() || (core::chemical::is_canonical_D_aa(rsd.type().aa())) && rsd.type().is_base_type());
+	bool const is_rsd_baseAA = res.type().is_base_type();
+	bool const is_ncaa_polymer = res.is_polymer() && !is_rsd_baseAA;
+
 	//bool intra_xover3 = (is_ligand && count_pair_hybrid_);
-	bool intra_xover3 = ((is_ligand && count_pair_hybrid_) || count_pair_full_);
+	bool intra_xover3 = (((is_ligand || is_ncaa_polymer) && count_pair_hybrid_) || count_pair_full_);
 	CountPairFunctionOP reg_cpfxn = intra_xover3 ?
 		CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_3FULL ) :
 		CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_4 );

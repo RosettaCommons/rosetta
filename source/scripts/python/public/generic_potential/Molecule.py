@@ -45,6 +45,7 @@ class MoleculeClass:
         self.torsions = []
         self.nbratom = -1
         self.nbrradius = 0.0
+        self.atms_strained = []
         self.atms_aro = []
         self.atms_puckering = []
         self.atms_ring = [] #including aromatic ring
@@ -274,8 +275,13 @@ class MoleculeClass:
     def report_icoord(self,outstream):
         icoordcont = []
         form = "ICOOR_INTERNAL  %-4s %11.6f %11.6f %11.6f %-4s %-4s %-4s\n"
+
+        # Heavy atms
         for i,iatm in enumerate(self.ATorder):
             atm = self.atms[iatm]
+            #skip non-root hydrogens
+            if i > 2 and atm.is_H: continue
+            
             len_i,ang_i,dih_i=0.0,180.0,0.0
             #print ("ROOT:", iatm, atm.root, atm.groot )
             if (i > 0):
@@ -285,9 +291,44 @@ class MoleculeClass:
                     if (i > 2):
                         dih_i = dihedral(self.xyz[iatm],self.xyz[atm.root],
                                          self.xyz[atm.groot[0]],self.xyz[atm.groot[1]])
-
+                            
             l = form%(atm.name,dih_i,180.0-ang_i,len_i,
                       self.atms[atm.root].name,self.atms[atm.groot[0]].name,self.atms[atm.groot[1]].name)
+            outstream.write(l)
+
+        # Hydrogens: define improper torsion relation if root has >= 2 hvyatm connections (thus improper can be defined)
+        for i,iatm in enumerate(self.ATorder):
+            atm = self.atms[iatm]
+             #skip heavyatms
+            if not atm.is_H: continue
+            
+            other_hvy_atms_conn_to_root = []
+            rootatm = self.atms[atm.root]
+            for jatm,order in rootatm.bonds:
+                if jatm not in [iatm,atm.groot[0]] and not self.atms[jatm].is_H:
+                    other_hvy_atms_conn_to_root.append(jatm)
+
+            if len(other_hvy_atms_conn_to_root) > 0:
+                imp2 = atm.root
+                imp3 = atm.groot[0]
+                imp4 = other_hvy_atms_conn_to_root[0]
+                len_i = distance(self.xyz[iatm],self.xyz[imp2])
+                ang_i = angle(self.xyz[iatm],self.xyz[imp2],self.xyz[imp3])
+                dih_i = dihedral(self.xyz[iatm],self.xyz[imp2], self.xyz[imp3],self.xyz[imp4])
+                
+                l = form%(atm.name,dih_i,180.0-ang_i,len_i,
+                          self.atms[imp2].name,self.atms[imp3].name,self.atms[imp4].name)
+            else:
+                if (i > 0):
+                    len_i = distance(self.xyz[iatm],self.xyz[atm.root])
+                    if (i > 1):
+                        ang_i = angle(self.xyz[iatm],self.xyz[atm.root],self.xyz[atm.groot[0]])
+                        if (i > 2):
+                            dih_i = dihedral(self.xyz[iatm],self.xyz[atm.root],
+                                             self.xyz[atm.groot[0]],self.xyz[atm.groot[1]])
+                            
+                l = form%(atm.name,dih_i,180.0-ang_i,len_i,
+                          self.atms[atm.root].name,self.atms[atm.groot[0]].name,self.atms[atm.groot[1]].name)
             outstream.write(l)
 
         # virtual atms

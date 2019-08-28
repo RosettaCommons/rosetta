@@ -174,6 +174,15 @@ inline_residue_atom_pair_energy(
 	Real const original_fa_sol = emap.get( fa_sol );
 	bool no_fa_sol = false;
 
+	if ( basic::options::option[ basic::options::OptionKeys::score::show_etable_contributions ] ) {
+		std::cout << "res_" << res1.seqpos() << " res_" << res2.seqpos() << "   ";
+		std::cout << "Before scoring: ";
+		std::cout << "atr: " << emap[ fa_atr ] << " ";
+		std::cout << "rep: " << emap[ fa_rep ] << " ";
+		std::cout << "sol: " << emap[ fa_sol ] << " ";
+		std::cout << std::endl;
+	}
+
 	// hydrate/SPaDES protocol
 	// check to make sure water_hybrid_sf and ignore_fa_sol_at_positions is on
 	if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
@@ -338,6 +347,16 @@ inline_intraresidue_atom_pair_energy(
 
 				}
 			}
+
+			if ( basic::options::option[ basic::options::OptionKeys::score::show_etable_contributions ] ) {
+				std::cout << "res_" << res.seqpos();
+				std::cout << " Atom_Pair_Energy: " << i << " with " << j << "   ";
+				std::cout << "atr: " << emap[ fa_atr ] << " ";
+				std::cout << "rep: " << emap[ fa_rep ] << " ";
+				std::cout << "sol: " << emap[ fa_sol ] << " ";
+				std::cout << std::endl;
+			}
+
 		}
 	}
 }

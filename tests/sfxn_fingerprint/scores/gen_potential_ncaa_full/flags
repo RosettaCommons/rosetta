@@ -1,0 +1,12 @@
+-in:file:s cycpep_w_nmethyl.pdb
+-in:file:fullatom
+-gen_potential
+-genbonded_score_full
+-score:weights genpot_full_cart
+-score::gen_bonded_params_file scoring/score_functions/generic_potential/generic_bonded.aamerge.txt
+-out:level 500
+-mute all
+-unmute core.scoring.GenericBondedPotential
+-crystal_refine
+-in::file::load_PDB_components false
+-out:nooutput

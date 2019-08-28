@@ -35,6 +35,7 @@ ACLASS_ID = ['Null', #0: Unassigned
              'CDp', #sp2, polar
              'CRp', #aromatic, polar
              'CTp', #sp1, polar
+             'CSQ', #strained sp3 
              
              #Hydrogens, attached to C,CR,O,N,S,or Generic
              'HC',

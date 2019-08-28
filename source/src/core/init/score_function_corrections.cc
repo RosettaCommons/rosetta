@@ -2092,9 +2092,67 @@ init_gen_potential_settings( utility::options::OptionCollection & options ) {
 		options[ basic::options::OptionKeys::rings::ring_conformer_dbpath ].value( "chemical/ring_conformer_sets/fd_alternate" );
 	}
 
-	// modified countpair logic for ligands
-	if ( ! options[ basic::options::OptionKeys::score::count_pair_hybrid ].user() ) {
+	// gen_torsion behavior
+	if ( options[ basic::options::OptionKeys::score::genbonded_score_hybrid ]() &&
+			!(options[ basic::options::OptionKeys::score::count_pair_hybrid ].user() ||
+			options[ basic::options::OptionKeys::score::count_pair_full ].user() ) ) {
 		options[ basic::options::OptionKeys::score::count_pair_hybrid ].value( true );
+		TR.Warning << "Flag -score::genbonded_score_hybrid set but count_pair behavior not defined; auto set to -score:count_pair_hybrid" << std::endl;
+	}
+	if ( options[ basic::options::OptionKeys::score::genbonded_score_full ]() &&
+			!(options[ basic::options::OptionKeys::score::count_pair_hybrid ].user() ||
+			options[ basic::options::OptionKeys::score::count_pair_full ].user() ) ) {
+		options[ basic::options::OptionKeys::score::count_pair_full ].value( true );
+		TR.Warning << "Flag -score::genbonded_score_full set but count_pair behavior not defined; auto set to -score:count_pair_full" << std::endl;
+	}
+
+	// modified countpair logic for ligands
+	if ( ! options[ basic::options::OptionKeys::score::count_pair_hybrid ].user() &&
+			! options[ basic::options::OptionKeys::score::count_pair_full ].user() ) {
+		options[ basic::options::OptionKeys::score::count_pair_hybrid ].value( true );
+	}
+
+	// allow cyclic connection to be considered by cart_bonded
+	if ( ! options[ basic::options::OptionKeys::score::cart_bonded_skip_cutpoints ].user() ) {
+		options[ basic::options::OptionKeys::score::cart_bonded_skip_cutpoints ].value( false );
+	}
+
+	// hbond params
+	if ( !options[ basic::options::OptionKeys::corrections::score::lj_hbond_hdis ].user() ) {
+		options[ basic::options::OptionKeys::corrections::score::lj_hbond_hdis ].value(2.3);
+	}
+	if ( !options[ basic::options::OptionKeys::corrections::score::lj_hbond_OH_donor_dis ].user() ) {
+		options[ basic::options::OptionKeys::corrections::score::lj_hbond_OH_donor_dis ].value(3.3);
+	}
+
+	// consistency check
+	{
+		bool const bond_hybrid( options[ basic::options::OptionKeys::score::genbonded_score_hybrid ]() );
+		bool const bond_full( options[ basic::options::OptionKeys::score::genbonded_score_full ]() );
+		bool const cp_hybrid( options[ basic::options::OptionKeys::score::count_pair_hybrid ]() );
+		bool const cp_full( options[ basic::options::OptionKeys::score::count_pair_full ]() );
+
+		// assert not defined both together
+		if ( cp_full && cp_hybrid ) {
+			utility_exit_with_message("-count_pair_full/_hybrid cannot be used together!");
+		}
+		if ( bond_full && bond_hybrid ) {
+			utility_exit_with_message("-genbonded_full/_hybrid cannot be used together!");
+		}
+
+		// assert not used as a mixture
+		if ( (bond_full && cp_hybrid ) || (bond_hybrid && cp_full ) ) {
+			utility_exit_with_message("[-count_pair_full/genbonded_pair_full] & [-count_pair_hybrid/genbonded_pair_hybrid] should be paired!");
+		}
+
+		// bond_full mode should be used -only if- cp_full is on (not the other way around; cp can work separately)
+		if ( (bond_full && !cp_full) ) {
+			utility_exit_with_message("-genbonded_score_full & -count_pair_full should be used together!");
+		}
+		// bond_hybrid mode should be used -only if- cp_hybrid is on (not the other way around; cp can work separately)
+		if ( (bond_hybrid && !cp_hybrid) ) {
+			utility_exit_with_message("-genbonded_score_hybrid & -count_pair_hybrid should be used together!");
+		}
 	}
 
 	if ( ! options[ score::weights ].user() ) {

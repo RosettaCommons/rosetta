@@ -184,7 +184,7 @@ void FragmentConstantLengthTest::test_frag_cache() {
 
 				// for faster access to all values of the frame:
 				FragCache< Size >::TCacheUnit& cache = silly_cache( frame );
-				Size val3;
+				Size val3 = 0;
 				TS_ASSERT( cache.retrieve( frame.frag_id( 1 ), val3 ) );
 				TS_ASSERT_EQUALS( val3, pos );
 			};
@@ -230,7 +230,7 @@ void FragmentConstantLengthTest::test_frag_cache() {
 
 				// for faster access to all values of the frame:
 				FragStore< Size >::TCacheUnit& cache = silly_cache( frame );
-				Size val3;
+				Size val3 = 0;
 				TS_ASSERT( cache.retrieve( frame.frag_id( 1 ), val3 ) );
 				TS_ASSERT_EQUALS( val3, pos );
 			};

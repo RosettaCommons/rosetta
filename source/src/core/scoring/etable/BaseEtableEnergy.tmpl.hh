@@ -714,9 +714,23 @@ BaseEtableEnergy< Derived >::determine_crossover_behavior(
 	// Ask "are these two residues polymers and do they share a polymeric bond?"
 	if (
 			//res1.polymeric_sequence_distance(res2) == 1 //VKM, 20 Feb 2016: Doesn't handle cyclic geometry properly.  The following code does, however:
-			res1.type().is_polymer() && res2.type().is_polymer() && res1.is_polymer_bonded(res2)
-			) {
+			res1.type().is_polymer() && res2.type().is_polymer() && res1.is_polymer_bonded(res2) ) {
+
+		/*
+		// check if corresponds to base-type L/D-AA -- is there any better way to get base-type D-AA?
+		bool const is_rsd1_baseAA = res1.type().is_canonical_aa() || (core::chemical::is_canonical_D_aa(res1.type().aa()) && res1.type().is_base_type());
+		bool const is_rsd2_baseAA = res2.type().is_canonical_aa() || (core::chemical::is_canonical_D_aa(res2.type().aa()) && res2.type().is_base_type());
+		*/
+		// Let's make it simple -- let count_pair_hybrid to count even regular modifications (e.g. disulf/terminius...)
+		// regardless of D/L
+		bool const is_rsd1_baseAA = res1.type().is_base_type();
+		bool const is_rsd2_baseAA = res2.type().is_base_type();
+
+		bool const is_rsd1_ncaa_polymer = res1.is_ligand() || ( res1.is_polymer() && !is_rsd1_baseAA );
+		bool const is_rsd2_ncaa_polymer = res2.is_ligand() || ( res2.is_polymer() && !is_rsd2_baseAA );
 		if ( count_pair_full_ ) {
+			return CP_CROSSOVER_3FULL;
+		} else if ( count_pair_hybrid_ && (is_rsd1_ncaa_polymer || is_rsd2_ncaa_polymer) ) {
 			return CP_CROSSOVER_3FULL;
 		} else if ( ( !sfxn.has_zero_weight( mm_twist ) && sfxn.has_zero_weight( rama )) ||
 				( ( ( !res1.is_protein() && !res1.is_peptoid() ) || ( !res2.is_protein() && !res2.is_peptoid() ) ) &&
@@ -729,8 +743,13 @@ BaseEtableEnergy< Derived >::determine_crossover_behavior(
 	} else if ( res1.seqpos() == res2.seqpos() ) {
 		// logic for controlling intra-residue count pair behavior goes here; for now, default to crossover 3
 		bool is_ligand = res1.is_ligand();
-		bool is_non_polymer = !(res1.is_protein() || res1.is_polymer()); //apply to any non-protein-polymers too
-		if ( ((is_ligand || is_non_polymer) && count_pair_hybrid_ ) || count_pair_full_ ) {
+		bool is_non_polymer = !(res1.is_protein() || res1.is_polymer()); //apply to any non-[protein/polymers] too
+
+		// apply to ncaa-polymers too
+		bool const is_rsd1_baseAA = res1.type().is_base_type();
+		bool const is_ncaa_polymer = res1.is_polymer() && !is_rsd1_baseAA;
+
+		if ( ((is_ligand || is_non_polymer || is_ncaa_polymer ) && count_pair_hybrid_ ) || count_pair_full_ ) {
 			return CP_CROSSOVER_3FULL;
 		} else if ( do_classic_intrares_ ) {
 			return CP_CROSSOVER_3; // used by EtableIntraClassicEnergy

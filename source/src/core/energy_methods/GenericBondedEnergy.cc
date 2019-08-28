@@ -48,7 +48,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-static basic::Tracer TR( "core.scoring.GenericBondedEnergy" );
+static basic::Tracer TR( "core.scoring.methods.GenericBondedEnergy" );
 
 /// @details This must return a fresh instance of the P_AA_pp_Energy class,
 /// never an instance already in use
@@ -74,7 +74,8 @@ GenericBondedEnergyCreator::score_types_for_method() const {
 GenericBondedEnergy::GenericBondedEnergy( GenericBondedEnergy const & src ) :
 	parent( src ),
 	potential_( src.potential_ ),
-	score_canonical_aas_( src.score_canonical_aas() )
+	score_full_( src.score_full() ),
+	score_hybrid_( src.score_hybrid() )
 {
 }
 
@@ -82,7 +83,10 @@ GenericBondedEnergy::GenericBondedEnergy( EnergyMethodOptions const & eopt ):
 	parent( utility::pointer::make_shared< GenericBondedEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_GenericBondedPotential() )
 {
-	score_canonical_aas_ = eopt.genbonded_score_canonical_aas();
+	score_full_ = eopt.genbonded_score_full();
+	score_hybrid_ = eopt.genbonded_score_hybrid();
+	//potential_.score_full( score_full_ );
+	//potential_.score_hybrid( score_hybrid_ );
 }
 
 /// clone
@@ -98,6 +102,18 @@ GenericBondedEnergy::setup_for_scoring(
 	ScoreFunction const &sfxn
 ) const {
 	using namespace methods;
+
+	// DIE if (score_full) & (weights contains any statistical torsion potential)
+	bool const has_rama_weight( std::abs(sfxn[core::scoring::rama_prepro]) > 1.0e-6 ||
+		std::abs(sfxn[core::scoring::rama]) > 1.0e-6 );
+	bool const has_dun_weight( std::abs(sfxn[core::scoring::fa_dun]) > 1.0e-6 ||
+		std::abs(sfxn[core::scoring::fa_dun_rot]) > 1.0e-6 ||
+		std::abs(sfxn[core::scoring::fa_dun_semi]) > 1.0e-6 ||
+		std::abs(sfxn[core::scoring::fa_dun_dev]) > 1.0e-6 );
+
+	if ( score_full() && (has_rama_weight || has_dun_weight) ) {
+		utility_exit_with_message("gen_bonded cannot be used with fa_dun/rama/rama_pp when -genbonded_score_full is on in the sfxn weights!");
+	}
 
 	// create LR energy container
 	LongRangeEnergyType const & lr_type( long_range_type() );
@@ -131,7 +147,7 @@ GenericBondedEnergy::setup_for_scoring(
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
-	potential_.setup_for_scoring( pose, sfxn );
+	potential_.setup_for_scoring( pose, sfxn, score_full_, score_hybrid_  );
 }
 
 methods::LongRangeEnergyType
@@ -142,7 +158,7 @@ GenericBondedEnergy::setup_for_derivatives(
 	pose::Pose & pose,
 	ScoreFunction const &sfxn
 ) const {
-	potential_.setup_for_scoring( pose, sfxn );
+	potential_.setup_for_scoring( pose, sfxn, score_full_, score_hybrid_ );
 }
 
 void
@@ -155,7 +171,7 @@ GenericBondedEnergy::residue_pair_energy(
 ) const {
 
 	if ( !defines_score_for_residue_pair( rsd1, rsd2 ) ) return;
-	potential_.residue_pair_energy( rsd1, rsd2, pose, emap );
+	potential_.residue_pair_energy( rsd1, rsd2, pose, emap, score_full(), score_hybrid() );
 }
 
 void
@@ -173,7 +189,8 @@ GenericBondedEnergy::eval_residue_pair_derivatives(
 
 	if ( !defines_score_for_residue_pair( rsd1, rsd2 ) ) return;
 
-	potential_.residue_pair_derivatives( rsd1, rsd2, pose, weights, r1_atom_derivs, r2_atom_derivs );
+	potential_.residue_pair_derivatives( rsd1, rsd2, pose, weights, r1_atom_derivs, r2_atom_derivs,
+		score_full(), score_hybrid() );
 }
 
 bool
@@ -182,15 +199,30 @@ GenericBondedEnergy::defines_score_for_residue_pair(
 	conformation::Residue const & rsd2,
 	bool /*res_moving_wrt_eachother*/ ) const
 {
-	if ( !score_canonical_aas() ) {
-		bool rsd1_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd1.aa() ) ||
-			chemical::is_canonical_D_aa( rsd1.aa() );
-		bool rsd2_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd2.aa() ) ||
-			chemical::is_canonical_D_aa( rsd2.aa() );
+	/*
+	bool rsd1_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd1.aa() ) ||
+	chemical::is_canonical_D_aa( rsd1.aa() );
+	bool rsd2_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd2.aa() ) ||
+	chemical::is_canonical_D_aa( rsd2.aa() );
+	*/
 
-		// still allow scoring if either is non-canonical_aa
-		if ( rsd1_is_canonical_aa && rsd2_is_canonical_aa ) return false;
-	}
+	if ( !rsd1.is_bonded(rsd2) ) return false;
+
+	// any other "aas" can be added in future
+	bool const if_scoring_full( score_full() && (rsd1.is_ligand() || rsd1.is_polymer() /*rsd1_is_canonical_aa*/)
+		&& (rsd2.is_ligand() || rsd2.is_polymer() /*rsd2_is_canonical_aa*/ ) );
+	bool const if_scoring_hybrid( score_hybrid() &&
+		((rsd1.is_polymer() || rsd1.is_ligand()) || (rsd2.is_polymer() || rsd2.is_ligand())) );
+	// score at anycase if is aa_unk
+	bool const is_aa_unk( rsd1.type().backbone_aa() == core::chemical::aa_unk &&
+		rsd2.type().backbone_aa() == core::chemical::aa_unk );
+
+	TR.Debug << "Define res pair scoring? "
+		<< if_scoring_full << "/" << if_scoring_hybrid << "/" << is_aa_unk
+		<< " (" << rsd1.is_polymer() << " " << rsd2.is_polymer() << ")"
+		<< std::endl;
+
+	if ( !if_scoring_full && !if_scoring_hybrid && !is_aa_unk ) return false;
 
 	return true;
 }
@@ -203,13 +235,23 @@ GenericBondedEnergy::eval_intrares_energy(
 	EnergyMap & emap
 ) const {
 
-	if ( !score_canonical_aas() ) {
-		bool rsd_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd.aa() ) ||
-			chemical::is_canonical_D_aa( rsd.aa() );
-		if ( rsd_is_canonical_aa ) return;
-	}
+	/* bool rsd_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd.aa() ) ||
+	chemical::is_canonical_D_aa( rsd.aa() );*/
 
-	potential_.residue_energy( rsd, pose, emap );
+	// any other "aas" can be added in future
+	bool const if_scoring_full( score_full() && (rsd.is_ligand() || rsd.is_polymer() /*rsd_is_canonical_aa*/));
+	bool const if_scoring_hybrid( score_hybrid() && rsd.is_polymer() );
+	// score at anycase if is aa_unk
+	bool const is_aa_unk( rsd.type().backbone_aa() == core::chemical::aa_unk &&
+		!( rsd.type().is_water() || rsd.type().is_metal() ) );
+
+	TR.Debug << rsd.name() << " " << rsd.name3()
+		<< ": is_polymer/aa_unk" << " " << rsd.is_polymer() << " " << is_aa_unk
+		<< std::endl;
+
+	if ( !if_scoring_full && !if_scoring_hybrid && !is_aa_unk ) return;
+
+	potential_.residue_energy( rsd, pose, emap, score_full(), score_hybrid() );
 }
 
 // using atom derivs instead of dof derivates;
@@ -222,13 +264,18 @@ GenericBondedEnergy::eval_intrares_derivatives(
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const {
 
-	if ( !score_canonical_aas() ) {
-		bool rsd_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd.aa() ) ||
-			chemical::is_canonical_D_aa( rsd.aa() );
-		if ( rsd_is_canonical_aa ) return;
-	}
+	/*bool rsd_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd.aa() ) ||
+	chemical::is_canonical_D_aa( rsd.aa() );*/
 
-	potential_.residue_derivatives( rsd, pose, weights, atom_derivs );
+	// any other aa can be added in future
+	bool const if_scoring_full( score_full() &&  (rsd.is_ligand() || rsd.is_polymer()) );
+	bool const if_scoring_hybrid( score_hybrid() && rsd.is_polymer() );
+	// score at anycase if is aa_unk
+	bool const is_aa_unk( rsd.type().backbone_aa() == core::chemical::aa_unk );
+
+	if ( !if_scoring_full && !if_scoring_hybrid && !is_aa_unk ) return;
+
+	potential_.residue_derivatives( rsd, pose, weights, atom_derivs, score_full(), score_hybrid() );
 }
 
 void

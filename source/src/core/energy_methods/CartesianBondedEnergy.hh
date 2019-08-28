@@ -873,6 +873,7 @@ private:
 	core::Size version() const;
 
 	std::string pro_nv_;
+	bool skip_cutpoints_; // skip evaluation if rsd1/rsd2 are defined as cutpoint
 
 };
 

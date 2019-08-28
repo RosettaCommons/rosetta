@@ -131,7 +131,9 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	cartbonded_proton_(-1.0),
 	cartbonded_improper_(-1.0),
 	cartbonded_linear_(false),
-	genbonded_score_canonical_aas_(false),
+	cartbonded_skip_cutpoints_(true),
+	genbonded_score_full_(false),
+	genbonded_score_hybrid_(false),
 	pb_bound_tag_("bound"),
 	pb_unbound_tag_("unbound"),
 	ordered_wat_penalty_(1.5),
@@ -257,7 +259,9 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		cartbonded_proton_ = src.cartbonded_proton_;
 		cartbonded_improper_ = src.cartbonded_improper_;
 		cartbonded_linear_ = src.cartbonded_linear_;
-		genbonded_score_canonical_aas_ = src.genbonded_score_canonical_aas_;
+		cartbonded_skip_cutpoints_ = src.cartbonded_skip_cutpoints_;
+		genbonded_score_full_ = src.genbonded_score_full_;
+		genbonded_score_hybrid_ = src.genbonded_score_hybrid_;
 		pb_bound_tag_ = src.pb_bound_tag_;
 		pb_unbound_tag_ = src.pb_unbound_tag_;
 		fastdens_perres_weights_ = src.fastdens_perres_weights_;
@@ -359,7 +363,9 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	symmetric_gly_tables_ = options[ basic::options::OptionKeys::score::symmetric_gly_tables ]();
 	loop_close_use_6D_potential_ = options[ basic::options::OptionKeys::score::loop_close::use_6D_potential ]();
 	fa_stack_base_all_ = !options[ basic::options::OptionKeys::score::fa_stack_base_base_only ]();
-	genbonded_score_canonical_aas_ = options[ basic::options::OptionKeys::score::genbonded_score_canonical_aas ]();
+	genbonded_score_full_ = options[ basic::options::OptionKeys::score::genbonded_score_full ]();
+	genbonded_score_hybrid_ = options[ basic::options::OptionKeys::score::genbonded_score_hybrid ]();
+	cartbonded_skip_cutpoints_ = options[ basic::options::OptionKeys::score::cart_bonded_skip_cutpoints ]();
 
 	//Options for the NMerSVMEnergy:
 	nmer_ref_seq_length_ = options[ basic::options::OptionKeys::score::nmer_ref_seq_length ]();
@@ -467,8 +473,10 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::smooth_fa_elec
 		+ basic::options::OptionKeys::score::symmetric_gly_tables
 		+ basic::options::OptionKeys::score::loop_close::use_6D_potential
-		+ basic::options::OptionKeys::score::genbonded_score_canonical_aas
 		+ basic::options::OptionKeys::score::fa_stack_base_base_only
+		+ basic::options::OptionKeys::score::genbonded_score_full
+		+ basic::options::OptionKeys::score::genbonded_score_hybrid
+		+ basic::options::OptionKeys::score::cart_bonded_skip_cutpoints
 		+ basic::options::OptionKeys::score::use_gen_kirkwood
 		+ basic::options::OptionKeys::score::use_polarization
 
@@ -1651,7 +1659,9 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.cartbonded_proton_ == b.cartbonded_proton_ ) &&
 		( a.cartbonded_improper_ == b.cartbonded_improper_ ) &&
 		( a.cartbonded_linear_ == b.cartbonded_linear_ ) &&
-		( a.genbonded_score_canonical_aas_ == b.genbonded_score_canonical_aas_ ) &&
+		( a.cartbonded_skip_cutpoints_ == b.cartbonded_skip_cutpoints_ ) &&
+		( a.genbonded_score_full_ == b.genbonded_score_full_ ) &&
+		( a.genbonded_score_hybrid_ == b.genbonded_score_hybrid_ ) &&
 		( a.bond_angle_central_atoms_to_score_ == b.bond_angle_central_atoms_to_score_ ) &&
 		( a.bond_angle_residue_type_param_set_ == b.bond_angle_residue_type_param_set_ ) &&
 		( a.pb_bound_tag_ == b.pb_bound_tag_ ) &&
@@ -2029,8 +2039,14 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_keys.push_back("cartbonded_linear");
 	option_values.push_back(cartbonded_linear_ ? "1" : "0");
 
-	option_keys.push_back("genbonded_score_canonical_aas");
-	option_values.push_back(genbonded_score_canonical_aas_ ? "1" : "0");
+	option_keys.push_back("cartbonded_skip_cutpoints");
+	option_values.push_back(cartbonded_skip_cutpoints_ ? "1" : "0");
+
+	option_keys.push_back("genbonded_score_full");
+	option_values.push_back(genbonded_score_full_ ? "1" : "0");
+
+	option_keys.push_back("genbonded_score_hybrid");
+	option_values.push_back(genbonded_score_hybrid_ ? "1" : "0");
 
 	option_keys.push_back("ordered_wat_penalty");
 	option_values.push_back(boost::lexical_cast<std::string>(ordered_wat_penalty_));
@@ -2132,7 +2148,9 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( cartbonded_proton_ ) ); // core::Real
 	arc( CEREAL_NVP( cartbonded_improper_ ) ); // core::Real
 	arc( CEREAL_NVP( cartbonded_linear_ ) ); // _Bool
-	arc( CEREAL_NVP( genbonded_score_canonical_aas_ ) ); // _Bool
+	arc( CEREAL_NVP( cartbonded_skip_cutpoints_ ) ); // _Bool
+	arc( CEREAL_NVP( genbonded_score_full_ ) ); // _Bool
+	arc( CEREAL_NVP( genbonded_score_hybrid_ ) ); // _Bool
 	arc( CEREAL_NVP( pb_bound_tag_ ) ); // std::string
 	arc( CEREAL_NVP( pb_unbound_tag_ ) ); // std::string
 	arc( CEREAL_NVP( fastdens_perres_weights_ ) ); // utility::vector1<core::Real>
@@ -2245,7 +2263,9 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( cartbonded_proton_ ); // core::Real
 	arc( cartbonded_improper_ ); // core::Real
 	arc( cartbonded_linear_ ); // _Bool
-	arc( genbonded_score_canonical_aas_ ); // _Bool
+	arc( cartbonded_skip_cutpoints_ ); // _Bool
+	arc( genbonded_score_full_ ); // _Bool
+	arc( genbonded_score_hybrid_ ); // _Bool
 	arc( pb_bound_tag_ ); // std::string
 	arc( pb_unbound_tag_ ); // std::string
 	arc( fastdens_perres_weights_ ); // utility::vector1<core::Real>

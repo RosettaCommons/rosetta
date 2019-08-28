@@ -22,6 +22,7 @@
 // Project headers
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/conformation/Residue.hh>
 
 #include <utility>
@@ -96,7 +97,20 @@ ReferenceEnergyNoncanonical::residue_energy(
 		}
 	}
 
-	if ( index_find == 0 ) return;
+	if ( index_find == 0 ) {
+		// try if restype contains reference weight info as a numeric property
+		// grab directly from full list; get_numeric_property("REFERENCE") function doesn't work
+		std::map< std::string, core::Real > const &
+			numeric_properties = rsd.type().properties().numeric_properties();
+
+		auto property_it( numeric_properties.find( "REFERENCE" ) );
+		if ( property_it == numeric_properties.end() ) {
+			return;
+		} else {
+			emap[ ref_nc ] += property_it->second;
+		}
+		return; // skip below
+	}
 
 	if ( ( ! weights_.empty() ) && index_find <= weights_.size() ) {
 		emap[ ref_nc ] += weights_[ index_find ];

@@ -923,14 +923,34 @@ public:
 		cartbonded_linear_ = lin_in;
 	}
 
-	/// @brief allow scoring canonical aas with gen_bonded
-	bool genbonded_score_canonical_aas() const {
-		return genbonded_score_canonical_aas_;
+	/// @brief get the harmonic bond angle and bond-length spring constants
+	bool get_cartesian_bonded_skip_cutpoints() const {
+		return cartbonded_skip_cutpoints_;
 	}
 
-	/// @brief allow scoring canonical aas with gen_bonded
-	void genbonded_score_canonical_aas( bool setting ) {
-		genbonded_score_canonical_aas_ = setting;
+	/// @brief set the harmonic bond angle and bond-length spring constants
+	void set_cartesian_bonded_skip_cutpoints( bool setting ) {
+		cartbonded_skip_cutpoints_ = setting;
+	}
+
+	/// @brief allow scoring all (i.e. canonical aas) with gen_bonded
+	bool genbonded_score_full() const {
+		return genbonded_score_full_;
+	}
+
+	/// @brief allow scoring all (i.e. canonical aas) with gen_bonded
+	void genbonded_score_full( bool setting ) {
+		genbonded_score_full_ = setting;
+	}
+
+	/// @brief allow scoring torsions lack of any preference term with gen_bonded
+	bool genbonded_score_hybrid() const {
+		return genbonded_score_hybrid_;
+	}
+
+	/// @brief allow scoring torsions lack of any preference term with gen_bonded
+	void genbonded_score_hybrid( bool setting ) {
+		genbonded_score_hybrid_ = setting;
 	}
 
 	core::Real
@@ -1025,7 +1045,9 @@ private:
 	core::Size cst_max_seq_sep_;
 	core::Real cartbonded_len_, cartbonded_ang_, cartbonded_tors_, cartbonded_proton_, cartbonded_improper_;
 	bool cartbonded_linear_;
-	bool genbonded_score_canonical_aas_;
+	bool cartbonded_skip_cutpoints_;
+	bool genbonded_score_full_;
+	bool genbonded_score_hybrid_;
 	std::string pb_bound_tag_;
 	std::string pb_unbound_tag_;
 	utility::vector1< core::Real > fastdens_perres_weights_;

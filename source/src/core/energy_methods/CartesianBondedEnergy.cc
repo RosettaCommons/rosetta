@@ -1651,7 +1651,8 @@ IdealParametersDatabase::create_parameters_for_restype(
 		bool is_cterm = ( rsd_type.is_upper_terminus());
 		for ( int i=1; i<=5; ++i ) {
 			if ( i==1 && is_nterm ) continue;
-			if ( i==3 && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.aa() == core::chemical::aa_b3g /*"beta-glycine"*/ ) ) continue;
+			//if ( i==3 && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.aa() == core::chemical::aa_b3g /*"beta-glycine"*/ ) ) continue;
+			if ( i==3 && !rsd_type.has("CB") ) continue; // more general than gly/b3g
 
 			std::string atm1,atm2;
 			int rt1 = 0;
@@ -1672,9 +1673,12 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 		// backbone dependent bond angles
 		for ( int i=1; i<=7; ++i ) {
-			if ( (i==2 || i==4) && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.aa() == core::chemical::aa_b3g /*"beta-glycine"*/ ) ) continue;
+			//if ( (i==2 || i==4) && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.aa() == core::chemical::aa_b3g /*"beta-glycine"*/ ) ) continue;
+			if ( (i==2 || i==4) && !rsd_type.has("CB") ) continue; // more general than gly/b3g
 			if ( i==1 && is_nterm ) continue;
 			if ( (i==6 || i==7) && is_cterm ) continue;
+
+			//if ( !(rsd_type.has("N") && rsd_type.has("C") && rsd_type.has("CA") && rsd_type.has("CB") && rsd_type.has("O") ) ) continue;
 
 			std::string atm1,atm2,atm3;
 			int rt1 = 0;
@@ -1829,6 +1833,7 @@ CartesianBondedEnergy::CartesianBondedEnergy( methods::EnergyMethodOptions const
 	options.get_cartesian_bonded_parameters( cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper );
 
 	db_ = get_db( cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper);
+	skip_cutpoints_ = options.get_cartesian_bonded_skip_cutpoints();
 }
 
 CartesianBondedEnergy::CartesianBondedEnergy( CartesianBondedEnergy const & ) = default;
@@ -2102,8 +2107,11 @@ CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 
 	// bail out if the residues aren't bonded or we cross a cutpoint
 	if ( !rsd1.is_bonded(rsd2) ) { return; }
-	if ( rsd1.has_variant_type(core::chemical::CUTPOINT_LOWER) ) { return; }
-	if ( rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER) ) { return; }
+	// hpark, 04/2019: allow evaluation b/w cyclic relation when skip_cutpoints_ is false
+	if ( skip_cutpoints_ ) {
+		if ( rsd1.has_variant_type(core::chemical::CUTPOINT_LOWER) ) { return; }
+		if ( rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER) ) { return; }
+	}
 
 	eval_interresidue_improper_derivatives( rsd1, rsd2, res1params, res2params, weights, r1_atom_derivs, r2_atom_derivs );
 
@@ -2331,8 +2339,11 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 
 	// If residue1 and 2 are the same, stop here to avoid double-counting.
 	if ( !rsd1.is_bonded(rsd2) ) return;
-	if ( rsd1.has_variant_type(core::chemical::CUTPOINT_LOWER) ) return;
-	if ( rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER) ) return;
+	// hpark, 04/2019: allow evaluation b/w cyclic relation when skip_cutpoints_ is false
+	if ( skip_cutpoints_ ) {
+		if ( rsd1.has_variant_type(core::chemical::CUTPOINT_LOWER) ) return;
+		if ( rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER) ) return;
+	}
 
 	/// evaluate all the inter-residue energy components
 	eval_residue_pair_energies( rsd1, rsd2, res1params, res2params, phi1, psi1, phi2, psi2, pose, emap );

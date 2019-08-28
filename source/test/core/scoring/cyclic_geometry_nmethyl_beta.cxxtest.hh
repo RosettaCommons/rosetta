@@ -53,12 +53,14 @@ using core::chemical::AA;
 
 static basic::Tracer TR("core.scoring.CyclicGeometry_nmethyl_beta_Tests.cxxtest");
 
-class CyclicGeometry_nmethyl_betanov16_Tests : public CxxTest::TestSuite {
+class CyclicGeometry_nmethyl_beta_Tests : public CxxTest::TestSuite {
 
 public:
 
 	void setUp() {
-		core_init_with_additional_options( "-beta -score:weights beta.wts -symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0 -output_virtual true" );
+		// hpark Aug 2019: Updated options for "-beta_genpot"
+		// because count_pair_hybrid as a default option -beta treats cut_point differently b/w NCAA and CAA, turn it off so that permutation works properly
+		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0 -beta -score:weights beta.wts -count_pair_hybrid false -output_virtual true" );
 
 		// Pull in the cyclic peptide pose (9 residues):
 		core::pose::PoseOP initial_pose( new core::pose::Pose );

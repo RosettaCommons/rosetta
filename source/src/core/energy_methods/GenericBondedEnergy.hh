@@ -21,6 +21,8 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/GenericBondedPotential.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/MinimizationData.fwd.hh>
@@ -137,11 +139,13 @@ public:
 	Distance
 	atomic_interaction_cutoff() const { return 0.0; }
 
-	bool score_canonical_aas() const { return score_canonical_aas_; }
+	bool score_full() const { return score_full_; }
+	bool score_hybrid() const { return score_hybrid_; }
 
 private:
 	GenericBondedPotential const &potential_;
-	bool score_canonical_aas_;
+	bool score_full_;
+	bool score_hybrid_;
 };
 
 } // methods

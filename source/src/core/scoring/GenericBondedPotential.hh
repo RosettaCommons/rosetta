@@ -26,7 +26,7 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/Residue.hh>
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -36,6 +36,10 @@
 
 namespace core {
 namespace scoring {
+
+/// @brief compress 5 values into one unsigned int; use 12 bits for each
+uint64_t
+get_parameter_hash( Size bondtypr, Size type1, Size type2, Size type3=0, Size type4=0 );
 
 /// @brief helper function to convert string specification of bondorders to indices
 utility::vector1< core::Size >
@@ -144,6 +148,8 @@ public:
 		return 0.0;
 	}
 
+	void set_offset( core::Real value ) { offset_ = value; }
+
 	Real offset() const { return offset_; }
 
 	void k6( core::Real value ) { k6_ = value; }
@@ -174,16 +180,25 @@ public:
 	/// @brief Default Constructor
 	GenericBondedPotential();
 
+	/// @brief Constructor with exclusion behaviors
+	//GenericBondedPotential( bool score_full, bool score_hybrid );
+
 	/// @brief interface with same named function in GenericBondedEnergy
 	void
-	setup_for_scoring( pose::Pose & pose, scoring::ScoreFunction const &sfxn ) const;
+	setup_for_scoring( pose::Pose & pose,
+		scoring::ScoreFunction const &sfxn,
+		bool const &score_full=false,
+		bool const &score_hybrid=true
+	) const;
 
 	/// @brief interface with same named function in GenericBondedEnergy
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &pose,
-		EnergyMap & emap
+		EnergyMap & emap,
+		bool const &score_full,
+		bool const &score_hybrid
 	) const;
 
 	/// @brief interface with same named function in GenericBondedEnergy
@@ -192,7 +207,9 @@ public:
 		conformation::Residue const & rsd,
 		pose::Pose const &pose,
 		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
+		utility::vector1< DerivVectorPair > & atom_derivs,
+		bool const &score_full,
+		bool const &score_hybrid
 	) const;
 
 	/// @brief interface with same named function in GenericBondedEnergy
@@ -201,7 +218,9 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const &pose,
-		EnergyMap & emap
+		EnergyMap & emap,
+		bool const &score_full,
+		bool const &score_hybrid
 	) const;
 
 	/// @brief interface with same named function in GenericBondedEnergy
@@ -212,8 +231,18 @@ public:
 		pose::Pose const &pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs_r1,
-		utility::vector1< DerivVectorPair > & atom_derivs_r2
+		utility::vector1< DerivVectorPair > & atom_derivs_r2,
+		bool const &score_full,
+		bool const &score_hybrid
 	) const;
+
+	/*
+	void
+	score_full( bool setting ){ score_full_ = setting; } // score all angle/tors
+
+	void
+	score_hybrid( bool setting ){ score_hybrid_ = setting; } // score only those are missing in consideration by other terms
+	*/
 
 private:
 
@@ -235,9 +264,11 @@ private:
 	void
 	modify_torsion_params_from_cmd_line();
 
+	/*
 	/// @brief get a uint64_t hash from 2~4 atomtype indices & bond type
 	inline uint64_t
 	get_parameter_hash( Size bondtype, Size type1, Size type2, Size type3=0, Size type4=0 ) const;
+	*/
 
 	/// @brief fast database lookup; bond/angles (currently) keyed on type only
 	SpringParams const &lookup_bond_params( Size type1, Size type2 ) const;
@@ -275,7 +306,7 @@ private:
 	eval_residue_energy_and_derivative_torsion(
 		conformation::Residue const & rsd,
 		utility::vector1< DerivVectorPair > & atom_derivs,
-		//ResidueExclParamsCOP excl_params,
+		ResidueExclParamsCOP excl_params,
 		Real const weight = 0.0,
 		bool const calc_deriv = false
 	) const;
@@ -285,6 +316,7 @@ private:
 	eval_residue_energy_and_derivative_improper(
 		conformation::Residue const & rsd,
 		utility::vector1< DerivVectorPair > & atom_derivs,
+		ResidueExclParamsCOP excl_params,
 		Real const weight = 0.0,
 		bool const calc_deriv = false
 	) const;
@@ -318,7 +350,9 @@ private:
 		conformation::Residue const & rsd2,
 		utility::vector1< DerivVectorPair > & atom_derivs_r1,
 		utility::vector1< DerivVectorPair > & atom_derivs_r2,
-		//utility::vector1< ResidueExclParamsCOP > const &excl_params,
+		//utility::vector1< ResidueExclParamsCOP > excl_params,
+		ResidueExclParamsCOP excl_info_res1,
+		ResidueExclParamsCOP excl_info_res2,
 		Real const weight = 0.0,
 		bool const calc_deriv = false
 	) const;
@@ -330,6 +364,8 @@ private:
 		conformation::Residue const & rsd2,
 		utility::vector1< DerivVectorPair > & atom_derivs_r1,
 		utility::vector1< DerivVectorPair > & atom_derivs_r2,
+		ResidueExclParamsCOP excl_info_res1,
+		ResidueExclParamsCOP excl_info_res2,
 		Real const weight = 0.0,
 		bool const calc_deriv = false
 	) const;
@@ -360,16 +396,103 @@ private:
 
 };
 
-/// @brief compress 5 values into one unsigned int; use 12 bits for each
-uint64_t
-GenericBondedPotential::get_parameter_hash( Size bondtypr, Size type1, Size type2, Size type3, Size type4 ) const {
-	uint64_t retval=type4;
-	retval = (retval<<12) + type3;
-	retval = (retval<<12) + type2;
-	retval = (retval<<12) + type1;
-	retval = (retval<<12) + bondtypr;
-	return retval;
-}
+class ResidueExclParams : public utility::pointer::ReferenceCount {
+
+public:
+	ResidueExclParams( core::chemical::ResidueType const rsd_type,
+		bool const score_full,
+		bool const score_hybrid );
+
+	void create_excl_info( bool const score_full,
+		bool const score_hybrid );
+
+	void fully_counted( bool const value ) { fully_counted_ = value; }
+	bool fully_counted() const { return fully_counted_; }
+
+	void fully_excluded_1b( bool const value ) { fully_excluded_1b_ = value; }
+	bool fully_excluded_1b() const { return fully_excluded_1b_; }
+
+	// atm index
+	void atm_excluded( Size i, bool value ) { atm_excluded_[i] = value; }
+
+	// atm index
+	bool atm_excluded( Size i ) const { return atm_excluded_[i]; }
+
+	// either dihedral or bond index
+	void store_by_bondno( Size i ) { bondnos_[i] = true; }
+
+	// either dihedral or bond index
+	bool find_by_bondno( Size i ) const { return bondnos_[i]; }
+
+	// central 2 atms
+	void store_by_atmpairno( Size i, Size j );
+
+	// central 2 atms
+	bool find_by_atmpairno( Size i, Size j ) const;
+
+	void rsd1type( core::chemical::ResidueType const &rsdtype ){ rsdtype1_ = rsdtype.name(); }
+	void rsd2type( core::chemical::ResidueType const &rsdtype ){ rsdtype2_ = rsdtype.name(); }
+
+	//bool empty() const { return ; }
+	/*
+	core::chemical::ResidueType rsd1type() const { return rsdtype1_; }
+
+	core::chemical::ResidueType rsd2type() const { return rsdtype2_; }
+	*/
+	bool same_rsdpairs( core::conformation::Residue const &rsd1,
+		core::conformation::Residue const &rsd2 ) const
+	{ return (rsd1.type().name() == rsdtype1_) &&
+		(rsd2.type().name() == rsdtype2_); }
+
+private:
+	bool fully_counted_;
+	bool fully_excluded_1b_;
+	std::string rsdtype1_, rsdtype2_;
+	utility::vector1< bool > atm_excluded_;
+	utility::vector1< bool > bondnos_;
+	boost::unordered_map< uint64_t, bool > atmpairnos_;
+	core::chemical::ResidueType rsd_type_;
+
+};
+
+class GenBondedExclInfo : public basic::datacache::CacheableData {
+
+public:
+	// constructor
+	GenBondedExclInfo( bool const score_full,
+		bool const score_hybrid );
+
+	// virtual
+	basic::datacache::CacheableDataOP clone() const
+	{ return basic::datacache::CacheableDataOP( new GenBondedExclInfo( *this ) );}
+
+	//void update_poseinfo( pose::Pose const &pose );
+
+	void
+	add_residue_exclude_torsions( chemical::ResidueType const &rsd_type
+	);
+
+	/* // unused
+	void
+	add_residue_pair_exclude_torsions( core::conformation::Residue const &rsd1,
+	core::conformation::Residue const &rsd2
+	);
+	*/
+
+	ResidueExclParamsCOP
+	get_residue_data( core::chemical::ResidueType const &rsd_type ) const;
+
+	ResidueExclParamsCOP
+	get_residue_pair_data( core::Size seqpos1,
+		core::Size seqpos2 ) const;
+
+
+private:
+	bool score_full_;
+	bool score_hybrid_;
+	boost::unordered_map< std::string, ResidueExclParamsOP > perres_excls_;
+	boost::unordered_map< uint64_t, ResidueExclParamsOP > respair_excls_;
+};
 
 } // scoring
 } // core

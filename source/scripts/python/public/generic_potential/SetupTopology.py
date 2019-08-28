@@ -34,6 +34,7 @@ def setup(mol,option): # mol: Molecule type
     mol.atms_puckering = []
     mol.atms_ring = [] #including aromatic ring
     mol.ATorder = []
+    mol.rings_strained = [] #3/4 membered
     mol.rings_aro = [] #only aromatic
     mol.rings_pucker = [] #puckering
     mol.rings_sugar = [] #subset of puckering rings
@@ -417,7 +418,14 @@ def classify_ring_type(mol,ring,option):
                 else:
                     is_aro = False
 
-    if is_aro:
+    if ring.natms <= 4:
+        ring.type = 2
+        mol.rings_strained.append(ring)
+        for atm in ring.atms:
+            if atm not in mol.atms_strained:
+                mol.atms_strained.append(atm)
+        
+    elif is_aro:
         ring.type = 4
         mol.rings_aro.append(ring)
         for atm in ring.atms:
@@ -643,11 +651,17 @@ def assign_bond_conjugation(mol):
             type_i = ATYPES[mol.atms[i].atype]
             type_j = ATYPES[mol.atms[j].atype]
             if mol.atms[j].has_H and (type_i,type_j) == ('C','N'):
-                for k,dumm in mol.atms[i].bonds:
+                for k,dumm in mol.atms[i].bonds: #from C
                     if mol.in_same_ring(i,k) == 0 or k == j: continue
                     if (ATYPES[mol.atms[k].atype] == 'N') and (mol.atms[k].hyb != 3):
                         is_ring_NCNH = True
                         break
+                    
+                #for l,dumm in mol.atms[j].bonds: #from N
+                #    if l == i: continue
+                #    if l in mol.atms_aro:
+                #        is_ring_NCNH = False #override this rule if ringNC-NH-aro
+                #        break
 
         if is_ring_NCNH:
             print("Torsion around %s-%s assigned as conjugated by [ring N=C]-N-H rule"%(mol.atms[bond.atm1].name,mol.atms[bond.atm2].name))
@@ -800,6 +814,11 @@ def define_rotable_torsions(mol):
             #print( mol.atms[atms[1]].name,mol.atms[atms[2]].name,is_aliphatic_bond)
             #if is_aliphatic_bond:
             #    pass
+            
+            ## always skip a bond in a same aromatic ring
+            if mol.in_same_ring(atms[1],atms[2]):
+                continue
+            
             if (mol.option.opt.report_amide_chi):
                 if (not is_amide_bond): continue
             elif (not mol.option.opt.report_nbonded_chi and not is_biaryl_pivot):

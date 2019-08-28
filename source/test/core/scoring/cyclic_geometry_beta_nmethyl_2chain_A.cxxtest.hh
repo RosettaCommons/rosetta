@@ -58,7 +58,9 @@ class CyclicGeometry_nmethyl_beta_TwoChainTests_A : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
-		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0 -beta -score:weights beta.wts" );
+		// hpark Aug 2019: Updated options for "-beta_genpot"
+		// because count_pair_hybrid as a default option -beta treats cut_point differently b/w NCAA and CAA, turn it off so that permutation works properly
+		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0 -beta -score:weights beta.wts -count_pair_hybrid false" );
 
 		// Pull in the two-chain cyclic peptide pose (12 + 12 = 24 residues)
 		core::pose::PoseOP initial_pose_2chain( new core::pose::Pose );

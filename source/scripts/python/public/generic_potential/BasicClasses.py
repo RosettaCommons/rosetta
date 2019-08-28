@@ -103,19 +103,28 @@ class OptionClass:
                           action="store_true"
                           )
         parser.add_option("--puckering_chi",
+                          dest="report_puckering_chi",
                           default=False,
                           help="Define ring puckering torsions as rotatable CHI",
                           action="store_true"
                           )
         parser.add_option("--amide_chi",
+                          dest="report_amide_chi",
                           default=False,
                           help="Define amide as rotatable CHI",
                           action="store_true"
                           )
+        parser.add_option("--nbonded_chi",
+                          dest="report_nbonded_chi",
+                          default=False,
+                          help="Define order >1 & non-aromatic bonds as rotatable CHI",
+                          action="store_true"
+                          )
         parser.add_option("--freeze_ringring",
+                          dest="report_ringring_chi",
                           default=False,
                           help="Define  as rotatable CHI",
-                          action="store_true"
+                          action="store_false"
                           )
 
         if len(argv) < 2:

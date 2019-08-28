@@ -119,6 +119,10 @@ class AtomTypeClassifier:
         else:
             return False
 
+        # Strained Carbons go to a special type
+        if iatm in molecule.atms_strained:
+            return 'CSQ'
+        
         nH = 0
         for jatm,order in atm.bonds:
             if molecule.atms[jatm].is_H:
