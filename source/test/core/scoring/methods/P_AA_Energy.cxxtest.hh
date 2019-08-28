@@ -15,7 +15,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/scoring/methods/P_AA_Energy.hh>
+#include <core/energy_methods/P_AA_Energy.hh>
 
 #include <platform/types.hh>
 

@@ -17,7 +17,7 @@
 
 #include <protocols/filters/Filter.hh>
 #include <protocols/simple_filters/SAXSScoreFilter.fwd.hh>
-#include <core/scoring/saxs/SAXSEnergyFA.hh>
+#include <core/energy_methods/SAXSEnergyFA.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>

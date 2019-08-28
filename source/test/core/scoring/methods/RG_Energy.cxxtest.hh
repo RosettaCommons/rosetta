@@ -15,8 +15,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-// #include <core/scoring/methods/RG_Energy.hh>
-#include <core/scoring/methods/RG_Energy_Fast.hh>
+#include <core/energy_methods/RG_Energy_Fast.hh>
 
 #include <platform/types.hh>
 

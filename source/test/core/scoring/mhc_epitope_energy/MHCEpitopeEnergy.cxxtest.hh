@@ -14,8 +14,8 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergy.hh>
-#include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergyCreator.hh>
+#include <core/energy_methods/MHCEpitopeEnergy.hh>
+#include <core/energy_methods/MHCEpitopeEnergyCreator.hh>
 
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/protein_interface_design/movers/AddChainBreak.hh>

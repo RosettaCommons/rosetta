@@ -18,7 +18,7 @@
 
 // Platform Headers
 #include <core/pose/Pose.hh>
-#include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.hh>
+#include <core/energy_methods/ExactOccludedHbondSolEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/types.hh>
 

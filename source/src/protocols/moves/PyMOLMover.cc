@@ -39,7 +39,7 @@ inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/methods/RG_Energy_Fast.hh>
+#include <core/energy_methods/RG_Energy_Fast.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>

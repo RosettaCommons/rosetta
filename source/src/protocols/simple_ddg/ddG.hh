@@ -19,7 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <basic/datacache/CacheableData.hh>
-#include <core/scoring/methods/PoissonBoltzmannEnergy.hh>
+#include <core/energy_methods/PoissonBoltzmannEnergy.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.fwd.hh>

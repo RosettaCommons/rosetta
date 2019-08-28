@@ -20,7 +20,7 @@
 #include <core/scoring/dna/base_geometry.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
-//#include <core/scoring/elec/FA_ElecEnergy.hh>
+//#include <core/energy_methods/FA_ElecEnergy.hh>
 //#include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 //#include <core/scoring/etable/count_pair/CountPairAll.hh>

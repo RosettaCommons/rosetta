@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/membrane.MPSpanInsertion.cxxtest.hh
+/// @file   core/energy_methods.MPSpanInsertion.cxxtest.hh
 /// @brief  Test the scoring and burial estimations methods of MPSpanInsertion
 /// @author Jonathan Weinstein
 
@@ -20,7 +20,7 @@
 #include <test/core/init_util.hh>
 
 // Package headers
-#include <core/scoring/membrane/MPSpanInsertionEnergy.hh>
+#include <core/energy_methods/MPSpanInsertionEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 

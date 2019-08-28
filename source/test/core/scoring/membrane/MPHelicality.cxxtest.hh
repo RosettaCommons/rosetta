@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/membrane.MPHelicality.cxxtest.hh
+/// @file   core/energy_methods.MPHelicality.cxxtest.hh
 /// @brief  Test the scoring and burial estimations methods of MPHelicality
 /// @author Jonathan Weinstein
 
@@ -20,7 +20,7 @@
 #include <test/core/init_util.hh>
 
 // Package headers
-#include <core/scoring/membrane/MPHelicalityEnergy.hh>
+#include <core/energy_methods/MPHelicalityEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 

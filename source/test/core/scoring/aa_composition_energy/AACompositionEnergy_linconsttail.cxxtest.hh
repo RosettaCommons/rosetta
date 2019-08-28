@@ -17,7 +17,7 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <core/scoring/aa_composition_energy/AACompositionEnergySetup.hh>
-#include <core/scoring/aa_composition_energy/AACompositionEnergy.hh>
+#include <core/energy_methods/AACompositionEnergy.hh>
 
 // Unit headers
 

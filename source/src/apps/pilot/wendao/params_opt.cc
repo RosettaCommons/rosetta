@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/elec/FA_ElecEnergy.hh>
+#include <core/energy_methods/FA_ElecEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/util/cryst_util.hh>

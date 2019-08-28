@@ -20,7 +20,7 @@
 #include <test/core/init_util.hh>
 
 // Package headers
-#include <core/scoring/elec/RNA_FA_ElecEnergy.hh>
+#include <core/energy_methods/RNA_FA_ElecEnergy.hh>
 #include <core/scoring/etable/coulomb/Coulomb.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/EnergyMethod.hh>

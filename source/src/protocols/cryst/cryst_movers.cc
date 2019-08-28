@@ -23,7 +23,7 @@
 
 #include <core/util/cryst_util.hh>
 #include <core/scoring/cryst/util.hh>
-#include <core/scoring/cryst/XtalMLEnergy.hh>
+#include <core/energy_methods/XtalMLEnergy.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>

@@ -24,7 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <core/scoring/methods/NMerPSSMEnergy.hh>
+#include <core/energy_methods/NMerPSSMEnergy.hh>
 
 namespace protocols {
 namespace simple_filters {

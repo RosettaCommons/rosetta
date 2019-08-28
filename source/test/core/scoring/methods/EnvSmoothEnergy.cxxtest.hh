@@ -20,7 +20,7 @@
 #include <platform/types.hh>
 
 // Unit headers
-#include <core/scoring/methods/EnvSmoothEnergy.hh>
+#include <core/energy_methods/EnvSmoothEnergy.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>

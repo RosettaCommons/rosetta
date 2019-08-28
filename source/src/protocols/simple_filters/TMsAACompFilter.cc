@@ -62,7 +62,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 
-#include <core/scoring/membrane/MPSpanInsertionEnergy.hh>
+#include <core/energy_methods/MPSpanInsertionEnergy.hh>
 #include <map>
 #include <string>
 

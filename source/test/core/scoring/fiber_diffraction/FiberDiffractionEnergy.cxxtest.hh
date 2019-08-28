@@ -17,7 +17,7 @@
 #include <test/util/pose_funcs.hh>
 
 // Unit headers
-#include <core/scoring/fiber_diffraction/FiberDiffractionEnergy.hh>
+#include <core/energy_methods/FiberDiffractionEnergy.hh>
 
 // Project headers
 #include <core/scoring/ScoreFunctionFactory.hh>

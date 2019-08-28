@@ -47,7 +47,7 @@
 #include <utility/file/PathName.hh>
 #include <utility/file/gzip_util.hh>
 
-#include <core/scoring/methods/RG_Energy_Fast.hh>
+#include <core/energy_methods/RG_Energy_Fast.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>

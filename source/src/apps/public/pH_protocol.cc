@@ -12,7 +12,7 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/methods/pHEnergy.hh>
+#include <core/energy_methods/pHEnergy.hh>
 #include <core/scoring/Energies.hh>
 
 #include <core/pack/task/PackerTask.hh>

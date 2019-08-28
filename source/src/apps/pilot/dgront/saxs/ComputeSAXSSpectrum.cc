@@ -12,10 +12,10 @@
 
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/saxs/SAXSEnergyCEN.hh>
-#include <core/scoring/saxs/SAXSEnergyFA.hh>
-#include <core/scoring/saxs/SAXSEnergyCreator.hh>
-#include <core/scoring/saxs/SAXSEnergyCreatorFA.hh>
+#include <core/energy_methods/SAXSEnergyCEN.hh>
+#include <core/energy_methods/SAXSEnergyFA.hh>
+#include <core/energy_methods/SAXSEnergyCreator.hh>
+#include <core/energy_methods/SAXSEnergyCreatorFA.hh>
 
 
 #include <devel/init.hh>

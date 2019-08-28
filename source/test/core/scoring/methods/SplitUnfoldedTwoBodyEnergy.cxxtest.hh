@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   test/core/scoring/methods/SplitUnfoldedReferenceEnergy.cxxtest.hh
+/// @file   test/core/energy_methods/SplitUnfoldedReferenceEnergy.cxxtest.hh
 /// @brief  test suite for SplitUnfoldedReferenceEnergy energy method
 /// @author Ron Jacak
 
@@ -15,7 +15,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/scoring/methods/SplitUnfoldedTwoBodyEnergy.hh>
+#include <core/energy_methods/SplitUnfoldedTwoBodyEnergy.hh>
 
 #include <platform/types.hh>
 

@@ -17,7 +17,7 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <core/scoring/netcharge_energy/NetChargeEnergySetup.hh>
-#include <core/scoring/netcharge_energy/NetChargeEnergy.hh>
+#include <core/energy_methods/NetChargeEnergy.hh>
 
 // Unit headers
 

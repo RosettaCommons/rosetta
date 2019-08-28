@@ -16,7 +16,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/scoring/methods/ProClosureEnergy.hh>
+#include <core/energy_methods/ProClosureEnergy.hh>
 
 #include <platform/types.hh>
 

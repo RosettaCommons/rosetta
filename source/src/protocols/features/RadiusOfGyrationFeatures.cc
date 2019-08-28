@@ -13,7 +13,7 @@
 
 // Unit Headers
 #include <protocols/features/RadiusOfGyrationFeatures.hh>
-#include <core/scoring/methods/RG_Energy_Fast.hh>
+#include <core/energy_methods/RG_Energy_Fast.hh>
 
 // Project Headers
 #include <core/types.hh>

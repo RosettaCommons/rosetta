@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   test/core/scoring/methods/ProClosureEnergy.cxxtest.hh
+/// @file   test/core/energy_methods/ProClosureEnergy.cxxtest.hh
 /// @brief  test suite for core::scoring::ProClosureEnergy.cc
 /// @author Andrew Leaver-Fay
 /// @author Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
@@ -16,7 +16,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/scoring/methods/ProClosureEnergy.hh>
+#include <core/energy_methods/ProClosureEnergy.hh>
 
 #include <platform/types.hh>
 

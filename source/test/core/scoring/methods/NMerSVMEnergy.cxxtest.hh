@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   test/core/scoring/methods/NMerSVMEnergy.cxxtest.hh
+/// @file   test/core/energy_methods/NMerSVMEnergy.cxxtest.hh
 /// @brief  test suite for core::scoring::NMerSVMEenergy.cc
 /// @author Indigo King (indigo.c.king@gmail.com)
 /// @author
@@ -16,7 +16,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/scoring/methods/NMerSVMEnergy.hh>
+#include <core/energy_methods/NMerSVMEnergy.hh>
 
 #include <platform/types.hh>
 

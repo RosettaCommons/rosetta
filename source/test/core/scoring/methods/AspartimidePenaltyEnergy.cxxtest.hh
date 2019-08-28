@@ -36,7 +36,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.hh>
-#include <core/scoring/methods/AspartimidePenaltyEnergy.hh>
+#include <core/energy_methods/AspartimidePenaltyEnergy.hh>
 
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/pack_rotamers.hh>

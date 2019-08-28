@@ -20,7 +20,7 @@
 
 // Package Headers
 #include <core/scoring/ResidualDipolarCoupling.hh>
-#include <core/scoring/methods/ResidualDipolarCouplingEnergy.hh>
+#include <core/energy_methods/ResidualDipolarCouplingEnergy.hh>
 
 
 // Project Headers

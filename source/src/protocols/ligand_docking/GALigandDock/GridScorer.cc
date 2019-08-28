@@ -36,6 +36,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/elec/FA_ElecEnergy.hh>
+#include <core/energy_methods/CartesianBondedEnergy.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>

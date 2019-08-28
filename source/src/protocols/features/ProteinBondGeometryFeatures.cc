@@ -13,7 +13,7 @@
 /// @author Matthew O'Meara
 
 // Unit Headers
-#include <core/scoring/methods/CartesianBondedEnergy.hh>
+#include <core/energy_methods/CartesianBondedEnergy.hh>
 #include <core/scoring/methods/CartBondedParameters.hh>
 #include <protocols/features/ProteinBondGeometryFeatures.hh>
 
@@ -382,7 +382,7 @@ ProteinBondGeometryFeatures::report_intrares_angles(
 		Residue const & rsd = pose.residue(i);
 		if ( !rsd.is_protein() ) continue;
 
-		//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+		//following code ripped off from core/energy_methods/CartesianBondedEnergy.cc
 		//energy computations are not up to date with current cart_bonded - the rest is ok
 
 		// get residue type
@@ -466,7 +466,7 @@ ProteinBondGeometryFeatures::report_interres_angles(
 			Residue const & rsd2 = pose.residue(j);
 			if ( !rsd2.is_protein() ) continue;
 
-			//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+			//following code ripped off from core/energy_methods/CartesianBondedEnergy.cc
 			//energy computations are not up to date with current cart_bonded - the rest is ok
 
 			// bail out if the residues aren't bonded
@@ -597,7 +597,7 @@ ProteinBondGeometryFeatures::report_intrares_lengths(
 		Residue const & rsd = pose.residue(i);
 		if ( !rsd.is_protein() ) continue;
 
-		//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+		//following code ripped off from core/energy_methods/CartesianBondedEnergy.cc
 		//energy computations are not up to date with current cart_bonded - the rest is ok
 
 		core::chemical::ResidueType const & rsd_type = rsd.type();
@@ -668,7 +668,7 @@ ProteinBondGeometryFeatures::report_interres_lengths(
 			Residue const & rsd2 = pose.residue(j);
 			if ( !rsd2.is_protein() ) continue;
 
-			//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+			//following code ripped off from core/energy_methods/CartesianBondedEnergy.cc
 			//energy computations are not up to date with current cart_bonded - the rest is ok
 
 			// bail out if the residues aren't bonded
@@ -739,7 +739,7 @@ ProteinBondGeometryFeatures::report_intrares_torsions(
 		Residue const & rsd = pose.residue(i);
 		if ( !rsd.is_protein() ) continue;
 
-		//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+		//following code ripped off from core/energy_methods/CartesianBondedEnergy.cc
 		//energy computations are not up to date with current cart_bonded - the rest is ok
 
 		core::chemical::ResidueType const & rsd_type = rsd.type();

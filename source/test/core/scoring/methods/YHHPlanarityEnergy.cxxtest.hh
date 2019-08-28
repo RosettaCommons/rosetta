@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   test/core/scoring/methods/RamachandranEnergy.cxxtest.hh
+/// @file   test/core/energy_methods/RamachandranEnergy.cxxtest.hh
 /// @brief  test suite for core::scoring::RamachandranEnergy.cc
 /// @author Andrew Leaver-Fay
 
@@ -15,7 +15,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/scoring/methods/YHHPlanarityEnergy.hh>
+#include <core/energy_methods/YHHPlanarityEnergy.hh>
 
 #include <platform/types.hh>
 

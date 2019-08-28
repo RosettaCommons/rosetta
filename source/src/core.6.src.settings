@@ -1,0 +1,131 @@
+# -*- mode:python;indent-tabs-mode:t;show-trailing-whitespace:t; -*-
+#
+# Project settings for rosetta sources
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
+
+sources = {
+	"core/enzymes": [
+		"consensus_sequence_parsers",
+		"database_io",
+		"EnzymeManager",
+	],
+	"core/fragment": [
+		"BBTorsionAndAnglesSRFD",
+		"BBTorsionSRFD",
+		"ConstantLengthFragSet",
+		"FragData",
+		"FragID",
+		"FragID_Iterator",
+		"FragmentIO",
+		"FragmentRmsd",
+		"FragmentSetLoader",
+		"FragSet",
+		"FragSetCollection",
+		"Frame",
+		"FrameIterator",
+		"FrameList",
+		"IndependentBBTorsionSRFD",
+		"JumpingFrame",
+		"JumpSRFD",
+		"MinimalFragSet",
+		"OrderedFragSet",
+		"SecondaryStructure",
+		"SecstructSRFD",
+		"SingleResidueFragData",
+		"util",
+	],
+    "core/fragment/rna": [
+        "FragmentLibrary",
+        "FullAtomRNA_Fragments",
+		"RNA_FragmentHomologyExclusion",
+        "RNA_Fragments",
+		"TorsionSet",
+    ],
+	"core/fragment/picking_old": [
+		"FragmentLibraryManager",
+	],
+	"core/fragment/picking_old/vall": [
+		"util",
+		"vall_io",
+		"VallLibrarian",
+		"VallResidue",
+	],
+	"core/fragment/picking_old/vall/eval": [
+		"ABEGOEval",
+		"EnergyEval",
+		"IdentityEval",
+		"VallFragmentEval",
+	],
+	"core/fragment/picking_old/vall/gen": [
+		"LengthGen",
+		"SecStructGen",
+		"VallFragmentGen",
+	],
+	"core/import_pose": [
+		"FullModelPoseBuilder",
+		"import_pose",
+		"import_pose_options",
+		"PDBSilentStruct",
+		"PDBSilentStructCreator",
+		"PoseResource",
+		"PoseResourceLoader",
+		"RNA_BasePairHandler",
+		"RNA_DeNovoSetup",
+		"RNA_DeNovoParameters",
+		"RNA_HelixAssembler",
+		"RNA_JumpMover", # not a mover -- it never was!
+	],
+	"core/import_pose/libraries": [
+		"BasePairStepLibrary",
+		"ChunkSet",
+		"RNA_ChunkLibrary",
+		"RNA_JumpLibrary",
+		"RNA_LibraryManager",
+	],
+	"core/import_pose/options": [
+		"RNA_BasicOptions",
+		"RNA_DeNovoProtocolOptions",
+		"RNA_FragmentMonteCarloOptions",
+		"RNA_MinimizerOptions",
+	],
+	"core/import_pose/atom_tree_diffs": [
+		"atom_tree_diff",
+	],
+	"core/import_pose/pose_stream": [
+		"ExtendedPoseInputStream",
+		"LazySilentFilePoseInputStream",
+		"MetaPoseInputStream",
+		"PDBPoseInputStream",
+		"PoseInputStream",
+		"SilentFilePoseInputStream",
+		"util",
+	],
+	"core/init": [
+		"init",
+		"score_function_corrections",
+	],
+
+}
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"core.1",
+	"core.2",
+	"core.3",
+	"core.4",
+	"core.5",
+	"basic",
+	"numeric",
+	"utility",
+	"ObjexxFCL",
+]

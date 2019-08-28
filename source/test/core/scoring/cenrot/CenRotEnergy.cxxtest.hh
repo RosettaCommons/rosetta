@@ -22,8 +22,8 @@
 
 // Unit headers
 #include <core/scoring/CenRotEnvPairPotential.hh>
-#include <core/scoring/methods/CenPairEnergy.hh>
-#include <core/scoring/methods/CenRotEnvEnergy.hh>
+#include <core/energy_methods/CenPairEnergy.hh>
+#include <core/energy_methods/CenRotEnvEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Numeric headers

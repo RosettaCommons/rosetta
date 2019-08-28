@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_features_ProteinBondGeometryFeatures_hh
 
 // Unit Headers
-#include <core/scoring/methods/CartesianBondedEnergy.fwd.hh>
+#include <core/energy_methods/CartesianBondedEnergy.fwd.hh>
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/ProteinBondGeometryFeatures.fwd.hh>
 

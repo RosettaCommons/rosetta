@@ -116,10 +116,9 @@
 #include <core/io/rna/RNA_DataReader.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/rna/util.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
-#include <core/scoring/rna/RNA_LJ_BaseEnergy.hh>
+#include <core/energy_methods/RNA_LJ_BaseEnergy.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/EnergyMap.hh> //for EnergyMap
 #include <core/scoring/EnergyMap.fwd.hh> //for EnergyMap

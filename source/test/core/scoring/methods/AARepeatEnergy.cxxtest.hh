@@ -36,7 +36,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.hh>
-#include <core/scoring/aa_repeat_energy/AARepeatEnergy.hh>
+#include <core/energy_methods/AARepeatEnergy.hh>
 
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/pack_rotamers.hh>

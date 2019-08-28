@@ -24,7 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/methods/ContactOrderEnergy.hh>
+#include <core/energy_methods/ContactOrderEnergy.hh>
 
 // ObjexxFCL Headers
 

@@ -97,7 +97,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/scoring/SS_Killhairpins_Info.hh>
-#include <core/scoring/methods/ContactOrderEnergy.hh>
+#include <core/energy_methods/ContactOrderEnergy.hh>
 
 // Project Headers
 #include <core/types.hh>

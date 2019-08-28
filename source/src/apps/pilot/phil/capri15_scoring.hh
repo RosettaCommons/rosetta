@@ -46,7 +46,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-//#include <core/scoring/elec/FA_ElecEnergy.hh>
+//#include <core/energy_methods/FA_ElecEnergy.hh>
 //#include <core/scoring/methods/WholeStructureEnergy.hh>
 //#include <core/scoring/etable/EtableEnergy.hh>
 //#include <core/scoring/etable/count_pair/CountPairAll.hh>

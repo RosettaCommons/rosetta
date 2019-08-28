@@ -61,7 +61,7 @@
 #include <core/conformation/membrane/Exceptions.hh>
 #include <core/scoring/sasa/SasaCalc.hh>
 #include <core/scoring/sasa/util.hh>
-#include <core/scoring/membrane/MPSpanInsertionEnergy.hh>
+#include <core/energy_methods/MPSpanInsertionEnergy.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>

@@ -37,7 +37,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/methods/LinearChainbreakEnergy.hh>
+#include <core/energy_methods/LinearChainbreakEnergy.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/membrane.MPResidueLipophilicity.cxxtest.hh
+/// @file   core/energy_methods.MPResidueLipophilicity.cxxtest.hh
 /// @brief  Test the scoring and burial estimations methods of MPResidueLipophilicity
 /// @author Jonathan Weinstein
 
@@ -20,7 +20,7 @@
 #include <test/core/init_util.hh>
 
 // Package headers
-#include <core/scoring/membrane/MPResidueLipophilicityEnergy.hh>
+#include <core/energy_methods/MPResidueLipophilicityEnergy.hh>
 #include <core/scoring/elec/FA_ElecEnergy.hh>
 #include <core/scoring/etable/coulomb/Coulomb.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   test/core/scoring/methods/UnfoldedStateEnergy.cxxtest.hh
+/// @file   test/core/energy_methods/UnfoldedStateEnergy.cxxtest.hh
 /// @brief  test suite for UnfoldedStateEnergy energy method
 /// @author Ron Jacak
 
@@ -15,7 +15,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/scoring/methods/UnfoldedStateEnergy.hh>
+#include <core/energy_methods/UnfoldedStateEnergy.hh>
 
 #include <platform/types.hh>
 

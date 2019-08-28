@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/data/RNA_ChemicalMappingEnergy.hh>
+#include <core/energy_methods/RNA_ChemicalMappingEnergy.hh>
 #include <core/pose/rna/RNA_DataInfo.hh>
 #include <core/pose/rna/util.hh>
 #include <basic/options/option.hh>

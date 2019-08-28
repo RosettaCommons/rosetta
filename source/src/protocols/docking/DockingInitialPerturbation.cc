@@ -47,7 +47,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/methods/RG_Energy_Fast.hh>
+#include <core/energy_methods/RG_Energy_Fast.hh>
 
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 

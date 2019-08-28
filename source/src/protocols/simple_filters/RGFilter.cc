@@ -24,7 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/methods/RG_Energy_Fast.hh>
+#include <core/energy_methods/RG_Energy_Fast.hh>
 
 // ObjexxFCL Headers
 

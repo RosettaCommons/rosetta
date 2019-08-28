@@ -43,7 +43,6 @@
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 #include <core/scoring/MinimizationData.hh>
-#include <core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh>
 
 // Project headers
 #include <core/conformation/Atom.hh>

@@ -44,7 +44,7 @@
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/elec/FA_ElecEnergy.hh>
+#include <core/energy_methods/FA_ElecEnergy.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>

@@ -51,7 +51,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/scoring/methods/PoissonBoltzmannEnergy.hh>
+#include <core/energy_methods/PoissonBoltzmannEnergy.hh>
 
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>

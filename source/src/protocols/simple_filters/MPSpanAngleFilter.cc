@@ -59,7 +59,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <iostream>
 #include <fstream>
-#include <core/scoring/membrane/MPSpanAngleEnergy.hh>
+#include <core/energy_methods/MPSpanAngleEnergy.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   test/core/scoring/methods/RingClosureEnergy.cxxtest.hh
+/// @file   test/core/energy_methods/RingClosureEnergy.cxxtest.hh
 /// @brief  Test suite for core::scoring::RingClosureEnergy.cc
 /// @author Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory
 
@@ -15,7 +15,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/scoring/methods/RingClosureEnergy.hh>
+#include <core/energy_methods/RingClosureEnergy.hh>
 #include <platform/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>

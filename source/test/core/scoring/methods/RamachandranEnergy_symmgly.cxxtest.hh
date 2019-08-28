@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   test/core/scoring/methods/RamachandranEnergy_symmgly.cxxtest.hh
+/// @file   test/core/energy_methods/RamachandranEnergy_symmgly.cxxtest.hh
 /// @brief  test suite for the Ramachandran score term with the -symmetric_gly_tables option turned on.
 /// @author Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
 
@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <basic/Tracer.hh>
-#include <core/scoring/methods/RamachandranEnergy.hh>
+#include <core/energy_methods/RamachandranEnergy.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoringManager.hh>
 

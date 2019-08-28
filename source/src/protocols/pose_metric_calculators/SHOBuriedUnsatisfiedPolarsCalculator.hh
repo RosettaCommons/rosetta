@@ -13,7 +13,7 @@
 #ifndef INCLUDED_SHOBuriedUnsatisfiedPolarsCalculator_hh
 #define INCLUDED_SHOBuriedUnsatisfiedPolarsCalculator_hh
 
-#include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.hh>
+#include <core/energy_methods/ExactOccludedHbondSolEnergy.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>

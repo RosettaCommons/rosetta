@@ -22,7 +22,7 @@
 #include <test/core/init_util.hh>
 
 // Package headers
-#include <core/scoring/hbonds/NPDHBondEnergy.hh>
+#include <core/energy_methods/NPDHBondEnergy.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>

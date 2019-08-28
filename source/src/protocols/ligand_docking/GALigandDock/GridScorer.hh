@@ -27,7 +27,7 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/methods/CartesianBondedEnergy.hh>
+#include <core/energy_methods/CartesianBondedEnergy.fwd.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/conformation/Atom.hh>
 #include <core/optimization/MinimizerMap.hh>

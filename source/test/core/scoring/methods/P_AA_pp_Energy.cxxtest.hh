@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   test/core/scoring/methods/RamachandranEnergy.cxxtest.hh
+/// @file   test/core/energy_methods/RamachandranEnergy.cxxtest.hh
 /// @brief  test suite for core::scoring::RamachandranEnergy.cc
 /// @author Andrew Leaver-Fay
 
@@ -15,7 +15,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/scoring/methods/P_AA_pp_Energy.hh>
+#include <core/energy_methods/P_AA_pp_Energy.hh>
 #include <core/scoring/P_AA.hh>
 #include <core/scoring/ScoringManager.hh>
 
@@ -65,7 +65,7 @@ public:
 		core_init();
 
 		the_pose = create_test_in_pdb_poseop();
-		//core::import_pose::pose_from_file( *the_pose, "core/scoring/methods/test_in.pdb" , core::import_pose::PDB_file);
+		//core::import_pose::pose_from_file( *the_pose, "core/energy_methods/test_in.pdb" , core::import_pose::PDB_file);
 
 		paapp_energy = utility::pointer::make_shared< P_AA_pp_Energy >();
 

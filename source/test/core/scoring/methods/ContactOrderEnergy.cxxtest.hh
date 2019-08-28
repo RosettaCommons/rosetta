@@ -15,7 +15,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/scoring/methods/ContactOrderEnergy.hh>
+#include <core/energy_methods/ContactOrderEnergy.hh>
 
 #include <platform/types.hh>
 

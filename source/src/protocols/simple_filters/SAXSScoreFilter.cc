@@ -40,7 +40,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/filters.OptionKeys.gen.hh>
 
-#include <core/scoring/saxs/SAXSEnergyFA.hh>
+#include <core/energy_methods/SAXSEnergyFA.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>

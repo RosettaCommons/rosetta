@@ -22,7 +22,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/methods/NMerPSSMEnergy.hh>
+#include <core/energy_methods/NMerPSSMEnergy.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>

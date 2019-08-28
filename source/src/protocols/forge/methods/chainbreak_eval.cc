@@ -25,8 +25,8 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/methods/LinearChainbreakEnergy.hh>
-#include <core/scoring/methods/ChainbreakEnergy.hh>
+#include <core/energy_methods/LinearChainbreakEnergy.hh>
+#include <core/energy_methods/ChainbreakEnergy.hh>
 
 #include <utility/vector1.hh>
 

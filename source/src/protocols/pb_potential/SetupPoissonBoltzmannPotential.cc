@@ -27,7 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/methods/PoissonBoltzmannEnergy.hh>
+#include <core/energy_methods/PoissonBoltzmannEnergy.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <basic/datacache/BasicDataCache.hh>
