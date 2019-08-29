@@ -29,6 +29,7 @@
 #include <core/types.hh>
 
 #include <basic/Tracer.hh>
+#include <numeric/xyz.functions.hh>
 //#include <numeric/xyzVector.io.hh>
 
 #include <utility/graph/DFS_sort.hh>
@@ -43,6 +44,81 @@ namespace core {
 namespace chemical {
 
 static basic::Tracer TR( "core.chemical.icoor_support" );
+
+/// @brief Walk up the icoor tree to find alternate reference atoms
+/// Utility function for clean_up_dangling_connect() -- we only go up the tree to make sure we don't get cycles.
+/// Won't choose atoms in exclusions (or the start)
+VD
+walk_back_to_find_usable_base( core::chemical::ResidueType const & restype, VD start, utility::vector1< VD > const & exclusions ) {
+
+	VD selected = start;
+	while ( selected != restype.root_atom() ) { // Root needs special handling.
+		selected = restype.atom_base( selected );
+		if ( ! exclusions.contains(selected) ) { return selected; }
+	}
+	// Selected is root
+	if ( !exclusions.contains(selected) && selected != start ) { return selected; } // Use the root, if possible.
+	for ( VD bn: boost::make_iterator_range( restype.bonded_neighbor_iterators(selected) ) ) {
+		// Slightly dangerous, as we could potentially do cycles, but if we're close to the root this might be the only way to do it.
+		if ( !exclusions.contains(bn) && bn != start ) { return bn; }
+	}
+	utility_exit_with_message("Can't find a usable base entry for " + restype.atom_name(start));
+}
+
+/// @details Assumes that all of the xyz coordinates are updated.
+void clean_up_dangling_connect( core::chemical::ResidueType & restype, ICoorAtomID::Type remove_type ) {
+	debug_assert( remove_type == ICoorAtomID::POLYMER_LOWER || remove_type == ICoorAtomID::POLYMER_UPPER );
+	if ( remove_type == ICoorAtomID::POLYMER_LOWER ) { runtime_assert( restype.lower_connect_id() == 0 ); }
+	if ( remove_type == ICoorAtomID::POLYMER_UPPER ) { runtime_assert( restype.upper_connect_id() == 0 ); }
+
+	for ( VD vd: boost::make_iterator_range( restype.atom_iterators() ) ) {
+		AtomICoor const & icoor = restype.icoor(vd);
+		if ( icoor.stub_atom1().type() != remove_type && icoor.stub_atom2().type() != remove_type && icoor.stub_atom3().type() != remove_type ) {
+			continue; // Nothing to do - skip
+		}
+
+		Vector self_xyz( restype.atom(vd).ideal_xyz() );
+		std::string stub1, stub2, stub3;
+		Vector stub1_xyz, stub2_xyz, stub3_xyz;
+		core::Real phi, theta, d;
+
+		// Stub1
+		if ( icoor.stub_atom1().type() != remove_type ) {
+			d = icoor.d();
+			stub1_xyz = icoor.stub_atom1().xyz(restype);
+			runtime_assert( icoor.stub_atom1().is_internal() );
+			stub1 = restype.atom_name( icoor.stub_atom1().atomno() );
+		} else {
+			utility_exit_with_message("Cannot automatically remove connection which is the stub1 of another atom - manually set ICOOR");
+		}
+
+		// Stub2
+		if ( icoor.stub_atom2().type() != remove_type ) {
+			theta = icoor.theta();
+			stub2_xyz = icoor.stub_atom2().xyz(restype);
+			runtime_assert( icoor.stub_atom2().is_internal() );
+			stub2 = restype.atom_name( icoor.stub_atom2().atomno() );
+		} else { // Stub2 is the issue.
+			VD const stub2_vd = walk_back_to_find_usable_base(restype, restype.atom_vertex(stub1), {vd} );
+			stub2_xyz = restype.atom( stub2_vd ).ideal_xyz();
+			stub2 = restype.atom_name( stub2_vd );
+			theta = numeric::angle_radians( self_xyz, stub1_xyz, stub2_xyz );
+		}
+
+		// Stub3 -- always rebuild it. (It's either the issue, or needs to be rebuilt from earlier changes.)
+		VD const stub3_vd = walk_back_to_find_usable_base(restype, restype.atom_vertex(stub2), {vd, restype.atom_vertex(stub1)});
+		stub3_xyz = restype.atom( stub3_vd ).ideal_xyz();
+		stub3 = restype.atom_name( stub3_vd );
+		phi = numeric::dihedral_radians( self_xyz, stub1_xyz, stub2_xyz, stub3_xyz );
+
+		// Debug level primarily because the name of the associated patch is only ever output at debug level.
+		// (Ideally any patch which triggers this should be fixed.)
+		TR.Debug << "Had to clean up dangling connection ICOOR on residue type " << restype.name() << " for atom " << restype.atom_name(vd) << std::endl;
+		restype.set_icoor( restype.atom_name(vd), phi, theta, d, stub1, stub2, stub3 );
+	}
+}
+
+
 
 class RerootRestypeVisitor: public boost::default_dfs_visitor {
 private:

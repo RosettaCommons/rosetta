@@ -17,6 +17,7 @@
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
+#include <core/chemical/AtomICoor.hh>
 
 #include <core/kinematics/tree/Atom.fwd.hh>
 
@@ -24,6 +25,10 @@
 
 namespace core {
 namespace chemical {
+
+/// @brief Attempt to find new ICOOR definitions for entries in the ResidueType which rely on a now-deleted upper/lower connection
+/// (Connection type is specified by the passed type.)
+void clean_up_dangling_connect( core::chemical::ResidueType & restype, ICoorAtomID::Type remove_type );
 
 //The core::kinematics::tree::Atom objects take care of the internal/xyz exchange.
 //We just need to chain them together appropriately.

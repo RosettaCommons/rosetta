@@ -25,6 +25,7 @@
 #include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 #include <core/chemical/Bond.hh>
 #include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/icoor_support.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
@@ -160,22 +161,30 @@ SetPolymerConnectAtom::SetPolymerConnectAtom( std::string const & atom_name_in, 
 bool
 SetPolymerConnectAtom::apply( ResidueType & rsd ) const
 {
-	if ( atom_name_ == "NONE" || rsd.has( atom_name_ ) ) {
-		if ( TR_PatchOperations.Trace.visible() ) {
-			TR_PatchOperations.Trace << "SetPolymerConnectAtom::apply: " <<
-				atom_name_ << ' ' << upper_lower_ << std::endl;
-		}
-		if ( upper_lower_ == -1 ) {
-			rsd.set_lower_connect_atom( atom_name_ );
-		} else {
-			debug_assert( upper_lower_ == 1 );
-			rsd.set_upper_connect_atom( atom_name_ );
-		}
-	} else {
+	if ( atom_name_ != "NONE" && ! rsd.has( atom_name_ ) ) {
 		TR_PatchOperations.Debug << "SetPolymerConnectAtom::apply failed: " <<
 			rsd.name() << " is missing atom " << atom_name_ << std::endl;
 		return true; // failure
 	}
+
+	if ( TR_PatchOperations.Trace.visible() ) {
+		TR_PatchOperations.Trace << "SetPolymerConnectAtom::apply: " <<
+			atom_name_ << ' ' << upper_lower_ << std::endl;
+	}
+
+	if ( upper_lower_ == -1 ) {
+		rsd.set_lower_connect_atom( atom_name_ );
+		if ( atom_name_ == "NONE" ) {
+			clean_up_dangling_connect( rsd, ICoorAtomID::POLYMER_LOWER );
+		}
+	} else {
+		debug_assert( upper_lower_ == 1 );
+		rsd.set_upper_connect_atom( atom_name_ );
+		if ( atom_name_ == "NONE" ) {
+			clean_up_dangling_connect( rsd, ICoorAtomID::POLYMER_UPPER );
+		}
+	}
+
 	return false;
 }
 

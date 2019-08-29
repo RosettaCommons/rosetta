@@ -9,13 +9,12 @@ END_SELECTOR
 
 BEGIN_CASE
 
-SET_POLYMER_CONNECT LOWER NONE
-
 ## need to do this since lower-connect will not exist
 ## OP2 was built off of the lower-connect
 
 SET_ICOOR  OP2  -64.027359   76.329353    1.607808   P     O5'   C5'
 
+SET_POLYMER_CONNECT LOWER NONE
 ADD_PROPERTY LOWER_TERMINUS
 
 END_CASE
