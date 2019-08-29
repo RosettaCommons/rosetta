@@ -24,15 +24,6 @@ sources = {
                 "MakeRotLibOptionsData",
 		"RotData",
 	],
-	"protocols/optimize_weights": [
-		"DDGBindOptEData",
-		"DGBindOptEData",
-		"IterativeOptEDriver",
-		"NestedEnergyTermOptEData",
-		"OptEData",
-		"OptEMultifunc",
-		"PNatLigPoseOptEData",
-	],
 	"protocols/RotamerDump": [
 		"RotamerDumpMover",
 	],

@@ -203,6 +203,15 @@ sources = {
 		"BundleParametersSet",
 		"OmegaBundleParameter",
 	],
+	"protocols/optimize_weights": [
+		"DDGBindOptEData",
+		"DGBindOptEData",
+		"IterativeOptEDriver",
+		"NestedEnergyTermOptEData",
+		"OptEData",
+		"OptEMultifunc",
+		"PNatLigPoseOptEData",
+	],
     "protocols/pose_length_moves": [
 		#"DeleteResMover",
 		"AnalyzeLoopModeling",

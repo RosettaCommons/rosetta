@@ -84,6 +84,7 @@
 #include <protocols/minimization_packing/MinPackMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/denovo_design/movers/FastDesign.hh>
 
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
@@ -4770,6 +4771,12 @@ IterativeOptEDriver::measure_sequence_recovery(
 		minpack_mover->task_factory( task_factory_for_design );
 		minpack_mover->score_function( sfxn );
 		design_mover = minpack_mover;
+	} else if ( option[ optE::design_with_fast_design ] ) {
+		using namespace protocols::denovo_design::movers;
+		FastDesignOP mover_op = utility::pointer::make_shared< FastDesign >();
+		mover_op->set_task_factory( task_factory_for_design );
+		mover_op->set_scorefxn( sfxn );
+		design_mover = mover_op;
 	} else {
 		protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 		pack_mover->task_factory( task_factory_for_design );

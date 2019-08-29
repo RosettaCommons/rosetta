@@ -809,7 +809,17 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			// no input validation as of now, relax will just die
 			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
 			local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * ((cmd.param2 - cmd.param1 ) * numeric::random::uniform() + cmd.param1 ));
+		} else if ( cmd.command.substr(0,15) == "reset_reference" ) {
+			TR << "RESET REFERENCE VALUES" << std::endl;
+			core::scoring::methods::EnergyMethodOptions const & original_options =
+				get_scorefxn()->energy_method_options();
+			utility::vector1< core::Real > const & original_ref_weights =
+				original_options.method_weights( core::scoring::ref );
 
+			core::scoring::methods::EnergyMethodOptions local_options =
+				local_scorefxn->energy_method_options();
+			local_options.set_method_weights( core::scoring::ref, original_ref_weights );
+			local_scorefxn->set_energy_method_options( local_options );
 		} else if ( cmd.command.substr(0,9) == "reference" ) {
 			// added for design applications
 			if ( cmd.nparams < 20 ) {
@@ -823,14 +833,6 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
 
 			local_scorefxn->set_energy_method_options( eopts );
-
-			/*
-			utility::vector1< Real > refw =
-			local_scorefxn->energy_method_options().method_weights(
-			scoring::ScoreTypeManager::score_type_from_name( "ref" ) );
-			TR << "Check, Refweight: " << refw[1] << " " << refw[2] << " " << refw[3]
-			<< std::endl;
-			*/
 
 		}   else if ( cmd.command.substr(0,6) == "switch" ) {
 			// no input validation as of now, relax will just die
