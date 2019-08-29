@@ -462,6 +462,10 @@ EXAMPLES For Running Demos/Tutorials
                     # binary files will not work with the replacements
                     # below
                     continue
+                except TypeError as e:
+                    # Python2 and early versions of Python3 use a different error class
+                    if len(e.args) > 0 and type( e.args[0] ) == str and 'UnicodeDecodeError' in e.args[0]:
+                        continue
 
                 mod = False
                 if root_rosetta_dir in data:
