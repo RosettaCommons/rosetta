@@ -564,7 +564,8 @@ static MoverRegistrator< simple_moves::RepeatPropagationMoverCreator > reg_Repea
 static MoverRegistrator< simple_moves::ReportEffectivePKACreator > ReportEffectivePKACreator;
 static MoverRegistrator< simple_moves::ReportXYZCreator > reg_ReportXYZCreator;
 static MoverRegistrator< monte_carlo::ResetBaselineMoverCreator > reg_ResetBaselineMoverCreator;
-static MoverRegistrator< simple_moves::ResetFoldTreeCreator > ResetFoldTreeCreator;
+static MoverRegistrator< simple_moves::ResetFoldTreeCreator > reg_ResetFoldTreeCreator;
+static MoverRegistrator< simple_moves::ResetFullModelInfoMoverCreator > reg_ResetFullModelInfoMoverCreator;
 static MoverRegistrator< simple_moves::RingConformationMoverCreator > reg_RingConformationMoverCreator;
 static MoverRegistrator< simple_moves::SaveSequenceToCommentsMoverCreator > reg_SaveSequenceToCommentsMoverCreator;
 static MoverRegistrator< simple_moves::ScoreMoverCreator > reg_ScoreMoverCreator;

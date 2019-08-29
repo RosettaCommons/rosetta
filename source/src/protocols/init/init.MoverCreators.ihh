@@ -548,6 +548,7 @@
 #include <protocols/simple_moves/ReportXYZCreator.hh>
 #include <protocols/monte_carlo/ResetBaselineMoverCreator.hh>
 #include <protocols/simple_moves/ResetFoldTreeCreator.hh>
+#include <protocols/simple_moves/ResetFullModelInfoMoverCreator.hh>
 #include <protocols/constraint_movers/ResidueTypeConstraintMoverCreator.hh>
 #include <protocols/simple_moves/RingConformationMoverCreator.hh>
 #include <protocols/simple_moves/SaveSequenceToCommentsMoverCreator.hh>

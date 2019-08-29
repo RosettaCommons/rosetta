@@ -707,6 +707,7 @@ sources = {
 		"PSSM2BfactorMover",
 
 		"ResetFoldTree",
+		"ResetFullModelInfoMover",
 		"ReturnSidechainMover",
 		"ResTypeFragmentMover",
 		"RingConformationMover",
