@@ -388,14 +388,16 @@ add_extra_data(
 	}
 
 	// 2. reproducibility / logging info
-	sd.extraProperties["rosetta::version"] = msgpack::object(utility::Version::version(), sd.msgpack_zone);
-	sd.extraProperties["rosetta::commit"] = msgpack::object(utility::Version::commit(), sd.msgpack_zone);
-	sd.extraProperties["rosetta::date_created"] = msgpack::object(utility::Version::date(), sd.msgpack_zone);
-	if ( utility::Version::package() != "devel" ) {
-		sd.extraProperties["rosetta::package"] = msgpack::object(utility::Version::package(), sd.msgpack_zone);
-	}
-	if ( utility::Version::revision() != "None" ) {
-		sd.extraProperties["rosetta::revision"] = msgpack::object(utility::Version::revision(), sd.msgpack_zone);
+	if ( ! options.integration_test_mode() ) { // Don't include version info for integration tests
+		sd.extraProperties["rosetta::version"] = msgpack::object(utility::Version::version(), sd.msgpack_zone);
+		sd.extraProperties["rosetta::commit"] = msgpack::object(utility::Version::commit(), sd.msgpack_zone);
+		sd.extraProperties["rosetta::date_created"] = msgpack::object(utility::Version::date(), sd.msgpack_zone);
+		if ( utility::Version::package() != "devel" ) {
+			sd.extraProperties["rosetta::package"] = msgpack::object(utility::Version::package(), sd.msgpack_zone);
+		}
+		if ( utility::Version::revision() != "None" ) {
+			sd.extraProperties["rosetta::revision"] = msgpack::object(utility::Version::revision(), sd.msgpack_zone);
+		}
 	}
 
 	/// 3. SimpleMetrics -- These are experimental and may change!
