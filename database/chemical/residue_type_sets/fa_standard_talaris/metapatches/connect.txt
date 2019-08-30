@@ -1,6 +1,6 @@
 ## Metapatch for aromatic bromination
 NAME connect
-TYPES blank-CONNECT
+TYPES MP-blank-CONNECT
 
 PERTINENT_PROPERTY NO_ATOM_PROPERTY
 

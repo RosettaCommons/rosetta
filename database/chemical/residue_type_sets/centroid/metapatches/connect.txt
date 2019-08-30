@@ -1,6 +1,6 @@
 ## Metapatch for residue connections
 NAME connect
-TYPES blank-CONNECT
+TYPES MP-blank-CONNECT
 
 PERTINENT_PROPERTY NO_ATOM_PROPERTY
 

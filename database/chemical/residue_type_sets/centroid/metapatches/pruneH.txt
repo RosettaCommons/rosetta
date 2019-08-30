@@ -1,6 +1,6 @@
 ## Metapatch for hydrogen removal
 NAME pruneH
-TYPES blank-PRUNEH
+TYPES MP-blank-PRUNEH
 
 PERTINENT_PROPERTY NO_ATOM_PROPERTY
 

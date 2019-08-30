@@ -1,6 +1,6 @@
 ## Metapatch for metal connections
 NAME metal_connect
-TYPES blank-METAL_CONNECT
+TYPES MP-blank-METAL_CONNECT
 
 PERTINENT_PROPERTY NO_ATOM_PROPERTY
 

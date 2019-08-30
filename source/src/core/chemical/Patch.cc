@@ -660,18 +660,22 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 
 			// patch succeeded!
 			if ( !replaces_residue_type_ ) { // This is bananas. Shouldn't just forget that patch was applied. -- rhiju.
-				for ( auto const & type : types_ ) {
+				for ( auto const & type : types_ ) { // Just the enum types.
+					patched_rsd_type->add_variant_type( type );
+				}
+				if ( ! custom_types_.empty() ) {
 					// Custom variant type--must account for.
 					// Issue: this means that variants in Patch files that are misspelled or
 					// something won't be caught--they'll just silently and ineffectually
 					// be added.
 					// AMW: No longer an issue. Check if this Patch is metapatch-derived
 					// if so, enable custom variant types. if not, let it burn!
-					if ( name_.substr( 0, 3 ) == "MP-" ) {
-						// Need custom variant types.
+					if ( name_.substr( 0, 3 ) == "MP-" ) { // Are we a metapatch?
 						patched_rsd_type->enable_custom_variant_types();
+					} // If not enabled, the add_variant_type() will error out.
+					for ( auto const & type: custom_types_ ) {
+						patched_rsd_type->add_variant_type( type ); // Robust addition if it already has it.
 					}
-					patched_rsd_type->add_variant_type( type );
 				}
 				patched_rsd_type->name( patched_name(*patched_rsd_type) );
 			}

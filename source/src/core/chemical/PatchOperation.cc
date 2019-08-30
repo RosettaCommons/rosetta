@@ -2456,7 +2456,7 @@ AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
 	if ( !rsd.has( atom_ ) ) return true; // failure!
 
 	// Provide unique variant name
-	std::string res_varname( atom_ + "-METAL_CONNECT" );
+	std::string res_varname( "MP-" + atom_ + "-METAL_CONNECT" );
 	Size count=0;
 	while ( true ) {
 		if ( count > 20 ) {
@@ -2466,7 +2466,7 @@ AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
 		if ( count == 1 ) {
 			if ( !rsd.properties().has_custom_variant_types() || ! rsd.has_variant_type( res_varname ) ) break;
 		} else {
-			res_varname = atom_ + "-METAL_CONNECT" + utility::to_string( count );
+			res_varname = "MP-" + atom_ + "-METAL_CONNECT" + utility::to_string( count );
 			if ( !rsd.properties().has_custom_variant_types() || ! rsd.has_variant_type( res_varname ) ) break;
 		}
 	}

@@ -1011,14 +1011,24 @@ ResidueTypeSet::get_residue_type_with_variant_removed(
 		ResidueProperties::get_string_from_variant( old_type ) ) );
 
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
-	if ( !rsd_type ) {
-		rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants ).get_representative_type();
+	if ( rsd_type && ! rsd_type->has_variant_type( old_type ) ) {
+		return *rsd_type;
 	}
 
-	if ( rsd_type == nullptr ) {
-		utility_exit_with_message( "unable to find desired non-variant residue: " + init_rsd.name() + " " + base_name +
-			" " + ResidueProperties::get_string_from_variant( old_type ) );
+	if ( init_rsd.get_base_type_cop() != nullptr ) {
+		rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_base_type_cop() ).variants( target_variants ).get_representative_type();
+		if ( rsd_type && ! rsd_type->has_variant_type( old_type ) ) {
+			return *rsd_type;
+		}
 	}
+
+	rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants ).get_representative_type();
+	if ( rsd_type && ! rsd_type->has_variant_type( old_type ) ) {
+		return *rsd_type;
+	}
+
+	utility_exit_with_message( "Unable to find a version of " + init_rsd.name() + " without the variant type " +
+		ResidueProperties::get_string_from_variant( old_type ) );
 
 	return *rsd_type;
 }
