@@ -233,6 +233,14 @@ static basic::Tracer TR( "protocols.relax.FastRelax" );
 using namespace core;
 using namespace core::io::silent;
 
+using namespace core::scoring;
+using namespace core::conformation;
+using namespace core::pack;
+using namespace core::pack::task;
+using namespace core::pack::task::operation;
+using namespace core::kinematics;
+using namespace basic::options;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace protocols {
@@ -568,16 +576,282 @@ void FastRelax::do_md(
 	MD_mover.apply( pose );
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-void FastRelax::apply( core::pose::Pose & pose ){
-	using namespace core::scoring;
-	using namespace core::conformation;
-	using namespace core::pack;
+core::pack::task::TaskFactoryOP
+FastRelax::setup_local_tf(
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMapOP const & local_movemap //note that the movemap itself is not const
+){
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using namespace core::kinematics;
-	using namespace protocols;
 	using namespace basic::options;
+
+	//Change behavior of Task to be initialized in PackRotamersMover to allow design directly within FastRelax
+	// Jadolfbr 5/2/2013
+	TaskFactoryOP local_tf( utility::pointer::make_shared< TaskFactory >() );
+
+	//If a user gives a TaskFactory, completely respect it.
+
+	if ( get_task_factory() ) {
+		local_tf = get_task_factory()->clone();
+	} else {
+		local_tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >());
+		if ( option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
+			local_tf->push_back(utility::pointer::make_shared< ReadResfile >());
+			TR << "Using Resfile for packing step. " <<std::endl;
+		} else {
+			//Keep the same behavior as before if no resfile given for design.
+			//Though, as mentioned in the doc, movemap now overrides chi_move as it was supposed to.
+
+			local_tf->push_back(utility::pointer::make_shared< RestrictToRepacking >());
+			PreventRepackingOP turn_off_packing( utility::pointer::make_shared< PreventRepacking >() );
+			for ( Size pos = 1; pos <= pose.size(); ++pos ) {
+				if ( ! local_movemap->get_chi(pos) ) {
+					turn_off_packing->include_residue(pos);
+				}
+			}
+			local_tf->push_back(turn_off_packing);
+		}
+	}
+	//Include current rotamer by default - as before.
+	local_tf->push_back(utility::pointer::make_shared< IncludeCurrent >());
+
+	if ( limit_aroma_chi2() ) {
+		local_tf->push_back(utility::pointer::make_shared< task_operations::LimitAromaChi2Operation >());
+	}
+
+	return local_tf;
+}
+
+void
+FastRelax::inner_loop_repack_command(
+	core::Size const chk_counter,
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionOP const & local_scorefxn,
+	minimization_packing::PackRotamersMoverOP const & pack_full_repack,
+	int & dump_counter
+){
+	std::string checkpoint_id = "chk" + string_of( chk_counter );
+	if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
+		// hydrate/SPaDES protocol
+		if ( option[ OptionKeys::relax::use_explicit_water ]() ) {
+			hydrate::HydrateOP hydrate_protocol( utility::pointer::make_shared< hydrate::Hydrate >( local_scorefxn ) );
+			hydrate_protocol->apply( pose );
+		} else {
+			pack_full_repack->apply( pose );
+		}
+		checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
+	}
+	if ( dumpall_ ) {
+		pose.dump_pdb( "dump_" + right_string_of( dump_counter, 4, '0' ) );
+		dump_counter++;
+	}
+}
+
+void
+FastRelax::inner_loop_min_command(
+	RelaxScriptCommand const & cmd,
+	core::pose::Pose & pose,
+	core::kinematics::MoveMapOP const & local_movemap,
+	core::scoring::ScoreFunctionOP const & local_scorefxn,
+	core::Size & chk_counter,
+	int & dump_counter
+){
+	if ( cmd.nparams < 1 ) { utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <min_tolerance>  " ); }
+
+	chk_counter++;
+	std::string checkpoint_id = "chk" + string_of( chk_counter );
+	if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
+		do_minimize( pose, cmd.param1, local_movemap, local_scorefxn );
+		checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
+	}
+	if ( dumpall_ ) {
+		pose.dump_pdb( "dump_" + right_string_of( dump_counter, 4, '0' ) );
+		dump_counter++;
+	}
+
+}
+
+void
+FastRelax::inner_loop_ramp_repack_min_command(
+	RelaxScriptCommand const & cmd,
+	int const total_repeat_count,
+	bool const do_rama_repair,
+	core::scoring::EnergyMap & full_weights,
+	core::pose::Pose & pose,
+	minimization_packing::PackRotamersMoverOP const & pack_full_repack,
+	int const repeat_count,
+	int const total_count,
+	core::kinematics::MoveMapOP const & local_movemap,
+	core::scoring::ScoreFunctionOP const & local_scorefxn,
+	core::Size & chk_counter,
+	int & dump_counter
+){
+	if ( cmd.nparams < 2 ) { utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
+
+	// The first parameter is the relative repulsive weight
+	core::Real const relative_repulsive_weight = cmd.param1;//unnecessary duplication, but easier to read than "param1"
+	local_scorefxn->set_weight( scoring::fa_rep, full_weights[ scoring::fa_rep ] * relative_repulsive_weight );
+
+	// The third paramter is the coordinate constraint weight
+	if ( ( constrain_coords() || ramp_down_constraints() ) && (cmd.nparams >= 3) ) {
+		set_constraint_weight( local_scorefxn, full_weights, cmd.param3, pose );
+	}
+
+	// The fourth paramter is the minimization
+	if ( cmd.nparams >= 4 ) {
+		auto const iter_cmd = (Size)(cmd.param4);
+		max_iter( iter_cmd );
+	}
+
+	// decide when to call ramady repair code
+	if ( total_repeat_count > 1 && repeat_count > 2 ) {
+		if ( relative_repulsive_weight < 0.2 ) {
+			if ( do_rama_repair ) {
+				fix_worst_bad_ramas( pose, ramady_num_rebuild_, 0.0, ramady_cutoff_, ramady_rms_limit_);
+			}
+		}
+	}
+
+	chk_counter++;
+	std::string checkpoint_id = "chk" + string_of( chk_counter );
+	if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
+		// hydrate/SPaDES protocol
+		if ( option[ OptionKeys::relax::use_explicit_water ]() ) {
+			hydrate::HydrateOP hydrate_protocol( utility::pointer::make_shared< hydrate::Hydrate >( local_scorefxn ) );
+			hydrate_protocol->apply( pose );
+		} else {
+			pack_full_repack->apply( pose );
+		}
+		do_minimize( pose, cmd.param2, local_movemap, local_scorefxn );
+		checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
+	}
+
+
+	// print some debug info
+	if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) {
+		core::Real imedscore = (*local_scorefxn)( pose );
+		core::pose::setPoseExtraScore( pose, "R" + right_string_of( total_count ,5,'0'), imedscore );
+	}
+
+	if ( dumpall_ ) {
+		pose.dump_pdb( "dump_" + right_string_of( dump_counter, 4, '0' ) );
+		dump_counter++;
+	}
+
+}
+
+void
+FastRelax::inner_loop_dumpall_command(
+	RelaxScriptCommand const & cmd
+){
+	if ( cmd.command.substr(8) == "true" ) {
+		dumpall_ = true;
+	} else if ( cmd.command.substr(8) == "false" ) {
+		dumpall_ = false;
+	} else {
+		utility_exit_with_message( "Unable to parse " + cmd.command );
+	}
+}
+
+void
+FastRelax::inner_loop_reset_reference_command(
+	core::scoring::ScoreFunctionOP const & local_scorefxn
+) const {
+	TR << "RESET REFERENCE VALUES" << std::endl;
+	core::scoring::methods::EnergyMethodOptions const & original_options =
+		get_scorefxn()->energy_method_options();
+	utility::vector1< core::Real > const & original_ref_weights =
+		original_options.method_weights( core::scoring::ref );
+
+	core::scoring::methods::EnergyMethodOptions local_options =
+		local_scorefxn->energy_method_options();
+	local_options.set_method_weights( core::scoring::ref, original_ref_weights );
+	local_scorefxn->set_energy_method_options( local_options );
+}
+
+void
+FastRelax::inner_loop_md_command(
+	RelaxScriptCommand const & cmd,
+	core::Size & chk_counter,
+	core::pose::Pose & pose,
+	core::kinematics::MoveMapOP const & local_movemap,
+	core::scoring::ScoreFunctionOP const & local_scorefxn
+){
+	if ( cmd.nparams < 2 ) { utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <mdstep> <temperature> " ); }
+
+	chk_counter++;
+	std::string checkpoint_id = "chk" + string_of( chk_counter );
+	if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
+		auto const nstep = cmd.param1;
+		auto const temperature = cmd.param2;
+		do_md( pose, nstep, temperature, local_movemap, local_scorefxn );
+		checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
+	}
+}
+
+void
+FastRelax::inner_loop_reference_command(
+	RelaxScriptCommand const & cmd,
+	core::scoring::ScoreFunctionOP const & local_scorefxn
+) const {
+	// added for design applications
+	if ( cmd.nparams < 20 ) {
+		utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <20 reference weights in ACDEF order>" );
+	}
+	//local_scorefxn->energy_method_options().set_method_weights(
+	// scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
+	methods::EnergyMethodOptions eopts( local_scorefxn->energy_method_options() );
+
+	eopts.set_method_weights(
+		scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
+
+	local_scorefxn->set_energy_method_options( eopts );
+}
+
+void
+FastRelax::inner_loop_accept_to_best_command(
+	core::scoring::ScoreFunctionOP const & local_scorefxn,
+	core::pose::Pose & pose,
+	core::Real & best_score,
+	core::Size & accept_count,
+	core::pose::Pose & best_pose,
+	core::pose::Pose const & start_pose,
+	std::vector< core::Real > & best_score_log,
+	std::vector< core::Real > & curr_score_log,
+#ifdef BOINC_GRAPHICS
+	int const total_count
+#else
+	int const
+#endif
+) {
+	// grab the score and remember the pose if the score is better then ever before.
+	core::Real score = (*local_scorefxn)( pose );
+	if ( ( score < best_score) || (accept_count == 0) ) {
+		best_score = score;
+		best_pose = pose;
+	}
+#ifdef BOINC_GRAPHICS
+	boinc::Boinc::update_graphics_low_energy( best_pose, best_score  );
+	boinc::Boinc::update_graphics_last_accepted( pose, score );
+	boinc::Boinc::update_mc_trial_info( total_count , "FastRelax" );
+#endif
+	core::Real rms = 0, irms = 0;
+	if ( core::pose::symmetry::is_symmetric( pose ) && symmetric_rmsd_ ) {
+		rms = CA_rmsd_symmetric( *get_native_pose() , best_pose );
+		irms = CA_rmsd_symmetric( start_pose , best_pose );
+	} else {
+		rms = native_CA_rmsd( *get_native_pose() , best_pose );
+		irms = native_CA_rmsd( start_pose , best_pose );
+	}
+	TR << "MRP: " << accept_count << "  " << score << "  " << best_score << "  " << rms << "  " << irms << "  " << std::endl;
+	best_score_log.push_back( best_score );
+	curr_score_log.push_back( score );
+
+	accept_count++;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void FastRelax::apply( core::pose::Pose & pose ){
 
 	TR.Debug   << "================== FastRelax: " << script_.size() << " ===============================" << std::endl;
 	if ( pose.size() == 0 ) {
@@ -637,42 +911,10 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		core::pose::symmetry::make_symmetric_movemap( pose, *local_movemap );
 	}
 
-	//Change behavior of Task to be initialized in PackRotamersMover to allow design directly within FastRelax
-	// Jadolfbr 5/2/2013
-	TaskFactoryOP local_tf( utility::pointer::make_shared< TaskFactory >() );
+	TaskFactoryOP const local_tf( setup_local_tf( pose, local_movemap ) );
 
-	//If a user gives a TaskFactory, completely respect it.
-
-	if ( get_task_factory() ) {
-		local_tf = get_task_factory()->clone();
-	} else {
-		local_tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >());
-		if ( option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
-			local_tf->push_back(utility::pointer::make_shared< ReadResfile >());
-			TR << "Using Resfile for packing step. " <<std::endl;
-		} else {
-			//Keep the same behavior as before if no resfile given for design.
-			//Though, as mentioned in the doc, movemap now overrides chi_move as it was supposed to.
-
-			local_tf->push_back(utility::pointer::make_shared< RestrictToRepacking >());
-			PreventRepackingOP turn_off_packing( utility::pointer::make_shared< PreventRepacking >() );
-			for ( Size pos = 1; pos <= pose.size(); ++pos ) {
-				if ( ! local_movemap->get_chi(pos) ) {
-					turn_off_packing->include_residue(pos);
-				}
-			}
-			local_tf->push_back(turn_off_packing);
-		}
-	}
-	//Include current rotamer by default - as before.
-	local_tf->push_back(utility::pointer::make_shared< IncludeCurrent >());
-
-	if ( limit_aroma_chi2() ) {
-		local_tf->push_back(utility::pointer::make_shared< task_operations::LimitAromaChi2Operation >());
-	}
-
-	minimization_packing::PackRotamersMoverOP pack_full_repack_( utility::pointer::make_shared< minimization_packing::PackRotamersMover >( local_scorefxn ) );
-	pack_full_repack_->task_factory(local_tf);
+	minimization_packing::PackRotamersMoverOP pack_full_repack( utility::pointer::make_shared< minimization_packing::PackRotamersMover >( local_scorefxn ) );
+	pack_full_repack->task_factory(local_tf);
 
 	(*local_scorefxn)( pose );
 
@@ -685,9 +927,9 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 
 	/// OK, start of actual protocol
-	pose::Pose start_pose=pose;
-	pose::Pose best_pose=pose;
-	core::Real best_score=100000000.0;
+	pose::Pose start_pose( pose );
+	pose::Pose best_pose( pose );
+	core::Real best_score = 100000000.0;
 	core::Size accept_count = 0;
 	core::Size chk_counter = 0;
 
@@ -716,15 +958,17 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	int dump_counter=0;
 	for ( core::Size ncmd = 0; ncmd < script_.size(); ncmd ++ ) {
 		total_count++;
-		if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) local_scorefxn->show( TR, pose );
-		if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) pose.constraint_set()->show_numbers( TR.Debug );
+		if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) {
+			local_scorefxn->show( TR, pose );
+			pose.constraint_set()->show_numbers( TR.Debug );
+		}
 
 		// No MC is used, so update graphics manually
 #ifdef BOINC_GRAPHICS
 		boinc::Boinc::update_graphics_current( pose );
 #endif
 
-		RelaxScriptCommand cmd = script_[ncmd];
+		RelaxScriptCommand const & cmd = script_[ ncmd ];
 
 		TR.Debug << "Command: " << cmd.command << std::endl;
 
@@ -734,107 +978,36 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			repeat_step = ncmd;
 		} else if ( cmd.command == "endrepeat" ) {
 			TR.Debug << "CMD:  Repeat: " << repeat_count << std::endl;
-			repeat_count -- ;
-			total_repeat_count ++ ;
-			if ( repeat_count <= 0 ) {}
-			else {
+			--repeat_count;
+			++total_repeat_count;
+			if ( repeat_count > 0 ) {
 				ncmd = repeat_step;
 			}
 		} else if ( cmd.command == "dump" ) {
 			if ( cmd.nparams < 1 ) { utility_exit_with_message( "ERROR: Syntax: " + cmd.command + "<number> " ); }
 			pose.dump_pdb( "dump_" + right_string_of( (int) cmd.param1, 4, '0' ) );
 		} else if ( cmd.command.substr(0,7) == "dumpall" ) {
-			if ( cmd.command.substr(8) == "true" ) {
-				dumpall_ = true;
-			}
-			if ( cmd.command.substr(8) == "false" ) {
-				dumpall_ = false;
-			}
+			inner_loop_dumpall_command( cmd );
 		} else if ( cmd.command == "repack" ) {
-			//if( cmd.nparams < 0 ){ utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 			chk_counter++;
-			std::string checkpoint_id = "chk" + string_of( chk_counter );
-			if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
-				// hydrate/SPaDES protocol
-				if ( option[ OptionKeys::relax::use_explicit_water ]() ) {
-					//if ( option[ OptionKeys::relax::enforce_waters_during_relax ]() == true ) {
-					// // keep waters enforced on every ramping step UNTIL final repeat count and fa_rep < enforce_until_ramp_step
-					// // below code overwrites the enforce_all_waters option
-					// if ( cmd.param1 < option[ OptionKeys::relax::enforce_until_ramp_step ]() || repeat_count != 1 ) {
-					//  basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( true );
-					// } else { // last ramping step
-					//  basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( false );
-					// }
-					//}
-					hydrate::HydrateOP hydrate_protocol( utility::pointer::make_shared< hydrate::Hydrate >( local_scorefxn ) );
-					hydrate_protocol->apply( pose );
-				} else {
-					pack_full_repack_->apply( pose );
-				}
-				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
-			}
-			if ( dumpall_ ) {
-				pose.dump_pdb( "dump_" + right_string_of( dump_counter, 4, '0' ) );
-				dump_counter++;
-			}
+			inner_loop_repack_command( chk_counter, pose, local_scorefxn, pack_full_repack, dump_counter );
 		} else if ( cmd.command == "min" ) {
-			if ( cmd.nparams < 1 ) { utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <min_tolerance>  " ); }
-
-			chk_counter++;
-			std::string checkpoint_id = "chk" + string_of( chk_counter );
-			if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
-				do_minimize( pose, cmd.param1, local_movemap, local_scorefxn );
-				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
-			}
-			if ( dumpall_ ) {
-				pose.dump_pdb( "dump_" + right_string_of( dump_counter, 4, '0' ) );
-				dump_counter++;
-			}
+			inner_loop_min_command( cmd, pose, local_movemap, local_scorefxn, chk_counter, dump_counter );
 		} else if ( cmd.command == "md" ) {
-			if ( cmd.nparams < 2 ) { utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <mdstep> <temperature> " ); }
-
-			chk_counter++;
-			std::string checkpoint_id = "chk" + string_of( chk_counter );
-			if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
-				// param1: nstep; param2: temperature
-				//if ( input_csts ) pose.constraint_set( input_csts );
-				do_md( pose, cmd.param1, cmd.param2, local_movemap, local_scorefxn );
-				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
-			}
+			inner_loop_md_command( cmd, chk_counter, pose, local_movemap, local_scorefxn );
 		} else if ( cmd.command.substr(0,5) == "scale" ) {
 			// no input validation as of now, relax will just die
 			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(6));
 			local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * cmd.param1 );
-		}   else if ( cmd.command.substr(0,6) == "rscale" ) {
+		} else if ( cmd.command.substr(0,6) == "rscale" ) {
 			// no input validation as of now, relax will just die
 			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
 			local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * ((cmd.param2 - cmd.param1 ) * numeric::random::uniform() + cmd.param1 ));
 		} else if ( cmd.command.substr(0,15) == "reset_reference" ) {
-			TR << "RESET REFERENCE VALUES" << std::endl;
-			core::scoring::methods::EnergyMethodOptions const & original_options =
-				get_scorefxn()->energy_method_options();
-			utility::vector1< core::Real > const & original_ref_weights =
-				original_options.method_weights( core::scoring::ref );
-
-			core::scoring::methods::EnergyMethodOptions local_options =
-				local_scorefxn->energy_method_options();
-			local_options.set_method_weights( core::scoring::ref, original_ref_weights );
-			local_scorefxn->set_energy_method_options( local_options );
+			inner_loop_reset_reference_command( local_scorefxn );
 		} else if ( cmd.command.substr(0,9) == "reference" ) {
-			// added for design applications
-			if ( cmd.nparams < 20 ) {
-				utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <20 reference weights in ACDEF order>" );
-			}
-			//local_scorefxn->energy_method_options().set_method_weights(
-			// scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
-			methods::EnergyMethodOptions eopts( local_scorefxn->energy_method_options() );
-
-			eopts.set_method_weights(
-				scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
-
-			local_scorefxn->set_energy_method_options( eopts );
-
-		}   else if ( cmd.command.substr(0,6) == "switch" ) {
+			inner_loop_reference_command( cmd, local_scorefxn );
+		} else if ( cmd.command.substr(0,6) == "switch" ) {
 			// no input validation as of now, relax will just die
 			if ( cmd.command.substr(7) == "torsion" ) {
 				TR << "Using AtomTreeMinimizer"  << std::endl;
@@ -843,13 +1016,13 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				TR << "Using CartesianMinizer with lbfgs"  << std::endl;
 				cartesian( true );
 			}
-		}   else if ( cmd.command.substr(0,6) == "weight" ) {
+		} else if ( cmd.command.substr(0,6) == "weight" ) {
 			// no input validation as of now, relax will just die
 			scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
 			local_scorefxn->set_weight( scale_param, cmd.param1 );
 			// I'm not too sure if the changing the default weight makes sense
 			full_weights[ scale_param ] = cmd.param1;
-		}   else if ( cmd.command == "batch_shave" ) {  // grab the score and remember the pose if the score is better then ever before.
+		} else if ( cmd.command == "batch_shave" ) {  // grab the score and remember the pose if the score is better then ever before.
 		} else if ( cmd.command == "show_weights" ) {
 			local_scorefxn->show(TR, pose);
 		} else if ( cmd.command == "coord_cst_weight" ) {
@@ -858,97 +1031,12 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			} else if ( constrain_coords() || ramp_down_constraints() ) {
 				set_constraint_weight( local_scorefxn, full_weights, cmd.param1, pose );
 			}
-		}   else if ( cmd.command == "ramp_repack_min" ) {
-			if ( cmd.nparams < 2 ) { utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
-
-			// The first parameter is the relative repulsive weight
-			core::Real const relative_repulsive_weight = cmd.param1;//unnecessary duplication, but easier to read than "param1"
-			local_scorefxn->set_weight( scoring::fa_rep, full_weights[ scoring::fa_rep ] * relative_repulsive_weight );
-
-			// The third paramter is the coordinate constraint weight
-			if ( ( constrain_coords() || ramp_down_constraints() ) && (cmd.nparams >= 3) ) {
-				set_constraint_weight( local_scorefxn, full_weights, cmd.param3, pose );
-			}
-
-			// The fourth paramter is the minimization
-			if ( cmd.nparams >= 4 ) {
-				auto const iter_cmd = (Size)(cmd.param4);
-				max_iter( iter_cmd );
-				//Size const original_iter = max_iter();
-				//max_iter( original_iter );
-			}
-
-			// decide when to call ramady repair code
-			if ( total_repeat_count > 1 && repeat_count > 2 ) {
-				if ( relative_repulsive_weight < 0.2 ) {
-					if ( do_rama_repair ) {
-						fix_worst_bad_ramas( pose, ramady_num_rebuild_, 0.0, ramady_cutoff_, ramady_rms_limit_);
-					}
-				}
-			}
-
-			chk_counter++;
-			std::string checkpoint_id = "chk" + string_of( chk_counter );
-			if ( !checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true ) ) {
-				// hydrate/SPaDES protocol
-				if ( option[ OptionKeys::relax::use_explicit_water ]() ) {
-					//if ( option[ OptionKeys::relax::enforce_waters_during_relax ]() == true ) {
-					// // keep waters enforced on every ramping step UNTIL final repeat count and fa_rep < enforce_until_ramp_step
-					// // below code overwrites the enforce_all_waters option
-					// if ( cmd.param1 < option[ OptionKeys::relax::enforce_until_ramp_step ]() || repeat_count != 1 ) {
-					//  basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( true );
-					// } else { // last ramping step
-					//  basic::options::option[ basic::options::OptionKeys::hydrate::force_enforce_all_waters ].value( false );
-					// }
-					//}
-					hydrate::HydrateOP hydrate_protocol( utility::pointer::make_shared< hydrate::Hydrate >( local_scorefxn ) );
-					hydrate_protocol->apply( pose );
-				} else {
-					pack_full_repack_->apply( pose );
-				}
-				do_minimize( pose, cmd.param2, local_movemap, local_scorefxn );
-				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
-			}
-
-
-			// print some debug info
-			if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) {
-				core::Real imedscore = (*local_scorefxn)( pose );
-				core::pose::setPoseExtraScore( pose, "R" + right_string_of( total_count ,5,'0'), imedscore );
-			}
-
-			if ( dumpall_ ) {
-				pose.dump_pdb( "dump_" + right_string_of( dump_counter, 4, '0' ) );
-				dump_counter++;
-			}
+		} else if ( cmd.command == "ramp_repack_min" ) {
+			inner_loop_ramp_repack_min_command( cmd, total_repeat_count, do_rama_repair, full_weights, pose, pack_full_repack, repeat_count, total_count, local_movemap, local_scorefxn, chk_counter, dump_counter );
 		} else if ( cmd.command == "accept_to_best" ) {
-			// grab the score and remember the pose if the score is better then ever before.
-			core::Real score = (*local_scorefxn)( pose );
-			if ( ( score < best_score) || (accept_count == 0) ) {
-				best_score = score;
-				best_pose = pose;
-			}
-#ifdef BOINC_GRAPHICS
-			boinc::Boinc::update_graphics_low_energy( best_pose, best_score  );
-			boinc::Boinc::update_graphics_last_accepted( pose, score );
-			boinc::Boinc::update_mc_trial_info( total_count , "FastRelax" );
-#endif
-			core::Real rms = 0, irms = 0;
-			if ( core::pose::symmetry::is_symmetric( pose ) && symmetric_rmsd_ ) {
-				rms = CA_rmsd_symmetric( *get_native_pose() , best_pose );
-				irms = CA_rmsd_symmetric( start_pose , best_pose );
-			} else {
-				rms = native_CA_rmsd( *get_native_pose() , best_pose );
-				irms = native_CA_rmsd( start_pose , best_pose );
-			}
-			TR << "MRP: " << accept_count << "  " << score << "  " << best_score << "  " << rms << "  " << irms << "  " << std::endl;
-			best_score_log.push_back( best_score );
-			curr_score_log.push_back( score );
-
-			accept_count++;
+			inner_loop_accept_to_best_command( local_scorefxn, pose, best_score, accept_count, best_pose, start_pose, best_score_log, curr_score_log, total_count );
 			if ( accept_count > script_max_accept_ ) break;
 			if ( test_cycles_ || dry_run() ) break;
-
 		} else if ( cmd.command == "load_best" ) {
 			pose = best_pose;
 		} else if ( cmd.command == "load_start" ) {
@@ -1248,7 +1336,7 @@ void FastRelax::batch_apply(
 
 	check_nonideal_mintype();
 	PackerTaskOP task_;
-	protocols::minimization_packing::PackRotamersMoverOP pack_full_repack_;
+	protocols::minimization_packing::PackRotamersMoverOP pack_full_repack;
 	core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();
 	core::pose::Pose pose;
 
@@ -1329,9 +1417,9 @@ void FastRelax::batch_apply(
 		// 453 mb
 		if ( i == 0 ) {
 			if ( get_task_factory() ) {
-				pack_full_repack_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
-				pack_full_repack_->score_function(local_scorefxn);
-				pack_full_repack_->task_factory(get_task_factory());
+				pack_full_repack = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
+				pack_full_repack->score_function(local_scorefxn);
+				pack_full_repack->task_factory(get_task_factory());
 			} else {
 				task_ = TaskFactory::create_packer_task( pose );
 
@@ -1346,7 +1434,7 @@ void FastRelax::batch_apply(
 				}
 				task_->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
 				task_->or_include_current( true );
-				pack_full_repack_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( local_scorefxn, task_ );
+				pack_full_repack = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( local_scorefxn, task_ );
 			}
 
 			// Make sure we only allow symmetrical degrees of freedom to move
@@ -1401,7 +1489,7 @@ void FastRelax::batch_apply(
 				if ( !relax_decoy.active ) continue;
 				relax_decoy.current_struct->fill_pose( pose );
 				if ( input_csts ) pose.constraint_set( input_csts );
-				pack_full_repack_->apply( pose );
+				pack_full_repack->apply( pose );
 				core::Real score = (*local_scorefxn)(pose);
 				relax_decoy.current_score = score;
 				relax_decoy.current_struct->fill_struct( pose );
@@ -1463,7 +1551,7 @@ void FastRelax::batch_apply(
 						}
 					}
 
-					pack_full_repack_->apply( pose );
+					pack_full_repack->apply( pose );
 					do_minimize( pose, cmd.param2, local_movemap, local_scorefxn  );
 					relax_decoy.current_score = (*local_scorefxn)(pose);
 					relax_decoy.current_struct->fill_struct( pose );

@@ -28,7 +28,11 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 
 //// C++ headers
 #include <string>
@@ -209,6 +213,14 @@ protected:
 	std::string
 	determine_default_relax_script();
 
+	///@brief helper function for apply(). Helps setup the task factory
+	core::pack::task::TaskFactoryOP
+	setup_local_tf(
+		core::pose::Pose const & pose,
+		core::kinematics::MoveMapOP const & local_movemap //note that the movemap itself is not const
+	);
+
+
 protected: //getters and setters
 	bool script_file_specified() const {
 		return script_file_specified_;
@@ -229,6 +241,87 @@ private:
 	);
 
 	void check_nonideal_mintype();
+
+
+	//Helper funcitons for apply():
+
+	void
+	inner_loop_repack_command(
+		core::Size const chk_counter,
+		core::pose::Pose & pose,
+		core::scoring::ScoreFunctionOP const & local_scorefxn,
+		minimization_packing::PackRotamersMoverOP const & pack_full_repack,
+		int & dump_counter
+	);
+
+	void
+	inner_loop_min_command(
+		RelaxScriptCommand const & cmd,
+		core::pose::Pose & pose,
+		core::kinematics::MoveMapOP const & local_movemap,
+		core::scoring::ScoreFunctionOP const & local_scorefxn,
+		core::Size & chk_counter,
+		int & dump_counter
+	);
+
+
+	void
+	inner_loop_ramp_repack_min_command(
+		RelaxScriptCommand const & cmd,
+		int const total_repeat_count,
+		bool const do_rama_repair,
+		core::scoring::EnergyMap & full_weights,
+		core::pose::Pose & pose,
+		minimization_packing::PackRotamersMoverOP const & pack_full_repack,
+		int const repeat_count,
+		int const total_count,
+		core::kinematics::MoveMapOP const & local_movemap,
+		core::scoring::ScoreFunctionOP const & local_scorefxn,
+		core::Size & chk_counter,
+		int & dump_counter
+	);
+
+	void
+	inner_loop_dumpall_command(
+		RelaxScriptCommand const & cmd
+	);
+
+	void
+	inner_loop_md_command(
+		RelaxScriptCommand const & cmd,
+		core::Size & chk_counter,
+		core::pose::Pose & pose,
+		core::kinematics::MoveMapOP const & local_movemap,
+		core::scoring::ScoreFunctionOP const & local_scorefxn
+	);
+
+	void
+	inner_loop_reset_reference_command(
+		core::scoring::ScoreFunctionOP const & local_scorefxn
+	) const;
+
+	void
+	inner_loop_reference_command(
+		RelaxScriptCommand const & cmd,
+		core::scoring::ScoreFunctionOP const & local_scorefxn
+	) const;
+
+	void
+	inner_loop_accept_to_best_command(
+		core::scoring::ScoreFunctionOP const & local_scorefxn,
+		core::pose::Pose & pose,
+		core::Real & best_score,
+		core::Size & accept_count,
+		core::pose::Pose & best_pose,
+		core::pose::Pose const & start_pose,
+		std::vector< core::Real > & best_score_log,
+		std::vector< core::Real > & curr_score_log,
+#ifdef BOINC_GRAPHICS
+		int const total_count
+#else
+		int const
+#endif
+	);
 
 private:   // options
 
