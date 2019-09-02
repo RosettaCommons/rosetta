@@ -4,6 +4,8 @@
 -genbonded_score_hybrid
 -score::gen_bonded_params_file scoring/score_functions/generic_potential/generic_bonded.aamerge.txt
 -out:level 500
+#The point of this is not about rotamer library which is missing in the master database yet
+-set_weights fa_dun_rot 0.0 fa_dun_semi 0.0 fa_dun_dev 0.0
 -mute all
 -unmute core.scoring.GenericBondedPotential
 -crystal_refine
