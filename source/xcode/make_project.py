@@ -25,6 +25,7 @@ KNOWN_PROJECTS = [
     'core.3',
     'core.4',
     'core.5',
+    'core.6',
     #'interactive',
     #'game',
     ]

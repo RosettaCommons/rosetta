@@ -50,6 +50,7 @@ LIBS += \
         -L$$OUT_PWD/../rosetta/protocols_b_2    -lprotocols_b_2 \
         -L$$OUT_PWD/../rosetta/protocols_a_2    -lprotocols_a_2 \
         -L$$OUT_PWD/../rosetta/protocols_1      -lprotocols_1 \
+        -L$$OUT_PWD/../rosetta/core_6           -lcore_6 \
         -L$$OUT_PWD/../rosetta/core_5           -lcore_5 \
         -L$$OUT_PWD/../rosetta/core_4           -lcore_4 \
         -L$$OUT_PWD/../rosetta/core_3           -lcore_3 \
