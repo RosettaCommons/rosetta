@@ -7,6 +7,6 @@
 -helical_bundle_predict:helix_assignment_file inputs/2nd2.helix_assignments
 -helical_bundle_predict:num_steps_per_simulated_annealing_round_centroid 100
 -helical_bundle_predict:num_simulated_annealing_rounds_centroid 3
--cyclic_peptide:MPI_processes_by_level 1 3
--cyclic_peptide:MPI_batchsize_by_level 1
+-cyclic_peptide:MPI_processes_by_level 1 1 1 1
+-cyclic_peptide:MPI_batchsize_by_level 1 1 1
 -out:file:silent output.silent
