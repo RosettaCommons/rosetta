@@ -150,6 +150,29 @@ std::ostream & operator<<( std::ostream & stream, FileType type ) {
 	return stream;
 }
 
+/// @brief Given a filetype, return the string for the extension.
+/// @details Extensions are in lowercase (e.g. "pdb", "cif", "mmtf"), etc.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+extension_from_filetype(
+	FileType const filetype
+) {
+	switch( filetype ) {
+	case PDB_file :
+		return "pdb";
+	case CIF_file :
+		return "cif";
+	case MMTF_file :
+		return "mmtf";
+	case SRLZ_file :
+		return "srlz";
+	default :
+		utility_exit_with_message( "Error in core::import_pose::extension_from_filetype(): Invalid filetype provided!" );
+		break;
+	}
+	return "ERROR"; //To keep compiler happy, though we should never reach here.
+}
+
 void
 read_all_poses(
 	utility::vector1< std::string > const & filenames,

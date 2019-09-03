@@ -8,7 +8,8 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/helical_bundle_predict/HelicalBundlePredictApplication.hh
-/// @brief The meat-and-potatoes for the helical_bundle_predict application, used to predict structures of helical bundles made from canonical or noncanonical building-blocks.
+/// @brief The meat-and-potatoes for the helical_bundle_predict application, used to predict structures of helical bundles
+/// made from canonical or noncanonical building-blocks.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
 
@@ -27,6 +28,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
+#include <core/import_pose/import_pose.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -255,6 +257,19 @@ public: //Member functions:
 	/// @brief Set the number of jobs already done on this process or thread.
 	inline void set_already_completed_job_count( core::Size const count_in ) { already_completed_job_count_ = count_in; }
 
+#else //Output options for non-MPI build:
+
+	/// @brief Set the output format.  (Automatically sets extension.)
+	/// @details This one sets silent output to false.
+	void set_output_format( core::import_pose::FileType const type );
+
+	/// @brief Indicate that we're using silent output.  This overrides set_ouput_format(), and
+	/// sets the extension automatically.
+	void set_silent_output();
+
+	/// @brief Set the prefix and suffix for output.
+	void set_output_prefix_and_suffix( std::string const & prefix, std::string const & suffix );
+
 #endif //USEMPI
 
 
@@ -331,8 +346,11 @@ private: //Variables:
 	/// @brief Number of repeats to attempt.
 	core::Size nstruct_;
 
-	//Variables used only in MPI mode:
+
+
 #ifdef USEMPI
+	//Variables used only in MPI mode:
+
 	/// @brief Rank of this MPI process
 	core::Size my_rank_;
 
@@ -346,6 +364,29 @@ private: //Variables:
 	/// @brief Pointer to the vector where I should store full silent structures of all output.
 	/// @details This is a rare instance in which using raw pointers is appropriate.  DO NOT EMULATE THIS UNLESS YOU KNOW WHAT YOU'RE DOING.
 	utility::vector1 < core::io::silent::SilentStructOP > * all_output_;
+
+#else
+	//Variables for output in non-MPI mode:
+
+	/// @brief The output prefix.
+	/// @details Not used in MPI build.
+	std::string outfile_prefix_ = "result_";
+
+	/// @brief The output suffix.
+	/// @details Not used in MPI build.
+	std::string outfile_suffix_ = "";
+
+	/// @brief The output extension.
+	/// @details Not used in MPI build.
+	std::string outfile_extension_ = "pdb";
+
+	/// @brief The output format.
+	/// @details Not used in MPI build.
+	core::import_pose::FileType output_filetype_ = core::import_pose::PDB_file;
+
+	/// @brief Are we doing silent output?
+	/// @details Not used in MPI build.
+	bool silent_output_ = false;
 #endif
 
 };

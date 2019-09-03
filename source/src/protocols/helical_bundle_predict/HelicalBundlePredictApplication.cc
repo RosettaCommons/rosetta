@@ -8,7 +8,8 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/helical_bundle_predict/HelicalBundlePredictApplication.cc
-/// @brief The meat-and-potatoes for the helical_bundle_predict application, used to predict structures of helical bundles made from canonical or noncanonical building-blocks.
+/// @brief The meat-and-potatoes for the helical_bundle_predict application, used to predict structures of helical bundles
+/// made from canonical or noncanonical building-blocks.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
 // Project includes:
@@ -368,8 +369,29 @@ HelicalBundlePredictApplication::run() {
 			utility_exit(); //TODO proper output.
 		}
 #else //if !USEMPI
+
+#ifdef DUMP_HBP_DEBUG_OUTPUT
 		pose_->dump_pdb( "END.pdb" );
-		//TODO proper output.
+#endif
+
+		if ( silent_output_ ) {
+			char outfile[1024];
+			sprintf(outfile, "%s%s.%s", outfile_prefix_.c_str(), outfile_suffix_.c_str(), outfile_extension_.c_str() );
+
+			core::io::silent::SilentFileOptions opts;
+			core::io::silent::SilentStructOP ss( core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts ) );
+			char tag[1024];
+			sprintf(tag, "%s%06lu%s", outfile_prefix_.c_str(), static_cast<unsigned long>(irepeat), outfile_suffix_.c_str() );
+			ss->fill_struct( *pose_, std::string(tag) );
+			if ( native_pose_ != nullptr ) ss->add_energy( "RMSD", rmsd ); //Add the RMSD to the energy to be written out in the silent file.
+			core::io::silent::SilentFileDataOP silent_file ( utility::pointer::make_shared< core::io::silent::SilentFileData >( opts ) );
+			silent_file->set_filename( std::string( outfile ) );
+			silent_file->write_silent_struct( *ss, std::string( outfile ) );
+		} else {
+			char outfile[1024];
+			sprintf(outfile, "%s%06lu%s.%s", outfile_prefix_.c_str(), irepeat, outfile_suffix_.c_str(), outfile_extension_.c_str() );
+			pose_->dump_file( std::string(outfile) );
+		}
 
 #endif //USEMPI
 
@@ -462,6 +484,39 @@ HelicalBundlePredictApplication::output_to_silent_list(
 			my_rank_, curjob, pose.energies().total_energy(), (include_rmsd ? rmsd : 0), 0, 0
 		)
 	);
+}
+
+#else // Output setters for non-MPI build:
+
+/// @brief Set the output format.  (Automatically sets extension.)
+/// @details This one sets silent output to false.
+void
+HelicalBundlePredictApplication::set_output_format(
+	core::import_pose::FileType const type
+) {
+	runtime_assert( type < core::import_pose::end_of_filetype_list && static_cast< core::Size >( type ) > 0 );
+	runtime_assert_string_msg( type != core::import_pose::SRLZ_file, "Error in HelicalBundlePredictApplication::set_output_format(): SRLZ file output is not supported." );
+	output_filetype_ = type;
+	outfile_extension_ = core::import_pose::extension_from_filetype(type);
+	silent_output_ = false;
+}
+
+/// @brief Indicate that we're using silent output.  This overrides set_ouput_format(), and
+/// sets the extension automatically.
+void
+HelicalBundlePredictApplication::set_silent_output() {
+	silent_output_ = true;
+	outfile_extension_ = "silent";
+}
+
+/// @brief Set the prefix and suffix for output.
+void
+HelicalBundlePredictApplication::set_output_prefix_and_suffix(
+	std::string const & prefix,
+	std::string const & suffix
+) {
+	outfile_prefix_ = prefix;
+	outfile_suffix_ = suffix;
 }
 
 #endif //USEMPI

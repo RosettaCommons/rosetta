@@ -1759,7 +1759,7 @@ SimpleCycpepPredictApplication::run() const {
 			protocols::boinc::Boinc::update_graphics_low_energy( *pose, pose->energies().total_energy() );
 #endif
 			if ( silent_out_ ) {
-				core::io::silent::SilentFileOptions opts;
+				//core::io::silent::SilentFileOptions opts;
 				core::io::silent::SilentFileDataOP silent_file (new core::io::silent::SilentFileData( opts ) );
 				silent_file->set_filename( out_filename_ );
 				silent_file->write_silent_struct( *ss, out_filename_ );

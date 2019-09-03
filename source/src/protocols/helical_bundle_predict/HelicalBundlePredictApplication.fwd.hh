@@ -8,7 +8,8 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/helical_bundle_predict/HelicalBundlePredictApplication.fwd.hh
-/// @brief The meat-and-potatoes for the helical_bundle_predict application, used to predict structures of helical bundles made from canonical or noncanonical building-blocks.
+/// @brief The meat-and-potatoes for the helical_bundle_predict application, used to predict structures of helical bundles
+/// made from canonical or noncanonical building-blocks.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
 #ifndef INCLUDED_protocols_helical_bundle_predict_HelicalBundlePredictApplication_fwd_hh

@@ -35,6 +35,7 @@
 // basic headers
 #include <basic/Tracer.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/helical_bundle_predict.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -70,6 +71,35 @@ get_options_from_options_collection(
 	// The following triggers read from disk.  Modify tihs for multi-threaded or multi-process processing:
 	options.read_inputs();
 }
+
+#ifndef USEMPI
+/// @brief In the non-MPI build, set the file output options.
+void
+set_file_output(
+	protocols::helical_bundle_predict::HelicalBundlePredictApplication & application
+) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	if ( option[out::file::silent].user() ) {
+		application.set_output_prefix_and_suffix( option[out::prefix].user() ? option[ out::prefix ]() : "result" , option[out::suffix]() );
+		application.set_silent_output();
+		TR << "Configuring for Rosetta silent file output." << std::endl;
+	} else {
+		application.set_output_prefix_and_suffix( option[out::prefix].user() ? option[ out::prefix ]() : "result_" , option[out::suffix]() );
+		if ( option[out::mmCIF].value() ) {
+			application.set_output_format( core::import_pose::CIF_file );
+			TR << "Configuring for CIF output." << std::endl;
+		} else if ( option[out::mmtf].value() ) {
+			application.set_output_format( core::import_pose::MMTF_file );
+			TR << "Configuring for MMTF output." << std::endl;
+		} else {
+			application.set_output_format( core::import_pose::PDB_file );
+			TR << "Configuring for PDB output." << std::endl;
+		}
+	}
+}
+#endif
 
 /// @brief Entry point for program execution.
 int
@@ -109,6 +139,7 @@ main( int argc, char * argv [] )
 		application.set_options( options );
 #else // !USEMPI
 		HelicalBundlePredictApplication application( options );
+		set_file_output( application );
 #endif //USEMPI
 
 		if (

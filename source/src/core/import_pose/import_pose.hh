@@ -50,17 +50,29 @@ typedef utility::pointer::shared_ptr< CifParser > CifParserOP;
 namespace core {
 namespace import_pose {
 
+/// @brief Enum for the file type.
+/// @details If you add to this list, update the
+/// extension_from_filetype function!
 enum FileType{
-	PDB_file,
+	PDB_file=1, //Keep this first.
 	CIF_file,
 	MMTF_file,
 	SRLZ_file,
-	Unknown_file
+	end_of_filetype_list, // Keep this second-to-last.
+	Unknown_file = end_of_filetype_list //Keep this last.
 };
 
 std::ostream & operator<<( std::ostream & stream, FileType type );
 
 typedef std::string String;
+
+/// @brief Given a filetype, return the string for the extension.
+/// @details Extensions are in lowercase (e.g. "pdb", "cif", "mmtf"), etc.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+extension_from_filetype(
+	FileType const filetype
+);
 
 void
 read_all_poses(
