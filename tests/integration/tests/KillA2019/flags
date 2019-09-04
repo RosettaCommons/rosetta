@@ -1,0 +1,6 @@
+-parser:protocol inputs/test.xml
+-nstruct 1
+-packing:linmem_ig 10
+-mute all
+-unmute protocols.relax.FastRelax
+-s 1a19.pdb

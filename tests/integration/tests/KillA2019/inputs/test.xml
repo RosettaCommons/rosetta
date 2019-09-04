@@ -1,0 +1,22 @@
+<ROSETTASCRIPTS>
+
+  <RESIDUE_SELECTORS>
+    <Index name="designable" resnums="1,3,6,8,12,35" />
+    <Not name="not_designable" selector="designable" />
+  </RESIDUE_SELECTORS>
+
+  <TASKOPERATIONS>
+    <InitializeFromCommandline name="ifc" />
+    <OperateOnResidueSubset name="decrease_sample_size_dramatically" selector="not_designable">
+      <RestrictToRepackingRLT/>
+    </OperateOnResidueSubset>
+  </TASKOPERATIONS>
+
+  <MOVERS>
+    <FastDesign name="design" scorefxn="commandline" repeats="1" task_operations="ifc,decrease_sample_size_dramatically" relaxscript="KillA2019"/>
+  </MOVERS>
+
+  <PROTOCOLS>
+    <Add mover="design"/>
+  </PROTOCOLS>
+</ROSETTASCRIPTS>
