@@ -80,10 +80,10 @@ public:
 		// Color rsd by hyd as bfactor
 		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			for ( core::Size jj = 1; jj <= pose.residue( ii ).natoms(); ++jj ) {
-				core::Real z_n( std::pow( pose.residue(ii).atom( jj ).xyz().z()/15, 10 ) );
-				core::Real f_of_z( z_n / (1 + z_n ) );
-				//core::Real hyd = implicit_lipids->f_hydration( pose.residue( ii ).atom( jj ).xyz() );
-				pose.pdb_info()->bfactor( ii, jj, f_of_z );
+				//core::Real z_n( std::pow( pose.residue(ii).atom( jj ).xyz().z()/15, 10 ) );
+				//core::Real f_of_z( z_n / (1 + z_n ) );
+				core::Real hyd = implicit_lipids->f_hydration( pose.residue( ii ).atom( jj ).xyz() );
+				pose.pdb_info()->bfactor( ii, jj, hyd );
 			}
 		}
 
