@@ -11,6 +11,7 @@
 /// @brief  Eliminate rotamers that contain a sidechain buried unsat and make no other sidechain h-bonds
 /// @detail This is intended to speed up packing by eliminating useless polar rotamers. This can
 ///         also help to reduce the number of buried unsats in designs because Rosetta can't pack them.
+/// @note   This task operation does not work with symmetry at the current time.
 /// @author Longxing Cao -- original idea
 /// @author Brian Coventry ( bcov@uw.edu ) -- code implementation
 
@@ -37,6 +38,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pose/symmetry/util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -423,8 +425,12 @@ PruneBuriedUnsatsOperation::clone() const {
 
 /// @brief
 void
-PruneBuriedUnsatsOperation::apply( Pose const & /*pose*/, core::pack::task::PackerTask & task ) const
+PruneBuriedUnsatsOperation::apply( Pose const & pose, core::pack::task::PackerTask & task ) const
 {
+	runtime_assert_string_msg(
+		!core::pose::symmetry::is_symmetric( pose ),
+		"Error in PruneBuriedUnsatsOperation::apply(): This task operation currently does not support symmetric poses."
+	);
 	PruneBuriedUnsats_RotamerSetsOperationOP rso( new PruneBuriedUnsats_RotamerSetsOperation(
 		allow_even_trades_, atomic_depth_probe_radius_, atomic_depth_resolution_, atomic_depth_cutoff_,
 		minimum_hbond_energy_, scorefxn_sc_, scorefxn_bb_ ) );

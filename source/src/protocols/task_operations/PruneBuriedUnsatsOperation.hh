@@ -11,6 +11,7 @@
 /// @brief  Eliminate rotamers that contain a sidechain buried unsat and make no other sidechain h-bonds
 /// @detail This is intended to speed up packing by eliminating useless polar rotamers. This can
 ///         also help to reduce the number of buried unsats in designs because Rosetta can't pack them.
+/// @note   This task operation does not work with symmetry at the current time.
 /// @author Longxing Cao -- original idea
 /// @author Brian Coventry ( bcov@uw.edu ) -- code implementation
 
