@@ -554,7 +554,7 @@ StepWisePoseAligner::add_coordinate_constraints_from_map( pose::Pose & pose, pos
 	Size const my_anchor( pose.fold_tree().root() ); //Change to use the root of the current foldtree as done by Rocco in AtomCoordinateCstMover - JAB.
 
 	ConstraintSetOP cst_set = pose.constraint_set()->clone();
-	FuncOP constraint_func( new FlatHarmonicFunc( constraint_x0, 1.0, constraint_tol ) );
+	FuncOP constraint_func( new FlatHarmonicFunc( constraint_x0, constraint_tol, constraint_tol ) );
 
 	for ( auto const & elem : atom_id_map ) {
 		id::AtomID const mapped_atom = elem.second;

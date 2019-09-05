@@ -138,6 +138,7 @@ output_movemap( kinematics::MoveMap const & mm, core::pose::Pose const & pose, s
 		outstream << "movemap jump == true for jump_pos1 = " << it->first << " | jump_pos2 = " << it->second << std::endl;
 	}
 	outstream << "--------------------------------------------------------------------------------------" << std::endl;
+
 }
 
 

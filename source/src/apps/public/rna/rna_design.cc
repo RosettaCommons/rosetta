@@ -221,44 +221,10 @@ rna_design_test()
 	dump_pdb( pose, "start.pdb");
 	pose::Pose save_pose( pose );
 
-
-	utility::vector1< std::string > names;
-	names.emplace_back( "  A" );
-	names.emplace_back( "  C" );
-	names.emplace_back( "  U" );
-	names.emplace_back( "  G" );
-	/*if ( option[ all_RNA ].value() ) {
-	//auto const RNA_rsd_types = ResidueTypeFinder( *rsd_set ).base_property( RNA ).get_all_possible_residue_types();
-	//for ( auto const & type : RNA_rsd_types ) { names.emplace_back( type->name3() ); }
-	// Explicitly permit names of particular interest.
-	names.emplace_back( "OMA" );
-	names.emplace_back( "OMC" );
-	names.emplace_back( "OMG" );
-	names.emplace_back( "OMU" );
-	names.emplace_back( "  I" );
-	names.emplace_back( "H2U" );
-	names.emplace_back( "PSU" );
-	names.emplace_back( "1AP" ); // diaminopurine by another name.
-	// Newly added for Dharmacon
-	names.emplace_back( "OMI" );
-	names.emplace_back( "PUR" );
-	names.emplace_back( "2AP" );
-	names.emplace_back( "8OG" );
-	names.emplace_back( "6MG" );
-	names.emplace_back( "5FC" );
-	names.emplace_back( "5FU" );
-	names.emplace_back( "5BU" );
-	names.emplace_back( "5IU" );
-	names.emplace_back( "NPU" );
-	}*/
-
 	//Create a packer palette (VKM, Jan 2019):
 	//core::pack::palette::CustomBaseTypePackerPaletteOP pal( utility::pointer::make_shared< core::pack::palette::CustomBaseTypePackerPalette >() );
 	//core::pack::palette::PackerPaletteOP pal( ppf.create_packer_palette_from_global_defaults() );
 	core::pack::palette::PackerPaletteOP pal( core::pack::palette::PackerPaletteFactory::get_instance()->create_packer_palette_from_global_defaults() );
-	//for ( core::Size i(1), imax(names.size()); i<=imax; ++i ) {
-	// pal->add_type( ResidueTypeFinder( *rsd_set ).name3( names[i] ).get_representative_type()->base_name() );
-	//}
 
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose, pal ));
 	task->initialize_from_command_line();

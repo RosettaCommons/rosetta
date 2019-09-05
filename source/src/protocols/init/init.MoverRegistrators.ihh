@@ -182,6 +182,7 @@ static MoverRegistrator< evolution::NucleotideMutationCreator > reg_NucleotideMu
 
 // F //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< rna::movers::ErraserMinimizerMoverCreator > reg_ErraserMinimizerMoverCreator;
+static MoverRegistrator< rna::movers::ERRASER2ProtocolCreator > reg_ERRASER2ProtocolCreator;
 static MoverRegistrator< rna::movers::RNAIdealizeMoverCreator > reg_RNAIdealizeMoverCreator;
 
 static MoverRegistrator< farnesyl::SampleFarnesylMoverCreator > reg_SampleFarnesylMoverCreator;

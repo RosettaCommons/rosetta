@@ -27,10 +27,6 @@ x_label = "rms"
 y_label = "score"
 outfile = "score_vs_rmsd.png"
 
-# get column numbers from labels, 1-indexed
-x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).split().index( x_label ) + 1 )
-y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).split().index( y_label ) + 1 )
-
 #number of subplots
 ncols = 4
 nrows = 1
@@ -48,11 +44,29 @@ plt.rcParams['figure.figsize'] = width, height #width, height
 
 # go through scorefiles
 for i in range( 0, len( scorefiles ) ):
+        
+    # We do this in the inner loop because it's fast, and also because it's possible for the index 
+    # to change because there is a bizarre instability in how the numbers get set.
+    x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).split().index( x_label ) + 1 )
+    y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).split().index( y_label ) + 1 )
 
-    # read in score file
-    x = subprocess.getoutput( "grep SCORE " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " | awk '{print $" + x_index + "}'" ).splitlines()
-    y = subprocess.getoutput( "grep SCORE " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " | awk '{print $" + y_index + "}'" ).splitlines()
-    
+
+    # read in score file, scores are sorted, first one is lowest
+    x = subprocess.getoutput( "grep \"^SCORE:\" " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + x_label + " | awk '{print $" + x_index + "}'" ).splitlines()
+    y = subprocess.getoutput( "grep \"^SCORE:\" " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " | awk '{print $" + y_index + "}'" ).splitlines()
+
+    # map values to floats (were strings)
+    # skip any failures??
+    newx, newy = [], []
+    for x_, y_ in zip(x,y):
+        try:
+            fx_, fy_ = float(x_), float(y_)
+            newx.append(fx_)
+            newy.append(fy_)
+        except:
+            continue
+    x, y = newx, newy
+
     # map all values to floats
     x = list( map( float, x ) )
     y = list( map( float, y ) )

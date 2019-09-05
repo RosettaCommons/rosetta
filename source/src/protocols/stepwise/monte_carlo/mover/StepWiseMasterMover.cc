@@ -45,11 +45,14 @@
 #include <utility/io/ozstream.hh>
 #include <fstream>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
+#include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
-#ifdef MULTI_THREADED
 #include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+
+#ifdef MULTI_THREADED
 #include <basic/options/keys/jd3.OptionKeys.gen.hh>
 #include <CTPL/ctpl_stl.h>
 #include <thread>
@@ -78,6 +81,7 @@ static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.StepWiseMasterMov
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using namespace core;
 using namespace core::pose;
+using namespace core::kinematics;
 using namespace protocols::stepwise::monte_carlo::rna;
 using namespace protocols::stepwise::modeler;
 using namespace core::pose::full_model_info;
@@ -85,6 +89,9 @@ using namespace protocols::magnesium;
 
 using namespace core::import_pose::pose_stream;
 using namespace core::chemical;
+
+using namespace basic::options::OptionKeys;
+using namespace basic::options;
 
 namespace protocols {
 namespace stepwise {
@@ -388,17 +395,18 @@ name_from_move( StepWiseMove const & stepwise_move, Pose const & start_pose ) {
 std::string
 residue_rebuild_log_namer( Size const resample_round, Size const nstruct ) {
 	std::stringstream minimized_name;
-	minimized_name << "resample_checkpoint_" << resample_round << "_" <<
+	minimized_name << option[ in::file::s ]()[1] << "_resample_checkpoint_" << resample_round << "_" <<
 		ObjexxFCL::lead_zero_string_of( nstruct, 4 )
 		<< ".rsd_log";
 	return minimized_name.str();
 }
+
 std::string
 residue_rebuild_checkpoint_namer( Size const resample_round, Size const nstruct ) {
 	std::stringstream minimized_name;
-	minimized_name << "resample_checkpoint_" << resample_round << "_" <<
+	minimized_name << option[ in::file::s ]()[1] << "_resample_checkpoint_" << resample_round << "_" <<
 		ObjexxFCL::lead_zero_string_of( nstruct, 4 )
-		<< ".out";
+		<< ".pdb";
 	return minimized_name.str();
 }
 
@@ -466,8 +474,7 @@ write_checkpoint( utility::vector1< StepWiseMove > const & stepwise_moves,
 	utility::file::file_delete( residue_rebuild_checkpoint_namer( resample_round, nstruct ) );
 
 	// Output silent
-	protocols::stepwise::monte_carlo::output_to_silent_file(
-		"CHECKPOINT", checkpoint_fname, output_pose );
+	output_pose.dump_pdb( checkpoint_fname );
 }
 
 utility::vector1< StepWiseMove >
@@ -573,16 +580,77 @@ StepWiseMasterMover::moves_for_pose(
 	return stepwise_moves;
 }
 
-void ensure_appropriate_foldtree_for_move( StepWiseMove const & stepwise_move, Pose & output_pose ) {
+void ensure_appropriate_foldtree_for_move( StepWiseMove const & stepwise_move, Pose & output_pose, core::kinematics::FoldTree & ft_to_restore ) {
+	// simple tree, reordered to new root. trust RIL setup to fix for move.
+	//
+	if ( stepwise_move.attachments().size() == 2 ) {
+		auto f = output_pose.fold_tree();
+		core::kinematics::FoldTree g;//( output_pose.size() );
+		// Resample internal local case. We're going to set up cutpoints later
+		// to prevent propagation, so our only goal is making sure our move
+		// element doesn't build anything else by jump (like the virt)
+		if ( stepwise_move.move_element()[ 1 ] >= output_pose.size() - 2 ) {
+			// Note that there is a danger, if residue i is gonna be KICed, i+1 moves as well.
+			g.add_edge( 1, output_pose.size() - 1, -1 );
+			g.add_edge( output_pose.size(), 1, 1 );
+		} else if ( stepwise_move.move_element()[ 1 ] == 1 ) {
+			g.add_edge( output_pose.size() - 1, 1, -1 );
+			g.add_edge( output_pose.size(), 1, 1 );
+		} else {
+			g.add_edge( 1, output_pose.size() - 1, -1 );
+			g.add_edge( output_pose.size(), 1, 1 );
+		}
+		g.reorder( output_pose.size() );
+		output_pose.fold_tree( g );
+		//TR << "Newly set up: " << g << std::endl;
+		ft_to_restore = f;
+		return;
+	} else {
+		// one attachment. concern is, we won't do any FT manipulations
+		// later, so this MUST terminate an edge.
+		auto g = output_pose.fold_tree();
+		ft_to_restore = g;
+		//for ( auto const & e : g ) {
+		// if ( stepwise_move.move_element().contains( e.start() ) {
+		//  // First -- log the edge that CURRENTLY builds e.start(); we may need to flip it too.
+		//  auto also_flip = g.get_residue_edge( e.start() );
+		//  g.replace_edge( e, core::kinematics::Edge( e.stop(), e.start(), e.label() ) );
+		// }
+		//}
+		//bool switched_root_horror = false;
+		//for ( Size const seqpos : stepwise_move.move_element() ) {
+		// for ( auto const & e : g.get_outgoing_edges( seqpos ) ) {
+		//  if ( g.root() == e.start() ) switched_root_horror = true;
+		//  g.replace_edge( e, core::kinematics::Edge( e.stop(), e.start(), e.label() ) );
+		// }
+		//}
+		//TR << "Edge replaced: " << g << std::endl;
+		//if ( switched_root_horror ) g.reorder( output_pose.size() );
+		//for ( Size const seqpos : stepwise_move.move_element() ) {
+		// g.reorder( seqpos );
+		//}
+		//g.reorder( output_pose.size() );
+
+		g.slide_jump( g.get_outgoing_edges( output_pose.size() )[ 1 ].label(), output_pose.size(), stepwise_move.attachments()[ 1 ].attached_res() );
+
+		output_pose.fold_tree( g );
+		TR << "Newly set up: " << g << std::endl;
+		return;
+	}
+
+
+
+
 	// First FoldTree magic: move root away from the residue being resampled!!!
 	Size restore_root = 0;
-	if ( output_pose.fold_tree().root() == stepwise_move.move_element()[ 1 ] ) {
+	if ( output_pose.fold_tree().root() == stepwise_move.move_element()[ 1 ]
+			|| ( stepwise_move.attachments().size() == 2 && output_pose.fold_tree().root() == stepwise_move.move_element()[ 1 ] + 1 ) ) {
 		auto f = output_pose.fold_tree();
 		restore_root = f.root();
-		if ( stepwise_move.move_element()[ 1 ] < output_pose.size() ) {
-			f.reorder(stepwise_move.move_element()[ 1 ]+1);
+		if ( stepwise_move.move_element()[ 1 ] < output_pose.size() - 1 ) {
+			f.reorder(stepwise_move.move_element()[ 1 ] + 2 );
 		} else {
-			f.reorder(stepwise_move.move_element()[ 1 ]-1);
+			f.reorder(stepwise_move.move_element()[ 1 ] - 2 );
 		}
 		output_pose.fold_tree( f );
 	}
@@ -613,7 +681,7 @@ void ensure_appropriate_foldtree_for_move( StepWiseMove const & stepwise_move, P
 			Size ref = f.upstream_jump_residue( jump_nr );
 			// Just try to offset by a residue?
 			// For very odd organizations of chains this can fail.
-			if ( current_moving > 3 ) {
+			if ( current_moving > 3 + output_pose.chain_begin( current_moving ) ) {
 				f.slide_jump( jump_nr, ref, current_moving - 2 );
 			} else {
 				f.slide_jump( jump_nr, ref, current_moving + 2 );
@@ -749,9 +817,17 @@ threaded_apply_fxn_wrapper(
 	basic::random::init_random_number_generators();
 	//
 	TR << "In threaded_apply_fxn_wrapper" << std::endl;
-	ensure_appropriate_foldtree_for_move( *thismove, *thispose );
+	core::kinematics::FoldTree f;
+	ensure_appropriate_foldtree_for_move( *thismove, *thispose, f );
 	set_up_params_for_move( *thispose, *thismove );
-	newptr->apply( *thispose, *thismove, true );
+	try {
+		newptr->apply( *thispose, *thismove, true );
+	} catch ( utility::excn::Exception const & e ) {
+		// Could have an RMSD issue; we just need to move on.
+		TR << "Problem with " << *thismove << std::endl;
+		TR << "foldtree was " << thispose->fold_tree() << std::endl;
+	}
+	thispose->fold_tree( f );
 	//ths->apply( *thispose, *thismove, true );
 }
 
@@ -963,8 +1039,12 @@ StepWiseMasterMover::resample_full_model(
 		if ( start_idx != 1 ) {
 			// Load silent into output_pose
 			ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-			auto input = utility::pointer::make_shared< SilentFilePoseInputStream >( residue_rebuild_checkpoint_namer( resample_round, nstruct ) );
-			input->fill_pose( output_pose, *rsd_set );
+			PDBPoseInputStream input( residue_rebuild_checkpoint_namer( resample_round, nstruct ) );
+			// iterate over input stream
+			input.fill_pose( output_pose, *rsd_set );
+			core::pose::addVirtualResAsRoot( output_pose );
+			//auto input = utility::pointer::make_shared< SilentFilePoseInputStream >( residue_rebuild_checkpoint_namer( resample_round, nstruct ) );
+			//input->fill_pose( output_pose, *rsd_set );
 		}
 
 	} else {
@@ -984,12 +1064,22 @@ StepWiseMasterMover::resample_full_model(
 
 		TR << "[ " << ii << "/" << stepwise_moves.size() << " ] Applying Move: " << stepwise_move << "." << std::endl;
 
-		ensure_appropriate_foldtree_for_move( stepwise_move, output_pose );
+		TR << "output pose ft: " << output_pose.fold_tree() << std::endl;
+		core::kinematics::FoldTree f;
+		ensure_appropriate_foldtree_for_move( stepwise_move, output_pose, f );
 		set_up_params_for_move( output_pose, stepwise_move );
 
 		//continue;
-		apply( output_pose, stepwise_move, true /* figure_out_all_possible_moves */ );
-		scorefxn_->show( output_pose );
+		try {
+			apply( output_pose, stepwise_move, true /* figure_out_all_possible_moves */ );
+			// restore old ft
+			output_pose.fold_tree( f );
+		} catch ( utility::excn::Exception const & e ) {
+			// Could have an RMSD issue; we just need to move on.
+			TR << "Problem with " << stepwise_move << std::endl;
+			TR << "foldtree was " << output_pose.fold_tree() << std::endl;
+			scorefxn_->show( output_pose );
+		}
 
 		++ii;
 

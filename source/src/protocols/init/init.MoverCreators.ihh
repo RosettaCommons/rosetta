@@ -168,6 +168,7 @@
 
 // F //////////////////////////////////////////////////////////////////////////
 #include <protocols/rna/movers/ErraserMinimizerMoverCreator.hh>
+#include <protocols/rna/movers/ERRASER2ProtocolCreator.hh>
 #include <protocols/rna/movers/RNAIdealizeMoverCreator.hh>
 
 #include <protocols/farnesyl/SampleFarnesylMoverCreator.hh>

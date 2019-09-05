@@ -115,6 +115,7 @@ using namespace core::id;
 
 OPT_KEY( Integer, rounds )
 OPT_KEY( Boolean, minimize_protein )
+OPT_KEY( Boolean, erraser_resample )
 
 static basic::Tracer TR( "apps.public.rna.erraser.erraser2" );
 
@@ -126,6 +127,7 @@ std::string first_preminimized_namer( std::string const & s, Size const nstruct 
 		<< ".pdb";
 	return minimized_name.str();
 }
+
 std::string second_preminimized_namer( std::string const & s, Size const nstruct ) {
 	std::stringstream minimized_name;
 	minimized_name << s << "_preminimized_round_2_" <<
@@ -133,6 +135,7 @@ std::string second_preminimized_namer( std::string const & s, Size const nstruct
 		<< ".pdb";
 	return minimized_name.str();
 }
+
 std::string third_preminimized_namer( std::string const & s, Size const nstruct ) {
 	std::stringstream minimized_name;
 	minimized_name << s << "_preminimized_round_3_" <<
@@ -140,6 +143,7 @@ std::string third_preminimized_namer( std::string const & s, Size const nstruct 
 		<< ".pdb";
 	return minimized_name.str();
 }
+
 std::string round_minimized_namer( std::string const & s, Size const ii, Size const nstruct ) {
 	std::stringstream minimized_name;
 	minimized_name << s << "_minimized_" << ii << "_" <<
@@ -147,6 +151,7 @@ std::string round_minimized_namer( std::string const & s, Size const ii, Size co
 		<< ".pdb";
 	return minimized_name.str();
 }
+
 std::string round_resampled_namer( std::string const & s, Size const ii, Size const nstruct ) {
 	std::stringstream minimized_name;
 	minimized_name << s << "_resampled_" << ii << "_" <<
@@ -411,7 +416,6 @@ void do_erraser2(
 	if ( checkpoints_to_pass < 3 ) { // First pass: no constrain P, fun FT
 	std::stringstream minimized_name;
 	minimized_name << option[ in::file::s ]()[1] << "_preminimized_round_3.pdb";
-	//if ( !utility::file::file_exists( minimized_name.str() ) ) {
 	start_pose->fold_tree( emm_ft ); // no-op if none specified
 	erraser_minimizer.constrain_phosphate( false );
 	erraser_minimizer.apply( *start_pose );
@@ -432,11 +436,13 @@ void do_erraser2(
 			start_pose->dump_scored_pdb( round_minimized_namer( option[ in::file::s ]()[1], ii, nstruct ), *scorefxn );
 		}
 
-		if ( checkpoints_to_pass < 3 + 2 * ii ) {
-			if ( resample_fold_tree.nres() == start_pose->size() ) start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
-			resample_full_model( ii, *start_pose, scorefxn, unconverged_res, nstruct );
-			show_accuracy_report( *start_pose, "Resampled", ii/*, TR*/ );
-			start_pose->dump_scored_pdb( round_resampled_namer( option[ in::file::s ]()[1], ii, nstruct ), *scorefxn );
+		if ( basic::options::option[ erraser_resample ] ) {
+			if ( checkpoints_to_pass < 3 + 2 * ii ) {
+				if ( resample_fold_tree.nres() == start_pose->size() ) start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
+				resample_full_model( ii, *start_pose, scorefxn, unconverged_res, nstruct );
+				show_accuracy_report( *start_pose, "Resampled", ii/*, TR*/ );
+				start_pose->dump_scored_pdb( round_resampled_namer( option[ in::file::s ]()[1], ii, nstruct ), *scorefxn );
+			}
 		}
 	}
 
@@ -497,19 +503,12 @@ erraser2_test()
 		utility_exit_with_message( "You must provide a scoring function via -score:weights. Try -score:weights stepwise/rna/rna_res_level_energy4.wts with -set_weights elec_dens_fast 10.0." );
 	}
 
-	TR << "made it 483 " << std::endl;
 	if ( option[ in::file::s ]().empty() ) {
 		utility_exit_with_message( "You must provide a starting model via -in:file:s in PDB format." );
 	}
 
-	TR << "made it 488 " << std::endl;
-
 	// Input is handled for each nstruct because of checkpoint naming...
-
-
 	for ( Size const job : my_nstruct ) {
-
-		TR << "made it 495 " << std::endl;
 		do_erraser2( job, /*start_pose, */scorefxn, rank, nproc, work_partition );
 	}
 
@@ -774,6 +773,7 @@ main( int argc, char * argv [] )
 
 		NEW_OPT( rounds, "Number of total rounds", 3 );
 		NEW_OPT( minimize_protein, "Minimize protein", false );
+		NEW_OPT( erraser_resample, "Resample -- don't just minimize", true );
 		// help
 		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -in::file::silent <silent file>" << std::endl;
 		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;

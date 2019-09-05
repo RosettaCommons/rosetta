@@ -31,13 +31,14 @@ sources = {
         "RNA_HelixMover",
         "RNA_Minimizer",
         "RNA_Relaxer",
-	"RNP_HighResMover",
+		"RNP_HighResMover",
     ],
     "protocols/rna/denovo/output": [
         "RNA_FragmentMonteCarloOutputter",
     ],
     "protocols/rna/movers": [
         "ErraserMinimizerMover",
+        "ERRASER2Protocol",
         "RNA_LoopCloser",
         "RNAThreadAndMinimizeMover",
         "RNAIdealizeMover",

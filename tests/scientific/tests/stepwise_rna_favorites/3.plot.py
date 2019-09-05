@@ -50,8 +50,8 @@ plt.rcParams['figure.figsize'] = width, height #width, height
 for i in range( 0, len( scorefiles ) ):
 
     # read in score file
-    x = subprocess.getoutput( "grep SCORE " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " | awk '{print $" + x_index + "}'" ).splitlines()
-    y = subprocess.getoutput( "grep SCORE " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " | awk '{print $" + y_index + "}'" ).splitlines()
+    x = subprocess.getoutput( "grep \"^SCORE:\" " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " | awk '{print $" + x_index + "}'" ).splitlines()
+    y = subprocess.getoutput( "grep \"^SCORE:\" " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " | awk '{print $" + y_index + "}'" ).splitlines()
     
     # map all values to floats
     x = list( map( float, x ) )

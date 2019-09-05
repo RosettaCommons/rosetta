@@ -1173,11 +1173,11 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 	if ( !rsd.is_NA() ) {
 		std::cout << "name " << rsd.type().name() << std::endl;
 		// rna_prot_erraser is true now
-		if ( rsd.is_carbohydrate() || true ) { //basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
-			return Vector( 0.0, 0.0, 0.0 );
-		} else { //if not option
-			utility_exit_with_message( "non - RNA residue inside get_rna_base_centroid" );
-		}
+		//if ( rsd.is_carbohydrate() || true ) { //basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
+		return Vector( 0.0, 0.0, 0.0 );
+		//} else { //if not option
+		// utility_exit_with_message( "non - RNA residue inside get_rna_base_centroid" );
+		//}
 	} //if not RNA
 
 	Vector centroid( 0.0 );
