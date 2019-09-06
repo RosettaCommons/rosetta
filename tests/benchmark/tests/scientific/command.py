@@ -109,8 +109,9 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         fast_relax               = 'numpy matplotlib',
         fast_relax_5iter         = 'numpy matplotlib',
 
-        stepwise_rna_favorites   = 'numpy matplotlib',
-        rna_denovo_favorites     = 'numpy matplotlib',
+        stepwise_rna_favorites = 'numpy matplotlib',
+        rna_denovo_favorites   = 'numpy matplotlib',
+        simple_cycpep_predict  = 'numpy matplotlib',
 
         enzyme_design            = 'numpy matplotlib',
         cofactor_binding_sites   = 'numpy matplotlib',

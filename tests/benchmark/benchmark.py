@@ -113,7 +113,9 @@ def main(args):
     if Options.jobs: Config.set('DEFAULT', 'cpu_count', str(Options.jobs) )
     Config.set('DEFAULT', 'memory',    str(memory) )
 
-    config = Config.items('config')
+    #config = Config.items('config')
+    config = { section: dict(Config.items(section)) for section in Config.sections() }
+    config.update( config.pop('config').items() )
     config = dict(config, cpu_count=Config.getint('DEFAULT', 'cpu_count'), memory=memory, debug=Options.debug, emulation=True)
 
     if 'results_root' not in config: config['results_root'] = os.path.abspath('./results/')
@@ -123,7 +125,7 @@ def main(args):
     if Options.skip_compile is not None: config['skip_compile'] = Options.skip_compile
 
     #print(f'Results path: {config["results_root"]}')
-    print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True), Platform))
+    print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True, indent=2), Platform))
 
     if Options.compare: print('Comparing tests {} with suffixes: {}'.format(Options.args, Options.compare) )
     else: print('Running tests: {}'.format(Options.args) )

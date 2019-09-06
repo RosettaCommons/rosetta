@@ -98,10 +98,32 @@ class HPC_Driver:
             with file(shell_wrapper_sh, 'w') as f: f.write('#!/bin/bash\n{} {}\n'.format(executable, arguments));  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
             executable, arguments = shell_wrapper_sh, ''
 
-        return self.submit_hpc_job(name=name, executable=executable, arguments=arguments, working_dir=working_dir, log_dir=log_dir, jobs_to_queue=1, memory=memory, time=time, block=block)
+        return self.submit_serial_hpc_job(name=name, executable=executable, arguments=arguments, working_dir=working_dir, log_dir=log_dir, jobs_to_queue=1, memory=memory, time=time, block=block, shell_wrapper=shell_wrapper)
 
 
-    def submit_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=512, time=12, block=True):
+
+    @property
+    def number_of_cpu_per_node(self):
+        must_be_implemented_in_inherited_classes
+
+    @property
+    def maximum_number_of_mpi_cpu(self):
+        must_be_implemented_in_inherited_classes
+
+
+    def submit_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=512, time=12, block=True, shell_wrapper=False):
+        print('submit_hpc_job is DEPRECATED and will be removed in near future, please use submit_serial_hpc_job  instead!')
+        must_be_implemented_in_inherited_classes
+
+
+    def submit_serial_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=512, time=12, block=True, shell_wrapper=False):
+        must_be_implemented_in_inherited_classes
+
+
+    def submit_mpi_hpc_job(self, name, executable, arguments, working_dir, log_dir, memory=512, time=12, block=True, process_coefficient="1", requested_nodes=1, requested_processes_per_node=1):
+        ''' submit jobs as MPI job
+            process_coefficient should be string representing fraction of process to launch on each node, for example '3 / 4' will start only 75% of MPI process's on each node
+        '''
         must_be_implemented_in_inherited_classes
 
 
@@ -159,10 +181,6 @@ class HPC_Driver:
 
 
     def cancel_job(self, job_id):
-        must_be_implemented_in_inherited_classes
-
-
-    def submit_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, memory=512, time=12, block=True):
         must_be_implemented_in_inherited_classes
 
 

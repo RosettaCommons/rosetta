@@ -37,6 +37,15 @@ release_root = ./results/_release_
 # deprecated
 conda_token = your-conda-token
 
+[condor]
+# condor (HPC) specific settings
+
+# requirements = && (Arch == "X86_64")
+
+mpi_requirements = (Machine > "rosetta012.graylab.jhu.edu")
+mpi_cpu_per_node = 40
+mpi_maximum_number_of_nodes = 4
+
 
 # path to local ncbi_blast_plus
 ncbi_blast_plus = /Users/benchmark/prefix/ncbi-blast-2.9.0+/bin/blastp

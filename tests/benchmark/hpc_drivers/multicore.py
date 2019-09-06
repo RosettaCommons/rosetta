@@ -70,6 +70,11 @@ class MultiCore_HPC_Driver(HPC_Driver):
 
 
     def submit_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=512, time=12, block=True, shell_wrapper=False):
+        print('submit_hpc_job is DEPRECATED and will be removed in near future, please use submit_serial_hpc_job  instead!')
+        return self.submit_serial_hpc_job(name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory, time, block, shell_wrapper)
+
+
+    def submit_serial_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=512, time=12, block=True, shell_wrapper=False):
         cpu_usage = -time_module.time()/60./60.
 
         if shell_wrapper:
@@ -97,7 +102,7 @@ class MultiCore_HPC_Driver(HPC_Driver):
             if not pid: # we are child process
                 command_line = 'cd {} && {} {}'.format(working_dir, executable, arguments.format(process=process) )
                 exit_code, log = execute('Running job {}.{}...'.format(name, i), command_line, tracer=self.tracer, return_='tuple')
-                with codecs.open(log_dir+'/hpc.{name}.{i:02d}.log'.format(**vars()), 'w', encoding='utf-8', errors='replace') as f:
+                with codecs.open(log_dir+'/.hpc.{name}.{i:02d}.log'.format(**vars()), 'w', encoding='utf-8', errors='replace') as f:
                     f.write(command_line+'\n'+log)
                     if exit_code:
                         error_report = f'\n\n{command_line}\nERROR: PROCESS {name}.{i:02d} TERMINATED WITH NON-ZERO-EXIT-CODE {exit_code}!\n'
@@ -125,6 +130,37 @@ class MultiCore_HPC_Driver(HPC_Driver):
             current_job = self.JobID()
 
         return current_job
+
+
+    @property
+    def number_of_cpu_per_node(self): return self.cpu_count
+
+
+    @property
+    def maximum_number_of_mpi_cpu(self): return self.cpu_count
+
+
+    def submit_mpi_hpc_job(self, name, executable, arguments, working_dir, log_dir, memory=512, time=12, block=True, process_coefficient="1", requested_nodes=1, requested_processes_per_node=1):
+
+        if requested_nodes > 1:
+            print( "WARNING: " + str( requested_nodes ) + " nodes were requested, but we're running locally, so only 1 node will be used." )
+
+        if requested_processes_per_node > self.cpu_count:
+            print( "WARNING: " + str(requested_processes_per_node) + " processes were requested, but I only have " + str(self.cpu_count) + " CPUs.  Will launch " + str(self.cpu_count) + " processes."  )
+        actual_processes = min( requested_processes_per_node, self.cpu_count )
+
+        cpu_usage = -time_module.time()/60./60.
+
+        arguments = arguments.format(process=0)
+
+        command_line = f'cd {working_dir} && mpirun -np {actual_processes} {executable} {arguments}'
+        log = execute(f'Running job {name}...', command_line, tracer=self.tracer, return_='output')
+        with codecs.open(log_dir+'/.hpc.{name}.log'.format(**vars()), 'w', encoding='utf-8', errors='replace') as f: f.write(command_line+'\n'+log)
+
+        cpu_usage += time_module.time()/60./60.
+        self.cpu_usage += cpu_usage * actual_processes  # approximation...
+
+        # return None - we do not return anything from this version of submit which imply returning None which in turn will be treated as job-id for already finished job
 
 
     def complete(self, job_id):

@@ -52,9 +52,36 @@ wait_for_proc_zero() {
 	char mybuf('A'); //A dummy piece of information to send.
 	MPI_Bcast( &mybuf, 1, MPI_CHAR, 0, MPI_COMM_WORLD );
 }
-#endif //USEMPI
 
-#ifdef USEMPI
+/// @brief In MPI mode, get the number of hierarchy levels from the options system.
+utility::vector1< long int >
+get_user_specified_hierarchy_levels(
+	int const MPI_rank,
+	int const MPI_n_procs,
+	std::string const & errormsg
+) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	if(MPI_rank == 0 ) {
+		runtime_assert_string_msg( option[cyclic_peptide::MPI_processes_by_level].user() != /*XOR*/ (option[cyclic_peptide::MPI_auto_2level_distribution].user() && option[cyclic_peptide::MPI_auto_2level_distribution].user() ),
+		errormsg + "In MPI mode, the user must EITHER use the \"-cyclic_peptide:MPI_auto_2level_distribution\" flag, or specify the number of communication levels and the number of processes in each level, with the \"-cyclic_peptide:MPI_processes_by_level\" flag." );
+	}
+	MPI_Barrier(MPI_COMM_WORLD); //Wait until all procs reach this point -- ensures that processes 0 does this check first.
+
+	utility::vector1< long int > levelvect;
+	if( option[cyclic_peptide::MPI_processes_by_level].user() ) {
+		levelvect = option[cyclic_peptide::MPI_processes_by_level]();
+	} else if ( option[cyclic_peptide::MPI_auto_2level_distribution].user() && option[cyclic_peptide::MPI_auto_2level_distribution].value() ) {
+		levelvect.resize(2);
+		levelvect[1] = 1;
+		runtime_assert( MPI_n_procs > 1 );
+		levelvect[2] = MPI_n_procs - 1;
+	}
+	debug_assert( levelvect.size() > 0 );
+	return levelvect;
+}
+
 /// @brief In MPI mode, set the MPI-specific variables that the parallel version
 /// of the protocol will need.
 void
@@ -86,10 +113,7 @@ set_MPI_vars(
 		TR.Debug << "MPI rank " << MPI_rank << " of " << MPI_n_procs << " reporting for duty." << std::endl;
 	}
 
-	if(MPI_rank == 0 ) {
-		runtime_assert_string_msg( option[cyclic_peptide::MPI_processes_by_level].user(), errormsg + "In MPI mode, the user MUST specify the number of communication levels, and the number of processes in each level, with the \"-cyclic_peptide:MPI_processes_by_level\" flag." );
-	}
-	utility::vector1< long int > user_specified_hierarchy_levels( option[cyclic_peptide::MPI_processes_by_level]() );
+	utility::vector1< long int > user_specified_hierarchy_levels( get_user_specified_hierarchy_levels( MPI_rank, MPI_n_procs, errormsg ) );
 	if(MPI_rank == 0 ) {
 		runtime_assert_string_msg( user_specified_hierarchy_levels.size() > 1, errormsg + "The number of communication levels specified with the \"-cyclic_peptide:MPI_processes_by_level\" flag must be greater than one." );
 		runtime_assert_string_msg( user_specified_hierarchy_levels.size() <= static_cast<core::Size>(MPI_n_procs), errormsg + "The number of communication levels specified with the \"-cyclic_peptide:MPI_processes_by_level\" flag must be less than or equal to the number of processes launched." );

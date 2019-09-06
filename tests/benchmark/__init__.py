@@ -45,7 +45,7 @@ def error(code, message):
         r = { _StateKey_ : _S_build_failed_,  _ResultsKey_ : {}, _LogKey_ : message}
         json.dump(r, f, sort_keys=True, indent=2)
 
-    sys.exit(1)
+    sys.exit(0)
 
 
 def build_rosetta(mode='release'):

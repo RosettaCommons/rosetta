@@ -129,6 +129,7 @@ HelicalBundlePredictApplicationOptions::register_options() {
 
 	//Options only used in MPI mode:
 #ifdef USEMPI //Options that are only needed in the MPI version:
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_auto_2level_distribution         );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_processes_by_level               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_batchsize_by_level               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_sort_by                          );

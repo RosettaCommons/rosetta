@@ -314,7 +314,7 @@ def calculate_extension(platform, mode='release'):
     elif platform['os'] == 'mac':        os = 'macos'
     else:                                os = platform['os']
 
-    extras = ''.join(platform['extras']) if platform['extras'] else 'default'  # platform and therfor extras should be comming from database and therefor it should be already sorted
+    extras = ''.join( sorted(platform['extras']) ) if platform['extras'] else 'default'  # platform and therfor extras should be comming from database and therefor it should be already sorted
 
     return extras + "." + os + platform['compiler'] + mode
 

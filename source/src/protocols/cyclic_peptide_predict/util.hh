@@ -49,9 +49,15 @@ enum HIERARCHICAL_HYBRID_JD_MPI_SORT_TYPE {
 /// is zero, send the message.
 /// @details Only used in MPI mode.
 void wait_for_proc_zero();
-#endif //USEMPI
 
-#ifdef USEMPI
+/// @brief In MPI mode, get the number of hierarchy levels from the options system.
+utility::vector1< long int >
+get_user_specified_hierarchy_levels(
+	int const MPI_rank,
+	int const MPI_n_procs,
+	std::string const & errormsg
+);
+
 /// @brief In MPI mode, set the MPI-specific variables that the parallel version
 /// of the protocol will need.
 void
