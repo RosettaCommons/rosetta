@@ -17,7 +17,7 @@ scale:fa_rep 0.568
 repack
 scale:fa_rep 0.633
 min 0.01
-reference 1.8394 3.6196 -2.3716 -2.7348 1.0402 0.83697 -0.45461 0.73287 -1.5107 0.18072 0.60916 -0.93687 -2.4119 -0.18838 -1.2888 -0.77834 -1.0874 1.9342 1.6906 1.2797
+reset_reference
 coord_cst_weight 0.0
 scale:fa_rep 1
 repack
