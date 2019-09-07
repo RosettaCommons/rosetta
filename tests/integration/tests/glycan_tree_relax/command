@@ -8,23 +8,23 @@ cd %(workdir)s
 #Test Normal script - Layer of 2 and a window of 1.
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s \
     -parser:protocol glycan_tree_relax.xml -s two_glycans.pdb -out:prefix default_ -testing:INTEGRATION_TEST \
-    2>&1 | egrep -vf ../../ignore_list > info.log
+    2>&1 | egrep -vf ../../ignore_list > default_info.log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 #Test Refinement Script
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s \
     -parser:protocol tree_relax_refine.xml -s two_glycans.pdb -out:prefix refine_ -testing:INTEGRATION_TEST \
-    2>&1 | egrep -vf ../../ignore_list > info.log
+    2>&1 | egrep -vf ../../ignore_list > refine_info.log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 #Test Hybrid Sampler/Build Script
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s \
     -parser:protocol tree_relax_hybrid.xml -s two_glycans.pdb -out:prefix hybrid_ -testing:INTEGRATION_TEST \
-    2>&1 | egrep -vf ../../ignore_list > info.log
+    2>&1 | egrep -vf ../../ignore_list > hybrid_info.log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 #Test Shear Sampler/Build Script
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s \
     -parser:protocol tree_relax_shear.xml -s two_glycans.pdb -out:prefix shear_ -testing:INTEGRATION_TEST \
-    2>&1 | egrep -vf ../../ignore_list > info.log
+    2>&1 | egrep -vf ../../ignore_list > shear_info.log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true

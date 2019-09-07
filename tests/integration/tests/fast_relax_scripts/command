@@ -45,8 +45,8 @@ echo -e "script\tdualspace\texpected_result\tresult" > log
 script="legacy"
 dualspace="0"
 expected_filename="legacy.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" > temp1
-filename=`cat temp1 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" > subtest1.log 2>&1
+filename=`cat subtest1.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
@@ -56,8 +56,8 @@ fi
 script="default"
 dualspace="0"
 expected_filename="MonomerRelax2019.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" > temp1
-filename=`cat temp1 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" > subtest2.log 2>&1
+filename=`cat subtest2.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
@@ -66,8 +66,8 @@ fi
 script="default"
 dualspace="1"
 expected_filename="MonomerRelax2019.dualspace.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" sfxn="ref2015_cart" dualspace="$dualspace" sfxn="ref2015_cart" > temp2
-filename=`cat temp2 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" sfxn="ref2015_cart" dualspace="$dualspace" sfxn="ref2015_cart" > subtest3.log 2>&1
+filename=`cat subtest3.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
@@ -77,8 +77,8 @@ fi
 script="default"
 dualspace="0"
 expected_filename="MonomerRelax2019.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16 > temp3
-filename=`cat temp3 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16 > subtest4.log 2>&1
+filename=`cat subtest4.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
@@ -88,8 +88,8 @@ fi
 script="default"
 dualspace="1"
 expected_filename="MonomerRelax2019.dualspace.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16_cart > temp4
-filename=`cat temp4 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16_cart > subtest5.log 2>&1
+filename=`cat subtest5.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
@@ -102,8 +102,8 @@ fi
 script="KillA2019"
 dualspace="0"
 expected_filename="KillA2019.ref2015.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" > temp5
-filename=`cat temp5 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" > subtest6.log 2>&1
+filename=`cat subtest6.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
@@ -112,8 +112,8 @@ fi
 script="KillA2019"
 dualspace="1"
 expected_filename="KillA2019.ref2015.dualspace.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" dualspace="$dualspace" sfxn="ref2015_cart" > temp6
-filename=`cat temp6 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" dualspace="$dualspace" sfxn="ref2015_cart" > subtest7.log 2>&1
+filename=`cat subtest7.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
@@ -122,8 +122,8 @@ fi
 script="KillA2019"
 dualspace="0"
 expected_filename="KillA2019.beta_nov16.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16 > temp7
-filename=`cat temp7 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16 > subtest8.log 2>&1
+filename=`cat subtest8.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
@@ -132,8 +132,8 @@ fi
 script="KillA2019"
 dualspace="1"
 expected_filename="KillA2019.beta_nov16.dualspace.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16_cart > temp8
-filename=`cat temp8 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16_cart > subtest9.log 2>&1
+filename=`cat subtest9.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
@@ -144,8 +144,8 @@ fi
 script="KillA2019"
 dualspace="0"
 expected_filename="KillA2019.talaris2014.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" dualspace="$dualspace" sfxn="talaris2014" -corrections::restore_talaris_behavior 1 > temp9
-filename=`cat temp9 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" dualspace="$dualspace" sfxn="talaris2014" -corrections::restore_talaris_behavior 1 > subtest10.log 2>&1
+filename=`cat subtest10.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
@@ -154,8 +154,8 @@ fi
 script="KillA2019"
 dualspace="0"
 expected_filename="KillA2019.talaris2013.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" dualspace="$dualspace" sfxn="talaris2013" -corrections::restore_talaris_behavior 1 > temp10
-filename=`cat temp10 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" dualspace="$dualspace" sfxn="talaris2013" -corrections::restore_talaris_behavior 1 > subtest11.log 2>&1
+filename=`cat subtest11.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
@@ -164,14 +164,10 @@ fi
 script="KillA2019"
 dualspace="0"
 expected_filename="KillA2019.score12.txt"
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" dualspace="$dualspace" sfxn="score12" -restore_pre_talaris_2013_behavior 1 > temp11
-filename=`cat temp11 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" dualspace="$dualspace" sfxn="score12" -restore_pre_talaris_2013_behavior 1 > subtest12.log 2>&1
+filename=`cat subtest12.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
 if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
 fi
 
-
-#cleanup
-rm temp*
-#rm ROSETTA_CRASH.log

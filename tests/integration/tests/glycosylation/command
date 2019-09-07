@@ -8,8 +8,9 @@ cd %(workdir)s
 # Then, check for errors.
 %(bin)s/glycosyltransfer.%(binext)s %(additional_flags)s @N.flags -database %(database)s \
     -testing:INTEGRATION_TEST \
-    2>&1 | egrep -vf ../../ignore_list > info.log
+    2>&1 | egrep -vf ../../ignore_list > info_N.log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
 %(bin)s/glycosyltransfer.%(binext)s %(additional_flags)s @O.flags -database %(database)s \
     -testing:INTEGRATION_TEST \
     2>&1 | egrep -vf ../../ignore_list > info.log

@@ -7,7 +7,7 @@ set -e
 
 [ -x %(bin)s/create_clash-based_repack_shell.%(binext)s ] || exit 1
 
- %(bin)s/create_clash-based_repack_shell.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+%(bin)s/create_clash-based_repack_shell.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
      | egrep -vf ../../ignore_list \
      > log
 

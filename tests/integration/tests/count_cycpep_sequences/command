@@ -30,56 +30,66 @@ cd %(workdir)s
 
 [ -x %(bin)s/count_cycpep_sequences.%(binext)s ] || exit 1
 
-for g in `seq 4 2 16`; do %(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 2 -mirror_symmetry false -do_numerical_count -options_per_position 6; done  2>&1 \
+# For the Valgrind tests, we want the executable to be in the left-hand column, and there to be one log file perexecutable line/
+
+for g in `seq 4 2 16`; do
+%(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 2 -mirror_symmetry false -do_numerical_count -options_per_position 6  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log_C2
-
+    >> log_C2
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+done;
 
-for g in `seq 6 3 24`; do %(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 3 -mirror_symmetry false -do_numerical_count -options_per_position 6; done  2>&1 \
+
+for g in `seq 6 3 24`; do
+%(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 3 -mirror_symmetry false -do_numerical_count -options_per_position 6  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log_C3
-
+    >> log_C3
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+done;
 
-for g in `seq 4 2 16`; do %(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 2 -mirror_symmetry true -do_numerical_count -options_per_position 6; done  2>&1 \
+
+for g in `seq 4 2 16`; do
+%(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 2 -mirror_symmetry true -do_numerical_count -options_per_position 6 2>&1 \
     | egrep -vf ../../ignore_list \
-    > log_S2
-
+    >> log_S2
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+done;
 
-for g in `seq 4 2 16`; do %(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 2 -mirror_symmetry true -do_numerical_count -options_per_position 6 -SN_semi_analytical; done  2>&1 \
+
+for g in `seq 4 2 16`; do
+%(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 2 -mirror_symmetry true -do_numerical_count -options_per_position 6 -SN_semi_analytical  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log_S2_semi
-
+    >> log_S2_semi
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+done;
 
-
-for g in `seq 8 4 32`; do %(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 4 -mirror_symmetry false -do_numerical_count -options_per_position 6; done  2>&1 \
+for g in `seq 8 4 32`; do
+%(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 4 -mirror_symmetry false -do_numerical_count -options_per_position 6  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log_C4
-
+    >> log_C4
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+done;
 
-
-for g in `seq 8 4 32`; do %(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 4 -mirror_symmetry true -do_numerical_count -options_per_position 6; done  2>&1 \
+for g in `seq 8 4 32`; do
+%(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 4 -mirror_symmetry true -do_numerical_count -options_per_position 6  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log_S4
-
+    >> log_S4
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+done;
 
-for g in `seq 8 4 32`; do %(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 4 -mirror_symmetry true -do_numerical_count -options_per_position 6 -SN_semi_analytical; done  2>&1 \
+for g in `seq 8 4 32`; do
+%(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 4 -mirror_symmetry true -do_numerical_count -options_per_position 6 -SN_semi_analytical  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log_S4_semi
-
+    >> log_S4_semi
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+done;
 
-for g in `seq 2 1 8`; do %(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 1 -mirror_symmetry false -do_numerical_count -options_per_position 6; done  2>&1 \
+for g in `seq 2 1 8`; do
+%(bin)s/count_cycpep_sequences.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -peptide_length $g -symmetry_number 1 -mirror_symmetry false -do_numerical_count -options_per_position 6  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log_asymmetric
-
+    >> log_asymmetric
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
-
+done;
 
 #
 # After that, do whatever you want.

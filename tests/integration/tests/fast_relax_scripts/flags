@@ -1,5 +1,4 @@
 -s input/smallpose.pdb
 -nooutput
--mute all
--unmute protocols
+-out:levels all:warning protocols.relax.RelaxScriptManager:info
 -parser:protocol input/protocol.xml

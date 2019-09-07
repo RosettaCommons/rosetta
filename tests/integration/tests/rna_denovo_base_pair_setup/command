@@ -44,19 +44,19 @@ cd %(workdir)s
 
 %(bin)s/rna_denovo.%(binext)s %(additional_flags)s @flags -obligate_pair_explicit 1 2 W H C -out:file:silent cis.out -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log
+    > log1
 
 %(bin)s/rna_denovo.%(binext)s %(additional_flags)s @flags -obligate_pair_explicit 1 2 W H T -out:file:silent trans.out -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log
+    > log2
 
 %(bin)s/rna_denovo.%(binext)s %(additional_flags)s @flags -obligate_pair_explicit 1 2 W H A  -out:file:silent antiparallel.out -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log
+    > log3
 
 %(bin)s/rna_denovo.%(binext)s %(additional_flags)s @flags -obligate_pair_explicit 1 2 W H P -database %(database)s  -out:file:silent parallel.out -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log
+    > log4
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 

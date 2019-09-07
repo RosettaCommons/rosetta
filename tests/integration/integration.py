@@ -1231,58 +1231,60 @@ def analyze_valgrind_test( test, outdir, results, full_log ):
 
     # Find all the Valgrind formatted lines in the log files
     def recurse( dirname, outlines ):
+        nfiles_with_output = 0
         for fn in os.listdir( dirname ): #Looking for all the files
             fn = os.path.join( dirname, fn )
             if os.path.isdir( fn ):
-                recurse( fn, outlines )
+                nfiles_with_output += recurse( fn, outlines )
                 continue
             if (not os.path.isfile( fn )) or fn.endswith("valgrind.out"):
                 continue
-            f = io.open(fn, encoding="UTF-8", errors='backslashreplace')
-            try:
+            has_output = False
+            with io.open(fn, encoding="UTF-8", errors='backslashreplace') as f:
                 for line in f:
                     if line.startswith("=="):
                         outlines.append(line)
-            finally:
-                f.close()
+                        has_output = True
+            if has_output:
+                nfiles_with_output += 1
 
-    recurse(dir, valgrind_output)
+        return nfiles_with_output
 
-    # Save the valgrind output specifically
-    f = open( os.path.join(dir, "valgrind.out" ), 'w' )
-    try:
-        f.writelines( valgrind_output )
-    finally:
-        f.close()
+    number_logs = recurse(dir, valgrind_output)
 
     # Check that the number of log files with valgrind output matches the number we expect from
     # the number of commands we ran (i.e. there isn't a missing log somewhere)
     number_expected = 0
-    f = open( os.path.join( dir, "command.sh" ) )
-    try:
+    with open( os.path.join( dir, "command.sh" ) ) as f:
         for line in f:
             # Lines for valgrind runs start in column 0.
             # To turn off counting a line (e.g. because it's surrounded in an if clause)
             # Simply indent it.
             if line.startswith( Options.valgrind_path ):
                 number_expected += 1
-    finally:
-        f.close()
 
     # Count the summary error lines, and sum the number of errors
-    number_logs = 0
+    number_summary = 0
     total_errors = 0
     for line in valgrind_output:
         if line.find("ERROR SUMMARY") == -1:
             continue
-        number_logs += 1
+        number_summary += 1
         total_errors += int(line.split()[3])
 
     msg = ''
-    if number_logs != number_expected:
-        msg += " --Log file(s) missing (%d of %d) -- " % (number_logs,number_expected)
+    # We're fine as long as the number of counted commands matches either the number of summary lines or the number of logfiles.
+    if number_summary != number_expected and number_logs != number_expected:
+        msg += " --Log file(s) missing (expected %d results, found %d entries in %d log files) -- " % (number_expected, number_summary, number_logs)
+        valgrind_output.append('\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
+        valgrind_output.append(msg)
+        total_errors += 1 # Missing files count as an "error"
     if total_errors != 0:
         msg += " Found " + str( total_errors ) + " Valgrind error(s)."
+
+    # Save the valgrind output specifically
+    with open( os.path.join(dir, "valgrind.out" ), 'w' ) as f:
+        f.writelines( valgrind_output )
 
     results[test] = total_errors # I think this is what we should be attaching to the results object
 
