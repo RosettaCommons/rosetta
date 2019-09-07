@@ -124,6 +124,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/optE.OptionKeys.gen.hh>
+#include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
@@ -4773,7 +4774,8 @@ IterativeOptEDriver::measure_sequence_recovery(
 		design_mover = minpack_mover;
 	} else if ( option[ optE::design_with_fast_design ] ) {
 		using namespace protocols::denovo_design::movers;
-		FastDesignOP mover_op = utility::pointer::make_shared< FastDesign >();
+		TR << "USING FAST DESIGN" << std::endl;
+		FastDesignOP mover_op = utility::pointer::make_shared< FastDesign >( sfxn, option[ OptionKeys::relax::script ]() );
 		mover_op->set_task_factory( task_factory_for_design );
 		mover_op->set_scorefxn( sfxn );
 		design_mover = mover_op;

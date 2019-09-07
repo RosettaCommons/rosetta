@@ -115,6 +115,19 @@ FastDesign::FastDesign(
 	set_enable_design( true );
 }
 
+/// @brief Constructor with some options
+///
+FastDesign::FastDesign(
+	core::scoring::ScoreFunctionOP scorefxn_in,
+	std::string const & script_file
+) :
+	FastRelax( scorefxn_in, script_file ),
+	clear_designable_residues_(false),
+	run_count_(0),
+	cgs_()
+{
+	set_enable_design( true );
+}
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.

@@ -70,6 +70,8 @@ public:
 	///
 	FastDesign( core::scoring::ScoreFunctionOP scorefxn_in, core::Size standard_repeats = 0 );
 
+	FastDesign( core::scoring::ScoreFunctionOP scorefxn_in, std::string const & script_file );
+
 	/// @brief virtual constructor to allow derivation
 	virtual ~FastDesign();
 
