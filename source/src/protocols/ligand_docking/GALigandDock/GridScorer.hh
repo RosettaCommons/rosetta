@@ -211,6 +211,11 @@ public:
 	void set_debug( bool debugin ) { debug_ = debugin; }
 	bool get_debug( ) { return debug_; }
 
+	void set_grid_dim_with_maxRad( core::Real inval);
+	core::Real get_maxRad() {return maxRad_;}
+
+	numeric::xyzVector< core::Real > get_ligand_com() {return lig_com_;}
+
 	void set_force_exact_min( bool setting ) { force_exact_min_ = setting; }
 
 	// protocol stuff
@@ -363,6 +368,10 @@ private:
 
 	// for minimize
 	core::Size maxiter_minimize_;
+
+	// for adjusting grid box
+	numeric::xyzVector< core::Real > lig_com_;
+	core::Real maxRad_;
 };
 
 typedef utility::pointer::shared_ptr< GridScorer > GridScorerOP;

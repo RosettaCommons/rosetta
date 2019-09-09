@@ -335,6 +335,11 @@ private:
 	core::Size nreport_;
 	bool estimate_dG_;
 
+	bool use_mean_maxRad_;
+	core::Real stdev_multiplier_;
+	core::Real multi_ligands_maxRad_;
+
+
 	// per-cycle defaults
 	core::Size ngen_, npool_;
 	core::Real rmsdthreshold_; // enforce dissimilarity using this RMS

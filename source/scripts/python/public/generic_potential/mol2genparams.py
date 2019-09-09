@@ -20,7 +20,8 @@ from Types import *
 from BasicClasses import OptionClass
 from Molecule import MoleculeClass
 from AtomTypeClassifier import FunctionalGroupClassifier
-
+import tarfile
+from ReportTorsions import report_raw_torsions
 #### check if libraries are installed
 import importlib
 
@@ -45,8 +46,18 @@ def run_mol2(mol2file,option):
     molecule = MoleculeClass(mol2file,option)
 
     if not option.opt.no_output:
-        molecule.report_paramsfile('%s.params'%prefix)
-        molecule.report_pdbfile('%s_0001.pdb'%prefix)
+        if option.opt.outdir:
+            outdir = option.opt.outdir
+            if not os.path.exists(outdir):
+                os.makedirs(outdir)
+            params_outfn = os.path.join(outdir, '%s.params'%prefix)
+            pdb_outfn = os.path.join(outdir, '%s_0001.pdb'%prefix)
+        else:
+             params_outfn = '%s.params'%prefix
+             pdb_outfn = '%s_0001.pdb'%prefix
+             
+        molecule.report_paramsfile(params_outfn)
+        molecule.report_pdbfile(pdb_outfn)
 
     if option.opt.report_funcgrp:
         classifier = FunctionalGroupClassifier()
@@ -58,6 +69,60 @@ def run_mol2(mol2file,option):
 
     if option.opt.write_elec_grpdef:
         molecule.report_grpdeffile('%s.grpdef'%prefix)
+        
+    if option.opt.write_raw_torsion:
+        torsion_outfn = os.path.join(outdir, '%s.torsion'%prefix)
+        report_raw_torsions( molecule, torsion_outfn )
+
+def run_mol2_tar_gz(mol2file,option):
+
+    if mol2file.endswith('.gz'):
+        mode="r:gz"
+    elif mol2file.endswith('.tar'):
+        mode="r"
+        
+    with tarfile.open(mol2file, mode) as intar:
+        for name, member in zip(intar.getnames(), intar.getmembers()):
+            fobj = intar.extractfile(member)
+            if fobj is None:
+                continue
+            print(name, member)
+            
+            if option.opt.prefix == None:
+                prefix = os.path.basename(name).split(".")[0]
+            else:
+                prefix = option.opt.prefix
+            molecule = MoleculeClass(name,option,fobj)
+            
+            if not option.opt.no_output:
+                if option.opt.outdir:
+                    outdir = option.opt.outdir
+                    if not os.path.exists(outdir):
+                        os.makedirs(outdir)
+                    params_outfn = os.path.join(outdir, '%s.params'%prefix)
+                    pdb_outfn = os.path.join(outdir, '%s_0001.pdb'%prefix)
+                else:
+                     params_outfn = '%s.params'%prefix
+                     pdb_outfn = '%s_0001.pdb'%prefix
+             
+                molecule.report_paramsfile(params_outfn)
+                molecule.report_pdbfile(pdb_outfn)
+
+            if option.opt.report_funcgrp:
+                classifier = FunctionalGroupClassifier()
+                classifier.apply_to_molecule(molecule)
+                molecule.report_functional_grps(sys.stdout)
+        
+            if option.opt.write_elec_cp_rep:
+                molecule.report_elec_cp_rep('%s.elec_cp_rep'%prefix)
+
+            if option.opt.write_elec_grpdef:
+                molecule.report_grpdeffile('%s.grpdef'%prefix)
+            
+            if option.opt.write_raw_torsion:
+                torsion_outfn = os.path.join(outdir, '%s.torsion'%prefix)
+                report_raw_torsions( molecule, torsion_outfn )
+
 
 def main(option):
     mol2files = option.opt.inputs
@@ -69,11 +134,17 @@ def main(option):
             print("WARNING: Cannot find mol2file %s, skip!"%mol2file)
             continue
         try:
-            run_mol2(mol2file,option)
+            if mol2file.endswith(".mol2"):
+                run_mol2(mol2file,option)
+            elif mol2file.endswith(".gz") or mol2file.endswith(".tar"):
+                run_mol2_tar_gz(mol2file,option)
         except:
             print('failed on generating params file for ', mol2file)
             if option.opt.debug:
-                run_mol2(mol2file,option)
+                if mol2file.endswith(".mol2"):
+                    run_mol2(mol2file,option)
+                elif mol2file.endswith(".gz") or mol2file.endswith(".tar"):
+                    run_mol2_tar_gz(mol2file,option)
                 
         option.resname_counter += 1 #add counter
 

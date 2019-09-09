@@ -510,7 +510,7 @@ EntropyEstimator::setup_trj( core::pose::Pose const &pose,
 		core::Size ires = chidefs[ichidef].first;
 		core::Size ichi = chidefs[ichidef].second;
 		auto it = currentchi.recchis.find( ires );
-		if ( it == currentchi.recchis.end() ) currentchi.recchis[ires] = utility::vector1< core::Size >();
+		if ( it == currentchi.recchis.end() ) currentchi.recchis[ires] = utility::vector1< core::Real >();
 		it = currentchi.recchis.find( ires );
 		if ( it->second.size() < ichi ) currentchi.recchis[ires].resize( ichi );
 	}

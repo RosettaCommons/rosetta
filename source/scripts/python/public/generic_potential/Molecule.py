@@ -15,21 +15,22 @@ import sys,os,math
 import json
 import operator
 import importlib
+from importlib import util
 from Types import *
 from BasicClasses import OptionClass, AtomClass, BondClass, FunctionalGroupClass
 from utils import distance,angle,dihedral
 
-NUMBA_INSTALLED = (importlib.util.find_spec('numba'))
+NUMBA_INSTALLED = (util.find_spec('numba'))
 if NUMBA_INSTALLED: import AM1
 
 import SetupTopology
 
 class MoleculeClass:
-    def __init__(self,mol2file,option=None):
+    def __init__(self,mol2file, option=None, mol2fileobj=None):
         self.name = ''
         #self.resname = 'LG1' # goes to option
         self.mol2file = mol2file
-
+        self.mol2fileobj = mol2fileobj
         #read from mol2
         self.atms = []
         self.bonds = []
@@ -106,8 +107,17 @@ class MoleculeClass:
         xyzs = []
         bonds = []
         #self.atomnames_in_inputmol2 = []
+        if self.mol2fileobj is not None:
+            mol2filelines = self.mol2fileobj.readlines()
+        else:
+            with open(self.mol2file) as infn:
+                mol2filelines = infn.readlines()
 
-        for l in open(self.mol2file):
+        for l in mol2filelines:
+            try:
+                l = l.decode()
+            except AttributeError:
+                pass
             words = l[:-1].split()
             if l.startswith('@<TRIPOS>MOLECULE'):
                 mode = 1
@@ -138,13 +148,13 @@ class MoleculeClass:
                     pass
                 else:
                     atype1 = self.try_map_atype(atype1)
-                    
+                
                 atype = ATYPES.index(atype1) # integer
                 name = words[1] # string
 
                 if '?' in name: # ambiguous
                     continue
-                    
+                
                 hybstr = words[5]
                 hyb = 0 # integer
 
@@ -187,7 +197,7 @@ class MoleculeClass:
                 else:
                     print('skip bond order of ', words[3])
                     order = 0
-                    
+                
                 bonds.append((atm1,atm2,order))
             elif mode == 4:
                 self.parse_crystinfo(l)
@@ -345,7 +355,8 @@ class MoleculeClass:
                                  self.xyz[atm.groot[0]],self.xyz[atm.groot[1]])
 
                 l = form%(atm.name,dih_i,180.0-ang_i,len_i,
-                          self.atms[atm.root].name,self.atms[atm.groot[0]].name,self.atms[atm.groot[1]].name)
+                    self.atms[atm.root].name,self.atms[atm.groot[0]].name,
+                    self.atms[atm.groot[1]].name)
                 outstream.write(l)
                         
     def parse_crystinfo(self,l):
@@ -432,7 +443,17 @@ class MoleculeClass:
 
         # start writing
         resname = self.option.get_resname()
-        out.write('NAME %s\n'%resname)
+        if self.option.opt.res_type_name is None:
+            res_type_name = resname
+        elif self.option.opt.res_type_name == 'automol2name':
+            res_type_name = self.name
+        else:
+            res_type_name = self.option.opt.res_type_name
+        if self.option.opt.typenm_suffix:
+            res_type_name += "_%s"%self.option.opt.typenm_suffix
+        if self.option.opt.debug:
+            print("Debug: use NAME: %s and NAME3 %s"%(res_type_name, resname))
+        out.write('NAME %s\n'%res_type_name)
         out.write('IO_STRING %s Z\n'%resname)
         out.write('TYPE LIGAND\n')
         out.write('AA UNK\n')
@@ -625,7 +646,10 @@ class MoleculeClass:
         if not NUMBA_INSTALLED:
             print( "AM1BCC calculation requested but numba library not installed! skip." )
             return
-        a = AM1.AM1(open(self.mol2file),streamtype="mol2")
+        if self.mol2fileobj is not None:
+            a = AM1.AM1(self.mol2fileobj,streamtype="mol2")
+        else:
+            a = AM1.AM1(open(self.mol2file),streamtype="mol2")
         a.runLBFGS()
         Z = a.get_charges()
         

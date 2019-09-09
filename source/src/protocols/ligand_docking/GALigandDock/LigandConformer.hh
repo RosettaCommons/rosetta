@@ -215,6 +215,18 @@ public:
 		return (ref_pose_->total_residue()==ligid_);
 	}
 
+	void
+	set_typename( std::string name ) { ligand_typename_ = name; }
+
+	std::string
+	ligand_typename() const { return ligand_typename_; }
+
+	void
+	set_negTds( core::Real inval ) { negTdS_ = inval; }
+
+	core::Real
+	neg_Tds() const { return negTdS_; }
+
 private:
 	// reference pose
 	core::pose::PoseCOP ref_pose_;
@@ -253,6 +265,12 @@ private:
 
 	// history of conformation generation
 	std::string generation_tag_;
+
+	// ligand type name, mainly used for competing dock
+	std::string ligand_typename_;
+
+	// -Tds
+	core::Real negTdS_;
 };
 
 typedef utility::vector1< LigandConformer > LigandConformers;

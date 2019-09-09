@@ -1,6 +1,7 @@
 import sys,os
 from utils import dihedral
 from Types import *
+import copy
 MYFILE = os.path.abspath(__file__)
 direc = MYFILE.replace(MYFILE.split('/')[-1],'')
 

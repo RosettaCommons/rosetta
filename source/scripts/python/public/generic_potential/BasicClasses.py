@@ -17,15 +17,14 @@ from Types import *
 class OptionClass:
     def __init__(self,argv):
         self.debug = False
-
-        self.init_from_parser(argv)
+        self.init_from_parser(argv) 
 
         # basic options
         self.verbose = self.opt.debug
         self.resname_counter = 0
-
+        
         # chi angle control
-        self.opt.report_puckering_chi = False
+        self.opt.report_puckering_chi = True
         self.opt.report_Hapol_chi = False
         self.opt.report_nbonded_chi = False
         self.opt.report_amide_chi = False
@@ -38,6 +37,8 @@ class OptionClass:
         self.opt.define_aro_by_input_geometry = False #unused now
         self.opt.longest_puckering_ring = 6
         self.opt.ring_sampling_sp3_only = True
+        
+
         
     def init_from_parser(self,argv):
         usagemsg = "USAGE: python mol2genparams.py [-s mol2file or -l mol2filelist] [options]\n"
@@ -53,10 +54,22 @@ class OptionClass:
                           help="",
                           type="string",
                           )
+        parser.add_option("--typenm", "--res_type_name",
+                          dest="res_type_name",
+                          default=None,
+                          help="Residue type name,  corresponding to rsd.name in Rosetta; "
+                          + "Default is None, the res_type name will be the same to the residue 3 letter name; "
+                          + "if set to automol2name, then res_type name will grab from the name in mol2 file",
+                          )
+        parser.add_option("--typenm_suffix",
+                          dest="typenm_suffix",
+                          default=None,
+                          help="Suffix of residue type name",
+                          )
         parser.add_option("--nm","--resname",
                           dest="resname",
                           default=None,
-                          help="Residue name",
+                          help="Residue 3 letter name, corresponding to rsd.name3 in Rosetta",
                           )
         parser.add_option("--auto_nm",
                           dest="auto_resprefix",
@@ -73,6 +86,11 @@ class OptionClass:
         parser.add_option("--prefix",
                           default=None,
                           help="Prefix of output names (prefix.params,prefix_0001.pdb), default as the prefix of input mol2 file",
+                          )
+        parser.add_option("--outdir",
+                          default=None,
+                          type="string",
+                          help="Output directory of params and pdb files",
                           )
         parser.add_option("--debug",
                           default=False,
@@ -100,6 +118,12 @@ class OptionClass:
                           dest="write_elec_grpdef",
                           default=False,
                           help="Report elec-grp-definition info to [prefix].grpref",
+                          action="store_true"
+                          )
+        parser.add_option("--report_torsion",
+                          dest="write_raw_torsion",
+                          default=False,
+                          help="Report write_raw_torsion info to [prefix].torsion",
                           action="store_true"
                           )
         parser.add_option("--puckering_chi",
@@ -133,7 +157,7 @@ class OptionClass:
             
         (self.opt, args) = parser.parse_args(args=argv[1:])
         if self.opt.l:
-            self.opt.inputs = [l[:-1] for l in open(self.opt.l)]
+            self.opt.inputs = [l.rstrip() for l in open(self.opt.l)]
 
         if self.opt.inputs == []:
             parser.print_help()
@@ -155,6 +179,7 @@ class OptionClass:
         else:
             self.opt.auto_resname = False
             self.opt.auto_resprefix = "L"
+        
 
     def get_resname(self):
         if self.opt.auto_resname:
@@ -165,6 +190,7 @@ class OptionClass:
         else:
             resname = self.opt.resname
         return resname
+        
         
 class AtomClass:
     def __init__(self,name,atype,hyb,charge):

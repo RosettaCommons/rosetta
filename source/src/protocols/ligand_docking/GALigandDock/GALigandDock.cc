@@ -26,6 +26,8 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/util.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
@@ -77,6 +79,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <ctime>
+#include <fstream>
 
 namespace protocols {
 namespace ligand_docking {
@@ -142,8 +145,12 @@ GALigandDock::GALigandDock() {
 	use_pharmacophore_ = true; // turn on by default!
 
 	multiple_ligands_ = utility::vector1< std::string >();
+	multi_ligands_maxRad_ = 0.0;
 	initial_pool_ = "";
 	reference_pool_ = "";
+
+	use_mean_maxRad_ = false;
+	stdev_multiplier_ = 1.0; // most of the time, only mean value is too small
 
 	move_water_ = true;
 
@@ -186,11 +193,41 @@ GALigandDock::apply( pose::Pose & pose )
 	for ( core::Size ires = 1; ires <= movable_scs.size(); ++ires ) {
 		rsds_to_build_grids.push_back( pose.residue(movable_scs[ires]) );
 	}
+
 	if ( multiple_ligands_.size() > 0 ) {
+		core::Real mean_maxRad = 0.0;
+		std::vector<core::Real> maxRads;
 		for ( core::Size ilig = 1; ilig <= multiple_ligands_.size(); ++ilig ) {
+			TR << "Building multiple_ligands: "<< multiple_ligands_[ilig] << std::endl;
 			core::conformation::ResidueOP ligand = core::conformation::get_residue_from_name( multiple_ligands_[ilig] );
 			rsds_to_build_grids.push_back( *ligand );
+			if ( use_mean_maxRad_ ) {
+				numeric::xyzVector< core::Real > com(0,0,0);
+				for ( core::Size i=1; i<=ligand->natoms(); ++i ) com += ligand->xyz(i);
+				com /= ligand->natoms();
+				core::Real maxRad = 0.0;
+				for ( core::Size i=1; i<=ligand->natoms(); ++i ) maxRad = std::max( maxRad, com.distance(ligand->xyz(i)) );
+				maxRads.push_back(maxRad);
+				TR << "Building multiple_ligands: "<< multiple_ligands_[ilig] << " maxRad: " << maxRad << std::endl;
+				mean_maxRad += maxRad;
+			}
 		}
+		if ( use_mean_maxRad_ ) {
+			mean_maxRad /= (core::Real)maxRads.size();
+			core::Real sum_square(0.0), stdev(0.0);
+			for ( auto maxRad:maxRads ) {
+				sum_square += (maxRad-mean_maxRad) * (maxRad-mean_maxRad);
+			}
+			stdev = std::sqrt(sum_square/(maxRads.size()-1));
+
+			TR << "mean and stdev of maxRad: " << mean_maxRad <<
+				", " << stdev << std::endl;
+			multi_ligands_maxRad_ = mean_maxRad+stdev_multiplier_*stdev;
+			TR << "Setting new maxRad with mean + " << stdev_multiplier_ <<
+				" * " << "stdev: " << multi_ligands_maxRad_ << std::endl;
+			gridscore->set_grid_dim_with_maxRad(multi_ligands_maxRad_);
+		}
+
 	}
 	gridscore->get_grid_atomtypes( rsds_to_build_grids );
 
@@ -234,12 +271,19 @@ GALigandDock::apply( pose::Pose & pose )
 		pose_apo->delete_residue_slow( lig_resno );
 		lig_resno = pose.size(); // reset it to the last one
 		*/
-
+		core::chemical::ResidueTypeSetCOP residue_set( core::chemical::ChemicalManager::get_instance()
+			->residue_type_set( "fa_standard" ) );
 		for ( core::Size ilig = 1; ilig <= multiple_ligands_.size(); ++ilig ) {
+			auto start = std::chrono::steady_clock::now();
 			TR << "===============================================================================" << std::endl;
 			TR << " Starting " <<  multiple_ligands_[ilig]
 				<< " (" << ilig << "/" << multiple_ligands_.size() << ")" << std::endl;
 			TR << "===============================================================================" << std::endl;
+
+			if ( ! residue_set->has_name( multiple_ligands_[ilig] ) ) {
+				TR << "No residue info found, skip "<< multiple_ligands_[ilig] << std::endl;
+				continue;
+			}
 
 			core::pose::PoseOP pose_working =
 				make_starting_pose_for_virtual_screening( pose, lig_resno, multiple_ligands_[ilig] );
@@ -267,6 +311,9 @@ GALigandDock::apply( pose::Pose & pose )
 			core::pose::getPoseExtraScore( pose, "ligandname", ligandname );
 			//ignore ranking_prerelax
 			remaining_outputs_.push( pose, score, rms, ligscore, recscore, 0, ligandname );
+			auto end = std::chrono::steady_clock::now();
+			std::chrono::duration<double> diff = end-start;
+			TR << "GALigand Dock took " << (diff).count() << " seconds." << std::endl;
 		}
 
 	} else {
@@ -283,6 +330,7 @@ GALigandDock::apply( pose::Pose & pose )
 
 		pose = run_docking( gene_initial, gridscore, aligner, remaining_outputs_ );
 	}
+
 }
 
 core::pose::Pose
@@ -394,6 +442,7 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		EntropyEstimator entropy_estimator( scfxn_relax_, *pose, lig_resno );
 		//entropy_estimator.simple( runmode_=="VSX" ); // TODO
 		if ( runmode_ == "VSX" ) entropy_estimator.set_niter( 1000 );
+
 		core::Real TdS = entropy_estimator.apply( *pose ); //comes out in energy unit; sign is opposite
 
 		std::sort( dEs.begin(), dEs.end() ); // default comparator
@@ -404,7 +453,11 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		TR << "Estimated Binding Free Energy (arbitrary energy unit, just for relative ranking)" << std::endl;
 		TR << "dH: " << std::setw(6) << mindE << std::endl;
 		TR << "-T*dS: " << std::setw(6) << TdS << std::endl;
-		TR << "dG (dH-T*dS): " << dG << std::endl;
+		TR << "Ligand typename: "<< gene_initial.ligand_typename() << " dG (dH-T*dS): " << dG << std::endl;
+		core::pose::setPoseExtraScore( *pose, "dH", mindE );
+		core::pose::setPoseExtraScore( *pose, "-TdS", TdS );
+		core::pose::setPoseExtraScore( *pose, "dG", dG );
+		//core::pose::setPoseExtraScore( *pose, "ligandname", pose->residue(lig_resno).name() );
 	}
 
 	return *pose; // return lowest energy one
@@ -1260,12 +1313,16 @@ GALigandDock::setup_ligand_aligner( core::pose::Pose const & pose,
 	gridscore_ref->set_debug( false );
 	gridscore_ref->set_out_of_bound_e( grid_bound_penalty_ );
 	gridscore_ref->prepare_grid( pose, lig_resno );
+	if ( use_mean_maxRad_ ) {
+		gridscore_ref->set_grid_dim_with_maxRad(multi_ligands_maxRad_);
+	}
 
 	// pass all the ligand residues for grid construction
 	utility::vector1< core::conformation::Residue > rsds_to_build_grids;
 	rsds_to_build_grids.push_back( pose.residue(lig_resno) );
 	if ( multiple_ligands_.size() > 0 ) {
 		for ( core::Size ilig = 1; ilig <= multiple_ligands_.size(); ++ilig ) {
+			TR.Debug << "Building ligand: "<< multiple_ligands_[ilig] << std::endl;
 			core::conformation::ResidueOP ligand = core::conformation::get_residue_from_name( multiple_ligands_[ilig] );
 			rsds_to_build_grids.push_back( *ligand );
 		}
@@ -1492,12 +1549,37 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("reference_frac_auto") ) { reference_frac_auto_ = tag->getOption<bool>("reference_frac_auto"); }
 	if ( tag->hasOption("random_oversample") ) { random_oversample_ = tag->getOption<core::Real>("random_oversample"); }
 	if ( tag->hasOption("premin_ligand") ) { premin_ligand_ = tag->getOption<bool>("premin_ligand"); }
+	if ( tag->hasOption("use_mean_maxRad") ) { use_mean_maxRad_ = tag->getOption<bool>("use_mean_maxRad"); }
+	if ( tag->hasOption("stdev_multiplier") ) { stdev_multiplier_ = tag->getOption<core::Real>("stdev_multiplier"); }
 
 	if ( tag->hasOption("multiple_ligands") ) {
 		std::string ligands_string = tag->getOption<std::string>("multiple_ligands");
 		multiple_ligands_ = utility::string_split( ligands_string, ',' );
-		if ( multiple_ligands_.size() > 100 ) {
+		if ( multiple_ligands_.size() > 1000 ) {
 			TR.Error << "multiple_ligands arguments cannot be more than 100! " << std::endl;
+			utility_exit();
+		}
+	}
+
+	if ( tag->hasOption("multiple_ligands_file") ) {
+		std::string ligands_file = tag->getOption<std::string>("multiple_ligands_file");
+		std::string line;
+		std::ifstream myfile(ligands_file);
+		core::chemical::ResidueTypeSetCOP residue_set( core::chemical::ChemicalManager::get_instance()
+			->residue_type_set( "fa_standard" ) );
+		if ( myfile.is_open() ) {
+			while ( myfile.good() ) {
+				std::getline(myfile, line);
+				if ( line.empty() ) continue;
+				if ( ! residue_set->has_name( line ) ) {
+					TR.Warning << "No residue info found, skip "<< line << std::endl;
+					continue;
+				}
+				multiple_ligands_.push_back(line);
+			}
+			myfile.close();
+		} else {
+			TR.Error << "Cannot open " << ligands_file << std::endl;
 			utility_exit();
 		}
 	}
@@ -1713,6 +1795,7 @@ GALigandDock::setup_params_for_runmode( std::string runmode )
 			fast_relax_lines_.push_back("endrepeat");
 
 			//ramp_schedule.push_back( 0.1 ); ramp_schedule.push_back( 1.0 );
+			// repeats, npool, rmsdthreshold, pmut, maxiter, packcycles, smoothing, ramp_schedule
 			GADockStageParams stage1( 5, 50, 2.0, 0.2, 50, 25, 0.375, ramp_schedule );
 			protocol_.push_back( stage1 );
 
@@ -1801,6 +1884,7 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "use_pharmacophore", xsct_rosetta_bool, "Use pharmacophore info at initial pool generation.");
 	attlist + XMLSchemaAttribute( "initial_pool", xs_string, "Include these structures in the initial pool.");
 	attlist + XMLSchemaAttribute( "multiple_ligands", xs_string, "Scan ligands with these residue types.");
+	attlist + XMLSchemaAttribute( "multiple_ligands_file", xs_string, "Scan ligands with these residue types in a text file.");
 	attlist + XMLSchemaAttribute( "random_oversample", xsct_real, "scale factor to ntrial of initial random pool generation");
 	attlist + XMLSchemaAttribute( "reference_oversample", xsct_real, "scale factor to ntrial of initial reference pool generation");
 	attlist + XMLSchemaAttribute( "reference_pool", xs_string, "Use this structures as _references_ to generate the initial pool.");
@@ -1811,6 +1895,8 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "fa_rep_grid", xsct_real, "Repulsion weight at grid scoring stage");
 	attlist + XMLSchemaAttribute( "grid_bound_penalty", xsct_real, "Penalty factor when ligand atm gets out of boundary");
 	attlist + XMLSchemaAttribute( "estimate_dG", xsct_rosetta_bool, "Estimate dG of binding on lowest-energy docked pose. Default: false");
+	attlist + XMLSchemaAttribute( "use_mean_maxRad", xsct_rosetta_bool, "Use mean maxRad for multi ligands? Default: false");
+	attlist + XMLSchemaAttribute( "stdev_multiplier", xsct_real, "Standard deviation multiplier for mean_maxRad. Default: 1.0");
 
 	// per-cycle parameters (defaults)
 	attlist + XMLSchemaAttribute( "ngen", xs_integer, "number of generations");

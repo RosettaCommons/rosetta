@@ -281,6 +281,9 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 	force_exact_min_ = false;
 
 	pack_time_ = min_time_ = std::chrono::duration<double>{};
+
+	maxRad_ = 0.0;
+	numeric::xyzVector< core::Real > lig_com_(0,0,0);
 }
 
 GridScorer::~GridScorer(){}
@@ -288,25 +291,46 @@ GridScorer::~GridScorer(){}
 void
 GridScorer::prepare_grid( core::pose::Pose const &pose, core::Size const lig_resid ) {
 	// define bounding box
+	lig_com_ = {0,0,0};
+	maxRad_ = 0.0;
 	core::conformation::Residue const &resLig = pose.residue( lig_resid );
-	numeric::xyzVector< core::Real > com(0,0,0);
-	for ( core::Size i=1; i<=resLig.natoms(); ++i ) com += resLig.xyz(i);
-	com /= resLig.natoms();
-	core::Real maxRad = 0.0;
-	for ( core::Size i=1; i<=resLig.natoms(); ++i ) maxRad = std::max( maxRad, com.distance(resLig.xyz(i)) );
+	for ( core::Size i=1; i<=resLig.natoms(); ++i ) lig_com_ += resLig.xyz(i);
+	lig_com_ /= resLig.natoms();
+	for ( core::Size i=1; i<=resLig.natoms(); ++i ) maxRad_ = std::max( maxRad_, lig_com_.distance(resLig.xyz(i)) );
 
-	if ( maxRad < bbox_padding_*1.5 ) { maxRad = bbox_padding_*1.5; } // modification for very small ligands
+	if ( maxRad_ < bbox_padding_*1.5 ) { maxRad_ = bbox_padding_*1.5; } // modification for very small ligands
 
-	origin_ = com - (maxRad + bbox_padding_);
-	dims_[0] = (core::Size)std::ceil( 2*(maxRad + bbox_padding_) / voxel_spacing_ );
+	origin_ = lig_com_ - (maxRad_ + bbox_padding_);
+	dims_[0] = (core::Size)std::ceil( 2*(maxRad_ + bbox_padding_) / voxel_spacing_ );
 	dims_[2] = dims_[1] = dims_[0];
 
 	ref_pose_ = utility::pointer::make_shared< core::pose::Pose >(pose); // reference pose (used in scoring)
 
-	TR << "  ... built grid with " << maxRad << " + " << bbox_padding_ << " A radius; "
+	TR << "  ... built grid with " << maxRad_ << " + " << bbox_padding_ << " A radius; "
 		<< voxel_spacing_ << " A grid spacing" << std::endl;
+
+	TR << "Initial dimension: " << dims_[0] << " x " << dims_[1] << " x " << dims_[2]
+		<< std::endl;
+	TR << "Initial origin = ( " << origin_[0] << "," << origin_[1] << "," << origin_[2] << " )" << std::endl;
 }
 
+void
+GridScorer::set_grid_dim_with_maxRad(core::Real in_maxRad) {
+	core::Real maxRad_ = in_maxRad;
+	if ( maxRad_ < bbox_padding_*1.5 ) { maxRad_ = bbox_padding_*1.5; } // modification for very small ligands
+
+	origin_ = lig_com_ - (maxRad_ + bbox_padding_);
+	dims_[0] = (core::Size)std::ceil( 2*(maxRad_ + bbox_padding_) / voxel_spacing_ );
+	dims_[2] = dims_[1] = dims_[0];
+
+	TR << " set grid_dim with maxRad:  " << maxRad_ << " + " << bbox_padding_ << " A radius; "
+		<< voxel_spacing_ << " A grid spacing" << std::endl;
+
+	TR << "dimension: " << dims_[0] << " x " << dims_[1] << " x " << dims_[2]
+		<< std::endl;
+	TR << "origin = ( " << origin_[0] << "," << origin_[1] << "," << origin_[2] << " )" << std::endl;
+
+}
 //// TODO
 void
 GridScorer::get_grid_atomtypes( utility::vector1< core::conformation::Residue > const & rsds )
