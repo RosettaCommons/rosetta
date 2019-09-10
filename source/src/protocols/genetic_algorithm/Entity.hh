@@ -52,7 +52,7 @@ public:
 	EntityElement( std::string & word ); // This constructor nibbles away at the input string
 	EntityElement( EntityElement const & ) = default;
 	// Need virtual operator= to avoid slicing with respect to subtype assignments
-	virtual EntityElement & operator = ( EntityElement const & ) = default;
+	virtual EntityElement & operator = ( EntityElement const & );
 	~EntityElement() override;
 
 	virtual EntityElementOP clone() = 0;

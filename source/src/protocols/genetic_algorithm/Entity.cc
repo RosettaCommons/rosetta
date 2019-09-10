@@ -71,6 +71,12 @@ EntityElement::operator <  ( EntityElement const & rhs ) const {
 	return index_ < rhs.index_;
 }
 
+EntityElement &
+EntityElement::operator = ( EntityElement const & rhs ) {
+	index_ = rhs.index_;
+	return (*this);
+}
+
 bool
 EntityElement::operator == ( EntityElement const & rhs ) const {
 	return index_ == rhs.index_;
