@@ -37,8 +37,14 @@ if len(failures)==0:
 for k in failures.keys():
     _index_html_template_ +=  "{} \n fraction in test: {} \n fraction tolerated: {} <br>\n\t".format(k, failures[k], cutoffs_fraction_dict[k])
 
-# add regions off by more than 1A
-_index_html_template_ += "<h4>PDBs off by more than X A</h4>\n<p>\n"
+_index_html_template_ += "</p>\n<h3>RESULTS</h3>\n"
+_index_html_template_ += "Briefly, the rmsd histograms plot the results for the benchmark (below) and are separated by structural region. Along the x-axis of each plot are notches showing the rmsd values for each model. The red line is the cutoff. Note that a certain number of models are expected to be above the cutoff, so having just one or a few past the line will not trigger a failure.\n<p>\n"
+_index_html_template_ += '<img src="plot_results.png" alt="alternative text" style="max-width: 100%">\n'
+
+# add list of regions failing cutoff
+# note this doesn't imply failure as a whole
+_index_html_template_ += "<h4>Inidivual PDBs off by more than X A</h4>\n<p>\n"
+_index_html_template_ += "Listed below are, for each region, the PDBs missing the cutoff. Note these will only result in a test failure of some percentage greater than the cutoff fail. This list is for debugging purposes.\n<p>\n"
 for k in off_by_more_than_X.keys():
     _index_html_template_ += "<u>" + str(k) + " > {} A </u><br>\n\t".format(cutoffs_rms_dict[k])
     for v in off_by_more_than_X[k]:
@@ -46,9 +52,6 @@ for k in off_by_more_than_X.keys():
 
     _index_html_template_ += "\n<p>\n"
 
-
-_index_html_template_ += "</p>\n<h3>RESULTS</h3>\n"
-_index_html_template_ += '<img src="plot_results.png" alt="alternative text" style="max-width: 100%">\n'
 
 # add text from readme
 for l in readme:

@@ -74,14 +74,11 @@ working_dir = config['working_dir']
 
 # there must be a better way of doing This
 # sym links don't work with index.html, so delete and copy over original pngs
-os.remove(working_dir+"/discrim_resample.png")
-shutil.copy(rosetta_dir+"/tests/scientific/tests/antibody_h3_modeling/discrim_resample.png", working_dir+"/discrim_resample.png")
+os.remove(working_dir+"/h3_discrim.png")
+shutil.copy(rosetta_dir+"/tests/scientific/tests/antibody_h3_modeling/h3_discrim.png", working_dir+"/h3_discrim.png")
 
-os.remove(working_dir+"/rmsd_resample.png")
-shutil.copy(rosetta_dir+"/tests/scientific/tests/antibody_h3_modeling/rmsd_resample.png", working_dir+"/rmsd_resample.png")
-
-os.remove(working_dir+"/4f57_fail.png")
-shutil.copy(rosetta_dir+"/tests/scientific/tests/antibody_h3_modeling/4f57_fail.png", working_dir+"/4f57_fail.png")
+os.remove(working_dir+"/h3_min_rmsd.png")
+shutil.copy(rosetta_dir+"/tests/scientific/tests/antibody_h3_modeling/h3_min_rmsd.png", working_dir+"/h3_min_rmsd.png")
 
 # write the overall results
 with open(_multi_step_result_, 'w') as f:

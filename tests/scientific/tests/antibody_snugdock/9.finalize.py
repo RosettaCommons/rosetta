@@ -76,20 +76,14 @@ working_dir = config['working_dir']
 # sym links don't work with index.html, so delete and copy over original pngs
 
 try:
-    os.remove(working_dir+"/discrim_resample.png")
-    shutil.copy(rosetta_dir+"/tests/scientific/tests/antibody_snugdock/discrim_resample.png", working_dir+"/discrim_resample.png")
+    os.remove(working_dir+"/sd_discrim.png")
+    shutil.copy(rosetta_dir+"/tests/scientific/tests/antibody_snugdock/sd_discrim.png", working_dir+"/sd_discrim.png")
 except:
     pass
 
 try:
-    os.remove(working_dir+"/rmsd_resample.png")
-    shutil.copy(rosetta_dir+"/tests/scientific/tests/antibody_snugdock/rmsd_resample.png", working_dir+"/rmsd_resample.png")
-except:
-    pass
-
-try:
-    os.remove(working_dir+"/fails.png")
-    shutil.copy(rosetta_dir+"/tests/scientific/tests/antibody_snugdock/fails.png", working_dir+"/fails.png")
+    os.remove(working_dir+"/sd_min_irms.png")
+    shutil.copy(rosetta_dir+"/tests/scientific/tests/antibody_snugdock/sd_min_irms.png", working_dir+"/sd_min_irms.png")
 except:
     pass
 
