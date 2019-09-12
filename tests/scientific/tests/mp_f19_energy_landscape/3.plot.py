@@ -79,10 +79,11 @@ for i in range( 0, len( energy_landscapes ) ):
 
 	cmap = cm.get_cmap('viridis', 256)
 	im = ax.pcolormesh( X,Y,Z, cmap=cmap)
+	cbar = plt.colorbar(im)
 
 	# Calculate the minimum energy point
 	zmin, anglemin = energy_landscape_metrics.compute_minimum_energy_orientation( zcoords_arr, angles_arr, total_scores_arr )
-	plt.plot( anglemin, zmin, 'ro' )
+	plt.plot( anglemin, zmin, 'white' )
 	
 #save figure
 plt.tight_layout()

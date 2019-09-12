@@ -4,7 +4,7 @@ PI: Jeffrey J. Gray (Johns Hopkins ChemBE)
 Test created 6/6/19
 
 ## PURPOSE OF THE TEST
-The purpose of this test is to evaluate the scientific performance of franklin2019, the default energy function for membrane protein structure prediction and design. Specifcially, this test evaluates the ability of the energy function to reproduce experimentally measured ddG of mutation values. 
+The purpose of this test is to evaluate the scientific performance of franklin2019, the default energy function for membrane protein structure prediction and design. Specifcally, this test evaluates the ability of the energy function to reproduce experimentally measured ddG of mutation values. 
 
 ## BENCHMARK DATASET
 The dataset includes two sets of 19 ddG measurements taken in two corresponding scaffolds: the Outer Membrane Protein Phospholipiase A (OmpLA; 1qd6) [1] and the Palmitoyl transferase PagP (3gp6) [2]. Each set of ddG measurements capture the change in free energy upon mutation from alanine to one of the 19 canonical amino acids at a lipid facing site on the protien. The references for each set of measurements are given here: 
@@ -13,15 +13,15 @@ The dataset includes two sets of 19 ddG measurements taken in two corresponding 
 	[2] Marx DC, Fleming KG (2017) "Influence of Protein Scaffold on Side-Chain Transfer Free Energies" Biophysical Journal 113(3):597-604
 
 ## PROTOCOL
-This test uses the ddG prediction protocol described in Alford & Koehler Leman et al. [3]. Here, a mutation is introduced at the host site and the side chains are optimized within 8Å of the mutted residue. Then, the ddG of mutation is computed as the difference in energy between the mutant and native conformations. 
+This test uses the ddG prediction protocol described in Alford & Koehler Leman et al. [3]. Here, a mutation is introduced at the host site and the side chains are optimized within 8Å of the mutated residue. Then, the ddG of mutation is computed as the difference in energy between the mutant and native conformations. 
 
 The ddG of mutation protocol is described in: 
 
-	Alford RF, Koehler Leman J, Weitzner BD, Duran Am, Tiley DC, Elazar A, Gray JJ (2015) "An integrated framework advancing membrane protein modeling and design" PLoS Comput. Biol. 11(9):e1004398.
+	(Alford RF, Koehler Leman J, Weitzner BD, Duran Am, Tiley DC, Elazar A, Gray JJ (2015) "An integrated framework advancing membrane protein modeling and design" PLoS Comput. Biol. 11(9):e1004398.)
 
 The established test results for franklin2019 are described in: 
 
-	Alford RF, Fleming PJ, Fleming KG, Gray JJ (2019) "Protein structure prediction and design in a biologically-realistic implicit membrane" Under Review
+	(Alford RF, Fleming PJ, Fleming KG, Gray JJ (2019) "Protein structure prediction and design in a biologically-realistic implicit membrane" Submitted.)
 
 The test should take approximately 1 CPU hour. 
 

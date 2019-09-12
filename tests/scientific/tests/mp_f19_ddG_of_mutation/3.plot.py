@@ -46,6 +46,13 @@ height = 6 * nrows
 plt.rc("font", size=20)
 plt.rcParams['figure.figsize'] = width, height #width, height
 
+# Correlation coefficients from Alford et al. 2019
+moon_fleming = 0.68
+mcdonald_fleming = -0.1
+marx_fleming = 0.66
+
+lit_values = [ moon_fleming, mcdonald_fleming, marx_fleming ]
+
 # go through scorefiles
 for i in range( 0, len( ddG_files ) ):
 
@@ -90,6 +97,11 @@ for i in range( 0, len( ddG_files ) ):
 
 	# scatterplot of the data
 	plt.plot(exp_no_proline, pred_no_proline, 'ko')
+
+	# Plot text labels
+	corr_coeff = np.corrcoef( exp_no_proline, pred_no_proline )[1,0]
+	plt.text( -5, -3, "corr=" + str(round(corr_coeff,3)) + "\n lit_coeff=" + str(lit_values[i]) , horizontalalignment='center', verticalalignment='center' )
+
 
 #save figure
 plt.tight_layout()
