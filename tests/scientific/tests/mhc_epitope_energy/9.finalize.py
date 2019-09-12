@@ -46,8 +46,6 @@ if len( failures ) > 0:
 else:
     _index_html_template_ += "&nbsp;&nbsp;&nbsp;&nbsp;None<br>\n"
 
-_index_html_template_ += "</p>\n<h3>README</h3>\n"
-
 # add text from readme
 for l in readme:
 
