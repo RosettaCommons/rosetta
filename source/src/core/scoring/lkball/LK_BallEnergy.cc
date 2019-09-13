@@ -1030,6 +1030,8 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 		}
 	}
 
+	weighted_d2_water_delta = std::max<Real>( weighted_d2_water_delta, 1E-10 ); // fix a divide by zero - bcov
+
 	if ( compute_derivs ) {
 		for ( Size idx = 1; idx <= atom1_n_attached_waters; ++idx ) {
 			d_weighted_d2_d_di[idx] /= weighted_d2_water_delta;
