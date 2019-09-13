@@ -672,6 +672,7 @@ sources = {
 	],
 
 	"simple_moves" : [
+		"ConcatenatePosesMover",
 		"CopyRotamerMover",
 		"ddG",
 		"DisulfideInsertionMoverTests",
@@ -1260,6 +1261,7 @@ testinputfiles = [
 	"simple_moves/DisulfideInsertionMover.xml",
 	"simple_moves/1A2A_A.pdb",
 	"simple_moves/test_input.pdb",
+	"simple_moves/concatenate_inputs/component_file",
 	"simple_moves/D2I.params",
 	#"simple_moves/chiral/AAdAdA.pdb",
 	#"simple_moves/chiral/DALA.params",

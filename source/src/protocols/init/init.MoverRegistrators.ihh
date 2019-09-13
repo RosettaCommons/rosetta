@@ -523,8 +523,9 @@ static MoverRegistrator< simple_moves::AddChainMoverCreator > reg_AddChainMoverC
 static MoverRegistrator< simple_moves::AddJobPairDataCreator > reg_AddJobPairDataCreator;
 static MoverRegistrator< simple_moves::AddResidueLabelMoverCreator > reg_AddResidueLabelMoverCreator;
 static MoverRegistrator< simple_moves::AlignChainMoverCreator > reg_AlignChainCreator;
-static MoverRegistrator< simple_moves::ChangeAndResetFoldTreeMoverCreator > reg_ChangeAndResetFoldTreeMoverCreator;
 static MoverRegistrator< simple_moves::BBGaussianMoverCreator > reg_BBGaussianMoverCreator;
+static MoverRegistrator< simple_moves::ChangeAndResetFoldTreeMoverCreator > reg_ChangeAndResetFoldTreeMoverCreator;
+static MoverRegistrator< simple_moves::ConcatenatePosesMoverCreator > reg_ConcatenatePosesMoverCreator;
 static MoverRegistrator< calc_taskop_movers::ConsensusDesignMoverCreator > reg_ConsensusDesignMoverCreator;
 static MoverRegistrator< simple_moves::ContingentAcceptMoverCreator > reg_ContingentAcceptMoverCreator;
 static MoverRegistrator< simple_moves::ConvertRealToVirtualMoverCreator > reg_ConvertRealToVirtualMoverCreator;

@@ -660,6 +660,7 @@ sources = {
 		# Creates a totally new pose
 
 		"AddCavitiesMover",
+		"ConcatenatePosesMover",
 
 		"AlignChainMover",
 		"ChangeAndResetFoldTreeMover",
