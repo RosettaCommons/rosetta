@@ -63,7 +63,8 @@ class FragmentStore : public utility::pointer::ReferenceCount , public utility::
 
 {
 public:
-	// @brief Basic structure store, holds a collection of structure and associated residue entries.
+	// @brief Basic fragment store, holds a collection of structure and associated residue entries.
+	FragmentStore();
 	FragmentStore(FragmentSpecification fragment_specification, numeric::Size num_fragments = 0);
 
 	/// self pointer
