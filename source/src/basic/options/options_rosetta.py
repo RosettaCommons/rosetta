@@ -1363,7 +1363,7 @@ Options = Option_Group( '',
 		Option( 'buffer_flush_frequency', 'Real', default = '1.0', desc = 'when N structures (buffer_silent_output) are collected dump to file with probability X' ),
 		#why is this default false?  It should definitely be true - a better name for this used to be "jd2:dont_leak_memory".  However, at the time this was implemented there were untested, against-the-design hacks of JD2 that would cause crashes when this flag was true.
 		#Now it's radioactive and nobody would touch it.  You should ALWAYS set this flag true when using JD2; if your code crashes it is a sign you are misusing JD2 anyway, and you can just turn the flag back off to perform your evil.
-		Option( 'delete_old_poses', 'Boolean', default = 'false', desc = 'Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful.', ),
+		Option( 'delete_old_poses', 'Boolean', default = 'true', desc = 'Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful.  True by default, since there is no good reason to effectively leak memory.', ),
 		Option( 'checkpoint_file', 'File', desc='write/read nstruct-based checkpoint files to the desired filename.' ),
 		#Option( 'nthreads', 'Integer', desc='The maximum number of threads to run at once using the MultiThreadedJobDistributor' ),
 		Option( 'failed_job_exception', 'Boolean', default = 'true', desc = 'If JD2 encounters an error during job execution, raise an exception at the end of the run', ),
