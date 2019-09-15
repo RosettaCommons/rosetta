@@ -8,9 +8,10 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-## @file  cartesian_relax/1.submit.py
-## @brief this script is part of cartesian_relax scientific test
+## @file  docking/1.submit.py
+## @brief this script is part of docking scientific test
 ## @author Sergey Lyskov
+## @author Shourya S. Roy Burman
 
 import os, sys, time
 import benchmark
@@ -26,28 +27,58 @@ working_dir = config['working_dir']
 hpc_driver = benchmark.hpc_driver()
 extension  = benchmark.calculate_extension()
 
+def partners(argument):
+    switcher = {
+        "1AY7": "A_B",
+        "1MAH": "A_F",
+        "2PCC": "A_B",
+        "2SIC": "E_I",
+        "1CGI": "E_I",
+        "1LFD": "B_A",
+        "3EO1": "AB_CF",
+        "4IZ7": "A_B",
+        "1FQ1": "A_B",
+        "2IDO": "A_B",
+    }
+    return switcher.get(argument, -1)
+
 
 command_line = '''
 -database {rosetta_dir}/database
 
--in:file:s {rosetta_dir}/tests/scientific/data/{testname}/{target}.pdb
+-in:file:s {rosetta_dir}/tests/scientific/data/{testname}/targets/{target}.pdb
+-unboundrot {rosetta_dir}/tests/scientific/data/{testname}/targets/{target}.pdb
+-in:file:native {rosetta_dir}/tests/scientific/data/{testname}/natives/{target}.pdb
 
--dock_pert 3 8
+-nstruct        {nstruct}
+
+-partners       {partners_value}
+-dock_pert      3 8
 -spin
+
+-docking_low_res_score motif_dock_score
+-mh:path:scores_BB_BB {rosetta_dir}/database/additional_protocol_data/motif_dock/xh_16_
+-mh:score:use_ss1 false
+-mh:score:use_ss2 false
+-mh:score:use_aa1 true
+-mh:score:use_aa2 true
+
+-detect_disulf true
+-rebuild_disulf true
+-ignore_zero_occupancy  false
 -ex1
 -ex2aro
--nstruct {nstruct}
--mute core
--out:file:fullatom
+
+-out:file:scorefile     {prefix}/{target}.score
 
 -multiple_processes_writing_to_one_directory
 -no_color
 '''.replace('\n', ' ').replace('  ', ' ')
 
 
-nstruct = 2 if debug else 100
+nstruct = 2 if debug else 1000
 
-targets = 'BACB'.split()
+targets = '1AY7 1CGI 1FQ1 1LFD 1MAH 2IDO 2PCC 2SIC 3EO1 4IZ7'.split()
 targets = targets[:2] if debug else targets
 
 #print(f'extension: {extension}')
@@ -59,6 +90,7 @@ hpc_logs = f'{working_dir}/hpc-logs'
 if not os.path.exists(hpc_logs): os.makedirs(hpc_logs)
 hpc_job_ids = []
 for target in targets:
+    partners_value = partners(f'{target}')
     prefix = f'{working_dir}/output/{target}'
     if not os.path.exists(prefix): os.makedirs(prefix)
 
@@ -79,4 +111,4 @@ for target in targets:
 #     time.sleep(64)  # waiting for NFS caching
 hpc_driver.wait_until_complete(hpc_job_ids, silent=True)
 
-benchmark.save_variables('targets nstruct working_dir testname')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('debug targets nstruct working_dir testname')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

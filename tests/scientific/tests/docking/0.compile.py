@@ -8,8 +8,8 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-## @file  cartesian_relax/0.compile.py
-## @brief this script is part of cartesian_relax scientific test
+## @file  docking/0.compile.py
+## @brief this script is part of docking scientific test
 ## @author Sergey Lyskov
 
 import benchmark
