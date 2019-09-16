@@ -8,7 +8,7 @@
 JOBS=1
 COMPILETYPE=default
 
-while getopts "j:e:" opt; do
+while getopts "e:j:w:" opt; do
   case $opt in 
     j)
       JOBS=$OPTARG
@@ -18,6 +18,10 @@ while getopts "j:e:" opt; do
       if ! [ -z "$OPTARG" ]; then
      	COMPILETYPE=$(echo $OPTARG | tr ',' '-')
       fi
+      ;;
+    w)
+      # The working directory of the test
+      WORKING_DIR=$OPTARG
       ;;
     '?')
       echo "Invalid option:-$OPTARG" >&2
@@ -67,6 +71,9 @@ grep -L '^\[' ${CACHEDIR}/all_lines.txt | uniq > ${CACHEDIR}/error_output.txt
 grep '^\[' ${CACHEDIR}/all_lines.txt | sort | uniq > ${CACHEDIR}/output.txt
 
 ../../tests/benchmark/util/extract_lines.py ${CACHEDIR}/output.txt ../../tests/benchmark/util/cppcheck_known_lines.txt ${CACHEDIR}/oldissues.txt ${CACHEDIR}/newissues.txt
+
+#Copy over logfiles for reference purposes
+cp ${CACHEDIR}/*.txt ${WORKING_DIR}
 
 if [ -s ${CACHEDIR}/error_output.txt ]; then
     #error file size is zero, i.e. we have errors

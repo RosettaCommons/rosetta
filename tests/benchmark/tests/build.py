@@ -37,7 +37,7 @@ tests = dict(
     header    = NT(command='./scons.py unit_test_platform_only ; cd src && python ./../../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
     levels    = NT(command='./update_options.sh && ./update_ResidueType_enum_files.sh && python version.py && cd src && python ./../../../tools/python_cc_reader/library_levels.py', incremental=False),
 
-    cppcheck  = NT(command='cd src && bash ../../tests/benchmark/util/do_cppcheck.sh -j {jobs} -e "{extras}"', incremental=False),
+    cppcheck  = NT(command='cd src && bash ../../tests/benchmark/util/do_cppcheck.sh -j {jobs} -e "{extras}" -w "{working_dir}"', incremental=False),
 
     ui  = NT(command='cd src/ui && {python} update_ui_project.py && cd ../../build && mkdir -p ui.{platform_suffix}.debug && cd ui.{platform_suffix}.debug && {qmake} -r ../qt/qt.pro {qt_extras}&& make -j{jobs}', incremental=True),
 
@@ -73,11 +73,19 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
     platform_suffix = platform_to_pretty_string(platform)
+    skip_compile = config.get('skip_compile', False) # Don't skip the actual build we're testing, just the compilation/installation of other things
 
-    python = local_python_install(platform, config).python
+    if not skip_compile:
+        python = local_python_install(platform, config).python # Will install a local python
+    else:
+        python = sys.executable
 
-    qmake = config['qmake']
-    qt_extras = '-spec linux-clang ' if (compiler == 'clang' and platform['os'] == 'linux') else ''
+    if 'qmake' in config:
+        qmake = config['qmake']
+        qt_extras = '-spec linux-clang ' if (compiler == 'clang' and platform['os'] == 'linux') else ''
+    else:
+        qmake = '<none>'
+        gt_extras = '<none>'
 
     command_line = tests[test].command.format( **vars() )
 
