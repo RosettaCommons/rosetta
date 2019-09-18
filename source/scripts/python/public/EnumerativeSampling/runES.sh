@@ -1,6 +1,6 @@
 #!/bin/sh
 
-$ROSETTA3/source/bin/rosetta_scripts.default.linuxgccrelease\
+$ROSETTA3/bin/rosetta_scripts.default.linuxgccrelease\
     -database $ROSETTA3/database\
     -parser:protocol $1 \
     -edensity:mapfile $3\
