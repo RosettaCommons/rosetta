@@ -762,7 +762,8 @@ read_topology_file(
 	}
 
 	// Add the bonds; parse the rest of file.
-	bool found_AA_record = false;
+	bool nbr_atom_read( false ), nbr_radius_read( false );
+	bool found_AA_record( false );
 	AtomIndices mainchain_atoms;
 
 	// Set disulfide atom name to "NONE"
@@ -927,13 +928,16 @@ read_topology_file(
 			rsd->set_proton_chi( chino, samples, extra_samples );
 
 		} else if ( tag == "NBR_ATOM" ) {
+			runtime_assert_string_msg( !nbr_atom_read, "Error in params file \"" + filename + "\": More than one NBR_ATOM line was found!" );
 			l >> atom1;
 			rsd->nbr_atom( atom1 );
-
+			nbr_atom_read=true;
 		} else if ( tag == "NBR_RADIUS" ) {
+			runtime_assert_string_msg( !nbr_radius_read, "Error in params file \"" + filename + "\": More than one NBR_RADIUS line was found!" );
 			Real radius;
 			l >> radius;
 			rsd->nbr_radius( radius );
+			nbr_radius_read = true;
 		} else if ( tag == "ORIENT_ATOM" ) {
 			l >> tag;
 			if ( tag == "NBR" ) {
@@ -1191,6 +1195,8 @@ read_topology_file(
 			<< "; assuming " << name_from_aa( rsd->aa() ) << std::endl;
 	}
 
+	runtime_assert_string_msg( nbr_atom_read, "Error in params file \"" + filename + "\": No NBR_ATOM line was found!");
+	runtime_assert_string_msg( nbr_radius_read, "Error in params file \"" + filename + "\": No NBR_RADIUS line was found!");
 
 	// set icoor coordinates, store information about polymer links
 	// also sets up base_atom
