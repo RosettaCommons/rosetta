@@ -47,6 +47,7 @@ SET(LINK_STATIC_LIBS
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_b.2.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_a.2.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.1.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.6.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libcore.5.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libcore.4.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libcore.3.a
@@ -93,7 +94,7 @@ FOREACH(BINARY ${BINARIES})
 	SET_TARGET_PROPERTIES(${BINARY_NAME} PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
 	SET_TARGET_PROPERTIES(${BINARY_NAME} PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 	ADD_DEPENDENCIES(${BINARY_NAME} ObjexxFCL cifparse libxml2 utility numeric
-		basic core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2
+		basic core.1 core.2 core.3 core.4 core.5 core.6 protocols.1 protocols_a.2
 		protocols_b.2 protocols.3 protocols.4 protocols_a.5 protocols_b.5 protocols_c.5
 		protocols_d.5 protocols_e.5 protocols_f.5 protocols_g.5 protocols_h.5
 		protocols_a.6 protocols_b.6 protocols_c.6 protocols_d.6 protocols_e.6

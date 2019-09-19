@@ -8,7 +8,7 @@ SET(COMPILE_FLAGS "-pipe -w -O2")
 
 SET( LIBRARIES
 	ObjexxFCL utility numeric basic
-	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols.6 protocols.7 devel
+	core.1 core.2 core.3 core.4 core.5 core.6 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols.6 protocols.7 devel
     )
 FOREACH(LIBRARY ${LIBRARIES})
 	INCLUDE(../build/${LIBRARY}.cmake)
@@ -43,6 +43,7 @@ SET(LINK_STATIC_LIBS
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_b.2.a 
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_a.2.a 
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.1.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.6.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libcore.5.a 
     ${CMAKE_CURRENT_SOURCE_DIR}/libcore.4.a 
     ${CMAKE_CURRENT_SOURCE_DIR}/libcore.3.a 
