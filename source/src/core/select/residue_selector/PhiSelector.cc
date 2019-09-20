@@ -84,7 +84,7 @@ PhiSelector::apply(
 	ResidueSubset selected( nres, false ); //Output, initialized to a vector of "false".
 
 	for ( core::Size i=1; i<=nres; ++i ) { //Loop through all residues.
-		if ( !pose.residue_type(i).is_alpha_aa() ) continue; //Skip non-alpha amino acid positions.
+		if ( !pose.residue_type(i).is_alpha_aa() && !pose.residue_type(i).is_beta_aa() ) continue; //Skip non-alpha amino acid and non beta amino acid  positions.
 		if ( !pose.residue(i).has_lower_connect() || (ignore_unconnected_upper() && !pose.residue(i).has_upper_connect() ) ) continue; //Ignore residues with no lower or upper connection.
 		if ( !pose.residue(i).connected_residue_at_resconn( pose.residue_type(i).lower_connect_id() ) ) continue; //Ignore residues with a lower connection, but nothing there.
 		if ( ignore_unconnected_upper() && !pose.residue(i).connected_residue_at_resconn( pose.residue_type(i).upper_connect_id() ) ) continue; //Ignore residues with an upper connection, but nothing there.
@@ -99,7 +99,7 @@ PhiSelector::apply(
 		TR.Debug << "PhiSelector has selected:" << std::endl;
 		for ( core::Size i=1, imax=selected.size(); i<=imax; ++i ) {
 			TR.Debug << i << "\t" << "phi:";
-			if ( pose.residue(i).type().is_alpha_aa() ) {
+			if ( pose.residue(i).type().is_alpha_aa() || pose.residue(i).type().is_beta_aa() ) {
 				TR.Debug << pose.phi(i);
 			} else {
 				TR.Debug << "N/A";
