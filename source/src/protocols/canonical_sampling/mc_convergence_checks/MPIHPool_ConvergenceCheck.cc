@@ -222,7 +222,7 @@ namespace mc_convergence_checks {
       MPI_Allgather( buf_.int_buf1_, nlevels_, MPI_INT, buf_.neighbor_addresses_, nlevels_, MPI_INT, MPI_COMM_POOL );
 
       best_rmsd = current_best_rmsds_[ current_best_rmsds_.size() ]; //this is what is written out to traj files
-      double candidate_best_rms = best_rmsd;
+      core::Real candidate_best_rms = best_rmsd;
       //remove this, not needed?
       MPI_Allgather( &candidate_best_rms, 1, MPI_DOUBLE, buf_.candidate_best_rmsds_, 1, MPI_DOUBLE, MPI_COMM_POOL );
       if( tracer_visible_ ) {
@@ -1130,7 +1130,7 @@ namespace mc_convergence_checks {
       tr.Debug << "END PRINTING SIZE PER LEVEL FOR INITIATION" << std::endl;
     }
     clock_t finish_setup = clock();
-    double time_to_setup = ( double(finish_setup) - double(start_setup) ) / CLOCKS_PER_SEC;
+    core::Real time_to_setup = ( core::Real(finish_setup) - core::Real(start_setup) ) / CLOCKS_PER_SEC;
     tr << "time to setup " << pool_npes_ << " nodes: " << time_to_setup << std::endl;
     PROF_STOP( basic::INITIALIZE_HIERARCHY );
   }

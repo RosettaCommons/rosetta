@@ -43,7 +43,7 @@ namespace nonlocal {
 class SheetTranslate : public moves::Mover {
 public:
 	SheetTranslate();
-	SheetTranslate(const protocols::loops::Loop& sheet, double distance_ang);
+	SheetTranslate(const protocols::loops::Loop& sheet, core::Real distance_ang);
 
 	/// @brief Translates the sheet by the specified distance (in Angstroms)
 	void apply(core::pose::Pose& pose) override;
@@ -61,17 +61,17 @@ public:
 	const protocols::loops::Loop& get_sheet() const;
 
 	/// @brief Returns the distance (in Angstroms) to translate the sheet
-	double get_distance() const;
+	core::Real get_distance() const;
 
 	/// @brief Updates the sheet to be modified
 	void set_sheet(const protocols::loops::Loop& sheet);
 
 	/// @brief Updates the distance (in Angstroms) to translate the sheet
-	void set_distance(double distance_ang);
+	void set_distance(core::Real distance_ang);
 
 private:
 	/// @brief Shared initialization routine
-	void initialize(const protocols::loops::Loop& sheet, double distance);
+	void initialize(const protocols::loops::Loop& sheet, core::Real distance);
 
 	/// @brief Returns true if this instance is valid and fully configured
 	bool is_valid() const;
@@ -88,7 +88,7 @@ private:
 	protocols::loops::Loop sheet_;
 
 	/// @brief Distance to translate the sheet in Angstroms
-	double distance_;
+	core::Real distance_;
 };
 
 }  // namespace nonlocal

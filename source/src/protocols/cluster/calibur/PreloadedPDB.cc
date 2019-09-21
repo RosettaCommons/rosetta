@@ -164,9 +164,9 @@ PreloadedPDB::loadSilentFile( std::string const & filename ) {
 			}
 
 			residueID = toInt(line.substr( 0, 4));
-			double x = toFloat(line.substr(35, 8));
-			double y = toFloat(line.substr(44, 9));
-			double z = toFloat(line.substr(54, 8));
+			core::Real x = toFloat(line.substr(35, 8));
+			core::Real y = toFloat(line.substr(44, 9));
+			core::Real z = toFloat(line.substr(54, 8));
 			pdb->calpha_vector_[numResidue*3]   = x;
 			pdb->calpha_vector_[numResidue*3+1] = y;
 			pdb->calpha_vector_[numResidue*3+2] = z;

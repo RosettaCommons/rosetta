@@ -202,7 +202,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 		kinmover->set_rama_check( true );
 		kinmover->set_idealize_loop_first( true );
 		kinmover->set_sfxn(sfxn);
-		kinmover->set_pivots(kic_res1_, (int)( ( (double)(kic_res1_+kic_res2_) )/2.0 ), kic_res2_);
+		kinmover->set_pivots(kic_res1_, (int)( ( (core::Real)(kic_res1_+kic_res2_) )/2.0 ), kic_res2_);
 
 		pose.update_residue_neighbors();
 		kinmover->apply(pose);

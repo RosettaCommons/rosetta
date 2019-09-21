@@ -230,49 +230,49 @@ PackDaemon::compute_energy_for_assignment( Entity const & entity )
 
 	//stoptime = clock();
 
-	/*TR << "repacker_ " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
+	/*TR << "repacker_ " << ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
 
 	starttime = clock();
 	last_assignment_ = repacker2_->repack( rot_to_pack );
 	stoptime = clock();
 
-	TR << "repacker2_ " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
+	TR << "repacker2_ " << ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
 
 	starttime = clock();
 	last_assignment_ = repacker3_->repack( rot_to_pack );
 	stoptime = clock();
 
-	TR << "repacker3_ " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
+	TR << "repacker3_ " << ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
 
 	starttime = clock();
 	last_assignment_ = repacker4_->repack( rot_to_pack );
 	stoptime = clock();
 
-	TR << "repacker4_ " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
+	TR << "repacker4_ " << ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
 
 	starttime = clock();
 	last_assignment_ = repacker5_->repack( rot_to_pack );
 	stoptime = clock();
 
-	TR << "repacker5_ " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
+	TR << "repacker5_ " << ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
 
 	starttime = clock();
 	last_assignment_ = repacker6_->repack( rot_to_pack );
 	stoptime = clock();
 
-	TR << "repacker6_ " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
+	TR << "repacker6_ " << ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
 
 	starttime = clock();
 	last_assignment_ = repacker7_->repack( rot_to_pack );
 	stoptime = clock();
 
-	TR << "repacker7_ " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
+	TR << "repacker7_ " << ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;
 
 	starttime = clock();
 	last_assignment_ = repacker8_->repack( rot_to_pack );
 	stoptime = clock();
 
-	TR << "repacker8_ " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;*/
+	TR << "repacker8_ " << ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC << " " << last_assignment_.second << std::endl;*/
 
 	if ( ! best_assignment_valid_ || last_assignment_.second < best_assignment_.second ) {
 		best_assignment_ = last_assignment_;
@@ -785,8 +785,8 @@ DaemonSet::compute_energy_for_assignment( Entity const & entity )
 	}
 #ifdef APL_MEASURE_MSD_LOAD_BALANCE
 	std::clock_t stoptime = clock();
-	packing_runtime_ = ((double) midtime  - starttime ) / CLOCKS_PER_SEC;
-	npd_runtime_     = ((double) stoptime - midtime   ) / CLOCKS_PER_SEC;
+	packing_runtime_ = ((core::Real) midtime  - starttime ) / CLOCKS_PER_SEC;
+	npd_runtime_     = ((core::Real) stoptime - midtime   ) / CLOCKS_PER_SEC;
 #endif
 	return std::make_pair( daemon_scores, npd_properties );
 }
@@ -1010,7 +1010,7 @@ void DaemonSet::process_state_energy_evaluations_for_entity()
 	}
 
 #ifdef APL_MEASURE_MSD_LOAD_BALANCE
-	core::Real evaltime = ((double) stoptime - starttime) / CLOCKS_PER_SEC;
+	core::Real evaltime = ((core::Real) stoptime - starttime) / CLOCKS_PER_SEC;
 	//TR << "Node " << utility::mpi_rank() << " " << evaltime << " seconds to evaluate" << std::endl;
 	utility::send_double_to_node( 0, evaltime );
 	utility::send_double_to_node( 0, packing_runtime_ );

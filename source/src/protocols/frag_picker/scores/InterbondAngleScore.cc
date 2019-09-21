@@ -130,7 +130,7 @@ bool InterbondAngleScore::cached_score(FragmentCandidateOP fragment,
 				get_atom_coordinates(thirdVallResidueIndex, r->get_third_atom())
 			);
 
-			double angle = angle_of(v1, v2)*180.0/numeric::NumericTraits<core::Real>::pi();
+			core::Real angle = angle_of(v1, v2)*180.0/numeric::NumericTraits<core::Real>::pi();
 			total_score += r->get_function()->func(angle);
 		}
 	}

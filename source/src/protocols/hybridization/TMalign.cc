@@ -55,12 +55,12 @@ using core::Size;
 //private:
 // KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 // char version[20];
-double D0_MIN;
-double Lnorm;                                           //normalization length
-double score_d8, d0, d0_search, dcu0;                   //for TMscore search
-std::vector < std::vector < double > > score;           //Input score table for dynamic programming
+core::Real D0_MIN;
+core::Real Lnorm;                                           //normalization length
+core::Real score_d8, d0, d0_search, dcu0;                   //for TMscore search
+std::vector < std::vector < core::Real > > score;           //Input score table for dynamic programming
 std::vector < std::vector < bool > >   path;            //for dynamic programming
-std::vector < std::vector < double > > val;             //for dynamic programming
+std::vector < std::vector < core::Real > > val;             //for dynamic programming
 int xlen, ylen, minlen;                                 //length of proteins
 std::vector < numeric::xyzVector<core::Real> > xa, ya;  //for input vectors xa[0...xlen-1][0..2], ya[0...ylen-1][0..2]
 std::vector < int >   xresno, yresno;                   //residue numbers, used in fragment gapless threading
@@ -74,14 +74,14 @@ numeric::xyzMatrix <core::Real> u;                      //Kabsch translation vec
 
 int n_ali8_;
 std::vector < int > m1_, m2_;
-double d0_out_;
+core::Real d0_out_;
 
 //argument variables
-double d0A, d0B;
+core::Real d0A, d0B;
 // KAB - below variables commented out (-Wunused-private-field) on 2014-09-11
-// double Lnorm_ass, d0u, d0_scale, d0a, Lnorm_d0;
+// core::Real Lnorm_ass, d0u, d0_scale, d0a, Lnorm_d0;
 // bool o_opt, a_opt, u_opt, d_opt, v_opt;
-// double TM3, TM4, TM5;
+// core::Real TM3, TM4, TM5;
 
 //public:
 TMalign::TMalign()= default;
@@ -119,7 +119,7 @@ int  TMalign::read_pose(
 }
 
 
-double TMalign::dist(numeric::xyzVector<core::Real> x, numeric::xyzVector<core::Real> y) {return x.distance(y);}
+core::Real TMalign::dist(numeric::xyzVector<core::Real> x, numeric::xyzVector<core::Real> y) {return x.distance(y);}
 
 void TMalign::transform(
 	numeric::xyzVector <core::Real> const & t,
@@ -147,14 +147,14 @@ void  TMalign::do_rotation(
 //     one layer of the matrix. This code was exploited in TM-align
 //     because it is about 1.5 times faster than a complete N-W code
 //     and does not influence much the final structure alignment result.
-void  TMalign::NWDP_TM(Size const len1, Size const len2, double const gap_open, std::vector < int > & j2i)
+void  TMalign::NWDP_TM(Size const len1, Size const len2, core::Real const gap_open, std::vector < int > & j2i)
 {
 	//NW dynamic programming for alignment
 	//not a standard implementation of NW algorithm
 	//Input: score[1:len1, 1:len2], and gap_open
 	//Output: j2i[1:len2] \in {1:len1} U {-1}
 	//path[0:len1, 0:len2]=1,2,3, from diagonal, horizontal, vertical
-	double h, v, d;
+	core::Real h, v, d;
 
 	//initialization
 	val_[0][0]=0;
@@ -226,14 +226,14 @@ void  TMalign::NWDP_TM(
 	std::vector < numeric::xyzVector<core::Real> > const & y,
 	int const len1, int const len2,
 	numeric::xyzVector <core::Real> const & t, numeric::xyzMatrix <core::Real> const & u,
-	double d02, double gap_open, std::vector < int > & j2i) {
+	core::Real d02, core::Real gap_open, std::vector < int > & j2i) {
 	//NW dynamic programming for alignment
 	//not a standard implementation of NW algorithm
 	//Input: vectors x, y, rotation matrix t, u, scale factor d02, and gap_open
 	//Output: j2i[1:len2] \in {1:len1} U {-1}
 	//path[0:len1, 0:len2]=1,2,3, from diagonal, horizontal, vertical
 	int i, j;
-	double h, v, d;
+	core::Real h, v, d;
 
 	//initialization
 	val_[0][0]=0;
@@ -248,7 +248,7 @@ void  TMalign::NWDP_TM(
 		j2i[j]=-1; //all are not aligned, only use j2i[1:len2]
 	}
 	numeric::xyzVector <core::Real> xx;
-	double dij;
+	core::Real dij;
 
 	//decide matrix and path
 	for ( i=1; i<=len1; i++ ) {
@@ -308,7 +308,7 @@ void  TMalign::NWDP_TM(
 	std::vector < int > const & secx,
 	std::vector < int > const & secy,
 	int const len1, int const len2,
-	double gap_open, std::vector < int > & j2i)
+	core::Real gap_open, std::vector < int > & j2i)
 {
 	//NW dynamic programming for alignment
 	//not a standard implementation of NW algorithm
@@ -316,7 +316,7 @@ void  TMalign::NWDP_TM(
 	//Output: j2i[1:len2] \in {1:len1} U {-1}
 	//path[0:len1, 0:len2]=1,2,3, from diagonal, horizontal, vertical
 	int i, j;
-	double h, v, d;
+	core::Real h, v, d;
 
 	//initialization
 	val_[0][0]=0;
@@ -433,7 +433,7 @@ TMalign::convert_matrix_to_xyz(
 void
 TMalign::convert_xyz_v_to_vectors(
 	std::vector < numeric::xyzVector <core::Real> > const & x,
-	std::vector < std::vector < double > > & xx) {
+	std::vector < std::vector < core::Real > > & xx) {
 	xx.resize(x.size());
 	for ( Size i=0; i<xx.size(); ++i ) {
 		convert_xyz_to_vector(x[i],xx[i]);
@@ -447,19 +447,19 @@ bool  TMalign::Kabsch(
 	std::vector < numeric::xyzVector <core::Real> > const & y,
 	int const n,
 	int const mode,
-	double *rms,
+	core::Real *rms,
 	numeric::xyzVector <core::Real> & t,
 	numeric::xyzMatrix <core::Real> & u ) {
-	std::vector < std::vector < double > > xx;
+	std::vector < std::vector < core::Real > > xx;
 	convert_xyz_v_to_vectors(x,xx);
 
-	std::vector < std::vector < double > > yy;
+	std::vector < std::vector < core::Real > > yy;
 	convert_xyz_v_to_vectors(y,yy);
 
-	std::vector < double > tt;
+	std::vector < core::Real > tt;
 	convert_xyz_to_vector(t,tt);
 
-	std::vector < std::vector < double > > uu;
+	std::vector < std::vector < core::Real > > uu;
 	convert_xyz_to_matrix(u,uu);
 
 	bool retval = Kabsch(xx,yy,n,mode,rms,tt,uu);
@@ -481,24 +481,24 @@ bool  TMalign::Kabsch(
 // u    - u(i,j) is   rotation  matrix for best superposition  (output)
 // t    - t(i)   is translation vector for best superposition  (output)
 bool  TMalign::Kabsch(
-	std::vector < std::vector < double > > const & x,
-	std::vector < std::vector < double > > const & y,
+	std::vector < std::vector < core::Real > > const & x,
+	std::vector < std::vector < core::Real > > const & y,
 	int const n,
 	int const mode,
-	double *rms,
-	std::vector < double > & t,
-	std::vector < std::vector < double > > & u ) {
+	core::Real *rms,
+	std::vector < core::Real > & t,
+	std::vector < std::vector < core::Real > > & u ) {
 	int i, j, m, m1, l, k;
-	double e0, rms1, d, h, g;
-	double cth, sth, sqrth, p, det, sigma;
-	double xc[3], yc[3];
-	double a[3][3], b[3][3], r[3][3], e[3], rr[6], ss[6];
-	double sqrt3=1.73205080756888, tol=0.01;
+	core::Real e0, rms1, d, h, g;
+	core::Real cth, sth, sqrth, p, det, sigma;
+	core::Real xc[3], yc[3];
+	core::Real a[3][3], b[3][3], r[3][3], e[3], rr[6], ss[6];
+	core::Real sqrt3=1.73205080756888, tol=0.01;
 	int ip[]={0, 1, 3, 1, 2, 4, 3, 4, 5};
 	int ip2312[]={1, 2, 0, 1};
 
 	int a_failed=0, b_failed=0;
-	double epsilon=0.00000001;
+	core::Real epsilon=0.00000001;
 
 	//initializtation
 	*rms=0;
@@ -563,8 +563,8 @@ bool  TMalign::Kabsch(
 		}
 	}
 
-	double spur=(rr[0]+rr[2]+rr[5]) / 3.0;
-	double cof = (((((rr[2]*rr[5] - rr[4]*rr[4]) + rr[0]*rr[5])\
+	core::Real spur=(rr[0]+rr[2]+rr[5]) / 3.0;
+	core::Real cof = (((((rr[2]*rr[5] - rr[4]*rr[4]) + rr[0]*rr[5])\
 		- rr[3]*rr[3]) + rr[0]*rr[2]) - rr[1]*rr[1]) / 3.0;
 	det = det*det;
 
@@ -811,12 +811,12 @@ int  TMalign::score_fun8(
 	int const n_ali,
 	double const d,
 	std::vector <int> & i_ali,
-	double *score1,
+	core::Real *score1,
 	int score_sum_method ) {
-	double score_sum=0, di;
-	double d_tmp=d*d;
-	double d02=d0_*d0_;
-	double score_d8_cut = score_d8_*score_d8_;
+	core::Real score_sum=0, di;
+	core::Real d_tmp=d*d;
+	core::Real d02=d0_*d0_;
+	core::Real score_d8_cut = score_d8_*score_d8_;
 
 	int i, n_cut, inc=0;
 
@@ -841,7 +841,7 @@ int  TMalign::score_fun8(
 		//there are not enough feasible pairs, reliefe the threshold
 		if ( n_cut<3 && n_ali>3 ) {
 			inc++;
-			double dinc=(d+inc*0.5);
+			core::Real dinc=(d+inc*0.5);
 			d_tmp = dinc * dinc;
 		} else {
 			break;
@@ -859,7 +859,7 @@ int  TMalign::score_fun8(
 //          score_sum_method: 0 for score over all pairs
 //                            8 for socre over the pairs with dist<score_d8
 // output:  the best rotaion matrix t0, u0 that results in highest TMscore
-double  TMalign::TMscore8_search(
+core::Real  TMalign::TMscore8_search(
 	std::vector < numeric::xyzVector <core::Real> > const & xtm,
 	std::vector < numeric::xyzVector <core::Real> > const & ytm,
 	int Lali,
@@ -867,15 +867,15 @@ double  TMalign::TMscore8_search(
 	numeric::xyzMatrix <core::Real> & u0,
 	int const simplify_step,
 	int const score_sum_method,
-	double *Rcomm ) {
+	core::Real *Rcomm ) {
 	int i, m;
-	double score_max, score, rmsd;
+	core::Real score_max, score, rmsd;
 	const int kmax=Lali;
 	std::vector <int> k_ali(kmax);
 	int ka, k;
 	numeric::xyzVector<core::Real> t(0.0, 0.0, 0.0);
 	numeric::xyzMatrix<core::Real> u(0.0);
-	double d;
+	core::Real d;
 
 	//iterative parameters
 	int n_it=20;            //maximum number of iterations
@@ -886,7 +886,7 @@ double  TMalign::TMscore8_search(
 	int n_init=0, i_init;
 	for ( i=0; i<n_init_max-1; i++ ) {
 		n_init++;
-		L_ini[i]=(int) (Lali/pow(2.0, (double) i));
+		L_ini[i]=(int) (Lali/pow(2.0, (core::Real) i));
 		if ( L_ini[i]<=L_ini_min ) {
 			L_ini[i]=L_ini_min;
 			break;
@@ -992,7 +992,7 @@ double  TMalign::TMscore8_search(
 //          score_sum_method: 0 for score over all pairs
 //                            8 for socre over the pairs with dist<score_d8
 // output:  the best rotaion matrix t, u that results in highest TMscore
-double  TMalign::detailed_search(
+core::Real  TMalign::detailed_search(
 	std::vector < numeric::xyzVector <core::Real> > const & x,
 	std::vector < numeric::xyzVector <core::Real> > const & y,
 	int const,
@@ -1004,8 +1004,8 @@ double  TMalign::detailed_search(
 	int score_sum_method) {
 	//x is model, y is template, try to superpose onto y
 	int i, j, k;
-	double tmscore;
-	double rmsd;
+	core::Real tmscore;
+	core::Real rmsd;
 
 	k=0;
 	for ( i=0; i<y_len; i++ ) {
@@ -1024,11 +1024,11 @@ double  TMalign::detailed_search(
 
 
 //compute the score quickly in three iterations
-double  TMalign::get_score_fast(
+core::Real  TMalign::get_score_fast(
 	std::vector < numeric::xyzVector <core::Real> > const & x,
 	std::vector < numeric::xyzVector <core::Real> > const & y,
 	int const , int const y_len, std::vector < int > const & invmap) {
-	double rms, tmscore, tmscore1, tmscore2;
+	core::Real rms, tmscore, tmscore1, tmscore2;
 	int i, j, k=0;
 
 	for ( j=0; j<y_len; j++ ) {
@@ -1047,12 +1047,12 @@ double  TMalign::get_score_fast(
 	Kabsch(r1_, r2_, k, 1, &rms, t_, u_);
 
 	//evaluate score
-	double di;
+	core::Real di;
 	const int len=k;
-	std::vector <double> dis(len);
-	double d00=d0_search_;
-	double d002=d00*d00;
-	double d02=d0_*d0_;
+	std::vector <core::Real> dis(len);
+	core::Real d00=d0_search_;
+	core::Real d002=d00*d00;
+	core::Real d02=d0_*d0_;
 
 	int n_ali=k;
 	numeric::xyzVector <core::Real> xrot;
@@ -1065,7 +1065,7 @@ double  TMalign::get_score_fast(
 	}
 
 	//second iteration
-	double d002t=d002;
+	core::Real d002t=d002;
 	while ( true ) {
 		j=0;
 		for ( k=0; k<n_ali; k++ ) {
@@ -1142,7 +1142,7 @@ double  TMalign::get_score_fast(
 //y2x0[j]=i means:
 //the jth element in y is aligned to the ith element in x if i>=0
 //the jth element in y is aligned to a gap in x if i==-1
-double  TMalign::get_initial(
+core::Real  TMalign::get_initial(
 	std::vector < numeric::xyzVector <core::Real> > const & x,
 	std::vector < numeric::xyzVector <core::Real> > const & y,
 	int const x_len,
@@ -1162,7 +1162,7 @@ double  TMalign::get_initial(
 	n2 = x_len-min_ali;
 
 	int i, j, k, k_best;
-	double tmscore, tmscore_max=-1;
+	core::Real tmscore, tmscore_max=-1;
 
 	k_best=n1;
 	for ( k=n1; k<=n2; k++ ) {
@@ -1216,7 +1216,7 @@ void  TMalign::smooth(std::vector < int > & sec, int const len) {
 		}
 	}
 
-	//   smooth double
+	//   smooth core::Real
 	//   --xx-- => ------
 	for ( i=0; i<len-5; i++ ) {
 		//helix
@@ -1270,10 +1270,10 @@ void  TMalign::smooth(std::vector < int > & sec, int const len) {
 	}
 }
 
-int  TMalign::sec_str(double dis13, double dis14, double dis15, double dis24, double dis25, double dis35) {
+int  TMalign::sec_str(core::Real dis13, core::Real dis14, core::Real dis15, core::Real dis24, core::Real dis25, core::Real dis35) {
 	int s=1;
 
-	double delta=2.1;
+	core::Real delta=2.1;
 	if ( fabs(dis15-6.37)<delta ) {
 		if ( fabs(dis14-5.18)<delta ) {
 			if ( fabs(dis25-5.18)<delta ) {
@@ -1315,7 +1315,7 @@ int  TMalign::sec_str(double dis13, double dis14, double dis15, double dis24, do
 //1->coil, 2->helix, 3->turn, 4->strand
 void  TMalign::make_sec(std::vector < numeric::xyzVector <core::Real> > const & x, int const len, std::vector < int > & sec) {
 	int j1, j2, j3, j4, j5;
-	double d13, d14, d15, d24, d25, d35;
+	core::Real d13, d14, d15, d24, d25, d35;
 	for ( int i=0; i<len; i++ ) {
 		sec[i]=1;
 		j1=i-2;
@@ -1352,7 +1352,7 @@ void  TMalign::get_initial_ss(
 	make_sec(x, x_len, secx_);
 	make_sec(y, y_len, secy_);
 
-	double gap_open=-1.0;
+	core::Real gap_open=-1.0;
 	NWDP_TM(secx_, secy_, x_len, y_len, gap_open, y2x);
 }
 
@@ -1370,15 +1370,15 @@ bool  TMalign::get_initial_local(
 	int const x_len,
 	int const y_len,
 	std::vector < int > & y2x ) {
-	double GL, rmsd;
+	core::Real GL, rmsd;
 	numeric::xyzVector <core::Real> t(0.0,0.0,0.0);
 	numeric::xyzMatrix <core::Real> u(0.0);
 
-	double d01=d0_+1.5;
+	core::Real d01=d0_+1.5;
 	if ( d01 < D0_MIN_ ) d01=D0_MIN_;
-	double d02=d01*d01;
+	core::Real d02=d01*d01;
 
-	double GLmax=0;
+	core::Real GLmax=0;
 	int n_frag=20; //length of fragment for superposition
 	int ns=20; //tail length to discard
 	std::vector < int > invmap(y_len+1);
@@ -1419,7 +1419,7 @@ bool  TMalign::get_initial_local(
 			Kabsch(r1_, r2_, n_frag, 1, &rmsd, t, u);
 			count++;
 
-			double gap_open=0.0;
+			core::Real gap_open=0.0;
 			NWDP_TM(x, y, x_len, y_len, t, u, d02, gap_open, invmap);
 			GL=get_score_fast(x, y, x_len, y_len, invmap);
 			if ( GL>GLmax ) {
@@ -1444,10 +1444,10 @@ void  TMalign::score_matrix_rmsd(
 	std::vector < int > const & y2x ) {
 	numeric::xyzVector <core::Real> t;
 	numeric::xyzMatrix <core::Real> u;
-	double rmsd, dij;
-	double d01=d0_+1.5;
+	core::Real rmsd, dij;
+	core::Real d01=d0_+1.5;
 	if ( d01 < D0_MIN_ ) d01=D0_MIN_;
-	double d02=d01*d01;
+	core::Real d02=d01*d01;
 
 	numeric::xyzVector <core::Real> xx;
 	int i, k=0;
@@ -1478,10 +1478,10 @@ void  TMalign::score_matrix_rmsd_sec(
 	std::vector < int > const & y2x ) {
 	numeric::xyzVector <core::Real> t;
 	numeric::xyzMatrix <core::Real> u;
-	double rmsd, dij;
-	double d01=d0_+1.5;
+	core::Real rmsd, dij;
+	core::Real d01=d0_+1.5;
 	if ( d01 < D0_MIN_ ) d01=D0_MIN_;
-	double d02=d01*d01;
+	core::Real d02=d01*d01;
 
 	numeric::xyzVector <core::Real> xx;
 	int i, k=0;
@@ -1524,7 +1524,7 @@ void  TMalign::get_initial_ssplus(
 	std::vector < int > & y2x ) {
 	//create score matrix for DP
 	score_matrix_rmsd_sec(x, y, x_len, y_len, y2x0);
-	double gap_open=-1.0;
+	core::Real gap_open=-1.0;
 	NWDP_TM(x_len, y_len, gap_open, y2x);
 }
 
@@ -1534,7 +1534,7 @@ void  TMalign::find_max_frag(
 	std::vector < int > const & resno,
 	int const len, int *start_max, int *end_max) {
 	int r_min, fra_min=4; //minimum fragment for search
-	double d;
+	core::Real d;
 	int start;
 	int Lfr_max=0, flag;
 
@@ -1542,8 +1542,8 @@ void  TMalign::find_max_frag(
 	if ( r_min > fra_min ) r_min=fra_min;
 
 	int inc=0;
-	double dcu0_cut=dcu0*dcu0;
-	double dcu_cut=dcu0_cut;
+	core::Real dcu0_cut=dcu0*dcu0;
+	core::Real dcu_cut=dcu0_cut;
 
 	while ( Lfr_max < r_min ) {
 		Lfr_max=0;
@@ -1587,7 +1587,7 @@ void  TMalign::find_max_frag(
 
 		if ( Lfr_max < r_min ) {
 			inc++;
-			double dinc=pow(1.1, (double) inc) * dcu0_;
+			core::Real dinc=pow(1.1, (core::Real) inc) * dcu0_;
 			dcu_cut= dinc*dinc;
 		}
 	}//while <;
@@ -1599,7 +1599,7 @@ void  TMalign::find_max_frag(
 //y2x0[j]=i means:
 //the jth element in y is aligned to the ith element in x if i>=0
 //the jth element in y is aligned to a gap in x if i==-1
-double  TMalign::get_initial_fgt(
+core::Real  TMalign::get_initial_fgt(
 	std::vector < numeric::xyzVector < core::Real > > const & x,
 	std::vector < numeric::xyzVector < core::Real > > const & y,
 	int const x_len,
@@ -1648,7 +1648,7 @@ double  TMalign::get_initial_fgt(
 	}
 
 	//gapless threading for the extracted fragment
-	double tmscore, tmscore_max=-1;
+	core::Real tmscore, tmscore_max=-1;
 
 	if ( Lx<Ly || (Lx==Ly && x_len<=y_len) ) {
 		int L1=L_fr;
@@ -1721,7 +1721,7 @@ double  TMalign::get_initial_fgt(
 //input: initial rotation matrix t, u
 //       vectors x and y, d0
 //output: best alignment that maximizes the TMscore, will be stored in invmap
-double  TMalign::DP_iter(
+core::Real  TMalign::DP_iter(
 	std::vector < numeric::xyzVector < core::Real > > const & x,
 	std::vector < numeric::xyzVector < core::Real > > const & y,
 	int const x_len, int const y_len,
@@ -1729,15 +1729,15 @@ double  TMalign::DP_iter(
 	numeric::xyzMatrix < core::Real > u,
 	std::vector < int > & invmap0,
 	int const g1, int const g2, int const iteration_max ) {
-	double gap_open[2]={-0.6, 0};
-	double rmsd;
+	core::Real gap_open[2]={-0.6, 0};
+	core::Real rmsd;
 	std::vector < int > invmap(y_len+1);
 	int iteration, i, j, k;
-	double tmscore, tmscore_max, tmscore_old=0;
+	core::Real tmscore, tmscore_max, tmscore_old=0;
 	int score_sum_method=8, simplify_step=40;
 	tmscore_max=-1;
 
-	double d02=d0_*d0_;
+	core::Real d02=d0_*d0_;
 	for ( int g=g1; g<g2; g++ ) {
 		for ( iteration=0; iteration<iteration_max; iteration++ ) {
 			NWDP_TM(x, y, x_len, y_len, t, u, d02, gap_open[g], invmap);
@@ -1825,9 +1825,9 @@ void  TMalign::alignment2AtomMap(
 	std::list <core::Size> const & ref_residue_list,
 	core::Size & n_mapped_residues,
 	core::id::AtomID_Map< core::id::AtomID > & atom_map) {
-	//double seq_id;  // unused ~Labonte
+	//core::Real seq_id;  // unused ~Labonte
 	int k;
-	double d;
+	core::Real d;
 	do_rotation(xa_, xt_, xlen_, t_, u_);
 	//seq_id=0;  // unused ~Labonte
 
@@ -1853,9 +1853,9 @@ void  TMalign::alignment2strings(
 	std::string & seqxA,
 	std::string & seqyA,
 	std::string & seqM ) {
-	double seq_id;
+	core::Real seq_id;
 	int i, j, k;
-	double d;
+	core::Real d;
 
 	int ali_len=xlen_+ylen_; //maximum length of alignment
 	seqM.resize(ali_len);
@@ -1943,7 +1943,7 @@ void  TMalign::parameter_set4search(int xlen, int ylen) {
 	score_d8_=1.5*pow(Lnorm_*1.0, 0.3)+3.5; //remove pairs with dis>d8 during search & final
 }
 
-void  TMalign::parameter_set4final(double len) {
+void  TMalign::parameter_set4final(core::Real len) {
 	D0_MIN_=0.5;
 
 	Lnorm_=len;            //normaliz TMscore by this in searching
@@ -1960,7 +1960,7 @@ void  TMalign::parameter_set4final(double len) {
 }
 
 
-void  TMalign::parameter_set4scale(int len, double d_s) {
+void  TMalign::parameter_set4scale(int len, core::Real d_s) {
 	d0_=d_s;
 	Lnorm_=len;            //normaliz TMscore by this in searching
 
@@ -2016,12 +2016,12 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 	int i;
 	std::vector < int > invmap0(ylen_+1);
 	std::vector < int > invmap(ylen_+1);
-	double TM, TMmax=-1;
+	core::Real TM, TMmax=-1;
 	for ( i=0; i<ylen_; i++ ) {
 		invmap0[i]=-1;
 	}
 
-	double ddcc=0.4;
+	core::Real ddcc=0.4;
 	if ( Lnorm_ <= 40 ) ddcc=0.1;   //Lnorm was setted in parameter_set4search
 
 	// get initial alignment with gapless threading
@@ -2149,7 +2149,7 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 	n_ali8_=0;
 	int k=0;
 	int n_ali=0;
-	double d;
+	core::Real d;
 	m1_.resize(xlen_); //alignd index in x
 	m2_.resize(ylen_); //alignd index in y
 	do_rotation(xa_, xt_, xlen_, t_, u_);
@@ -2171,16 +2171,16 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 	n_ali8_=k;
 
 	// Final TMscore
-	//double rmsd;  // unused ~Labonte
-	//double TM1, TM2;  // unused ~Labonte
+	//core::Real rmsd;  // unused ~Labonte
+	//core::Real TM1, TM2;  // unused ~Labonte
 	d0_out_=5.0;
 	//simplify_step=1;
 	//score_sum_method=0;
 
 	numeric::xyzVector <core::Real> t0;
 	numeric::xyzMatrix <core::Real> u0;
-	//double d0_0, TM_0;
-	double Lnorm_0=ylen_;
+	//core::Real d0_0, TM_0;
+	core::Real Lnorm_0=ylen_;
 
 	//normalized by length of structure A
 	parameter_set4final(Lnorm_0);

@@ -26,6 +26,7 @@
 #include <sys/resource.h>
 #endif
 
+#include <core/types.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -48,17 +49,17 @@ public:
 	int which_;         // index of the decoy this AdjacentList is for
 	int num_neighbors_;      // synchronized with the size of neigh
 	std::vector<int> neigh; // keep a record of all the neighbors
-	std::vector<double> dist;
+	std::vector<core::Real> dist;
 	std::vector<LIST_TYPE> reverse_index_; // References index of the decoy within the array
 	AdjacentList();
 	AdjacentList(int which, int num);
 	~AdjacentList();
-	void add(int n, double d, bool ifNeigh);
+	void add(int n, core::Real d, bool ifNeigh);
 #ifdef _ADD_LITE_MODE_
     void add(int num);
 #endif
 	void remove(int n);
-	double getD(int n) const;
+	core::Real getD(int n) const;
 };
 
 typedef utility::pointer::shared_ptr< AdjacentList > AdjacentListOP;

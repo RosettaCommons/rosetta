@@ -202,14 +202,14 @@ void RepeatParameterFilter::calculate_helical_parameters_helper( core::pose::Pos
 	R<< 1,0,0, 0,1,0, 0,0,Rt.determinant();
 	Matrix3f H= svd.matrixU() * R * svd.matrixV().transpose();
 
-	double acos_fix_tmp = (H.trace()-1)/2;
+	core::Real acos_fix_tmp = (H.trace()-1)/2;
 	if ( acos_fix_tmp <= -1.0 ) {
 		acos_fix_tmp = -1.0;
 	}
 	if ( acos_fix_tmp >= 1.0 ) {
 		acos_fix_tmp = 1.0;
 	}
-	double omega = acos(acos_fix_tmp);
+	core::Real omega = acos(acos_fix_tmp);
 	Matrix3f I = Matrix3f::Identity();
 	Matrix3f N = 0.5*(H+H.transpose()) - cos(omega)*I;
 
@@ -225,13 +225,13 @@ void RepeatParameterFilter::calculate_helical_parameters_helper( core::pose::Pos
 		}
 	}
 
-	double sin_omega = (H(1,0)-H(0,1)) / (2*hN(2));
+	core::Real sin_omega = (H(1,0)-H(0,1)) / (2*hN(2));
 	TR.Debug <<"sin_omega "<<sin_omega<<endl;
 	if ( sin_omega < 0 ) hN = -1 * hN;
 
 	Vector3f t = c_B - H*c_A;
-	double L = t.dot(hN) ;
-	double rise=abs(L);
+	core::Real L = t.dot(hN) ;
+	core::Real rise=abs(L);
 
 	Matrix3f Ncross;
 	Ncross << 0,-1*hN(2),hN(1), hN(2),0,-1*hN(0), -1*hN(1),hN(0),0 ;
@@ -242,13 +242,13 @@ void RepeatParameterFilter::calculate_helical_parameters_helper( core::pose::Pos
 	Vector3f pB= (c_B-R0)-(hN*(hN.dot(c_B-R0)));
 
 
-	double direction = L * hN.dot(pA.cross(pB));
+	core::Real direction = L * hN.dot(pA.cross(pB));
 	if ( direction > 0 ) {
 		handedness = "R";
 	} else {
 		handedness = "L";
 	}
-	double radius=pA.norm();
+	core::Real radius=pA.norm();
 	rise_out = rise;
 	radius_out = radius;
 	omega_out = omega;

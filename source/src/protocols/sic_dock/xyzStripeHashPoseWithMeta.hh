@@ -30,18 +30,18 @@ namespace sic_dock {
 
 class xyzStripeHashPoseWithMeta : public numeric::geometry::hashing::xyzStripeHashWithMeta<float> {
 public:
-	xyzStripeHashPoseWithMeta(double radius) : numeric::geometry::hashing::xyzStripeHashWithMeta<float>(radius) {}
+	xyzStripeHashPoseWithMeta(core::Real radius) : numeric::geometry::hashing::xyzStripeHashWithMeta<float>(radius) {}
 
-	xyzStripeHashPoseWithMeta(double radius,
+	xyzStripeHashPoseWithMeta(core::Real radius,
 		core::pose::Pose const & p,
 		core::pose::PoseCoordPickMode m = core::pose::PoseCoordPickMode_BB
 	) : numeric::geometry::hashing::xyzStripeHashWithMeta<float>(radius) {
 		init_with_pose(p,m);
 	}
 
-	xyzStripeHashPoseWithMeta(double radius,
+	xyzStripeHashPoseWithMeta(core::Real radius,
 		core::pose::Pose const & p,
-		core::id::AtomID_Map<double> const & amap
+		core::id::AtomID_Map<core::Real> const & amap
 	) : numeric::geometry::hashing::xyzStripeHashWithMeta<float>(radius) {
 		init_with_pose(p,amap);
 	}
@@ -51,14 +51,14 @@ public:
 		core::pose::Pose const & p,
 		core::pose::PoseCoordPickMode m = core::pose::PoseCoordPickMode_BB
 	){
-		utility::vector1<double> dummy;
+		utility::vector1<core::Real> dummy;
 		init_with_pose(p,dummy,m);
 	}
 
 	void
 	init_with_pose(
 		core::pose::Pose const & p,
-		core::id::AtomID_Map<double> const amap
+		core::id::AtomID_Map<core::Real> const amap
 	){
 		using core::id::AtomID;
 		int natom = 0;
@@ -87,7 +87,7 @@ public:
 	void
 	init_with_pose(
 		core::pose::Pose const & p,
-		utility::vector1<double> const & meta_in,
+		utility::vector1<core::Real> const & meta_in,
 		core::pose::PoseCoordPickMode m = core::pose::PoseCoordPickMode_BB
 	){
 		int natom = 0;

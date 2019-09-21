@@ -125,7 +125,7 @@ private:
 	void deallocate_buffers();
 	void allocate_buffers( core::Size );
 	void setup_exchange_schedule( Size nlevels );
-	void shuffle_temperatures( const double *energies );
+	void shuffle_temperatures( const core::Real *energies );
 
 private:
 	static bool options_registered_;
@@ -156,7 +156,7 @@ private:
 	utility::vector0< ExchangeSchedule > exchange_schedules_;
 	core::Size last_exchange_schedule_;
 	// C-style arrays for communication in MPI
-	double *last_energies_;
+	core::Real *last_energies_;
 	int *rank2tlevel_;
 	int *tlevel2rank_;
 	std::map<std::pair<int, int>, core::Size> exchange_attempts_;

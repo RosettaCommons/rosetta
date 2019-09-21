@@ -15,6 +15,8 @@
 #ifndef INCLUDED_protocols_boinc_boinc_hh
 #define INCLUDED_protocols_boinc_boinc_hh
 
+#include <core/types.hh>
+
 // External headers: BOINC
 #ifdef BOINC
 #ifdef WIN32
@@ -86,21 +88,21 @@ public:
 	////// User project prefs
 
 	/// @brief Get maximum graphics frames per second user preference
-	static double get_project_pref_max_gfx_fps( void );
+	static core::Real get_project_pref_max_gfx_fps( void );
 	/// @brief Get maximum percent cpu for graphics user preference
-	static double get_project_pref_max_gfx_cpu( void );
+	static core::Real get_project_pref_max_gfx_cpu( void );
 	/// @brief Get maximum target cpu run time user preference
 	static int get_project_pref_max_cpu_run_time( void );
 	/// @brief Get graphics background type user preference
 	static background_type get_project_pref_bg(void);
 	/// @brief Set maximum graphics frames per second. Standalone mode only.
-	static void set_project_pref_max_gfx_fps( double project_pref_max_gfx_fps );
+	static void set_project_pref_max_gfx_fps( core::Real project_pref_max_gfx_fps );
 	/// @brief Set maximum percent cpu for graphics. Standalone mode only.
-	static void set_project_pref_max_gfx_cpu( double project_pref_max_gfx_cpu );
+	static void set_project_pref_max_gfx_cpu( core::Real project_pref_max_gfx_cpu );
 	/// @brief Set maximum target cpu run time. Standalone mode only.
 	static void set_project_pref_max_cpu_run_time( int project_pref_max_cpu_run_time );
 	/// @brief Set working set size to keep track of memory usage
-	static void set_working_set_size( double working_set_size );
+	static void set_working_set_size( core::Real working_set_size );
 	/// @brief Rereads project prefs and stores info
 	static void read_and_set_project_prefs(void);
 
@@ -109,13 +111,13 @@ public:
 
 	/// @brief Gets the remaining cpu time which depends on the user
 	/// run time preference
-	static double get_remaining_cpu_time(void);
+	static core::Real get_remaining_cpu_time(void);
 	/// @brief Determines the fraction complete based on the max_cpu_run_time
 	/// preference and the total wu_cpu_run_time. Calls BOINC API
 	/// boinc_fraction_done().
 	static void update_pct_complete(void);
 	/// @brief gets the current runtime for the boinc wu
-	static double get_boinc_wu_cpu_time();
+	static core::Real get_boinc_wu_cpu_time();
 	/// @brief Is the task finished?
 	static bool worker_is_finished(const int & total_nstruct);
 
@@ -227,16 +229,16 @@ private:
 	Boinc(/*void*/) = default;
 
 	static bool worker_initialized_;
-	static double fraction_done_;
-	static double cpu_time_;
-	static double working_set_size_;
-	static double working_set_size_max_val_;
+	static core::Real fraction_done_;
+	static core::Real cpu_time_;
+	static core::Real working_set_size_;
+	static core::Real working_set_size_max_val_;
 	static int checkpoint_count_;
 	static int decoy_count_;
 	static int no_progress_init_cnt_;
 	static bool worker_running_;
-	static double project_pref_max_gfx_fps_;
-	static double project_pref_max_gfx_cpu_;
+	static core::Real project_pref_max_gfx_fps_;
+	static core::Real project_pref_max_gfx_cpu_;
 	static int project_pref_max_cpu_run_time_;
 	static background_type project_pref_bg_;
 

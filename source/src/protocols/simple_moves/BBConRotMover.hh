@@ -71,7 +71,7 @@ private:
 	Real calc_jacobian_cartesians(xyzVector const &, xyzVector const &,
 		xyzVector const &, xyzVector const &, xyzVector const &);
 
-	bool get_determinant(double a[5][5], int n, double &det);
+	bool get_determinant(core::Real a[5][5], int n, core::Real &det);
 
 	bool closure(
 		//before closure

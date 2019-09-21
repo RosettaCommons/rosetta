@@ -111,15 +111,15 @@ static basic::Tracer TR("core.grid.Pockets.PocketGrid");
 // Visual Studio is more particular about implicit upconversion than gcc
 #ifdef _WIN32
 core::Real floor(core::Size x) {
-	return std::floor((double) x);
+	return std::floor((core::Real) x);
 }
 
 core::Real pow(core::Size x, core::Size y) {
-	return std::pow((double) x, (double) y);
+	return std::pow((core::Real) x, (core::Real) y);
 }
 
 core::Real sqrt(core::Size x) {
-	return std::sqrt((double) x);
+	return std::sqrt((core::Real) x);
 }
 #endif
 
@@ -378,8 +378,8 @@ bool CCluster::testNeighbor(CCluster & c2){
 				continue;
 			}
 
-			if ( sqrt(pow((double)i->x - (double)j->x,2) + pow((double)i->y - (double)j->y,2) + pow((double)i->z - (double)j->z,2) ) <= 5./step ) {
-				if ( ((i->atom_type.compare("C") == 0  || i->atom_type.compare("BBe") == 0 || i->atom_type.compare("BNe") == 0 ) && (j->atom_type.compare("C") == 0  || j->atom_type.compare("BBe") == 0 || j->atom_type.compare("BNe") == 0)) || !filterExemplars_ || (sqrt(pow((double)i->x - (double)j->x,2) + pow((double)i->y - (double)j->y,2) + pow((double)i->z - (double)j->z,2))  <= 3./step ) ) {
+			if ( sqrt(pow((core::Real)i->x - (core::Real)j->x,2) + pow((core::Real)i->y - (core::Real)j->y,2) + pow((core::Real)i->z - (core::Real)j->z,2) ) <= 5./step ) {
+				if ( ((i->atom_type.compare("C") == 0  || i->atom_type.compare("BBe") == 0 || i->atom_type.compare("BNe") == 0 ) && (j->atom_type.compare("C") == 0  || j->atom_type.compare("BBe") == 0 || j->atom_type.compare("BNe") == 0)) || !filterExemplars_ || (sqrt(pow((core::Real)i->x - (core::Real)j->x,2) + pow((core::Real)i->y - (core::Real)j->y,2) + pow((core::Real)i->z - (core::Real)j->z,2))  <= 3./step ) ) {
 					if ( ((i->atom_type.compare("C") != 0) && (j->atom_type.compare("C") != 0)) && filterExemplars_ ) continue;
 
 					minX=std::min(minX, c2.minX);
@@ -3019,7 +3019,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 						if ( (int) pit->x + x > (int) xdim_-1 ) continue;
 						if ( (int) pit->y + y > (int) ydim_-1 ) continue;
 						if ( (int) pit->z + z > (int) zdim_-1 ) continue;
-						if ( sqrt(pow((double)x,2)+pow((double)y,2)+pow((double)z,2)) > 5./stepSize_ ) continue;
+						if ( sqrt(pow((core::Real)x,2)+pow((core::Real)y,2)+pow((core::Real)z,2)) > 5./stepSize_ ) continue;
 						if ( grid_[pit->x+x][pit->y+y][pit->z+z]==T_SURFACE ) {
 							cluster.target_=true;
 						} else if ( grid_[pit->x+x][pit->y+y][pit->z+z]==ST_SURFACE ) {

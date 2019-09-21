@@ -50,7 +50,7 @@ public:
 	foldInChanges( core::pose::Pose &pose, core::optimization::Multivec & y );
 
 private:
-	ObjexxFCL::FArray3D< double > rhoC_; // f calc
+	ObjexxFCL::FArray3D< core::Real > rhoC_; // f calc
 };
 
 

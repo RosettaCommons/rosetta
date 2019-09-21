@@ -357,12 +357,12 @@ inline void convert_grid_to_cartesian( numeric::xyzVector<core::Real> const & gr
 }
 
 // helper functions to compute derivatives
-double dD_dv1(const double,const double,const double,const double,const double,const double,const double,const double,const double,const double) ;
-double dD_dv2(const double,const double,const double,const double,const double,const double,const double,const double,const double,const double) ;
-double dD_dv3(const double,const double,const double,const double,const double,const double,const double,const double,const double,const double) ;
-double dD_dv4(const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double) ;
-double dD_dv5(const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double) ;
-double dD_dv6(const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double) ;
+core::Real dD_dv1(const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real) ;
+core::Real dD_dv2(const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real) ;
+core::Real dD_dv3(const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real) ;
+core::Real dD_dv4(const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real) ;
+core::Real dD_dv5(const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real) ;
+core::Real dD_dv6(const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real,const core::Real) ;
 
 // another helper function
 core::Real Find_Closest_Intersect_SQ(core::Real const & phiAngle, core::Real const & psiAngle, core::Real const & atomX, core::Real const & atomY, core::Real const & atomZ, core::Real const & atom_radius );

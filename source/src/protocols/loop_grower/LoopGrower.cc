@@ -140,7 +140,7 @@ using namespace core;
 
 // stupid function
 // until we get better dist distribs
-double gapdist( int n ) {
+core::Real gapdist( int n ) {
 	switch (n) {
 	case 0 : return 0.5;
 	case 1 : return 5.0; // return 5.0

@@ -123,11 +123,11 @@ SmallMol::~SmallMol() = default;
 
 void SmallMol::add_atom(string line) {
 	pdbContent.append(line + "\n");
-	vector<double> newAtom(3);
+	vector<core::Real> newAtom(3);
 
-	double x = atof(line.substr(30, 8).c_str());
-	double y = atof(line.substr(38, 8).c_str());
-	double z = atof(line.substr(46, 8).c_str());
+	core::Real x = atof(line.substr(30, 8).c_str());
+	core::Real y = atof(line.substr(38, 8).c_str());
+	core::Real z = atof(line.substr(46, 8).c_str());
 	newAtom[0] = x;
 	newAtom[1] = y;
 	newAtom[2] = z;
@@ -186,7 +186,7 @@ core::Real SmallMol::calRMSD(SmallMol &mol1, SmallMol &mol2) {
 void SmallMol::printCoordinates() const {
 	cout << molName << endl;
 	for ( auto currentAtom : coordinates ) {
-		for ( double k : currentAtom ) {
+		for ( core::Real k : currentAtom ) {
 			cout << k << "\t";
 		}
 		cout << endl;
@@ -756,11 +756,11 @@ void GenPharmacophore::cluster_KeyFeatures(std::string const & input_filename, s
 	cout << "RNG molecules: " << rings.size() << "\t" << "DNR-ACP atoms: " << dnrAcp.size() << endl;
 
 	// build ring - Dnr_Acp pairs
-	// double max_dist = 5.0;
+	// core::Real max_dist = 5.0;
 	vector<SmallMol>::iterator it1, it2, end1, end2;
 	for ( it1 = dnrAcp.begin(), end1 = dnrAcp.end(); it1 != end1; ++it1 ) {
 		for ( it2 = rings.begin(), end2 = rings.end(); it2 != end2; ++it2 ) {
-			double dist = it1->cal_min_dist(&(*it2));
+			core::Real dist = it1->cal_min_dist(&(*it2));
 			if ( dist <= ring_atm_dist * ring_atm_dist ) {
 				UnionEdge newEdge(&(*it1), &(*it2));
 				edges.push_back(newEdge);
@@ -788,7 +788,7 @@ void GenPharmacophore::cluster_KeyFeatures(std::string const & input_filename, s
 	// max_dist = 5.0;
 	for ( it1 = rings.begin(); it1 != end2; ++it1 ) {
 		for ( it2 = it1 + 1; it2 != end2; ++it2 ) {
-			double dist = it1->cal_min_dist(&(*it2));
+			core::Real dist = it1->cal_min_dist(&(*it2));
 			if ( dist <= ring_ring_dist * ring_ring_dist ) {
 				UnionEdge newEdge(&(*it1), &(*it2));
 				edges.push_back(newEdge);

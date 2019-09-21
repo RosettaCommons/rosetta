@@ -563,7 +563,7 @@ VarSolDRotamerDots::msas_for_atom( Size atom_index ) const
 		}
 	}
 	return msas_radii_[ rotamer_->atom(atom_index).type() ] * msas_radii_[ rotamer_->atom(atom_index).type() ] *
-		4 * numeric::constants::d::pi * ((double) count_exposed / DotSphere::NUM_DOTS_TOTAL );
+		4 * numeric::constants::d::pi * ((core::Real) count_exposed / DotSphere::NUM_DOTS_TOTAL );
 }
 
 bool

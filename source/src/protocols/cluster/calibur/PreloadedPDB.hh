@@ -32,6 +32,8 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
+#include <core/types.hh>
+
 namespace protocols {
 namespace cluster {
 namespace calibur {

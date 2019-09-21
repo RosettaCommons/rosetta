@@ -359,14 +359,14 @@ OptEMultifunc::wait_for_remote_vars() const
 
 		if ( message == EVAL_FUNC ) {
 			mpi_broadcast_receive_vars( vars );
-			double my_func = operator() ( vars );
+			core::Real my_func = operator() ( vars );
 			MPI_Send( & my_func, 1, MPI_DOUBLE, 0, 1, MPI_COMM_WORLD );
 		} else if ( message == EVAL_DFUNC ) {
 			mpi_broadcast_receive_vars( vars );
 			dE_dvars.resize( vars.size() );
 			std::fill( dE_dvars.begin(), dE_dvars.end(), 0.0 );
 			dfunc( vars, dE_dvars );
-			double * dE_dvars_raw = new double[ vars.size() ];
+			core::Real * dE_dvars_raw = new core::Real[ vars.size() ];
 			for ( Size ii = 1; ii <= vars.size(); ++ii ) { dE_dvars_raw[ ii - 1 ] = dE_dvars[ ii ]; }
 			MPI_Send( dE_dvars_raw, vars.size(), MPI_DOUBLE, 0, 1, MPI_COMM_WORLD );
 		} else if ( message == END_OF_MINIMIZATION ) {
@@ -444,7 +444,7 @@ void OptEMultifunc::mpi_broadcast_send_vars(
 	int vars_size = vars.size();
 	MPI_Bcast( & vars_size, 1, MPI_INT, 0, MPI_COMM_WORLD );
 
-	double * raw_vars = new double[ vars_size ];
+	core::Real * raw_vars = new core::Real[ vars_size ];
 	for ( int ii = 1; ii <= vars_size; ++ii ) {
 		raw_vars[ ii - 1 ] = vars[ ii ];
 	}
@@ -466,7 +466,7 @@ void OptEMultifunc::mpi_broadcast_receive_vars(
 	MPI_Bcast( & vars_size, 1, MPI_INT, 0, MPI_COMM_WORLD );
 	vars.resize( vars_size );
 
-	double * raw_vars = new double[ vars_size ];
+	core::Real * raw_vars = new core::Real[ vars_size ];
 	MPI_Bcast( raw_vars, vars_size, MPI_DOUBLE, 0, MPI_COMM_WORLD );
 	for ( int ii = 1; ii <= vars_size; ++ii ) {
 		vars[ ii ] = raw_vars[ ii - 1 ];
@@ -486,7 +486,7 @@ OptEMultifunc::mpi_receive_func() const
 	MPI_Status stat;
 
 	for ( int ii = 1; ii < mpi_nprocs_; ++ii ) {
-		double ii_func( 0 );
+		core::Real ii_func( 0 );
 		MPI_Recv( & ii_func, 1, MPI_DOUBLE, ii, 1, MPI_COMM_WORLD, & stat );
 		total += ii_func;
 	}
@@ -507,7 +507,7 @@ OptEMultifunc::mpi_receive_dfunc(
 #ifdef USEMPI
 	MPI_Status stat;
 
-	double * dE_dvars_raw = new double[ dE_dvars.size() ];
+	core::Real * dE_dvars_raw = new core::Real[ dE_dvars.size() ];
 	for ( int ii = 1; ii < mpi_nprocs_; ++ii ) {
 		MPI_Recv( dE_dvars_raw, dE_dvars.size(), MPI_DOUBLE, ii, 1, MPI_COMM_WORLD, & stat );
 		for ( Size jj = 1; jj <= dE_dvars.size(); ++jj ) {

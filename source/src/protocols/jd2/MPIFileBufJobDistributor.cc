@@ -293,7 +293,7 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	n_nodes_left_to_spin_down_ = option[ OptionKeys::jd2::mpi_nowait_for_remaining_jobs ]() ? 0 : ( n_worker() );
-	double timeout_wait_factor = option[ OptionKeys::jd2::mpi_timeout_factor ]();  //wait at most X-times the average job-time for stray jobs...
+	core::Real timeout_wait_factor = option[ OptionKeys::jd2::mpi_timeout_factor ]();  //wait at most X-times the average job-time for stray jobs...
 	// Job Distribution Loop  --- receive message and process -- repeat
 	while ( current_job_id() || jobs_returned_ < jobs_assigned_ || n_nodes_left_to_spin_down_ ) {
 		tr.Debug << "current_job_id: " << current_job_id() << " jobs_returned " << jobs_returned_
@@ -307,8 +307,8 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 		//bool only_some_nodes_unfinished = ( 1.0 * n_nodes_left_to_spin_down_ / n_worker() ) < 0.2;
 
 
-		double timeout=MPI_Wtime();
-		double timeout_limit = ( cumulated_jobs_ < 1 || timeout_wait_factor <=0 ) ? 1e9 : cumulated_runtime_/cumulated_jobs_ * timeout_wait_factor ;
+		core::Real timeout=MPI_Wtime();
+		core::Real timeout_limit = ( cumulated_jobs_ < 1 || timeout_wait_factor <=0 ) ? 1e9 : cumulated_runtime_/cumulated_jobs_ * timeout_wait_factor ;
 		tr.Debug << "set timeout_limit to " << timeout_limit << std::endl;
 		while ( flag==0 ) {
 			if ( MPI_Wtime() - timeout > timeout_limit ) break;

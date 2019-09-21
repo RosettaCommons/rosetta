@@ -82,7 +82,7 @@ namespace star {
 
 static basic::Tracer TR( "protocols.star.StarAbinitio" );
 
-using Probabilities = utility::vector1<double>;
+using Probabilities = utility::vector1<core::Real>;
 
 using core::Real;
 using core::Size;
@@ -200,7 +200,7 @@ void StarAbinitio::setup_kinematics(const Loops& aligned, const vector1<unsigned
 	const Size num_residues = pose.size();
 	const Size vres = num_residues + 1;
 
-	xyzVector<double> center;
+	xyzVector<core::Real> center;
 	aligned.center_of_mass(pose, &center);
 	core::pose::addVirtualResAsRoot(center, pose);
 

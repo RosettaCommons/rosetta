@@ -33,6 +33,8 @@
 #include <protocols/cluster/calibur/SimPDB.hh>
 #include <protocols/cluster/calibur/PreloadedPDB.hh>
 
+#include <core/types.hh>
+
 namespace protocols {
 namespace cluster {
 namespace calibur {
@@ -55,13 +57,13 @@ enum EST_THRESHOLD_MODE {
 class Stru
 {
 public:
-	std::vector<double> calpha_vector_;
-	std::vector<double> signature_; //signature
+	std::vector<core::Real> calpha_vector_;
+	std::vector<core::Real> signature_; //signature
 	SimPDBOP mPDB;
 	Stru(SimPDBOP pdb, int len, bool use_sig);
 	~Stru();
-	double dist(double x, double y, double z, double const *zz);
-	double dist(double x, double y, double z);
+	core::Real dist(core::Real x, core::Real y, core::Real z, core::Real const *zz);
+	core::Real dist(core::Real x, core::Real y, core::Real z);
 };
 
 typedef utility::pointer::shared_ptr< Stru > StruOP;
@@ -75,9 +77,9 @@ public:
 
 	EST_THRESHOLD_MODE EST_THRESHOLD;
 	bool FILTER_MODE;
-	double xPercentile;
+	core::Real xPercentile;
 	bool autoAdjustPercentile;
-	double xFactor;
+	core::Real xFactor;
 
 	std::string mInputFileName;   // file which contains all PDB filenames
 	StringVec names_; // all decoy (file) names
@@ -85,25 +87,25 @@ public:
 	int n_pdbs_;   // will be set to mPDBs->size()
 	int mLen;      // #residues
 
-	double THRESHOLD;  // clustering threshold. most important parameter
+	core::Real THRESHOLD;  // clustering threshold. most important parameter
 
 	// - = - = - = - = - = - = - = - = - = - = - = - = - = -
 	// for auxiliary grouping
 
-	double CLU_RADIUS;  // cluster radius for auxClustering()
+	core::Real CLU_RADIUS;  // cluster radius for auxClustering()
 	std::vector< int > mCluCen; // cluster centers found using auxClustering()
 	std::vector< int >** auxiliary_clusters_; // cluster elements
 	std::vector< int > mCen;
-	std::vector< double > mD2C;    // distance from decoy in auxCluster to CluCen
+	std::vector< core::Real > mD2C;    // distance from decoy in auxCluster to CluCen
 	std::vector< int > num_neighbors_;   // the number of neighbors of each decoy
-	double bestClusMargin; // size(bestClus) -origsuze(2ndClus) /size(bestClus)
+	core::Real bestClusMargin; // size(bestClus) -origsuze(2ndClus) /size(bestClus)
 	int bestClusSize;
 
 	// - = - = - = - = - = - = - = - = - = - = - = - = - = -
 	// for clustering
 
 	std::vector< AdjacentListOP > adjacent_lists_; // lists of all neighbors
-	std::vector< double > references_;   // for {lower,upper}bounds through references
+	std::vector< core::Real > references_;   // for {lower,upper}bounds through references
 
 	int mFinalDecoy;
 	std::vector< AdjacentListOP > mFinalClusters;
@@ -115,18 +117,18 @@ public:
 	// Why aren't these temporaries
 	// I think for preallocation, use multiple times.
 	bool spaceAllocatedForRMSD;
-	double *result_coords;
+	core::Real *result_coords;
 	// storage for rmsfit_() computation
-	double *coord1;
-	double *coord2;
+	core::Real *coord1;
+	core::Real *coord2;
 
 	//- = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = -
 	// METHODS
 	//- = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = -
 
 	Clustering(); // do nothing
-	void initialize( std::string const & filename, double threshold);
-	void reinitialize( StringVec const &, std::vector< StruOP > const &, double const threshold );
+	void initialize( std::string const & filename, core::Real threshold);
+	void reinitialize( StringVec const &, std::vector< StruOP > const &, core::Real const threshold );
 	void cluster();
 	void showClusters(int);
 	void getPDBs( StringVec &, std::vector< StruOP > &, std::vector<int> const &, int);
@@ -144,14 +146,14 @@ public:
 	// for finding threshold
 
 	void getThresholdAndDecoys();
-	double get_threshold(std::vector< std::vector< double > > const & nbors, int, int, int, int, double, double);
-	void get_neighbor_list(std::vector< StruOP > const &, StringVec const &, int, std::vector< std::vector< double > > & nbors );
-	//double ** get_neighbor_list(std::vector<Stru *> *, std::vector<Stru *> *, int);
-	void get_neighbor_list(std::vector< StruOP > const &, int, double &, double &, std::vector< std::vector< double > > & nbors );
-	void estimateDist( StringVec const &, int, int, double,
-		double &, double &, double &, double &);
-	void estimateDist(std::vector< StruOP > const &, double,
-		double &, double &, double &, double &);
+	core::Real get_threshold(std::vector< std::vector< core::Real > > const & nbors, int, int, int, int, core::Real, core::Real);
+	void get_neighbor_list(std::vector< StruOP > const &, StringVec const &, int, std::vector< std::vector< core::Real > > & nbors );
+	//core::Real ** get_neighbor_list(std::vector<Stru *> *, std::vector<Stru *> *, int);
+	void get_neighbor_list(std::vector< StruOP > const &, int, core::Real &, core::Real &, std::vector< std::vector< core::Real > > & nbors );
+	void estimateDist( StringVec const &, int, int, core::Real,
+		core::Real &, core::Real &, core::Real &, core::Real &);
+	void estimateDist(std::vector< StruOP > const &, core::Real,
+		core::Real &, core::Real &, core::Real &, core::Real &);
 
 	std::vector< std::string > getRandomDecoyNames( StringVec const &, int );
 	void destroyRandomDecoys( StringVec const &, std::vector< StruOP > const &);
@@ -171,22 +173,22 @@ public:
 	// - = - = - = - = - = - = - = - = - = - = - = -
 
 	void initRef(int* index);
-	void refBound(int i, int j, double& lower, double& upper);
+	void refBound(int i, int j, core::Real& lower, core::Real& upper);
 	//bool find(int which, std::vector<int> *elements); // too slow
 
 	// - = - = - = - = - = - = - = - = - = - = - = -
 
 	void realignDecoys(int ref);
-	void superimposeAndReplace(std::vector<double> & coor1, std::vector<double> & coor2);
-	double eucD(int i, int j);
+	void superimposeAndReplace(std::vector<core::Real> & coor1, std::vector<core::Real> & coor2);
+	core::Real eucD(int i, int j);
 
 	// - = - = - = - = - = - = - = - = - = - = - = -
 
 	// methods for rmsd computation
-	double estD( int i, int j );
-	double estD( Stru const & a, Stru const & b );
-	double trueD( Stru const & a, Stru const & b );
-	double trueD( int i, int j );
+	core::Real estD( int i, int j );
+	core::Real estD( Stru const & a, Stru const & b );
+	core::Real trueD( Stru const & a, Stru const & b );
+	core::Real trueD( int i, int j );
 	// storage for RMSD() computation
 	void allocateSpaceForRMSD(int len);
 };

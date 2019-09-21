@@ -1612,7 +1612,7 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 			lig_part_sum_it != lig_part_sums.end(); ++lig_part_sum_it ) {
 
 		tr << "LIGPARTCOMPARE ";
-		for ( double comp_it : (*lig_part_sum_it) ) {
+		for ( core::Real comp_it : (*lig_part_sum_it) ) {
 			tr << comp_it << " ";
 		}
 		tr << std::endl;

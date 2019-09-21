@@ -121,22 +121,22 @@ Boinc::initialize_worker( void )
 }
 
 
-double Boinc::get_project_pref_max_gfx_fps() { return project_pref_max_gfx_fps_; }
-double Boinc::get_project_pref_max_gfx_cpu() { return project_pref_max_gfx_cpu_; }
+core::Real Boinc::get_project_pref_max_gfx_fps() { return project_pref_max_gfx_fps_; }
+core::Real Boinc::get_project_pref_max_gfx_cpu() { return project_pref_max_gfx_cpu_; }
 int Boinc::get_project_pref_max_cpu_run_time() { return project_pref_max_cpu_run_time_; }
 background_type Boinc::get_project_pref_bg() { return project_pref_bg_; }
 
-void Boinc::set_project_pref_max_gfx_fps( double project_pref_max_gfx_fps ) {
+void Boinc::set_project_pref_max_gfx_fps( core::Real project_pref_max_gfx_fps ) {
 	project_pref_max_gfx_fps_ = project_pref_max_gfx_fps;
 }
-void Boinc::set_project_pref_max_gfx_cpu( double project_pref_max_gfx_cpu ) {
+void Boinc::set_project_pref_max_gfx_cpu( core::Real project_pref_max_gfx_cpu ) {
 	project_pref_max_gfx_cpu_ = project_pref_max_gfx_cpu;
 }
 void Boinc::set_project_pref_max_cpu_run_time( int project_pref_max_cpu_run_time ) {
 	project_pref_max_cpu_run_time_ = project_pref_max_cpu_run_time;
 }
 
-void Boinc::set_working_set_size( double working_set_size ) {
+void Boinc::set_working_set_size( core::Real working_set_size ) {
 	working_set_size_ = working_set_size;
 	if (working_set_size_max_val_ < working_set_size_) {
 		working_set_size_max_val_ = working_set_size_;
@@ -157,8 +157,8 @@ See http://boinc.berkeley.edu/trac/wiki/BasicApi
 	boinc_get_init_data(app_init_data); // BOINC API call
 	if (!app_init_data.project_preferences) return;
 
-	double max_gfx_fpstmp = 0.0;
-	double max_gfx_cputmp = 0.0;
+	core::Real max_gfx_fpstmp = 0.0;
+	core::Real max_gfx_cputmp = 0.0;
 	int cpu_run_timetmp = 0;
 	int bgtmp = 0;
 	parse_double(app_init_data.project_preferences, "<max_fps>", max_gfx_fpstmp);
@@ -180,7 +180,7 @@ See http://boinc.berkeley.edu/trac/wiki/BasicApi
 	}
 }
 
-double Boinc::get_remaining_cpu_time() {
+core::Real Boinc::get_remaining_cpu_time() {
 	read_and_set_project_prefs(); // get user max cpu run time preference
 	boinc_wu_cpu_time(cpu_time_); // BOINC API call for wu cpu run time
 	return project_pref_max_cpu_run_time_ - cpu_time_;
@@ -195,10 +195,10 @@ void Boinc::update_pct_complete() {
 	// If we've done many decoys then safely make a more accurate estimate of the time remaining.
 	using namespace basic::options;
 	int cpu_run_timeout = option[ OptionKeys::boinc::cpu_run_timeout ]();
-	double estimated_wu_length = (double)project_pref_max_cpu_run_time_  + (double(cpu_run_timeout) / (double(decoy_count_) + 1.0) );
+	core::Real estimated_wu_length = (core::Real)project_pref_max_cpu_run_time_  + (core::Real(cpu_run_timeout) / (core::Real(decoy_count_) + 1.0) );
 
 	if( ( estimated_wu_length - cpu_time_ ) < 10*60 ) estimated_wu_length = cpu_time_ + 10*60;
-	double new_frac = cpu_time_ / ( estimated_wu_length );
+	core::Real new_frac = cpu_time_ / ( estimated_wu_length );
 
 	//Only update if increasing
 	if (new_frac > fraction_done_) {
@@ -214,8 +214,8 @@ void Boinc::update_pct_complete() {
 }
 
 //call to BOINC API call for wu cpu run time
-double Boinc::get_boinc_wu_cpu_time(){
-		double tmp_cpu_time;
+core::Real Boinc::get_boinc_wu_cpu_time(){
+		core::Real tmp_cpu_time;
 		boinc_wu_cpu_time(tmp_cpu_time);
 		return(tmp_cpu_time);
 }
@@ -262,13 +262,13 @@ bool Boinc::worker_is_finished( const int & total_nstruct ){
 #endif
 	// not finished if a structure is not made yet
 	if (total_nstruct <= 0) return false;
-	double time_left = get_remaining_cpu_time();
+	core::Real time_left = get_remaining_cpu_time();
 	using namespace basic::options;
 	if (
 			// finished if max_cpu_run_time_ reached
 			time_left < 1 ||
 			// finished if there is not enough time to make another structure
-			time_left < cpu_time_/double(total_nstruct) ||
+			time_left < cpu_time_/core::Real(total_nstruct) ||
 			// finished if too many models
 			total_nstruct >= option[ OptionKeys::boinc::max_nstruct ]
 		) {
@@ -368,7 +368,7 @@ void Boinc::worker_finish_summary( const int & num_decoys, const int & attempted
 	if (decoy_cnt < 1) decoy_cnt = 1;
 	int attempt_cnt = attempted_decoys;
 	if (attempt_cnt < 1) attempt_cnt = 1;
-	double cputime = 0.0;
+	core::Real cputime = 0.0;
 	boinc_wu_cpu_time(cputime); // get wu cpu run time
 	// prevent invalid cpu times (validator doesnt accept things that took less then 1200 seconds ):
 	if(cputime < 1200 ) cputime = 1201;
@@ -1092,10 +1092,10 @@ BoincSharedMemory* Boinc::shmem_ = NULL;
 
 // worker status
 bool Boinc::worker_initialized_ = false;
-double Boinc::fraction_done_ = 0.0;
-double Boinc::cpu_time_ = 0.0;
-double Boinc::working_set_size_ = 0.0;
-double Boinc::working_set_size_max_val_ = 0.0;
+core::Real Boinc::fraction_done_ = 0.0;
+core::Real Boinc::cpu_time_ = 0.0;
+core::Real Boinc::working_set_size_ = 0.0;
+core::Real Boinc::working_set_size_max_val_ = 0.0;
 
 // for checking progress
 int Boinc::checkpoint_count_ = 0;
@@ -1108,8 +1108,8 @@ bool Boinc::worker_running_ = false;
 // default project prefs
 // don't change these defaults or boinc users may get upset
 // these are user changable preferences
-double Boinc::project_pref_max_gfx_fps_ = BOINC_MAX_GFX_FPS;
-double Boinc::project_pref_max_gfx_cpu_ = BOINC_MAX_GFX_CPU;
+core::Real Boinc::project_pref_max_gfx_fps_ = BOINC_MAX_GFX_FPS;
+core::Real Boinc::project_pref_max_gfx_cpu_ = BOINC_MAX_GFX_CPU;
 int Boinc::project_pref_max_cpu_run_time_ = BOINC_DEFAULT_MAX_CPU_RUN_TIME;
 background_type Boinc::project_pref_bg_ = BLUE_GRADIENT_BG;
 

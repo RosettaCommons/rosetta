@@ -2242,7 +2242,7 @@ DynamicAggregateFunctionDriver::distribute_jobs_to_remote_daemons(
 	int MPI_nprocs = utility::mpi_nprocs();
 	int nstructs = num_states();
 
-	auto njobs_per_cpu = static_cast< int > ( std::ceil( (double) nstructs / MPI_nprocs ));
+	auto njobs_per_cpu = static_cast< int > ( std::ceil( (core::Real) nstructs / MPI_nprocs ));
 	/// Assign myself fewer states than to all other nodes if the number of states is not evenly divisible
 	/// by the number of processors.
 

@@ -347,7 +347,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 	if ( option[OptionKeys::remodel::resclass_by_sasa]() ) {
 		//simply repackage the values so either metric can feed into the code
 		int count = 1 ;
-		for ( double & it : sasa_list ) {
+		for ( core::Real & it : sasa_list ) {
 			sizemap[count] = Size(it);
 			count++;
 		}

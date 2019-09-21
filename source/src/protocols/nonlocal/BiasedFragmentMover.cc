@@ -47,7 +47,7 @@
 namespace protocols {
 namespace nonlocal {
 
-using Probabilities = utility::vector1<double>;
+using Probabilities = utility::vector1<core::Real>;
 
 BiasedFragmentMover::BiasedFragmentMover(const PolicyOP& policy, Probabilities const & pdf)
 : policy_(policy), pdf_(pdf) {
@@ -84,7 +84,7 @@ void BiasedFragmentMover::verify_probabilities_or_die(const core::kinematics::Fo
 
 		// In order to avoid folding across the cut, certain residues must have zero probability of selection
 		for ( unsigned j = (cutpoint - fragment_len + 2); j <= cutpoint; ++j ) {
-			const double prob = pdf_[j];
+			const core::Real prob = pdf_[j];
 			if ( prob > 0 ) {
 				utility_exit_with_message((boost::format("Non-zero selection probability for unmodifiable residue %1%") % j).str());
 			}

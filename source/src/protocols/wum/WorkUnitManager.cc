@@ -141,9 +141,9 @@ void WorkUnitManager::write_queue( const WorkUnitQueue &the_queue, std::ostream 
 void WorkUnitManager::write_work_unit( const WorkUnitBaseOP& MPI_ONLY(wu), std::ostream& MPI_ONLY( out ) ) const {
 #ifdef USEMPI
 	// serialize data
-	double time1=MPI_Wtime();
+	core::Real time1=MPI_Wtime();
 	wu->serialize();
-	double time2=MPI_Wtime();
+	core::Real time2=MPI_Wtime();
 	// now send data
 	int size_of_raw_data;
 	unsigned char * raw_data_ptr=NULL;
@@ -156,7 +156,7 @@ void WorkUnitManager::write_work_unit( const WorkUnitBaseOP& MPI_ONLY(wu), std::
 	delete [] raw_data_ptr;
 	TR.Debug << "  Deleted temp data.. " << std::endl;
 	wu->clear_serial_data();
-	double time3=MPI_Wtime();
+	core::Real time3=MPI_Wtime();
 	TR.Debug << "S: " << time3-time2 << "  " << time2-time1 << "  " << std::endl;
 #endif
 }

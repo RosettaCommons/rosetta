@@ -52,11 +52,11 @@ const int VISITED = 1;
 const int PREVIOUS_HILL = 2;
 const int HILL = 3;
 const int VISITED_HILL = 4;
-const double ED = 2;
-const double KT = 15;
+const core::Real ED = 2;
+const core::Real KT = 15;
 
-double TailsScoreMover::visit(
-	double in_current_min,
+core::Real TailsScoreMover::visit(
+	core::Real in_current_min,
 	int in_current_min_ltail,
 	int in_current_min_rtail,
 	int in_ltail,
@@ -189,7 +189,7 @@ void TailsScoreMover::make_tail(utility::vector1< core::Size > & tail,int in_lta
 //////////////////////////////////////////////////
 //Searches through all combinations of tails    //
 //////////////////////////////////////////////////
-double TailsScoreMover::score_mode1(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, pose::Pose & pose)
+core::Real TailsScoreMover::score_mode1(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, pose::Pose & pose)
 {
 	TR<< "mode 1" << std::endl;
 	int sequence_length = pose.size(); // Need to get protein sequence length
@@ -237,7 +237,7 @@ double TailsScoreMover::score_mode1(int& out_min_ltail_length, int& out_min_rtai
 //to stay in local minimum we are going to figure out the number of tail steps as following:                         //
 //cut tail until the energy doesn't increase by KT from current min value or reach the middle of protein sequence       //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-double TailsScoreMover::score_mode2(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, pose::Pose & pose)
+core::Real TailsScoreMover::score_mode2(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, pose::Pose & pose)
 {
 	TR<< "mode 2" << std::endl;
 	int sequence_length = pose.size(); // Need to get protein sequence length
@@ -307,7 +307,7 @@ double TailsScoreMover::score_mode2(int& out_min_ltail_length, int& out_min_rtai
 }
 
 //Looks for local min
-double TailsScoreMover::score_mode3(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, pose::Pose & pose)
+core::Real TailsScoreMover::score_mode3(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, pose::Pose & pose)
 {
 	TR<< "mode 3" << std::endl;
 	int array_of_visits[200][200] = {{0}};
@@ -318,7 +318,7 @@ double TailsScoreMover::score_mode3(int& out_min_ltail_length, int& out_min_rtai
 	int min_rtail_length = 0;
 	Real min_updated_tail_score = 0;
 
-	double hill_size = 0;
+	core::Real hill_size = 0;
 	m_done_all = false;
 	while ( hill_size < KT && !m_done_all )
 			{
@@ -327,7 +327,7 @@ double TailsScoreMover::score_mode3(int& out_min_ltail_length, int& out_min_rtai
 		core::Real m_hill_size = 0;
 		core::Real  m_number_of_hill_points = 0;
 		make_tail(tail, 0,0,sequence_length);
-		double min_current_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
+		core::Real min_current_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
 		//Real barrier = min_current_tail_score + 2;
 
 		min_updated_tail_score = visit(min_current_tail_score, 0, 0,
@@ -391,7 +391,7 @@ TailsScoreMover::apply( pose::Pose & pose )
 		TR.Error << "Unable to open tail output file for writing. " << std::endl;
 	}
 
-	double free_energy = 0;
+	core::Real free_energy = 0;
 	int out_min_ltail_length = 0;
 	int out_min_rtail_length = 0;
 

@@ -60,7 +60,7 @@ void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Lo
 	chunks_by_CA_CA_distance(pose, chunks, option[OptionKeys::rigid::max_ca_ca_dist]());
 }
 
-void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::LoopsOP chunks, double threshold) {
+void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::LoopsOP chunks, core::Real threshold) {
 	using core::Size;
 	using core::id::NamedAtomID;
 	using numeric::xyzVector;
@@ -73,10 +73,10 @@ void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Lo
 	vector1<Size> violated_residues;
 	violated_residues.push_back(1);
 	for ( Size i = 2; i <= pose.size(); ++i ) {
-		const xyzVector<double>& prev_xyz = pose.xyz(NamedAtomID("CA", i - 1));
-		const xyzVector<double>& curr_xyz = pose.xyz(NamedAtomID("CA", i));
+		const xyzVector<core::Real>& prev_xyz = pose.xyz(NamedAtomID("CA", i - 1));
+		const xyzVector<core::Real>& curr_xyz = pose.xyz(NamedAtomID("CA", i));
 
-		double distance = prev_xyz.distance(curr_xyz);
+		core::Real distance = prev_xyz.distance(curr_xyz);
 		if ( distance > threshold ) {
 			// Residues j and j - 1 are separated by more than max_ca_ca_dist Angstroms
 			violated_residues.push_back(i);

@@ -234,13 +234,13 @@ public:
 
 	// convert 1d power spectrum into 3d map
 	void
-	map_from_spectrum( utility::vector1< core::Real > const& pose_1dspec, ObjexxFCL::FArray3D< double > &rot );
+	map_from_spectrum( utility::vector1< core::Real > const& pose_1dspec, ObjexxFCL::FArray3D< core::Real > &rot );
 
 	/// @brief  step 0: map pose to spherically sampled density
 	void
 	poseSphericalSamples(
 		core::pose::Pose const &pose,
-		ObjexxFCL::FArray3D< double > &sigR);
+		ObjexxFCL::FArray3D< core::Real > &sigR);
 
 	/// @brief  step 1: select points over which to search (saved in class variable)
 	void

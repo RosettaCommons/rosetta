@@ -241,12 +241,12 @@ public:
 
 	void
 	report_and_reset_timers(
-		std::chrono::duration<double> &pack_time,
-		std::chrono::duration<double> &min_time
+		std::chrono::duration<core::Real> &pack_time,
+		std::chrono::duration<core::Real> &min_time
 	) {
 		pack_time = pack_time_;
 		min_time = min_time_;
-		pack_time_ = min_time_ = std::chrono::duration<double>{};
+		pack_time_ = min_time_ = std::chrono::duration<core::Real>{};
 	}
 
 	bool has_atom_type( int atype ){ return !(raw_faatr_.find( atype ) == raw_faatr_.end()); }
@@ -321,7 +321,7 @@ private:
 	bool exact_, debug_, force_exact_min_;
 
 	// reporting runtime
-	std::chrono::duration<double> min_time_, pack_time_;
+	std::chrono::duration<core::Real> min_time_, pack_time_;
 
 	//unique atoms grid calculated for
 	std::map< int, core::conformation::Atom > uniq_atoms_; // KEEP AS INT, IT IS NOT A SIZE

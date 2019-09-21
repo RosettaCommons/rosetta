@@ -31,6 +31,8 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
+#include <core/types.hh>
+
 namespace protocols {
 namespace cluster {
 namespace calibur {
@@ -45,8 +47,8 @@ unsigned int num_lines_in_file( std::string const & filename );
 //- = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = -
 
 int toInt( std::string const & aString );
-double toFloat( std::string const & aString );
-void center_residues( std::vector<double> & calpha_vector, int num_residue_ );
+core::Real toFloat( std::string const & aString );
+void center_residues( std::vector<core::Real> & calpha_vector, int num_residue_ );
 
 INPUT_FILE_TYPE
 filetype( std::string const & filename );

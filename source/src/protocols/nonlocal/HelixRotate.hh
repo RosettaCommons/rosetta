@@ -44,7 +44,7 @@ namespace nonlocal {
 class HelixRotate : public moves::Mover {
 public:
 	HelixRotate();
-	HelixRotate(const protocols::loops::Loop& helix, double degrees);
+	HelixRotate(const protocols::loops::Loop& helix, core::Real degrees);
 
 	/// @brief Rotates the helix by the specified number of degrees
 	void apply(core::pose::Pose& pose) override;
@@ -62,17 +62,17 @@ public:
 	const protocols::loops::Loop& get_helix() const;
 
 	/// @brief Returns the number of degrees to rotate the helix
-	double get_degrees() const;
+	core::Real get_degrees() const;
 
 	/// @brief Updates the helix to be modified
 	void set_helix(const protocols::loops::Loop& helix);
 
 	/// @brief Updates the number of degrees to rotate the helix
-	void set_degrees(double degrees);
+	void set_degrees(core::Real degrees);
 
 private:
 	/// @brief Shared initialization routine
-	void initialize(const protocols::loops::Loop& helix, double degrees);
+	void initialize(const protocols::loops::Loop& helix, core::Real degrees);
 
 	/// @brief Returns true if this instance is valid and fully configured
 	bool is_valid() const;
@@ -88,14 +88,14 @@ private:
 	/// @brief Computes rotational parameters-- axis and point
 	void get_rotation_parameters(
 		const core::pose::Pose& pose,
-		numeric::xyzVector<double>* axis,
-		numeric::xyzVector<double>* point) const;
+		numeric::xyzVector<core::Real>* axis,
+		numeric::xyzVector<core::Real>* point) const;
 
 	/// @brief Stretch of contiguous residues representing the helix to be rotated
 	protocols::loops::Loop helix_;
 
 	/// @brief Number of degrees to rotate the helix
-	double degrees_;
+	core::Real degrees_;
 };
 
 }  // namespace nonlocal

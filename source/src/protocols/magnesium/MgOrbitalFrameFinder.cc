@@ -66,7 +66,7 @@ MgOrbitalFrameFinder::determine_mg_orbital_frame( pose::Pose & pose,
 	sample_orbital_frame( pose, i, ligands );
 
 	clock_t end_time = clock();
-	TR << "orbital frame finder finished in " << double(end_time - start_time) / CLOCKS_PER_SEC << " seconds." << std::endl;
+	TR << "orbital frame finder finished in " << core::Real(end_time - start_time) / CLOCKS_PER_SEC << " seconds." << std::endl;
 }
 
 

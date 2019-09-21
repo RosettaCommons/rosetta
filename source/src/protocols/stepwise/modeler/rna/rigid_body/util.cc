@@ -274,7 +274,7 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 
 	TR.Debug << std::setw( 50 ) << std::left << "Analysis " + DOF_one + "_" + DOF_two;
 	TR.Debug << " tot_count = " << std::setw( 15 ) << std::left << total_count << " tot_occ = " << std::setw( 15 ) << std::left << total_occupied_bin;
-	TR.Debug << " tot_count/tot_occ_bin = " << std::setw( 5 ) << std::left << ( double( total_count )/double( total_occupied_bin ) ) << std::endl;
+	TR.Debug << " tot_count/tot_occ_bin = " << std::setw( 5 ) << std::left << ( core::Real( total_count )/core::Real( total_occupied_bin ) ) << std::endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

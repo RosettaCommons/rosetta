@@ -388,7 +388,7 @@ ScoringSecMatchRPE::eval_cd_2b_residues(
 
 		auto sco_it = secmatch_scotypes_cutoff_.begin();
 
-		for ( double real_it : secmatch_value_cutoff_ ) {
+		for ( core::Real real_it : secmatch_value_cutoff_ ) {
 
 			//if scoretype is not 2b type, we skip and continue
 			//We will skip scoretype that is not 2b type to calculate the total score

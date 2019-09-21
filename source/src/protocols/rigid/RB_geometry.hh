@@ -32,8 +32,8 @@
 namespace protocols {
 namespace geometry {
 
-numeric::xyzMatrix_double
-random_reorientation_matrix(const double phi_range= 360.0, const double psi_range= 360.0);
+numeric::xyzMatrix_real
+random_reorientation_matrix(const core::Real phi_range= 360.0, const core::Real psi_range= 360.0);
 
 core::Vector centroid_by_residues(core::conformation::ResidueCOPs residue_c_pointers);
 

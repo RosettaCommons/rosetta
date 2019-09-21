@@ -69,7 +69,7 @@ using namespace core;
 using namespace scoring;
 
 using mutations = utility::vector1<core::chemical::AA>;
-using ddgs = utility::vector1<double>;
+using ddgs = utility::vector1<core::Real>;
 
 namespace protocols {
 void
@@ -77,7 +77,7 @@ print_ddgs(std::string ddg_out,
 	std::string label,
 	ddgs delta_e_components,
 	ddgs /*mut_avg_components*/,
-	double total_ddgs
+	core::Real total_ddgs
 ){
 	std::ofstream ddg_output(ddg_out.c_str(), std::ios_base::app);
 	if ( !ddg_output ) {
@@ -189,7 +189,7 @@ ddG_main()
 
 	int num_iterations = option[ OptionKeys::ddg::iterations ]();
 	bool opt_nbrs = false;
-	double cutoff = -1;
+	core::Real cutoff = -1;
 	if ( basic::options::option[ OptionKeys::ddg::opt_radius].user() ) {
 		opt_nbrs = true;
 		cutoff = basic::options::option[ OptionKeys::ddg::opt_radius ]();
@@ -223,13 +223,13 @@ ddG_main()
 	bool mean = option[OptionKeys::ddg::mean]();
 	bool min = option[OptionKeys::ddg::min]();
 
-	ObjexxFCL::FArray2D<double> wt_scores(20,num_iterations);
+	ObjexxFCL::FArray2D<core::Real> wt_scores(20,num_iterations);
 
 	utility::vector1<core::chemical::AA> all_unk(pose.size(),core::chemical::aa_unk);
 
-	utility::vector1<double> wt_averaged_score_components;
+	utility::vector1<core::Real> wt_averaged_score_components;
 	utility::vector1<ddgs> delta_energy_components;
-	utility::vector1<double> total_ddgs;
+	utility::vector1<core::Real> total_ddgs;
 	utility::vector1<ddgs> mutant_averaged_score_components;
 	utility::vector1<std::string> delta_delta_G_label;
 

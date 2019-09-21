@@ -1620,7 +1620,7 @@ Matcher::initialize_bump_grids()
 
 	TR << "...done" << std::endl;
 	clock_t stoptime = clock();
-	TR << " TIMING: Bump grids took " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " seconds to compute" << std::endl;
+	TR << " TIMING: Bump grids took " << ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC << " seconds to compute" << std::endl;
 }
 
 void
@@ -2191,7 +2191,7 @@ Matcher::process_matches_main_loop_enumerating_all_hit_combos( output::MatchProc
 	clock_t starttime = clock();
 	utility::vector1< std::list< Hit const * > > hit_ccs = finders[ 1 ].connected_components();
 	clock_t stoptime = clock();
-	TR << "Found " << hit_ccs.size() << " connected component" << ( hit_ccs.size() != 1 ? "s" : "" ) << " in the hit neighbor graph in " << ((double) stoptime - starttime ) / CLOCKS_PER_SEC << " seconds." << std::endl;
+	TR << "Found " << hit_ccs.size() << " connected component" << ( hit_ccs.size() != 1 ? "s" : "" ) << " in the hit neighbor graph in " << ((core::Real) stoptime - starttime ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 	//TR << "CONNECTED COMPONENTS: " << hit_ccs.size() << std::endl;
 	// -- this doesn't work -- don't turn it on -- #pragma omp parallel for
 	for ( Size ii = 1; ii <= hit_ccs.size(); ++ii ) {
@@ -2421,19 +2421,19 @@ Matcher::predict_n_matches_for_hit_subsets(
 
 	/// 1. First approximation: just add the log of the number of hits in all bins.
 	/// If this is less than the log of the accuracy threshold, then don't bother computing a more accurate estimate.
-	Real log_n_combos = std::log( (double) neighbor_hits[ 1 ].size() );
+	Real log_n_combos = std::log( (core::Real) neighbor_hits[ 1 ].size() );
 	TR << "predict_n_matches_for_hit_subsets with #hits for each geomcst: " << neighbor_hits[ 1 ].size();
 	for ( Size ii = 2; ii <= n_geometric_constraints_; ++ii ) {
 		if ( ! geomcst_is_upstream_only_[ ii ] ) {
 			Size ii_nhits = neighbor_hits[ ii ].size();
 			if ( ii_nhits == 0 ) { TR << std::endl; return 0; } // Quit now, no hits for this non-upstream-only geometric constraint
-			log_n_combos += std::log( (double) ii_nhits ) ;
+			log_n_combos += std::log( (core::Real) ii_nhits ) ;
 			TR << " " << ii_nhits;
 		}
 		//std::cout << "blah 1 " << std::endl;
 	}
 	TR << std::endl;
-	if ( log_n_combos < std::log( (double) accuracy_threshold ) ) return static_cast< Size > ( exp( log_n_combos )) + 1; // good enough approximation
+	if ( log_n_combos < std::log( (core::Real) accuracy_threshold ) ) return static_cast< Size > ( exp( log_n_combos )) + 1; // good enough approximation
 
 
 	MatchCounter match_counter;

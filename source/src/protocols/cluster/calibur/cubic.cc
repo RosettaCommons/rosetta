@@ -27,21 +27,21 @@ namespace calibur {
 //- = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = -
 
 
-void cubic_roots1(double a2, double a1, double a0, double * z) {
-	double p_over_3 = (3*a1 - a2*a2)/9.;
-	double q_over_2 = (9*a2*a1 - 27*a0 - 2*a2*a2*a2) /54.;
+void cubic_roots1(core::Real a2, core::Real a1, core::Real a0, core::Real * z) {
+	core::Real p_over_3 = (3*a1 - a2*a2)/9.;
+	core::Real q_over_2 = (9*a2*a1 - 27*a0 - 2*a2*a2*a2) /54.;
 	if ( p_over_3 >= 0 ) {
 		// can proceed to obtain root using sinh(C)
 		z[0] = z[1] = z[2] = 0;
 		return;
 	} else { // p is negative
 		p_over_3 = -p_over_3;
-		double C = q_over_2 / sqrt(p_over_3 * p_over_3 * p_over_3);
+		core::Real C = q_over_2 / sqrt(p_over_3 * p_over_3 * p_over_3);
 		if ( C >= -1 && C <= 1 ) {
 			// Then, cos(3*theta) = C. This gives 3 solutions, respectively
 			// cos(acos(C)/3), cos((acos(C)+2pi)/3), cos((acos(C)+4pi)/3)
-			double theta = acos(C);
-			double a2_over_3 = a2/3.;
+			core::Real theta = acos(C);
+			core::Real a2_over_3 = a2/3.;
 			z[0] = z[1] = z[2] = 2 * sqrt(p_over_3);
 			z[0] = z[0] * cos( theta    / 3.) - a2_over_3;
 			z[1] = z[1] * cos((theta + 2.*PI) / 3.) - a2_over_3;
@@ -57,15 +57,15 @@ void cubic_roots1(double a2, double a1, double a0, double * z) {
 * This is faster but leaves no option for obtaining imaginary roots.
 * (After "-O" in GCC, the speed gain is not much, only ~4%)
 */
-void cubic_roots2(double a2, double a1, double a0, double* z) {
-	double Q = (3*a1 - a2*a2)/9.;
-	double R = (9*a2*a1 - 27*a0 - 2*a2*a2*a2) /54.;
-	double Q3 = Q*Q*Q;
+void cubic_roots2(core::Real a2, core::Real a1, core::Real a0, core::Real* z) {
+	core::Real Q = (3*a1 - a2*a2)/9.;
+	core::Real R = (9*a2*a1 - 27*a0 - 2*a2*a2*a2) /54.;
+	core::Real Q3 = Q*Q*Q;
 	if ( Q3 + R*R < 0 ) { // condition for 3 real roots
 		// Q3+R2<0 implies Q3<0, and sqrt(-Q3) is real
-		double negsqrtQ3 = sqrt(-Q3);
-		double theta = acos(R/negsqrtQ3);
-		double a2_over_3 = a2/3.;
+		core::Real negsqrtQ3 = sqrt(-Q3);
+		core::Real theta = acos(R/negsqrtQ3);
+		core::Real a2_over_3 = a2/3.;
 		z[0] = z[1] = z[2] = 2 * sqrt(-Q);
 		z[0] = z[0] * cos( theta    /3.) - a2_over_3;
 		z[1] = z[1] * cos((theta + 2.*PI) /3.) - a2_over_3;

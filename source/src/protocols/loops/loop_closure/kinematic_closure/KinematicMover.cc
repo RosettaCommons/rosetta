@@ -1082,7 +1082,7 @@ KinematicMover::get_loop_sequence() const
 void
 KinematicMover::insert_sampled_torsion_string_into_taboo_map( core::conformation::torsion_bin_string const & ts )
 {
-	if ( sequence_.size() > 0 && taboo_map_.size() > pow(4.0, (double) sequence_.size()) * taboo_map_max_capacity_ ) {
+	if ( sequence_.size() > 0 && taboo_map_.size() > pow(4.0, (core::Real) sequence_.size()) * taboo_map_max_capacity_ ) {
 		TR << "Taboo map filled to " << taboo_map_max_capacity_*100 << "% capacity, clearing the map to avoid almost-endless loops. " << taboo_map_.size() << std::endl;
 		taboo_map_.clear();
 	}

@@ -520,7 +520,7 @@ core::Real BBConRotMover::calc_jacobian_cartesians(
 	xyzVector const &v10
 )
 {
-	double A[5][5];
+	core::Real A[5][5];
 
 	xyzVector u1(v7-v6);
 	u1.normalize();
@@ -582,7 +582,7 @@ core::Real BBConRotMover::calc_jacobian_cartesians(
 	A[3][4] = b.x();
 	A[4][4] = b.y();
 
-	double det;
+	core::Real det;
 	Real jacobian;
 	if ( get_determinant( A, 5, det ) ) {
 		jacobian = 1.0 / std::fabs(det);
@@ -805,11 +805,11 @@ bool BBConRotMover::closure(
 	return crfailed;
 }
 
-bool BBConRotMover::get_determinant(double a[5][5], int n, double &d)
+bool BBConRotMover::get_determinant(core::Real a[5][5], int n, core::Real &d)
 {
 	int i,imax=0,j,k;
-	double big,dum,sum,temp;
-	double vv[10];
+	core::Real big,dum,sum,temp;
+	core::Real vv[10];
 	//int indx[10];
 
 	d=1.0;

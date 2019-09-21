@@ -73,7 +73,7 @@ MgWaterHydrogenPacker::apply( pose::Pose & pose )
 		apply( pose, mg_water_pairs_[ i ] );
 		clock_t end_time = clock();
 
-		std::cout << "pack_mg_water finished in " << double(end_time - start_time) / CLOCKS_PER_SEC << " seconds." << std::endl;
+		std::cout << "pack_mg_water finished in " << core::Real(end_time - start_time) / CLOCKS_PER_SEC << " seconds." << std::endl;
 	}
 
 	std::cout << "Processed " << mg_water_pairs_.size() <<  std::endl;

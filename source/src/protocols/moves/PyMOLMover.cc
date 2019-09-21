@@ -354,8 +354,8 @@ std::string PyMOLMover::get_PyMOL_model_name(Pose const & pose) const
 bool PyMOLMover::is_it_time()
 {
 	// First let's check if enough time have passes since last time we send info...
-	//double t = clock() / CLOCKS_PER_SEC;
-	double t = time(nullptr);
+	//core::Real t = clock() / CLOCKS_PER_SEC;
+	core::Real t = time(nullptr);
 	//TR << "t=" << t << " cl="<< clock() << std::endl;
 	if ( t - last_packet_sent_time_ < update_interval_ ) return false;
 	last_packet_sent_time_ = t;

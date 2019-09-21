@@ -307,7 +307,7 @@ void CA_superimpose( core::pose::Pose const&  ref_pose, core::pose::Pose& fit_po
 
 
 void calc_fit_R(int natoms, Real const* weights, rvec const* xp,rvec const*x, matrix R );
-void jacobi(double a[6][6],double d[],double v[6][6],int *nrot);
+void jacobi(core::Real a[6][6],core::Real d[],core::Real v[6][6],int *nrot);
 
 /// @brief A function (not a macro) that will not print a square matrix to tr.Debug
 template< class T > void dump_matrix( Size, T const &, basic::Tracer & ) {}
@@ -449,9 +449,9 @@ void calc_fit_R(int natoms, Real const* weights, rvec const* xref, rvec const*x,
 {
 
 	int    c,r,n,j,i,irot;
-	double omega[ DIM6 ][ DIM6 ];
-	double om[ DIM6 ] [ DIM6 ];
-	double d[ DIM6 ],xnr,xpc;
+	core::Real omega[ DIM6 ][ DIM6 ];
+	core::Real om[ DIM6 ] [ DIM6 ];
+	core::Real d[ DIM6 ],xnr,xpc;
 	matrix vh,vk,u;
 	Real   mn;
 	int    index;
@@ -467,7 +467,7 @@ void calc_fit_R(int natoms, Real const* weights, rvec const* xref, rvec const*x,
 
 	/* clear matrix U */
 	for ( auto & ii : u ) {
-		for ( double & jj : ii ) jj=0;
+		for ( core::Real & jj : ii ) jj=0;
 	}
 
 	/*calculate the matrix U*/
@@ -554,13 +554,13 @@ void calc_fit_R(int natoms, Real const* weights, rvec const* xref, rvec const*x,
 #define YY 1
 #define ZZ 2
 
-void jacobi(double a[6][6],double d[],double v[6][6],int *nrot)
+void jacobi(core::Real a[6][6],core::Real d[],core::Real v[6][6],int *nrot)
 {
 	int j,i;
 	int iq,ip;
-	double tresh,theta,tau,t,/*sm,*/s,h,g,c;
-	double b[DIM6];
-	double z[DIM6];
+	core::Real tresh,theta,tau,t,/*sm,*/s,h,g,c;
+	core::Real b[DIM6];
+	core::Real z[DIM6];
 	int const n( DIM6 );
 	for ( ip=0; ip<n; ip++ ) {
 		for ( iq=0; iq<n; iq++ ) v[ip][iq]=0.0;
@@ -572,7 +572,7 @@ void jacobi(double a[6][6],double d[],double v[6][6],int *nrot)
 	}
 	*nrot=0;
 	for ( i=1; i<=50; i++ ) {
-		double sm=0.0;
+		core::Real sm=0.0;
 		for ( ip=0; ip<n-1; ip++ ) {
 			for ( iq=ip+1; iq<n; iq++ ) {
 				sm += fabs(a[ip][iq]);

@@ -678,11 +678,11 @@ bool calc_res_contact(
 )
 {
 	Real dist_cutoff2 = dist_cutoff * dist_cutoff;
-	double dist2 = 9999.0;
+	core::Real dist2 = 9999.0;
 
 	for ( Size m = 1; m <= rsd1->nheavyatoms(); m++ ) {
 		for ( Size n = 1; n <= rsd2->nheavyatoms(); n++ ) {
-			/* double */dist2 = rsd1->xyz( m ).distance_squared( rsd2->xyz( n ) );  //Is there a reason this is a double?
+			/* core::Real */dist2 = rsd1->xyz( m ).distance_squared( rsd2->xyz( n ) );  //Is there a reason this is a core::Real?
 			if ( dist2 <= dist_cutoff2 ) { TR.Debug << "return true " << dist2 << std::endl; return true; }
 		}
 	}

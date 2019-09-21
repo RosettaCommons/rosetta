@@ -62,14 +62,14 @@ using namespace core;
 //////////////////////////////////////////////////////////////////////////
 // these functions should probably be moves somewhere else
 // copied from rosetta++ jumping_util.cc
-numeric::xyzMatrix_double
-random_reorientation_matrix(const double phi_range, const double psi_range)
+numeric::xyzMatrix_real
+random_reorientation_matrix(const core::Real phi_range, const core::Real psi_range)
 {
 	// a genuine rotation matrix which will randomly reorient the coord sys.
 	// from Euler theorem
-	const double phi( phi_range * numeric::random::rg().uniform() ); // degrees
-	const double psi( psi_range * numeric::random::rg().uniform() ); // degrees
-	const double theta(
+	const core::Real phi( phi_range * numeric::random::rg().uniform() ); // degrees
+	const core::Real psi( psi_range * numeric::random::rg().uniform() ); // degrees
+	const core::Real theta(
 		numeric::conversions::degrees( std::acos(numeric::sin_cos_range( 1.0 - 2.0 * numeric::random::rg().uniform() ) ) )
 	); // degrees
 

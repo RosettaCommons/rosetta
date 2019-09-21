@@ -180,7 +180,7 @@ void PointMutScanDriver::go() {
 	barrier();
 	if ( MPI_rank_ == 0 ) {
 		clock_t entire_stoptime = clock();
-		TR << "main(): whole protocol took " << ((double)entire_stoptime-entire_starttime) / CLOCKS_PER_SEC << " seconds" << std::endl;
+		TR << "main(): whole protocol took " << ((core::Real)entire_stoptime-entire_starttime) / CLOCKS_PER_SEC << " seconds" << std::endl;
 		TR << "go(): DONE with pmut scan." << std::endl;
 	}
 

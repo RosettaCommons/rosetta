@@ -579,13 +579,13 @@ PNatAAOptEPositionData::write_to_binary_file( std::ofstream & outfile ) const
 
 		Size const nfree( rot->data().size() );
 		outfile.write( (char*) &nfree, sizeof(Size) );
-		for ( double energy : rot->data() ) {
+		for ( core::Real energy : rot->data() ) {
 			outfile.write( (char*) &energy, sizeof(Real) );
 		}
 
 		Size const nfixed( rot->fixed_data().size() );
 		outfile.write( (char*) &nfixed, sizeof(Size) );
-		for ( double fixed_energy : rot->fixed_data() ) {
+		for ( core::Real fixed_energy : rot->fixed_data() ) {
 			outfile.write( (char*) &fixed_energy, sizeof(Real) );
 		}
 	}
@@ -3136,15 +3136,15 @@ ConstraintedOptimizationWeightFunc::send_to_node( int const /*destination_node*/
 	utility_exit();
 	//std::cout << "sending total_residue to node " << destination_node << std::endl;
 	/// 1. max_weight_
-	//double max_weight = max_weight_;
+	//core::Real max_weight = max_weight_;
 	//MPI_Send( & max_weight, 1, MPI_DOUBLE, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 2. min_weight_
-	//double min_weight = min_weight_;
+	//core::Real min_weight = min_weight_;
 	//MPI_Send( & min_weight, 1, MPI_DOUBLE, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 3. spring_constant_
-	//double spring_constant = spring_constant_;
+	//core::Real spring_constant = spring_constant_;
 	//MPI_Send( & spring_constant, 1, MPI_DOUBLE, destination_node, tag, MPI_COMM_WORLD );
 
 	//OptEPositionData::send_to_node( destination_node, tag );
@@ -3160,17 +3160,17 @@ ConstraintedOptimizationWeightFunc::receive_from_node( int const /*source_node*/
 	//MPI_Status stat;
 
 	/// 1. max_weight_
-	//double max_weight;
+	//core::Real max_weight;
 	//MPI_Recv( & max_weight, 1, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 	//max_weight_ = max_weight;
 
 	/// 2. min_weight_
-	//double min_weight;
+	//core::Real min_weight;
 	//MPI_Recv( & min_weight, 1, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 	//min_weight_ = min_weight;
 
 	/// 3. spring_constant_
-	//double spring_constant;
+	//core::Real spring_constant;
 	//MPI_Recv( & spring_constant, 1, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 	//spring_constant_ = spring_constant;
 

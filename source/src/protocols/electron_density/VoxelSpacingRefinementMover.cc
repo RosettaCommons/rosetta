@@ -61,7 +61,7 @@ using core::scoring::electron_density::poseCoord;
 VoxelSpacingMultifunc::VoxelSpacingMultifunc( core::pose::Pose const &pose)
 {
 	// get rhoC from pose
-	ObjexxFCL::FArray3D< double > rhoMask;
+	ObjexxFCL::FArray3D< core::Real > rhoMask;
 
 	// convert to poseCoords
 	poseCoords litePose;

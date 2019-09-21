@@ -64,7 +64,7 @@ int toInt( std::string const & aString ) {
 }
 
 
-double toFloat( std::string const & aString ) {
+core::Real toFloat( std::string const & aString ) {
 	static char st[20];
 	int start = 0;
 	for ( char i : aString ) {
@@ -73,15 +73,15 @@ double toFloat( std::string const & aString ) {
 		}
 	}
 	st[start] = '\0';
-	double rev = atof(st);
+	core::Real rev = atof(st);
 	return rev;
 }
 
 
-void center_residues( std::vector<double> & calpha_vector, int num_residue_ ) {
-	double cx = 0;
-	double cy = 0;
-	double cz = 0;
+void center_residues( std::vector<core::Real> & calpha_vector, int num_residue_ ) {
+	core::Real cx = 0;
+	core::Real cy = 0;
+	core::Real cz = 0;
 
 	int i3 = 0;
 	for ( int i=0; i < num_residue_; i++ ) {

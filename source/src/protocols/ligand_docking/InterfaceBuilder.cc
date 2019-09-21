@@ -164,7 +164,7 @@ bool InterfaceBuilder::is_interface_residue(
 	debug_assert(found != ligand_areas_.end());
 	LigandAreaOP const ligand_area = found->second;
 
-	double cutoff = ligand_area->add_nbr_radius_ ?
+	core::Real cutoff = ligand_area->add_nbr_radius_ ?
 		potential_interface_residue.nbr_radius() + ligand_area->cutoff_ :
 		ligand_area->cutoff_;
 

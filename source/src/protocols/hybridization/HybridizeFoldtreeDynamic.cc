@@ -139,8 +139,8 @@ utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::pose
 						using core::Size;
 						using numeric::random::DistributionSampler;
 
-						double mu = cut_residues.size() / 2.0;
-						double sigma = cut_residues.size() / 5.0;
+						core::Real mu = cut_residues.size() / 2.0;
+						core::Real sigma = cut_residues.size() / 5.0;
 						normal distribution(mu, sigma);
 						DistributionSampler<normal> sampler(distribution);
 
@@ -211,8 +211,8 @@ core::Size HybridizeFoldtreeDynamic::choose_anchor_position(const protocols::loo
 	using core::Size;
 	using numeric::random::DistributionSampler;
 
-	double mu = chunk.start() + chunk.length() / 2.0;
-	double sigma = chunk.length() / 5.0;
+	core::Real mu = chunk.start() + chunk.length() / 2.0;
+	core::Real sigma = chunk.length() / 5.0;
 	normal distribution(mu, sigma);
 	DistributionSampler<normal> sampler(distribution);
 

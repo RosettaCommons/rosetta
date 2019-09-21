@@ -99,12 +99,12 @@ public:
 	/// @brief Apply an arbitrary rotation specified by Euler angles (in degrees!)
 	inline
 	void applyRotation( core::pose::Pose & pose, core::Real alpha, core::Real beta, core::Real gamma ) {
-		double sa = std::sin( numeric::conversions::radians( alpha ) );
-		double ca = std::cos( numeric::conversions::radians( alpha ) );
-		double sb = std::sin( numeric::conversions::radians( beta  ) );
-		double cb = std::cos( numeric::conversions::radians( beta  ) );
-		double sg = std::sin( numeric::conversions::radians( gamma ) );
-		double cg = std::cos( numeric::conversions::radians( gamma ) );
+		core::Real sa = std::sin( numeric::conversions::radians( alpha ) );
+		core::Real ca = std::cos( numeric::conversions::radians( alpha ) );
+		core::Real sb = std::sin( numeric::conversions::radians( beta  ) );
+		core::Real cb = std::cos( numeric::conversions::radians( beta  ) );
+		core::Real sg = std::sin( numeric::conversions::radians( gamma ) );
+		core::Real cg = std::cos( numeric::conversions::radians( gamma ) );
 
 		numeric::xyzMatrix< core::Real > rotation;
 		rotation.xx( -sa*cb*sg + ca*cg ); rotation.xy(  ca*cb*sg + sa*cg ); rotation.xz(  sb*sg );

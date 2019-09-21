@@ -228,7 +228,7 @@ core::Real MultistateFitnessFunction::evaluate( Entity & entity )
 
 	clock_t stop_time = clock();
 	if ( TR.visible( basic::t_debug ) ) {
-		TR.Debug << "evaluate() took " << ((double) stop_time - start_time ) / CLOCKS_PER_SEC << " seconds" << std::endl;
+		TR.Debug << "evaluate() took " << ((core::Real) stop_time - start_time ) / CLOCKS_PER_SEC << " seconds" << std::endl;
 	}
 	return score;
 }
@@ -488,7 +488,7 @@ void MPIMultistateFitnessFunction::compute_state_energies( Entity const & entity
 	}
 #ifdef APL_MEASURE_MSD_LOAD_BALANCE
 	std::clock_t node0_stop_time = clock();
-	times[ 0 ] = ((double) node0_stop_time - start_time ) / CLOCKS_PER_SEC;
+	times[ 0 ] = ((core::Real) node0_stop_time - start_time ) / CLOCKS_PER_SEC;
 	packing_times[ 0 ] = daemon_set()->last_packing_runtime();
 	npd_times[ 0 ] = daemon_set()->last_npd_runtime();
 #endif
@@ -522,7 +522,7 @@ void MPIMultistateFitnessFunction::compute_state_energies( Entity const & entity
 
 #ifdef APL_MEASURE_MSD_LOAD_BALANCE
 	std::clock_t final_stop_time = clock();
-	Real runtime = ((double) final_stop_time - start_time ) / CLOCKS_PER_SEC;
+	Real runtime = ((core::Real) final_stop_time - start_time ) / CLOCKS_PER_SEC;
 	if (runtime != 0.0 ) {
 		for ( Size ii = 0; ii < MPI_nprocs_; ++ii ) {
 			utilization_by_node_[ ii ].push_back( times[ ii ] / runtime );

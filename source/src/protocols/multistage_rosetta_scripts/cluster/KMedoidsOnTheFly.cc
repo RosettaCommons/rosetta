@@ -92,14 +92,14 @@ assign_medoids_on_the_fly (
 
 ///@brief After the medoids have been assigned, go through each point and determine which cluster it is in.
 /// Returns total distance cost.
-double
+core::Real
 assign_non_medoids_to_clusters_on_the_fly (
 	utility::vector1< ClusterMetricCOP > const & points,
 	utility::vector1< bool > const & medoids,
 	utility::vector1< uint > const & medoid_for_cluster,
 	utility::vector1< uint > & cluster_for_point
 ){
-	double score = 0;
+	core::Real score = 0;
 
 	uint const num_points = medoids.size();
 	uint const num_clusters = medoid_for_cluster.size();
@@ -108,11 +108,11 @@ assign_non_medoids_to_clusters_on_the_fly (
 		if ( medoids[ i ] ) continue;
 
 		uint closest_cluster = 0;
-		double smallest_score = 999999.9;
+		core::Real smallest_score = 999999.9;
 
 		for ( uint cluster = 1; cluster <= num_clusters; ++cluster ) {
 			uint const other_point = medoid_for_cluster[ cluster ];
-			double const dist = points[ i ]->distance( * points[ other_point ] );
+			core::Real const dist = points[ i ]->distance( * points[ other_point ] );
 
 			if ( dist < smallest_score || closest_cluster == 0 ) {
 				closest_cluster = cluster;
@@ -169,7 +169,7 @@ k_medoids_on_the_fly (
 	utility::vector1< uint > medoid_for_cluster( num_medoids, 0 );
 	utility::vector1< uint > cluster_for_point( num_points, 0 );
 	assign_initial_medoids_on_the_fly( medoids, medoid_for_cluster, cluster_for_point );
-	double current_cost =
+	core::Real current_cost =
 		assign_non_medoids_to_clusters_on_the_fly( points, medoids, medoid_for_cluster, cluster_for_point );
 
 	best_medoids = medoids;
@@ -178,7 +178,7 @@ k_medoids_on_the_fly (
 
 	while ( true ) {
 		assign_medoids_on_the_fly( points, medoids, medoid_for_cluster, cluster_for_point );
-		double const cost =
+		core::Real const cost =
 			assign_non_medoids_to_clusters_on_the_fly( points, medoids, medoid_for_cluster, cluster_for_point );
 
 		if ( cost < current_cost ) {

@@ -20,6 +20,7 @@
 // Unit headers
 #include <protocols/checkpoint/Checkpoint.hh>
 
+#include <core/types.hh>
 
 namespace protocols {
 namespace checkpoint {
@@ -52,10 +53,10 @@ bool Timer::time_to_checkpoint() {
 		if (!boinc_time_to_checkpoint() && !boinc_is_standalone()) return false;
 		boinc_end_critical_section(); // boinc_time_to_checkpoint sets is, and we dont need it yet.
 #endif
-	//double time_diff(0.0);
+	//core::Real time_diff(0.0);
 	time_t curr_time;
 	time(&curr_time);
-	double time_diff = difftime( curr_time, time_ );
+	core::Real time_diff = difftime( curr_time, time_ );
 	if ( time_diff > interval_ ) return true;
 
 	return false;

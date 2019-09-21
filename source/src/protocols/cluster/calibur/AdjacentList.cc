@@ -65,7 +65,7 @@ AdjacentList::~AdjacentList()
 	//if (reverse_index_)  delete [] reverse_index_;
 }
 
-double
+core::Real
 AdjacentList::getD(int which) const
 {
 	if ( list_mode_ == LIST
@@ -78,7 +78,7 @@ AdjacentList::getD(int which) const
 }
 
 void
-AdjacentList::add(int n, double d, bool ifNeigh)
+AdjacentList::add(int n, core::Real d, bool ifNeigh)
 {
 #ifdef _ADD_LITE_MODE_
 	if (list_mode_ == LITE) return;

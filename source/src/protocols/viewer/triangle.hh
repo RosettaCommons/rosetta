@@ -18,6 +18,7 @@
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.hh>
 
+#include <core/types.hh>
 
 namespace protocols {
 namespace viewer {
@@ -42,7 +43,7 @@ public:
 
 	}
 
-	triangle( const numeric::xyzVector<double> vertices[], const numeric::xyzVector<double> normals[] ) {
+	triangle( const numeric::xyzVector<core::Real> vertices[], const numeric::xyzVector<core::Real> normals[] ) {
 		for ( int i=0; i<3; ++i ) {
 			for ( int j=0; j<3; ++j ) {
 				vertices_[i][j] = (float)vertices[i][j];

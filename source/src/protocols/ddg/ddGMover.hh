@@ -37,7 +37,7 @@
 namespace protocols {
 namespace ddg {
 
-typedef std::vector<double> ddGs;
+typedef std::vector<core::Real> ddGs;
 
 class ddGMover: public moves::Mover{
 public:
@@ -52,7 +52,7 @@ public:
 	~ddGMover() override;
 
 	//setter function
-	void neighbor_cutoff(double cutoff);
+	void neighbor_cutoff(core::Real cutoff);
 	void restrict_to_nbrs(bool truefalse);
 	void score_function( core::scoring::ScoreFunctionOP s);
 	void set_minimization_score_function( core::scoring::ScoreFunctionOP s);
@@ -62,9 +62,9 @@ public:
 	void dump_pdbs(bool truefalse);
 	void debug_output(bool truefalse);
 	void is_interface_ddg(bool truefalse);
-	void wt_score_components(ObjexxFCL::FArray2D<double> wsc);
-	void wt_unbound_score_components(ObjexxFCL::FArray2D<double> wusc);
-	void mutant_score_components(ObjexxFCL::FArray2D<double> msc);
+	void wt_score_components(ObjexxFCL::FArray2D<core::Real> wsc);
+	void wt_unbound_score_components(ObjexxFCL::FArray2D<core::Real> wusc);
+	void mutant_score_components(ObjexxFCL::FArray2D<core::Real> msc);
 	void residues_to_mutate(utility::vector1<core::chemical::AA> residues);
 	void set_min_cst(bool truefalse);
 	void set_mean(bool truefalse);
@@ -80,26 +80,26 @@ public:
 	//core::scoring::constraints::ConstraintSetOP constraint_set();
 	int num_iterations();
 	bool is_interface_ddg();
-	ObjexxFCL::FArray2D<double> wt_score_components();
-	ObjexxFCL::FArray2D<double> wt_unbound_score_components();
-	ObjexxFCL::FArray2D<double> mutant_score_components();
+	ObjexxFCL::FArray2D<core::Real> wt_score_components();
+	ObjexxFCL::FArray2D<core::Real> wt_unbound_score_components();
+	ObjexxFCL::FArray2D<core::Real> mutant_score_components();
 	utility::vector1<core::chemical::AA> residues_to_mutate();
 
-	utility::vector1<double> get_wt_min_score_components();
-	utility::vector1<double> get_wt_averaged_score_components();
-	utility::vector1<double> get_mutant_min_score_components();
-	utility::vector1<double> get_mutant_averaged_score_components();
-	utility::vector1<double> get_delta_energy_components();
+	utility::vector1<core::Real> get_wt_min_score_components();
+	utility::vector1<core::Real> get_wt_averaged_score_components();
+	utility::vector1<core::Real> get_mutant_min_score_components();
+	utility::vector1<core::Real> get_mutant_averaged_score_components();
+	utility::vector1<core::Real> get_delta_energy_components();
 	void get_scorefunction_header(
 		core::scoring::ScoreFunctionOP sfxn,
 		utility::vector1<std::string> & components
 	);
 	std::string mutation_label(core::pose::Pose const & pose) const;
-	double get_wt_averaged_totals();
-	double get_wt_min_totals();
-	double get_mutant_averaged_totals();
-	double get_mutant_min_totals();
-	double ddG();
+	core::Real get_wt_averaged_totals();
+	core::Real get_wt_min_totals();
+	core::Real get_mutant_averaged_totals();
+	core::Real get_mutant_min_totals();
+	core::Real ddG();
 	void apply(core::pose::Pose & pose) override;
 	std::string get_name() const override;
 	bool is_wt_calc_complete();
@@ -136,10 +136,10 @@ private:
 	int num_iterations_;
 	bool dmp_pdb_;
 	bool dbg_output_;
-	ObjexxFCL::FArray2D<double> wt_components_;
-	ObjexxFCL::FArray2D<double> wt_unbound_components_; //ek interface ddg capabilities;
-	ObjexxFCL::FArray2D<double> mutant_components_;
-	ObjexxFCL::FArray2D<double> mutant_unbound_components_; //ek interface ddg capabilities;
+	ObjexxFCL::FArray2D<core::Real> wt_components_;
+	ObjexxFCL::FArray2D<core::Real> wt_unbound_components_; //ek interface ddg capabilities;
+	ObjexxFCL::FArray2D<core::Real> mutant_components_;
+	ObjexxFCL::FArray2D<core::Real> mutant_unbound_components_; //ek interface ddg capabilities;
 	utility::vector1<core::pose::Pose> natives_;
 	utility::vector1<core::pose::Pose> mutants_;
 
@@ -147,19 +147,19 @@ private:
 	find_nbrs(
 		core::pose::Pose & p,
 		utility::vector1<int> & mutation_position,
-		double radii
+		core::Real radii
 	);
 
 	void setup_packertask(core::pack::task::PackerTaskOP pt, core::pose::Pose & p);
 	//void refine_structure();
 
 
-	bool is_complete(ObjexxFCL::FArray2D<double> to_check);
+	bool is_complete(ObjexxFCL::FArray2D<core::Real> to_check);
 
-	double sum(ddGs &scores_to_sum);
-	double average( utility::vector1<double> &scores_to_average);
+	core::Real sum(ddGs &scores_to_sum);
+	core::Real average( utility::vector1<core::Real> &scores_to_average);
 	int store_energies(
-		ObjexxFCL::FArray2D< double > &two_d_e_arrays,
+		ObjexxFCL::FArray2D< core::Real > &two_d_e_arrays,
 		core::scoring::ScoreFunction &s,
 		core::pose::Pose &p,
 		int next_index,
@@ -167,11 +167,11 @@ private:
 	);
 
 	int average_score_components(
-		ObjexxFCL::FArray2D< double > &scores_to_average,
-		utility::vector1<double> &averaged_scores
+		ObjexxFCL::FArray2D< core::Real > &scores_to_average,
+		utility::vector1<core::Real> &averaged_scores
 	);
 
-	//int which_iteration(ObjexxFCL::FArray2D<double> scores);//locates uninitialized values
+	//int which_iteration(ObjexxFCL::FArray2D<core::Real> scores);//locates uninitialized values
 	//and returns the iteration to continue on
 	//above not used/???
 

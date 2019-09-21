@@ -125,7 +125,7 @@ bool DihedralConstraintsScore::cached_score(FragmentCandidateOP fragment,
 			numeric::xyzVector<core::Real> v4 = get_atom_coordinates(
 				fourthVallResidueIndex, r->get_fourth_atom());
 
-			double torsion = dihedral_degrees(v1, v2, v3, v4);
+			core::Real torsion = dihedral_degrees(v1, v2, v3, v4);
 			total_score += r->get_function()->func(torsion);
 		}
 	}

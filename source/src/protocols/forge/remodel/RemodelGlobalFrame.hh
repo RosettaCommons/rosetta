@@ -34,8 +34,8 @@ namespace remodel {
 numeric::xyzVector< core::Real >
 compute_center_of_mass( core::pose::Pose const &  pose, core::Size range_start, core::Size range_stop);
 
-double get_RMSD(Eigen::MatrixXf &A,Eigen::MatrixXf &B);
-Eigen::MatrixXf ideal_COMs(double rise, double radius, double omega, int unitn);
+core::Real get_RMSD(Eigen::MatrixXf &A,Eigen::MatrixXf &B);
+Eigen::MatrixXf ideal_COMs(core::Real rise, core::Real radius, core::Real omega, int unitn);
 Eigen::Matrix3f rot_mat(Eigen::MatrixXf &A,Eigen::MatrixXf &B);
 
 

@@ -59,7 +59,7 @@ bool is_interface_vector(
 	core::Real const cutoff_squared
 ){
 
-	double distance_squared = ligand_vector.distance_squared(questionable_vector);
+	core::Real distance_squared = ligand_vector.distance_squared(questionable_vector);
 	if ( distance_squared <= cutoff_squared ) {
 		return true; // don't need to go through all atoms
 	} else {

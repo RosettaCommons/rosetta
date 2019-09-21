@@ -98,7 +98,7 @@ SpinMover::apply( core::pose::Pose & pose )
 		- pose.residue(downstream_res).atom(downstream_atom).xyz() );
 
 
-	numeric::xyzVector<double> reference_center = pose.residue(downstream_res).atom(downstream_atom).xyz();
+	numeric::xyzVector<core::Real> reference_center = pose.residue(downstream_res).atom(downstream_atom).xyz();
 	curr_jump.rotation_by_axis( downstream_stub, axis, reference_center, 360.0f*numeric::random::rg().uniform() /*degrees*/ );
 	TR<<"new jump: " << curr_jump<<std::endl;
 	TR<<"new fold-tree: "<< pose.fold_tree()<<std::endl;

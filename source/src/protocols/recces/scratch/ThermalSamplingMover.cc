@@ -521,11 +521,11 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	scorefxn->show( min_pose );
 
 	TR << "n_cycles: " << n_cycle_ << std::endl;
-	TR << "Total accept rate: " << double( n_accept_total ) / n_cycle_ << std::endl;
-	TR << "Backbone accept rate: " << double( n_accept_backbone ) / ((n_cycle_ / 2) - (n_cycle_ / 10)) << std::endl;
-	TR << "Chi accept rate: " << double( n_accept_chi ) / (n_cycle_ / 2) << std::endl;
-	TR << "Standard accept rate: " << double( n_accept_standard ) / (n_cycle_ / 10) << std::endl;
-	TR << "Temp jump accept rate: " << double( n_t_jumps_accept ) / (n_cycle_ / t_jump_interval) << std::endl;
+	TR << "Total accept rate: " << core::Real( n_accept_total ) / n_cycle_ << std::endl;
+	TR << "Backbone accept rate: " << core::Real( n_accept_backbone ) / ((n_cycle_ / 2) - (n_cycle_ / 10)) << std::endl;
+	TR << "Chi accept rate: " << core::Real( n_accept_chi ) / (n_cycle_ / 2) << std::endl;
+	TR << "Standard accept rate: " << core::Real( n_accept_standard ) / (n_cycle_ / 10) << std::endl;
+	TR << "Temp jump accept rate: " << core::Real( n_t_jumps_accept ) / (n_cycle_ / t_jump_interval) << std::endl;
 
 	// If we're being called from an app that wants to dump data after sampling
 	// like recces_turner or thermal_sampler

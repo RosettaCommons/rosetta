@@ -46,11 +46,11 @@ SheetTranslate::SheetTranslate() {
 	initialize(protocols::loops::Loop(), 0.0);
 }
 
-SheetTranslate::SheetTranslate(const protocols::loops::Loop& sheet, double distance_ang) {
+SheetTranslate::SheetTranslate(const protocols::loops::Loop& sheet, core::Real distance_ang) {
 	initialize(sheet, distance_ang);
 }
 
-void SheetTranslate::initialize(const protocols::loops::Loop& sheet, double distance) {
+void SheetTranslate::initialize(const protocols::loops::Loop& sheet, core::Real distance) {
 	sheet_ = sheet;
 	distance_ = distance;
 }
@@ -83,7 +83,7 @@ void SheetTranslate::apply(core::pose::Pose& pose) {
 	TR.Debug << pose.fold_tree() << std::endl;
 
 	// Define the axis of translation as the vector between the first and last residues of the sheet
-	xyzVector<double> axis = pose.xyz(NamedAtomID("CA", sheet_.stop())) - pose.xyz(NamedAtomID("CA", sheet_.start()));
+	xyzVector<core::Real> axis = pose.xyz(NamedAtomID("CA", sheet_.stop())) - pose.xyz(NamedAtomID("CA", sheet_.start()));
 
 	// Translation along the axis
 	unsigned jump_num = jump_containing_sheet(chunks);
@@ -141,11 +141,11 @@ void SheetTranslate::set_sheet(const protocols::loops::Loop& sheet) {
 	sheet_ = sheet;
 }
 
-double SheetTranslate::get_distance() const {
+core::Real SheetTranslate::get_distance() const {
 	return distance_;
 }
 
-void SheetTranslate::set_distance(double distance_ang) {
+void SheetTranslate::set_distance(core::Real distance_ang) {
 	distance_ = distance_ang;
 }
 

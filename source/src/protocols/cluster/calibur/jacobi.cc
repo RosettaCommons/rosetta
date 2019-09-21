@@ -27,7 +27,7 @@ namespace calibur {
 *
 * (The method follows closely the discussions in "Numerical Recipes in C".)
 */
-bool jacobi3( double a[3][3], double d[3], double v[3][3] ) {
+bool jacobi3( core::Real a[3][3], core::Real d[3], core::Real v[3][3] ) {
 	#define NUM_ITER 50
 	#define SMALL_NUM_ITER 4
 	// initialize v to the identify matrix
@@ -48,7 +48,7 @@ bool jacobi3( double a[3][3], double d[3], double v[3][3] ) {
 
 	for ( int iter=0; iter < NUM_ITER; iter++ ) {
 		// Find sum of non-diagonal entries in a
-		double sum_a = 0.0;
+		core::Real sum_a = 0.0;
 		for ( int i=0; i < 2; i++ ) {
 			for ( int j=i+1; j < 3; j++ ) {
 				sum_a += fabs(a[i][j]);
@@ -58,7 +58,7 @@ bool jacobi3( double a[3][3], double d[3], double v[3][3] ) {
 			return true;
 		}
 
-		double threshold = (iter < SMALL_NUM_ITER)? 0.2 * sum_a / 9.: 0.;
+		core::Real threshold = (iter < SMALL_NUM_ITER)? 0.2 * sum_a / 9.: 0.;
 
 		/**
 		* i and j traverse only the upper-right part ('o') of a.
@@ -71,9 +71,9 @@ bool jacobi3( double a[3][3], double d[3], double v[3][3] ) {
 		*/
 		for ( int i=0; i < 2; i++ ) {
 			for ( int j=i+1; j < 3; j++ ) {
-				double g = 100.0 * fabs(a[i][j]);
-				double di = fabs(d[i]);
-				double dj = fabs(d[j]);
+				core::Real g = 100.0 * fabs(a[i][j]);
+				core::Real di = fabs(d[i]);
+				core::Real dj = fabs(d[j]);
 
 				if ( iter > SMALL_NUM_ITER && di+g == di && dj+g == dj ) {
 					a[i][j] = 0.0; // just clean it up if it is too small
@@ -115,22 +115,22 @@ bool jacobi3( double a[3][3], double d[3], double v[3][3] ) {
 					*   4. a'[j][j] = a[i][i] + t a[i][j],
 					* where tau = s/1+c.
 					*/
-					double diff = d[j]-d[i]; // a[i][i]-a[j][j]
-					double t;
+					core::Real diff = d[j]-d[i]; // a[i][i]-a[j][j]
+					core::Real t;
 
 					if ( fabs(diff) + g == fabs(diff) ) {
 						t = a[i][j] / diff;
 					} else {
-						double theta = 0.5 * diff / a[i][j];
+						core::Real theta = 0.5 * diff / a[i][j];
 						t = 1.0 / ( fabs(theta) + sqrt(theta*theta + 1) );
 						if ( theta < 0.0 ) {
 							t = -t;
 						}
 					}
-					double c = 1.0 / sqrt(t*t + 1);
-					double s = t*c;
-					double tau = s / (1.0 + c);
-					double h = t*a[i][j];
+					core::Real c = 1.0 / sqrt(t*t + 1);
+					core::Real s = t*c;
+					core::Real tau = s / (1.0 + c);
+					core::Real h = t*a[i][j];
 					d[i] -= h;
 					d[j] += h;
 					a[i][j] = 0.0;
@@ -187,7 +187,7 @@ bool jacobi3( double a[3][3], double d[3], double v[3][3] ) {
 
 #define _TEST_JACOBI_
 #ifdef _TEST_JACOBI_
-void print_matrix(double a[3][3]) {
+void print_matrix(core::Real a[3][3]) {
 	for ( int i=0; i < 3; i++ ) {
 		for ( int j=0; j < 3; j++ ) {
 			std::cout << a[i][j] << ",";

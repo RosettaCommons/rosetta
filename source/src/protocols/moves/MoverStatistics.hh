@@ -66,7 +66,10 @@ public:
 
 	void print( MonteCarloOP mc, std::string const & type );
 
-	core::Real acceptance_rate() const { return (core::Real)accepted_/(accepted_+rejected_+1e-100); }
+	core::Real acceptance_rate() const {
+		constexpr core::Real buffer = std::numeric_limits< core::Real >::epsilon();
+		return core::Real( accepted_ ) / (accepted_ + rejected_ + buffer);
+	}
 
 	int num_accepted() const { return accepted_; }
 

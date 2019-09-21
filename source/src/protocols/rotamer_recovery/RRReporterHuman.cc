@@ -218,7 +218,7 @@ PerNativeRRReporterHuman::show(
 			if ( i <= nat_rots_[ii].size() ) {
 				out << F(column_width,
 					precision,
-					static_cast< long double >(nat_rots_[ii][i]));
+					static_cast< core::Real >(nat_rots_[ii][i]));
 			} else {
 				out << A(column_width, "");
 			}

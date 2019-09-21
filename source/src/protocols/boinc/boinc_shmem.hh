@@ -32,21 +32,21 @@ const std::size_t TEXT_BUFSIZE = 255; //99999;
 const std::size_t WU_DESC_TEXT_BUFSIZE = 1024; //99999;
 
 struct BoincSharedMemory {
-	double update_time;
-	double fraction_done;
-	double cpu_time;
+	core::Real update_time;
+	core::Real fraction_done;
+	core::Real cpu_time;
 
 #ifdef BOINC
 	BOINC_STATUS status;
 #endif
 
-// Lets save the info necessary to reproduce rosetta++ graphics
-// rmsds will be calculated by the graphics app against the native_pose below
+	// Lets save the info necessary to reproduce rosetta++ graphics
+	// rmsds will be calculated by the graphics app against the native_pose below
 
 	// current pose
 	int current_pose_exists;
 	char current_pose_buf[POSE_BUFSIZE];
-	
+
 	// current pose ghost
 	int current_pose_ghost_exists;
 	char current_pose_ghost_buf[POSE_BUFSIZE];
@@ -66,7 +66,7 @@ struct BoincSharedMemory {
 	// monte carlo total step count
 	unsigned int total_mc_trial_count;
 
-  // scores
+	// scores
 	core::Real low_energy;
 	core::Real last_accepted_energy;
 
@@ -94,7 +94,7 @@ struct BoincSharedMemory {
 
 	// Should we randomly cycle appearance?
 	bool randomly_cycle_appearance;
-	
+
 	// Has the main app initialized the shared memory object completely, so that the graphics app can read what it needs?
 	bool fully_initialized;
 

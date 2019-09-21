@@ -122,13 +122,13 @@ get_water_uniform_rotation_sampler() {
 		urs->remove_redundant( flipZ );
 		clock_t end_time = clock();
 		init = true;
-		std::cout << "remove_redundant finished in " << double(end_time - start_time) / CLOCKS_PER_SEC << " seconds." << std::endl;
+		std::cout << "remove_redundant finished in " << core::Real(end_time - start_time) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 		// start_time = clock();
 		// numeric::UniformRotationSampler urs_fast( rotstep );
 		// urs_fast.remove_redundant_quaternion( flipZ );
 		// end_time = clock();
-		// std::cout << "remove_redundant_fast finished in " << double(end_time - start_time) / CLOCKS_PER_SEC << " seconds." << std::endl;
+		// std::cout << "remove_redundant_fast finished in " << core::Real(end_time - start_time) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 		std::cout << "Done preparing rotations " << std::endl;
 	}

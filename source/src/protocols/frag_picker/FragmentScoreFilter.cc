@@ -111,7 +111,7 @@ FragmentScoreFilter::parse_my_tag(
 void convert_binary_checkpoint( std::string const & check_filename ){
 	utility::vector1< core::Size > column_map{1, 5, 4, 7, 14, 8, 9, 10, 12, 11, 13, 3, 15, 6, 2, 16, 17, 20, 18, 19};
 
-	double x = 0;
+	core::Real x = 0;
 	char bb4[4];
 	std::ifstream binary_check ( check_filename.c_str(), std::ios::in|std::ios::binary);
 	if ( !binary_check ) {
@@ -147,7 +147,7 @@ void convert_binary_checkpoint( std::string const & check_filename ){
 		checkpoint_file << " ";
 		for ( int j = 0; j < 20; j++ ) {
 			binary_check.read(bb8, 8);
-			std::copy(bb8, bb8 + sizeof(double), reinterpret_cast<char*>(&x));
+			std::copy(bb8, bb8 + sizeof(core::Real), reinterpret_cast<char*>(&x));
 			//     x = swap(x);
 			std::cout << std::fixed<<std::setw(7)<<std::setprecision(4)<<x<<" ";
 			prof_row.push_back(x);

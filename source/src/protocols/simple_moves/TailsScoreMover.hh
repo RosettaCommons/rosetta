@@ -49,11 +49,11 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	std::string get_name() const override;
 private:
-	double score_mode1(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, core::pose::Pose & pose);
-	double score_mode2(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, core::pose::Pose & pose);
-	double score_mode3(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, core::pose::Pose & pose);
+	core::Real score_mode1(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, core::pose::Pose & pose);
+	core::Real score_mode2(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, core::pose::Pose & pose);
+	core::Real score_mode3(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, core::pose::Pose & pose);
 
-	double visit(double in_current_min, int in_current_min_ltail, int in_current_min_rtail,
+	core::Real visit(core::Real in_current_min, int in_current_min_ltail, int in_current_min_rtail,
 		int in_ltail, int in_rtail, int in_array_of_visits [][200], int &out_min_ltail,
 		int &out_min_rtail, int in_sequence_length, utility::vector1< core::Size > & tail, core::pose::Pose & pose,std::ofstream& area_file);
 	void make_tail(utility::vector1< core::Size > & tail,int in_ltaillength, int in_rtaillength, int in_sequence_length);

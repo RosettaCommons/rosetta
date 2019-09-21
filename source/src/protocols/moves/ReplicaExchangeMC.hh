@@ -47,7 +47,7 @@ public:
 
 	~ReplicaExchangeMC() override;
 
-	void build_temperature_list(const double *elist);
+	void build_temperature_list(const core::Real *elist);
 
 	using Parent::boltzmann;
 
@@ -69,7 +69,7 @@ private:
 	core::Size ntrials_;
 	utility::vector1<core::Real> Tlist_;
 	utility::vector1< utility::vector1<std::pair<int, int> > > exchange_schedule;
-	double *last_energylist;
+	core::Real *last_energylist;
 	int *T_tag;
 	int *T_rev;
 	int T_ndx;

@@ -512,10 +512,10 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	TR << " start score " << start_score << " end " << end_score << " min " << minned_score << std::endl;
 
 	TR << "n_cycles: " << n_cycle_ << std::endl;
-	TR << "Total accept rate:       " << double( n_accept_total ) / n_cycle_ << std::endl;
-	TR << "Suite accept rate:       " << double( n_accept_backbone ) / n_backbone << std::endl;
-	TR << "One-torsion accept rate: " << double( n_accept_onetors ) / n_onetors << std::endl;
-	TR << "KIC accept rate:         " << double( n_accept_kic ) / n_kic << std::endl;
+	TR << "Total accept rate:       " << core::Real( n_accept_total ) / n_cycle_ << std::endl;
+	TR << "Suite accept rate:       " << core::Real( n_accept_backbone ) / n_backbone << std::endl;
+	TR << "One-torsion accept rate: " << core::Real( n_accept_onetors ) / n_onetors << std::endl;
+	TR << "KIC accept rate:         " << core::Real( n_accept_kic ) / n_kic << std::endl;
 
 	Real const time_in_test = static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC;
 	TR << "Time in sampler: " <<  time_in_test << std::endl;

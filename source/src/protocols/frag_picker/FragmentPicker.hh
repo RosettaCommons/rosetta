@@ -348,7 +348,7 @@ public:
 	/// (FragmentScoreMap object pointer)
 	/// @details FragmentScoreManager that is stored inside the picker is used
 	/// for this calculation. It particular it provides weights
-	double total_score(scores::FragmentScoreMapOP f, core::Size index=1);
+	core::Real total_score(scores::FragmentScoreMapOP f, core::Size index=1);
 
 	// save results
 	void save_candidates();

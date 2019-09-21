@@ -25,6 +25,8 @@
 #include <protocols/cluster/calibur/jacobi.hh>
 #include <protocols/cluster/calibur/cubic.hh>
 
+#include <core/types.hh>
+
 namespace protocols {
 namespace cluster {
 namespace calibur {
@@ -37,9 +39,9 @@ namespace calibur {
 #ifdef __RMSD_SPEED_TEST__
 #ifndef PYROSETTA
 #ifndef __WIN32__
-inline double
+inline core::Real
 __timeval_difference(struct timeval * x, struct timeval * y) {
-	double elapsed;
+	core::Real elapsed;
 	if (x->tv_usec < y->tv_usec) {
 		int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
 		y->tv_usec -= 1000000 * nsec;
@@ -52,15 +54,15 @@ __timeval_difference(struct timeval * x, struct timeval * y) {
 	}
 
 	elapsed = x->tv_sec - y->tv_sec;
-	elapsed += (x->tv_usec - y->tv_usec)/(double)1000000;
+	elapsed += (x->tv_usec - y->tv_usec)/(core::Real)1000000;
 	return elapsed;
 }
 
-inline double
+inline core::Real
 _get_elapsed(int set_start) {
 	static struct rusage last;
 	struct rusage now;
-	double elapsed = 0;
+	core::Real elapsed = 0;
 	if (set_start) {
 		getrusage(RUSAGE_SELF, &last);
 	} else {
@@ -75,14 +77,14 @@ _get_elapsed(int set_start) {
 #endif
 #endif
 
-double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n, double R[3][3] );
+core::Real RMSD( std::vector<core::Real> & coords1, std::vector<core::Real> & coords2, int n, core::Real R[3][3] );
 
 // Same as above, but skips computation of R
-double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n );
+core::Real RMSD( std::vector<core::Real> & coords1, std::vector<core::Real> & coords2, int n );
 
-void rotate( std::vector<double> & coords, int n, double R[3][3], double * result );
+void rotate( std::vector<core::Real> & coords, int n, core::Real R[3][3], core::Real * result );
 
-double fast_rmsd( std::vector<double> & coords1, std::vector<double> & coords2, int n);
+core::Real fast_rmsd( std::vector<core::Real> & coords1, std::vector<core::Real> & coords2, int n);
 
 }
 }

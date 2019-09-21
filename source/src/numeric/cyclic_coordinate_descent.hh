@@ -18,6 +18,8 @@
 
 #include <numeric/types.hh>
 
+#include <numeric/xyzVector.hh>
+
 #include <utility/vector1.fwd.hh>
 
 namespace numeric {

@@ -264,7 +264,7 @@ DisulfideEntropyFilter::compute(
 		return 0;
 	}
 
-	bnu::matrix<double> m(disulf_config.size(), disulf_config.size());
+	bnu::matrix<core::Real> m(disulf_config.size(), disulf_config.size());
 	for ( Size i = 0; i < m.size1() ; ++i ) {
 		for ( Size j = i; j < m.size2() ; ++j ) {
 			if ( disulf_config[j+1].first > disulf_config[i+1].second ) {
@@ -307,13 +307,13 @@ DisulfideEntropyFilter::compute(
 	//TR << "t2 " << static_cast<int>(disulf_config.size()) << std::endl;
 	//TR << "pow1 " << std::pow(static_cast<float>(0.17827), static_cast<int>(disulf_config.size())) << std::endl;
 	//TR << "m " << m << std::endl;
-	//TR << "t3 " << static_cast<double>(determinant(m)) << std::endl;
+	//TR << "t3 " << static_cast<core::Real>(determinant(m)) << std::endl;
 	//TR << "m " << m << std::endl;
-	//TR << "t4 " << static_cast<double>(-1.5) << std::endl;
-	//TR << "pow2 " << std::pow(static_cast<double>(determinant(m)), static_cast<double>(-1.5)) << std::endl;
-	//TR << "-log " << -log(std::pow(static_cast<float>(0.17827), static_cast<int>(disulf_config.size())) * std::pow(static_cast<double>(determinant(m)), static_cast<double>(-1.5))) << std::endl;
+	//TR << "t4 " << static_cast<core::Real>(-1.5) << std::endl;
+	//TR << "pow2 " << std::pow(static_cast<core::Real>(determinant(m)), static_cast<core::Real>(-1.5)) << std::endl;
+	//TR << "-log " << -log(std::pow(static_cast<float>(0.17827), static_cast<int>(disulf_config.size())) * std::pow(static_cast<core::Real>(determinant(m)), static_cast<core::Real>(-1.5))) << std::endl;
 
-	return -log(std::pow(static_cast<float>(0.17827), static_cast<int>(disulf_config.size())) * std::pow(static_cast<double>(determinant(m)), static_cast<double>(-1.5)));
+	return -log(std::pow(static_cast<float>(0.17827), static_cast<int>(disulf_config.size())) * std::pow(static_cast<core::Real>(determinant(m)), static_cast<core::Real>(-1.5)));
 
 
 }

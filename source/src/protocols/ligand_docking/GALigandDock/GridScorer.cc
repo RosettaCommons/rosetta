@@ -280,7 +280,8 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 	packer_cycles_ = 0;
 	force_exact_min_ = false;
 
-	pack_time_ = min_time_ = std::chrono::duration<double>{};
+
+	pack_time_ = min_time_ = std::chrono::duration< core::Real >{};
 
 	maxRad_ = 0.0;
 	numeric::xyzVector< core::Real > lig_com_(0,0,0);
@@ -738,7 +739,7 @@ GridScorer::calculate_grid(
 	do_convolution_and_compute_coeffs( raw_faelec_, coeffs_faelec_, 0.0 );
 
 	auto end = std::chrono::steady_clock::now();
-	std::chrono::duration<double> diff = end-start;
+	std::chrono::duration<core::Real> diff = end-start;
 	TR << "Grid calculation took " << (diff).count() << " seconds." << std::endl;
 }
 
@@ -984,7 +985,7 @@ GridScorer::do_convolution_and_compute_coeffs(
 	core::Real smoothing,
 	bool inverted
 ) {
-	ObjexxFCL::FArray3D< double > tempdata, tempcoeffs;
+	ObjexxFCL::FArray3D< core::Real > tempdata, tempcoeffs;
 
 	int N = rawdata.u1()*rawdata.u2()*rawdata.u3();
 
@@ -1017,9 +1018,9 @@ GridScorer::do_convolution_and_compute_coeffs(
 
 								if ( voxel_mask( di+window_width+1, dj+window_width+1, dk+window_width+1 ) ) {
 									if ( inverted ) {
-										tempdata(i,j,k) = std::max( tempdata(i,j,k), (double)(rawdata(i+di,j+dj,k+dk)) );
+										tempdata(i,j,k) = std::max( tempdata(i,j,k), (core::Real)(rawdata(i+di,j+dj,k+dk)) );
 									} else {
-										tempdata(i,j,k) = std::min( tempdata(i,j,k), (double)(rawdata(i+di,j+dj,k+dk)) );
+										tempdata(i,j,k) = std::min( tempdata(i,j,k), (core::Real)(rawdata(i+di,j+dj,k+dk)) );
 									}
 								}
 							}

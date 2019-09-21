@@ -200,7 +200,7 @@ rigid_body_move(
 	core::pose::Pose & pose,
 	core::select::residue_selector::ResidueSubset const & subset,
 	numeric::xyzVector<core::Real> center_of_rotation
-	= numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0));
+	= numeric::xyzVector<core::Real>(std::numeric_limits<core::Real>::quiet_NaN(), 0, 0));
 
 /// @brief Performs a rigid body rotation then translation of a section
 /// of a pose given by a ResidueSubset. By default this routine will
@@ -215,7 +215,7 @@ rigid_body_move(
 	core::pose::Pose & pose,
 	core::select::residue_selector::ResidueSubset const & subset,
 	numeric::xyzVector<core::Real> center_of_rotation
-	= numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0));
+	= numeric::xyzVector<core::Real>(std::numeric_limits<core::Real>::quiet_NaN(), 0, 0));
 
 /// @brief Performs a rigid body rotation then translation of a section
 /// of a pose given by a ResidueSubset. By default this routine will
@@ -228,7 +228,7 @@ rigid_body_move(
 	core::pose::Pose & pose,
 	core::select::residue_selector::ResidueSubset const & subset,
 	numeric::xyzVector<core::Real> center_of_rotation
-	= numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0));
+	= numeric::xyzVector<core::Real>(std::numeric_limits<core::Real>::quiet_NaN(), 0, 0));
 
 /// @brief Performs a rigid body rotation then translation of a section
 /// of a pose given by a ResidueSubset. By default this routine will
@@ -242,7 +242,7 @@ rigid_body_move(
 	core::pose::Pose & pose,
 	core::select::residue_selector::ResidueSubset const & subset,
 	numeric::xyzVector<core::Real> center_of_rotation
-	= numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0));
+	= numeric::xyzVector<core::Real>(std::numeric_limits<core::Real>::quiet_NaN(), 0, 0));
 
 
 } //pose_manipulation

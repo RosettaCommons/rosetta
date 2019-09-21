@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <cmath>
+#include <core/types.hh>
 
 namespace protocols {
 namespace cluster {
@@ -32,10 +33,10 @@ namespace calibur {
 #ifdef __TEST_CUBIC__
 #ifndef __WIN32__
 #ifndef PYOSETTA
-static double
+static core::Real
 __timeval_difference(struct timeval * x, struct timeval * y)
 {
-	double elapsed;
+	core::Real elapsed;
 	if (x->tv_usec < y->tv_usec)
 	{
 		int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
@@ -50,16 +51,16 @@ __timeval_difference(struct timeval * x, struct timeval * y)
 	}
 
 	elapsed = x->tv_sec - y->tv_sec;
-	elapsed += (x->tv_usec - y->tv_usec)/(double)1000000;
+	elapsed += (x->tv_usec - y->tv_usec)/(core::Real)1000000;
 	return elapsed;
 }
 
-static double
+static core::Real
 _get_elapsed(int set_start)
 {
 	static struct rusage last;
 	struct rusage now;
-	double elapsed = 0;
+	core::Real elapsed = 0;
 	if (set_start)
 		getrusage(RUSAGE_SELF, &last);
 	else
@@ -78,13 +79,13 @@ _get_elapsed(int set_start)
 //- = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = -
 
 
-void cubic_roots1(double a2, double a1, double a0, double * z);
+void cubic_roots1(core::Real a2, core::Real a1, core::Real a0, core::Real * z);
 
 /**
 * This is faster but leaves no option for obtaining imaginary roots.
 * (After "-O" in GCC, the speed gain is not much, only ~4%)
 */
-void cubic_roots2(double a2, double a1, double a0, double* z);
+void cubic_roots2(core::Real a2, core::Real a1, core::Real a0, core::Real* z);
 
 }
 }

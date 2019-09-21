@@ -57,27 +57,27 @@ public:
 	);
 
 	// return distace xmob*pose1 must move along ori to contact xfix*pose2
-	double slide_into_contact(
+	core::Real slide_into_contact(
 		Xform const & xmob,
 		Xform const & xfix,
 		Vec            ori
 	) const;
 
-	double slide_into_contact(
+	core::Real slide_into_contact(
 		Xforms const & xmob,
 		Xforms const & xfix,
 		Vec             ori
 	) const;
 
 	// convenience adaptor
-	double slide_into_contact_DEPRICATED(
+	core::Real slide_into_contact_DEPRICATED(
 		core::kinematics::Stub const & xmob,
 		core::kinematics::Stub const & xfix,
 		Vec                            ori
 	) const;
 
 private:
-	double CLD, CLD2, BIN;
+	core::Real CLD, CLD2, BIN;
 	// KAB - below variables commented out (-Wunused-private-field) on 2014-09-11
 	// double CTD, CTD2;
 

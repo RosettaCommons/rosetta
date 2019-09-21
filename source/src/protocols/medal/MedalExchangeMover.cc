@@ -173,7 +173,7 @@ void setup_constraints(const Pose& pose, LoopsCOP aligned, ConstraintSetOP const
 
 /// @detail Computes the probability of selecting a residue for fragment insertion.
 /// P(unaligned) = 0. P(aligned) = 1 / #aligned.
-void MedalExchangeMover::setup_sampling_probs(Size num_residues, const core::kinematics::FoldTree& tree, LoopsCOP aligned, vector1<double>* probs) const {
+void MedalExchangeMover::setup_sampling_probs(Size num_residues, const core::kinematics::FoldTree& tree, LoopsCOP aligned, vector1<core::Real>* probs) const {
 	probs->resize(num_residues, 0);
 
 	for ( auto const & i : *aligned ) {
@@ -236,7 +236,7 @@ void MedalExchangeMover::apply(Pose& pose) {
 	score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::cm::sanitize::cst_weight_pair]());
 	score->set_weight(core::scoring::coordinate_constraint, option[OptionKeys::cm::sanitize::cst_weight_coord]());
 
-	vector1<double> probs;
+	vector1<core::Real> probs;
 	setup_sampling_probs(pose.size() - 1, pose.fold_tree(), aligned, &probs);
 
 	// Sampling parameters

@@ -111,7 +111,7 @@ TrialCounterObserver::observe_after_metropolis(
 	}
 	if ( mhm.current_trial() && mhm.current_trial() % io_stride_ == 0 ) {
 #ifdef WIN32
-		core::Size output_ct( floor( (double)mhm.current_trial() / (double)io_stride_ ) );
+		core::Size output_ct( floor( (core::Real)mhm.current_trial() / (core::Real)io_stride_ ) );
 #else
 		core::Size output_ct( floor( mhm.current_trial() / io_stride_ ) );
 #endif

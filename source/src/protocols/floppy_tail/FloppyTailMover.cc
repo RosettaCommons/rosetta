@@ -543,7 +543,7 @@ void FloppyTailMover::low_res( core::pose::Pose & pose ) {
 	TR << std::flush; //show doesn't flush the buffer
 
 	clock_t stoptime = clock();
-	TR << "One perturb took " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
+	TR << "One perturb took " << ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
 	TR << "perturb steps complete" << std::endl;
 
 	// convert back to full atom

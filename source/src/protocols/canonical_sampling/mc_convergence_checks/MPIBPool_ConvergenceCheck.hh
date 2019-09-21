@@ -45,7 +45,7 @@ public:
   int* size_per_coords_;
   int* int_buf1_;
   int* winning_ranks_;
-  double* farray_coord_ptr_;
+  core::Real* farray_coord_ptr_;
   FArray2D_double temp_coord_for_evaluation_;
   FArray3D_double coords_;
   core::Size size_; // num-structures reported, to broadcast
@@ -75,7 +75,7 @@ std::string const& get_discovered_out();
 bool is_active_node();
 
 void partition_into_coordinates(
-				double const received_array[],
+				core::Real const received_array[],
 				int const size_per_coord[],
 				core::Size num_received,
 				utility::vector1<FArray2D_double>& coords

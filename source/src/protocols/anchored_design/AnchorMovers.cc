@@ -340,7 +340,7 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 		}
 
 		clock_t stoptime = clock();
-		T_design << "One perturb/refine took " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
+		T_design << "One perturb/refine took " << ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
 	} //end RMSD_only_this block
 
 	//post-post-processing
@@ -1135,7 +1135,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 	T_perturb << std::flush; //show doesn't flush the buffer
 
 	clock_t stoptime = clock();
-	T_perturb << "One perturb took " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
+	T_perturb << "One perturb took " << ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
 	T_perturb << "perturb steps complete" << std::endl;
 
 }//AnchoredPerturbMover::apply
@@ -1483,7 +1483,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	T_perturb << std::flush; //show doesn't flush the buffer
 
 	clock_t stoptime = clock();
-	T_refine << "One refine took " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
+	T_refine << "One refine took " << ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
 	T_refine << "refine steps complete" << std::endl;
 }//AnchoredRefineMover::apply()
 

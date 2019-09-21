@@ -33,9 +33,9 @@ namespace calibur {
 
 #if !defined(__WIN32__) && !defined(WIN32)
 #ifndef PYROSETTA
-double
+core::Real
 __timeval_difference(struct timeval * x, struct timeval * y) {
-	double elapsed;
+	core::Real elapsed;
 	if ( x->tv_usec < y->tv_usec ) {
 		int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
 		y->tv_usec -= 1000000 * nsec;
@@ -48,15 +48,15 @@ __timeval_difference(struct timeval * x, struct timeval * y) {
 	}
 
 	elapsed = x->tv_sec - y->tv_sec;
-	elapsed += (x->tv_usec - y->tv_usec)/(double)1000000;
+	elapsed += (x->tv_usec - y->tv_usec)/(core::Real)1000000;
 	return elapsed;
 }
 
-double
+core::Real
 _get_elapsed(int set_start) {
 	static struct rusage last;
 	struct rusage now;
-	double elapsed = 0;
+	core::Real elapsed = 0;
 	if ( set_start ) {
 		getrusage(RUSAGE_SELF, &last);
 	} else {

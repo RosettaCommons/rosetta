@@ -94,7 +94,7 @@ struct HAL_Type<Integer, typename std::enable_if<std::is_integral<Integer>::valu
 template <typename Float>
 struct HAL_Type<Float, typename std::enable_if<std::is_floating_point<Float>::value>::type>
 {
-	using value_type = double;
+	using value_type = core::Real;
 	static auto constexpr name = _t_float_;
 };
 

@@ -23,6 +23,7 @@
 #include <utility/vector0.hh>
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
 
 #include <utility/vector1.hh>
 
@@ -32,8 +33,8 @@ namespace sparta {
 
 typedef float Vec3[3];
 typedef float Mat3[3][3];
-//typedef boost::unordered_map<int, boost::unordered_map<int, double> > DoubleD2;
-//typedef boost::unordered_map<int, double>  DoubleD1;
+//typedef boost::unordered_map<int, boost::unordered_map<int, core::Real> > DoubleD2;
+//typedef boost::unordered_map<int, core::Real>  DoubleD1;
 
 struct PDB_Entry
 {
@@ -174,9 +175,9 @@ public:
 	PDB_Entry isDonor(PDB_Entry D); //check if an aotm is a Donor for a H-hond, and return the connected heavy atom
 
 	// void SphereCalcPoints(int divNo, Vec3 **pointAP, int *pointNoP);
-	void calcTriangles( double x0, double y0, double z0,
-		double x1, double y1, double z1,
-		double x2, double y2, double z2,
+	void calcTriangles( core::Real x0, core::Real y0, core::Real z0,
+		core::Real x1, core::Real y1, core::Real z1,
+		core::Real x2, core::Real y2, core::Real z2,
 		int rowStartA[], int rowNo, int quad,
 		int row0, int ind0, int ind1,
 		int row2, int ind2,

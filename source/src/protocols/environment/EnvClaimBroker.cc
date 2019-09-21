@@ -816,7 +816,7 @@ void EnvClaimBroker::process_elements( JumpElemVect const & elems,
 				throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 			}
 
-			// if we make it through the above check, it's safe to double-label this jump with both.
+			// if we make it through the above check, it's safe to core::Real-label this jump with both.
 			BrokeredJumpDataCOP old_jump_data = brokered_jumps.find( pos_pair )->second;
 			new_jumps[ element.label ] = old_jump_data;
 		}

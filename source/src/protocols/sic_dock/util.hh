@@ -39,7 +39,7 @@ int
 neighbor_count(
 	core::pose::Pose const & pose,
 	int ires,
-	double distance_threshold=10.0
+	core::Real distance_threshold=10.0
 );
 
 core::Real
@@ -51,7 +51,7 @@ cb_weight(
 
 void make_Cx(core::pose::Pose & pose, int N, numeric::xyzVector<core::Real> axis=numeric::xyzVector<core::Real>(0,0,1) );
 
-double
+core::Real
 slide_into_contact_and_score(
 	protocols::sic_dock::SICFast    const & sic,
 	protocols::sic_dock::RigidScore const & sfxn,
@@ -61,7 +61,7 @@ slide_into_contact_and_score(
 	core::Real                            & score
 );
 
-double
+core::Real
 slide_into_contact_and_score_DEPRICATED(
 	protocols::sic_dock::SICFast    const & sic,
 	protocols::sic_dock::RigidScore const & sfxn,
@@ -76,7 +76,7 @@ bool                                       pose1_has_most_CBs( core::pose::Pose 
 
 core::Size                                          count_CBs( core::pose::Pose const & pose );
 
-core::id::AtomID_Map<double>          cb_weight_map_from_pose( core::pose::Pose const & pose );
+core::id::AtomID_Map<core::Real>          cb_weight_map_from_pose( core::pose::Pose const & pose );
 
 utility::vector1<numeric::xyzVector<core::Real> > get_CB_Vecs_from_pose( core::pose::Pose const & pose );
 utility::vector1<numeric::xyzVector<core::Real> > get_CB_Vecs_from_map ( core::pose::Pose const & pose, core::id::AtomID_Map<core::Real> const & map );
@@ -91,7 +91,7 @@ get_leap_lower_stub(
 	core::Size ir
 );
 
-int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double t);
+int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<core::Real> & grid, core::Real t);
 
 // void termini_exposed(core::pose::Pose const & pose, bool & ntgood, bool & ctgood );
 
@@ -130,7 +130,7 @@ core::kinematics::Stub getxform(core::conformation::Residue const & move_resi, c
 
 template<typename T> inline T sqr(T x) { return x*x; }
 
-std::string KMGT(double const & x, int const & w, int const & d);
+std::string KMGT(core::Real const & x, int const & w, int const & d);
 
 } // sic_dock
 } // protocols

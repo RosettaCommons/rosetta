@@ -64,7 +64,7 @@ private:
 	void read_structure ( std::istream& data, core::pose::Pose const& pose, IndexVector& ind, CoordVector& x, std::string endtag );
 	void fill_coordinates( core::pose::Pose const& pose, IndexVector const& ind, CoordVector & x );
 	void reset_x( Size n, CoordVector& x, rvec trans );
-	void jacobi(double a[6][6],double d[],double v[6][6],int *nrot);
+	void jacobi(core::Real a[6][6],core::Real d[],core::Real v[6][6],int *nrot);
 	void calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R);
 	void rotate_vec(int natoms,rvec *x,matrix R);
 	void add_vec( int natoms, rvec *x, rvec const transvec );

@@ -39,7 +39,7 @@
 namespace protocols {
 namespace medal {
 
-using Probabilities = utility::vector1<double>;
+using Probabilities = utility::vector1<core::Real>;
 using core::Size;
 
 /// @brief Lower sampling probability near termini
@@ -103,8 +103,8 @@ void cutpoint_probabilities(const Size num_residues, const core::kinematics::Fol
 
 	p->clear();
 	for ( Size residue = 1; residue <= num_residues; ++residue ) {
-		const double nearest_cutpoint = *utility::find_closest(cutpoints.begin(), cutpoints.end(), residue);
-		const double distance = std::abs(nearest_cutpoint - residue);
+		const core::Real nearest_cutpoint = *utility::find_closest(cutpoints.begin(), cutpoints.end(), residue);
+		const core::Real distance = std::abs(nearest_cutpoint - residue);
 		p->push_back(std::pow(distance + 1, -3));
 	}
 	numeric::normalize(p->begin(), p->end());

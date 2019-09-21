@@ -312,7 +312,7 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 
 
 void
-DockIntoDensityMover::map_from_spectrum( utility::vector1< core::Real > const& pose_1dspec, ObjexxFCL::FArray3D< double > &rot ) {
+DockIntoDensityMover::map_from_spectrum( utility::vector1< core::Real > const& pose_1dspec, ObjexxFCL::FArray3D< core::Real > &rot ) {
 	// ugly
 	for ( int z=1; z<=(int)rot.u3(); ++z ) {
 		for ( int y=1; y<=(int)rot.u2(); ++y ) {
@@ -358,7 +358,7 @@ DockIntoDensityMover::predefine_search( utility::vector1< numeric::xyzVector<cor
 void
 DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 	ObjexxFCL::FArray3D< float > const & densdata = core::scoring::electron_density::getDensityMap().get_data();
-	ObjexxFCL::FArray3D< std::complex<double> > Fdens, Frot;
+	ObjexxFCL::FArray3D< std::complex<core::Real> > Fdens, Frot;
 	numeric::fourier::fft3(densdata, Fdens);
 
 	// make rotationally averaged pose map
@@ -368,7 +368,7 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 	if ( points_defined_ ) return; // points were predefined, don't change
 	points_to_search_.clear();
 
-	ObjexxFCL::FArray3D< double > rot;
+	ObjexxFCL::FArray3D< core::Real > rot;
 	rot.dimension( densdata.u1(), densdata.u2(), densdata.u3() );
 	map_from_spectrum( pose_1dspec, rot );
 	numeric::fourier::fft3(rot, Frot);
@@ -447,7 +447,7 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 void
 DockIntoDensityMover::poseSphericalSamples(
 	core::pose::Pose const &pose,
-	ObjexxFCL::FArray3D< double > & sigR)
+	ObjexxFCL::FArray3D< core::Real > & sigR)
 {
 	using namespace core;
 
@@ -648,12 +648,12 @@ DockIntoDensityMover::density_grid_search (
 	runtime_assert( points_to_search_.size() >= 1 ); // sanity check
 
 	// get pose SPHARM
-	ObjexxFCL::FArray3D< double > poseSig, poseCoefR, poseCoefI;
+	ObjexxFCL::FArray3D< core::Real > poseSig, poseCoefR, poseCoefI;
 	poseSphericalSamples( pose, poseSig );
 	SOFT.sharm_transform( poseSig, poseCoefR, poseCoefI );
 	SOFT.sph_standardize( poseCoefR, poseCoefI );
 
-	ObjexxFCL::FArray3D< double > mapSig, mapCoefR, mapCoefI;
+	ObjexxFCL::FArray3D< core::Real > mapSig, mapCoefR, mapCoefI;
 	for ( core::Size i=1; i<=points_to_search_.size(); ++i ) {
 		// get cartesian coords of ths point
 		density.idx2cart( points_to_search_[i], posttrans );
@@ -663,7 +663,7 @@ DockIntoDensityMover::density_grid_search (
 		SOFT.sph_standardize( mapCoefR, mapCoefI );
 
 		// get correlation
-		ObjexxFCL::FArray3D< double > so3_correlation;
+		ObjexxFCL::FArray3D< core::Real > so3_correlation;
 		SOFT.so3_correlate(so3_correlation, mapCoefR,mapCoefI,  poseCoefR,poseCoefI);
 
 

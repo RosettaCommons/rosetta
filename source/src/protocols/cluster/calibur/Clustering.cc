@@ -31,6 +31,8 @@
 
 #include <utility/exit.hh> // for runtime_assert
 
+#include <core/types.hh>
+
 namespace protocols {
 namespace cluster {
 namespace calibur {
@@ -59,9 +61,9 @@ Stru::Stru(SimPDBOP pdb, int len, bool use_sig):
 {
 	if ( use_sig ) {
 		signature_.resize( len );
-		//double cx = 0;
-		//double cy = 0;
-		//double cz = 0;
+		//core::Real cx = 0;
+		//core::Real cy = 0;
+		//core::Real cz = 0;
 		//compute the centroid
 		/*for (int i=0; i < len; i++)
 		{
@@ -82,17 +84,17 @@ Stru::Stru(SimPDBOP pdb, int len, bool use_sig):
 
 Stru::~Stru() = default;
 
-double
-Stru::dist(double x, double y, double z, const double *zz)
+core::Real
+Stru::dist(core::Real x, core::Real y, core::Real z, const core::Real *zz)
 {
-	double xd=x-zz[0];
-	double yd=y-zz[1];
-	double zd=z-zz[2];
+	core::Real xd=x-zz[0];
+	core::Real yd=y-zz[1];
+	core::Real zd=z-zz[2];
 	return sqrt(xd*xd+yd*yd+zd*zd);
 }
 
-double
-Stru::dist(double x, double y, double z)
+core::Real
+Stru::dist(core::Real x, core::Real y, core::Real z)
 {
 	return sqrt(x*x+y*y+z*z);
 }
@@ -152,7 +154,7 @@ Clustering::Clustering() :
 * (4) ...for clustering.
 */
 void
-Clustering::initialize( std::string const & filename, double const threshold )
+Clustering::initialize( std::string const & filename, core::Real const threshold )
 {
 	mInputFileName = filename;
 	THRESHOLD = threshold;
@@ -245,7 +247,7 @@ void
 Clustering::reinitialize(
 	std::vector< std::string > const & nNames,
 	std::vector< StruOP > const & nPDBs,
-	double const threshold
+	core::Real const threshold
 ) {
 	THRESHOLD = threshold;
 
@@ -328,7 +330,7 @@ Clustering::getThresholdAndDecoys()
 
 	// decide the min max thresholds - = - = - = - = -
 
-	double minDist, maxDist, mostFreqDist, xPercentileDist;
+	core::Real minDist, maxDist, mostFreqDist, xPercentileDist;
 
 	estimateDist(names_,
 		NUM_TRIALS_FOR_THRESHOLD,
@@ -371,7 +373,7 @@ Clustering::getThresholdAndDecoys()
 		std::vector< std::string > names = getRandomDecoyNames(names_, numDecoys);
 		std::vector< StruOP > decoys = readDecoys(names);
 
-		std::vector< std::vector< double > > nbors;
+		std::vector< std::vector< core::Real > > nbors;
 		get_neighbor_list(decoys, names_, names_.size()-1, nbors);
 
 		destroyRandomDecoys(names, decoys);
@@ -380,9 +382,9 @@ Clustering::getThresholdAndDecoys()
 		// values coming from likely uninitialized values in nbors.
 
 		// find the minimum of average distances
-		double min_avg_dist = _OVER_RMSD_;
+		core::Real min_avg_dist = _OVER_RMSD_;
 		for ( int i=0; i < numDecoys; i++ ) {
-			double sum_of_dist = 0;
+			core::Real sum_of_dist = 0;
 			unsigned int num_to_avg = 0;
 			for ( unsigned int j=0; j < names_.size(); j++ ) {
 				if ( nbors[i][j] >= 0 && nbors[i][j] < 500 ) {
@@ -390,7 +392,7 @@ Clustering::getThresholdAndDecoys()
 					num_to_avg++;
 				}
 			}
-			double avg_dist = sum_of_dist / num_to_avg;//names_.size();
+			core::Real avg_dist = sum_of_dist / num_to_avg;//names_.size();
 			if ( avg_dist < min_avg_dist ) {
 				min_avg_dist = avg_dist;
 			}
@@ -398,7 +400,7 @@ Clustering::getThresholdAndDecoys()
 
 		THRESHOLD = xFactor * min_avg_dist + minDist;
 
-		double elapsed = (clock() - start)/(double)CLOCKS_PER_SEC;
+		core::Real elapsed = (clock() - start)/(core::Real)CLOCKS_PER_SEC;
 		std::cout << "Minimum average distance = " << min_avg_dist
 			<< ". Found in " << elapsed << " s" << std::endl;
 		std::cout << "Threshold = " << THRESHOLD << "  (" << minDist
@@ -434,13 +436,13 @@ Clustering::getThresholdAndDecoys()
 		std::vector<std::string> names = getRandomDecoyNames(names_, numDecoys);
 		std::vector< StruOP > decoys = readDecoys(names);
 
-		std::vector< std::vector< double > > nbors;
+		std::vector< std::vector< core::Real > > nbors;
 		get_neighbor_list(decoys, names_, maxClusterSize, nbors);
 
 		destroyRandomDecoys(names, decoys);
 
-		double minThreshold = minDist;
-		double maxThreshold = (minDist + maxDist)/2;
+		core::Real minThreshold = minDist;
+		core::Real maxThreshold = (minDist + maxDist)/2;
 
 		THRESHOLD = get_threshold(nbors,
 			numDecoys,   // # of lists to build
@@ -450,7 +452,7 @@ Clustering::getThresholdAndDecoys()
 			minThreshold,
 			maxThreshold );
 
-		double elapsed = (clock() - start)/(double)CLOCKS_PER_SEC;
+		core::Real elapsed = (clock() - start)/(core::Real)CLOCKS_PER_SEC;
 		std::cout << "Threshold = " << THRESHOLD
 			<< ". Found in " << elapsed << " s" << std::endl;
 	}
@@ -468,7 +470,7 @@ Clustering::getThresholdAndDecoys()
 
 	clock_t start = clock();
 	readDecoys(randNames, randDecoys); // results in PDBs_
-	double elapsed = (clock() - start)/(double)CLOCKS_PER_SEC;
+	core::Real elapsed = (clock() - start)/(core::Real)CLOCKS_PER_SEC;
 	std::cout << "Decoys read in " << elapsed << " s" << std::endl;
 
 	if ( FILTER_MODE ) {
@@ -497,9 +499,9 @@ Clustering::getThresholdAndDecoys()
 			<< maxClusterSize << ")" << std::endl;
 		clock_t start = clock();
 
-		double minThreshold, maxThreshold;
+		core::Real minThreshold, maxThreshold;
 
-		std::vector< std::vector< double > > nbors;
+		std::vector< std::vector< core::Real > > nbors;
 		get_neighbor_list(PDBs_,
 			maxClusterSize,
 			minThreshold,
@@ -514,7 +516,7 @@ Clustering::getThresholdAndDecoys()
 			minThreshold,
 			maxThreshold);
 
-		double elapsed = (clock() - start)/(double)CLOCKS_PER_SEC;
+		core::Real elapsed = (clock() - start)/(core::Real)CLOCKS_PER_SEC;
 		std::cout << "Threshold = " << THRESHOLD
 			<< ". Found in " << elapsed << " s" << std::endl;
 	}
@@ -535,11 +537,11 @@ void
 Clustering::estimateDist( std::vector< std::string > const & allNames,
 	int numTrials,
 	int randDecoySize,
-	double xPercent,
-	double & minDist,
-	double & maxDist,
-	double & mostFreqDist,
-	double & xPercentileDist
+	core::Real xPercent,
+	core::Real & minDist,
+	core::Real & maxDist,
+	core::Real & mostFreqDist,
+	core::Real & xPercentileDist
 ) {
 	StringVec randNames;
 	std::vector< StruOP > randDecoys;
@@ -569,10 +571,10 @@ Clustering::estimateDist( std::vector< std::string > const & allNames,
 	fflush(stdout);
 #endif
 
-	std::vector< double > maxDists( numTrials - 1 );
-	std::vector< double > minDists( numTrials - 1 );
-	std::vector< double > mostFreqDists( numTrials - 1 );
-	std::vector< double > xPercentileDists( numTrials - 1 );
+	std::vector< core::Real > maxDists( numTrials - 1 );
+	std::vector< core::Real > minDists( numTrials - 1 );
+	std::vector< core::Real > mostFreqDists( numTrials - 1 );
+	std::vector< core::Real > xPercentileDists( numTrials - 1 );
 	for ( int i=0; i < numTrials-1; i++ ) {
 		randNames = getRandomDecoyNames(allNames, randDecoySize);
 		randDecoys = readDecoys(randNames);
@@ -689,7 +691,7 @@ Clustering::allocateSpaceForRMSD( int len ) {
 	if ( spaceAllocatedForRMSD ) {
 		return;
 	}
-	result_coords = new double[3*len];
+	result_coords = new core::Real[3*len];
 	spaceAllocatedForRMSD = true;
 }
 
@@ -728,7 +730,7 @@ Clustering::readDecoys(
 	// Spicker samples decoys at a fixed interval delta
 	// such that exactly 13000 decoys are sampled
 	std::cout << "Sampling 13000 decoys" << std::endl;
-	double delta = names_.size()/(double)13000;
+	core::Real delta = names_.size()/(core::Real)13000;
 	int sampled_decoy_id = 1;
 	if (delta < 1) delta = 1;
 #endif
@@ -806,7 +808,7 @@ void
 Clustering::cluster()
 {
 	clock_t start;
-	double elapsed;
+	core::Real elapsed;
 
 	std::cout << "Auxiliary clustering...";
 #ifdef _SHOW_PERCENTAGE_COMPLETE_
@@ -815,7 +817,7 @@ Clustering::cluster()
 	start = clock();
 	initRef(nullptr);
 	auxClustering(); // Cluster to speed-up computation of neighbors
-	elapsed = (clock() - start)/(double)CLOCKS_PER_SEC;
+	elapsed = (clock() - start)/(core::Real)CLOCKS_PER_SEC;
 #ifdef _SHOW_PERCENTAGE_COMPLETE_
 	std::cout << "\nAuxiliaryClustering...";
 #endif
@@ -829,7 +831,7 @@ Clustering::cluster()
 #endif
 #endif
 	buildAdjacentLists(); // Find all the neighbors for each decoy
-	//elapsed = (clock() - start)/(double)CLOCKS_PER_SEC;
+	//elapsed = (clock() - start)/(core::Real)CLOCKS_PER_SEC;
 #if !defined(__WIN32__) && !defined(WIN32)
 #ifndef PYROSETTA
 	elapsed = _get_elapsed(0);
@@ -846,7 +848,7 @@ Clustering::cluster()
 	std::cout << "Finding and removing largest clusters...";
 	start = clock();
 	findLargestClusters(); // Find largest clusters and remove. Recurse.
-	elapsed = (clock() - start)/(double)CLOCKS_PER_SEC;
+	elapsed = (clock() - start)/(core::Real)CLOCKS_PER_SEC;
 	std::cout << " completed in " << elapsed << " s" << std::endl;
 
 #ifdef _ADD_LITE_MODE_
@@ -877,7 +879,7 @@ Clustering::cluster()
 	if ( mFinalClusters.size() > 1 ) {
 		AdjacentList const & nextClus = *mFinalClusters[1];
 		int nextSize = num_neighbors_[nextClus.which_];
-		bestClusMargin = (bestClusSize - nextSize) /(double) bestClusSize;
+		bestClusMargin = (bestClusSize - nextSize) /(core::Real) bestClusSize;
 		std::cout << std::endl << std::endl<<"Largest 2 cluster centers: "
 			<< names_[bestClus.which_] << "(" << bestClusSize << "), "
 			<< names_[nextClus.which_] << "(" << nextSize
@@ -995,7 +997,7 @@ Clustering::listAdjacentLists()
 void
 Clustering::auxClustering()
 {
-	double lower, upper, upper_scud;
+	core::Real lower, upper, upper_scud;
 	for ( int i=0; i < n_pdbs_; i++ ) { // for each decoy
 #ifdef _SHOW_PERCENTAGE_COMPLETE_
 		printf("Auxiliary clustering... %4.1f%%\r", 100.*i/n_pdbs_);
@@ -1030,7 +1032,7 @@ Clustering::auxClustering()
 				}
 			}
 
-			double d = trueD(i, cen);
+			core::Real d = trueD(i, cen);
 			adjacent_lists_[i]->add(cen, d, false);
 			adjacent_lists_[cen]->add(i, d, false);
 			if ( d <= CLU_RADIUS ) {
@@ -1077,7 +1079,7 @@ return false;
 void
 Clustering::buildAdjacentLists()
 {
-	double lower, upper;
+	core::Real lower, upper;
 	//, upper_scud;
 	int numc = mCluCen.size();
 	//std::cout << "Number of decoys=" << n_pdbs_
@@ -1092,7 +1094,7 @@ Clustering::buildAdjacentLists()
 	printf("\r");
 #endif
 	for ( int c=0; c < numc; c++ ) { // for each cluster center
-		double d, _d;
+		core::Real d, _d;
 		int cen = mCluCen[c];
 #ifdef _SHOW_PERCENTAGE_COMPLETE_
 		printf("Finding decoys' neighbors... completed %4.1f%%\r", 100.*c/numc);
@@ -1269,62 +1271,57 @@ Clustering::buildAdjacentLists()
 // Codes for finding RMSD
 //- = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = -
 
-double
+core::Real
 Clustering::estD(int i, int j)
 {
-	std::vector< double > const & sig1 = PDBs_[i]->signature_;
-	std::vector< double > const & sig2 = PDBs_[j]->signature_;
-	double rev = 0;
+	std::vector< core::Real > const & sig1 = PDBs_[i]->signature_;
+	std::vector< core::Real > const & sig2 = PDBs_[j]->signature_;
+	core::Real rev = 0;
 	for ( int c=0; c < mLen; c++ ) {
-		double v = sig1[c]-sig2[c];
+		core::Real v = sig1[c]-sig2[c];
 		rev += v*v;
 	}
 	return sqrt(rev/mLen);
 }
 
-double
+core::Real
 Clustering::estD(Stru const & a, Stru const & b)
 {
-	std::vector< double > const & sig1 = a.signature_;
-	std::vector< double > const & sig2 = b.signature_;
-	double rev=0;
+	std::vector< core::Real > const & sig1 = a.signature_;
+	std::vector< core::Real > const & sig2 = b.signature_;
+	core::Real rev=0;
 	for ( int c=0; c<mLen; c++ ) {
-		double v = sig1[c]-sig2[c];
+		core::Real v = sig1[c]-sig2[c];
 		rev += v*v;
 	}
 	return sqrt(rev/mLen);
 }
 
-double
+core::Real
 Clustering::trueD(int i, int j)
 {
 	std::cout.flush();
 	if ( i == j ) return 0;
-	double d = adjacent_lists_[i]->getD(j);
+	core::Real d = adjacent_lists_[i]->getD(j);
 	if ( d < _OVER_RMSD_ && d >= 0 ) return d;
-	std::vector<double> coor1 = PDBs_[i]->calpha_vector_;
-	std::vector<double> coor2 = PDBs_[j]->calpha_vector_;
-	double rmsd;
-	rmsd = fast_rmsd(coor1, coor2, mLen);
-	if ( rmsd != rmsd ) { // crazy RMSD
-		rmsd = RMSD(coor1, coor2, mLen);
-	}
-	return (double) rmsd;
+	std::vector<core::Real> coor1 = PDBs_[i]->calpha_vector_;
+	std::vector<core::Real> coor2 = PDBs_[j]->calpha_vector_;
+	return fast_rmsd(coor1, coor2, mLen);
 }
 
-double
+core::Real
 Clustering::eucD(int i, int j)
 {
 	std::cout.flush();
 	if ( i == j ) return 0;
-	double d = adjacent_lists_[i]->getD(j);
+	core::Real d = adjacent_lists_[i]->getD(j);
 	if ( d < _OVER_RMSD_ && d >= 0 ) return d;
-	std::vector<double> coor1 = PDBs_[i]->calpha_vector_;
-	std::vector<double> coor2 = PDBs_[j]->calpha_vector_;
-	double rev=0;
+	std::vector<core::Real> coor1 = PDBs_[i]->calpha_vector_;
+	std::vector<core::Real> coor2 = PDBs_[j]->calpha_vector_;
+	core::Real rev=0;
 	int l3=mLen*3;
 	for ( int k=0; k<l3; k++ ) {
-		double d=coor1[k]-coor2[k];
+		core::Real d=coor1[k]-coor2[k];
 		rev+=d*d;
 	}
 	return sqrt(rev/mLen);
@@ -1342,15 +1339,15 @@ Clustering::realignDecoys(int ref)
 	for ( int i=1; i < n_pdbs_; i++ ) {
 		superimposeAndReplace(PDBs_[ref]->calpha_vector_, PDBs_[i]->calpha_vector_);
 	}
-	double elapsed = (clock() - start)/(double)CLOCKS_PER_SEC;
+	core::Real elapsed = (clock() - start)/(core::Real)CLOCKS_PER_SEC;
 	std::cout << " completed in " << elapsed << " s" << std::endl;
 }
 
 
 void
-Clustering::superimposeAndReplace(std::vector<double> & coor1, std::vector<double> & coor2)
+Clustering::superimposeAndReplace(std::vector<core::Real> & coor1, std::vector<core::Real> & coor2)
 {
-	double R[3][3];
+	core::Real R[3][3];
 	RMSD(coor1, coor2, mLen, R);
 	rotate(coor2, mLen, R, result_coords);
 	for ( int i=0; i < 3*mLen; i++ ) {
@@ -1359,17 +1356,12 @@ Clustering::superimposeAndReplace(std::vector<double> & coor1, std::vector<doubl
 }
 
 
-double
+core::Real
 Clustering::trueD(Stru const & a, Stru const & b)
 {
-	std::vector<double> coor1 = a.calpha_vector_;
-	std::vector<double> coor2 = b.calpha_vector_;
-	double rmsd = 0;
-	rmsd = fast_rmsd(coor1, coor2, mLen);
-	if ( rmsd != rmsd ) { // crazy RMSD
-		rmsd = RMSD(coor1, coor2, mLen);
-	}
-	return rmsd;
+	std::vector<core::Real> coor1 = a.calpha_vector_;
+	std::vector<core::Real> coor2 = b.calpha_vector_;
+	return fast_rmsd(coor1, coor2, mLen);
 }
 
 
@@ -1555,14 +1547,14 @@ void
 Clustering::get_neighbor_list(std::vector< StruOP > const & decoys,
 	StringVec const & nborsCandidates,
 	int listLength,
-	std::vector< std::vector< double > > & nbors
+	std::vector< std::vector< core::Real > > & nbors
 ) {
 	// AMW TODO: at some point we should be using a proper 2Darray.
 	// (we want to preserve the previous zero-indexing, so FArrays are out.)
 	// For now, a correctly initialized vector of vectors will do.
 
 	// For each decoy i find its neighbors: nbors[0],nbors[1],...,nbors[N-1]
-	double r;
+	core::Real r;
 	std::string dName;
 	int N = decoys.size();   // decoys to build neighbor list of
 	int M = nborsCandidates.size(); // #candidates to test to fill list
@@ -1576,7 +1568,7 @@ Clustering::get_neighbor_list(std::vector< StruOP > const & decoys,
 		dName = nborsCandidates[i];
 		StruOP a( new Stru( utility::pointer::make_shared< SimPDB >( dName, mLen ), mLen, pref_use_sig ) );
 		for ( int j=0; j < N; j++ ) {// ...insert it into each candidate list.
-			std::vector< double > & nl = nbors[j];
+			std::vector< core::Real > & nl = nbors[j];
 			Stru const & b = *decoys[j];
 
 			// FIXME need to change trueD to store computed RMSDs in a cache.
@@ -1585,7 +1577,7 @@ Clustering::get_neighbor_list(std::vector< StruOP > const & decoys,
 
 			if ( r < nl[listLength-1] ) { // nbors[I] should be altered
 				nl[listLength-1] = r;
-				// double r up the list nl till it's larger
+				// core::Real r up the list nl till it's larger
 				for ( int k=listLength-1; k > 0 && nl[k-1] > r; k-- ) {
 					// swap nl[k] with nk[k-1]
 					nl[k] = nl[k-1];
@@ -1608,16 +1600,16 @@ Clustering::get_neighbor_list(std::vector< StruOP > const & decoys,
 void
 Clustering::get_neighbor_list(std::vector< StruOP > const & decoys,
 	int listLength,
-	double & minDist,
-	double & maxDist,
-	std::vector< std::vector< double > > & nbors
+	core::Real & minDist,
+	core::Real & maxDist,
+	std::vector< std::vector< core::Real > > & nbors
 ) {
 	// AMW: curious problems in the integration test using thres_finder 3 (ROSETTA)
 	// may stem from issues in this function.
 	// AMW: this seems fine. What about the one that removes?
 
 	// For each decoy i find its neighbors: nbors[0],nbors[1],...,nbors[N-1]
-	double r;
+	core::Real r;
 #ifdef _DEBUG_NBORLIST_
 	int ** nborsIndex, * ni;
 #endif
@@ -1634,7 +1626,7 @@ Clustering::get_neighbor_list(std::vector< StruOP > const & decoys,
 	for ( int i=0; i < N; i++ ) {
 		nbors[i].resize( listLength, 1000.0 );
 #ifdef _DEBUG_NBORLIST_
-		nborsIndex[i] = (int *) calloc(listLength, sizeof(double));
+		nborsIndex[i] = (int *) calloc(listLength, sizeof(core::Real));
 #endif
 	}
 	for ( int i=0; i < N; i++ ) {
@@ -1648,7 +1640,7 @@ Clustering::get_neighbor_list(std::vector< StruOP > const & decoys,
 			if ( r > maxDist ) {
 				maxDist = r;
 			}
-			std::vector< double > & nl = nbors[i];
+			std::vector< core::Real > & nl = nbors[i];
 #ifdef _DEBUG_NBORLIST_
 			ni = nborsIndex[i];
 #endif
@@ -1657,7 +1649,7 @@ Clustering::get_neighbor_list(std::vector< StruOP > const & decoys,
 #ifdef _DEBUG_NBORLIST_
 				ni[listLength-1] = j;
 #endif
-				// double r up the list nl till it's larger
+				// core::Real r up the list nl till it's larger
 				for ( int k=listLength-1; k > 0 && nl[k-1] > r; k-- ) {
 					// swap nl[k] with nk[k-1]
 					nl[k] = nl[k-1];
@@ -1677,7 +1669,7 @@ Clustering::get_neighbor_list(std::vector< StruOP > const & decoys,
 #ifdef _DEBUG_NBORLIST_
 				ni[listLength-1] = i;
 #endif
-				// double r up the list nl till it's larger
+				// core::Real r up the list nl till it's larger
 				for ( int k=listLength-1; k > 0 && nl[k-1] > r; k-- ) {
 					// swap nl[k] with nk[k-1]
 					nl[k] = nl[k-1];
@@ -1707,7 +1699,7 @@ Clustering::get_neighbor_list(std::vector< StruOP > const & decoys,
 static int
 __cmp(const void *a, const void *b)
 {
-	return *((double *)a) >= *((double *)b);
+	return *((core::Real *)a) >= *((core::Real *)b);
 }
 
 /**
@@ -1721,16 +1713,16 @@ __cmp(const void *a, const void *b)
 * should be the same as case (3) at x=50%.
 */
 void
-Clustering::estimateDist(std::vector< StruOP > const & decoys, double xPercent,
-	double & minDist, double & maxDist,
-	double & mostFreqDist, double & xPercentileDist
+Clustering::estimateDist(std::vector< StruOP > const & decoys, core::Real xPercent,
+	core::Real & minDist, core::Real & maxDist,
+	core::Real & mostFreqDist, core::Real & xPercentileDist
 ) {
 	//char * dName;
-	double r;
+	core::Real r;
 	int numdecoys = decoys.size();
 	int numofpairs = numdecoys * (numdecoys-1) / 2;
 	// Has to be a raw array for later qsort.
-	auto * alldists = new double[numofpairs];
+	auto * alldists = new core::Real[numofpairs];
 	int k = 0;
 	maxDist = 0;
 	minDist = _OVER_RMSD_;
@@ -1754,7 +1746,7 @@ Clustering::estimateDist(std::vector< StruOP > const & decoys, double xPercent,
 	// Break the interval [minDist,maxDist] into numofbins bins and find
 	// the frequencies of the distances within the range of each bin
 	int numofbins = numdecoys;
-	double bin_size = (maxDist - minDist)/numofbins;
+	core::Real bin_size = (maxDist - minDist)/numofbins;
 	std::vector< int > bins( numofbins );
 	for ( int & bin : bins ) {
 		bin = 0;
@@ -1803,7 +1795,7 @@ Clustering::estimateDist(std::vector< StruOP > const & decoys, double xPercent,
 	mostFreqDist = (minDist + (bin_of_highest + 0.5) * bin_size);
 
 	// Find the x percentile distance through qsort
-	qsort(alldists, numofpairs, sizeof(double), __cmp);
+	qsort(alldists, numofpairs, sizeof(core::Real), __cmp);
 	xPercentileDist = alldists[(int)(xPercent/100*numofpairs)];
 
 	if ( autoAdjustPercentile ) { // Use smaller thresholds for larger data sets
@@ -1847,15 +1839,15 @@ Clustering::estimateDist(std::vector< StruOP > const & decoys, double xPercent,
 *  ---> N
 *         ...we would use x=x_1 and N=maxSize.
 */
-double
+core::Real
 Clustering::get_threshold(
-	std::vector< std::vector< double > > const & nbors,
+	std::vector< std::vector< core::Real > > const & nbors,
 	int numLists,
 	int listLength,
 	int minSize,
 	int size,
-	double minThres,
-	double maxThres
+	core::Real minThres,
+	core::Real maxThres
 ) {
 	int t = size;   // current number of nearest neighbors to try
 	int last_t = 0; // the last number of nearest neighbors found suitable
@@ -1864,7 +1856,7 @@ Clustering::get_threshold(
 	// I think we should initialize best_rmsd because there is no
 	// true guarantee that size is between minSize and maxSize.
 	// (So loop might never execute.)
-	double rmsd, best_rmsd = _OVER_RMSD_, threshold;
+	core::Real rmsd, best_rmsd = _OVER_RMSD_, threshold;
 
 	/** Look for a number t where:
 	* 1. minSize <= t <= maxSize
@@ -1946,7 +1938,7 @@ Clustering::initRef( int* index ) {
 
 	for ( int j=0; j < n_pdbs_; j++ ) {
 		for ( int i=0; i < REFERENCE_SIZE; i++ ) {
-			double d = trueD(index[i],j);
+			core::Real d = trueD(index[i],j);
 			adjacent_lists_[index[i]]->add(j, d, false);
 			adjacent_lists_[j]->add(index[i], d, false);
 			references_[j*REFERENCE_SIZE+i] = d; //trueD(index[i],j);
@@ -1960,15 +1952,15 @@ Clustering::initRef( int* index ) {
 
 
 void
-Clustering::refBound( int i, int j, double& lower, double& upper )
+Clustering::refBound( int i, int j, core::Real& lower, core::Real& upper )
 {
 	lower = 0;
 	upper = _OVER_RMSD_;
 	unsigned int index_first  = i*REFERENCE_SIZE;
 	unsigned int index_second = j*REFERENCE_SIZE;
 	for ( int k=0; k < REFERENCE_SIZE; k++ ) {
-		double diff = fabs( references_[ index_first + k ] - references_[ index_second + k ] );
-		double sum  = references_[ index_first + k ] + references_[ index_second + k ] ;
+		core::Real diff = fabs( references_[ index_first + k ] - references_[ index_second + k ] );
+		core::Real sum  = references_[ index_first + k ] + references_[ index_second + k ] ;
 		if ( diff > lower ) lower = diff;
 		if ( sum  < upper ) upper = sum;
 	}

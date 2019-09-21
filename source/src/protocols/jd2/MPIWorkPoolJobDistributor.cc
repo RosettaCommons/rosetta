@@ -545,7 +545,7 @@ MPIWorkPoolJobDistributor::slave_job_succeeded(core::pose::Pose & MPI_ONLY( pose
 		clock_t stoptime = clock();
 
 			// send message to master that we are done outputing
-		if(TR.visible()) TR << "Slave Node " << rank_ << ": Finished writing output in " << ((double) stoptime-starttime) / CLOCKS_PER_SEC << " seconds. Sending message to master" << std::endl;
+		if(TR.visible()) TR << "Slave Node " << rank_ << ": Finished writing output in " << ((core::Real) stoptime-starttime) / CLOCKS_PER_SEC << " seconds. Sending message to master" << std::endl;
 		MPI_Send( &empty_data, 1, MPI_UNSIGNED_LONG, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
 	}
 #endif

@@ -44,7 +44,7 @@ using utility::vector1;
 
 namespace protocols {
 namespace simple_filters {
-using Xform = numeric::xyzTransform<double>;
+using Xform = numeric::xyzTransform<core::Real>;
 static basic::Tracer TR( "protocols.simple_moves.MotifScoreFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
@@ -82,7 +82,7 @@ core::Real MotifScoreFilter::report_sm( core::pose::Pose const & pose ) const {
 core::Real MotifScoreFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace core::scoring;
 	using namespace core::scoring::motif;
-	double score = 0.0;
+	core::Real score = 0.0;
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
 	for ( size_t ir = 1; ir <= pose.size(); ++ir ) {

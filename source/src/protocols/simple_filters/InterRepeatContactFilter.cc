@@ -88,8 +88,8 @@ InterRepeatContactFilter::compute( Pose const & pose ) const
 	for ( Size ii=region1Start; ii<=region1End; ++ii ) {
 		for ( Size jj=region2Start; jj<=region2End; ++jj ) {
 			if ( (jj-ii)>sequenceSep_ ) {
-				xyzVector<double> a = pose.xyz(core::id::NamedAtomID("CA", ii));
-				xyzVector<double> b = pose.xyz(core::id::NamedAtomID("CA", jj));
+				xyzVector<core::Real> a = pose.xyz(core::id::NamedAtomID("CA", ii));
+				xyzVector<core::Real> b = pose.xyz(core::id::NamedAtomID("CA", jj));
 				if ( a.distance(b)<distThresh_ ) {
 					contactCt+=1;
 				}

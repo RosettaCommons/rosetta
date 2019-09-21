@@ -257,7 +257,7 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 	}//foreach pos
 	unsigned long const seq_space_after( sequence_space( ptask ) );
 	TR<<"Finished restricting. Total number of sequences after restriction: "<<seq_space_after<<'\n';
-	TR<<"Orders of magnitude change: "<<log10( (double)seq_space_after ) - log10( (double)seq_space_before )<<std::endl; // REQUIRED FOR WINDOWS
+	TR<<"Orders of magnitude change: "<<log10( (core::Real)seq_space_after ) - log10( (core::Real)seq_space_before )<<std::endl; // REQUIRED FOR WINDOWS
 }
 
 unsigned long

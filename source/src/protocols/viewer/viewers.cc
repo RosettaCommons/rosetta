@@ -214,7 +214,7 @@ void processMouseActiveMotion(int x, int y) {
 	//std::cout << "clicked_button " << clicked_button << "    specialKey " << specialKey << std::endl;
 
 	if ( ((specialKey == GLUT_ACTIVE_SHIFT) & (clicked_button == 0)) || clicked_button == 1 ) { // Zoom in/out
-		double s = exp( -1.0* (double) delta_y*0.01);
+		core::Real s = exp( -1.0* (core::Real) delta_y*0.01);
 		glScalef(s,s,s);
 	} else if ( specialKey == GLUT_ACTIVE_CTRL ) { // Recontour
 		GraphicsState* current_gs = gs_map_[ glutGetWindow() ];
@@ -238,8 +238,8 @@ void processMouseActiveMotion(int x, int y) {
 		//  -1.0*delta_y * (_bottom-_top)/(viewport[3]), 0);
 		//Scale factors map from screen coordinates to molecule coordinates.
 		glMatrixMode(GL_MODELVIEW);
-		double xscale = (graphics::window_size * 2.0)/(viewport[2]);
-		double yscale = (graphics::window_size * 2.0)/(viewport[3]);
+		core::Real xscale = (graphics::window_size * 2.0)/(viewport[2]);
+		core::Real yscale = (graphics::window_size * 2.0)/(viewport[3]);
 
 		GLfloat currentrotation[16];
 		glGetFloatv(GL_MODELVIEW_MATRIX, currentrotation);
@@ -247,10 +247,10 @@ void processMouseActiveMotion(int x, int y) {
 		glTranslatef( -delta_x * xscale, delta_y * yscale, 0);
 		glMultMatrixf(currentrotation);
 	} else { //Rotate the sucker.
-		//double axis_z = 0;
-		double axis_x = -delta_y;
-		double axis_y = -delta_x;
-		double userangle = sqrt(delta_x*delta_x + delta_y*delta_y);
+		//core::Real axis_z = 0;
+		core::Real axis_x = -delta_y;
+		core::Real axis_y = -delta_x;
+		core::Real userangle = sqrt(delta_x*delta_x + delta_y*delta_y);
 
 		glMatrixMode(GL_MODELVIEW);
 		// Standard GLUT rotation is a postmultiplication - rotation around

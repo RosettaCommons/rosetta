@@ -167,7 +167,7 @@ DensitySymmInfo::autocorrelate(
 	ObjexxFCL::FArray3D< float > const & densdata = e.get_data();
 	numeric::xyzVector<core::Size> grid(
 		densdata.u1()/undersample, densdata.u2()/undersample, densdata.u3()/undersample );
-	ObjexxFCL::FArray3D< double > dens, rot;
+	ObjexxFCL::FArray3D< core::Real > dens, rot;
 	rot.dimension( grid[0], grid[1], grid[2] );
 	dens.dimension( grid[0], grid[1], grid[2] );
 	dens=0;
@@ -188,11 +188,11 @@ DensitySymmInfo::autocorrelate(
 	}
 
 	// rotate density map about center of mass by angle (no wrapping)
-	ObjexxFCL::FArray3D< std::complex<double> > Fdens, Frot;
+	ObjexxFCL::FArray3D< std::complex<core::Real> > Fdens, Frot;
 	rot.dimension( grid[0], grid[1], grid[2] );
 	numeric::xyzMatrix<core::Real> R = numeric::rotation_matrix( axis, angle );
 
-	ObjexxFCL::FArray3D< double > coeffs_density;
+	ObjexxFCL::FArray3D< core::Real > coeffs_density;
 	core::scoring::electron_density::spline_coeffs( dens , coeffs_density );
 
 	numeric::xyzVector<core::Real> idx_center ( grid[0]/2.0+1 , grid[1]/2.0+1 , grid[2]/2.0+1 );
@@ -295,7 +295,7 @@ DensitySymmInfo::autocorrelate(
 }
 
 void
-DensitySymmInfo::mask_asu( ObjexxFCL::FArray3D< double > &vol, core::scoring::electron_density::ElectronDensity const &e, double value ) {
+DensitySymmInfo::mask_asu( ObjexxFCL::FArray3D< core::Real > &vol, core::scoring::electron_density::ElectronDensity const &e, core::Real value ) {
 	numeric::xyzVector< core::Real > grid(vol.u1(), vol.u2(), vol.u3()), idx_center;
 
 	if ( type=='C' || type == 'D' ) {

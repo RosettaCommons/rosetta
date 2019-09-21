@@ -299,9 +299,9 @@ void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
 {
 
 	int    c,r,n,j,i,irot;
-	double omega[ DIM6 ][ DIM6 ];
-	double om[ DIM6 ] [ DIM6 ];
-	double d[ DIM6 ],xnr,xpc;
+	core::Real omega[ DIM6 ][ DIM6 ];
+	core::Real om[ DIM6 ] [ DIM6 ];
+	core::Real d[ DIM6 ],xnr,xpc;
 	matrix vh,vk,u;
 	Real   mn;
 	int    index;
@@ -317,7 +317,7 @@ void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
 
 	/* clear matrix U */
 	for ( auto & ii : u ) {
-		for ( double & jj : ii ) jj=0;
+		for ( core::Real & jj : ii ) jj=0;
 	}
 	/*calculate the matrix U*/
 	for ( n=0; (n<natoms); n++ ) {
@@ -397,13 +397,13 @@ void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
 }
 
 
-void PCA::jacobi(double a[6][6],double d[],double v[6][6],int *nrot)
+void PCA::jacobi(core::Real a[6][6],core::Real d[],core::Real v[6][6],int *nrot)
 {
 	int j,i;
 	int iq,ip;
-	double tresh,theta,tau,t,/*sm,*/s,h,g,c;
-	double b[DIM6];
-	double z[DIM6];
+	core::Real tresh,theta,tau,t,/*sm,*/s,h,g,c;
+	core::Real b[DIM6];
+	core::Real z[DIM6];
 	int const n( DIM6 );
 	for ( ip=0; ip<n; ip++ ) {
 		for ( iq=0; iq<n; iq++ ) v[ip][iq]=0.0;
@@ -415,7 +415,7 @@ void PCA::jacobi(double a[6][6],double d[],double v[6][6],int *nrot)
 	}
 	*nrot=0;
 	for ( i=1; i<=50; i++ ) {
-		double sm=0.0;
+		core::Real sm=0.0;
 		for ( ip=0; ip<n-1; ip++ ) {
 			for ( iq=ip+1; iq<n; iq++ ) {
 				sm += fabs(a[ip][iq]);

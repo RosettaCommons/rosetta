@@ -174,7 +174,7 @@ void FragmentSampler::checkpointed_cycle_block(
 	};
 	clock_t endtime = clock();
 	if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
-		tr.Info << "Timeperstep: " << (double(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
+		tr.Info << "Timeperstep: " << (core::Real(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
 		protocols::jd2::output_intermediate_pose( pose, id2string( stage_id ) );
 	}
 }

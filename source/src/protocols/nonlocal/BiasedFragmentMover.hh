@@ -46,7 +46,7 @@ namespace nonlocal {
 class BiasedFragmentMover : public protocols::moves::Mover {
 	typedef boost::unordered_map<unsigned, core::fragment::Frame> FrameMap;
 	typedef core::fragment::FragSetCOP FragSetCOP;
-	typedef utility::vector1<double> Probabilities;
+	typedef utility::vector1<core::Real> Probabilities;
 
 public:
 	/// @brief Creates a new BiasedFragmentMover that selects uniformly from the

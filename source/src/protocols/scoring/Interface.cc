@@ -252,8 +252,8 @@ Interface::ligand_calculate(
 			if ( partner_(j) ) continue; // compare against only ligand residues
 			conformation::Residue const & lig_rsd = pose.residue(j);
 			for ( Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
-				double dist2 = lig_rsd.xyz(k).distance_squared( prot_rsd.xyz(prot_rsd.nbr_atom()) );
-				double cutoff = prot_rsd.nbr_radius() + 6.0;
+				core::Real dist2 = lig_rsd.xyz(k).distance_squared( prot_rsd.xyz(prot_rsd.nbr_atom()) );
+				core::Real cutoff = prot_rsd.nbr_radius() + 6.0;
 				if ( dist2 <= cutoff * cutoff ) {
 					is_interface_(i) = true;
 

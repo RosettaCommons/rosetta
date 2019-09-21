@@ -784,14 +784,14 @@ FlexPepDockingProtocol::random_peptide_phi_psi_perturbation(
 	using namespace std;
 	using namespace numeric;
 
-	double pertSize = flags_.random_phi_psi_pert_size;
+	core::Real pertSize = flags_.random_phi_psi_pert_size;
 
 	for ( Size i=flags_.peptide_first_res();
 			i < flags_.peptide_first_res()+flags_.peptide_nres(); i++ ) {
-		double phi_offset = numeric::random::uniform()*(pertSize)*2 - pertSize;
-		double psi_offset = numeric::random::uniform()*(pertSize)*2 - pertSize;
-		double new_phi = principal_angle_degrees( pose.phi(i) + phi_offset );
-		double new_psi = principal_angle_degrees( pose.psi(i) + psi_offset );
+		core::Real phi_offset = numeric::random::uniform()*(pertSize)*2 - pertSize;
+		core::Real psi_offset = numeric::random::uniform()*(pertSize)*2 - pertSize;
+		core::Real new_phi = principal_angle_degrees( pose.phi(i) + phi_offset );
+		core::Real new_psi = principal_angle_degrees( pose.psi(i) + psi_offset );
 		pose.set_phi(i,new_phi);
 		pose.set_psi(i,new_psi);
 	}
@@ -1714,22 +1714,22 @@ FlexPepDockingProtocol::storeJobStatistics
 			fpdock_metrics_.calc_phipsi_RMSD( native_pose, final_pose, native_interface_residues) );
 
 		core::Size ngoodatoms;
-		double frac1 =  fpdock_metrics_.calc_frac_atoms_kA_to_native
+		core::Real frac1 =  fpdock_metrics_.calc_frac_atoms_kA_to_native
 			( native_pose,
 			final_pose,
 			native_interface_residues,
 			&is_polymer_heavyatom, 1 /*Angstrom*/, ngoodatoms);
-		double frac1_bb =  fpdock_metrics_.calc_frac_atoms_kA_to_native
+		core::Real frac1_bb =  fpdock_metrics_.calc_frac_atoms_kA_to_native
 			( native_pose,
 			final_pose,
 			native_interface_residues,
 			&is_protein_backbone, 1 /*Angstrom*/, ngoodatoms);
-		double frac1_5 =  fpdock_metrics_.calc_frac_atoms_kA_to_native
+		core::Real frac1_5 =  fpdock_metrics_.calc_frac_atoms_kA_to_native
 			( native_pose,
 			final_pose,
 			native_interface_residues,
 			&is_polymer_heavyatom, 1.5 /*Angstrom*/, ngoodatoms);
-		double frac2 =  fpdock_metrics_.calc_frac_atoms_kA_to_native
+		core::Real frac2 =  fpdock_metrics_.calc_frac_atoms_kA_to_native
 			( native_pose,
 			final_pose,
 			native_interface_residues,

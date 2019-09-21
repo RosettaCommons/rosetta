@@ -17,6 +17,8 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include <core/types.hh>
+
 #include <utility/exit.hh>
 #include <utility/json_spirit/json_spirit.h>
 #include <utility/json_spirit/json_spirit_tools.hh>
@@ -28,11 +30,8 @@
 #include <protocols/indexed_structure_store/FragmentStore.hh>
 #include <protocols/indexed_structure_store/BinaryFragmentStoreBackend.hh>
 
-namespace protocols
-{
-namespace indexed_structure_store
-{
-
+namespace protocols {
+namespace indexed_structure_store {
 
 static basic::Tracer TR( "core.indexed_structure_store.BinaryFragmentStoreBackend" );
 
@@ -85,8 +84,8 @@ FragmentStoreOP BinaryFragmentStoreBackend::get_fragment_store(std::string store
 
 	for ( auto & fragment_coordinate : fragment_store->fragment_coordinates ) {
 		// Stored precision may not be double
-		double read_coordinate[3];
-		coordinates_file.read((char*)&read_coordinate[0], sizeof(double) * 3);
+		core::Real read_coordinate[3];
+		coordinates_file.read((char*)&read_coordinate[0], sizeof(core::Real) * 3);
 
 		fragment_coordinate.x() = read_coordinate[0];
 		fragment_coordinate.y() = read_coordinate[1];
@@ -99,10 +98,10 @@ FragmentStoreOP BinaryFragmentStoreBackend::get_fragment_store(std::string store
 	threshold_distance_file.exceptions(std::ifstream::failbit | std::ifstream::badbit | std::ifstream::eofbit);
 	threshold_distance_file.open(threshold_distance_path.c_str(),std::ios::in|std::ios::binary);
 
-	for ( double & fragment_threshold_distance : fragment_store->fragment_threshold_distances ) {
+	for ( core::Real & fragment_threshold_distance : fragment_store->fragment_threshold_distances ) {
 		// Stored precision may not be double
-		double read_coordinate;
-		threshold_distance_file.read((char*)&read_coordinate, sizeof(double));
+		core::Real read_coordinate;
+		threshold_distance_file.read((char*)&read_coordinate, sizeof(core::Real));
 
 		fragment_threshold_distance = read_coordinate;
 	}
@@ -114,5 +113,6 @@ FragmentStoreOP BinaryFragmentStoreBackend::get_fragment_store(std::string store
 void BinaryFragmentStoreBackend::append_to_fragment_store(FragmentStoreOP /*fragment_store*/, std::string /*store_name*/, std::string /*group_field*/, std::string /*group_type*/){
 	return;
 }
+
 }
 }

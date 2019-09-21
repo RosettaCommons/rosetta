@@ -51,12 +51,12 @@ void field_message(
 );
 
 void farray_to_string(
-  ObjexxFCL::FArray2D<double>& xyz,
+  ObjexxFCL::FArray2D<core::Real>& xyz,
   std::string& string
 );
 
 void string_to_farray(
-  ObjexxFCL::FArray2D<double>& xyz,
+  ObjexxFCL::FArray2D<core::Real>& xyz,
   std::string& string,
   int xyz_u1,
   int xyz_u2
@@ -72,7 +72,7 @@ std::string get_discovered_out();
 
   /**
 void broadcast_new_coords(
-  ObjexxFCL::FArray2D<double>& xyz,
+  ObjexxFCL::FArray2D<core::Real>& xyz,
   std::string& tag
 );
   **/
@@ -116,7 +116,7 @@ private:
   );
 
   void send_xyz(
-    ObjexxFCL::FArray2D<double>& xyz,
+    ObjexxFCL::FArray2D<core::Real>& xyz,
     std::string& tag,
     core::Size rank
   );
@@ -129,7 +129,7 @@ private:
   );
 
   void receive_xyz(
-    ObjexxFCL::FArray2D<double>& xyz,
+    ObjexxFCL::FArray2D<core::Real>& xyz,
     std::string& tag,
     core::Size rank
   );

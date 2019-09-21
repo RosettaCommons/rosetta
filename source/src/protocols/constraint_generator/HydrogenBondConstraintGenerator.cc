@@ -489,7 +489,7 @@ HydrogenBondConstraintGenerator::create_residue_constraint(
 
 	if ( !a1.dihedrals().empty() ) {
 		ConstraintOPs dihedral_csts;
-		for ( double d : a1.dihedrals() ) {
+		for ( core::Real d : a1.dihedrals() ) {
 			dihedral_csts.push_back( utility::pointer::make_shared< DihedralConstraint >(
 				parent2_atomid1, parent_atomid1, atomid1, atomid2, dihedral_func( d ) ) );
 		}
@@ -497,7 +497,7 @@ HydrogenBondConstraintGenerator::create_residue_constraint(
 	}
 	if ( !a2.dihedrals().empty() ) {
 		ConstraintOPs dihedral_csts;
-		for ( double d : a2.dihedrals() ) {
+		for ( core::Real d : a2.dihedrals() ) {
 			dihedral_csts.push_back( utility::pointer::make_shared< DihedralConstraint >(
 				atomid1, atomid2, parent_atomid2, parent2_atomid2, dihedral_func( d ) ) );
 		}
@@ -521,7 +521,7 @@ HydrogenBondingAtom::HydrogenBondingAtom(
 	angle_( numeric::constants::f::pi / 180.0 * ideal_angle ),
 	dihedrals_()
 {
-	for ( double d : ideal_dihedral ) {
+	for ( core::Real d : ideal_dihedral ) {
 		dihedrals_.push_back( numeric::constants::f::pi / 180.0 * d );
 	}
 }

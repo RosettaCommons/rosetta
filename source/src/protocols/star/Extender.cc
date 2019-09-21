@@ -167,7 +167,7 @@ int Extender::choose_cutpoint(int start, int stop) const {
 	WeightedReservoirSampler<int> sampler(1);
 
 	for ( int i = start; i <= stop; ++i ) {
-		double weight = pred_ss_->loop_fraction(i) + 1e-20;
+		core::Real weight = pred_ss_->loop_fraction(i) + 1e-20;
 		sampler.consider_sample(i, weight);
 	}
 

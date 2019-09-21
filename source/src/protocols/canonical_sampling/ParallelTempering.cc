@@ -214,7 +214,7 @@ ParallelTempering::finalize_simulation(
 		tr.flags(oldflags);
 	}
 
-	core::Real const clock_factor( ( (double) basic::SHRINK_FACTOR ) / CLOCKS_PER_SEC );
+	core::Real const clock_factor( ( (core::Real) basic::SHRINK_FACTOR ) / CLOCKS_PER_SEC );
 	clock_t total_time(clock()/basic::SHRINK_FACTOR - start_time_);
 	core::Real fraction_waiting = total_mpi_wait_time_*clock_factor / ( total_time*clock_factor );
 	tr << "Spent " << fraction_waiting*100 << "% time waiting for MPI temperature exchange ("
@@ -254,7 +254,7 @@ void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
 void ParallelTempering::allocate_buffers( core::Size nlevels ) {
 	tr.Trace << "ParallelTempering::allocate_buffers for " << nlevels << std::endl;
 	deallocate_buffers();
-	last_energies_ = new double[nlevels];
+	last_energies_ = new core::Real[nlevels];
 	rank2tlevel_ = new int[nlevels];
 	tlevel2rank_ = new int[nlevels];
 	for ( Size i=0; i<nlevels; ++i ) {
@@ -282,7 +282,7 @@ ParallelTempering::temperature_move( core::Real MPI_ONLY( score ) ) {
 	// Size const nlevels( n_temp_levels() );
 #ifdef USEMPI
 	//get infomation
-	double last_energy = score;
+	core::Real last_energy = score;
 	clock_t time_before_MPI = clock();
 	MPI_Gather(&last_energy, 1, MPI_DOUBLE, last_energies_, 1, MPI_DOUBLE, 0, mpi_comm() );
 
@@ -299,7 +299,7 @@ ParallelTempering::temperature_move( core::Real MPI_ONLY( score ) ) {
 }
 
 void
-ParallelTempering::shuffle_temperatures( const double *energies ) {
+ParallelTempering::shuffle_temperatures( const core::Real *energies ) {
 	last_exchange_schedule_ = ( last_exchange_schedule_ + 1 ) % 2;
 	ExchangeSchedule const& ex( exchange_schedules_[ last_exchange_schedule_ ] );
 

@@ -56,12 +56,12 @@ Real get_rg(core::pose::Pose const & pose){
 	return sqrt( rg_score );
 }
 
-int neighbor_count(core::pose::Pose const &pose, int ires, double distance_threshold) {
+int neighbor_count(core::pose::Pose const &pose, int ires, core::Real distance_threshold) {
 	core::conformation::Residue const resi( pose.residue( ires ) );
 	Size resi_neighbors( 0 );
 	for ( Size jres = 1; jres <= pose.size(); ++jres ) {
 		core::conformation::Residue const resj( pose.residue( jres ) );
-		double const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
+		core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
 		if ( distance <= distance_threshold ) {
 			++resi_neighbors;
 		}
@@ -71,7 +71,7 @@ int neighbor_count(core::pose::Pose const &pose, int ires, double distance_thres
 
 Real
 cb_weight(core::pose::Pose const &pose, Size ires, Real distance_threshold) {
-	Real wt = numeric::min(1.0,(double)neighbor_count(pose,ires,distance_threshold)/20.0);
+	Real wt = numeric::min(1.0,(core::Real)neighbor_count(pose,ires,distance_threshold)/20.0);
 	if ( pose.secstruct(ires)=='L' ) wt = wt / 3.0; //TODO make option somehow
 	return wt;
 }
@@ -91,7 +91,7 @@ void make_Cx(core::pose::Pose & pose, int N, numeric::xyzVector<core::Real> axis
 }
 
 
-double
+core::Real
 slide_into_contact_and_score(
 	protocols::sic_dock::SICFast    const & sic,
 	protocols::sic_dock::RigidScore const & sfxn,
@@ -100,13 +100,13 @@ slide_into_contact_and_score(
 	numeric::xyzVector<core::Real>  const & ori,
 	core::Real                            & score
 ){
-	double d = sic.slide_into_contact(xa,xb,ori);
+	core::Real d = sic.slide_into_contact(xa,xb,ori);
 	xa.t += d*ori;
 	if ( score != -12345.0 ) score = sfxn.score( xa, xb );
 	return d;
 }
 
-double
+core::Real
 slide_into_contact_and_score_DEPRICATED(
 	protocols::sic_dock::SICFast    const & sic,
 	protocols::sic_dock::RigidScore const & sfxn,
@@ -115,17 +115,17 @@ slide_into_contact_and_score_DEPRICATED(
 	numeric::xyzVector<core::Real>  const & ori,
 	core::Real                            & score
 ){
-	double d = sic.slide_into_contact_DEPRICATED(xa,xb,ori);
+	core::Real d = sic.slide_into_contact_DEPRICATED(xa,xb,ori);
 	xa.v += d*ori;
 	if ( score != -12345.0 ) score = sfxn.score( Xform(xa.M,xa.v), Xform(xb.M,xb.v) );
 	return d;
 }
 
-core::id::AtomID_Map<double>
+core::id::AtomID_Map<core::Real>
 cb_weight_map_from_pose(
 	core::pose::Pose const & pose
 ){
-	core::id::AtomID_Map<double> amap;
+	core::id::AtomID_Map<core::Real> amap;
 	core::pose::initialize_atomid_map(amap,pose,-1.0);
 	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).has("CB") ) {
@@ -222,7 +222,7 @@ vector1<core::Size> range(core::Size beg, core::Size end){
 	return v;
 }
 
-int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double t) {
+int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<core::Real> & grid, core::Real t) {
 	if ( grid(i,j,k) <= t ) return 0;
 	grid(i,j,k) = t;
 	int nmark = 1;
@@ -456,7 +456,7 @@ Real brute_mindis(vector1<Vec> const & pa, vector1<Vec> const & pb, Vec const & 
 	return mindis;
 }
 
-std::string KMGT(double const & x, int const & w, int const & d){
+std::string KMGT(core::Real const & x, int const & w, int const & d){
 	using ObjexxFCL::format::F;
 	if ( x < 1e3  ) return F( w, d, x/1e0  )+" ";
 	if ( x < 1e6  ) return F( w, d, x/1e3  )+"K";

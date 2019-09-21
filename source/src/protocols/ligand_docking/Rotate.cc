@@ -410,7 +410,7 @@ bool check_RMSD(
 	debug_assert(heavy_atom_number > 0);
 
 	// This next parameter is a wild heuristic guesses that seem OK for the Meiler x-dock set.
-	core::Real const diverse_rms = 0.65 * std::sqrt((double) heavy_atom_number);
+	core::Real const diverse_rms = 0.65 * std::sqrt((core::Real) heavy_atom_number);
 
 	core::conformation::ResidueCOPs const & these_residues= ligand.get_residues();
 

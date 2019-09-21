@@ -85,7 +85,7 @@ private:
 	void torsions_monte_carlo(
 		core::pose::Pose & pose,
 		const int cycles,
-		double& acceptance_rate
+		core::Real& acceptance_rate
 	);
 
 	// pose - the pose to loop close, containing the peptide
@@ -103,7 +103,7 @@ private:
 		const int cycles,
 		const float trans_magnitude,
 		const float rot_magnitude,
-		double& acceptance_rate
+		core::Real& acceptance_rate
 	);
 
 	/////////////////////////////////////////////////////////////////////////////

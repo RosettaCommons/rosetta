@@ -29,7 +29,7 @@
 namespace protocols {
 namespace medal {
 
-typedef utility::vector1<double> Probabilities;
+typedef utility::vector1<core::Real> Probabilities;
 
 /// @brief Computes per-residue alignment probabilities. To minimize assumptions
 /// about the fold tree, the number of residues in the pose is an explicit input.

@@ -134,7 +134,7 @@ private: //functions
 		core::scoring::ScoreFunction const & scorefxn );
 
 
-	void setInitialSpeeds(double tgtTemp);
+	void setInitialSpeeds(core::Real tgtTemp);
 
 	void calcKineticEnergy(
 		float &ekin,
@@ -148,7 +148,7 @@ private: //functions
 
 
 	void applyForces_LangevinIntegration(
-		double T,
+		core::Real T,
 		float &kin,
 		float &temp);
 

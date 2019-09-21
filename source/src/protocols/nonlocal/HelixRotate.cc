@@ -46,11 +46,11 @@ HelixRotate::HelixRotate() {
 	initialize(protocols::loops::Loop(), 0.0);
 }
 
-HelixRotate::HelixRotate(const protocols::loops::Loop& helix, double degrees) {
+HelixRotate::HelixRotate(const protocols::loops::Loop& helix, core::Real degrees) {
 	initialize(helix, degrees);
 }
 
-void HelixRotate::initialize(const protocols::loops::Loop& helix, double degrees) {
+void HelixRotate::initialize(const protocols::loops::Loop& helix, core::Real degrees) {
 	helix_ = helix;
 	degrees_ = degrees;
 }
@@ -82,7 +82,7 @@ void HelixRotate::apply(core::pose::Pose& pose) {
 	builder.set_up(chunks, &pose);
 
 	// Define the axis of translation
-	xyzVector<double> axis, point;
+	xyzVector<core::Real> axis, point;
 	get_rotation_parameters(pose, &axis, &point);
 
 	// Rotation about the axis
@@ -99,7 +99,7 @@ void HelixRotate::apply(core::pose::Pose& pose) {
 void avg_ca_position(
 	const core::pose::Pose& pose,
 	const protocols::loops::Loop& region,
-	numeric::xyzVector<double>* point
+	numeric::xyzVector<core::Real>* point
 ) {
 	debug_assert(point);
 
@@ -113,8 +113,8 @@ void avg_ca_position(
 
 void HelixRotate::get_rotation_parameters(
 	const core::pose::Pose& pose,
-	numeric::xyzVector<double>* axis,
-	numeric::xyzVector<double>* point
+	numeric::xyzVector<core::Real>* axis,
+	numeric::xyzVector<core::Real>* point
 ) const
 {
 	using core::id::NamedAtomID;
@@ -133,7 +133,7 @@ void HelixRotate::get_rotation_parameters(
 
 	// Given a sufficient number of points, define the axis of rotation by the
 	// average position of the first and last 3 CA atoms.
-	xyzVector<double> a, b;
+	xyzVector<core::Real> a, b;
 	avg_ca_position(pose, Loop(helix_.start(), helix_.start() + 2), &a);
 	avg_ca_position(pose, Loop(helix_.stop() - 2, helix_.stop()), &b);
 	*axis = b - a;
@@ -184,11 +184,11 @@ void HelixRotate::set_helix(const protocols::loops::Loop& helix) {
 	helix_ = helix;
 }
 
-double HelixRotate::get_degrees() const {
+core::Real HelixRotate::get_degrees() const {
 	return degrees_;
 }
 
-void HelixRotate::set_degrees(double degrees) {
+void HelixRotate::set_degrees(core::Real degrees) {
 	degrees_ = degrees;
 }
 

@@ -72,7 +72,7 @@ private:
 	core::id::AtomID_Map< core::Size > atom_indices_;
 	utility::vector1< core::id::AtomID > moving_atoms_;
 
-	mutable ObjexxFCL::FArray3D< double > rhoC_, rhoMask_;  // temp storage avoids reallocation
+	mutable ObjexxFCL::FArray3D< core::Real > rhoC_, rhoMask_;  // temp storage avoids reallocation
 
 
 	core::Real B_EPS;

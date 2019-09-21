@@ -43,28 +43,28 @@ public:
 	void
 	farray_to_array( core::Size index,
 		FArray2D_double const& coords,
-		double* coord_buf );
+		core::Real* coord_buf );
 
 	void
 	farray_to_array( core::Size index,
 		core::Size num_to_add,
 		FArray2D_double const& coords,
-		double* coord_buf );
+		core::Real* coord_buf );
 
 	void
 	array_to_farray( core::Size index,
 		FArray2D_double & coords,
-		double* coord_buf );
+		core::Real* coord_buf );
 
 	void
 	array_to_farray( core::Size index,
 		core::Size num_to_add,
 		FArray2D_double & coords,
-		const double* coord_buf);
+		const core::Real* coord_buf);
 
 	int* neighbor_addresses_;
-	double* coords_transfer_buffer_;
-	double* coords_receiving_buffer_;
+	core::Real* coords_transfer_buffer_;
+	core::Real* coords_receiving_buffer_;
 	FArray2D_double coords_;
 	FArray2D_double temp_coords_;
 	core::Size num_new_neighbors_;
@@ -75,7 +75,7 @@ public:
 	FArray2D_double candidate_coords_;
 	core::Size candidate_nbr_index_;
 	core::Real candidate_best_rmsd_;
-	double* candidate_best_rmsds_;
+	core::Real* candidate_best_rmsds_;
 	Address candidate_address_;
 	std::string winning_tag_;
 	Address winning_address_;

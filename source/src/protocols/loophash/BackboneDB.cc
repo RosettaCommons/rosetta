@@ -159,9 +159,9 @@ BackboneSegment::read_from_pose( core::pose::Pose const &pose, core::Size ir, co
 }
 
 void BackboneSegment::print() const {
-	for ( double it : phi_ ) TR << it << "  " ;
-	for ( double it : psi_ ) TR << it << "  " ;
-	for ( double it : omega_ ) TR << it << "  " ;
+	for ( core::Real it : phi_ ) TR << it << "  " ;
+	for ( core::Real it : psi_ ) TR << it << "  " ;
+	for ( core::Real it : omega_ ) TR << it << "  " ;
 	TR << std::endl;
 }
 

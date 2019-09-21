@@ -126,7 +126,7 @@ FlexPepDockingPoseMetrics::calc_frac_atoms_kA_to_native(
 	Pose const & pose2,
 	ObjexxFCL::FArray1D_bool const & res_subset,
 	t_predicate_func predicate,
-	double k,
+	core::Real k,
 	core::Size & ngood
 ) const
 {

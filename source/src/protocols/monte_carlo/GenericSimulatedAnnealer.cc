@@ -343,7 +343,7 @@ std::ostream &
 operator<<( std::ostream & os, AcceptedScores const & scores )
 {
 	os << scores.iteration() << " " << scores.rank_score() << " ";
-	for ( double score : scores ) {
+	for ( core::Real score : scores ) {
 		os << score << " ";
 	}
 	return os;

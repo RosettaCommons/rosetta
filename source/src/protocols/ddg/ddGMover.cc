@@ -95,7 +95,7 @@ namespace ddg {
 using namespace core;
 using namespace core::scoring;
 
-using ddGs = std::vector<double>;
+using ddGs = std::vector<core::Real>;
 
 ddGMover::ddGMover() :
 	Mover("ddGMover"),
@@ -175,15 +175,15 @@ utility::vector1<int>
 ddGMover::find_nbrs(
 	pose::Pose & p,
 	utility::vector1<int> & mutation_position,
-	double radii
+	core::Real radii
 ){
 	utility::vector1<int> nbrs;
 	for ( core::Size i = 1; i <= mutation_position.size(); ++i ) {
-		numeric::xyzVector<double> i_pos;
+		numeric::xyzVector<core::Real> i_pos;
 		// The neighbor atom is CA in Gly, CB in other amino acids, and *defined* for everything
 		i_pos = p.residue(mutation_position[i]).xyz( p.residue(mutation_position[i]).nbr_atom() );
 		for ( core::Size j = 1; j <= p.size(); j++ ) {
-			numeric::xyzVector<double> j_pos;
+			numeric::xyzVector<core::Real> j_pos;
 			// The neighbor atom is CA in Gly, CB in other amino acids, and *defined* for everything
 			j_pos = p.residue(j).xyz( p.residue(j).nbr_atom() );
 			if ( i_pos.distance(j_pos) <= radii ) {
@@ -195,7 +195,7 @@ ddGMover::find_nbrs(
 }
 
 bool
-ddGMover::is_complete(ObjexxFCL::FArray2D<double> to_check){
+ddGMover::is_complete(ObjexxFCL::FArray2D<core::Real> to_check){
 	bool is_complete=true;
 	for ( int i = to_check.l1(); i <= to_check.u1(); i++ ) {
 		for ( int j = to_check.l2(); j <= to_check.u2(); j++ ) {
@@ -207,20 +207,20 @@ ddGMover::is_complete(ObjexxFCL::FArray2D<double> to_check){
 	return is_complete;
 }
 
-double
+core::Real
 ddGMover::sum(ddGs &scores_to_sum)
 {
-	double sum=0;
-	for ( double i : scores_to_sum ) {
+	core::Real sum=0;
+	for ( core::Real i : scores_to_sum ) {
 		sum+=i;
 	}
 	return sum;
 }
 
-double
-ddGMover::average( utility::vector1<double> &scores_to_average)
+core::Real
+ddGMover::average( utility::vector1<core::Real> &scores_to_average)
 {
-	double sum = 0;
+	core::Real sum = 0;
 	for ( unsigned int i =1; i<=scores_to_average.size(); i++ ) {
 		sum+=scores_to_average[i];
 	}
@@ -229,7 +229,7 @@ ddGMover::average( utility::vector1<double> &scores_to_average)
 
 int
 ddGMover::store_energies(
-	ObjexxFCL::FArray2D< double > & two_d_e_arrays,
+	ObjexxFCL::FArray2D< core::Real > & two_d_e_arrays,
 	core::scoring::ScoreFunction & s,
 	pose::Pose &p,
 	int next_index,
@@ -253,7 +253,7 @@ ddGMover::store_energies(
 	int num_score_components = 0;
 	using core::scoring::EnergyMap;
 	using core::scoring::ScoreType;
-	for ( double it : s.weights() ) {
+	for ( core::Real it : s.weights() ) {
 		if ( it != 0.0 ) {
 			num_score_components++;
 		}
@@ -281,8 +281,8 @@ ddGMover::store_energies(
 
 int
 ddGMover::average_score_components(
-	ObjexxFCL::FArray2D< double > &scores_to_average,
-	utility::vector1<double> &averaged_scores
+	ObjexxFCL::FArray2D< core::Real > &scores_to_average,
+	utility::vector1<core::Real> &averaged_scores
 )
 {
 	if ( num_decoys_used_in_calculations_ > num_iterations_ ) {
@@ -291,9 +291,9 @@ ddGMover::average_score_components(
 	//of decoys produced.
 
 	if ( num_decoys_used_in_calculations_ == num_iterations_ ) { //if we do a straight average, things are easy
-		averaged_scores = utility::vector1<double>(scores_to_average.u1()-scores_to_average.l1()+1);
+		averaged_scores = utility::vector1<core::Real>(scores_to_average.u1()-scores_to_average.l1()+1);
 		for ( int i = scores_to_average.l1(); i <= scores_to_average.u1(); i++ ) {
-			double sum_score_component = 0;
+			core::Real sum_score_component = 0;
 			for ( int j = scores_to_average.l2(); j <= scores_to_average.u2(); j++ ) {
 				sum_score_component += scores_to_average(i,j);
 			}
@@ -302,13 +302,13 @@ ddGMover::average_score_components(
 		}
 		return 0;
 	} else {
-		using score_components = utility::vector1<double>;
-		typedef std::pair<double,score_components> enrgs;
+		using score_components = utility::vector1<core::Real>;
+		typedef std::pair<core::Real,score_components> enrgs;
 
 		utility::vector1<enrgs> scores_to_sort;
 
 		for ( int i = scores_to_average.l2(); i <= scores_to_average.u2(); i++ ) {
-			double total_score = 0; utility::vector1<double> sc;
+			core::Real total_score = 0; utility::vector1<core::Real> sc;
 			enrgs e;
 			for ( int j = scores_to_average.l1(); j <= scores_to_average.u1(); j++ ) {
 				total_score += scores_to_average(j,i);
@@ -322,7 +322,7 @@ ddGMover::average_score_components(
 		utility::vector1<enrgs> sorted;
 
 		while ( sorted.size() < num_decoys_used_in_calculations_ ) {
-			double min = 1000; int min_index = -1;
+			core::Real min = 1000; int min_index = -1;
 			for ( unsigned int i=1; i<= scores_to_sort.size(); i++ ) {
 				if ( scores_to_sort[i].first < min ) {
 					min = scores_to_sort[i].first;
@@ -336,7 +336,7 @@ ddGMover::average_score_components(
 		}
 
 		for ( unsigned int i =1; i <= sorted[1].second.size(); i++ ) {
-			double sum_score_component = 0.0;
+			core::Real sum_score_component = 0.0;
 			for ( unsigned int j = 1; j <= sorted.size(); j++ ) {
 				sum_score_component += sorted[j].second[i];
 			}
@@ -378,7 +378,7 @@ ddGMover::setup_repack_constraints(
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options;
 
-	double const CONSTRAINT_WEIGHT = 1.0;
+	core::Real const CONSTRAINT_WEIGHT = 1.0;
 
 	pose.remove_constraints();
 	//if member object constraint set is non-zero, then
@@ -410,7 +410,7 @@ ddGMover::setup_constraints(
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options;
 	static float const CA_cutoff(9.0);
-	double const CONSTRAINT_WEIGHT = 1.0;
+	core::Real const CONSTRAINT_WEIGHT = 1.0;
 
 	pose.remove_constraints();
 
@@ -542,15 +542,15 @@ ddGMover::minimize_with_constraints(
 }
 
 bool
-sort_numerically_ascending(double a, double b){
+sort_numerically_ascending(core::Real a, core::Real b){
 	return a < b;
 }
 
 /// @details APL Note that utility::arg_min does exactly this without the awful 99999999 bug
 int
-min_index(utility::vector1<double>scores)
+min_index(utility::vector1<core::Real>scores)
 {
-	double min=9999999;
+	core::Real min=9999999;
 	int min_index=-1;
 	for ( unsigned int i=1; i<=scores.size(); i++ ) {
 		if ( scores[i] < min ) {
@@ -562,7 +562,7 @@ min_index(utility::vector1<double>scores)
 }
 
 void
-ddGMover::neighbor_cutoff(double cutoff){
+ddGMover::neighbor_cutoff(core::Real cutoff){
 	nbr_cutoff_ = cutoff;
 }
 
@@ -603,17 +603,17 @@ ddGMover::is_interface_ddg(bool truefalse){
 }
 
 void
-ddGMover::wt_score_components(ObjexxFCL::FArray2D<double> wsc){
+ddGMover::wt_score_components(ObjexxFCL::FArray2D<core::Real> wsc){
 	wt_components_=wsc;
 }
 
 void
-ddGMover::wt_unbound_score_components(ObjexxFCL::FArray2D<double> wusc){
+ddGMover::wt_unbound_score_components(ObjexxFCL::FArray2D<core::Real> wusc){
 	wt_unbound_components_=wusc;
 }
 
 void
-ddGMover::mutant_score_components(ObjexxFCL::FArray2D<double> msc){
+ddGMover::mutant_score_components(ObjexxFCL::FArray2D<core::Real> msc){
 	mutant_components_=msc;
 }
 
@@ -671,17 +671,17 @@ ddGMover::num_iterations(){return num_iterations_;}
 bool
 ddGMover::is_interface_ddg(){return interface_ddg_;}
 
-ObjexxFCL::FArray2D<double>
+ObjexxFCL::FArray2D<core::Real>
 ddGMover::wt_score_components(){
 	return wt_components_;
 }
 
-ObjexxFCL::FArray2D<double>
+ObjexxFCL::FArray2D<core::Real>
 ddGMover::wt_unbound_score_components(){
 	return wt_unbound_components_;
 }
 
-ObjexxFCL::FArray2D<double>
+ObjexxFCL::FArray2D<core::Real>
 ddGMover::mutant_score_components(){
 	return mutant_components_;
 }
@@ -691,14 +691,14 @@ ddGMover::residues_to_mutate(){
 	return residues_to_mutate_;
 }
 
-utility::vector1<double>
+utility::vector1<core::Real>
 ddGMover::get_wt_min_score_components(){
 	//std::cout << "computing minimum energy components" << std::endl;
-	utility::vector1<double> wt_min_score_components;
-	utility::vector1<double> total_scores;
+	utility::vector1<core::Real> wt_min_score_components;
+	utility::vector1<core::Real> total_scores;
 	//sum all components for each structure
 	for ( int i = wt_components_.l2(); i <= wt_components_.u2(); i++ ) {
-		double total_score = 0.0;
+		core::Real total_score = 0.0;
 		for ( int j = wt_components_.l1(); j <= wt_components_.u1(); j++ ) {
 			total_score += wt_components_(j,i);
 		}
@@ -708,7 +708,7 @@ ddGMover::get_wt_min_score_components(){
 	//num_score_components, size_to_expect
 	//find minimum index
 	int min_index = -1;
-	double min_score = 10000;
+	core::Real min_score = 10000;
 	for ( unsigned int i = 1; i <= total_scores.size(); i++ ) {
 		if ( total_scores[i] < min_score ) {
 			min_index = i;
@@ -724,16 +724,16 @@ ddGMover::get_wt_min_score_components(){
 	return wt_min_score_components;
 }
 
-utility::vector1<double>
+utility::vector1<core::Real>
 ddGMover::get_wt_averaged_score_components(){
 	//std::cout << "computing wt averaged score components" << std::endl;
-	utility::vector1<double> wt_averaged_score_components;
+	utility::vector1<core::Real> wt_averaged_score_components;
 	if ( !interface_ddg_ ) {
 		average_score_components(wt_components_,wt_averaged_score_components);
 	} else {
 		debug_assert((wt_components_.u1()-wt_components_.l1())== (wt_unbound_components_.u1()-wt_unbound_components_.l1()) &&
 			(wt_components_.u2()-wt_components_.l2()) == (wt_unbound_components_.u2()-wt_unbound_components_.l2()));
-		ObjexxFCL::FArray2D<double> dG_bound_unbound((wt_components_.u1()-wt_components_.l1()+1),
+		ObjexxFCL::FArray2D<core::Real> dG_bound_unbound((wt_components_.u1()-wt_components_.l1()+1),
 			(wt_components_.u2()-wt_components_.l2()+1),-999.99);
 		for ( int i =wt_components_.l1(); i<=wt_components_.u1(); i++ ) {
 			for ( int j = wt_components_.l2(); j<= wt_components_.u2(); j++ ) {
@@ -745,14 +745,14 @@ ddGMover::get_wt_averaged_score_components(){
 	return wt_averaged_score_components;
 }
 
-utility::vector1<double>
+utility::vector1<core::Real>
 ddGMover::get_mutant_min_score_components(){
 	//std::cout << "computing minimum energy score components for mutant" << std::endl;
-	utility::vector1<double> mutant_min_score_components;
-	utility::vector1<double> total_scores;
+	utility::vector1<core::Real> mutant_min_score_components;
+	utility::vector1<core::Real> total_scores;
 	//sum all components for each structure
 	for ( int i = mutant_components_.l2(); i <= mutant_components_.u2(); i++ ) {
-		double total_score = 0.0;
+		core::Real total_score = 0.0;
 		for ( int j = mutant_components_.l1(); j <= mutant_components_.u1(); j++ ) {
 			total_score += mutant_components_(j,i);
 		}
@@ -762,7 +762,7 @@ ddGMover::get_mutant_min_score_components(){
 	//num_score_components, size_to_expect
 	//find minimum index
 	int min_index = -1;
-	double min_score = 10000;
+	core::Real min_score = 10000;
 	for ( unsigned int i = 1; i <= total_scores.size(); i++ ) {
 		if ( total_scores[i] < min_score ) {
 			min_index = i;
@@ -778,17 +778,17 @@ ddGMover::get_mutant_min_score_components(){
 	return mutant_min_score_components;
 }
 
-utility::vector1<double>
+utility::vector1<core::Real>
 ddGMover::get_mutant_averaged_score_components(){
 	//std::cout << "computing average mutant score components" << std::endl;
-	utility::vector1<double> mutant_averaged_score_components;
+	utility::vector1<core::Real> mutant_averaged_score_components;
 	if ( !interface_ddg_ ) {
 		average_score_components(mutant_components_, mutant_averaged_score_components);
 	} else {
 		debug_assert(
 			(mutant_components_.u1()-mutant_components_.l1()) == (mutant_unbound_components_.u1()-mutant_unbound_components_.l1()) &&
 			(mutant_components_.u2()-mutant_components_.l2()) == (mutant_unbound_components_.u2()-mutant_unbound_components_.l2()));
-		ObjexxFCL::FArray2D<double> dG_bound_unbound(
+		ObjexxFCL::FArray2D<core::Real> dG_bound_unbound(
 			(mutant_components_.u1()-mutant_components_.l1()+1),
 			(mutant_components_.u2()-mutant_components_.l2()+1),
 			-999.99);
@@ -802,11 +802,11 @@ ddGMover::get_mutant_averaged_score_components(){
 	return mutant_averaged_score_components;
 }
 
-utility::vector1<double>
+utility::vector1<core::Real>
 ddGMover::get_delta_energy_components()
 {
-	utility::vector1<double> wt;
-	utility::vector1<double> mut;
+	utility::vector1<core::Real> wt;
+	utility::vector1<core::Real> mut;
 	if ( mean_ ) {
 		wt = this->get_wt_averaged_score_components();
 		mut = this->get_mutant_averaged_score_components();
@@ -814,7 +814,7 @@ ddGMover::get_delta_energy_components()
 		wt = this->get_wt_min_score_components();
 		mut = this->get_mutant_min_score_components();
 	}
-	utility::vector1<double> delta_energy;
+	utility::vector1<core::Real> delta_energy;
 	debug_assert(wt.size() == mut.size());
 	for ( unsigned int i=1; i<=wt.size(); i++ ) {
 		delta_energy.push_back(mut[i]-wt[i]);
@@ -861,20 +861,20 @@ ddGMover::mutation_label( pose::Pose const & pose ) const
 	return mutation_label;
 }
 
-double
+core::Real
 ddGMover::get_wt_averaged_totals(){
-	utility::vector1<double> wt = this->get_wt_averaged_score_components();
-	double sum=0;
+	utility::vector1<core::Real> wt = this->get_wt_averaged_score_components();
+	core::Real sum=0;
 	for ( unsigned int i =1; i<=wt.size(); i++ ) {
 		sum=sum+wt[i];
 	}
 	return sum;
 }
 
-double
+core::Real
 ddGMover::get_wt_min_totals(){
-	utility::vector1<double> wt = this->get_wt_min_score_components();
-	double sum = 0;
+	utility::vector1<core::Real> wt = this->get_wt_min_score_components();
+	core::Real sum = 0;
 	for ( unsigned int i =1; i <= wt.size(); i++ ) {
 		sum = sum + wt[i];
 	}
@@ -882,27 +882,27 @@ ddGMover::get_wt_min_totals(){
 }
 
 
-double
+core::Real
 ddGMover::get_mutant_averaged_totals(){
-	utility::vector1<double> mut = this->get_mutant_averaged_score_components();
-	double sum=0;
+	utility::vector1<core::Real> mut = this->get_mutant_averaged_score_components();
+	core::Real sum=0;
 	for ( unsigned int i =1; i<=mut.size(); i++ ) {
 		sum=sum+mut[i];
 	}
 	return sum;
 }
 
-double
+core::Real
 ddGMover::get_mutant_min_totals(){
-	utility::vector1<double> mut = this->get_mutant_min_score_components();
-	double sum = 0;
+	utility::vector1<core::Real> mut = this->get_mutant_min_score_components();
+	core::Real sum = 0;
 	for ( unsigned int i =1; i <= mut.size(); i++ ) {
 		sum = sum + mut[i];
 	}
 	return sum;
 }
 
-double
+core::Real
 ddGMover::ddG(){
 	if ( mean_ ) {
 		return get_mutant_averaged_totals() - get_wt_averaged_totals();
@@ -1150,13 +1150,13 @@ ddGMover::relax_wildtype_structure(
 			} else if ( interface_ddg_ ) {
 				debug_assert(resulting_pose.chain(resulting_pose.size())-pose.chain(1) !=0);
 				//dGinterface = Gbound-Gunbound
-				//double debug_bound_score = (*scorefxn_)(temporary_pose);
+				//core::Real debug_bound_score = (*scorefxn_)(temporary_pose);
 				store_energies(wt_components_, (*scorefxn_), resulting_pose,i,num_iterations_);
 				pose::Pose temporary_unbound_pose = resulting_pose;
 				calculate_interface_unbound_energy(temporary_unbound_pose,scorefxn_,repack_native);
 				//store in wt_components_
 				store_energies(wt_unbound_components_, (*scorefxn_),temporary_unbound_pose,i,num_iterations_);
-				//double debug_unbound_score = (*scorefxn_)(temporary_unbound_pose);
+				//core::Real debug_unbound_score = (*scorefxn_)(temporary_unbound_pose);
 			}
 			//store repacked pose
 			natives_.push_back(resulting_pose);
@@ -1475,12 +1475,12 @@ ddGMover::apply(core::pose::Pose & pose)
 			} else if ( interface_ddg_ ) {
 				debug_assert(pose.chain(pose.size())-pose.chain(1) !=0);
 				//dGinterface = Gbound-Gunbound
-				//double debug_bound = (*scorefxn_)(resulting_pose);
+				//core::Real debug_bound = (*scorefxn_)(resulting_pose);
 				store_energies(mutant_components_, (*scorefxn_), resulting_pose,i,num_iterations_);
 				pose::Pose temporary_unbound_pose = resulting_pose;
 				calculate_interface_unbound_energy(temporary_unbound_pose,scorefxn_,packer_task);
 				//store in wt_components_
-				//    double debug_unbound = (*scorefxn_)(temporary_unbound_pose);
+				//    core::Real debug_unbound = (*scorefxn_)(temporary_unbound_pose);
 				store_energies(mutant_unbound_components_, (*scorefxn_),temporary_unbound_pose,i,num_iterations_);
 				//TR << "debug unbound " << debug_unbound << " debug bound is " << debug_bound << " so dg is " << (debug_bound-debug_unbound) << std::endl;
 			}

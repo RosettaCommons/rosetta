@@ -84,7 +84,7 @@ void ReplicaExchangeMC::init()
 	runtime_assert(size_ == static_cast<int>(Tlist_.size()));
 
 	//setup init list
-	last_energylist = new double[size_];
+	last_energylist = new core::Real[size_];
 	T_tag = new int[size_];
 	T_rev = new int[size_];
 
@@ -134,7 +134,7 @@ ReplicaExchangeMC::~ReplicaExchangeMC()
 	if ( T_rev!=nullptr ) delete [] T_rev;
 }
 
-void ReplicaExchangeMC::build_temperature_list(const double *elist)
+void ReplicaExchangeMC::build_temperature_list(const core::Real *elist)
 {
 	static int flag=-1;
 	int nlist=(3+flag)/2; // 1 or 2, switch
@@ -189,7 +189,7 @@ ReplicaExchangeMC::boltzmann(
     MPI_Barrier(MPI_COMM_WORLD);
     if (ntrials_ % (nreplica_frequency_/2) == 0)
     {
-        double last_energy_ = last_accepted_score();
+        core::Real last_energy_ = last_accepted_score();
 
         //get infomation
         MPI_Gather(&last_energy_, 1, MPI_DOUBLE, last_energylist, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);

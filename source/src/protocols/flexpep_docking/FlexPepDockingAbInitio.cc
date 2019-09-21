@@ -136,11 +136,11 @@ FlexPepDockingAbInitio::~FlexPepDockingAbInitio() = default;
 void
 FlexPepDockingAbInitio::setup_for_apply( core::pose::Pose& pose )
 {
-	double temperature = 0.8;
+	core::Real temperature = 0.8;
 	mc_ = utility::pointer::make_shared< moves::MonteCarlo >( pose, *scorefxn_, temperature );
 	// setup minimizer
 	std::string min_type = "lbfgs_armijo_atol"; // armijo_nonmonotone? different tolerance?
-	double min_func_tol = 0.1;
+	core::Real min_func_tol = 0.1;
 	minimizer_ = utility::pointer::make_shared< protocols::minimization_packing::MinMover >(
 		movemap_, scorefxn_, min_type, min_func_tol, true /*nb_list accel.*/ );
 }
@@ -183,7 +183,7 @@ void
 FlexPepDockingAbInitio::torsions_monte_carlo
 ( core::pose::Pose & pose,
 	const int cycles,
-	double& acceptance_rate )
+	core::Real& acceptance_rate )
 {
 	using namespace protocols::moves;
 	using namespace protocols::simple_moves;
@@ -283,7 +283,7 @@ FlexPepDockingAbInitio::rigidbody_monte_carlo
 	const int cycles,
 	const float trans_magnitude,
 	const float rot_magnitude,
-	double& acceptance_rate
+	core::Real& acceptance_rate
 )
 {
 	using namespace protocols::moves;
@@ -316,15 +316,15 @@ FlexPepDockingAbInitio::apply( core::pose::Pose & pose )
 	int outer_cycles=10; // TODO: runtime param?
 	int inner_cycles_rb = 50; // TODO: runtime param?
 	int inner_cycles_torsions = 50; // TODO: runtime param?
-	double trans_mag = 1; // Angstrom // TODO: runtime param?
-	double rot_mag = 10; // Degrees // TODO: runtime param?
-	double rb_acceptance, torsions_acceptance; // MC acceptance rates
+	core::Real trans_mag = 1; // Angstrom // TODO: runtime param?
+	core::Real rot_mag = 10; // Degrees // TODO: runtime param?
+	core::Real rb_acceptance, torsions_acceptance; // MC acceptance rates
 	// MC temperature params
-	double init_MC_temp = 2;
-	double final_MC_temp = 0.6;
-	double gamma = pow( (final_MC_temp / init_MC_temp) , 1.0 / (outer_cycles - 1.0) );
+	core::Real init_MC_temp = 2;
+	core::Real final_MC_temp = 0.6;
+	core::Real gamma = pow( (final_MC_temp / init_MC_temp) , 1.0 / (outer_cycles - 1.0) );
 	std::cout << "gamma = " << gamma << std::endl;
-	double MC_temp = init_MC_temp;
+	core::Real MC_temp = init_MC_temp;
 	// real stuff: //
 	std::set<int> pSer_positions;
 	if ( flags_.pSer2Asp_centroid ) {

@@ -129,8 +129,8 @@ AACompositionEnergy::residue_energy(
 		auto const lower = (Size)round( thresholds.first * pose.size() );
 		auto const upper = (Size)round( thresholds.second * pose.size() );
 #else
-		Size const lower = (Size)double( thresholds.first * pose.size() + 0.5 );
-		Size const upper = (Size)double( thresholds.second * pose.size() + 0.5 );
+		Size const lower = (Size)core::Real( thresholds.first * pose.size() + 0.5 );
+		Size const upper = (Size)core::Real( thresholds.second * pose.size() + 0.5 );
 #endif
 
 		if ( hist[ itr->first ] < lower ) {

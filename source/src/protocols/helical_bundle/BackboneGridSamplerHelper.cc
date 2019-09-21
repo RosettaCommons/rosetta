@@ -159,7 +159,7 @@ void BackboneGridSamplerHelper::initialize_samples() {
 			sprintf(outstring, "%lu\t", static_cast<unsigned long>(allowed_torsion_indices_[i]) );
 			TR << outstring;
 			for ( core::Size j=1, jmax=torsion_sample_vals_[i].size(); j<=jmax; ++j ) {
-				sprintf(outstring, "%.4f\t", static_cast<double>(torsion_sample_vals_[i][j]));
+				sprintf(outstring, "%.4f\t", static_cast<core::Real>(torsion_sample_vals_[i][j]));
 				TR << outstring;
 			}
 			TR << std::endl;

@@ -120,8 +120,8 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		////
 		//// use model
 		////
-		ObjexxFCL::FArray3D< double > rhoC, rhoMask;
-		ObjexxFCL::FArray3D< std::complex<double> > Frho;
+		ObjexxFCL::FArray3D< core::Real > rhoC, rhoMask;
+		ObjexxFCL::FArray3D< std::complex<core::Real> > Frho;
 		core::scoring::electron_density::getDensityMap().calcRhoC( litePose, res_high_, rhoC, rhoMask );  // truncate mask at highres limit
 		numeric::fourier::fft3(rhoC, Frho);
 
@@ -155,7 +155,7 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		////
 		//// bfactor sharpen
 		////
-		ObjexxFCL::FArray3D< std::complex<double> > Frho;
+		ObjexxFCL::FArray3D< std::complex<core::Real> > Frho;
 		numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().get_data(), Frho);
 		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 0.0, 0.0, mapI, bin_squared_);
 

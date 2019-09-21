@@ -603,8 +603,8 @@ LigandBaseProtocol::find_interface_rsds(
 			core::conformation::Residue const & lig_rsd = pose.residue(j);
 			bool done = false;
 			for ( core::Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
-				double dist2 = lig_rsd.xyz(k).distance_squared( prot_rsd.xyz(prot_rsd.nbr_atom()) );
-				double cutoff = prot_rsd.nbr_radius() + 6.0 + padding;
+				core::Real dist2 = lig_rsd.xyz(k).distance_squared( prot_rsd.xyz(prot_rsd.nbr_atom()) );
+				core::Real cutoff = prot_rsd.nbr_radius() + 6.0 + padding;
 				if ( dist2 <= cutoff * cutoff ) {
 					is_interface(i) = true;
 					num_in_interface += 1;
@@ -618,7 +618,7 @@ LigandBaseProtocol::find_interface_rsds(
 		// break gets to here
 	}
 	TR << "Interface is " << num_in_interface << " / " << pose.size()
-		<< " residues (" << 100*(double(num_in_interface) / double(pose.size())) << "%)" << std::endl;
+		<< " residues (" << 100*(core::Real(num_in_interface) / core::Real(pose.size())) << "%)" << std::endl;
 }
 
 /// Find residues that would most benefit docking by backbone movement.
@@ -635,7 +635,7 @@ LigandBaseProtocol::find_interface_backbone(
 ) const
 {
 	runtime_assert( cutoff_dist > 0 );
-	double const cutoff2 = cutoff_dist * cutoff_dist;
+	core::Real const cutoff2 = cutoff_dist * cutoff_dist;
 
 	int num_in_interface = 0;
 	is_interface.resize( pose.size(), false ); // init all positions to false
@@ -665,7 +665,7 @@ LigandBaseProtocol::find_interface_backbone(
 			core::conformation::Residue const & lig_rsd = pose.residue(j);
 			bool done = false;
 			for ( core::Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
-				double dist2 = lig_rsd.xyz(k).distance_squared( prot_cb );
+				core::Real dist2 = lig_rsd.xyz(k).distance_squared( prot_cb );
 				if ( dist2 <= cutoff2 ) {
 					is_interface[i] = true;
 					//std::cout << "{bb iface " << prot_rsd.name3() << " " << i << "} "
@@ -679,7 +679,7 @@ LigandBaseProtocol::find_interface_backbone(
 		}
 	}
 	TR << "Backbone interface is " << num_in_interface << " / " << pose.size()
-		<< " residues (" << 100*(double(num_in_interface) / double(pose.size())) << "%)" << std::endl;
+		<< " residues (" << 100*(core::Real(num_in_interface) / core::Real(pose.size())) << "%)" << std::endl;
 
 	int const window = 3; // how many residues on either side of the truly mobile ones?
 	for ( Size i = 1, nres = pose.size(); i <= nres; ++i ) {

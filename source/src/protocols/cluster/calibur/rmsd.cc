@@ -77,14 +77,14 @@ namespace calibur {
 
 #define cubic_roots(a,b,c,z) cubic_roots2(a,b,c,z)
 
-double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n, double R[3][3] )
+core::Real RMSD( std::vector<core::Real> & coords1, std::vector<core::Real> & coords2, int n, core::Real R[3][3] )
 {
 	/*************************************************************************
 	* Compute the centroids of coords1 and coords2 respectively    *
 	*************************************************************************/
 
-	double centroid1[3] = {0., 0., 0.};
-	double centroid2[3] = {0., 0., 0.};
+	core::Real centroid1[3] = {0., 0., 0.};
+	core::Real centroid2[3] = {0., 0., 0.};
 	for ( int j=0; j < n; j++ ) {
 		int j3 = 3*j;
 		centroid1[0] += coords1[j3  ];
@@ -120,8 +120,8 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	* Compute C=Q(Pt) and the sum_{i=1 to n} p_i^2 + q_i^2 term (Eo)  *
 	*************************************************************************/
 
-	double C[3][3] = {{0., 0., 0.}, {0., 0., 0.}, {0., 0., 0.}};
-	double Eo = 0.0;
+	core::Real C[3][3] = {{0., 0., 0.}, {0., 0., 0.}, {0., 0., 0.}};
+	core::Real Eo = 0.0;
 	for ( int m=0; m < n; m++ ) {
 		int m3 = 3*m;
 		C[0][0] += coords2[m3  ] * coords1[m3  ];
@@ -150,7 +150,7 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	* Prepare CCt for eigenvector decomposition        *
 	*************************************************************************/
 
-	double Ct[3][3], CCt[3][3];
+	core::Real Ct[3][3], CCt[3][3];
 	for ( int i=0; i < 3; i++ ) {
 		for ( int j=0; j < 3; j++ ) {
 			Ct[i][j] = C[j][i];
@@ -170,12 +170,12 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	* eigenval{0,1,2} and eigenvec{0,1,2} respectively.      *
 	*************************************************************************/
 
-	double eigenval[3], eigenvec[3][3];
+	core::Real eigenval[3], eigenvec[3][3];
 	if ( !jacobi3(CCt, eigenval, eigenvec) ) { return -1.; }
 
 	/* Sort the eigenvalues such that eigenval0 >= eigenval1 >= eigenval2 */
-	double eigenval0, eigenval1, eigenval2;
-	double eigenvec0[3], eigenvec1[3], eigenvec2[3];
+	core::Real eigenval0, eigenval1, eigenval2;
+	core::Real eigenvec0[3], eigenvec1[3], eigenvec2[3];
 	if ( eigenval[0] >= eigenval[1] ) {
 		if ( eigenval[1] >= eigenval[2] ) {
 			eigenval0 = eigenval[0];
@@ -230,22 +230,22 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	* right singular vectors, V are computed from the left singular vectors.*
 	*************************************************************************/
 
-	double * U0 = eigenvec0;
-	double * U1 = eigenvec1;
-	double * U2 = eigenvec2;
-	double V0[3], V1[3], V2[3];
+	core::Real * U0 = eigenvec0;
+	core::Real * U1 = eigenvec1;
+	core::Real * U2 = eigenvec2;
+	core::Real V0[3], V1[3], V2[3];
 	for ( int i=0; i < 3; i++ ) {
 		V0[i] = Ct[i][0] * U0[0] + Ct[i][1] * U0[1] + Ct[i][2] * U0[2];
 		V1[i] = Ct[i][0] * U1[0] + Ct[i][1] * U1[1] + Ct[i][2] * U1[2];
 		V2[i] = Ct[i][0] * U2[0] + Ct[i][1] * U2[1] + Ct[i][2] * U2[2];
 	}
-	double mag; // get the magnitude of the singular vector to normalize it
+	core::Real mag; // get the magnitude of the singular vector to normalize it
 	mag = sqrt(V0[0]*V0[0] + V0[1]*V0[1] + V0[2]*V0[2]);
-	for ( double & i : V0 ) i /= mag;
+	for ( core::Real & i : V0 ) i /= mag;
 	mag = sqrt(V1[0]*V1[0] + V1[1]*V1[1] + V1[2]*V1[2]);
-	for ( double & i : V1 )  i /= mag;
+	for ( core::Real & i : V1 )  i /= mag;
 	mag = sqrt(V2[0]*V2[0] + V2[1]*V2[1] + V2[2]*V2[2]);
-	for ( double & i : V2 )  i /= mag;
+	for ( core::Real & i : V2 )  i /= mag;
 
 #ifdef __DEBUG_RMSD__
 	std::cout << "	[" << U0[0] << " " << U1[0] << " " << U2[0] << "]" << std::endl;
@@ -262,10 +262,10 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	* Compute R=VUt, taking chirality into consideration     *
 	*************************************************************************/
 
-	double detV = V0[0]*(V1[1]*V2[2] - V2[1]*V1[2])
+	core::Real detV = V0[0]*(V1[1]*V2[2] - V2[1]*V1[2])
 		- V1[0]*(V0[1]*V2[2] - V2[1]*V0[2])
 		+ V2[0]*(V0[1]*V1[2] - V1[1]*V0[2]);
-	double detU = U0[0]*(U1[1]*U2[2] - U2[1]*U1[2])
+	core::Real detU = U0[0]*(U1[1]*U2[2] - U2[1]*U1[2])
 		- U1[0]*(U0[1]*U2[2] - U2[1]*U0[2])
 		+ U2[0]*(U0[1]*U1[2] - U1[1]*U0[2]);
 	int is_reflection = (detV * detU >= 0.)? 1: -1;
@@ -298,23 +298,23 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	std::cout << std::endl;
 #endif
 
-	double residual = Eo - (double) sqrt(fabs(eigenval0))
-		- (double) sqrt(fabs(eigenval1))
-		- is_reflection * (double) sqrt(fabs(eigenval2));
-	double rmsd = sqrt( fabs((residual)*2.0/n) );
+	core::Real residual = Eo - (core::Real) sqrt(fabs(eigenval0))
+		- (core::Real) sqrt(fabs(eigenval1))
+		- is_reflection * (core::Real) sqrt(fabs(eigenval2));
+	core::Real rmsd = sqrt( fabs((residual)*2.0/n) );
 	return rmsd;
 }
 
 
 // Same as above, but skips computation of R
-double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n )
+core::Real RMSD( std::vector<core::Real> & coords1, std::vector<core::Real> & coords2, int n )
 {
 	/*************************************************************************
 	* Compute the centroids of coords1 and coords2 respectively    *
 	*************************************************************************/
 
-	double centroid1[3] = {0., 0., 0.};
-	double centroid2[3] = {0., 0., 0.};
+	core::Real centroid1[3] = {0., 0., 0.};
+	core::Real centroid2[3] = {0., 0., 0.};
 	for ( int j=0; j < n; j++ ) {
 		int j3 = 3*j;
 		centroid1[0] += coords1[j3  ];
@@ -350,8 +350,8 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	* Compute C=Q(Pt) and the sum_{i=1 to n} p_i^2 + q_i^2 term (Eo)  *
 	*************************************************************************/
 
-	double C[3][3] = {{0., 0., 0.}, {0., 0., 0.}, {0., 0., 0.}};
-	double Eo = 0.0;
+	core::Real C[3][3] = {{0., 0., 0.}, {0., 0., 0.}, {0., 0., 0.}};
+	core::Real Eo = 0.0;
 	for ( int m=0; m < n; m++ ) {
 		int m3 = 3*m;
 		C[0][0] += coords2[m3  ] * coords1[m3  ];
@@ -380,7 +380,7 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	* Prepare CCt for eigenvector decomposition        *
 	*************************************************************************/
 
-	double Ct[3][3], CCt[3][3];
+	core::Real Ct[3][3], CCt[3][3];
 	for ( int i=0; i < 3; i++ ) {
 		for ( int j=0; j < 3; j++ ) {
 			Ct[i][j] = C[j][i];
@@ -400,12 +400,12 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	* eigenval{0,1,2} and eigenvec{0,1,2} respectively.      *
 	*************************************************************************/
 
-	double eigenval[3], eigenvec[3][3];
+	core::Real eigenval[3], eigenvec[3][3];
 	if ( !jacobi3(CCt, eigenval, eigenvec) ) return -1.;
 
 	/* Sort the eigenvalues such that eigenval0 >= eigenval1 >= eigenval2 */
-	double eigenval0, eigenval1, eigenval2;
-	double eigenvec0[3], eigenvec1[3], eigenvec2[3];
+	core::Real eigenval0, eigenval1, eigenval2;
+	core::Real eigenvec0[3], eigenvec1[3], eigenvec2[3];
 	if ( eigenval[0] >= eigenval[1] ) {
 		if ( eigenval[1] >= eigenval[2] ) {
 			eigenval0 = eigenval[0];
@@ -460,26 +460,26 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	* right singular vectors, V are computed from the left singular vectors.*
 	*************************************************************************/
 
-	double * U0 = eigenvec0;
-	double * U1 = eigenvec1;
-	double * U2 = eigenvec2;
-	double V0[3], V1[3], V2[3];
+	core::Real * U0 = eigenvec0;
+	core::Real * U1 = eigenvec1;
+	core::Real * U2 = eigenvec2;
+	core::Real V0[3], V1[3], V2[3];
 	for ( int i=0; i < 3; i++ ) {
 		V0[i] = Ct[i][0] * U0[0] + Ct[i][1] * U0[1] + Ct[i][2] * U0[2];
 		V1[i] = Ct[i][0] * U1[0] + Ct[i][1] * U1[1] + Ct[i][2] * U1[2];
 		V2[i] = Ct[i][0] * U2[0] + Ct[i][1] * U2[1] + Ct[i][2] * U2[2];
 	}
-	double mag; // get the magnitude of the singular vector to normalize it
+	core::Real mag; // get the magnitude of the singular vector to normalize it
 	mag = sqrt(V0[0]*V0[0] + V0[1]*V0[1] + V0[2]*V0[2]);
-	for ( double & i : V0 ) {
+	for ( core::Real & i : V0 ) {
 		i /= mag;
 	}
 	mag = sqrt(V1[0]*V1[0] + V1[1]*V1[1] + V1[2]*V1[2]);
-	for ( double & i : V1 ) {
+	for ( core::Real & i : V1 ) {
 		i /= mag;
 	}
 	mag = sqrt(V2[0]*V2[0] + V2[1]*V2[1] + V2[2]*V2[2]);
-	for ( double & i : V2 ) {
+	for ( core::Real & i : V2 ) {
 		i /= mag;
 	}
 
@@ -498,10 +498,10 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	* Compute R=VUt, taking chirality into consideration     *
 	*************************************************************************/
 
-	double detV = V0[0]*(V1[1]*V2[2] - V2[1]*V1[2])
+	core::Real detV = V0[0]*(V1[1]*V2[2] - V2[1]*V1[2])
 		- V1[0]*(V0[1]*V2[2] - V2[1]*V0[2])
 		+ V2[0]*(V0[1]*V1[2] - V1[1]*V0[2]);
-	double detU = U0[0]*(U1[1]*U2[2] - U2[1]*U1[2])
+	core::Real detU = U0[0]*(U1[1]*U2[2] - U2[1]*U1[2])
 		- U1[0]*(U0[1]*U2[2] - U2[1]*U0[2])
 		+ U2[0]*(U0[1]*U1[2] - U1[1]*U0[2]);
 	int is_reflection = (detV * detU >= 0.)? 1: -1;
@@ -513,16 +513,16 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	std::cout << std::endl;
 #endif
 
-	double residual = Eo - (double) sqrt(fabs(eigenval0))
-		- (double) sqrt(fabs(eigenval1))
-		- is_reflection * (double) sqrt(fabs(eigenval2));
-	double rmsd = sqrt( fabs((residual)*2.0/n) );
+	core::Real residual = Eo - (core::Real) sqrt(fabs(eigenval0))
+		- (core::Real) sqrt(fabs(eigenval1))
+		- is_reflection * (core::Real) sqrt(fabs(eigenval2));
+	core::Real rmsd = sqrt( fabs((residual)*2.0/n) );
 	return rmsd;
 }
 
 
 
-void rotate( std::vector<double> & coords, int n, double R[3][3], double * result )
+void rotate( std::vector<core::Real> & coords, int n, core::Real R[3][3], core::Real * result )
 {
 	for ( int m=0; m < n; m++ ) {
 		int m3 = 3*m;
@@ -541,14 +541,14 @@ void rotate( std::vector<double> & coords, int n, double R[3][3], double * resul
 
 //- = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = -
 
-double fast_rmsd( std::vector<double> & coords1, std::vector<double> & coords2, int n)
+core::Real fast_rmsd( std::vector<core::Real> & coords1, std::vector<core::Real> & coords2, int n)
 {
 	/*************************************************************************
 	* Compute the centroids of coords1 and coords2 respectively    *
 	*************************************************************************/
 
-	double centroid1[3] = {0., 0., 0.};
-	double centroid2[3] = {0., 0., 0.};
+	core::Real centroid1[3] = {0., 0., 0.};
+	core::Real centroid2[3] = {0., 0., 0.};
 	for ( int j=0; j < n; j++ ) {
 		int j3 = 3*j;
 		centroid1[0] += coords1[j3  ];
@@ -584,8 +584,8 @@ double fast_rmsd( std::vector<double> & coords1, std::vector<double> & coords2, 
 	* Compute C=Q(Pt) and the sum_{i=1 to n} p_i^2 + q_i^2 term (Eo)  *
 	*************************************************************************/
 
-	double C[3][3] = {{0., 0., 0.}, {0., 0., 0.}, {0., 0., 0.}};
-	double Eo = 0.0;
+	core::Real C[3][3] = {{0., 0., 0.}, {0., 0., 0.}, {0., 0., 0.}};
+	core::Real Eo = 0.0;
 	for ( int m=0; m < n; m++ ) {
 		int m3 = 3*m;
 		C[0][0] += coords2[m3  ] * coords1[m3  ];
@@ -608,7 +608,7 @@ double fast_rmsd( std::vector<double> & coords1, std::vector<double> & coords2, 
 	* That is, see if det(C) > 0.             *
 	*************************************************************************/
 
-	double detC = C[0][0] * (C[1][1]*C[2][2] - C[1][2]*C[2][1])
+	core::Real detC = C[0][0] * (C[1][1]*C[2][2] - C[1][2]*C[2][1])
 		- C[0][1] * (C[1][0]*C[2][2] - C[1][2]*C[2][0])
 		+ C[0][2] * (C[1][0]*C[2][1] - C[1][1]*C[2][0]);
 	int omega = (detC > 0.0)? 1: -1;
@@ -619,14 +619,14 @@ double fast_rmsd( std::vector<double> & coords1, std::vector<double> & coords2, 
 	*     [ * * e22 ]          *
 	*************************************************************************/
 
-	double x   =  C[0][0]*C[0][0] + C[1][0]*C[1][0] + C[2][0]*C[2][0];
-	double e01 = (C[0][1]*C[0][1] + C[1][1]*C[1][1] + C[2][1]*C[2][1]) / x;
-	double e02 = (C[0][2]*C[0][2] + C[1][2]*C[1][2] + C[2][2]*C[2][2]) / x;
+	core::Real x   =  C[0][0]*C[0][0] + C[1][0]*C[1][0] + C[2][0]*C[2][0];
+	core::Real e01 = (C[0][1]*C[0][1] + C[1][1]*C[1][1] + C[2][1]*C[2][1]) / x;
+	core::Real e02 = (C[0][2]*C[0][2] + C[1][2]*C[1][2] + C[2][2]*C[2][2]) / x;
 
-	double e11 = (C[0][0]*C[0][1] + C[1][0]*C[1][1] + C[2][0]*C[2][1]) / x;
-	double e12 = (C[0][1]*C[0][2] + C[1][1]*C[1][2] + C[2][1]*C[2][2]) / x;
+	core::Real e11 = (C[0][0]*C[0][1] + C[1][0]*C[1][1] + C[2][0]*C[2][1]) / x;
+	core::Real e12 = (C[0][1]*C[0][2] + C[1][1]*C[1][2] + C[2][1]*C[2][2]) / x;
 
-	double e22 = (C[0][0]*C[0][2] + C[1][0]*C[1][2] + C[2][0]*C[2][2]) / x;
+	core::Real e22 = (C[0][0]*C[0][2] + C[1][0]*C[1][2] + C[2][0]*C[2][2]) / x;
 
 	/*************************************************************************
 	* Obtain the eigenvalues of CtC through solving the equation   *
@@ -638,10 +638,10 @@ double fast_rmsd( std::vector<double> & coords1, std::vector<double> & coords2, 
 	* where...                 *
 	*************************************************************************/
 
-	double a2 = -1.0 - e01 - e02;
-	double a1 = e01 + e02 + e01*e02 - e11*e11 - e12*e12 - e22*e22;
-	double a0 = e11*e11*e02 + e12*e12 + e22*e22*e01 - e01*e02 - 2*e11*e22*e12;
-	double roots[3];
+	core::Real a2 = -1.0 - e01 - e02;
+	core::Real a1 = e01 + e02 + e01*e02 - e11*e11 - e12*e12 - e22*e22;
+	core::Real a0 = e11*e11*e02 + e12*e12 + e22*e22*e01 - e01*e02 - 2*e11*e22*e12;
+	core::Real roots[3];
 	cubic_roots(a2, a1, a0, roots);
 	roots[0] *= x;
 	roots[1] *= x;
@@ -655,12 +655,12 @@ double fast_rmsd( std::vector<double> & coords1, std::vector<double> & coords2, 
 		}
 	}
 	if ( min_index != 2 ) { // then, we swap roots[min_index] with roots[2]
-		double aux = roots[min_index];
+		core::Real aux = roots[min_index];
 		roots[min_index] = roots[2];
 		roots[2] = aux;
 	}
 
-	double residual = Eo - sqrt(roots[0]) - sqrt(roots[1])
+	core::Real residual = Eo - sqrt(roots[0]) - sqrt(roots[1])
 		- omega * sqrt(roots[2]);
 	return sqrt( residual*2.0 / n );
 }

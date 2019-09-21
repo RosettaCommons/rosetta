@@ -243,7 +243,7 @@ protected:
 
 
 	int random_counter_;
-	utility::vector1< double > random_store_;
+	utility::vector1< core::Real > random_store_;
 
 	int get_next_random_range(int low, int high);
 

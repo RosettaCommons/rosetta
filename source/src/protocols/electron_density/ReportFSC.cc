@@ -103,8 +103,8 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	core::Size bincountsum=0;
 
 	// train map
-	ObjexxFCL::FArray3D< double > rhoC, rhoMask;
-	ObjexxFCL::FArray3D< std::complex<double> > FrhoC, FrhoO;
+	ObjexxFCL::FArray3D< core::Real > rhoC, rhoMask;
+	ObjexxFCL::FArray3D< std::complex<core::Real> > FrhoC, FrhoO;
 	core::scoring::electron_density::getDensityMap().calcRhoC( litePose, 0, rhoC, rhoMask );
 	numeric::fourier::fft3(rhoC, FrhoC);
 	numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().get_data(), FrhoO);

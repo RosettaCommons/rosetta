@@ -484,7 +484,7 @@ StepWiseRNA_Minimizer::native_edensity_score_checker( pose::Pose & pose, pose::P
 	core::Real pose_score = ( ( *eden_scorefxn )( pose ) );
 	core::Real native_score = ( ( *eden_scorefxn )( native_pose ) );
 	core::Size nres = pose.size();
-	core::Real native_score_cutoff = native_score / ( static_cast < double > ( nres ) ) *
+	core::Real native_score_cutoff = native_score / ( static_cast < core::Real > ( nres ) ) *
 		( 1 - options_->native_edensity_score_cutoff() );
 	TR.Debug << "pose_score = " << pose_score << std::endl;
 	TR.Debug << "native_score = " << native_score << std::endl;

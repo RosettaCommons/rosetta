@@ -94,7 +94,7 @@ GAOptimizer::run( LigandConformers & genes ) {
 			optimize_generation( genes, stage_i.ramp_schedule ); // optimize with new smoothing factor
 			show_status( genes, "rescored pool at start of stage "+utility::to_string( i ) );
 
-			std::chrono::duration<double> pack_time, min_time;
+			std::chrono::duration<core::Real> pack_time, min_time;
 			scorefxn_->report_and_reset_timers( pack_time, min_time );
 			if ( ! basic::options::option[ basic::options::OptionKeys::run::no_prof_info_in_silentout ]() ) {
 				TR << "Stage " << i << " pre-refine pack/min time = "
@@ -111,7 +111,7 @@ GAOptimizer::run( LigandConformers & genes ) {
 			update_pool( genes, genes_new, stage_i.pool, stage_i.rmsthreshold );
 			show_status( genes, "pool after stage "+std::to_string(i)+" iter "+std::to_string(j) );
 
-			std::chrono::duration<double> pack_time, min_time;
+			std::chrono::duration<core::Real> pack_time, min_time;
 			scorefxn_->report_and_reset_timers( pack_time, min_time );
 			if ( ! basic::options::option[ basic::options::OptionKeys::run::no_prof_info_in_silentout ]() ) {
 				TR << "Stage " << i << " iter " << j << " pack/min time = "

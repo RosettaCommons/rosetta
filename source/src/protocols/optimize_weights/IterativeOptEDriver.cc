@@ -1595,8 +1595,8 @@ IterativeOptEDriver::compute_rotamers_around_ligands()
 				if ( is_upstream(j) ) continue; // compare against only ligand residues
 				core::conformation::Residue const & lig_rsd = context_pose.residue(j);
 				for ( core::Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
-					double dist2 = lig_rsd.xyz(k).distance_squared( prot_rsd.xyz(prot_rsd.nbr_atom()) );
-					double cutoff = prot_rsd.nbr_radius() + 6.0;
+					core::Real dist2 = lig_rsd.xyz(k).distance_squared( prot_rsd.xyz(prot_rsd.nbr_atom()) );
+					core::Real cutoff = prot_rsd.nbr_radius() + 6.0;
 					if ( dist2 <= cutoff * cutoff ) {
 						include_rsd[i] = true;
 						done = true;
@@ -2084,7 +2084,7 @@ void IterativeOptEDriver::optimize_weights()
 				std::cout.flush();
 			}
 			clock_t min_stoptime = clock();
-			TR_VERBOSE << "optimize_weights(): particle minimization took " << ((double)min_stoptime-min_starttime) / CLOCKS_PER_SEC << " seconds." << std::endl;
+			TR_VERBOSE << "optimize_weights(): particle minimization took " << ((core::Real)min_stoptime-min_starttime) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 			// This will re-sort the particles and update pbest_
 			psm.run(0, *opt_min2, particles);
@@ -2122,7 +2122,7 @@ void IterativeOptEDriver::optimize_weights()
 					std::cout.flush();
 				}
 				clock_t min_stoptime = clock();
-				TR_VERBOSE << "optimize_weights(): particle minimization took " << ((double)min_stoptime-min_starttime) / CLOCKS_PER_SEC << " seconds." << std::endl;
+				TR_VERBOSE << "optimize_weights(): particle minimization took " << ((core::Real)min_stoptime-min_starttime) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 				// re-score and re-sort the particles to get the best scoring one
 				psm.run( 0, *opt_min2, particles );
@@ -2211,7 +2211,7 @@ void IterativeOptEDriver::optimize_weights()
 		/// There's no reason, of course, why the optE data should have to live on a single CPU all at once...
 		clock_t stoptime = clock();
 
-		TR << "optimize_weights(): optimization took " << ((double) stoptime-starttime)/CLOCKS_PER_SEC << " seconds." << std::endl;
+		TR << "optimize_weights(): optimization took " << ((core::Real) stoptime-starttime)/CLOCKS_PER_SEC << " seconds." << std::endl;
 
 		// release hold of the multifunc that the wrapper wraps, but
 		/// hold on to the wrapper itself for later reuse.  No more calls to func() after this point.

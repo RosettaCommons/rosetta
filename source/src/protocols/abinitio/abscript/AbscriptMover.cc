@@ -787,7 +787,7 @@ void AbscriptMover::StageTracker::end_stage( core::pose::Pose& pose ){
 	// PROF_STOP( stagename() );
 	if ( basic::options::option[ basic::options::OptionKeys::run::profile ] ) basic::prof_show();
 	if ( basic::options::option[ basic::options::OptionKeys::abinitio::debug ]() ) {
-		tr.Info << "Time/step: " << ( double(endtime) - starttime_ )/( CLOCKS_PER_SEC ) << std::endl;
+		tr.Info << "Time/step: " << ( core::Real(endtime) - starttime_ )/( CLOCKS_PER_SEC ) << std::endl;
 	}
 
 	if ( basic::options::option[ basic::options::OptionKeys::run::intermediate_structures ]() &&

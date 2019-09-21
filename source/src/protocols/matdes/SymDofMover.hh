@@ -59,8 +59,8 @@ public:
 	// virtual void trans_pose( Pose & pose, numeric::xyzVector<Real> const & trans, Size start, Size end );
 	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, Size start, Size end );
 	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, numeric::xyzVector<Real> const & cen, Size start, Size end );
-	// virtual void rot_pose( Pose & pose, numeric::xyzVector<Real> const & axis, double const & ang, Size start, Size end );
-	// virtual void rot_pose( Pose & pose, numeric::xyzVector<Real> const & axis, double const & ang, numeric::xyzVector<Real> const & cen, Size start, Size end );
+	// virtual void rot_pose( Pose & pose, numeric::xyzVector<Real> const & axis, core::Real const & ang, Size start, Size end );
+	// virtual void rot_pose( Pose & pose, numeric::xyzVector<Real> const & axis, core::Real const & ang, numeric::xyzVector<Real> const & cen, Size start, Size end );
 	// virtual void alignaxis(core::pose::Pose & pose, numeric::xyzVector<Real> newaxis, numeric::xyzVector<Real> oldaxis, numeric::xyzVector<Real> cen , Size start, Size end );
 
 	// --- virtual copy constructors

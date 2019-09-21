@@ -344,7 +344,7 @@ bool LoopRebuild::build_random_loops( core::pose::Pose & pose ) {
 			}
 
 			if ( option[ OptionKeys::loops::extended_beta ].user()  ) {
-				Real expfactor =  exp( - option[ OptionKeys::loops::extended_beta ]() * fabs( (double) loop_begin - loop_end ) );
+				Real expfactor =  exp( - option[ OptionKeys::loops::extended_beta ]() * fabs( (core::Real) loop_begin - loop_end ) );
 				bool stochastic_extend_this_loop = ( numeric::random::uniform() < expfactor );
 				extend_this_loop = extend_this_loop || stochastic_extend_this_loop;
 			}

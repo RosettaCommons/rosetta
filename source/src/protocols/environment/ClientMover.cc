@@ -92,7 +92,7 @@ void ClientMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
 
 	for ( Size i = 1; i <= true_pose.num_jump(); ++i ) {
 		core::Real const delta_trans = sandbox_pose.jump( (int) i ).get_translation().distance( true_pose.jump( (int) i).get_translation() );
-		numeric::xyzMatrix< double > const delta_rot = sandbox_pose.jump( (int) i ).get_rotation()*true_pose.jump( (int) i ).get_rotation().inverse();
+		numeric::xyzMatrix< core::Real > const delta_rot = sandbox_pose.jump( (int) i ).get_rotation()*true_pose.jump( (int) i ).get_rotation().inverse();
 		if ( delta_trans > TOLERANCE ||
 				( delta_rot.trace() - 3 ) > TOLERANCE ) {
 			try {
@@ -145,7 +145,7 @@ void ClientMover::push_passport( EnvironmentCAP env_ap, DofPassportCOP pass ){
 	if ( superenv && superenv->is_registered( utility::pointer::static_pointer_cast< ClientMover >( get_self_ptr() ) ) ) {
 		EnvironmentCOP passport_env = passports_.top().first.lock();
 		if ( passport_env && passport_env->id() == superenv->id() ) {
-			throw CREATE_EXCEPTION(EXCN_Env_Passport, "ClientMover being double-assigned a passport for an environment.",
+			throw CREATE_EXCEPTION(EXCN_Env_Passport, "ClientMover being core::Real-assigned a passport for an environment.",
 				get_name(), env_ap );
 		}
 	} else {

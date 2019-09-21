@@ -156,7 +156,7 @@ void MPIPool_RMSD::send_newest_xyz( core::Size num_to_send, int const receiving_
   core::Size current_size = new_structures_;
   runtime_assert( new_structures_ >= num_to_send );
    while( num_to_send > 0 ){
-    FArray2D<double> coords;
+    FArray2D<core::Real> coords;
     Pool_RMSD::get( current_size - num_to_send + 1, coords );
     std::string tag = Pool_RMSD::get_tag( current_size - num_to_send + 1);
     tr.Debug << "Sending " << tag << " from rank " << rank_ <<
@@ -170,7 +170,7 @@ void MPIPool_RMSD::send_newest_xyz( core::Size num_to_send, int const receiving_
 }
 
 void MPIPool_RMSD::send_xyz(
-  FArray2D<double>& xyz,
+  FArray2D<core::Real>& xyz,
   std::string& tag,
   core::Size receiving_rank
 ){
@@ -203,7 +203,7 @@ void MPIPool_RMSD::send_xyz(
 }
 
 void MPIPool_RMSD::farray_to_string(
-  FArray2D<double>& xyz,
+  FArray2D<core::Real>& xyz,
   std::string& string
 ){
   PROF_START( basic::FARRAY_MANIPULATION );
@@ -219,7 +219,7 @@ void MPIPool_RMSD::farray_to_string(
 
 void MPIPool_RMSD::receive_newest_xyz( core::Size num_to_get, int const sending_rank ){
   while( num_to_get > 0 ){
-    FArray2D<double> coords;
+    FArray2D<core::Real> coords;
     std::string tag;
     receive_xyz( coords, tag, sending_rank );
     num_to_get--;
@@ -229,7 +229,7 @@ void MPIPool_RMSD::receive_newest_xyz( core::Size num_to_get, int const sending_
 }
 
 void MPIPool_RMSD::receive_xyz(
-  FArray2D<double>& xyz,
+  FArray2D<core::Real>& xyz,
   std::string& tag,
   core::Size sending_rank
 ){
@@ -263,11 +263,11 @@ void MPIPool_RMSD::receive_xyz(
   //tr.Debug << sending_rank << " RECEIVED TAG " << tag << std::endl;
 }
 
-void MPIPool_RMSD::string_to_farray( FArray2D<double>& xyz, std::string& string, int xyz_u1, int xyz_u2 ){
+void MPIPool_RMSD::string_to_farray( FArray2D<core::Real>& xyz, std::string& string, int xyz_u1, int xyz_u2 ){
   std::istringstream string_to_double;
   string_to_double.str(string);
   PROF_START( basic::FARRAY_MANIPULATION );
-  double element;
+  core::Real element;
   for(core::Size i = 1; static_cast<int>(i) <= xyz_u1; i++ ){
     for(core::Size j = 1; static_cast<int>(j) <= xyz_u2; j++ ){
       string_to_double >> element;
@@ -375,7 +375,7 @@ void MPIPool_RMSD::master_go(){
     }
     else if(message_type == MPI_ADD_POSE_TO_POOL){
       //tr.Debug << "received message to add pose to pool" << std::endl;
-      FArray2D<double> new_coords;
+      FArray2D<core::Real> new_coords;
       std::string new_tag;
 
       receive_xyz( new_coords, new_tag, slave_rank );

@@ -15,6 +15,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <core/types.hh>
 
 namespace protocols {
 namespace cluster {
@@ -28,10 +29,10 @@ namespace calibur {
 *
 * (The method follows closely the discussions in "Numerical Recipes in C".)
 */
-bool jacobi3( double a[3][3], double d[3], double v[3][3] );
+bool jacobi3( core::Real a[3][3], core::Real d[3], core::Real v[3][3] );
 
 #ifdef _TEST_JACOBI_
-void print_matrix(double a[3][3]);
+void print_matrix(core::Real a[3][3]);
 #endif
 
 }

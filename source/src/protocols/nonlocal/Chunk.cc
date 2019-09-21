@@ -67,8 +67,8 @@ Chunk::Chunk(RegionOP  region, MoveMapOP  movable)
 		acc(i);
 	}
 
-	double mu = mean(acc);
-	double sigma = (std::sqrt(variance(acc)) * SD_MULTIPLIER) + SALT;
+	core::Real mu = mean(acc);
+	core::Real sigma = (std::sqrt(variance(acc)) * SD_MULTIPLIER) + SALT;
 	Normal dist(mu, sigma);
 	sampler_.reset(new numeric::random::DistributionSampler<Normal>(dist));
 }

@@ -64,7 +64,7 @@ LogFilePerturber::LogFilePerturber(string path) {
 			fields.begin(),
 			fields.end(),
 			back_inserter(dofs),
-			boost::lexical_cast<double, string>);
+			boost::lexical_cast<core::Real, string>);
 
 		if ( header == "TORSIONS" ) {
 			for ( Size i = 1; i <= dofs.size(); i++ ) to_radians(dofs[i]);

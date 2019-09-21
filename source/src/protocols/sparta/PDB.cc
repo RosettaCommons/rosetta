@@ -252,9 +252,9 @@ float PDB::getBondAngle(PDB_Entry a, PDB_Entry b, PDB_Entry c)
 
 float PDB::getDihedralAngle(PDB_Entry a, PDB_Entry b, PDB_Entry c, PDB_Entry d)
 {
-	double cb[3], n1[3], n2[3];
+	core::Real cb[3], n1[3], n2[3];
 	float co;
-	double TEMP, TEMP1, TEMP2, TEMP3, TEMP4, TEMP5;
+	core::Real TEMP, TEMP1, TEMP2, TEMP3, TEMP4, TEMP5;
 
 	if ( (a.atomName).empty() || (b.atomName).empty() || (c.atomName).empty() || (d.atomName).empty() ) {
 		return SPARTA_MAXNUM;
@@ -1105,9 +1105,9 @@ void PDB::findNeighors(float rad_sol)
 
 // Same model from MOLMOL
 void PDB::calcTriangles(
-	double x0, double y0, double z0,
-	double x1, double y1, double z1,
-	double x2, double y2, double z2,
+	core::Real x0, core::Real y0, core::Real z0,
+	core::Real x1, core::Real y1, core::Real z1,
+	core::Real x2, core::Real y2, core::Real z2,
 	int rowStartA[], int rowNo, int quad,
 	int row0, int ind0, int ind1,
 	int row2, int ind2,
@@ -1153,10 +1153,10 @@ void PDB::calcTriangles(
 			pointA[ind2][2] = (float) z2;
 		}
 	} else {
-		double x01, y01, z01;
-		double x12, y12, z12;
-		double x20, y20, z20;
-		double a;
+		core::Real x01, y01, z01;
+		core::Real x12, y12, z12;
+		core::Real x20, y20, z20;
+		core::Real a;
 		int rowMid, indMid01, indMid02, indMid12;
 
 		x01 = x0 + x1;
@@ -1416,7 +1416,7 @@ void PDB::calc_ElectricField()
 				PDB_Entry b = it->second;
 
 				int resID2 = b.resNum;
-				if ( fabs((double) (resID2 - resID)) <= 1 ) continue; // FOR WINDOWS BUILD //skip all atoms from present and adjacent residues
+				if ( fabs((core::Real) (resID2 - resID)) <= 1 ) continue; // FOR WINDOWS BUILD //skip all atoms from present and adjacent residues
 				string atomName2 = b.atomName;
 				if ( atomName2 == "O" && target.atomName == "HN" ) continue;
 
@@ -1499,7 +1499,7 @@ void PDB::collect_HN_S2_and_EF( )
 				//cout << "\t" << D_OK << "\t" << D_HK << "\t" <<  S2 << endl;
 			} // S2 calucalation
 
-			if ( fabs( (double) (resID2 - resID)) <= 1 ) continue; // FOR WINDOWS BUILD //skip all atoms from present and adjacent residues
+			if ( fabs( (core::Real) (resID2 - resID)) <= 1 ) continue; // FOR WINDOWS BUILD //skip all atoms from present and adjacent residues
 			string atomName2 = b.atomName;
 
 			if ( !(EF_target_HA.atomName).empty() ) {

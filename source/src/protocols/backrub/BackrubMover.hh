@@ -419,7 +419,7 @@ backrub_rotation_constants(
 	core::kinematics::tree::AtomCOP PP1_atom,
 	core::kinematics::tree::AtomCOP PP2_atom,
 	core::kinematics::tree::AtomCOP REF_atom,
-	utility::vector0<double> & constants,
+	utility::vector0<core::Real> & constants,
 	core::Real const alpha_min = 0,
 	core::Real const alpha_max = numeric::NumericTraits<core::Real>::pi(),
 	numeric::IntervalSet<core::Real> *tau_intervals = nullptr

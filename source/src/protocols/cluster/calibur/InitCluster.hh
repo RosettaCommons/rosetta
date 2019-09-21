@@ -27,6 +27,7 @@
 #if !defined(__WIN32__) && !defined(WIN32)
 #include <sys/resource.h>
 #endif
+#include <core/types.hh>
 
 namespace protocols {
 namespace cluster {
@@ -36,10 +37,10 @@ namespace calibur {
 
 #if !defined(__WIN32__) && !defined(WIN32)
 #ifndef PYROSETTA
-double
+core::Real
 __timeval_difference(struct timeval * x, struct timeval * y);
 
-double
+core::Real
 _get_elapsed(int set_start);
 #endif
 #endif

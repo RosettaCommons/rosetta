@@ -85,8 +85,8 @@ IntraRepeatContactFilter::compute( Pose const & pose ) const
 	Size contactCt = 0;
 	for ( Size ii=resStart; ii<=resEnd; ++ii ) {
 		for ( Size jj=ii+sequenceSep_; jj<=resEnd; ++jj ) {
-			xyzVector<double> a = pose.xyz(core::id::NamedAtomID("CA", ii));
-			xyzVector<double> b = pose.xyz(core::id::NamedAtomID("CA", jj));
+			xyzVector<core::Real> a = pose.xyz(core::id::NamedAtomID("CA", ii));
+			xyzVector<core::Real> b = pose.xyz(core::id::NamedAtomID("CA", jj));
 			if ( a.distance(b)<distThresh_ ) {
 				contactCt+=1;
 			}

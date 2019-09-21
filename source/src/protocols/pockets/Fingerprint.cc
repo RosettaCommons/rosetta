@@ -2414,21 +2414,21 @@ ALL ANGLES ARE IN RADIANS
 */
 
 /* the function dD_dv1 calculates the value of the partial derivative of the distance, D, with respect to the variable v1 */
-double dD_dv1(const double x0,const double x2,const double x3,const double y0,const double y2,const double y3,const double z0,const double z2,const double z3,const double r){
+core::Real dD_dv1(const core::Real x0,const core::Real x2,const core::Real x3,const core::Real y0,const core::Real y2,const core::Real y3,const core::Real z0,const core::Real z2,const core::Real z3,const core::Real r){
 
-	double u ; // paremeter that determines the point of intersection between the ray and the sphere
-	double xI; // x coordinate for the intersection point
-	double yI; // y coordinate for the intersection point
-	double zI; // z coordinate for the intersection point
-	double d ; // current distance between PI and P2
+	core::Real u ; // paremeter that determines the point of intersection between the ray and the sphere
+	core::Real xI; // x coordinate for the intersection point
+	core::Real yI; // y coordinate for the intersection point
+	core::Real zI; // z coordinate for the intersection point
+	core::Real d ; // current distance between PI and P2
 
-	double du_dx3 ; // derivative of u with respect to x3
-	double Q ; // constant which multiplies the derivative du_dx3 to obtain dD_dv1
+	core::Real du_dx3 ; // derivative of u with respect to x3
+	core::Real Q ; // constant which multiplies the derivative du_dx3 to obtain dD_dv1
 
 	// calculate directional vector
-	const double a = x2-x0;
-	const double b = y2-y0;
-	const double c = z2-z0;
+	const core::Real a = x2-x0;
+	const core::Real b = y2-y0;
+	const core::Real c = z2-z0;
 
 	// calculate paremter that determines intersection point between the line and the sphere
 	u =(-(a*x0) + a*x3 - b*y0 + b*y3 - c*z0 - sqrt(4.0*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3))*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3)) - 4.0*(a*a + b*b + c*c)*(-r*r + (x0 - x3)*(x0-x3) + (y0 - y3)*(y0 - y3) + (z0 - z3)*(z0 - z3)))/2.0 + c*z3)/(a*a + b*b + c*c);
@@ -2453,21 +2453,21 @@ double dD_dv1(const double x0,const double x2,const double x3,const double y0,co
 }
 
 /* the function dD_dv2 calculates the value of the partial derivative of the distance, D, with respect to the variable v2 */
-double dD_dv2(const double x0,const double x2,const double x3,const double y0,const double y2,const double y3,const double z0,const double z2,const double z3,const double r){
+core::Real dD_dv2(const core::Real x0,const core::Real x2,const core::Real x3,const core::Real y0,const core::Real y2,const core::Real y3,const core::Real z0,const core::Real z2,const core::Real z3,const core::Real r){
 
-	double u ; // paremeter that determines the point of intersection between the ray and the sphere
-	double xI; // x coordinate for the intersection point
-	double yI; // y coordinate for the intersection point
-	double zI; // z coordinate for the intersection point
-	double d ; // current distance between PI and P2
+	core::Real u ; // paremeter that determines the point of intersection between the ray and the sphere
+	core::Real xI; // x coordinate for the intersection point
+	core::Real yI; // y coordinate for the intersection point
+	core::Real zI; // z coordinate for the intersection point
+	core::Real d ; // current distance between PI and P2
 
-	double du_dy3 ; // derivative of u with respect to y3
-	double Q ; // constant which multiplies the derivative du_dy3 to obtain dD_dv2
+	core::Real du_dy3 ; // derivative of u with respect to y3
+	core::Real Q ; // constant which multiplies the derivative du_dy3 to obtain dD_dv2
 
 	// calculate directional vector
-	const double a = x2-x0;
-	const double b = y2-y0;
-	const double c = z2-z0;
+	const core::Real a = x2-x0;
+	const core::Real b = y2-y0;
+	const core::Real c = z2-z0;
 
 	// calculate paremter that determines intersection point between the line and the sphere
 	u = (-(a*x0) + a*x3 - b*y0 + b*y3 - c*z0 - sqrt(4.0*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3))*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3)) - 4.0*(a*a + b*b + c*c)*(-r*r + (x0 - x3)*(x0-x3) + (y0 - y3)*(y0 - y3) + (z0 - z3)*(z0 - z3)))/2.0 + c*z3)/(a*a + b*b + c*c);
@@ -2490,21 +2490,21 @@ double dD_dv2(const double x0,const double x2,const double x3,const double y0,co
 }
 
 /* the function dD_dv3 calculates the value of the partial derivative of the distance, D, with respect to the variable v3 */
-double dD_dv3(const double x0,const double x2,const double x3,const double y0,const double y2,const double y3,const double z0,const double z2,const double z3,const double r){
+core::Real dD_dv3(const core::Real x0,const core::Real x2,const core::Real x3,const core::Real y0,const core::Real y2,const core::Real y3,const core::Real z0,const core::Real z2,const core::Real z3,const core::Real r){
 
-	double u ; // paremeter that determines the point of intersection between the ray and the sphere
-	double xI; // x coordinate for the intersection point
-	double yI; // y coordinate for the intersection point
-	double zI; // z coordinate for the intersection point
-	double d ; // current distance between PI and P2
+	core::Real u ; // paremeter that determines the point of intersection between the ray and the sphere
+	core::Real xI; // x coordinate for the intersection point
+	core::Real yI; // y coordinate for the intersection point
+	core::Real zI; // z coordinate for the intersection point
+	core::Real d ; // current distance between PI and P2
 
-	double du_dz3 ; // derivative of u with respect to z3
-	double Q ; // constant which multiplies the derivative du_dz3 to obtain dD_dv3
+	core::Real du_dz3 ; // derivative of u with respect to z3
+	core::Real Q ; // constant which multiplies the derivative du_dz3 to obtain dD_dv3
 
 	// calculate directional vector
-	const double a = x2-x0;
-	const double b = y2-y0;
-	const double c = z2-z0;
+	const core::Real a = x2-x0;
+	const core::Real b = y2-y0;
+	const core::Real c = z2-z0;
 
 	// calculate paremter that determines intersection point between the line and the sphere
 	u = (-(a*x0) + a*x3 - b*y0 + b*y3 - c*z0 - sqrt(4.0*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3))*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3)) - 4.0*(a*a + b*b + c*c)*(-r*r + (x0 - x3)*(x0-x3) + (y0 - y3)*(y0 - y3) + (z0 - z3)*(z0 - z3)))/2.0 + c*z3)/(a*a + b*b + c*c);
@@ -2527,11 +2527,11 @@ double dD_dv3(const double x0,const double x2,const double x3,const double y0,co
 }
 
 /* the function dD_dv4 calculates the value of the partial derivative of the distance, D, with respect to the variable v4 */
-double dD_dv4(const double x0,const double x2,const double x3,const double y0,const double y2,const double y3,const double z0,const double z2,const double z3,const double r,const double v4,const double v5,const double v6,const double ,const double ,const double yc,const double ys,const double zc,const double zs) {
+core::Real dD_dv4(const core::Real x0,const core::Real x2,const core::Real x3,const core::Real y0,const core::Real y2,const core::Real y3,const core::Real z0,const core::Real z2,const core::Real z3,const core::Real r,const core::Real v4,const core::Real v5,const core::Real v6,const core::Real ,const core::Real ,const core::Real yc,const core::Real ys,const core::Real zc,const core::Real zs) {
 
-	double dx3_dv4 ; // derivative of x3 with respect to v4
-	double dy3_dv4 ; // derivative of y3 with respect to v4
-	double dz3_dv4 ; // derivative of y3 with respect to v4
+	core::Real dx3_dv4 ; // derivative of x3 with respect to v4
+	core::Real dy3_dv4 ; // derivative of y3 with respect to v4
+	core::Real dz3_dv4 ; // derivative of y3 with respect to v4
 
 	// calculate derivatives for P3
 	dx3_dv4 = (-zc + zs)*(-(cos(v6)*sin(v4)*sin(v5)) + cos(v4)*sin(v6)) + (-yc + ys)*(cos(v4)*cos(v6)*sin(v5) + sin(v4)*sin(v6));
@@ -2542,11 +2542,11 @@ double dD_dv4(const double x0,const double x2,const double x3,const double y0,co
 }
 
 /* the function dD_dv5 calculates the value of the partial derivative of the distance, D, with respect to the variable v5 */
-double dD_dv5(const double x0,const double x2,const double x3,const double y0,const double y2,const double y3,const double z0,const double z2,const double z3,const double r,const double v4,const double v5,const double v6,const double xc,const double xs,const double yc,const double ys,const double zc,const double zs) {
+core::Real dD_dv5(const core::Real x0,const core::Real x2,const core::Real x3,const core::Real y0,const core::Real y2,const core::Real y3,const core::Real z0,const core::Real z2,const core::Real z3,const core::Real r,const core::Real v4,const core::Real v5,const core::Real v6,const core::Real xc,const core::Real xs,const core::Real yc,const core::Real ys,const core::Real zc,const core::Real zs) {
 
-	double dx3_dv5 ; // derivative of x3 with respect to v5
-	double dy3_dv5 ; // derivative of y3 with respect to v5
-	double dz3_dv5 ; // derivative of y3 with respect to v5
+	core::Real dx3_dv5 ; // derivative of x3 with respect to v5
+	core::Real dy3_dv5 ; // derivative of y3 with respect to v5
+	core::Real dz3_dv5 ; // derivative of y3 with respect to v5
 
 	// calculate derivatives for P3
 	dx3_dv5 = (-zc + zs)*cos(v4)*cos(v5)*cos(v6) + (-yc + ys)*cos(v5)*cos(v6)*sin(v4) - (-xc + xs)*cos(v6)*sin(v5) ;
@@ -2557,11 +2557,11 @@ double dD_dv5(const double x0,const double x2,const double x3,const double y0,co
 }
 
 /* the function dD_dv6 calculates the value of the partial derivative of the distance, D, with respect to the variable v6 */
-double dD_dv6(const double x0,const double x2,const double x3,const double y0,const double y2,const double y3,const double z0,const double z2,const double z3,const double r,const double v4,const double v5,const double v6,const double xc,const double xs,const double yc,const double ys,const double zc,const double zs) {
+core::Real dD_dv6(const core::Real x0,const core::Real x2,const core::Real x3,const core::Real y0,const core::Real y2,const core::Real y3,const core::Real z0,const core::Real z2,const core::Real z3,const core::Real r,const core::Real v4,const core::Real v5,const core::Real v6,const core::Real xc,const core::Real xs,const core::Real yc,const core::Real ys,const core::Real zc,const core::Real zs) {
 
-	double dx3_dv6 ; // derivative of x3 with respect to v6
-	double dy3_dv6 ; // derivative of y3 with respect to v6
-	double dz3_dv6 ; // derivative of y3 with respect to v6
+	core::Real dx3_dv6 ; // derivative of x3 with respect to v6
+	core::Real dy3_dv6 ; // derivative of y3 with respect to v6
+	core::Real dz3_dv6 ; // derivative of y3 with respect to v6
 
 	// calculate derivatives for P3
 	dx3_dv6 = (xc - xs)*cos(v5)*sin(v6) + (-zc + zs)*(cos(v6)*sin(v4) - cos(v4)*sin(v5)*sin(v6)) + (-yc + ys)*(-(cos(v4)*cos(v6)) - sin(v4)*sin(v5)*sin(v6)) ;

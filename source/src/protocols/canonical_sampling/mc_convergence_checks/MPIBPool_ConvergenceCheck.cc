@@ -366,7 +366,7 @@ MPIBPool_RMSD::master_gather_new_coords(){
 
 
   ///now receive all coordinates of announced structures
-  double tmp;
+  core::Real tmp;
   PROF_START( basic::MPI_SLAVE_REPORT_NEW_COORDS );
   MPI_Gatherv( &tmp, 0, MPI_DOUBLE, transfer_buf_.farray_coord_ptr_, transfer_buf_.size_per_coords_, transfer_buf_.memory_offset_, MPI_DOUBLE, (pool_master_node_), MPI_COMM_POOL );
   PROF_STOP( basic::MPI_SLAVE_REPORT_NEW_COORDS );
@@ -387,7 +387,7 @@ MPIBPool_RMSD::slave_gather_new_coords(){
 
   int size_to_report = transfer_buf_.temp_coord_for_evaluation_.u1() * transfer_buf_.temp_coord_for_evaluation_.u2();
 
-  //double* array_xyz = new double[ size_to_report ];
+  //core::Real* array_xyz = new core::Real[ size_to_report ];
   farray_to_array( 0 ); //prof statement in function call
 
   int dummy;
@@ -427,7 +427,7 @@ void
 MPIBPool_RMSD::slave_report_no_new_coords(){
   int num_to_report = 0;
   int dummy;
-  double empty_coords;
+  core::Real empty_coords;
 
 
   PROF_START( basic::MPI_GATHER_BARRIER );
@@ -475,7 +475,7 @@ void MPIBPool_RMSD::array_to_farray( core::Size index ){
 }
 
   /**
-void MPIBPool_RMSD::farray_to_array( FArray2D<double> const& farray_xyz, double xyz[] ){
+void MPIBPool_RMSD::farray_to_array( FArray2D<core::Real> const& farray_xyz, core::Real xyz[] ){
   int index = 0;
   if( tracer_visible_ ){
     tr.Debug << "converting farray to array: u1: " << farray_xyz.u1() << " u2: " << farray_xyz.u2() << " " << std::endl;
@@ -491,7 +491,7 @@ void MPIBPool_RMSD::farray_to_array( FArray2D<double> const& farray_xyz, double 
   **/ //not needed anymore. just access memory directly
 
   /**
-void MPIBPool_RMSD::array_to_farray( FArray2D<double>& farray_xyz, double xyz[] ){
+void MPIBPool_RMSD::array_to_farray( FArray2D<core::Real>& farray_xyz, core::Real xyz[] ){
 
   debug_assert( transfer_buf_.nresidues_ > 0 );
   //farray_xyz.redimension( 3, nresidues_, 0.0 );
@@ -538,7 +538,7 @@ void MPIBPool_RMSD::finalize(){
     }
     int size_to_report = -1;
     int empty_size = 0;
-    double empty_coords;
+    core::Real empty_coords;
 
     PROF_START( basic::MPI_GATHER_BARRIER );
     MPI_Barrier( MPI_COMM_POOL );
@@ -596,7 +596,7 @@ void MPIBPool_RMSD::finalize(){
     debug.open((q.str() + debug_posedump).c_str(),std::fstream::app);
 
     for( core::Size ii = 1; ii <= Pool_RMSD::size(); ii++ ) {
-      FArray2D<double> tmp;
+      FArray2D<core::Real> tmp;
       std::string tag = Pool_RMSD::get_tag( ii );
       Pool_RMSD::get( ii, tmp );
       //write to file
@@ -734,10 +734,10 @@ TransferBuffer::set_size( int num_slave_nodes ){
   int_buf1_ = new int[ num_slave_nodes ];
   winning_ranks_ = new int[ num_slave_nodes ];
   //runtime_assert( nresidues_ > 0 && num_slave_nodes > 0);
-  coords_ = ObjexxFCL::FArray3D<double>( 3, nresidues_, num_slave_nodes, 0.0 );
-  temp_coord_for_evaluation_ = ObjexxFCL::FArray2D<double>( 3, nresidues_, 0.0 );
+  coords_ = ObjexxFCL::FArray3D<core::Real>( 3, nresidues_, num_slave_nodes, 0.0 );
+  temp_coord_for_evaluation_ = ObjexxFCL::FArray2D<core::Real>( 3, nresidues_, 0.0 );
   //farray_coord_ptr_ = coords_.get_pointer_to_data();
-  farray_coord_ptr_ = new double[  3 * nresidues_ * num_slave_nodes ];
+  farray_coord_ptr_ = new core::Real[  3 * nresidues_ * num_slave_nodes ];
   size_ = num_slave_nodes;
 }
 
@@ -902,7 +902,7 @@ void MPIBPool_RMSD::master_go(){
   debug_master.open(master_debug_posedump.c_str(),std::fstream::app);
 
   for( core::Size ii = 1; ii <= Pool_RMSD::size(); ii++ ) {
-    FArray2D<double> tmp;
+    FArray2D<core::Real> tmp;
     std::string tag = Pool_RMSD::get_tag( ii );
     Pool_RMSD::get( ii, tmp );
     //write to file

@@ -184,14 +184,14 @@ RECCES_Mover::run_sampler( pose::Pose & pose )
 	final_dump_stuff( pose, min_pose );
 
 	TR << "n_cycles: " << options_->n_cycle() << std::endl;
-	TR << "Accept rate: " << double( n_accept_total ) / options_->n_cycle() << std::endl;
+	TR << "Accept rate: " << core::Real( n_accept_total ) / options_->n_cycle() << std::endl;
 	if ( num_accepts.size() > 0 ) {
 		for ( auto const & it : num_accepts ) {
 			std::string const & sampler_name( it.first );
-			TR << " " <<  sampler_name << " accept rate: " << double( num_accepts[ sampler_name ] )/double( num_tries[ sampler_name ] ) << std::endl;
+			TR << " " <<  sampler_name << " accept rate: " << core::Real( num_accepts[ sampler_name ] )/core::Real( num_tries[ sampler_name ] ) << std::endl;
 		}
 	}
-	TR << "T_jump accept rate: " << double( n_t_jumps_accept ) / n_t_jumps << std::endl;
+	TR << "T_jump accept rate: " << core::Real( n_t_jumps_accept ) / n_t_jumps << std::endl;
 
 	Real const time_in_test = static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC;
 	TR << "Time in sampler: " <<  time_in_test << std::endl;
@@ -279,7 +279,7 @@ RECCES_Mover::dump_stuff(
 		min_pose = pose;
 	}
 	if ( options_->n_dump() != 0 &&
-			n * (options_->n_dump() + 1) / double(options_->n_cycle()) >= curr_dump ) {
+			n * (options_->n_dump() + 1) / core::Real(options_->n_cycle()) >= curr_dump ) {
 		std::ostringstream oss;
 		oss << "intermediate" << '_' << curr_dump << ".pdb";
 		pose.dump_pdb(oss.str());

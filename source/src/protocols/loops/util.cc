@@ -91,9 +91,9 @@ using namespace pose;
 using namespace kinematics;
 
 // Numeric constants
-static const double EXT_PHI = -150;
-static const double EXT_PSI = +150;
-static const double EXT_OMG =  180;
+static const core::Real EXT_PHI = -150;
+static const core::Real EXT_PSI = +150;
+static const core::Real EXT_OMG =  180;
 
 void
 fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom, utility::vector1< core::Real > &weights ) {

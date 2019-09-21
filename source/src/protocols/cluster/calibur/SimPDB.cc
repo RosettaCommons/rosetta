@@ -26,6 +26,8 @@
 #include <protocols/cluster/calibur/PreloadedPDB.hh>
 #include <protocols/cluster/calibur/pdb_util.hh>
 
+#include <core/types.hh>
+
 #include <memory>
 
 namespace protocols {
@@ -53,7 +55,7 @@ SimPDB::SimPDB( std::string const & aFileName )
 	if ( preloadPDB ) {
 		/*for(int i=0; i<len; i++)
 		{
-		calpha_vector[i]=new double [3];
+		calpha_vector[i]=new core::Real [3];
 		}*/
 		SimPDBOP pdb = preloadedPDB->filename2PDB[aFileName];
 		protein_file_name_ = pdb->protein_file_name_; // copies
@@ -61,7 +63,7 @@ SimPDB::SimPDB( std::string const & aFileName )
 		//calpha_vector.resize(3*num_residue_);
 		// copy by copy ctor
 		calpha_vector_ = pdb->calpha_vector_;
-		//memcpy(calpha_vector, pdb->calpha_vector_, 3 * num_residue_ * sizeof(double));
+		//memcpy(calpha_vector, pdb->calpha_vector_, 3 * num_residue_ * sizeof(core::Real));
 	} else {
 		protein_file_name_ = aFileName;
 		num_residue_ = LONGEST_CHAIN;
@@ -75,7 +77,7 @@ SimPDB::SimPDB( std::string const & aFileName, int len )
 	if ( preloadPDB ) {
 		/*for(int i=0; i<len; i++)
 		{
-		calpha_vector[i]=new double [3];
+		calpha_vector[i]=new core::Real [3];
 		}*/
 		SimPDBOP pdb = preloadedPDB->filename2PDB[aFileName];
 		protein_file_name_ = pdb->protein_file_name_;
@@ -125,7 +127,7 @@ SimPDB::read()
 	std::cout.flush();
 	char buf[400];
 	num_residue_ = 0;
-	double x, y, z;
+	core::Real x, y, z;
 	//char c = 'a';
 	bool read = false;
 
@@ -134,9 +136,9 @@ SimPDB::read()
 
 	int CA_number = 1;
 
-	//double cx = 0;
-	//double cy = 0;
-	//double cz = 0;
+	//core::Real cx = 0;
+	//core::Real cy = 0;
+	//core::Real cz = 0;
 	int count3 = 0;
 	//mSquaredSum=0;
 	while ( !input.eof() ) {

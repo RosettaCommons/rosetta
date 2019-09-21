@@ -406,13 +406,13 @@ void FlexbbSimAnnealer::run()
 
 		/*std::cerr << "Finished Inner Iterations, temperature = " << get_temperature() << std::endl;
 		std::cerr << "fixbb moves attempted: " << num_fixbb_move_valid << " accepted: " << num_fixbb_move_accepts;
-		if ( num_fixbb_move_valid > 0 ) std::cerr << " (" << (double) num_fixbb_move_accepts / num_fixbb_move_valid << ")";
+		if ( num_fixbb_move_valid > 0 ) std::cerr << " (" << (core::Real) num_fixbb_move_accepts / num_fixbb_move_valid << ")";
 		std::cerr << std::endl;
 		std::cerr << "bb moves attempted: " << num_bb_move_valid << " accepted: " << num_bb_move_accepts;
-		if ( num_bb_move_valid > 0 ) std::cerr << " (" << (double) num_bb_move_accepts / num_bb_move_valid << ")";
+		if ( num_bb_move_valid > 0 ) std::cerr << " (" << (core::Real) num_bb_move_accepts / num_bb_move_valid << ")";
 		std::cerr << std::endl;
 		std::cerr << "bb substitutions attempted: " << num_bb_sub_valid << " accepted: " << num_bb_sub_accepts;
-		if ( num_bb_sub_accepts > 0 ) std::cerr << " (" << (double) num_bb_sub_accepts / num_bb_sub_valid << ")";
+		if ( num_bb_sub_accepts > 0 ) std::cerr << " (" << (core::Real) num_bb_sub_accepts / num_bb_sub_valid << ")";
 		std::cerr << std::endl;
 		std::cerr << "bestenergy: " << bestenergy() << " currentenergy: " << currentenergy;
 		std::cerr << std::endl << "-------------" << std::endl;*/

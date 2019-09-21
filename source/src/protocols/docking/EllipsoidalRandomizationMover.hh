@@ -73,7 +73,7 @@ public:
 	numeric::xyzMatrix< core::Real > calculate_axes( core::pose::Pose & );
 
 	/// @brief Returns a sample from a beta distribution.
-	core::Real single_beta_sample( double, double );
+	core::Real single_beta_sample( core::Real, core::Real );
 
 	/// @brief Selects a random point on ellipsoid surface.
 	core::Vector point_on_ellipsoid( numeric::xyzMatrix< core::Real > );

@@ -1118,7 +1118,7 @@ void FragmentPicker::pick_candidates() {
 	PROF_STOP( basic::FRAGMENTPICKING );
 }
 
-double FragmentPicker::total_score(scores::FragmentScoreMapOP f, core::Size index) {
+core::Real FragmentPicker::total_score(scores::FragmentScoreMapOP f, core::Size index) {
 
 	utility::vector1<core::Real> components = f->get_score_components();
 	utility::vector1<core::Real> weights = scores_[index]->get_weights();

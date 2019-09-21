@@ -220,7 +220,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	Matrix3f H= svd.matrixU() * R * svd.matrixV().transpose();
 	capture_stream <<"Rotation matrix:\n"<<H<<endl;
 
-	double omega = acos((H.trace()-1)/2);
+	core::Real omega = acos((H.trace()-1)/2);
 	Matrix3f I = Matrix3f::Identity();
 	Matrix3f N = 0.5*(H+H.transpose()) - cos(omega)*I;
 
@@ -235,14 +235,14 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 		}
 	}
 
-	double sin_omega = (H(1,0)-H(0,1)) / (2*hN(2));
+	core::Real sin_omega = (H(1,0)-H(0,1)) / (2*hN(2));
 	TR.Debug <<"sin_omega "<<sin_omega<<endl;
 	if ( sin_omega < 0 ) hN = -1 * hN;
 
 
 	Vector3f t = c_B - H*c_A;
-	double L = t.dot(hN) ;
-	double rise= std::abs(L);
+	core::Real L = t.dot(hN) ;
+	core::Real rise= std::abs(L);
 
 	capture_stream<<"getParams:N:\n"<<N<<endl;
 	capture_stream<<"getParams:helical axis:\n"<<hN<<endl;
@@ -268,12 +268,12 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	Vector3f pB= (c_B-R0)-(hN*(hN.dot(c_B-R0)));
 
 
-	double direction = L * hN.dot(pA.cross(pB));
+	core::Real direction = L * hN.dot(pA.cross(pB));
 	left_handed_ = 1;
 	if ( direction > 0 ) left_handed_ = -1;
 	capture_stream<<"left handed: "<<left_handed_<<endl;
 
-	double radius=pA.norm();
+	core::Real radius=pA.norm();
 
 	capture_stream <<"L: " << L << endl << "rise: "<<rise<<endl<<"radius: "<<radius<<endl<<"omega: "<<omega<<endl;
 
@@ -381,7 +381,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 
 	TR.Debug << "H: " << H << std::endl;
 
-	double omega = acos((H.trace()-1)/2);
+	core::Real omega = acos((H.trace()-1)/2);
 	Matrix3f I = Matrix3f::Identity();
 	Matrix3f N = 0.5*(H+H.transpose()) - cos(omega)*I;
 
@@ -399,15 +399,15 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	TR.Debug << "N: " << N << std::endl;
 	TR.Debug << "helical axis: " << hN << std::endl;
 
-	double sin_omega = (H(1,0)-H(0,1)) / (2*hN(2));
+	core::Real sin_omega = (H(1,0)-H(0,1)) / (2*hN(2));
 
 	TR.Debug<<"sin_omega "<<sin_omega<<endl;
 
 	if ( sin_omega < 0 ) hN = -1 * hN;
 
 	Vector3f t = c_B - H*c_A;
-	double L = t.dot(hN) ;
-	//double rise= std::abs(L);  // unused ~Labonte
+	core::Real L = t.dot(hN) ;
+	//core::Real rise= std::abs(L);  // unused ~Labonte
 
 
 	Matrix3f Ncross;
@@ -418,11 +418,11 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	Vector3f pA= (c_A-R0)-(hN*(hN.dot(c_A-R0)));
 	Vector3f pB= (c_B-R0)-(hN*(hN.dot(c_B-R0)));
 
-	double direction = L * hN.dot(pA.cross(pB));
+	core::Real direction = L * hN.dot(pA.cross(pB));
 	left_handed_ = 1;
 	if ( direction<0 ) left_handed_ = -1;
 
-	double radius=pA.norm();
+	core::Real radius=pA.norm();
 
 	radius_ = radius;
 
@@ -441,7 +441,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	//////////////////////////////////
 	//3x1
 	Vector3f cA2axis= R0 + hN*(hN.dot(c_A-R0));
-	double u(hN(0)),v(hN(1)),w(hN(2));
+	core::Real u(hN(0)),v(hN(1)),w(hN(2));
 	// check! u,v,w should not be parallel to Z-axis (0,0,1)
 
 	//translation
@@ -477,8 +477,8 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 
 
 	//figure out the new axis with the CA set of coordinates
-	double a(A.row(0).mean()), b(A.row(1).mean());
-	//double c(A.row(2).mean());
+	core::Real a(A.row(0).mean()), b(A.row(1).mean());
+	//core::Real c(A.row(2).mean());
 
 	Matrix3f Tx;
 	Tx<< a/sqrt(a*a+b*b), b/sqrt(a*a+b*b),0,
@@ -568,7 +568,7 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 	// the strategy is to use the singleton to figure out the coordinates, and dump the xyz to the second segment.
 	// these's going to be an issue with connectivity....
 
-	// expand residue indices to double
+	// expand residue indices to core::Real
 	for ( Size i = seg_size+1; i <= 2*seg_size; ++i ) {
 		residue_indices.push_back(i);
 	}
@@ -606,9 +606,9 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 
 	// generating new coordinates following pre-defined helical parameters
 	// pre-defined helical parameters, inputs from outside
-	double t_rise =option[OptionKeys::remodel::helical_rise];
-	double t_radius =option[OptionKeys::remodel::helical_radius];
-	double t_omega =option[OptionKeys::remodel::helical_omega];
+	core::Real t_rise =option[OptionKeys::remodel::helical_rise];
+	core::Real t_radius =option[OptionKeys::remodel::helical_radius];
+	core::Real t_omega =option[OptionKeys::remodel::helical_omega];
 
 	//if(left_handed_ == -1) t_omega *= -1;
 
@@ -706,11 +706,11 @@ RemodelGlobalFrame::setup_CM_helical_constraint(Pose & pose){
 	com1[1], com2[1], com3[1], com4[1], com5[1], com6[1],
 	com1[2], com2[2], com3[2], com4[2], com5[2], com6[2];
 	*/
-	double t_rise =option[OptionKeys::remodel::helical_rise];
-	double t_radius =option[OptionKeys::remodel::helical_radius];
-	double t_omega =option[OptionKeys::remodel::helical_omega];
-	double sd = option[OptionKeys::remodel::COM_sd];
-	double tolerance = option[OptionKeys::remodel::COM_tolerance];
+	core::Real t_rise =option[OptionKeys::remodel::helical_rise];
+	core::Real t_radius =option[OptionKeys::remodel::helical_radius];
+	core::Real t_omega =option[OptionKeys::remodel::helical_omega];
+	core::Real sd = option[OptionKeys::remodel::COM_sd];
+	core::Real tolerance = option[OptionKeys::remodel::COM_tolerance];
 
 	MatrixXf COM_target = ideal_COMs(t_rise , t_radius , t_omega, repeat_number);
 
@@ -816,9 +816,9 @@ COMs << com1[0], com2[0], com3[0], com4[0],
 com1[1], com2[1], com3[1], com4[1],
 com1[2], com2[2], com3[2], com4[2];
 
-double t_rise =option[OptionKeys::remodel::helical_rise];
-double t_radius =option[OptionKeys::remodel::helical_radius];
-double t_omega =option[OptionKeys::remodel::helical_omega];
+core::Real t_rise =option[OptionKeys::remodel::helical_rise];
+core::Real t_radius =option[OptionKeys::remodel::helical_radius];
+core::Real t_omega =option[OptionKeys::remodel::helical_omega];
 
 MatrixXf COM_target = ideal_COMs(t_rise , t_radius , t_omega, 4);
 //get_RMSD(COMs,COM_target);
@@ -1011,7 +1011,7 @@ Matrix3f rot_mat(MatrixXf &A,MatrixXf &B)
 	return H;
 }
 
-MatrixXf ideal_COMs(double rise, double radius, double omega, int unitn){
+MatrixXf ideal_COMs(core::Real rise, core::Real radius, core::Real omega, int unitn){
 
 	Matrix3f Rz;  // rot_mat along Z
 	Rz<< cos(omega),-sin(omega),0, sin(omega),cos(omega),0, 0,0,1;
@@ -1029,11 +1029,11 @@ MatrixXf ideal_COMs(double rise, double radius, double omega, int unitn){
 	return COMs;
 }
 
-double get_RMSD(MatrixXf &A,MatrixXf &B){
+core::Real get_RMSD(MatrixXf &A,MatrixXf &B){
 
-	double rmsd=0;
+	core::Real rmsd=0;
 	for ( int i=0; i < A.cols(); i++ ) {
-		double d2 = (A.col(i)-B.col(i)).squaredNorm();
+		core::Real d2 = (A.col(i)-B.col(i)).squaredNorm();
 		rmsd += d2;
 	}
 	rmsd /= A.cols();

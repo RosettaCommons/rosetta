@@ -169,8 +169,8 @@ core::Size StarTreeBuilder::choose_anchor_position(const protocols::loops::Loop&
 	using core::Size;
 	using numeric::random::DistributionSampler;
 
-	double mu = chunk.start() + chunk.length() / 2.0;
-	double sigma = chunk.length() / 5.0;
+	core::Real mu = chunk.start() + chunk.length() / 2.0;
+	core::Real sigma = chunk.length() / 5.0;
 	normal distribution(mu, sigma);
 	DistributionSampler<normal> sampler(distribution);
 

@@ -277,7 +277,7 @@ void MembraneAbinitio::apply( pose::Pose & pose ) {
 			PROF_STOP( basic::STAGE1 );
 
 			if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
-				tr << "Timeperstep: " << (double(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
+				tr << "Timeperstep: " << (core::Real(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
 				prof_show();
 				output_debug_structure( pose, "stage1" );
 			}
@@ -327,7 +327,7 @@ void MembraneAbinitio::apply( pose::Pose & pose ) {
 				if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 					// pose.dump_pdb("stage2.pdb");
 					output_debug_structure( pose, "stage2" );
-					tr << "Timeperstep: " << (double(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
+					tr << "Timeperstep: " << (core::Real(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
 					prof_show();
 				}
 
@@ -365,7 +365,7 @@ void MembraneAbinitio::apply( pose::Pose & pose ) {
 
 				if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 					output_debug_structure( pose, "stage3" );
-					tr << "Timeperstep: " << (double(endtime) - starttime )/( CLOCKS_PER_SEC) << std::endl;
+					tr << "Timeperstep: " << (core::Real(endtime) - starttime )/( CLOCKS_PER_SEC) << std::endl;
 					prof_show();
 				}
 
@@ -397,7 +397,7 @@ void MembraneAbinitio::apply( pose::Pose & pose ) {
 
 					if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 						output_debug_structure( pose, "stage3" );
-						tr << "Timeperstep: " << (double(endtime) - starttime )/( CLOCKS_PER_SEC) << std::endl;
+						tr << "Timeperstep: " << (core::Real(endtime) - starttime )/( CLOCKS_PER_SEC) << std::endl;
 						prof_show();
 					}
 				}
@@ -439,7 +439,7 @@ void MembraneAbinitio::apply( pose::Pose & pose ) {
 
 	if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 		output_debug_structure( pose, "stage4" );
-		tr << "Timeperstep: " << (double(endtime) - starttime )/( CLOCKS_PER_SEC ) << std::endl;
+		tr << "Timeperstep: " << (core::Real(endtime) - starttime )/( CLOCKS_PER_SEC ) << std::endl;
 		prof_show();
 	}
 
@@ -1221,7 +1221,7 @@ int MembraneAbinitio::do_stage2_cycles( pose::Pose &pose ) {
 
 	}
 	clock_t stop = clock();
-	double t = (double) (stop-start)/CLOCKS_PER_SEC;
+	core::Real t = (core::Real) (stop-start)/CLOCKS_PER_SEC;
 	std::cout << "End stage2: time " << t << "\n";
 	*/
 	// clock_t start = clock();
@@ -1234,7 +1234,7 @@ int MembraneAbinitio::do_stage2_cycles( pose::Pose &pose ) {
 	moves::TrialMoverOP trials( new moves::TrialMover( cycle, mc_ptr() ) );
 	moves::RepeatMover( trials, nr_cycles ).apply(pose);
 	// clock_t stop = clock();
-	// double t = (double) (stop-start)/CLOCKS_PER_SEC;
+	// core::Real t = (core::Real) (stop-start)/CLOCKS_PER_SEC;
 	// std::cout << "End stage2: time " << t << "\n";
 	// std::exit(1);
 	// moves::RepeatMover( stage2_mover( pose, trials ), nr_cycles ).apply(pose);

@@ -16,10 +16,10 @@
 #ifndef INCLUDED_numeric_xyzVector_fwd_hh
 #define INCLUDED_numeric_xyzVector_fwd_hh
 
+#include <numeric/types.hh>
 
 // C++ headers
 #include <cstddef>
-
 
 namespace numeric {
 
@@ -40,11 +40,12 @@ typedef  xyzVector< std::size_t >         xyzVector_size_t;
 typedef  xyzVector< std::size_t >         xyzVector_size;
 typedef  xyzVector< float >               xyzVector_float;
 typedef  xyzVector< double >              xyzVector_double;
-typedef  xyzVector< long double >         xyzVector_longdouble;
+typedef  xyzVector< long double >         xyzVector_long_double;
 typedef  xyzVector< char >                xyzVector_char;
 typedef  xyzVector< unsigned char >       xyzVector_uchar;
 typedef  xyzVector< signed char >         xyzVector_schar;
 
+typedef  xyzVector< Real >                xyzVector_real;
 
 } // namespace numeric
 

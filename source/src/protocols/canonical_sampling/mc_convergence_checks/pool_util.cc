@@ -62,15 +62,15 @@ DataBuffer::setup( int num_slave_nodes, int nresidues, int nlevels ){
 		" nlevels: " << nlevels << std::endl;
 
 	neighbor_addresses_ = new int[ num_slave_nodes * nlevels ];
-	coords_transfer_buffer_ = new double[ (nresidues * 3) ];
-	coords_receiving_buffer_ = new double[ (nresidues * 3 * num_slave_nodes ) ];
+	coords_transfer_buffer_ = new core::Real[ (nresidues * 3) ];
+	coords_receiving_buffer_ = new core::Real[ (nresidues * 3 * num_slave_nodes ) ];
 	coords_ = FArray2D_double( 3, nresidues, 0.0 );
 	temp_coords_ = FArray2D_double( 3, nresidues, 0.0 );
 	num_new_neighbors_ = 0;
 	memory_offset_ = new int[ num_slave_nodes ];
 	int_buf1_ = new int[ num_slave_nodes * nlevels ];
 	winning_ranks_ = new int[ num_slave_nodes * ( nlevels + 1 ) ];
-	candidate_best_rmsds_ = new double[ num_slave_nodes ];
+	candidate_best_rmsds_ = new core::Real[ num_slave_nodes ];
 	candidate_address_.resize( nlevels, 0 );
 	winning_address_.resize( nlevels, 0 );
 	candidate_coords_ = FArray2D_double( 3, nresidues, 0.0);
@@ -108,7 +108,7 @@ void
 DataBuffer::farray_to_array( core::Size index,
 	core::Size /*num_to_add*/,
 	FArray2D_double const&  coords,
-	double* coord_buf ){
+	core::Real* coord_buf ){
 	PROF_START( basic::FARRAY_MANIPULATION );
 	for ( int ii = 1; ii <= coords.u1(); ii++ ) {
 		for ( int jj = 1; jj <= coords.u2(); jj++ ) {
@@ -121,7 +121,7 @@ DataBuffer::farray_to_array( core::Size index,
 void
 DataBuffer::farray_to_array( core::Size index,
 	FArray2D_double const&  coords,
-	double* coord_buf ){
+	core::Real* coord_buf ){
 	farray_to_array( index, 1, coords, coord_buf );
 }
 
@@ -129,7 +129,7 @@ void
 DataBuffer::array_to_farray( core::Size index,
 	core::Size /*num_to_add*/,
 	FArray2D_double & coords,
-	const double* coord_buf){
+	const core::Real* coord_buf){
 	PROF_START( basic::FARRAY_MANIPULATION );
 	for ( int ii = 1; ii <= coords.u1(); ii++ ) {
 		for ( int jj = 1; jj <= coords.u2(); jj++ ) {
@@ -142,7 +142,7 @@ DataBuffer::array_to_farray( core::Size index,
 void
 DataBuffer::array_to_farray( core::Size index,
 	FArray2D_double & coords,
-	double* coord_buf){
+	core::Real* coord_buf){
 	array_to_farray( index, 1, coords, coord_buf );
 }
 

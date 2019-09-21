@@ -1348,7 +1348,7 @@ SandwichFeatures::report_features(
 					}
 
 					Real sum = 0;
-					for ( double k : array_avg_dis_sheet_i_j ) {
+					for ( core::Real k : array_avg_dis_sheet_i_j ) {
 						sum += k;
 					}
 					avg_dis_between_sheets = sum / array_avg_dis_sheet_i_j.size();

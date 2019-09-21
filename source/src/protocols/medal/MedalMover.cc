@@ -219,8 +219,8 @@ void MedalMover::apply(core::pose::Pose& pose) {
 	core::pose::correctly_add_cutpoint_variants(pose);
 	ScoreFunctionOP score = score_function();
 
-	const double cb_start = score->get_weight(core::scoring::linear_chainbreak);
-	const double cb_stop = cb_start * 2;
+	const core::Real cb_start = score->get_weight(core::scoring::linear_chainbreak);
+	const core::Real cb_stop = cb_start * 2;
 	const unsigned num_stages = option[OptionKeys::rigid::stages]();
 
 	for ( unsigned stage = 0; stage <= num_stages; ++stage ) {

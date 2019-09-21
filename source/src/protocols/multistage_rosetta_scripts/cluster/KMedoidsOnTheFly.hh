@@ -21,6 +21,8 @@
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.hh>
 #include <utility/vector1.hh>
 
+#include <core/types.hh>
+
 namespace protocols {
 namespace multistage_rosetta_scripts {
 namespace cluster {

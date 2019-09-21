@@ -509,7 +509,7 @@ RNA_Minimizer::update_atom_level_domain_map_with_extra_minimize_res( pose::Pose 
 	for ( auto const & atom_id_to_move : atom_ids_to_move ) {
 		if ( atom_level_domain_map_->has_domain( atom_id_to_move ) ) atom_level_domain_map_->set( atom_id_to_move, true );
 	}
-	// We should do a double check that we're not introducing movement that would mess up a domain?
+	// We should do a core::Real check that we're not introducing movement that would mess up a domain?
 }
 
 /////////////////////////////////////////////////////////////////////////////////

@@ -205,19 +205,19 @@ void MPI_WorkUnitManager::send_MPI_workunit( const WorkUnitBaseOP& MPI_ONLY(wu),
 	start_timer( TIMING_WAIT );
 	TRDEBUG << "Sending workunit to " << dest_rank << std::endl;
 	// announce that you're about to send data and the size of it
-	double  start_wait = get_time();
+	core::Real  start_wait = get_time();
 	MPI_Ssend( &size_of_raw_data,    1,                MPI_UNSIGNED, dest_rank, WUM_MPI_SEND_WU,    MPI_COMM_WORLD );
 	TR.Debug << "Sent header announcing incoming WU of size " << F(5,1,(size_of_raw_data/1024.0)) << "kB" << " to node " << dest_rank << std::endl;
 	start_timer( TIMING_TRANSFER_SEND );
-	double  start_send = get_time();
+	core::Real  start_send = get_time();
 	TR.Debug << "Sending WU" << std::endl;
 	MPI_Ssend( (char*) raw_data_ptr, size_of_raw_data, MPI_CHAR,     dest_rank, WUM_MPI_DATA_BLOCK, MPI_COMM_WORLD );
 	TR.Debug << "WU sent" << std::endl;
-	double  end_send = get_time();
+	core::Real  end_send = get_time();
 	send_wu_time_ += end_send - start_send;
 	send_wu_time_n_++;
 	//Unused parameter commented out to silence warning
-	//double last_spent = start_timer( TIMING_CPU );
+	//core::Real last_spent = start_timer( TIMING_CPU );
 	TRDEBUG << "MPI_SEND: " << dest_rank << "  " << F(7,1,(start_send - start_wait)*1000.0)  << "ms  " << F(7,1,(end_send - start_send)*1000.0)
 	<< "ms  " << F(5,1,(size_of_raw_data/1024.0)) << "kB" << std::endl;
 	if( (end_send - start_wait) >  warning_threshold){
@@ -243,7 +243,7 @@ void MPI_WorkUnitManager::receive_MPI_workunit( core::Size MPI_ONLY(node_rank) )
 
 	start_timer( TIMING_TRANSFER_RECV );
 
-	double  start_recv = get_time();
+	core::Real  start_recv = get_time();
 	TR.Debug << "Receiving MPI header (ie how big the WU will be)" << std::endl;
 	MPI_Recv( &size_of_raw_data, 1, MPI_UNSIGNED, node_rank, WUM_MPI_SEND_WU, MPI_COMM_WORLD, &status);
 	TR.Debug << "Received MPI header, receiving WU of " << F(5,1,(size_of_raw_data/1024.0)) << "kB from node " << status.MPI_SOURCE << std::endl;
@@ -251,7 +251,7 @@ void MPI_WorkUnitManager::receive_MPI_workunit( core::Size MPI_ONLY(node_rank) )
 	// now receive a datablock fromt he very same source
 	TRDEBUG << "Confirmed datablock is coming" << std::endl;
 	MPI_Recv( (char*) raw_data_ptr, size_of_raw_data, MPI_CHAR,  status.MPI_SOURCE, WUM_MPI_DATA_BLOCK, MPI_COMM_WORLD, &status);
-	double  end_recv = get_time();
+	core::Real  end_recv = get_time();
 	TRDEBUG << "MPI_RECV: " << status.MPI_SOURCE  << F(5,0,(end_recv - start_recv)/1000000.0) << "us  " << F(5,1,(size_of_raw_data/1024.0)) << "kB" << std::endl;
 
 	recv_wu_time_ += end_recv - start_recv;
@@ -377,7 +377,7 @@ void MPI_WorkUnitManager::print_stats_auto(){
 }
 
 void MPI_WorkUnitManager::reset_timing_stats(){
-	for ( double & i : timing_total_ ) i = 0;
+	for ( core::Real & i : timing_total_ ) i = 0;
 }
 
 

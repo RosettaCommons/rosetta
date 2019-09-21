@@ -210,7 +210,7 @@ void SCS_BlastFilter_by_alignment_length::apply(AntibodySequence const &/*antibo
 
 	struct {
 		SCS_ResultVector &r;
-		double v;
+		core::Real v;
 		string const SCS_BlastResult::*sequence;  //std::function< string const &(SCS_BlastResult const&) > sequence; //[](SCS_BlastResult const &r) -> string const & { return r.h1; }
 	} R[] {
 		{ results->h1, 0.70, &SCS_BlastResult::h1 },

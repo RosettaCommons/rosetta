@@ -200,10 +200,10 @@ static void rot_pose( Pose & pose, Mat const & rot, Vec const & cen, Size start,
 	rot_pose(pose,rot,start,end);
 	trans_pose(pose,cen,start,end);
 }
-static void rot_pose( Pose & pose, Vec const & axis, double const & ang, Size start, Size end ) {
+static void rot_pose( Pose & pose, Vec const & axis, core::Real const & ang, Size start, Size end ) {
 	rot_pose(pose,rotation_matrix_degrees(axis,ang),start,end);
 }
-static void rot_pose( Pose & pose, Vec const & axis, double const & ang, Vec const & cen, Size start, Size end ) {
+static void rot_pose( Pose & pose, Vec const & axis, core::Real const & ang, Vec const & cen, Size start, Size end ) {
 	rot_pose(pose,rotation_matrix_degrees(axis,ang),cen,start,end);
 }
 static void alignaxis(core::pose::Pose & pose, Vec newaxis, Vec oldaxis, Vec cen, Size start, Size end ) {

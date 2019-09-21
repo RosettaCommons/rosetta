@@ -335,7 +335,7 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 		PROF_STOP( basic::STAGE1 );
 		if ( option[ basic::options::OptionKeys::run::profile ] ) prof_show();
 		if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
-			tr.Info << "Timeperstep: " << (double(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
+			tr.Info << "Timeperstep: " << (core::Real(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
 			output_debug_structure( pose, "stage1" );
 		}
 	} //skipStage1
@@ -391,7 +391,7 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 		if ( option[ basic::options::OptionKeys::run::profile ] ) prof_show();
 		if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 			output_debug_structure( pose, "stage2" );
-			tr << "Timeperstep: " << (double(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
+			tr << "Timeperstep: " << (core::Real(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
 		}
 	} //bSkipStage2
 
@@ -431,7 +431,7 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 		if ( option[ basic::options::OptionKeys::run::profile ] ) prof_show();
 		if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 			output_debug_structure( pose, "stage3" );
-			tr << "Timeperstep: " << (double(endtime) - starttime )/( CLOCKS_PER_SEC) << std::endl;
+			tr << "Timeperstep: " << (core::Real(endtime) - starttime )/( CLOCKS_PER_SEC) << std::endl;
 		}
 
 		//  pose.dump_pdb("stage3.pdb");
@@ -472,7 +472,7 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 		if ( option[ basic::options::OptionKeys::run::profile ] ) prof_show();
 		if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 			output_debug_structure( pose, "stage4" );
-			tr << "Timeperstep: " << (double(endtime) - starttime )/( CLOCKS_PER_SEC ) << std::endl;
+			tr << "Timeperstep: " << (core::Real(endtime) - starttime )/( CLOCKS_PER_SEC ) << std::endl;
 		}
 
 		tr.Info <<  "\n===================================================================\n";
@@ -510,7 +510,7 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 		if ( option[ basic::options::OptionKeys::run::profile ] ) prof_show();
 		if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 			output_debug_structure( pose, "stage5" );
-			tr << "Timeperstep: " << (double(endtime) - starttime )/( CLOCKS_PER_SEC ) << std::endl;
+			tr << "Timeperstep: " << (core::Real(endtime) - starttime )/( CLOCKS_PER_SEC ) << std::endl;
 		}
 
 		tr.Info <<  "\n===================================================================\n";

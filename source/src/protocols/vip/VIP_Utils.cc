@@ -85,7 +85,7 @@ core::Real output_packstat( core::pose::Pose & pose ) {
 	opts.surrounding_sasa_smoothing_window = 1+2*oversample;
 	opts.num_surrounding_sasa_bins = 7;
 	for( core::Size ipr = 1; ipr <= 31; ++ipr ) {
-	PackstatReal pr = 3.0 - ((double)(ipr-1))/10.0;
+	PackstatReal pr = 3.0 - ((core::Real)(ipr-1))/10.0;
 	PackstatReal ostep = 0.1 / (oversample*2.0+1.0);
 	for( core::Size i = 1; i <= oversample; ++i ) opts.probe_radii.push_back( pr + i*ostep );
 	opts.probe_radii.push_back( pr );

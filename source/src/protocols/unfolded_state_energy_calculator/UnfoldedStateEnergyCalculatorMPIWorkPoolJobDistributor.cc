@@ -75,7 +75,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 
 	// local arrays to store incomming messages
 	int slave_data( 0 );
-	double slave_data_vector[ n_score_types ];
+	core::Real slave_data_vector[ n_score_types ];
 	EMapVector slave_data_emap;
 	char slave_tlc_vector[LENGTH_TLC];
 	std::string slave_tlc_string;
@@ -273,7 +273,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::slave_add_unfolded_energ
 
 	int empty_data( 0 );
 	MPI_Status status;
-	double data_vector[ n_score_types ];
+	core::Real data_vector[ n_score_types ];
 	char tlc_vector[LENGTH_TLC];
 
 	// send message that we want to send a vector of energies
@@ -291,7 +291,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::slave_add_unfolded_energ
 	// send vector to master
 	MPI_Send( &tlc_vector, 3, MPI_CHAR, 0, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD );
 
-	// convert EMapVector to vector of doubles
+	// convert EMapVector to vector of core::Reals
 	for ( Size i( 1 ); i <= n_score_types; ++i ) {
 		data_vector[ i - 1 ] = scores[ ScoreType( i ) ];
 	}
@@ -347,7 +347,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::slave_set_energy_terms(c
 
 	int empty_data( 0 );
 	MPI_Status status;
-	double data_vector[ n_score_types ];
+	core::Real data_vector[ n_score_types ];
 
 	// send message that we want to send a vector of energies
 	MPI_Send( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD );
@@ -356,7 +356,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::slave_set_energy_terms(c
 	MPI_Recv( &empty_data, 1, MPI_UNSIGNED_LONG, 0, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD, &status );
 	TR << "Slave Node " << rank_ << ": Sending unfolded energy terms to master" <<std::endl;
 
-	// convert EMapVector to vector of doubles
+	// convert EMapVector to vector of core::Reals
 	for ( Size i( 1 ); i <= n_score_types; ++i ) {
 		data_vector[ i - 1 ] = weights[ ScoreType( i ) ];
 	}

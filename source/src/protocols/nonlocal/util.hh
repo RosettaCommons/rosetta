@@ -68,7 +68,7 @@ void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Lo
 
 /// @brief Computes the distance between consecutive CA atoms. If the distance exceeds
 /// <threshold>, creates a new chunk and adds it to <chunks>.
-void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::LoopsOP chunks, double threshold);
+void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::LoopsOP chunks, core::Real threshold);
 
 /// @brief Returns the unweighted score of the ScoreType for the given residue. Assumes that the Pose has recently been scored by ScoreFunction with non-zero weight for the ScoreType.
 core::Real get_per_residue_score(

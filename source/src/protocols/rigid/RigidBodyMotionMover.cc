@@ -50,8 +50,8 @@ namespace rigid {
 
 static basic::Tracer TR( "protocols.moves.RigidBodyMotionMover" );
 
-double angle_between(const numeric::xyzVector<double>& a, const numeric::xyzVector<double>& b) {
-	double radians = std::acos(a.dot(b) / (a.length() * b.length()));
+core::Real angle_between(const numeric::xyzVector<core::Real>& a, const numeric::xyzVector<core::Real>& b) {
+	core::Real radians = std::acos(a.dot(b) / (a.length() * b.length()));
 	return radians * 180 / M_PI;
 }
 
@@ -92,12 +92,12 @@ void RigidBodyMotionMover::apply(core::pose::Pose& pose) {
 	jump.set_rb_delta(Jump::ROT_Z, 1, numeric::random::gaussian() * magnitude_rotation());
 
 	// translation
-	xyzVector<double> bias(0.0);
+	xyzVector<core::Real> bias(0.0);
 	compute_bias(i, pose, &bias);
 
-	double tx = numeric::random::gaussian() * magnitude_translation() + bias.x();
-	double ty = numeric::random::gaussian() * magnitude_translation() + bias.y();
-	double tz = numeric::random::gaussian() * magnitude_translation() + bias.z();
+	core::Real tx = numeric::random::gaussian() * magnitude_translation() + bias.x();
+	core::Real ty = numeric::random::gaussian() * magnitude_translation() + bias.y();
+	core::Real tz = numeric::random::gaussian() * magnitude_translation() + bias.z();
 
 	jump.set_rb_delta(Jump::TRANS_X, 1, tx);
 	jump.set_rb_delta(Jump::TRANS_Y, 1, ty);
@@ -108,7 +108,7 @@ void RigidBodyMotionMover::apply(core::pose::Pose& pose) {
 	pose.set_jump(i, jump);
 }
 
-void RigidBodyMotionMover::compute_bias(Size i, const core::pose::Pose& pose, numeric::xyzVector<double>* bias) const {
+void RigidBodyMotionMover::compute_bias(Size i, const core::pose::Pose& pose, numeric::xyzVector<core::Real>* bias) const {
 	using core::id::NamedAtomID;
 	using numeric::xyzVector;
 	using protocols::loops::Loop;
@@ -123,12 +123,12 @@ void RigidBodyMotionMover::compute_bias(Size i, const core::pose::Pose& pose, nu
 		const Loop& prev = chunks_[i - 1];
 		const Loop& next = chunks_[i + 1];
 
-		xyzVector<double> a = pose.xyz(NamedAtomID("CA", chunk.start())) - pose.xyz(NamedAtomID("CA", prev.stop()));
-		xyzVector<double> b = pose.xyz(NamedAtomID("CA", chunk.stop())) - pose.xyz(NamedAtomID("CA", next.start()));
+		xyzVector<core::Real> a = pose.xyz(NamedAtomID("CA", chunk.start())) - pose.xyz(NamedAtomID("CA", prev.stop()));
+		xyzVector<core::Real> b = pose.xyz(NamedAtomID("CA", chunk.stop())) - pose.xyz(NamedAtomID("CA", next.start()));
 
 		// If the absolute value of the angle between vectors is too great,
 		// we're better served biasing translation toward one of the endpoints
-		double degrees = std::abs(angle_between(a, b));
+		core::Real degrees = std::abs(angle_between(a, b));
 		if ( degrees < 90 ) {
 			*bias = (a + b) / 2.0;
 		} else {
@@ -160,15 +160,15 @@ void RigidBodyMotionMover::update_chunks() {
 	chunks_.sequential_order();
 }
 
-double RigidBodyMotionMover::magnitude_rotation() const {
+core::Real RigidBodyMotionMover::magnitude_rotation() const {
 	return mag_rot_;
 }
 
-double RigidBodyMotionMover::magnitude_translation() const {
+core::Real RigidBodyMotionMover::magnitude_translation() const {
 	return mag_trans_;
 }
 
-double RigidBodyMotionMover::chainbreak_bias() const {
+core::Real RigidBodyMotionMover::chainbreak_bias() const {
 	return cb_bias_;
 }
 
@@ -176,17 +176,17 @@ const core::kinematics::FoldTree& RigidBodyMotionMover::fold_tree() const {
 	return tree_;
 }
 
-void RigidBodyMotionMover::set_magnitude_rotation(double mag_rot) {
+void RigidBodyMotionMover::set_magnitude_rotation(core::Real mag_rot) {
 	debug_assert(mag_rot >= 0);
 	mag_rot_ = mag_rot;
 }
 
-void RigidBodyMotionMover::set_magnitude_translation(double mag_trans) {
+void RigidBodyMotionMover::set_magnitude_translation(core::Real mag_trans) {
 	debug_assert(mag_trans >= 0);
 	mag_trans_ = mag_trans;
 }
 
-void RigidBodyMotionMover::set_chainbreak_bias(double cb_bias) {
+void RigidBodyMotionMover::set_chainbreak_bias(core::Real cb_bias) {
 	debug_assert(cb_bias >= 0);
 	debug_assert(cb_bias <= 1);
 	cb_bias_ = cb_bias;

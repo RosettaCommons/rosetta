@@ -46,9 +46,9 @@ public:
 	// mask a volume to the asymmetric unit
 	void
 	mask_asu(
-		ObjexxFCL::FArray3D< double > &vol,
+		ObjexxFCL::FArray3D< core::Real > &vol,
 		core::scoring::electron_density::ElectronDensity const &e,
-		double value );
+		core::Real value );
 
 	// min dist between X and any symm copy of Y
 	core::Real

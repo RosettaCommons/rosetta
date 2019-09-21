@@ -54,7 +54,7 @@ private:
 	void setup_sampling_probs(core::Size num_residues,
 		const core::kinematics::FoldTree& tree,
 		protocols::loops::LoopsCOP aligned,
-		utility::vector1<double>* probs) const;
+		utility::vector1<core::Real>* probs) const;
 
 	core::fragment::FragSetOP fragments_;
 	core::fragment::SecondaryStructureOP pred_ss_;

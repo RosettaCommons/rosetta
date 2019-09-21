@@ -276,7 +276,7 @@ main_watchdog( void* )
 	using namespace basic::options;
 	using namespace protocols::boinc;
 
-	double current_cpu_time = 0.0;
+	core::Real current_cpu_time = 0.0;
 	std::stringstream moreinfo;
 
 	int watchdog_time = option[ OptionKeys::boinc::watchdog_time ];

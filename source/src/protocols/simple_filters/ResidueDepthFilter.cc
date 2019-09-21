@@ -652,7 +652,7 @@ ResidueDepthFilter::apply( core::pose::Pose const & pose ) const
 
 	/*
 	long t2=clock();
-	double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
+	core::Real time = ((core::Real)t2 - t1) / CLOCKS_PER_SEC;
 	std::cout << "Done in " << time << " sec." << std::endl;
 	*/
 	bool passed = true;

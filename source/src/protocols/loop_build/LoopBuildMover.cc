@@ -206,7 +206,7 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 	}
 	clock_t stoptime = clock();
 	if ( keep_time ) {
-		TR << "Job " << curr_nstruct << " took "<< ((double) stoptime - starttime )/CLOCKS_PER_SEC
+		TR << "Job " << curr_nstruct << " took "<< ((core::Real) stoptime - starttime )/CLOCKS_PER_SEC
 			<< " seconds" << std::endl;
 	}
 }

@@ -452,7 +452,7 @@ rigid_body_move(
 	core::pose::Pose & pose,
 	core::select::residue_selector::ResidueSubset const & subset,
 	numeric::xyzVector<core::Real> center_of_rotation
-	/* = numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0) */) {
+	/* = numeric::xyzVector<core::Real>(std::numeric_limits<core::Real>::quiet_NaN(), 0, 0) */) {
 
 	numeric::xyzMatrix<core::Real> rotation = numeric::rotation_matrix( rotation_unit_vector,
 		angle_deg * numeric::constants::r::pi / 180. );
@@ -469,7 +469,7 @@ rigid_body_move(
 	core::pose::Pose & pose,
 	core::select::residue_selector::ResidueSubset const & subset,
 	numeric::xyzVector<core::Real> center_of_rotation
-	/* = numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0) */) {
+	/* = numeric::xyzVector<core::Real>(std::numeric_limits<core::Real>::quiet_NaN(), 0, 0) */) {
 
 	numeric::xyzMatrix<core::Real> rotation = numeric::rotation_matrix( rotation_unit_vector,
 		angle_deg * numeric::constants::r::pi / 180. );
@@ -488,7 +488,7 @@ rigid_body_move(
 	core::pose::Pose & pose,
 	core::select::residue_selector::ResidueSubset const & subset,
 	numeric::xyzVector<core::Real> center_of_rotation
-	/* = numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0) */) {
+	/* = numeric::xyzVector<core::Real>(std::numeric_limits<core::Real>::quiet_NaN(), 0, 0) */) {
 
 	if ( ! center_of_rotation.is_finite() ) {
 		center_of_rotation = core::pose::center_of_mass( pose, subset );
@@ -519,7 +519,7 @@ rigid_body_move(
 	core::pose::Pose & pose,
 	core::select::residue_selector::ResidueSubset const & subset,
 	numeric::xyzVector<core::Real> center_of_rotation
-	/* = numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0) */) {
+	/* = numeric::xyzVector<core::Real>(std::numeric_limits<core::Real>::quiet_NaN(), 0, 0) */) {
 
 	numeric::xyzVector<core::Real> translate = translation_vector;
 	translate *= translation_scalar;

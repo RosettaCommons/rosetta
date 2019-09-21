@@ -359,7 +359,7 @@ GreenPacker::apply( core::pose::Pose & pose )
 	}
 	repack( pose );
 	clock_t stoptime = clock();
-	TR << "Green Packer took: " << ((double) stoptime-starttime) / CLOCKS_PER_SEC << " seconds." << std::endl;
+	TR << "Green Packer took: " << ((core::Real) stoptime-starttime) / CLOCKS_PER_SEC << " seconds." << std::endl;
 }
 
 std::string

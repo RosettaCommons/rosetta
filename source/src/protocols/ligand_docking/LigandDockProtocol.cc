@@ -590,7 +590,7 @@ LigandDockProtocol::optimize_orientation3(
 	// By collecting "perfect" poses and enforcing a minimum level of diversity,
 	// we should be able to pick from them randomly and enrich for rare poses.
 	// These next two parameters are wild-ass heuristic guesses that seem OK for the Meiler x-dock set.
-	core::Real const diverse_rms = 0.65 * std::sqrt( (double)pose.residue_type(lig_id).nheavyatoms() );
+	core::Real const diverse_rms = 0.65 * std::sqrt( (core::Real)pose.residue_type(lig_id).nheavyatoms() );
 	// Setting this too low leads to little enrichment in rare poses,
 	// but setting it too high wastes a lot of time in rms calculation:
 	core::Size const max_diversity = 5 * (pose.residue_type(lig_id).nchi()+1);

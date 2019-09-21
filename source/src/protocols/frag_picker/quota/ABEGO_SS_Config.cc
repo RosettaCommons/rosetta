@@ -76,7 +76,7 @@ ABEGO_SS_Config::ABEGO_SS_Config(std::string & file_name) : source_file_name_(fi
 		} else {
 			utility::vector1<core::Real> row;
 			for ( core::Size i=5; i<=t.size(); i++ ) {
-				row.push_back( boost::lexical_cast<double>(t[i]) );
+				row.push_back( boost::lexical_cast<core::Real>(t[i]) );
 			}
 			bin_probs_.push_back(row);
 		}

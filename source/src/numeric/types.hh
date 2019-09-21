@@ -18,10 +18,6 @@
 #ifndef INCLUDED_numeric_types_hh
 #define INCLUDED_numeric_types_hh
 
-
-// Numeric headers
-#include <numeric/xyzVector.fwd.hh>
-
 // Platform headers
 #include <platform/types.hh> // ssize_t
 
@@ -31,13 +27,9 @@
 
 namespace numeric {
 
-
 // Floating point precision control scalar
-#ifdef ROSETTA_FLOAT // Real == float
-typedef  float  Real;
-#else // Real == double
-typedef  double  Real;
-#endif
+
+using  Real = platform::Real;
 
 typedef platform::Size Size;
 typedef platform::SSize SSize;

@@ -33,6 +33,8 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
+#include <core/types.hh>
+
 namespace protocols {
 namespace cluster {
 namespace calibur {
@@ -60,8 +62,8 @@ public:
 public:
 	std::string protein_file_name_;
 	int num_residue_;
-	//double mSquaredSum;
-	std::vector<double> calpha_vector_;
+	//core::Real mSquaredSum;
+	std::vector<core::Real> calpha_vector_;
 	void read();
 
 public:

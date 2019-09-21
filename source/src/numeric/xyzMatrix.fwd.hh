@@ -42,14 +42,14 @@ typedef  xyzMatrix< platform::Size >      xyzMatrix_size_t;
 typedef  xyzMatrix< platform::Size >      xyzMatrix_size;
 typedef  xyzMatrix< float >               xyzMatrix_float;
 typedef  xyzMatrix< double >              xyzMatrix_double;
-typedef  xyzMatrix< long double >         xyzMatrix_longdouble;
+typedef  xyzMatrix< long double >         xyzMatrix_long_double;
 typedef  xyzMatrix< char >                xyzMatrix_char;
 typedef  xyzMatrix< unsigned char >       xyzMatrix_uchar;
 typedef  xyzMatrix< signed char >         xyzMatrix_schar;
 
+typedef  xyzMatrix< platform::Real >      xyzMatrix_real;
 
 } // namespace numeric
 
 
 #endif // INCLUDED_numeric_xyzMatrix_FWD_HH
-

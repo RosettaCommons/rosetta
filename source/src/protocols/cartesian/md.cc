@@ -938,14 +938,14 @@ void MolecularDynamics::doDihedralDerivatives( float & totalepot ) {
 			dsindnrml2 = inv_nrml2_mag * ( nrml2 * sin_phi - nrml3 );
 		}
 
-		double diff = phi - dihedrallist[i].angle;
-		if ( diff < -numeric::NumericTraits< double >::pi() )     diff += 2*numeric::NumericTraits< double >::pi();
-		if ( diff < -numeric::NumericTraits< double >::pi() )     diff += 2*numeric::NumericTraits< double >::pi();
-		if ( diff >  numeric::NumericTraits< double >::pi() )     diff -= 2*numeric::NumericTraits< double >::pi();
-		if ( diff >  numeric::NumericTraits< double >::pi() )     diff -= 2*numeric::NumericTraits< double >::pi();
+		core::Real diff = phi - dihedrallist[i].angle;
+		if ( diff < -numeric::NumericTraits< core::Real >::pi() )     diff += 2*numeric::NumericTraits< core::Real >::pi();
+		if ( diff < -numeric::NumericTraits< core::Real >::pi() )     diff += 2*numeric::NumericTraits< core::Real >::pi();
+		if ( diff >  numeric::NumericTraits< core::Real >::pi() )     diff -= 2*numeric::NumericTraits< core::Real >::pi();
+		if ( diff >  numeric::NumericTraits< core::Real >::pi() )     diff -= 2*numeric::NumericTraits< core::Real >::pi();
 		totalepot += k * sqr(diff);
-		double deriv = -2.0 * k * diff;
-		//std::cout << "BAH! " << phi << "  " <<  dihedrallist[i].angle << "  " << diff << "  " << deriv << "  " << numeric::NumericTraits< double >::pi() << std::endl;
+		core::Real deriv = -2.0 * k * diff;
+		//std::cout << "BAH! " << phi << "  " <<  dihedrallist[i].angle << "  " << diff << "  " << deriv << "  " << numeric::NumericTraits< core::Real >::pi() << std::endl;
 		// forces
 		if ( fabs( sin_phi ) > 0.1 ) {
 			deriv /= sin_phi;
@@ -1010,14 +1010,14 @@ void MolecularDynamics::createCartesianDerivatives( core::scoring::ScoreFunction
 }
 
 
-void MolecularDynamics::setInitialSpeeds(double tgtTemp )
+void MolecularDynamics::setInitialSpeeds(core::Real tgtTemp )
 {
 	using namespace core;
-	//double sigma;
+	//core::Real sigma;
 	//int natom = cartom.size();
 
 	for ( Size i = 1; i <= cartom.size(); i ++ ) {
-		double sigma = sqrt( 1.38065E-23 * tgtTemp / (cartom[i].mass * 1.66053878E-27) );
+		core::Real sigma = sqrt( 1.38065E-23 * tgtTemp / (cartom[i].mass * 1.66053878E-27) );
 		cartom[i].velocity.x() = numeric::random::gaussian() * sigma;
 		cartom[i].velocity.y() = numeric::random::gaussian() * sigma;
 		cartom[i].velocity.z() = numeric::random::gaussian() * sigma;
@@ -1048,8 +1048,8 @@ void MolecularDynamics::applyForces_BeeMan(
 ) {
 	using namespace core;
 
-	double t;
-	double tinvmass;
+	core::Real t;
+	core::Real tinvmass;
 	core::Vector dr, dv;
 	core::Vector t2a;
 
@@ -1092,36 +1092,36 @@ void MolecularDynamics::applyForces_BeeMan(
 
 
 void MolecularDynamics::applyForces_LangevinIntegration(
-	double T,
+	core::Real T,
 	float &kin,
 	float &temp
 ) {
 	using namespace core;
 	core::Vector dr, dv;
-	double t = 1E-15;
-	double tinvmass;
+	core::Real t = 1E-15;
+	core::Real tinvmass;
 	float forcemul =  -( 1E10 / 6.0221418E23 * 4184.0);
 
-	double gamma = 10E12;
-	double gammat = gamma * t;
-	double gt = gammat; // these are the consecutive powers for the series expnsions
-	double gt2 = gt * gt;
-	double gt3 = gt * gt2;
-	double gt4 = gt2 * gt2;
-	double gt5 = gt2 * gt3;
-	double gt6 = gt3 * gt3;
-	double gt7 = gt3 * gt4;
-	double gt8 = gt4 * gt4;
-	double gt9 = gt4 * gt5;
+	core::Real gamma = 10E12;
+	core::Real gammat = gamma * t;
+	core::Real gt = gammat; // these are the consecutive powers for the series expnsions
+	core::Real gt2 = gt * gt;
+	core::Real gt3 = gt * gt2;
+	core::Real gt4 = gt2 * gt2;
+	core::Real gt5 = gt2 * gt3;
+	core::Real gt6 = gt3 * gt3;
+	core::Real gt7 = gt3 * gt4;
+	core::Real gt8 = gt4 * gt4;
+	core::Real gt9 = gt4 * gt5;
 
-	double c0; // langevin coefficients
-	double c1;
-	double c2;
+	core::Real c0; // langevin coefficients
+	core::Real c1;
+	core::Real c2;
 
-	//double egammat;
-	double varv;
-	double varr;
-	double crv;
+	//core::Real egammat;
+	core::Real varv;
+	core::Real varr;
+	core::Real crv;
 
 	core::Vector deltav;
 	core::Vector deltar;
@@ -1133,7 +1133,7 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 		c1 = (1 - c0) / gammat;
 		c2 = (1 - c1) / gammat;
 
-		double egammat = exp(-gammat);
+		core::Real egammat = exp(-gammat);
 		varv = (1.0 - sqr(egammat));
 		varr = (2.0 * gammat - 3.0 + (4.0 - egammat) * egammat);
 		crv = sqr(1.0 - egammat) / (sqrt(varv * varr));
@@ -1177,16 +1177,16 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 	for ( Size i = 1; i <= cartom.size(); i ++ ) {
 		tinvmass = t / (cartom[i].mass  *  1.66053878E-27); // t div m
 
-		double kTdivm =  1.38065E-23 * T / (cartom[i].mass  * 1.66053878E-27);
-		double sigmav = sqrt(kTdivm * varv);
-		double sigmar = sqrt(kTdivm * varr) / gamma;
+		core::Real kTdivm =  1.38065E-23 * T / (cartom[i].mass  * 1.66053878E-27);
+		core::Real sigmav = sqrt(kTdivm * varv);
+		core::Real sigmar = sqrt(kTdivm * varr) / gamma;
 
-		double n1x = numeric::random::gaussian();
-		double n2y = numeric::random::gaussian();
-		double n2x = numeric::random::gaussian();
-		double n1z = numeric::random::gaussian();
-		double n1y = numeric::random::gaussian();
-		double n2z = numeric::random::gaussian();
+		core::Real n1x = numeric::random::gaussian();
+		core::Real n2y = numeric::random::gaussian();
+		core::Real n2x = numeric::random::gaussian();
+		core::Real n1z = numeric::random::gaussian();
+		core::Real n1y = numeric::random::gaussian();
+		core::Real n2z = numeric::random::gaussian();
 
 		deltav = core::Vector(sigmav * (crv * n1x + sqrt(1.0 - sqr(crv)) * n2x),
 			sigmav * (crv * n1y + sqrt(1.0 - sqr(crv)) * n2y),
@@ -1215,7 +1215,7 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 	using namespace core;
 
 	core::Vector f;
-	static double m_StepMultiplier = 1.0;
+	static core::Real m_StepMultiplier = 1.0;
 	float StepSize = 0.000001;
 	float forcemul = 1; // ( 1E10 / 6.0221418E23 * 4184.0);
 
@@ -1224,7 +1224,7 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 		if ( (current_energy < m_OldEnergy) ) { // energy did go down on last Step
 
 			//if( !backstep ){
-			double  fmagold, fmagnew, gamma;
+			core::Real  fmagold, fmagnew, gamma;
 			m_StepMultiplier *= 1.2;
 			//std::cout << "ENERGY_IMPROVEMENT\n";
 			fmagold = 0;
