@@ -133,8 +133,6 @@ JobExtractor::note_job_no_longer_running( Size job_id )
 	// ok, now remove the completed/failed job from the maps keeping track of
 	// outstanding jobs
 
-	//TR << "Job no longer running: " << job_id << std::endl;
-
 	running_jobs_.erase( job_id );
 	Size digraph_node = digraph_node_for_job_[ job_id ];
 	digraph_node_for_job_.erase( job_id );
@@ -182,7 +180,9 @@ JobExtractor::not_done()
 	debug_assert( digraph_nodes_ready_to_be_run_.empty() ||
 		! jobs_for_current_digraph_node_.empty() );
 
-	if ( ! jobs_for_current_digraph_node_.empty() ) return true;
+	if ( ! jobs_for_current_digraph_node_.empty() ) {
+		return true;
+	}
 
 
 	// ok -- in here, the JE asks the JQ to update the JobDigraph by adding
@@ -272,11 +272,11 @@ JobExtractor::query_job_queen_for_more_jobs_for_current_node()
 
 	first_call_to_determine_job_list_ = false;
 
-	//TR << "query_job_queen_for_more_jobs_for_current_node " << current_digraph_node_ << " " <<
-	// job_queen_ << " " << job_dag_ << " " << std::endl;
+	TR << "Query job queen for more jobs for current node: " << current_digraph_node_ << std::endl;
 
 	LarvalJobs jobs_for_current_node = job_queen_->determine_job_list_and_track(
 		current_digraph_node_, maximum_jobs_to_hold_in_memory_ );
+	TR << "Retrieved " << jobs_for_current_node.size() << " jobs for node " << current_digraph_node_ << std::endl;
 
 	// Make sure that we haven't encountered any previous jobs that have the same job index as this job.
 	for ( LarvalJobs::const_iterator iter = jobs_for_current_node.begin();
@@ -284,6 +284,8 @@ JobExtractor::query_job_queen_for_more_jobs_for_current_node()
 		if ( ! *iter ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "determine_job_list has returned a null-pointer" );
 		}
+		runtime_assert( (*iter)->job_node() == current_digraph_node_ );
+
 		if ( job_indices_seen_.member( (*iter)->job_index() ) ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "determine_job_list has returned two jobs with the same job index: " +
 				utility::to_string( (*iter)->job_index() ) + ". The job distributor requires that all jobs are given a unique job index." );
@@ -293,6 +295,7 @@ JobExtractor::query_job_queen_for_more_jobs_for_current_node()
 
 	if ( jobs_for_current_node.empty() ) {
 		// mark this node as complete
+		TR << "Marking that all jobs have started for node " << current_digraph_node_ << std::endl;
 		job_dag_->get_job_node( current_digraph_node_ )->all_jobs_started();
 		// recursive call here:
 		// walk through the digraph_nodes_ready_to_be_run_ list to find a node
@@ -313,6 +316,7 @@ JobExtractor::query_job_queen_for_more_jobs_for_current_node()
 void
 JobExtractor::mark_node_as_complete( Size digraph_node )
 {
+	TR << "Marking node " << digraph_node << " as complete" << std::endl;
 	node_recently_completed_ = true;
 
 	// we no longer have to look at this node in the call to not_done(), so
@@ -349,9 +353,11 @@ JobExtractor::mark_node_as_complete( Size digraph_node )
 			++done_child_iter ) {
 		auto const * done_child = dynamic_cast< JobDirectedNode const * >
 			((*done_child_iter)->get_head_node());
+		TR << "Looking at node " << done_child->get_node_index() << std::endl;
 		if ( done_child->n_predecessors_w_outstanding_jobs() == 0 ) {
 			digraph_nodes_ready_to_be_run_.push_back( done_child->get_node_index() );
 			found_any_nodes_ready_to_run = true;
+			TR << "Found a node ready to run!" << std::endl;
 		}
 	}
 
@@ -377,8 +383,10 @@ JobExtractor::mark_node_as_complete( Size digraph_node )
 void
 JobExtractor::find_jobs_for_next_node()
 {
+	TR << "Find jobs for next node: " << digraph_nodes_ready_to_be_run_.empty() << std::endl;
 	if ( ! digraph_nodes_ready_to_be_run_.empty() ) {
 		Size next_node_to_check = digraph_nodes_ready_to_be_run_.front();
+		TR << "Next node to check: " << next_node_to_check << std::endl;
 		current_digraph_node_ = next_node_to_check;
 		digraph_nodes_ready_to_be_run_.pop_front();
 

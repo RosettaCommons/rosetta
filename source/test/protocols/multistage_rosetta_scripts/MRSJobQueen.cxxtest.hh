@@ -23,6 +23,7 @@
 
 // Package headers
 #include <protocols/jd3/standard/StandardJobQueen.hh>
+#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/jobs/MoverJob.hh>
 #include <protocols/jd3/JobDigraph.hh>
@@ -177,8 +178,8 @@ public:
 			TS_ASSERT_EQUALS( all_ljobs[ 1 ]->inner_job(), all_ljobs[ i ]->inner_job() );
 			TS_ASSERT_EQUALS( all_ljobs[ 6 ]->inner_job(), all_ljobs[ 5 + i ]->inner_job() );
 
-			TS_ASSERT_EQUALS( static_cast< InnerLarvalJob const & > ( * all_ljobs[ i ]->inner_job() ).job_node(), 1 );
-			TS_ASSERT_EQUALS( static_cast< InnerLarvalJob const & > ( * all_ljobs[ 5 + i ]->inner_job() ).job_node(), 2 );
+			TS_ASSERT_EQUALS( static_cast< StandardInnerLarvalJob const & > ( * all_ljobs[ i ]->inner_job() ).preliminary_job_node(), 1 );
+			TS_ASSERT_EQUALS( static_cast< StandardInnerLarvalJob const & > ( * all_ljobs[ 5 + i ]->inner_job() ).preliminary_job_node(), 2 );
 		}
 
 		utility::vector1< JobResultCOP > dummy;
@@ -282,8 +283,8 @@ public:
 		TS_ASSERT_EQUALS( all_ljobs.size(), 8 );
 
 		for ( int i = 1; i <= 4; ++i ) {
-			TS_ASSERT_EQUALS( static_cast< InnerLarvalJob const & > ( * all_ljobs[ i ]->inner_job() ).job_node(), 1 );
-			TS_ASSERT_EQUALS( static_cast< InnerLarvalJob const & > ( * all_ljobs[ 4 + i ]->inner_job() ).job_node(), 2 );
+			TS_ASSERT_EQUALS( static_cast< StandardInnerLarvalJob const & > ( * all_ljobs[ i ]->inner_job() ).preliminary_job_node(), 1 );
+			TS_ASSERT_EQUALS( static_cast< StandardInnerLarvalJob const & > ( * all_ljobs[ 4 + i ]->inner_job() ).preliminary_job_node(), 2 );
 		}
 
 		core::Size local_job_id = 0;

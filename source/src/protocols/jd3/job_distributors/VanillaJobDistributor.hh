@@ -27,7 +27,6 @@
 #include <protocols/jd3/JobResult.fwd.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
 
-
 // Project headers
 #include <core/types.hh>
 
@@ -46,7 +45,6 @@ namespace job_distributors {
 /// @brief The VanillaJobDistributor is a single process running by itself, running a single thread.
 class VanillaJobDistributor : public JobDistributor {
 public:
-	typedef std::list< core::Size > SizeList;
 	typedef std::list< JobResultID > JobResultIDList;
 	typedef std::map< JobResultID, std::pair< LarvalJobOP, JobResultOP > > JobResultMap;
 

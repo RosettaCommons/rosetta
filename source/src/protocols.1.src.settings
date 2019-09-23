@@ -251,6 +251,7 @@ sources = {
 	"protocols/jd3/standard": [
 		"PreliminaryLarvalJob",
 		"PreliminaryLarvalJobTracker",
+                "StandardInnerLarvalJob",
 		"StandardJobQueen",
 	],
 	"protocols/jobdist": [

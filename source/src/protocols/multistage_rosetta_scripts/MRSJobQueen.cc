@@ -11,7 +11,10 @@
 /// @brief Queen for JD3 multistep protocol
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
+// Unit headers
 #include <protocols/multistage_rosetta_scripts/MRSJobQueen.hh>
+
+// Package headers
 #include <protocols/multistage_rosetta_scripts/MRSJob.hh>
 #include <protocols/multistage_rosetta_scripts/MRSJobSummary.hh>
 
@@ -39,7 +42,9 @@
 #include <protocols/jd3/JobSummary.hh>
 #include <protocols/jd3/JobTracker.hh>
 #include <protocols/jd3/CompletedJobOutput.fwd.hh>
+
 #include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
+#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
 
 #include <protocols/jd3/dag_node_managers/NodeManager.hh>
 #include <protocols/jd3/dag_node_managers/EvenlyPartitionedNodeManager.hh>
@@ -245,13 +250,17 @@ MRSJobQueen::complete_larval_job_maturation(
 		job_options = options_for_job( * job->inner_job() );
 	}
 
-	core::Size const input_pose_id = job->inner_job()->job_node();
+	auto const inner =
+		utility::pointer::dynamic_pointer_cast<
+		jd3::standard::StandardInnerLarvalJob const >(
+		job->inner_job() );
+
+	core::Size const input_pose_id = inner->preliminary_job_node();
 	unsigned int const global_job_id = job->job_index();
 	unsigned int const stage = stage_for_global_job_id( global_job_id );
 
 	core::pose::PoseOP pose = 0;
 	if ( stage == 1 ) {
-		core::Size const input_pose_id = job->job_node();
 		utility::vector1< standard::PreliminaryLarvalJob > const & all_preliminary_larval_jobs = get_preliminary_larval_jobs();
 		InnerLarvalJobCOP inner_job = all_preliminary_larval_jobs[ input_pose_id ].inner_job;
 		pose = pose_for_inner_job_derived( inner_job, * job_options );
@@ -303,6 +312,7 @@ MRSJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, core::Size 
 
 	core::Size const job_id = job->job_index();
 	core::Size const stage = stage_for_global_job_id( job_id );
+	TR << "Note job completed for job " << job_id << " in stage " << stage << std::endl;
 
 	if ( status != jd3_job_status_success ) {
 		node_managers_[ stage ]->note_job_completed( job_id, 0 );
@@ -316,6 +326,7 @@ MRSJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, core::Size 
 		InnerLarvalJobCOP inner_job = job->inner_job();
 		utility::options::OptionCollectionOP job_options = options_for_job( *inner_job );
 		for ( core::Size ii = 1; ii <= nresults; ++ii ) {
+			TR << "Creating output specification for job " << job_id << " " << ii << std::endl;
 			output::OutputSpecificationOP out_spec = create_output_specification_for_job_result( job, *job_options, ii, nresults );
 			pose_output_specification_for_job_result_id_[ jd3::JobResultID( job_id, ii ) ] = out_spec;
 		}
@@ -453,6 +464,7 @@ MRSJobQueen::jobs_that_should_be_output() {
 	return list_to_return;
 }
 
+
 core::pose::PoseOP
 MRSJobQueen::pose_for_job_derived (
 	LarvalJobCOP job,
@@ -515,7 +527,7 @@ MRSJobQueen::get_nth_job_for_initial_stage( core::Size local_job_id ){
 
 	if ( ++current_inner_larval_job_for_stage_[ 1 ].second > num_jobs_per_input_for_stage_[ 1 ] ) {
 		current_inner_larval_job_for_stage_[ 1 ].first =
-			standard::StandardJobQueen::create_and_init_inner_larval_job_from_preliminary( num_jobs_per_input_for_stage_[ 1 ], pose_input_source_id );
+			standard::StandardJobQueen::create_and_init_inner_larval_job_from_preliminary( num_jobs_per_input_for_stage_[ 1 ], pose_input_source_id, 1 );
 		current_inner_larval_job_for_stage_[ 1 ].second = 1;
 	}
 
@@ -556,7 +568,11 @@ MRSJobQueen::get_nth_job_for_noninitial_stage( core::Size stage, core::Size loca
 
 	if ( ++current_inner_larval_job_for_stage_[ stage ].second > num_jobs_per_input_for_stage_[ stage ] ) {
 		current_inner_larval_job_for_stage_[ stage ].first =
-			standard::StandardJobQueen::create_and_init_inner_larval_job_from_preliminary( num_jobs_per_input_for_stage_[ stage ], pose_input_source_id );
+			standard::StandardJobQueen::create_and_init_inner_larval_job_from_preliminary(
+			num_jobs_per_input_for_stage_[ stage ],
+			pose_input_source_id,
+			stage
+		);
 		current_inner_larval_job_for_stage_[ stage ].second = 1;
 
 		current_inner_larval_job_for_stage_[ stage ].first->add_input_job_result_index( input_job_result );

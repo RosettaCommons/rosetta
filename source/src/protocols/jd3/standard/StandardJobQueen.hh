@@ -34,6 +34,7 @@
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.fwd.hh>
 #include <protocols/jd3/standard/PreliminaryLarvalJob.fwd.hh>
 #include <protocols/jd3/standard/PreliminaryLarvalJobTracker.fwd.hh>
+#include <protocols/jd3/standard/StandardInnerLarvalJob.fwd.hh>
 
 // project headers
 #include <core/pose/Pose.fwd.hh>
@@ -443,11 +444,26 @@ protected:
 	virtual LarvalJobs
 	expand_job_list( InnerLarvalJobOP inner_job, core::Size max_larval_jobs_to_create );
 
+	/// @brief Factory method for derived classes if they wish to rely on classes derived
+	/// from StandardInnerLarvalJob.  This is invoked by the StandardJobQueen in her determine_job_list
+	/// method just as jobs are prepared. If the base StandardInnerLarvalJob class is desired, then do
+	/// not override this method.
+	virtual StandardInnerLarvalJobOP create_inner_larval_job( core::Size nstruct, core::Size job_node, core::Size preliminary_job_node ) const;
+
+	/// @brief Factory method for derived classes if they wish to rely on classes derived
+	/// from LarvalJob.  This is invoked by the StandardJobQueen in the expand_job_list method.
+	/// If the base LarvalJob class is desired, then do not override this method.
+	virtual LarvalJobOP create_larval_job( InnerLarvalJobOP job, core::Size nstruct_index, core::Size larval_job_index );
+
 	/// @brief Adds information regarding the job definition
 	/// (job tag, input source, jobdef tag, and outputter).
 	/// Uses the PreliminaryInnerLarvalJob to do so.
 	InnerLarvalJobOP
-	create_and_init_inner_larval_job_from_preliminary( core::Size nstruct, core::Size prelim_job_node ) const;
+	create_and_init_inner_larval_job_from_preliminary(
+		core::Size nstruct,
+		core::Size prelim_job_node,
+		core::Size job_node
+	) const;
 
 protected:
 

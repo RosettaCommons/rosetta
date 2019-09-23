@@ -16,7 +16,7 @@
 #include <protocols/jd3/standard/StandardJobQueen.hh>
 
 // package headers
-#include <protocols/jd3/InnerLarvalJob.hh>
+#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
 #include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 #include <protocols/jd3/standard/PreliminaryLarvalJobTracker.hh>
 #include <protocols/jd3/LarvalJob.hh>
@@ -850,17 +850,44 @@ StandardJobQueen::expand_job_list( InnerLarvalJobOP inner_job, core::Size max_la
 	core::Size n_to_make = std::min( nstruct, max_larval_jobs_to_create );
 	for ( core::Size jj = 1; jj <= n_to_make; ++jj ) {
 		get_job_tracker().increment_current_job_index();
-		LarvalJobOP job = make_shared< LarvalJob >( inner_job, njobs_made_for_curr_inner_larval_job_ + jj, current_job_index() );
+		LarvalJobOP job = create_larval_job( inner_job, njobs_made_for_curr_inner_larval_job_ + jj, current_job_index() );
 		//TR << "Expand larval job " << current_job_index() << std::endl;
 		jobs.push_back( job );
 	}
 	return jobs;
 }
 
-InnerLarvalJobOP
-StandardJobQueen::create_and_init_inner_larval_job_from_preliminary( core::Size nstruct, core::Size prelim_job_node ) const
+/// @details Factory method instantiates the base-class LarvalJob to start.
+/// Non-const so that derived classes may do sometthing like keep track of
+/// each of the larval jobs they instantiate.
+LarvalJobOP
+StandardJobQueen::create_larval_job(
+	InnerLarvalJobOP inner_job,
+	core::Size nstruct_index,
+	core::Size larval_job_index
+)
 {
-	InnerLarvalJobOP inner_job = make_shared< InnerLarvalJob> ( nstruct, prelim_job_node );
+	return std::make_shared< LarvalJob >( inner_job, nstruct_index, larval_job_index );
+}
+
+StandardInnerLarvalJobOP
+StandardJobQueen::create_inner_larval_job(
+	core::Size nstruct,
+	core::Size job_node,
+	core::Size preliminary_job_node
+) const
+{
+	return std::make_shared< StandardInnerLarvalJob >( nstruct, job_node, preliminary_job_node );
+}
+
+InnerLarvalJobOP
+StandardJobQueen::create_and_init_inner_larval_job_from_preliminary(
+	core::Size nstruct,
+	core::Size prelim_job_node,
+	core::Size job_node
+) const
+{
+	InnerLarvalJobOP inner_job = create_inner_larval_job( nstruct, job_node, prelim_job_node );
 
 	PreliminaryLarvalJob const & prelim_job = preliminary_larval_jobs_[ prelim_job_node ];
 	InnerLarvalJobCOP src = prelim_job.inner_job;
@@ -1347,7 +1374,9 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 		core::Size nstruct = nstruct_for_job( subtag );
 		for ( auto pose_source_and_inputter : input_poses_and_inputters ) {
 			PreliminaryLarvalJob prelim_job;
-			InnerLarvalJobOP inner_job = make_shared< InnerLarvalJob >( nstruct, ++count_prelim_nodes );
+			++count_prelim_nodes;
+			InnerLarvalJobOP inner_job =
+				create_inner_larval_job( nstruct, count_prelim_nodes, count_prelim_nodes );
 			inner_job->input_source( pose_source_and_inputter.first );
 			inner_job->jobdef_tag( subtag );
 			inner_job->outputter( outputter->class_key() );

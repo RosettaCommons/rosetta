@@ -298,6 +298,7 @@ private:
 
 	///@brief No need to store this data for more than one stage at a time
 	utility::vector1< jd3::JobResultID > most_recent_cluster_results_;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;
