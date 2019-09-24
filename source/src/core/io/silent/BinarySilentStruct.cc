@@ -650,13 +650,14 @@ void BinarySilentStruct::fill_pose(
 					<< "Number of atoms in pose and silent file disagree! "
 					<< "Attempting to continue ..." << std::endl
 					<< "   (in residue " << pose.residue(seqpos).name() << " at " << seqpos
+					<< " and atm_seqpos of " << atm_seqpos
 					<< "  natoms_pose=" << natoms_pose
-					<< "atm_seqpos " << atm_seqpos << "  natoms_struct="
-					<< natoms_struct << ")" << tr.Reset << std::endl;
+					<< "  natoms_struct=" << natoms_struct << ")" << tr.Reset << std::endl;
 				tr.Warning << "Likely explanations: " << std::endl;
 				tr.Warning << "\t1. You are trying to extract, with residue type set A, a silent file created with residue type set B." << std::endl;
-				tr.Warning << "\t2. The database has been updated since your silent file was made, meaning the definition of this RT has drifted." << std::endl;
-				tr.Warning << "\t3. You have passed an argument to -database that indicates a database out of sync with your chosen executable." << std::endl;
+				tr.Warning << "\t2. You have specified a database with -database that is out of sync with your chosen executable." << std::endl;
+				tr.Warning << "\t3. You have used different environment flags (e.g. -restore_talaris_behavior/-restore_pre_talaris_behavior) than the silent file was generated with." << std::endl;
+				tr.Warning << "\t4. The database has been updated since your silent file was made, meaning the definition of this RT has drifted." << std::endl;
 				tr.flush();
 			}
 		}
