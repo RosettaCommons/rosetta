@@ -19,6 +19,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/Atom.hh>
 
@@ -85,11 +86,11 @@ ResidueTypeKinWriter::write_restype(
 
 	ostr << "@balllist {element balls} color= gray radius= 0.1\n";
 	for ( core::Size ii(1); ii <= natoms; ++ii ) {
-		core::chemical::Atom const & a( restype.atom(ii) );
+		core::Vector const & pos( restype.ideal_xyz(ii) );
 		core::chemical::AtomType const & at( restype.atom_type(ii) );
 
 		ostr << "{" << at.element() << "} " << get_element_color(at.element()) << " "
-			<< a.ideal_xyz().x() << " " << a.ideal_xyz().y() << " " << a.ideal_xyz().z() << "\n";
+			<< pos.x() << " " << pos.y() << " " << pos.z() << "\n";
 	}
 
 	ostr << "@vectorlist {all bonds} color= gray width= 1\n";
@@ -97,62 +98,62 @@ ResidueTypeKinWriter::write_restype(
 	// It would be nice to be able to annotate these bonds with the bond type.
 	// (Would involve drawing multiple lines, offsetting, etc.)
 	for ( core::Size ii(1); ii <= natoms; ++ii ) {
-		core::chemical::Atom const & a1( restype.atom(ii) );
-		core::chemical::AtomIndices const & neighbors( restype.bonded_neighbor(ii) );
-		for ( core::Size jj(1); jj <= neighbors.size(); ++jj ) {
-			if ( ii >= neighbors[jj] ) { continue; }
-			core::chemical::Atom const & a2( restype.atom(neighbors[jj]) );
-			ostr << "{" << a1.name() << "}P "
-				<< a1.ideal_xyz().x() << " " << a1.ideal_xyz().y() << " " << a1.ideal_xyz().z() << "\n";
-			ostr << "{" << a2.name() << "}L "
-				<< a2.ideal_xyz().x() << " " << a2.ideal_xyz().y() << " " << a2.ideal_xyz().z() << "\n";
+		core::Vector const & pos1( restype.ideal_xyz(ii) );
+		core::chemical::AtomIndices const & neighbors( restype.bonded_neighbor( ii ) );
+		for ( core::Size jj: neighbors ) {
+			if ( ii >= jj ) { continue; }
+			core::Vector const & pos2( restype.ideal_xyz(jj) );
+			ostr << "{" << restype.atom_name(ii) << "}P "
+				<< pos1.x() << " " << pos1.y() << " " << pos1.z() << "\n";
+			ostr << "{" << restype.atom_name(jj) << "}L "
+				<< pos2.x() << " " << pos2.y() << " " << pos2.z() << "\n";
 		}
 	}
 
 	ostr << "@vectorlist {rotatable bonds} color= white width= 4\n";
 	for ( core::Size ii(1); ii <= restype.nchi(); ++ii ) {
-		AtomIndices const & chi( restype.chi_atoms(ii) );
+		AtomIndices const & chi( restype.chi_atoms( ii ) );
 		debug_assert( chi.size() == 4 );
-		core::chemical::Atom const & a2( restype.atom( chi[2] ) );
-		core::chemical::Atom const & a3( restype.atom( chi[3] ) );
-		ostr << "{" << a2.name() << "}P "
-			<< a2.ideal_xyz().x() << " " << a2.ideal_xyz().y() << " " << a2.ideal_xyz().z() << "\n";
-		ostr << "{" << a3.name() << "}L "
-			<< a3.ideal_xyz().x() << " " << a3.ideal_xyz().y() << " " << a3.ideal_xyz().z() << "\n";
+		core::Vector const & pos2( restype.ideal_xyz(chi[2]) );
+		core::Vector const & pos3( restype.ideal_xyz(chi[3]) );
+		ostr << "{" << restype.atom_name(chi[2]) << "}P "
+			<< pos2.x() << " " << pos2.y() << " " << pos2.z() << "\n";
+		ostr << "{" << restype.atom_name(chi[3]) << "}L "
+			<< pos3.x() << " " << pos3.y() << " " << pos3.z() << "\n";
 	}
 
 	ostr << "@labellist {atom indices} color= white off\n";
 	for ( core::Size ii(1); ii <= natoms; ++ii ) {
-		core::chemical::Atom const & a( restype.atom(ii) );
+		core::Vector const & pos( restype.ideal_xyz(ii) );
 
 		ostr << "{" << ii << "} "
-			<< a.ideal_xyz().x() << " " << a.ideal_xyz().y() << " " << a.ideal_xyz().z() << "\n";
+			<< pos.x() << " " << pos.y() << " " << pos.z() << "\n";
 	}
 
 	ostr << "@labellist {atom names} color= white off\n";
 	for ( core::Size ii(1); ii <= natoms; ++ii ) {
-		core::chemical::Atom const & a( restype.atom(ii) );
+		core::Vector const & pos( restype.ideal_xyz(ii) );
 
-		ostr << "{" << a.name() << "} "
-			<< a.ideal_xyz().x() << " " << a.ideal_xyz().y() << " " << a.ideal_xyz().z() << "\n";
+		ostr << "{" << restype.atom_name(ii) << "} "
+			<< pos.x() << " " << pos.y() << " " << pos.z() << "\n";
 	}
 
 	ostr << "@labellist {Rosetta types} color= white\n";
 	for ( core::Size ii(1); ii <= natoms; ++ii ) {
-		core::chemical::Atom const & a( restype.atom(ii) );
-		core::chemical::AtomType const & at( restype.atom_type(ii) );
+		core::Vector const & pos( restype.ideal_xyz(ii) );
+		core::chemical::AtomType const & at( restype.atom_type( ii ) );
 
 		ostr << "{" << at.name() << "} "
-			<< a.ideal_xyz().x() << " " << a.ideal_xyz().y() << " " << a.ideal_xyz().z() << "\n";
+			<< pos.x() << " " << pos.y() << " " << pos.z() << "\n";
 	}
 
 	ostr << "@labellist {MM types} color= white off\n";
 	for ( core::Size ii(1); ii <= natoms; ++ii ) {
-		core::chemical::Atom const & a( restype.atom(ii) );
-		MMAtomType const & mm( restype.mm_atom_type(ii) );
+		core::Vector const & pos( restype.ideal_xyz(ii) );
+		MMAtomType const & mm( restype.mm_name( ii ) );
 
 		ostr << "{" << mm.name() << "} "
-			<< a.ideal_xyz().x() << " " << a.ideal_xyz().y() << " " << a.ideal_xyz().z() << "\n";
+			<< pos.x() << " " << pos.y() << " " << pos.z() << "\n";
 	}
 
 	ostr << "@labellist {partial charges} color= white off\n";
@@ -160,10 +161,10 @@ ResidueTypeKinWriter::write_restype(
 	std::streamsize oldprec( ostr.precision(2) );
 	ostr.setf( std::ios::fixed );
 	for ( core::Size ii(1); ii <= natoms; ++ii ) {
-		core::chemical::Atom const & a( restype.atom(ii) );
+		core::Vector const & pos( restype.ideal_xyz(ii) );
 
-		ostr << "{" << a.charge() << "} "
-			<< a.ideal_xyz().x() << " " << a.ideal_xyz().y() << " " << a.ideal_xyz().z() << "\n";
+		ostr << "{" << restype.atom_charge(ii) << "} "
+			<< pos.x() << " " << pos.y() << " " << pos.z() << "\n";
 	}
 	ostr.flags( oldflags );
 	ostr.precision( oldprec );
@@ -180,31 +181,33 @@ ResidueTypeKinWriter::write_restype(
 	}
 
 	{ // For scope limitation
-		core::chemical::Atom const & a( restype.atom(root_atom) );
-		ostr << "{" << a.name() << "} "
-			<< a.ideal_xyz().x() << " " << a.ideal_xyz().y() << " " << a.ideal_xyz().z() << "\n";
+		core::Vector const & pos( restype.ideal_xyz(root_atom) );
+		ostr << "{" << restype.atom_name(root_atom) << "} "
+			<< pos.x() << " " << pos.y() << " " << pos.z() << "\n";
 	}
 
-	ostr << "@ringlist {nbr atom} color= purple radius= " << restype.nbr_radius() << " off\n";
-	core::chemical::Atom const & nbr( restype.atom(restype.nbr_atom()) );
-	ostr << "{" << nbr.name() << "} "
-		<< nbr.ideal_xyz().x() << " " << nbr.ideal_xyz().y() << " " << nbr.ideal_xyz().z() << "\n";
-	ostr << "{" << nbr.name() << "} r=0.3 "
-		<< nbr.ideal_xyz().x() << " " << nbr.ideal_xyz().y() << " " << nbr.ideal_xyz().z() << "\n";
+	{ // For scope limitation
+		ostr << "@ringlist {nbr atom} color= purple radius= " << restype.nbr_radius() << " off\n";
+		core::Size nbr( restype.nbr_atom() );
+		core::Vector const & pos( restype.ideal_xyz(nbr) );
+		ostr << "{" << restype.atom_name(nbr) << "} "
+			<< pos.x() << " " << pos.y() << " " << pos.z() << "\n";
+		ostr << "{" << restype.atom_name(nbr) << "} r=0.3 "
+			<< pos.x() << " " << pos.y() << " " << pos.z() << "\n";
+	}
 
 
 	ostr << "@arrowlist {atom tree} color= purple \n";
 	for ( core::Size ii(1); ii <= natoms; ++ii ) {
 		if ( ii == root_atom ) { continue; }
 
-		core::chemical::Atom const & a1( restype.atom(ii) );
+		core::Vector const & pos1( restype.ideal_xyz(ii) );
+		core::Vector const & pos2( restype.ideal_xyz( restype.atom_base(ii) ) );
 
-		core::chemical::Atom const & a2( restype.atom( restype.atom_base(ii) ) );
-
-		ostr << "{" << a2.name() << "}P "
-			<< a2.ideal_xyz().x() << " " << a2.ideal_xyz().y() << " " << a2.ideal_xyz().z() << "\n";
-		ostr << "{" << a1.name() << "}L "
-			<< a1.ideal_xyz().x() << " " << a1.ideal_xyz().y() << " " << a1.ideal_xyz().z() << "\n";
+		ostr << "{" << restype.atom_name( restype.atom_base(ii) ) << "}P "
+			<< pos2.x() << " " << pos2.y() << " " << pos2.z() << "\n";
+		ostr << "{" << restype.atom_name(ii) << "}L "
+			<< pos1.x() << " " << pos1.y() << " " << pos1.z() << "\n";
 	}
 }
 

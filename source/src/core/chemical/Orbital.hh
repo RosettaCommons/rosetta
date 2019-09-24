@@ -78,9 +78,6 @@ public:
 
 	Orbital(Orbital const & ) = default;
 
-	/// @brief Update the internal VDs based on the provide mapping
-	void remap_atom_vds( std::map< VD, VD > const & old_to_new );
-
 	void
 	print( std::ostream & out ) const;
 

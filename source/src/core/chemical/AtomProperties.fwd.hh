@@ -28,6 +28,8 @@ class AtomProperties;
 typedef utility::pointer::shared_ptr< AtomProperties > AtomPropertiesOP;
 typedef utility::pointer::shared_ptr< AtomProperties const > AtomPropertiesCOP;
 
+AtomPropertiesOP deep_copy( AtomProperties const & source);
+
 }  // namespace chemical
 }  // namespace core
 

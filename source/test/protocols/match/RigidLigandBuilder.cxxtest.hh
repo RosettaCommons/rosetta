@@ -245,7 +245,7 @@ public:
 		ResidueTypeSetCOP restype_set(
 			ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ));
 
-		ResidueTypeCOP cys_restype( utility::pointer::make_shared< ResidueType >( restype_set->name_map( "CYS" )));
+		ResidueTypeCOP cys_restype( restype_set->name_mapOP( "CYS" ) );
 
 		Pose trpcage = create_trpcage_ideal_pose();
 		Pose carbaryl_pose;
@@ -354,7 +354,7 @@ public:
 		ResidueTypeSetCOP restype_set(
 			ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ));
 
-		ResidueTypeCOP cys_restype( utility::pointer::make_shared< ResidueType >( restype_set->name_map( "CYS" )));
+		ResidueTypeCOP cys_restype( restype_set->name_mapOP( "CYS" ) );
 
 		Pose trpcage = create_trpcage_ideal_pose();
 		Pose mbh_pose;

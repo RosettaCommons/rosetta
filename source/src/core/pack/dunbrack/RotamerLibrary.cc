@@ -966,7 +966,7 @@ RotamerLibrary::create_fa_dunbrack_libraries_02_from_ASCII()
 	Size count_libraries_read(0);
 	while ( nextaa != "" ) {
 
-		ResidueType rt = rts->name_map( nextaa );//aan = chemical::aa_from_name( nextaa );
+		ResidueType const & rt = rts->name_map( nextaa );//aan = chemical::aa_from_name( nextaa );
 		SingleResidueDunbrackLibraryOP newlib = create_rotameric_dunlib(
 			rt, nchi_for_aa[ rt.aa() ], nbb_for_aa[ rt.aa() ], libstream, true /*dun02*/, nextaa, true /*first aa string already read*/ );
 		++count_libraries_read;

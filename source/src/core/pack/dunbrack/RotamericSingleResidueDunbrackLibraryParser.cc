@@ -16,6 +16,7 @@
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibraryParser.tmpl.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 
 //Basic includes
 #include <basic/Tracer.hh>
@@ -761,7 +762,9 @@ void
 RotamericSingleResidueDunbrackLibraryParser::hacky_parser_init_workaround() {
 	utility_exit_with_message( "The hacky_parser_init_workaround() function should never be called!" );
 
-	core::chemical::ResidueType rt( nullptr, nullptr, nullptr, nullptr );
+	core::chemical::MutableResidueType mrt( nullptr, nullptr, nullptr, nullptr );
+	core::chemical::ResidueTypeCOP rtop( core::chemical::ResidueType::make( mrt ) );
+	core::chemical::ResidueType const & rt( *rtop );
 
 	RotamericSingleResidueDunbrackLibrary< 1, 1 > lib_1_1( rt, false, false, false, 0.1, 0.1, false );
 	RotamericSingleResidueDunbrackLibrary< 1, 2 > lib_1_2( rt, false, false, false, 0.1, 0.1, false );

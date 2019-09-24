@@ -24,6 +24,7 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
+#include <core/chemical/MutableResidueType.hh>
 
 #include <utility/graph/Graph.hh>
 
@@ -838,7 +839,10 @@ INIT(  FIVE,  FIVE )
 	utility::fixedsizearray1< Real,  FIVE > realvec_FIVE;
 	utility::vector1< Real > realvec( FIVE );
 
-	chemical::ResidueType rt( nullptr, nullptr, nullptr, nullptr );
+	core::chemical::MutableResidueType mrt( nullptr, nullptr, nullptr, nullptr );
+	core::chemical::ResidueTypeCOP rtop( core::chemical::ResidueType::make( mrt ) );
+	core::chemical::ResidueType const & rt( *rtop );
+
 	conformation::Residue rsd( rt, true );
 	RotamerLibraryScratchSpace scratch;
 	Size4 rotwell;

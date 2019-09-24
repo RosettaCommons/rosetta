@@ -28,9 +28,10 @@ namespace core {
 namespace chemical {
 namespace rotamers {
 
-RotamerLibrarySpecification::RotamerLibrarySpecification() = default;
-
-RotamerLibrarySpecification::~RotamerLibrarySpecification() = default;
+RotamerLibrarySpecificationOP
+deep_copy( RotamerLibrarySpecification const & source) {
+	return source.clone();
+}
 
 } //namespace rotamers
 } //namespace chemical

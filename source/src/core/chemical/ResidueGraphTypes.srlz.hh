@@ -98,11 +98,44 @@ void DESERIALIZE_VD_VD_MAP( Archive & arc, std::map< VD, VD > & map, std::map< V
 	}
 }
 
+template< class Archive, class T >
+void SERIALIZE_T_VD_MAP( Archive & arc, std::map< T, VD > const & map ) {
+	arc( map.size() );
+	for ( std::pair< T, VD > item : map ) {
+		arc( item.first );
+		SERIALIZE_VD( arc, item.second );
+	}
+}
+
+template< class Archive, class T >
+void DESERIALIZE_T_VD_MAP( Archive & arc, std::map< T, VD > & map, std::map< VD, VD > const & translation ) {
+	map.clear();
+	core::Size nentries; arc( nentries );
+	for ( core::Size ii(1); ii <= nentries; ++ii ) {
+		T key;
+		VD value;
+		arc( key );
+		DESERIALIZE_VD( arc, value, translation );
+		map[ key ] = value;
+	}
+}
+
 template< class Archive >
 void SERIALIZE_VD_VECTOR( Archive & arc, utility::vector1< VD > const & vector ) {
 	arc( vector.size() );
 	for ( VD item : vector ) {
 		SERIALIZE_VD( arc, item );
+	}
+}
+
+template< class Archive >
+void DESERIALIZE_VD_VECTOR( Archive & arc, utility::vector1< VD > & vector ) {
+	vector.clear();
+	core::Size nentries; arc( nentries );
+	for ( core::Size ii(1); ii <= nentries; ++ii ) {
+		VD value;
+		DESERIALIZE_VD( arc, value );
+		vector.push_back( value );
 	}
 }
 

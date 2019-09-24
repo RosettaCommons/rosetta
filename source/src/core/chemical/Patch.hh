@@ -24,6 +24,8 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 
+#include <core/chemical/MutableResidueType.fwd.hh>
+
 // Utility headers
 #include <utility/vector1.hh>
 
@@ -44,7 +46,7 @@ std::string tag_from_line( std::string const & line );
 
 /// @brief helper function, returns the base residue name prior to any patching
 std::string
-residue_type_base_name( ResidueType const & rsd_type );
+residue_type_base_name( ResidueTypeBase const & rsd_type );
 
 /// @brief helper function, returns the name of all added patches
 std::string
@@ -60,15 +62,20 @@ public:
 
 	/// @brief whether the PatchCase is applicable to this ResidueType?
 	bool
-	applies_to( ResidueType const & rsd ) const
+	applies_to( ResidueTypeBase const & rsd ) const
 	{
 		return selector_[ rsd ];
 	}
 
 	/// @brief returns patched residue, 0 if patch failed
 	virtual
-	ResidueTypeOP
+	MutableResidueTypeOP
 	apply( ResidueType const & rsd_in, bool const instantiate = true ) const;
+
+	/// @brief returns patched residue, 0 if patch failed
+	virtual
+	MutableResidueTypeOP
+	apply( MutableResidueType const & rsd_in, bool const instantiate = true ) const;
 
 	/// @brief add one more operation in this PatchCase
 	void
@@ -183,7 +190,7 @@ public:
 	/// can I operate on this residue type?
 	virtual
 	bool
-	applies_to( ResidueType const & rsd ) const
+	applies_to( ResidueTypeBase const & rsd ) const
 	{
 		return selector_[ rsd ];
 	}
@@ -191,16 +198,20 @@ public:
 	/// do I replace this residue type?
 	virtual
 	bool
-	replaces( ResidueType const & rsd ) const
+	replaces( ResidueTypeBase const & rsd ) const
 	{
 		return  applies_to( rsd ) && replaces_residue_type_;
 	}
 
 	/// @brief returns patched residue, 0 if patch failed
 	virtual
-	ResidueTypeOP
+	MutableResidueTypeOP
 	apply( ResidueType const & rsd_type, bool const instantiate = true ) const;
 
+	/// @brief returns patched residue, 0 if patch failed
+	virtual
+	MutableResidueTypeOP
+	apply( MutableResidueType const & rsd_type, bool const instantiate = true ) const;
 
 	/// @brief unique name of this patch, eg Nter-simple, Cter-full, Phospho, ... ?
 	virtual
@@ -213,7 +224,7 @@ public:
 	/// @brief Returns the name of the residueType after applying the patch
 	/// (Theoretical - doesn't actually check if the patch would be applied.)
 	std::string
-	patched_name( ResidueType const & rsd ) const;
+	patched_name( ResidueTypeBase const & rsd ) const;
 
 	void set_selector( ResidueTypeSelector const & selector ) { selector_ = selector; }
 

@@ -73,7 +73,7 @@ private:
 
 	/// @brief Load various non-param files from commandline.
 	/// These will be loaded as full atom types - it's the responsibility of the caller to convert.
-	utility::vector1< ResidueTypeOP > extra_nonparam_restypes_from_commandline() const;
+	utility::vector1< MutableResidueTypeOP > extra_nonparam_restypes_from_commandline() const;
 
 	/// @brief Load residue types from the command line-specified SQL database
 	void load_residue_types_from_sql_database();
@@ -178,10 +178,10 @@ private:
 
 	/// @brief Worker that actually takes care of file access for load_pdb_component
 	void
-	attempt_readin( std::string const & db_filename, std::string const & pdb_id, ResidueTypeOP & new_rsd_type, bool & found_file ) const;
+	attempt_readin( std::string const & db_filename, std::string const & pdb_id, MutableResidueTypeOP & new_rsd_type, bool & found_file ) const;
 
 	/// @brief Load a residue type from the components dictionary.
-	ResidueTypeOP
+	MutableResidueTypeOP
 	load_pdb_component( std::string const & pdb_id ) const;
 
 	//////////////////

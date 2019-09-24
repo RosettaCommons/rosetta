@@ -16,6 +16,7 @@
 #include <core/chemical/bond_support.hh>
 #include <core/chemical/residue_support.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/Bond.hh>
@@ -50,7 +51,7 @@ gasteiger::GasteigerAtomTypeData::Properties bond_order_to_property( const core:
 	return properties[ BOND_ORDER_OR_AROMATIC];
 }
 
-void find_bonds_in_rings(ResidueType & res, bool const complex_ring){
+void find_bonds_in_rings(MutableResidueType & res, bool const complex_ring){
 	//first, we assign all the bonds in the residue to having no rings
 	EIter edge_begin, edge_end;
 	boost::tie(edge_begin, edge_end) = boost::edges( res.graph() );
@@ -65,7 +66,7 @@ void find_bonds_in_rings(ResidueType & res, bool const complex_ring){
 
 }
 void
-complex_ring_detection( ResidueType & res){
+complex_ring_detection( MutableResidueType & res){
 
 	//first we get the light weight residue graph
 	LightWeightResidueGraph lwrg = convert_residuetype_to_light_graph(res);
@@ -104,7 +105,7 @@ complex_ring_detection( ResidueType & res){
 	}
 }
 
-void quick_ring_detection( ResidueType & res){
+void quick_ring_detection( MutableResidueType & res){
 	std::map< VD, std::map<VD, bool > >  ring_edges( utility::graph::annotate_ring_edges( res.graph()) );
 	//std::map< VD,std::map<VD, bool > >::const_iterator it_start, it_end;
 	//it_start = ring_edges.begin();
@@ -126,7 +127,7 @@ void quick_ring_detection( ResidueType & res){
 	}
 }
 
-utility::vector1<VD> get_connecting_atoms(ResidueType const & res, ED const & edge) {
+utility::vector1<VD> get_connecting_atoms(MutableResidueType const & res, ED const & edge) {
 	return get_connecting_atoms(res.graph(), edge);
 }
 
@@ -138,7 +139,7 @@ utility::vector1<VD> get_connecting_atoms(ResidueGraph const & graph, ED const &
 }
 
 
-ED get_bond(ResidueType const & res, VD const & source, VD const & target){
+ED get_bond(MutableResidueType const & res, VD const & source, VD const & target){
 	bool bond_there(false);
 	ED edge;
 	boost::tie(edge,bond_there) = boost::edge(source, target, res.graph() );
@@ -164,7 +165,7 @@ Real create_bond_length(
 /// * Ringness has been set for all bonds in rings
 /// * The Icoor graph has been set.
 
-utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
+utility::vector1<VDs> find_chi_bonds( MutableResidueType const & restype ) {
 	using namespace core::chemical;
 	utility::vector1<VDs> found_chis;
 
@@ -289,7 +290,7 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 
 /// @brief Is the given chi a proton chi with the proton attached to an atom attached to an non-sp3 atom?
 /// @details The use case is to see if the proton chi should flat or staggered with rotamers
-bool is_sp2_proton_chi( core::Size chi, ResidueType const & restype ) {
+bool is_sp2_proton_chi( core::Size chi, MutableResidueType const & restype ) {
 	VDs atoms( restype.chi_atom_vds(chi) );
 	debug_assert( atoms.size() == 4 );
 	// Note this is used in setting up proton chis, so we can't assume is_proton_chi() and associated are valid yet.

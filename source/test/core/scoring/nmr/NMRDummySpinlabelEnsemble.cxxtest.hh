@@ -87,7 +87,7 @@ public:
 		TR << "Testing instantiation of NMRDummySpinlabelEnsemble." << std::endl;
 
 		NMRDummySpinlabelEnsembleOP r1a_virt_ensemble;
-		core::chemical::ResidueTypeOP restype( new core::chemical::ResidueType( *((core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard"))->get_representative_type_name3("R1A")) ) );
+		core::chemical::ResidueTypeCOP restype( (core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard"))->get_representative_type_name3("R1A"));
 		try {
 			r1a_virt_ensemble = NMRDummySpinlabelEnsembleOP( new NMRDummySpinlabelEnsemble(ensemble_conformers_database_file_, *restype) );
 		} catch ( utility::excn::Exception & excn ) {
@@ -189,7 +189,7 @@ public:
 		using namespace core::scoring::nmr;
 
 		TR << "Testing quick clash score calculation of NMRDummySpinlabelEnsemble." << std::endl;
-		core::chemical::ResidueTypeOP restype( new core::chemical::ResidueType( *((core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard"))->get_representative_type_name3("R1A")) ) );
+		core::chemical::ResidueTypeCOP restype( (core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard"))->get_representative_type_name3("R1A"));
 		NMRDummySpinlabelEnsembleOP r1a_virt_ensemble = NMRDummySpinlabelEnsembleOP( new NMRDummySpinlabelEnsemble(ensemble_conformers_database_file_, *restype) );
 		TS_ASSERT_EQUALS(r1a_virt_ensemble->get_ensemble_size(), 54);
 		core::Size sl_site(13);
@@ -205,7 +205,7 @@ public:
 		using namespace core::scoring::nmr;
 		core_init_with_additional_options("-nmr:spinlabel:elaborate_rotamer_clash_check true");
 		TR << "Testing elaborate clash score calculation of NMRDummySpinlabelEnsemble." << std::endl;
-		core::chemical::ResidueTypeOP restype( new core::chemical::ResidueType( *((core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard"))->get_representative_type_name3("R1A")) ) );
+		core::chemical::ResidueTypeCOP restype( (core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard"))->get_representative_type_name3("R1A"));
 		NMRDummySpinlabelEnsembleOP r1a_virt_ensemble = NMRDummySpinlabelEnsembleOP( new NMRDummySpinlabelEnsemble(ensemble_conformers_database_file_, *restype) );
 		TS_ASSERT_EQUALS(r1a_virt_ensemble->get_ensemble_size(), 54);
 		core::Size sl_site(13);

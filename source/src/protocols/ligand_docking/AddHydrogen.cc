@@ -28,6 +28,7 @@
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/conformation/Conformation.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
 #include <utility/vector0.hh>
@@ -74,14 +75,14 @@ AddHydrogen::apply( core::pose::Pose & pose )
 {
 	core::conformation::Residue const & res_to_fix= pose.residue(residue_index_);
 	core::chemical::ResidueConnection const & res_connection= res_to_fix.residue_connection(connection_id_);
+	std::string const & res_conn_atom_name = res_to_fix.atom_name( res_to_fix.residue_connect_atom_index(connection_id_) );
 	core::chemical::AtomICoor const & new_i_coor= res_connection.icoor();
 
-	core::chemical::ResidueTypeOP type_to_fix= res_to_fix.type().clone();
+	core::chemical::MutableResidueTypeOP type_to_fix( new core::chemical::MutableResidueType( res_to_fix.type() ) );
 	type_to_fix->name( generate_unique_name() );
-	core::Size res_conn_atom_index= type_to_fix->residue_connect_atom_index(connection_id_);
 	core::chemical::AddAtom aa(" HH ", "Hapo", "X", 0.09);
 	aa.apply(*type_to_fix);
-	core::chemical::AddBond ab(" HH ", res_to_fix.atom_name(res_conn_atom_index));
+	core::chemical::AddBond ab(" HH ", res_conn_atom_name);
 	ab.apply(*type_to_fix);
 
 	core::Size stub_atom1= new_i_coor.stub_atom1().atomno();
@@ -103,18 +104,18 @@ AddHydrogen::apply( core::pose::Pose & pose )
 	);
 	set_i_coor.apply(*type_to_fix);
 
-	type_to_fix->finalize();
 	{
 		core::chemical::PoseResidueTypeSetOP rts( pose.conformation().modifiable_residue_type_set_for_conf( core::chemical::FULL_ATOM_t ) );
 		rts->add_unpatchable_residue_type(type_to_fix);
 		pose.conformation().reset_residue_type_set_for_conf(rts);
 	}
+	core::chemical::ResidueTypeCOP new_type( pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t )->name_mapOP( type_to_fix->name() ) );
 	utility::vector1< std::pair< std::string, std::string > > atom_pairs;
 	atom_pairs.push_back(std::pair<std::string, std::string>(name1,name1) );
 	atom_pairs.push_back(std::pair<std::string, std::string>(name2,name2) );
 	atom_pairs.push_back(std::pair<std::string, std::string>(name3,name3) );
 
-	core::conformation::Residue new_res(*type_to_fix, true);
+	core::conformation::Residue new_res(*new_type, true);
 	//type_to_fix_is_good
 	pose.replace_residue(residue_index_, new_res, atom_pairs);
 }

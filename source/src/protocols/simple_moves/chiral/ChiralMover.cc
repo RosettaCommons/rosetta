@@ -120,7 +120,7 @@ void ChiralMover::apply( core::pose::Pose & pose )
 	TR << "phi_angle: " << phi_angle << " psi_angle: " << psi_angle << std::endl;
 
 	//kdrew: get residue type
-	ResidueType rtype = pose.residue_type( chiral_seq_pos_ );
+	ResidueType const & rtype = pose.residue_type( chiral_seq_pos_ );
 	TR << "Current residue type: " << rtype.name()  << std::endl;
 	TR << "Current residue type lower terminus: " << rtype.is_lower_terminus()  << std::endl;
 	TR << "Current residue type upper terminus: " << rtype.is_upper_terminus()  << std::endl;

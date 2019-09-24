@@ -115,8 +115,8 @@ public:
 	/// @brief Conversion operator which allows an OP -> COP change.
 	operator shared_ptr< typename std::add_const< T >::type >() const { return val_; }
 
-	void swap( DeepCopyOP & r ) noexcept { swap(val_, r.val_); }
-	void swap( DeepCopyOP::pointer_type & r ) noexcept { swap(val_, r); }
+	void swap( DeepCopyOP & r ) noexcept { std::swap(val_, r.val_); }
+	void swap( DeepCopyOP::pointer_type & r ) noexcept { std::swap(val_, r); }
 
 	T* get() const noexcept { return val_.get(); }
 
@@ -165,5 +165,24 @@ dynamic_pointer_cast( DeepCopyOP< T > const & param ) {
 
 } // namespace pointer
 } // namespace utility
+
+
+#ifdef    SERIALIZATION
+
+template < class Archive, class T >
+void save( Archive & archive, typename utility::pointer::DeepCopyOP< T > const & deep_op )
+{
+	save( archive, deep_op.get_op() ); // Simply save the included pointer
+}
+
+template < class Archive, class T >
+void load( Archive & archive, typename utility::pointer::DeepCopyOP< T > & deep_op )
+{
+	typename utility::pointer::DeepCopyOP< T >::pointer_type op_val;
+	load( archive, op_val );
+	deep_op.swap( op_val ); // No need to copy - should get a unique version
+}
+
+#endif // SERIALIZATION
 
 #endif

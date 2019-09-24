@@ -21,6 +21,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -89,7 +90,7 @@ switch_to_centroid_rot_set(
 
 /// @brief Attempt to generate a *new* residue type of the appropriate mode.
 /// If not possible, return a nullptr.
-core::chemical::ResidueTypeOP
+core::chemical::MutableResidueTypeOP
 generate_replacement_restype(
 	core::chemical::ResidueType const & restype,
 	core::chemical::TypeSetMode mode);

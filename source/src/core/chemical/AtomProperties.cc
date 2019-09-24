@@ -78,6 +78,11 @@ AtomProperties::operator==( AtomProperties const & properties ) const
 	return atom_property_status_ == properties.atom_property_status_;
 }
 
+bool
+AtomProperties::operator!=( AtomProperties const & other ) const {
+	return atom_property_status_ != other.atom_property_status_;
+}
+
 
 // Standard Rosetta methods ///////////////////////////////////////////////////
 // General methods
@@ -124,7 +129,6 @@ AtomProperties::get_list_of_properties() const
 	return list;
 }
 
-
 // Private methods ////////////////////////////////////////////////////////////
 // Initialize data members.
 void
@@ -157,6 +161,11 @@ operator++( AtomProperty & property )
 {
 	property = static_cast< AtomProperty >( static_cast< int >( property ) + 1 );
 	return property;
+}
+
+AtomPropertiesOP
+deep_copy( AtomProperties const & source) {
+	return utility::pointer::make_shared< AtomProperties >( source );
 }
 
 }  // namespace chemical

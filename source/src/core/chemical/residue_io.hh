@@ -15,7 +15,9 @@
 #define INCLUDED_core_chemical_residue_io_hh
 
 // Project headers
+#include <core/chemical/ResidueTypeBase.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
@@ -31,25 +33,22 @@
 namespace core {
 namespace chemical {
 
-/// @brief  If polymer, determine a list of main chain atoms by shortest path from LOWER to UPPER.
-AtomIndices define_mainchain_atoms( ResidueTypeOP rsd );
-
 /// @brief function to convert params files into ResidueType objects (repackages string filename into istream, gets needed subsidiary type sets from rsd_type_set
-ResidueTypeOP
+MutableResidueTypeOP
 read_topology_file(
 	std::string const & filename,
 	chemical::ResidueTypeSetCOP rsd_type_set
 );
 
 /// @brief function to convert params files into ResidueType objects, gets needed subsidiary type sets from rsd_type_set
-ResidueTypeOP
+MutableResidueTypeOP
 read_topology_file(
 	utility::io::izstream & istream,
 	chemical::ResidueTypeSetCOP rsd_type_set
 );
 
 /// @brief function to convert params files into ResidueType objects, gets needed subsidiary type sets from rsd_type_set
-ResidueTypeOP
+MutableResidueTypeOP
 read_topology_file(
 	std::istream & istream,
 	std::string const & filename, //this may be a fake filename
@@ -57,7 +56,7 @@ read_topology_file(
 );
 
 /// @brief function to convert params files into ResidueType objects (repackages string filename into istream)
-ResidueTypeOP
+MutableResidueTypeOP
 read_topology_file(
 	std::string const & filename,
 	chemical::AtomTypeSetCAP atom_types,
@@ -67,7 +66,7 @@ read_topology_file(
 );
 
 /// @brief main function to convert params files into ResidueType objects
-ResidueTypeOP
+MutableResidueTypeOP
 read_topology_file(
 	std::istream & data,
 	std::string const & filename, //MAY be faux filename if stream is not izstream of file
@@ -93,12 +92,19 @@ write_graphviz(
 	bool header = true
 );
 
+void
+write_graphviz(
+	MutableResidueType const & rsd,
+	std::ostream & out,
+	bool header = true
+);
+
 /// @brief Certain commandline flags override the default RamaPrePro maps used by the 20
 /// canonical amino acids.  This function applies those overrides.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void
 set_up_mapfile_reassignments_from_commandline(
-	ResidueTypeOP rsd
+	ResidueTypeBaseOP rsd
 );
 
 void

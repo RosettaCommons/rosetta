@@ -13,9 +13,11 @@
 
 #include <core/chemical/icoor_support.hh>
 
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomICoor.hh>
-#include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/MutableResidueType.hh>
+#include <core/chemical/AtomICoor.fwd.hh>
+#include <core/chemical/MutableICoorRecord.hh>
+#include <core/chemical/MutableResidueConnection.hh>
+#include <core/chemical/bond_support.hh>
 
 //#include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/Stub.hh>
@@ -49,7 +51,7 @@ static basic::Tracer TR( "core.chemical.icoor_support" );
 /// Utility function for clean_up_dangling_connect() -- we only go up the tree to make sure we don't get cycles.
 /// Won't choose atoms in exclusions (or the start)
 VD
-walk_back_to_find_usable_base( core::chemical::ResidueType const & restype, VD start, utility::vector1< VD > const & exclusions ) {
+walk_back_to_find_usable_base( core::chemical::MutableResidueType const & restype, VD start, utility::vector1< VD > const & exclusions ) {
 
 	VD selected = start;
 	while ( selected != restype.root_atom() ) { // Root needs special handling.
@@ -66,14 +68,14 @@ walk_back_to_find_usable_base( core::chemical::ResidueType const & restype, VD s
 }
 
 /// @details Assumes that all of the xyz coordinates are updated.
-void clean_up_dangling_connect( core::chemical::ResidueType & restype, ICoorAtomID::Type remove_type ) {
-	debug_assert( remove_type == ICoorAtomID::POLYMER_LOWER || remove_type == ICoorAtomID::POLYMER_UPPER );
-	if ( remove_type == ICoorAtomID::POLYMER_LOWER ) { runtime_assert( restype.lower_connect_id() == 0 ); }
-	if ( remove_type == ICoorAtomID::POLYMER_UPPER ) { runtime_assert( restype.upper_connect_id() == 0 ); }
+void clean_up_dangling_connect( core::chemical::MutableResidueType & restype, ICoordAtomIDType remove_type ) {
+	debug_assert( remove_type == ICoordAtomIDType::POLYMER_LOWER || remove_type == ICoordAtomIDType::POLYMER_UPPER );
+	if ( remove_type == ICoordAtomIDType::POLYMER_LOWER ) { runtime_assert( restype.lower_connect_id() == 0 ); }
+	if ( remove_type == ICoordAtomIDType::POLYMER_UPPER ) { runtime_assert( restype.upper_connect_id() == 0 ); }
 
 	for ( VD vd: boost::make_iterator_range( restype.atom_iterators() ) ) {
-		AtomICoor const & icoor = restype.icoor(vd);
-		if ( icoor.stub_atom1().type() != remove_type && icoor.stub_atom2().type() != remove_type && icoor.stub_atom3().type() != remove_type ) {
+		MutableICoorRecord const & icoor = *restype.icoor(vd);
+		if ( icoor.stub_type1() != remove_type && icoor.stub_type2() != remove_type && icoor.stub_type3() != remove_type ) {
 			continue; // Nothing to do - skip
 		}
 
@@ -83,21 +85,21 @@ void clean_up_dangling_connect( core::chemical::ResidueType & restype, ICoorAtom
 		core::Real phi, theta, d;
 
 		// Stub1
-		if ( icoor.stub_atom1().type() != remove_type ) {
+		if ( icoor.stub_type1() != remove_type ) {
 			d = icoor.d();
-			stub1_xyz = icoor.stub_atom1().xyz(restype);
-			runtime_assert( icoor.stub_atom1().is_internal() );
-			stub1 = restype.atom_name( icoor.stub_atom1().atomno() );
+			runtime_assert( icoor.stub_type1() == ICoordAtomIDType::INTERNAL );
+			stub1 = icoor.stub_atom1();
+			stub1_xyz = icoor.xyz( 1, restype );
 		} else {
 			utility_exit_with_message("Cannot automatically remove connection which is the stub1 of another atom - manually set ICOOR");
 		}
 
 		// Stub2
-		if ( icoor.stub_atom2().type() != remove_type ) {
+		if ( icoor.stub_type2() != remove_type ) {
 			theta = icoor.theta();
-			stub2_xyz = icoor.stub_atom2().xyz(restype);
-			runtime_assert( icoor.stub_atom2().is_internal() );
-			stub2 = restype.atom_name( icoor.stub_atom2().atomno() );
+			runtime_assert( icoor.stub_type2() == ICoordAtomIDType::INTERNAL );
+			stub2 = icoor.stub_atom2();
+			stub2_xyz = icoor.xyz(2, restype);
 		} else { // Stub2 is the issue.
 			VD const stub2_vd = walk_back_to_find_usable_base(restype, restype.atom_vertex(stub1), {vd} );
 			stub2_xyz = restype.atom( stub2_vd ).ideal_xyz();
@@ -124,9 +126,9 @@ class RerootRestypeVisitor: public boost::default_dfs_visitor {
 private:
 	core::chemical::VD root_;
 	VdTreeatomMap & treeatom_map_;
-	core::chemical::ResidueType const & restype_;
+	core::chemical::MutableResidueType const & restype_;
 public:
-	RerootRestypeVisitor( VdTreeatomMap & map, core::chemical::VD root, core::chemical::ResidueType const & restype ):
+	RerootRestypeVisitor( VdTreeatomMap & map, core::chemical::VD root, core::chemical::MutableResidueType const & restype ):
 		root_( root ),
 		treeatom_map_( map ),
 		restype_( restype )
@@ -176,7 +178,7 @@ public:
 /// This doesn't (need to?) quite match the logic in core/conformation/util.cc:setup_atom_links()
 class RerootEdgeSorter {
 public:
-	RerootEdgeSorter(core::chemical::ResidueGraph const & graph, core::chemical::ResidueType const & /*restype*/):
+	RerootEdgeSorter(core::chemical::ResidueGraph const & graph, core::chemical::MutableResidueType const & /*restype*/):
 		graph_(graph)
 		//restype_(restype)
 	{}
@@ -271,7 +273,7 @@ private:
 /// * All ideal xyz coordinates are updated.
 ///
 void
-reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGraph const & graph, core::chemical::VD root) {
+reroot_restype( core::chemical::MutableResidueType & restype, core::chemical::ResidueGraph const & graph, core::chemical::VD root) {
 	if ( restype.natoms() < 3 ) {
 		TR.Warning << "Cannot re-root residue type with less than three atoms." << std::endl;
 		return;
@@ -365,6 +367,7 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 		// There's probably a better way to do this non-destructively,
 		// but I don't know how generalizable it would be.
 		TR.Warning << "Resetting the ICOORD invalidated some CHI entries - recomputing." << std::endl;
+		find_bonds_in_rings( restype ); // We need updated ring information for chi autodetermination.
 		restype.autodetermine_chi_bonds();
 		//} else {
 		// TR << "Chis should be fine." << std::endl;
@@ -373,23 +376,24 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 }
 
 /// @brief Utility function for fill_ideal_xyz_from_icoor() -- does this ICoorAtomID have all the dependancies filled?
-bool has_assigned_coords(ICoorAtomID const & stub, std::set< VD > const & assigned, core::chemical::ResidueType const & restype) {
-	if ( stub.type() == ICoorAtomID::INTERNAL ) {
-		debug_assert( restype.has( stub.vertex() ) );
-		return assigned.count( stub.vertex() );
+bool has_assigned_coords(std::string const & stub, std::set< VD > const & assigned, core::chemical::MutableResidueType const & restype) {
+	ICoordAtomIDType type( string_to_icoord_type( stub ) );
+	if ( type == ICoordAtomIDType::INTERNAL ) {
+		debug_assert( restype.has( stub ) );
+		return assigned.count( restype.atom_vertex( stub ) );
 	} else {
 		// For connections, they have assigned coords if all their dependancies have assigned coords.
-		ResidueConnection connection;
-		if ( stub.type() == ICoorAtomID::POLYMER_LOWER ) {
+		MutableResidueConnection connection;
+		if ( type == ICoordAtomIDType::POLYMER_LOWER ) {
 			connection = restype.lower_connect();
-		} else if ( stub.type() == ICoorAtomID::POLYMER_UPPER ) {
+		} else if ( type == ICoordAtomIDType::POLYMER_UPPER ) {
 			connection = restype.upper_connect();
-		} else if ( stub.type() == ICoorAtomID::CONNECT ) {
-			connection = restype.residue_connection( stub.atomno() );
+		} else if ( type == ICoordAtomIDType::CONNECT ) {
+			connection = restype.residue_connection( get_connection_number( stub ) );
 		} else {
 			utility_exit_with_message("Unable to assign coordinates for "+restype.name()+" - bad ICOOR specification." );
 		}
-		AtomICoor const & conicoor( connection.icoor() );
+		MutableICoorRecord const & conicoor( connection.icoor() );
 		// TODO: This has a possibility of an infinite loop if you have connection points which mutually depend on each other
 		return ( has_assigned_coords( conicoor.stub_atom(1), assigned, restype ) &&
 			has_assigned_coords( conicoor.stub_atom(2), assigned, restype ) &&
@@ -401,7 +405,7 @@ bool has_assigned_coords(ICoorAtomID const & stub, std::set< VD > const & assign
 /// @details Contains logic originally from read_topology_file()
 void
 fill_ideal_xyz_from_icoor(
-	core::chemical::ResidueType & restype,
+	core::chemical::MutableResidueType & restype,
 	core::chemical::ResidueGraph const & graph) {
 	if ( restype.natoms() == 0 ) {
 		TR.Warning << "fill_ideal_xyz_from_icoor: residue type has no atoms." << std::endl;
@@ -449,34 +453,17 @@ fill_ideal_xyz_from_icoor(
 		VD child_atom = atom_queue.front();
 		atom_queue.pop();
 		--natoms;
-		AtomICoor const & icoor( restype.icoor(child_atom) );
+		MutableICoorRecordCOP icoor( restype.icoor(child_atom) );
+		runtime_assert( icoor != nullptr);
 
-		ICoorAtomID parent_stub( icoor.stub_atom(1) ), angle_stub( icoor.stub_atom(2) ), torsion_stub( icoor.stub_atom(3) );
-		/*
-		if ( parent_stub.atomno() == 0 ) {
-		TR << "U/L ";
-		} else {
-		TR << restype.atom_name( parent_stub.atomno() ) << " ";
-		}
-		if ( angle_stub.atomno() == 0 ) {
-		TR << "U/L ";
-		} else {
-		TR << restype.atom_name( angle_stub.atomno() ) << " ";
-		}
-		if ( torsion_stub.atomno() == 0 ) {
-		TR << "U/L ";
-		} else {
-		TR << restype.atom_name( torsion_stub.atomno() ) << " ";
-		}
-		TR << std::endl;
-		*/
-		core::Real phi( icoor.phi() ), theta( icoor.theta() ), d( icoor.d() );
-		//debug_assert( restype.has(parent_atom) && restype.has(angle_atom) );
-		if ( child_atom == parent_stub.vertex() ) { // root atom
+		std::string const & parent_stub( icoor->stub_atom1() ), angle_stub( icoor->stub_atom2() ), torsion_stub( icoor->stub_atom3() );
+		core::Real phi( icoor->phi() ), theta( icoor->theta() ), d( icoor->d() );
+
+		if ( restype.has( parent_stub ) && child_atom == restype.atom_vertex( parent_stub ) ) { // root atom
 			restype.set_ideal_xyz( child_atom, Vector(0,0,0) );
 			assigned.insert( child_atom );
 			progress = true;
-		} else if ( child_atom == angle_stub.vertex() ) { // second atom
+		} else if ( restype.has( angle_stub ) && child_atom == restype.atom_vertex( angle_stub ) ) { // second atom
 			restype.set_ideal_xyz( child_atom, Vector(d,0,0) );
 			assigned.insert( child_atom );
 			progress = true;
@@ -487,7 +474,7 @@ fill_ideal_xyz_from_icoor(
 				continue;
 			}
 			Vector torsion_xyz;
-			if ( child_atom == torsion_stub.vertex() ) { // third atom
+			if ( restype.has( torsion_stub ) && child_atom == restype.atom_vertex( torsion_stub ) ) { // third atom
 				torsion_xyz = Vector( 1.0, 1.0, 0.0 );
 			} else {
 				if ( ! has_assigned_coords( torsion_stub, assigned, restype ) ) {
@@ -495,15 +482,13 @@ fill_ideal_xyz_from_icoor(
 					atom_queue.push( child_atom );
 					continue;
 				}
-				torsion_xyz = torsion_stub.xyz( restype );
+				torsion_xyz = MutableICoorRecord::build_xyz( torsion_stub, restype );
 			}
-			debug_assert( parent_stub.xyz( restype ) != angle_stub.xyz( restype ) );
-			debug_assert( angle_stub.xyz( restype ) != torsion_xyz );
-
-			kinematics::Stub const stub( parent_stub.xyz( restype ),
-				angle_stub.xyz( restype ),
-				torsion_xyz );
-			restype.set_ideal_xyz( child_atom , stub.spherical( phi, theta, d ) );
+			Vector location( kinematics::Stub::create_orthogonal(
+				MutableICoorRecord::build_xyz( parent_stub, restype ),
+				MutableICoorRecord::build_xyz( angle_stub, restype ),
+				torsion_xyz ).spherical( phi, theta, d ) );
+			restype.set_ideal_xyz( child_atom, location );
 			assigned.insert( child_atom );
 			progress = true;
 		}

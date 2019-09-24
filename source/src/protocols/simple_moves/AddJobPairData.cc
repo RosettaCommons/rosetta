@@ -76,7 +76,7 @@ void AddJobPairData::apply( Pose & pose)
 		//This is true in the simple hts case but not universally true.
 		core::Size chain_id = core::pose::get_chain_id_from_chain(ligand_chain_, pose);
 		core::Size ligand_seqpos(pose.conformation().chain_begin(chain_id));
-		core::chemical::ResidueType ligand_res_type(pose.conformation().residue_type(ligand_seqpos));
+		core::chemical::ResidueType const & ligand_res_type(pose.conformation().residue_type(ligand_seqpos));
 		if ( value_type_ == string_value ) {
 			std::string value = ligand_res_type.get_string_property(string_key_);
 			protocols::jd2::add_string_string_pair_to_current_job(string_key_, value);

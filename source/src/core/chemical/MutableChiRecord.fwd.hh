@@ -7,21 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/chemical/ResidueLoader.fwd.hh
-/// @brief forward headers for the Residue Loader
-/// @author Sam DeLuca
+/// @file
+/// @brief A Chi record object for a MutableResidueType
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
-#ifndef INCLUDED_core_chemical_ResidueLoader_fwd_hh
-#define INCLUDED_core_chemical_ResidueLoader_fwd_hh
 
+#ifndef INCLUDED_core_chemical_MutableChiRecord_fwd_hh
+#define INCLUDED_core_chemical_MutableChiRecord_fwd_hh
+
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace chemical {
 
-class ResidueLoader;
+class MutableChiRecord;
 
+typedef  utility::pointer::shared_ptr< MutableChiRecord >  MutableChiRecordOP;
+typedef  utility::pointer::shared_ptr< MutableChiRecord const >  MutableChiRecordCOP;
 }
 }
 
 #endif
-

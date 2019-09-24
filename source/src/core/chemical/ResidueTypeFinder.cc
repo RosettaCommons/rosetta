@@ -16,6 +16,7 @@
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/Metapatch.hh>
 #include <core/chemical/util.hh>
@@ -533,7 +534,7 @@ ResidueTypeFinder::apply_metapatches_recursively(
 				//TR << "Considering " << rsd_type->name() << " for " << patch->name() << std::endl;
 
 				// following just gets the right name of the patched residue
-				ResidueTypeCOP rsd_type_new_placeholder = patch->apply( *rsd_type, false /*instantiate*/ );
+				MutableResidueTypeCOP rsd_type_new_placeholder = patch->apply( *rsd_type, false /*instantiate*/ );
 				if ( rsd_type_new_placeholder ) {
 					// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
 					ResidueTypeCOP rsd_type_new( residue_type_set_.name_mapOP( rsd_type_new_placeholder->name() ) );
@@ -737,7 +738,7 @@ ResidueTypeFinder::fixes_name3( PatchCOP patch, ResidueTypeCOP rsd_type ) const
 	if ( name3_.size() > 0 &&
 			rsd_type->name3() != name3_ &&
 			residue_type_set_.generates_patched_residue_type_with_name3( residue_type_base_name( *rsd_type ), name3_ ) ) {
-		ResidueTypeCOP new_type( patch->apply( *rsd_type, false /*instantiate*/ ) );
+		MutableResidueTypeCOP new_type( patch->apply( *rsd_type, false /*instantiate*/ ) );
 		if ( new_type && new_type->name3() == name3_ ) {
 			return true;
 		}
@@ -753,7 +754,7 @@ ResidueTypeFinder::fixes_interchangeability_group( PatchCOP patch, ResidueTypeCO
 			rsd_type->interchangeability_group() != interchangeability_group_ &&
 			residue_type_set_.generates_patched_residue_type_with_interchangeability_group( residue_type_base_name( *rsd_type ),
 			interchangeability_group_ ) ) {
-		ResidueTypeCOP new_type( patch->apply( *rsd_type, false /*instantiate*/ ) );
+		MutableResidueTypeCOP new_type( patch->apply( *rsd_type, false /*instantiate*/ ) );
 		if ( new_type && new_type->interchangeability_group() == interchangeability_group_ ) {
 			return true;
 		}

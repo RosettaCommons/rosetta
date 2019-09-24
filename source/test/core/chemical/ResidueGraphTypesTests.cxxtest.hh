@@ -18,8 +18,10 @@
 
 // Unit Headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 
 #include <core/chemical/ResidueGraphTypes.hh>
+#include <core/chemical/ResidueSubGraphTypes.hh>
 
 // Project Headers
 #include <core/chemical/AtomTypeSet.hh>
@@ -59,8 +61,9 @@ public:
 
 	void test_heavy_atom_filter() {
 		core::pose::Pose pose = create_trpcage_ideal_pose();
-		core::chemical::ResidueType rsd(pose.residue_type(1));
-		core::chemical::HeavyAtomGraph HAgraph(rsd.heavy_atoms());
+		core::chemical::ResidueType const & rsd_origin(pose.residue_type(1));
+		core::chemical::MutableResidueType rsd( rsd_origin );
+		core::chemical::HeavyAtomGraph HAgraph( core::chemical::make_heavy_atom_graph( rsd ) );
 
 		core::chemical::HeavyAtomVIterPair vp = boost::vertices(HAgraph);
 		core::chemical::VD vd = *vp.first; //get the vertex
@@ -75,8 +78,9 @@ public:
 
 	void test_acceptor_atom_filter() {
 		core::pose::Pose pose = create_trpcage_ideal_pose();
-		core::chemical::ResidueType rsd(pose.residue_type(1));
-		core::chemical::AcceptorAtomGraph HAgraph(rsd.acceptor_atoms());
+		core::chemical::ResidueType const & rsd_origin(pose.residue_type(1));
+		core::chemical::MutableResidueType rsd( rsd_origin );
+		core::chemical::AcceptorAtomGraph HAgraph( core::chemical::make_acceptor_atom_graph( rsd ) );
 
 		core::chemical::AcceptorAtomVIterPair vp = boost::vertices(HAgraph);
 		core::chemical::VD vd = *vp.first; //get the vertex
@@ -92,8 +96,9 @@ public:
 
 	void test_heavy_atom_with_polar_hydrogen_filter(){
 		core::pose::Pose pose = create_trpcage_ideal_pose();
-		core::chemical::ResidueType rsd(pose.residue_type(1));
-		core::chemical::HeavyAtomWithPolarHydrogensGraph HAgraph(rsd.heavy_atom_with_polar_hydrogens());
+		core::chemical::ResidueType const & rsd_origin(pose.residue_type(1));
+		core::chemical::MutableResidueType rsd( rsd_origin );
+		core::chemical::HeavyAtomWithPolarHydrogensGraph HAgraph( core::chemical::make_heavy_atom_with_polar_hydrogens_graph( rsd ) );
 		core::chemical::HeavyAtomWithPolarHydrogensVIterPair vp = boost::vertices(HAgraph);
 		core::chemical::VD vd = *vp.first; //get the vertex
 		core::chemical::Atom atom(HAgraph[vd]); //get the atom
@@ -108,8 +113,9 @@ public:
 
 	void test_heavy_atom_with_hydrogens_filter(){
 		core::pose::Pose pose = create_trpcage_ideal_pose();
-		core::chemical::ResidueType rsd(pose.residue_type(1));
-		core::chemical::HeavyAtomWithHydrogensGraph HAgraph(rsd.heavy_atom_with_hydrogens());
+		core::chemical::ResidueType const & rsd_origin(pose.residue_type(1));
+		core::chemical::MutableResidueType rsd( rsd_origin );
+		core::chemical::HeavyAtomWithHydrogensGraph HAgraph( core::chemical::make_heavy_atom_with_hydrogens_graph( rsd ) );
 		core::chemical::HeavyAtomWithHydrogensVIterPair vp = boost::vertices(HAgraph);
 		core::chemical::VD vd = *vp.first; //get the vertex
 		core::chemical::Atom atom(HAgraph[vd]); //get the atom
@@ -122,44 +128,42 @@ public:
 
 	void test_hydrogen_atom_filter() {
 		core::pose::Pose pose = create_trpcage_ideal_pose();
-		core::chemical::ResidueType rsd(pose.residue_type(1));
-		core::chemical::HydrogenAtomGraph HAgraph(rsd.hydrogens());
+		core::chemical::ResidueType const & rsd_origin(pose.residue_type(1));
+		core::chemical::MutableResidueType rsd( rsd_origin );
+		core::chemical::HydrogenAtomGraph HAgraph( core::chemical::make_hydrogen_atom_graph( rsd ) );
 
-		//now lets iterate through the heavy atom graph
+		//now lets iterate through the graph
+		std::set< std::string > atom_names; // We don't care about ordering
 		core::chemical::HydrogenAtomVIterPair vp = boost::vertices(HAgraph);
-		//core::chemical::VIter v_iter=  //creat an iterator for access
-		core::chemical::VD vd = *vp.first; //get the vertex
-		core::chemical::Atom atom(HAgraph[vd]); //get the atom
-		TS_ASSERT_EQUALS(atom.name(), "1HD2");
-		++vp.first;
-		vd = *vp.first;
-		atom = HAgraph[vd];
-		TS_ASSERT_EQUALS(atom.name(), "2HD2");
-
+		for ( ; vp.first != vp.second; ++vp.first ) {
+			atom_names.insert( HAgraph[*vp.first].name() );
+		}
+		std::set< std::string > reference{ "1H  ", "2H  ", "3H  ", " HA ", "1HB ", "2HB ", "1HD2", "2HD2" };
+		TS_ASSERT_EQUALS( atom_names, reference );
 	}
 
 
 	void test_polar_hydrogen_atom_filter() {
 		core::pose::Pose pose = create_trpcage_ideal_pose();
-		core::chemical::ResidueType rsd(pose.residue_type(1));
-		core::chemical::PolarHydrogenGraph HAgraph(rsd.polar_hydrogens());
+		core::chemical::ResidueType const & rsd_origin(pose.residue_type(1));
+		core::chemical::MutableResidueType rsd( rsd_origin );
+		core::chemical::PolarHydrogenGraph HAgraph( core::chemical::make_polar_hydrogen_graph( rsd ) );
 
+		//now lets iterate through the graph
+		std::set< std::string > atom_names; // We don't care about ordering
 		core::chemical::PolarHydrogenVIterPair vp = boost::vertices(HAgraph);
-		//core::chemical::VIter v_iter=  //creat an iterator for access
-		core::chemical::VD vd = *vp.first; //get the vertex
-		core::chemical::Atom atom(HAgraph[vd]); //get the atom
-		TS_ASSERT_EQUALS(atom.name(), "1HD2");
-		++vp.first;
-		vd = *vp.first;
-		atom = HAgraph[vd];
-		TS_ASSERT_EQUALS(atom.name(), "2HD2");
-
+		for ( ; vp.first != vp.second; ++vp.first ) {
+			atom_names.insert( HAgraph[*vp.first].name() );
+		}
+		std::set< std::string > reference{ "1H  ", "2H  ", "3H  ", "1HD2", "2HD2" };
+		TS_ASSERT_EQUALS( atom_names, reference );
 	}
 
 	void test_aromatic_hydrogen_filter(){
 		core::pose::Pose pose = create_trpcage_ideal_pose();
-		core::chemical::ResidueType rsd(pose.residue_type(3));
-		core::chemical::AromaticAtomGraph HAgraph(rsd.aromatic_atoms());
+		core::chemical::ResidueType const & rsd_origin(pose.residue_type(3));
+		core::chemical::MutableResidueType rsd( rsd_origin );
+		core::chemical::AromaticAtomGraph HAgraph( core::chemical::make_aromatic_atom_graph( rsd ) );
 
 		core::chemical::AromaticAtomVIterPair vp = boost::vertices(HAgraph);
 		core::chemical::VD vd = *vp.first; //get the vertex
@@ -175,8 +179,9 @@ public:
 
 	void test_apolar_hydrogen_atom_filter() {
 		core::pose::Pose pose = create_trpcage_ideal_pose();
-		core::chemical::ResidueType rsd(pose.residue_type(1));
-		core::chemical::APolarHydrogenGraph HAgraph(rsd.apolar_hydrogens());
+		core::chemical::ResidueType const & rsd_origin(pose.residue_type(1));
+		core::chemical::MutableResidueType rsd( rsd_origin );
+		core::chemical::APolarHydrogenGraph HAgraph( core::chemical::make_apolar_hydrogen_graph( rsd ) );
 
 		//now lets iterate through the heavy atom graph
 		core::chemical::APolarHydrogenVIterPair vp = boost::vertices(HAgraph);

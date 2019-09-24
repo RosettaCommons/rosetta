@@ -180,7 +180,7 @@ BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup::determine_max_accepted_hbond_cou
 	core::conformation::Residue const & residue
 ) {
 	if ( !is_acceptor ) return 0;
-	return ( residue.type().atom( heavyatom_index ).element() == core::chemical::element::O ? 2 : 1 );
+	return ( residue.type().element( heavyatom_index ) == core::chemical::element::O ? 2 : 1 );
 }
 
 /*******************************************************************************

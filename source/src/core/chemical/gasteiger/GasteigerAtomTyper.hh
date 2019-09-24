@@ -21,8 +21,9 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh> // For enums
 #include <core/chemical/Element.fwd.hh>
 
-#include <core/chemical/ResidueGraphTypes.hh>
+#include <core/chemical/ResidueSubGraphTypes.hh> // For RealResidueGraph & RealResidueVD
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
 
 #include <core/types.hh>
 
@@ -30,6 +31,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <list>
+#include <map>
 
 namespace core {
 namespace chemical {
@@ -37,10 +39,10 @@ namespace gasteiger {
 
 class PossibleAtomTypesForAtom; // Forward declaration
 
-void assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAtomTypeSetCOP gasteiger_atom_type_set, bool keep_existing, bool allow_unknown = false);
+void assign_gasteiger_atom_types( core::chemical::MutableResidueType & restype, GasteigerAtomTypeSetCOP gasteiger_atom_type_set, bool keep_existing, bool allow_unknown = false);
 
 /// @breif Version which gets typeset from ResidueType, or just uses default
-void assign_gasteiger_atom_types( core::chemical::ResidueType & restype, bool keep_existing = true, bool allow_unknown = false);
+void assign_gasteiger_atom_types( core::chemical::MutableResidueType & restype, bool keep_existing = true, bool allow_unknown = false);
 
 PossibleAtomTypesForAtom GetPossibleTypesForAtom(
 	core::chemical::RealResidueGraph const & graph,

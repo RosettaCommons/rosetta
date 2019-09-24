@@ -1055,7 +1055,7 @@ get_root_atomno(
 		if ( rsd.mainchain_atoms().empty() ) {
 			// For non-polymeric ligands, match the ICOOR root.
 			// (This should minimize issues with matching trees.)
-			return rsd.type().atom_index( rsd.type().root_atom() );
+			return rsd.type().root_atom();
 		} else if ( rsd.type().has_variant_type( chemical::N_ACETYLATION ) ) {
 			return 1; // awful hack! want N-CA-C triad to stay put when one of these residues is at root.
 		} else {

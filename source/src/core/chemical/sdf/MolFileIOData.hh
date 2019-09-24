@@ -16,11 +16,14 @@
 #include <core/chemical/sdf/MolFileIOData.fwd.hh>
 
 #include <core/chemical/ResidueGraphTypes.hh>
-#include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/types.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>        // for AtomTypeSetCOP
 #include <core/chemical/ElementSet.fwd.hh>         // for ElementSetCOP
 #include <core/chemical/MMAtomTypeSet.fwd.hh>      // for MMAtomTypeSetCOP
+
+#include <utility/pointer/ReferenceCount.hh>
+#include <numeric/xyzVector.hh>
 
 #include <boost/graph/undirected_graph.hpp>
 
@@ -163,7 +166,7 @@ public:
 
 	/// @brief Make a ResidueType from this object
 	/// @details Not const as it calls normalize() to fix up missing data first.
-	ResidueTypeOP convert_to_ResidueType(
+	MutableResidueTypeOP convert_to_ResidueType(
 		chemical::AtomTypeSetCOP atom_types,
 		chemical::ElementSetCOP elements,
 		chemical::MMAtomTypeSetCOP mm_atom_types
@@ -176,7 +179,7 @@ public:
 	/// Index_name_map will contain a mapping from this object's AtomIndexes
 	/// to the atom names in the returned ResidueType
 	/// @details Not const as it calls normalize() to fix up missing data first.
-	ResidueTypeOP convert_to_ResidueType(
+	MutableResidueTypeOP convert_to_ResidueType(
 		std::map< AtomIndex, std::string > & index_name_map,
 		chemical::AtomTypeSetCOP atom_types,
 		chemical::ElementSetCOP elements,
@@ -187,11 +190,11 @@ private:
 
 	/// @brief From the str/str data in MolFile, additional information
 	/// Specifically, it's the overall atom and bond information.
-	void set_from_extra_data(ResidueType & restype, std::map< mioAD, core::chemical::VD > & restype_from_mio);
+	void set_from_extra_data(MutableResidueType & restype, std::map< mioAD, core::chemical::VD > & restype_from_mio);
 
-	bool index_valid(AtomIndex index, ResidueType const & restype, std::map< mioAD, core::chemical::VD > & restype_from_mio);
+	bool index_valid(AtomIndex index, MutableResidueType const & restype, std::map< mioAD, core::chemical::VD > & restype_from_mio);
 
-	void create_dummy_atom(ResidueTypeOP restype, std::string atom_name, core::Vector const & xyz_offset, chemical::ElementSetCOP elements, chemical::MMAtomTypeSetCOP mm_atom_types);
+	void create_dummy_atom(MutableResidueTypeOP restype, std::string atom_name, core::Vector const & xyz_offset, chemical::ElementSetCOP elements, chemical::MMAtomTypeSetCOP mm_atom_types);
 
 private:
 	std::string name_;

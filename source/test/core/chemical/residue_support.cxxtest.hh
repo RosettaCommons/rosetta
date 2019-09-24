@@ -18,6 +18,7 @@
 
 // Unit Headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/residue_support.hh>
 #include <core/chemical/Atom.hh>
 
@@ -54,6 +55,23 @@ public:
 
 	void tearDown() {}
 
+	void test_shortest_path() {
+		using namespace core::chemical;
+
+		ResidueTypeSetCOP rsd_types = ChemicalManager::get_instance()->residue_type_set(FA_STANDARD);
+
+		MutableResidueTypeCOP trp( new MutableResidueType( *rsd_types->name_mapOP("TRP") ) );
+
+		utility::vector1< VD > mainchain = core::chemical::mainchain_path( *trp );
+		utility::vector1< VD > mainchain_ref{ trp->atom_vertex("N"), trp->atom_vertex("CA"), trp->atom_vertex("C") };
+		TS_ASSERT_EQUALS( mainchain, mainchain_ref );
+
+		utility::vector1< VD > path1 = core::chemical::shortest_path( *trp, trp->atom_vertex("CD1"), trp->atom_vertex("CZ3") );
+		utility::vector1< VD > path2_ref{ trp->atom_vertex("CD1"), trp->atom_vertex("CG"), trp->atom_vertex("CD2"), trp->atom_vertex("CE3"), trp->atom_vertex("CZ3") };
+		TS_ASSERT_EQUALS( path1, path2_ref );
+
+	}
+
 	void test_renaming() {
 		using namespace core::chemical;
 
@@ -61,24 +79,27 @@ public:
 		std::string const tag(FA_STANDARD);
 		ResidueTypeSetCOP rsd_types = cm->residue_type_set(tag);
 
-		ResidueTypeCOP rsd_ref( rsd_types->name_mapOP("LYS") );
-		ResidueTypeOP rsd;
+		MutableResidueTypeCOP rsd_ref;
+		rsd_ref = MutableResidueTypeOP( new MutableResidueType( *rsd_types->name_mapOP("LYS") ) );
+		MutableResidueTypeOP rsd;
 		std::set< std::string > names;
 
 		// Already named - should be no changes.
-		rsd = utility::pointer::make_shared< ResidueType >( *rsd_ref );
+		rsd = utility::pointer::make_shared< MutableResidueType >( *rsd_ref );
 		rename_atoms( *rsd, /*preserve=*/true);
+		TS_ASSERT_EQUALS( rsd->natoms(), rsd_ref->natoms() ); // No change in atom number
 		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
-			TS_ASSERT_EQUALS( rsd->atom(ii).name(), rsd_ref->atom(ii).name() );
+			// Atoms should have matched order in each.
+			TS_ASSERT_EQUALS( rsd->atom( rsd->all_atoms()[ii] ).name(), rsd_ref->atom( rsd_ref->all_atoms()[ii] ).name() );
 		}
 
 		// Force renaming.
-		rsd = utility::pointer::make_shared< ResidueType >( *rsd_ref );
+		rsd = utility::pointer::make_shared< MutableResidueType >( *rsd_ref );
 		names.clear();
 		rename_atoms( *rsd, /*preserve=*/false);
-		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
-			TS_ASSERT_EQUALS( names.count( rsd->atom(ii).name() ), 0 ); // Names should be unique
-			names.insert( rsd->atom(ii).name() );
+		for ( VD atm: rsd->all_atoms() ) {
+			TS_ASSERT_EQUALS( names.count( rsd->atom(atm).name() ), 0 ); // Names should be unique
+			names.insert( rsd->atom(atm).name() );
 		}
 		//non-terminal Lysine: 6 carbons, 1 oxygen, 2 nitrogen, 13 hydrogens.
 		TS_ASSERT_EQUALS( names.size(), 22 );
@@ -94,31 +115,31 @@ public:
 		TS_ASSERT_EQUALS( names.count( " H14" ), 0 );
 
 		// Partial renaming.
-		rsd = utility::pointer::make_shared< ResidueType >( *rsd_ref );
-		rsd->atom(" NZ ").name(" N  ");
-		rsd->atom("1HB ").name("");
-		rsd->atom("2HB ").name("");
-		rsd->atom(" HA ").name(" H  ");
+		rsd = utility::pointer::make_shared< MutableResidueType >( *rsd_ref );
+		//rsd->rename_atom(rsd->atom_vertex(" NZ "), " N  "); // We don't permit duplicate names anymore
+		rsd->rename_atom(rsd->atom_vertex("1HB "), "");
+		rsd->rename_atom(rsd->atom_vertex("2HB "), "");
+		//rsd->rename_atom(rsd->atom_vertex(" HA "), " H  "); // We don't permit duplicate names anymore
 		rename_atoms( *rsd, /*preserve=*/true);
 		names.clear();
-		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
-			TS_ASSERT_EQUALS( names.count( rsd->atom(ii).name() ), 0 ); // Names should be unique
-			names.insert( rsd->atom(ii).name() );
+		for ( VD atm: rsd->all_atoms() ) {
+			TS_ASSERT_EQUALS( names.count( rsd->atom(atm).name() ), 0 ); // Names should be unique
+			names.insert( rsd->atom(atm).name() );
 		}
 		TS_ASSERT_EQUALS( names.size(), 22 );
 		TS_ASSERT_EQUALS( names.count( " O  " ), 1 );
 		TS_ASSERT_EQUALS( names.count( " CA " ), 1 );
-		TS_ASSERT_EQUALS( names.count( " N  " ), 0 );
-		TS_ASSERT_EQUALS( names.count( " NZ " ), 0 );
-		TS_ASSERT_EQUALS( names.count( " N1 " ), 1 );
-		TS_ASSERT_EQUALS( names.count( " N2 " ), 1 );
+		//TS_ASSERT_EQUALS( names.count( " N  " ), 0 ); // We don't permit duplicate names anymore
+		//TS_ASSERT_EQUALS( names.count( " NZ " ), 0 ); // We don't permit duplicate names anymore
+		//TS_ASSERT_EQUALS( names.count( " N1 " ), 1 ); // We don't permit duplicate names anymore
+		//TS_ASSERT_EQUALS( names.count( " N2 " ), 1 ); // We don't permit duplicate names anymore
 		TS_ASSERT_EQUALS( names.count( " H1 " ), 1 );
 		TS_ASSERT_EQUALS( names.count( " H2 " ), 1 );
-		TS_ASSERT_EQUALS( names.count( " H3 " ), 1 );
-		TS_ASSERT_EQUALS( names.count( " H4 " ), 1 );
-		TS_ASSERT_EQUALS( names.count( " H5 " ), 0 );
-		TS_ASSERT_EQUALS( names.count( " H  " ), 0 );
-		TS_ASSERT_EQUALS( names.count( " HA " ), 0 );
+		TS_ASSERT_EQUALS( names.count( " H3 " ), 0 );
+		//TS_ASSERT_EQUALS( names.count( " H4 " ), 1 );
+		//TS_ASSERT_EQUALS( names.count( " H5 " ), 0 );
+		//TS_ASSERT_EQUALS( names.count( " H  " ), 0 );
+		//TS_ASSERT_EQUALS( names.count( " HA " ), 0 );
 		TS_ASSERT_EQUALS( names.count( ""     ), 0 );
 		TS_ASSERT_EQUALS( names.count( "1HZ " ), 1 );
 
@@ -137,7 +158,7 @@ public:
 		// minirosetta_database/chemical/mm_atom_type_sets/<tag>
 		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
 
-		ResidueTypeOP rsd( new ResidueType( atom_types, element_types, mm_atom_types, NULL ) );
+		MutableResidueTypeOP rsd( new MutableResidueType( atom_types, element_types, mm_atom_types, NULL ) );
 
 		rsd->add_atom( "C1", "aroC", "VIRT", 0 );
 		rsd->add_atom( "C2", "aroC", "VIRT", 0 );
@@ -244,7 +265,7 @@ public:
 		// minirosetta_database/chemical/mm_atom_type_sets/<tag>
 		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
 
-		ResidueTypeOP rsd( new ResidueType( atom_types, element_types, mm_atom_types, NULL ) );
+		MutableResidueTypeOP rsd( new  MutableResidueType( atom_types, element_types, mm_atom_types, NULL ) );
 
 		rsd->add_atom( "C1", "aroC", "VIRT", 0 );
 		rsd->add_atom( "C2", "aroC", "VIRT", 0 );
@@ -307,27 +328,27 @@ public:
 		//  //TS_ASSERT_DELTA( maxdist, sqrt( 2.0 ), 1e-6 ); //To C3 & C5 - As hydrogen, C6 = sqrt(8) doesn't count.
 
 		// C6 is omitted because it's singly bonded.
-		nbr = ResidueType::null_vertex;
+		nbr = MutableResidueType::null_vertex;
 		maxdist = find_nbr_dist(*rsd, nbr);
 		TS_ASSERT_EQUALS( rsd->atom_name(nbr), "C3" );
 		TS_ASSERT_DELTA( maxdist, sqrt( 1.0*1.0 + 3.0*3.0 ), 1e-6 ); //To C1 & C5
 
 		rsd->add_bond( "C6", "C2" );
-		nbr = ResidueType::null_vertex;
+		nbr = MutableResidueType::null_vertex;
 		maxdist = find_nbr_dist(*rsd, nbr);
 		TS_ASSERT_EQUALS( rsd->atom_name(nbr), "C6" );
 		TS_ASSERT_DELTA( maxdist, 2.0 , 1e-6 );
 
 		// Doubly bonded H is still omitted.
 		rsd->atom("C6").element_type( element_types->element("H") );
-		nbr = ResidueType::null_vertex;
+		nbr = MutableResidueType::null_vertex;
 		maxdist = find_nbr_dist(*rsd, nbr);
 		TS_ASSERT_EQUALS( rsd->atom_name(nbr), "C3" );
 		TS_ASSERT_DELTA( maxdist, sqrt( 1.0*1.0 + 3.0*3.0 ) , 1e-6 ); //To C1 & C5
 
 		rsd->atom("C4").ideal_xyz( Vector(3,2,0) );
 		rsd->atom("C5").ideal_xyz( Vector(1,3,0) );
-		nbr = ResidueType::null_vertex;
+		nbr = MutableResidueType::null_vertex;
 		maxdist = find_nbr_dist(*rsd, nbr);
 		TS_ASSERT_EQUALS( rsd->atom_name(nbr), "C2" );
 		TS_ASSERT_DELTA( maxdist, sqrt( 2.0*2.0+2.0*2.0 ), 1e-6 ); //To C1
@@ -340,13 +361,13 @@ public:
 		std::string const tag(FA_STANDARD);
 		ResidueTypeSetCOP rsd_types = cm->residue_type_set(tag);
 
-		ResidueTypeOP rsd( new ResidueType( rsd_types->name_map("TYR") ) );
+		MutableResidueTypeOP rsd( new MutableResidueType( rsd_types->name_map("TYR") ) );
 
 		TR << "Testing standard charging." << std::endl;
 
-		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
-			rsd->atom(ii).formal_charge( 0.0 );
-			rsd->atom(ii).charge( -1.234 ); // Will be reset
+		for ( VD atm: rsd->all_atoms() ) {
+			rsd->atom(atm).formal_charge( 0.0 );
+			rsd->atom(atm).charge( -1.234 ); // Will be reset
 		}
 
 		rosetta_recharge_fullatom( *rsd );
@@ -360,8 +381,8 @@ public:
 		TS_ASSERT_DELTA( rsd->atom(" OH ").charge(), -0.660 - Y_naive_charge/19, 1e-4 ); //"OH  "
 
 		core::Real net_charge(0);
-		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
-			net_charge += rsd->atom(ii).charge();
+		for ( VD atm: rsd->all_atoms() ) {
+			net_charge += rsd->atom(atm).charge();
 		}
 		TS_ASSERT_DELTA( net_charge, 0, 1e-4 );
 
@@ -377,18 +398,18 @@ public:
 		TS_ASSERT_DELTA( rsd->atom(" OH ").charge(), -0.660 - Y_naive_charge/19 + -2.0/19, 1e-4 ); //"OH  "
 
 		net_charge = 0;
-		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
-			net_charge += rsd->atom(ii).charge();
+		for ( VD atm: rsd->all_atoms() ) {
+			net_charge += rsd->atom(atm).charge();
 		}
 		TS_ASSERT_DELTA( net_charge, -2.0, 1e-4 );
 
 		TR << "Testing that virtual atoms aren't recharged and aren't counted during recharge" << std::endl;
 
-		rsd = utility::pointer::make_shared< ResidueType >( rsd_types->name_map("PRO") );
+		rsd = utility::pointer::make_shared< MutableResidueType >( rsd_types->name_map("PRO") );
 
-		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
-			rsd->atom(ii).formal_charge( 0.0 );
-			rsd->atom(ii).charge( -1.234 ); // Will be reset
+		for ( VD atm: rsd->all_atoms() ) {
+			rsd->atom(atm).formal_charge( 0.0 );
+			rsd->atom(atm).charge( -1.234 ); // Will be reset
 		}
 
 		rsd->atom(" CB ").formal_charge( -1 );
@@ -416,17 +437,17 @@ public:
 		while ( paramslist ) {
 			TR << "Comparing converted " << fafile << " with " << cenfile << std::endl;
 
-			core::chemical::ResidueTypeOP fa_rsd = read_topology_file("core/chemical/params/"+fafile, fa_rts );
-			core::chemical::ResidueTypeOP cen_rsd = read_topology_file("core/chemical/params/"+cenfile, cen_rts );
+			core::chemical::MutableResidueTypeOP fa_rsd = read_topology_file("core/chemical/params/"+fafile, fa_rts );
+			core::chemical::MutableResidueTypeOP cen_rsd = read_topology_file("core/chemical/params/"+cenfile, cen_rts );
 
-			core::chemical::ResidueTypeOP converted = make_centroid( *fa_rsd );
+			core::chemical::MutableResidueTypeOP converted = make_centroid( *fa_rsd );
 
 			TS_ASSERT_EQUALS( converted->atom_type_set().name(), cen_rsd->atom_type_set().name() );
 			TS_ASSERT_EQUALS( converted->natoms(), cen_rsd->natoms() );
 
-			for ( core::Size ii(1); ii <= cen_rsd->natoms(); ++ii ) {
-				core::Size jj( converted->atom_index( cen_rsd->atom_name(ii) ) );
-				TSM_ASSERT_EQUALS( cen_rsd->atom_name(ii), converted->atom_type( jj ).name(), cen_rsd->atom_type( ii ).name() );
+			for ( VD atm: cen_rsd->all_atoms() ) {
+				std::string const & name( cen_rsd->atom_name( atm ) );
+				TSM_ASSERT_EQUALS( name, converted->atom_type( converted->atom_vertex(name) ).name(), cen_rsd->atom_type( cen_rsd->atom_vertex(name) ).name() );
 			}
 			paramslist >> cenfile >> fafile;
 		}

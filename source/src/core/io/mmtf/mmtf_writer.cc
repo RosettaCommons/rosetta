@@ -300,12 +300,21 @@ add_bonds_to_sd(::mmtf::StructureData & sd,
 							if ( !already_in_grouplist ) {
 								group.bondAtomList.push_back(lower_connect.group_atom_index);
 								group.bondAtomList.push_back(upper_connect.group_atom_index);
-								if ( ai.connected_orders[m] == 0 ) {
-									group.bondOrderList.push_back((int8_t)-1);
-									group.bondResonanceList.push_back((int8_t)1);
-								} else {
+								switch ( ai.connected_orders[m] ) {
+								case core::chemical::SingleBond:
+								case core::chemical::DoubleBond:
+								case core::chemical::TripleBond :
 									group.bondOrderList.push_back((int8_t)ai.connected_orders[m]);
 									group.bondResonanceList.push_back((int8_t)0);
+									break;
+								case core::chemical::AromaticBond :
+									group.bondOrderList.push_back((int8_t)-1);
+									group.bondResonanceList.push_back((int8_t)1);
+									break;
+								default :
+									group.bondOrderList.push_back((int8_t)-1); // There's a bond, we don't know what it is.
+									group.bondResonanceList.push_back((int8_t)1); // Unfortunately, the MMTF requires unknown bond orders to be resonant
+									break;
 								}
 							}
 							++group_bonds;

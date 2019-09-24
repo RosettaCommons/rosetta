@@ -169,7 +169,7 @@ public:
 		utility::vector1< core::Size > const & restype_atomnos
 	) const;
 
-	core::chemical::ResidueType
+	core::chemical::ResidueType const &
 	get_lig_restype() const;
 
 private:

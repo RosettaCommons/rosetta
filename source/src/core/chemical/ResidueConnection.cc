@@ -16,27 +16,9 @@
 
 
 #ifdef    SERIALIZATION
-#include <core/chemical/ResidueGraphTypes.srlz.hh>
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
 #endif // SERIALIZATION
-
-namespace core {
-namespace chemical {
-
-
-/// @brief Update the internal VDs based on the provide mapping
-void
-ResidueConnection::remap_atom_vds( std::map< VD, VD > const & old_to_new ) {
-	if ( old_to_new.count( vertex_ ) == 1 ) {
-		vertex_ = old_to_new.at( vertex_ );
-	}
-	icoor_.remap_atom_vds(old_to_new);
-}
-
-
-} // namespace chemical
-} // namespace core
 
 #ifdef    SERIALIZATION
 
@@ -47,7 +29,6 @@ core::chemical::ResidueConnection::save( Archive & arc ) const {
 	arc( CEREAL_NVP( atomno_ ) ); // int
 	arc( CEREAL_NVP( icoor_ ) ); // class core::chemical::AtomICoor
 	arc( CEREAL_NVP( index_ ) ); // int
-	SERIALIZE_VD( arc, vertex_, "vertex_" ); // EXEMPT vertex_
 }
 
 /// @brief Automatically generated deserialization method
@@ -57,7 +38,6 @@ core::chemical::ResidueConnection::load( Archive & arc ) {
 	arc( atomno_ ); // int
 	arc( icoor_ ); // class core::chemical::AtomICoor
 	arc( index_ ); // int
-	DESERIALIZE_VD( arc, vertex_ ); // EXEMPT vertex_
 }
 SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ResidueConnection );
 #endif // SERIALIZATION

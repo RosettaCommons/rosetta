@@ -260,7 +260,7 @@ public:
 		core::chemical::ChemicalManager & chemman( *core::chemical::ChemicalManager::get_instance() );
 		core::chemical::ResidueType const & restype( chemman.residue_type_set(core::chemical::FA_STANDARD)->name_map( "U05" ) );
 		core::conformation::ResidueOP orig_res( new core::conformation::Residue(restype, true) );
-		core::Size root_index( restype.atom_index( restype.root_atom() ) ); // C21
+		core::Size root_index( restype.root_atom() ); // C21
 		core::Size stub2_index( restype.atom_index( "C13" ) );
 		core::Size stub3_index( restype.atom_index( "C4" ) );
 

@@ -227,7 +227,7 @@ public:
 	///     Pose
 	Real
 	atomic_charge( Size const atomno ) const {
-		return rsd_type_.atom( atomno ).charge();
+		return rsd_type_.atom_charge(atomno);
 	}
 
 	/// @brief  Check if atom is virtual.
@@ -2167,7 +2167,7 @@ public:
 	std::string const &
 	mm_atom_name( Size const atom ) const
 	{
-		return rsd_type_.atom(atom).mm_name();
+		return rsd_type_.mm_name(atom);
 	}
 
 	/// @brief Returns this residue's ResidueType name

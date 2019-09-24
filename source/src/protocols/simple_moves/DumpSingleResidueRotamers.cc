@@ -122,8 +122,8 @@ DumpSingleResidueRotamers::apply( core::pose::Pose & pose ){
 	runtime_assert( rsd_index_ >= 1 && rsd_index_ <= pose.total_residue() );
 
 	// Set up the single residue dunbrack library
-	ResidueTypeCOP concrete_residue( utility::pointer::make_shared< ResidueType >( pose.residue( rsd_index_ ).type() ) );
-	SingleResidueRotamerLibraryCOP rsd_rl_temp1( SingleResidueRotamerLibraryFactory::get_instance()->get( *concrete_residue ) );
+	ResidueType const & concrete_residue( pose.residue( rsd_index_ ).type() );
+	SingleResidueRotamerLibraryCOP rsd_rl_temp1( SingleResidueRotamerLibraryFactory::get_instance()->get( concrete_residue ) );
 	SingleResidueDunbrackLibraryCOP rsd_rl = utility::pointer::dynamic_pointer_cast< const SingleResidueDunbrackLibrary >( rsd_rl_temp1 );
 
 	if ( all_positions_ ) {

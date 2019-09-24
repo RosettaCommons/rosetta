@@ -23,6 +23,7 @@
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/sdf/MolFileIOReader.hh>
 
 // Basic headers
@@ -95,7 +96,7 @@ public:
 		TR << ">>>>WOW<<<" << std::endl;
 		utility::vector1< core::chemical::sdf::MolFileIOMoleculeOP > entries( sdf_reader.parse_file( filestream2, "sdf", 1 ) );
 		runtime_assert( entries.size() == 1 );
-		core::chemical::ResidueTypeOP azt_res( core::chemical::sdf::convert_to_ResidueType( entries ) );
+		core::chemical::MutableResidueTypeOP azt_res( core::chemical::sdf::convert_to_ResidueType( entries ) );
 		TR << azt_res->name() << std::endl;
 		TR << azt_res->name3() << std::endl;
 		TR << azt_res->name1() << std::endl;

@@ -44,7 +44,9 @@ public:
 	CenrotRotamerLibrarySpecification();
 	CenrotRotamerLibrarySpecification( AA aa_setting );
 	CenrotRotamerLibrarySpecification( std::istream & input );
-	virtual ~CenrotRotamerLibrarySpecification();
+
+	RotamerLibrarySpecificationOP
+	clone() const override;
 
 	/// @brief The AA for which we're building the Rotamer library.
 	AA get_aa() const {
@@ -55,14 +57,12 @@ public:
 	void aa( AA aa_setting );
 
 	/// @brief Which type of SingleResidueRotamerLibrary does this specification sub-type correspond to?
-	virtual
 	std::string
-	keyname() const;
+	keyname() const override;
 
 	/// @brief Return empty string, as Cenrot rotamer caching happens external to the Factory caching.
-	virtual
 	std::string
-	cache_tag(ResidueType const &) const { return ""; }
+	cache_tag(ResidueType const &) const override { return ""; }
 
 	/// @brief Static function for access to type_name, to have a single string which is used for both
 	/// this class and for the SingleResidueRotamerLibraryCreator.

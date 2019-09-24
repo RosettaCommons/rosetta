@@ -18,6 +18,7 @@
 
 // Unit Headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/residue_io.hh>
 
 // Project Headers
@@ -113,17 +114,17 @@ public:
 
 		core::chemical::ResidueTypeSetCOP rtsCOP(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FULL_ATOM_t ));
 
-		core::chemical::ResidueTypeOP LG1_RTOP(core::chemical::read_topology_file( ligand_stream, "dummy_filename", rtsCOP ));
+		core::chemical::MutableResidueTypeOP LG1_RTOP(core::chemical::read_topology_file( ligand_stream, "dummy_filename", rtsCOP ));
 
 		//This is a collection of tests based narrowly on "functions of ResidueType that are easy to use and verify by glancing at the params string", improvements welcome
 		TS_ASSERT(LG1_RTOP);
-		TS_ASSERT_EQUALS(LG1_RTOP->nbr_atom(), LG1_RTOP->atom_index("C3"));
+		TS_ASSERT_EQUALS(LG1_RTOP->nbr_vertex(), LG1_RTOP->atom_vertex("C3"));
 		TS_ASSERT_EQUALS(LG1_RTOP->nbr_radius(), 3.328921);
 		TS_ASSERT_EQUALS(LG1_RTOP->natoms(), 8);
 		TS_ASSERT_EQUALS(LG1_RTOP->nbonds(), 7);
-		TS_ASSERT(  LG1_RTOP->atoms_are_bonded(LG1_RTOP->atom_index("C3"), LG1_RTOP->atom_index("P1")));
-		TS_ASSERT(! LG1_RTOP->atoms_are_bonded(LG1_RTOP->atom_index("C3"), LG1_RTOP->atom_index("O3")));
-		TS_ASSERT(! LG1_RTOP->atom_is_polar_hydrogen(LG1_RTOP->atom_index("C3")));
+		TS_ASSERT(  LG1_RTOP->atoms_are_bonded("C3", "P1"));
+		TS_ASSERT(! LG1_RTOP->atoms_are_bonded("C3", "O3"));
+		//TS_ASSERT(! LG1_RTOP->atom_is_polar_hydrogen(LG1_RTOP->atom_index("C3")));
 
 		TS_ASSERT(LG1_RTOP->has("C3"));
 		TS_ASSERT(LG1_RTOP->has("C2"));
@@ -135,46 +136,46 @@ public:
 		TS_ASSERT(LG1_RTOP->has("O3"));
 
 		TS_ASSERT_EQUALS(LG1_RTOP->n_polymeric_residue_connections(), 0);
-		TS_ASSERT(LG1_RTOP->finalized());
 
 		TS_ASSERT(! LG1_RTOP->is_polymer());
-		TS_ASSERT(! LG1_RTOP->is_sidechain_thiol());
-		TS_ASSERT(! LG1_RTOP->is_disulfide_bonded());
-		TS_ASSERT(! LG1_RTOP->is_sidechain_amine());
 		TS_ASSERT(! LG1_RTOP->is_protein());
-		TS_ASSERT(! LG1_RTOP->is_alpha_aa());
-		TS_ASSERT(! LG1_RTOP->is_beta_aa());
-		TS_ASSERT(! LG1_RTOP->is_gamma_aa());
-		TS_ASSERT(! LG1_RTOP->is_sri());
-		TS_ASSERT(! LG1_RTOP->is_triazolemer());
-		TS_ASSERT(! LG1_RTOP->is_d_aa());
-		TS_ASSERT(! LG1_RTOP->is_l_aa());
-		TS_ASSERT(! LG1_RTOP->is_achiral_backbone());
 		TS_ASSERT(! LG1_RTOP->is_DNA());
 		TS_ASSERT(! LG1_RTOP->is_RNA());
-		TS_ASSERT(! LG1_RTOP->is_coarse());
-		TS_ASSERT(! LG1_RTOP->is_NA());
-		TS_ASSERT(! LG1_RTOP->is_peptoid());
-		TS_ASSERT(! LG1_RTOP->is_carbohydrate());
-		TS_ASSERT(  LG1_RTOP->is_ligand());
-		TS_ASSERT(! LG1_RTOP->is_lipid());
-		TS_ASSERT(! LG1_RTOP->is_metal());
-		TS_ASSERT(! LG1_RTOP->is_metalbinding());
-		TS_ASSERT(! LG1_RTOP->is_membrane());
-		TS_ASSERT(! LG1_RTOP->is_surface());
-		TS_ASSERT(! LG1_RTOP->has_sc_orbitals());
-		TS_ASSERT(! LG1_RTOP->is_polar());
-		TS_ASSERT(! LG1_RTOP->is_charged());
-		TS_ASSERT(! LG1_RTOP->is_aromatic());
-		TS_ASSERT(! LG1_RTOP->is_cyclic());
-		TS_ASSERT(! LG1_RTOP->is_terminus());
-		TS_ASSERT(! LG1_RTOP->is_lower_terminus());
-		TS_ASSERT(! LG1_RTOP->is_upper_terminus());
-		TS_ASSERT(! LG1_RTOP->is_branch_point());
-		TS_ASSERT(! LG1_RTOP->is_acetylated_nterminus());
-		TS_ASSERT(! LG1_RTOP->is_methylated_cterminus());
-		TS_ASSERT(! LG1_RTOP->is_virtual_residue());
-		TS_ASSERT(! LG1_RTOP->is_adduct());
+
+		//TS_ASSERT(! LG1_RTOP->is_sidechain_thiol());
+		//TS_ASSERT(! LG1_RTOP->is_disulfide_bonded());
+		//TS_ASSERT(! LG1_RTOP->is_sidechain_amine());
+		//TS_ASSERT(! LG1_RTOP->is_alpha_aa());
+		//TS_ASSERT(! LG1_RTOP->is_beta_aa());
+		//TS_ASSERT(! LG1_RTOP->is_gamma_aa());
+		//TS_ASSERT(! LG1_RTOP->is_sri());
+		//TS_ASSERT(! LG1_RTOP->is_triazolemer());
+		//TS_ASSERT(! LG1_RTOP->is_d_aa());
+		//TS_ASSERT(! LG1_RTOP->is_l_aa());
+		//TS_ASSERT(! LG1_RTOP->is_achiral_backbone());
+		//TS_ASSERT(! LG1_RTOP->is_coarse());
+		//TS_ASSERT(! LG1_RTOP->is_NA());
+		//TS_ASSERT(! LG1_RTOP->is_peptoid());
+		//TS_ASSERT(! LG1_RTOP->is_carbohydrate());
+		//TS_ASSERT(  LG1_RTOP->is_ligand());
+		//TS_ASSERT(! LG1_RTOP->is_lipid());
+		//TS_ASSERT(! LG1_RTOP->is_metal());
+		//TS_ASSERT(! LG1_RTOP->is_metalbinding());
+		//TS_ASSERT(! LG1_RTOP->is_membrane());
+		//TS_ASSERT(! LG1_RTOP->is_surface());
+		//TS_ASSERT(! LG1_RTOP->has_sc_orbitals());
+		//TS_ASSERT(! LG1_RTOP->is_polar());
+		//TS_ASSERT(! LG1_RTOP->is_charged());
+		//TS_ASSERT(! LG1_RTOP->is_aromatic());
+		//TS_ASSERT(! LG1_RTOP->is_cyclic());
+		//TS_ASSERT(! LG1_RTOP->is_terminus());
+		//TS_ASSERT(! LG1_RTOP->is_lower_terminus());
+		//TS_ASSERT(! LG1_RTOP->is_upper_terminus());
+		//TS_ASSERT(! LG1_RTOP->is_branch_point());
+		//TS_ASSERT(! LG1_RTOP->is_acetylated_nterminus());
+		//TS_ASSERT(! LG1_RTOP->is_methylated_cterminus());
+		//TS_ASSERT(! LG1_RTOP->is_virtual_residue());
+		//TS_ASSERT(! LG1_RTOP->is_adduct());
 
 		TS_ASSERT_EQUALS( LG1_RTOP->name(), "LG1");
 		TS_ASSERT_EQUALS( LG1_RTOP->name3(), "LG1");

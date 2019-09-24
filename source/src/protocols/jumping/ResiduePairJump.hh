@@ -84,7 +84,7 @@ public:
 	bool fixResidue() const { return fixResidue_; }
 
 	/// @brief access residue type
-	core::chemical::ResidueTypeOP residueType() const;
+	core::chemical::ResidueTypeCOP residueType() const;
 
 	/// @brief access all three jumpAtoms at once
 	inline
@@ -116,7 +116,7 @@ public:
 
 private:
 	/// @brief internal data -- residue type
-	core::chemical::ResidueTypeOP residueType_;
+	core::chemical::ResidueTypeCOP residueType_;
 	/// @brief internal data -- atom names (3) for creating the jump
 	utility::vector1< std::string >  jumpAtoms_;
 	/// @brief internal data -- atom names (3) for defining cst

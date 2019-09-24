@@ -68,7 +68,6 @@
 #include <cstdio>
 #include <algorithm>
 
-
 static basic::Tracer TR( "core.io.pdb.pdb_writer" );
 
 

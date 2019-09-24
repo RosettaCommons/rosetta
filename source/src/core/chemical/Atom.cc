@@ -18,6 +18,7 @@
 
 // Package header
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
+#include <core/chemical/AtomProperties.hh>
 
 // Basic header
 #include <basic/Tracer.hh>
@@ -26,13 +27,14 @@
 #include <utility/exit.hh>
 
 #ifdef    SERIALIZATION
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
 #include <utility/serialization/serialization.hh>
+#include <utility/pointer/memory.hh>
 
 // Numeric serialization headers
 #include <numeric/xyz.serialization.hh>
@@ -49,86 +51,41 @@ static basic::Tracer TR( "core.chemical.Atom" );
 
 /// @details All its properties are un-set by default.
 Atom::Atom() :
-	name_( "" ),
-	mm_name_( "" ),
-	atom_type_index_( 0 ),
-	mm_atom_type_index_( 0 ),
-	element_( /* 0 */ ),
-	gasteiger_atom_type_( /* 0 */ ),
-	formal_charge_( 0 ),
-	charge_( 0 ),
-	ideal_xyz_(),
-	properties_( utility::pointer::make_shared< AtomProperties >() ),
-	is_hydrogen_( false ),
-	has_orbitals_( false ),
-	abs_stereochem_( char() ),
-	greek_d_( NA_GREEK_DISTANCE )
+	properties_( utility::pointer::make_shared< AtomProperties >() )
 {}
 
 /// @details Rosetta AtomTypes should be set through the ResidueType to ensure data consistency.
 Atom::Atom(
 	std::string const & name_in,
 	std::string const & mm_name,
-	Size const mm_atom_type_index,
 	ElementCOP element,
 	Real const charge,
 	Vector const & ideal_xyz ) :
 	name_( name_in ),
 	mm_name_( mm_name ),
-	atom_type_index_( 0 ),
-	mm_atom_type_index_( mm_atom_type_index ),
 	element_(std::move( element )),
-	gasteiger_atom_type_( /* 0 */ ),
-	formal_charge_( 0 ),
 	charge_( charge ),
 	ideal_xyz_( ideal_xyz ),
-	properties_( utility::pointer::make_shared< AtomProperties >() ),
-	is_hydrogen_( false ),
-	has_orbitals_( false ),
-	abs_stereochem_( char() ),
-	greek_d_( NA_GREEK_DISTANCE )
+	properties_( utility::pointer::make_shared< AtomProperties >() )
 {}
 
-Atom::Atom( Atom const & src ) :
-	name_( src.name_ ),
-	mm_name_( src.mm_name_ ),
-	atom_type_index_( src.atom_type_index_ ),
-	mm_atom_type_index_( src.mm_atom_type_index_ ),
-	element_( src.element_ ),
-	gasteiger_atom_type_( src.gasteiger_atom_type_ ),
-	formal_charge_( src.formal_charge_ ),
-	charge_( src.charge_ ),
-	ideal_xyz_( src.ideal_xyz_ ),
-	properties_( AtomPropertiesOP ( new AtomProperties( *src.properties_ ) ) ),
-	is_hydrogen_( false ),
-	has_orbitals_( false ),
-	bonded_orbitals_(),
-	abs_stereochem_( src.abs_stereochem_ ),
-	greek_d_( src.greek_d_ )
-{}
-
-Atom::~Atom() = default;
-
-//because you have an owning pointer in private member data, you need to implement an = operator
-Atom &
-Atom::operator=( Atom const & rhs )
-{
-	name_= rhs.name_;
-	mm_name_ = rhs.mm_name_;
-	atom_type_index_ = rhs.atom_type_index_;
-	mm_atom_type_index_ = rhs.mm_atom_type_index_;
-	element_ = rhs.element_;
-	formal_charge_ = rhs.formal_charge_;
-	charge_ = rhs.charge_;
-	ideal_xyz_ = rhs.ideal_xyz_;
-	properties_ = AtomPropertiesOP ( new AtomProperties( *rhs.properties_ ) );
-	gasteiger_atom_type_ = rhs.gasteiger_atom_type_;
-	is_hydrogen_ = rhs.is_hydrogen_;
-	has_orbitals_ = rhs.has_orbitals_;
-	bonded_orbitals_ = rhs.bonded_orbitals_;
-	abs_stereochem_ = rhs.abs_stereochem_;
-	greek_d_ = rhs.greek_d_;
-	return *this;
+bool
+Atom::operator==( Atom const & atom ) const {
+	return name_== atom.name_ &&
+		mm_name_ == atom.mm_name_ &&
+		atom_type_index_ == atom.atom_type_index_ &&
+		element_ == atom.element_ &&
+		gasteiger_atom_type_ == atom.gasteiger_atom_type_ &&
+		is_backbone_ == atom.is_backbone_ &&
+		is_actcoord_ == atom.is_actcoord_ &&
+		formal_charge_ == atom.formal_charge_ &&
+		charge_ == atom.charge_ &&
+		abs_stereochem_ == atom.abs_stereochem_ &&
+		greek_d_ == atom.greek_d_ &&
+		ideal_xyz_ == atom.ideal_xyz_ &&
+		( icoor_ == atom.icoor_ || ( icoor_ != nullptr && atom.icoor_ != nullptr && *icoor_ == *atom.icoor_ ) ) &&
+		*properties_ == *atom.properties_ &&
+		bonded_orbitals_ == atom.bonded_orbitals_;
 }
 
 core::chemical::element::Elements
@@ -142,7 +99,9 @@ Atom::element() const {
 
 gasteiger::GasteigerAtomTypeDataCOP Atom::gasteiger_atom_type() const { return gasteiger_atom_type_; }
 
-void Atom::gasteiger_atom_type( core::chemical::gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type ) { gasteiger_atom_type_ = gasteiger_atom_type; }
+void Atom::gasteiger_atom_type( core::chemical::gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type ) {
+	gasteiger_atom_type_ = gasteiger_atom_type;
+}
 
 void
 Atom::set_absolute_stereochemistry( char const setting )
@@ -154,10 +113,35 @@ Atom::set_absolute_stereochemistry( char const setting )
 	abs_stereochem_ = setting;
 }
 
-void
-Atom::greek_distance( GreekDistance const setting )
+bool
+Atom::has_property( std::string const & property ) const
 {
-	greek_d_ = setting;
+	return properties_->has_property( property );
+}
+
+bool
+Atom::has_property( AtomProperty const property ) const
+{
+	return properties_->has_property( property );
+}
+
+/// @brief  Generic property setting.
+void
+Atom::set_property( std::string const & property, bool const setting)
+{
+	properties_->set_property( property, setting );
+}
+
+void
+Atom::set_property( AtomProperty const property, bool const setting)
+{
+	properties_->set_property( property, setting );
+}
+
+void
+Atom::reset_all_properies(AtomProperties const & setting)
+{
+	properties_ = AtomPropertiesOP( new AtomProperties( setting ) );
 }
 
 // Return true if this represents a fake/mock atom.
@@ -188,7 +172,7 @@ Atom::show( std::ostream & out ) const
 
 	out << "   Types (type set indices): ";
 	out << "Rosetta: " /*<< type_name_*/ << " (" << atom_type_index_ << "); ";
-	out << "CHARMm: " << mm_name_ << " (" << mm_atom_type_index_ << "); ";
+	out << "CHARMm: " << mm_name_  << "; ";
 	out << "Gasteiger: ";
 	if ( gasteiger_atom_type() ) {
 		out << gasteiger_atom_type_->get_name();
@@ -197,28 +181,24 @@ Atom::show( std::ostream & out ) const
 	}
 	out << endl;
 
+	if ( is_backbone() ) {
+		out << "   Backbone Atom" << endl;
+	}
 	out << "   Charge: " << "partial: " << charge_ << "; formal: ";
 	if ( formal_charge_ > 0 ) {
 		out << '+';
 	}
 	out << formal_charge_ << endl;
+	if ( abs_stereochem_ != char() ) {
+		out << "   Stereochemistry: " << abs_stereochem_ << endl;
+	}
+	if ( greek_d_ != NA_GREEK_DISTANCE ) {
+		out << "   Greek Distance: " << greek_d_ << endl;
+	}
 
-	out << "   Properties: ";
-	if ( heavyatom_has_polar_hydrogens() ) {
-		out << "H-bond donor, ";
-	}
-	if ( is_acceptor() ) {
-		out << "H-bond acceptor, ";
-	}
-	if ( is_hydrogen_ ) {
-		if ( is_polar_hydrogen() ) {
-			out << "polar hydrogen, ";
-		} else if ( is_haro() ) {
-			out << "aromatic hydrogen, ";
-		} else {
-			out << "non-polar hydrogen, ";
-		}
-	}
+	out << "   Properties: " << endl;
+	out << *properties_;
+
 	out << std::endl;
 }
 
@@ -236,7 +216,7 @@ operator<< ( std::ostream & out, Atom const & atom )
 #ifdef    SERIALIZATION
 
 void
-core::chemical::Atom::update_typesets( ResidueType const & parent ) {
+core::chemical::Atom::update_typesets( MutableResidueType const & parent ) {
 	element_ = nullptr;
 	if ( parent.element_set_ptr() ) {
 		element_ = parent.element_set_ptr()->element( element_enum_ );
@@ -254,7 +234,6 @@ core::chemical::Atom::save( Archive & arc ) const {
 	arc( CEREAL_NVP( name_ ) ); // std::string
 	arc( CEREAL_NVP( mm_name_ ) ); // std::string
 	arc( CEREAL_NVP( atom_type_index_ ) ); // Size
-	arc( CEREAL_NVP( mm_atom_type_index_ ) ); // Size
 	// EXEMPT element_ element_enum_
 	arc( CEREAL_NVP_( "element_enum_", element() )); // core::chemical::element::Elements
 	// EXEMPT gasteiger_atom_type_ gasteiger_atom_type_name_
@@ -263,38 +242,42 @@ core::chemical::Atom::save( Archive & arc ) const {
 		gasteiger_atom_type_name = gasteiger_atom_type_->get_name();
 	}
 	arc( CEREAL_NVP_( "gasteiger_atom_type_name_", gasteiger_atom_type_name ) ); // std::string
+	arc( CEREAL_NVP( is_backbone_ ) ); // bool
+	arc( CEREAL_NVP( is_actcoord_ ) ); // bool
 	arc( CEREAL_NVP( formal_charge_ ) ); // int
 	arc( CEREAL_NVP( charge_ ) ); // Real
-	arc( CEREAL_NVP( ideal_xyz_ ) ); // Vector
-	arc( CEREAL_NVP( properties_ ) ); // AtomPropertiesOP
-	arc( CEREAL_NVP( is_hydrogen_ ) ); // _Bool
-	arc( CEREAL_NVP( has_orbitals_ ) ); // _Bool
-	arc( CEREAL_NVP( bonded_orbitals_ ) ); // utility::vector1<Size>
 	arc( CEREAL_NVP( abs_stereochem_ ) ); // char
 	arc( CEREAL_NVP( greek_d_ ) ); // enum core::chemical::GreekDistance
+	arc( CEREAL_NVP( ideal_xyz_ ) ); // Vector
+	arc( CEREAL_NVP( icoor_ ) ); // MutableICoorRecordCOP
+	arc( CEREAL_NVP( bonded_orbitals_ ) ); // utility::vector1< Size >
+	arc( properties_.get_op() ); // AtomPropertiesOP
 }
 
-/// @brief Automatically generated deserialization method
 template< class Archive >
 void
 core::chemical::Atom::load( Archive & arc ) {
 	arc( name_ ); // std::string
 	arc( mm_name_ ); // std::string
 	arc( atom_type_index_ ); // Size
-	arc( mm_atom_type_index_ ); // Size
 	// EXEMPT element_
 	arc( element_enum_ ); // core::chemical::element::Elements
 	// EXEMPT gasteiger_atom_type_
 	arc( gasteiger_atom_type_name_ );
+	arc( is_backbone_ ); // bool
+	arc( is_actcoord_ ); // bool
 	arc( formal_charge_ ); // int
 	arc( charge_ ); // Real
-	arc( ideal_xyz_ ); // Vector
-	arc( properties_ ); // AtomPropertiesOP
-	arc( is_hydrogen_ ); // _Bool
-	arc( has_orbitals_ ); // _Bool
-	arc( bonded_orbitals_ ); // utility::vector1<Size>
 	arc( abs_stereochem_ ); // char
 	arc( greek_d_ ); // enum core::chemical::GreekDistance
+	arc( ideal_xyz_ ); // Vector
+	MutableICoorRecordOP icoor; // EXEMPT icoor_
+	arc( icoor ); // MutableICoorRecordCOP
+	icoor_ = icoor;
+	arc( bonded_orbitals_ ); // utility::vector1< Size >
+	AtomPropertiesOP props;
+	arc( props ); // AtomPropertiesOP
+	properties_ = props; // EXEMPT properties_
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Atom );

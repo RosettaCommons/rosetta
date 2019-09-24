@@ -52,6 +52,8 @@
 #include <protocols/indexed_structure_store/SegmentSequenceProfile.hh>
 #include <protocols/indexed_structure_store/SegmentSequenceProfile.json.hh>
 
+#include <boost/range/irange.hpp>
+
 #include "ndarray.h"
 #include "ndarray/eigen.h"
 

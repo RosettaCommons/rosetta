@@ -275,7 +275,7 @@ OversaturatedHbondAcceptorFilter::max_allowed_hbonds(
 	core::Size const res_index,
 	core::Size const atom_index
 ) const {
-	if ( !pose.residue(res_index).type().atom(atom_index).is_acceptor() ) return 0; //If it's not an acceptor, it can have only 0.
+	if ( !pose.residue(res_index).type().heavyatom_is_an_acceptor( atom_index ) ) return 0; //If it's not an acceptor, it can have only 0.
 	return 2; //By default, assume that 2 is the max.
 }
 

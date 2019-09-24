@@ -138,7 +138,7 @@ MapHotspot::output_pose( core::pose::Pose const & pose ) const{
 
 /// @details Utility function to deal with all of the ugliness of copying a single residue from one pose to another while conserving the jump
 void
-copy_hotspot_to_pose( core::pose::Pose const & src, core::pose::Pose & dest, core::Size const src_resi, core::chemical::ResidueType const restype, core::Size const jump )
+copy_hotspot_to_pose( core::pose::Pose const & src, core::pose::Pose & dest, core::Size const src_resi, core::chemical::ResidueType const & restype, core::Size const jump )
 {
 	using namespace core::kinematics;
 	using namespace core::conformation;

@@ -91,12 +91,12 @@ AutomorphismIterator::can_pair(Size i, Size j) {
 	// they can match. I'm not sure if this is really what we want, but it makes things work
 	// like they did under the old single residue type version.
 	if ( restype_.name3() == "HIS" && restype2_.name3() == "HIS" ) {
-		if ( restype_.atom(i).element_type()->get_atomic_number() == 7 &&
-				restype2_.atom(j).element_type()->get_atomic_number() == 7 ) {
+		if ( restype_.element_type(i)->get_atomic_number() == 7 &&
+				restype2_.element_type(j)->get_atomic_number() == 7 ) {
 			return true; // For HIS, nitrogens always match other nitrogens, regardless of type or connection.
 		}
 	}
-	return restype_.atom(i).atom_type_index() == restype2_.atom(j).atom_type_index()
+	return restype_.atom_type(i).atom_type_name() == restype2_.atom_type(j).atom_type_name()
 		&& restype_.nbrs(i).size() == restype2_.nbrs(j).size();
 }
 

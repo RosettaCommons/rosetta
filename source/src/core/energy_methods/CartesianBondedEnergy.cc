@@ -31,6 +31,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
+#include <core/chemical/Element.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -1027,30 +1028,24 @@ IdealParametersDatabase::generate_impropers_map_res(
 	// Does not exist - generate
 	// Logic from -extra_torsion_output of molfile_to_params.py (Yifan c00e20a5)
 	TorsionsIndepSubmap resmap; // Make new map
-	for ( core::chemical::EIterPair bitrs( restype.bond_iterators() ); bitrs.first != bitrs.second; ++bitrs.first ) {
-		core::chemical::Bond const & bond( restype.bond( *bitrs.first ) );
-		core::chemical::BondName bondtype( bond.bond_name() );
-		core::chemical::VD a2( boost::source( *bitrs.first, restype.graph() ) );
-		core::chemical::VD a3( boost::target( *bitrs.first, restype.graph() ) );
+	for ( auto const & bond: restype.bonds() ) {
+		core::Size a2( bond.first );
+		core::Size a3( bond.second );
+		core::chemical::BondName bondtype( restype.bond_type( a2, a3 ) );
+
 		// Planar bonds include aromatic bonds and double bonds to carbons.
 		// (General double bonds aren't, due to phosphate and sulfates, etc.)
 		if ( bondtype == core::chemical::AromaticBond ||
 				( bondtype == core::chemical::DoubleBond && (
-				restype.atom(a2).element_type()->element() == core::chemical::element::C ||
-				restype.atom(a3).element_type()->element() == core::chemical::element::C )
+				restype.element_type(a2)->element() == core::chemical::element::C ||
+				restype.element_type(a3)->element() == core::chemical::element::C )
 				) ) {
 			// Find all the atoms within one bond of the two conjugated atoms
-			utility::vector1< core::chemical::VD > adjacent_atoms;
-			for ( core::chemical::AdjacentIterPair aitrs( restype.bonded_neighbor_iterators( a2 ) ); aitrs.first != aitrs.second; ++aitrs.first ) {
-				if ( *aitrs.first != a3 ) {
-					adjacent_atoms.push_back( *aitrs.first );
-				}
-			}
-			for ( core::chemical::AdjacentIterPair aitrs( restype.bonded_neighbor_iterators( a3 ) ); aitrs.first != aitrs.second; ++aitrs.first ) {
-				if ( *aitrs.first != a2 ) {
-					adjacent_atoms.push_back( *aitrs.first );
-				}
-			}
+			utility::vector1< core::Size > adjacent_atoms( restype.bonded_neighbor(a2) );
+			adjacent_atoms.append( restype.bonded_neighbor(a3) );
+			adjacent_atoms.pop(a2); // Don't add pairs for the atoms in question
+			adjacent_atoms.pop(a3);
+
 			// Add an entry for each pair
 			std::string const & atom2( restype.atom_name(a2) ), atom3( restype.atom_name(a3) );
 			for ( core::Size ii(1); ii <= adjacent_atoms.size(); ++ii ) {

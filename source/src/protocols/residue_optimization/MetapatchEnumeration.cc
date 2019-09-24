@@ -158,7 +158,7 @@ MetapatchEnumeration::generate_derived_types(
 ) {
 	ResidueTypeSetCAP rts_cap = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 	ResidueTypeSetCOP rts     = ResidueTypeSetCOP( rts_cap );
-	ResidueType const current_type = rts->name_map( types_considered[ tp ] );
+	ResidueType const & current_type = rts->name_map( types_considered[ tp ] );
 
 	TR << "Considering derivatives of " << current_type.name() << "." << std::endl;
 	// If patch names contain a tabooed mutation set, move on.
@@ -249,7 +249,7 @@ MetapatchEnumeration::generate_derived_types(
 void
 MetapatchEnumeration::generate_metapatched_variants( Size resi ) {
 	std::string starting_name = pose_.residue( resi ).type().name();
-	ResidueType const starting_type = pose_.residue( resi ).type();
+	ResidueType const & starting_type = pose_.residue( resi ).type();
 
 	// Reset mm bb except for area near resi
 	for ( Size ii = 1; ii <= pose_.size(); ++ii ) {

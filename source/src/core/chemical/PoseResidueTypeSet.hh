@@ -122,10 +122,10 @@ public:
 public:
 
 	// These could be hoisted by using statements, but PyRosetta currently has issues with that.
-	void add_base_residue_type( ResidueTypeOP new_type ) override;
+	void add_base_residue_type( MutableResidueTypeOP new_type ) override;
 	void add_base_residue_type( std::string const &  filename ) override;
 	void read_files_for_base_residue_types( utility::vector1< std::string > const & filenames ) override;
-	void add_unpatchable_residue_type( ResidueTypeOP new_type ) override;
+	void add_unpatchable_residue_type( MutableResidueTypeOP new_type ) override;
 	void add_unpatchable_residue_type( std::string const &  filename ) override;
 	void read_files_for_unpatchable_residue_types( utility::vector1< std::string > const & filenames ) override;
 	void remove_base_residue_type( std::string const & name ) override;

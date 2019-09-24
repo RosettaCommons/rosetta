@@ -37,6 +37,8 @@
 // Rosetta headers
 #include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSetCache.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/Metapatch.hh>
@@ -65,6 +67,7 @@
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
 #include <utility/sql_database/types.hh>
+#include <utility/pointer/memory.hh>
 
 // C++ headers
 #include <fstream>
@@ -205,7 +208,7 @@ GlobalResidueTypeSet::init_restypes_from_database() {
 		} else {
 			std::string const filename( database_directory_ + line );
 
-			ResidueTypeOP rsd_type( read_topology_file(
+			MutableResidueTypeOP rsd_type( read_topology_file(
 				filename, atom_type_set(), element_set(), mm_atom_type_set(), orbital_type_set() ) );
 
 			add_base_residue_type( rsd_type );
@@ -220,7 +223,7 @@ void GlobalResidueTypeSet::init_restypes_from_commandline() {
 	utility::vector1< std::string > extra_params_files( params_files_from_commandline() );
 
 	for ( std::string const & filename : extra_params_files ) {
-		ResidueTypeOP rsd_type( read_topology_file(
+		MutableResidueTypeOP rsd_type( read_topology_file(
 			filename, atom_type_set(), element_set(), mm_atom_type_set(), orbital_type_set() ) );
 		add_base_residue_type( rsd_type );
 		exclude_pdb_component_ids_.insert( rsd_type->name3() ); // if user has bothered to specify params file, don't look in pdb components dictionary
@@ -228,19 +231,19 @@ void GlobalResidueTypeSet::init_restypes_from_commandline() {
 	}
 
 	if ( mode () == FULL_ATOM_t ) {
-		utility::vector1< ResidueTypeOP > extra_residues( extra_nonparam_restypes_from_commandline() );
-		for ( ResidueTypeOP const & rsd_type : extra_residues ) {
+		utility::vector1< MutableResidueTypeOP > extra_residues( extra_nonparam_restypes_from_commandline() );
+		for ( MutableResidueTypeOP const & rsd_type : extra_residues ) {
 			add_base_residue_type( rsd_type );
 			exclude_pdb_component_ids_.insert( rsd_type->name3() ); // if user has bothered to specify mol file, don't look in pdb components dictionary
 		}
 	} else if ( mode() == CENTROID_t ) {
-		utility::vector1< ResidueTypeOP > extra_residues( extra_nonparam_restypes_from_commandline() );
-		for ( ResidueTypeOP const & rsd_type : extra_residues ) {
+		utility::vector1< MutableResidueTypeOP > extra_residues( extra_nonparam_restypes_from_commandline() );
+		for ( MutableResidueTypeOP const & rsd_type : extra_residues ) {
 			if ( has_name( rsd_type->name() ) ) {
 				TR << "Skipping re-addition of non-params residue type " << rsd_type->name() << " as it already exists from params files." << std::endl;
 				continue;
 			}
-			ResidueTypeOP centroid_type( make_centroid( *rsd_type ) );
+			MutableResidueTypeOP centroid_type( new MutableResidueType( *make_centroid( *rsd_type ) ) );
 			if ( centroid_type ) {
 				TR << "Adding " << centroid_type->name() << " as converted centroid type. " << std::endl;
 				add_base_residue_type( centroid_type );
@@ -334,11 +337,11 @@ GlobalResidueTypeSet::params_files_from_commandline() const {
 	return extra_params_files;
 }
 
-utility::vector1< ResidueTypeOP >
+utility::vector1< MutableResidueTypeOP >
 GlobalResidueTypeSet::extra_nonparam_restypes_from_commandline() const {
 	using namespace  basic::options;
 
-	utility::vector1< ResidueTypeOP > extra_residues;
+	utility::vector1< MutableResidueTypeOP > extra_residues;
 
 	// Regardless of what the current ResidueTypeSet is, we want to load these residues in full atom mode
 	// It's the responsibility of the caller to convert, if necessary.
@@ -356,7 +359,7 @@ GlobalResidueTypeSet::extra_nonparam_restypes_from_commandline() const {
 		sdf::MolFileIOReader molfile_reader;
 		for ( utility::file::FileName const & filename : option[OptionKeys::in::file::extra_res_mol] ) {
 			utility::vector1< sdf::MolFileIOMoleculeOP > data( molfile_reader.parse_file( filename ) );
-			utility::vector1< ResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( data, /* load_rotamers= */ true, atom_types, elements, mm_atom_types ) );
+			utility::vector1< MutableResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( data, /* load_rotamers= */ true, atom_types, elements, mm_atom_types ) );
 			TR << "Reading " << rtvec.size() << " residue types from the " << data.size() << " models in " << filename << std::endl;
 			extra_residues.append( rtvec );
 		}
@@ -367,7 +370,7 @@ GlobalResidueTypeSet::extra_nonparam_restypes_from_commandline() const {
 		mmCIF::mmCIFParser mmCIF_parser;
 		for ( utility::file::FileName const & filename : option[OptionKeys::in::file::extra_res_mmCIF] ) {
 			utility::vector1< sdf::MolFileIOMoleculeOP> molecules( mmCIF_parser.parse( filename ) );
-			utility::vector1< ResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( molecules, true, atom_types, elements, mm_atom_types ) );
+			utility::vector1< MutableResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( molecules, true, atom_types, elements, mm_atom_types ) );
 			extra_residues.append( rtvec );
 		}
 	}
@@ -401,7 +404,7 @@ GlobalResidueTypeSet::load_residue_types_from_sql_database() {
 					{
 				//residue_name_file >> residue_name;
 				TR <<residue_name <<std::endl;
-				ResidueTypeOP new_residue(
+				MutableResidueTypeOP new_residue(
 					residue_database_interface.read_residuetype_from_database(
 					atom_type_set(),
 					element_set(),
@@ -417,7 +420,7 @@ GlobalResidueTypeSet::load_residue_types_from_sql_database() {
 		} else {
 			utility::vector1<std::string> residue_names_in_database( residue_database_interface.get_all_residues_in_database(db_session));
 			for ( Size index =1; index <= residue_names_in_database.size(); ++index ) {
-				ResidueTypeOP new_residue(
+				MutableResidueTypeOP new_residue(
 					residue_database_interface.read_residuetype_from_database(
 					atom_type_set(),
 					element_set(),
@@ -576,8 +579,7 @@ GlobalResidueTypeSet::deal_with_patch_special_cases()
 		for ( ResidueTypeCOP rsd_type : base_residue_types() ) {
 			if ( p->applies_to( *rsd_type ) ) {
 				if ( p->replaces( *rsd_type ) ) {
-					runtime_assert( rsd_type->finalized() );
-					ResidueTypeCOP rsd_type_new = p->apply( *rsd_type );
+					ResidueTypeCOP rsd_type_new( ResidueType::make( *p->apply( *rsd_type ) ) );
 					cache_object()->update_residue_type( rsd_type, rsd_type_new );
 					runtime_assert( update_base_residue_types_if_replaced( rsd_type, rsd_type_new ) );
 				}
@@ -590,11 +592,13 @@ GlobalResidueTypeSet::deal_with_patch_special_cases()
 	for ( PatchCOP p : patches() ) {
 		for ( ResidueTypeCOP rsd_type : base_residue_types() ) {
 			if ( p->applies_to( *rsd_type ) && ( p->adds_properties( *rsd_type ).has_value( "D_AA" ) || p->adds_properties(*rsd_type).has_value( "R_PEPTOID" ) ) ) {
-				ResidueTypeOP new_rsd_type = p->apply( *rsd_type );
-				new_rsd_type->base_name( new_rsd_type->name() ); //D-residues have their own base names.
-				new_rsd_type->reset_base_type_cop(); //This is now a base type, so its base type pointer must be NULL.
+				MutableResidueTypeOP patched_rsd_type = p->apply( *rsd_type );
+				patched_rsd_type->base_name( patched_rsd_type->name() ); //D-residues have their own base names.
+				patched_rsd_type->reset_base_type_cop(); //This is now a base type, so its base type pointer must be NULL.
 
-				add_base_residue_type( new_rsd_type );
+				add_base_residue_type( patched_rsd_type );
+
+				ResidueTypeCOP new_rsd_type( name_mapOP( patched_rsd_type->name() ) ); // We want the (potentially modified) version added to this RTS.
 
 				// Store the D-to-L and L-to-D mappings:
 				runtime_assert_string_msg(
@@ -610,12 +614,13 @@ GlobalResidueTypeSet::deal_with_patch_special_cases()
 			}
 
 			if ( p->applies_to( *rsd_type ) && p->adds_properties( *rsd_type ).has_value( "L_RNA" ) ) {
-				ResidueTypeOP new_rsd_type = p->apply( *rsd_type );
-				new_rsd_type->base_name( new_rsd_type->name() ); //L-RNA residues have their own base names.
-				new_rsd_type->reset_base_type_cop(); //This is now a base type, so its base type pointer must be NULL.
+				MutableResidueTypeOP patched_rsd_type = p->apply( *rsd_type );
+				patched_rsd_type->base_name( patched_rsd_type->name() ); //L-RNA residues have their own base names.
+				patched_rsd_type->reset_base_type_cop(); //This is now a base type, so its base type pointer must be NULL.
 
-				add_base_residue_type( new_rsd_type );
+				add_base_residue_type( patched_rsd_type );
 
+				ResidueTypeCOP new_rsd_type( name_mapOP( patched_rsd_type->name() ) ); // We want the (potentially modified) version added to this RTS.
 				// Store the D-to-L and L-to-D mappings -- in reverse, of course!
 				runtime_assert_string_msg(
 					l_to_d_mapping().count( new_rsd_type ) == 0,
@@ -670,10 +675,10 @@ GlobalResidueTypeSet::place_adducts() {
 	ResidueTypeCOPs residue_types = ResidueTypeFinder( *this ).base_property( DNA ).variant_exceptions( utility::tools::make_vector1( LOWER_TERMINUS_VARIANT, UPPER_TERMINUS_VARIANT, ADDUCT_VARIANT ) ).get_all_possible_residue_types();
 
 	for ( ResidueTypeCOP const & rsd : residue_types ) {
-		if ( !rsd || !rsd->finalized() ) continue;
+		if ( !rsd ) continue;
 		AdductMap count_map( blank_map );
 		utility::vector1< bool > add_mask( rsd->defined_adducts().size(), false  );
-		for ( ResidueTypeOP const & newtype : create_adduct_combinations( *rsd, add_map, count_map, add_mask, rsd->defined_adducts().begin() ) ) {
+		for ( MutableResidueTypeOP const & newtype : create_adduct_combinations( *rsd, add_map, count_map, add_mask, rsd->defined_adducts().begin() ) ) {
 			add_unpatchable_residue_type( newtype );
 		}
 	}
@@ -760,7 +765,7 @@ GlobalResidueTypeSet::lazy_load_base_type_already_write_locked( std::string cons
 	if ( cache_object()->has_generated_residue_type( rsd_base_name ) ) { return true; }
 	if ( cache_object()->is_prohibited( rsd_base_name ) ) { return false; }
 
-	core::chemical::ResidueTypeOP new_rsd_type;
+	core::chemical::MutableResidueTypeOP new_rsd_type;
 
 	// These are heuristics to figure out where to load the data from.
 
@@ -798,7 +803,7 @@ GlobalResidueTypeSet::lazy_load_base_type_already_write_locked( std::string cons
 }
 
 void
-GlobalResidueTypeSet::attempt_readin( std::string const & db_filename, std::string const & pdb_id, ResidueTypeOP & new_rsd_type, bool & found_file ) const {
+GlobalResidueTypeSet::attempt_readin( std::string const & db_filename, std::string const & pdb_id, MutableResidueTypeOP & new_rsd_type, bool & found_file ) const {
 	utility::io::izstream filestream( db_filename );
 	if ( filestream.good() ) found_file = true;
 	std::string entry( "data_" + pdb_id );
@@ -845,10 +850,10 @@ GlobalResidueTypeSet::attempt_readin( std::string const & db_filename, std::stri
 }
 
 /// @brief Load a residue type from the components dictionary.
-ResidueTypeOP
+MutableResidueTypeOP
 GlobalResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 	static THREAD_LOCAL bool warned_about_missing_file( false );
-	core::chemical::ResidueTypeOP new_rsd_type = nullptr;
+	core::chemical::MutableResidueTypeOP new_rsd_type = nullptr;
 
 	// First try the 'overriding' components filenames -- user customized overrides.
 	// Then, look at the overrides text file for 'default overrides' (replacing types
@@ -934,8 +939,8 @@ GlobalResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 		}
 
 	}
-	return ResidueTypeOP( nullptr );
 
+	return nullptr;
 }
 
 } // pose

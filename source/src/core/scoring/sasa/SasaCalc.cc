@@ -295,7 +295,7 @@ SasaCalc::calc_per_res_sasas(const pose::Pose & pose) {
 			if ( ! atom_subset_[atomid] || atom_sasa_[atomid] <= 0.0 ) continue;
 			if ( is_sc ) sasa_sc += atom_sasa_[atomid];
 
-			core::Real charge = res.type().atom(x).charge();
+			core::Real charge = res.type().atom_charge(x);
 			hsasa_rel = hsasa_rel + atom_sasa_[atomid] * (1- std::abs(charge));
 
 			//Options do not make sense together and will give wrong results.
@@ -310,7 +310,7 @@ SasaCalc::calc_per_res_sasas(const pose::Pose & pose) {
 
 
 			//If we are excluding polars, skip the polar from inclusion into hsasa if charge is too great.
-			if ( exclude_polar_all_in_hsasa_   && std::abs(res.type().atom(x).charge()) > polar_charge_cutoff_ ) {
+			if ( exclude_polar_all_in_hsasa_   && std::abs(res.type().atom_charge(x)) > polar_charge_cutoff_ ) {
 				continue;
 			}
 

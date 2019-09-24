@@ -7,21 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/chemical/ResidueLoaderOptions.fwd.hh
-/// @brief forward headers for the Residue Loader Options
-/// @author Sam DeLuca
+/// @file
+/// @brief A ICoord record object for a MutableResidueType
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
-#ifndef INCLUDED_core_chemical_ResidueLoaderOptions_fwd_hh
-#define INCLUDED_core_chemical_ResidueLoaderOptions_fwd_hh
 
+#ifndef INCLUDED_core_chemical_MutableICoorRecord_fwd_hh
+#define INCLUDED_core_chemical_MutableICoorRecord_fwd_hh
+
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace chemical {
 
-class ResidueLoaderOptions;
+class MutableICoorRecord;
 
+typedef  utility::pointer::shared_ptr< MutableICoorRecord >  MutableICoorRecordOP;
+typedef  utility::pointer::shared_ptr< MutableICoorRecord const >  MutableICoorRecordCOP;
 }
 }
 
 #endif
-

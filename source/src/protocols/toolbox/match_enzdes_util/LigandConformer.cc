@@ -398,7 +398,7 @@ LigandConformer::create_collcheck_ordering(
 
 }
 
-core::chemical::ResidueType
+core::chemical::ResidueType const &
 LigandConformer::get_lig_restype() const{
 	return * ligand_restype_;
 }

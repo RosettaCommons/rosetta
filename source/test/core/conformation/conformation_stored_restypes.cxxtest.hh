@@ -19,6 +19,7 @@
 #include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ElementSet.hh>
+#include <core/chemical/Element.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 
@@ -273,8 +274,9 @@ public:
 
 		// Double check that the Atom TypeSet reset works
 		TS_ASSERT( reconst_restype->has("O1") );
-		TS_ASSERT( reconst_restype->atom("O1").element_type() != nullptr );
-		TS_ASSERT_EQUALS( reconst_restype->atom("O1").element_type()->get_chemical_symbol(), "O" );
+		auto element_type = reconst_restype->element_type( reconst_restype->atom_index("O1") );
+		TS_ASSERT( element_type != nullptr );
+		TS_ASSERT_EQUALS( element_type->get_chemical_symbol(), "O" );
 
 
 		TR << "Done with serialization test." << std::endl;

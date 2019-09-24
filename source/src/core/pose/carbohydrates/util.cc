@@ -970,9 +970,9 @@ find_neighbor( Pose &pose, core::Size res_pos, core::Size atom_nr, std::pair<cor
 	core::Real min_cutoff = 1.0;
 	for ( core::Size i = res_pos + 1; i <= res_pos + 20; ++res_pos ) {
 		conformation::ResidueOP res( new conformation::Residue( pose.residue( i ) ) );
-		chemical::ResidueTypeOP RT( new chemical::ResidueType( pose.residue_type( i ) ) );
+		chemical::ResidueType const & RT( pose.residue_type( i ) );
 		// Loop through main chain atoms of potential neighbor residue
-		for ( unsigned long mc_atom : RT->mainchain_atoms() ) {
+		for ( unsigned long mc_atom : RT.mainchain_atoms() ) {
 			core::Real distance = pose.residue(res_pos).xyz( atom_nr ).distance(pose.residue( i ).xyz( mc_atom ));
 			if ( (distance < max_cutoff) | (distance > min_cutoff) ) {
 				neighbor = std::make_pair(i,mc_atom);
@@ -994,10 +994,10 @@ setup_existing_glycans(Pose &pose)
 		conformation::ResidueOP res( new conformation::Residue( pose.residue( res_pos ) ) );
 		if ( res->is_carbohydrate() ) {
 			//core::Size chain = res->chain();
-			chemical::ResidueTypeOP RT( new chemical::ResidueType( pose.residue_type(res_pos) ) );
-			for ( auto atom = RT->mainchain_atoms().begin(); atom != RT->mainchain_atoms().end(); ++atom ) {
+			chemical::ResidueType const & RT( pose.residue_type(res_pos) );
+			for ( auto atom = RT.mainchain_atoms().begin(); atom != RT.mainchain_atoms().end(); ++atom ) {
 				// Find the fisrt exocyclic oxigen
-				std::string atom_name = RT->atom_name(*atom);
+				std::string atom_name = RT.atom_name(*atom);
 				if ( atom_name.find('O') != std::string::npos ) {  // is oxigen
 					std::pair< core::Size,core::Size  > neighbor = std::make_pair(0,0);
 					find_neighbor(pose,res_pos,*atom,neighbor);

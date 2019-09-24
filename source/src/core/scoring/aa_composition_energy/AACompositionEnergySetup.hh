@@ -39,6 +39,7 @@
 #include <string>
 #include <utility/vector1.hh>
 #include <math.h>
+#include <utility/excn/Exceptions.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

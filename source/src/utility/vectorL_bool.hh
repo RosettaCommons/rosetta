@@ -284,6 +284,25 @@ public: // Conversion
 
 public: // Methods
 
+	/// @brief  Append another vectorL to the back of the vector.
+	/// @author Labonte <JWLabonte@jhu.edu>
+	inline
+	vectorL &
+	append( vectorL const & v )
+	{
+		insert( end(), v.begin(), v.end() );
+		return *this;
+	}
+
+	/// @brief Deletes the index from the vector.
+	inline
+	void
+	erase_index( index_type const i )
+	{
+		debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
+		debug_assert( static_cast< size_type >( i - l_ ) < super::size() ); // Upper bound check
+		super::erase( super::begin() + ( i - l_ ) );
+	}
 
 	/// @brief Shrink the index map to remove unused capacity
 	inline

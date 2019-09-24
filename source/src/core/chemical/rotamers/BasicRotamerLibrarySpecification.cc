@@ -51,7 +51,10 @@ BasicRotamerLibrarySpecificationCreator::keyname() const {
 
 BasicRotamerLibrarySpecification::BasicRotamerLibrarySpecification() = default;
 
-BasicRotamerLibrarySpecification::~BasicRotamerLibrarySpecification() = default;
+RotamerLibrarySpecificationOP
+BasicRotamerLibrarySpecification::clone() const {
+	return utility::pointer::make_shared< BasicRotamerLibrarySpecification >( *this );
+}
 
 std::string
 BasicRotamerLibrarySpecification::keyname() const {

@@ -63,7 +63,11 @@ PDBRotamerLibrarySpecification::PDBRotamerLibrarySpecification(std::istream & in
 		utility_exit_with_message("Must provide a file name with PDB Rotamers input");
 	}
 }
-PDBRotamerLibrarySpecification::~PDBRotamerLibrarySpecification() = default;
+
+RotamerLibrarySpecificationOP
+PDBRotamerLibrarySpecification::clone() const {
+	return utility::pointer::make_shared< PDBRotamerLibrarySpecification >( *this );
+}
 
 std::string
 PDBRotamerLibrarySpecification::keyname() const {

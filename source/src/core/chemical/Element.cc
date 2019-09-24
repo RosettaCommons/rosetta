@@ -52,6 +52,7 @@ const std::string &Element::get_property_name( const Element::Properties &PROPER
 
 //! @brief construct undefined element
 Element::Element() :
+	index_(0),
 	element_( core::chemical::element::UnknownElement ),
 	atomic_number_( utility::get_undefined_size() ),
 	period_( utility::get_undefined_size() ),
@@ -84,6 +85,7 @@ Element::Element
 	const core::Real VDW_RADIUS,
 	ElectronConfiguration const & ELECTRON_CONFIGURATION
 ) :
+	index_(0),
 	atomic_number_( ATOMIC_NUMBER),
 	period_( PERIOD),
 	main_group_( MAIN_GROUP),

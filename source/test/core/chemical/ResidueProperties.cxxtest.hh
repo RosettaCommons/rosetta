@@ -16,6 +16,7 @@
 #include <test/core/init_util.hh>
 
 // Unit header
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 
@@ -54,10 +55,11 @@ public:  // Standard methods //////////////////////////////////////////////////
 		ElementSetCOP element_types = manager->element_set( "default" );
 		MMAtomTypeSetCOP mm_atom_types = manager->mm_atom_type_set( FA_STANDARD );
 		orbitals::OrbitalTypeSetCOP orbital_types = manager->orbital_type_set( FA_STANDARD );
-		residue_type_ = utility::pointer::make_shared< ResidueType >( atom_types, element_types, mm_atom_types, orbital_types );
-		residue_type_->name( "test_residue" );
+		MutableResidueType mrt(  atom_types, element_types, mm_atom_types, orbital_types );
+		mrt.name( "test_residue" );
+		residue_type_ = ResidueType::make( mrt );
 
-		test_properties_ = utility::pointer::make_shared< ResidueProperties >( residue_type_.get() );
+		test_properties_ = utility::pointer::make_shared< ResidueProperties >( *residue_type_ );
 
 		TR << "Finished setting up ResiduePropertiesTests." << std::endl;
 		TR.flush();
@@ -190,7 +192,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 
 private:  // Private data /////////////////////////////////////////////////////
-	core::chemical::ResidueTypeOP residue_type_;
+	core::chemical::ResidueTypeCOP residue_type_;
 	core::chemical::ResiduePropertiesOP test_properties_;
 
 };  // class ResiduePropertiesTests

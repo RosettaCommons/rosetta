@@ -140,6 +140,9 @@ public:
 	static bool
 	skip_atom( core::conformation::Residue const & rsd, core::Size const atom_index, SasaMethodHPMode const hp_mode );
 
+	/// @brief Classify an atom on a residue as "polar" for the purposes of SASA
+	static bool
+	is_polar_atom( core::conformation::Residue const & rsd, core::Size const atom_index );
 
 protected:
 	Real probe_radius_;

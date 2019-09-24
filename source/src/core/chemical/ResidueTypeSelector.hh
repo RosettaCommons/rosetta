@@ -12,7 +12,7 @@
 /// @details
 ///
 ///     The ResidueTypeSelector is an object the picks out a subset of ResidueTypes, via a
-///     bool operator[](ResidueType const &) method.  It is implemented as a logical AND of individual constraints,
+///     bool operator[](ResidueTypeBase const &) method.  It is implemented as a logical AND of individual constraints,
 ///     each of which typically has an OR structure.  The system allows NOT at the beginning.
 ///
 ///     AA aa1 aa2 aa3
@@ -41,7 +41,7 @@
 #include <core/chemical/ResidueTypeSelector.fwd.hh>
 
 // Package headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeBase.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/ResidueProperties.hh>
 
@@ -79,7 +79,7 @@ public:
 
 	virtual
 	bool
-	operator[]( ResidueType const & rsd ) const = 0;
+	operator[]( ResidueTypeBase const & rsd ) const = 0;
 
 private:
 	bool desired_result_;
@@ -110,7 +110,7 @@ public:
 
 	// select by AA type
 	bool
-	operator[]( ResidueType const & rsd ) const override {
+	operator[]( ResidueTypeBase const & rsd ) const override {
 		// left-hand side will be TRUE if rsd.aa() is present in our list of AA's
 		//std::cout << "Selector_AA: " << rsd.aa() << ' ' << aas_.size() << ' ' << desired_result() << std::endl;
 		return ( ( std::find( aas_.begin(), aas_.end(), rsd.aa() ) != aas_.end() ) == desired_result() );
@@ -144,7 +144,7 @@ public:
 
 	// select by AA type
 	bool
-	operator[]( ResidueType const & ) const override {
+	operator[]( ResidueTypeBase const & ) const override {
 		return b_flag_is_present_ == desired_result();
 	}
 
@@ -178,7 +178,7 @@ public:
 
 	// select by three-letter code
 	bool
-	operator[]( ResidueType const & rsd ) const override {
+	operator[]( ResidueTypeBase const & rsd ) const override {
 		return (  ( std::find( basenames_.begin(), basenames_.end(), rsd.base_name() ) != basenames_.end() ) == desired_result() );
 	}
 
@@ -211,7 +211,7 @@ public:
 
 	// select by three-letter code
 	bool
-	operator[]( ResidueType const & rsd ) const override {
+	operator[]( ResidueTypeBase const & rsd ) const override {
 		return (  ( std::find( name3s_.begin(), name3s_.end(), rsd.name3() ) != name3s_.end() ) == desired_result() );
 	}
 
@@ -243,7 +243,7 @@ public:
 	{}
 
 	bool
-	operator[]( ResidueType const & rsd ) const override {
+	operator[]( ResidueTypeBase const & rsd ) const override {
 		for ( std::string const & atom : atoms_ ) {
 			if ( ! rsd.has( atom ) ) {
 				return !desired_result();
@@ -285,7 +285,7 @@ public:
 	/// @brief Given a ResidueType, return a boolean value based on whether the ResidueType has the
 	/// property that this selector selects.
 	bool
-	operator[]( ResidueType const & rsd ) const override {
+	operator[]( ResidueTypeBase const & rsd ) const override {
 		//Check basic properties:
 		for ( auto const & prop : properties_ ) {
 			if ( rsd.has_property( prop ) ) return desired_result();
@@ -347,7 +347,7 @@ public:
 
 	// select by VARIANT_TYPE
 	bool
-	operator[]( ResidueType const & rsd ) const override {
+	operator[]( ResidueTypeBase const & rsd ) const override {
 		//Check standard variants:
 		for ( auto const & var : variants_ ) {
 			if ( rsd.has_variant_type( var ) ) return desired_result();
@@ -401,14 +401,7 @@ public:
 
 	/// @brief Select by the position at which the upper connection is attached.
 	bool
-	operator[](ResidueType const & rsd) const override {
-		if ( rsd.upper_connect_id() != 0 && rsd.has( position_ ) ) {
-			if ( rsd.atom_index( position_ ) == rsd.upper_connect_atom() ) {
-				return desired_result();
-			}
-		}
-		return !desired_result();
-	}
+	operator[](ResidueTypeBase const & rsd) const override;
 
 private:
 	std::string position_;  // This is the position label at which the upper connection is attached.
@@ -439,7 +432,7 @@ public:
 
 	// select by VARIANT_TYPE
 	bool
-	operator[]( ResidueType const & rsd ) const override {
+	operator[]( ResidueTypeBase const & rsd ) const override {
 		for ( auto const & variant : variants_ ) {
 			if ( !rsd.has_variant_type( variant ) ) return !desired_result(); // rsd is missing one of our variants
 		}
@@ -475,7 +468,7 @@ public:
 
 	// select by VARIANT_TYPE
 	bool
-	operator[]( ResidueType const & rsd ) const override {
+	operator[]( ResidueTypeBase const & rsd ) const override {
 		return ( rsd.properties().get_list_of_variants().empty() == desired_result() );
 	}
 #ifdef    SERIALIZATION
@@ -505,7 +498,7 @@ public:
 
 	// select by name1 type
 	bool
-	operator[]( ResidueType const & rsd ) const override {
+	operator[]( ResidueTypeBase const & rsd ) const override {
 		return ( ( rsd.name1() == name1_ ) == desired_result() );
 	}
 
@@ -540,7 +533,7 @@ public:
 
 	// [] operator: selector[ResidueType] => yes or no
 	bool
-	operator[]( ResidueType const & rsd ) const
+	operator[]( ResidueTypeBase const & rsd ) const
 	{
 		//std::cout << "ResidueTypeSelector::operator[] " << rsd.name() << ' ' << selectors_.size() << std::endl;
 		for ( uint i=1, i_end = selectors_.size(); i<= i_end; ++i ) {
@@ -607,7 +600,7 @@ public:
 
 
 	ResidueTypeSelector & // allow chaining
-	match_variants( ResidueType const & rsd_type_to_match )
+	match_variants( ResidueTypeBase const & rsd_type_to_match )
 	{
 		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueTypeSelectorSingle>( new Selector_MATCH_VARIANTS( rsd_type_to_match.properties().get_list_of_variants(), true ) ) );
 		return *this;

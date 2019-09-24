@@ -17,6 +17,8 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
+#include <core/chemical/ResidueTypeBase.fwd.hh>
 #include <core/chemical/VariantType.hh>
 
 // Utility headers
@@ -47,9 +49,14 @@ void modify_atom_properties_from_command_line(
 /// @brief Return a string representing the internal coordinates tree of this ResidueType.
 std::string formatted_icoord_tree( core::chemical::ResidueType const & restype );
 
+/// @brief Return a string representing the internal coordinates tree of this MutableResidueType (if any)
+std::string formatted_icoord_tree( core::chemical::MutableResidueType const & restype );
+
 /// @brief Utility to examine chi output.
 void print_chis( std::ostream & out, ResidueType const & res );
 
+/// @brief Utility to examine chi output.
+void print_chis( std::ostream & out, MutableResidueType const & res );
 
 /// @brief Replaces the deprecated "_p:" linker connecting ResidueType base names with their patch names with ":".
 std::string fixup_patches( std::string const & string_in );
@@ -57,18 +64,18 @@ std::string fixup_patches( std::string const & string_in );
 
 /// @brief  Are these two residues patched in exactly the same way, ignoring any VariantTypes in the list of exceptions?
 bool variants_match_with_exceptions(
-	ResidueType const & res1,
-	ResidueType const & res2,
+	ResidueTypeBase const & res1,
+	ResidueTypeBase const & res2,
 	utility::vector1< VariantType > list_of_variants_to_ignore );
 
 
 utility::vector1< VariantType > pH_mode_exceptions();
 
 /// @brief  Are these two residues patched in exactly the same way?
-bool variants_match( ResidueType const & res1, ResidueType const & res2 );
+bool variants_match( ResidueTypeBase const & res1, ResidueTypeBase const & res2 );
 
 /// @brief  Similar to variants_match(), but allows different adduct-modified states.
-bool nonadduct_variants_match( ResidueType const & res1, ResidueType const & res2 );
+bool nonadduct_variants_match( ResidueTypeBase const & res1, ResidueTypeBase const & res2 );
 
 /// @brief Get a list of those VariantTypes that affect termini.
 /// @author Vikram K. Mulligan.

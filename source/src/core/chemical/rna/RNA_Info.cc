@@ -22,8 +22,6 @@ namespace core {
 namespace chemical {
 namespace rna {
 
-using namespace ObjexxFCL;
-
 static basic::Tracer TR( "core.chemical.rna.RNA_Info" );
 
 ////////////////////////////////////////////////////////////
@@ -68,84 +66,83 @@ RNA_Info::~RNA_Info()= default;
 ////////////////////////////////////////////////////////////////////////
 
 void
-RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
-
-	residue_type_ = residue_type_in;
-	ResidueTypeCOP residue_type( residue_type_ );
+RNA_Info::update_derived_rna_data( ResidueType const & residue_type ){
 
 	is_virtual_.clear();
-	for ( Size i = 1; i <= residue_type->natoms(); i++ ) {
-		if ( residue_type->is_virtual( i ) ) {
+	for ( Size i = 1; i <= residue_type.natoms(); i++ ) {
+		if ( residue_type.is_virtual( i ) ) {
 			is_virtual_.push_back( true );
 		} else {
 			is_virtual_.push_back( false );
 		}
 	}
-	runtime_assert( is_virtual_.size() == residue_type->natoms() );
+	runtime_assert( is_virtual_.size() == residue_type.natoms() );
 
 	// There must be EITHER O2', a replacement like F2', or a virt.
-	if ( residue_type->has( "O2'" ) ) {
-		o2prime_index_ = residue_type->atom_index( "O2'" );
-	} else if ( residue_type->has( "F2'" ) ) {
-		o2prime_index_ = residue_type->atom_index( "F2'" );
+	if ( residue_type.has( "O2'" ) ) {
+		o2prime_index_ = residue_type.atom_index( "O2'" );
+	} else if ( residue_type.has( "F2'" ) ) {
+		o2prime_index_ = residue_type.atom_index( "F2'" );
 	} else {
 		o2prime_index_ = 0;
 	}
-	if ( residue_type->has( "HO2'" ) ) {
-		ho2prime_index_ = residue_type->atom_index("HO2'" );
+	if ( residue_type.has( "HO2'" ) ) {
+		ho2prime_index_ = residue_type.atom_index("HO2'" );
 	} else {
 		ho2prime_index_ = 0;
 	}
-	p_atom_index_  = residue_type->atom_index( "P" );
+	p_atom_index_  = residue_type.atom_index( "P" );
 
 	// Could be phosphorothioate
-	if ( residue_type->has( "OP2" ) ) {
-		op2_atom_index_ = residue_type->atom_index( "OP2" );
-	} else if ( residue_type->has( "O2P" ) ) { // should only be CCD derived
-		op2_atom_index_ = residue_type->atom_index( "O2P" );
+	if ( residue_type.has( "OP2" ) ) {
+		op2_atom_index_ = residue_type.atom_index( "OP2" );
+	} else if ( residue_type.has( "O2P" ) ) { // should only be CCD derived
+		op2_atom_index_ = residue_type.atom_index( "O2P" );
+	} else if ( residue_type.has( "SP2" ) ) {
+		op2_atom_index_ = residue_type.atom_index( "SP2" );
 	} else {
-		op2_atom_index_ = residue_type->atom_index( "SP2" );
+		op2_atom_index_ = residue_type.atom_index( "S2P" );
 	}
-	if ( residue_type->has( "OP1" ) ) {
-		op1_atom_index_ = residue_type->atom_index( "OP1" );
-	} else if ( residue_type->has( "O1P" ) ) { // should only be CCD derived
-		op2_atom_index_ = residue_type->atom_index( "O1P" );
+	if ( residue_type.has( "OP1" ) ) {
+		op1_atom_index_ = residue_type.atom_index( "OP1" );
+	} else if ( residue_type.has( "O1P" ) ) { // should only be CCD derived
+		op2_atom_index_ = residue_type.atom_index( "O1P" );
 	} else {
-		op1_atom_index_ = residue_type->atom_index( "SP1" );
+		op1_atom_index_ = residue_type.atom_index( "SP1" );
 	}
-	if ( residue_type->has( "O5'" ) ) {
-		o5prime_index_  = residue_type->atom_index( "O5'" );
+	if ( residue_type.has( "O5'" ) ) {
+		o5prime_index_  = residue_type.atom_index( "O5'" );
 	} else {
 		o5prime_index_ = 0; // TNA
 	}
 
-	if ( residue_type->has( "O3'" ) ) {
-		o3prime_index_  = residue_type->atom_index( "O3'" );
-	} else if ( residue_type->has( "N3'" ) ) {
-		o3prime_index_ = residue_type->atom_index( "N3'" ); // TNA
+	if ( residue_type.has( "O3'" ) ) {
+		o3prime_index_  = residue_type.atom_index( "O3'" );
+	} else if ( residue_type.has( "N3'" ) ) {
+		o3prime_index_ = residue_type.atom_index( "N3'" ); // TNA
 	} else {
 		o3prime_index_ = 0; // erp
 	}
 
-	if ( residue_type->has( "O4'" ) ) {
-		o4prime_index_ = residue_type->atom_index( "O4'" );
+	if ( residue_type.has( "O4'" ) ) {
+		o4prime_index_ = residue_type.atom_index( "O4'" );
 	} else {
-		o4prime_index_ = residue_type->atom_index( "S4'" );
+		o4prime_index_ = residue_type.atom_index( "S4'" );
 	}
-	c1prime_index_ = residue_type->atom_index( "C1'" );
-	c2prime_index_ = residue_type->atom_index( "C2'" );
-	c4prime_index_ = residue_type->atom_index( "C4'" );
-	c3prime_index_ = residue_type->atom_index( "C3'" );
-	if ( residue_type->has( "C5'" ) ) {
-		c5prime_index_ = residue_type->atom_index( "C5'" );
+	c1prime_index_ = residue_type.atom_index( "C1'" );
+	c2prime_index_ = residue_type.atom_index( "C2'" );
+	c4prime_index_ = residue_type.atom_index( "C4'" );
+	c3prime_index_ = residue_type.atom_index( "C3'" );
+	if ( residue_type.has( "C5'" ) ) {
+		c5prime_index_ = residue_type.atom_index( "C5'" );
 	} else {
 		o5prime_index_ = 0; // TNA
 	}
 	base_atom_list_.clear();
 
-	for ( Size i = 1; i <= residue_type->natoms(); i++ ) {
+	for ( Size i = 1; i <= residue_type.natoms(); i++ ) {
 		/*assume that chi # 1 is the base chi. chi_atoms_in[ 1 ][ 3 ] is the first base atom (either N1 or N9)*/
-		if ( residue_type->last_controlling_chi( i ) == 1 || ( i == residue_type->chi_atoms( 1 )[ 3 ] ) ) {
+		if ( residue_type.last_controlling_chi( i ) == 1 || ( i == residue_type.chi_atoms( 1 )[ 3 ] ) ) {
 			base_atom_list_.push_back( i );
 		}
 	}
@@ -153,7 +150,7 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 	is_RNA_base_.clear();
 	is_phosphate_.clear();
 
-	for ( Size i = 1; i <= residue_type->natoms(); i++ ) {
+	for ( Size i = 1; i <= residue_type.natoms(); i++ ) {
 
 		bool is_phosphate_atom = false;
 		if ( i == p_atom_index_  ) is_phosphate_atom = true;
@@ -161,12 +158,12 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 		if ( i == op1_atom_index_ ) is_phosphate_atom = true;
 		if ( i == o5prime_index_  ) is_phosphate_atom = true;
 		if ( i == o3prime_index_  ) is_phosphate_atom = true;
-		if ( residue_type->is_TNA() && i == o2prime_index_ ) is_phosphate_atom = true;
+		if ( residue_type.is_TNA() && i == o2prime_index_ ) is_phosphate_atom = true;
 
 		is_phosphate_.push_back( is_phosphate_atom );
 
 		/*assume that chi # 1 is the base chi, chi_atoms_in[ 1 ][3] is the index of the first RNA_base atom */
-		if ( ( residue_type->last_controlling_chi( i ) ) == 1 || ( i == residue_type->chi_atoms( 1 )[3] ) ) {
+		if ( ( residue_type.last_controlling_chi( i ) ) == 1 || ( i == residue_type.chi_atoms( 1 )[3] ) ) {
 			is_RNA_base_.push_back( true );
 		} else {
 			is_RNA_base_.push_back( false );
@@ -174,13 +171,13 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 
 	}
 
-	runtime_assert( is_RNA_base_.size() == residue_type->natoms() );
-	runtime_assert( is_phosphate_.size() == residue_type->natoms() );
+	runtime_assert( is_RNA_base_.size() == residue_type.natoms() );
+	runtime_assert( is_phosphate_.size() == residue_type.natoms() );
 
-	if ( ( residue_type->atoms_last_controlled_by_chi( 1 ).size() + 1 ) != base_atom_list_.size() ) {
-		std::cout << "residue_type_->atoms_last_controlled_by_chi( 1 ).size() = " << residue_type->atoms_last_controlled_by_chi( 1 ).size() << std::endl;
+	if ( ( residue_type.atoms_last_controlled_by_chi( 1 ).size() + 1 ) != base_atom_list_.size() ) {
+		std::cout << "residue_type.atoms_last_controlled_by_chi( 1 ).size() = " << residue_type.atoms_last_controlled_by_chi( 1 ).size() << std::endl;
 		std::cout << "base_atom_list_.size() = " << base_atom_list_.size() << std::endl;
-		utility_exit_with_message( "( residue_type_->atoms_last_controlled_by_chi( 1 ).size() + 1 ) != base_atom_list_.size()" );
+		utility_exit_with_message( "( residue_type.atoms_last_controlled_by_chi( 1 ).size() + 1 ) != base_atom_list_.size()" );
 	}
 
 	chi_number_pseudoalpha_ = 0;
@@ -189,8 +186,8 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 	chi_number_pseudoepsilon_ = 0;
 	chi_number_pseudozeta_ = 0;
 
-	for ( Size ii = 1; ii <= residue_type->nchi(); ii++ ) {
-		std::string const chi_atom_name = residue_type->atom_name( residue_type->chi_atoms( ii )[ 4 ] );
+	for ( Size ii = 1; ii <= residue_type.nchi(); ii++ ) {
+		std::string const chi_atom_name = residue_type.atom_name( residue_type.chi_atoms( ii )[ 4 ] );
 		if ( chi_atom_name == "XO5'" ) {
 			chi_number_pseudogamma_ = ii;
 		} else if ( chi_atom_name == "XP" ) {
@@ -210,8 +207,9 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 ////////////////////////////////////////////////////////////
 // ugh, sorry this was hard-coded by Parin.
 // should not be that hard to fill in automatically, though.
+// Static function, can't access any member data
 utility::vector1< Size > const
-RNA_Info::figure_out_chi_order() const {
+RNA_Info::figure_out_chi_order(ResidueType const & residue_type) {
 
 	utility::vector1< Size > chi_order;
 	chi_order.push_back( 4 );  //chi_1 is furthest [nucleosidic chi]
@@ -220,9 +218,8 @@ RNA_Info::figure_out_chi_order() const {
 	chi_order.push_back( 2 );  //chi_4 is 2nd furthest (the choice between chi_4 and chi 3 is somewhat arbitrary) [2'-OH]
 
 	// further chis get bigger numbers?
-	ResidueTypeCOP residue_type( residue_type_ );
-	if ( residue_type->nchi() > 4 ) {
-		for ( Size ii = 5; ii <= residue_type->nchi(); ++ii ) {
+	if ( residue_type.nchi() > 4 ) {
+		for ( Size ii = 5; ii <= residue_type.nchi(); ++ii ) {
 			// This might go poorly for multi-sidechain modifications but this is rarely an issue. Important to start from something!
 			chi_order.push_back( ii );
 		}
@@ -237,21 +234,20 @@ RNA_Info::figure_out_chi_order() const {
 	return chi_order;
 }
 
-////////////////////////////////////////////////////////////
-///WARNING THIS FUNCTION SHOULD NOT ACCESS ANY DATA of the RNA_Info object itself since at this point it is not yet updated!
+// Static function, can't access any member data
 void
-RNA_Info::rna_note_chi_controls_atom( Size const chi, Size const atomno,
+RNA_Info::rna_note_chi_controls_atom( ResidueType const & residue_type,
+	Size const chi, Size const atomno,
 	utility::vector1< core::Size >  & last_controlling_chi,
-	utility::vector1< Size > const & chi_order ) const {
+	utility::vector1< Size > const & chi_order ) {
 
 	//RNA require special treatment: Parin Sripakdeevong, June 26, 2011
 	//1) there are 4 chi torsions.
 	//2)The chi are not ordered from nearest to furthest from mainchain like in Protein.
 	//   The sidechain also contain 2 branch (RNA base and 2'OH sidechains)
 	//3)chi_2 is NEAREST. Then branch to chi_3 and chi_4. then chi_3 connects to chi_1 which IS FURTHEST!
-	ResidueTypeCOP residue_type( residue_type_ );
-	runtime_assert( residue_type->nchi() >= 3 );
-	runtime_assert ( chi <= residue_type->nchi() );
+	runtime_assert( residue_type.nchi() >= 3 );
+	runtime_assert ( chi <= residue_type.nchi() );
 	runtime_assert ( chi >= 1 );
 
 	if ( last_controlling_chi[ atomno ] != 0 ) {
@@ -265,57 +261,52 @@ RNA_Info::rna_note_chi_controls_atom( Size const chi, Size const atomno,
 
 	last_controlling_chi[ atomno ] = chi;
 
-	AtomIndices const & nbrs( residue_type->bonded_neighbor( atomno ) );
+	AtomIndices const & nbrs( residue_type.bonded_neighbor( atomno ) );
 	for ( Size ii = 1; ii <= nbrs.size(); ++ii ) {
-		if ( residue_type->atom_base( nbrs[ ii ] ) == atomno ) {
-			rna_note_chi_controls_atom( chi, nbrs[ ii ],
+		if ( residue_type.atom_base( nbrs[ ii ] ) == atomno ) {
+			rna_note_chi_controls_atom( residue_type, chi, nbrs[ ii ],
 				last_controlling_chi, chi_order );
 		}
 	}
 
 }
 
-
-////////////////////////////////////////////////////////////
-///WARNING THIS FUNCTION SHOULD NOT ACCESS ANY DATA of the RNA_Info object itself since at this point it is not yet updated!
-///ALSO SHOULD MAKE THIS FUNCTION A CONST FUNCTION!
+// Static function, can't access any member data
 void
-RNA_Info::rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in,
+RNA_Info::rna_update_last_controlling_chi( ResidueType const & residue_type,
 	utility::vector1< core::Size >  & last_controlling_chi,
-	utility::vector1< AtomIndices > & atoms_last_controlled_by_chi ){
-	residue_type_ = residue_type_in;
-	ResidueTypeCOP residue_type( residue_type_ );
+	utility::vector1< AtomIndices > & atoms_last_controlled_by_chi ) {
 
 	last_controlling_chi.clear(); //figure this out
 	atoms_last_controlled_by_chi.clear(); //figure this out!
 
 	//RNA requires special treatment: Parin Sripakdeevong, Juen 26, 2011
-	Size const nchi = residue_type->nchi();
-	last_controlling_chi.resize( residue_type->natoms() );
+	Size const nchi = residue_type.nchi();
+	last_controlling_chi.resize( residue_type.natoms() );
 	std::fill( last_controlling_chi.begin(), last_controlling_chi.end(), 0 );
 
-	utility::vector1< Size > const & chi_order = figure_out_chi_order();
+	utility::vector1< Size > const & chi_order = figure_out_chi_order(residue_type);
 
 	for ( Size ii = nchi; ii >= 1; --ii ) {
 
 		// This doesn't matter SO much and can break some residues.
 		// AMW: don't skip this for chemically modified residues. Then you miss
 		// all their important extra chis!
-		if ( residue_type->is_canonical_nucleic() && ii > chi_order.size() ) continue;
+		if ( residue_type.is_canonical_nucleic() && ii > chi_order.size() ) continue;
 
 		/// Note children of atom 3 of chi_ii as being controlled by chi ii.
-		if ( residue_type->chi_atoms( ii ).size() == 0 ) continue;
-		Size const iiat3 = residue_type->chi_atoms( ii )[ 3 ]; // atom 3
-		Size const iiat2 = residue_type->chi_atoms( ii )[ 2 ]; // atom 2
+		if ( residue_type.chi_atoms( ii ).size() == 0 ) continue;
+		Size const iiat3 = residue_type.chi_atoms( ii )[ 3 ]; // atom 3
+		Size const iiat2 = residue_type.chi_atoms( ii )[ 2 ]; // atom 2
 
-		Size const iiat3base = residue_type->atom_base( iiat3 ); // don't go back to base of atom.
-		AtomIndices const & ii_nbrs( residue_type->bonded_neighbor( iiat3 ) );
+		Size const iiat3base = residue_type.atom_base( iiat3 ); // don't go back to base of atom.
+		AtomIndices const & ii_nbrs( residue_type.bonded_neighbor( iiat3 ) );
 
 		for ( Size const jj_atom : ii_nbrs ) {
-			if ( residue_type->atom_base( jj_atom ) == iiat3 &&
+			if ( residue_type.atom_base( jj_atom ) == iiat3 &&
 					iiat3base != jj_atom  &&
 					iiat2 != jj_atom ) {
-				rna_note_chi_controls_atom( ii, jj_atom,
+				rna_note_chi_controls_atom( residue_type, ii, jj_atom,
 					last_controlling_chi,
 					chi_order );
 			}
@@ -326,7 +317,7 @@ RNA_Info::rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in,
 	/// Now compute the atoms_last_controlled_by_chi_ arrays.
 	/// get ready to allocate space in the atoms_last_controlled_by_chi_ arrays
 	utility::vector1< Size > natoms_for_chi( nchi, 0 );
-	for ( Size ii = 1; ii <= residue_type->natoms(); ++ii ) {
+	for ( Size ii = 1; ii <= residue_type.natoms(); ++ii ) {
 		if ( last_controlling_chi[ ii ] != 0 ) {
 			++natoms_for_chi[ last_controlling_chi[ ii ] ];
 		}
@@ -340,18 +331,18 @@ RNA_Info::rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in,
 	}
 
 	/// fill the arrays
-	for ( Size ii = 1; ii <= residue_type->natoms(); ++ii ) {
+	for ( Size ii = 1; ii <= residue_type.natoms(); ++ii ) {
 		if ( last_controlling_chi[ ii ] != 0 ) {
 			atoms_last_controlled_by_chi[ last_controlling_chi[ ii ]].push_back( ii );
 		}
 	}
 
 	// if ( nchi > 8 ){
-	//  TR << residue_type_->name() << std::endl;
+	//  TR << residue_type.name() << std::endl;
 	//  for ( Size ii = 1; ii <= nchi; ++ii ) {
 	//   TR << "chi " << ii << " controls: ";
 	//   for ( Size jj = 1; jj <= atoms_last_controlled_by_chi[ ii ].size(); jj++ ){
-	//    TR << ' ' << residue_type_->atom_name( atoms_last_controlled_by_chi[ ii ][ jj ] );
+	//    TR << ' ' << residue_type.atom_name( atoms_last_controlled_by_chi[ ii ][ jj ] );
 	//   }
 	//   TR << std::endl;
 	//  }

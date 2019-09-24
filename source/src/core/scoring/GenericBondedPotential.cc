@@ -110,11 +110,6 @@ bin_from_bond(core::chemical::BondName bn, core::chemical::BondRingness br) {
 	return ((core::Size)idx);
 }
 
-core::Size
-bin_from_bond(core::chemical::Bond const &b) {
-	return bin_from_bond(b.bond_name(), b.ringness());
-}
-
 // helper class to convert string specification of bondorders to indices
 //   subset of SMARTS chemical description language
 // everything is remapped via Rosetta's "bond" type
@@ -462,11 +457,11 @@ GenericBondedPotential::lookup_angle_params(
 
 GenTorsionParams const &
 GenericBondedPotential::lookup_tors_params(
-	core::chemical::Bond const &bt, Size type1, Size type2, Size type3, Size type4
+	core::chemical::BondName bn, core::chemical::BondRingness br, Size type1, Size type2, Size type3, Size type4
 ) const {
 	if ( !defined_atom_types_[type1] || !defined_atom_types_[type2] || !defined_atom_types_[type3]|| !defined_atom_types_[type4] ) return null_tors_param;
 
-	core::Size btidx = bin_from_bond(bt);
+	core::Size btidx = bin_from_bond(bn, br);
 
 	//fd look up tgt with best multiplicity
 	auto it = tors_lookup_.find( get_parameter_hash(btidx, type1, type2, type3, type4) );
@@ -991,7 +986,7 @@ GenericBondedPotential::residue_energy(
 			( static_cast< GenBondedExclInfo const & >( pose.data().get( pose::datacache::CacheableDataType::GEN_BONDED_EXCL_INFO ) ) );
 		rsd_excl_info = excl_info.get_residue_data( rsd.type() );
 	} else {
-		rsd_excl_info = ResidueExclParamsCOP( new ResidueExclParams( rsd.type(), score_full, score_hybrid ) );
+		rsd_excl_info = ResidueExclParamsCOP( new ResidueExclParams( rsd.type_ptr(), score_full, score_hybrid ) );
 	}
 
 	// skip if fully excluded
@@ -1050,8 +1045,8 @@ GenericBondedPotential::residue_pair_energy(
 		res1_excl_info = excl_info.get_residue_data( resLower.type() );
 		res2_excl_info = excl_info.get_residue_data( resUpper.type() );
 	} else {
-		res1_excl_info = ResidueExclParamsCOP( new ResidueExclParams( rsd1.type(), score_full, score_hybrid ) );
-		res2_excl_info = ResidueExclParamsCOP( new ResidueExclParams( rsd2.type(), score_full, score_hybrid ) );
+		res1_excl_info = ResidueExclParamsCOP( new ResidueExclParams( rsd1.type_ptr(), score_full, score_hybrid ) );
+		res2_excl_info = ResidueExclParamsCOP( new ResidueExclParams( rsd2.type_ptr(), score_full, score_hybrid ) );
 	}
 
 	//ResidueExclParamsCOP res1_excl_info; = excl_info.get_residue_data( resLower.type() );
@@ -1093,7 +1088,7 @@ GenericBondedPotential::residue_derivatives(
 			( static_cast< GenBondedExclInfo const & >( pose.data().get( pose::datacache::CacheableDataType::GEN_BONDED_EXCL_INFO ) ) );
 		rsd_excl_info = excl_info.get_residue_data( rsd.type() );
 	} else {
-		rsd_excl_info = ResidueExclParamsCOP( new ResidueExclParams( rsd.type(), score_full, score_hybrid ) );
+		rsd_excl_info = ResidueExclParamsCOP( new ResidueExclParams( rsd.type_ptr(), score_full, score_hybrid ) );
 	}
 	// skip if fully excluded
 	if ( rsd_excl_info->fully_excluded_1b() ) return; // still rsd_excl_info can have 2b info
@@ -1144,8 +1139,8 @@ GenericBondedPotential::residue_pair_derivatives(
 		res1_excl_info = excl_info.get_residue_data( resLower.type() );
 		res2_excl_info = excl_info.get_residue_data( resUpper.type() );
 	} else {
-		res1_excl_info = ResidueExclParamsCOP( new ResidueExclParams( rsd1.type(), score_full, score_hybrid ) );
-		res2_excl_info = ResidueExclParamsCOP( new ResidueExclParams( rsd2.type(), score_full, score_hybrid ) );
+		res1_excl_info = ResidueExclParamsCOP( new ResidueExclParams( rsd1.type_ptr(), score_full, score_hybrid ) );
+		res2_excl_info = ResidueExclParamsCOP( new ResidueExclParams( rsd2.type_ptr(), score_full, score_hybrid ) );
 	}
 
 	eval_residue_pair_energy_and_derivative_bond(
@@ -1520,10 +1515,9 @@ GenericBondedPotential::eval_residue_energy_and_derivative_torsion(
 			}
 			continue; // boolean
 		}
-		core::chemical::VD vd_j = rsd.type().atom_vertex(atm_j);
-		core::chemical::VD vd_k = rsd.type().atom_vertex(atm_k);
+
 		GenTorsionParams const &t_param_ij = lookup_tors_params(
-			rsd.type().bond( vd_j, vd_k ),
+			rsd.type().bond_type(atm_j,atm_k), rsd.type().bond_ringness(atm_j,atm_k),
 			rsd.atom_type_index(atm_i), rsd.atom_type_index(atm_j),
 			rsd.atom_type_index(atm_k), rsd.atom_type_index(atm_l) );
 
@@ -1660,10 +1654,8 @@ GenericBondedPotential::eval_residue_pair_energy_and_derivative_torsion(
 				}
 			}
 
-			core::chemical::VD vd_j = rsd1.type().atom_vertex(jj_atom2);
-			core::chemical::VD vd_k = rsd1.type().atom_vertex(resconn_atomno1);
 			GenTorsionParams const &t_param_ij = lookup_tors_params(
-				rsd1.type().bond( vd_j, vd_k ),
+				rsd1.type().bond_type(jj_atom2,resconn_atomno1), rsd1.type().bond_ringness(jj_atom2,resconn_atomno1),
 				rsd1.atom_type_index(jj_atom1) ,
 				rsd1.atom_type_index(jj_atom2) ,
 				rsd1.atom_type_index(resconn_atomno1),
@@ -1750,11 +1742,10 @@ GenericBondedPotential::eval_residue_pair_energy_and_derivative_torsion(
 					continue; // boolean
 				}
 			}
-			core::chemical::VD vd_j = rsd2.type().atom_vertex(resconn_atomno2);
-			core::chemical::VD vd_k = rsd2.type().atom_vertex(jj_atom3);
+
 			// torsion is r1.resconn_atomno1 / r2.resconn_atomno2 / r2.jj_atom3 / r2.jj_atom4
 			GenTorsionParams const &t_param_ij = lookup_tors_params(
-				rsd2.type().bond( vd_j, vd_k ),
+				rsd2.type().bond_type(resconn_atomno2,jj_atom3), rsd2.type().bond_ringness(resconn_atomno2,jj_atom3),
 				rsd1.atom_type_index(resconn_atomno1) ,
 				rsd2.atom_type_index(resconn_atomno2) ,
 				rsd2.atom_type_index(jj_atom3),
@@ -1845,15 +1836,12 @@ GenericBondedPotential::eval_residue_pair_energy_and_derivative_torsion(
 					}
 				}
 
-				// no "Bond" associated with inter-residue connections
 				//   assume double bond non-ring for protein, single bond non-ring for all others
 				//   if we ever want the concept of "multi-residue ligands" this will need to be addressed
-				core::chemical::Bond tempbond(
-					1.0, rsd1.is_protein() ? core::chemical::DoubleBond : core::chemical::SingleBond);
-				tempbond.ringness(core::chemical::BondNotInRing);
+				core::chemical::BondName tempname = rsd1.is_protein() ? core::chemical::DoubleBond : core::chemical::SingleBond;
 
 				GenTorsionParams const &t_param_ij = lookup_tors_params(
-					tempbond,
+					tempname, core::chemical::BondNotInRing,
 					rsd1.atom_type_index(jj_term_atomno),
 					rsd1.atom_type_index(resconn_atomno1),
 					rsd2.atom_type_index(resconn_atomno2),
@@ -2283,7 +2271,7 @@ GenericBondedPotential::modify_tors_params(
 }
 
 //////////////////////////////////////////  excludingparams stuffs
-ResidueExclParams::ResidueExclParams( core::chemical::ResidueType const rsd_type,
+ResidueExclParams::ResidueExclParams( core::chemical::ResidueTypeCOP rsd_type,
 	bool const score_full,
 	bool const score_hybrid ) :
 	fully_counted_( false ),
@@ -2292,8 +2280,8 @@ ResidueExclParams::ResidueExclParams( core::chemical::ResidueType const rsd_type
 {
 	// default: nothing excluded
 	atmpairnos_.clear();
-	bondnos_.resize( rsd_type.ndihe(), false );
-	atm_excluded_.resize( rsd_type.natoms(), false );
+	bondnos_.resize( rsd_type->ndihe(), false );
+	atm_excluded_.resize( rsd_type->natoms(), false );
 	create_excl_info( score_full, score_hybrid );
 }
 
@@ -2302,7 +2290,7 @@ ResidueExclParams::create_excl_info( bool const score_full,
 	bool const score_hybrid
 )
 {
-	chemical::ResidueType const &rsd_type = rsd_type_;
+	chemical::ResidueType const & rsd_type = *rsd_type_;
 	bool is_any_aa( rsd_type.backbone_aa() != core::chemical::aa_unk );
 
 	if ( rsd_type.is_virtual_residue() || rsd_type.is_water() || rsd_type.is_metal() ) {
@@ -2347,7 +2335,7 @@ ResidueExclParams::create_excl_info( bool const score_full,
 
 		if ( ref_type->has( name_i ) ) {
 			core::Size jatm = ref_type->atom_index( name_i );
-			if ( rsd_type.atom(iatm).atom_type_index() == ref_type->atom(jatm).atom_type_index() ) {
+			if ( rsd_type.atom_type_index(iatm) == ref_type->atom_type_index(jatm) ) {
 				//std::cout << name_i << " Excl" << std::endl;
 				atm_excluded(iatm,true); //same atype
 			} else {
@@ -2518,7 +2506,7 @@ GenBondedExclInfo::add_residue_exclude_torsions(
 )
 {
 	TR.Debug << "Generate " << rsd_type.name() << " on setup" << std::endl;
-	ResidueExclParamsOP p = ResidueExclParamsOP( new ResidueExclParams( rsd_type, score_full_, score_hybrid_ ) );
+	ResidueExclParamsOP p = ResidueExclParamsOP( new ResidueExclParams( rsd_type.get_self_ptr(), score_full_, score_hybrid_ ) );
 
 	// store by rsdtype name
 	perres_excls_[ rsd_type.name() ] = p;
@@ -2532,7 +2520,7 @@ GenBondedExclInfo::get_residue_data( core::chemical::ResidueType const &rsd_type
 	if ( it == perres_excls_.end() ) {
 		// on-the-fly generation
 		TR.Debug << "Generate " << rsd_type.name() << " params on-the-fly" << std::endl;
-		ResidueExclParamsOP p = ResidueExclParamsOP( new ResidueExclParams( rsd_type, score_full_, score_hybrid_ ) );
+		ResidueExclParamsOP p = ResidueExclParamsOP( new ResidueExclParams( rsd_type.get_self_ptr(), score_full_, score_hybrid_ ) );
 		return p;
 	}
 	return it->second;

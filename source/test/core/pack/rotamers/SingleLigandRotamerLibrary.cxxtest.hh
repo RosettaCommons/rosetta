@@ -70,7 +70,8 @@ public:
 		using namespace core::chemical;
 		ResidueTypeSetCOP rtsCOP(ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
 
-		core::chemical::ResidueTypeOP RTOP(core::chemical::read_topology_file( "core/pack/rotamers/4tim.params", rtsCOP ));
+		core::chemical::MutableResidueTypeOP MRTOP(core::chemical::read_topology_file( "core/pack/rotamers/4tim.params", rtsCOP ));
+		core::chemical::ResidueTypeCOP RTOP( core::chemical::ResidueType::make( *MRTOP ) );
 
 
 		//Run SingleLigandRotamerLibrary machinery to read same data from file
@@ -115,7 +116,8 @@ public:
 
 		core::chemical::ResidueTypeSetCOP rtsCOP(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FULL_ATOM_t ));
 
-		core::chemical::ResidueTypeOP RTOP(core::chemical::read_topology_file( param_stream, "dummy_filename", rtsCOP ));
+		core::chemical::MutableResidueTypeOP MRTOP(core::chemical::read_topology_file( param_stream, "dummy_filename", rtsCOP ));
+		core::chemical::ResidueTypeCOP RTOP( core::chemical::ResidueType::make( *MRTOP ) );
 
 		//create stringstream to init from
 		std::istringstream conformers_stream;

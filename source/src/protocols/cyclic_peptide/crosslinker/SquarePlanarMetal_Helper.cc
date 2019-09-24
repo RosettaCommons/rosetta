@@ -236,13 +236,13 @@ SquarePlanarMetal_Helper::add_dihedral_constraint_to_stream(
 			cststream << "AmbiguousConstraint\n";
 		}
 		for ( core::Size i(1), imax( is_his[res_permutations[permutation][1]] ? 2 : 1 ); i<=imax; ++i ) {
-			core::chemical::ResidueType const rtype_i( *( rtypes[res_permutations[permutation][1]] ) );
+			core::chemical::ResidueType const & rtype_i( *( rtypes[res_permutations[permutation][1]] ) );
 			std::string const at1( is_his[res_permutations[permutation][1]] ? ( i == 1 ? "NE2" : "ND1" ) : rtype_i.atom_name( rtype_i.icoor( rtype_i.atom_index("VM1") ).stub_atom1().atomno() ) );
 			for ( core::Size j(1), jmax( is_his[res_permutations[permutation][2]] ? 2 : 1 ); j<=jmax; ++j ) {
-				core::chemical::ResidueType const rtype_j( *( rtypes[res_permutations[permutation][2]] ) );
+				core::chemical::ResidueType const & rtype_j( *( rtypes[res_permutations[permutation][2]] ) );
 				std::string const at2( is_his[res_permutations[permutation][2]] ? ( j == 1 ? "NE2" : "ND1" ) : rtype_j.atom_name( rtype_j.icoor( rtype_j.atom_index("VM1") ).stub_atom1().atomno() ) );
 				for ( core::Size k(1), kmax( is_his[res_permutations[permutation][3]] ? 2 : 1 ); k<=kmax; ++k ) {
-					core::chemical::ResidueType const rtype_k( *( rtypes[res_permutations[permutation][3]] ) );
+					core::chemical::ResidueType const & rtype_k( *( rtypes[res_permutations[permutation][3]] ) );
 					std::string const at3( is_his[res_permutations[permutation][3]] ? ( k == 1 ? "NE2" : "ND1" ) : rtype_k.atom_name( rtype_k.icoor( rtype_k.atom_index("VM1") ).stub_atom1().atomno() ) );
 					cststream << "Dihedral " << at1 << " " << res_indices[res_permutations[permutation][1]] << " " << at2 << " " << res_indices[res_permutations[permutation][2]] << " "<< at3 << " " << res_indices[res_permutations[permutation][3]] << " VM1 " << res_indices[res_permutations[permutation][1]] << " " << circularharmonic_string;
 				}

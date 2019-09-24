@@ -263,14 +263,14 @@ HotspotPlacementMover::apply(
 	core::chemical::ResidueTypeSetCOP rs( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 	core::pack::task::PackerTaskOP packer_task = core::pack::task::TaskFactory::create_packer_task( start_pose );
 	for ( core::Size resnum=pep_start; resnum <= pep_end; ++resnum ) {
-		core::chemical::ResidueType rtype = start_pose.residue_type( resnum );
+		core::chemical::ResidueType const & rtype = start_pose.residue_type( resnum );
 		std::list< core::chemical::ResidueTypeCOP > allowed_aas = packer_task->residue_task(resnum).allowed_residue_types();
 		if ( rtype.is_d_aa() ) {
 			packer_task->nonconst_residue_task(resnum).restrict_absent_canonical_aas(aas);
 			for ( std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin();
 					restype != allowed_aas.end(); ++restype ) {
 
-				core::chemical::ResidueType allowed_rtype =  **restype;
+				core::chemical::ResidueType const & allowed_rtype =  **restype;
 				core::chemical::ResidueType const & chiral_aa = protocols::simple_moves::chiral::get_chiral_residue_type(allowed_rtype, protocols::simple_moves::chiral::D_CHIRALITY, *rs);
 				TR << "chiral_aa.name(): "<< chiral_aa.name() << " chiral_aa.name3(): " << chiral_aa.name3()<< std::endl;
 				packer_task->nonconst_residue_task(resnum).allow_noncanonical_aa(chiral_aa.name3(),*rs);
@@ -279,7 +279,6 @@ HotspotPlacementMover::apply(
 	}
 
 	for ( core::Size resnum=pep_start; resnum <= pep_end; ++resnum ) {
-		core::chemical::ResidueType rtype = start_pose.residue_type( resnum );
 
 		// Check that this position is allowed to be used for stub constraints
 		if ( ! packer_task->pack_residue(resnum) ) continue;
@@ -386,8 +385,6 @@ HotspotPlacementMover::apply(
 				//kdrew: put additional constraints to satisify other hotspot residues
 				//kdrew: for each residue in scaffold (peptide)
 				for ( core::Size resnum2=pep_start; resnum2 <= pep_end; ++resnum2 ) {
-
-					core::chemical::ResidueType rtype2 = pose.residue_type( resnum2 );
 
 					if ( resnum != resnum2 ) {
 						utility::vector1< core::scoring::constraints::ConstraintCOP > ambig_csts;

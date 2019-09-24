@@ -45,9 +45,9 @@
 // Utility headers
 
 #include <core/types.hh>
-#include <core/chemical/ResidueGraphTypes.hh>
 
-//Auto Headers
+#include <string>
+
 namespace core {
 namespace chemical {
 namespace orbitals {
@@ -64,16 +64,10 @@ public:
 		Real phi,
 		Real theata,
 		Real distance,
-		Size stub1,
-		Size stub2,
-		Size stub3,
-		VD v1,
-		VD v2,
-		VD v3
+		std::string const & stub1,
+		std::string const & stub2,
+		std::string const & stub3
 	);
-
-	/// @brief Update the internal VDs based on the provide mapping
-	void remap_atom_vds( std::map< VD, VD > const & old_to_new );
 
 	Real phi() const;
 	Real theta() const;
@@ -87,57 +81,31 @@ public:
 	) const;
 
 
-	void replace_stub1(const core::Size atom1 )
+	void replace_stub1(std::string const & atom1 )
 	{
 		stub1_=atom1;
 	}
 
-	void replace_stub2(const core::Size atom2)
+	void replace_stub2(std::string const & atom2)
 	{
 		stub2_=atom2;
 	}
-	void replace_stub3(const core::Size atom3)
+	void replace_stub3(std::string const & atom3)
 	{
 		stub3_=atom3;
 	}
 
-	core::Size get_stub1() const
+	std::string const & get_stub1() const
 	{
 		return stub1_;
 	}
-	core::Size get_stub2() const
+	std::string const & get_stub2() const
 	{
 		return stub2_;
 	}
-	core::Size get_stub3() const
+	std::string const & get_stub3() const
 	{
 		return stub3_;
-	}
-
-	VD vertex1() const
-	{
-		return vertex1_;
-	}
-	VD vertex2() const
-	{
-		return vertex2_;
-	}
-	VD vertex3() const
-	{
-		return vertex3_;
-	}
-
-	void vertex1(VD const vertex)
-	{
-		vertex1_=vertex;
-	}
-	void vertex2(VD const vertex)
-	{
-		vertex2_=vertex;
-	}
-	void vertex3(VD const vertex)
-	{
-		vertex3_=vertex;
 	}
 
 
@@ -146,14 +114,9 @@ private:
 	Real theta_;
 	Real distance_;
 
-	Size stub1_;
-	Size stub2_;
-	Size stub3_;
-
-	VD vertex1_;
-	VD vertex2_;
-	VD vertex3_;
-
+	std::string stub1_;
+	std::string stub2_;
+	std::string stub3_;
 
 #ifdef    SERIALIZATION
 public:

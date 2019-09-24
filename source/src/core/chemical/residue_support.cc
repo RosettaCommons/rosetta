@@ -17,6 +17,7 @@
 // Package Headers
 #include <core/chemical/residue_support.hh>
 
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -26,8 +27,10 @@
 
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/Atom.hh>
+#include <core/chemical/AtomProperties.hh>
 #include <core/chemical/Bond.hh>
 #include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/MutableResidueConnection.hh>
 #include <utility/graph/RingDetection.hh>
 
 #include <basic/Tracer.hh>
@@ -39,6 +42,8 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+#include <boost/graph/breadth_first_search.hpp>
+
 #include <algorithm>
 
 namespace core {
@@ -49,7 +54,6 @@ static basic::Tracer TR( "core.chemical.residue_support" );
 ObjexxFCL::FArray2D_int
 get_residue_path_distances( ResidueType const & res )
 {
-	//return res.get_residue_path_distances();
 	using namespace utility::graph;
 	Graph g;
 
@@ -65,7 +69,107 @@ get_residue_path_distances( ResidueType const & res )
 	return g.all_pairs_shortest_paths();
 }
 
-LightWeightResidueGraph convert_residuetype_to_light_graph( ResidueType const & res ){
+utility::vector1< VD >
+mainchain_path( MutableResidueType const & res ) {
+	if ( res.lower_connect_id() == 0 || res.upper_connect_id() == 0 ) {
+		return utility::vector1< VD >{}; // Empty vector
+	}
+
+	return shortest_path( res, res.lower_connect_atom(), res.upper_connect_atom() );
+}
+
+utility::vector1< VD >
+shortest_path( MutableResidueType const & res, VD start, VD end ) {
+	debug_assert( has( res.graph(), start ) );
+	debug_assert( has( res.graph(), end ) );
+
+	typedef typename std::map<VD,VD> Predecessors;
+	typedef typename boost::associative_property_map< Predecessors > PredecessorsMap;
+
+	Predecessors predecessors;
+	PredecessorsMap predecessors_map( predecessors );
+
+	// During the BFS, record each nodes predecessor
+	auto visitor = boost::make_bfs_visitor( boost::record_predecessors(predecessors_map,boost::on_tree_edge()) );
+
+	// We start at the end, such that we can iterate predicessors, resulting in forward iteration
+	boost::breadth_first_search( res.graph(), end, boost::visitor(visitor) );
+
+	if ( predecessors.count( start ) == 0 ) {
+		return utility::vector1< VD >{}; // Not found in BFS - no path.
+	}
+
+	utility::vector1< VD > path;
+	VD current = start;
+	while ( current != end ) {
+		path.push_back( current );
+		debug_assert( predecessors.count( current ) != 0 );
+		current = predecessors[ current ];
+	}
+	path.push_back( end );
+
+	return path;
+}
+
+void
+annotate_backbone( MutableResidueType & restype ) {
+	// First thing - reset all atoms to sidechain.
+	for ( VD atm: restype.all_atoms() ) {
+		restype.atom(atm).is_backbone( false );
+	}
+
+	utility::vector1< VD > to_process;
+
+	// Now start with the seeds on the connects.
+	if ( restype.lower_connect_id() != 0 ) {
+		restype.atom( restype.lower_connect_atom() ).is_backbone( true );
+		to_process.push_back( restype.lower_connect_atom() );
+	}
+	if ( restype.upper_connect_id() != 0 ) {
+		restype.atom( restype.upper_connect_atom() ).is_backbone( true );
+		to_process.push_back( restype.upper_connect_atom() );
+	}
+
+	if ( to_process.empty() ) { return; } // No starting points - all sidechain
+
+	// Annotate rotatable bonds which we shouldn't cross.
+	std::map< VD, utility::vector1< VD > > rot_nbr;
+	for ( core::Size ii(1); ii <= restype.nchi(); ++ii ) {
+		VDs const & chi_atoms = restype.chi_atom_vds( ii );
+		rot_nbr[ chi_atoms[2] ].push_back( chi_atoms[3] ); // Center bond is the rotatable one
+		rot_nbr[ chi_atoms[3] ].push_back( chi_atoms[2] );
+	}
+
+	// Flood fill atoms
+	while ( ! to_process.empty() ) {
+		VD atm = to_process.back();
+		to_process.pop_back();
+		for ( VD nbr: restype.bonded_neighbors(atm) ) {
+			if ( restype.atom(nbr).is_backbone() ) { continue; } // Try to halt infinite recursion
+			if ( rot_nbr[atm].contains( nbr ) ) { continue; } // Don't cross rotatable bonds
+			if ( restype.bond( atm, nbr ).cut_bond() ) { continue; } // Don't cross cut bonds
+			// If we made it here, we should be good.
+			restype.atom( nbr ).is_backbone( true );
+			to_process.push_back( nbr );
+		}
+	}
+}
+
+//////////////////////////////////////////////////////
+/// Make all atoms virtual
+/// @author Sebastian Rämisch <raemisch@scripps.edu>
+void
+real_to_virtual( MutableResidueType & restype ) {
+	std::string const VIRT = "VIRT";
+	for ( VD atm: restype.all_atoms() ) {
+		restype.set_atom_type( atm, VIRT );
+		restype.atom(atm).charge(0.0);
+		restype.atom(atm).is_virtual( true );
+	}
+	restype.add_property("VIRTUAL_RESIDUE");
+}
+
+LightWeightResidueGraph convert_residuetype_to_light_graph( MutableResidueType const & res ){
 	//this is a const reference because vertices change when  you copy the graph
 	const  core::chemical::ResidueGraph & full_residue_graph = res.graph(); //get the boost graph structure from residuetype
 
@@ -115,7 +219,7 @@ LightWeightResidueGraph convert_residuetype_to_light_graph( ResidueType const & 
 /// If preserve is true, only rename those which have no names or who have
 /// name conflicts. (Both of the conflicting atoms will be renamed.)
 void
-rename_atoms( ResidueType & res, bool preserve/*=true*/ ) {
+rename_atoms( MutableResidueType & res, bool preserve/*=true*/ ) {
 	std::map< std::string, core::Size > name_counts;
 	ResidueGraph const & graph( res.graph() );
 	VIter iter, iter_end;
@@ -150,7 +254,7 @@ rename_atoms( ResidueType & res, bool preserve/*=true*/ ) {
 		if ( TR.Trace.visible() ) {
 			TR.Trace << "Renaming atom from '"<< res.atom(*iter).name() << "' to '" << name << "'" << std::endl;
 		}
-		res.atom(*iter).name( name );
+		res.rename_atom( *iter, name );
 		res.remap_pdb_atom_names( true ); // We've renamed an atom, so we need to be flexible with PDB loading.
 		name_counts[ name ]++;
 	}
@@ -164,7 +268,7 @@ class RigidDistanceVisitor: public utility::graph::null_bfs_prune_visitor {
 	using Matrix = utility::vector1<utility::vector1<core::Real> >;
 
 public:
-	RigidDistanceVisitor( Matrix & distances, ResidueType const & restype, VD start ) :
+	RigidDistanceVisitor( Matrix & distances, MutableResidueType const & restype, VD start ) :
 		distances_(distances),
 		restype_(restype),
 		start_(start),
@@ -234,14 +338,14 @@ public:
 
 private:
 	Matrix & distances_;
-	ResidueType const & restype_;
+	MutableResidueType const & restype_;
 	VD start_;
 	core::Size start_index_;
 	Vector const & start_pos_;
 };
 
 /// @brief Calculate the rigid matrix - assume that distances has been initialized to some really large value, and is square
-void calculate_rigid_matrix( ResidueType const & res, utility::vector1< utility::vector1< core::Real > > & distances ) {
+void calculate_rigid_matrix( MutableResidueType const & res, utility::vector1< utility::vector1< core::Real > > & distances ) {
 	// Set up bonded and rigid distances
 	VIter iter, iter_end;
 	for ( boost::tie( iter, iter_end ) = res.atom_iterators(); iter != iter_end; ++iter ) {
@@ -268,14 +372,14 @@ void calculate_rigid_matrix( ResidueType const & res, utility::vector1< utility:
 		TR.Trace << std::setprecision(4);
 		TR.Trace << "Atom distance matrix for " << res.name() << std::endl;
 		TR.Trace << "    " << '\t';
-		for ( core::Size xx(1); xx <= res.natoms(); ++xx ) {
+		for ( VD xx: res.all_atoms() ) {
 			TR.Trace << res.atom_name(xx) << '\t';
 		}
 		TR.Trace << std::endl;
-		for (  core::Size yy(1); yy <= res.natoms(); ++yy ) {
+		for ( VD yy: res.all_atoms() ) {
 			TR.Trace << res.atom_name(yy) << '\t';
 			for (  core::Size xx(1); xx <= res.natoms(); ++xx ) {
-				TR.Trace << distances[yy][xx] << '\t';
+				TR.Trace << distances[res.atom_index(yy)][xx] << '\t';
 			}
 			TR.Trace << std::endl;
 		}
@@ -297,7 +401,7 @@ void calculate_rigid_matrix( ResidueType const & res, utility::vector1< utility:
 ///   * All elements have been set
 ///  * All ring bonds have been annotated
 core::Real
-find_nbr_dist( ResidueType const & res, VD & nbr_atom ) {
+find_nbr_dist( MutableResidueType const & res, VD & nbr_atom ) {
 	if ( res.natoms() == 0 ) {
 		utility_exit_with_message("Cannot find neighbor atom distance for empty residue type.");
 	}
@@ -314,16 +418,16 @@ find_nbr_dist( ResidueType const & res, VD & nbr_atom ) {
 		maxdists.push_back( *(std::max_element( distances[ii].begin(), distances[ii].end() )) );
 	}
 
-	if ( nbr_atom != ResidueType::null_vertex ) {
+	if ( nbr_atom != MutableResidueType::null_vertex ) {
 		// We have an atom in mind - we just need the distance.
 		return maxdists[ res.atom_index( nbr_atom ) ];
 	}
 
 	//maxdist initialized above
-	for ( core::Size jj(1); jj <= res.natoms(); ++jj ) {
-		VD atom_vd( res.atom_vertex( jj ) );
+	for ( VD atom_vd: res.all_atoms() ) {
+		core::Size jj( res.atom_index( atom_vd ) );
 		if ( maxdists[jj] < maxdist &&
-				res.atom(jj).element_type()->element() != core::chemical::element::H ) { // not hydrogen
+				res.atom(atom_vd).element_type()->element() != core::chemical::element::H ) { // not hydrogen
 			//Use graph directly, as other neighbor annotations may not be fully baked
 			core::Size bonded_heavy(0);
 			AdjacentIter itr, itr_end;
@@ -339,9 +443,10 @@ find_nbr_dist( ResidueType const & res, VD & nbr_atom ) {
 		}
 	}
 
-	if ( nbr_atom == ResidueType::null_vertex ) { // No suitable neighbor -- just pick atom 1
-		TR.Warning << "No suitable neighbor atom found for " << res.name() << " -- picking first atom (" << res.atom_name(1) << ") instead." << std::endl;
-		nbr_atom = res.atom_vertex( 1 );
+	if ( nbr_atom == MutableResidueType::null_vertex ) { // No suitable neighbor -- just pick atom 1
+		VD first_atom = res.all_atoms()[1];
+		TR.Warning << "No suitable neighbor atom found for " << res.name() << " -- picking first atom (" << res.atom_name(first_atom) << ") instead." << std::endl;
+		nbr_atom = first_atom;
 		maxdist = maxdists[1];
 	}
 	return maxdist;
@@ -360,7 +465,7 @@ find_nbr_dist( ResidueType const & res, VD & nbr_atom ) {
 ///   * Formal charges (if any) have been set.
 
 void
-rosetta_recharge_fullatom( ResidueType & res ) {
+rosetta_recharge_fullatom( MutableResidueType & res ) {
 	ResidueGraph const & graph( res.graph() );
 	AtomTypeSet const & ats( res.atom_type_set() );
 	if ( ! ats.has_extra_parameter( "CHARGE" ) ) {
@@ -398,8 +503,13 @@ rosetta_recharge_fullatom( ResidueType & res ) {
 	}
 }
 
-ResidueTypeOP
+MutableResidueTypeOP
 make_centroid( ResidueType const & res ) {
+	return make_centroid( MutableResidueType( res ) ); // I'm not 100% on the implicit double copy here, but it's easier
+}
+
+MutableResidueTypeOP
+make_centroid( MutableResidueType const & res ) {
 
 	AtomTypeSet const & old_ats( res.atom_type_set() );
 
@@ -410,7 +520,7 @@ make_centroid( ResidueType const & res ) {
 		TR.Warning << "Residue " << res.name() << " to convert to centroid is not in full atom mode!" << std::endl;
 	}
 
-	ResidueTypeOP centroid( res.clone() );
+	MutableResidueTypeOP centroid( new MutableResidueType( res ) );
 
 	// Atom type translation from molfile_to_params.py
 	// RM: There's been some additions to the centroid atom type set since
@@ -442,9 +552,10 @@ make_centroid( ResidueType const & res ) {
 	AtomTypeSetCOP centroid_ats_ptr( ChemicalManager::get_instance()->atom_type_set( core::chemical::CENTROID )  );
 	AtomTypeSet const & centroid_ats( *centroid_ats_ptr );
 
-	utility::vector1< std::string > new_types;
-	for ( core::Size ii(1); ii <= centroid->natoms(); ++ii ) {
-		core::Size old_index = res.atom(ii).atom_type_index();
+	std::map< VD, std::string > new_types;
+	for ( VD atm: centroid->all_atoms() ) {
+		// We assume that the order is the same between the two
+		core::Size old_index = res.atom( res.all_atoms()[ centroid->atom_index(atm) ] ).atom_type_index();
 		std::string const & old_string( old_ats[ old_index ].name() );
 		std::string new_string;
 		if ( type_translation.count(old_string) ) {
@@ -453,27 +564,27 @@ make_centroid( ResidueType const & res ) {
 			// We have a simple as-is translation
 			new_string = old_string;
 		} else {
-			TR.Warning << "Atom type '" << old_string << "' on atom '" << res.atom_name(ii)
-				<< "' from residue type '" <<  res.name() <<  "' does not have a centroid mode equivalent: assuming CAbb." << std::endl;
+			TR.Warning << "Atom type '" << old_string << "' on atom '" << centroid->atom_name(atm)
+				<< "' from residue type '" <<  centroid->name() <<  "' does not have a centroid mode equivalent: assuming CAbb." << std::endl;
 			// This is how the molfile_to_params.py script does the translation for unrecognized atoms.
 			new_string = "CAbb";
 		}
 
-		new_types.push_back( new_string );
+		new_types[ atm ] = new_string;
 	}
 
-	centroid->set_atom_type_set( centroid_ats_ptr ); // Will zero out unknown types.
+	centroid->update_atom_type_set( centroid_ats_ptr ); // Will zero out unknown types.
 
 	utility::vector1< std::string > to_delete; // Don't modify ResidueType while iterating.
-	for ( core::Size ii(1); ii <= centroid->natoms(); ++ii ) {
-		std::string const & new_string( new_types[ii] );
+	for ( VD atm: centroid->all_atoms() ) {
+		std::string const & new_string( new_types[ atm ] );
 
 		if ( new_string.empty() ) {
-			to_delete.push_back( centroid->atom_name( ii ) );
+			to_delete.push_back( centroid->atom_name( atm ) );
 		} else {
 			debug_assert( centroid_ats.has_atom( new_string ) );
 			// This should reset things properly, as we've set the atom type set to centroid previously.
-			centroid->set_atom_type( centroid->atom_name( ii ), new_string );
+			centroid->set_atom_type( centroid->atom_name( atm ), new_string );
 		}
 	}
 
@@ -482,61 +593,56 @@ make_centroid( ResidueType const & res ) {
 		centroid->delete_atom( to_delete[ jj ] );
 	}
 
-	// We may need to update the internal coordinates due to the missing hydrogens.
-	// The neighbor settings should be fine - they're based on heavy atoms
-	// Rotatable bonds should be fine - we shouldn't have rotatable bonds to apolar hydrogens
-	// TODO: Charges might be a little funky, but I don't think we use them in centroid mode.
 	if ( ! to_delete.empty() ) {
+		// We may have invalidated some of the internal coordinates/chis, due to the deletion of the hydrogens.
+		// It's unlikely, but check if that's the case.
+		// TODO: Charges might be a little funky, but I don't think we use them in centroid mode.
+
 		// Check if we have any rotatable bonds defined in terms of missing atoms
 		for ( core::Size ii(1); ii <= centroid->nchi(); ++ii ) {
-			for ( VD vd: centroid->chi_atom_vds(ii) ) {
-				if ( ! centroid->has(vd) ) {
-					TR.Warning << "Cannot automatically convert " << res.name() << " to centroid, as it has rotatable bond which depend on now-missing atoms." << std::endl;
-					return nullptr;
-				}
+			if ( ! centroid->chi_valid( ii ) ) {
+				TR.Warning << "Cannot automatically convert " << res.name() << " to centroid, as it has rotatable bond which depend on now-missing atoms." << std::endl;
+				return nullptr;
 			}
 		}
 
-		bool icoor_okay( true );
 		// Check if we have any ICOOR that still depend on now-missing atoms.
-		VIter iter, iter_end;
-		for ( boost::tie(iter,iter_end) = centroid->atom_iterators(); iter != iter_end; ++iter ) {
-			AtomICoor const & icoor( centroid->icoor( *iter ) );
-			if ( ( icoor.stub_atom1().is_internal() && ! centroid->has( icoor.stub_atom1().vertex() ) ) ||
-					( icoor.stub_atom2().is_internal() && ! centroid->has( icoor.stub_atom2().vertex() ) ) ||
-					( icoor.stub_atom3().is_internal() && ! centroid->has( icoor.stub_atom3().vertex() ) ) ) {
-				icoor_okay = false;
+		bool needs_icoor_update = false;
+		for ( VD atm: centroid->all_atoms() ) {
+			MutableICoorRecordCOP ic = centroid->atom( atm ).icoor();
+			if ( ic == nullptr ) {
+				needs_icoor_update = true;
 				break;
 			}
-			for ( core::Size ii(1); ii <= 3; ++ ii ) {
-				ICoorAtomID const & stub_atom( icoor.stub_atom( ii ) );
-				if ( stub_atom.type() == ICoorAtomID::INTERNAL && ! centroid->has( stub_atom.vertex() ) ) {
-					icoor_okay = false;
+			for ( core::Size stub(1); stub <= 3; ++stub ) {
+				if ( ic->stub_type(stub) == ICoordAtomIDType::INTERNAL && ! centroid->has( ic->stub_atom(stub) ) ) {
+					needs_icoor_update = true;
 					break;
 				}
 			}
-			if ( ! icoor_okay ) { break; }
 		}
+
 		// Need to check connections, too.
 		// They *should* be based off of heavy atoms, but potentially not.
 		for ( core::Size cc(1); cc <= centroid->n_possible_residue_connections(); ++cc ) {
-			ResidueConnection const & connect( centroid->residue_connection(1) );
+			MutableResidueConnection const & connect( centroid->residue_connection(cc) );
 			if ( ! centroid->has( connect.vertex() ) ) {
-				icoor_okay = false;
+				needs_icoor_update = true;
 				break;
 			}
-			AtomICoor const & icoor( connect.icoor() );
-			if ( ( icoor.stub_atom1().is_internal() && ! centroid->has( icoor.stub_atom1().vertex() ) ) ||
-					( icoor.stub_atom2().is_internal() && ! centroid->has( icoor.stub_atom2().vertex() ) ) ||
-					( icoor.stub_atom3().is_internal() && ! centroid->has( icoor.stub_atom3().vertex() ) ) ) {
-				icoor_okay = false;
-				break;
+			MutableICoorRecord const & icoor( connect.icoor() );
+			for ( core::Size stub(1); stub <= 3; ++stub ) {
+				if ( icoor.stub_type(stub) == ICoordAtomIDType::INTERNAL && ! centroid->has( icoor.stub_atom(stub) ) ) {
+					needs_icoor_update = true;
+					break;
+				}
 			}
 		}
 
-		if ( ! icoor_okay ) {
+		if ( needs_icoor_update ) {
+			// Currently assign_internal_coordinates can't work with polymeric types.
 			if ( res.n_possible_residue_connections() != 0 ) {
-				TR.Warning << "Cannot automatically convert " << res.name() << " to centroid, as it is polymeric/has connections and the geometry depends on now-missing atoms." << std::endl;
+				TR.Warning << "Cannot automatically convert " << res.name() << " to centroid, as it needs ICoor reassignment and it is polymeric/has connections." << std::endl;
 				return nullptr;
 			}
 			// Fix up all the internal icoords.
@@ -545,8 +651,234 @@ make_centroid( ResidueType const & res ) {
 		}
 	}
 
-	centroid->finalize();
 	return centroid;
+}
+
+bool
+residue_type_bases_identical( ResidueTypeBase const & r1, ResidueTypeBase const & r2 ) {
+	if ( r1.mode() != r2.mode() ) return false;
+	// Assume that we need *exactly* the same type sets to be equal.
+	if ( r1.atom_type_set_ptr() != r2.atom_type_set_ptr() ) return false;
+	if ( r1.element_set_ptr() != r2.element_set_ptr() ) return false;
+	if ( r1.mm_atom_types_ptr() != r2.mm_atom_types_ptr() ) return false;
+	if ( r1.gasteiger_atom_typeset() != r2.gasteiger_atom_typeset() ) return false;
+	if ( r1.orbital_types_ptr() != r2.orbital_types_ptr() ) return false;
+
+	if ( r1.aa() != r2.aa() ) return false;
+	if ( r1.backbone_aa() != r2.backbone_aa() ) return false;
+	//if ( r1.rotamer_aa() != r2.rotamer_aa() ) return false;
+	if ( r1.na_analogue() != r2.na_analogue() ) return false;
+	if ( r1.base_analogue() != r2.base_analogue() ) return false;
+
+	if ( r1.base_name() != r2.base_name() ) return false;
+	if ( r1.name() != r2.name() ) return false;
+	if ( r1.name1() != r2.name1() ) return false;
+	if ( r1.name3() != r2.name3() ) return false;
+	if ( r1.interchangeability_group() != r2.interchangeability_group() ) return false;
+
+	if ( r1.get_rama_prepro_mainchain_torsion_potential_name(false) != r2.get_rama_prepro_mainchain_torsion_potential_name(false) ) return false;
+	if ( r1.get_rama_prepro_mainchain_torsion_potential_name(true) != r2.get_rama_prepro_mainchain_torsion_potential_name(true) ) return false;
+	if ( r1.get_rama_prepro_map_file_name(false) != r2.get_rama_prepro_map_file_name(false) ) return false;
+	if ( r1.get_rama_prepro_map_file_name(true) != r2.get_rama_prepro_map_file_name(true) ) return false;
+
+	if ( r1.net_formal_charge() != r2.net_formal_charge() ) return false;
+	if ( r1.force_nbr_atom_orient() != r2.force_nbr_atom_orient() ) return false;
+	if ( r1.remap_pdb_atom_names() != r2.remap_pdb_atom_names() ) return false;
+	if ( r1.is_metapatched() != r2.is_metapatched() ) return false;
+
+	if ( r1.properties() != r2.properties() ) return false;
+	// TODO: Probably should check rotamer library specification.
+	//if ( *r1.rotamer_library_specification() != *r2.rotamer_library_specification() ) return false;
+
+	if ( r1.get_metal_binding_atoms() != r2.get_metal_binding_atoms() ) return false;
+	if ( r1.get_anomeric_pseudotorsion() != r2.get_anomeric_pseudotorsion() ) return false;
+	if ( r1.get_anomeric_sidechain() != r2.get_anomeric_sidechain() ) return false;
+	if ( r1.get_disulfide_atom_name() != r2.get_disulfide_atom_name() ) return false;
+
+	if ( r1.atom_aliases() != r2.atom_aliases() ) return false;
+	if ( r1.canonical_atom_aliases() != r2.canonical_atom_aliases() ) return false;
+
+	if ( r1.defined_adducts() != r2.defined_adducts() ) return false;
+	if ( r1.n_orbitals() != r2.n_orbitals() ) return false;
+	// TODO: Probably should check orbitals themselves, but don't bother.
+
+	return true;
+}
+
+bool
+residue_types_identical( ResidueType const & r1, ResidueType const & r2 ) {
+	if ( ! residue_type_bases_identical( r1, r2 ) ) return false;
+
+	if ( r1.natoms() != r2.natoms() ) return false;
+	if ( r1.nbonds() != r2.nbonds() ) return false;
+	if ( r1.nheavyatoms() != r2.nheavyatoms() ) return false;
+	if ( r1.n_hbond_acceptors() != r2.n_hbond_acceptors() ) return false;
+	if ( r1.n_hbond_donors() != r2.n_hbond_donors() ) return false;
+	if ( r1.last_backbone_atom() != r2.last_backbone_atom() ) return false;
+	if ( r1.first_sidechain_hydrogen() != r2.first_sidechain_hydrogen() ) return false;
+
+	//if ( r1.rotamer_aa() != r2.rotamer_aa() ) return false;
+
+	// atom_name_to_index_ ??
+	for ( core::Size ii(1); ii<= r1.natoms(); ++ii ) {
+		if ( r1.atom_name(ii) != r2.atom_name(ii) ) return false;
+		if ( r1.atom_type_index(ii) != r2.atom_type_index(ii) ) return false;
+		//if ( r1.atom_type(ii) != r2.atom_type(ii) ) ) return false;
+		if ( r1.element(ii) != r2.element(ii) ) return false;
+		if ( r1.mm_atom_type_index(ii) != r2.mm_atom_type_index(ii) ) return false;
+		if ( r1.gasteiger_atom_type(ii) != r2.gasteiger_atom_type(ii) ) return false;
+		if ( r1.formal_charge(ii) != r2.formal_charge(ii) ) return false;
+		if ( r1.atom_charge(ii) != r2.atom_charge(ii) ) return false;
+		if ( r1.ideal_xyz(ii) != r2.ideal_xyz(ii) ) return false; // Potentially an issue???
+
+		if ( r1.atom_properties(ii) != r2.atom_properties(ii) ) return false;
+		if ( ! compare_atom_icoor( r1.icoor(ii), r2.icoor(ii), true ) ) return false;
+
+		if ( ii <= r1.nheavyatoms() ) {
+			if ( r1.attached_H_begin(ii) != r2.attached_H_begin(ii) ) return false;
+			if ( r1.attached_H_end(ii) != r2.attached_H_end(ii) ) return false;
+		}
+
+		// Shouldn't have ordering issues (should all be in numeric order.)
+		if ( r1.bonded_neighbor(ii) != r2.bonded_neighbor(ii) ) return false;
+		if ( r1.bonded_neighbor_types(ii) != r2.bonded_neighbor_types(ii) ) return false;
+		if ( r1.bonded_neighbor_ringnesses(ii) != r2.bonded_neighbor_ringnesses(ii) ) return false;
+
+		if ( r1.dihedrals_for_atom(ii) != r2.dihedrals_for_atom(ii) ) return false;
+		if ( r1.bondangles_for_atom(ii) != r2.bondangles_for_atom(ii) ) return false;
+
+		if ( r1.last_controlling_chi(ii) != r2.last_controlling_chi(ii) ) return false;
+
+		if ( r1.bonded_orbitals(ii) != r2.bonded_orbitals(ii) ) return false;
+
+		if ( r1.heavyatom_has_polar_hydrogens(ii) != r2.heavyatom_has_polar_hydrogens(ii) ) return false;
+
+		if ( r1.atom_base(ii) != r2.atom_base(ii) ) return false;
+		if ( r1.abase2(ii) != r2.abase2(ii) ) return false;
+
+		if ( r1.cut_bond_neighbor(ii) != r2.cut_bond_neighbor(ii) ) return false;
+		if ( r1.atom_being_shadowed(ii) != r2.atom_being_shadowed(ii) ) return false;
+
+		if ( r1.atom_depends_on_lower_polymeric_connection(ii) != r2.atom_depends_on_lower_polymeric_connection(ii) ) return false;
+		if ( r1.atom_depends_on_upper_polymeric_connection(ii) != r2.atom_depends_on_upper_polymeric_connection(ii) ) return false;
+
+	}
+
+	if ( r1.ndihe() != r2.ndihe() ) return false;
+	for ( core::Size dd(1); dd <= r1.ndihe(); ++dd ) {
+		if ( r1.dihedral(dd) != r2.dihedral(dd) ) return false;
+	}
+	if ( r1.num_bondangles() != r2.num_bondangles() ) return false;
+	for ( core::Size ba(1); ba <= r1.num_bondangles(); ++ba ) {
+		if ( r1.bondangle(ba) != r2.bondangle(ba) ) return false;
+	}
+
+	if ( r1.atoms_with_orb_index() != r2.atoms_with_orb_index() ) return false;
+
+	if ( r1.Haro_index() != r2.Haro_index() ) return false;
+	if ( r1.Hpol_index() != r2.Hpol_index() ) return false;
+	if ( r1.accpt_pos() != r2.accpt_pos() ) return false;
+	if ( r1.Hpos_polar() != r2.Hpos_polar() ) return false;
+	if ( r1.Hpos_apolar() != r2.Hpos_apolar() ) return false;
+	if ( r1.accpt_pos_sc() != r2.accpt_pos_sc() ) return false;
+	if ( r1.Hpos_polar_sc() != r2.Hpos_polar_sc() ) return false;
+	if ( r1.all_bb_atoms() != r2.all_bb_atoms() ) return false;
+	if ( r1.all_sc_atoms() != r2.all_sc_atoms() ) return false;
+
+	if ( r1.nchi() != r2.nchi() ) return false;
+	if ( r1.chi_atoms() != r2.chi_atoms() ) return false;
+
+	for ( core::Size cc(1); cc <= r1.nchi(); ++cc ) {
+		if ( r1.is_proton_chi(cc) != r2.is_proton_chi(cc) ) return false;
+		if ( r1.chi_2_proton_chi(cc) != r2.chi_2_proton_chi(cc) ) return false;
+		if ( r1.chi_rotamers(cc) != r2.chi_rotamers(cc) ) return false;
+		if ( r1.atoms_last_controlled_by_chi(cc) != r2.atoms_last_controlled_by_chi(cc) ) return false;
+	}
+	for ( core::Size cc(1); cc <= r1.n_proton_chi(); ++cc ) {
+		if ( r1.proton_chi_2_chi( cc ) != r2.proton_chi_2_chi( cc ) ) return false;
+		if ( r1.proton_chi_samples(cc) != r2.proton_chi_samples(cc) ) return false;
+		if ( r1.proton_chi_extra_samples(cc) != r2.proton_chi_extra_samples(cc) ) return false;
+	}
+
+	if ( r1.nu_atoms() != r2.nu_atoms() ) return false;
+	if ( r1.ring_atoms() != r2.ring_atoms() ) return false;
+	if ( r1.n_ring_conformer_sets() != r2.n_ring_conformer_sets() ) return false;
+	for ( core::Size rr(1); rr <= r1.n_ring_conformer_sets(); ++rr ) {
+		if ( r1.ring_conformer_set(rr) != r2.ring_conformer_set(rr) ) {
+			if ( r1.ring_conformer_set(rr) == nullptr ) return false; // If one is nullptr, they both should be
+			if ( r2.ring_conformer_set(rr) == nullptr ) return false;
+			// The Ring conformer sets are created deterministically from other data - skip for now
+			// if ( *r1.ring_conformer_set(rr) != *r2.ring_conformer_set(rr) ) return false;
+		}
+	}
+	if ( r1.lowest_ring_conformers() != r2.lowest_ring_conformers() ) return false;
+	if ( r1.low_ring_conformers() != r2.low_ring_conformers() ) return false;
+
+	if ( r1.path_distances() != r2.path_distances() ) return false;
+
+	if ( r1.root_atom() != r2.root_atom() ) return false;
+	if ( r1.nbr_atom() != r2.nbr_atom() ) return false;
+	if ( r1.nbr_radius() != r2.nbr_radius() ) return false;
+	if ( r1.mass() != r2.mass() ) return false;
+
+	if ( r1.n_possible_residue_connections() != r2.n_possible_residue_connections() ) return false;
+	for ( core::Size rr(1); rr <= r1.n_possible_residue_connections(); ++ rr ) {
+		if ( ! compare_residue_connection( r1.residue_connection(rr), r2.residue_connection(rr), true) ) return false;
+		for ( core::Size ii(1); ii<= r1.natoms(); ++ii ) {
+			if ( r1.atom_depends_on_connection(ii,rr) != r2.atom_depends_on_connection(ii,rr) ) return false;
+		}
+	}
+	// Bonds within distance of connection-- skip for now
+	if ( r1.lower_connect_id() != r2.lower_connect_id() ) return false;
+	if ( r1.upper_connect_id() != r2.upper_connect_id() ) return false;
+	if ( r1.n_non_polymeric_residue_connections() != r2.n_non_polymeric_residue_connections() ) return false;
+	if ( r1.n_polymeric_residue_connections() != r2.n_polymeric_residue_connections() ) return false;
+
+	if ( r1.get_base_type_cop().get() == &r1 ) {
+		if ( r2.get_base_type_cop().get() != &r2 ) return false; // Self-base
+	} else if ( r1.get_base_type_cop() != r2.get_base_type_cop() ) {
+		if ( !residue_types_identical(*r1.get_base_type_cop(),*r2.get_base_type_cop()) ) return false;
+	}
+
+	// RNA and Carbohydrate info is created deterministicly from other data - skip for now
+	//if ( r1.RNA_info() != r2.RNA_info() ) return false;
+	//if ( r1.carbohydrate_info() != r2.carbohydrate_info() || *r1.carbohydrate_info() != *r2.carbohydrate_info() ) return false;
+
+	if ( r1.mainchain_atoms() != r2.mainchain_atoms() ) return false;
+	if ( r1.actcoord_atoms() != r2.actcoord_atoms() ) return false;
+
+	if ( r1.has_polymer_dependent_groups() != r2.has_polymer_dependent_groups() ) return false;
+
+	return true;
+}
+
+bool
+compare_residue_connection( ResidueConnection const & rc1, ResidueConnection const & rc2, bool fuzzy) {
+	if ( rc1.atomno() != rc2.atomno() ) return false;
+	if ( rc1.index() != rc2.index() ) return false;
+	return compare_atom_icoor( rc1.icoor(), rc2.icoor(), fuzzy );
+}
+
+bool
+compare_atom_icoor( AtomICoor const & aic1, AtomICoor const & aic2, bool fuzzy ) {
+	if ( aic1.built_atom() != aic2.built_atom() ) return false;
+	if ( aic1.stub_atom1() != aic2.stub_atom1() ) return false;
+	if ( aic1.stub_atom2() != aic2.stub_atom2() ) return false;
+	if ( aic1.stub_atom3() != aic2.stub_atom3() ) return false;
+	if ( !fuzzy ) {
+		if ( aic1.d() != aic2.d() ) return false;
+		if ( aic1.theta() != aic2.theta() ) return false;
+		if ( aic1.phi() != aic2.phi() ) return false;
+	} else {
+		constexpr core::Real delta = 1e-10; // Enough to accomodate for slight noise from building, not large enough to be an appreciable different.
+		if ( aic1.d() > aic2.d() + delta ) return false;
+		if ( aic1.d() < aic2.d() - delta ) return false;
+		if ( aic1.theta() > aic2.theta() + delta ) return false;
+		if ( aic1.theta() < aic2.theta() - delta ) return false;
+		if ( aic1.phi() > aic2.phi() + delta ) return false;
+		if ( aic1.phi() < aic2.phi() - delta ) return false;
+	}
+	return true;
 }
 
 } // chemical

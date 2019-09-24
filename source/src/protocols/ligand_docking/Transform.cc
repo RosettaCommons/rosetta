@@ -211,7 +211,7 @@ void Transform::apply(core::pose::Pose & pose)
 	core::Size const begin(pose.conformation().chain_begin(transform_info_.chain_id));
 
 	core::conformation::Residue original_residue = pose.residue(begin);
-	core::chemical::ResidueType residue_type = pose.residue_type(begin);
+	//core::chemical::ResidueType const & residue_type = pose.residue_type(begin);
 
 	//Duplicate pose to avoid overriding existing constraints
 	core::pose::PoseOP cst_pose;

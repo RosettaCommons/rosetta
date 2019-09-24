@@ -18,6 +18,7 @@
 
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/GlobalResidueTypeSet.fwd.hh>
 #include <core/chemical/Adduct.fwd.hh>
 
@@ -49,13 +50,13 @@ error_check_requested_adducts( AdductMap const & add_map,
 	ResidueTypeCOPs const & rsd_types );
 
 /// @brief Apply adducts to residue using a boolean mask
-ResidueTypeOP apply_adducts_to_residue(
+MutableResidueTypeOP apply_adducts_to_residue(
 	ResidueType const & rsd,
 	utility::vector1< bool > & add_mask
 );
 
 /// @brief Create correct combinations of adducts for a residue type
-ResidueTypeOPs
+MutableResidueTypeOPs
 create_adduct_combinations(
 	ResidueType const & rsd,
 	AdductMap ref_map,

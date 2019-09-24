@@ -68,6 +68,11 @@ CenrotRotamerLibrarySpecification::CenrotRotamerLibrarySpecification( std::istre
 	aa( aa_from_name( tag ) );
 }
 
+RotamerLibrarySpecificationOP
+CenrotRotamerLibrarySpecification::clone() const {
+	return utility::pointer::make_shared< CenrotRotamerLibrarySpecification >( *this );
+}
+
 void
 CenrotRotamerLibrarySpecification::aa( AA aa_setting ) {
 	if ( aa_setting > num_canonical_aas ) {
@@ -75,7 +80,6 @@ CenrotRotamerLibrarySpecification::aa( AA aa_setting ) {
 	}
 	aa_ = aa_setting;
 }
-CenrotRotamerLibrarySpecification::~CenrotRotamerLibrarySpecification() = default;
 
 std::string
 CenrotRotamerLibrarySpecification::keyname() const {

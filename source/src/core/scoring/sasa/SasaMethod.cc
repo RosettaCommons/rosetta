@@ -134,8 +134,7 @@ SasaMethod::skip_atom(
 		return false;
 	case SasaMethodHPMode::POLAR_SASA :
 		{
-		core::chemical::Atom const & curatom( rsd.type().atom(atom_index) );
-		if ( curatom.heavyatom_has_polar_hydrogens() || curatom.is_acceptor() || curatom.is_polar_hydrogen() ) {
+		if ( is_polar_atom( rsd, atom_index ) ) {
 			return false;
 		} else {
 			return true;
@@ -143,8 +142,7 @@ SasaMethod::skip_atom(
 	}
 	case SasaMethodHPMode::HYDROPHOBIC_SASA :
 		{
-		core::chemical::Atom const & curatom( rsd.type().atom(atom_index) );
-		if ( curatom.heavyatom_has_polar_hydrogens() || curatom.is_acceptor() || curatom.is_polar_hydrogen() ) {
+		if ( is_polar_atom( rsd, atom_index ) ) {
 			return true;
 		} else {
 			return false;
@@ -156,6 +154,12 @@ SasaMethod::skip_atom(
 	return false; //Keep the compiler happy.
 }
 
+
+bool
+SasaMethod::is_polar_atom( core::conformation::Residue const & rsd, core::Size const atm ) {
+	core::chemical::ResidueType const & type = rsd.type();
+	return type.heavyatom_has_polar_hydrogens(atm) || type.heavyatom_is_an_acceptor(atm) || type.atom_is_polar_hydrogen(atm);
+}
 
 }
 } //scoring

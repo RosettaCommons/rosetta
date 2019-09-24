@@ -36,16 +36,16 @@ namespace rotamers {
 class BasicRotamerLibrarySpecification : public RotamerLibrarySpecification {
 public:
 	BasicRotamerLibrarySpecification();
-	virtual ~BasicRotamerLibrarySpecification();
+
+	RotamerLibrarySpecificationOP
+	clone() const override;
 
 	/// @brief Which type of SingleResidueRotamerLibrary does this specification sub-type correspond to?
-	virtual
 	std::string
-	keyname() const;
+	keyname() const override;
 
-	virtual
 	std::string
-	cache_tag(ResidueType const &) const;
+	cache_tag(ResidueType const &) const override;
 
 	/// @brief Static function for access to type_name, to have a single string which is used for both
 	/// this class and for the SingleResidueRotamerLibraryCreator.

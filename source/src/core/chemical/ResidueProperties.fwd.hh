@@ -26,6 +26,8 @@ class ResidueProperties;
 typedef utility::pointer::shared_ptr< ResidueProperties > ResiduePropertiesOP;
 typedef utility::pointer::shared_ptr< ResidueProperties const > ResiduePropertiesCOP;
 
+ResiduePropertiesOP deep_copy( ResidueProperties const & source);
+
 }  // namespace chemical
 }  // namespace core
 

@@ -12,7 +12,7 @@
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 // Unit header
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeBase.hh>
 #include <core/chemical/ResidueProperties.hh>
 
 // Basic headers
@@ -27,7 +27,7 @@
 // C++ headers
 #include <map>
 #include <iostream>
-
+#include <algorithm>
 
 // Construct tracer.
 static basic::Tracer TR( "core.chemical.ResidueProperties" );
@@ -53,23 +53,21 @@ using namespace core;
 
 // Public methods /////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////
+
+ResidueProperties::ResidueProperties() :
+	utility::pointer::ReferenceCount(),
+	general_property_status_( N_PROPERTIES, false ),
+	variant_type_status_( N_VARIANTS, false )
+{}
+
+
 // Constructor with owning ResidueType
-ResidueProperties::ResidueProperties( ResidueType const * residue_type ) : utility::pointer::ReferenceCount()
-{
-	init( residue_type );
-}
-
-// "Copy constructor"
-ResidueProperties::ResidueProperties( ResidueProperties const & object_to_copy, ResidueType const * new_owner ) :
-	utility::pointer::ReferenceCount( object_to_copy )
-{
-	residue_type_ = new_owner;
-	copy_data( *this, object_to_copy );
-}
-
-// Destructor
-ResidueProperties::~ResidueProperties() = default;
-
+ResidueProperties::ResidueProperties( ResidueTypeBase const & residue_type ) :
+	utility::pointer::ReferenceCount(),
+	parent_residue_type_( residue_type.name() ),
+	general_property_status_( N_PROPERTIES, false ),
+	variant_type_status_( N_VARIANTS, false )
+{}
 
 // Standard Rosetta methods ///////////////////////////////////////////////////
 // General methods
@@ -167,10 +165,10 @@ ResidueProperties::set_variant_type( std::string const & variant_type, bool cons
 			if ( setting /* == true */ ) {
 				if ( custom_variant_types_.has_value( variant_type ) ) {
 					TR.Trace << "Custom variant " << variant_type <<
-						" already exists in " << residue_type_->name() << endl;
+						" already exists in " << parent_residue_type_ << endl;
 				} else {
 					TR.Trace << "Adding the custom variant " << variant_type <<
-						" to " << residue_type_->name() << endl;
+						" to " << parent_residue_type_ << endl;
 					custom_variant_types_.push_back( variant_type );
 				}
 			} else /* setting == false */ {
@@ -178,10 +176,10 @@ ResidueProperties::set_variant_type( std::string const & variant_type, bool cons
 					find( custom_variant_types_.begin(), custom_variant_types_.end(), variant_type );
 				if ( i == custom_variant_types_.end() ) {
 					utility_exit_with_message( "Rosetta does not recognize the custom variant " + variant_type +
-						" in " + residue_type_->name() );
+						" in " + parent_residue_type_ );
 				} else {
 					TR.Trace << "Removing the custom variant " << variant_type <<
-						" from " << residue_type_->name() << endl;
+						" from " << parent_residue_type_ << endl;
 					custom_variant_types_.erase( i );
 				}
 			}
@@ -274,30 +272,18 @@ ResidueProperties::get_list_of_variants() const
 	return list;
 }
 
-
-// Private methods ////////////////////////////////////////////////////////////
-// Initialize data members.
-void
-ResidueProperties::init( ResidueType const * residue_type )
+bool
+ResidueProperties::operator==( ResidueProperties const & other ) const
 {
-	residue_type_ = residue_type;
-	general_property_status_.resize( N_PROPERTIES, false );
-	variant_type_status_.resize( N_VARIANTS, false );
-	has_custom_variant_types_ = false;
+	return parent_residue_type_ == other.parent_residue_type_ &&
+		general_property_status_ == other.general_property_status_ &&
+		variant_type_status_ == other.variant_type_status_ &&
+		has_custom_variant_types_ == other.has_custom_variant_types_ &&
+		numeric_properties_ == other.numeric_properties_ &&
+		string_properties_ == other.string_properties_ &&
+		custom_variant_types_.size() == other.custom_variant_types_.size() &&
+		std::is_permutation(custom_variant_types_.begin(), custom_variant_types_.end(), other.custom_variant_types_.begin()); // Need to compare in order-independent fashion.
 }
-
-// Copy all data members from <from> to <to>.
-void
-ResidueProperties::copy_data( ResidueProperties & to, ResidueProperties const & from )
-{
-	to.general_property_status_ = from.general_property_status_;
-	to.variant_type_status_ = from.variant_type_status_;
-	to.has_custom_variant_types_ = from.has_custom_variant_types_;
-	to.custom_variant_types_ = from.custom_variant_types_;
-	to.numeric_properties_ = from.numeric_properties_;
-	to.string_properties_ = from.string_properties_;
-}
-
 
 // Helper methods /////////////////////////////////////////////////////////////
 // Insertion operator (overloaded so that ResidueProperties can be "printed" in PyRosetta).
@@ -333,6 +319,11 @@ operator++( VariantType & variant )
 	return variant;
 }
 
+ResiduePropertiesOP
+deep_copy( ResidueProperties const & source) {
+	return utility::pointer::make_shared< ResidueProperties >( source );
+}
+
 }  // namespace chemical
 }  // namespace core
 
@@ -344,11 +335,7 @@ operator++( VariantType & variant )
 template< class Archive >
 void
 core::chemical::ResidueProperties::save( Archive & arc ) const {
-	bool valid_ptr( residue_type_ != nullptr );  // Shouldn't ever be non-null, but just to be safe ...
-	arc( CEREAL_NVP( valid_ptr ) );
-	if  ( valid_ptr  ) {
-		arc( CEREAL_NVP_( "residue_type", residue_type_->get_self_ptr() ) ); // EXEMPT residue_type_
-	}
+	arc( CEREAL_NVP( parent_residue_type_ ) );
 	arc( CEREAL_NVP( general_property_status_ ) ); // utility::vector1<_Bool>
 	arc( CEREAL_NVP( variant_type_status_ ) ); // utility::vector1<_Bool>
 	arc( CEREAL_NVP( has_custom_variant_types_ ) ); // _Bool
@@ -360,21 +347,17 @@ core::chemical::ResidueProperties::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::chemical::ResidueProperties::load_and_construct( Archive & arc, cereal::construct< core::chemical::ResidueProperties > & construct ) {
-	core::chemical::ResidueTypeCOP residue_type( nullptr );
-	bool valid_ptr; arc( valid_ptr );
-	if ( valid_ptr ) {
-		arc( residue_type );
-	}
-	construct( residue_type.get() ); // EXEMPT residue_type_
-	arc( construct->general_property_status_ ); // utility::vector1<_Bool>
-	arc( construct->variant_type_status_ ); // utility::vector1<_Bool>
-	arc( construct->has_custom_variant_types_ ); // _Bool
-	arc( construct->custom_variant_types_ ); // utility::vector1<std::string>
-	arc( construct->numeric_properties_ ); // std::map<std::string, core::Real>
-	arc( construct->string_properties_ ); // std::map<std::string, std::string>
+core::chemical::ResidueProperties::load( Archive & arc ) {
+	arc( parent_residue_type_ ); // std::string
+	arc( general_property_status_ ); // utility::vector1<_Bool>
+	arc( variant_type_status_ ); // utility::vector1<_Bool>
+	arc( has_custom_variant_types_ ); // _Bool
+	arc( custom_variant_types_ ); // utility::vector1<std::string>
+	arc( numeric_properties_ ); // std::map<std::string, core::Real>
+	arc( string_properties_ ); // std::map<std::string, std::string>
 }
-SAVE_AND_LOAD_AND_CONSTRUCT_SERIALIZABLE( core::chemical::ResidueProperties );
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ResidueProperties );
 CEREAL_REGISTER_TYPE( core::chemical::ResidueProperties )
 
 CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_ResidueProperties )

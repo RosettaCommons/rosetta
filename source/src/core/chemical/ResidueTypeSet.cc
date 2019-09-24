@@ -22,6 +22,7 @@
 
 // Rosetta headers
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSetCache.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueProperties.hh>
@@ -203,24 +204,23 @@ ResidueTypeSet::generate_residue_type_write_locked( std::string const & rsd_name
 	ResidueTypeCOP rsd_base_ptr = name_mapOP_write_locked( rsd_name_base );
 	if ( ! rsd_base_ptr ) { return nullptr; }
 
-	runtime_assert( rsd_base_ptr->finalized() );
-
-	ResidueTypeCOP patched_type( apply_patch( rsd_base_ptr, patch_name, patch_map(), metapatch_map() ) );
-	if ( patched_type == nullptr ) {
+	MutableResidueTypeCOP patched_mut_type( apply_patch( rsd_base_ptr, patch_name, patch_map(), metapatch_map() ) );
+	if ( patched_mut_type == nullptr ) {
 		return nullptr;
 	} else {
+		ResidueTypeCOP patched_type( ResidueType::make( *patched_mut_type ) );
 		cache_object()->add_residue_type( patched_type );
 		return patched_type;
 	}
 }
 
-ResidueTypeCOP
+MutableResidueTypeCOP
 ResidueTypeSet::apply_patch(
 	ResidueTypeCOP const & rsd_base_ptr,
 	std::string const & patch_name,
 	std::map< std::string, utility::vector1< PatchCOP > > const & patch_mapping,
 	std::map< std::string, MetapatchCOP > const & metapach_mapping
-) {
+) const {
 
 	if ( rsd_base_ptr == nullptr ) { return nullptr; }
 
@@ -245,7 +245,7 @@ ResidueTypeSet::apply_patch(
 		// we need enough whitespace -- will trim later
 		PatchCOP needed_patch = metapach_mapping.at( metapatch_name )->get_one_patch( /*rsd_base, */"  " + atom_name + "  " );
 
-		ResidueTypeOP rsd_instantiated ( needed_patch->apply( *rsd_base_ptr ) );
+		MutableResidueTypeOP rsd_instantiated ( needed_patch->apply( *rsd_base_ptr ) );
 
 		if ( rsd_instantiated == nullptr ) {
 			return nullptr;
@@ -272,7 +272,7 @@ ResidueTypeSet::apply_patch(
 		for ( PatchCOP p : patches ) {
 			if ( !p->applies_to( *rsd_base_ptr ) ) continue;
 
-			ResidueTypeOP rsd_instantiated = p->apply( *rsd_base_ptr );
+			MutableResidueTypeOP rsd_instantiated = p->apply( *rsd_base_ptr );
 
 			if ( rsd_instantiated == nullptr ) return nullptr; // Should this really be a hard-fail, or should we just go on to the next patch?
 
@@ -393,7 +393,7 @@ ResidueTypeSet::generates_patched_residue_type_with_interchangeability_group( st
 }
 
 void
-ResidueTypeSet::prep_restype( ResidueTypeOP new_type ) {
+ResidueTypeSet::prep_restype( MutableResidueTypeOP new_type ) const {
 
 	if ( option[ OptionKeys::in::file::assign_gasteiger_atom_types ] ) {
 		gasteiger::GasteigerAtomTypeSetCOP gasteiger_set(
@@ -401,7 +401,11 @@ ResidueTypeSet::prep_restype( ResidueTypeOP new_type ) {
 		gasteiger::assign_gasteiger_atom_types( *new_type, gasteiger_set, false );
 	}
 
-	if ( option[ OptionKeys::in::add_orbitals] && new_type->has_orbital_types() ) {
+	if ( option[ OptionKeys::in::add_orbitals] ) {
+		if ( new_type->orbital_types_ptr() == nullptr ) {
+			debug_assert( orbital_type_set() );
+			new_type->set_orbital_typeset( orbital_type_set() );
+		}
 		orbitals::AssignOrbitals add_orbitals_to_residue(new_type);
 		add_orbitals_to_residue.assign_orbitals();
 	}
@@ -412,7 +416,7 @@ ResidueTypeSet::prep_restype( ResidueTypeOP new_type ) {
 void
 ResidueTypeSet::add_base_residue_type( std::string const & filename )
 {
-	ResidueTypeOP rsd_type( read_topology_file( filename, atom_type_set(), element_set(), mm_atom_type_set(), orbital_type_set() ) );
+	MutableResidueTypeOP rsd_type( read_topology_file( filename, atom_type_set(), element_set(), mm_atom_type_set(), orbital_type_set() ) );
 	add_base_residue_type( rsd_type );
 }
 
@@ -427,7 +431,7 @@ ResidueTypeSet::read_files_for_base_residue_types(
 }
 
 void
-ResidueTypeSet::add_base_residue_type( ResidueTypeOP new_type )
+ResidueTypeSet::add_base_residue_type( MutableResidueTypeOP new_type )
 {
 	debug_assert( new_type );
 	if ( mode() != new_type->mode() ) {
@@ -437,12 +441,13 @@ ResidueTypeSet::add_base_residue_type( ResidueTypeOP new_type )
 	}
 
 	prep_restype( new_type );
+	ResidueTypeCOP new_restype( ResidueType::make( *new_type ) );
 #ifdef MULTI_THREADED
 	utility::thread::WriteLockGuard write_lock( cache_object()->read_write_mutex() );
 #endif
-	cache_object()->add_residue_type( new_type );
+	cache_object()->add_residue_type( new_restype );
 	cache_object()->clear_cached_maps();
-	base_residue_types_.push_back( new_type );
+	base_residue_types_.push_back( new_restype );
 }
 
 /// @brief Force the addition of a new residue type despite a const context.
@@ -453,7 +458,7 @@ ResidueTypeSet::add_base_residue_type( ResidueTypeOP new_type )
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 void
 ResidueTypeSet::force_add_base_residue_type_already_write_locked(
-	ResidueTypeOP new_type
+	MutableResidueTypeOP new_type
 ) const {
 	debug_assert( new_type );
 	if ( mode() != new_type->mode() ) {
@@ -462,15 +467,17 @@ ResidueTypeSet::force_add_base_residue_type_already_write_locked(
 		// But we're doing it anyway (though we probably shouldn't).
 	}
 	prep_restype( new_type );
-	cache_object()->add_residue_type( new_type );
+
+	ResidueTypeCOP new_restype( ResidueType::make( *new_type ) );
+	cache_object()->add_residue_type( new_restype );
 	cache_object()->clear_cached_maps();
-	const_cast< ResidueTypeSet * >(this)->base_residue_types_.push_back( new_type ); //Horrible but necessary abuse of const_cast for this function.
+	const_cast< ResidueTypeSet * >(this)->base_residue_types_.push_back( new_restype ); //Horrible but necessary abuse of const_cast for this function.
 }
 
 void
 ResidueTypeSet::add_unpatchable_residue_type( std::string const & filename )
 {
-	ResidueTypeOP rsd_type( read_topology_file( filename, atom_type_set(), element_set(), mm_atom_type_set(), orbital_type_set() ) );
+	MutableResidueTypeOP rsd_type( read_topology_file( filename, atom_type_set(), element_set(), mm_atom_type_set(), orbital_type_set() ) );
 	add_unpatchable_residue_type( rsd_type );
 }
 
@@ -485,7 +492,7 @@ ResidueTypeSet::read_files_for_unpatchable_residue_types(
 }
 
 void
-ResidueTypeSet::add_unpatchable_residue_type( ResidueTypeOP new_type )
+ResidueTypeSet::add_unpatchable_residue_type( MutableResidueTypeOP new_type )
 {
 	debug_assert( new_type );
 	if ( mode() != new_type->mode() ) {
@@ -495,13 +502,14 @@ ResidueTypeSet::add_unpatchable_residue_type( ResidueTypeOP new_type )
 	}
 
 	prep_restype( new_type );
+	ResidueTypeCOP new_restype( ResidueType::make( *new_type ) );
 
 #ifdef MULTI_THREADED
 	utility::thread::WriteLockGuard write_lock( cache_object()->read_write_mutex() );
 #endif
-	cache_object()->add_residue_type( new_type );
+	cache_object()->add_residue_type( new_restype );
 	cache_object()->clear_cached_maps();
-	unpatchable_residue_types_.push_back( new_type );
+	unpatchable_residue_types_.push_back( new_restype );
 }
 
 void
@@ -676,7 +684,7 @@ ResidueTypeSet::get_d_equivalent(
 	runtime_assert_string_msg( l_rsd, "Error in core::chemical::ResidueTypeSet::get_d_equivalent(): A null pointer was passed to this function!" );
 	runtime_assert_string_msg( l_rsd->is_l_aa() || l_rsd->is_s_peptoid(), "Error in core::chemical::ResidueTypeSet::get_d_equivalent(): The residue passed to this function is not an L_AA or S_PEPTOID!" );
 
-	ResidueTypeCOP l_basetype( l_rsd->get_base_type_cop() );
+	ResidueTypeCOP l_basetype( utility::pointer::dynamic_pointer_cast<ResidueType const>(l_rsd->get_base_type_cop()) );
 	if ( !l_to_d_mapping_.count(l_basetype) ) return ResidueTypeCOP(); //Returns NULL pointer if there's no D-equivalent.
 
 	ResidueTypeCOP d_basetype( l_to_d_mapping_.at(l_basetype) );
@@ -702,7 +710,7 @@ ResidueTypeSet::get_l_equivalent(
 	runtime_assert_string_msg( d_rsd, "Error in core::chemical::ResidueTypeSet::get_l_equivalent(): A null pointer was passed to this function!" );
 	runtime_assert_string_msg( d_rsd->is_d_aa() || d_rsd->is_r_peptoid(), "Error in core::chemical::ResidueTypeSet::get_l_equivalent(): The residue passed to this function is not a D_AA or R_PEPTOID!" );
 
-	ResidueTypeCOP d_basetype( d_rsd->get_base_type_cop() );
+	ResidueTypeCOP d_basetype( utility::pointer::dynamic_pointer_cast<ResidueType const>(d_rsd->get_base_type_cop()) );
 	if ( !d_to_l_mapping_.count(d_basetype) ) return ResidueTypeCOP(); //Returns NULL pointer if there's no D-equivalent.
 
 	ResidueTypeCOP l_basetype( d_to_l_mapping_.at(d_basetype) );

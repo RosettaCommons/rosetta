@@ -303,8 +303,8 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 
 		TR << "Found residue connection id " << resconn_id1 << "-" << resconn_id2 << ": " << rsd1.atom_name( resconn_atomno1 ) << "-" << rsd2.atom_name( resconn_atomno2 ) << std::endl;
 
-		Size const resconn_mmat1 = rsd1_type.atom( resconn_atomno1 ).mm_atom_type_index();
-		Size const resconn_mmat2 = rsd2_type.atom( resconn_atomno2 ).mm_atom_type_index();
+		Size const resconn_mmat1 = rsd1_type.mm_atom_type_index( resconn_atomno1 );
+		Size const resconn_mmat2 = rsd2_type.mm_atom_type_index( resconn_atomno2 );
 
 		/// Iterate across all atom-quadrouples that define dihedral angles spanning the interface.
 		/// 1. iterate over all pairs of pairs within 1 bond of either residue connection atom.
@@ -325,12 +325,12 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 			for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
 				debug_assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
 				Size const jj_term_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
-				Size const mmat1 = rsd1_type.atom( jj_term_atomno ).mm_atom_type_index();
+				Size const mmat1 = rsd1_type.mm_atom_type_index( jj_term_atomno );
 
 				for ( Size kk = 1; kk <= rsd2_atoms_wi1_bond_of_ii.size(); ++kk ) {
 					debug_assert( rsd2_atoms_wi1_bond_of_ii[ kk ].key1() == resconn_atomno2 );
 					Size const kk_term_atomno = rsd2_atoms_wi1_bond_of_ii[ kk ].key2();
-					Size const mmat4 = rsd2_type.atom( kk_term_atomno ).mm_atom_type_index();
+					Size const mmat4 = rsd2_type.mm_atom_type_index( kk_term_atomno );
 
 					//Real const angle = numeric::dihedral_radians(
 					// rsd1.xyz( jj_term_atomno ),
@@ -339,10 +339,10 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 					// rsd2.xyz( kk_term_atomno ) );
 
 					TR << "Section 1:"
-						<< "r1 " << jj_term_atomno  << " " << rsd1.atom_name( jj_term_atomno )  << "(" << rsd1_type.atom( jj_term_atomno ).mm_name()  << ") - "
-						<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
-						<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.atom( resconn_atomno2 ).mm_name() << ") - "
-						<< "r2 " << kk_term_atomno  << " " << rsd2.atom_name( kk_term_atomno )  << "(" << rsd2_type.atom( kk_term_atomno ).mm_name()  << ")" << std::endl;
+						<< "r1 " << jj_term_atomno  << " " << rsd1.atom_name( jj_term_atomno )  << "(" << rsd1_type.mm_name( jj_term_atomno )  << ") - "
+						<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.mm_name( resconn_atomno1 ) << ") - "
+						<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.mm_name( resconn_atomno2 ) << ") - "
+						<< "r2 " << kk_term_atomno  << " " << rsd2.atom_name( kk_term_atomno )  << "(" << rsd2_type.mm_name( kk_term_atomno )  << ")" << std::endl;
 
 					// get mm params and add constraints for each set of params
 					scoring::mm::mm_torsion_library_citer_pair pair = mm_torsion_library_.lookup( mmat1, mmat2, mmat3, mmat4 );
@@ -375,10 +375,10 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 				debug_assert( rsd1_atoms_wi2_bonds_of_ii[ jj ].key1() == resconn_atomno1 );
 
 				Size const jj_atom2 = rsd1_atoms_wi2_bonds_of_ii[ jj ].key2();
-				Size const mmat2 = rsd1_type.atom( jj_atom2 ).mm_atom_type_index();
+				Size const mmat2 = rsd1_type.mm_atom_type_index( jj_atom2 );
 
 				Size const jj_atom1 = rsd1_atoms_wi2_bonds_of_ii[ jj ].key3();
-				Size const mmat1 = rsd1_type.atom( jj_atom1 ).mm_atom_type_index();
+				Size const mmat1 = rsd1_type.mm_atom_type_index( jj_atom1 );
 
 				//Real const angle = numeric::dihedral_radians(
 				// rsd1.xyz( jj_atom1 ),
@@ -387,10 +387,10 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 				// rsd2.xyz( resconn_atomno2 ) );
 
 				TR << "Section 2: "
-					<< "r1 " << jj_atom1        << " " << rsd1.atom_name( jj_atom1 )        << "(" << rsd1_type.atom( jj_atom1 ).mm_name()  << ") - "
-					<< "r1 " << jj_atom2        << " " << rsd1.atom_name( jj_atom2 )        << "(" << rsd1_type.atom( jj_atom2 ).mm_name()  << ") - "
-					<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
-					<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.atom( resconn_atomno2 ).mm_name() << ")" << std::endl;
+					<< "r1 " << jj_atom1        << " " << rsd1.atom_name( jj_atom1 )        << "(" << rsd1_type.mm_name( jj_atom1 )  << ") - "
+					<< "r1 " << jj_atom2        << " " << rsd1.atom_name( jj_atom2 )        << "(" << rsd1_type.mm_name( jj_atom2 )  << ") - "
+					<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.mm_name( resconn_atomno1 ) << ") - "
+					<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.mm_name( resconn_atomno2 ) << ")" << std::endl;
 
 				// get mm params and add constraints for each set of params
 				scoring::mm::mm_torsion_library_citer_pair pair = mm_torsion_library_.lookup( mmat1, mmat2, mmat3, mmat4 );
@@ -421,10 +421,10 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 				debug_assert( rsd2_atoms_wi2_bonds_of_ii[ jj ].key1() == resconn_atomno2 );
 
 				Size const jj_atom3 = rsd2_atoms_wi2_bonds_of_ii[ jj ].key2();
-				Size const mmat3 = rsd2_type.atom( jj_atom3 ).mm_atom_type_index();
+				Size const mmat3 = rsd2_type.mm_atom_type_index( jj_atom3 );
 
 				Size const jj_atom4 = rsd2_atoms_wi2_bonds_of_ii[ jj ].key3();
-				Size const mmat4 = rsd2_type.atom( jj_atom4 ).mm_atom_type_index();
+				Size const mmat4 = rsd2_type.mm_atom_type_index( jj_atom4 );
 
 				//Real const angle = numeric::dihedral_radians(
 				// rsd1.xyz( resconn_atomno1 ),
@@ -433,10 +433,10 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 				// rsd2.xyz( jj_atom4 ) );
 
 				TR << "Section 3: "
-					<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
-					<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.atom( resconn_atomno2 ).mm_name() << ") - "
-					<< "r2 " << jj_atom3        << " " << rsd1.atom_name( jj_atom3 )        << "(" << rsd1_type.atom( jj_atom3 ).mm_name()  << ") - "
-					<< "r2 " << jj_atom4        << " " << rsd1.atom_name( jj_atom4 )        << "(" << rsd1_type.atom( jj_atom4 ).mm_name()  << ")" << std::endl;
+					<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.mm_name( resconn_atomno1 ) << ") - "
+					<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.mm_name( resconn_atomno2 ) << ") - "
+					<< "r2 " << jj_atom3        << " " << rsd1.atom_name( jj_atom3 )        << "(" << rsd1_type.mm_name( jj_atom3 )  << ") - "
+					<< "r2 " << jj_atom4        << " " << rsd1.atom_name( jj_atom4 )        << "(" << rsd1_type.mm_name( jj_atom4 )  << ")" << std::endl;
 
 				// get mm params and add constraints for each set of params
 				scoring::mm::mm_torsion_library_citer_pair pair = mm_torsion_library_.lookup( mmat1, mmat2, mmat3, mmat4 );

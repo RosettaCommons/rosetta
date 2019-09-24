@@ -14,6 +14,9 @@
 #include <core/chemical/AtomType.hh>
 
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
+
+#include <utility/graph/ring_detection.hh>
 
 namespace core {
 namespace chemical {
@@ -50,7 +53,7 @@ bool retype_is_aromatic(VD const & atom, ResidueGraph const & graph) {
 ///   * Bond types (bond_name) are correctly set
 ///   * The appropriate element objects have been set in Atoms.
 void
-rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
+rosetta_retype_fullatom(MutableResidueType & restype, bool preserve/*=false*/) {
 	using namespace core::chemical;
 
 	// For each atom, analyze bonding pattern to determine type
@@ -222,7 +225,7 @@ rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
 				if ( num_bonds < 2 ) {
 					restype.set_atom_type(vd, "OOC "); // catches C(=O)[O-] (Kekule form) -- new rule by IWD
 				} else {
-					core::Size ring_size( restype.smallest_ring_size( *itr ) );
+					core::Size ring_size( utility::graph::smallest_ring_size( *itr, restype.graph(), 999999 ) );
 					if ( num_H > 0 ) {
 						restype.set_atom_type(vd, "OH  "); // catches C(=O)OH (Kekule form)
 					} else if ( ring_size < 5 ) {

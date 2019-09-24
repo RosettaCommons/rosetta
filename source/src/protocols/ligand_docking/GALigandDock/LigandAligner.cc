@@ -1489,9 +1489,8 @@ LigandAligner::randomize_lig(
 	for ( core::Size ichi_src=1; ichi_src<=nchi; ++ichi_src ) {
 		core::Real angle_i = 360.0 * numeric::random::rg().uniform();
 
-		core::chemical::VDs chivds = pose.residue_type(ligid).chi_atom_vds( ichi_src );
-		core::chemical::Bond const & bond = pose.residue_type(ligid).bond( chivds[2], chivds[3] );
-		core::chemical::BondName bondtype( bond.bond_name() );
+		core::chemical::AtomIndices const & chiatoms = pose.residue_type(ligid).chi_atoms( ichi_src );
+		core::chemical::BondName bondtype( pose.residue_type(ligid).bond_type( chiatoms[2], chiatoms[3] ) );
 
 		if ( bondtype == core::chemical::DoubleBond ) {
 			if ( angle_i < 90.0 || angle_i > 270.0 ) {
@@ -1547,9 +1546,8 @@ LigandAligner::perturb_lig( core::pose::Pose & pose, core::Size ligid ) {
 	// internal torsions
 	core::Size nchi = pose.residue_type(ligid).nchi();
 	for ( core::Size ichi_src=1; ichi_src<=nchi; ++ichi_src ) {
-		core::chemical::VDs chivds = pose.residue_type(ligid).chi_atom_vds( ichi_src );
-		core::chemical::Bond const & bond =  pose.residue_type(ligid).bond( chivds[2], chivds[3] );
-		core::chemical::BondName bondtype( bond.bond_name() );
+		core::chemical::AtomIndices const & chiatoms = pose.residue_type(ligid).chi_atoms( ichi_src );
+		core::chemical::BondName bondtype( pose.residue_type(ligid).bond_type( chiatoms[2], chiatoms[3] ) );
 
 		core::Real angle_i = pose.chi( ichi_src, ligid );
 		if ( bondtype == core::chemical::DoubleBond ) {

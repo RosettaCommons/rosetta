@@ -92,8 +92,8 @@ public:
 		core::chemical::ResidueTypeSetCOP rsd_set
 			= core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
-		core::chemical::ResidueType const cydn = rsd_set->name_map( "CYS:NtermProteinFull:disulfide" );
-		core::chemical::ResidueType const cydc = rsd_set->name_map( "CYS:CtermProteinFull:disulfide" );
+		core::chemical::ResidueType const & cydn = rsd_set->name_map( "CYS:NtermProteinFull:disulfide" );
+		core::chemical::ResidueType const & cydc = rsd_set->name_map( "CYS:CtermProteinFull:disulfide" );
 		TS_ASSERT( start_pose.residue( 1 ).type().name() == cydn.name() );
 		TS_ASSERT( start_pose.residue( 2 ).type().name() == cydc.name() );
 
@@ -122,7 +122,7 @@ public:
 		// the reason it reads in differently is because earlier, we had done pose from string
 		// and then written out before any actions that would have completed termini
 
-		core::chemical::ResidueType const cyd = rsd_set->name_map( "CYS:CtermProteinFull:NtermProteinFull:disulfide" );
+		core::chemical::ResidueType const & cyd = rsd_set->name_map( "CYS:CtermProteinFull:NtermProteinFull:disulfide" );
 		core::io::silent::SilentFileData sfd2( opts );
 		std::string silent_outfile2 = "core/io/test_CYD.out";
 

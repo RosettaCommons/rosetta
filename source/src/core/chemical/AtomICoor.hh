@@ -23,9 +23,9 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
-#include <core/chemical/ResidueGraphTypes.hh>
 // Utility headers
 #include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 #include <core/id/AtomID.fwd.hh>
 
@@ -43,22 +43,6 @@ public:
 	typedef conformation::Conformation Conformation;
 
 public:
-	/// ICoordAtomID type
-	/**
-	- INTERNAL: atoms which inherently belong to this ResidueType
-	- POLYMER_LOWER: atom at the polymer lower connection, such as backbone C in
-	the previous residue (N-term side)
-	- POLYMER_UPPER: atom at the polymer upper connection, such as backbone N in
-	the next residue (C-term side)
-	- CONNECT: atoms from a non-adjacent residue which connect to this residue
-	by non-polymer connection, such as disulfide
-	*/
-	enum Type {
-		INTERNAL = 1,
-		POLYMER_LOWER,
-		POLYMER_UPPER,
-		CONNECT
-	};
 
 
 public:
@@ -70,15 +54,6 @@ public:
 		std::string name,
 		ResidueType const & rsd_type
 	);
-
-	/// @brief construct ICoorAtomID by VD and its ResidueType
-	ICoorAtomID(
-		VD vd,
-		ResidueType const & rsd_type
-	);
-
-	/// @brief Update the internal VDs based on the provide mapping
-	void remap_atom_vds( std::map< VD, VD > const & old_to_new );
 
 public:
 	/// @brief get ICoorAtomID atomno
@@ -95,18 +70,8 @@ public:
 		atomno_ = atomno_in;
 	}
 
-	VD
-	vertex() const {
-		return vd_;
-	}
-
-	void
-	vertex( VD vertex ){
-		vd_ = vertex;
-	}
-
 	/// @brief get ICoordAtomID type
-	Type const &
+	ICoordAtomIDType const &
 	type() const
 	{
 		return type_;
@@ -116,21 +81,21 @@ public:
 	bool
 	is_internal() const
 	{
-		return ( type_ == INTERNAL );
+		return ( type_ == ICoordAtomIDType::INTERNAL );
 	}
 
 
 	bool
 	is_polymer_lower() const
 	{
-		return ( type_ == POLYMER_LOWER );
+		return ( type_ == ICoordAtomIDType::POLYMER_LOWER );
 	}
 
 
 	bool
 	is_polymer_upper() const
 	{
-		return ( type_ == POLYMER_UPPER );
+		return ( type_ == ICoordAtomIDType::POLYMER_UPPER );
 	}
 
 	/// @brief Returns true if this is the specified connection id
@@ -138,7 +103,7 @@ public:
 	bool
 	is_connect( Size const connid ) const
 	{
-		return ( type_ == CONNECT && atomno_ == connid );
+		return ( type_ == ICoordAtomIDType::CONNECT && atomno_ == connid );
 	}
 
 	/// @brief Returns true if this is a connection.
@@ -146,9 +111,13 @@ public:
 	bool
 	is_connect( ) const
 	{
-		return ( type_ == CONNECT );
+		return ( type_ == ICoordAtomIDType::CONNECT );
 	}
 
+	/// @brief Returns the string representation which will build this ICoorAtomID
+	/// (e.g. atom name, UPPER, LOWER, CONN*
+	std::string
+	name( ResidueType const & rt ) const;
 
 public:
 
@@ -180,14 +149,15 @@ public:
 	bool
 	buildable( Residue const & rsd, Conformation const & conformation ) const;
 
+	bool operator==( ICoorAtomID const & other ) const;
+	bool operator!=( ICoorAtomID const & other ) const;
+
 private:
 
 	/// atom's "connection" type
-	Type type_;
+	ICoordAtomIDType type_;
 	/// atom's index number
 	Size atomno_;
-	/// vertex descriptor associated with the icoor
-	VD vd_;
 
 #ifdef    SERIALIZATION
 public:
@@ -223,18 +193,6 @@ public:
 		ResidueType const & rsd_type
 	);
 
-	/// @brief Vertex descriptor version
-	AtomICoor(
-		VD const & built_atom_vd,
-		Real const phi_in,
-		Real const theta_in,
-		Real const d_in,
-		VD const & stub_atom1_vd,
-		VD const & stub_atom2_vd,
-		VD const & stub_atom3_vd,
-		ResidueType const & rsd_type
-	);
-
 	AtomICoor(
 		std::string const & built_atom_name,
 		Real const phi_in,
@@ -245,9 +203,6 @@ public:
 		ICoorAtomID const & stub_atom3,
 		ResidueType const & rsd_type
 	);
-
-	/// @brief Update the internal VDs based on the provide mapping
-	void remap_atom_vds( std::map< VD, VD > const & old_to_new );
 
 public:
 	/// @brief accessor to stub_atom1 ICoorAtomID
@@ -378,17 +333,10 @@ public:
 		return stub_atom1_;
 	}
 
-	void built_atom_vertex(core::chemical::VD vd)
+	/// @brief The name of the atom being built by this icoor
+	std::string const & built_atom() const
 	{
-		built_vd_ = vd;
-	}
-
-	/// @brief The vertex descriptor of the atom being built by this icoor
-	/// Can be null_vertex if this AtomICoor doesn't build a physical atom.
-	/// (e.g. CONNECT, UPPER, LOWER)
-	core::chemical::VD built_atom_vertex() const
-	{
-		return built_vd_;
+		return built_atom_;
 	}
 
 
@@ -424,7 +372,7 @@ private:
 
 private:
 
-	VD built_vd_;
+	std::string built_atom_;
 	Real phi_;
 	Real theta_;
 	Real d_;
@@ -442,6 +390,8 @@ public:
 
 void pretty_print_atomicoor(std::ostream & out, ResidueType const & rsd_type);
 void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, ResidueType const & rsd_type, core::Size indent=0);
+
+std::ostream & operator <<( std::ostream & out, ICoordAtomIDType type );
 
 } // chemical
 } // core

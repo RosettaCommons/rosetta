@@ -83,6 +83,9 @@ public:
 	/// const accessor to stub_atom strings by index
 	std::string const & stub_atom( int const atm ) const;
 
+	bool operator==( Adduct const & other ) const;
+	bool operator!=( Adduct const & other ) const;
+
 private:
 	std::string adduct_name_;
 	std::string atom_name_;

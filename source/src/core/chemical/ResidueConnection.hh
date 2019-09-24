@@ -61,45 +61,28 @@ public:
 	ResidueConnection():
 		atomno_( 0 ),
 		icoor_(),
-		index_( 0 ),
-		vertex_(nullptr)
+		index_( 0 )
 	{}
 
 	/// @brief constructor with atom index number
 	ResidueConnection(
-		int const atomno_in,
-		VD const vertex
+		int const atomno_in
 	):
 		atomno_( atomno_in ),
 		icoor_(),
-		index_( 0 ),
-		vertex_(vertex)
+		index_( 0 )
 	{}
 
-
-	//DO NOT USE unless you add a vertex constructor with this!!!!!!
-	/* /// @brief constructor with atom index number and AtomICoor
-	ResidueConnection(
-	int const atomno_in,
-	AtomICoor const & icoor_in
-	):
-	atomno_( atomno_in ),
-	icoor_( icoor_in ),
-	index_( 0 )
-	{}*/
-
-
-	//DO NOT USE unless you add a vertex constructor with this!!!!!!
 	/// @brief constructor with atom index number, AtomICoor, and connection index
-	/* ResidueConnection(
-	int const atomno_in,
-	AtomICoor const & icoor_in,
-	int const index
+	ResidueConnection(
+		int const atomno_in,
+		AtomICoor const & icoor_in,
+		int const index
 	):
-	atomno_( atomno_in ),
-	icoor_( icoor_in ),
-	index_( index )
-	{}*/
+		atomno_( atomno_in ),
+		icoor_( icoor_in ),
+		index_( index )
+	{}
 
 	/// @brief get atom index number
 	int
@@ -113,21 +96,6 @@ public:
 	atomno( Size const atomno_in )
 	{
 		atomno_ = atomno_in;
-	}
-
-
-	/// @brief get the vetex associated with this residue connection
-	VD
-	vertex() const
-	{
-		return vertex_;
-	}
-
-	/// @brief set the vertex of this residue connection
-	void
-	vertex(VD const vertex)
-	{
-		vertex_ = vertex;
 	}
 
 	/// @brief get atom's AtomICoor
@@ -147,9 +115,6 @@ public:
 	int index() const { return index_; }
 	void index( int index_in ) { index_ = index_in; }
 
-	/// @brief Update the internal VDs based on the provide mapping
-	void remap_atom_vds( std::map< VD, VD > const & old_to_new );
-
 private:
 
 	/// atom index number
@@ -158,7 +123,6 @@ private:
 	AtomICoor icoor_;
 	/// Which residue connection # am I in my owners list of residue connections?
 	int index_;
-	VD vertex_; //my vertex which corresponds to the atomno
 
 #ifdef    SERIALIZATION
 public:

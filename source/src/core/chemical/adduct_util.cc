@@ -16,6 +16,8 @@
 #include <core/chemical/Patch.hh>
 #include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 
 // Project headers
 #include <core/chemical/VariantType.hh>
@@ -105,7 +107,7 @@ error_check_requested_adducts( std::map< std::string, int > const & add_map,
 }
 
 /// @brief Apply adducts to residue using a boolean mask
-ResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
+MutableResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
 	utility::vector1< bool > & add_mask
 )
 {
@@ -145,7 +147,7 @@ ResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
 	}
 
 	// Apply the Patch operations
-	ResidueTypeOP new_rsd_type( temp_patch_case.apply( rsd ) );
+	MutableResidueTypeOP new_rsd_type( temp_patch_case.apply( rsd ) );
 
 	// Set the full name
 	TR << "Setting new rsd name to " << new_rsd_name << std::endl;
@@ -159,7 +161,6 @@ ResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
 	// while non-adduct variants are in general disallowed
 	new_rsd_type->set_adduct_flag( true );
 
-	new_rsd_type->finalize();
 	return new_rsd_type;
 }
 
@@ -169,7 +170,7 @@ ResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Create correct combinations of adducts for a residue type
-ResidueTypeOPs
+MutableResidueTypeOPs
 create_adduct_combinations(
 	ResidueType const & rsd,
 	AdductMap ref_map,
@@ -179,7 +180,7 @@ create_adduct_combinations(
 )
 {
 
-	ResidueTypeOPs adducted_types;
+	MutableResidueTypeOPs adducted_types;
 
 	if ( work_iter == rsd.defined_adducts().end() ) {
 		// Skip the 'no adduct' case - that has already been

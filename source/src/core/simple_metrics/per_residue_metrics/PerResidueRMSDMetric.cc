@@ -279,22 +279,21 @@ PerResidueRMSDMetric::create_atom_id_map( core::pose::Pose const & pose, bool de
 					if ( ! pose.residue_type( res_pair.first).atom_is_sidechain( i ) ) continue;
 				}
 
-
-				core::chemical::Atom const & pose_atom = pose.residue_type( res_pair.first).atom( i );
+				std::string const & pose_atom_name = pose.residue_type(res_pair.first).atom_name( i );
 
 				//if ((ref_atom_index != i) && (robust_ == false)){
-				// std::string msg = "RMSDMetric.  Robust set to false.  Residues do not match:"+utility::to_string( res_pair.first)+" atomno "+utility::to_string(i)+" "+pose_atom.name()+" :ref: "+utility::to_string( res_pair.second )+" atomno "+ utility::to_string( ref_atom_index )+" "+ pose.residue_type( res_pair.second).
+				// std::string msg = "RMSDMetric.  Robust set to false.  Residues do not match:"+utility::to_string( res_pair.first)+" atomno "+utility::to_string(i)+" "+pose_atom_name+" :ref: "+utility::to_string( res_pair.second )+" atomno "+ utility::to_string( ref_atom_index )+" "+ pose.residue_type( res_pair.second).
 				// utility_exit_with_message()
 
 				if ( (!robust_) && (pose.residue_type( res_pair.first).natoms() != ref_pose_->residue_type( res_pair.second).natoms()) ) {
 					std::string msg = "RMSDMetric.  Robust set to false.  Number of atoms in residues do not match. "+ to_string( res_pair.first)+" "+to_string(res_pair.second);
 					utility_exit_with_message(msg);
 				}
-				if ( ref_pose_->residue_type( res_pair.second).has( pose_atom.name()) ) {
-					core::Size ref_atom_index = pose.residue_type( res_pair.second).atom_index( pose_atom.name() );
+				if ( ref_pose_->residue_type( res_pair.second).has( pose_atom_name ) ) {
+					core::Size ref_atom_index = pose.residue_type( res_pair.second).atom_index( pose_atom_name );
 					atom_map[ core::id::AtomID( i, res_pair.first)] = core::id::AtomID( ref_atom_index, res_pair.second);
 				} else if ( (!robust_) ) {
-					std::string msg = "RMSDMetric.  Robust set to false.  ref pose is missing "+pose_atom.name()+" at residue "+to_string( res_pair.second );
+					std::string msg = "RMSDMetric.  Robust set to false.  ref pose is missing "+pose_atom_name+" at residue "+to_string( res_pair.second );
 					utility_exit_with_message(msg);
 				}
 

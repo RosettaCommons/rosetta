@@ -107,13 +107,14 @@ public:
 	void tearDown() {}
 
 	void test_load_restype_noset() {
-		core::chemical::ResidueTypeOP restype( read_topology_file(
+		core::chemical::MutableResidueTypeOP restype( read_topology_file(
 			resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_ ) ); // Null for ResidueTypeSet is deliberate
 	}
 
 	void test_score_restype_noset() {
-		core::chemical::ResidueTypeOP restype( read_topology_file(
+		core::chemical::MutableResidueTypeOP mut_restype( read_topology_file(
 			resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_ ) ); // Null for ResidueTypeSet is deliberate
+		core::chemical::ResidueTypeCOP restype( core::chemical::ResidueType::make( *mut_restype ) );
 
 		core::pose::Pose pose;
 		// Make a default residue
@@ -125,8 +126,9 @@ public:
 	}
 
 	void test_pack_restype_noset() {
-		core::chemical::ResidueTypeOP restype( read_topology_file(
+		core::chemical::MutableResidueTypeOP mut_restype( read_topology_file(
 			resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_ ) ); // Null for ResidueTypeSet is deliberate
+		core::chemical::ResidueTypeCOP restype( core::chemical::ResidueType::make( *mut_restype ) );
 
 		core::pose::Pose pose;
 		// Make a default residue
@@ -138,8 +140,9 @@ public:
 	}
 
 	void test_min_restype_noset() {
-		core::chemical::ResidueTypeOP restype( read_topology_file(
+		core::chemical::MutableResidueTypeOP mut_restype( read_topology_file(
 			resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_ ) ); // Null for ResidueTypeSet is deliberate
+		core::chemical::ResidueTypeCOP restype( core::chemical::ResidueType::make( *mut_restype ) );
 
 		core::pose::Pose pose;
 		// Make a default residue
@@ -151,8 +154,9 @@ public:
 	}
 
 	void test_cartmin_restype_noset() {
-		core::chemical::ResidueTypeOP restype( read_topology_file(
+		core::chemical::MutableResidueTypeOP mut_restype( read_topology_file(
 			resfile_, atom_types_, elements_, mm_atom_types_, orbital_types_ ) ); // Null for ResidueTypeSet is deliberate
+		core::chemical::ResidueTypeCOP restype( core::chemical::ResidueType::make( *mut_restype ) );
 
 		core::pose::Pose pose;
 		// Make a default residue

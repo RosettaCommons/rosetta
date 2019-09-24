@@ -24,6 +24,8 @@
 #include <boost/unordered_map.hpp>
 #include <utility/SingletonBase.hh>
 
+#include <boost/unordered_set.hpp>
+
 namespace core {
 namespace scoring {
 namespace motif {

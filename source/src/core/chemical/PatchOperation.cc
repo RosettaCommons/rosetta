@@ -16,6 +16,7 @@
 
 // Package headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 
 // Project headers
 #include <core/chemical/Atom.hh>
@@ -65,7 +66,7 @@ DeleteAtom::DeleteAtom( std::string const & atom_name_in ) :
 {}
 
 bool
-DeleteAtom::apply( ResidueType & rsd ) const
+DeleteAtom::apply( MutableResidueType & rsd ) const
 {
 
 	if ( !rsd.has( atom_name_ )  ) {
@@ -93,7 +94,7 @@ SetBackboneHeavyatom::SetBackboneHeavyatom( std::string const & atom_name_in ) :
 {}
 
 bool
-SetBackboneHeavyatom::apply( ResidueType & rsd ) const
+SetBackboneHeavyatom::apply( MutableResidueType & rsd ) const
 {
 	if ( !rsd.has( atom_name_ ) ) {
 		TR_PatchOperations.Debug << "SetBackboneHeavyatom::apply failed: " <<
@@ -122,7 +123,7 @@ SetDisulfideAtomName::SetDisulfideAtomName( std::string const & atom_name_in ) :
 {}
 
 bool
-SetDisulfideAtomName::apply( ResidueType & rsd ) const
+SetDisulfideAtomName::apply( MutableResidueType & rsd ) const
 {
 	if ( !rsd.has( atom_name_ ) ) {
 		TR_PatchOperations.Debug << "SetDisulfideAtomName::apply failed: " <<
@@ -159,7 +160,7 @@ SetPolymerConnectAtom::SetPolymerConnectAtom( std::string const & atom_name_in, 
 }
 
 bool
-SetPolymerConnectAtom::apply( ResidueType & rsd ) const
+SetPolymerConnectAtom::apply( MutableResidueType & rsd ) const
 {
 	if ( atom_name_ != "NONE" && ! rsd.has( atom_name_ ) ) {
 		TR_PatchOperations.Debug << "SetPolymerConnectAtom::apply failed: " <<
@@ -175,13 +176,13 @@ SetPolymerConnectAtom::apply( ResidueType & rsd ) const
 	if ( upper_lower_ == -1 ) {
 		rsd.set_lower_connect_atom( atom_name_ );
 		if ( atom_name_ == "NONE" ) {
-			clean_up_dangling_connect( rsd, ICoorAtomID::POLYMER_LOWER );
+			clean_up_dangling_connect( rsd, ICoordAtomIDType::POLYMER_LOWER );
 		}
 	} else {
 		debug_assert( upper_lower_ == 1 );
 		rsd.set_upper_connect_atom( atom_name_ );
 		if ( atom_name_ == "NONE" ) {
-			clean_up_dangling_connect( rsd, ICoorAtomID::POLYMER_UPPER );
+			clean_up_dangling_connect( rsd, ICoordAtomIDType::POLYMER_UPPER );
 		}
 	}
 
@@ -217,7 +218,7 @@ AddConnect::AddConnect( std::string const & connect_atom,
 
 
 bool
-AddConnect::apply( ResidueType & rsd ) const
+AddConnect::apply( MutableResidueType & rsd ) const
 {
 	if ( !rsd.has( connect_atom_ ) ||
 			!rsd.has(  parent_atom_ ) ||
@@ -248,7 +249,7 @@ AddProperty::AddProperty( std::string const & property_in ):
 {}
 
 bool
-AddProperty::apply( ResidueType & rsd ) const
+AddProperty::apply( MutableResidueType & rsd ) const
 {
 	runtime_assert_string_msg( property_enum_ != core::chemical::NO_PROPERTY, "Error in AddProperty::apply(): Could not parse \"" + property_ + "\" as a valid residue type property." );
 	rsd.add_property( property_enum_ );
@@ -271,7 +272,7 @@ DeleteProperty::DeleteProperty( std::string const & property_in ):
 {}
 
 bool
-DeleteProperty::apply( ResidueType & rsd ) const
+DeleteProperty::apply( MutableResidueType & rsd ) const
 {
 	runtime_assert_string_msg( property_ != core::chemical::NO_PROPERTY, "Error in DeleteProperty::apply(): Could not parse \"" + property_name_ + "\" as a valid residue type property." );
 	rsd.delete_property( property_ );
@@ -304,7 +305,7 @@ DeleteVariantType::DeleteVariantType( VariantType const variant_in ) :
 /// @remarks Because ResidueType is not throwing exceptions, this will never return true.  Failure will lead to exits
 /// from ResidueType. ~Labonte
 bool
-DeleteVariantType::apply( ResidueType & rsd ) const
+DeleteVariantType::apply( MutableResidueType & rsd ) const
 {
 	if ( variant_ != NO_VARIANT ) {
 		rsd.remove_variant_type( variant_ );
@@ -352,7 +353,7 @@ AddChi::AddChi(std::string const & atom1_in,
 {}
 
 bool
-AddChi::apply( ResidueType & rsd ) const
+AddChi::apply( MutableResidueType & rsd ) const
 {
 	if ( !rsd.has( atom1_ ) || !rsd.has( atom2_ ) || !rsd.has( atom3_ ) || !rsd.has( atom4_ ) ) {
 		TR_PatchOperations.Debug << "AddChi::apply failed: " << rsd.name() << " is missing atom(s) " <<
@@ -388,7 +389,7 @@ AddProtonChi::AddProtonChi(
 {}
 
 bool
-AddProtonChi::apply( ResidueType & rsd ) const
+AddProtonChi::apply( MutableResidueType & rsd ) const
 {
 	rsd.set_proton_chi( chino_, samples_, extrasamples_ );
 	return false;
@@ -410,7 +411,7 @@ RedefineChi::RedefineChi(Size const & chino_in,
 {}
 
 bool
-RedefineChi::apply( ResidueType & rsd ) const
+RedefineChi::apply( MutableResidueType & rsd ) const
 {
 	if ( !rsd.has( atom1_ ) || !rsd.has( atom2_ ) || !rsd.has( atom3_ ) || !rsd.has( atom4_ ) ) {
 		TR_PatchOperations.Debug << "RedefineChi::apply failed: " <<
@@ -437,7 +438,7 @@ RedefineChi::name() const {
 }
 
 bool
-DeleteTerminalChi::apply( ResidueType & rsd ) const
+DeleteTerminalChi::apply( MutableResidueType & rsd ) const
 {
 	if ( rsd.nchi() < 1 ) {
 		TR_PatchOperations.Debug << "DeleteTerminalChi::apply failed: " <<
@@ -465,7 +466,7 @@ DeleteMetalbindingAtom::DeleteMetalbindingAtom(
 {}
 
 bool
-DeleteMetalbindingAtom::apply( ResidueType & rsd ) const
+DeleteMetalbindingAtom::apply( MutableResidueType & rsd ) const
 {
 	rsd.delete_metalbinding_atom( atom_name_ );
 	return false;
@@ -485,9 +486,9 @@ DeleteActCoordAtom::DeleteActCoordAtom(
 {}
 
 bool
-DeleteActCoordAtom::apply( ResidueType & rsd ) const
+DeleteActCoordAtom::apply( MutableResidueType & rsd ) const
 {
-	rsd.delete_act_coord_atom( atom_name_ );
+	rsd.delete_actcoord_atom( atom_name_ );
 	return false;
 }
 
@@ -517,7 +518,7 @@ AddChiRotamer::AddChiRotamer(Angle const & mean_in, Angle const & sdev_in) :
 {}
 
 bool
-AddChiRotamer::apply( ResidueType & rsd ) const
+AddChiRotamer::apply( MutableResidueType & rsd ) const
 {
 	if ( no_index_ ) {
 		rsd.add_chi_rotamer_to_last_chi(mean_ , sdev_);
@@ -546,7 +547,7 @@ ClearChiRotamers::ClearChiRotamers( core::uint const chi_no_in ) :
 
 /// @return  true on failure
 bool
-ClearChiRotamers::apply( ResidueType & rsd ) const
+ClearChiRotamers::apply( MutableResidueType & rsd ) const
 {
 	if ( chi_no_ == 0 || chi_no_ > rsd.nchi() ) {
 		TR_PatchOperations.Debug << "ClearChiRotamers::apply failed: " <<
@@ -586,7 +587,7 @@ AddAtom::name() const {
 }
 
 bool
-AddAtom::apply( ResidueType & rsd ) const
+AddAtom::apply( MutableResidueType & rsd ) const
 {
 	if ( rsd.has( atom_name_ ) ) {
 		TR_PatchOperations.Debug << "AddAtom::apply failed: " <<
@@ -615,7 +616,7 @@ AddAtomAlias::AddAtomAlias( std::string const & rosetta_atom_name_in, std::strin
 /// @remarks Because ResidueType is not throwing exceptions, this will never return true.  Failure will lead to exits
 /// from ResidueType. ~Labonte
 bool
-AddAtomAlias::apply( ResidueType & rsd ) const
+AddAtomAlias::apply( MutableResidueType & rsd ) const
 {
 	rsd.add_atom_alias( rosetta_atom_name_, alias_ );
 	rsd.add_canonical_atom_alias( rosetta_atom_name_full_, alias_full_ );
@@ -646,7 +647,7 @@ std::string
 AddBond::name() const { return "AddBond"; }
 
 bool
-AddBond::apply( ResidueType & rsd ) const
+AddBond::apply( MutableResidueType & rsd ) const
 {
 	if ( !rsd.has( atom1_ ) || !rsd.has( atom2_ ) ) {
 		TR_PatchOperations.Debug << "AddBond::apply failed: " <<
@@ -678,7 +679,7 @@ AddBondType::AddBondType(
 /// @remarks Because ResidueType is not throwing exceptions, this will never return true.  Failure will lead to exits
 /// from ResidueType. ~Labonte
 bool
-AddBondType::apply( ResidueType & rsd ) const
+AddBondType::apply( MutableResidueType & rsd ) const
 {
 	rsd.add_bond( atom1_, atom2_, convert_to_BondName( bond_type_ ) );
 	return false;  // success
@@ -708,10 +709,10 @@ ChangeBondType::ChangeBondType(
 /// @remarks Because ResidueType is not throwing exceptions, this will never return true.  Failure will lead to exits
 /// from ResidueType. ~Labonte
 bool
-ChangeBondType::apply( ResidueType & rsd ) const
+ChangeBondType::apply( MutableResidueType & rsd ) const
 {
 	rsd.change_bond_type(
-		atom1_, atom2_, convert_to_BondName( old_bond_type_ ), convert_to_BondName( new_bond_type_ ) );
+		atom1_, atom2_, convert_to_BondName( new_bond_type_ ) );
 	return false;  // success
 }
 
@@ -733,7 +734,7 @@ SetAtomicCharge::SetAtomicCharge(
 {}
 
 bool
-SetAtomicCharge::apply( ResidueType & rsd ) const
+SetAtomicCharge::apply( MutableResidueType & rsd ) const
 {
 	if ( !rsd.has( atom_name_ ) ) {
 		TR_PatchOperations.Debug << "SetAtomicCharge::apply failed: " <<
@@ -764,7 +765,7 @@ SetFormalCharge::SetFormalCharge( std::string const & atom_name_in, core::SSize 
 
 /// @return  true on failure
 bool
-SetFormalCharge::apply( ResidueType & rsd ) const
+SetFormalCharge::apply( MutableResidueType & rsd ) const
 {
 	if ( ! rsd.has( atom_name_ ) ) {
 		TR_PatchOperations.Error << "SetFormalCharge::apply() failed: " << rsd.name() << " is missing atom: " <<
@@ -791,7 +792,7 @@ SetNetFormalCharge::SetNetFormalCharge( signed int const charge_in ) :
 
 /// @return  true on failure
 bool
-SetNetFormalCharge::apply( ResidueType & rsd ) const
+SetNetFormalCharge::apply( MutableResidueType & rsd ) const
 {
 	rsd.net_formal_charge( charge_ );
 	return false;  // success always
@@ -815,7 +816,7 @@ SetAtomType::SetAtomType(
 {}
 
 bool
-SetAtomType::apply( ResidueType & rsd ) const
+SetAtomType::apply( MutableResidueType & rsd ) const
 {
 	if ( !rsd.has( atom_name_ ) ) {
 		TR_PatchOperations.Debug << "SetAtomType::apply failed: " <<
@@ -843,7 +844,7 @@ SetAtomType::name() const {
 
 // Set_AA ////////////////////////////////////////////////////////////////////
 bool
-Set_AA::apply( ResidueType & rsd ) const
+Set_AA::apply( MutableResidueType & rsd ) const
 {
 	rsd.aa( aa_ );
 	return false;
@@ -860,7 +861,7 @@ SetIO_String::SetIO_String(
 {}
 
 bool
-SetIO_String::apply( ResidueType & rsd ) const
+SetIO_String::apply( MutableResidueType & rsd ) const
 {
 	rsd.name3( name3_ );
 	rsd.name1( name1_ );
@@ -881,7 +882,7 @@ SetInterchangeabilityGroup_String::SetInterchangeabilityGroup_String(
 {}
 
 bool
-SetInterchangeabilityGroup_String::apply( ResidueType & rsd ) const
+SetInterchangeabilityGroup_String::apply( MutableResidueType & rsd ) const
 {
 	rsd.interchangeability_group( intgrp_ );
 	return false;
@@ -905,7 +906,7 @@ SetMMAtomType::SetMMAtomType(
 {}
 
 bool
-SetMMAtomType::apply( ResidueType & rsd ) const
+SetMMAtomType::apply( MutableResidueType & rsd ) const
 {
 	if ( ! rsd.has( atom_name_ ) ) {
 		if ( TR_PatchOperations.Debug.visible() ) {
@@ -918,7 +919,7 @@ SetMMAtomType::apply( ResidueType & rsd ) const
 			TR_PatchOperations.Trace << "SetMMAtomType::apply: " <<
 				atom_name_ << ' ' << mm_atom_type_name_ << std::endl;
 		}
-		rsd.set_mm_atom_type( atom_name_, mm_atom_type_name_ );
+		rsd.atom( rsd.atom_vertex( atom_name_ ) ).mm_name( mm_atom_type_name_ );
 	}
 	return false;
 }
@@ -934,7 +935,7 @@ SetMMAtomType::name() const {
 
 // helper function
 std::string
-expand_icoor_atom_name( std::string name, ResidueType const & rsd )
+expand_icoor_atom_name( std::string name, MutableResidueType const & rsd )
 {
 	std::string const nconn_tag( "%LASTCONN" );
 	Size pos( name.find( nconn_tag ) );
@@ -942,6 +943,16 @@ expand_icoor_atom_name( std::string name, ResidueType const & rsd )
 		name.replace( pos, nconn_tag.size(), ObjexxFCL::string_of( rsd.n_possible_residue_connections() ) );
 	}
 	return name;
+}
+
+// helper function
+void
+check_residue_has_atom( std::string const & atom_name, core::chemical::MutableResidueType const & rsd, std::string const & location ) {
+	// The strings here might be connection designations, so avoid the inevitable failure from that.
+	if ( string_to_icoord_type( atom_name ) == ICoordAtomIDType::INTERNAL &&
+			! rsd.has( atom_name ) ) {
+		utility_exit_with_message( location + " atom `" + atom_name + "` not found in residue " + rsd.name() );
+	}
 }
 
 SetICoor::SetICoor(
@@ -968,7 +979,7 @@ std::string
 SetICoor::name() const { return "SetICoor"; }
 
 bool
-SetICoor::apply( ResidueType & rsd ) const
+SetICoor::apply( MutableResidueType & rsd ) const
 {
 	if ( TR_PatchOperations.Trace.visible() ) {
 		TR_PatchOperations.Trace << "SetICoor::apply: " <<
@@ -978,9 +989,10 @@ SetICoor::apply( ResidueType & rsd ) const
 	std::string const stub1( expand_icoor_atom_name( stub1_, rsd ) );
 	std::string const stub2( expand_icoor_atom_name( stub2_, rsd ) );
 	std::string const stub3( expand_icoor_atom_name( stub3_, rsd ) );
-	//  bool const rebuild_icoor_xyz( ICoorAtomID( stub1, rsd ).is_internal() &&
-	//                 ICoorAtomID( stub2, rsd ).is_internal() &&
-	//                 ICoorAtomID( stub3, rsd ).is_internal() );
+	check_residue_has_atom( atom, rsd, "SetICoor patch:");
+	check_residue_has_atom( stub1, rsd, "SetICoor patch:");
+	check_residue_has_atom( stub2, rsd, "SetICoor patch:");
+	check_residue_has_atom( stub3, rsd, "SetICoor patch:");
 	bool const rebuild_icoor_xyz( true );
 	rsd.set_icoor( atom, phi_, theta_, d_, stub1, stub2, stub3, rebuild_icoor_xyz );
 	return false;
@@ -998,17 +1010,21 @@ ChangeAncestory::ChangeAncestory(
 
 /// @brief change the ancestory, but leave the icoors intact.
 bool
-ChangeAncestory::apply( ResidueType & rsd ) const
+ChangeAncestory::apply( MutableResidueType & rsd ) const
 {
-	Size const atind( rsd.atom_index( atom_ ));
-	AtomICoor const aticoor( rsd.icoor( atind ));
+	VD const atvd( rsd.atom_vertex( atom_ ));
+	MutableICoorRecordCOP const aticoor( rsd.icoor( atvd ) );
 
-	ICoorAtomID pa, gp, gg;
+	if ( aticoor == nullptr ) {
+		utility_exit_with_message("ChangeAncestory patch called on a ResidueType and atom that doesn't yet have a proper Icoor record");
+	}
+
+	std::string pa, gp, gg;
 
 	try {
-		pa = which_ancestor_ == anc_parent           ? ICoorAtomID( ancestor_name_, rsd ) : aticoor.stub_atom1();
-		gp = which_ancestor_ == anc_grandparent      ? ICoorAtomID( ancestor_name_, rsd ) : aticoor.stub_atom2();
-		gg = which_ancestor_ == anc_greatgrandparent ? ICoorAtomID( ancestor_name_, rsd ) : aticoor.stub_atom3();
+		pa = which_ancestor_ == anc_parent           ? ancestor_name_ : aticoor->stub_atom1();
+		gp = which_ancestor_ == anc_grandparent      ? ancestor_name_ : aticoor->stub_atom2();
+		gg = which_ancestor_ == anc_greatgrandparent ? ancestor_name_ : aticoor->stub_atom3();
 	} catch ( utility::excn::Exception const & excn ) {
 		std::ostringstream oss;
 		oss << "Failed to apply the ChangeAncestory patch (" << atom_ << ", ";
@@ -1023,7 +1039,7 @@ ChangeAncestory::apply( ResidueType & rsd ) const
 		utility_exit_with_message( oss.str() );
 	}
 
-	rsd.set_icoor( atom_, aticoor.phi(), aticoor.theta(), aticoor.d(), pa, gp, gg, true /*rebuild_xyz*/ );
+	rsd.set_icoor( atom_, aticoor->phi(), aticoor->theta(), aticoor->d(), pa, gp, gg, true /*rebuild_xyz*/ );
 	return false;
 }
 
@@ -1043,7 +1059,7 @@ ResetBondLength::ResetBondLength( std::string const & atm_in, core::Distance d_i
 
 /// @return  true on failure
 bool
-ResetBondLength::apply( ResidueType & rsd ) const
+ResetBondLength::apply( MutableResidueType & rsd ) const
 {
 	if ( ! rsd.has( atm_ ) ) {
 		TR_PatchOperations.Debug << "ResetBondLength::apply failed: " <<
@@ -1069,22 +1085,21 @@ PrependMainchainAtom::PrependMainchainAtom( std::string const & atom_name_in ) :
 {}
 
 bool
-PrependMainchainAtom::apply( ResidueType & rsd ) const
+PrependMainchainAtom::apply( MutableResidueType & rsd ) const
 {
 	if ( !rsd.has( atom_name_ ) ) {
 		TR_PatchOperations.Debug << "PrependMainchainAtom::apply failed: " <<
 			rsd.name() << " is missing atom " << atom_name_ << std::endl;
 		return true; // failure
 	} else {
-		AtomIndices const & old_mainchain_atoms( rsd.mainchain_atoms() );
-		AtomIndices new_mainchain_atoms;
-		new_mainchain_atoms.push_back( rsd.atom_index( atom_name_ ) );
+		utility::vector1< VD > const & old_mainchain_atoms( rsd.mainchain_atoms() );
+		utility::vector1< VD > new_mainchain_atoms;
+		new_mainchain_atoms.push_back( rsd.atom_vertex( atom_name_ ) );
 		for ( Size i = 1; i <= old_mainchain_atoms.size(); ++i ) {
 			new_mainchain_atoms.push_back( old_mainchain_atoms[i] );
 		}
 		rsd.set_mainchain_atoms( new_mainchain_atoms );
 	}
-	rsd.finalize();
 	return false;
 }
 
@@ -1100,18 +1115,17 @@ AppendMainchainAtom::AppendMainchainAtom( std::string const & atom_name_in ) :
 {}
 
 bool
-AppendMainchainAtom::apply( ResidueType & rsd ) const
+AppendMainchainAtom::apply( MutableResidueType & rsd ) const
 {
 	if ( !rsd.has( atom_name_ ) ) {
 		TR_PatchOperations.Debug << "AppendMainchainAtom::apply failed: " <<
 			rsd.name() << " is missing atom " << atom_name_ << std::endl;
 		return true; // failure
 	} else {
-		AtomIndices new_mainchain_atoms( rsd.mainchain_atoms() );
-		new_mainchain_atoms.push_back( rsd.atom_index( atom_name_ ) );
+		utility::vector1< VD > new_mainchain_atoms( rsd.mainchain_atoms() );
+		new_mainchain_atoms.push_back( rsd.atom_vertex( atom_name_ ) );
 		rsd.set_mainchain_atoms( new_mainchain_atoms );
 	}
-	rsd.finalize();
 	return false;
 }
 
@@ -1128,14 +1142,14 @@ ReplaceMainchainAtom::ReplaceMainchainAtom( std::string const & target, std::str
 {}
 
 bool
-ReplaceMainchainAtom::apply( ResidueType & rsd ) const
+ReplaceMainchainAtom::apply( MutableResidueType & rsd ) const
 {
 	if ( !rsd.has( target_ ) ) {
 		TR_PatchOperations.Debug << "ReplaceMainchainAtom::apply failed: " <<
 			rsd.name() << " is missing atom " << target_ << std::endl;
 		return true; // failure
 	} else {
-		AtomIndices new_mainchain_atoms( rsd.mainchain_atoms() );
+		utility::vector1< VD > new_mainchain_atoms( rsd.mainchain_atoms() );
 		for ( Size i = 1; i <= new_mainchain_atoms.size(); ++i ) {
 			std::string mainchain_atom_name = rsd.atom_name( new_mainchain_atoms[ i ] );
 			mainchain_atom_name.erase( std::remove_if( mainchain_atom_name.begin(),
@@ -1144,7 +1158,7 @@ ReplaceMainchainAtom::apply( ResidueType & rsd ) const
 				mainchain_atom_name.end() );
 
 			if ( mainchain_atom_name == target_ ) {
-				new_mainchain_atoms[ i ] = rsd.atom_index( new_atom_ );
+				new_mainchain_atoms[ i ] = rsd.atom_vertex( new_atom_ );
 				break;
 			}
 		}
@@ -1165,7 +1179,7 @@ SetNbrAtom::SetNbrAtom( std::string const & atom_name_in ) :
 {}
 
 bool
-SetNbrAtom::apply( ResidueType & rsd ) const
+SetNbrAtom::apply( MutableResidueType & rsd ) const
 {
 	if ( !rsd.has( atom_name_ ) ) {
 		TR_PatchOperations.Debug << "SetNbrAtom::apply failed: " <<
@@ -1189,7 +1203,7 @@ SetNbrRadius::SetNbrRadius( Real const & radius ) :
 {}
 
 bool
-SetNbrRadius::apply( ResidueType & rsd ) const
+SetNbrRadius::apply( MutableResidueType & rsd ) const
 {
 	rsd.nbr_radius( radius_ );
 	return false;
@@ -1204,13 +1218,13 @@ SetNbrRadius::name() const {
 
 /// @brief Add a connection to the residue's sulfur and make a virtual proton to track the position of the connection atom
 bool
-SetAllAtomsRepulsive::apply( ResidueType & rsd ) const {
+SetAllAtomsRepulsive::apply( MutableResidueType & rsd ) const {
 
-	for ( Size i = 1; i <= rsd.natoms(); ++i ) {
-		if ( rsd.atom_is_hydrogen( i ) ) {
-			rsd.set_atom_type( rsd.atom_name( i ), "REPLS" );
+	for ( VD atm: rsd.all_atoms() ) {
+		if ( rsd.atom(atm).is_hydrogen() ) {
+			rsd.set_atom_type( atm, "REPLS" );
 		} else {
-			rsd.set_atom_type( rsd.atom_name( i ), "HREPS" );
+			rsd.set_atom_type( atm, "HREPS" );
 		}
 	}
 
@@ -1229,7 +1243,7 @@ SetOrientAtom::SetOrientAtom(bool force_nbr_atom_orient):
 {}
 
 bool
-SetOrientAtom::apply( ResidueType & rsd ) const
+SetOrientAtom::apply( MutableResidueType & rsd ) const
 {
 	rsd.force_nbr_atom_orient( force_nbr_atom_orient_ );
 	return false;
@@ -1250,7 +1264,7 @@ RemoveRotamerSpecifications::RemoveRotamerSpecifications() {}
 /// @return Success ("false" -- i.e. no error thrown) or failure ("true").
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 bool
-RemoveRotamerSpecifications::apply( ResidueType & rsd ) const {
+RemoveRotamerSpecifications::apply( MutableResidueType & rsd ) const {
 	using namespace core::chemical::rotamers;
 
 	if ( rsd.rotamer_library_specification() ) {
@@ -1281,7 +1295,7 @@ RamaPreproFilename::RamaPreproFilename(
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 bool
 RamaPreproFilename::apply(
-	ResidueType & rsd
+	MutableResidueType & rsd
 ) const {
 	rsd.set_rama_prepro_map_file_name( non_prepro_file_, false);
 	rsd.set_rama_prepro_map_file_name( prepro_file_, true);
@@ -1308,7 +1322,7 @@ RamaPreproResname::RamaPreproResname(
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 bool
 RamaPreproResname::apply(
-	ResidueType & rsd
+	MutableResidueType & rsd
 ) const {
 	rsd.set_rama_prepro_mainchain_torsion_potential_name( resname_, false );
 	rsd.set_rama_prepro_mainchain_torsion_potential_name( resname_, true );
@@ -1328,7 +1342,7 @@ NCAARotLibPath::NCAARotLibPath( std::string const & path_in ) :
 
 /// @brief set the NCAA rotamer library path in the residue type
 bool
-NCAARotLibPath::apply( ResidueType & rsd ) const
+NCAARotLibPath::apply( MutableResidueType & rsd ) const
 {
 	using namespace core::chemical::rotamers;
 
@@ -1366,7 +1380,7 @@ NCAARotLibBBTorsions::NCAARotLibBBTorsions( utility::vector1< core::Size > const
 
 /// @brief Set the mainchain torsion indices that a noncanonical rotamer library depends upon.
 bool
-NCAARotLibBBTorsions::apply( ResidueType & rsd ) const
+NCAARotLibBBTorsions::apply( MutableResidueType & rsd ) const
 {
 	using namespace core::chemical::rotamers;
 
@@ -1415,7 +1429,7 @@ NCAARotLibNumRotamerBins::NCAARotLibNumRotamerBins(
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 bool
 NCAARotLibNumRotamerBins::apply(
-	ResidueType & rsd
+	MutableResidueType & rsd
 ) const {
 	using namespace core::chemical::rotamers;
 
@@ -1434,10 +1448,10 @@ NCAARotLibNumRotamerBins::name() const {
 
 /// @brief Add a connection to the residue's sulfur and make a virtual proton to track the position of the connection atom
 bool
-ConnectSulfurAndMakeVirtualProton::apply( ResidueType & rsd ) const {
+ConnectSulfurAndMakeVirtualProton::apply( MutableResidueType & rsd ) const {
 	std::string const & disulfide_atom_name = rsd.get_disulfide_atom_name();
-	std::string const & CB_equivalent = rsd.atom_name( rsd.atom_base( rsd.atom_index( disulfide_atom_name ) ) );
-	std::string const & CA_equivalent = rsd.atom_name( rsd.atom_base( rsd.atom_index( CB_equivalent ) ) );
+	std::string const & CB_equivalent = rsd.atom_name( rsd.atom_base( rsd.atom_vertex( disulfide_atom_name ) ) );
+	std::string const & CA_equivalent = rsd.atom_name( rsd.atom_base( rsd.atom_vertex( CB_equivalent ) ) );
 	AddConnect ad(
 		disulfide_atom_name,
 		180, 68.374, 1.439,
@@ -1448,11 +1462,19 @@ ConnectSulfurAndMakeVirtualProton::apply( ResidueType & rsd ) const {
 	bool x = ad.apply( rsd );
 
 	// Now I need to grab the proton sitting on the disulfide atom
-	std::string HG_name = rsd.atom_name( rsd.attached_H_begin( rsd.atom_index( disulfide_atom_name ) ) );
-	rsd.set_atom_type( HG_name, "VIRT" );
-	rsd.set_mm_atom_type( HG_name, "VIRT" );
-	rsd.atom( HG_name ).charge( 0.0 );
-	rsd.atom( HG_name ).is_virtual( true );
+	utility::vector1< VD > const & bonded_H( rsd.bonded_hydrogens( rsd.atom_vertex( disulfide_atom_name ) ) );
+	if ( bonded_H.empty() ) {
+		utility_exit_with_message("Cannot apply ConnectSulfurAndMakeVirtualProton to " + rsd.name() + ": atom " + disulfide_atom_name + " has no hydrogens.");
+	}
+	if ( bonded_H.size() != 1 ) {
+		tr.Warning << "In ConnectSulfurAndMakeVirtualProton patch, " << rsd.name() << " disulfide atom " << disulfide_atom_name << " has more than one hydrogen." << std::endl;
+	}
+	VD HG_atm = bonded_H[1];
+
+	rsd.set_atom_type( HG_atm, "VIRT" );
+	rsd.atom( HG_atm ).mm_name( "VIRT" );
+	rsd.atom( HG_atm ).charge( 0.0 );
+	rsd.atom( HG_atm ).is_virtual( true );
 
 	return x;
 }
@@ -1472,7 +1494,7 @@ ConnectSulfurAndMakeVirtualProton::name() const {
 }
 
 bool
-ChiralFlipNaming::apply( ResidueType & rsd ) const {
+ChiralFlipNaming::apply( MutableResidueType & rsd ) const {
 
 	//Special-case logic for peptoids (VKM 15 Nov 2017):
 	if ( rsd.is_peptoid() ) {
@@ -1602,7 +1624,7 @@ ChiralFlipNaming::name() const {
 }
 
 bool
-ChiralFlipAtoms::apply( ResidueType & rsd ) const {
+ChiralFlipAtoms::apply( MutableResidueType & rsd ) const {
 
 	// So I think I need to separately process shadow atoms.
 	// The reason is because they're 0 from something
@@ -1628,25 +1650,25 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 		utility_exit_with_message( "For some reason, calling ChiralFlipAtoms on a residue type that's not an L-amino acid, not a D-nucleic acid, and not a peptoid with a chiral sidechain." );
 	}
 
-	for ( core::Size ii = 2; ii <= rsd.natoms(); ++ii ) {
+	for ( VD atm: rsd.all_atoms() ) {
+		MutableICoorRecordCOP icoor1( rsd.icoor( atm ) );
 
-		AtomICoor icoor1 = rsd.icoor( ii );
+		if ( icoor1 == nullptr ) {
+			tr << "In ChiralFlipAtoms, cannot flip ICoor for atom " << rsd.atom_name( atm ) << " as its ICoor record isn't set yet." << std::endl;
+			continue; // Or should this be an error?
+		}
 
-		std::string n1 = icoor1.stub_atom1().is_polymer_upper() ? "UPPER" :
-			( icoor1.stub_atom1().is_polymer_lower() ? "LOWER" :
-			( icoor1.stub_atom1().atomno() == 0 ? base_atom_name : rsd.atom( icoor1.stub_atom1().atomno() ).name() ) );
-		std::string n2 = icoor1.stub_atom2().is_polymer_upper() ? "UPPER" :
-			( icoor1.stub_atom2().is_polymer_lower() ? "LOWER" :
-			( icoor1.stub_atom2().atomno() == 0 ? base_atom_name : rsd.atom( icoor1.stub_atom2().atomno() ).name() ) );
-		std::string n3 = icoor1.stub_atom3().is_polymer_upper() ? "UPPER" :
-			( icoor1.stub_atom3().is_polymer_lower() ? "LOWER" :
-			( icoor1.stub_atom3().atomno() == 0 ? base_atom_name : rsd.atom( icoor1.stub_atom3().atomno() ).name() ) );
+		if ( icoor1->stub_atom1() == icoor1->stub_atom2() ) { continue; } // Don't flip root
 
-		rsd.set_icoor( rsd.atom( ii ).name(),
-			-1.0*icoor1.phi(),
-			icoor1.theta(),
-			icoor1.d(),
-			n1, n2, n3,
+		// RM: There used to be some atom name mangling here, but I don't think it's needed any longer, given we're keeping the atoms as-is
+
+		rsd.set_icoor( rsd.atom_name( atm ),
+			-1.0*icoor1->phi(),
+			icoor1->theta(),
+			icoor1->d(),
+			icoor1->stub_atom1(),
+			icoor1->stub_atom2(),
+			icoor1->stub_atom3(),
 			true );
 	}
 	rsd.fill_ideal_xyz_from_icoor();
@@ -1663,44 +1685,48 @@ ChiralFlipAtoms::name() const {
 
 /// @brief replace proton with trifluoromethyl
 bool
-ReplaceProtonWithTrifluoromethyl::apply( ResidueType & rsd ) const {
+ReplaceProtonWithTrifluoromethyl::apply( MutableResidueType & rsd ) const {
+	VD atm( rsd.atom_vertex( atom_ ) );
 
-	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
+	utility::vector1< VD > const & bond_H( rsd.bonded_hydrogens( atm ) );
+	if ( bond_H.empty() ) {
 		return true;
 	}
 
 	// Now the valence isn't free.
-	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	rsd.atom( atm ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
 
-	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
-		// Am I an aromatic carbon atom with a free valence?
-		// Can also be specified in params, but add if not already set!
-		rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-		if ( rsd.atom( ii ).mm_name() == "CA" ) {
-			AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
-			for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
-				if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
-					rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
-				}
-			}
-		}
-	}
+	// //RM: I don't think this should be the responsibility of this patch.
+	//for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
+	// // Am I an aromatic carbon atom with a free valence?
+	// // Can also be specified in params, but add if not already set!
+	// rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	// if ( rsd.atom( ii ).mm_name() == "CA" ) {
+	//  AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
+	//  for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
+	//   if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
+	//    rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
+	//   }
+	//  }
+	// }
+	//}
 
-	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
+	VD proton_index = bond_H[1]; // Are we just assuming there's only the one?
 	//std::cout << "Proton is " << rsd.atom_name( proton_index ) << std::endl;
-	AtomICoor icoor = rsd.icoor( proton_index );
+	MutableICoorRecordCOP icoor = rsd.icoor( proton_index );
+	debug_assert( icoor != nullptr );
 	rsd.delete_atom( proton_index );
 
 	//std::cout << "Adding atom C" << atom_ << " to " << atom_ << ", bonded to " << rsd.atom_name( icoor.stub_atom1().atomno() ) << rsd.atom_name( icoor.stub_atom2().atomno() ) << rsd.atom_name( icoor.stub_atom3().atomno() ) << std::endl;
 	rsd.add_atom( "C"+atom_, "CH3", "CT3", -0.27 );
 	rsd.add_bond( "C"+atom_, atom_ );
 	rsd.set_icoor( "C"+atom_,
-		icoor.phi(),
-		icoor.theta(),
+		icoor->phi(),
+		icoor->theta(),
 		1.511005,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
-		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
+		icoor->stub_atom3(),
 		true );
 
 	// these codes with
@@ -1716,8 +1742,8 @@ ReplaceProtonWithTrifluoromethyl::apply( ResidueType & rsd ) const {
 		70.5/180.0*3.14159,
 		1.319661,
 		"C"+atom_,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
 		true );
 
 	rsd.set_icoor( "F"+atom_,
@@ -1725,7 +1751,7 @@ ReplaceProtonWithTrifluoromethyl::apply( ResidueType & rsd ) const {
 		70.5/180.0*3.14159,
 		1.319661,
 		"C"+atom_,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		icoor->stub_atom1(),
 		"E"+atom_,
 		true );
 
@@ -1734,7 +1760,7 @@ ReplaceProtonWithTrifluoromethyl::apply( ResidueType & rsd ) const {
 		70.5/180.0*3.14159,
 		1.319661,
 		"C"+atom_,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		icoor->stub_atom1(),
 		"F"+atom_,
 		true );
 
@@ -1752,43 +1778,47 @@ ReplaceProtonWithTrifluoromethyl::name() const {
 
 /// @brief replace proton with methyl
 bool
-ReplaceProtonWithMethyl::apply( ResidueType & rsd ) const {
+ReplaceProtonWithMethyl::apply( MutableResidueType & rsd ) const {
 
-	// What is the proton to be replaced?
-	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
+	VD atm( rsd.atom_vertex( atom_ ) );
+
+	utility::vector1< VD > const & bond_H( rsd.bonded_hydrogens( atm ) );
+	if ( bond_H.empty() ) {
 		return true;
 	}
 
 	// Now the valence isn't free.
-	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	rsd.atom( atm ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
 
-	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
-		// Am I an aromatic carbon atom with a free valence?
-		// Can also be specified in params, but add if not already set!
-		rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-		if ( rsd.atom( ii ).mm_name() == "CA" ) {
-			AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
-			for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
-				if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
-					rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
-				}
-			}
-		}
-	}
+	// //RM: I don't think this should be the responsibility of this patch.
+	//for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
+	// // Am I an aromatic carbon atom with a free valence?
+	// // Can also be specified in params, but add if not already set!
+	// rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	// if ( rsd.atom( ii ).mm_name() == "CA" ) {
+	//  AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
+	//  for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
+	//   if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
+	//    rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
+	//   }
+	//  }
+	// }
+	//}
 
-	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
-	AtomICoor icoor = rsd.icoor( proton_index );
+	VD proton_index = bond_H[1]; // Are we just assuming there's only the one?
+	MutableICoorRecordCOP icoor = rsd.icoor( proton_index );
+	debug_assert( icoor != nullptr );
 	rsd.delete_atom( proton_index );
 
 	rsd.add_atom( "C"+atom_, "CH3", "CT3", -0.27 );
 	rsd.add_bond( "C"+atom_, atom_ );
 	rsd.set_icoor( "C"+atom_,
-		icoor.phi(),
-		icoor.theta(),
+		icoor->phi(),
+		icoor->theta(),
 		1.511005,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
-		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
+		icoor->stub_atom3(),
 		true );
 
 	// these codes with
@@ -1804,8 +1834,8 @@ ReplaceProtonWithMethyl::apply( ResidueType & rsd ) const {
 		70.5/180.0*3.14159,
 		1.083573,
 		"C"+atom_,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
 		true );
 
 	rsd.set_icoor( "Y"+atom_,
@@ -1813,7 +1843,7 @@ ReplaceProtonWithMethyl::apply( ResidueType & rsd ) const {
 		70.5/180.0*3.14159,
 		1.083573,
 		"C"+atom_,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		icoor->stub_atom1(),
 		"X"+atom_,
 		true );
 
@@ -1822,7 +1852,7 @@ ReplaceProtonWithMethyl::apply( ResidueType & rsd ) const {
 		70.5/180.0*3.14159,
 		1.083573,
 		"C"+atom_,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		icoor->stub_atom1(),
 		"Y"+atom_,
 		true );
 
@@ -1848,42 +1878,46 @@ ReplaceProtonWithMethyl::name() const {
 
 /// @brief replace proton with methoxy
 bool
-ReplaceProtonWithMethoxy::apply( ResidueType & rsd ) const {
-	// What is the proton to be replaced?
-	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
+ReplaceProtonWithMethoxy::apply( MutableResidueType & rsd ) const {
+	VD atm( rsd.atom_vertex( atom_ ) );
+
+	utility::vector1< VD > const & bond_H( rsd.bonded_hydrogens( atm ) );
+	if ( bond_H.empty() ) {
 		return true;
 	}
 
 	// Now the valence isn't free.
-	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	rsd.atom( atm ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
 
-	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
-		// Am I an aromatic carbon atom with a free valence?
-		// Can also be specified in params, but add if not already set!
-		rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-		if ( rsd.atom( ii ).mm_name() == "CA" ) {
-			AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
-			for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
-				if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
-					rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
-				}
-			}
-		}
-	}
+	// //RM: I don't think this should be the responsibility of this patch.
+	//for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
+	// // Am I an aromatic carbon atom with a free valence?
+	// // Can also be specified in params, but add if not already set!
+	// rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	// if ( rsd.atom( ii ).mm_name() == "CA" ) {
+	//  AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
+	//  for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
+	//   if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
+	//    rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
+	//   }
+	//  }
+	// }
+	//}
 
-	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
-	AtomICoor icoor = rsd.icoor( proton_index );
+	VD proton_index = bond_H[1]; // Are we just assuming there's only the one?
+	MutableICoorRecordCOP icoor = rsd.icoor( proton_index );
+	debug_assert( icoor != nullptr );
 	rsd.delete_atom( proton_index );
 
 	rsd.add_atom( "O"+atom_, "OH", "OE", -0.61 );
 	rsd.add_bond( "O"+atom_, atom_ );
 	rsd.set_icoor( "O"+atom_,
-		icoor.phi(),
-		icoor.theta(),
+		icoor->phi(),
+		icoor->theta(),
 		1.375964, // actually that's the tyr dist
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
-		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
+		icoor->stub_atom3(),
 		true  );
 
 
@@ -1894,8 +1928,8 @@ ReplaceProtonWithMethoxy::apply( ResidueType & rsd ) const {
 		65.681781/180.0*3.14159,
 		1.393527, // aliphatic context.
 		"O"+atom_,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
 		true );
 
 	// these codes with
@@ -1912,7 +1946,7 @@ ReplaceProtonWithMethoxy::apply( ResidueType & rsd ) const {
 		1.083573,
 		"C"+atom_,
 		"O"+atom_,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		icoor->stub_atom1(),
 		true );
 
 	rsd.set_icoor( "Y"+atom_,
@@ -1934,7 +1968,7 @@ ReplaceProtonWithMethoxy::apply( ResidueType & rsd ) const {
 		true );
 
 	// fake proton chi
-	rsd.add_chi( rsd.atom_name( icoor.stub_atom2().atomno() ), rsd.atom_name( icoor.stub_atom1().atomno() ), "O"+atom_, "C"+atom_ );
+	rsd.add_chi( icoor->stub_atom2(), icoor->stub_atom1(), "O"+atom_, "C"+atom_ );
 
 	rsd.add_chi_rotamer( rsd.nchi(),   0, 10 );
 	rsd.add_chi_rotamer( rsd.nchi(),  60, 10 );
@@ -1965,42 +1999,47 @@ ReplaceProtonWithMethoxy::name() const {
 
 /// @brief replace proton with ethyl
 bool
-ReplaceProtonWithEthyl::apply( ResidueType & rsd ) const {
+ReplaceProtonWithEthyl::apply( MutableResidueType & rsd ) const {
 	// What is the proton to be replaced?
-	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
+	VD atm( rsd.atom_vertex( atom_ ) );
+
+	utility::vector1< VD > const & bond_H( rsd.bonded_hydrogens( atm ) );
+	if ( bond_H.empty() ) {
 		return true;
 	}
 
 	// Now the valence isn't free.
-	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	rsd.atom( atm ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
 
-	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
-		// Am I an aromatic carbon atom with a free valence?
-		// Can also be specified in params, but add if not already set!
-		rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-		if ( rsd.atom( ii ).mm_name() == "CA" ) {
-			AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
-			for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
-				if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
-					rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
-				}
-			}
-		}
-	}
+	// //RM: I don't think this should be the responsibility of this patch.
+	//for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
+	// // Am I an aromatic carbon atom with a free valence?
+	// // Can also be specified in params, but add if not already set!
+	// rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	// if ( rsd.atom( ii ).mm_name() == "CA" ) {
+	//  AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
+	//  for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
+	//   if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
+	//    rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
+	//   }
+	//  }
+	// }
+	//}
 
-	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
-	AtomICoor icoor = rsd.icoor( proton_index );
+	VD proton_index = bond_H[1]; // Are we just assuming there's only the one?
+	MutableICoorRecordCOP icoor = rsd.icoor( proton_index );
+	debug_assert( icoor != nullptr );
 	rsd.delete_atom( proton_index );
 
 	rsd.add_atom( "C"+atom_, "CH2", "CT2", -0.27 );
 	rsd.add_bond( "C"+atom_, atom_ );
 	rsd.set_icoor( "C"+atom_,
-		icoor.phi(),
-		icoor.theta(),
+		icoor->phi(),
+		icoor->theta(),
 		1.511005,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
-		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
+		icoor->stub_atom3(),
 		true  );
 
 	rsd.add_atom( "A"+atom_, "Hapo", "HA", 0.09 );
@@ -2015,8 +2054,8 @@ ReplaceProtonWithEthyl::apply( ResidueType & rsd ) const {
 		70.5/180.0*3.14159,
 		1.527165, // semi-arbitrary--CC bond from ethanolamine
 		"C"+atom_,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
 		true );
 
 	rsd.set_icoor( "A"+atom_,
@@ -2024,7 +2063,7 @@ ReplaceProtonWithEthyl::apply( ResidueType & rsd ) const {
 		70.5/180.0*3.14159,
 		1.083573,
 		"C"+atom_,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		icoor->stub_atom1(),
 		"D"+atom_,
 		true );
 
@@ -2033,7 +2072,7 @@ ReplaceProtonWithEthyl::apply( ResidueType & rsd ) const {
 		70.5/180.0*3.14159,
 		1.083573,
 		"C"+atom_,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		icoor->stub_atom1(),
 		"A"+atom_,
 		true );
 
@@ -2051,7 +2090,7 @@ ReplaceProtonWithEthyl::apply( ResidueType & rsd ) const {
 		1.083573,
 		"D"+atom_,
 		"C"+atom_,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		icoor->stub_atom1(),
 		true );
 
 	rsd.set_icoor( "Y"+atom_,
@@ -2073,7 +2112,7 @@ ReplaceProtonWithEthyl::apply( ResidueType & rsd ) const {
 		true );
 
 	// fake proton chi
-	rsd.add_chi( rsd.atom_name( icoor.stub_atom2().atomno() ), rsd.atom_name( icoor.stub_atom1().atomno() ), "C"+atom_, "D"+atom_ );
+	rsd.add_chi( icoor->stub_atom2(), icoor->stub_atom1(), "C"+atom_, "D"+atom_ );
 
 	rsd.add_chi_rotamer( rsd.nchi(),   0, 10 );
 	rsd.add_chi_rotamer( rsd.nchi(),  60, 10 );
@@ -2104,43 +2143,47 @@ ReplaceProtonWithEthyl::name() const {
 
 /// @brief replace proton with chlorine
 bool
-ReplaceProtonWithChlorine::apply( ResidueType & rsd ) const {
+ReplaceProtonWithChlorine::apply( MutableResidueType & rsd ) const {
 
-	// What is the proton to be replaced?
-	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
+	VD atm( rsd.atom_vertex( atom_ ) );
+
+	utility::vector1< VD > const & bond_H( rsd.bonded_hydrogens( atm ) );
+	if ( bond_H.empty() ) {
 		return true;
 	}
 
 	// Now the valence isn't free.
-	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	rsd.atom( atm ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
 
-	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
-		// Am I an aromatic carbon atom with a free valence?
-		// Can also be specified in params, but add if not already set!
-		rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-		if ( rsd.atom( ii ).mm_name() == "CA" ) {
-			AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
-			for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
-				if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
-					rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
-				}
-			}
-		}
-	}
+	// //RM: I don't think this should be the responsibility of this patch.
+	//for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
+	// // Am I an aromatic carbon atom with a free valence?
+	// // Can also be specified in params, but add if not already set!
+	// rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	// if ( rsd.atom( ii ).mm_name() == "CA" ) {
+	//  AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
+	//  for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
+	//   if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
+	//    rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
+	//   }
+	//  }
+	// }
+	//}
 
-	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
-	AtomICoor icoor = rsd.icoor( proton_index );
+	VD proton_index = bond_H[1]; // Are we just assuming there's only the one?
+	MutableICoorRecordCOP icoor = rsd.icoor( proton_index );
+	debug_assert( icoor != nullptr );
 	rsd.delete_atom( proton_index );
 
 	rsd.add_atom( "CL"+atom_.substr( 1 ), "Cl", "CL", -0.10 );
 	rsd.add_bond( "CL"+atom_.substr( 1 ), atom_ );
 	rsd.set_icoor( "CL"+atom_.substr( 1 ),
-		icoor.phi(),
-		icoor.theta(),
+		icoor->phi(),
+		icoor->theta(),
 		1.810005,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
-		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
+		icoor->stub_atom3(),
 		true );
 
 	rosetta_recharge_fullatom( rsd );
@@ -2165,43 +2208,47 @@ ReplaceProtonWithChlorine::name() const {
 
 /// @brief replace proton with fluorine
 bool
-ReplaceProtonWithFluorine::apply( ResidueType & rsd ) const {
+ReplaceProtonWithFluorine::apply( MutableResidueType & rsd ) const {
 
-	// What is the proton to be replaced?
-	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
+	VD atm( rsd.atom_vertex( atom_ ) );
+
+	utility::vector1< VD > const & bond_H( rsd.bonded_hydrogens( atm ) );
+	if ( bond_H.empty() ) {
 		return true;
 	}
 
 	// Now the valence isn't free.
-	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	rsd.atom( atm ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
 
-	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
-		// Am I an aromatic carbon atom with a free valence?
-		// Can also be specified in params, but add if not already set!
-		rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-		if ( rsd.atom( ii ).mm_name() == "CA" ) {
-			AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
-			for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
-				if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
-					rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
-				}
-			}
-		}
-	}
+	// //RM: I don't think this should be the responsibility of this patch.
+	//for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
+	// // Am I an aromatic carbon atom with a free valence?
+	// // Can also be specified in params, but add if not already set!
+	// rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	// if ( rsd.atom( ii ).mm_name() == "CA" ) {
+	//  AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
+	//  for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
+	//   if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
+	//    rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
+	//   }
+	//  }
+	// }
+	//}
 
-	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
-	AtomICoor icoor = rsd.icoor( proton_index );
+	VD proton_index = bond_H[1]; // Are we just assuming there's only the one?
+	MutableICoorRecordCOP icoor = rsd.icoor( proton_index );
+	debug_assert( icoor != nullptr );
 	rsd.delete_atom( proton_index );
 
 	rsd.add_atom( "F"+atom_, "F", "F1", -0.22 );
 	rsd.add_bond( "F"+atom_, atom_ );
 	rsd.set_icoor( "F"+atom_,
-		icoor.phi(),
-		icoor.theta(),
+		icoor->phi(),
+		icoor->theta(),
 		1.332965,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
-		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
+		icoor->stub_atom3(),
 		true );
 
 	rosetta_recharge_fullatom( rsd );
@@ -2226,43 +2273,47 @@ ReplaceProtonWithFluorine::name() const {
 
 /// @brief replace proton with bromine
 bool
-ReplaceProtonWithBromine::apply( ResidueType & rsd ) const {
+ReplaceProtonWithBromine::apply( MutableResidueType & rsd ) const {
 
-	// What is the proton to be replaced?
-	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
+	VD atm( rsd.atom_vertex( atom_ ) );
+
+	utility::vector1< VD > const & bond_H( rsd.bonded_hydrogens( atm ) );
+	if ( bond_H.empty() ) {
 		return true;
 	}
 
 	// Now the valence isn't free.
-	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	rsd.atom( atm ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
 
-	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
-		// Am I an aromatic carbon atom with a free valence?
-		// Can also be specified in params, but add if not already set!
-		rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-		if ( rsd.atom( ii ).mm_name() == "CA" ) {
-			AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
-			for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
-				if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
-					rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
-				}
-			}
-		}
-	}
+	// //RM: I don't think this should be the responsibility of this patch.
+	//for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
+	// // Am I an aromatic carbon atom with a free valence?
+	// // Can also be specified in params, but add if not already set!
+	// rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	// if ( rsd.atom( ii ).mm_name() == "CA" ) {
+	//  AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
+	//  for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
+	//   if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
+	//    rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
+	//   }
+	//  }
+	// }
+	//}
 
-	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
-	AtomICoor icoor = rsd.icoor( proton_index );
+	VD proton_index = bond_H[1]; // Are we just assuming there's only the one?
+	MutableICoorRecordCOP icoor = rsd.icoor( proton_index );
+	debug_assert( icoor != nullptr );
 	rsd.delete_atom( proton_index );
 
 	rsd.add_atom( "BR"+atom_.substr( 1 ), "Br", "BR", -0.07 );
 	rsd.add_bond( "BR"+atom_.substr( 1 ), atom_ );
 	rsd.set_icoor( "BR"+atom_.substr( 1 ),
-		icoor.phi(),
-		icoor.theta(),
+		icoor->phi(),
+		icoor->theta(),
 		1.903609,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
-		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
+		icoor->stub_atom3(),
 		true );
 
 	rosetta_recharge_fullatom( rsd );
@@ -2287,43 +2338,47 @@ ReplaceProtonWithBromine::name() const {
 
 /// @brief replace proton with iodine
 bool
-ReplaceProtonWithIodine::apply( ResidueType & rsd ) const {
+ReplaceProtonWithIodine::apply( MutableResidueType & rsd ) const {
 
-	// What is the proton to be replaced?
-	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
+	VD atm( rsd.atom_vertex( atom_ ) );
+
+	utility::vector1< VD > const & bond_H( rsd.bonded_hydrogens( atm ) );
+	if ( bond_H.empty() ) {
 		return true;
 	}
 
 	// Now the valence isn't free.
-	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	rsd.atom( atm ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
 
-	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
-		// Am I an aromatic carbon atom with a free valence?
-		// Can also be specified in params, but add if not already set!
-		rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-		if ( rsd.atom( ii ).mm_name() == "CA" ) {
-			AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
-			for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
-				if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
-					rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
-				}
-			}
-		}
-	}
+	// //RM: I don't think this should be the responsibility of this patch.
+	//for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
+	// // Am I an aromatic carbon atom with a free valence?
+	// // Can also be specified in params, but add if not already set!
+	// rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	// if ( rsd.atom( ii ).mm_name() == "CA" ) {
+	//  AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
+	//  for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
+	//   if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
+	//    rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
+	//   }
+	//  }
+	// }
+	//}
 
-	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
-	AtomICoor icoor = rsd.icoor( proton_index );
+	VD proton_index = bond_H[1]; // Are we just assuming there's only the one?
+	MutableICoorRecordCOP icoor = rsd.icoor( proton_index );
+	debug_assert( icoor != nullptr );
 	rsd.delete_atom( proton_index );
 
 	rsd.add_atom( "I"+atom_, "I", "I", -0.08 );
 	rsd.add_bond( "I"+atom_, atom_ );
 	rsd.set_icoor( "I"+atom_,
-		icoor.phi(),
-		icoor.theta(),
+		icoor->phi(),
+		icoor->theta(),
 		2.142205,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
-		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
+		icoor->stub_atom3(),
 		true );
 
 	rosetta_recharge_fullatom( rsd );
@@ -2348,43 +2403,47 @@ ReplaceProtonWithIodine::name() const {
 
 /// @brief replace proton with hydroxyl
 bool
-ReplaceProtonWithHydroxyl::apply( ResidueType & rsd ) const {
+ReplaceProtonWithHydroxyl::apply( MutableResidueType & rsd ) const {
 
-	// What is the proton to be replaced?
-	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
+	VD atm( rsd.atom_vertex( atom_ ) );
+
+	utility::vector1< VD > const & bond_H( rsd.bonded_hydrogens( atm ) );
+	if ( bond_H.empty() ) {
 		return true;
 	}
 
 	// Now the valence isn't free.
-	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	rsd.atom( atm ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
 
-	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
-		// Am I an aromatic carbon atom with a free valence?
-		// Can also be specified in params, but add if not already set!
-		rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-		if ( rsd.atom( ii ).mm_name() == "CA" ) {
-			AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
-			for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
-				if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
-					rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
-				}
-			}
-		}
-	}
+	// //RM: I don't think this should be the responsibility of this patch.
+	//for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
+	// // Am I an aromatic carbon atom with a free valence?
+	// // Can also be specified in params, but add if not already set!
+	// rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+	// if ( rsd.atom( ii ).mm_name() == "CA" ) {
+	//  AtomIndices const & ii_bonded_neighbors( rsd.bonded_neighbor( ii ) );
+	//  for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
+	//   if ( rsd.atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
+	//    rsd.atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
+	//   }
+	//  }
+	// }
+	//}
 
-	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
-	AtomICoor icoor = rsd.icoor( proton_index );
+	VD proton_index = bond_H[1]; // Are we just assuming there's only the one?
+	MutableICoorRecordCOP icoor = rsd.icoor( proton_index );
+	debug_assert( icoor != nullptr );
 	rsd.delete_atom( proton_index );
 
 	rsd.add_atom( "O"+atom_, "OH", "OH1", -0.54 );
 	rsd.add_bond( "O"+atom_, atom_ );
 	rsd.set_icoor( "O"+atom_,
-		icoor.phi(),
-		icoor.theta(),
+		icoor->phi(),
+		icoor->theta(),
 		1.375964,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
-		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
+		icoor->stub_atom3(),
 		true );
 
 	rsd.add_atom( "H"+atom_, "Hpol", "H", 0.43 );
@@ -2395,11 +2454,11 @@ ReplaceProtonWithHydroxyl::apply( ResidueType & rsd ) const {
 		70.600000*3.14159/180.000000,
 		0.960239,
 		"O"+atom_,
-		rsd.atom_name( icoor.stub_atom1().atomno() ),
-		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		icoor->stub_atom1(),
+		icoor->stub_atom2(),
 		true );
 
-	rsd.add_chi( rsd.atom_name( icoor.stub_atom2().atomno() ), rsd.atom_name( icoor.stub_atom1().atomno() ), "O"+atom_, "H"+atom_ );
+	rsd.add_chi( icoor->stub_atom2(), icoor->stub_atom1(), "O"+atom_, "H"+atom_ );
 
 	utility::vector1< Real > chi_samples;
 	chi_samples.push_back( 0 );
@@ -2433,12 +2492,17 @@ ReplaceProtonWithHydroxyl::name() const {
 }
 
 bool
-VirtualizeSidechain::apply( ResidueType & rsd ) const {
-	for ( Size ii = rsd.first_sidechain_atom() + 1; ii <= rsd.natoms(); ++ii ) {
-		rsd.set_atom_type( rsd.atom_name( ii ), "VIRT" );
-		rsd.set_mm_atom_type( rsd.atom_name( ii ), "VIRT" );
-		rsd.atom( ii ).charge( 0.0 );
-		rsd.atom( ii ).is_virtual( true );
+VirtualizeSidechain::apply( MutableResidueType & rsd ) const {
+	// TODO: The original version of this also virtualized backbone hydrogens.
+	// I'm currently keeping this behavior, but we probably shouldn't.
+	for ( VD atm: rsd.all_atoms() ) {
+		if ( rsd.is_backbone_heavyatom( atm ) ) {
+			continue;
+		}
+		rsd.set_atom_type( atm, "VIRT" );
+		rsd.atom( atm ).mm_name( "VIRT" );
+		rsd.atom( atm ).charge( 0.0 );
+		rsd.atom( atm ).is_virtual( true );
 	}
 	return false;
 }
@@ -2452,7 +2516,7 @@ VirtualizeSidechain::name() const {
 
 
 bool
-AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
+AddConnectAndTrackingVirt::apply( MutableResidueType & rsd ) const {
 	if ( !rsd.has( atom_ ) ) return true; // failure!
 
 	// Provide unique variant name
@@ -2491,16 +2555,15 @@ AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
 		//Create a new virt atom, using the unique name found above:
 		rsd.add_atom( virtname, "VIRT", "VIRT", 0.0 );
 		rsd.add_bond( virtname, atom_ );
-		rsd.set_atom_base( virtname, atom_ );
-		rsd.set_icoor( virtname, 1.0, 1.0, 1.37, rsd.atom_name( 1 ), ( "V" + ObjexxFCL::string_of( virtcount-2 ) ), ( "V" + ObjexxFCL::string_of( virtcount-1 ) ), true );
+		rsd.set_icoor( virtname, 1.0, 1.0, 1.37, rsd.atom_name( rsd.all_atoms()[1] ), ( "V" + ObjexxFCL::string_of( virtcount-2 ) ), ( "V" + ObjexxFCL::string_of( virtcount-1 ) ), true );
 	}
 	//icoor = rsd.icoor( rsd.atom_index( virtname ) );
 
 	// Okay, give CONN the icoor of the selected virt.
 	if ( virtcount <= 3 ) { // like FE
-		rsd.set_icoor( "CONN"+ObjexxFCL::string_of( con_res ), 0, 1.0, 1.37, rsd.atom_name( 1 ), ( "V" + ObjexxFCL::string_of( virtcount-1 ) ), ( "V" + ObjexxFCL::string_of( virtcount ) ), true );
+		rsd.set_icoor( "CONN"+ObjexxFCL::string_of( con_res ), 0, 1.0, 1.37, rsd.atom_name( rsd.all_atoms()[1] ), ( "V" + ObjexxFCL::string_of( virtcount-1 ) ), ( "V" + ObjexxFCL::string_of( virtcount ) ), true );
 	} else {
-		rsd.set_icoor( "CONN"+ObjexxFCL::string_of( con_res ), 10, 1.0, 1.37, rsd.atom_name( 1 ), ( "V" + ObjexxFCL::string_of( virtcount-2 ) ), ( "V" + ObjexxFCL::string_of( virtcount-1 ) ), true );
+		rsd.set_icoor( "CONN"+ObjexxFCL::string_of( con_res ), 10, 1.0, 1.37, rsd.atom_name( rsd.all_atoms()[1] ), ( "V" + ObjexxFCL::string_of( virtcount-2 ) ), ( "V" + ObjexxFCL::string_of( virtcount-1 ) ), true );
 	}
 	return false;
 }
@@ -2519,7 +2582,7 @@ AddConnectAndTrackingVirt::name() const {
 }
 
 bool
-AddConnectDeleteChildProton::apply( ResidueType & rsd ) const {
+AddConnectDeleteChildProton::apply( MutableResidueType & rsd ) const {
 	if ( !rsd.has( atom_ ) ) return true; // failure!
 	if (  rsd.atom( atom_ ).is_hydrogen() ) return true; // Can't delete child proton from a proton
 	rsd.add_metapatch_connect( atom_ );
@@ -2529,7 +2592,7 @@ AddConnectDeleteChildProton::apply( ResidueType & rsd ) const {
 bool
 AddConnectDeleteChildProton::changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const
 {
-	return rsd_type.has( atom_ ) && !rsd_type.atom( atom_ ).is_hydrogen() && rsd_type.has( atom ) && rsd_type.atom_index( atom ) == rsd_type.atom_index( atom_ );
+	return rsd_type.has( atom_ ) && !rsd_type.atom_is_hydrogen( rsd_type.atom_index(atom_) ) && rsd_type.has( atom ) && rsd_type.atom_index( atom ) == rsd_type.atom_index( atom_ );
 }
 
 /// @brief Return the name of this PatchOperation ("AddConnectDeleteChildProton").
@@ -2540,7 +2603,7 @@ AddConnectDeleteChildProton::name() const {
 }
 
 bool
-DeleteChildProton::apply( ResidueType & rsd ) const {
+DeleteChildProton::apply( MutableResidueType & rsd ) const {
 	if ( !rsd.has( atom_ ) ) return true; // failure!
 	rsd.delete_child_proton( atom_ );
 	return false;
@@ -2554,12 +2617,12 @@ DeleteChildProton::name() const {
 }
 
 bool
-VirtualizeAll::apply( ResidueType & rsd ) const {
-	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
-		rsd.set_atom_type( rsd.atom_name( ii ), "VIRT" );
-		rsd.set_mm_atom_type( rsd.atom_name( ii ), "VIRT" );
-		rsd.atom( ii ).charge( 0.0 );
-		rsd.atom( ii ).is_virtual( true );
+VirtualizeAll::apply( MutableResidueType & rsd ) const {
+	for ( VD atm: rsd.all_atoms() ) {
+		rsd.set_atom_type( atm, "VIRT" );
+		rsd.atom( atm ).mm_name( "VIRT" );
+		rsd.atom( atm ).charge( 0.0 );
+		rsd.atom( atm ).is_virtual( true );
 	}
 	return false;
 }
@@ -2582,7 +2645,7 @@ SetVirtualShadow::SetVirtualShadow(
 {}
 
 bool
-SetVirtualShadow::apply( ResidueType & rsd ) const
+SetVirtualShadow::apply( MutableResidueType & rsd ) const
 {
 	if ( ! rsd.has( shadower_ ) ) {
 		if ( TR_PatchOperations.Debug.visible() ) {
@@ -2617,9 +2680,9 @@ SetVirtualShadow::name() const {
 // RenameAtom //////////////////////////////////////////////////////////////
 
 bool
-RenameAtom::apply( ResidueType & rsd ) const
+RenameAtom::apply( MutableResidueType & rsd ) const
 {
-	rsd.atom( rsd.atom_index( old_name_ ) ).name( new_name_ );
+	rsd.rename_atom( rsd.atom_vertex( old_name_ ), new_name_ );
 	return false;
 }
 

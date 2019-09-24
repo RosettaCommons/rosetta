@@ -347,6 +347,18 @@ public: // Methods
 
 	}
 
+	/// @brief Deletes the index from the vector.
+	/// Has same thread-safety/iterator guarantees as std::vector::erase()
+	/// (That is, it's not safe to access anything past the point of deletion, including the end() iterator.)
+	inline
+	void
+	erase_index( index_type const i )
+	{
+		debug_assert( vectorL_ZeroSelector< L != 0 >::ge( i, l_ ) ); // Avoid "always true" warnings when L==0
+		debug_assert( static_cast< size_type >( i - l_ ) < super::size() ); // Upper bound check
+		super::erase( super::begin() + ( i - l_ ) );
+	}
+
 	/// @brief Shrink the index map to remove unused capacity
 	inline
 	void

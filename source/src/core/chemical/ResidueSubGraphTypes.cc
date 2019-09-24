@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-/// @file ResidueGraphTypes.hh
+/// @file ResidueSubGraphTypes.hh
 ///
-/// @brief
-/// Graph structure for ResidueType
+/// @brief Filtered subgraphs
 ///
 /// @details
-/// This is the typedefs and filtered graphs for the graph implementation of ResidueType based on boost graphs.
+/// This is the filtered graphs for the graph implementation of ResidueType based on boost graphs.
 /// Filtered graphs are graph structures that have been filtered based on a certain criteria. For example, the
 /// Acceptor atom graph has been filtered so that every node and edge in the graph is associated with an acceptor
 /// atom. The properties of the filtered graphs can be determined by any criteria. Currently, atom types are used
@@ -27,9 +26,12 @@
 /// use this method: for(HeavyAtomVIterPair vp = boost::vertices(heavy_atom_graph); vp.first != vp.second; ++vp.first){}
 ///
 /// @author Steven Combs
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 ////////////////////////////////////////////////////////////////////////
+
 // Unit headers
 #include <core/chemical/ResidueGraphTypes.hh>
+#include <core/chemical/ResidueSubGraphTypes.hh>
 #include <core/chemical/AtomTypeSet.hh> // operator []
 #include <core/chemical/AtomType.hh>
 // Package headers

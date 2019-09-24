@@ -51,7 +51,9 @@ class StoredRotamerLibrarySpecification : public RotamerLibrarySpecification {
 public:
 	StoredRotamerLibrarySpecification();
 	StoredRotamerLibrarySpecification(std::istream & input);
-	virtual ~StoredRotamerLibrarySpecification();
+
+	RotamerLibrarySpecificationOP
+	clone() const override;
 
 	utility::vector1< std::map< std::string, core::Vector > > const &
 	coordinates() const { return coordinates_; }
@@ -73,9 +75,8 @@ public:
 		ref_energy_ = ref_E_in;
 	}
 
-	virtual
 	std::string
-	keyname() const;
+	keyname() const override;
 
 	static std::string library_name();
 

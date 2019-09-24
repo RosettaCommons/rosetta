@@ -36,6 +36,7 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <utility/pointer/memory.hh>
 
 // C++ headers
 #include <string>
@@ -89,7 +90,7 @@ public:
 		assert( gly_ != NULL );
 
 		std::string filename("core/chemical/params/1aq1.mol2.params");
-		rsd_ = read_topology_file(filename, atom_types, element_types, mm_atom_types, orbital_types );
+		rsd_ = ResidueType::make( *read_topology_file(filename, atom_types, element_types, mm_atom_types, orbital_types ) );
 
 		main_rinfo_ = create_ResidueInfo(
 			"HETATM    1  O2  LG1 X 299      -0.058   0.605   0.915  1.00  0.00           O  \n"
@@ -605,7 +606,7 @@ public:
 		orbitals::OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
 
 		std::string filename("core/chemical/params/1pq6.mol2.params");
-		ResidueTypeCOP rsd = read_topology_file(filename, atom_types, element_types, mm_atom_types, orbital_types );
+		ResidueTypeCOP rsd = ResidueType::make( *read_topology_file(filename, atom_types, element_types, mm_atom_types, orbital_types ) );
 
 		ResidueInformation rinfo = create_ResidueInfo( // Just need the area around the Chlorine
 			"HETATM    1 Cl1  965 B2500      19.150  -8.190  58.729  1.00  0.00          Cl\n"

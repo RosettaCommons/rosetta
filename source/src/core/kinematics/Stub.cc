@@ -37,6 +37,36 @@ Stub::Stub( RT const & rt ):
 	v( rt.get_translation() )
 {}
 
+Stub
+Stub::create_orthogonal(
+	Vector const & a,
+	Vector const & b,
+	Vector const & c
+) {
+	core::Real delta = 1e-6;
+
+	// a-b being zero Will cause built_stub to crash.
+	// In that case, throw in a little bit of a shift.
+	Vector const & corrected_a = (a-b).is_zero() ?
+		((c-a).normalized() + Vector( delta, 0, 0 )) :
+		a;
+
+	kinematics::Stub built_stub( corrected_a, b, c );
+
+	if ( ! built_stub.is_orthogonal( 0.001 ) ) {
+		// Throw in a tiny shift and try again.
+		kinematics::Stub delta_stub(
+			a + Vector( delta, 0, 0 ),
+			b + Vector( 0, delta, 0 ),
+			c + Vector( 0, 0, delta ) );
+		built_stub = delta_stub;
+	}
+
+	debug_assert( built_stub.is_orthogonal( 0.001 ) );
+
+	return built_stub;
+}
+
 /// @brief output operator, 3x3 matrix followed by an xyzVector
 std::ostream &
 operator<<( std::ostream & os, Stub const & a )

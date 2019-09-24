@@ -16,6 +16,7 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/ResidueDatabaseIO.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
@@ -104,7 +105,7 @@ public:
 		core::chemical::ResidueType const & res_type,
 		utility::sql_database::sessionOP db_session) ;
 
-	core::chemical::ResidueTypeOP read_residuetype_from_database(
+	core::chemical::MutableResidueTypeOP read_residuetype_from_database(
 		chemical::AtomTypeSetCOP atom_types,
 		chemical::ElementSetCOP elements,
 		chemical::MMAtomTypeSetCOP mm_atom_types,
@@ -134,7 +135,7 @@ private:
 	read_residue_type(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
-		core::chemical::ResidueType & res_type,
+		core::chemical::MutableResidueType & res_type,
 		utility::sql_database::sessionOP db_session) ;
 
 	void
@@ -147,7 +148,7 @@ private:
 	read_residue_type_atom(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
-		core::chemical::ResidueType & res_type,
+		core::chemical::MutableResidueType & res_type,
 		utility::sql_database::sessionOP db_session) ;
 
 	void
@@ -160,7 +161,7 @@ private:
 	read_residue_type_bond(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
-		core::chemical::ResidueType & res_type,
+		core::chemical::MutableResidueType & res_type,
 		utility::sql_database::sessionOP db_session) ;
 	void
 	report_residue_type_cut_bond(
@@ -172,7 +173,7 @@ private:
 	read_residue_type_cut_bond(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
-		core::chemical::ResidueType & res_type,
+		core::chemical::MutableResidueType & res_type,
 		utility::sql_database::sessionOP db_session) ;
 
 	void
@@ -185,7 +186,7 @@ private:
 	read_residue_type_chi(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
-		core::chemical::ResidueType & res_type,
+		core::chemical::MutableResidueType & res_type,
 		utility::sql_database::sessionOP db_session) ;
 
 	void
@@ -198,7 +199,7 @@ private:
 	read_residue_type_chi_rotamer(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
-		core::chemical::ResidueType & res_type,
+		core::chemical::MutableResidueType & res_type,
 		utility::sql_database::sessionOP db_session) ;
 
 	void
@@ -211,7 +212,7 @@ private:
 	read_residue_type_proton_chi(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
-		core::chemical::ResidueType & res_type,
+		core::chemical::MutableResidueType & res_type,
 		utility::sql_database::sessionOP db_session) ;
 
 	void
@@ -224,7 +225,7 @@ private:
 	read_residue_type_properties(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
-		core::chemical::ResidueType & res_type,
+		core::chemical::MutableResidueType & res_type,
 		utility::sql_database::sessionOP db_session) ;
 
 
@@ -238,7 +239,7 @@ private:
 	read_residue_type_variant(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
-		core::chemical::ResidueType & res_type,
+		core::chemical::MutableResidueType & res_type,
 		utility::sql_database::sessionOP db_session) ;
 
 	void
@@ -251,7 +252,7 @@ private:
 	read_residue_type_icoor(
 		std::string const & residue_type_set_name,
 		std::string const & residue_type_name,
-		core::chemical::ResidueType & res_type,
+		core::chemical::MutableResidueType & res_type,
 		utility::sql_database::sessionOP db_session) ;
 
 

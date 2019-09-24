@@ -18,6 +18,7 @@
 
 // Unit Headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/atomtype_support.hh>
 
 // Project Headers
@@ -76,17 +77,18 @@ public:
 		paramslist >> filename;
 		while ( paramslist ) {
 			TR << "Retyping " << filename << std::endl;
-			core::chemical::ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename, rsd_types);
-			core::chemical::ResidueTypeOP ref( new core::chemical::ResidueType(*rsd) );
+			core::chemical::MutableResidueTypeOP rsd = read_topology_file("core/chemical/"+filename, rsd_types);
+			core::chemical::MutableResidueTypeOP ref( new core::chemical::MutableResidueType(*rsd) );
 
-			for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
-				rsd->atom(ii).atom_type_index(0);
+			for ( VD atm: rsd->all_atoms() ) {
+				rsd->set_atom_type( atm, "" );
 			}
 			core::chemical::rosetta_retype_fullatom(*rsd);
 
-			for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
-				TS_ASSERT( rsd->atom(ii).atom_type_index() != 0 );
-				TS_ASSERT_EQUALS( rsd->atom_type(ii).name(), ref->atom_type(ii).name() );
+			for ( VD atm: rsd->all_atoms() ) {
+				std::string const & atom_name( rsd->atom_name( atm ) );
+				TS_ASSERT( rsd->atom( atm ).atom_type_index() != 0 );
+				TS_ASSERT_EQUALS( rsd->atom_type( atm ).name(), ref->atom_type( ref->atom_vertex(atom_name) ).name() );
 			}
 
 			paramslist >> filename;

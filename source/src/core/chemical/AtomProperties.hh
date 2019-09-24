@@ -58,6 +58,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 
 	// Comparison operator
 	bool operator==( AtomProperties const & properties ) const;
+	bool operator!=( AtomProperties const & other ) const;
 
 
 public:  // Standard Rosetta methods //////////////////////////////////////////
@@ -92,7 +93,6 @@ public:  // Accessors/Mutators ////////////////////////////////////////////////
 public:  // Other public methods //////////////////////////////////////////////
 	/// @brief  Generate and return a list of strings representing the properties of this Atom.
 	utility::vector1< std::string > get_list_of_properties() const;
-
 
 private:  // Private methods //////////////////////////////////////////////////
 	// Initialize data members.

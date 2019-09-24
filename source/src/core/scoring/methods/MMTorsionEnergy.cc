@@ -137,8 +137,8 @@ MMTorsionEnergy::residue_pair_energy(
 		TR(basic::t_trace) << "Found residue connection id " << resconn_id1 << "-" << resconn_id2 << ": "
 			<< rsd1.atom_name( resconn_atomno1 ) << "-" << rsd2.atom_name( resconn_atomno2 ) << std::endl;
 
-		Size const resconn_mmat1 = rsd1_type.atom( resconn_atomno1 ).mm_atom_type_index();
-		Size const resconn_mmat2 = rsd2_type.atom( resconn_atomno2 ).mm_atom_type_index();
+		Size const resconn_mmat1 = rsd1_type.mm_atom_type_index( resconn_atomno1 );
+		Size const resconn_mmat2 = rsd2_type.mm_atom_type_index( resconn_atomno2 );
 
 		/// Iterate across all atom-quadrouples that define dihedral angles spanning the interface.
 		/// 1. iterate over all pairs of pairs within 1 bond of either residue connection atom.
@@ -159,12 +159,12 @@ MMTorsionEnergy::residue_pair_energy(
 			for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
 				debug_assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
 				Size const jj_term_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
-				Size const mmat1 = rsd1_type.atom( jj_term_atomno ).mm_atom_type_index();
+				Size const mmat1 = rsd1_type.mm_atom_type_index( jj_term_atomno );
 
 				for ( Size kk = 1; kk <= rsd2_atoms_wi1_bond_of_ii.size(); ++kk ) {
 					debug_assert( rsd2_atoms_wi1_bond_of_ii[ kk ].key1() == resconn_atomno2 );
 					Size const kk_term_atomno = rsd2_atoms_wi1_bond_of_ii[ kk ].key2();
-					Size const mmat4 = rsd2_type.atom( kk_term_atomno ).mm_atom_type_index();
+					Size const mmat4 = rsd2_type.mm_atom_type_index( kk_term_atomno );
 
 					Real const angle = numeric::dihedral_radians(
 						rsd1.xyz( jj_term_atomno ),
@@ -174,13 +174,13 @@ MMTorsionEnergy::residue_pair_energy(
 
 					TR(basic::t_trace)
 						<< "r1 " << jj_term_atomno << " " << rsd1.atom_name( jj_term_atomno ) << "("
-						<< rsd1_type.atom( jj_term_atomno ).mm_name() << ") - "
+						<< rsd1_type.mm_name( jj_term_atomno ) << ") - "
 						<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "("
-						<< rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
+						<< rsd1_type.mm_name( resconn_atomno1 ) << ") - "
 						<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "("
-						<< rsd2_type.atom( resconn_atomno2 ).mm_name() << ") - "
+						<< rsd2_type.mm_name( resconn_atomno2 ) << ") - "
 						<< "r2 " << kk_term_atomno << " " << rsd2.atom_name( kk_term_atomno ) << "("
-						<< rsd2_type.atom( kk_term_atomno ).mm_name() << ")" << std::endl;
+						<< rsd2_type.mm_name( kk_term_atomno ) << ")" << std::endl;
 
 					energy += potential_.core::scoring::mm::MMTorsionScore::score(
 						mm::mm_torsion_atom_quad( mmat1, mmat2, mmat3, mmat4 ), angle );
@@ -199,10 +199,10 @@ MMTorsionEnergy::residue_pair_energy(
 				debug_assert( rsd1_atoms_wi2_bonds_of_ii[ jj ].key1() == resconn_atomno1 );
 
 				Size const jj_atom2 = rsd1_atoms_wi2_bonds_of_ii[ jj ].key2();
-				Size const mmat2 = rsd1_type.atom( jj_atom2 ).mm_atom_type_index();
+				Size const mmat2 = rsd1_type.mm_atom_type_index( jj_atom2 );
 
 				Size const jj_atom1 = rsd1_atoms_wi2_bonds_of_ii[ jj ].key3();
-				Size const mmat1 = rsd1_type.atom( jj_atom1 ).mm_atom_type_index();
+				Size const mmat1 = rsd1_type.mm_atom_type_index( jj_atom1 );
 
 				Real const angle = numeric::dihedral_radians(
 					rsd1.xyz( jj_atom1 ),
@@ -227,10 +227,10 @@ MMTorsionEnergy::residue_pair_energy(
 				debug_assert( rsd2_atoms_wi2_bonds_of_ii[ jj ].key1() == resconn_atomno2 );
 
 				Size const jj_atom3 = rsd2_atoms_wi2_bonds_of_ii[ jj ].key2();
-				Size const mmat3 = rsd2_type.atom( jj_atom3 ).mm_atom_type_index();
+				Size const mmat3 = rsd2_type.mm_atom_type_index( jj_atom3 );
 
 				Size const jj_atom4 = rsd2_atoms_wi2_bonds_of_ii[ jj ].key3();
-				Size const mmat4 = rsd2_type.atom( jj_atom4 ).mm_atom_type_index();
+				Size const mmat4 = rsd2_type.mm_atom_type_index( jj_atom4 );
 
 				Real const angle = numeric::dihedral_radians(
 					rsd1.xyz( resconn_atomno1 ),
@@ -272,20 +272,20 @@ MMTorsionEnergy::eval_intrares_energy(
 		int rt4 = ( rsd_type.dihedral( dihe ) ).key4();
 
 		// get mm atom type index
-		int mmat1 = rsd_type.atom( rt1 ).mm_atom_type_index();
-		int mmat2 = rsd_type.atom( rt2 ).mm_atom_type_index();
-		int mmat3 = rsd_type.atom( rt3 ).mm_atom_type_index();
-		int mmat4 = rsd_type.atom( rt4 ).mm_atom_type_index();
+		int mmat1 = rsd_type.mm_atom_type_index( rt1 );
+		int mmat2 = rsd_type.mm_atom_type_index( rt2 );
+		int mmat3 = rsd_type.mm_atom_type_index( rt3 );
+		int mmat4 = rsd_type.mm_atom_type_index( rt4 );
 
 		// get angle
 		Real angle = numeric::dihedral_radians
 			( rsd.atom( rt1 ).xyz(), rsd.atom( rt2 ).xyz(),
 			rsd.atom( rt3 ).xyz(), rsd.atom( rt4 ).xyz() );
 
-		TR(basic::t_trace) << rt1 << " " << rsd.atom_name( rt1 ) << "(" << rsd_type.atom( rt1 ).mm_name()
-			<< ") - " << rt2 << " " << rsd.atom_name( rt2 ) << "(" << rsd_type.atom( rt2 ).mm_name()
-			<< ") - " << rt3 << " " << rsd.atom_name( rt3 ) << "(" << rsd_type.atom( rt3 ).mm_name()
-			<< ") - " << rt4 << " " << rsd.atom_name( rt4 ) << "(" << rsd_type.atom( rt4 ).mm_name()
+		TR(basic::t_trace) << rt1 << " " << rsd.atom_name( rt1 ) << "(" << rsd_type.mm_name( rt1 )
+			<< ") - " << rt2 << " " << rsd.atom_name( rt2 ) << "(" << rsd_type.mm_name( rt2 )
+			<< ") - " << rt3 << " " << rsd.atom_name( rt3 ) << "(" << rsd_type.mm_name( rt3 )
+			<< ") - " << rt4 << " " << rsd.atom_name( rt4 ) << "(" << rsd_type.mm_name( rt4 )
 			<< ") angle " << angle << std::endl;
 
 		// score dihedral
@@ -336,10 +336,10 @@ MMTorsionEnergy::eval_atom_derivative(
 
 		//TR << "  1. Deriv for dihed# " << diheds[ ii ] << " between " << restype.atom_name( ii_dihed.key1() ) << " " << restype.atom_name( ii_dihed.key2() )  << " " << restype.atom_name( ii_dihed.key3() ) << " " << restype.atom_name( ii_dihed.key4() ) << std::endl;
 
-		Size const mmat1 = restype.atom( ii_dihed.key1()).mm_atom_type_index();
-		Size const mmat2 = restype.atom( ii_dihed.key2()).mm_atom_type_index();
-		Size const mmat3 = restype.atom( ii_dihed.key3()).mm_atom_type_index();
-		Size const mmat4 = restype.atom( ii_dihed.key4()).mm_atom_type_index();
+		Size const mmat1 = restype.mm_atom_type_index( ii_dihed.key1());
+		Size const mmat2 = restype.mm_atom_type_index( ii_dihed.key2());
+		Size const mmat3 = restype.mm_atom_type_index( ii_dihed.key3());
+		Size const mmat4 = restype.mm_atom_type_index( ii_dihed.key4());
 
 		Vector f1(0.0), f2(0.0);
 		Real theta(0.0);
@@ -406,10 +406,10 @@ MMTorsionEnergy::eval_atom_derivative(
 
 			//TR << "  2a. Deriv for interres dihedral between (" << ii_neighb << "," << neighb_restype.atom_name( neighb_atom ) << ") " << restype.atom_name( ii_triple.key1() )  << " " << restype.atom_name( ii_triple.key2() ) << " " << restype.atom_name( ii_triple.key3() ) << std::endl;
 
-			Size const mmat1 = neighb_restype.atom( neighb_atom ).mm_atom_type_index();
-			Size const mmat2 = restype.atom( ii_triple.key1()).mm_atom_type_index();
-			Size const mmat3 = restype.atom( ii_triple.key2()).mm_atom_type_index();
-			Size const mmat4 = restype.atom( ii_triple.key3()).mm_atom_type_index();
+			Size const mmat1 = neighb_restype.mm_atom_type_index( neighb_atom );
+			Size const mmat2 = restype.mm_atom_type_index( ii_triple.key1());
+			Size const mmat3 = restype.mm_atom_type_index( ii_triple.key2());
+			Size const mmat4 = restype.mm_atom_type_index( ii_triple.key3());
 
 
 			Vector f1(0.0), f2(0.0);
@@ -462,8 +462,8 @@ MMTorsionEnergy::eval_atom_derivative(
 			debug_assert( ii_pair.key1() == atomno || ii_pair.key2() == atomno );
 
 
-			Size const mmat1 = restype.atom( ii_pair.key2()).mm_atom_type_index();
-			Size const mmat2 = restype.atom( ii_pair.key1()).mm_atom_type_index();
+			Size const mmat1 = restype.mm_atom_type_index( ii_pair.key2());
+			Size const mmat2 = restype.mm_atom_type_index( ii_pair.key1());
 
 			/// Find the neighbor residue and connection atom
 			Size const ii_neighb      = res.residue_connection_partner( ii_resconn );
@@ -471,7 +471,7 @@ MMTorsionEnergy::eval_atom_derivative(
 			conformation::Residue const & neighb_res( pose.residue( ii_neighb ));
 			chemical::ResidueType const & neighb_restype( pose.residue_type( ii_neighb ) );
 			Size const neighb_atom1   = neighb_restype.residue_connection( neighb_resconn ).atomno();
-			Size const mmat3          = neighb_restype.atom( neighb_atom1 ).mm_atom_type_index();
+			Size const mmat3          = neighb_restype.mm_atom_type_index( neighb_atom1 );
 
 			utility::vector1< chemical::two_atom_set > const & neighb_atoms_wi1_bond_of_ii(
 				neighb_restype.atoms_within_one_bond_of_a_residue_connection( neighb_resconn ));
@@ -482,7 +482,7 @@ MMTorsionEnergy::eval_atom_derivative(
 
 				//TR << "  2b. Deriv for interres dihedral between (" << ii_neighb << "," << neighb_restype.atom_name( neighb_pair.key1() ) << " " << neighb_restype.atom_name( neighb_pair.key2() ) << ") " << restype.atom_name( ii_pair.key1() )  << " " << restype.atom_name( ii_pair.key2() ) << std::endl;
 
-				Size const mmat4 = neighb_restype.atom( neighb_pair.key2() ).mm_atom_type_index();
+				Size const mmat4 = neighb_restype.mm_atom_type_index( neighb_pair.key2() );
 
 				Vector f1(0.0), f2(0.0);
 				Real theta(0.0);
@@ -516,7 +516,7 @@ MMTorsionEnergy::eval_atom_derivative(
 	{ // Scope 2c.  All the inter-residue connections involving this atom and all within-2-bond triples
 		/// of the bonded residues.
 		utility::vector1< Size > const & connections( restype.residue_connections_for_atom( atomno ) );
-		Size const mmat1 = restype.atom( atomno ).mm_atom_type_index();
+		Size const mmat1 = restype.mm_atom_type_index( atomno );
 
 		for ( Size ii = 1; ii <= connections.size(); ++ii ) {
 			Size const ii_resconn   = connections[ ii ];
@@ -527,7 +527,7 @@ MMTorsionEnergy::eval_atom_derivative(
 			conformation::Residue const & neighb_res( pose.residue( ii_neighb ));
 			chemical::ResidueType const & neighb_restype( pose.residue_type( ii_neighb ) );
 			Size const neighb_atom1    = neighb_restype.residue_connection( neighb_resconn ).atomno();
-			Size const mmat2          = neighb_restype.atom( neighb_atom1 ).mm_atom_type_index();
+			Size const mmat2          = neighb_restype.mm_atom_type_index( neighb_atom1 );
 
 			utility::vector1< chemical::three_atom_set > const & neighb_atoms_wi2(
 				neighb_restype.atoms_within_two_bonds_of_a_residue_connection( neighb_resconn ));
@@ -538,10 +538,10 @@ MMTorsionEnergy::eval_atom_derivative(
 				debug_assert( neighb_triple.key1() == neighb_atom1 );
 
 				Size const neighb_atom2 = neighb_triple.key2();
-				Size const mmat3 = neighb_restype.atom( neighb_atom2 ).mm_atom_type_index();
+				Size const mmat3 = neighb_restype.mm_atom_type_index( neighb_atom2 );
 
 				Size const neighb_atom3 = neighb_triple.key3();
-				Size const mmat4 = neighb_restype.atom( neighb_atom3 ).mm_atom_type_index();
+				Size const mmat4 = neighb_restype.mm_atom_type_index( neighb_atom3 );
 
 				//TR << "  2c. Deriv for interres dihedral between (" << ii_neighb << "," << neighb_restype.atom_name( neighb_atom1 ) << neighb_restype.atom_name( neighb_atom2 ) << " " << neighb_restype.atom_name( neighb_atom3 )<< ") " << restype.atom_name( atomno ) << std::endl;
 
@@ -610,10 +610,10 @@ MMTorsionEnergy::eval_intrares_derivatives(
 
 			//TR << "  1. Deriv for dihed# " << diheds[ ii ] << " between " << restype.atom_name( ii_dihed.key1() ) << " " << restype.atom_name( ii_dihed.key2() )  << " " << restype.atom_name( ii_dihed.key3() ) << " " << restype.atom_name( ii_dihed.key4() ) << std::endl;
 
-			Size const mmat1 = restype.atom( ii_dihed.key1()).mm_atom_type_index();
-			Size const mmat2 = restype.atom( ii_dihed.key2()).mm_atom_type_index();
-			Size const mmat3 = restype.atom( ii_dihed.key3()).mm_atom_type_index();
-			Size const mmat4 = restype.atom( ii_dihed.key4()).mm_atom_type_index();
+			Size const mmat1 = restype.mm_atom_type_index( ii_dihed.key1());
+			Size const mmat2 = restype.mm_atom_type_index( ii_dihed.key2());
+			Size const mmat3 = restype.mm_atom_type_index( ii_dihed.key3());
+			Size const mmat4 = restype.mm_atom_type_index( ii_dihed.key4());
 
 			Vector f1(0.0), f2(0.0);
 			Real theta(0.0);
@@ -680,10 +680,10 @@ MMTorsionEnergy::eval_intrares_derivatives(
 
 				//TR << "  2a. Deriv for interres dihedral between (" << ii_neighb << "," << neighb_restype.atom_name( neighb_atom ) << ") " << restype.atom_name( ii_triple.key1() )  << " " << restype.atom_name( ii_triple.key2() ) << " " << restype.atom_name( ii_triple.key3() ) << std::endl;
 
-				Size const mmat1 = neighb_restype.atom( neighb_atom ).mm_atom_type_index();
-				Size const mmat2 = restype.atom( ii_triple.key1()).mm_atom_type_index();
-				Size const mmat3 = restype.atom( ii_triple.key2()).mm_atom_type_index();
-				Size const mmat4 = restype.atom( ii_triple.key3()).mm_atom_type_index();
+				Size const mmat1 = neighb_restype.mm_atom_type_index( neighb_atom );
+				Size const mmat2 = restype.mm_atom_type_index( ii_triple.key1());
+				Size const mmat3 = restype.mm_atom_type_index( ii_triple.key2());
+				Size const mmat4 = restype.mm_atom_type_index( ii_triple.key3());
 
 
 				Vector f1(0.0), f2(0.0);
@@ -736,8 +736,8 @@ MMTorsionEnergy::eval_intrares_derivatives(
 				debug_assert( ii_pair.key1() == atomno || ii_pair.key2() == atomno );
 
 
-				Size const mmat1 = restype.atom( ii_pair.key2()).mm_atom_type_index();
-				Size const mmat2 = restype.atom( ii_pair.key1()).mm_atom_type_index();
+				Size const mmat1 = restype.mm_atom_type_index( ii_pair.key2());
+				Size const mmat2 = restype.mm_atom_type_index( ii_pair.key1());
 
 				/// Find the neighbor residue and connection atom
 				Size const ii_neighb      = rsd.residue_connection_partner( ii_resconn );
@@ -748,7 +748,7 @@ MMTorsionEnergy::eval_intrares_derivatives(
 				conformation::Residue const & neighb_res( pose.residue( ii_neighb ));
 				chemical::ResidueType const & neighb_restype( pose.residue_type( ii_neighb ) );
 				Size const neighb_atom1   = neighb_restype.residue_connection( neighb_resconn ).atomno();
-				Size const mmat3          = neighb_restype.atom( neighb_atom1 ).mm_atom_type_index();
+				Size const mmat3          = neighb_restype.mm_atom_type_index( neighb_atom1 );
 
 				utility::vector1< chemical::two_atom_set > const & neighb_atoms_wi1_bond_of_ii(
 					neighb_restype.atoms_within_one_bond_of_a_residue_connection( neighb_resconn ));
@@ -759,7 +759,7 @@ MMTorsionEnergy::eval_intrares_derivatives(
 
 					//TR << "  2b. Deriv for interres dihedral between (" << ii_neighb << "," << neighb_restype.atom_name( neighb_pair.key1() ) << " " << neighb_restype.atom_name( neighb_pair.key2() ) << ") " << restype.atom_name( ii_pair.key1() )  << " " << restype.atom_name( ii_pair.key2() ) << std::endl;
 
-					Size const mmat4 = neighb_restype.atom( neighb_pair.key2() ).mm_atom_type_index();
+					Size const mmat4 = neighb_restype.mm_atom_type_index( neighb_pair.key2() );
 
 					Vector f1(0.0), f2(0.0);
 					Real theta(0.0);
@@ -793,7 +793,7 @@ MMTorsionEnergy::eval_intrares_derivatives(
 		{ // Scope 2c.  All the inter-residue connections involving this atom and all within-2-bond triples
 			/// of the bonded residues.
 			utility::vector1< Size > const & connections( restype.residue_connections_for_atom( atomno ) );
-			Size const mmat1 = restype.atom( atomno ).mm_atom_type_index();
+			Size const mmat1 = restype.mm_atom_type_index( atomno );
 
 			for ( Size ii = 1; ii <= connections.size(); ++ii ) {
 				Size const ii_resconn   = connections[ ii ];
@@ -807,7 +807,7 @@ MMTorsionEnergy::eval_intrares_derivatives(
 				conformation::Residue const & neighb_res( pose.residue( ii_neighb ));
 				chemical::ResidueType const & neighb_restype( pose.residue_type( ii_neighb ) );
 				Size const neighb_atom1    = neighb_restype.residue_connection( neighb_resconn ).atomno();
-				Size const mmat2          = neighb_restype.atom( neighb_atom1 ).mm_atom_type_index();
+				Size const mmat2          = neighb_restype.mm_atom_type_index( neighb_atom1 );
 
 				utility::vector1< chemical::three_atom_set > const & neighb_atoms_wi2(
 					neighb_restype.atoms_within_two_bonds_of_a_residue_connection( neighb_resconn ));
@@ -818,10 +818,10 @@ MMTorsionEnergy::eval_intrares_derivatives(
 					debug_assert( neighb_triple.key1() == neighb_atom1 );
 
 					Size const neighb_atom2 = neighb_triple.key2();
-					Size const mmat3 = neighb_restype.atom( neighb_atom2 ).mm_atom_type_index();
+					Size const mmat3 = neighb_restype.mm_atom_type_index( neighb_atom2 );
 
 					Size const neighb_atom3 = neighb_triple.key3();
-					Size const mmat4 = neighb_restype.atom( neighb_atom3 ).mm_atom_type_index();
+					Size const mmat4 = neighb_restype.mm_atom_type_index( neighb_atom3 );
 
 					//TR << "  2c. Deriv for interres dihedral between (" << ii_neighb << "," << neighb_restype.atom_name( neighb_atom1 ) << neighb_restype.atom_name( neighb_atom2 ) << " " << neighb_restype.atom_name( neighb_atom3 )<< ") " << restype.atom_name( atomno ) << std::endl;
 

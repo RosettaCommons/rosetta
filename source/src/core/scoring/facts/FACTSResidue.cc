@@ -58,6 +58,7 @@
 #include <cstdio>
 #include <utility/assert.hh>
 #include <utility/assert.hh>
+#include <utility/pointer/memory.hh>
 
 static basic::Tracer TR( "core.scoring.FACTSPotential" );
 
@@ -166,23 +167,19 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 	// Option for binding affinity calculation
 	bool const binding_affinity( option[ score::facts_binding_affinity ]() );
 
-	chemical::ResidueTypeOP rsd_for_charge;
-
+	chemical::ResidueTypeCOP file_residue;
 	if ( utility::file::file_exists( filename ) ) {
 		chemical::ResidueTypeSetCOP rsd_type_set = chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-		rsd_for_charge = chemical::read_topology_file( filename, rsd_type_set );
-
-	} else {
-		rsd_for_charge = rsd.clone();
+		file_residue = chemical::ResidueType::make( *chemical::read_topology_file( filename, rsd_type_set ) );
 	}
-
+	chemical::ResidueType const & rsd_for_charge( utility::file::file_exists( filename ) ? *file_residue : rsd );
 
 	// Assign parameters
 	for ( Size i = 1; i <= natoms(); ++i ) {
 		core::chemical::AtomType const &type = rsd.atom_type(i);
 
 		// Partial charge
-		q_[i] = rsd_for_charge->atom(i).charge();
+		q_[i] = rsd_for_charge.atom_charge(i);
 
 		if ( std::abs(q_[i]) < 1.0e-3 ) charged_[i] = false;
 

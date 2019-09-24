@@ -153,17 +153,17 @@ MMBondLengthEnergy::residue_pair_energy(
 		TR(basic::t_trace) << "Found residue connection id " << resconn_id1 << "-" << resconn_id2 << ": "
 			<< rsd1.atom_name( resconn_atomno1 ) << "-" << rsd2.atom_name( resconn_atomno2 ) << std::endl;
 
-		Size const resconn_mmat1 = rsd1_type.atom( resconn_atomno1 ).mm_atom_type_index();
-		Size const resconn_mmat2 = rsd2_type.atom( resconn_atomno2 ).mm_atom_type_index();
+		Size const resconn_mmat1 = rsd1_type.mm_atom_type_index( resconn_atomno1 );
+		Size const resconn_mmat2 = rsd2_type.mm_atom_type_index( resconn_atomno2 );
 
 		Real const d =
 			( rsd1.atom( resconn_atomno1 ).xyz()-rsd2.atom( resconn_atomno2 ).xyz() ).length();
 
 		TR(basic::t_trace)
 			<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "("
-			<< rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
+			<< rsd1_type.mm_name( resconn_atomno1 ) << ") - "
 			<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "("
-			<< rsd2_type.atom( resconn_atomno2 ).mm_name() << ")" << std::endl;
+			<< rsd2_type.mm_name( resconn_atomno2 ) << ")" << std::endl;
 
 		energy += potential_.mm::MMBondLengthScore::score
 			(  mm::mm_bondlength_atom_pair( resconn_mmat1, resconn_mmat2 ), d );
@@ -193,8 +193,8 @@ MMBondLengthEnergy::eval_intrares_energy(
 			Size atm_j = atm_nbrs[j];
 			if ( atm_i >= atm_j ) continue; // only score each bond once -- use restype index to define ordering
 
-			int mmat1 = rsd_type.atom( atm_i ).mm_atom_type_index();
-			int mmat2 = rsd_type.atom( atm_j ).mm_atom_type_index();
+			int mmat1 = rsd_type.mm_atom_type_index( atm_i );
+			int mmat2 = rsd_type.mm_atom_type_index( atm_j );
 
 			// check for vrt
 			if ( rsd_type.atom_type(atm_i).is_virtual() || rsd_type.atom_type(atm_j).is_virtual() ) {
@@ -205,9 +205,9 @@ MMBondLengthEnergy::eval_intrares_energy(
 
 			TR(basic::t_trace)
 				<< "r1 " << atm_i << " " << rsd.atom_name( atm_i ) << "("
-				<< rsd_type.atom( atm_i ).mm_name() << ") - "
+				<< rsd_type.mm_name( atm_i ) << ") - "
 				<< "r2 " << atm_j << " " << rsd.atom_name( atm_j ) << "("
-				<< rsd_type.atom( atm_j ).mm_name() << ")" << std::endl;
+				<< rsd_type.mm_name( atm_j ) << ")" << std::endl;
 
 			// score bond angle
 			energy += potential_.mm::MMBondLengthScore::score
@@ -244,8 +244,8 @@ MMBondLengthEnergy::eval_atom_derivative(
 	for ( Size j=1; j<=atm_nbrs.size(); ++j ) {
 		Size atm2 = atm_nbrs[j];
 
-		int mmat1 = rsd_type.atom( atomno ).mm_atom_type_index();
-		int mmat2 = rsd_type.atom( atm2 ).mm_atom_type_index();
+		int mmat1 = rsd_type.mm_atom_type_index( atomno );
+		int mmat2 = rsd_type.mm_atom_type_index( atm2 );
 
 		// check for vrt
 		if ( rsd_type.atom_type(atomno).is_virtual() || rsd_type.atom_type(atm2).is_virtual() ) {
@@ -274,8 +274,8 @@ MMBondLengthEnergy::eval_atom_derivative(
 		chemical::ResidueType const & neighb_restype( pose.residue_type( ii_neighb ) );
 		Size const neighb_atom1    = neighb_restype.residue_connection( neighb_resconn ).atomno();
 
-		Size const mmat1 = rsd_type.atom( atomno ).mm_atom_type_index();
-		Size const mmat2 = neighb_restype.atom( neighb_atom1 ).mm_atom_type_index();
+		Size const mmat1 = rsd_type.mm_atom_type_index( atomno );
+		Size const mmat2 = neighb_restype.mm_atom_type_index( neighb_atom1 );
 
 		// check for vrt
 		if ( rsd_type.atom_type(atomno).is_virtual() || neighb_restype.atom_type(neighb_atom1).is_virtual() ) {

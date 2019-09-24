@@ -613,7 +613,7 @@ add_to_pose(
 	// add terminal residues if necessary
 	if ( s_start == start ) {
 		// prepend residue here
-		core::chemical::ResidueType const restype =
+		core::chemical::ResidueType const & restype =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map("ALA");
 		core::conformation::ResidueOP new_rsd = core::conformation::ResidueFactory::create_residue( restype );
 		debug_assert( new_rsd );
@@ -635,7 +635,7 @@ add_to_pose(
 	tmppose.fold_tree( ft );
 	if ( s_stop == stop ) {
 		// append residue here
-		core::chemical::ResidueType const restype =
+		core::chemical::ResidueType const & restype =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map("ALA");
 		core::conformation::ResidueOP new_rsd = core::conformation::ResidueFactory::create_residue( restype );
 		debug_assert( new_rsd );

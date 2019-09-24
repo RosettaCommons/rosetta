@@ -7,33 +7,30 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/loops/ResidueLoaderCreator.hh
-/// @brief
-/// @author Sam DeLuca
-
-#ifndef INCLUDED_core_chemical_ResidueLoaderCreator_hh
-#define INCLUDED_core_chemical_ResidueLoaderCreator_hh
+/// @file
+/// @brief A version of ResidueConnection used with MutableResidueType
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 
-//unit headers
-#include <basic/resource_manager/ResourceLoaderCreator.hh>
+#ifndef INCLUDED_core_chemical_MutableResidueConnection_fwd_hh
+#define INCLUDED_core_chemical_MutableResidueConnection_fwd_hh
+
+
+// Unit headers
+
+// Project headers
+
+// Utility headers
+
+// C++ headers
+
 
 namespace core {
 namespace chemical {
 
-class ResidueLoaderCreator : public basic::resource_manager::ResourceLoaderCreator
-{
-public:
+class MutableResidueConnection;
 
-	basic::resource_manager::ResourceLoaderOP
-	create_resource_loader() const override;
-
-
-	std::string loader_type() const override;
-
-};
-
-}
-}
+} // chemical
+} // core
 
 #endif

@@ -58,7 +58,8 @@ int main(int argc, char*argv[])
 		utility::vector1<std::string> const & res_file_paths(basic::options::option[basic::options::OptionKeys::in::file::extra_res_fa]());
 
 		for ( std::string const & params_file_path : res_file_paths ) {
-			core::chemical::ResidueTypeOP new_residue_type = core::chemical::read_topology_file( params_file_path, residue_types );
+			core::chemical::MutableResidueTypeOP new_mut_residue_type = core::chemical::read_topology_file( params_file_path, residue_types );
+			core::chemical::ResidueTypeCOP new_residue_type( core::chemical::ResidueType::make( *new_mut_residue_type ) );
 
 			residue_database_io.write_residuetype_to_database("fa_standard",*new_residue_type,db_session);
 		}

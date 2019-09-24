@@ -24,8 +24,9 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/Atom.hh>
-#include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/MutableResidueConnection.hh>
 
 #include <core/chemical/sdf/mol_writer.hh>
 
@@ -1114,12 +1115,12 @@ bool PossibleAtomTypesForAtom::IsBondedToAHalogen( const core::chemical::RealRes
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void assign_gasteiger_atom_types( core::chemical::ResidueType & restype, bool keep_existing /*= true*/, bool allow_unknown /*= false*/) {
+void assign_gasteiger_atom_types( core::chemical::MutableResidueType & restype, bool keep_existing /*= true*/, bool allow_unknown /*= false*/) {
 	GasteigerAtomTypeSetCOP typeset( restype.gasteiger_atom_typeset() );
 	if ( ! typeset ) {
 		typeset = core::chemical::ChemicalManager::get_instance()->gasteiger_atom_type_set();
 		debug_assert( typeset );
-		restype.set_gasteiger_typeset( typeset );
+		restype.set_gasteiger_atom_typeset( typeset );
 	}
 	assign_gasteiger_atom_types( restype, typeset, keep_existing, allow_unknown );
 }
@@ -1146,7 +1147,7 @@ void assign_gasteiger_atom_types( core::chemical::ResidueType & restype, bool ke
 /// * The bridge nitrogens of fused ring structures like PO5, C7M and AZQ are typed trig versus gasteiger tet.
 
 void
-assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAtomTypeSetCOP gasteiger_atom_type_set, bool keep_existing, bool allow_unknown /* = false */) {
+assign_gasteiger_atom_types( core::chemical::MutableResidueType & restype, GasteigerAtomTypeSetCOP gasteiger_atom_type_set, bool keep_existing, bool allow_unknown /* = false */) {
 	debug_assert( gasteiger_atom_type_set );
 	// This functionality was taken from AtomsCompleteStandardizer
 
@@ -1173,7 +1174,7 @@ assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAto
 		} else if ( restype.atom(*iter).is_fake() ) {
 			restype.atom(*iter).gasteiger_atom_type( gasteiger_atom_type_set->type_for_fake_atoms() );
 		} else {
-			core::Size connections( restype.n_residue_connections_for_atom( restype.atom_index(*iter) ) );
+			core::Size connections( restype.n_residue_connections_for_atom( *iter ) );
 			// This makes the (probably justifilable) assumption that VDs for the main graph can be converted simply to VDs of the filtered graph.
 			PossibleAtomTypes[ *iter ] = GetPossibleTypesForAtom( real_graph, *iter, gasteiger_atom_type_set, connections);
 			if ( ! allow_unknown && ! PossibleAtomTypes[ *iter ].GetMostStableType() ) {
@@ -1211,7 +1212,7 @@ assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAto
 	// This will turn what is typed separately as an amine (N_Te2TeTeTe) atom into an amide (N_TrTrTrPi2).
 	if ( restype.is_polymer() && restype.lower_connect_id() != 0 ) {
 		VD lower_connect_vd = restype.lower_connect().vertex();
-		debug_assert( lower_connect_vd != ResidueType::null_vertex );
+		debug_assert( lower_connect_vd != MutableResidueType::null_vertex );
 		if ( restype.atom( lower_connect_vd ).gasteiger_atom_type()->get_name() == "N_Te2TeTeTe" ) {
 			restype.atom( lower_connect_vd ).gasteiger_atom_type( gasteiger_atom_type_set->atom_type("N_TrTrTrPi2") );
 		}

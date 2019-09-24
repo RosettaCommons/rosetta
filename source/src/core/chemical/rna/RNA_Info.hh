@@ -50,21 +50,27 @@ public:
 	///////////////////////////Implemented for fast lookup! Parin Sripakdeevong, June 25th, 2011//////////////////
 private:
 
+	static
 	utility::vector1< Size > const
-	figure_out_chi_order() const;
+	figure_out_chi_order( ResidueType const & residue_type );
 
+	static
 	void
-	rna_note_chi_controls_atom( core::Size const chi, core::Size const atomno,
+	rna_note_chi_controls_atom( ResidueType const & residue_type_in,
+		core::Size const chi, core::Size const atomno,
 		utility::vector1< core::Size > & last_controlling_chi,
-		utility::vector1< core::Size > const & chi_order ) const;
+		utility::vector1< core::Size > const & chi_order );
 
 public:
 
 	void
-	update_derived_rna_data( ResidueTypeCAP residue_type_in );
+	update_derived_rna_data( ResidueType const & residue_type_in );
 
+	/// @brief This is used for setting up the two passed vectors on the ResidueType.
+	/// This can/will be called before this RNA_Info object is complete, so it's static.
+	static
 	void
-	rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in,
+	rna_update_last_controlling_chi( ResidueType const & residue_type_in,
 		utility::vector1< core::Size > & last_controlling_chi,
 		utility::vector1< AtomIndices >  &  atoms_last_controlled_by_chi );
 
@@ -169,7 +175,7 @@ public:
 	//For fast look whether atom is VIRTUAL type.
 	utility::vector1< bool > is_virtual_;
 
-	ResidueTypeCAP residue_type_; //Pointer to the main ResidueType object that this RNA_Info object belongs to.
+	// ResidueTypeCAP residue_type_; //Pointer to the main ResidueType object that this RNA_Info object belongs to.
 
 	Size chi_number_pseudoalpha_;
 	Size chi_number_pseudobeta_;

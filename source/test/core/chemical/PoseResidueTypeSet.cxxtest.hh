@@ -22,6 +22,7 @@
 #include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/MutableResidueType.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -57,7 +58,7 @@ public:
 
 		ResidueType const & serine = grs->name_map( "SER" );
 
-		ResidueTypeOP modser = serine.clone();
+		MutableResidueTypeOP modser( new MutableResidueType( serine ) );
 		modser->nbr_radius( 15.0);
 		modser->name( "bigser" );
 
@@ -90,7 +91,7 @@ public:
 		GlobalResidueTypeSetOP grts( new GlobalResidueTypeSet( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ) ) );
 		PoseResidueTypeSetOP prts( new PoseResidueTypeSet( grts ) );
 
-		ResidueTypeOP new_cys( new ResidueType( grts->name_map("CYS") ) );
+		MutableResidueTypeOP new_cys( new MutableResidueType( grts->name_map("CYS") ) );
 		std::string const & unique_tag( "UNIQUE_PROPERTY_TAG_13243214" );
 		new_cys->add_string_property(unique_tag,"VALUE");
 		prts->add_base_residue_type( new_cys );

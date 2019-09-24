@@ -73,6 +73,7 @@ ElementSet::read_file( std::string const & filename )
 				data >> *element;
 				if ( data.good() ) {
 					elements_.push_back( element );
+					element->set_index( elements_.size() );
 					std::string symbol( element->get_chemical_symbol() );
 					if ( element_index_.count( symbol ) ) {
 						if ( symbol != "Z" && symbol != "X" ) {

@@ -29,6 +29,8 @@
 #include <utility/vector1.hh>
 #include <boost/unordered/unordered_map.hpp>
 
+#include <boost/unordered_map.hpp>
+
 namespace core {
 namespace scoring {
 

@@ -67,7 +67,10 @@ StoredRotamerLibrarySpecification::StoredRotamerLibrarySpecification(std::istrea
 	utility_exit_with_message("Cannot currently instantiate a StoredRotamerLibrarySpecification from an input stream.");
 }
 
-StoredRotamerLibrarySpecification::~StoredRotamerLibrarySpecification() = default;
+RotamerLibrarySpecificationOP
+StoredRotamerLibrarySpecification::clone() const {
+	return utility::pointer::make_shared< StoredRotamerLibrarySpecification >( *this );
+}
 
 /// @brief Add a particular rotamer to the list
 void

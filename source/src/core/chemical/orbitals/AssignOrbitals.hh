@@ -11,8 +11,9 @@
 #define INCLUDED_core_chemical_orbitals_AssignOrbitals_hh
 
 #include <numeric/xyzVector.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
 #include <utility/vector1.hh>
+#include <core/chemical/ResidueGraphTypes.hh>
 
 //Auto Headers
 #include <core/chemical/AtomType.fwd.hh>
@@ -35,15 +36,15 @@ class AssignOrbitals {
 public:
 
 
-	AssignOrbitals(core::chemical::ResidueTypeOP const restype);
+	AssignOrbitals(core::chemical::MutableResidueTypeOP const restype);
 	void assign_orbitals();
 
 	void assign_only_pi_orbitals_to_atom(/*OrbInfo const & orbital_info,*/ core::chemical::AtomType const & atmtype);
 
 	void assign_sp2_sp_orbitals_to_one_bonded_atom(/*OrbInfo const & orbital_info*/ core::chemical::AtomType const & atmtype);
 	void add_orbitals_to_restype(
-		core::Size const atm_index2,
-		core::Size const atm_index3,
+		VD atm_vd2,
+		VD atm_vd3,
 		//OrbInfo const & orbital_info,
 		core::chemical::AtomType const & atmtype,
 		std::string const & atom_hybridization,
@@ -54,46 +55,46 @@ public:
 
 
 	utility::vector1< numeric::xyzVector<core::Real> > cross_product_helper(
-		core::Size const atm_index1,
-		core::Size const atm_index2,
-		core::Size const atm_index3,
+		VD const atm_vd1,
+		VD const atm_vd2,
+		VD const atm_vd3,
 		core::Real const dist
 	);
 
 	void calculate_orbital_icoor(
 		numeric::xyzVector<core::Real> const & orbital_xyz,
-		core::Size const atm_index1,
-		core::Size const atm_index2,
-		core::Size const atm_index3,
+		VD const atm_vd1,
+		VD const atm_vd2,
+		VD const atm_vd3,
 		std::string const & orbital_element_name
 	);
 
 	utility::vector1< numeric::xyzVector<core::Real> >  Coordinates_TriganolPlanar_bondedto1atom_helper(
-		core::Size const atm_index1,
-		core::Size const atm_index2,
-		core::Size const atm_index3,
+		VD const atm_vd1,
+		VD const atm_vd2,
+		VD const atm_vd3,
 		core::Real const dist
 
 	);
 
 	utility::vector1< numeric::xyzVector<core::Real> >  Coordinates_Tetrahedral_bondedto3atoms_helper(
-		core::Size const atm_index1,
-		core::Size const atm_index2,
-		core::Size const atm_index3,
-		core::Size const atm_index4,
+		VD const atm_vd1,
+		VD const atm_vd2,
+		VD const atm_vd3,
+		VD const atm_vd4,
 		core::Real const dist
 
 	);
 
 private:
 
-	core::Size Aindex_;
+	core::chemical::VD Avd_;
 	core::Size AOhybridization_;
 	core::Size Orbtype_;
 	core::Real AOdist_;
-	utility::vector1<core::Size> AObondedatoms_;
+	utility::vector1<VD> AObondedatoms_;
 
-	core::chemical::ResidueTypeOP restype_;
+	core::chemical::MutableResidueTypeOP restype_;
 	core::Size n_orbitals_;
 
 	std::string make_orbital_type_name
@@ -107,7 +108,7 @@ private:
 
 
 	void set_orbital_type_and_bond(
-		core::Size atom_index,
+		VD atom_vd,
 		std::string orbital_element_name,
 		std::string orbital_type_full_name
 	);

@@ -29,6 +29,7 @@
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/Metapatch.fwd.hh>
 #include <core/chemical/Patch.fwd.hh>
@@ -404,16 +405,16 @@ protected:
 
 	/// @brief Centralize the steps for preparing the ResidueType for addition to the RTS
 	/// (e.g. if there's any additional modifications that need to get done.)
-	static
 	void
-	prep_restype( ResidueTypeOP new_type );
+	prep_restype( MutableResidueTypeOP new_type ) const;
 
 	/// @brief adds a new base residue type to the set, one that isn't patched, but can be.
+	/// (Needs a modifiable type so that it can call prep_restype() on it.)
 	/// Note: creates write lock on RTSC and must not be invoked in the generate_residue_type_write_locked
 	/// call chain.
 	virtual
 	void
-	add_base_residue_type( ResidueTypeOP new_type );
+	add_base_residue_type( MutableResidueTypeOP new_type );
 
 	/// @brief Force the addition of a new residue type despite a const context.
 	/// @details Danger!  Only intended for rare use cases in which there is no other way to allow a new base type
@@ -421,7 +422,7 @@ protected:
 	/// @note Creates no write lock.  Can be called from the generate_residue_type_write_locked call chain, but not
 	/// threadsafe unless a write lock is obtained outside of this function.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-	virtual void force_add_base_residue_type_already_write_locked( ResidueTypeOP new_type ) const;
+	virtual void force_add_base_residue_type_already_write_locked( MutableResidueTypeOP new_type ) const;
 
 	/// @brief adds a new residue type to the set, one that can be patched
 	/// Note: creates write lock on RTSC and must not be invoked in the generate_residue_type_write_locked
@@ -440,11 +441,12 @@ protected:
 	);
 
 	/// @brief adds a new residue type to the set, one that CANNOT be generated from a base_residue_type and patches, and shouldn't have patches applied
+	/// (Needs a modifiable type so that it can call prep_restype() on it.)
 	/// Note: creates write lock on RTSC and must not be invoked in the generate_residue_type_write_locked
 	/// call chain.
 	virtual
 	void
-	add_unpatchable_residue_type( ResidueTypeOP new_type );
+	add_unpatchable_residue_type( MutableResidueTypeOP new_type );
 
 	/// @brief adds a new residue type to the set, one that CANNOT be generated from a base_residue_type and patches, and shouldn't have patches applied
 	/// Note: creates write lock on RTSC and must not be invoked in the generate_residue_type_write_locked
@@ -526,13 +528,12 @@ protected:
 
 	/// @brief Static method which will apply a given patch to a given ResidueType
 	/// If the patch cannot be applies, it will return nullptr
-	/// @details This is a static member function, so should not be sensitive to the lock state of the RTS
-	static
-	ResidueTypeCOP
+	/// @details This should not touch any mutex-protected data.
+	MutableResidueTypeCOP
 	apply_patch( ResidueTypeCOP const & rsd_base_ptr,
 		std::string const & patch_name,
 		std::map< std::string, utility::vector1< PatchCOP > > const & patch_mapping,
-		std::map< std::string, MetapatchCOP > const & metapach_mapping);
+		std::map< std::string, MetapatchCOP > const & metapach_mapping) const;
 
 	/// @brief Template method to return a residue type with the given name, updating the
 	/// ResidueTypeSetCache as needed -- meant to be overridden by the derived

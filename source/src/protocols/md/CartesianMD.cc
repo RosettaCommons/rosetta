@@ -246,7 +246,7 @@ void CartesianMD::do_initialize( core::pose::Pose &pose )
 		Size resno = AtomID.rsd();
 		Size atmno = AtomID.atomno();
 
-		set_mass( iatm, pose.residue_type(resno).atom(atmno).element_type()->weight() );
+		set_mass( iatm, pose.residue_type(resno).element_type(atmno)->weight() );
 	}
 
 }

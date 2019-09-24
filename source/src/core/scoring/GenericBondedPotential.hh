@@ -19,7 +19,7 @@
 #include <core/scoring/GenericBondedPotential.fwd.hh>
 
 // Package headers
-#include <core/chemical/Bond.hh>
+#include <core/chemical/Bond.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -34,6 +34,8 @@
 
 #include <utility/vector1.hh>
 
+#include <boost/unordered_map.hpp>
+
 namespace core {
 namespace scoring {
 
@@ -47,7 +49,7 @@ bondorders_map(std::string bt);
 
 /// @brief convert a bond type to a bin index
 core::Size
-bin_from_bond(core::chemical::Bond const &b);
+bin_from_bond(core::chemical::BondName bn, core::chemical::BondRingness br);
 
 /// @brief Parameter set for one torsion angle
 /// @details Stores a set of constants required for enumerating a harmonic
@@ -275,11 +277,12 @@ private:
 	SpringParams const &lookup_angle_params( Size type1, Size type2, Size type3 ) const;
 
 	/// @brief fast database lookup; torsions conditioned on types + 2-3 bond
-	GenTorsionParams const &lookup_tors_params(
-		core::chemical::Bond const &bt, Size type1, Size type2, Size type3, Size type4 ) const;
+	GenTorsionParams const & lookup_tors_params(
+		core::chemical::BondName bn, core::chemical::BondRingness br,
+		Size type1, Size type2, Size type3, Size type4 ) const;
 
 	/// @brief fast database lookup; improper keyed on types only
-	SpringParams const &lookup_improper_params(
+	SpringParams const & lookup_improper_params(
 		Size type1, Size type2, Size type3, Size type4, int &idx2, int &idx3, int &idx4
 	) const;
 
@@ -399,7 +402,7 @@ private:
 class ResidueExclParams : public utility::pointer::ReferenceCount {
 
 public:
-	ResidueExclParams( core::chemical::ResidueType const rsd_type,
+	ResidueExclParams( core::chemical::ResidueTypeCOP rsd_type,
 		bool const score_full,
 		bool const score_hybrid );
 
@@ -451,7 +454,7 @@ private:
 	utility::vector1< bool > atm_excluded_;
 	utility::vector1< bool > bondnos_;
 	boost::unordered_map< uint64_t, bool > atmpairnos_;
-	core::chemical::ResidueType rsd_type_;
+	core::chemical::ResidueTypeCOP rsd_type_;
 
 };
 

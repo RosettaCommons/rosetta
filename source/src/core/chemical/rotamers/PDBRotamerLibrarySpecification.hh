@@ -38,7 +38,9 @@ public:
 	PDBRotamerLibrarySpecification();
 	PDBRotamerLibrarySpecification(std::string const & library_filename);
 	PDBRotamerLibrarySpecification(std::istream & input);
-	virtual ~PDBRotamerLibrarySpecification();
+
+	RotamerLibrarySpecificationOP
+	clone() const override;
 
 	std::string const &
 	pdb_rotamers_file() const { return pdb_rotamers_file_; }
@@ -46,13 +48,11 @@ public:
 	void
 	pdb_rotamers_file( std::string const & filename){ pdb_rotamers_file_ = filename; }
 
-	virtual
 	std::string
-	keyname() const;
+	keyname() const override;
 
-	virtual
 	std::string
-	cache_tag(core::chemical::ResidueType const &) const { return pdb_rotamers_file_; }
+	cache_tag(core::chemical::ResidueType const &) const override { return pdb_rotamers_file_; }
 
 	static std::string library_name();
 

@@ -39,9 +39,12 @@ namespace rotamers {
 
 class RotamerLibrarySpecification : public utility::pointer::ReferenceCount {
 public:
-	RotamerLibrarySpecification();
+	RotamerLibrarySpecification() = default;
 
-	virtual ~RotamerLibrarySpecification();
+	/// @brief Create a copy of the RotamerLibrarySpecification, respecting the subclassing
+	virtual
+	RotamerLibrarySpecificationOP
+	clone() const = 0;
 
 	/// @brief Which type of SingleResidueRotamerLibrary does this specification sub-type correspond to?
 	virtual

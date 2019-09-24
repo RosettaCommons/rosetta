@@ -370,8 +370,8 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::compute_r
 
 		atom_data.ligand_atom = pose.conformation().residue(atom_data.ligand_atom_id.rsd()).atom(atom_data.ligand_atom_id.atomno());
 
-		atom_data.protein_atom_charge = pose.conformation().residue(atom_data.protein_atom_id.rsd()).type().atom(atom_data.protein_atom_id.atomno()).charge();
-		atom_data.ligand_atom_charge = pose.conformation().residue(atom_data.ligand_atom_id.rsd()).type().atom(atom_data.ligand_atom_id.atomno()).charge();
+		atom_data.protein_atom_charge = pose.conformation().residue(atom_data.protein_atom_id.rsd()).type().atom_charge(atom_data.protein_atom_id.atomno());
+		atom_data.ligand_atom_charge = pose.conformation().residue(atom_data.ligand_atom_id.rsd()).type().atom_charge(atom_data.ligand_atom_id.atomno());
 
 
 		// Compute all the RDF data for this pair of atoms

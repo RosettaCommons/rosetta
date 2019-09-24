@@ -19,6 +19,7 @@
 
 // Package headers
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueProperties.hh>
 
@@ -53,7 +54,7 @@ public:
 	/// @brief Returns true to signal failure, false to indicate success.
 	virtual
 	bool
-	apply( ResidueType & rsd ) const = 0;
+	apply( MutableResidueType & rsd ) const = 0;
 
 	/// @brief Which atom, if any, is added. Used for fast matching of ResidueType/Patches to PDB residues.
 	virtual
@@ -149,7 +150,7 @@ public:
 
 	/// @brief delete an atom from ResidueType rsd
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("DeleteAtom").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -188,7 +189,7 @@ public:
 
 	/// set an atom in ResidueType rsd as backbone heavy atom
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 private:
 	// name of the atom to be set
@@ -215,7 +216,7 @@ public:
 
 	/// @brief set an atom in ResidueType rsd as a polymer connection atom
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	bool
 	changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const override;
@@ -256,7 +257,7 @@ public:
 
 	/// add a property
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	bool
 	changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const override;
@@ -298,7 +299,7 @@ public:
 
 	/// @brief add a property
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("AddProperty").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -348,7 +349,7 @@ public:
 
 	/// @brief delete a property
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("DeleteProperty").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -400,7 +401,7 @@ public:
 	DeleteVariantType( VariantType const variant_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	bool apply( ResidueType & rsd ) const override;
+	bool apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("DeleteVariantType").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -452,7 +453,7 @@ public:
 		std::string const & atom4_in);
 
 	/// @brief Add a chi angle.
-	bool apply(ResidueType & rsd) const override;
+	bool apply(MutableResidueType & rsd) const override;
 
 	/// @brief Return the name of this PatchOperation ("AddChi").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -493,7 +494,7 @@ public:
 
 	/// add a proton chi angle
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("AddProtonChi").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -535,7 +536,7 @@ public:
 
 	/// redefine a chi angle
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("RedefineChi").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -571,7 +572,7 @@ public:
 
 	/// redefine a chi angle
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("DeleteTerminalChi").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -595,7 +596,7 @@ public:
 	DeleteMetalbindingAtom( std::string const & atom_name );
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("DeleteMetalbindingAtom").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -626,7 +627,7 @@ public:
 	DeleteActCoordAtom( std::string const & atom_name );
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("DeleteActCoordAtom").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -661,7 +662,7 @@ public:
 	AddChiRotamer(Angle const & mean_in, Angle const & sdev_in);
 
 	/// @brief Add a rotamer sample.
-	bool apply(ResidueType & rsd) const override;
+	bool apply(MutableResidueType & rsd) const override;
 
 	/// @brief Return the name of this PatchOperation ("AddChiRotamer").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -696,7 +697,7 @@ public:
 	ClearChiRotamers( core::uint const chi_no_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	bool apply( ResidueType & rsd ) const override;
+	bool apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ClearChiRotamers").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -738,7 +739,7 @@ public:
 
 	/// add an atom
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 
 	std::string
@@ -774,7 +775,7 @@ public:
 	AddAtomAlias( std::string const & rosetta_atom_name_in, std::string const & alias_in, std::string const & rosetta_atom_name_full, std::string const & alias_full );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	bool apply( ResidueType & rsd ) const override;
+	bool apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("AddAtomAlias").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -820,7 +821,7 @@ public:
 
 	/// add a bond
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 private:
 	/// atoms between which a bond is added
@@ -853,7 +854,7 @@ public:
 		std::string const & bond_type_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	bool apply( ResidueType & rsd ) const override;
+	bool apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("AddBondType").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -891,7 +892,7 @@ public:
 		std::string const & new_bond_type_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	bool apply( ResidueType & rsd ) const override;
+	bool apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ChangeBondType").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -929,7 +930,7 @@ public:
 
 	/// set an atom's charge
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("SetAtomicCharge").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -963,7 +964,7 @@ public:
 	SetFormalCharge( std::string const & atom_name_in, core::SSize charge_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	bool apply( ResidueType & rsd ) const override;
+	bool apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("SetFormalCharge").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -996,7 +997,7 @@ public:
 	SetNetFormalCharge( signed int const charge_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	bool apply( ResidueType & rsd ) const override;
+	bool apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("SetNetFormalCharge").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1031,7 +1032,7 @@ public:
 
 	/// set atom's chemical type
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("SetAtomType").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1066,7 +1067,7 @@ public:
 
 	/// set atom's chemical type
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("Set_AA").
 	std::string
@@ -1104,7 +1105,7 @@ public:
 
 	/// set atom's chemical type
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("SetIO_String").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1144,7 +1145,7 @@ public:
 	);
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("SetInterchangeabilityGroup_String").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1181,7 +1182,7 @@ public:
 
 	/// set atom's chemical type
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("SetMMAtomType").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1227,7 +1228,7 @@ public:
 
 	/// set an atom's AtomICoord
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 private:
 	/// atom's name
@@ -1266,7 +1267,7 @@ public:
 
 	/// @brief change the ancestory, but leave the icoors intact.
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ChangeAncestory").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1301,7 +1302,7 @@ public:
 	ResetBondLength( std::string const & atm_in, core::Distance d_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	bool apply( ResidueType & rsd ) const override;
+	bool apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ResetBondLength").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1333,7 +1334,7 @@ public:
 
 	/// @brief set an atom to be the first mainchain atom
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("PrependMainchainAtom").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1363,7 +1364,7 @@ public:
 
 	/// @brief set an atom to be the last mainchain atom
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("AppendMainchainAtom").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1393,7 +1394,7 @@ public:
 
 	/// @brief set an atom to be the last mainchain atom
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ReplaceMainchainAtom").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1424,7 +1425,7 @@ public:
 
 	/// @brief set the residue neighbor atom
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("SetNbrAtom").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1454,7 +1455,7 @@ public:
 
 	/// @brief set the residue neighbor atom
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("SetNbrRadius").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1484,7 +1485,7 @@ public:
 
 	/// @brief set the residue neighbor atom
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("SetAllAtomsRepulsive").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1506,7 +1507,7 @@ public:
 	SetOrientAtom(bool force_nbr_atom_orient);
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("SetOrientAtom").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1539,7 +1540,7 @@ public:
 	/// @brief Strip all RotamerSpecifications from the ResidueType.
 	///
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("RemoveRotamerSpecifications").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1561,7 +1562,7 @@ public:
 	/// @brief Set the RamaPrepro library paths in the residue type.
 	///
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("RamaPreproFilename").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1594,7 +1595,7 @@ public:
 	/// @brief Set the RamaPrepro reference string in the residue type.
 	///
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("RamaPreproResname").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1618,7 +1619,7 @@ public:
 
 	/// @brief set the NCAA rotamer library path in the residue type
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("NCAARotLibPath").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1649,7 +1650,7 @@ public:
 
 	/// @brief Set the mainchain torsion indices that a noncanonical rotamer library depends upon.
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("NCAARotLibBBTorsions").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1682,7 +1683,7 @@ public:
 	/// @brief Set the number of rotamer bins per chi for an NCAA.
 	///
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("NCAARotLibNumRotamerBins").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1701,7 +1702,7 @@ public:
 	ConnectSulfurAndMakeVirtualProton() {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	bool
 	changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const override;
@@ -1736,7 +1737,7 @@ public:
 
 	/// @brief set the NCAA rotamer library path in the residue type
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ChiralFlipNaming").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1762,7 +1763,7 @@ public:
 	/// @brief set the NCAA rotamer library path in the residue type
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ChiralFlipAtoms").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1787,7 +1788,7 @@ public:
 	ReplaceProtonWithTrifluoromethyl( std::string atom ): atom_( atom ) {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ReplaceProtonWithTrifluoromethyl").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1816,7 +1817,7 @@ public:
 	ReplaceProtonWithMethyl( std::string const & atom ): atom_( atom ) {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ReplaceProtonWithMethyl").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1845,7 +1846,7 @@ public:
 	ReplaceProtonWithMethoxy( std::string const & atom ): atom_( atom ) {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ReplaceProtonWithMethoxy").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1874,7 +1875,7 @@ public:
 	ReplaceProtonWithEthyl( std::string const & atom ): atom_( atom ) {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ReplaceProtonWithEthyl").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1903,7 +1904,7 @@ public:
 	ReplaceProtonWithChlorine( std::string atom ): atom_( atom ) {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ReplaceProtonWithChlorine").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1932,7 +1933,7 @@ public:
 	ReplaceProtonWithFluorine( std::string const & atom ): atom_( atom ) {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ReplaceProtonWithFluorine").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1961,7 +1962,7 @@ public:
 	ReplaceProtonWithBromine( std::string const & atom ): atom_( atom ) {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ReplaceProtonWithBromine").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1990,7 +1991,7 @@ public:
 	ReplaceProtonWithIodine( std::string const & atom ): atom_( atom ) {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ReplaceProtonWithIodine").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -2019,7 +2020,7 @@ public:
 	ReplaceProtonWithHydroxyl( std::string const & atom ): atom_( atom ) {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("ReplaceProtonWithHydroxyl").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -2048,7 +2049,7 @@ public:
 	AddConnectAndTrackingVirt( std::string const & atom ): atom_( atom ) {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	bool
 	changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const override;
@@ -2080,7 +2081,7 @@ public:
 	AddConnectDeleteChildProton( std::string const & atom ): atom_( atom ) {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	bool
 	changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const override;
@@ -2112,7 +2113,7 @@ public:
 	DeleteChildProton( std::string const & atom ): atom_( atom ) {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("DeleteChildProton").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -2141,7 +2142,7 @@ public:
 	VirtualizeAll() {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("VirtualizeAll").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -2158,7 +2159,7 @@ public:
 	VirtualizeSidechain() {};
 
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("VirtualizeSidechain").
 	/// @author Andrew M. Watkins (amw579@stanford.edu).
@@ -2179,7 +2180,7 @@ public:
 
 	/// set atom's chemical type
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("SetVirtualShadow").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -2215,7 +2216,7 @@ public:
 
 	/// set atom's chemical type
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("RenameAtom").
 	std::string
@@ -2251,7 +2252,7 @@ public:
 
 	/// set an atom in ResidueType rsd as backbone heavy atom
 	bool
-	apply( ResidueType & rsd ) const override;
+	apply( MutableResidueType & rsd ) const override;
 
 private:
 	// name of the atom to be set

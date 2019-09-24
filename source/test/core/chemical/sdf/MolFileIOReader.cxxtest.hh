@@ -19,7 +19,7 @@
 #include <core/chemical/sdf/MolFileIOReader.hh>
 
 // Unit Headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 
 #include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
 #include <core/chemical/rotamers/StoredRotamerLibrarySpecification.hh>
@@ -64,13 +64,13 @@ public:
 
 		TR << "File parsed" << std::endl;
 
-		utility::vector1< ResidueTypeOP > no_rot = convert_to_ResidueTypes( molfile_data, false );
+		utility::vector1< MutableResidueTypeOP > no_rot = convert_to_ResidueTypes( molfile_data, false );
 
 		TR << "SDF file contains " << no_rot.size() << " entries " << std::endl;
 
 		TS_ASSERT_EQUALS( no_rot.size(), 9 ); // 9 entries, each a different residue type
 
-		utility::vector1< ResidueTypeOP > rotamers = convert_to_ResidueTypes( molfile_data, true );
+		utility::vector1< MutableResidueTypeOP > rotamers = convert_to_ResidueTypes( molfile_data, true );
 
 		TR << "These are divided into  " << rotamers.size() << " rotamer groups " << std::endl;
 		TS_ASSERT_EQUALS( rotamers.size(), 2 ); // 2 entries for different residue types
@@ -98,7 +98,12 @@ public:
 
 		sdf::MolFileIOReader molfile_reader;
 		utility::vector1< MolFileIOMoleculeOP > molfile_data = molfile_reader.parse_file( "core/chemical/sdf/multi_rotamers.sdf" );
-		utility::vector1< ResidueTypeOP > restypes = convert_to_ResidueTypes( molfile_data, true );
+		utility::vector1< MutableResidueTypeOP > mut_restypes = convert_to_ResidueTypes( molfile_data, true );
+		utility::vector1< ResidueTypeCOP > restypes;
+		for ( MutableResidueTypeOP mrt: mut_restypes ) {
+			ResidueTypeCOP rt( ResidueType::make( *mrt ) );
+			restypes.push_back( rt );
+		}
 
 		core::pack::rotamers::SingleResidueRotamerLibraryCOP rotlib( core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *restypes[1] ) );
 		TS_ASSERT( rotlib.get() );

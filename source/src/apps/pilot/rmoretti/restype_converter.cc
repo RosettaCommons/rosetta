@@ -93,7 +93,10 @@ load_as_fullatom() {
 		sdf::MolFileIOReader molfile_reader;
 		for ( auto const & filename: option[OptionKeys::in::file::extra_res_mol]() ) {
 			utility::vector1< sdf::MolFileIOMoleculeOP > data( molfile_reader.parse_file( filename ) );
-			fullatom.append( sdf::convert_to_ResidueTypes( data, /* load_rotamers= */ true, atom_types, elements, mm_atom_types ) );
+			utility::vector1< MutableResidueTypeOP > restypes = sdf::convert_to_ResidueTypes( data, /* load_rotamers= */ true, atom_types, elements, mm_atom_types );
+			for ( auto const & restype: restypes ) {
+				fullatom.push_back( ResidueType::make( *restype ) );
+			}
 		}
 	}
 
@@ -101,7 +104,10 @@ load_as_fullatom() {
 		mmCIF::mmCIFParser mmCIF_parser;
 		for ( auto const & filename : option[OptionKeys::in::file::extra_res_mmCIF]() ) {
 			utility::vector1< sdf::MolFileIOMoleculeOP> molecules( mmCIF_parser.parse( filename ) );
-			fullatom.append( sdf::convert_to_ResidueTypes( molecules, true, atom_types, elements, mm_atom_types ) );
+			utility::vector1< MutableResidueTypeOP > restypes = sdf::convert_to_ResidueTypes( molecules, true, atom_types, elements, mm_atom_types );
+			for ( auto const & restype: restypes ) {
+				fullatom.push_back( ResidueType::make( *restype ) );
+			}
 		}
 	}
 
@@ -146,20 +152,22 @@ collect_residue_types() {
 
 	if ( type_set->mode() == FULL_ATOM_t ) {
 		for ( auto const & filename: option[OptionKeys::in::file::extra_res_fa]() ) {
-			restypes.push_back( read_topology_file( filename, type_set ) );
+			MutableResidueTypeOP restype = read_topology_file( filename, type_set );
+			restypes.push_back( ResidueType::make( *restype ) );
 		}
 	}
 
 	if ( type_set->mode() == CENTROID_t ) {
 		for ( auto const & filename: option[OptionKeys::in::file::extra_res_cen]() ) {
-			restypes.push_back( read_topology_file( filename, type_set ) );
+			MutableResidueTypeOP restype = read_topology_file( filename, type_set );
+			restypes.push_back( ResidueType::make( *restype ) );
 		}
 	}
 
 	for ( core::chemical::ResidueTypeCOP fa_type: load_as_fullatom() ) {
 		if ( type_set->mode() == CENTROID_t ) {
-			ResidueTypeOP centroid_type( make_centroid( *fa_type ) );
-			restypes.push_back( centroid_type );
+			MutableResidueTypeOP centroid_type( make_centroid( *fa_type ) );
+			restypes.push_back( ResidueType::make( *centroid_type ) );
 		} else {
 			restypes.push_back( fa_type );
 		}

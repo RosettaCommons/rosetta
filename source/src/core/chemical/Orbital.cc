@@ -47,20 +47,11 @@ namespace core {
 namespace chemical {
 
 void
-Orbital::remap_atom_vds( std::map< VD, VD > const & old_to_new ) {
-	icoor_.remap_atom_vds( old_to_new );
-	new_icoor_.remap_atom_vds( old_to_new );
-}
-
-void
 Orbital::print(
 	std::ostream & out
 ) const {
 	out << "Name: " << name() << std::endl;
 	out << "orbital_type_index: " << orbital_type_index() << std::endl;
-	//out << "xyz: " << xyz() << std::endl;
-	//out << "icoor: " << icoor() << std::endl;
-	//out << "new_icoor: " << new_icoor() << std::endl;
 	out << std::endl;
 }
 

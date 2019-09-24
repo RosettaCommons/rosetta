@@ -19,6 +19,9 @@
 #define INCLUDED_core_chemical_residue_support_hh
 
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
+#include <core/chemical/ResidueConnection.fwd.hh>
+#include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
@@ -26,24 +29,47 @@
 namespace core {
 namespace chemical {
 
-// Find a better place to declare this function
+// TODO: This function seems a bit out of place here
 /// @brief relies on class Graph to find all pairs shortest path information
 ObjexxFCL::FArray2D_int
 get_residue_path_distances( ResidueType const & res );
 
+/// @brief Figure out the shortest path between the upper and lower connect atoms (inclusive)
+/// Will return an empty vector if one does not exist.
+utility::vector1< VD >
+mainchain_path( MutableResidueType const & res );
+
+/// @brief Figure out the shortest path between two atoms (inclusive)
+/// Will return an empty vector if one does not exist.
+utility::vector1< VD >
+shortest_path( MutableResidueType const & res, VD start, VD end );
+
+/// @brief Annotate "backbone" atoms.
+/// For the purpose of this function, backbone atoms are any atoms which are connected
+/// to another backbone atom by a non-rotatable, non-cut bond.
+/// Atoms connected to the upper and/or lower connect points are always backbone.
+/// Important - if Chis/cuts aren't properly annotated, all atoms will be backbone.
+void
+annotate_backbone( MutableResidueType & restype );
+
+/// @brief Virtualize convert the MutableResidueType to a virtual type
+/// NOTE: This function does not rename the residue type
+// RM: Not sure why this isn't a patch/patch operation
+void
+real_to_virtual( MutableResidueType & restype );
+
 //used to create a light weight residue for searching rings
-LightWeightResidueGraph convert_residuetype_to_light_graph(ResidueType const & res);
+LightWeightResidueGraph convert_residuetype_to_light_graph(MutableResidueType const & res);
 
 /// @brief Rename atoms in the residue type such that their names are unique.
 /// If preserve is true, only rename those which have no names or who have
 /// name conflicts. (Both of the conflicting atoms will be renamed.)
 void
-rename_atoms( ResidueType & res, bool preserve=true );
-
+rename_atoms( MutableResidueType & res, bool preserve=true );
 
 /// @brief Calculate the rigid matrix for neighbor atom finding
 /// Assume that distances has been initialized to some really large value, and is square
-void calculate_rigid_matrix( ResidueType const & res, utility::vector1< utility::vector1< core::Real > > & distances );
+void calculate_rigid_matrix( MutableResidueType const & res, utility::vector1< utility::vector1< core::Real > > & distances );
 
 /// @brief Find the neighbor distance to the given neighbor atom.
 /// If nbr_atom is null_vertex, give the smallest neighbor distance,
@@ -60,7 +86,7 @@ void calculate_rigid_matrix( ResidueType const & res, utility::vector1< utility:
 ///   * All elements have been set
 ///  * All ring bonds have been annotated
 core::Real
-find_nbr_dist( ResidueType const & res, VD & nbr_atom );
+find_nbr_dist( MutableResidueType const & res, VD & nbr_atom );
 
 /// @brief Apply molfile_to_params style partial charges to the ResidueType.
 /// @details These partial charges are based off of the Rosetta atom type,
@@ -74,7 +100,7 @@ find_nbr_dist( ResidueType const & res, VD & nbr_atom );
 ///   * All atom types have been set.
 ///   * Formal charges (if any) have been set.
 void
-rosetta_recharge_fullatom( ResidueType & res );
+rosetta_recharge_fullatom( MutableResidueType & res );
 
 /// @brief Make a centroid version of the fullatom ResidueType passed in.
 ///
@@ -92,8 +118,27 @@ rosetta_recharge_fullatom( ResidueType & res );
 ///
 /// Assumes:
 ///   * Input ResidueType is complete and finalized
-ResidueTypeOP
+MutableResidueTypeOP
 make_centroid( ResidueType const & res );
+
+MutableResidueTypeOP
+make_centroid( MutableResidueType const & res );
+
+/// @brief Are two ResidueTypes equivalent?
+/// This is here rather than as an operator on ResidueType because it's not the sort of thing one should be doing normally.
+/// This looks for exact equivalence, including atom order.
+bool
+residue_types_identical( ResidueType const & res1, ResidueType const & res2 );
+
+/// @brief Are the two ResidueConnection objects equivalent
+/// Here instead of in operator== because of the fuzzy-real issue.
+bool
+compare_residue_connection( ResidueConnection const & rc1, ResidueConnection const & rc2, bool fuzzy=false );
+
+/// @brief Are the two ResidueConnection objects equivalent
+/// Here instead of in operator== because of the fuzzy-real issue.
+bool
+compare_atom_icoor( AtomICoor const & aic1, AtomICoor const & aic2, bool fuzzy=false );
 
 } // chemical
 } // core

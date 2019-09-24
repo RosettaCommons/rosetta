@@ -244,7 +244,7 @@ PlaceSimultaneouslyMover::create_task_for_hotspot_packing( core::pose::Pose cons
 			HotspotStubSetCOP hs_set_curr( item.second.second.first );
 			if ( hs_set_curr != hs_set ) continue;
 			HotspotStubCOP hs_stub_curr( item.second.second.second );
-			chemical::ResidueType const type( hs_stub_curr->residue()->type() );
+			//chemical::ResidueType const & type( hs_stub_curr->residue()->type() );
 			allowed_aas[ hs_stub_curr->residue()->type().aa() ] = true;
 		}//foreach item in auction_->auction_results()
 		RestrictAbsentCanonicalAASOP rac_op( new RestrictAbsentCanonicalAAS( pos, allowed_aas ) );
@@ -279,7 +279,7 @@ PlaceSimultaneouslyMover::create_task_for_allhotspot_packing( core::pose::Pose c
 			HotspotStubSetCOP hs_set_curr( item.second.second.first );
 			if ( pos==item.second.first ) {
 				HotspotStubCOP hs_stub_curr( item.second.second.second );
-				chemical::ResidueType const type( hs_stub_curr->residue()->type() );
+				//chemical::ResidueType const & type( hs_stub_curr->residue()->type() );
 				allowed_aas[ hs_stub_curr->residue()->type().aa() ] = true;
 				TR << "RestrictAbsentCanonicalAAS: " << pos << " " << hs_stub_curr->residue()->type().aa() << " " << item.first <<  std::endl;
 			}
@@ -304,7 +304,7 @@ void PlaceSimultaneouslyMover::add_coordinatecst_for_hotspot_packing( core::pose
 		for ( ResidueAuctionItem const & item : auction_->auction_results() ) {
 			HotspotStubSetCOP hs_set_curr( item.second.second.first );
 			HotspotStubCOP hs_stub_curr( item.second.second.second );
-			chemical::ResidueType const type( hs_stub_curr->residue()->type() );
+			//chemical::ResidueType const & type( hs_stub_curr->residue()->type() );
 			if ( pos==item.second.first ) {
 				//loop through sidechain heavy atom of pos and the coordinates of hs_stub_curr->residue()->xyz(heavy_sidechain)
 				//create coordinate constraints

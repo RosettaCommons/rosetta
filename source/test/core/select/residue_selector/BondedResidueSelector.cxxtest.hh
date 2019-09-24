@@ -119,9 +119,11 @@ public:
 		core::pose::Pose pose;
 		core::pose::make_pose_from_sequence( pose, "AAAAAA", core::chemical::FA_STANDARD );
 		//Remove variant types from ends
-		core::chemical::ResidueTypeCOP res1_type = pose.residue(1).type().get_base_type_cop();
+		core::chemical::ResidueTypeCOP res1_type = utility::pointer::dynamic_pointer_cast< core::chemical::ResidueType const >( pose.residue(1).type().get_base_type_cop() );
+		TS_ASSERT( res1_type != nullptr );
 		core::pose::replace_pose_residue_copying_existing_coordinates( pose, 1, *res1_type );
-		core::chemical::ResidueTypeCOP res6_type = pose.residue(6).type().get_base_type_cop();
+		core::chemical::ResidueTypeCOP res6_type = utility::pointer::dynamic_pointer_cast< core::chemical::ResidueType const >( pose.residue(6).type().get_base_type_cop() );
+		TS_ASSERT( res6_type != nullptr );
 		core::pose::replace_pose_residue_copying_existing_coordinates( pose, 6, *res6_type );
 
 		pose.conformation().declare_chemical_bond( 1, "N", 6, "C" );

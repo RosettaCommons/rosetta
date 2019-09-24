@@ -439,7 +439,13 @@ public:
 				}
 				for ( auto const & bond : pdb_ids ) {
 					TS_ASSERT_EQUALS(mmtf_ids.count(bond.first), 1);
-					TS_ASSERT_EQUALS(mmtf_ids.at(bond.first), bond.second);
+					if ( 1 <= bond.second && bond.second <= 3 ) {
+						// For bond orders of 1-3, these should be the same.
+						TS_ASSERT_EQUALS(mmtf_ids.at(bond.first), bond.second);
+					} else {
+						// MMTF smashes everything into an unknown bond order.
+						TS_ASSERT_EQUALS( mmtf_ids.at(bond.first), 0 );
+					}
 				}
 			}
 		}

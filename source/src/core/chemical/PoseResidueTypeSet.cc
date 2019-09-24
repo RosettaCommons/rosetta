@@ -120,7 +120,7 @@ PoseResidueTypeSet::generate_residue_type_write_locked( std::string const & name
 
 	// Note: We're deliberately invoking the base class method here, as we only want the (meta)patches from this RTS itself,
 	// and not any of the (meta)patches from the default_rts_ object.
-	ResidueTypeCOP patched_type( apply_patch( rsd_base_ptr, patch_name, ResidueTypeSet::patch_map(), ResidueTypeSet::metapatch_map() ) );
+	MutableResidueTypeCOP patched_type( apply_patch( rsd_base_ptr, patch_name, ResidueTypeSet::patch_map(), ResidueTypeSet::metapatch_map() ) );
 
 	if ( patched_type == nullptr ) {
 		// Okay, try patching with the full set of patches, but only if the base RT is a local one.
@@ -137,8 +137,9 @@ PoseResidueTypeSet::generate_residue_type_write_locked( std::string const & name
 	if ( patched_type == nullptr ) {
 		return nullptr;
 	} else {
-		cache_object()->add_residue_type( patched_type );
-		return patched_type;
+		ResidueTypeCOP new_restype( ResidueType::make( *patched_type ) );
+		cache_object()->add_residue_type( new_restype );
+		return new_restype;
 	}
 }
 
@@ -315,7 +316,7 @@ PoseResidueTypeSet::get_all_types_with_variants_aa( AA aa,
 
 // These could be hoisted by using statements, but PyRosetta currently has issues with that.
 void
-PoseResidueTypeSet::add_base_residue_type( ResidueTypeOP new_type ) {
+PoseResidueTypeSet::add_base_residue_type( MutableResidueTypeOP new_type ) {
 	ResidueTypeSet::add_base_residue_type(new_type);
 }
 void
@@ -327,7 +328,7 @@ PoseResidueTypeSet::read_files_for_base_residue_types( utility::vector1< std::st
 	ResidueTypeSet::read_files_for_base_residue_types( filenames );
 }
 void
-PoseResidueTypeSet::add_unpatchable_residue_type( ResidueTypeOP new_type ) {
+PoseResidueTypeSet::add_unpatchable_residue_type( MutableResidueTypeOP new_type ) {
 	ResidueTypeSet::add_unpatchable_residue_type(new_type);
 }
 void

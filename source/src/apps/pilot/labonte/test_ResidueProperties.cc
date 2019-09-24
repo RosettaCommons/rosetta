@@ -21,6 +21,7 @@
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
@@ -59,7 +60,7 @@ main( int argc, char *argv[] )
 		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set( tag );
 		OrbitalTypeSetCOP orbital_types = cm->orbital_type_set( tag );
 
-		ResidueType rsd( atom_types, element_types, mm_atom_types, orbital_types );
+		MutableResidueType rsd( atom_types, element_types, mm_atom_types, orbital_types );
 
 		rsd.add_property( "PROTEIN" );
 

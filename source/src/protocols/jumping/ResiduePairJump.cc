@@ -68,7 +68,7 @@ ResiduePairJumpSingle::~ResiduePairJumpSingle() = default;
 ResiduePairJumpSingle::ResiduePairJumpSingle(
 	core::chemical::ResidueType const & residue_type
 ) :
-	residueType_( residue_type.clone() ),
+	residueType_( residue_type.get_self_ptr() ),
 	fixResidue_( ! residue_type.is_protein() )
 {}
 /////////////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ ResiduePairJumpSingle::set_cstAtoms(
 	cstAtoms_[i] = atom_name;
 }
 
-core::chemical::ResidueTypeOP
+core::chemical::ResidueTypeCOP
 ResiduePairJumpSingle::residueType() const
 {
 	return residueType_;

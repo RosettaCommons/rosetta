@@ -31,13 +31,16 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/metrics/PoseMetricContainer.hh>
-
 // Project headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/rings/RingConformer.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/chemical/residue_support.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/carbohydrates/GlycanNode.hh>
@@ -1978,15 +1981,14 @@ Pose::clear()
 /// @author Jared Adolf-Bryfogle <jadolfbr@gmail.com>
 void
 Pose::real_to_virtual( core::Size seqpos ){
-	//std::cout << "Original residue type:" << std::endl;
-	//std::cout << this->residue_type(seqpos) << std::endl;
+	core::chemical::ResidueType const & curr_restype = this->residue_type(seqpos);
 
+	core::chemical::MutableResidueTypeOP newRT( utility::pointer::make_shared< core::chemical::MutableResidueType >( curr_restype ) );
+	core::chemical::real_to_virtual( *newRT );
+	core::chemical::ResidueTypeCOP virtRT = core::chemical::ResidueType::make(*newRT);
 
-	//work on a copy of the restype. Then add the restype to the pose
-	core::chemical::ResidueTypeOP newRT( new core::chemical::ResidueType ( this->residue_type(seqpos) ) );
-	newRT->real_to_virtual();
 	// Should the new, virtual ResidueType be placed in the pose's RTS, so we don't make a new TR for each replacement?
-	replace_pose_residue_copying_existing_coordinates(*this, seqpos, *newRT);
+	replace_pose_residue_copying_existing_coordinates(*this, seqpos, *virtRT);
 
 	// update connections
 	for ( Size i_con=1; i_con<=this->residue_type(seqpos).n_possible_residue_connections(); ++i_con ) {
@@ -2005,14 +2007,13 @@ Pose::real_to_virtual( core::Size seqpos ){
 /// @author Jared Adolf-Bryfogle <jadolfbr@gmail.com>
 void
 Pose::virtual_to_real( core::Size seqpos ){
-	core::chemical::ResidueTypeOP oldRT( new core::chemical::ResidueType ( this->residue_type(seqpos) ) );
-	std::string const base_name( residue_type_base_name( *oldRT ) );
+	core::chemical::ResidueType const & oldRT( this->residue_type(seqpos) );
+	std::string const base_name( residue_type_base_name( oldRT ) );
 
-	//Remove variant type before getting list.
-	oldRT->delete_property("VIRTUAL_RESIDUE");
+	utility::vector1< std::string > variants( oldRT.properties().get_list_of_variants() );
+	variants.pop("VIRTUAL_RESIDUE");
 
-	utility::vector1< std::string > const & variants( oldRT->properties().get_list_of_variants() );
-	chemical::ResidueTypeSetCOP base_RTset( residue_type_set_for_pose( oldRT->mode() ) );
+	chemical::ResidueTypeSetCOP base_RTset( residue_type_set_for_pose( oldRT.mode() ) );
 	core::chemical::ResidueTypeCOP RT = core::chemical::ResidueTypeFinder(*base_RTset).residue_base_name( base_name ).variants( variants ).get_representative_type();
 	// swap in new (old) residue type
 	core::pose::replace_pose_residue_copying_existing_coordinates(*this,seqpos,*RT);

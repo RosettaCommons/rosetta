@@ -136,10 +136,10 @@ check_and_correct_sister_atom_based_on_chirality( core::conformation::ResidueOP 
 	int current_sign = get_chirality_sign( current_xyz_sister1, current_xyz_sister2, current_xyz_parent, current_xyz_cousin );
 
 	core::chemical::ResidueType const & rsd_type = rsd->type();
-	Vector const ideal_xyz_sister1        = rsd_type.atom( sister1_name ).ideal_xyz();
-	Vector const ideal_xyz_sister2        = rsd_type.atom( sister2_name ).ideal_xyz();
-	Vector const ideal_xyz_parent         = rsd_type.atom( parent_name ).ideal_xyz();
-	Vector const ideal_xyz_cousin      = rsd_type.atom( cousin_name ).ideal_xyz();
+	Vector const ideal_xyz_sister1        = rsd_type.ideal_xyz( sister1_name );
+	Vector const ideal_xyz_sister2        = rsd_type.ideal_xyz( sister2_name );
+	Vector const ideal_xyz_parent         = rsd_type.ideal_xyz( parent_name );
+	Vector const ideal_xyz_cousin         = rsd_type.ideal_xyz( cousin_name );
 	int ideal_sign = get_chirality_sign( ideal_xyz_sister1, ideal_xyz_sister2, ideal_xyz_parent, ideal_xyz_cousin );
 
 	if ( current_sign != ideal_sign ) flip_atom_xyz( rsd, sister1_name, sister2_name );
@@ -164,9 +164,9 @@ check_and_correct_sister_atom_based_on_outgroup( core::conformation::ResidueOP &
 	int current_closest_sister = get_closest_sister( current_xyz_sister1, current_xyz_sister2, current_xyz_outgroup );
 
 	core::chemical::ResidueType const & rsd_type = rsd->type();
-	Vector const ideal_xyz_sister1        = rsd_type.atom( sister1_name ).ideal_xyz();
-	Vector const ideal_xyz_sister2        = rsd_type.atom( sister2_name ).ideal_xyz();
-	Vector const ideal_xyz_outgroup       = rsd_type.atom( outgroup_name ).ideal_xyz();
+	Vector const ideal_xyz_sister1        = rsd_type.ideal_xyz( sister1_name );
+	Vector const ideal_xyz_sister2        = rsd_type.ideal_xyz( sister2_name );
+	Vector const ideal_xyz_outgroup       = rsd_type.ideal_xyz( outgroup_name );
 	int ideal_closest_sister = get_closest_sister( ideal_xyz_sister1, ideal_xyz_sister2, ideal_xyz_outgroup );
 
 	if ( current_closest_sister != ideal_closest_sister ) flip_atom_xyz( rsd, sister1_name, sister2_name );
@@ -297,10 +297,10 @@ core::Real score_mapping( NameBimap const & mapping, ResidueInformation const & 
 		if ( type_nbrs.size() >= 4 ) {
 			// We hope that the first four are sufficient for a chirality signature if there's more than 4 bonded neighbors
 			core::Real const rsd_dhd = numeric::dihedral_degrees(
-				rsd_type.atom( type_nbrs[1] ).ideal_xyz(),
-				rsd_type.atom( type_nbrs[2] ).ideal_xyz(),
-				rsd_type.atom( type_nbrs[3] ).ideal_xyz(),
-				rsd_type.atom( type_nbrs[4] ).ideal_xyz() );
+				rsd_type.ideal_xyz( type_nbrs[1] ),
+				rsd_type.ideal_xyz( type_nbrs[2] ),
+				rsd_type.ideal_xyz( type_nbrs[3] ),
+				rsd_type.ideal_xyz( type_nbrs[4] ) );
 			//These will be found, because we only pushed back names which were present and had coordinates.
 			core::Real const rinfo_dhd = numeric::dihedral_degrees(
 				rinfo.xyz().find( inverse.find(type_nbrs[1])->second )->second,
@@ -317,18 +317,16 @@ core::Real score_mapping( NameBimap const & mapping, ResidueInformation const & 
 
 	// For each bond in the residue type, make sure that the mapped atoms are "close enough" to also be bonded.
 	// This check will keep the heurisitic from smashing together distal parts of the molecule
-	core::chemical::EIter bonditr, bonditr_end;
-	for ( boost::tie( bonditr, bonditr_end ) = rsd_type.bond_iterators(); bonditr != bonditr_end; ++bonditr ) {
-		core::chemical::VD source( boost::source(*bonditr,rsd_type.graph()) ), target( boost::target(*bonditr,rsd_type.graph()) );
-		std::string const & name1( rsd_type.atom_name(source) );
-		std::string const & name2( rsd_type.atom_name(target) );
+	for ( auto const & bond: rsd_type.bonds() ) {
+		std::string const & name1( rsd_type.atom_name(bond.first) );
+		std::string const & name2( rsd_type.atom_name(bond.second) );
 		if ( inverse.count(name1) && inverse.count(name2) &&
 				rinfo.xyz().count( inverse.find(name1)->second ) &&
 				rinfo.xyz().count( inverse.find(name2)->second ) ) {
 			Vector const & pos1(rinfo.xyz().find( inverse.find(name1)->second )->second);
 			Vector const & pos2(rinfo.xyz().find( inverse.find(name2)->second )->second);
-			std::string const & elem1( rsd_type.atom(source).element_type()->get_chemical_symbol() ) ;
-			std::string const & elem2( rsd_type.atom(target).element_type()->get_chemical_symbol() ) ;
+			std::string const & elem1( rsd_type.element_type(bond.first)->get_chemical_symbol() ) ;
+			std::string const & elem2( rsd_type.element_type(bond.second)->get_chemical_symbol() ) ;
 			core::Real bond_thresh( bonding_distance_threshold(elem1,elem2) );
 			if ( pos1.distance_squared(pos2) > (bond_thresh*bond_thresh) ) {
 				score -= 2.0;
@@ -342,15 +340,21 @@ core::Real score_mapping( NameBimap const & mapping, ResidueInformation const & 
 using AtomInfoGraph = boost::undirected_graph<AtomInformation>;
 using AIVD = AtomInfoGraph::vertex_descriptor;
 
+// Cutdown graph for boost isomorphism usage -- just contains (atom_name, element) pairs
+using RestypeInfoGraph = boost::undirected_graph< std::pair< std::string, std::string> >;
+using RIGVD = RestypeInfoGraph::vertex_descriptor;
+
 class GeometricRenameIsomorphismCallback {
 public:
 	GeometricRenameIsomorphismCallback(AtomInfoGraph const & aigraph,
 		ResidueInformation const & rinfo,
+		RestypeInfoGraph const & rigraph,
 		core::chemical::ResidueType const & rsdtype,
 		NameBimap & mapping,
 		core::Real &  mapscore ):
 		aigraph_( aigraph ),
 		rinfo_(rinfo),
+		rigraph_( rigraph ),
 		rsdtype_( rsdtype ),
 		mapping_( mapping ),
 		best_score_( mapscore ),
@@ -364,7 +368,7 @@ public:
 		AtomInfoGraph::vertex_iterator iter, iter_end;
 		for ( boost::tie( iter, iter_end) = boost::vertices(aigraph_); iter != iter_end; ++iter ) {
 			if ( map_1_to_2[ *iter ] != core::chemical::ResidueGraph::null_vertex() ) {
-				newmap.insert( NameBimap::value_type( aigraph_[*iter].name , rsdtype_.atom_name( map_1_to_2[ *iter ] ) ) );
+				newmap.insert( NameBimap::value_type( aigraph_[*iter].name , rigraph_[ map_1_to_2[ *iter ] ].first ) );
 			}
 		}
 		core::Real newscore( score_mapping( newmap, rinfo_, rsdtype_ ) );
@@ -381,7 +385,7 @@ public:
 		}
 		// We don't want to go forever - if there are too many mappings, just go with a "good enough" one.
 		// RM: The "too many" criteria here are arbitrary, based on wait times on my machine.
-		core::Size natoms( numeric::min(rsdtype_.natoms(),boost::num_vertices(aigraph_)) );
+		core::Size natoms( numeric::min(boost::num_vertices(rigraph_),boost::num_vertices(aigraph_)) );
 		if ( (*n_mappings_ >=  100000 && mapping_.left.size() > (3*natoms)/4 ) ||
 				(*n_mappings_ >=  300000 && mapping_.left.size() >   natoms/2 ) ||
 				(*n_mappings_ >= 1000000 && mapping_.left.size() >= 3 ) ) {
@@ -395,6 +399,7 @@ public:
 private:
 	AtomInfoGraph const & aigraph_;
 	ResidueInformation const & rinfo_;
+	RestypeInfoGraph const & rigraph_;
 	core::chemical::ResidueType const & rsdtype_;
 	NameBimap & mapping_;
 	core::Real & best_score_;
@@ -407,25 +412,23 @@ class GeometricRenameVerticiesEquivalent {
 public:
 
 	GeometricRenameVerticiesEquivalent(AtomInfoGraph const & aigraph,
-		core::chemical::ResidueGraph const & rsdtype ):
+		RestypeInfoGraph const & rsdgraph ):
 		aigraph_( aigraph ),
-		rsdtype_( rsdtype )
+		rsdgraph_( rsdgraph )
 	{}
 
-	bool operator() ( AIVD vd1, core::chemical::VD vd2 ) {
+	bool operator() ( AIVD vd1, RIGVD vd2 ) {
 		std::string pdb_elem( aigraph_[vd1].element );
 		utility::strip_whitespace( pdb_elem );
 		utility::uppercase( pdb_elem );
-		std::string rsdtype_elem( rsdtype_[vd2].element_type()->get_chemical_symbol() );
-		utility::strip_whitespace( rsdtype_elem );
-		utility::uppercase( rsdtype_elem );
+		std::string rsdtype_elem( rsdgraph_[vd2].second );
 		//TR << "Element match '" << pdb_elem << "' '" << rsdtype_elem << "'" << std::endl;
 		return pdb_elem == rsdtype_elem;
 	}
 
 private:
 	AtomInfoGraph const & aigraph_;
-	core::chemical::ResidueGraph const & rsdtype_;
+	RestypeInfoGraph const & rsdgraph_;
 };
 
 /// @brief Callback class for writing graphviz info
@@ -449,6 +452,8 @@ void
 remap_names_on_geometry( NameBimap & mapping,
 	ResidueInformation const & rinfo,
 	chemical::ResidueType const & rsd_type) {
+
+	/////////////////////////////////////
 	// Set up the graph on the PDB side
 	AtomInfoGraph aigraph;
 	std::map< std::string, AIVD > name_aivd_map;
@@ -492,20 +497,38 @@ remap_names_on_geometry( NameBimap & mapping,
 		}
 	}
 
+	///////////////////////////////////
+	// Setup the graph on the ResidueType side
+	RestypeInfoGraph rigraph;
+	utility::vector1< RIGVD > restype_order;
+	for ( core::Size ii(1); ii <= rsd_type.natoms(); ++ii ) {
+		std::string rsdtype_elem = rsd_type.element_type(ii)->get_chemical_symbol();
+		utility::strip_whitespace( rsdtype_elem );
+		utility::uppercase( rsdtype_elem );
+
+		RIGVD rivd = boost::add_vertex( std::make_pair( rsd_type.atom_name(ii), rsdtype_elem ), rigraph );
+		restype_order.push_back( rivd );
+	}
+	for ( auto const & bond: rsd_type.bonds() ) {
+		boost::add_edge( restype_order[ bond.first ], restype_order[ bond.second ], rigraph );
+	}
+
+	////////////////////////////////////
+
 	TR.Debug << "Graph sizes: Ainfo " << boost::num_vertices(aigraph)
-		<< " ResidueType " <<  boost::num_vertices(rsd_type.graph()) << std::endl;
+		<< " ResidueType " <<  boost::num_vertices(rigraph) << std::endl;
 	TR.Debug << "      sizes: order " << small_order.size() << std::endl;
 	TR.Debug << " Number of edges: Ainfo " << boost::num_edges(aigraph)
-		<< " ResidueType " <<  boost::num_edges(rsd_type.graph()) << std::endl;
+		<< " ResidueType " <<  boost::num_edges(rigraph) << std::endl;
 
 	core::Real const no_match_found_score( -999999 );
 	core::Real best_score( no_match_found_score );
-	GeometricRenameIsomorphismCallback const callback( aigraph, rinfo, rsd_type, mapping, best_score );
-	GeometricRenameVerticiesEquivalent const vertices_equivalent( aigraph, rsd_type.graph() );
+	GeometricRenameIsomorphismCallback const callback( aigraph, rinfo, rigraph, rsd_type, mapping, best_score );
+	GeometricRenameVerticiesEquivalent const vertices_equivalent( aigraph, rigraph );
 
 	clock_t const time_start( clock() );
 
-	boost::vf2_subgraph_mono( aigraph, rsd_type.graph(), callback, small_order,
+	boost::vf2_subgraph_mono( aigraph, rigraph, callback, small_order,
 		boost::vertices_equivalent( vertices_equivalent ) );
 
 	clock_t const vf2_end( clock() );
@@ -520,7 +543,7 @@ remap_names_on_geometry( NameBimap & mapping,
 		// connected component, rather than multiple disconnected subgraphs.
 		TR.Debug << "Using the McGregor fall-back approach." << std::endl;
 
-		boost::mcgregor_common_subgraphs( aigraph, rsd_type.graph(), true /*only_connected_subgraphs*/,
+		boost::mcgregor_common_subgraphs( aigraph, rigraph, true /*only_connected_subgraphs*/,
 			callback, boost::vertices_equivalent( vertices_equivalent ) );
 
 		TR.Debug << "McGregor-style subgraph matching took " << (clock() - vf2_end) / CLOCKS_PER_SEC << " seconds." << std::endl;

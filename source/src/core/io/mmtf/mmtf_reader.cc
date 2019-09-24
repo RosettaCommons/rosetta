@@ -324,9 +324,9 @@ add_bond_information(::mmtf::StructureData const & sd,
 				// bond Resonance is also not required
 				if ( !::mmtf::isDefaultValue(group.bondOrderList) ) {
 					if ( group.bondOrderList[k] == -1 || group.bondOrderList[k] == 4 ) {
-						all_AIs[i].connected_orders.push_back(0);
+						all_AIs[i].connected_orders.push_back( core::chemical::UnknownBond );
 					} else {
-						all_AIs[i].connected_orders.push_back(group.bondOrderList[k]);
+						all_AIs[i].connected_orders.push_back( core::chemical::BondName(group.bondOrderList[k]) );
 					}
 				}
 			} else if ( c_sd_index.group_atom_index == group.bondAtomList[j+1] ) {
@@ -336,9 +336,9 @@ add_bond_information(::mmtf::StructureData const & sd,
 				// bond Resonance is also not required
 				if ( !::mmtf::isDefaultValue(group.bondOrderList) ) {
 					if ( group.bondOrderList[k] == -1 || group.bondOrderList[k] == 4 ) {
-						all_AIs[i].connected_orders.push_back(0);
+						all_AIs[i].connected_orders.push_back( core::chemical::UnknownBond );
 					} else {
-						all_AIs[i].connected_orders.push_back(group.bondOrderList[k]);
+						all_AIs[i].connected_orders.push_back( core::chemical::BondName(group.bondOrderList[k]) );
 					}
 				}
 			}
@@ -351,11 +351,11 @@ add_bond_information(::mmtf::StructureData const & sd,
 		atm2.connected_indices.push_back(sd.bondAtomList[i]+1);
 		if ( !::mmtf::isDefaultValue(sd.bondOrderList) && !::mmtf::isDefaultValue(sd.bondResonanceList) ) {
 			if ( sd.bondOrderList[j] == -1 || sd.bondOrderList[j] == 4 ) {
-				atm1.connected_orders.push_back(0);
-				atm2.connected_orders.push_back(0);
+				atm1.connected_orders.push_back( core::chemical::UnknownBond );
+				atm2.connected_orders.push_back( core::chemical::UnknownBond );
 			} else {
-				atm1.connected_orders.push_back(sd.bondOrderList[j]);
-				atm2.connected_orders.push_back(sd.bondOrderList[j]);
+				atm1.connected_orders.push_back( core::chemical::BondName(sd.bondOrderList[j]) );
+				atm2.connected_orders.push_back( core::chemical::BondName(sd.bondOrderList[j]) );
 			}
 		}
 	}

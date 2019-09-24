@@ -399,6 +399,8 @@ class PDB_Diagnostic_Codes(enum.Enum):
     missing_bond           = enum.auto()
     not_being_packed       = enum.auto()
     no_hbond_deriv         = enum.auto()
+    nu_conformer           = enum.auto()
+    restype_configure      = enum.auto()
 
     bad_patch              = enum.auto()
 
@@ -437,6 +439,7 @@ def classify_pdb_diagnostic_log(log):
 
         ( P(line='unable to find desired variant residue:'),    PDB_Diagnostic_Codes.sugar_variant ),
         ( P(line=('atom name', 'not available in residue'), ),  PDB_Diagnostic_Codes.unknown_atom_name ),
+        ( P(line=('Atom name not found in MutableResidueType.'), ),  PDB_Diagnostic_Codes.unknown_atom_name ),
         ( P(line='Unrecognized residue:'),                      PDB_Diagnostic_Codes.unrecognized_residue ),
         ( P(line='Unrecognized experimental technique string'), PDB_Diagnostic_Codes.unrecognized_experimental_technique ),
         ( P(line='Rosetta does not recognize the variant:'),    PDB_Diagnostic_Codes.unrecognized_variant ),
@@ -492,6 +495,8 @@ def classify_pdb_diagnostic_log(log):
         ( P(line="Assertion `res2.is_bonded(res1)` failed"),                         PDB_Diagnostic_Codes.missing_bond ),
         ( P(line="Assertion `being_packed()` failed"),                               PDB_Diagnostic_Codes.not_being_packed ),
         ( P(line="Cannot compute derivative for hbond interaction"),                 PDB_Diagnostic_Codes.no_hbond_deriv ),
+        ( P(line="No conformer with given nu angles found in this set"),             PDB_Diagnostic_Codes.nu_conformer ),
+        ( P(line=("Residue type","is not appropriately configured.")),               PDB_Diagnostic_Codes.restype_configure ),
 
         ( P(log=("Patch","implies it can apply to residue type", "but actually applying it fails")), PDB_Diagnostic_Codes.bad_patch ),
     ] )

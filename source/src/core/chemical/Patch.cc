@@ -162,6 +162,8 @@
 // Unit headers
 #include <core/chemical/Patch.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 
 // Basic header
 #include <basic/Tracer.hh>
@@ -219,7 +221,7 @@ std::string tag_from_line( std::string const & line ) {
 }
 
 std::string
-residue_type_base_name( ResidueType const & rsd_type )
+residue_type_base_name( ResidueTypeBase const & rsd_type )
 {
 	std::string base_name = rsd_type.name().substr( 0, rsd_type.name().find( PATCH_LINKER ) );
 	return base_name;
@@ -280,7 +282,7 @@ setup_patch_atomic_charge_reassignments_from_commandline(
 		//    instead, we make make a dummy residue type with only name1, name3, and aa set
 		//    this could be expanded to deal with more complicated selector logic
 		//    it is possible as well more complicated selector logic (which queries ResidueType in more detail) could break this ...
-		ResidueType dummy( nullptr,nullptr,nullptr,nullptr );
+		MutableResidueType dummy( nullptr,nullptr,nullptr,nullptr );
 		AA aatype = aa_from_name(tokens[2]);
 		dummy.aa(aatype);
 		dummy.name(tokens[2]);
@@ -340,13 +342,20 @@ case_from_lines(
 	return pcase;
 }
 
+MutableResidueTypeOP
+PatchCase::apply( ResidueType const & rsd_in, bool const instantiate /* = true */ ) const
+{
+	MutableResidueTypeOP mut_type( new MutableResidueType( rsd_in ) );
+	return apply( *mut_type, instantiate );
+}
+
 /// @details First clone the base ResidueType.  Then patching for this case is done by applying all the operations.
 /// finalize() is called after the VariantTypes and name are set by Patch::apply().
 /// @note    If you call this method without calling finalize(), your ResidueType may not have the correct derived data!
-ResidueTypeOP
-PatchCase::apply( ResidueType const & rsd_in, bool const instantiate /* = true */ ) const
+MutableResidueTypeOP
+PatchCase::apply( MutableResidueType const & rsd_in, bool const instantiate /* = true */ ) const
 {
-	ResidueTypeOP rsd;
+	MutableResidueTypeOP rsd;
 	if ( instantiate ) {
 		rsd = rsd_in.clone();
 	} else {
@@ -620,12 +629,19 @@ Patch::add_custom_type( std::string const & custom_type ) {
 	custom_types_.push_back(custom_type);
 }
 
+MutableResidueTypeOP
+Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ ) const
+{
+	MutableResidueTypeOP mut_type( new MutableResidueType( rsd_type ) );
+	return apply( *mut_type, instantiate );
+}
+
 /// @details loop through the cases in this patch and if it is applicable to this ResidueType, the corresponding patch
 /// operations are applied to create a new variant type of the basic ResidueType.  The new types's name and its
 /// variant type info are updated together with all other primary and derived ResidueType data.
 /// Finally, call finalize() to update all primary and derived data for the new ResidueType.
-ResidueTypeOP
-Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ ) const
+MutableResidueTypeOP
+Patch::apply( MutableResidueType const & rsd_type, bool const instantiate /* = true */ ) const
 {
 	if ( !applies_to( rsd_type ) ) { return nullptr; }  // I don't know how to patch this residue.
 	using namespace basic;
@@ -633,7 +649,7 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 	for ( auto const & iter : cases_ ) {
 		if ( iter->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
-			ResidueTypeOP patched_rsd_type;
+			MutableResidueTypeOP patched_rsd_type;
 			try {
 				patched_rsd_type = iter->apply( rsd_type, instantiate );
 			} catch ( utility::excn::Exception & excn ) {
@@ -654,6 +670,13 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 
 			if ( ! patched_rsd_type ) {
 				tr.Warning << "Patch " << name() << " implies it can apply to residue type " << rsd_type.name() << ", but actually applying it fails." << std::endl;
+				tr.Warning << "   You may want to check your patch definitions." << std::endl;
+				continue;
+			}
+
+			// Each patch should leave the residue type in a valid state - catch that failure here to be more robust to patch failures.
+			if ( ! patched_rsd_type->validate_residue_type() ) {
+				tr.Warning << "Patch " << name() << " implies it can apply to residue type " << rsd_type.name() << ", but actually applying it results in an invalid residue type." << std::endl;
 				tr.Warning << "   You may want to check your patch definitions." << std::endl;
 				continue;
 			}
@@ -681,7 +704,6 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 			}
 
 			if ( instantiate ) {
-				patched_rsd_type->finalize();
 				tr.Debug << "successfully patched: " << rsd_type.name() <<
 					" to: " << patched_rsd_type->name() << std::endl;
 			}
@@ -701,7 +723,7 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 }
 
 std::string
-Patch::patched_name( ResidueType const & rsd ) const {
+Patch::patched_name( ResidueTypeBase const & rsd ) const {
 	// AMW: Special case for the chiral flip patches. In ONLY THESE CASE,
 	// application PREpends the letter D or L. No ':'.
 	if ( name_ == "D" ) {
@@ -961,7 +983,7 @@ Patch::generates_aa( ResidueType const & rsd_type ) const
 
 	for ( auto const & iter : cases_ ) {
 		if ( iter->applies_to( rsd_type ) && iter->may_change_aa() ) {
-			ResidueTypeOP rsd_type_apply = apply( rsd_type, false /* do not need to instantiate */ );
+			MutableResidueTypeOP rsd_type_apply = apply( rsd_type, false /* do not need to instantiate */ );
 			chemical::AA aa = rsd_type_apply->aa();
 			if ( aa == rsd_type.aa() ) aa = aa_none;
 			runtime_assert( new_aa == aa_none );

@@ -142,7 +142,7 @@ FlexPepDockingPoseMetrics::calc_frac_atoms_kA_to_native(
 		if ( !res_subset(i) ) {
 			continue;
 		}
-		core::chemical::ResidueType residue_type = pose1.conformation().residue_type(i);
+		//core::chemical::ResidueType const & residue_type = pose1.conformation().residue_type(i);
 
 		//if ( !residue_type.is_protein() && !residue_type.is_peptoid() && !residue_type.is_carbohydrate() ) {
 		// continue;

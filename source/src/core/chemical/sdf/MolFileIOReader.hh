@@ -15,7 +15,7 @@
 
 #include <core/chemical/sdf/MolFileIOReader.fwd.hh>
 #include <core/chemical/sdf/MolFileIOData.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
@@ -48,7 +48,7 @@ private:
 /// @brief Convert the vector of MolFileIOMolecules into a single residue type,
 /// using multiple entries as rotamers
 /// Can return a null pointer if there's something wrong with the underlying data
-ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
+MutableResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 	std::string atom_type_tag = "fa_standard",
 	std::string element_type_tag = "default",
 	std::string mm_atom_type_tag = "fa_standard");
@@ -56,7 +56,7 @@ ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > mo
 /// @brief Convert the vector of MolFileIOMolecules into a single residue type,
 /// using multiple entries as rotamers
 /// Can return a null pointer if there's something wrong with the underlying data
-ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
+MutableResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 	AtomTypeSetCOP atom_types,
 	ElementSetCOP element_types,
 	MMAtomTypeSetCOP mm_atom_types);
@@ -65,7 +65,7 @@ ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > mo
 /// If load_rotamers is false, each will be loaded as a single ResidueType
 /// Otherwise, entries with the same name will be loaded as rotamers
 /// Will not return results for entries with bad Data
-utility::vector1< ResidueTypeOP > convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
+utility::vector1< MutableResidueTypeOP > convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 	bool load_rotamers = true,
 	std::string atom_type_tag = "fa_standard",
 	std::string element_type_tag = "default",
@@ -75,7 +75,7 @@ utility::vector1< ResidueTypeOP > convert_to_ResidueTypes( utility::vector1< Mol
 /// If load_rotamers is false, each will be loaded as a single ResidueType
 /// Otherwise, entries with the same name will be loaded as rotamers
 /// Will not return results for entries with bad Data
-utility::vector1< ResidueTypeOP > convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
+utility::vector1< MutableResidueTypeOP > convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 	bool load_rotamers,
 	AtomTypeSetCOP atom_types,
 	ElementSetCOP element_types,

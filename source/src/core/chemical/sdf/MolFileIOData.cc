@@ -14,7 +14,7 @@
 #include <core/chemical/sdf/MolFileIOData.hh>
 
 // Package headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ElementSet.hh>
@@ -48,7 +48,7 @@ void dump_graph( MolFileIOGraph const & graph ) {
 		debug_assert( has( graph, *aiter ) );
 		MolFileIOAtomCOP atom( graph[*aiter] );
 		if ( atom ) {
-			TR << "Atom " << *aiter << " " << atom->element() << std::endl;
+			TR << "Atom " << *aiter << " " << atom->element() << " '" <<  atom->name() << "'" << std::endl;
 		} else {
 			TR << "Atom with empty data." << std::endl;
 		}
@@ -135,7 +135,7 @@ MolFileIOMolecule::normalize() {
 	// TODO: Does anything need to go here?
 }
 
-ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
+MutableResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 	std::map< AtomIndex, std::string > & index_name_map,
 	chemical::AtomTypeSetCOP atom_types,
 	chemical::ElementSetCOP elements,
@@ -147,7 +147,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 	// Make sure we're up to date first.
 	normalize();
 
-	ResidueTypeOP restype( new core::chemical::ResidueType( atom_types, elements, mm_atom_types, nullptr ) );
+	MutableResidueTypeOP restype( new core::chemical::MutableResidueType( atom_types, elements, mm_atom_types, nullptr ) );
 
 	// Reasonable defaults for:
 	// aa_, rotamer_aa_, <properties suite>, variant_types_,
@@ -171,11 +171,11 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		Atom & restype_atom( restype->atom( vd ) );
 
 		if ( atom.name() == "O1P" ) {
-			restype_atom.name( "OP1" );
+			restype->rename_atom( vd, "OP1" );
 		} else if ( atom.name() == "O2P" ) {
-			restype_atom.name( "OP2" );
+			restype->rename_atom( vd, "OP2" );
 		} else {
-			restype_atom.name( atom.name() );
+			restype->rename_atom( vd, atom.name() );
 		}
 		restype_atom.element_type( elements->element( atom.element() ) );
 		restype_atom.charge( atom.partial_charge() );
@@ -185,8 +185,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		}
 		restype_atom.formal_charge( atom.formal_charge() );
 		restype_atom.ideal_xyz( atom.position() );
-		//restype_atom.mm_name("VIRT"); //What is this actually used for? It doesn't look like it gets set.
-		restype_atom.mm_atom_type_index( mm_atom_types->atom_type_index("VIRT") ); // We need to do better on this typing.
+		restype_atom.mm_name("VIRT"); // We need to do better on this typing.
 	}
 
 	MolFileIOGraph::edge_iterator eiter, eiter_end;
@@ -203,9 +202,11 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 	//fix problem with residues that only have one or two atoms. Rosetta residuetypes need to have at least 3 atoms
 	// We're hoping that this isn't going to be colinear
 	if ( restype->natoms() == 2 ) {
+		VD atom1 = restype->all_atoms()[1];
+		VD atom2 = restype->all_atoms()[2];
 		//add one extra atom
 		create_dummy_atom( restype, "DX1",
-			restype->atom(2).ideal_xyz()-restype->atom(1).ideal_xyz()+Vector(1.0, 0.0, 0.0),
+			restype->atom(atom2).ideal_xyz()-restype->atom(atom1).ideal_xyz()+Vector(1.0, 0.0, 0.0),
 			elements, mm_atom_types);
 	} else if ( restype->natoms() == 1 ) {
 		//add two extra atoms
@@ -221,26 +222,26 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 	// If coordinates aren't set, we can't generate a restype from this molecule
 	// Also, if bonds are messed up (too many bonds to one atom) also kill the molecule
 	core::Size n_no_coords(0);
-	for ( core::Size ii(1); ii <= restype->natoms(); ++ii ) {
-		if ( restype->atom( ii ).ideal_xyz().is_zero() ) {
-			if ( ! restype->is_protein() && restype->atom( ii ).name() != "H" ) {
+	for ( VD atom_vd: restype->all_atoms() ) {
+		if ( restype->atom( atom_vd ).ideal_xyz().is_zero() ) {
+			if ( ! restype->is_protein() && restype->atom( atom_vd ).name() != "H" ) {
 				// We'll reset the position of the (added) hydrogen later, based on coordinates.
 				++n_no_coords;
 			}
 		}
-		if ( restype->nbonds( ii ) > 10 ) {
-			TR << "Input molecular structure '" << restype->name() << "' has too many bonds (" << restype->nbonds( ii ) << ") on atom " << restype->atom(ii).name() << std::endl;
-			return ResidueTypeOP( nullptr );
+		if ( restype->nbonds( atom_vd ) > 10 ) {
+			TR << "Input molecular structure '" << restype->name() << "' has too many bonds (" << restype->nbonds( atom_vd ) << ") on atom " << restype->atom( atom_vd ).name() << std::endl;
+			return MutableResidueTypeOP( nullptr );
 		}
 		// There's a bunch of assumptions in the code about hydrogen only belonging to a single atom (e.g. in atom ordering).
-		if ( restype->atom(ii).element() == core::chemical::element::H && restype->nbonds( ii ) != 1 ) {
-			TR << "Input molecular structure '" << restype->name() << "' has " << restype->nbonds( ii ) << " bonds to hydrogen " << restype->atom(ii).name() << " - Hydrogens should only have one bond!" << std::endl;
-			return ResidueTypeOP( nullptr );
+		if ( restype->atom(atom_vd).element() == core::chemical::element::H && restype->nbonds( atom_vd ) != 1 ) {
+			TR << "Input molecular structure '" << restype->name() << "' has " << restype->nbonds( atom_vd ) << " bonds to hydrogen " << restype->atom(atom_vd).name() << " - Hydrogens should only have one bond!" << std::endl;
+			return nullptr;
 		}
 	}
 	if ( n_no_coords > 1 ) {
 		TR << "Input molecular structure '" << restype->name() << "' has too many zero coordinate atoms (" << n_no_coords << "): cannot convert to ResidueType." << std::endl;
-		return ResidueTypeOP( nullptr );
+		return nullptr;
 	}
 
 	// ///////////////////////
@@ -265,7 +266,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 
 	// Nbr atom determination needs ring bond settings
 	VD nbr_atom = restype->nbr_vertex();
-	if ( nbr_atom == ResidueType::null_vertex || restype->nbr_radius() == 0 ) {
+	if ( nbr_atom == MutableResidueType::null_vertex || restype->nbr_radius() == 0 ) {
 		if ( restype->nbr_radius() != 0 ) {
 			// As a radius without a start point is rather pointless.
 			TR.Warning << "neighbor radius specified without neighbor atom specification - ignoring." << std::endl;
@@ -285,17 +286,11 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 	// TODO: Can't directly specify internal coordinate tree or chi bond info
 	// If that changes this needs to be adjusted so as not to overwrite those settings.
 
-	if ( restype->is_protein() ) {
-		// extra finalize call so I can grab atom vertex from N
-		restype->finalize();
+	if ( restype->is_protein() ) { // (This would be set from the `Rosetta Properties` specification)
 		restype->assign_internal_coordinates( restype->atom_vertex( "N" ) );
 	} else if ( restype->is_RNA() ) {
-		// extra finalize call so I can grab atom vertex from P
-		restype->finalize();
 		restype->assign_internal_coordinates( restype->atom_vertex( "P" ) );
 	} else if ( restype->is_DNA() ) {
-		// extra finalize call so I can grab atom vertex from P
-		restype->finalize();
 		restype->assign_internal_coordinates( restype->atom_vertex( "P" ) );
 	} else {
 		restype->assign_internal_coordinates(); // Also sets atom base. Needs nbr atom assignment
@@ -317,8 +312,6 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		}
 	}
 
-	restype->finalize();
-
 	// If one of those properties is PROTEIN (inferred from a cif, for
 	// example) set upper and lower
 	if ( restype->is_polymer() ) {
@@ -332,40 +325,41 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 				restype->add_property( "PHOSPHONATE" );
 			}
 
-			// Taken -- hardcoded -- from alanine.
-			//restype->set_atom_base( "LOWER", "N" );
-			//restype->set_atom_base( "UPPER", "C" );
-			restype->set_atom_base( "H", "N" );
-
 			using numeric::conversions::radians;
-			auto temp_vec = define_mainchain_atoms( restype );
-			runtime_assert_msg( temp_vec.size() >= 3, "Insufficient mainchain atoms for residue " + name_ );
+			auto mainchain_vec = mainchain_path( *restype );
+			runtime_assert_msg( mainchain_vec.size() >= 3, "Insufficient mainchain atoms for residue " + name_ );
+			if ( mainchain_vec.size() == 3 ) {
+				restype->add_property( "ALPHA_AA" );
+			} else if ( mainchain_vec.size() == 4 ) {
+				restype->add_property( "BETA_AA" );
+			}
+
 			if ( restype->is_d_aa() ) {
 				// TODO: correct internal coordinates, if possible? For H at least.
 				restype->set_icoor( "LOWER", radians(-149.999985), radians(63.800007), 1.328685,
-					restype->atom_name( temp_vec[1] ), // the lower atom itself
-					restype->atom_name( temp_vec[2] ),
-					restype->atom_name( temp_vec[3] ) );
+					restype->atom_name( mainchain_vec[1] ), // the lower atom itself
+					restype->atom_name( mainchain_vec[2] ),
+					restype->atom_name( mainchain_vec[3] ) );
 				restype->set_icoor( "UPPER", radians(150.000000), radians(58.300003), 1.328685,
-					restype->atom_name( temp_vec[temp_vec.size()] ), // the upper atom itself
-					restype->atom_name( temp_vec[temp_vec.size() - 1] ),
-					restype->atom_name( temp_vec[temp_vec.size() - 2] ) );
+					restype->atom_name( mainchain_vec[mainchain_vec.size()] ), // the upper atom itself
+					restype->atom_name( mainchain_vec[mainchain_vec.size() - 1] ),
+					restype->atom_name( mainchain_vec[mainchain_vec.size() - 2] ) );
 				restype->set_icoor( "H", radians(180.000000), radians(60.849998), 1.010000,
-					restype->atom_name( temp_vec[1] ), // the lower atom itself
-					restype->atom_name( temp_vec[2] ),
+					restype->atom_name( mainchain_vec[1] ), // the lower atom itself
+					restype->atom_name( mainchain_vec[2] ),
 					"LOWER" );
 			} else { // is L or achiral
 				restype->set_icoor( "LOWER", radians(149.999985), radians(63.800007), 1.328685,
-					restype->atom_name( temp_vec[1] ), // the lower atom itself
-					restype->atom_name( temp_vec[2] ),
-					restype->atom_name( temp_vec[3] ) );
+					restype->atom_name( mainchain_vec[1] ), // the lower atom itself
+					restype->atom_name( mainchain_vec[2] ),
+					restype->atom_name( mainchain_vec[3] ) );
 				restype->set_icoor( "UPPER", radians(-150.000000), radians(58.300003), 1.328685,
-					restype->atom_name( temp_vec[temp_vec.size()] ), // the upper atom itself
-					restype->atom_name( temp_vec[temp_vec.size() - 1] ),
-					restype->atom_name( temp_vec[temp_vec.size() - 2] ) );
+					restype->atom_name( mainchain_vec[mainchain_vec.size()] ), // the upper atom itself
+					restype->atom_name( mainchain_vec[mainchain_vec.size() - 1] ),
+					restype->atom_name( mainchain_vec[mainchain_vec.size() - 2] ) );
 				restype->set_icoor( "H", radians(-180.000000), radians(60.849998), 1.010000,
-					restype->atom_name( temp_vec[1] ), // the lower atom itself
-					restype->atom_name( temp_vec[2] ),
+					restype->atom_name( mainchain_vec[1] ), // the lower atom itself
+					restype->atom_name( mainchain_vec[2] ),
 					"LOWER" );
 			}
 		} else if ( restype->is_RNA() || restype->is_DNA() ) {
@@ -380,9 +374,9 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 			// bonded to C3' that aren't hydrogens or C4' or C2'.else if ( restype->has( ""))
 			std::string upper_atom = "";
 			if ( restype->has( "C3'" ) ) {
-				for ( Size const possible_upper_idx : restype->bonded_neighbor( restype->atom_index( "C3'" ) ) ) {
-					if ( restype->atom_name( possible_upper_idx ) == "C2'" ) continue;
-					if ( restype->atom_name( possible_upper_idx ) == "C4'" ) continue;
+				for ( VD possible_upper : restype->bonded_neighbors( restype->atom_vertex( "C3'" ) ) ) {
+					if ( restype->atom_name( possible_upper ) == "C2'" ) continue;
+					if ( restype->atom_name( possible_upper ) == "C4'" ) continue;
 					// Can't use the below because we aren't finalized.
 					// Let's say that we probably don't need this yet. Maybe for
 					// the next run at this test we will need to support
@@ -390,25 +384,22 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 					// Let's just make DOC a thing.
 					//if ( restype->atom_is_hydrogen( possible_upper_idx ) ) continue;
 					// Or... these are common, too.
-					if ( restype->atom_name( possible_upper_idx ) == "H3'" ) continue;
-					if ( restype->atom_name( possible_upper_idx ) == "H3''" ) continue;
+					if ( restype->atom_name( possible_upper ) == "H3'" ) continue;
+					if ( restype->atom_name( possible_upper ) == "H3''" ) continue;
 
-					restype->set_upper_connect_atom( restype->atom_name( possible_upper_idx ) );
-					upper_atom = restype->atom_name( possible_upper_idx );
+					restype->set_upper_connect_atom( restype->atom_name( possible_upper ) );
+					upper_atom = restype->atom_name( possible_upper );
 				}
 			}
 
 			// Taken -- hardcoded -- from RAD_n.
 			// Necessary?
-			std::string OP1_name = restype->has( "OP1" ) ? "OP1" :
-				( restype->has( "O1P" ) ? "O1P" :
-				( restype->has( "S1P" ) ? "S1P" : "N4'" ) );
+			//std::string OP1_name = restype->has( "OP1" ) ? "OP1" :
+			// ( restype->has( "O1P" ) ? "O1P" :
+			// ( restype->has( "S1P" ) ? "S1P" : "N4'" ) );
 			std::string OP2_name = restype->has( "OP2" ) ? "OP2" :
 				( restype->has( "O2P" ) ? "O2P" :
 				( restype->has( "S2P" ) ? "S2P" : "N4'" ) );
-
-			restype->set_atom_base( OP1_name, "P" );
-			restype->set_atom_base( OP2_name, "P" );
 
 			using numeric::conversions::radians;
 			// These magic numbers are the standard upper and lower coordinates used across nucleic acid
@@ -457,44 +448,30 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 				restype->set_icoor( OP2_name, radians(-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
 			}
 		}
-		restype->set_mainchain_atoms( define_mainchain_atoms( restype ) );
 	}
 
 	// Find possible disulfide atoms.
-	for ( Size ii = 1; ii <= restype->natoms(); ++ii ) {
-		if ( restype->atom( ii ).element_type()->element() == core::chemical::element::S ) {
+	for ( VD atom_vd: restype->all_atoms() ) {
+		if ( restype->atom( atom_vd ).element_type()->element() == core::chemical::element::S ) {
 			// OK, this is an S. Does it have a bonded H?
-			auto nbrs = restype->bonded_neighbor( ii );
-			for ( auto const nbr : nbrs ) {
+			for ( auto const nbr : restype->bonded_neighbors( atom_vd ) ) {
 				if ( restype->atom( nbr ).element_type()->element() == core::chemical::element::H ) {
 					restype->add_property( "SIDECHAIN_THIOL" );
-					restype->set_disulfide_atom_name( restype->atom_name( ii ) );
+					restype->set_disulfide_atom_name( restype->atom_name( atom_vd ) );
 				}
 			}
 		}
 	}
 
-	restype->finalize();
-
-	if ( restype->is_protein() ) {
-		if ( restype->mainchain_atoms().size() == 3 ) {
-			restype->add_property( "ALPHA_AA" );
-		} else if ( restype->mainchain_atoms().size() == 4 ) {
-			restype->add_property( "BETA_AA" );
-		}
-	}
-
-	restype->finalize();
-
-	TR.Debug << "First sidechain atom: " << restype->name() << " " << restype->atom_name( restype->first_sidechain_atom() ) << std::endl;
-	TR.Debug << "Neighbor atom: " << restype->name() << " " << restype->atom_name( restype->nbr_atom() ) << std::endl;
+	//TR.Debug << "First sidechain atom: " << restype->name() << " " << restype->atom_name( restype->first_sidechain_atom() ) << std::endl;
+	TR.Debug << "Neighbor atom: " << restype->name() << " " << restype->atom_name( restype->nbr_vertex() ) << std::endl;
 
 	//restype->show( TR, true );
 
 	return restype;
 }
 
-void MolFileIOMolecule::create_dummy_atom(ResidueTypeOP restype, std::string atom_name, core::Vector const & xyz_offset, chemical::ElementSetCOP elements, chemical::MMAtomTypeSetCOP ){
+void MolFileIOMolecule::create_dummy_atom(MutableResidueTypeOP restype, std::string atom_name, core::Vector const & xyz_offset, chemical::ElementSetCOP elements, chemical::MMAtomTypeSetCOP ){
 
 	VD vd = restype->add_atom(atom_name, "VIRT", "VIRT", 0.0 );
 	Atom & restype_atom( restype->atom( vd ) );
@@ -502,12 +479,14 @@ void MolFileIOMolecule::create_dummy_atom(ResidueTypeOP restype, std::string ato
 	restype_atom.element_type( elements->element( "X" ) ); // Rosetta-specific non-atom
 	restype_atom.formal_charge( 0 );
 
-	restype_atom.ideal_xyz( restype->atom( 1 ).ideal_xyz() + xyz_offset );
+	VD first_atom = restype->all_atoms()[1];
 
-	restype->add_bond( vd, restype->atom_vertex( 1 ), UnknownBond );
+	restype_atom.ideal_xyz( restype->atom( first_atom ).ideal_xyz() + xyz_offset );
+
+	restype->add_bond( vd, first_atom, UnknownBond );
 }
 
-void MolFileIOMolecule::set_from_extra_data(ResidueType & restype, std::map< mioAD, VD > & restype_from_mio) {
+void MolFileIOMolecule::set_from_extra_data(MutableResidueType & restype, std::map< mioAD, VD > & restype_from_mio) {
 	//////////// Process Data
 	TR.Debug << "Loading " << molecule_string_data_.size() << " extra data entries from sdf file." << std::endl;
 	for ( StrStrMap::const_iterator iter( molecule_string_data_.begin() ), iter_end(molecule_string_data_.end() );
@@ -612,7 +591,7 @@ void MolFileIOMolecule::set_from_extra_data(ResidueType & restype, std::map< mio
 					TR.Warning << "Atom name '" << name << "' for atom " << ii << " on " << this->name() << " is longer than 4 charachters." << std::endl;
 					break;
 				}
-				restype.atom( restype_from_mio[ index_atom_map_[ii] ] ).name( name );
+				restype.rename_atom( restype_from_mio[ index_atom_map_[ii] ], name );
 			}
 		} else if ( header == "Rosetta AtomTypes" ) {
 			std::string type;
@@ -649,7 +628,7 @@ void MolFileIOMolecule::set_from_extra_data(ResidueType & restype, std::map< mio
 	}
 }
 
-bool MolFileIOMolecule::index_valid(AtomIndex index, ResidueType const & restype, std::map< mioAD, core::chemical::VD > & restype_from_mio) {
+bool MolFileIOMolecule::index_valid(AtomIndex index, MutableResidueType const & restype, std::map< mioAD, core::chemical::VD > & restype_from_mio) {
 	return index_atom_map_.count(index) &&
 		restype_from_mio.count(index_atom_map_[index]) &&
 		restype.has(restype_from_mio[ index_atom_map_[index] ]);

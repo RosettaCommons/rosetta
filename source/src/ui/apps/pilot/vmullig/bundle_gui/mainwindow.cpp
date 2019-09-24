@@ -347,7 +347,7 @@ MainWindow::compute_com_vect(
 	core::Size counter(0);
 	for( core::Size ir(1), irmax(nonparametric_pose_->total_residue()); ir<=irmax; ++ir ) {
 		for( core::Size ia(1), iamax( pose.residue_type(ir).natoms() ); ia<=iamax; ++ia ) {
-			if( pose.residue_type(ir).atom(ia).is_hydrogen() ) continue;
+			if( pose.residue_type(ir).atom_is_hydrogen(ia) ) continue;
 			comvect += pose.xyz( core::id::AtomID(ia,ir) );
 			++counter;
 		}

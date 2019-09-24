@@ -106,6 +106,16 @@ public: // Creation
 		this->from_four_points( a, a, b, c );
 	}
 
+	/// @brief constructor by three points
+	/// Like the three-point constructor, but adjust things to make sure the stub is orthoganal
+	static
+	Stub
+	create_orthogonal(
+		Vector const & a,
+		Vector const & b,
+		Vector const & c
+	);
+
 public: // Methods
 
 	/// @brief build a stub from a center and other three points a, b, c

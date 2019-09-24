@@ -18,6 +18,7 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/Patch.hh>
 
@@ -227,6 +228,71 @@ formatted_icoord_tree( core::chemical::ResidueType const & restype )
 	return output;
 }
 
+// Return a string representing the internal coordinates tree of this ResidueType.
+/// @note  Mainly intended for debugging purposes. MutableResidueTypes don't necessarily have an icoor tree.
+std::string
+formatted_icoord_tree( core::chemical::MutableResidueType const & restype )
+{
+	using namespace std;
+	using namespace utility;
+
+	// General scheme: Start at the root,
+	// Then proceed down the tree depth first, outputting atom names as you go, keeping a stack of atoms to go back to.
+	// The complicated bit is keeping track of where the different attachment points are, such that you can accurately
+	// place the parenthesis for the tree.
+	string output( "Icoord tree: " );
+
+	std::map< VD, bool > placed;
+	vector1< VD > deferred;
+
+	VD curatm( restype.root_atom() ); // Start at the root.
+
+	while ( curatm != MutableResidueType::null_vertex ) {
+		output += restype.atom_name( curatm );
+		placed[ curatm ] = true;
+
+		vector1< VD > possibles;
+		for ( VD subatm: restype.all_atoms() ) {
+			MutableICoorRecordCOP icoor( restype.icoor( subatm ) );
+			if ( icoor != nullptr &&
+					restype.has( icoor->stub_atom1() ) &&
+					restype.atom_vertex( icoor->stub_atom1() ) == curatm &&
+					subatm != curatm // Handle root case
+					) {
+				possibles.push_back( subatm );
+			}
+		}
+
+		if ( possibles.size() == 1 ) {
+			curatm = possibles[ 1 ];
+		} else if ( possibles.size() ) {
+			output += " (";
+			curatm = possibles.back();
+			possibles.pop_back();
+			if ( deferred.size() ) {
+				deferred.push_back( MutableResidueType::null_vertex ); // Sentinel, but not needed for first
+			}
+			deferred.insert( deferred.end(), possibles.begin(), possibles.end() );
+		} else if ( deferred.size() ) {
+			output += ") ";
+			while ( deferred.size() && deferred.back() == MutableResidueType::null_vertex ) {
+				output += ") ";
+				deferred.pop_back();
+			}
+			if ( ! deferred.size() ) {
+				break;
+			}
+			output += " (";
+			curatm = deferred.back();
+			deferred.pop_back();
+		} else {
+			output += ") ";
+			break;
+		}
+	}
+
+	return output;
+}
 
 // Utility to examine chi output.
 void
@@ -246,6 +312,22 @@ print_chis( std::ostream & out, ResidueType const & res )
 	}
 }
 
+void
+print_chis( std::ostream & out, MutableResidueType const & res )
+{
+	using namespace std;
+	using namespace core::chemical;
+
+	out << "Residue: " << res.name() << endl;
+	out << formatted_icoord_tree(res) << endl; // MutableResidueTypes don't necessarily have an icoord tree.
+	for ( core::uint ii( 1 ); ii <= res.nchi(); ++ii ) {
+		VDs const & vertexes( res.chi_atom_vds( ii ) );
+		out << "Chi " << ii << ": " << res.atom_name( vertexes[ 1 ] ) << " " << res.atom_name( vertexes[ 2 ] ) << " "
+			<< res.atom_name( vertexes[ 3 ] ) << " " << res.atom_name( vertexes[ 4 ] ) << " ";
+		if ( res.is_proton_chi( ii ) ) { out << " PROTON"; }
+		out << endl;
+	}
+}
 
 // Replaces the deprecated "_p:" linker connecting ResidueType base names with their patch names with ":".
 /// @note This is here for backwards compatibility.
@@ -264,8 +346,8 @@ fixup_patches( std::string const & string_in )
 /// @author  Labonte <JWLabonte@jhu.edu>
 bool
 variants_match_with_exceptions(
-	ResidueType const & res1,
-	ResidueType const & res2,
+	ResidueTypeBase const & res1,
+	ResidueTypeBase const & res2,
 	utility::vector1< VariantType > list_of_variants_to_ignore )
 {
 	using namespace std;
@@ -315,7 +397,7 @@ pH_mode_exceptions() {
 /// @details If pH mode is being used, this function returns true, even if the two residues compared have different
 /// protonation states.
 bool
-variants_match( ResidueType const & res1, ResidueType const & res2 )
+variants_match( ResidueTypeBase const & res1, ResidueTypeBase const & res2 )
 {
 	return variants_match_with_exceptions( res1, res2, pH_mode_exceptions() );
 }
@@ -323,7 +405,7 @@ variants_match( ResidueType const & res1, ResidueType const & res2 )
 
 // Similar to variants_match(), but allows different adduct-modified states.
 bool
-nonadduct_variants_match( ResidueType const & res1, ResidueType const & res2 )
+nonadduct_variants_match( ResidueTypeBase const & res1, ResidueTypeBase const & res2 )
 {
 	return variants_match_with_exceptions( res1, res2, utility::vector1< VariantType >( 1, ADDUCT_VARIANT ) );
 }

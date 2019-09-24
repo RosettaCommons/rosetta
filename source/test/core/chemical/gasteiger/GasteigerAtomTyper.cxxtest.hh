@@ -22,6 +22,7 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
 #include <core/chemical/Element.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
@@ -55,11 +56,11 @@ void dump_resgraph( Graph const & graph ) {
 	}
 }
 
-void dump_gast_types( core::chemical::ResidueType const & restype ) {
-	for ( core::Size ii(1); ii <= restype.natoms(); ++ii ) {
-		TR << ii << " Atom " << restype.atom_name(ii) << " " ;
-		if ( restype.atom(ii).gasteiger_atom_type() ) {
-			TR << restype.atom(ii).gasteiger_atom_type()->get_name() << std::endl;
+void dump_gast_types( core::chemical::MutableResidueType const & restype ) {
+	for ( VD atm: restype.all_atoms() ) {
+		TR << "Atom " << restype.atom_name(atm) << " " ;
+		if ( restype.atom( atm ).gasteiger_atom_type() ) {
+			TR << restype.atom( atm ).gasteiger_atom_type()->get_name() << std::endl;
 		} else {
 			TR << " unassigned" << std::endl;
 		}
@@ -103,7 +104,7 @@ public:
 		core::chemical::ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set("fa_standard") );
 		utility::vector1< ResidueTypeCOP > const & residues( residue_set->base_residue_types() );
 		for ( core::Size ii(1); ii <= residues.size(); ++ii ) {
-			core::chemical::ResidueTypeOP restype( new core::chemical::ResidueType( *(residues[ii]) ) );
+			core::chemical::MutableResidueTypeOP restype( new core::chemical::MutableResidueType( *(residues[ii]) ) );
 			if ( restype->name() != core::chemical::residue_type_base_name( *restype ) ) {
 				continue; //Ignore patched residue types
 			}
@@ -119,9 +120,10 @@ public:
 
 	void test_cannonicals() {
 		core::chemical::ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set("fa_standard") );
-		core::chemical::ResidueTypeOP restype;
+		core::chemical::MutableResidueTypeOP restype;
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "ASP" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "ASP" ) );
+
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("N").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" ); //Special Cased
@@ -137,7 +139,7 @@ public:
 		TS_ASSERT_EQUALS( restype->atom("1HB").gasteiger_atom_type()->get_name(), "H_S" );
 		TS_ASSERT_EQUALS( restype->atom("2HB").gasteiger_atom_type()->get_name(), "H_S" );
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "GLY:NtermProteinFull" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "GLY:NtermProteinFull" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("N").gasteiger_atom_type()->get_name(), "N_TeTeTeTe" ); //Not special cased, protonated amine
@@ -145,7 +147,7 @@ public:
 		TS_ASSERT_EQUALS( restype->atom("C").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
 		TS_ASSERT_EQUALS( restype->atom("O").gasteiger_atom_type()->get_name(), "O_Tr2Tr2TrPi" );
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "GLY:CtermProteinFull" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "GLY:CtermProteinFull" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("N").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" ); // Still special cased
@@ -153,14 +155,14 @@ public:
 		TS_ASSERT_EQUALS( restype->atom("C").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
 		TS_ASSERT_EQUALS( restype->atom("O").gasteiger_atom_type()->get_name(), "O_Tr2Tr2TrPi" ); //Still trigonal
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "GLN" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "GLN" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("CD").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
 		TS_ASSERT_EQUALS( restype->atom("OE1").gasteiger_atom_type()->get_name(), "O_Tr2Tr2TrPi" );
 		TS_ASSERT_EQUALS( restype->atom("NE2").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "TYR" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "TYR" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("CG").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
@@ -174,7 +176,7 @@ public:
 		TS_ASSERT_EQUALS( restype->atom("HH").gasteiger_atom_type()->get_name(), "H_S" );
 		TS_ASSERT_EQUALS( restype->atom("HD2").gasteiger_atom_type()->get_name(), "H_S" );
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "HIS" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "HIS" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("CG").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
@@ -184,21 +186,21 @@ public:
 		TS_ASSERT_EQUALS( restype->atom("NE2").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
 		TS_ASSERT_EQUALS( restype->atom("HE2").gasteiger_atom_type()->get_name(), "H_S" );
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "HIS_D" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "HIS_D" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("ND1").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
 		TS_ASSERT_EQUALS( restype->atom("NE2").gasteiger_atom_type()->get_name(), "N_Tr2TrTrPi" );
 		TS_ASSERT_EQUALS( restype->atom("HD1").gasteiger_atom_type()->get_name(), "H_S" );
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "TRP" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "TRP" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("CD1").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
 		TS_ASSERT_EQUALS( restype->atom("NE1").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
 		TS_ASSERT_EQUALS( restype->atom("CD2").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "ARG" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "ARG" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("NE").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
@@ -206,25 +208,25 @@ public:
 		TS_ASSERT_EQUALS( restype->atom("NH1").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
 		TS_ASSERT_EQUALS( restype->atom("NH2").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "LYS" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "LYS" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("NZ").gasteiger_atom_type()->get_name(), "N_TeTeTeTe" );
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "MET" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "MET" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("CG").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" );
 		TS_ASSERT_EQUALS( restype->atom("SD").gasteiger_atom_type()->get_name(), "S_Te2Te2TeTe" );
 		TS_ASSERT_EQUALS( restype->atom("CE").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" );
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "CYS" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "CYS" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("CB").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" );
 		TS_ASSERT_EQUALS( restype->atom("SG").gasteiger_atom_type()->get_name(), "S_Te2Te2TeTe" );
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "GUA" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "GUA" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("P").gasteiger_atom_type()->get_name(), "P_TeTeTeTePi" );
@@ -246,21 +248,21 @@ public:
 
 	void test_virtuals() {
 		core::chemical::ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set("fa_standard") );
-		core::chemical::ResidueTypeOP restype;
+		core::chemical::MutableResidueTypeOP restype;
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "NA" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "NA" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("NA").gasteiger_atom_type()->get_name(), "Na_" );
 		TS_ASSERT_EQUALS( restype->atom("V1").gasteiger_atom_type()->get_name(), "FAKE" );
 		TS_ASSERT_EQUALS( restype->atom("V2").gasteiger_atom_type()->get_name(), "FAKE" );
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "FE" ) ); // Formal charge of 3, transition metal
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "FE" ) ); // Formal charge of 3, transition metal
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("FE").gasteiger_atom_type()->get_name(), "Fe_" );
 
-		restype = utility::pointer::make_shared< core::chemical::ResidueType >( residue_set->name_map( "PRO" ) );
+		restype = utility::pointer::make_shared< core::chemical::MutableResidueType >( residue_set->name_map( "PRO" ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("NV").gasteiger_atom_type()->get_name(), "FAKE" );
@@ -274,7 +276,7 @@ public:
 
 		///////////// Thiolate
 
-		core::chemical::ResidueTypeOP thiolate_test = read_topology_file("core/chemical/gasteiger/THI.params", rsd_types );
+		core::chemical::MutableResidueTypeOP thiolate_test = read_topology_file("core/chemical/gasteiger/THI.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *thiolate_test, atom_type_set_, /*keep_existing=*/ false );
 
@@ -291,7 +293,7 @@ public:
 
 		///////////// Sulfurs
 
-		core::chemical::ResidueTypeOP sulfur_test = read_topology_file("core/chemical/gasteiger/GST.params", rsd_types );
+		core::chemical::MutableResidueTypeOP sulfur_test = read_topology_file("core/chemical/gasteiger/GST.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *sulfur_test, atom_type_set_, /*keep_existing=*/ false );
 
@@ -309,7 +311,7 @@ public:
 
 		///////////// Sulfoxides
 
-		core::chemical::ResidueTypeOP sulfoxide_test = read_topology_file("core/chemical/gasteiger/SXX.params", rsd_types );
+		core::chemical::MutableResidueTypeOP sulfoxide_test = read_topology_file("core/chemical/gasteiger/SXX.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *sulfoxide_test, atom_type_set_, /*keep_existing=*/ false );
 
@@ -320,7 +322,7 @@ public:
 
 		///////////// Phosphates/Phosphines
 
-		core::chemical::ResidueTypeOP phos_test = read_topology_file("core/chemical/gasteiger/PXX.params", rsd_types );
+		core::chemical::MutableResidueTypeOP phos_test = read_topology_file("core/chemical/gasteiger/PXX.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *phos_test, atom_type_set_, /*keep_existing=*/ false );
 
@@ -338,7 +340,7 @@ public:
 
 		//////////// Nitrogens
 
-		core::chemical::ResidueTypeOP nitr_test = read_topology_file("core/chemical/gasteiger/NXX.params", rsd_types );
+		core::chemical::MutableResidueTypeOP nitr_test = read_topology_file("core/chemical/gasteiger/NXX.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *nitr_test, atom_type_set_, /*keep_existing=*/ false );
 
@@ -353,7 +355,7 @@ public:
 
 		//////////// Azides
 
-		core::chemical::ResidueTypeOP azo_test = read_topology_file("core/chemical/gasteiger/AZO.params", rsd_types );
+		core::chemical::MutableResidueTypeOP azo_test = read_topology_file("core/chemical/gasteiger/AZO.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *azo_test, atom_type_set_, /*keep_existing=*/ false );
 
@@ -377,7 +379,7 @@ public:
 
 		///////////// Sulfates and Sulfites
 
-		core::chemical::ResidueTypeOP sulfur_test = read_topology_file("core/chemical/gasteiger/SOx.params", rsd_types );
+		core::chemical::MutableResidueTypeOP sulfur_test = read_topology_file("core/chemical/gasteiger/SOx.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *sulfur_test, atom_type_set_, /*keep_existing=*/ false, /*allow_unknown=*/ true );
 
@@ -407,7 +409,7 @@ public:
 		TS_ASSERT_EQUALS( sulfur_test->atom("O4").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" );  //S-O(-)
 		TS_ASSERT_EQUALS( sulfur_test->atom("O13").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //S-O(-)
 
-		core::chemical::ResidueTypeOP phosphorus_test = read_topology_file("core/chemical/gasteiger/POx.params", rsd_types );
+		core::chemical::MutableResidueTypeOP phosphorus_test = read_topology_file("core/chemical/gasteiger/POx.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *phosphorus_test, atom_type_set_, /*keep_existing=*/ false, /*allow_unknown=*/ true );
 

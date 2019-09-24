@@ -14,6 +14,8 @@
 
 // Unit headers
 #include <core/chemical/ResidueTypeSelector.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 
 
 // Basic headers
@@ -152,6 +154,28 @@ Selector_CMDFLAG::Selector_CMDFLAG(std::string  const & flag_in, bool const resu
 			break;
 		}
 	}
+}
+
+bool
+Selector_UPPER_ATOM::operator[](ResidueTypeBase const & rsd) const {
+	if ( ! position_.empty() && rsd.has( position_ ) ) {
+		// Working with raw pointers because we need the dynamic cast null fall-back (and we don't worry about lifetime).
+		ResidueType const * rt_ptr = dynamic_cast< ResidueType const * >( &rsd );
+		if ( rt_ptr != nullptr ) {
+			// Do ResidueType version
+			if ( rt_ptr->upper_connect_id() != 0 && rt_ptr->atom_index( position_ ) == rt_ptr->upper_connect_atom() ) {
+				return desired_result();
+			}
+		} else {
+			MutableResidueType const * mrt_ptr = dynamic_cast< MutableResidueType const * >( &rsd );
+			runtime_assert( mrt_ptr != nullptr ); // Shouldn't ever, as there's only two possibilities
+			// Do MutableResidueType version
+			if ( mrt_ptr->upper_connect_id() != 0 && mrt_ptr->atom_vertex( position_ ) == mrt_ptr->upper_connect_atom() ) {
+				return desired_result();
+			}
+		}
+	}
+	return !desired_result();
 }
 
 } // chemical

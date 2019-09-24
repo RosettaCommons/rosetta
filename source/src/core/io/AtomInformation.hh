@@ -17,6 +17,7 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/chemical/Bond.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -77,7 +78,7 @@ struct AtomInformation {
 	/// @brief List of lower-numbered atoms that this atom is connected to.
 	utility::vector1< core::Size > connected_indices;
 	/// @brief bond order list that matches connected_indices
-	utility::vector1< core::Size > connected_orders;
+	utility::vector1< core::chemical::BondName > connected_orders;
 };  // struct AtomInformation
 
 } // namespace io

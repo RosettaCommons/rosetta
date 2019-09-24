@@ -95,7 +95,10 @@ NCAARotamerLibrarySpecification::NCAARotamerLibrarySpecification( std::istream &
 	TR.Debug << "Read " << ncaa_rotlib_n_bins_per_rot_.size() << " entries for NCAA rotamer library specification with path " << ncaa_rotlib_path_ << std::endl;
 }
 
-NCAARotamerLibrarySpecification::~NCAARotamerLibrarySpecification() = default;
+RotamerLibrarySpecificationOP
+NCAARotamerLibrarySpecification::clone() const {
+	return utility::pointer::make_shared< NCAARotamerLibrarySpecification >( *this );
+}
 
 std::string
 NCAARotamerLibrarySpecification::keyname() const {

@@ -15,6 +15,7 @@
 #include <core/chemical/Atom.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/AtomICoor.hh>
@@ -472,7 +473,7 @@ void ResidueDatabaseIO::write_residuetype_to_database(
 	report_residue_type_icoor(residue_type_set_name, res_type, db_session);
 }
 
-core::chemical::ResidueTypeOP ResidueDatabaseIO::read_residuetype_from_database(
+core::chemical::MutableResidueTypeOP ResidueDatabaseIO::read_residuetype_from_database(
 	chemical::AtomTypeSetCOP atom_types,
 	chemical::ElementSetCOP elements,
 	chemical::MMAtomTypeSetCOP mm_atom_types,
@@ -483,7 +484,7 @@ core::chemical::ResidueTypeOP ResidueDatabaseIO::read_residuetype_from_database(
 )
 {
 
-	core::chemical::ResidueTypeOP res_type( new core::chemical::ResidueType(atom_types,elements,mm_atom_types,orbital_atom_types) );
+	core::chemical::MutableResidueTypeOP res_type( new core::chemical::MutableResidueType(atom_types,elements,mm_atom_types,orbital_atom_types) );
 
 
 	read_residue_type_atom(residue_type_set_name,residue_type_name,*res_type,db_session);
@@ -495,7 +496,6 @@ core::chemical::ResidueTypeOP ResidueDatabaseIO::read_residuetype_from_database(
 	read_residue_type_properties(residue_type_set_name,residue_type_name,*res_type,db_session);
 	read_residue_type_variant(residue_type_set_name,residue_type_name,*res_type,db_session);
 	read_residue_type_icoor(residue_type_set_name,residue_type_name,*res_type,db_session);
-	res_type->finalize();
 
 	return res_type;
 }
@@ -582,7 +582,7 @@ void ResidueDatabaseIO::report_residue_type(
 void ResidueDatabaseIO::read_residue_type(
 	std::string const & residue_type_set_name,
 	std::string const & residue_type_name,
-	core::chemical::ResidueType & res_type,
+	core::chemical::MutableResidueType & res_type,
 	utility::sql_database::sessionOP db_session)
 {
 	std::string residue_type_statement =
@@ -691,7 +691,7 @@ ResidueDatabaseIO::report_residue_type_atom(
 		// stmt.bind() binds by reference -- need to lifetime preserve any (non-primitive) return-by-value intermediate values
 		auto const & atom_name = res_type.atom_name(i);
 		auto const & atom_type_name = res_type.atom_type(i).atom_type_name();
-		auto const & mm_name = res_type.atom(i).mm_name();
+		auto const & mm_name = res_type.mm_name(i);
 
 		stmt.bind(1,residue_type_set_name);
 		stmt.bind(2,res_type.name());
@@ -699,7 +699,7 @@ ResidueDatabaseIO::report_residue_type_atom(
 		stmt.bind(4,atom_name);
 		stmt.bind(5,atom_type_name);
 		stmt.bind(6,mm_name);
-		stmt.bind(7,res_type.atom(i).charge());
+		stmt.bind(7,res_type.atom_charge(i));
 		stmt.bind(8,res_type.atom_is_backbone(i));
 		basic::database::safely_write_to_database(stmt);
 
@@ -710,7 +710,7 @@ void
 ResidueDatabaseIO::read_residue_type_atom(
 	std::string const & residue_type_set_name,
 	std::string const & residue_type_name,
-	core::chemical::ResidueType & res_type,
+	core::chemical::MutableResidueType & res_type,
 	utility::sql_database::sessionOP db_session)
 {
 	std::string residue_atoms_statement =
@@ -769,7 +769,7 @@ void
 ResidueDatabaseIO::read_residue_type_bond(
 	std::string const & residue_type_set_name,
 	std::string const & residue_type_name,
-	core::chemical::ResidueType & res_type,
+	core::chemical::MutableResidueType & res_type,
 	utility::sql_database::sessionOP db_session
 )
 {
@@ -824,7 +824,7 @@ void
 ResidueDatabaseIO::read_residue_type_cut_bond(
 	std::string const & residue_type_set_name,
 	std::string const & residue_type_name,
-	core::chemical::ResidueType & res_type,
+	core::chemical::MutableResidueType & res_type,
 	utility::sql_database::sessionOP db_session
 )
 {
@@ -879,7 +879,7 @@ void
 ResidueDatabaseIO::read_residue_type_chi(
 	std::string const & residue_type_set_name,
 	std::string const & residue_type_name,
-	core::chemical::ResidueType & res_type,
+	core::chemical::MutableResidueType & res_type,
 	utility::sql_database::sessionOP db_session
 )
 {
@@ -935,7 +935,7 @@ void
 ResidueDatabaseIO::read_residue_type_chi_rotamer(
 	std::string const & residue_type_set_name,
 	std::string const & residue_type_name,
-	core::chemical::ResidueType & res_type,
+	core::chemical::MutableResidueType & res_type,
 	utility::sql_database::sessionOP db_session)
 {
 	std::string chi_rotamer_statement_string =
@@ -1004,7 +1004,7 @@ void
 ResidueDatabaseIO::read_residue_type_proton_chi(
 	std::string const & residue_type_set_name,
 	std::string const & residue_type_name,
-	core::chemical::ResidueType &,
+	core::chemical::MutableResidueType &,
 	utility::sql_database::sessionOP db_session)
 {
 	std::string proton_chi_statement_string =
@@ -1071,7 +1071,7 @@ void
 ResidueDatabaseIO::read_residue_type_properties(
 	std::string const & residue_type_set_name,
 	std::string const & residue_type_name,
-	core::chemical::ResidueType & res_type,
+	core::chemical::MutableResidueType & res_type,
 	utility::sql_database::sessionOP db_session)
 {
 	std::string residue_property_statement_string =
@@ -1112,7 +1112,7 @@ void
 ResidueDatabaseIO::read_residue_type_variant(
 	std::string const & residue_type_set_name,
 	std::string const & residue_type_name,
-	core::chemical::ResidueType & res_type,
+	core::chemical::MutableResidueType & res_type,
 	utility::sql_database::sessionOP db_session)
 {
 	std::string residue_variant_statement_string =
@@ -1155,33 +1155,33 @@ ResidueDatabaseIO::report_residue_type_icoor(
 		stmt.bind(6,atom_icoor.theta());
 		stmt.bind(7,atom_icoor.d());
 		//We need to do this because the AtomICoor doesn't store atom names, just numbers, but it takes atom names as its constructor
-		if ( atom_icoor.stub_atom1().type() == ICoorAtomID::INTERNAL ) {
+		if ( atom_icoor.stub_atom1().type() == ICoordAtomIDType::INTERNAL ) {
 			stmt.bind(8,res_type.atom_name(atom_icoor.stub_atom1().atomno()));
-		} else if ( atom_icoor.stub_atom1().type() == ICoorAtomID::CONNECT ) {
+		} else if ( atom_icoor.stub_atom1().type() == ICoordAtomIDType::CONNECT ) {
 			stmt.bind(8,"CONNECT");
-		} else if ( atom_icoor.stub_atom2().type() == ICoorAtomID::POLYMER_LOWER ) {
+		} else if ( atom_icoor.stub_atom2().type() == ICoordAtomIDType::POLYMER_LOWER ) {
 			stmt.bind(8,"LOWER");
 		} else {
 			//should be POLYMER_UPPER
 			stmt.bind(8,"UPPER");
 		}
 
-		if ( atom_icoor.stub_atom2().type() == ICoorAtomID::INTERNAL ) {
+		if ( atom_icoor.stub_atom2().type() == ICoordAtomIDType::INTERNAL ) {
 			stmt.bind(9,res_type.atom_name(atom_icoor.stub_atom2().atomno()));
-		} else if ( atom_icoor.stub_atom1().type() == ICoorAtomID::CONNECT ) {
+		} else if ( atom_icoor.stub_atom1().type() == ICoordAtomIDType::CONNECT ) {
 			stmt.bind(9,"CONNECT");
-		} else if ( atom_icoor.stub_atom2().type() == ICoorAtomID::POLYMER_LOWER ) {
+		} else if ( atom_icoor.stub_atom2().type() == ICoordAtomIDType::POLYMER_LOWER ) {
 			stmt.bind(9,"LOWER");
 		} else {
 			//should be POLYMER_UPPER
 			stmt.bind(9,"UPPER");
 		}
 
-		if ( atom_icoor.stub_atom3().type() == ICoorAtomID::INTERNAL ) {
+		if ( atom_icoor.stub_atom3().type() == ICoordAtomIDType::INTERNAL ) {
 			stmt.bind(10,res_type.atom_name(atom_icoor.stub_atom3().atomno()));
-		} else if ( atom_icoor.stub_atom1().type() == ICoorAtomID::CONNECT ) {
+		} else if ( atom_icoor.stub_atom1().type() == ICoordAtomIDType::CONNECT ) {
 			stmt.bind(10,"CONNECT");
-		} else if ( atom_icoor.stub_atom2().type() == ICoorAtomID::POLYMER_LOWER ) {
+		} else if ( atom_icoor.stub_atom2().type() == ICoordAtomIDType::POLYMER_LOWER ) {
 			stmt.bind(10,"LOWER");
 		} else {
 			//should be POLYMER_UPPER
@@ -1196,7 +1196,7 @@ void
 ResidueDatabaseIO::read_residue_type_icoor(
 	std::string const & residue_type_set_name,
 	std::string const & residue_type_name,
-	core::chemical::ResidueType & res_type,
+	core::chemical::MutableResidueType & res_type,
 	utility::sql_database::sessionOP db_session)
 {
 

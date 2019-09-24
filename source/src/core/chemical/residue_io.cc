@@ -18,6 +18,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/residue_support.hh>
@@ -70,84 +71,15 @@
 
 #include <sstream>
 
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-
+using ObjexxFCL::stripped;
+using ObjexxFCL::strip_whitespace;
 
 namespace core {
 namespace chemical {
 
 static basic::Tracer tr( "core.chemical" );
 
-
-///////////////////////////////////////////////////////////////////////////////
-/// @brief helper fxn
-id::AtomID
-atom_id_from_icoor_line(
-	std::string const & name,
-	ResidueType const & rsd
-)
-{
-	using id::AtomID;
-	ICoorAtomID id( name, rsd );
-
-	switch ( id.type() ) {
-	case ICoorAtomID::INTERNAL :
-		return AtomID( id.atomno(), 1 );
-	case ICoorAtomID::CONNECT :
-		return AtomID( id.atomno(), 2 );
-	case ICoorAtomID::POLYMER_LOWER :
-		return AtomID( 1, 3 );
-	case ICoorAtomID::POLYMER_UPPER :
-		return AtomID( 2, 3 );
-	default :
-		utility_exit_with_message( "unrecognized stub atom id type!" );
-	}
-	return id::GLOBAL_BOGUS_ATOM_ID;
-}
-
-
-// If polymer, determine a list of main chain atoms by shortest path from LOWER to UPPER.
-AtomIndices
-define_mainchain_atoms( ResidueTypeOP rsd )
-{
-	AtomIndices mainchain;
-
-	if ( rsd->is_polymer() ) {
-		// Test that this is really a polymer residue.
-		if ( rsd->upper_connect_id() && rsd->upper_connect_atom() &&
-				rsd->lower_connect_id() && rsd->lower_connect_atom() ) {
-			Size upper_connect( rsd->upper_connect_atom() ), lower_connect( rsd->lower_connect_atom() );
-			// Default main chain: defined by shortest path from LOWER to UPPER.
-			// IMO, everyone should really explicitly define the main chain from the topology file.  ~Labonte
-			FArray2D_int D( get_residue_path_distances( *rsd ) );
-			uint atom( lower_connect );
-			while ( atom != upper_connect ) {
-				mainchain.push_back( atom );
-				AtomIndices const & nbrs( rsd->nbrs( atom ) );
-				int min_d( D( atom, upper_connect ) );
-				uint next_atom( atom );
-
-				for ( uint i=1; i<= nbrs.size(); ++i ) {
-					uint const nbr( nbrs[i] );
-					if ( D( nbr, upper_connect ) < min_d ) {
-						min_d = D( nbr, upper_connect );
-						next_atom = nbr;
-					}
-				}
-				debug_assert( next_atom != atom );
-				atom = next_atom;
-			}
-			mainchain.push_back( upper_connect );
-		} else {
-			tr.Warning << "Residue " << rsd->name() << " claims it's a polymer, " <<
-				"but it doesn't have the appropriate UPPER and LOWER connection points specified.  " <<
-				"Set MAINCHAIN_ATOMS in the topology file to remove this warning." << std::endl;
-		}
-	}
-	return mainchain;
-}
-
-ResidueTypeOP
+MutableResidueTypeOP
 read_topology_file(
 	std::string const & filename,
 	chemical::ResidueTypeSetCOP rsd_type_set
@@ -161,14 +93,14 @@ read_topology_file(
 		rsd_type_set->orbital_type_set() );
 }
 
-ResidueTypeOP
+MutableResidueTypeOP
 read_topology_file(
 	utility::io::izstream & istream,
 	chemical::ResidueTypeSetCOP rsd_type_set
 ) {
 	debug_assert( rsd_type_set );
 
-	core::chemical::ResidueTypeOP const our_res(read_topology_file(
+	core::chemical::MutableResidueTypeOP const our_res(read_topology_file(
 		istream,
 		istream.filename(),
 		rsd_type_set->atom_type_set(),
@@ -180,7 +112,7 @@ read_topology_file(
 	return our_res;
 }
 
-ResidueTypeOP
+MutableResidueTypeOP
 read_topology_file(
 	std::istream & istream,
 	std::string const & filename,
@@ -197,7 +129,7 @@ read_topology_file(
 		rsd_type_set->orbital_type_set() );
 }
 
-ResidueTypeOP
+MutableResidueTypeOP
 read_topology_file(
 	std::string const & filename,
 	chemical::AtomTypeSetCAP atom_types,
@@ -217,7 +149,7 @@ read_topology_file(
 	if ( !data.good() ) {
 		utility_exit_with_message("Cannot open file '"+full_filename+"'");
 	}
-	core::chemical::ResidueTypeOP const our_res(read_topology_file(data, filename, atom_types, elements, mm_atom_types, orbital_atom_types ));
+	core::chemical::MutableResidueTypeOP const our_res(read_topology_file(data, filename, atom_types, elements, mm_atom_types, orbital_atom_types ));
 
 	data.close(); //we must close this because the istream interface that carries this variable doesn't have .close(); we can't check is_open() because izstream doesn't have that for some reason.  Previous versions of this code called .close in the workhorse read_topology_file function.
 	return our_res;
@@ -623,7 +555,7 @@ read_topology_file(
 /// other. E.g. "VIRTUAL_SHADOW NV N" from PRO.params.  Currently, the
 /// cart_bonded and ring_close energy terms are the only energy terms
 /// that enforce this.
-ResidueTypeOP
+MutableResidueTypeOP
 read_topology_file(
 	std::istream & data,
 	std::string const & filename, //MAY be faux filename if stream is not izstream of file
@@ -680,7 +612,7 @@ read_topology_file(
 	// things are being assigned correctly, i.e., adding bonds correctly, setting icoor values with correct placement
 	// of stub atoms, etc., etc.
 
-	ResidueTypeOP rsd( new ResidueType( atom_types.lock(), elements.lock(), mm_atom_types.lock(), orbital_atom_types.lock() ) ); //kwk commenting out until atom types are fully implemented , csd_atom_types ) );
+	MutableResidueTypeOP rsd( new MutableResidueType( atom_types.lock(), elements.lock(), mm_atom_types.lock(), orbital_atom_types.lock() ) ); //kwk commenting out until atom types are fully implemented , csd_atom_types ) );
 
 	// Add the atoms.
 	Size const nlines( lines.size() );
@@ -764,7 +696,7 @@ read_topology_file(
 	// Add the bonds; parse the rest of file.
 	bool nbr_atom_read( false ), nbr_radius_read( false );
 	bool found_AA_record( false );
-	AtomIndices mainchain_atoms;
+	utility::vector1< VD > mainchain_atoms;
 
 	// Set disulfide atom name to "NONE"
 	// So that's the default
@@ -980,7 +912,7 @@ read_topology_file(
 			// finding the shortest path from lower terminus to upper terminus.
 			l >> tag;
 			while ( !l.fail() ) {
-				mainchain_atoms.push_back( rsd->atom_index( tag ) );
+				mainchain_atoms.push_back( rsd->atom_vertex( tag ) );
 				l >> tag;
 			}
 		} else if ( tag == "FIRST_SIDECHAIN_ATOM" ) {
@@ -991,12 +923,13 @@ read_topology_file(
 			l >> tag;
 			if ( tag == "NONE" ) {
 				// Set all atoms to backbone.
-				for ( Size j=1; j<= rsd->natoms(); ++j ) {
-					rsd->set_backbone_heavyatom( rsd->atom_name(j) );
+				for ( VD atm: rsd->all_atoms() ) {
+					rsd->set_backbone_heavyatom( rsd->atom_name(atm) );
 				}
 			} else if ( rsd->has( tag ) ) {
-				for ( Size j=1; j< rsd->atom_index( tag ); ++j ) {
-					rsd->set_backbone_heavyatom( rsd->atom_name(j) );
+				for ( VD atm: rsd->all_atoms() ) {
+					if ( atm == rsd->atom_vertex( tag ) ) { break; }
+					rsd->set_backbone_heavyatom( rsd->atom_name(atm) );
 				}
 			}
 
@@ -1283,21 +1216,6 @@ read_topology_file(
 				}
 			}
 
-			// set atom_base
-			if ( child_atom != "UPPER" && child_atom != "LOWER" && child_atom.substr(0,4) != "CONN" ) {
-				// atom base only valid for genuine atoms of this residue
-				if ( child_atom == parent_atom ) {
-					// root of the tree
-					if ( natoms == 1 ) {
-						rsd->set_atom_base( child_atom, child_atom ); // 1st child of root atom
-					} else {
-						rsd->set_atom_base( child_atom, angle_atom ); // 1st child of root atom
-					}
-				} else {
-					rsd->set_atom_base( child_atom, parent_atom );
-				}
-			}
-
 			// set icoor
 			rsd->set_icoor(child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom );
 
@@ -1305,14 +1223,15 @@ read_topology_file(
 
 
 		// fill in the rsd-xyz values
+		debug_assert( natoms == rsd->natoms() );
 		if ( natoms == 1 ) {
-			std::string const name( rsd->atom_name(1) );
+			std::string const name( rsd->atom_name( rsd->all_atoms()[1] ) );
 			rsd->set_ideal_xyz( name, Vector(0.0) );
 
 		} else {
 			// now fill in the icoor values -- in principle the rsd itself could be doing this...
-			for ( Size i=1; i<= natoms; ++i ) {
-				std::string name( rsd->atom_name(i) );
+			for ( VD atm: rsd->all_atoms() ) {
+				std::string name( rsd->atom_name( atm ) );
 				strip_whitespace( name );
 				debug_assert( rsd_xyz.count( name ) );
 				rsd->set_ideal_xyz( name, rsd_xyz[ name ] );
@@ -1321,13 +1240,10 @@ read_topology_file(
 			}
 		}
 
-
-		// If polymer, fill list of main chain atoms, if not already defined by MAINCHAIN_ATOMS.
-		// (This must occur after internal coordinates and connections are set.)
-		if ( mainchain_atoms.size() == 0 ) {
-			mainchain_atoms = define_mainchain_atoms( rsd );
+		// Handle the case of explicitly set main chain atoms
+		if ( ! mainchain_atoms.empty() ) {
+			rsd->set_mainchain_atoms( mainchain_atoms );
 		}
-		rsd->set_mainchain_atoms( mainchain_atoms );
 
 		// Okay, now that we have information about the residue's atomic positions
 		// we can re-evaluate if there could be an issue with the specification
@@ -1395,9 +1311,6 @@ read_topology_file(
 	//Set up command-line overrides of RamaPrePro maps:
 	set_up_mapfile_reassignments_from_commandline( rsd );
 
-	// calculate any remaining derived data
-	rsd->finalize();
-
 	return rsd;
 }
 
@@ -1437,7 +1350,7 @@ write_topology_file(
 
 		std::string atom_out = "ATOM " + rsd.atom_name( i ) + " " + rsd.atom_type( i ).name() + "  ";
 		atom_out = atom_out + rsd.mm_atom_type(i).name();
-		out << atom_out << " " << rsd.atom(i).charge() << " \n";
+		out << atom_out << " " << rsd.atom_charge(i) << " \n";
 
 	} // atom write out
 
@@ -1509,8 +1422,8 @@ write_topology_file(
 
 	// Charges
 	for ( Size i=1; i <= rsd.natoms(); ++i ) {
-		if ( rsd.atom(i).formal_charge() != 0 ) {
-			out << "CHARGE " << rsd.atom_name( i ) << " FORMAL  " << rsd.atom(i).formal_charge() << " \n";
+		if ( rsd.formal_charge(i) != 0 ) {
+			out << "CHARGE " << rsd.atom_name( i ) << " FORMAL  " << rsd.formal_charge(i) << " \n";
 		}
 	}
 
@@ -1555,7 +1468,7 @@ write_topology_file(
 /// @brief Callback class for write_graphviz - outputs properties for the nodes and edges.
 class GraphvizPropertyWriter {
 public:
-	explicit GraphvizPropertyWriter( ResidueType const & rsd ):
+	explicit GraphvizPropertyWriter( MutableResidueType const & rsd ):
 		rsd_(rsd)
 	{}
 
@@ -1620,7 +1533,7 @@ public:
 	}
 
 private:
-	ResidueType const & rsd_;
+	MutableResidueType const & rsd_;
 
 };
 
@@ -1630,6 +1543,16 @@ private:
 void
 write_graphviz(
 	ResidueType const & rsd,
+	std::ostream & out,
+	bool header /*= true*/
+) {
+	MutableResidueType mut_rsd( rsd );
+	write_graphviz( mut_rsd, out, header );
+}
+
+void
+write_graphviz(
+	MutableResidueType const & rsd,
 	std::ostream & out,
 	bool header /*= true*/
 ) {
@@ -1650,7 +1573,7 @@ write_graphviz(
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void
 set_up_mapfile_reassignments_from_commandline(
-	ResidueTypeOP rsd
+	ResidueTypeBaseOP rsd
 ) {
 
 	if ( !is_canonical_L_aa_or_gly( rsd->aa() ) ) return; //Note that is_canonical_L_aa_or_gly() returns true also for glycine.

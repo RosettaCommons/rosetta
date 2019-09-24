@@ -830,14 +830,14 @@ print_torsion_info(
 		rsd_2.atom_type( id2.atomno() ).name() << " " <<
 		rsd_3.atom_type( id3.atomno() ).name() << " " <<
 		rsd_4.atom_type( id4.atomno() ).name() << std::endl;
-	TR << "\t\tatom_type_index: " << rsd_1.atom( id1.atomno() ).atom_type_index() <<
-		" " << rsd_2.atom( id2.atomno() ).atom_type_index() << " " <<
-		rsd_3.atom( id3.atomno() ).atom_type_index() << " " <<
-		rsd_4.atom( id4.atomno() ).atom_type_index() << std::endl;
-	TR << "\t\tatomic_charge: " << rsd_1.atom( id1.atomno() ).charge() <<
-		" " << rsd_2.atom( id2.atomno() ).charge() << " " <<
-		rsd_3.atom( id3.atomno() ).charge() << " " <<
-		rsd_4.atom( id4.atomno() ).charge() << std::endl;
+	TR << "\t\tatom_type_index: " << rsd_1.atom_type_index( id1.atomno() ) <<
+		" " << rsd_2.atom_type_index( id2.atomno() ) << " " <<
+		rsd_3.atom_type_index( id3.atomno() ) << " " <<
+		rsd_4.atom_type_index( id4.atomno() ) << std::endl;
+	TR << "\t\tatomic_charge: " << rsd_1.atom_charge( id1.atomno() ) <<
+		" " << rsd_2.atom_charge( id2.atomno() ) << " " <<
+		rsd_3.atom_charge( id3.atomno() ) << " " <<
+		rsd_4.atom_charge( id4.atomno() ) << std::endl;
 }
 
 void

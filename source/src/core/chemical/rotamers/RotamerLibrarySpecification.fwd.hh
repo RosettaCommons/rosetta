@@ -27,6 +27,8 @@ class RotamerLibrarySpecification;
 typedef utility::pointer::shared_ptr< RotamerLibrarySpecification > RotamerLibrarySpecificationOP;
 typedef utility::pointer::shared_ptr< RotamerLibrarySpecification const > RotamerLibrarySpecificationCOP;
 
+RotamerLibrarySpecificationOP deep_copy( RotamerLibrarySpecification const & source);
+
 } //namespace rotamers
 } //namespace chemical
 } //namespace core

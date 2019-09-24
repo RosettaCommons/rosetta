@@ -197,7 +197,7 @@ GroupElec::build_groupinfo( std::string const & group_file,
 		} else if ( s1.compare( "GROUP" ) == 0 && !skip_residue ) {
 			TR.Debug << "Group: ";
 
-			core::chemical::ResidueType const rsdtype = rsdtypeset->name_map( resname );
+			core::chemical::ResidueType const & rsdtype = rsdtypeset->name_map( resname );
 
 			ElecGroup grp;
 			std::string atmname;

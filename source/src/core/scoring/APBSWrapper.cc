@@ -158,7 +158,7 @@ PQR::PQR(core::pose::Pose const & pose,
 			x.push_back(atom.xyz()(1));
 			y.push_back(atom.xyz()(2));
 			z.push_back(atom.xyz()(3));
-			charge.push_back(charged_atoms( i, j )? pose.residue_type(i).atom(j).charge() : 0.);
+			charge.push_back(charged_atoms( i, j )? pose.residue_type(i).atom_charge(j) : 0.);
 			radius.push_back(rsd.atom_type(j).lj_radius());
 			++cntAtoms;
 		}

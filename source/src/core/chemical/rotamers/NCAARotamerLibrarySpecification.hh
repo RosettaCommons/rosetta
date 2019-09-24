@@ -45,7 +45,9 @@ public:
 	NCAARotamerLibrarySpecification();
 	NCAARotamerLibrarySpecification( std::string const & ncaa_rotlib_path );
 	NCAARotamerLibrarySpecification( std::istream & );
-	virtual ~NCAARotamerLibrarySpecification();
+
+	RotamerLibrarySpecificationOP
+	clone() const override;
 
 	/// @brief Sets the path to the NCAA rotlib for the residue type
 	void
@@ -89,13 +91,11 @@ public:
 	Real
 	nrchi_start_angle() const { return nrchi_start_angle_; }
 
-	virtual
 	std::string
-	keyname() const;
+	keyname() const override;
 
-	virtual
 	std::string
-	cache_tag(core::chemical::ResidueType const &) const;
+	cache_tag(core::chemical::ResidueType const &) const override;
 
 	static std::string library_name();
 

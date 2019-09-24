@@ -107,8 +107,8 @@ Residue::Residue( ResidueTypeCOP rsd_type_in, bool const /*dummy_arg*/ ):
 {
 	// Assign atoms.
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
-		atoms_.push_back( Atom( rsd_type_.atom(i).ideal_xyz(), rsd_type_.atom(i).atom_type_index(),
-			rsd_type_.atom(i).mm_atom_type_index() ) );
+		atoms_.push_back( Atom( rsd_type_.ideal_xyz(i), rsd_type_.atom_type_index(i),
+			rsd_type_.mm_atom_type_index(i) ) );
 	}
 
 	update_nus();
@@ -137,8 +137,8 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 {
 	// Assign atoms.
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
-		atoms_.push_back( Atom( rsd_type_.atom(i).ideal_xyz(), rsd_type_.atom(i).atom_type_index(),
-			rsd_type_.atom(i).mm_atom_type_index() ) );
+		atoms_.push_back( Atom( rsd_type_.ideal_xyz(i), rsd_type_.atom_type_index(i),
+			rsd_type_.mm_atom_type_index(i) ) );
 	}
 
 	update_nus();
@@ -183,8 +183,8 @@ Residue::Residue(
 {
 	// Assign atoms.
 	for ( Size i = 1; i <= rsd_type_.natoms(); ++i ) {
-		atoms_.push_back( Atom( rsd_type_.atom( i ).ideal_xyz(), rsd_type_.atom( i ).atom_type_index(),
-			rsd_type_.atom( i ).mm_atom_type_index() ) );
+		atoms_.push_back( Atom( rsd_type_.ideal_xyz( i ), rsd_type_.atom_type_index( i ),
+			rsd_type_.mm_atom_type_index( i ) ) );
 	}
 
 	if ( current_rsd.mainchain_torsions().size() == rsd_type_.mainchain_atoms().size() ) {
@@ -666,7 +666,14 @@ Residue::copy_residue_connections( Residue const & src_rsd )
 void
 Residue::update_actcoord()
 {
-	rsd_type_.update_actcoord( *this );
+	actcoord().zero();
+	core::Size const n_actcoord_atoms( rsd_type_.actcoord_atoms().size() );
+	if ( n_actcoord_atoms > 0 ) {
+		for ( Size index: rsd_type_.actcoord_atoms() ) {
+			actcoord() += atoms()[ index ].xyz();
+		}
+		actcoord() /= n_actcoord_atoms;
+	}
 }
 
 void
@@ -1208,12 +1215,12 @@ improper_build(Residue const & residue,
 	Vector & coordinate
 ) {
 	core::chemical::ResidueType const & restype( residue.type() );
-	core::Vector to_missing( restype.atom(missing).ideal_xyz() - restype.atom(parent).ideal_xyz() );
-	core::Vector to_sib1( restype.atom(sibling1).ideal_xyz() - restype.atom(parent).ideal_xyz());
+	core::Vector to_missing( restype.ideal_xyz(missing) - restype.ideal_xyz(parent) );
+	core::Vector to_sib1( restype.ideal_xyz(sibling1) - restype.ideal_xyz(parent) );
 	core::Real d( to_missing.length() );
 	core::Real theta( numeric::constants::r::pi - angle_of( to_missing, to_sib1 ) );
-	core::Real phi( numeric::dihedral_radians( restype.atom(missing).ideal_xyz(), restype.atom(parent).ideal_xyz(),
-		restype.atom(sibling1).ideal_xyz(), restype.atom(sibling2).ideal_xyz() ) );
+	core::Real phi( numeric::dihedral_radians( restype.ideal_xyz(missing), restype.ideal_xyz(parent),
+		restype.ideal_xyz(sibling1), restype.ideal_xyz(sibling2) ) );
 	chemical::AtomICoor newicoor( residue.atom_name(missing), phi, theta, d,
 		residue.atom_name(parent),
 		residue.atom_name(sibling1),
@@ -1256,7 +1263,7 @@ Residue::fill_missing_atoms(
 				for ( Size j=1; j<= 3; ++j ) {
 					chemical::ICoorAtomID const & id( ic.stub_atom(j) );
 					// We assume all connection points to other residues are not missing
-					if ( id.type() == chemical::ICoorAtomID::INTERNAL && missing[ id.atomno() ] ) {
+					if ( id.type() == chemical::ICoordAtomIDType::INTERNAL && missing[ id.atomno() ] ) {
 						stub_atoms_missing = true;
 					}
 					if ( ! id.buildable( *this, conformation ) ) {
@@ -1330,7 +1337,7 @@ Residue::fill_missing_atoms(
 					TR.Error << "Cannot build coordinates for residue " << name() << " at position " << seqpos() << ": missing too many atoms." << std::endl;
 					type().show_all_atom_names(TR.Debug);
 					TR.Debug << "Internal coordinate tree:" << std::endl;
-					core::chemical::pretty_print_atomicoor( TR.Debug, type().icoor(type().atom_index(type().root_atom())), type());
+					core::chemical::pretty_print_atomicoor( TR.Debug, type().icoor(type().root_atom()), type());
 					TR.Error << "Missing atoms are: ";
 					for ( core::Size nn(1); nn <= missing.size(); ++nn ) {
 						if ( missing[nn] ) {

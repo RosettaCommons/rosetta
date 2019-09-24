@@ -87,7 +87,6 @@ BondName convert_to_BondName( std::string const & id ) {
 }
 
 Bond::Bond():
-	distance_(0),
 	cut_bond_(false),
 	bond_name_(UnknownBond),
 	order_(UnknownBondOrder),
@@ -97,8 +96,7 @@ Bond::Bond():
 	isometry_(UnknownIsometry)
 {}
 
-Bond::Bond(Real d, BondName name, bool cut_bond /*= false*/):
-	distance_(d),
+Bond::Bond(Real , BondName name, bool cut_bond /*= false*/):
 	cut_bond_(cut_bond),
 	bond_name_(name),
 	order_(UnknownBondOrder),
@@ -110,9 +108,8 @@ Bond::Bond(Real d, BondName name, bool cut_bond /*= false*/):
 	bond_name(name);
 }
 
-Bond::Bond(Real d, BondOrder order, BondConjugability conj,  BondAromaticity aroma,
+Bond::Bond(Real , BondOrder order, BondConjugability conj,  BondAromaticity aroma,
 	BondRingness ring /*= UnknownRingness*/, BondIsometry isom /*= UnknownIsometry*/, bool cut_bond /*= false*/):
-	distance_(d),
 	cut_bond_(cut_bond),
 	order_(order),
 	conjug_(conj),
@@ -183,7 +180,7 @@ Bond::aromaticity(BondAromaticity aroma){
 
 void
 Bond::print( std::ostream & out ) const {
-	out << distance_ << std::endl;
+	out << "Bond of order " << bond_name_;
 }
 
 std::ostream &
@@ -373,7 +370,6 @@ core::Size Bond::GetSDAltFileID() const {
 template< class Archive >
 void
 core::chemical::Bond::save( Archive & arc ) const {
-	arc( CEREAL_NVP( distance_ ) ); // Real
 	arc( CEREAL_NVP( cut_bond_ ) ); // _Bool
 	arc( CEREAL_NVP( bond_name_ ) ); // enum core::chemical::BondName
 	arc( CEREAL_NVP( order_ ) ); // enum core::chemical::BondOrder
@@ -387,7 +383,6 @@ core::chemical::Bond::save( Archive & arc ) const {
 template< class Archive >
 void
 core::chemical::Bond::load( Archive & arc ) {
-	arc( distance_ ); // Real
 	arc( cut_bond_ ); // _Bool
 	arc( bond_name_ ); // enum core::chemical::BondName
 	arc( order_ ); // enum core::chemical::BondOrder

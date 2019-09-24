@@ -26,6 +26,7 @@
 #include <basic/Tracer.hh>
 
 //numeric headers
+#include <numeric/xyzVector.hh>
 
 //// C++ headers
 // #include <string>

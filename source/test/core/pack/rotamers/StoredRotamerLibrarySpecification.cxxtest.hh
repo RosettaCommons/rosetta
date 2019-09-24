@@ -29,6 +29,7 @@
 
 
 #include <core/types.hh>
+#include <utility/pointer/memory.hh>
 
 #include <basic/Tracer.hh>
 
@@ -50,7 +51,7 @@ private:
 	AtomPositions conformers_;
 	core::Real const ref_energy_ = 77.0;
 	core::Real e_ref_;
-	core::chemical::ResidueTypeOP RTOP_;
+	core::chemical::ResidueTypeCOP RTOP_;
 
 public:
 
@@ -68,7 +69,7 @@ public:
 
 		core::chemical::ResidueTypeSetCOP rtsCOP(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FULL_ATOM_t ));
 
-		RTOP_ = core::chemical::read_topology_file( param_stream, "dummy_filename", rtsCOP );
+		RTOP_ = core::chemical::ResidueType::make( *core::chemical::read_topology_file( param_stream, "dummy_filename", rtsCOP ) );
 
 		//create stringstream to init from
 		std::istringstream conformers_stream;
@@ -98,9 +99,11 @@ public:
 	//utility function shared between several tests
 	void get_and_compare_SLRL_to_reference(StoredRotamerLibrarySpecificationOP SRLS) {
 
+		// ICKY, ICKY conversion for testing purposes only
+		core::chemical::ResidueType * rt = const_cast< core::chemical::ResidueType * >( RTOP_.get() );
 		//load SRLS into RTOP
-		RTOP_->strip_rotamer_library_specification();
-		RTOP_->rotamer_library_specification(SRLS);
+		rt->strip_rotamer_library_specification();
+		rt->rotamer_library_specification(SRLS);
 
 		//get SingleLigandRotamerLibrary from StoredRotamerLibraryCreator
 		StoredRotamerLibraryCreator SRLC;
@@ -110,7 +113,7 @@ public:
 		compare_SLRL_to_reference(SLRL);
 
 		//get SingleLigandRotamerLibrary from SingleResidueRotamerLibraryFactory instead to make sure that works
-		SRRL = SingleResidueRotamerLibraryFactory::get_instance()->get( *RTOP_, false );
+		SRRL = SingleResidueRotamerLibraryFactory::get_instance()->get( *rt, false );
 		SLRL = utility::pointer::dynamic_pointer_cast< SingleLigandRotamerLibrary const >(SRRL);
 		compare_SLRL_to_reference(SLRL);
 

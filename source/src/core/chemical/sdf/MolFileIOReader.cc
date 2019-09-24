@@ -15,6 +15,7 @@
 #include <core/chemical/sdf/SDFParser.hh>
 
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/chemical/rotamers/StoredRotamerLibrarySpecification.hh>
@@ -120,7 +121,7 @@ utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::istrea
 }
 
 
-ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
+MutableResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 	std::string atom_type_tag,
 	std::string elements_tag,
 	std::string mm_atom_type_tag) {
@@ -131,7 +132,7 @@ ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > mo
 	return convert_to_ResidueType(molfile_data, atom_types, elements, mm_atom_types);
 }
 
-ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
+MutableResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 	AtomTypeSetCOP atom_types,
 	ElementSetCOP element_type_set,
 	MMAtomTypeSetCOP mm_atom_types) {
@@ -142,10 +143,10 @@ ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > mo
 	}
 
 	std::map< core::chemical::sdf::AtomIndex, std::string > index_name_map;
-	ResidueTypeOP restype = molfile_data[1]->convert_to_ResidueType(index_name_map, atom_types, element_type_set, mm_atom_types);
+	MutableResidueTypeOP restype = molfile_data[1]->convert_to_ResidueType(index_name_map, atom_types, element_type_set, mm_atom_types);
 	if ( ! restype ) {
 		TR.Info << "Could not load molecule '" << molfile_data[1]->name() << "' as a residue type." << std::endl;
-		return ResidueTypeOP(nullptr);
+		return nullptr;
 	}
 
 	if ( molfile_data.size() > 1 ) {
@@ -166,7 +167,7 @@ ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > mo
 	return restype;
 }
 
-utility::vector1< ResidueTypeOP >
+utility::vector1< MutableResidueTypeOP >
 convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 	bool load_rotamers,
 	std::string atom_type_tag,
@@ -179,7 +180,7 @@ convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 	return convert_to_ResidueTypes(molfile_data, load_rotamers, atom_types, elements, mm_atom_types);
 }
 
-utility::vector1< ResidueTypeOP >
+utility::vector1< MutableResidueTypeOP >
 convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 	bool load_rotamers,
 	AtomTypeSetCOP atom_types,
@@ -210,10 +211,10 @@ convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 		}
 	}
 
-	utility::vector1< ResidueTypeOP > residue_types;
+	utility::vector1< MutableResidueTypeOP > residue_types;
 	for ( core::Size jj(1); jj <= separated_molecules.size(); ++jj ) {
 		TR.Debug << "Converting " << separated_molecules[jj][1]->name() << std::endl;
-		ResidueTypeOP restype;
+		MutableResidueTypeOP restype;
 		try {
 			restype = convert_to_ResidueType(separated_molecules[jj], atom_types, element_types, mm_atom_types);
 		} catch( utility::excn::Exception & e ) {

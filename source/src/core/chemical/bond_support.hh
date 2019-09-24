@@ -17,6 +17,7 @@
 #define INCLUDED_core_chemical_bond_support_hh
 
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 
@@ -24,13 +25,13 @@ namespace core {
 namespace chemical {
 
 /// @brief Determine which bonds are in rings, and set the BondRingness property of each
-void find_bonds_in_rings(ResidueType & res, bool const complex_ring_detection = false);
-void complex_ring_detection( ResidueType & res);
-void quick_ring_detection( ResidueType & res);
+void find_bonds_in_rings(MutableResidueType & res, bool const complex_ring_detection = false);
+void complex_ring_detection( MutableResidueType & res);
+void quick_ring_detection( MutableResidueType & res);
 
-utility::vector1<VD> get_connecting_atoms(ResidueType const & res, ED const & edge);
+utility::vector1<VD> get_connecting_atoms(MutableResidueType const & res, ED const & edge);
 utility::vector1<VD> get_connecting_atoms(ResidueGraph const & res, ED const & edge);
-ED get_bond(ResidueType const & res, VD const & source, VD const & target);
+ED get_bond(MutableResidueType const & res, VD const & source, VD const & target);
 
 //this will create a bond length based on gasteiger atom type definitions of bonds
 Real create_bond_length(gasteiger::GasteigerAtomTypeData const & atom1,
@@ -38,11 +39,11 @@ Real create_bond_length(gasteiger::GasteigerAtomTypeData const & atom1,
 
 /// @brief Find which bonds are rotatatable (chi) bonds
 /// Returns a list of four vds representing the chi
-utility::vector1<VDs> find_chi_bonds( ResidueType const & restype );
+utility::vector1<VDs> find_chi_bonds( MutableResidueType const & restype );
 
 /// @brief Is the given chi a proton chi with the proton attached to an atom attached to an non-sp3 atom?
 /// @details The use case is to see if the proton chi should flat or staggered with rotamers
-bool is_sp2_proton_chi( core::Size chi, ResidueType const & restype );
+bool is_sp2_proton_chi( core::Size chi, MutableResidueType const & restype );
 
 }
 }

@@ -17,6 +17,7 @@
 
 // Unit Headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/bond_support.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/Bond.hh>
@@ -56,7 +57,7 @@ public:
 		ElementSetCOP element_types = cm->element_set("default");
 		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
 
-		ResidueType res( atom_types, element_types, mm_atom_types, NULL );
+		MutableResidueType res( atom_types, element_types, mm_atom_types, NULL );
 
 		TR << "Testing Biphenyl" << std::endl;
 		//Biphenyl - we want the ring bonds but not the connecting or hygrogen bond to be rings
@@ -147,7 +148,7 @@ public:
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		ResidueTypeSetCOP restypeset = cm->residue_type_set(FA_STANDARD);
 
-		ResidueTypeOP res( read_topology_file( "core/chemical/params/U26.params", restypeset ) );
+		MutableResidueTypeOP res( read_topology_file( "core/chemical/params/U26.params", restypeset ) );
 
 		TR << "Testing U26" << std::endl;
 

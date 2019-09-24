@@ -18,6 +18,7 @@
 #include <core/chemical/Patch.hh>
 
 // Package headers
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/AtomProperty.hh>
 
@@ -61,7 +62,7 @@ public:
 	bool
 	meets_requirements( ResidueType const & r, Size i ) const {
 		if ( pertinent_property_ == NO_ATOM_PROPERTY ) return true;
-		return ( r.atom(i).has_property( pertinent_property_ ) );
+		return ( r.atom_has_property( i, pertinent_property_ ) );
 	}
 
 	/// @brief unique name of this patch, eg Nter-simple, Cter-full, Phospho, ... ?

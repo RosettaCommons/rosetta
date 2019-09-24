@@ -15,6 +15,7 @@
 #define INCLUDED_core_chemical_atomtype_support_hh
 
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 
 namespace core {
@@ -25,7 +26,7 @@ bool retype_is_aromatic(VD const & atom, ResidueGraph const & graph);
 /// @brief Reassign Rosetta atom types based on the current fullatom heuristics.
 ///
 /// If preserve is true, only retype those atoms which have an atom_type_index of zero.
-void rosetta_retype_fullatom(ResidueType & restype, bool preserve=false);
+void rosetta_retype_fullatom(MutableResidueType & restype, bool preserve=false);
 
 } // chemical
 } // core

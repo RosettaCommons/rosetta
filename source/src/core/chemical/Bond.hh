@@ -49,9 +49,6 @@ public:
 	Bond(Real d, BondOrder order, BondConjugability conj,  BondAromaticity aroma, BondRingness ring = UnknownRingness, BondIsometry isom = UnknownIsometry, bool cut_bond = false);
 
 	// Setters
-	void distance(Real distance){
-		distance_ = distance;
-	}
 	void bond_name(BondName bond_name);
 
 	void cut_bond(bool cut_bond){
@@ -72,10 +69,7 @@ public:
 	}
 
 
-	// Getters
-	Real distance() const {
-		return distance_;
-	}
+	//// Getters
 	BondName bond_name() const {
 		return bond_name_;
 	}
@@ -131,7 +125,6 @@ public:
 
 private:
 
-	Real distance_;
 	/// @brief Is the bond allowed to be in the atom tree?
 	bool cut_bond_;
 	// The following enums are defined in Bond.fwd.hh

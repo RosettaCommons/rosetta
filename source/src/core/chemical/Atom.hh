@@ -15,15 +15,14 @@
 #ifndef INCLUDED_core_chemical_Atom_HH
 #define INCLUDED_core_chemical_Atom_HH
 
-
 // Unit headers
 #include <core/chemical/Atom.fwd.hh>
-#include <core/chemical/AtomProperties.hh>
+#include <core/chemical/AtomProperty.hh>
+#include <core/chemical/AtomProperties.fwd.hh>
+#include <core/chemical/MutableICoorRecord.hh>
 
 // Package headers
-#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/GreekDistance.hh>
-//#include <core/chemical/Bond.fwd.hh> // only for Temp BondName
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/Element.hh>
 
@@ -35,27 +34,25 @@
 
 // Utility headers
 #include <utility/vector1_bool.hh>
+#include <utility/pointer/deep_copy.hh>
 
 // C++ headers
 #include <string>
 
 
+#ifdef    SERIALIZATION
+#include <core/chemical/ResidueType.fwd.hh>
+#endif
+
 namespace core {
 namespace chemical {
 
-/// @details This class contains the "chemical" information for atoms.  This does not contain the actual xyz
-/// coordinates of the atom, (which are found in core/conformation/Atom.hh).  The atom_type properties are assigned by
-/// the class AtomSet, which is initiated from the ChemicalManager.  AtomType properties are currently read in from the
-/// file chemical/atom_type_sets/fa_standard/atom_properties.txt.  These properties contain the the properties of
-/// LJ_RADIUS, LJ_WDEPTH, LK_DGRFREE, LK_LAMBDA, and LK_VOLUME and are used in the scoring methods fa_atr, fa_rep, and
-/// fa_sol, which are located in the Etable (core/scoring/etable/Etable.hh).  Additional parameters are acceptor/donor,
-/// hybridization, and orbital paramaters.  This class should not have information associated with the Conformation or
-/// ResidueType; it represents an atom divorced from a particular conformation or residue but not from things that
-/// affect it chemically.  It is distinct from an Element, in that it can have a particular hybridization state,
-/// charge, etc.  It is distinct from conformation::Atom in that it does not have coordinates.  Everything stored here
-/// should be concerning the atom.  Conformation information goes in core::conformation, while data for ResidueType
-/// is cached there.
-/// @note    chemical::Atoms are stored in chemical::ResidueType (within its ResidueGraph);
+/// @details This class contains the "chemical" information for atoms in a MutableResidueType.
+/// This does not contain the actual xyz coordinates of the atom, (which are found in core/conformation/Atom.hh)
+/// It is also not used for the plain ResidueType class, which holds the corresponding information intenrally.
+/// This class should contain the information that's associated with the atom,
+/// calculated from other info. (Do that in the MutableResidueType -> ResidueType transition. )
+/// @note    chemical::Atoms are stored in chemical::MutableResidueType (within its ResidueGraph);
 /// conformation::Atoms are stored in conformation::Residue
 class Atom {
 
@@ -67,96 +64,34 @@ public:
 	Atom(
 		std::string const & name_in,
 		std::string const & mm_name,
-		Size const mm_atom_type_index,
 		ElementCOP element,
 		Real const charge,
 		Vector const & ideal_xyz );
 
-	/// @brief Copy constructor
-	Atom( Atom const & src );
+	bool operator==( Atom const & atom ) const;
 
-	//destructor (default)
-	~Atom();
-
-	bool operator==( Atom const & atom ) const {
-		return name_== atom.name_ &&
-			mm_name_ == atom.mm_name_ &&
-			atom_type_index_ == atom.atom_type_index_ &&
-			mm_atom_type_index_ == atom.mm_atom_type_index_ &&
-			element_ == atom.element_ &&
-			formal_charge_ == atom.formal_charge_ &&
-			charge_ == atom.charge_ &&
-			ideal_xyz_ == atom.ideal_xyz_ &&
-			*properties_ == *atom.properties_ &&
-			gasteiger_atom_type_ == atom.gasteiger_atom_type_ &&
-			is_hydrogen_ == atom.is_hydrogen_ &&
-			has_orbitals_ == atom.has_orbitals_  &&
-			bonded_orbitals_ == atom.bonded_orbitals_ &&
-			abs_stereochem_ == atom.abs_stereochem_ &&
-			greek_d_ == atom.greek_d_;
-	}
-
-	Atom & operator =( Atom const & atom );
-
-	/// @brief  Generate string representation of chemical::Atom for debugging purposes.
-	void show( std::ostream & out=std::cout ) const;
-
+	////////////////
 	// Const Getters
+
 	std::string const& name() const { return name_; }
-	//std::string const& type_name() const { return type_name_; };
 	std::string const& mm_name() const { return mm_name_; }
 	Size const& atom_type_index() const { return atom_type_index_; }
-	Size const& mm_atom_type_index() const { return mm_atom_type_index_; }
 	ElementCOP element_type() const {return element_;}
+
 	/// @brief Convenience function to go directly to the element enum
 	core::chemical::element::Elements element() const;
 
 	gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type() const;
+	bool const& is_backbone() const { return is_backbone_; }
+	/// @brief Is this atom part of the action coordinate centers?
+	/// @details The geometric center of all atoms listed as actcoords are the residue's "action coordinate" (for pair energy)
+	bool const& is_actcoord() const { return is_actcoord_; }
 	int const& formal_charge() const { return formal_charge_; }
 	Real const& charge() const { return charge_; }
-	Vector const& ideal_xyz() const { return ideal_xyz_; };
-	utility::vector1<Size> const & bonded_orbitals() const{return bonded_orbitals_;}
-	utility::vector1<Size>  & bonded_orbitals() {return bonded_orbitals_;}
+	Vector const& ideal_xyz() const { return ideal_xyz_; }
 
-	/// @brief Access the collection of properties for this Atom.
-	AtomProperties & properties() const { return *properties_; }
-
-	/// @brief  Generic property access.
-	inline
-	bool
-	has_property( std::string const & property ) const
-	{
-		return properties_->has_property( property );
-	}
-
-	inline
-	bool
-	has_property( AtomProperty const property ) const
-	{
-		return properties_->has_property( property );
-	}
-
-	/// @brief  Get whether or not this heavy atom is a hydrogen-bond donor.
-	bool heavyatom_has_polar_hydrogens() const { return has_property( H_DONOR ); }
-
-	/// @brief  Get whether or not this heavy atom is a hydrogen-bond acceptor.
-	bool is_acceptor() const { return has_property( H_ACCEPTOR ); }
-
-
-	bool is_hydrogen() const { return is_hydrogen_; }
-
-	/// @brief  Get whether or not this hydrogen atom is polar.
-	bool is_polar_hydrogen() const { return has_property( POLAR_HYDROGEN ); }
-
-	/// @brief  Get whether or not this hydrogen atom is bonded to an aromatic ring.
-	bool is_haro() const { return has_property( AROMATIC_HYDROGEN ); }
-
-
-	/// @brief  Get whether or not this atom is virtual.
-	bool is_virtual() const { return has_property( VIRTUAL_ATOM ); }
-
-
-	bool has_orbitals() const { return has_orbitals_; }
+	/// @brief The ICoor record for this residue -- may be null.
+	MutableICoorRecordCOP icoor() const { return icoor_; }
 
 	/// @brief  Return the absolute stereochemistry (R/S designation) of this stereocenter.
 	char absolute_stereochemistry() const { return abs_stereochem_; }
@@ -164,107 +99,136 @@ public:
 	/// @brief  How far (in Greek letters) is this atom from the primary functional group of the molecule?
 	GreekDistance greek_distance() const { return greek_d_; }
 
+	/// @brief Which orbital indicies are attached to this atom?
+	utility::vector1< core::Size > const &
+	bonded_orbitals() const { return bonded_orbitals_; }
 
+	//////////
 	// Setters
-	void name( std::string const & name ) { name_ = name; };
-	void mm_name( std::string const & name ) { mm_name_ = name; };
 
-	/// @details You probably don't want to use this directly.
-	/// Use ResidueType::set_atom_type() which correctly updates the internal state of the residuetype/atom
-	void atom_type_index( Size const & atom_type_index ) { atom_type_index_ = atom_type_index; };
-
-	void mm_atom_type_index( Size const & mm_atom_type_index ) { mm_atom_type_index_ = mm_atom_type_index; };
 	void element_type(ElementCOP element) {element_ = element;}
+	void mm_name( std::string const & name ) { mm_name_ = name; };
 	void gasteiger_atom_type( core::chemical::gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type );
+
+	void is_backbone( bool setting ) { is_backbone_ = setting; }
+	void is_actcoord( bool setting ) { is_actcoord_ = setting; }
 	void formal_charge( int charge ) { formal_charge_ = charge; }
 	void charge( Real const & charge ) { charge_ = charge; };
-	void ideal_xyz( Vector const & ideal_xyz ) { ideal_xyz_= ideal_xyz; };
-
-	/// @brief  Generic property setting.
-	inline
-	void
-	set_property( std::string const & property, bool const setting)
-	{
-		properties_->set_property( property, setting );
+	void ideal_xyz( Vector const & ideal_xyz ) {
+		ideal_xyz_= ideal_xyz;
 	}
-
-	inline
-	void
-	set_property( AtomProperty const property, bool const setting)
-	{
-		properties_->set_property( property, setting );
-	}
-
-	/// @brief  Set whether or not this heavy atom is a hydrogen-bond donor.
-	void heavyatom_has_polar_hydrogens( bool setting ) { set_property( H_DONOR, setting ); }
-
-	/// @brief  Set whether or not this heavy atom is a hydrogen-bond acceptor.
-	void is_acceptor( bool setting ) { set_property( H_ACCEPTOR, setting ); }
-
-
-	void is_hydrogen( bool setting ) { is_hydrogen_= setting; }
-
-	/// @brief  Set whether or not this hydrogen atom is polar.
-	void is_polar_hydrogen( bool setting ) { set_property( POLAR_HYDROGEN, setting ); }
-
-	/// @brief  Set whether or not this hydrogen atom is bonded to an aromatic ring.
-	void is_haro( bool setting ) { set_property( AROMATIC_HYDROGEN, setting ); }
-
-
-	/// @brief  Set whether or not this atom is virtual.
-	void is_virtual( bool setting ) { set_property( VIRTUAL_ATOM, setting ); }
-
-
-	void has_orbitals(bool orbitals){has_orbitals_ = orbitals;}
+	void icoor( MutableICoorRecordCOP icoor_record ) { icoor_ = icoor_record; }
 
 	/// @brief  Set the absolute stereochemistry (R/S designation) of this stereocenter.
 	void set_absolute_stereochemistry( char const setting );
 
 	/// @brief  Set how far (in Greek letters) this atom is from the primary functional group of the molecule.
-	void greek_distance( GreekDistance const setting );
+	void greek_distance( GreekDistance const setting ) { greek_d_ = setting; }
 
-	// Calculated data
+	void set_bonded_orbitals( utility::vector1<core::Size> const & setting ) {
+		bonded_orbitals_ = setting;
+	}
+
+	void add_bonded_orbital( Size orbital_index ) {
+		bonded_orbitals_.push_back( orbital_index );
+	}
+
+	/////////////////////
+	// Protected Setters
+	//
+	// These are protected because they should really only be changes through the owning MutableResidueType
+	// (As there's certain bookkeeping that the MutableResidueType needs to do.)
+protected:
+	friend MutableResidueType; // Only for these functions! don't access other private members!
+
+	void name( std::string const & name ) { name_ = name; };
+	void atom_type_index( Size const & atom_type_index ) { atom_type_index_ = atom_type_index; };
+
+public:
+	//////////////
+	// Properties
+
+	/// @brief Access the collection of properties for this Atom.
+	/// IMPORTANT -- This only looks at manually set properties, not any automatically derived ones.
+	AtomProperties const & properties() const { return *properties_; }
+
+	/// @brief  Generic property access.
+	/// IMPORTANT -- This only looks at manually set properties, not any automatically derived ones.
+	bool
+	has_property( std::string const & property ) const;
+
+	/// @brief  Generic property access.
+	/// IMPORTANT -- This only looks at manually set properties, not any automatically derived ones.
+	bool
+	has_property( AtomProperty const property ) const;
+
+	//teiger_atom_type @brief  Generic property setting.
+	void
+	set_property( std::string const & property, bool const setting);
+
+	void
+	set_property( AtomProperty const property, bool const setting);
+
+	/// @brief Discard all the current properties, and set the the passed values.
+	void
+	reset_all_properies(AtomProperties const & setting);
+
+	/// @brief  Set whether or not this atom is virtual.
+	void is_virtual( bool setting ) { set_property( VIRTUAL_ATOM, setting ); }
+
+	////////////////////
+	// Derived info
+
+	bool is_hydrogen() const { return element() == element::H; }
+
+	/// @brief  Get whether or not this atom is virtual.
+	bool is_virtual() const { return has_property( VIRTUAL_ATOM ); }
 
 	/// @brief Return true if this represents a fake/mock atom.
 	bool is_fake() const;
 
+	///////////////////
+	// Other functions.
+
+	/// @brief  Generate string representation of chemical::Atom for debugging purposes.
+	void show( std::ostream & out=std::cout ) const;
 
 	// data
 private:
+
 	std::string name_;
 	std::string mm_name_;
-	Size atom_type_index_;
-	Size mm_atom_type_index_;
+	Size atom_type_index_ = 0;
 	ElementCOP element_;
 	/// Gasteiger atom-type
 	gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type_;
+	bool is_backbone_ = false;
+	bool is_actcoord_ = false;
 	/// The formal (integral) charge on the atom.
-	int formal_charge_;
-	Real charge_;
-	Vector ideal_xyz_;
+	int formal_charge_ = 0;
+	Real charge_ = 0.0;
+	char abs_stereochem_ = '\0';
+	GreekDistance greek_d_ = NA_GREEK_DISTANCE;
+
+	Vector ideal_xyz_{0,0,0};
+	/// @brief Internal coordinates on how to build the given atom - used in preference to ideal_xyz if set.
+	MutableICoorRecordCOP icoor_; // COP because it's a copy-on-write sematics.
 
 	// General properties of this atom.
-	// Many of these properties are derived data and are set in ResidueType::add_atom() and/or Residue::finalize().
-	AtomPropertiesOP properties_;
+	// For the MutableResidueType Atom, only explicitly set properties are present.
+	// There are other properties which are indirect consequences of the atom type which don't appear here.
+	utility::pointer::DeepCopyOP< AtomProperties > properties_;
 
-	/// @brief is an atom a hydrogen?
-	/// Derived from Rosetta Atom type, set in add_atom()
-	bool is_hydrogen_;
-
-	/// @brief doe an atom have orbitals?
-	/// Derived from Rosetta Atom type, set in add_atom()
-	bool has_orbitals_;
-	utility::vector1<Size> bonded_orbitals_;
-
-	char abs_stereochem_;
-	GreekDistance greek_d_;
+	utility::vector1< Size > bonded_orbitals_; /// @brief The orbitals bonded to this atom
 
 #ifdef    SERIALIZATION
 public:
+	// WARNING: The serialization of an Atom is not 100% self-contained.
+	// You need to call update_typesets on it after with the parent Restype in order for it to work.
 	template< class Archive > void save( Archive & arc ) const;
 	template< class Archive > void load( Archive & arc );
 
-	void update_typesets( ResidueType const & parent );
+	void update_typesets( MutableResidueType const & parent );
 private:
 	// Temporary entries for serialization loading
 	std::string gasteiger_atom_type_name_;

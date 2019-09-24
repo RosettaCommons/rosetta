@@ -90,7 +90,7 @@ void OopRandomPuckMover::apply( core::pose::Pose & pose ){
 	TR << random_pucker <<std::endl;
 
 	oop::OopMoverOP oop_mover;
-	ResidueType restype = pose.residue_type( random_pos );
+	ResidueType const & restype = pose.residue_type( random_pos );
 
 	//kdrew: determine which mover should be used, use D puck movers for chiral D oops
 	if ( random_pucker == "OOP_PUCK_PLUS" ) {

@@ -81,7 +81,7 @@ EnergyMap SplitUnfoldedTwoBodyPotential::calculate_residue_emap(const chemical::
 		if ( atom_type_label_set_used_=="rosetta" ) {
 			curratomname=restype.atom_type(i).name();
 		} else if ( atom_type_label_set_used_=="mm" ) {
-			curratomname=restype.atom(i).mm_name();
+			curratomname=restype.mm_name(i);
 		} else if ( atom_type_label_set_used_=="elemental" ) {
 			curratomname=restype.atom_type(i).element();
 		} else if ( atom_type_label_set_used_=="pdb" ) {
@@ -96,7 +96,7 @@ EnergyMap SplitUnfoldedTwoBodyPotential::calculate_residue_emap(const chemical::
 			tostring<<i;
 			curratomname+=tostring.str();
 		} else {
-			curratomname=restype.atom(i).mm_name();
+			curratomname=restype.mm_name(i);
 		}
 		//    std::cout<<curratomname<<std::endl;
 

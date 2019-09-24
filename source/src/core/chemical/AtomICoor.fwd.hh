@@ -19,17 +19,43 @@
 // Unit headers
 
 // Project headers
+#include <core/types.hh>
 
 // Utility headers
 
 // C++ headers
-
+#include <string>
 
 namespace core {
 namespace chemical {
 
 class AtomICoor;
 
+/// @brief ICoordAtomIDType
+///
+/// - INTERNAL: atoms which inherently belong to this ResidueType
+/// - POLYMER_LOWER: atom at the polymer lower connection, such as backbone C in
+/// the previous residue (N-term side)
+/// - POLYMER_UPPER: atom at the polymer upper connection, such as backbone N in
+/// the next residue (C-term side)
+/// - CONNECT: atoms from a non-adjacent residue which connect to this residue
+/// by non-polymer connection, such as disulfide
+///
+/// @details If you add anything to this enum, be sure to update the string_to_icoord_type() function.
+enum class ICoordAtomIDType {
+	INTERNAL = 1,
+	POLYMER_LOWER,
+	POLYMER_UPPER,
+	CONNECT
+};
+
+/// @brief Convert a string designation into the corresponding ICoordAtomIDType enum.
+ICoordAtomIDType
+string_to_icoord_type( std::string const & );
+
+/// @brief Get the connection number from a string representing an CONNECT type (e.g. 4 from `CONN4`)
+Size
+get_connection_number( std::string const & );
 
 }
 }

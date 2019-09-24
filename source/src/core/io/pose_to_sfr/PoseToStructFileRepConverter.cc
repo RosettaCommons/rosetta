@@ -506,7 +506,7 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 	ai.serial = new_atom_num;
 	ai.name = rsd.atom_name( atom_index );
 	if ( options_.write_glycan_pdb_codes() && rsd.type().canonical_atom_aliases().count(rsd.atom_name(atom_index) ) ) {
-		ai.name = rsd.type().canonical_atom_aliases()[ai.name];
+		ai.name = rsd.type().canonical_atom_alias(ai.name);
 	}
 	if ( options_.write_glycan_pdb_codes() && rsd.is_carbohydrate() ) {
 		ai.resName = NomenclatureManager::get_instance()->pdb_code_from_rosetta_name( rsd.name() );
@@ -689,7 +689,7 @@ PoseToStructFileRepConverter::get_link_record( core::pose::Pose const & pose, co
 
 	link.name1 = pose.residue_type( ii ).atom_name( pose.residue_type( ii ).residue_connect_atom_index( conn ) );
 	if ( options_.output_alternate_atomids() && pose.residue_type(ii).canonical_atom_aliases().count(link.name1) != 0 ) {
-		link.name1 = pose.residue_type( ii ).canonical_atom_aliases()[link.name1];
+		link.name1 = pose.residue_type( ii ).canonical_atom_alias(link.name1);
 	}
 	if ( !options_.write_glycan_pdb_codes() || !pose.residue_type(ii).is_carbohydrate() ) {
 		link.resName1 = pose.residue_type( ii ).name3();
@@ -712,7 +712,7 @@ PoseToStructFileRepConverter::get_link_record( core::pose::Pose const & pose, co
 
 	link.name2 =  pose.residue_type( jj ).atom_name( pose.residue_type( jj ).residue_connect_atom_index( jj_conn ) );
 	if ( options_.output_alternate_atomids() && pose.residue_type( jj ).canonical_atom_aliases().count(link.name2) != 0 ) {
-		link.name2 = pose.residue_type( jj ).canonical_atom_aliases()[link.name2];
+		link.name2 = pose.residue_type( jj ).canonical_atom_alias(link.name2);
 	}
 	if ( !options_.write_glycan_pdb_codes() || !pose.residue_type(jj).is_carbohydrate() ) {
 		link.resName2 = pose.residue_type( jj ).name3();
@@ -1164,7 +1164,6 @@ PoseToStructFileRepConverter::grab_conect_records_for_atom(
 	bool const target_res_is_canonical_or_solvent( target_restype.is_canonical() || target_restype.is_solvent() );
 	core::Real const dist_cutoff_sq( options_.connect_info_cutoff()*options_.connect_info_cutoff() );
 	core::id::AtomID const target_atom_id( atom_index_in_rsd, res_index ); //The AtomID of this atom.
-	const core::chemical::VD target_atom_VD(target_restype.atom_vertex(atom_index_in_rsd));
 	utility::vector1< core::id::AtomID > const bonded_ids(  pose.conformation().bonded_neighbor_all_res( target_atom_id, write_virtuals, ! writeall ) ); //List of AtomIDs of atoms bound to this atom.
 
 	Vector target_atom_xyz( pose.xyz( target_atom_id ) );
@@ -1189,11 +1188,9 @@ PoseToStructFileRepConverter::grab_conect_records_for_atom(
 		if ( target_atom_xyz.distance_squared( pose.xyz( bonded_ids[ii] ) ) >= dist_cutoff_sq ) {
 			ai.connected_indices.push_back( atom_indices_[ bonded_ids[ ii ] ] );
 			if ( target_atom_id.rsd() == bonded_ids[ii].rsd() ) {  // Same rsd
-				const core::chemical::VD bonded_atom_VD(target_restype.atom_vertex(bonded_ids[ii].atomno()));
-				auto bond = target_restype.bond(target_atom_VD, bonded_atom_VD);
-				ai.connected_orders.push_back(bond.order());
+				ai.connected_orders.push_back( target_restype.bond_type(atom_index_in_rsd, bonded_ids[ii].atomno()) );
 			} else {  // Rosetta doesn't store bond order outside of groups, assume 1
-				ai.connected_orders.push_back(1);
+				ai.connected_orders.push_back( core::chemical::SingleBond );
 			}
 		}
 	}

@@ -164,6 +164,26 @@ Adduct::stub_atom( int const atm ) const
 	return stub_atom1_;
 }
 
+bool
+Adduct::operator==( Adduct const & other ) const {
+	return adduct_name_ == other.adduct_name_ &&
+		atom_name_ == other.atom_name_ &&
+		atom_type_name_ == other.atom_type_name_ &&
+		mm_atom_type_name_ == other.mm_atom_type_name_ &&
+		stub_atom1_ == other.stub_atom1_ &&
+		stub_atom2_ == other.stub_atom2_ &&
+		stub_atom3_ == other.stub_atom3_ &&
+		atom_charge_ == other.atom_charge_ &&
+		phi_ == other.phi_ &&
+		theta_ == other.theta_ &&
+		d_ == other.d_;
+}
+
+bool
+Adduct::operator!=( Adduct const & other ) const {
+	return ! this->operator==( other );
+}
+
 } // chemical
 } // core
 

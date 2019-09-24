@@ -3189,7 +3189,7 @@ build_next_nucleotide_test()
 	if ( option[in::file::native].user() ) {
 		import_pose::pose_from_file( pose_reference, *rsd_set, option[in::file::native] , core::import_pose::PDB_file);
 		if ( prepend_res ) {
-			ResidueType rsd_type =  pose_reference.residue( 1 ).type();
+			ResidueType const & rsd_type =  pose_reference.residue( 1 ).type();
 			ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type ) ;
 			pose_start.prepend_polymer_residue_before_seqpos( *new_rsd, 1, true );
 		} else {
@@ -3216,7 +3216,7 @@ build_next_nucleotide_test()
 
 	// Now erase last residue, and rebuild last suite-to-suite, from scratch.
 	Size const which_res = prepend_res ? 1 : nres;
-	ResidueType rsd_type =  pose.residue( which_res   ).type();
+	ResidueType const & rsd_type =  pose.residue( which_res   ).type();
 	//pose.delete_polymer_residue( which_res );
 	ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type ) ;
 

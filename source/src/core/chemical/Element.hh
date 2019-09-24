@@ -105,9 +105,17 @@ public:
 	//! @brief virtual copy constructor
 	ElementOP Clone() const;
 
+	void
+	set_index( core::Size setting ) { index_ = setting; }
+
 	/////////////////
 	// data access //
 	/////////////////
+
+	//! @brief Get the index of this element in the parent Element set
+	/// Will be zero if it's not a member.
+	core::Size
+	get_index() const { return index_; }
 
 	//! @brief The element enumeration
 	core::chemical::element::Elements element() const {
@@ -206,6 +214,7 @@ private:
 	// data //
 	//////////
 
+	core::Size             index_;                                    //!< The index of this Element in the parent typeset.
 	core::chemical::element::Elements element_;                       //!< Element enum
 	core::Size             atomic_number_;                            //!< atomic number
 	core::Size             period_;                                   //!< Period

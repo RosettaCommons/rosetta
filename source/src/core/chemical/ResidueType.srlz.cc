@@ -92,12 +92,12 @@ void deserialize_residue_type( Archive & arc, ResidueTypeCOP & ptr )
 			arc( id );
 			if ( id & ::cereal::detail::msb_32bit ) {
 				// Hasn't been loaded yet - do so.
-				ResidueTypeOP mod_restype( new ResidueType(nullptr,nullptr,nullptr,nullptr) );
+				ResidueTypeOP restype( new ResidueType() );
 				// Inform the Archive the pointer which corresponds to this id
 				// (put before loading to handle circular references.)
-				arc.registerSharedPointer( id, mod_restype );
-				arc( *mod_restype ); // Hopefully this is the appropriate way of deserializeing a RT directly
-				ptr = mod_restype;
+				arc.registerSharedPointer( id, restype );
+				arc( *restype ); // Hopefully this is the appropriate way of deserializeing a RT directly
+				ptr = restype;
 			} else {
 				ptr = utility::pointer::static_pointer_cast< ResidueType const >( arc.getSharedPointer(id) );
 			}

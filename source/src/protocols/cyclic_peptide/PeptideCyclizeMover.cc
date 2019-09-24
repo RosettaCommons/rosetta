@@ -344,7 +344,7 @@ PeptideCyclizeMover::parse_my_tag(
 void PeptideCyclizeMover::get_values ( ) {
 	//generating a residue type and getting the values for ideal bond length and angles from it
 	core::chemical::ResidueTypeSetCOP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	core::chemical ::ResidueType new_rsd =standard_residues->name_map("ALA");
+	core::chemical ::ResidueType const & new_rsd =standard_residues->name_map("ALA");
 
 	core::chemical::AtomICoor icoor_lower ( new_rsd.lower_connect().icoor());
 	core::chemical::AtomICoor icoor_upper ( new_rsd.upper_connect().icoor());

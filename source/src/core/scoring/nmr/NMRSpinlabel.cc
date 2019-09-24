@@ -63,7 +63,7 @@ NMRSpinlabel::NMRSpinlabel(
 	std::string const & residue_type
 ) :
 	utility::pointer::ReferenceCount(),
-	residue_type_( new chemical::ResidueType( *((chemical::ChemicalManager::get_instance()->residue_type_set(residue_type_set))->get_representative_type_name3(residue_type)) ) ),
+	residue_type_( chemical::ChemicalManager::get_instance()->residue_type_set(residue_type_set)->get_representative_type_name3(residue_type) ),
 	radical_atom_(""),
 	distance_potential_histogram_file_(""),
 	dummy_ensemble_(nullptr),
@@ -94,7 +94,7 @@ NMRSpinlabel::NMRSpinlabel(
 	NMRDummySpinlabelEnsembleCOP dummy_ensemble
 ) :
 	utility::pointer::ReferenceCount(),
-	residue_type_( new chemical::ResidueType( *residue_type ) ),
+	residue_type_( residue_type ),
 	radical_atom_(radical_atom),
 	distance_potential_histogram_file_(""),
 	dummy_ensemble_( new NMRDummySpinlabelEnsemble( *dummy_ensemble ) ),
@@ -111,7 +111,7 @@ NMRSpinlabel::NMRSpinlabel(
 /// @brief copy constructor
 NMRSpinlabel::NMRSpinlabel(NMRSpinlabel const & other) :
 	utility::pointer::ReferenceCount(other),
-	residue_type_( new chemical::ResidueType( *(other.residue_type_) )),
+	residue_type_( other.residue_type_ ),
 	radical_atom_(other.radical_atom_),
 	distance_potential_histogram_file_(other.distance_potential_histogram_file_),
 	dummy_ensemble_( other.dummy_ensemble_ ? new NMRDummySpinlabelEnsemble( *(other.dummy_ensemble_) ) : nullptr ),
@@ -126,7 +126,7 @@ NMRSpinlabel::NMRSpinlabel(NMRSpinlabel const & other) :
 /// @brief assignment operator
 NMRSpinlabel & NMRSpinlabel::operator=(NMRSpinlabel const & rhs) {
 	if ( this != &rhs ) {
-		residue_type_ = chemical::ResidueTypeCOP( new chemical::ResidueType( *(rhs.residue_type_) ) );
+		residue_type_ = rhs.residue_type_;
 		radical_atom_ = rhs.radical_atom_;
 		distance_potential_histogram_file_ = rhs.distance_potential_histogram_file_;
 		dummy_ensemble_ = rhs.dummy_ensemble_ ? NMRDummySpinlabelEnsembleOP( new NMRDummySpinlabelEnsemble( *(rhs.dummy_ensemble_) ) ) : nullptr;

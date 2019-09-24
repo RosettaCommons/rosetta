@@ -20,6 +20,7 @@
 
 // Unit Headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/Atom.hh>
 
@@ -33,7 +34,7 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/MMAtomType.hh>
-
+#include <core/chemical/AtomProperties.hh>
 
 #include <core/chemical/icoor_support.hh>
 #include <core/chemical/residue_io.hh>
@@ -128,7 +129,7 @@ atom_equivalent( Atom const & one, Atom const & other, bool exact, bool verbose 
 		return false;
 	}
 	// VIRT/X issue with testing runs -- only care about mm type if exact
-	if ( ( exact ) && one.mm_atom_type_index() != other.mm_atom_type_index() )  {
+	if ( ( exact ) && one.mm_name() != other.mm_name() )  {
 		if ( verbose ) TR << "Bad mm atom type. " << one.name() << " " << other.name()  << std::endl;
 		return false;
 	}
@@ -160,29 +161,15 @@ atom_equivalent( Atom const & one, Atom const & other, bool exact, bool verbose 
 		if ( verbose ) TR << "Bad is_hydrogen " << one.name() << " " << other.name()  << std::endl;
 		return false;
 	}
-	if ( one.is_polar_hydrogen() != other.is_polar_hydrogen() ) {
-		if ( verbose ) TR << "Bad is_polar_hydrogen " << one.name() << " " << other.name()  << std::endl;
-		return false;
-	}
-	if ( one.is_haro() != other.is_haro() ) {
-		if ( verbose ) TR << "Bad is_haro " << one.name() << " " << other.name()  << std::endl;
-		return false;
-	}
-	if ( one.is_acceptor() != other.is_acceptor() ) {
-		if ( verbose ) TR << "Bad is_acceptor " << one.name() << " " << other.name()  << std::endl;
-		return false;
-	}
 	if ( one.is_virtual() != other.is_virtual() ) {
 		if ( verbose ) TR << "Bad is_virtual " << one.name() << " " << other.name()  << std::endl;
 		return false;
 	}
-	if ( one.heavyatom_has_polar_hydrogens() != other.heavyatom_has_polar_hydrogens() ) {
-		if ( verbose ) TR << "Bad heavyatom_has_polar_hydrogens " << one.name() << " " << other.name()  << std::endl;
-		return false;
-	}
-	if ( one.has_orbitals() != other.has_orbitals() ) {
-		if ( verbose ) TR << "Bad has_orbitals " << one.name() << " " << other.name()  << std::endl;
-		return false;
+	for ( AtomProperty prop(FIRST_ATOM_PROPERTY); prop <= N_ATOM_PROPERTIES; ++prop ) {
+		if ( one.has_property( prop ) != other.has_property( prop ) ) {
+			if ( verbose ) TR << "Bad properties " << one.name() << " " << other.name()  << std::endl;
+			return false;
+		}
 	}
 
 	return true;
@@ -227,8 +214,9 @@ public:
 	Graph1 const & rsd1_;
 	Graph2 const & rsd2_;
 };
+
 /// @details map is a mapping of VDs of rsd1 to rsd2
-bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd2, VDVDmap & map) {
+bool compare_residues_mapping( MutableResidueType const & rsd1, MutableResidueType const & rsd2, VDVDmap & map) {
 	// First, compare the non-mapping dependant options.
 	if ( rsd1.atom_type_set_ptr() != rsd2.atom_type_set_ptr() ) {
 		TR << "Bad atom type set match." << std::endl;
@@ -256,28 +244,29 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 	}
 	if ( rsd1.is_polymer() != rsd2.is_polymer()  ||
 			rsd1.is_protein() != rsd2.is_protein()  ||
-			rsd1.is_alpha_aa() != rsd2.is_alpha_aa()  ||
-			rsd1.is_beta_aa() != rsd2.is_beta_aa()  ||
+			//rsd1.is_alpha_aa() != rsd2.is_alpha_aa()  ||
+			//rsd1.is_beta_aa() != rsd2.is_beta_aa()  ||
 			rsd1.is_d_aa() != rsd2.is_d_aa()  ||
 			rsd1.is_l_aa() != rsd2.is_l_aa()  ||
 			rsd1.is_DNA() != rsd2.is_DNA()  ||
-			rsd1.is_RNA() != rsd2.is_RNA()  ||
-			rsd1.is_NA() != rsd2.is_NA()  ||
-			rsd1.is_coarse() != rsd2.is_coarse()  ||
-			rsd1.is_ligand() != rsd2.is_ligand()  ||
-			rsd1.is_metal() != rsd2.is_metal()  ||
-			rsd1.is_metalbinding() != rsd2.is_metalbinding()  ||
-			rsd1.is_surface() != rsd2.is_surface()  ||
-			rsd1.is_polar() != rsd2.is_polar()  ||
-			rsd1.is_charged() != rsd2.is_charged()  ||
-			rsd1.is_aromatic() != rsd2.is_aromatic()  ||
-			rsd1.is_cyclic() != rsd2.is_cyclic()  ||
-			rsd1.is_terminus() != rsd2.is_terminus()  ||
-			rsd1.is_lower_terminus() != rsd2.is_lower_terminus()  ||
-			rsd1.is_upper_terminus() != rsd2.is_upper_terminus()  ||
-			rsd1.is_acetylated_nterminus() != rsd2.is_acetylated_nterminus()  ||
-			rsd1.is_virtual_residue() != rsd2.is_virtual_residue()  ||
-			rsd1.is_adduct() != rsd2.is_adduct() ) {
+			rsd1.is_RNA() != rsd2.is_RNA()
+			//rsd1.is_NA() != rsd2.is_NA()  ||
+			//rsd1.is_coarse() != rsd2.is_coarse()  ||
+			//rsd1.is_ligand() != rsd2.is_ligand()  ||
+			//rsd1.is_metal() != rsd2.is_metal()  ||
+			//rsd1.is_metalbinding() != rsd2.is_metalbinding()  ||
+			//rsd1.is_surface() != rsd2.is_surface()  ||
+			//rsd1.is_polar() != rsd2.is_polar()  ||
+			//rsd1.is_charged() != rsd2.is_charged()  ||
+			//rsd1.is_aromatic() != rsd2.is_aromatic()  ||
+			//rsd1.is_cyclic() != rsd2.is_cyclic()  ||
+			//rsd1.is_terminus() != rsd2.is_terminus()  ||
+			//rsd1.is_lower_terminus() != rsd2.is_lower_terminus()  ||
+			//rsd1.is_upper_terminus() != rsd2.is_upper_terminus()  ||
+			//rsd1.is_acetylated_nterminus() != rsd2.is_acetylated_nterminus()  ||
+			//rsd1.is_virtual_residue() != rsd2.is_virtual_residue()  ||
+			//rsd1.is_adduct() != rsd2.is_adduct()
+			) {
 		TR << "Properties mismatch!" << std::endl;
 		TR << rsd1.name() << ": ";
 		utility::vector1< std::string > properties( rsd1.properties().get_list_of_properties() );
@@ -308,30 +297,30 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 		TR << "Wrong nheavyatoms!" << rsd1.nheavyatoms() << " " << rsd2.nheavyatoms() << std::endl;
 		return false;
 	}
-	if ( rsd1.n_hbond_acceptors() != rsd2.n_hbond_acceptors() ) {
-		TR << "Wrong n_hbond_acceptors!" << rsd1.n_hbond_acceptors() << " " << rsd2.n_hbond_acceptors() << std::endl;
-		return false;
-	}
-	if ( rsd1.n_hbond_donors() != rsd2.n_hbond_donors() ) {
-		TR << "Wrong n_hbond_donors!" << rsd1.n_hbond_donors() << " " << rsd2.n_hbond_donors() << std::endl;
-		return false;
-	}
+	//if ( rsd1.n_hbond_acceptors() != rsd2.n_hbond_acceptors() ) {
+	// TR << "Wrong n_hbond_acceptors!" << rsd1.n_hbond_acceptors() << " " << rsd2.n_hbond_acceptors() << std::endl;
+	// return false;
+	//}
+	//if ( rsd1.n_hbond_donors() != rsd2.n_hbond_donors() ) {
+	// TR << "Wrong n_hbond_donors!" << rsd1.n_hbond_donors() << " " << rsd2.n_hbond_donors() << std::endl;
+	// return false;
+	//}
 	if ( rsd1.nbonds() != rsd2.nbonds() ) {
 		TR << "Wrong nbonds!" << rsd1.nbonds() << " " << rsd2.nbonds() << std::endl;
 		return false;
 	}
-	if ( rsd1.last_backbone_atom() != rsd2.last_backbone_atom() ) {
-		TR << "Wrong last_backbone_atom!" << rsd1.last_backbone_atom() << " " << rsd2.last_backbone_atom() << std::endl;
-		return false;
-	}
-	if ( rsd1.first_sidechain_atom() != rsd2.first_sidechain_atom() ) {
-		TR << "Wrong first_sidechain_atom!" << rsd1.first_sidechain_atom() << " " << rsd2.first_sidechain_atom() << std::endl;
-		return false;
-	}
-	if ( rsd1.first_sidechain_hydrogen() != rsd2.first_sidechain_hydrogen() ) {
-		TR << "Wrong first_sidechain_hydrogen!" << rsd1.first_sidechain_hydrogen() << " " << rsd2.first_sidechain_hydrogen() << std::endl;
-		return false;
-	}
+	//if ( rsd1.last_backbone_atom() != rsd2.last_backbone_atom() ) {
+	// TR << "Wrong last_backbone_atom!" << rsd1.last_backbone_atom() << " " << rsd2.last_backbone_atom() << std::endl;
+	// return false;
+	//}
+	//if ( rsd1.first_sidechain_atom() != rsd2.first_sidechain_atom() ) {
+	// TR << "Wrong first_sidechain_atom!" << rsd1.first_sidechain_atom() << " " << rsd2.first_sidechain_atom() << std::endl;
+	// return false;
+	//}
+	//if ( rsd1.first_sidechain_hydrogen() != rsd2.first_sidechain_hydrogen() ) {
+	// TR << "Wrong first_sidechain_hydrogen!" << rsd1.first_sidechain_hydrogen() << " " << rsd2.first_sidechain_hydrogen() << std::endl;
+	// return false;
+	//}
 	if ( rsd1.n_orbitals() != rsd2.n_orbitals() ) {
 		TR << "Wrong n_orbitals!" << rsd1.n_orbitals() << " " << rsd2.n_orbitals() << std::endl;
 		return false;
@@ -374,8 +363,8 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 	}
 
 	//Nbr atom:
-	core::chemical::VD nbr1( rsd1.atom_vertex( rsd1.nbr_atom() ) );
-	core::chemical::VD nbr2( rsd2.atom_vertex( rsd2.nbr_atom() ) );
+	core::chemical::VD nbr1( rsd1.nbr_vertex() );
+	core::chemical::VD nbr2( rsd2.nbr_vertex() );
 	if ( map[ nbr1 ] != nbr2 ) {
 		TR << "Nbr atom mismatch:" << rsd1.atom_name( nbr1 ) << " -> should be " << rsd2.atom_name( map[ nbr1 ] ) << " is " << rsd2.atom_name( nbr2 ) << std::endl;
 		VD nbr2_rev( ResidueGraph::null_vertex() );
@@ -388,8 +377,8 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 		core::Real maxdist( 0 ), maxdist1( 0 ), maxdist2( 0 );
 		core::Vector nbrxyz( rsd1.atom( nbr1 ).ideal_xyz() );
 		core::Vector nbr2xyz( rsd1.atom( nbr2_rev ).ideal_xyz() );
-		for ( core::Size ii(1); ii <= rsd1.natoms(); ++ii ) {
-			if ( rsd1.atom_is_hydrogen( ii ) ) continue;
+		for ( VD ii: rsd1.all_atoms() ) {
+			if ( rsd1.atom( ii ).is_hydrogen() ) continue;
 			core::Real dist( nbrxyz.distance( rsd1.atom(ii).ideal_xyz() ) );
 			if ( dist > maxdist ) {
 				maxdist = dist;
@@ -409,10 +398,10 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 		TR << "Residue 1: residue 2 eq neighbor " << rsd1.atom_name( nbr2_rev ) << " distance to " << maxatom2 << " is " << maxdist2 << std::endl;
 		maxatom = "";
 		maxdist = 0;
-		nbrxyz = rsd2.atom( rsd2.nbr_atom() ).ideal_xyz();
+		nbrxyz = rsd2.atom( rsd2.nbr_vertex() ).ideal_xyz();
 		core::Vector nbr1xyz( rsd2.atom( map[ nbr1 ] ).ideal_xyz() );
-		for ( core::Size ii(1); ii <= rsd2.natoms(); ++ii ) {
-			if ( rsd2.atom_is_hydrogen( ii ) ) continue;
+		for ( VD ii: rsd2.all_atoms() ) {
+			if ( rsd2.atom( ii ).is_hydrogen() ) continue;
 			core::Real dist( nbrxyz.distance( rsd2.atom(ii).ideal_xyz() ) );
 			if ( dist > maxdist ) {
 				maxdist = dist;
@@ -429,7 +418,7 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 			}
 		}
 		TR << "Residue 2: residue 1 eq neighbor " << rsd2.atom_name( map[ nbr1 ] ) << " distance to " << maxatom1 << " is " << maxdist1 << std::endl;
-		TR << "Residue 2: nbr atom " << rsd2.atom_name( rsd2.nbr_atom() ) << " distance to " << maxatom << " is " << maxdist << std::endl;
+		TR << "Residue 2: nbr atom " << rsd2.atom_name( rsd2.nbr_vertex() ) << " distance to " << maxatom << " is " << maxdist << std::endl;
 		return false;
 
 		//Nbr radius:
@@ -453,13 +442,13 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 	}
 	// Chis -- a chi representing each rotatable bond must be present, and the proton states must match.
 	for ( core::Size chi1(1); chi1 <= rsd1.nchi(); ++chi1 ) {
-		AtomIndices const & chiatoms1( rsd1.chi_atoms( chi1 ) );
+		VDs const & chiatoms1( rsd1.chi_atom_vds( chi1 ) );
 		// The center two atoms in the chi -- different outside references may exist.
-		VD mapped2a( map[ rsd1.atom_vertex( chiatoms1[2] ) ] ), mapped2b( map[ rsd1.atom_vertex( chiatoms1[3] ) ] );
+		VD mapped2a( map[ chiatoms1[2] ] ), mapped2b( map[ chiatoms1[3] ] );
 		bool found(false), isproton(false);
 		for ( core::Size chi2(1); chi2 <= rsd2.nchi(); ++chi2 ) {
-			AtomIndices const & chiatoms2( rsd2.chi_atoms( chi2 ) );
-			VD vd2a( rsd2.atom_vertex( chiatoms2[2] ) ), vd2b( rsd2.atom_vertex(chiatoms2[3]) );
+			VDs const & chiatoms2( rsd2.chi_atom_vds( chi2 ) );
+			VD vd2a( chiatoms2[2] ), vd2b( chiatoms2[3] );
 			// The orientation of the bond is allowed to flip
 			if ( ( mapped2a == vd2a && mapped2b == vd2b ) || ( mapped2a == vd2b && mapped2b == vd2a ) ) {
 				found=true;
@@ -470,7 +459,7 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 		if ( ! found ) {
 			TR << "Couldn't find chi matching: " << rsd1.atom_name( chiatoms1[2] ) << " -- " << rsd1.atom_name( chiatoms1[3] ) << std::endl;
 			for ( core::Size chi2(1); chi2 <= rsd2.nchi(); ++chi2 ) {
-				AtomIndices const & chiatoms2( rsd2.chi_atoms( chi2 ) );
+				VDs const & chiatoms2( rsd2.chi_atom_vds( chi2 ) );
 				TR << rsd2.atom_name( chiatoms2[2] ) << " -- " << rsd2.atom_name( chiatoms2[3] ) << std::endl;
 			}
 			return false;
@@ -526,7 +515,7 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 	}
 
 	// Now we call icoor->xyz (on both) and see if they still match
-	ResidueType copy1(rsd1), copy2(rsd2); // Make copy for alteration.
+	MutableResidueType copy1(rsd1), copy2(rsd2); // Make copy for alteration.
 
 	//TR << "------------------- rsd1 ------------------------" <<std::endl;
 	//rsd1.dump_vd_info();
@@ -558,7 +547,7 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 			// Need to go through names as the vds for the copies have changed.
 			std::string const & name1( rsd1.atom_name( iter->first ) );
 			std::string const & name2( rsd2.atom_name( iter->second ) );
-			VD cpvd1( copy1.atom_vertex( copy1.atom_index( name1 ) ) ), cpvd2( copy2.atom_vertex( copy2.atom_index( name2 ) ) );
+			VD cpvd1( copy1.atom_vertex( name1 ) ), cpvd2( copy2.atom_vertex( name2 ) );
 			core::Vector const & coord1( copy1.graph()[ cpvd1 ].ideal_xyz() );
 			core::Vector const & coord2( copy2.graph()[ cpvd2 ].ideal_xyz() );
 			for ( core::Size k = 1; k <= 3; ++k ) { // k = X, Y and Z
@@ -584,7 +573,7 @@ bool compare_residues_mapping( ResidueType const & rsd1, ResidueType const & rsd
 }
 
 /// @brief utility function for seeing if two residue types are "equivalent"
-bool match_restype( ResidueType const & rsd1, ResidueType const & rsd2 ) {
+bool match_restype( MutableResidueType const & rsd1, MutableResidueType const & rsd2 ) {
 	if ( rsd1.natoms() != rsd2.natoms() ) {
 		return false;
 	} // Otherwise we need to assure that rsd1 has fewer atoms than rsd2 for the isomorphism functions.
@@ -653,30 +642,30 @@ public:
 				TR << "------- Comparing  " << molfile << " and " << paramsfile << std::endl;
 
 				// Read reference
-				core::chemical::ResidueTypeOP rsd_ref = read_topology_file(paramsfile, rsd_types );
+				core::chemical::MutableResidueTypeOP rsd_ref = read_topology_file(paramsfile, rsd_types );
 
 				// Read molfile (reader has sensible defaults for typesets in use)
 				utility::vector1< sdf::MolFileIOMoleculeOP > data( molfile_reader.parse_file( molfile ) );
-				utility::vector1< ResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( data, false ) );
+				utility::vector1< MutableResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( data, false ) );
 				TS_ASSERT( rtvec.size() == 1 ); // These should all have a single entry.
 				if ( rtvec.size() > 0 ) {
 					bool restypes_match( match_restype( *rtvec[1], *rsd_ref ) );
 					if ( ! restypes_match ) {
-						core::chemical::write_topology_file( *rtvec[1] );
-						core::chemical::ResidueType const & rsd1( *rtvec[1] );
-						core::chemical::ResidueType const & rsd2( *rsd_ref );
+						//core::chemical::write_topology_file( *rtvec[1] ); // TODO: add params file writer for MutableResidueType
+						core::chemical::MutableResidueType const & rsd1( *rtvec[1] );
+						core::chemical::MutableResidueType const & rsd2( *rsd_ref );
 						core::chemical::sdf::MolWriter write;
 						write.output_residue( rsd1.name() + "_rsd1.sdf", rsd1 );
 						write.output_residue( rsd2.name() + "_rsd2.sdf", rsd2 );
-						core::conformation::ResidueCOP residue1( utility::pointer::make_shared< core::conformation::Residue >( rsd1, true ) );
-						core::conformation::ResidueCOP residue2( utility::pointer::make_shared< core::conformation::Residue >( rsd2, true ) );
-						core::pose::Pose test_pose;
-						test_pose.append_residue_by_jump( *residue1, 1 );
-						test_pose.dump_pdb( rsd1.name() + "_rsd1.pdb" );
-						test_pose.replace_residue( 1, *residue2, false );
-						test_pose.dump_pdb( rsd2.name() + "_rsd2.pdb" );
-						test_pose.replace_residue( 1, *residue1, true );
-						test_pose.dump_pdb( rsd1.name() + "_rsd1_orient.pdb" );
+						//core::conformation::ResidueCOP residue1( utility::pointer::make_shared< core::conformation::Residue >( rsd1, true ) );
+						//core::conformation::ResidueCOP residue2( utility::pointer::make_shared< core::conformation::Residue >( rsd2, true ) );
+						//core::pose::Pose test_pose;
+						//test_pose.append_residue_by_jump( *residue1, 1 );
+						//test_pose.dump_pdb( rsd1.name() + "_rsd1.pdb" );
+						//test_pose.replace_residue( 1, *residue2, false );
+						//test_pose.dump_pdb( rsd2.name() + "_rsd2.pdb" );
+						//test_pose.replace_residue( 1, *residue1, true );
+						//test_pose.dump_pdb( rsd1.name() + "_rsd1_orient.pdb" );
 					} else {
 						TR << ">>>>>>" << rtvec[1]->name() << " PASSES <<<<<<<<" << std::endl;
 					}

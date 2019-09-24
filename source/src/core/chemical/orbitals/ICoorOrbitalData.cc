@@ -38,20 +38,13 @@
 
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 
-//#include <core/chemical/ResidueType.hh>
-//#include <core/conformation/Residue.hh>
-
 // Utility headers
-//#include <utility/exit.hh>
-//#include <numeric/xyz.functions.hh>
 #include <core/kinematics/Stub.hh>
-//#include <core/kinematics/Jump.hh>
-//#include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION
-#include <core/chemical/ResidueGraphTypes.srlz.hh>
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
+#include <cereal/types/string.hpp>
 #endif // SERIALIZATION
 
 namespace core {
@@ -62,13 +55,7 @@ namespace orbitals {
 ICoorOrbitalData::ICoorOrbitalData():
 	phi_(0.0),
 	theta_(0.0),
-	distance_(0.0),
-	stub1_(0),
-	stub2_(0),
-	stub3_(0),
-	vertex1_(nullptr),
-	vertex2_(nullptr),
-	vertex3_(nullptr)
+	distance_(0.0)
 {}
 
 
@@ -77,39 +64,17 @@ ICoorOrbitalData::ICoorOrbitalData(
 	Real phi,
 	Real theta,
 	Real distance,
-	Size stub1,
-	Size stub2,
-	Size stub3,
-	VD vertex1,
-	VD vertex2,
-	VD vertex3
+	std::string const & stub1,
+	std::string const & stub2,
+	std::string const & stub3
 ):
 	phi_(phi),
 	theta_(theta),
 	distance_(distance),
 	stub1_(stub1),
 	stub2_(stub2),
-	stub3_(stub3),
-	vertex1_(vertex1),
-	vertex2_(vertex2),
-	vertex3_(vertex3)
-{
-
-}
-
-void
-ICoorOrbitalData::remap_atom_vds( std::map< VD, VD > const & old_to_new ) {
-	if ( old_to_new.count( vertex1_ ) == 1 ) {
-		vertex1_ = old_to_new.at( vertex1_ );
-	}
-	if ( old_to_new.count( vertex2_ ) == 1 ) {
-		vertex2_ = old_to_new.at( vertex2_ );
-	}
-	if ( old_to_new.count( vertex3_ ) == 1 ) {
-		vertex3_ = old_to_new.at( vertex3_ );
-	}
-}
-
+	stub3_(stub3)
+{}
 
 /// @brief return the phi for a given orbital
 Real ICoorOrbitalData::phi() const
@@ -161,12 +126,9 @@ core::chemical::orbitals::ICoorOrbitalData::save( Archive & arc ) const {
 	arc( CEREAL_NVP( phi_ ) ); // Real
 	arc( CEREAL_NVP( theta_ ) ); // Real
 	arc( CEREAL_NVP( distance_ ) ); // Real
-	arc( CEREAL_NVP( stub1_ ) ); // Size
-	arc( CEREAL_NVP( stub2_ ) ); // Size
-	arc( CEREAL_NVP( stub3_ ) ); // Size
-	SERIALIZE_VD( arc, vertex1_ ); // EXEMPT vertex1_
-	SERIALIZE_VD( arc, vertex2_ ); // EXEMPT vertex2_
-	SERIALIZE_VD( arc, vertex3_ ); // EXEMPT vertex3_
+	arc( CEREAL_NVP( stub1_ ) ); // std::string
+	arc( CEREAL_NVP( stub2_ ) ); // std::string
+	arc( CEREAL_NVP( stub3_ ) ); // std::string
 }
 
 /// @brief Automatically generated deserialization method
@@ -176,12 +138,9 @@ core::chemical::orbitals::ICoorOrbitalData::load( Archive & arc ) {
 	arc( phi_ ); // Real
 	arc( theta_ ); // Real
 	arc( distance_ ); // Real
-	arc( stub1_ ); // Size
-	arc( stub2_ ); // Size
-	arc( stub3_ ); // Size
-	DESERIALIZE_VD( arc, vertex1_ ); // EXEMPT vertex1_
-	DESERIALIZE_VD( arc, vertex2_ ); // EXEMPT vertex2_
-	DESERIALIZE_VD( arc, vertex3_ ); // EXEMPT vertex3_
+	arc( stub1_ ); // std::string
+	arc( stub2_ ); // std::string
+	arc( stub3_ ); // std::string
 }
 SAVE_AND_LOAD_SERIALIZABLE( core::chemical::orbitals::ICoorOrbitalData );
 #endif // SERIALIZATION
