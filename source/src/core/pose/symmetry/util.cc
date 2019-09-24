@@ -562,6 +562,12 @@ extract_asymmetric_unit_pdb_info(
 
 		//std::cout << "Remap: " << res << " to " << res_id << chn_id << std::endl;
 
+		// keep info labels
+		utility::vector1 < std::string > reslabels_for_res = pdb_info_src->get_reslabels(res);
+		for ( auto const &reslabel : reslabels_for_res ) {
+			pdb_info_target->add_reslabel( res, reslabel );
+		}
+
 		// symmetrize B's
 		// there may be a CYD<->CYS switch
 		// account for this
