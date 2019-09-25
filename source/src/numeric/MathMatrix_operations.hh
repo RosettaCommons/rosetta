@@ -107,7 +107,7 @@ MathMatrix< T> & operator += ( MathMatrix< T> &MATRIX_LHS, const T &VALUE )
 		(
 		MATRIX_LHS.begin(), MATRIX_LHS.end(),
 		MATRIX_LHS.begin(),
-		std::bind2nd( std::plus< T>(), VALUE)
+		std::bind( std::plus< T>(), std::placeholders::_1, VALUE)
 	);
 
 	return MATRIX_LHS;
@@ -125,7 +125,7 @@ MathMatrix< T> & operator -= ( MathMatrix< T> &MATRIX_LHS, const T &VALUE )
 		(
 		MATRIX_LHS.begin(), MATRIX_LHS.end(),
 		MATRIX_LHS.begin(),
-		std::bind2nd( std::minus< T>(), VALUE)
+		std::bind( std::minus< T>(), std::placeholders::_1, VALUE)
 	);
 
 	return MATRIX_LHS;
@@ -143,7 +143,7 @@ MathMatrix< T> & operator *= ( MathMatrix< T> &MATRIX_LHS, const T &SCALAR )
 		(
 		MATRIX_LHS.begin(), MATRIX_LHS.end(),
 		MATRIX_LHS.begin(),
-		std::bind2nd( std::multiplies< T>(), SCALAR)
+		std::bind( std::multiplies< T>(), std::placeholders::_1, SCALAR)
 	);
 
 	return MATRIX_LHS;
@@ -161,7 +161,7 @@ MathMatrix< T> & operator /= ( MathMatrix< T> &MATRIX_LHS, const T &SCALAR )
 		(
 		MATRIX_LHS.begin(), MATRIX_LHS.end(),
 		MATRIX_LHS.begin(),
-		std::bind2nd( std::divides< T>(), SCALAR)
+		std::bind( std::divides< T>(), std::placeholders::_1, SCALAR)
 	);
 
 	return MATRIX_LHS;
@@ -210,7 +210,7 @@ bool operator == ( const MathMatrix< T> &MATRIX_LHS, const T &VALUE_RHS )
 	return std::find_if
 		(
 		MATRIX_LHS.begin(), MATRIX_LHS.end(),
-		std::bind2nd( std::not_equal_to< T>(), VALUE_RHS)
+		std::bind( std::not_equal_to< T>(), std::placeholders::_1, VALUE_RHS)
 		) == MATRIX_LHS.end();
 }
 
@@ -236,7 +236,7 @@ bool operator != ( const MathMatrix< T> &MATRIX_LHS, const T &VALUE_RHS )
 	return std::find_if
 		(
 		MATRIX_LHS.begin(), MATRIX_LHS.end(),
-		std::bind2nd( std::not_equal_to< T>(), VALUE_RHS)
+		std::bind( std::not_equal_to< T>(), std::placeholders::_1, VALUE_RHS)
 		) != MATRIX_LHS.end();
 }
 
