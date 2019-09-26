@@ -699,70 +699,70 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
 //added by LS Aug 2011
 //Auxillary functions for compute_dipscore_nls
-double frdc( double r0, double r1, double r2, double rdcconst, const double *par)
+core::Real frdc( core::Real r0, core::Real r1, core::Real r2, core::Real rdcconst, const core::Real *par)
 {
-	double Ax=par[0];
-	double Ay=par[1];
-	double Az=-par[0]-par[1];
+	core::Real Ax=par[0];
+	core::Real Ay=par[1];
+	core::Real Az=-par[0]-par[1];
 	//use radius instead
-	double a=par[2];
-	double b=par[3];
-	double c=par[4];
-	double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
-	double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
-	double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
+	core::Real a=par[2];
+	core::Real b=par[3];
+	core::Real c=par[4];
+	core::Real rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
+	core::Real rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
+	core::Real rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
 	return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
 }//frdc
 
-double frdcDa( double r0, double r1, double r2, double rdcconst, double const tensorDa, const double *par)
+core::Real frdcDa( core::Real r0, core::Real r1, core::Real r2, core::Real rdcconst, core::Real const tensorDa, const core::Real *par)
 {
-	double Ax=(3.0*par[0]/2.0-1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
-	double Ay=-(3.0*par[0]/2.0+1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
-	double Az=2.0*tensorDa/(36.5089/1.041/1.041/1.041);
+	core::Real Ax=(3.0*par[0]/2.0-1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
+	core::Real Ay=-(3.0*par[0]/2.0+1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
+	core::Real Az=2.0*tensorDa/(36.5089/1.041/1.041/1.041);
 	//use radius instead
-	double a=par[1];
-	double b=par[2];
-	double c=par[3];
-	double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
-	double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
-	double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
+	core::Real a=par[1];
+	core::Real b=par[2];
+	core::Real c=par[3];
+	core::Real rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
+	core::Real rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
+	core::Real rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
 	return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
 }//frdcDa
 
-double frdcR( double r0, double r1, double r2, double rdcconst, double const tensorR, const double *par)
+core::Real frdcR( core::Real r0, core::Real r1, core::Real r2, core::Real rdcconst, core::Real const tensorR, const core::Real *par)
 {
-	double Ax=(3.0*tensorR/2.0-1.0)*par[0]/(36.5089/1.041/1.041/1.041);
-	double Ay=-(3.0*tensorR/2.0+1.0)*par[0]/(36.5089/1.041/1.041/1.041);
-	double Az=2.0*par[0]/(36.5089/1.041/1.041/1.041);
+	core::Real Ax=(3.0*tensorR/2.0-1.0)*par[0]/(36.5089/1.041/1.041/1.041);
+	core::Real Ay=-(3.0*tensorR/2.0+1.0)*par[0]/(36.5089/1.041/1.041/1.041);
+	core::Real Az=2.0*par[0]/(36.5089/1.041/1.041/1.041);
 	//use radius instead
-	double a=par[1];
-	double b=par[2];
-	double c=par[3];
-	double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
-	double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
-	double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
+	core::Real a=par[1];
+	core::Real b=par[2];
+	core::Real c=par[3];
+	core::Real rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
+	core::Real rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
+	core::Real rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
 	return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
 }//frdcR
 
-double frdcDaR( double r0, double r1, double r2, double rdcconst, double const tensorDa, double const tensorR, const double *par)
+core::Real frdcDaR( core::Real r0, core::Real r1, core::Real r2, core::Real rdcconst, core::Real const tensorDa, core::Real const tensorR, const core::Real *par)
 {
-	double Ax=(3.0*tensorR/2.0-1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
-	double Ay=-(3.0*tensorR/2.0+1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
-	double Az=2.0*tensorDa/(36.5089/1.041/1.041/1.041);
+	core::Real Ax=(3.0*tensorR/2.0-1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
+	core::Real Ay=-(3.0*tensorR/2.0+1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
+	core::Real Az=2.0*tensorDa/(36.5089/1.041/1.041/1.041);
 	//use radius instead
-	double a=par[0];
-	double b=par[1];
-	double c=par[2];
-	double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
-	double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
-	double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
+	core::Real a=par[0];
+	core::Real b=par[1];
+	core::Real c=par[2];
+	core::Real rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
+	core::Real rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
+	core::Real rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
 	return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
 }//frdcDaR
 
 class data_struct {
 public:
 
-	data_struct( double* _r0, double* _r1, double* _r2, double* _rdc, double* _rdcconst, double* _rdcweight, double _tensorDa, double _tensorR, int _type_of_computation) :
+	data_struct( core::Real* _r0, core::Real* _r1, core::Real* _r2, core::Real* _rdc, core::Real* _rdcconst, core::Real* _rdcweight, core::Real _tensorDa, core::Real _tensorR, int _type_of_computation) :
 		r0( _r0 ),
 		r1( _r1 ),
 		r2( _r2 ),
@@ -774,18 +774,18 @@ public:
 		type_of_computation( _type_of_computation )
 	{ }
 
-	double *r0, *r1, *r2;
-	double *rdc;
-	double *rdcconst;
-	double *rdcweight;
-	double const tensorDa;
-	double const tensorR;
+	core::Real *r0, *r1, *r2;
+	core::Real *rdc;
+	core::Real *rdcconst;
+	core::Real *rdcweight;
+	core::Real const tensorDa;
+	core::Real const tensorR;
 	int type_of_computation;
 
 };
 
 //Evaluaterdc function required by lmmin
-void evaluaterdc(const double *par, int m_dat, const void *data, double *fvec, int * ) {
+void evaluaterdc(const core::Real *par, int m_dat, const void *data, core::Real *fvec, int * ) {
 	// amw: we could make this more concise but we are being very careful to be super explicit
 	// that we are not using tensorR in cases where it is its default for example
 	data_struct *mydata;
@@ -913,8 +913,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 	int n_par = 3; // number of parameters in model function frdcR
 	int nrepeat = basic::options::option[ basic::options::OptionKeys::rdc::nlsrepeat ](); // number of repeat lmfit
 
-	std::vector<double> parbest(n_par*nex_);
-	std::vector<double> par(n_par*nex_);
+	std::vector<core::Real> parbest(n_par*nex_);
+	std::vector<core::Real> par(n_par*nex_);
 
 	int i,j;
 	Size prelen=0;
@@ -932,8 +932,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 		}
 
 		//perform lmfit on each exp
-		double p1 = -99999;
-		double p2 = -99999;
+		core::Real p1 = -99999;
+		core::Real p2 = -99999;
 		if ( type_of_computation == NLSR ) {
 			p2 = tensorR[ex+1];
 		} else if ( type_of_computation == NLSDA ) {
@@ -959,7 +959,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 			}
 		}
 
-		double bestnorm = 1e12;
+		core::Real bestnorm = 1e12;
 
 		for ( j = 0; j < nrepeat; j++ ) {
 			//random starting value
@@ -988,8 +988,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 			par[ex*n_par+i]=parbest[ex*n_par+i];
 		}
 
-		double Ax = 0;
-		double Ay = 0;
+		core::Real Ax = 0;
+		core::Real Ay = 0;
 		//sort the right order Ax<Ay and calculate Da and R
 		if ( type_of_computation == NLS ) {
 			if ( parbest[ex*n_par+0]>0 ) {
@@ -1280,7 +1280,7 @@ void ResidualDipolarCoupling::show_tensor_stats( std::ostream& out, Size ex ) co
 	out << F( width, precision, Aa ) << F( width, precision, Ar ) << F( width, precision, rhombicity ) << std::endl;
 }
 
-void ResidualDipolarCoupling::show_tensor_stats_nls( std::ostream& out, Size, const double *par) const {
+void ResidualDipolarCoupling::show_tensor_stats_nls( std::ostream& out, Size, const core::Real *par) const {
 	using namespace ObjexxFCL;
 	using namespace ObjexxFCL::format;
 

@@ -63,7 +63,7 @@ public:
 	inline int get_natoms() { return natoms_; }
 	static std::string const chains;
 	int natoms_;
-	std::vector<double> x, y, z, charge, radius;
+	std::vector<core::Real> x, y, z, charge, radius;
 };
 ///-------------------------------------------------------------------------------------
 /// APBSResult
@@ -76,26 +76,26 @@ public:
 		int write_kappa, int write_diel, int write_atompot ) ;
 	~APBSResult() override;
 
-	std::vector<double> esEnergy;
-	std::vector<double> npEnergy;
-	std::vector<double> dx;
-	std::vector<double> dy;
-	std::vector<double> dz;
-	std::vector<double> qfx;
-	std::vector<double> qfy;
-	std::vector<double> qfz;
-	std::vector<double> ibx;
-	std::vector<double> iby;
-	std::vector<double> ibz;
-	std::vector<double> npx;
-	std::vector<double> npy;
-	std::vector<double> npz;
-	std::vector<double> dbx;
-	std::vector<double> dby;
-	std::vector<double> dbz;
+	std::vector<core::Real> esEnergy;
+	std::vector<core::Real> npEnergy;
+	std::vector<core::Real> dx;
+	std::vector<core::Real> dy;
+	std::vector<core::Real> dz;
+	std::vector<core::Real> qfx;
+	std::vector<core::Real> qfy;
+	std::vector<core::Real> qfz;
+	std::vector<core::Real> ibx;
+	std::vector<core::Real> iby;
+	std::vector<core::Real> ibz;
+	std::vector<core::Real> npx;
+	std::vector<core::Real> npy;
+	std::vector<core::Real> npz;
+	std::vector<core::Real> dbx;
+	std::vector<core::Real> dby;
+	std::vector<core::Real> dbz;
 	int nwrites;
-	double grid_meta[13];
-	std::vector< std::vector<double> > grid_data;
+	core::Real grid_meta[13];
+	std::vector< std::vector<core::Real> > grid_data;
 };
 ///-------------------------------------------------------------------------------------
 /// APBSConfig
@@ -147,12 +147,12 @@ public:
 	///---------------------------------------------------------
 	class R_PARAM : public utility::pointer::ReferenceCount
 	{
-		mutable double array[9];
+		mutable core::Real array[9];
 	public:
-		double pdie, nsdie, srad, swin, temp, sdens, gamma, smpbe_vol, smpbe_size;
+		core::Real pdie, nsdie, srad, swin, temp, sdens, gamma, smpbe_vol, smpbe_size;
 		R_PARAM();
 		~R_PARAM() override;
-		double * raw_array();
+		core::Real * raw_array();
 	};
 
 	APBSConfig(pose::Pose const & pose, int natoms, int dbg, bool calcenergy, id::AtomID_Map<bool> const & present_atoms);
@@ -168,23 +168,23 @@ public:
 	int natoms;
 
 	// Grid generation parameters:
-	double cfac;
-	double fadd;
-	double space;
+	core::Real cfac;
+	core::Real fadd;
+	core::Real space;
 
 	// APBS config parameters
-	double grid[3];  // For manual & energy
+	core::Real grid[3];  // For manual & energy
 	int dime[3];
 	int pdime[3];  // Non 1 for parallel
-	double glen[3]; // manual only
-	double center[3]; // manual only
-	double cglen[3];
-	double fglen[3];
-	double ccenter[3];
-	double fcenter[3];
+	core::Real glen[3]; // manual only
+	core::Real center[3]; // manual only
+	core::Real cglen[3];
+	core::Real fglen[3];
+	core::Real ccenter[3];
+	core::Real fcenter[3];
 
-	double ionq[4], ionc[4], ionr[4];
-	double ofrac; // parallel only
+	core::Real ionq[4], ionc[4], ionr[4];
+	core::Real ofrac; // parallel only
 	I_PARAM i_param;
 	R_PARAM r_param;
 

@@ -40,12 +40,12 @@ inline float pos_mod(float x,float y) {
 	float r=std::fmod(x,y); if ( r<0 ) r+=y;
 	return r;
 }
-inline double pos_mod(double x,double y) {
-	double r=std::fmod(x,y); if ( r<0 ) r+=y;
+inline core::Real pos_mod(core::Real x,core::Real y) {
+	core::Real r=std::fmod(x,y); if ( r<0 ) r+=y;
 	return r;
 }
 inline float  square(float  x) { return (x*x); }
-inline double square(double x) { return (x*x); }
+inline core::Real square(core::Real x) { return (x*x); }
 
 // weight from scattering factors
 // single-gaussian approx
@@ -163,7 +163,7 @@ bool factorsLTE19(int X) {
 }
 
 
-int findSampling5(double MINSMP, int NMUL) {
+int findSampling5(core::Real MINSMP, int NMUL) {
 	if ( MINSMP <= 0 ) return NMUL;
 
 	// multiple of nmul nearest minsmp
@@ -177,7 +177,7 @@ int findSampling5(double MINSMP, int NMUL) {
 }
 
 
-int findSampling(double MINSMP, int NMUL) {
+int findSampling(core::Real MINSMP, int NMUL) {
 	if ( MINSMP <= 0 ) return NMUL;
 
 	// multiple of nmul nearest minsmp

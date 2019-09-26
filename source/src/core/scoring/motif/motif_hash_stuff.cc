@@ -140,8 +140,10 @@ using utility::vector1;
 using numeric::geometry::hashing::Real3;
 
 /************************************************ helpers ***********************************************/
-static inline double sqr(double const & x) { return x*x; }
-static inline float  sqr(float  const & x) { return x*x; }
+//static inline double sqr(double const & x) { return x*x; }
+//static inline float  sqr(float  const & x) { return x*x; }
+template< typename T >
+static inline T sqr(T const & x) { return x*x; }
 
 
 static inline Real uint16_to_real(uint16_t const & val, Real const & lb, Real const & ub){

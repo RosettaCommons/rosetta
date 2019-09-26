@@ -149,7 +149,7 @@ void SequenceProfile::read_from_checkpoint(
 
 void SequenceProfile::read_from_binary_chk(utility::file::FileName const & fn) {
 
-	double x = 0;
+	core::Real x = 0;
 	char bb4[4];
 	std::ifstream myfile (fn.name().c_str(), std::ios::in|std::ios::binary);
 	if ( !myfile ) {
@@ -202,12 +202,12 @@ void SequenceProfile::read_from_binary_chk(utility::file::FileName const & fn) {
 	tr.Debug << "Read sequence " << strSeq << " from  " << fn << std::endl;
 
 	char bb8[8];
-	//double row[20]; /// @ralford werror catches as an unused var 3/26/14
+	//core::Real row[20]; /// @ralford werror catches as an unused var 3/26/14
 	for ( int i = 0; i < seqLength; i++ ) {
 		utility::vector1< Real > prof_row;
 		for ( int j = 0; j < 20; j++ ) {
 			myfile.read(bb8,8);
-			std::copy(bb8, bb8 + sizeof(double), reinterpret_cast<char*>(&x));
+			std::copy(bb8, bb8 + sizeof(core::Real), reinterpret_cast<char*>(&x));
 			//        x = swap(x);
 			std::cout << std::fixed<<std::setw(7)<<std::setprecision(4)<<x<<" ";
 			prof_row.push_back(x);
@@ -381,7 +381,7 @@ SequenceProfile::occurrence_data() const {
 /// @brief Multiply all profile weights by factor
 void SequenceProfile::rescale(core::Real factor) {
 	for ( Size ii = 1; ii <= profile().size(); ++ii ) {
-		for ( double & it : profile_[ii] ) {
+		for ( core::Real & it : profile_[ii] ) {
 			it *= factor;
 		}
 	}
@@ -523,7 +523,7 @@ void SequenceProfile::scores_to_probs_(
 	// calculate partition (aka Z), with this definition:
 	// Z = sum( exp( score / kT ) )
 	core::Real partition( 0.0 );
-	for ( double & score : scores ) {
+	for ( core::Real & score : scores ) {
 		if ( negative_better ) {
 			score = exp( -1 * score / kT );
 		} else {
@@ -534,7 +534,7 @@ void SequenceProfile::scores_to_probs_(
 
 	// transform scores using the partition calculated above:
 	// P(s) = exp( -1  * score / kT ) ) / Z
-	for ( double & score : scores ) {
+	for ( core::Real & score : scores ) {
 		score = score / partition;
 	}
 } // scores_to_probs_

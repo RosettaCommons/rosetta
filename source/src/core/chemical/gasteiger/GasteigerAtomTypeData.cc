@@ -116,8 +116,8 @@ GasteigerAtomTypeData::GasteigerAtomTypeData() :
 	pi_contribution_( Zero)
 {
 	// make all the properties undefined
-	for ( double & propertie : properties_ ) {
-		propertie = utility::get_undefined_real();
+	for ( core::Real & property : properties_ ) {
+		property = utility::get_undefined_real();
 	}
 }
 
@@ -226,8 +226,8 @@ GasteigerAtomTypeData::GasteigerAtomTypeData
 	pi_contribution_( Zero)
 {
 	// make all the properties undefined
-	for ( double & propertie : properties_ ) {
-		propertie = utility::get_undefined_real();
+	for ( core::Real & property : properties_ ) {
+		property = utility::get_undefined_real();
 	}
 }
 

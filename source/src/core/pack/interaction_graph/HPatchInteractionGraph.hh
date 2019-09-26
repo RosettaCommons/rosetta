@@ -915,7 +915,7 @@ void HPatchNode< V, E, G >::set_rotamer_dots_for_state( Size state, RotamerDots 
 template < typename V, typename E, typename G >
 bool HPatchNode< V, E, G >::overlaps( HPatchNode< V, E, G >* neighbor ) {
 
-	//static double time_spent_here( 0.0 );
+	//static core::Real time_spent_here( 0.0 );
 	bool found_overlap = false;
 
 	//TR_NODE << "overlaps(): num_states: " << parent::get_num_states() << ", neighbors num_states: " << neighbor->get_num_states() << std::endl;

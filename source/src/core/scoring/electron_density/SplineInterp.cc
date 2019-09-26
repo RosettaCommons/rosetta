@@ -31,9 +31,9 @@ namespace scoring {
 namespace electron_density {
 namespace SplineInterp {
 
-void put_line3(double* data, int dim, int x1, int x2, const double line[], const int dims[]) {
+void put_line3(core::Real* data, int dim, int x1, int x2, const core::Real line[], const int dims[]) {
 	int i, inc;
-	double* ptr;
+	core::Real* ptr;
 
 	if ( dim == 0 ) {          // x1 == y, x2 == z
 		ptr = &data[x1*dims[2] + x2];
@@ -53,9 +53,9 @@ void put_line3(double* data, int dim, int x1, int x2, const double line[], const
 }
 
 
-void get_line3(double* data, int dim, int x1, int x2, double line[], const int dims[]) {
+void get_line3(core::Real* data, int dim, int x1, int x2, core::Real line[], const int dims[]) {
 	int i, inc;
-	double* ptr;
+	core::Real* ptr;
 
 	if ( dim == 0 ) {          // x1 == y, x2 == z
 		ptr = &data[x1*dims[2] + x2];
@@ -74,9 +74,9 @@ void get_line3(double* data, int dim, int x1, int x2, double line[], const int d
 	}
 }
 
-void put_line4(double* data, int dim, int x1, int x2, int x3, const double line[], const int dims[]) {
+void put_line4(core::Real* data, int dim, int x1, int x2, int x3, const core::Real line[], const int dims[]) {
 	int i, inc;
-	double* ptr;
+	core::Real* ptr;
 
 	if ( dim == 0 ) {          // x1 == y, x2 == z, x3 == w
 		ptr = &data[x1*dims[2]*dims[3] + x2*dims[3] + x3];
@@ -99,9 +99,9 @@ void put_line4(double* data, int dim, int x1, int x2, int x3, const double line[
 }
 
 
-void get_line4(double* data, int dim, int x1, int x2, int x3, double line[], const int dims[]) {
+void get_line4(core::Real* data, int dim, int x1, int x2, int x3, core::Real line[], const int dims[]) {
 	int i, inc;
-	double* ptr;
+	core::Real* ptr;
 
 	if ( dim == 0 ) {          // x1 == y, x2 == z, x3 == w
 		ptr = &data[x1*dims[2]*dims[3] + x2*dims[3] + x3];
@@ -123,14 +123,14 @@ void get_line4(double* data, int dim, int x1, int x2, int x3, double line[], con
 	}
 }
 
-static double InitialCausalCoefficient (
-	const double c[],       // coefficients
+static core::Real InitialCausalCoefficient (
+	const core::Real c[],       // coefficients
 	long DataLength,  // number of coefficients
-	double z,         // actual pole
-	double Tolerance, // admissible relative error
+	core::Real z,         // actual pole
+	core::Real Tolerance, // admissible relative error
 	bool Mirrored     // mirror boundary?
 ) {
-	double Sum, zn;
+	core::Real Sum, zn;
 	long n, Horizon;
 
 	// this initialization corresponds to mirror boundaries
@@ -173,8 +173,8 @@ static double InitialCausalCoefficient (
 		} else {
 			// full loop
 			zn = z;
-			double iz = 1.0 / z;
-			double z2n = std::pow(z, (double)(DataLength - 1));
+			core::Real iz = 1.0 / z;
+			core::Real z2n = std::pow(z, (core::Real)(DataLength - 1));
 			Sum = c[0] + z2n * c[DataLength - 1];
 			z2n *= z2n * iz;
 			for ( n = 1L; n <= DataLength - 2; n++ ) {
@@ -188,11 +188,11 @@ static double InitialCausalCoefficient (
 }
 
 
-static double InitialAntiCausalCoefficient (
-	const double c[],       // coefficients
+static core::Real InitialAntiCausalCoefficient (
+	const core::Real c[],       // coefficients
 	long DataLength,  // number of coefficients
-	double z,         // actual pole
-	double Tolerance, // admissible relative error
+	core::Real z,         // actual pole
+	core::Real Tolerance, // admissible relative error
 	bool Mirrored     // mirror boundary?
 ) {
 	if ( !Mirrored ) {
@@ -204,16 +204,16 @@ static double InitialAntiCausalCoefficient (
 		}
 
 		if ( Horizon < DataLength ) {
-			double zn = z;
-			double Sum = c[DataLength-1];
+			core::Real zn = z;
+			core::Real Sum = c[DataLength-1];
 			for ( int n = 0L; n < Horizon; n++ ) {
 				Sum += zn * c[n];
 				zn *= z;
 			}
 			return(-z*Sum);
 		} else {
-			double zn = z;
-			double Sum = c[DataLength-1];
+			core::Real zn = z;
+			core::Real Sum = c[DataLength-1];
 			for ( int n = 0L; n < DataLength-1; n++ ) {
 				Sum += zn * c[n];
 				zn *= z;
@@ -227,14 +227,14 @@ static double InitialAntiCausalCoefficient (
 
 
 void ConvertToInterpolationCoefficients (
-	double c[],      // input samples --> output coefficients
+	core::Real c[],      // input samples --> output coefficients
 	long   DataLength,// number of samples or coefficients
-	double z[],       // poles
+	core::Real z[],       // poles
 	long   NbPoles,   // number of poles
-	double Tolerance, // admissible relative error
+	core::Real Tolerance, // admissible relative error
 	bool   Mirrored   // mirror boundary?
 ) {
-	double Lambda = 1.0;
+	core::Real Lambda = 1.0;
 	long n, k;
 
 	// special case required by mirror boundaries
@@ -268,9 +268,9 @@ void ConvertToInterpolationCoefficients (
 
 //////////////////////////////////
 
-int compute_coefficients3(double *data, int dims[3], bool mirrored) {
-	std::vector< double > line;
-	double Pole[2];
+int compute_coefficients3(core::Real *data, int dims[3], bool mirrored) {
+	std::vector< core::Real > line;
+	core::Real Pole[2];
 	int NbPoles;
 	int x,y,z;
 
@@ -279,7 +279,7 @@ int compute_coefficients3(double *data, int dims[3], bool mirrored) {
 
 	// convert the image samples into interpolation coefficients
 	// in-place separable process, along x
-	//line = (double *)malloc((size_t)(dims[0] * sizeof(double)));
+	//line = (core::Real *)malloc((size_t)(dims[0] * sizeof(core::Real)));
 	line.resize( dims[0] );
 	if ( (int)line.size() != dims[0] ) { std::cerr << "Row allocation failed\n"; return(1); }
 	for ( y = 0L; y < dims[1]; y++ ) {
@@ -291,7 +291,7 @@ int compute_coefficients3(double *data, int dims[3], bool mirrored) {
 	}
 
 	// in-place separable process, along y
-	//line = (double *)malloc((size_t)(dims[1] * sizeof(double)));
+	//line = (core::Real *)malloc((size_t)(dims[1] * sizeof(core::Real)));
 	line.resize( dims[1] );
 	if ( (int)line.size() != dims[1] ) { std::cerr << "Row allocation failed\n"; return(1); }
 	for ( x = 0L; x < dims[0]; x++ ) {
@@ -303,7 +303,7 @@ int compute_coefficients3(double *data, int dims[3], bool mirrored) {
 	}
 
 	// in-place separable process, along z
-	//line = (double *)malloc((size_t)(dims[2] * sizeof(double)));
+	//line = (core::Real *)malloc((size_t)(dims[2] * sizeof(core::Real)));
 	line.resize( dims[2] );
 	if ( (int)line.size() != dims[2] ) { std::cerr << "Row allocation failed\n"; return(1); }
 	for ( x = 0L; x < dims[0]; x++ ) {
@@ -317,17 +317,17 @@ int compute_coefficients3(double *data, int dims[3], bool mirrored) {
 	return(0);
 }
 
-int grad3(double grad[3], const double *Bcoeff, const int dims[3], double X[3], bool mirrored) {
-	return grad3< double >( grad, Bcoeff, dims, X, mirrored );
+int grad3(core::Real grad[3], const core::Real *Bcoeff, const int dims[3], core::Real X[3], bool mirrored) {
+	return grad3< core::Real >( grad, Bcoeff, dims, X, mirrored );
 }
 
-double interp3(const double *Bcoeff, const int dims[3], double X[3], bool mirrored) {
-	return interp3< double > ( Bcoeff, dims, X, mirrored );
+core::Real interp3(const core::Real *Bcoeff, const int dims[3], core::Real X[3], bool mirrored) {
+	return interp3< core::Real > ( Bcoeff, dims, X, mirrored );
 }
 
-int compute_coefficients4(double *data, int dims[4]) {
-	std::vector< double > line;
-	double Pole[2];
+int compute_coefficients4(core::Real *data, int dims[4]) {
+	std::vector< core::Real > line;
+	core::Real Pole[2];
 	int NbPoles;
 	int x,y,z,w;
 
@@ -391,10 +391,10 @@ int compute_coefficients4(double *data, int dims[4]) {
 }
 
 
-int grad4(double grad[4], const double *Bcoeff, const int dims[4], double X[4]) {
-	double wt[4][4];
-	double w;
-	double sum_l, sum_kl, sum_jkl;
+int grad4(core::Real grad[4], const core::Real *Bcoeff, const int dims[4], core::Real X[4]) {
+	core::Real wt[4][4];
+	core::Real w;
+	core::Real sum_l, sum_kl, sum_jkl;
 	int idx[4][4];
 	int i,j,k,l, pt, dim, gradDim;
 
@@ -408,13 +408,13 @@ int grad4(double grad[4], const double *Bcoeff, const int dims[4], double X[4]) 
 
 			// compute the interpolation weights
 			if ( dim == gradDim ) {
-				w = X[dim] - (double)idx[dim][1];
+				w = X[dim] - (core::Real)idx[dim][1];
 				wt[dim][3] = (1.0 / 2.0) * w * w;
 				wt[dim][0] = (w - 1.0/2.0) - wt[dim][3];
 				wt[dim][2] = 1.0 + wt[dim][0] - 2.0 * wt[dim][3];
 				wt[dim][1] = - wt[dim][0] - wt[dim][2] - wt[dim][3];
 			} else {
-				w = X[dim] - (double)idx[dim][1];
+				w = X[dim] - (core::Real)idx[dim][1];
 				wt[dim][3] = (1.0 / 6.0) * w * w * w;
 				wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
 				wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
@@ -472,9 +472,9 @@ int grad4(double grad[4], const double *Bcoeff, const int dims[4], double X[4]) 
 }
 
 
-double interp4(const double *Bcoeff, const int dims[4], double X[4]) {
-	double wt[4][4];
-	double value;
+core::Real interp4(const core::Real *Bcoeff, const int dims[4], core::Real X[4]) {
+	core::Real wt[4][4];
+	core::Real value;
 	int idx[4][4];
 	int i,j,k,l, dim;
 
@@ -486,7 +486,7 @@ double interp4(const double *Bcoeff, const int dims[4], double X[4]) {
 		}
 
 		// interpolation weights
-		double w = X[dim] - (double)idx[dim][1];
+		core::Real w = X[dim] - (core::Real)idx[dim][1];
 		wt[dim][3] = (1.0 / 6.0) * w * w * w;
 		wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
 		wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
@@ -518,11 +518,11 @@ double interp4(const double *Bcoeff, const int dims[4], double X[4]) {
 
 	value = 0.0;
 	for ( i = 0; i <= 3; i++ ) {  // x
-		double sum_jkl = 0.0;
+		core::Real sum_jkl = 0.0;
 		for ( j = 0; j <= 3; j++ ) {  // y
-			double sum_kl = 0.0;
+			core::Real sum_kl = 0.0;
 			for ( k = 0; k <= 3; k++ ) {  // z
-				double sum_l = 0;
+				core::Real sum_l = 0;
 				for ( l = 0; l <= 3; l++ ) {  // w
 					sum_l += wt[3][l] * Bcoeff[idx[0][i]*dims[1]*dims[2]*dims[3] + idx[1][j]*dims[2]*dims[3] + idx[2][k]*dims[3] + idx[3][l]];
 				}

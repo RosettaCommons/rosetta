@@ -184,8 +184,8 @@ PB::solve_pb(
 	}
 
 	TR.Debug << "Solved PB. Loading potential..." << std::endl;
-	const double * meta = result->grid_meta;
-	const double * data = &(result->grid_data[0][0]);
+	const core::Real * meta = result->grid_meta;
+	const core::Real * data = &(result->grid_data[0][0]);
 	load_potential(meta, data);
 
 	time_t end;
@@ -195,8 +195,8 @@ PB::solve_pb(
 
 void
 PB::load_potential(
-	const double grid_meta[],
-	const double pot[]
+	const core::Real grid_meta[],
+	const core::Real pot[]
 ) {
 	int nx = grid_meta[1];
 	int ny = grid_meta[2];
@@ -222,7 +222,7 @@ PB::load_potential(
 
 	potential_.dimension(nx, ny, nz);
 
-	double cap =  basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ];
+	core::Real cap =  basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ];
 
 	int icol=0;
 	int u;

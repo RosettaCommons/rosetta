@@ -315,7 +315,7 @@ void AtomicDepth::boundingatom( pose::Pose const & pose )
 
 void AtomicDepth::initpara(pose::Pose const & pose)
 {
-	double fmargin=2.5;
+	core::Real fmargin=2.5;
 	vp_.clear();
 	boundbox(pose,pmin_,pmax_);
 
@@ -338,14 +338,14 @@ void AtomicDepth::initpara(pose::Pose const & pose)
 	if ( (pmax_.z-pmin_.z)>scalefactor_ ) {
 		scalefactor_=pmax_.z-pmin_.z;
 	}
-	scalefactor_=(boxlength_-1.0)/double(scalefactor_);
+	scalefactor_=(boxlength_-1.0)/core::Real(scalefactor_);
 	///////////////////////////add this automatically first fix sf then fix boxlength_
 	//  /*
 	boxlength_=int(boxlength_*fixsf_/scalefactor_);
 	scalefactor_=fixsf_;
-	double threshbox=300;
+	constexpr core::Real threshbox = 300;
 	if ( boxlength_>threshbox ) {
-		double sfthresh=threshbox/double(boxlength_);
+		core::Real sfthresh=threshbox/core::Real(boxlength_);
 		boxlength_=int(threshbox);
 		scalefactor_=scalefactor_*sfthresh;
 	}
@@ -589,7 +589,7 @@ void AtomicDepth::fastdistancemap(int type)
 	inarray_ = nullptr;
 	outarray_ = nullptr;
 
-	double cutsf=scalefactor_-0.5;
+	core::Real cutsf=scalefactor_-0.5;
 	if ( cutsf<0 ) cutsf=0;
 	//   cutsf=100000000;
 	for ( i=0; i<plength_; i++ ) {

@@ -971,7 +971,7 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	using namespace conformation;
 
 
-	//typedef std::map< std::string, double > ResidueTemps;
+	//typedef std::map< std::string, core::Real > ResidueTemps;
 
 	// Note: _do not_ access Residue here. You do not need to. Doing so triggers
 	// a refold and that is expensive. You probably can get away with
@@ -1265,7 +1265,7 @@ PoseFromSFRBuilder::build_pdb_info_2_temps( pose::Pose & pose )
 	using namespace chemical;
 	using namespace conformation;
 
-	typedef std::map< std::string, double > ResidueTemps;
+	typedef std::map< std::string, core::Real > ResidueTemps;
 
 	PDBInfoOP pdb_info = pose.pdb_info();
 
@@ -1410,7 +1410,7 @@ PoseFromSFRBuilder::is_residue_type_recognized(
 	core::chemical::ResidueTypeCOPs const & rsd_type_list
 ){
 	std::map< std::string, Vector > const & xyz( rinfos_[ pdb_residue_index ].xyz() );
-	std::map< std::string, double > const & rtemp( rinfos_[ pdb_residue_index ].temps() );
+	std::map< std::string, core::Real > const & rtemp( rinfos_[ pdb_residue_index ].temps() );
 
 	bool const is_HOH_to_ignore ( rosetta_residue_name3 == "HOH" && options_.ignore_waters() );
 

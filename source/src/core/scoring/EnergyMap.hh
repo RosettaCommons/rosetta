@@ -147,7 +147,7 @@ public:
 	void
 	clear()
 	{
-		for ( double & ii : map_ ) {
+		for ( Real & ii : map_ ) {
 			ii = 0;
 		}
 		//memset( map_, 0.0, n_score_types );
@@ -164,7 +164,6 @@ public:
 	///     ScoreFunction
 	///     ScoreFunction.weights
 	///     create_score_function
-	inline
 	Real
 	dot( EMapVector const & src ) const
 	{
@@ -177,7 +176,6 @@ public:
 
 	/// @brief dot product of two EMapVectors
 	/// over a subset of the score types
-	inline
 	Real
 	dot( EMapVector const & src,  ScoreTypes const & l ) const
 	{
@@ -189,7 +187,6 @@ public:
 	}
 
 	/// @brief += operator, for summing energies
-	inline
 	EMapVector &
 	operator += ( EMapVector const & src )
 	{
@@ -213,7 +210,7 @@ public:
 	EMapVector &
 	operator *= ( Real scalar )
 	{
-		for ( double & ii : map_ ) {
+		for ( Real & ii : map_ ) {
 			ii *= scalar;
 		}
 		return *this;
@@ -250,7 +247,6 @@ public:
 
 
 	/// @brief == operator for comparing two energy maps element by element
-	inline
 	bool
 	operator == ( EMapVector const & src ) const
 	{
@@ -261,7 +257,6 @@ public:
 	}
 
 	/// @brief != operator for comparing two energy maps element by element
-	inline
 	bool
 	operator != ( EMapVector const & src ) const
 	{
@@ -286,7 +281,6 @@ public:
 	}
 
 	/// @brief accumulate a subset of the positions with a common weight factor
-	inline
 	void
 	accumulate( EMapVector const & src, ScoreTypes const & l, Real const wt )
 	{
@@ -309,7 +303,7 @@ public:
 	sum()
 	{
 		Real total( 0.0 );
-		for ( double ii : map_ ) {
+		for ( Real ii : map_ ) {
 			total += ii;
 		}
 		return total;

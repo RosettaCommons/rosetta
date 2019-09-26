@@ -557,7 +557,7 @@ template< class Archive >
 void
 core::scoring::custom_pair_distance::DistanceFunc::load( Archive & arc ) {
 	arc( cereal::base_class< core::scoring::func::Func >( this ) );
-	std::shared_ptr< numeric::interpolation::Histogram< double, double > > local_scores_hist;
+	std::shared_ptr< numeric::interpolation::Histogram< core::Real, core::Real > > local_scores_hist;
 	arc( local_scores_hist ); // numeric::interpolation::HistogramCOP<Real, Real>::Type
 	scores_hist_ = local_scores_hist; // copy the non-const pointer(s) into the const pointer(s)
 }

@@ -93,13 +93,13 @@ const int CCP4HDSIZE = 1024;  // size of CCP4/MRC header
 inline float d2r( float d ) {
 	return ( d * M_PI / 180.0 );
 }
-inline double d2r( double d ) {
+inline core::Real d2r( core::Real d ) {
 	return ( d * M_PI / 180.0 );
 }
 inline float square( float x ) {
 	return ( x * x );
 }
-inline double square( double x ) {
+inline core::Real square( core::Real x ) {
 	return ( x * x );
 }
 
@@ -118,8 +118,8 @@ inline float pos_mod( float x, float y ) {
 
 	return r;
 }
-inline double pos_mod( double x, double y ) {
-	double r = std::fmod( x, y );
+inline core::Real pos_mod( core::Real x, core::Real y ) {
+	core::Real r = std::fmod( x, y );
 
 	if ( r < 0 ) r += y;
 
@@ -319,7 +319,7 @@ void ElectronDensityAtomwise::resize( core::Real approxGridSpacing ) {
 
 	// compute new dimensions & origin
 	numeric::xyzVector<int> newDims,  newGrid;
-	numeric::xyzVector<double> newOri;
+	numeric::xyzVector<core::Real> newOri;
 	newDims[0] = ( int ) floor( cell_dimensions[0] / approxGridSpacing + 0.5 );
 	newDims[1] = ( int ) floor( cell_dimensions[1] / approxGridSpacing + 0.5 );
 	newDims[2] = ( int ) floor( cell_dimensions[2] / approxGridSpacing + 0.5 );
@@ -327,23 +327,23 @@ void ElectronDensityAtomwise::resize( core::Real approxGridSpacing ) {
 	newOri[1] = newDims[1] * orig[1] / ( ( core::Real ) grid[1] );
 	newOri[2] = newDims[2] * orig[2] / ( ( core::Real ) grid[2] );
 	newGrid = newDims;
-	ObjexxFCL::FArray3D< std::complex<double> > newDensity;
+	ObjexxFCL::FArray3D< std::complex<core::Real> > newDensity;
 	newDensity.dimension( newDims[0], newDims[1], newDims[2] );
 	TR << "Resizing " << density.u1() << "x" << density.u2() << "x" << density.u3() << " to "
 		<< newDensity.u1() << "x" << newDensity.u2() << "x" << newDensity.u3() << std::endl;
-	// convert map to complex<double>
-	ObjexxFCL::FArray3D< std::complex<double> > Foldmap, Fnewmap;
+	// convert map to complex<core::Real>
+	ObjexxFCL::FArray3D< std::complex<core::Real> > Foldmap, Fnewmap;
 	Fnewmap.dimension( newDims[0], newDims[1], newDims[2] );
 	// fft
-	ObjexxFCL::FArray3D< std::complex<double> > cplx_density;
+	ObjexxFCL::FArray3D< std::complex<core::Real> > cplx_density;
 	cplx_density.dimension( density.u1() , density.u2() , density.u3() );
 
-	for ( int i = 0; i < density.u1() *density.u2() *density.u3(); ++i ) cplx_density[i] = ( double ) density[i];
+	for ( int i = 0; i < density.u1() *density.u2() *density.u3(); ++i ) cplx_density[i] = ( core::Real ) density[i];
 
 	numeric::fourier::fft3( cplx_density, Foldmap );
 
 	// reshape (handles both shrinking and growing in each dimension)
-	for ( int i = 0; i < Fnewmap.u1() *Fnewmap.u2() *Fnewmap.u3(); ++i ) Fnewmap[i] = std::complex<double> ( 0, 0 );
+	for ( int i = 0; i < Fnewmap.u1() *Fnewmap.u2() *Fnewmap.u3(); ++i ) Fnewmap[i] = std::complex<core::Real> ( 0, 0 );
 
 	numeric::xyzVector<int> nyq( std::min( Foldmap.u1(), Fnewmap.u1() ) / 2,
 		std::min( Foldmap.u2(), Fnewmap.u2() ) / 2,
@@ -656,8 +656,8 @@ ElectronDensityAtomwise::readMRCandResize() {
 	if ( grid_spacing > 0 ) resize( grid_spacing );
 
 	// grid spacing in each dim
-	max_del_grid = std::max( cell_dimensions[0] / ( ( double ) grid[0] ) , cell_dimensions[1] / ( ( double ) grid[1] ) );
-	max_del_grid = std::max( max_del_grid , cell_dimensions[2] / ( ( double ) grid[2] ) );
+	max_del_grid = std::max( cell_dimensions[0] / ( ( core::Real ) grid[0] ) , cell_dimensions[1] / ( ( core::Real ) grid[1] ) );
+	max_del_grid = std::max( max_del_grid , cell_dimensions[2] / ( ( core::Real ) grid[2] ) );
 	calculate_index2cart();
 	is_map_loaded_ = true;
 }
@@ -667,9 +667,9 @@ ElectronDensityAtomwise::readMRCandResize() {
 void
 ElectronDensityAtomwise::calculate_index2cart() {
 	auto i2f = numeric::xyzMatrix<core::Real>::rows(
-		1 / double ( grid[0] ), 0, 0,
-		0, 1 / double ( grid[1] ), 0,
-		0, 0, 1 / double ( grid[2] ) );
+		1 / core::Real ( grid[0] ), 0, 0,
+		0, 1 / core::Real ( grid[1] ), 0,
+		0, 0, 1 / core::Real ( grid[2] ) );
 	auto f2i = numeric::xyzMatrix<core::Real>::rows(
 		grid[0], 0, 0,
 		0, grid[1], 0,
@@ -701,9 +701,9 @@ ElectronDensityAtomwise::index2frac( numeric::xyzVector< core::Real > const &ind
 numeric::xyzVector< core::Real >
 ElectronDensityAtomwise::index2frac( numeric::xyzVector< int > const & index_vector ) {
 	numeric::xyzVector< core::Real > frac_vector;
-	frac_vector[0] = ( double )  index_vector[0] / grid[0];
-	frac_vector[1] = ( double )  index_vector[1] / grid[1];
-	frac_vector[2] = ( double )  index_vector[2] / grid[2];
+	frac_vector[0] = ( core::Real )  index_vector[0] / grid[0];
+	frac_vector[1] = ( core::Real )  index_vector[1] / grid[1];
+	frac_vector[2] = ( core::Real )  index_vector[2] / grid[2];
 	return frac_vector;
 }
 
@@ -712,9 +712,9 @@ numeric::xyzVector< core::Real >
 ElectronDensityAtomwise::xyz2index_in_cell( numeric::xyzVector< core::Real > const & xyz_vector ) {
 	numeric::xyzVector< Real > index_vector;
 	index_vector = c2i * xyz_vector;
-	index_vector[0] = pos_mod( index_vector[0] - orig[0], ( double ) grid[0] );
-	index_vector[1] = pos_mod( index_vector[1] - orig[1], ( double ) grid[1] );
-	index_vector[2] = pos_mod( index_vector[2] - orig[2], ( double ) grid[2] );
+	index_vector[0] = pos_mod( index_vector[0] - orig[0], ( core::Real ) grid[0] );
+	index_vector[1] = pos_mod( index_vector[1] - orig[1], ( core::Real ) grid[1] );
+	index_vector[2] = pos_mod( index_vector[2] - orig[2], ( core::Real ) grid[2] );
 	return index_vector;
 }
 
@@ -760,10 +760,10 @@ ElectronDensityAtomwise::get_atom_weight( std::string const & elt ) {
 //Trilinear Interpolation
 core::Real
 ElectronDensityAtomwise::trilinear_interpolation(
-	ObjexxFCL::FArray3D< double > & score,
+	ObjexxFCL::FArray3D< core::Real > & score,
 	numeric::xyzVector< core::Real > const & index ) {
 	int lower_bound[3], upper_bound[3];
-	double residual[3];
+	core::Real residual[3];
 
 	// find bounding grid points
 	for ( int i = 0; i < 3; ++i ) {
@@ -775,14 +775,14 @@ ElectronDensityAtomwise::trilinear_interpolation(
 		residual[i] = index[i] + 1 - lower_bound[i];
 	}
 
-	double &c000 = score( lower_bound[0], lower_bound[1], lower_bound[2] );
-	double &c100 = score( upper_bound[0], lower_bound[1], lower_bound[2] );
-	double &c010 = score( lower_bound[0], upper_bound[1], lower_bound[2] );
-	double &c001 = score( lower_bound[0], lower_bound[1], upper_bound[2] );
-	double &c110 = score( upper_bound[0], upper_bound[1], lower_bound[2] );
-	double &c101 = score( upper_bound[0], lower_bound[1], upper_bound[2] );
-	double &c011 = score( lower_bound[0], upper_bound[1], upper_bound[2] );
-	double &c111 = score( upper_bound[0], upper_bound[1], upper_bound[2] );
+	core::Real &c000 = score( lower_bound[0], lower_bound[1], lower_bound[2] );
+	core::Real &c100 = score( upper_bound[0], lower_bound[1], lower_bound[2] );
+	core::Real &c010 = score( lower_bound[0], upper_bound[1], lower_bound[2] );
+	core::Real &c001 = score( lower_bound[0], lower_bound[1], upper_bound[2] );
+	core::Real &c110 = score( upper_bound[0], upper_bound[1], lower_bound[2] );
+	core::Real &c101 = score( upper_bound[0], lower_bound[1], upper_bound[2] );
+	core::Real &c011 = score( lower_bound[0], upper_bound[1], upper_bound[2] );
+	core::Real &c111 = score( upper_bound[0], upper_bound[1], upper_bound[2] );
 	//interpolate at x dimension (R is the residual coord)
 	Real cR00 = c000 + residual[0] * ( c100 - c000 );
 	Real cR10 = c010 + residual[0] * ( c110 - c010 );
@@ -798,10 +798,10 @@ ElectronDensityAtomwise::trilinear_interpolation(
 
 numeric::xyzVector<core::Real>
 ElectronDensityAtomwise::trilinear_gradient(
-	ObjexxFCL::FArray3D< double > & score,
+	ObjexxFCL::FArray3D< core::Real > & score,
 	numeric::xyzVector< core::Real > const & index ) {
 	int lower_bound[3], upper_bound[3];
-	double residual[3];
+	core::Real residual[3];
 	numeric::xyzVector<core::Real> grad;
 
 	// find bounding grid points
@@ -814,14 +814,14 @@ ElectronDensityAtomwise::trilinear_gradient(
 		residual[i] = index[i] + 1 - lower_bound[i];
 	}
 
-	double &c000 = score( lower_bound[0], lower_bound[1], lower_bound[2] );
-	double &c100 = score( upper_bound[0], lower_bound[1], lower_bound[2] );
-	double &c010 = score( lower_bound[0], upper_bound[1], lower_bound[2] );
-	double &c001 = score( lower_bound[0], lower_bound[1], upper_bound[2] );
-	double &c110 = score( upper_bound[0], upper_bound[1], lower_bound[2] );
-	double &c101 = score( upper_bound[0], lower_bound[1], upper_bound[2] );
-	double &c011 = score( lower_bound[0], upper_bound[1], upper_bound[2] );
-	double &c111 = score( upper_bound[0], upper_bound[1], upper_bound[2] );
+	core::Real &c000 = score( lower_bound[0], lower_bound[1], lower_bound[2] );
+	core::Real &c100 = score( upper_bound[0], lower_bound[1], lower_bound[2] );
+	core::Real &c010 = score( lower_bound[0], upper_bound[1], lower_bound[2] );
+	core::Real &c001 = score( lower_bound[0], lower_bound[1], upper_bound[2] );
+	core::Real &c110 = score( upper_bound[0], upper_bound[1], lower_bound[2] );
+	core::Real &c101 = score( upper_bound[0], lower_bound[1], upper_bound[2] );
+	core::Real &c011 = score( lower_bound[0], upper_bound[1], upper_bound[2] );
+	core::Real &c111 = score( upper_bound[0], upper_bound[1], upper_bound[2] );
 	//interpolate at x dimension (x)  (R is the residual coord)
 	Real cR00 = c000 + residual[0] * ( c100 - c000 );
 	Real cR10 = c010 + residual[0] * ( c110 - c010 );
@@ -854,7 +854,7 @@ ElectronDensityAtomwise::trilinear_gradient(
 //Spline interpolation
 core::Real
 ElectronDensityAtomwise::spline_interpolation(
-	ObjexxFCL::FArray3D< double > & coeffs ,
+	ObjexxFCL::FArray3D< core::Real > & coeffs ,
 	numeric::xyzVector< core::Real > const & idxX
 ) const {
 	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
@@ -864,8 +864,8 @@ ElectronDensityAtomwise::spline_interpolation(
 }
 
 void
-ElectronDensityAtomwise::spline_coeffs( ObjexxFCL::FArray3D< double > & data ,
-	ObjexxFCL::FArray3D< double > & coeffs ) {
+ElectronDensityAtomwise::spline_coeffs( ObjexxFCL::FArray3D< core::Real > & data ,
+	ObjexxFCL::FArray3D< core::Real > & coeffs ) {
 	int dims[3] = { data.u3(), data.u2(), data.u1() };
 	coeffs = data;
 	core::scoring::electron_density::SplineInterp::compute_coefficients3( &coeffs[0] , dims );
@@ -878,7 +878,7 @@ ElectronDensityAtomwise::compute_normalization ( pose::Pose const & pose ) {
 	atom_weight_stored.clear();
 
 	//rho_calc_array initialization
-	ObjexxFCL::FArray3D< double >  rho_calc_array;
+	ObjexxFCL::FArray3D< core::Real >  rho_calc_array;
 	rho_calc_array.dimension( density.u1() , density.u2() , density.u3() );
 
 	for ( int i = 0; i < density.u1() *density.u2() *density.u3(); ++i ) {
@@ -995,7 +995,7 @@ ElectronDensityAtomwise::compute_normalization ( pose::Pose const & pose ) {
 	Real rscc = ( sum_rho_calc_times_rho_obs - sum_rho_calc * sum_rho_obs / n_grid_points ) / ( sqrt( sum_rho_calc_square - sum_rho_calc * sum_rho_calc / n_grid_points ) * sqrt( sum_rho_obs_square - sum_rho_obs * sum_rho_obs / n_grid_points ) );
 	//Compute Normalization, Score = -sum_weight * rscc = normalization * <dx dy>
 	//Per atom energy = normalization * ( sum(rho_atom*rho_obs) - sum(rho_atom) * avg_rho_obs )
-	normalization = - ( ( double ) sum_weight ) / ( sqrt( sum_rho_calc_square - sum_rho_calc * sum_rho_calc / n_grid_points ) * sqrt( sum_rho_obs_square - sum_rho_obs * sum_rho_obs / n_grid_points ) );
+	normalization = - ( ( core::Real ) sum_weight ) / ( sqrt( sum_rho_calc_square - sum_rho_calc * sum_rho_calc / n_grid_points ) * sqrt( sum_rho_obs_square - sum_rho_obs * sum_rho_obs / n_grid_points ) );
 	avg_rho_obs = sum_rho_obs / n_grid_points;
 
 	TR.Debug << "RSCC of starting pose = " << rscc << std::endl;
@@ -1009,8 +1009,8 @@ void
 ElectronDensityAtomwise::precompute_unweighted_score() {
 	if ( is_score_precomputed_ ) return;
 
-	ObjexxFCL::FArray3D< double > unweighted_score;
-	ObjexxFCL::FArray3D< std::complex<double> > density_transformed,
+	ObjexxFCL::FArray3D< core::Real > unweighted_score;
+	ObjexxFCL::FArray3D< std::complex<core::Real> > density_transformed,
 		atom_dens_transformed, atom_dens, cplx_score, cplx_density;
 	atom_dens.dimension( density.u1() , density.u2() , density.u3() );
 
@@ -1071,7 +1071,7 @@ ElectronDensityAtomwise::precompute_unweighted_score() {
 	cplx_density.dimension( density.u1() , density.u2() , density.u3() );
 
 	for ( int i = 0; i < density.u1() *density.u2() *density.u3(); ++i ) {
-		cplx_density[i] = ( double ) density[i];
+		cplx_density[i] = ( core::Real ) density[i];
 	}
 
 	// calebgeniesse: cannot recompute normalization if this is cleared,

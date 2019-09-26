@@ -21,23 +21,25 @@
 
 #include <cmath>
 
+#include <core/types.hh>
+
 namespace core {
 namespace scoring {
 namespace electron_density {
 namespace SplineInterp {
 
 // 3d --- periodic or mirrored boundaries on all dimensions
-double interp3(const double *Bcoeff, const int dims[3], double X[3], bool mirrored=false);
-int grad3(double grad[3], const double *Bcoeff, const int dims[3], double X[3], bool mirrored=false);
-int compute_coefficients3(double *data, int dims[3], bool mirrored=false);
+core::Real interp3(const core::Real *Bcoeff, const int dims[3], core::Real X[3], bool mirrored=false);
+int grad3(core::Real grad[3], const core::Real *Bcoeff, const int dims[3], core::Real X[3], bool mirrored=false);
+int compute_coefficients3(core::Real *data, int dims[3], bool mirrored=false);
 
 //
 template <class S>
-double interp3(const S *Bcoeff, const int dims[3], double X[3], bool mirrored=false)
+core::Real interp3(const S *Bcoeff, const int dims[3], core::Real X[3], bool mirrored=false)
 {
-	double wt[3][4];
-	double value;
-	double sum_k;
+	core::Real wt[3][4];
+	core::Real value;
+	core::Real sum_k;
 	int idx[3][4];
 	int i,j,k, dim, dims2;
 
@@ -49,7 +51,7 @@ double interp3(const S *Bcoeff, const int dims[3], double X[3], bool mirrored=fa
 		}
 
 		// interpolation weights
-		double w = X[dim] - (double)idx[dim][1];
+		core::Real w = X[dim] - (core::Real)idx[dim][1];
 		wt[dim][3] = (1.0 / 6.0) * w * w * w;
 		wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
 		wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
@@ -89,7 +91,7 @@ double interp3(const S *Bcoeff, const int dims[3], double X[3], bool mirrored=fa
 
 	value = 0.0;
 	for ( i = 0; i <= 3; i++ ) {  // x
-		double sum_jk = 0.0;
+		core::Real sum_jk = 0.0;
 		for ( j = 0; j <= 3; j++ ) {  // y
 			sum_k = 0.0;
 			for ( k = 0; k <= 3; k++ ) {  // z
@@ -104,11 +106,11 @@ double interp3(const S *Bcoeff, const int dims[3], double X[3], bool mirrored=fa
 }
 
 template <class S>
-int grad3(double grad[3], const S *Bcoeff, const int dims[3], double X[3], bool mirrored=false)
+int grad3(core::Real grad[3], const S *Bcoeff, const int dims[3], core::Real X[3], bool mirrored=false)
 {
-	double wt[3][4];
-	double w;
-	double sum_k, sum_jk;
+	core::Real wt[3][4];
+	core::Real w;
+	core::Real sum_k, sum_jk;
 	int idx[3][4];
 	int i,j,k, pt, dim, gradDim, dims2;
 
@@ -122,13 +124,13 @@ int grad3(double grad[3], const S *Bcoeff, const int dims[3], double X[3], bool 
 
 			// compute the interpolation weights
 			if ( dim == gradDim ) {
-				w = X[dim] - (double)idx[dim][1];
+				w = X[dim] - (core::Real)idx[dim][1];
 				wt[dim][3] = (1.0 / 2.0) * w * w;
 				wt[dim][0] = (w - 1.0/2.0) - wt[dim][3];
 				wt[dim][2] = 1.0 + wt[dim][0] - 2.0 * wt[dim][3];
 				wt[dim][1] = - wt[dim][0] - wt[dim][2] - wt[dim][3];
 			} else {
-				w = X[dim] - (double)idx[dim][1];
+				w = X[dim] - (core::Real)idx[dim][1];
 				wt[dim][3] = (1.0 / 6.0) * w * w * w;
 				wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
 				wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
@@ -185,9 +187,9 @@ int grad3(double grad[3], const S *Bcoeff, const int dims[3], double X[3], bool 
 }
 
 // 4d --- periodic boundaries on dimensions 2-4; mirror boundaries on dimension 1
-double interp4(const double *Bcoeff, const int dims[4], double X[4]);
-int grad4(double grad[4], const double *Bcoeff, const int dims[4], double X[4]);
-int compute_coefficients4(double *data, int dims[3]);
+core::Real interp4(const core::Real *Bcoeff, const int dims[4], core::Real X[4]);
+int grad4(core::Real grad[4], const core::Real *Bcoeff, const int dims[4], core::Real X[4]);
+int compute_coefficients4(core::Real *data, int dims[3]);
 
 }
 }

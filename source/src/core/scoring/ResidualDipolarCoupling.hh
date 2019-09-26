@@ -180,10 +180,10 @@ public:
 	void show_tensor_matrix( std::ostream&, core::Size ex ) const;
 	void show_rdc_values( std::ostream&, core::Size ex ) const;
 
-	void show_tensor_stats_nls( std::ostream&, core::Size ex, const double *par) const;
-	//void show_tensor_stats_nlsDa( std::ostream&, core::Size ex, const double tensorDa, const double *par) const;
-	//void show_tensor_stats_nlsR( std::ostream&, core::Size ex, const double tensorR, const double *par) const;
-	//void show_tensor_stats_nlsDaR( std::ostream&, core::Size ex, const double tensorDa, const double tensorR, const double *par) const;
+	void show_tensor_stats_nls( std::ostream&, core::Size ex, const core::Real *par) const;
+	//void show_tensor_stats_nlsDa( std::ostream&, core::Size ex, const core::Real tensorDa, const core::Real *par) const;
+	//void show_tensor_stats_nlsR( std::ostream&, core::Size ex, const core::Real tensorR, const core::Real *par) const;
+	//void show_tensor_stats_nlsDaR( std::ostream&, core::Size ex, const core::Real tensorDa, const core::Real tensorR, const core::Real *par) const;
 
 	void do_correct_NH(
 		utility::vector1<core::scoring::RDC>::const_iterator it,

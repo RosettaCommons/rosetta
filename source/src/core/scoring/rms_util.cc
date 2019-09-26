@@ -157,7 +157,7 @@ core::Real gdtsc(const core::pose::Pose& ref,
 		Real dist_threshold = 0.5 * i;  // 0.5, 1.0, ...
 
 		int nali;
-		double mxrms, mxpsi, mxzscore, mxscore, mxeval;
+		core::Real mxrms, mxpsi, mxzscore, mxscore, mxeval;
 		numeric::model_quality::maxsub(
 			actual_num_atoms, coords_ref, coords_mod,
 			mxrms, mxpsi, nali, mxzscore, mxeval, mxscore,
@@ -222,7 +222,7 @@ core::Real gdtha(
 		Real dist_threshold = dists[i];
 
 		int nali;
-		double mxrms, mxpsi, mxzscore, mxscore, mxeval;
+		core::Real mxrms, mxpsi, mxzscore, mxscore, mxeval;
 		numeric::model_quality::maxsub(
 			actual_num_atoms, coords_ref, coords_mod,
 			mxrms, mxpsi, nali, mxzscore, mxeval, mxscore,
@@ -901,11 +901,11 @@ CA_maxsub(
 	const int nres1( pose1.size() );
 
 	int natoms(0);
-	FArray2D< double > p1a( 3, nres1 );
-	FArray2D< double > p2a( 3, nres1 );
+	FArray2D< core::Real > p1a( 3, nres1 );
+	FArray2D< core::Real > p2a( 3, nres1 );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, is_protein_CA );
 
-	double mxrms, mxpsi, mxzscore, mxscore, mxeval;
+	core::Real mxrms, mxpsi, mxzscore, mxscore, mxeval;
 	int nali;
 	numeric::model_quality::maxsub( natoms, p1a, p2a, mxrms, mxpsi, nali, mxzscore, mxeval, mxscore, rms );
 	return nali;
@@ -931,7 +931,7 @@ CA_maxsub(
 		<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
-	double mxrms, mxpsi, mxzscore, mxscore, mxeval;
+	core::Real mxrms, mxpsi, mxzscore, mxscore, mxeval;
 	int nali;
 	numeric::model_quality::maxsub( natoms, p1a, p2a, mxrms, mxpsi, nali, mxzscore, mxeval, mxscore, rms );
 	//logeval = std::log(mxeval);
@@ -943,7 +943,7 @@ int xyz_maxsub(
 	FArray2D< core::Real > p2a,
 	int natoms
 ) {
-	double mxrms, mxpsi, mxzscore, mxscore, mxeval;
+	core::Real mxrms, mxpsi, mxzscore, mxscore, mxeval;
 	int nali;
 	numeric::model_quality::maxsub( natoms, p1a, p2a, mxrms, mxpsi, nali, mxzscore, mxeval, mxscore );
 	return nali;
@@ -959,11 +959,11 @@ CA_maxsub_by_subset(
 	const int nres1( pose1.size() );
 
 	int natoms(0);
-	FArray2D< double > p1a( 3, nres1 );
-	FArray2D< double > p2a( 3, nres1 );
+	FArray2D< core::Real > p1a( 3, nres1 );
+	FArray2D< core::Real > p2a( 3, nres1 );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, is_protein_CA );
 
-	double mxrms, mxpsi, mxzscore, mxscore, mxeval;
+	core::Real mxrms, mxpsi, mxzscore, mxscore, mxeval;
 	int nali;
 	numeric::model_quality::maxsub( natoms, p1a, p2a, mxrms, mxpsi, nali, mxzscore, mxeval, mxscore );
 	return nali;
@@ -1035,7 +1035,7 @@ xyz_gdtmm(
 ) {
 	int natoms = p1a.size2();
 	runtime_assert( (p1a.size() == p2a.size()) && (p1a.size2() == p2a.size2()) );
-	double mxrms, mxpsi, mxzscore, mxscore, mxeval;
+	core::Real mxrms, mxpsi, mxzscore, mxscore, mxeval;
 	int nali;
 
 	core::Real rmstol, disttol;
@@ -1269,11 +1269,11 @@ superimpose_pose(
 	COMAS(xx1,wt,natoms,COM(1),COM(2),COM(3));
 
 	// superimpose:: shifts xx1, shifts and transforms xx2;
-	double rms;
-	rmsfitca2(natoms,xx1,xx2,wt,nsup,rms, static_cast<double>( rms_calc_offset_val ), realign);
+	core::Real rms;
+	rmsfitca2(natoms,xx1,xx2,wt,nsup,rms, static_cast<core::Real>( rms_calc_offset_val ), realign);
 
 	if ( true ) { // debug:
-		double tmp1,tmp2,tmp3;
+		core::Real tmp1,tmp2,tmp3;
 		COMAS(xx1,wt,natoms,tmp1,tmp2,tmp3); // store xcen,ycen,zcen vals for later
 		//std::cout << "zero??: " << std::abs(tmp1) + std::abs(tmp2) + std::abs(tmp3)
 		//     << std::endl;

@@ -126,7 +126,7 @@ class XfragSet : public utility::pointer::ReferenceCount {
 	typedef numeric::geometry::hashing::SixDCoordinateBinner SixDCoordinateBinner;
 	typedef numeric::geometry::hashing::bin_index_hasher bin_index_hasher;
 	typedef boost::unordered_multimap< Key, Xfrag, bin_index_hasher > XfragMap;
-	double const /*cart_size_,*/cart_resl_,angle_resl_;
+	core::Real const /*cart_size_,*/cart_resl_,angle_resl_;
 	SixDCoordinateBinner hasher_;
 	XfragMap xfragmap_;
 	utility::vector1<Xfres> xfres_;

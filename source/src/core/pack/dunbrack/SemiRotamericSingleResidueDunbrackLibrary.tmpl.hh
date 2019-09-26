@@ -1814,7 +1814,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 	utility::fixedsizearray1< Real, N+1 > delta( 10.0 );
 	delta[ N + 1 ] = bbdep_nrchi_binsize_;
 	utility::fixedsizearray1< bool, N+1 > lin_cont( true );
-	utility::fixedsizearray1< std::pair< double, double>, N+1 > first_be( std::pair< double, double > ( 10, 10 ) );
+	utility::fixedsizearray1< std::pair< core::Real, core::Real>, N+1 > first_be( std::pair< core::Real, core::Real > ( 10, 10 ) );
 
 	for ( Size ii = 1; ii <= grandparent::n_packed_rots(); ++ii ) {
 

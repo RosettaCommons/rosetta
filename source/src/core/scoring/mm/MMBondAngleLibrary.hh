@@ -20,6 +20,7 @@
 
 // Project headers
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
+#include <core/types.hh>
 
 // Utility header
 #include <utility/pointer/access_ptr.hh>
@@ -44,7 +45,7 @@ namespace mm {
 
 // all ints for now
 typedef utility::keys::Key3Tuple< int, int, int > mm_bondangle_atom_tri;
-typedef utility::keys::Key2Tuple< double, double > mm_bondangle_param_set;
+typedef utility::keys::Key2Tuple< core::Real, core::Real > mm_bondangle_param_set;
 typedef std::multimap< mm_bondangle_atom_tri, mm_bondangle_param_set > mm_bondangle_library;
 typedef std::multimap< mm_bondangle_atom_tri, mm_bondangle_param_set >::const_iterator mm_bondangle_library_citer;
 typedef std::pair< mm_bondangle_library_citer, mm_bondangle_library_citer > mm_bondangle_library_citer_pair;

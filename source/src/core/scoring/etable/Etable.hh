@@ -685,7 +685,7 @@ private:
 	bool const no_lk_polar_desolvation_;
 	bool const proline_N_is_lk_nonpolar_;
 	Real const min_dis_;
-	Real const min_dis2_; // was double
+	Real const min_dis2_; // was core::Real
 	bool const add_long_range_damping_;
 	Real const long_range_damping_length_;
 	Real const epsilon_;

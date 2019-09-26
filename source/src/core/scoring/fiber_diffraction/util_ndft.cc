@@ -126,8 +126,8 @@ ndft(
 	for ( Size i=1; i<=Nn; ++i ) {
 		fout(i)=0.0;
 		for ( Size j=1; j<=Nphi; ++j ) {
-			double re = cos(-phi(j)*n(i))/Nphi;
-			double im = sin(-phi(j)*n(i))/Nphi;
+			core::Real re = cos(-phi(j)*n(i))/Nphi;
+			core::Real im = sin(-phi(j)*n(i))/Nphi;
 			std::complex< float> wij( re, im );
 			fout(i)+= wij*fin(j);
 		}

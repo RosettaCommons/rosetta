@@ -112,7 +112,7 @@ public:
 	/// @brief resample the map in spherical shells around a pose
 	void
 	mapSphericalSamples(
-		ObjexxFCL::FArray3D< double > &mapShellR,
+		ObjexxFCL::FArray3D< core::Real > &mapShellR,
 		core::Size nRsteps, core::Real delR, core::Size B,
 		numeric::xyzVector< core::Real > center,
 		core::Real laplacian_offset
@@ -147,7 +147,7 @@ public:
 	/// @brief Compute map intensities, masked by a pose.  Also compute mask intensities
 	void
 	getIntensities(
-		ObjexxFCL::FArray3D< std::complex<double> > const &FrhoC,
+		ObjexxFCL::FArray3D< std::complex<core::Real> > const &FrhoC,
 		core::Size nbuckets,
 		core::Real maxreso,
 		core::Real minreso,
@@ -157,8 +157,8 @@ public:
 	/// @brief Compute map-map FSC
 	void
 	getFSC(
-		ObjexxFCL::FArray3D< std::complex<double> > const &Frho1,
-		ObjexxFCL::FArray3D< std::complex<double> > const &Frho2,
+		ObjexxFCL::FArray3D< std::complex<core::Real> > const &Frho1,
+		ObjexxFCL::FArray3D< std::complex<core::Real> > const &Frho2,
 		core::Size nbuckets, core::Real maxreso, core::Real minreso,
 		utility::vector1< core::Real >& FSC,
 		bool S2_bin=false);
@@ -166,8 +166,8 @@ public:
 	/// @brief Compute map-map phase error
 	void
 	getPhaseError(
-		ObjexxFCL::FArray3D< std::complex<double> > const &Frho1,
-		ObjexxFCL::FArray3D< std::complex<double> > const &Frho2,
+		ObjexxFCL::FArray3D< std::complex<core::Real> > const &Frho1,
+		ObjexxFCL::FArray3D< std::complex<core::Real> > const &Frho2,
 		core::Size nbuckets, core::Real maxreso, core::Real minreso,
 		utility::vector1< core::Real >& phaseError,
 		bool S2_bin=false);
@@ -177,20 +177,20 @@ public:
 	calcRhoC(
 		poseCoords const &pose,
 		core::Real highres_limit,
-		ObjexxFCL::FArray3D< double > &rhoC,
-		ObjexxFCL::FArray3D< double > &mask,
+		ObjexxFCL::FArray3D< core::Real > &rhoC,
+		ObjexxFCL::FArray3D< core::Real > &mask,
 		core::Real forceB = -1.0,
 		core::Real B_upper_limit = 600,
 		core::Real force_mask = -1.0 );
 
 	/// @brief Real-space correlation
 	core::Real
-	getRSCC( ObjexxFCL::FArray3D< double > const &density2,  ObjexxFCL::FArray3D< double > const &mask);
+	getRSCC( ObjexxFCL::FArray3D< core::Real > const &density2,  ObjexxFCL::FArray3D< core::Real > const &mask);
 
 	/// @brief Real-space correlation
 	core::Real
-	getRSCC( ObjexxFCL::FArray3D< double > &rhoC ) {
-		ObjexxFCL::FArray3D< double > nullmask;
+	getRSCC( ObjexxFCL::FArray3D< core::Real > &rhoC ) {
+		ObjexxFCL::FArray3D< core::Real > nullmask;
 		return getRSCC( rhoC, nullmask );
 	}
 
@@ -293,7 +293,7 @@ public:
 	dCCdBs(
 		core::pose::Pose const &pose,
 		utility::vector1< core::Real>  & dE_dvars,
-		ObjexxFCL::FArray3D< double > &maskC
+		ObjexxFCL::FArray3D< core::Real > &maskC
 	);
 
 	//@brief Called to initialize scorefunction scaling for B-factor refinement
@@ -480,10 +480,10 @@ public:
 	}
 
 	///@brief get the "effective B factor": a global b factor based on map resolution
-	double getEffectiveBfactor() { return effectiveB; }
+	core::Real getEffectiveBfactor() { return effectiveB; }
 
 	// get S2 (reciprocal space dist^2)
-	double S2(int h, int k, int l) {
+	core::Real S2(int h, int k, int l) {
 		return ( h*h*RcellDimensions[0]*RcellDimensions[0]
 			+ k*k*RcellDimensions[1]*RcellDimensions[1]
 			+ l*l*RcellDimensions[2]*RcellDimensions[2]
@@ -528,10 +528,10 @@ private:
 
 	// get Fdrho_d(xyz)
 	// compute if not already computed
-	utility::vector1< ObjexxFCL::FArray3D< std::complex<double> > * > getFdrhoc( OneGaussianScattering S );
+	utility::vector1< ObjexxFCL::FArray3D< std::complex<core::Real> > * > getFdrhoc( OneGaussianScattering S );
 
 	// volume of 1 voxel
-	double voxel_volume( ) {
+	core::Real voxel_volume( ) {
 		return V / (grid_[0]*grid_[1]*grid_[2]);
 	}
 
@@ -541,10 +541,10 @@ private:
 
 	// the density data array and spline coeffs
 	ObjexxFCL::FArray3D< float > density;
-	ObjexxFCL::FArray3D< double > coeffs_density_;
+	ObjexxFCL::FArray3D< core::Real > coeffs_density_;
 
 	// fft of density -- only used in FSC calc
-	ObjexxFCL::FArray3D< std::complex<double> > Fdensity_;
+	ObjexxFCL::FArray3D< std::complex< core::Real > > Fdensity_;
 
 	// Controllable parameters
 	std::map< core::Size, bool > scoring_mask_;
@@ -554,7 +554,7 @@ private:
 	bool score_window_context_, remap_symm_;
 
 	// (fast scoring) precomputed rhocrhoo, d_rhocrhoo
-	ObjexxFCL::FArray4D< double > fastdens_score;
+	ObjexxFCL::FArray4D< core::Real > fastdens_score;
 	core::Size nkbins_;
 	core::Real kmin_,kmax_,kstep_;
 	numeric::xyzVector< int > fastgrid;           // grid & origin
@@ -592,7 +592,7 @@ private:
 	// gradients, used for displaying isocontoured surface
 	//     ... mutable for the viewer to access
 	// in non-graphics builds this never gets initialized
-	mutable ObjexxFCL::FArray3D< double > coeff_grad_x, coeff_grad_y, coeff_grad_z;
+	mutable ObjexxFCL::FArray3D< core::Real > coeff_grad_x, coeff_grad_y, coeff_grad_z;
 
 	///////////////////
 	/// CRYSTAL INFO
@@ -632,8 +632,8 @@ inline float pos_mod(float x,float y) {
 	float r=std::fmod(x,y); if ( r<0 ) r+=y;
 	return r;
 }
-inline double pos_mod(double x,double y) {
-	double r=std::fmod(x,y); if ( r<0 ) r+=y;
+inline core::Real pos_mod(core::Real x,core::Real y) {
+	core::Real r=std::fmod(x,y); if ( r<0 ) r+=y;
 	return r;
 }
 

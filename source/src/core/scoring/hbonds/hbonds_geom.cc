@@ -975,14 +975,14 @@ hbond_compute_energy(
 
 	// The function takes in single precision and computes in double
 	// precision To help numeric stability
-	auto const dAHdis = static_cast<double>(AHdis);
-	auto const dxD    = static_cast<double>(xD);
-	auto const dxH    = static_cast<double>(xH);
-	auto const dxH2   = static_cast<double>(xH2);
-	double  Pr(0.0),  PSxD(0.0),  PSxH(0.0),  PLxD(0.0),  PLxH(0.0),  PxH2(0.0); // values of polynomials
-	double dPr(0.0), dPSxD(0.0), dPSxH(0.0), dPLxD(0.0), dPLxH(0.0), dPxH2(0.0); // derivatives of polynomials
-	double  FSr(0.0),  FLr(0.0),  FxD(0.0),  FxH(0.0),  FxH2(0.0); // values of fading intervals
-	double dFSr(0.0), dFLr(0.0), dFxD(0.0), dFxH(0.0), dFxH2(0.0); // derivatives of fading intervals
+	auto const dAHdis = static_cast<core::Real>(AHdis);
+	auto const dxD    = static_cast<core::Real>(xD);
+	auto const dxH    = static_cast<core::Real>(xH);
+	auto const dxH2   = static_cast<core::Real>(xH2);
+	core::Real  Pr(0.0),  PSxD(0.0),  PSxH(0.0),  PLxD(0.0),  PLxH(0.0),  PxH2(0.0); // values of polynomials
+	core::Real dPr(0.0), dPSxD(0.0), dPSxH(0.0), dPLxD(0.0), dPLxH(0.0), dPxH2(0.0); // derivatives of polynomials
+	core::Real  FSr(0.0),  FLr(0.0),  FxD(0.0),  FxH(0.0),  FxH2(0.0); // values of fading intervals
+	core::Real dFSr(0.0), dFLr(0.0), dFxD(0.0), dFxH(0.0), dFxH2(0.0); // derivatives of fading intervals
 
 
 	database.AHdist_short_fade_lookup( hbe )->value_deriv(AHdis, FSr, dFSr);
@@ -991,7 +991,7 @@ hbond_compute_energy(
 	database.cosBAH2_fade_lookup( hbe )->value_deriv(xH2, FxH2, dFxH2);
 	database.cosAHD_fade_lookup( hbe )->value_deriv(xD, FxD, dFxD);
 
-	double const acc_don_scale = database.acc_strength( hbt.acc_type() ) * database.don_strength( hbt.don_type() );
+	core::Real const acc_don_scale = database.acc_strength( hbt.acc_type() ) * database.don_strength( hbt.don_type() );
 
 	if ( FSr == Real(0.0) && FLr == Real(0.0) ) {
 		// is dAHdis out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
@@ -1052,14 +1052,14 @@ hbond_compute_energy(
 	}
 
 	//double fade_factor = 1.0; // larger == stiffer fade
-	double exp1 = 0, exp2 = 0;
-	double fade_factor = basic::options::option[ basic::options::OptionKeys::score::hbond_fade ].value();
+	core::Real exp1 = 0, exp2 = 0;
+	core::Real fade_factor = basic::options::option[ basic::options::OptionKeys::score::hbond_fade ].value();
 	if ( !use_softmax ) {
 		energy = Pr*FxD*FxH + FSr*(PSxD*FxH + FxD*PSxH) + FLr*(PLxD*FxH + FxD*PLxH);
 	} else {
 		// fade between both angles
-		double energy1 = Pr*FxD*FxH  + FSr*(PSxD*FxH + FxD*PSxH)  + FLr*(PLxD*FxH + FxD*PLxH);
-		double energy2 = Pr*FxD*FxH2 + FSr*(PSxD*FxH2 + FxD*PxH2) + FLr*(PLxD*FxH2 + FxD*PxH2);
+		core::Real energy1 = Pr*FxD*FxH  + FSr*(PSxD*FxH + FxD*PSxH)  + FLr*(PLxD*FxH + FxD*PLxH);
+		core::Real energy2 = Pr*FxD*FxH2 + FSr*(PSxD*FxH2 + FxD*PxH2) + FLr*(PLxD*FxH2 + FxD*PxH2);
 
 		//FPD: new way
 		exp1 = exp(energy1*fade_factor);
@@ -1117,9 +1117,9 @@ hbond_compute_energy(
 		dE_dxH *= acc_don_scale;
 	} else {
 		// fpd - a bit more complicated with the fade ...
-		double dE1_dr = dPr*FxD*FxH + dFSr*(PSxD*FxH + FxD*PSxH) + dFLr*(PLxD*FxH + FxD*PLxH);
-		double dE2_dr = dPr*FxD*FxH2 + dFSr*(PSxD*FxH2 + FxD*PxH2) + dFLr*(PLxD*FxH2 + FxD*PxH2);
-		double dE1_dxD, dE2_dxD;
+		core::Real dE1_dr = dPr*FxD*FxH + dFSr*(PSxD*FxH + FxD*PSxH) + dFLr*(PLxD*FxH + FxD*PLxH);
+		core::Real dE2_dr = dPr*FxD*FxH2 + dFSr*(PSxD*FxH2 + FxD*PxH2) + dFLr*(PLxD*FxH2 + FxD*PxH2);
+		core::Real dE1_dxD, dE2_dxD;
 		if ( use_cosAHD ) {
 			dE1_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH) + FxH*(FSr*dPSxD + FLr*dPLxD);
 			dE2_dxD = dFxD*(Pr*FxH2 + FLr*PxH2 + FSr*PxH2) + FxH2*(FSr*dPSxD + FLr*dPLxD);
@@ -1128,8 +1128,8 @@ hbond_compute_energy(
 			dE2_dxD = dFxD*(Pr*FxH2 + FLr*PxH2 + FSr*PxH2)*sin(AHD) + FxH2*(FSr*dPSxD + FLr*dPLxD);
 		}
 
-		double dE1_dxH    = dFxH*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPSxH + FLr*dPLxH);
-		double dE2_dxH2   = dFxH2*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPxH2 + FLr*dPxH2);
+		core::Real dE1_dxH    = dFxH*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPSxH + FLr*dPLxH);
+		core::Real dE2_dxH2   = dFxH2*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPxH2 + FLr*dPxH2);
 
 		dE_dr = (exp1*dE1_dr + exp2*dE2_dr) / (fade_factor*(exp1+exp2));
 		dE_dxD = (exp1*dE1_dxD + exp2*dE2_dxD) / (fade_factor*(exp1+exp2));

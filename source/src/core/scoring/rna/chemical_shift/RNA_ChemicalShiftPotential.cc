@@ -1694,7 +1694,7 @@ RNA_ChemicalShiftPotential::load_larmord_parameters( std::string  const & filena
 		std::istringstream iss(line);
 		iss >> nmr_atom >> resname >> neighbor_atom >> alpha;
 		//std::cout << "Checking White" << add_whitespaces( remove_whitespaces( neighbor_atom )  ) << "here" << std::endl;
-		this->alphas_.insert( std::pair<std::string,double>( remove_whitespaces( nmr_atom ) + ":" + remove_whitespaces( resname ) + ":" + add_whitespaces( remove_whitespaces( neighbor_atom )  ), alpha ) );
+		this->alphas_.insert( std::pair<std::string,core::Real>( remove_whitespaces( nmr_atom ) + ":" + remove_whitespaces( resname ) + ":" + add_whitespaces( remove_whitespaces( neighbor_atom )  ), alpha ) );
 		//std::cout << "Checking Keys Load" << remove_whitespaces( nmr_atom ) + ":" + remove_whitespaces( resname ) + ":" + add_whitespaces( remove_whitespaces( neighbor_atom )  ) << "here" << std::endl;
 	}
 }
@@ -1709,7 +1709,7 @@ RNA_ChemicalShiftPotential::load_larmord_weights( std::string  const & filename 
 	while ( getline( stream, line ) ) {
 		std::istringstream iss(line);
 		iss >> nmr_atom >> mae;
-		this->accuracy_weights_.insert( std::pair<std::string,double>( remove_whitespaces( nmr_atom ) , mae ) );
+		this->accuracy_weights_.insert( std::pair<std::string,core::Real>( remove_whitespaces( nmr_atom ) , mae ) );
 	}
 }
 
@@ -1723,7 +1723,7 @@ RNA_ChemicalShiftPotential::load_larmord_reference_shifts( std::string  const & 
 	while ( getline( stream, line ) ) {
 		std::istringstream iss(line);
 		iss >> nmr_resname >> nmr_atom >> refcs;
-		this->reference_shifts_.insert( std::pair<std::string,double>( remove_whitespaces( nmr_resname + ":" + nmr_atom ) , refcs ) );
+		this->reference_shifts_.insert( std::pair<std::string,core::Real>( remove_whitespaces( nmr_resname + ":" + nmr_atom ) , refcs ) );
 	}
 }
 

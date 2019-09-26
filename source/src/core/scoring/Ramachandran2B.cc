@@ -731,7 +731,7 @@ Ramachandran2B::read_rama()
 #ifndef WIN32
 #ifndef __CYGWIN__
 	clock_t stoptime = clock();
-	T << "Reading Rama from database took " << ((double) stoptime - starttime)/CLOCKS_PER_SEC << " seconds" << std::endl;
+	T << "Reading Rama from database took " << ((core::Real) stoptime - starttime)/CLOCKS_PER_SEC << " seconds" << std::endl;
 #endif
 #endif
 

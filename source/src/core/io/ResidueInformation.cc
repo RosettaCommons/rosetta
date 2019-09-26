@@ -90,7 +90,7 @@ void ResidueInformation::resSeq(   int setting ) { resSeq_ = setting; }
 void ResidueInformation::iCode(    char setting ) { iCode_ = setting; }
 void ResidueInformation::terCount( int setting ) { terCount_ = setting; }
 void ResidueInformation::set_xyz( std::string const &atomname, Vector const &vect ) { xyz_[atomname] = vect; }
-void ResidueInformation::set_temp( std::string const &atomname, core::Real const &val ) { temps_[atomname] = static_cast<double>(val); }
+void ResidueInformation::set_temp( std::string const &atomname, core::Real const &val ) { temps_[atomname] = static_cast<core::Real>(val); }
 void ResidueInformation::segmentID( std::string const & setting ) { segmentID_ = setting; }
 
 utility::vector1< AtomInformation > const & ResidueInformation::atoms() const { return atoms_; }
@@ -145,7 +145,7 @@ std::map< std::string, Vector > const & ResidueInformation::xyz() const {
 }
 
 //< map of names to B-factors;  redundant but used a lot in reader
-std::map< std::string, double > const & ResidueInformation::temps() const {
+std::map< std::string, core::Real > const & ResidueInformation::temps() const {
 	return temps_;
 }
 

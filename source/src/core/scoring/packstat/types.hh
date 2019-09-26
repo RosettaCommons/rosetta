@@ -30,7 +30,7 @@ namespace core {
 namespace scoring {
 namespace packstat {
 
-typedef double PackstatReal;
+typedef core::Real PackstatReal;
 
 typedef utility::vector1<PackstatReal> Floats;
 typedef Floats::iterator FloatIter;

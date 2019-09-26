@@ -93,7 +93,7 @@ EtableFunc::dfunc( Real const ) const {
 
 void EtableFunc::show_definition( std::ostream& out ) const {
 	out << "ETABLEFUNC " << min_ << ' ' << max_;
-	for ( double f_it : func_ ) {
+	for ( core::Real f_it : func_ ) {
 		out << ' ' << f_it;
 	} // for func_ and dfunc_
 

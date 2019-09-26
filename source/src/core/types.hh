@@ -38,12 +38,8 @@ typedef platform::uint uint;
 #ifndef WIN32
 typedef platform::Real Real;
 #else
-// Floating point precision control scalar
-#ifdef ROSETTA_FLOAT // Real == float
-	  typedef  float  Real;
-#else // Real == double
-typedef  double  Real;
-#endif
+
+using  Real = platform::Real;
 
 // for 'and/or' operators
 #include <iso646.h>

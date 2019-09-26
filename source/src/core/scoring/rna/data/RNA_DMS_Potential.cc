@@ -320,13 +320,13 @@ RNA_DMS_Potential::figure_out_potential(){
 	// Train polycubic spline on the potential.
 	utility::fixedsizearray1< BorderFlag, 4 > const BORDER( e_Natural );
 
-	utility::fixedsizearray1< double, 4 > START;
+	utility::fixedsizearray1< core::Real, 4 > START;
 	START[1] = *is_bonded_values_.begin();
 	START[2] = *occ_values_.begin();
 	START[3] = *binding_energy_values_.begin();
 	START[4] = *DMS_values_.begin();
 
-	utility::fixedsizearray1< double, 4 >  DELTA;
+	utility::fixedsizearray1< core::Real, 4 >  DELTA;
 	DELTA[1] = *std::next(is_bonded_values_.begin()) - *is_bonded_values_.begin();
 	DELTA[2] = *std::next(occ_values_.begin()) - *occ_values_.begin();
 	DELTA[3] = *std::next(binding_energy_values_.begin()) - *binding_energy_values_.begin();

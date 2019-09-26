@@ -61,8 +61,8 @@ FadeInterval::FadeInterval(
 	fmin_(fmin),
 	fmax_(fmax),
 	max0_(max0),
-	dfade_min_(1.0/static_cast<double>(fmin-min0)),
-	dfade_max_(1.0/static_cast<double>(max0-fmax)),
+	dfade_min_(1.0/static_cast<core::Real>(fmin-min0)),
+	dfade_max_(1.0/static_cast<core::Real>(max0-fmax)),
 	smooth_(smooth)
 {
 	debug_assert(min0 <= fmin && fmin <= fmax && fmax <= max0);
@@ -80,8 +80,8 @@ FadeInterval::FadeInterval(
 	fmin_(fmin),
 	fmax_(fmax),
 	max0_(max0),
-	dfade_min_(1.0/static_cast<double>(fmin-min0)),
-	dfade_max_(1.0/static_cast<double>(max0-fmax)),
+	dfade_min_(1.0/static_cast<core::Real>(fmin-min0)),
+	dfade_max_(1.0/static_cast<core::Real>(max0-fmax)),
 	smooth_(smooth)
 {
 	debug_assert(min0 <= fmin && fmin <= fmax && fmax <= max0);
@@ -90,15 +90,15 @@ FadeInterval::FadeInterval(
 void
 FadeInterval::value_deriv(
 	Real const x,
-	double &val,
-	double &deriv) const
+	core::Real &val,
+	core::Real &deriv) const
 {
 	//JSS  5 intervals --a-b---c-d--
 	if ( x <= fmax_ ) {
 		if ( x <= min0_ ) { val = deriv = 0.0; return; }       // in (-\infty, min0]
 		if ( x >= fmin_ ) { val = 1.0; deriv = 0.0; return; }  // in [fmin, fmax]
 		if ( smooth_ ) {
-			double const z((x - min0_)* dfade_min_);
+			core::Real const z((x - min0_)* dfade_min_);
 			val = z*z*(3-2*z);
 			deriv = -6*z*(z-1)*dfade_min_;
 		} else {
@@ -107,7 +107,7 @@ FadeInterval::value_deriv(
 	} else {
 		if ( x >= max0_ ) { val = deriv = 0.0; return; }       // in [max0, \infty)
 		if ( smooth_ ) {
-			double const z((x - fmax_) * dfade_max_);
+			core::Real const z((x - fmax_) * dfade_max_);
 			val = z*z*(2*z-3) + 1;
 			deriv = 6*z*(z-1)*dfade_max_;
 		} else {
@@ -116,7 +116,7 @@ FadeInterval::value_deriv(
 	}
 }
 
-double
+core::Real
 FadeInterval::value(
 	Real const x) const
 {
@@ -125,7 +125,7 @@ FadeInterval::value(
 		if ( x <= min0_ ) return 0.0;      // in (-\infty, min0]
 		if ( x >= fmin_ ) return 1.0;      // in [fmin, fmax]
 		if ( smooth_ ) {
-			double const z((x - min0_)* dfade_min_);
+			core::Real const z((x - min0_)* dfade_min_);
 			return z*z*(3.0-2.0*z);
 		} else {
 			return (x - min0_) * dfade_min_; // in (min0,fmin)
@@ -133,7 +133,7 @@ FadeInterval::value(
 	} else {
 		if ( x >= max0_ ) return 0.0;      // in [max0, \infty)
 		if ( smooth_ ) {
-			double const z((x - fmax_) * dfade_max_);
+			core::Real const z((x - fmax_) * dfade_max_);
 			return z*z*(2.0*z-3.0) + 1.0;
 		} else {
 			return (max0_ - x) * dfade_max_; // in (fmax,max0)

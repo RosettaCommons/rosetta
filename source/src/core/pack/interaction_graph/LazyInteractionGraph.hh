@@ -859,7 +859,7 @@ LazyNode::project_deltaE_for_substitution
 		}
 	}
 
-	//std::cout << " " << (double) num_rpe_calcs_this_sub / get_num_incident_edges();
+	//std::cout << " " << (core::Real) num_rpe_calcs_this_sub / get_num_incident_edges();
 
 	return alternate_state_total_energy_ - curr_state_total_energy_;
 

@@ -64,9 +64,9 @@ struct AtomInformation {
 	char chainID;
 	int resSeq;
 	char iCode;
-	double x, y, z;
-	double occupancy;
-	double temperature;
+	core::Real x, y, z;
+	core::Real occupancy;
+	core::Real temperature;
 	std::string segmentID;
 	std::string element;
 	signed short int formalcharge;

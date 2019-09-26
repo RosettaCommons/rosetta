@@ -41,7 +41,7 @@ typedef struct Hankel{
 	core::Real *f0;
 	int l;
 	core::Real *snn;
-	std::complex<double> * data_in_fft;
+	std::complex<core::Real> * data_in_fft;
 } Hankel;
 
 void hankel_free (
@@ -152,10 +152,10 @@ void hankel_make_rp (
 );
 
 void dfour1_plan(
-	double *data,
+	core::Real *data,
 	core::Size nn,
 	int isign,
-	std::complex<double> *in
+	std::complex<core::Real> *in
 	//numeric::fourier::kiss_fft_cpx *in
 );
 

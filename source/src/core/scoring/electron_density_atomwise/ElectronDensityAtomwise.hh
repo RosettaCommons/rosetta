@@ -89,7 +89,7 @@ private:
 
 	// the density data and precomputed score array
 	ObjexxFCL::FArray3D< float > density;
-	ObjexxFCL::FArray3D< double > unweighted_score_coeff;
+	ObjexxFCL::FArray3D< core::Real > unweighted_score_coeff;
 	//Stored atom weight
 	utility::vector1< utility::vector1 < core::Size > > atom_weight_stored;
 
@@ -122,18 +122,18 @@ private:
 	core::Size get_atom_weight( std::string const & elt );
 
 	//Spline interpolation
-	core::Real spline_interpolation( ObjexxFCL::FArray3D < double >
+	core::Real spline_interpolation( ObjexxFCL::FArray3D < core::Real >
 		& coeffs, numeric::xyzVector< core::Real > const & idxX ) const;
 
-	void spline_coeffs( ObjexxFCL::FArray3D< double > & data,
-		ObjexxFCL::FArray3D< double > & coeffs );
+	void spline_coeffs( ObjexxFCL::FArray3D< core::Real > & data,
+		ObjexxFCL::FArray3D< core::Real > & coeffs );
 
 	//Trilinear Interpolation
-	core::Real trilinear_interpolation( ObjexxFCL::FArray3D< double > & score,
+	core::Real trilinear_interpolation( ObjexxFCL::FArray3D< core::Real > & score,
 		numeric::xyzVector< core::Real > const & index );
 
 	numeric::xyzVector<core::Real> trilinear_gradient( ObjexxFCL::FArray3D
-		<double> & score, numeric::xyzVector< core::Real > const & index );
+		<core::Real> & score, numeric::xyzVector< core::Real > const & index );
 
 	//Convert a vector from xyz coordinate to index coordinate, shift w/ respect to the origin and fold into the unit cell
 	numeric::xyzVector< core::Real > xyz2index_in_cell( numeric::xyzVector< core::Real > const & xyz_vector );

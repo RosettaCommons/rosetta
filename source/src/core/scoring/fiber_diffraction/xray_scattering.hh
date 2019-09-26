@@ -133,7 +133,7 @@ public:
 //  // common initialization
 //  void init( core::Real mask, core::Real reso );
 //
-//  ObjexxFCL::FArray3D< double > data;
+//  ObjexxFCL::FArray3D< core::Real > data;
 //  numeric::xyzVector< core::Real > c2i, i2c;    // always construct orthogonal
 //  numeric::xyzVector< core::Size > grid;
 //  core::Real reso;
@@ -151,8 +151,8 @@ KromerMann get_km( std::string elt );
 
 bool factorsLTE5(int X);
 bool factorsLTE19(int X);
-int findSampling(double MINSMP, int NMUL);
-int findSampling5(double MINSMP, int NMUL);
+int findSampling(core::Real MINSMP, int NMUL);
+int findSampling5(core::Real MINSMP, int NMUL);
 
 }
 }

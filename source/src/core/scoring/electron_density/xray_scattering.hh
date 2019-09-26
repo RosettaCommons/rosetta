@@ -52,7 +52,7 @@ public:
 	}
 
 	// scattering at reciprocal space distance^2
-	inline core::Real f0( core::Real S2 ) {
+	core::Real f0( core::Real S2 ) {
 		return (c_ + a_[0]*exp(b_[0]*S2/4) + a_[1]*exp(b_[1]*S2/4) + a_[2]*exp(b_[2]*S2/4) + a_[3]*exp(b_[3]*S2/4) );
 	}
 
@@ -75,7 +75,7 @@ public:
 		weight_ = w;
 	}
 
-	inline core::Real B( core::Real k ) const {
+	core::Real B( core::Real k ) const {
 		core::Real s = M_PI*M_PI/k;
 		core::Real sigma_eff = sigma_;
 		core::Real B = ( 4*( s - sigma_eff ) );
@@ -86,7 +86,7 @@ public:
 		return ( B );
 	}
 
-	inline core::Real k( core::Real B , core::Real lim=600) const {
+	core::Real k( core::Real B , core::Real lim=600) const {
 		core::Real sigma_eff = sigma_;
 		core::Real B_eff = B;
 		if ( B<0 ) B_eff = 0;
@@ -99,7 +99,7 @@ public:
 	}
 
 	// calculate dK/dB at a given resolution
-	inline core::Real dk( core::Real B , core::Real lim=600) const {
+	core::Real dk( core::Real B , core::Real lim=600) const {
 		core::Real sigma_eff = sigma_;
 
 		core::Real B_eff = B;
@@ -118,12 +118,12 @@ public:
 
 	// rho = C*exp(-k*X^2)
 	// get scale factor, given k
-	inline core::Real C( core::Real k ) const {
+	core::Real C( core::Real k ) const {
 		core::Real C = pow(k, 1.5);
 		return ( C*weight_ );
 	}
 
-	inline int a( ) const {
+	int a( ) const {
 		return ( weight_ );
 	}
 
@@ -141,8 +141,8 @@ KromerMann get_km( std::string elt );
 
 bool factorsLTE5(int X);
 bool factorsLTE19(int X);
-int findSampling(double MINSMP, int NMUL);
-int findSampling5(double MINSMP, int NMUL);
+int findSampling(core::Real MINSMP, int NMUL);
+int findSampling5(core::Real MINSMP, int NMUL);
 
 }
 }

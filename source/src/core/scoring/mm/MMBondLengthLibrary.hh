@@ -17,6 +17,7 @@
 
 // Project headers
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
+#include <core/types.hh>
 
 // Utility header
 #include <utility/pointer/access_ptr.hh>
@@ -38,7 +39,7 @@ namespace mm {
 
 // all ints for now
 typedef utility::keys::Key2Tuple< int, int > mm_bondlength_atom_pair;
-typedef utility::keys::Key2Tuple< double, double > mm_bondlength_param_set;
+typedef utility::keys::Key2Tuple< core::Real, core::Real > mm_bondlength_param_set;
 typedef std::multimap< mm_bondlength_atom_pair, mm_bondlength_param_set > mm_bondlength_library;
 typedef std::multimap< mm_bondlength_atom_pair, mm_bondlength_param_set >::const_iterator mm_bondlength_library_citer;
 typedef std::pair< mm_bondlength_library_citer, mm_bondlength_library_citer > mm_bondlength_library_citer_pair;

@@ -17,6 +17,7 @@
 
 // Unit headers
 #include <core/scoring/mm/MMTorsionLibrary.fwd.hh>
+#include <core/types.hh>
 
 // Project headers
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
@@ -43,7 +44,7 @@ namespace mm {
 
 // all ints for now
 typedef utility::keys::Key4Tuple< int, int, int, int > mm_torsion_atom_quad;
-typedef utility::keys::Key3Tuple< double, int, double > mm_torsion_param_set;
+typedef utility::keys::Key3Tuple< core::Real, int, core::Real > mm_torsion_param_set;
 typedef std::multimap< mm_torsion_atom_quad, mm_torsion_param_set > mm_torsion_library;
 typedef std::multimap< mm_torsion_atom_quad, mm_torsion_param_set >::const_iterator mm_torsion_library_citer;
 typedef std::pair< mm_torsion_library_citer, mm_torsion_library_citer > mm_torsion_library_citer_pair;

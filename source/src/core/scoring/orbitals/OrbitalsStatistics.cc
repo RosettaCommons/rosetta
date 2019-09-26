@@ -69,7 +69,7 @@ namespace orbitals {
 
 // REQUIRED FOR WINDOWS
 #ifdef _WIN32                       // REQUIRED FOR WINDOWS
-double round( double d ) {      // REQUIRED FOR WINDOWS
+core::Real round( core::Real d ) {      // REQUIRED FOR WINDOWS
 	return (d > 0.0) ? floor(d + 0.5) : ceil(d - 0.5);      // REQUIRED FOR WINDOWS
 }                               // REQUIRED FOR WINDOWS
 #endif                              // REQUIRED FOR WINDOWS

@@ -537,16 +537,16 @@ polycubic_interpolation(
 template <Size N>
 void
 interpolate_polylinear_by_value_noangles(
-	utility::fixedsizearray1< double, ( 1 << N ) > const & vals,
-	utility::fixedsizearray1< double, N > const & bbd,
-	utility::fixedsizearray1< double, N > const & binrange,
-	double & val,
-	utility::fixedsizearray1< double, N > & dval_dbb
+	utility::fixedsizearray1< core::Real, ( 1 << N ) > const & vals,
+	utility::fixedsizearray1< core::Real, N > const & bbd,
+	utility::fixedsizearray1< core::Real, N > const & binrange,
+	core::Real & val,
+	utility::fixedsizearray1< core::Real, N > & dval_dbb
 ) {
 	val = 0;
 
 	for ( Size ii = 1; ii <= vals.size(); ++ii ) {
-		double valterm = vals[ ii ];
+		core::Real valterm = vals[ ii ];
 		for ( Size jj = 1; jj <= N; ++jj ) {
 			valterm *= bit_is_set( ii, N, jj ) ? bbd[ jj ] : (1.0f - bbd[ jj ]);
 		}
@@ -556,7 +556,7 @@ interpolate_polylinear_by_value_noangles(
 	for ( Size ii = 1; ii <= N; ++ii ) {
 		dval_dbb[ ii ] = 0.0f;
 		for ( Size jj = 1; jj <= vals.size(); ++jj ) {
-			double valterm = 1;
+			core::Real valterm = 1;
 
 			for ( Size kk = 1; kk <= N; ++kk ) {
 				if ( kk == ii ) {
@@ -584,20 +584,20 @@ interpolate_polylinear_by_value_noangles(
 template < core::Size N > inline
 void
 interpolate_polylinear_by_value_angles_degrees (
-	utility::fixedsizearray1< double, ( 1 << N ) > const & vals,
-	utility::fixedsizearray1< double, N > const & bbd,
-	utility::fixedsizearray1< double, N > const & binrange,
-	double & val,
-	utility::fixedsizearray1< double, N > &dval_dbb
+	utility::fixedsizearray1< core::Real, ( 1 << N ) > const & vals,
+	utility::fixedsizearray1< core::Real, N > const & bbd,
+	utility::fixedsizearray1< core::Real, N > const & binrange,
+	core::Real & val,
+	utility::fixedsizearray1< core::Real, N > &dval_dbb
 ) {
-	utility::fixedsizearray1< double, (1 << (N-1) ) > subvals, curderivvals;
-	utility::fixedsizearray1< double, (N-1) > sub_bbd, sub_binrange;
+	utility::fixedsizearray1< core::Real, (1 << (N-1) ) > subvals, curderivvals;
+	utility::fixedsizearray1< core::Real, (N-1) > sub_bbd, sub_binrange;
 
 	// First, interpolate the points along the current dimension:
 	for ( core::Size i(1), imax( 1 << (N-1) ); i<=imax; ++i ) {
-		utility::fixedsizearray1< double, 2 > const curvals{ vals[i], vals[i+imax] };
-		utility::fixedsizearray1< double, 1 > const curbbds{ bbd[1] }, curbinrange{ binrange[1] };
-		utility::fixedsizearray1< double, 1 > curderiv;
+		utility::fixedsizearray1< core::Real, 2 > const curvals{ vals[i], vals[i+imax] };
+		utility::fixedsizearray1< core::Real, 1 > const curbbds{ bbd[1] }, curbinrange{ binrange[1] };
+		utility::fixedsizearray1< core::Real, 1 > curderiv;
 		interpolate_polylinear_by_value_angles_degrees( curvals, curbbds, curbinrange, subvals[i], curderiv); //Calls the N=1 specialization.
 		curderivvals[i] = curderiv[1];
 	}
@@ -609,11 +609,11 @@ interpolate_polylinear_by_value_angles_degrees (
 	}
 
 	// Interpolate (non-angles) the (N-1)^2 derivative points to get derivative in current dimension:
-	utility::fixedsizearray1< double, (N-1) > dummy; //Not used
+	utility::fixedsizearray1< core::Real, (N-1) > dummy; //Not used
 	interpolate_polylinear_by_value_noangles( curderivvals, sub_bbd, sub_binrange, dval_dbb[1], dummy );
 
 	// Call this function recursively for the next lower dimension:
-	utility::fixedsizearray1< double, (N-1) > sub_derivs;
+	utility::fixedsizearray1< core::Real, (N-1) > sub_derivs;
 	interpolate_polylinear_by_value_angles_degrees( subvals, sub_bbd, sub_binrange, val, sub_derivs );
 
 	// Update derivatives for lower dimensions:
@@ -635,16 +635,16 @@ interpolate_polylinear_by_value_angles_degrees (
 template <> inline
 void
 interpolate_polylinear_by_value_angles_degrees <1> (
-	utility::fixedsizearray1< double, 2 > const & vals,
-	utility::fixedsizearray1< double, 1 > const & bbd,
-	utility::fixedsizearray1< double, 1 > const & binrange,
-	double & val,
-	utility::fixedsizearray1< double, 1 > & dval_dbb
+	utility::fixedsizearray1< core::Real, 2 > const & vals,
+	utility::fixedsizearray1< core::Real, 1 > const & bbd,
+	utility::fixedsizearray1< core::Real, 1 > const & binrange,
+	core::Real & val,
+	utility::fixedsizearray1< core::Real, 1 > & dval_dbb
 ) {
 	debug_assert(vals.size() == 2);
 	debug_assert(bbd.size() == 1);
 	debug_assert(binrange.size() == 1);
-	utility::fixedsizearray1< double, 2 > rangedvals_0, rangedvals_180;
+	utility::fixedsizearray1< core::Real, 2 > rangedvals_0, rangedvals_180;
 
 	for ( core::Size i(1); i<=2; ++i ) {
 		rangedvals_180[i] = numeric::principal_angle_degrees(vals[i]);
@@ -673,12 +673,12 @@ interpolate_polylinear_by_value_angles_degrees <1> (
 template < Size N >
 void
 interpolate_polylinear_by_value(
-	utility::fixedsizearray1< double, ( 1 << N ) > const & vals,
-	utility::fixedsizearray1< double, N > const & bbd,
-	utility::fixedsizearray1< double, N > const & binrange,
+	utility::fixedsizearray1< core::Real, ( 1 << N ) > const & vals,
+	utility::fixedsizearray1< core::Real, N > const & bbd,
+	utility::fixedsizearray1< core::Real, N > const & binrange,
 	bool angles,
-	double & val,
-	utility::fixedsizearray1< double, N > & dval_dbb
+	core::Real & val,
+	utility::fixedsizearray1< core::Real, N > & dval_dbb
 ) {
 	debug_assert( N != 0 );
 

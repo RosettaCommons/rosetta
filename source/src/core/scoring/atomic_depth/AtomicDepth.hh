@@ -60,7 +60,7 @@ const int fast_one_shell_highb[3] = {6, 18, 26};
 
 typedef struct point3d
 {
-	double x,y,z;
+	core::Real x,y,z;
 }point3d;
 typedef struct volumepixel
 {
@@ -103,14 +103,14 @@ private:
 	point3d ptran_;
 	int boxlength_;
 	bool flagradius_;
-	double proberadius_;
-	double fixsf_;
-	double scalefactor_;
+	core::Real proberadius_;
+	core::Real fixsf_;
+	core::Real scalefactor_;
 	point3d pmin_,pmax_;
 	int pheight_,pwidth_,plength_;
 	std::vector<int> widxz_;
 	std::vector<std::vector<int> > depty_;
-	double cutradis_;
+	core::Real cutradis_;
 	std::vector<std::vector<std::vector<volumepixel > > > vp_;
 	std::shared_ptr<std::vector<voxel2> > inarray_;
 	std::shared_ptr<std::vector<voxel2> > outarray_;

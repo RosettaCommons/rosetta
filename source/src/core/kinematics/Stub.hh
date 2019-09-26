@@ -129,7 +129,7 @@ public: // Methods
 
 	/// @brief check if the stub is orthogonal under the tolerance cutoff
 	bool
-	is_orthogonal( double const & tolerance ) const
+	is_orthogonal( core::Real const & tolerance ) const
 	{
 		Matrix delta( M * M.transposed() - Matrix::identity() );
 		return ( ( delta.col_x().length() +
@@ -200,7 +200,7 @@ public:
 
 /// @brief root squared deviation between two stubs
 inline
-double
+core::Real
 distance(
 	Stub const & a,
 	Stub const & b

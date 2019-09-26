@@ -3663,9 +3663,9 @@ ScoreFunction::set_symmetric_cenlist( pose::Pose & pose ) const {
 			if ( symm_info->fa_is_independent( res ) ) continue;
 
 			int symm_res ( symm_info->bb_follows( res ) );
-			double fcen6_symm ( cenlist->fcen6( symm_res) );
-			double fcen10_symm ( cenlist->fcen10( symm_res ) );
-			double fcen12_symm ( cenlist->fcen12( symm_res ) );
+			core::Real fcen6_symm ( cenlist->fcen6( symm_res) );
+			core::Real fcen10_symm ( cenlist->fcen10( symm_res ) );
+			core::Real fcen12_symm ( cenlist->fcen12( symm_res ) );
 			cenlist->set_fcen6( res, fcen6_symm );
 			cenlist->set_fcen10( res, fcen10_symm );
 			cenlist->set_fcen12( res, fcen12_symm );

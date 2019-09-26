@@ -28,7 +28,7 @@ namespace evaluator {
 
 void
 inline
-get_minval_binwidth( numeric::MathNTensor< double, 6 > const & T,
+get_minval_binwidth( numeric::MathNTensor< core::Real, 6 > const & T,
 	utility::json_spirit::mObject const & json,
 	utility::fixedsizearray1< numeric::Real, 6 > & minval,
 	utility::fixedsizearray1< numeric::Real, 6 > & binwidth)

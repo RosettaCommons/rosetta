@@ -134,8 +134,8 @@ void FixbbPwatSimAnnealer::run() {
 
 			core::conformation::Residue const & curres( *rotamer_sets()->rotamer_for_moltenres(moltenres_id, rotamer_state_on_moltenres) );
 			if ( curres.aa() == core::chemical::aa_h2o ) {
-				double rand_num = numeric::random::rg().uniform();
-				double nrot = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
+				core::Real rand_num = numeric::random::rg().uniform();
+				core::Real nrot = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
 				if ( rand_num < (nrot/2.0-1)/nrot ) rotamer_state_on_moltenres = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
 			}
 			core::PackerEnergy previous_energy_for_node( 0.0 ), delta_energy( 0.0 );
@@ -169,9 +169,9 @@ void FixbbPwatSimAnnealer::run() {
 			// for waters, set to virtual 50% of the time
 			core::conformation::Residue const &curres( *rotamer_sets()->rotamer_for_moltenres(moltenres_id, rotamer_state_on_moltenres) );
 			if ( curres.aa() == core::chemical::aa_h2o ) {
-				double rand_num = numeric::random::uniform();
+				core::Real rand_num = numeric::random::uniform();
 				// last rotamer is the virtual state
-				double nrot = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
+				core::Real nrot = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
 				if ( rand_num < 0.5*(1.0 - 1.0/nrot) ) rotamer_state_on_moltenres = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
 			}
 

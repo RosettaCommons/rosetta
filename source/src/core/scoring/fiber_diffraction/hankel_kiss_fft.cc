@@ -287,7 +287,7 @@ Hankel * hankel_make_input (
 
 	memcpy( p_hankel->f0 , f0 , 2 * p_hankel->lec_order * sizeof( core::Real ) );
 
-	p_hankel->data_in_fft = ( std::complex<double> *) malloc(sizeof(std::complex<double> ) * 2 * p_hankel->n );
+	p_hankel->data_in_fft = ( std::complex<core::Real> *) malloc(sizeof(std::complex<core::Real> ) * 2 * p_hankel->n );
 	if ( p_hankel->data_in_fft == nullptr ) {
 		utility_exit_with_message( "Fourth malloc failed in make_input" );
 	}
@@ -367,12 +367,12 @@ void set_r_inv_array (
 	}
 }
 
-void dfour1_plan(double *data, core::Size nn, int isign, std::complex<double> *in)
+void dfour1_plan(core::Real *data, core::Size nn, int isign, std::complex<core::Real> *in)
 {
-	double *f;
+	core::Real *f;
 	f=data+1;
 	for ( core::Size i=0; i<nn; ++i ) {
-		std::complex<double> cmpx( *f , *( f+1 ) );
+		std::complex<core::Real> cmpx( *f , *( f+1 ) );
 		in[i] = cmpx;
 		f+=2;
 	}

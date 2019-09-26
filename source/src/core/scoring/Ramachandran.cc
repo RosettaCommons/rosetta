@@ -668,8 +668,8 @@ Ramachandran::eval_rama_score_residue(
 		interp_p = bilinearly_interpolated( phi2, psi2, binw_, n_phi_, rama_for_res, dp_dphi, dp_dpsi );
 
 		if ( interp_p > 0.0 ) {
-			rama = ram_entropy_(ss_type, res_aa2 ) - std::log( static_cast< double >( interp_p ) );
-			double const interp_p_inv_neg = -1.0 / interp_p;
+			rama = ram_entropy_(ss_type, res_aa2 ) - std::log( static_cast< core::Real >( interp_p ) );
+			core::Real const interp_p_inv_neg = -1.0 / interp_p;
 			drama_dphi = interp_p_inv_neg * d_multiplier * dp_dphi;
 			drama_dpsi = interp_p_inv_neg * d_multiplier * dp_dpsi;
 		} else {
@@ -895,7 +895,7 @@ Ramachandran::read_rama_map_file (
 ) {
 	int aa_num,phi_bin,psi_bin,ss_type;
 	Real check,min_prob,max_prob;
-	double entropy;
+	core::Real entropy;
 	char line[60];
 	int scan_count;
 	float pval, eval; // vars for sscanf float I/O
@@ -948,7 +948,7 @@ Ramachandran::read_rama_map_file (
 
 					check += ram_probabil_(j,k,ii,i);
 					entropy += ram_probabil_(j,k,ii,i) *
-						std::log( static_cast< double >( ram_probabil_(j,k,ii,i) ) );
+						std::log( static_cast< core::Real >( ram_probabil_(j,k,ii,i) ) );
 					min_prob = std::min(ram_probabil_(j,k,ii,i),min_prob);
 					max_prob = std::max(ram_probabil_(j,k,ii,i),max_prob);
 				}
@@ -1320,7 +1320,7 @@ Ramachandran::read_rama_map_file_shapovalov (
 	int j, k; //phi and psi indices
 	char aa[4];
 	std::string aaStr;
-	double phi, psi, prob, minusLogProb;
+	core::Real phi, psi, prob, minusLogProb;
 
 	do {
 		iunit->getline( line, 255 );

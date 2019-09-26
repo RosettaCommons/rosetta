@@ -138,13 +138,14 @@ EItem GA_Minimizer::loop(std::vector<EItem> & pop, int &time)
 
 void GA_Minimizer::step(std::vector<EItem> &pop, int &c_time, int &mres, EItem &shift)
 {
-	int i_ev = pop.size();  double best = pop[0].r;
+	int const i_ev = pop.size();
+	core::Real const best = pop[0].r;
 
 	for ( int i=pop.size()-1; i>=0; i-- ) {  // for each item in pop do: mutation/crossover/...
 		// Plain Mutation
 		if ( yes_no_random(1.) ) {
 			c_time--;
-			int last_i = pop.size();
+			int const last_i = pop.size();
 			pop.push_back(pop[i]);
 			mutate(pop[last_i]);
 		}
@@ -152,10 +153,10 @@ void GA_Minimizer::step(std::vector<EItem> &pop, int &c_time, int &mres, EItem &
 		// Cross over mutation
 		if ( yes_no_random(1.) ) {
 			c_time--;
-			int last_i = pop.size();
+			int const last_i = pop.size();
 			pop.push_back(pop[i]);
 
-			int i2 = numeric::random::rg().random_range(0, i_ev-1);  //Random::RangeRandom(i_ev);
+			int const i2 = numeric::random::rg().random_range(0, i_ev-1);  //Random::RangeRandom(i_ev);
 			if ( i2 != i ) cross_over(pop[last_i], pop[i], pop[i2]);
 		}
 	}
@@ -197,7 +198,7 @@ void GA_Minimizer::mutate(EItem &V)
 {
 	for ( Size i=1; i<=V.v.size(); i++ ) {
 		if ( yes_no_random( mutation_probability_ ) ) {
-			double r = numeric::random::rg().gaussian() + .7; //Random::NormalRandom(1, .7);
+			core::Real const r = numeric::random::rg().gaussian() + .7; //Random::NormalRandom(1, .7);
 			V.v[i] *= r * 1.0;
 			//V.v[i] += numeric::random::rg().gaussian();
 		}

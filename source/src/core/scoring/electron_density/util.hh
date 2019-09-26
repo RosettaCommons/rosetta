@@ -92,19 +92,19 @@ core::Real interp_linear(
 
 /// @brief spline interpolation with periodic boundaries
 core::Real
-interp_spline( ObjexxFCL::FArray3D< double > & coeffs ,
+interp_spline( ObjexxFCL::FArray3D< core::Real > & coeffs ,
 	numeric::xyzVector<core::Real> const & idxX,
 	bool mirrored=false
 );
 
 numeric::xyzVector<core::Real>
-interp_dspline( ObjexxFCL::FArray3D< double > & coeffs ,
+interp_dspline( ObjexxFCL::FArray3D< core::Real > & coeffs ,
 	numeric::xyzVector<core::Real> const & idxX,
 	bool mirrored=false
 );
 
-/// @brief precompute spline coefficients (float array => double coeffs)
-void spline_coeffs( ObjexxFCL::FArray3D< double > const &data, ObjexxFCL::FArray3D< double > & coeffs, bool mirrored=false);
+/// @brief precompute spline coefficients (float array => core::Real coeffs)
+void spline_coeffs( ObjexxFCL::FArray3D< core::Real > const &data, ObjexxFCL::FArray3D< core::Real > & coeffs, bool mirrored=false);
 
 /// @brief spline interpolation with periodic boundaries
 core::Real
@@ -119,32 +119,32 @@ interp_dspline( ObjexxFCL::FArray3D< float > & coeffs ,
 	bool mirrored=false
 );
 
-/// @brief precompute spline coefficients (double array => double coeffs)
-void spline_coeffs( ObjexxFCL::FArray3D< float > const &data, ObjexxFCL::FArray3D< double > & coeffs, bool mirrored=false);
+/// @brief precompute spline coefficients (core::Real array => core::Real coeffs)
+void spline_coeffs( ObjexxFCL::FArray3D< float > const &data, ObjexxFCL::FArray3D< core::Real > & coeffs, bool mirrored=false);
 
-void conj_map_times(ObjexxFCL::FArray3D< std::complex<double> > & map_product, ObjexxFCL::FArray3D< std::complex<double> > const & mapA, ObjexxFCL::FArray3D< std::complex<double> > const & mapB);
+void conj_map_times(ObjexxFCL::FArray3D< std::complex<core::Real> > & map_product, ObjexxFCL::FArray3D< std::complex<core::Real> > const & mapA, ObjexxFCL::FArray3D< std::complex<core::Real> > const & mapB);
 
-ObjexxFCL::FArray3D< double > convolute_maps( ObjexxFCL::FArray3D< double > const & mapA, ObjexxFCL::FArray3D< double > const & mapB) ;
+ObjexxFCL::FArray3D< core::Real > convolute_maps( ObjexxFCL::FArray3D< core::Real > const & mapA, ObjexxFCL::FArray3D< core::Real > const & mapB) ;
 
 
 /// 4d interpolants
 core::Real interp_spline(
-	ObjexxFCL::FArray4D< double > & coeffs ,
+	ObjexxFCL::FArray4D< core::Real > & coeffs ,
 	core::Real slab,
 	numeric::xyzVector< core::Real > const & idxX );
 
 void interp_dspline(
-	ObjexxFCL::FArray4D< double > & coeffs ,
+	ObjexxFCL::FArray4D< core::Real > & coeffs ,
 	numeric::xyzVector< core::Real > const & idxX ,
 	core::Real slab,
 	numeric::xyzVector< core::Real > & gradX,
 	core::Real & gradSlab );
 void spline_coeffs(
-	ObjexxFCL::FArray4D< double > const & data ,
-	ObjexxFCL::FArray4D< double > & coeffs);
+	ObjexxFCL::FArray4D< core::Real > const & data ,
+	ObjexxFCL::FArray4D< core::Real > & coeffs);
 void spline_coeffs(
 	ObjexxFCL::FArray4D< float > const & data ,
-	ObjexxFCL::FArray4D< double > & coeffs);
+	ObjexxFCL::FArray4D< core::Real > & coeffs);
 
 ///@brief Calculate the density and relative neighbor density score.
 /// Map must be initialized to number of calculation residues.
@@ -202,18 +202,18 @@ void resample(
 
 	newDensity.dimension( newDims[0], newDims[1], newDims[2] );
 
-	// convert map to complex<double>
-	ObjexxFCL::FArray3D< std::complex<double> > Foldmap, Fnewmap;
+	// convert map to complex<core::Real>
+	ObjexxFCL::FArray3D< std::complex<core::Real> > Foldmap, Fnewmap;
 	Fnewmap.dimension( newDims[0], newDims[1], newDims[2] );
 
 	// fft
-	ObjexxFCL::FArray3D< std::complex<double> > cplx_density;
+	ObjexxFCL::FArray3D< std::complex<core::Real> > cplx_density;
 	cplx_density.dimension( density.u1() , density.u2() , density.u3() );
-	for ( int i=0; i<density.u1()*density.u2()*density.u3(); ++i ) cplx_density[i] = (double)density[i];
+	for ( int i=0; i<density.u1()*density.u2()*density.u3(); ++i ) cplx_density[i] = (core::Real)density[i];
 	numeric::fourier::fft3(cplx_density, Foldmap);
 
 	// reshape (handles both shrinking and growing in each dimension)
-	for ( int i=0; i<Fnewmap.u1()*Fnewmap.u2()*Fnewmap.u3(); ++i ) Fnewmap[i] = std::complex<double>(0,0);
+	for ( int i=0; i<Fnewmap.u1()*Fnewmap.u2()*Fnewmap.u3(); ++i ) Fnewmap[i] = std::complex<core::Real>(0,0);
 
 	numeric::xyzVector<int> nyq( std::min(Foldmap.u1(), Fnewmap.u1())/2,
 		std::min(Foldmap.u2(), Fnewmap.u2())/2,

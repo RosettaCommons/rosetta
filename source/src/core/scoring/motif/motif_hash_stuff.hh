@@ -64,7 +64,7 @@ public:
 	SixDCoordinateBinner hasher_;
 	typedef boost::unordered_map< Key, Score, bin_index_hasher > ScoreMap;
 	ScoreMap scores_;
-	double cart_size_,cart_resl_,angle_resl_;
+	core::Real cart_size_,cart_resl_,angle_resl_;
 public:
 	XformScore(Real cart_resl, Real ang_resl);
 	// Key key_of(Real6 const & xform);
@@ -464,7 +464,7 @@ public:
 	typedef boost::unordered_multimap< Key, ResPairMotif , bin_index_hasher > MotifMap;
 	typedef boost::unordered_set<Key> KeySet;
 	typedef numeric::geometry::hashing::xyzStripeHashCOP ClashCheckerPtr;
-	double const cart_size_,cart_resl_,angle_resl_;
+	core::Real const cart_size_,cart_resl_,angle_resl_;
 	SixDCoordinateBinner hasher_;
 	MotifMap motif_umap_;
 	KeySet key_set_;

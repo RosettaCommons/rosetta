@@ -40,7 +40,7 @@ public:
 
 	Multivec v;  ///< item value
 	char tag;  ///< tag for debug. (m-mutation, c-crossover, ...etc)
-	double r;  ///< result of FF evaluation.
+	core::Real r;  ///< result of FF evaluation.
 
 	// for sorting: compare function
 	static inline bool sort_R_function(const EItem &e1, const EItem &e2) {return e1.r < e2.r;}

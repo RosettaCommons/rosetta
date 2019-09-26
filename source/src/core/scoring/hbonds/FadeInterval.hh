@@ -116,11 +116,11 @@ public:
 	void
 	value_deriv(
 		Real const x,
-		double &val,
-		double &deriv
+		core::Real &val,
+		core::Real &deriv
 	) const;
 
-	double
+	core::Real
 	value(
 		Real const x
 	) const;
@@ -164,8 +164,8 @@ private:
 	Real const fmin_;
 	Real const fmax_;
 	Real const max0_;
-	double const dfade_min_;
-	double const dfade_max_;
+	core::Real const dfade_min_;
+	core::Real const dfade_max_;
 	bool const smooth_;
 
 };

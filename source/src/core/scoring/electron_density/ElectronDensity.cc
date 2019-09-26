@@ -94,9 +94,9 @@ using namespace basic::options;
 ///
 ///  SHORT HELPER FUNCTIONS
 inline float d2r(float d) { return (d*M_PI/180.0); }
-inline double d2r(double d) { return (d*M_PI/180.0); }
+inline core::Real d2r(core::Real d) { return (d*M_PI/180.0); }
 inline float  square(float  x) { return (x*x); }
-inline double square(double x) { return (x*x); }
+inline core::Real square(core::Real x) { return (x*x); }
 
 
 // x mod y, returns z in [-y/2,y/2]
@@ -108,8 +108,8 @@ inline float min_mod(float x,float y) {
 	float r=std::fmod(x,y); if ( r<-0.5*y ) { r+=y; } if ( r>=0.5*y ) { r-=y; }
 	return r;
 }
-inline double min_mod(double x,double y) {
-	double r=std::fmod(x,y); if ( r<-0.5*y ) { r+=y; } if ( r>=0.5*y ) { r-=y; }
+inline core::Real min_mod(core::Real x,core::Real y) {
+	core::Real r=std::fmod(x,y); if ( r<-0.5*y ) { r+=y; } if ( r>=0.5*y ) { r-=y; }
 	return r;
 }
 
@@ -303,7 +303,7 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 			}
 		}
 
-		ObjexxFCL::FArray3D< double > rhoC, rhoMask;
+		ObjexxFCL::FArray3D< core::Real > rhoC, rhoMask;
 		calcRhoC( litePose, 0, rhoC, rhoMask, -1, 1e6 );
 		for ( int i=0; i<density.u1()*density.u2()*density.u3(); ++i ) density[i] += rhoC[i];
 	}
@@ -348,7 +348,7 @@ numeric::xyzVector<core::Real> ElectronDensity::dens_grad (
 // mapSphericalSamples
 // - resample the map in spherical slices around a pose
 void ElectronDensity::mapSphericalSamples (
-	ObjexxFCL::FArray3D< double > &mapShellR,
+	ObjexxFCL::FArray3D< core::Real > &mapShellR,
 	core::Size nRsteps, core::Real delR, core::Size B,
 	numeric::xyzVector< core::Real > center,
 	core::Real laplacian_offset
@@ -461,7 +461,7 @@ core::Real ElectronDensity::matchCentroidPose(
 		return 0.0;
 	}
 
-	ObjexxFCL::FArray3D< double >  rho_calc, inv_rho_mask;
+	ObjexxFCL::FArray3D< core::Real >  rho_calc, inv_rho_mask;
 	rho_calc.dimension(density.u1() , density.u2() , density.u3());
 	inv_rho_mask.dimension(density.u1() , density.u2() , density.u3());
 	for ( int i=0; i<density.u1()*density.u2()*density.u3(); ++i ) {
@@ -506,10 +506,10 @@ core::Real ElectronDensity::matchCentroidPose(
 
 		cartX = atm_i.xyz(); // - getTransform();
 		fracX = c2f*cartX;
-		atm_idx[i][0] = pos_mod (fracX[0]*grid_[0] - origin_[0] + 1 , (double)grid_[0]);
-		atm_idx[i][1] = pos_mod (fracX[1]*grid_[1] - origin_[1] + 1 , (double)grid_[1]);
-		atm_idx[i][2] = pos_mod (fracX[2]*grid_[2] - origin_[2] + 1 , (double)grid_[2]);
 
+		atm_idx[i][0] = pos_mod (fracX[0]*grid_[0] - origin_[0] + 1 , (core::Real)grid_[0]);
+		atm_idx[i][1] = pos_mod (fracX[1]*grid_[1] - origin_[1] + 1 , (core::Real)grid_[1]);
+		atm_idx[i][2] = pos_mod (fracX[2]*grid_[2] - origin_[2] + 1 , (core::Real)grid_[2]);
 
 		for ( int z=1; z<=density.u3(); ++z ) {
 			atm_j[2] = z;
@@ -631,8 +631,8 @@ core::Real ElectronDensity::matchCentroidPose(
 			obs_x = density[x];
 			core::Real inv_eps_x = inv_rho_mask[x];
 
-			numeric::xyzVector<double> del_mask = inv_eps_x*rho_dx_mask_ij[n];
-			numeric::xyzVector<double> del_rhoc = rho_dx_atm_ij[n];
+			numeric::xyzVector<core::Real> del_mask = inv_eps_x*rho_dx_mask_ij[n];
+			numeric::xyzVector<core::Real> del_rhoc = rho_dx_atm_ij[n];
 
 			dVdx_ij  += del_mask;
 			dOdx_ij  += del_mask*obs_x;
@@ -673,7 +673,7 @@ core::Real ElectronDensity::matchPose(
 		return 0.0;
 	}
 
-	ObjexxFCL::FArray3D< double >  rho_calc, inv_rho_mask;
+	ObjexxFCL::FArray3D< core::Real >  rho_calc, inv_rho_mask;
 	rho_calc.dimension(density.u1() , density.u2() , density.u3());
 	inv_rho_mask.dimension(density.u1() , density.u2() , density.u3());
 	for ( int i=0; i<density.u1()*density.u2()*density.u3(); ++i ) {
@@ -735,9 +735,9 @@ core::Real ElectronDensity::matchPose(
 
 			cartX = atm_i.xyz(); // - getTransform();
 			fracX = c2f*cartX;
-			atm_idx[i][j][0] = pos_mod (fracX[0]*grid_[0] - origin_[0] + 1 , (double)grid_[0]);
-			atm_idx[i][j][1] = pos_mod (fracX[1]*grid_[1] - origin_[1] + 1 , (double)grid_[1]);
-			atm_idx[i][j][2] = pos_mod (fracX[2]*grid_[2] - origin_[2] + 1 , (double)grid_[2]);
+			atm_idx[i][j][0] = pos_mod (fracX[0]*grid_[0] - origin_[0] + 1 , (core::Real)grid_[0]);
+			atm_idx[i][j][1] = pos_mod (fracX[1]*grid_[1] - origin_[1] + 1 , (core::Real)grid_[1]);
+			atm_idx[i][j][2] = pos_mod (fracX[2]*grid_[2] - origin_[2] + 1 , (core::Real)grid_[2]);
 
 
 			for ( int z=1; z<=density.u3(); ++z ) {
@@ -867,8 +867,8 @@ core::Real ElectronDensity::matchPose(
 				obs_x = density[x];
 				core::Real inv_eps_x = inv_rho_mask[x];
 
-				numeric::xyzVector<double> del_mask = inv_eps_x*rho_dx_mask_ij[n];
-				numeric::xyzVector<double> del_rhoc = rho_dx_atm_ij[n];
+				numeric::xyzVector<core::Real> del_mask = inv_eps_x*rho_dx_mask_ij[n];
+				numeric::xyzVector<core::Real> del_rhoc = rho_dx_atm_ij[n];
 
 				dVdx_ij  += del_mask;
 				dOdx_ij  += del_mask*obs_x;
@@ -951,7 +951,7 @@ ElectronDensity::getResolutionBins(
 
 void
 ElectronDensity::getIntensities(
-	ObjexxFCL::FArray3D< std::complex<double> > const & Fdensity,
+	ObjexxFCL::FArray3D< std::complex<core::Real> > const & Fdensity,
 	core::Size nbuckets,
 	core::Real maxreso,
 	core::Real minreso,
@@ -1021,8 +1021,8 @@ ElectronDensity::smooth_intensities(utility::vector1< core::Real > &Is) const {
 /// @brief Compute model-map FSC & errors
 void
 ElectronDensity::getFSC(
-	ObjexxFCL::FArray3D< std::complex<double> > const &Fdensity,
-	ObjexxFCL::FArray3D< std::complex<double> > const &Fdensity2,
+	ObjexxFCL::FArray3D< std::complex<core::Real> > const &Fdensity,
+	ObjexxFCL::FArray3D< std::complex<core::Real> > const &Fdensity2,
 	core::Size nbuckets, core::Real maxreso, core::Real minreso,
 	utility::vector1< core::Real >& FSC,
 	bool S2_bin/*=false*/) {
@@ -1089,8 +1089,8 @@ ElectronDensity::getFSC(
 
 void
 ElectronDensity::getPhaseError(
-	ObjexxFCL::FArray3D< std::complex<double> > const &Fdensity,
-	ObjexxFCL::FArray3D< std::complex<double> > const &Fdensity2,
+	ObjexxFCL::FArray3D< std::complex<core::Real> > const &Fdensity,
+	ObjexxFCL::FArray3D< std::complex<core::Real> > const &Fdensity2,
 	core::Size nbuckets, core::Real maxreso, core::Real minreso,
 	utility::vector1< core::Real >& phaseError,
 	bool S2_bin/*=false*/) {
@@ -1264,7 +1264,7 @@ ElectronDensity::reciprocalSpaceFilter( core::Real maxreso, core::Real minreso, 
 
 
 core::Real
-ElectronDensity::getRSCC( ObjexxFCL::FArray3D< double > const &density2,  ObjexxFCL::FArray3D< double > const &mask) {
+ElectronDensity::getRSCC( ObjexxFCL::FArray3D< core::Real > const &density2,  ObjexxFCL::FArray3D< core::Real > const &mask) {
 	runtime_assert( density.u1()==density2.u1() && density.u2()==density2.u2() && density.u3()==density2.u3() );
 
 	core::Real sumC_i=0, sumO_i=0, sumCO_i=0, vol_i=0, CC_i=0;
@@ -1302,8 +1302,8 @@ void
 ElectronDensity::calcRhoC(
 	poseCoords const &pose,
 	core::Real highres_limit,
-	ObjexxFCL::FArray3D< double > &rhoC,
-	ObjexxFCL::FArray3D< double > &mask,
+	ObjexxFCL::FArray3D< core::Real > &rhoC,
+	ObjexxFCL::FArray3D< core::Real > &mask,
 	core::Real fixed_mask_B /* = -1 */,
 	core::Real B_upper_limit /* = 600 */,
 	core::Real force_mask /*=-1*/ ) {
@@ -1352,9 +1352,10 @@ ElectronDensity::calcRhoC(
 		}
 
 		// TO DO: OPTIONALLY control periodic/nonperiodic boundaries
-		//atm_idx[0] = pos_mod (fracX[0]*grid_[0] - origin_[0] + 1 , (double)grid_[0]);
-		//atm_idx[1] = pos_mod (fracX[1]*grid_[1] - origin_[1] + 1 , (double)grid_[1]);
-		//atm_idx[2] = pos_mod (fracX[2]*grid_[2] - origin_[2] + 1 , (double)grid_[2]);
+		//atm_idx[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (core::Real)grid[0]);
+		//atm_idx[1] = pos_mod (fracX[1]*grid[1] - origin[1] + 1 , (core::Real)grid[1]);
+		//atm_idx[2] = pos_mod (fracX[2]*grid[2] - origin[2] + 1 , (core::Real)grid[2]);
+
 		numeric::xyzVector< core::Real> cartX = pose[i].x_; // - getTransform();
 		numeric::xyzVector< core::Real> fracX = c2f*cartX;
 		numeric::xyzVector< core::Real> atm_idx (
@@ -1416,7 +1417,7 @@ ElectronDensity::calcRhoC(
 	if ( highres_limit == 0 ) return;
 
 	// bandlimit mask at 'radius'
-	ObjexxFCL::FArray3D< std::complex<double> > Fmask;
+	ObjexxFCL::FArray3D< std::complex<core::Real> > Fmask;
 	numeric::fourier::fft3(mask, Fmask);
 	//int H,K,L;
 	for ( int z=1; z<=(int)grid_[2]; ++z ) {
@@ -1475,8 +1476,8 @@ void ElectronDensity::setup_fastscoring_first_time(Real scalefactor) {
 		fastdens_params.push_back( 0.6 );
 	}
 
-	ObjexxFCL::FArray3D< double > rhoc, fastdens_score_i;
-	ObjexxFCL::FArray3D< std::complex<double> > Frhoo, Frhoc;
+	ObjexxFCL::FArray3D< core::Real > rhoc, fastdens_score_i;
+	ObjexxFCL::FArray3D< std::complex<core::Real> > Frhoo, Frhoc;
 	rhoc.dimension(fastgrid[0], fastgrid[1], fastgrid[2]);
 
 	fastdens_score.dimension( density.u1(), density.u2(), density.u3(), nkbins_);
@@ -1619,7 +1620,7 @@ void ElectronDensity::setup_fastscoring_first_time(Real scalefactor) {
 	}
 
 	// spline coeffs
-	ObjexxFCL::FArray4D< double > temp_coeffs;
+	ObjexxFCL::FArray4D< core::Real > temp_coeffs;
 	spline_coeffs( fastdens_score, temp_coeffs);
 	fastdens_score = temp_coeffs;
 }
@@ -1694,9 +1695,9 @@ void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose
 
 				// compute overlap
 				fracX = c2f*litePose[i].x_;
-				idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
-				idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
-				idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
+				idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
+				idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
+				idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
 				idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
 					fracX[1]*fastgrid[1] - fastorigin[1] + 1,
 					fracX[2]*fastgrid[2] - fastorigin[2] + 1);
@@ -1706,7 +1707,7 @@ void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose
 			}
 
 			// compute RSCC
-			ObjexxFCL::FArray3D< double > rhoC, rhoMask;
+			ObjexxFCL::FArray3D< core::Real > rhoC, rhoMask;
 			calcRhoC( litePose, 0.0, rhoC, rhoMask );
 			RSCC[kbin] = getRSCC(rhoC);
 			if ( RSCC[kbin] > RSCC_ref ) {
@@ -2040,7 +2041,7 @@ core::Real ElectronDensity::matchRes(
 	bbox_min[1] = (int)floor(idxX_low[1])-1; bbox_max[1] = (int)ceil(idxX_high[1]); bbox_dims[1] = bbox_max[1]-bbox_min[1];
 	bbox_min[2] = (int)floor(idxX_low[2])-1; bbox_max[2] = (int)ceil(idxX_high[2]); bbox_dims[2] = bbox_max[2]-bbox_min[2];
 
-	ObjexxFCL::FArray3D< double >  rho_obs, inv_rho_mask, rho_calc_fg, rho_calc_bg;
+	ObjexxFCL::FArray3D< core::Real >  rho_obs, inv_rho_mask, rho_calc_fg, rho_calc_bg;
 	rho_obs.dimension(bbox_dims[0],bbox_dims[1],bbox_dims[2]);
 	rho_calc_fg.dimension(bbox_dims[0],bbox_dims[1],bbox_dims[2]);
 	rho_calc_bg.dimension(bbox_dims[0],bbox_dims[1],bbox_dims[2]);
@@ -2228,8 +2229,8 @@ core::Real ElectronDensity::matchRes(
 				core::Real inv_eps_x = inv_rho_mask[x];
 				core::Real eps_x = 1-inv_eps_x;
 
-				numeric::xyzVector<double> del_mask = inv_eps_x*rho_dx_mask_ij[n];
-				numeric::xyzVector<double> del_rhoc = rho_dx_atm_ij[n];
+				numeric::xyzVector<core::Real> del_mask = inv_eps_x*rho_dx_mask_ij[n];
+				numeric::xyzVector<core::Real> del_rhoc = rho_dx_atm_ij[n];
 
 				dVdx_ij  += del_mask;
 				// dC_dx = rhoc.*2.*(1-eps).*(x-xi).*sig_i.*eps_i.^2./(1-eps_i)  +  2 * rho_i .* (x-xi) .* (eps);
@@ -2306,9 +2307,9 @@ ElectronDensity::matchResFast(
 
 		fracX = c2f*rsd.atom(i).xyz();
 
-		idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
-		idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
-		idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
+		idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
+		idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
+		idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
 		idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
 			fracX[1]*fastgrid[1] - fastorigin[1] + 1,
 			fracX[2]*fastgrid[2] - fastorigin[2] + 1);
@@ -2370,9 +2371,9 @@ ElectronDensity::matchAtomFast(
 	if ( kbin>nkbins_ ) kbin=nkbins_;
 
 	fracX = c2f*rsd.atom(atomid).xyz();
-	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
-	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
-	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
+	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
+	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
+	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
 	idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
 		fracX[1]*fastgrid[1] - fastorigin[1] + 1,
 		fracX[2]*fastgrid[2] - fastorigin[2] + 1);
@@ -2402,9 +2403,9 @@ ElectronDensity::matchPointFast(
 	numeric::xyzVector<core::Real> fracX = c2f*X;
 	numeric::xyzVector< core::Real > idxX;
 	core::Real kbin = 1;
-	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
-	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
-	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
+	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
+	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
+	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
 	core::Real score_i = interp_spline( fastdens_score , kbin, idxX );
 
 	return score_i;
@@ -2431,9 +2432,9 @@ ElectronDensity::dCCdx_PointFast(
 	core::Real kbin = 1;
 	numeric::xyzVector<core::Real> dCCdX_grid;
 	core::Real dkbin;
-	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
-	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
-	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
+	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
+	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
+	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
 	interp_dspline( fastdens_score , idxX, kbin,  dCCdX_grid, dkbin );
 
 	dCCdX[0] = dCCdX_grid[0]*c2f(1,1)*fastgrid[0] + dCCdX_grid[1]*c2f(2,1)*fastgrid[1] + dCCdX_grid[2]*c2f(3,1)*fastgrid[2];
@@ -2465,9 +2466,9 @@ void ElectronDensity::dCCdx_fastRes(
 
 	numeric::xyzVector<core::Real> fracX = c2f*X;
 	numeric::xyzVector<core::Real> idxX;
-	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
-	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
-	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
+	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
+	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
+	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
 
 	chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
 	std::string elt_i = atom_type_set[ rsd.atom_type_index( atmid ) ].element();
@@ -2516,9 +2517,9 @@ ElectronDensity::dCCdB_fastRes(
 	numeric::xyzVector<core::Real> const &X = rsd.xyz(atmid);
 	numeric::xyzVector<core::Real> fracX = c2f*X;
 	numeric::xyzVector<core::Real> idxX;
-	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
-	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
-	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
+	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
+	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
+	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
 
 	chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
 	std::string elt_i = atom_type_set[ rsd.atom_type_index( atmid ) ].element();
@@ -2550,7 +2551,7 @@ void
 ElectronDensity::dCCdBs(
 	core::pose::Pose const &pose,
 	utility::vector1< core::Real>  & dE_dvars,
-	ObjexxFCL::FArray3D< double > &maskC
+	ObjexxFCL::FArray3D< core::Real > &maskC
 ) {
 	// 1 get rhoc
 	core::scoring::electron_density::poseCoords litePose;
@@ -2582,7 +2583,7 @@ ElectronDensity::dCCdBs(
 	Size natoms = litePose.size();
 	dE_dvars.resize( natoms );
 
-	ObjexxFCL::FArray3D< double > rhoC;
+	ObjexxFCL::FArray3D< core::Real > rhoC;
 	rhoC.dimension( density.u1(), density.u2(), density.u3() );
 	rhoC = 0;
 
@@ -3041,8 +3042,8 @@ ElectronDensity::readMRCandResize(
 	//   The minimum resolution is the absolute minimum resolution component we can represent (grid_sampling/2)
 	//   Effective resolution is the "actual" resolution of the data, and comes from -map_reso (if provided)
 	//      or is guessed at grid_sampling
-	core::Real max_del_grid = std::max( cellDimensions[0]/((double)grid_[0]) , cellDimensions[1]/((double)grid_[1]) );
-	max_del_grid = std::max( max_del_grid , cellDimensions[2]/((double)grid_[2]) );
+	core::Real max_del_grid = std::max( cellDimensions[0]/((core::Real)grid_[0]) , cellDimensions[1]/((core::Real)grid_[1]) );
+	max_del_grid = std::max( max_del_grid , cellDimensions[2]/((core::Real)grid_[2]) );
 	minimumB = 16*max_del_grid*max_del_grid;
 
 	if ( reso == 0 ) {
@@ -3365,7 +3366,7 @@ void ElectronDensity::resize( core::Real approxGridSpacing ) {
 
 	// compute new dimensions & origin
 	numeric::xyzVector<int> newDims,  newGrid;
-	numeric::xyzVector<double> newOri;
+	numeric::xyzVector<core::Real> newOri;
 
 	//fpd since we're doing a bunch of FFTs now resize this to something with no large prime factors
 	newDims[0] = findSampling( cellDimensions[0] / approxGridSpacing , MINMULT[0] );
@@ -3377,7 +3378,7 @@ void ElectronDensity::resize( core::Real approxGridSpacing ) {
 	newOri[2] = newDims[2]*origin_[2] / ((core::Real)grid_[2]);
 	newGrid = newDims;
 
-	ObjexxFCL::FArray3D< double > newDensity;
+	ObjexxFCL::FArray3D< core::Real > newDensity;
 
 	resample( density, newDensity, newDims );
 	TR << "Resizing " << density.u1() << "x" << density.u2() << "x" << density.u3() << " to "

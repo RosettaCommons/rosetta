@@ -180,7 +180,7 @@ struct SHEETInformation {
 /// accessors.
 class StructFileRep : public utility::pointer::ReferenceCount {
 public:  // Typedefs //////////////////////////////////////////////////////////
-	typedef std::map< std::string, double > ResidueTemps;
+	typedef std::map< std::string, core::Real > ResidueTemps;
 	typedef std::map< std::string, Vector > ResidueCoords;
 	typedef std::map< std::string, ResidueCoords > Coords;
 	typedef utility::vector1< std::string > Strings;

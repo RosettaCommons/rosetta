@@ -417,8 +417,8 @@ void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, Residue
 	}
 	memo->obj.insert( name );
 	out << name
-		<< '\t' << start.phi() * numeric::NumericTraits< double >::rad2deg()
-		<< '\t' << start.theta() * numeric::NumericTraits< double >::rad2deg()
+		<< '\t' << start.phi() * numeric::NumericTraits< core::Real >::rad2deg()
+		<< '\t' << start.theta() * numeric::NumericTraits< core::Real >::rad2deg()
 		<< '\t' << start.d() << '\t';
 	for ( core::Size ii(1); ii <= 3; ++ii ) {
 		ICoorAtomID icoorid( start.stub_atom(ii) );

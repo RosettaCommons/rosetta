@@ -75,7 +75,7 @@ public:
 
 	/// @brief A convenience accessor for the coordinates.
 	std::map< std::string, Vector > const & xyz() const;
-	std::map< std::string, double > const & temps() const; //< map of names to B-factors;  redundant but used a lot in reader
+	std::map< std::string, core::Real > const & temps() const; //< map of names to B-factors;  redundant but used a lot in reader
 
 	/// @brief Returns a short, printable designation for this residue.
 	std::string resid() const;
@@ -90,7 +90,7 @@ private:
 	int terCount_; //< number of TER or END cards encountered prior to this
 	utility::vector1< AtomInformation > atoms_;
 	std::map< std::string, Vector > xyz_; //< map of names to coords;  redundant but used a lot in reader
-	std::map< std::string, double > temps_; //< map of names to B-factors;  redundant but used a lot in reader
+	std::map< std::string, core::Real > temps_; //< map of names to B-factors;  redundant but used a lot in reader
 
 	std::string segmentID_;
 

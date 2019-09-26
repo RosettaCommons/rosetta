@@ -127,8 +127,8 @@ private:
 
 	/// Read & load the APBS results
 #ifdef LINK_APBS_LIB
-	void load_potential( const double grid_meta[],
-											 const double pot[] );
+	void load_potential( const core::Real grid_meta[],
+											 const core::Real pot[] );
 #else
 	void load_APBS_potential();
 #endif
