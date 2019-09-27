@@ -59,6 +59,7 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
@@ -241,6 +242,11 @@ void SnugDockProtocol::setup_objects( Pose & pose ) {
 	docking()->set_task_factory( tf_ );
 	docking()->add_additional_low_resolution_step( low_res_refine_cdr_h2_ );
 	docking()->add_additional_low_resolution_step( low_res_refine_cdr_h3_ );
+    
+    if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() ) {
+        docking()->set_use_constraints( true );
+    }
+    
 
 	SnugDockOP high_resolution_phase( new SnugDock );
 	// if debugging
@@ -278,6 +284,17 @@ void SnugDockProtocol::setup_loop_refinement_movers() {
 		low_res_loop_refinement_scorefxn->set_weight( scoring::dihedral_constraint, 1.0 );
 		low_res_loop_refinement_scorefxn->set_weight( scoring::angle_constraint, 1.0 );
 	}
+    
+    // if csts were specified for DockingProtocol, then pose has csts
+    // so just add atom_pair constraints to the sfxn to include them
+    if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() ) {
+        // set weight to user specified or 1.0
+        core::Real cst_weight = 1.0;
+        if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_weight ].user() ) {
+            cst_weight = basic::options::option[ basic::options::OptionKeys::constraints::cst_weight ];
+        }
+        low_res_loop_refinement_scorefxn->set_weight( scoring::atom_pair_constraint, cst_weight );
+    }
 
 	low_res_refine_cdr_h2_ = refine_loop();
 	low_res_refine_cdr_h3_ = refine_loop();
