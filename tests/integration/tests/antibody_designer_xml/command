@@ -41,23 +41,10 @@ cd %(workdir)s
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 #
-[ -x %(bin)s/antibody_designer.%(binext)s ] || exit 1
-%(bin)s/antibody_designer.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -s my_ab.pdb -parser:protocol rabd.xml @ab_flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-[ -x %(bin)s/antibody_designer.%(binext)s ] || exit 1
-%(bin)s/antibody_designer.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  -out:prefix DE_test_ -antibody:design:cdr_instructions cdr_design_instructions_de.txt 2>&1 \
-    | egrep -vf ../../ignore_list \
-    > log2
-
-test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
-
-[ -x %(bin)s/antibody_designer.%(binext)s ] || exit 1
-%(bin)s/antibody_designer.%(binext)s %(additional_flags)s @flags_nanobody -database %(database)s -testing:INTEGRATION_TEST  -out:prefix DE_test_ -antibody:design:cdr_instructions cdr_design_instructions_nanobody.txt 2>&1 \
-    | egrep -vf ../../ignore_list \
-    > log_nanobody
-
-test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so

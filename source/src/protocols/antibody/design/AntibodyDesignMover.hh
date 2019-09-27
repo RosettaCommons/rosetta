@@ -109,6 +109,14 @@ public:
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
+	///@brief Set the light chain - lambda or kappa.
+	void
+	set_light_chain(std::string const & light_chain);
+
+	///@brief Set the protocol to start with random grafted CDRs for the CDRs set to graft design.
+	/// Useful for starting a high-energy structure or doing benchmarks.
+	void
+	set_random_start( bool const random_start);
 
 public:
 

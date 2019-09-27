@@ -432,6 +432,15 @@ AntibodyDesignMover::parse_my_tag(
 	remove_antigen_ = tag->getOption< bool >("remove_antigen", remove_antigen_);
 }
 
+void
+AntibodyDesignMover::set_light_chain(std::string const & light_chain){
+	light_chain_ = light_chain;
+}
+
+void
+AntibodyDesignMover::set_random_start(bool const random_start){
+	benchmark_ = random_start;
+}
 
 void
 AntibodyDesignMover::set_scorefunction(ScoreFunctionOP scorefxn){
@@ -1605,11 +1614,11 @@ AntibodyDesignMover::get_additional_output(){
 }
 
 AntibodyInfoOP
-AntibodyDesignMover::init_ab_info(const core::pose::Pose &pose){
+AntibodyDesignMover::init_ab_info(core::pose::Pose const & pose){
 	AntibodyInfoOP ab_info = utility::pointer::make_shared< AntibodyInfo >(pose, AHO_Scheme, North);
 	if ( ! light_chain_.empty() ) {
-		LightChainTypeEnum light_chain_enum = ab_info_->get_antibody_enum_manager()->light_chain_type_string_to_enum(light_chain_);
-		ab_info_->set_light_chain_type(light_chain_enum);
+		LightChainTypeEnum light_chain_enum = ab_info->get_antibody_enum_manager()->light_chain_type_string_to_enum(light_chain_);
+		ab_info->set_light_chain_type(light_chain_enum);
 	}
 	return ab_info;
 }
