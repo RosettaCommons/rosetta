@@ -319,17 +319,17 @@ void SnugDock::setup_objects( Pose const & pose ) {
 		high_res_loop_refinement_scorefxn->set_weight( scoring::dihedral_constraint, 1.0 );
 		high_res_loop_refinement_scorefxn->set_weight( scoring::angle_constraint, 1.0 );
 	}
-    
-    // if we added constraints in low-res, then SnugDockProtocol has attached them to the pose,
-    // so set the weight for loop modeling
-    if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user() ) {
-        // set weight to 1.0 or user specified
-        core::Real cst_weight = 1.0;
-        if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_weight ].user() ) {
-            cst_weight = basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_weight ];
-        }
-        high_res_loop_refinement_scorefxn->set_weight( scoring::atom_pair_constraint, cst_weight );
-    }
+
+	// if we added constraints in low-res, then SnugDockProtocol has attached them to the pose,
+	// so set the weight for loop modeling
+	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user() ) {
+		// set weight to 1.0 or user specified
+		core::Real cst_weight = 1.0;
+		if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_weight ].user() ) {
+			cst_weight = basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_weight ];
+		}
+		high_res_loop_refinement_scorefxn->set_weight( scoring::atom_pair_constraint, cst_weight );
+	}
 
 	protocols::loop_modeler::LoopModelerOP refine_kic_h3 = refine_loop();
 	protocols::loop_modeler::LoopModelerOP refine_kic_h2 = refine_loop();
