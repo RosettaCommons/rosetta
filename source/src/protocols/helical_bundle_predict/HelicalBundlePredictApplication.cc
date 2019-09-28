@@ -138,6 +138,8 @@ HelicalBundlePredictApplicationOptions::register_options() {
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_stop_after_time                  );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_pnear_lambda                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_pnear_kbt                        );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::compute_rmsd_to_lowest               );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::compute_ensemble_sasa_metrics        );
 #ifdef MULTI_THREADED //Options that are only needed in the MPI+threads version:
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::threads_per_slave                    );
 #endif //ifdef MULTI_THREADED
@@ -408,6 +410,46 @@ HelicalBundlePredictApplication::set_native(
 	core::pose::PoseCOP native
 ) {
 	native_pose_ = native;
+}
+
+/// @brief Given a pose, align it to the native pose.
+/// @details Throws an error if there's a mismatch between the pose lengths or mainchain atom counts.
+/// @returns RMSD to native.
+core::Real
+HelicalBundlePredictApplication::align_to_native_pose(
+	core::pose::Pose & pose
+) const {
+	static const std::string errmsg( "Error in HelicalBundlePredictApplication::align_to_native_pose(): " );
+	core::Size const nres( pose.total_residue() );
+
+	runtime_assert_string_msg( native_pose_ != nullptr && native_pose_->total_atoms() > 0, errmsg + "The native pose is null or empty!" );
+	runtime_assert_string_msg( native_pose_->total_residue() == pose.total_residue(), errmsg + "The number of the residues in the native and in the alignment pose don't match.  (Native has " + std::to_string( native_pose_->total_residue() ) + ", alignment pose has " + std::to_string( pose.total_residue() ) + "." );
+
+	core::id::AtomID_Map< core::id::AtomID > amap;
+
+	core::pose::initialize_atomid_map(amap, pose, core::id::AtomID::BOGUS_ATOM_ID());
+
+	for ( core::Size ir=1; ir<=nres; ++ir ) {
+		core::chemical::ResidueType const & restype_native( native_pose_->residue_type(ir) );
+		if ( !restype_native.is_polymer() ) continue;
+
+		core::chemical::ResidueType const & restype_pose( pose.residue_type(ir) );
+
+		core::Size const n_mainchain_atoms_native( restype_native.mainchain_atoms().size() );
+		runtime_assert_string_msg( n_mainchain_atoms_native == restype_pose.mainchain_atoms().size(), errmsg + "The number of mainchain atoms in native pose residue " + restype_native.name3() + std::to_string(ir) + " (" + std::to_string(n_mainchain_atoms_native) + " atoms) does not match the number of mainchain atoms in alignment pose residue " + restype_pose.name3() + std::to_string(ir) + " (" + std::to_string( restype_pose.mainchain_atoms().size() ) + " atoms)." );
+
+		for ( core::Size ia(1); ia<=n_mainchain_atoms_native; ++ia ) { //Loop through all mainchain heavyatoms (including atoms coming off mainchain that are not sidechain atoms, like peptide "O").
+			core::Size const native_index( restype_native.mainchain_atoms()[ia] );
+			core::Size const pose_index( restype_pose.mainchain_atoms()[ia] );
+
+			if ( restype_native.atom_is_hydrogen( native_index ) ) continue;
+			runtime_assert( !restype_pose.atom_is_hydrogen(pose_index) );
+
+			amap[ core::id::AtomID(pose_index,ir) ] = core::id::AtomID(native_index,ir);
+		}
+	}
+
+	return core::scoring::superimpose_pose( pose, *native_pose_, amap ); //Superimpose the pose and return the RMSD.
 }
 
 /// @brief Create a new move generator.  Static, so this can be called from other classes (e.g.
@@ -682,47 +724,6 @@ HelicalBundlePredictApplication::apply_metropolis_criterion(
 	core::Real const prob_accept( std::exp( -(new_energy-old_energy)/temperature ) );
 	return ( numeric::random::uniform() < prob_accept );
 }
-
-/// @brief Given a pose, align it to the native pose.
-/// @details Throws an error if there's a mismatch between the pose lengths or mainchain atom counts.
-/// @returns RMSD to native.
-core::Real
-HelicalBundlePredictApplication::align_to_native_pose(
-	core::pose::Pose & pose
-) const {
-	static const std::string errmsg( "Error in HelicalBundlePredictApplication::align_to_native_pose(): " );
-	core::Size const nres( pose.total_residue() );
-
-	runtime_assert_string_msg( native_pose_ != nullptr && native_pose_->total_atoms() > 0, errmsg + "The native pose is null or empty!" );
-	runtime_assert_string_msg( native_pose_->total_residue() == pose.total_residue(), errmsg + "The number of the residues in the native and in the alignment pose don't match.  (Native has " + std::to_string( native_pose_->total_residue() ) + ", alignment pose has " + std::to_string( pose.total_residue() ) + "." );
-
-	core::id::AtomID_Map< core::id::AtomID > amap;
-
-	core::pose::initialize_atomid_map(amap, pose, core::id::AtomID::BOGUS_ATOM_ID());
-
-	for ( core::Size ir=1; ir<=nres; ++ir ) {
-		core::chemical::ResidueType const & restype_native( native_pose_->residue_type(ir) );
-		if ( !restype_native.is_polymer() ) continue;
-
-		core::chemical::ResidueType const & restype_pose( pose.residue_type(ir) );
-
-		core::Size const n_mainchain_atoms_native( restype_native.mainchain_atoms().size() );
-		runtime_assert_string_msg( n_mainchain_atoms_native == restype_pose.mainchain_atoms().size(), errmsg + "The number of mainchain atoms in native pose residue " + restype_native.name3() + std::to_string(ir) + " (" + std::to_string(n_mainchain_atoms_native) + " atoms) does not match the number of mainchain atoms in alignment pose residue " + restype_pose.name3() + std::to_string(ir) + " (" + std::to_string( restype_pose.mainchain_atoms().size() ) + " atoms)." );
-
-		for ( core::Size ia(1); ia<=n_mainchain_atoms_native; ++ia ) { //Loop through all mainchain heavyatoms (including atoms coming off mainchain that are not sidechain atoms, like peptide "O").
-			core::Size const native_index( restype_native.mainchain_atoms()[ia] );
-			core::Size const pose_index( restype_pose.mainchain_atoms()[ia] );
-
-			if ( restype_native.atom_is_hydrogen( native_index ) ) continue;
-			runtime_assert( !restype_pose.atom_is_hydrogen(pose_index) );
-
-			amap[ core::id::AtomID(pose_index,ir) ] = core::id::AtomID(native_index,ir);
-		}
-	}
-
-	return core::scoring::superimpose_pose( pose, *native_pose_, amap ); //Superimpose the pose and return the RMSD.
-}
-
 
 } //helical_bundle_predict
 } //protocols

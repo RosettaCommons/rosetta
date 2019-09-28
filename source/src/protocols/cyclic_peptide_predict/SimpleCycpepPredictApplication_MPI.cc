@@ -87,9 +87,16 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	std::string const &output_filename,
 	core::Real const &lambda,
 	core::Real const &kbt,
+	bool const compute_rmsd_to_lowest,
+	bool const compute_sasa_metrics,
 	core::Size const threads_per_slave_proc //Only used in multi-threaded build.
 ) :
-	HierarchicalHybridJDApplication( TR, TR_summary, MPI_rank, MPI_n_procs, sfxn_in, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_type, select_highest, output_fraction, output_filename, lambda, kbt, threads_per_slave_proc ),
+	HierarchicalHybridJDApplication(
+		TR, TR_summary, MPI_rank, MPI_n_procs, sfxn_in, total_hierarchy_levels,
+		procs_per_hierarchy_level, batchsize_per_level, sort_type, select_highest,
+		output_fraction, output_filename, lambda, kbt, compute_rmsd_to_lowest,
+		compute_sasa_metrics, threads_per_slave_proc
+	),
 	allowed_canonicals_(),
 	allowed_noncanonicals_(),
 	L_alpha_comp_file_exists_(false),
@@ -225,26 +232,43 @@ SimpleCycpepPredictApplication_MPI::derived_slave_carry_out_n_jobs(
 	core::pose::PoseCOP native,
 	std::string const &sequence
 ) const {
-		//Create and initialize the predictor:
-		SimpleCycpepPredictApplicationOP predict_app( utility::pointer::make_shared< SimpleCycpepPredictApplication >(false /*prevent file read*/) );
-		if( native != nullptr ) predict_app->set_native( native );
-		predict_app->set_scorefxn( sfxn );
-		predict_app->set_nstruct( njobs_from_above );
-		predict_app->set_sequence( sequence );
-		predict_app->set_silentstructure_outputlist( &all_output, &jobsummaries );
-		predict_app->set_suppress_checkpoints( true );
-		predict_app->set_my_rank( MPI_rank() );
-		predict_app->set_already_completed_job_count( slave_job_count() );
-		predict_app->set_allowed_residues_by_position( allowed_canonicals_, allowed_noncanonicals_ );
-		if( L_alpha_comp_file_exists_ ) predict_app->set_L_alpha_compfile_contents( comp_file_contents_L_alpha_ );
-		if( D_alpha_comp_file_exists_ ) predict_app->set_D_alpha_compfile_contents( comp_file_contents_D_alpha_ );
-		if( L_beta_comp_file_exists_ ) predict_app->set_L_beta_compfile_contents( comp_file_contents_L_beta_ );
-		if( D_beta_comp_file_exists_ ) predict_app->set_D_beta_compfile_contents( comp_file_contents_D_beta_ );
-		predict_app->set_abba_bins_binfile_contents( abba_bins_);
+	//Create and initialize the predictor:
+	SimpleCycpepPredictApplicationOP predict_app( utility::pointer::make_shared< SimpleCycpepPredictApplication >(false /*prevent file read*/) );
+	if( native != nullptr ) predict_app->set_native( native );
+	predict_app->set_scorefxn( sfxn );
+	predict_app->set_nstruct( njobs_from_above );
+	predict_app->set_sequence( sequence );
+	predict_app->set_silentstructure_outputlist( &all_output, &jobsummaries );
+	predict_app->set_suppress_checkpoints( true );
+	predict_app->set_my_rank( MPI_rank() );
+	predict_app->set_already_completed_job_count( slave_job_count() );
+	predict_app->set_allowed_residues_by_position( allowed_canonicals_, allowed_noncanonicals_ );
+	if( L_alpha_comp_file_exists_ ) predict_app->set_L_alpha_compfile_contents( comp_file_contents_L_alpha_ );
+	if( D_alpha_comp_file_exists_ ) predict_app->set_D_alpha_compfile_contents( comp_file_contents_D_alpha_ );
+	if( L_beta_comp_file_exists_ ) predict_app->set_L_beta_compfile_contents( comp_file_contents_L_beta_ );
+	if( D_beta_comp_file_exists_ ) predict_app->set_D_beta_compfile_contents( comp_file_contents_D_beta_ );
+	predict_app->set_abba_bins_binfile_contents( abba_bins_);
 
-		predict_app->run();
+	predict_app->run();
 }
 
+/// @brief Compute the RMSD between a pose and a reference pose.
+/// @details Must be implemented by derived classes, since this might be done differently for
+/// different classes of molecule.
+core::Real
+SimpleCycpepPredictApplication_MPI::derived_slave_compute_rmsd(
+	core::pose::Pose const & pose,
+	core::pose::Pose const & reference_pose,
+	std::string const &sequence
+) const {
+	//Create and initialize the predictor:
+	SimpleCycpepPredictApplicationOP predict_app( utility::pointer::make_shared< SimpleCycpepPredictApplication >(false /*prevent file read*/) );
+	predict_app->set_sequence( sequence );
+	predict_app->set_suppress_checkpoints( true );
+	predict_app->set_my_rank( MPI_rank() );
+
+	return predict_app->align_and_calculate_rmsd( *(pose.clone()), reference_pose, true );
+}
 
 } //protocols
 } //cyclic_peptide_predict

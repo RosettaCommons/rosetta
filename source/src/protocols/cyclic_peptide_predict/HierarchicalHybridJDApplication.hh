@@ -26,6 +26,7 @@
 // Unit Headers
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJDApplication.fwd.hh>
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.fwd.hh>
+#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_RMSDToBestSummary.fwd.hh>
 #include <protocols/cyclic_peptide_predict/util.hh>
 
 // Package Headers
@@ -60,7 +61,9 @@ namespace cyclic_peptide_predict {
 enum HIERARCHICAL_MPI_COMMUNICATION_TYPE {
 	NULL_MESSAGE = 1,
 	REQUEST_NEW_JOBS_BATCH_UPWARD,
+	REQUEST_TOP_POSE_BCAST, // The emperor is asking that the top pose be shared with all nodes.
 	OFFER_NEW_JOBRESULTSSUMMARY_BATCH_UPWARD,
+	OFFER_NEW_RMSD_TO_BEST_SUMMARY_BATCH_UPWARD,
 	OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD,
 	OFFER_NEW_POSE_BATCH_UPWARD,
 	SILENT_STRUCT_TRANSMISSION,
@@ -114,6 +117,8 @@ public:
 		std::string const &output_filename,
 		core::Real const &lambda,
 		core::Real const &kbt,
+		bool const compute_rmsd_to_lowest,
+		bool const compute_sasa_metrics,
 		core::Size const threads_per_slave_proc //Only used in multi-threaded build.
 	);
 
@@ -175,6 +180,16 @@ protected:
 		core::scoring::ScoreFunctionOP sfxn,
 		core::pose::PoseCOP native,
 		std::string const &sequence	
+	) const = 0;
+
+	/// @brief Compute the RMSD between a pose and a reference pose.
+	/// @details Must be implemented by derived classes, since this might be done differently for
+	/// different classes of molecule.
+	virtual core::Real
+	derived_slave_compute_rmsd(
+		core::pose::Pose const & pose,
+		core::pose::Pose const & reference_pose,
+		std::string const &sequence
 	) const = 0;
 
 	/// @brief Get a const owning pointer to the native pose.
@@ -331,12 +346,63 @@ private:
 	/// @param[out] summary_shortlist The job summaries list, cleared and populated by this function.
 	void receive_pose_requests_from_above( utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > &summary_shortlist ) const;
 
+	/// @brief The emperor is sending out a request that the slave that produced the top pose broadcast
+	/// that pose to all other nodes.  All nodes participate in the broadcast.  At the end of this operation,
+	/// all nodes know:
+	/// - The node index that produced the top structure.
+	/// - The index of the top structure on that node index.
+	/// - The top structure (the pose), as a binary silent structure.
+	/// They can then compare the top structure to all of their structures and compute an RMSD for each.
+	/// @note If broadcast_no_poses_found is true, the emperor announces to all processes that there is no best
+	/// pose with which to compare.
+	/// @returns TRUE for FAILURE (Emperor reports no poses found), FALSE for SUCCESS.
+	bool
+	top_pose_bcast(
+		HierarchicalHybridJD_JobResultsSummaryOP top_summary=nullptr,
+		core::io::silent::SilentStructOP top_pose_silentstruct=nullptr,
+		bool const broadcast_no_poses_found=false
+	) const;
+
 protected:
 
 	/// @brief Given a string on the emperor node, send it to all nodes.
 	/// @details The "mystring" string is the input on the emperor node, and the output on all other nodes.
 	/// @note Protected, not private.
 	void broadcast_string_from_emperor( std::string &mystring ) const;
+
+	/// @brief Given a string on a given node, send it to all nodes.
+	/// @details The "mystring" string is the input on the originating node, and the output on all other nodes.
+	/// @note Protected, not private.
+	void broadcast_string_from_node( std::string &mystring, int const originating_node_index ) const;
+
+	/// @brief Given a vector of RMSDs to best summaries, send them up the hierarchy.
+	/// @details Made for use with receive_and_sort_all_rmsd_to_best_summaries(), which calls receive_rmsd_to_best_summaries_from_below().
+	void
+	send_rmsds_to_best_summaries_upward(
+		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > const &rmsds_to_best_summaries,
+		int const receiving_node
+	) const;
+
+	/// @brief From one of the nodes below me in the next level down, receive one vector of RMSD-to-best summaries.
+	/// @details Made for use with send_rmsds_to_best_summaries_upward().  THe new_rmsd_to_best_summaries vector is cleared
+	/// and populated by this operation.
+	void
+	receive_rmsd_to_best_summaries_from_below(
+		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > &new_rmsd_to_best_summaries,
+		int const requesting_node,
+		bool const append_to_handler_list
+	) const;
+
+	/// @brief From all of the nodes below me in the next level down, receive RMSD-to-best summaries.  Then sort them
+	/// based on the already-received job summaries.
+	/// @details Made for use with send_rmsds_to_best_summaries_upward().  THe rmsds_to_best_summaries vector is cleared
+	/// and populated by this operation.
+	void
+	receive_and_sort_all_rmsd_to_best_summaries (
+		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > &rmsds_to_best_summaries,
+		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &job_summary_list,
+		bool const append_to_handler_list
+	) const;
 
 	/// ------------- Emperor Methods --------------------
 
@@ -357,8 +423,12 @@ private:
 	void emperor_broadcast_silent_struct( core::io::silent::SilentStructOP ss ) const;
 
 	/// @brief Write out a summary of the jobs completed (node, job index on node, total energy, rmsd, handler path) to the summary tracer.
-	///
-	void emperor_write_summaries_to_tracer( utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &summary_list ) const;
+	/// @details The RMSD to best pose vector will only be populated if the -compute_rmsd_to_lowest option is used.
+	void
+	emperor_write_summaries_to_tracer(
+		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &summary_list,
+		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > const &rmsds_to_best_pose
+	) const;
 
 	/// @brief Based on the sorted list of summaries, populate a short list of jobs, the results of which will be collected from below for output to disk.
 	/// @param[out] summary_shortlist The short list of job summaries populated by this function.
@@ -435,6 +505,17 @@ private:
 		core::Size const batch_index //Number of batches that have been sent out on this proc.
 	) const;
 #endif
+
+	/// @brief If we're computing the RMSDs to the very best pose, do so.
+	/// @details This function clears and populates the rmsds_to_best_summaries vector, ensuring that RMSDs to the
+	/// pose represented by top_pose_silentstruct are computed in the order that matches jobsummaries.
+	void
+	slave_compute_sorted_rmsds_to_best(
+		core::io::silent::SilentStruct const &top_pose_silentstruct,
+		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > & rmsds_to_best_summaries,
+		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &jobsummaries,
+		utility::vector1< core::io::silent::SilentStructOP > const &poses_from_this_slave
+	) const;
 
 	/// @brief Given a list of jobs that have been requested from above, send the corresponding poses up the hierarchy.
 	/// @details Throws an error if any jbo was completed on a different node than this slave.
@@ -526,6 +607,13 @@ private:
 	/// @brief The Boltzmann temperature, kB*T, used for calculating funnel quality (PNear).
 	/// @details Read from options system; default 1.0.
 	core::Real kbt_;
+
+	/// @brief If true, the RMSD to the lowest-energy state found is computed.  False by default.
+	bool compute_rmsd_to_lowest_ = false;
+
+	/// @brief If true, sasa, polar sasa, and hydrophobic sasa are computed for each structure and for
+	/// the ensemble.  False by default.
+	bool compute_sasa_metrics_ = false;
 
 #ifdef MULTI_THREADED
 // Private member variables only used in multi-threaded build.

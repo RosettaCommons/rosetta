@@ -49,6 +49,8 @@ public:
 		std::string const &output_filename,
 		core::Real const &lambda,
 		core::Real const &kbt,
+		bool const compute_rmsd_to_lowest,
+		bool const compute_sasa_metrics,
 		core::Size const threads_per_slave_proc //Only used in multi-threaded build.
 	);
 
@@ -78,6 +80,16 @@ protected: //Methods
 		utility::vector1 < core::io::silent::SilentStructOP > &all_output,
 		core::scoring::ScoreFunctionOP sfxn,
 		core::pose::PoseCOP native,
+		std::string const &sequence
+	) const override;
+
+	/// @brief Compute the RMSD between a pose and a reference pose.
+	/// @details Must be implemented by derived classes, since this might be done differently for
+	/// different classes of molecule.
+	core::Real
+	derived_slave_compute_rmsd(
+		core::pose::Pose const & pose,
+		core::pose::Pose const & reference_pose,
 		std::string const &sequence
 	) const override;
 

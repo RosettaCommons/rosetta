@@ -237,6 +237,8 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_stop_after_time                  );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_pnear_lambda                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_pnear_kbt                        );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::compute_rmsd_to_lowest               );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::compute_ensemble_sasa_metrics        );
 #ifdef MULTI_THREADED //Options that are only needed in the MPI+threads version:
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::threads_per_slave                    );
 #endif //ifdef MULTI_THREADED
@@ -1457,7 +1459,43 @@ SimpleCycpepPredictApplication::set_use_rama_prepro_for_sampling(
 	use_rama_prepro_for_sampling_ = setting;
 }
 
+/// @brief Align pose to native_pose, and return the RMSD between the two poses.
+/// @details Assumes that the pose has already been de-permuted (i.e. the native and the pose line up).
+/// Only uses alpha-amino acids for the alignment, currently.
+core::Real
+SimpleCycpepPredictApplication::align_and_calculate_rmsd(
+	core::pose::Pose & pose,
+	core::pose::Pose const & native_pose,
+	bool const skip_seq_comparison/*=false*/
+) const {
+	core::Size const nres( sequence_length() );
+	core::Size res_counter(0); //Residue indices might not match between native pose and pose, due to linkers.
 
+	core::id::AtomID_Map< core::id::AtomID > amap;
+	core::pose::initialize_atomid_map(amap, pose, core::id::AtomID::BOGUS_ATOM_ID());
+	for ( core::Size ir=1, irmax=native_pose.total_residue(); ir<=irmax; ++ir ) {
+		if ( !is_supported_restype( native_pose.residue_type(ir) ) ) continue;
+		if ( is_residue_ignored_in_rms(ir) ) continue;
+		++res_counter;
+		if ( !skip_seq_comparison ) {
+			runtime_assert_string_msg( res_counter <= nres, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): The native pose has more residues than the input sequence.  (Native pose: " + std::to_string( irmax ) + " residues; sequence: " + std::to_string( nres ) + " residues.)" );
+		}
+		for ( core::Size ia=1, iamax=native_pose.residue_type(ir).first_sidechain_atom(); ia<iamax; ++ia ) { //Loop through all mainchain heavyatoms (including atoms coming off mainchain that are not sidechain atoms, like peptide "O").
+			if ( native_pose.residue_type(ir).atom_is_hydrogen(ia) ) continue;
+			if ( native_pose.residue_type(ir).is_virtual(ia) ) continue; //Ignore virtual atoms
+			core::Size const ia_pose( pose.residue_type(res_counter).atom_index( native_pose.residue_type(ir).atom_name(ia) ) );
+			//TR << "ir=" << ir << " ia=" << ia << " res_counter=" << res_counter << " native=" << native_pose.residue_type(ir).atom_name(ia) << " pred=" << pose.residue_type(res_counter).atom_name(ia_pose) << std::endl; TR.flush(); //DELETE ME.
+			amap[ core::id::AtomID(ia_pose,res_counter) ] = core::id::AtomID(ia,ir);
+			//TR << "Adding ia=" << ia << " ir=" << ir << " to map." << std::endl; //DELETE ME
+		}
+	}
+
+	if ( !skip_seq_comparison ) {
+		runtime_assert_string_msg( res_counter == nres - exclude_residues_from_rms_.size(), "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): The native pose has fewer residues than the input sequence." );
+	}
+
+	return core::scoring::superimpose_pose( pose, native_pose, amap ); //Superimpose the pose and return the RMSD.
+}
 
 /// @brief Actually run the application.
 /// @details The initialize_from_options() function must be called before calling this.  (Called by default constructor.)
@@ -1729,7 +1767,7 @@ SimpleCycpepPredictApplication::run() const {
 		++success_count; //Increment the count of number of successes.
 
 		if ( native_pose ) {
-			native_rmsd = align_and_calculate_rmsd(pose, native_pose);
+			native_rmsd = align_and_calculate_rmsd(*pose, *native_pose);
 		}
 
 		core::Size const cis_peptide_bonds( count_cis_peptide_bonds( pose ) );
@@ -3962,42 +4000,6 @@ SimpleCycpepPredictApplication::depermute (
 	(*pose) = (*newpose);
 
 	return;
-}
-
-
-/// @brief Align pose to native_pose, and return the RMSD between the two poses.
-/// @details Assumes that the pose has already been de-permuted (i.e. the native and the pose line up).
-/// Only uses alpha-amino acids for the alignment, currently.
-core::Real
-SimpleCycpepPredictApplication::align_and_calculate_rmsd(
-	core::pose::PoseOP pose,
-	core::pose::PoseCOP native_pose
-) const {
-	core::Size const nres( sequence_length() );
-	core::Size res_counter(0); //Residue indices might not match between native pose and pose, due to linkers.
-
-	core::id::AtomID_Map< core::id::AtomID > amap;
-	core::pose::initialize_atomid_map(amap, *pose, core::id::AtomID::BOGUS_ATOM_ID());
-	for ( core::Size ir=1, irmax=native_pose->total_residue(); ir<=irmax; ++ir ) {
-		if ( !is_supported_restype( native_pose->residue_type(ir) ) ) continue;
-		if ( is_residue_ignored_in_rms(ir) ) continue;
-		++res_counter;
-		runtime_assert_string_msg( res_counter <= nres, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): The native pose has more residues than the input sequence." );
-		for ( core::Size ia=1, iamax=native_pose->residue(ir).type().first_sidechain_atom(); ia<iamax; ++ia ) { //Loop through all mainchain heavyatoms (including atoms coming off mainchain that are not sidechain atoms, like peptide "O").
-			if ( native_pose->residue_type(ir).atom_is_hydrogen(ia) ) continue;
-			//TR << "ir=" << ir << " ia=" << ia << " res_counter=" << res_counter << " native=" << native_pose->residue_type(ir).atom_name(ia) << " pred=" << pose->residue_type(res_counter).atom_name(ia) << std::endl; TR.flush(); //DELETE ME.
-			runtime_assert_string_msg(
-				!native_pose->residue_type(ir).atom_name(ia).compare( pose->residue_type(res_counter).atom_name(ia) ),
-				"Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): Residue types or atom indices don't match between native and prediction."
-			);
-			amap[ core::id::AtomID(ia,res_counter) ] = core::id::AtomID(ia,ir);
-			//TR << "Adding ia=" << ia << " ir=" << ir << " to map." << std::endl; //DELETE ME
-		}
-	}
-
-	runtime_assert_string_msg( res_counter == nres - exclude_residues_from_rms_.size(), "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): The native pose has fewer residues than the input sequence." );
-
-	return core::scoring::superimpose_pose( *pose, *native_pose, amap ); //Superimpose the pose and return the RMSD.
 }
 
 /// @brief Create a new checkpoint file.

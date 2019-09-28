@@ -23,6 +23,7 @@
 // Unit Headers
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJDApplication.hh>
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.hh>
+#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_RMSDToBestSummary.hh>
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
 
 // Package Headers
@@ -61,6 +62,7 @@
 #include <basic/random/init_random_generator.hh>
 #include <core/sequence/util.hh>
 #include <core/chemical/AA.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 
 // option key includes
 #include <basic/options/option_macros.hh>
@@ -109,7 +111,9 @@ HierarchicalHybridJDApplication::HierarchicalHybridJDApplication(
 	output_fraction_(1.0),
 	output_filename_(""),
 	lambda_(0.5),
-	kbt_(1.0)
+	kbt_(1.0),
+	compute_rmsd_to_lowest_(false),
+	compute_sasa_metrics_(false)
 #ifdef MULTI_THREADED
 	,
 	threads_per_slave_proc_(1),
@@ -146,6 +150,8 @@ HierarchicalHybridJDApplication::HierarchicalHybridJDApplication(
 	std::string const &output_filename,
 	core::Real const &lambda,
 	core::Real const &kbt,
+	bool const compute_rmsd_to_lowest,
+	bool const compute_sasa_metrics,
 #ifdef MULTI_THREADED
 	core::Size const threads_per_slave_proc
 #else
@@ -171,7 +177,9 @@ HierarchicalHybridJDApplication::HierarchicalHybridJDApplication(
 	output_fraction_(1.0),
 	output_filename_( output_filename ),
 	lambda_(lambda),
-	kbt_(kbt)
+	kbt_(kbt),
+	compute_rmsd_to_lowest_( compute_rmsd_to_lowest ),
+	compute_sasa_metrics_( compute_sasa_metrics )
 #ifdef MULTI_THREADED
 	,
 	threads_per_slave_proc_(threads_per_slave_proc),
@@ -223,7 +231,9 @@ HierarchicalHybridJDApplication::HierarchicalHybridJDApplication(
 	output_fraction_(src.output_fraction_),
 	output_filename_(src.output_filename_),
 	lambda_(src.lambda_),
-	kbt_(src.kbt_)
+	kbt_(src.kbt_),
+	compute_rmsd_to_lowest_( src.compute_rmsd_to_lowest_ ),
+	compute_sasa_metrics_( src.compute_sasa_metrics_ )
 #ifdef MULTI_THREADED
 	,
 	threads_per_slave_proc_( src.threads_per_slave_proc_ ),
@@ -855,7 +865,7 @@ HierarchicalHybridJDApplication::receive_and_sort_job_summaries(
 	MPI_Recv( cispepbondbuf, sizebuf, MPI_UNSIGNED_LONG, originating_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status ); //Receive the cis-peptide bond counts.
 
 	for(core::Size i=1, imax=static_cast<core::Size>(sizebuf); i<=imax; ++i) {
-		summary_list.push_back( HierarchicalHybridJD_JobResultsSummaryOP( utility::pointer::make_shared< HierarchicalHybridJD_JobResultsSummary >() ) );
+		summary_list.push_back( utility::pointer::make_shared< HierarchicalHybridJD_JobResultsSummary >() );
 
 		summary_list[i]->set_originating_node_MPI_rank( procbuf[i-1] );
 		summary_list[i]->set_jobindex_on_originating_node( static_cast<core::Size>(jobindexbuf[i-1]) );
@@ -998,13 +1008,79 @@ HierarchicalHybridJDApplication::receive_pose_requests_from_above(
 	receive_and_sort_job_summaries( summary_shortlist, my_parent_, false /*No need to list all the nodes that we pass through this time*/ );
 }
 
+/// @brief The emperor is sending out a request that the slave that produced the top pose broadcast
+/// that pose to all other nodes.  All nodes participate in the broadcast.  At the end of this operation,
+/// all nodes know:
+/// - The node index that produced the top structure.
+/// - The index of the top structure on that node index.
+/// - The top structure (the pose), as a binary silent structure.
+/// They can then compare the top structure to all of their structures and compute an RMSD for each.
+/// @note If broadcast_no_poses_found is true, the emperor announces to all processes that there is no best
+/// pose with which to compare.
+bool
+HierarchicalHybridJDApplication::top_pose_bcast(
+	HierarchicalHybridJD_JobResultsSummaryOP top_summary /*=nullptr*/,
+	core::io::silent::SilentStructOP top_pose_silentstruct /*=nullptr*/,
+	bool const broadcast_no_poses_found/*=false*/
+) const {
+	// 1.  The emperor broadcasts to everyone else the node index and job index for the best sample:
+	if( i_am_emperor() ) {
+		runtime_assert( broadcast_no_poses_found || top_summary != nullptr );
+	}
+	int there_were_no_poses( broadcast_no_poses_found ? 1 : 0 );	
+	MPI_Bcast( &there_were_no_poses, 1, MPI_INT, 0 /*Emperor broadcasts*/, MPI_COMM_WORLD );
+	if( there_were_no_poses==1 ) return true;
+
+	int node_that_produced_best( top_summary == nullptr ? 0 : static_cast< int >( top_summary->originating_node_MPI_rank() ) );
+	unsigned long jobindex_on_node_that_produced_best( top_summary == nullptr ? 0 : static_cast< unsigned long >( top_summary->jobindex_on_originating_node() ) );
+	MPI_Bcast( &node_that_produced_best, 1, MPI_INT, 0 /*Emperor broadcasts*/, MPI_COMM_WORLD  );
+	MPI_Bcast( &jobindex_on_node_that_produced_best, 1, MPI_UNSIGNED_LONG, 0 /*Emperor broadcasts*/, MPI_COMM_WORLD  );
+
+	// 2.  The node that produced the top structure transmits it to all others.
+	std::string silentstring;
+	if( MPI_rank_ == node_that_produced_best ) {
+		runtime_assert( top_pose_silentstruct != nullptr );
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData silentfiledata( opts );
+		std::stringbuf sb;
+		std::ostream outstream(&sb);
+
+		silentfiledata._write_silent_struct( (*top_pose_silentstruct), outstream );
+		silentstring = sb.str();
+	}
+	broadcast_string_from_node( silentstring, node_that_produced_best );
+
+	// 3.  All other slave nodes reconstruct the silent structure.
+	if( MPI_rank_ != node_that_produced_best && top_pose_silentstruct != nullptr ) {
+		utility::vector1< std::string > const lines( utility::split_by_newlines( silentstring ) );
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::BinarySilentStruct silentstruct(opts);
+		core::io::silent::SilentFileData dummy_container(opts);
+		silentstruct.init_from_lines(lines, dummy_container, true);
+		(*top_pose_silentstruct) = silentstruct;
+	}
+
+	return false;
+}
+
 /// @brief Given a string on the emperor node, send it to all nodes.
 /// @details The "mystring" string is the input on the emperor node, and the output on all other nodes.
 void
 HierarchicalHybridJDApplication::broadcast_string_from_emperor(
 	std::string &mystring
 ) const {
-	if( i_am_emperor() ) {
+	broadcast_string_from_node( mystring, 0 );
+}
+
+/// @brief Given a string on a given node, send it to all nodes.
+/// @details The "mystring" string is the input on the originating node, and the output on all other nodes.
+/// @note Protected, not private.
+void
+HierarchicalHybridJDApplication::broadcast_string_from_node(
+	std::string &mystring,
+	int const originating_node_index
+) const {
+	if( MPI_rank_ == originating_node_index ) {
 		//if(TR.Debug.visible()) derivedTR_.Debug << "Broadcasting the following string from the emperor:\n" << mystring << std::endl;
 		unsigned long charsize( mystring.size() + 1 );
 		char * bcastchar( new char[charsize] ); // Plus one for null terminator.
@@ -1024,6 +1100,164 @@ HierarchicalHybridJDApplication::broadcast_string_from_emperor(
 	}
 }
 
+/// @brief Given a vector of RMSDs to best summaries, send them up the hierarchy.
+/// @details Made for use with receive_and_sort_all_rmsd_to_best_summaries().
+void
+HierarchicalHybridJDApplication::send_rmsds_to_best_summaries_upward(
+	utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > const &rmsds_to_best_summaries,
+	int const receiving_node
+) const {
+	send_request( receiving_node, OFFER_NEW_RMSD_TO_BEST_SUMMARY_BATCH_UPWARD );
+	unsigned long sizebuf( rmsds_to_best_summaries.size() );
+	MPI_Send( &sizebuf, 1, MPI_UNSIGNED_LONG, receiving_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD ); //First, send the size of the list.
+
+	if(sizebuf == 0) return;
+
+	//Buffers for data that we'll send:
+	int * procbuf( new int[sizebuf] );
+	unsigned long * jobindexbuf( new unsigned long[sizebuf] );
+	double * rmsdbuf( new double[sizebuf] );
+
+	for(core::Size i=1; i<=static_cast<core::Size>(sizebuf); ++i) {
+		procbuf[i-1] = rmsds_to_best_summaries[i]->originating_node_MPI_rank();
+		jobindexbuf[i-1] = static_cast<unsigned long>( rmsds_to_best_summaries[i]->jobindex_on_originating_node() );
+		rmsdbuf[i-1] = static_cast<double>( rmsds_to_best_summaries[i]->rmsd_to_best() );
+	}
+
+	MPI_Send( procbuf, sizebuf, MPI_INT, receiving_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD ); //Send the originating process indices.
+	MPI_Send( jobindexbuf, sizebuf, MPI_UNSIGNED_LONG, receiving_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD ); //Send the originating process job indices.
+	MPI_Send( rmsdbuf, sizebuf, MPI_DOUBLE, receiving_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD ); //Send the RMSD values.
+
+	//Send the message history lists (MPI_ranks_handling_message()):
+	for(core::Size i=1; i<=static_cast<core::Size>(sizebuf); ++i) {
+		int nodelist_size(rmsds_to_best_summaries[i]->MPI_ranks_handling_message().size());
+		MPI_Send( &nodelist_size, 1, MPI_INT, receiving_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD );
+		if(nodelist_size == 0) continue;
+
+		int * nodelist( new int[ rmsds_to_best_summaries[i]->MPI_ranks_handling_message().size() ] );
+		for( core::Size j=1, jmax=rmsds_to_best_summaries[i]->MPI_ranks_handling_message().size(); j<=jmax; ++j ) {
+			nodelist[j-1] = rmsds_to_best_summaries[i]->MPI_ranks_handling_message()[j];
+		}
+		MPI_Send( nodelist, rmsds_to_best_summaries[i]->MPI_ranks_handling_message().size(), MPI_INT, receiving_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD );
+		delete[] nodelist;
+	}
+
+	delete[] procbuf;
+	delete[] jobindexbuf;
+	delete[] rmsdbuf;
+}
+
+/// @brief From one of the nodes below me in the next level down, receive one vector of RMSD-to-best summaries.
+/// @details Made for use with send_rmsds_to_best_summaries_upward().  THe new_rmsd_to_best_summaries vector is cleared
+/// and populated by this operation.
+void
+HierarchicalHybridJDApplication::receive_rmsd_to_best_summaries_from_below(
+	utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > &new_rmsd_to_best_summaries,
+	int const requesting_node,
+	bool const append_to_handler_list
+) const {
+	runtime_assert( new_rmsd_to_best_summaries.empty() );
+
+	MPI_Status status;
+	unsigned long sizebuf(0);
+	MPI_Recv( &sizebuf, 1, MPI_UNSIGNED_LONG, requesting_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status ); //First, receive the size of the list.
+	new_rmsd_to_best_summaries.reserve( sizebuf );
+
+	if(sizebuf == 0) return;
+
+	//Buffers for data that we'll send:
+	int * procbuf( new int[sizebuf] );
+	unsigned long * jobindexbuf( new unsigned long[sizebuf] );
+	double * rmsdbuf( new double[sizebuf] );
+
+	MPI_Recv( procbuf, sizebuf, MPI_INT, requesting_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status ); //Receive the originating process indices.
+	MPI_Recv( jobindexbuf, sizebuf, MPI_UNSIGNED_LONG, requesting_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status ); //Receive the originating process job indices.
+	MPI_Recv( rmsdbuf, sizebuf, MPI_DOUBLE, requesting_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status ); //Receive the RMSD values.
+
+	for(core::Size i=1, imax=static_cast<core::Size>(sizebuf); i<=imax; ++i) {
+		new_rmsd_to_best_summaries.push_back(
+			utility::pointer::make_shared< HierarchicalHybridJD_RMSDToBestSummary >( procbuf[i-1], jobindexbuf[i-1], rmsdbuf[i-1] )
+		);
+	}
+
+	runtime_assert(new_rmsd_to_best_summaries.size() == static_cast<core::Size>(sizebuf));
+
+	//Receive the message history lists (MPI_ranks_handling_message()):
+	for(core::Size i=1, imax=new_rmsd_to_best_summaries.size(); i<=imax; ++i) {
+		int nodelist_size(0);
+		MPI_Recv( &nodelist_size, 1, MPI_INT, requesting_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status );
+
+		if(nodelist_size != 0) {
+			int * nodelist( new int[ nodelist_size ] );
+			MPI_Recv( nodelist, nodelist_size, MPI_INT, requesting_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status );
+			for( core::Size j=1; j<=static_cast<core::Size>(nodelist_size); ++j ) {
+				new_rmsd_to_best_summaries[i]->add_MPI_rank_handling_message( nodelist[j-1] );
+			}
+			delete[] nodelist;
+		}
+		if( append_to_handler_list ) {
+			new_rmsd_to_best_summaries[i]->add_MPI_rank_handling_message( requesting_node ); //Add the originating node to the list of MPI ranks that handled this message.
+		}
+
+	}
+
+	delete[] procbuf;
+	delete[] jobindexbuf;
+	delete[] rmsdbuf;
+}
+
+/// @brief From all of the nodes below me in the next level down, receive RMSD-to-best summaries.  Then sort them
+/// based on the already-received job summaries.
+/// @details Made for use with send_rmsds_to_best_summaries_upward().  THe rmsds_to_best_summaries vector is cleared
+/// and populated by this operation.
+void
+HierarchicalHybridJDApplication::receive_and_sort_all_rmsd_to_best_summaries (
+	utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > &rmsds_to_best_summaries,
+	utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &job_summary_list,
+	bool const append_to_handler_list
+) const {
+	runtime_assert( rmsds_to_best_summaries.empty() );
+	if( job_summary_list.size() == 0 ) return;
+	rmsds_to_best_summaries.resize( job_summary_list.size(), nullptr );
+
+	core::Size n_summaries_received(0);
+	core::Size const n_children( my_children_.size() );
+
+	do {
+		int requesting_node(0);
+		HIERARCHICAL_MPI_COMMUNICATION_TYPE message_from_below(NULL_MESSAGE);
+
+		wait_for_request( requesting_node, message_from_below );
+		runtime_assert_string_msg( message_from_below == OFFER_NEW_RMSD_TO_BEST_SUMMARY_BATCH_UPWARD, "Error in HierarchicalHybridJDApplication::receive_and_sort_all_rmsd_to_best_summaries(): Children nodes of node " + std::to_string( MPI_rank_ ) + " should be transmitting RMSD-to-best summaries at this point, but I received something else from node " + std::to_string( requesting_node ) + "!" );
+
+		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > new_rmsd_to_best_summaries;
+		receive_rmsd_to_best_summaries_from_below( new_rmsd_to_best_summaries, requesting_node, append_to_handler_list );
+		++n_summaries_received;
+
+		// Sort the new list into the old:
+		core::Size counter(1);
+		for( core::Size i(1), imax( job_summary_list.size() ); i<=imax; ++i ) { //Loop through the job summary list, placing each summary.
+			//Note that the received list is already sorted in the same order as the job_summary_list, except that the job_summary_list is longer (has more elements).
+			if( counter > new_rmsd_to_best_summaries.size() ) break; //Stop when all have been placed.
+
+			if( job_summary_list[i]->originating_node_MPI_rank() == new_rmsd_to_best_summaries[i]->originating_node_MPI_rank() ) {
+				runtime_assert( job_summary_list[i]->jobindex_on_originating_node() == new_rmsd_to_best_summaries[counter]->jobindex_on_originating_node() );
+				runtime_assert( rmsds_to_best_summaries[i] == nullptr );
+				rmsds_to_best_summaries[i] = new_rmsd_to_best_summaries[counter];
+				++counter;
+			}
+		}
+
+		//Sanity checks
+		runtime_assert( counter == new_rmsd_to_best_summaries.size() + 1 );
+
+	} while( n_summaries_received < n_children );  //Keep looping until all children have sent summaries.
+
+	//Another sanity check:
+	for( core::Size i(1), imax(rmsds_to_best_summaries.size()); i<=imax; ++i ) {
+		runtime_assert( rmsds_to_best_summaries[i] != nullptr );
+	}
+}
 
 /// ------------- Emperor Methods --------------------
 
@@ -1057,6 +1291,7 @@ HierarchicalHybridJDApplication::run_emperor() const {
 	core::Size children_reporting_job_counts(0);
 
 	utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > results_summary_from_below;
+	utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > rmsds_to_best_pose; //Only computed if compute_rmsd_to_lowest_ is false.
 
 	clock_t start_time( clock() ); //The start of the run, for timing information.
 	go_signal(); //Send signal to everyone that it's time to start.
@@ -1067,7 +1302,7 @@ HierarchicalHybridJDApplication::run_emperor() const {
 
 		wait_for_request( requesting_node, message_from_below );
 		switch( message_from_below ) {
-			case 	OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD:
+			case OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD:
 				receive_jobs_attempted_count( total_jobs_attempted_by_children, requesting_node );
 				++children_reporting_job_counts;
 			break;
@@ -1099,7 +1334,19 @@ HierarchicalHybridJDApplication::run_emperor() const {
 
 	if(derivedTR_.Debug.visible()) derivedTR_.Debug << "Empreror node (" << MPI_rank_ << ") has received completion signals, job attempt counts, and job summaries from all children." << std::endl;
 
-	emperor_write_summaries_to_tracer( results_summary_from_below );
+	if( compute_rmsd_to_lowest_ ) {
+		if( !results_summary_from_below.empty() ) {
+			top_pose_bcast( results_summary_from_below[1], nullptr, false );
+			if(derivedTR_.Debug.visible()) derivedTR_.Debug << "Empreror node (" << MPI_rank_ << ") is waiting for RMSD-to-best summaries from nodes below." << std::endl;
+			receive_and_sort_all_rmsd_to_best_summaries( rmsds_to_best_pose, results_summary_from_below, true );
+			if(derivedTR_.Debug.visible()) derivedTR_.Debug << "Empreror node (" << MPI_rank_ << ") has received " << rmsds_to_best_pose.size() << " RMSD-to-best summaries from nodes below." << std::endl;
+		} else {
+			top_pose_bcast( nullptr, nullptr, true );
+			derivedTR_.Warning << "Warning: no structures were generated." << std::endl;
+		}
+	}
+
+	emperor_write_summaries_to_tracer( results_summary_from_below, rmsds_to_best_pose );
 
 	utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > summary_shortlist;
 	emperor_select_best_summaries( summary_shortlist, results_summary_from_below, output_fraction_, select_highest_ );  //This populates summary_shortlist.
@@ -1170,23 +1417,26 @@ HierarchicalHybridJDApplication::emperor_broadcast_silent_struct(
 }
 
 /// @brief Write out a summary of the jobs completed (node, job index on node, total energy, rmsd, handler path) to the summary tracer.
-///
+/// @details The RMSD to best pose vector will only be populated if the -compute_rmsd_to_lowest option is used.
 void
 HierarchicalHybridJDApplication::emperor_write_summaries_to_tracer(
-	utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &summary_list
+	utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &summary_list,
+	utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > const &rmsds_to_best_pose
 ) const {
 	if( !derivedTR_summary_.visible() ) return; //Do nothing if the tracer is off.
+	bool const write_rmsds_to_best( !rmsds_to_best_pose.empty() );
 
 	derivedTR_summary_ << "Summary for " << summary_list.size() << " job(s) returning results:\n";
 	bool const original_print_channel_name_setting( derivedTR_summary_.get_local_print_channel_name() );
 	derivedTR_summary_.set_local_print_channel_name( false ); //Disable channel name printing from this point forward.
 
-	derivedTR_summary_ << "MPI_slave_node\tJobindex_on_node\tRMSD\tEnergy\tHbonds\tCisPepBonds\tNode_path_to_emperor\n";
+	derivedTR_summary_ << "MPI_slave_node\tJobindex_on_node\tRMSD" << (write_rmsds_to_best ? "\tRMSD_to_best" : "" ) << "\tEnergy\tHbonds\tCisPepBonds\tNode_path_to_emperor\n";
 
 	core::Real numerator(0), denominator(0); //For calculating PNear.
+	core::Real numerator_tobest(0), denominator_tobest(0); //For calculating PNear to best.
 
 	for( core::Size i=1, imax=summary_list.size(); i<=imax; ++i ) {
-		derivedTR_summary_ << summary_list[i]->originating_node_MPI_rank() << "\t" << summary_list[i]->jobindex_on_originating_node() << "\t" << summary_list[i]->rmsd() << "\t" << summary_list[i]->pose_energy() << "\t" << summary_list[i]->hbonds() << "\t" << summary_list[i]->cis_peptide_bonds() << "\t";
+		derivedTR_summary_ << summary_list[i]->originating_node_MPI_rank() << "\t" << summary_list[i]->jobindex_on_originating_node() << "\t" << summary_list[i]->rmsd() << "\t" << ( write_rmsds_to_best ? std::to_string( rmsds_to_best_pose[i]->rmsd_to_best() ) + "\t" : "" )  << summary_list[i]->pose_energy() << "\t" << summary_list[i]->hbonds() << "\t" << summary_list[i]->cis_peptide_bonds() << "\t";
 		for(core::Size j=1, jmax=summary_list[i]->MPI_ranks_handling_message().size(); j<=jmax; ++j) {
 			derivedTR_summary_ << summary_list[i]->MPI_ranks_handling_message()[j];
 			if( j<jmax ) derivedTR_summary_ << ",";
@@ -1200,12 +1450,35 @@ HierarchicalHybridJDApplication::emperor_write_summaries_to_tracer(
 			denominator += Pcurrent;
 			numerator += std::exp( -1.0 * std::pow(-summary_list[i]->rmsd() / lambda() , 2.0 ) ) * Pcurrent;
 		}
+		if( write_rmsds_to_best ) {
+			core::Real const Pcurrent( std::exp( -1.0*summary_list[i]->pose_energy()/kbt() ) );
+			denominator_tobest += Pcurrent;
+			numerator_tobest += std::exp( -1.0 * std::pow(-rmsds_to_best_pose[i]->rmsd_to_best() / lambda() , 2.0 ) ) * Pcurrent;
+		}
 	}
 
 	if(native_ && summary_list.size() > 0 && denominator > 1e-14) {
 		core::Real const PNear( numerator/denominator );
+		core::Real Keq( PNear < 0.999999999 ? PNear/(1.0-PNear) : 0.999999999/(1.0-0.999999999) );
+        if ( Keq < 1.0e-10 ) Keq = 1.0e-10;
+        core::Real const minus_kbt_ln_Keq( -kbt()*std::log( Keq ) );
+
 		derivedTR_summary_ << "\nPNear:\t" << PNear << "\n";
-		derivedTR_summary_ << "-kB*T*ln(PNear):\t" << -1.0*kbt()*std::log( PNear ) << "\n";
+		derivedTR_summary_ << "\nKeq:\t" << Keq << "\n";
+		derivedTR_summary_ << "-kB*T*ln(Keq):\t" << minus_kbt_ln_Keq << "\n";
+		derivedTR_summary_ << "lambda:\t" << lambda() << "\n";
+		derivedTR_summary_ << "kB*T:\t" << kbt() << "\n";
+	}
+
+	if( write_rmsds_to_best && denominator_tobest > 1e-14 ) {
+		core::Real const PNearBest( numerator_tobest/denominator_tobest );
+		core::Real KeqBest( PNearBest < 0.999999999 ? PNearBest/(1.0-PNearBest) : 0.999999999/(1.0-0.999999999) );
+        if ( KeqBest < 1.0e-10 ) KeqBest = 1.0e-10;
+        core::Real const minus_kbt_ln_KeqBest( -kbt()*std::log( KeqBest ) );
+
+		derivedTR_summary_ << "\nPNearLowest:\t" << PNearBest << "\n";
+		derivedTR_summary_ << "\nKeqLowest:\t" << KeqBest << "\n";
+		derivedTR_summary_ << "-kB*T*ln(KeqLowest):\t" << minus_kbt_ln_KeqBest << "\n";
 		derivedTR_summary_ << "lambda:\t" << lambda() << "\n";
 		derivedTR_summary_ << "kB*T:\t" << kbt() << "\n";
 	}
@@ -1304,6 +1577,7 @@ HierarchicalHybridJDApplication::run_intermediate_master() const {
 	go_signal(); //Wait for signal to everyone that it's time to start.
 
 	utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > jobsummaries; //Job summaries received from children.  Sorted list.
+	utility::vector1 < HierarchicalHybridJD_RMSDToBestSummaryOP > rmsd_to_best_summaries; //RMSD-to-best summaries received from children.  Sorted list.  Only used if we're calculating RMSD to best; remains an empty vector otherwise.
 
 	bool halt_signal_received(false);
 	core::Size const n_children( my_children_.size() ); //How many children do I have?
@@ -1319,7 +1593,7 @@ HierarchicalHybridJDApplication::run_intermediate_master() const {
 		wait_for_request( requesting_node, message_from_above_or_below );
 
 		switch( message_from_above_or_below ) {
-			case 	OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD:
+			case OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD:
 				receive_jobs_attempted_count( total_jobs_attempted_by_children, requesting_node );
 				++children_reporting_job_counts;
 				if( children_reporting_job_counts == n_children ) {
@@ -1354,7 +1628,8 @@ HierarchicalHybridJDApplication::run_intermediate_master() const {
 				}
 				break;
 			case OFFER_NEW_JOBRESULTSSUMMARY_BATCH_UPWARD:
-				//A slave is offering a summary of the jobs that it completed.  Signal for it to send the summary upward, and sort the list into the list that we're holding.
+				//A slave is offering a summary of the jobs that it completed.  Signal for it to send the summary upward, and sort the
+				//list into the list that we're holding.
 				if(derivedTR_.Debug.visible()) {
 					derivedTR_.Debug << "Intermediate master process " << MPI_rank_ << " has been offered new job summaries from node " << requesting_node << ".  Receiving..." << std::endl;
 					derivedTR_.Debug.flush();
@@ -1372,12 +1647,21 @@ HierarchicalHybridJDApplication::run_intermediate_master() const {
 					if(derivedTR_.Debug.visible()) derivedTR_.Debug << "Intermediate master process " << MPI_rank_ << " sent job summaries to node " << my_parent_ << "." << std::endl;
 				}
 				break;
+			case OFFER_NEW_RMSD_TO_BEST_SUMMARY_BATCH_UPWARD:
+				utility_exit_with_message( "Error!  Intermediate master " + std::to_string(MPI_rank_) + " received an offer of RMSD-to-best summaries from node " + std::to_string( requesting_node ) + ", but we're still collecting job summaries!  This should not be possible.");
 				//TODO other cases
 			default:
 				//TODO
 				break;
 		}
 	} while( n_children_done < n_children || n_summaries_received < n_children || children_reporting_job_counts < n_children );
+
+	if( compute_rmsd_to_lowest_ ) {
+		if( !top_pose_bcast() ) {
+			receive_and_sort_all_rmsd_to_best_summaries( rmsd_to_best_summaries, jobsummaries, true );
+			send_rmsds_to_best_summaries_upward( rmsd_to_best_summaries, my_parent_ );
+		}
+	}
 
 	//Transmit requests for full poses down the hierarchy:
 	utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > requested_jobs;
@@ -1533,6 +1817,17 @@ HierarchicalHybridJDApplication::run_slave() const {
 	send_jobs_attempted_count( total_jobs_attempted, my_parent_);
 	if(derivedTR_.Debug.visible()) derivedTR_.Debug << "Slave process " << MPI_rank_ << " reported to its parent that it attempted " << total_jobs_attempted << " jobs." << std::endl;
 
+	//If we're computing RMSD to top pose, receive the top pose and compute 
+	if( compute_rmsd_to_lowest_ ) {
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentStructOP top_pose_silentstruct( all_output.empty() ? utility::pointer::make_shared< core::io::silent::BinarySilentStruct >(opts) : all_output[ jobsummaries[1]->jobindex_on_originating_node() ]->clone() );
+		if( !top_pose_bcast( nullptr, top_pose_silentstruct ) ) {
+			utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > rmsds_to_best_summaries;
+			slave_compute_sorted_rmsds_to_best( *top_pose_silentstruct, rmsds_to_best_summaries, jobsummaries, all_output );
+			send_rmsds_to_best_summaries_upward( rmsds_to_best_summaries, my_parent_ );
+		}
+	}
+
 	//Receive requests for full poses from up the hierarchy:
 	utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > requested_jobs;
 	receive_pose_requests_from_above( requested_jobs );
@@ -1659,6 +1954,38 @@ HierarchicalHybridJDApplication::slave_carry_out_njobs_in_thread(
 
 } //slave_carry_out_njobs_in_thread()
 #endif
+
+/// @brief If we're computing the RMSDs to the very best pose, do so.
+/// @details This function clears and populates the rmsds_to_best_summaries vector, ensuring that RMSDs to the
+/// pose represented by top_pose_silentstruct are computed in the order that matches jobsummaries.
+void
+HierarchicalHybridJDApplication::slave_compute_sorted_rmsds_to_best(
+	core::io::silent::SilentStruct const &top_pose_silentstruct,
+	utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > & rmsds_to_best_summaries,
+	utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &jobsummaries,
+	utility::vector1< core::io::silent::SilentStructOP > const &poses_from_this_slave
+) const {
+	runtime_assert( rmsds_to_best_summaries.empty() );
+	runtime_assert( jobsummaries.size() == poses_from_this_slave.size() );
+	rmsds_to_best_summaries.reserve( jobsummaries.size() );
+
+	// Rebuild the top pose from the binary silent structure:
+	core::pose::PoseOP top_pose( utility::pointer::make_shared< core::pose::Pose >() );
+	top_pose_silentstruct.fill_pose( *top_pose );
+
+	for( core::Size isummary(1), isummarymax(jobsummaries.size()); isummary<=isummarymax; ++isummary ) { //Loop through all job summaries.
+		core::Size const cur_job_index( jobsummaries[isummary]->jobindex_on_originating_node() );
+		core::pose::PoseOP slave_pose( utility::pointer::make_shared< core::pose::Pose >() );
+		poses_from_this_slave[ cur_job_index ]->fill_pose( *slave_pose );
+		rmsds_to_best_summaries.push_back(
+			utility::pointer::make_shared< HierarchicalHybridJD_RMSDToBestSummary >(
+				MPI_rank_, cur_job_index,
+				derived_slave_compute_rmsd( *slave_pose, *top_pose, sequence_ )
+			)
+		);
+
+	}
+}
 
 /// @brief Given a list of jobs that have been requested from above, send the corresponding poses up the hierarchy.
 /// @details Throws an error if any jbo was completed on a different node than this slave.

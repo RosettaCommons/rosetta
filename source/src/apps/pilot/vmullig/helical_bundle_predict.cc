@@ -131,11 +131,23 @@ main( int argc, char * argv [] )
 		core::Real lambda( 0.5 );
 		core::Real kbt( 1.0 );
 		core::Size threads_per_slave(1);
-		protocols::cyclic_peptide_predict::set_MPI_vars( MPI_rank, MPI_n_procs, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename, lambda, kbt, threads_per_slave, "helical_bundle_predict" ); //Get the values of these vars (only used in MPI mode).
+		bool compute_rmsd_to_lowest( false );
+		bool compute_sasa_metrics( false );
+		protocols::cyclic_peptide_predict::set_MPI_vars(
+			MPI_rank, MPI_n_procs, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level,
+			sort_by, select_highest, output_fraction, output_filename, lambda, kbt, compute_rmsd_to_lowest,
+			compute_sasa_metrics, threads_per_slave, "helical_bundle_predict"
+		); //Get the values of these vars (only used in MPI mode).
 #endif
 
 #ifdef USEMPI
-		HelicalBundlePredictApplication_MPI application( MPI_rank, MPI_n_procs, HelicalBundlePredictApplication::create_centroid_scorefunction(), HelicalBundlePredictApplication::create_fullatom_scorefunction(), total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename, lambda, kbt, threads_per_slave );
+		HelicalBundlePredictApplication_MPI application(
+			MPI_rank, MPI_n_procs, HelicalBundlePredictApplication::create_centroid_scorefunction(),
+			HelicalBundlePredictApplication::create_fullatom_scorefunction(), total_hierarchy_levels,
+			procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction,
+			output_filename, lambda, kbt, compute_rmsd_to_lowest, compute_sasa_metrics,
+			threads_per_slave
+		);
 		application.set_options( options );
 #else // !USEMPI
 		HelicalBundlePredictApplication application( options );

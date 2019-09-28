@@ -102,8 +102,14 @@ main( int argc, char * argv [] )
 		std::string output_filename("");
 		core::Real lambda( 0.5 );
 		core::Real kbt( 1.0 );
+		bool compute_rmsd_to_lowest( false );
+		bool compute_sasa_metrics( false );
 		core::Size threads_per_slave(1);
-		protocols::cyclic_peptide_predict::set_MPI_vars( MPI_rank, MPI_n_procs, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename, lambda, kbt, threads_per_slave, "simple_cycpep_predict" ); //Get the values of these vars (only used in MPI mode).
+		protocols::cyclic_peptide_predict::set_MPI_vars(
+			MPI_rank, MPI_n_procs, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level,
+			sort_by, select_highest, output_fraction, output_filename, lambda, kbt, compute_rmsd_to_lowest,
+			compute_sasa_metrics, threads_per_slave, "simple_cycpep_predict"
+		); //Get the values of these vars (only used in MPI mode).
 #endif
 
 		if ( TR.visible() ) {
@@ -130,7 +136,11 @@ main( int argc, char * argv [] )
 		}
 
 #ifdef USEMPI
-		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication_MPI this_app( MPI_rank, MPI_n_procs, core::scoring::get_score_function() /*Reads from file once here.*/, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename, lambda, kbt, threads_per_slave );
+		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication_MPI this_app(
+			MPI_rank, MPI_n_procs, core::scoring::get_score_function() /*Reads from file once here.*/, total_hierarchy_levels,
+			procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename,
+			lambda, kbt, compute_rmsd_to_lowest, compute_sasa_metrics, threads_per_slave
+		);
 #else
 		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication this_app;
 #endif

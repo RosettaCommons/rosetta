@@ -18,6 +18,7 @@
 
 // Core headers:
 #include <core/scoring/ScoreFunction.hh>
+#include <core/pose/Pose.hh>
 
 // Protocols headers
 #include <protocols/helical_bundle_predict/HBP_MoveGenerator.hh>
@@ -64,9 +65,16 @@ HelicalBundlePredictApplication_MPI::HelicalBundlePredictApplication_MPI(
 	std::string const &output_filename,
 	core::Real const &lambda,
 	core::Real const &kbt,
+	bool const compute_rmsd_to_lowest,
+	bool const compute_sasa_metrics,
 	core::Size const threads_per_slave_proc //Only used in multi-threaded build.
 ) :
-	protocols::cyclic_peptide_predict::HierarchicalHybridJDApplication( TR, TR_summary, MPI_rank, MPI_n_procs, centroid_sfxn_in, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level, sort_type, select_highest, output_fraction, output_filename, lambda, kbt, threads_per_slave_proc ),
+	protocols::cyclic_peptide_predict::HierarchicalHybridJDApplication(
+		TR, TR_summary, MPI_rank, MPI_n_procs, centroid_sfxn_in, total_hierarchy_levels,
+		procs_per_hierarchy_level, batchsize_per_level, sort_type, select_highest,
+		output_fraction, output_filename, lambda, kbt, compute_rmsd_to_lowest,
+		compute_sasa_metrics, threads_per_slave_proc
+	),
 	centroid_move_generator_(nullptr),
 	sfxn_fullatom_(fullatom_sfxn_in->clone()),
 #ifdef MULTI_THREADED
@@ -157,6 +165,41 @@ HelicalBundlePredictApplication_MPI::derived_slave_carry_out_n_jobs(
 	predict_app->set_already_completed_job_count( slave_job_count() );
 	predict_app->set_native( native );
 	predict_app->run();
+}
+
+/// @brief Compute the RMSD between a pose and a reference pose.
+/// @details Must be implemented by derived classes, since this might be done differently for
+/// different classes of molecule.
+core::Real
+HelicalBundlePredictApplication_MPI::derived_slave_compute_rmsd(
+	core::pose::Pose const & pose,
+	core::pose::Pose const & reference_pose,
+	std::string const &//sequence
+) const {
+
+#ifdef MULTI_THREADED
+	centroid_move_generator_mutex_.lock();
+#endif //MULTI_THREADED
+	HBP_MoveGeneratorOP centroid_move_generator_copy( centroid_move_generator_->clone() );
+#ifdef MULTI_THREADED
+	centroid_move_generator_mutex_.unlock();
+#endif //MULTI_THREADED
+
+#ifdef MULTI_THREADED
+	sfxn_fullatom_mutex_.lock();
+#endif //MULTI_THREADED
+	runtime_assert_string_msg( sfxn_fullatom_  != nullptr, "Error in HelicalBundlePredictApplication_MPI::derived_slave_carry_out_n_jobs(): No fullatom scoring function was provided." );
+	core::scoring::ScoreFunctionOP sfxn_fullatom_local( sfxn_fullatom_->clone() );
+#ifdef MULTI_THREADED
+	sfxn_fullatom_mutex_.unlock();
+#endif //MULTI_THREADED
+
+	HelicalBundlePredictApplicationOP predict_app(
+		utility::pointer::make_shared< HelicalBundlePredictApplication >( options_, centroid_move_generator_copy, sfxn_fullatom_local, sfxn_fullatom_local )
+	);
+	predict_app->set_my_rank( MPI_rank() );
+	predict_app->set_native( reference_pose.clone() );
+	return predict_app->align_to_native_pose( *( pose.clone() ) );
 }
 
 } //protocols

@@ -97,6 +97,8 @@ set_MPI_vars(
 	std::string &output_filename,
 	core::Real &lambda,
 	core::Real &kbt,
+	bool &compute_rmsd_to_lowest,
+	bool &compute_sasa_metrics,
 	core::Size &threads_per_slave,
 	std::string const & app_name
 ) {
@@ -167,6 +169,8 @@ set_MPI_vars(
 		runtime_assert_string_msg( lambda > 0, errormsg + "The -cyclic_peptide:MPI_pnear_lambda option must be greater than zero." );
 		runtime_assert_string_msg( kbt > 0, errormsg + "The -cyclic_peptide:MPI_pnear_kbt option must be greater than zero." );
 	}
+	compute_rmsd_to_lowest = option[cyclic_peptide::compute_rmsd_to_lowest].value();
+	compute_sasa_metrics = option[cyclic_peptide::compute_ensemble_sasa_metrics].value();
 
 #ifdef MULTI_THREADED
 	runtime_assert_string_msg( option[cyclic_peptide::threads_per_slave]() > 0, errormsg + "The -cyclic_peptide:threads_per_slave option's value must be greater than zero." );

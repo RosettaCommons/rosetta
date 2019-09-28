@@ -207,6 +207,11 @@ public: //Member functions:
 	/// @details Does not clone the input; sets owning pointer directly.
 	void set_native( core::pose::PoseCOP native );
 
+	/// @brief Given a pose, align it to the native pose.
+	/// @details Throws an error if there's a mismatch between the pose lengths or mainchain atom counts.
+	/// @returns RMSD to native.
+	core::Real align_to_native_pose( core::pose::Pose & pose ) const;
+
 	/// @brief Create a new move generator.  Static, so this can be called from other classes (e.g.
 	/// HelicalBundlePredictApplication_MPI.)
 	/// @details Triggers read from disk!
@@ -310,11 +315,6 @@ private: //Member functions:
 
 	/// @brief Given the old energy, the new energy, and the temperature, apply the Metropolis criterion.
 	bool apply_metropolis_criterion( core::Real const &old_energy, core::Real const &new_energy, core::Real const &temperature ) const;
-
-	/// @brief Given a pose, align it to the native pose.
-	/// @details Throws an error if there's a mismatch between the pose lengths or mainchain atom counts.
-	/// @returns RMSD to native.
-	core::Real align_to_native_pose( core::pose::Pose & pose ) const;
 
 private: //Variables:
 

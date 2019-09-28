@@ -73,6 +73,8 @@ set_MPI_vars(
 	std::string &output_filename,
 	core::Real &lambda,
 	core::Real &kbt,
+	bool &compute_rmsd_to_lowest,
+	bool &compute_sasa_metrics,
 	core::Size &threads_per_slave,
 	std::string const & app_name
 );

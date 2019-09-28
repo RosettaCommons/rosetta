@@ -265,6 +265,16 @@ public:
 	/// @details Setting this to "false" lets us use classic rama tables.  True by default.
 	void set_use_rama_prepro_for_sampling( bool const setting );
 
+	/// @brief Align pose to native_pose, and return the RMSD between the two poses.
+	/// @details Assumes that the pose has already been de-permuted (i.e. the native and the pose line up).
+	/// Only uses alpha-amino acids for the alignment, currently.
+	core::Real
+	align_and_calculate_rmsd(
+		core::pose::Pose & pose,
+		core::pose::Pose const & native_pose,
+		bool const skip_seq_comparison=false
+	) const;
+
 	/// @brief Actually run the application.
 	/// @details The initialize_from_options() function must be called before calling this.  (Called by default constructor.)
 	void run() const;
@@ -530,15 +540,6 @@ private:
 	depermute (
 		core::pose::PoseOP pose,
 		core::Size const offset
-	) const;
-
-	/// @brief Align pose to native_pose, and return the RMSD between the two poses.
-	/// @details Assumes that the pose has already been de-permuted (i.e. the native and the pose line up).
-	/// Only uses alpha-amino acids for the alignment, currently.
-	core::Real
-	align_and_calculate_rmsd(
-		core::pose::PoseOP pose,
-		core::pose::PoseCOP native_pose
 	) const;
 
 	/// @brief Create a new checkpoint file.
