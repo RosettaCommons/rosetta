@@ -31,6 +31,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 
+#include <core/pack/make_symmetric_task.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/ResidueLevelTask_.hh>
@@ -73,6 +74,11 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/pb_potential.OptionKeys.gen.hh>
+
+//debug tools
+#include <protocols/jd2/util.hh>
+#include <protocols/simple_moves/DumpPdb.hh>
+#include <utility/sys_util.hh>
 
 // C++ headers
 #include <map>
@@ -454,9 +460,21 @@ ddG::calculate( pose::Pose const & pose_original )
 	//---------------------------------
 	if ( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_bound_tag());
 
+	//initialize task
 	if ( repack_unbound_ || repack_bound_ ) {
 		setup_task(pose);
 	}
+
+	//setup debugging
+	//std::string name;
+	//std::string name_b;
+
+	//Dump pdb before repacking
+	//name = protocols::jd2::current_output_name();
+	//name_b = name + "_BOUND_before_repack_" + utility::timestamp_short() + ".pdb";
+	//TR << "DEBUGGING: dumping pdb - " << name_b << std::endl;
+	//protocols::simple_moves::DumpPdb dump_bound_before_repack(name_b);
+	//dump_bound_before_repack.apply(pose);
 
 	// fd: now solvate the bound pose
 	if ( solvate_ ) {
@@ -479,6 +497,14 @@ ddG::calculate( pose::Pose const & pose_original )
 
 	if ( repack_bound() || solvate_ ) {
 		pack::pack_rotamers( pose, *scorefxn_, task_ );
+
+		//Dump pdb after repacking
+		//name = protocols::jd2::current_output_name();
+		//name_b = name + "_BOUND_after_repack_" + utility::timestamp_short() + ".pdb";
+		//TR << "DEBUGGING: dumping pdb - " << name_b << std::endl;
+		//protocols::simple_moves::DumpPdb dump_bound_after_repack(name_b);
+		//dump_bound_after_repack.apply(pose);
+
 		// if we're solvating, we also need to minimize
 		if ( solvate_ ) do_minimize( pose );
 	}
@@ -504,11 +530,28 @@ ddG::calculate( pose::Pose const & pose_original )
 			setup_solvated_task( pose, false ); // false = we're unbound
 		}
 
+		//Dump pdb before repacking
+		//name = protocols::jd2::current_output_name();
+		//name_b = name + "_UNBOUND_before_repack_" + utility::timestamp_short() + ".pdb";
+		//TR << "DEBUGGING: dumping pdb - " << name_b << std::endl;
+		//protocols::simple_moves::DumpPdb dump_unbound_before_repack(name_b);
+		//dump_unbound_before_repack.apply(pose);
+
 		// if we solvate, even if we don't repack unbound,
 		//    we need to give waters a chance to virtualize
 		if ( solvate_ || repack_unbound_ ) {
+
+
 			// Use the same task which was setup earlier
 			pack::pack_rotamers( pose, *scorefxn_, task_ );
+
+			//Dump pdb after repacking
+			//name = protocols::jd2::current_output_name();
+			//name_b = name + "_UNBOUND_after_repack_" + utility::timestamp_short() + ".pdb";
+			//TR << "DEBUGGING: dumping pdb - " << name_b << std::endl;
+			//protocols::simple_moves::DumpPdb dump_unbound_after_repack(name_b);
+			//dump_unbound_after_repack.apply(pose);
+
 			// if we're solvating, we also need to minimize
 			if ( solvate_ ) do_minimize( pose );
 		}
@@ -538,7 +581,35 @@ ddG::setup_task( pose::Pose const & pose) {
 	if ( use_custom_task() ) {
 		// Allows the user to define custom tasks that specify which residues
 		// are allowed to repack if RestrictToInterface doesn't work for them.
-		task_ = task_factory_->create_task_and_apply_taskoperations( pose );  //!!!!!
+		//WARNING: If RestrictToRepacking is not passed, ddG will actually do design on designable residues!!
+		task_ = task_factory_->create_task_and_apply_taskoperations( pose );
+
+		//symmetry check
+		//need to make sure the task is not overselecting symmetrical residues
+		if ( core::pose::symmetry::is_symmetric( pose ) ) {
+			TR << "Pose is symmetric, truncating task." << std::endl;
+			core::pack::make_symmetric_PackerTask_by_truncation( pose, task_ );
+		}
+
+		//dump task information
+		//designing residues
+		utility::vector1< bool > designing_resis = task_->designing_residues();
+		TR << "select ddg_designing_resis, resi ";
+		for ( Size ir=1; ir<=designing_resis.size(); ir++ ) {
+			if ( designing_resis[ir] ) {
+				TR << ir << "+";
+			}
+		}
+		TR << std::endl;
+		//repacking residues
+		utility::vector1< bool > repacking_resis = task_->repacking_residues();
+		TR << "select ddg_repacking_resis, resi ";
+		for ( Size ir=1; ir<=repacking_resis.size(); ir++ ) {
+			if ( repacking_resis[ir] ) {
+				TR << ir << "+";
+			}
+		}
+		TR << std::endl;
 	} else {
 		task_ = core::pack::task::TaskFactory::create_packer_task( pose );
 		task_->initialize_from_command_line().or_include_current( true );
