@@ -544,17 +544,7 @@ public:
 
 	// add a new selector single
 	ResidueTypeSelector & // allow chaining
-	add_line( std::string const & line )
-	{
-		ResidueTypeSelectorSingleOP new_selector( residue_selector_single_from_line( line ) );
-		if ( new_selector ) {
-			//std::cout << "add_line: success: " << line << std::endl;
-			selectors_.push_back( new_selector );
-		} else {
-			std::cout << "ResidueTypeSelector::add_line: bad line:" << line << std::endl;
-		}
-		return *this;
-	}
+	add_line( std::string const & line );
 
 	// reset
 	ResidueTypeSelector & // allow chaining

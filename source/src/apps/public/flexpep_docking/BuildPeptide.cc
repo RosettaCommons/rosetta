@@ -90,12 +90,11 @@ main( int argc, char * argv [] )
 
 		//read peptides fasta file
 		std::string pepSeq = core::sequence::read_fasta_file( basic::options::option[ in::file::fasta ]()[1] )[1]->sequence();
-		int seqLen = pepSeq.length();
 
 		make_pose_from_sequence(pose,pepSeq, *ChemicalManager::get_instance()->residue_type_set( "fa_standard" ));
 
 		//make peptide extended
-		for ( int i=1; i<=seqLen; i++ ) {
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			if ( basic::options::option[ phi ].user() || basic::options::option[ psi ].user() ) {
 				pose.set_phi(i, basic::options::option[ phi ]() );
 				pose.set_psi(i, basic::options::option[ psi ]() );

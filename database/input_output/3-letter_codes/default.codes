@@ -13,6 +13,8 @@
   MED   DME
   DSN   DSE
   DGL   DGU
+  DSG   DAS
+  DPN   DPH
   NVA   NVL
 # This one is a bit of a bummer. SMP and RMP have the same PDB atom names.
 # This means that we will only ever successfully match one even if we create

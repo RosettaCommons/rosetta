@@ -933,6 +933,7 @@ testinputfiles = [
 	"io/1QYS.cif",
 	"io/1QYS.pdb",
 	"io/1l2y_w_glucose.pdb",
+	"io/daa.pdb",
 	"io/GTP.params",
 	"io/bin_silentfile_test.out",
 	"io/bin_silentfile_test.pdb",

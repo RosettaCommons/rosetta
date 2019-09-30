@@ -153,4 +153,55 @@ public:
 		TS_ASSERT_EQUALS( pose.annotated_sequence(),
 			"L[LEU:NtermProteinFull]DAPSQIEVKDVTDTTALITWFKPLAEIDGIELTYGIKDVPGDRTTIDLTEDENQYSIGNLKPDTEYEVSLISRRGDMSSNPAKETFTT[THR:CtermProteinFull]" );
 	}
+
+	void test_pdb_read_d_aa() {
+		using namespace core::chemical;
+
+		pose::Pose pose;
+		// Input pose has the 20 Rosetta three letter D-AA codes, followed by the 6 D-AA entries using the wwPDB code which is different from the Rosetta code,
+		// followed by the 6 wwPDB entries (as separate ligand chains) which overlap with the Rosetta D-AA code.
+		// The first 20+6 entries should get loaded as Rosetta D-AA types.
+		// The final 6 entries don't necessarily need to get loaded as CCD components, but they *shouldn't* be loaded as the D-AA which just happens to have the same code.
+		// (These are currently disabled because of PDB loading issues.)
+		import_pose::pose_from_file(pose, "core/io/daa.pdb", core::import_pose::PDB_file);
+		TS_ASSERT_EQUALS( pose.size(), 26 );
+		//TS_ASSERT_EQUALS( pose.size(), 32 );
+		TR << pose.annotated_sequence() << std::endl;
+		TS_ASSERT_EQUALS( pose.annotated_sequence(),
+			"A[DALA:NtermProteinFull]C[DCYS]D[DASP]E[DGLU]F[DPHE]GH[DHIS]I[DILE]K[DLYS]L[DLEU]M[DMET]N[DASN]P[DPRO]Q[DGLN]R[DARG]S[DSER]T[DTHR]V[DVAL]W[DTRP]Y[DTYR]"
+			"C[DCYS]E[DGLU]F[DPHE]M[DMET]D[DASP]S[DSER:CtermProteinFull]"
+			//"Z[pdb_DCS]Z[pdb_DGU]Z[pdb_DPH]Z[pdb_DME]Z[pdb_DAS]Z[pdb_DSE:CtermProteinFull:NtermProteinFull]"
+		);
+		utility::vector1< std::string > three_letter_codes = { "DAL", "DCS", "DAS", "DGU", "DPH", "GLY", "DHI", "DIL", "DLY", "DLE", "DME", "DAN", "DPR", "DGN", "DAR", "DSE", "DTH", "DVA", "DTR", "DTY", // Rosetta specific codes
+			"DCS", "DGU", "DPH", "DME", "DAS", "DSE" // Loaded as CCD codes, but in-pose as Rosetta ones.
+			//"DCS", "DGU", "DPH", "DME", "DAS", "DSE" // The (non D-AA) CCD entries
+			};
+
+		for ( core::Size ii(1); ii <= pose.size(); ++ii ) {
+			TS_ASSERT_EQUALS( three_letter_codes[ii], pose.residue(ii).name3() );
+		}
+
+
+		// Iterate over the Rosetta residue types, double checking their properties are as expected.
+		utility::vector1< AA > const aa_enums = { aa_dal, aa_dcs, aa_das, aa_dgu, aa_dph, aa_gly, aa_dhi, aa_dil, aa_dly, aa_dle, aa_dme, aa_dan, aa_dpr, aa_dgn, aa_dar, aa_dse, aa_dth, aa_dva, aa_dtr, aa_dty,
+			aa_dcs, aa_dgu, aa_dph, aa_dme, aa_das, aa_dse };
+		utility::vector1< std::string > basenames = { "DALA", "DCYS", "DASP", "DGLU", "DPHE", "GLY", "DHIS", "DILE", "DLYS", "DLEU", "DMET", "DASN", "DPRO", "DGLN", "DARG", "DSER", "DTHR", "DVAL", "DTRP", "DTYR",
+			"DCYS", "DGLU", "DPHE", "DMET", "DASP", "DSER" };
+		utility::vector1< bool > const ispolar = { false, false, true, true, false, false, true, false, true, false, false, true, false, true, true, true, true, false, false, false,
+			false, true, false, false, true, true };
+
+		TS_ASSERT_EQUALS( aa_enums.size(), basenames.size() );
+		TS_ASSERT_EQUALS( aa_enums.size(), ispolar.size() );
+
+		for ( core::Size ii(1); ii <= aa_enums.size(); ++ii ) {
+			TS_ASSERT_EQUALS( aa_enums[ii], pose.residue_type(ii).aa() );
+			TS_ASSERT_EQUALS( basenames[ii], pose.residue_type(ii).base_name() );
+			TS_ASSERT_EQUALS( bool(ispolar[ii]), bool(pose.residue_type(ii).is_polar()) ); // Odd compile error if I don't cast
+
+			TS_ASSERT( pose.residue_type(ii).is_alpha_aa() );
+			if ( pose.residue_type(ii).base_name() != "GLY" ) {
+				TS_ASSERT( pose.residue_type(ii).is_d_aa() );
+			}
+		}
+	}
 };

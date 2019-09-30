@@ -129,20 +129,26 @@ B3Y
 
 ## D amino acids - this is handled by the CHIRAL_FLIP_NAMING operation 
 DAL
-# DCY -- CCD D-CYS is DCY; Rosetta uses DCS, which is CCD D-[3-HYDROXY-2-METHYL-5-PHOSPHONOOXYMETHYL-PYRIDIN-4-YLMETHYL]-N,O-CYCLOSERYLAMIDE
+DCY # D-CYS; Translated to Rosetta's DSC by input_output/3-letter_codes/default.codes
+# Don't list DCS here - in CCD it's D-[3-HYDROXY-2-METHYL-5-PHOSPHONOOXYMETHYL-PYRIDIN-4-YLMETHYL]-N,O-CYCLOSERYLAMIDE
 DAS 
-# DGL -- CCD D-GLU is DGL; Rosetta uses DGU, which is CCD D-galacturonic acid
-# DPH -- CCD D-PHE is DPN; Rosetta uses DPH, which is CCD DEAMINO-METHYL-PHENYLALANINE
+DGL # D-GLU; Translated to Rosetta's DGU by input_output/3-letter_codes/default.codes
+# Don't list DGU here - in CCD it's D-galacturonic acid
+DPN # D-PHE; Translated to Rosetta's DPH by input_output/3-letter_codes/default.codes
+# Don't list DPH here - in CCD it's DEAMINO-METHYL-PHENYLALANINE
 DHI
 DIL
 DLY
 DLE
-# MED -- CCD D-MET is MED; Rosetta uses DME, which is CCD DECAMETHONIUM ION
-# DAN -- CCD D-ASN is DSG; ROsetta uses DAN, which is CCD 2-DEOXY-2,3-DEHYDRO-N-ACETYL-NEURAMINIC ACID
+MED # D-MET; Translated to Rosetta's DME by input_output/3-letter_codes/default.codes
+# Don't list DME here - in CCD it's DECAMETHONIUM ION
+DSG # D-ASN; Translated to Rosetta's DAN by input_output/3-letter_codes/default.codes
+# Don't list DAN here - in CCD it's 2-DEOXY-2,3-DEHYDRO-N-ACETYL-NEURAMINIC ACID 
 DPR
 DGN
 DAR
-# DSN -- CCD D-SER is DSN; Rosetta uses DSE, which is CCD N-METHYL-D-SERINE
+DSN # D-SER; Translated to Rosetta's DSE by input_output/3-letter_codes/default.codes
+# Don't list DSE here - in CCD it's N-METHYL-D-SERINE
 DTH
 DVA
 DTR

@@ -24,7 +24,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-
+#include <basic/Tracer.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -39,6 +39,8 @@
 
 namespace core {
 namespace chemical {
+
+static basic::Tracer TR("core.chemical.ResidueTypeSelector");
 
 /// @details Auto-generated virtual destructor
 ResidueTypeSelector::~ResidueTypeSelector() = default;
@@ -138,8 +140,22 @@ residue_selector_single_from_line( std::string const & line )
 		l >> selector_string; // if one wants AND logical operation make this a vector of selector_strings...
 		if ( !selector_string.empty() ) return utility::pointer::make_shared< Selector_CMDFLAG >( selector_string, desired_result );
 	}
-	std::cout << "residue_selector_single: unrecognized line: " << line << std::endl;
+	TR.Warning << "residue_selector_single: unrecognized line: " << line << std::endl;
 	return nullptr;
+}
+
+// add a new selector single
+ResidueTypeSelector & // allow chaining
+ResidueTypeSelector::add_line( std::string const & line )
+{
+	ResidueTypeSelectorSingleOP new_selector( residue_selector_single_from_line( line ) );
+	if ( new_selector ) {
+		//std::cout << "add_line: success: " << line << std::endl;
+		selectors_.push_back( new_selector );
+	} else {
+		TR.Warning << "ResidueTypeSelector::add_line: bad line:" << line << std::endl;
+	}
+	return *this;
 }
 
 Selector_CMDFLAG::Selector_CMDFLAG(std::string  const & flag_in, bool const result) : ResidueTypeSelectorSingle( result )

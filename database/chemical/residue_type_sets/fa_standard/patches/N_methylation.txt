@@ -31,6 +31,7 @@ NOT VARIANT_TYPE VIRTUAL_BB
 NOT VARIANT_TYPE REPLONLY
 NOT NAME3 PRO DPR
 NOT VARIANT_TYPE DEPROTONATED
+NOT HAS_ATOMS CN # Certain CCD types already have a CN (bit of a hack) 
 END_SELECTOR
 
 BEGIN_CASE ### CYS ##########################################
