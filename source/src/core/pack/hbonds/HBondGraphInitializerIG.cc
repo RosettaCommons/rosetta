@@ -148,11 +148,11 @@ void HBondGraphInitializerIG::eval_rot_pair(
 	if ( two_body_energy > clash_threshold_ ) {
 		HBondNode * const node1 =
 			static_cast< HBondNode * >( hbond_graph_->get_node( global_rot1 ) );
-		node1->register_clash( global_rot2 );
+		node1->register_clash( NodeIDSize( global_rot2 ) );
 
 		HBondNode * const node2 =
 			static_cast< HBondNode * >( hbond_graph_->get_node( global_rot2 ) );
-		node2->register_clash( global_rot1 );
+		node2->register_clash( NodeIDSize( global_rot1 ) );
 		return;
 	}
 	if ( two_body_energy <= hbond_threshold_ ) {

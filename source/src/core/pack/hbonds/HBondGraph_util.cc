@@ -101,8 +101,8 @@ void init_node_info( HBondGraph & graph, rotamer_set::RotamerSets const & rotame
 		HBondNode * node = graph.get_node( rot );
 		Size const mres = rotamer_sets.moltenres_for_rotamer( rot );
 		debug_assert( mres );
-		node->set_moltenres( mres );
-		node->set_local_rotamer_id( rotamer_sets.rotid_on_moltenresidue( rot ) );
+		node->set_moltenres( MResIDSize( mres ) );
+		node->set_local_rotamer_id( RotamerIDSize( rotamer_sets.rotid_on_moltenresidue( rot ) ) );
 	}//for rot
 }
 

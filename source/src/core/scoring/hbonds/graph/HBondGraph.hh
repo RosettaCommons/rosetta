@@ -39,10 +39,19 @@
 
 #include <boost/container/flat_set.hpp>
 
+#include <utility/strong_aliasing.hh>
+
 namespace core {
 namespace scoring {
 namespace hbonds {
 namespace graph {
+
+using NodeIDSize = utility::StrongSize< struct NodeIDSize_ >;
+using MResIDSize = utility::StrongSize< struct MResIDSize_ >;
+using RotamerIDSize = utility::StrongSize< struct RotamerIDSize_ >;
+//using NodeIDSize = utility::NamedType< core::Size, struct NodeIDSize_ >;
+//using MResIDSize = utility::NamedType< core::Size, struct MResIDSize_ >;
+//using RotamerIDSize = utility::NamedType< core::Size, struct RotamerIDSize_ >;
 
 ///@brief Each HBondNode represents a rotamer from the RotamerSets object
 class HBondNode : public utility::graph::LowMemNode {
@@ -57,7 +66,7 @@ public:
 	//constructor
 	HBondNode( Size node_id );
 
-	HBondNode( Size node_id, Size mres_id, Size rotamer_id );
+	HBondNode( NodeIDSize node_id, MResIDSize mres_id, RotamerIDSize rotamer_id );
 
 	//destructor
 	~HBondNode();
@@ -79,7 +88,7 @@ public://getters, setters, accessors
 	}
 
 	///@brief set molten residue id for this rotamer.
-	void set_moltenres( Size mres ){
+	void set_moltenres( MResIDSize mres ){
 		mres_id_ = ( unsigned int ) ( mres );
 	}
 
@@ -90,7 +99,7 @@ public://getters, setters, accessors
 	}
 
 	///@brief set local rotamer id (local to the residue position).
-	void set_local_rotamer_id( Size rot_id ){
+	void set_local_rotamer_id( RotamerIDSize rot_id ){
 		rotamer_id_ = ( unsigned int ) ( rot_id );
 	}
 
@@ -101,12 +110,12 @@ public://getters, setters, accessors
 	}
 
 	///@brief keep track of another node (rotamer) that this clashes with. You do not need to call this for all of the rotamers that share a residue position.
-	void register_clash( Size node_id ){
+	void register_clash( NodeIDSize node_id ){
 		ids_of_clashing_nodes_.insert( node_id );
 	}
 
 	///@brief does this node clash with another node (at another residue position)?
-	bool clashes( Size node_id ) const{
+	bool clashes( NodeIDSize node_id ) const{
 		return ids_of_clashing_nodes_.find( node_id ) != ids_of_clashing_nodes_.end();
 	}
 

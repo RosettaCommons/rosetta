@@ -55,7 +55,7 @@ HBondNode::HBondNode( Size node_id ) :
 	polar_sc_atoms_not_satisfied_by_background_()
 {}
 
-HBondNode::HBondNode( Size node_id, Size mres_id, Size rotamer_id ) :
+HBondNode::HBondNode( NodeIDSize node_id, MResIDSize mres_id, RotamerIDSize rotamer_id ) :
 	utility::graph::LowMemNode( node_id ),
 	mres_id_( mres_id ),
 	rotamer_id_( rotamer_id ),
@@ -93,8 +93,9 @@ HBondNode::merge_data(
 
 	for ( unsigned int other_new_clash_node : other.ids_of_clashing_nodes_ ) {
 		Size my_new_clash_node = other_node_to_my_node[ other_new_clash_node ];
-		if ( ! clashes( my_new_clash_node ) ) {
-			register_clash( my_new_clash_node );
+		if ( ! clashes( NodeIDSize( my_new_clash_node ) ) ) {
+			//if ( ! clashes( my_new_clash_node ) ) {
+			register_clash( NodeIDSize( my_new_clash_node ) );
 		}
 	}
 

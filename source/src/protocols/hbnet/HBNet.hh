@@ -900,8 +900,8 @@ inline void HBNet::set_monte_carlo_data_to_default(){
 }
 
 inline void HBNet::register_clash( core::Size rotamerA, core::Size rotamerB ){
-	hbond_graph_->get_node( rotamerA )->register_clash( rotamerB );
-	hbond_graph_->get_node( rotamerB )->register_clash( rotamerA );
+	hbond_graph_->get_node( rotamerA )->register_clash( core::scoring::hbonds::graph::NodeIDSize( rotamerB ) );
+	hbond_graph_->get_node( rotamerB )->register_clash( core::scoring::hbonds::graph::NodeIDSize( rotamerA ) );
 }
 
 

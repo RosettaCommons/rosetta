@@ -1089,7 +1089,7 @@ HBNet::monte_carlo_net_clash( utility::vector1< HBondResStructCOP > const & resi
 	for ( core::Size const rot1 : global_rots1 ) {
 		HBondNode const * node1 = hbond_graph_->get_node( rot1 );
 		for ( core::Size const rot2 : global_rots2 ) {
-			if ( node1->clashes( rot2 ) ) return true;
+			if ( node1->clashes( NodeIDSize( rot2 ) ) ) return true;
 
 			// check for networks that have common intersections that rotamers are compatible
 			if ( rotamer_sets_->moltenres_for_rotamer(rot1) == rotamer_sets_->moltenres_for_rotamer(rot2) && ( rot1 != rot2 ) ) {
@@ -3885,7 +3885,7 @@ bool HBNet::monte_carlo_seed_is_dead_end( HBondEdge const * monte_carlo_seed ){
 		HBondNode const * const temp_node = hbond_graph_->get_node( (*it_A)->get_other_ind( nodeA_ind ) );
 
 		if ( temp_node->moltenres() == nodeB->moltenres() ) continue;
-		if ( nodeB->clashes( temp_node->global_rotamer_id() ) ) continue;
+		if ( nodeB->clashes( NodeIDSize( temp_node->global_rotamer_id() ) ) ) continue;
 
 		return false;
 	}
@@ -3895,7 +3895,7 @@ bool HBNet::monte_carlo_seed_is_dead_end( HBondEdge const * monte_carlo_seed ){
 		HBondNode const * const temp_node = hbond_graph_->get_node( (*it_B)->get_other_ind( nodeB_ind ) );
 
 		if ( temp_node->moltenres() == nodeA->moltenres() ) continue;
-		if ( nodeA->clashes( temp_node->global_rotamer_id() ) ) continue;
+		if ( nodeA->clashes( NodeIDSize( temp_node->global_rotamer_id() ) ) ) continue;
 
 		return false;
 	}
@@ -4119,7 +4119,7 @@ bool HBNet::register_new_network(
 bool HBNet::node_is_compatible( NetworkState const & current_state, HBondNode const * node_being_added ){
 	for ( HBondNode const * const existing_node : current_state.nodes() ) {
 		if ( existing_node->moltenres() == node_being_added->moltenres() ) return false;
-		if ( node_being_added->clashes( existing_node->global_rotamer_id() ) ) return false;
+		if ( node_being_added->clashes( NodeIDSize( existing_node->global_rotamer_id() ) ) ) return false;
 	}
 	return true;
 }
