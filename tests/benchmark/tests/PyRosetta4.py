@@ -115,13 +115,13 @@ def run_notebook_tests(rosetta_dir, working_dir, platform, config, hpc_driver, v
         notebooks_path = f'{working_dir}/notebooks'
         shutil.copytree(notebooks_source_prefix, notebooks_path)
 
-        notebooks = [ f[:-len('.ipynb')] for f in os.listdir(notebooks_path) if f.endswith('.ipynb') ]
+        notebooks = [ f[:-len('.ipynb')] for f in os.listdir(notebooks_path) if f.endswith('.ipynb') and f not in ('index.ipynb', 'toc.ipynb') ]
         TR(f'notebooks: {notebooks}')
 
         sub_tests = {}
         test_state = False
         for n in notebooks:
-            command_line = f'cd {notebooks_path} && {P.python_virtual_environment.python} -m nbconvert --to script {n}.ipynb && {P.python_virtual_environment.python} {n}.py'
+            command_line = f'cd {notebooks_path} && {P.python_virtual_environment.python} -m nbconvert --to script {n}.ipynb && {rosetta_dir}/source/test/timelimit.py 8 {P.python_virtual_environment.python} {n}.py'
             res, output = execute(f'Running converting and running notebook {n}...', command_line, return_='tuple', add_message_and_command_line_to_output=True)
             sub_tests[n] = {_StateKey_ : _S_failed_ if res else _S_passed_, _LogKey_ : output }
             test_state |= res
