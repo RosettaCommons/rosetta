@@ -75,7 +75,7 @@ public: // construct/destruct
 	);
 
 	//destructor
-	~LoopMover_Perturb_QuickCCD();
+	~LoopMover_Perturb_QuickCCD() override;
 
 
 public: // virtual constructors

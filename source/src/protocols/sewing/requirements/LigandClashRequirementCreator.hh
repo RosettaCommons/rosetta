@@ -29,11 +29,11 @@ class LigandClashRequirementCreator : public AssemblyRequirementCreator
 {
 public:
 	LigandClashRequirementCreator() {}
-	virtual ~LigandClashRequirementCreator() {}
+	~LigandClashRequirementCreator() override {}
 
-	virtual AssemblyRequirementOP create_requirement() const override;
-	virtual std::string keyname() const override;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
+	AssemblyRequirementOP create_requirement() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
 

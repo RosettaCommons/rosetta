@@ -145,7 +145,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~VectorOption_T_() {}
+	~VectorOption_T_() override {}
 
 
 protected: // Assignment

@@ -57,21 +57,21 @@ public:
 	//   core::Real repack_shell, bool deleteHairpin, core::Size delete_hairpinC, core::Size delete_hairpinN,
 	//   void(SpliceOut::*callMover)(core::pose::Pose & pose,core::kinematics::MoveMapOP mm),
 	//   protocols::moves::MoverOP submover, bool write_to_database);
-	virtual std::string get_name() const override;
+	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpliceOutTail >(); }
-	virtual ~SpliceOutTail();
-	virtual void set_source_from_to_res() override;
+	~SpliceOutTail() override;
+	void set_source_from_to_res() override;
 	core::Size set_anchor_res() override;
-	virtual void set_loop_length_change(protocols::protein_interface_design::movers::LoopLengthChange & llc) override;
-	virtual void set_fold_tree_nodes(core::pose::Pose const & pose) override;
-	virtual void place_cut_site_in_segment(core::pose::Pose const & pose) override;
+	void set_loop_length_change(protocols::protein_interface_design::movers::LoopLengthChange & llc) override;
+	void set_fold_tree_nodes(core::pose::Pose const & pose) override;
+	void place_cut_site_in_segment(core::pose::Pose const & pose) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string mover_name();
 	void abstract_parse_tag(TagCOP const tag) override;
 	void write_database_to_file(core::pose::Pose const & pose) override;
 	void superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::Pose & source_pose ) override;
-	virtual void build_ideal_segment(core::pose::Pose & pose) override;
+	void build_ideal_segment(core::pose::Pose & pose) override;
 	std::string name_for_filter() override;
 
 

@@ -30,17 +30,15 @@ class SequenceDependentRefEnergyCreator : public EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new SequenceDependentRefEnergy
-	virtual
 	methods::EnergyMethodOP
 	create_energy_method(
 		methods::EnergyMethodOptions const &
-	) const;
+	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	virtual
 	ScoreTypes
-	score_types_for_method() const;
+	score_types_for_method() const override;
 
 };
 

@@ -48,11 +48,11 @@ public:
 	/// @details fragments will be compared to given coordinates, which should have the same number of residues a the query sequence
 	FragmentAllAtomCrmsd(core::Size, core::Real, bool, std::string const &, utility::vector1< utility::vector1<core::Real> > const & );
 
-	~FragmentAllAtomCrmsd();
+	~FragmentAllAtomCrmsd() override;
 
 	// Undefined, commenting out to fix PyRosetta build  void do_caching(VallChunkOP);
 	// Undefined, commenting out to fix PyRosetta build  void clean_up();
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
 	// Undefined, commenting out to fix PyRosetta build  bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
 
 private:
@@ -80,7 +80,7 @@ public:
 		MakeFragmentScoringMethod("FragmentAllAtomCrmsd") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 
 } // scores

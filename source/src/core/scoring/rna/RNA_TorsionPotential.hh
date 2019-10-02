@@ -49,7 +49,7 @@ public:
 
 	RNA_TorsionPotential( RNA_EnergyMethodOptions const & options );
 
-	virtual ~RNA_TorsionPotential() ; // auto-removing definition from header{}
+	~RNA_TorsionPotential() override ; // auto-removing definition from header{}
 
 
 	// void update_constraints( pose::Pose & pose ) const;

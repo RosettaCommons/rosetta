@@ -36,10 +36,10 @@ namespace chunk_library_inputters {
 class PDBChunkLibraryInputterCreator : public ChunkLibraryInputterCreator
 {
 public:
-	virtual ChunkLibraryInputterOP create_inputter() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
-	virtual void list_options_read( utility::options::OptionKeyList & read_options ) const;
+	ChunkLibraryInputterOP create_inputter() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
+	void list_options_read( utility::options::OptionKeyList & read_options ) const override;
 };
 
 } // namespace chunk_library_inputters

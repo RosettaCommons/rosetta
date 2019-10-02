@@ -38,11 +38,11 @@ public:
 		utility::vector1< std::string > const & sample_virtual_sugar_string_list);
 
 	//destructor
-	~VirtualSugarSamplerFromStringList();
+	~VirtualSugarSamplerFromStringList() override;
 
-	virtual void apply( core::pose::Pose & pose_to_visualize );
+	void apply( core::pose::Pose & pose_to_visualize ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 public:
 

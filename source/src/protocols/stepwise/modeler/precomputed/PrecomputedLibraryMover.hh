@@ -34,17 +34,17 @@ public:
 	PrecomputedLibraryMover();
 
 	//destructor
-	~PrecomputedLibraryMover();
+	~PrecomputedLibraryMover() override;
 
 public:
 
 	/// @brief Apply the minimizer to one pose
 	using protocols::moves::Mover::apply;
-	virtual void apply( core::pose::Pose & pose_to_visualize );
+	void apply( core::pose::Pose & pose_to_visualize ) override;
 
 	void apply( core::pose::Pose & pose_to_visualize ) const;
 
-	virtual std::string get_name() const { return "PrecomputedLibraryMover"; }
+	std::string get_name() const override { return "PrecomputedLibraryMover"; }
 
 	bool
 	has_precomputed_move( core::pose::Pose const & pose ) const;

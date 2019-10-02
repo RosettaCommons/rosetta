@@ -55,37 +55,36 @@ public: // construct/destruct
 
 	/// @brief default destructor
 	/// @remarks detaches during destruction
-	virtual
-	~StructureDataObserver();
+	~StructureDataObserver() override;
 
 
 public: // virtual constructors
 
 	/// @brief clone this object
-	virtual core::pose::datacache::CacheableObserverOP
-	clone();
+	core::pose::datacache::CacheableObserverOP
+	clone() override;
 
 	/// @brief create a new instance of this object
-	virtual core::pose::datacache::CacheableObserverOP
-	create();
+	core::pose::datacache::CacheableObserverOP
+	create() override;
 
 
 public: // interface
 
 	/// @brief is this observer attached to a Pose/Conformation?
-	virtual bool
-	is_attached() const;
+	bool
+	is_attached() const override;
 
 protected: // virtual observer interface
 
 	/// @brief attach to Pose/Conformation
-	virtual void
-	attach_impl( core::pose::Pose & pose );
+	void
+	attach_impl( core::pose::Pose & pose ) override;
 
 
 	/// @brief detach from Pose/Conformation
-	virtual void
-	detach_impl();
+	void
+	detach_impl() override;
 
 	void
 	on_length_change( core::conformation::signals::LengthEvent const & event );

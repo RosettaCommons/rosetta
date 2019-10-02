@@ -57,7 +57,7 @@ public:
 	MembraneData();
 
 	/// @brief Destructor
-	~MembraneData();
+	~MembraneData() override;
 
 	/// @brief Finalize Setup of MP Base Potential Class
 	virtual void finalize( pose::Pose & pose ) const;

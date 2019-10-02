@@ -219,8 +219,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~FArray4()
+	~FArray4() override
 	{}
 
 
@@ -520,7 +519,7 @@ public: // Modifier
 	/// @brief Clear
 	inline
 	FArray4 &
-	clear()
+	clear() override
 	{
 		Super::clear();
 		s1_ = s2_ = s3_ = 0;
@@ -531,7 +530,7 @@ public: // Modifier
 	/// @brief Assign Default Value to all Elements
 	inline
 	FArray4 &
-	to_default()
+	to_default() override
 	{
 		Super::to_default();
 		return *this;

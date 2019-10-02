@@ -62,7 +62,7 @@ public:
 	VoidsPenaltyVoxelGrid();
 
 	/// @brief Default destructor.
-	virtual ~VoidsPenaltyVoxelGrid();
+	~VoidsPenaltyVoxelGrid() override;
 
 	/// @brief Copy constructor.
 	VoidsPenaltyVoxelGrid(VoidsPenaltyVoxelGrid const & src);

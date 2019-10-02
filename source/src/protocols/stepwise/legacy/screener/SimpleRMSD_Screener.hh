@@ -39,18 +39,18 @@ public:
 		bool const force_align = false );
 
 	//destructor
-	~SimpleRMSD_Screener();
+	~SimpleRMSD_Screener() override;
 
 public:
 
 	std::string
-	name() const { return "SimpleRMSD_Screener"; }
+	name() const override { return "SimpleRMSD_Screener"; }
 
 	stepwise::screener::StepWiseScreenerType
-	type() const { return stepwise::screener::SIMPLE_RMSD; }
+	type() const override { return stepwise::screener::SIMPLE_RMSD; }
 
 	bool
-	check_screen();
+	check_screen() override;
 
 private:
 

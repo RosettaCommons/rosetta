@@ -52,7 +52,7 @@ public:
 		core::Real trans_mag
 	);
 
-	~AsymFoldandDockRbTrialMover(){}
+	~AsymFoldandDockRbTrialMover() override{}
 
 	void apply( core::pose::Pose & pose ) override;
 	//void find_new_jump_residue( core::pose::Pose & pose );
@@ -66,7 +66,7 @@ public:
 		core::pose::Pose const &
 	) override;
 
-	virtual std::string get_name() const override;
+	std::string get_name() const override;
 
 	static
 	std::string mover_name();

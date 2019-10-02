@@ -41,20 +41,20 @@ public:
 	PeriodicFunc ( Real const x0_in, Real const k_in, Real const n_periodic_in, Real const C_in) : x0_( x0_in ), k_( k_in ), n_periodic_( n_periodic_in ), C_( C_in ){}
 
 	FuncOP
-	clone() const { return utility::pointer::make_shared< PeriodicFunc >( *this ); }
+	clone() const override { return utility::pointer::make_shared< PeriodicFunc >( *this ); }
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	Real func( Real const x ) const;
-	Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	void read_data( std::istream& in );
+	void read_data( std::istream& in ) override;
 
-	void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
 	Size
-	show_violations( std::ostream& out, Real x, Size verbose_level, core::Real threshold = 1 ) const;
+	show_violations( std::ostream& out, Real x, Size verbose_level, core::Real threshold = 1 ) const override;
 
 
 private:

@@ -57,7 +57,7 @@ class GridSearchIterator_Ts3 : public utility::pointer::ReferenceCount {
 public:
 	GridSearchIterator_Ts3();
 
-	~GridSearchIterator_Ts3();
+	~GridSearchIterator_Ts3() override;
 
 	GridSearchIterator_Ts3(GridSearchIterator_Ts3 const & other);
 

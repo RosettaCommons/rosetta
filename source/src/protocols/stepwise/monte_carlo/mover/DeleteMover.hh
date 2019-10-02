@@ -41,7 +41,7 @@ public:
 	DeleteMover();
 
 	//destructor
-	~DeleteMover();
+	~DeleteMover() override;
 
 public:
 
@@ -54,7 +54,7 @@ public:
 	apply( core::pose::Pose & pose, utility::vector1< core::Size > const & residues_to_delete_in_full_model_numbering );
 
 	/// @brief Apply the minimizer to one pose
-	virtual void apply( core::pose::Pose & pose_to_visualize ) override;
+	void apply( core::pose::Pose & pose_to_visualize ) override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< DeleteMover >(); }
 	protocols::moves::MoverOP clone() const override;
 	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;

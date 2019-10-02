@@ -67,11 +67,11 @@ public:
 
 	BundleParameters( BundleParameters const & src );
 
-	~BundleParameters();
+	~BundleParameters() override;
 
 	/// @brief Copy this residue( allocate actual memory for it )
 	///
-	ParametersOP clone() const;
+	ParametersOP clone() const override;
 
 	///////////////////
 	//Output:

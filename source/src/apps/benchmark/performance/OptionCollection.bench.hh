@@ -24,10 +24,10 @@ public:
 
 	OptionCollectionBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
-	virtual void setUp() {
+	void setUp() override {
 	};
 
-	virtual void run(core::Real scaleFactor) {
+	void run(core::Real scaleFactor) override {
 		using namespace utility::keys;
 		using namespace basic::options;
 
@@ -45,5 +45,5 @@ public:
 		}
 	};
 
-	virtual void tearDown() {};
+	void tearDown() override {};
 };

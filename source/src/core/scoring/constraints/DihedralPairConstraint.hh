@@ -45,22 +45,22 @@ class DihedralPairConstraint : public Constraint {
 
 public:
 
-	virtual std::string type() const {
+	std::string type() const override {
 		return "DihedralPair";
 	}
 
-	virtual ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
-	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;
+	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const override;
 
 	void read_def(
 		std::istream & in,
 		pose::Pose const & pose,
 		func::FuncFactory const & func_factory
-	);
+	) override;
 
-	virtual bool operator == ( Constraint const & rhs ) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	bool operator == ( Constraint const & rhs ) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
 	// Needed to get the base class overloads
 	using Constraint::score;
@@ -73,7 +73,7 @@ public:
 	) const;
 
 	void
-	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const override;
 
 	Real
 	score( conformation::Conformation const & conformation  ) const;
@@ -84,9 +84,8 @@ public:
 		Vector const & Y1, Vector const & Y2, Vector const & Y3, Vector const & Y4
 	) const;
 
-	virtual
 	core::Real
-	dist( core::scoring::func::XYZ_Func const & xyz ) const;
+	dist( core::scoring::func::XYZ_Func const & xyz ) const override;
 
 	// atom deriv
 	void
@@ -95,7 +94,7 @@ public:
 		func::XYZ_Func const & xyz,
 		Vector & F1, Vector & F2,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
 	///c-tor
 	DihedralPairConstraint(
@@ -111,31 +110,30 @@ public:
 	{}
 
 	Size
-	natoms() const {
+	natoms() const override {
 		return 8;
 	}
 
-	virtual
 	ConstraintOP
-	remap_resid( core::id::SequenceMapping const & seqmap ) const;
+	remap_resid( core::id::SequenceMapping const & seqmap ) const override;
 
 	AtomID const &
-	atom( Size const n ) const;
+	atom( Size const n ) const override;
 
-	virtual void show_def( std::ostream &, pose::Pose const & ) const;
+	void show_def( std::ostream &, pose::Pose const & ) const override;
 
-	virtual void show( std::ostream & out ) const;
+	void show( std::ostream & out ) const override;
 
 	// Coppied Remapped_clone from AtomPairConstraint
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
 	/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
 	/// to the new object. Intended to be implemented by derived classes.
-	virtual ConstraintOP remapped_clone(
+	ConstraintOP remapped_clone(
 		pose::Pose const & src,
 		pose::Pose const & dest,
 		id::SequenceMappingCOP map = NULL
-	) const;
+	) const override;
 
 private:
 	Real

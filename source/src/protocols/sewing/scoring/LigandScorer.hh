@@ -41,7 +41,7 @@ public:
 	///@brief default construct
 	LigandScorer();
 
-	virtual ~LigandScorer()=default;
+	~LigandScorer() override =default;
 	LigandScorer( LigandScorer const & );
 
 

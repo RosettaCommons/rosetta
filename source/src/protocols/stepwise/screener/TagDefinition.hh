@@ -38,20 +38,20 @@ public:
 		std::string const & extra_tag = "" );
 
 	//destructor
-	~TagDefinition();
+	~TagDefinition() override;
 
 public:
 
 	std::string tag() const { return tag_; }
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	std::string
-	name() const { return "TagDefinition"; }
+	name() const override { return "TagDefinition"; }
 
 	StepWiseScreenerType
-	type() const { return TAG_DEFINITION; }
+	type() const override { return TAG_DEFINITION; }
 
 	void
 	append_to_tag( std::string const & value ){ tag_ += value; }

@@ -35,11 +35,11 @@ public:
 public:
 	ContextIndependentLRTwoBodyEnergy( EnergyMethodCreatorOP );
 
-	virtual ~ContextIndependentLRTwoBodyEnergy();
+	~ContextIndependentLRTwoBodyEnergy() override;
 
 
 	EnergyMethodType
-	method_type() const;
+	method_type() const override;
 
 };
 

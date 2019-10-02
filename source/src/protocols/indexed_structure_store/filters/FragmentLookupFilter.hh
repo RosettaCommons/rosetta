@@ -107,7 +107,7 @@ public:
 	// @brief copy constructor
 	FragmentLookupFilter( FragmentLookupFilter const & rval );
 
-	virtual ~FragmentLookupFilter(){}
+	~FragmentLookupFilter() override{}
 
 
 public:// virtual constructor

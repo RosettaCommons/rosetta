@@ -50,26 +50,25 @@ public:
 	RG_Energy_RNA();
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	/////////////////////////////////
 	void
@@ -80,19 +79,18 @@ public:
 		ScoreFunction const &,
 		EnergyMap const & weights,
 		Vector & F1,
-		Vector & F2 ) const;
+		Vector & F2 ) const override;
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 private:
 
 	mutable core::Vector center_of_mass_;
 	mutable core::Real rg_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

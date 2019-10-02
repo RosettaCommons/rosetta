@@ -50,7 +50,7 @@ public: //Constructors and destructors:
 
 	/// @brief Default destructor for BinTransitionCalculator
 	///
-	~BinTransitionCalculator();
+	~BinTransitionCalculator() override;
 
 	/// @brief Clone operation for BinTransitionCalculator.
 	/// @details Returns an owning pointer to a copy of this object.

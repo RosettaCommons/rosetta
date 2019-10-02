@@ -44,12 +44,12 @@ public:
 		utility::vector1< Size > const & moving_residues );
 
 	//destructor -- necessary?
-	~StepWiseProteinMinimizer();
+	~StepWiseProteinMinimizer() override;
 
 	/// @brief Apply the minimizer to one pose
-	virtual void apply( core::pose::Pose & pose_to_visualize );
+	void apply( core::pose::Pose & pose_to_visualize ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void set_min_tolerance( core::Real const & setting );
 	void set_min_type( std::string const & setting );

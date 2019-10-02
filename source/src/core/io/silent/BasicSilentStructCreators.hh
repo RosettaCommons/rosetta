@@ -32,10 +32,10 @@ class ProteinSilentStruct_SinglePrecCreator : public SilentStructCreator
 {
 public:
 	ProteinSilentStruct_SinglePrecCreator();
-	virtual ~ProteinSilentStruct_SinglePrecCreator();
+	~ProteinSilentStruct_SinglePrecCreator() override;
 
-	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
-	virtual std::string keyname() const;
+	SilentStructOP create_silent_struct( SilentFileOptions const & ) const override;
+	std::string keyname() const override;
 };
 
 
@@ -44,10 +44,10 @@ class ProteinSilentStructCreator : public SilentStructCreator
 {
 public:
 	ProteinSilentStructCreator();
-	virtual ~ProteinSilentStructCreator();
+	~ProteinSilentStructCreator() override;
 
-	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
-	virtual std::string keyname() const;
+	SilentStructOP create_silent_struct( SilentFileOptions const & ) const override;
+	std::string keyname() const override;
 };
 
 
@@ -56,10 +56,10 @@ class RNA_SilentStructCreator : public SilentStructCreator
 {
 public:
 	RNA_SilentStructCreator();
-	virtual ~RNA_SilentStructCreator();
+	~RNA_SilentStructCreator() override;
 
-	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
-	virtual std::string keyname() const;
+	SilentStructOP create_silent_struct( SilentFileOptions const & ) const override;
+	std::string keyname() const override;
 };
 
 
@@ -68,10 +68,10 @@ class BinarySilentStructCreator : public SilentStructCreator
 {
 public:
 	BinarySilentStructCreator();
-	virtual ~BinarySilentStructCreator();
+	~BinarySilentStructCreator() override;
 
-	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
-	virtual std::string keyname() const;
+	SilentStructOP create_silent_struct( SilentFileOptions const & ) const override;
+	std::string keyname() const override;
 };
 
 
@@ -80,10 +80,10 @@ class ScoreFileSilentStructCreator : public SilentStructCreator
 {
 public:
 	ScoreFileSilentStructCreator();
-	virtual ~ScoreFileSilentStructCreator();
+	~ScoreFileSilentStructCreator() override;
 
-	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
-	virtual std::string keyname() const;
+	SilentStructOP create_silent_struct( SilentFileOptions const & ) const override;
+	std::string keyname() const override;
 };
 
 
@@ -92,10 +92,10 @@ class ScoreJumpFileSilentStructCreator : public SilentStructCreator
 {
 public:
 	ScoreJumpFileSilentStructCreator();
-	virtual ~ScoreJumpFileSilentStructCreator();
+	~ScoreJumpFileSilentStructCreator() override;
 
-	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
-	virtual std::string keyname() const;
+	SilentStructOP create_silent_struct( SilentFileOptions const & ) const override;
+	std::string keyname() const override;
 };
 
 
@@ -104,10 +104,10 @@ class RigidBodySilentStructCreator : public SilentStructCreator
 {
 public:
 	RigidBodySilentStructCreator();
-	virtual ~RigidBodySilentStructCreator();
+	~RigidBodySilentStructCreator() override;
 
-	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const;
-	virtual std::string keyname() const;
+	SilentStructOP create_silent_struct( SilentFileOptions const & ) const override;
+	std::string keyname() const override;
 };
 
 

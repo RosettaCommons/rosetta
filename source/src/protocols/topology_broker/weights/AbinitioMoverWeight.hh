@@ -52,7 +52,7 @@ namespace weights {
 
 class AbinitioMoverWeight : public utility::pointer::ReferenceCount {
 public:
-	virtual ~AbinitioMoverWeight() {};
+	~AbinitioMoverWeight() override {};
 	virtual core::Real weight( core::Size stageID, core::Real progress /* progress within stage */ ) const = 0;
 }; //class AbinitioMoverWeight
 

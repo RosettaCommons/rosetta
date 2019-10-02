@@ -39,13 +39,13 @@ public:
 	RECCES_Mover( options::RECCES_OptionsCOP options );
 
 	//destructor
-	~RECCES_Mover();
+	~RECCES_Mover() override;
 
 public:
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const{ return "RECCES_Mover"; }
+	std::string get_name() const override{ return "RECCES_Mover"; }
 
 	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ) { scorefxn_ = scorefxn ; }
 

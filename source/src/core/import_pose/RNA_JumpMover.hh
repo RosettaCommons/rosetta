@@ -36,7 +36,7 @@ public:
 		core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
 
 	//destructor
-	~RNA_JumpMover();
+	~RNA_JumpMover() override;
 
 public:
 

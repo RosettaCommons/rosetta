@@ -40,7 +40,7 @@ class ResultOutputter : public utility::pointer::ReferenceCount
 public:
 
 	ResultOutputter();
-	virtual ~ResultOutputter();
+	~ResultOutputter() override;
 
 	virtual
 	void write_output(

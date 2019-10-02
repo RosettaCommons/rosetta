@@ -76,7 +76,7 @@ public:
 	//@brief just set defaults -- expects fragset, scorefxn and movemap to be set later
 	SlidingWindowLoopClosure();
 
-	~SlidingWindowLoopClosure();
+	~SlidingWindowLoopClosure() override;
 
 	using moves::Mover::apply;
 

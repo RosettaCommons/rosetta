@@ -48,7 +48,7 @@ public:
 	void refresh_bbstub_constraints( core::pose::Pose & pose );
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
-	virtual void parse_my_tag( utility::tag::TagCOP tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -58,7 +58,7 @@ public:
 	//void max_cb_cb_dist( core::Real const mccd );
 	void cb_force( core::Real const cf );
 	void stub_sets( utility::vector1< StubSetStubPos > const & stub_sets );
-	~PlacementMinimizationMover();
+	~PlacementMinimizationMover() override;
 
 	std::string
 	get_name() const override;

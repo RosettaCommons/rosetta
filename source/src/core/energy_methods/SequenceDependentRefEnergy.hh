@@ -51,27 +51,25 @@ public:
 	SequenceDependentRefEnergy( utility::vector1< utility::vector1< Real > > const & aa_seq_weights_in );
 
 
-	virtual ~SequenceDependentRefEnergy();
+	~SequenceDependentRefEnergy() override;
 
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 
 	virtual
@@ -86,16 +84,14 @@ public:
 
 	/// @brief DunbrackEnergy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 
 private:
 	utility::vector1< utility::vector1< Real > > aa_seq_weights_;
 
 	void read_energy_weight_table();
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 } // methods

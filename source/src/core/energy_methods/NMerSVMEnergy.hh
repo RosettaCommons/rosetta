@@ -87,27 +87,25 @@ public:
 		std::string const & aa_matrix
 	);
 
-	virtual ~NMerSVMEnergy();
+	~NMerSVMEnergy() override;
 
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 
 	virtual
@@ -122,8 +120,7 @@ public:
 
 	/// @brief context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	void
 	get_residue_energy_by_svm(
@@ -178,8 +175,7 @@ private:
 	/// is fully threadsafe.  --VKM
 	void initialize_from_options( EnergyMethodOptions const & options );
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 } // methods

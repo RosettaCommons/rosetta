@@ -43,7 +43,7 @@ public:
 	);
 
 	core::pack::rotamer_set::RotamerSetOperationOP
-	clone() const;
+	clone() const override;
 
 	void
 	alter_rotamer_set(
@@ -52,7 +52,7 @@ public:
 		core::pack::task::PackerTask const & /*ptask*/,
 		utility::graph::GraphCOP /*packer_neighbor_graph*/,
 		core::pack::rotamer_set::RotamerSet & rotamer_set
-	);
+	) override;
 
 private:
 	utility::vector1<core::conformation::ResidueOP> residues_;

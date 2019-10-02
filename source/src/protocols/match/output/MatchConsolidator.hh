@@ -50,28 +50,23 @@ public:
 public:
 	MatchConsolidator();
 
-	virtual
-	~MatchConsolidator();
+	~MatchConsolidator() override;
 
-	virtual
 	void
-	begin_processing();
+	begin_processing() override;
 
-	virtual
 	void
 	process_match(
 		match const & m
-	);
+	) override;
 
-	virtual
 	void
 	process_match(
 		match_dspos1 const & m
-	);
+	) override;
 
-	virtual
 	void
-	end_processing();
+	end_processing() override;
 
 	void
 	set_n_to_output_per_group( Size setting );
@@ -105,7 +100,7 @@ public:
 
 public:
 	BestMatchesCollection( Size n_to_keep, bool dspos1_mode = false );
-	virtual ~BestMatchesCollection();
+	~BestMatchesCollection() override;
 
 	void
 	add_match( match const & m, Real score );

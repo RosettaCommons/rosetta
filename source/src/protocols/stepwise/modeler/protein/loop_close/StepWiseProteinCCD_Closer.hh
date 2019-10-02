@@ -43,17 +43,17 @@ public:
 	StepWiseProteinCCD_Closer( protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters );
 
 	//destructor -- necessary?
-	virtual ~StepWiseProteinCCD_Closer();
+	~StepWiseProteinCCD_Closer() override;
 
 	void
 	init( core::pose::Pose & pose );
 
 	/// @brief Apply the minimizer to one pose
-	virtual void apply( core::pose::Pose & pose_to_visualize );
+	void apply( core::pose::Pose & pose_to_visualize ) override;
 
 	void get_closure_solution( core::pose::Pose & pose_to_visualize );
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	utility::vector1< core::id::TorsionID > const & which_torsions() const;
 

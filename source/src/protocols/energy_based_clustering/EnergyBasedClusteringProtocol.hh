@@ -59,7 +59,7 @@ public:
 	/// @brief Options constructor -- avoids access to global options system.
 	EnergyBasedClusteringProtocol( EnergyBasedClusteringOptions const & options );
 
-	virtual ~EnergyBasedClusteringProtocol();
+	~EnergyBasedClusteringProtocol() override;
 
 	EnergyBasedClusteringProtocolOP
 	clone() const;

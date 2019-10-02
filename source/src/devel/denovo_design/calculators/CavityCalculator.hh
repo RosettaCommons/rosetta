@@ -53,19 +53,19 @@ public:// constructor/destructor
 	CavityCalculator();
 
 	/// @brief destructor
-	virtual ~CavityCalculator();
+	~CavityCalculator() override;
 
 public:// virtual constructor
 	/// @brief make clone
 	core::pose::metrics::PoseMetricCalculatorOP
-	clone() const { return utility::pointer::make_shared< CavityCalculator >( *this ); }
+	clone() const override { return utility::pointer::make_shared< CavityCalculator >( *this ); }
 
 public:// mutators
 
 protected:
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	virtual std::string print( std::string const & key ) const;
-	virtual void recompute( core::pose::Pose const & this_pose );
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override;
+	std::string print( std::string const & key ) const override;
+	void recompute( core::pose::Pose const & this_pose ) override;
 
 private: // private member functions
 

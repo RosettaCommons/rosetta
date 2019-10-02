@@ -43,7 +43,7 @@ public:
 	ResFilterComposition();
 	ResFilterComposition(utility::vector1<ResFilterCOP> const & );
 
-	virtual void parse_tag( TagCOP );
+	void parse_tag( TagCOP ) override;
 
 	static utility::tag::XMLSchemaComplexTypeGeneratorOP define_composition_schema( utility::tag::XMLSchemaDefinition & xsd );
 
@@ -59,8 +59,8 @@ public:
 
 	AnyResFilter();
 	AnyResFilter(utility::vector1<ResFilterCOP> const &);
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -73,8 +73,8 @@ public:
 
 	AllResFilter();
 	AllResFilter(utility::vector1<ResFilterCOP> const &);
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -87,8 +87,8 @@ public:
 
 	NoResFilter();
 	NoResFilter(utility::vector1<ResFilterCOP> const &);
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -103,9 +103,9 @@ public:
 	ResidueTypeFilter();
 	ResidueTypeFilter(bool polar, bool apolar, bool aromatic, bool charged);
 
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
-	virtual void parse_tag( TagCOP );
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
+	void parse_tag( TagCOP ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -123,9 +123,9 @@ public:
 public:
 	ResidueHasProperty();
 	ResidueHasProperty( std::string const & );
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
-	virtual void parse_tag( TagCOP );
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
+	void parse_tag( TagCOP ) override;
 	virtual std::string const & property() const { return property_; }
 
 	static std::string keyname();
@@ -142,8 +142,8 @@ public:
 public:
 	ResidueLacksProperty();
 	ResidueLacksProperty( std::string const & );
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -156,9 +156,9 @@ public:
 public:
 	ResiduePDBInfoHasLabel();
 	ResiduePDBInfoHasLabel( std::string const & );
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
-	virtual void parse_tag( TagCOP );
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
+	void parse_tag( TagCOP ) override;
 	virtual std::string const & property() const { return property_; }
 
 	static std::string keyname();
@@ -175,8 +175,8 @@ public:
 public:
 	ResiduePDBInfoLacksLabel();
 	ResiduePDBInfoLacksLabel( std::string const & );
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -190,9 +190,9 @@ public:
 	ResidueName3Is();
 	ResidueName3Is( std::string const & );
 	ResidueName3Is( std::set<std::string> const & );
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
-	virtual void parse_tag( TagCOP );
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
+	void parse_tag( TagCOP ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -209,8 +209,8 @@ public:
 	ResidueName3Isnt();
 	ResidueName3Isnt( std::string const & );
 	ResidueName3Isnt( std::set<std::string> const & );
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -225,9 +225,9 @@ public:
 	ResidueIndexIs();
 	ResidueIndexIs( Size );
 	ResidueIndexIs( utility::vector1< Size > const & );
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
-	virtual void parse_tag( TagCOP );
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
+	void parse_tag( TagCOP ) override;
 	virtual utility::vector1< Size > const & indices() const;
 
 	static std::string keyname();
@@ -246,8 +246,8 @@ public:
 	ResidueIndexIsnt();
 	ResidueIndexIsnt( Size );
 	ResidueIndexIsnt( utility::vector1< Size > const & );
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -269,9 +269,9 @@ public:
 	ResiduePDBIndexIs();
 	ResiduePDBIndexIs( char, int );
 	ResiduePDBIndexIs( utility::vector1< ChainPos > const & );
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
-	virtual void parse_tag( TagCOP );
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
+	void parse_tag( TagCOP ) override;
 	virtual utility::vector1< ChainPos > const & indices() const;
 
 	static std::string keyname();
@@ -290,8 +290,8 @@ public:
 	ResiduePDBIndexIsnt();
 	ResiduePDBIndexIsnt( char, int );
 	ResiduePDBIndexIsnt( utility::vector1< ChainPos > const & );
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -304,9 +304,9 @@ public:
 public:
 	ChainIs();
 	ChainIs( char const );
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
-	virtual void parse_tag( TagCOP );
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
+	void parse_tag( TagCOP ) override;
 	virtual char const & chain() const { return chain_; }
 
 	static std::string keyname();
@@ -323,8 +323,8 @@ public:
 public:
 	ChainIsnt();
 	ChainIsnt( char const );
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
+	bool operator() ( Pose const &, Size ) const override;
+	ResFilterOP clone() const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

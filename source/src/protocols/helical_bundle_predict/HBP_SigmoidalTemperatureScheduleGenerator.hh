@@ -46,7 +46,7 @@ public:
 	HBP_SigmoidalTemperatureScheduleGenerator(HBP_SigmoidalTemperatureScheduleGenerator const & src);
 
 	/// @brief Destructor.
-	virtual ~HBP_SigmoidalTemperatureScheduleGenerator();
+	~HBP_SigmoidalTemperatureScheduleGenerator() override;
 
 	/// @brief Copy this object and return an owning pointe to the copy.
 	HBP_TemperatureScheduleGeneratorOP clone() const override;

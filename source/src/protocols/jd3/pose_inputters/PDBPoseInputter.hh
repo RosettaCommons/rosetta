@@ -47,7 +47,7 @@ class PDBPoseInputter : public PoseInputter
 public:
 
 	PDBPoseInputter();
-	virtual ~PDBPoseInputter();
+	~PDBPoseInputter() override;
 
 	bool job_available_on_command_line() const override;
 

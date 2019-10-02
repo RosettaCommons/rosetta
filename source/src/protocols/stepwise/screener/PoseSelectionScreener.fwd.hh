@@ -21,11 +21,9 @@
 namespace protocols {
 namespace stepwise {
 namespace screener {
-	
 	class PoseSelectionScreener;
 	typedef utility::pointer::shared_ptr< PoseSelectionScreener > PoseSelectionScreenerOP;
 	typedef utility::pointer::shared_ptr< PoseSelectionScreener const > PoseSelectionScreenerCOP;
-	
 } //screener
 } //stepwise
 } //protocols

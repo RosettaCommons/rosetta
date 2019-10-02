@@ -68,7 +68,7 @@ public:
 	HBondDatabaseCOP
 	get_database( std::string const & );
 
-	virtual ~HBondDatabase();
+	~HBondDatabase() override;
 
 	void
 	initialize();

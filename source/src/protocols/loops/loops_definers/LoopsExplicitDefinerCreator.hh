@@ -31,11 +31,11 @@ class LoopsExplicitDefinerCreator : public LoopsDefinerCreator
 {
 public:
 	LoopsExplicitDefinerCreator();
-	virtual ~LoopsExplicitDefinerCreator();
+	~LoopsExplicitDefinerCreator() override;
 
-	virtual LoopsDefinerOP create_loops_definer() const;
-	virtual std::string type_name() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	LoopsDefinerOP create_loops_definer() const override;
+	std::string type_name() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //namespace

@@ -55,9 +55,9 @@ public:
 	SAXSEnergy(const std::string &,const utility::vector1<Real> &,const utility::vector1<Real> &,
 		ScoreType, methods::EnergyMethodCreatorOP);
 
-	virtual ~SAXSEnergy() {}
+	~SAXSEnergy() override {}
 
-	virtual methods::EnergyMethodOP clone() const {
+	methods::EnergyMethodOP clone() const override {
 
 		if ( saxs_score_variant_ == saxs_fa_score ) {
 			return utility::pointer::make_shared< SAXSEnergy >(the_config_file_,q_, reference_intensities_,saxs_score_variant_, utility::pointer::make_shared< SAXSEnergyCreatorFA >() );
@@ -66,10 +66,10 @@ public:
 		}
 	}
 
-	virtual void finalize_total_energy(pose::Pose & pose,ScoreFunction const &,EnergyMap & totals) const;
+	void finalize_total_energy(pose::Pose & pose,ScoreFunction const &,EnergyMap & totals) const override;
 
-	virtual void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
+	) const override {}
 
 	methods::EnergyMethodOP create_energy_method(methods::EnergyMethodOptions const &) const {
 
@@ -145,7 +145,7 @@ private:
 	Real compute_L1(utility::vector1<Real> const &, utility::vector1<Real> const &) const;
 	void compute_distance_histogram(const core::pose::Pose & pose) const;
 
-	virtual core::Size version() const;
+	core::Size version() const override;
 };
 
 

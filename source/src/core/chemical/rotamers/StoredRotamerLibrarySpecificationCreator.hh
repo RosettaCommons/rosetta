@@ -33,13 +33,13 @@ namespace rotamers {
 
 class StoredRotamerLibrarySpecificationCreator : public RotamerLibrarySpecificationCreator {
 public:
-	virtual RotamerLibrarySpecificationOP
-	create() const;
+	RotamerLibrarySpecificationOP
+	create() const override;
 
-	virtual RotamerLibrarySpecificationOP
-	create( std::istream & ) const;
+	RotamerLibrarySpecificationOP
+	create( std::istream & ) const override;
 
-	virtual std::string keyname() const;
+	std::string keyname() const override;
 
 };
 

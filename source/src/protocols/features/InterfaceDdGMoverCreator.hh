@@ -21,8 +21,8 @@ namespace features {
 
 class InterfaceDdGMoverCreator : public protocols::moves::MoverCreator {
 public:
-	virtual protocols::moves::MoverOP create_mover() const override;
-	virtual std::string keyname() const override;
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static std::string mover_name();
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };

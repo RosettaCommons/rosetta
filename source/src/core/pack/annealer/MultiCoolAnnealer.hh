@@ -64,8 +64,8 @@ public:
 		ObjexxFCL::FArray1D< core::PackerEnergy > & rot_freq
 	);
 
-	virtual ~MultiCoolAnnealer();
-	void run();
+	~MultiCoolAnnealer() override;
+	void run() override;
 
 
 private:

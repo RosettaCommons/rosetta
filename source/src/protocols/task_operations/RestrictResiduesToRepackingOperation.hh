@@ -49,17 +49,16 @@ public:
 
 	void set_residues( utility::vector1 < core::Size > residues_vec );
 
-	virtual ~RestrictResiduesToRepackingOperation();
+	~RestrictResiduesToRepackingOperation() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictResiduesToRepacking"; }
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	std::string reference_pdb_id() const{ return reference_pdb_id_; }
 	void reference_pdb_id( std::string const & s ){ reference_pdb_id_ = s; }

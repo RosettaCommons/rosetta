@@ -99,7 +99,7 @@ public:
 	ResHashMap();
 
 	/// @brief Destructor
-	~ResHashMap();
+	~ResHashMap() override;
 
 
 	// Standard Rosetta methods ////////////////////////////////////////////////

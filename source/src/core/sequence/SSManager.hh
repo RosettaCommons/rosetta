@@ -49,7 +49,7 @@ public:
 	SSManager();
 
 	/// @brief value constructor
-	virtual ~SSManager() ;
+	~SSManager() override ;
 
 public:
 	/// @brief transform abego index to symbol

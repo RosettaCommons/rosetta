@@ -21,11 +21,9 @@
 namespace core {
 namespace scoring {
 namespace magnesium {
-	
 	class MgEnergy;
 	typedef utility::pointer::shared_ptr< MgEnergy > MgEnergyOP;
 	typedef utility::pointer::shared_ptr< MgEnergy const > MgEnergyCOP;
-	
 } //magnesium
 } //scoring
 } //core

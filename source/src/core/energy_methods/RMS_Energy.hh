@@ -46,9 +46,8 @@ public:
 	RMS_Energy();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -59,18 +58,17 @@ public:
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 private:
 	pose::Pose native_pose_;
 	core::Real rms_target_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 

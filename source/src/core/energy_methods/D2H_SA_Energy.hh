@@ -44,9 +44,8 @@ public:
 	D2H_SA_Energy();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -57,14 +56,13 @@ public:
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
-	virtual
-	core::Size version() const;
+	) const override;
+	core::Size version() const override;
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 	//void
 	//D2H_SA_Energy::set_rsa_range(Size s,Size e) {};

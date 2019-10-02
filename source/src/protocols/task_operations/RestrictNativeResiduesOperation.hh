@@ -50,17 +50,17 @@ public:
 	RestrictNativeResiduesOperation();
 
 	/// @brief destructor
-	~RestrictNativeResiduesOperation();
+	~RestrictNativeResiduesOperation() override;
 
 	/// @brief make clone
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 public:
 
-	void parse_tag( TagCOP tag , DataMap & );
+	void parse_tag( TagCOP tag , DataMap & ) override;
 
 	/// @brief apply
-	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	void apply( Pose const & pose, PackerTask & task ) const override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictNativeResidues"; }
 

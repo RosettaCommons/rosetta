@@ -77,16 +77,16 @@ public:
 
 	AddCDRProfilesOperation(AddCDRProfilesOperation const & src);
 
-	virtual ~AddCDRProfilesOperation();
+	~AddCDRProfilesOperation() override;
 
 	core::pack::task::operation::TaskOperationOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Configure from a RosettaScripts XML tag.
-	virtual void
+	void
 	parse_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & );
+		basic::datacache::DataMap & ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -99,9 +99,8 @@ public:
 	void
 	pre_load_data(core::pose::Pose const & pose);
 
-	virtual
 	void
-	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const override;
 
 
 

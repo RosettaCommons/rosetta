@@ -63,7 +63,7 @@ public: // boiler plate / virtuals
 	ShearMinCCDTrial & operator=( ShearMinCCDTrial const & rhs );
 
 	// destructor
-	~ShearMinCCDTrial();
+	~ShearMinCCDTrial() override;
 
 	void apply( Pose & pose ) override;
 

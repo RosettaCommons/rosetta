@@ -111,7 +111,7 @@ public: // Methods
 	operator=(NMRDummySpinlabelConformer const & rhs);
 
 	/// @brief destructor
-	~NMRDummySpinlabelConformer();
+	~NMRDummySpinlabelConformer() override;
 
 	/// Getters and Setters
 	Size get_id() const { return id_; }
@@ -206,7 +206,7 @@ public: // Methods
 	operator=(NMRDummySpinlabelEnsemble const & rhs);
 
 	/// @brief destructor
-	~NMRDummySpinlabelEnsemble();
+	~NMRDummySpinlabelEnsemble() override;
 
 	/// @brief Perform a clash score calculation for every spinlabel conformer in the ensemble by
 	///        calculating pairwise distances to neighborhood residues which are within a given radius.

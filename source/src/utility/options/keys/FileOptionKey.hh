@@ -114,9 +114,8 @@ public: // Creation
 
 
 	/// @brief Clone this
-	inline
 	FileOptionKey *
-	clone() const
+	clone() const override
 	{
 		return new FileOptionKey( *this );
 	}
@@ -124,8 +123,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~FileOptionKey() {}
+	~FileOptionKey() override {}
 
 
 public: // Assignment

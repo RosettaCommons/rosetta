@@ -102,8 +102,7 @@ struct LengthEvent : public GeneralEvent {
 
 	/// @brief default destructor
 	inline
-	virtual
-	~LengthEvent() {}
+	~LengthEvent() override {}
 
 
 	/// @brief copy assignment

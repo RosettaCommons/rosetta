@@ -45,12 +45,11 @@ public:
 	ProClosureEnergy();
 
 	// dstor
-	~ProClosureEnergy();
+	~ProClosureEnergy() override;
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentTwoBodyEnergies
@@ -58,16 +57,14 @@ public:
 
 	/// @brief Pro-closure terms only apply between bonded residues where i+1 is
 	/// proline -- skip residue pairs that don't apply during minimization.
-	virtual
 	bool
 	defines_score_for_residue_pair(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		bool res_moving_wrt_eachother
-	) const;
+	) const override;
 
 	/// @brief Evaluate the interaction between a given residue pair
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -75,10 +72,10 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 	/// @brief Evaluate the derivative for the input residue pair.
 	/// This will only be called if rsd1 and rsd2 are bonded and one of them is a proline
@@ -100,7 +97,6 @@ public:
 	Vector & F2
 	) const;*/
 
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
@@ -112,7 +108,7 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
 	/// @brief Non-virtual interface; takes only the needed parameters.
 	/*void
@@ -131,7 +127,6 @@ public:
 	/// after pro_residue (i+1), unless pro_residue is an upper_term,
 	/// in which case it applies the penalty for pro_residue's previous polymeric
 	/// residue.
-	virtual
 	void
 	bump_energy_full(
 		conformation::Residue const & pro_residue,
@@ -139,7 +134,7 @@ public:
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const;
+	) const override;
 
 	/// @brief Penalize the pucker-up residue type if its chi1 is positive;
 	/// penalize the pucker-down residue type if its chi1 is negative.  Only
@@ -147,7 +142,6 @@ public:
 	/// after pro_residue (i+1), unless pro_residue is an upper_term,
 	/// in which case it applies the penalty for pro_residue's previous polymeric
 	/// residue.
-	virtual
 	void
 	bump_energy_backbone(
 		conformation::Residue const & pro_residue,
@@ -155,31 +149,28 @@ public:
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const;
+	) const override;
 
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & weights ) const;
+	defines_intrares_energy( EnergyMap const & weights ) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	/// @brief Returns false if res is not a proline.
 	bool
 	defines_intrares_energy_for_residue(
 		conformation::Residue const & res
-	) const;
+	) const override;
 
 	/// @brief This should only be handed a proline.
-	virtual
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
@@ -187,19 +178,17 @@ public:
 		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
 	/// @brief ProClosure Energy is context independent and thus
 	/// indicates that no context graphs need to
 	/// be maintained by class Energies
-	virtual
 	void indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const;
+	) const override;
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const
+	atomic_interaction_cutoff() const override
 	{ return 4.0; }
 
 	/// @brief Queries whether the user has set the -score::no_pro_close_ring_closure flag.
@@ -263,8 +252,7 @@ private:
 	std::string const scCD_;
 	std::string const bbC_;
 	std::string const bbO_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

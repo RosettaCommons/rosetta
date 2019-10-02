@@ -20,16 +20,16 @@ namespace task_operations {
 
 class SeqprofConsensusOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
-	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	core::pack::task::operation::TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class RestrictConservedLowDdgOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
-	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	core::pack::task::operation::TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //namespace protocols

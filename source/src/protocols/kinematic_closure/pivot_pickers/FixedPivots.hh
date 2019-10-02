@@ -32,10 +32,10 @@ public:
 
 public:
 	/// @copydoc PivotPicker::get_name
-	std::string get_name() const { return "FixedPivots"; }
+	std::string get_name() const override { return "FixedPivots"; }
 
 	/// @copydoc PivotPicker::pick
-	Loop pick(Pose const & pose, Loop const & loop);
+	Loop pick(Pose const & pose, Loop const & loop) override;
 
 private:
 	Size start_, stop_, cut_;

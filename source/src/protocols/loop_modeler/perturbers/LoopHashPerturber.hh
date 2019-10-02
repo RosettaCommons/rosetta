@@ -39,19 +39,19 @@ public:
 	LoopHashPerturber(protocols::loophash::LoopHashLibraryOP lh_library);
 
 	/// @copydoc Perturber::get_name
-	std::string get_name() const { return "LoopHashPerturber"; }
+	std::string get_name() const override { return "LoopHashPerturber"; }
 
 	/// @copydoc Perturber::perturb_subset()
 	void perturb_subset(
 		core::pose::Pose const & pose,
 		kinematic_closure::IndexList const & residues,
-		kinematic_closure::ClosureProblemOP problem);
+		kinematic_closure::ClosureProblemOP problem) override;
 
 	/// @copydoc Perturber::perturb_subset_with_balance()
 	void perturb_subset_with_balance(
 		core::pose::Pose const & pose,
 		kinematic_closure::IndexList const & residues,
-		kinematic_closure::ClosureProblemOP problem);
+		kinematic_closure::ClosureProblemOP problem) override;
 
 	///@brief Find a backbone segment from the loop hash library
 	void get_backbone_segments(core::pose::Pose const& pose,

@@ -57,7 +57,7 @@ class Obsolet_NamedAtomPairConstraint : public utility::pointer::ReferenceCount 
 	typedef core::id::SequenceMapping SequenceMapping;
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~Obsolet_NamedAtomPairConstraint();
+	~Obsolet_NamedAtomPairConstraint() override;
 	Obsolet_NamedAtomPairConstraint( AtomPairConstraintOP, core::pose::Pose const& );
 	Obsolet_NamedAtomPairConstraint( NamedAtomID const& atom1, NamedAtomID const& atom2, AtomPairConstraintOP cst );
 	AtomPairConstraintOP mapto( SequenceMapping const&, core::pose::Pose const& ) const;

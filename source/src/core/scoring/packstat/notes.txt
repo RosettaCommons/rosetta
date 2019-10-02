@@ -4,7 +4,6 @@ basic stats for each ball:
 	size
 	surface
 	volume estimates?
-	
 better cav ball selection? ones sticking out most?
 
 // do sasa calc in pr loop and check if ball completely covered w/ smaller probe

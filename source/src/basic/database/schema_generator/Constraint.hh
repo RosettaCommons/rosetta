@@ -31,7 +31,7 @@ class Constraint : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~Constraint();
+	~Constraint() override;
 
 	Constraint(Column const & column);
 
@@ -80,7 +80,7 @@ public:
 	std::string
 	print(
 		utility::sql_database::sessionOP
-	) const;
+	) const override;
 };
 
 class GreaterThanConstraint : public Constraint {
@@ -93,7 +93,7 @@ public:
 	std::string
 	print(
 		utility::sql_database::sessionOP
-	) const;
+	) const override;
 
 private:
 	platform::Real value_;

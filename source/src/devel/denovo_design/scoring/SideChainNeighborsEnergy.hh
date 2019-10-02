@@ -35,40 +35,38 @@ public:
 	SideChainNeighborsEnergy();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual void
+	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	void
 	setup_for_scoring(
 		pose::Pose & pose, ScoreFunction const &
-	) const;
+	) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const {}
+	) const override {}
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const;
+	) const override;
 
 private:
 	utility::vector1< core::Real > pred_burial_;

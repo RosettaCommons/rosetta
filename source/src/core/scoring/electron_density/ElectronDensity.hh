@@ -53,7 +53,7 @@ float pos_mod(float x,float y);
 class ElectronDensity : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ElectronDensity();
+	~ElectronDensity() override;
 
 	/// @brief default constructor
 	ElectronDensity();

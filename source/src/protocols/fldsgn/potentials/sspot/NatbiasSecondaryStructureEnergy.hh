@@ -82,7 +82,7 @@ public: // constructor/destructor
 	NatbiasSecondaryStructureEnergy( NatbiasSecondaryStructureEnergy const & src );
 
 	/// @brief clone
-	virtual EnergyMethodOP clone() const;
+	EnergyMethodOP clone() const override;
 
 
 public: // mutator
@@ -124,21 +124,21 @@ public: //
 public:
 
 	/// @brief scoring
-	virtual void setup_for_scoring( Pose & pose, ScoreFunction const & scorefxn ) const;
+	void setup_for_scoring( Pose & pose, ScoreFunction const & scorefxn ) const override;
 
 	/// @brief scoring
-	virtual void finalize_total_energy( Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
+	void finalize_total_energy( Pose & pose, ScoreFunction const &, EnergyMap & totals ) const override;
 
 	/// @brief The NatbiasSecondaryStructureEnergy class requires that the EnergyGraph
 	/// span 12 Angstroms between centroids.  The centroids residues build-in a
 	/// 3 Angstrom radius each.
-	virtual Distance atomic_interaction_cutoff() const;
+	Distance atomic_interaction_cutoff() const override;
 
 	/// @brief
-	virtual void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 	/// @brief
-	virtual Size version() const;
+	Size version() const override;
 
 private:
 

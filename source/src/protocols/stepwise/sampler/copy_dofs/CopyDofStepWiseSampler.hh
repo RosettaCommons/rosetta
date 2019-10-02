@@ -47,16 +47,16 @@ public:
 public:
 
 	/// @brief Get the total number of rotamers in sampler
-	virtual core::Size size() const{ return copy_dof_movers_.size(); }
+	core::Size size() const override{ return copy_dof_movers_.size(); }
 
 	/// @brief Apply the i-th rotamer to pose
-	virtual void apply( core::pose::Pose&, core::Size const );
+	void apply( core::pose::Pose&, core::Size const ) override;
 
 	/// @brief Name of the class
-	virtual std::string get_name() const { return "CopyDofStepWiseSampler"; }
+	std::string get_name() const override { return "CopyDofStepWiseSampler"; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::COPY_DOF; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::COPY_DOF; }
 
 
 protected:

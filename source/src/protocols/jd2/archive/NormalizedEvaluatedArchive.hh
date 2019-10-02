@@ -65,43 +65,43 @@ public:
 	/// @brief Constructor  and Destructor
 	NormalizedEvaluatedArchive( ArchiveManagerAP ptr );
 	NormalizedEvaluatedArchive();
-	~NormalizedEvaluatedArchive();
+	~NormalizedEvaluatedArchive() override;
 
 	/// @brief Archive specific options
 	static void register_options();
 
 	void init_from_options();
 
-	virtual void initialize();
+	void initialize() override;
 
 	/// @brief add decoy to Archive
 	/// @detail evaluate decoy and call add_evaluated_structure
-	virtual bool add_evaluated_structure(
+	bool add_evaluated_structure(
 		core::io::silent::SilentStructOP from_batch,
 		core::io::silent::SilentStructOP alternative_decoy,
 		Batch const&
-	);
+	) override;
 
 	/// @brief overloaded that we can sort the pool after reading
-	virtual bool restore_from_file();
+	bool restore_from_file() override;
 
 	/// @brief determine variation of scores (those that are non-zeros in select_weights_ )
 	bool determine_score_variations() const;
 
 	///overloaded to save / restore the variance_archive_
-	virtual void save_to_file( std::string suffix = "" );
+	void save_to_file( std::string suffix = "" ) override;
 
 	/// @brief recompute all score-values of all decoys and re-order the archive by (new) select_score
-	void rescore();
+	void rescore() override;
 
-	virtual WeightMap const& score_variations() const;
+	WeightMap const& score_variations() const override;
 
-	virtual core::Real score_variation( std::string const& col ) const;
+	core::Real score_variation( std::string const& col ) const override;
 
 
 protected:
 
-	virtual void invalidate_score_variations() {
+	void invalidate_score_variations() override {
 		score_variations_are_clean_ = false;
 	}
 

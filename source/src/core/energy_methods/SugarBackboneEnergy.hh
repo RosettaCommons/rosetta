@@ -54,41 +54,41 @@ public:  // Standard Methods //////////////////////////////////////////////////
 
 
 public:  // General EnergyMethod Methods //////////////////////////////////////
-	virtual EnergyMethodOP clone() const;
+	EnergyMethodOP clone() const override;
 
 	/// @brief   Should this EnergyMethod have score and derivative evaluation evaluated ONLY in the context of a whole
 	/// Pose?
 	/// @return  false
-	virtual bool minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	bool minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 	/// @brief    Indicate in the context-graphs-required list which context-graphs this energy method requires that the
 	/// Pose maintains when doing neighbor evaluation.
 	/// @details  not implemented for SugarBackboneEnergy
-	virtual void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const {}
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override {}
 
 
 public:  // OneBodyEnergy Methods /////////////////////////////////////////////
 	/// @brief  Evaluate the one-body carbohydrate backbone energies for a particular residue, in the context of the
 	/// given Pose, and increment those energies in the input Emap.
-	virtual void residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, EnergyMap & emap ) const;
+	void residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, EnergyMap & emap ) const override;
 
 	/// @brief   Should the dof_derivative interface be used for this EnergyMethod when calculating derivatives?
 	/// @return  true
-	virtual bool defines_dof_derivatives( pose::Pose const & /* pose */ ) const { return true; }
+	bool defines_dof_derivatives( pose::Pose const & /* pose */ ) const override { return true; }
 
 	/// @brief    Evaluate the DoF derivative for a particular residue.
-	virtual core::Real eval_residue_dof_derivative(
+	core::Real eval_residue_dof_derivative(
 		conformation::Residue const & rsd,
 		ResSingleMinimizationData const & min_data,
 		id::DOF_ID const & dof_id,
 		id::TorsionID const & torsion_id,
 		pose::Pose const & pose,
 		ScoreFunction const & sf,
-		EnergyMap const & weights ) const;
+		EnergyMap const & weights ) const override;
 
 
 private:  // Private methods //////////////////////////////////////////////////
-	virtual core::Size version() const { return 1; }  // initial versioning
+	core::Size version() const override { return 1; }  // initial versioning
 
 private:  // Private Data /////////////////////////////////////////////////////
 	// the "CarboHydrate Intrinsic" (CHI) Energy Function developed by Woods Lab

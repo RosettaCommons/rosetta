@@ -97,8 +97,7 @@ struct IdentityEvent : public GeneralEvent {
 
 	/// @brief default destructor
 	inline
-	virtual
-	~IdentityEvent() {}
+	~IdentityEvent() override {}
 
 
 	/// @brief copy assignment

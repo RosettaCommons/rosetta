@@ -75,7 +75,7 @@ public: // construct/destruct
 	SetAACompositionPotential( SetAACompositionPotential const & rval );
 
 	/// @brief default destructor
-	virtual ~SetAACompositionPotential();
+	~SetAACompositionPotential() override;
 
 
 private: // disallow assignment

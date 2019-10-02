@@ -46,30 +46,26 @@ public:
 
 
 	/// clone
-	virtual
 	scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, scoring::ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, scoring::ScoreFunction const & ) const override;
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		scoring::EnergyMap & emap
-	) const;
+	) const override;
 
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
-	virtual
 	void
 	eval_residue_derivatives(
 		conformation::Residue const & rsd,
@@ -77,21 +73,19 @@ public:
 		pose::Pose const & pose,
 		scoring::EnergyMap const & weights,
 		utility::vector1< scoring::DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		scoring::ScoreFunction const &,
 		scoring::EnergyMap &// totals
-	) const;
+	) const override;
 
 	/// @brief Yes.  The DunbrackEnergy defines derivatives
 	/// for phi/psi and the chi dihedrals.
-	virtual
 	bool
-	defines_dof_derivatives( pose::Pose const & p ) const;
+	defines_dof_derivatives( pose::Pose const & p ) const override;
 
 	/// @brief Evaluate the phi/psi and chi dihedral derivatives
 	/// for the input residue.
@@ -104,7 +98,7 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & sfxn,
 		scoring::EnergyMap const & weights
-	) const;
+	) const override;
 
 	/// @brief Deprecated.
 	virtual
@@ -117,8 +111,7 @@ public:
 		scoring::EnergyMap const & weights
 	) const;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -127,8 +120,7 @@ public:
 
 private:
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

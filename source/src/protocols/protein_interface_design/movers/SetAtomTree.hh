@@ -34,7 +34,7 @@ class SetAtomTree : public protocols::moves::Mover
 public :
 	SetAtomTree();
 	/// Commenting out to fix PyRosetta build  SetAtomTree( core::kinematics::FoldTreeOP ft );
-	virtual ~SetAtomTree();
+	~SetAtomTree() override;
 	/// Commenting out to fix PyRosetta build  void fold_tree( core::kinematics::FoldTreeOP ft );
 	/// Commenting out to fix PyRosetta build  core::kinematics::FoldTreeOP fold_tree() const;
 	void apply( core::pose::Pose & pose ) override;

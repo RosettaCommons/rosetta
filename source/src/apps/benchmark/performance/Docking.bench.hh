@@ -38,7 +38,7 @@ public:
 
 	DockingBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
-	virtual void setUp() {
+	void setUp() override {
 		if ( dock == Low ) core_init_with_additional_options( "-low_res_protocol_only -dock_pert 3 8 -run:constant_seed" );
 		if ( dock == High ) core_init_with_additional_options( "-docking_local_refine -run:constant_seed" );
 		start_pose = utility::pointer::make_shared< core::pose::Pose >();
@@ -49,7 +49,7 @@ public:
 	};
 
 
-	virtual void run(core::Real scaleFactor) {
+	void run(core::Real scaleFactor) override {
 		//for(int i=0; i<10; i++) {
 		// std::cout << "i="<< i << " R=" << numeric::random::uniform() << std::endl;
 		//}
@@ -62,7 +62,7 @@ public:
 		}
 	};
 
-	virtual void tearDown() {};
+	void tearDown() override {};
 };
 
 typedef DockingBenchmark<Low,  2> DockingBenchmark_low;

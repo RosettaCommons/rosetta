@@ -39,15 +39,14 @@ class ScoringGridLoader : public protocols::parser::DataLoader
 {
 public:
 	ScoringGridLoader();
-	virtual ~ScoringGridLoader();
+	~ScoringGridLoader() override;
 
 	/// @brief The ScoringGridLoader will create named ScoringGrids and load them into the basic::datacache::DataMap
-	virtual
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 	/// @brief Utility function for load_data(), which only takes tags for a single GridSet
 	void parse_gridset_tag(

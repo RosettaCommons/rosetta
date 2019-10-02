@@ -34,7 +34,7 @@ public:
 
 public:
 
-	virtual ~CountPairCrossover3();
+	~CountPairCrossover3() override;
 
 	/// @brief function used by derived classes and associated classes (like the trie's count pair hierarchy)
 	static

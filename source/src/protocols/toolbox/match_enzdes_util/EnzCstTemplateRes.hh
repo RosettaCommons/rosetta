@@ -69,7 +69,7 @@ class EnzCstTemplateResAtoms : public utility::pointer::ReferenceCount {
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~EnzCstTemplateResAtoms();
+	~EnzCstTemplateResAtoms() override;
 
 	friend class EnzCstTemplateRes; //::check_data_consistency(pose::Pose const & pose);
 	friend class EnzConstraintParameters; //::add_constraints_to_cst_set(pose::Pose & pose);
@@ -104,7 +104,7 @@ class EnzCstTemplateRes : public utility::pointer::ReferenceCount {
 	//friend class EnzConstraintParameters;
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~EnzCstTemplateRes();
+	~EnzCstTemplateRes() override;
 
 	typedef std::map< core::chemical::ResidueTypeCOP, utility::vector1< utility::vector1< core::Size > > > RestypeToTemplateAtomsMap;
 

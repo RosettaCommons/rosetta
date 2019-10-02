@@ -60,7 +60,7 @@ public:
 	GlycanTree();
 	//GlycanTree(GlycanTree const & src);
 
-	virtual ~GlycanTree();
+	~GlycanTree() override;
 
 	GlycanTree( GlycanTree const & src );
 

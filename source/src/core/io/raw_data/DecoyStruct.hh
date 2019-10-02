@@ -69,27 +69,27 @@ public:
 	);
 
 	// destructor
-	~DecoyStruct() {}
+	~DecoyStruct() override {}
 
 	//DecoyStruct & operator= (DecoyStruct const & src);
 
 	void fill_pose(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	void fill_pose(
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const& residue_set
-	);
+	) override;
 
 	// fills the res array
 	//void set_sequence(std::string const & sequence);
 
-	virtual void print_conformation( std::ostream& output ) const;
+	void print_conformation( std::ostream& output ) const override;
 
 	/// @brief calculates the RMSD between the C-alpha atoms of a Pose built from the torsions in this
 	/// DecoyStruct and the C-alpha atoms from this DecoyStruct.
-	virtual Real get_debug_rmsd();
+	Real get_debug_rmsd() override;
 
 	/// @brief data getters/setters
 	bool fullatom() const {

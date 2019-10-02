@@ -114,9 +114,8 @@ public: // Creation
 
 
 	/// @brief Clone this
-	inline
 	StringOptionKey *
-	clone() const
+	clone() const override
 	{
 		return new StringOptionKey( *this );
 	}
@@ -124,8 +123,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~StringOptionKey() {}
+	~StringOptionKey() override {}
 
 
 public: // Assignment

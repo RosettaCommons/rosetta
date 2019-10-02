@@ -40,9 +40,8 @@ public:
 		ResidueDecompositionByChainCalculator const & calculator
 	);
 
-	virtual
 	core::pose::metrics::PoseMetricCalculatorOP
-	clone() const;
+	clone() const override;
 
 	utility::vector1<std::set<char> > const &
 	chain_letters() const {
@@ -80,7 +79,7 @@ public:
 
 protected:
 
-	virtual void recompute( core::pose::Pose const & this_pose );
+	void recompute( core::pose::Pose const & this_pose ) override;
 
 	utility::vector1<std::set<char> > chain_letters_;
 	utility::vector1<std::set<core::Size> > chain_numbers_;

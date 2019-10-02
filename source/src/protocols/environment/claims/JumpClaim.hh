@@ -57,13 +57,13 @@ public:
 		LocalPosition const & pos2,
 		LocalPosition const & cutp = core::environment::NO_POSITION );
 
-	virtual void yield_elements( core::environment::FoldTreeSketch const& fts, ResidueElements& elements ) const;
+	void yield_elements( core::environment::FoldTreeSketch const& fts, ResidueElements& elements ) const override;
 
-	virtual void yield_elements( core::environment::FoldTreeSketch const& fts, JumpElements& elements ) const;
+	void yield_elements( core::environment::FoldTreeSketch const& fts, JumpElements& elements ) const override;
 
-	virtual void yield_elements( core::environment::FoldTreeSketch const& fts, CutElements& elements ) const;
+	void yield_elements( core::environment::FoldTreeSketch const& fts, CutElements& elements ) const override;
 
-	virtual void yield_elements( core::pose::Pose const&, DOFElements& elements ) const;
+	void yield_elements( core::pose::Pose const&, DOFElements& elements ) const override;
 
 	/// @brief set the two atom names to use as the start and beginning of the jump. Both must be set simultaneously
 	///        because the FoldTree requires this.
@@ -104,11 +104,11 @@ public:
 
 
 
-	virtual EnvClaimOP clone() const;
+	EnvClaimOP clone() const override;
 
-	virtual std::string type() const;
+	std::string type() const override;
 
-	virtual void show( std::ostream& os ) const;
+	void show( std::ostream& os ) const override;
 
 protected:
 

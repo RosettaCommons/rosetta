@@ -47,7 +47,7 @@ public:
 	ParatopeEpitopeSiteConstraintMover(AntibodyInfoCOP ab_info, utility::vector1<CDRNameEnum> paratope_cdrs);
 	ParatopeEpitopeSiteConstraintMover(AntibodyInfoCOP ab_info, utility::vector1<CDRNameEnum> paratope_cdrs, utility::vector1<bool> const & epitope_residues);
 
-	~ParatopeEpitopeSiteConstraintMover();
+	~ParatopeEpitopeSiteConstraintMover() override;
 
 	ParatopeEpitopeSiteConstraintMover( ParatopeEpitopeSiteConstraintMover const & src );
 

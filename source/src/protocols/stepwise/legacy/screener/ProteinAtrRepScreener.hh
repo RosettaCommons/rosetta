@@ -34,18 +34,18 @@ public:
 		protocols::stepwise::modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker );
 
 	//destructor
-	~ProteinAtrRepScreener();
+	~ProteinAtrRepScreener() override;
 
 public:
 
 	std::string
-	name() const { return "ProteinAtrRepScreener"; }
+	name() const override { return "ProteinAtrRepScreener"; }
 
 	stepwise::screener::StepWiseScreenerType
-	type() const { return stepwise::screener::PROTEIN_ATR_REP; }
+	type() const override { return stepwise::screener::PROTEIN_ATR_REP; }
 
 	bool
-	check_screen();
+	check_screen() override;
 
 private:
 

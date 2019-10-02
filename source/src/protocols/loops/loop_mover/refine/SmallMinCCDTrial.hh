@@ -50,7 +50,7 @@ public: // boiler plate / virtuals
 	SmallMinCCDTrial & operator=( SmallMinCCDTrial const & rhs );
 
 	// destructor
-	virtual ~SmallMinCCDTrial();
+	~SmallMinCCDTrial() override;
 
 	// constructor with arguments
 	SmallMinCCDTrial(

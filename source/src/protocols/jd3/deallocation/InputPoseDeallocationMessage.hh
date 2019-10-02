@@ -43,7 +43,7 @@ public:
 
 	InputPoseDeallocationMessage();
 	InputPoseDeallocationMessage( core::Size pose_id );
-	virtual ~InputPoseDeallocationMessage();
+	~InputPoseDeallocationMessage() override;
 
 	core::Size pose_id() const;
 	void pose_id( core::Size setting );

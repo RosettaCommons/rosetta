@@ -40,7 +40,7 @@ public:
 	RNA_BasePairHandler( core::import_pose::RNA_DeNovoParameters const & rna_params );
 
 	//destructor
-	~RNA_BasePairHandler();
+	~RNA_BasePairHandler() override;
 
 public:
 

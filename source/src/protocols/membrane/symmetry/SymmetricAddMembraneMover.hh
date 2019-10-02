@@ -84,7 +84,7 @@ public:
 	SymmetricAddMembraneMover( SymmetricAddMembraneMover const & src );
 
 	/// @brief Destructor
-	~SymmetricAddMembraneMover();
+	~SymmetricAddMembraneMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///

@@ -53,7 +53,7 @@ public:
 	);
 
 	//destructor
-	~LoopMover_Refine_KIC();
+	~LoopMover_Refine_KIC() override;
 
 	void init( core::scoring::ScoreFunctionCOP  scorefxn );
 	void set_default_settings();

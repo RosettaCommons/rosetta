@@ -58,17 +58,17 @@ public: // construct/destruct
 	OptH( OptH const & rval );
 
 	/// @brief default destructor
-	virtual ~OptH();
+	~OptH() override;
 
 public: // virtual constructors
 
 	/// @brief clone this object
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 public: // methods
 
 	/// @brief apply operations to PackerTask
-	virtual void apply( Pose const & , PackerTask & task ) const;
+	void apply( Pose const & , PackerTask & task ) const override;
 
 	/// @brief prevent a position from being optimized
 	void disallow_resid( Size const resid );

@@ -54,27 +54,27 @@ public:
 		add_list_filenames( list_fns );
 	}
 
-	~PDBPoseInputStream() {}
+	~PDBPoseInputStream() override {}
 
 	void set_filenames( utility::vector1< utility::file::FileName > filenames );
 
 	utility::vector1< utility::file::FileName > get_filenames();
 
-	virtual bool has_another_pose();
+	bool has_another_pose() override;
 
-	virtual void reset();
+	void reset() override;
 
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set,
 		bool const metapatches = true
-	);
-	virtual void fill_pose( core::pose::Pose&,
-		bool const metapatches = true );
+	) override;
+	void fill_pose( core::pose::Pose&,
+		bool const metapatches = true ) override;
 
-	virtual utility::vector1< core::pose::PoseOP > get_all_poses(
+	utility::vector1< core::pose::PoseOP > get_all_poses(
 		core::chemical::ResidueTypeSet const & residue_set
-	);
+	) override;
 
 	/// @brief adds a list of files each containing lists of PDBs
 	void add_list_filenames(

@@ -56,7 +56,7 @@ public:
 	JumpSelectorOP clone() const override;
 
 	NotJumpSelector( JumpSelectorCOP selector );
-	virtual ~NotJumpSelector();
+	~NotJumpSelector() override;
 
 	JumpSubset apply( core::pose::Pose const & pose ) const override;
 	void parse_my_tag(

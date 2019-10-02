@@ -64,7 +64,7 @@ public:
 		core::Real threshold );
 
 	/// @brief Destructor
-	virtual ~MeanField();
+	~MeanField() override;
 
 
 	// Standard Rosetta methods ////////////////////////////////////////////////

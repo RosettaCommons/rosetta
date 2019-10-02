@@ -49,7 +49,7 @@ public:
 
 	mmTFPoseOutputSpecification();
 	mmTFPoseOutputSpecification( JobResultID const & result_id, JobOutputIndex const & output_index );
-	virtual ~mmTFPoseOutputSpecification();
+	~mmTFPoseOutputSpecification() override;
 
 	core::io::StructFileRepOptionsCOP sfr_opts() const;
 	void sfr_opts( core::io::StructFileRepOptions const & setting );

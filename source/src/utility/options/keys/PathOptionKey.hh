@@ -114,9 +114,8 @@ public: // Creation
 
 
 	/// @brief Clone this
-	inline
 	PathOptionKey *
-	clone() const
+	clone() const override
 	{
 		return new PathOptionKey( *this );
 	}
@@ -124,8 +123,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~PathOptionKey() {}
+	~PathOptionKey() override {}
 
 
 public: // Assignment

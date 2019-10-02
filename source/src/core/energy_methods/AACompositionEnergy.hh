@@ -65,7 +65,7 @@ public:
 
 	/// @brief Default destructor.
 	///
-	virtual ~AACompositionEnergy();
+	~AACompositionEnergy() override;
 
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.

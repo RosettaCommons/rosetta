@@ -91,7 +91,7 @@ public:// constructor/destructor
 	// @brief copy constructor
 	SecretionPredictionFilter( SecretionPredictionFilter const & rval );
 
-	virtual ~SecretionPredictionFilter();
+	~SecretionPredictionFilter() override;
 
 
 public:// virtual constructor

@@ -50,7 +50,7 @@ public:
 	{
 	}
 
-	virtual ~SlicedPoseWorkingParameters(); // auto-removing definition from header{};
+	~SlicedPoseWorkingParameters() override; // auto-removing definition from header{};
 
 	void
 	setup( protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP & working_parameters );
@@ -110,7 +110,7 @@ public:
 	StepWiseRNA_Clusterer(  core::io::silent::SilentFileDataOP & sfd );
 
 	//destructor -- necessary?
-	virtual ~StepWiseRNA_Clusterer();
+	~StepWiseRNA_Clusterer() override;
 
 	/// @brief Filter a list of poses by score.
 

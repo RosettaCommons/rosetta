@@ -48,13 +48,13 @@ public:
 	HighestEnergyRegionOperation( HighestEnergyRegionOperation const & rval );
 
 	/// @brief destructor
-	virtual ~HighestEnergyRegionOperation();
+	~HighestEnergyRegionOperation() override;
 
 	/// @brief make clone
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
 	/// @brief apply
-	virtual void apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
+	void apply( Pose const & pose, core::pack::task::PackerTask & task ) const override;
 
 	/// @brief Runs the calculation and caches residues to design
 	virtual void cache_result( core::pose::Pose const & pose );
@@ -68,7 +68,7 @@ public:
 
 public:
 	void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map );
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map ) override;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static utility::tag::AttributeList schema_attributes();
@@ -150,17 +150,17 @@ public:
 	DesignByPackStatOperation( DesignByPackStatOperation const & rval );
 
 	/// @brief virtual destructor
-	virtual ~DesignByPackStatOperation();
+	~DesignByPackStatOperation() override;
 
 	/// @brief make clone
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
 	/// @brief Gets a list of residues for design
-	virtual utility::vector1< core::Size >
-	get_residues_to_design( core::pose::Pose const & pose ) const;
+	utility::vector1< core::Size >
+	get_residues_to_design( core::pose::Pose const & pose ) const override;
 
 	/// @brief Returns the name of the class
-	virtual std::string get_name() const { return "PackStat"; }
+	std::string get_name() const override { return "PackStat"; }
 
 	// AMW: doesn't have a Creator yet.
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -176,17 +176,17 @@ public:
 	DesignRandomRegionOperation();
 
 	/// @brief virtual destructor
-	virtual ~DesignRandomRegionOperation();
+	~DesignRandomRegionOperation() override;
 
 	/// @brief make clone
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
 	/// @brief Gets a list of residues for design
-	virtual utility::vector1< core::Size >
-	get_residues_to_design( core::pose::Pose const & pose ) const;
+	utility::vector1< core::Size >
+	get_residues_to_design( core::pose::Pose const & pose ) const override;
 
 	/// @brief Returns the name of the class
-	virtual std::string get_name() const { return "RandomRegion"; }
+	std::string get_name() const override { return "RandomRegion"; }
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "DesignRandomRegionOperation"; }
@@ -201,17 +201,17 @@ public:
 	DesignByResidueCentralityOperation();
 
 	/// @brief virtual destructor
-	virtual ~DesignByResidueCentralityOperation();
+	~DesignByResidueCentralityOperation() override;
 
 	/// @brief make clone
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
 	/// @brief Gets a list of residues for design
-	virtual utility::vector1< core::Size >
-	get_residues_to_design( core::pose::Pose const & pose ) const;
+	utility::vector1< core::Size >
+	get_residues_to_design( core::pose::Pose const & pose ) const override;
 
 	/// @brief Returns the name of the class
-	virtual std::string get_name() const { return "ResidueCentrality"; }
+	std::string get_name() const override { return "ResidueCentrality"; }
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "DesignByResidueCentralityOperation"; }
@@ -226,17 +226,17 @@ public:
 	DesignCatalyticResiduesOperation();
 
 	/// @brief virtual destructor
-	virtual ~DesignCatalyticResiduesOperation();
+	~DesignCatalyticResiduesOperation() override;
 
 	/// @brief make clone
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
 	/// @brief Gets a list of residues for design
-	virtual utility::vector1< core::Size >
-	get_residues_to_design( core::pose::Pose const & pose ) const;
+	utility::vector1< core::Size >
+	get_residues_to_design( core::pose::Pose const & pose ) const override;
 
 	/// @brief Returns the name of the class
-	virtual std::string get_name() const { return "CatalyticResidues"; }
+	std::string get_name() const override { return "CatalyticResidues"; }
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "DesignCatalyticResiduesOperation"; }
@@ -251,17 +251,17 @@ public:
 	DesignByCavityProximityOperation();
 
 	/// @brief virtual destructor
-	virtual ~DesignByCavityProximityOperation();
+	~DesignByCavityProximityOperation() override;
 
 	/// @brief make clone
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
 	/// @brief Gets a list of residues for design
-	virtual utility::vector1< core::Size >
-	get_residues_to_design( core::pose::Pose const & pose ) const;
+	utility::vector1< core::Size >
+	get_residues_to_design( core::pose::Pose const & pose ) const override;
 
 	/// @brief Returns the name of the class
-	virtual std::string get_name() const { return "CavityProximity"; }
+	std::string get_name() const override { return "CavityProximity"; }
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "DesignByCavityProximityOperation"; }

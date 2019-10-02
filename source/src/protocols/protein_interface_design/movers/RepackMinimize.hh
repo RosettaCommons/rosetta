@@ -50,7 +50,7 @@ public:
 		core::Real const interface_distance_cutoff=8.0,
 		bool const repack_non_ala=true
 	);
-	virtual ~RepackMinimize();
+	~RepackMinimize() override;
 
 	void apply( Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;

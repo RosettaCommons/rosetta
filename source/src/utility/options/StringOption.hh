@@ -79,7 +79,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~StringOption() {}
+	~StringOption() override {}
 
 
 public: // Properties

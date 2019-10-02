@@ -40,10 +40,10 @@ public:
 	OopRandomSmallMover( utility::vector1< core::Size > const & oop_seq_positions );
 	OopRandomSmallMover( utility::vector1< core::Size > const & oop_seq_positions, core::Real max_small_angle );
 
-	virtual ~OopRandomSmallMover();
+	~OopRandomSmallMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	virtual void set_max_small_angle( core::Real angle ) { max_small_angle_ = angle; }
 

@@ -61,15 +61,15 @@ public:
 
 	PcsDataCenterManager(); //construct
 
-	~PcsDataCenterManager(); //destruct
+	~PcsDataCenterManager() override; //destruct
 
 	PcsDataCenterManager(PcsDataCenterManager const &other); //copy
 
 	PcsDataCenterManager & // =
 	operator=( PcsDataCenterManager const & src );
 
-	virtual basic::datacache::CacheableDataOP //clone
-	clone() const;
+	basic::datacache::CacheableDataOP //clone
+	clone() const override;
 
 	/// @brief Give me the number of lanthanide
 	core::Size

@@ -64,9 +64,8 @@ public:
 		SidechainMoverBase const & mover
 	);
 
-	~SidechainMoverBase();
+	~SidechainMoverBase() override;
 
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -74,7 +73,7 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 	/// @brief initialize the packer task if necessary
 	void
@@ -82,13 +81,12 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	virtual
 	void
 	initialize_simulation(
 		core::pose::Pose &pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
-	);
+	) override;
 
 	virtual core::conformation::ResidueOP
 	make_move( core::conformation::ResidueOP res );
@@ -103,9 +101,9 @@ public:
 	virtual core::Size suggest_residue_number( core::pose::Pose const& ) const;
 
 	/// @brief apply a sidechain move to a Pose object
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	virtual core::Real
 	compute_proposal_density(
@@ -136,11 +134,11 @@ public:
 
 	/// @brief get whether detailed balance is preserved (i.e. proposal density ratio calculated)
 	bool
-	preserve_detailed_balance() const;
+	preserve_detailed_balance() const override;
 
 	/// @brief set whether detailed balance is preserved (i.e. proposal density ratio calculated)
 	void
-	set_preserve_detailed_balance( bool setting );
+	set_preserve_detailed_balance( bool setting ) override;
 
 	/// @brief perform direct chi manipulations rather than using replace_residue to effect rotamer changes; useful if things are kinematically dependent on a sidechain.
 	bool change_chi_without_replacing_residue() const;
@@ -153,18 +151,16 @@ public:
 	virtual bool have_mutated_residue() const { return false; }
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-	virtual
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
-	virtual
 	utility::vector1<core::id::DOF_ID_Range>
 	dof_id_ranges(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	/// @brief get the residues that can be changed by this mover
 	utility::vector1<core::Size> const &
@@ -175,9 +171,8 @@ public:
 	residue_packed() const;
 
 	/// @brief get the ratio of proposal densities for the last move
-	virtual
 	core::Real
-	last_proposal_density_ratio();
+	last_proposal_density_ratio() override;
 
 protected:
 

@@ -112,7 +112,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	~VarLengthBuild();
+	~VarLengthBuild() override;
 
 
 private: // assignment
@@ -127,13 +127,11 @@ public: // virtual constructors
 
 
 	/// @brief clone this object
-	virtual
-	MoverOP clone() const;
+	MoverOP clone() const override;
 
 
 	/// @brief create a new instance of this type of object
-	virtual
-	MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
 
 public: // accessors
@@ -443,10 +441,9 @@ public: // main operations
 	///  that you would prefer, e.g. by Dssp (protocols::jumping::Dssp),
 	///  by the old Rosetta++ binning method (core::pose::set_ss_from_phipsi)
 	///  or by external method such as reading in a file.
-	virtual
-	void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 protected: // main operations
 

@@ -58,7 +58,7 @@ public:
 
 	/// @brief Destructor.
 	///
-	~CustomBaseTypePackerPalette();
+	~CustomBaseTypePackerPalette() override;
 
 	/// @brief Clone operator: make a copy and return an owning pointer to the copy.
 	/// @details Derived classes MUST implement this.

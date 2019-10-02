@@ -30,13 +30,13 @@ class BondAnglePerturber : public Perturber {
 public:
 
 	/// @copydoc Perturber::get_name()
-	std::string get_name() const { return "BondAnglePerturber"; }
+	std::string get_name() const override { return "BondAnglePerturber"; }
 
 	/// @copydoc Perturber::perturb_subset()
 	void perturb_subset(
 		Pose const & pose,
 		IndexList const & residues,
-		ClosureProblemOP problem);
+		ClosureProblemOP problem) override;
 
 };
 

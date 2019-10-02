@@ -132,7 +132,7 @@ public:
 	/// @brief Return a string representing the settings which don't change based on reinitialization
 	// SingleGrid isn't defining this, as type_ is currently the only value of interest here,
 	// and we want an error if derived classes don't define this.
-	virtual std::string hash_fingerprint() const override = 0;
+	std::string hash_fingerprint() const override = 0;
 
 private:
 	core::grid::CartGrid<core::Real> grid_;

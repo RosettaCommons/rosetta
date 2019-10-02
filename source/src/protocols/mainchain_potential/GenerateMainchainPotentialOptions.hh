@@ -45,7 +45,7 @@ public:
 	GenerateMainchainPotentialOptions(GenerateMainchainPotentialOptions const & /*src*/) = default;
 
 	/// @brief Destructor.
-	virtual ~GenerateMainchainPotentialOptions();
+	~GenerateMainchainPotentialOptions() override;
 
 	/// @brief Clone function: create a copy of this object, and return an owning pointer to the copy.
 	GenerateMainchainPotentialOptionsOP clone() const;

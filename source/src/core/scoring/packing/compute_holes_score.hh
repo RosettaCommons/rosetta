@@ -39,7 +39,7 @@ namespace packing {
 class HolesResult : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~HolesResult();
+	~HolesResult() override;
 	HolesResult() : score(0.0),decoy_score(0.0),resl_score(0.0),dec15_score(0.0) {}
 	core::Real score, decoy_score, resl_score, dec15_score, natom;
 	core::id::AtomID_Map< core::Real > atom_scores;

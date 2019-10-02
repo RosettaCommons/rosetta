@@ -61,7 +61,7 @@ public:
 	GlycanTreeMinMover( GlycanTreeMinMover const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~GlycanTreeMinMover();
+	~GlycanTreeMinMover() override;
 
 	/////////////////////
 	/// Mover Methods ///
@@ -70,7 +70,7 @@ public:
 public:
 
 	/// @brief Apply the mover
-	virtual void
+	void
 	apply( core::pose::Pose & pose ) override;
 
 	void parse_my_tag(
@@ -109,7 +109,7 @@ public:
 	class_name();
 
 	/// @brief Get the name of the Mover
-	virtual std::string
+	std::string
 	get_name() const override;
 
 	///////////////////////////////
@@ -119,11 +119,11 @@ public:
 	//GlycanTreeMinMover & operator=( GlycanTreeMinMover const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
+	protocols::moves::MoverOP
 	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
+	protocols::moves::MoverOP
 	clone() const override;
 
 	static

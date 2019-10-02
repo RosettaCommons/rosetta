@@ -44,7 +44,6 @@ public:
 
 	/// @brief default constructor
 	BoincCurrentPoseObserver();
-	
 	/// @brief Constructor for observers for drawing a "ghost" overlaid on the current pose.
 	///
 	BoincCurrentPoseObserver( bool const is_ghost );
@@ -83,7 +82,6 @@ private:
 	BoincSharedMemory * shmem_;
 
 	utility::signals::Link conf_event_link_;
-	
 	/// @brief Is this for normal display, or for a "ghost" overlay on a pose?
 	/// @details Default false (normal display).  True means "ghost".
 	bool is_ghost_;

@@ -43,20 +43,17 @@ public:
 	);
 
 	///@brief Does the segment have a valid DSSP code?
-	virtual
 	bool
 	satisfies(
 		SewSegment segment
-	) const;
+	) const override;
 
 	///@brief Does the segment have an invalid DSSP code?
-	virtual
 	bool
 	violates(
 		SewSegment segment
-	) const;
+	) const override;
 
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -64,13 +61,12 @@ public:
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/
-	);
+	) override;
 
-	virtual
 	void
 	show(
 		std::ostream & out
-	) const;
+	) const override;
 
 	static std::string
 	class_name();

@@ -36,18 +36,18 @@ public:
 		modeler::align::StepWiseClustererOP stepwise_clusterer );
 
 	//destructor
-	~PoseSelectionScreener();
+	~PoseSelectionScreener() override;
 
 public:
 
 	std::string
-	name() const { return "PoseSelectionScreener"; }
+	name() const override { return "PoseSelectionScreener"; }
 
 	StepWiseScreenerType
-	type() const { return POSE_SELECTION; }
+	type() const override { return POSE_SELECTION; }
 
 	bool
-	check_screen();
+	check_screen() override;
 
 private:
 

@@ -43,7 +43,7 @@ public:
 	//MakeAsymmetricStructureDataMover( MakeAsymmetricStructureDataMover const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~MakeAsymmetricStructureDataMover();
+	~MakeAsymmetricStructureDataMover() override;
 
 
 public:

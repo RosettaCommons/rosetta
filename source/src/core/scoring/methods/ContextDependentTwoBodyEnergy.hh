@@ -46,11 +46,11 @@ public:
 public:
 	ContextDependentTwoBodyEnergy( EnergyMethodCreatorOP creator );
 
-	virtual ~ContextDependentTwoBodyEnergy();
+	~ContextDependentTwoBodyEnergy() override;
 
 
 	EnergyMethodType
-	method_type() const;
+	method_type() const override;
 
 };
 

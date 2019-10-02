@@ -49,7 +49,7 @@ public:
 
 	SilentFilePoseOutputSpecification();
 	SilentFilePoseOutputSpecification( JobResultID const & result_id, JobOutputIndex const & output_index );
-	virtual ~SilentFilePoseOutputSpecification();
+	~SilentFilePoseOutputSpecification() override;
 
 	core::io::silent::SilentFileOptions const & sf_opts() const;
 	void sf_opts( core::io::silent::SilentFileOptions const & setting );

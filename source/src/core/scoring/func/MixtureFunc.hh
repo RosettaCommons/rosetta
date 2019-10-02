@@ -72,19 +72,19 @@ public:
 	}
 
 	/// @brief returns a clone of this MixtureFunc
-	FuncOP clone() const { return utility::pointer::make_shared< MixtureFunc >( *this ); }
+	FuncOP clone() const override { return utility::pointer::make_shared< MixtureFunc >( *this ); }
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
 	/// @brief Returns the value of this MixtureFunc evaluated at distance x.
-	Real func( Real const x ) const;
+	Real func( Real const x ) const override;
 
 	/// @brief Returns the value of the first derivative of this MixtureFunc at distance x.
-	Real dfunc( Real const x ) const;
+	Real dfunc( Real const x ) const override;
 
 	/// @brief show the definitio of this MixtureFunc to the specified output stream.
-	virtual void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
 	/// @brief Function that's used for debugging. Given x, this calculates
 	/// g(x), h(x), g'(x) and h'(x).
@@ -101,7 +101,7 @@ public:
 	Real calc_kl_divergence() const;
 
 	/// @brief Prints this MixtureFunc to the given ostream.
-	virtual void show( std::ostream& out ) const;
+	void show( std::ostream& out ) const override;
 
 	/// @brief Calls show( out ) on this MixtureFunc.
 	friend std::ostream& operator<<( std::ostream& out, const MixtureFunc& f ) {
@@ -123,7 +123,7 @@ public:
 	* - bg_mean 19.396
 	* - bg_sd 7.643
 	*/
-	void read_data( std::istream& in );
+	void read_data( std::istream& in ) override;
 
 	/// @brief Returns the value of this MixtureFunc evaluated at distance x.
 	Real func_( Real x ) const;

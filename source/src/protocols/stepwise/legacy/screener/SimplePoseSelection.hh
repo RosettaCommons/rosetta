@@ -38,18 +38,18 @@ public:
 		bool const full_optimize );
 
 	//destructor
-	~SimplePoseSelection();
+	~SimplePoseSelection() override;
 
 public:
 
 	std::string
-	name() const { return "SimplePoseSelection"; }
+	name() const override { return "SimplePoseSelection"; }
 
 	stepwise::screener::StepWiseScreenerType
-	type() const { return stepwise::screener::SIMPLE_POSE_SELECTION; }
+	type() const override { return stepwise::screener::SIMPLE_POSE_SELECTION; }
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	void
 	finalize();

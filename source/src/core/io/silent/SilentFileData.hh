@@ -354,7 +354,7 @@ public:
 	}
 
 	/// @brief Destructor.
-	virtual ~SilentFileData();
+	~SilentFileData() override;
 
 	/// @brief write all SilentStruct objects in the structure_map_ to the given
 	/// filename.

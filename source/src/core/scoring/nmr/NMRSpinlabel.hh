@@ -97,7 +97,7 @@ public: // Methods
 	operator=(NMRSpinlabel const & rhs);
 
 	/// @brief destructor
-	~NMRSpinlabel();
+	~NMRSpinlabel() override;
 
 	/// Getters
 	std::string get_name() const { return name_; }

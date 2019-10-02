@@ -82,8 +82,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	virtual
-	~VallFragmentGen();
+	~VallFragmentGen() override;
 
 
 public: // copy assignment

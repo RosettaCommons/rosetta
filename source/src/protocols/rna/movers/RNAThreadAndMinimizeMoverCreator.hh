@@ -25,11 +25,11 @@ class RNAThreadAndMinimizeMoverCreator : public protocols::moves::MoverCreator {
 
 public:
 
-	virtual protocols::moves::MoverOP
-	create_mover() const;
+	protocols::moves::MoverOP
+	create_mover() const override;
 
-	virtual std::string
-	keyname() const;
+	std::string
+	keyname() const override;
 
 };
 

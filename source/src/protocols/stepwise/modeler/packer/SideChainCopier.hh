@@ -39,14 +39,14 @@ public:
 		bool const copy_o2prime_hydrogens = false  );
 
 	//destructor
-	~SideChainCopier();
+	~SideChainCopier() override;
 
 public:
 
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
-	std::string get_name() const { return "SideChainCopier"; }
+	std::string get_name() const override { return "SideChainCopier"; }
 
 private:
 

@@ -48,7 +48,7 @@ public:
 
 	void trie( Size index, RotamerTrieBaseOP new_trie );
 
-	virtual basic::datacache::CacheableDataOP clone() const;
+	basic::datacache::CacheableDataOP clone() const override;
 
 private:
 	utility::vector1< RotamerTrieBaseOP > tries_;

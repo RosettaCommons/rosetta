@@ -20,9 +20,9 @@ namespace hbnet {
 
 class ConstrainHBondNetworkCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
-	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "ConstrainHBondNetwork"; }
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	core::pack::task::operation::TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override { return "ConstrainHBondNetwork"; }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //namespace hbnet

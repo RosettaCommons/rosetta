@@ -84,7 +84,7 @@ public:
 	RTConstraint( RTConstraint const & src );
 
 	/// @brief destructor
-	~RTConstraint();
+	~RTConstraint() override;
 
 	/// @brief Copies the data from this %Constraint into a new object and returns
 	/// an OP to the new object. Intended to be implemented by derived classes and

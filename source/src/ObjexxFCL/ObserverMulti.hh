@@ -60,8 +60,7 @@ public: // Creation
 
 
 	/// @brief Destructor
-	virtual
-	~ObserverMulti();
+	~ObserverMulti() override;
 
 
 protected: // Assignment
@@ -81,13 +80,13 @@ public: // Subject Inspector
 
 	/// @brief Insert an Observer
 	void
-	insert_observer( Observer & observer ) const;
+	insert_observer( Observer & observer ) const override;
 
 
 	/// @brief Remove an Observer
 	inline
 	void
-	remove_observer( Observer & observer ) const
+	remove_observer( Observer & observer ) const override
 	{
 		if ( observers_p_ ) do_remove_observer( observer );
 	}
@@ -96,7 +95,7 @@ public: // Subject Inspector
 	/// @brief Has At Least One Observer?
 	inline
 	bool
-	has_observer() const
+	has_observer() const override
 	{
 		return ( observers_p_ ? do_has_observer() : false );
 	}

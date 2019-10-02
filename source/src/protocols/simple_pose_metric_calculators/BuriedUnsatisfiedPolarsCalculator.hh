@@ -90,7 +90,7 @@ public:
 
 
 	///@brief copy constructor implicit in clone call
-	core::pose::metrics::PoseMetricCalculatorOP clone() const {
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override {
 		return utility::pointer::make_shared< BuriedUnsatisfiedPolarsCalculator >( name_of_sasa_calc_, name_of_hbond_calc_, special_region_, burial_cutoff_, probe_radius_, residue_surface_cutoff_, generous_hbonds_, legacy_counting_, vsasa_, use_sc_neighbors_, skip_surface_res_ ); };
 
 	std::string const & name_of_hbond_calc() const { return name_of_hbond_calc_; }
@@ -115,9 +115,9 @@ public:
 
 protected:
 
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	virtual std::string print( std::string const & key ) const;
-	virtual void recompute( core::pose::Pose const & this_pose );
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override;
+	std::string print( std::string const & key ) const override;
+	void recompute( core::pose::Pose const & this_pose ) override;
 
 
 private:

@@ -43,13 +43,12 @@ public:
 	///@brief default construct
 	MotifScorer();
 
-	virtual ~MotifScorer()=default;
+	~MotifScorer() override =default;
 	MotifScorer( MotifScorer const & );
 
 	static std::string type_name();
 
 	//Virtual because derived classes override this as well
-	virtual
 	core::Real
 	score(
 		data_storage::SmartAssemblyCOP assembly
@@ -80,17 +79,17 @@ public:
 		char aa2
 	) const;
 
-	virtual std::string
+	std::string
 	get_name() const override;
 
-	virtual core::Real
+	core::Real
 	get_weight() const override;
 
-	virtual void
+	void
 	set_weight( core::Real ) override;
 
 
-	virtual void
+	void
 	set_options_from_tag(
 		utility::tag::TagCOP scorer_tag,
 		basic::datacache::DataMap& datamap,

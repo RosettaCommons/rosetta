@@ -39,13 +39,13 @@ public:
 	ProfileScoreBlosum62(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		core::sequence::SequenceProfileOP query_profile, core::Size longest_vall_chunk);
 
-	~ProfileScoreBlosum62();
+	~ProfileScoreBlosum62() override;
 
-	void do_caching(VallChunkOP);
-	void clean_up() {
+	void do_caching(VallChunkOP) override;
+	void clean_up() override {
 	}
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
-	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
 	//bool describe_score(FragmentCandidateOP, FragmentScoreMapOP, std::ostream&);
 protected:
 	Matrix scores_;
@@ -64,7 +64,7 @@ public:
 		MakeFragmentScoringMethod("ProfileScoreBlosum62") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 
 } // scores

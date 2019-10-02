@@ -33,7 +33,7 @@ public:
 	HBNetScore( HBNetScore const & );
 
 	//destructor
-	~HBNetScore();
+	~HBNetScore() override;
 
 	protocols::filters::FilterOP clone() const override{
 		return utility::pointer::make_shared< HBNetScore >( *this );

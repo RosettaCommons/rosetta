@@ -61,8 +61,7 @@ public: // Creation
 
 	StructureArchitect( std::string const & id );
 
-	virtual
-	~StructureArchitect();
+	~StructureArchitect() override;
 
 public:
 	/// @brief simply returns the name of this type of architect

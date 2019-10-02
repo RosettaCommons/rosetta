@@ -116,11 +116,11 @@ public: // constructors / destructors
 public:
 
 	///@brief Name of the class
-	virtual std::string
+	std::string
 	name() const override = 0;
 
 	///@brief Name of the metric
-	virtual std::string
+	std::string
 	metric() const override = 0;
 
 	///@brief Get the submetric names that this Metric will calculate
@@ -129,12 +129,12 @@ public:
 
 public:
 	/// @brief called by parse_my_tag -- should not be used directly
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data ) override = 0;
 
-	virtual SimpleMetricOP
+	SimpleMetricOP
 	clone() const override = 0;
 
 	///@brief Add options to the schema from this base class.

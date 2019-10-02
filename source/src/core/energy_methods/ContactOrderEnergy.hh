@@ -43,9 +43,8 @@ public:
 	ContactOrderEnergy();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -56,17 +55,16 @@ public:
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	core::Real
 	calculate_contact_order( pose::Pose const & pose ) const;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 private:
 

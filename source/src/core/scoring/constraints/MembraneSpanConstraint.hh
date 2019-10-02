@@ -56,46 +56,41 @@ public:
 		pose::Pose const & pose
 	);
 
-	virtual ~MembraneSpanConstraint();
+	~MembraneSpanConstraint() override;
 
-	virtual
 	Size
-	natoms() const { return 0; }
+	natoms() const override { return 0; }
 
-	virtual
 	AtomID const &
-	atom( Size const ) const {
+	atom( Size const ) const override {
 		utility_exit_with_message("MembraneSpanConstraint is not atom-based!.");
 		return core::id::GLOBAL_BOGUS_ATOM_ID;  // required for compilation on Windows
 	}
 
-	virtual
 	utility::vector1< core::Size >
-	residues() const;
+	residues() const override;
 
 	void
-	show( std::ostream & out ) const;
+	show( std::ostream & out ) const override;
 
-	virtual
 	ConstraintOP
-	remap_resid( core::id::SequenceMapping const & ) const;
+	remap_resid( core::id::SequenceMapping const & ) const override;
 
-	virtual bool operator == ( Constraint const & other ) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	bool operator == ( Constraint const & other ) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
-	virtual ConstraintOP remapped_clone(
+	ConstraintOP remapped_clone(
 		pose::Pose const & src,
 		pose::Pose const & dest,
 		id::SequenceMappingCOP map = NULL
-	) const;
+	) const override;
 
 	// Needed to get the base class overloads
 	using Constraint::score;
 	using Constraint::dist;
 
-	virtual
 	void
-	score( func::XYZ_Func const &, EnergyMap const &, EnergyMap & emap ) const;
+	score( func::XYZ_Func const &, EnergyMap const &, EnergyMap & emap ) const override;
 
 	core::Real
 	calc_score() const;
@@ -104,11 +99,9 @@ public:
 	score_res_z( core::Real z ) const;
 
 	/// @details Return 1.0 if constraint will get a bonus, 0.0 if not
-	virtual
 	core::Real
-	dist( core::scoring::func::XYZ_Func const & xyz ) const;
+	dist( core::scoring::func::XYZ_Func const & xyz ) const override;
 
-	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,
@@ -116,10 +109,10 @@ public:
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
-	virtual ConstraintOP
-	clone() const;
+	ConstraintOP
+	clone() const override;
 private:
 	utility::vector1< core::conformation::ResidueCOP > span_res_;
 

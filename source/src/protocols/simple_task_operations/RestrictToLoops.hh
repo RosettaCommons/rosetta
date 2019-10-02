@@ -49,18 +49,18 @@ public:
 	RestrictToLoops( RestrictToLoops const & src );
 
 	/// @brief Default destructor.
-	virtual ~RestrictToLoops();
+	~RestrictToLoops() override;
 
 	/// @brief Assignment operator.
 	RestrictToLoops & operator= ( RestrictToLoops const & rhs );
 
 	/// @brief Return a deep-copied OP.
-	core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
 	/// @brief Configure from a RosettaScripts XML tag.
 	void parse_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & );
+		basic::datacache::DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static void provide_attributes( utility::tag::AttributeList & attributes );
 	static std::string keyname() { return "RestrictToLoops"; }
@@ -78,7 +78,7 @@ public:
 	/// @brief Apply this operation to the packer task.
 	void apply(
 		core::pose::Pose const & pose,
-		core::pack::task::PackerTask & task ) const;
+		core::pack::task::PackerTask & task ) const override;
 
 	/// @brief Return true if design is allowed.
 	bool design_loop() const;

@@ -44,7 +44,7 @@ public :
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
-	virtual ~RelativeSegmentFilter();
+	~RelativeSegmentFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	std::string source_pose() const { return source_pose_; }
 	void source_pose( std::string const & s ) { source_pose_ = s; }

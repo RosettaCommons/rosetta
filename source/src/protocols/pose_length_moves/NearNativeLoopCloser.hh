@@ -47,7 +47,7 @@ namespace pose_length_moves {
 class PossibleLoop : public utility::pointer::ReferenceCount {
 public:
 	PossibleLoop(int resAdjustmentBeforeLoop, int resAdjustmentAfterLoop,Size loopLength,Size resBeforeLoop, Size resAfterLoop, char resTypeBeforeLoop, char resTypeAfterLoop, Size insertedBeforeLoopRes, Size insertedAfterLoopRes, core::pose::PoseOP fullLengthPoseOP, core::pose::PoseOP  orig_atom_type_fullLengthPoseOP);
-	~PossibleLoop();
+	~PossibleLoop() override;
 	void evaluate_distance_closure();
 	void generate_stub_rmsd();
 	void generate_uncached_stub_rmsd();

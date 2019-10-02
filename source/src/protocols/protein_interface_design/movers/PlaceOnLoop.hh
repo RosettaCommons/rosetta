@@ -51,7 +51,7 @@ public:
 	bool position_stub( core::pose::Pose & pose ) const;
 	void ala_pose_loop( core::pose::Pose & pose ) const;
 	bool loop_length( core::pose::Pose & pose );
-	virtual ~PlaceOnLoop();
+	~PlaceOnLoop() override;
 
 	std::string
 	get_name() const override;

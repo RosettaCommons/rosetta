@@ -49,7 +49,7 @@ public:
 	InterbondAngleScore(core::Size, core::Real, bool, std::string, core::Size);
 
 	/// @brief Calculates the score
-	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 private:
 	utility::vector1<utility::vector1<FourAtomsConstraintDataOP> > data_;
@@ -67,7 +67,7 @@ public:
 		MakeFragmentScoringMethod("InterbondAngleScore") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 } // scores
 } // frag_picker

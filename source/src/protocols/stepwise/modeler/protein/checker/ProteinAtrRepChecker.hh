@@ -35,7 +35,7 @@ public:
 	ProteinAtrRepChecker( core::pose::Pose const & pose,
 		utility::vector1< core::Size > const & moving_res_list );
 
-	~ProteinAtrRepChecker();
+	~ProteinAtrRepChecker() override;
 
 	core::Real delta_atr_score() const{ return delta_atr_score_; }
 	core::Real delta_rep_score() const{ return delta_rep_score_; }

@@ -50,7 +50,7 @@ public: // boiler plate / virtuals
 	LoopRefineInnerCycleContainer & operator=( LoopRefineInnerCycleContainer const & rhs );
 
 	// destructor
-	virtual ~LoopRefineInnerCycleContainer();
+	~LoopRefineInnerCycleContainer() override;
 
 	void apply( Pose & ) override;
 

@@ -47,7 +47,7 @@ public:
 	/// @details the method returns ALWAYS TRUE which is inconsistent with other methods derived from
 	/// FragmentScoringMethod base class. The other option (i.e. returning false when a score is too high)
 	/// doesn't make any sense in this case.
-	virtual bool score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
+	bool score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) override {
 
 		empty_map->set_score_component((core::Real) f->get_length() * CONST_SCORE, id_);
 		return true;
@@ -63,7 +63,7 @@ public:
 	}
 
 	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value,
-		bool use_lowest, FragmentPickerOP, std::string /* params */) {
+		bool use_lowest, FragmentPickerOP, std::string /* params */) override {
 		return (FragmentScoringMethodOP) utility::pointer::make_shared< ConstScore >(priority,
 			lowest_acceptable_value, use_lowest);
 	}

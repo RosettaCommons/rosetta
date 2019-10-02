@@ -46,8 +46,8 @@ public:
 public:
 	CstMinimizationData();
 	CstMinimizationData( ConstraintsOP constraints );
-	virtual ~CstMinimizationData();
-	virtual CacheableDataOP clone() const;
+	~CstMinimizationData() override;
+	CacheableDataOP clone() const override;
 
 	Constraints const & constraints() const { return *constraints_; }
 	void set_constraints( ConstraintsOP constraints );

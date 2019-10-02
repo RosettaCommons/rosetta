@@ -43,11 +43,11 @@ class RetrieveStoredTaskOperation : public core::pack::task::operation::TaskOper
 public:
 
 	RetrieveStoredTaskOperation();
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
-	virtual ~RetrieveStoredTaskOperation();
+	core::pack::task::operation::TaskOperationOP clone() const override;
+	~RetrieveStoredTaskOperation() override;
 
-	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
-	virtual void parse_tag( TagCOP, DataMap & );
+	void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
+	void parse_tag( TagCOP, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RetrieveStoredTask"; }
 

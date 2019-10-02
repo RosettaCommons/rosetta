@@ -62,7 +62,7 @@ void load_unboundrot(pose::Pose & pose, core::pose::PoseCOPs const & unboundrot_
 class RotamerConstraint : public scoring::constraints::Constraint
 {
 public:
-	virtual std::string type() const {
+	std::string type() const override {
 		return "Rotamer";
 	}
 
@@ -75,45 +75,39 @@ public:
 		Size seqpos
 	);
 
-	virtual ~RotamerConstraint();
+	~RotamerConstraint() override;
 
 	virtual
 	void
 	add_residue( conformation::Residue const & rsd );
 
-	virtual
 	scoring::constraints::ConstraintOP
-	clone() const;
+	clone() const override;
 
-	virtual bool operator == ( Constraint const & other ) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	bool operator == ( Constraint const & other ) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
-	virtual
 	Size
-	natoms() const;
+	natoms() const override;
 
-	virtual
 	AtomID const &
-	atom( Size const index ) const;
+	atom( Size const index ) const override;
 
 	// Needed to get the base class overloads
 	using Constraint::score;
 	using Constraint::dist;
 
-	virtual
 	void
 	score(
 		scoring::func::XYZ_Func const & xyz_func,
 		scoring::EnergyMap const & weights,
 		scoring::EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @details Is ithere a "distance" that we can give for RotamerConstraints?
-	virtual
 	core::Real
-	dist( core::scoring::func::XYZ_Func const & ) const { return 0; }
+	dist( core::scoring::func::XYZ_Func const & ) const override { return 0; }
 
-	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,
@@ -121,11 +115,11 @@ public:
 		Vector & F1,
 		Vector & F2,
 		scoring::EnergyMap const & weights
-	) const;
+	) const override;
 
 	/// @brief This gets used to compare one constraint to another, so it should
 	/// uniquely reflect all the parameters.
-	virtual void show( std::ostream & out ) const ;
+	void show( std::ostream & out ) const override ;
 
 private:
 	Size seqpos_;

@@ -295,7 +295,7 @@ public:
 		core::Size num_input_sources
 	);
 
-	~JobGenealogist();
+	~JobGenealogist() override;
 
 public:
 	///@brief register a new job that does not depend on a previous job result but rather takes a pose directly from an input source

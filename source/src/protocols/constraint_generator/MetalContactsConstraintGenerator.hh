@@ -41,10 +41,10 @@ public:
 	class_name();
 
 	protocols::constraint_generator::ConstraintGeneratorOP
-	clone() const;
+	clone() const override;
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	apply( core::pose::Pose const & pose ) const;
+	core::scoring::constraints::ConstraintCOPs
+	apply( core::pose::Pose const & pose ) const override;
 
 	static
 	void
@@ -177,8 +177,8 @@ private:
 	get_contact_resnums( core::pose::Pose const & pose, std::set< core::Size > & output ) const;
 
 protected:
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 private:
 	core::Real dist_cutoff_multiplier_=1.0;

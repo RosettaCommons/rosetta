@@ -51,8 +51,7 @@ public: // Creation
 	PoseFolder( std::string const & type );
 
 	/// @brief Destructor
-	virtual
-	~PoseFolder();
+	~PoseFolder() override;
 
 	// Pure virtuals
 public:

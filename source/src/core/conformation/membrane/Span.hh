@@ -68,7 +68,7 @@ public: // constructors
 	operator=( Span const & src );
 
 	/// @brief Destructor
-	~Span();
+	~Span() override;
 
 public: // getters
 

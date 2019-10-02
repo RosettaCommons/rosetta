@@ -155,14 +155,13 @@ public:
 
 	CstResInteractions();
 
-	virtual
-	~CstResInteractions(){}
+	~CstResInteractions() override{}
 
 	bool
-	read_data( utility::io::izstream & data );
+	read_data( utility::io::izstream & data ) override;
 
 	void
-	write_data() const;
+	write_data() const override;
 
 	bool
 	resA() const{
@@ -193,7 +192,7 @@ class EnzdesLoopInfo : public utility::pointer::ReferenceCount
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~EnzdesLoopInfo();
+	~EnzdesLoopInfo() override;
 
 	EnzdesLoopInfo();
 
@@ -329,7 +328,7 @@ class EnzdesLoopsFile : public utility::pointer::ReferenceCount
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~EnzdesLoopsFile();
+	~EnzdesLoopsFile() override;
 
 	EnzdesLoopsFile();
 

@@ -31,24 +31,21 @@ public:
 	FastForwardToNextResidueAlternative( Size const moving_res );
 
 	//destructor
-	~FastForwardToNextResidueAlternative();
+	~FastForwardToNextResidueAlternative() override;
 
 public:
 
 	//  bool
 	//  check_screen();
 
-	virtual
 	std::string
-	name() const { return "FastForwardToNextResidueAlternative"; }
+	name() const override { return "FastForwardToNextResidueAlternative"; }
 
-	virtual
 	StepWiseScreenerType
-	type() const { return FAST_FORWARD_TO_NEXT_RESIDUE_ALTERNATIVE; }
+	type() const override { return FAST_FORWARD_TO_NEXT_RESIDUE_ALTERNATIVE; }
 
-	virtual
 	void
-	get_update( sampler::StepWiseSamplerOP sampler );
+	get_update( sampler::StepWiseSamplerOP sampler ) override;
 
 	// kind of tricky -- put fast_forward above in get_update.
 	//  virtual

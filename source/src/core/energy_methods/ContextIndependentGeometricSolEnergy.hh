@@ -56,33 +56,29 @@ public:
 	ContextIndependentGeometricSolEnergy( ContextIndependentGeometricSolEnergy const & src );
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
 	/// attempt to precalculate backbone/backbone energies in advance
-	virtual
 	void
 	setup_for_packing(
 		pose::Pose & pose,
 		utility::vector1< bool > const &,
-		utility::vector1< bool > const & ) const;
+		utility::vector1< bool > const & ) const override;
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const override;
 
-	virtual
 	bool
 	defines_score_for_residue_pair(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		bool res_moving_wrt_eachother
-	) const;
+	) const override;
 
 	virtual
 	etable::count_pair::CountPairFunctionCOP
@@ -108,11 +104,9 @@ public:
 		ScoreFunction const &
 	) const;
 
-	virtual
 	bool
-	use_extended_residue_pair_energy_interface() const;
+	use_extended_residue_pair_energy_interface() const override;
 
-	virtual
 	void
 	setup_for_minimizing_for_residue_pair(
 		conformation::Residue const & rsd1,
@@ -123,9 +117,8 @@ public:
 		ResSingleMinimizationData const &,
 		ResSingleMinimizationData const &,
 		ResPairMinimizationData & pair_data
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & ires,
@@ -137,9 +130,8 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
@@ -147,13 +139,11 @@ public:
 		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
-	virtual
 	bool
-	requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose::Pose const & ) const;
+	requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose::Pose const & ) const override;
 
-	virtual
 	void
 	setup_for_minimizing_for_residue(
 		conformation::Residue const & rsd,
@@ -162,9 +152,8 @@ public:
 		kinematics::MinimizerMapBase const &,
 		basic::datacache::BasicDataCache &,
 		ResSingleMinimizationData & res_data_cache
-	) const;
+	) const override;
 
-	virtual
 	void
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
@@ -173,13 +162,12 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// This evaluates everything for now,
 	/// but eventually may want to split this
 	/// based on backbone/backbone vs. others,
 	/// as is carried out in HBondEnergy.cc
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -187,11 +175,10 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & pose ) const;
+	minimize_in_whole_structure_context( pose::Pose const & pose ) const override;
 
 	// Undefined, commenting out to fix PyRosetta build
 	/* void
@@ -210,7 +197,7 @@ public:
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	/// f1 and f2 are zeroed
 	// virtual
@@ -226,30 +213,25 @@ public:
 	// ) const;
 
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & weights ) const;
+	defines_intrares_energy( EnergyMap const & weights ) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & ,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	/// @brief GeometricSolEnergy is context sensitive
-	virtual
 	void indicate_required_context_graphs(
-		utility::vector1< bool > & context_graphs_required ) const;
+		utility::vector1< bool > & context_graphs_required ) const override;
 
 	void
 	precalculate_bb_bb_energy_for_design(

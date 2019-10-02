@@ -39,12 +39,11 @@ public:
 public:
 
 	FullatomDisulfideEnergy( FullatomDisulfidePotential const & potential );
-	virtual ~FullatomDisulfideEnergy();
+	~FullatomDisulfideEnergy() override;
 
 	// EnergyMethod Methods:
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/// @brief check that the fullatom disulfid energy container is the right size, and the
 	/// set of disulfides it holds corresponds correctly to the set of disulfides in the Pose.
@@ -53,40 +52,34 @@ public:
 		pose::Pose & pose
 	) const;
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const override;
 
 	/// @brief Make sure that the FullatomDisulfideEnergyContainer is ready for packing.
-	virtual
 	void
 	setup_for_packing(
 		pose::Pose & pose,
 		utility::vector1< bool > const & residues_repacking,
 		utility::vector1< bool > const & residues_designing
-	) const;
+	) const override;
 
 	/// @brief Returns true only for disulfide-bonded residue pairs
-	virtual
 	bool
 	defines_score_for_residue_pair(
 		conformation::Residue const & res1,
 		conformation::Residue const & res2,
 		bool res_moving_wrt_eachother
-	) const;
+	) const override;
 
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const;
+	minimize_in_whole_structure_context( pose::Pose const & ) const override;
 
 	/// @brief During minimization, access atom-index information from the ResPairMinimizationData
-	virtual
 	bool
-	use_extended_residue_pair_energy_interface() const;
+	use_extended_residue_pair_energy_interface() const override;
 
 	/// @brief Pull the atom-index information out of min_data object, and use those indices to
 	/// score the disulfide bond
-	virtual
 	void
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
@@ -95,11 +88,10 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Initialize the atom-index information for a particular residue pair and store those
 	/// indices in the ResPairMinimizationData data_cache
-	virtual
 	void
 	setup_for_minimizing_for_residue_pair(
 		conformation::Residue const & rsd1,
@@ -110,11 +102,10 @@ public:
 		ResSingleMinimizationData const & res1_data_cache,
 		ResSingleMinimizationData const & res2_data_cache,
 		ResPairMinimizationData & data_cache
-	) const;
+	) const override;
 
 	/// @brief Retrieve the atom-index information for this residue pair from the minpair_data object
 	/// and evaluate the derivatives for a particular atom.
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
@@ -126,7 +117,7 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
 
 	virtual
@@ -152,11 +143,9 @@ public:
 		EnergyMap const &
 	) const;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	// TwoBodyEnergy Methods:
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -164,36 +153,32 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & weights ) const;
+	defines_intrares_energy( EnergyMap const & weights ) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	// LongRangeTwoBodyEnergy methods
-	virtual methods::LongRangeEnergyType long_range_type() const;
+	methods::LongRangeEnergyType long_range_type() const override;
 
-	virtual
 	bool
 	defines_residue_pair_energy(
 		pose::Pose const & pose,
 		Size res1,
 		Size res2
-	) const;
+	) const override;
 
 private:
 	FullatomDisulfidePotential const & potential_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

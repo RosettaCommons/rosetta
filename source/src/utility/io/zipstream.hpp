@@ -111,10 +111,10 @@ public:
 		size_t buffer_size_
 	);
 
-	~basic_zip_streambuf();
+	~basic_zip_streambuf() override;
 
-	int sync();
-	int_type overflow( int_type c );
+	int sync() override;
+	int_type overflow( int_type c ) override;
 
 	/// @brief flushes the zip buffer and output buffer
 	std::streamsize flush();
@@ -200,9 +200,9 @@ public:
 		size_t input_buffer_size_
 	);
 
-	~basic_unzip_streambuf();
+	~basic_unzip_streambuf() override;
 
-	int_type underflow();
+	int_type underflow() override;
 
 	/// @brief returns the compressed input istream
 	istream_reference get_istream() { return m_istream; }
@@ -440,7 +440,7 @@ public:
 		if ( m_is_gzip ) add_header();
 	}
 
-	~basic_zip_ostream()
+	~basic_zip_ostream() override
 	{
 		// adding a footer is not necessary here, as it will be
 		// taken care of during the last zflush_finalize()

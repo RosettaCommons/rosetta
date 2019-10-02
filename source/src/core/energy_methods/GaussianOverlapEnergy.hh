@@ -43,20 +43,18 @@ public:
 
 
 	GaussianOverlapEnergy();
-	~GaussianOverlapEnergy();
+	~GaussianOverlapEnergy() override;
 
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -64,10 +62,9 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & scorefxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & atom_id,
@@ -77,35 +74,31 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
 	/// @details non-virtual accessor for speed
 	Distance
 	interaction_cutoff() const;
 
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const {
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override {
 		return true;
 	}
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -115,8 +108,7 @@ public:
 private:
 
 	numeric::interpolation::spline::InterpolatorOP interp_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

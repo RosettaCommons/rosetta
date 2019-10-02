@@ -55,21 +55,19 @@ public:
 	RG_LocalEnergy();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 
 	core::Real
@@ -81,9 +79,9 @@ public:
 		utility::vector1< bool > const & relevant_residues) const;
 
 	// derivatives
-	virtual void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const;
+	void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const override;
 
-	virtual void
+	void
 	eval_atom_derivative(
 		id::AtomID const & id,
 		pose::Pose const & pose,
@@ -92,13 +90,13 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 private:
 	RG_Local_MinData const & mindata_from_pose( pose::Pose const & ) const;

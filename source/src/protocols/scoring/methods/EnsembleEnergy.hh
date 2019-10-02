@@ -45,29 +45,26 @@ public:
 
 
 	/// clone
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 	// determine the site_constraint score for all sites constrained to the interface
-	virtual
 	void
 	finalize_total_energy(
 		core::pose::Pose & pose,
 		core::scoring::ScoreFunction const &,
 		core::scoring::EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 };
 

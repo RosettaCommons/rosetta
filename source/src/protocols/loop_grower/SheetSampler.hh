@@ -108,14 +108,14 @@ public:
 	core::Real
 	sheethbonds( core::pose::Pose & pose, core::Size lower, core::Size upper );
 
-	void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
 	void
 	set_sf( core::scoring::ScoreFunctionOP newsf ){ sf_ = newsf; }
 
 	void set_ideal_sheets( bool ideal_sheets ){ ideal_sheets_ = ideal_sheets; }
 
-	std::string get_name() const { return "SheetSampler"; }
+	std::string get_name() const override { return "SheetSampler"; }
 
 
 

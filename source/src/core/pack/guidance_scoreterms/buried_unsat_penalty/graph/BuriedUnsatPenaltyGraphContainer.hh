@@ -45,7 +45,7 @@ public:
 	BuriedUnsatPenaltyGraphContainer(BuriedUnsatPenaltyGraphContainer const & src);
 
 	/// @brief Destructor
-	virtual ~BuriedUnsatPenaltyGraphContainer();
+	~BuriedUnsatPenaltyGraphContainer() override;
 
 	/// @brief Copy this object and return an owning pointer to the copy.
 	basic::datacache::CacheableDataOP

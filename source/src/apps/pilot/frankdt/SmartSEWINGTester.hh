@@ -33,7 +33,7 @@ public:
 	SmartSEWINGTester();
 	SmartSEWINGTester(SmartSEWINGTester const & src);
 
-	virtual ~SmartSEWINGTester();
+	~SmartSEWINGTester() override;
 
 	SmartSEWINGTesterOP
 	clone() const;

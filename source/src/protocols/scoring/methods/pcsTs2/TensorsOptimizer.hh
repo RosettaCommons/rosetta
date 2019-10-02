@@ -63,20 +63,17 @@ private:
 public:
 	TensorsOptimizer_Ts2(PCS_data_Ts2 const & pcs_d);
 
-	virtual
-	~TensorsOptimizer_Ts2();
+	~TensorsOptimizer_Ts2() override;
 
 	// @brief OptE func
-	virtual
 	core::Real
-	operator ()( core::optimization::Multivec const & vars ) const;
+	operator ()( core::optimization::Multivec const & vars ) const override;
 
 	/// @brief OptE dfunc
-	virtual
 	void
 	dfunc(core::optimization::Multivec const & vars,
 		core::optimization::Multivec & dE_dvars
-	) const;
+	) const override;
 
 
 	// void

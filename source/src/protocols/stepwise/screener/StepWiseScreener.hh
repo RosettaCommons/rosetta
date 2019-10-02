@@ -43,7 +43,7 @@ public:
 	StepWiseScreener();
 
 	//destructor
-	~StepWiseScreener();
+	~StepWiseScreener() override;
 
 public:
 

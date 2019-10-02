@@ -71,7 +71,7 @@ namespace trie {
 class RotamerTrieBase : public conformation::AbstractRotamerTrie
 {
 public:
-	virtual ~RotamerTrieBase() {}
+	~RotamerTrieBase() override {}
 
 	/// Useful Functions
 	virtual

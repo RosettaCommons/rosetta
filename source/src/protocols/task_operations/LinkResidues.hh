@@ -51,15 +51,15 @@ public:
 
 	LinkResidues();
 
-	~LinkResidues();
+	~LinkResidues() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 	void remap_allowed_residues_to_template(core::pose::Pose const & pose, core::pack::rotamer_set::RotamerLinksOP & links) const;
 	void add_group( std::string group );
 
-	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
 
-	virtual void parse_tag(TagCOP tag, DataMap & );
+	void parse_tag(TagCOP tag, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "LinkResidues"; }
 

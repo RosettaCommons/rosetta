@@ -42,33 +42,29 @@ public:
 	RamachandranEnergy();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 	/// @brief The ramachandran energy defines derivatives for protein backbone torsion angles
-	virtual
 	bool
-	defines_dof_derivatives( pose::Pose const & p ) const;
+	defines_dof_derivatives( pose::Pose const & p ) const override;
 
 	/// @brief Evaluate the phi or psi derivative for a particular residue
-	virtual
 	Real
 	eval_residue_dof_derivative(
 		conformation::Residue const & rsd,
@@ -78,7 +74,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
 	/// @brief NOTE: non-virtual function interface.
 	Real
@@ -92,14 +88,12 @@ public:
 
 	/// @brief Ramachandran Energy is context independent and thus indicates that no context graphs need to
 	/// be maintained by class Energies
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override;
 
 	// data
 private:
 	Ramachandran const & potential_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

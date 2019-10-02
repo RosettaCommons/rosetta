@@ -46,7 +46,7 @@ public:
 	/// @brief Empty Constructor
 	NubInitioMover();
 	/// @brief Destructor
-	~NubInitioMover();
+	~NubInitioMover() override;
 
 	/// @brief Main application of the NubInitioMover
 	void apply( core::pose::Pose & pose ) override;

@@ -37,15 +37,14 @@ class ScoreFunctionLoader : public DataLoader
 {
 public:
 	ScoreFunctionLoader();
-	virtual ~ScoreFunctionLoader();
+	~ScoreFunctionLoader() override;
 
 	/// @brief The ScoreFunctionLoader will create named ScoreFunctions and load them into the basic::datacache::DataMap
-	virtual
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 	/// @brief Load THE single ScoreFunction from a tag.
 	static

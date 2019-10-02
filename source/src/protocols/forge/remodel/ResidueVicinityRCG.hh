@@ -55,7 +55,7 @@ public:
 		core::Size desired_remodelres_in_vicinity
 	);
 
-	virtual ~ResidueVicinityInfo();
+	~ResidueVicinityInfo() override;
 
 	core::Size
 	old_seqpos() const {
@@ -178,7 +178,7 @@ public:
 		utility::vector1< ResidueVicinityInfoOP > const & rv_infos
 	);
 
-	virtual ~ResidueVicinityRCG();
+	~ResidueVicinityRCG() override;
 
 	void
 	generate_remodel_constraints( core::pose::Pose const & pose ) override;

@@ -49,25 +49,24 @@ public:
 
 	OccludedHbondSolEnergy_onebody( OccludedHbondSolEnergy_onebody const & src );
 
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
-	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual void setup_for_packing(pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
+	void setup_for_packing(pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
 
-	virtual void setup_for_derivatives( pose::Pose &pose, ScoreFunction const &  ) const;
+	void setup_for_derivatives( pose::Pose &pose, ScoreFunction const &  ) const override;
 
-	virtual void setup_for_minimizing(pose::Pose & pose, ScoreFunction const & , kinematics::MinimizerMapBase const &) const;
+	void setup_for_minimizing(pose::Pose & pose, ScoreFunction const & , kinematics::MinimizerMapBase const &) const override;
 
-	virtual void residue_energy(
+	void residue_energy(
 		conformation::Residue const & polar_rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual void indicate_required_context_graphs( utility::vector1< bool > &  ) const {};
+	void indicate_required_context_graphs( utility::vector1< bool > &  ) const override {};
 
 	// note intrares_energy *is* included, but just as part of residue_energy and not as a separate function
 	virtual bool defines_intrares_energy( EnergyMap const & ) const { return false; };
@@ -113,8 +112,7 @@ private:
 	DatabaseOccSolEne const & occ_hbond_sol_database_;
 
 	bool const verbose_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

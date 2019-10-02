@@ -35,7 +35,7 @@ class DeleteAllRotamerSetOperation : public RotamerSetOperation
 public:
 
 	RotamerSetOperationOP
-	clone() const;
+	clone() const override;
 
 	void
 	alter_rotamer_set(
@@ -44,7 +44,7 @@ public:
 		task::PackerTask const & ptask,
 		utility::graph::GraphCOP packer_neighbor_graph,
 		RotamerSet & rotamer_set
-	);
+	) override;
 };
 
 } //namespace rotamer_set

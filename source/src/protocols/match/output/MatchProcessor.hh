@@ -47,8 +47,7 @@ public:
 
 	MatchProcessor();
 
-	virtual
-	~MatchProcessor();
+	~MatchProcessor() override;
 
 	/// @brief Invoked by the Matcher before it begins feeding matches to the processor.
 	/// Base-class has a no-op implementation.

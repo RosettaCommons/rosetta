@@ -117,7 +117,7 @@ public:
 	RosettaThreadAssignmentInfo() = delete;
 	RosettaThreadAssignmentInfo( RosettaThreadRequestOriginatingLevel const ) {}
 	RosettaThreadAssignmentInfo( RosettaThreadAssignmentInfo const & ) = default;
-	~RosettaThreadAssignmentInfo() = default;
+	~RosettaThreadAssignmentInfo() override = default;
 };
 
 }

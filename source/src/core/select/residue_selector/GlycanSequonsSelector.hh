@@ -60,20 +60,19 @@ public:
 	/// @brief Clone operator.
 	/// @details Copy the current object (creating the copy on the heap) and return an owning pointer
 	/// to the copy.  All ResidueSelectors must implement this.
-	virtual ResidueSelectorOP clone() const;
+	ResidueSelectorOP clone() const override;
 
 	/// @brief XML parse.
 	/// @details Parse RosettaScripts tags and set up this mover.
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &
-	);
+	) override;
 
 	/// @brief Get the mover class name.
-	virtual
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	/// @brief Get the mover class name.
 	static std::string

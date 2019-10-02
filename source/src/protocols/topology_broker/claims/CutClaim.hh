@@ -67,13 +67,13 @@ public:
 		position_( position )
 	{}
 
-	virtual DofClaimOP clone() const { return utility::pointer::make_shared< CutClaim >( *this ); }
+	DofClaimOP clone() const override { return utility::pointer::make_shared< CutClaim >( *this ); }
 
 	std::pair< std::string, core::Size > get_position() const {
 		return position_;
 	}
 
-	virtual void show(std::ostream& os) const {
+	void show(std::ostream& os) const override {
 		TopologyClaimerCOP owner_op( owner() );
 		os << "DofClaim-" << str_type() << " owned by a " << (owner_op ? owner_op->type() : "(Unknown)") << "  at pos";
 		os << " ('" << position_.first << "'," << position_.second << ")";
@@ -83,7 +83,7 @@ public:
 		return false; //so far all CutClaims will be physical --> permanent cuts ... !permanent_;
 	}
 
-	virtual std::string str_type() const {
+	std::string str_type() const override {
 		return "CUT";
 	}
 

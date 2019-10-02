@@ -40,7 +40,7 @@ public:
 	RNA_DMS_LowResolutionPotential();
 
 	//destructor
-	~RNA_DMS_LowResolutionPotential();
+	~RNA_DMS_LowResolutionPotential() override;
 
 public:
 

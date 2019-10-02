@@ -36,7 +36,7 @@ public:
 	segment_file_generator();
 	segment_file_generator(segment_file_generator const & src);
 
-	virtual ~segment_file_generator();
+	~segment_file_generator() override;
 
 	segment_file_generatorOP
 	clone() const;

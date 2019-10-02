@@ -47,7 +47,7 @@ public:
 
 	SilentFilePoseInputter();
 
-	virtual ~SilentFilePoseInputter();
+	~SilentFilePoseInputter() override;
 
 	bool job_available_on_command_line() const override;
 

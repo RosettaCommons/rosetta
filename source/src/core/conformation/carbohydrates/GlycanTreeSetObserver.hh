@@ -53,7 +53,7 @@ public:
 
 	GlycanTreeSetObserver(GlycanTreeSetObserver const & src);
 
-	virtual ~GlycanTreeSetObserver();
+	~GlycanTreeSetObserver() override;
 
 	GlycanTreeSetObserverOP
 	clone() const;

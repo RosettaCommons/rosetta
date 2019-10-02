@@ -72,13 +72,12 @@ public:
 	// //if you want to use chain characters this is probably the best way, define the calculator separately
 	// RestrictToInterfaceVectorOperation( std::string const & calculator );
 
-	virtual ~RestrictToInterfaceVectorOperation();
+	~RestrictToInterfaceVectorOperation() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictToInterfaceVector"; }
 
@@ -96,7 +95,7 @@ public:
 	void vector_dist_cutoff(core::Real vector_dist_cutoff);
 	void include_all_water(bool include_all_water);
 	/// @brief parse_tag function for rosetta scripts
-	void parse_tag( TagCOP tag , DataMap & );
+	void parse_tag( TagCOP tag , DataMap & ) override;
 
 	/*
 	// Used to make the eventual inheritance frodm protocols::simple_task_operations::InterfaceTaskOperation easier.

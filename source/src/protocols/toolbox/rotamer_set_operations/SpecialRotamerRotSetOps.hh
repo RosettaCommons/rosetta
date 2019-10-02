@@ -46,13 +46,11 @@ public:
 
 	SpecialRotamerRSO( core::Size seqpos );
 	SpecialRotamerRSO( SpecialRotamerRSO const & src );
-	~SpecialRotamerRSO();
+	~SpecialRotamerRSO() override;
 
-	virtual
 	core::pack::rotamer_set::RotamerSetOperationOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
 	alter_rotamer_set(
 		core::pose::Pose const & pose,
@@ -60,7 +58,7 @@ public:
 		core::pack::task::PackerTask const & ptask,
 		utility::graph::GraphCOP packer_neighbor_graph,
 		core::pack::rotamer_set::RotamerSet & rotamer_set
-	);
+	) override;
 
 	virtual //virtual or not?
 	void

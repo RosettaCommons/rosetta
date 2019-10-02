@@ -35,7 +35,7 @@ namespace loops_definers {
 class LoopsDefinerCreator : public utility::pointer::ReferenceCount {
 public:
 	LoopsDefinerCreator() {}
-	virtual ~LoopsDefinerCreator() {}
+	~LoopsDefinerCreator() override {}
 
 	virtual LoopsDefinerOP create_loops_definer() const = 0;
 	virtual std::string type_name() const = 0;

@@ -71,10 +71,10 @@ public:
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.
-	virtual ResidueSelectorOP clone() const;
+	ResidueSelectorOP clone() const override;
 
 	/// @brief Destructor
-	virtual ~SSElementSelector();
+	~SSElementSelector() override;
 
 	/// @brief parses the secondary structure elements
 	utility::vector1<SSElement> parse_ss(core::pose::Pose const & pose) const;
@@ -89,17 +89,16 @@ public:
 	ResidueSubset combine_residue_selections(utility::vector1<Size> start_selection_residues, utility::vector1<Size>  end_selection_residues,core::pose::Pose const & pose) const;
 
 	/// @brief apply.
-	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
+	ResidueSubset apply( core::pose::Pose const & pose ) const override;
 
 	/// @brief tag parsing
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &
-	);
+	) override;
 
-	virtual
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

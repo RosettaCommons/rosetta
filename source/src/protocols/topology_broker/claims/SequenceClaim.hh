@@ -78,7 +78,7 @@ private:
 	typedef DofClaim Parent;
 
 public:
-	virtual DofClaimOP clone() const { return utility::pointer::make_shared< SequenceClaim >( *this ); }
+	DofClaimOP clone() const override { return utility::pointer::make_shared< SequenceClaim >( *this ); }
 
 	core::Size length() const {
 		return annotated_sequence_.length();
@@ -96,12 +96,12 @@ public:
 		return label_;
 	}
 
-	virtual void show( std::ostream& os ) const {
+	void show( std::ostream& os ) const override {
 		os << "SequenceClaim (" << label() << ", length="<<length()<<", priority="<<priority_<<") ";
 		Parent::show( os );
 	};
 
-	virtual std::string str_type() const {
+	std::string str_type() const override {
 		return "SEQUENCE";
 	}
 

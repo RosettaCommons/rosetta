@@ -53,7 +53,7 @@ public:
 	RNA_DMS_Potential();
 
 	//destructor
-	~RNA_DMS_Potential();
+	~RNA_DMS_Potential() override;
 
 public:
 

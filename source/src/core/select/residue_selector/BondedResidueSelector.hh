@@ -46,19 +46,18 @@ public:
 	BondedResidueSelector();
 	BondedResidueSelector( std::set<core::Size> const & input_set );
 	BondedResidueSelector ( BondedResidueSelector const & other );
-	virtual ~BondedResidueSelector();
+	~BondedResidueSelector() override;
 
-	virtual ResidueSelectorOP clone() const;
-	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
+	ResidueSelectorOP clone() const override;
+	ResidueSubset apply( core::pose::Pose const & pose ) const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datacache
-	);
+	) override;
 
-	virtual
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	static std::string class_name();
 

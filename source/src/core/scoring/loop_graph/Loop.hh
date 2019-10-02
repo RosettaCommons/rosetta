@@ -43,7 +43,7 @@ public:
 	// Undefined, commenting out to fix PyRosetta build  Loop();
 
 	//destructor
-	~Loop();
+	~Loop() override;
 
 	/// @brief copy constructor
 	Loop( Loop const & src );

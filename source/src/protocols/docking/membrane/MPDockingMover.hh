@@ -83,7 +83,7 @@ public:
 	MPDockingMover( MPDockingMover const & src );
 
 	/// @brief Destructor
-	virtual ~MPDockingMover();
+	~MPDockingMover() override;
 
 public: // methods
 

@@ -44,7 +44,7 @@ public:
 
 	/// @brief Destructor.
 	///
-	virtual ~AnnealableGraphBase();
+	~AnnealableGraphBase() override;
 
 	// Graph property accessors.
 

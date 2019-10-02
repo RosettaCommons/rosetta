@@ -54,7 +54,7 @@ public:
 		toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP geomcst_seqpos
 	);
 
-	~InvrotTreeRCG();
+	~InvrotTreeRCG() override;
 
 	void
 	parse_my_tag( TagCOP tag,

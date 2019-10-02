@@ -43,12 +43,12 @@ public:
 		protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters );
 
 	//destructor -- necessary?
-	~StepWiseProteinKIC_LoopBridger();
+	~StepWiseProteinKIC_LoopBridger() override;
 
 	/// @brief Apply the minimizer to one pose
-	virtual void apply( core::pose::Pose & pose_to_visualize );
+	void apply( core::pose::Pose & pose_to_visualize ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 
 	utility::vector1< utility::vector1< core::Real > > const & main_chain_torsion_set_lists() const;

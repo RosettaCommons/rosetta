@@ -50,20 +50,17 @@ public:
 	//MatchCollisionFilter( std::string filter_name );
 	MatchCollisionFilter( std::string filter_name, UpstreamHitCacherOP coordinate_cacher );
 
-	virtual
-	~MatchCollisionFilter();
+	~MatchCollisionFilter() override;
 
-	virtual
 	bool
 	passes_filter(
 		match const & m
-	) const = 0;
+	) const override = 0;
 
-	virtual
 	bool
 	passes_filter(
 		match_dspos1 const & m
-	) const = 0;
+	) const override = 0;
 
 	//setters
 	void set_filter_by_lj( bool setting );
@@ -129,22 +126,19 @@ public:
 	//UpstreamCollisionFilter( std::string filter_name );
 	UpstreamCollisionFilter( std::string filter_name, UpstreamHitCacherOP coordinate_cacher );
 
-	virtual
-	~UpstreamCollisionFilter();
+	~UpstreamCollisionFilter() override;
 
 	/// @brief Returns true if the given match does not contain too much residue-pair collision.
-	virtual
 	bool
 	passes_filter(
 		match const & m
-	) const;
+	) const override;
 
 	/// @brief Returns true if the given match does not contain too much residue-pair collision.
-	virtual
 	bool
 	passes_filter(
 		match_dspos1 const & m
-	) const;
+	) const override;
 
 	bool
 	passes_hardsphere_filter(

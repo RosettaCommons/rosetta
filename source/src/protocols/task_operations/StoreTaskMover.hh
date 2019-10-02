@@ -34,7 +34,7 @@ class StoreTaskMover : public protocols::moves::Mover {
 public:
 
 	StoreTaskMover();
-	~StoreTaskMover();
+	~StoreTaskMover() override;
 
 	void apply( core::pose::Pose & pose  ) override;
 	protocols::moves::MoverOP clone() const override;

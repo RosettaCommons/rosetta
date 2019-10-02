@@ -45,7 +45,7 @@ public:
 	HBP_MoveGenerator(HBP_MoveGenerator const & src);
 
 	/// @brief Destructor.
-	virtual ~HBP_MoveGenerator();
+	~HBP_MoveGenerator() override;
 
 	/// @brief Clone this object: that is, make a copy and return an owning pointer to the copy.
 	virtual HBP_MoveGeneratorOP clone() const = 0;

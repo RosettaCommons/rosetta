@@ -37,7 +37,7 @@ public:
 	//Copy constructor
 	InterfaceTaskOperation( InterfaceTaskOperation const & old_instance );
 
-	virtual ~InterfaceTaskOperation();
+	~InterfaceTaskOperation() override;
 
 	void set_movable_jumps( utility::vector1_int const & movable_jumps );
 	void add_movable_jump( int const additional_jump );

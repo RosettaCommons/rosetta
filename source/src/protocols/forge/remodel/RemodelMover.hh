@@ -106,8 +106,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	virtual
-	~RemodelMover();
+	~RemodelMover() override;
 
 
 private: // disallow assignment
@@ -553,7 +552,7 @@ private: // per-stage movers
 
 public: // parser
 
-	virtual void parse_my_tag( TagCOP tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, Pose const & ) override;
+	void parse_my_tag( TagCOP tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, Pose const & ) override;
 
 	std::string
 	get_name() const override;

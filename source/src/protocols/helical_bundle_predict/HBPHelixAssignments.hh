@@ -57,7 +57,7 @@ public:
 	HBPHelixParameters(HBPHelixParameters const & src);
 
 	/// @brief Destructor.
-	virtual ~HBPHelixParameters();
+	~HBPHelixParameters() override;
 
 	/// @brief Create a copy of this object and return an owning pointer to the copy.
 	HBPHelixParametersOP clone() const;
@@ -150,7 +150,7 @@ public:
 	HBPHelix(HBPHelix const & src);
 
 	/// @brief Destructor.
-	virtual ~HBPHelix();
+	~HBPHelix() override;
 
 	/// @brief Create a copy of this object and return an owning pointer to the copy.
 	HBPHelixOP clone() const;
@@ -267,7 +267,7 @@ public:
 	HBPHelixAssignments(HBPHelixAssignments const & src);
 
 	/// @brief Destructor.
-	virtual ~HBPHelixAssignments();
+	~HBPHelixAssignments() override;
 
 	/// @brief Create a copy of this object and return an owning pointer to the copy.
 	HBPHelixAssignmentsOP clone() const;

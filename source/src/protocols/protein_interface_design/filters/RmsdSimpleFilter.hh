@@ -53,7 +53,7 @@ public:
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	virtual ~RmsdSimpleFilter();
+	~RmsdSimpleFilter() override;
 
 	void
 	parse_my_tag( utility::tag::TagCOP tag,

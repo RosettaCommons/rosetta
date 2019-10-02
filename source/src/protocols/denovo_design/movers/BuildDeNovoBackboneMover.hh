@@ -65,7 +65,7 @@ public:
 	BuildDeNovoBackboneMover();
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~BuildDeNovoBackboneMover();
+	~BuildDeNovoBackboneMover() override;
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP

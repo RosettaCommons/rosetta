@@ -47,7 +47,7 @@ class RG_MinData:  public basic::datacache::CacheableData {
 public:
 	RG_MinData(): com(0.0,0.0,0.0), rg(0), nres_scored(0) {}
 
-	basic::datacache::CacheableDataOP clone() const {
+	basic::datacache::CacheableDataOP clone() const override {
 		return utility::pointer::make_shared< RG_MinData >(*this);
 	}
 
@@ -76,9 +76,8 @@ public:
 	RG_Energy_Fast( EnergyMethodCreatorOP CreatorOP );
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -89,7 +88,7 @@ public:
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 
 	core::Real
@@ -101,9 +100,9 @@ public:
 		utility::vector1< bool > const & relevant_residues) const;
 
 	// derivatives
-	virtual void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const;
+	void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const override;
 
-	virtual void
+	void
 	eval_atom_derivative(
 		id::AtomID const & id,
 		pose::Pose const & pose,
@@ -112,16 +111,15 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 	/// @brief function to get membrane protein TMH centers of mass
 	// Undefined, commenting out to fix PyRosetta build  utility::vector1<core::Size> get_tmh_CoMs(pose::Pose const& pose) const;

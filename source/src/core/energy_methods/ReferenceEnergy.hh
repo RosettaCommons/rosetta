@@ -52,11 +52,10 @@ public:
 	ReferenceEnergy( utility::vector1< Real > const & aa_weights_in, Real ordered_wat_penalty );
 
 
-	virtual ~ReferenceEnergy();
+	~ReferenceEnergy() override;
 
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	bool
 	is_d_aminoacid(
@@ -73,16 +72,15 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 
 	virtual
@@ -97,15 +95,13 @@ public:
 
 	/// @brief DunbrackEnergy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 
 private:
 	utility::vector1< Real > aa_weights_;
 	Real ordered_wat_penalty_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

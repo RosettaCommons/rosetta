@@ -33,16 +33,16 @@ public:
 	ScoreStructJSON( core::pose::Pose, std::string tag );
 
 	// Not implemented for this format
-	void fill_pose( core::pose::Pose & ) {}
-	void fill_pose( core::pose::Pose &, core::chemical::ResidueTypeSet const & ) {}
-	void print_conformation( std::ostream & ) const {}
-	Real get_debug_rmsd() { return 0; }
+	void fill_pose( core::pose::Pose & ) override {}
+	void fill_pose( core::pose::Pose &, core::chemical::ResidueTypeSet const & ) override {}
+	void print_conformation( std::ostream & ) const override {}
+	Real get_debug_rmsd() override { return 0; }
 
 	void print_header(
 		std::ostream& /* out */,
 		std::map < std::string, core::Real > const & /* score_map */,
 		std::map < std::string, std::string > const & /* string_map */,
-		bool /* print_sequence */ ) const
+		bool /* print_sequence */ ) const override
 	{
 		// No header in JSON
 	}
@@ -50,7 +50,7 @@ public:
 	void print_scores(
 		std::ostream& out,
 		std::map < std::string, core::Real > const & score_map,
-		std::map < std::string, std::string > const & string_map = ( std::map < std::string, std::string > () ) ) const;
+		std::map < std::string, std::string > const & string_map = ( std::map < std::string, std::string > () ) ) const override;
 
 }; // class ScoreStructJSON
 

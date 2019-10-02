@@ -53,18 +53,18 @@ public:
 		protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options );
 
 	//destructor
-	~StepWiseMasterMover();
+	~StepWiseMasterMover() override;
 
 public:
 
 	using Mover::apply;
-	virtual void apply( Pose & );
+	void apply( Pose & ) override;
 
-	virtual std::string get_name() const { return "StepWiseMasterMover"; }
+	std::string get_name() const override { return "StepWiseMasterMover"; }
 
 	StepWiseMasterMover( StepWiseMasterMover const & src );
 
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	void
 	apply( core::pose::Pose & pose,

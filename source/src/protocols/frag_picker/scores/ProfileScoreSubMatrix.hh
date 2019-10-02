@@ -36,13 +36,13 @@ class ProfileScoreSubMatrix: public CachingScoringMethod {
 public:
 
 	ProfileScoreSubMatrix(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,              std::string sequence,core::Size longest_vall_chunk,std::string subMatrixFile);
-	~ProfileScoreSubMatrix();
+	~ProfileScoreSubMatrix() override;
 
-	void do_caching(VallChunkOP);
-	void clean_up() {
+	void do_caching(VallChunkOP) override;
+	void clean_up() override {
 	}
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
-	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
 	// Undefinede, commenting out to fix PyRosetta build  bool describe_score(FragmentCandidateOP, FragmentScoreMapOP, std::ostream&);
 protected:
 	Matrix scores_;
@@ -63,7 +63,7 @@ public:
 		MakeFragmentScoringMethod("ProfileScoreSubMatrix") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 
 } // scores

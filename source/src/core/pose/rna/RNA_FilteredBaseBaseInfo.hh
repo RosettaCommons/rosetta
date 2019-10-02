@@ -58,7 +58,7 @@ public:
 	RNA_FilteredBaseBaseInfo( RNA_FilteredBaseBaseInfo const & src );
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return utility::pointer::make_shared< RNA_FilteredBaseBaseInfo >( *this );
 	}

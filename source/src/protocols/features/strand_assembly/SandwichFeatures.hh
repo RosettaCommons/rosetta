@@ -55,7 +55,7 @@ class SandwichFeatures : public protocols::features::FeaturesReporter
 public:
 
 	SandwichFeatures();
-	~SandwichFeatures();
+	~SandwichFeatures() override;
 
 
 	/// @brief generate the table schemas and write them to the database
@@ -76,7 +76,6 @@ public:
 	features_reporter_dependencies() const override;
 
 	/// @brief collect all the feature data for the pose
-	virtual
 	Size
 	report_features(
 		core::pose::Pose const & pose, //core::pose::Pose & pose, // dropped 'const' for dssp info addition

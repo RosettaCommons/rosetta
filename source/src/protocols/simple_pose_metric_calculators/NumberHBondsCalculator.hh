@@ -50,11 +50,11 @@ public:
 
 	NumberHBondsCalculator();
 	NumberHBondsCalculator( bool const generous, std::set< core::Size > special_region=std::set< core::Size >() );
-	~NumberHBondsCalculator();
+	~NumberHBondsCalculator() override;
 
 	//core::pose::metrics::PoseMetricCalculatorOP clone() const;
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const {
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override {
 		return utility::pointer::make_shared< NumberHBondsCalculator >( use_generous_hbonds_, special_region_ ); };
 
 	static core::Real
@@ -71,9 +71,9 @@ public:
 
 protected:
 
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	virtual std::string print( std::string const & key ) const;
-	virtual void recompute( core::pose::Pose const & this_pose );
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override;
+	std::string print( std::string const & key ) const override;
+	void recompute( core::pose::Pose const & this_pose ) override;
 
 	void
 	determine_res_to_recompute(

@@ -34,7 +34,7 @@ public:
 	LigandResidue();
 	LigandResidue(LigandResidue const & src);
 
-	virtual ~LigandResidue();
+	~LigandResidue() override;
 
 	LigandResidueOP
 	clone() const;

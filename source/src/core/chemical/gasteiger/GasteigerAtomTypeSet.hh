@@ -62,7 +62,7 @@ public:
 
 	GasteigerAtomTypeSet( ElementSetCAP element_set, std::string const & name = "" );
 	GasteigerAtomTypeSet( GasteigerAtomTypeSet const & other );
-	virtual ~GasteigerAtomTypeSet();
+	~GasteigerAtomTypeSet() override;
 
 	/// @brief What does the ChemicalManger call this TypeSet?
 	std::string const & name() const { return name_; }

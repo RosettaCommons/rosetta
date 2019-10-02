@@ -47,7 +47,7 @@ public:
 	EnergyBasedClusteringOptions( bool const initialize_from_options=true );
 
 	/// @brief Destructor.
-	virtual ~EnergyBasedClusteringOptions();
+	~EnergyBasedClusteringOptions() override;
 
 	EnergyBasedClusteringOptionsOP
 	clone() const;

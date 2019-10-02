@@ -51,7 +51,7 @@ public:
 		Size const default_domain );
 
 	//destructor
-	~CopyDofs();
+	~CopyDofs() override;
 
 public:
 

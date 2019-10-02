@@ -90,7 +90,7 @@ public: //Constructors and destructors:
 
 	/// @brief Default destructor for BinTransitionData
 	///
-	~BinTransitionData();
+	~BinTransitionData() override;
 
 	/// @brief Clone operation for BinTransitionData.
 	/// @details Returns an owning pointer to a copy of this object.

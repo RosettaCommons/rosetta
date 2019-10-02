@@ -46,9 +46,8 @@ public:
 
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -56,22 +55,20 @@ public:
 
 
 	/// @brief  All the work happens here
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const & scorefxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	/// @brief  No graphs required.
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const {};
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {};
 
 	///
 	Size
-	version() const;
+	version() const override;
 
 
 	/////////////////////////////////////////////////////////////////////////////

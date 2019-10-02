@@ -42,7 +42,7 @@ private:
 public:
 	/// @brief default ctor
 	FilterScanFilter();
-	virtual ~FilterScanFilter();
+	~FilterScanFilter() override;
 
 	/// @brief Constructor with a single target residue
 	bool apply( core::pose::Pose const & pose ) const override;

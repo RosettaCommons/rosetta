@@ -55,7 +55,7 @@ public:
 	RamaCheckBase & operator=( RamaCheckBase const & object_to_copy );
 
 	// destructor
-	virtual ~RamaCheckBase();
+	~RamaCheckBase() override;
 
 	/// @brief  Generate a string representation of RamaCheck for debugging purposes.
 	virtual void show( std::ostream & output=std::cout ) const;
@@ -180,24 +180,24 @@ public:
 	RamaCheck1B & operator=( RamaCheck1B const & object_to_copy );
 
 	// destructor
-	virtual ~RamaCheck1B();
+	~RamaCheck1B() override;
 
 	/// @brief Return "RamaCheck1B"
-	virtual std::string name() const;
+	std::string name() const override;
 
 	/// @brief Return a pointer to a new, fully configured copy of RamaCheck1B
-	virtual RamaCheckBaseOP
-	clone() const;
+	RamaCheckBaseOP
+	clone() const override;
 
 	/// @brief Compute the Ramachandran score of residue <seqpos> in <pose> with a hypothetical conformation <phi>, <psi>.
 	/// The score is independent of the identity of the neighboring residues.
-	virtual core::Real
+	core::Real
 	compute_rama_score(
 		core::pose::Pose const & pose,
 		core::uint const seqpos,
 		core::Real const phi,
 		core::Real const psi
-	) const;
+	) const override;
 
 private: //methods
 	// Copy all data members from <from> to <to>.
@@ -220,24 +220,24 @@ public:
 	RamaCheck2B & operator=( RamaCheck2B const & object_to_copy );
 
 	// destructor
-	virtual ~RamaCheck2B();
+	~RamaCheck2B() override;
 
 	/// @brief Return "RamaCheck2B"
-	virtual std::string name() const;
+	std::string name() const override;
 
 	/// @brief Return a pointer to a new, fully configured copy of RamaCheck2B
-	virtual RamaCheckBaseOP
-	clone() const;
+	RamaCheckBaseOP
+	clone() const override;
 
 	/// @brief Compute the Ramachandran score of residue <seqpos> in <pose> with a hypothetical conformation <phi>, <psi>.
 	/// The score depends on the identity of the neighboring residues.
-	virtual core::Real
+	core::Real
 	compute_rama_score(
 		core::pose::Pose const & pose,
 		core::uint const seqpos,
 		core::Real const phi,
 		core::Real const psi
-	) const;
+	) const override;
 
 private: // methods
 	// Copy all data members from <from> to <to>.

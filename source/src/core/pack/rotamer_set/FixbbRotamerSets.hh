@@ -53,7 +53,7 @@ public:
 
 public:
 	FixbbRotamerSets();
-	virtual ~FixbbRotamerSets();
+	~FixbbRotamerSets() override;
 
 	virtual
 	RotamerSetCOP
@@ -85,9 +85,8 @@ public:
 	utility::vector1< uint > const &
 	moltenres_2_resid_vector() const = 0;
 
-	virtual
 	void
-	show( std::ostream & out ) const = 0;
+	show( std::ostream & out ) const override = 0;
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

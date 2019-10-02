@@ -54,7 +54,7 @@ public:
 	MPFastRelaxMover( core::scoring::ScoreFunctionOP sfxn );
 
 	/// @brief Destructor
-	virtual ~MPFastRelaxMover();
+	~MPFastRelaxMover() override;
 
 	/// @brief Create a custom foldtree anchored at the COM
 	/// @details Generate a foldtree where the membrane residue

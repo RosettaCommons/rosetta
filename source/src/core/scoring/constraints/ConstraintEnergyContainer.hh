@@ -52,27 +52,27 @@ public:
 
 	CstResNeighbIterator( Size focused_node, EdgeListIter edge_iter);
 
-	virtual ~CstResNeighbIterator();
+	~CstResNeighbIterator() override;
 
-	virtual ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & );
-	virtual ResidueNeighborIterator const & operator ++ ();
-	virtual bool operator == ( ResidueNeighborIterator const & ) const;
-	virtual bool operator != ( ResidueNeighborIterator const & ) const;
+	ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & ) override;
+	ResidueNeighborIterator const & operator ++ () override;
+	bool operator == ( ResidueNeighborIterator const & ) const override;
+	bool operator != ( ResidueNeighborIterator const & ) const override;
 
-	virtual Size upper_neighbor_id() const;
-	virtual Size lower_neighbor_id() const;
+	Size upper_neighbor_id() const override;
+	Size lower_neighbor_id() const override;
 
-	virtual Size residue_iterated_on() const;
-	virtual Size neighbor_id() const;
+	Size residue_iterated_on() const override;
+	Size neighbor_id() const override;
 
-	virtual void save_energy( EnergyMap const & );
-	virtual void retrieve_energy( EnergyMap & ) const;
-	virtual void accumulate_energy( EnergyMap & ) const;
+	void save_energy( EnergyMap const & ) override;
+	void retrieve_energy( EnergyMap & ) const override;
+	void accumulate_energy( EnergyMap & ) const override;
 
-	virtual void mark_energy_computed();
-	virtual void mark_energy_uncomputed();
+	void mark_energy_computed() override;
+	void mark_energy_uncomputed() override;
 
-	virtual bool energy_computed() const;
+	bool energy_computed() const override;
 protected:
 
 	static ConstraintEdge * downcast_cstedge( utility::graph::Edge * );
@@ -91,23 +91,23 @@ public:
 public:
 	CstResNeighbConstIterator( Size focused_node, EdgeListConstIter edge_iter);
 
-	virtual ~CstResNeighbConstIterator();
+	~CstResNeighbConstIterator() override;
 
-	virtual ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & );
-	virtual ResidueNeighborConstIterator const & operator ++ ();
-	virtual bool operator == ( ResidueNeighborConstIterator const & ) const;
-	virtual bool operator != ( ResidueNeighborConstIterator const & ) const;
+	ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & ) override;
+	ResidueNeighborConstIterator const & operator ++ () override;
+	bool operator == ( ResidueNeighborConstIterator const & ) const override;
+	bool operator != ( ResidueNeighborConstIterator const & ) const override;
 
-	virtual Size upper_neighbor_id() const;
-	virtual Size lower_neighbor_id() const;
+	Size upper_neighbor_id() const override;
+	Size lower_neighbor_id() const override;
 
-	virtual Size residue_iterated_on() const;
-	virtual Size neighbor_id() const;
+	Size residue_iterated_on() const override;
+	Size neighbor_id() const override;
 
-	virtual void retrieve_energy( EnergyMap & ) const;
-	virtual void accumulate_energy( EnergyMap & ) const;
+	void retrieve_energy( EnergyMap & ) const override;
+	void accumulate_energy( EnergyMap & ) const override;
 
-	virtual bool energy_computed() const;
+	bool energy_computed() const override;
 
 protected:
 	static ConstraintEdge const * downcast_cstedge( utility::graph::Edge const * );
@@ -125,58 +125,44 @@ public:
 
 	CstEnergyContainer( pose::Pose const & );
 
-	virtual
-	~CstEnergyContainer();
+	~CstEnergyContainer() override;
 
-	virtual
-	bool empty() const;
+	bool empty() const override;
 
-	virtual
-	LREnergyContainerOP clone() const;
+	LREnergyContainerOP clone() const override;
 
-	virtual
 	void
-	set_num_nodes( Size );
+	set_num_nodes( Size ) override;
 
-	virtual
 	bool
-	any_neighbors_for_residue( int resid ) const;
+	any_neighbors_for_residue( int resid ) const override;
 
-	virtual
 	bool
-	any_upper_neighbors_for_residue( int resid ) const;
+	any_upper_neighbors_for_residue( int resid ) const override;
 
-	virtual
 	ResidueNeighborConstIteratorOP
-	const_neighbor_iterator_begin( int resid ) const;
+	const_neighbor_iterator_begin( int resid ) const override;
 
-	virtual
 	ResidueNeighborConstIteratorOP
-	const_neighbor_iterator_end( int resid ) const;
+	const_neighbor_iterator_end( int resid ) const override;
 
-	virtual
 	ResidueNeighborConstIteratorOP
-	const_upper_neighbor_iterator_begin( int resid ) const;
+	const_upper_neighbor_iterator_begin( int resid ) const override;
 
-	virtual
 	ResidueNeighborConstIteratorOP
-	const_upper_neighbor_iterator_end( int resid ) const;
+	const_upper_neighbor_iterator_end( int resid ) const override;
 
-	virtual
 	ResidueNeighborIteratorOP
-	neighbor_iterator_begin( int resid );
+	neighbor_iterator_begin( int resid ) override;
 
-	virtual
 	ResidueNeighborIteratorOP
-	neighbor_iterator_end( int resid );
+	neighbor_iterator_end( int resid ) override;
 
-	virtual
 	ResidueNeighborIteratorOP
-	upper_neighbor_iterator_begin( int resid );
+	upper_neighbor_iterator_begin( int resid ) override;
 
-	virtual
 	ResidueNeighborIteratorOP
-	upper_neighbor_iterator_end( int resid );
+	upper_neighbor_iterator_end( int resid ) override;
 
 	/// Does the constraint graph that this CEC defines match up with the constraint set stored
 	/// in the pose?

@@ -50,19 +50,19 @@ public:
 	{}
 
 	/// @brief returns a clone of this GaussianFunc
-	FuncOP clone() const { return utility::pointer::make_shared< GaussianFunc >( *this ); }
+	FuncOP clone() const override { return utility::pointer::make_shared< GaussianFunc >( *this ); }
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
 	/// @brief Returns the value of this GaussianFunc evaluated at distance x.
-	Real func( Real const x ) const;
+	Real func( Real const x ) const override;
 
 	/// @brief Returns the value of the first derivative of this GaussianFunc at distance x.
-	Real dfunc( Real const x ) const;
+	Real dfunc( Real const x ) const override;
 
 	/// @brief show the definitio of this GaussianFunc to the specified output stream.
-	virtual void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
 	/// @brief Calls show( out ) on this GaussianFunc.
 	friend std::ostream& operator<<(std::ostream& out, const GaussianFunc& f ) {
@@ -81,7 +81,7 @@ public:
 	* - mean 19.396
 	* - sd 7.643
 	*/
-	void read_data( std::istream& in );
+	void read_data( std::istream& in ) override;
 
 private:
 	Real mean_;

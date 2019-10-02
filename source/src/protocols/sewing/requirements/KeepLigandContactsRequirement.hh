@@ -38,7 +38,7 @@ public:
 	KeepLigandContactsRequirement();
 	KeepLigandContactsRequirement(KeepLigandContactsRequirement const & src);
 
-	virtual ~KeepLigandContactsRequirement() override;
+	~KeepLigandContactsRequirement() override;
 
 	KeepLigandContactsRequirementOP
 	clone() const;

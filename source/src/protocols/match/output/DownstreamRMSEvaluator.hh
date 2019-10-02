@@ -53,7 +53,7 @@ public:
 	typedef core::id::AtomID AtomID;
 public:
 	DownstreamRMSEvaluator();
-	virtual ~DownstreamRMSEvaluator();
+	~DownstreamRMSEvaluator() override;
 
 	void
 	set_downstream_pose( core::pose::PoseCOP dspose );
@@ -67,15 +67,13 @@ public:
 		downstream::DownstreamBuilderCOP ds_builder
 	);
 
-	virtual
 	Real
-	score( match const & m ) const;
+	score( match const & m ) const override;
 
 	/// @brief Causes a graceful exit.  The DownstreamRMSEvaluator is incompatible with
 	/// the match_dspos1 match definition!
-	virtual
 	Real
-	score( match_dspos1 const & m ) const;
+	score( match_dspos1 const & m ) const override;
 
 private:
 	core::pose::PoseCOP dspose_;

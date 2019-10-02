@@ -62,16 +62,16 @@ public:
 	ClashBasedRepackShell( ClashBasedRepackShell const & ) = default;
 
 	/// @brief Default destructor.
-	virtual ~ClashBasedRepackShell() = default;
+	~ClashBasedRepackShell() override = default;
 
 	/// @brief Return a shallow copy of this object.
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 	/// @brief apply operations to PackerTask
-	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	void apply( Pose const & pose, PackerTask & task ) const override;
 
 	/// @brief Initialize from an XML tag.
-	void parse_tag( utility::tag::TagCOP, basic::datacache::DataMap & );
+	void parse_tag( utility::tag::TagCOP, basic::datacache::DataMap & ) override;
 
 	/// @brief Define the expected XML options.
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

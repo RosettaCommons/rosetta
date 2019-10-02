@@ -35,7 +35,7 @@ public:
 	//ShearMoverBenchmark(std::string name) : PerformanceBenchmark(name), shear_mover(300., 100) {};
 	ShearMoverBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
-	virtual void setUp() {
+	void setUp() override {
 		using namespace core;
 		pose = utility::pointer::make_shared< pose::Pose >();
 		core::import_pose::pose_from_file(*pose, "test_in.pdb", core::import_pose::PDB_file);
@@ -56,7 +56,7 @@ public:
 		shear_mover.apply(*pose);
 	};
 
-	virtual void run(core::Real scaleFactor) {
+	void run(core::Real scaleFactor) override {
 		//protocols::simple_moves::ShearMover shear_mover(movemap, 300., 100);
 		core::Size reps( (core::Size)(5*scaleFactor) ); // amw 500 to 50
 		if ( reps == 0 ) { reps = 1; } // Do at least one rep, regardless of scaling factor.
@@ -65,7 +65,7 @@ public:
 		}
 	};
 
-	virtual void tearDown() {
+	void tearDown() override {
 		pose.reset();
 		movemap.reset();
 	}

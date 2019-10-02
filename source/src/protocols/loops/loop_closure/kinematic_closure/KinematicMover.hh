@@ -63,9 +63,9 @@ public:
 public:
 
 	KinematicMover();
-	~KinematicMover();
+	~KinematicMover() override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void set_vary_bondangles( bool vary );
 	bool get_vary_bondangles();
@@ -121,7 +121,7 @@ public:
 	virtual void set_do_sfxn_eval_every_iteration( bool do_sfxn_eval );
 	virtual bool get_hardsphere_bump_check();
 	virtual void set_pivots( Size start_res, Size middle_res, Size end_res );
-	virtual void apply( core::pose::Pose & );
+	void apply( core::pose::Pose & ) override;
 	virtual void set_idealize_loop_first( bool idealize );
 	virtual bool get_idealize_loop_first();
 	void set_temperature(core::Real temp_in);

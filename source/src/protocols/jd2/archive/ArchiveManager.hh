@@ -245,7 +245,7 @@ class ArchiveManager : public BaseArchiveManager {
 public:
 	/// @brief ctor is protected; singleton pattern
 	ArchiveManager( core::Size archive_rank, core::Size jd_master_rank, core::Size file_buf_rank );
-	virtual ~ArchiveManager() {}; //virtual destructor because we have virtual functions
+	~ArchiveManager() override {}; //virtual destructor because we have virtual functions
 
 
 public:
@@ -260,8 +260,8 @@ public:
 
 	core::Size unfinished_batches() const;
 
-	void save_archive();
-	virtual bool restore_archive();
+	void save_archive() override;
+	bool restore_archive() override;
 
 protected:
 	/// @brief triggered in slave if new batch_ID comes in.
@@ -273,8 +273,8 @@ protected:
 	void idle();
 
 	void jobs_completed();// core::Size batch_id, bool final, core::Size bad );
-	void queue_batch( Batch const& batch );
-	void cancel_batch( Batch& batch, bool allow_reading_of_decoys = true );
+	void queue_batch( Batch const& batch ) override;
+	void cancel_batch( Batch& batch, bool allow_reading_of_decoys = true ) override;
 	void read_existing_batches();
 	void register_batch( Batch new_batch );
 	void send_stop_to_jobdistributor();
@@ -282,7 +282,7 @@ protected:
 
 	friend class JobDistributorFactory; //ctor access
 
-	virtual void unlock_file( Batch const& batch, bool final );
+	void unlock_file( Batch const& batch, bool final ) override;
 private:
 
 

@@ -50,25 +50,25 @@ public:
 		bool const is_TNA_ = false
 	);
 
-	~RNA_KinematicCloser();
+	~RNA_KinematicCloser() override;
 
 	/// @brief Class name
-	std::string get_name() const { return "RNA_KinematicCloser"; }
+	std::string get_name() const override { return "RNA_KinematicCloser"; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RNA_KINEMATIC_CLOSER; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::RNA_KINEMATIC_CLOSER; }
 
 	/// @brief Initialization
-	void init();
+	void init() override;
 	void init( const Pose & pose_current, const Pose & pose_closed, bool use_pose_closed = true );
 
 	using StepWiseSamplerSized::apply;
 
 	/// @brief Apply the i-th rotamer to pose
-	virtual void apply( core::pose::Pose & pose, core::Size const id );
+	void apply( core::pose::Pose & pose, core::Size const id ) override;
 
 	/// @brief Get the total number of rotamers in sampler
-	core::Size size() const { return nsol_; }
+	core::Size size() const override { return nsol_; }
 
 	/// @brief Set verbose
 	void set_verbose( bool const setting ) { verbose_ = setting; }

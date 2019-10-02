@@ -36,13 +36,12 @@ public:
 		pose::Pose const & pose );
 
 	//destructor
-	~GaussianChainFuncPotentialEvaluator();
+	~GaussianChainFuncPotentialEvaluator() override;
 
 public:
 
-	virtual
 	void
-	get_f1_f2( Vector & f1, Vector & f2, bool const takeoff ) const;
+	get_f1_f2( Vector & f1, Vector & f2, bool const takeoff ) const override;
 
 private:
 

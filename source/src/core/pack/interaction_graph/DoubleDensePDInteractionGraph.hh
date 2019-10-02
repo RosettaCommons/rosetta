@@ -46,7 +46,7 @@ class DoubleDensePDNode : public PrecomputedPairEnergiesNode
 {
 public:
 	DoubleDensePDNode(InteractionGraphBase * owner, int node_id, int num_states);
-	virtual ~DoubleDensePDNode();
+	~DoubleDensePDNode() override;
 	void print() const override;
 
 	void update_one_body_energy( int state, core::PackerEnergy energy ) override;
@@ -137,7 +137,7 @@ class DoubleDensePDEdge : public PrecomputedPairEnergiesEdge
 {
 public:
 	DoubleDensePDEdge(InteractionGraphBase* owner, int first_node_ind, int second_node_ind);
-	virtual ~DoubleDensePDEdge();
+	~DoubleDensePDEdge() override;
 	void set_sparse_aa_info(ObjexxFCL::FArray2_bool const & ) override {}
 	bool get_sparse_aa_info( int, int) const override {return true;} //"all amino acids are neighbors"
 	void add_to_two_body_energy(int const, int const, core::PackerEnergy const) override;
@@ -212,50 +212,50 @@ class DoubleDensePDInteractionGraph : public PrecomputedPairEnergiesInteractionG
 {
 public:
 	DoubleDensePDInteractionGraph(int num_nodes);
-	virtual void initialize( pack_basic::RotamerSetsBase const & rot_sets );
+	void initialize( pack_basic::RotamerSetsBase const & rot_sets ) override;
 
-	virtual core::PackerEnergy get_one_body_energy_for_node_state( int node, int state);
+	core::PackerEnergy get_one_body_energy_for_node_state( int node, int state) override;
 
 	//virtual void set_num_aatypes(int) {}
-	virtual int  get_num_aatypes() const {return 1;}
+	int  get_num_aatypes() const override {return 1;}
 
-	virtual void blanket_assign_state_0();
-	virtual core::PackerEnergy set_state_for_node(int node_ind, int new_state);
-	virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states);
-	virtual void consider_substitution
+	void blanket_assign_state_0() override;
+	core::PackerEnergy set_state_for_node(int node_ind, int new_state) override;
+	core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states) override;
+	void consider_substitution
 	(
 		int node_ind,
 		int new_state,
 		core::PackerEnergy & delta_energy,
 		core::PackerEnergy & prev_energy_for_node
-	);
+	) override;
 
 	/// @brief Accepts (commits) the state change previously considered in a call to
 	/// consider_substitution and returns the energy of the entire graph
-	virtual core::PackerEnergy commit_considered_substitution();
+	core::PackerEnergy commit_considered_substitution() override;
 
 	/// @brief removes all accumulated numerical drift and returns the
 	/// energy for the current state assignment.
-	virtual core::PackerEnergy get_energy_current_state_assignment();
+	core::PackerEnergy get_energy_current_state_assignment() override;
 	/// @brief returns the number of floats used in all edge two-body energy tables
-	virtual int get_edge_memory_usage() const;
+	int get_edge_memory_usage() const override;
 
 	/// @brief outputs the current state for each node, useful for debugging
-	virtual void print_current_state_assignment() const;
-	virtual void set_errorfull_deltaE_threshold( core::PackerEnergy ) {};
+	void print_current_state_assignment() const override;
+	void set_errorfull_deltaE_threshold( core::PackerEnergy ) override {};
 
 	/// @brief a user may define subsets of the vertex set for which they would like to
 	/// know the internal energy sum.
-	virtual core::PackerEnergy get_energy_sum_for_vertex_group( int group_id );
+	core::PackerEnergy get_energy_sum_for_vertex_group( int group_id ) override;
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 protected:
 	//virtual unsigned int getMemoryUsageInBytes() const;
 
-	virtual NodeBase* create_new_node( int node_index, int num_states);
-	virtual EdgeBase* create_new_edge( int index1, int index2);
+	NodeBase* create_new_node( int node_index, int num_states) override;
+	EdgeBase* create_new_edge( int index1, int index2) override;
 
 	/// @brief removes numerical drift that can accumulate over the course of
 	/// many state assignment changes within simulated annealing

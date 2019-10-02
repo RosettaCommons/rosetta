@@ -48,7 +48,7 @@ public:
 
 	RemoveRemodelCsts( protocols::forge::remodel::RemodelConstraintGeneratorOP generator );
 
-	virtual ~RemoveRemodelCsts();
+	~RemoveRemodelCsts() override;
 
 	/// @brief this function looks up the constraints created by the object with the given generator and removes them
 	void

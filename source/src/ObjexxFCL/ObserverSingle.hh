@@ -54,8 +54,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~ObserverSingle()
+	~ObserverSingle() override
 	{
 		notify_destructed();
 	}
@@ -79,7 +78,7 @@ public: // Subject Inspector
 	/// @brief Insert an Observer
 	inline
 	void
-	insert_observer( Observer & observer ) const
+	insert_observer( Observer & observer ) const override
 	{
 		assert( acyclic( observer ) );
 		assert( ( ! observer_p_ ) || ( observer_p_ == &observer ) );
@@ -90,7 +89,7 @@ public: // Subject Inspector
 	/// @brief Remove an Observer
 	inline
 	void
-	remove_observer( Observer & observer ) const
+	remove_observer( Observer & observer ) const override
 	{
 		if ( observer_p_ == &observer ) observer_p_ = 0;
 	}
@@ -99,7 +98,7 @@ public: // Subject Inspector
 	/// @brief Has At Least One Observer?
 	inline
 	bool
-	has_observer() const
+	has_observer() const override
 	{
 		return observer_p_;
 	}

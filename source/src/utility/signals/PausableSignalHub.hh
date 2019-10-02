@@ -77,8 +77,7 @@ public: // construct/destruct
 
 	/// @brief default destructor
 	inline
-	virtual
-	~PausableSignalHub() = default;
+	~PausableSignalHub() override = default;
 
 
 private: // disallow copy construction and assignment
@@ -123,8 +122,7 @@ protected: // methods
 	/// @details user presses enter to continue
 	/// @return true if successful, false otherwise
 	inline
-	virtual
-	void after_send() {
+	void after_send() override {
 #ifndef BOINC
 		if ( pausing_ ) {
 			char hold;

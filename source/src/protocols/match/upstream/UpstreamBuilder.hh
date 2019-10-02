@@ -46,7 +46,7 @@ public:
 	typedef core::Vector Vector;
 
 public:
-	virtual ~UpstreamBuilder();
+	~UpstreamBuilder() override;
 
 	virtual
 	UpstreamBuilderOP
@@ -129,7 +129,7 @@ private:
 class UpstreamResidueProcessor : public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~UpstreamResidueProcessor();
+	~UpstreamResidueProcessor() override;
 
 	virtual
 	void

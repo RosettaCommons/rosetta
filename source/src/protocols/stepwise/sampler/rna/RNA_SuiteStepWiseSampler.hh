@@ -44,7 +44,7 @@ public:
 	);
 
 	/// @brief Initialization wrapper
-	void init();
+	void init() override;
 
 	/// @brief Initialization for standard modeler
 	void init_standard();
@@ -95,10 +95,10 @@ public:
 	}
 
 	/// @brief Name of the class
-	std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RNA_SUITE; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::RNA_SUITE; }
 
 private:
 	TorsionList fast_sample_torsions_from_info(

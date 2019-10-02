@@ -46,11 +46,11 @@ public:
 		core::scoring::ScoreFunctionCOP scorefxn );
 
 	//destructor
-	~PhosphateMover();
+	~PhosphateMover() override;
 
-	virtual void apply( core::pose::Pose & pose_to_visualize );
+	void apply( core::pose::Pose & pose_to_visualize ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 public:
 

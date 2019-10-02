@@ -59,11 +59,10 @@ public:
 
 public:
 	ClassicMatchAlgorithm( Size geom_cst_id );
-	virtual ~ClassicMatchAlgorithm();
+	~ClassicMatchAlgorithm() override;
 
-	virtual
 	DownstreamAlgorithmOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Enable a strategy where the first round hits are discarded after they are generated
 	/// and then, after the second round completes, they are regenerated but respecting the occ-space
@@ -76,11 +75,10 @@ public:
 	void
 	set_build_round1_hits_twice();
 
-	virtual
 	std::list< Hit >
 	build_hits_at_all_positions(
 		Matcher & matcher
-	);
+	) override;
 
 	std::list< Hit >
 	build_and_discard_first_round_hits_at_all_positions(
@@ -89,50 +87,43 @@ public:
 
 	/// @brief Reset the occupied space grid for the matcher so that only those
 	/// regions which contain hits from this geometric constraint are marked as occupied.
-	virtual
 	void
-	respond_to_primary_hitlist_change( Matcher & matcher, Size round_just_completed );
+	respond_to_primary_hitlist_change( Matcher & matcher, Size round_just_completed ) override;
 
 	/// @brief Delete hits for this geometric constraint if they fall into
 	/// now-empty regions of 6D.  This step can be avoided if the occupied-space-grid's
 	/// revision ID has not changed since the last time this function was invoked.
-	virtual
 	void
-	respond_to_peripheral_hitlist_change( Matcher & matcher );
+	respond_to_peripheral_hitlist_change( Matcher & matcher ) override;
 
 	/// @brief Iterate across the external geom samplers that describe the rigid body orientations
 	/// of the downstream partner from the coordinates of the upstream partner.
-	virtual
 	std::list< Hit >
 	build(
 		Size const scaffold_build_point_id,
 		Size const upstream_conf_id,
 		core::conformation::Residue const & upstream_residue
-	) const;
+	) const override;
 
 	/// @brief This method returns 'false' since the classic match algorithm
 	/// builds coordinates of the downstream partner and its hits should
 	/// be hashed in 6D to generate matches
-	virtual
 	bool
-	upstream_only() const;
+	upstream_only() const override;
 
 	/// @brief This method returns 'true' since the classic matcher builds the
 	/// downstream coordinates from scratch.
-	virtual
 	bool
-	generates_primary_hits() const;
+	generates_primary_hits() const override;
 
 
 	/// @brief This method should not be invoked on the ClassicMatchAlgorithm,
 	/// since it returns "false" in its upstream_only method.
-	virtual
 	HitPtrListCOP
-	hits_to_include_with_partial_match( match_dspos1 const & m ) const;
+	hits_to_include_with_partial_match( match_dspos1 const & m ) const override;
 
-	virtual
 	Size
-	n_possible_hits_per_upstream_conformation() const;
+	n_possible_hits_per_upstream_conformation() const override;
 
 
 	/// @brief This function completes the building of the downstream conformation

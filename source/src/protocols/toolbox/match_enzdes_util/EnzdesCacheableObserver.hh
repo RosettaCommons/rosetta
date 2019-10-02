@@ -74,28 +74,23 @@ public: //constructor/destructor/
 
 	EnzdesCacheableObserver( EnzdesCacheableObserver const & other );
 
-	~EnzdesCacheableObserver();
+	~EnzdesCacheableObserver() override;
 
-	virtual
 	core::pose::datacache::CacheableObserverOP
-	clone();
+	clone() override;
 
-	virtual
 	core::pose::datacache::CacheableObserverOP
-	create();
+	create() override;
 
 public: //observer interface
 
-	virtual
-	bool is_attached() const;
+	bool is_attached() const override;
 
 protected: //observer interface
 
-	virtual
-	void attach_impl( core::pose::Pose & pose );
+	void attach_impl( core::pose::Pose & pose ) override;
 
-	virtual
-	void detach_impl();
+	void detach_impl() override;
 
 	void
 	on_length_change( core::conformation::signals::LengthEvent const & event );

@@ -34,7 +34,7 @@ public:
 	RNA_DeNovoParameters();
 
 	//destructor
-	~RNA_DeNovoParameters();
+	~RNA_DeNovoParameters() override;
 
 public:
 

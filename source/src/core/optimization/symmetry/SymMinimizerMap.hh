@@ -68,19 +68,17 @@ public: // Creation
 	);
 
 	/// @brief Destructor
-	virtual
-	~SymMinimizerMap();
+	~SymMinimizerMap() override;
 
 	/// @brief The atom tree will report that a new torsion has been identified as free in the traversal of the atom tree.
 	/// If this is an independent torsion, then the SymMinimizerMap will add a new DOF_Node, but otherwise, will
 	/// ignore the DOF.  The atom tree will traverse through dependent torsions in addition to independent torsions, and
 	/// it's the job of the SymMinimizerMap to weed out the dependent torsions.
-	virtual
 	void
 	add_torsion(
 		DOF_ID const & new_torsion,
 		DOF_ID const & parent
-	);
+	) override;
 
 	/// @brief Add an atom to the list of atoms controlled by a given DOF.  The SymMinimzierMap
 	/// will figure out, first, if the dof_id is a dependent or independent dof.  If it's a dependent
@@ -88,16 +86,14 @@ public: // Creation
 	/// If not, then the atom is ignored.  If it does, then the SymMinimizerMap will figure out
 	/// what independent DOF the given dependent DOF is a a clone of, and add this atom as being controlled
 	/// by that dependent DOF.
-	virtual
 	void
 	add_atom(
 		AtomID const & atom_id,
 		DOF_ID const & dof_id
-	);
+	) override;
 
-	virtual
 	kinematics::DomainMap const &
-	domain_map() const;
+	domain_map() const override;
 
 	void
 	copy_dofs_from_pose(

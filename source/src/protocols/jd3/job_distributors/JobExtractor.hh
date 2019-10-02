@@ -66,7 +66,7 @@ public:
 
 	JobExtractor();
 
-	virtual ~JobExtractor();
+	~JobExtractor() override;
 
 	/// @brief dummy for master/slave version
 	void

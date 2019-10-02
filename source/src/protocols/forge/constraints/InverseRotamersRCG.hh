@@ -70,7 +70,7 @@ public:
 		std::list< core::conformation::ResidueCOP > const & inverse_rotamers
 	);
 
-	~InverseRotamersRCG();
+	~InverseRotamersRCG() override;
 
 	void
 	parse_my_tag( TagCOP tag,

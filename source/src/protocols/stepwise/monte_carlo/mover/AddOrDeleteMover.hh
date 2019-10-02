@@ -45,7 +45,7 @@ public:
 		FromScratchMoverOP rna_from_scratch_mover );
 
 	//destructor
-	~AddOrDeleteMover();
+	~AddOrDeleteMover() override;
 	using protocols::moves::Mover::apply;
 
 	void
@@ -55,8 +55,8 @@ public:
 	apply( core::pose::Pose & pose, std::string & move_type_string /* will be updated by mover */ );
 
 	/// @brief Apply the minimizer to one pose
-	virtual void apply( core::pose::Pose & pose_to_visualize );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose_to_visualize ) override;
+	std::string get_name() const override;
 
 	void set_disallow_deletion_of_last_residue( bool const setting ){ disallow_deletion_of_last_residue_ = setting; }
 

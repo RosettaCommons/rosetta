@@ -40,21 +40,21 @@ public:
 		bool const do_screen = true );
 
 	//destructor
-	~AlignRMSD_Screener();
+	~AlignRMSD_Screener() override;
 
 public:
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	void set_do_screen( bool const & setting ) { do_screen_ = setting; }
 	bool do_screen() const { return do_screen_; }
 
 	std::string
-	name() const { return "AlignRMSD_Screener"; }
+	name() const override { return "AlignRMSD_Screener"; }
 
 	StepWiseScreenerType
-	type() const { return ALIGN_RMSD; }
+	type() const override { return ALIGN_RMSD; }
 
 	core::Size pass_count() const { return pass_count_; }
 

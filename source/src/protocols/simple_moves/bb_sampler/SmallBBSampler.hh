@@ -45,10 +45,10 @@ public:
 public:
 
 	core::Real
-	get_torsion( core::pose::Pose const & pose, core::Size resnum ) const;
+	get_torsion( core::pose::Pose const & pose, core::Size resnum ) const override;
 
 	void
-	set_torsion_to_pose( core::pose::Pose & pose, core::Size resnum ) const;
+	set_torsion_to_pose( core::pose::Pose & pose, core::Size resnum ) const override;
 
 
 public:
@@ -99,13 +99,13 @@ public:
 
 	SmallBBSampler(SmallBBSampler const & src);
 
-	virtual ~SmallBBSampler();
+	~SmallBBSampler() override;
 
 	SmallBBSamplerOP
 	clone() const;
 
-	virtual std::string
-	get_name() const {
+	std::string
+	get_name() const override {
 		return "SmallBBSampler";
 	}
 

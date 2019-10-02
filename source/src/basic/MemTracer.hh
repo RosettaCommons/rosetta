@@ -32,7 +32,7 @@ public:
 
 protected:
 	/// @brief overload member function.
-	virtual void t_flush(std::string const &);
+	void t_flush(std::string const &) override;
 
 };
 

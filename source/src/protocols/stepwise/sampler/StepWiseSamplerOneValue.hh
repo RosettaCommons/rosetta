@@ -41,22 +41,22 @@ public:
 		std::string const & name
 	);
 
-	virtual ~StepWiseSamplerOneValue();
+	~StepWiseSamplerOneValue() override;
 
 	/// @brief Initialization
-	virtual void init() {
+	void init() override {
 		set_init( true );
 		reset();
 	}
 
 	/// @brief Apply the current rotamer to pose
-	virtual void apply( core::pose::Pose & ){}
+	void apply( core::pose::Pose & ) override{}
 
 	/// @brief Apply the i-th rotamer to pose
-	virtual void apply( core::pose::Pose &, Size const ){}
+	void apply( core::pose::Pose &, Size const ) override{}
 
 	/// @brief Get the total number of rotamers in sampler
-	virtual core::Size size() const {
+	core::Size size() const override {
 		runtime_assert( is_init() );
 		return values_.size();
 	}
@@ -79,10 +79,10 @@ public:
 	}
 
 	/// @brief Name of the class
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::ONE_VALUE; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::ONE_VALUE; }
 
 protected: // will be available to derived classes.
 	ValueList values_;

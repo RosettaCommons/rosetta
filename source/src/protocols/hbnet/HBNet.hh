@@ -385,7 +385,7 @@ public:
 	//HBNet( HBNet const & other );
 
 	// destructor
-	virtual ~HBNet();
+	~HBNet() override;
 
 	//virtuals derived from Mover class
 	moves::MoverOP clone() const override;

@@ -52,17 +52,15 @@ public: //Constructor, destructor, copy, clone:
 	NetChargeConstraint( NetChargeConstraint const & src );
 
 	/// @brief Destructor
-	~NetChargeConstraint();
+	~NetChargeConstraint() override;
 
 	/// @brief Clone operator
-	virtual constraints::ConstraintOP clone() const;
+	constraints::ConstraintOP clone() const override;
 
-	virtual
-	bool operator == ( constraints::Constraint const & /*other*/ ) const;
+	bool operator == ( constraints::Constraint const & /*other*/ ) const override;
 
-	virtual
 	bool
-	same_type_as_me( constraints::Constraint const & other ) const;
+	same_type_as_me( constraints::Constraint const & other ) const override;
 
 
 public: //Functions that actually do stuff:
@@ -88,7 +86,7 @@ public: //Functions that actually do stuff:
 	void initialize_from_file_contents( std::string const &filecontents );
 
 	/// @brief Print info on the constraint
-	void show_def (std::ostream &TO, pose::Pose const &pose) const;
+	void show_def (std::ostream &TO, pose::Pose const &pose) const override;
 
 private:
 	// Member variables

@@ -43,8 +43,7 @@ public:
 		core::select::residue_selector::ResidueSelectorCOP selector,
 		std::string const & moverkey );
 
-	virtual
-	~FragmentJumpCM() {};
+	~FragmentJumpCM() override {};
 
 	EnvClaims yield_claims( core::pose::Pose const&,
 		basic::datacache::WriteableCacheableMapOP ) override;

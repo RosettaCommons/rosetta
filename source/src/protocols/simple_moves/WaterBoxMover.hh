@@ -161,7 +161,7 @@ public:
 
 	static std::string mover_name();
 
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
 	// This function deletes waters from a pose (all or virtualized-only)
 	void
@@ -222,17 +222,17 @@ public:
 	void set_taskop( core::pack::task::PackerTaskCOP val ) { task_=val; }
 
 	// RS stuff
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		filters::Filters_map const &,
 		moves::Movers_map const &,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	static
 	utility::tag::XMLSchemaComplexTypeGeneratorOP

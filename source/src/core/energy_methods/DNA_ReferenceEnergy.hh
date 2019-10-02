@@ -51,14 +51,12 @@ public:
 
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 	// virtual
 	// void
@@ -104,7 +102,6 @@ public:
 	}
 
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -112,17 +109,16 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const {}
+	) const override {}
 
 
 	// virtual
@@ -137,20 +133,16 @@ public:
 	//  Vector & F2
 	// ) const;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 	///@brief Return the version of the energy method
-	virtual
-	core::Size version() const { return 1; }
+	core::Size version() const override { return 1; }
 
 
 	/////////////////////////////////////////////////////////////////////////////

@@ -59,17 +59,17 @@ class ShapeComplementarityCalculator : public MolecularSurfaceCalculator {
 public:
 
 	ShapeComplementarityCalculator();
-	virtual ~ShapeComplementarityCalculator();
+	~ShapeComplementarityCalculator() override;
 
-	virtual int Calc();
-	virtual int Calc(core::pose::Pose const & pose, core::Size jump_id);
+	int Calc() override;
+	int Calc(core::pose::Pose const & pose, core::Size jump_id) override;
 
 	// Static function that can be called without object instantiation
 	static core::Real CalcSc(core::pose::Pose const & pose, core::Size jump_id =1, int quick =0);
 
 protected:
 	// Surface generation configuration
-	virtual int AssignAttentionNumbers(std::vector<Atom>& atom);
+	int AssignAttentionNumbers(std::vector<Atom>& atom) override;
 
 private:
 

@@ -62,37 +62,36 @@ public:
 
 	/// @brief Destructor.
 	///
-	~AspartimidePenaltyEnergy( );
+	~AspartimidePenaltyEnergy( ) override;
 
 	/// @brief Copy this energy object and return an owning pointer to the copy.
 	///
-	virtual EnergyMethodOP clone() const;
+	EnergyMethodOP clone() const override;
 
 	/// @brief Method called before scoring a pose.
 	///
-	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const &sfxn ) const;
+	void setup_for_scoring( pose::Pose & pose, ScoreFunction const &sfxn ) const override;
 
 	/// @brief Are the two residues (rsd1, rsd2) two residues that should be scored by this scorefunction?
 	/// @details Returns true only if rsd2 is connected to the C-terminus of rsd1 by its N-terminal connection, or
 	/// vice versa.
-	virtual
 	bool
 	defines_residue_pair_energy(
 		pose::Pose const & pose,
 		Size rsd1,
 		Size rsd2
-	) const;
+	) const override;
 
 	/// @brief Score the residues (rsd1, rsd2) and put the energy in the EnergyMap.
 	///
-	virtual void
+	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Does nothing, since there is no one-body energy associated with this term.
 	///
@@ -102,11 +101,10 @@ public:
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const { }
+	) const override { }
 
 	/// @brief Does nothing, since this term is spatially invariant (i.e. has no DoF derivatives, because
 	/// the value depends only on residue identities).
-	virtual
 	Real
 	eval_intraresidue_dof_derivative(
 		conformation::Residue const & /*rsd*/,
@@ -116,33 +114,29 @@ public:
 		pose::Pose const & /*pose*/,
 		ScoreFunction const & /*sfxn*/,
 		EnergyMap const & /*weights*/
-	) const;
+	) const override;
 
 	/// @brief Returns false -- there's no one-body energy defined here.
 	///
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
 
 	/// @brief Returns false -- there are no derivatives defined here.
 	/// @details This score term's value depends only on residue identities, not on geometric DoFs.
-	virtual
 	bool
-	defines_intrares_dof_derivatives( pose::Pose const & ) const { return false; }
+	defines_intrares_dof_derivatives( pose::Pose const & ) const override { return false; }
 
 	virtual
 	Distance
 	atomic_interaction_cutoff() const { return 0.0; }
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const { }
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override { }
 
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 	methods::LongRangeEnergyType
-	long_range_type() const;
+	long_range_type() const override;
 
 private: // Private functions:
 
@@ -154,8 +148,7 @@ private: // Private functions:
 	/// @details Returns true for aa_gly/aa_asn/aa_ser/aa_thr/aa_dan/aa_dse/aa_dth, false otherwise.
 	bool second_res_types( core::chemical::AA const aa) const;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 private: // Private variables:
 

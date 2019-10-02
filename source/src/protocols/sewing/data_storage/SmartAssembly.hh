@@ -44,7 +44,7 @@ public:
 
 	SmartAssembly(SmartAssembly const & src);
 
-	virtual ~SmartAssembly();
+	~SmartAssembly() override;
 
 	SmartAssemblyOP
 	clone() const;

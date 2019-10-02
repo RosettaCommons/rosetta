@@ -39,7 +39,7 @@ public:
 
 public:
 	DataLoaderCreator();
-	virtual ~DataLoaderCreator();
+	~DataLoaderCreator() override;
 
 	virtual DataLoaderOP create_loader() const = 0;
 	virtual std::string keyname() const = 0;

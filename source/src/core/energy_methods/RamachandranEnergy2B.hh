@@ -40,15 +40,13 @@ public:
 	RamachandranEnergy2B();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentTwoBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -56,25 +54,22 @@ public:
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const;
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &, // unused,
 		ScoreFunction const &, // unused,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
 
 	virtual
@@ -89,14 +84,12 @@ public:
 
 	/// @brief Ramachandran Energy is context independent and thus indicates that no context graphs need to
 	/// be maintained by class Energies
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override;
 
 	// data
 private:
 	Ramachandran2B const & potential_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

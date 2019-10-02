@@ -63,7 +63,7 @@ public:// construct/destruct
 	BetaAlphaBetaMotif( BetaAlphaBetaMotif const & s );
 
 	/// @brief destructor
-	virtual ~BetaAlphaBetaMotif();
+	~BetaAlphaBetaMotif() override;
 
 
 public:// operator
@@ -190,7 +190,7 @@ public:// constructor/destructor
 	BetaAlphaBetaMotifSet( BetaAlphaBetaMotifSet const & s );
 
 	/// @brief destructor
-	virtual ~BetaAlphaBetaMotifSet();
+	~BetaAlphaBetaMotifSet() override;
 
 
 public://

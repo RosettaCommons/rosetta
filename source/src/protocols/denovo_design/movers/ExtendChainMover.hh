@@ -38,7 +38,7 @@ public:
 	ExtendChainMover();
 
 	/// @brief virtual constructor to allow derivation
-	virtual ~ExtendChainMover();
+	~ExtendChainMover() override;
 
 
 	// mover virtuals

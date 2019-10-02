@@ -36,7 +36,7 @@ class AssemblyRequirementCreator : public utility::pointer::ReferenceCount
 {
 public:
 	AssemblyRequirementCreator() {}
-	virtual ~AssemblyRequirementCreator() {}
+	~AssemblyRequirementCreator() override {}
 
 	virtual AssemblyRequirementOP create_requirement() const = 0;
 	virtual std::string keyname() const = 0;

@@ -32,10 +32,10 @@ namespace rotamers {
 
 class SingleBasicRotamerLibraryCreator : public SingleResidueRotamerLibraryCreator {
 public:
-	virtual core::pack::rotamers::SingleResidueRotamerLibraryCOP
-	create( core::chemical::ResidueType const & ) const;
+	core::pack::rotamers::SingleResidueRotamerLibraryCOP
+	create( core::chemical::ResidueType const & ) const override;
 
-	virtual std::string keyname() const;
+	std::string keyname() const override;
 };
 
 

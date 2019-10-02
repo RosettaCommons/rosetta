@@ -49,7 +49,7 @@ class KinematicPerturber : public utility::pointer::ReferenceCount {
 public:
 
 	KinematicPerturber();
-	virtual ~KinematicPerturber();
+	~KinematicPerturber() override;
 
 	virtual
 	std::string perturber_type() const = 0;
@@ -129,9 +129,9 @@ public:
 
 	TorsionSamplingKinematicPerturber( KinematicMoverCAP kinmover_in );
 
-	~TorsionSamplingKinematicPerturber();
+	~TorsionSamplingKinematicPerturber() override;
 
-	std::string perturber_type() const {
+	std::string perturber_type() const override {
 		return "TorsionSampleKinematicPerturber"; }
 
 	/// @brief Varies torsions of a beta-amino acid residue based on minimia in the beta-amino acid Ramachandran cube.  This randomly picks a minimum, then chooses phi/theta/psi values randomly in a Gaussian centered in that minimum.
@@ -152,7 +152,7 @@ public:
 		utility::vector1< core::Real> & torsions,
 		utility::vector1< core::Real> & bond_ang,
 		utility::vector1< core::Real> & //bond_len
-	);
+	) override;
 
 
 	void
@@ -162,7 +162,7 @@ public:
 		utility::vector1< core::Real> const & bond_ang,
 		utility::vector1< core::Real> const & bond_len,
 		bool closure_successful
-	) const;
+	) const override;
 
 	void
 	set_vary_ca_bond_angles( bool vary_ca_bond_angles ) {
@@ -188,9 +188,9 @@ public:
 
 	VicinitySamplingKinematicPerturber( KinematicMoverCAP kinmover_in );
 
-	~VicinitySamplingKinematicPerturber();
+	~VicinitySamplingKinematicPerturber() override;
 
-	std::string perturber_type() const {
+	std::string perturber_type() const override {
 		return "VicinitySampleKinematicPerturber"; }
 
 	/// @brief varies torsions always and bond angles sometimes.  Currently torsion varying will respect a movemap if present; angles do NOT look for a movemap. -- note that the analytic closure and pivot selection currently do not respect movemaps though
@@ -200,7 +200,7 @@ public:
 		utility::vector1< core::Real> & torsions,
 		utility::vector1< core::Real> & bond_ang,
 		utility::vector1< core::Real> & //bond_len
-	);
+	) override;
 
 
 	void
@@ -210,7 +210,7 @@ public:
 		utility::vector1< core::Real> const & bond_ang,
 		utility::vector1< core::Real> const & bond_len,
 		bool closure_successful
-	) const;
+	) const override;
 
 	void
 	set_vary_ca_bond_angles( bool vary_ca_bond_angles ) {
@@ -242,9 +242,9 @@ class TorsionSweepingKinematicPerturber : public KinematicPerturber {
 public:
 
 	TorsionSweepingKinematicPerturber();
-	~TorsionSweepingKinematicPerturber();
+	~TorsionSweepingKinematicPerturber() override;
 
-	std::string perturber_type() const {
+	std::string perturber_type() const override {
 		return "TorsionSweepingKinematicPerturber"; }
 
 	/// @brief movemap control NOT IMPLEMENTED in TorsionSweepingKP.  It is also NOT NEEDED because you can use set_nonpivot_res_to_sweep instead.
@@ -254,9 +254,9 @@ public:
 		utility::vector1< core::Real > & torsions,
 		utility::vector1< core::Real > & bond_ang,
 		utility::vector1< core::Real > & //bond_len
-	);
+	) override;
 
-	bool perturber_exhausted() const { return sweep_iterator_.at_end(); }
+	bool perturber_exhausted() const override { return sweep_iterator_.at_end(); }
 
 	void set_nonpivot_res_to_sweep( utility::vector1< Size > const & resids );
 	void set_nonpivot_bb_torsion_id( utility::vector1< Size > const & bbtorids );
@@ -286,9 +286,9 @@ public:
 
 	NeighborDependentTorsionSamplingKinematicPerturber( KinematicMoverCAP kinmover_in );
 
-	~NeighborDependentTorsionSamplingKinematicPerturber();
+	~NeighborDependentTorsionSamplingKinematicPerturber() override;
 
-	std::string perturber_type() const {
+	std::string perturber_type() const override {
 		return "NeighborDependentTorsionSamplingKinematicPerturber"; }
 
 	void
@@ -297,7 +297,7 @@ public:
 		utility::vector1< core::Real> & torsions,
 		utility::vector1< core::Real> & bond_ang,
 		utility::vector1< core::Real> & //bond_len
-	);
+	) override;
 
 
 	void
@@ -307,7 +307,7 @@ public:
 		utility::vector1< core::Real> const & bond_ang,
 		utility::vector1< core::Real> const & bond_len,
 		bool closure_successful
-	) const;
+	) const override;
 
 	void
 	set_vary_ca_bond_angles( bool vary_ca_bond_angles ) { vary_ca_bond_angles_ = vary_ca_bond_angles; }
@@ -336,9 +336,9 @@ public:
 		core::conformation::torsion_bin_string const & torsion_bins
 	);
 
-	~TorsionRestrictedKinematicPerturber();
+	~TorsionRestrictedKinematicPerturber() override;
 
-	std::string perturber_type() const {
+	std::string perturber_type() const override {
 		return "TorsionRestrictedKinematicPerturber"; }
 
 	void
@@ -347,7 +347,7 @@ public:
 		utility::vector1< core::Real> & torsions,
 		utility::vector1< core::Real> & bond_ang,
 		utility::vector1< core::Real> & //bond_len
-	) ;
+	) override ;
 
 
 	void
@@ -357,7 +357,7 @@ public:
 		utility::vector1< core::Real> const & bond_ang,
 		utility::vector1< core::Real> const & bond_len,
 		bool closure_successful
-	) const;
+	) const override;
 
 	void
 	set_vary_ca_bond_angles( bool vary_ca_bond_angles ) {
@@ -385,7 +385,7 @@ public:
 	// check if both c'tors are used -- if not, remove the unused one
 	BaseTabooPerturber( KinematicMoverCAP kinmover_in );
 
-	virtual ~BaseTabooPerturber();
+	~BaseTabooPerturber() override;
 
 	void
 	perturb_chain(
@@ -393,7 +393,7 @@ public:
 		utility::vector1< core::Real> & torsions,
 		utility::vector1< core::Real> & bond_ang,
 		utility::vector1< core::Real> & //bond_len
-	);
+	) override;
 
 	void
 	set_pose_after_closure(
@@ -402,7 +402,7 @@ public:
 		utility::vector1< core::Real> const & bond_ang,
 		utility::vector1< core::Real> const & bond_len,
 		bool closure_successful
-	) const;
+	) const override;
 
 	void
 	set_vary_ca_bond_angles( bool vary_ca_bond_angles ) {
@@ -467,14 +467,13 @@ public:
 
 	TabooSamplingKinematicPerturber( KinematicMoverCAP kinmover_in );
 
-	virtual ~TabooSamplingKinematicPerturber();
+	~TabooSamplingKinematicPerturber() override;
 
-	std::string perturber_type() const {
+	std::string perturber_type() const override {
 		return "TabooSamplingKinematicPerturber"; }
 
 private:
 
-	virtual
 	void
 	get_random_phi_psi_for_residue(
 		core::pose::Pose const & pose,
@@ -482,14 +481,13 @@ private:
 		core::conformation::ppo_torsion_bin torbin,
 		core::Real & phi,
 		core::Real & psi
-	) const;
+	) const override;
 
-	virtual
 	std::map< core::conformation::ppo_torsion_bin, core::Size >
 	get_entries_per_torsion_bin(
 		utility::vector1< core::chemical::AA > loop_seq,
 		core::Size resid
-	) const;
+	) const override;
 
 private:
 
@@ -512,14 +510,13 @@ public:
 
 	NeighborDependentTabooSamplingKinematicPerturber( KinematicMoverCAP kinmover_in );
 
-	~NeighborDependentTabooSamplingKinematicPerturber();
+	~NeighborDependentTabooSamplingKinematicPerturber() override;
 
-	std::string perturber_type() const {
+	std::string perturber_type() const override {
 		return "NeighborDependentTabooSamplingKinematicPerturber"; }
 
 private:
 
-	virtual
 	void
 	get_random_phi_psi_for_residue(
 		core::pose::Pose const & pose,
@@ -527,14 +524,13 @@ private:
 		core::conformation::ppo_torsion_bin torbin,
 		core::Real & phi,
 		core::Real & psi
-	) const;
+	) const override;
 
-	virtual
 	std::map< core::conformation::ppo_torsion_bin, core::Size >
 	get_entries_per_torsion_bin(
 		utility::vector1< core::chemical::AA > loop_seq,
 		core::Size resid
-	) const;
+	) const override;
 
 private:
 

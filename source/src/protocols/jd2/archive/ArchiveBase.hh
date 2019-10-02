@@ -58,7 +58,7 @@ namespace archive {
 class AbstractArchiveBase : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~AbstractArchiveBase();
+	~AbstractArchiveBase() override;
 	AbstractArchiveBase( BaseArchiveManagerAP ptr ) : manager_( ptr ), name_( "archive" ) {};
 	AbstractArchiveBase() : manager_( NULL ), name_( "archive" ) {};
 
@@ -137,15 +137,15 @@ protected:
 	static std::string const SOURCE_FILE;//( "source_file" );
 public:
 	ArchiveBase( ArchiveManagerAP ptr=NULL );
-	~ArchiveBase();
+	~ArchiveBase() override;
 	static void register_options();
-	virtual bool finished() const { return true; };
+	bool finished() const override { return true; };
 
 	//obsolet ?
 	// virtual bool ready_for_batch() const { return false; };
-	virtual void initialize() {};
+	void initialize() override {};
 
-	virtual void generate_batch() = 0;
+	void generate_batch() override = 0;
 
 	/// @brief add structure to Archive.. return false if structure is rejected.
 	virtual bool add_structure (
@@ -161,7 +161,7 @@ public:
 	void set_nstruct( core::Size set ) { nstruct_ = set; };
 
 	/// @brief save and restore archive to file-system
-	virtual void save_to_file( std::string suffix = "" );
+	void save_to_file( std::string suffix = "" ) override;
 
 	/// @brief helper routine to save decoys properly
 	void save_decoys(
@@ -175,24 +175,24 @@ public:
 		SilentStructs& decoys
 	);
 
-	virtual bool restore_from_file();
+	bool restore_from_file() override;
 
 	/// @brief save and restore status of archive to file-system
-	virtual void save_status( std::ostream& ) const;
+	void save_status( std::ostream& ) const override;
 	virtual void restore_status( std::istream& );
 
 	/// @brief called when nothing is happening
-	virtual void idle() {};
+	void idle() override {};
 
 	/// @brief read externally provided structures from decoy_file into archive
-	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd );
+	void init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) override;
 
 	/// @brief SilentFileData contains the new structures belonging to this batch.
-	virtual void read_structures(
+	void read_structures(
 		core::io::silent::SilentFileData&,
 		core::io::silent::SilentFileData& alternative_decoys,
 		Batch const& batch
-	);
+	) override;
 
 
 	///---- methods to keep statistics of acceptance

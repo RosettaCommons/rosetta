@@ -51,12 +51,12 @@ public:
 	/// @details fragments will be compared to given coordinates, which should have the same number of residues a the query sequence
 	FragmentCrmsdResDepth(core::Size, core::Real, bool, utility::vector1< utility::vector1<core::Real> >,  utility::vector1<core::Real> & query_residue_depth);
 
-	~FragmentCrmsdResDepth();
+	~FragmentCrmsdResDepth() override;
 
-	void do_caching(VallChunkOP);
-	void clean_up();
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
-	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
+	void do_caching(VallChunkOP) override;
+	void clean_up() override;
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 private:
 	std::string cached_scores_id_;
@@ -80,7 +80,7 @@ public:
 		MakeFragmentScoringMethod("FragmentCrmsdResDepth") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 
 } // scores

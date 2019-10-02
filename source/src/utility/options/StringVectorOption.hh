@@ -79,7 +79,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~StringVectorOption() {}
+	~StringVectorOption() override {}
 
 
 public: // Properties

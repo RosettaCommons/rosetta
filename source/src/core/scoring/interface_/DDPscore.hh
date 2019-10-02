@@ -36,43 +36,42 @@ public:
 public:
 	DDPscore();
 
-	virtual methods::EnergyMethodOP clone() const;
+	methods::EnergyMethodOP clone() const override;
 
-	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual void setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
+	void setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
 
-	virtual void setup_for_derivatives( pose::Pose &pose, ScoreFunction const &  ) const;
+	void setup_for_derivatives( pose::Pose &pose, ScoreFunction const &  ) const override;
 
 	//virtual void setup_for_minimizing(pose::Pose & pose, ScoreFunction const & ,optimization::MinimizerMap const &) const;
 
-	virtual void residue_pair_energy(
+	void residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		const pose::Pose & pose,
 		const ScoreFunction & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	bool defines_intrares_energy(core::scoring::EnergyMap const &) const;
+	bool defines_intrares_energy(core::scoring::EnergyMap const &) const override;
 
-	virtual void eval_intrares_energy(
+	void eval_intrares_energy(
 		const core::conformation::Residue &,
 		const core::pose::Pose &,
 		const core::scoring::ScoreFunction &,
 		core::scoring::EnergyMap &
-	) const;
+	) const override;
 
-	virtual void indicate_required_context_graphs(
+	void indicate_required_context_graphs(
 		utility::vector1< bool > & context_graphs_required
-	) const;
+	) const override;
 
-	core::Distance atomic_interaction_cutoff() const;
+	core::Distance atomic_interaction_cutoff() const override;
 
 private:
 	DDPlookup const lookup_table_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 }; // DDP
 } // Interface_
 } // scoring

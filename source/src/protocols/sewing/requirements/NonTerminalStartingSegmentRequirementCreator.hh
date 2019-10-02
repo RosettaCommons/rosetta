@@ -31,14 +31,14 @@ class NonTerminalStartingSegmentRequirementCreator : public AssemblyRequirementC
 {
 public:
 	NonTerminalStartingSegmentRequirementCreator() {}
-	virtual ~NonTerminalStartingSegmentRequirementCreator() {}
+	~NonTerminalStartingSegmentRequirementCreator() override {}
 
-	virtual AssemblyRequirementOP create_requirement() const;
-	virtual std::string
-	keyname() const;
+	AssemblyRequirementOP create_requirement() const override;
+	std::string
+	keyname() const override;
 
-	virtual void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 
 };
 

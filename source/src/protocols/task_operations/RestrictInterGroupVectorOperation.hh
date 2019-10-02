@@ -65,10 +65,10 @@ public:
 		core::Real vector_dist_cutoff);
 
 	/// @brief destructor
-	~RestrictInterGroupVectorOperation();
+	~RestrictInterGroupVectorOperation() override;
 
 	/// @brief make clone
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictInterGroupVectorOperation"; }
 
@@ -79,7 +79,7 @@ public:
 	// core::pose::Pose const & pose);
 
 	/// @brief apply
-	virtual void apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
+	void apply( Pose const & pose, core::pack::task::PackerTask & task ) const override;
 
 	// /// @brief parse_tag
 	// void parse_tag(utility::tag::TagCOP tag);

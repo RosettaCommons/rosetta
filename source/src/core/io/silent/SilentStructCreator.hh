@@ -37,7 +37,7 @@ class SilentStructCreator : public utility::pointer::ReferenceCount
 {
 public:
 	SilentStructCreator();
-	virtual ~SilentStructCreator();
+	~SilentStructCreator() override;
 
 	virtual SilentStructOP create_silent_struct( SilentFileOptions const & ) const = 0;
 	virtual std::string keyname() const = 0;

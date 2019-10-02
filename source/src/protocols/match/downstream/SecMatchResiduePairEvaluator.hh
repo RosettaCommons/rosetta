@@ -46,7 +46,7 @@ public:
 public:
 	SecMatchResiduePairEvaluator();
 
-	virtual ~SecMatchResiduePairEvaluator();
+	~SecMatchResiduePairEvaluator() override;
 
 	/// @brief Returns true if the interaction between the two residues satisifies the
 	/// secondary match requirement.

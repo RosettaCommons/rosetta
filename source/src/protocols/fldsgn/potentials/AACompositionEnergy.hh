@@ -75,7 +75,7 @@ public: // constructor/destructor
 	AACompositionEnergy( AACompositionEnergy const & src );
 
 	/// @brief destructor
-	virtual ~AACompositionEnergy();
+	~AACompositionEnergy() override;
 
 	/// @brief clone
 	EnergyMethodOP clone() const override;

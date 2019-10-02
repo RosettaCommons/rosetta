@@ -45,7 +45,7 @@ public:
 
 	RNA_Info();
 
-	virtual ~RNA_Info();
+	~RNA_Info() override;
 
 	///////////////////////////Implemented for fast lookup! Parin Sripakdeevong, June 25th, 2011//////////////////
 private:

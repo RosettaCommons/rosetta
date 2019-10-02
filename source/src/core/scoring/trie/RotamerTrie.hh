@@ -160,11 +160,10 @@ public:
 		construct_rotamer_trie( rotamers, atomic_interaction_cutoff_distance );
 	}
 
-	virtual ~RotamerTrie() {}
+	~RotamerTrie() override {}
 
 public:   /// Type Resolution Functions
 	/// Four trie-vs-trie type resolution functions
-	virtual
 	void
 	trie_vs_trie(
 		RotamerTrieBase const & other,
@@ -172,12 +171,11 @@ public:   /// Type Resolution Functions
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & other,
@@ -185,12 +183,11 @@ public:   /// Type Resolution Functions
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & other,
@@ -198,13 +195,12 @@ public:   /// Type Resolution Functions
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & other,
@@ -212,12 +208,11 @@ public:   /// Type Resolution Functions
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & other,
@@ -225,14 +220,13 @@ public:   /// Type Resolution Functions
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrieBase const &,
@@ -240,14 +234,13 @@ public:   /// Type Resolution Functions
 		etable::TableLookupEvaluator const &,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit();
 	}
 
 
 	/// Four trie-vs-path type resolution functions
-	virtual
 	void
 	trie_vs_path(
 		RotamerTrieBase const & other,
@@ -255,12 +248,11 @@ public:   /// Type Resolution Functions
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & other,
@@ -268,12 +260,11 @@ public:   /// Type Resolution Functions
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & other,
@@ -281,13 +272,12 @@ public:   /// Type Resolution Functions
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & other,
@@ -295,12 +285,11 @@ public:   /// Type Resolution Functions
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & other,
@@ -308,14 +297,13 @@ public:   /// Type Resolution Functions
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrieBase const &,
@@ -323,13 +311,12 @@ public:   /// Type Resolution Functions
 		etable::TableLookupEvaluator const & ,
 		utility::vector1< core::PackerEnergy > & ,
 		utility::vector1< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit_with_message("blah2");
 	}
 
 	//////////////////////////////////////// CoarseEtableEnergy//////////////////////////////
-	virtual
 	void
 	trie_vs_trie(
 		RotamerTrieBase const & other,
@@ -337,12 +324,11 @@ public:   /// Type Resolution Functions
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & other,
@@ -350,12 +336,11 @@ public:   /// Type Resolution Functions
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & other,
@@ -363,13 +348,12 @@ public:   /// Type Resolution Functions
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & other,
@@ -377,12 +361,11 @@ public:   /// Type Resolution Functions
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & other,
@@ -390,7 +373,7 @@ public:   /// Type Resolution Functions
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
@@ -398,7 +381,6 @@ public:   /// Type Resolution Functions
 
 	/// This function is called when the coarse etable energy function get mixed up with non-etable tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrieBase const & ,
@@ -406,13 +388,12 @@ public:   /// Type Resolution Functions
 		etable::AnalyticEtableEvaluator const & ,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & ,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit();
 	}
 
 	/// Four trie-vs-path type resolution functions
-	virtual
 	void
 	trie_vs_path(
 		RotamerTrieBase const & other,
@@ -420,12 +401,11 @@ public:   /// Type Resolution Functions
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & other,
@@ -433,12 +413,11 @@ public:   /// Type Resolution Functions
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & other,
@@ -446,13 +425,12 @@ public:   /// Type Resolution Functions
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & other,
@@ -460,12 +438,11 @@ public:   /// Type Resolution Functions
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & other,
@@ -473,7 +450,7 @@ public:   /// Type Resolution Functions
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
@@ -481,7 +458,6 @@ public:   /// Type Resolution Functions
 
 	/// This function is called when the coarse etable energy function get mixed up with non-etable tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrieBase const & ,
@@ -489,13 +465,12 @@ public:   /// Type Resolution Functions
 		etable::AnalyticEtableEvaluator const & ,
 		utility::vector1< core::PackerEnergy > & ,
 		utility::vector1< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit();
 	}
 
 	// HBond Type Resolution Functions
-	virtual
 	void
 	trie_vs_trie(
 		RotamerTrieBase const & other,
@@ -503,12 +478,11 @@ public:   /// Type Resolution Functions
 		hbonds::HBondEnergy const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< hbonds::hbtrie::HBAtom, hbonds::hbtrie::HBCPData > const & other,
@@ -516,14 +490,13 @@ public:   /// Type Resolution Functions
 		hbonds::HBondEnergy const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
 	/// This function is called when hbond energy function get mixed up with non-hbond tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrieBase const & ,
@@ -531,12 +504,11 @@ public:   /// Type Resolution Functions
 		hbonds::HBondEnergy const & ,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & ,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit_with_message( "Type resolution error in trie vs trie.  Unsupported mixing of HBondEnergy function with non-hbond trie.");
 	}
 
-	virtual
 	void
 	trie_vs_path(
 		RotamerTrieBase const & other,
@@ -544,12 +516,11 @@ public:   /// Type Resolution Functions
 		hbonds::HBondEnergy const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< hbonds::hbtrie::HBAtom, hbonds::hbtrie::HBCPData > const & other,
@@ -557,14 +528,13 @@ public:   /// Type Resolution Functions
 		hbonds::HBondEnergy const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
 	/// This function is called when hbond energy function get mixed up with non-hbond tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrieBase const & ,
@@ -572,14 +542,13 @@ public:   /// Type Resolution Functions
 		hbonds::HBondEnergy const & ,
 		utility::vector1< core::PackerEnergy > & ,
 		utility::vector1< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit_with_message("Type resolution error in trie-vs-path.  Unsupported mixing of HBondEnergy function with non-hbond trie.");
 	}
 
 	//////////////// Hack Elec E //////////////////////
 	/// Four trie-vs-trie type resolution functions
-	virtual
 	void
 	trie_vs_trie(
 		RotamerTrieBase const & other,
@@ -587,12 +556,11 @@ public:   /// Type Resolution Functions
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & other,
@@ -600,12 +568,11 @@ public:   /// Type Resolution Functions
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & other,
@@ -613,13 +580,12 @@ public:   /// Type Resolution Functions
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & other,
@@ -627,12 +593,11 @@ public:   /// Type Resolution Functions
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & other,
@@ -640,7 +605,7 @@ public:   /// Type Resolution Functions
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
@@ -648,7 +613,6 @@ public:   /// Type Resolution Functions
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrieBase const &,
@@ -656,14 +620,13 @@ public:   /// Type Resolution Functions
 		elec::electrie::ElecTrieEvaluator const &,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit();
 	}
 
 
 	/// Four trie-vs-path type resolution functions
-	virtual
 	void
 	trie_vs_path(
 		RotamerTrieBase const & other,
@@ -671,12 +634,11 @@ public:   /// Type Resolution Functions
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & other,
@@ -684,12 +646,11 @@ public:   /// Type Resolution Functions
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & other,
@@ -697,13 +658,12 @@ public:   /// Type Resolution Functions
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & other,
@@ -711,12 +671,11 @@ public:   /// Type Resolution Functions
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & other,
@@ -724,7 +683,7 @@ public:   /// Type Resolution Functions
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
@@ -732,7 +691,6 @@ public:   /// Type Resolution Functions
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrieBase const &,
@@ -740,7 +698,7 @@ public:   /// Type Resolution Functions
 		elec::electrie::ElecTrieEvaluator const & ,
 		utility::vector1< core::PackerEnergy > & ,
 		utility::vector1< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit_with_message("blah2");
 	}
@@ -748,7 +706,6 @@ public:   /// Type Resolution Functions
 	//////////////// ////// //////////////////////
 	//////////////// lkball //////////////////////
 	//////////////// ////// //////////////////////
-	virtual
 	void
 	trie_vs_trie(
 		RotamerTrieBase const & other,
@@ -756,12 +713,11 @@ public:   /// Type Resolution Functions
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & other,
@@ -769,12 +725,11 @@ public:   /// Type Resolution Functions
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & other,
@@ -782,13 +737,12 @@ public:   /// Type Resolution Functions
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & other,
@@ -796,12 +750,11 @@ public:   /// Type Resolution Functions
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & other,
@@ -809,7 +762,7 @@ public:   /// Type Resolution Functions
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
@@ -817,7 +770,6 @@ public:   /// Type Resolution Functions
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrieBase const &,
@@ -825,14 +777,13 @@ public:   /// Type Resolution Functions
 		lkball::lkbtrie::LKBTrieEvaluator const & ,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit();
 	}
 
 
 	/// Four trie-vs-path type resolution functions
-	virtual
 	void
 	trie_vs_path(
 		RotamerTrieBase const & other,
@@ -840,12 +791,11 @@ public:   /// Type Resolution Functions
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & other,
@@ -853,12 +803,11 @@ public:   /// Type Resolution Functions
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & other,
@@ -866,13 +815,12 @@ public:   /// Type Resolution Functions
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & other,
@@ -880,12 +828,11 @@ public:   /// Type Resolution Functions
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & other,
@@ -893,14 +840,13 @@ public:   /// Type Resolution Functions
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrieBase const &,
@@ -908,7 +854,7 @@ public:   /// Type Resolution Functions
 		lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 		utility::vector1< core::PackerEnergy > & ,
 		utility::vector1< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit();
 	}
@@ -916,7 +862,6 @@ public:   /// Type Resolution Functions
 
 
 	/// mm lj inter type resolution functions
-	virtual
 	void
 	trie_vs_trie(
 		RotamerTrieBase const & other,
@@ -924,12 +869,11 @@ public:   /// Type Resolution Functions
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_1 > const & other,
@@ -937,12 +881,11 @@ public:   /// Type Resolution Functions
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_2 > const & other,
@@ -950,13 +893,12 @@ public:   /// Type Resolution Functions
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_3 > const & other,
@@ -964,14 +906,13 @@ public:   /// Type Resolution Functions
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrieBase const &,
@@ -979,14 +920,13 @@ public:   /// Type Resolution Functions
 		methods::MMLJEnergyInter const &,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit();
 	}
 
 
 	/// Four trie-vs-path type resolution functions
-	virtual
 	void
 	trie_vs_path(
 		RotamerTrieBase const & other,
@@ -994,12 +934,11 @@ public:   /// Type Resolution Functions
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_1 > const & other,
@@ -1007,12 +946,11 @@ public:   /// Type Resolution Functions
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_2 > const & other,
@@ -1020,13 +958,12 @@ public:   /// Type Resolution Functions
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_3 > const & other,
@@ -1034,14 +971,13 @@ public:   /// Type Resolution Functions
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrieBase const &,
@@ -1049,13 +985,12 @@ public:   /// Type Resolution Functions
 		methods::MMLJEnergyInter const & ,
 		utility::vector1< core::PackerEnergy > & ,
 		utility::vector1< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit_with_message("blah2");
 	}
 
 	/// VDW_Energy type resolution functions
-	virtual
 	void
 	trie_vs_trie(
 		RotamerTrieBase const & other,
@@ -1063,12 +998,11 @@ public:   /// Type Resolution Functions
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & other,
@@ -1076,12 +1010,11 @@ public:   /// Type Resolution Functions
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & other,
@@ -1089,13 +1022,12 @@ public:   /// Type Resolution Functions
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
 
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & other,
@@ -1103,14 +1035,13 @@ public:   /// Type Resolution Functions
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-vdwatom tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_trie(
 		RotamerTrieBase const &,
@@ -1118,14 +1049,13 @@ public:   /// Type Resolution Functions
 		vdwaals::VDWTrieEvaluator const &,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit_with_message("Type resolution failure in the trie-vs-trie algorithm for the VDW_Energy function");
 	}
 
 
 	/// Four trie-vs-path type resolution functions
-	virtual
 	void
 	trie_vs_path(
 		RotamerTrieBase const & other,
@@ -1133,12 +1063,11 @@ public:   /// Type Resolution Functions
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & other,
@@ -1146,12 +1075,11 @@ public:   /// Type Resolution Functions
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & other,
@@ -1159,13 +1087,12 @@ public:   /// Type Resolution Functions
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
 
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & other,
@@ -1173,14 +1100,13 @@ public:   /// Type Resolution Functions
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
-	) const
+	) const override
 	{
 		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
 	/// It produces a utility_exit call.
-	virtual
 	void
 	resolve_trie_vs_path(
 		RotamerTrieBase const &,
@@ -1188,7 +1114,7 @@ public:   /// Type Resolution Functions
 		vdwaals::VDWTrieEvaluator const & ,
 		utility::vector1< core::PackerEnergy > & ,
 		utility::vector1< core::PackerEnergy > &
-	) const
+	) const override
 	{
 		utility_exit_with_message("Type resolution failure in the trie-vs-path algorithm for the VDW_Energy function");
 	}
@@ -1199,8 +1125,7 @@ public:   /// Type Resolution Functions
 
 public:
 	/// Useful Functions
-	virtual
-	void print() const
+	void print() const override
 	{
 		std::cout << "RotamerTrie with parameters:" << std::endl;
 		for ( Size ii = 1; ii <= num_total_atoms_; ++ii ) {

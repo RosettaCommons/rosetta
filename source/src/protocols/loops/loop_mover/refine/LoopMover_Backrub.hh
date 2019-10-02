@@ -46,7 +46,7 @@ public:
 	);
 
 	//destructor
-	~LoopMover_Refine_Backrub();
+	~LoopMover_Refine_Backrub() override;
 
 
 	void set_default_settings(){

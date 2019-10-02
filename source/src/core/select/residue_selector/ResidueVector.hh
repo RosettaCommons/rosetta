@@ -42,7 +42,7 @@ public:
 	ResidueVector( utility::vector1< core::Size > const & vec );
 
 	/// @brief Destructor.
-	virtual ~ResidueVector();
+	~ResidueVector() override;
 
 	void from_subset( ResidueSubset const & subset );
 

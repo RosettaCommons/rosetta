@@ -71,23 +71,20 @@ public: //constructor/destructor
 
 	RemodelGlobalFrame(Size segment_size);
 
-	virtual
-	~RemodelGlobalFrame();
+	~RemodelGlobalFrame() override;
 
 public: // virtual constructors
 
-	virtual
-	MoverOP clone() const;
+	MoverOP clone() const override;
 
-	virtual
-	MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
 public: // options
 
 public:
 
-	virtual void apply( Pose & pose);
-	virtual std::string get_name() const;
+	void apply( Pose & pose) override;
+	std::string get_name() const override;
 
 	void get_helical_params( Pose & pose );
 	void align_segment( Pose & pose );

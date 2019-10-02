@@ -41,7 +41,7 @@ public:
 	/// class which ScoreTypes this EnergyMethod computes.
 	LongRangeTwoBodyEnergy( EnergyMethodCreatorOP creator );
 
-	virtual ~LongRangeTwoBodyEnergy();
+	~LongRangeTwoBodyEnergy() override;
 
 	virtual LongRangeEnergyType long_range_type() const = 0;
 

@@ -156,7 +156,7 @@ public:
 	GasteigerAtomTypeData();
 
 	//! @brief destructor
-	~GasteigerAtomTypeData();
+	~GasteigerAtomTypeData() override;
 
 	//! @brief the usual constructor
 	GasteigerAtomTypeData

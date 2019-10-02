@@ -55,7 +55,7 @@ public:
 
 public:
 	PointWaterPotential();
-	~PointWaterPotential() {}
+	~PointWaterPotential() override {}
 
 	Real
 	eval_pointwater_score(

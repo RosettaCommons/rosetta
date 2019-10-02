@@ -51,7 +51,7 @@ public: // Methods
 	NMRTensor & operator=(NMRTensor const & rhs);
 
 	/// @brief virtual destructor
-	virtual ~NMRTensor();
+	~NMRTensor() override;
 
 	/// @brief every tensor should offer a function that returns its name
 	virtual std::string tensor_name() const = 0;

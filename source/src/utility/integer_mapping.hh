@@ -41,7 +41,7 @@ public:
 	subset_mapping( subset_mapping const & src );
 	subset_mapping & operator = ( subset_mapping const & rhs );
 
-	virtual ~subset_mapping();
+	~subset_mapping() override;
 
 	/// @brief Required before the first call to set_next_correspondence may be called.
 	/// The size of the source enumeration must be known before the mapping may begin

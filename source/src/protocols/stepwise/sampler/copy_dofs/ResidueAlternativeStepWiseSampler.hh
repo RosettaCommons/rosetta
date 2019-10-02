@@ -53,7 +53,7 @@ public:
 	ResidueAlternativeStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
 		Size const seqpos );
 
-	~ResidueAlternativeStepWiseSampler();
+	~ResidueAlternativeStepWiseSampler() override;
 
 public:
 
@@ -64,10 +64,10 @@ public:
 	get_residue_at_origin_with_matching_type( core::conformation::Residue const & rsd_in );
 
 	/// @brief Name of the class
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RESIDUE_ALTERNATIVE; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::RESIDUE_ALTERNATIVE; }
 
 	Size representative_seqpos() const { return representative_seqpos_; }
 

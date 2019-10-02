@@ -39,7 +39,7 @@ public:
 public:
 
 	LegacyReadNativeRotamersFile();
-	virtual ~LegacyReadNativeRotamersFile();
+	~LegacyReadNativeRotamersFile() override;
 
 	core::pack::task::operation::TaskOperationOP
 	clone() const override;
@@ -78,7 +78,7 @@ public:
 public:
 
 	LegacyReadRepeatNativeRotamersFile();
-	virtual ~LegacyReadRepeatNativeRotamersFile();
+	~LegacyReadRepeatNativeRotamersFile() override;
 
 	core::pack::task::operation::TaskOperationOP
 	clone() const override;

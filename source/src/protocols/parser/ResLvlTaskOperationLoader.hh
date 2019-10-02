@@ -30,16 +30,15 @@ class ResLvlTaskOperationLoader : public DataLoader
 {
 public:
 	ResLvlTaskOperationLoader();
-	virtual ~ResLvlTaskOperationLoader();
+	~ResLvlTaskOperationLoader() override;
 
 	/// @brief The ResLvlTaskOperationLoader will load named residue-level-task operations
 	/// into the basic::datacache::DataMap
-	virtual
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 	static std::string loader_name();
 	static std::string res_lvl_task_op_loader_ct_namer( std::string const & element_name );

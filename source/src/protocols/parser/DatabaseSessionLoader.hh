@@ -36,15 +36,14 @@ class DatabaseSessionLoader : public DataLoader
 {
 public:
 	DatabaseSessionLoader();
-	virtual ~DatabaseSessionLoader();
+	~DatabaseSessionLoader() override;
 
 	/// @brief The DatabaseSessionLoader will create named DatabaseSessions and load them into the basic::datacache::DataMap
-	virtual
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 	static std::string loader_name();
 	static std::string database_session_loader_ct_namer( std::string const & element_name );

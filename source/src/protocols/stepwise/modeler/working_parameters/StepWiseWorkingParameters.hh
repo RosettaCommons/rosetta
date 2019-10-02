@@ -50,7 +50,7 @@ public:
 	StepWiseWorkingParameters();
 
 	//destructor
-	~StepWiseWorkingParameters();
+	~StepWiseWorkingParameters() override;
 
 public:
 

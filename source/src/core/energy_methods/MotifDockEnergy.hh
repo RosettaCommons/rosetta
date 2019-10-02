@@ -51,42 +51,38 @@ public:
 
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual void residue_pair_energy(
+	void residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & weights ) const;
+	defines_intrares_energy( EnergyMap const & weights ) const override;
 
-	virtual void indicate_required_context_graphs( utility::vector1< bool > & ) const {};
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {};
 
-	virtual core::Size version() const;
+	core::Size version() const override;
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 };
 
 

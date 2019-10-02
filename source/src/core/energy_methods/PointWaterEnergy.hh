@@ -50,32 +50,27 @@ public:
 	PointWaterEnergy( PointWaterEnergy const & src );
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/// stashes nblist if use_nblist is true
-	virtual
 	void
 	setup_for_minimizing(
 		pose::Pose & pose,
 		ScoreFunction const & sfxn,
 		kinematics::MinimizerMapBase const & min_map
-	) const;
+	) const override;
 
-	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -83,17 +78,15 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	bool
 	defines_score_for_residue_pair(
 		conformation::Residue const & res1,
 		conformation::Residue const & res2,
 		bool res_moving_wrt_eachother
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
@@ -105,35 +98,29 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return true; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return true; }
 
-	virtual
 	bool
-	defines_intrares_dof_derivatives( pose::Pose const & ) const { return false; }
+	defines_intrares_dof_derivatives( pose::Pose const & ) const override { return false; }
 
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const { return 6.0; }
+	atomic_interaction_cutoff() const override { return 6.0; }
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const { }
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override { }
 
 	/// Private methods
 private:
@@ -141,8 +128,7 @@ private:
 	PointWaterPotential const & potential_;
 	core::Real pwater_ref_wt_, pwater_water_bonus_, pwater_water_bonus_width_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

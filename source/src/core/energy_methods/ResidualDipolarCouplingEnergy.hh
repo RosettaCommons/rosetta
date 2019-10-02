@@ -50,16 +50,14 @@ public:
 	ResidualDipolarCouplingEnergy();
 
 	//clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
-	virtual
 	void
-	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const override;
 
 	/// @brief Called at the beginning of atom tree minimization, this method
 	/// allows the derived class the opportunity to initialize pertinent data
@@ -67,28 +65,27 @@ public:
 	/// structure of the pose is constant, so assumptions on the number of atoms
 	/// per residue and their identities are safe so long as the pose's Energies
 	/// object's "use_nblist()" method returns true.
-	virtual
 	void
 	setup_for_minimizing(
 		pose::Pose & ,
 		ScoreFunction const & ,
 		kinematics::MinimizerMapBase const &
-	) const;
+	) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 
-	virtual void eval_atom_derivative(
+	void eval_atom_derivative(
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
@@ -96,7 +93,7 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 	Real eval_dipolar(
 		pose::Pose const& pose,
@@ -118,8 +115,7 @@ private:
 	//used by Energy Method during scoring... should this become part of ResidualDipolarCoupling and thus cached in the pose
 	mutable core::Real dip_score_; //computed in setup_for_scoring.. delivered in finalize
 	mutable id::AtomID_Map< utility::vector1<Size> > atom2rdc_map_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 } //methods

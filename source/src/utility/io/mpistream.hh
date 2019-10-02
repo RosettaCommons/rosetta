@@ -92,10 +92,10 @@ public:
 		bool append
 	);
 
-	virtual ~basic_mpi_streambuf();
+	~basic_mpi_streambuf() override;
 
-	int sync();
-	int_type overflow( int_type c );
+	int sync() override;
+	int_type overflow( int_type c ) override;
 
 	/// @brief flushes the mpi buffer and output buffer
 	virtual std::streamsize flush() {
@@ -271,7 +271,7 @@ public:
 	void close() {
 	};
 
-	~basic_mpi_ostream()
+	~basic_mpi_ostream() override
 	{
 		// adding a footer is not necessary here, as it will be
 		// taken care of during the last zflush_finalize()

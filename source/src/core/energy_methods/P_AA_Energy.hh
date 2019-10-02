@@ -46,15 +46,13 @@ public:
 
 	P_AA_Energy();
 
-	virtual
-	EnergyMethodOP clone() const;
+	EnergyMethodOP clone() const override;
 
-	virtual
 	void residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	virtual
 	Real
@@ -64,15 +62,13 @@ public:
 	) const;
 
 	/// @brief P_AA_Energy is context independent; indicates that no context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 
 private:
 
 	P_AA const & p_aa_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

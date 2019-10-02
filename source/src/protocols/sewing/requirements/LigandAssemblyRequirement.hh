@@ -62,8 +62,7 @@ public: // Creation
 
 
 	/// @brief Destructor
-	virtual
-	~LigandAssemblyRequirement()=default;
+	~LigandAssemblyRequirement() override =default;
 
 
 protected: // Creation
@@ -75,19 +74,19 @@ protected: // Creation
 
 public: // Methods
 	// Further subsections of methods allowed
-	virtual std::pair<bool,bool>
-	test(data_storage::SmartAssemblyOP assembly)=0;
+	std::pair<bool,bool>
+	test(data_storage::SmartAssemblyOP assembly) override =0;
 
-	virtual void
+	void
 	set_options_from_tag(
 		utility::tag::TagCOP requirement_tag,
 		basic::datacache::DataMap& datamap,
 		protocols::filters::Filters_map const & filtermap,
 		protocols::moves::Movers_map const & movermap,
-		core::pose::Pose const & pose)=0;
+		core::pose::Pose const & pose) override =0;
 
-	virtual std::string
-	get_name()=0;
+	std::string
+	get_name() override =0;
 protected: // Methods
 	// Further subsections of methods allowed
 

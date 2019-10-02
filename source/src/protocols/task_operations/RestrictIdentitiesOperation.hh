@@ -42,8 +42,8 @@ public:
 
 	RestrictIdentitiesOperation();
 	RestrictIdentitiesOperation( utility::vector1 < std::string > const & identities, bool prevent_repacking );
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
-	virtual ~RestrictIdentitiesOperation();
+	core::pack::task::operation::TaskOperationOP clone() const override;
+	~RestrictIdentitiesOperation() override;
 
 	// @brief getters
 	utility::vector1< std::string > identities() const;
@@ -53,8 +53,8 @@ public:
 	void identities( utility::vector1 < std::string > residues_vec );
 	void prevent_repacking( bool const prevent_repacking);
 
-	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
-	virtual void parse_tag( TagCOP, DataMap & );
+	void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
+	void parse_tag( TagCOP, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictIdentities"; }
 

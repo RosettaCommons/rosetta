@@ -45,15 +45,15 @@ public:
 		Real const offset         ) : xC_( center_radians ), m_( slope_radians ),
 		o1_( -width_radians/2 ), o2_( width_radians/2 ), offset_( offset ) {}
 
-	FuncOP clone() const { return utility::pointer::make_shared< CircularSigmoidalFunc >( *this ); }
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	FuncOP clone() const override { return utility::pointer::make_shared< CircularSigmoidalFunc >( *this ); }
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	Real func( Real const x ) const;
-	Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	virtual void read_data( std::istream & in );
-	virtual void show_definition( std::ostream & out ) const;
+	void read_data( std::istream & in ) override;
+	void show_definition( std::ostream & out ) const override;
 
 private:
 	Real xC_;

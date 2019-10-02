@@ -29,25 +29,25 @@ class StepWiseSamplerComb : public sampler::StepWiseSampler {
 public:
 	StepWiseSamplerComb();
 
-	virtual ~StepWiseSamplerComb();
+	~StepWiseSamplerComb() override;
 
 	/// @brief Initialization
-	virtual void init();
+	void init() override;
 
 	/// @brief Reset to the first (or random if random()) rotamer
-	virtual void reset();
+	void reset() override;
 
 	/// @brief Move to next rotamer
-	virtual void operator++();
+	void operator++() override;
 
 	/// @brief Check if reach the end of rotamer list
-	virtual bool not_end() const;
+	bool not_end() const override;
 
 	/// @brief Apply the current rotamer to pose
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Set the random modeler state
-	virtual void set_random( bool const setting );
+	void set_random( bool const setting ) override;
 
 	/// @brief Add one more rotamer sampler to this sampler
 	virtual void add_external_loop_rotamer( sampler::StepWiseSamplerOP const & rotamer ) {
@@ -62,14 +62,13 @@ public:
 	}
 
 	/// @brief Name of the class
-	virtual std::string get_name() const { return "StepWiseSamplerComb"; }
+	std::string get_name() const override { return "StepWiseSamplerComb"; }
 
 	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::COMB; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::COMB; }
 
 	/// @brief output summary of class
-	virtual
-	void show( std::ostream & out, Size const indent = 0 ) const;
+	void show( std::ostream & out, Size const indent = 0 ) const override;
 
 private:
 	bool is_empty_;

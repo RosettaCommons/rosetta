@@ -56,8 +56,7 @@ public:
 	// PyRosetta debug helper
 	//virtual std::string who_am_i() { return "SingleResidueRotamerLibrary"; }
 
-	virtual
-	~SingleResidueRotamerLibrary();
+	~SingleResidueRotamerLibrary() override;
 
 	virtual
 	Real

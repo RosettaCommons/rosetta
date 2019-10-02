@@ -41,10 +41,10 @@ namespace pose_inputters {
 class PDBPoseInputterCreator : public PoseInputterCreator
 {
 public:
-	virtual PoseInputterOP create_inputter() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
-	virtual void list_options_read( utility::options::OptionKeyList & read_options ) const;
+	PoseInputterOP create_inputter() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
+	void list_options_read( utility::options::OptionKeyList & read_options ) const override;
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

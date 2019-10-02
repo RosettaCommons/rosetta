@@ -35,7 +35,7 @@ public:
 
 	DeleteRegionMover( DeleteRegionMover const & src );
 
-	virtual ~DeleteRegionMover();
+	~DeleteRegionMover() override;
 
 	void
 	apply( core::pose::Pose & pose ) override;

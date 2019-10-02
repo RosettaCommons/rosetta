@@ -70,7 +70,7 @@ public:
 	);
 
 	/// @brief Destructor
-	~AtomGridPoint();
+	~AtomGridPoint() override;
 
 	/// @brief Is relevant for neighbor search
 	bool is_relevant_neighbor() const { return true; }

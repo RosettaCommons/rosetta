@@ -43,15 +43,12 @@ public:
 	OrbitalsScore(methods::EnergyMethodOptions const &);
 
 	//clone
-	virtual methods::EnergyMethodOP clone() const;
+	methods::EnergyMethodOP clone() const override;
 
-	virtual
-	void setup_for_scoring(pose::Pose & pose, ScoreFunction const & weights) const;
+	void setup_for_scoring(pose::Pose & pose, ScoreFunction const & weights) const override;
 
-	virtual
-	void setup_for_derivatives( pose::Pose &pose, ScoreFunction const &  ) const;
+	void setup_for_derivatives( pose::Pose &pose, ScoreFunction const &  ) const override;
 
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
@@ -63,8 +60,7 @@ public:
 		EnergyMap const &,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
-	virtual
+	) const override;
 	void
 	setup_for_minimizing_for_residue_pair(
 		conformation::Residue const & rsd1,
@@ -75,72 +71,62 @@ public:
 		ResSingleMinimizationData const & res1_data_cache,
 		ResSingleMinimizationData const & res2_data_cache,
 		ResPairMinimizationData & data_cache
-	) const;
+	) const override;
 
-	virtual
 	void
 	setup_for_minimizing(
 		pose::Pose & pose,
 		ScoreFunction const & ,
 		kinematics::MinimizerMapBase const &
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap &
-	) const;
-	virtual
+	) const override;
 	void
-	finalize_after_derivatives( pose::Pose & pose, ScoreFunction const &  ) const;
+	finalize_after_derivatives( pose::Pose & pose, ScoreFunction const &  ) const override;
 
 
-	virtual
 	void eval_intrares_energy(
 		core::conformation::Residue const &,
 		core::pose::Pose const &,
 		core::scoring::ScoreFunction const &,
 		core::scoring::EnergyMap &
-	) const;
+	) const override;
 
-	virtual
-	bool defines_intrares_energy(const core::scoring::EnergyMap&) const; //false
+	bool defines_intrares_energy(const core::scoring::EnergyMap&) const override; //false
 
-	virtual
 	void residue_pair_energy(
 		core::conformation::Residue const & res1,
 		core::conformation::Residue const & res2,
 		core::pose::Pose const &,
 		core::scoring::ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief The OrbitalsScore term requires the opportunity to update the Residue's orbital coordinates
 	/// at the beginning of scoring and derivative evaluation.
-	virtual
 	bool
-	requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & pose ) const;
+	requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & pose ) const override;
 
 	/// @brief Update the orbital coordinates before scores are evaluated
-	virtual
 	void
 	setup_for_scoring_for_residue(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		ResSingleMinimizationData & min_data
-	) const;
+	) const override;
 
 	/// @brief The OrbitalsScore term must update the Residue's orbital coordinates before derivative evaluation
-	virtual
 	bool
-	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const & pose ) const;
+	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const & pose ) const override;
 
 	/// @brief Update the orbital coordinates before derivatives are evaluated
-	virtual
 	void
 	setup_for_derivatives_for_residue(
 		conformation::Residue const & rsd,
@@ -148,34 +134,29 @@ public:
 		ScoreFunction const & sfxn,
 		ResSingleMinimizationData & min_data,
 		basic::datacache::BasicDataCache &
-	) const;
+	) const override;
 
 
-	virtual
-	core::Real atomic_interaction_cutoff() const; //set to default
+	core::Real atomic_interaction_cutoff() const override; //set to default
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > &  ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > &  ) const override;
 
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const {
+	minimize_in_whole_structure_context( pose::Pose const & ) const override {
 		return false;
 	}
 
-	virtual
 	void
 	prepare_rotamers_for_packing(
 		pose::Pose const & pose,
 		conformation::RotamerSetBase & set
-	) const;
+	) const override;
 
-	virtual
 	void
 	update_residue_for_packing(
 		pose::Pose &,
 		Size resid
-	) const;
+	) const override;
 
 public:
 
@@ -299,7 +280,7 @@ public:
 
 	//virtual private functions
 private:
-	virtual core::Size version() const;
+	core::Size version() const override;
 
 	void compute_orb_orb_E(
 		core::conformation::Residue const & res1,

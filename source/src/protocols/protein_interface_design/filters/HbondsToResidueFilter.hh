@@ -86,7 +86,7 @@ public :
 	/// @brief Actually compute the number of hydrogen bonds to the target residue.
 	///
 	core::Size compute( core::pose::Pose const & pose, core::Size const resnum_rosetta ) const;
-	virtual ~HbondsToResidueFilter();
+	~HbondsToResidueFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	/// @brief Set the minimum number of H-bond partners that this residue must have for the filter to pass.

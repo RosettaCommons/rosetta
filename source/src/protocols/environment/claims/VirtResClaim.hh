@@ -58,13 +58,13 @@ public:
 		std::string const& jump_label,
 		std::string const& vrt_label );
 
-	virtual void yield_elements( FoldTreeSketch const& fts, ResidueElements& elements ) const;
+	void yield_elements( FoldTreeSketch const& fts, ResidueElements& elements ) const override;
 
-	virtual void yield_elements( FoldTreeSketch const& fts, JumpElements& elements ) const;
+	void yield_elements( FoldTreeSketch const& fts, JumpElements& elements ) const override;
 
-	virtual void yield_elements( FoldTreeSketch const& fts, CutElements& elements ) const;
+	void yield_elements( FoldTreeSketch const& fts, CutElements& elements ) const override;
 
-	virtual void yield_elements( core::pose::Pose const&, DOFElements& elements ) const;
+	void yield_elements( core::pose::Pose const&, DOFElements& elements ) const override;
 
 	JumpClaim& jump() { return j_claim_; }
 
@@ -77,11 +77,11 @@ public:
 
 
 
-	virtual EnvClaimOP clone() const;
+	EnvClaimOP clone() const override;
 
-	virtual std::string type() const;
+	std::string type() const override;
 
-	virtual void show( std::ostream& os ) const;
+	void show( std::ostream& os ) const override;
 
 private:
 	std::string vrt_label_;

@@ -51,22 +51,21 @@ public:
 	RestrictToLoopsAndNeighbors(RestrictToLoopsAndNeighbors const & src);
 
 	/// @brief Default destructor.
-	virtual ~RestrictToLoopsAndNeighbors();
+	~RestrictToLoopsAndNeighbors() override;
 
 	/// @brief Assignment operator.
 	RestrictToLoopsAndNeighbors & operator=( RestrictToLoopsAndNeighbors const & rhs );
 
 	/// @copydoc RestrictToLoops::clone
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
 	/// @copydoc RestrictToLoops::parse_tag
 	void parse_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & );
+		basic::datacache::DataMap & ) override;
 
-	virtual
 	void
-	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const override;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictToLoopsAndNeighbors"; }
@@ -81,7 +80,7 @@ public:
 	void set_cutoff_distance( core::Real cutoff_distance );
 
 private:
-	void init();
+	void init() override;
 	void init_for_copy( RestrictToLoopsAndNeighbors & lhs, RestrictToLoopsAndNeighbors const & rhs);
 
 private:

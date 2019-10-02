@@ -45,8 +45,7 @@ public:
 		std::ios_base::openmode open_mode = std::ios_base::in
 	);
 
-	virtual
-	~FileStream();
+	~FileStream() override;
 
 	/// @brief Open a particular file; must be called if the default constructor is used.
 	void
@@ -85,7 +84,7 @@ public:
 		FileSystemResourceLocator const & src
 	);
 
-	virtual ~FileSystemResourceLocator();
+	~FileSystemResourceLocator() override;
 
 	/// @brief Set the search paths; expects that the paths all end with a trailing "/";
 	/// Use "./" to include the present working directory in the search paths.

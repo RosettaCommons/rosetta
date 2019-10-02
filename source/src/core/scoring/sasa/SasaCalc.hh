@@ -39,7 +39,7 @@ public:
 
 	SasaCalc(SasaMethodEnum method);
 
-	virtual ~SasaCalc();
+	~SasaCalc() override;
 
 	/// @brief Calculate Sasa.  Atoms not calculated have -1 sasa in AtomID_Map.  This is carried over for compatability purposes.
 	Real

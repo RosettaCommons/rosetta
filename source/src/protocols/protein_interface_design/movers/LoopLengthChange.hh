@@ -39,7 +39,7 @@ public:
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< LoopLengthChange >(); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
-	virtual ~LoopLengthChange();
+	~LoopLengthChange() override;
 	void loop_start( core::pose::ResidueIndexDescriptionCOP loop_start );
 	void loop_end( core::pose::ResidueIndexDescriptionCOP loop_end );
 	void loop_cut( core::pose::ResidueIndexDescriptionCOP loop_cut );

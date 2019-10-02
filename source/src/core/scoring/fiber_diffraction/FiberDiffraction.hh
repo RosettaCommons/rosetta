@@ -40,7 +40,7 @@ public:
 	FiberDiffraction();
 
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~FiberDiffraction();
+	~FiberDiffraction() override;
 
 	/// @brief Initialize map from cmd line options
 	void init();

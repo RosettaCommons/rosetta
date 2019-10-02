@@ -66,7 +66,7 @@ public:
 		core::pack::dunbrack::RotamerLibrary const & rotamer_library
 	);
 
-	~SidechainMCMover();
+	~SidechainMCMover() override;
 
 	void
 	show_counters( std::ostream & out );

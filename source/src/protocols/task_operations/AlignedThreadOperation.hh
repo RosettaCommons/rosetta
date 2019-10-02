@@ -44,15 +44,14 @@ public:
 	//@brief:undefined constructor
 	//AlignedThreadOperation( std::string const seq );
 
-	virtual ~AlignedThreadOperation();
+	~AlignedThreadOperation() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	std::string alignment_file() const{ return alignment_file_; }
 	void alignment_file( std::string const & s ){ alignment_file_ = s; }

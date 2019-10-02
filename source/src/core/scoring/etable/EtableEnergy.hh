@@ -50,7 +50,7 @@ class EtableEvaluator : public utility::pointer::ReferenceCount {
 
 public:
 	EtableEvaluator( Etable const & etable );
-	~EtableEvaluator();
+	~EtableEvaluator() override;
 
 	void
 	set_weights(
@@ -214,7 +214,7 @@ class AnalyticEtableEvaluator : public EtableEvaluator
 {
 public:
 	AnalyticEtableEvaluator( Etable const & etable );
-	~AnalyticEtableEvaluator();
+	~AnalyticEtableEvaluator() override;
 
 	//Etable etable() const { return etable_; }
 
@@ -500,7 +500,7 @@ class TableLookupEvaluator : public EtableEvaluator
 {
 public:
 	TableLookupEvaluator( Etable const & etable_in );
-	~TableLookupEvaluator();
+	~TableLookupEvaluator() override;
 
 	/// Atom pair energy inline type resolution functions
 	void
@@ -846,7 +846,7 @@ public:
 
 	/// clone
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	void
 	setup_for_scoring_(pose::Pose const& pose, scoring::ScoreFunction const&) const;
@@ -857,18 +857,16 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const;
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 public:
 
@@ -893,8 +891,7 @@ private:
 	// don't bother to reset the BaseEtable's st_atr_, st_rep_, st_sol_ if possible.
 	//mutable bool using_interres_scoretypes_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	TableLookupEvaluator intrares_evaluator_;
 	TableLookupEvaluator interres_evaluator_;
@@ -925,7 +922,7 @@ public:
 
 	/// clone
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	void
 	setup_for_scoring_(pose::Pose const& pose, scoring::ScoreFunction const&) const;
@@ -936,18 +933,16 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const;
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 public:
 
@@ -972,8 +967,7 @@ private:
 	// don't bother to reset the BaseEtable's st_atr_, st_rep_, st_sol_ if possible.
 	//mutable bool using_interres_scoretypes_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	mutable AnalyticEtableEvaluator intrares_evaluator_;
 	mutable AnalyticEtableEvaluator interres_evaluator_;

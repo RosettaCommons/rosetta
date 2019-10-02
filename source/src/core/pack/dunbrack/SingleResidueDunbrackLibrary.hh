@@ -508,9 +508,8 @@ public:
 
 	/// @brief Comparison operator, mainly intended to use in ASCII/binary comparsion tests
 	/// Values tested should parallel those used in the read_from_binary() function.
-	virtual
 	bool
-	operator ==( rotamers::SingleResidueRotamerLibrary const & ) const;
+	operator ==( rotamers::SingleResidueRotamerLibrary const & ) const override;
 
 private:
 

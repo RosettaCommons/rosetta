@@ -44,7 +44,7 @@ public:
 	{}
 
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~WaterAnchorInfo();
+	~WaterAnchorInfo() override;
 	typedef chemical::AA AA;
 	typedef chemical::ResidueType ResidueType;
 

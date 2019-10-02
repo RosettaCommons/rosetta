@@ -68,7 +68,7 @@ public:// construct/destruct
 	SS_Base( SS_Base const & s );
 
 	/// @brief destructor
-	virtual ~SS_Base();
+	~SS_Base() override;
 
 
 public:// accessors
@@ -179,7 +179,7 @@ public:// construct/destruct
 	Strand( Strand const & s );
 
 	/// @brief destructor
-	~Strand();
+	~Strand() override;
 
 	/// @brief
 	friend std::ostream & operator<<(std::ostream & out, const Strand & st );
@@ -221,7 +221,7 @@ public: // constructor/destructor
 	Helix( Helix const & s );
 
 	/// @brief destructor
-	~Helix();
+	~Helix() override;
 
 	/// @brief
 	Real bend() const { return bend_; }
@@ -271,7 +271,7 @@ public: // constructor/destructor
 	Loop( Loop const & s );
 
 	/// @brief destructor
-	~Loop();
+	~Loop() override;
 
 	/// @brief
 	friend std::ostream & operator<<( std::ostream & out, const Loop & hx );
@@ -320,14 +320,14 @@ public: // constructor/destructor
 	SS_Info2( SS_Info2 const & s );
 
 	/// @brief destructor
-	~SS_Info2();
+	~SS_Info2() override;
 
 
 public:
 
 
 	/// @brief make clone
-	basic::datacache::CacheableDataOP clone() const;
+	basic::datacache::CacheableDataOP clone() const override;
 
 	/// @brief output info of SS_Info2
 	friend

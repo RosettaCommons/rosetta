@@ -49,38 +49,33 @@ public:
 	FaWaterToBilayerEnergy();
 
 	/// @brief Clone Energy Method
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Compute Per-Residue Energies
-	virtual
 	void
 	residue_energy(
 		core::conformation::Residue const & rsd,
 		core::pose::Pose const & pose,
 		core::scoring::EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Fianlzie Total Per-Residue Energies
-	virtual
 	void
 	finalize_total_energy(
 		core::pose::Pose & pose,
 		core::scoring::ScoreFunction const &,
 		core::scoring::EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Setup for Computing Derivatives
-	virtual
 	void
 	setup_for_derivatives(
 		core::pose::Pose & pose,
 		core::scoring::ScoreFunction const & scfxn
-	) const;
+	) const override;
 
 	/// @brief Evaluate Per-Atom Derivatives
-	virtual
 	void
 	eval_atom_derivative(
 		core::id::AtomID const & id,
@@ -90,19 +85,18 @@ public:
 		core::scoring::EnergyMap const & emap,
 		core::Vector & F1,
 		core::Vector & F2
-	) const;
+	) const override;
 
 	/// @brief Fa_MbenvEnergy is context independent
-	virtual
 	void
-	indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	/// @brief Setup Method for initial scoring
 	void
 	setup_for_scoring(
 		core::pose::Pose & pose,
 		core::scoring::ScoreFunction const &
-	) const;
+	) const override;
 
 	MEnvAtomParamsCOP
 	get_menv_params_for_residue(
@@ -124,8 +118,7 @@ private: // helper methods
 	get_atype_index( std::string atype_name ) const;
 
 	/// @brief Versioning
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 
 private:

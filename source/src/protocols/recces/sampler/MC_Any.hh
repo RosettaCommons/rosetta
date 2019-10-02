@@ -31,29 +31,28 @@ public:
 	MC_Any();
 
 	//destructor
-	~MC_Any();
+	~MC_Any() override;
 
 public:
 
 	/// @brief Initialization
-	virtual void init();
+	void init() override;
 
 	/// @brief Move to next rotamer
-	virtual void operator++();
+	void operator++() override;
 
 	/// @brief Apply the current rotamer to pose
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_ANY; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::MC_ANY; }
 
 	core::Size curr_id() const { return curr_id_; }
 
 	MC_SamplerCOP rotamer() const { return rotamer_list_[ curr_id_ ]; }
 
 	/// @brief output summary of class
-	virtual
-	void show( std::ostream & out, Size const indent = 0 ) const;
+	void show( std::ostream & out, Size const indent = 0 ) const override;
 
 protected:
 	core::Size curr_id_;

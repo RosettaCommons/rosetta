@@ -37,17 +37,16 @@ class SelectBySASAOperation : public core::pack::task::operation::TaskOperation 
 public:
 	SelectBySASAOperation( std::string const & mode = "sc", std::string const & state = "monomer", core::Real probe_radius = 2.2, core::Real core_asa = 0, core::Real surface_asa = 30, std::string const & jump_nums = "1", std::string const & sym_dof_names = "", bool core = 0, bool boundary = 0, bool surface = 0, bool verbose = 0 );
 
-	virtual ~SelectBySASAOperation();
+	~SelectBySASAOperation() override;
 
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "SelectBySASA"; }
 
-	void parse_tag( TagCOP tag , DataMap & );
+	void parse_tag( TagCOP tag , DataMap & ) override;
 
 private:
 	std::string mode_;

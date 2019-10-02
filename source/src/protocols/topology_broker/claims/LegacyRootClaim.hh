@@ -61,13 +61,13 @@ public:
 		local_position_ ( local_position )
 	{}
 
-	virtual DofClaimOP clone() const { return utility::pointer::make_shared< LegacyRootClaim >( *this ); }
+	DofClaimOP clone() const override { return utility::pointer::make_shared< LegacyRootClaim >( *this ); }
 
 	std::pair< std::string, core::Size > local_position() const {
 		return local_position_;
 	}
 
-	virtual void show(std::ostream& os) const {
+	void show(std::ostream& os) const override {
 		os << " with position: " << local_position_.second << " under claim label: " << local_position_.first;
 	}
 
@@ -75,7 +75,7 @@ public:
 		return false;
 	}
 
-	virtual std::string str_type() const {
+	std::string str_type() const override {
 		return "ROOT";
 	}
 

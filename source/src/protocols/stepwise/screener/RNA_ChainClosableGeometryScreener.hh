@@ -36,18 +36,18 @@ public:
 		bool const finer_sampling_at_chain_closure = false );
 
 	//destructor
-	~RNA_ChainClosableGeometryScreener();
+	~RNA_ChainClosableGeometryScreener() override;
 
 public:
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	std::string
-	name() const { return "RNA_ChainClosableGeometryScreener"; }
+	name() const override { return "RNA_ChainClosableGeometryScreener"; }
 
 	StepWiseScreenerType
-	type() const { return RNA_CHAIN_CLOSABLE_GEOMETRY; }
+	type() const override { return RNA_CHAIN_CLOSABLE_GEOMETRY; }
 
 private:
 

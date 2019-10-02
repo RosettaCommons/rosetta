@@ -46,7 +46,7 @@ public:
 	// derived from base class
 	ResidueInMembraneSelector();
 	//ResidueInMembraneSelector( std::string const & res_name_str );
-	virtual ~ResidueInMembraneSelector();
+	~ResidueInMembraneSelector() override;
 
 	/// @brief Copy constructor
 	///
@@ -54,17 +54,16 @@ public:
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.
-	virtual ResidueSelectorOP clone() const;
+	ResidueSelectorOP clone() const override;
 
-	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
-	virtual void parse_my_tag(
+	ResidueSubset apply( core::pose::Pose const & pose ) const override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &
-	);
+	) override;
 
-	virtual
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	static std::string class_name();
 

@@ -50,38 +50,33 @@ public:
 
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scorefxn ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scorefxn ) const override;
 
 
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 
 	/// @brief The SecondaryStructureEnergy class requires that the EnergyGraph
 	/// span 12 Angstroms between centroids.  The centroids residues build-in a
 	/// 3 Angstrom radius each.
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -92,8 +87,7 @@ private:
 
 	/// const-ref to scoring database
 	SecondaryStructurePotential const & potential_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 

@@ -51,30 +51,30 @@ public:
 		func::FuncOP func,
 		ScoreType scoretype = angle_constraint );
 
-	virtual std::string type() const override;
+	std::string type() const override;
 
-	virtual ConstraintOP clone() const override;
+	ConstraintOP clone() const override;
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
 	/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
 	/// to the new object. Intended to be implemented by derived classes.
-	virtual ConstraintOP remapped_clone(
+	ConstraintOP remapped_clone(
 		pose::Pose const & src,
 		pose::Pose const & dest,
 		id::SequenceMappingCOP map = NULL ) const override;
 
 	/// @brief This overrride updates the sequence numbering but not the atom names.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	virtual ConstraintOP remap_resid( core::id::SequenceMapping const &seqmap ) const override;
+	ConstraintOP remap_resid( core::id::SequenceMapping const &seqmap ) const override;
 
-	virtual bool operator == ( Constraint const & rhs ) const override;
-	virtual bool same_type_as_me( Constraint const & other ) const override;
+	bool operator == ( Constraint const & rhs ) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
-	virtual void show_def( std::ostream & out, pose::Pose const & pose ) const override;
+	void show_def( std::ostream & out, pose::Pose const & pose ) const override;
 	void show_def_nopose( std::ostream & out ) const;
 
-	virtual void read_def(
+	void read_def(
 		std::istream & in,
 		pose::Pose const & pose,
 		func::FuncFactory const & func_factory ) override;
@@ -83,13 +83,12 @@ public:
 	using Constraint::score;
 	using Constraint::dist;
 
-	virtual void score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const override;
+	void score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const override;
 
 	//fpd use the same machinery as NamedAtomPairConstraint where names are mapped to indices here
-	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const override;
+	void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const override;
 
 
-	virtual
 	core::Real
 	dist( core::scoring::func::XYZ_Func const & xyz ) const override;
 

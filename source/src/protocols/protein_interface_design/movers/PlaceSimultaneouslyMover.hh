@@ -93,7 +93,7 @@ public:
 	void add_coordinatecst_for_hotspot_packing( core::pose::Pose & );
 	void stub_sets( utility::vector1< StubSetStubPos > const sets ) { stub_sets_ = sets; }
 	void host_chain( core::Size const host_chain ) { host_chain_ = host_chain; }
-	virtual ~PlaceSimultaneouslyMover();
+	~PlaceSimultaneouslyMover() override;
 
 	std::string
 	get_name() const override;

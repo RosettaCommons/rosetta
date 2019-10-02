@@ -47,13 +47,13 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn );
 
 	//destructor -- necessary? -- YES destructors are necessary.
-	~RNA_AddDeleteMonteCarlo();
+	~RNA_AddDeleteMonteCarlo() override;
 
 	// Undefinded, commenting out to fix PyRosetta build  void apply( core::pose::Pose & pose, Size const res_to_delete, protocols::stepwise::monte_carlo::MovingResidueCase const moving_residue_case  );
 
 	/// @brief Apply the minimizer to one pose
-	virtual void apply( core::pose::Pose & pose_to_visualize );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose_to_visualize ) override;
+	std::string get_name() const override;
 
 	void set_kT( core::Real const & setting ){ kT_ = setting; }
 

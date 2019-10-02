@@ -47,7 +47,7 @@ class RNA_IdealCoord : public utility::pointer::ReferenceCount {
 public:
 
 	RNA_IdealCoord();
-	~RNA_IdealCoord();
+	~RNA_IdealCoord() override;
 
 	//Apply ideal coords to one residue. Keep the backbone torsion values by default
 	//std::map < id::DOF_ID , Real > apply_and_return( Pose & pose, Size const seqpos, Size pucker, bool const keep_backbone_torsion = true ) const;

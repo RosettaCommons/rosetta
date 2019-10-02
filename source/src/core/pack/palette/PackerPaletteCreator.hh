@@ -40,7 +40,7 @@ namespace palette {
 class PackerPaletteCreator : public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~PackerPaletteCreator() {}
+	~PackerPaletteCreator() override {}
 
 	/// @brief Instantiate a new PackerPalette
 	virtual PackerPaletteOP create_packer_palette() const = 0;

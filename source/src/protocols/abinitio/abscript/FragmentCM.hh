@@ -46,7 +46,7 @@ public:
 
 	virtual void set_mover( simple_moves::FragmentMoverOP mover );
 
-	virtual ~FragmentCM();
+	~FragmentCM() override;
 
 	void
 	parse_my_tag( utility::tag::TagCOP tag,

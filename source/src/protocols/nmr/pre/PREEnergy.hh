@@ -82,11 +82,10 @@ public: // Methods
 	PREEnergy(PREEnergy const & other);
 
 	/// @brief destructor
-	~PREEnergy();
+	~PREEnergy() override;
 
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Return PREData from pose. Create PREData if not present and attach them to the pose.
 	core::scoring::nmr::pre::PREData &
@@ -98,7 +97,7 @@ public: // Methods
 		Pose & pose,
 		ScoreFunction const & /*sxfn*/,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	/// @brief Calculate the total PRE score from PREData retrieved from the pose
 	Real
@@ -111,20 +110,18 @@ public: // Methods
 	///        that will be used during minimization.
 	///        Here, the function creates and updates the atom_id_to_pre_xyz_deriv_map_ which
 	///        is needed by the eval_atom_derivative() function.
-	virtual
 	void
 	setup_for_minimizing(
 		Pose & pose,
 		ScoreFunction const & /*sxfn*/,
 		core::kinematics::MinimizerMapBase const & /*minmap*/
-	) const;
+	) const override;
 
 	/// @brief Evaluate the xyz derivative of the PRE for an atom in the pose.
 	///        Called during the atomtree derivative calculation, atom_tree_minimize.cc,
 	///        through the ScoreFunction::eval_atom_derivative intermediary.
 	///        F1 and F2 should not zeroed, rather, setup_for_minimizing() accumulates its
 	///        contribution from the xyz derivatives of atom id
-	virtual
 	void
 	eval_atom_derivative(
 		core::id::AtomID const & id,
@@ -134,7 +131,7 @@ public: // Methods
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 	/// @brief Indicate in the context-graphs-required list which
 	///        context-graphs this energy method requires that the Pose
@@ -142,7 +139,7 @@ public: // Methods
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > &
-	) const;
+	) const override;
 
 	/// @brief show additional information of the energy method
 	void
@@ -150,12 +147,11 @@ public: // Methods
 		std::ostream & TR,
 		Pose & pose,
 		bool verbose=false
-	) const;
+	) const override;
 
 	/// @brief Return the version of the energy method
-	virtual
 	Size
-	version() const;
+	version() const override;
 
 private: // Methods
 

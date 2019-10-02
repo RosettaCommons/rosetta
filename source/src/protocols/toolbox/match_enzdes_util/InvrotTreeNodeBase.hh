@@ -55,7 +55,7 @@ public:
 
 	InvrotCollector( InvrotCollector const & other );
 
-	virtual ~InvrotCollector();
+	~InvrotCollector() override;
 
 	InvrotCollectorOP
 	clone() const;
@@ -98,7 +98,7 @@ public:
 		InvrotTreeNodeBaseCAP parent_node
 	);
 
-	virtual ~InvrotTreeNodeBase();
+	~InvrotTreeNodeBase() override;
 
 	/// self pointers
 	inline InvrotTreeNodeBaseCOP get_self_ptr() const { return shared_from_this(); }

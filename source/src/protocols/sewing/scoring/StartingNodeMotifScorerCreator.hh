@@ -28,9 +28,9 @@ namespace scoring {
 class StartingNodeMotifScorerCreator : public AssemblyScorerCreator
 {
 public:
-	virtual AssemblyScorerOP create_assembly_scorer() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition &  ) const;
+	AssemblyScorerOP create_assembly_scorer() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition &  ) const override;
 };
 
 

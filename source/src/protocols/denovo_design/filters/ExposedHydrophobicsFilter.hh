@@ -47,7 +47,7 @@ public:
 	ExposedHydrophobicsFilter();
 
 	/// @brief virtual constructor to allow derivation
-	virtual ~ExposedHydrophobicsFilter();
+	~ExposedHydrophobicsFilter() override;
 
 	/// @brief Parses the ExposedHydrophobicsFilter tags
 	void parse_my_tag(

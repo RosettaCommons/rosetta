@@ -41,8 +41,7 @@ public:
 public:
 	MatchGrouper();
 
-	virtual
-	~MatchGrouper();
+	~MatchGrouper() override;
 
 	virtual
 	Size

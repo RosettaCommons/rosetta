@@ -40,7 +40,7 @@ private:
 public:
 	/// @brief default ctor
 	SetChiMover();
-	virtual ~SetChiMover();
+	~SetChiMover() override;
 
 	void apply( core::pose::Pose & pose ) override;
 	protocols::moves::MoverOP clone() const  override{

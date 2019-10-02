@@ -40,7 +40,7 @@ public:
 	///@brief default construct
 	InterModelMotifScorer();
 
-	virtual ~InterModelMotifScorer()=default;
+	~InterModelMotifScorer() override =default;
 
 	InterModelMotifScorer( InterModelMotifScorer const & );
 
@@ -63,10 +63,10 @@ public:
 
 	static std::string type_name();
 
-	virtual core::Real
+	core::Real
 	get_weight() const override;
 
-	virtual void
+	void
 	set_weight( core::Real ) override;
 
 

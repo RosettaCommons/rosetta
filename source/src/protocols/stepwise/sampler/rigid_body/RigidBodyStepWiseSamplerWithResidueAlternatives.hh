@@ -36,7 +36,7 @@ public:
 		RigidBodyStepWiseSamplerOP rigid_body_rotamer );
 
 	//destructor
-	~RigidBodyStepWiseSamplerWithResidueAlternatives();
+	~RigidBodyStepWiseSamplerWithResidueAlternatives() override;
 
 public:
 
@@ -67,10 +67,10 @@ public:
 	RigidBodyStepWiseSamplerOP rigid_body_rotamer();
 
 	/// @brief Name of the class
-	virtual std::string get_name() const { return "RigidBodyStepWiseSamplerWithResidueAlternatives"; }
+	std::string get_name() const override { return "RigidBodyStepWiseSamplerWithResidueAlternatives"; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RIGID_BODY_WITH_RESIDUE_ALTERNATIVES; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::RIGID_BODY_WITH_RESIDUE_ALTERNATIVES; }
 
 	void
 	apply_rigid_body_only( core::pose::Pose & pose );

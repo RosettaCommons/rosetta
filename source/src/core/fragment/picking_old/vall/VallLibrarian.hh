@@ -125,8 +125,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	virtual
-	~VallLibrarian();
+	~VallLibrarian() override;
 
 
 private: // disallow copy

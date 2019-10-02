@@ -53,12 +53,12 @@ public:
 	SetupForSymmetryMover( std::string const & symmdef_file,
 		utility::options::OptionCollection const & options );
 
-	~SetupForSymmetryMover();
+	~SetupForSymmetryMover() override;
 
 	moves::MoverOP clone() const override { return( utility::pointer::make_shared< SetupForSymmetryMover >( *this ) ); }
 
-	virtual void apply( core::pose::Pose & pose ) override;
-	virtual void parse_my_tag(
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
@@ -132,12 +132,12 @@ public:
 	// default constructor
 	ExtractAsymmetricUnitMover();
 
-	~ExtractAsymmetricUnitMover();
+	~ExtractAsymmetricUnitMover() override;
 
 	moves::MoverOP clone() const override { return( utility::pointer::make_shared< ExtractAsymmetricUnitMover >( *this ) ); }
 
-	virtual void apply( core::pose::Pose & pose ) override;
-	virtual void parse_my_tag(
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
@@ -189,12 +189,12 @@ public:
 	// default constructor
 	ExtractAsymmetricPoseMover();
 
-	~ExtractAsymmetricPoseMover();
+	~ExtractAsymmetricPoseMover() override;
 
 	moves::MoverOP clone() const override { return( utility::pointer::make_shared< ExtractAsymmetricPoseMover >( *this ) ); }
 
-	virtual void apply( core::pose::Pose & pose ) override;
-	virtual void parse_my_tag(
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,

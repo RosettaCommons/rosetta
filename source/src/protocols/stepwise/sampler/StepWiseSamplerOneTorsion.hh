@@ -39,13 +39,13 @@ public:
 		TorsionList const & torsions
 	);
 
-	virtual ~StepWiseSamplerOneTorsion();
+	~StepWiseSamplerOneTorsion() override;
 
 	/// @brief Apply the current rotamer to pose
-	virtual void apply( core::pose::Pose & pose ) { apply( pose, id_ ); }
+	void apply( core::pose::Pose & pose ) override { apply( pose, id_ ); }
 
 	/// @brief Apply the i-th rotamer to pose
-	virtual void apply( core::pose::Pose & pose, Size const i );
+	void apply( core::pose::Pose & pose, Size const i ) override;
 
 	/// @brief Set the allowed torsions in sampler
 	virtual void set_torsions( TorsionList const & setting ) {
@@ -65,10 +65,10 @@ public:
 	}
 
 	/// @brief Name of the class
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::ONE_TORSION; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::ONE_TORSION; }
 
 private:
 

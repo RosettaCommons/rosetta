@@ -694,7 +694,7 @@ public:
 
 	/// @brief virtual destructor.  Derived classes must ensure they've destroyed all their
 	/// nodes and edges through a call to "destroy_everything" before this function is arrived at
-	virtual ~Digraph();
+	~Digraph() override;
 
 	/// @brief ctor
 	Digraph();

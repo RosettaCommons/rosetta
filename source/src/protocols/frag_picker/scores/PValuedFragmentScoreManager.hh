@@ -38,16 +38,16 @@ public:
 
 	/// @brief calculates all the small scores for a given fragment
 	/// @brief results are properly stored inside a FragmentScoreMap object
-	bool score_fragment_from_cache(FragmentCandidateOP, FragmentScoreMapOP);
+	bool score_fragment_from_cache(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 	/// @brief calculates all the small scores for a given fragment
 	/// @brief results are properly stored inside a FragmentScoreMap object
-	bool score_fragment(FragmentCandidateOP, FragmentScoreMapOP);
+	bool score_fragment(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 	/// @brief prints a flat table with all scores for all the fragments in a given vector
 	/// @details If the manager allows for annotations, they will be printed as well
 	void describe_fragments(utility::vector1<std::pair<FragmentCandidateOP,
-		scores::FragmentScoreMapOP> > const&, std::ostream&);
+		scores::FragmentScoreMapOP> > const&, std::ostream&) override;
 
 private:
 	utility::vector1<utility::vector1<AdaptiveScoreHistogramOP> > statistics_;

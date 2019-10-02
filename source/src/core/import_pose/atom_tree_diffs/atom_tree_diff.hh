@@ -69,7 +69,7 @@ public:
 
 	AtomTreeDiff();
 	AtomTreeDiff(std::string filename);
-	virtual ~AtomTreeDiff();
+	~AtomTreeDiff() override;
 
 	/// @brief returns true if a reference struct with the given tag is present
 	bool has_ref_pose(std::string const & tag) const;

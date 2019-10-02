@@ -42,7 +42,7 @@ class MultipleOutputter : public ResultOutputter
 public:
 
 	MultipleOutputter();
-	virtual ~MultipleOutputter();
+	~MultipleOutputter() override;
 
 	/// @brief Invoke write_output on all of the ResultOutputters this %MultipleOutputter contains.
 	/// This class expects the OutputSpecification to be of type MultipleOutputSpecification and will

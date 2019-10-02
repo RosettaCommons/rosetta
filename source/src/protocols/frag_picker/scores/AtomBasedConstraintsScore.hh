@@ -50,10 +50,10 @@ public:
 	AtomBasedConstraintsScore(core::Size, core::Real, bool, core::Size, std::string);
 
 	/// @brief In this case caching means copying coordinates of relevant atoms from a chunk's pose
-	void do_caching(VallChunkOP);
+	void do_caching(VallChunkOP) override;
 
 	/// @brief Erases the internal array of coordinates
-	void clean_up();
+	void clean_up() override;
 
 	/// @brief Returns true if a given atom has been successfully cached and one can use its coordinates
 	/// @param residue_id the residue order number. The first is 1,

@@ -35,7 +35,7 @@ public:
 	LoopCycle( utility::vector1< Loop > const & loops );
 
 	//destructor
-	~LoopCycle();
+	~LoopCycle() override;
 
 public:
 

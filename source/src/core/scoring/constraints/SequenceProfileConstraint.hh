@@ -63,26 +63,26 @@ public:
 		core::id::SequenceMappingCOP mapping = NULL // current pose numbers onto profile numbers.
 	);
 
-	virtual ~SequenceProfileConstraint();
+	~SequenceProfileConstraint() override;
 
-	virtual ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
-	virtual bool operator == ( Constraint const & ) const;
-	virtual bool same_type_as_me( Constraint const & ) const;
+	bool operator == ( Constraint const & ) const override;
+	bool same_type_as_me( Constraint const & ) const override;
 
-	virtual std::string type() const { return "SequenceProfile"; }
+	std::string type() const override { return "SequenceProfile"; }
 
 	/// @brief used by ConstraintIO and ConstraintFactory to construct this constraint from a input file stream (constraint file)
-	virtual void
+	void
 	read_def(
 		std::istream &,
 		Pose const &,
 		func::FuncFactory const &
-	);
+	) override;
 
-	virtual void show_def( std::ostream &, Pose const & ) const;
+	void show_def( std::ostream &, Pose const & ) const override;
 
-	virtual void show( std::ostream & out ) const;
+	void show( std::ostream & out ) const override;
 
 	core::Size seqpos() const { return seqpos_; }
 
@@ -96,43 +96,42 @@ public:
 	SequenceProfileCOP sequence_profile() const;
 	core::id::SequenceMappingCOP profile_mapping() const;
 
-	virtual core::Size natoms() const { return 0; }
-	virtual AtomID const & atom( core::Size const ) const {
+	core::Size natoms() const override { return 0; }
+	AtomID const & atom( core::Size const ) const override {
 		utility_exit_with_message("SequenceProfileConstraint is not atom-based!.");
 		return core::id::GLOBAL_BOGUS_ATOM_ID; // required for compilation on Windows
 	};
 
-	virtual utility::vector1< core::Size > residues() const;
+	utility::vector1< core::Size > residues() const override;
 
-	virtual ConstraintOP remap_resid( SequenceMapping const & ) const;
-	virtual ConstraintOP remapped_clone(pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map ) const;
+	ConstraintOP remap_resid( SequenceMapping const & ) const override;
+	ConstraintOP remapped_clone(pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map ) const override;
 
 	// Needed to get the base class overloads
 	using Constraint::score;
 	using Constraint::dist;
 
-	virtual void
+	void
 	score(
 		XYZ_Func const &,
 		EnergyMap const &,
 		EnergyMap &
-	) const;
+	) const override;
 
 	core::Real
 	dist( core::chemical::AA aa ) const;
 
-	virtual
 	core::Real
-	dist( core::scoring::func::XYZ_Func const & xyz ) const;
+	dist( core::scoring::func::XYZ_Func const & xyz ) const override;
 
-	virtual void
+	void
 	fill_f1_f2(
 		AtomID const &,
 		XYZ_Func const &,
 		core::Vector &,
 		core::Vector &,
 		EnergyMap const &
-	) const;
+	) const override;
 
 	void weight( core::Real const w );
 	core::Real weight() const;

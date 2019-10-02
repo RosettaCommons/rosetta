@@ -40,7 +40,7 @@ class PDBPoseOutputter : public PoseOutputter
 public:
 
 	PDBPoseOutputter();
-	virtual ~PDBPoseOutputter();
+	~PDBPoseOutputter() override;
 
 	static
 	bool
@@ -68,7 +68,6 @@ public:
 	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
 
 	/// @brief Create the PoseOutputSpecification for a particular job
-	virtual
 	PoseOutputSpecificationOP
 	create_output_specification(
 		LarvalJob const & job,
@@ -78,7 +77,6 @@ public:
 	) override;
 
 	/// @brief Write a pose out to permanent storage (whatever that may be).
-	virtual
 	void write_output(
 		output::OutputSpecification const & specification,
 		JobResult const & result
@@ -89,7 +87,6 @@ public:
 	void flush() override;
 
 	/// @brief Return the stiring used by the PDBPoseOutputterCreator for this class
-	virtual
 	std::string
 	class_key() const override;
 

@@ -28,10 +28,10 @@ namespace scoring {
 class InterModelMotifScorerCreator : public AssemblyScorerCreator
 {
 public:
-	virtual AssemblyScorerOP create_assembly_scorer() const;
-	virtual std::string keyname() const;
+	AssemblyScorerOP create_assembly_scorer() const override;
+	std::string keyname() const override;
 
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
 

@@ -45,9 +45,8 @@ public:
 	MembraneLipo();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -58,20 +57,18 @@ public:
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
-	virtual
+	) const override;
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 private:
 	// const-ref to scoring database
 	MembranePotential const & potential_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 

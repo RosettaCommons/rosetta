@@ -54,8 +54,7 @@ public:
 
 	SegmentPairing( SegmentNames const & paired_segments );
 
-	virtual
-	~SegmentPairing() {};
+	~SegmentPairing() override {};
 
 	virtual SegmentPairingOP
 	clone() const = 0;
@@ -147,11 +146,10 @@ public:
 
 	HelixPairing( SegmentName const & h1, SegmentName const & h2, bool const is_parallel );
 
-	virtual
-	~HelixPairing() {};
+	~HelixPairing() override {};
 
-	virtual SegmentPairingOP
-	clone() const;
+	SegmentPairingOP
+	clone() const override;
 
 	static std::string
 	class_name() { return "HelixPairing"; }
@@ -159,19 +157,19 @@ public:
 	static void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-	virtual PairingType
-	type() const { return HELIX; }
+	PairingType
+	type() const override { return HELIX; }
 
 protected:
-	virtual void
-	parse_tag( utility::tag::Tag const & tag );
+	void
+	parse_tag( utility::tag::Tag const & tag ) override;
 
-	virtual void
-	to_xml( utility::tag::Tag & tag ) const;
+	void
+	to_xml( utility::tag::Tag & tag ) const override;
 
 public:
-	virtual std::string
-	pairing_string( StructureData const & sd ) const;
+	std::string
+	pairing_string( StructureData const & sd ) const override;
 
 private:
 	bool parallel_;
@@ -188,11 +186,10 @@ public:
 		StrandOrientation const & orient2,
 		RegisterShift const & shift );
 
-	virtual
-	~StrandPairing() {};
+	~StrandPairing() override {};
 
-	virtual SegmentPairingOP
-	clone() const;
+	SegmentPairingOP
+	clone() const override;
 
 	static std::string
 	class_name() { return "StrandPairing"; }
@@ -200,19 +197,19 @@ public:
 	static void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-	virtual PairingType
-	type() const { return STRAND; }
+	PairingType
+	type() const override { return STRAND; }
 
 protected:
-	virtual void
-	parse_tag( utility::tag::Tag const & tag );
+	void
+	parse_tag( utility::tag::Tag const & tag ) override;
 
-	virtual void
-	to_xml( utility::tag::Tag & tag ) const;
+	void
+	to_xml( utility::tag::Tag & tag ) const override;
 
 public:
-	virtual std::string
-	pairing_string( StructureData const & sd ) const;
+	std::string
+	pairing_string( StructureData const & sd ) const override;
 
 	bool
 	parallel() const;
@@ -250,11 +247,10 @@ public:
 		SegmentName const & s1,
 		SegmentName const & s2 );
 
-	virtual
-	~HelixSheetPairing() {};
+	~HelixSheetPairing() override {};
 
-	virtual SegmentPairingOP
-	clone() const;
+	SegmentPairingOP
+	clone() const override;
 
 	static std::string
 	class_name() { return "HelixSheetPairing"; }
@@ -262,19 +258,19 @@ public:
 	static void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-	virtual PairingType
-	type() const { return HELIX_SHEET; }
+	PairingType
+	type() const override { return HELIX_SHEET; }
 
 protected:
-	virtual void
-	parse_tag( utility::tag::Tag const & tag );
+	void
+	parse_tag( utility::tag::Tag const & tag ) override;
 
-	virtual void
-	to_xml( utility::tag::Tag & tag ) const;
+	void
+	to_xml( utility::tag::Tag & tag ) const override;
 
 public:
-	virtual std::string
-	pairing_string( StructureData const & sd ) const;
+	std::string
+	pairing_string( StructureData const & sd ) const override;
 
 };
 

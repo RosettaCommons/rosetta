@@ -72,16 +72,16 @@ public:
 	LoopMover & operator=( LoopMover const & rhs );
 
 	//destructor
-	virtual ~LoopMover();
+	~LoopMover() override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Inform the GuardedLoopsFromFile object that it is not in charge of
 	/// updating its Loops object at the beginning of apply()
 	void set_guarded_loops_not_in_charge();
 
 	/// @brief Apply the loop-build protocol to the input pose
-	virtual void apply( core::pose::Pose & ) = 0;
+	void apply( core::pose::Pose & ) override = 0;
 
 	void set_scorefxn( const core::scoring::ScoreFunctionOP score_in );
 	const core::scoring::ScoreFunctionOP & scorefxn() const;

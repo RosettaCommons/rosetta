@@ -48,7 +48,7 @@ public:
 
 	protocols::moves::MoverOP clone() const override { return( utility::pointer::make_shared< SpinMover >( *this ) ); }
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpinMover >(); }
-	virtual ~SpinMover() {};
+	~SpinMover() override {};
 
 	std::string
 	get_name() const override;

@@ -28,7 +28,7 @@ namespace topology {
 class DimerPairing  : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~DimerPairing();
+	~DimerPairing() override;
 
 
 	typedef core::Size Size;

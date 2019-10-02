@@ -46,7 +46,7 @@ class UnboundRotamersOperation : public core::pack::rotamer_set::RotamerSetOpera
 public:
 
 	UnboundRotamersOperation();
-	virtual ~UnboundRotamersOperation();
+	~UnboundRotamersOperation() override;
 
 	/// @brief Adds rotamers from the specified pose to the unbound collection.
 	virtual void add_pose(core::pose::PoseCOP pose);
@@ -56,11 +56,9 @@ public:
 	/// @brief Loads poses from the -unboundrot flag.
 	virtual void initialize_from_command_line();
 
-	virtual
 	core::pack::rotamer_set::RotamerSetOperationOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
 	alter_rotamer_set(
 		pose::Pose const & pose,
@@ -68,7 +66,7 @@ public:
 		task::PackerTask const & ptask,
 		utility::graph::GraphCOP packer_neighbor_graph,
 		core::pack::rotamer_set::RotamerSet & rotamer_set
-	);
+	) override;
 
 private:
 	Size total_rot_;

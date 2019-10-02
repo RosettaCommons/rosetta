@@ -440,14 +440,12 @@ public:
 	using Constraint::score;
 	using Constraint::dist;
 
-	virtual
 	void
 	score(
 		core::scoring::func::XYZ_Func const & xyz_func,
 		core::scoring::EnergyMap const & weights,
 		core::scoring::EnergyMap & emap ) const override;
 
-	virtual
 	core::Real
 	dist( core::scoring::func::XYZ_Func const & ) const override { return 0; }
 

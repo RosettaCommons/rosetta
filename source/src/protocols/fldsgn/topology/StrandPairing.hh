@@ -73,7 +73,7 @@ public:// construct/destruct
 	StrandPairing( String const & spair);
 
 	/// @brief default destructor
-	virtual ~StrandPairing();
+	~StrandPairing() override;
 
 	/// @brief clone this object
 	StrandPairingOP clone();
@@ -235,7 +235,7 @@ public:// construct/destruct
 	StrandPairingSet( String const & spairstring, SS_Info2_COP const ssinfo, utility::vector1< String > const & abego );
 
 	/// @brief default destructor
-	virtual ~StrandPairingSet();
+	~StrandPairingSet() override;
 
 	/// @brief clone this object
 	StrandPairingSetOP clone() const;

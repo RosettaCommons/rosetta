@@ -52,7 +52,7 @@ public:
 	CoordinateConstraintStack(
 		utility::vector1< core::scoring::constraints::ConstraintCOP > const & coord_csts_,
 		CoordinateConstraintStackOP parent );
-	~CoordinateConstraintStack();
+	~CoordinateConstraintStack() override;
 
 	utility::vector1< core::scoring::constraints::ConstraintCOP > const & coord_csts() const;
 	void coord_csts( utility::vector1< core::scoring::constraints::ConstraintCOP > const & setting );
@@ -88,7 +88,7 @@ public:
 		bool const triage_positions=true,
 		core::Real stub_energy_threshold = 1.0
 	);
-	virtual ~PlaceStubMover();
+	~PlaceStubMover() override;
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override {
@@ -103,8 +103,8 @@ public:
 	stub_minimize_movers() const
 	{ return stub_minimize_movers_; }
 
-	virtual void apply( core::pose::Pose & pose ) override;
-	virtual void parse_my_tag( utility::tag::TagCOP tag,
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,

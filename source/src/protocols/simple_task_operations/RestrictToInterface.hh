@@ -69,11 +69,11 @@ public:
 	DockingNoRepack1();
 	DockingNoRepack1( int rb_jump_in );
 
-	virtual ~DockingNoRepack1();
+	~DockingNoRepack1() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
+	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "DockingNoRepack1"; }
 
@@ -92,11 +92,11 @@ public:
 	DockingNoRepack2();
 	DockingNoRepack2( int rb_jump_in );
 
-	virtual ~DockingNoRepack2();
+	~DockingNoRepack2() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
+	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "DockingNoRepack2"; }
 
@@ -143,20 +143,20 @@ public:
 	RestrictToInterface( utility::vector1<bool> loop_residues );
 
 
-	virtual ~RestrictToInterface();
+	~RestrictToInterface() override;
 
 	void add_jump( int rb_jump_in ) {
 		add_movable_jump( rb_jump_in );
 	}
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 	void rb_jump( int jump_in );
 	//void set_movable_jumps( utility::vector1_int const movable_jumps );
 	void distance( core::Real const distance_in );
 	void symmetric_task( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 
-	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
-	virtual void parse_tag( TagCOP, DataMap & );
+	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const override;
+	void parse_tag( TagCOP, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictToInterface"; }
 

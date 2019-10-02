@@ -57,22 +57,22 @@ class LeGrandSasa : public SasaMethod {
 public:
 
 	LeGrandSasa(Real probe_radius, SasaRadii radii_set);
-	virtual ~ LeGrandSasa();
+	~ LeGrandSasa() override;
 
 
 	//Real
 	//calculate(const pose::Pose & pose);
 
 	/// @brief Calculate Sasa.  Atoms not calculated have -1 sasa.  This is carried over for compatability purposes.
-	virtual Real
+	Real
 	calculate(
 		const pose::Pose & pose,
 		const id::AtomID_Map<bool> & atom_subset,
 		id::AtomID_Map<Real> & atom_sasa,
-		utility::vector1< Real > & rsd_sasa);
+		utility::vector1< Real > & rsd_sasa) override;
 
-	virtual std::string
-	get_name() const ;
+	std::string
+	get_name() const  override;
 
 public:
 

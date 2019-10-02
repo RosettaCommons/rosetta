@@ -31,9 +31,9 @@ namespace task_operations {
 class ProteinCore : public core::pack::task::operation::ResFilter {
 public:
 	ProteinCore();
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual core::pack::task::operation::ResFilterOP clone() const {return (utility::pointer::make_shared< ProteinCore >( *this));}
-	virtual void parse_tag( TagCOP );
+	bool operator() ( Pose const &, Size ) const override;
+	core::pack::task::operation::ResFilterOP clone() const override {return (utility::pointer::make_shared< ProteinCore >( *this));}
+	void parse_tag( TagCOP ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

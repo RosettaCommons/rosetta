@@ -64,7 +64,7 @@ public:
 	MPSymDockMover();
 
 	/// @brief Destructor
-	~MPSymDockMover();
+	~MPSymDockMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///

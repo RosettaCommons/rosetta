@@ -66,13 +66,12 @@ public:
 		utility::vector1<core::Real> const & potential_vect,
 		boundary_fn_type const & boundary_functions = boundary_fn_type());
 
-	~SplineFunc();
+	~SplineFunc() override;
 
 	/// @brief returns a clone of this SplineFunc
-	virtual
-	FuncOP clone() const { return utility::pointer::make_shared< SplineFunc >( *this ); }
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	FuncOP clone() const override { return utility::pointer::make_shared< SplineFunc >( *this ); }
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
 	/// @brief return SplineFunc member variables
 	core::Real get_exp_val() const;
@@ -106,24 +105,19 @@ public:
 	utility::vector1<core::Real> const & get_potential_vect() const;
 
 	/// @brief initialize this SplineFunc from the given izstream.
-	virtual
-	void read_data( std::istream &in );
+	void read_data( std::istream &in ) override;
 
 	/// @brief Returns the value of this SplineFunc evaluated at distance x.
-	virtual
-	core::Real func( core::Real const x ) const;
+	core::Real func( core::Real const x ) const override;
 
 	/// @brief Returns the value of the first derivative of this SplineFunc at distance x.
-	virtual
-	core::Real dfunc( core::Real const x ) const;
+	core::Real dfunc( core::Real const x ) const override;
 
 	/// @brief show the definition of this SplineFunc to the specified output stream.
-	virtual
-	void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
 	/// @brief show some sort of stringified representation of the violations for this constraint.
-	virtual
-	core::Size show_violations( std::ostream &out, core::Real x, core::Size verbose_level, core::Real threshold = 1 ) const;
+	core::Size show_violations( std::ostream &out, core::Real x, core::Size verbose_level, core::Real threshold = 1 ) const override;
 
 private:
 

@@ -218,8 +218,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~jagged_array()
+	~jagged_array() override
 	{}
 
 

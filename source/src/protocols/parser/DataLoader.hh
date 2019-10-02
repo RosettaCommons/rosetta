@@ -35,7 +35,7 @@ class DataLoader : public utility::pointer::ReferenceCount
 {
 public:
 	DataLoader();
-	virtual ~DataLoader();
+	~DataLoader() override;
 
 	/// @brief The DataLoader may load specific information into the basic::datacache::DataMap
 	/// object using this interface.

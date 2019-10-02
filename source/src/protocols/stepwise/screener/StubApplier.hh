@@ -32,21 +32,18 @@ public:
 	StubApplier( core::kinematics::Stub & stub );
 
 	//destructor
-	~StubApplier();
+	~StubApplier() override;
 
 public:
 
-	virtual
 	void
-	get_update( sampler::StepWiseSamplerOP sampler );
+	get_update( sampler::StepWiseSamplerOP sampler ) override;
 
-	virtual
 	std::string
-	name() const { return "StubApplier"; }
+	name() const override { return "StubApplier"; }
 
-	virtual
 	StepWiseScreenerType
-	type() const { return STUB_APPLIER; }
+	type() const override { return STUB_APPLIER; }
 
 private:
 

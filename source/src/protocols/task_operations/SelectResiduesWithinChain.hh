@@ -41,17 +41,16 @@ public:
 
 	SelectResiduesWithinChainOperation();
 
-	virtual ~SelectResiduesWithinChainOperation();
+	~SelectResiduesWithinChainOperation() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "SelectResiduesWithinChain"; }
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	core::Size chain() const{ return chain_; }
 	void chain( core::Size const c ){ chain_ = c; }

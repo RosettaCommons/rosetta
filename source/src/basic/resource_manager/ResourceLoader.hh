@@ -38,7 +38,7 @@ namespace resource_manager {
 class ResourceLoader : public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~ResourceLoader();
+	~ResourceLoader() override;
 
 	/// @brief Create a resource, held in an owning pointer, of any type
 	/// which will be stored in the ResourceManager; a resource may depend

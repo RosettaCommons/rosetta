@@ -78,7 +78,7 @@ public:
 	/// @throw _AE_unexpected_cdr_region_ (sub-class of _AE_numbering_failed_) if numbering is fails
 	/// @throw _AE_cdr_undefined_ if reuested CDR regions is not defined.
 	/// @throw _AE_invalid_cdr_region_ if CDR sequence out of bound of Chain sequence
-	virtual AntibodyNumbering number(AntibodySequence const &, AntibodyFramework const &heavy_fr, AntibodyFramework const &light_fr);
+	AntibodyNumbering number(AntibodySequence const &, AntibodyFramework const &heavy_fr, AntibodyFramework const &light_fr) override;
 
 	AntibodyChainNumbering number_heavy_chain(AntibodySequence const &, AntibodyFramework const &heavy_fr);
 	AntibodyChainNumbering number_light_chain(AntibodySequence const &, AntibodyFramework const &light_fr);

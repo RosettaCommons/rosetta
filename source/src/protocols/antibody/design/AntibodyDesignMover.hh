@@ -84,7 +84,7 @@ public:
 
 	AntibodyDesignMover( AntibodyDesignMover const & src );
 
-	virtual ~AntibodyDesignMover();
+	~AntibodyDesignMover() override;
 
 	/// @brief Reads default CDRGraftInstruction file and creates structs.
 	void

@@ -59,7 +59,7 @@ public:
 
 	GroupElec( GroupElec const & src );
 	GroupElec( methods::EnergyMethodOptions const & options );
-	~GroupElec();
+	~GroupElec() override;
 
 	void initialize( etable::coulomb::Coulomb const &coulomb );
 

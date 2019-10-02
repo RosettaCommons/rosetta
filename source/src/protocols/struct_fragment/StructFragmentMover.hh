@@ -45,17 +45,17 @@ public:
 	StructFragmentMover();
 
 	/// @brief Destructor
-	~StructFragmentMover();
+	~StructFragmentMover() override;
 
 	/// @brief Apply Mover
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	// Functions necessary for RosettaScripts
 	/// @brief Create clone of this mover
-	inline protocols::moves::MoverOP clone() const { return utility::pointer::make_shared< StructFragmentMover >( *this ); };
+	inline protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< StructFragmentMover >( *this ); };
 
 	/// @brief Create a fresh instance of this mover
-	inline protocols::moves::MoverOP fresh_instance() const{ return utility::pointer::make_shared< StructFragmentMover >(); };
+	inline protocols::moves::MoverOP fresh_instance() const override{ return utility::pointer::make_shared< StructFragmentMover >(); };
 
 	/// @brief Parse RosettaScripts options for this mover
 	void parse_my_tag(
@@ -64,7 +64,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
@@ -72,7 +72,7 @@ public:
 	// getters
 
 	/// @brief Get mover name
-	inline std::string get_name() const { return mover_name(); };
+	inline std::string get_name() const override { return mover_name(); };
 
 	/// @brief Return mover name
 	inline static std::string mover_name() { return "StructFragmentMover"; };

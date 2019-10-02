@@ -44,7 +44,7 @@ public:
 	// Use the parent Mover
 	using RotamerTrialsMover::RotamerTrialsMover;
 
-	~SymRotamerTrialsMover();
+	~SymRotamerTrialsMover() override;
 
 	std::string
 	get_name() const override;
@@ -65,7 +65,7 @@ public:
 
 	using EnergyCutRotamerTrialsMover::EnergyCutRotamerTrialsMover;
 
-	~SymEnergyCutRotamerTrialsMover();
+	~SymEnergyCutRotamerTrialsMover() override;
 public:
 
 	std::string get_name() const override;

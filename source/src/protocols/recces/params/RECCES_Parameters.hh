@@ -34,7 +34,7 @@ public:
 	RECCES_Parameters( core::pose::Pose const & pose );
 
 	//destructor
-	~RECCES_Parameters();
+	~RECCES_Parameters() override;
 
 public:
 

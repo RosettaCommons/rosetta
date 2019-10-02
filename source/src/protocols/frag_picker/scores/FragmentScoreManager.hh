@@ -40,7 +40,7 @@ namespace scores {
 class FragmentScoreManager: public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~FragmentScoreManager();
+	~FragmentScoreManager() override;
 
 	/// @brief precision used to display the total score for each fragment
 	static const core::Size TOTAL_PRECISION = 3;

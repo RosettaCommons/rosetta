@@ -76,8 +76,8 @@ public:
 	XYZClaim( ClientMoverOP owner,
 		ResidueSelectorCOP selector );
 
-	virtual void yield_elements( core::pose::Pose const&,
-		DOFElements& elements ) const;
+	void yield_elements( core::pose::Pose const&,
+		DOFElements& elements ) const override;
 
 	ControlStrength const& ctrl_strength() const;
 
@@ -95,15 +95,14 @@ public:
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string class_name();
 
-	virtual EnvClaimOP clone() const;
+	EnvClaimOP clone() const override;
 
-	virtual std::string type() const;
+	std::string type() const override;
 
-	virtual void show( std::ostream& os ) const;
+	void show( std::ostream& os ) const override;
 
 protected:
-	virtual
-	DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const;
+	DOFElement wrap_dof_id( core::id::DOF_ID const& id ) const override;
 
 	void build_bond_length_elements( core::Size seqpos,
 		ProtectedConformationCOP const&,

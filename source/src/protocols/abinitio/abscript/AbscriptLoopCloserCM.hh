@@ -51,7 +51,7 @@ public:
 	AbscriptLoopCloserCM( core::fragment::FragSetCOP fragset,
 		core::scoring::ScoreFunctionOP scorefxn );
 
-	virtual ~AbscriptLoopCloserCM() {};
+	~AbscriptLoopCloserCM() override {};
 
 	EnvClaims yield_claims( core::pose::Pose const&,
 		basic::datacache::WriteableCacheableMapOP ) override;

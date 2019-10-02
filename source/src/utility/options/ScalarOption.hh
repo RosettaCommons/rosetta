@@ -71,7 +71,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~ScalarOption() {}
+	~ScalarOption() override {}
 
 
 protected: // Assignment

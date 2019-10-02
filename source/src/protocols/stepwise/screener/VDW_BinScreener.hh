@@ -47,21 +47,21 @@ public:
 		core::kinematics::Stub const & moving_res_base_stub );
 
 	//destructor
-	~VDW_BinScreener();
+	~VDW_BinScreener() override;
 
 public:
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	std::string
-	name() const { return "VDW_BinScreener"; }
+	name() const override { return "VDW_BinScreener"; }
 
 	StepWiseScreenerType
-	type() const { return VDW_BIN; }
+	type() const override { return VDW_BIN; }
 
 	void
-	fast_forward( sampler::StepWiseSamplerOP sampler );
+	fast_forward( sampler::StepWiseSamplerOP sampler ) override;
 
 private:
 

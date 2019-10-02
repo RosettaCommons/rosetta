@@ -54,7 +54,7 @@ public:
 	/// @brief Empty Constructor
 	Nub();
 	/// @brief Destructor
-	~Nub();
+	~Nub() override;
 
 	/// @brief Produces the unfolded pose
 	void apply(

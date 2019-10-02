@@ -48,7 +48,7 @@ class DensePDNode : public PrecomputedPairEnergiesNode
 {
 public:
 	DensePDNode(InteractionGraphBase * owner, int node_id, int num_states);
-	virtual ~DensePDNode();
+	~DensePDNode() override;
 	void print() const override;
 
 	void update_one_body_energy( int state, core::PackerEnergy energy ) override;
@@ -186,13 +186,12 @@ class DensePDEdge : public PrecomputedPairEnergiesEdge
 {
 public:
 	DensePDEdge(InteractionGraphBase* owner, int first_node_ind, int second_node_ind);
-	virtual ~DensePDEdge();
+	~DensePDEdge() override;
 	void set_sparse_aa_info(ObjexxFCL::FArray2_bool const & ) override {}
 	bool get_sparse_aa_info( int, int) const override;// {return true;} //"all amino acids are neighbors"
 	void add_to_two_body_energy(int const, int const, core::PackerEnergy const) override;
 	void add_to_two_body_energies( ObjexxFCL::FArray2< core::PackerEnergy > const & res_res_energy_array ) override;
 	void set_two_body_energy(int const, int const, core::PackerEnergy const) override;
-	virtual
 	void clear_two_body_energy(int const, int const) override;
 	core::PackerEnergy get_two_body_energy( int const, int const ) const override;
 
@@ -274,68 +273,65 @@ class DensePDInteractionGraph : public PrecomputedPairEnergiesInteractionGraph
 {
 public:
 	DensePDInteractionGraph(int num_nodes);
-	virtual void initialize( pack_basic::RotamerSetsBase const & rot_sets );
+	void initialize( pack_basic::RotamerSetsBase const & rot_sets ) override;
 
-	virtual core::PackerEnergy get_one_body_energy_for_node_state( int node, int state);
+	core::PackerEnergy get_one_body_energy_for_node_state( int node, int state) override;
 
 	//virtual void set_num_aatypes(int) {}
-	virtual int  get_num_aatypes() const {return 1;}
+	int  get_num_aatypes() const override {return 1;}
 
-	virtual void blanket_assign_state_0();
-	virtual core::PackerEnergy set_state_for_node(int node_ind, int new_state);
-	virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states);
-	virtual void consider_substitution
+	void blanket_assign_state_0() override;
+	core::PackerEnergy set_state_for_node(int node_ind, int new_state) override;
+	core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states) override;
+	void consider_substitution
 	(
 		int node_ind,
 		int new_state,
 		core::PackerEnergy & delta_energy,
 		core::PackerEnergy & prev_energy_for_node
-	);
+	) override;
 
 	/// @brief Accepts (commits) the state change previously considered in a call to
 	/// consider_substitution and returns the energy of the entire graph
-	virtual core::PackerEnergy commit_considered_substitution();
+	core::PackerEnergy commit_considered_substitution() override;
 
 	/// @brief removes all accumulated numerical drift and returns the
 	/// energy for the current state assignment.
-	virtual core::PackerEnergy get_energy_current_state_assignment();
+	core::PackerEnergy get_energy_current_state_assignment() override;
 	/// @brief Hook for classes derived from AdditionalBackgroundNodesInteractionGraph
 	core::PackerEnergy get_energy_PD_current_state_assignment();
 
 	/// @brief returns the number of floats used in all edge two-body energy tables
-	virtual int get_edge_memory_usage() const;
+	int get_edge_memory_usage() const override;
 
 	/// @brief outputs the current state for each node, useful for debugging
-	virtual void print_current_state_assignment() const;
-	virtual void set_errorfull_deltaE_threshold( core::PackerEnergy ) {};
+	void print_current_state_assignment() const override;
+	void set_errorfull_deltaE_threshold( core::PackerEnergy ) override {};
 
 	/// @brief a user may define subsets of the vertex set for which they would like to
 	/// know the internal energy sum.
-	virtual core::PackerEnergy get_energy_sum_for_vertex_group( int group_id );
+	core::PackerEnergy get_energy_sum_for_vertex_group( int group_id ) override;
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 	/// @brief Override the InteractionGraphBase class's implementation of this function
 	/// to return 'true'.
-	virtual
 	bool
-	aa_submatrix_energies_retrievable() const;
+	aa_submatrix_energies_retrievable() const override;
 
-	virtual
 	int aatype_for_node_state(
 		int node_ind,
 		int node_state
-	) const;
+	) const override;
 
-	virtual
 	ObjexxFCL::FArray2D< core::PackerEnergy >
 	get_aa_submatrix_energies_for_edge(
 		int node1,
 		int node2,
 		int node1aa,
 		int node2aa
-	) const;
+	) const override;
 
 
 	/// @brief Swap the contents of the edge pair-energy table with the contents in the new_edge_table
@@ -345,8 +341,8 @@ public:
 protected:
 	//virtual unsigned int getMemoryUsageInBytes() const;
 
-	virtual NodeBase* create_new_node( int node_index, int num_states);
-	virtual EdgeBase* create_new_edge( int index1, int index2);
+	NodeBase* create_new_node( int node_index, int num_states) override;
+	EdgeBase* create_new_edge( int index1, int index2) override;
 
 	/// @brief removes numerical drift that can accumulate over the course of
 	/// many state assignment changes within simulated annealing

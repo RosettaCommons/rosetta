@@ -42,7 +42,7 @@ public:
 
 	//CDRSetOptions(std::string instructions);
 
-	~CDRSetOptions();
+	~CDRSetOptions() override;
 
 
 public:

@@ -66,7 +66,7 @@ public: // construct/destruct
 	/// @brief default destructor
 	/// @remarks detaches during destruction
 	//virtual
-	~LengthEventCollector();
+	~LengthEventCollector() override;
 
 
 public: // assignment
@@ -82,18 +82,18 @@ public: // virtual constructors
 
 	/// @brief clone this object
 	/// @warning Subject (represented by Link/pointer) is not copied!
-	pose::datacache::CacheableObserverOP clone();
+	pose::datacache::CacheableObserverOP clone() override;
 
 
 	/// @brief create a new instance of this object
-	pose::datacache::CacheableObserverOP create();
+	pose::datacache::CacheableObserverOP create() override;
 
 
 public: // interface
 
 
 	/// @brief is this observer attached to a Pose/Conformation?
-	bool is_attached() const {
+	bool is_attached() const override {
 		return length_event_link_.valid(); }
 
 	void
@@ -108,13 +108,11 @@ protected: // virtual observer interface
 
 
 	/// @brief attach to Pose/Conformation
-	virtual
-	void attach_impl( pose::Pose & pose );
+	void attach_impl( pose::Pose & pose ) override;
 
 
 	/// @brief detach from Pose/Conformation
-	virtual
-	void detach_impl();
+	void detach_impl() override;
 
 	void
 	on_length_change( conformation::signals::LengthEvent const & event );
@@ -157,21 +155,21 @@ public: // construct/destruct, assignment, virtual constructors
 
 	SpecialSegmentsObserver( SpecialSegmentsObserver const & rval );
 
-	~SpecialSegmentsObserver();
+	~SpecialSegmentsObserver() override;
 
 	SpecialSegmentsObserver & operator =( SpecialSegmentsObserver const & rval );
 
 	/// @brief clone this object
 	/// @warning Subject (represented by Link/pointer) is not copied!
-	pose::datacache::CacheableObserverOP clone();
+	pose::datacache::CacheableObserverOP clone() override;
 
 	/// @brief create a new instance of this object
-	pose::datacache::CacheableObserverOP create();
+	pose::datacache::CacheableObserverOP create() override;
 
 public: //interface
 
 	/// @brief is this observer attached to a Pose/Conformation?
-	bool is_attached() const {
+	bool is_attached() const override {
 		return length_event_link_.valid(); }
 
 	utility::vector1< Segment > const &
@@ -204,13 +202,11 @@ protected: // virtual observer interface
 	on_length_change( conformation::signals::LengthEvent const & event );
 
 	/// @brief attach to Pose/Conformation
-	virtual
-	void attach_impl( pose::Pose & pose );
+	void attach_impl( pose::Pose & pose ) override;
 
 
 	/// @brief detach from Pose/Conformation
-	virtual
-	void detach_impl();
+	void detach_impl() override;
 
 private: //data
 

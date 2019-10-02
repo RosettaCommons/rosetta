@@ -49,7 +49,7 @@ public:
 	// Need a clone();
 
 	//destructor -- necessary?
-	~ChunkSet();
+	~ChunkSet() override;
 
 	void
 	insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,

@@ -33,19 +33,19 @@ public:
 	VicinityPerturber(Pose const & target);
 
 	/// @copydoc Perturber::get_name
-	std::string get_name() const { return "VicinityPerturber"; }
+	std::string get_name() const override { return "VicinityPerturber"; }
 
 	/// @copydoc Perturber::perturb_subset
 	void perturb_subset(
 		Pose const & pose,
 		IndexList const & residues,
-		ClosureProblemOP problem);
+		ClosureProblemOP problem) override;
 
 	/// @copydoc Perturber::perturb_subset_with_balance
 	void perturb_subset_with_balance(
 		Pose const & pose,
 		IndexList const & residues,
-		ClosureProblemOP problem);
+		ClosureProblemOP problem) override;
 
 private:
 	Pose const target_;

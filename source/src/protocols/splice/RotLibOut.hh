@@ -32,7 +32,7 @@ namespace splice {
 class RotLibOut : public protocols::moves::Mover {
 public:
 	RotLibOut();
-	~RotLibOut();
+	~RotLibOut() override;
 
 	void apply( core::pose::Pose & pose ) override;
 	std::string get_name() const override;
@@ -51,7 +51,7 @@ public:
 	void min_frag_length( core::Size i ) {min_frag_length_=i;}//setter for min_dist_ variable
 	core::Size min_frag_length() {return min_frag_length_;}
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & ,
 		protocols::filters::Filters_map const & ,

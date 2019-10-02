@@ -41,8 +41,8 @@ namespace methods {
 class PBLifetimeCache : public basic::datacache::CacheableData{
 public:
 	PBLifetimeCache();
-	virtual ~PBLifetimeCache();
-	basic::datacache::CacheableDataOP clone() const;
+	~PBLifetimeCache() override;
+	basic::datacache::CacheableDataOP clone() const override;
 	void set_charged_residues_map( const std::map<std::string, bool> & charged_residues_map );
 	void set_energy_state( const std::string& energy_state );
 	// Undefined, commenting out to fix PyRosetta build  void set_pose( const std::string& energy_state, const core::pose::Pose& pose );
@@ -78,26 +78,25 @@ public:
 
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
 	methods::LongRangeEnergyType
-	long_range_type() const;
+	long_range_type() const override;
 
-	virtual bool defines_intrares_energy( EnergyMap const &  ) const { return true; }
+	bool defines_intrares_energy( EnergyMap const &  ) const override { return true; }
 
-	virtual bool defines_residue_pair_energy(
+	bool defines_residue_pair_energy(
 		pose::Pose const & pose,
 		Size res1,
 		Size res2
-	) const;
+	) const override;
 
-	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
 	Real
 	revamp_weight_by_burial(
@@ -110,23 +109,22 @@ public:
 		utility::vector1 <Size> chains
 	) const ;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const ;
+	) const override ;
 
 
-	virtual void residue_pair_energy(
+	void residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// virtual
 	/// void
@@ -147,8 +145,7 @@ public:
 
 	/// @brief PB Energy is context independent and thus indicates that no context graphs need to
 	/// be maintained by class Energies
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data
@@ -182,8 +179,7 @@ private:
 	mutable std::map<std::string, bool> charged_residues_;
 	mutable utility::vector1<Size> charged_chains_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

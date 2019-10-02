@@ -82,7 +82,7 @@ public:
 
 	RNA_CS_residue_parameters( chemical::AA const & res_aa );
 
-	~RNA_CS_residue_parameters();
+	~RNA_CS_residue_parameters() override;
 
 	std::string const base_name() const;
 
@@ -147,7 +147,7 @@ public:
 	RNA_CS_parameters();
 
 
-	~RNA_CS_parameters();
+	~RNA_CS_parameters() override;
 
 public:
 

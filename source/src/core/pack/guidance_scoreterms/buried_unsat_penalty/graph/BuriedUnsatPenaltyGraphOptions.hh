@@ -53,7 +53,7 @@ public:
 	BuriedUnsatPenaltyGraphOptions(BuriedUnsatPenaltyGraphOptions const & /*src*/) = default;
 
 	/// @brief Default destructor.
-	virtual ~BuriedUnsatPenaltyGraphOptions();
+	~BuriedUnsatPenaltyGraphOptions() override;
 
 	/// @brief Clone method: return a copy of the original object, by owning pointer.
 	BuriedUnsatPenaltyGraphOptionsOP

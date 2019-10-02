@@ -28,10 +28,10 @@ class AtomPairConstraintCreator : public ConstraintCreator
 {
 public:
 	AtomPairConstraintCreator();
-	virtual ~AtomPairConstraintCreator();
+	~AtomPairConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the BasePairConstraint constraint
@@ -39,10 +39,10 @@ class BasePairConstraintCreator : public ConstraintCreator
 {
 public:
 	BasePairConstraintCreator();
-	virtual ~BasePairConstraintCreator();
+	~BasePairConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the AngleConstraint constraint
@@ -50,10 +50,10 @@ class AngleConstraintCreator : public ConstraintCreator
 {
 public:
 	AngleConstraintCreator();
-	virtual ~AngleConstraintCreator();
+	~AngleConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the DihedralConstraint constraint
@@ -61,10 +61,10 @@ class DihedralConstraintCreator : public ConstraintCreator
 {
 public:
 	DihedralConstraintCreator();
-	virtual ~DihedralConstraintCreator();
+	~DihedralConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Constraint creator for DihedralPairConstraint
@@ -72,10 +72,10 @@ class DihedralPairConstraintCreator : public ConstraintCreator
 {
 public:
 	DihedralPairConstraintCreator();
-	virtual ~DihedralPairConstraintCreator();
+	~DihedralPairConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the BigBinConstraint constraint
@@ -83,10 +83,10 @@ class BigBinConstraintCreator : public ConstraintCreator
 {
 public:
 	BigBinConstraintCreator();
-	virtual ~BigBinConstraintCreator();
+	~BigBinConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the MultiConstraint constraint
@@ -94,10 +94,10 @@ class MultiConstraintCreator : public ConstraintCreator
 {
 public:
 	MultiConstraintCreator();
-	virtual ~MultiConstraintCreator();
+	~MultiConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the AmbiguousConstraint constraint
@@ -105,10 +105,10 @@ class AmbiguousConstraintCreator : public ConstraintCreator
 {
 public:
 	AmbiguousConstraintCreator();
-	virtual ~AmbiguousConstraintCreator();
+	~AmbiguousConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the KofNConstraint constraint
@@ -116,10 +116,10 @@ class KofNConstraintCreator : public ConstraintCreator
 {
 public:
 	KofNConstraintCreator();
-	virtual ~KofNConstraintCreator();
+	~KofNConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the CoordinateConstraint constraint
@@ -127,10 +127,10 @@ class CoordinateConstraintCreator : public ConstraintCreator
 {
 public:
 	CoordinateConstraintCreator();
-	virtual ~CoordinateConstraintCreator();
+	~CoordinateConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the LocalCoordinateConstraint constraint
@@ -138,10 +138,10 @@ class LocalCoordinateConstraintCreator : public ConstraintCreator
 {
 public:
 	LocalCoordinateConstraintCreator();
-	virtual ~LocalCoordinateConstraintCreator();
+	~LocalCoordinateConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the AmbiguousNMRDistanceConstraint constraint
@@ -149,20 +149,20 @@ class AmbiguousNMRDistanceConstraintCreator : public ConstraintCreator
 {
 public:
 	AmbiguousNMRDistanceConstraintCreator();
-	virtual ~AmbiguousNMRDistanceConstraintCreator();
+	~AmbiguousNMRDistanceConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 /// @brief Mover creator for the AmbiguousNMRConstraint constraint
 class AmbiguousNMRConstraintCreator : public ConstraintCreator
 {
 public:
 	AmbiguousNMRConstraintCreator();
-	virtual ~AmbiguousNMRConstraintCreator();
+	~AmbiguousNMRConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the SiteConstraint constraint
@@ -170,10 +170,10 @@ class SiteConstraintCreator : public ConstraintCreator
 {
 public:
 	SiteConstraintCreator();
-	virtual ~SiteConstraintCreator();
+	~SiteConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the SiteConstraintResidues constraint
@@ -181,10 +181,10 @@ class SiteConstraintResiduesCreator : public ConstraintCreator
 {
 public:
 	SiteConstraintResiduesCreator();
-	virtual ~SiteConstraintResiduesCreator();
+	~SiteConstraintResiduesCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the FabConstraint constraint
@@ -192,10 +192,10 @@ class FabConstraintCreator : public ConstraintCreator
 {
 public:
 	FabConstraintCreator();
-	virtual ~FabConstraintCreator();
+	~FabConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Constraint creator for the NamedAngleConstraint
@@ -203,10 +203,10 @@ class NamedAngleConstraintCreator : public ConstraintCreator
 {
 public:
 	NamedAngleConstraintCreator();
-	virtual ~NamedAngleConstraintCreator();
+	~NamedAngleConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 } //namespace constraints

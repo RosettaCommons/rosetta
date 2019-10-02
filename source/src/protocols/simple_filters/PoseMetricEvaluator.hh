@@ -51,7 +51,7 @@ public:
 		metric_( metric ),
 		tag_( tag )
 	{};
-	virtual T apply( core::pose::Pose& pose  ) const;
+	T apply( core::pose::Pose& pose  ) const override;
 private:
 	std::string metric_;
 	std::string tag_;

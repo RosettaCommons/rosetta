@@ -42,13 +42,12 @@ public:
 
 	RNA_ChemicalMappingEnergy();
 
-	~RNA_ChemicalMappingEnergy();
+	~RNA_ChemicalMappingEnergy() override;
 
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -59,22 +58,19 @@ public:
 		bool const use_low_res = false,
 		bool const rna_base_pair_computed = false ) const;
 
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap &// totals
-	) const;
+	) const override;
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
-	virtual Size version() const { return 0; }
+	Size version() const override { return 0; }
 
 private:
 

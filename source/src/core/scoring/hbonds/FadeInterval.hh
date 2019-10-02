@@ -93,7 +93,7 @@ class FadeInterval : public utility::pointer::ReferenceCount {
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~FadeInterval();
+	~FadeInterval() override;
 	/// Constructor
 
 	FadeInterval();

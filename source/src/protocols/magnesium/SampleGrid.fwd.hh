@@ -20,11 +20,9 @@
 
 namespace protocols {
 namespace magnesium {
-	
 	class SampleGrid;
 	typedef utility::pointer::shared_ptr< SampleGrid > SampleGridOP;
 	typedef utility::pointer::shared_ptr< SampleGrid const > SampleGridCOP;
-	
 } //magnesium 
 } //protocols 
 

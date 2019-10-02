@@ -91,8 +91,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	virtual
-	~GrowLeft();
+	~GrowLeft() override;
 
 
 public: // assignment
@@ -106,8 +105,7 @@ public: // virtual constructors
 
 
 	/// @brief clone this object
-	virtual
-	BuildInstructionOP clone() const;
+	BuildInstructionOP clone() const override;
 
 
 public: // accessors
@@ -143,8 +141,7 @@ public: // virtual accessors
 	///  or being used for something else?
 	/// @return false, stores invalid interval
 	inline
-	virtual
-	bool original_interval_valid() const {
+	bool original_interval_valid() const override {
 		return false;
 	}
 
@@ -152,8 +149,7 @@ public: // virtual accessors
 	/// @brief a copy of the working range of residues specifying the modified region
 	/// @remarks This can change if listening to Conformation LengthEvents
 	inline
-	virtual
-	Interval interval() const {
+	Interval interval() const override {
 		return Interval( pos_ - ss_.length(), pos_ - 1 );
 	}
 
@@ -161,16 +157,14 @@ public: // virtual accessors
 	/// @brief return a copy of the set of positions within the new region
 	///  that were pre-existing in the original Pose prior to modify()
 	/// @return An empty set -- no positions are pre-existing.
-	virtual
-	Positions preexisting_positions() const;
+	Positions preexisting_positions() const override;
 
 
 	/// @brief return a copy of the set of positions that are "new" and did
 	///  not exist in the original Pose.
 	/// @return A set of positions spanning the entire region -- all positions
 	///  are new.
-	virtual
-	Positions new_positions() const;
+	Positions new_positions() const override;
 
 
 	/// @brief return a copy of the set of positions within the newly modified
@@ -178,8 +172,7 @@ public: // virtual accessors
 	/// @return An empty set -- no positions are defined.
 	/// @details This set can change wrt length changes in Pose/Conformation being
 	///  watched.
-	virtual
-	Positions defined_positions() const;
+	Positions defined_positions() const override;
 
 
 	/// @brief return a copy of the set of positions within the newly modified
@@ -188,8 +181,7 @@ public: // virtual accessors
 	///  are undefined.
 	/// @details This set can change wrt length changes in Pose/Conformation being
 	///  watched.
-	virtual
-	Positions undefined_positions() const;
+	Positions undefined_positions() const override;
 
 
 	/// @brief return a copy of the MoveMap that defines the moveable/fixed
@@ -198,26 +190,22 @@ public: // virtual accessors
 	///  at the MoveMapTorsionID level
 	/// @details This set can change wrt length changes in Pose/Conformation being
 	///  watched.
-	virtual
-	MoveMap movemap() const;
+	MoveMap movemap() const override;
 
 
 public: // virtual Conformation observer interface
 
 
 	/// @brief update indexing on residue append
-	virtual
-	void on_residue_append( LengthEvent const & event );
+	void on_residue_append( LengthEvent const & event ) override;
 
 
 	/// @brief update indexing on residue prepend
-	virtual
-	void on_residue_prepend( LengthEvent const & event );
+	void on_residue_prepend( LengthEvent const & event ) override;
 
 
 	/// @brief update indexing on residue delete
-	virtual
-	void on_residue_delete( LengthEvent const & event );
+	void on_residue_delete( LengthEvent const & event ) override;
 
 
 public: // original positions
@@ -226,15 +214,13 @@ public: // original positions
 	/// @brief return the set of positions within the original interval that
 	///  will be kept in this BuildInstruction
 	/// @return An empty set -- no positions are kept.
-	virtual
-	Positions original_kept_positions() const;
+	Positions original_kept_positions() const override;
 
 
 	/// @brief return set of positions within the original interval that will
 	///  be deleted in this BuildInstruction
 	/// @return An empty set -- no positions are deleted.
-	virtual
-	Positions original_deleted_positions() const;
+	Positions original_deleted_positions() const override;
 
 
 public: // instruction comparison
@@ -245,8 +231,7 @@ public: // instruction comparison
 	/// @remarks Used for ensuring build regions for instructions do not overlap and
 	///  so that jumps may be placed correctly.
 	/// @return empty set if no fixed positions
-	virtual
-	Positions original_fixed_positions() const;
+	Positions original_fixed_positions() const override;
 
 
 	/// @brief return set of any mutable positions necessary with respect to the original
@@ -254,8 +239,7 @@ public: // instruction comparison
 	/// @remarks Used for ensuring build regions for instructions do not overlap and
 	///  so that jumps may be placed correctly.
 	/// @return empty set if no mutable positions
-	virtual
-	Positions original_mutable_positions() const;
+	Positions original_mutable_positions() const override;
 
 
 public: // virtual object descriptor
@@ -264,8 +248,7 @@ public: // virtual object descriptor
 	/// @brief does this object create undefined backbone in the modified region?
 	/// @return true
 	inline
-	virtual
-	bool creates_undefined_backbone() const {
+	bool creates_undefined_backbone() const override {
 		return true;
 	}
 
@@ -277,23 +260,20 @@ protected: // virtual Pose modification methods
 	///  successfully?
 	/// @return always True, this BuildInstruction has no dependencies
 	inline
-	virtual
-	bool dependencies_satisfied() const {
+	bool dependencies_satisfied() const override {
 		return true;
 	}
 
 
 	/// @brief do the actual work of modifying the Pose
-	virtual
-	void modify_impl( Pose & pose );
+	void modify_impl( Pose & pose ) override;
 
 
 protected: // virtual mutators
 
 
 	/// @brief do the actual reset of intervals, positions, etc to initial state
-	virtual
-	void reset_accounting_impl();
+	void reset_accounting_impl() override;
 
 private: // data
 

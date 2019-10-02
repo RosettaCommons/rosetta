@@ -37,7 +37,7 @@ public:
 	///@brief default construct
 	SegmentContactOrderScorer();
 
-	virtual ~SegmentContactOrderScorer()=default;
+	~SegmentContactOrderScorer() override =default;
 
 	SegmentContactOrderScorer( SegmentContactOrderScorer const & );
 

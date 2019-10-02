@@ -44,7 +44,7 @@ public:
 
 	AtomPairConstraintsScore(core::Size, core::Real, bool, std::string, core::Size);
 
-	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 private:
 	utility::vector1<utility::vector1<AtomPairConstraintsDataOP> > data_;
@@ -67,7 +67,7 @@ public:
 		second_atom_ = second_atom;
 	}
 
-	virtual ~AtomPairConstraintsData() ; // auto-removing definition from header{}
+	~AtomPairConstraintsData() override ; // auto-removing definition from header{}
 
 	inline core::Size get_offset() {
 		return offset_;
@@ -100,7 +100,7 @@ public:
 		MakeFragmentScoringMethod("AtomPairConstraintsScore") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 } // scores
 } // frag_picker

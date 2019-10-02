@@ -48,7 +48,7 @@ public:
 	{
 	};
 
-	~BaseStack(){};
+	~BaseStack() override{};
 
 	BaseStack
 	flipped() const;

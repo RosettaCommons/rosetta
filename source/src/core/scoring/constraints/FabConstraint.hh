@@ -58,17 +58,16 @@ public:
 	FabConstraint(ConstraintCOPs const & cst_in) ;
 
 	///
-	virtual
-	ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
-	std::string type() const;
+	std::string type() const override;
 
 	void
-	show(std::ostream& out) const;
+	show(std::ostream& out) const override;
 
 	/// @brief read in constraint definition
 	void
-	read_def(std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory);
+	read_def(std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory) override;
 
 	Size
 	pose_res_no(core::pose::Pose const & pose, std::string tempres);
@@ -79,8 +78,8 @@ public:
 	void
 	setup_csts(core::pose::Pose const & pose, utility::vector1<Size> res1, utility::vector1<Size> res2, std::string antchains);
 
-	virtual bool operator==( Constraint const & rhs ) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	bool operator==( Constraint const & rhs ) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
 private:
 

@@ -81,7 +81,7 @@ public:// constructor/destructor
 	/// @brief copy constructor -- required because we clone the hss3set_ pointer
 	HSSTripletFilter( HSSTripletFilter const & rval );
 
-	virtual ~HSSTripletFilter(){}
+	~HSSTripletFilter() override{}
 
 
 public:// virtual constructor

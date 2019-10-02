@@ -40,7 +40,7 @@ public:
 	typedef CompoundFactory::const_iterator const_factory_iterator;
 
 	StoreCompoundTaskMover();
-	~StoreCompoundTaskMover();
+	~StoreCompoundTaskMover() override;
 
 	// Boolean logic functions for the different modes.
 	void CompoundPackableTask( core::pose::Pose const & pose, core::Size & total_residue, core::pack::task::PackerTaskOP & task );

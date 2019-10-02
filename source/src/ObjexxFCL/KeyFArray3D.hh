@@ -244,8 +244,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~KeyFArray3D()
+	~KeyFArray3D() override
 	{}
 
 
@@ -779,7 +778,7 @@ public: // Observer Modifier
 	/// @brief Update
 	inline
 	void
-	update()
+	update() override
 	{
 		dimension_real();
 		initialize();
@@ -789,7 +788,7 @@ public: // Observer Modifier
 	/// @brief Update for Destruction of a Subject
 	inline
 	void
-	destructed( Subject const & )
+	destructed( Subject const & ) override
 	{}
 
 

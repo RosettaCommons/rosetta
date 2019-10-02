@@ -39,18 +39,18 @@ public:
 		core::scoring::methods::EnergyMethodOptions const & options /* how to setup etable */ );
 
 	//destructor
-	~PartitionContactScreener();
+	~PartitionContactScreener() override;
 
 public:
 
 	std::string
-	name() const { return "PartitionContactScreener"; }
+	name() const override { return "PartitionContactScreener"; }
 
 	StepWiseScreenerType
-	type() const { return PARTITION_CONTACT; }
+	type() const override { return PARTITION_CONTACT; }
 
 	bool
-	check_screen();
+	check_screen() override;
 
 private:
 

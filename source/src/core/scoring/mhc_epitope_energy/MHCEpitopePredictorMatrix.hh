@@ -42,7 +42,7 @@ public:
 
 	AlleleMatrix();
 	AlleleMatrix(std::string name, utility::vector1< Real > threshes, PWM profile);
-	~AlleleMatrix();
+	~AlleleMatrix() override;
 
 	bool operator==(AlleleMatrix const & /* other */);
 
@@ -75,13 +75,13 @@ public:
 	MHCEpitopePredictorMatrix();
 	/// @brief Loads the matrices from the file
 	MHCEpitopePredictorMatrix(std::string const &fn);
-	virtual ~MHCEpitopePredictorMatrix();
+	~MHCEpitopePredictorMatrix() override;
 
-	virtual bool operator==(MHCEpitopePredictor const & /* other */);
+	bool operator==(MHCEpitopePredictor const & /* other */) override;
 
-	std::string report() const;
+	std::string report() const override;
 
-	virtual core::Real score( std::string const &pep);
+	core::Real score( std::string const &pep) override;
 
 	/// @brief Loads the matrices from the file
 	void load_matrix(std::string const &filename);

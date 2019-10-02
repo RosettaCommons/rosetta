@@ -49,9 +49,8 @@ public:
 	PeptideBondEnergy();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const
+	clone() const override
 	{
 		return utility::pointer::make_shared< PeptideBondEnergy >();
 	}
@@ -65,7 +64,6 @@ public:
 	// EnergyMap & totals
 	//) const;
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -73,23 +71,21 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const {}
+	) const override {}
 
 	/// called during gradient-based minimization inside dfunc
 	/**
 	F1 and F2 are not zeroed -- contributions from this atom are
 	just summed in
 	**/
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -99,23 +95,19 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
-	virtual
 	void
-	indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const {
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override {
 		return false;
 	}
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
-	virtual
-	core::Size version() const;
+	atomic_interaction_cutoff() const override;
+	core::Size version() const override;
 
 private:
 

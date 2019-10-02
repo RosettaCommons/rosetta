@@ -40,7 +40,7 @@ public:
 	///@brief default construct
 	IntraDesignTerminusMotifScorer();
 
-	virtual ~IntraDesignTerminusMotifScorer(){}
+	~IntraDesignTerminusMotifScorer() override{}
 
 	IntraDesignTerminusMotifScorer( IntraDesignTerminusMotifScorer const & );
 
@@ -56,10 +56,10 @@ public:
 		data_storage::SmartAssemblyCOP assembly
 	);
 
-	virtual core::Real
+	core::Real
 	get_weight() const override;
 
-	virtual void
+	void
 	set_weight( core::Real ) override;
 
 	//Getters and setters

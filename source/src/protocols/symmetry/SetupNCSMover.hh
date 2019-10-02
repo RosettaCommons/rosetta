@@ -82,7 +82,7 @@ public:
 	// many->many
 	SetupNCSMover( utility::vector1<std::string> src, utility::vector1<std::string> tgt );
 
-	~SetupNCSMover();
+	~SetupNCSMover() override;
 
 	// add an ncs group
 	void add_group( std::string src, std::string tgt );

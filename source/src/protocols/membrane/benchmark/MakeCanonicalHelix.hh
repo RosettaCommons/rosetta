@@ -40,7 +40,7 @@ public:
 	MakeCanonicalHelix( MakeCanonicalHelix const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~MakeCanonicalHelix();
+	~MakeCanonicalHelix() override;
 
 	void
 	apply( core::pose::Pose & pose ) override;

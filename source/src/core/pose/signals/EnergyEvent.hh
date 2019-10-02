@@ -67,8 +67,7 @@ struct EnergyEvent : public GeneralEvent {
 
 	/// @brief default destructor
 	inline
-	virtual
-	~EnergyEvent() {}
+	~EnergyEvent() override {}
 
 
 	/// @brief copy assignment

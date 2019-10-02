@@ -47,30 +47,25 @@ public:
 
 	MMBondLengthEnergy( MMBondLengthEnergy const & src );
 
-	~MMBondLengthEnergy();
+	~MMBondLengthEnergy() override;
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 
-	virtual
 	void
-	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
+	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
 
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
 
-	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
 
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -78,22 +73,19 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const ;
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override ;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -103,23 +95,21 @@ public:
 		EnergyMap const & emap,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 
 	/// @brief MMBondLengthEnergy does not have an atomic interation threshold
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
 	/// @brief MMBondLengthEnergy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 private:
 	core::scoring::mm::MMBondLengthScore potential_;
 
-	virtual core::Size version() const;
+	core::Size version() const override;
 
 };
 

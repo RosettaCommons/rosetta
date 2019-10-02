@@ -44,7 +44,7 @@ public:
 	//RotamerLibraryScratchSpace();
 
 
-	virtual ~RotamerLibraryScratchSpace();
+	~RotamerLibraryScratchSpace() override;
 
 	Real rotprob() const { return rotprob_; }
 	Real negln_rotprob() const { return negln_rotprob_; }

@@ -72,7 +72,7 @@ public:
 	/// @brief Documentation functon that lists the options that are read in the initialize_from_options function
 	static void list_options_read( utility::options::OptionKeyList & option_list );
 
-	virtual ~HBondOptions();
+	~HBondOptions() override;
 
 	/// copy constructor
 	HBondOptions( HBondOptions const & src );

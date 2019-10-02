@@ -44,44 +44,42 @@ public:
 	DFIRE_Energy();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
 	methods::LongRangeEnergyType
-	long_range_type() const;
+	long_range_type() const override;
 
-	virtual bool defines_intrares_energy( EnergyMap const &  ) const { return false; }
+	bool defines_intrares_energy( EnergyMap const &  ) const override { return false; }
 
-	virtual bool defines_residue_pair_energy(
+	bool defines_residue_pair_energy(
 		pose::Pose const & pose,
 		Size res1,
 		Size res2
-	) const;
+	) const override;
 
-	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const ;
+	) const override ;
 
 
-	virtual void residue_pair_energy(
+	void residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	virtual
 	void
@@ -93,8 +91,7 @@ public:
 
 	/// @brief DFIRE_Energy is context independent and thus indicates that no
 	/// context graphs are necessary.
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -104,8 +101,7 @@ public:
 private:
 	bool potential_is_loaded_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 

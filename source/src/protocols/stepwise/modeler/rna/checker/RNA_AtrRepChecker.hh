@@ -48,7 +48,7 @@ public:
 	);
 
 	//destructor
-	~RNA_AtrRepChecker();
+	~RNA_AtrRepChecker() override;
 
 	core::Real delta_atr_score() const{ return delta_atr_score_; }
 	core::Real delta_rep_score() const{ return delta_rep_score_; }

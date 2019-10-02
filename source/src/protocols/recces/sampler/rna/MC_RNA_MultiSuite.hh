@@ -35,7 +35,7 @@ public:
 	MC_RNA_MultiSuite();
 
 	/// @brief Move to next rotamer
-	virtual void operator++();
+	void operator++() override;
 
 	/// @brief Set the standard deviation of Gaussian sampler
 	void set_gaussian_stdev( core::Real const setting );
@@ -62,13 +62,13 @@ public:
 	void set_init_from_pose( core::pose::Pose const & pose );
 
 	/// @brief Clear all rotamer samplers stored in this sampler
-	void clear_rotamer();
+	void clear_rotamer() override;
 
 	/// @brief Add one more rotamer sampler to this sampler
 	void add_rotamer( MC_RNA_SuiteOP rotamer );
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_RNA_MULTI_SUITE; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::MC_RNA_MULTI_SUITE; }
 
 	void set_do_no_op_random( bool const & setting ){ do_no_op_random_ = setting; }
 

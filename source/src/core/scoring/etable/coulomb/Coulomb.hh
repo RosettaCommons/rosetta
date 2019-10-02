@@ -37,7 +37,7 @@ class Coulomb : public utility::pointer::ReferenceCount
 {
 
 public:
-	~Coulomb() {}
+	~Coulomb() override {}
 
 	Coulomb( methods::EnergyMethodOptions const & options );
 

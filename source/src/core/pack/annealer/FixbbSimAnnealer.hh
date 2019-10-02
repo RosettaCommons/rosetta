@@ -67,8 +67,8 @@ public:
 		ObjexxFCL::FArray1D< core::PackerEnergy > & rot_freq
 	);
 
-	virtual ~FixbbSimAnnealer();
-	void run();
+	~FixbbSimAnnealer() override;
+	void run() override;
 
 	void record_annealer_trajectory( bool setting );
 	void trajectory_file_name( std::string const & setting );

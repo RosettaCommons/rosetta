@@ -24,7 +24,7 @@ class RandomSolutions : public SolutionPicker {
 
 public:
 	/// @copydoc SolutionPicker::pick_and_apply
-	bool pick_and_apply(Pose & pose, SolutionList const & solutions);
+	bool pick_and_apply(Pose & pose, SolutionList const & solutions) override;
 
 };
 

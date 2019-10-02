@@ -75,7 +75,7 @@ public: // constructors
 	operator = ( Embedding const & src );
 
 	/// @brief Destructor
-	~Embedding();
+	~Embedding() override;
 
 public: // methods
 

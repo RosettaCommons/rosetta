@@ -49,7 +49,7 @@ public:
 	OrJumpSelector( OrJumpSelector const &src);
 
 	OrJumpSelector( JumpSelectorCOP selector1, JumpSelectorCOP selector2 );
-	virtual ~OrJumpSelector();
+	~OrJumpSelector() override;
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.

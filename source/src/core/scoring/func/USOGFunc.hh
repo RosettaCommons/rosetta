@@ -55,23 +55,23 @@ public:
 		utility::vector1<core::Real> const & weights);
 
 	/// @brief No-op virtual destructor
-	~USOGFunc() {}
+	~USOGFunc() override {}
 
-	FuncOP clone() const;
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	FuncOP clone() const override;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
 	/// @brief Returns a value representing this function evaluated at a given point
-	core::Real func(const core::Real x) const;
+	core::Real func(const core::Real x) const override;
 
 	/// @brief Returns a value representing the derivative of this function evaluated at a given point
-	core::Real dfunc(const core::Real x) const;
+	core::Real dfunc(const core::Real x) const override;
 
 	/// @brief Initializes this function from the given input stream
-	void read_data(std::istream& in);
+	void read_data(std::istream& in) override;
 
 	/// @brief Writes the definition of this function to the specific output stream
-	void show_definition(std::ostream& out) const;
+	void show_definition(std::ostream& out) const override;
 
 	/// @brief Returns the number of Gaussian components
 	core::Size numGaussians() const;

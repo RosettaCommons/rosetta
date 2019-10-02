@@ -60,17 +60,16 @@ public:
 
 public:
 	SymmetricRotamerSet_();
-	virtual ~SymmetricRotamerSet_();
+	~SymmetricRotamerSet_() override;
 
 	/// @brief Computes the packers "one body energies" for the set of rotamers.
-	virtual
 	void
 	compute_one_body_energies(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
 		utility::graph::GraphCOP packer_neighbor_graph,
-		utility::vector1< core::PackerEnergy > & energies ) const;
+		utility::vector1< core::PackerEnergy > & energies ) const override;
 
 	void
 	PackerEnergyMultiply(
@@ -107,11 +106,10 @@ public:
 
 
 	//fpd function to set some pose data needed SymmetricRotamerSets
-	virtual
 	void
 	initialize_pose_for_rotset_creation(
 		pose::Pose & pose
-	) const;
+	) const override;
 
 #ifdef    SERIALIZATION
 public:

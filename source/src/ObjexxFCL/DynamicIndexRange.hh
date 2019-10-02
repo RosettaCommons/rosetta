@@ -276,8 +276,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~DynamicIndexRange()
+	~DynamicIndexRange() override
 	{
 		delete l_dim_p_;
 		delete u_dim_p_;
@@ -322,7 +321,7 @@ public: // Assignment
 	/// @brief Upper Index Assignment
 	inline
 	DynamicIndexRange &
-	operator =( int const u_a )
+	operator =( int const u_a ) override
 	{
 		delete l_dim_p_; l_dim_p_ = 0;
 		delete u_dim_p_; u_dim_p_ = 0;
@@ -336,7 +335,7 @@ public: // Assignment
 	/// @brief Unbounded Upper Index Assignment
 	inline
 	DynamicIndexRange &
-	operator =( Star const & str )
+	operator =( Star const & str ) override
 	{
 		delete l_dim_p_; l_dim_p_ = 0;
 		delete u_dim_p_; u_dim_p_ = 0;
@@ -411,7 +410,7 @@ public: // Assignment
 	/// @brief Upper Index Assignment
 	inline
 	DynamicIndexRange &
-	assign( int const u_a )
+	assign( int const u_a ) override
 	{
 		delete l_dim_p_; l_dim_p_ = 0;
 		delete u_dim_p_; u_dim_p_ = 0;
@@ -425,7 +424,7 @@ public: // Assignment
 	/// @brief Unbounded Upper Index Assignment
 	inline
 	DynamicIndexRange &
-	assign( Star const & str )
+	assign( Star const & str ) override
 	{
 		delete l_dim_p_; l_dim_p_ = 0;
 		delete u_dim_p_; u_dim_p_ = 0;
@@ -468,7 +467,7 @@ public: // Assignment
 	/// @brief Index Range Assignment
 	inline
 	DynamicIndexRange &
-	assign( int const l_a, int const u_a )
+	assign( int const l_a, int const u_a ) override
 	{
 		delete l_dim_p_; l_dim_p_ = 0;
 		delete u_dim_p_; u_dim_p_ = 0;
@@ -602,7 +601,7 @@ public: // Assignment
 	/// @brief Index and Unbounded Upper Index Assignment
 	inline
 	DynamicIndexRange &
-	assign( int const l_a, Star const & str )
+	assign( int const l_a, Star const & str ) override
 	{
 		delete l_dim_p_; l_dim_p_ = 0;
 		delete u_dim_p_; u_dim_p_ = 0;
@@ -672,7 +671,7 @@ public: // Predicate
 	/// @brief Initialized?
 	inline
 	bool
-	initialized() const
+	initialized() const override
 	{
 		return ( ( l_dim_p_ ? l_dim_p_->initialized_ : true ) && ( u_dim_p_ ? u_dim_p_->initialized_ : true ) );
 	}
@@ -681,7 +680,7 @@ public: // Predicate
 	/// @brief Lower Initialized?
 	inline
 	bool
-	l_initialized() const
+	l_initialized() const override
 	{
 		return ( l_dim_p_ ? l_dim_p_->initialized_ : true );
 	}
@@ -690,7 +689,7 @@ public: // Predicate
 	/// @brief Upper Initialized?
 	inline
 	bool
-	u_initialized() const
+	u_initialized() const override
 	{
 		return ( u_dim_p_ ? u_dim_p_->initialized_ : true );
 	}
@@ -699,7 +698,7 @@ public: // Predicate
 	/// @brief Legal?
 	inline
 	bool
-	legal() const
+	legal() const override
 	{
 		return ( ( ( l_ >= l_min ) && /*( u_ <= u_max ) &&*/ ( l_ - 2 <= u_ ) ) ||
 			( ! ( ( l_dim_p_ ? l_dim_p_->initialized_ : true ) && ( u_dim_p_ ? u_dim_p_->initialized_ : true ) ) ) );
@@ -709,7 +708,7 @@ public: // Predicate
 	/// @brief Bounded?
 	inline
 	bool
-	bounded() const
+	bounded() const override
 	{
 		return ( ( ( l_dim_p_ ? l_dim_p_->initialized_ : true ) && ( u_dim_p_ ? u_dim_p_->initialized_ : true ) ) && ( Super::bounded() ) );
 	}
@@ -718,7 +717,7 @@ public: // Predicate
 	/// @brief Unbounded?
 	inline
 	bool
-	unbounded() const
+	unbounded() const override
 	{
 		return ( ( ( l_dim_p_ ? l_dim_p_->initialized_ : true ) && ( u_dim_p_ ? u_dim_p_->initialized_ : true ) ) && ( Super::unbounded() ) );
 	}
@@ -727,7 +726,7 @@ public: // Predicate
 	/// @brief Not Unbounded?
 	inline
 	bool
-	not_unbounded() const
+	not_unbounded() const override
 	{
 		return ( ( ! ( ( l_dim_p_ ? l_dim_p_->initialized_ : true ) && ( u_dim_p_ ? u_dim_p_->initialized_ : true ) ) ) || ( Super::not_unbounded() ) );
 	}
@@ -736,7 +735,7 @@ public: // Predicate
 	/// @brief Bounded with Positive Size?
 	inline
 	bool
-	positive() const
+	positive() const override
 	{
 		return ( ( ( l_dim_p_ ? l_dim_p_->initialized_ : true ) && ( u_dim_p_ ? u_dim_p_->initialized_ : true ) ) && ( Super::positive() ) );
 	}
@@ -745,7 +744,7 @@ public: // Predicate
 	/// @brief Contains an Index?
 	inline
 	bool
-	contains( int const i ) const
+	contains( int const i ) const override
 	{
 		return ( ( ( l_dim_p_ ? l_dim_p_->initialized_ : true ) && ( u_dim_p_ ? u_dim_p_->initialized_ : true ) ) && ( ( l_ <= i ) && ( ( i <= u_ ) || ( size_ == npos ) ) ) );
 	}
@@ -754,7 +753,7 @@ public: // Predicate
 	/// @brief Contains Another IndexRange?
 	inline
 	bool
-	contains( IndexRange const & I ) const
+	contains( IndexRange const & I ) const override
 	{
 		return ( ( ( l_dim_p_ ? l_dim_p_->initialized_ : true ) && ( u_dim_p_ ? u_dim_p_->initialized_ : true ) ) && ( Super::contains( I ) ) );
 	}
@@ -763,7 +762,7 @@ public: // Predicate
 	/// @brief Intersects Another IndexRange?
 	inline
 	bool
-	intersects( IndexRange const & I ) const
+	intersects( IndexRange const & I ) const override
 	{
 		return ( ( ( l_dim_p_ ? l_dim_p_->initialized_ : true ) && ( u_dim_p_ ? u_dim_p_->initialized_ : true ) ) && ( Super::intersects( I ) ) );
 	}
@@ -778,7 +777,7 @@ public: // Modifier
 	/// @brief Lower Index Set
 	inline
 	DynamicIndexRange &
-	l( int const l_a )
+	l( int const l_a ) override
 	{
 		delete l_dim_p_; l_dim_p_ = 0;
 		Super::l( l_a );
@@ -859,7 +858,7 @@ public: // Modifier
 	/// @brief Upper Index Set
 	inline
 	DynamicIndexRange &
-	u( int const u_a )
+	u( int const u_a ) override
 	{
 		delete u_dim_p_; u_dim_p_ = 0;
 		Super::u( u_a );
@@ -872,7 +871,7 @@ public: // Modifier
 
 	/// @brief Unbounded Upper Index Set
 	DynamicIndexRange &
-	u( Star const & star );
+	u( Star const & star ) override;
 
 
 	/// @brief Upper Dimension Set
@@ -949,7 +948,7 @@ public: // Modifier
 
 	/// @brief Expand to Contain an Index
 	DynamicIndexRange &
-	contain( int const i );
+	contain( int const i ) override;
 
 
 	/// @brief Expand to Contain an Index and Notify If Changed
@@ -959,7 +958,7 @@ public: // Modifier
 
 	/// @brief Expand to Contain Another IndexRange
 	DynamicIndexRange &
-	contain( IndexRange const & I );
+	contain( IndexRange const & I ) override;
 
 
 	/// @brief Expand to Contain Another IndexRange and Notify If Changed
@@ -969,7 +968,7 @@ public: // Modifier
 
 	/// @brief Intersect With Another IndexRange
 	DynamicIndexRange &
-	intersect( IndexRange const & I );
+	intersect( IndexRange const & I ) override;
 
 
 	/// @brief Intersect With Another IndexRange and Notify If Changed
@@ -980,7 +979,7 @@ public: // Modifier
 	/// @brief Clear
 	inline
 	DynamicIndexRange &
-	clear()
+	clear() override
 	{
 		Super::clear();
 		delete l_dim_p_; l_dim_p_ = 0;
@@ -1047,7 +1046,7 @@ public: // Observer Modifier
 	/// @brief Update
 	inline
 	void
-	update()
+	update() override
 	{
 		if ( l_dim_p_ ) Super::l( l_dim_p_->zvalue() );
 		if ( u_dim_p_ ) Super::u( u_dim_p_->zvalue() );
@@ -1059,7 +1058,7 @@ public: // Observer Modifier
 	/// @brief Update for Destruction of a Subject
 	inline
 	void
-	destructed( Subject const & )
+	destructed( Subject const & ) override
 	{}
 
 
@@ -1111,7 +1110,7 @@ private: // Functions
 	/// @brief Lower Dimension Clone
 	inline
 	Dimension *
-	l_dim_clone() const
+	l_dim_clone() const override
 	{
 		return ( l_dim_p_ ? l_dim_p_->clone() : static_cast< Dimension * >( 0 ) );
 	}
@@ -1120,7 +1119,7 @@ private: // Functions
 	/// @brief Upper Dimension Clone
 	inline
 	Dimension *
-	u_dim_clone() const
+	u_dim_clone() const override
 	{
 		return ( u_dim_p_ ? u_dim_p_->clone() : static_cast< Dimension * >( 0 ) );
 	}

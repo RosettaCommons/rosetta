@@ -31,11 +31,11 @@ class DsspSpecificLengthRequirementCreator : public AssemblyRequirementCreator
 {
 public:
 	DsspSpecificLengthRequirementCreator() {}
-	virtual ~DsspSpecificLengthRequirementCreator() {}
+	~DsspSpecificLengthRequirementCreator() override {}
 
-	virtual AssemblyRequirementOP create_requirement() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
+	AssemblyRequirementOP create_requirement() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
 

@@ -57,16 +57,13 @@ public: //constructor/destructor
 
 	RemodelDesignMover(RemodelData const & remodel_data, RemodelWorkingSet const & working_model, ScoreFunctionOP const & sfxn);
 
-	virtual
-	~RemodelDesignMover();
+	~RemodelDesignMover() override;
 
 public: // virtual constructors
 
-	virtual
-	MoverOP clone() const;
+	MoverOP clone() const override;
 
-	virtual
-	MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
 
 public: // accessors
@@ -97,8 +94,8 @@ public: // options
 	void make_disulfide( Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners, core::kinematics::MoveMapOP mm );
 	void make_disulfide_fast( Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners);
 
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	void run_calculator( core::pose::Pose const & pose, std::string const & calculator, std::string const & calculation, utility::vector1_bool & residues );

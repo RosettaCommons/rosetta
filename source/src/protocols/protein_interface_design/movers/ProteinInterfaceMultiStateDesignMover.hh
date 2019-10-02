@@ -44,18 +44,18 @@ public:
 
 public:
 	ProteinInterfaceMultiStateDesignMover();
-	virtual ~ProteinInterfaceMultiStateDesignMover();
+	~ProteinInterfaceMultiStateDesignMover() override;
 	void apply( Pose & ) override;
 	void output_results( Pose & );
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
 		Pose const & ) override;
-	virtual moves::MoverOP fresh_instance() const override;
-	virtual moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
+	moves::MoverOP clone() const override;
 	void restrict_sequence_profile( core::pose::Pose const & pose, core::pack::task::PackerTaskOP const ptask ) const;
 	unsigned long sequence_space( core::pack::task::PackerTaskCOP ptask ) const;
 	void output_alternative_states( core::pose::Pose const & output_pose ) const;

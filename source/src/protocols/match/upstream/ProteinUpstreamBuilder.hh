@@ -231,7 +231,7 @@ public:
 public:
 
 	BuildSet();
-	virtual ~BuildSet();
+	~BuildSet() override;
 	BuildSet( BuildSet const & );
 
 	BuildSet & operator = ( BuildSet const & rhs );
@@ -337,7 +337,7 @@ public:
 class FullChiSampleSet : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~FullChiSampleSet();
+	~FullChiSampleSet() override;
 	typedef core::Size Size;
 	typedef core::Real Real;
 	typedef numeric::HomogeneousTransform< Real > HTReal;
@@ -438,68 +438,63 @@ public:
 
 public:
 	ProteinUpstreamBuilder();
-	virtual ~ProteinUpstreamBuilder();
+	~ProteinUpstreamBuilder() override;
 
 	UpstreamBuilderOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Iterate across possible conformations for the upstream
 	/// half of the hit, and for each (non-coliding) conformation,
 	/// sample all external geometries specified by the external_sampler
 	/// to construct the three coordinates of the downstream sampler.
 	/// Return a list of hits.
-	virtual
 	std::list< Hit >
 	build(
 		ScaffoldBuildPoint const & build_point
-	) const;
+	) const override;
 
 	/// @brief Regenerate the rotamer for a particular hit and give that rotamer
 	/// to the UpstreamResidueProcessor.
-	virtual
 	void
 	recover_hit(
 		Hit const & hit,
 		ScaffoldBuildPoint const & build_point,
 		UpstreamResidueProcessor & processor
-	) const;
+	) const override;
 
 	/// @brief Regenerate a set of rotamers for a subset of hits bound by the
 	/// two input hit-list iterators.
-	virtual
 	void
 	recover_hits(
 		std::list< Hit >::const_iterator hits_begin,
 		std::list< Hit >::const_iterator hits_end,
 		ScaffoldBuildPoint const & build_point,
 		UpstreamResidueProcessor & processor
-	) const;
+	) const override;
 
-	virtual
 	Size
-	n_restypes_to_build() const;
+	n_restypes_to_build() const override;
 
-	virtual
 	core::chemical::ResidueTypeCOP
-	restype( Size which_restype ) const;
+	restype( Size which_restype ) const override;
 
-	virtual bool compatible(
+	bool compatible(
 		Hit const & my_hit,
 		ScaffoldBuildPoint const & build_point_mine,
 		UpstreamBuilder const & other,
 		Hit const & other_hit,
 		ScaffoldBuildPoint const & build_point_other,
 		bool first_dispatch = true
-	) const;
+	) const override;
 
-	virtual bool compatible(
+	bool compatible(
 		Hit const & my_hit,
 		ScaffoldBuildPoint const & build_point_mine,
 		ProteinUpstreamBuilder const & other,
 		Hit const & other_hit,
 		ScaffoldBuildPoint const & build_point_other,
 		bool first_dispatch = true
-	) const;
+	) const override;
 
 	void
 	add_build_set(

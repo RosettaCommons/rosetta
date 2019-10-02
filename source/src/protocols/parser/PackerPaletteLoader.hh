@@ -35,16 +35,15 @@ class PackerPaletteLoader : public DataLoader
 {
 public:
 	PackerPaletteLoader();
-	virtual ~PackerPaletteLoader();
+	~PackerPaletteLoader() override;
 
 	/// @brief The PackerPaletteLoader will create named PackerPalettes and load them into the basic::datacache::DataMap.
 	///
-	virtual
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 	static std::string loader_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

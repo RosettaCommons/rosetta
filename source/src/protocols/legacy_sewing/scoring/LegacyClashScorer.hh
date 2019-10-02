@@ -38,13 +38,12 @@ public:
 	///@brief default construct
 	LegacyClashScorer();
 
-	virtual ~LegacyClashScorer(){}
+	~LegacyClashScorer() override{}
 
-	virtual
 	core::Real
 	score(
 		AssemblyCOP assembly
-	);
+	) override;
 };
 
 

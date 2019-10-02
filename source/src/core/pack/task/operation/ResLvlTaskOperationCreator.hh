@@ -40,7 +40,7 @@ namespace operation {
 class ResLvlTaskOperationCreator : public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~ResLvlTaskOperationCreator() {}
+	~ResLvlTaskOperationCreator() override {}
 
 	/// @brief Instantiate a new ResLvlTaskOperation
 	virtual

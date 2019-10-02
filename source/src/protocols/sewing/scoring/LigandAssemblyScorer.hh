@@ -64,8 +64,7 @@ public: // Creation
 
 
 	/// @brief Destructor
-	virtual
-	~LigandAssemblyScorer()=default;
+	~LigandAssemblyScorer() override =default;
 
 
 protected: // Creation
@@ -78,40 +77,40 @@ protected: // Creation
 public: // Methods
 	// Further subsections of methods allowed
 
-	virtual core::Real
-	score(data_storage::SmartAssemblyCOP assembly)=0;
+	core::Real
+	score(data_storage::SmartAssemblyCOP assembly) override =0;
 
-	virtual std::string
-	get_name() const=0;
+	std::string
+	get_name() const override =0;
 
-	virtual void
+	void
 	set_options_from_tag(
 		utility::tag::TagCOP scorer_tag,
 		basic::datacache::DataMap& datamap,
 		protocols::filters::Filters_map const & filtermap,
 		protocols::moves::Movers_map const & movermap,
-		core::pose::Pose const & pose)=0;
+		core::pose::Pose const & pose) override =0;
 	/*
 	static void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & );
 	*/
-	virtual core::Real
-	get_weight() const=0;
+	core::Real
+	get_weight() const override =0;
 
-	virtual void
-	set_weight( core::Real )=0;
+	void
+	set_weight( core::Real ) override =0;
 
-	virtual core::Real
-	get_last_score() const=0;
+	core::Real
+	get_last_score() const override =0;
 
-	virtual void
-	set_last_score( core::Real )=0;
+	void
+	set_last_score( core::Real ) override =0;
 
-	virtual core::Real
-	get_old_last_score() const=0;
+	core::Real
+	get_old_last_score() const override =0;
 
-	virtual void
-	set_old_last_score( core::Real) = 0;
+	void
+	set_old_last_score( core::Real) override = 0;
 protected: // Methods
 	// Further subsections of methods allowed
 

@@ -72,7 +72,7 @@ public: //Constructors
 	Metal_HelperBase( Metal_HelperBase const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~Metal_HelperBase();
+	~Metal_HelperBase() override;
 
 
 public: // public methods

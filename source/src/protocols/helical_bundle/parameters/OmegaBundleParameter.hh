@@ -47,7 +47,7 @@ public:
 	OmegaBundleParameter(OmegaBundleParameter const & src);
 
 	/// @details Destructor
-	virtual ~OmegaBundleParameter();
+	~OmegaBundleParameter() override;
 
 	/// @brief Clone operator.
 	/// @details Make a copy of this object and return a smart pointer to the copy.

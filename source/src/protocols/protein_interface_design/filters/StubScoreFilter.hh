@@ -50,7 +50,7 @@ public:
 	protocols::filters::FilterOP clone() const override;
 	protocols::filters::FilterOP fresh_instance() const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	virtual ~StubScoreFilter();
+	~StubScoreFilter() override;
 	void stub_sets( utility::vector1< StubSetStubPos > const & stub_sets );
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,

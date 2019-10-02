@@ -216,8 +216,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~vector1()
+	~vector1() override
 	{}
 
 

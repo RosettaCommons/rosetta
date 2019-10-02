@@ -84,7 +84,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~RealVectorOption() {}
+	~RealVectorOption() override {}
 
 
 public: // Properties

@@ -73,7 +73,7 @@ public:// constructor/destructor
 	// @brief copy constructor
 	CoreDunbrackFilter( CoreDunbrackFilter const & rval );
 
-	virtual ~CoreDunbrackFilter(){}
+	~CoreDunbrackFilter() override{}
 
 
 public:// virtual constructor

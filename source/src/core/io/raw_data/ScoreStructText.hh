@@ -46,7 +46,7 @@ public:
 	);
 
 	// destructor
-	~ScoreStructText() {}
+	~ScoreStructText() override {}
 
 	//ScoreStructText & operator= (ScoreStructText const & src);
 
@@ -55,17 +55,17 @@ public:
 	/// ResidueTypeSet. This is a virtual method which must be implemented by classes derived from RawStruct.
 	void fill_pose(
 		core::pose::Pose & //pose
-	);
+	) override;
 
 	/// @brief Fill a Pose with the conformation information in this RawStruct and the ResidueTypeSet
 	/// provided by the caller. This is a virtual method which must be implemented by classes derived from RawStruct.
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose &, //pose,
 		core::chemical::ResidueTypeSet const& residue_set
-	);
+	) override;
 
-	virtual Real get_debug_rmsd();
-	virtual void print_conformation( std::ostream& out ) const;
+	Real get_debug_rmsd() override;
+	void print_conformation( std::ostream& out ) const override;
 
 }; // class ScoreStructText
 

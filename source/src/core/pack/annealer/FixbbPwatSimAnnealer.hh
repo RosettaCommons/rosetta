@@ -59,8 +59,8 @@ public:
 		ObjexxFCL::FArray1D< core::PackerEnergy > & rot_freq
 	);
 
-	virtual ~FixbbPwatSimAnnealer();
-	void run();
+	~FixbbPwatSimAnnealer() override;
+	void run() override;
 
 	void
 	set_min_dwell(core::Real mindwell) {

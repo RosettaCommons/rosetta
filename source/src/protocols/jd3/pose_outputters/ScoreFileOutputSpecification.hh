@@ -44,7 +44,7 @@ public:
 
 	ScoreFileOutputSpecification();
 	ScoreFileOutputSpecification( JobResultID const & result_id, JobOutputIndex const & output_index );
-	virtual ~ScoreFileOutputSpecification();
+	~ScoreFileOutputSpecification() override;
 
 	std::string out_fname() const;
 	void out_fname( std::string const & setting );

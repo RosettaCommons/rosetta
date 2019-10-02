@@ -34,7 +34,7 @@ public:
 
 	InsertPoseIntoPoseMover( InsertPoseIntoPoseMover const & src);
 
-	virtual ~InsertPoseIntoPoseMover();
+	~InsertPoseIntoPoseMover() override;
 
 	void
 	apply(core::pose::Pose & pose) override;

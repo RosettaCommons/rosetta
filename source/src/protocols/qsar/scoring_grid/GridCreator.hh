@@ -35,7 +35,7 @@ class GridCreator : public utility::pointer::ReferenceCount
 {
 public:
 	GridCreator();
-	virtual ~GridCreator();
+	~GridCreator() override;
 
 	virtual GridBaseOP create_grid(utility::tag::TagCOP tag) const = 0;
 	virtual GridBaseOP create_grid() const = 0;

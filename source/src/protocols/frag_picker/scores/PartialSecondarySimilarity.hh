@@ -49,15 +49,15 @@ public:
 		core::fragment::SecondaryStructureOP query_prediction, std::string const & prediction_name,
 		core::Size sequence_length, core::Size longest_vall_chunk);
 
-	~PartialSecondarySimilarity() {}
+	~PartialSecondarySimilarity() override {}
 
-	void do_caching(VallChunkOP);
+	void do_caching(VallChunkOP) override;
 
-	bool cached_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map);
-	void clean_up() {}
+	bool cached_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) override;
+	void clean_up() override {}
 
 	/// @brief Computes the score
-	virtual bool score(FragmentCandidateOP, FragmentScoreMapOP);
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 
 	inline std::string& get_prediction_name() { return prediction_name_; };
@@ -86,7 +86,7 @@ public:
 	}
 
 	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
-		FragmentPickerOP picker, std::string prediction_id) {
+		FragmentPickerOP picker, std::string prediction_id) override {
 
 		core::Size sequence_length = picker->get_query_seq()->length();
 		core::Size vall_max_len = picker->get_vall()->get_largest_chunk_size();

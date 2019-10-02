@@ -30,7 +30,7 @@ namespace scores {
 class AdaptiveScoreHistogram : public utility::pointer::ReferenceCount {
 public:
 	AdaptiveScoreHistogram(core::Real,core::Real);
-	virtual ~AdaptiveScoreHistogram();
+	~AdaptiveScoreHistogram() override;
 
 	void insert(core::Real);
 

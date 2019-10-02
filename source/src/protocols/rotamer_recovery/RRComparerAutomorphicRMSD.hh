@@ -84,7 +84,6 @@ public: // public interface
 	core::Real
 	get_recovery_threshold() const;
 
-	virtual
 	void
 	set_absolute_threshold(
 		core::Real const absolute_threshold

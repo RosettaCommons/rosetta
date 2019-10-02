@@ -81,7 +81,7 @@ public:
 		return utility::pointer::make_shared< DisulfideFilter >();
 	}
 
-	virtual ~DisulfideFilter();
+	~DisulfideFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,

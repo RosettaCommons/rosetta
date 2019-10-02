@@ -35,10 +35,10 @@ public:
 	/// @brief
 	OopPatcher( core::Size oop_seq_position );
 
-	virtual ~OopPatcher();
+	~OopPatcher() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 

@@ -47,7 +47,7 @@ class SilentFilePoseOutputter : public PoseOutputter
 public:
 
 	SilentFilePoseOutputter();
-	virtual ~SilentFilePoseOutputter();
+	~SilentFilePoseOutputter() override;
 
 	static
 	bool

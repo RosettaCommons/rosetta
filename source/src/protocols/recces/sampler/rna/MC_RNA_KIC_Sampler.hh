@@ -54,20 +54,20 @@ public:
 		bool const change_ft = true
 	);
 
-	~MC_RNA_KIC_Sampler()
+	~MC_RNA_KIC_Sampler() override
 	{}
 
 	/// @brief Initialization
-	virtual void init();
+	void init() override;
 
 	/// @brief Reset to the first (or random if is_random()) rotamer.
-	virtual void reset() {return;}
+	void reset() override {return;}
 
 	/// @brief Move to next rotamer
-	virtual void operator++();
+	void operator++() override;
 
 	/// @brief Update rotamer
-	virtual void update();
+	void update() override;
 
 	void
 	get_next_solutions( core::pose::Pose const & pose );
@@ -81,14 +81,13 @@ public:
 	bool check_moved() const;
 
 	/// @brief Apply the current rotamer to pose
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Name of the class
-	virtual
-	std::string get_name() const { return "MC_RNA_KIC_Sampler"; }
+	std::string get_name() const override { return "MC_RNA_KIC_Sampler"; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_RNA_KIC; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::MC_RNA_KIC; }
 
 	/// @brief Set the standard deviation of Gaussian sampler
 	void set_gaussian_stdev( core::Real const setting );
@@ -101,13 +100,11 @@ public:
 	void set_angle_range_from_init_torsions( core::Real const range );
 
 	/// @brief output summary of class
-	virtual
-	void show( std::ostream & out, Size const indent = 0 ) const;
+	void show( std::ostream & out, Size const indent = 0 ) const override;
 
 	/// @brief return OP to the subsampler that controls exactly this torsion_id (assume only one).
-	virtual
 	MC_SamplerOP
-	find( core::id::TorsionID const & torsion_id );
+	find( core::id::TorsionID const & torsion_id ) override;
 
 private:
 

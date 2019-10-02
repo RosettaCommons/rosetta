@@ -50,8 +50,7 @@ public:
 public:
 	ProcessorFactory();
 
-	virtual
-	~ProcessorFactory();
+	~ProcessorFactory() override;
 
 	static
 	MatchProcessorOP

@@ -46,7 +46,7 @@ public:
 		core::chemical::rna::BaseEdge const edge2 = core::chemical::rna::ANY_BASE_EDGE,
 		core::chemical::rna::BaseDoubletOrientation const orientation = core::chemical::rna::ANY_BASE_DOUBLET_ORIENTATION );
 
-	~BasePair(){}
+	~BasePair() override{}
 
 	BasePair
 	flipped() const;

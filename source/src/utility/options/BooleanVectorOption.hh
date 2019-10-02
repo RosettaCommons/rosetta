@@ -80,7 +80,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~BooleanVectorOption() {}
+	~BooleanVectorOption() override {}
 
 
 public: // Properties

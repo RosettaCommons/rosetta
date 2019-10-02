@@ -44,13 +44,13 @@ public:
 	/// @brief  Constructor sets the desired number of fragments.
 	QuotaSelector(core::Size,core::Size,QuotaCollectorOP);
 
-	virtual ~QuotaSelector() {
+	~QuotaSelector() override {
 	}
 
 	/// @brief  Selects desired number of fragments from a given candidates
-	virtual void select_fragments(
+	void select_fragments(
 		ScoredCandidatesVector1 const& in,
-		ScoredCandidatesVector1 & out)
+		ScoredCandidatesVector1 & out) override
 	{
 		select_fragments_25_200(in,out);
 	}

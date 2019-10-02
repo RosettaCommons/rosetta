@@ -43,10 +43,10 @@ public:
 
 	//SymmetricRMSMover( std::string const & );
 
-	~SymmetricRMSMover();
+	~SymmetricRMSMover() override;
 
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 };
 

@@ -36,16 +36,16 @@ public:
 	CircularPowerFunc( Real const x0_radians, Real const sd_radians, int const power, Real const weight );
 
 	FuncOP
-	clone() const;
+	clone() const override;
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
-
-	Real
-	func( Real const x ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
 	Real
-	dfunc( Real const x ) const;
+	func( Real const x ) const override;
+
+	Real
+	dfunc( Real const x ) const override;
 
 private:
 	Real const x0_;

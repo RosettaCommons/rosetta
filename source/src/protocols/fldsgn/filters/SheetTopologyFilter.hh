@@ -82,7 +82,7 @@ public:// constructor/destructor
 	// @brief copy constructor
 	SheetTopologyFilter( SheetTopologyFilter const & rval );
 
-	virtual ~SheetTopologyFilter(){}
+	~SheetTopologyFilter() override{}
 
 
 public:// virtual constructor

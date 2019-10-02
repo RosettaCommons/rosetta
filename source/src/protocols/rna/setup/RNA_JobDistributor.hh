@@ -59,13 +59,12 @@ public:
 	{
 	}
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "RNA_JobDistributor";
 	}
 
-	virtual
 	void
-	apply( core::pose::Pose & pose ) = 0;
+	apply( core::pose::Pose & pose ) override = 0;
 
 	virtual
 	void

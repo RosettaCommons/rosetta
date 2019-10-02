@@ -44,7 +44,7 @@ public:
 
 	InvrotTreeNode( InvrotTreeNodeBaseCAP parent );
 
-	~InvrotTreeNode();
+	~InvrotTreeNode() override;
 
 	/// @brief generate invrots according to
 	/// an enzdes cstfile
@@ -88,7 +88,7 @@ public:
 	generate_constraints(
 		core::pose::Pose const & pose,
 		AllowedSeqposForGeomCstCOP geomcst_seqpos
-	) const;
+	) const override;
 
 
 	/// @brief this function returns the AtomID for an atom
@@ -99,7 +99,7 @@ public:
 	get_fixed_pt( core::pose::Pose const & pose ) const;
 
 	utility::vector1< std::list< core::conformation::ResidueCOP > >
-	all_target_residues( InvrotTreeNodeBaseCAP child_node ) const;
+	all_target_residues( InvrotTreeNodeBaseCAP child_node ) const override;
 
 
 	void
@@ -111,7 +111,7 @@ public:
 	void
 	collect_all_inverse_rotamers(
 		utility::vector1< InvrotCollectorOP > & invrot_collectors
-	) const;
+	) const override;
 
 private:
 

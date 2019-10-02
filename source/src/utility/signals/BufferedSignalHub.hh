@@ -89,8 +89,7 @@ public: // construct/destruct
 
 	/// @brief default destructor
 	inline
-	virtual
-	~BufferedSignalHub() = default;
+	~BufferedSignalHub() override = default;
 
 
 private: // disallow copy construction and assignment
@@ -117,8 +116,7 @@ public: // signal management
 
 	/// @brief allow signals to be sent and release any signals that were buffered
 	inline
-	virtual
-	void unblock() {
+	void unblock() override {
 		Super::unblock();
 		buffering_ = false;
 		release_buffer();
@@ -164,8 +162,7 @@ protected: // methods
 	/// @details If buffering is enabled, signal will be stored in buffer.
 	/// @return true if hub is not blocked, otherwise false
 	inline
-	virtual
-	bool signal_allowed( Signal const s ) {
+	bool signal_allowed( Signal const s ) override {
 		if ( buffering_ ) {
 			buffer_.push_back( s );
 			return false;

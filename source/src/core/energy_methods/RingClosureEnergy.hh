@@ -47,30 +47,27 @@ public:
 
 	/// @brief Clone -- creates a copy and returns an owning pointer to the copy.
 	///
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 
 	/// @brief Evaluate the derivatives for all atoms in this residue.
 	///
-	virtual
 	void
 	eval_residue_derivatives(
 		conformation::Residue const & rsd,
@@ -78,12 +75,11 @@ public:
 		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
 	/// @brief RingClosure Energy is context independent and thus indicates that no context graphs need to
 	/// be maintained by class Energies
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override;
 
 private:
 
@@ -93,8 +89,7 @@ private:
 	/// potential that holds virtual atoms atop real atoms.
 	core::Real std_dev_sq_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

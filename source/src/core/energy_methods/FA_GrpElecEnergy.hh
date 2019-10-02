@@ -53,11 +53,11 @@ class FAElecContextData : public basic::datacache::CacheableData {
 
 public:
 	FAElecContextData();
-	~FAElecContextData();
+	~FAElecContextData() override;
 
 	void initialize( Size const nres );
 
-	basic::datacache::CacheableDataOP clone() const {
+	basic::datacache::CacheableDataOP clone() const override {
 		return utility::pointer::make_shared< FAElecContextData >( *this );
 	}
 
@@ -97,55 +97,47 @@ public:
 	initialize();
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/// stashes nblist if use_nblist is true
-	virtual
 	void
 	setup_for_minimizing(
 		pose::Pose & pose,
 		ScoreFunction const & sfxn,
 		kinematics::MinimizerMapBase const & min_map
-	) const;
+	) const override;
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const &scfxn ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const &scfxn ) const override;
 
-	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const &scfxn ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const &scfxn ) const override;
 
 
-	virtual
 	void
 	setup_for_packing(
 		pose::Pose & pose,
 		utility::vector1< bool > const &,
 		utility::vector1< bool > const &
-	) const;
+	) const override;
 
 	// Creates a rotamer trie for the input set of rotamers and stores the trie
 	// in the rotamer set.
-	virtual
 	void
 	prepare_rotamers_for_packing(
 		pose::Pose const &,
-		conformation::RotamerSetBase & ) const;
+		conformation::RotamerSetBase & ) const override;
 
 	// Updates the cached rotamer trie for a residue if it has changed during the course of
 	// a repacking
-	virtual
 	void
-	update_residue_for_packing( pose::Pose &, Size ) const;
+	update_residue_for_packing( pose::Pose &, Size ) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -153,26 +145,22 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Returns true if we're using neighborlist-autoupdate
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & pose ) const;
+	minimize_in_whole_structure_context( pose::Pose const & pose ) const override;
 
-	virtual
 	bool
 	defines_score_for_residue_pair(
 		conformation::Residue const & res1,
 		conformation::Residue const & res2,
 		bool res_moving_wrt_eachother
-	) const;
+	) const override;
 
-	virtual
 	bool
-	use_extended_residue_pair_energy_interface() const;
+	use_extended_residue_pair_energy_interface() const override;
 
-	virtual
 	void
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
@@ -181,7 +169,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	void
 	setup_for_minimizing_for_residue_pair(
@@ -193,13 +181,12 @@ public:
 		ResSingleMinimizationData const &,
 		ResSingleMinimizationData const &,
 		ResPairMinimizationData &
-	) const;
+	) const override;
 
 	/// @brief Evaluate the atom derivative f1/f2 vectors for all atoms on rsd1
 	/// in response to the atoms on rsd2, and all the atoms on rsd2 as they
 	/// in response to the atoms on rsd1.  This method is used with the
 	/// MinimizationGraph and when nblist_autoupdate is not in use.
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
@@ -211,12 +198,11 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
 	/// @brief Evaluate the derivative vectors for a particular atom in a given
 	/// (asymmetric) pose when nblist_autoupdate is being used.  nblist_autoupdate
 	/// cannot be used with symmetric poses, in rtmin, or in minpack.
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const &,
@@ -226,24 +212,23 @@ public:
 		EnergyMap const &,
 		Vector &,
 		Vector &
-	) const;
+	) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & ,
 		ScoreFunction const &,
 		EnergyMap &
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	void
 	eval_intrares_derivatives(
@@ -252,9 +237,8 @@ public:
 		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
-	virtual
 	void
 	evaluate_rotamer_pair_energies(
 		conformation::RotamerSetBase const & set1,
@@ -263,12 +247,11 @@ public:
 		ScoreFunction const &,
 		EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
-	) const;
+	) const override;
 
 
 	//@brief overrides default rotamer/background energy calculation and uses
 	// the trie-vs-trie algorithm instead
-	virtual
 	void
 	evaluate_rotamer_background_energies(
 		conformation::RotamerSetBase const & set,
@@ -277,12 +260,11 @@ public:
 		ScoreFunction const &,
 		EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
-	) const;
+	) const override;
 
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
 
 	/// @brief Interface function for class NeighborList.
 	etable::count_pair::CountPairFunctionCOP
@@ -308,12 +290,10 @@ public:
 	) const;
 
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 	/// Private methods
 private:
@@ -384,8 +364,7 @@ private:
 	// temporary for derivative stuffs; turn off for now
 	//mutable utility::vector1< Real > Eres_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

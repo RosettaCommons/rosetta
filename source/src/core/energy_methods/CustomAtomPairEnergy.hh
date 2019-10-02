@@ -48,43 +48,36 @@ public:
 	CustomAtomPairEnergy( Size const cst_seq_sep );
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 
-	virtual
 	void
-	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
+	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
 
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
 
-	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
 	prepare_rotamers_for_packing(
 		pose::Pose const & pose,
 		conformation::RotamerSetBase & set
-	) const;
+	) const override;
 
-	virtual
 	void
 	update_residue_for_packing(
 		pose::Pose &,
-		Size resid ) const;
+		Size resid ) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -92,9 +85,8 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & atom_id,
@@ -104,33 +96,29 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
 	/// @details non-virtual accessor for speed
 	Distance
 	interaction_cutoff() const;
 
-	virtual
 	void indicate_required_context_graphs(
 		utility::vector1< bool > & context_graphs_required
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const;
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data
@@ -145,8 +133,7 @@ private:
 	//mutable bool init_;
 	mutable utility::vector1< utility::vector1< core::scoring::func::SOGFunc_Impl > > funcs_;
 	mutable utility::vector1< utility::vector1< bool > > have_cst_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 } // constraints

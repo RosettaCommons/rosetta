@@ -82,7 +82,7 @@ class NPDHBondSet : public HBondSet {
 
 public:
 	NPDHBondSet();
-	~NPDHBondSet();
+	~NPDHBondSet() override;
 
 	NPDHBondSet( Size const nres );
 	NPDHBondSet( HBondOptions const & options );
@@ -132,7 +132,7 @@ public:
 
 	/// @brief Clone this object
 	basic::datacache::CacheableDataOP
-	clone() const;
+	clone() const override;
 
 	friend
 	std::ostream &

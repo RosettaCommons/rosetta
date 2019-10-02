@@ -60,7 +60,7 @@ public: // boiler plate / virtuals
 	SnugDockProtocol & operator=( SnugDockProtocol const & rhs );
 
 	// destructor
-	virtual ~SnugDockProtocol();
+	~SnugDockProtocol() override;
 
 	void apply( Pose & ) override;
 	std::string get_name() const override;

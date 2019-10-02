@@ -70,7 +70,7 @@ public:
 		indent_depth_()
 	{}
 
-	virtual ~Emitter() {}
+	~Emitter() override {}
 
 	/// @brief Flush the underlying output stream.
 	void flush() { out_.flush(); }
@@ -222,10 +222,10 @@ public:
 		Emitter(out)
 	{ start_raw(true, true); } // can't call virtual func from base class ctor
 
-	virtual ~YamlEmitter() {}
+	~YamlEmitter() override {}
 
 	/// @brief Start a new YAML document, ending the previous one first if necessary
-	virtual void start_doc()
+	void start_doc() override
 	{ end(); out_ << "\n---\n"; start_raw(true, true); }
 
 private:
@@ -236,8 +236,7 @@ private:
 protected:
 
 	/// @brief YAML only quotes strings when they contain special characters.
-	virtual
-	std::string quote_string(std::string const & s)
+	std::string quote_string(std::string const & s) override
 	{
 		bool needs_quotes(false); // dummy val; will be overwritten below
 		std::string t = escape_string(s, needs_quotes);
@@ -245,8 +244,7 @@ protected:
 		else return t;
 	}
 
-	virtual
-	void do_indent(bool write_comma=true)
+	void do_indent(bool write_comma=true) override
 	{
 		bool indent = indent_.back();
 		if ( indent ) {
@@ -264,16 +262,14 @@ protected:
 	}
 
 	/// @brief YAML uses "-" for list items when in block (indented) mode.
-	virtual
-	void write_list_marker()
+	void write_list_marker() override
 	{
 		bool indent = indent_.back();
 		if ( indent ) out_ << "- ";
 	}
 
 	/// @details YAML only uses brackets and braces if data is not being indented.
-	virtual
-	void start_raw(bool is_map, bool indent)
+	void start_raw(bool is_map, bool indent) override
 	{
 		if ( !indent ) {
 			if ( is_map ) out_ << "{ ";
@@ -289,8 +285,7 @@ protected:
 	}
 
 	/// @details YAML only uses brackets and braces if data is not being indented.
-	virtual
-	void end_raw()
+	void end_raw() override
 	{
 		if ( in_map_.empty() ) return; // bad op
 		bool indent = indent_.back();
@@ -345,11 +340,11 @@ public:
 		Emitter(out)
 	{ start_raw(true, true); } // can't call virtual func from base class ctor
 
-	virtual ~JsonEmitter() {}
+	~JsonEmitter() override {}
 
 	/// @brief JSON doesn't support multiple documents, so this just calls end(1)
 	/// to return you to the top (least-nested) level.
-	virtual void start_doc()
+	void start_doc() override
 	{ end(1); }
 
 private:
@@ -360,16 +355,14 @@ private:
 protected:
 
 	/// @brief JSON always quotes strings, regardless.
-	virtual
-	std::string quote_string(std::string const & s)
+	std::string quote_string(std::string const & s) override
 	{
 		bool needs_quotes(false); // dummy val; will be overwritten below
 		std::string t = escape_string(s, needs_quotes);
 		return "\""+t+"\""; // JSON always uses quotes, whether needed or not
 	}
 
-	virtual
-	void do_indent(bool write_comma=true)
+	void do_indent(bool write_comma=true) override
 	{
 		if ( write_comma ) {
 			bool first = first_.back();
@@ -385,12 +378,10 @@ protected:
 	}
 
 	/// @brief JSON has no special marker for list items
-	virtual
-	void write_list_marker() {} // not used in JSON
+	void write_list_marker() override {} // not used in JSON
 
 	/// @details JSON always uses brackets and braces, regardless of whether we're indenting.
-	virtual
-	void start_raw(bool is_map, bool indent)
+	void start_raw(bool is_map, bool indent) override
 	{
 		if ( is_map ) out_ << "{";
 		else out_ << "[";
@@ -405,8 +396,7 @@ protected:
 	}
 
 	/// @details JSON always uses brackets and braces, regardless of whether we're indenting.
-	virtual
-	void end_raw()
+	void end_raw() override
 	{
 		if ( in_map_.empty() ) return; // bad op
 		bool is_map = in_map_.back();

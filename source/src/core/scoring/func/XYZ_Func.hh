@@ -64,16 +64,13 @@ public:
 
 	ResidueXYZ( Residue const & rsd_in );
 
-	virtual
 	Vector const &
-	operator()( AtomID const & id ) const;
+	operator()( AtomID const & id ) const override;
 
-	virtual
 	Residue const &
-	residue( Size seqpos ) const;
+	residue( Size seqpos ) const override;
 
-	virtual
-	~ResidueXYZ();
+	~ResidueXYZ() override;
 
 private:
 	Residue const & rsd_;
@@ -85,16 +82,13 @@ public:
 
 	ResiduePairXYZ( Residue const & rsd1_in, Residue const & rsd2_in );
 
-	virtual
 	Vector const &
-	operator()( AtomID const & id ) const;
+	operator()( AtomID const & id ) const override;
 
-	virtual
 	Residue const &
-	residue( Size seqpos ) const;
+	residue( Size seqpos ) const override;
 
-	virtual
-	~ResiduePairXYZ();
+	~ResiduePairXYZ() override;
 
 private:
 	Residue const & rsd1_;
@@ -107,16 +101,13 @@ public:
 
 	ConformationXYZ( Conformation const & conformation_in );
 
-	virtual
 	Vector const &
-	operator()( AtomID const & id ) const;
+	operator()( AtomID const & id ) const override;
 
-	virtual
 	Residue const &
-	residue( Size seqpos ) const;
+	residue( Size seqpos ) const override;
 
-	virtual
-	~ConformationXYZ();
+	~ConformationXYZ() override;
 
 private:
 	Conformation const & conformation_;

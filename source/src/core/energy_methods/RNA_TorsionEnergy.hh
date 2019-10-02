@@ -45,26 +45,23 @@ public:
 		RNA_TorsionPotentialOP rna_torsion_potential = 0 );
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Evaluate the intra-residue constraint energy for a given residue
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -72,14 +69,13 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// called during gradient-based minimization inside dfunc
 	/**
 	F1 and F2 are not zeroed -- contributions from this atom are
 	just summed in
 	**/
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -89,20 +85,18 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & ) const { return true; }
+	defines_intrares_energy( EnergyMap const & ) const override { return true; }
 
 	bool
 	defines_residue_pair_energy( EnergyMap const & ) const { return true; }
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data
@@ -113,8 +107,7 @@ private:
 	RNA_EnergyMethodOptions const & options_;
 	RNA_TorsionPotentialOP rna_torsion_potential_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

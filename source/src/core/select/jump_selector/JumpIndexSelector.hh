@@ -52,7 +52,7 @@ public:
 
 	/// @details If soft_error is true, ignore jumps that are outside the Pose.
 	JumpIndexSelector( int jump, bool soft_error=false );
-	virtual ~JumpIndexSelector();
+	~JumpIndexSelector() override;
 
 	JumpSubset apply( core::pose::Pose const & pose ) const override;
 	void parse_my_tag(

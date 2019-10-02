@@ -41,12 +41,12 @@ public:
 	StepWisePacker( utility::vector1< core::Size > const & working_moving_residues );
 
 	//destructor -- necessary?
-	~StepWisePacker();
+	~StepWisePacker() override;
 
 	/// @brief Apply the minimizer to one pose
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void
 	do_packing( core::pose::Pose & pose );

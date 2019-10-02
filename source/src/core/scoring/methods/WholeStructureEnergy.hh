@@ -44,11 +44,11 @@ public:
 	/// computed by this WholeStructureEnergy.
 	WholeStructureEnergy( EnergyMethodCreatorOP );
 
-	virtual ~WholeStructureEnergy() {}
+	~WholeStructureEnergy() override {}
 
 
 	EnergyMethodType
-	method_type() const;
+	method_type() const  override;
 
 	/// @brief how far apart must two heavy atoms be to have a zero interaction energy?
 	///

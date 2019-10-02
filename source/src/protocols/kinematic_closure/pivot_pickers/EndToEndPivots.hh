@@ -24,10 +24,10 @@ class EndToEndPivots : public PivotPicker {
 public:
 
 	/// @copydoc PivotPicker::get_name
-	std::string get_name() const { return "EndToEndPivots"; }
+	std::string get_name() const override { return "EndToEndPivots"; }
 
 	/// @copydoc PivotPicker::pick
-	Loop pick(Pose const & pose, Loop const & loop);
+	Loop pick(Pose const & pose, Loop const & loop) override;
 
 };
 

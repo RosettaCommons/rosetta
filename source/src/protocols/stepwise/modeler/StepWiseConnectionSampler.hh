@@ -69,11 +69,11 @@ public:
 	StepWiseConnectionSampler( working_parameters::StepWiseWorkingParametersCOP & working_parameters_ );
 
 	//destructor
-	~StepWiseConnectionSampler();
+	~StepWiseConnectionSampler() override;
 
-	virtual void apply( core::pose::Pose & pose_to_visualize );
+	void apply( core::pose::Pose & pose_to_visualize ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	using MoverForPoseList::apply;
 

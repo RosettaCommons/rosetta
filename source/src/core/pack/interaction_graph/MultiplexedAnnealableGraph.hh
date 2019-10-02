@@ -50,7 +50,7 @@ public:
 
 	/// @brief Destructor.
 	///
-	virtual ~MultiplexedAnnealableGraph();
+	~MultiplexedAnnealableGraph() override;
 
 	// AnnealableGraphBase Implementation
 public:

@@ -51,19 +51,16 @@ public: // constructors
 	MPPairEnergy();
 
 	/// @brief Clone Method
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 public: // scoring methods
 
 	/// @brief Setup for Scoring - compute cen env and update neighbors
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
 	/// @brief Compute residue pair energy in th emembrane
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -71,21 +68,19 @@ public: // scoring methods
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	/// @brief Fianlize whole structure energy
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap &
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & ) const { return false; }
+	defines_intrares_energy( EnergyMap const & ) const override { return false; }
 
 	void
 	eval_intrares_energy(
@@ -93,20 +88,17 @@ public: // scoring methods
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const {}
+	) const override {}
 
 	/// @brief Define Atomic Interaction Cutoff == 6A
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
 	void
-	indicate_required_context_graphs( utility::vector1< bool > & ) const {}
+	indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
 	/// @brief Versioning
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 public: // energy methods
 

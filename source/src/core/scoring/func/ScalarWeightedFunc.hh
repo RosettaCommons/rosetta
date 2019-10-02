@@ -49,27 +49,21 @@ public:
 		FuncOP myfunc
 	): weight_( weight ), func_to_weight_( myfunc ) {}
 
-	virtual ~ScalarWeightedFunc();
+	~ScalarWeightedFunc() override;
 
-	virtual
 	FuncOP
-	clone() const { return utility::pointer::make_shared< ScalarWeightedFunc >( *this ); }
+	clone() const override { return utility::pointer::make_shared< ScalarWeightedFunc >( *this ); }
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	virtual
-	Real func( Real const x ) const;
-	virtual
-	Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	virtual
-	void read_data( std::istream& );
+	void read_data( std::istream& ) override;
 
-	virtual
-	void show_definition( std::ostream &out ) const;
-	virtual
-	Size show_violations(std::ostream &out, Real x, Size verbose_level, Real threshold = 1) const;
+	void show_definition( std::ostream &out ) const override;
+	Size show_violations(std::ostream &out, Real x, Size verbose_level, Real threshold = 1) const override;
 
 
 private:

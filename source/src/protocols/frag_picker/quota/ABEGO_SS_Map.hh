@@ -42,7 +42,7 @@ core::Size ss_index(char);
 class ABEGO_SS_Map : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ABEGO_SS_Map();
+	~ABEGO_SS_Map() override;
 
 	ABEGO_SS_Map(utility::vector1< std::pair<core::Size,core::Size> >);
 

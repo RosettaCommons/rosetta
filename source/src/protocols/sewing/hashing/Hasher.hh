@@ -45,7 +45,7 @@ public:
 	// constructors
 	Hasher();
 
-	virtual ~Hasher();
+	~Hasher() override;
 
 	Hasher( HasherSettings & hasher_settings, SegmentVectorCOP segment_vector );
 

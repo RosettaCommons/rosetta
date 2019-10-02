@@ -59,13 +59,13 @@ public:
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.
-	virtual ResidueSelectorOP clone() const;
+	ResidueSelectorOP clone() const override;
 
 	NeighborhoodResidueSelector( utility::vector1< bool > const & focus, Real distance, bool include_focus_in_subset = true);
 
 	NeighborhoodResidueSelector( ResidueSelectorCOP selector, Real distance, bool include_focus_in_subset = true);
 
-	virtual ~NeighborhoodResidueSelector();
+	~NeighborhoodResidueSelector() override;
 
 public:
 
@@ -96,17 +96,16 @@ public:
 public:
 
 
-	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
+	ResidueSubset apply( core::pose::Pose const & pose ) const override;
 
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
-	);
+	) override;
 
-	virtual
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	static std::string
 	class_name();

@@ -67,7 +67,7 @@ public:
 public:
 	FlexbbRotamerSets( PackerTaskCOP task );
 
-	virtual ~FlexbbRotamerSets();
+	~FlexbbRotamerSets() override;
 
 	inline FlexbbRotamerSetsCOP get_self_ptr() const { return shared_from_this(); }
 	inline FlexbbRotamerSetsOP  get_self_ptr() { return shared_from_this(); }
@@ -141,50 +141,41 @@ public:
 	//void prepare_sets_for_packing( Pose const & pose, ScoreFunction const &);
 
 	/// Virtual functions from base class
-	virtual core::uint nrotamers() const;
-	virtual core::uint nrotamers_for_moltenres( core::uint ) const;
+	core::uint nrotamers() const override;
+	core::uint nrotamers_for_moltenres( core::uint ) const override;
 
-	virtual core::uint nmoltenres() const;
+	core::uint nmoltenres() const override;
 
-	virtual core::uint total_residue() const;
+	core::uint total_residue() const override;
 
-	virtual
 	core::uint
-	moltenres_2_resid( core::uint ) const;
+	moltenres_2_resid( core::uint ) const override;
 
-	virtual
 	core::uint
-	resid_2_moltenres( core::uint ) const;
+	resid_2_moltenres( core::uint ) const override;
 
-	virtual
 	core::uint
-	moltenres_for_rotamer( core::uint ) const;
+	moltenres_for_rotamer( core::uint ) const override;
 
-	virtual
 	core::uint
-	res_for_rotamer( core::uint ) const;
+	res_for_rotamer( core::uint ) const override;
 
-	virtual
 	core::conformation::ResidueCOP
-	rotamer( core::uint ) const;
+	rotamer( core::uint ) const override;
 
-	virtual
 	core::conformation::ResidueCOP
-	rotamer_for_moltenres( core::uint moltenres_id, core::uint rotamerid ) const;
+	rotamer_for_moltenres( core::uint moltenres_id, core::uint rotamerid ) const override;
 
-	virtual
 	core::uint
-	nrotamer_offset_for_moltenres( core::uint ) const;
+	nrotamer_offset_for_moltenres( core::uint ) const override;
 
 	/// @brief convert rotid in full rotamer enumeration into rotamer id on its source residue
-	virtual
 	core::uint
-	rotid_on_moltenresidue( core::uint rotid ) const;
+	rotid_on_moltenresidue( core::uint rotid ) const override;
 
 	/// @brief convert moltenres rotid to id in full rotamer enumeration
-	virtual
 	core::uint
-	moltenres_rotid_2_rotid( core::uint moltenres, core::uint moltenresrotid ) const;
+	moltenres_rotid_2_rotid( core::uint moltenres, core::uint moltenresrotid ) const override;
 
 	Size
 	nmolten_res() const
@@ -358,15 +349,13 @@ public:
 		return bbconf[ rot1 ] == bbconf[ rot2 ];
 	}
 
-	virtual
 	void
 	initialize_pose_for_rotsets_creation(
 		core::pose::Pose & /*pose*/
-	) const {}
+	) const override {}
 
-	virtual
 	void
-	show( std::ostream & out ) const;
+	show( std::ostream & out ) const override;
 
 protected:
 

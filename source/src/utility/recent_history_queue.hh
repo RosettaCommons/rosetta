@@ -65,7 +65,7 @@ class recent_history_queue : public utility::pointer::ReferenceCount {
 public:
 	recent_history_queue();
 	recent_history_queue( int num_elements, int history_size );
-	virtual ~recent_history_queue();
+	~recent_history_queue() override;
 
 	void clear();
 	void num_elements( int num_elements );

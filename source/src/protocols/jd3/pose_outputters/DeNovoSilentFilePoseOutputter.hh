@@ -47,7 +47,7 @@ class DeNovoSilentFilePoseOutputter : public PoseOutputter
 public:
 
 	DeNovoSilentFilePoseOutputter();
-	virtual ~DeNovoSilentFilePoseOutputter();
+	~DeNovoSilentFilePoseOutputter() override;
 
 	static
 	bool

@@ -62,7 +62,7 @@ public: //constructor/destructor/
 
 	EnzdesCstCache( EnzdesCstCache const & other );
 
-	virtual ~EnzdesCstCache();
+	~EnzdesCstCache() override;
 
 public: //accessors
 
@@ -130,7 +130,7 @@ public: //constructor/destructor
 
 	EnzdesCstParamCache( EnzdesCstParamCache const & other );
 
-	virtual ~EnzdesCstParamCache();
+	~EnzdesCstParamCache() override;
 
 public: //accessors
 
@@ -213,7 +213,7 @@ public: //constructor/destructor
 
 	EnzCstTemplateResCache( EnzCstTemplateResCache const & other );
 
-	virtual ~EnzCstTemplateResCache();
+	~EnzCstTemplateResCache() override;
 
 public:  //accessors
 

@@ -95,7 +95,7 @@ public: // construct/destruct
 	SetSecStructEnergies( ScoreFunctionOP const sfx, BluePrintOP const blueprintOP, bool const ss_from_blueprint=true );
 
 	/// @brief default destructor
-	virtual ~SetSecStructEnergies();
+	~SetSecStructEnergies() override;
 
 
 private: // disallow assignment

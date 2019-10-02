@@ -47,28 +47,22 @@ public:
 	BoundFunc( Real const lb, Real const ub, Real sd, std::string const & type );
 	BoundFunc( Real const lb, Real const ub, Real sd, Real rswitch, std::string const & type );
 
-	virtual
-	func::FuncOP clone() const;
+	func::FuncOP clone() const override;
 
-	virtual bool operator==( Func const & rhs ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator==( Func const & rhs ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	virtual
-	void read_data( std::istream& );
+	void read_data( std::istream& ) override;
 
-	virtual
 	Real
-	func( Real const x ) const;
+	func( Real const x ) const override;
 
-	virtual
 	Real
-	dfunc( Real const x ) const;
+	dfunc( Real const x ) const override;
 
-	virtual
-	void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
-	virtual
-	Size show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold = 1 ) const;
+	Size show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold = 1 ) const override;
 
 	Real lb() const { return lb_; }
 	Real ub() const { return ub_; }
@@ -106,18 +100,18 @@ public:
 		Real const lb, Real const ub, Real sd, std::string type, Real const periodicity_in
 	);
 
-	virtual func::FuncOP clone() const;
+	func::FuncOP clone() const override;
 
-	virtual bool operator == ( Func const & rhs ) const;
-	virtual bool same_type_as_me( Func const & rhs ) const;
+	bool operator == ( Func const & rhs ) const override;
+	bool same_type_as_me( Func const & rhs ) const override;
 
-	virtual void read_data( std::istream& );
+	void read_data( std::istream& ) override;
 
-	virtual Real func(Real const x ) const;
-	virtual Real dfunc( Real const x ) const;
+	Real func(Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	virtual void show_definition( std::ostream& out ) const;
-	virtual Size show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold = 1) const;
+	void show_definition( std::ostream& out ) const override;
+	Size show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold = 1) const override;
 
 private:
 	Real periodicity_;
@@ -146,18 +140,18 @@ public:
 		Real const lb, Real const ub, Real sd, std::string type, Real const periodicity_in, Real const offset_in
 	);
 
-	virtual func::FuncOP clone() const;
+	func::FuncOP clone() const override;
 
-	virtual bool operator == ( Func const & rhs ) const;
-	virtual bool same_type_as_me( Func const & rhs ) const;
+	bool operator == ( Func const & rhs ) const override;
+	bool same_type_as_me( Func const & rhs ) const override;
 
-	virtual void read_data( std::istream& );
+	void read_data( std::istream& ) override;
 
-	virtual Real func(Real const x ) const;
-	virtual Real dfunc( Real const x ) const;
+	Real func(Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	virtual void show_definition( std::ostream& out ) const;
-	virtual Size show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold = 1) const;
+	void show_definition( std::ostream& out ) const override;
+	Size show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold = 1) const override;
 
 private:
 	Real periodicity_;

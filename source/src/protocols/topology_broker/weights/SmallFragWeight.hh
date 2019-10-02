@@ -54,7 +54,7 @@ namespace weights {
 class SmallFragWeight : public AbinitioMoverWeight {
 public:
 	SmallFragWeight( core::Real weight = 1.0 ) : weight_( weight ) {};
-	virtual core::Real weight( core::Size stageID, core::Real progress /* progress within stage */ ) const {
+	core::Real weight( core::Size stageID, core::Real progress /* progress within stage */ ) const override {
 		if ( basic::options::option[basic::options::OptionKeys::broker::small_frag_mover_stage1_weight].user() && stageID == 1 ) {
 			return basic::options::option[basic::options::OptionKeys::broker::small_frag_mover_stage1_weight].value();
 		}

@@ -58,38 +58,36 @@ public:
 		core::chemical::rna::BaseEdge const edge2 = core::chemical::rna::WATSON_CRICK,
 		core::chemical::rna::LW_BaseDoubletOrientation const orientation = core::chemical::rna::CIS );
 
-	virtual ConstraintOP clone() const;
-	virtual ConstraintOP remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP smap ) const;
-	virtual
+	ConstraintOP clone() const override;
+	ConstraintOP remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP smap ) const override;
 	ConstraintOP
-	remap_resid( core::id::SequenceMapping const &seqmap ) const;
+	remap_resid( core::id::SequenceMapping const &seqmap ) const override;
 
-	virtual void show_def( std::ostream& out, pose::Pose const& /*pose*/ ) const;
+	void show_def( std::ostream& out, pose::Pose const& /*pose*/ ) const override;
 
-	std::string type() const;
+	std::string type() const override;
 
 	Real
-	dist( core::scoring::func::XYZ_Func const & /*xyz*/ ) const;
+	dist( core::scoring::func::XYZ_Func const & /*xyz*/ ) const override;
 
 	/// @brief read in constraint defiinition
 	void
-	read_def( std::istream& data, pose::Pose const& pose, func::FuncFactory const& func_factory );
+	read_def( std::istream& data, pose::Pose const& pose, func::FuncFactory const& func_factory ) override;
 
 	void
 	init_subsidiary_constraints( pose::Pose const & pose );
 
-	virtual bool operator == ( Constraint const & other ) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	bool operator == ( Constraint const & other ) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
 	/// @brief compute score
 	void
-	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const override;
 
 	/// @brief number of atoms involved in this BasePairConstraint
-	Size natoms() const { return 0; }
+	Size natoms() const override { return 0; }
 
-	virtual
-	AtomID const & atom( Size const n ) const{
+	AtomID const & atom( Size const n ) const override{
 		debug_assert( n <= member_atoms_.size() );
 		return member_atoms_[n];
 	}
@@ -102,11 +100,11 @@ public:
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
-	void show( std::ostream& out) const;
+	void show( std::ostream& out) const override;
 
-	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1.0 ) const;
+	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1.0 ) const override;
 
 	ConstraintCOPs const &
 	constraints() const {

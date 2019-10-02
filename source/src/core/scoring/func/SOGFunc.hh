@@ -51,21 +51,21 @@ public:
 	SOGFunc( core::Real mean, core::Real sdev );
 
 	/// @brief returns a clone of this SOGFunc
-	FuncOP clone() const { return utility::pointer::make_shared< SOGFunc >( *this ); }
+	FuncOP clone() const override { return utility::pointer::make_shared< SOGFunc >( *this ); }
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
 	/// @brief Returns the value of this SOGFunc evaluated at distance x.
-	Real func( Real const x ) const;
+	Real func( Real const x ) const override;
 
 	/// @brief Returns the value of the first derivative of this SOGFunc at distance x.
-	Real dfunc( Real const x ) const;
+	Real dfunc( Real const x ) const override;
 
 	void check_bounds( Real const x, Real const val ) const;
 
 	/// @brief show the definition of this SOGFunc to the specified output stream.
-	virtual void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
 	/// @brief Calls show( out ) on this SOGFunc.
 	friend std::ostream& operator<<(std::ostream& out, const SOGFunc& f ) {
@@ -87,7 +87,7 @@ public:
 	* of 0.6.
 	* Weights need not add up to 1, but many times they will.
 	*/
-	void read_data( std::istream & in );
+	void read_data( std::istream & in ) override;
 
 private:
 	void clear_();

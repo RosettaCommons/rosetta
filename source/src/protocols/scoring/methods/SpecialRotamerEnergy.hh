@@ -45,22 +45,20 @@ public:
 	SpecialRotamerEnergy();
 
 	/// clone
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
 	void
 	residue_energy(
 		core::conformation::Residue const & rsd,
 		core::pose::Pose const & pose,
 		core::scoring::EnergyMap & emap
-	) const;
+	) const override;
 
 
 	virtual
@@ -75,10 +73,8 @@ public:
 
 	/// @brief SpecialRotamerEnergy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
-	virtual
-	core::Size version() const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
+	core::Size version() const override;
 
 	// data
 private:

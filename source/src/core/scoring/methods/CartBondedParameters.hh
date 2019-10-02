@@ -82,23 +82,19 @@ public:
 		period_ = period_in;
 	}
 
-	virtual
-	Real mu(Real , Real ) const {
+	Real mu(Real , Real ) const override {
 		return mu0_;
 	}
 
-	virtual
-	Real K(Real , Real ) const {
+	Real K(Real , Real ) const override {
 		return K0_;
 	}
 
-	virtual
-	Size period() const {
+	Size period() const override {
 		return period_;
 	}
 
-	virtual
-	bool is_null() const {
+	bool is_null() const override {
 		return (K0_==0);
 	}
 
@@ -149,12 +145,10 @@ public:
 	}
 
 	// interpolate mu
-	virtual
-	Real mu (Real phi, Real psi) const { return mus_spline_.F(phi,psi); }
+	Real mu (Real phi, Real psi) const override { return mus_spline_.F(phi,psi); }
 
 	// interpolate Ks
-	virtual
-	Real K (Real phi, Real psi) const {
+	Real K (Real phi, Real psi) const override {
 		core::Real retval = Ks_spline_.F(phi,psi);
 		//if (retval<0) {
 		// std::cerr << tag_ << "   K(" << phi << "," << psi << ") = " << Ks_spline_.F(phi,psi) << std::endl;
@@ -163,28 +157,24 @@ public:
 	}
 
 	// get dmu_dphi
-	virtual
-	Real dmu_dphi (Real phi, Real psi) const { return mus_spline_.dFdx(phi,psi); }
+	Real dmu_dphi (Real phi, Real psi) const override { return mus_spline_.dFdx(phi,psi); }
 
 	// get dmu_dpsi
-	virtual
-	Real dmu_dpsi (Real phi, Real psi) const  { return mus_spline_.dFdy(phi,psi); }
+	Real dmu_dpsi (Real phi, Real psi) const override  { return mus_spline_.dFdy(phi,psi); }
 
 	// get dmu_dphi
-	virtual
-	Real dK_dphi (Real phi, Real psi) const {
+	Real dK_dphi (Real phi, Real psi) const override {
 		//std::cerr << "   dKs_dphi(" << phi << "," << psi << ") = " << Ks_spline_.dFdx(phi,psi) << std::endl;
 		return Ks_spline_.dFdx(phi,psi);
 	}
 
 	// get dmu_dpsi
-	virtual
-	Real dK_dpsi (Real phi, Real psi) const  {
+	Real dK_dpsi (Real phi, Real psi) const override  {
 		//std::cerr << "   dKs_dpsi(" << phi << "," << psi << ") = " << Ks_spline_.dFdy(phi,psi) << std::endl;
 		return Ks_spline_.dFdy(phi,psi);
 	}
 
-	Size period() const {
+	Size period() const override {
 		return 1;
 	}
 

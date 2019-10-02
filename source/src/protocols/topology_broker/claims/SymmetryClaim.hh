@@ -61,7 +61,7 @@ public:
 		symm_data_( symmdata )
 	{}
 
-	virtual DofClaimOP clone() const {
+	DofClaimOP clone() const override {
 		return utility::pointer::make_shared< SymmetryClaim >( *this );
 	}
 
@@ -73,11 +73,11 @@ public:
 		return symm_data_;
 	}
 
-	virtual std::string str_type() const {
+	std::string str_type() const override {
 		return "SYMMETRY";
 	}
 
-	virtual void show( std::ostream& os ) const {
+	void show( std::ostream& os ) const override {
 		os << " with label: " << label();
 	}
 

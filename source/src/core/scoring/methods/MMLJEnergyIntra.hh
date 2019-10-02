@@ -51,7 +51,7 @@ public:
 	{}
 
 	basic::datacache::CacheableDataOP
-	clone() const { return utility::pointer::make_shared< NeighborListData >( *this ); }
+	clone() const override { return utility::pointer::make_shared< NeighborListData >( *this ); }
 
 	scoring::NeighborListOP
 	nblist() const { return nblist_; }
@@ -76,15 +76,12 @@ public:
 	MMLJEnergyIntra();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const &  ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const &  ) const override { return false; }
 
-	virtual
 	void
 	setup_for_minimizing_for_residue(
 		conformation::Residue const & rsd,
@@ -93,9 +90,8 @@ public:
 		kinematics::MinimizerMapBase const & minmap,
 		basic::datacache::BasicDataCache &,
 		ResSingleMinimizationData & res_data_cache
-	) const;
+	) const override;
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -103,10 +99,9 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
@@ -114,28 +109,24 @@ public:
 		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & ) const { return true; }
+	defines_intrares_energy( EnergyMap const & ) const override { return true; }
 
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	bool
-	use_extended_intrares_energy_interface() const { return true; }
+	use_extended_intrares_energy_interface() const override { return true; }
 
-	virtual
 	void
 	eval_intrares_energy_ext(
 		conformation::Residue const & rsd,
@@ -143,17 +134,15 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief MMLJEnergy does not have an atomic interation threshold
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
 	/// @brief MMLJEnergy is context independent; indicates that no context graphs are required
-	virtual
 	void
-	indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	/// @brief required for neighbor list and to be more lke the ETable
 	etable::count_pair::CountPairFunctionCOP
@@ -183,8 +172,7 @@ public:
 
 private:
 	core::scoring::mm::MMLJEnergyTable const & potential_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

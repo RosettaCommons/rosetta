@@ -48,7 +48,7 @@ public:
 	AppendAssemblyMover( AppendAssemblyMover const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~AppendAssemblyMover()=default;
+	~AppendAssemblyMover() override =default;
 
 	/////////////////////
 	/// Mover Methods ///
@@ -56,10 +56,10 @@ public:
 
 public:
 	/// @brief Apply the mover
-	virtual void
+	void
 	apply( core::pose::Pose & pose ) override;
 
-	virtual data_storage::SmartAssemblyOP
+	data_storage::SmartAssemblyOP
 	set_up_assembly( core::pose::Pose &) override;
 
 	virtual data_storage::SmartSegmentOP
@@ -69,11 +69,11 @@ public:
 	static std::string
 	class_name();
 
-	virtual void
+	void
 	show( std::ostream & output = std::cout ) const override;
 
 	/// @brief Get the name of the Mover
-	virtual std::string
+	std::string
 	get_name() const override;
 
 	void
@@ -99,7 +99,7 @@ public:
 	///////////////////////////////
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
@@ -110,11 +110,11 @@ public:
 	//AppendAssemblyMover & operator=( AppendAssemblyMover const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
+	protocols::moves::MoverOP
 	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
+	protocols::moves::MoverOP
 	clone() const override;
 
 	static void

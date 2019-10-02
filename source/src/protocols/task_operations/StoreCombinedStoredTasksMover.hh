@@ -36,7 +36,7 @@ class StoreCombinedStoredTasksMover : public protocols::moves::Mover {
 public:
 
 	StoreCombinedStoredTasksMover();
-	~StoreCombinedStoredTasksMover();
+	~StoreCombinedStoredTasksMover() override;
 
 	void apply( core::pose::Pose & pose  ) override;
 	protocols::moves::MoverOP clone() const override;

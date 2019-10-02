@@ -34,21 +34,21 @@ public:
 		AlignRMSD_ScreenerOP align_rmsd_screener );
 
 	//destructor
-	~IntegrationTestBreaker();
+	~IntegrationTestBreaker() override;
 
 public:
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	std::string
-	name() const { return "IntegrationTestBreaker"; }
+	name() const override { return "IntegrationTestBreaker"; }
 
 	StepWiseScreenerType
-	type() const { return INTEGRATION_TEST; }
+	type() const override { return INTEGRATION_TEST; }
 
 	void
-	fast_forward( sampler::StepWiseSamplerOP sampler );
+	fast_forward( sampler::StepWiseSamplerOP sampler ) override;
 
 private:
 

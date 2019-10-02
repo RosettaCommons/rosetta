@@ -104,7 +104,7 @@ public:
 		emap_( emap )
 	{}
 
-	virtual ~ResResEnergyInvoker() {}
+	~ResResEnergyInvoker() override {}
 
 protected:
 
@@ -135,9 +135,9 @@ public:
 	: parent( rsd1, rsd2, evaluator, emap )
 	{}
 
-	virtual ~WholeWholeEnergyInvoker() {}
+	~WholeWholeEnergyInvoker() override {}
 
-	virtual void invoke( count_pair::CountPairFunction const & cp )
+	void invoke( count_pair::CountPairFunction const & cp ) override
 	{
 		parent::evaluator().residue_atom_pair_energy( parent::rsd1(), parent::rsd2(), cp, parent::emap() );
 	}
@@ -159,9 +159,9 @@ public:
 	: parent( rsd1, rsd2, evaluator, emap )
 	{}
 
-	virtual ~SC_BB_EnergyInvoker() {}
+	~SC_BB_EnergyInvoker() override {}
 
-	virtual void invoke( count_pair::CountPairFunction const & cp )
+	void invoke( count_pair::CountPairFunction const & cp ) override
 	{
 		parent::evaluator().residue_atom_pair_energy_sidechain_backbone( parent::rsd1(), parent::rsd2(), cp, parent::emap() );
 	}
@@ -183,9 +183,9 @@ public:
 	: parent( rsd1, rsd2, evaluator, emap )
 	{}
 
-	virtual ~SC_Whole_EnergyInvoker() {}
+	~SC_Whole_EnergyInvoker() override {}
 
-	virtual void invoke( count_pair::CountPairFunction const & cp )
+	void invoke( count_pair::CountPairFunction const & cp ) override
 	{
 		parent::evaluator().residue_atom_pair_energy_sidechain_whole( parent::rsd1(), parent::rsd2(), cp, parent::emap() );
 	}
@@ -207,9 +207,9 @@ public:
 	: parent( rsd1, rsd2, evaluator, emap )
 	{}
 
-	virtual ~BB_BB_EnergyInvoker() {}
+	~BB_BB_EnergyInvoker() override {}
 
-	virtual void invoke( count_pair::CountPairFunction const & cp )
+	void invoke( count_pair::CountPairFunction const & cp ) override
 	{
 		parent::evaluator().residue_atom_pair_energy_backbone_backbone( parent::rsd1(), parent::rsd2(), cp, parent::emap() );
 	}
@@ -231,9 +231,9 @@ public:
 	: parent( rsd1, rsd2, evaluator, emap )
 	{}
 
-	virtual ~SC_SC_EnergyInvoker() {}
+	~SC_SC_EnergyInvoker() override {}
 
-	virtual void invoke( count_pair::CountPairFunction const & cp )
+	void invoke( count_pair::CountPairFunction const & cp ) override
 	{
 		parent::evaluator().residue_atom_pair_energy_sidechain_sidechain( parent::rsd1(), parent::rsd2(), cp, parent::emap() );
 	}

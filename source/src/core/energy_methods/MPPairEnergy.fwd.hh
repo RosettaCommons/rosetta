@@ -25,7 +25,6 @@
 namespace core {
 namespace scoring {
 namespace membrane {
-	
 /// @brief Membrane Residue Pair Energy Term
 class MPPairEnergy;
 typedef utility::pointer::shared_ptr< MPPairEnergy > MPPairEnergyOP;

@@ -40,12 +40,12 @@ public:
 	/// @brief default constructor
 	SelectByDeltaScoreOperation();
 	/// @brief destructor
-	virtual ~SelectByDeltaScoreOperation();
+	~SelectByDeltaScoreOperation() override;
 	/// @brief make clone
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
-	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
-	void parse_tag( TagCOP tag , DataMap & );
+	void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
+	void parse_tag( TagCOP tag , DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "SelectByDeltaScore"; }
 

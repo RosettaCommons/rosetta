@@ -42,7 +42,7 @@ public:
 	}
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< FavorNativeResiduePreCycle >(); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
-	virtual ~FavorNativeResiduePreCycle();
+	~FavorNativeResiduePreCycle() override;
 
 	std::string
 	get_name() const override;

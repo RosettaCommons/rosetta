@@ -58,21 +58,18 @@ public:
 	);
 
 	///@brief Inverse of violated for this requirement
-	virtual
 	bool
 	satisfies(
 		AssemblyCOP assembly
-	) const;
+	) const override;
 
 	///@brief Has the Assembly removed required residues
 	///for the specified model
-	virtual
 	bool
 	violates(
 		AssemblyCOP assembly
-	) const;
+	) const override;
 
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -80,13 +77,12 @@ public:
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/
-	);
+	) override;
 
-	virtual
 	void
 	show(
 		std::ostream & out
-	) const;
+	) const override;
 
 	static std::string
 	class_name();

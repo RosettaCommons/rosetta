@@ -57,7 +57,7 @@ public:
 	RotMatrix & operator=( RotMatrix const & object_to_copy );
 
 	/// @brief Destructor
-	~RotMatrix();
+	~RotMatrix() override;
 
 
 	// Standard Rosetta methods ////////////////////////////////////////////////

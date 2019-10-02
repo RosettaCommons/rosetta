@@ -37,15 +37,15 @@ public:
 	PolarHydrogenPacker();
 
 	//destructor
-	~PolarHydrogenPacker();
+	~PolarHydrogenPacker() override;
 
 public:
 
 	/// @brief  Apply the corresponding move to <pose>.
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief  Return the name of the Mover.
-	virtual std::string get_name() const { return "PolaryHydrogenPacker"; }
+	std::string get_name() const override { return "PolaryHydrogenPacker"; }
 
 	void set_allow_virtual_o2prime_hydrogens( bool const setting ) { allow_virtual_o2prime_hydrogens_ = setting; }
 

@@ -29,11 +29,11 @@ public:
 
 	ScoreBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
-	virtual void setUp() {
+	void setUp() override {
 		core::import_pose::pose_from_file(pose, "test_in.pdb", core::import_pose::PDB_file);
 	}
 
-	virtual void run(core::Real scaleFactor) {
+	void run(core::Real scaleFactor) override {
 		core::scoring::ScoreFunction scorefxn;
 		for ( int i=0; i<150*scaleFactor; i++ ) { // /100
 			scorefxn(pose);
@@ -41,5 +41,5 @@ public:
 		}
 	};
 
-	virtual void tearDown() {};
+	void tearDown() override {};
 };

@@ -41,14 +41,14 @@ public:
 	RNA_LoopCloser();
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return utility::pointer::make_shared< RNA_LoopCloser >(*this);
 	}
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
 	using protocols::moves::Mover::apply;
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
 	void apply( core::pose::Pose & pose, std::map< Size, Size > const & connections );

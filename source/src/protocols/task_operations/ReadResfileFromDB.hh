@@ -49,13 +49,12 @@ public:
 
 	ReadResfileFromDB(ReadResfileFromDB const & src);
 
-	virtual ~ReadResfileFromDB();
+	~ReadResfileFromDB() override;
 
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	void db_session(utility::sql_database::sessionOP db_session);
@@ -69,7 +68,7 @@ public:
 	void residue_selector( core::select::residue_selector::ResidueSelectorCOP const & sel );
 	core::select::residue_selector::ResidueSelectorCOP residue_selector() const;
 
-	virtual void parse_tag(utility::tag::TagCOP, DataMap &);
+	void parse_tag(utility::tag::TagCOP, DataMap &) override;
 	static std::string keyname() { return "ReadResfileFromDB"; }
 
 private:

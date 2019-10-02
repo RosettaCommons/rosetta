@@ -129,7 +129,7 @@ public:
 
 	using Reporter::Reporter;
 
-	virtual ~SCS_Base() {}
+	~SCS_Base() override {}
 
 	/// Results post-processing options: use filter to filter out resutls and sorting for chnaging results priority
 	//void clear_filters();

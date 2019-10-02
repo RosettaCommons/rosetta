@@ -29,15 +29,14 @@ class LoopsDefinerLoader : public parser::DataLoader
 {
 public:
 	LoopsDefinerLoader();
-	virtual ~LoopsDefinerLoader();
+	~LoopsDefinerLoader() override;
 
 	/// @brief The LoopsDefinerLoader will load named task operations into the basic::datacache::DataMap
-	virtual
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 	static std::string loader_name();
 	static std::string loop_def_loader_ct_namer( std::string const & element_name );

@@ -37,15 +37,13 @@ public:
 	RNA_DeNovoProtocolOptionsOP clone() const;
 
 	/// @brief Initialize from the recursive "tag" structure.
-	virtual
 	void
-	parse_my_tag( utility::tag::TagCOP ){}
+	parse_my_tag( utility::tag::TagCOP ) override{}
 
 	/// @brief The class name (its type) for a particular instance.
 	/// This function allows for better error message delivery.
-	virtual
 	std::string
-	type() const{ return "RNA_DeNovoProtocolOptions";}
+	type() const override{ return "RNA_DeNovoProtocolOptions";}
 
 	void set_nstruct( core::Size const setting ){ nstruct_ = setting; }
 	core::Size nstruct() const { return nstruct_; }

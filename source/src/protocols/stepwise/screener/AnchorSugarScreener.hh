@@ -52,21 +52,21 @@ public:
 		TagDefinitionOP tag_definition );
 
 	//destructor
-	~AnchorSugarScreener();
+	~AnchorSugarScreener() override;
 
 public:
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	std::string
-	name() const { return "AnchorSugarScreener"; }
+	name() const override { return "AnchorSugarScreener"; }
 
 	StepWiseScreenerType
-	type() const { return ANCHOR_SUGAR; }
+	type() const override { return ANCHOR_SUGAR; }
 
 	void
-	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ) override;
 
 	Size const &
 	anchor_sugar_solution_number() const { return anchor_sugar_solution_number_; }

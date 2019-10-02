@@ -55,7 +55,7 @@ public:
 	CavityVolumeFilter();
 
 	/// @brief virtual constructor to allow derivation
-	virtual ~CavityVolumeFilter();
+	~CavityVolumeFilter() override;
 
 	/// @brief Parses the CavityVolumeFilter tags
 	void parse_my_tag(

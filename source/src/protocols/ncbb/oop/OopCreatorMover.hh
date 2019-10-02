@@ -90,7 +90,7 @@ public:
 	);
 
 	//default dtor
-	virtual ~OopCreatorMover(){}
+	~OopCreatorMover() override{}
 
 	//methods
 	void apply( core::pose::Pose & pose ) override;

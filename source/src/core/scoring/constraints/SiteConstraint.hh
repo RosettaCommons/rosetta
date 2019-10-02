@@ -57,18 +57,17 @@ public:
 	SiteConstraint( ConstraintCOPs const & cst_in ) ;
 
 	///
-	virtual
-	ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
-	virtual bool operator == ( Constraint const & ) const;
-	virtual bool same_type_as_me( Constraint const & ) const;
+	bool operator == ( Constraint const & ) const override;
+	bool same_type_as_me( Constraint const & ) const override;
 
-	std::string type() const;
+	std::string type() const override;
 
 	/// @brief read in constraint defiinition
-	void read_def( std::istream& data, pose::Pose const& pose, func::FuncFactory const& func_factory );
+	void read_def( std::istream& data, pose::Pose const& pose, func::FuncFactory const& func_factory ) override;
 
-	void show( std::ostream& out) const;
+	void show( std::ostream& out) const override;
 
 	/// @brief Sets up SiteConstaint between the residue of interest and a chain
 	void setup_csts( Size res, std::string name, std::string chain, core::pose::Pose const & pose, func::FuncOP const & func );

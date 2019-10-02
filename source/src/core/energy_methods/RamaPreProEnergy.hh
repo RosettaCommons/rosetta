@@ -53,30 +53,28 @@ public:
 	RamaPreProEnergy( );
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
-	virtual void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	void
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	bool
 	defines_residue_pair_energy(
 		pose::Pose const & pose,
 		Size rsd1,
 		Size rsd2
-	) const;
+	) const override;
 
 
-	virtual void
+	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	void
 	eval_intrares_energy(
@@ -84,9 +82,8 @@ public:
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const { }
+	) const override { }
 
-	virtual
 	Real
 	eval_intraresidue_dof_derivative(
 		conformation::Residue const & rsd,
@@ -96,38 +93,33 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & /*sfxn*/,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
 
-	virtual
 	bool
-	defines_intrares_dof_derivatives( pose::Pose const & ) const { return true; }
+	defines_intrares_dof_derivatives( pose::Pose const & ) const override { return true; }
 
 	virtual
 	Distance
 	atomic_interaction_cutoff() const { return 0.0; }
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const { }
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override { }
 
 	//fpd  use the new minimizer interface
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 	methods::LongRangeEnergyType
-	long_range_type() const;
+	long_range_type() const override;
 
 	bool is_allowed_type( core::chemical::ResidueType const & rt ) const;
 
 private:
 	RamaPrePro const & potential_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

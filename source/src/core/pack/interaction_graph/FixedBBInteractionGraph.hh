@@ -35,7 +35,7 @@ namespace interaction_graph {
 class FixedBBNode : public NodeBase
 {
 public:
-	virtual ~FixedBBNode() {}
+	~FixedBBNode() override {}
 
 	FixedBBNode(
 		InteractionGraphBase * owner,
@@ -50,7 +50,7 @@ public:
 class FixedBBEdge : public EdgeBase
 {
 public:
-	virtual ~FixedBBEdge() {}
+	~FixedBBEdge() override {}
 
 	FixedBBEdge(
 		InteractionGraphBase* owner,
@@ -79,7 +79,7 @@ public:
 class FixedBBInteractionGraph : public InteractionGraphBase
 {
 public:
-	virtual ~FixedBBInteractionGraph() {}
+	~FixedBBInteractionGraph() override {}
 	FixedBBInteractionGraph( int num_nodes )
 	:
 		InteractionGraphBase( num_nodes )

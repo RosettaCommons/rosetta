@@ -70,7 +70,7 @@ public:// constructor/destructor
 	// @brief copy constructor
 	FragQualFilter( FragQualFilter const & rval );
 
-	virtual ~FragQualFilter(){}
+	~FragQualFilter() override{}
 
 
 public:// virtual constructor

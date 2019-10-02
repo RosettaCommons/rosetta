@@ -62,17 +62,17 @@ public:// constructor/destructor
 	// @brief default constructor
 	SecondaryStructureHasResidueFilter();
 
-	virtual ~SecondaryStructureHasResidueFilter(){}
+	~SecondaryStructureHasResidueFilter() override{}
 
 
 public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const override { return utility::pointer::make_shared< SecondaryStructureHasResidueFilter >( *this ); }
+	FilterOP clone() const override { return utility::pointer::make_shared< SecondaryStructureHasResidueFilter >( *this ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const override { return utility::pointer::make_shared< SecondaryStructureHasResidueFilter >(); }
+	FilterOP fresh_instance() const override { return utility::pointer::make_shared< SecondaryStructureHasResidueFilter >(); }
 
 public:// accessor
 
@@ -82,7 +82,7 @@ public:// accessor
 
 public:// parser
 
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		Movers_map const &,

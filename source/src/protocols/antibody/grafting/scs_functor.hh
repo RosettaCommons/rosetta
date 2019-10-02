@@ -44,7 +44,7 @@ public:
 class SCS_Comparator : public SCS_Functor
 {
 public:
-	virtual void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
+	void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
 	virtual bool compare(AntibodySequence const &antibody_sequence, SCS_Result const &a, SCS_Result const &b) const = 0;
 };
 
@@ -52,7 +52,7 @@ public:
 class SCS_BlastComparator : public SCS_Comparator
 {
 public:
-    virtual bool compare(AntibodySequence const &antibody_sequence, SCS_Result const &a, SCS_Result const &b) const override;
+    bool compare(AntibodySequence const &antibody_sequence, SCS_Result const &a, SCS_Result const &b) const override;
 	virtual bool compare(AntibodySequence const &antibody_sequence, SCS_BlastResult const &a, SCS_BlastResult const &b) const = 0;
 };
 

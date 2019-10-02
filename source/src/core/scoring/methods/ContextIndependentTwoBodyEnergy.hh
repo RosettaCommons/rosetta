@@ -39,11 +39,10 @@ public:
 	/// is responsible for computing.
 	ContextIndependentTwoBodyEnergy( EnergyMethodCreatorOP );
 
-	virtual
-	~ContextIndependentTwoBodyEnergy();
+	~ContextIndependentTwoBodyEnergy() override;
 
 	EnergyMethodType
-	method_type() const;
+	method_type() const override;
 
 };
 

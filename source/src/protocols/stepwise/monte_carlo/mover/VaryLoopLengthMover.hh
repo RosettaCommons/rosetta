@@ -39,19 +39,19 @@ public:
 	VaryLoopLengthMover( VaryLoopLengthMover const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~VaryLoopLengthMover();
+	~VaryLoopLengthMover() override;
 
 	void
 	apply( core::pose::Pose & pose,  StepWiseMove const & swa_move );
 
 	using protocols::moves::Mover::apply;
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 public:
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 private:
 

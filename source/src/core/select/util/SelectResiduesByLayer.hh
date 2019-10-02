@@ -67,7 +67,7 @@ public: // constructor/destructor
 
 	/// @brief Destructor
 	///
-	virtual ~SelectResiduesByLayer();
+	~SelectResiduesByLayer() override;
 
 	/// @brief Clone operator.
 	/// @details Construct a copy of this object and return an owning pointer to the copy.

@@ -36,7 +36,7 @@ namespace palette {
 class NoDesignPackerPaletteCreator : public PackerPaletteCreator
 {
 public:
-	virtual ~NoDesignPackerPaletteCreator() {}
+	~NoDesignPackerPaletteCreator() override {}
 
 	/// @brief Instantiate a new PackerPalette
 	PackerPaletteOP create_packer_palette() const override;

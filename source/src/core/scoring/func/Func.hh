@@ -36,7 +36,7 @@ namespace func {
 class Func : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~Func();
+	~Func() override;
 
 	/// @brief This method must return a deep copy of this %Func, meaning if this %Func holds pointers
 	/// to other %Func objects, that it must clone those %Func objects as well.

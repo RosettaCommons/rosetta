@@ -51,12 +51,11 @@ public:
 public:
 
 	VanillaJobDistributor();
-	virtual ~VanillaJobDistributor();
+	~VanillaJobDistributor() override;
 
 	/// @brief The main method for executing a protocol.
-	virtual
 	void
-	go( JobQueenOP queen );
+	go( JobQueenOP queen ) override;
 
 private:
 

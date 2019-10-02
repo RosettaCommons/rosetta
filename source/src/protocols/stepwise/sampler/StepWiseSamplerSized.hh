@@ -30,34 +30,34 @@ class StepWiseSamplerSized: public sampler::StepWiseSampler {
 public:
 	StepWiseSamplerSized();
 
-	virtual ~StepWiseSamplerSized();
+	~StepWiseSamplerSized() override;
 
 	/// @brief Get the total number of rotamers in sampler
 	virtual core::Size size() const = 0;
 
 	/// @brief Initialization
-	virtual void init();
+	void init() override;
 
 	/// @brief Reset to the first (or random if random()) rotamer.
-	virtual void reset();
+	void reset() override;
 
 	/// @brief Move to next rotamer
-	virtual void operator++();
+	void operator++() override;
 
 	/// @brief Check if reach the end of rotamer list
-	virtual bool not_end() const;
+	bool not_end() const override;
 
 	/// @brief Apply the i-th rotamer to pose
 	virtual void apply( core::pose::Pose&, core::Size const ) = 0;
 
 	/// @brief Apply the current rotamer to pose
-	void apply( core::pose::Pose & pose ) { apply( pose, id_ ); }
+	void apply( core::pose::Pose & pose ) override { apply( pose, id_ ); }
 
 	/// @brief Name of the class
-	virtual std::string get_name() const { return "StepWiseSamplerSized"; }
+	std::string get_name() const override { return "StepWiseSamplerSized"; }
 
 	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::SIZED; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::SIZED; }
 
 	Size const & id() const { return id_; }
 
@@ -66,8 +66,7 @@ public:
 	virtual void set_id( Size const setting ){ id_ = setting; }
 
 	/// @brief output summary of class
-	virtual
-	void show( std::ostream & out, Size const indent = 0 ) const {
+	void show( std::ostream & out, Size const indent = 0 ) const override {
 		for ( Size n = 1; n <= indent; n++ ) out << ' ';
 		out << get_name() << " [" << size() << ']' << std::endl;
 	}

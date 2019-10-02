@@ -57,7 +57,7 @@ public:
 	OneBodyEnergy( EnergyMethodCreatorOP );
 
 	// @brief dstor;
-	virtual ~OneBodyEnergy();
+	~OneBodyEnergy() override;
 
 	/// @brief Evaluate the one-body energies for a particular residue, in the context of a
 	/// given Pose, and increment those energies in the input Emap (do not overwrite them).

@@ -114,9 +114,8 @@ public: // Creation
 
 
 	/// @brief Clone this
-	inline
 	BooleanOptionKey *
-	clone() const
+	clone() const override
 	{
 		return new BooleanOptionKey( *this );
 	}
@@ -124,8 +123,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~BooleanOptionKey() {}
+	~BooleanOptionKey() override {}
 
 
 public: // Assignment

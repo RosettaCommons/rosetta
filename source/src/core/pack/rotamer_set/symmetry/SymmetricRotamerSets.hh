@@ -51,7 +51,7 @@ public:
 
 public:
 	SymmetricRotamerSets();
-	~SymmetricRotamerSets();
+	~SymmetricRotamerSets() override;
 
 	void
 	compute_energies(

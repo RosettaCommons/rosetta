@@ -45,18 +45,16 @@ public:
 
 	/// @brief Returns the ci_1b element of the EnergyMethodType enumeration; this
 	/// method should NOT be overridden by derived classes.
-	virtual
 	EnergyMethodType
-	method_type() const;
+	method_type() const override;
 
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &,
 		EnergyMap & emap
-	) const = 0;
+	) const override = 0;
 
 
 };

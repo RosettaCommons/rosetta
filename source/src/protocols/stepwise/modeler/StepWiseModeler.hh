@@ -43,7 +43,7 @@ public:
 	StepWiseModeler( core::scoring::ScoreFunctionCOP scorefxn );
 
 	//destructor
-	~StepWiseModeler();
+	~StepWiseModeler() override;
 
 	StepWiseModeler( StepWiseModeler const & src );
 
@@ -53,9 +53,9 @@ public:
 
 	StepWiseModeler & operator=( StepWiseModeler const & src );
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const{ return "StepWiseModeler"; }
+	std::string get_name() const override{ return "StepWiseModeler"; }
 
 	void set_moving_res_and_reset( Size const moving_res );
 

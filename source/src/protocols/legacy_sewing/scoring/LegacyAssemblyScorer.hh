@@ -36,7 +36,7 @@ public:
 	///@brief default construct
 	LegacyAssemblyScorer(){}
 
-	virtual ~LegacyAssemblyScorer(){}
+	~LegacyAssemblyScorer() override{}
 
 	virtual
 	core::Real

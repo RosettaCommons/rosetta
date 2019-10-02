@@ -81,7 +81,7 @@ public:
 	RNA_ChunkLibrary( core::pose::Pose const & pose );
 
 	//destructoro
-	~RNA_ChunkLibrary();
+	~RNA_ChunkLibrary() override;
 
 	/// @brief clone the ChunkLibrary
 	RNA_ChunkLibraryOP

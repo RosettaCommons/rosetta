@@ -447,7 +447,7 @@ public:
 	}
 
 	// run the protocol
-	void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
 	// one growcycle direction
 	core::Real single_grow( core::pose::Pose& pose, core::pose::Pose& pose_cen, LoopPartialSolutionStore& solutionset, const core::chemical::ResidueTypeCOPs& restypes_pose,
@@ -552,7 +552,7 @@ public:
 	void set_coordfile( std::string coordfile ) { coordfile_ = coordfile; }
 	void set_skeletonfile( std::string skeletonfile ) { skeleton_file_ = skeletonfile; }
 
-	std::string get_name() const { return "LoopGrower"; }
+	std::string get_name() const override { return "LoopGrower"; }
 
 	void update_fragment_library_pointers();
 
@@ -582,8 +582,8 @@ public:
 
 	LoopPartialSolutionStore getSolutionSet(){ return solutionset_;}
 
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 private:
 	core::Size beamwidth_ = 1;

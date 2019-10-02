@@ -127,15 +127,13 @@ public: // Creation
 
 
 	/// @brief Clone this
-	virtual
 	OptionKey *
-	clone() const = 0;
+	clone() const override = 0;
 
 
 	/// @brief Destructor
 	inline
-	virtual
-	~OptionKey() {}
+	~OptionKey() override {}
 
 
 public: // Assignment

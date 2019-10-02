@@ -72,7 +72,7 @@ class AtomPairFuncList : public utility::pointer::ReferenceCount
 {
 public:
 	AtomPairFuncList();
-	virtual ~AtomPairFuncList();
+	~AtomPairFuncList() override;
 
 	std::list< atoms_and_func_struct > const & ats_n_func_list() const {
 		return interacting_atompair_list_;
@@ -146,9 +146,8 @@ public:
 	FullatomCustomPairDistanceEnergy( FullatomCustomPairDistanceEnergy const & src );
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -156,23 +155,19 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	// necessary pure virtual functions
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const {}
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override {}
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const {}
+	) const override {}
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -180,11 +175,10 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
 	/*virtual
 	void
@@ -209,29 +203,25 @@ public:
 	/// @brief Returns true if there are atoms on residue 1 & 2 that have interactions defined between them,
 	/// and false otherwise.  This avoids unnecessary calls to residue_pair_energy_ext during minimization
 	/// between pairs of atoms that have no interactons
-	virtual
 	bool
 	defines_score_for_residue_pair(
 		conformation::Residue const & res1,
 		conformation::Residue const & res2,
 		bool res_moving_wrt_eachother
-	) const;
+	) const override;
 
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const;
+	minimize_in_whole_structure_context( pose::Pose const & ) const override;
 
 	/// @brief Returns true.  This class takes advantage of the opportunity to store sequence-specific data
 	/// in a ResiduePairMinimiazationObject listing the atom-pair interactions for a particular residue pair
 	/// and to extract that data from cache for easy use inside residue_pair_energy_ext.
-	virtual
 	bool
-	use_extended_residue_pair_energy_interface() const;
+	use_extended_residue_pair_energy_interface() const override;
 
 	/// @brief Extract the cached std::list< atoms_and_func_struct > object from the ResPairMinimizationData
 	/// object that was stored for this particular residue pair in setup_for_minimizing_for_residue_pair, and
 	/// use this cached list to evaluate the atom-pair interactions.
-	virtual
 	void
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
@@ -240,11 +230,10 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Find the list of atom-pair interactions from the pair_and_func_map_ for the given
 	/// residue-type pair and cache that list in the input ResPairMinimizationData object.
-	virtual
 	void
 	setup_for_minimizing_for_residue_pair(
 		conformation::Residue const & rsd1,
@@ -255,12 +244,11 @@ public:
 		ResSingleMinimizationData const & res1_data_cache,
 		ResSingleMinimizationData const & res2_data_cache,
 		ResPairMinimizationData & data_cache
-	) const;
+	) const override;
 
 
 	/// @brief Evaluate all f1/f2 derivative vector pairs for all interacting atoms
 	/// on the input residue pair.
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
@@ -272,7 +260,7 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
 private:
 
@@ -290,8 +278,7 @@ private:
 
 	PairFuncMapOP pair_and_func_map_;
 	Real max_dis_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 
@@ -300,12 +287,12 @@ class DistanceFunc : public func::Func
 {
 public:
 	DistanceFunc( std::string const & name );
-	virtual ~DistanceFunc();
-	func::FuncOP clone() const;
-	virtual bool operator == ( func::Func const & rhs ) const;
-	virtual bool same_type_as_me( func::Func const & other ) const;
-	virtual Real func( Real const ) const;
-	virtual Real dfunc( Real const ) const;
+	~DistanceFunc() override;
+	func::FuncOP clone() const override;
+	bool operator == ( func::Func const & rhs ) const override;
+	bool same_type_as_me( func::Func const & other ) const override;
+	Real func( Real const ) const override;
+	Real dfunc( Real const ) const override;
 	virtual Real max_dis() const;
 	virtual Real min_dis() const;
 private:

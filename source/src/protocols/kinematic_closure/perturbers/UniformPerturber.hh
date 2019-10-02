@@ -25,19 +25,19 @@ class UniformPerturber : public Perturber {
 public:
 
 	/// @copydoc Perturber::get_name
-	std::string get_name() const { return "UniformPerturber"; }
+	std::string get_name() const override { return "UniformPerturber"; }
 
 	/// @copydoc Perturber::perturb_subset()
 	void perturb_subset(
 		Pose const & pose,
 		IndexList const & residues,
-		ClosureProblemOP problem);
+		ClosureProblemOP problem) override;
 
 	/// @copydoc Perturber::perturb_subset_with_balance()
 	void perturb_subset_with_balance(
 		Pose const & pose,
 		IndexList const & residues,
-		ClosureProblemOP problem);
+		ClosureProblemOP problem) override;
 
 };
 

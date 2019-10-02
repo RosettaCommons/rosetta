@@ -53,7 +53,7 @@ public:
 	/// (residues will be maintained and passed by the ResidueArrayAnnealableEnergy machinery)
 	ScoreCache(int nres);
 	ScoreCache(ScoreCache const &);
-	~ScoreCache();
+	~ScoreCache() override;
 
 	ScoreCacheOP clone() const;
 
@@ -84,7 +84,7 @@ public:
 
 	/// @brief Default destructor.
 	///
-	virtual ~MHCEpitopeEnergy();
+	~MHCEpitopeEnergy() override;
 
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.

@@ -48,7 +48,7 @@ public:
 
 	SingleLigandRotamerLibrary();
 
-	virtual ~SingleLigandRotamerLibrary();
+	~SingleLigandRotamerLibrary() override;
 
 	/// @brief Reads conformers from PDB-format file (must be separated by TER records!)
 	virtual
@@ -65,33 +65,29 @@ public:
 	);
 
 	/// @brief Adheres to the contract from SingleLigandRotamerLibrary
-	virtual
 	Real
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		dunbrack::RotamerLibraryScratchSpace & scratch
-	) const;
+	) const override;
 
 	/// @brief Adheres to the contract from SingleLigandRotamerLibrary
-	virtual
 	Real
 	rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		dunbrack::RotamerLibraryScratchSpace & scratch
-	) const;
+	) const override;
 
-	virtual
 	Real
 	best_rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		bool curr_rotamer_only,
 		dunbrack::RotamerLibraryScratchSpace & scratch
-	) const;
+	) const override;
 
-	virtual
 	void
 	assign_random_rotamer_with_bias(
 		conformation::Residue const &,// rsd,
@@ -100,10 +96,9 @@ public:
 		numeric::random::RandomGenerator &,// RG,
 		dunbrack::ChiVector &,// new_chi_angles,
 		bool //perturb_from_rotamer_center
-	) const {} // stubbed out for the moment.
+	) const override {} // stubbed out for the moment.
 
 	/// @brief Adheres to the contract from SingleLigandRotamerLibrary
-	virtual
 	void
 	fill_rotamer_vector(
 		pose::Pose const & pose,
@@ -115,12 +110,11 @@ public:
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
 		RotamerVector & rotamers
-	) const;
+	) const override;
 
 	/// @brief Adheres to the contract from SingleLigandRotamerLibrary
-	virtual
 	void
-	write_to_file( utility::io::ozstream &out ) const;
+	write_to_file( utility::io::ozstream &out ) const override;
 
 	Real
 	get_reference_energy() const{

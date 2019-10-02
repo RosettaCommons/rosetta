@@ -50,7 +50,7 @@ public:
 	HelicalBundlePredictApplicationOptions();
 
 	/// @brief Destructor
-	~HelicalBundlePredictApplicationOptions();
+	~HelicalBundlePredictApplicationOptions() override;
 
 	/// @brief Clone operator: copy this object and return a smart pointer to the copy.
 	HelicalBundlePredictApplicationOptionsOP clone() const;
@@ -193,7 +193,7 @@ public:
 	HelicalBundlePredictApplication(HelicalBundlePredictApplication const & src);
 
 	/// @brief Destructor.
-	virtual ~HelicalBundlePredictApplication();
+	~HelicalBundlePredictApplication() override;
 
 	HelicalBundlePredictApplicationOP
 	clone() const;

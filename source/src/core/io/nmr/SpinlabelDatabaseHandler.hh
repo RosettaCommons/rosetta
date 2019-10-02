@@ -55,7 +55,7 @@ public: // Methods
 	);
 
 	/// @brief Destructor
-	~SpinlabelDatabaseEntry();
+	~SpinlabelDatabaseEntry() override;
 
 	std::string const & fullname() const { return fullname_; }
 	std::string const & three_letter_code() const { return three_letter_code_; }

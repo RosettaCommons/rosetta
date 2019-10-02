@@ -27,16 +27,14 @@ class InterchainPairEnergyCreator : public core::scoring::methods::EnergyMethodC
 {
 public:
 	/// @brief Instantiate a new InterchainPairEnergy
-	virtual
 	core::scoring::methods::EnergyMethodOP create_energy_method(
 		core::scoring::methods::EnergyMethodOptions const &
-	) const;
+	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	virtual
 	core::scoring::ScoreTypes
-	score_types_for_method() const;
+	score_types_for_method() const override;
 
 };
 

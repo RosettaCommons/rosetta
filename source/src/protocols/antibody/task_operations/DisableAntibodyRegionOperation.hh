@@ -54,22 +54,21 @@ public:
 
 	DisableAntibodyRegionOperation(DisableAntibodyRegionOperation const & src);
 
-	virtual ~DisableAntibodyRegionOperation();
+	~DisableAntibodyRegionOperation() override;
 
 	core::pack::task::operation::TaskOperationOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Configure from a RosettaScripts XML tag.
-	virtual void
+	void
 	parse_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & );
+		basic::datacache::DataMap & ) override;
 
 	//////////////////////
 
-	virtual
 	void
-	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const override;
 
 	void
 	set_region(AntibodyRegionEnum region);

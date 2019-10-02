@@ -108,7 +108,7 @@ public:
 	{
 	}
 
-	~WorkUnitQueue_Swapped() {};
+	~WorkUnitQueue_Swapped() override {};
 
 	//virtual core::Size  size();
 

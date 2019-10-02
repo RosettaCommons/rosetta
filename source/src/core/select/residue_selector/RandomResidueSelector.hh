@@ -47,21 +47,21 @@ public:
 	RandomResidueSelector();
 	RandomResidueSelector( ResidueSelectorCOP selector, Size const num_residues );
 	RandomResidueSelector( ResidueSelectorCOP selector, Size const num_residues, bool const select_res_cluster, Real const distance_cutoff );
-	virtual ~RandomResidueSelector();
+	~RandomResidueSelector() override;
 
-	virtual ResidueSelectorOP
-	clone() const;
+	ResidueSelectorOP
+	clone() const override;
 
-	virtual ResidueSubset
-	apply( core::pose::Pose const & pose ) const;
+	ResidueSubset
+	apply( core::pose::Pose const & pose ) const override;
 
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data );
+		basic::datacache::DataMap & data ) override;
 
-	virtual std::string
-	get_name() const;
+	std::string
+	get_name() const override;
 
 	static std::string
 	class_name();

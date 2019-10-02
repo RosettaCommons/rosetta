@@ -49,7 +49,7 @@ private: // typedefs
 
 public:
 	ContinuousRotamerSet();
-	virtual ~ContinuousRotamerSet();
+	~ContinuousRotamerSet() override;
 
 	void build_rotamers(
 		pose::Pose const & pose,
@@ -135,7 +135,7 @@ class ContinuousRotamerSets : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ContinuousRotamerSets();
+	~ContinuousRotamerSets() override;
 	ContinuousRotamerSets(
 		pose::Pose const & pose,
 		task::PackerTask const & task

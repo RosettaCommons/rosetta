@@ -60,7 +60,7 @@ public:
 	/// @brief Construct which populates the glycan trees.
 	GlycanTreeSet( conformation::Conformation const & conf );
 
-	virtual ~GlycanTreeSet();
+	~GlycanTreeSet() override;
 
 	GlycanTreeSet( GlycanTreeSet const & src );
 

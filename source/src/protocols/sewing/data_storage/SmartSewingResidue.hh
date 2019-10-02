@@ -34,7 +34,7 @@ public:
 	SmartSewingResidue();
 	SmartSewingResidue(SmartSewingResidue const & src);
 
-	virtual ~SmartSewingResidue();
+	~SmartSewingResidue() override;
 
 	SmartSewingResidueOP
 	clone() const;

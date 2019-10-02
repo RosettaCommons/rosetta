@@ -46,15 +46,13 @@ public:
 	list_options_read( utility::options::OptionKeyList & opts );
 
 	/// @brief Initialize from the recursive "tag" structure.
-	virtual
 	void
-	parse_my_tag( utility::tag::TagCOP ){}
+	parse_my_tag( utility::tag::TagCOP ) override{}
 
 	/// @brief The class name (its type) for a particular instance.
 	/// This function allows for better error message delivery.
-	virtual
 	std::string
-	type() const{ return "RNA_MinimizerOptions";}
+	type() const override{ return "RNA_MinimizerOptions";}
 
 	void set_vary_bond_geometry( bool const & setting ){ vary_bond_geometry_ = setting; }
 	bool vary_bond_geometry() const { return vary_bond_geometry_; }

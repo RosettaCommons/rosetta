@@ -80,7 +80,7 @@ public:
 	/// @brief Constructor -- READS FROM DISK!
 	EnergyMapContainer( std::string const & filename );
 	EnergyMapContainer( EnergyMapContainer const & src ) = default;
-	~EnergyMapContainer() = default;
+	~EnergyMapContainer() override = default;
 
 	/// @brief Access the energy map.
 	inline core::scoring::EnergyMap const & get_energy_map() const { return energy_map_; }
@@ -104,7 +104,7 @@ public:
 	RelaxScriptFileContents( utility::vector1< std::string > const & file_lines_in );
 
 	/// @brief Destructor.
-	~RelaxScriptFileContents();
+	~RelaxScriptFileContents() override;
 
 	/// @brief Clone function: make a copy of this object and return an owning pointer to the copy.
 	RelaxScriptFileContentsOP clone() const;

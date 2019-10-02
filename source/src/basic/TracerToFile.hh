@@ -28,11 +28,11 @@ class TracerToFile : public basic::otstream
 {
 public:
 	TracerToFile( std::string const & file_name );
-	virtual ~TracerToFile();
+	~TracerToFile() override;
 
 
 protected:
-	void t_flush( std::string const & s );
+	void t_flush( std::string const & s ) override;
 
 private:
 	std::ofstream file_;

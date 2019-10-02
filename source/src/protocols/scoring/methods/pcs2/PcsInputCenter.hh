@@ -63,7 +63,7 @@ private:
 public:
 	PcsInputCenter(); //Construct
 
-	virtual ~PcsInputCenter(); //Destruct
+	~PcsInputCenter() override; //Destruct
 
 	PcsInputCenter(PcsInputCenter const & other); //Copy
 

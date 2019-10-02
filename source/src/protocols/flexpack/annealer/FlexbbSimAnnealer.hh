@@ -50,9 +50,9 @@ public:
 		ObjexxFCL::FArray1D< PackerEnergy > & rot_freq
 	);
 
-	virtual ~FlexbbSimAnnealer();
+	~FlexbbSimAnnealer() override;
 
-	void run();
+	void run() override;
 
 protected:
 

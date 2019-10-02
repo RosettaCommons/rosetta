@@ -24,8 +24,8 @@ namespace abscript {
 class JumpSampleDataCreator : public basic::datacache::WriteableCacheableDataCreator {
 	typedef basic::datacache::WriteableCacheableDataOP WriteableCacheableDataOP;
 public:
-	virtual WriteableCacheableDataOP create_data( std::istream &in ) const;
-	virtual std::string keyname() const;
+	WriteableCacheableDataOP create_data( std::istream &in ) const override;
+	std::string keyname() const override;
 };
 
 }

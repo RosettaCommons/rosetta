@@ -167,7 +167,7 @@ public:
 
 public:
 	SingleResidueCenrotLibrary(AA const aa);
-	virtual ~SingleResidueCenrotLibrary();
+	~SingleResidueCenrotLibrary() override;
 
 public:
 	AA aa() const { return aa_; }
@@ -179,19 +179,17 @@ public:
 	get_rotamer_samples(conformation::Residue const & rsd) const;
 
 	/// Virtual functions required by the base classes
-	virtual
 	Real rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch
-	) const;
+	) const override;
 
-	virtual
 	Real rotamer_energy_deriv(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch
-	) const;
+	) const override;
 
 	//eval cart version
 	Real eval_rotameric_energy_deriv(
@@ -210,15 +208,14 @@ public:
 	/// (based on e.g. its current phi and psi values).
 	/// If curr_rotamer_only is true, then consider only the idealized version of the
 	/// residue's current rotamer (local optimum); otherwise, consider all rotamers (global optimum).
-	virtual
 	Real best_rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		bool curr_rotamer_only,
 		RotamerLibraryScratchSpace & scratch
-	) const;
+	) const override;
 
-	virtual void
+	void
 	assign_random_rotamer_with_bias(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
@@ -226,9 +223,9 @@ public:
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,
 		bool perturb_from_rotamer_center
-	) const;
+	) const override;
 
-	virtual void
+	void
 	fill_rotamer_vector(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
@@ -239,9 +236,9 @@ public:
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
 		rotamers::RotamerVector & rotamers
-	) const;
+	) const override;
 
-	virtual void write_to_file( utility::io::ozstream &out ) const;
+	void write_to_file( utility::io::ozstream &out ) const override;
 
 	CentroidRotamerSampleData const & get_closest_rotamer(
 		conformation::Residue const & rsd, Size &nrot, Real &dis) const;

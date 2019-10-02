@@ -55,7 +55,7 @@ public:
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.
-	virtual core::select::residue_selector::ResidueSelectorOP clone() const;
+	core::select::residue_selector::ResidueSelectorOP clone() const override;
 
 	EnvLabelSelector( LocalPositions const& );
 
@@ -64,16 +64,15 @@ public:
 	EnvLabelSelector( std::string const& label,
 		std::pair< core::Size, core::Size > const& range );
 
-	virtual ~EnvLabelSelector();
+	~EnvLabelSelector() override;
 
-	virtual
 	core::select::residue_selector::ResidueSubset
-	apply( core::pose::Pose const & pose ) const;
+	apply( core::pose::Pose const & pose ) const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
-	);
+	) override;
 
 	void set_local_positions( LocalPositions const& );
 
@@ -81,9 +80,8 @@ public:
 
 	void add_position( LocalPosition const& p ){ positions_.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new LocalPosition( p ) ) ); }
 
-	virtual
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	static std::string class_name();
 

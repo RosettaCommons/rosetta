@@ -61,25 +61,25 @@ public:
 public:
 	BetaSheetArchitect( std::string const & id_value );
 
-	virtual ~BetaSheetArchitect();
+	~BetaSheetArchitect() override;
 
 	static std::string
 	class_name() { return "BetaSheetArchitect"; }
 
-	virtual std::string
-	type() const;
+	std::string
+	type() const override;
 
 	DeNovoArchitectOP
-	clone() const;
+	clone() const override;
 
-	virtual StructureDataOP
-	design( core::pose::Pose const & pose, core::Real & random ) const;
+	StructureDataOP
+	design( core::pose::Pose const & pose, core::Real & random ) const override;
 
 	static void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 protected:
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 public:
 	Lengths

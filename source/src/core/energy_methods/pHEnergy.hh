@@ -48,21 +48,19 @@ public:
 	pHEnergy();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	virtual
@@ -73,8 +71,7 @@ public:
 	) const;
 
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	static void set_pH ( core::Real );
 
@@ -82,8 +79,7 @@ public:
 private:
 
 	static core::Real pH_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 
 };

@@ -42,13 +42,12 @@ public:
 	///@brief default construct
 	LegacyMotifScorer();
 
-	virtual ~LegacyMotifScorer(){}
+	~LegacyMotifScorer() override{}
 
-	virtual
 	core::Real
 	score(
 		AssemblyCOP assembly
-	);
+	) override;
 
 	core::Real
 	norm_motif_score(

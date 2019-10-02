@@ -51,7 +51,7 @@ public:
 	GridSet();
 	GridSet(GridSet const & src);
 
-	virtual ~GridSet();
+	~GridSet() override;
 
 	GridSetOP
 	clone() const;

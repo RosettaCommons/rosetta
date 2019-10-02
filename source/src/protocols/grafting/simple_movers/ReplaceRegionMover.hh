@@ -39,7 +39,7 @@ public:
 
 	ReplaceRegionMover(ReplaceRegionMover const & src);
 
-	virtual ~ReplaceRegionMover();
+	~ReplaceRegionMover() override;
 
 	void
 	apply(core::pose::Pose & pose) override;

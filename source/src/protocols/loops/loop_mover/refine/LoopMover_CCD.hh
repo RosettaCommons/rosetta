@@ -65,7 +65,7 @@ public:
 	);
 
 	//destructor
-	~LoopMover_Refine_CCD();
+	~LoopMover_Refine_CCD() override;
 
 	/// @brief Clone this object
 	protocols::moves::MoverOP clone() const override;

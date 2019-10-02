@@ -40,17 +40,17 @@ public:
 		x_middle_( x_middle ), well_depth_( well_depth ), half_width_ ( half_width ), slope_ ( slope ) {}
 
 	FuncOP
-	clone() const { return utility::pointer::make_shared< LinearPenaltyFunction >( *this ); }
+	clone() const override { return utility::pointer::make_shared< LinearPenaltyFunction >( *this ); }
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	Real func( Real const x ) const;
-	Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	void read_data( std::istream& in );
+	void read_data( std::istream& in ) override;
 
-	void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
 	Real get_x_middle() const { return x_middle_; }
 	Real get_well_depth() const { return well_depth_; }
@@ -60,8 +60,9 @@ public:
 	void set_well_depth( Real well_depth ){ well_depth_ = well_depth;}
 	void set_half_width(Real half_width) { half_width_ = half_width;}
 	void set_slope(Real slope) { slope_ = slope; }
+
 	Size
-	show_violations( std::ostream& out, Real x, Size verbose_level, core::Real threshold = 1 ) const;
+	show_violations( std::ostream& out, Real x, Size verbose_level, core::Real threshold = 1 ) const override;
 
 private:
 	Real x_middle_;

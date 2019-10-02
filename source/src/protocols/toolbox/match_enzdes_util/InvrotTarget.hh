@@ -49,7 +49,7 @@ public:
 
 	InvrotTarget();
 
-	~InvrotTarget();
+	~InvrotTarget() override;
 
 	core::conformation::ResidueCOP
 	target_res_for_geom_cst( core::Size geom_cst ) const;
@@ -62,7 +62,7 @@ public:
 	generate_constraints(
 		core::pose::Pose const & pose,
 		AllowedSeqposForGeomCstCOP geomcst_seqpos
-	) const;
+	) const override;
 
 	/// @brief
 	/// can initialize tree nodes according to
@@ -77,13 +77,12 @@ public:
 		EnzConstraintIOCOP enzcst_io );
 
 	utility::vector1< std::list< core::conformation::ResidueCOP > >
-	all_target_residues( InvrotTreeNodeBaseCAP child_node ) const;
+	all_target_residues( InvrotTreeNodeBaseCAP child_node ) const override;
 
-	virtual
 	void
 	collect_all_inverse_rotamers(
 		utility::vector1< InvrotCollectorOP > & invrot_collector
-	) const;
+	) const override;
 
 protected:
 
@@ -120,12 +119,12 @@ public:
 		utility::vector1< core::conformation::ResidueCOP > const & single_res
 	);
 
-	~SingleResidueInvrotTarget();
+	~SingleResidueInvrotTarget() override;
 
 private:
 
 	void
-	generate_representative_target_res_for_geom_cst( Size const num_geom_cst );
+	generate_representative_target_res_for_geom_cst( Size const num_geom_cst ) override;
 
 
 };

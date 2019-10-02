@@ -49,7 +49,7 @@ public:
 
 	CDRDihedralConstraintMover(CDRDihedralConstraintMover const & src);
 
-	virtual~CDRDihedralConstraintMover();
+	~CDRDihedralConstraintMover() override;
 
 	void
 	parse_my_tag(

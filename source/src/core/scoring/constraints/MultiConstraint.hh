@@ -61,70 +61,60 @@ public:
 	MultiConstraint( ConstraintCOPs const & cst_in, ScoreType const & t = dof_constraint );
 
 	/// @brief Creates a deep copy of this %MultiConstaint, cloning all constraints that it holds.
-	virtual
-	ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
 	virtual
 	MultiConstraintOP empty_clone() const;
 
 	/// @brief number of atoms involved in this MultiConstraint container
-	Size natoms() const;
+	Size natoms() const override;
 
 	/// @brief number of constraints that are held by this %MultiConstraint
 	Size size() const;
 
-	virtual std::string type() const;
+	std::string type() const override;
 
 	/// @brief read in constraint defiinition
-	virtual
-	void read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory );
+	void read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory ) override;
 
 	/// @brief possibility to compare constraint according to data
 	/// and not just pointers
-	virtual
-	bool operator == ( Constraint const & other ) const;
+	bool operator == ( Constraint const & other ) const override;
 
-	virtual
-	bool same_type_as_me( Constraint const & other ) const;
+	bool same_type_as_me( Constraint const & other ) const override;
 
 	// Needed to get the base class overloads
 	using Constraint::score;
 	using Constraint::dist;
 
 	/// @brief compute score
-	virtual
 	void
-	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const override;
 
 	/// @details MultiConstraints don't have a single distance
-	virtual
 	core::Real
-	dist( core::scoring::func::XYZ_Func const & ) const { return 0; }
+	dist( core::scoring::func::XYZ_Func const & ) const override { return 0; }
 
-	virtual
-	AtomID const & atom( Size const n ) const{
+	AtomID const & atom( Size const n ) const override{
 		debug_assert( n <= member_atoms_.size() );
 		return member_atoms_[n];
 	}
 
-	virtual
 	utility::vector1< core::Size >
-	residues() const { return member_residues_; }
+	residues() const override { return member_residues_; }
 
 	//@brief translates the atom-names into numbers
-	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const;
+	void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const override;
 
 	/// @brief add individual constraint into MultiConstraint
 	virtual
 	void
 	add_individual_constraint( ConstraintCOP cst_in );
 
-	virtual
 	ConstraintOP
-	remap_resid( core::id::SequenceMapping const &seqmap ) const;
+	remap_resid( core::id::SequenceMapping const &seqmap ) const override;
 
 	/// @brief compute atom deriv
-	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,
@@ -132,36 +122,31 @@ public:
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
-	virtual
-	void show( std::ostream& out ) const;
+	void show( std::ostream& out ) const override;
 
-	virtual
-	void show_def( std::ostream& out, pose::Pose const& pose ) const;
+	void show_def( std::ostream& out, pose::Pose const& pose ) const override;
 
-	virtual
-	Size show_violations( std::ostream & out, pose::Pose const & pose, Size verbose_level, Real threshold = 1.0 ) const;
+	Size show_violations( std::ostream & out, pose::Pose const & pose, Size verbose_level, Real threshold = 1.0 ) const override;
 
 	ConstraintCOPs const &
 	member_constraints() const {
 		return member_constraints_;
 	}
 
-	virtual ConstraintOP remapped_clone(
+	ConstraintOP remapped_clone(
 		pose::Pose const& /*src*/,
 		pose::Pose const& /*dest*/,
-		id::SequenceMappingCOP map=NULL ) const;
+		id::SequenceMappingCOP map=NULL ) const override;
 
 	void set_effective_sequence_separation( core::Size setting ) {
 		report_this_as_effective_sequence_separation_ = setting;
 	}
 
-	virtual
-	core::Size choose_effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp, numeric::random::RandomGenerator& );
+	core::Size choose_effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp, numeric::random::RandomGenerator& ) override;
 
-	virtual
-	core::Size effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& ) const {
+	core::Size effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& ) const override {
 		return report_this_as_effective_sequence_separation_;
 	}
 

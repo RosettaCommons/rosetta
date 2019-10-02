@@ -69,25 +69,22 @@ public:
 	utility::vector1< AtomID > const & atoms_in
 	);
 	*/
-	virtual ~ResidueTypeLinkingConstraint();
+	~ResidueTypeLinkingConstraint() override;
 
-	virtual
 	Size
-	natoms() const { return 0; }
+	natoms() const override { return 0; }
 
-	virtual
 	AtomID const &
-	atom( Size const ) const {
+	atom( Size const ) const override {
 		utility_exit_with_message("ResidueTypeLinkingConstraint is not atom-based!.");
 		return core::id::GLOBAL_BOGUS_ATOM_ID;  // required for compilation on Windows
 	}
 
-	virtual
 	utility::vector1< core::Size >
-	residues() const;
+	residues() const override;
 
 	void
-	show( std::ostream & out ) const;
+	show( std::ostream & out ) const override;
 	/*
 	virtual
 	ConstraintOP
@@ -96,8 +93,8 @@ public:
 
 	/// @brief possibility to compare constraint according to data
 	/// and not just pointers
-	virtual bool operator == ( Constraint const & other ) const;
-	virtual bool same_type_as_me( Constraint const & ) const;
+	bool operator == ( Constraint const & other ) const override;
+	bool same_type_as_me( Constraint const & ) const override;
 
 	/*
 	virtual ConstraintOP remapped_clone(
@@ -111,16 +108,13 @@ public:
 	using Constraint::score;
 	using Constraint::dist;
 
-	virtual
 	void
-	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const override;
 
 	/// @details Return 1.0 if constraint will get a bonus/penalty, 0.0 if not
-	virtual
 	core::Real
-	dist( core::scoring::func::XYZ_Func const & xyz ) const;
+	dist( core::scoring::func::XYZ_Func const & xyz ) const override;
 
-	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,
@@ -128,10 +122,10 @@ public:
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
-	virtual ConstraintOP
-	clone() const;
+	ConstraintOP
+	clone() const override;
 private:
 	Size seqpos1_;
 	Size seqpos2_;

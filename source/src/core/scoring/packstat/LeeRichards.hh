@@ -70,13 +70,13 @@ typedef utility::pointer::shared_ptr<Accumulator> AccumulatorOP;
 
 struct AreaAccumulator : public Accumulator {
 	AreaAccumulator() : total_area(0.0), buried_area(0.0) {}
-	virtual void accumulate_area( core::id::AtomID, core::Real area, bool buried ) {
+	void accumulate_area( core::id::AtomID, core::Real area, bool buried ) override {
 		// std::cerr << "accumulate_area " << area << std::endl;
 		debug_assert( !utility::isnan(area) );
 		total_area += area;
 		if ( buried ) buried_area += area;
 	}
-	void accumulate_dxdy( core::id::AtomID, core::Real, core::Real, bool ) {}
+	void accumulate_dxdy( core::id::AtomID, core::Real, core::Real, bool ) override {}
 	//dz// void accumulate_dz( core::id::AtomID, core::Real ) {}
 	void reset() { total_area = 0.0; }
 	core::Real total_area, buried_area;
@@ -93,10 +93,10 @@ struct PerSphereAccumulator : public Accumulator {
 		atom_map_.resize(spheres.size());
 		for ( Size i = 1; i <= spheres.size(); ++i ) atom_map_.resize(i,1);
 	}
-	virtual void accumulate_area( core::id::AtomID id, core::Real area, bool ) {
+	void accumulate_area( core::id::AtomID id, core::Real area, bool ) override {
 		atom_map_[id].area += area;
 	}
-	virtual void accumulate_dxdy( core::id::AtomID id, core::Real dx, core::Real dy, bool ) {
+	void accumulate_dxdy( core::id::AtomID id, core::Real dx, core::Real dy, bool ) override {
 		atom_map_[id].dx += dx;
 		atom_map_[id].dy += dy;
 	}
@@ -114,11 +114,11 @@ struct LR_MP_AtomData {
 
 struct MultiProbePoseAccumulator : public Accumulator {
 	MultiProbePoseAccumulator( core::pose::Pose & _pose, std::string const & tag="" );
-	virtual void accumulate_area( core::id::AtomID id, core::Real area, bool buried ) {
+	void accumulate_area( core::id::AtomID id, core::Real area, bool buried ) override {
 		if ( buried ) atom_map_[id].barea[pr_idx_] += area;
 		else         atom_map_[id].area[pr_idx_] += area;
 	}
-	virtual void accumulate_dxdy( core::id::AtomID id, core::Real dx, core::Real dy, bool buried ) {
+	void accumulate_dxdy( core::id::AtomID id, core::Real dx, core::Real dy, bool buried ) override {
 		if ( buried ) {
 			atom_map_[id].bdx[pr_idx_] += dx;
 			atom_map_[id].bdy[pr_idx_] += dy;
@@ -145,10 +145,10 @@ struct MultiProbePerSphereAccumulator : public Accumulator {
 	}
 	// ~MultiProbePerSphereAccumulator() { std::cerr << "delete MultiProbePerSphereAccumulator" << std::endl;}
 	PackingScoreResDataOP compute_surrounding_sasa( XYZ & center );
-	virtual void accumulate_area( core::id::AtomID id, core::Real area, bool ) {
+	void accumulate_area( core::id::AtomID id, core::Real area, bool ) override {
 		atom_map_[id].area[pr_idx_] += area;
 	}
-	virtual void accumulate_dxdy( core::id::AtomID id, core::Real dx, core::Real dy, bool ) {
+	void accumulate_dxdy( core::id::AtomID id, core::Real dx, core::Real dy, bool ) override {
 		atom_map_[id].dx[pr_idx_] += dx;
 		atom_map_[id].dy[pr_idx_] += dy;
 	}

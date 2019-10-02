@@ -63,15 +63,15 @@ public:
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.
-	virtual ResidueSelectorOP clone() const;
+	ResidueSelectorOP clone() const override;
 
-	virtual ~InterGroupInterfaceByVectorSelector();
+	~InterGroupInterfaceByVectorSelector() override;
 
-	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
-	virtual void parse_my_tag(
+	ResidueSubset apply( core::pose::Pose const & pose ) const override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
-	);
+	) override;
 
 	ResidueSelectorCOP group1_selector() const;
 	void group1_selector( ResidueSelectorCOP setting );
@@ -97,9 +97,8 @@ public:
 	void vector_angle_cut( Real setting );
 	void vector_dist_cut( Real setting );
 
-	virtual
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

@@ -27,7 +27,7 @@ class LigandPropertyScore : public ConstantScoreBase
 public:
 	LigandPropertyScore();
 
-	virtual ~LigandPropertyScore() {}
+	~LigandPropertyScore() override {}
 
 	/// @brief Make a copy of the grid, respecting the subclassing.
 	GridBaseOP clone() const override;

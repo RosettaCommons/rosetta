@@ -94,7 +94,7 @@ public:
 	/// to force EnergyMethod writers to provide an energy-method-creator at construction time.
 	TwoBodyEnergy( EnergyMethodCreatorOP );
 
-	virtual ~TwoBodyEnergy();
+	~TwoBodyEnergy() override;
 
 	/// @brief Evaluate the interaction between a given residue pair
 	/// accumulating the unweighted energies in an EnergyMap

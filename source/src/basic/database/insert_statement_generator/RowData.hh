@@ -29,7 +29,7 @@ class RowDataBase : public utility::pointer::ReferenceCount {
 public:
 
 	RowDataBase(std::string const & column_name);
-	virtual ~RowDataBase();
+	~RowDataBase() override;
 
 	std::string get_column_name() const;
 	virtual void bind_data(platform::Size index, cppdb::statement & statement) = 0;
@@ -46,9 +46,9 @@ public:
 		std::string const & column_name,
 		T const & data) : RowDataBase(column_name),data_(data)
 	{}
-	virtual void bind_data(
+	void bind_data(
 		platform::Size index,
-		cppdb::statement & statement)
+		cppdb::statement & statement) override
 	{
 		statement.bind(index,data_);
 	}

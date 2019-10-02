@@ -36,7 +36,7 @@ public:
 	LoopClosePotentialEvaluator( core::Real const & loop_fixed_cost );
 
 	//destructor
-	~LoopClosePotentialEvaluator();
+	~LoopClosePotentialEvaluator() override;
 
 public:
 

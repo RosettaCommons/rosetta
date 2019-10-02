@@ -34,19 +34,19 @@ class ExtendedPoseInputStream : public PoseInputStream {
 public:
 	ExtendedPoseInputStream( std::string sequence, Size ntimes )
 	: seq_( sequence ), ntimes_( ntimes ), current_n_( 1 ) {}
-	~ExtendedPoseInputStream() {}
+	~ExtendedPoseInputStream() override {}
 
-	virtual bool has_another_pose();
+	bool has_another_pose() override;
 
-	virtual void reset();
+	void reset() override;
 
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set,
 		bool const metapatches = true
-	);
-	virtual void fill_pose( core::pose::Pose&,
-		bool const metapatches = true );
+	) override;
+	void fill_pose( core::pose::Pose&,
+		bool const metapatches = true ) override;
 
 private:
 	std::string seq_;

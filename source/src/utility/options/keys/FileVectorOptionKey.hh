@@ -114,9 +114,8 @@ public: // Creation
 
 
 	/// @brief Clone this
-	inline
 	FileVectorOptionKey *
-	clone() const
+	clone() const override
 	{
 		return new FileVectorOptionKey( *this );
 	}
@@ -124,8 +123,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~FileVectorOptionKey() {}
+	~FileVectorOptionKey() override {}
 
 
 public: // Assignment

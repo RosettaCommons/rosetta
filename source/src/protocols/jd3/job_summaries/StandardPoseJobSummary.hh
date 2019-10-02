@@ -45,7 +45,7 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	virtual ~StandardPoseJobSummary();
+	~StandardPoseJobSummary() override;
 
 public:
 

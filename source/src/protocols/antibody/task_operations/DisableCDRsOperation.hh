@@ -54,25 +54,24 @@ public:
 		utility::vector1<bool> const & cdrs,
 		bool disable_packing_and_design);
 
-	virtual ~DisableCDRsOperation();
+	~DisableCDRsOperation() override;
 
 	DisableCDRsOperation(DisableCDRsOperation const & src);
 
-	virtual core::pack::task::operation::TaskOperationOP
-	clone() const;
+	core::pack::task::operation::TaskOperationOP
+	clone() const override;
 
 
 	/// @brief Configure from a RosettaScripts XML tag.
-	virtual void
+	void
 	parse_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & );
+		basic::datacache::DataMap & ) override;
 
 	//////////////////////
 
-	virtual
 	void
-	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const override;
 
 	/// @brief Set the CDRs we will be disabling - 6/8 long vector corresponding to Enum.
 	void

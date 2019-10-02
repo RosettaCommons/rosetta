@@ -84,10 +84,10 @@ public:
 
 public:
 	SurfaceNode( G* owner, int node_index, int num_states );
-	virtual ~SurfaceNode();
+	~SurfaceNode() override;
 
-	virtual void assign_zero_state();
-	virtual bool state_unassigned() const { return parent::get_current_state() == 0; }
+	void assign_zero_state() override;
+	bool state_unassigned() const override { return parent::get_current_state() == 0; }
 
 	void assign_state_surface( int state );
 	Real get_curr_state_surface_energy() const;
@@ -104,12 +104,12 @@ public:
 	static void reset_surface_avoidance_stats();
 
 	// virtual methods from NodeBase class
-	virtual void print() const;
+	void print() const override;
 
-	virtual void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 	virtual unsigned int getMemoryUsageInBytes() const;
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 	// setter for the rotamers object.
 	void set_rotamers( rotamer_set::RotamerSetCOP rotamers );
@@ -236,7 +236,7 @@ public:
 public:
 
 	SurfaceBackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G > * owner, int node_index );
-	virtual ~SurfaceBackgroundNode();
+	~SurfaceBackgroundNode() override;
 
 	bool detect_neighborship( SurfaceNode< V, E, G >* node ) const;
 
@@ -246,11 +246,11 @@ public:
 	void acknowledge_substitution_surface();
 	Real get_surface_score() const;
 
-	virtual void prepare_for_simulated_annealing();
-	void print() const;
+	void prepare_for_simulated_annealing() override;
+	void print() const override;
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 	inline
 	conformation::Residue const & wt_residue_for_node() const {
@@ -329,7 +329,7 @@ public:
 
 public:
 	SurfaceEdge( G* owner, int node1, int node2 );
-	virtual ~SurfaceEdge();
+	~SurfaceEdge() override;
 
 	void acknowledge_state_zeroed_surface( int node_index );
 
@@ -339,14 +339,14 @@ public:
 	void acknowledge_substitution_surface();
 
 	//Virtual methods from EdgeBase
-	virtual void declare_energies_final();
-	virtual void prepare_for_simulated_annealing();
+	void declare_energies_final() override;
+	void prepare_for_simulated_annealing() override;
 	virtual unsigned int getMemoryUsageInBytes() const;
 
 	Real get_max_surface_deltaE_guess( int node_changing ) const;
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 	// this method used only for testing
 	inline
@@ -407,17 +407,17 @@ public:
 
 public:
 	SurfaceBackgroundEdge( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int first_class_node_index, int background_node_index );
-	virtual ~SurfaceBackgroundEdge();
+	~SurfaceBackgroundEdge() override;
 
-	void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 
 	Real get_surface_deltaE_for_substitution( int alt_state );
 	void acknowledge_substitution_surface();
 	void acknowledge_state_change( int new_state );
 	Real get_max_surface_deltaE_guess() const;
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 	// this function only used for unit tests
 	inline
@@ -480,19 +480,19 @@ public:
 
 public:
 	SurfaceInteractionGraph( int num_nodes );
-	virtual ~SurfaceInteractionGraph();
+	~SurfaceInteractionGraph() override;
 
-	void initialize( pack_basic::RotamerSetsBase const & rot_sets );
+	void initialize( pack_basic::RotamerSetsBase const & rot_sets ) override;
 
 	// Virtual public methods from InteractionGraphBase
-	virtual void prepare_for_simulated_annealing();
-	virtual void  blanket_assign_state_0();
-	virtual core::PackerEnergy set_state_for_node( int node_ind, int new_state );
-	virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int& node_states );
+	void prepare_for_simulated_annealing() override;
+	void  blanket_assign_state_0() override;
+	core::PackerEnergy set_state_for_node( int node_ind, int new_state ) override;
+	core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int& node_states ) override;
 
-	virtual void consider_substitution( int node_ind, int new_state, core::PackerEnergy & delta_energy, core::PackerEnergy & prev_energy_for_node );
-	virtual core::PackerEnergy commit_considered_substitution();
-	virtual core::PackerEnergy get_energy_current_state_assignment();
+	void consider_substitution( int node_ind, int new_state, core::PackerEnergy & delta_energy, core::PackerEnergy & prev_energy_for_node ) override;
+	core::PackerEnergy commit_considered_substitution() override;
+	core::PackerEnergy get_energy_current_state_assignment() override;
 
 	using parent::set_errorfull_deltaE_threshold;
 
@@ -504,10 +504,10 @@ public:
 
 	void print_internal_energies_for_current_state_assignment();
 
-	virtual int get_edge_memory_usage() const;
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
-	void print() const;
+	int get_edge_memory_usage() const override;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
+	void print() const override;
 
 	inline
 	pose::Pose const & pose() const { return *pose_; }
@@ -536,12 +536,12 @@ protected:
 
 	//Factory Methods:
 	//From InteractionGraphBase
-	virtual core::pack::interaction_graph::NodeBase* create_new_node( int node_index, int num_states );
-	virtual core::pack::interaction_graph::EdgeBase* create_new_edge( int index1, int index2);
+	core::pack::interaction_graph::NodeBase* create_new_node( int node_index, int num_states ) override;
+	core::pack::interaction_graph::EdgeBase* create_new_edge( int index1, int index2) override;
 
 	//From AdditionalBackgroundNodesInteractionGraph
-	virtual BackgroundNode< V, E, G >* create_background_node( int node_index );
-	virtual BackgroundToFirstClassEdge< V, E, G >* create_background_edge( int fc_node_index, int bg_node_index);
+	BackgroundNode< V, E, G >* create_background_node( int node_index ) override;
+	BackgroundToFirstClassEdge< V, E, G >* create_background_edge( int fc_node_index, int bg_node_index) override;
 
 	inline
 	SurfaceNode< V, E, G >* get_surface_node( int index ) const {

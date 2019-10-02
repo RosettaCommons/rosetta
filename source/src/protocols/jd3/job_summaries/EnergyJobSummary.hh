@@ -39,7 +39,7 @@ public:
 
 	EnergyJobSummary( core::pose::Pose const & pose );
 
-	virtual ~EnergyJobSummary();
+	~EnergyJobSummary() override;
 
 public:
 

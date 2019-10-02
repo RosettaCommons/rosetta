@@ -69,8 +69,7 @@ public:
 	/// copy constructor
 	EnergyMethodOptions( EnergyMethodOptions const & src );
 
-	virtual
-	~EnergyMethodOptions();
+	~EnergyMethodOptions() override;
 
 	/// copy operator
 	EnergyMethodOptions &

@@ -65,7 +65,7 @@ public:
 	BuriedUnsatPenaltyGraphHbond( BuriedUnsatPenaltyGraphHbond const &src );
 
 	/// @brief Destructor.
-	virtual ~BuriedUnsatPenaltyGraphHbond();
+	~BuriedUnsatPenaltyGraphHbond() override;
 
 	/// @brief Assignment operator.
 	BuriedUnsatPenaltyGraphHbond & operator = ( BuriedUnsatPenaltyGraphHbond const & src );
@@ -146,7 +146,7 @@ public:
 	BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup( BuriedUnsatPenaltyGraphHbond const &src ) = delete;
 
 	/// @brief Destructor.
-	virtual ~BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup();
+	~BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup() override;
 
 	/// @brief Assignment operator.
 	BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup & operator=( BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup const &src );
@@ -230,7 +230,7 @@ public:
 	BuriedUnsatPenaltyNodeData( BuriedUnsatPenaltyNodeData const & ) = default;
 
 	/// @brief Destructor.
-	virtual ~BuriedUnsatPenaltyNodeData();
+	~BuriedUnsatPenaltyNodeData() override;
 
 	/// @brief Create a copy by owning pointer and return the owning pointer to the copy.
 	virtual BuriedUnsatPenaltyNodeDataOP clone() const;
@@ -354,7 +354,7 @@ public:
 	BuriedUnsatPenaltyNode( BuriedUnsatPenaltyNode const &src ) = delete;
 
 	/// @brief Destructor.
-	virtual ~BuriedUnsatPenaltyNode();
+	~BuriedUnsatPenaltyNode() override;
 
 public: //These functions are public, but are only intended to be called by BuriedUnsatPenaltyGraph class:
 
@@ -479,7 +479,7 @@ public:
 	BuriedUnsatPenaltyEdgeData( BuriedUnsatPenaltyEdgeData const & ) = delete;
 
 	/// @brief Destructor.
-	virtual ~BuriedUnsatPenaltyEdgeData() = default;
+	~BuriedUnsatPenaltyEdgeData() override = default;
 
 public:
 
@@ -522,7 +522,7 @@ public:
 	BuriedUnsatPenaltyEdge( BuriedUnsatPenaltyEdge const &src ) = delete;
 
 	/// @brief Destructor.
-	virtual ~BuriedUnsatPenaltyEdge();
+	~BuriedUnsatPenaltyEdge() override;
 
 public:
 

@@ -44,7 +44,7 @@ public:
 
 	/// @brief Destructor.
 	///
-	virtual ~JumpSelector();
+	~JumpSelector() override;
 
 	/// @brief Clone operator.
 	/// @details All JumpSelectors must implement a clone() operator.  This must create a copy of the object and

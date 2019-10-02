@@ -53,42 +53,37 @@ public:
 	MMLJEnergyInter();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	void
 	setup_for_minimizing(
 		pose::Pose & pose,
 		ScoreFunction const & sfxn,
 		kinematics::MinimizerMapBase const & min_map
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	setup_for_packing(
 		pose::Pose & pose,
 		utility::vector1< bool > const &,
 		utility::vector1< bool > const &
-	) const;
+	) const override;
 
 	// Creates a rotamer trie for the input set of rotamers and stores the trie
 	// in the rotamer set.
-	virtual
 	void
 	prepare_rotamers_for_packing(
 		pose::Pose const & pose,
-		conformation::RotamerSetBase & set ) const;
+		conformation::RotamerSetBase & set ) const override;
 
 	// Updates the cached rotamer trie for a residue if it has changed during the course of
 	// a repacking
-	virtual
 	void
-	update_residue_for_packing( pose::Pose & pose, Size resid ) const;
+	update_residue_for_packing( pose::Pose & pose, Size resid ) const override;
 
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -96,9 +91,8 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -108,22 +102,19 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & ) const;
+	defines_intrares_energy( EnergyMap const & ) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	evaluate_rotamer_pair_energies(
 		conformation::RotamerSetBase const & set1,
@@ -132,11 +123,10 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
-	) const;
+	) const override;
 
 	//@brief overrides default rotamer/background energy calculation and uses
 	// the trie-vs-trie algorithm instead
-	virtual
 	void
 	evaluate_rotamer_background_energies(
 		conformation::RotamerSetBase const & set,
@@ -145,17 +135,15 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
-	) const;
+	) const override;
 
 	/// @brief MMLJEnergyInter does not have an atomic interation threshold
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
 	/// @brief MMLJEnergyInter is context independent; indicates that no context graphs are required
-	virtual
 	void
-	indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	/// @brief required for neighbor list and to be more lke the ETable
 	etable::count_pair::CountPairFunctionCOP
@@ -286,7 +274,6 @@ public:
 
 
 	// stuff for bump check
-	virtual
 	void
 	bump_energy_full(
 		conformation::Residue const & rsd1,
@@ -294,9 +281,8 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	bump_energy_backbone(
 		conformation::Residue const & rsd1,
@@ -304,12 +290,11 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 private:
 	core::scoring::mm::MMLJEnergyTable const & potential_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

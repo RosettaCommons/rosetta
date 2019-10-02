@@ -114,9 +114,8 @@ public: // Creation
 
 
 	/// @brief Clone this
-	inline
 	ResidueChainVectorOptionKey *
-	clone() const
+	clone() const override
 	{
 		return new ResidueChainVectorOptionKey( *this );
 	}
@@ -124,8 +123,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~ResidueChainVectorOptionKey() {}
+	~ResidueChainVectorOptionKey() override {}
 
 
 public: // Assignment

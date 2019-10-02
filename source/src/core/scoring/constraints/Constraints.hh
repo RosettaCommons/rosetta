@@ -53,7 +53,7 @@ namespace constraints {
 class Constraints : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~Constraints();
+	~Constraints() override;
 	typedef id::AtomID AtomID;
 	typedef conformation::Residue Residue;
 	typedef conformation::Conformation Conformation;

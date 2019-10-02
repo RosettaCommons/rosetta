@@ -39,13 +39,13 @@ public:
 	// Moves, so by-value
 	FileConstraintGenerator( std::string const & filename );
 
-	virtual ~FileConstraintGenerator();
+	~FileConstraintGenerator() override;
 
-	virtual protocols::constraint_generator::ConstraintGeneratorOP
-	clone() const;
+	protocols::constraint_generator::ConstraintGeneratorOP
+	clone() const override;
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	apply( core::pose::Pose const & pose ) const;
+	core::scoring::constraints::ConstraintCOPs
+	apply( core::pose::Pose const & pose ) const override;
 
 	static void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -55,8 +55,8 @@ public:
 
 
 protected:
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 public:
 	void

@@ -66,232 +66,228 @@ public:
 	ResidueLevelTask_();
 
 	/// @brief dtor
-	virtual ~ResidueLevelTask_();
+	~ResidueLevelTask_() override;
 
 	/// @brief returns the extra chi sampling level
-	virtual
 	ExtraRotSample
 	extrachi_sample_level(
 		bool buried,
 		int chi,
 		chemical::ResidueType const & concrete_residue
-	) const;
+	) const override;
 
 	/// @brief initialize options from command line flags
-	virtual void initialize_from_command_line();
+	void initialize_from_command_line() override;
 
 	/// @brief Initialize only the extra rotamer building flags from the command line;
 	/// invoked by intialize_from_command_line();
-	virtual void initialize_extra_rotamer_flags_from_command_line();
+	void initialize_extra_rotamer_flags_from_command_line() override;
 
-	virtual void initialize_from_options( utility::options::OptionCollection const & options );
-	virtual void initialize_extra_rotamer_flags_from_options( utility::options::OptionCollection const & options );
+	void initialize_from_options( utility::options::OptionCollection const & options ) override;
+	void initialize_extra_rotamer_flags_from_options( utility::options::OptionCollection const & options ) override;
 
 
 	/// @brief include the pre-existing rotamer while packing
-	virtual void or_include_current( bool include_current );
+	void or_include_current( bool include_current ) override;
 	/// @brief is the pre-existing rotamer specifically allowed while packing?
-	virtual bool include_current() const;
+	bool include_current() const override;
 
 	// access to any flagged protocol-level behaviors for this residue
-	virtual void add_behavior( std::string const & behavior );
-	virtual bool has_behavior( std::string const & behavior ) const;
-	virtual bool has_behavior() const;
+	void add_behavior( std::string const & behavior ) override;
+	bool has_behavior( std::string const & behavior ) const override;
+	bool has_behavior() const override;
 
-	virtual void target_type( chemical::ResidueTypeCOP type );
-	virtual void target_type( chemical::AA aa );
-	virtual void target_type( std::string name );
+	void target_type( chemical::ResidueTypeCOP type ) override;
+	void target_type( chemical::AA aa ) override;
+	void target_type( std::string name ) override;
 
 	/// @brief include adducts at this residue
-	virtual void or_adducts( bool setting );
-	virtual bool adducts() const;
+	void or_adducts( bool setting ) override;
+	bool adducts() const override;
 
 	/// @brief activate ex1 when passed true; do nothing otherwise
-	virtual void or_ex1( bool ex1 );
+	void or_ex1( bool ex1 ) override;
 	/// @brief activate ex2 when passed true; do nothing otherwise
-	virtual void or_ex2( bool ex2 );
+	void or_ex2( bool ex2 ) override;
 	/// @brief activate ex3 when passed true; do nothing otherwise
-	virtual void or_ex3( bool ex3 );
+	void or_ex3( bool ex3 ) override;
 	/// @brief activate ex4 when passed true; do nothing otherwise
-	virtual void or_ex4( bool ex4 );
+	void or_ex4( bool ex4 ) override;
 
 	/// @brief increase ex1 sample level; do nothing if not an increase
-	virtual void or_ex1_sample_level( ExtraRotSample ex1_sample_level );
+	void or_ex1_sample_level( ExtraRotSample ex1_sample_level ) override;
 	/// @brief increase ex2 sample level; do nothing if not an increase
-	virtual void or_ex2_sample_level( ExtraRotSample ex2_sample_level );
+	void or_ex2_sample_level( ExtraRotSample ex2_sample_level ) override;
 	/// @brief increase ex3 sample level; do nothing if not an increase
-	virtual void or_ex3_sample_level( ExtraRotSample ex3_sample_level );
+	void or_ex3_sample_level( ExtraRotSample ex3_sample_level ) override;
 	/// @brief increase ex4 sample level; do nothing if not an increase
-	virtual void or_ex4_sample_level( ExtraRotSample ex4_sample_level );
+	void or_ex4_sample_level( ExtraRotSample ex4_sample_level ) override;
 
 	/// @brief activate ex1 for aromatics when passed true; do nothing otherwise
-	virtual void or_ex1aro( bool ex1aro );
+	void or_ex1aro( bool ex1aro ) override;
 	/// @brief activate ex2 for aromatics when passed true; do nothing otherwise
-	virtual void or_ex2aro( bool ex2aro_only );
+	void or_ex2aro( bool ex2aro_only ) override;
 	/// @brief activate ex1 for exposed aromatics when passed true; do nothing otherwise
-	virtual void or_ex1aro_exposed( bool ex1aro_exposed );
+	void or_ex1aro_exposed( bool ex1aro_exposed ) override;
 	/// @brief activate ex2 for exposed aromatics when passed true; do nothing otherwise
-	virtual void or_ex2aro_exposed( bool ex2aro_exposed );
+	void or_ex2aro_exposed( bool ex2aro_exposed ) override;
 
 	/// @brief increase ex1aro sample level; do nothing if not an increase
-	virtual void or_ex1aro_sample_level( ExtraRotSample ex1aro_sample_level );
+	void or_ex1aro_sample_level( ExtraRotSample ex1aro_sample_level ) override;
 	/// @brief increase ex2aro sample level; do nothing if not an increase
-	virtual void or_ex2aro_sample_level( ExtraRotSample ex2aro_only_sample_level );
+	void or_ex2aro_sample_level( ExtraRotSample ex2aro_only_sample_level ) override;
 	/// @brief increase ex1aro_exposed sample level; do nothing if not an increase
-	virtual void or_ex1aro_exposed_sample_level( ExtraRotSample ex1aro_exposed_sample_level );
+	void or_ex1aro_exposed_sample_level( ExtraRotSample ex1aro_exposed_sample_level ) override;
 	/// @brief increase ex2aro_exposed sample level; do nothing if not an increase
-	virtual void or_ex2aro_exposed_sample_level( ExtraRotSample ex2aro_exposed_sample_level );
+	void or_ex2aro_exposed_sample_level( ExtraRotSample ex2aro_exposed_sample_level ) override;
 
-	virtual void or_operate_on_ex1( bool operate );
-	virtual void or_operate_on_ex2( bool operate );
-	virtual void or_operate_on_ex3( bool operate );
-	virtual void or_operate_on_ex4( bool operate );
+	void or_operate_on_ex1( bool operate ) override;
+	void or_operate_on_ex2( bool operate ) override;
+	void or_operate_on_ex3( bool operate ) override;
+	void or_operate_on_ex4( bool operate ) override;
 
-	virtual void or_exdna_sample_level( ExtraRotSample exdna_sample_level );
+	void or_exdna_sample_level( ExtraRotSample exdna_sample_level ) override;
 
-	virtual void or_optimize_h( bool setting );
-	virtual bool optimize_h() const;
-	virtual void or_preserve_c_beta( bool setting );
-	virtual bool preserve_c_beta() const;
-	virtual void or_flip_HNQ( bool setting );
-	virtual bool flip_HNQ() const;
-	virtual void or_fix_his_tautomer( bool setting );
-	virtual bool fix_his_tautomer() const;
+	void or_optimize_h( bool setting ) override;
+	bool optimize_h() const override;
+	void or_preserve_c_beta( bool setting ) override;
+	bool preserve_c_beta() const override;
+	void or_flip_HNQ( bool setting ) override;
+	bool flip_HNQ() const override;
+	void or_fix_his_tautomer( bool setting ) override;
+	bool fix_his_tautomer() const override;
 
-	virtual void or_include_virtual_side_chain( bool setting );
-	virtual bool include_virtual_side_chain() const;
-
-	/// @brief sample proton chi.
-	virtual void sample_proton_chi( bool setting );
+	void or_include_virtual_side_chain( bool setting ) override;
+	bool include_virtual_side_chain() const override;
 
 	/// @brief sample proton chi.
-	virtual bool sample_proton_chi() const;
+	void sample_proton_chi( bool setting ) override;
 
-	virtual bool ex1() const;
-	virtual bool ex2() const;
-	virtual bool ex3() const;
-	virtual bool ex4() const;
+	/// @brief sample proton chi.
+	bool sample_proton_chi() const override;
 
-	virtual ExtraRotSample ex1_sample_level() const;
-	virtual ExtraRotSample ex2_sample_level() const;
-	virtual ExtraRotSample ex3_sample_level() const;
-	virtual ExtraRotSample ex4_sample_level() const;
+	bool ex1() const override;
+	bool ex2() const override;
+	bool ex3() const override;
+	bool ex4() const override;
 
-	virtual bool ex1aro() const;
-	virtual bool ex2aro() const;
-	virtual bool ex1aro_exposed() const;
-	virtual bool ex2aro_exposed() const;
+	ExtraRotSample ex1_sample_level() const override;
+	ExtraRotSample ex2_sample_level() const override;
+	ExtraRotSample ex3_sample_level() const override;
+	ExtraRotSample ex4_sample_level() const override;
 
-	virtual ExtraRotSample ex1aro_sample_level() const;
-	virtual ExtraRotSample ex2aro_sample_level() const;
-	virtual ExtraRotSample ex1aro_exposed_sample_level() const;
-	virtual ExtraRotSample ex2aro_exposed_sample_level() const;
+	bool ex1aro() const override;
+	bool ex2aro() const override;
+	bool ex1aro_exposed() const override;
+	bool ex2aro_exposed() const override;
 
-	virtual ExtraRotSample exdna_sample_level() const;
+	ExtraRotSample ex1aro_sample_level() const override;
+	ExtraRotSample ex2aro_sample_level() const override;
+	ExtraRotSample ex1aro_exposed_sample_level() const override;
+	ExtraRotSample ex2aro_exposed_sample_level() const override;
 
-	virtual bool operate_on_ex1() const;
-	virtual bool operate_on_ex2() const;
-	virtual bool operate_on_ex3() const;
-	virtual bool operate_on_ex4() const;
+	ExtraRotSample exdna_sample_level() const override;
+
+	bool operate_on_ex1() const override;
+	bool operate_on_ex2() const override;
+	bool operate_on_ex3() const override;
+	bool operate_on_ex4() const override;
 
 	/// @brief lower extrachi_cutoff to given value; do nothing if not a decrease
-	virtual void and_extrachi_cutoff( Size num_neighbors_to_be_called_buried );
+	void and_extrachi_cutoff( Size num_neighbors_to_be_called_buried ) override;
 
 	/// @brief get function for extrachi_cutoff
-	virtual Size extrachi_cutoff() const;
+	Size extrachi_cutoff() const override;
 
 	/// @brief remove all ResidueTypes from the list of allowed residue types, preventing repacking
-	virtual void prevent_repacking();
+	void prevent_repacking() override;
 
 	/// @brief Restrict residue types.
 	/// @details This function takes a vector of base names to allow.  Anything not in this list is turned off.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-	virtual void restrict_restypes( utility::vector1< std::string > const & basenames_to_keep );
+	void restrict_restypes( utility::vector1< std::string > const & basenames_to_keep ) override;
 
 	/// @brief Disable residue types.
 	/// @details This function takes a vector of base names to prohibit.  Anything in this list is turned off.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-	virtual void disable_restypes( utility::vector1< std::string > const & basenames_to_disable );
+	void disable_restypes( utility::vector1< std::string > const & basenames_to_disable ) override;
 
 	/// @brief Given a list of residue properties, eliminate any residue type that does not have at
 	/// least one of the properties in the list.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-	virtual void restrict_to_restypes_with_at_least_one_property( utility::vector1< core::chemical::ResidueProperty > const & properties );
+	void restrict_to_restypes_with_at_least_one_property( utility::vector1< core::chemical::ResidueProperty > const & properties ) override;
 
 	/// @brief Given a list of residue properties, eliminate any residue type that does not have ALL of the properties in the list.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-	virtual void restrict_to_restypes_with_all_properties( utility::vector1< core::chemical::ResidueProperty > const & properties );
+	void restrict_to_restypes_with_all_properties( utility::vector1< core::chemical::ResidueProperty > const & properties ) override;
 
 	/// @brief Given a list of residue properties, eliminate any residue type that has any of the properties in the list.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-	virtual void disable_restypes_with_at_least_one_property( utility::vector1< core::chemical::ResidueProperty > const & properties );
+	void disable_restypes_with_at_least_one_property( utility::vector1< core::chemical::ResidueProperty > const & properties ) override;
 
 	/// @brief disables designing to residues not in the passed list
-	virtual void restrict_absent_canonical_aas( utility::vector1< bool > const &);
+	void restrict_absent_canonical_aas( utility::vector1< bool > const &) override;
 
 	/// @brief disables designing to residues not in the passed list--and specifies the resfile command that made this list
-	virtual void restrict_absent_canonical_aas( utility::vector1< bool > const & allowed_aas,
-		std::string const & mode );
+	void restrict_absent_canonical_aas( utility::vector1< bool > const & allowed_aas,
+		std::string const & mode ) override;
 
 	//@brief Same behavior restrict_absent_canonical_aas except that it always allows the native aa at a position even if it is not included in the allowed residues
-	virtual void restrict_nonnative_canonical_aas( utility::vector1< bool > const & allowed_aas);
+	void restrict_nonnative_canonical_aas( utility::vector1< bool > const & allowed_aas) override;
 
 
 	/// @brief disables designing to nucleic acid residues not in the passed list
-	virtual void restrict_absent_nas( utility::vector1< chemical::AA > const & keep_nas );
+	void restrict_absent_nas( utility::vector1< chemical::AA > const & keep_nas ) override;
 
 	/// @brief only let this residue repack -- prevent redesign
-	virtual void restrict_to_repacking();
+	void restrict_to_repacking() override;
 
 	/// @brief
-	virtual bool is_original_type( chemical::ResidueTypeCOP type ) const;
+	bool is_original_type( chemical::ResidueTypeCOP type ) const override;
 
 	/// @brief
-	virtual chemical::ResidueTypeSetCOP get_original_residue_set() const;
+	chemical::ResidueTypeSetCOP get_original_residue_set() const override;
 
 	/// @brief
-	virtual chemical::AA const & get_original_residue() const;
+	chemical::AA const & get_original_residue() const override;
 
-	virtual ResidueTypeCOPList const & allowed_residue_types() const;
+	ResidueTypeCOPList const & allowed_residue_types() const override;
 	/// @brief returns iterator to beginning of allowed residue types list (traversal only)
-	virtual ResidueTypeCOPListConstIter allowed_residue_types_begin() const;
+	ResidueTypeCOPListConstIter allowed_residue_types_begin() const override;
 	/// @brief returns iterator to end of allowed residue types list (traversal only)
-	virtual ResidueTypeCOPListConstIter allowed_residue_types_end() const;
+	ResidueTypeCOPListConstIter allowed_residue_types_end() const override;
 
-	virtual chemical::ResidueTypeCOP target_type() const;
+	chemical::ResidueTypeCOP target_type() const override;
 
-	virtual void print_allowed_types( std::ostream & os ) const;
+	void print_allowed_types( std::ostream & os ) const override;
 
 	/// @brief is this residue up for design (variable sequence)?
-	virtual bool being_designed() const;
+	bool being_designed() const override;
 	/// @brief is this residue modififable at all by the packer?
-	virtual bool being_packed() const;
+	bool being_packed() const override;
 
-	virtual
 	rotamer_set::RotamerOperations const &
-	rotamer_operations() const;
+	rotamer_operations() const override;
 
-	virtual
 	void
 	append_rotamer_operation(
 		rotamer_set::RotamerOperationOP rotop
-	);
+	) override;
 
-	virtual rotamer_set::RotSetOperationListIterator
-	rotamer_set_operation_begin() const;
+	rotamer_set::RotSetOperationListIterator
+	rotamer_set_operation_begin() const override;
 
-	virtual rotamer_set::RotSetOperationListIterator
-	rotamer_set_operation_end() const;
+	rotamer_set::RotSetOperationListIterator
+	rotamer_set_operation_end() const override;
 
-	virtual
 	void
 	append_rotamerset_operation(
 		rotamer_set::RotamerSetOperationOP rotsetop
-	);
+	) override;
 
 
 	/// @brief create a string the resfile format of all the commands applied to this residue level task
-	virtual std::string command_string( ) const;
+	std::string command_string( ) const override;
 
 
 	///////////////////////////// dangerous update functions
@@ -343,9 +339,9 @@ private: // private methods
 	///should return the string "POLAR".
 	std::string task_mode() const;
 
-	rna::RNA_ResidueLevelTask const & rna_task() const;
+	rna::RNA_ResidueLevelTask const & rna_task() const override;
 
-	rna::RNA_ResidueLevelTask & nonconst_rna_task();
+	rna::RNA_ResidueLevelTask & nonconst_rna_task() override;
 
 	void
 	do_restrict_absent_canonical_aas( utility::vector1<bool> const & allowed_aas );

@@ -51,13 +51,13 @@ public:
 		core::scoring::ScoreFunctionOP sfxn  );
 
 	//destructor
-	~RNA_DeNovoMasterMover();
+	~RNA_DeNovoMasterMover() override;
 
 public:
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const{ return "RNA_DeNovoMasterMover"; }
+	std::string get_name() const override{ return "RNA_DeNovoMasterMover"; }
 
 	void
 	apply( core::pose::Pose & pose,

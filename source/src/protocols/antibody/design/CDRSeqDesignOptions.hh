@@ -41,7 +41,7 @@ public:
 	CDRSeqDesignOptions(CDRNameEnum cdr);
 	CDRSeqDesignOptions(CDRSeqDesignOptions const & src);
 
-	virtual ~CDRSeqDesignOptions();
+	~CDRSeqDesignOptions() override;
 
 public:
 	void
@@ -119,7 +119,7 @@ public:
 	CDRSeqDesignOptionsParser();
 	// Undefined, commenting out to fix PyRosetta build  CDRSeqDesignOptionsParser(CDRSeqDesignOptions const & src);
 
-	virtual ~CDRSeqDesignOptionsParser();
+	~CDRSeqDesignOptionsParser() override;
 
 	CDRSeqDesignOptionsParser( CDRSeqDesignOptionsParser const & src );
 

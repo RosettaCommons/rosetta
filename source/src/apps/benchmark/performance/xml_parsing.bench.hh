@@ -27,7 +27,7 @@ public:
 
 	XMLParseBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
-	virtual void setUp() {
+	void setUp() override {
 		rosetta_script_.str( std::string() );
 
 		rosetta_script_
@@ -110,7 +110,7 @@ public:
 
 	}
 
-	virtual void run(core::Real scaleFactor) {
+	void run(core::Real scaleFactor) override {
 		core::Size reps( (core::Size)(100*scaleFactor) ); // amw 10000 to 1000
 
 		if ( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scaling factor
@@ -121,5 +121,5 @@ public:
 		}
 	}
 
-	virtual void tearDown() {}
+	void tearDown() override {}
 };

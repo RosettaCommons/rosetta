@@ -53,7 +53,7 @@ public:
 	RNA_CentroidInfo( RNA_CentroidInfo const & src );
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return utility::pointer::make_shared< RNA_CentroidInfo >( *this );
 	}

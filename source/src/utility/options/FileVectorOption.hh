@@ -92,7 +92,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~FileVectorOption() {}
+	~FileVectorOption() override {}
 
 
 public: // Methods

@@ -46,7 +46,7 @@ class ScoreFileOutputter : public SecondaryPoseOutputter
 public:
 
 	ScoreFileOutputter();
-	virtual ~ScoreFileOutputter();
+	~ScoreFileOutputter() override;
 
 	/// @brief The %ScoreFileOutputter returns the name of the scorefile that it sends its outputs to
 	/// for this particular job so that the JobQueen can send multiple outputs to the same outputter

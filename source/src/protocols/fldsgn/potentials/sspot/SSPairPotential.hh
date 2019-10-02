@@ -70,7 +70,7 @@ public: // construct/destruct
 	SSPairPotential();
 
 	/// @brief default destructor
-	virtual ~SSPairPotential();
+	~SSPairPotential() override;
 
 
 public: // scoring

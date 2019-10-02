@@ -51,46 +51,39 @@ public:
 	FACTSEnergy( FACTSEnergy const & src );
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const {
+	clone() const override {
 		return utility::pointer::make_shared< FACTSEnergy >(*this);
 	}
 
-	virtual
 	void
 	setup_for_packing(
 		pose::Pose & pose,
 		utility::vector1< bool > const & residues_repacking,
 		utility::vector1< bool > const &
-	) const;
+	) const override;
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
 	prepare_rotamers_for_packing(
 		pose::Pose const & pose,
 		conformation::RotamerSetBase & set
-	) const;
+	) const override;
 
-	virtual
 	void
 	update_residue_for_packing(
 		pose::Pose &,
-		Size resid ) const;
+		Size resid ) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -98,27 +91,25 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	evaluate_rotamer_intrares_energies(
 		conformation::RotamerSetBase const & set,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		utility::vector1< core::PackerEnergy > & energies
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	evaluate_rotamer_intrares_energy_maps(
 		conformation::RotamerSetBase const & set,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		utility::vector1< EnergyMap > & emaps
-	) const;
+	) const override;
 
 
 	/// @brief Batch computation of rotamer pair energies.  Need not be overriden in
@@ -126,7 +117,6 @@ public:
 	/// and calls derived class's residue_pair_energy method.  Since short range rotamer pairs
 	/// may not need calculation, the default method looks at blocks of residue type pairs
 	/// and only calls the residue_pair_energy method if the rotamer pairs are within range
-	virtual
 	void
 	evaluate_rotamer_pair_energies(
 		conformation::RotamerSetBase const & set1,
@@ -135,7 +125,7 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
-	) const;
+	) const override;
 
 
 	/// @brief Batch computation of rotamer/background energies.  Need not be overriden
@@ -144,7 +134,6 @@ public:
 	/// Since short range rotamer pairs may not need calculation, the default method
 	/// looks at blocks of residue type pairs and only calls the residue_pair_energy method
 	/// if the rotamer pairs are within range
-	virtual
 	void
 	evaluate_rotamer_background_energies(
 		conformation::RotamerSetBase const & set,
@@ -153,7 +142,7 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
-	) const;
+	) const override;
 
 
 	/// @brief Batch computation of rotamer/background energies.  Need not be overriden
@@ -163,7 +152,6 @@ public:
 	/// looks at blocks of residue type pairs and only calls the residue_pair_energy method
 	/// if the rotamer pairs are within range
 
-	virtual
 	void
 	evaluate_rotamer_background_energy_maps(
 		conformation::RotamerSetBase const & set,
@@ -172,10 +160,9 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		utility::vector1< EnergyMap > & emaps
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & atom_id,
@@ -185,27 +172,23 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return true; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return true; }
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// this is our own special function
 	Real
@@ -221,8 +204,7 @@ private:
 	bool const exclude_DNA_DNA_;
 	Real max_dis_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

@@ -36,7 +36,7 @@ namespace build {
 
 /// @brief computes a position wrt values in given BuildInstruction
 struct RelativeSequencePosition : public utility::pointer::ReferenceCount {
-	virtual ~RelativeSequencePosition() {}
+	~RelativeSequencePosition() override {}
 	virtual RelativeSequencePositionOP clone() const = 0;
 	virtual core::Size operator ()( BuildInstructionCAP i ) const = 0;
 };
@@ -45,12 +45,12 @@ struct RelativeSequencePosition : public utility::pointer::ReferenceCount {
 /// @brief count starting from interval().left in a BuildInstruction
 struct CountFromLeft : public RelativeSequencePosition {
 	inline
-	virtual RelativeSequencePositionOP clone() const {
+	RelativeSequencePositionOP clone() const override {
 		return utility::pointer::make_shared< CountFromLeft >( *this );
 	}
 
 	inline
-	virtual core::Size operator ()( BuildInstructionCAP i ) const {
+	core::Size operator ()( BuildInstructionCAP i ) const override {
 		return i.lock()->interval().left + left_skip + p - 1;
 	}
 

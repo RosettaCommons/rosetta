@@ -32,7 +32,7 @@ public:
 
 	StepWiseSamplerOneValueComb();
 
-	virtual ~StepWiseSamplerOneValueComb();
+	~StepWiseSamplerOneValueComb() override;
 
 	ValueList const &
 	get_value_list( Size const id );
@@ -46,10 +46,10 @@ public:
 	}
 
 	/// @brief Name of the class
-	virtual std::string get_name() const { return "StepWiseSamplerOneValueComb"; }
+	std::string get_name() const override { return "StepWiseSamplerOneValueComb"; }
 
 	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::ONE_VALUE_COMB; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::ONE_VALUE_COMB; }
 
 private:
 

@@ -44,16 +44,16 @@ public:
 		core::kinematics::Stub const & reference_stub );
 
 	//destructor
-	~RigidBodyStepWiseSampler();
+	~RigidBodyStepWiseSampler() override;
 
 public:
 
-	void init();
+	void init() override;
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual void apply( core::pose::Pose & pose,
-		core::Size const id );
+	void apply( core::pose::Pose & pose,
+		core::Size const id ) override;
 
 	void apply( core::pose::Pose & pose,
 		core::conformation::Residue const & moving_residue_at_origin );
@@ -101,7 +101,7 @@ public:
 	core::conformation::Residue const & moving_residue_at_origin() const { return *moving_residue_at_origin_; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RIGID_BODY; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::RIGID_BODY; }
 
 	core::Size const & reference_res() const { return reference_res_; }
 	utility::vector1< core::Size > const & moving_partition_res() const { return moving_partition_res_;}
@@ -116,7 +116,7 @@ public:
 	void set_euler_gamma_values( core::Real const centroid_euler_gamma_min, core::Real const centroid_euler_gamma_max, core::Real const centroid_euler_gamma_bin );
 
 	/// @brief Name of the class
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 

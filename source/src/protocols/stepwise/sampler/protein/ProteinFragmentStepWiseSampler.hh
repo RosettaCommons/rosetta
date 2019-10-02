@@ -38,21 +38,21 @@ public:
 
 
 	//destructor
-	~ProteinFragmentStepWiseSampler();
+	~ProteinFragmentStepWiseSampler() override;
 
 public:
 
 	/// @brief Get the total number of rotamers in sampler
-	virtual core::Size size() const;
+	core::Size size() const override;
 
 	/// @brief Apply the i-th rotamer to pose
-	virtual void apply( core::pose::Pose &, core::Size const );
+	void apply( core::pose::Pose &, core::Size const ) override;
 
 	/// @brief Name of the class
-	virtual std::string get_name() const { return "ProteinFragmentStepWiseSampler"; }
+	std::string get_name() const override { return "ProteinFragmentStepWiseSampler"; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::PROTEIN_FRAGMENT; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::PROTEIN_FRAGMENT; }
 
 private:
 

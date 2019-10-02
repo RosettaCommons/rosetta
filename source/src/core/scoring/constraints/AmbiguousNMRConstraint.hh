@@ -56,44 +56,36 @@ public:
 	/// @brief Constructor
 	AmbiguousNMRConstraint( ConstraintCOPs const & cst_in, func::FuncOP func );
 
-	virtual
-	ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
-	virtual
-	ConstraintOP clone( func::FuncOP func ) const;
+	ConstraintOP clone( func::FuncOP func ) const override;
 
-	virtual
-	MultiConstraintOP empty_clone() const;
+	MultiConstraintOP empty_clone() const override;
 
-	virtual std::string type() const;
+	std::string type() const override;
 
-	virtual bool operator == ( Constraint const & other ) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	bool operator == ( Constraint const & other ) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
 	// Needed to get the base class overloads
 	using Constraint::score;
 	using Constraint::dist;
 
 	/// @brief compute score
-	virtual
 	void
-	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const override;
 
-	virtual
 	core::Real
-	dist( func::XYZ_Func const & xyz ) const;
+	dist( func::XYZ_Func const & xyz ) const override;
 
 	/// @brief add individual constraint into AmbiguousNMRConstraint
-	virtual
 	void
-	add_individual_constraint( ConstraintCOP cst_in );
+	add_individual_constraint( ConstraintCOP cst_in ) override;
 
-	virtual
 	ConstraintOP
-	remap_resid( core::id::SequenceMapping const &seqmap ) const;
+	remap_resid( core::id::SequenceMapping const &seqmap ) const override;
 
 	/// @brief compute atom deriv
-	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,
@@ -101,29 +93,26 @@ public:
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
 	/// @brief Returns the func::Func object associated with this Constraint object.
-	virtual
-	func::Func const & get_func() const;
+	func::Func const & get_func() const override;
 
 	//  virtual
 	//  void show( std::ostream& out ) const;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @details read definition of a multiconstraint. Since a MultiConstraint is essentially a vector of
-	virtual void
+	void
 	read_def(
 		std::istream& data,
 		core::pose::Pose const& pose,
 		func::FuncFactory const & func_factory
-	);
+	) override;
 
-	virtual
-	void show_def( std::ostream& out, pose::Pose const& pose ) const;
+	void show_def( std::ostream& out, pose::Pose const& pose ) const override;
 
-	virtual
-	Size show_violations( std::ostream & out, pose::Pose const & pose, Size verbose_level, Real threshold = 1.0 ) const;
+	Size show_violations( std::ostream & out, pose::Pose const & pose, Size verbose_level, Real threshold = 1.0 ) const override;
 
 protected:
 	/// @brief Explicit copy constructor so that derived classes will recieve a deep copy

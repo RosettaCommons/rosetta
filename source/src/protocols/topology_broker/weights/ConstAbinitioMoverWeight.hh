@@ -52,7 +52,7 @@ namespace weights {
 class ConstAbinitioMoverWeight : public AbinitioMoverWeight {
 public:
 	ConstAbinitioMoverWeight( core::Real weight ) : weight_( weight ) {};
-	virtual core::Real weight( core::Size /* stageID */, core::Real /* progress */ /* progress within stage */ )  const {
+	core::Real weight( core::Size /* stageID */, core::Real /* progress */ /* progress within stage */ )  const override {
 		return weight_;
 	}
 protected:

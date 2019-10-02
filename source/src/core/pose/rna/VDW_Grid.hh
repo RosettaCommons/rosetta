@@ -48,7 +48,7 @@ public:
 
 	VDW_Grid( VDW_Grid const & src );
 
-	virtual ~VDW_Grid();
+	~VDW_Grid() override;
 
 	void
 	setup( int const bin_max ) const;

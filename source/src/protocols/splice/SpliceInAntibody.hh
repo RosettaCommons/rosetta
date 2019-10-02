@@ -52,11 +52,11 @@ class SpliceInAntibody : virtual public protocols::splice::SpliceInTail
 public:
 	SpliceInAntibody();
 	void apply( Pose & pose ) override;
-	virtual std::string get_name() const override;
+	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpliceInAntibody >(); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
-	virtual ~SpliceInAntibody();
+	~SpliceInAntibody() override;
 	core::Size find_dbase_entry(core::pose::Pose const & pose) override;
 	core::Size database_entry()const {return database_entry_; }
 	void database_entry( core::Size const d ){ database_entry_ = d; }
@@ -78,7 +78,7 @@ public:
 	void find_vl_vh_cut(core::pose::Pose pose);
 	void update_vl_vh_cut();
 	void find_disulfide_postions(core::pose::Pose const & pose,utility::vector1<core::Size> & cys_pos);
-	virtual void assign_from_res_to_res(core::pose::Pose const & pose) override;
+	void assign_from_res_to_res(core::pose::Pose const & pose) override;
 	//void copy_stretch(core::pose::Pose & pose);
 	void adjust_template_jump(core::pose::Pose & pose);
 	void build_ideal_segment(core::pose::Pose & pose) override;

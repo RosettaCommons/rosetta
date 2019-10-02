@@ -73,7 +73,7 @@ public:// constructor/destructor
 	ParallelBetaPairingPreferenceFilter( ParallelBetaPairingPreferenceFilter const & rval );
 
 	// @brief destructor
-	virtual ~ParallelBetaPairingPreferenceFilter(){}
+	~ParallelBetaPairingPreferenceFilter() override{}
 
 
 public:// virtual constructor
@@ -122,7 +122,7 @@ public:// virtual main operations
 public:// parser
 
 
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		Movers_map const &,

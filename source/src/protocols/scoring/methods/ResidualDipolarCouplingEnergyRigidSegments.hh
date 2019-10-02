@@ -48,16 +48,14 @@ public:
 	ResidualDipolarCouplingEnergyRigidSegments();
 
 	//clone
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
-	virtual
 	void
-	setup_for_scoring( core::pose::Pose &, core::scoring::ScoreFunction const & ) const;
+	setup_for_scoring( core::pose::Pose &, core::scoring::ScoreFunction const & ) const override;
 
 	/// @brief Called at the beginning of atom tree minimization, this method
 	/// allows the derived class the opportunity to initialize pertinent data
@@ -78,12 +76,12 @@ public:
 		core::pose::Pose & pose,
 		core::scoring::ScoreFunction const &,
 		core::scoring::EnergyMap & totals
-	) const;
+	) const override;
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 private:
 
@@ -110,8 +108,7 @@ private:
 	//used by Energy Method during scoring... should this become part of ResidualDipolarCoupling and thus cached in the pose
 	mutable core::Real dip_score_; //computed in setup_for_scoring.. delivered in finalize
 	mutable core::id::AtomID_Map< Size > atom2rdc_map_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 } //methods

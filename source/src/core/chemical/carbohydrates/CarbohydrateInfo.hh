@@ -45,7 +45,7 @@ public: // Standard methods ///////////////////////////////////////////////////
 	CarbohydrateInfo( CarbohydrateInfo const & object_to_copy, core::chemical::ResidueTypeCAP new_owner );
 
 	// Destructor
-	virtual ~CarbohydrateInfo();
+	~CarbohydrateInfo() override;
 
 private:
 	// Empty constructor -- should not ever be called; not implemented

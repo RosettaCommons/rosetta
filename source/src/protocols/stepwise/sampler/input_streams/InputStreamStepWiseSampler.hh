@@ -37,30 +37,30 @@ public:
 		stepwise::legacy::modeler::protein::StepWiseProteinPoseSetupCOP stepwise_pose_setup );
 
 	//destructor
-	~InputStreamStepWiseSampler();
+	~InputStreamStepWiseSampler() override;
 
 public:
 
 	/// @brief Reset to the first (or random if random()) rotamer.
-	virtual void reset();
+	void reset() override;
 
 	/// @brief Get the total number of rotamers in sampler
-	virtual core::Size size() const{ return size_;}
+	core::Size size() const override{ return size_;}
 
 	/// @brief set ID -- how StepWiseSamplerSizedComb controls StepWiseSamplerSized. Need some extra work here with InputStreamStepWiseSampler.
-	virtual void set_id( Size const setting );
+	void set_id( Size const setting ) override;
 
 	/// @brief Move to next rotamer
-	virtual void operator++();
+	void operator++() override;
 
 	/// @brief Apply the i-th rotamer to pose
-	virtual void apply( core::pose::Pose&, core::Size const );
+	void apply( core::pose::Pose&, core::Size const ) override;
 
 	/// @brief Name of the class
-	virtual std::string get_name() const { return "InputStreamStepWiseSampler"; }
+	std::string get_name() const override { return "InputStreamStepWiseSampler"; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::INPUT_STREAM; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::INPUT_STREAM; }
 
 private:
 

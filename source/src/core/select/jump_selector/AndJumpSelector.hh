@@ -54,7 +54,7 @@ public:
 	AndJumpSelector( JumpSelectorCOP selector1);
 	AndJumpSelector( JumpSelectorCOP selector1, JumpSelectorCOP selector2 );
 
-	virtual ~AndJumpSelector();
+	~AndJumpSelector() override;
 
 	JumpSubset apply( core::pose::Pose const & pose ) const override;
 	void parse_my_tag(

@@ -72,8 +72,7 @@ public: // construct/destruct
 
 	/// @brief default destructor
 	/// @warning Derived classes must remember to detach on destruction!
-	virtual
-	~CacheableObserver();
+	~CacheableObserver() override;
 
 
 public: // assignment

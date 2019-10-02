@@ -183,20 +183,20 @@ public:
 	ConsensusLoopDesignOperation();
 
 	/// @brief destructor
-	virtual ~ConsensusLoopDesignOperation();
+	~ConsensusLoopDesignOperation() override;
 
 	static std::string
 	class_name();
 
 	/// @brief make clone
-	virtual core::pack::task::operation::TaskOperationOP
-	clone() const;
+	core::pack::task::operation::TaskOperationOP
+	clone() const override;
 
 	/// @brief apply
-	virtual void
+	void
 	apply(
 		core::pose::Pose const & pose,
-		core::pack::task::PackerTask & task ) const;
+		core::pack::task::PackerTask & task ) const override;
 
 	/// @brief Returns the name of the class
 	virtual std::string
@@ -219,10 +219,10 @@ public:
 	set_residue_selector( core::select::residue_selector::ResidueSelector const & selector_val );
 
 public:
-	virtual void
+	void
 	parse_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data_map );
+		basic::datacache::DataMap & data_map ) override;
 
 	static void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

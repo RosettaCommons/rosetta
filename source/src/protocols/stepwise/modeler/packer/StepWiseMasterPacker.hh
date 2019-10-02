@@ -43,7 +43,7 @@ public:
 		options::StepWiseModelerOptionsCOP options );
 
 	//destructor
-	~StepWiseMasterPacker();
+	~StepWiseMasterPacker() override;
 
 public:
 

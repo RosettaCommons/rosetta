@@ -59,10 +59,10 @@ public:
 
 	OperateOnResidueSubset( OperateOnResidueSubset const & );
 	OperateOnResidueSubset & operator = ( OperateOnResidueSubset const & );
-	virtual ~OperateOnResidueSubset();
+	~OperateOnResidueSubset() override;
 
-	virtual TaskOperationOP clone() const;
-	virtual void apply( Pose const &, PackerTask & ) const;
+	TaskOperationOP clone() const override;
+	void apply( Pose const &, PackerTask & ) const override;
 
 public:
 
@@ -85,7 +85,7 @@ public:
 public:
 
 	/// @brief Used to parse an xml-like tag to construct the ResLvlTaskOperation and the ResFilter
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

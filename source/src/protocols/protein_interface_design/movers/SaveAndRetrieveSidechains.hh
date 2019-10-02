@@ -52,7 +52,7 @@ public:
 		bool const ensure_variant_matching=false,
 		core::Size const jumpid=1
 	);
-	virtual ~SaveAndRetrieveSidechains();
+	~SaveAndRetrieveSidechains() override;
 	bool allsc() const { return allsc_; }
 	void allsc( bool const allsc ) { allsc_ = allsc; }
 	void apply( Pose & pose ) override;

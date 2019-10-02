@@ -123,8 +123,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~Dimension()
+	~Dimension() override
 	{
 		remove_as_observer();
 		delete exp_p_;
@@ -536,7 +535,7 @@ public: // Observer Modifier
 	/// @brief Update
 	inline
 	void
-	update()
+	update() override
 	{
 		initialized_ = ( exp_p_ ? exp_p_->initialized() : false );
 		value_ = ( initialized_ ? exp_p_->ivalue() : 0 );
@@ -546,7 +545,7 @@ public: // Observer Modifier
 	/// @brief Update for Destruction of a Subject
 	inline
 	void
-	destructed( Subject const & subject )
+	destructed( Subject const & subject ) override
 	{
 		if ( exp_p_ ) exp_p_->destructed( subject );
 	}

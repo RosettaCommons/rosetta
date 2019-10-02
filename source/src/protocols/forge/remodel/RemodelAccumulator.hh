@@ -59,16 +59,13 @@ public: //constructor/destructor
 	//RemodelAccumulator(RemodelData remodeldata);
 	RemodelAccumulator(RemodelWorkingSet & working_model);
 
-	virtual
-	~RemodelAccumulator();
+	~RemodelAccumulator() override;
 
 public: // virtual constructors
 
-	virtual
-	MoverOP clone() const;
+	MoverOP clone() const override;
 
-	virtual
-	MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
 public: // options
 
@@ -80,12 +77,12 @@ public:
 
 	using Super::apply;
 
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 	virtual void apply( Pose & pose, core::Real & score );
 	virtual Pose pop();
 	virtual void clear();
 	virtual core::Size size();
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 
 private: // data

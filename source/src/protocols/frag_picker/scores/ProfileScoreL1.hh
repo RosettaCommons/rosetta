@@ -41,14 +41,14 @@ public:
 
 	ProfileScoreL1(core::Size, core::Real , bool,
 		core::sequence::SequenceProfileOP, utility::vector1<core::Size> &,core::Size);
-	~ProfileScoreL1();
+	~ProfileScoreL1() override;
 
 	void do_caching_simple(VallChunkOP);
-	void do_caching(VallChunkOP);
-	void clean_up() {
+	void do_caching(VallChunkOP) override;
+	void clean_up() override {
 	}
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
-	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
 	//bool describe_score(FragmentCandidateOP, FragmentScoreMapOP, std::ostream&);
 protected:
 	Matrix scores_;
@@ -67,7 +67,7 @@ public:
 		MakeFragmentScoringMethod("ProfileScoreL1") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 
 } // scores

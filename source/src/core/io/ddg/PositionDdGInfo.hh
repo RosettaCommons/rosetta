@@ -45,7 +45,7 @@ public:
 		core::chemical::AA wt_aa
 	);
 
-	virtual ~PositionDdGInfo();
+	~PositionDdGInfo() override;
 
 	void
 	add_mutation_ddG(

@@ -48,7 +48,7 @@ public:
 		conformation::Residue const & res
 	);
 
-	virtual ~CountPairIntraRes();
+	~CountPairIntraRes() override;
 
 	/// @brief function required by templated functions in atom_pair_energy_inline
 	inline
@@ -64,112 +64,101 @@ public:
 		return parent::count_at_path_distance( path_dist, weight );
 	}
 
-	virtual
 	bool
 	count(
 		int const at1,
 		int const at2,
 		Real &,
 		Size & path_dist
-	) const;
+	) const override;
 
 	/// Type Resolution Functions ///
 
-	virtual
 	void
 	residue_atom_pair_energy(
 		conformation::Residue const & res1,
 		conformation::Residue const & res2,
 		etable::TableLookupEvaluator const &,
 		EnergyMap &
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	residue_atom_pair_energy_sidechain_backbone(
 		conformation::Residue const &,
 		conformation::Residue const &,
 		etable::TableLookupEvaluator const &,
 		EnergyMap &
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	residue_atom_pair_energy_sidechain_whole(
 		conformation::Residue const &,
 		conformation::Residue const &,
 		etable::TableLookupEvaluator const &,
 		EnergyMap &
-	) const;
+	) const override;
 
-	virtual
 	void
 	residue_atom_pair_energy_backbone_backbone(
 		conformation::Residue const &,
 		conformation::Residue const &,
 		etable::TableLookupEvaluator const &,
 		EnergyMap &
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	residue_atom_pair_energy_sidechain_sidechain(
 		conformation::Residue const &,
 		conformation::Residue const &,
 		etable::TableLookupEvaluator const &,
 		EnergyMap &
-	) const;
+	) const override;
 
-	virtual
 	void
 	residue_atom_pair_energy(
 		conformation::Residue const & res1,
 		conformation::Residue const & res2,
 		etable::AnalyticEtableEvaluator const &,
 		EnergyMap &
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	residue_atom_pair_energy_sidechain_backbone(
 		conformation::Residue const &,
 		conformation::Residue const &,
 		etable::AnalyticEtableEvaluator const &,
 		EnergyMap &
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	residue_atom_pair_energy_sidechain_whole(
 		conformation::Residue const &,
 		conformation::Residue const &,
 		etable::AnalyticEtableEvaluator const &,
 		EnergyMap &
-	) const;
+	) const override;
 
-	virtual
 	void
 	residue_atom_pair_energy_backbone_backbone(
 		conformation::Residue const &,
 		conformation::Residue const &,
 		etable::AnalyticEtableEvaluator const &,
 		EnergyMap &
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	residue_atom_pair_energy_sidechain_sidechain(
 		conformation::Residue const &,
 		conformation::Residue const &,
 		etable::AnalyticEtableEvaluator const &,
 		EnergyMap &
-	) const;
+	) const override;
 
 private:
 	utility::vector1< utility::vector1< int > > const & path_dists_;

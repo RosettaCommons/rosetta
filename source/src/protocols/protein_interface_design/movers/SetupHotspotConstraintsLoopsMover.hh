@@ -55,7 +55,7 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
-	~SetupHotspotConstraintsLoopsMover();
+	~SetupHotspotConstraintsLoopsMover() override;
 
 	void set_resfile( std::string const& setting ) {
 		resfile_ = setting;

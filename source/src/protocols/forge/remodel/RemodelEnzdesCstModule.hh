@@ -37,7 +37,7 @@ public:
 
 	RemodelEnzdesCstModule(protocols::forge::remodel::RemodelData external_data);
 
-	~RemodelEnzdesCstModule();
+	~RemodelEnzdesCstModule() override;
 
 	void apply(core::pose::Pose & pose);
 	void blueprint_cst_definition(core::pose::Pose & pose);

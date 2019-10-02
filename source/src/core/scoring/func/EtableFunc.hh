@@ -55,19 +55,19 @@ public:
 	{}
 
 	/// @brief returns a clone of this EtableFunc
-	FuncOP clone() const { return utility::pointer::make_shared< EtableFunc >( *this ); }
+	FuncOP clone() const override { return utility::pointer::make_shared< EtableFunc >( *this ); }
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
 	/// @brief Returns the value of this EtableFunc evaluated at distance x.
-	Real func( Real const x ) const;
+	Real func( Real const x ) const override;
 
 	/// @brief Returns the value of the first derivative of this EtableFunc at distance x.
-	Real dfunc( Real const x ) const;
+	Real dfunc( Real const x ) const override;
 
 	/// @brief show the definitio of this EtableFunc to the specified output stream.
-	virtual void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
 	/// @brief Calls show( out ) on this EtableFunc.
 	friend std::ostream& operator<<(std::ostream& out, const EtableFunc& f ) {
@@ -76,7 +76,7 @@ public:
 	} // operator<<
 
 
-	void read_data( std::istream& in );
+	void read_data( std::istream& in ) override;
 
 private:
 	utility::vector1< core::Real > func_;

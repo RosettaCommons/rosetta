@@ -191,7 +191,7 @@ public:
 		delete [] gridc;
 		delete [] gindex;
 	}
-	virtual ~xyzStripeHashWithMeta() {
+	~xyzStripeHashWithMeta() override {
 		if ( grid_atoms_ )  delete grid_atoms_;
 		if ( grid_stripe_ ) delete grid_stripe_;
 	}

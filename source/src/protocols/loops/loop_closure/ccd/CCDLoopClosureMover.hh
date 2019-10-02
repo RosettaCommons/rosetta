@@ -84,7 +84,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 	CCDLoopClosureMover( protocols::loops::Loop const & loop, core::kinematics::MoveMapCOP mm );
 
 	// Destructor
-	virtual ~CCDLoopClosureMover();
+	~CCDLoopClosureMover() override;
 
 	// Assignment operator
 	CCDLoopClosureMover & operator=( CCDLoopClosureMover const & object_to_copy );

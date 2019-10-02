@@ -31,22 +31,22 @@ public:
 	PerturberSet();
 
 	/// @brief Destructor
-	~PerturberSet();
+	~PerturberSet() override;
 
 	/// @copydoc Perturber::get_name
-	std::string get_name() const { return "PerturberSet"; }
+	std::string get_name() const override { return "PerturberSet"; }
 
 	/// @copydoc Perturber::perturb_subset
 	void perturb_subset(
 		Pose const & pose,
 		IndexList const & residues,
-		ClosureProblemOP problem);
+		ClosureProblemOP problem) override;
 
 	/// @copydoc Perturber::perturb_subset_with_balance
 	void perturb_subset_with_balance(
 		Pose const & pose,
 		IndexList const & residues,
-		ClosureProblemOP problem);
+		ClosureProblemOP problem) override;
 
 	/// @brief Add a new perturber to the set.  Any default perturbers are
 	/// removed.

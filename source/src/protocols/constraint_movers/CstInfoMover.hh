@@ -42,7 +42,7 @@ public:
 	CstInfoMover( CstInfoMover const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~CstInfoMover();
+	~CstInfoMover() override;
 
 	void cst_file( std::string const & setting ) { cst_file_ = setting; }
 	void dump_cst_file( std::string const & setting ) { dump_cst_file_ = setting; }

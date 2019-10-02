@@ -38,8 +38,8 @@ public:
 	FuncOP
 	clone() const override; // { return new HarmonicFunc( *this ); }
 
-	virtual bool operator == ( Func const & other ) const override;
-	virtual bool same_type_as_me( Func const & other ) const override;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
 	Real func( Real const x ) const override;
 	Real dfunc( Real const x ) const override;

@@ -59,28 +59,28 @@ public:
 		ScoreType scoretype = angle_constraint
 	);
 
-	virtual std::string type() const;
+	std::string type() const override;
 
-	virtual ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
 	/// @brief possibility to compare constraint according to data
 	/// and not just pointers
-	bool operator == ( Constraint const & other ) const;
+	bool operator == ( Constraint const & other ) const override;
 
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	bool same_type_as_me( Constraint const & other ) const override;
 
 	/// @brief read in constraint defiinition
-	void read_def( std::istream & data, pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory );
+	void read_def( std::istream & data, pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory ) override;
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
 	/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
 	/// to the new object. Intended to be implemented by derived classes.
-	virtual ConstraintOP remapped_clone(
+	ConstraintOP remapped_clone(
 		pose::Pose const & src,
 		pose::Pose const & dest,
 		id::SequenceMappingCOP map = NULL
-	) const;
+	) const override;
 
 	// Needed to get the base class overloads
 	using Constraint::score;
@@ -95,9 +95,8 @@ public:
 	) const;
 
 	/// @brief compute score
-	virtual
 	void
-	score( core::scoring::func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	score( core::scoring::func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const override;
 
 	virtual
 	core::Real
@@ -111,11 +110,10 @@ public:
 		Vector const & xyz3
 	) const;
 
-	virtual
 	core::Real
-	dist( core::scoring::func::XYZ_Func const & xyz ) const;
+	dist( core::scoring::func::XYZ_Func const & xyz ) const override;
 
-	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const;
+	void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const override;
 
 	/// @brief compute atom deriv
 	void
@@ -125,31 +123,30 @@ public:
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
 	/// @brief number of atoms --- always 3 for angles
 	Size
-	natoms() const
+	natoms() const override
 	{
 		return 3;
 	}
 
-	virtual
 	ConstraintOP
-	remap_resid( core::id::SequenceMapping const &seqmap ) const;
+	remap_resid( core::id::SequenceMapping const &seqmap ) const override;
 
 	/// @brief return AtomID for atom 1,2,3
 	AtomID const &
-	atom( Size const n ) const;
+	atom( Size const n ) const override;
 
 	/// @brief output violation of constraint to out - returns 1 if violated ( i.e., func.show_violations() > 0 )
-	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, core::Real threshold = 1  ) const;
+	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, core::Real threshold = 1  ) const override;
 
-	virtual void show(std::ostream& out ) const;
+	void show(std::ostream& out ) const override;
 
-	void show_def( std::ostream& out, pose::Pose const& pose ) const;
+	void show_def( std::ostream& out, pose::Pose const& pose ) const override;
 
-	virtual core::scoring::func::Func const& get_func() const {
+	core::scoring::func::Func const& get_func() const override {
 		return *func_;
 	}
 

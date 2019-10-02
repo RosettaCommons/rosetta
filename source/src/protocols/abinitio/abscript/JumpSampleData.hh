@@ -43,11 +43,11 @@ public:
 	JumpSampleData( std::string const & moverkey,
 		jumping::JumpSample const & );
 
-	void write( std::ostream &out ) const;
+	void write( std::ostream &out ) const override;
 
-	basic::datacache::CacheableDataOP clone() const;
+	basic::datacache::CacheableDataOP clone() const override;
 
-	std::string datatype() const;
+	std::string datatype() const override;
 
 	jumping::JumpSample const& jump_sample() const{
 		return jump_sample_;

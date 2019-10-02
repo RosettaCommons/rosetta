@@ -162,7 +162,7 @@ private:
 public:
 	PCS_data_Ts3();
 
-	~PCS_data_Ts3();
+	~PCS_data_Ts3() override;
 
 	PCS_data_Ts3(PCS_data_input_Ts3 & P_d_i);
 
@@ -173,8 +173,8 @@ public:
 	PCS_data_Ts3 &
 	operator=( PCS_data_Ts3 const & src );
 
-	virtual basic::datacache::CacheableDataOP
-	clone() const;
+	basic::datacache::CacheableDataOP
+	clone() const override;
 
 	//void update_matrix_fstyle_A();
 

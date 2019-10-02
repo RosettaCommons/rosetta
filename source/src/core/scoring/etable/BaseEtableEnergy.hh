@@ -104,53 +104,46 @@ public:
 	/// be able to control the definition and update for its atom-neighbors.  This
 	/// will bypass the standard neighborlist evaluation inside the ScoreFunction,
 	/// avoiding the use the MinimizationGraph.
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const;
+	minimize_in_whole_structure_context( pose::Pose const & ) const override;
 
 	/// @brief stashes nblist if pose.energies().use_nblist_auto_update() is true
 	/// This is only invoked, now, if the neighborlist-autoupdate flag is on.
-	virtual
 	void
 	setup_for_minimizing(
 		pose::Pose & pose,
 		ScoreFunction const & sfxn,
 		kinematics::MinimizerMapBase const & min_map
-	) const;
+	) const override;
 
 	/// @brief check compatibility with atomtypeset
-	virtual
 	void
-	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const;
+	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const override;
 
-	virtual
 	void
 	setup_for_derivatives(
 		pose::Pose &pose,
 		ScoreFunction const &scfxn
-	) const;
+	) const override;
 
 	// The EtableEnergy method stores a vector of rotamer trie objects in the Energies
 	// object for use in rapid rotamer/background energy calculations.  Overrides default
 	// do-nothing behavior.
-	virtual
 	void
-	setup_for_packing( pose::Pose &, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
+	setup_for_packing( pose::Pose &, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
 
 	// Creates a rotamer trie for the input set of rotamers and stores the trie
 	// in the rotamer set.
-	virtual
 	void
 	prepare_rotamers_for_packing(
 		pose::Pose const & pose,
 		conformation::RotamerSetBase & set
-	) const;
+	) const override;
 
 	// Updates the cached rotamer trie for a residue if it has changed during the course of
 	// a repacking
-	virtual
 	void
-	update_residue_for_packing( pose::Pose & pose, Size resid ) const;
+	update_residue_for_packing( pose::Pose & pose, Size resid ) const override;
 
 
 	count_pair::CountPairFunctionCOP
@@ -177,7 +170,6 @@ public:
 	) const;
 
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -185,15 +177,13 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// APL -- note, new
-	virtual
 	bool
-	use_extended_residue_pair_energy_interface() const;
+	use_extended_residue_pair_energy_interface() const override;
 
 	/// APL -- note, new
-	virtual
 	void
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
@@ -202,11 +192,10 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	/// APL -- note, new
-	virtual
 	void
 	setup_for_minimizing_for_residue_pair(
 		conformation::Residue const & rsd1,
@@ -217,37 +206,33 @@ public:
 		ResSingleMinimizationData const & res1_data_cache,
 		ResSingleMinimizationData const & res2_data_cache,
 		ResPairMinimizationData & min_data
-	) const;
+	) const override;
 
 	/// @brief Does this EnergyMethod require the opportunity to examine the residue before scoring begins?  Not
 	/// all energy methods would.  The ScoreFunction will not ask energy methods to examine residues that are uninterested
 	/// in doing so.
-	virtual
 	bool
-	requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & pose ) const;
+	requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & pose ) const override;
 
 	/// @brief Do any setup work should the coordinates of this residue (who is still guaranteed to be
 	/// of the same residue type as when setup_for_minimizing_for_residue was called) have changed so dramatically
 	/// as to possibly require some amount of setup work before scoring should proceed.
 	/// This function is used for both intra-residue setup and pre-inter-residue setup
-	virtual
 	void
 	setup_for_scoring_for_residue(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		ResSingleMinimizationData & min_data
-	) const;
+	) const override;
 
 	/// @brief Does this EnergyMethod require the opportunity to examine each residue before derivative evaluation begins?  Not
 	/// all energy methods would.  The ScoreFunction will not ask energy methods to examine residue pairs that are uninterested
 	/// in doing so.
-	virtual
 	bool
-	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const & pose ) const;
+	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const & pose ) const override;
 
 	/// @brief Do any setup work necessary before evaluating the derivatives for this residue
-	virtual
 	void
 	setup_for_derivatives_for_residue(
 		conformation::Residue const & rsd,
@@ -255,19 +240,17 @@ public:
 		ScoreFunction const &,
 		ResSingleMinimizationData & min_data,
 		basic::datacache::BasicDataCache &
-	) const;
+	) const override;
 
 	/// @brief Does this EnergyMethod require the opportunity to examine each residue pair before scoring begins?  Not
 	/// all energy methods would.  The ScoreFunction will not ask energy methods to examine residue pairs that are uninterested
 	/// in doing so.
-	virtual
 	bool
-	requires_a_setup_for_scoring_for_residue_pair_opportunity( pose::Pose const & pose ) const;
+	requires_a_setup_for_scoring_for_residue_pair_opportunity( pose::Pose const & pose ) const override;
 
 	/// @brief Do any setup work should the coordinates of a pair of residues, who are still guaranteed to be
 	/// of the same residue type as when setup_for_minimizing_for_residue was called, have changed so dramatically
 	/// as to possibly require some amount of setup work before scoring should proceed
-	virtual
 	void
 	setup_for_scoring_for_residue_pair(
 		conformation::Residue const & rsd1,
@@ -277,17 +260,15 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		ResPairMinimizationData & data_cache
-	) const;
+	) const override;
 
 	/// @brief Does this EnergyMethod require the opportunity to examine each residue pair before derivative evaluation begins?  Not
 	/// all energy methods would.  The ScoreFunction will not ask energy methods to examine residue pairs that are uninterested
 	/// in doing so.
-	virtual
 	bool
-	requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose::Pose const & pose ) const;
+	requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose::Pose const & pose ) const override;
 
 	/// @brief Do any setup work necessary before evaluating the derivatives for this residue pair
-	virtual
 	void
 	setup_for_derivatives_for_residue_pair(
 		conformation::Residue const & rsd1,
@@ -297,7 +278,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		ResPairMinimizationData & data_cache
-	) const;
+	) const override;
 
 	/// APL -- note, new
 	/*virtual
@@ -317,7 +298,6 @@ public:
 	Vector & F2
 	) const;*/
 
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
@@ -329,11 +309,10 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_at_derivs,
 		utility::vector1< DerivVectorPair > & r2_at_derivs
-	) const;
+	) const override;
 
 	/// @brief Evaluates the interaction between the backbone of rsd1 and the
 	/// backbone of rsd2 and accumulates the unweighted energy.
-	virtual
 	void
 	backbone_backbone_energy(
 		conformation::Residue const & rsd1,
@@ -341,12 +320,11 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	/// @brief Evaluates the interaction between the backbone of rsd1 and the
 	/// sidechain of rsd2 and accumulates the unweighted energy.
-	virtual
 	void
 	backbone_sidechain_energy(
 		conformation::Residue const & rsd1,
@@ -354,11 +332,10 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Evaluates the interaction between the sidechain of rsd1 and the
 	/// sidechain of rsd2 and accumulates the unweighted energy.
-	virtual
 	void
 	sidechain_sidechain_energy(
 		conformation::Residue const & rsd1,
@@ -366,9 +343,8 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	evaluate_rotamer_pair_energies(
 		conformation::RotamerSetBase const & set1,
@@ -377,12 +353,11 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
-	) const;
+	) const override;
 
 
 	//@brief overrides default rotamer/background energy calculation and uses
 	// the trie-vs-trie algorithm instead
-	virtual
 	void
 	evaluate_rotamer_background_energies(
 		conformation::RotamerSetBase const & set,
@@ -391,15 +366,13 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
-	) const;
+	) const override;
 
 	/// APL -- note, new
-	virtual
 	bool
-	use_extended_intrares_energy_interface() const;
+	use_extended_intrares_energy_interface() const override;
 
 	/// APL -- note, new
-	virtual
 	void
 	eval_intrares_energy_ext(
 		conformation::Residue const & rsd,
@@ -407,10 +380,9 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// APL -- note, new
-	virtual
 	void
 	setup_for_minimizing_for_residue(
 		conformation::Residue const & rsd,
@@ -419,7 +391,7 @@ public:
 		kinematics::MinimizerMapBase const & minmap,
 		basic::datacache::BasicDataCache &,
 		ResSingleMinimizationData & min_data
-	) const;
+	) const override;
 
 	void
 	eval_intrares_derivatives(
@@ -428,9 +400,8 @@ public:
 		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
-	virtual
 	void
 	bump_energy_full(
 		conformation::Residue const & rsd1,
@@ -438,9 +409,8 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	bump_energy_backbone(
 		conformation::Residue const & rsd1,
@@ -448,17 +418,16 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	/// called at the end of energy evaluation
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 
 	/// called during gradient-based minimization inside dfunc
@@ -466,7 +435,6 @@ public:
 	F1 and F2 are not zeroed -- contributions from this atom are
 	just summed in
 	**/
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -476,7 +444,7 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -593,20 +561,17 @@ public:
 	}
 
 	/// @brief Etable atomic distance cutoff is 5.5 A
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
 	bool
-	divides_backbone_and_sidechain_energetics() const
+	divides_backbone_and_sidechain_energetics() const override
 	{
 		return true;
 	}
 
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override;
 
 	inline
 	EnergiesCacheableDataType::Enum

@@ -59,7 +59,7 @@ class HBond : public utility::pointer::ReferenceCount, public utility::pointer::
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~HBond();
+	~HBond() override;
 	HBond(
 		Size const dhatm,
 		bool const dhatm_is_protein_backbone,
@@ -287,7 +287,7 @@ class HBondSet : public basic::datacache::CacheableData {
 
 public:
 	HBondSet();
-	~HBondSet();
+	~HBondSet() override;
 
 	HBondSet( Size const nres );
 	HBondSet( HBondOptions const & options );
@@ -488,7 +488,7 @@ public:
 
 	/// @brief Clone this object
 	basic::datacache::CacheableDataOP
-	clone() const;
+	clone() const override;
 
 	friend
 	std::ostream &

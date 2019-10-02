@@ -43,11 +43,10 @@ public:
 	CacheableResidueTypeSets(CacheableResidueTypeSets const & src);
 	CacheableResidueTypeSets & operator=(CacheableResidueTypeSets const & src);
 
-	virtual ~CacheableResidueTypeSets();
+	~CacheableResidueTypeSets() override;
 
-	virtual
 	basic::datacache::CacheableDataOP
-	clone() const;
+	clone() const override;
 
 	void
 	clear();

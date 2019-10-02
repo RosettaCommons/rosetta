@@ -62,11 +62,11 @@ public:
 	typedef typename std::vector< BackgroundToFirstClassEdge< V, E, G >* >::iterator BackgroundEdgeVectorIter;
 
 public:
-	virtual ~FirstClassNode();
+	~FirstClassNode() override;
 	FirstClassNode( G * owner, int node_id, int num_states);
 	BackgroundEdgeListIter add_background_edge(BackgroundToFirstClassEdge< V, E, G >* edge );
 	void drop_background_edge( BackgroundEdgeListIter edge );
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_dynamic_memory() const override;
 
 protected:
 	inline
@@ -142,9 +142,9 @@ template < typename V, typename E, typename G >
 class FirstClassEdge : public E {
 
 public:
-	virtual ~FirstClassEdge();
+	~FirstClassEdge() override;
 	FirstClassEdge( G * owner, int first_node_ind, int second_node_ind );
-	virtual unsigned int count_dynamic_memory() const { return E::count_dynamic_memory(); }
+	unsigned int count_dynamic_memory() const override { return E::count_dynamic_memory(); }
 
 private:
 	//no default constructor, uncopyable
@@ -349,12 +349,12 @@ public:
 
 public:
 	AdditionalBackgroundNodesInteractionGraph( int num_nodes );
-	virtual ~AdditionalBackgroundNodesInteractionGraph();
+	~AdditionalBackgroundNodesInteractionGraph() override;
 
 	friend class BackgroundToFirstClassEdge< V, E, G >;
 
-	virtual unsigned int getTotalMemoryUsage() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int getTotalMemoryUsage() const override;
+	unsigned int count_dynamic_memory() const override;
 
 	inline
 	int get_num_background_nodes() const { return num_bg_nodes_; }
@@ -382,7 +382,7 @@ protected:
 		return bg_nodes_[ index ];
 	}
 
-	void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 
 	inline
 	BackgroundEdgeListConstIter get_bg_edge_list_begin() const {

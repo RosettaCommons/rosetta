@@ -53,20 +53,17 @@ public:
 	StepWiseModelerOptionsOP clone() const;
 
 	/// @brief Describe this instance to a given output stream
-	virtual
 	void
-	show( std::ostream & ) const{}
+	show( std::ostream & ) const override{}
 
 	/// @brief Initialize from the recursive "tag" structure.
-	virtual
 	void
-	parse_my_tag( utility::tag::TagCOP ){}
+	parse_my_tag( utility::tag::TagCOP ) override{}
 
 	/// @brief The class name (its type) for a particular instance.
 	/// This function allows for better error message delivery.
-	virtual
 	std::string
-	type() const{ return "StepWiseModelerOptions";}
+	type() const override{ return "StepWiseModelerOptions";}
 
 public:
 

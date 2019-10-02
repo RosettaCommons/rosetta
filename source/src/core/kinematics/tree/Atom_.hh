@@ -80,8 +80,7 @@ public: // Creation
 
 	/// @brief Destructor
 	// does not clear pointers, use erase
-	virtual
-	~Atom_()
+	~Atom_() override
 	{}
 
 
@@ -106,13 +105,13 @@ public: // Methods
 	// assumes coords for our input stub are good
 	/// @brief update xyz position of this atom and its offspring atoms
 	void
-	update_xyz_coords();
+	update_xyz_coords() override;
 
 	/// @brief update internal coords of this atom and its offspring atoms (if recursive)
 	void
 	update_internal_coords(
 		bool const recursive
-	);
+	) override;
 
 
 	/// @brief for DOFs which must be kept fixed due to topology of tree
@@ -121,7 +120,7 @@ public: // Methods
 	bool
 	keep_dof_fixed(
 		DOF_Type const  //type
-	) const
+	) const override
 	{
 		return false;
 	}
@@ -131,15 +130,15 @@ public: // Methods
 	dihedral_between_bonded_children(
 		Atom const & child1,
 		Atom const & child2
-	) const;
+	) const override;
 
 	/// @brief dump out AtomID for this atom, its parent and all its offspring
 	void
-	show() const;
+	show() const override;
 
 	/// @brief dump out AtomID for this atom, its parent and all its offspring up to n_level
 	void
-	show(int const & n_level) const;
+	show(int const & n_level) const override;
 
 	///////////////////////////////////////////////////////////////////////////
 	/// @brief update domain map
@@ -150,7 +149,7 @@ public: // Methods
 		DomainMap & domain_map,
 		AtomID_Mask const & dof_moved,
 		AtomID_Mask const & atom_moved
-	) const;
+	) const override;
 
 
 	///////////////////////////////////////////////////////////////////////////
@@ -159,7 +158,7 @@ public: // Methods
 	/// @brief starting const iterator of the children atom list
 	inline
 	Atoms_ConstIterator
-	atoms_begin() const
+	atoms_begin() const override
 	{
 		return atoms_.begin();
 	}
@@ -167,7 +166,7 @@ public: // Methods
 	/// @brief ending const iterator of the children atom list
 	inline
 	Atoms_ConstIterator
-	atoms_end() const
+	atoms_end() const override
 	{
 		return atoms_.end();
 	}
@@ -175,7 +174,7 @@ public: // Methods
 	/// @brief starting iterator of the children atom list
 	inline
 	Atoms_Iterator
-	atoms_begin()
+	atoms_begin() override
 	{
 		return atoms_.begin();
 	}
@@ -183,7 +182,7 @@ public: // Methods
 	/// @brief ending iterator of the children atom list
 	inline
 	Atoms_Iterator
-	atoms_end()
+	atoms_end() override
 	{
 		return atoms_.end();
 	}
@@ -191,71 +190,71 @@ public: // Methods
 	/// @brief number of children atoms
 	inline
 	Size
-	n_atom() const
+	n_atom() const override
 	{
 		return atoms_.size();
 	}
 
 	/// @brief append an atom as this atom's child
 	void
-	append_atom( AtomOP );
+	append_atom( AtomOP ) override;
 
 	/// @brief remove an atom from this atom's children
 	void
-	delete_atom( AtomOP );
+	delete_atom( AtomOP ) override;
 
 	/// @brief insert an atom as this atom's child
 	void
-	insert_atom( AtomOP );
+	insert_atom( AtomOP ) override;
 
 
 	/// @brief tries to insert at the position specified by the second argument
 	void
-	insert_atom( AtomOP, int const /*index*/ );
+	insert_atom( AtomOP, int const /*index*/ ) override;
 
 	/// @brief replace the old atom by the new atom in the child atom list
 	void
 	replace_atom(
 		AtomOP const old_atom,
 		AtomOP const new_atom
-	);
+	) override;
 
 	/// @brief get non-jump atom by its index from the children atoms list
 	AtomCOP
 	get_nonjump_atom(
 		Size const i
-	) const;
+	) const override;
 
 	/// @brief number of the child atoms
 	Size
-	n_children() const;
+	n_children() const override;
 
 	/// @brief number of the non-jump child atoms
 	Size
-	n_nonjump_children() const
+	n_nonjump_children() const override
 	{
 		return atoms_end() - nonjump_atoms_begin();
 	}
 
 	/// @brief get a child atom by index (const method)
 	AtomCOP
-	child( Size const k ) const;
+	child( Size const k ) const override;
 
 	/// @brief get a child atom by index
 	AtomOP
-	child( Size const k );
+	child( Size const k ) override;
 
 	/// @brief the atom-index of this child
 	Size
-	child_index( AtomCOP child ) const;
+	child_index( AtomCOP child ) const override;
 
 	/// @brief the atom-index of this child
 	Size
-	raw_child_index( Atom const * child ) const;
+	raw_child_index( Atom const * child ) const override;
 
 	/// @brief whether atom1 is downstream of this atom.
 	bool
-	downstream( AtomCOP atom1 ) const;
+	downstream( AtomCOP atom1 ) const override;
 
 
 public: // Properties
@@ -263,7 +262,7 @@ public: // Properties
 	/// @brief Atom identifier
 	inline
 	AtomID const &
-	id() const
+	id() const override
 	{
 		return atom_id_;
 	}
@@ -272,7 +271,7 @@ public: // Properties
 	/// @brief AtomID assignment
 	inline
 	void
-	id( AtomID const & id_in )
+	id( AtomID const & id_in ) override
 	{
 		atom_id_ = id_in;
 	}
@@ -281,7 +280,7 @@ public: // Properties
 	/// @brief Atom identifier
 	inline
 	AtomID const &
-	atom_id() const
+	atom_id() const override
 	{
 		return atom_id_;
 	}
@@ -290,7 +289,7 @@ public: // Properties
 	/// @brief Position
 	inline
 	Position const &
-	position() const
+	position() const override
 	{
 		return position_;
 	}
@@ -299,7 +298,7 @@ public: // Properties
 	/// @brief Position assignment
 	inline
 	void
-	position( Position const & position_a )
+	position( Position const & position_a ) override
 	{
 		debug_assert( position_a.is_finite() );
 		position_ = position_a;
@@ -309,7 +308,7 @@ public: // Properties
 	/// @brief Position
 	inline
 	Position const &
-	xyz() const
+	xyz() const override
 	{
 		return position_;
 	}
@@ -318,7 +317,7 @@ public: // Properties
 	/// @brief Position assignment
 	inline
 	void
-	xyz( Position const & position_a )
+	xyz( Position const & position_a ) override
 	{
 		position_ = position_a;
 	}
@@ -327,7 +326,7 @@ public: // Properties
 	/// @brief x coordinate
 	inline
 	Length const &
-	x() const
+	x() const override
 	{
 		return position_.x();
 	}
@@ -336,7 +335,7 @@ public: // Properties
 	/// @brief y coordinate
 	inline
 	Length const &
-	y() const
+	y() const override
 	{
 		return position_.y();
 	}
@@ -345,7 +344,7 @@ public: // Properties
 	/// @brief z coordinate
 	inline
 	Length const &
-	z() const
+	z() const override
 	{
 		return position_.z();
 	}
@@ -354,7 +353,7 @@ public: // Properties
 	/// @brief Distance to an Atom
 	inline
 	Length
-	distance( Atom const & atom ) const
+	distance( Atom const & atom ) const override
 	{
 		return position_.distance( atom.position() );
 	}
@@ -363,7 +362,7 @@ public: // Properties
 	/// @brief Distance squared to an Atom
 	inline
 	Length
-	distance_squared( Atom const & atom ) const
+	distance_squared( Atom const & atom ) const override
 	{
 		return position_.distance_squared( atom.position() );
 	}
@@ -372,7 +371,7 @@ public: // Properties
 	/// @brief Parent atom pointer
 	inline
 	AtomOP
-	parent()
+	parent() override
 	{
 		return parent_.lock();
 	}
@@ -381,14 +380,14 @@ public: // Properties
 	/// @brief Parent atom pointer
 	inline
 	AtomCOP
-	parent() const
+	parent() const override
 	{
 		return parent_.lock();
 	}
 
 
 	void
-	parent( AtomAP parent_in )
+	parent( AtomAP parent_in ) override
 	{
 		parent_ = parent_in;
 		AtomOP parent_op = parent_.lock();
@@ -398,16 +397,16 @@ public: // Properties
 
 	/// @brief stub centerd at this atom
 	Stub
-	get_stub() const;
+	get_stub() const override;
 
 	/// @brief stub used to build this atom
 	Stub
-	get_input_stub() const;
+	get_input_stub() const override;
 
 	/// @brief stub atom1 's id
 	inline                                 // PHIL: These AtomID fxns could be faster by implementing analogs to the atom lookup calls at the cost of more near-duplicate code
 	AtomID const &
-	stub_atom1_id() const
+	stub_atom1_id() const override
 	{
 		return stub_atom1()->id();
 	}
@@ -415,7 +414,7 @@ public: // Properties
 	/// @brief stub atom2's id
 	inline
 	AtomID const &
-	stub_atom2_id() const
+	stub_atom2_id() const override
 	{
 		return raw_stub_atom2()->id();
 	}
@@ -423,7 +422,7 @@ public: // Properties
 	/// @brief stub atom3's id
 	inline
 	AtomID const &
-	stub_atom3_id() const
+	stub_atom3_id() const override
 	{
 		return stub_atom3()->id();
 	}
@@ -432,7 +431,7 @@ public: // Properties
 	/** it is its parent*/
 	inline
 	AtomCOP
-	input_stub_atom0() const
+	input_stub_atom0() const override
 	{
 		return parent();
 	}
@@ -441,7 +440,7 @@ public: // Properties
 	/** it is its parent's stub_atom1, which normally the parent itself*/
 	inline
 	AtomCOP
-	input_stub_atom1() const
+	input_stub_atom1() const override
 	{
 		AtomCOP p = parent();
 		debug_assert( p != 0 );
@@ -452,7 +451,7 @@ public: // Properties
 	/** it is its parent's stub_atom2, which normally the parent's parent*/
 	inline
 	AtomCOP
-	input_stub_atom2() const
+	input_stub_atom2() const override
 	{
 		AtomCOP p = parent();
 		debug_assert( p != 0 );
@@ -463,7 +462,7 @@ public: // Properties
 	/** it is either its previous sibling or its parent's stub_atom3,*/
 	inline
 	AtomCOP
-	input_stub_atom3() const
+	input_stub_atom3() const override
 	{
 		AtomCOP parent_op = parent();
 		AtomCOP sibling_op( previous_sibling() );
@@ -479,7 +478,7 @@ public: // Properties
 	/// @brief input stub atom0's id
 	inline
 	AtomID const &
-	input_stub_atom0_id() const
+	input_stub_atom0_id() const override
 	{
 		return raw_input_stub_atom0()->id();
 	}
@@ -487,7 +486,7 @@ public: // Properties
 	/// @brief input stub atom1's id
 	inline
 	AtomID const &
-	input_stub_atom1_id() const
+	input_stub_atom1_id() const override
 	{
 		return raw_input_stub_atom1()->id();
 	}
@@ -495,7 +494,7 @@ public: // Properties
 	/// @brief input stub atom2's id
 	inline
 	AtomID const &
-	input_stub_atom2_id() const
+	input_stub_atom2_id() const override
 	{
 		return raw_input_stub_atom2()->id();
 	}
@@ -503,7 +502,7 @@ public: // Properties
 	/// @brief input stub atom3's id
 	inline
 	AtomID const &
-	input_stub_atom3_id() const
+	input_stub_atom3_id() const override
 	{
 		return input_stub_atom3()->id();
 	}
@@ -512,23 +511,23 @@ public: // Properties
 	/// @brief  routines for navigating the tree
 	/// find the sibling atom before itself
 	AtomCOP
-	previous_sibling() const;
+	previous_sibling() const override;
 
 	/// @brief find the child atom before this child in the list
 	AtomCOP
 	previous_child(
 		AtomCOP child
-	) const;
+	) const override;
 
 	/// @brief find the child atom after this child in the list
 	AtomOP
 	next_child(
 		AtomCOP child
-	);
+	) override;
 
 	/// @brief whether a Stub can be defined for this atom
 	bool
-	stub_defined() const;
+	stub_defined() const override;
 
 
 protected: // Methods
@@ -537,15 +536,15 @@ protected: // Methods
 	void
 	update_child_torsions(
 		AtomOP const child
-	);
+	) override;
 
 	/// @brief constant iterator of the first non-jump (bonded) atom in the vector of children atoms.
 	Atoms_ConstIterator
-	nonjump_atoms_begin() const;
+	nonjump_atoms_begin() const override;
 
 	/// @brief iterator of the first non-jump (bonded) atom in the vector of children atoms.
 	Atoms_Iterator
-	nonjump_atoms_begin();
+	nonjump_atoms_begin() override;
 
 	/// @brief helper function to abort if something is wrong in atom tree
 	void
@@ -553,22 +552,20 @@ protected: // Methods
 
 
 	/// @brief Transform atom and children by linear transformation
-	virtual
 	void
 	transform_Ax_plus_b_recursive(
 		Matrix const & A,
 		Vector const & b,
 		ResidueCoordinateChangeList & res_change_list
-	);
+	) override;
 
 
-	//virtual
 	void
-	get_path_from_root( utility::vector1< AtomCAP > & path ) const;
+	get_path_from_root( utility::vector1< AtomCAP > & path ) const override;
 
 
 	bool
-	atom_is_on_path_from_root( AtomCOP atm ) const;
+	atom_is_on_path_from_root( AtomCOP atm ) const override;
 
 
 	/// @brief Records this atom as having a changed DOF in the input list
@@ -593,13 +590,12 @@ public:
 
 	/// @brief base class implementation that traverses the subtree routed at this node
 	/// in the depth-first traversal of the atoms requiring coordinate updates.
-	virtual
 	void
 	dfs(
 		AtomDOFChangeSet & changeset,
 		ResidueCoordinateChangeList & res_change_list,
 		Size const start_atom_index
-	) const;
+	) const override;
 
 
 protected:
@@ -637,41 +633,33 @@ protected: // Fields -- should be private...
 
 public:
 
-	virtual
 	Atom const *
-	raw_parent() const;
+	raw_parent() const override;
 
-	virtual
 	Atom const *
-	raw_previous_sibling() const;
+	raw_previous_sibling() const override;
 
-	virtual
 	Atom const *
 	raw_previous_child(
 		Atom const * child
-	) const;
+	) const override;
 
-	virtual
 	Atom const *
-	raw_input_stub_atom0() const;
+	raw_input_stub_atom0() const override;
 
-	virtual
 	Atom const *
-	raw_input_stub_atom1() const;
+	raw_input_stub_atom1() const override;
 
-	virtual
 	Atom const *
-	raw_input_stub_atom2() const;
+	raw_input_stub_atom2() const override;
 
-	virtual
 	Atom const *
-	raw_input_stub_atom3() const;
+	raw_input_stub_atom3() const override;
 
-	virtual
 	Atom const *
 	raw_get_nonjump_atom(
 		Size const i
-	) const;
+	) const override;
 
 
 private:

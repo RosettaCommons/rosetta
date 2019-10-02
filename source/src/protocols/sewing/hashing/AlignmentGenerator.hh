@@ -37,7 +37,7 @@ public:
 	AlignmentGenerator( HasherSettings const & hasher_settings, SegmentVectorCOP segment_vector, std::map< core::Size, data_storage::SmartSegmentOP > pdbsegs );
 	AlignmentGenerator(AlignmentGenerator const & src);
 
-	virtual ~AlignmentGenerator();
+	~AlignmentGenerator() override;
 
 	///@brief Determines all possible basis pairs for an edge given the two SewSegments involved.
 	utility::vector1< std::pair< core::Size, core::Size > > get_all_alignments( data_storage::SmartSegmentCOP s1, data_storage::SmartSegmentCOP s2 );

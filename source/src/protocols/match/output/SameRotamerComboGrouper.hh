@@ -47,24 +47,20 @@ public:
 	SameRotamerComboGrouper();
 	SameRotamerComboGrouper( Size ncst );
 
-	virtual
-	~SameRotamerComboGrouper();
+	~SameRotamerComboGrouper() override;
 
-	virtual
 	Size
 	assign_group_for_match(
 		match const & m
-	);
+	) override;
 
-	virtual
 	Size
 	assign_group_for_match(
 		match_dspos1 const & m
-	);
+	) override;
 
-	virtual
 	void
-	reset();
+	reset() override;
 
 	void
 	set_n_geometric_constraints( Size n_csts );

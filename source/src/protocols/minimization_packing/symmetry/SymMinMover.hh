@@ -48,7 +48,7 @@ public:
 	// Constructors should be inherited from MinMover
 	using MinMover::MinMover;
 
-	~SymMinMover();
+	~SymMinMover() override;
 
 	// These are kept to keep the correct typing
 	protocols::moves::MoverOP clone() const override;

@@ -64,7 +64,7 @@ public:
 
 	DownstreamBuilder( DownstreamBuilder const & );
 
-	virtual ~DownstreamBuilder();
+	~DownstreamBuilder() override;
 
 	virtual
 	DownstreamBuilderOP

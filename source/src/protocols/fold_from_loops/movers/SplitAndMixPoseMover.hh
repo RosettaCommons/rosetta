@@ -55,7 +55,7 @@ public:
 	/// @brief Empty Constructor
 	SplitAndMixPoseMover();
 	/// @brief Destructor
-	inline ~SplitAndMixPoseMover(){};
+	inline ~SplitAndMixPoseMover() override{};
 
 	/// @brief ResidueSelector Setter
 	inline void set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector ){ selector_ = selector; };
@@ -111,18 +111,18 @@ public:
 	core::Size count_segments( core::pose::Pose const & pose );
 
 	/// @brief Apply Mover
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 	utility::vector1< core::pose::PoseOP > apply_without_merge( core::pose::Pose const & pose );
 
-	inline std::string get_name() const { return mover_name(); };
+	inline std::string get_name() const override { return mover_name(); };
 	inline static std::string mover_name() { return "SplitAndMixPoseMover"; };
-	inline moves::MoverOP clone() const { return utility::pointer::make_shared< SplitAndMixPoseMover >( *this ); };
-	inline moves::MoverOP fresh_instance() const{ return utility::pointer::make_shared< SplitAndMixPoseMover >(); };
+	inline moves::MoverOP clone() const override { return utility::pointer::make_shared< SplitAndMixPoseMover >( *this ); };
+	inline moves::MoverOP fresh_instance() const override{ return utility::pointer::make_shared< SplitAndMixPoseMover >(); };
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:

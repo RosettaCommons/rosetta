@@ -103,7 +103,7 @@ public:
 
 public:
 	FullatomDisulfidePotential();
-	virtual ~FullatomDisulfidePotential();
+	~FullatomDisulfidePotential() override;
 
 	void
 	print_score_functions() const;
@@ -194,21 +194,19 @@ class CBSG_Dihedral_Func : public func::Func
 {
 public:
 	CBSG_Dihedral_Func();
-	virtual ~CBSG_Dihedral_Func();
+	~CBSG_Dihedral_Func() override;
 
 	func::FuncOP
-	clone() const { return utility::pointer::make_shared< CBSG_Dihedral_Func >( *this ); };
+	clone() const override { return utility::pointer::make_shared< CBSG_Dihedral_Func >( *this ); };
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	virtual
 	Real
-	func( Real const ) const;
+	func( Real const ) const override;
 
-	virtual
 	Real
-	dfunc( Real const ) const;
+	dfunc( Real const ) const override;
 private:
 	core::scoring::func::CircularSigmoidalFunc csf_cbang1_;
 	core::scoring::func::CircularSigmoidalFunc csf_cbang2_;
@@ -226,21 +224,19 @@ class SGSG_Dihedral_Func : public func::Func
 public:
 	SGSG_Dihedral_Func();
 
-	~SGSG_Dihedral_Func();
+	~SGSG_Dihedral_Func() override;
 
 	func::FuncOP
-	clone() const { return utility::pointer::make_shared< SGSG_Dihedral_Func >( *this ); };
+	clone() const override { return utility::pointer::make_shared< SGSG_Dihedral_Func >( *this ); };
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	virtual
 	Real
-	func( Real const ) const;
+	func( Real const ) const override;
 
-	virtual
 	Real
-	dfunc( Real const ) const;
+	dfunc( Real const ) const override;
 private:
 	/// Access the histogram for this Func
 	core::scoring::func::CircularSigmoidalFunc csf_cbang1a_;
@@ -260,22 +256,20 @@ class CB_Angle_Func : public func::Func
 public:
 	CB_Angle_Func();
 
-	~CB_Angle_Func();
+	~CB_Angle_Func() override;
 
 	func::FuncOP
-	clone() const { return utility::pointer::make_shared< CB_Angle_Func >( *this ); };
+	clone() const override { return utility::pointer::make_shared< CB_Angle_Func >( *this ); };
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	virtual
 	Real
-	func( Real const ) const;
+	func( Real const ) const override;
 
 
-	virtual
 	Real
-	dfunc( Real const ) const;
+	dfunc( Real const ) const override;
 private:
 	core::scoring::func::CircularSigmoidalFunc csf_cbang1_;
 	core::scoring::func::CircularSigmoidalFunc csf_cbang2_;
@@ -293,21 +287,19 @@ class SG_Dist_Func : public func::Func
 public:
 	SG_Dist_Func();
 
-	~SG_Dist_Func();
+	~SG_Dist_Func() override;
 
 	func::FuncOP
-	clone() const { return utility::pointer::make_shared< SG_Dist_Func >( *this ); };
+	clone() const override { return utility::pointer::make_shared< SG_Dist_Func >( *this ); };
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	virtual
 	Real
-	func( Real const ) const;
+	func( Real const ) const override;
 
-	virtual
 	Real
-	dfunc( Real const ) const;
+	dfunc( Real const ) const override;
 
 private:
 	/// Access the histogram for this Func

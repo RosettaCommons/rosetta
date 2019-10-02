@@ -40,7 +40,7 @@ public:
 	/// computing
 	ShortRangeTwoBodyEnergy( EnergyMethodCreatorOP );
 
-	virtual ~ShortRangeTwoBodyEnergy();
+	~ShortRangeTwoBodyEnergy() override;
 
 
 	/// @brief how far apart must two heavy atoms be to have a zero interaction energy?
@@ -74,7 +74,6 @@ public:
 	/// and calls derived class's residue_pair_energy method.  Since short range rotamer pairs
 	/// may not need calculation, the default method looks at blocks of residue type pairs
 	/// and only calls the residue_pair_energy method if the rotamer pairs are within range
-	virtual
 	void
 	evaluate_rotamer_pair_energies(
 		conformation::RotamerSetBase const & set1,
@@ -83,7 +82,7 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
-	) const;
+	) const override;
 
 
 	/// @brief Batch computation of rotamer/background energies.  Need not be overriden
@@ -92,7 +91,6 @@ public:
 	/// Since short range rotamer pairs may not need calculation, the default method
 	/// looks at blocks of residue type pairs and only calls the residue_pair_energy method
 	/// if the rotamer pairs are within range
-	virtual
 	void
 	evaluate_rotamer_background_energies(
 		conformation::RotamerSetBase const & set,
@@ -101,7 +99,7 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
-	) const;
+	) const override;
 
 	/// @brief Batch computation of rotamer/background energies.  Need not be overriden
 	/// in derived class -- by default, iterates over all rotamers in the set, and calls
@@ -109,7 +107,6 @@ public:
 	/// Since short range rotamer pairs may not need calculation, the default method
 	/// looks at blocks of residue type pairs and only calls the residue_pair_energy method
 	/// if the rotamer pairs are within range
-	virtual
 	void
 	evaluate_rotamer_background_energy_maps(
 		conformation::RotamerSetBase const & set,
@@ -118,7 +115,7 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		utility::vector1< EnergyMap > & emaps
-	) const;
+	) const override;
 
 
 };

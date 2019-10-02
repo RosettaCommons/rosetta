@@ -33,21 +33,21 @@ public:
 	RNA_ChainClosableGeometryResidueBasedScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker );
 
 	//destructor
-	~RNA_ChainClosableGeometryResidueBasedScreener();
+	~RNA_ChainClosableGeometryResidueBasedScreener() override;
 
 public:
 
 	void
-	get_update( sampler::StepWiseSamplerOP sampler );
+	get_update( sampler::StepWiseSamplerOP sampler ) override;
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	std::string
-	name() const { return "RNA_ChainClosableGeometryResidueBasedScreener"; }
+	name() const override { return "RNA_ChainClosableGeometryResidueBasedScreener"; }
 
 	StepWiseScreenerType
-	type() const { return RNA_CHAIN_CLOSABLE_GEOMETRY_RESIDUE_BASED; }
+	type() const override { return RNA_CHAIN_CLOSABLE_GEOMETRY_RESIDUE_BASED; }
 
 private:
 

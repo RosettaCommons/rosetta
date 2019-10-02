@@ -46,28 +46,25 @@ public:
 	SymmetricLigandEnergy();
 
 	/// @brief dtor
-	virtual ~SymmetricLigandEnergy();
+	~SymmetricLigandEnergy() override;
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -77,14 +74,12 @@ public:
 		EnergyMap const & emap,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 	/// @brief SymmetricLigandEnergy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
-	virtual
-	core::Size version() const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
+	core::Size version() const override;
 
 
 };

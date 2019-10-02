@@ -47,28 +47,23 @@ public:
 
 	Fa_MbenvEnergy( etable::MembEtable const & memb_etable_in );
 
-	virtual
-	EnergyMethodOP clone() const;
+	EnergyMethodOP clone() const override;
 
-	virtual
-	void residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, EnergyMap & emap ) const;
+	void residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, EnergyMap & emap ) const override;
 
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	setup_for_derivatives(
 		pose::Pose & pose,
 		ScoreFunction const & scfxn
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -78,11 +73,10 @@ public:
 		EnergyMap const & emap,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 	/// @brief Fa_MbenvEnergy is context independent; indicates that no context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 
 	MembraneTopology const & MembraneTopology_from_pose( pose::Pose const & ) const;
@@ -94,7 +88,7 @@ public:
 	setup_for_scoring(
 		pose::Pose & pose,
 		ScoreFunction const &
-	) const;
+	) const override;
 
 private:
 
@@ -115,8 +109,7 @@ private:
 
 	Membrane_FAPotential const & potential_;
 	mutable Real fa_mbenv_weight_; // hold this while calculating derivatives.
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

@@ -79,40 +79,40 @@ public:
 		ScoreType scotype = coordinate_constraint
 	);
 
-	~CoordinateConstraint();
+	~CoordinateConstraint() override;
 
 
-	virtual std::string type() const;
+	std::string type() const override;
 
-	virtual ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
-	virtual ConstraintOP clone( core::scoring::func::FuncOP ) const;
+	ConstraintOP clone( core::scoring::func::FuncOP ) const override;
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
 	/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
 	/// to the new object. Intended to be implemented by derived classes.
-	virtual ConstraintOP remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map=NULL ) const;
+	ConstraintOP remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map=NULL ) const override;
 
 
-	void show( std::ostream& out ) const;
+	void show( std::ostream& out ) const override;
 
 	// @brief Reads the definition of a Constraint from the given std::istream,
 	// using the given Pose, and the given func::FuncFactory. This method is intended
 	// to be overridden by derived classes if they'd like to use the
 	// ConstraintIO machinery.
-	virtual void read_def( std::istream &, pose::Pose const &,func::FuncFactory const & );
+	void read_def( std::istream &, pose::Pose const &,func::FuncFactory const & ) override;
 
 	/// @brief possibility to do object comparison instead
 	/// of pointer comparison
-	virtual bool operator == ( Constraint const & other_cst) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	bool operator == ( Constraint const & other_cst) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
-	void show_def( std::ostream& out, pose::Pose const& pose ) const;
+	void show_def( std::ostream& out, pose::Pose const& pose ) const override;
 
 	// @brief take coordinates, distances, angles, etc from given pose
 	///
-	virtual void steal_def( pose::Pose const& );
+	void steal_def( pose::Pose const& ) override;
 
 	Real
 	non_virtual_score(
@@ -123,16 +123,13 @@ public:
 	using Constraint::score;
 	using Constraint::dist;
 
-	virtual
 	void
-	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const override;
 
-	virtual
 	core::Real
-	dist( core::scoring::func::XYZ_Func const & xyz ) const;
+	dist( core::scoring::func::XYZ_Func const & xyz ) const override;
 
 	// atom deriv
-	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,
@@ -140,32 +137,30 @@ public:
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
 
 	Size
-	natoms() const;
+	natoms() const override;
 
-	virtual
 	ConstraintOP
-	remap_resid( core::id::SequenceMapping const &seqmap ) const;
+	remap_resid( core::id::SequenceMapping const &seqmap ) const override;
 
 	AtomID const &
-	atom( Size const n ) const;
+	atom( Size const n ) const override;
 
 	// UNDEFINED, commenting out to fix PyRosetta build  void set_atom( Size const index, AtomID const atom_id );
 
-	virtual Size show_violations(
+	Size show_violations(
 		std::ostream& out,
 		pose::Pose const& pose,
 		Size verbose_level,
 		Real threshold = 1
-	) const;
+	) const override;
 
 
 	/// @brief Returns the func::Func object associated with this Constraint object.
-	virtual
-	core::scoring::func::Func const & get_func() const;
+	core::scoring::func::Func const & get_func() const override;
 
 private:
 

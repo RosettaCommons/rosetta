@@ -46,7 +46,7 @@ public:
 	utility::fixedsizearray1< core::Real, 4 >
 	mainchain_dihedral_values() const { return mainchain_dihedral_values_; }
 
-	virtual ~MainChainTorsionSet();
+	~MainChainTorsionSet() override;
 
 	MainChainTorsionSet &
 	operator=( MainChainTorsionSet const & src );

@@ -91,7 +91,7 @@ public:
 
 public:
 	ResidueCartBondedParameters();
-	virtual ~ResidueCartBondedParameters();
+	~ResidueCartBondedParameters() override;
 
 	void add_length_parameter(  Size2 atom_inds, CartBondedParametersCOP );
 	void add_angle_parameter(   Size3 atom_inds, CartBondedParametersCOP );
@@ -242,7 +242,7 @@ public:
 	IdealParametersDatabase( IdealParametersDatabase const & ) = delete;
 	IdealParametersDatabase & operator=( IdealParametersDatabase const & ) = delete;
 
-	~IdealParametersDatabase();
+	~IdealParametersDatabase() override;
 
 	CartBondedParametersCOP
 	lookup_improper(
@@ -429,18 +429,17 @@ public:
 
 	CartesianBondedEnergy( CartesianBondedEnergy const & src );
 
-	~CartesianBondedEnergy();
+	~CartesianBondedEnergy() override;
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
-	virtual void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	void
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const;
+	void
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const override;
 
 	/// @brief Idealize the virtual NV atom of every proline in the pose. This
 	///prevents innacurate pro-close scores when switching between cartesian
@@ -450,23 +449,22 @@ public:
 		pose::Pose & pose
 	) const;
 
-	virtual
 	bool
 	defines_residue_pair_energy(
 		pose::Pose const & pose,
 		Size res1,
 		Size res2
-	) const;
+	) const override;
 
 
-	virtual void
+	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	void
 	eval_intrares_energy(
@@ -474,7 +472,7 @@ public:
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const;
+	) const override;
 
 	void
 	eval_intrares_derivatives(
@@ -483,7 +481,7 @@ public:
 		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
 	void
 	eval_residue_pair_derivatives(
@@ -496,7 +494,7 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
 	void
 	eval_residue_pair_derivatives_sorted(
@@ -512,7 +510,6 @@ public:
 	) const;
 
 	// dof (bbdep) derivatives
-	virtual
 	Real
 	eval_intraresidue_dof_derivative(
 		conformation::Residue const & rsd,
@@ -522,30 +519,26 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return true; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return true; }
 
-	virtual
 	bool
-	defines_intrares_dof_derivatives( pose::Pose const & ) const { return true; }
+	defines_intrares_dof_derivatives( pose::Pose const & ) const override { return true; }
 
 	//fpd  use the new minimizer interface
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 	virtual
 	Distance
 	atomic_interaction_cutoff() const;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	methods::LongRangeEnergyType
-	long_range_type() const;
+	long_range_type() const override;
 
 private:
 
@@ -869,8 +862,7 @@ private:
 	// option
 	bool linear_bonded_potential_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	std::string pro_nv_;
 	bool skip_cutpoints_; // skip evaluation if rsd1/rsd2 are defined as cutpoint

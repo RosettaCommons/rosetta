@@ -50,7 +50,7 @@ public:
 
 	RotamericSingleResidueDunbrackLibraryParser(RotamericSingleResidueDunbrackLibraryParser const & src);
 
-	virtual ~RotamericSingleResidueDunbrackLibraryParser();
+	~RotamericSingleResidueDunbrackLibraryParser() override;
 
 	RotamericSingleResidueDunbrackLibraryParserOP
 	clone() const;

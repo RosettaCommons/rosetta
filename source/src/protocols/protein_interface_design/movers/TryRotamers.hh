@@ -79,7 +79,7 @@ public:
 
 	protocols::moves::MoverOP clone() const override { return( utility::pointer::make_shared< TryRotamers >( *this ) ); }
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< TryRotamers >(); }
-	virtual ~TryRotamers();
+	~TryRotamers() override;
 
 	std::string
 	get_name() const override;

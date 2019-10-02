@@ -36,15 +36,14 @@ class MonteCarloLoader : public DataLoader
 {
 public:
 	MonteCarloLoader();
-	virtual ~MonteCarloLoader();
+	~MonteCarloLoader() override;
 
 	/// @brief The MonteCarloLoader will create named MonteCarlo objects and load them into the basic::datacache::DataMap
-	virtual
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 	static std::string loader_name();
 	static std::string monte_carlo_loader_ct_namer( std::string const & element_name );

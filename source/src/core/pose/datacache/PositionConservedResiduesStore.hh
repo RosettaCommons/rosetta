@@ -50,7 +50,7 @@ public:
 	PositionConservedResiduesStore();
 
 	/// @brief Creates a copy of this instance
-	basic::datacache::CacheableDataOP clone() const;
+	basic::datacache::CacheableDataOP clone() const override;
 
 	/// @brief Returns true if <residue> is positionally conserved, false otherwise
 	bool is_conserved(core::Size residue) const;

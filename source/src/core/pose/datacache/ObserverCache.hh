@@ -75,8 +75,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	virtual
-	~ObserverCache();
+	~ObserverCache() override;
 
 
 private: // disallowed constructors

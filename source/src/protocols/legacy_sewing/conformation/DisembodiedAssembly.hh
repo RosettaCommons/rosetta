@@ -44,15 +44,14 @@ public:
 	///@brief default constructor
 	DisembodiedAssembly();
 
-	virtual
 	AssemblyOP
-	clone();
+	clone() override;
 
-	virtual void
+	void
 	append_model(
 		Model const & model,
 		ScoreResult const & edge_score
-	);
+	) override;
 
 };
 

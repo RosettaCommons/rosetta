@@ -54,8 +54,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~SymAtomTreeMultifunc()
+	~SymAtomTreeMultifunc() override
 	{}
 
 
@@ -63,19 +62,16 @@ public: // Methods
 
 
 	// func
-	virtual
 	Real
-	operator ()( Multivec const & vars ) const;
+	operator ()( Multivec const & vars ) const override;
 
 	// dfunc
-	virtual
 	void
-	dfunc( Multivec const & vars, Multivec & dE_dvars ) const;
+	dfunc( Multivec const & vars, Multivec & dE_dvars ) const override;
 
 	/// @brief Error state reached; dump out current pdb.
-	virtual
 	void
-	dump( Multivec const & vars, Multivec const & vars2 ) const;
+	dump( Multivec const & vars, Multivec const & vars2 ) const override;
 
 private: // data
 

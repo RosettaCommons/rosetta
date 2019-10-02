@@ -38,7 +38,7 @@ public:
 
 	KeepRegionMover(KeepRegionMover const & src);
 
-	virtual ~KeepRegionMover();
+	~KeepRegionMover() override;
 
 	void
 	apply(core::pose::Pose & pose) override;

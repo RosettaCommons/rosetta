@@ -54,10 +54,10 @@ public:
 		bool recover_low);
 
 	/// @brief Applies the underlying mover to <pose> the specified number of times
-	void apply(Pose& pose);
+	void apply(Pose& pose) override;
 
 	/// @brief Returns this mover's name
-	std::string get_name() const;
+	std::string get_name() const override;
 
 	// -- Accessors -- //
 	bool recover_low() const;

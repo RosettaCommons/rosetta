@@ -47,10 +47,10 @@ public:
 	typedef core::pack::task::operation::TaskOperation parent;
 
 	InteractingRotamerExplosion();
-	virtual ~InteractingRotamerExplosion();
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
-	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
-	virtual void parse_tag( TagCOP tag, DataMap & datamap );
+	~InteractingRotamerExplosion() override;
+	core::pack::task::operation::TaskOperationOP clone() const override;
+	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const override;
+	void parse_tag( TagCOP tag, DataMap & datamap ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "InteractingRotamerExplosion"; }
 

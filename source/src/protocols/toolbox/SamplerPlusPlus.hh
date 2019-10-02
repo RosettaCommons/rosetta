@@ -56,7 +56,7 @@ public:
 		is_init_( false )
 	{}
 
-	virtual ~SamplerPlusPlus(){}
+	~SamplerPlusPlus() override{}
 
 	/// @brief Initialization
 	virtual void init() = 0;
@@ -68,10 +68,10 @@ public:
 	virtual void operator++() = 0;
 
 	/// @brief Apply the current rotamer to pose
-	virtual void apply( core::pose::Pose & ) = 0;
+	void apply( core::pose::Pose & ) override = 0;
 
 	/// @brief Name of the class
-	virtual std::string get_name() const = 0;
+	std::string get_name() const override = 0;
 
 	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
 	virtual SamplerPlusPlusType type() const = 0;

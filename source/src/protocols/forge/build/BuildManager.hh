@@ -97,8 +97,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	virtual
-	~BuildManager();
+	~BuildManager() override;
 
 
 public: // assignment

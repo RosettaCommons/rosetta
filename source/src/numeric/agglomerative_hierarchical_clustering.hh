@@ -71,7 +71,7 @@ public:
 	void comparator( utility::vector1< utility::vector1<Real> > &distance_matrix,
 		utility::vector1<Size> const & members1,
 		utility::vector1<Size> const & members2,
-		ClusterOptions & co);
+		ClusterOptions & co) override;
 };
 
 class AverageLinkClusterer : public AgglomerativeHierarchicalClusterer {
@@ -79,7 +79,7 @@ public:
 	void comparator( utility::vector1< utility::vector1<Real> > &distance_matrix,
 		utility::vector1<Size> const & members1,
 		utility::vector1<Size> const & members2,
-		ClusterOptions & co);
+		ClusterOptions & co) override;
 };
 
 class CompleteLinkClusterer : public AgglomerativeHierarchicalClusterer {
@@ -87,7 +87,7 @@ public:
 	void comparator( utility::vector1< utility::vector1<Real> > &distance_matrix,
 		utility::vector1<Size> const & members1,
 		utility::vector1<Size> const & members2,
-		ClusterOptions & co);
+		ClusterOptions & co) override;
 };
 
 } // numeric

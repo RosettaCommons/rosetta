@@ -46,20 +46,20 @@ class DbText : public  DbDataType {
 public:
 	DbText();
 	DbText(int size);
-	std::string print(utility::sql_database::sessionOP) const;
+	std::string print(utility::sql_database::sessionOP) const override;
 };
 
 class DbTextKey : public  DbDataType {
 public:
 	DbTextKey();
-	std::string print(utility::sql_database::sessionOP) const;
+	std::string print(utility::sql_database::sessionOP) const override;
 };
 
 //General integer data type
 class DbInteger : public DbDataType {
 public:
 	DbInteger();
-	std::string print(utility::sql_database::sessionOP) const;
+	std::string print(utility::sql_database::sessionOP) const override;
 };
 
 /// DOES NOT WORK WITH CPPDB - USE INTEGER INSTEAD
@@ -73,28 +73,28 @@ public:
 class DbBigInt : public DbDataType {
 public:
 	DbBigInt();
-	std::string print(utility::sql_database::sessionOP) const;
+	std::string print(utility::sql_database::sessionOP) const override;
 };
 
 //Double data type
 class DbDouble : public DbDataType {
 public:
 	DbDouble();
-	std::string print(utility::sql_database::sessionOP) const;
+	std::string print(utility::sql_database::sessionOP) const override;
 };
 
 //Real data type
 class DbReal : public DbDataType {
 public:
 	DbReal();
-	std::string print(utility::sql_database::sessionOP) const;
+	std::string print(utility::sql_database::sessionOP) const override;
 };
 
 //Struct Id has its own type due to incompatibilities between backends in regards to unsigned long longs
 class DbUUID : public DbDataType {
 public:
 	DbUUID();
-	std::string print(utility::sql_database::sessionOP) const;
+	std::string print(utility::sql_database::sessionOP) const override;
 };
 
 } // schema_generator

@@ -35,13 +35,13 @@ public:
 	);
 
 	/// @brief Initialization
-	void init();
+	void init() override;
 
 	/// @brief Apply the i-th rotamer to pose
-	void apply( core::pose::Pose & pose, core::Size const i );
+	void apply( core::pose::Pose & pose, core::Size const i ) override;
 
 	/// @brief Get the total number of rotamers in sampler
-	core::Size size() const {
+	core::Size size() const override {
 		runtime_assert( is_init() );
 		return pucker_states_.size();
 	}
@@ -75,10 +75,10 @@ public:
 	}
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RNA_SUGAR; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::RNA_SUGAR; }
 
 	/// @brief Name of the class
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	utility::vector1<core::chemical::rna::PuckerState> pucker_states_;

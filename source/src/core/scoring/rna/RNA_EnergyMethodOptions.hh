@@ -39,7 +39,7 @@ public:
 	RNA_EnergyMethodOptions();
 
 	//destructor
-	~RNA_EnergyMethodOptions();
+	~RNA_EnergyMethodOptions() override;
 
 	void initialize_from_options();
 

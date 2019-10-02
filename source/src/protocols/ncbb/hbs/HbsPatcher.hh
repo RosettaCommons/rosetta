@@ -34,10 +34,10 @@ public:
 	/// @brief
 	HbsPatcher( core::Size hbs_pre_position );
 
-	virtual ~HbsPatcher();
+	~HbsPatcher() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 

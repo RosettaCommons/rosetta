@@ -31,11 +31,11 @@ namespace loops_definers {
 class LoopsFileDefinerCreator : public LoopsDefinerCreator {
 public:
 	LoopsFileDefinerCreator();
-	virtual ~LoopsFileDefinerCreator();
+	~LoopsFileDefinerCreator() override;
 
-	virtual LoopsDefinerOP create_loops_definer() const;
-	virtual std::string type_name() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	LoopsDefinerOP create_loops_definer() const override;
+	std::string type_name() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //namespace

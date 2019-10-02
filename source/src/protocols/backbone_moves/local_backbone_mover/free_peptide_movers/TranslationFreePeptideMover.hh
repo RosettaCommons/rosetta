@@ -41,9 +41,9 @@ public:
 	/// whose amplitude is smaller than a given value
 	TranslationFreePeptideMover(Real max_amplitude);
 
-	virtual ~TranslationFreePeptideMover();
+	~TranslationFreePeptideMover() override;
 
-	virtual void apply(FreePeptide &free_peptide);
+	void apply(FreePeptide &free_peptide) override;
 
 private:
 

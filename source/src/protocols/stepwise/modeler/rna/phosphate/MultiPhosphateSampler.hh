@@ -43,21 +43,20 @@ public:
 		core::Size const moving_res /*sets partition*/ );
 
 	//destructor
-	~MultiPhosphateSampler();
+	~MultiPhosphateSampler() override;
 
 public:
 
 	MultiPhosphateSamplerOP
 	clone_sampler() const;
 
-	virtual
 	moves::MoverOP
-	clone() const { return clone_sampler();}
+	clone() const override { return clone_sampler();}
 
 	void
-	apply( core::pose::Pose & pose ){ copy_phosphates( pose ); }
+	apply( core::pose::Pose & pose ) override{ copy_phosphates( pose ); }
 
-	std::string get_name() const{ return "MultiPhosphateSampler"; }
+	std::string get_name() const override{ return "MultiPhosphateSampler"; }
 
 	void
 	sample_phosphates();

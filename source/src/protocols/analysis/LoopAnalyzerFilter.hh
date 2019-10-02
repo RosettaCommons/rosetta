@@ -42,7 +42,7 @@ public:
 	LoopAnalyzerFilter( protocols::loops::Loops const & loops, bool const tracer = false );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~LoopAnalyzerFilter();
+	~LoopAnalyzerFilter() override;
 
 	LoopAnalyzerFilter( LoopAnalyzerFilter const & rhs );
 

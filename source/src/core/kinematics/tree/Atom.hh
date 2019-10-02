@@ -104,8 +104,7 @@ public: // Creation
 
 
 	/// @brief Destructor
-	virtual
-	~Atom() {}
+	~Atom() override {}
 
 public: // self pointers
 

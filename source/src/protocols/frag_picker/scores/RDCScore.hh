@@ -37,10 +37,10 @@ public:
 	/// @brief  creates a RDC-based scoring function.
 	RDCScore( core::Size, core::Real, bool);
 
-	void do_caching( VallChunkOP );
-	void clean_up();
-	bool cached_score( FragmentCandidateOP, FragmentScoreMapOP );
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
+	void do_caching( VallChunkOP ) override;
+	void clean_up() override;
+	bool cached_score( FragmentCandidateOP, FragmentScoreMapOP ) override;
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 
 private:
@@ -56,7 +56,7 @@ public:
 		MakeFragmentScoringMethod("RDCScore") {
 	}
 
-	FragmentScoringMethodOP make( core::Size, core::Real, bool, FragmentPickerOP, std::string );
+	FragmentScoringMethodOP make( core::Size, core::Real, bool, FragmentPickerOP, std::string ) override;
 };
 
 } // scores

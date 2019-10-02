@@ -63,10 +63,10 @@ public:
 	CoupledMovesProtocol();
 	CoupledMovesProtocol(CoupledMovesProtocol const & cmp);
 
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	///@brief adds terms for the backrub step to the scorefunction.  Used by ctor; also useful when using set_score_fxn
 	void configure_score_fxn();
@@ -85,7 +85,7 @@ public:
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & ) /*override*/;
+		Pose const & ) override /*override*/;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	// setters
@@ -105,7 +105,7 @@ public:
 	void set_ligand_prob( core::Real const ligand_prob ) { ligand_prob_ = ligand_prob; }
 
 	// getters
-	std::string get_name() const;
+	std::string get_name() const override;
 	static std::string mover_name();
 	core::Size get_ntrials() { return ntrials_; }
 	std::string get_backbone_mover() const { return backbone_mover_; }

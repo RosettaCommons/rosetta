@@ -42,7 +42,7 @@ public:
 
 	protocols::filters::FilterOP clone() const override;
 	protocols::filters::FilterOP fresh_instance() const override;
-	virtual ~AtomicContactCountFilter();
+	~AtomicContactCountFilter() override;
 
 	// @brief Filter name
 

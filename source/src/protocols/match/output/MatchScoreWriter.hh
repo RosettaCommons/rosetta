@@ -49,7 +49,7 @@ public:
 	MatchScoreWriter & operator=(MatchScoreWriter const & object_to_copy);
 
 	// Destructor
-	~MatchScoreWriter();
+	~MatchScoreWriter() override;
 
 	// Standard Rosetta methods ////////////////////////////////////////////////
 	/// @brief  Generate string representation of MatchScoreWriter for debugging purposes.

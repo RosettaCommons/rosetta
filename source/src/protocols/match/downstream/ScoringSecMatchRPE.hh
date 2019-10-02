@@ -51,7 +51,7 @@ public:
 	//ScoringSecMatchRPE( std::string const & s_in);
 	ScoringSecMatchRPE( std::string const & s_in, core::pose::Pose const & ref_pose);
 
-	virtual ~ScoringSecMatchRPE();
+	~ScoringSecMatchRPE() override;
 
 	virtual
 	core::Real
@@ -67,12 +67,11 @@ public:
 	void
 	setPose( core::pose::Pose const & ref_pose );
 
-	virtual
 	bool
 	evaluate_residues(
 		core::conformation::Residue const & match_res,
 		core::conformation::Residue const & target_res
-	) const;
+	) const override;
 
 	virtual
 	bool
@@ -88,13 +87,11 @@ public:
 		core::conformation::Residue const & target_res
 	) const;
 
-	virtual
 	bool
-	require_all_target_residue_atom_coordinates() const;
+	require_all_target_residue_atom_coordinates() const override;
 
-	virtual
 	bool
-	require_target_atom_coordinate( Size target_atom_id ) const;
+	require_target_atom_coordinate( Size target_atom_id ) const override;
 
 	virtual
 	bool

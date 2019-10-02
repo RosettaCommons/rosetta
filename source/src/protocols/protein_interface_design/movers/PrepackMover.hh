@@ -35,7 +35,7 @@ class PrepackMover : public protocols::minimization_packing::PackRotamersMover
 public:
 	PrepackMover();
 	PrepackMover( core::scoring::ScoreFunctionCOP scorefxn, core::Size jump_num );
-	virtual ~PrepackMover();
+	~PrepackMover() override;
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;

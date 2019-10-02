@@ -57,17 +57,16 @@ public:
 	void jump( core::Size const j );
 	core::Size jump() const;
 
-	virtual ~ProteinInterfaceDesignOperation();
+	~ProteinInterfaceDesignOperation() override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "ProteinInterfaceDesign"; }
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	bool modify_before_jump() const{ return modify_before_jump_; }
 	void modify_before_jump( bool const m ) { modify_before_jump_ = m; }

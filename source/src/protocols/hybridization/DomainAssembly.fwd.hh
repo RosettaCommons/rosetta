@@ -21,7 +21,6 @@
 namespace protocols {
 //namespace comparative_modeling {
 namespace hybridization {
-			
 class TemlateAssembly;
 typedef utility::pointer::shared_ptr< TemlateAssembly > TemlateAssemblyOP;
 typedef utility::pointer::shared_ptr< TemlateAssembly const > TemlateAssemblyCOP;

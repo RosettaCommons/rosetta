@@ -39,9 +39,9 @@ class RestrictToRepackingRLT : public ResLvlTaskOperation
 public:
 	typedef ResLvlTaskOperation parent;
 public:
-	virtual ~RestrictToRepackingRLT();
-	virtual ResLvlTaskOperationOP clone() const;
-	virtual void apply( ResidueLevelTask & ) const;
+	~RestrictToRepackingRLT() override;
+	ResLvlTaskOperationOP clone() const override;
+	void apply( ResidueLevelTask & ) const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -53,13 +53,13 @@ public:
 	typedef ResLvlTaskOperation parent;
 public:
 	RestrictAbsentCanonicalAASRLT();
-	virtual ~RestrictAbsentCanonicalAASRLT();
-	virtual ResLvlTaskOperationOP clone() const;
-	virtual void apply( ResidueLevelTask & ) const;
+	~RestrictAbsentCanonicalAASRLT() override;
+	ResLvlTaskOperationOP clone() const override;
+	void apply( ResidueLevelTask & ) const override;
 	// if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
 	void aas_to_keep( utility::vector1< bool > const & );
 	void aas_to_keep( std::string const & );
-	virtual void parse_tag( TagCOP );
+	void parse_tag( TagCOP ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -74,13 +74,13 @@ public:
 	typedef ResLvlTaskOperation parent;
 public:
 	RestrictAbsentCanonicalAASExceptNativeRLT();
-	virtual ~RestrictAbsentCanonicalAASExceptNativeRLT();
-	virtual ResLvlTaskOperationOP clone() const;
-	virtual void apply( ResidueLevelTask & ) const;
+	~RestrictAbsentCanonicalAASExceptNativeRLT() override;
+	ResLvlTaskOperationOP clone() const override;
+	void apply( ResidueLevelTask & ) const override;
 	// if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
 	void aas_to_keep( utility::vector1< bool > const & );
 	void aas_to_keep( std::string const & );
-	virtual void parse_tag( TagCOP );
+	void parse_tag( TagCOP ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -96,15 +96,15 @@ public:
 public:
 	DisallowIfNonnativeRLT();
 	DisallowIfNonnativeRLT( utility::vector1< bool > disallowed_aas );
-	virtual ~DisallowIfNonnativeRLT();
-	virtual ResLvlTaskOperationOP clone() const;
-	virtual void apply(  ResidueLevelTask & rlt ) const;
+	~DisallowIfNonnativeRLT() override;
+	ResLvlTaskOperationOP clone() const override;
+	void apply(  ResidueLevelTask & rlt ) const override;
 	//helper functions to define desired AAs
 	void clear();
 	//define as true which residues are NOT allowed
 	void disallow_aas( utility::vector1< bool > const & cannonical_disallowed );
 	void disallow_aas( std::string const & aa_string );
-	virtual void parse_tag( TagCOP );
+	void parse_tag( TagCOP ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -120,9 +120,9 @@ class PreventRepackingRLT : public ResLvlTaskOperation
 public:
 	typedef ResLvlTaskOperation parent;
 public:
-	virtual ~PreventRepackingRLT();
-	virtual ResLvlTaskOperationOP clone() const;
-	virtual void apply( ResidueLevelTask & ) const;
+	~PreventRepackingRLT() override;
+	ResLvlTaskOperationOP clone() const override;
+	void apply( ResidueLevelTask & ) const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -135,10 +135,10 @@ public:
 public:
 	AddBehaviorRLT();
 	AddBehaviorRLT( std::string const & behavior );
-	virtual ~AddBehaviorRLT();
-	virtual ResLvlTaskOperationOP clone() const;
-	virtual void apply( ResidueLevelTask & ) const;
-	virtual void parse_tag( TagCOP );
+	~AddBehaviorRLT() override;
+	ResLvlTaskOperationOP clone() const override;
+	void apply( ResidueLevelTask & ) const override;
+	void parse_tag( TagCOP ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -153,9 +153,9 @@ public:
 	typedef ResLvlTaskOperation parent;
 public:
 	IncludeCurrentRLT();
-	virtual ~IncludeCurrentRLT();
-	virtual ResLvlTaskOperationOP clone() const;
-	virtual void apply( ResidueLevelTask & ) const;
+	~IncludeCurrentRLT() override;
+	ResLvlTaskOperationOP clone() const override;
+	void apply( ResidueLevelTask & ) const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -167,9 +167,9 @@ public:
 	typedef ResLvlTaskOperation parent;
 public:
 	PreserveCBetaRLT();
-	virtual ~PreserveCBetaRLT();
-	virtual ResLvlTaskOperationOP clone() const;
-	virtual void apply( ResidueLevelTask & ) const;
+	~PreserveCBetaRLT() override;
+	ResLvlTaskOperationOP clone() const override;
+	void apply( ResidueLevelTask & ) const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -181,10 +181,10 @@ public:
 	typedef ResLvlTaskOperation parent;
 public:
 	ExtraChiCutoffRLT();
-	virtual ~ExtraChiCutoffRLT();
-	virtual ResLvlTaskOperationOP clone() const;
-	virtual void apply( ResidueLevelTask & ) const;
-	virtual void parse_tag( TagCOP );
+	~ExtraChiCutoffRLT() override;
+	ResLvlTaskOperationOP clone() const override;
+	void apply( ResidueLevelTask & ) const override;
+	void parse_tag( TagCOP ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -199,10 +199,10 @@ public:
 	typedef ResLvlTaskOperation parent;
 public:
 	ExtraRotamersGenericRLT();
-	virtual ~ExtraRotamersGenericRLT();
-	virtual ResLvlTaskOperationOP clone() const;
-	virtual void apply( ResidueLevelTask & ) const;
-	virtual void parse_tag( TagCOP );
+	~ExtraRotamersGenericRLT() override;
+	ResLvlTaskOperationOP clone() const override;
+	void apply( ResidueLevelTask & ) const override;
+	void parse_tag( TagCOP ) override;
 
 	void ex1( bool value );
 	void ex2( bool value );

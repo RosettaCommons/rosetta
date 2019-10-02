@@ -42,7 +42,7 @@ public:
 	//SetResidueAliasMover( SetResidueAliasMover const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~SetResidueAliasMover();
+	~SetResidueAliasMover() override;
 
 
 public:

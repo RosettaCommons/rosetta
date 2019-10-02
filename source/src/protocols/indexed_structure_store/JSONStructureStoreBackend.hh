@@ -37,11 +37,11 @@ class JSONStructureStoreBackend : public StructureStoreProvider
 {
 public:
 	// @brief Retrieves structure and residue information from the backing store.
-	virtual bool can_load(std::string store_path);
-	virtual bool can_write(std::string store_path);
+	bool can_load(std::string store_path) override;
+	bool can_write(std::string store_path) override;
 	// @brief Retrieves structure and residue information from the backing store.
-	virtual StructureStoreOP load_store(std::string store_path);
-	virtual void write_store(std::string store_path, StructureStore & store);
+	StructureStoreOP load_store(std::string store_path) override;
+	void write_store(std::string store_path, StructureStore & store) override;
 };
 
 }

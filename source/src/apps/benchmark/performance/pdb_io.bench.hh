@@ -28,7 +28,7 @@ public:
 
 	PDB_IOBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
-	virtual void setUp() {
+	void setUp() override {
 
 		std::ifstream pdb("test_in.pdb");
 
@@ -40,7 +40,7 @@ public:
 		pdb.read(&pdb_string_[0], length);
 	}
 
-	virtual void run(core::Real scaleFactor) {
+	void run(core::Real scaleFactor) override {
 		core::Size reps( (core::Size)(10*scaleFactor) ); // /10
 		if ( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor
 		for ( core::Size i=0; i<reps; i++ ) {
@@ -48,7 +48,7 @@ public:
 		}
 	};
 
-	virtual void tearDown() {};
+	void tearDown() override {};
 
 	std::string pdb_string_;
 };

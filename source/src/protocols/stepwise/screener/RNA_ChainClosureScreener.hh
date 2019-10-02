@@ -37,24 +37,24 @@ public:
 	RNA_ChainClosureScreener( modeler::rna::checker::RNA_ChainClosureCheckerOP chain_closure_checker );
 
 	//destructor
-	~RNA_ChainClosureScreener();
+	~RNA_ChainClosureScreener() override;
 
 public:
 
 	std::string
-	name() const { return "RNA_ChainClosureScreener"; }
+	name() const override { return "RNA_ChainClosureScreener"; }
 
 	StepWiseScreenerType
-	type() const { return RNA_CHAIN_CLOSURE; }
+	type() const override { return RNA_CHAIN_CLOSURE; }
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	void
-	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ) override;
 
 	void
-	fast_forward( sampler::StepWiseSamplerOP sampler );
+	fast_forward( sampler::StepWiseSamplerOP sampler ) override;
 
 private:
 

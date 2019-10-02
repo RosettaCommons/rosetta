@@ -130,8 +130,7 @@ public:
 	void
 	recalculate_transforms( ) override;
 
-	virtual
-	~MirrorSymmetricConformation();
+	~MirrorSymmetricConformation() override;
 
 	/// @brief Append a new residue by a jump; clones this append to all copies
 	void

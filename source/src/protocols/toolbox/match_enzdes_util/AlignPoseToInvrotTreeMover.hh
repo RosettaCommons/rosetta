@@ -57,15 +57,13 @@ public:
 		AllowedSeqposForGeomCstCOP seqpos
 	);
 
-	~AlignPoseToInvrotTreeMover();
+	~AlignPoseToInvrotTreeMover() override;
 
-	virtual
 	std::string
-	get_name() const;
+	get_name() const override;
 
-	virtual
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
 	void
 	set_add_target_to_pose( bool const setting );

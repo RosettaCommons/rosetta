@@ -50,38 +50,33 @@ public:
 
 
 	/// clone
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
-	setup_for_scoring( core::pose::Pose & pose, core::scoring::ScoreFunction const & ) const;
+	setup_for_scoring( core::pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	residue_energy(
 		core::conformation::Residue const & rsd,
 		core::pose::Pose const &,
 		core::scoring::EnergyMap &
-	) const;
+	) const override;
 
 	// is there a better way to do this?
 	// (using the finalize to calculate the contact score)
-	virtual
 	void
 	finalize_total_energy(
 		core::pose::Pose & pose,
 		core::scoring::ScoreFunction const &,
 		core::scoring::EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -95,8 +90,7 @@ private:
 	core::scoring::EnvPairPotential const & env_potential_;
 
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

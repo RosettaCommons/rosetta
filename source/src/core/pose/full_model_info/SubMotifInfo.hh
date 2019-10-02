@@ -51,7 +51,7 @@ public:
 
 	SubMotifInfo( SubMotifInfo const & src );
 
-	~SubMotifInfo();
+	~SubMotifInfo() override;
 
 	SubMotifInfoOP
 	clone() const

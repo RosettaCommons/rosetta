@@ -48,22 +48,19 @@ public:
 	DNATorsionEnergy();
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const;
+	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const override;
 
 	// call the cst setup_for_derivatives wrapper
-	virtual
 	void
-	setup_for_derivatives( pose::Pose &pose, ScoreFunction const &scfxn ) const;
+	setup_for_derivatives( pose::Pose &pose, ScoreFunction const &scfxn ) const override;
 
 
 	// virtual
@@ -71,17 +68,15 @@ public:
 	// setup_for_packing( pose::Pose & pose, pack::task::PackerTask const & ) const;
 
 	/// @brief Evaluate the intra-residue constraint energy for a given residue
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -89,24 +84,22 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// called at the end of energy evaluation
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	/// called at the end of energy evaluation
-	virtual
 	void
 	finalize_after_derivatives(
 		pose::Pose & pose,
 		ScoreFunction const &
-	) const;
+	) const override;
 
 
 	/// called during gradient-based minimization inside dfunc
@@ -114,7 +107,6 @@ public:
 	F1 and F2 are not zeroed -- contributions from this atom are
 	just summed in
 	**/
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -124,7 +116,7 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 
 	/// uses the dof constraints
@@ -139,20 +131,17 @@ public:
 
 
 	bool
-	defines_intrares_energy( EnergyMap const & ) const { return true; }
+	defines_intrares_energy( EnergyMap const & ) const override { return true; }
 
 	bool
 	defines_residue_pair_energy( EnergyMap const & ) const { return true; }
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data

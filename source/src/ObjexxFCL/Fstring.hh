@@ -2062,8 +2062,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~Fsubstring()
+	~Fsubstring() override
 	{}
 
 

@@ -33,21 +33,21 @@ public:
 		core::pose::Pose & screening_pose );
 
 	//destructor
-	~ProteinCCD_ClosureScreener();
+	~ProteinCCD_ClosureScreener() override;
 
 public:
 
 	std::string
-	name() const { return "ProteinCCD_ClosureScreener"; }
+	name() const override { return "ProteinCCD_ClosureScreener"; }
 
 	StepWiseScreenerType
-	type() const { return PROTEIN_CCD_CLOSURE; }
+	type() const override { return PROTEIN_CCD_CLOSURE; }
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	void
-	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ) override;
 
 private:
 

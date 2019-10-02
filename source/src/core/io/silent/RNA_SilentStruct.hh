@@ -92,12 +92,12 @@ public:
 		Size const nres_in
 	);
 
-	virtual SilentStructOP clone() const {
+	SilentStructOP clone() const override {
 		return utility::pointer::make_shared< RNA_SilentStruct >( *this );
 	};
 
 	// destructor
-	~RNA_SilentStruct() {}
+	~RNA_SilentStruct() override {}
 
 	/// @brief Test if this RNA_SilentStruct is equal to the given RNA_SilentStruct in terms of conformation.
 	/// Doesn't check energies.
@@ -107,26 +107,26 @@ public:
 
 	/// @brief Tells this RNA_SilentStruct object to initialize itself from the given set of lines. Lines should
 	/// be of the format
-	virtual bool init_from_lines(
+	bool init_from_lines(
 		utility::vector1< std::string > const & lines,
 		SilentFileData & container
-	);
+	) override;
 
 	/// @brief Configure the conformation of the given Pose with the conformational data within this RNA_SilentStruct.
 	/// Calls pose.clear() and rebuilds Pose from scratch using FA_STANDARD residue types.
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		bool const metapatches = true
-	) const;
+	) const override;
 
 	/// @brief Configure the conformation of the given Pose with the conformational data within
 	/// this RNA_SilentStruct. Calls pose.clear() and rebuilds Pose from scratch using the
 	/// user-specified residue types.
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set,
 		bool const metapatches = true
-	) const;
+	) const override;
 
 	//virtual void fill_pose(
 	// core::pose::Pose & pose,
@@ -135,13 +135,13 @@ public:
 	//) const;
 
 	/// @brief opposite of fill_pose
-	virtual void fill_struct( core::pose::Pose const & pose, std::string tag );
+	void fill_struct( core::pose::Pose const & pose, std::string tag ) override;
 
 	/// @brief print header information
-	virtual void print_header( std::ostream& out ) const;
+	void print_header( std::ostream& out ) const override;
 
 	/// @brief Prints the conformation information within this RNA_SilentStruct to the given std::ostream.
-	virtual void print_conformation( std::ostream & output ) const;
+	void print_conformation( std::ostream & output ) const override;
 
 	/// @brief data getters/setters
 	bool fullatom() const {
@@ -220,14 +220,14 @@ public:
 
 	/// @brief returns the positions of the CA atoms in this RNA_SilentStruct.
 	/// Useful for RMS calculations.
-	virtual ObjexxFCL::FArray2D< Real > get_CA_xyz() const;
+	ObjexxFCL::FArray2D< Real > get_CA_xyz() const override;
 
 	// model quality-related methods.
 	virtual Real CA_rmsd( RNA_SilentStruct other_pss );
 
 	/// @brief calculates the RMSD between the C-alpha atoms of a Pose built from the torsions in this
 	/// RNA_SilentStruct and the C-alpha atoms from this RNA_SilentStruct.
-	virtual Real get_debug_rmsd();
+	Real get_debug_rmsd() override;
 
 protected:
 	bool fullatom_;

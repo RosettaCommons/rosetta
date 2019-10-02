@@ -53,27 +53,25 @@ public:
 	//AlignmentEnergy( AlignmentEnergy const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~AlignmentEnergy() {};
+	~AlignmentEnergy() override {};
 
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.
-	virtual core::scoring::methods::EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
 	/// @brief Indicate required setup steps for scoring
-	virtual
 	void setup_for_scoring( core::pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	/// @brief Is the score context dependent or context independent?
-	virtual void indicate_required_context_graphs( utility::vector1< bool > &context_graphs_required ) const override;
+	void indicate_required_context_graphs( utility::vector1< bool > &context_graphs_required ) const override;
 
 	/// @brief Indicates the current version of this score term
-	virtual core::Size version() const override;
+	core::Size version() const override;
 
 	/// @brief Actually calculate the total energy
 	/// @details Called by the scoring machinery.
-	virtual void finalize_total_energy( core::pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const override;
+	void finalize_total_energy( core::pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const override;
 
-	virtual
 	void
 	eval_atom_derivative(
 		core::id::AtomID const & id,

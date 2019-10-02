@@ -25,14 +25,14 @@ class CrosslinkerMoverCreator : public protocols::moves::MoverCreator {
 
 public:
 
-	virtual protocols::moves::MoverOP
-	create_mover() const;
+	protocols::moves::MoverOP
+	create_mover() const override;
 
-	virtual std::string
-	keyname() const;
+	std::string
+	keyname() const override;
 
-	virtual void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 
 };
 

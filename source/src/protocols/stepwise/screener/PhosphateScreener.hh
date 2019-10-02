@@ -32,21 +32,21 @@ public:
 	PhosphateScreener( modeler::rna::phosphate::MultiPhosphateSamplerOP phosphate_sampler );
 
 	//destructor
-	~PhosphateScreener();
+	~PhosphateScreener() override;
 
 public:
 
 	std::string
-	name() const { return "PhosphateScreener"; }
+	name() const override { return "PhosphateScreener"; }
 
 	StepWiseScreenerType
-	type() const { return PHOSPHATE_PACK; }
+	type() const override { return PHOSPHATE_PACK; }
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	void
-	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ) override;
 
 private:
 

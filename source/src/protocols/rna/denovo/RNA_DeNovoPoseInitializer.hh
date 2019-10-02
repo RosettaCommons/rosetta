@@ -43,7 +43,7 @@ public:
 
 	//constructor
 	RNA_DeNovoPoseInitializer( core::import_pose::RNA_DeNovoParameters const & rna_params_file_info );
-	virtual ~RNA_DeNovoPoseInitializer();
+	~RNA_DeNovoPoseInitializer() override;
 
 	/// @brief "classic" setup, used in denovo protocol. Note: changes pose (virtualizes phosphate).
 	///    and requires later call of setup_fold_tree_and_jumps_and_variants

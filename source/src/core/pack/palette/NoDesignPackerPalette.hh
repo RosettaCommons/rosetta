@@ -68,16 +68,16 @@ public:
 
 	/// @brief Destructor.
 	///
-	~NoDesignPackerPalette();
+	~NoDesignPackerPalette() override;
 
 	/// @brief Clone operator: make a copy and return an owning pointer to the copy.
 	/// @details Derived classes MUST implement this.
-	virtual PackerPaletteOP clone() const override;
+	PackerPaletteOP clone() const override;
 
 	/// @brief Function to parse XML tags, implemented by derived classes.
 	/// @brief Failure to implement this results in a warning message, but does not prevent compilation or
 	/// program execution.
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP const &tag,
 		basic::datacache::DataMap const &datamap
@@ -88,7 +88,7 @@ public:
 
 	/// @brief Function to allow a different ResidueTypeSet to be set.
 	/// @details Each PackerPalette derived class must implement this.  After setting the new ResidueTypeSet, things need to happen.
-	virtual void
+	void
 	set_residue_type_set( core::chemical::ResidueTypeSetCOP new_type_set ) override;
 
 	/// @brief Get the name of this object ("NoDesignPackerPalette").

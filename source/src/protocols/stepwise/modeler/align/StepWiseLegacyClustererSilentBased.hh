@@ -59,7 +59,7 @@ public:
 		bool const force_align );
 
 	//destructor -- necessary?
-	virtual ~StepWiseLegacyClustererSilentBased();
+	~StepWiseLegacyClustererSilentBased() override;
 
 	/// @brief Filter a list of poses by score.
 

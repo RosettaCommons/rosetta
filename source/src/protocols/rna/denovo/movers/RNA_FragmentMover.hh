@@ -61,14 +61,14 @@ public:
 	/// @brief Copy constructor
 	RNA_FragmentMover(RNA_FragmentMover const & object_to_copy);
 
-	~RNA_FragmentMover();
+	~RNA_FragmentMover() override;
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	// virtual protocols::moves::MoverOP fresh_instance() const;
 

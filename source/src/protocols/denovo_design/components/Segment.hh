@@ -103,7 +103,7 @@ public:
 		bool const start_inc,
 		bool const stop_inc );
 
-	virtual ~Segment()
+	~Segment() override
 	{}
 
 	virtual SegmentOP

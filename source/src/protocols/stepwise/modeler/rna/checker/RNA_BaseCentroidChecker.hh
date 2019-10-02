@@ -48,7 +48,7 @@ public:
 	RNA_BaseCentroidChecker( core::pose::Pose const & pose, working_parameters::StepWiseWorkingParametersCOP & working_parameters,
 		bool const tether_jump = false );
 
-	virtual ~RNA_BaseCentroidChecker();
+	~RNA_BaseCentroidChecker() override;
 
 	bool
 	update_base_stub_list_and_check_centroid_interaction( core::pose::Pose const & pose, StepWiseRNA_CountStruct & count_data );

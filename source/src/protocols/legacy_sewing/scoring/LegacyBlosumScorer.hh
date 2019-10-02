@@ -36,11 +36,10 @@ public:
 	///@brief default construct
 	LegacyBlosumScorer();
 
-	virtual ~LegacyBlosumScorer(){}
+	~LegacyBlosumScorer() override{}
 
-	virtual
 	core::Real
-	score( AssemblyCOP assembly ) = 0;
+	score( AssemblyCOP assembly ) override = 0;
 
 	// bool
 	// check_blosum(

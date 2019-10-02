@@ -25,19 +25,19 @@ class RamaPerturber : public Perturber {
 public:
 
 	/// @copydoc Perturber::get_name
-	std::string get_name() const { return "RamaPerturber"; }
+	std::string get_name() const override { return "RamaPerturber"; }
 
 	/// @copydoc Perturber::get_subset
 	void perturb_subset(
 		Pose const & pose,
 		IndexList const & residues,
-		ClosureProblemOP problem);
+		ClosureProblemOP problem) override;
 
 	/// @copydoc Perturber::perturb_subset_with_balance
 	void perturb_subset_with_balance(
 		Pose const & pose,
 		IndexList const & residues,
-		ClosureProblemOP problem);
+		ClosureProblemOP problem) override;
 
 };
 

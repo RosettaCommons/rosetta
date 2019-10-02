@@ -58,7 +58,7 @@ class ResidueAtomTreeCollectionMomento : public utility::pointer::ReferenceCount
 {
 public:
 	ResidueAtomTreeCollectionMomento();
-	virtual ~ResidueAtomTreeCollectionMomento();
+	~ResidueAtomTreeCollectionMomento() override;
 
 	ResidueAtomTreeCollectionMomento( ResidueAtomTreeCollectionMomento const & );
 	ResidueAtomTreeCollectionMomento & operator = ( ResidueAtomTreeCollectionMomento const & );
@@ -101,7 +101,7 @@ public:
 		Size resid
 	);
 
-	virtual ~ResidueAtomTreeCollection();
+	~ResidueAtomTreeCollection() override;
 
 	Size active_restype_index() const { return active_restype_; }
 	void set_active_restype_index( Size restype_index );
@@ -220,7 +220,7 @@ public:
 		Size resid
 	);
 
-	virtual ~AtomTreeCollection();
+	~AtomTreeCollection() override;
 
 	ResidueAtomTreeCollection & moltenres_atomtree_collection( Size moltenresid );
 	ResidueAtomTreeCollection & residue_atomtree_collection( Size resid );

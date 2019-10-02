@@ -56,7 +56,7 @@ public: // Methods
 	);
 
 	/// @brief Destructor
-	virtual ~VoxelGridPoint();
+	~VoxelGridPoint() override;
 
 	/// @brief Type name of this voxel grid point
 	virtual std::string type() const;

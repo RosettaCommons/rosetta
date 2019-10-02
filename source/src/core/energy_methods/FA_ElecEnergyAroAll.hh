@@ -52,43 +52,36 @@ public:
 
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
 
-	virtual
 	void
-	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
+	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
 
 
 	/// @brief overrides parent class implementation which would have
 	/// created several tries
-	virtual
 	void
 	prepare_rotamers_for_packing(
 		pose::Pose const & pose,
-		conformation::RotamerSetBase & set ) const;
+		conformation::RotamerSetBase & set ) const override;
 
 	/// @brief overrides parent class implementation which would have
 	/// updated a trie
-	virtual
 	void
-	update_residue_for_packing( pose::Pose & pose, Size resid ) const;
+	update_residue_for_packing( pose::Pose & pose, Size resid ) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -96,7 +89,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Returns "true" because this energy method has not been updated to
 	/// use the new derivative evaluation machinery.  Note that this class requires
@@ -105,20 +98,18 @@ public:
 	/// if this class did not return "true", it would be asked to evaluate derivatives
 	/// in ways it cannot yet evaluate them in.
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return true; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return true; }
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const {}
+	) const override {}
 
 	//@brief overrides default rotamer/rotamer energy calculation
 	// and overrides the parent class trie implementatoin
-	virtual
 	void
 	evaluate_rotamer_pair_energies(
 		conformation::RotamerSetBase const & set1,
@@ -127,12 +118,11 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
-	) const;
+	) const override;
 
 
 	//@brief overrides default rotamer/background energy calculation
 	// and overrides the parent class trie implementatoin
-	virtual
 	void
 	evaluate_rotamer_background_energies(
 		conformation::RotamerSetBase const & set,
@@ -141,10 +131,9 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & atom_id,
@@ -154,14 +143,12 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 public:
 
@@ -182,8 +169,7 @@ public:
 		Vector & F1,
 		Vector & F2
 	) const;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

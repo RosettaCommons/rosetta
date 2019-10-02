@@ -59,17 +59,17 @@ public:
 	QuickRelaxPartnersSeparately( QuickRelaxPartnersSeparately const & src );
 
 	/// @brief Destructor
-	virtual ~QuickRelaxPartnersSeparately();
+	~QuickRelaxPartnersSeparately() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
@@ -78,17 +78,17 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this Mover (QuickRelaxPartnersSeparately)
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Moving partners apart and relax them separately
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
 private: // methods
 

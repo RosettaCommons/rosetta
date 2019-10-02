@@ -47,7 +47,7 @@ public:
 	/// @brief Create a new set of ellipse parameters from an existing initialized object
 	EllipseParameters( EllipseParameters const & src );
 
-	virtual ~EllipseParameters();
+	~EllipseParameters() override;
 
 	EllipseParametersOP
 	clone() const;

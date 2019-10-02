@@ -36,7 +36,7 @@ class RDFFunctionCreator : public utility::pointer::ReferenceCount
 {
 public:
 	RDFFunctionCreator() {}
-	virtual ~RDFFunctionCreator() {}
+	~RDFFunctionCreator() override {}
 
 	virtual RDFBaseOP create_rdf_function() const = 0;
 	virtual std::string type_name() const = 0;

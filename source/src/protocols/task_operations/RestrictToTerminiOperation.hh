@@ -50,18 +50,18 @@ public:
 	RestrictToTerminiOperation(
 		RestrictToTerminiOperation const & src);
 
-	~RestrictToTerminiOperation();
+	~RestrictToTerminiOperation() override;
 
 	core::pack::task::operation::TaskOperationOP
-	clone() const;
+	clone() const override;
 
 	void
 	apply(
 		core::pose::Pose const &,
-		core::pack::task::PackerTask & ) const;
+		core::pack::task::PackerTask & ) const override;
 
 	void
-	parse_tag( utility::tag::TagCOP, DataMap & );
+	parse_tag( utility::tag::TagCOP, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictToTermini"; }
 

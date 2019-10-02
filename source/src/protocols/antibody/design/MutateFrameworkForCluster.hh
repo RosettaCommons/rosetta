@@ -68,28 +68,28 @@ public:
 
 	MutateFrameworkForCluster(MutateFrameworkForCluster const & src);
 
-	virtual ~MutateFrameworkForCluster();
+	~MutateFrameworkForCluster() override;
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	//virtual moves::MoverOP
 	//clone() const;
 
-	virtual moves::MoverOP
-	fresh_instance() const;
+	moves::MoverOP
+	fresh_instance() const override;
 
-	virtual void
+	void
 	parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const &,
 		moves::Movers_map const &,
 		Pose const & pose
-	);
+	) override;
 
-	virtual void
-	apply(core::pose::Pose & pose);
+	void
+	apply(core::pose::Pose & pose) override;
 
 
 public:

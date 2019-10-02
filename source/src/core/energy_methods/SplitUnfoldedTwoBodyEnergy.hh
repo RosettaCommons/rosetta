@@ -46,15 +46,15 @@ public:
 	SplitUnfoldedTwoBodyEnergy(std::string const & label_type,std::string const & value_type, std::string const & score_func_type);
 	//instantiate using given weight emap
 	SplitUnfoldedTwoBodyEnergy(std::string const & label_type,std::string const & value_type, std::string const & score_func_type, const EnergyMap & emap_in);
-	~SplitUnfoldedTwoBodyEnergy();
+	~SplitUnfoldedTwoBodyEnergy() override;
 
-	virtual EnergyMethodOP clone() const;
+	EnergyMethodOP clone() const override;
 
-	virtual void residue_energy(conformation::Residue const & rsd,pose::Pose const &, EnergyMap & emap) const;
+	void residue_energy(conformation::Residue const & rsd,pose::Pose const &, EnergyMap & emap) const override;
 
-	virtual bool minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	bool minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
-	virtual void indicate_required_context_graphs(utility::vector1<bool> &) const;
+	void indicate_required_context_graphs(utility::vector1<bool> &) const override;
 
 private:
 	std::string label_type_; //the atom type set for this two body energy, e.g. rosetta types, mm types, elemental types, etc.
@@ -62,7 +62,7 @@ private:
 	std::string score_func_type_; //the base score function in use, specifies the internal two body weights that will be used.
 	SplitUnfoldedTwoBodyPotential const & sutbp_;
 	EnergyMap score_type_weights_;
-	virtual core::Size version() const;
+	core::Size version() const override;
 
 };
 

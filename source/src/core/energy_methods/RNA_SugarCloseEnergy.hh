@@ -48,12 +48,11 @@ public:
 	RNA_SugarCloseEnergy();
 
 	/// @brief dtor
-	virtual ~RNA_SugarCloseEnergy();
+	~RNA_SugarCloseEnergy() override;
 
 	/// clone
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
@@ -68,22 +67,19 @@ public:
 	) const;
 
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
 
 
 	///////////////////////////////////////////////////////////////////////////////
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -93,13 +89,12 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 
 	/// @brief RNA_SugarCloseEnergy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	void
 	setup_sugar_ring_closure_constraints( pose::Pose & pose ) const;
@@ -142,8 +137,7 @@ private:
 	chemical::rna::RNA_FittedTorsionInfoOP rna_fitted_torsion_info_; // currently just used for delta cutoff
 	mutable constraints::ConstraintSetOP rna_sugar_close_constraints_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 
 };

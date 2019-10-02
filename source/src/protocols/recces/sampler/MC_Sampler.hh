@@ -34,7 +34,7 @@ public:
 		name_( "MC_Sampler" )
 	{}
 
-	virtual ~MC_Sampler(){}
+	~MC_Sampler() override{}
 
 	/// @brief Update the DOFs
 	virtual void update() = 0;
@@ -57,7 +57,7 @@ public:
 	bool found_move() const { return found_move_; }
 
 	/// @brief Name of the class
-	virtual std::string get_name() const { return name_; }
+	std::string get_name() const override { return name_; }
 
 	/// @brief Set name of the class
 	void set_name( std::string const & setting ) { name_ = setting; }

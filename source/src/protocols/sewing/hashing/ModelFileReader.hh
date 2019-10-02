@@ -37,7 +37,7 @@ public:
 	ModelFileReader();
 	ModelFileReader(ModelFileReader const & src);
 
-	virtual ~ModelFileReader();
+	~ModelFileReader() override;
 
 	ModelFileReaderOP
 	clone() const;

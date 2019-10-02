@@ -38,9 +38,9 @@ public:
 	// radian and -radian.
 	LongAxisRotationFreePeptideMover(Real radian, bool random=false);
 
-	virtual ~LongAxisRotationFreePeptideMover();
+	~LongAxisRotationFreePeptideMover() override;
 
-	virtual void apply(FreePeptide &free_peptide);
+	void apply(FreePeptide &free_peptide) override;
 
 private:
 

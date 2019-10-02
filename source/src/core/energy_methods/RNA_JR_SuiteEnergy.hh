@@ -43,37 +43,37 @@ public:
 	RNA_JR_SuiteEnergy();
 
 	/// clone
-	virtual methods::EnergyMethodOP clone() const;
+	methods::EnergyMethodOP clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Evaluate the intra-residue constraint energy for a given residue
-	virtual void
+	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const {};
+	) const override {};
 
 
-	virtual void
+	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// called during gradient-based minimization inside dfunc
 	/**
 	F1 and F2 are not zeroed -- contributions from this atom are
 	just summed in
 	**/
-	virtual void
+	void
 	eval_atom_derivative(
 		id::AtomID const &,
 		pose::Pose const &,
@@ -82,23 +82,23 @@ public:
 		EnergyMap const &,
 		Vector &,
 		Vector &
-	) const {};
+	) const override {};
 
-	bool defines_intrares_energy( EnergyMap const & ) const { return true; }
+	bool defines_intrares_energy( EnergyMap const & ) const override { return true; }
 
 	bool
 	defines_residue_pair_energy( EnergyMap const & ) const { return true; }
 
-	virtual Distance atomic_interaction_cutoff() const { return 0; }
+	Distance atomic_interaction_cutoff() const override { return 0; }
 
-	virtual void
-	indicate_required_context_graphs( utility::vector1< bool > & ) const {};
+	void
+	indicate_required_context_graphs( utility::vector1< bool > & ) const override {};
 	/////////////////////////////////////////////////////////////////////////////
 	// data
 	/////////////////////////////////////////////////////////////////////////////
 
 private:
-	virtual Size version() const { return 0; }
+	Size version() const override { return 0; }
 
 	core::pose::rna::RNA_SuiteName suitename_;
 };

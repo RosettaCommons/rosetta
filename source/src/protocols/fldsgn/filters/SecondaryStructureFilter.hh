@@ -65,7 +65,7 @@ public:// constructor/destructor
 	// @brief constructor with arguments
 	SecondaryStructureFilter( String const & ss );
 
-	virtual ~SecondaryStructureFilter(){}
+	~SecondaryStructureFilter() override{}
 
 
 public:// virtual constructor

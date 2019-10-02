@@ -428,7 +428,7 @@ private:
 class RotamerBuildingData : public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~RotamerBuildingData() = 0;
+	~RotamerBuildingData() override = 0;
 };
 
 /// @brief Perform cubic interpolation over each of N axes, using the
@@ -723,7 +723,7 @@ public:
 		rotamer_.rotamer_probability() = rotamer_in.rotamer_probability();
 	}
 
-	virtual ~RotamericData() {}
+	~RotamericData() override {}
 
 	DunbrackRotamer< T, N, Real > const &
 	rotamer() const {

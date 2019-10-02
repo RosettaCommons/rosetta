@@ -47,16 +47,15 @@ public:
 	MissingEnergy();
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	/////////////////////////////////
 	void
@@ -67,17 +66,16 @@ public:
 		ScoreFunction const &,
 		EnergyMap const & weights,
 		Vector & F1,
-		Vector & F2 ) const;
+		Vector & F2 ) const override;
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 private:
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

@@ -64,7 +64,7 @@ public: // construct/destruct
 	HSPairPotential();
 
 	/// @brief default destructor
-	virtual ~HSPairPotential();
+	~HSPairPotential() override;
 
 
 public: // scoring

@@ -41,7 +41,7 @@ public:
 	PreProlineFilter();
 
 	/// @brief virtual constructor to allow derivation
-	virtual ~PreProlineFilter();
+	~PreProlineFilter() override;
 
 	/// @brief Parses the PreProlineFilter tags
 	void parse_my_tag(

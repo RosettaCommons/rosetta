@@ -39,7 +39,7 @@ public:
 	StepWisePoseAligner( core::pose::Pose const & reference_pose );
 
 	//destructor
-	~StepWisePoseAligner();
+	~StepWisePoseAligner() override;
 
 public:
 

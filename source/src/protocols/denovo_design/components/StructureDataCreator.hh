@@ -25,11 +25,11 @@ namespace components {
 
 class StructureDataCreator : public basic::datacache::WriteableCacheableDataCreator {
 public:
-	virtual basic::datacache::WriteableCacheableDataOP
-	create_data( std::istream & in ) const;
+	basic::datacache::WriteableCacheableDataOP
+	create_data( std::istream & in ) const override;
 
-	virtual std::string
-	keyname() const;
+	std::string
+	keyname() const override;
 };
 
 } // namespace components

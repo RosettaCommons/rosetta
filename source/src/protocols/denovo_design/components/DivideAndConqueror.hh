@@ -51,8 +51,7 @@ public:
 
 	BuildPhases( BuildPhases::const_iterator const & begin_it, BuildPhases::const_iterator const & end_it );
 
-	virtual
-	~BuildPhases() {};
+	~BuildPhases() override {};
 
 private:
 	BuildPhases() {};
@@ -78,7 +77,7 @@ class DivideAndConqueror : public utility::pointer::ReferenceCount {
 public:
 	DivideAndConqueror();
 
-	virtual ~DivideAndConqueror();
+	~DivideAndConqueror() override;
 
 	DivideAndConquerorOP
 	clone() const;

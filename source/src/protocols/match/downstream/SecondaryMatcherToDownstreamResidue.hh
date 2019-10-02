@@ -56,11 +56,10 @@ public:
 public:
 	SecondaryMatcherToDownstreamResidue( core::pose::PoseCOP upstream_pose, Size geom_cst_id );
 
-	virtual ~SecondaryMatcherToDownstreamResidue();
+	~SecondaryMatcherToDownstreamResidue() override;
 
-	virtual
 	DownstreamAlgorithmOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Main driver function for hit generation.  This DownstreamAlgorithm
 	/// structures it's iteration over the hits from previous rounds as follows:
@@ -87,57 +86,50 @@ public:
 	/// will primarily lie in the same place: the call to evaluate_residues( rotamer_l, rotamer_m ).
 	/// NOTE: if there are ways to iterate across the j loop differently, it likely possible to prune m/l combinations early
 	/// and thereby improve running time.
-	virtual
 	std::list< Hit >
 	build_hits_at_all_positions(
 		Matcher & matcher
-	);
+	) override;
 
 
 	/// @brief mimic the classic matcher's reset of the Occupied space hash.
-	virtual
 	void
-	respond_to_primary_hitlist_change( Matcher & matcher, Size round_just_completed );
+	respond_to_primary_hitlist_change( Matcher & matcher, Size round_just_completed ) override;
 
 	/// @brief Remove my hits if they fall into a volume of the occupied space hash
 	/// that is no longer occupied.
-	virtual
 	void
-	respond_to_peripheral_hitlist_change( Matcher & matcher );
+	respond_to_peripheral_hitlist_change( Matcher & matcher ) override;
 
 
 	/// @brief Iterate across the conformations of the downstream residue coming from hits
 	/// generated in previous rounds, and add hits for each upstream residue that
 	/// (Also, see comments for the
 	/// build_at_all_positions method.)
-	virtual
 	std::list< Hit >
 	build(
 		Size const scaffold_build_point_id,
 		Size const upstream_conf_id,
 		core::conformation::Residue const & upstream_residue
-	) const;
+	) const override;
 
 	/// @brief returns false; this secondary matcher describes the location
 	/// of the downstream partner even though it does not generate that location
 	/// itself.  Matches may be found by hashing the 6D coordinate of the
 	/// downstream partner.
-	virtual
 	bool
-	upstream_only() const;
+	upstream_only() const override;
 
 	/// @brief This method returns 'false' since this matcher does not describe
 	/// the coordinates of the downstream partner at all.
-	virtual
 	bool
-	generates_primary_hits() const;
+	generates_primary_hits() const override;
 
 	HitPtrListCOP
-	hits_to_include_with_partial_match( match_dspos1 const & ) const;
+	hits_to_include_with_partial_match( match_dspos1 const & ) const override;
 
-	virtual
 	Size
-	n_possible_hits_per_upstream_conformation() const;
+	n_possible_hits_per_upstream_conformation() const override;
 
 	void
 	set_downstream_restype( core::chemical::ResidueTypeCOP downstream_restype );

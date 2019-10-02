@@ -46,23 +46,23 @@ public:
 	NVscore();
 
 	/// clone
-	virtual methods::EnergyMethodOP clone() const;
+	methods::EnergyMethodOP clone() const override;
 
-	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual void setup_for_packing(pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
+	void setup_for_packing(pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
 
-	virtual void setup_for_derivatives( pose::Pose &pose, ScoreFunction const &  ) const;
+	void setup_for_derivatives( pose::Pose &pose, ScoreFunction const &  ) const override;
 
-	virtual void setup_for_minimizing(pose::Pose & pose, ScoreFunction const & ,kinematics::MinimizerMapBase const &) const;
+	void setup_for_minimizing(pose::Pose & pose, ScoreFunction const & ,kinematics::MinimizerMapBase const &) const override;
 
-	virtual void residue_energy(
+	void residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 	Real neighbor_weight( Vector::Value const & distance) const;
 
@@ -73,8 +73,7 @@ private:
 	core::Real upper_bound_;
 	core::Real upper_bound_squared_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 } //NV

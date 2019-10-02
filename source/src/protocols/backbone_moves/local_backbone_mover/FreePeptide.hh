@@ -193,7 +193,7 @@ public: // Functions from code template generator
 	FreePeptide(core::pose::Pose const& pose, Size pivot1, Size pivot2);
 	FreePeptide(FreePeptide const &) = default;
 
-	virtual ~FreePeptide();
+	~FreePeptide() override;
 
 	FreePeptideOP clone() const;
 

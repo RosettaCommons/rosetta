@@ -34,21 +34,21 @@ public:
 		modeler::packer::StepWisePackerOP stepwise_packer );
 
 	//destructor
-	~PackScreener();
+	~PackScreener() override;
 
 public:
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	std::string
-	name() const { return "PackScreener"; }
+	name() const override { return "PackScreener"; }
 
 	StepWiseScreenerType
-	type() const { return PACK; }
+	type() const override { return PACK; }
 
 	void
-	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ) override;
 
 private:
 

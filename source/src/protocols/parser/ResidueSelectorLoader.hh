@@ -36,15 +36,14 @@ class ResidueSelectorLoader : public DataLoader
 {
 public:
 	ResidueSelectorLoader();
-	virtual ~ResidueSelectorLoader();
+	~ResidueSelectorLoader() override;
 
 	/// @brief The ResidueSelectorLoader will create named ResidueSelectors and load them into the basic::datacache::DataMap
-	virtual
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 	static std::string loader_name();
 	static std::string res_selector_loader_ct_namer( std::string const & element_name );

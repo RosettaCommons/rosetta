@@ -45,7 +45,7 @@ public:
 	RNA_SuitePotential( bool const calculate_suiteness_bonus = false,
 		std::string const & suiteness_bonus = "" );
 
-	virtual ~RNA_SuitePotential();
+	~RNA_SuitePotential() override;
 
 	bool eval_score(
 		conformation::Residue const & rsd1,

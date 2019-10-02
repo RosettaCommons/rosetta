@@ -38,7 +38,7 @@ public:
 	ExtraDataEnumManager();
 	ExtraDataEnumManager(ExtraDataEnumManager const & src);
 
-	virtual ~ExtraDataEnumManager();
+	~ExtraDataEnumManager() override;
 
 
 	ExtraDataEnum

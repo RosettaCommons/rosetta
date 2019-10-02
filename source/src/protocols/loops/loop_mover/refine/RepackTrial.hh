@@ -49,7 +49,7 @@ public: // boiler plate / virtuals
 	RepackTrial & operator=( RepackTrial const & rhs );
 
 	// destructor
-	virtual ~RepackTrial();
+	~RepackTrial() override;
 
 	// constructor with arguments
 	RepackTrial(

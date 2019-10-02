@@ -27,8 +27,8 @@ namespace task_operations {
 
 class DesignBySecondaryStructureOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
-	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
+	core::pack::task::operation::TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
 };
 
 }

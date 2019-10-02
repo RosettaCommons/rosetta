@@ -42,10 +42,10 @@ public:
 		ObjexxFCL::FArray2D_double target_ca_dev,
 		ObjexxFCL::FArray2D_double target_ca_dist, core::Size largest_fragment, core::Size max_length);
 
-	void do_caching(VallChunkOP);
-	void clean_up();
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
-	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
+	void do_caching(VallChunkOP) override;
+	void clean_up() override;
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 private:
 	core::Size n_res_;
@@ -67,7 +67,7 @@ public:
 		MakeFragmentScoringMethod("PCS_FragDistance") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 
 } // scores

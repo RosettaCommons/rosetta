@@ -64,7 +64,7 @@ public: // boiler plate / virtuals
 	SnugDock & operator=( SnugDock const & rhs );
 
 	// destructor
-	virtual ~SnugDock();
+	~SnugDock() override;
 
 	void apply( Pose & ) override;
 

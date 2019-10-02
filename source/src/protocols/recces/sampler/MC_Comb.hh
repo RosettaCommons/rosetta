@@ -29,25 +29,25 @@ class MC_Comb : public MC_Sampler {
 public:
 	MC_Comb();
 
-	virtual ~MC_Comb(){}
+	~MC_Comb() override{}
 
 	/// @brief Initialization
-	virtual void init();
+	void init() override;
 
 	/// @brief Reset to the first (or random if random()) rotamer
-	virtual void reset();
+	void reset() override;
 
 	/// @brief Move to next rotamer
-	virtual void operator++();
+	void operator++() override;
 
 	/// @brief Update the DOFs
-	virtual void update();
+	void update() override;
 
 	/// @brief Apply the current rotamer to pose
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Get uniform modeler state
-	virtual void set_uniform_modeler( bool const setting );
+	void set_uniform_modeler( bool const setting ) override;
 
 	/// @brief Add one more rotamer sampler to this sampler
 	virtual void add_rotamer( MC_SamplerOP const & rotamer ) {
@@ -62,20 +62,18 @@ public:
 	}
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_COMB; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::MC_COMB; }
 
 	/// @brief set (optional) update_pose
 	void
-	set_update_pose( core::pose::PoseCOP setting );
+	set_update_pose( core::pose::PoseCOP setting ) override;
 
 	/// @brief output summary of class
-	virtual
-	void show( std::ostream & out, Size const indent = 0 ) const;
+	void show( std::ostream & out, Size const indent = 0 ) const override;
 
 	/// @brief return OP to the subsampler that controls exactly this torsion_id (assume only one).
-	virtual
 	MC_SamplerOP
-	find( core::id::TorsionID const & torsion_id );
+	find( core::id::TorsionID const & torsion_id ) override;
 
 	core::Size
 	num_rotamers() const { return rotamer_list_.size(); }

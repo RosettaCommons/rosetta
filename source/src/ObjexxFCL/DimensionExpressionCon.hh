@@ -67,7 +67,7 @@ public: // Creation
 	/// @brief Clone
 	inline
 	DimensionExpressionCon *
-	clone() const
+	clone() const override
 	{
 		return new DimensionExpressionCon( *this );
 	}
@@ -76,7 +76,7 @@ public: // Creation
 	/// @brief Clone with Dimension Substitution
 	inline
 	DimensionExpressionCon *
-	clone( Dimension const & ) const
+	clone( Dimension const & ) const override
 	{
 		return new DimensionExpressionCon( *this );
 	}
@@ -84,8 +84,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~DimensionExpressionCon()
+	~DimensionExpressionCon() override
 	{}
 
 
@@ -95,7 +94,7 @@ public: // Inspector
 	/// @brief Initialized?
 	inline
 	bool
-	initialized() const
+	initialized() const override
 	{
 		return true;
 	}
@@ -104,7 +103,7 @@ public: // Inspector
 	/// @brief Integer?
 	inline
 	bool
-	integer() const
+	integer() const override
 	{
 		return integer_;
 	}
@@ -113,7 +112,7 @@ public: // Inspector
 	/// @brief Constant?
 	inline
 	bool
-	constant() const
+	constant() const override
 	{
 		return true;
 	}
@@ -122,7 +121,7 @@ public: // Inspector
 	/// @brief Reference?
 	inline
 	bool
-	reference() const
+	reference() const override
 	{
 		return false;
 	}
@@ -131,7 +130,7 @@ public: // Inspector
 	/// @brief Reducible?
 	inline
 	bool
-	reducible() const
+	reducible() const override
 	{
 		return false;
 	}
@@ -140,7 +139,7 @@ public: // Inspector
 	/// @brief Value
 	inline
 	double
-	operator ()() const
+	operator ()() const override
 	{
 		return value_;
 	}
@@ -149,7 +148,7 @@ public: // Inspector
 	/// @brief Value
 	inline
 	double
-	value() const
+	value() const override
 	{
 		return value_;
 	}
@@ -158,14 +157,14 @@ public: // Inspector
 	/// @brief Insert an Observer
 	inline
 	void
-	insert_observer( Observer & ) const
+	insert_observer( Observer & ) const override
 	{}
 
 
 	/// @brief Remove an Observer
 	inline
 	void
-	remove_observer( Observer & ) const
+	remove_observer( Observer & ) const override
 	{}
 
 
@@ -175,7 +174,7 @@ public: // Modifier
 	/// @brief Update for Destruction of a Subject
 	inline
 	void
-	destructed( Subject const & )
+	destructed( Subject const & ) override
 	{}
 
 

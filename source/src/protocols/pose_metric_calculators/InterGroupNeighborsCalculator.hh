@@ -71,9 +71,9 @@ public:
 
 	InterGroupNeighborsCalculator( InterGroupNeighborsCalculator const & calculator );
 
-	~InterGroupNeighborsCalculator();
+	~InterGroupNeighborsCalculator() override;
 
-	virtual core::pose::metrics::PoseMetricCalculatorOP clone() const;
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override;
 
 	//accessors for non-recomputed input data
 	/// @brief return groups
@@ -84,9 +84,9 @@ public:
 
 protected:
 
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	virtual std::string print( std::string const & key ) const;
-	virtual void recompute( core::pose::Pose const & pose );
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override;
+	std::string print( std::string const & key ) const override;
+	void recompute( core::pose::Pose const & pose ) override;
 
 private:
 

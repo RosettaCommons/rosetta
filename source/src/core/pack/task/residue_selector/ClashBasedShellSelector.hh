@@ -111,7 +111,7 @@ public:
 	ClashBasedShellSelector(ClashBasedShellSelector const &) = default;
 
 	/// @brief Default destructor.
-	~ClashBasedShellSelector() = default;
+	~ClashBasedShellSelector() override = default;
 
 	/// Initialize from a string containing a list of indices, e.g.
 	/// "34-46,199-202".
@@ -146,25 +146,23 @@ public:
 		utility::vector1<bool> mask);
 
 	/// @brief Copy this object and return an owning pointer to the result.
-	virtual
 	core::select::residue_selector::ResidueSelectorOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Select the residues that are clashing with any rotamer of the
 	/// previously specified focus residues.
 	/// @details Rotamers that are clashing with the backbone are ignored, since
 	/// the idea is to identify residues that might need to be repacked, and
 	/// backbone clashes can't be solved by repacking.
-	virtual
 	core::select::residue_selector::ResidueSubset
-	apply( core::pose::Pose const & pose ) const;
+	apply( core::pose::Pose const & pose ) const override;
 
 	/// @brief Initialize from a RosettaScripts tag.
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
-	);
+	) override;
 
 	/// @brief Define the expected RosettaScripts options.
 	static void
@@ -178,7 +176,7 @@ public:
 	provide_xml_schema_attributes( utility::tag::AttributeList & attributes );
 
 	/// @brief Return "ClashBasedShell".
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Return "ClashBasedShell".
 	static std::string class_name();

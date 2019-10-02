@@ -36,13 +36,12 @@ public:
 
 	RestrictOperationsBase();
 
-	virtual ~RestrictOperationsBase();
+	~RestrictOperationsBase() override;
 
-	virtual TaskOperationOP clone() const = 0;
+	TaskOperationOP clone() const override = 0;
 
-	virtual
 	void
-	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const = 0;
+	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override = 0;
 
 protected:
 	/// @brief this is the only real function - it takes a calculator name and calculation, and a PackerTask-compatible vector, and flips booleans in the vector according to the calculator

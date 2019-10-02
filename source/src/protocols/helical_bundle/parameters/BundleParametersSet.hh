@@ -70,11 +70,11 @@ public:
 
 	BundleParametersSet( BundleParametersSet const & src );
 
-	~BundleParametersSet();
+	~BundleParametersSet() override;
 
 	/// @brief Copy this residue( allocate actual memory for it )
 	///
-	ParametersSetOP clone() const;
+	ParametersSetOP clone() const override;
 
 public: //Getters
 
@@ -116,7 +116,7 @@ public: //Setters
 	/// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.
 	/// @details Default function can be overridden by derived classes.  This version actually outputs
 	/// Crick parameter information.
-	virtual void get_pdb_remark(std::stringstream &remark) const;
+	void get_pdb_remark(std::stringstream &remark) const override;
 
 private:
 

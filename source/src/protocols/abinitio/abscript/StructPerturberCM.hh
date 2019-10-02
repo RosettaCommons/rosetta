@@ -44,7 +44,7 @@ public:
 	StructPerturberCM( std::string const & label,
 		core::Real magnitude );
 
-	virtual ~StructPerturberCM() {};
+	~StructPerturberCM() override {};
 
 	EnvClaims yield_claims( core::pose::Pose const&,
 		basic::datacache::WriteableCacheableMapOP ) override;

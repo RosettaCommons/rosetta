@@ -49,7 +49,7 @@ public:
 
 	PDBPoseOutputSpecification();
 	PDBPoseOutputSpecification( JobResultID const & result_id, JobOutputIndex const & output_index );
-	virtual ~PDBPoseOutputSpecification();
+	~PDBPoseOutputSpecification() override;
 
 	core::io::StructFileRepOptionsCOP sfr_opts() const;
 	void sfr_opts( core::io::StructFileRepOptions const & setting );

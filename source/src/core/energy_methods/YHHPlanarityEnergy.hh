@@ -45,33 +45,29 @@ public:
 	YHHPlanarityEnergy();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 	/// @brief The P_AA_pp energy function describes derivatives wrt phi and psi.
-	virtual
 	bool
-	defines_dof_derivatives( pose::Pose const & p ) const;
+	defines_dof_derivatives( pose::Pose const & p ) const override;
 
 	/// @brief Evaluate the P_AA_pp DOF derivative for a particular residue.
-	virtual
 	Real
 	eval_residue_dof_derivative(
 		conformation::Residue const & rsd,
@@ -81,16 +77,14 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
 
 	/// @brief P_AA_pp_Energy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 private:
 	bool defines_score_for_rsd( conformation::Residue const & rsd ) const;

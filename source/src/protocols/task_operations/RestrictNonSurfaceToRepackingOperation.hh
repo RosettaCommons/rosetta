@@ -44,12 +44,12 @@ public:
 public:
 	RestrictNonSurfaceToRepackingOperation();
 	RestrictNonSurfaceToRepackingOperation( core::Size nb_cutoff );
-	virtual ~RestrictNonSurfaceToRepackingOperation();
+	~RestrictNonSurfaceToRepackingOperation() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 	void surface_exposed_nb_cutoff( core::Size const nb_count );
-	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
-	virtual void parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & dm );
+	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const override;
+	void parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & dm ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictNonSurfaceToRepacking"; }
 

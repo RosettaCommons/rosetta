@@ -92,7 +92,7 @@ public:
 	{
 
 	}
-	virtual ~RDFBase() {};
+	~RDFBase() override {};
 
 	/// @brief given an AtomPairData object, return a map
 	virtual RDFResultList operator()(AtomPairData const &  ) = 0;

@@ -33,7 +33,7 @@ public:
 
 	SmallMoverBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
-	virtual void setUp() {
+	void setUp() override {
 		using namespace core;
 		pose = utility::pointer::make_shared< pose::Pose >();
 		core::import_pose::pose_from_file(*pose, "test_in.pdb", core::import_pose::PDB_file);
@@ -54,7 +54,7 @@ public:
 		small_mover.apply(*pose);
 	}
 
-	virtual void run(core::Real scaleFactor) {
+	void run(core::Real scaleFactor) override {
 		core::Size reps( (core::Size)(5*scaleFactor) ); // amw 500 to 50
 		if ( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor
 		for ( core::Size i=0; i<reps; i++ ) {
@@ -62,7 +62,7 @@ public:
 		}
 	}
 
-	virtual void tearDown() {
+	void tearDown() override {
 		pose.reset();
 		movemap.reset();
 	}

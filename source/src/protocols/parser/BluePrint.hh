@@ -57,7 +57,7 @@ public: // constructor/destructor
 	BluePrint( String const & filename );
 
 	/// @brief destructor
-	virtual ~BluePrint();
+	~BluePrint() override;
 
 	/// @brief copy constructor
 	BluePrint( BluePrint const & rval );

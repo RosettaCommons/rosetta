@@ -165,14 +165,12 @@ protected: // Creation
 public: // Creation
 
 	/// @brief Clone this
-	virtual
 	AutoKey *
-	clone() const = 0;
+	clone() const override = 0;
 
 	/// @brief Destructor
 	inline
-	virtual
-	~AutoKey() {}
+	~AutoKey() override {}
 
 public: // Assignment
 
@@ -205,9 +203,8 @@ protected: // Assignment
 
 
 	/// @brief Key assignment
-	inline
 	void
-	assign_Key( Key const & key )
+	assign_Key( Key const & key ) override
 	{
 		debug_assert( comparable( key ) );
 		index_ = key.index();
@@ -221,27 +218,24 @@ public: // Properties
 
 
 	/// @brief ID
-	inline
 	std::string const &
-	id() const
+	id() const override
 	{
 		return id_;
 	}
 
 
 	/// @brief ID
-	inline
 	std::string &
-	id()
+	id() override
 	{
 		return id_;
 	}
 
 
 	/// @brief ID assignment
-	inline
 	AutoKey &
-	id( std::string const & id_a )
+	id( std::string const & id_a ) override
 	{
 		id_ = id_a;
 		return *this;
@@ -249,27 +243,24 @@ public: // Properties
 
 
 	/// @brief Identifier
-	inline
 	std::string const &
-	identifier() const
+	identifier() const override
 	{
 		return identifier_;
 	}
 
 
 	/// @brief Identifier
-	inline
 	std::string &
-	identifier()
+	identifier() override
 	{
 		return identifier_;
 	}
 
 
 	/// @brief Identifier assignment
-	inline
 	AutoKey &
-	identifier( std::string const & identifier_a )
+	identifier( std::string const & identifier_a ) override
 	{
 		identifier_ = identifier_a;
 		return *this;
@@ -277,27 +268,24 @@ public: // Properties
 
 
 	/// @brief Code
-	inline
 	std::string const &
-	code() const
+	code() const override
 	{
 		return code_;
 	}
 
 
 	/// @brief Code
-	inline
 	std::string &
-	code()
+	code() override
 	{
 		return code_;
 	}
 
 
 	/// @brief Code assignment
-	inline
 	AutoKey &
-	code( std::string const & code_a )
+	code( std::string const & code_a ) override
 	{
 		code_ = code_a;
 		return *this;
@@ -306,9 +294,8 @@ public: // Properties
 
 	/// @brief Index
 	/// @note  Only for use as an optimization: DO NOT WRITE CODE DEPENDING ON THE SPECIFIC INDEX VALUE!
-	inline
 	Index
-	private_index() const
+	private_index() const override
 	{
 		return index_;
 	}
@@ -424,27 +411,24 @@ protected: // Properties
 
 
 	/// @brief Index
-	inline
 	Index
-	index() const
+	index() const override
 	{
 		return index_;
 	}
 
 
 	/// @brief Index
-	inline
 	Index &
-	index()
+	index() override
 	{
 		return index_;
 	}
 
 
 	/// @brief Index assignment
-	inline
 	AutoKey &
-	index( Index const index_a )
+	index( Index const index_a ) override
 	{
 		index_ = index_a;
 		return *this;
@@ -455,27 +439,24 @@ protected: // Comparison
 
 
 	/// @brief Equal to a Key?
-	inline
 	bool
-	equals( Key const & key ) const
+	equals( Key const & key ) const override
 	{
 		return ( index_ == utility::down_cast< AutoKey const & >( key ).index_ );
 	}
 
 
 	/// @brief Less than a Key?
-	inline
 	bool
-	less_than( Key const & key ) const
+	less_than( Key const & key ) const override
 	{
 		return ( index_ < utility::down_cast< AutoKey const & >( key ).index_ );
 	}
 
 
 	/// @brief Comparable to a Key?
-	inline
 	bool
-	comparable( Key const & key ) const
+	comparable( Key const & key ) const override
 	{
 		return dynamic_cast< AutoKey const * >( &key );
 	}

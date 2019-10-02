@@ -40,7 +40,7 @@ class mmTFPoseOutputter : public PDBPoseOutputter
 public:
 
 	mmTFPoseOutputter();
-	virtual ~mmTFPoseOutputter();
+	~mmTFPoseOutputter() override;
 
 	static
 	bool

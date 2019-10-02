@@ -50,11 +50,11 @@ class SpliceOutAntibody : public protocols::splice::SpliceOutTail
 public:
 	SpliceOutAntibody();
 	void apply( Pose & pose ) override;
-	virtual std::string get_name() const override;
+	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpliceOutAntibody >(); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )override;
-	virtual ~SpliceOutAntibody();
+	~SpliceOutAntibody() override;
 	void find_disulfide_postions(core::pose::Pose const & pose, utility::vector1<core::Size> & cys_pos);
 	void antibody_DB(std::string const & s){ antibody_DB_ = s; }
 	std::string antibody_DB(){return antibody_DB_;}

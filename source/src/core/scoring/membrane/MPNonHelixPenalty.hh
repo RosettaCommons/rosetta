@@ -55,29 +55,25 @@ public: // constructors
 	MPNonHelixPenalty();
 
 	/// @brief Clone
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 
 	/// @brief Set MP nonhelix Penalty for Scoring
-	virtual
 	void
-	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const {}
+	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const override {}
 
 	/// @brief Setup MP nonhelix for derivatives
-	virtual
 	void
-	setup_for_derivatives( pose::Pose &, ScoreFunction const & ) const {}
+	setup_for_derivatives( pose::Pose &, ScoreFunction const & ) const override {}
 
 	/// @brief Compute nonhelix penalty per-residue
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Finalize total energy method (for whole structure
 	void
@@ -85,10 +81,10 @@ public: // constructors
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	void
-	indicate_required_context_graphs( utility::vector1< bool > & ) const {}
+	indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
 public: // compute penalty
 
@@ -99,7 +95,7 @@ public: // compute penalty
 private:
 
 	/// @brief Version
-	core::Size version() const { return core::Size(2.0); }
+	core::Size version() const override { return core::Size(2.0); }
 
 	// MP Base potential (database)
 	MembraneData const & mpdata_;

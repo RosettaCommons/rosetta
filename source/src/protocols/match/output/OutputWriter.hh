@@ -40,7 +40,7 @@ class OutputWriter : public utility::pointer::ReferenceCount
 public:
 	OutputWriter();
 
-	virtual ~OutputWriter();
+	~OutputWriter() override;
 
 	protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP
 	cst_io() const;

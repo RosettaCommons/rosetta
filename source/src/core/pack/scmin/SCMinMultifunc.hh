@@ -63,28 +63,24 @@ public:
 		SCMinMinimizerMap & scminmap
 	);
 
-	virtual ~SCMinMultifunc();
+	~SCMinMultifunc() override;
 
-	virtual
 	Real
-	operator ()( Multivec const & chi ) const;
+	operator ()( Multivec const & chi ) const override;
 
 
-	virtual
 	void
-	dfunc( Multivec const & chi, Multivec & dE_dchi ) const;
+	dfunc( Multivec const & chi, Multivec & dE_dchi ) const override;
 
-	virtual
 	bool
-	abort_min( Multivec const & ) const;
+	abort_min( Multivec const & ) const override;
 
 	using optimization::Multifunc::dump;
 
 	/// @brief Error state reached; dump out something corresponding to the
 	/// var assignment.  Default base class implementation: no_op();
-	virtual
 	void
-	dump( Multivec const & /*vars*/, Multivec const & /*vars2*/ ) const;
+	dump( Multivec const & /*vars*/, Multivec const & /*vars2*/ ) const override;
 
 	void
 	scmin_numerical_derivative_check( Multivec const & start_vars, Multivec & dE_dvars ) const;

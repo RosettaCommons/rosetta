@@ -43,13 +43,13 @@ public:
 	/// @brief Initializes from a csv file with header, such that the first column is the peptide and the second column the score; other columns ignored
 	void load_csv(std::string const &filename);
 
-	virtual ~MHCEpitopePredictorPreLoaded() {}
+	~MHCEpitopePredictorPreLoaded() override {}
 
-	virtual bool operator==(MHCEpitopePredictor const & /* other */);
+	bool operator==(MHCEpitopePredictor const & /* other */) override;
 
-	std::string report() const;
+	std::string report() const override;
 
-	virtual core::Real score(std::string const &pep);
+	core::Real score(std::string const &pep) override;
 
 	/// @brief Sets the score for a peptide not in the map
 	void set_unseen_score(core::Size us) { unseen_score_ = us; }

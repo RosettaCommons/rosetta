@@ -47,7 +47,7 @@ public:
 public:
 	ScaffoldBuildPoint();
 	ScaffoldBuildPoint( Size index );
-	virtual ~ScaffoldBuildPoint();
+	~ScaffoldBuildPoint() override;
 
 	virtual bool compatible( ScaffoldBuildPoint const &, bool first_dispatch = true ) const;
 

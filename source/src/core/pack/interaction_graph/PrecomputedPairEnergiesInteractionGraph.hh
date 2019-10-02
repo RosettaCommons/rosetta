@@ -32,7 +32,7 @@ namespace interaction_graph {
 class PrecomputedPairEnergiesNode : public FixedBBNode
 {
 public:
-	virtual ~PrecomputedPairEnergiesNode() {}
+	~PrecomputedPairEnergiesNode() override {}
 
 	PrecomputedPairEnergiesNode(
 		InteractionGraphBase * owner,
@@ -54,7 +54,7 @@ public:
 class PrecomputedPairEnergiesEdge : public FixedBBEdge
 {
 public:
-	virtual ~PrecomputedPairEnergiesEdge() {}
+	~PrecomputedPairEnergiesEdge() override {}
 
 	PrecomputedPairEnergiesEdge(
 		InteractionGraphBase* owner,
@@ -68,7 +68,7 @@ public:
 	/// @brief Get the two-body energy for two states of the nodes connected to this edge.
 	/// @details Must be implmented by derived classes.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-	virtual core::PackerEnergy get_two_body_energy( int const first_state, int const second_state ) const = 0;
+	core::PackerEnergy get_two_body_energy( int const first_state, int const second_state ) const override = 0;
 
 	virtual
 	void add_to_two_body_energy(int const, int const, core::PackerEnergy const) = 0;
@@ -87,7 +87,7 @@ public:
 class PrecomputedPairEnergiesInteractionGraph : public FixedBBInteractionGraph
 {
 public:
-	virtual ~PrecomputedPairEnergiesInteractionGraph() {}
+	~PrecomputedPairEnergiesInteractionGraph() override {}
 	PrecomputedPairEnergiesInteractionGraph( int num_nodes )
 	:
 		FixedBBInteractionGraph( num_nodes )

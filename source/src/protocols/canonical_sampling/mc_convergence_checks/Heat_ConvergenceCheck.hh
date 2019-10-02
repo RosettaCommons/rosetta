@@ -45,7 +45,7 @@ public:
 };
 
 class Heat_ConvergenceCheck : public moves::MonteCarloExceptionConverge {
-	virtual bool operator() ( const core::pose::Pose&, moves::MonteCarlo const& mc, bool /*reject*/ ) {
+	bool operator() ( const core::pose::Pose&, moves::MonteCarlo const& mc, bool /*reject*/ ) override {
 		if ( mc.last_accept() >= mc.heat_after_cycles() - mc.check_frequency() ) {
 			throw CREATE_EXCEPTION(canonical_sampling::mc_convergence_checks::EXCN_Heat_Converged, "");
 		}

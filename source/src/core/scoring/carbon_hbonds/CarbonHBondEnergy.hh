@@ -53,21 +53,18 @@ public:
 	CarbonHBondEnergy( CarbonHBondEnergy const & src );
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Evaluate the cbond energy between two residues
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -75,11 +72,10 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	/// @brief Splitting out based on bb/bb for the OnTheFly IGs
-	virtual
 	void
 	backbone_backbone_energy(
 		conformation::Residue const & rsd1,
@@ -87,10 +83,9 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	backbone_sidechain_energy(
 		conformation::Residue const & rsd1,
@@ -98,9 +93,8 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	sidechain_sidechain_energy(
 		conformation::Residue const & rsd1,
@@ -108,7 +102,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/* DEPRECATED
 	virtual
@@ -123,12 +117,10 @@ public:
 	Vector & F2
 	) const;*/
 
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const;
+	minimize_in_whole_structure_context( pose::Pose const & ) const override;
 
 	/// @brief Evaluate all atom-pair derivatives for any interactions between the two residues
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
@@ -140,9 +132,8 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
@@ -150,7 +141,7 @@ public:
 		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
 
 	// virtual
@@ -161,26 +152,22 @@ public:
 	//  EnergyMap & totals
 	// ) const;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const;
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
 	bool
-	divides_backbone_and_sidechain_energetics() const
+	divides_backbone_and_sidechain_energetics() const override
 	{
 		return true;
 	}
@@ -188,9 +175,8 @@ public:
 	// Real hydrogen_interaction_cutoff2() const;
 
 	/// @brief CarbonHBondEnergy is context sensitive
-	virtual
 	void indicate_required_context_graphs(
-		utility::vector1< bool > & context_graphs_required ) const;
+		utility::vector1< bool > & context_graphs_required ) const override;
 
 	bool
 	use_orientation_dep_rna_ch_o_bonds(conformation::Residue const & don_rsd, conformation::Residue const & acc_rsd) const;
@@ -297,8 +283,7 @@ private:
 	//mutable Real wbb_sc_;
 	//mutable Real wsc_sc_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 } // carbon_hbonds

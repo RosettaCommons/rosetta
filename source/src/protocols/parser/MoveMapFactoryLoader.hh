@@ -30,15 +30,14 @@ class MoveMapFactoryLoader : public DataLoader
 {
 public:
 	MoveMapFactoryLoader();
-	virtual ~MoveMapFactoryLoader();
+	~MoveMapFactoryLoader() override;
 
 	/// @brief The MoveMapFactoryLoader will load named MoveMapFactories into the basic::datacache::DataMap
-	virtual
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 	static std::string mmf_cat_in_datamap();
 	static std::string loader_name();

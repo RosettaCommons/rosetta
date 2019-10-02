@@ -52,13 +52,13 @@ public:
 		protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer,
 		core::import_pose::options::RNA_FragmentMonteCarloOptionsCOP options );
 
-	~RNP_HighResMover();
+	~RNP_HighResMover() override;
 
 	void initialize( core::pose::Pose const & pose );
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	//private methods

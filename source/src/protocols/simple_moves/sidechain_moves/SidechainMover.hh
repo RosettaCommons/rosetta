@@ -64,7 +64,7 @@ public:
 		SidechainMover const & mover
 	);
 
-	~SidechainMover();
+	~SidechainMover() override;
 
 	protocols::moves::MoverOP
 	clone() const override;

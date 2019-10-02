@@ -56,7 +56,7 @@ public:
 
 	ResidueProbDesignOperation(ResidueProbDesignOperation const & src);
 
-	virtual ~ResidueProbDesignOperation();
+	~ResidueProbDesignOperation() override;
 
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const override;

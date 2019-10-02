@@ -43,9 +43,8 @@ public:
 public:
 	SSElementMotifContactEnergy();
 
-	virtual
 	EnergyMethodOP
-	clone() const {
+	clone() const override {
 		return utility::pointer::make_shared< SSElementMotifContactEnergy >();
 	}
 
@@ -58,13 +57,13 @@ public:
 
 
 	/// @brief Called at the end of the energy evaluation.
-	virtual void finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
+	void finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const override;
 
 
-	virtual void indicate_required_context_graphs( utility::vector1< bool > & ) const {};
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {};
 
 
-	virtual core::Size version() const;
+	core::Size version() const override;
 
 private:
 	core::scoring::motif::MotifHashManager *mman_;

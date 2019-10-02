@@ -36,7 +36,7 @@ class ConstraintCreator : public utility::pointer::ReferenceCount
 {
 public:
 	ConstraintCreator();
-	virtual ~ConstraintCreator();
+	~ConstraintCreator() override;
 
 	virtual ConstraintOP create_constraint() const = 0;
 	virtual std::string keyname() const = 0;

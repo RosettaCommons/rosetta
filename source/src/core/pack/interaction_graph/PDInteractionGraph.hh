@@ -57,7 +57,7 @@ public:
 	PDNode(InteractionGraphBase * owner, int node_id, int num_states);
 
 	/// @brief Destructor.
-	virtual ~PDNode();
+	~PDNode() override;
 
 	/// @brief prints a description of the node and all of it's one-body energies
 	void print() const override;
@@ -234,7 +234,7 @@ class PDEdge : public PrecomputedPairEnergiesEdge
 {
 public:
 	PDEdge(InteractionGraphBase* owner, int first_node_ind, int second_node_ind);
-	virtual ~PDEdge();
+	~PDEdge() override;
 	void set_sparse_aa_info(ObjexxFCL::FArray2_bool const & sparse_conn_info) override;
 	void force_aa_neighbors(int node1aa, int node2aa) override;
 	void force_all_aa_neighbors() override;
@@ -356,39 +356,39 @@ class PDInteractionGraph : public PrecomputedPairEnergiesInteractionGraph
 {
 public:
 	PDInteractionGraph(int num_nodes);
-	virtual void initialize( pack_basic::RotamerSetsBase const & rot_sets );
+	void initialize( pack_basic::RotamerSetsBase const & rot_sets ) override;
 
-	virtual core::PackerEnergy get_one_body_energy_for_node_state( int node, int state);
+	core::PackerEnergy get_one_body_energy_for_node_state( int node, int state) override;
 
 	/// @brief sets the number of amino acid types present.
 	//virtual void set_num_aatypes(int);
-	virtual int  get_num_aatypes() const;
+	int  get_num_aatypes() const override;
 
 	virtual void add_edge(int node1, int node2);
 
-	virtual void blanket_assign_state_0();
-	virtual core::PackerEnergy set_state_for_node(int node_ind, int new_state);
-	virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states);
-	virtual void consider_substitution
+	void blanket_assign_state_0() override;
+	core::PackerEnergy set_state_for_node(int node_ind, int new_state) override;
+	core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states) override;
+	void consider_substitution
 	(
 		int node_ind,
 		int new_state,
 		core::PackerEnergy & delta_energy,
 		core::PackerEnergy & prev_energy_for_node
-	);
-	virtual core::PackerEnergy commit_considered_substitution();
+	) override;
+	core::PackerEnergy commit_considered_substitution() override;
 	/// @ brief O(1) total energy report.  Protected read access for derived classes.
-	virtual core::PackerEnergy get_energy_current_state_assignment();
+	core::PackerEnergy get_energy_current_state_assignment() override;
 
 	/// @brief older scheme for memory accounting -- replace this asap
 	/// @brief returns the number of floats used in all edge two-body energy tables
-	virtual int get_edge_memory_usage() const;
+	int get_edge_memory_usage() const override;
 	/// @brief outputs the current state for each node, useful for debugging
-	virtual void print_current_state_assignment() const;
-	virtual void set_errorfull_deltaE_threshold( core::PackerEnergy ) {};
+	void print_current_state_assignment() const override;
+	void set_errorfull_deltaE_threshold( core::PackerEnergy ) override {};
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 
 	/*
@@ -414,7 +414,7 @@ public:
 
 	/// @brief a user may define subsets of the vertex set for which they would like to
 	/// know the internal energy sum.
-	virtual core::PackerEnergy get_energy_sum_for_vertex_group( int group_id );
+	core::PackerEnergy get_energy_sum_for_vertex_group( int group_id ) override;
 
 	// <directed_design>
 	core::PackerEnergy get_weighted_energy(ObjexxFCL::FArray2D< core::PackerEnergy > const &weights) const;
@@ -434,32 +434,29 @@ public:
 
 	/// @brief Override the InteractionGraphBase class's implementation of this function
 	/// to return 'true'.
-	virtual
 	bool
-	aa_submatrix_energies_retrievable() const;
+	aa_submatrix_energies_retrievable() const override;
 
-	virtual
 	int aatype_for_node_state(
 		int node_ind,
 		int node_state
-	) const;
+	) const override;
 
-	virtual
 	ObjexxFCL::FArray2D< core::PackerEnergy >
 	get_aa_submatrix_energies_for_edge(
 		int node1,
 		int node2,
 		int node1aa,
 		int node2aa
-	) const;
+	) const override;
 
 protected:
 	virtual unsigned int getMemoryUsageInBytes() const;
 
 	/// @brief factory method that instantiates a PDNode.
-	virtual NodeBase* create_new_node( int node_index, int num_states);
+	NodeBase* create_new_node( int node_index, int num_states) override;
 	/// @brief factory method that instantiates a PDEdge
-	virtual EdgeBase* create_new_edge( int index1, int index2);
+	EdgeBase* create_new_edge( int index1, int index2) override;
 
 	//Hooks for SASAInterationGraph< V, E, G >
 	core::PackerEnergy get_energy_PD_current_state_assignment();

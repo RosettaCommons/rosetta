@@ -45,16 +45,15 @@ public:
 	RNA_AnalyticLoopCloser ( core::Size const moving_suite, core::Size const chainbreak_suite );
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Each derived class must specify its name.  The class name.
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "RNA_AnalyticLoopCloser";
 	}
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
-	virtual
-	void apply ( core::pose::Pose & pose );
+	void apply ( core::pose::Pose & pose ) override;
 
 	void
 	choose_best_solution_based_on_score_function ( core::scoring::ScoreFunctionOP scorefxn );

@@ -47,11 +47,11 @@ public:
 
 	void SetupRamaTables();
 
-	void do_caching(VallChunkOP);
-	void clean_up();
+	void do_caching(VallChunkOP) override;
+	void clean_up() override;
 
-	bool score(FragmentCandidateOP f, FragmentScoreMapOP empty_map);
-	bool cached_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map);
+	bool score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) override;
+	bool cached_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) override;
 
 	/// @brief prints a detailed explanation how a fragment score has been computed
 	/// @details besides extensive output, the method should return the same result as score()
@@ -85,7 +85,7 @@ public:
 	}
 
 	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
-		FragmentPickerOP picker, std::string prediction_id ) {
+		FragmentPickerOP picker, std::string prediction_id ) override {
 
 		if ( prediction_id == "" ) {
 			core::fragment::SecondaryStructureOP default_ss( new core::fragment::SecondaryStructure );

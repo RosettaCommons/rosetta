@@ -95,12 +95,12 @@ public:
 
 	/// @brief Returns a new ProteinSilentStruct with a copy of the information
 	/// in this ProteinSilentStruct.
-	virtual SilentStructOP clone() const {
+	SilentStructOP clone() const override {
 		return utility::pointer::make_shared< ProteinSilentStruct_Template<T> >( *this );
 	}
 
 	// destructor
-	~ProteinSilentStruct_Template() {}
+	~ProteinSilentStruct_Template() override {}
 
 	ProteinSilentStruct_Template( ProteinSilentStruct_Template<T> const & ) = default;
 
@@ -113,38 +113,38 @@ public:
 
 	/// @brief Tells this ProteinSilentStruct object to initialize itself from
 	//the given set of lines.
-	virtual bool init_from_lines(
+	bool init_from_lines(
 		utility::vector1< std::string > const & lines,
 		SilentFileData & container
-	);
+	) override;
 
 	/// @brief Configure the conformation of the given Pose with the
 	/// conformational data within this ProteinSilentStruct.
 	/// Calls pose.clear() and rebuilds Pose from scratch using FA_STANDARD
 	/// residue types.
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		bool const metapatches = true
-	) const;
+	) const override;
 
 	/// @brief Configure the conformation of the given Pose with the
 	/// conformational data within this ProteinSilentStruct. Calls pose.clear()
 	/// and rebuilds Pose from scratch using the user-specified residue types.
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set,
 		bool const metapatches = true
-	) const;
+	) const override;
 
 	/// @brief opposite of fill_pose
-	virtual void fill_struct(
+	void fill_struct(
 		core::pose::Pose const & pose,
 		std::string tag = "empty_tag"
-	);
+	) override;
 
 	/// @brief Prints the conformation information within this
 	// ProteinSilentStruct to the given std::ostream.
-	virtual void print_conformation( std::ostream & output ) const;
+	void print_conformation( std::ostream & output ) const override;
 
 	/// @brief data getters/setters
 	bool fullatom() const {
@@ -270,7 +270,7 @@ public:
 
 	// @brief returns the positions of the CA atoms in this
 	// ProteinSilentStruct. Useful for RMS calculations.
-	virtual ObjexxFCL::FArray2D< Real > get_CA_xyz() const;
+	ObjexxFCL::FArray2D< Real > get_CA_xyz() const override;
 
 	// model quality-related methods.
 	virtual Real CA_rmsd( ProteinSilentStruct_Template<T> other_pss );
@@ -278,7 +278,7 @@ public:
 	/// @brief calculates the RMSD between the C-alpha atoms of a Pose built from
 	/// the torsions in this ProteinSilentStruct and the C-alpha atoms from this
 	/// ProteinSilentStruct.
-	virtual Real get_debug_rmsd();
+	Real get_debug_rmsd() override;
 
 	static bool is_single_precision();
 
@@ -296,7 +296,7 @@ private: // private member functions
 
 	void resize_chi();
 public:
-	virtual core::Size mem_footprint() const;
+	core::Size mem_footprint() const override;
 protected:
 	const static Size max_chi_ = 4; // maximum number of chis for the classic rosetta++ silent-file format
 	bool fullatom_;

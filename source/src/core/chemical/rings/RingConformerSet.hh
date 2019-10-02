@@ -64,7 +64,7 @@ public:
 	RingConformerSet & operator=( RingConformerSet const & object_to_copy );
 
 	// Destructor
-	virtual ~RingConformerSet();
+	~RingConformerSet() override;
 
 
 	// Standard Rosetta methods //////////////////////////////////////////////////////////////////////////////////////

@@ -48,7 +48,7 @@ public:
 	EdgeMapGenerator(EdgeMapGenerator const & other);
 	EdgeMapGenerator(std::string edge_file_name );
 
-	virtual ~EdgeMapGenerator();
+	~EdgeMapGenerator() override;
 
 	EdgeMapGeneratorOP
 	clone();

@@ -57,13 +57,13 @@ public:
 	DisulfideMover( core::Size targetResidue );
 	/// @brief Constructor with multiple target residues
 	DisulfideMover( utility::vector1<core::Size> const& targetResidues );
-	virtual ~DisulfideMover();
+	~DisulfideMover() override;
 
-	virtual void apply( core::pose::Pose & pose ) override;
-	virtual protocols::moves::MoverOP clone() const override {
+	void apply( core::pose::Pose & pose ) override;
+	protocols::moves::MoverOP clone() const override {
 		return (utility::pointer::make_shared< DisulfideMover >( *this ) );
 	}
-	virtual protocols::moves::MoverOP fresh_instance() const override {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return utility::pointer::make_shared< DisulfideMover >();
 	}
 

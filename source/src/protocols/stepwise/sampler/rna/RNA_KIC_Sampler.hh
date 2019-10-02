@@ -46,37 +46,37 @@ public:
 		bool const is_TNA = false
 	);
 
-	~RNA_KIC_Sampler();
+	~RNA_KIC_Sampler() override;
 
 	/// @brief Initialization
-	virtual void init();
+	void init() override;
 
 	/// @brief Reset to the first (or random if is_random()) rotamer.
-	virtual void reset();
+	void reset() override;
 
 	/// @brief Move to next rotamer
-	virtual void operator++();
+	void operator++() override;
 
 	/// @brief Check if reach the end of rotamer list
-	virtual bool not_end() const;
+	bool not_end() const override;
 
 	/// @brief Apply the current rotamer to pose
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Apply the current rotamer to ref_pose_
 	void apply();
 
 	/// @brief Set the random modeler state
-	void set_random( bool const setting );
+	void set_random( bool const setting ) override;
 
 	/// @brief If the chain is closable (random modeler only)
 	bool closable() const { return random_chain_closed_; }
 
 	/// @brief Name of the class
-	std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RNA_KIC; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::RNA_KIC; }
 
 	// Set functions
 	void set_verbose( bool const setting ) {

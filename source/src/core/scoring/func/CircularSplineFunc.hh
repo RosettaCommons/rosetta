@@ -53,32 +53,26 @@ public:
 	CircularSplineFunc( core::Real weight_in, utility::vector1< core::Real> energies_in,
 		bool convert_to_degrees = false ); // true might be better? esp. if used in DihedralConstraint.
 
-	~CircularSplineFunc() {}
+	~CircularSplineFunc() override {}
 
-	virtual
-	FuncOP clone() const { return utility::pointer::make_shared< CircularSplineFunc >( *this ); }
+	FuncOP clone() const override { return utility::pointer::make_shared< CircularSplineFunc >( *this ); }
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
 	core::Real get_weight() { return weight_; }
 
 	void train( utility::vector1< core::Real> energies_in );
 
-	virtual
-	void read_data ( std::istream &in );
+	void read_data ( std::istream &in ) override;
 
-	virtual
-	core::Real func( core::Real const x ) const;
+	core::Real func( core::Real const x ) const override;
 
-	virtual
-	core::Real dfunc( core::Real const x ) const;
+	core::Real dfunc( core::Real const x ) const override;
 
-	virtual
-	void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
-	virtual
-	core::Size show_violations( std::ostream &out, core::Real x, core::Size verbose_level, core::Real threshold = 1 ) const;
+	core::Size show_violations( std::ostream &out, core::Real x, core::Size verbose_level, core::Real threshold = 1 ) const override;
 
 private:
 

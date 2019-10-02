@@ -194,7 +194,7 @@ typedef utility::pointer::shared_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
 /// @brief %LKB_ResidueInfo holds the coordinates of the waters attached to a Residue
 class LKB_ResidueInfo : public basic::datacache::CacheableData {
 public:
-	virtual ~LKB_ResidueInfo();
+	~LKB_ResidueInfo() override;
 
 public:
 
@@ -207,9 +207,8 @@ public:
 	void
 	initialize( chemical::ResidueType const & rsd );
 
-	virtual
 	basic::datacache::CacheableDataOP
-	clone() const;
+	clone() const override;
 
 	void
 	build_waters( conformation::Residue const & rsd, bool compute_derivs = false );
@@ -307,7 +306,7 @@ public:
 	LKB_ResiduesInfo( LKB_ResiduesInfo const & src );
 
 	basic::datacache::CacheableDataOP
-	clone() const;
+	clone() const override;
 
 	Size
 	size() const { return residues_info_.size(); }

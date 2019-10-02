@@ -78,7 +78,7 @@ public:
 
 
 	//default dtor
-	virtual ~OopDockDesignProtocol(){}
+	~OopDockDesignProtocol() override{}
 
 	//methods
 	void apply( core::pose::Pose & pose ) override;

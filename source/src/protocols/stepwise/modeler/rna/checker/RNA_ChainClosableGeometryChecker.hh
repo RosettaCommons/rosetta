@@ -39,7 +39,7 @@ public:
 	RNA_ChainClosableGeometryChecker( core::Size const five_prime_chain_break_res, core::Size const three_prime_chain_break_res, core::Size const gap_size );
 
 	//destructor
-	~RNA_ChainClosableGeometryChecker();
+	~RNA_ChainClosableGeometryChecker() override;
 
 public:
 

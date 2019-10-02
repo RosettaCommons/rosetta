@@ -48,7 +48,7 @@ public: //Constructors
 	TrigonalPyramidalMetal_Helper( TrigonalPyramidalMetal_Helper const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~TrigonalPyramidalMetal_Helper();
+	~TrigonalPyramidalMetal_Helper() override;
 
 
 public: // public methods

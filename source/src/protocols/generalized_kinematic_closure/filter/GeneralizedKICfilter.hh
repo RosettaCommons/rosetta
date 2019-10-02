@@ -74,7 +74,7 @@ class GeneralizedKICfilter : public utility::pointer::ReferenceCount
 public:
 	GeneralizedKICfilter();
 	GeneralizedKICfilter(GeneralizedKICfilter const &src);
-	~GeneralizedKICfilter();
+	~GeneralizedKICfilter() override;
 	GeneralizedKICfilterOP clone() const;
 
 

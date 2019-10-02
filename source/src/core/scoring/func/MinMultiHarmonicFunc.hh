@@ -39,17 +39,17 @@ public:
 	MinMultiHarmonicFunc( utility::vector1<Real> const & x0_in, utility::vector1<Real> const & sd_in );
 
 	FuncOP
-	clone() const { return utility::pointer::make_shared< MinMultiHarmonicFunc >( *this ); }
+	clone() const override { return utility::pointer::make_shared< MinMultiHarmonicFunc >( *this ); }
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	Real func( Real const x ) const;
-	Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	void read_data( std::istream & in );
+	void read_data( std::istream & in ) override;
 
-	void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
 	Real x0(int n) const {
 		return x0_[n];
@@ -68,7 +68,7 @@ public:
 	}
 
 	Size
-	show_violations( std::ostream& out, Real x, Size verbose_level, core::Real threshold = 1 ) const;
+	show_violations( std::ostream& out, Real x, Size verbose_level, core::Real threshold = 1 ) const override;
 
 private:
 	utility::vector1<Real> x0_;

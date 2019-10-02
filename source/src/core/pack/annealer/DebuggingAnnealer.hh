@@ -62,9 +62,9 @@ public:
 		ObjexxFCL::FArray1D_float & rot_freq
 	);
 
-	virtual ~DebuggingAnnealer();
+	~DebuggingAnnealer() override;
 
-	virtual void run();
+	void run() override;
 
 	void annealer_file( std::string const & fname );
 

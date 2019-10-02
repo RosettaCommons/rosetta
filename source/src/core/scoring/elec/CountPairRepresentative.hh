@@ -51,7 +51,7 @@ public:
 		inner_cpfxn_( inner_cpfxn )
 	{}
 
-	virtual ~CountPairRepresentative() {}
+	~CountPairRepresentative() override {}
 
 	bool
 	count(

@@ -51,9 +51,8 @@ public:
 
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -84,8 +83,7 @@ public:
 
 
 	/// @brief  No graphs required.
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const {};
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {};
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -95,8 +93,7 @@ public:
 private:
 
 	dna::DirectReadoutPotential const & potential_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

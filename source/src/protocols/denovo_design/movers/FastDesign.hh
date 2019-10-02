@@ -73,7 +73,7 @@ public:
 	FastDesign( core::scoring::ScoreFunctionOP scorefxn_in, std::string const & script_file );
 
 	/// @brief virtual constructor to allow derivation
-	virtual ~FastDesign();
+	~FastDesign() override;
 
 
 	/// @brief Create the default task factory.  Must be called before design can occur.

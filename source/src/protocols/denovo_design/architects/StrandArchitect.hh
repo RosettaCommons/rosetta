@@ -61,23 +61,23 @@ public:
 public:
 	StrandArchitect( std::string const & id_value );
 
-	virtual ~StrandArchitect();
+	~StrandArchitect() override;
 
 	static std::string
 	class_name() { return "StrandArchitect"; }
 
-	virtual std::string
-	type() const;
+	std::string
+	type() const override;
 
 	DeNovoArchitectOP
-	clone() const;
+	clone() const override;
 
-	virtual StructureDataOP
-	design( core::pose::Pose const & pose, core::Real & random ) const;
+	StructureDataOP
+	design( core::pose::Pose const & pose, core::Real & random ) const override;
 
 protected:
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 public:
 	components::StructureDataCOPs::const_iterator

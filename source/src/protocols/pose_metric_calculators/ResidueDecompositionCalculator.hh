@@ -38,7 +38,7 @@ class ResidueDecompositionCalculator : public core::pose::metrics::StructureDepe
 
 public:
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const = 0;
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override = 0;
 
 protected:
 
@@ -46,11 +46,11 @@ protected:
 
 	ResidueDecompositionCalculator( ResidueDecompositionCalculator const & calculator );
 
-	virtual std::string print( std::string const & key ) const;
+	std::string print( std::string const & key ) const override;
 
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override;
 
-	virtual void recompute( core::pose::Pose const & this_pose ) = 0;
+	void recompute( core::pose::Pose const & this_pose ) override = 0;
 
 	void
 	residue_decomposition_to_set_numbers(

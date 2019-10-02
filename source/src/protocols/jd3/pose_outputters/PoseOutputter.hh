@@ -51,7 +51,7 @@ class PoseOutputter : public output::ResultOutputter
 public:
 
 	PoseOutputter();
-	virtual ~PoseOutputter();
+	~PoseOutputter() override;
 
 	/// @brief Determine the inner-larval job's "job_tag" from the <Output> tag / per-job options
 	virtual

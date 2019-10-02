@@ -54,7 +54,7 @@ class OrbitalTypeSet : public utility::pointer::ReferenceCount {
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~OrbitalTypeSet();
+	~OrbitalTypeSet() override;
 	OrbitalTypeSet(std::string const & directory, std::string const & name="" );
 
 	/// @brief What the ChemicalManager knows this as, if relevant

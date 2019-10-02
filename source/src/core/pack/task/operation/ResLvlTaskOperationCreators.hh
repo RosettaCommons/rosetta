@@ -29,72 +29,72 @@ namespace operation {
 
 class RestrictToRepackingRLTCreator : public ResLvlTaskOperationCreator {
 public:
-	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	ResLvlTaskOperationOP create_res_level_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class RestrictAbsentCanonicalAASRLTCreator : public ResLvlTaskOperationCreator {
 public:
-	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	ResLvlTaskOperationOP create_res_level_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class RestrictAbsentCanonicalAASExceptNativeRLTCreator : public ResLvlTaskOperationCreator {
 public:
-	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	ResLvlTaskOperationOP create_res_level_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class DisallowIfNonnativeRLTCreator : public ResLvlTaskOperationCreator {
 public:
-	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	ResLvlTaskOperationOP create_res_level_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class PreventRepackingRLTCreator : public ResLvlTaskOperationCreator {
 public:
-	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	ResLvlTaskOperationOP create_res_level_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class AddBehaviorRLTCreator : public ResLvlTaskOperationCreator {
 public:
-	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	ResLvlTaskOperationOP create_res_level_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class IncludeCurrentRLTCreator : public ResLvlTaskOperationCreator {
 public:
-	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	ResLvlTaskOperationOP create_res_level_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class PreserveCBetaRLTCreator : public ResLvlTaskOperationCreator {
 public:
-	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	ResLvlTaskOperationOP create_res_level_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class ExtraChiCutoffRLTCreator : public ResLvlTaskOperationCreator {
 public:
-	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	ResLvlTaskOperationOP create_res_level_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class ExtraRotamersGenericRLTCreator : public ResLvlTaskOperationCreator {
 public:
-	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	ResLvlTaskOperationOP create_res_level_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //namespace operation

@@ -98,7 +98,7 @@ class GeneralizedKICperturber : public utility::pointer::ReferenceCount
 public:
 	GeneralizedKICperturber();
 	GeneralizedKICperturber( GeneralizedKICperturber const &src );
-	~GeneralizedKICperturber();
+	~GeneralizedKICperturber() override;
 
 	GeneralizedKICperturberOP clone() const;
 

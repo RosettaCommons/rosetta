@@ -43,7 +43,7 @@ public:
 	HBP_TemperatureScheduleGenerator(HBP_TemperatureScheduleGenerator const & src);
 
 	/// @brief Destructor.
-	virtual ~HBP_TemperatureScheduleGenerator();
+	~HBP_TemperatureScheduleGenerator() override;
 
 	/// @brief Copy this object and return an owning pointe to the copy.
 	virtual HBP_TemperatureScheduleGeneratorOP clone() const = 0;

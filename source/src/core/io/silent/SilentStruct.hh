@@ -61,7 +61,7 @@ public:
 	SilentStruct( SilentFileOptions const & opts );
 
 	// destructor
-	virtual ~SilentStruct();
+	~SilentStruct() override;
 
 	SilentStruct( SilentStruct const & );
 	SilentStruct& operator= ( SilentStruct const & );

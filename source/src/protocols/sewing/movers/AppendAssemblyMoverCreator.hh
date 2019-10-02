@@ -24,18 +24,18 @@ class AppendAssemblyMoverCreator : public protocols::moves::MoverCreator {
 
 public:
 
-	virtual protocols::moves::MoverOP
-	create_mover() const;
+	protocols::moves::MoverOP
+	create_mover() const override;
 
-	virtual std::string
-	keyname() const;
+	std::string
+	keyname() const override;
 
 	static std::string class_name();
 
 	static std::string mover_name();
 
-	virtual void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
 } //protocols

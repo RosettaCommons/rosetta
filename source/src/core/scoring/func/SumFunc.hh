@@ -55,14 +55,14 @@ public:
 	//}
 
 	FuncOP
-	clone() const { return utility::pointer::make_shared< SumFunc >( *this ); }
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	clone() const override { return utility::pointer::make_shared< SumFunc >( *this ); }
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	Real func( Real const x ) const;
-	Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	void read_data( std::istream& );
+	void read_data( std::istream& ) override;
 
 	// class-specific accessors
 	utility::vector1< FuncOP > funcs() const {

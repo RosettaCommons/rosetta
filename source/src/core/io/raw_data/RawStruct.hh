@@ -41,7 +41,7 @@ class RawStruct : public utility::pointer::ReferenceCount {
 
 public:
 	// destructor
-	virtual ~RawStruct();
+	~RawStruct() override;
 
 	/// @brief Fill a Pose with the conformation information in this RawStruct and the FA_STANDARD
 	/// ResidueTypeSet. This is a virtual method which must be implemented by classes derived from RawStruct.

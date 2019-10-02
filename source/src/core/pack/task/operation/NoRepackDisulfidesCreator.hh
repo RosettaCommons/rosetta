@@ -26,9 +26,9 @@ namespace operation {
 
 class NoRepackDisulfidesCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //namespace operation

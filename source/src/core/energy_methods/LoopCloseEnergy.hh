@@ -51,28 +51,25 @@ public:
 	LoopCloseEnergy( LoopCloseEnergy const & src );
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	/////////////////////////////////
 	void
@@ -83,12 +80,12 @@ public:
 		ScoreFunction const &,
 		EnergyMap const & weights,
 		Vector & F1,
-		Vector & F2 ) const;
+		Vector & F2 ) const override;
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 private:
 
@@ -101,8 +98,7 @@ private:
 	Vector
 	get_loop_distance2_deriv( Vector const & v_takeoff,  Vector const & v_landing ) const;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	methods::EnergyMethodOptions const & options_;
 

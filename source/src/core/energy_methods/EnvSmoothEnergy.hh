@@ -54,9 +54,8 @@ public:
 	EnvSmoothEnergy( EnvSmoothEnergy const & src );
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -64,26 +63,22 @@ public:
 
 	/// @brief computes dScore/dNumNeighbors for all residues for rapid use in later
 	/// atom derivate calculations
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
 	/// @brief causes a neighbor graph update
-	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const override;
 
 	/// @brief evaluates the one-body energy for a residue
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &,// pose,
 		EnergyMap &// emap
-	) const;
+	) const override;
 
 	/// @brief increments the F1 and F2 derivative vectors for an atom
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & atom_id,
@@ -93,15 +88,14 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 	/// @brief unused by the EnvSmoothEnergy class, returns 0
 	Distance
 	atomic_interaction_cutoff() const;
 
 	/// @brief Tells the scoring function to maintain the TwelveANeighborGraph
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 private:
 
@@ -153,8 +147,7 @@ private:
 	mutable utility::vector1< Real > residue_N_;
 	mutable utility::vector1< Real > residue_E_;
 	mutable utility::vector1< Real > residue_dEdN_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 
 };

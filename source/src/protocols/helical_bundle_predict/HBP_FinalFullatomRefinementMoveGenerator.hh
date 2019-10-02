@@ -50,23 +50,22 @@ public:
 	HBP_FinalFullatomRefinementMoveGenerator(HBP_FinalFullatomRefinementMoveGenerator const & src);
 
 	/// @brief Destructor.
-	virtual ~HBP_FinalFullatomRefinementMoveGenerator();
+	~HBP_FinalFullatomRefinementMoveGenerator() override;
 
 	/// @brief Clone this object: that is, make a copy and return an owning pointer to the copy.
-	virtual HBP_MoveGeneratorOP clone() const;
+	HBP_MoveGeneratorOP clone() const override;
 
 public: //Functions
 
 	/// @brief Given the current step index, the total number of steps in the trajectory, and the pose for analysis,
 	/// construct a ParsedProtocol of things to do to this pose for this move in the Monte Carlo trajectory.
 	/// @details Pure virtual.  Must be implemented by derived classes.
-	virtual
 	protocols::rosetta_scripts::ParsedProtocolOP
 	generate_monte_carlo_move(
 		core::Size const current_step,
 		core::Size const num_steps,
 		core::pose::Pose const &pose
-	) const;
+	) const override;
 
 private: //Data
 

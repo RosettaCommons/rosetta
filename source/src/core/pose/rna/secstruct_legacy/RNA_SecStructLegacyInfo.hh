@@ -56,7 +56,7 @@ public:
 	RNA_SecStructLegacyInfo( RNA_SecStructLegacyInfo const & src );
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return utility::pointer::make_shared< RNA_SecStructLegacyInfo >( *this );
 	}

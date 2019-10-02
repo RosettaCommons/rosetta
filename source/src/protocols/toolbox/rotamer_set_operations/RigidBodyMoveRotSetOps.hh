@@ -84,7 +84,6 @@ public:
 	/// Does not have full safety checks to make sure all the rotamers in the set are
 	/// of the same residue type as the internally stored ones, i.e. that no user sets this
 	/// position to designing in the task
-	virtual
 	void
 	alter_rotamer_set(
 		core::pose::Pose const & pose,
@@ -92,7 +91,7 @@ public:
 		core::pack::task::PackerTask const & ptask,
 		utility::graph::GraphCOP packer_neighbor_graph,
 		core::pack::rotamer_set::RotamerSet & rotamer_set
-	);
+	) override;
 
 	/// @brief returns the largest possible change in nbr atoms location
 	///
@@ -141,16 +140,14 @@ public:
 	RigidBodyMoveRSO( core::Size seqpos );
 	RigidBodyMoveRSO( RigidBodyMoveRSO const & other );
 
-	virtual
 	core::pack::rotamer_set::RotamerSetOperationOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	utility::vector1< core::conformation::ResidueCOP >
 	get_rigid_body_confs(
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask const & ptask,
-		core::Size residue_index);
+		core::Size residue_index) override;
 
 	void
 	set_rigid_body_confs(

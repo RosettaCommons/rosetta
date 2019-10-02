@@ -67,39 +67,34 @@ public:
 
 	HBondEnergy( HBondEnergy const & src );
 
-	virtual ~HBondEnergy();
+	~HBondEnergy() override;
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 
-	virtual
 	void
 	setup_for_packing(
 		pose::Pose & pose,
 		utility::vector1< bool > const &,
-		utility::vector1< bool > const & ) const;
+		utility::vector1< bool > const & ) const override;
 
 	// Creates a rotamer trie for the input set of rotamers and stores the trie
 	// in the rotamer set.
-	virtual
 	void
 	prepare_rotamers_for_packing(
 		pose::Pose const & pose,
-		conformation::RotamerSetBase & set ) const;
+		conformation::RotamerSetBase & set ) const override;
 
 	// Updates the cached rotamer trie for a residue if it has changed during the course of
 	// a repacking
-	virtual
 	void
-	update_residue_for_packing( pose::Pose & pose, Size resid ) const;
+	update_residue_for_packing( pose::Pose & pose, Size resid ) const override;
 
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
 
 	/*virtual
@@ -112,7 +107,6 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	/// note that this only evaluates sc-sc and sc-bb energies
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -120,36 +114,32 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Returns false if two residues are not moving wrt each other; the two parts
 	/// of the HBondEnergy function which are non-pairwise-decomposable are held fixed
 	/// during minimization -- the neighbor counts, and the bb/bb hbond availability status.
 	/// This means that the hbond-energy function can be efficiently evaluated during minimization.
-	virtual
 	bool
 	defines_score_for_residue_pair(
 		conformation::Residue const & res1,
 		conformation::Residue const & res2,
 		bool res_moving_wrt_eachother
-	) const;
+	) const override;
 
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const;
+	minimize_in_whole_structure_context( pose::Pose const & ) const override;
 
 	/// @brief Use the extended residue pair energy interface to distinguish between
 	/// score function evaluation during minimization from score function evaluation
 	/// during regular scoring.
-	virtual
 	bool
-	use_extended_residue_pair_energy_interface() const;
+	use_extended_residue_pair_energy_interface() const override;
 
 
 	/// @brief Evaluate the energy between a pair of residues during minimization;
 	/// during minimization, the bb/bb hbond status is held fixed, so it is possible
 	/// to evaluate the bb/bb, bb/sc and sc/sc hydrogen bonds in this function call.
-	virtual
 	void
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
@@ -158,11 +148,10 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Setup the bb/bb hbond presence data for a particular residue -- this data
 	/// is taken out of the HbondSet in the Pose.
-	virtual
 	void
 	setup_for_minimizing_for_residue(
 		conformation::Residue const & rsd,
@@ -171,11 +160,10 @@ public:
 		kinematics::MinimizerMapBase const & minmap,
 		basic::datacache::BasicDataCache &,
 		ResSingleMinimizationData & res_data_cache
-	) const;
+	) const override;
 
 	/// @brief Link the bb/bb hbond information in the ResidueSingleMinimizationData
 	/// to the ResiduePairMinimizationData.
-	virtual
 	void
 	setup_for_minimizing_for_residue_pair(
 		conformation::Residue const & rsd1,
@@ -186,12 +174,11 @@ public:
 		ResSingleMinimizationData const & res1_data_cache,
 		ResSingleMinimizationData const & res2_data_cache,
 		ResPairMinimizationData & data_cache
-	) const;
+	) const override;
 
 	/// @brief Construct the set of all hydrogen bonds between two residues before
-	virtual
 	bool
-	requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose::Pose const & pose ) const;
+	requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose::Pose const & pose ) const override;
 
 	/// @brief Do any setup work necessary before evaluating the derivatives for this residue
 	/*virtual
@@ -227,7 +214,6 @@ public:
 	Vector & F2
 	) const;*/
 
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
@@ -239,10 +225,9 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
@@ -250,7 +235,7 @@ public:
 		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
 
 	//pba
@@ -276,7 +261,6 @@ public:
 
 	/// @brief Evaluates the interaction between the backbone of rsd1 and the
 	/// backbone of rsd2 and accumulates the unweighted energy.
-	virtual
 	void
 	backbone_backbone_energy(
 		conformation::Residue const & rsd1,
@@ -284,12 +268,11 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	/// @brief Evaluates the interaction between the backbone of rsd1 and the
 	/// sidechain of rsd2 and accumulates the unweighted energy.
-	virtual
 	void
 	backbone_sidechain_energy(
 		conformation::Residue const & rsd1,
@@ -297,11 +280,10 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Evaluates the interaction between the sidechain of rsd1 and the
 	/// sidechain of rsd2 and accumulates the unweighted energy.
-	virtual
 	void
 	sidechain_sidechain_energy(
 		conformation::Residue const & rsd1,
@@ -309,10 +291,9 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	evaluate_rotamer_pair_energies(
 		conformation::RotamerSetBase const & set1,
@@ -321,12 +302,11 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
-	) const;
+	) const override;
 
 
 	//@brief overrides default rotamer/background energy calculation and uses
 	// the trie-vs-trie algorithm instead
-	virtual
 	void
 	evaluate_rotamer_background_energies(
 		conformation::RotamerSetBase const & set,
@@ -335,16 +315,15 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	/// f1 and f2 are zeroed
 	/*virtual
@@ -360,14 +339,12 @@ public:
 	) const;*/
 
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
 
-	virtual
 	bool
-	divides_backbone_and_sidechain_energetics() const
+	divides_backbone_and_sidechain_energetics() const override
 	{
 		return true;
 	}
@@ -376,22 +353,19 @@ public:
 	hydrogen_interaction_cutoff2() const;
 
 	/// @brief HBondEnergy is context sensitive
-	virtual
 	void indicate_required_context_graphs(
-		utility::vector1< bool > & context_graphs_required ) const;
+		utility::vector1< bool > & context_graphs_required ) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & weights ) const;
+	defines_intrares_energy( EnergyMap const & weights ) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	inline
 	Energy heavyatom_heavyatom_energy(
@@ -489,8 +463,7 @@ private:
 	//mutable utility::vector1< core::Size > num_hbonds_;
 	mutable boost::unordered_map< core::Size, core::Size> num_hbonds_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

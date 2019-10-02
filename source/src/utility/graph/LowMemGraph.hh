@@ -353,7 +353,7 @@ class LowMemGraphBase : public utility::pointer::ReferenceCount {
 public:
 	LowMemGraphBase() {}
 
-	virtual ~LowMemGraphBase() {}
+	~LowMemGraphBase() override {}
 
 	virtual LowMemNode const * get_node( uint32_t index ) const = 0;
 

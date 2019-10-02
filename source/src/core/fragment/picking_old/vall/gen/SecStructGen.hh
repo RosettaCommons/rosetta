@@ -86,8 +86,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	virtual
-	~SecStructGen();
+	~SecStructGen() override;
 
 
 public: // copy assignment
@@ -101,8 +100,7 @@ public: // virtual constructors
 
 
 	/// @brief clone this object
-	virtual
-	VallFragmentGenOP clone() const;
+	VallFragmentGenOP clone() const override;
 
 
 public: // extent generation
@@ -115,8 +113,7 @@ public: // extent generation
 	///  section_end.  Invalid (false) extent otherwise.
 	/// @remarks we assume VallResidueIterator is a type of RandomAccessIterator, such as
 	///  those used in std::vector
-	virtual
-	Extent operator ()( VallResidueIterator extent_begin, VallResidueIterator section_end ) const;
+	Extent operator ()( VallResidueIterator extent_begin, VallResidueIterator section_end ) const override;
 
 
 private: // data

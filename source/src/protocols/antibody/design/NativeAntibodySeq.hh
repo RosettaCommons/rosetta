@@ -51,7 +51,7 @@ public:
 
 	NativeAntibodySeq( NativeAntibodySeq const & src);
 
-	virtual ~NativeAntibodySeq();
+	~NativeAntibodySeq() override;
 
 	/// @brief Sets the sequence from the PDB into this class and into the pose.
 	void
@@ -79,8 +79,8 @@ public:
 	std::string
 	get_native_sequence_matching_current_length(core::pose::Pose const & pose, AntibodyInfo const & ab_info ) const;
 
-	virtual basic::datacache::CacheableDataOP
-	clone() const;
+	basic::datacache::CacheableDataOP
+	clone() const override;
 
 
 private:

@@ -62,17 +62,16 @@ public:
 	SymmetricEnergies( Energies & src );
 
 	// Explicit assignmnet operator to avoid #include .hh's
-	virtual Energies & operator = ( Energies const & rhs );
+	Energies & operator = ( Energies const & rhs ) override;
 
 	/// @details determine whether my type is the same as another Conformation's
-	virtual
 	bool
-	same_type_as_me( Energies const & other, bool recurse = true ) const;
+	same_type_as_me( Energies const & other, bool recurse = true ) const override;
 
-	~SymmetricEnergies();
+	~SymmetricEnergies() override;
 
 	EnergiesOP
-	clone() const;
+	clone() const override;
 
 	void set_derivative_graph( MinimizationGraphOP dg );
 	MinimizationGraphOP derivative_graph();
@@ -80,9 +79,9 @@ public:
 
 private:
 
-	void update_neighbor_links( pose::Pose const & pose );
-	void fill_point_graph( pose::Pose const & pose, conformation::PointGraphOP pg ) const;
-	void require_context_graph_( scoring::ContextGraphType type, bool external ) const;
+	void update_neighbor_links( pose::Pose const & pose ) override;
+	void fill_point_graph( pose::Pose const & pose, conformation::PointGraphOP pg ) const override;
+	void require_context_graph_( scoring::ContextGraphType type, bool external ) const override;
 
 private:
 	MinimizationGraphOP derivative_graph_;

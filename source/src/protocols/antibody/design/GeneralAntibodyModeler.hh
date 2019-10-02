@@ -47,7 +47,7 @@ class GeneralAntibodyModeler : public utility::pointer::ReferenceCount {
 
 public:
 	GeneralAntibodyModeler(AntibodyInfoOP ab_info);
-	virtual ~GeneralAntibodyModeler();
+	~GeneralAntibodyModeler() override;
 
 	GeneralAntibodyModeler( GeneralAntibodyModeler const & src );
 

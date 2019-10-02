@@ -64,7 +64,7 @@ public:
 	RNA_VDW_BinChecker();
 
 	//destructor -- necessary?
-	virtual ~RNA_VDW_BinChecker();
+	~RNA_VDW_BinChecker() override;
 
 	void
 	FARFAR_setup_using_user_input_VDW_pose( utility::vector1< std::string > const & VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose );

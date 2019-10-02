@@ -58,12 +58,12 @@ public:
 		utility::vector1< core::Size > const & cutpoint_closed );
 
 	//destructor -- necessary?
-	~StepWiseProteinPoseSetup();
+	~StepWiseProteinPoseSetup() override;
 
 	/// @brief Apply the minimizer to one pose
-	virtual void apply( core::pose::Pose & pose_to_visualize );
+	void apply( core::pose::Pose & pose_to_visualize ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 
 	stepwise::modeler::working_parameters::StepWiseWorkingParametersOP & working_parameters();

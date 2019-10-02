@@ -53,38 +53,33 @@ public:
 		bool const analytic_etable_evaluation );
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	LK_PolarNonPolarEnergy( LK_PolarNonPolarEnergy const & src );
 
-	virtual
 	void
 	setup_for_derivatives(
 		pose::Pose & pose,
 		ScoreFunction const & scfxn
-	) const;
+	) const override;
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
 	setup_for_minimizing(
 		pose::Pose & pose,
 		ScoreFunction const & sfxn,
 		kinematics::MinimizerMapBase const & min_map
-	) const;
+	) const override;
 
-	virtual
 	bool
 	defines_score_for_residue_pair(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		bool res_moving_wrt_eachother
-	) const;
+	) const override;
 
 	virtual
 	etable::count_pair::CountPairFunctionCOP
@@ -110,11 +105,9 @@ public:
 		ScoreFunction const &
 	) const;
 
-	virtual
 	bool
-	use_extended_residue_pair_energy_interface() const;
+	use_extended_residue_pair_energy_interface() const override;
 
-	virtual
 	void
 	setup_for_minimizing_for_residue_pair(
 		conformation::Residue const & rsd1,
@@ -125,9 +118,8 @@ public:
 		ResSingleMinimizationData const &,
 		ResSingleMinimizationData const &,
 		ResPairMinimizationData & pair_data
-	) const;
+	) const override;
 
-	virtual
 	void
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
@@ -136,7 +128,7 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & scorefxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	void
@@ -155,7 +147,6 @@ public:
 	F1 and F2 are not zeroed -- contributions from this atom are
 	just summed in
 	**/
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -165,9 +156,8 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & ires,
@@ -179,9 +169,8 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -189,38 +178,34 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & weights ) const;
+	defines_intrares_energy( EnergyMap const & weights ) const override;
 
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & ,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
 
-	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap &// totals
-	) const;
+	) const override;
 
 private:
 
@@ -269,8 +254,7 @@ private:
 	void
 	distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) const;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 
 	/////////////////////////////////////////////////////////////////////////////

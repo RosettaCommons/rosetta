@@ -36,12 +36,12 @@ public:
 public:
 
 	MinimalistFlexbbNode( MinimalistFlexbbInteractionGraph * owner, int node_id, int num_states);
-	~MinimalistFlexbbNode();
+	~MinimalistFlexbbNode() override;
 
 	/// Virtual functions from NodeBase not covered by FlexbbNode
-	virtual void assign_zero_state();
-	virtual void prepare_for_simulated_annealing();
-	virtual void print() const;
+	void assign_zero_state() override;
+	void prepare_for_simulated_annealing() override;
+	void print() const override;
 
 	/// Virtual functions from OTFFlexbbNode
 
@@ -124,8 +124,8 @@ public:
 	void
 	complete_partial_state_assignment();
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 protected:
 
@@ -168,12 +168,12 @@ public:
 
 public:
 	MinimalistFlexbbEdge( MinimalistFlexbbInteractionGraph * owner, int node1, int node2 );
-	~MinimalistFlexbbEdge();
+	~MinimalistFlexbbEdge() override;
 
 	/// Virtual functions from EdgeBase
-	virtual void declare_energies_final();
-	virtual void prepare_for_simulated_annealing();
-	virtual void set_edge_weight( Real weight );
+	void declare_energies_final() override;
+	void prepare_for_simulated_annealing() override;
+	void set_edge_weight( Real weight ) override;
 
 
 	PackerEnergy
@@ -185,8 +185,8 @@ public:
 	void
 	acknowledge_state_zeroed( int node_index );
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 protected:
 
@@ -215,38 +215,36 @@ public:
 
 public:
 	MinimalistFlexbbInteractionGraph( int num_nodes );
-	virtual ~MinimalistFlexbbInteractionGraph();
+	~MinimalistFlexbbInteractionGraph() override;
 
 	/// Virtual functions from InteractionGraphBase
-	virtual void initialize( core::pack_basic::RotamerSetsBase const & rot_sets );
-	virtual PackerEnergy get_one_body_energy_for_node_state( int node, int state);
-	virtual void  blanket_assign_state_0();
-	virtual PackerEnergy set_state_for_node(int node_ind, int new_state);
-	virtual PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states);
-	virtual void consider_substitution(
+	void initialize( core::pack_basic::RotamerSetsBase const & rot_sets ) override;
+	PackerEnergy get_one_body_energy_for_node_state( int node, int state) override;
+	void  blanket_assign_state_0() override;
+	PackerEnergy set_state_for_node(int node_ind, int new_state) override;
+	PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states) override;
+	void consider_substitution(
 		int node_ind,
 		int new_state,
 		PackerEnergy & delta_energy,
-		PackerEnergy & prev_energy_for_node);
-	virtual PackerEnergy commit_considered_substitution();
-	virtual PackerEnergy get_energy_current_state_assignment();
-	virtual int get_edge_memory_usage() const;
-	virtual void print_current_state_assignment() const;
-	virtual void set_errorfull_deltaE_threshold( PackerEnergy deltaE );
-	virtual PackerEnergy get_energy_sum_for_vertex_group( int group_id );
+		PackerEnergy & prev_energy_for_node) override;
+	PackerEnergy commit_considered_substitution() override;
+	PackerEnergy get_energy_current_state_assignment() override;
+	int get_edge_memory_usage() const override;
+	void print_current_state_assignment() const override;
+	void set_errorfull_deltaE_threshold( PackerEnergy deltaE ) override;
+	PackerEnergy get_energy_sum_for_vertex_group( int group_id ) override;
 
 
 	/// Virtual functions from FlexbbInteractionGraph
-	virtual
 	void consider_backbone_move(
 		int bb_id,
 		core::PackerEnergy & delta_energy,
 		core::PackerEnergy & prev_flexseg_energy,
 		bool & valid_motion,
 		int & num_nodes_changing_state
-	);
+	) override;
 
-	virtual
 	void consider_bbmove_w_state_substitution(
 		int node_ind,
 		int new_state,
@@ -254,7 +252,7 @@ public:
 		core::PackerEnergy & prev_energy_for_flexseg,
 		bool & valid_motion,
 		int & num_nodes_changing_state
-	);
+	) override;
 
 protected:
 	void
@@ -267,11 +265,10 @@ protected:
 
 private:
 
-	virtual
 	PackerEnergy
 	commit_considered_backbone_move(
 		ObjexxFCL::FArray1_int & rotamer_on_node
-	);
+	) override;
 
 	/// Virtual functions from OTFFlexbbInteractionGraph
 
@@ -306,11 +303,11 @@ protected:
 
 protected:
 	/// Virtual functions from InteractionGraphBase
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
-	virtual core::pack::interaction_graph::NodeBase * create_new_node( int node_index, int num_states);
-	virtual core::pack::interaction_graph::EdgeBase * create_new_edge( int index1, int index2);
+	core::pack::interaction_graph::NodeBase * create_new_node( int node_index, int num_states) override;
+	core::pack::interaction_graph::EdgeBase * create_new_edge( int index1, int index2) override;
 
 
 	void resolve_uncommitted_substitution();

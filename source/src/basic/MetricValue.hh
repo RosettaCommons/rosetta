@@ -44,7 +44,7 @@ class MetricValueBase : public utility::pointer::ReferenceCount {
 public:
 	// note: MetricValueBase must have a virtual function so that it will be polymorphic
 	// (specifically to allow dynamic casting)
-	virtual ~MetricValueBase() {};
+	~MetricValueBase() override {};
 	virtual MetricValueBaseOP clone() const = 0;
 };
 
@@ -58,7 +58,7 @@ public:
 	void set( T const & inp ) { data_ = inp; };
 	std::string print() const { std::ostringstream ostream; ostream << data_; return ostream.str(); };
 	T const & value() const { return data_; };
-	virtual MetricValueBaseOP clone() const { return utility::pointer::make_shared< MetricValue >(*this); }
+	MetricValueBaseOP clone() const override { return utility::pointer::make_shared< MetricValue >(*this); }
 private:
 	T data_;
 };

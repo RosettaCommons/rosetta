@@ -44,7 +44,7 @@ public:
 	AlignResiduesMover();
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~AlignResiduesMover();
+	~AlignResiduesMover() override;
 
 
 public:

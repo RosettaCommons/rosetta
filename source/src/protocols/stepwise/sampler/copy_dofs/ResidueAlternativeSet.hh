@@ -46,7 +46,7 @@ public:
 		Size const representative_seqpos);
 
 	//destructor
-	~ResidueAlternativeSet();
+	~ResidueAlternativeSet() override;
 
 public:
 

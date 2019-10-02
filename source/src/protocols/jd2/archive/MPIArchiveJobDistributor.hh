@@ -142,14 +142,13 @@ protected:
 	MPIArchiveJobDistributor();
 	friend class protocols::jd2::JobDistributorFactory; //ctor access
 
-	virtual void handle_interrupt() {}
+	void handle_interrupt() override {}
 
 public:
 
 	/// @brief overloaded to also start the ArchiveManager process
-	virtual
 	void
-	go( protocols::moves::MoverOP mover );
+	go( protocols::moves::MoverOP mover ) override;
 
 	void
 	set_archive( archive::ArchiveBaseOP );
@@ -160,25 +159,25 @@ public:
 
 protected:
 	/// @brief triggered in slave if new batch_ID comes in.
-	virtual void batch_underflow();
+	void batch_underflow() override;
 
 	/// @brief act on a message, return true if message was understood
-	virtual bool process_message(
+	bool process_message(
 		core::Size msg_tag,
 		core::Size slave_rank,
 		core::Size slave_job_id,
 		core::Size slave_batch_id,
 		core::Real run_time
-	);
+	) override;
 
 	/// @brief overloaded to allow statistics and sending of CompletionMessages
-	virtual void mark_job_as_completed( core::Size job_id, core::Size batch_id, core::Real run_time );
+	void mark_job_as_completed( core::Size job_id, core::Size batch_id, core::Real run_time ) override;
 
 	/// @brief overloaded to allow statistics and sending of CompletionMessages
-	virtual void mark_job_as_bad( core::Size job_id, core::Size batch_id );
+	void mark_job_as_bad( core::Size job_id, core::Size batch_id ) override;
 
 	/// @brief overloaded to start new entries in nr_new_completed_, nr_completed_, nstruct_ and nr_bad_ ...
-	virtual void load_new_batch();
+	void load_new_batch() override;
 
 	/// @brief rank of ArchiveManger process
 	core::Size archive_rank() const {

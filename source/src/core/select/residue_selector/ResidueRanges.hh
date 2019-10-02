@@ -87,7 +87,7 @@ public:
 	ResidueRanges( ResidueSubset const & subset );
 
 	/// @brief Destructor.
-	virtual ~ResidueRanges();
+	~ResidueRanges() override;
 
 	/// @brief Clears the ranges and uses the provided ResidueSubset to create new ranges
 	/// @param subset : residue subset from which contiguous ranges of residues will be derived

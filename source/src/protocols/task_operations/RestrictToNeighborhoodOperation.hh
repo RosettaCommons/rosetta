@@ -56,16 +56,15 @@ public:
 
 	RestrictToNeighborhoodOperation( std::string const & calculator );
 
-	virtual ~RestrictToNeighborhoodOperation();
+	~RestrictToNeighborhoodOperation() override;
 
 	/// @brief assignment operator
 	RestrictToNeighborhoodOperation & operator=( RestrictToNeighborhoodOperation const & rhs );
 
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictToNeighborhood"; }
 

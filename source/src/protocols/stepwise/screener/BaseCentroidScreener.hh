@@ -41,22 +41,21 @@ public:
 		core::kinematics::Stub const & moving_res_base_stub );
 
 	//destructor
-	~BaseCentroidScreener();
+	~BaseCentroidScreener() override;
 
 public:
 
 	std::string
-	name() const { return "BaseCentroidScreener"; }
+	name() const override { return "BaseCentroidScreener"; }
 
 	StepWiseScreenerType
-	type() const { return BASE_CENTROID; }
+	type() const override { return BASE_CENTROID; }
 
-	virtual
 	bool
-	check_screen();
+	check_screen() override;
 
 	void
-	fast_forward( sampler::StepWiseSamplerOP sampler );
+	fast_forward( sampler::StepWiseSamplerOP sampler ) override;
 
 private:
 

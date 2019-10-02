@@ -54,7 +54,7 @@ public:
 	FullModelInnerLarvalJob( core::Size nstruct, core::Size prelim_job_node );
 	FullModelInnerLarvalJob( FullModelInnerLarvalJob const & src );
 
-	virtual ~FullModelInnerLarvalJob();
+	~FullModelInnerLarvalJob() override;
 
 	bool
 	operator == ( InnerLarvalJob const & other ) const override;

@@ -46,7 +46,7 @@ public:
 
 	MEnvAtomParams(MEnvAtomParams const & src);
 
-	virtual ~MEnvAtomParams();
+	~MEnvAtomParams() override;
 
 	MEnvAtomParamsOP
 	clone() const;

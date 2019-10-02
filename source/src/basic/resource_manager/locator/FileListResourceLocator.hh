@@ -35,7 +35,7 @@ public:
 	FileListResourceLocator(
 		FileListResourceLocator const & src);
 
-	virtual ~FileListResourceLocator();
+	~FileListResourceLocator() override;
 
 	/// @brief Describe the %FileListResourceLocator to the output stringstream; since
 	/// this class has no data, merely prints the name of the class.

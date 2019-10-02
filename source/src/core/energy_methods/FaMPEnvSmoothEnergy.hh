@@ -60,34 +60,29 @@ public:
 	FaMPEnvSmoothEnergy();
 
 	/// @brief Create a clone of this energy method
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	// Scoring Methods ////////////////
 
 	/// @brief Computes dScore/dNumNeighbors for all residues for rapid use in later
 	/// atom derivate calculations
-	virtual
 	void
-	setup_for_scoring( core::pose::Pose & pose, core::scoring::ScoreFunction const & ) const;
+	setup_for_scoring( core::pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	/// @brief Causes a neighbor graph update
-	virtual
 	void
-	setup_for_derivatives( core::pose::Pose & pose, core::scoring::ScoreFunction const & sf) const;
+	setup_for_derivatives( core::pose::Pose & pose, core::scoring::ScoreFunction const & sf) const override;
 
 	/// @brief Evaluates the one-body energy for a residue
-	virtual
 	void
 	residue_energy(
 		core::conformation::Residue const & rsd,
 		core::pose::Pose const &,
 		core::scoring::EnergyMap &
-	) const;
+	) const override;
 
 	/// @brief Increments the F1 and F2 derivative vectors for an atom
-	virtual
 	void
 	eval_atom_derivative(
 		core::id::AtomID const & atom_id,
@@ -97,15 +92,14 @@ public:
 		core::scoring::EnergyMap const & weights,
 		core::Vector & F1,
 		core::Vector & F2
-	) const;
+	) const override;
 
 	/// @brief Unused by the FaMPEnvSmoothEnergy class, returns 0
 	Distance
 	atomic_interaction_cutoff() const;
 
 	/// @brief Tells the scoring function to maintain the TwelveANeighborGraph
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 private:
 
@@ -152,8 +146,7 @@ private:
 
 	ObjexxFCL::FArray3D< core::Real > mem_env_log10_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

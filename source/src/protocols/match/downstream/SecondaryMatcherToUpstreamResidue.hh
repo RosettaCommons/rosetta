@@ -67,11 +67,10 @@ public:
 public:
 	SecondaryMatcherToUpstreamResidue( Size geom_cst_id );
 
-	virtual ~SecondaryMatcherToUpstreamResidue();
+	~SecondaryMatcherToUpstreamResidue() override;
 
-	virtual
 	DownstreamAlgorithmOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Main driver function for hit generation.  This DownstreamAlgorithm
 	/// structures it's iteration over the hits from previous rounds as follows:
@@ -97,25 +96,22 @@ public:
 	/// B. By not trying to store all rotamers in memory at once, we do not impose any undue restrictions
 	/// on the number of rotamers that can be enumerated.  This is especially important if we're
 	/// using backbone flexibility to search a wider region of conformation space.
-	virtual
 	std::list< Hit >
 	build_hits_at_all_positions(
 		Matcher & matcher
-	);
+	) override;
 
 
 	/// @brief Prune hits away from the target_geomcst's hit list following a change to the
 	/// hits for my geom_cst_id().  Pruning hits from the target_geomcst's hit list will
 	/// trigger a round of peripheral-hitlist-change responses.
-	virtual
 	void
-	respond_to_primary_hitlist_change( Matcher & matcher, Size round_just_completed );
+	respond_to_primary_hitlist_change( Matcher & matcher, Size round_just_completed ) override;
 
 	/// @brief Remove my hits if my target_geomcst's hit list has been shortened.  This
 	/// will not trigger a round of peripheral-hitlist-change responses.
-	virtual
 	void
-	respond_to_peripheral_hitlist_change( Matcher & matcher );
+	respond_to_peripheral_hitlist_change( Matcher & matcher ) override;
 
 
 	/// @brief Iterate across the hits from a particular upstream build point i
@@ -124,42 +120,36 @@ public:
 	/// hits from upstream-build-point i; if so, it appends a Hit to the hitlist
 	/// returned at the end of the method.  (Also, see comments for the
 	/// build_at_all_positions method.)
-	virtual
 	std::list< Hit >
 	build(
 		Size const scaffold_build_point_id,
 		Size const upstream_conf_id,
 		core::conformation::Residue const & upstream_residue
-	) const;
+	) const override;
 
 	/// @brief returns true; this secondary matcher does not describe the location
 	/// of the downstream partner
-	virtual
 	bool
-	upstream_only() const;
+	upstream_only() const override;
 
 	/// @brief This method returns 'false' since this matcher does not describe
 	/// the coordinates of the downstream partner at all.
-	virtual
 	bool
-	generates_primary_hits() const;
+	generates_primary_hits() const override;
 
 
 	/// @brief Prepare a map between upstream hits of the target-geomcst and
 	/// a list of Hit const *'s of this geom_cst_id(). This map will be used
 	/// in the function hits_to_include_with_partial_match.
-	virtual
 	void
-	prepare_for_match_enumeration( Matcher const & matcher );
+	prepare_for_match_enumeration( Matcher const & matcher ) override;
 
 	/// @brief Return the set of hits to be iterated across
-	virtual
 	HitPtrListCOP
-	hits_to_include_with_partial_match( match_dspos1 const & m ) const;
+	hits_to_include_with_partial_match( match_dspos1 const & m ) const override;
 
-	virtual
 	Size
-	n_possible_hits_per_upstream_conformation() const;
+	n_possible_hits_per_upstream_conformation() const override;
 
 	//void
 	//set_match_restype( core::chemical::ResidueTypeCOP match_restype );
@@ -256,7 +246,7 @@ public:
 public:
 
 	TargetRotamerCoords();
-	virtual ~TargetRotamerCoords();
+	~TargetRotamerCoords() override;
 
 	void set_num_restypes( Size n_restypes );
 	void set_restype( Size restype_index, core::chemical::ResidueTypeCOP restype );
@@ -405,12 +395,11 @@ public:
 		SecondaryMatcherToUpstreamResidue & sec_matcher
 	);
 
-	virtual
 	void
 	process_hit(
 		Hit const & hit,
 		core::conformation::Residue const & upstream_conformation
-	);
+	) override;
 
 private:
 

@@ -40,7 +40,7 @@ public:
 	LongestContinuousApolarSegmentFilter();
 
 	/// @brief destructor.
-	~LongestContinuousApolarSegmentFilter();
+	~LongestContinuousApolarSegmentFilter() override;
 
 	std::string
 	name() const override;

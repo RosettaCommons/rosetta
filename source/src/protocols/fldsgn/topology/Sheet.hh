@@ -64,7 +64,7 @@ public:// construct/destruct
 	Sheet( Sheet const & s );
 
 	/// @brief default destructor
-	virtual ~Sheet();
+	~Sheet() override;
 
 	/// @brief clone this object
 	SheetOP clone() {
@@ -160,7 +160,7 @@ private:  // data
 class SheetSet : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~SheetSet();
+	~SheetSet() override;
 
 
 	typedef core::Size Size;

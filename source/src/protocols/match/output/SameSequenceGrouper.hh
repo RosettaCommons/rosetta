@@ -59,24 +59,20 @@ public:
 	SameSequenceGrouper();
 	SameSequenceGrouper( Size ncst );
 
-	virtual
-	~SameSequenceGrouper();
+	~SameSequenceGrouper() override;
 
-	virtual
 	Size
 	assign_group_for_match(
 		match const & m
-	);
+	) override;
 
-	virtual
 	Size
 	assign_group_for_match(
 		match_dspos1 const & m
-	);
+	) override;
 
-	virtual
 	void
-	reset();
+	reset() override;
 
 	virtual
 	void
@@ -107,8 +103,7 @@ public:
 	SameSequenceAndDSPositionGrouper();
 	SameSequenceAndDSPositionGrouper( Size ncst );
 
-	virtual
-	~SameSequenceAndDSPositionGrouper();
+	~SameSequenceAndDSPositionGrouper() override;
 
 	//virtual
 	//Size
@@ -116,19 +111,16 @@ public:
 	// match const & m
 	//);
 
-	virtual
 	Size
 	assign_group_for_match(
 		match_dspos1 const & m
-	);
+	) override;
 
-	virtual
 	void
-	reset();
+	reset() override;
 
-	virtual
 	void
-	set_n_geometric_constraints( Size n_csts );
+	set_n_geometric_constraints( Size n_csts ) override;
 
 	void
 	set_rms_group_cutoff( Real cutoff );

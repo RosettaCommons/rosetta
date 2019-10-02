@@ -60,7 +60,7 @@ public:
 
 public:
 	LigandConformer();
-	~LigandConformer();
+	~LigandConformer() override;
 
 	LigandConformer(
 		core::pose::PoseCOP pose,

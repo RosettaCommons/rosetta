@@ -55,7 +55,7 @@ public:
 	SampleTiltAngles( SampleTiltAngles const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~SampleTiltAngles();
+	~SampleTiltAngles() override;
 
 	void
 	apply( core::pose::Pose & pose ) override;

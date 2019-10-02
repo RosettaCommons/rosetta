@@ -44,7 +44,7 @@ public:
 
 	PoseOutputSpecification();
 	PoseOutputSpecification( JobResultID const & result_id, JobOutputIndex const & output_index );
-	virtual ~PoseOutputSpecification();
+	~PoseOutputSpecification() override;
 
 	std::string const & outputter_type() const;
 	void outputter_type( std::string const & setting );

@@ -57,7 +57,7 @@ class GridSearchIterator : public utility::pointer::ReferenceCount {
 public:
 	GridSearchIterator();
 
-	virtual ~GridSearchIterator();
+	~GridSearchIterator() override;
 
 	GridSearchIterator(GridSearchIterator const & other);
 

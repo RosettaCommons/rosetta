@@ -37,19 +37,19 @@ public:
 	);
 
 	/// @brief Initialization
-	void init();
+	void init() override;
 
 	/// @brief Reset to current angle
-	void reset() { stored_pucker_state_ = active_pucker_state_; }
+	void reset() override { stored_pucker_state_ = active_pucker_state_; }
 
 	/// @brief Generate new active DOFs
-	void operator++();
+	void operator++() override;
 
 	/// @brief Update the stored DOFs
-	void update() { active_pucker_state_ = stored_pucker_state_; }
+	void update() override { active_pucker_state_ = stored_pucker_state_; }
 
 	/// @brief Apply DOFs to pose
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Set the flip rate of pucker
 	void set_flip_rate( core::Real const setting ) {
@@ -64,19 +64,17 @@ public:
 	void set_idealize_coord( bool const setting );
 
 	/// @brief Name of the class
-	std::string get_name() const { return "MC_RNA_Sugar"; }
+	std::string get_name() const override { return "MC_RNA_Sugar"; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_RNA_SUGAR; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::MC_RNA_SUGAR; }
 
 	/// @brief output summary of class
-	virtual
-	void show( std::ostream & out, Size const indent) const;
+	void show( std::ostream & out, Size const indent) const override;
 
 	/// @brief return OP to the subsampler that controls exactly this torsion_id (assume only one).
-	virtual
 	MC_SamplerOP
-	find( core::id::TorsionID const & torsion_id );
+	find( core::id::TorsionID const & torsion_id ) override;
 
 private:
 	core::chemical::rna::PuckerState stored_pucker_state_, active_pucker_state_;

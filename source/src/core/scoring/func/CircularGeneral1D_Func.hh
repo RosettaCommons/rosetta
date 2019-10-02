@@ -43,13 +43,13 @@ public:
 
 	CircularGeneral1D_Func( std::string const & filename );
 
-	FuncOP clone() const { return utility::pointer::make_shared< CircularGeneral1D_Func >( *this ); }
+	FuncOP clone() const override { return utility::pointer::make_shared< CircularGeneral1D_Func >( *this ); }
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	Real func( Real const x ) const;
-	Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
 private:
 

@@ -46,7 +46,7 @@ public:
 
 	RestrictToMoveMapChiOperation( core::kinematics::MoveMapCOP movemap );
 
-	virtual ~RestrictToMoveMapChiOperation();
+	~RestrictToMoveMapChiOperation() override;
 
 	RestrictToMoveMapChiOperation(RestrictToMoveMapChiOperation const & src);
 
@@ -73,11 +73,10 @@ public:
 	//@brief.  Yes, I don't know wtf I'm doing with RosettaScripts yet.
 	//virtual void parse_tag( TagCOP, basic::datacache::DataMap & data, core);
 
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
+	apply( Pose const & pose, core::pack::task::PackerTask & task ) const override;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictToMoveMapChiOperation"; }

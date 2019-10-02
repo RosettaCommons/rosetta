@@ -56,7 +56,7 @@ public:
 
 	//  SimpleNode::SimpleNode();
 	NPDHBSimpleNode( utility::graph::Graph * owner, Size resnum );
-	virtual ~NPDHBSimpleNode();
+	~NPDHBSimpleNode() override;
 
 	void copy_from( utility::graph::Node const * ) override {}
 
@@ -136,7 +136,7 @@ public:
 
 	//SimpleEdge( utility::graph::Graph* owner );
 	NPDHBSimpleEdge( utility::graph::Graph* owner, Size res1, Size res2 );
-	virtual ~NPDHBSimpleEdge();
+	~NPDHBSimpleEdge() override;
 
 	void copy_from( utility::graph::Edge const * ) override {}
 
@@ -175,7 +175,7 @@ public:
 public:
 
 	NPDHBSimpleInteractionGraph();
-	virtual ~NPDHBSimpleInteractionGraph();
+	~NPDHBSimpleInteractionGraph() override;
 
 	void set_scorefunction( scoring::ScoreFunction const & sfxn ) override;
 

@@ -60,7 +60,7 @@ public:
 	FoldabilityFilter();
 
 	/// @brief virtual constructor to allow derivation
-	virtual ~FoldabilityFilter();
+	~FoldabilityFilter() override;
 
 	/// @brief Parses the FoldabilityFilter tags
 	void parse_my_tag(

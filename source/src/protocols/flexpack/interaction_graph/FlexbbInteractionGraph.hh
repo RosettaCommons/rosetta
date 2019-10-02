@@ -48,8 +48,8 @@ public:
 public:
 
 	FlexbbNode( FlexbbInteractionGraph * owner, int node_id, int num_states);
-	virtual ~FlexbbNode();
-	virtual void print() const;
+	~FlexbbNode() override;
+	void print() const override;
 
 	void set_num_distinct_backbones( int nbbconfs );
 	int  get_num_distinct_backbones() const { return num_bb_; }
@@ -72,15 +72,15 @@ public:
 	ObjexxFCL::FArray1A_int getNumStatesPerAAPerBB( int aa );
 
 
-	virtual void add_to_one_body_energies( ObjexxFCL::FArray1< PackerEnergy > & energies );
-	virtual void add_to_one_body_energy( int state, PackerEnergy energy );
-	virtual void update_one_body_energy( int state, PackerEnergy energy);
-	virtual void zero_one_body_energies();
-	virtual bool state_unassigned() const;
+	void add_to_one_body_energies( ObjexxFCL::FArray1< PackerEnergy > & energies ) override;
+	void add_to_one_body_energy( int state, PackerEnergy energy ) override;
+	void update_one_body_energy( int state, PackerEnergy energy) override;
+	void zero_one_body_energies() override;
+	bool state_unassigned() const override;
 
 	PackerEnergy get_one_body_energy( int state ) const;
 
-	virtual void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 
 	int get_current_state() const;
 	int get_backbone_for_current_state() const;
@@ -141,7 +141,7 @@ public:
 
 	void update_internal_energy_sums();
 
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_dynamic_memory() const override;
 
 protected:
 
@@ -307,7 +307,7 @@ public:
 		int second_node_ind
 	);
 
-	virtual ~FlexbbEdge();
+	~FlexbbEdge() override;
 
 	//virtual void set_nodes_from_same_flexseg( bool same_flexseg );
 	bool get_nodes_from_same_flexseg() const {
@@ -334,7 +334,7 @@ public:
 	void
 	reset_alternate_states_for_uncommited_substitution();
 
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_dynamic_memory() const override;
 
 	PackerEnergy cur_energy() const { return cur_energy_; }
 	PackerEnergy alt_energy() const { debug_assert( alt_e_up_to_date_ ); return alt_energy_; }
@@ -437,10 +437,10 @@ public:
 	enum Subsitution {SC_ONLY, BOTH_SC_AND_BB};
 
 public:
-	virtual ~FlexbbInteractionGraph();
+	~FlexbbInteractionGraph() override;
 	FlexbbInteractionGraph(int num_nodes);
 
-	virtual void initialize(core::pack_basic::RotamerSetsBase const & rot_sets );
+	void initialize(core::pack_basic::RotamerSetsBase const & rot_sets ) override;
 
 private:
 	/// Private functions called during initialize()
@@ -522,7 +522,7 @@ public:
 	/// simultaneous rotamer substitution as the backbone moves.
 	void increment_count_nodes_in_flexseg();
 
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_dynamic_memory() const override;
 
 protected:
 

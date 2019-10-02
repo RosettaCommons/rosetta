@@ -124,21 +124,21 @@ public:
 
 	StructureData( std::string const & id_val );
 
-	virtual ~StructureData();
+	~StructureData() override;
 
 	static std::string
 	class_name();
 
 public:
 	// WriteableCacheableData virtuals
-	virtual CacheableDataOP
-	clone() const;
+	CacheableDataOP
+	clone() const override;
 
-	virtual void
-	write( std::ostream & os ) const;
+	void
+	write( std::ostream & os ) const override;
 
-	virtual std::string
-	datatype() const;
+	std::string
+	datatype() const override;
 
 public:
 	/// @brief Retrieves data from an XML tag

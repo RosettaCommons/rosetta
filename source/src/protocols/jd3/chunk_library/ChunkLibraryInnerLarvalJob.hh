@@ -55,7 +55,7 @@ public:
 	ChunkLibraryInnerLarvalJob( core::Size nstruct, core::Size prelim_job_node );
 	ChunkLibraryInnerLarvalJob( ChunkLibraryInnerLarvalJob const & src );
 
-	virtual ~ChunkLibraryInnerLarvalJob();
+	~ChunkLibraryInnerLarvalJob() override;
 
 	bool
 	operator == ( InnerLarvalJob const & other ) const override;

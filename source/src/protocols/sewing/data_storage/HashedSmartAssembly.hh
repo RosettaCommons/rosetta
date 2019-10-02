@@ -34,7 +34,7 @@ public:
 	HashedSmartAssembly(hashing::SegmentVectorCOP);
 	HashedSmartAssembly(HashedSmartAssembly const & src);
 
-	virtual ~HashedSmartAssembly();
+	~HashedSmartAssembly() override;
 
 	HashedSmartAssemblyOP
 	clone() const;

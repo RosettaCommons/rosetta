@@ -64,7 +64,7 @@ public:
 	FragmentReader( TagCOP const & tag );
 
 	/// @brief destructor
-	virtual ~FragmentReader();
+	~FragmentReader() override;
 
 public:
 

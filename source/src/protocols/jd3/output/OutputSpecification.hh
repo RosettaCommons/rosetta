@@ -44,7 +44,7 @@ public:
 
 	OutputSpecification();
 	OutputSpecification( JobResultID const & result_id, JobOutputIndex const & output_index );
-	virtual ~OutputSpecification();
+	~OutputSpecification() override;
 
 	JobResultID result_id() const;
 	virtual void result_id( JobResultID const & setting );

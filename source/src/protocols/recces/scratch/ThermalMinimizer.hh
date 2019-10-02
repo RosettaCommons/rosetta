@@ -54,7 +54,7 @@ public:
 	ThermalMinimizer( ThermalMinimizer const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~ThermalMinimizer();
+	~ThermalMinimizer() override;
 
 	/////////////////////
 	/// Mover Methods ///

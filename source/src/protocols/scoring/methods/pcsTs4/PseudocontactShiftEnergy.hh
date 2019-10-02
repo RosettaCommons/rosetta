@@ -64,25 +64,25 @@ public:
 
 	PCS_Energy_Ts4();
 
-	~PCS_Energy_Ts4();
+	~PCS_Energy_Ts4() override;
 
 	PCS_Energy_Ts4 &
 	operator=(PCS_Energy_Ts4 const & other);
 
 	PCS_Energy_Ts4(PCS_Energy_Ts4 const & other);
 
-	virtual core::scoring::methods::EnergyMethodOP
-	clone() const;
+	core::scoring::methods::EnergyMethodOP
+	clone() const override;
 
 	void
-	indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	void
 	finalize_total_energy(
 		core::pose::Pose & pose,
 		core::scoring::ScoreFunction const &,
 		core::scoring::EnergyMap & totals
-	) const;
+	) const override;
 
 	core::Real
 	calculate_pcs_score( core::pose::Pose & pose, bool print_to_tracer ) const;
@@ -121,10 +121,9 @@ public:
 	) const;
 
 	void
-	show_additional_info(std::ostream & out, core::pose::Pose & pose, bool verbose=false) const;
+	show_additional_info(std::ostream & out, core::pose::Pose & pose, bool verbose=false) const override;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 

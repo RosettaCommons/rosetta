@@ -41,15 +41,15 @@ public:
 
 	InterfaceDefinitionCalculator( char const chain1_letter, char const chain2_letter );
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const = 0;
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override = 0;
 
 protected:
 
-	virtual std::string print( std::string const & key ) const = 0;
+	std::string print( std::string const & key ) const override = 0;
 
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const = 0;
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override = 0;
 
-	virtual void recompute( core::pose::Pose const & this_pose ) = 0;
+	void recompute( core::pose::Pose const & this_pose ) override = 0;
 
 	core::Size ch1_begin_num_, ch1_end_num_, ch2_begin_num_, ch2_end_num_;
 

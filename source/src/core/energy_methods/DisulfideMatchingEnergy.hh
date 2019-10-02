@@ -37,22 +37,18 @@ public:
 
 public:
 	DisulfideMatchingEnergy( DisulfideMatchingPotential const & potential );
-	virtual ~DisulfideMatchingEnergy();
+	~DisulfideMatchingEnergy() override;
 
 	// EnergyMethod Methods:
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const override;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	// TwoBodyEnergy Methods:
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -60,37 +56,33 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & weights ) const;
+	defines_intrares_energy( EnergyMap const & weights ) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	// LongRangeTwoBodyEnergy methods
-	virtual methods::LongRangeEnergyType long_range_type() const;
+	methods::LongRangeEnergyType long_range_type() const override;
 
-	virtual
 	bool
 	defines_residue_pair_energy(
 		pose::Pose const & pose,
 		Size res1,
 		Size res2
-	) const;
+	) const override;
 
 private:
 	DisulfideMatchingPotential const & potential_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 

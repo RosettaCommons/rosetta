@@ -46,22 +46,19 @@ public:
 
 	P_AA_ss_Energy();
 
-	virtual
-	EnergyMethodOP clone() const;
+	EnergyMethodOP clone() const override;
 
-	virtual
 	void
 	setup_for_scoring(
 		pose::Pose & pose,
-		ScoreFunction const & ) const;
+		ScoreFunction const & ) const override;
 
-	virtual
 	void
 	setup_for_minimizing(
 		pose::Pose & ,
 		ScoreFunction const & ,
 		kinematics::MinimizerMapBase const &
-	) const;
+	) const override;
 
 	virtual
 	Real
@@ -70,23 +67,20 @@ public:
 		ScoreFunction const & sfxn, EnergyMap const & weights
 	) const;
 
-	virtual
 	void residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief P_AA_ss_Energy is context independent; indicates that no context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 private:
 
 	P_AA_ss const & P_AA_ss_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 } // methods

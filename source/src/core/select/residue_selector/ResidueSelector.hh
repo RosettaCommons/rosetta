@@ -49,7 +49,7 @@ public:
 
 	/// @brief Destructor.
 	///
-	virtual ~ResidueSelector();
+	~ResidueSelector() override;
 
 	/// @brief Clone operator.
 	/// @details All ResidueSelectors must implement a clone() operator.  This must create a copy of the object and

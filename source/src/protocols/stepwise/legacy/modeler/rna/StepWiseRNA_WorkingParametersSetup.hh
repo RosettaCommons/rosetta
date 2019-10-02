@@ -53,7 +53,7 @@ public:
 
 
 	//destructor -- necessary? yes of course it is
-	virtual ~StepWiseWorkingParametersSetup();
+	~StepWiseWorkingParametersSetup() override;
 
 	virtual void apply();
 

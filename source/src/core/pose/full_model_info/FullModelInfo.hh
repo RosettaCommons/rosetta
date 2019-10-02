@@ -64,10 +64,10 @@ public:
 
 	FullModelInfo( FullModelInfo const & src );
 
-	~FullModelInfo();
+	~FullModelInfo() override;
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return utility::pointer::make_shared< FullModelInfo >( *this );
 	}

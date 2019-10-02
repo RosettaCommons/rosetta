@@ -44,16 +44,15 @@ public:
 	///@brief default constructor
 	ContinuousAssembly();
 
-	virtual
 	AssemblyOP
-	clone();
+	clone() override;
 
 	///@brief Needs to be implemented.
-	virtual void
+	void
 	append_model(
 		Model const & model,
 		ScoreResult const & edge_score
-	);
+	) override;
 
 };
 

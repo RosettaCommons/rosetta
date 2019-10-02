@@ -43,13 +43,11 @@ public:
 
 	MotifHitsRotamersOperation(core::scoring::motif::MotifHits const & motif_hits);
 
-	virtual ~MotifHitsRotamersOperation(){}
+	~MotifHitsRotamersOperation() override{}
 
-	virtual
 	core::pack::rotamer_set::RotamerSetOperationOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
 	alter_rotamer_set(
 		core::pose::Pose const & pose,
@@ -57,7 +55,7 @@ public:
 		core::pack::task::PackerTask const & ptask,
 		utility::graph::GraphCOP packer_neighbor_graph,
 		core::pack::rotamer_set::RotamerSet & rotamer_set
-	);
+	) override;
 
 private:
 	core::scoring::motif::MotifHits motif_hits_ ;

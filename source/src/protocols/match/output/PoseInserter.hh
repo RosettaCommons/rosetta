@@ -37,16 +37,15 @@ public:
 public:
 	PoseInserter( Pose & pose_to_modify );
 	PoseInserter( Pose & pose_to_modify, Size resid_to_replace );
-	virtual ~PoseInserter();
+	~PoseInserter() override;
 
 	/// @brief Take a conformation::Residue from the upstream builder and
 	/// call Pose::replace_residue at a particular position.
-	virtual
 	void
 	process_hit(
 		Hit const & hit,
 		core::conformation::Residue const & upstream_conformation
-	);
+	) override;
 
 	void
 	set_replacement_resid( Size seqpos );

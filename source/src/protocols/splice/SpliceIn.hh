@@ -53,11 +53,11 @@ class SpliceIn :  virtual public protocols::splice::SpliceOut
 public:
 	SpliceIn();
 	void apply( Pose & pose ) override;
-	virtual std::string get_name() const override;
+	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpliceIn >(); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
-	virtual ~SpliceIn();
+	~SpliceIn() override;
 	virtual core::Size find_dbase_entry(core::pose::Pose const & pose); //get pdb entry from database
 	virtual void assign_from_res_to_res(core::pose::Pose const & pose); //assign the start and end residues of the Spliced in segment
 	core::Size database_entry()const {return database_entry_; } //setter for db entry
@@ -77,9 +77,9 @@ public:
 	core::scoring::ScoreFunctionOP scorefxn() const {return scorefxn_;}
 	void set_loop_length_change( protocols::protein_interface_design::movers::LoopLengthChange & llc) override; //apply loop length change before changing torsion angles
 	void set_fold_tree_nodes(core::pose::Pose const & pose) override; //how to build the fold tree
-	virtual core::Size set_anchor_res() override; //set anchor res for coordinate constraints
+	core::Size set_anchor_res() override; //set anchor res for coordinate constraints
 
-	virtual void build_ideal_segment(core::pose::Pose & pose) override; //build segment using ideal bond length and angles
+	void build_ideal_segment(core::pose::Pose & pose) override; //build segment using ideal bond length and angles
 	void rtmin( core::pose::Pose & pose,core::pack::task::TaskFactoryOP tf); //apply rotamer trial min mover
 	void pack( core::pose::Pose & pose,core::pack::task::TaskFactoryOP tf); //apply packing
 

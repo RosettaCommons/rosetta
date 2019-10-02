@@ -36,7 +36,7 @@ public:
 	CopyDofsInfo();
 
 	//destructor
-	~CopyDofsInfo();
+	~CopyDofsInfo() override;
 
 public:
 

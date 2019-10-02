@@ -87,21 +87,21 @@ public:
 class StructureDependentCalculator : public PoseMetricCalculator {
 public:
 	StructureDependentCalculator() : PoseMetricCalculator(), structure_is_outdated_(true) {};
-	void notify_structure_change() { structure_is_outdated_ = true; };
-	void get( std::string const & key, basic::MetricValueBase & val, Pose const & this_pose ) {
+	void notify_structure_change() override { structure_is_outdated_ = true; };
+	void get( std::string const & key, basic::MetricValueBase & val, Pose const & this_pose ) override {
 		if ( structure_is_outdated_ ) recompute( this_pose );
 		structure_is_outdated_ = false;
 		lookup( key, &val );
 	};
-	std::string get( std::string const & key, Pose const & this_pose ) {
+	std::string get( std::string const & key, Pose const & this_pose ) override {
 		if ( structure_is_outdated_ ) recompute( this_pose );
 		structure_is_outdated_ = false;
 		return print( key );
 	};
 protected:
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const = 0;
-	virtual std::string print( std::string const & key ) const = 0;
-	virtual void recompute( Pose const & this_pose ) = 0;
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override = 0;
+	std::string print( std::string const & key ) const override = 0;
+	void recompute( Pose const & this_pose ) override = 0;
 private:
 	bool structure_is_outdated_;
 #ifdef    SERIALIZATION
@@ -139,21 +139,21 @@ bool sequence_is_outdated_;
 class EnergyDependentCalculator : public PoseMetricCalculator {
 public:
 	EnergyDependentCalculator() : PoseMetricCalculator(), energies_are_outdated_(true) {};
-	void notify_energy_change() { energies_are_outdated_ = true; };
-	void get( std::string const & key, basic::MetricValueBase & val, Pose const & this_pose ) {
+	void notify_energy_change() override { energies_are_outdated_ = true; };
+	void get( std::string const & key, basic::MetricValueBase & val, Pose const & this_pose ) override {
 		if ( energies_are_outdated_ ) recompute( this_pose );
 		energies_are_outdated_ = false;
 		lookup( key, &val );
 	};
-	std::string get( std::string const & key, Pose const & this_pose ) {
+	std::string get( std::string const & key, Pose const & this_pose ) override {
 		if ( energies_are_outdated_ ) recompute( this_pose );
 		energies_are_outdated_ = false;
 		return print( key );
 	};
 protected:
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const = 0;
-	virtual std::string print( std::string const & key ) const = 0;
-	virtual void recompute( Pose const & this_pose ) = 0;
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override = 0;
+	std::string print( std::string const & key ) const override = 0;
+	void recompute( Pose const & this_pose ) override = 0;
 private:
 	bool energies_are_outdated_;
 #ifdef    SERIALIZATION

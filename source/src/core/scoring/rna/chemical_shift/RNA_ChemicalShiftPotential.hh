@@ -63,7 +63,7 @@ public:
 	{
 	}
 
-	~ChemicalShiftData(){};
+	~ChemicalShiftData() override{};
 
 public:
 

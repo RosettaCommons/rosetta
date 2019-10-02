@@ -75,7 +75,7 @@ class GeneralizedKICselector : public utility::pointer::ReferenceCount
 public:
 	GeneralizedKICselector();
 	GeneralizedKICselector(GeneralizedKICselector const &src);
-	~GeneralizedKICselector();
+	~GeneralizedKICselector() override;
 	GeneralizedKICselectorOP clone() const;
 
 

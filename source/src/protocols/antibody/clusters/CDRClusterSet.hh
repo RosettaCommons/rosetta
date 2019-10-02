@@ -45,7 +45,7 @@ public:
 
 	// Undefined, commenting out to fix PyRosetta build  CDRClusterSet(CDRClusterSet const & src);
 
-	virtual ~CDRClusterSet();
+	~CDRClusterSet() override;
 
 	/// @brief Identify the cluster of the CDR, using numbering information held in AntibodyInfo. Replace data if already present.
 	void
@@ -114,10 +114,10 @@ public:
 
 	BasicCDRClusterSet(BasicCDRClusterSet const & src);
 
-	~BasicCDRClusterSet();
+	~BasicCDRClusterSet() override;
 
-	virtual basic::datacache::CacheableDataOP
-	clone() const;
+	basic::datacache::CacheableDataOP
+	clone() const override;
 
 	/// @brief Set the CDRCluster
 	void

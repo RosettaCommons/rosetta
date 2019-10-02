@@ -36,7 +36,7 @@ class AssemblyScorerCreator : public utility::pointer::ReferenceCount
 {
 public:
 	AssemblyScorerCreator() {}
-	virtual ~AssemblyScorerCreator() {}
+	~AssemblyScorerCreator() override {}
 	virtual std::string keyname() const = 0;
 	virtual AssemblyScorerOP create_assembly_scorer() const = 0;
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const =0;

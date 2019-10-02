@@ -46,7 +46,7 @@ public:
 		core::Real lambda_mem, core::Real tolerance, core::Real temp, core::Real threshold );
 
 	/// @brief Destructor
-	~FlexBBMeanField();
+	~FlexBBMeanField() override;
 
 
 	// Standard Rosetta methods ////////////////////////////////////////////////
@@ -58,16 +58,13 @@ public:
 	friend std::ostream & operator<<( std::ostream & output, FlexBBMeanField const & object_to_output );
 
 	/// @brief overrides process() method in MeanField to add convergence step for each pose and averaging step for all rot_matrices_
-	virtual
-	void process();
+	void process() override;
 
 	/// @brief deletes a pose from the list of poses
-	virtual
-	void delete_pose( core::Size pose_ind );
+	void delete_pose( core::Size pose_ind ) override;
 
 	/// @brief returns the expected (averaged) RotMatrix (exp_rot_matrix_)
-	virtual
-	RotMatrixCOP rot_matrix() const;
+	RotMatrixCOP rot_matrix() const override;
 
 	/// @brief returns the expected (averaged) EnergyMatrix (exp_energy_matrix_)
 	//added 6/23/15

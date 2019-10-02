@@ -44,24 +44,22 @@ public:
 	HydroxylTorsionEnergy();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	void
 	eval_residue_derivatives(
@@ -70,15 +68,13 @@ public:
 		pose::Pose const & /*pose*/,
 		EnergyMap const & /*weights*/,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
 	/// @brief P_AA_pp_Energy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 private:
 	HydroxylTorsionPotential const & potential_;

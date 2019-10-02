@@ -35,7 +35,7 @@ public:
 	LengthInResiduesRequirement(core::Size,core::Size);
 	LengthInResiduesRequirement(LengthInResiduesRequirement const & src);
 
-	virtual ~LengthInResiduesRequirement() override;
+	~LengthInResiduesRequirement() override;
 
 	LengthInResiduesRequirementOP
 	clone() const;

@@ -57,48 +57,48 @@ public:
 
 	char get_ss_type() const { return ss_type_; }
 
-	virtual ~SecondaryStructurePool();
+	~SecondaryStructurePool() override;
 
 	/// @brief Says how many fragments (in total) may fit into this pool
-	virtual core::Size total_size() const { return storage_->size(); }
+	core::Size total_size() const override { return storage_->size(); }
 
 	/// @brief Says how many fragments are currently in this pool
-	virtual core::Size current_size() const { return storage_->count_inserted();}
+	core::Size current_size() const override { return storage_->count_inserted();}
 
 	/// @brief Says how many fragments can still be inserted into this pool
-	virtual core::Size size_left() const { return total_size() - current_size(); }
+	core::Size size_left() const override { return total_size() - current_size(); }
 
-	virtual bool could_be_accepted(ScoredCandidate) const;
+	bool could_be_accepted(ScoredCandidate) const override;
 
 	/// @brief Push a fragment candidate into the container
-	virtual void push(ScoredCandidate candidate) {
+	void push(ScoredCandidate candidate) override {
 		storage_->push(candidate);
 	}
 
 
 	// Stuff inherited from CandidatesCollector base
 	/// @brief  Insert a fragment candidate to the container
-	virtual bool add(ScoredCandidate);
+	bool add(ScoredCandidate) override;
 
 	/// @brief removes all candidates from the container
-	void clear() { storage_->clear(); }
+	void clear() override { storage_->clear(); }
 
 	/// @brief  Check how many candidates have been already collected for a given position
 	/// @details This is a very special case - collector will be used only for a given position.
 	/// Thus it returns the total number of inserted candidates, as count_candidates() does
-	core::Size count_candidates(core::Size) const { return current_size(); }
+	core::Size count_candidates(core::Size) const override { return current_size(); }
 
 	/// @brief  Check how many candidates have been already collected for all positions
-	core::Size count_candidates() const { return current_size(); }
+	core::Size count_candidates() const override { return current_size(); }
 
 	/// @brief  Check the size of query sequence that this object knows.
 	/// @details This is a very special case - collector will be used only for a given position and it does NOT
 	/// know the tolal size. Thus it returns always 0
-	core::Size query_length() const { return 0; }
+	core::Size query_length() const override { return 0; }
 
 	/// @brief Inserts candidates from another Collector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
-	void insert(core::Size, CandidatesCollectorOP collector) {
+	void insert(core::Size, CandidatesCollectorOP collector) override {
 		SecondaryStructurePoolOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::quota::SecondaryStructurePool > ( collector );
 		if ( c == 0 ) {
 			utility_exit_with_message("Cant' cast candidates' collector to SecondaryStructurePool.");
@@ -109,7 +109,7 @@ public:
 
 	/// @brief  Returns all the candidate in this pool
 	ScoredCandidatesVector1 & get_candidates( core::Size //position_in_query
-	) {
+	) override {
 		return storage_->expose_data();
 	}
 
@@ -118,9 +118,9 @@ public:
 	}
 
 	/// @brief Describes what has been collected
-	void print_report(std::ostream &, scores::FragmentScoreManagerOP) const;
+	void print_report(std::ostream &, scores::FragmentScoreManagerOP) const override;
 
-	virtual void set_fraction(core::Real new_fraction) {
+	void set_fraction(core::Real new_fraction) override {
 		QuotaPool::set_fraction(new_fraction);
 		this_size_ = (core::Size)(total_size_*new_fraction);
 		if ( this_size_ < 20 ) {
@@ -129,7 +129,7 @@ public:
 		storage_->resize( this_size_,this_size_*buffer_factor_ );
 	}
 
-	virtual core::Real quota_score(ScoredCandidate candidate) const {
+	core::Real quota_score(ScoredCandidate candidate) const override {
 		core::Real t2(0);
 		for ( core::Size i=1; i<=components_.size(); i++ ) {
 			t2 += candidate.second->at( components_[i] ) * weights_[i];

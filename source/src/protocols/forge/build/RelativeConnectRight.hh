@@ -84,8 +84,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	virtual
-	~RelativeConnectRight();
+	~RelativeConnectRight() override;
 
 
 public: // assignment
@@ -99,16 +98,14 @@ public: // virtual constructors
 
 
 	/// @brief clone this object
-	virtual
-	BuildInstructionOP clone() const;
+	BuildInstructionOP clone() const override;
 
 
 public: // virtual Pose modification methods
 
 
 	/// @brief do the actual work of modifying the Pose
-	virtual
-	void modify_impl( Pose & pose_left );
+	void modify_impl( Pose & pose_left ) override;
 
 
 public: // instruction comparison
@@ -121,8 +118,7 @@ public: // instruction comparison
 	///  so that jumps may be placed correctly.  There is currently no way to
 	///  represent the dependent fixed position, so we're forced to return an empty
 	///  set.
-	virtual
-	Positions original_fixed_positions() const;
+	Positions original_fixed_positions() const override;
 
 
 private: // data

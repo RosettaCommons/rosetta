@@ -51,7 +51,7 @@ public:
 	GeometricSolEnergyEvaluator( GeometricSolEnergyEvaluator const & src );
 
 	//destructor
-	~GeometricSolEnergyEvaluator();
+	~GeometricSolEnergyEvaluator() override;
 
 public:
 

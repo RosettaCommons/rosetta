@@ -51,19 +51,15 @@ public:
 
 	OccludedHbondSolEnergy( OccludedHbondSolEnergy const & src );
 
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -71,32 +67,28 @@ public:
 		pose::Pose const & ,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const & scorefxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Inform inquiring algorithms that this energy method will opt-in to the
 	/// residue-pair decomposable derivative evaluation scheme.
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
-	virtual
 	bool
 	defines_score_for_residue_pair(
 		conformation::Residue const & res1,
 		conformation::Residue const & res2,
 		bool res_moving_wrt_eachother
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
@@ -108,9 +100,8 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
@@ -118,7 +109,7 @@ public:
 		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
 	/*void
 	deprecated_eval_atom_derivative(
@@ -133,16 +124,13 @@ public:
 
 	// Note: This could change - see notes in the .cc re double-counting. If it does,
 	// eval_atom_derivative has to change too.
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & ) const { return true; };
+	defines_intrares_energy( EnergyMap const & ) const override { return true; };
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > &  ) const {};
+	void indicate_required_context_graphs( utility::vector1< bool > &  ) const override {};
 
 private:
 
@@ -212,8 +200,7 @@ private:
 	DatabaseOccSolEne const & occ_hbond_sol_database_;
 
 	bool const verbose_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

@@ -66,7 +66,7 @@ public:
 
 	/// @brief Default destructor.
 	///
-	virtual ~NetChargeEnergy();
+	~NetChargeEnergy() override;
 
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.

@@ -35,7 +35,7 @@ public:
 	PeptideStapleDesignMover();
 	PeptideStapleDesignMover( std::string const & seqpos, core::Size const staple_gap );
 	PeptideStapleDesignMover( PeptideStapleDesignMover const & ) = default;
-	virtual ~PeptideStapleDesignMover();
+	~PeptideStapleDesignMover() override;
 
 	protocols::moves::MoverOP clone() const override;
 	void apply( core::pose::Pose & pose ) override;

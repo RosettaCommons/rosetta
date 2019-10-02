@@ -39,23 +39,23 @@ public:
 public:
 	NullPoseFolder();
 
-	virtual ~NullPoseFolder();
+	~NullPoseFolder() override;
 
 	static std::string
 	class_name();
 
 	PoseFolderOP
-	clone() const;
+	clone() const override;
 
-	virtual void
+	void
 	apply(
 		core::pose::Pose & pose,
 		core::select::residue_selector::ResidueSubset const & movable,
-		protocols::loops::Loops const & loops ) const;
+		protocols::loops::Loops const & loops ) const override;
 
 protected:
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 private:
 

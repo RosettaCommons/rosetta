@@ -63,7 +63,7 @@ public:
 
 	/// @brief Destructor.
 	///
-	virtual ~MoveMapFactory();
+	~MoveMapFactory() override;
 
 	void all_bb( bool setting );
 	void add_bb_action( move_map_action action, residue_selector::ResidueSelectorCOP selector );

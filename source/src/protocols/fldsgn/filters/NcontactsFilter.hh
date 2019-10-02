@@ -76,7 +76,7 @@ public:// constructor/destructor
 	NcontactsFilter( NcontactsFilter const & rval );
 
 	/// @brief destructor
-	virtual ~NcontactsFilter();
+	~NcontactsFilter() override;
 
 
 public:// virtual constructor

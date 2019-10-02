@@ -40,7 +40,7 @@ public:
 
 	MRSJobSummary( core::Real energy, cluster::ClusterMetricOP cluster_metric );
 
-	~MRSJobSummary();
+	~MRSJobSummary() override;
 
 public://Setters and Getters
 	void set_cluster_metric( cluster::ClusterMetricOP setting ) {

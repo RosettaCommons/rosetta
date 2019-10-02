@@ -105,7 +105,7 @@ public:
 	using Constraint::score;
 	using Constraint::dist;
 
-	virtual void
+	void
 	score(
 		XYZ_Func const &,
 		EnergyMap const &,
@@ -113,11 +113,10 @@ public:
 	) const override;
 
 	/// @details "Distance" for SequenceCouplingConstraint isn't all that simple
-	virtual
 	core::Real
 	dist( core::scoring::func::XYZ_Func const & ) const override { return 0; }
 
-	virtual void
+	void
 	fill_f1_f2(
 		AtomID const &,
 		XYZ_Func const &,

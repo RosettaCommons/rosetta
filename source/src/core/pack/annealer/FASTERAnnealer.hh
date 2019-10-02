@@ -55,9 +55,9 @@ public:
 		ObjexxFCL::FArray1D< core::PackerEnergy > & rot_freq
 	);
 
-	virtual ~FASTERAnnealer();
+	~FASTERAnnealer() override;
 
-	void run();
+	void run() override;
 
 private:
 	void iBR();

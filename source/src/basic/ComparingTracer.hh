@@ -26,11 +26,11 @@ class ComparingTracer : public basic::otstream
 {
 public:
 	ComparingTracer(std::string const & file_name);
-	virtual ~ComparingTracer();
+	~ComparingTracer() override;
 
 protected:
 	/// @brief overload member function.
-	virtual void t_flush(std::string const & s);
+	void t_flush(std::string const & s) override;
 
 private:
 	ComparingTracer(ComparingTracer const & );

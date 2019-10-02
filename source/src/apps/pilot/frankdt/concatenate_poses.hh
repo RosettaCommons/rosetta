@@ -33,7 +33,7 @@ public:
 	concatenate_poses();
 	concatenate_poses(concatenate_poses const & src);
 
-	virtual ~concatenate_poses();
+	~concatenate_poses() override;
 
 	concatenate_posesOP
 	clone() const;

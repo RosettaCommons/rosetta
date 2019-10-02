@@ -35,24 +35,20 @@ public:
 		core::Vector const & reference_centroid,
 		core::Real const max_distance_squared );
 	//destructor
-	~CentroidDistanceScreener();
+	~CentroidDistanceScreener() override;
 
 public:
 
-	virtual
-	bool check_screen();
+	bool check_screen() override;
 
-	virtual
 	std::string
-	name() const { return "CentroidDistanceScreener"; }
+	name() const override { return "CentroidDistanceScreener"; }
 
-	virtual
 	StepWiseScreenerType
-	type() const { return CENTROID_DISTANCE; }
+	type() const override { return CENTROID_DISTANCE; }
 
-	virtual
 	void
-	fast_forward( sampler::StepWiseSamplerOP sampler );
+	fast_forward( sampler::StepWiseSamplerOP sampler ) override;
 
 private:
 

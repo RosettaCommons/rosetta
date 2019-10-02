@@ -52,7 +52,7 @@ public:
 	void apply( Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< BackrubDDMover >(); }
-	virtual ~BackrubDDMover();
+	~BackrubDDMover() override;
 
 	std::string
 	get_name() const override;

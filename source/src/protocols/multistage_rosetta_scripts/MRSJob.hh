@@ -107,7 +107,7 @@ public:
 	);
 
 	//destructor
-	~MRSJob();
+	~MRSJob() override;
 
 public:
 

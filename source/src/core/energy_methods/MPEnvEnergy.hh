@@ -63,42 +63,36 @@ public: // methods
 	MPEnvEnergy();
 
 	/// @brief Clone Method
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Setup Menv for Scoring by updating neighbor count and compute cen env
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
 	/// @brief Setup for Derivatives - Calls Setup for Scoring
-	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
 
 	/// @brief Compute Membrane Environemnt - Residue Energy
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	/// @brief Finalize Whole Structure Energy from One Body Energies
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap &
-	) const;
+	) const override;
 
 	/// @brief No Required Context Graphs in MP Terms
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
 public: // energy method functions
 
@@ -116,8 +110,7 @@ private:
 	MembraneData const & mpdata_;
 
 	// Versioning
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 }; // MPEnvEnergy
 

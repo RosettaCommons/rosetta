@@ -41,12 +41,10 @@ public:
 
 public:
 
-	virtual
-	~NullStream();
+	~NullStream() override;
 
-	virtual
 	std::istream &
-	stream();
+	stream() override;
 
 private: // members
 	utility::io::izstream stream_;
@@ -65,7 +63,7 @@ public:
 
 	NullResourceLocator(NullResourceLocator const & src);
 
-	virtual ~NullResourceLocator();
+	~NullResourceLocator() override;
 
 	/// @brief Describe this instance to the given output stream; since there is no
 	/// data in this class, merely print the name of this class.

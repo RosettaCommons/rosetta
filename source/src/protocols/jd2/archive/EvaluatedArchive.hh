@@ -65,18 +65,18 @@ public:
 	/// @brief Constructor  and Destructor
 	EvaluatedArchive( ArchiveManagerAP ptr );
 	EvaluatedArchive();
-	~EvaluatedArchive();
+	~EvaluatedArchive() override;
 
 	/// @brief Archive specific options
 	static void register_options();
 
 	/// @brief add decoy to Archive
 	/// @detail evaluate decoy and call add_evaluated_structure
-	virtual bool add_structure(
+	bool add_structure(
 		core::io::silent::SilentStructOP new_decoy,
 		core::io::silent::SilentStructOP alternative_decoy,
 		Batch const& batch
-	);
+	) override;
 
 
 	/// @brief  compute score according to select_weights --- this can contain any evaluator columns
@@ -86,17 +86,17 @@ public:
 	void setup_default_evaluators();
 
 	/// @brief overloaded that we can sort the pool after reading
-	virtual bool restore_from_file();
+	bool restore_from_file() override;
 
 	/// @brief only overloaded this to add some verbosity each time we read structures
-	virtual void read_structures(
+	void read_structures(
 		core::io::silent::SilentFileData& sfd,
 		core::io::silent::SilentFileData& alternative_decoys,
 		Batch const& batch
-	);
+	) override;
 
 	/// @brief overloaded to make input decoys appear the same as decoys coming from batches
-	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) = 0;
+	void init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) override = 0;
 
 	/// @brief typedefs for Evaluators and Weights
 	typedef std::map< std::string, core::Real > WeightMap;
@@ -162,7 +162,7 @@ public:
 	void set_evaluators( EvaluatorMap const&, WeightMap const& );
 
 	///overloaded to save / restore the variance_archive_
-	virtual void save_to_file( std::string suffix = "" );
+	void save_to_file( std::string suffix = "" ) override;
 
 protected:
 	core::scoring::ScoreFunctionOP scorefxn_non_const();

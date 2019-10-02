@@ -112,7 +112,7 @@ public:
 	MutableResidueType( MutableResidueType && residue_type ) = default;
 
 	/// @brief destructor, for rule of 5
-	~MutableResidueType();
+	~MutableResidueType() override;
 
 	/// @brief Copies  <src>  into the MutableResidueType
 	MutableResidueType &

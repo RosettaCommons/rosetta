@@ -70,18 +70,18 @@ public:
 
 	PcsEnergy(); //Construct
 
-	~PcsEnergy(); //Destruct
+	~PcsEnergy() override; //Destruct
 
 	PcsEnergy & // =
 	operator=(PcsEnergy const & other);
 
 	PcsEnergy(PcsEnergy const & other); //copy
 
-	virtual core::scoring::methods::EnergyMethodOP
-	clone() const; // Clone
+	core::scoring::methods::EnergyMethodOP
+	clone() const override; // Clone
 
 	void
-	indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	/// @brief This is called to start the PCS machinerie and get the score (set in totals)
 	void
@@ -89,7 +89,7 @@ public:
 		core::pose::Pose & pose,
 		core::scoring::ScoreFunction const &,
 		core::scoring::EnergyMap & totals
-	) const;
+	) const override;
 
 	/// @brief Return the PCS score given the pose, the given PcsDataCenter, and the lanthanide number
 	core::Real
@@ -169,8 +169,7 @@ public:
 		numeric::xyzVector< core::Real > const & best_coo,
 		PcsDataCenter const &pcs_d
 	) const;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 } //PCS

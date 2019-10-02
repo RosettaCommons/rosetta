@@ -61,7 +61,7 @@ class RotamerOperation : public utility::pointer::ReferenceCount
 {
 public:
 	RotamerOperation();
-	virtual ~RotamerOperation();
+	~RotamerOperation() override;
 
 	virtual
 	bool
@@ -80,7 +80,7 @@ class RotamerSetOperation : public utility::pointer::ReferenceCount
 {
 public:
 	RotamerSetOperation();
-	virtual ~RotamerSetOperation();
+	~RotamerSetOperation() override;
 
 	virtual
 	RotamerSetOperationOP
@@ -123,7 +123,7 @@ class RotamerSetsOperation : public utility::pointer::ReferenceCount
 {
 public:
 	RotamerSetsOperation();
-	virtual ~RotamerSetsOperation();
+	~RotamerSetsOperation() override;
 
 	virtual
 	RotamerSetsOperationOP

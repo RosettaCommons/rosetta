@@ -44,13 +44,13 @@ public:
 		core::pose::PoseCOP align_pose );
 
 	//destructor
-	~RNA_FragmentMonteCarloOutputter();
+	~RNA_FragmentMonteCarloOutputter() override;
 
 public:
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const{ return "RNA_FragmentMonteCarloOutputter"; }
+	std::string get_name() const override{ return "RNA_FragmentMonteCarloOutputter"; }
 
 	void
 	output_running_info(

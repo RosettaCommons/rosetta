@@ -59,7 +59,7 @@ public:
 
 	LigandConformer( LigandConformer const & );
 
-	virtual ~LigandConformer();
+	~LigandConformer() override;
 
 	Real
 	atom1_atom2_distance() const;

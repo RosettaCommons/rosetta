@@ -65,14 +65,14 @@ public:
 		}
 	}
 
-	~ABEGO_SS_Score() {}
+	~ABEGO_SS_Score() override {}
 
-	void do_caching(VallChunkOP);
-	bool cached_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map);
-	void clean_up() {}
+	void do_caching(VallChunkOP) override;
+	bool cached_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) override;
+	void clean_up() override {}
 
 	/// @brief Computes the score
-	virtual bool score(FragmentCandidateOP, FragmentScoreMapOP);
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 private:
 	core::Size query_len_;
@@ -92,7 +92,7 @@ public:
 	}
 
 	FragmentScoringMethodOP make(core::Size, core::Real, bool,
-		FragmentPickerOP, std::string);
+		FragmentPickerOP, std::string) override;
 };
 
 } // scores

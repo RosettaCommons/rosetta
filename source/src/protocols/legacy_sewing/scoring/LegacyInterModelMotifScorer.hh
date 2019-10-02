@@ -40,13 +40,12 @@ public:
 	///@brief default construct
 	LegacyInterModelMotifScorer();
 
-	virtual ~LegacyInterModelMotifScorer(){}
+	~LegacyInterModelMotifScorer() override{}
 
-	virtual
 	core::Real
 	score(
 		AssemblyCOP assembly
-	);
+	) override;
 
 	core::Real
 	full_motif_score(

@@ -63,7 +63,7 @@ public:
 		utility::vector1< std::string > const & comments );
 
 	//destructor
-	~RDAT();
+	~RDAT() override;
 
 public:
 

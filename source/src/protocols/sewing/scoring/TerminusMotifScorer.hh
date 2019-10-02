@@ -40,7 +40,7 @@ public:
 	///@brief default construct
 	TerminusMotifScorer();
 
-	virtual ~TerminusMotifScorer()=default;
+	~TerminusMotifScorer() override =default;
 
 	TerminusMotifScorer( TerminusMotifScorer const & );
 
@@ -56,10 +56,10 @@ public:
 		data_storage::SmartAssemblyCOP assembly
 	);
 
-	virtual core::Real
+	core::Real
 	get_weight() const override;
 
-	virtual void
+	void
 	set_weight( core::Real ) override;
 
 	//Additional getters and setters

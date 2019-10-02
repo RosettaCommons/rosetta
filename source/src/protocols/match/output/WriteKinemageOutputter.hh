@@ -39,17 +39,15 @@ namespace output {
 class WriteKinemageOutputter : public OutputWriter
 {
 public:
-	virtual ~WriteKinemageOutputter();
+	~WriteKinemageOutputter() override;
 
-	virtual
 	void
-	record_match( match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer );
+	record_match( match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer ) override;
 
 	/// @brief evaluator and score writer are not passed in because single-downstream-position match
 	///currently have no way of being evaluated
-	virtual
 	void
-	record_match( match_dspos1 const & m );
+	record_match( match_dspos1 const & m ) override;
 
 	void
 	set_coordinate_cacher( UpstreamHitCacherOP );

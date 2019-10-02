@@ -57,7 +57,7 @@ public:
 	EmbeddingDef & operator = ( EmbeddingDef const & src );
 
 	/// @brief Destructor
-	~EmbeddingDef();
+	~EmbeddingDef() override;
 
 	/// @brief Standard Rosetta Show Method for Debugging
 	virtual void show( std::ostream & output=std::cout ) const;

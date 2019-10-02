@@ -33,7 +33,7 @@ namespace pose_stream {
 class PoseInputStream : public utility::pointer::ReferenceCount {
 public:
 	PoseInputStream() {}
-	virtual ~PoseInputStream() {}
+	~PoseInputStream() override {}
 
 	virtual bool has_another_pose() = 0;
 

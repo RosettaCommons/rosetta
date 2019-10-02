@@ -33,12 +33,12 @@ public:
 	protocols::minimization_packing::PackRotamersMover pack_mover;
 	core::pose::Pose design_pose;
 
-	virtual void setUp() {
+	void setUp() override {
 		//core_init_with_additional_options( "-ex1" );// I can't get this to work
 		core::import_pose::pose_from_file(design_pose, "design_in.pdb", core::import_pose::PDB_file);
 	};
 
-	virtual void run(core::Real scaleFactor) {
+	void run(core::Real scaleFactor) override {
 		int reps( 1 * scaleFactor );
 		if( reps == 0 ) { reps = 1; } // Do at least one repetition, regardless of scaling factor
 		for(int i=0; i< reps; i++) {
@@ -47,5 +47,5 @@ public:
 		//design_pose.dump_scored_pdb("design_out.pdb", *pack_mover.scorefxn());// write out for debug
 	};
 
-	virtual void tearDown() {};
+	void tearDown() override {};
 };

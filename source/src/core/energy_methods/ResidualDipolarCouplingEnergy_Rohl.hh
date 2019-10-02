@@ -51,9 +51,8 @@ public:
 	ResidualDipolarCouplingEnergy_Rohl();
 
 	//clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -64,12 +63,12 @@ public:
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 private:
 
@@ -139,8 +138,7 @@ private:
 		Size const & ORDERSIZE,
 		Real const & Azz
 	) const;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

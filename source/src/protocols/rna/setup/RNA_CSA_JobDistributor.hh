@@ -46,21 +46,18 @@ public:
 		bool const annealing );
 
 	//destructor
-	~RNA_CSA_JobDistributor();
+	~RNA_CSA_JobDistributor() override;
 
 public:
 
-	virtual
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
-	virtual
 	void
-	initialize( core::pose::Pose const & pose );
+	initialize( core::pose::Pose const & pose ) override;
 
-	virtual
 	bool
-	has_another_job();
+	has_another_job() override;
 
 private:
 

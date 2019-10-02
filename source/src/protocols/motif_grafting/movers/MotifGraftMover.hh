@@ -233,7 +233,7 @@ public:
 		filters::FilterCOP const & f_output_filter );
 
 	/**@brief MotifGraftMover Destructor**/
-	~MotifGraftMover();
+	~MotifGraftMover() override;
 
 	/**@brief Apply mover function**/
 	void apply( Pose & ) override;
@@ -269,7 +269,7 @@ public:
 		utility::vector1< utility::vector1< std::pair< core::Size, core::Size > > > & vv_resulting_permutations);
 
 	/**@brief Fuction to parse RosettaScripts XML options**/
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,

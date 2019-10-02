@@ -37,11 +37,11 @@ public:
 	/// ScoreTypes this EnergyMethod is responsible for computing
 	ContextDependentLRTwoBodyEnergy( EnergyMethodCreatorOP );
 
-	virtual ~ContextDependentLRTwoBodyEnergy();
+	~ContextDependentLRTwoBodyEnergy() override;
 
 
 	EnergyMethodType
-	method_type() const
+	method_type() const override
 	{
 		return cd_lr_2b;
 	}

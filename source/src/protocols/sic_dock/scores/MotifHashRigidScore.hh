@@ -36,17 +36,17 @@ class MotifHashRigidScore : public RigidScore {
 	typedef std::pair<numeric::xyzVector<float>,int> VecIR;
 public:
 	MotifHashRigidScore(core::pose::Pose const & pose1, core::pose::Pose const & pose2);
-	virtual ~MotifHashRigidScore();
-	core::Real score     ( Xforms const & x1, Xforms const & x2 ) const;
+	~MotifHashRigidScore() override;
+	core::Real score     ( Xforms const & x1, Xforms const & x2 ) const override;
 	core::Real score_meta( Xforms const & x1, Xforms const & x2, int & nsheet, Real & rawscore, Real & sselem_score , Real & coverage , Real & res_score, Real & sheetsc, int & nres, int &Nhh, int &Nee, int &Neh, int &Nh, int &Ne, int &Nl ) const;
 
 	int dump_matching_motifs( core::pose::Pose   const & pose1, core::pose::Pose   const & pose2, std::ostream & out, int & count, core::pose::xyzStripeHashPoseCOP clash_check=NULL, bool print=false ) const;
 	int dump_matching_motifs( Xforms const & x1s  , Xforms const & x2s  , std::ostream & out, core::pose::xyzStripeHashPoseCOP clash_check=NULL, bool print=false ) const;
 
-	std::string type() const { return "MotifHash"; }
+	std::string type() const override { return "MotifHash"; }
 
-	void show(std::ostream & out                                      , int width=10) const;
-	void show(std::ostream & out, Xforms const & x1, Xforms const & x2, int width=10) const;
+	void show(std::ostream & out                                      , int width=10) const override;
+	void show(std::ostream & out, Xforms const & x1, Xforms const & x2, int width=10) const override;
 	void show(std::ostream & out, Xforms const & x1, Xforms const & x2, core::pose::xyzStripeHashPoseCOP clash_check, int width=10) const;
 
 	core::scoring::motif::MotifHashCOP motif_hash() const { return mh_; }

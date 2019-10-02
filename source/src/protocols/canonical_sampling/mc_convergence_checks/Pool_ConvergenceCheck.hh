@@ -68,7 +68,7 @@ public:
 
 	Pool_RMSD() {};
 
-	virtual ~Pool_RMSD();
+	~Pool_RMSD() override;
 
 	/// @brief return position in pool for the best_decoy
 	core::Size evaluate( core::pose::Pose const&, std::string& best_decoy, core::Real& best_rmsd ) const;
@@ -125,9 +125,9 @@ public:
 	: threshold_( threshold ),
 		rmsd_pool_( rmsd_pool_in ) {};
 
-	virtual ~Pool_ConvergenceCheck();
+	~Pool_ConvergenceCheck() override;
 	//throws EXCN_Pool_Converged if lowest_score pose is < threshold away from any pool structure
-	virtual bool operator() ( const core::pose::Pose&, moves::MonteCarlo const& mc, bool /*reject*/ );
+	bool operator() ( const core::pose::Pose&, moves::MonteCarlo const& mc, bool /*reject*/ ) override;
 
 private:
 	core::Real threshold_;
@@ -136,17 +136,17 @@ private:
 
 class Pool_Evaluator : public evaluation::PoseEvaluator {
 public:
-	virtual ~Pool_Evaluator();
+	~Pool_Evaluator() override;
 	Pool_Evaluator( Pool_RMSD_OP rmsd_pool_in ) : rmsd_pool_( rmsd_pool_in ) {};
 	/// from PoseEvaluator interface:
 
 	/// @brief evaluate pose and store values in Silent_Struct
-	virtual void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
-	virtual void apply( core::io::silent::SilentStruct &pss) const;
+	void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const override;
+	void apply( core::io::silent::SilentStruct &pss) const override;
 
 	// void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
-	virtual core::Size size() const { return 2; };
-	virtual std::string name( core::Size i ) const {
+	core::Size size() const override { return 2; };
+	std::string name( core::Size i ) const override {
 		if ( i == 1 ) return "pool_converged_tag";
 		if ( i == 2 ) return "pool_converged_rmsd";
 		return "NO_TAG";

@@ -46,20 +46,17 @@ public:
 	SurfaceEnergies( SurfaceEnergies const & src );
 
 	// Explicit assignmnet operator to avoid #include .hh's
-	virtual Energies & operator = ( Energies const & rhs );
+	Energies & operator = ( Energies const & rhs ) override;
 
 	/// @details determine whether my type is the same as another Conformation's
-	virtual
 	bool
-	same_type_as_me( Energies const & other, bool recurse = true ) const;
+	same_type_as_me( Energies const & other, bool recurse = true ) const override;
 
 	/// dtor
-	virtual
-	~SurfaceEnergies();
+	~SurfaceEnergies() override;
 
-	virtual
 	EnergiesOP
-	clone() const;
+	clone() const override;
 
 	/// @brief The SurfaceEnergies object needs to know how many residues are in its pose;
 	/// it also has to be told which residues are considered part of the surface and which
@@ -96,8 +93,7 @@ private:
 	/// neighbor detection -- e.g. CB for most amino acids, CA for GLY.)  The point
 	/// graph will then be used in a call to find_neighbors to add upper-edges to
 	/// neighboring residues.
-	virtual
-	void fill_point_graph( pose::Pose const & pose, conformation::PointGraphOP pg ) const;
+	void fill_point_graph( pose::Pose const & pose, conformation::PointGraphOP pg ) const override;
 
 	/// @brief Create a new surface grid, bounding box and dimension for the surface residues.
 	/// This might get called if the range on the score function changes or if the surface

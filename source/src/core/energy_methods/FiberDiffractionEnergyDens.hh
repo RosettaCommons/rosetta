@@ -60,11 +60,11 @@ public:
 		rho_cylindrical_( src.rho_cylindrical_ )
 	{}
 
-	virtual methods::EnergyMethodOP clone() const;
+	methods::EnergyMethodOP clone() const override;
 
-	virtual void finalize_total_energy(pose::Pose & pose,ScoreFunction const &,EnergyMap & totals) const;
+	void finalize_total_energy(pose::Pose & pose,ScoreFunction const &,EnergyMap & totals) const override;
 
-	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & scorefxn ) const;
+	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & scorefxn ) const override;
 
 	/*virtual void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const;
 
@@ -79,8 +79,8 @@ public:
 	Vector & F2
 	) const;*/
 
-	virtual void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
+	) const override {}
 
 
 	void
@@ -106,8 +106,7 @@ private:
 	mutable core::Real a_, b_;
 	mutable ObjexxFCL::FArray3D< float > rho_cylindrical_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 

@@ -37,21 +37,18 @@ public:
 		core::scoring::ScoreFunctionCOP scorefxn );
 
 	//destructor
-	~Scorer();
+	~Scorer() override;
 
 public:
 
-	virtual
 	bool
-	check_screen();
+	check_screen() override;
 
-	virtual
 	std::string
-	name() const { return "Scorer"; }
+	name() const override { return "Scorer"; }
 
-	virtual
 	StepWiseScreenerType
-	type() const { return SCORER; }
+	type() const override { return SCORER; }
 
 private:
 

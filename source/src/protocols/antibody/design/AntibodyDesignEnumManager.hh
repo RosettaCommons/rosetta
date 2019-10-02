@@ -35,7 +35,7 @@ public:
 
 	AntibodyDesignEnumManager();
 
-	virtual ~AntibodyDesignEnumManager();
+	~AntibodyDesignEnumManager() override;
 
 	////////////////// SeqDesignStrategy ///////////////////////////////////////////////
 

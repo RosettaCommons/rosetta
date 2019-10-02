@@ -42,7 +42,7 @@ public:
 	/// @brief empty constructor
 	FindConsensusSequence();
 
-	~FindConsensusSequence();
+	~FindConsensusSequence() override;
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;

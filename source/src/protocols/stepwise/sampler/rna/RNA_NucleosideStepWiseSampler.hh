@@ -38,7 +38,7 @@ public:
 	);
 
 	/// @brief Initialization wrapper
-	void init();
+	void init() override;
 
 	/// Set functions
 	void set_extra_chi( bool const setting ) {
@@ -67,10 +67,10 @@ public:
 	}
 
 	/// @brief Name of the class
-	std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RNA_NUCLEOSIDE; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::RNA_NUCLEOSIDE; }
 
 private:
 	core::Size const rsd_id_;

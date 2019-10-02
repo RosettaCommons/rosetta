@@ -34,13 +34,13 @@ public:
 	BulgeUnApplyMover( Size const moving_res );
 
 	//destructor
-	~BulgeUnApplyMover();
+	~BulgeUnApplyMover() override;
 
 public:
 
-	virtual void apply( Pose & );
+	void apply( Pose & ) override;
 
-	virtual std::string get_name() const { return "BulgeUnApplyMover"; }
+	std::string get_name() const override { return "BulgeUnApplyMover"; }
 
 private:
 

@@ -31,24 +31,21 @@ public:
 	FastForwardToNextRigidBody();
 
 	//destructor
-	~FastForwardToNextRigidBody();
+	~FastForwardToNextRigidBody() override;
 
 public:
 
 	//  bool
 	//  check_screen();
 
-	virtual
 	std::string
-	name() const { return "FastForwardToNextRigidBody"; }
+	name() const override { return "FastForwardToNextRigidBody"; }
 
-	virtual
 	StepWiseScreenerType
-	type() const { return FAST_FORWARD_TO_NEXT_RIGID_BODY; }
+	type() const override { return FAST_FORWARD_TO_NEXT_RIGID_BODY; }
 
-	virtual
 	void
-	get_update( sampler::StepWiseSamplerOP sampler );
+	get_update( sampler::StepWiseSamplerOP sampler ) override;
 
 	// kind of tricky -- put fast_forward above in get_update.
 	//  virtual

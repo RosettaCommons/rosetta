@@ -63,7 +63,7 @@ public:// constructor/destructor
 	// @brief default constructor
 	SecondaryStructureCountFilter();
 
-	virtual ~SecondaryStructureCountFilter(){}
+	~SecondaryStructureCountFilter() override{}
 
 
 public:// virtual constructor

@@ -68,8 +68,7 @@ struct ConformationEvent : public GeneralEvent {
 
 	/// @brief default destructor
 	inline
-	virtual
-	~ConformationEvent() {}
+	~ConformationEvent() override {}
 
 
 	/// @brief copy assignment

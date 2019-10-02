@@ -37,7 +37,7 @@ class DFIRE_Potential : public utility::pointer::ReferenceCount {
 public:
 	DFIRE_Potential();
 
-	virtual ~DFIRE_Potential() ; // auto-removing definition from header{}
+	~DFIRE_Potential() override ; // auto-removing definition from header{}
 
 	core::Real
 	eval_dfire_pair_energy(

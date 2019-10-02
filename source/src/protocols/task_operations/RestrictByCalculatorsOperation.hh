@@ -43,13 +43,12 @@ public:
 	RestrictByCalculatorsOperation();
 	RestrictByCalculatorsOperation( utility::vector1< calc_calcn > const & calcs_and_calcns );
 
-	virtual ~RestrictByCalculatorsOperation();
+	~RestrictByCalculatorsOperation() override;
 
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictByCalculators"; }

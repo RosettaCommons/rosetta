@@ -43,24 +43,24 @@ public:
 		count_viols_( 0 ),
 		func_to_weight_( myfunc ) {}
 
-	~SkipViolFunc() {};
+	~SkipViolFunc() override {};
 
 	FuncOP
-	clone() const { return utility::pointer::make_shared< SkipViolFunc >( *this ); }
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	clone() const override { return utility::pointer::make_shared< SkipViolFunc >( *this ); }
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	Real func( Real const x ) const;
-	Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	void read_data( std::istream& );
+	void read_data( std::istream& ) override;
 
 	/// @brief show some sort of stringified representation of the violations for this constraint.
-	virtual core::Size show_violations( std::ostream& out, Real r, core::Size verbose_level, Real threshold = 1 ) const;
+	core::Size show_violations( std::ostream& out, Real r, core::Size verbose_level, Real threshold = 1 ) const override;
 
 	/// @brief shows the definition of this function, usually the string type of function and the
 	/// parameters passed in to the constructor.
-	virtual void show_definition( std::ostream & out ) const;
+	void show_definition( std::ostream & out ) const override;
 
 	Size viols() const {
 		return count_viols_;

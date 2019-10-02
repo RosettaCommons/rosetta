@@ -70,7 +70,7 @@ class SasaMethod : public utility::pointer::ReferenceCount {
 public:
 
 	SasaMethod(Real probe_radius, SasaRadii radii_set);
-	virtual ~SasaMethod();
+	~SasaMethod() override;
 
 	/// @brief Calculate Sasa.  Atoms not calculated have -1 sasa in AtomID_Map.  This is carried over for compatability purposes.
 	virtual Real

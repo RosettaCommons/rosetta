@@ -47,19 +47,16 @@ public:
 
 
 	/// clone
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
-	setup_for_scoring( core::pose::Pose & pose, core::scoring::ScoreFunction const & ) const;
+	setup_for_scoring( core::pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	residue_pair_energy(
 		core::conformation::Residue const & rsd1,
@@ -67,20 +64,18 @@ public:
 		core::pose::Pose const &,// pose,
 		core::scoring::ScoreFunction const &,
 		core::scoring::EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	finalize_total_energy(
 		core::pose::Pose & pose,
 		core::scoring::ScoreFunction const &,
 		core::scoring::EnergyMap &// emap
-	) const;
+	) const override;
 
 	/// This method *should* admit to defining intraresidue energies
-	virtual
 	bool
-	defines_intrares_energy( core::scoring::EnergyMap const & ) const { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & ) const override { return false; }
 
 	void
 	eval_intrares_energy(
@@ -88,14 +83,12 @@ public:
 		core::pose::Pose const &,
 		core::scoring::ScoreFunction const &,
 		core::scoring::EnergyMap &
-	) const {}
+	) const override {}
 
-	virtual
 	core::Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -108,8 +101,7 @@ private:
 	protocols::scoring::InterchainPotential const & interchain_potential_;
 	core::scoring::EnvPairPotential const & env_potential_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 

@@ -67,10 +67,10 @@ public:
 	DsspDesignOperation( DsspDesignOperation const & rval );
 
 	/// @brief destructor
-	virtual ~DsspDesignOperation();
+	~DsspDesignOperation() override;
 
 	/// @brief make clone
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 public:
 
@@ -107,10 +107,10 @@ private:
 public:
 
 	/// @brief parse RosettaScripts XML
-	void parse_tag( TagCOP tag , DataMap & );
+	void parse_tag( TagCOP tag , DataMap & ) override;
 
 	/// @brief apply
-	virtual void apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
+	void apply( Pose const & pose, core::pack::task::PackerTask & task ) const override;
 
 };
 

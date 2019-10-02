@@ -39,10 +39,10 @@ class RDFEtableCreator : public RDFFunctionCreator
 public:
 
 	/// @brief return a pointer to a newly created RDFEtableFunction
-	virtual RDFBaseOP create_rdf_function() const;
+	RDFBaseOP create_rdf_function() const override;
 	/// @brief return the name of the RDFEtableFunction
-	virtual std::string type_name() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	std::string type_name() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 /// @brief RDFEtableFunction computes fa_sol,fa_rep,fa_atr for a pair of atoms
@@ -51,15 +51,15 @@ class RDFEtableFunction : public RDFBase
 public:
 	RDFEtableFunction();
 
-	virtual ~RDFEtableFunction();
+	~RDFEtableFunction() override;
 
 	/// @brief parse tags for RDFEtableFunction tag
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data_map);
+		basic::datacache::DataMap & data_map) override;
 
 	/// @brief compute atr, rep and solvation energy for atom pair
-	virtual RDFResultList operator()(AtomPairData const & atom_data );
+	RDFResultList operator()(AtomPairData const & atom_data ) override;
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
@@ -74,10 +74,10 @@ class RDFElecCreator : public RDFFunctionCreator
 public:
 
 	/// @brief return a pointer to a newly created RDFElecFunction
-	virtual RDFBaseOP create_rdf_function() const;
+	RDFBaseOP create_rdf_function() const override;
 	/// @brief return the name of the RDFEtableFunction
-	virtual std::string type_name() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	std::string type_name() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 /// @brief RDFElecFunction computes fa_elec for a pair of atoms
@@ -86,15 +86,15 @@ class RDFElecFunction : public RDFBase
 public:
 	RDFElecFunction();
 
-	virtual ~RDFElecFunction();
+	~RDFElecFunction() override;
 
 	/// @brief parse tags for RDFElecFunction tag
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data_map);
+		basic::datacache::DataMap & data_map) override;
 
 	/// @brief compute fa_elec for atom pair
-	virtual RDFResultList operator()(AtomPairData const & atom_data );
+	RDFResultList operator()(AtomPairData const & atom_data ) override;
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
@@ -109,10 +109,10 @@ class RDFChargeCreator : public RDFFunctionCreator
 public:
 
 	/// @brief return a pointer to a newly created RDFElecFunction
-	virtual RDFBaseOP create_rdf_function() const;
+	RDFBaseOP create_rdf_function() const override;
 	/// @brief return the name of the RDFEtableFunction
-	virtual std::string type_name() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	std::string type_name() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 /// @brief RDFChargeFunction computes fa_elec for a pair of atoms
@@ -121,15 +121,15 @@ class RDFChargeFunction : public RDFBase
 public:
 	RDFChargeFunction();
 
-	virtual ~RDFChargeFunction();
+	~RDFChargeFunction() override;
 
 	/// @brief parse tags for RDFElecFunction tag
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & );
+		basic::datacache::DataMap & ) override;
 
 	/// @brief compute fa_elec for atom pair
-	virtual RDFResultList operator()(AtomPairData const & atom_data );
+	RDFResultList operator()(AtomPairData const & atom_data ) override;
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
@@ -145,10 +145,10 @@ class RDFHbondCreator : public RDFFunctionCreator
 public:
 
 	/// @brief return a pointer to a newly created RDFHbondFunction
-	virtual RDFBaseOP create_rdf_function() const;
+	RDFBaseOP create_rdf_function() const override;
 	/// @brief return the name of the RDFHbondFunction
-	virtual std::string type_name() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	std::string type_name() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 /// @brief RDFHbondFunction computes h-bonding energy for a pair of atoms.
@@ -157,18 +157,18 @@ class RDFHbondFunction : public RDFBase
 public:
 	RDFHbondFunction();
 
-	virtual ~RDFHbondFunction();
+	~RDFHbondFunction() override;
 
 	/// @brief parse tags for RDFHbondFunction tag
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data_map);
+		basic::datacache::DataMap & data_map) override;
 
 	/// @brief compute hbond energy for atom pair
-	virtual RDFResultList operator()(AtomPairData const & atom_data );
+	RDFResultList operator()(AtomPairData const & atom_data ) override;
 
 	/// @brief setup hbond database for each pose
-	virtual void preamble(core::pose::Pose & pose);
+	void preamble(core::pose::Pose & pose) override;
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
@@ -185,10 +185,10 @@ class RDFBinaryHbondCreator : public RDFFunctionCreator
 public:
 
 	/// @brief return a pointer to a newly created RDFBinaryHbondFunction
-	virtual RDFBaseOP create_rdf_function() const;
+	RDFBaseOP create_rdf_function() const override;
 	/// @brief return the name of the RDFBinaryHbondFunction
-	virtual std::string type_name() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	std::string type_name() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 
 };
 
@@ -198,15 +198,15 @@ class RDFBinaryHbondFunction : public RDFBase
 public:
 	RDFBinaryHbondFunction();
 
-	virtual ~RDFBinaryHbondFunction();
+	~RDFBinaryHbondFunction() override;
 
 	/// @brief parse tags for RDFBinaryHbondFunction tag
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data_map);
+		basic::datacache::DataMap & data_map) override;
 
 	/// @brief compute binary hbond status for atom pair
-	virtual RDFResultList operator()(AtomPairData const & atom_data );
+	RDFResultList operator()(AtomPairData const & atom_data ) override;
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
@@ -221,10 +221,10 @@ class RDFOrbitalFunctionCreator : public RDFFunctionCreator
 public:
 
 	/// @brief return a pointer to a newly created RDFOrbitalFunction
-	virtual RDFBaseOP create_rdf_function() const;
+	RDFBaseOP create_rdf_function() const override;
 	/// @brief return the name of the RDFOrbitalFunction
-	virtual std::string type_name() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd) const;
+	std::string type_name() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd) const override;
 };
 
 /// @brief RDFOrbitalFunction computes the orbital score energies of a pair of atoms
@@ -233,18 +233,18 @@ class RDFOrbitalFunction : public RDFBase
 public:
 	RDFOrbitalFunction();
 
-	virtual ~RDFOrbitalFunction();
+	~RDFOrbitalFunction() override;
 
 	/// @brief parse tags for RDFOrbitalFunction tag
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data_map);
+		basic::datacache::DataMap & data_map) override;
 
 	/// @brief compute binary hbond status for atom pair
-	virtual RDFResultList operator()(AtomPairData const & atom_data );
+	RDFResultList operator()(AtomPairData const & atom_data ) override;
 
 	/// @brief update residue neighbors and cache current pose
-	virtual void preamble(core::pose::Pose & pose);
+	void preamble(core::pose::Pose & pose) override;
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
@@ -259,10 +259,10 @@ class RDFBinaryOrbitalFunctionCreator : public RDFFunctionCreator
 public:
 
 	/// @brief return a pointer to a newly created RDFBinaryOrbitalFunction
-	virtual RDFBaseOP create_rdf_function() const;
+	RDFBaseOP create_rdf_function() const override;
 	/// @brief return the name of the RDFBinaryOrbitalFunction
-	virtual std::string type_name() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd) const;
+	std::string type_name() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd) const override;
 };
 
 /// @brief RDFBinaryOrbitalFunction returns 1 for various orbital pairs and 0 otherwise
@@ -271,18 +271,18 @@ class RDFBinaryOrbitalFunction : public RDFBase
 public:
 	RDFBinaryOrbitalFunction();
 
-	virtual ~RDFBinaryOrbitalFunction();
+	~RDFBinaryOrbitalFunction() override;
 
 	/// @brief parse tags for RDFOrbitalFunction tag
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data_map);
+		basic::datacache::DataMap & data_map) override;
 
 	/// @brief compute binary hbond status for atom pair
-	virtual RDFResultList operator()(AtomPairData const & atom_data );
+	RDFResultList operator()(AtomPairData const & atom_data ) override;
 
 	/// @brief update residue neighbors and cache current pose
-	virtual void preamble(core::pose::Pose & pose);
+	void preamble(core::pose::Pose & pose) override;
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 

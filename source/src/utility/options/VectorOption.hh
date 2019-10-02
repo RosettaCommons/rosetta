@@ -71,7 +71,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~VectorOption() {}
+	~VectorOption() override {}
 
 
 protected: // Assignment

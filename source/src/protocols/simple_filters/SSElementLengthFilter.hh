@@ -69,7 +69,7 @@ public:// constructor/destructor
 	// @brief copy constructor
 	SSElementLengthFilter( SSElementLengthFilter const & rval );
 
-	virtual ~SSElementLengthFilter();
+	~SSElementLengthFilter() override;
 
 
 public:// virtual constructor

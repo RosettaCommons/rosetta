@@ -48,7 +48,7 @@ namespace disulfides {
 class CentroidDisulfidePotential : public utility::pointer::ReferenceCount {
 public:
 	CentroidDisulfidePotential();
-	virtual ~CentroidDisulfidePotential();
+	~CentroidDisulfidePotential() override;
 
 	/**
 	* @brief Calculates scoring terms for the disulfide bond specified
@@ -145,12 +145,12 @@ class Cb_Distance_Func : public func::Func
 {
 public:
 	Cb_Distance_Func();
-	virtual ~Cb_Distance_Func();
-	func::FuncOP clone() const { return utility::pointer::make_shared< Cb_Distance_Func >( *this ); }
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
-	virtual core::Real func( core::Real const ) const;
-	virtual core::Real dfunc( core::Real const ) const;
+	~Cb_Distance_Func() override;
+	func::FuncOP clone() const override { return utility::pointer::make_shared< Cb_Distance_Func >( *this ); }
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
+	core::Real func( core::Real const ) const override;
+	core::Real dfunc( core::Real const ) const override;
 private:
 	//Parameters for the 3 gaussians
 	static const Real means_[3];
@@ -175,12 +175,12 @@ class Cen_Distance_Func : public func::Func
 {
 public:
 	Cen_Distance_Func();
-	virtual ~Cen_Distance_Func();
-	func::FuncOP clone() const { return utility::pointer::make_shared< Cen_Distance_Func >( *this ); }
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
-	virtual core::Real func( core::Real const ) const;
-	virtual core::Real dfunc( core::Real const ) const;
+	~Cen_Distance_Func() override;
+	func::FuncOP clone() const override { return utility::pointer::make_shared< Cen_Distance_Func >( *this ); }
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
+	core::Real func( core::Real const ) const override;
+	core::Real dfunc( core::Real const ) const override;
 private:
 	static numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type centroid_dist_scores_;
 #ifdef    SERIALIZATION
@@ -198,12 +198,12 @@ class CaCbCb_Angle_Func : public func::Func
 {
 public:
 	CaCbCb_Angle_Func();
-	virtual ~CaCbCb_Angle_Func();
-	func::FuncOP clone() const { return utility::pointer::make_shared< CaCbCb_Angle_Func >( *this ); }
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
-	virtual core::Real func( core::Real const ) const;
-	virtual core::Real dfunc( core::Real const ) const;
+	~CaCbCb_Angle_Func() override;
+	func::FuncOP clone() const  override{ return utility::pointer::make_shared< CaCbCb_Angle_Func >( *this ); }
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
+	core::Real func( core::Real const ) const override;
+	core::Real dfunc( core::Real const ) const override;
 private:
 	static numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type CaCbCb_angle_scores_;
 #ifdef    SERIALIZATION
@@ -221,12 +221,12 @@ class NCaCaC_Dihedral_Func : public func::Func
 {
 public:
 	NCaCaC_Dihedral_Func();
-	virtual ~NCaCaC_Dihedral_Func();
-	func::FuncOP clone() const { return utility::pointer::make_shared< NCaCaC_Dihedral_Func >( *this ); }
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
-	virtual core::Real func( core::Real const ) const;
-	virtual core::Real dfunc( core::Real const ) const;
+	~NCaCaC_Dihedral_Func() override;
+	func::FuncOP clone() const override { return utility::pointer::make_shared< NCaCaC_Dihedral_Func >( *this ); }
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
+	core::Real func( core::Real const ) const override;
+	core::Real dfunc( core::Real const ) const override;
 private:
 	static numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type backbone_dihedral_scores_;
 #ifdef    SERIALIZATION
@@ -244,12 +244,12 @@ class CaCbCbCa_Dihedral_Func : public func::Func
 {
 public:
 	CaCbCbCa_Dihedral_Func();
-	virtual ~CaCbCbCa_Dihedral_Func();
-	func::FuncOP clone() const { return utility::pointer::make_shared< CaCbCbCa_Dihedral_Func >( *this ); }
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
-	virtual core::Real func( core::Real const ) const;
-	virtual core::Real dfunc( core::Real const ) const;
+	~CaCbCbCa_Dihedral_Func() override;
+	func::FuncOP clone() const override { return utility::pointer::make_shared< CaCbCbCa_Dihedral_Func >( *this ); }
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
+	core::Real func( core::Real const ) const override;
+	core::Real dfunc( core::Real const ) const override;
 private:
 	static numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type CaCbCbCa_dihedral_scores_;
 #ifdef    SERIALIZATION

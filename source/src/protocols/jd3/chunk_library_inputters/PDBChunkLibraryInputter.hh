@@ -41,7 +41,7 @@ class PDBChunkLibraryInputter : public ChunkLibraryInputter
 public:
 
 	PDBChunkLibraryInputter();
-	virtual ~PDBChunkLibraryInputter();
+	~PDBChunkLibraryInputter() override;
 
 	bool job_available_on_command_line() const override;
 

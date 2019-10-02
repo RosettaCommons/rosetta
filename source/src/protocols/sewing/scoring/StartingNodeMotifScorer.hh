@@ -40,7 +40,7 @@ public:
 	///@brief default construct
 	StartingNodeMotifScorer();
 
-	virtual ~StartingNodeMotifScorer()=default;
+	~StartingNodeMotifScorer() override =default;
 
 	StartingNodeMotifScorer( StartingNodeMotifScorer const & );
 
@@ -50,10 +50,10 @@ public:
 	) override;
 	static std::string type_name();
 
-	virtual core::Real
+	core::Real
 	get_weight() const override;
 
-	virtual void
+	void
 	set_weight( core::Real ) override;
 
 

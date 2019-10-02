@@ -57,16 +57,16 @@ public:
 	SiteConstraintResidues( ConstraintCOPs const & cst_in ) ;
 
 	///
-	virtual ConstraintOP clone() const;
-	virtual bool operator == ( Constraint const & ) const;
-	virtual bool same_type_as_me( Constraint const & ) const;
-	virtual std::string type() const;
+	ConstraintOP clone() const override;
+	bool operator == ( Constraint const & ) const override;
+	bool same_type_as_me( Constraint const & ) const override;
+	std::string type() const override;
 
 	/// @brief read in constraint defiinition
 	void
-	read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory );
+	read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory ) override;
 
-	void show( std::ostream& out) const;
+	void show( std::ostream& out) const override;
 	void setup_csts( Size res1, std::string name, Size res2, Size res3, core::pose::Pose const & pose, func::FuncOP const & func );
 
 #ifdef    SERIALIZATION

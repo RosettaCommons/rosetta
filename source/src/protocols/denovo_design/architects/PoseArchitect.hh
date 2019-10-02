@@ -30,26 +30,26 @@ class PoseArchitect : public DeNovoArchitect {
 public:
 	PoseArchitect( std::string const & id_value );
 
-	virtual ~PoseArchitect();
+	~PoseArchitect() override;
 
-	virtual DeNovoArchitectOP
-	clone() const;
+	DeNovoArchitectOP
+	clone() const override;
 
 	static std::string
 	architect_name() { return "PoseArchitect"; }
 
-	virtual std::string
-	type() const;
+	std::string
+	type() const override;
 
-	virtual components::StructureDataOP
-	design( core::pose::Pose const & pose, core::Real & random ) const;
+	components::StructureDataOP
+	design( core::pose::Pose const & pose, core::Real & random ) const override;
 
 	static void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 protected:
 	/// @brief Configuration by XML
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 private:
 	/// @brief If set, this secondary structure will be used to override what is in the input pose

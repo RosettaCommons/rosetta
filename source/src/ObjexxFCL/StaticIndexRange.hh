@@ -219,8 +219,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~StaticIndexRange()
+	~StaticIndexRange() override
 	{}
 
 
@@ -257,7 +256,7 @@ public: // Assignment
 	/// @brief Upper Index Assignment
 	inline
 	StaticIndexRange &
-	operator =( int const u_a )
+	operator =( int const u_a ) override
 	{
 		Super::operator =( u_a );
 		assert( legal_static() );
@@ -268,7 +267,7 @@ public: // Assignment
 	/// @brief Unbounded Upper Index Assignment
 	inline
 	StaticIndexRange &
-	operator =( Star const & str )
+	operator =( Star const & str ) override
 	{
 		Super::operator =( str );
 		return *this;
@@ -327,7 +326,7 @@ public: // Assignment
 	/// @brief Upper Index Assignment
 	inline
 	StaticIndexRange &
-	assign( int const u_a )
+	assign( int const u_a ) override
 	{
 		Super::operator =( u_a );
 		assert( legal_static() );
@@ -338,7 +337,7 @@ public: // Assignment
 	/// @brief Unbounded Upper Index Assignment
 	inline
 	StaticIndexRange &
-	assign( Star const & str )
+	assign( Star const & str ) override
 	{
 		Super::operator =( str );
 		return *this;
@@ -370,7 +369,7 @@ public: // Assignment
 	/// @brief Index Range Assignment
 	inline
 	StaticIndexRange &
-	assign( int const l_a, int const u_a )
+	assign( int const l_a, int const u_a ) override
 	{
 		Super::assign( l_a, u_a );
 		assert( legal_static() );
@@ -469,7 +468,7 @@ public: // Assignment
 	/// @brief Index and Unbounded Upper Index Assignment
 	inline
 	StaticIndexRange &
-	assign( int const l_a, Star const & str )
+	assign( int const l_a, Star const & str ) override
 	{
 		Super::assign( l_a, str );
 		assert( legal_static() );
@@ -547,7 +546,7 @@ public: // Modifier
 	/// @brief Lower Index Set
 	inline
 	StaticIndexRange &
-	l( int const l_a )
+	l( int const l_a ) override
 	{
 		Super::l( l_a );
 		assert( legal_static() );
@@ -558,7 +557,7 @@ public: // Modifier
 	/// @brief Upper Index Set
 	inline
 	StaticIndexRange &
-	u( int const u_a )
+	u( int const u_a ) override
 	{
 		Super::u( u_a );
 		assert( legal_static() );
@@ -569,7 +568,7 @@ public: // Modifier
 	/// @brief Unbounded Upper Index Set
 	inline
 	StaticIndexRange &
-	u( Star const & str )
+	u( Star const & str ) override
 	{
 		Super::u( str );
 		assert( legal_static() );
@@ -580,7 +579,7 @@ public: // Modifier
 	/// @brief Expand to Contain an Index
 	inline
 	StaticIndexRange &
-	contain( int const i )
+	contain( int const i ) override
 	{
 		Super::contain( i );
 		assert( legal_static() );
@@ -591,7 +590,7 @@ public: // Modifier
 	/// @brief Expand to Contain Another IndexRange
 	inline
 	StaticIndexRange &
-	contain( IndexRange const & I )
+	contain( IndexRange const & I ) override
 	{
 		Super::contain( I );
 		assert( legal_static() );
@@ -602,7 +601,7 @@ public: // Modifier
 	/// @brief Intersect With Another IndexRange
 	inline
 	StaticIndexRange &
-	intersect( IndexRange const & I )
+	intersect( IndexRange const & I ) override
 	{
 		Super::intersect( I );
 		assert( legal_static() );
@@ -613,7 +612,7 @@ public: // Modifier
 	/// @brief Clear
 	inline
 	StaticIndexRange &
-	clear()
+	clear() override
 	{
 		Super::clear();
 		return *this;

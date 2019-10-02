@@ -45,7 +45,7 @@ public: //Constructors
 	CrosslinkerMoverHelper( CrosslinkerMoverHelper const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~CrosslinkerMoverHelper();
+	~CrosslinkerMoverHelper() override;
 
 
 public: // public pure virtual methods

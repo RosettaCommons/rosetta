@@ -81,7 +81,7 @@ public:// constructor/destructor
 	// @brief copy constructor
 	HelixPairingFilter( HelixPairingFilter const & rval );
 
-	virtual ~HelixPairingFilter(){}
+	~HelixPairingFilter() override{}
 
 
 public:// virtual constructor

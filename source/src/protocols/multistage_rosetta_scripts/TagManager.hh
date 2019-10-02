@@ -103,7 +103,7 @@ public:
 	TagManager();
 	TagManager( core::Size num_input_pose_ids );
 
-	virtual ~TagManager();
+	~TagManager() override;
 
 	void set_num_input_pose_ids( core::Size num_input_pose_ids );
 

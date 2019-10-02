@@ -36,14 +36,14 @@ public:
 
 
 	//destructor
-	~RNA_TorsionMover();
+	~RNA_TorsionMover() override;
 
 	// Undefinded, commenting out to fix PyRosetta build  void apply( core::pose::Pose & pose, core::Size const res_to_torsion, protocols::stepwise::monte_carlo::MovingResidueCase const moving_residue_case  );
 
 	/// @brief Apply the minimizer to one pose
 	using protocols::moves::Mover::apply;
-	virtual void apply( core::pose::Pose & pose_to_visualize );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose_to_visualize ) override;
+	std::string get_name() const override;
 
 	void
 	apply( core::pose::Pose & pose, std::string & move_type, core::Real const & sample_range );

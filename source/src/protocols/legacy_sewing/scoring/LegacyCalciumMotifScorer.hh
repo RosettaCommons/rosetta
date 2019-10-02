@@ -40,13 +40,12 @@ public:
 	///@brief default construct
 	LegacyCalciumMotifScorer();
 
-	virtual ~LegacyCalciumMotifScorer(){}
+	~LegacyCalciumMotifScorer() override{}
 
-	virtual
 	core::Real
 	score(
 		legacy_sewing::AssemblyCOP assembly
-	);
+	) override;
 	//Does the assembly know what the first node was?
 
 

@@ -76,7 +76,7 @@ public:
 		base_scale_( base_scale )
 	{}
 
-	virtual void setUp() {
+	void setUp() override {
 		configured_for_score12_ = basic::options::option[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ]();
 		pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file(*pose_, "test_in2.pdb", core::import_pose::PDB_file);
@@ -132,7 +132,7 @@ public:
 		}
 	}
 
-	virtual void run(core::Real scaleFactor) {
+	void run(core::Real scaleFactor) override {
 		using namespace core;
 		using namespace core::pack;
 		using namespace core::pack::annealer;
@@ -181,7 +181,7 @@ public:
 		}
 	}
 
-	virtual void tearDown() {
+	void tearDown() override {
 		pose_.reset();
 		scorefxn_.reset();
 		ig_.reset();

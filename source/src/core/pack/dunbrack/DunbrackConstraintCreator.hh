@@ -30,10 +30,10 @@ class DunbrackConstraintCreator : public scoring::constraints::ConstraintCreator
 {
 public:
 	DunbrackConstraintCreator();
-	virtual ~DunbrackConstraintCreator();
+	~DunbrackConstraintCreator() override;
 
-	virtual scoring::constraints::ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	scoring::constraints::ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 

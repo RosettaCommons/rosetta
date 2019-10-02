@@ -45,7 +45,7 @@ public:
 		"ProlinePhiScore"), query_(fastaQueryDisulfide) {
 	}
 
-	bool score(FragmentCandidateOP f, FragmentScoreMapOP empty_map);
+	bool score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) override;
 
 	/// @brief prints a detailed explanation how a fragment score has been computed
 	/// @details besides extensive output, the method should return the same result as score()
@@ -67,7 +67,7 @@ public:
 	}
 
 	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
-		FragmentPickerOP picker, std::string) {
+		FragmentPickerOP picker, std::string) override {
 		return (FragmentScoringMethodOP) utility::pointer::make_shared< ProlinePhiScore >(priority,
 			lowest_acceptable_value, use_lowest, picker->get_query_seq_string());
 	}

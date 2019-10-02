@@ -59,17 +59,17 @@ public:
 	SeqprofConsensusOperation();
 
 	/// @brief destructor
-	~SeqprofConsensusOperation();
+	~SeqprofConsensusOperation() override;
 
 	/// @brief make clone
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 public:
 
-	void parse_tag( TagCOP tag , DataMap & );
+	void parse_tag( TagCOP tag , DataMap & ) override;
 
 	/// @brief apply
-	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	void apply( Pose const & pose, PackerTask & task ) const override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static utility::tag::XMLSchemaComplexTypeGeneratorOP create_complex_type_generator( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "SeqprofConsensus"; }
@@ -146,11 +146,11 @@ public:
 
 	RestrictConservedLowDdgOperation();
 
-	~RestrictConservedLowDdgOperation();
+	~RestrictConservedLowDdgOperation() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	void parse_tag( TagCOP tag , DataMap & );
+	void parse_tag( TagCOP tag , DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	static
@@ -159,7 +159,7 @@ public:
 
 	static std::string keyname() { return "RestrictConservedLowDdg"; }
 
-	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	void apply( Pose const & pose, PackerTask & task ) const override;
 
 	/// @brief returns true if seqpos has a sequence profile
 	/// frequency > conservation_cutoff_ and an X->A ddG of >

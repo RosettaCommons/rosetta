@@ -139,13 +139,11 @@ protected:
 
 	/// @brief delete an unpatchable residue type from the set.
 	/// This should never be called in a GlobalResidueTypeSet - it's here just to match the base class interface.
-	virtual
 	void
 	remove_base_residue_type( std::string const & name ) override;
 
 	/// @brief delete an unpatchable residue type from the set.
 	/// This should never be called in a GlobalResidueTypeSet - it's here just to match the base class interface.
-	virtual
 	void
 	remove_unpatchable_residue_type( std::string const & name ) override;
 

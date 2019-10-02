@@ -60,10 +60,10 @@ public:
 public:
 
 	OTFFlexbbNode( OTFFlexbbInteractionGraph *, int node_id, int num_states );
-	virtual ~OTFFlexbbNode();
-	virtual void print() const;
+	~OTFFlexbbNode() override;
+	void print() const override;
 
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_dynamic_memory() const override;
 
 	Residue const &
 	rotamer( int index ) const {
@@ -115,7 +115,7 @@ public:
 
 public:
 	OTFFlexbbEdge( OTFFlexbbInteractionGraph * owner, int node1, int node2 );
-	virtual ~OTFFlexbbEdge();
+	~OTFFlexbbEdge() override;
 
 	PackerEnergy
 	compute_samebbconf_alternate_state_energy_first_node();
@@ -129,7 +129,7 @@ public:
 	void
 	otfedge_note_substitution_accepted();
 
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_dynamic_memory() const override;
 
 	void
 	set_ProCorrection_values(
@@ -153,7 +153,7 @@ public:
 		PackerEnergy sc_glybb_E
 	);
 
-	virtual void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 
 	void note_long_range_interactions_exist();
 
@@ -253,9 +253,9 @@ public:
 public:
 
 	OTFFlexbbInteractionGraph( int num_nodes );
-	virtual ~OTFFlexbbInteractionGraph();
+	~OTFFlexbbInteractionGraph() override;
 
-	virtual void initialize( core::pack_basic::RotamerSetsBase const & );
+	void initialize( core::pack_basic::RotamerSetsBase const & ) override;
 
 	void
 	set_ProCorrection_values_for_edge(
@@ -283,7 +283,7 @@ public:
 		PackerEnergy sc_glybb_E
 	);
 
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_dynamic_memory() const override;
 
 	/// @brief Pose must be set before any edges are added to the graph.
 	virtual void set_pose( Pose const & pose );

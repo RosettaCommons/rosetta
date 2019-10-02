@@ -55,7 +55,7 @@ public:
 
 public:
 	FoldGraph( StructureData const & perm );
-	virtual ~FoldGraph();
+	~FoldGraph() override;
 
 	/// @brief gives a fold tree based on the segments in the given permutation
 	core::kinematics::FoldTree

@@ -30,10 +30,10 @@ namespace carbohydrates {
 class SugarBackboneEnergyCreator : public EnergyMethodCreator {
 public:
 	/// @brief  Return an up-casted owning pointer (EnergyMethodOP) to the energy method.
-	virtual EnergyMethodOP create_energy_method( EnergyMethodOptions const & ) const;
+	EnergyMethodOP create_energy_method( EnergyMethodOptions const & ) const override;
 
 	/// @brief  Return the set of ScoreTypes for which this EnergyMethod is responsible.
-	virtual ScoreTypes score_types_for_method() const;
+	ScoreTypes score_types_for_method() const override;
 };
 
 }  // namespace carbohydrates

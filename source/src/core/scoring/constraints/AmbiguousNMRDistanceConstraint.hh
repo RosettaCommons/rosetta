@@ -69,22 +69,21 @@ public:
 
 	AmbiguousNMRDistanceConstraint();
 
-	virtual ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
-	virtual
-	ConstraintOP clone( func::FuncOP func ) const;
+	ConstraintOP clone( func::FuncOP func ) const override;
 
-	bool operator == ( Constraint const & other ) const;
+	bool operator == ( Constraint const & other ) const override;
 
-	bool same_type_as_me( Constraint const & other ) const;
+	bool same_type_as_me( Constraint const & other ) const override;
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
 	/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
 	/// to the new object. Intended to be implemented by derived classes.
-	virtual ConstraintOP remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map=NULL ) const;
+	ConstraintOP remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map=NULL ) const override;
 
-	void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
+	void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory ) override;
 	// //@brief set constraint such that the pose doesn't violate it.
 	// virtual void steal( pose::Pose& );
 
@@ -96,30 +95,30 @@ public:
 	using Constraint::dist;
 
 	void
-	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const override;
 
 	core::Real
 	inv_dist6( func::XYZ_Func const & xyz ) const;
 
-	Real dist( func::XYZ_Func const & xyz ) const;
+	Real dist( func::XYZ_Func const & xyz ) const override;
 
 	// atom deriv
-	virtual void
+	void
 	fill_f1_f2(
 		AtomID const & atom,
 		func::XYZ_Func const & xyz,
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
-	std::string type() const {
+	std::string type() const override {
 		return "AmbiguousNMRDistance";
 	}
 
 
 	Size
-	natoms() const
+	natoms() const override
 	{
 		return atoms1_.size() + atoms2_.size();
 	}
@@ -142,13 +141,12 @@ public:
 		return i == 1 ? atoms1_[ 1 ].rsd() : atoms2_[ 1 ].rsd();
 	}
 
-	virtual
 	ConstraintOP
-	remap_resid( core::id::SequenceMapping const &seqmap ) const;
+	remap_resid( core::id::SequenceMapping const &seqmap ) const override;
 
 
 	AtomID const &
-	atom( Size const n ) const
+	atom( Size const n ) const override
 	{
 		if ( n > natoms() ) {
 			utility_exit_with_message( "AmbiguousNMRDistanceConstraint::atom() bad argument" );
@@ -158,17 +156,16 @@ public:
 		} else return atoms2_[ n - atoms1_.size() ];
 	}
 
-	void show( std::ostream& out ) const;
-	void show_def( std::ostream& out, pose::Pose const& pose ) const;
+	void show( std::ostream& out ) const override;
+	void show_def( std::ostream& out, pose::Pose const& pose ) const override;
 
-	virtual Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;
+	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const override;
 
-	virtual func::Func const& get_func() const {
+	func::Func const& get_func() const override {
 		return *func_;
 	}
 
-	virtual
-	core::Size effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp ) const;
+	core::Size effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp ) const override;
 
 private:
 	// functions

@@ -84,7 +84,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~IntegerVectorOption() {}
+	~IntegerVectorOption() override {}
 
 
 public: // Properties

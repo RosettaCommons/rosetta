@@ -58,7 +58,7 @@ public:
 		contacts_ = contacts;
 	}
 
-	~NonlocalPair(){};
+	~NonlocalPair() override{};
 
 	utility::vector1<ContactOP> & get_contacts() {
 		return contacts_;

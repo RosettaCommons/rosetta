@@ -52,7 +52,7 @@ class mmCIFParser : public utility::pointer::ReferenceCount
 public:
 
 	mmCIFParser();
-	virtual ~mmCIFParser(){};
+	~mmCIFParser() override{};
 
 	/// @brief parse the mmCIF file. This is generally used with the command line option
 	/// -extra_res_mmCIF_fa. The mmCIF can contain multiple blocks that contain different

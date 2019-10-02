@@ -61,7 +61,7 @@ public:
 		benchtype_( benchtype )
 	{}
 
-	virtual void setUp() {
+	void setUp() override {
 		pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		// Use smaller pdb to test relax
 		core::import_pose::pose_from_file(*pose_, "test_in2.pdb", core::import_pose::PDB_file);
@@ -85,7 +85,7 @@ public:
 		}
 	}
 
-	virtual void run(core::Real scaleFactor) {
+	void run(core::Real scaleFactor) override {
 		core::Size reps( (core::Size)(1 * scaleFactor) );
 		if ( reps == 0 ) { reps = 1; } // do at least one repetition, regardless of scale factor.
 		for ( core::Size ii = 1; ii <= reps; ++ii ) {
@@ -94,7 +94,7 @@ public:
 		}
 	}
 
-	virtual void tearDown() {
+	void tearDown() override {
 		pose_.reset();
 		scorefxn_.reset();
 		fr_.reset();

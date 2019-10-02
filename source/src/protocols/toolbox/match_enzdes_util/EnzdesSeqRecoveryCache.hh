@@ -49,7 +49,7 @@ public:
 
 	EnzdesSeqRecoveryCache();
 
-	virtual ~EnzdesSeqRecoveryCache();
+	~EnzdesSeqRecoveryCache() override;
 
 	//copy constructor
 	EnzdesSeqRecoveryCache( EnzdesSeqRecoveryCache const & other );

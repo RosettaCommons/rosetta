@@ -40,7 +40,7 @@ class CountPairFunction : public utility::pointer::ReferenceCount
 
 public:
 	CountPairFunction() {} // inlined when declared on the stack
-	virtual ~CountPairFunction() {} // inlined when declared on the stack
+	~CountPairFunction() override {} // inlined when declared on the stack
 
 	// each derived class must override this (non virtual) function
 	// in order to work with residue_atom_pair_energy< T > defined in

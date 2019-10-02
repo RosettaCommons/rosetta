@@ -42,7 +42,7 @@ public:
 
 	SilentFileFullModelInputter();
 
-	virtual ~SilentFileFullModelInputter();
+	~SilentFileFullModelInputter() override;
 
 	bool job_available_on_command_line() const override;
 

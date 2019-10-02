@@ -54,7 +54,7 @@ public:
 
 	Polynomial_1d(Polynomial_1d const & src );
 
-	virtual ~Polynomial_1d();
+	~Polynomial_1d() override;
 
 	// check that the polynomial parameters are well formed
 	void

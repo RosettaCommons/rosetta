@@ -47,7 +47,7 @@ public:
 	PertMinMover( PertMinMover const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~PertMinMover();
+	~PertMinMover() override;
 
 	core::Real pert_size() const { return pert_size_; }
 	bool uniform() const { return uniform_; }
@@ -63,8 +63,8 @@ public:
 	void scorefxn(core::scoring::ScoreFunctionCOP setting) { scorefxn_ = setting; }
 	void movemap_factory(core::select::movemap::MoveMapFactoryCOP setting) { movemap_factory_ = setting; }
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 	void
 	pert( core::pose::Pose & pose, utility::vector1< bool > const & resi ) const;
@@ -73,11 +73,11 @@ public:
 	min( core::pose::Pose & pose ) const;
 
 public:
-	virtual void
-	show( std::ostream & output=std::cout ) const;
+	void
+	show( std::ostream & output=std::cout ) const override;
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void parse_my_tag(
@@ -85,17 +85,17 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	//PertMinMover & operator=( PertMinMover const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP
-	fresh_instance() const;
+	moves::MoverOP
+	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	static std::string mover_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

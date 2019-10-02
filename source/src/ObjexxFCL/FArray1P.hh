@@ -390,8 +390,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~FArray1P()
+	~FArray1P() override
 	{
 		if ( source_ ) source_->remove_observer( *this );
 	}
@@ -571,7 +570,7 @@ public: // Predicate
 	/// @brief Dimensions Initialized?
 	inline
 	bool
-	dimensions_initialized() const
+	dimensions_initialized() const override
 	{
 		return I_.initialized();
 	}
@@ -580,7 +579,7 @@ public: // Predicate
 	/// @brief Contains Indexed Element?
 	inline
 	bool
-	contains( int const i ) const
+	contains( int const i ) const override
 	{
 		return I_.contains( i );
 	}
@@ -589,7 +588,7 @@ public: // Predicate
 	/// @brief Initializer Active?
 	inline
 	bool
-	initializer_active() const
+	initializer_active() const override
 	{
 		return false;
 	}
@@ -601,7 +600,7 @@ public: // Inspector
 	/// @brief IndexRange
 	inline
 	IR const &
-	I1() const
+	I1() const override
 	{
 		return I_;
 	}
@@ -610,7 +609,7 @@ public: // Inspector
 	/// @brief Lower Index
 	inline
 	int
-	l1() const
+	l1() const override
 	{
 		return I_.l();
 	}
@@ -619,7 +618,7 @@ public: // Inspector
 	/// @brief Upper Index
 	inline
 	int
-	u1() const
+	u1() const override
 	{
 		return I_.u();
 	}
@@ -628,7 +627,7 @@ public: // Inspector
 	/// @brief Size
 	inline
 	size_type
-	size1() const
+	size1() const override
 	{
 		return I_.size();
 	}
@@ -637,7 +636,7 @@ public: // Inspector
 	/// @brief IndexRange
 	inline
 	IR const &
-	I() const
+	I() const override
 	{
 		return I_;
 	}
@@ -646,7 +645,7 @@ public: // Inspector
 	/// @brief Lower Index
 	inline
 	int
-	l() const
+	l() const override
 	{
 		return I_.l();
 	}
@@ -655,7 +654,7 @@ public: // Inspector
 	/// @brief Upper Index
 	inline
 	int
-	u() const
+	u() const override
 	{
 		return I_.u();
 	}
@@ -667,7 +666,7 @@ public: // Modifier
 	/// @brief Clear
 	inline
 	FArray1P &
-	clear()
+	clear() override
 	{
 		Super::clear();
 		I_.clear_no_notify();
@@ -903,7 +902,7 @@ public: // Observer Modifier
 	/// @brief Update
 	inline
 	void
-	update()
+	update() override
 	{
 #ifdef OBJEXXFCL_PROXY_CONST_CHECKS
 		if ( source_ ) {
@@ -923,7 +922,7 @@ public: // Observer Modifier
 	/// @brief Update for Destruction of a Subject
 	inline
 	void
-	destructed( Subject const & subject )
+	destructed( Subject const & subject ) override
 	{
 		if ( ( source_ ) && ( &subject == source_ ) ) { // Source array is being destructed
 			Base::detach();
@@ -939,7 +938,7 @@ protected: // Functions
 	/// @brief Dimension by IndexRanges
 	inline
 	void
-	dimension_assign( SIR const & I_a )
+	dimension_assign( SIR const & I_a ) override
 	{
 		I_.assign_no_notify( I_a );
 		dimension_proxy();

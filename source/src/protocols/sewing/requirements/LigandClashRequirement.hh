@@ -42,7 +42,7 @@ public:
 	LigandClashRequirement();
 	LigandClashRequirement(LigandClashRequirement const & src);
 
-	virtual ~LigandClashRequirement();
+	~LigandClashRequirement() override;
 
 	LigandClashRequirementOP
 	clone() const;

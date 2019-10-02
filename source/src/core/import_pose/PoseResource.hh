@@ -38,7 +38,7 @@ class PoseResource : public utility::pointer::ReferenceCount
 {
 public:
 	PoseResource( core::pose::PoseCOP pose );
-	virtual ~PoseResource();
+	~PoseResource() override;
 
 	void pose( core::pose::PoseCOP pose_to_hold );
 

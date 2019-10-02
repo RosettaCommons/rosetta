@@ -31,7 +31,7 @@ namespace numeric {
 class Calculator : public utility::pointer::ReferenceCount {
 
 public:
-	virtual ~Calculator();
+	~Calculator() override;
 
 	Calculator( std::string const & equation );
 

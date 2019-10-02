@@ -50,7 +50,7 @@ public:
 	void write_to_pdb(
 		std::map< core::Size, std::string > const & res_names1,
 		std::map< core::Size, std::string > const & res_names2 ) const;
-	virtual ~SequenceRecoveryFilter();
+	~SequenceRecoveryFilter() override;
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
 	core::Real rate_threshold() const;

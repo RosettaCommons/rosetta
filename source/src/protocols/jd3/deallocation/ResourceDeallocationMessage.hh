@@ -43,7 +43,7 @@ public:
 
 	ResourceDeallocationMessage();
 	ResourceDeallocationMessage( std::string const & resource_name );
-	virtual ~ResourceDeallocationMessage();
+	~ResourceDeallocationMessage() override;
 
 	std::string const & resource_name() const;
 	void resource_name( std::string const & setting );

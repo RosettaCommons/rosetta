@@ -37,7 +37,7 @@ public:
 		core::Real const spacing );
 
 	//destructor
-	~Histogram();
+	~Histogram() override;
 
 public:
 

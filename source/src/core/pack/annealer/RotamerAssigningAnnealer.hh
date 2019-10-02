@@ -63,7 +63,7 @@ public:
 		ObjexxFCL::FArray1D< core::PackerEnergy > & rot_freq
 	);
 
-	virtual ~RotamerAssigningAnnealer();
+	~RotamerAssigningAnnealer() override;
 
 	int pick_a_rotamer( int cycle );
 	int pick_a_rotamer_for_node( int node ) const;

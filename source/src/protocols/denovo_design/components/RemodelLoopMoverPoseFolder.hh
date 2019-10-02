@@ -43,13 +43,13 @@ public:
 public:
 	RemodelLoopMoverPoseFolder();
 
-	virtual ~RemodelLoopMoverPoseFolder();
+	~RemodelLoopMoverPoseFolder() override;
 
 	static std::string
 	class_name();
 
 	PoseFolderOP
-	clone() const;
+	clone() const override;
 
 	/// @brief performs folding
 	/// @param pose    - The pose to be folded, with all residues added.  The pose should be prepared with
@@ -62,15 +62,15 @@ public:
 	///                  the pose. Residues not within any loop should not be folded. Residues contained
 	///                  in a loop but not in the movable set should not be folded.
 	/// @throws EXCN_Fold if anything goes wrong in folding. Derived classes should throw this.
-	virtual void
+	void
 	apply(
 		core::pose::Pose & pose,
 		core::select::residue_selector::ResidueSubset const & movable,
-		protocols::loops::Loops const & loops ) const;
+		protocols::loops::Loops const & loops ) const override;
 
 protected:
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 public:
 	void

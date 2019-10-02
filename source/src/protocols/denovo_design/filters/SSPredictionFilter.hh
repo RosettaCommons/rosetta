@@ -42,7 +42,7 @@ public:
 		bool const use_probability,
 		bool const mismatch_probability,
 		bool const use_scratch_dir = false );
-	virtual ~SSPredictionFilter();
+	~SSPredictionFilter() override;
 	bool apply( core::pose::Pose const & pose ) const override;
 	protocols::filters::FilterOP clone() const override;
 	protocols::filters::FilterOP fresh_instance() const override;

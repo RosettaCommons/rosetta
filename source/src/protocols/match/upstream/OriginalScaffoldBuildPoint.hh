@@ -50,7 +50,7 @@ public:
 public:
 	ProteinBackboneBuildPoint();
 	ProteinBackboneBuildPoint( Size index );
-	virtual ~ProteinBackboneBuildPoint();
+	~ProteinBackboneBuildPoint() override;
 
 	Real phi() const { return phi_; }
 	Real psi() const { return psi_; }
@@ -96,7 +96,7 @@ public:
 
 public:
 	OriginalBackboneBuildPoint( Size index );
-	~OriginalBackboneBuildPoint();
+	~OriginalBackboneBuildPoint() override;
 	OriginalBackboneBuildPoint( core::conformation::Residue const & res );
 	OriginalBackboneBuildPoint( core::conformation::Residue const & res, Size index);
 
@@ -105,26 +105,22 @@ public:
 		core::conformation::Residue const & res
 	);
 
-	virtual
 	bool
-	compatible( ScaffoldBuildPoint const & other, bool first_dispatch = true ) const;
+	compatible( ScaffoldBuildPoint const & other, bool first_dispatch = true ) const override;
 
-	virtual
 	bool
-	compatible( OriginalBackboneBuildPoint const & other, bool first_dispatch = true ) const;
+	compatible( OriginalBackboneBuildPoint const & other, bool first_dispatch = true ) const override;
 
-	virtual
 	Size
-	original_insertion_point() const;
+	original_insertion_point() const override;
 
-	virtual
 	void
 	insert(
 		Size seqpos_to_insert_at,
 		Hit const & hit,
 		UpstreamBuilderCOP builder,
 		core::pose::Pose & pose
-	) const;
+	) const override;
 
 	Size original_resid() const { return original_resid_; }
 	//void original_resid( Size setting ) const;

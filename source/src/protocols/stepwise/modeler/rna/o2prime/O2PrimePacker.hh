@@ -40,7 +40,7 @@ public:
 		bool const pack_virtual_o2prime_hydrogen = false );
 
 	//destructor
-	~O2PrimePacker();
+	~O2PrimePacker() override;
 
 	void
 	sample_o2prime_hydrogen();
@@ -48,9 +48,9 @@ public:
 	core::pose::Pose & pose();
 
 	void
-	apply( core::pose::Pose & pose ){ copy_all_o2prime_torsions( pose ); }
+	apply( core::pose::Pose & pose ) override{ copy_all_o2prime_torsions( pose ); }
 
-	std::string get_name() const{ return "O2PrimePacker"; }
+	std::string get_name() const override{ return "O2PrimePacker"; }
 
 	void
 	copy_all_o2prime_torsions( core::pose::Pose & mod_pose ) const;

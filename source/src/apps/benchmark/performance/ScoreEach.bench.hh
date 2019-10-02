@@ -68,7 +68,7 @@ public:
 		scorefxn_ = scorefxn;
 	}
 
-	virtual void setUp() {
+	void setUp() override {
 		pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		if ( centroid_ ) {
 			core::chemical::ResidueTypeSetCOP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
@@ -110,7 +110,7 @@ public:
 		}
 	}
 
-	virtual void run(core::Real scaleFactor) {
+	void run(core::Real scaleFactor) override {
 		using namespace core::scoring::methods;
 
 		if ( !setup_successful_ ) {
@@ -249,7 +249,7 @@ public:
 
 	}
 
-	virtual void tearDown() {
+	void tearDown() override {
 		pose_.reset();
 		scorefxn_.reset();
 		enmeth_.reset();

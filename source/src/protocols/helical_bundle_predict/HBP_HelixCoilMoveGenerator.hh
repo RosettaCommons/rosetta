@@ -49,7 +49,7 @@ public:
 	HBP_HelixCoilMoveGenerator(HBP_HelixCoilMoveGenerator const & src);
 
 	/// @brief Destructor.
-	virtual ~HBP_HelixCoilMoveGenerator();
+	~HBP_HelixCoilMoveGenerator() override;
 
 	/// @brief Clone this object: that is, make a copy and return an owning pointer to the copy.
 	HBP_MoveGeneratorOP clone() const override;

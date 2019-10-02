@@ -104,7 +104,7 @@ public:
 	PackerPalette( PackerPalette const &src );
 
 	/// @brief Destructor.
-	~PackerPalette();
+	~PackerPalette() override;
 
 	/// @brief Clone operator: make a copy and return an owning pointer to the copy.
 	/// @details Derived classes MUST implement this.

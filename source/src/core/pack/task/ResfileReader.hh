@@ -67,7 +67,7 @@ public:
 
 	// Moves fname, so by-value
 	ResfileContents( pose::Pose const & pose, std::string const & fname, std::istream & istream );
-	virtual ~ResfileContents();
+	~ResfileContents() override;
 
 	std::list< ResfileCommandCOP > const &
 	default_commands() const;
@@ -154,7 +154,7 @@ class ResfileCommand : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ResfileCommand();
+	~ResfileCommand() override;
 	virtual ResfileCommandOP clone() const = 0;
 
 	// @brief Read the contents of the Resfile and store the state
@@ -189,25 +189,23 @@ public:
 class NATRO : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< NATRO >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< NATRO >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "NATRO";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -217,25 +215,23 @@ public:
 class NATAA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< NATAA >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< NATAA >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "NATAA";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -245,25 +241,23 @@ public:
 class ALLAA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< ALLAA >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< ALLAA >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "ALLAA";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -273,25 +267,23 @@ public:
 class ALLAAxc : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< ALLAAxc >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< ALLAAxc >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "ALLAAXC";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -301,25 +293,23 @@ public:
 class ALLAAwc : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< ALLAAwc >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< ALLAAwc >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "ALLAAWC";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -343,14 +333,13 @@ public:
 	/// @brief Default copy constructor.
 	PIKAA( PIKAA const & /*src*/ ) = default;
 
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< PIKAA >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< PIKAA >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
 	/// @brief Add a base name to the list of base names to keep.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
@@ -359,16 +348,15 @@ public:
 		std::string const & basename
 	);
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "PIKAA";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -381,25 +369,23 @@ private:
 class PIKNA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< PIKNA >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< PIKNA >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "PIKNA";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -414,20 +400,18 @@ public:
 	/// @brief Default constructor.
 	NOTAA() = default;
 
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< NOTAA >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< NOTAA >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	/// @brief Add a base name to the list of base names to exclude.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
@@ -435,8 +419,8 @@ public:
 
 	static std::string name() {return "NOTAA";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -453,25 +437,23 @@ public:
 	/// @brief Constructor.
 	PROPERTY() = default;
 
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< PROPERTY >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< PROPERTY >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "PROPERTY";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -483,25 +465,23 @@ public:
 class POLAR : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< POLAR >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< POLAR >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "POLAR";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -511,25 +491,23 @@ public:
 class APOLAR : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< APOLAR >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< APOLAR >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "APOLAR";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -539,25 +517,23 @@ public:
 class APOLA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< APOLA >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< APOLA >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "APOLA";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -568,25 +544,23 @@ public:
 class CHARGED : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< CHARGED >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< CHARGED >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "CHARGED";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -598,25 +572,23 @@ public:
 class AROMATIC : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< AROMATIC >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< AROMATIC >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "AROMATIC";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -635,27 +607,25 @@ public:
 		which_chi_( 0 ) // Does this make sense?
 	{}
 
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< EX >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< EX >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 
 
 	static std::string name() {return "EX";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -669,25 +639,23 @@ private:
 class EX_CUTOFF : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< EX_CUTOFF >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< EX_CUTOFF >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "EX_CUTOFF";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -699,25 +667,23 @@ private:
 class USE_INPUT_SC : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< USE_INPUT_SC >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< USE_INPUT_SC >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "USE_INPUT_SC";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -729,25 +695,23 @@ public:
 class AUTO : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< AUTO >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< AUTO >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "AUTO";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -759,25 +723,23 @@ public:
 class SCAN : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< SCAN >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< SCAN >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "SCAN";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 };
@@ -793,25 +755,23 @@ public:
 class TARGET : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< TARGET >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< TARGET >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "TARGET";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -825,25 +785,23 @@ private:
 class NO_ADDUCTS : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< NO_ADDUCTS >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< NO_ADDUCTS >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "NO_ADDUCTS";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 
@@ -853,25 +811,23 @@ public:
 class FIX_HIS_TAUTOMER : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< FIX_HIS_TAUTOMER >(); }
+	ResfileCommandOP clone() const override { return utility::pointer::make_shared< FIX_HIS_TAUTOMER >(); }
 
-	virtual
 	void initialize_from_tokens(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		Size resid
-	);
+	) override;
 
-	virtual
 	void residue_action(
 		PackerTask &,
 		Size resid
-	) const;
+	) const override;
 
 	static std::string name() {return "FIX_HIS_TAUTOMER";}
 
-	virtual std::string
-	get_name() {
+	std::string
+	get_name() override {
 		return name();
 	}
 

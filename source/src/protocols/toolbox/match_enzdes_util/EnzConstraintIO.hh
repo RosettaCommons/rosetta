@@ -72,7 +72,7 @@ class EnzConstraintIO : public utility::pointer::ReferenceCount, public utility:
 public:
 
 	EnzConstraintIO (core::chemical::ResidueTypeSetCOP src_restype_set);
-	virtual ~EnzConstraintIO();
+	~EnzConstraintIO() override;
 
 	/// self pointers
 	inline EnzConstraintIOCOP get_self_ptr() const { return shared_from_this(); }

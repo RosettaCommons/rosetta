@@ -53,39 +53,33 @@ public: // constructors
 	MPCbetaEnergy();
 
 	/// @brief Clone Energy Method
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 public: // scoring methods
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap &
-	) const;
+	) const override;
 
-	virtual
 	void
-	indicate_required_context_graphs( utility::vector1< bool > & ) const {}
+	indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
 	// Get version
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 public: // energy function methods
 

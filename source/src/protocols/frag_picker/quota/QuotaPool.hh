@@ -45,7 +45,7 @@ public:
 		quota_fraction_(quota_fraction)
 	{}
 
-	virtual ~QuotaPool() {};
+	~QuotaPool() override {};
 
 	virtual bool could_be_accepted(ScoredCandidate) const = 0;
 
@@ -59,7 +59,7 @@ public:
 	virtual core::Size size_left() const = 0;
 
 	/// @brief Makes the pool empty by removing all candidates
-	virtual void clear() = 0;
+	void clear() override = 0;
 
 	/// @brief Push a fragment candidate into the pool container
 	virtual void push(ScoredCandidate) = 0;
@@ -67,7 +67,7 @@ public:
 	/// @brief  Check how many candidates have been already collected for a given position
 	/// @details This is a very special case - collector will be used only for a given position.
 	/// Thus it returns the total number of inserted candidates, as count_candidates() does
-	virtual core::Size count_candidates() const = 0;
+	core::Size count_candidates() const override = 0;
 
 	/// @brief returns the name assigned to this quota pool
 	inline

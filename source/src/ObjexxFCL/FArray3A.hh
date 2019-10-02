@@ -451,8 +451,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~FArray3A()
+	~FArray3A() override
 	{}
 
 
@@ -631,7 +630,7 @@ public: // Predicate
 	/// @brief Dimensions Initialized?
 	inline
 	bool
-	dimensions_initialized() const
+	dimensions_initialized() const override
 	{
 		return true;
 	}
@@ -640,7 +639,7 @@ public: // Predicate
 	/// @brief Contains Indexed Element?
 	inline
 	bool
-	contains( int const i1, int const i2, int const i3 ) const
+	contains( int const i1, int const i2, int const i3 ) const override
 	{
 		return ( ( I1_.contains( i1 ) ) && ( I2_.contains( i2 ) ) && ( I3_.contains( i3 ) ) );
 	}
@@ -649,7 +648,7 @@ public: // Predicate
 	/// @brief Initializer Active?
 	inline
 	bool
-	initializer_active() const
+	initializer_active() const override
 	{
 		return false;
 	}
@@ -661,7 +660,7 @@ public: // Inspector
 	/// @brief IndexRange of Dimension 1
 	inline
 	IR const &
-	I1() const
+	I1() const override
 	{
 		return I1_;
 	}
@@ -670,7 +669,7 @@ public: // Inspector
 	/// @brief Lower Index of Dimension 1
 	inline
 	int
-	l1() const
+	l1() const override
 	{
 		return I1_.l();
 	}
@@ -679,7 +678,7 @@ public: // Inspector
 	/// @brief Upper Index of Dimension 1
 	inline
 	int
-	u1() const
+	u1() const override
 	{
 		return I1_.u();
 	}
@@ -688,7 +687,7 @@ public: // Inspector
 	/// @brief IndexRange of Dimension 2
 	inline
 	IR const &
-	I2() const
+	I2() const override
 	{
 		return I2_;
 	}
@@ -697,7 +696,7 @@ public: // Inspector
 	/// @brief Lower Index of Dimension 2
 	inline
 	int
-	l2() const
+	l2() const override
 	{
 		return I2_.l();
 	}
@@ -706,7 +705,7 @@ public: // Inspector
 	/// @brief Upper Index of Dimension 2
 	inline
 	int
-	u2() const
+	u2() const override
 	{
 		return I2_.u();
 	}
@@ -715,7 +714,7 @@ public: // Inspector
 	/// @brief IndexRange of Dimension 3
 	inline
 	IR const &
-	I3() const
+	I3() const override
 	{
 		return I3_;
 	}
@@ -724,7 +723,7 @@ public: // Inspector
 	/// @brief Lower Index of Dimension 3
 	inline
 	int
-	l3() const
+	l3() const override
 	{
 		return I3_.l();
 	}
@@ -733,7 +732,7 @@ public: // Inspector
 	/// @brief Upper Index of Dimension 3
 	inline
 	int
-	u3() const
+	u3() const override
 	{
 		return I3_.u();
 	}
@@ -742,7 +741,7 @@ public: // Inspector
 	/// @brief Size of Dimension 3
 	inline
 	size_type
-	size3() const
+	size3() const override
 	{
 		return I3_.size();
 	}
@@ -754,7 +753,7 @@ public: // Modifier
 	/// @brief Clear
 	inline
 	FArray3A &
-	clear()
+	clear() override
 	{
 		Super::clear();
 		I1_.clear();
@@ -1036,7 +1035,7 @@ protected: // Functions
 	/// @brief Dimension by IndexRanges
 	inline
 	void
-	dimension_assign( SIR const & I1_a, SIR const & I2_a, SIR const & I3_a )
+	dimension_assign( SIR const & I1_a, SIR const & I2_a, SIR const & I3_a ) override
 	{
 		I1_.assign_value_of( I1_a );
 		I2_.assign_value_of( I2_a );

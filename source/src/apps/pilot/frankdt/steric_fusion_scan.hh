@@ -33,7 +33,7 @@ public:
 	steric_fusion_scan();
 	steric_fusion_scan(steric_fusion_scan const & src);
 
-	virtual ~steric_fusion_scan();
+	~steric_fusion_scan() override;
 
 	steric_fusion_scanOP
 	clone() const;

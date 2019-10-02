@@ -73,7 +73,7 @@ public:// constructor/destructor
 	// @brief copy constructor
 	InterlockingAromaFilter( InterlockingAromaFilter const & rval );
 
-	virtual ~InterlockingAromaFilter(){}
+	~InterlockingAromaFilter() override{}
 
 
 public:// virtual constructor

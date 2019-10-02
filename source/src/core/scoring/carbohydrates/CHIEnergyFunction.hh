@@ -61,7 +61,7 @@ public:  // Standard Methods //////////////////////////////////////////////////
 	/// @brief  Default constructor
 	CHIEnergyFunction();
 
-	virtual ~CHIEnergyFunction();
+	~CHIEnergyFunction() override;
 
 
 public:  // Other Public Methods //////////////////////////////////////////////

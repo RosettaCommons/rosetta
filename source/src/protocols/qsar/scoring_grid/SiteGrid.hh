@@ -29,17 +29,17 @@ class SiteGrid : public SingleGrid
 public:
 	SiteGrid();
 	GridBaseOP clone() const override;
-	virtual ~SiteGrid();
+	~SiteGrid() override;
 	// void read_constraint();
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude) override;
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center) override;
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> ligand_chain_ids_to_exclude) override;
+	void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude) override;
+	void refresh(core::pose::Pose const & pose, core::Vector const & center) override;
+	void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> ligand_chain_ids_to_exclude) override;
 	// virtual void reset();
 
 	/// @brief serialize the SingleGrid to a json_spirit object
-	virtual utility::json_spirit::Value serialize() const override;
+	utility::json_spirit::Value serialize() const override;
 	/// @brief deserialize a json_spirit object to a SingleGrid
-	virtual void deserialize(utility::json_spirit::mObject data) override;
+	void deserialize(utility::json_spirit::mObject data) override;
 
 	void parse_my_tag(utility::tag::TagCOP tag) override;
 

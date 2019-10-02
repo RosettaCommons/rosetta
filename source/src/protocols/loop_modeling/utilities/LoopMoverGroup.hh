@@ -42,12 +42,12 @@ public:
 	LoopMoverGroup();
 
 	/// @brief Return the name of this mover.
-	string get_name() const { return "LoopMoverGroup"; }
+	string get_name() const override { return "LoopMoverGroup"; }
 
 	/// @brief Add the names of all the algorithms invoked by this loop mover to
 	/// the given list.  Indentation is used to represent hierarchy.
 	void get_children_names(
-		utility::vector1<std::string> & names, std::string indent="") const;
+		utility::vector1<std::string> & names, std::string indent="") const override;
 
 	/// @brief Add a mover to this group.
 	LoopMoverOP add_mover(LoopMoverOP task);
@@ -72,7 +72,7 @@ protected:
 	/// @brief Apply all the movers added to this group.
 	/// @details This method will immediately return false if any of the child
 	/// movers reports failure.
-	bool do_apply(Pose & pose);
+	bool do_apply(Pose & pose) override;
 
 private:
 	bool is_default_;

@@ -39,19 +39,16 @@ public:
 	DNA_DihedralEnergy( DNA_DihedralEnergy const & src);
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	bool
 	defines_score_for_residue(
 		conformation::Residue const &
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_dof_derivatives( pose::Pose const & ) const { return true; }
+	defines_dof_derivatives( pose::Pose const & ) const override { return true; }
 
 	void
 	configure_from_options_system();
@@ -61,13 +58,12 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	///
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	//  virtual
 	//  void
@@ -90,7 +86,6 @@ public:
 	) const;
 
 
-	virtual
 	Real
 	eval_residue_dof_derivative(
 		conformation::Residue const & rsd,
@@ -100,11 +95,10 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
 
 	/// this function is used for the sugar derivs, which dont match up to a "torsion" in the current scheme
-	virtual
 	void
 	eval_residue_derivatives(
 		conformation::Residue const & rsd,
@@ -112,7 +106,7 @@ public:
 		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
 	//  virtual
 	//  Real
@@ -126,11 +120,9 @@ public:
 
 	/// @brief DNA_Dihedral Energy is context dependent, but indicates that no context graphs need to
 	/// be maintained by class Energies
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override;
 
-	virtual
-	core::Size version() const { return 1; }
+	core::Size version() const override { return 1; }
 
 	// data
 private:

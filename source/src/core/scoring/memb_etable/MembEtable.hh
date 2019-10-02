@@ -53,19 +53,19 @@ public:
 
 	MembEtable( MembEtable const & src );
 
-	virtual ~MembEtable();
+	~MembEtable() override;
 
 	// Accessors
 
 	/// @brief Provide Constnat Access to Arrays
 	ObjexxFCL::FArray3D< Real > const &
-	solv1() const
+	solv1() const override
 	{
 		return solv1_;
 	}
 
 	ObjexxFCL::FArray3D< Real > const &
-	solv2() const
+	solv2() const override
 	{
 		return solv2_;
 	}
@@ -84,7 +84,7 @@ public:
 
 	/// @brief Return the solvation derivative table for the desolvation of atom1 by atom2
 	ObjexxFCL::FArray3D< Real > const &
-	dsolv1() const
+	dsolv1() const override
 	{
 		return dsolv1_;
 	}
@@ -127,30 +127,26 @@ public:
 	}
 
 	/// set these up in the ctor
-	virtual
 	Real
-	lj_radius( int const i ) const
+	lj_radius( int const i ) const override
 	{
 		return lj_radius_[i];
 	}
 
-	virtual
 	Real
-	lk_dgfree( int const i ) const
+	lk_dgfree( int const i ) const override
 	{
 		return lk_dgfree_[i];
 	}
 
-	virtual
 	Real
-	lk_volume( int const i ) const
+	lk_volume( int const i ) const override
 	{
 		return lk_volume_[i];
 	}
 
-	virtual
 	Real
-	lk_lambda( int const i ) const
+	lk_lambda( int const i ) const override
 	{
 		return lk_lambda_[i];
 	}
@@ -175,21 +171,19 @@ public:
 
 public: // Interfaces for convenient IO
 
-	virtual
 	void
 	output_etable(
 		ObjexxFCL::FArray3D<Real> & etable,
 		std::string label,
 		std::ostream & out
-	);
+	) override;
 
-	virtual
 	void
 	input_etable(
 		ObjexxFCL::FArray3D<Real> & etable,
 		std::string const & label,
 		std::istream & in
-	);
+	) override;
 
 
 private: // methods

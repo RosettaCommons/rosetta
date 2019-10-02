@@ -171,7 +171,7 @@ private:
 
 public:
 
-	~PCS_data_Ts4();
+	~PCS_data_Ts4() override;
 
 	PCS_data_Ts4(PCS_data_input_Ts4 & P_d_i);
 
@@ -182,8 +182,8 @@ public:
 	PCS_data_Ts4 &
 	operator=( PCS_data_Ts4 const & src );
 
-	virtual basic::datacache::CacheableDataOP
-	clone() const;
+	basic::datacache::CacheableDataOP
+	clone() const override;
 
 	//void update_matrix_fstyle_A();
 

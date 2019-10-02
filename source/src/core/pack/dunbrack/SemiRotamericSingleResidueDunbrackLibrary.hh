@@ -111,7 +111,7 @@ public:
 		bbdep_nrchi_sample_( bbdep_nrchi_sample_in )
 	{}
 
-	virtual ~BBDepSemiRotamericData() {}
+	~BBDepSemiRotamericData() override {}
 
 	BBDepNRChiSample< Real > const &
 	bbdep_nrchi_sample() const {
@@ -228,13 +228,12 @@ public:
 		core::Real prob_nonburied
 	);
 
-	virtual ~SemiRotamericSingleResidueDunbrackLibrary() throw() override;
+	~SemiRotamericSingleResidueDunbrackLibrary() throw() override;
 
 	friend class SingleResidueDunbrackLibrary;
 public:
 	/// Virtual functions required by the base classes
 
-	virtual
 	Real
 	rotamer_energy(
 		conformation::Residue const & rsd,
@@ -242,7 +241,6 @@ public:
 		RotamerLibraryScratchSpace & scratch
 	) const override;
 
-	virtual
 	Real
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
@@ -255,7 +253,6 @@ public:
 	/// (based on e.g. its current phi and psi values).
 	/// If curr_rotamer_only is true, then consider only the idealized version of the
 	/// residue's current rotamer (local optimum); otherwise, consider all rotamers (global optimum).
-	virtual
 	Real
 	best_rotamer_energy(
 		conformation::Residue const & rsd,
@@ -264,7 +261,6 @@ public:
 		RotamerLibraryScratchSpace & scratch
 	) const override;
 
-	virtual
 	void
 	assign_random_rotamer_with_bias(
 		conformation::Residue const & rsd,
@@ -285,7 +281,6 @@ public:
 		utility::vector1< Real > & interpolated_nrchi_distribution
 	) const;
 
-	virtual
 	void
 	fill_rotamer_vector(
 		pose::Pose const & pose,
@@ -305,41 +300,34 @@ public:
 	/// The returned samples should be in semi-decrasing order by probability; semi, because the
 	/// rotamers are constructed in sorted order by their probability in the lower phi-psi bin that
 	/// the input phi/psi perscribes.
-	virtual
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
 		Real5 bbs
 	) const override;
 
-	virtual
 	Real
 	get_probability_for_rotamer(
 		utility::fixedsizearray1< Real, N > bbs,
 		Size rot_ind
 	) const override;
 
-	virtual
 	DunbrackRotamerSampleData
 	get_rotamer(
 		utility::fixedsizearray1< Real, N > bbs,
 		Size rot_ind
 	) const override;
 
-	virtual
 	Size nchi() const override;
 
-	virtual
 	Size nbb() const override;
 
-	virtual
 	Size n_rotamer_bins() const override;
 
 	// stubbed out
-	virtual
 	void
 	write_to_file( utility::io::ozstream & out ) const override;
 
-	virtual void write_to_binary( utility::io::ozstream & out ) const override;
+	void write_to_binary( utility::io::ozstream & out ) const override;
 
 	/// @brief Initialize either a backbone-independent or a backbone-dependent SRSRDL
 	/// from the set of four files which describe both (not all files are read).
@@ -359,15 +347,13 @@ public:
 		utility::io::izstream & in_continmin_bbdep
 	);
 
-	virtual void read_from_binary( utility::io::izstream & in ) override;
+	void read_from_binary( utility::io::izstream & in ) override;
 
 	/// @brief Comparison operator, mainly intended to use in ASCII/binary comparsion tests
 	/// Values tested should parallel those used in the read_from_binary() function.
-	virtual
 	bool
 	operator ==( rotamers::SingleResidueRotamerLibrary const & ) const override;
 
-	virtual
 	void
 	get_rotamer_from_chi(
 		ChiVector const & chi,
@@ -395,8 +381,8 @@ public:
 
 protected:
 
-	virtual Size memory_usage_static() const override;
-	virtual Size memory_usage_dynamic() const override;
+	Size memory_usage_static() const override;
+	Size memory_usage_dynamic() const override;
 
 	Real
 	rotamer_energy_deriv_bbdep(
@@ -457,7 +443,6 @@ protected:
 
 	/// @brief overrides parent class for the non-rotameric chi, but falls back
 	/// on the parent class functionality for all other chi.
-	virtual
 	void
 	chisamples_for_rotamer_and_chi(
 		chemical::ResidueType const & rsd_type,

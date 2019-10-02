@@ -46,7 +46,7 @@ public:
 
 	NtoCConstraintGenerator( Real const dist, Real const coef );
 
-	virtual ~NtoCConstraintGenerator();
+	~NtoCConstraintGenerator() override;
 
 	void
 	parse_my_tag( TagCOP tag,

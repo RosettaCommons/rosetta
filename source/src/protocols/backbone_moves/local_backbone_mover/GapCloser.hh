@@ -42,7 +42,7 @@ public:
 	GapCloser();
 	GapCloser(GapCloser const & src);
 
-	virtual ~GapCloser();
+	~GapCloser() override;
 
 	GapCloserOP
 	clone() const;

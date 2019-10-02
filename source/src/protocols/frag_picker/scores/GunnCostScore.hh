@@ -44,12 +44,12 @@ public:
 	/// @details fragments will be compared to a given pose, which should have the same number of residues a the query sequence
 	GunnCostScore(core::Size, core::Real, bool, core::pose::PoseOP,utility::vector1<core::Size>,core::Size);
 
-	~GunnCostScore();
+	~GunnCostScore() override;
 
-	void do_caching(VallChunkOP);
-	void clean_up();
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
-	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
+	void do_caching(VallChunkOP) override;
+	void clean_up() override;
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 	void computeGunnTuples(core::pose::Pose &,core::Size,utility::vector1<GunnTuple> &);
 
@@ -71,7 +71,7 @@ public:
 		MakeFragmentScoringMethod("GunnCostScore") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 
 } // scores

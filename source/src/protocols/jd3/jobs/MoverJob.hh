@@ -49,7 +49,7 @@ class MoverJob: public protocols::jd3::Job{
 public:
 	MoverJob();
 
-	~MoverJob();
+	~MoverJob() override;
 
 	///@brief Set the pose this job will run on.
 	void
@@ -58,7 +58,7 @@ public:
 
 	///@brief Run the job on any set private variables (such as a PoseOP)
 	/// Return a completed job output after this Job is done.
-	virtual jd3::CompletedJobOutput
+	jd3::CompletedJobOutput
 	run() override;
 
 

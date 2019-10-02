@@ -55,7 +55,7 @@ class MMBondAngleLibrary  : public utility::pointer::ReferenceCount
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~MMBondAngleLibrary();
+	~MMBondAngleLibrary() override;
 	/// @brief ctor
 	MMBondAngleLibrary( std::string filename, core::chemical::MMAtomTypeSetCAP mm_atom_set );
 

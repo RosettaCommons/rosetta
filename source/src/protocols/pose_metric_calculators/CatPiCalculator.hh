@@ -58,7 +58,7 @@ public:
 	//constructor where you define what the distance cutoff is for the Hydrogen and Acceptor atoms
 	CatPiCalculator(core::Real dist_cutoff);
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const {
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override {
 		return utility::pointer::make_shared< CatPiCalculator >( distance_cutoff_); };
 
 private:
@@ -66,9 +66,9 @@ private:
 	core::Size cat_pi_total_;
 
 protected:
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	virtual std::string print( std::string const & key ) const;
-	virtual void recompute( core::pose::Pose const & this_pose );
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override;
+	std::string print( std::string const & key ) const override;
+	void recompute( core::pose::Pose const & this_pose ) override;
 
 #ifdef    SERIALIZATION
 public:

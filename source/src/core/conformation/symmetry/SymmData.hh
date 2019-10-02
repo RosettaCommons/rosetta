@@ -51,7 +51,7 @@ public:
 	SymmData( SymmData const &);
 	SymmDataOP
 	clone() const;
-	virtual ~SymmData();
+	~SymmData() override;
 
 	friend
 	bool

@@ -74,7 +74,7 @@ public:
 	);
 
 	// destructor
-	~BinarySilentStruct();
+	~BinarySilentStruct() override;
 
 	/// @brief Initialize object from a set of lines.
 	/// @details Does not skip read from container.

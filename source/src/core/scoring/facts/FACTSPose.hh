@@ -52,7 +52,7 @@ public:
 	FACTSPoseInfo();
 	FACTSPoseInfo( FACTSPoseInfo const & src );
 
-	basic::datacache::CacheableDataOP clone() const
+	basic::datacache::CacheableDataOP clone() const override
 	{ return utility::pointer::make_shared< FACTSPoseInfo >( *this );}
 
 	Size size() const { return residue_info_.size(); }

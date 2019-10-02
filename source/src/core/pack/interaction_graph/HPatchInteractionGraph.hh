@@ -115,7 +115,7 @@ public:
 
 public:
 	HPatchNode( G* owner, int node_index, int num_states );
-	virtual ~HPatchNode();
+	~HPatchNode() override;
 
 	// setter for the rotamers object. called at the very beginning of the HIG::initialize() method
 	void set_rotamers( rotamer_set::RotamerSetCOP rotamers );
@@ -133,7 +133,7 @@ public:
 	bool overlaps( HPatchNode< V, E, G >* neighbor );
 	bool detect_any_overlap_with_rotamer( RotamerDots const & rotamer ) const;
 
-	virtual void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 	void initialize_overlap_with_background(
 		RotamerDots const & bg_rotamer,
 		std::vector< RotamerDotsCache > & overlap,
@@ -141,7 +141,7 @@ public:
 	);
 
 	// for HIG entry point blanket_assign_state_0()
-	virtual void assign_zero_state();
+	void assign_zero_state() override;
 	void acknowledge_neighbors_substitution();
 
 	core::PackerEnergy calculate_PD_deltaE_for_substitution( int alternate_state, core::PackerEnergy & prev_PDenergies_for_node );
@@ -179,11 +179,11 @@ public:
 	void commit_considered_substitution();
 
 	virtual unsigned int getMemoryUsageInBytes() const;
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 	//void write_dot_kinemage( std::ofstream & output_kin );
-	virtual void print() const;
+	void print() const override;
 
 	// Extra methods only used only for the unit tests.
 	RotamerDots const & get_current_state_rotamer_dots();
@@ -293,7 +293,7 @@ public:
 
 public:
 	HPatchBackgroundNode( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int node_index );
-	virtual ~HPatchBackgroundNode();
+	~HPatchBackgroundNode() override;
 
 	void set_rotamer( conformation::ResidueOP const & rotamer );
 	conformation::ResidueCOP get_rotamer() const;
@@ -301,7 +301,7 @@ public:
 	void set_rotamer_dots( RotamerDots const & bg_rd );
 
 	bool detect_overlap( HPatchNode< V, E, G >* node ) const;
-	virtual void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 
 	void initialize_bg_bg_overlap( HPatchBackgroundNode< V, E, G > & other );
 
@@ -322,11 +322,11 @@ public:
 	utility::vector1< Size > const & get_hphobes() const { return hphobe_ats_; }
 	Size n_hphobes() const { return n_hphobes_; }
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 	//void write_dot_kinemage( std::ofstream & output_kin );
-	virtual void print() const;
+	void print() const override;
 
 	// Only used for the unit tests.
 	RotamerDots const & get_current_state_rotamer_dots();
@@ -407,9 +407,9 @@ public:
 
 public:
 	HPatchEdge( G * owner, int node1, int node2 );
-	virtual ~HPatchEdge();
+	~HPatchEdge() override;
 
-	virtual void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 
 	void acknowledge_state_zeroed( int node_index );
 
@@ -425,11 +425,11 @@ public:
 	utility::vector1< utility::vector1< bool > > const & get_alt_state_atom_atom_overlaps() const;
 
 	// Virtual methods from EdgeBase
-	virtual void declare_energies_final();
+	void declare_energies_final() override;
 
 	virtual unsigned int getMemoryUsageInBytes() const;
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 	Real get_current_two_body_energy() const;
 
@@ -486,9 +486,9 @@ public:
 
 public:
 	HPatchBackgroundEdge( AdditionalBackgroundNodesInteractionGraph< V, E, G >* owner, int first_class_node_index, int background_node_index );
-	virtual ~HPatchBackgroundEdge();
+	~HPatchBackgroundEdge() override;
 
-	void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 	void initialize_overlap_cache( RotamerDots const & bg_residue );
 
 	void acknowledge_state_change( int new_state );
@@ -498,8 +498,8 @@ public:
 
 	utility::vector1< utility::vector1< bool > > const & get_atom_atom_overlaps_for_state( Size state ) const;
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 protected:
 	inline
@@ -561,7 +561,7 @@ public:
 
 public:
 	HPatchInteractionGraph( int num_nodes );
-	virtual ~HPatchInteractionGraph();
+	~HPatchInteractionGraph() override;
 
 	pose::Pose const & pose() const { return *pose_; }
 	void set_pose( pose::Pose const & pose );
@@ -574,7 +574,7 @@ public:
 
 	void set_score_weight( Real weight ) { hpatch_score_weight_ = weight; }
 
-	void initialize( pack_basic::RotamerSetsBase const & rot_sets );
+	void initialize( pack_basic::RotamerSetsBase const & rot_sets ) override;
 
 	void set_num_residues_in_protein( Size num_res );
 	void set_num_background_residues( Size num_background_residues );
@@ -582,16 +582,16 @@ public:
 	void set_background_residue_rotamer_dots( Size residue, conformation::Residue const & rotamer );
 	void set_rotamer_dots_for_node_state( Size node_index, Size state, conformation::Residue const & rotamer );
 
-	virtual void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 
-	virtual void blanket_assign_state_0();
+	void blanket_assign_state_0() override;
 	Real get_hpatch_score();
-	virtual void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE );
+	void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE ) override;
 
 	static void print_hpatch_avoidance_stats();
 	static void reset_hpatch_avoidance_stats();
 
-	virtual void consider_substitution( int node_ind, int new_state, core::PackerEnergy & delta_energy, core::PackerEnergy & prev_energy_for_node );
+	void consider_substitution( int node_ind, int new_state, core::PackerEnergy & delta_energy, core::PackerEnergy & prev_energy_for_node ) override;
 	core::PackerEnergy calculate_hpatch_deltaE();
 
 	void register_fc_node_in_state0();
@@ -625,14 +625,14 @@ public:
 	Real calculate_alt_state_hpatch_score();
 	//void blanket_reset_alt_state_dots();
 
-	virtual core::PackerEnergy commit_considered_substitution();
+	core::PackerEnergy commit_considered_substitution() override;
 
-	virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states );
+	core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states ) override;
 
-	virtual core::PackerEnergy get_energy_current_state_assignment();
-	virtual int get_edge_memory_usage() const;
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	core::PackerEnergy get_energy_current_state_assignment() override;
+	int get_edge_memory_usage() const override;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 	using parent::get_energy_sum_for_vertex_group;
 
@@ -642,7 +642,7 @@ public:
 	void print_internal_energies_for_current_state_assignment();
 	//void write_dot_kinemage( std::ofstream & output_kin );
 
-	void print() const;
+	void print() const override;
 
 	// method used only by unit tests
 	int bg_node_2_resid( Size node_index );
@@ -673,10 +673,10 @@ public:
 	}
 
 protected:
-	virtual NodeBase* create_new_node( int node_index, int num_states);
-	virtual EdgeBase* create_new_edge( int index1, int index2);
-	virtual BackgroundNode< V, E, G >* create_background_node( int node_index );
-	virtual BackgroundToFirstClassEdge< V, E, G >* create_background_edge( int fc_node_index, int bg_node_index);
+	NodeBase* create_new_node( int node_index, int num_states) override;
+	EdgeBase* create_new_edge( int index1, int index2) override;
+	BackgroundNode< V, E, G >* create_background_node( int node_index ) override;
+	BackgroundToFirstClassEdge< V, E, G >* create_background_edge( int fc_node_index, int bg_node_index) override;
 
 	void track_hpatch_E_min();
 

@@ -50,7 +50,7 @@ public:
 		bool const bb_hbond, bool const sc_hbond, core::Real const hbond_energy_threshold,
 		core::Real interface_distance_cutoff=8.0,
 		bool const repack_partner1=true, bool const repack_partner2=false, bool const repack_non_ala=true );
-	virtual ~DesignMinimizeHbonds();
+	~DesignMinimizeHbonds() override;
 	void apply( Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< DesignMinimizeHbonds >(); }

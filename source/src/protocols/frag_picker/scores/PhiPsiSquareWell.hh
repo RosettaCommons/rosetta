@@ -44,10 +44,10 @@ public:
 
 	PhiPsiSquareWell(core::Size, core::Real, bool, core::pose::PoseOP);
 
-	void do_caching(VallChunkOP);
-	void clean_up();
-	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
+	void do_caching(VallChunkOP) override;
+	void clean_up() override;
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 private:
 	std::string cached_scores_id_;
@@ -72,7 +72,7 @@ public:
 		MakeFragmentScoringMethod("PhiPsiSquareWell") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 
 } // scores

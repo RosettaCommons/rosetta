@@ -489,8 +489,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~FArray4P()
+	~FArray4P() override
 	{
 		if ( source_ ) source_->remove_observer( *this );
 	}
@@ -1131,7 +1130,7 @@ public: // Observer Modifier
 	/// @brief Update
 	inline
 	void
-	update()
+	update() override
 	{
 #ifdef OBJEXXFCL_PROXY_CONST_CHECKS
 		if ( source_ ) {
@@ -1151,7 +1150,7 @@ public: // Observer Modifier
 	/// @brief Update for Destruction of a Subject
 	inline
 	void
-	destructed( Subject const & subject )
+	destructed( Subject const & subject ) override
 	{
 		if ( ( source_ ) && ( &subject == source_ ) ) { // Source array is being destructed
 			Base::detach();

@@ -163,7 +163,7 @@ private:
 public:
 	PCS_data();
 
-	~PCS_data();
+	~PCS_data() override;
 
 	PCS_data(PCS_data_input & P_d_i);
 
@@ -174,8 +174,8 @@ public:
 	PCS_data &
 	operator=( PCS_data const & src );
 
-	virtual basic::datacache::CacheableDataOP
-	clone() const;
+	basic::datacache::CacheableDataOP
+	clone() const override;
 
 	//void update_matrix_fstyle_A();
 

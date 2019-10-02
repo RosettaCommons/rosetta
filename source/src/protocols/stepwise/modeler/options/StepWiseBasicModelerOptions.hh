@@ -37,15 +37,13 @@ public:
 	StepWiseBasicModelerOptionsOP clone() const;
 
 	/// @brief Initialize from the recursive "tag" structure.
-	virtual
 	void
-	parse_my_tag( utility::tag::TagCOP ){}
+	parse_my_tag( utility::tag::TagCOP ) override{}
 
 	/// @brief The class name (its type) for a particular instance.
 	/// This function allows for better error message delivery.
-	virtual
 	std::string
-	type() const{ return "StepWiseBasicModelerOptions";}
+	type() const override{ return "StepWiseBasicModelerOptions";}
 
 	bool use_green_packer() const { return use_green_packer_; }
 	void set_use_green_packer( bool const & setting ){ use_green_packer_ = setting; }

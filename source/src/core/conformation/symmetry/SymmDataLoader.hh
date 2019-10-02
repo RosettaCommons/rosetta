@@ -36,7 +36,7 @@ class SymmDataLoader : public basic::resource_manager::ResourceLoader
 {
 public:
 	SymmDataLoader();
-	virtual ~SymmDataLoader();
+	~SymmDataLoader() override;
 
 	basic::resource_manager::ResourceCOP
 	create_resource(

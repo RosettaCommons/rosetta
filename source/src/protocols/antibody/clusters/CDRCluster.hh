@@ -50,7 +50,7 @@ public:
 
 	CDRClusterOP clone() const;
 
-	virtual ~CDRCluster();
+	~CDRCluster() override;
 
 	CDRNameEnum
 	cdr() const { return cdr_; }

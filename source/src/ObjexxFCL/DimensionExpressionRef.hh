@@ -61,7 +61,7 @@ public: // Creation
 	/// @brief Clone
 	inline
 	DimensionExpressionRef *
-	clone() const
+	clone() const override
 	{
 		return new DimensionExpressionRef( *this );
 	}
@@ -69,13 +69,12 @@ public: // Creation
 
 	/// @brief Clone with Dimension Substitution
 	DimensionExpression *
-	clone( Dimension const & dim ) const;
+	clone( Dimension const & dim ) const override;
 
 
 	/// @brief Destructor
 	inline
-	virtual
-	~DimensionExpressionRef()
+	~DimensionExpressionRef() override
 	{}
 
 
@@ -84,13 +83,13 @@ public: // Inspector
 
 	/// @brief Initialized?
 	bool
-	initialized() const;
+	initialized() const override;
 
 
 	/// @brief Integer?
 	inline
 	bool
-	integer() const
+	integer() const override
 	{
 		return true;
 	}
@@ -99,7 +98,7 @@ public: // Inspector
 	/// @brief Constant?
 	inline
 	bool
-	constant() const
+	constant() const override
 	{
 		return false;
 	}
@@ -108,7 +107,7 @@ public: // Inspector
 	/// @brief Reference?
 	inline
 	bool
-	reference() const
+	reference() const override
 	{
 		return true;
 	}
@@ -117,7 +116,7 @@ public: // Inspector
 	/// @brief Reducible?
 	inline
 	bool
-	reducible() const
+	reducible() const override
 	{
 		return false;
 	}
@@ -125,22 +124,22 @@ public: // Inspector
 
 	/// @brief Value
 	double
-	operator ()() const;
+	operator ()() const override;
 
 
 	/// @brief Value
 	double
-	value() const;
+	value() const override;
 
 
 	/// @brief Insert an Observer
 	void
-	insert_observer( Observer & observer ) const;
+	insert_observer( Observer & observer ) const override;
 
 
 	/// @brief Remove an Observer
 	void
-	remove_observer( Observer & observer ) const;
+	remove_observer( Observer & observer ) const override;
 
 
 public: // Modifier
@@ -148,7 +147,7 @@ public: // Modifier
 
 	/// @brief Update for Destruction of a Subject
 	void
-	destructed( Subject const & subject );
+	destructed( Subject const & subject ) override;
 
 
 private: // Data

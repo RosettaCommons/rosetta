@@ -57,34 +57,33 @@ public:
 	/// @brief Constructor
 	AmbiguousConstraint( ConstraintCOPs const & cst_in ) ;
 
-	virtual ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
-	virtual MultiConstraintOP empty_clone() const;
+	MultiConstraintOP empty_clone() const override;
 
 	/// @brief
 	void
 	init_cst_score_types();
 
-	std::string type() const;
+	std::string type() const override;
 
 
 	/// @brief read in constraint defiinition
 	void
-	read_def( std::istream& data, pose::Pose const& pose, func::FuncFactory const& func_factory );
+	read_def( std::istream& data, pose::Pose const& pose, func::FuncFactory const& func_factory ) override;
 
-	virtual bool operator == ( Constraint const & other ) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	bool operator == ( Constraint const & other ) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
 	/// @brief compute score
 	void
-	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const override;
 
 	core::Real
 	calculate_total_cst_score( EnergyMap const & weights, EnergyMap & emap) const;
 
-	virtual
 	ConstraintOP
-	remap_resid( core::id::SequenceMapping const &seqmap ) const;
+	remap_resid( core::id::SequenceMapping const &seqmap ) const override;
 
 	/// @brief compute atom deriv
 	void
@@ -94,15 +93,15 @@ public:
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
-	void show( std::ostream& out) const;
+	void show( std::ostream& out) const override;
 
 	ConstraintCOP active_constraint() const;
 
 	// void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
 
-	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1.0 ) const;
+	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1.0 ) const override;
 
 protected:
 	/// @brief Copy constructor for derived classes to ensure that they perform a deep copy on the

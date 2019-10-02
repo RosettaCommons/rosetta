@@ -28,10 +28,10 @@ public:
 
 public:
 	/// @copydoc PivotPicker::get_name
-	std::string get_name() const { return "FixedOffsetsPivots"; }
+	std::string get_name() const override { return "FixedOffsetsPivots"; }
 
 	/// @copydoc PivotPicker::pick
-	Loop pick(Pose const & pose, Loop const & loop);
+	Loop pick(Pose const & pose, Loop const & loop) override;
 
 private:
 	utility::vector1<Size> offsets_;

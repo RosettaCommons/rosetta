@@ -39,7 +39,7 @@ public:
 	LoopGraph();
 
 	//destructor
-	~LoopGraph();
+	~LoopGraph() override;
 
 public:
 

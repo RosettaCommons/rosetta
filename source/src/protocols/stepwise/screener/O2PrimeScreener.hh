@@ -32,21 +32,21 @@ public:
 	O2PrimeScreener( modeler::rna::o2prime::O2PrimePackerOP o2prime_packer );
 
 	//destructor
-	~O2PrimeScreener();
+	~O2PrimeScreener() override;
 
 public:
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	void
-	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ) override;
 
 	std::string
-	name() const { return "O2PrimeScreener"; }
+	name() const override { return "O2PrimeScreener"; }
 
 	StepWiseScreenerType
-	type() const { return O2PRIME_PACK; }
+	type() const override { return O2PRIME_PACK; }
 
 private:
 

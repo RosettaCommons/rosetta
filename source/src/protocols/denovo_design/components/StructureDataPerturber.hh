@@ -97,17 +97,16 @@ public:
 	NullPerturber();
 
 	/// @brief Destructor
-	virtual
-	~NullPerturber();
+	~NullPerturber() override;
 
-	virtual StructureDataPerturberOP
-	clone() const;
+	StructureDataPerturberOP
+	clone() const override;
 
-	virtual Permutations
-	enumerate( StructureData const & sd ) const;
+	Permutations
+	enumerate( StructureData const & sd ) const override;
 
-	virtual void
-	parse_my_tag( utility::tag::Tag const & tag, basic::datacache::DataMap & data );
+	void
+	parse_my_tag( utility::tag::Tag const & tag, basic::datacache::DataMap & data ) override;
 };
 
 /// @brief "mutates" a connection
@@ -115,20 +114,19 @@ class ConnectionPerturber : public StructureDataPerturber {
 public:
 	ConnectionPerturber();
 
-	virtual
-	~ConnectionPerturber();
+	~ConnectionPerturber() override;
 
 	static std::string
 	class_name() { return "ConnectionPerturber"; }
 
-	virtual StructureDataPerturberOP
-	clone() const;
+	StructureDataPerturberOP
+	clone() const override;
 
-	virtual void
-	parse_my_tag( utility::tag::Tag const & tag, basic::datacache::DataMap & data );
+	void
+	parse_my_tag( utility::tag::Tag const & tag, basic::datacache::DataMap & data ) override;
 
-	virtual Permutations
-	enumerate( StructureData const & sd ) const;
+	Permutations
+	enumerate( StructureData const & sd ) const override;
 
 private:
 	void
@@ -147,20 +145,19 @@ private:
 public:
 	HelixPerturber();
 
-	virtual
-	~HelixPerturber();
+	~HelixPerturber() override;
 
 	static std::string
 	class_name() { return "HelixPerturber"; }
 
-	virtual StructureDataPerturberOP
-	clone() const;
+	StructureDataPerturberOP
+	clone() const override;
 
-	virtual void
-	parse_my_tag( utility::tag::Tag const & tag, basic::datacache::DataMap & data );
+	void
+	parse_my_tag( utility::tag::Tag const & tag, basic::datacache::DataMap & data ) override;
 
-	virtual Permutations
-	enumerate( StructureData const & sd ) const;
+	Permutations
+	enumerate( StructureData const & sd ) const override;
 
 private:
 	/// @brief Gets const pointer to helix architect from the data map and stores it as architect_
@@ -188,23 +185,22 @@ public:
 	/// @brief copy constructor -- necessary for deep copying of perturbers_
 	CompoundPerturber( CompoundPerturber const & other );
 
-	virtual
-	~CompoundPerturber();
+	~CompoundPerturber() override;
 
 	static std::string
 	class_name() { return "CompoundPerturber"; }
 
-	virtual StructureDataPerturberOP
-	clone() const;
+	StructureDataPerturberOP
+	clone() const override;
 
-	virtual void
-	parse_my_tag( utility::tag::Tag const & tag, basic::datacache::DataMap & data );
+	void
+	parse_my_tag( utility::tag::Tag const & tag, basic::datacache::DataMap & data ) override;
 
-	virtual Permutations
-	enumerate( StructureData const & sd ) const;
+	Permutations
+	enumerate( StructureData const & sd ) const override;
 
-	virtual void
-	set_ignore_segments( SegmentNameSet const & ignore_set );
+	void
+	set_ignore_segments( SegmentNameSet const & ignore_set ) override;
 
 private:
 	Permutations

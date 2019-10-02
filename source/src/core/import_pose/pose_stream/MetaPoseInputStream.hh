@@ -34,23 +34,23 @@ class MetaPoseInputStream : public PoseInputStream {
 public:
 	MetaPoseInputStream() : current_index_( 1 ) {}
 
-	~MetaPoseInputStream() {}
+	~MetaPoseInputStream() override {}
 
 	void add_pose_input_stream( PoseInputStreamOP input );
 
 	utility::vector1< PoseInputStreamOP > get_input_streams();
 
-	virtual bool has_another_pose();
+	bool has_another_pose() override;
 
-	virtual void reset();
+	void reset() override;
 
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set,
 		bool const metapatches = true
-	);
-	virtual void fill_pose( core::pose::Pose&,
-		bool const metapatches = true );
+	) override;
+	void fill_pose( core::pose::Pose&,
+		bool const metapatches = true ) override;
 
 private:
 	core::Size current_index_;

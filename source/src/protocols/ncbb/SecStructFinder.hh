@@ -60,7 +60,7 @@ public:
 		bool constrain = false
 	);
 
-	~SecStructFinder() = default;
+	~SecStructFinder() override = default;
 	void apply( core::pose::Pose & pose ) override;
 	std::string get_name() const override { return "SecStructFinder"; }
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SecStructFinder >(); }

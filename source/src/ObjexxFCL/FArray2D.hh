@@ -255,8 +255,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~FArray2D()
+	~FArray2D() override
 	{}
 
 
@@ -452,27 +451,24 @@ public: // Predicate
 
 
 	/// @brief Dimensions Initialized?
-	inline
 	bool
-	dimensions_initialized() const
+	dimensions_initialized() const override
 	{
 		return ( ( I1_.initialized() ) && ( I2_.initialized() ) );
 	}
 
 
 	/// @brief Contains Indexed Element?
-	inline
 	bool
-	contains( int const i1, int const i2 ) const
+	contains( int const i1, int const i2 ) const override
 	{
 		return ( ( I1_.contains( i1 ) ) && ( I2_.contains( i2 ) ) );
 	}
 
 
 	/// @brief Initializer Active?
-	inline
 	bool
-	initializer_active() const
+	initializer_active() const override
 	{
 		return initializer_.is_active();
 	}
@@ -482,63 +478,56 @@ public: // Inspector
 
 
 	/// @brief IndexRange of Dimension 1
-	inline
 	IR const &
-	I1() const
+	I1() const override
 	{
 		return I1_;
 	}
 
 
 	/// @brief Lower Index of Dimension 1
-	inline
 	int
-	l1() const
+	l1() const override
 	{
 		return I1_.l();
 	}
 
 
 	/// @brief Upper Index of Dimension 1
-	inline
 	int
-	u1() const
+	u1() const override
 	{
 		return I1_.u();
 	}
 
 
 	/// @brief IndexRange of Dimension 2
-	inline
 	IR const &
-	I2() const
+	I2() const override
 	{
 		return I2_;
 	}
 
 
 	/// @brief Lower Index of Dimension 2
-	inline
 	int
-	l2() const
+	l2() const override
 	{
 		return I2_.l();
 	}
 
 
 	/// @brief Upper Index of Dimension 2
-	inline
 	int
-	u2() const
+	u2() const override
 	{
 		return I2_.u();
 	}
 
 
 	/// @brief Size of Dimension 2
-	inline
 	size_type
-	size2() const
+	size2() const override
 	{
 		return I2_.size();
 	}
@@ -550,7 +539,7 @@ public: // Modifier
 	/// @brief Clear
 	inline
 	FArray2D &
-	clear()
+	clear() override
 	{
 		Super::clear();
 		I1_.clear_no_notify();
@@ -759,9 +748,8 @@ public: // Observer Modifier
 
 
 	/// @brief Update
-	inline
 	void
-	update()
+	update() override
 	{
 		dimension_real();
 		initialize();
@@ -769,9 +757,8 @@ public: // Observer Modifier
 
 
 	/// @brief Update for Destruction of a Subject
-	inline
 	void
-	destructed( Subject const & )
+	destructed( Subject const & ) override
 	{}
 
 
@@ -920,9 +907,8 @@ protected: // Functions
 
 
 	/// @brief Dimension by IndexRanges
-	inline
 	void
-	dimension_assign( SIR const & I1_a, SIR const & I2_a )
+	dimension_assign( SIR const & I1_a, SIR const & I2_a ) override
 	{
 		initializer_.clear();
 		I1_.assign_no_notify( I1_a );

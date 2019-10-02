@@ -48,15 +48,13 @@ public:
 	initialize_for_farna_optimizer( core::Size const & cycles /* = 0 */ );
 
 	/// @brief Initialize from the recursive "tag" structure.
-	virtual
 	void
-	parse_my_tag( utility::tag::TagCOP ){}
+	parse_my_tag( utility::tag::TagCOP ) override{}
 
 	/// @brief The class name (its type) for a particular instance.
 	/// This function allows for better error message delivery.
-	virtual
 	std::string
-	type() const{ return "RNA_FragmentMonteCarloOptions";}
+	type() const override{ return "RNA_FragmentMonteCarloOptions";}
 
 	void set_rounds( core::Size const & setting ){ rounds_ = setting; }
 	core::Size rounds() const { return rounds_; }

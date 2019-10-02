@@ -53,7 +53,7 @@ public:
 	//computeBoltzWeight(utility::vector0<int> rot_to_pack);//gives rot_to_pack where entry is rotameric id into rotamersets
 	void computeAllBoltz( core::pose::Pose const & pose );
 	RotamerProbability computeBoltzWeight(core::pose::Pose& pose, core::Size resi);
-	virtual core::pose::metrics::PoseMetricCalculatorOP clone() const;
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override;
 
 	void set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
@@ -64,9 +64,9 @@ public:
 	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
 
 protected:
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	virtual std::string print( std::string const & key ) const;
-	virtual void recompute( core::pose::Pose const & this_pose );
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override;
+	std::string print( std::string const & key ) const override;
+	void recompute( core::pose::Pose const & this_pose ) override;
 	core::Real computeBoltzWeight(core::pose::Pose& pose, core::Size resi, protocols::minimization_packing::MinMoverOP min_mover, core::pack::task::PackerTaskOP task);
 
 	core::scoring::ScoreFunctionOP scorefxn() const {return scorefxn_;};

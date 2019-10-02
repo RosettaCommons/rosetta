@@ -69,7 +69,7 @@ public: // Creation
 	/// @brief Clone
 	inline
 	DimensionExpression *
-	clone() const
+	clone() const override
 	{
 		assert( exp_p_ );
 		if ( constant() ) {
@@ -87,7 +87,7 @@ public: // Creation
 	/// @brief Clone with Dimension Substitution
 	inline
 	DimensionExpression *
-	clone( Dimension const & dim ) const
+	clone( Dimension const & dim ) const override
 	{
 		assert( exp_p_ );
 		if ( constant() ) {
@@ -104,8 +104,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~DimensionExpressionSquare()
+	~DimensionExpressionSquare() override
 	{
 		assert( exp_p_ );
 		delete exp_p_;
@@ -118,7 +117,7 @@ public: // Inspector
 	/// @brief Initialized?
 	inline
 	bool
-	initialized() const
+	initialized() const override
 	{
 		assert( exp_p_ );
 		return ( exp_p_->initialized() );
@@ -128,7 +127,7 @@ public: // Inspector
 	/// @brief Integer?
 	inline
 	bool
-	integer() const
+	integer() const override
 	{
 		assert( exp_p_ );
 		return ( exp_p_->integer() );
@@ -138,7 +137,7 @@ public: // Inspector
 	/// @brief Constant?
 	inline
 	bool
-	constant() const
+	constant() const override
 	{
 		assert( exp_p_ );
 		return ( exp_p_->constant() );
@@ -148,7 +147,7 @@ public: // Inspector
 	/// @brief Reference?
 	inline
 	bool
-	reference() const
+	reference() const override
 	{
 		assert( exp_p_ );
 		return ( exp_p_->reference() );
@@ -158,7 +157,7 @@ public: // Inspector
 	/// @brief Reducible?
 	inline
 	bool
-	reducible() const
+	reducible() const override
 	{
 		assert( exp_p_ );
 		return ( ( constant() ) || ( exp_p_->reducible() ) );
@@ -168,7 +167,7 @@ public: // Inspector
 	/// @brief Value
 	inline
 	double
-	operator ()() const
+	operator ()() const override
 	{
 		assert( exp_p_ );
 		return ( exp_p_->operator ()() * exp_p_->operator ()() );
@@ -178,7 +177,7 @@ public: // Inspector
 	/// @brief Value
 	inline
 	double
-	value() const
+	value() const override
 	{
 		assert( exp_p_ );
 		return ( exp_p_->value() * exp_p_->value() );
@@ -188,7 +187,7 @@ public: // Inspector
 	/// @brief Insert an Observer
 	inline
 	void
-	insert_observer( Observer & observer ) const
+	insert_observer( Observer & observer ) const override
 	{
 		assert( exp_p_ );
 		exp_p_->insert_observer( observer );
@@ -198,7 +197,7 @@ public: // Inspector
 	/// @brief Remove an Observer
 	inline
 	void
-	remove_observer( Observer & observer ) const
+	remove_observer( Observer & observer ) const override
 	{
 		assert( exp_p_ );
 		exp_p_->remove_observer( observer );
@@ -211,7 +210,7 @@ public: // Modifier
 	/// @brief Update for Destruction of a Subject
 	inline
 	void
-	destructed( Subject const & subject )
+	destructed( Subject const & subject ) override
 	{
 		assert( exp_p_ );
 		exp_p_->destructed( subject );

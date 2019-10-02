@@ -39,18 +39,18 @@ public:
 		core::Distance const atom_atom_overlap_dist_cutoff );
 
 	//destructor
-	~ResidueContactScreener();
+	~ResidueContactScreener() override;
 
 public:
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	std::string
-	name() const { return "ResidueContactScreener"; }
+	name() const override { return "ResidueContactScreener"; }
 
 	StepWiseScreenerType
-	type() const { return RESIDUE_CONTACT; }
+	type() const override { return RESIDUE_CONTACT; }
 
 private:
 

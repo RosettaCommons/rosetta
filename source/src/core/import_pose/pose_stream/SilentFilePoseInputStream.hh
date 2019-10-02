@@ -75,7 +75,7 @@ public:
 	void
 	set_record_source( bool const & setting );
 
-	~SilentFilePoseInputStream() {}
+	~SilentFilePoseInputStream() override {}
 
 public: // methods specific to SilentFilePoseInputStream class
 	void renumber_decoys( bool const setting );
@@ -90,16 +90,16 @@ public: // methods specific to SilentFilePoseInputStream class
 	void set_order_by_energy( bool const & setting );
 
 public: // class-wide methods
-	virtual bool has_another_pose();
+	bool has_another_pose() override;
 
-	virtual void reset();
+	void reset() override;
 
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set,
 		bool const metapatches = true
-	);
-	virtual void fill_pose( core::pose::Pose&, bool const metapatches = true );
+	) override;
+	void fill_pose( core::pose::Pose&, bool const metapatches = true ) override;
 
 	core::io::silent::SilentStructOP next_struct();
 

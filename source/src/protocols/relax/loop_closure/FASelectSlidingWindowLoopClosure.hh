@@ -74,15 +74,15 @@ public:
 	//@brief just set defaults -- expects fragset, scorefxn and movemap to be set later
 	FASelectSlidingWindowLoopClosure();
 
-	~FASelectSlidingWindowLoopClosure();
-	virtual std::string get_name() const;
+	~FASelectSlidingWindowLoopClosure() override;
+	std::string get_name() const override;
 
 	static void register_options();
 	void set_defaults();
 
 	//@brief run find fragments that close loop  (if ideal loop closing: such that the less_cut pose is close RMSD <0.1 to pose more_cut)
 	// returns less_cut and more_cut with best fragment already applied..
-	virtual void select_final_loop( core::pose::Pose& more_cut, core::pose::Pose& less_cut );
+	void select_final_loop( core::pose::Pose& more_cut, core::pose::Pose& less_cut ) override;
 
 	core::Real fascore( core::pose::Pose& fa_pose ) const;
 

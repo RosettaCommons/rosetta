@@ -48,7 +48,7 @@ class BBMatching : public utility::pointer::ReferenceCount
 public:
 	BBMatching();
 	void read_partners_from_file(std::string const & pdb_name,std::string const & file_name);
-	virtual ~BBMatching();
+	~BBMatching() override;
 	core::Size size(){return size_;}
 	std::string show(){return pdb_names_;}
 	std::map< std::string,  std::vector<std::string>  > pdb_to_next_allowed_partners(){return pdb_to_next_allowed_partners_;};

@@ -44,8 +44,8 @@ class CacheablePoseRawPtr : public basic::datacache::CacheableData
 {
 public:
 	CacheablePoseRawPtr( core::pose::PoseOP pose );
-	virtual ~CacheablePoseRawPtr();
-	virtual basic::datacache::CacheableDataOP clone() const;
+	~CacheablePoseRawPtr() override;
+	basic::datacache::CacheableDataOP clone() const override;
 	virtual core::pose::PoseOP pose();
 
 private:

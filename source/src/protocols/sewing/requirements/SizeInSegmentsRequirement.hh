@@ -35,7 +35,7 @@ public:
 	SizeInSegmentsRequirement(core::Size,core::Size);
 	SizeInSegmentsRequirement(SizeInSegmentsRequirement const & src);
 
-	virtual ~SizeInSegmentsRequirement() override;
+	~SizeInSegmentsRequirement() override;
 
 	SizeInSegmentsRequirementOP
 	clone() const;

@@ -61,7 +61,7 @@ public:
 
 	/// @brief Default destructor for MHCEpitopeEnergySetup.
 	///
-	virtual ~MHCEpitopeEnergySetup();
+	~MHCEpitopeEnergySetup() override;
 
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.

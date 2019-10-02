@@ -32,14 +32,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -48,14 +48,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -64,14 +64,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -80,14 +80,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -96,14 +96,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -112,14 +112,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -128,14 +128,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -144,14 +144,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -160,14 +160,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -176,14 +176,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -191,14 +191,14 @@ class SequenceSimilarityMetricCreator : public core::simple_metrics::SimpleMetri
 public:
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual SimpleMetricOP
+	SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 
 };
@@ -209,14 +209,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -225,14 +225,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -246,14 +246,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -262,14 +262,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -278,14 +278,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -301,14 +301,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -317,14 +317,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -333,14 +333,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -349,14 +349,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -365,14 +365,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
@@ -381,14 +381,14 @@ public:
 
 
 	/// @brief Instantiate a particular SimpleMetric
-	virtual core::simple_metrics::SimpleMetricOP
+	core::simple_metrics::SimpleMetricOP
 	create_simple_metric() const override;
 
 	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
+	std::string
 	keyname() const override;
 
-	virtual void
+	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 

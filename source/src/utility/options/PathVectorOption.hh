@@ -92,7 +92,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~PathVectorOption() {}
+	~PathVectorOption() override {}
 
 
 public: // Methods

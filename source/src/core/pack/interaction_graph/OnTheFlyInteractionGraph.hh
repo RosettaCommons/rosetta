@@ -69,17 +69,17 @@ public:
 		int node_id,
 		int num_states);
 
-	virtual ~OnTheFlyNode();
+	~OnTheFlyNode() override;
 
 	void set_rotamers(
 		rotamer_set::RotamerSetCOP rotamers
 	);
 
-	virtual void zero_one_body_energies();
-	virtual void add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energy1b );
-	virtual void update_one_body_energy( int state, core::PackerEnergy energy);
+	void zero_one_body_energies() override;
+	void add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energy1b ) override;
+	void update_one_body_energy( int state, core::PackerEnergy energy) override;
 	virtual void set_one_body_energy( int state, core::PackerEnergy energy );
-	virtual void add_to_one_body_energy( int state, core::PackerEnergy energy );
+	void add_to_one_body_energy( int state, core::PackerEnergy energy ) override;
 	virtual void zero_one_body_energy( int state );
 
 	int
@@ -132,8 +132,8 @@ public:
 	void
 	distinguish_backbone_and_sidechain( bool setting );
 
-	virtual unsigned int count_static_memory() const = 0;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override = 0;
+	unsigned int count_dynamic_memory() const override;
 
 	core::PackerEnergy
 	compute_rotamer_pair_energy(
@@ -193,7 +193,7 @@ private:
 class OnTheFlyEdge : public FixedBBEdge
 {
 public:
-	virtual ~OnTheFlyEdge();
+	~OnTheFlyEdge() override;
 
 	OnTheFlyEdge(
 		InteractionGraphBase * owner,
@@ -242,8 +242,8 @@ public:
 	}
 
 
-	virtual unsigned int count_static_memory() const = 0;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override = 0;
+	unsigned int count_dynamic_memory() const override;
 
 	bool long_range_interactions_exist() const { return long_range_interactions_exist_; }
 	bool short_range_interactions_exist() const { return short_range_interactions_exist_; }
@@ -307,11 +307,11 @@ public:
 
 public:
 	OnTheFlyInteractionGraph( int num_nodes );
-	~OnTheFlyInteractionGraph();
+	~OnTheFlyInteractionGraph() override;
 
-	virtual void initialize( pack_basic::RotamerSetsBase const & rot_sets );
+	void initialize( pack_basic::RotamerSetsBase const & rot_sets ) override;
 
-	int get_num_aatypes() const
+	int get_num_aatypes() const override
 	{
 		return num_aa_types_;
 	}
@@ -382,9 +382,8 @@ public:
 		core::PackerEnergy one_body_energy
 	);
 
-	virtual
 	core::PackerEnergy
-	get_one_body_energy_for_node_state( int node, int state);
+	get_one_body_energy_for_node_state( int node, int state) override;
 
 	void
 	set_sparse_aa_info_for_edge(
@@ -446,7 +445,7 @@ public:
 		int node2
 	);
 
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_dynamic_memory() const override;
 
 protected:
 

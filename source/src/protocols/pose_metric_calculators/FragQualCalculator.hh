@@ -75,14 +75,14 @@ public:// constructor/destructor
 	FragQualCalculator( FragQualCalculator const & rval );
 
 	/// @brief destructor
-	virtual ~FragQualCalculator();
+	~FragQualCalculator() override;
 
 
 public:// virtual constructor
 
 
 	/// @brief make clone
-	PoseMetricCalculatorOP clone() const { return utility::pointer::make_shared< FragQualCalculator >( *this ); }
+	PoseMetricCalculatorOP clone() const override { return utility::pointer::make_shared< FragQualCalculator >( *this ); }
 
 
 public:// mutator
@@ -120,9 +120,9 @@ public:
 protected:
 
 
-	virtual void lookup( String const & key, MetricValueBase * valptr ) const;
-	virtual std::string print( String const & key ) const;
-	virtual void recompute( Pose const & this_pose );
+	void lookup( String const & key, MetricValueBase * valptr ) const override;
+	std::string print( String const & key ) const override;
+	void recompute( Pose const & this_pose ) override;
 
 
 private:

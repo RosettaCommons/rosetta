@@ -64,7 +64,7 @@ namespace constraints {
 class ResidueConstraints : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ResidueConstraints();
+	~ResidueConstraints() override;
 	typedef std::map< Size, ConstraintsOP > Map;
 	typedef Map::const_iterator const_iterator;
 	typedef Map::iterator iterator;
@@ -171,7 +171,7 @@ public:
 		core::Size start_residue,
 		core::Size end_residue
 	);
-	virtual ~ConstraintSet();
+	~ConstraintSet() override;
 
 	/// @brief Assignment operator -- requires that "same_type_as_me" has already
 	/// been called. This performs a shallow copy of all of the constraints held

@@ -36,15 +36,14 @@ class ConstraintGeneratorLoader : public DataLoader
 {
 public:
 	ConstraintGeneratorLoader();
-	virtual ~ConstraintGeneratorLoader();
+	~ConstraintGeneratorLoader() override;
 
 	/// @brief The ConstraintGeneratorLoader will create named ConstraintGenerators and load them into the basic::datacache::DataMap
-	virtual
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 	static std::string loader_name();
 	static std::string cst_gen_loader_ct_namer( std::string const & element_name );

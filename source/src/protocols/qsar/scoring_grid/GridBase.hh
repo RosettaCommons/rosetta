@@ -31,7 +31,7 @@ class GridBase:  public utility::pointer::ReferenceCount
 {
 public:
 	GridBase() {}
-	virtual ~GridBase() {}
+	~GridBase() override {}
 
 	/// @brief Make a copy of the grid, respecting the subclassing.
 	/// @details Note that due to the heavy use of modification to reset positions

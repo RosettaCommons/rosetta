@@ -54,7 +54,7 @@ public:
 
 	BBDihedralSamplerBase( BBDihedralSamplerBase const & src );
 
-	virtual ~BBDihedralSamplerBase();
+	~BBDihedralSamplerBase() override;
 
 	BBDihedralSamplerBaseOP
 	clone() const;
@@ -106,7 +106,7 @@ public:
 
 	BBDihedralSampler( BBDihedralSampler const & src );
 
-	virtual ~BBDihedralSampler();
+	~BBDihedralSampler() override;
 
 	BBDihedralSamplerOP
 	clone() const;
@@ -120,7 +120,7 @@ public:
 	virtual void
 	set_torsion_to_pose(core::pose::Pose & pose, core::Size resnum) const = 0;
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "BBDihedralSampler";
 	};
 };
@@ -134,7 +134,7 @@ public:
 
 	BBDihedralSampler2D(BBDihedralSampler2D const & src);
 
-	virtual ~BBDihedralSampler2D();
+	~BBDihedralSampler2D() override;
 
 	BBDihedralSampler2DOP
 	clone() const;
@@ -151,7 +151,7 @@ public:
 	set_2D_torsion_to_pose(core::pose::Pose & pose, core::Size resnum,
 		std::pair<core::id::MainchainTorsionType, core::Real > ) const = 0;
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "BBDihedralSampler2D";
 	};
 
@@ -169,7 +169,7 @@ public:
 
 	BBDihedralSampler3D(BBDihedralSampler3D const & src);
 
-	virtual ~BBDihedralSampler3D();
+	~BBDihedralSampler3D() override;
 
 	BBDihedralSampler3DOP
 	clone() const;
@@ -188,7 +188,7 @@ public:
 		std::pair< core::id::MainchainTorsionType, core::Real >,
 		std::pair< core::id::MainchainTorsionType, core::Real > ) const = 0;
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "BBDihedralSampler3D";
 	};
 
@@ -202,7 +202,7 @@ public:
 	BBDihedralSamplerND( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
 	BBDihedralSamplerND(BBDihedralSamplerND const & src);
 
-	virtual ~BBDihedralSamplerND();
+	~BBDihedralSamplerND() override;
 
 	BBDihedralSamplerNDOP
 	clone() const;
@@ -220,7 +220,7 @@ public:
 		core::pose::Pose & pose, core::Size resnum,
 		utility::vector1< std::pair< core::id::MainchainTorsionType, core::Real > >) const = 0;
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "BBDihedralSamplerND";
 	};
 

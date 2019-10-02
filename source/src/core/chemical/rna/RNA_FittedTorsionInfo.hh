@@ -48,7 +48,7 @@ public:
 
 	RNA_FittedTorsionInfo();
 
-	virtual ~RNA_FittedTorsionInfo();
+	~RNA_FittedTorsionInfo() override;
 
 	GaussianParameterSet gaussian_parameter_set_alpha() const & { return gaussian_parameter_set_alpha_; }
 	GaussianParameterSet gaussian_parameter_set_beta() const & { return gaussian_parameter_set_beta_; }

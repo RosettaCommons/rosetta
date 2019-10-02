@@ -48,7 +48,7 @@ class JobSummary : public utility::pointer::ReferenceCount
 public:
 
 	JobSummary();
-	virtual ~JobSummary();
+	~JobSummary() override;
 
 
 #ifdef    SERIALIZATION

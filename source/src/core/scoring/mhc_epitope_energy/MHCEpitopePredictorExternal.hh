@@ -43,13 +43,13 @@ public:
 	/// @brief Initializes with a connection to an sqlite database
 	MHCEpitopePredictorExternal(std::string const &db_filename);
 
-	virtual ~MHCEpitopePredictorExternal() {}
+	~MHCEpitopePredictorExternal() override {}
 
-	virtual bool operator==(MHCEpitopePredictor const & /* other */);
+	bool operator==(MHCEpitopePredictor const & /* other */) override;
 
-	std::string report() const;
+	std::string report() const override;
 
-	virtual core::Real score(std::string const &pep);
+	core::Real score(std::string const &pep) override;
 
 	/// @brief Establishes the connection to the sqlite database and gets the meta information about the predictor
 	void connect(std::string const &db_filename);

@@ -71,7 +71,7 @@ public:
 	);
 
 	//destructor
-	~LoopMover_Perturb_CCD();
+	~LoopMover_Perturb_CCD() override;
 
 
 	void show(std::ostream & output=std::cout) const override;

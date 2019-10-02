@@ -37,28 +37,24 @@ public:
 		bool const apply_residue_alternative_sampler = true );
 
 	//destructor
-	~SampleApplier();
+	~SampleApplier() override;
 
 public:
 
-	virtual
 	bool
-	check_screen(){ return true; }
+	check_screen() override{ return true; }
 
-	virtual
 	void
-	get_update( sampler::StepWiseSamplerOP sampler );
+	get_update( sampler::StepWiseSamplerOP sampler ) override;
 
-	virtual
 	std::string
-	name() const { return "SampleApplier"; }
+	name() const override { return "SampleApplier"; }
 
-	virtual
 	StepWiseScreenerType
-	type() const { return SAMPLE_APPLIER; }
+	type() const override { return SAMPLE_APPLIER; }
 
 	void
-	apply_mover( moves::CompositionMoverOP mover, Size const i, Size const j );
+	apply_mover( moves::CompositionMoverOP mover, Size const i, Size const j ) override;
 
 	core::pose::Pose & pose(){ return pose_; }
 

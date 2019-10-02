@@ -71,7 +71,7 @@ public: //Constructor, destructor, copy, clone:
 
 	/// @brief Default destructor.
 	///
-	virtual ~SymmetryTransform();
+	~SymmetryTransform() override;
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the copy.

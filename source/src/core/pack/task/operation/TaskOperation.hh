@@ -47,7 +47,7 @@ public:
 	typedef pose::Pose Pose;
 
 public:
-	virtual ~TaskOperation();
+	~TaskOperation() override;
 
 	/// @brief Create another task operation of the type matching the most-derived
 	/// version of the class.

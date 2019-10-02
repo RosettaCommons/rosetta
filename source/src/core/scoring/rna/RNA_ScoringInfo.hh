@@ -57,10 +57,10 @@ public:
 
 	RNA_ScoringInfo( RNA_ScoringInfo const & src );
 
-	~RNA_ScoringInfo(){};
+	~RNA_ScoringInfo() override{};
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return utility::pointer::make_shared< RNA_ScoringInfo >( *this );
 	}

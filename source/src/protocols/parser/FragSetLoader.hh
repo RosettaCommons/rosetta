@@ -36,15 +36,14 @@ class FragSetLoader : public DataLoader
 {
 public:
 	FragSetLoader();
-	virtual ~FragSetLoader();
+	~FragSetLoader() override;
 
 	/// @brief The FragSetLoader will create named FragSets and load them into the basic::datacache::DataMap
-	virtual
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 	static std::string loader_name();
 	static std::string frag_set_loader_ct_namer( std::string const & );

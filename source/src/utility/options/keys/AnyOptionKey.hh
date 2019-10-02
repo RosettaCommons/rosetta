@@ -116,9 +116,8 @@ public: // Creation
 
 
 	/// @brief Clone this
-	inline
 	AnyOptionKey *
-	clone() const
+	clone() const override
 	{
 		return new AnyOptionKey( *this );
 	}
@@ -126,8 +125,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~AnyOptionKey() {}
+	~AnyOptionKey() override {}
 
 
 public: // Assignment

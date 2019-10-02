@@ -49,7 +49,7 @@ public:
 
 	GoapRsdType();
 
-	~GoapRsdType();
+	~GoapRsdType() override;
 
 	void setup_rsdtype( chemical::ResidueTypeCOP rsd );
 	void setup_connectivity( chemical::ResidueType const &rsd );
@@ -98,31 +98,26 @@ public:
 	GoapEnergy( EnergyMethodOptions const & options );
 	GoapEnergy( GoapEnergy const & src );
 
-	~GoapEnergy();
+	~GoapEnergy() override;
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const { return utility::pointer::make_shared< GoapEnergy >(*this); }
+	clone() const override { return utility::pointer::make_shared< GoapEnergy >(*this); }
 
-	virtual
 	void
 	setup_for_packing(
 		pose::Pose & ,
 		utility::vector1< bool > const & ,
 		utility::vector1< bool > const &
-	) const;
+	) const override;
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
 	setup_for_derivatives( pose::Pose & ,
-		ScoreFunction const & ) const;
+		ScoreFunction const & ) const override;
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -130,33 +125,27 @@ public:
 		pose::Pose const &, //pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
 
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const { return max_dis(); }
+	atomic_interaction_cutoff() const override { return max_dis(); }
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const {};
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {};
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & ,//rsd,
 		pose::Pose const & ,//pose,
 		ScoreFunction const & ,//sfxn,
 		EnergyMap & //emap
-	) const {} // Just do nothing - no intrares
+	) const override {} // Just do nothing - no intrares
 
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & ,//rsd1,
@@ -168,10 +157,9 @@ public:
 		EnergyMap const & ,//weights,
 		utility::vector1< DerivVectorPair > & ,//r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & //r2_atom_derivs
-	) const;
+	) const override;
 
-	virtual
-	Size version() const { return 1; }
+	Size version() const override { return 1; }
 
 	// Accessors
 	Vector xn( Size const resno, Size const atmno ) const { return xn_[resno][atmno]; }

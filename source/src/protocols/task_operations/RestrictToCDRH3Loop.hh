@@ -43,13 +43,12 @@ public:
 
 	RestrictToCDRH3Loop(RestrictToCDRH3Loop const & src);
 
-	virtual ~RestrictToCDRH3Loop();
+	~RestrictToCDRH3Loop() override;
 
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictToCDRH3Loop"; }
 

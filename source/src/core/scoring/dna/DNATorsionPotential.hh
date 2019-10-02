@@ -47,7 +47,7 @@ class DNATorsionPotential : public utility::pointer::ReferenceCount
 
 public:
 	DNATorsionPotential();
-	~DNATorsionPotential() {}
+	~DNATorsionPotential() override {}
 
 
 	/* Undefinded, comented out to make python bindings complile

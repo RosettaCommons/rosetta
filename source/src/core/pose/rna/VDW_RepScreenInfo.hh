@@ -42,7 +42,7 @@ public:
 
 	VDW_RepScreenInfo( VDW_RepScreenInfo const & src );
 
-	virtual ~VDW_RepScreenInfo();
+	~VDW_RepScreenInfo() override;
 
 public:
 

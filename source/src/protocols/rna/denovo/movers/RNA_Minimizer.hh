@@ -44,16 +44,16 @@ public:
 	RNA_Minimizer( core::import_pose::options::RNA_MinimizerOptionsCOP options = 0 );
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return utility::pointer::make_shared< RNA_Minimizer >(*this);
 	}
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual void show(std::ostream & output=std::cout) const;
+	void show(std::ostream & output=std::cout) const override;
 
 	void set_perform_minimizer_run( bool const setting ){ perform_minimizer_run_ = setting; }
 

@@ -38,7 +38,7 @@ public:
 	ClashRequirement();
 	ClashRequirement(ClashRequirement const & src);
 
-	virtual ~ClashRequirement() override;
+	~ClashRequirement() override;
 
 	ClashRequirementOP
 	clone() const;

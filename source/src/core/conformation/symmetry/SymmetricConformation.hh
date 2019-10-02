@@ -207,8 +207,7 @@ public:
 		Vector const & v
 	) override;
 
-	virtual
-	~SymmetricConformation();
+	~SymmetricConformation() override;
 
 	/// @brief Append a new residue by a jump; clones this append to all copies
 	void

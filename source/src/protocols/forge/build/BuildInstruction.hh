@@ -112,8 +112,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	virtual
-	~BuildInstruction();
+	~BuildInstruction() override;
 
 
 public: // assignment

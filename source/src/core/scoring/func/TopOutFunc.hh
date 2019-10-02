@@ -36,16 +36,16 @@ class TopOutFunc : public Func {
 public:
 	TopOutFunc( Real weight_in, Real x0_in, Real limit_in );
 
-	virtual FuncOP clone() const;
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	FuncOP clone() const override;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	virtual Real func( Real const x ) const;
-	virtual Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	virtual void read_data( std::istream & in );
+	void read_data( std::istream & in ) override;
 
-	virtual void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
 	Real x0() const { return x0_; }
 	Real limit() const { return limit_; }
@@ -56,7 +56,7 @@ public:
 	void weight( Real weight ) { weight_ = weight; }
 
 	Size
-	show_violations( std::ostream& out, Real x, Size verbose_level, core::Real threshold = 1 ) const;
+	show_violations( std::ostream& out, Real x, Size verbose_level, core::Real threshold = 1 ) const override;
 
 private:
 	Real x0_;

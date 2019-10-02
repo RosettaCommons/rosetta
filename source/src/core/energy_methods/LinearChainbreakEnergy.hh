@@ -78,33 +78,33 @@ public:
 	LinearChainbreakEnergy& operator=(const LinearChainbreakEnergy&);
 
 	// @brief Releases resources associated with an instance.
-	~LinearChainbreakEnergy();
+	~LinearChainbreakEnergy() override;
 
 	/// clone
-	virtual EnergyMethodOP clone() const {
+	EnergyMethodOP clone() const override {
 		return utility::pointer::make_shared< LinearChainbreakEnergy >(*this);
 	}
 
 	/// called at the end of energy evaluation
-	virtual void finalize_total_energy(
+	void finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
-		EnergyMap & totals) const;
+		EnergyMap & totals) const override;
 
 	/// called during gradient-based minimization inside dfunc
 	/**
 	F1 and F2 are not zeroed -- contributions from this atom are
 	just summed in
 	**/
-	virtual void eval_atom_derivative(id::AtomID const & id,
+	void eval_atom_derivative(id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		Vector & F1,
-		Vector & F2) const;
+		Vector & F2) const override;
 
-	virtual void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 private:
 	core::Real do_score_dev(const core::conformation::Residue& lower_rsd,
@@ -139,8 +139,7 @@ private:
 	// new FoldTree's hash value.
 	mutable std::size_t previous_hash_value_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 } // methods

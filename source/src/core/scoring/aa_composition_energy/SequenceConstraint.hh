@@ -53,7 +53,7 @@ public: //Constructor, destructor, copy, clone:
 	SequenceConstraint( SequenceConstraint const &src );
 
 	/// @brief Destructor
-	~SequenceConstraint();
+	~SequenceConstraint() override;
 
 
 public: //Functions that all Constraints must implement, but which aren't really applicable for a seqeunce constraint:
@@ -63,23 +63,22 @@ public: //Functions that all Constraints must implement, but which aren't really
 	using Constraint::dist;
 
 	/// @brief Implemented because the base class requires it; not used by a sequence constraint.
-	virtual void score( core::scoring::func::XYZ_Func const &, EnergyMap const &, EnergyMap & ) const { return; }
+	void score( core::scoring::func::XYZ_Func const &, EnergyMap const &, EnergyMap & ) const override { return; }
 
 	/// @brief Implemented because the base class requires it; not used by a sequence constraint.
-	virtual
 	core::Real
-	dist( core::scoring::func::XYZ_Func const & ) const { return 0; };
+	dist( core::scoring::func::XYZ_Func const & ) const override { return 0; };
 
 	/// @brief Implemented because the base class requires it; not used by a sequence constraint.
-	virtual void fill_f1_f2( core::id::AtomID const &, core::scoring::func::XYZ_Func const &, Vector &, Vector &, EnergyMap const & ) const { return; }
+	void fill_f1_f2( core::id::AtomID const &, core::scoring::func::XYZ_Func const &, Vector &, Vector &, EnergyMap const & ) const override { return; }
 
 	/// @brief Implemented because the base class requires it; not used by a sequence constraint.
 	/// @details Always returns zero.
-	virtual core::Size natoms() const { return 0; }
+	core::Size natoms() const override { return 0; }
 
 	/// @brief Implemented because the base class requires it; not used by a sequence constraint.
 	/// @details Always returns AtomID(0,0).
-	virtual core::id::AtomID const &atom( core::Size const ) const { return dummy_atomid_; }
+	core::id::AtomID const &atom( core::Size const ) const override { return dummy_atomid_; }
 
 
 private:

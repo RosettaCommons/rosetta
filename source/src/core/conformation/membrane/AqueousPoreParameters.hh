@@ -78,7 +78,7 @@ public:
 	);
 
 	AqueousPoreParameters(AqueousPoreParameters const & src);
-	virtual ~AqueousPoreParameters();
+	~AqueousPoreParameters() override;
 
 	AqueousPoreParametersOP
 	clone() const;

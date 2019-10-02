@@ -30,7 +30,7 @@ ScoreNormalizationOP get_score_normalization_function(std::string const & norm_t
 class ScoreNormalization : public utility::pointer::ReferenceCount {
 public:
 	ScoreNormalization() {};
-	virtual ~ScoreNormalization() {};
+	~ScoreNormalization() override {};
 	virtual std::string get_name() const = 0;
 	virtual core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const = 0;
 	virtual core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue) const = 0;
@@ -41,15 +41,15 @@ private:
 class HeavyAtomNormalization : public ScoreNormalization {
 public:
 	HeavyAtomNormalization() {};
-	virtual ~HeavyAtomNormalization() {};
+	~HeavyAtomNormalization() override {};
 
-	virtual std::string get_name() const override
+	std::string get_name() const override
 	{
 		return "HeavyAtomNormalization";
 	}
 
-	virtual core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const override;
-	virtual core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue) const override;
+	core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const override;
+	core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue) const override;
 private:
 	HeavyAtomNormalization(HeavyAtomNormalization const & src) = delete;
 };
@@ -57,15 +57,15 @@ private:
 class AllAtomNormalization : public ScoreNormalization {
 public:
 	AllAtomNormalization() {};
-	virtual ~AllAtomNormalization() {};
+	~AllAtomNormalization() override {};
 
-	virtual std::string get_name() const override
+	std::string get_name() const override
 	{
 		return "AllAtomNormalization";
 	}
 
-	virtual core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const override;
-	virtual core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue) const override;
+	core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const override;
+	core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue) const override;
 private:
 	AllAtomNormalization(AllAtomNormalization const & src) = delete;
 };
@@ -73,15 +73,15 @@ private:
 class ChiAngleNormalization : public ScoreNormalization {
 public:
 	ChiAngleNormalization() {};
-	virtual ~ChiAngleNormalization() {};
+	~ChiAngleNormalization() override {};
 
-	virtual std::string get_name() const override
+	std::string get_name() const override
 	{
 		return "ChiAngleNormalization";
 	}
 
-	virtual core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const override;
-	virtual core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue) const override;
+	core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const override;
+	core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue) const override;
 private:
 	ChiAngleNormalization(ChiAngleNormalization const & src) = delete;
 };
@@ -89,15 +89,15 @@ private:
 class MolecularWeightNormalization : public ScoreNormalization {
 public:
 	MolecularWeightNormalization() {};
-	virtual ~MolecularWeightNormalization() {};
+	~MolecularWeightNormalization() override {};
 
-	virtual std::string get_name() const override
+	std::string get_name() const override
 	{
 		return "MolecularWeightNormalization";
 	}
 
-	virtual core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const override;
-	virtual core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue) const override;
+	core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const override;
+	core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue) const override;
 private:
 	MolecularWeightNormalization(MolecularWeightNormalization const & src) = delete;
 };

@@ -40,7 +40,7 @@ public:
 	RNA_DeNovoSetup();
 
 	//destructor
-	~RNA_DeNovoSetup();
+	~RNA_DeNovoSetup() override;
 
 public:
 

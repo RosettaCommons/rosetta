@@ -47,21 +47,21 @@ public:
 		Size const chain_break_reference_res );
 
 	//destructor
-	~RNA_ChainClosableGeometryStubBasedScreener();
+	~RNA_ChainClosableGeometryStubBasedScreener() override;
 
 public:
 
 	void
-	get_update( sampler::StepWiseSamplerOP sampler );
+	get_update( sampler::StepWiseSamplerOP sampler ) override;
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	std::string
-	name() const { return "RNA_ChainClosableGeometryStubBasedScreener"; }
+	name() const override { return "RNA_ChainClosableGeometryStubBasedScreener"; }
 
 	StepWiseScreenerType
-	type() const { return RNA_CHAIN_CLOSABLE_GEOMETRY_STUB_BASED; }
+	type() const override { return RNA_CHAIN_CLOSABLE_GEOMETRY_STUB_BASED; }
 
 private:
 

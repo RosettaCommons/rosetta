@@ -43,16 +43,16 @@ public:
 		Real const x0_radians, Real const sd_radians, Real const offset
 	): x0_( x0_radians ), sd_( sd_radians ), offset_( offset ) {}
 
-	FuncOP clone() const { return utility::pointer::make_shared< CircularHarmonicFunc >( *this ); }
+	FuncOP clone() const override { return utility::pointer::make_shared< CircularHarmonicFunc >( *this ); }
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	Real func( Real const x ) const;
-	Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	virtual void read_data( std::istream & in );
-	virtual void show_definition( std::ostream & out ) const;
+	void read_data( std::istream & in ) override;
+	void show_definition( std::ostream & out ) const override;
 
 	Real x0() const {
 		return x0_;

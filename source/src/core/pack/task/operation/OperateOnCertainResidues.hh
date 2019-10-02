@@ -55,10 +55,10 @@ public:
 	OperateOnCertainResidues( ResLvlTaskOperationOP, ResFilterOP );
 	OperateOnCertainResidues( OperateOnCertainResidues const & );
 	OperateOnCertainResidues & operator = ( OperateOnCertainResidues const & );
-	virtual ~OperateOnCertainResidues();
+	~OperateOnCertainResidues() override;
 
-	virtual TaskOperationOP clone() const;
-	virtual void apply( Pose const &, PackerTask & ) const;
+	TaskOperationOP clone() const override;
+	void apply( Pose const &, PackerTask & ) const override;
 
 	/// @brief supports direct limitation of residues to be affected, without the need for a filter
 	void residue_indices( ResidueIndices const & );
@@ -72,7 +72,7 @@ public:
 	void filter( ResFilterCOP );
 
 	/// @brief Used to parse an xml-like tag to construct the ResLvlTaskOperation and the ResFilter
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

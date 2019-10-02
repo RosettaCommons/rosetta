@@ -50,7 +50,7 @@ public:
 	DisulfidizeMover( DisulfidizeMover const & src );
 
 	/// @brief virtual constructor to allow derivation
-	virtual ~DisulfidizeMover();
+	~DisulfidizeMover() override;
 
 	/// @brief Parses the DisulfidizerMoverTags
 	void parse_my_tag(
@@ -63,7 +63,7 @@ public:
 	/// @brief Return the name of this mover.
 
 	/// @brief return a fresh instance of this class in an owning pointer
-	virtual protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP clone() const override;
 
 	// public methods
 public:

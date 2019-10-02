@@ -62,7 +62,7 @@ typedef std::pair< std::string, core::Size> LocalPosition;
 class DofClaim : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~DofClaim();
+	~DofClaim() override;
 	typedef core::Size Size;
 
 	enum ClaimRight {

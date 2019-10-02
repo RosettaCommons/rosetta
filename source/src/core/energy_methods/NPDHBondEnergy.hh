@@ -65,7 +65,7 @@ public:
 	NPDHBondEnergy( HBondOptions const & opts );
 	NPDHBondEnergy( NPDHBondEnergy const & src );
 
-	virtual ~NPDHBondEnergy();
+	~NPDHBondEnergy() override;
 
 	/// clone
 	methods::EnergyMethodOP

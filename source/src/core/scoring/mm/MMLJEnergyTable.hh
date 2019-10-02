@@ -41,7 +41,7 @@ class MMLJEnergyTable : public utility::pointer::ReferenceCount
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~MMLJEnergyTable();
+	~MMLJEnergyTable() override;
 
 	/// @briefs typedefs
 	typedef utility::vector1< Real > EnergyVector;

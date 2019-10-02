@@ -70,14 +70,13 @@ public:
 		bool const reduced_resolution_library=false
 	);
 
-	virtual ~RotamericSingleResidueDunbrackLibrary() throw();
+	~RotamericSingleResidueDunbrackLibrary() throw() override;
 
 	friend class SingleResidueDunbrackLibrary;
 
 public:
 	/// Virtual functions required by the base classes
 
-	virtual
 	Real
 	rotamer_energy(
 		conformation::Residue const & rsd,
@@ -85,7 +84,6 @@ public:
 		RotamerLibraryScratchSpace & scratch
 	) const override;
 
-	virtual
 	Real
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
@@ -97,7 +95,6 @@ public:
 	/// (based on e.g. its current phi and psi values).
 	/// If curr_rotamer_only is true, then consider only the idealized version of the
 	/// residue's current rotamer (local optimum); otherwise, consider all rotamers (global optimum).
-	virtual
 	Real
 	best_rotamer_energy(
 		conformation::Residue const & rsd,
@@ -106,7 +103,6 @@ public:
 		RotamerLibraryScratchSpace & scratch
 	) const override;
 
-	virtual
 	void
 	assign_random_rotamer_with_bias(
 		conformation::Residue const & rsd,
@@ -117,7 +113,6 @@ public:
 		bool perturb_from_rotamer_center
 	) const override;
 
-	virtual
 	void
 	fill_rotamer_vector(
 		pose::Pose const & pose,
@@ -137,7 +132,6 @@ public:
 	/// The returned samples should be in semi-decrasing order by probability; semi, because the
 	/// rotamers are constructed in sorted order by their probability in the lower torsion bin that
 	/// the input backbone torsions prescribe.
-	virtual
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
 		Real5 bbs
@@ -157,7 +151,6 @@ public:
 		Size rot_ind
 	) const;
 
-	virtual
 	Real
 	get_probability_for_rotamer(
 		Real phi,
@@ -165,7 +158,6 @@ public:
 		Size rot_ind
 	) const override;
 
-	virtual
 	DunbrackRotamerSampleData
 	get_rotamer(
 		Real phi,
@@ -173,29 +165,23 @@ public:
 		Size rot_ind
 	) const override;
 
-	virtual
 	Size nchi() const override;
 
-	virtual
 	Size nbb() const override;
 
-	virtual
 	Size n_rotamer_bins() const override;
 
-	virtual
 	void
 	write_to_file( utility::io::ozstream &out ) const override;
 
-	virtual void write_to_binary( utility::io::ozstream & out ) const override;
-	virtual void read_from_binary( utility::io::izstream & in ) override;
+	void write_to_binary( utility::io::ozstream & out ) const override;
+	void read_from_binary( utility::io::izstream & in ) override;
 
 	/// @brief Comparison operator, mainly intended to use in ASCII/binary comparsion tests
 	/// Values tested should parallel those used in the read_from_binary() function.
-	virtual
 	bool
 	operator ==( SingleResidueRotamerLibrary const & ) const override;
 
-	virtual
 	void
 	get_rotamer_from_chi(
 		ChiVector const & chi,
@@ -301,8 +287,8 @@ protected:
 protected:
 	/// Worker functions
 
-	virtual Size memory_usage_static() const override;
-	virtual Size memory_usage_dynamic() const override;
+	Size memory_usage_static() const override;
+	Size memory_usage_dynamic() const override;
 
 	/// @brief  Evaluates the score and chi-deviation penalty for the rotameric
 	/// chi (in this class, that means all the chi) and stores the answers in

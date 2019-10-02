@@ -56,7 +56,7 @@ public:
 
 	InvrotTree();
 
-	virtual ~InvrotTree();
+	~InvrotTree() override;
 
 	core::scoring::constraints::ConstraintCOP
 	get_constraint_for_target_state( Size target_state ) const;
@@ -138,7 +138,7 @@ public:
 
 	TheozymeInvrotTree( EnzConstraintIOCOP enzcst_io ); //initialize from enz constraint object, all the inverse rotamers are built
 
-	~TheozymeInvrotTree();
+	~TheozymeInvrotTree() override;
 
 public:
 
@@ -149,13 +149,12 @@ public:
 	/// if in the future somebody wants to use this to build inverse rotamers
 	/// against a protein, this function can be reimplemented.
 	/// called from the constructor, is this really the best idea?
-	virtual
 	void
-	generate_targets_and_inverse_rotamers();
+	generate_targets_and_inverse_rotamers() override;
 
 	bool
 	check_pose_tree_compatibility(
-		core::pose::Pose & pose ) const;
+		core::pose::Pose & pose ) const override;
 
 private:
 

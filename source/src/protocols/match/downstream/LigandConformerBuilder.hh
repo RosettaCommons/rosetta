@@ -62,13 +62,11 @@ public:
 	// for collision checking
 	//LigandConformerBuilder( LigandConformerBuilder const & , core::chemical::ResidueTypeCOP upstream_restype );
 
-	virtual ~LigandConformerBuilder();
+	~LigandConformerBuilder() override;
 
-	virtual
 	DownstreamBuilderOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	std::list< Hit >
 	build(
 		HTReal const & atom3_frame,
@@ -76,7 +74,7 @@ public:
 		Size const upstream_conf_id,
 		Size const external_geometry_id,
 		core::conformation::Residue const & upstream_residue
-	) const;
+	) const override;
 
 
 	/// @brief goes through the list of conformers and does rms calculations (overlaid
@@ -93,90 +91,76 @@ public:
 		utility::vector1< core::Size > const & relevant_atom_indices
 	) const;
 
-	virtual
 	void
 	set_bb_grid(
 		BumpGridCOP bbgrid
-	);
+	) override;
 
-	virtual bool
-	hits_potentially_incompatible() const;
+	bool
+	hits_potentially_incompatible() const override;
 
-	virtual bool compatible(
+	bool compatible(
 		Hit const & my_hit,
 		DownstreamBuilder const & other,
 		Hit const & other_hit,
 		bool first_dispatch = true
-	) const;
+	) const override;
 
-	virtual bool compatible(
+	bool compatible(
 		Hit const & my_hit,
 		LigandConformerBuilder const & other,
 		Hit const & other_hit,
 		bool first_dispatch = true
-	) const;
+	) const override;
 
-	virtual
 	void
 	require_atom_to_reside_in_active_site(
 		core::id::AtomID const & id
-	);
+	) override;
 
-	virtual
 	ProbeRadius
-	atom1_radius() const;
+	atom1_radius() const override;
 
-	virtual
 	ProbeRadius
-	atom2_radius() const;
+	atom2_radius() const override;
 
-	virtual
 	ProbeRadius
-	atom3_radius() const;
+	atom3_radius() const override;
 
-	virtual
 	bool
-	atom1_belongs_in_active_site() const;
+	atom1_belongs_in_active_site() const override;
 
-	virtual
 	bool
-	atom2_belongs_in_active_site() const;
+	atom2_belongs_in_active_site() const override;
 
-	virtual
 	bool
-	atom3_belongs_in_active_site() const;
+	atom3_belongs_in_active_site() const override;
 
 
-	virtual
 	Real
-	atom1_atom2_distance() const;
+	atom1_atom2_distance() const override;
 
-	virtual
 	Real
-	atom2_atom3_distance() const;
+	atom2_atom3_distance() const override;
 
 	/// @brief Returns an angle in degrees between the three downstream atoms.
-	virtual
 	Real
-	atom1_atom2_atom3_angle() const;
+	atom1_atom2_atom3_angle() const override;
 
-	virtual
 	void
 	coordinates_from_hit(
 		Hit const & hit,
 		utility::vector1< AtomID > const & atom_indices,
 		utility::vector1< Vector > & atom_coords
-	) const;
+	) const override;
 
-	virtual
 	core::pose::PoseCOP
 	downstream_pose_from_hit(
 		Hit const & hit
-	) const;
+	) const override;
 
-	virtual
 	Size
-	n_possible_hits_per_at3frame() const;
+	n_possible_hits_per_at3frame() const override;
 
 public:
 	// Initialization
@@ -213,17 +197,15 @@ public:
 
 	void set_rmsd_unique_cutoff( core::Real setting );
 
-	virtual
 	toolbox::match_enzdes_util::LigandConformerOP
-	get_lig_conformers(core::Size conf_id) const;
+	get_lig_conformers(core::Size conf_id) const override;
 
 	//  virtual
 	//  utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > >
 	//  get_min_sep_d2_from_upstream_atoms() const;
 
-	virtual
 	core::chemical::ResidueTypeCOP
-	get_upstream_restype() const;
+	get_upstream_restype() const override;
 
 	/*Real6
 	global_orientation_from_frame3(

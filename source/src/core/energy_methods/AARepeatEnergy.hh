@@ -62,31 +62,31 @@ public:
 
 	/// @brief Default destructor.
 	///
-	virtual ~AARepeatEnergy();
+	~AARepeatEnergy() override;
 
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.
-	virtual methods::EnergyMethodOP clone() const;
+	methods::EnergyMethodOP clone() const override;
 
 	/// @brief AARepeatEnergy is context-independent and thus indicates that no context graphs need to be maintained by
 	/// class Energies.
-	virtual void indicate_required_context_graphs( utility::vector1< bool > &context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > &context_graphs_required ) const override;
 
 	/// @brief AARepeatEnergy is version 1.0 right now.
 	///
-	virtual core::Size version() const;
+	core::Size version() const override;
 
 	/// @brief Actually calculate the total energy
 	/// @details Called by the scoring machinery.
-	virtual void finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
+	void finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const override;
 
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues.
 	/// @details Called by finalize_total_energy().
-	virtual core::Real calculate_energy(
+	core::Real calculate_energy(
 		utility::vector1< core::conformation::ResidueCOP > const & resvect,
 		utility::vector1< core::Size > const & rotamer_ids,
 		core::Size const substitution_position = 0
-	) const;
+	) const override;
 
 private:
 

@@ -35,13 +35,13 @@ public:
 	/// @brief Constructor
 	VectorPoseFilter();
 
-	virtual ~VectorPoseFilter();
+	~VectorPoseFilter() override;
 
 	VectorPoseFilter( std::string const& name );
 
 	VectorPoseFilter( VectorPoseFilter const & other );
 
-	virtual bool apply ( core::pose::Pose const & pose ) const = 0;
+	bool apply ( core::pose::Pose const & pose ) const override = 0;
 
 	/// @brief Apply function to run under MPI
 	virtual bool apply_mpi ( core::pose::Pose const & pose ) const = 0;

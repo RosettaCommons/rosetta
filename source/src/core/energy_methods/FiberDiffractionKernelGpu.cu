@@ -165,7 +165,6 @@ void calculate_intensity_kernel(
 	unsigned int atom1 = blockDim.x * blockIdx.x + threadIdx.x;
 	unsigned int atom2 = blockDim.y * blockIdx.y + threadIdx.y;
 	unsigned int R = blockDim.z * blockIdx.z + threadIdx.z;
-	
 	if (atom1 < natoms && atom2 <= atom1 && R < legal_R_values) {
 		//float d_phase(0);
 		float Rinv(d_layer_lines_R[R]);
@@ -244,7 +243,6 @@ void calculate_derivatives_kernel(int l, int n, int abs_n,
 			float jn1( d_bessel[natoms*R+atom1] );
 			float jn1_plus_1( d_bessel_plus_1[natoms*R+atom1] );
 			float jn2( d_bessel[natoms*R+atom2] );
-		
 			float d_phase( d_phases[natoms*atom2+atom1] );
 			float d_phase_prime( d_phases_prime[natoms*atom2+atom1] );
                 	//__syncthreads();
@@ -256,11 +254,9 @@ void calculate_derivatives_kernel(int l, int n, int abs_n,
 			float3 unit_r = { cosf(d_phi[atom1]), sinf(d_phi[atom1]), 0.0f };
 			float3 unit_x = { 1.0f, 0.0f, 0.0f };
 			float3 unit_z = { 0.0f, 0.0f, 1.0f };
-			
 			//Temporary kernel definition
 			float3 D_ker= { 0.0f, 0.0f, 0.0f };
 			float3 D_cross_R_ker = { 0.0f, 0.0f, 0.0f };
-			
 			if (atom1==atom2) {
 				float tmp( 2*d_form_factors[max_R_values*(atom_type_index1-1)+start_R_index+R]\
 						*d_form_factors[max_R_values*(atom_type_index1-1)+start_R_index+R]\
@@ -269,7 +265,6 @@ void calculate_derivatives_kernel(int l, int n, int abs_n,
 				D_cross_R_ker = cross(D_ker,cartesian_coord_atom1);
 				//__syncthreads();
 			}
-			
 			if (atom1!=atom2) {
 				int atom_type_index2 ( d_atom_type_number[atom2] );
 				float fact( d_form_factors[max_R_values*(atom_type_index1-1)+start_R_index+R]\
@@ -418,11 +413,9 @@ void  calculate_intensity_gpu(
 {
 	//Cuda error retruned by checkCuda function
 	cudaError_t error;
-	
 	checkCuda ( cudaSetDevice( gpu_processor_ ) );
 	//TODO: observe!
 	//checkCuda ( cudaDeviceReset() );
-	
 	//GPU device variables 
 	Real * d_phi;
 	Real * d_z;
@@ -459,7 +452,6 @@ void  calculate_intensity_gpu(
         
         
 	for ( Size l=0; l <= l_max; ++l ) {
-		
 		Size max_b_order( nvals[l].size() );
 		Size max_R_values( layer_lines_R[l].size());
                 
@@ -473,7 +465,6 @@ void  calculate_intensity_gpu(
 		h_I_R =  (float * ) malloc( max_R_values * sizeof( float ));
 		h_layer_lines_R_l =  ( float * ) malloc(max_R_values *  sizeof( float ));
 		h_form_factors_l =  ( float * ) malloc(5 * max_R_values *  sizeof( float ));	
-		
 		Size t_count(0);		
 		for ( Size atom=0; atom<5; ++atom ) {
 			t_count = 0;
@@ -487,7 +478,6 @@ void  calculate_intensity_gpu(
 			h_layer_lines_R_l[t_count]=layer_lines_R[l][R+1];
 			t_count++;
 		}
-		
 		//GPU device variables. It's bit faster when using float instead of Real	
 		float * d_I_l;
 		float * d_I_R;
@@ -495,22 +485,18 @@ void  calculate_intensity_gpu(
 		float * d_form_factors_l;
 		float * d_bessels;
 		float * d_phases;
-	
 		checkCuda ( cudaMalloc((void **)&d_layer_lines_R_l, sizeof( float ) * max_R_values) );
 		checkCuda ( cudaMalloc((void **)&d_form_factors_l, sizeof( float ) * 5 * max_R_values) );
 		checkCuda ( cudaMemcpy(d_layer_lines_R_l, h_layer_lines_R_l, sizeof( float ) * max_R_values, cudaMemcpyHostToDevice) );
 		checkCuda ( cudaMemcpy(d_form_factors_l, h_form_factors_l, sizeof( float ) * 5 * max_R_values, cudaMemcpyHostToDevice) );	
-		
 		checkCuda ( cudaMalloc((void **)&d_bessels, sizeof( float ) * natoms * max_R_values) );
 		checkCuda ( cudaMalloc((void **)&d_phases, sizeof( float ) * natoms * natoms) );
-		
 		//Output intensity
 		checkCuda ( cudaMalloc((void **)&d_I_l, sizeof( float ) * max_R_values * natoms * natoms ) );
 		checkCuda ( cudaMemset(d_I_l, 0.0, max_R_values * natoms * natoms * sizeof( float )));    
 		checkCuda ( cudaMalloc((void **)&d_I_R, sizeof( float ) * max_R_values) );
 		checkCuda ( cudaMemset(d_I_R, 0.0, max_R_values * sizeof( float )));
 		//cudaDeviceSynchronize();
-		
                
 		for ( Size b_order=1; b_order <= max_b_order; ++b_order ) {
 
@@ -544,7 +530,6 @@ void  calculate_intensity_gpu(
 			calculate_bessels_kernel<<<numBlocksBessel, threadsPerBlockBessel>>>(l, n, abs_n, natoms,
                                                                        	max_R_values, d_layer_lines_R_l,
                                                                         d_r, d_bessels);
-			
 			error = cudaGetLastError();
 			if ( error != 0 ) {
 				TR.Error<<"Problem running bessel kernel! "<<cudaGetErrorString(error)<<std::endl; 
@@ -622,7 +607,6 @@ void  calculate_intensity_gpu(
 		free(h_layer_lines_R_l);
 		free(h_form_factors_l);
 	} //end l
-	
 	TR << " Phase, bessel,  main, reduction times " <<totalElapsedTime_phase \
                 <<", "<<totalElapsedTime_bessel<<", "<< totalElapsedTime_main \
                 <<", "<< totalElapsedTime_reduct<< " ms.\n";
@@ -690,7 +674,6 @@ void  calculate_derivatives_gpu(
 	for ( Size l=0; l <= l_max; ++l ) {
 		Size max_b_order( nvals[l].size() );
 		Size max_R_values( layer_lines_R[l].size());
-		
 		//d_dchi and d_dchi_cross_R for each l
 		float3 * h_dchi_l;
 		float3 * h_dchi_cross_R_l;
@@ -725,7 +708,6 @@ void  calculate_derivatives_gpu(
 			h_I_l[t_count] = I[l][R+1];
 			t_count++;
 		}
-		
 		//GPU device variables. It's bit faster when using float instead of Real        
 		float3 * d_dchi_l;
 		float3 * d_dchi_cross_R_l;
@@ -754,7 +736,6 @@ void  calculate_derivatives_gpu(
 		checkCuda ( cudaMemset(d_dchi_cross_R_l, 0.0, natoms * sizeof( float3 )));
 
 		cudaDeviceSynchronize();
-	
 		size_t gpu_mem_tot = 0;
 		size_t gpu_mem_free = 0;
 		cudaMemGetInfo(&gpu_mem_free, &gpu_mem_tot) ;
@@ -777,7 +758,6 @@ void  calculate_derivatives_gpu(
 			float * d_bessels_plus_1;	
 			float3 * d_D_l;
 			float3 * d_D_cross_R_l;
-			
 			checkCuda ( cudaMalloc((void **)&d_bessels, sizeof( float ) * natoms * legal_R_values) );
 			checkCuda ( cudaMalloc((void **)&d_bessels_plus_1, sizeof( float ) * natoms * legal_R_values) );
 			checkCuda ( cudaMalloc((void **)&d_D_l, sizeof( float3 ) * legal_R_values * natoms * natoms ) );
@@ -875,7 +855,6 @@ void  calculate_derivatives_gpu(
 			dchi2_d[atom1+1] += dummy_dchi;
 			dchi2_d_cross_R[atom1+1] += dummy_dchi_cross_R; 
 		}
-	
 		cudaFree( d_layer_lines_R_l );
 		cudaFree( d_layer_lines_I_l );
 		cudaFree( d_form_factors_l );

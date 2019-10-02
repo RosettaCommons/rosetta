@@ -977,7 +977,7 @@ public:
 
 public:
 	XMLSchemaRepeatableCTNode();
-	virtual ~XMLSchemaRepeatableCTNode();
+	~XMLSchemaRepeatableCTNode() override;
 
 	/// self pointers
 	inline XMLSchemaRepeatableCTNodeCOP get_self_ptr() const      { return shared_from_this(); }

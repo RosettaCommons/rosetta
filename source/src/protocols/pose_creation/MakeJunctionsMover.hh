@@ -60,7 +60,7 @@ public:
 			}
 		}
 	};
-	virtual std::string get_name() const override;
+	std::string get_name() const override;
 	static std::string mover_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	moves::MoverOP clone() const override;

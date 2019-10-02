@@ -44,19 +44,19 @@ public:
 	{}
 
 	/// @brief returns a clone of this ConstantFunc
-	FuncOP clone() const { return utility::pointer::make_shared< ConstantFunc >( *this ); }
+	FuncOP clone() const override { return utility::pointer::make_shared< ConstantFunc >( *this ); }
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
 	/// @brief Returns the value of this ConstantFunc evaluated at distance x.
-	Real func( Real const ) const;
+	Real func( Real const ) const override;
 
 	/// @brief Returns the value of the first derivative of this ConstantFunc at distance x.
-	Real dfunc( Real const ) const;
+	Real dfunc( Real const ) const override;
 
 	/// @brief show the definition of this ConstantFunc to the specified output stream.
-	virtual void show_definition( std::ostream & out ) const;
+	void show_definition( std::ostream & out ) const override;
 
 	/// @brief Calls show( out ) on this ConstantFunc.
 	friend std::ostream & operator<<(std::ostream & out, const ConstantFunc & f ) {
@@ -64,7 +64,7 @@ public:
 		return out;
 	} // operator<<
 
-	void read_data( std::istream & in );
+	void read_data( std::istream & in ) override;
 
 private:
 

@@ -41,25 +41,22 @@ public:
 		core::Size const nstruct );
 
 	//destructor
-	~RNA_MonteCarloJobDistributor();
+	~RNA_MonteCarloJobDistributor() override;
 
 public:
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "RNA_MonteCarloJobDistributor";
 	}
 
-	virtual
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
-	virtual
 	void
-	initialize( core::pose::Pose const & pose );
+	initialize( core::pose::Pose const & pose ) override;
 
-	virtual
 	bool
-	has_another_job();
+	has_another_job() override;
 
 private:
 

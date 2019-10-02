@@ -41,16 +41,16 @@ public:
 	NonlocalFrags();
 
 	/// @brief Finds interacting non-local fragment pairs
-	void apply(core::pose::Pose& pose);
+	void apply(core::pose::Pose& pose) override;
 
 	/// @brief Returns the name of this mover.
-	std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Creates a copy of this instance
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Creates a new instance by calling the no-argument constructor
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Registers applicable options
 	static void register_options();

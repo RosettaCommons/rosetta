@@ -44,12 +44,11 @@ public:
 	RNA_FullAtomVDW_BasePhosphate( methods::EnergyMethodOptions const & options );
 
 	/// @brief dtor
-	virtual ~RNA_FullAtomVDW_BasePhosphate();
+	~RNA_FullAtomVDW_BasePhosphate() override;
 
 	/// clone
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
@@ -77,16 +76,14 @@ public:
 	) const;
 
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -96,16 +93,14 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 private:
 
 	/// @brief RNA_FullAtomVDW_BasePhosphate( is context independent; indicates that no context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 private:
 

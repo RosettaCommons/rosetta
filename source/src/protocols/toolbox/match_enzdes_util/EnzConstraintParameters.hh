@@ -76,7 +76,7 @@ public:
 
 	CovalentConnectionReplaceInfo( CovalentConnectionReplaceInfo const & other );
 
-	virtual ~CovalentConnectionReplaceInfo();
+	~CovalentConnectionReplaceInfo() override;
 
 	void
 	remove_covalent_connection_from_pose( core::pose::Pose & pose ) const;
@@ -125,7 +125,7 @@ public:
 
 	EnzConstraintParameters( EnzConstraintParameters const & other );
 
-	virtual ~EnzConstraintParameters();
+	~EnzConstraintParameters() override;
 
 	/// self pointers
 	inline EnzConstraintParametersCOP get_self_ptr() const { return shared_from_this(); }

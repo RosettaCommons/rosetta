@@ -36,17 +36,17 @@ public:
 	SigmoidFunc( Real const x0_in, Real const slope_in ): x0_( x0_in ), slope_( slope_in ){}
 
 	FuncOP
-	clone() const { return utility::pointer::make_shared< SigmoidFunc >( *this ); }
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	clone() const override { return utility::pointer::make_shared< SigmoidFunc >( *this ); }
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	Real func( Real const x ) const;
-	Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	void read_data( std::istream & in );
+	void read_data( std::istream & in ) override;
 
-	Size show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold) const;
-	void show_definition( std::ostream &out ) const;
+	Size show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold) const override;
+	void show_definition( std::ostream &out ) const override;
 
 	Real x0() const {
 		return x0_;

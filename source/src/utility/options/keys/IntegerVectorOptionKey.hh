@@ -114,9 +114,8 @@ public: // Creation
 
 
 	/// @brief Clone this
-	inline
 	IntegerVectorOptionKey *
-	clone() const
+	clone() const override
 	{
 		return new IntegerVectorOptionKey( *this );
 	}
@@ -124,8 +123,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~IntegerVectorOptionKey() {}
+	~IntegerVectorOptionKey() override {}
 
 
 public: // Assignment

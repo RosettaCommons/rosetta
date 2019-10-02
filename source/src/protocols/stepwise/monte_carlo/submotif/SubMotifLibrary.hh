@@ -44,7 +44,7 @@ public:
 		utility::vector1< std::string > const & exclude_submotif_list = utility::vector1< std::string >() );
 
 	//destructor
-	~SubMotifLibrary();
+	~SubMotifLibrary() override;
 
 public:
 

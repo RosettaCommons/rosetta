@@ -32,7 +32,7 @@ private:
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ClusteringTreeNode();
+	~ClusteringTreeNode() override;
 
 	/// @brief Creates a node with no leaves
 	/// @details leaves are NULLs, parent is set to this

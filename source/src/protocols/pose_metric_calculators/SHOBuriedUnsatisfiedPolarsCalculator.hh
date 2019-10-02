@@ -50,7 +50,7 @@ public:
 		core::scoring::ScoreFunctionCOP sfxn);
 
 	/// @brief clones this calculator
-	core::pose::metrics::PoseMetricCalculatorOP clone() const;
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override;
 
 	/// @brief returns the set of target atoms classified as "buried unsatisfied"
 	utility::vector1<core::id::AtomID> const& burunsat_atoms() {return burunsat_atoms_;}
@@ -70,15 +70,15 @@ public:
 protected:
 
 	/// @brief outputs a quantity's value that is cached in the calculator
-	void lookup(std::string const &key, basic::MetricValueBase* valptr) const;
+	void lookup(std::string const &key, basic::MetricValueBase* valptr) const override;
 
 	/// @brief returns the string representation of a quantity's value that is
 	///  cached in the calculator
-	std::string print(std::string const& key) const;
+	std::string print(std::string const& key) const override;
 
 	/// @brief finds buried unsatisfied atoms by building all needed data structures
 	///  from scratch
-	void recompute(core::pose::Pose const& ps);
+	void recompute(core::pose::Pose const& ps) override;
 
 private:
 

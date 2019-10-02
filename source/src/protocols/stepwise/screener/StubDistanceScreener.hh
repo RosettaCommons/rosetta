@@ -34,24 +34,20 @@ public:
 		core::Real const max_distance_squared );
 
 	//destructor
-	~StubDistanceScreener();
+	~StubDistanceScreener() override;
 
 public:
 
-	virtual
-	bool check_screen();
+	bool check_screen() override;
 
-	virtual
 	std::string
-	name() const { return "StubDistanceScreener"; }
+	name() const override { return "StubDistanceScreener"; }
 
-	virtual
 	StepWiseScreenerType
-	type() const { return STUB_DISTANCE; }
+	type() const override { return STUB_DISTANCE; }
 
-	virtual
 	void
-	fast_forward( sampler::StepWiseSamplerOP sampler );
+	fast_forward( sampler::StepWiseSamplerOP sampler ) override;
 
 private:
 

@@ -38,10 +38,10 @@ public:
 	);
 
 	/// @brief Initialization
-	void init();
+	void init() override;
 
 	/// @brief Set the residue id
-	void set_rsd_id( core::Size const setting ) {
+	void set_rsd_id( core::Size const setting ) override {
 		set_and_reinit( rsd_id_, setting );
 	}
 
@@ -86,10 +86,10 @@ public:
 	}
 
 	/// @brief Name of the class
-	std::string get_name() const { return "RNA_ChiStepWiseSampler"; }
+	std::string get_name() const override { return "RNA_ChiStepWiseSampler"; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RNA_CHI; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::RNA_CHI; }
 
 private:
 	core::Size rsd_id_;

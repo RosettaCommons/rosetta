@@ -48,7 +48,7 @@ public:
 	HelicalFragment();
 	HelicalFragment(core::Size start, core::Size end);
 
-	~HelicalFragment();
+	~HelicalFragment() override;
 
 	core::Size seq_start() const;
 	core::Size seq_end() const;

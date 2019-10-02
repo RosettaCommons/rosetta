@@ -89,7 +89,7 @@ class RNA_SuiteName : public utility::pointer::ReferenceCount {
 public:
 	RNA_SuiteName();
 
-	~RNA_SuiteName();
+	~RNA_SuiteName() override;
 
 	RNA_SuiteInfo name2suite( std::string const & name ) const;
 

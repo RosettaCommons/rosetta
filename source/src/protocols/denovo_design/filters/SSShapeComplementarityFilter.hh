@@ -53,7 +53,7 @@ public:
 	SSShapeComplementarityFilter();
 
 	/// @brief virtual constructor to allow derivation
-	virtual ~SSShapeComplementarityFilter();
+	~SSShapeComplementarityFilter() override;
 
 	/// @brief Parses the SSShapeComplementarityFilter tags
 	void parse_my_tag(

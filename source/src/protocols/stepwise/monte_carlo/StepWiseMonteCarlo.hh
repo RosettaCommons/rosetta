@@ -41,20 +41,19 @@ public:
 	StepWiseMonteCarlo( core::scoring::ScoreFunctionCOP scorefxn );
 
 	//destructor
-	~StepWiseMonteCarlo();
+	~StepWiseMonteCarlo() override;
 
 public:
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "StepWiseMonteCarlo";
 	}
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
-	virtual
-	void apply ( core::pose::Pose & pose );
+	void apply ( core::pose::Pose & pose ) override;
 
 	/// @brief setter for native poses contained for rms ---- we should get rid of this method? it is widely used, but a bit unsafe
-	virtual void set_native_pose( core::pose::PoseCOP pose );
+	void set_native_pose( core::pose::PoseCOP pose ) override;
 	void set_align_pose( core::pose::PoseCOP pose ) { align_pose_ = pose; }
 
 	void

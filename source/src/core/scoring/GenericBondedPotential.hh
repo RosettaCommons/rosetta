@@ -466,7 +466,7 @@ public:
 		bool const score_hybrid );
 
 	// virtual
-	basic::datacache::CacheableDataOP clone() const
+	basic::datacache::CacheableDataOP clone() const override
 	{ return basic::datacache::CacheableDataOP( new GenBondedExclInfo( *this ) );}
 
 	//void update_poseinfo( pose::Pose const &pose );

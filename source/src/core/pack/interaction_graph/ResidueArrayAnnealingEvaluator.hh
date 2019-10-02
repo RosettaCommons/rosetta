@@ -53,7 +53,7 @@ public:
 	ResidueArrayAnnealingEvaluator();
 
 	/// @brief Destructor
-	virtual ~ResidueArrayAnnealingEvaluator();
+	~ResidueArrayAnnealingEvaluator() override;
 
 	/// @brief Copy constructor
 	///

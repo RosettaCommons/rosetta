@@ -46,7 +46,7 @@ public:
 	GeneralFileContents( std::string const & filename );
 
 	/// @brief Destructor.
-	~GeneralFileContents();
+	~GeneralFileContents() override;
 
 	/// @brief Clone function: make a copy of this object and return an owning pointer to the copy.
 	GeneralFileContentsOP clone() const;

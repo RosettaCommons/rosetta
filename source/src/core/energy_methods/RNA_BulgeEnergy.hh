@@ -44,41 +44,36 @@ public:
 	RNA_BulgeEnergy();
 
 	/// @brief dtor
-	virtual ~RNA_BulgeEnergy();
+	~RNA_BulgeEnergy() override;
 
 	/// clone
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose &,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	/// @brief RNA_BulgeEnergy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	// methods
 private:

@@ -46,7 +46,7 @@ public:
 
 	std::string const & pose_sequence() const { return pose_sequence_; }
 
-	~PoseSequence() = default;
+	~PoseSequence() override = default;
 
 	PoseSequenceOP
 	copy_clone() const
@@ -74,39 +74,34 @@ public:
 	ElecDensAtomwiseEnergy();
 
 
-	virtual ~ElecDensAtomwiseEnergy();
+	~ElecDensAtomwiseEnergy() override;
 
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const {};
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {};
 
 	/////////////////////////////////////////////////////////////////////////////
 
 	methods::LongRangeEnergyType
-	long_range_type() const;
+	long_range_type() const override;
 
 
-	virtual
 	bool
 	defines_residue_pair_energy(
 		pose::Pose const & pose,
 		Size res1,
 		Size res2
-	) const;
+	) const override;
 
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & ) const {
+	defines_intrares_energy( EnergyMap const & ) const override {
 		return true;
 	}
 
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -114,22 +109,20 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const {
+	) const override {
 		return;
 	}
 
 
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -139,15 +132,14 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	setup_for_scoring(
 		pose::Pose & pose,
 		ScoreFunction const &
-	) const;
+	) const override;
 
 	using parent::finalize_total_energy;
 
@@ -164,8 +156,7 @@ public:
 
 private:
 	mutable bool pose_is_proper;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 } // electron_density_atomwise

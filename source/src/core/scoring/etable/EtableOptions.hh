@@ -44,7 +44,7 @@ public:
 	EtableOptions();
 	EtableOptions( utility::options::OptionCollection const & options );
 
-	~EtableOptions();
+	~EtableOptions() override;
 
 	EtableOptions( EtableOptions const & src );
 

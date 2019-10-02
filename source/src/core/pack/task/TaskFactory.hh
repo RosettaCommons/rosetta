@@ -67,7 +67,7 @@ public:
 
 	TaskFactory();
 	TaskFactory( TaskFactory const & );
-	virtual ~TaskFactory();
+	~TaskFactory() override;
 
 	TaskFactory & operator = ( TaskFactory const & );
 

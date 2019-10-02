@@ -56,31 +56,26 @@ public:
 
 	SurfaceEnergy();
 
-	virtual
 	scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, scoring::ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, scoring::ScoreFunction const & ) const override;
 
-	virtual
 	void
-	residue_energy( conformation::Residue const & rsd, pose::Pose const &, scoring::EnergyMap & ) const;
+	residue_energy( conformation::Residue const & rsd, pose::Pose const &, scoring::EnergyMap & ) const override;
 
-	virtual
 	void
-	finalize_total_energy( pose::Pose & pose, scoring::ScoreFunction const &, scoring::EnergyMap & totals ) const;
+	finalize_total_energy( pose::Pose & pose, scoring::ScoreFunction const &, scoring::EnergyMap & totals ) const override;
 
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const {};
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override {};
 
 
 private:
 
 	// const-ref to scoring database
 	//InterchainPotential const & potential_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

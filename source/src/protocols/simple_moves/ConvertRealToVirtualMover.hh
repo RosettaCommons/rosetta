@@ -60,7 +60,7 @@ public:
 	ConvertRealToVirtualMover( ConvertRealToVirtualMover const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~ConvertRealToVirtualMover();
+	~ConvertRealToVirtualMover() override;
 
 	static std::string
 	mover_name();
@@ -74,14 +74,14 @@ public:
 
 
 	// mover virtual API
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
-	virtual void
-	show( std::ostream & output = std::cout ) const;
+	void
+	show( std::ostream & output = std::cout ) const override;
 
-	virtual std::string
-	get_name() const;
+	std::string
+	get_name() const override;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void
@@ -90,17 +90,17 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	//ConvertRealToVirtualMover & operator=( ConvertRealToVirtualMover const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
 	static
 	void

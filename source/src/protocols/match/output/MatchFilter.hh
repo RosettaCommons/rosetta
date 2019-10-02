@@ -36,8 +36,7 @@ public:
 
 	MatchFilter( std::string const & filter_name );
 
-	virtual
-	~MatchFilter();
+	~MatchFilter() override;
 
 	/// @brief Returns true if the given match passes this filter
 	virtual
@@ -66,21 +65,18 @@ public:
 
 	StateAccumulatingMatchFilter( std::string filter_name );
 
-	virtual
-	~StateAccumulatingMatchFilter();
+	~StateAccumulatingMatchFilter() override;
 
 	/// @brief Returns true if the given match passes this filter
-	virtual
 	bool
 	passes_filter(
 		match const & m
-	) const = 0;
+	) const override = 0;
 
-	virtual
 	bool
 	passes_filter(
 		match_dspos1 const & m
-	) const = 0;
+	) const override = 0;
 
 	/// @brief Note that a particular match has passed all the filters and will be output.
 	virtual

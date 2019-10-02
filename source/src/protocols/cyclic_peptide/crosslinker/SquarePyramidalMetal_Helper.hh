@@ -50,7 +50,7 @@ public: //Constructors
 	SquarePyramidalMetal_Helper( SquarePyramidalMetal_Helper const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~SquarePyramidalMetal_Helper();
+	~SquarePyramidalMetal_Helper() override;
 
 
 public: // public methods

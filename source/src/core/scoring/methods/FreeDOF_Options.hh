@@ -38,7 +38,7 @@ public:
 	FreeDOF_Options();
 
 	//destructor
-	~FreeDOF_Options();
+	~FreeDOF_Options() override;
 
 	void initialize_from_options();
 

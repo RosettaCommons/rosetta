@@ -54,7 +54,7 @@ public:
 	);
 
 	//destructor
-	~LoopMover_Perturb_KIC();
+	~LoopMover_Perturb_KIC() override;
 
 
 	void show(std::ostream & output=std::cout) const override;
@@ -108,7 +108,7 @@ protected:
 		protocols::loops::Loop const & loop
 	) override;
 
-	virtual basic::Tracer & tr() const override;
+	basic::Tracer & tr() const override;
 };
 
 std::ostream &operator<< ( std::ostream &os, LoopMover_Perturb_KIC const &mover );

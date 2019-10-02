@@ -69,7 +69,7 @@ class MolFileIOAtom : public utility::pointer::ReferenceCount
 {
 public:
 	MolFileIOAtom();
-	virtual ~MolFileIOAtom();
+	~MolFileIOAtom() override;
 
 	AtomIndex index() const { return index_; }
 	std::string const & name() const { return name_; }
@@ -111,7 +111,7 @@ class MolFileIOBond : public utility::pointer::ReferenceCount
 {
 public:
 	MolFileIOBond();
-	virtual ~MolFileIOBond();
+	~MolFileIOBond() override;
 
 	BondIndex index() const { return index_; }
 	core::Size atom1() const { return atom1_; }
@@ -138,7 +138,7 @@ class MolFileIOMolecule : public utility::pointer::ReferenceCount
 {
 public:
 	MolFileIOMolecule();
-	virtual ~MolFileIOMolecule();
+	~MolFileIOMolecule() override;
 
 	std::string name() const { return name_; }
 	//core::Size nbr() const { return nbr_; }

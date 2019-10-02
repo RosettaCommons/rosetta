@@ -46,15 +46,15 @@ public:
 		core::import_pose::RNA_BasePairHandlerCOP rna_base_pair_handler,
 		bool const & move_first_rigid_body );
 
-	~RNA_HelixMover();
+	~RNA_HelixMover() override;
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	void set_pose( core::pose::Pose const & pose );
 
 	void get_helix_ends();
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void set_rot_magnitude( core::Real const & rot_mag ) { rot_mag_ = rot_mag; }
 

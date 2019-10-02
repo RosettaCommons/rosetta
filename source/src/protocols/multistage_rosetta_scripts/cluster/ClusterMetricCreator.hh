@@ -27,7 +27,7 @@ class ClusterMetricCreator : public utility::pointer::ReferenceCount
 {
 public:
 	ClusterMetricCreator(){}
-	virtual ~ClusterMetricCreator(){}
+	~ClusterMetricCreator() override{}
 
 	/// @brief Return a new metric.
 	virtual ClusterMetricOP create_metric() const = 0;

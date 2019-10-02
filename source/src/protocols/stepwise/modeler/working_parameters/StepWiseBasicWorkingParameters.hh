@@ -52,7 +52,7 @@ public:
 	StepWiseBasicWorkingParameters();
 
 	//destructor
-	~StepWiseBasicWorkingParameters();
+	~StepWiseBasicWorkingParameters() override;
 
 public:
 

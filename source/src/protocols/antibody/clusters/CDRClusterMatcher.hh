@@ -45,7 +45,7 @@ class CDRClusterMatcher: public utility::pointer::ReferenceCount {
 public:
 	CDRClusterMatcher();
 
-	virtual ~CDRClusterMatcher();
+	~CDRClusterMatcher() override;
 
 	/// @brief Get the cluster of an antibody CDR region, defined between start and end of the pose.
 	/// Should it give out an OP or not?  It's a small class... I don't have any idea...

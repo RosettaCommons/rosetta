@@ -42,7 +42,7 @@ public:
 		utility::json_spirit::mObject const & json );
 
 	//destructor
-	~SixDTransRotPotential();
+	~SixDTransRotPotential() override;
 
 public:
 

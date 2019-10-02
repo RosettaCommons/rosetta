@@ -66,7 +66,7 @@ private: // typedefs
 
 public:
 	RotamerSet();
-	virtual ~RotamerSet();
+	~RotamerSet() override;
 
 	void set_resid( Size resid );
 
@@ -114,9 +114,8 @@ public:
 
 	/// @brief Return the number of different residue types; two residue types are considered
 	/// different if they have a different address.
-	virtual
 	Size
-	get_n_residue_types() const = 0;
+	get_n_residue_types() const override = 0;
 
 	/// @brief Return the number of different residue groups.  Two residue types are considered
 	/// to be part of the same block of residues if 1. they have the same address or 2. they have
@@ -126,18 +125,16 @@ public:
 	get_n_residue_groups() const = 0;
 
 	/// @brief Return the first rotamer of a particular residue type
-	virtual
 	Size
-	get_residue_type_begin( Size which_restype ) const = 0;
+	get_residue_type_begin( Size which_restype ) const override = 0;
 
 	/// @brief Return the first rotamer that belongs to a particular rotamer group
 	virtual
 	Size
 	get_residue_group_begin( Size which_resgroup ) const = 0;
 
-	virtual
 	Size
-	get_n_rotamers_for_residue_type( Size which_restype ) const = 0;
+	get_n_rotamers_for_residue_type( Size which_restype ) const override = 0;
 
 	virtual
 	Size
@@ -150,9 +147,8 @@ public:
 	/// If new lysine rotamers are appended to the end of the rotamer set, they are
 	/// considered to be in a separate residue type block.  Lysine rotamers 200 to 210 might
 	/// be block 15 while lysine rotamers 100 to 120 are still block 7.
-	virtual
 	Size
-	get_residue_type_index_for_rotamer( Size which_rotamer ) const = 0;
+	get_residue_type_index_for_rotamer( Size which_rotamer ) const override = 0;
 
 	/// @brief Return the index of the rotamer group for a particular rotamer.
 	virtual
@@ -189,21 +185,18 @@ public:
 		utility::graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< scoring::EnergyMap > & energies ) const = 0;
 
-	virtual
 	Size
-	num_rotamers() const = 0;
+	num_rotamers() const override = 0;
 
 	/// @brief Return the index in the RotamerSet for the current rotamer
 	virtual
 	Size
 	id_for_current_rotamer() const = 0;
 
-	virtual
-	Size resid() const { return resid_;}
+	Size resid() const override { return resid_;}
 
-	virtual
 	conformation::ResidueCOP
-	rotamer( Size rot_id ) const = 0;
+	rotamer( Size rot_id ) const override = 0;
 
 	virtual
 	basic::datacache::BasicDataCache &
@@ -214,17 +207,14 @@ public:
 	virtual Rotamers::const_iterator end() const = 0;
 
 	/// @brief mutatable access to a single rotamer in the set.
-	virtual
 	conformation::ResidueOP
-	nonconst_rotamer( Size rot_id ) = 0;
+	nonconst_rotamer( Size rot_id ) override = 0;
 
-	virtual
 	void
-	store_trie( Size method_enum_id, conformation::AbstractRotamerTrieOP trie ) = 0;
+	store_trie( Size method_enum_id, conformation::AbstractRotamerTrieOP trie ) override = 0;
 
-	virtual
 	conformation::AbstractRotamerTrieCOP
-	get_trie( Size method_enum_id ) const = 0;
+	get_trie( Size method_enum_id ) const override = 0;
 
 	/// @brief removes a single rotamer and causes a rotamer index update
 	virtual

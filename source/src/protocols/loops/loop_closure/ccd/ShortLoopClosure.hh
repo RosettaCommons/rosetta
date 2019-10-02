@@ -43,11 +43,11 @@ public:
 	);
 
 	//@brief run protocol on pose
-	virtual bool apply( core::pose::Pose const& pose );
+	bool apply( core::pose::Pose const& pose ) override;
 
 	/// @brief save the loop-fragment in closure_frames_
 	// overwritten to realign frames to target sequence
-	virtual void catch_fragment( core::pose::Pose const& short_pose );
+	void catch_fragment( core::pose::Pose const& short_pose ) override;
 private:
 	Loop orig_loop_;
 };

@@ -40,7 +40,7 @@ public:
 	SpecificResiduesNearInterfaceFilter();
 	SpecificResiduesNearInterfaceFilter(
 		SpecificResiduesNearInterfaceFilter const & src);
-	~SpecificResiduesNearInterfaceFilter();
+	~SpecificResiduesNearInterfaceFilter() override;
 
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP tf );

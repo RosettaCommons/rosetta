@@ -23,11 +23,11 @@ namespace scoring_grid {
 class ClassicGridCreator : public GridCreator
 {
 public:
-	virtual GridBaseOP create_grid(utility::tag::TagCOP tag) const;
-	virtual GridBaseOP create_grid() const;
+	GridBaseOP create_grid(utility::tag::TagCOP tag) const override;
+	GridBaseOP create_grid() const override;
 
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 	//static std::string grid_name();
 };
 

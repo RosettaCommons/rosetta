@@ -45,13 +45,13 @@ public:
 public:
 
 	ConstrainHBondNetwork();
-	~ConstrainHBondNetwork();
+	~ConstrainHBondNetwork() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	void apply( Pose const & pose, PackerTask & task ) const override;
 
-	virtual void parse_tag( TagCOP tag , DataMap & );
+	void parse_tag( TagCOP tag , DataMap & ) override;
 
 	static std::string keyname();
 

@@ -43,7 +43,7 @@ public:
 	//AddSegmentDataMover( AddSegmentDataMover const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~AddSegmentDataMover();
+	~AddSegmentDataMover() override;
 
 
 public:

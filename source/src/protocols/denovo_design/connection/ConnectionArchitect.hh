@@ -62,21 +62,21 @@ public:
 public:
 	ConnectionArchitect( std::string const & id_value );
 
-	virtual ~ConnectionArchitect();
+	~ConnectionArchitect() override;
 
 	static std::string
 	class_name() { return "Connection"; }
 
-	virtual std::string
-	type() const;
+	std::string
+	type() const override;
 
 	virtual ConnectionArchitectOP
 	clone() const;
 
 protected:
 	/// @brief companion function: attributes_for_parse_my_tag
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 public:
 	static void

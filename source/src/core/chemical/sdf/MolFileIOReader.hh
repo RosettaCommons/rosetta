@@ -33,7 +33,7 @@ class MolFileIOReader : public utility::pointer::ReferenceCount
 {
 public:
 	MolFileIOReader();
-	virtual ~MolFileIOReader();
+	~MolFileIOReader() override;
 
 	/// @brief parse file, with the possibility of type autodetection.
 	utility::vector1< MolFileIOMoleculeOP > parse_file( std::string const & filename, std::string type = "", core::Size n_entries = 0 );

@@ -49,13 +49,13 @@ private:
 public:
 	/// @brief default ctor
 	DockWithHotspotMover();
-	virtual ~DockWithHotspotMover();
+	~DockWithHotspotMover() override;
 
-	virtual void apply( core::pose::Pose & pose ) override;
-	virtual protocols::moves::MoverOP clone() const override {
+	void apply( core::pose::Pose & pose ) override;
+	protocols::moves::MoverOP clone() const override {
 		return (utility::pointer::make_shared< protocols::protein_interface_design::movers::DockWithHotspotMover >( *this ) );
 	}
-	virtual protocols::moves::MoverOP fresh_instance() const override {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return utility::pointer::make_shared< DockWithHotspotMover >();
 	}
 

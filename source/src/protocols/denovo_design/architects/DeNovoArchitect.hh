@@ -54,13 +54,12 @@ public:
 public:
 	DeNovoArchitect( std::string const & id );
 
-	virtual
-	~DeNovoArchitect();
+	~DeNovoArchitect() override;
 
 	// pure virtual API
 public:
-	virtual std::string
-	type() const = 0;
+	std::string
+	type() const override = 0;
 
 	virtual DeNovoArchitectOP
 	clone() const = 0;
@@ -78,8 +77,8 @@ public:
 	static void
 	add_common_denovo_architect_attributes( utility::tag::AttributeList & attlist );
 protected:
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) = 0;
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override = 0;
 
 public:
 	// constants
@@ -103,10 +102,10 @@ public:
 public:
 	DeNovoMotifArchitect( std::string const & id );
 
-	virtual ~DeNovoMotifArchitect();
+	~DeNovoMotifArchitect() override;
 
-	virtual DeNovoArchitectOP
-	clone() const;
+	DeNovoArchitectOP
+	clone() const override;
 
 	static std::string
 	architect_name() { return "DeNovoMotif"; }
@@ -115,15 +114,15 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
-	virtual std::string
-	type() const;
+	std::string
+	type() const override;
 
-	virtual components::StructureDataOP
-	design( core::pose::Pose const & pose, core::Real & random ) const;
+	components::StructureDataOP
+	design( core::pose::Pose const & pose, core::Real & random ) const override;
 
 protected:
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 public:
 	MotifCOPs::const_iterator

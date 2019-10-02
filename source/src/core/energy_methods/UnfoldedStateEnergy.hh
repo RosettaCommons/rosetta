@@ -45,29 +45,24 @@ public:
 
 	UnfoldedStateEnergy( std::string const & type );
 	UnfoldedStateEnergy( std::string const & type, const EnergyMap & emap_in );
-	~UnfoldedStateEnergy();
+	~UnfoldedStateEnergy() override;
 
-	virtual
-	EnergyMethodOP clone() const;
+	EnergyMethodOP clone() const override;
 
-	virtual
 	void
-	residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, EnergyMap & emap ) const;
+	residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, EnergyMap & emap ) const override;
 
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 private:
 
 	std::string type_;
 	UnfoldedStatePotential const & unf_state_potential_;
 	EnergyMap score_type_weights_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

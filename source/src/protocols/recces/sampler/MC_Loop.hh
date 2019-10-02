@@ -31,19 +31,18 @@ public:
 	MC_Loop();
 
 	//destructor
-	~MC_Loop();
+	~MC_Loop() override;
 
 public:
 
 	/// @brief Move to next rotamer
-	virtual void operator++();
+	void operator++() override;
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_LOOP; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::MC_LOOP; }
 
 	/// @brief output summary of class
-	virtual
-	void show( std::ostream & out, Size const indent = 0 ) const;
+	void show( std::ostream & out, Size const indent = 0 ) const override;
 
 };
 

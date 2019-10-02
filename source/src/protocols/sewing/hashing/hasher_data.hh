@@ -126,7 +126,7 @@ struct HasherSettings {
 class SegmentVector: public utility::vector1< data_storage::SmartSegmentOP > {
 	//just a vector1 of SmartSegmentOPs with a fancy destructor
 public:
-	virtual ~SegmentVector() {
+	~SegmentVector() override {
 		for ( data_storage::SmartSegmentOP cur_seg: *this ) {
 			cur_seg->set_n_terminal_neighbor(nullptr);
 			cur_seg->set_c_terminal_neighbor(nullptr);

@@ -42,16 +42,16 @@ public:
 	SquareWell2Func( Real const x0_in, Real const x_range_in, Real const well_depth_in ): x0_( x0_in ), x_range_(x_range_in), well_depth_( well_depth_in ){}
 
 	FuncOP
-	clone() const { return utility::pointer::make_shared< SquareWell2Func >( *this ); }
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	clone() const override { return utility::pointer::make_shared< SquareWell2Func >( *this ); }
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	Real func( Real const x ) const;
-	Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	void read_data( std::istream& in );
+	void read_data( std::istream& in ) override;
 
-	void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
 	Real x0()         const { return x0_; }
 	Real x_range()    const { return x_range_ ;}
@@ -61,7 +61,7 @@ public:
 	void well_depth( Real well_depth ){ well_depth_ = well_depth;}
 
 	Size
-	show_violations( std::ostream& out, Real x, Size verbose_level, core::Real threshold = 1 ) const;
+	show_violations( std::ostream& out, Real x, Size verbose_level, core::Real threshold = 1 ) const override;
 
 private:
 	Real x0_;

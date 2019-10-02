@@ -45,14 +45,14 @@ public:
 	VirtualSugarSampler( working_parameters::StepWiseWorkingParametersCOP & working_parameters, SugarModeling & sugar_modeling );
 
 	//destructor
-	~VirtualSugarSampler();
+	~VirtualSugarSampler() override;
 
-	virtual void apply( core::pose::Pose & pose_to_visualize );
+	void apply( core::pose::Pose & pose_to_visualize ) override;
 
-	virtual void
-	apply( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & pose_to_visualize );
+	void
+	apply( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose & pose_to_visualize ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void set_tag( std::string const & setting ) { tag_ = setting; }
 

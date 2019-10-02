@@ -49,14 +49,13 @@ public:
 	SymAtomTreeMinimizer(){};
 
 	/// @brief Override the base class implementation.  Non-const.
-	virtual
 	Real
 	run(
 		pose::Pose & pose,
 		kinematics::MoveMap const & move_map,
 		scoring::ScoreFunction const & scorefxn,
 		MinimizerOptions const & options
-	);
+	) override;
 
 	static
 	void

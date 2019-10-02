@@ -64,13 +64,11 @@ public:
 
 	LimitAromaChi2_RotamerSetOperation( Real const chi2max, Real const chi2min );
 
-	virtual ~LimitAromaChi2_RotamerSetOperation();
+	~LimitAromaChi2_RotamerSetOperation() override;
 
-	virtual
 	RotamerSetOperationOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
 	alter_rotamer_set(
 		Pose const &,
@@ -78,7 +76,7 @@ public:
 		PackerTask const & ptask,
 		GraphCOP,
 		RotamerSet & rotamer_set
-	);
+	) override;
 
 
 public:
@@ -136,10 +134,10 @@ public:
 	LimitAromaChi2Operation();
 
 	/// @brief destructor
-	virtual ~LimitAromaChi2Operation();
+	~LimitAromaChi2Operation() override;
 
 	/// @brief make clone
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 public:
 
@@ -189,13 +187,13 @@ public:
 
 
 	/// @brief apply
-	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	void apply( Pose const & pose, PackerTask & task ) const override;
 
 
 public:
 
 
-	void parse_tag( TagCOP tag , DataMap & );
+	void parse_tag( TagCOP tag , DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "LimitAromaChi2"; }
 

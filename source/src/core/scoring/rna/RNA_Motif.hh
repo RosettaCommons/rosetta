@@ -160,7 +160,7 @@ public:
 	{}
 
 	//destructor
-	~RNA_Motif()
+	~RNA_Motif() override
 	{}
 
 public:
@@ -215,7 +215,7 @@ public:
 	{}
 
 	//destructor
-	~RNA_Motifs()
+	~RNA_Motifs() override
 	{}
 
 public:

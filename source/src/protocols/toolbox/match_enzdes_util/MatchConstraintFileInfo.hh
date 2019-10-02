@@ -89,7 +89,7 @@ public:
 	// copy ctor
 	GeomSampleInfo( GeomSampleInfo const & gsi );
 
-	virtual ~GeomSampleInfo();
+	~GeomSampleInfo() override;
 
 	/// @brief data reading routine
 	bool
@@ -195,7 +195,7 @@ public:  //construct / destruct
 		core::chemical::ResidueTypeSetCOP restype_set
 	);
 
-	virtual ~MatchConstraintFileInfo();
+	~MatchConstraintFileInfo() override;
 
 public:  //atom and residue accessors
 
@@ -386,7 +386,7 @@ public:
 	MatchConstraintFileInfoList(
 		core::chemical::ResidueTypeSetCOP restype_set );
 
-	virtual ~MatchConstraintFileInfoList();
+	~MatchConstraintFileInfoList() override;
 
 public: //accessors
 

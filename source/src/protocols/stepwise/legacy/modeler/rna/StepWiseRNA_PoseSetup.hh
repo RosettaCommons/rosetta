@@ -49,13 +49,13 @@ public:
 	StepWiseRNA_PoseSetup( stepwise::modeler::working_parameters::StepWiseWorkingParametersOP & working_parameters );
 
 	//destructor -- necessary?
-	~StepWiseRNA_PoseSetup();
+	~StepWiseRNA_PoseSetup() override;
 
 	/////////////////////////////////////////////////////////////////////////
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void
 	set_input_tags( utility::vector1< std::string > const & setting ){ input_tags_ = setting; } //Only called if COPY_DOF is true

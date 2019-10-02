@@ -44,10 +44,10 @@ public:
 	PhiPsiRmsd(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		core::pose::PoseOP reference_pose);
 	PhiPsiRmsd(core::Size, core::Real, bool, PhiPsiTalosIO&);
-	void do_caching(VallChunkOP);
-	void clean_up();
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
-	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
+	void do_caching(VallChunkOP) override;
+	void clean_up() override;
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 	/// @brief  Print debugging informations about a score for a given fragment
 	bool describe_score(FragmentCandidateOP, FragmentScoreMapOP, std::ostream&);
@@ -71,7 +71,7 @@ public:
 		MakeFragmentScoringMethod("PhiPsiRmsd") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 
 } // scores

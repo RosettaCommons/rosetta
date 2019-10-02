@@ -37,7 +37,7 @@ public:
 
 	CDRSetOptionsParser();
 
-	virtual ~CDRSetOptionsParser();
+	~CDRSetOptionsParser() override;
 
 	CDRSetOptionsParser( CDRSetOptionsParser const & src );
 

@@ -47,27 +47,23 @@ public:
 	DistanceChainbreakEnergy();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const
+	clone() const override
 	{
 		return utility::pointer::make_shared< DistanceChainbreakEnergy >();
 	}
 
 	/// called at the end of energy evaluation
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
-	virtual
 	void
-	indicate_required_context_graphs( utility::vector1< bool > & ) const;
-	virtual
-	core::Size version() const;
+	indicate_required_context_graphs( utility::vector1< bool > & ) const override;
+	core::Size version() const override;
 
 
 };

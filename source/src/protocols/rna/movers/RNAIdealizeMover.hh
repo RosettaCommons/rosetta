@@ -53,7 +53,7 @@ public:
 	//RNAIdealizeMover( RNAIdealizeMover const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~RNAIdealizeMover();
+	~RNAIdealizeMover() override;
 
 
 public:

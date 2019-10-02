@@ -42,18 +42,18 @@ public:
 		core::pose::Pose & screening_pose );
 
 	//destructor
-	~RNA_AtrRepScreener();
+	~RNA_AtrRepScreener() override;
 
 public:
 
 	std::string
-	name() const { return "RNA_AtrRepScreener"; }
+	name() const override { return "RNA_AtrRepScreener"; }
 
 	stepwise::screener::StepWiseScreenerType
-	type() const { return stepwise::screener::ATR_REP; }
+	type() const override { return stepwise::screener::ATR_REP; }
 
 	bool
-	check_screen();
+	check_screen() override;
 
 	void
 	set_exit_on_fail( bool const setting ){ exit_on_fail_ = setting; }

@@ -45,10 +45,10 @@ public:
 	/// @details Phi-Psi angles from a fragment will be compared to relevant angles in a given pose, which should have the same number of residues a the query sequence
 
 	AmbigCSScore(core::Size, core::Real, bool, CSTalosIO&, CSTalosIO&);
-	void do_caching(VallChunkOP);
-	void clean_up();
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
-	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
+	void do_caching(VallChunkOP) override;
+	void clean_up() override;
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 	/// @brief  Print debugging informations about a score for a given fragment
 	//bool describe_score(FragmentCandidateOP, FragmentScoreMapOP, std::ostream&);
@@ -78,7 +78,7 @@ public:
 		MakeFragmentScoringMethod("AmbigCSScore") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 
 } // scores

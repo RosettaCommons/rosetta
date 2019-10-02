@@ -35,7 +35,7 @@ class VLB : public protocols::moves::Mover
 public:
 	VLB(); // default ctor//design_ = true;
 	VLB( VLB const & init ); // copy ctor
-	~VLB(); // dtor
+	~VLB() override; // dtor
 	VLB & operator=( VLB const & init );
 
 	VLB( protocols::forge::build::BuildManagerCOP manager, core::scoring::ScoreFunctionCOP scorefxn );

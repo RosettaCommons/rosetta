@@ -60,17 +60,17 @@ public:
 	MPRangeRelaxMover & operator = ( MPRangeRelaxMover const & src );
 
 	/// @brief Destructor
-	virtual ~MPRangeRelaxMover();
+	~MPRangeRelaxMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Parse Rosetta Scripts Options for this Mover
 	void parse_my_tag(
@@ -91,10 +91,10 @@ public:
 	/////////////////////
 
 	/// @brief Get the name of this Mover (MPRangeRelaxMover)
-	virtual std::string get_name() const override;
+	std::string get_name() const override;
 
 	/// @brief Do a RangeRelax of a membrane protein
-	virtual void apply( Pose & pose ) override;
+	void apply( Pose & pose ) override;
 
 	/// @brief Optimize membrane
 	void optimize_membrane( bool yesno );

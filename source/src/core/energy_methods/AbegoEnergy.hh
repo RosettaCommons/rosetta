@@ -40,22 +40,20 @@ public:
 	Abego();
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	// @brief Abego Energy is context independent and thus indicates that no context graphs need to
 	// be maintained by class Energies
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override;
 
-	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual void finalize_total_energy( pose::Pose &, ScoreFunction const &, EnergyMap & totals ) const;
+	void finalize_total_energy( pose::Pose &, ScoreFunction const &, EnergyMap & totals ) const override;
 
 	// data
 private:
-	virtual core::Size version() const;
+	core::Size version() const override;
 	P_AA_ABEGO3 const & paa_abego3_;
 	mutable core::sequence::ABEGOManager abegoManager_;
 

@@ -40,7 +40,7 @@ public:
 	typedef utility::vector1< DunbrackRotamerSampleData >      DunbrackRotamerSampleDataVector;
 
 public:
-	virtual ~ProteinSCSampler();
+	~ProteinSCSampler() override;
 
 	virtual
 	DunbrackRotamerSampleDataVector
@@ -72,12 +72,11 @@ public:
 
 	bool desymmeterize() const;
 
-	virtual
 	DunbrackRotamerSampleDataVector
 	samples(
 		ScaffoldBuildPoint const & bb_conf,
 		core::chemical::ResidueType const & restype
-	) const;
+	) const override;
 
 private:
 	bool desymmeterize_;

@@ -52,7 +52,7 @@ public:
 
 	//  SimpleNode::SimpleNode();
 	SimpleNode( utility::graph::Graph * owner, Size resnum );
-	virtual ~SimpleNode();
+	~SimpleNode() override;
 
 	void copy_from( utility::graph::Node const * ) override {}
 
@@ -195,7 +195,7 @@ public:
 
 	//SimpleEdge( utility::graph::Graph* owner );
 	SimpleEdge( utility::graph::Graph* owner, Size res1, Size res2 );
-	virtual ~SimpleEdge();
+	~SimpleEdge() override;
 
 	void copy_from( utility::graph::Edge const * ) override {}
 
@@ -298,7 +298,7 @@ class SimpleInteractionGraph : public utility::graph::Graph {
 public:
 
 	SimpleInteractionGraph();
-	virtual ~SimpleInteractionGraph();
+	~SimpleInteractionGraph() override;
 
 	virtual void set_scorefunction( scoring::ScoreFunction const & sfxn );
 

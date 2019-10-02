@@ -49,7 +49,7 @@ public:
 	LigandBindingAssemblyMover( LigandBindingAssemblyMover const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~LigandBindingAssemblyMover()=default;
+	~LigandBindingAssemblyMover() override =default;
 
 	/////////////////////
 	/// Mover Methods ///

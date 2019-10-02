@@ -30,9 +30,9 @@ namespace residue_selector {
 
 class ClashBasedShellSelectorCreator : public core::select::residue_selector::ResidueSelectorCreator {
 public:
-	virtual select::residue_selector::ResidueSelectorOP create_residue_selector() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
+	select::residue_selector::ResidueSelectorOP create_residue_selector() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
 } //namespace residue_selector

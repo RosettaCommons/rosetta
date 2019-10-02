@@ -33,10 +33,10 @@ public:
 
 public:
 	RemodelRotamerLinks();
-	virtual ~RemodelRotamerLinks();
-	virtual TaskOperationOP clone() const;
-	virtual void apply( Pose const & pose, PackerTask & ptask ) const;
-	virtual void parse_tag( utility::tag::TagCOP, DataMap & );
+	~RemodelRotamerLinks() override;
+	TaskOperationOP clone() const override;
+	void apply( Pose const & pose, PackerTask & ptask ) const override;
+	void parse_tag( utility::tag::TagCOP, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RemodelRotamerLinks"; }
 

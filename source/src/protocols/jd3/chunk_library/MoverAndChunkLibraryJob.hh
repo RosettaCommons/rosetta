@@ -47,7 +47,6 @@ public:
 	MoverAndChunkLibraryJob();
 	~MoverAndChunkLibraryJob() override;
 
-	virtual
 	CompletedJobOutput run() override;
 
 	void mover( moves::MoverOP setting );

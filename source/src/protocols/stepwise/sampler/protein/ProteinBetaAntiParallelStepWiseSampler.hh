@@ -33,15 +33,15 @@ public:
 		Size const moving_residue );
 
 	//destructor
-	~ProteinBetaAntiParallelStepWiseSampler();
+	~ProteinBetaAntiParallelStepWiseSampler() override;
 
 public:
 
 	/// @brief Name of the class
-	virtual std::string get_name() const { return "ProteinBetaAntiParallelStepWiseSampler"; }
+	std::string get_name() const override { return "ProteinBetaAntiParallelStepWiseSampler"; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::PROTEIN_BETA_ANTIPARALLEL; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::PROTEIN_BETA_ANTIPARALLEL; }
 
 private:
 

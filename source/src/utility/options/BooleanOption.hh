@@ -94,7 +94,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	~BooleanOption() {}
+	~BooleanOption() override {}
 
 
 public: // Properties

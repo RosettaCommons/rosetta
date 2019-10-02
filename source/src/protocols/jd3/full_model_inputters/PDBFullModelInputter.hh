@@ -41,7 +41,7 @@ class PDBFullModelInputter : public FullModelInputter
 public:
 
 	PDBFullModelInputter();
-	virtual ~PDBFullModelInputter();
+	~PDBFullModelInputter() override;
 
 	bool job_available_on_command_line() const override;
 

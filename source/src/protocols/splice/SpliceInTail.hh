@@ -54,11 +54,11 @@ class SpliceInTail : virtual public protocols::splice::SpliceIn
 public:
 	SpliceInTail();
 	void apply( Pose & pose ) override;
-	virtual std::string get_name() const override;
+	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpliceInTail >(); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )override;
-	virtual ~SpliceInTail();
+	~SpliceInTail() override;
 	utility::vector1<core::Size>::const_iterator dbase_begin() const {return tail_dbase_subset_.begin();}
 	utility::vector1<core::Size>::const_iterator dbase_end() const {return tail_dbase_subset_.end();}
 	//void read_torsion_database();
@@ -70,8 +70,8 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string mover_name();
-	virtual core::Size find_dbase_entry(core::pose::Pose const & pose) override;
-	virtual void assign_from_res_to_res(core::pose::Pose const & pose) override;
+	core::Size find_dbase_entry(core::pose::Pose const & pose) override;
+	void assign_from_res_to_res(core::pose::Pose const & pose) override;
 	void build_ideal_segment(core::pose::Pose & pose) override;
 
 

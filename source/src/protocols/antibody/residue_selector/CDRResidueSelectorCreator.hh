@@ -27,11 +27,11 @@ namespace residue_selector {
 
 class CDRResidueSelectorCreator : public core::select::residue_selector::ResidueSelectorCreator {
 public:
-	virtual core::select::residue_selector::ResidueSelectorOP create_residue_selector() const;
+	core::select::residue_selector::ResidueSelectorOP create_residue_selector() const override;
 
-	virtual std::string keyname() const;
+	std::string keyname() const override;
 
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
 

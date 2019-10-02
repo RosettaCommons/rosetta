@@ -52,27 +52,23 @@ public:
 	void
 	set_limit_for_rotamer_combo( Size limit );
 
-	virtual
-	~LimitHitsPerRotamerFilter();
+	~LimitHitsPerRotamerFilter() override;
 
 	/// @brief Returns true if the given match passes this filter
-	virtual
 	bool
 	passes_filter(
 		match const & m
-	) const;
+	) const override;
 
 	/// @brief Note that a particular match has passed all the filters and will be output.
-	virtual
 	void
 	note_match_accepted(
 		match const & m
-	);
+	) override;
 
 	/// @brief Erase all tracking data on which matches have already been output.
-	virtual
 	void
-	reset();
+	reset() override;
 
 private:
 	Size n_geometric_constraints_;

@@ -59,7 +59,7 @@ public:
 	DownstreamAlgorithm( DownstreamAlgorithm const & );
 	DownstreamAlgorithm const & operator = ( DownstreamAlgorithm const & );
 
-	virtual ~DownstreamAlgorithm();
+	~DownstreamAlgorithm() override;
 
 	virtual
 	DownstreamAlgorithmOP

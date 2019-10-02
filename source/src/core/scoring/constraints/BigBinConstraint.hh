@@ -49,23 +49,22 @@ namespace constraints {
 class BigBinConstraint : public Constraint {
 public:
 
-	virtual std::string type() const;
+	std::string type() const override;
 
-	virtual ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
-	virtual bool operator == ( Constraint const & other ) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	bool operator == ( Constraint const & other ) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
 	// Needed to get the base class overloads
 	using Constraint::score;
 	using Constraint::dist;
 
-	void score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	void score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const override;
 
 	/// @details BigBinConstraints don't have a single distance
-	virtual
 	core::Real
-	dist( core::scoring::func::XYZ_Func const & ) const { return 0; }
+	dist( core::scoring::func::XYZ_Func const & ) const override { return 0; }
 
 	// atom deriv
 	void
@@ -75,7 +74,7 @@ public:
 		Vector &,
 		Vector &,
 		EnergyMap const &
-	) const;
+	) const override;
 
 	///c-tor
 	BigBinConstraint(
@@ -93,14 +92,14 @@ public:
 
 
 	Size
-	natoms() const;
+	natoms() const override;
 
 	AtomID const &
-	atom( Size const n ) const;
+	atom( Size const n ) const override;
 
-	virtual void show( std::ostream & out ) const;
+	void show( std::ostream & out ) const override;
 
-	void read_def( std::istream & in, pose::Pose const & pose,func::FuncFactory const & func_factory );
+	void read_def( std::istream & in, pose::Pose const & pose,func::FuncFactory const & func_factory ) override;
 
 	char bin() const {
 		return bin_;

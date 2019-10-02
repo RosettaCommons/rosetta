@@ -42,12 +42,12 @@ public:
 		string name="loop_move");
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const { return "AcceptanceCheck"; }
+	string get_name() const override { return "AcceptanceCheck"; }
 
 protected:
 	/// @brief Apply the Metropolis criterion to the given pose and return true
 	/// if the pose was accepted.
-	bool do_apply(Pose & pose);
+	bool do_apply(Pose & pose) override;
 
 private:
 	protocols::moves::MonteCarloOP monte_carlo_;

@@ -39,7 +39,7 @@ public:
 
 	SugarModeling();
 
-	~SugarModeling();
+	~SugarModeling() override;
 
 	void
 	check_compatibility( core::Size const nres ) const;

@@ -47,7 +47,7 @@ public:
 	protocols::filters::FilterOP clone() const override;
 	protocols::filters::FilterOP fresh_instance() const override;
 	core::Size compute( core::pose::Pose const & pose ) const;
-	virtual ~DesignableResiduesFilter();
+	~DesignableResiduesFilter() override;
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
 	void parse_my_tag( utility::tag::TagCOP tag,

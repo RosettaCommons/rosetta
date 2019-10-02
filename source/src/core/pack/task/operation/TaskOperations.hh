@@ -63,13 +63,13 @@ public:
 	RestrictToSpecifiedBaseResidueTypes( utility::vector1< std::string > const & base_types,
 		core::select::residue_selector::ResidueSelectorCOP selector );
 
-	virtual ~RestrictToSpecifiedBaseResidueTypes() = default;
+	~RestrictToSpecifiedBaseResidueTypes() override = default;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual void apply( pose::Pose const & pose, PackerTask & task ) const;
+	void apply( pose::Pose const & pose, PackerTask & task ) const override;
 
-	virtual void parse_tag( TagCOP tag, DataMap & map );
+	void parse_tag( TagCOP tag, DataMap & map ) override;
 
 	static std::string keyname();
 	static utility::tag::AttributeList xml_schema_attributes();
@@ -100,13 +100,13 @@ public:
 	ProhibitSpecifiedBaseResidueTypes( utility::vector1< std::string > const & base_types,
 		core::select::residue_selector::ResidueSelectorCOP selector );
 
-	virtual ~ProhibitSpecifiedBaseResidueTypes() = default;
+	~ProhibitSpecifiedBaseResidueTypes() override = default;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual void apply( pose::Pose const & pose, PackerTask & task ) const;
+	void apply( pose::Pose const & pose, PackerTask & task ) const override;
 
-	virtual void parse_tag( TagCOP tag, DataMap & map );
+	void parse_tag( TagCOP tag, DataMap & map ) override;
 
 	static std::string keyname();
 	static utility::tag::AttributeList xml_schema_attributes();
@@ -137,13 +137,13 @@ public:
 	RestrictToResidueProperties( utility::vector1< core::chemical::ResidueProperty > const & properties,
 		core::select::residue_selector::ResidueSelectorCOP selector );
 
-	virtual ~RestrictToResidueProperties() = default;
+	~RestrictToResidueProperties() override = default;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual void apply( pose::Pose const & pose, PackerTask & task ) const;
+	void apply( pose::Pose const & pose, PackerTask & task ) const override;
 
-	virtual void parse_tag( TagCOP tag, DataMap & map );
+	void parse_tag( TagCOP tag, DataMap & map ) override;
 
 	static std::string keyname();
 	static utility::tag::AttributeList xml_schema_attributes();
@@ -175,13 +175,13 @@ public:
 	ProhibitResidueProperties( utility::vector1< core::chemical::ResidueProperty > const & properties,
 		core::select::residue_selector::ResidueSelectorCOP selector );
 
-	virtual ~ProhibitResidueProperties() = default;
+	~ProhibitResidueProperties() override = default;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual void apply( pose::Pose const & pose, PackerTask & task ) const;
+	void apply( pose::Pose const & pose, PackerTask & task ) const override;
 
-	virtual void parse_tag( TagCOP tag, DataMap & map );
+	void parse_tag( TagCOP tag, DataMap & map ) override;
 
 	static std::string keyname();
 	static utility::tag::AttributeList xml_schema_attributes();
@@ -206,15 +206,14 @@ public:
 	typedef TaskOperation parent;
 
 public:
-	virtual ~RestrictToRepacking();
+	~RestrictToRepacking() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( pose::Pose const & pose, PackerTask & task ) const;
+	apply( pose::Pose const & pose, PackerTask & task ) const override;
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -227,18 +226,17 @@ public:
 	typedef TaskOperation parent;
 
 public:
-	virtual ~RestrictResidueToRepacking();
+	~RestrictResidueToRepacking() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 
 	void include_residue( core::Size resid );
 	void clear();
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -256,15 +254,14 @@ public:
 public:
 	RestrictAbsentCanonicalAAS();
 	RestrictAbsentCanonicalAAS( core::Size resid, utility::vector1< bool > keep_aas );
-	virtual ~RestrictAbsentCanonicalAAS();
+	~RestrictAbsentCanonicalAAS() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 	/// @brief if resid_ is zero, will apply RestrictAbsentCanonicalAAs to all residues
 	/// in the pose. O/w only to resid_
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 
 	/// @brief a human-readible string-based mutator
 	void keep_aas( std::string const & keep_aas );
@@ -274,7 +271,7 @@ public:
 	/// order by one-letter code.
 	void keep_aas( utility::vector1< bool > keep_aas );
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	void include_residue( core::Size const resid );
 
@@ -297,12 +294,11 @@ public:
 	DisallowIfNonnative();
 	DisallowIfNonnative( utility::vector1< bool > const & disallowed_aas );
 	DisallowIfNonnative( utility::vector1< bool > const & disallowed_aas, utility::vector1<core::Size> const & res_selection);
-	virtual ~DisallowIfNonnative();
-	virtual TaskOperationOP clone() const;
+	~DisallowIfNonnative() override;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 	//helper functions to define desired AAs
 	void clear();
 	//define as true which residues are NOT allowed.
@@ -312,7 +308,7 @@ public:
 	// allow restriction of residues, additive
 	void restrict_to_residue( core::Size const & resid);
 	void restrict_to_residue( utility::vector1< core::Size > const & residues);
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -332,10 +328,10 @@ public:
 public:
 	RotamerExplosion();
 	RotamerExplosion( core::Size const resid, ExtraRotSample const sample_level, core::Size const chi );
-	virtual ~RotamerExplosion();
-	virtual TaskOperationOP clone() const;
-	virtual void apply( pose::Pose const &, PackerTask & ) const;
-	virtual void parse_tag( TagCOP, DataMap & );
+	~RotamerExplosion() override;
+	TaskOperationOP clone() const override;
+	void apply( pose::Pose const &, PackerTask & ) const override;
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	void resid( core::Size const r );
 	void chi( core::Size const c );
@@ -355,15 +351,14 @@ public:
 	typedef TaskOperation parent;
 
 public:
-	virtual ~InitializeFromCommandline();
+	~InitializeFromCommandline() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 
-	virtual void parse_tag( TagCOP, DataMap & ); //parses nothing
+	void parse_tag( TagCOP, DataMap & ) override; //parses nothing
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -377,15 +372,14 @@ public:
 public:
 	UseMultiCoolAnnealer();
 	UseMultiCoolAnnealer( core::Size states );
-	virtual ~UseMultiCoolAnnealer();
+	~UseMultiCoolAnnealer() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 
-	virtual void parse_tag( TagCOP Tag, DataMap & );
+	void parse_tag( TagCOP Tag, DataMap & ) override;
 
 	void set_states( core::Size states );
 
@@ -406,15 +400,14 @@ public:
 	InitializeFromOptionCollection();
 	InitializeFromOptionCollection( utility::options::OptionCollectionCOP options );
 	InitializeFromOptionCollection( InitializeFromOptionCollection const & );
-	virtual ~InitializeFromOptionCollection();
+	~InitializeFromOptionCollection() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	void options( utility::options::OptionCollectionCOP options );
 
@@ -432,13 +425,12 @@ public:
 	typedef TaskOperation parent;
 
 public:
-	virtual ~InitializeExtraRotsFromCommandline();
+	~InitializeExtraRotsFromCommandline() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -451,13 +443,12 @@ public:
 	typedef TaskOperation parent;
 
 public:
-	virtual ~IncludeCurrent();
+	~IncludeCurrent() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -495,15 +486,14 @@ public:
 
 public:
 	ExtraRotamersGeneric();
-	virtual ~ExtraRotamersGeneric();
+	~ExtraRotamersGeneric() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 
 	void ex1( bool value );
 	void ex2( bool value );
@@ -564,13 +554,12 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	ReadResfile( ReadResfile const &src );
 
-	virtual ~ReadResfile();
+	~ReadResfile() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 
 	/// @brief Set the residue selector.
 	/// @details The input selector is cloned and the clone is stored.
@@ -589,7 +578,7 @@ public:
 
 	std::string const & filename() const;
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	/// @brief Read in the resfile and store it, so that it
 	/// doesn't have to be read over and over again at apply time.
@@ -640,14 +629,14 @@ public:
 	ReadResfileAndObeyLengthEvents();
 	ReadResfileAndObeyLengthEvents( std::string const &);
 
-	~ReadResfileAndObeyLengthEvents();
+	~ReadResfileAndObeyLengthEvents() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 	void
-	apply( pose::Pose const & pose, PackerTask & ptask ) const;
+	apply( pose::Pose const & pose, PackerTask & ptask ) const override;
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	std::list< ResfileCommandCOP > const &
 	resfile_commands(
@@ -672,14 +661,13 @@ public:
 public:
 	SetRotamerCouplings();
 	SetRotamerCouplings(SetRotamerCouplings const & );
-	virtual ~SetRotamerCouplings();
+	~SetRotamerCouplings() override;
 	SetRotamerCouplings & operator = ( SetRotamerCouplings const & );
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 
 	void
 	set_couplings( rotamer_set::RotamerCouplingsOP couplings );
@@ -701,14 +689,13 @@ public:
 public:
 	SetRotamerLinks();
 	SetRotamerLinks(SetRotamerLinks const & );
-	virtual ~SetRotamerLinks();
+	~SetRotamerLinks() override;
 	SetRotamerLinks & operator = ( SetRotamerLinks const & );
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 
 	void
 	set_links( rotamer_set::RotamerLinksOP links );
@@ -728,11 +715,11 @@ public:
 	typedef TaskOperation parent;
 public:
 	AppendRotamer();
-	virtual ~AppendRotamer();
+	~AppendRotamer() override;
 	AppendRotamer( rotamer_set::RotamerOperationOP rotamer_operation );
 	AppendRotamer( AppendRotamer const & );
-	virtual TaskOperationOP clone() const;
-	virtual void apply( pose::Pose const &, PackerTask & ) const;
+	TaskOperationOP clone() const override;
+	void apply( pose::Pose const &, PackerTask & ) const override;
 	void set_rotamer_operation( rotamer_set::RotamerOperationOP rotamer_operation );
 
 	static std::string keyname();
@@ -751,11 +738,11 @@ public:
 	typedef TaskOperation parent;
 public:
 	AppendRotamerSet();
-	virtual ~AppendRotamerSet();
+	~AppendRotamerSet() override;
 	AppendRotamerSet( rotamer_set::RotamerSetOperationOP rotamer_set_operation );
 	AppendRotamerSet( AppendRotamerSet const & );
-	virtual TaskOperationOP clone() const;
-	virtual void apply( pose::Pose const &, PackerTask & ) const;
+	TaskOperationOP clone() const override;
+	void apply( pose::Pose const &, PackerTask & ) const override;
 	void set_rotamer_set_operation( rotamer_set::RotamerSetOperationOP rotamer_operation );
 
 	static std::string keyname();
@@ -773,11 +760,11 @@ public:
 	typedef TaskOperation parent;
 public:
 	AppendResidueRotamerSet();
-	virtual ~AppendResidueRotamerSet();
+	~AppendResidueRotamerSet() override;
 	AppendResidueRotamerSet( core::Size resnum, rotamer_set::RotamerSetOperationOP rotamer_set_operation );
 	AppendResidueRotamerSet( AppendResidueRotamerSet const & );
-	virtual TaskOperationOP clone() const;
-	virtual void apply( pose::Pose const &, PackerTask & ) const;
+	TaskOperationOP clone() const override;
+	void apply( pose::Pose const &, PackerTask & ) const override;
 	void set_resnum( core::Size resnum );
 	void set_rotamer_set_operation( rotamer_set::RotamerSetOperationOP rotamer_operation );
 
@@ -795,13 +782,12 @@ public:
 	typedef TaskOperation parent;
 
 public:
-	virtual ~PreserveCBeta();
+	~PreserveCBeta() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -815,18 +801,17 @@ public:
 	typedef TaskOperation parent;
 
 public:
-	virtual ~PreventRepacking();
+	~PreventRepacking() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const &, PackerTask & ) const override;
 
 	void include_residue( core::Size resid );
 	void clear();
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -847,10 +832,10 @@ public:
 	RestrictYSDesign();
 	RestrictYSDesign( RestrictYSDesign const & src );
 	RestrictYSDesign( utility::vector1< core::Size > const & resids );
-	virtual ~RestrictYSDesign();
+	~RestrictYSDesign() override;
 
-	virtual TaskOperationOP clone() const;
-	virtual void apply( pose::Pose const &, PackerTask & task) const;
+	TaskOperationOP clone() const override;
+	void apply( pose::Pose const &, PackerTask & task) const override;
 	void include_resid( core::Size const resid );
 	void include_gly( bool const gly );
 	// void clear();  // Not defined, commenting out to make Python binding compile
@@ -871,10 +856,10 @@ public:
 public:
 	ExtraRotamers();
 	ExtraRotamers( core::Size const resid, core::Size const chi, core::Size level = 1 );
-	virtual ~ExtraRotamers();
-	virtual TaskOperationOP clone() const;
-	virtual void apply( pose::Pose const &, PackerTask & ) const;
-	virtual void parse_tag( TagCOP, DataMap & );
+	~ExtraRotamers() override;
+	TaskOperationOP clone() const override;
+	void apply( pose::Pose const &, PackerTask & ) const override;
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -890,10 +875,10 @@ public:
 public:
 	ExtraChiCutoff();
 	ExtraChiCutoff( core::Size const resid, core::Size const extrachi_cutoff );
-	virtual ~ExtraChiCutoff();
-	virtual TaskOperationOP clone() const;
-	virtual void apply( pose::Pose const &, PackerTask & ) const;
-	virtual void parse_tag( TagCOP, DataMap & );
+	~ExtraChiCutoff() override;
+	TaskOperationOP clone() const override;
+	void apply( pose::Pose const &, PackerTask & ) const override;
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	static std::string keyname();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

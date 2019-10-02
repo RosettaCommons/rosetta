@@ -54,7 +54,7 @@ public:
 
 public:
 	UpstreamHitCacher( MatcherCOP matcher );
-	virtual ~UpstreamHitCacher();
+	~UpstreamHitCacher() override;
 
 	void
 	set_cache_size( Size n_rotamers_to_cache );
@@ -69,12 +69,11 @@ public:
 	/// hand itself to an UpstreamBuilder. Ask the UpstreamHitCacher for a particular hit, and it
 	/// will call recover_rotamer() on the upstream builder; it's doing bookkeeping in the background
 	/// and that bookkeeping is important for the success of this function.
-	virtual
 	void
 	process_hit(
 		Hit const & hit,
 		core::conformation::Residue const & upstream_conformation
-	);
+	) override;
 
 
 private:

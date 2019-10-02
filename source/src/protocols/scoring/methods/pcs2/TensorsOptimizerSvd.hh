@@ -63,28 +63,24 @@ public:
 
 	TensorsOptimizerSvd(PcsDataCenter /*const*/  & pcs_d_c);
 
-	virtual
-	~TensorsOptimizerSvd();
+	~TensorsOptimizerSvd() override;
 
 	// @brief OptE func
-	virtual
 	core::Real
-	operator ()( core::optimization::Multivec const & vars ) const;
+	operator ()( core::optimization::Multivec const & vars ) const override;
 
 	core::Real
 	func( core::optimization::Multivec const & vars ) const;
 
 
 	/// @brief OptE dfunc
-	virtual
 	void
 	dfunc(core::optimization::Multivec const & vars,
 		core::optimization::Multivec & dE_dvars
-	) const;
+	) const override;
 
-	virtual
 	bool
-	abort_min(core::optimization::Multivec const & vars ) const;
+	abort_min(core::optimization::Multivec const & vars ) const override;
 
 	/// @brief exact derivative (fast)
 	void

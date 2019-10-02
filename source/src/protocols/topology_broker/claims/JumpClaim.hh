@@ -108,7 +108,7 @@ public:
 		atom2_( atom2 )
 	{}
 
-	virtual DofClaimOP clone() const { return utility::pointer::make_shared< JumpClaim >( *this ); }
+	DofClaimOP clone() const override { return utility::pointer::make_shared< JumpClaim >( *this ); }
 
 	LocalPosition const& local_pos1() const {
 		return local_pos1_;
@@ -118,7 +118,7 @@ public:
 		return local_pos2_;
 	}
 
-	virtual void show(std::ostream& os) const {
+	void show(std::ostream& os) const override {
 		TopologyClaimerCOP owner_op( owner() );
 		os << "DofClaim-" << str_type() << " owned by a " << (owner_op ? owner_op->type() : "(Unknown)") << " from ("
 			<< local_pos1_.first << ", " << local_pos1_.second << ") to ("
@@ -135,7 +135,7 @@ public:
 		return owner_op->broker().sequence_number_resolver().find_global_pose_number( local_pos2_ );
 	}
 
-	virtual void toggle( core::kinematics::MoveMap& mm, bool new_setting ) const {
+	void toggle( core::kinematics::MoveMap& mm, bool new_setting ) const override {
 		TopologyClaimerCOP owner_op( owner() );
 		core::Size pos1 = owner_op->broker().sequence_number_resolver().find_global_pose_number( local_pos1_ );
 		core::Size pos2 = owner_op->broker().sequence_number_resolver().find_global_pose_number( local_pos2_ );
@@ -147,7 +147,7 @@ public:
 		return !permanent_;
 	}
 
-	virtual std::string str_type() const {
+	std::string str_type() const override {
 		return "JUMP";
 	}
 

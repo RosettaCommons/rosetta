@@ -44,14 +44,14 @@ public:
 
 	PDDFEnergy(utility::vector1<core::Real> const &,utility::vector1<core::Real> const &);
 
-	virtual ~PDDFEnergy() {}
+	~PDDFEnergy() override {}
 
-	virtual core::scoring::methods::EnergyMethodOP clone() const { return utility::pointer::make_shared< PDDFEnergy >(); }
+	core::scoring::methods::EnergyMethodOP clone() const override { return utility::pointer::make_shared< PDDFEnergy >(); }
 
-	virtual void finalize_total_energy(core::pose::Pose & pose,core::scoring::ScoreFunction const &,core::scoring::EnergyMap & totals) const;
+	void finalize_total_energy(core::pose::Pose & pose,core::scoring::ScoreFunction const &,core::scoring::EnergyMap & totals) const override;
 
-	virtual void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
+	) const override {}
 
 	core::scoring::methods::EnergyMethodOP create_energy_method(core::scoring::methods::EnergyMethodOptions const &) const {
 		return utility::pointer::make_shared< PDDFEnergy >();
@@ -92,8 +92,7 @@ private:
 	bool if_hydrogens_;
 
 	void read_pddf(std::string);
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 

@@ -72,17 +72,17 @@ public:
 		int node_id,
 		int num_states);
 
-	virtual ~SymmOnTheFlyNode();
+	~SymmOnTheFlyNode() override;
 
 	void set_rotamers(
 		rotamer_set::RotamerSetCOP rotamers
 	);
 
-	virtual void zero_one_body_energies();
-	virtual void add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energy1b );
-	virtual void update_one_body_energy( int state, core::PackerEnergy energy);
+	void zero_one_body_energies() override;
+	void add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energy1b ) override;
+	void update_one_body_energy( int state, core::PackerEnergy energy) override;
 	virtual void set_one_body_energy( int state, core::PackerEnergy energy );
-	virtual void add_to_one_body_energy( int state, core::PackerEnergy energy );
+	void add_to_one_body_energy( int state, core::PackerEnergy energy ) override;
 	virtual void zero_one_body_energy( int state );
 
 	/// @brief the number of distinct ResidueType objects pointed to by all of the
@@ -154,8 +154,8 @@ public:
 	void
 	distinguish_backbone_and_sidechain( bool setting );
 
-	virtual unsigned int count_static_memory() const = 0;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override = 0;
+	unsigned int count_dynamic_memory() const override;
 
 	core::PackerEnergy
 	compute_rotamer_pair_energy(
@@ -239,7 +239,7 @@ private:
 class SymmOnTheFlyEdge : public FixedBBEdge
 {
 public:
-	virtual ~SymmOnTheFlyEdge();
+	~SymmOnTheFlyEdge() override;
 
 	SymmOnTheFlyEdge(
 		InteractionGraphBase * owner,
@@ -289,8 +289,8 @@ public:
 		return get_glycine_correction( which_node, state );
 	}
 
-	virtual unsigned int count_static_memory() const = 0;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override = 0;
+	unsigned int count_dynamic_memory() const override;
 
 	bool long_range_interactions_exist() const { return long_range_interactions_exist_; }
 	bool short_range_interactions_exist() const { return short_range_interactions_exist_; }
@@ -319,25 +319,21 @@ public:
 
 	/// @brief fullfilling base class virtual member request -- however, this funciton does not quite
 	/// make sense for a symmetric oft ig so this is just stubbed out as a noop.
-	virtual
-	void set_sparse_aa_info(ObjexxFCL::FArray2_bool const & ) {}
+	void set_sparse_aa_info(ObjexxFCL::FArray2_bool const & ) override {}
 
 	/// @brief fullfilling base class virtual member request -- however, this function does not quite
 	/// make sense for a symmetric otf ig, so this is just stubbed out to return true.
-	virtual
-	bool get_sparse_aa_info( int, int ) const { return true; }
+	bool get_sparse_aa_info( int, int ) const override { return true; }
 
 	/// @brief fullfilling base class virtual member request -- however, this funciton does not quite
 	/// make sense for a symmetric oft ig so this is just stubbed out as a noop.
-	virtual
-	void force_aa_neighbors( int, int ) {}
+	void force_aa_neighbors( int, int ) override {}
 
 	/// @brief fullfilling base class virtual member request -- however, this funciton does not quite
 	/// make sense for a symmetric oft ig so this is just stubbed out as a noop.
-	virtual
-	void force_all_aa_neighbors() {}
+	void force_all_aa_neighbors() override {}
 
-	virtual core::PackerEnergy get_two_body_energy( int const, int const ) const = 0;
+	core::PackerEnergy get_two_body_energy( int const, int const ) const override = 0;
 
 protected:
 
@@ -410,11 +406,11 @@ public:
 
 public:
 	SymmOnTheFlyInteractionGraph( int num_nodes );
-	~SymmOnTheFlyInteractionGraph();
+	~SymmOnTheFlyInteractionGraph() override;
 
-	virtual void initialize( pack_basic::RotamerSetsBase const & rot_sets );
+	void initialize( pack_basic::RotamerSetsBase const & rot_sets ) override;
 
-	virtual int get_num_aatypes() const { return num_restype_groups_; }
+	int get_num_aatypes() const override { return num_restype_groups_; }
 
 	inline
 	int get_num_restype_groups() const
@@ -507,9 +503,8 @@ public:
 		core::PackerEnergy one_body_energy
 	);
 
-	virtual
 	core::PackerEnergy
-	get_one_body_energy_for_node_state( int node, int state);
+	get_one_body_energy_for_node_state( int node, int state) override;
 
 	// void
 	// set_sparse_aa_info_for_edge(
@@ -577,7 +572,7 @@ public:
 		int node2
 	);
 
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_dynamic_memory() const override;
 
 	/// @brief Return the homogeneous transform to translate and rotate coordinates
 	/// originally in the asymmetric unit into a given destination subunit.

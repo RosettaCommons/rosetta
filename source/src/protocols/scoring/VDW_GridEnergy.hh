@@ -47,36 +47,32 @@ public:
 	VDW_GridEnergy();
 
 	/// @brief dtor
-	virtual ~VDW_GridEnergy();
+	~VDW_GridEnergy() override;
 
 	/// clone
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for WholeStructureEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual void
-	setup_for_scoring( core::pose::Pose &, core::scoring::ScoreFunction const & ) const;
+	void
+	setup_for_scoring( core::pose::Pose &, core::scoring::ScoreFunction const & ) const override;
 
 
-	virtual
 	void
 	finalize_total_energy(
 		core::pose::Pose &,
 		core::scoring::ScoreFunction const &,
 		core::scoring::EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief VDW_GridEnergy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 
 	// data

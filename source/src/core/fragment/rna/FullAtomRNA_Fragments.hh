@@ -67,10 +67,10 @@ public:
 	// RNA_Fragments();
 	FullAtomRNA_Fragments( std::string const & filename );
 
-	~FullAtomRNA_Fragments(){}
+	~FullAtomRNA_Fragments() override{}
 
 	//Probably the only thing that will actually get called publicly:
-	virtual void
+	void
 	apply_random_fragment(
 		core::pose::Pose & pose,
 		core::Size const position,
@@ -78,10 +78,10 @@ public:
 		core::Size const type,
 		RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
 		core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-		core::Size const symm_hack_arity ) const;
+		core::Size const symm_hack_arity ) const override;
 
 	//Probably the only thing that will actually get called publicly:
-	virtual void
+	void
 	apply_best_fragment(
 		core::scoring::ScoreFunctionOP sfxn,
 		core::pose::Pose & pose,
@@ -91,10 +91,10 @@ public:
 		RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
 		core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 		core::Size const symm_hack_arity,
-		core::Size const exhaustive ) const;
+		core::Size const exhaustive ) const override;
 
-	virtual bool
-	is_fullatom();
+	bool
+	is_fullatom() override;
 
 	std::string
 	name( core::Size const & i ) const { return vall_name_( i ); }
@@ -117,14 +117,14 @@ public:
 		std::string const & RNA_secstruct_string,
 		RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
 		utility::vector1< SYN_ANTI_RESTRICTION > const & restriction = utility::vector1< SYN_ANTI_RESTRICTION >(),
-		Size const type = MATCH_YR ) const;
+		Size const type = MATCH_YR ) const override;
 
 	void
 	insert_fragment(
 		core::pose::Pose & pose,
 		Size const position,
 		TorsionSet const & torsion_set,
-		core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
+		core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const override;
 
 private:
 

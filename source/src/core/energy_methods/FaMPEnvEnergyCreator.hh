@@ -38,16 +38,14 @@ class FaMPEnvEnergyCreator : public core::scoring::methods::EnergyMethodCreator 
 public:
 
 	/// @brief Instantiate a new MPEnvEnergy
-	virtual
 	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
 		core::scoring::methods::EnergyMethodOptions const &
-	) const;
+	) const override;
 
 	/// @brief Return MPEnv Score Type Claimed by this energy method
-	virtual
 	core::scoring::ScoreTypes
-	score_types_for_method() const;
+	score_types_for_method() const override;
 };
 
 

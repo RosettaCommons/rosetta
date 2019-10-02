@@ -51,7 +51,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 	EnzymaticMover & operator=( EnzymaticMover const & object_to_copy );
 
 	// Destructor
-	virtual ~EnzymaticMover() = default;
+	~EnzymaticMover() override = default;
 
 
 public: // Standard Rosetta methods ///////////////////////////////////////////
@@ -60,29 +60,29 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 	static void register_options();
 
 	/// @brief  Generate string representation of EnzymaticMover for debugging purposes.
-	virtual void show( std::ostream & output=std::cout ) const;
+	void show( std::ostream & output=std::cout ) const override;
 
 
 	// Mover methods
 	/// @brief  Return the name of the Mover.
-	virtual std::string get_name() const = 0;  // This method must be overridden.
+	std::string get_name() const override = 0;  // This method must be overridden.
 
-	virtual moves::MoverOP clone() const = 0;
+	moves::MoverOP clone() const override = 0;
 
-	virtual moves::MoverOP fresh_instance() const = 0;
+	moves::MoverOP fresh_instance() const override = 0;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & /*filters*/,
 		moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	static utility::tag::XMLSchemaComplexTypeGeneratorOP xml_schema_complex_type_generator();
 
 
 	/// @brief  Apply the corresponding move to <input_pose>.
-	virtual void apply( core::pose::Pose & input_pose );
+	void apply( core::pose::Pose & input_pose ) override;
 
 
 protected: // Accessors/Mutators //////////////////////////////////////////////

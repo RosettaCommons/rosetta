@@ -76,7 +76,7 @@ public:
 
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~AlignmentFileGeneratorMover();
+	~AlignmentFileGeneratorMover() override;
 
 	//Helper methods for constructors
 	/*
@@ -85,17 +85,17 @@ public:
 	void model_file_from_options();
 	void alignment_settings_from_options();
 	*/
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 	//Each apply will have its own Hasher to avoid conflict b/w threads
 
 
 public:
-	virtual void
-	show( std::ostream & output=std::cout ) const;
+	void
+	show( std::ostream & output=std::cout ) const override;
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	static std::string class_name();
 
@@ -105,7 +105,7 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	//AlignmentFileGeneratorMover & operator=( AlignmentFileGeneratorMover const & src );
 
@@ -127,12 +127,12 @@ public:
 	void basis_map_generator( BasisMapGeneratorOP bmg );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	static core::Size add_pose_segments_to_segment_vector(
 		core::pose::Pose const & pose,

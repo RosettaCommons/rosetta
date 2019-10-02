@@ -102,15 +102,13 @@ public: // Creation
 
 
 	/// @brief Clone this
-	virtual
 	ScalarOptionKey *
-	clone() const = 0;
+	clone() const override = 0;
 
 
 	/// @brief Destructor
 	inline
-	virtual
-	~ScalarOptionKey() {}
+	~ScalarOptionKey() override {}
 
 
 public: // Assignment
@@ -130,18 +128,16 @@ public: // Properties
 
 
 	/// @brief Scalar option key?
-	inline
 	bool
-	scalar() const
+	scalar() const override
 	{
 		return true;
 	}
 
 
 	/// @brief Vector option key?
-	inline
 	bool
-	vector() const
+	vector() const override
 	{
 		return false;
 	}

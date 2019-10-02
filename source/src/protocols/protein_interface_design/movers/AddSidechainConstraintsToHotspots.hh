@@ -41,7 +41,7 @@ public:
 		core::pose::Pose const & ) override;
 	protocols::moves::MoverOP clone() const override { return( utility::pointer::make_shared< AddSidechainConstraintsToHotspots >( *this ) ); }
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< AddSidechainConstraintsToHotspots >(); }
-	virtual ~AddSidechainConstraintsToHotspots();
+	~AddSidechainConstraintsToHotspots() override;
 	core::Size chain() const;
 	void chain( core::Size const c );
 	core::Real coord_sdev() const;

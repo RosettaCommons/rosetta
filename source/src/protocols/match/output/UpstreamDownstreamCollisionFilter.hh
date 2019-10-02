@@ -57,8 +57,7 @@ public:
 		std::string filter_name,
 		UpstreamHitCacherOP coordinate_cacher );
 
-	virtual
-	~UpstreamDownstreamCollisionFilter();
+	~UpstreamDownstreamCollisionFilter() override;
 
 	void
 	set_downstream_pose( core::pose::Pose const & downstream_pose );
@@ -74,24 +73,22 @@ public:
 	void
 	set_downstream_builder( Size geomcst_id, downstream::DownstreamBuilderCOP builder );
 
-	void set_tolerated_overlap( Real setting );
+	void set_tolerated_overlap( Real setting ) override;
 
 	/// @brief Returns true if there is at least one placement of the
 	/// downstream partner which does not exceed the collision tolerance
 	/// with any of the upstream residues.
-	virtual
 	bool
 	passes_filter(
 		match const & m
-	) const;
+	) const override;
 
 	/// @brief Returns true if the specified downstream position does not
 	/// collide more than tolerated with any of the upstream residues
-	virtual
 	bool
 	passes_filter(
 		match_dspos1 const & m
-	) const;
+	) const override;
 
 	bool
 	passes_hardsphere_filter(

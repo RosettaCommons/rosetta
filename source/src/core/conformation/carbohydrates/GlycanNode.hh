@@ -60,7 +60,7 @@ public:
 	///  pos is the glycan residue we are setting up.
 	GlycanNode(conformation::Conformation const & conf, Size const tree_start_pos, Size const pos);
 
-	virtual ~GlycanNode();
+	~GlycanNode() override;
 
 	GlycanNode( GlycanNode const & src );
 

@@ -33,12 +33,12 @@ public:
 	SugarVirtualizeMover( Size const moving_res );
 
 	//destructor
-	~SugarVirtualizeMover();
+	~SugarVirtualizeMover() override;
 
 public:
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "SugarVirtualizeMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "SugarVirtualizeMover"; }
 
 private:
 

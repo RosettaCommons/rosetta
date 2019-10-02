@@ -43,21 +43,20 @@ public:
 	typedef core::pack::rotamer_set::RotamerSet_ parent;
 
 	FlexbbRotamerSet();
-	virtual ~FlexbbRotamerSet();
+	~FlexbbRotamerSet() override;
 
 	void
 	set_owner( FlexbbRotamerSetsCAP owner );
 
 	/// @brief  Build rotamers that depend on positions of rotamers built in a previous pass
 	/// This function won't work...
-	virtual
 	void build_dependent_rotamers(
 		core::pack::rotamer_set::RotamerSets const & rotamer_sets,
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const & scorefxn,
 		core::pack::task::PackerTask const & task,
 		utility::graph::GraphCOP packer_neighbor_graph
-	);
+	) override;
 
 	void
 	set_existing_residue( core::conformation::ResidueCOP residue );
@@ -72,7 +71,6 @@ protected:
 	/// (the concrete residue type) while relying on the rotamer-
 	/// building instructions within the PackerTask.
 	/// Use the residue in the input pose at position resid_ as the existing residue.
-	virtual
 	void build_rotamers_for_concrete_virt(
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const & scorefxn,
@@ -80,14 +78,13 @@ protected:
 		core::chemical::ResidueTypeCOP concrete_residue,
 		utility::graph::GraphCOP packer_neighbor_graph,
 		bool use_neighbor_context = true
-	);
+	) override;
 
 	/// @brief Computes the "bump energy" of a rotamer: the bump energy is the
 	/// sum of rotamer's interactions with 1) the backbone-and-side chains of
 	/// neighboring residues that are held fixed during this repacking optimization
 	/// and 2) the backbones of neighboring residues that are changable during this
 	/// repacking optimization.
-	virtual
 	core::PackerEnergy
 	bump_check(
 		core::conformation::ResidueCOP rotamer,
@@ -95,7 +92,7 @@ protected:
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask const & task,
 		utility::graph::GraphCOP packer_neighbor_graph
-	) const;
+	) const override;
 
 	virtual
 	void

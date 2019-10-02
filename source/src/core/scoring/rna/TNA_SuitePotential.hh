@@ -45,7 +45,7 @@ public:
 	/// be called from the ScoringManager
 	TNA_SuitePotential();
 
-	virtual ~TNA_SuitePotential();
+	~TNA_SuitePotential() override;
 
 	bool eval_score(
 		conformation::Residue const & rsd1,

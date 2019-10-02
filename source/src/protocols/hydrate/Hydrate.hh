@@ -58,18 +58,18 @@ public:
 	Hydrate & operator=(Hydrate const & hyd);
 
 	// Destructor
-	virtual ~Hydrate();
+	~Hydrate() override;
 
 	// Mover methods
 	/// @brief  Return the name of the Mover.
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief  Apply the corresponding move to <input_pose>.
-	virtual void apply(core::pose::Pose & input_pose);
+	void apply(core::pose::Pose & input_pose) override;
 
 
 private:

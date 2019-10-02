@@ -47,7 +47,7 @@ public:
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< HotspotDisjointedFoldTreeMover >(); }
-	virtual ~HotspotDisjointedFoldTreeMover();
+	~HotspotDisjointedFoldTreeMover() override;
 
 	void set_residues( core::select::residue_selector::ResidueSelectorCOP residues );
 	std::set< core::Size > get_residues( core::pose::Pose const & pose ) const;

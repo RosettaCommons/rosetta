@@ -72,13 +72,13 @@ public:
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string class_name();
 
-	virtual void yield_elements( FoldTreeSketch const& fts, CutBiasElements& elements ) const;
+	void yield_elements( FoldTreeSketch const& fts, CutBiasElements& elements ) const override;
 
-	EnvClaimOP clone() const;
+	EnvClaimOP clone() const override;
 
-	virtual std::string type() const;
+	std::string type() const override;
 
-	virtual void show( std::ostream& os ) const;
+	void show( std::ostream& os ) const override;
 
 private:
 	std::string label_;

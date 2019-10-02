@@ -48,7 +48,7 @@ public:
 	/// the RNA fragment library to use.
 	RNA_Relaxer( RNA_FragmentMoverOP rna_fragment_mover, RNA_MinimizerOP rna_minimizer );
 
-	~RNA_Relaxer();
+	~RNA_Relaxer() override;
 
 	/// @brief Clone this object
 	// virtual RNA_Relaxer* clone() const {
@@ -56,8 +56,8 @@ public:
 	// }
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void
 	simple_rmsd_cutoff_relax( bool const setting ){ simple_rmsd_cutoff_relax_ = setting; }

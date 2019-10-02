@@ -32,13 +32,13 @@ namespace scores {
 class TrisBpyScore : public RigidScore {
 public:
 	TrisBpyScore(core::pose::Pose const & pose, Real const & tolerance=0.3, Real const & min_bpy_contacts_=15);
-	virtual ~TrisBpyScore();
-	core::Real score      ( Xforms const & x1s, Xforms const & x2s ) const;
+	~TrisBpyScore() override;
+	core::Real score      ( Xforms const & x1s, Xforms const & x2s ) const override;
 	core::Real score_extra( Xforms const & x1s, Xforms const & x2s, Real&cbc,Real&err,int&chirl ,Xform&xbpy) const;
 	void      dump_trisbpy( Xforms const & x1s, Xforms const & x2s, std::string const & fname ) const;
-	void show(std::ostream & out                                      , int width=10) const;
-	void show(std::ostream & out, Xforms const & x1s, Xforms const & x2s, int width=10) const;
-	std::string type() const { return "TrisBpy"; }
+	void show(std::ostream & out                                      , int width=10) const override;
+	void show(std::ostream & out, Xforms const & x1s, Xforms const & x2s, int width=10) const override;
+	std::string type() const override { return "TrisBpy"; }
 private:
 	core::pose::Pose const & pose_;
 	numeric::Xforms bbx_;

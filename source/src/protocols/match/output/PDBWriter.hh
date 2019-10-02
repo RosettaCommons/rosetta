@@ -58,21 +58,18 @@ public:
 
 	PDBWriter();
 
-	virtual ~PDBWriter();
+	~PDBWriter() override;
 
-	virtual
 	void
-	prepare_for_output_writing();
+	prepare_for_output_writing() override;
 
-	virtual
 	void
-	record_match( match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer );
+	record_match( match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer ) override;
 
 	/// @brief evaluator and score writer are not passed in because single-downstream-position match
 	///currently have no way of being evaluated
-	virtual
 	void
-	record_match( match_dspos1 const & m );
+	record_match( match_dspos1 const & m ) override;
 
 	//core::pose::PoseCOP
 	//create_output_pose_from_dspos1_match(
@@ -87,7 +84,7 @@ public:
 	void
 	initialize_from_matcher_task(
 		MatcherTaskCOP mtask
-	);
+	) override;
 
 	void
 	set_downstream_builder(
@@ -184,24 +181,21 @@ public:
 
 	CloudPDBWriter( MatchGrouperOP grouper );
 
-	virtual ~CloudPDBWriter();
-
-	virtual
-	void
-	prepare_for_output_writing();
+	~CloudPDBWriter() override;
 
 	void
-	end_output_writing();
+	prepare_for_output_writing() override;
+
+	void
+	end_output_writing() override;
 
 	/// @brief no writing in this function, only saving the hits according
 	/// to what group they belong to
-	virtual
 	void
-	record_match( match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer );
+	record_match( match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer ) override;
 
-	virtual
 	void
-	record_match( match_dspos1 const & m );
+	record_match( match_dspos1 const & m ) override;
 
 
 	/// @brief this is where the actual writing happens
@@ -252,7 +246,7 @@ public:
 
 	PoseMatchOutputWriter( MatchGrouperOP grouper );
 
-	~PoseMatchOutputWriter();
+	~PoseMatchOutputWriter() override;
 
 	void
 	insert_match_into_pose(
@@ -266,7 +260,7 @@ public:
 	);
 
 	void
-	end_output_writing();
+	end_output_writing() override;
 
 
 };

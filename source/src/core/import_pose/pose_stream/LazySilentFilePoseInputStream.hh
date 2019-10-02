@@ -39,22 +39,22 @@ class LazySilentFilePoseInputStream : public PoseInputStream {
 public:
 	LazySilentFilePoseInputStream( utility::vector1< FileName > const & fns );
 	LazySilentFilePoseInputStream();
-	~LazySilentFilePoseInputStream() {}
+	~LazySilentFilePoseInputStream() override {}
 
 	utility::vector1< FileName > const & filenames() const;
 
 public:
-	virtual bool has_another_pose();
+	bool has_another_pose() override;
 
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set,
 		bool const metapatches = true
-	);
-	virtual void fill_pose( core::pose::Pose&,
-		bool const metapatches = true );
+	) override;
+	void fill_pose( core::pose::Pose&,
+		bool const metapatches = true ) override;
 
-	virtual void reset();
+	void reset() override;
 
 private:
 	utility::vector1< FileName > filenames_;

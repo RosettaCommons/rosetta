@@ -44,33 +44,33 @@ public:
 	QuotaCollector(core::Size query_size, core::Size frag_size)  { storage_.resize(query_size-frag_size+1); frag_size_ = frag_size; }
 
 	/// @brief  Insert a fragment candidate to the container
-	bool add(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP>);
+	bool add(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP>) override;
 
 	/// @brief removes all candidates from the container
-	void clear();
+	void clear() override;
 
 	/// @brief  Check how many candidates have been already collected for a given position
-	core::Size count_candidates(core::Size) const;
+	core::Size count_candidates(core::Size) const override;
 
 	/// @brief  Check how many candidates have been already collected for all positions
-	core::Size count_candidates() const;
+	core::Size count_candidates() const override;
 
 	/// @brief  Check the size of query sequence that this object knows.
 	/// This is mainly to be ale to check if it is the same as in the other parts of
 	/// fragment picking machinery.
-	core::Size query_length() const { return storage_.size(); }
+	core::Size query_length() const override { return storage_.size(); }
 
 	//Undefined, commenting out to fix PyRosetta build  ScoredCandidatesVector1 const & get_candidates(core::Size position_in_query) const;
-	ScoredCandidatesVector1 & get_candidates(core::Size position_in_query);
+	ScoredCandidatesVector1 & get_candidates(core::Size position_in_query) override;
 
 	/// @brief Describes what has been collected
 	void print_report(std::ostream & output,
 		scores::FragmentScoreManagerOP scoring
-	) const;
+	) const override;
 
 	/// @brief Inserts candidates from another QuotaCollector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
-	void insert(core::Size pos, CandidatesCollectorOP collector) {
+	void insert(core::Size pos, CandidatesCollectorOP collector) override {
 		QuotaCollectorOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::quota::QuotaCollector > ( collector );
 		if ( c == 0 ) {
 			utility_exit_with_message("Cant' cast candidates' collector to QuotaCollector. Is quota set up correctly?");

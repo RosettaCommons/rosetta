@@ -52,7 +52,7 @@ public:
 	/// @brief non-virtual destructor to keep EtableAtom small and lightweight
 	/// as a virtual destructor would add a vtable to the class
 	/// But I fear leaks... do I know how xyzVector dealloates its data?
-	virtual ~EtableAtom();
+	~EtableAtom() override;
 
 	/// @brief deprecated!
 	inline

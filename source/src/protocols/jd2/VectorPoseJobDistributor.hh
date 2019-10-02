@@ -44,17 +44,17 @@ public:
 
 	VectorPoseJobDistributor();
 
-	virtual ~VectorPoseJobDistributor();
+	~VectorPoseJobDistributor() override;
 
-	core::Size get_new_job_id();
+	core::Size get_new_job_id() override;
 
-	JobOP current_job() const;
+	JobOP current_job() const override;
 
-	void mark_current_job_id_for_repetition();
+	void mark_current_job_id_for_repetition() override;
 
-	void job_failed( core::pose::Pose &, bool );
+	void job_failed( core::pose::Pose &, bool ) override;
 
-	void handle_interrupt();
+	void handle_interrupt() override;
 
 	bool apply_parsed_protocol_mpi( core::pose::PoseOP & pose,
 		protocols::rosetta_scripts::ParsedProtocolOP & protocol );
@@ -63,7 +63,7 @@ public:
 		utility::vector1<protocols::rosetta_scripts::ParsedProtocolOP> & protocols,
 		utility::vector1< core::Size > & pose_order );
 
-	void go( protocols::moves::MoverOP mover );
+	void go( protocols::moves::MoverOP mover ) override;
 
 	void go_serial( protocols::moves::MoverOP mover );
 

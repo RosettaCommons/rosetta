@@ -30,7 +30,7 @@ class FileSystemResourceLocatorCreator : public ResourceLocatorCreator
 {
 public:
 	FileSystemResourceLocatorCreator();
-	virtual ~FileSystemResourceLocatorCreator();
+	~FileSystemResourceLocatorCreator() override;
 
 	ResourceLocatorOP create_resource_locator() const override;
 	std::string locator_type() const override;

@@ -46,7 +46,7 @@ public:
 	}
 
 	//destructor
-	~PhosphateMove();
+	~PhosphateMove() override;
 
 	bool operator== ( PhosphateMove const & other) const;
 

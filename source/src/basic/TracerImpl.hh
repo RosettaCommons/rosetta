@@ -40,7 +40,7 @@ protected: /// Inner class declaration
 		virtual ~basic_tstringbuf() {}
 
 	protected:
-		virtual int sync() {
+		int sync() override {
 			otsream_->t_flush( this->str() ); //std::basic_stringbuf<CharT, Traits>::str() );
 			//std::basic_stringbuf<CharT, Traits>::str("");
 			this->str("");
@@ -53,7 +53,7 @@ protected: /// Inner class declaration
 
 public:
 	basic_otstream() : std::basic_ostream<CharT, Traits> ( new basic_tstringbuf<CharT, Traits> (this) ) {}
-	virtual ~basic_otstream() { delete this->rdbuf(); }
+	~basic_otstream() override { delete this->rdbuf(); }
 
 
 	/// @brief Return true if inner string buffer is empty.
@@ -149,7 +149,7 @@ public:
 		bool muted_by_default = false
 	);
 
-	virtual ~TracerImpl();
+	~TracerImpl() override;
 
 	/// @brief re-init using data from another tracer object.
 	void init( TracerImpl const & tr );
@@ -232,7 +232,7 @@ public: /// Inner Classes
 	public:
 		TracerProxyImpl( TracerImpl & tracer, int priority, std::string channel );
 
-		virtual ~TracerProxyImpl();
+		~TracerProxyImpl() override;
 
 		/// @brief Is the output from this TracerProxy visible?
 		bool visible() { return visible_; }
@@ -242,7 +242,7 @@ public: /// Inner Classes
 
 	protected:
 
-		virtual void t_flush( std::string const & );
+		void t_flush( std::string const & ) override;
 
 	private:
 		TracerImpl & tracer_;
@@ -268,7 +268,7 @@ public: /// Inner Classes
 
 protected:
 	/// @brief overload member function.
-	virtual void t_flush(std::string const &);
+	void t_flush(std::string const &) override;
 
 private: /// Functions
 	/// @brief copy constructor.

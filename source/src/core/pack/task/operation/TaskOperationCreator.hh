@@ -43,7 +43,7 @@ namespace operation {
 class TaskOperationCreator : public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~TaskOperationCreator() {}
+	~TaskOperationCreator() override {}
 
 	/// @brief Instantiate a new TaskOperation
 	virtual TaskOperationOP create_task_operation() const = 0;

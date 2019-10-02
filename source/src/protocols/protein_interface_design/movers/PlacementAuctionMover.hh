@@ -77,7 +77,7 @@ public:
 	std::string get_stub_scorefxn() const;
 	utility::vector1< StubSetStubPos > const & stub_sets() const;
 	utility::vector1< StubSetStubPos > & stub_sets();
-	~PlacementAuctionMover();
+	~PlacementAuctionMover() override;
 
 	std::string
 	get_name() const override;

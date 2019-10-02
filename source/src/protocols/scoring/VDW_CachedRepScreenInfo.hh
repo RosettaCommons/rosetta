@@ -51,10 +51,10 @@ public:
 	VDW_CachedRepScreenInfo( VDW_CachedRepScreenInfo const & src );
 
 	// @brief default destructor
-	virtual ~VDW_CachedRepScreenInfo();
+	~VDW_CachedRepScreenInfo() override;
 
 	basic::datacache::CacheableDataOP
-	clone() const;
+	clone() const override;
 
 	void
 	read_in_VDW_rep_screen_pose( core::pose::rna::VDW_RepScreenInfo & VDW_rep_screen_info ) const;

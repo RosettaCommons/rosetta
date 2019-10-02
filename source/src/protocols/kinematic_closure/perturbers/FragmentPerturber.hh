@@ -36,13 +36,13 @@ public:
 	FragmentPerturber(utility::vector1< core::fragment::FragSetCOP > const & frag_libs);
 
 	/// @copydoc Perturber::get_name
-	std::string get_name() const { return "FragmentPerturber"; }
+	std::string get_name() const override { return "FragmentPerturber"; }
 
 	/// @copydoc Perturber::get_subset
 	void perturb_subset(
 		Pose const & pose,
 		IndexList const & residues,
-		ClosureProblemOP problem);
+		ClosureProblemOP problem) override;
 
 private:
 

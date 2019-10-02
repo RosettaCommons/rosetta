@@ -54,17 +54,17 @@ public: // construct/destruct
 	NoRepackDisulfides( NoRepackDisulfides const & rval );
 
 	/// @brief default destructor
-	virtual ~NoRepackDisulfides();
+	~NoRepackDisulfides() override;
 
 public: // virtual constructors
 
 	/// @brief clone this object
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 public: // methods
 
 	/// @brief apply operations to PackerTask
-	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	void apply( Pose const & pose, PackerTask & task ) const override;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname();

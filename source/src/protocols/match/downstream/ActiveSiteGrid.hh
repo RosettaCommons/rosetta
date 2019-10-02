@@ -46,7 +46,7 @@ public:
 	typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
 
 public:
-	virtual ~ActiveSiteGrid();
+	~ActiveSiteGrid() override;
 
 	ActiveSiteGrid();
 	ActiveSiteGrid( ActiveSiteGrid const & );

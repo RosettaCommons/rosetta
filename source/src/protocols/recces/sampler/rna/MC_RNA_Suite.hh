@@ -48,10 +48,10 @@ public:
 	MC_RNA_Suite( core::Size const rsd_id );
 
 	/// @brief Initialization
-	void init();
+	void init() override;
 
 	/// @brief Clear all rotamer samplers stored in this sampler
-	void clear_rotamer();
+	void clear_rotamer() override;
 
 	/// @brief Set the standard deviation of Gaussian sampler
 	void set_gaussian_stdev( core::Real const setting );
@@ -114,10 +114,10 @@ public:
 	void set_angle( core::pose::Pose const & pose );
 
 	/// @brief Name of the class
-	std::string get_name() const { return "MC_RNA_Suite"; }
+	std::string get_name() const override { return "MC_RNA_Suite"; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_RNA_SUITE; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::MC_RNA_SUITE; }
 
 private:
 	core::Size const rsd_id_;

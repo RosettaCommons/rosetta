@@ -41,7 +41,7 @@ public:
 	// derived from base class
 	InterchainJumpSelector();
 
-	virtual ~InterchainJumpSelector();
+	~InterchainJumpSelector() override;
 
 	/// @brief Copy constructor
 	///

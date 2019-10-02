@@ -34,12 +34,12 @@ public:
 
 public:
 	ConstraintNode( utility::graph::Graph*, Size node_id );
-	virtual ~ConstraintNode();
+	~ConstraintNode() override;
 
-	virtual void copy_from( Node const * source );
+	void copy_from( Node const * source ) override;
 
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
 };
 
@@ -53,12 +53,12 @@ public:
 public:
 	ConstraintEdge( utility::graph::Graph* owner, Size first_node_ind, Size second_node_ind);
 	ConstraintEdge( utility::graph::Graph* owner, ConstraintEdge const & example_edge );
-	virtual ~ConstraintEdge();
+	~ConstraintEdge() override;
 
-	virtual void copy_from( Edge const * source );
+	void copy_from( Edge const * source ) override;
 
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
 	void bond_geometry_energy( Energy );
 	void rna_bond_geometry_energy( Energy );
@@ -120,20 +120,20 @@ public:
 	ConstraintGraph( ConstraintGraph const & source );
 	ConstraintGraph & operator = ( ConstraintGraph const & source );
 
-	virtual ~ConstraintGraph();
+	~ConstraintGraph() override;
 
-	virtual void delete_edge( utility::graph::Edge * edge );
+	void delete_edge( utility::graph::Edge * edge ) override;
 
 	//virtual void copy_from( Graph const * source ); //? why haven't I implemented something like this in the base class?
 
 protected:
 
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
-	virtual utility::graph::Node * create_new_node( Size node_index );
-	virtual utility::graph::Edge * create_new_edge( Size index1, Size index2);
-	virtual utility::graph::Edge * create_new_edge( utility::graph::Edge const * example_edge );
+	utility::graph::Node * create_new_node( Size node_index ) override;
+	utility::graph::Edge * create_new_edge( Size index1, Size index2) override;
+	utility::graph::Edge * create_new_edge( utility::graph::Edge const * example_edge ) override;
 
 
 };

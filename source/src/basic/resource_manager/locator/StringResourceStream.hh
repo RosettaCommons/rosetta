@@ -56,8 +56,7 @@ private:
 
 public:
 
-	virtual
-	~StringResourceStream();
+	~StringResourceStream() override;
 
 	/// @brief Construct the stringstream from the given input string.
 	virtual
@@ -66,9 +65,8 @@ public:
 		std::string const & contents);
 
 	/// @brief Give non-const access to the internal stringstream so that it can be used to construct a resource.
-	virtual
 	std::istream &
-	stream();
+	stream() override;
 
 private: // members
 	std::stringstream stream_;

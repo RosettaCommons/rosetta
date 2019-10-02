@@ -49,7 +49,7 @@ public:
 	// MPLipidAccessibility( MPLipidAccessibility const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~MPLipidAccessibility();
+	~MPLipidAccessibility() override;
 
 	/////////////////////
 	/// Mover Methods ///

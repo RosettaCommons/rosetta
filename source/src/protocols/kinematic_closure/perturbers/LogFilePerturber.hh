@@ -32,13 +32,13 @@ public:
 	LogFilePerturber(std::string path);
 
 	/// @copydoc Perturber::get_name
-	std::string get_name() const { return "LogFilePerturber"; }
+	std::string get_name() const override { return "LogFilePerturber"; }
 
 	/// @copydoc Perturber::get_subset
 	void perturb_subset(
 		Pose const & pose,
 		IndexList const & residues,
-		ClosureProblemOP problem);
+		ClosureProblemOP problem) override;
 
 	/// @brief Output the given torsion angles in a format that can later be read
 	/// by LogFilePerturber.

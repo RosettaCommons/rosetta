@@ -33,25 +33,21 @@ public:
 		core::Distance const o2prime_instantiation_distance_cutoff = 6.0 );
 
 	//destructor
-	~SugarInstantiator();
+	~SugarInstantiator() override;
 
 public:
 
-	virtual
 	bool
-	check_screen();
+	check_screen() override;
 
-	virtual
 	std::string
-	name() const { return "SugarInstantiator"; }
+	name() const override { return "SugarInstantiator"; }
 
-	virtual
 	StepWiseScreenerType
-	type() const { return SUGAR_INSTANTIATOR; }
+	type() const override { return SUGAR_INSTANTIATOR; }
 
-	virtual
 	void
-	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ) override;
 
 private:
 

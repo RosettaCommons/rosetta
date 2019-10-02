@@ -89,7 +89,7 @@ public:
 	~ProtLigEnsemble() override;
 	ProtLigEnsemble(ProtLigEnsemble const & that);
 
-	virtual bool reinitialize_for_each_job() const override;
+	bool reinitialize_for_each_job() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 

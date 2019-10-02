@@ -40,30 +40,30 @@ public:
 	TNA_SuiteEnergy( RNA_EnergyMethodOptions const & options );
 
 	// clone
-	virtual methods::EnergyMethodOP clone() const { return utility::pointer::make_shared< TNA_SuiteEnergy >( options_ ); }
+	methods::EnergyMethodOP clone() const override { return utility::pointer::make_shared< TNA_SuiteEnergy >( options_ ); }
 
-	virtual void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	void
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
 	// scoring
-	virtual void
+	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual void
+	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
 		ScoreFunction const &,
 		EnergyMap &
-	) const {}
+	) const override {}
 
-	virtual void
+	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
@@ -74,36 +74,36 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
-	virtual bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
+	bool
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
 
-	virtual bool
-	defines_intrares_dof_derivatives( pose::Pose const & ) const { return false; }
+	bool
+	defines_intrares_dof_derivatives( pose::Pose const & ) const override { return false; }
 
-	virtual bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	bool
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
-	virtual bool
+	bool
 	defines_residue_pair_energy(
 		pose::Pose const &,
 		Size res1,
-		Size res2 ) const
+		Size res2 ) const override
 	{
 		return ( res1 == (res2+1) || res2 == (res1+1) );
 	}
 
 	virtual Distance atomic_interaction_cutoff() const { return 0; }
 
-	virtual void
-	indicate_required_context_graphs( utility::vector1< bool > & ) const {};
+	void
+	indicate_required_context_graphs( utility::vector1< bool > & ) const override {};
 
-	virtual methods::LongRangeEnergyType
-	long_range_type() const { return methods::tna_suite_lr; }
+	methods::LongRangeEnergyType
+	long_range_type() const override { return methods::tna_suite_lr; }
 
 private:
-	virtual Size version() const { return 420; }
+	Size version() const override { return 420; }
 
 	bool get_f1_f2(
 		id::TorsionID const & torsion_id,

@@ -53,7 +53,7 @@ class FullModelInputter : public utility::pointer::ReferenceCount
 public:
 
 	FullModelInputter();
-	virtual ~FullModelInputter();
+	~FullModelInputter() override;
 
 	virtual bool job_available_on_command_line() const = 0;
 

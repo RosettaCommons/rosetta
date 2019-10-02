@@ -48,7 +48,7 @@ public:  // Standard Methods //////////////////////////////////////////////////
 	/// @brief  Default constructor
 	OmegaPreferencesFunction();
 
-	virtual ~OmegaPreferencesFunction();
+	~OmegaPreferencesFunction() override;
 
 
 public:  // Other Public Methods //////////////////////////////////////////////

@@ -94,7 +94,6 @@ public:
 	score( core::scoring::func::XYZ_Func const & xyz, core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const override;
 
 	/// @details BindingSiteConstraints don't have a single distance
-	virtual
 	core::Real
 	dist( core::scoring::func::XYZ_Func const & ) const override { return 0; }
 

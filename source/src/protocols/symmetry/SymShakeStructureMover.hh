@@ -47,9 +47,9 @@ public:
 		core::Real ens_diversity,
 		core::Real ens_div_tolerance);
 
-	virtual ~SymShakeStructureMover();
+	~SymShakeStructureMover() override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 	//setters
 	//   void set_scorefunction(core::scoring::ScoreFunction & s);
 
@@ -57,12 +57,12 @@ public:
 	reduce_fa_rep(float fraction_fa_rep, core::scoring::ScoreFunction & s);
 
 	void minimize_with_constraints(core::pose::Pose & p,
-		core::scoring::ScoreFunction & s);
+		core::scoring::ScoreFunction & s) override;
 
-	void setup_for_run(core::pose::Pose & p);
+	void setup_for_run(core::pose::Pose & p) override;
 
 	void run_mc(core::pose::Pose & p, core::scoring::ScoreFunction & s,
-		core::Real temperature);
+		core::Real temperature) override;
 
 };
 

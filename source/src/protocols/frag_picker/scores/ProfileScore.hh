@@ -55,12 +55,12 @@ public:
 		}
 	}
 
-	~ProfileScore();
+	~ProfileScore() override;
 
-	void do_caching(VallChunkOP);
-	void clean_up() {
+	void do_caching(VallChunkOP) override;
+	void clean_up() override {
 	}
-	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
 	bool describe_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map,
 		std::ostream& out);
 
@@ -81,7 +81,7 @@ public:
 		MakeFragmentScoringMethod("ProfileScore") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 
 } // scores

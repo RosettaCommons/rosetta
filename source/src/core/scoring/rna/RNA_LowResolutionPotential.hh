@@ -57,15 +57,12 @@ public:
 	RNA_LowResolutionPotential( std::string const & filename );
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const { return utility::pointer::make_shared< RNA_LowResolutionPotential >( rna_base_pair_xy_filename_ ); }
+	clone() const override { return utility::pointer::make_shared< RNA_LowResolutionPotential >( rna_base_pair_xy_filename_ ); }
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
-	virtual
-	core::Size version() const { return 1; }
+	core::Size version() const override { return 1; }
 
 
 	void

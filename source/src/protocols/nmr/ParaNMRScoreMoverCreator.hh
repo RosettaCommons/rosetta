@@ -22,9 +22,9 @@ namespace nmr {
 
 class ParaNMRScoreMoverCreator : public protocols::moves::MoverCreator {
 public:
-	virtual protocols::moves::MoverOP create_mover() const override;
-	virtual std::string keyname() const override;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } // nmr

@@ -26,10 +26,10 @@ class AlignmentFileGeneratorMoverCreator : public protocols::moves::MoverCreator
 
 public:
 
-	virtual protocols::moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static std::string mover_name();
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
 } //hashing

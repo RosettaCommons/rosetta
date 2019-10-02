@@ -42,10 +42,10 @@ class DatabaseThread : public RestrictOperationsBase
 public:
 	typedef RestrictOperationsBase parent;
 	DatabaseThread();
-	virtual ~DatabaseThread();
-	virtual TaskOperationOP clone() const;
-	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
-	virtual void parse_tag( TagCOP, DataMap & );
+	~DatabaseThread() override;
+	TaskOperationOP clone() const override;
+	void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
+	void parse_tag( TagCOP, DataMap & ) override;
 
 	//function declerations:
 	core::Size find_length( core::pose::Pose const & pose ) const;

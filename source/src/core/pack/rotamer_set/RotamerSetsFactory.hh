@@ -37,7 +37,7 @@ namespace rotamer_set {
 class RotamerSetsFactory : public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~RotamerSetsFactory();
+	~RotamerSetsFactory() override;
 
 	/// @brief Create a generic RotamerSet object for the pose.
 	static RotamerSetsOP create_rotamer_sets( core::pose::Pose const & pose );

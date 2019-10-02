@@ -23,11 +23,9 @@ namespace stepwise {
 namespace legacy {
 namespace modeler {
 namespace rna {
-	
 	class util;
 	typedef utility::pointer::shared_ptr< util > utilOP;
 	typedef utility::pointer::shared_ptr< util const > utilCOP;
-	
 } //rna
 } //modeler
 } //legacy

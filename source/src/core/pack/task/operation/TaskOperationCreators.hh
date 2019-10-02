@@ -29,191 +29,191 @@ namespace operation {
 
 class RestrictYSDesignCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class PreventRepackingCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class PreserveCBetaCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class AppendRotamerSetCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class AppendResidueRotamerSetCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class AppendRotamerCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class SetRotamerCouplingsCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class SetRotamerLinksCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 
 class ReadResfileCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class ReadResfileAndObeyLengthEventsCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 
 class IncludeCurrentCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 
 class InitializeExtraRotsFromCommandlineCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class InitializeFromCommandlineCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class UseMultiCoolAnnealerCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class InitializeFromOptionCollectionCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class ExtraRotamersGenericCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class RotamerExplosionCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class RestrictAbsentCanonicalAASCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 
 class RestrictToSpecifiedBaseResidueTypesCreator : public TaskOperationCreator {
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class ProhibitSpecifiedBaseResidueTypesCreator : public TaskOperationCreator {
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class RestrictToResiduePropertiesCreator : public TaskOperationCreator {
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class ProhibitResiduePropertiesCreator : public TaskOperationCreator {
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class RestrictResidueToRepackingCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class RestrictToRepackingCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class DisallowIfNonnativeCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class ExtraRotamersCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class ExtraChiCutoffCreator : public TaskOperationCreator {
 public:
-	virtual TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "ExtraChiCutoff"; }
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override { return "ExtraChiCutoff"; }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //namespace operation

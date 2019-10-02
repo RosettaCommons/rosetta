@@ -36,10 +36,10 @@ namespace full_model_inputters {
 class PDBFullModelInputterCreator : public FullModelInputterCreator
 {
 public:
-	virtual FullModelInputterOP create_inputter() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
-	virtual void list_options_read( utility::options::OptionKeyList & read_options ) const;
+	FullModelInputterOP create_inputter() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
+	void list_options_read( utility::options::OptionKeyList & read_options ) const override;
 };
 
 } // namespace full_model_inputters

@@ -74,7 +74,7 @@ public:
 	PoseToStructFileRepConverter( StructFileRepOptions const &options_in );
 
 	/// @brief Destructor.
-	~PoseToStructFileRepConverter() {};
+	~PoseToStructFileRepConverter() override {};
 
 	/// @brief Resets the PoseToStructFileRepConverter object, and reinitializes
 	/// it with a fresh StruftFileRep object, returning an owning pointer to the

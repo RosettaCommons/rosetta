@@ -39,7 +39,7 @@ public:
 
 	MinimizerBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
-	virtual void setUp() {
+	void setUp() override {
 		start_pose = utility::pointer::make_shared< core::pose::Pose >();
 		// Use smaller PDB to test minimizer
 		core::import_pose::pose_from_file(*start_pose, "test_in2.pdb", core::import_pose::PDB_file);
@@ -55,7 +55,7 @@ public:
 		(*scorefxn)( *start_pose ); // to triger dunbrack loading/calcualtion
 	};
 
-	virtual void run(core::Real scaleFactor) {
+	void run(core::Real scaleFactor) override {
 		core::Size reps( (core::Size)(TScale*scaleFactor) );
 		if ( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor
 		for ( core::Size i=0; i<reps; i++ ) {
@@ -70,7 +70,7 @@ public:
 		}
 	};
 
-	virtual void tearDown() {};
+	void tearDown() override {};
 };
 
 typedef MinimizerBenchmark<SFT_dfpmin, 1> MinimizerBenchmark_dfpmin;

@@ -47,34 +47,31 @@ public:
 	DunbrackEnergy();
 
 	/// @brief dtor
-	virtual ~DunbrackEnergy();
+	~DunbrackEnergy() override;
 
 	/// clone
-	virtual
 	scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		scoring::EnergyMap & emap
-	) const;
+	) const override;
 
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 	/// @brief Yes.  The DunbrackEnergy defines derivatives
 	/// for phi/psi and the chi dihedrals.
-	virtual
 	bool
-	defines_dof_derivatives( pose::Pose const & p ) const;
+	defines_dof_derivatives( pose::Pose const & p ) const override;
 
 	/// @brief Evaluate the phi/psi and chi dihedral derivatives
 	/// for the input residue.
@@ -87,12 +84,11 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & sfxn,
 		scoring::EnergyMap const & weights
-	) const;
+	) const override;
 
 	/// @brief DunbrackEnergy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 private:
 	// methods
@@ -107,8 +103,7 @@ private:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	core::Size get_scratch_index( core::id::TorsionID const &torid, core::conformation::Residue const &rsd, core::pose::Pose const &pose ) const;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	// data
 private:

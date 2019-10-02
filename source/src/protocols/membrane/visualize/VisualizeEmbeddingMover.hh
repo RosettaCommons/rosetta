@@ -64,7 +64,7 @@ public:
 	operator=( VisualizeEmbeddingMover const & src );
 
 	/// @brief Destructor
-	~VisualizeEmbeddingMover();
+	~VisualizeEmbeddingMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///

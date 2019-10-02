@@ -60,7 +60,7 @@ public:
 
 	ParametersSet( ParametersSet const & src );
 
-	~ParametersSet();
+	~ParametersSet() override;
 
 	/// @brief Copy this residue( allocate actual memory for it )
 	///

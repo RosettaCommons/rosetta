@@ -55,7 +55,7 @@ public: // boiler plate / virtuals
 	LoopRefineInnerCycle & operator=( LoopRefineInnerCycle const & rhs );
 
 	// destructor
-	virtual ~LoopRefineInnerCycle();
+	~LoopRefineInnerCycle() override;
 
 	// constructor with arguments
 	LoopRefineInnerCycle(
@@ -65,11 +65,11 @@ public: // boiler plate / virtuals
 		core::pack::task::TaskFactoryOP tf
 	);
 
-	virtual void apply( Pose & ) = 0;
-	virtual std::string get_name() const;
+	void apply( Pose & ) override = 0;
+	std::string get_name() const override;
 
 	/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
-	virtual bool reinitialize_for_new_input() const;
+	bool reinitialize_for_new_input() const override;
 
 	/// @brief Associates relevant options with the LoopRefineInnerCycle class
 	static void register_options();
@@ -77,7 +77,7 @@ public: // boiler plate / virtuals
 	// NOTE: The clone() and fresh_instance() virtual methods are omitted because this class is abstract
 
 public: // printing methods
-	virtual void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, LoopRefineInnerCycle const & loop_refine_inner_cycle );
 
 public: // class-specific public methods

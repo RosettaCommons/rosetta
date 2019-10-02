@@ -80,8 +80,7 @@ struct XYZEvent : public GeneralEvent {
 
 	/// @brief default destructor
 	inline
-	virtual
-	~XYZEvent() {}
+	~XYZEvent() override {}
 
 
 };

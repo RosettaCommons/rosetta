@@ -67,23 +67,23 @@ public:
 	FragmentExtension();
 
 	// run the protocol
-	void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
-	std::string get_name() const { return "FragmentExtension"; }
+	std::string get_name() const override { return "FragmentExtension"; }
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		filters::Filters_map const & ,
 		moves::Movers_map const & ,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 	void cluster_fragments( utility::vector1<core::fragment::FragSetOP> & fragments, core::Real fragfilter );
 
 	utility::vector1<protocols::loops::Loop>

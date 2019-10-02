@@ -40,13 +40,13 @@ public:
 
 	ModifyAnnealer(bool disallow_quench, core::Real high_temp, core::Real low_temp);
 
-	virtual ~ModifyAnnealer();
+	~ModifyAnnealer() override;
 
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
-	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
 
-	virtual void parse_tag( utility::tag::TagCOP, basic::datacache::DataMap & );
+	void parse_tag( utility::tag::TagCOP, basic::datacache::DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "ModifyAnnealer"; }
 

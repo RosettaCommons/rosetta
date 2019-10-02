@@ -63,7 +63,7 @@ class DNABFormPotential : public utility::pointer::ReferenceCount
 
 public:
 	DNABFormPotential();
-	~DNABFormPotential() {}
+	~DNABFormPotential() override {}
 
 	void
 	eval_dna_bform_bb_torsion_score_residue(

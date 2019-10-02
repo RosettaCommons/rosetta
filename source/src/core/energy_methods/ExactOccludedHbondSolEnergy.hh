@@ -132,27 +132,27 @@ public:
 
 	ExactOccludedHbondSolEnergy( ExactOccludedHbondSolEnergy const & src );
 
-	~ExactOccludedHbondSolEnergy();
+	~ExactOccludedHbondSolEnergy() override;
 
-	virtual methods::EnergyMethodOP clone() const;
+	methods::EnergyMethodOP clone() const override;
 
 	void init_hbond_data( pose::Pose const& pose) const;
 
-	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual void setup_for_packing(pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
+	void setup_for_packing(pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
 
-	virtual void setup_for_derivatives( pose::Pose &pose, ScoreFunction const &  ) const;
+	void setup_for_derivatives( pose::Pose &pose, ScoreFunction const &  ) const override;
 
-	virtual void setup_for_minimizing(pose::Pose & pose, ScoreFunction const & , kinematics::MinimizerMapBase const &) const;
+	void setup_for_minimizing(pose::Pose & pose, ScoreFunction const & , kinematics::MinimizerMapBase const &) const override;
 
-	virtual void residue_energy(
+	void residue_energy(
 		conformation::Residue const & polar_rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual void indicate_required_context_graphs( utility::vector1< bool > &  ) const {};
+	void indicate_required_context_graphs( utility::vector1< bool > &  ) const override {};
 
 	virtual bool defines_intrares_energy( EnergyMap const & ) const { return false; }
 
@@ -205,8 +205,7 @@ public:
 
 	hbonds::HBondSetCOP hbond_set() const {return hbond_set_;}
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 private:
 

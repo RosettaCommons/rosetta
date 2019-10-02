@@ -34,8 +34,7 @@ namespace loops_definers {
 
 class LoopsDefiner : public utility::pointer::ReferenceCount {
 public:
-	virtual
-	~LoopsDefiner() {}
+	~LoopsDefiner() override {}
 
 	/// @brief Create another loops definer of the type matching the most-derived
 	/// version of the class.

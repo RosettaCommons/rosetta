@@ -52,7 +52,7 @@ public:
 	AntibodyNumberingConverterMover(AntibodyNumberingSchemeEnum const from, AntibodyNumberingSchemeEnum const to);
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~AntibodyNumberingConverterMover();
+	~AntibodyNumberingConverterMover() override;
 
 
 

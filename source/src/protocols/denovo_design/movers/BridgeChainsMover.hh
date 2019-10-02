@@ -47,7 +47,7 @@ public:
 	//BridgeChainsMover( BridgeChainsMover const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~BridgeChainsMover();
+	~BridgeChainsMover() override;
 
 
 public:

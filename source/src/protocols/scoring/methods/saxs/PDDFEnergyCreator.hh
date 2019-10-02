@@ -30,11 +30,11 @@ public:
 	PDDFEnergyCreator() {}
 
 	/// @brief Instantiate a new PDDFEnergy
-	virtual core::scoring::methods::EnergyMethodOP create_energy_method(core::scoring::methods::EnergyMethodOptions const &) const;
+	core::scoring::methods::EnergyMethodOP create_energy_method(core::scoring::methods::EnergyMethodOptions const &) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	virtual core::scoring::ScoreTypes score_types_for_method() const;
+	core::scoring::ScoreTypes score_types_for_method() const override;
 };
 
 }

@@ -38,7 +38,7 @@ public:
 
 	CDRClusterEnumManager();
 
-	virtual ~CDRClusterEnumManager();
+	~CDRClusterEnumManager() override;
 
 	CDRClusterEnum
 	cdr_cluster_string_to_enum(std::string const & cluster) const;

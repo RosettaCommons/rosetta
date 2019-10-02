@@ -43,7 +43,7 @@ public:
 		protocols::stepwise::modeler::rna::StepWiseRNA_CountStruct & count_data = local_count_data );
 
 	//destructor
-	~StepWiseRNA_PoseSelection();
+	~StepWiseRNA_PoseSelection() override;
 
 public:
 

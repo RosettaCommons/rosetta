@@ -27,7 +27,7 @@ public:
 		ScoreEachBenchmark(name, score_type, base_scale_factor)
 	{}
 
-	virtual void setUp() {
+	void setUp() override {
 		using namespace core::scoring;
 		using namespace core::scoring::methods;
 

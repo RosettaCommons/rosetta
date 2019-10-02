@@ -42,11 +42,11 @@ public:
 	SSFeature( SSType bin );
 
 	utility::vector1< ResidueFeatureOP >
-	values_from_pose( core::pose::Pose & pose ) const;
+	values_from_pose( core::pose::Pose & pose ) const override;
 
-	std::string type() const;
+	std::string type() const override;
 
-	ResidueFeatureOP clone() const;
+	ResidueFeatureOP clone() const override;
 
 	SSType ss_type() const;
 

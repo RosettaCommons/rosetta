@@ -38,7 +38,7 @@ class LegacyGlobalRequirementCreator : public utility::pointer::ReferenceCount
 {
 public:
 	LegacyGlobalRequirementCreator() {}
-	virtual ~LegacyGlobalRequirementCreator() {}
+	~LegacyGlobalRequirementCreator() override {}
 
 	virtual LegacyGlobalRequirementOP create_requirement() const = 0;
 	virtual std::string type_name() const = 0;
@@ -49,7 +49,7 @@ class LegacyIntraSegmentRequirementCreator : public utility::pointer::ReferenceC
 {
 public:
 	LegacyIntraSegmentRequirementCreator() {}
-	virtual ~LegacyIntraSegmentRequirementCreator() {}
+	~LegacyIntraSegmentRequirementCreator() override {}
 
 	virtual LegacyIntraSegmentRequirementOP create_requirement() const = 0;
 	virtual std::string type_name() const = 0;

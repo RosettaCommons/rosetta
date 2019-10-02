@@ -31,9 +31,9 @@ class CtabV2000Parser: public CtabParserBase {
 
 public:
 
-	virtual ~CtabV2000Parser() {}
+	~CtabV2000Parser() override {}
 
-	virtual bool parse(std::istream & tablein, std::string const & headerline, MolFileIOMolecule & molecule);
+	bool parse(std::istream & tablein, std::string const & headerline, MolFileIOMolecule & molecule) override;
 
 private:
 

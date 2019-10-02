@@ -44,7 +44,7 @@ namespace constraints {
 class BackboneStubConstraint : public Constraint
 {
 public:
-	virtual std::string type() const {
+	std::string type() const override {
 		return "BackboneStub";
 	}
 
@@ -84,32 +84,29 @@ public:
 	/// @brief Copy constructor -- performs a deep copy
 	BackboneStubConstraint( BackboneStubConstraint const & src );
 
-	virtual ~BackboneStubConstraint() {};
+	~BackboneStubConstraint() override {};
 
-	virtual Size natoms() const { return atom_ids_.size(); };
+	Size natoms() const override { return atom_ids_.size(); };
 
-	virtual AtomID const & atom( Size const index ) const { return atom_ids_[index]; };
+	AtomID const & atom( Size const index ) const override { return atom_ids_[index]; };
 
 	/// @brief possibility to compare constraint according to data
 	/// and not just pointers
-	bool operator == ( Constraint const & other ) const;
+	bool operator == ( Constraint const & other ) const override;
 
-	bool same_type_as_me( Constraint const & other ) const;
+	bool same_type_as_me( Constraint const & other ) const override;
 
 	// Needed to get the base class overloads
 	using Constraint::score;
 	using Constraint::dist;
 
-	virtual
 	void
-	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const override;
 
 	/// @details "Distance" for BackboneStubConstraint isn't all that simple
-	virtual
 	core::Real
-	dist( core::scoring::func::XYZ_Func const & ) const { return 0; }
+	dist( core::scoring::func::XYZ_Func const & ) const override { return 0; }
 
-	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,
@@ -117,25 +114,24 @@ public:
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
-	) const;
+	) const override;
 
-	virtual void show( std::ostream& out ) const;
+	void show( std::ostream& out ) const override;
 
 	/// @brief returns the private member seqpos_
 	core::Size seqpos() const;
 
-	virtual
-	ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
 	/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
 	/// to the new object. Intended to be implemented by derived classes.
-	virtual ConstraintOP remapped_clone(
+	ConstraintOP remapped_clone(
 		pose::Pose const & src,
 		pose::Pose const & dest,
 		id::SequenceMappingCOP map = NULL
-	) const;
+	) const override;
 
 
 	/*virtual

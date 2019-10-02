@@ -37,8 +37,7 @@ public:
 	typedef core::Real Real;
 
 public:
-	virtual
-	~MatchEvaluator();
+	~MatchEvaluator() override;
 
 	virtual
 	Real

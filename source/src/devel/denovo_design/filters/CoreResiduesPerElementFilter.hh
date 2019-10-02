@@ -41,7 +41,7 @@ public:
 	CoreResiduesPerElementFilter();
 
 	/// @brief virtual constructor to allow derivation
-	virtual ~CoreResiduesPerElementFilter();
+	~CoreResiduesPerElementFilter() override;
 
 	/// @brief Parses the CoreResiduesPerElementFilter tags
 	void parse_my_tag(

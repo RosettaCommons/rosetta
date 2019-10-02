@@ -46,7 +46,7 @@ public: //Constructors
 	OctahedralMetal_Helper( OctahedralMetal_Helper const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~OctahedralMetal_Helper();
+	~OctahedralMetal_Helper() override;
 
 public: // public methods
 

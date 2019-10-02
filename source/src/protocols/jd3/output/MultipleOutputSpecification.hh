@@ -40,7 +40,7 @@ public:
 
 	MultipleOutputSpecification();
 	MultipleOutputSpecification( JobResultID const & result_id, JobOutputIndex const & output_index );
-	virtual ~MultipleOutputSpecification();
+	~MultipleOutputSpecification() override;
 
 	void append_specification( OutputSpecificationOP spec );
 

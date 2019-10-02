@@ -39,16 +39,14 @@ class MPCbetaEnergyCreator : public core::scoring::methods::EnergyMethodCreator 
 public:
 
 	/// @brief Instantiate a new MPCBetaEnergy
-	virtual
 	methods::EnergyMethodOP
 	create_energy_method(
 		methods::EnergyMethodOptions const &
-	) const;
+	) const override;
 
 	/// @brief Return the Set of Score Types claimed by EnergyMethod (uses MPCbeta)
-	virtual
 	ScoreTypes
-	score_types_for_method() const;
+	score_types_for_method() const override;
 };
 
 

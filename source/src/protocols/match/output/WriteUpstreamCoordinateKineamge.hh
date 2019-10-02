@@ -85,43 +85,37 @@ public:
 	WriteUpstreamCoordinateKinemage( std::string const & fname );
 	WriteUpstreamCoordinateKinemage( std::ostream & ostr );
 
-	virtual ~WriteUpstreamCoordinateKinemage();
+	~WriteUpstreamCoordinateKinemage() override;
 
-	virtual
 	downstream::DownstreamAlgorithmOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	std::list< Hit >
 	build(
 		Size const scaffold_build_point_id,
 		Size const upstream_conf_id,
 		core::conformation::Residue const & upstream_residue
-	) const;
+	) const override;
 
 	/// @brief This method returns 'true' whether or not it's ClassicMatchAlgorithm is set
 	/// as it should not have its hits_to_include_with_partial_match method invoked.
-	virtual
 	bool
-	upstream_only() const;
+	upstream_only() const override;
 
 	/// @brief This method returns 'true' since when it does return hits, it's those generated
 	/// by the ClassicMatchAlgorithm
-	virtual
 	bool
-	generates_primary_hits() const;
+	generates_primary_hits() const override;
 
 
 	/// @brief This method should not be invoked on this class,
 	/// since it returns "true" in its upstream_only
 	/// method.
-	virtual
 	HitPtrListCOP
-	hits_to_include_with_partial_match( match_dspos1 const & m ) const;
+	hits_to_include_with_partial_match( match_dspos1 const & m ) const override;
 
-	virtual
 	Size
-	n_possible_hits_per_upstream_conformation() const;
+	n_possible_hits_per_upstream_conformation() const override;
 
 	void
 	set_kinemage_file_name( std::string const & filename );
@@ -167,14 +161,13 @@ public:
 	WriteUpstreamHitKinemage( std::string const & fname );
 	WriteUpstreamHitKinemage( std::ostream & ostr );
 
-	virtual ~WriteUpstreamHitKinemage();
+	~WriteUpstreamHitKinemage() override;
 
-	virtual
 	void
 	process_hit(
 		Hit const & hit,
 		core::conformation::Residue const & upstream_conformation
-	);
+	) override;
 
 	/// @brief Non-virtual method to write out a kinemage for an upstream residue
 	void
@@ -246,7 +239,7 @@ class DownstreamCoordinateKinemageWriter : public utility::pointer::ReferenceCou
 {
 public:
 	DownstreamCoordinateKinemageWriter();
-	virtual ~DownstreamCoordinateKinemageWriter();
+	~DownstreamCoordinateKinemageWriter() override;
 
 	virtual
 	void
@@ -267,14 +260,13 @@ class SingleDownstreamResidueWriter : public DownstreamCoordinateKinemageWriter
 {
 public:
 	SingleDownstreamResidueWriter();
-	virtual ~SingleDownstreamResidueWriter();
+	~SingleDownstreamResidueWriter() override;
 
-	virtual
 	void
 	write_downstream_coordinates(
 		Hit const & hit,
 		std::ostream & ostr
-	) const;
+	) const override;
 
 	void
 	set_restype( core::chemical::ResidueTypeCOP );
@@ -282,9 +274,8 @@ public:
 	void
 	set_downstream_builder( downstream::DownstreamBuilderCOP dsbuilder );
 
-	virtual
 	void
-	set_downstream_master( std::string const & master );
+	set_downstream_master( std::string const & master ) override;
 
 private:
 

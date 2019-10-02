@@ -50,13 +50,13 @@ public:
 	);
 
 	// destructor
-	virtual ~ConstantConstraint();
+	~ConstantConstraint() override;
 
-	virtual ConstraintOP clone() const;
-	virtual bool operator == ( Constraint const & other ) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	ConstraintOP clone() const override;
+	bool operator == ( Constraint const & other ) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
-	virtual std::string type() const;
+	std::string type() const override;
 
 	// Needed to get the base class overloads
 	using Constraint::score;
@@ -68,11 +68,10 @@ public:
 
 	/// @brief compute score
 	void
-	score( func::XYZ_Func const &, EnergyMap const &, EnergyMap & emap ) const;
+	score( func::XYZ_Func const &, EnergyMap const &, EnergyMap & emap ) const override;
 
-	virtual
 	core::Real
-	dist( core::scoring::func::XYZ_Func const & xyz ) const;
+	dist( core::scoring::func::XYZ_Func const & xyz ) const override;
 
 	/// @brief compute atom deriv
 	void
@@ -82,21 +81,21 @@ public:
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const &
-	) const;
+	) const override;
 
 	/// @brief number of atoms --- zero
 	Size
-	natoms() const;
+	natoms() const override;
 
 	AtomID const &
-	atom( Size const n ) const;
+	atom( Size const n ) const override;
 
 	/// @brief output violation of constraint (none!)
-	Size show_violations( std::ostream &, pose::Pose const &, Size, core::Real ) const;
+	Size show_violations( std::ostream &, pose::Pose const &, Size, core::Real ) const override;
 
-	void show( std::ostream& out ) const;
+	void show( std::ostream& out ) const override;
 
-	void show_def( std::ostream& out, pose::Pose const & ) const;
+	void show_def( std::ostream& out, pose::Pose const & ) const override;
 
 protected:
 	/// @brief Explicit copy constructor so that derived classes will recieve a deep copy

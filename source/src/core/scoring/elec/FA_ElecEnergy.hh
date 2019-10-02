@@ -111,55 +111,47 @@ public:
 	initialize();
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/// stashes nblist if use_nblist is true
-	virtual
 	void
 	setup_for_minimizing(
 		pose::Pose & pose,
 		ScoreFunction const & sfxn,
 		kinematics::MinimizerMapBase const & min_map
-	) const;
+	) const override;
 
-	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
 
-	virtual
 	void
 	setup_for_packing(
 		pose::Pose & pose,
 		utility::vector1< bool > const &,
 		utility::vector1< bool > const &
-	) const;
+	) const override;
 
 	// Creates a rotamer trie for the input set of rotamers and stores the trie
 	// in the rotamer set.
-	virtual
 	void
 	prepare_rotamers_for_packing(
 		pose::Pose const & pose,
-		conformation::RotamerSetBase & set ) const;
+		conformation::RotamerSetBase & set ) const override;
 
 	// Updates the cached rotamer trie for a residue if it has changed during the course of
 	// a repacking
-	virtual
 	void
-	update_residue_for_packing( pose::Pose & pose, Size resid ) const;
+	update_residue_for_packing( pose::Pose & pose, Size resid ) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -167,26 +159,22 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Returns true if we're using neighborlist-autoupdate
-	virtual
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & pose ) const;
+	minimize_in_whole_structure_context( pose::Pose const & pose ) const override;
 
-	virtual
 	bool
 	defines_score_for_residue_pair(
 		conformation::Residue const & res1,
 		conformation::Residue const & res2,
 		bool res_moving_wrt_eachother
-	) const;
+	) const override;
 
-	virtual
 	bool
-	use_extended_residue_pair_energy_interface() const;
+	use_extended_residue_pair_energy_interface() const override;
 
-	virtual
 	void
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
@@ -195,10 +183,10 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	bool
-	requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & ) const;
+	requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & ) const override;
 
 	void
 	setup_for_scoring_for_residue(
@@ -206,10 +194,10 @@ public:
 		pose::Pose const &,// pose,
 		ScoreFunction const & sfxn,
 		ResSingleMinimizationData & resdata
-	) const;
+	) const override;
 
 	bool
-	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const &  ) const;
+	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const &  ) const override;
 
 	void
 	setup_for_derivatives_for_residue(
@@ -218,7 +206,7 @@ public:
 		ScoreFunction const & sfxn,
 		ResSingleMinimizationData & min_data,
 		basic::datacache::BasicDataCache &
-	) const;
+	) const override;
 
 	void
 	setup_for_minimizing_for_residue(
@@ -228,7 +216,7 @@ public:
 		kinematics::MinimizerMapBase const & min_map,
 		basic::datacache::BasicDataCache &,
 		ResSingleMinimizationData & resdata
-	) const;
+	) const override;
 
 	void
 	setup_for_minimizing_for_residue_pair(
@@ -240,13 +228,12 @@ public:
 		ResSingleMinimizationData const & res1_data_cache,
 		ResSingleMinimizationData const & res2_data_cache,
 		ResPairMinimizationData & data_cache
-	) const;
+	) const override;
 
 	/// @brief Evaluate the atom derivative f1/f2 vectors for all atoms on rsd1
 	/// in response to the atoms on rsd2, and all the atoms on rsd2 as they
 	/// in response to the atoms on rsd1.  This method is used with the
 	/// MinimizationGraph and when nblist_autoupdate is not in use.
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
@@ -258,12 +245,11 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
 	/// @brief Evaluate the derivative vectors for a particular atom in a given
 	/// (asymmetric) pose when nblist_autoupdate is being used.  nblist_autoupdate
 	/// cannot be used with symmetric poses, in rtmin, or in minpack.
-	virtual
 	void
 	eval_atom_derivative(
 		id::AtomID const & atom_id,
@@ -273,9 +259,8 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
@@ -283,10 +268,9 @@ public:
 		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	backbone_backbone_energy(
 		conformation::Residue const & rsd1,
@@ -294,9 +278,8 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	backbone_sidechain_energy(
 		conformation::Residue const & rsd1,
@@ -304,9 +287,8 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	sidechain_sidechain_energy(
 		conformation::Residue const & rsd1,
@@ -314,26 +296,24 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const &sf,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	evaluate_rotamer_pair_energies(
 		conformation::RotamerSetBase const & set1,
@@ -342,12 +322,11 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
-	) const;
+	) const override;
 
 
 	//@brief overrides default rotamer/background energy calculation and uses
 	// the trie-vs-trie algorithm instead
-	virtual
 	void
 	evaluate_rotamer_background_energies(
 		conformation::RotamerSetBase const & set,
@@ -356,20 +335,18 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
-	) const;
+	) const override;
 
-	virtual
 	void
 	evaluate_rotamer_intrares_energies(
 		conformation::RotamerSetBase const & set,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		utility::vector1< core::PackerEnergy > & energies
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const;
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override;
 
 	/// @brief Interface function for class NeighborList.
 	etable::count_pair::CountPairFunctionCOP
@@ -395,19 +372,16 @@ public:
 	) const;
 
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
 	bool
-	divides_backbone_and_sidechain_energetics() const
+	divides_backbone_and_sidechain_energetics() const override
 	{
 		return true;
 	}
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 public:
 	/// @brief  How close two heavy atoms have to be such that their hydrogen atoms might interact, squared.
@@ -532,8 +506,7 @@ private:
 
 	mutable Size nres_monomer_;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

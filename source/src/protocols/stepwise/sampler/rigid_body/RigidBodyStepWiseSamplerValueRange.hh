@@ -34,7 +34,7 @@ public:
 	RigidBodyStepWiseSamplerValueRange();
 
 	//destructor
-	~RigidBodyStepWiseSamplerValueRange();
+	~RigidBodyStepWiseSamplerValueRange() override;
 
 public:
 

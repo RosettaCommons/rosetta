@@ -47,7 +47,7 @@ public:
 	// DeclareStructureDataCovalentBondMover( DeclareStructureDataCovalentBondMover const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~DeclareStructureDataCovalentBondMover();
+	~DeclareStructureDataCovalentBondMover() override;
 
 	/////////////////////
 	/// Mover Methods ///

@@ -37,7 +37,7 @@ public:
 	EulerAngles( numeric::xyzMatrix< core::Real > const & rotation_matrix );
 
 	//destructor
-	~EulerAngles();
+	~EulerAngles() override;
 
 public:
 

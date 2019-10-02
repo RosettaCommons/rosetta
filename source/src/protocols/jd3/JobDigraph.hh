@@ -52,7 +52,7 @@ public:
 
 public:
 
-	virtual ~JobDirectedNode();
+	~JobDirectedNode() override;
 
 	JobDirectedNode( utility::graph::Digraph*, platform::Size node_id );
 
@@ -62,8 +62,8 @@ public:
 	/// @brief invoked during graph assignment operators to copy any
 	/// node data from one graph to another graph.  The source node must
 	/// be the same type as this node.
-	virtual void
-	copy_from( DirectedNode const * source );
+	void
+	copy_from( DirectedNode const * source ) override;
 
 
 public:
@@ -72,8 +72,8 @@ public:
 	//  Setters
 	//////////////
 
-	virtual void
-	add_incoming_edge( utility::graph::DirectedEdge* edge_ptr, DirectedEdgeListIter & );
+	void
+	add_incoming_edge( utility::graph::DirectedEdge* edge_ptr, DirectedEdgeListIter & ) override;
 
 	///@brief Set the primary node type label.
 	///@details
@@ -111,12 +111,12 @@ public:
 	n_predecessors_w_outstanding_jobs() const;
 
 	///@brief memory accounting scheme
-	virtual platform::Size
-	count_static_memory() const;
+	platform::Size
+	count_static_memory() const override;
 
 	///@brief memory accounting scheme
-	virtual platform::Size
-	count_dynamic_memory() const;
+	platform::Size
+	count_dynamic_memory() const override;
 
 #ifdef SERIALIZATION
 	/// @brief Serialization function, but one that is called by the graph so that
@@ -160,7 +160,7 @@ public:
 	typedef utility::graph::DirectedEdge parent;
 public:
 
-	virtual ~JobDirectedEdge();
+	~JobDirectedEdge() override;
 
 	/// @brief Main edge constructor.  This should only be invoked by create_new_edge, which
 	/// itself is only called by add_edge.  The ONLY way an edge should be added to a graph
@@ -171,17 +171,17 @@ public:
 
 	/// @brief copy-from for use in Digraph::operator= and copy ctors.  The source node
 	/// must be a JobDirectedEdge
-	virtual void
-	copy_from( utility::graph::DirectedEdge const * source );
+	void
+	copy_from( utility::graph::DirectedEdge const * source ) override;
 
 	/// @brief how much memory is statically allocated by this edge
-	virtual platform::Size
-	count_static_memory() const;
+	platform::Size
+	count_static_memory() const override;
 
 	/// @brief how much memory is dynamically allocated by this edge -- must be recursively invoked
 	/// by a derived class.
-	virtual platform::Size
-	count_dynamic_memory() const;
+	platform::Size
+	count_dynamic_memory() const override;
 
 protected:
 
@@ -239,7 +239,7 @@ public:
 
 	/// @brief virtual destructor.  Derived classes must ensure they've destroyed all their
 	/// nodes and edges through a call to "destroy_everything" before this function is arrived at
-	virtual ~JobDigraph();
+	~JobDigraph() override;
 
 	/// @brief ctor
 	JobDigraph();
@@ -280,8 +280,8 @@ public:
 	/// @brief remove an edge from the graph. (NEW AS OF 12/9/07) Never call C++'s
 	/// "delete" function on an edge pointer directly.  Derived classes must implement this function.
 	/// If they wish to use unordered_object_pools to manage their memory
-	virtual void
-	delete_edge( utility::graph::DirectedEdge * edge );
+	void
+	delete_edge( utility::graph::DirectedEdge * edge ) override;
 
 #ifdef    SERIALIZATION
 	template < class Archive >
@@ -293,17 +293,17 @@ public:
 
 protected:
 
-	virtual platform::Size count_static_memory() const;
-	virtual platform::Size count_dynamic_memory() const;
+	platform::Size count_static_memory() const override;
+	platform::Size count_dynamic_memory() const override;
 
 	/// @brief factory method for job-directed node creation
-	virtual utility::graph::DirectedNode* create_new_node( platform::Size node_index );
+	utility::graph::DirectedNode* create_new_node( platform::Size node_index ) override;
 
 	/// @brief factory method for job-directed edge creation
-	virtual utility::graph::DirectedEdge* create_new_edge( platform::Size index1, platform::Size index2 );
+	utility::graph::DirectedEdge* create_new_edge( platform::Size index1, platform::Size index2 ) override;
 
 	/// @brief factory method for edge copy-construction
-	virtual utility::graph::DirectedEdge* create_new_edge( utility::graph::DirectedEdge const * example_edge );
+	utility::graph::DirectedEdge* create_new_edge( utility::graph::DirectedEdge const * example_edge ) override;
 
 private:
 

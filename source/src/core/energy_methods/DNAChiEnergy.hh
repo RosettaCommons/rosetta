@@ -40,25 +40,23 @@ public:
 	DNAChiEnergy();
 
 	/// @brief dtor
-	virtual ~DNAChiEnergy();
+	~DNAChiEnergy() override;
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	virtual
@@ -73,12 +71,10 @@ public:
 
 	/// @brief DunbrackEnergy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	// data
 private:

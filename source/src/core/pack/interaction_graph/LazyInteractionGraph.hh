@@ -44,15 +44,15 @@ public:
 		int num_states
 	);
 
-	virtual ~LazyNode();
+	~LazyNode() override;
 
 	//virtual methods inherited from NodeBase
-	virtual void prepare_for_simulated_annealing();
-	virtual void print() const;
-	virtual bool state_unassigned() const { return current_state_ == 0;}
+	void prepare_for_simulated_annealing() override;
+	void print() const override;
+	bool state_unassigned() const override { return current_state_ == 0;}
 	virtual core::PackerEnergy get_totalE() const { return curr_state_total_energy_;}
 
-	void assign_zero_state();
+	void assign_zero_state() override;
 	void assign_state(int new_state);
 	void partial_assign_state( int new_state );
 	void complete_state_assignment();
@@ -97,8 +97,8 @@ public:
 
 	void update_internal_energy_sums();
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 	virtual
 	int aatype_for_state( int state ) const;
@@ -185,32 +185,28 @@ public:
 		int second_node_ind
 	);
 
-	virtual ~LazyEdge();
+	~LazyEdge() override;
 
-	virtual
 	void
 	set_sparse_aa_info(
 		ObjexxFCL::FArray2_bool const &
-	);
+	) override;
 
-	virtual
-	void force_aa_neighbors( int node1aa, int node2aa);
+	void force_aa_neighbors( int node1aa, int node2aa) override;
 
-	virtual
-	void force_all_aa_neighbors();
+	void force_all_aa_neighbors() override;
 
-	virtual
 	bool
 	get_sparse_aa_info(
 		int node1aa,
 		int node2aa
-	) const;
+	) const override;
 
-	virtual core::PackerEnergy get_two_body_energy( int const node1state, int const node2state) const;
+	core::PackerEnergy get_two_body_energy( int const node1state, int const node2state) const override;
 
 	//virtual methods inherited from EdgeBase
-	virtual void declare_energies_final();
-	virtual void prepare_for_simulated_annealing();
+	void declare_energies_final() override;
+	void prepare_for_simulated_annealing() override;
 
 	core::PackerEnergy get_current_two_body_energy() const;
 
@@ -288,7 +284,7 @@ public:
 		SparseMatrixIndex const & nodes_new_state_sparse_info
 	);
 
-	void set_edge_weight( Real weight );
+	void set_edge_weight( Real weight ) override;
 
 	core::PackerEnergy & get_edge_table_ptr();
 	int get_two_body_table_size() const;
@@ -308,8 +304,8 @@ public:
 
 	static core::PackerEnergy const NOT_YET_COMPUTED_ENERGY; //an energy lower than any RPE could ever be
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 protected:
 
@@ -348,53 +344,50 @@ class LazyInteractionGraph : public OnTheFlyInteractionGraph
 {
 public:
 	LazyInteractionGraph( int numNodes );
-	virtual ~LazyInteractionGraph();
+	~LazyInteractionGraph() override;
 
 	//virtual methods inherited from InteractionGraphBase
-	virtual void  blanket_assign_state_0();
-	virtual core::PackerEnergy set_state_for_node(int node_ind, int new_state);
-	virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states);
-	virtual void consider_substitution(
+	void  blanket_assign_state_0() override;
+	core::PackerEnergy set_state_for_node(int node_ind, int new_state) override;
+	core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states) override;
+	void consider_substitution(
 		int node_ind,
 		int new_state,
 		core::PackerEnergy & delta_energy,
 		core::PackerEnergy & prev_energy_for_node
-	);
-	virtual core::PackerEnergy  commit_considered_substitution();
-	virtual core::PackerEnergy get_energy_current_state_assignment();
-	virtual int get_edge_memory_usage() const;
-	virtual void print_current_state_assignment() const;
-	virtual void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE );
-	virtual core::PackerEnergy get_energy_sum_for_vertex_group( int group_id );
+	) override;
+	core::PackerEnergy  commit_considered_substitution() override;
+	core::PackerEnergy get_energy_current_state_assignment() override;
+	int get_edge_memory_usage() const override;
+	void print_current_state_assignment() const override;
+	void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE ) override;
+	core::PackerEnergy get_energy_sum_for_vertex_group( int group_id ) override;
 
 	/// @brief Override the FixedBBInteractionGraph class's implementation of this function
 	/// to return 'true'.
-	virtual
 	bool
-	aa_submatrix_energies_retrievable() const;
+	aa_submatrix_energies_retrievable() const override;
 
-	virtual
 	int aatype_for_node_state(
 		int node_ind,
 		int node_state
-	) const;
+	) const override;
 
-	virtual
 	ObjexxFCL::FArray2D< core::PackerEnergy >
 	get_aa_submatrix_energies_for_edge(
 		int node1,
 		int node2,
 		int node1aa,
 		int node2aa
-	) const;
+	) const override;
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 protected:
 
-	virtual NodeBase* create_new_node( int node_index, int num_states);
-	virtual EdgeBase* create_new_edge( int index1, int index2);
+	NodeBase* create_new_node( int node_index, int num_states) override;
+	EdgeBase* create_new_edge( int index1, int index2) override;
 
 	//Hooks for SASAInterationGraph< V, E, G >
 	core::PackerEnergy get_energy_PD_current_state_assignment();

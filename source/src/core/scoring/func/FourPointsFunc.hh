@@ -40,20 +40,17 @@ public:
 public:
 	FourPointsFunc();
 
-	virtual
-	~FourPointsFunc();
+	~FourPointsFunc() override;
 
 	/// @brief set the coordinate for one of the four atoms
 	void xyz( Size atomid, Vector const & coord );
 
-	virtual
 	Vector const &
-	operator()( AtomID const & id ) const;
+	operator()( AtomID const & id ) const override;
 
 
-	virtual
 	Residue const &
-	residue( Size seqpos ) const;
+	residue( Size seqpos ) const override;
 
 private:
 	utility::vector1< Vector > points_;

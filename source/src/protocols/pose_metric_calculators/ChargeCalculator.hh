@@ -44,17 +44,17 @@ public:
 		std::set< core::Size > const & special_region
 	);
 
-	~ChargeCalculator();
+	~ChargeCalculator() override;
 
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const {
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override {
 		return utility::pointer::make_shared< ChargeCalculator >( special_region_); };
 
 protected:
 
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	virtual std::string print( std::string const & key ) const;
-	virtual void recompute( core::pose::Pose const & this_pose );
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override;
+	std::string print( std::string const & key ) const override;
+	void recompute( core::pose::Pose const & this_pose ) override;
 
 
 private:

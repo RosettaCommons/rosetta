@@ -37,7 +37,7 @@ public:
 	// Constructors same as PackRotamersMover
 	using PackRotamersMover::PackRotamersMover;
 
-	~SymPackRotamersMover();
+	~SymPackRotamersMover() override;
 
 	// Needed to preserve type information
 	protocols::moves::MoverOP clone() const override;

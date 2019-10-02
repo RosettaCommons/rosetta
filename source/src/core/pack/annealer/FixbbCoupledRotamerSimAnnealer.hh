@@ -72,10 +72,10 @@ public:
 	);
 
 
-	virtual ~FixbbCoupledRotamerSimAnnealer();
+	~FixbbCoupledRotamerSimAnnealer() override;
 
 	/// @brief sim_annealing for fixed backbone design mode
-	void run();
+	void run() override;
 
 private:
 	void

@@ -37,17 +37,17 @@ class SurfaceCalculator : public core::pose::metrics::StructureDependentCalculat
 public:
 
 	SurfaceCalculator( bool remove_nonprotein_res = false );
-	~SurfaceCalculator();
+	~SurfaceCalculator() override;
 
 public:
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const { return utility::pointer::make_shared< SurfaceCalculator >( remove_nonprotein_res_ ); };
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override { return utility::pointer::make_shared< SurfaceCalculator >( remove_nonprotein_res_ ); };
 
 protected:
 
-	virtual void lookup( std::string const & key, basic::MetricValueBase* valptr ) const;
-	virtual std::string print( std::string const & key ) const;
-	virtual void recompute( core::pose::Pose const & this_pose );
+	void lookup( std::string const & key, basic::MetricValueBase* valptr ) const override;
+	std::string print( std::string const & key ) const override;
+	void recompute( core::pose::Pose const & this_pose ) override;
 
 private:
 

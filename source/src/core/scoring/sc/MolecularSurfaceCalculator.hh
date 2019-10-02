@@ -206,7 +206,7 @@ public:
 	} settings;
 
 	MolecularSurfaceCalculator();
-	virtual ~MolecularSurfaceCalculator();
+	~MolecularSurfaceCalculator() override;
 	virtual int Init();
 	virtual void Reset();
 #if defined(WIN32) && !defined(WIN_PYROSETTA)

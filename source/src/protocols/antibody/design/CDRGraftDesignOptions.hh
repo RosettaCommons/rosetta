@@ -41,7 +41,7 @@ public:
 	CDRGraftDesignOptions(CDRNameEnum cdr);
 	CDRGraftDesignOptions(CDRGraftDesignOptions const & src);
 
-	virtual ~CDRGraftDesignOptions();
+	~CDRGraftDesignOptions() override;
 
 public:
 
@@ -152,7 +152,7 @@ public:
 	CDRGraftDesignOptionsParser();
 	// Undefined, commenting out to fix PyRosetta build  CDRGraftDesignOptionsParser(CDRGraftDesignOptions const & src);
 
-	virtual ~CDRGraftDesignOptionsParser();
+	~CDRGraftDesignOptionsParser() override;
 
 	CDRGraftDesignOptionsParser( CDRGraftDesignOptionsParser const & src );
 

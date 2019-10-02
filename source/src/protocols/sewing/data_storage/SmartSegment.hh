@@ -38,7 +38,7 @@ public:
 	SmartSegment(bool is_vital, core::Size max_segment_length); // use this constructor to actually make segments in an assembly, since it preallocates everything
 	SmartSegment(SmartSegment const & src);
 
-	virtual ~SmartSegment();
+	~SmartSegment() override;
 
 	SmartSegmentOP
 	clone() const;

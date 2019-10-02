@@ -73,7 +73,7 @@ public:
 	operator=( VisualizeMembraneMover const & src );
 
 	/// @brief Destructor
-	~VisualizeMembraneMover();
+	~VisualizeMembraneMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///

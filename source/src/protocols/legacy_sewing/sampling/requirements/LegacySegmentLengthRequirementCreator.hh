@@ -28,9 +28,9 @@ namespace sampling {
 namespace requirements {
 
 class LegacySegmentLengthRequirementCreator : public LegacyIntraSegmentRequirementCreator {
-	virtual LegacyIntraSegmentRequirementOP create_requirement() const;
-	virtual std::string type_name() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	LegacyIntraSegmentRequirementOP create_requirement() const override;
+	std::string type_name() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 

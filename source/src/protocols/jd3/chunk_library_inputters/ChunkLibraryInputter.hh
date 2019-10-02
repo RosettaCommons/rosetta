@@ -53,7 +53,7 @@ class ChunkLibraryInputter : public utility::pointer::ReferenceCount
 public:
 
 	ChunkLibraryInputter();
-	virtual ~ChunkLibraryInputter();
+	~ChunkLibraryInputter() override;
 
 	virtual bool job_available_on_command_line() const = 0;
 

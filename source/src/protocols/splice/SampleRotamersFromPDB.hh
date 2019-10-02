@@ -95,13 +95,11 @@ public:
 	SampleRotamersFromPDB_RotamerSetOperation(bool add_rot, utility::vector1< core::Size > SampleAtAlignedpositions,bool d,bool ccd,std::string file_name);
 
 
-	virtual ~SampleRotamersFromPDB_RotamerSetOperation();
+	~SampleRotamersFromPDB_RotamerSetOperation() override;
 
-	virtual
 	RotamerSetOperationOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
 	alter_rotamer_set(
 		core::pose::Pose const & pose,
@@ -109,7 +107,7 @@ public:
 		core::pack::task::PackerTask const & /*ptask*/,
 		utility::graph::GraphCOP /*packer_neighbor_graph*/,
 		core::pack::rotamer_set::RotamerSet & rotamer_set
-	);
+	) override;
 	//change the rotamer set from pdb file
 	void alter_rotamer_set_from_pdb(
 		core::pose::Pose const & pose,
@@ -179,17 +177,17 @@ public:
 	/// @brief default constructor
 	SampleRotamersFromPDB();
 	/// @brief destructor
-	virtual ~SampleRotamersFromPDB();
+	~SampleRotamersFromPDB() override;
 
 	/// @brief make clone
-	virtual TaskOperationOP clone() const override;
+	TaskOperationOP clone() const override;
 
 
 public:
 
 
 	/// @brief apply
-	virtual void apply( Pose const & pose, PackerTask & task) const override;
+	void apply( Pose const & pose, PackerTask & task) const override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "SampleRotamersFromPDB"; }
 

@@ -49,26 +49,22 @@ public:
 	GenericBondedEnergy( core::scoring::methods::EnergyMethodOptions const & eopt );
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & sfxn ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & sfxn ) const override;
 
-	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const override;
 
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -76,9 +72,8 @@ public:
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
@@ -90,20 +85,18 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return true; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return true; }
 
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		ScoreFunction const &sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	void
 	eval_intrares_derivatives(
@@ -112,28 +105,25 @@ public:
 		pose::Pose const & pose,
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_residue_pair_energy( pose::Pose const &, Size , Size ) const { return ( true ); }
+	defines_residue_pair_energy( pose::Pose const &, Size , Size ) const override { return ( true ); }
 
 	bool
 	defines_score_for_residue_pair(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		bool res_moving_wrt_eachother = false ) const;
+		bool res_moving_wrt_eachother = false ) const override;
 
 	methods::LongRangeEnergyType
-	long_range_type() const;
+	long_range_type() const override;
 
 	/// @brief P_AA_pp_Energy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 	virtual
 	Distance

@@ -54,7 +54,7 @@ public:
 
 	DeallocationMessage();
 	DeallocationMessage( deallocation_msg_type msg_type );
-	virtual ~DeallocationMessage();
+	~DeallocationMessage() override;
 
 	deallocation_msg_type
 	deallocation_type() const;

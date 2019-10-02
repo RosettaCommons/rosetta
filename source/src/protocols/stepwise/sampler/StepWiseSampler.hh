@@ -34,7 +34,7 @@ public:
 	{}
 
 	//destructor
-	~StepWiseSampler()
+	~StepWiseSampler() override
 	{}
 
 public:

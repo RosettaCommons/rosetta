@@ -45,7 +45,7 @@ public:
 	BasePairStepSequence( std::string const & sequence, core::pose::rna::BasePairStep const & base_pair_step );
 
 	//destructor
-	~BasePairStepSequence(){}
+	~BasePairStepSequence() override{}
 
 	friend
 	bool operator < (BasePairStepSequence const & lhs, BasePairStepSequence const & rhs )
@@ -120,7 +120,7 @@ public:
 	BasePairStepLibrary( bool const canonical = true );
 
 	//destructor
-	~BasePairStepLibrary();
+	~BasePairStepLibrary() override;
 
 public:
 

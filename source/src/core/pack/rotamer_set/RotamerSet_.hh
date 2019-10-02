@@ -68,7 +68,7 @@ public:
 
 public:
 	RotamerSet_();
-	virtual ~RotamerSet_();
+	~RotamerSet_() override;
 
 	void build_rotamers(
 		pose::Pose const & the_pose,
@@ -88,7 +88,6 @@ public:
 		utility::graph::GraphCOP packer_neighbor_graph
 	) override;
 
-	virtual
 	void
 	add_rotamer(
 		conformation::Residue const & rotamer

@@ -62,31 +62,27 @@ public:
 
 	LoopsDatabaseDefiner();
 
-	virtual
-	~LoopsDatabaseDefiner();
+	~LoopsDatabaseDefiner() override;
 
 	LoopsDatabaseDefiner(
 		LoopsDatabaseDefiner const & src);
 
 	/// @brief Create another loops definer of the type matching the most-derived
 	/// version of the class.
-	virtual
 	LoopsDefinerOP
-	clone() const;
+	clone() const override;
 
 
 	/// @brief Used to parse an xml-like tag to load parameters and properties.
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap const & data,
-		core::pose::Pose const &);
+		core::pose::Pose const &) override;
 
-	virtual
 	SerializedLoopList
 	apply(
-		core::pose::Pose const &);
+		core::pose::Pose const &) override;
 
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

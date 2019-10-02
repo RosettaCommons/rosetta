@@ -39,19 +39,19 @@ public:
 	ProteinMainChainStepWiseSampler();
 
 	//destructor
-	~ProteinMainChainStepWiseSampler();
+	~ProteinMainChainStepWiseSampler() override;
 
 	/// @brief Get the total number of rotamers in sampler
-	virtual core::Size size() const { return main_chain_torsion_set_lists_.size(); }
+	core::Size size() const override { return main_chain_torsion_set_lists_.size(); }
 
 	/// @brief Apply the i-th rotamer to pose
-	virtual void apply( core::pose::Pose&, core::Size const );
+	void apply( core::pose::Pose&, core::Size const ) override;
 
 	/// @brief Name of the class
-	virtual std::string get_name() const { return "ProteinMainChainStepWiseSampler"; }
+	std::string get_name() const override { return "ProteinMainChainStepWiseSampler"; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::PROTEIN_MAIN_CHAIN; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::PROTEIN_MAIN_CHAIN; }
 
 	/// @brief return OP to the subsampler that controls exactly this torsion_id (assume only one).
 	virtual

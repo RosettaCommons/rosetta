@@ -37,7 +37,7 @@ public:
 	NonTerminalStartingSegmentRequirement();
 	NonTerminalStartingSegmentRequirement(NonTerminalStartingSegmentRequirement const & src);
 
-	virtual ~NonTerminalStartingSegmentRequirement() override;
+	~NonTerminalStartingSegmentRequirement() override;
 
 	NonTerminalStartingSegmentRequirementOP
 	clone() const;

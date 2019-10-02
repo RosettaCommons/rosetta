@@ -32,8 +32,8 @@ class OopPuckPlusMover : public OopMover {
 public:
 
 	OopPuckPlusMover( core::Size oop_seq_position );
-	virtual ~OopPuckPlusMover();
-	virtual std::string get_name() const;
+	~OopPuckPlusMover() override;
+	std::string get_name() const override;
 
 };//end OopPuckPlusMover
 
@@ -42,8 +42,8 @@ class OopPuckMinusMover : public OopMover {
 public:
 
 	OopPuckMinusMover( core::Size oop_seq_position );
-	virtual ~OopPuckMinusMover();
-	virtual std::string get_name() const;
+	~OopPuckMinusMover() override;
+	std::string get_name() const override;
 
 };//end OopPuckMinusMover
 
@@ -53,8 +53,8 @@ class OopDPuckPlusMover : public OopMover {
 public:
 
 	OopDPuckPlusMover( core::Size oop_seq_position );
-	virtual ~OopDPuckPlusMover();
-	virtual std::string get_name() const;
+	~OopDPuckPlusMover() override;
+	std::string get_name() const override;
 
 };//end OopDPuckPlusMover
 
@@ -64,8 +64,8 @@ class OopDPuckMinusMover : public OopMover {
 public:
 
 	OopDPuckMinusMover( core::Size oop_seq_position );
-	virtual ~OopDPuckMinusMover();
-	virtual std::string get_name() const;
+	~OopDPuckMinusMover() override;
+	std::string get_name() const override;
 
 };//end OopDPuckMinusMover
 

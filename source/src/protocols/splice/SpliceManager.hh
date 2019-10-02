@@ -122,7 +122,7 @@ class SpliceManager : public utility::pointer::ReferenceCount
 
 public:
 	SpliceManager();
-	virtual ~SpliceManager();
+	~SpliceManager() override;
 	void fold_tree( core::pose::Pose & pose,utility::vector1<std::array<int, 3>> positions ) const;
 
 	//void superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::Pose & source_pose);

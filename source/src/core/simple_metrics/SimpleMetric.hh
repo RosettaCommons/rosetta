@@ -57,8 +57,7 @@ public:
 
 	SimpleMetric( std::string const & simple_metric_type );
 
-	virtual
-	~SimpleMetric();
+	~SimpleMetric() override;
 
 	SimpleMetric( SimpleMetric const & other );
 

@@ -52,7 +52,7 @@ public:
 
 	ModelNode( utility::graph::Graph * owner, core::Size index );
 
-	~ModelNode() {}
+	~ModelNode() override {}
 
 	Model const &
 	model() const;
@@ -62,11 +62,10 @@ public:
 		Model const & model
 	);
 
-	virtual
 	void
 	copy_from(
 		utility::graph::Node const * source
-	);
+	) override;
 
 	std::set<core::Size> const &
 	segment_ids() const;
@@ -129,7 +128,7 @@ class SewGraph : public utility::graph::Graph {
 
 public:
 
-	virtual ~SewGraph();
+	~SewGraph() override;
 	SewGraph();
 	SewGraph( SewGraph const & src );
 
@@ -140,18 +139,15 @@ public:
 	);
 
 	/// @brief Factory method for node creation
-	virtual
 	utility::graph::Node*
-	create_new_node( Size index );
+	create_new_node( Size index ) override;
 
 	/// @brief Factory method for edge creation
-	virtual
 	utility::graph::Edge*
-	create_new_edge( Size index1, Size index2 );
+	create_new_edge( Size index1, Size index2 ) override;
 
-	virtual
 	void
-	delete_edge( utility::graph::Edge * edge );
+	delete_edge( utility::graph::Edge * edge ) override;
 
 	HashEdge *
 	find_hash_edge(Size n1, Size n2);

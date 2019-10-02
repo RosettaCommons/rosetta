@@ -45,17 +45,17 @@ public:
 	SmoothStepFunc( Real const low, Real const high ): low_( low ), high_( high ){}
 
 	/// @brief returns a clone of this SmoothStepFunc
-	FuncOP clone() const { return utility::pointer::make_shared< SmoothStepFunc >( *this ); }
+	FuncOP clone() const override { return utility::pointer::make_shared< SmoothStepFunc >( *this ); }
 
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
-	Real func( Real const x ) const;
-	Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
-	void read_data( std::istream& in );
+	void read_data( std::istream& in ) override;
 
-	void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
 private:
 	Real low_;

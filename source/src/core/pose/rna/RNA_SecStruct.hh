@@ -42,7 +42,7 @@ public:
 	RNA_SecStruct(){} // everything empty.
 
 	//destructor
-	~RNA_SecStruct();
+	~RNA_SecStruct() override;
 
 public:
 

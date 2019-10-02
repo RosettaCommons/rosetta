@@ -66,39 +66,35 @@ public:
 	DatabaseResourceLocator(
 		DatabaseResourceLocator const & src);
 
-	virtual ~DatabaseResourceLocator();
+	~DatabaseResourceLocator() override;
 
 	/// @brief Describe the %DatabaseResourceLocator instance to the given output stream
-	virtual
 	void
 	show(
-		std::ostream & out) const;
+		std::ostream & out) const override;
 
 	/// @brief Return the typename for this class: "DatabaseResourceLocator"
-	virtual
 	std::string
-	type() const;
+	type() const override;
 
 	/// @brief Create a ResourceStream object from the given resource
 	/// source, so that its stream can be passed to the ResourceLoader
 	/// using the input "input_id" which is bound to the partially formed
 	/// SQL select statement that was provided at construction or in
 	/// parse_my_tag
-	virtual
 	ResourceStreamOP
 	locate_resource_stream(
 		std::string const & input_id
-	) const;
+	) const override;
 
 	/// @brief Initialize the %DatabaseResourceLoader from the input set of tags
 	/// which should contain both the name of the database session resource that
 	/// will be used to talk to the database, and the partially formed SQL
 	/// select statement that will be used to query the database.
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag
-	);
+	) override;
 
 	/// @brief Describe the schema for this resource locator to the XSD.
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

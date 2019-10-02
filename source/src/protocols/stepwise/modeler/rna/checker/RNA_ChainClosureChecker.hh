@@ -37,14 +37,14 @@ public:
 
 
 	//destructor
-	~RNA_ChainClosureChecker();
+	~RNA_ChainClosureChecker() override;
 
 public:
 
 	void
-	apply( core::pose::Pose & pose ){ copy_CCD_torsions( pose ); }
+	apply( core::pose::Pose & pose ) override{ copy_CCD_torsions( pose ); }
 
-	std::string get_name() const{ return "RNA_ChainClosureChecker"; }
+	std::string get_name() const override{ return "RNA_ChainClosureChecker"; }
 
 	void
 	set_reinitialize_CCD_torsions( bool const & setting ){ reinitialize_CCD_torsions_ = setting; };

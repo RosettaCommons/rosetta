@@ -62,9 +62,9 @@ public:
 
 	PlaceProbeMoverOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<PlaceProbeMover>( Mover::shared_from_this() ); }
 
-	virtual void apply( Pose & );
+	void apply( Pose & ) override;
 
-	virtual bool reinitialize_for_new_input() const { return false; }
+	bool reinitialize_for_new_input() const override { return false; }
 
 protected:
 	/// @brief Parses tag compoments for PlaceProbeMover

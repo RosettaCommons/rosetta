@@ -57,7 +57,7 @@ public:
 	/// @brief copy ctor
 	NeighborhoodByDistanceCalculator( NeighborhoodByDistanceCalculator const & calculator );
 
-	virtual core::pose::metrics::PoseMetricCalculatorOP clone() const;
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override;
 
 	//accessors for constant/input data
 	/// @brief return central residues set
@@ -67,9 +67,9 @@ public:
 	core::Real dist_cutoff() const { return dist_cutoff_; }
 
 protected:
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	virtual std::string print( std::string const & key ) const;
-	virtual void recompute( core::pose::Pose const & pose );
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override;
+	std::string print( std::string const & key ) const override;
+	void recompute( core::pose::Pose const & pose ) override;
 
 private:
 

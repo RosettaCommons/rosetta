@@ -48,7 +48,7 @@ public: //Constructors
 	SquarePlanarMetal_Helper( SquarePlanarMetal_Helper const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~SquarePlanarMetal_Helper();
+	~SquarePlanarMetal_Helper() override;
 
 public: // public methods
 

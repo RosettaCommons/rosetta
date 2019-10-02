@@ -53,22 +53,19 @@ public:
 
 	AtomGeometrySecMatchRPE( protocols::toolbox::match_enzdes_util::GeomSampleInfo const & gsi );
 
-	~AtomGeometrySecMatchRPE();
+	~AtomGeometrySecMatchRPE() override;
 
-	virtual
 	bool
 	evaluate_residues(
 		core::conformation::Residue const & candidate_res,
 		core::conformation::Residue const & target_res
-	) const = 0;
+	) const override = 0;
 
-	virtual
 	bool
-	require_all_target_residue_atom_coordinates() const;
+	require_all_target_residue_atom_coordinates() const override;
 
-	virtual
 	bool
-	require_target_atom_coordinate( Size target_atom_id ) const;
+	require_target_atom_coordinate( Size target_atom_id ) const override;
 
 
 	/// @brief determines if the passed in value is between lowval and highval
@@ -136,33 +133,28 @@ public:
 	/// evaluation faster
 	AtomDistanceSecMatchRPE( protocols::toolbox::match_enzdes_util::GeomSampleInfo const & gsi );
 
-	virtual
 	bool
 	evaluate_residues(
 		core::conformation::Residue const & candidate_res,
 		core::conformation::Residue const & target_res
-	) const;
+	) const override;
 
-	virtual
 	bool
-	require_candidate_residue_atoms_to_lie_near_target_atom( Size target_atom_id ) const;
+	require_candidate_residue_atoms_to_lie_near_target_atom( Size target_atom_id ) const override;
 
-	virtual
 	utility::vector1< Size >
 	candidate_res_atoms_reqd_near_target_atom(
 		Size target_atom_id
-	) const;
+	) const override;
 
-	virtual
 	Real
-	max_separation_dist_to_target_atom( Size target_atom_id ) const;
+	max_separation_dist_to_target_atom( Size target_atom_id ) const override;
 
-	virtual
 	std::string
 	print(
 		core::chemical::ResidueTypeCOP candidate_restype,
 		core::chemical::ResidueTypeCOP target_restype
-	) const;
+	) const override;
 
 };
 
@@ -175,19 +167,17 @@ public:
 
 	AtomAngleSecMatchRPE( protocols::toolbox::match_enzdes_util::GeomSampleInfo const & gsi );
 
-	virtual
 	bool
 	evaluate_residues(
 		core::conformation::Residue const & candidate_res,
 		core::conformation::Residue const & target_res
-	) const;
+	) const override;
 
-	virtual
 	std::string
 	print(
 		core::chemical::ResidueTypeCOP candidate_restype,
 		core::chemical::ResidueTypeCOP target_restype
-	) const;
+	) const override;
 
 };
 
@@ -202,19 +192,17 @@ public:
 
 	AtomDihedralSecMatchRPE( protocols::toolbox::match_enzdes_util::GeomSampleInfo const & gsi );
 
-	virtual
 	bool
 	evaluate_residues(
 		core::conformation::Residue const & candidate_res,
 		core::conformation::Residue const & target_res
-	) const;
+	) const override;
 
-	virtual
 	std::string
 	print(
 		core::chemical::ResidueTypeCOP candidate_restype,
 		core::chemical::ResidueTypeCOP target_restype
-	) const;
+	) const override;
 
 private:
 
@@ -246,39 +234,33 @@ public:
 	GeometrySecMatchRPE(){}
 
 	/// @brief performs a logical AND for all of the AtomGeometry evaluators.
-	virtual
 	bool
 	evaluate_residues(
 		core::conformation::Residue const & candidate_res,
 		core::conformation::Residue const & target_res
-	) const;
+	) const override;
 
 	void
 	add_atomgeom_evaluator(
 		AtomGeometrySecMatchRPECOP evaluator
 	);
 
-	virtual
 	bool
-	require_all_target_residue_atom_coordinates() const;
+	require_all_target_residue_atom_coordinates() const override;
 
-	virtual
 	bool
-	require_target_atom_coordinate( Size target_atom_id ) const;
+	require_target_atom_coordinate( Size target_atom_id ) const override;
 
-	virtual
 	bool
-	require_candidate_residue_atoms_to_lie_near_target_atom( Size target_atom_id ) const;
+	require_candidate_residue_atoms_to_lie_near_target_atom( Size target_atom_id ) const override;
 
-	virtual
 	utility::vector1< Size >
 	candidate_res_atoms_reqd_near_target_atom(
 		Size target_atom_id
-	) const;
+	) const override;
 
-	virtual
 	Real
-	max_separation_dist_to_target_atom( Size target_atom_id ) const;
+	max_separation_dist_to_target_atom( Size target_atom_id ) const override;
 
 	utility::vector1< AtomGeometrySecMatchRPECOP > const &
 	atom_geom_rpes() const {

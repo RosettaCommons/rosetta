@@ -41,10 +41,10 @@ public:
 	DisulfideDistance(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		utility::vector1< core::Size > const & disulfide_data, core::Size largest_fragment);
 
-	void do_caching(VallChunkOP);
-	void clean_up();
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
-	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
+	void do_caching(VallChunkOP) override;
+	void clean_up() override;
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 private:
 	core::Size n_res_;
@@ -64,7 +64,7 @@ public:
 		MakeFragmentScoringMethod("DisulfideDistance") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 
 } // scores

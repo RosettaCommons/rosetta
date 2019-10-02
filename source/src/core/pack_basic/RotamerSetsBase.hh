@@ -41,7 +41,7 @@ class RotamerSetsBase : public utility::pointer::ReferenceCount
 
 public:
 	RotamerSetsBase();
-	virtual ~RotamerSetsBase();
+	~RotamerSetsBase() override;
 
 	virtual uint nrotamers() const = 0;
 	virtual uint nrotamers_for_moltenres( uint ) const = 0;

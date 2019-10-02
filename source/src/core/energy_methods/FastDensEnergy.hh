@@ -43,48 +43,47 @@ public:
 
 
 	/// clone
-	virtual methods::EnergyMethodOP clone() const;
+	methods::EnergyMethodOP clone() const override;
 
 	/// lr container name
-	methods::LongRangeEnergyType long_range_type() const;
+	methods::LongRangeEnergyType long_range_type() const override;
 
 
-	virtual bool
+	bool
 	defines_residue_pair_energy(
 		pose::Pose const & pose,
 		Size res1,
 		Size res2
-	) const;
+	) const override;
 
-	virtual
 	bool
-	defines_intrares_energy( EnergyMap const &  ) const { return false; }
+	defines_intrares_energy( EnergyMap const &  ) const override { return false; }
 
 	/// scoring
-	virtual void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	void
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual void
+	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
-	) const;
+	) const override;
 
-	virtual void
+	void
 	eval_intrares_energy(
 		const core::conformation::Residue&,
 		const core::pose::Pose&,
 		const core::scoring::ScoreFunction&,
-		core::scoring::EnergyMap&) const {}
+		core::scoring::EnergyMap&) const override {}
 
 	/// derivatives
-	virtual void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const;
+	void
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const override;
 
-	virtual void
+	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
@@ -95,22 +94,21 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
+	) const override;
 
 	///
-	virtual void
+	void
 	finalize_total_energy(
 		pose::Pose & ,
 		ScoreFunction const &,
 		EnergyMap &
-	) const {}
+	) const override {}
 
 	///  use the new minimizer interface
-	virtual bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	bool
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const {};
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override {};
 
 private:
 	bool scoreSymmComplex_;
@@ -121,8 +119,7 @@ private:
 	bool
 	pose_is_setup_for_density_scoring( pose::Pose const & pose) const;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 

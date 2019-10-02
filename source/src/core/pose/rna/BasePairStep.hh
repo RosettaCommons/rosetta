@@ -45,7 +45,7 @@ public:
 		Size const j, Size const j_next );
 
 	//destructor
-	~BasePairStep();
+	~BasePairStep() override;
 
 	Size const & i() const { return base_pair_step_.first.first; };
 	Size const & i_next() const { return base_pair_step_.first.second; };

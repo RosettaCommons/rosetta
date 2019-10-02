@@ -37,7 +37,7 @@ public:
 	Basis( core::Size segment_id, core::Size resnum );
 	Basis(Basis const & src);
 
-	virtual ~Basis();
+	~Basis() override;
 
 	BasisOP
 	clone() const;

@@ -61,7 +61,7 @@ public:
 
 
 	/// @brief Destructor
-	~FlexBBDesignMeanField();
+	~FlexBBDesignMeanField() override;
 
 
 	// Standard Rosetta methods ////////////////////////////////////////////////
@@ -73,16 +73,13 @@ public:
 	friend std::ostream & operator<<( std::ostream & output, FlexBBDesignMeanField const & object_to_output );
 
 	/// @brief overrides process() method in FlexBBMeanField to init AAMatrix for each rot_matrix and average them together
-	virtual
-	void process();
+	void process() override;
 
 	/// @brief deletes a pose from the list of poses
-	virtual
-	void delete_pose( core::Size pose_ind );
+	void delete_pose( core::Size pose_ind ) override;
 
 	/// @brief overrides FlexBBMeanField::calc_bb_boltz_probs to filter out bb_boltz_probs that aren't designable
-	virtual
-	void calc_bb_boltz_probs();
+	void calc_bb_boltz_probs() override;
 
 	/// @brief returns averaged AAMatrix
 	AAMatrixCOP aa_matrix() const;

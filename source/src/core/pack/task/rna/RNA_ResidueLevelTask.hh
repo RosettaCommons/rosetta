@@ -37,7 +37,7 @@ public:
 	RNA_ResidueLevelTask();
 
 	//destructor
-	~RNA_ResidueLevelTask();
+	~RNA_ResidueLevelTask() override;
 
 public:
 

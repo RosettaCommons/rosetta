@@ -81,24 +81,21 @@ public:
 		core::Real yM,
 		core::Real zM*/);
 
-	virtual
-	~TensorsOptimizerFix();
+	~TensorsOptimizerFix() override;
 
 	// @brief OptE func
-	virtual
 	core::Real
-	operator ()( core::optimization::Multivec const & vars ) const;
+	operator ()( core::optimization::Multivec const & vars ) const override;
 
 	core::Real
 	func( core::optimization::Multivec const & vars ) const;
 
 
 	/// @brief OptE dfunc
-	virtual
 	void
 	dfunc(core::optimization::Multivec const & vars,
 		core::optimization::Multivec & dE_dvars
-	) const;
+	) const override;
 
 	/// @brief exact derivative (fast)
 	void

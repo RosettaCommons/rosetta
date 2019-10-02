@@ -57,7 +57,7 @@ public:
 	GenerateMainchainPotential(GenerateMainchainPotential const & src);
 
 	/// @brief Destructor.
-	virtual ~GenerateMainchainPotential();
+	~GenerateMainchainPotential() override;
 
 	/// @brief Clone function: make a copy of this object and return an owning pointer to the copy.
 	GenerateMainchainPotentialOP clone() const;

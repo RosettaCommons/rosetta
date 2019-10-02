@@ -35,7 +35,7 @@ public:
 	///@brief Make a LigandSegment from a non-LigandSegment
 	LigandSegment(SmartSegment const & src, bool is_vital, std::set< core::Size > ligand_residues, core::Size ligand_to_attach);
 
-	virtual ~LigandSegment();
+	~LigandSegment() override;
 
 	LigandSegmentOP
 	clone() const;

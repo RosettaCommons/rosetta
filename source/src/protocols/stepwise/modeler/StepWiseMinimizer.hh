@@ -50,7 +50,7 @@ public:
 
 
 	//destructor
-	~StepWiseMinimizer();
+	~StepWiseMinimizer() override;
 
 public:
 

@@ -35,11 +35,11 @@ public:
 	LoopFilter(protocols::filters::FilterOP filter);
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const { return "LoopFilter"; }
+	string get_name() const override { return "LoopFilter"; }
 
 public:
 	/// @brief Apply the given filter and return the result.
-	bool do_apply(Pose & pose);
+	bool do_apply(Pose & pose) override;
 
 private:
 	protocols::filters::FilterOP filter_;

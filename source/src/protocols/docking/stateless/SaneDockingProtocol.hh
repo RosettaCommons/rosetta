@@ -28,8 +28,8 @@ namespace stateless {
 
 class SaneDockingProtocol : public protocols::docking::DockingProtocol {
 public:
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 };
 
 } // stateless

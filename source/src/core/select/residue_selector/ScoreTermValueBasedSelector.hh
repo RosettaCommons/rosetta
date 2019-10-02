@@ -41,19 +41,19 @@ public:
 	//ScoreTermValueBasedSelector( core::pose::Pose const & pose );
 
 	/// @breif Destructor
-	virtual ~ScoreTermValueBasedSelector();
+	~ScoreTermValueBasedSelector() override;
 
 	/// @brief Clone operator.
 	/// @details Creates a copy of the object and return a pointer to the new object.
-	virtual ResidueSelectorOP clone() const;
+	ResidueSelectorOP clone() const override;
 
 	/// @brief Return a ResidueSubset indicating a selection of Residues from the input Pose.
-	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
+	ResidueSubset apply( core::pose::Pose const & pose ) const override;
 
 	/// @brief Initialize any data members of this instance from an input tag and a DataMap object
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datacache );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datacache ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	static std::string class_name();
 

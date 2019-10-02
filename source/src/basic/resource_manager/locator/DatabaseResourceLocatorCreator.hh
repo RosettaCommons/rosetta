@@ -30,7 +30,7 @@ class DatabaseResourceLocatorCreator : public ResourceLocatorCreator
 {
 public:
 	DatabaseResourceLocatorCreator();
-	virtual ~DatabaseResourceLocatorCreator();
+	~DatabaseResourceLocatorCreator() override;
 
 	ResourceLocatorOP create_resource_locator() const override;
 	std::string locator_type() const override;

@@ -42,7 +42,7 @@ public:
 	LoopHashLibraryLoader();
 
 	/// @brief Destructor.
-	virtual ~LoopHashLibraryLoader();
+	~LoopHashLibraryLoader() override;
 
 	/// @brief Return a LoopHashLibraryCOP constructed from the given ResourceOptions.
 

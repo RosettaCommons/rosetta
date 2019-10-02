@@ -42,16 +42,14 @@ class MPTMProjPenaltyCreator : public methods::EnergyMethodCreator
 public:
 
 	/// @brief Instantiate a new MPTMProjPenalty
-	virtual
 	methods::EnergyMethodOP
 	create_energy_method(
 		methods::EnergyMethodOptions const &
-	) const;
+	) const override;
 
 	/// @brief Returns MPTMProj score type
-	virtual
 	ScoreTypes
-	score_types_for_method() const;
+	score_types_for_method() const override;
 
 };
 

@@ -73,7 +73,7 @@ public:
 	CrosslinkerMover( CrosslinkerMover const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~CrosslinkerMover();
+	~CrosslinkerMover() override;
 
 	/////////////////////
 	/// Mover Methods ///

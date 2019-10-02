@@ -58,14 +58,13 @@ public:
 
 	MutationSetDesignOperation(MutationSetDesignOperation const & src);
 
-	virtual
 	void
-	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const override;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "MutationSetDesignOperation"; }
 
-	virtual ~MutationSetDesignOperation();
+	~MutationSetDesignOperation() override;
 
 	/// @brief Set the mutation sets.
 	/// Each MutationSet is a std::map of resnum:aa
@@ -134,7 +133,7 @@ public:
 
 public:
 
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
 private:
 	//void init_for_equal_operator_and_copy_constructor( MutationSetDesignOperation & lhs, MutationSetDesignOperation const & rhs);

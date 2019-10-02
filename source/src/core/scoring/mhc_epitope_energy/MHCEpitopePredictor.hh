@@ -35,7 +35,7 @@ class MHCEpitopePredictor: public utility::pointer::ReferenceCount {
 
 public:
 	MHCEpitopePredictor() {}
-	virtual ~MHCEpitopePredictor() {}
+	~MHCEpitopePredictor() override {}
 
 	/// @brief Is it the same predictor, not just as initialized (e.g., from file), but considering any subsequent modifications?
 	/// @details Takes any other epitope predictor so needs to make sure same type.

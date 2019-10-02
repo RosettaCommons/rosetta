@@ -119,8 +119,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	virtual
-	~EnergyEval();
+	~EnergyEval() override;
 
 
 public: // copy assignment
@@ -134,8 +133,7 @@ public: // virtual constructors
 
 
 	/// @brief clone this object
-	virtual
-	VallFragmentEvalOP clone() const;
+	VallFragmentEvalOP clone() const override;
 
 
 public: // virtual evaluation methods
@@ -143,11 +141,10 @@ public: // virtual evaluation methods
 
 	/// @brief for a fragment extent, evaluate and store results in a VallFragmentScore
 	/// @return true, so score is always stored during VallLibrarian::catalog()
-	virtual
 	bool eval_impl(
 		Extent const & extent,
 		VallFragmentScore & fs
-	);
+	) override;
 
 
 public: // accessor
@@ -216,8 +213,7 @@ public: // additional hooks
 
 
 	/// @brief operation to be perform before catalog() starts
-	virtual
-	void pre_catalog_op( VallLibrary const & );
+	void pre_catalog_op( VallLibrary const & ) override;
 
 
 private: // data

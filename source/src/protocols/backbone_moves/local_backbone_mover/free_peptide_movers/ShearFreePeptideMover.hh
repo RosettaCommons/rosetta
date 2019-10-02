@@ -34,9 +34,9 @@ public:
 
 	ShearFreePeptideMover(Size seqpos, Real torsion_degree, bool random = false);
 
-	virtual ~ShearFreePeptideMover();
+	~ShearFreePeptideMover() override;
 
-	virtual void apply(FreePeptide &free_peptide);
+	void apply(FreePeptide &free_peptide) override;
 
 private:
 

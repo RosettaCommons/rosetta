@@ -57,11 +57,11 @@ public:
 		core::Size cycles = 0 //0 is sentinel value to check options system
 	);
 
-	virtual ~KinematicWrapper();
+	~KinematicWrapper() override;
 
 	/// @brief re-applies KinematicMover with different pivots until success
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	/// @brief this function derives the allowed_positions_ vector from mm and the loop begin/end
 	void respect_this_movemap( core::kinematics::MoveMapCOP mm );

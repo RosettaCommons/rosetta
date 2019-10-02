@@ -66,7 +66,7 @@ public:
 	ImplicitLipidInfo( ImplicitLipidInfo const & src );
 	ImplicitLipidInfo & operator=( ImplicitLipidInfo const & src );
 
-	virtual ~ImplicitLipidInfo();
+	~ImplicitLipidInfo() override;
 
 	ImplicitLipidInfoOP
 	clone() const;

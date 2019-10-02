@@ -151,7 +151,7 @@ public:
 	typedef numeric::HomogeneousTransform< Real > HTReal;
 
 public:
-	virtual ~ExternalGeomSampler();
+	~ExternalGeomSampler() override;
 
 	ExternalGeomSampler();
 	ExternalGeomSampler( ExternalGeomSampler const & );

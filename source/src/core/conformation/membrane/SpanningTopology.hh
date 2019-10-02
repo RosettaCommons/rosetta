@@ -88,7 +88,7 @@ public: // constructors
 	operator=( SpanningTopology const & src );
 
 	/// @brief Destructor
-	~SpanningTopology();
+	~SpanningTopology() override;
 
 public: // methods
 

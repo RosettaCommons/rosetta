@@ -51,13 +51,13 @@ struct CoordinateArray_RMSD_FlatLookup : public FlatLookup<Real *, numeric::Size
 		this->initialize(entry_indicies.begin(), entry_indicies.end());
 	}
 
-	virtual void prepare_for_query(Real *& q)
+	void prepare_for_query(Real *& q) override
 	{
 		typename Kernel::CoordMap query_coords(q, 3, coordinates_per_entry);
 		query_center = query_coords.rowwise().sum() / query_coords.cols();
 	}
 
-	virtual Real entry_distance(Real *& q, numeric::Size & e)
+	Real entry_distance(Real *& q, numeric::Size & e) override
 	{
 		return Kernel::calc_coordinate_rmsd(
 			typename Kernel::CoordMap(q, 3, coordinates_per_entry),
@@ -67,7 +67,7 @@ struct CoordinateArray_RMSD_FlatLookup : public FlatLookup<Real *, numeric::Size
 		);
 	}
 
-	virtual Real entry_radius(numeric::Size & e)
+	Real entry_radius(numeric::Size & e) override
 	{
 		return entry_radii[e];
 	}

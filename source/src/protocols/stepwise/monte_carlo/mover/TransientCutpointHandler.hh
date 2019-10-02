@@ -38,7 +38,7 @@ public:
 		core::Size const cutpoint_suite, bool const change_foldtree = true );
 
 	//destructor
-	~TransientCutpointHandler();
+	~TransientCutpointHandler() override;
 
 public:
 

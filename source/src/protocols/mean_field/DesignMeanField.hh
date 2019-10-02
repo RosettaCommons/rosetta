@@ -58,7 +58,7 @@ public:
 	);
 
 	/// @brief Destructor
-	~DesignMeanField();
+	~DesignMeanField() override;
 
 
 	// Standard Rosetta methods ////////////////////////////////////////////////
@@ -70,8 +70,7 @@ public:
 	friend std::ostream & operator<<( std::ostream & output, DesignMeanField const & object_to_output );
 
 	/// @brief overrides process() method in MeanField to initialize AAMatrix from RotMatrix
-	virtual
-	void process();
+	void process() override;
 
 	// Accessors/Mutators
 	/// @brief returns const reference to AAMatrix

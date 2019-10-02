@@ -41,7 +41,7 @@ public:
 	AsymFoldandDockMoveRbJumpMover();
 	AsymFoldandDockMoveRbJumpMover( core::Size chain_start );
 
-	~AsymFoldandDockMoveRbJumpMover(){}
+	~AsymFoldandDockMoveRbJumpMover() override{}
 
 	void apply( core::pose::Pose & pose ) override;
 	void find_new_jump_residue( core::pose::Pose & pose );

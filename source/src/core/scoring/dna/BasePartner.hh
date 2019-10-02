@@ -44,7 +44,7 @@ public:
 	{}
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return utility::pointer::make_shared< BasePartner >( *this );
 	}

@@ -66,12 +66,12 @@ public:
 
 	/// @brief Returns a new RigidBodySilentStruct with a copy of the information
 	/// in this RigidBodySilentStruct.
-	virtual SilentStructOP clone() const {
+	SilentStructOP clone() const override {
 		return utility::pointer::make_shared< RigidBodySilentStruct >( *this );
 	}
 
 	// destructor
-	~RigidBodySilentStruct() {}
+	~RigidBodySilentStruct() override {}
 
 	/// @brief Test if this RigidBodySilentStruct is equal to the given
 	/// RigidBodySilentStruct in terms of conformation. Doesn't check energies.
@@ -81,37 +81,37 @@ public:
 
 	/// @brief Tells this RigidBodySilentStruct object to initialize itself from
 	//the given set of lines.
-	virtual bool init_from_lines(
+	bool init_from_lines(
 		utility::vector1< std::string > const & lines,
 		SilentFileData & container
-	);
+	) override;
 
 	/// @brief Configure the conformation of the given Pose with the
 	/// conformational data within this RigidBodySilentStruct.
 	/// sets the jump stored in the RigidBodySilentStruct
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		bool const metapatches = true
-	) const;
+	) const override;
 
 	/// @brief Configure the conformation of the given Pose with the
 	/// conformational data within this RigidBodySilentStruct.
 	// invalid to use
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set,
 		bool const metapatches = true
-	) const;
+	) const override;
 
 	/// @brief opposite of fill_pose
-	virtual void fill_struct(
+	void fill_struct(
 		core::pose::Pose const & pose,
 		std::string tag = "empty_tag"
-	);
+	) override;
 
 	/// @brief Prints the conformation information within this
 	// RigidBodySilentStruct to the given std::ostream.
-	virtual void print_conformation( std::ostream & output ) const;
+	void print_conformation( std::ostream & output ) const override;
 
 	//lin Symmetry
 	// @lin - move these to the .cc file so you can only include SymmetryInfo.fwd.hh!
@@ -146,14 +146,14 @@ public:
 	/// @brief calculates the RMSD between the C-alpha atoms of a Pose built from
 	/// the torsions in this RigidBodySilentStruct and the C-alpha atoms from this
 	/// RigidBodySilentStruct.
-	virtual Real get_debug_rmsd() {
+	Real get_debug_rmsd() override {
 		return 1000.0; //cannot do this with this bare-bones silent-struct type
 	}
 
 	void fold_tree( kinematics::FoldTree const& );
 	kinematics::FoldTree const& fold_tree() const;
 
-	virtual ObjexxFCL::FArray2D< Real > get_CA_xyz() const;
+	ObjexxFCL::FArray2D< Real > get_CA_xyz() const override;
 
 protected:
 

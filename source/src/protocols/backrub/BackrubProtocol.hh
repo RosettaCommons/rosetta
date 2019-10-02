@@ -46,7 +46,7 @@ class BackrubProtocol : public protocols::moves::Mover {
 public:
 	BackrubProtocol();
 	BackrubProtocol(BackrubProtocol const & bp);
-	~BackrubProtocol();
+	~BackrubProtocol() override;
 
 	void
 	apply( core::pose::Pose& pose ) override;

@@ -65,7 +65,7 @@ public:
 		local_pos_( local_pos )
 	{}
 
-	virtual DofClaimOP clone() const { return utility::pointer::make_shared< BBClaim >( *this ); }
+	DofClaimOP clone() const override { return utility::pointer::make_shared< BBClaim >( *this ); }
 
 	//  Size get_position() const {
 	//   return pos_;
@@ -80,13 +80,13 @@ public:
 		return owner_op->broker().sequence_number_resolver().find_global_pose_number( local_pos_ );
 	}
 
-	virtual void toggle( core::kinematics::MoveMap& mm, bool new_setting ) const {
+	void toggle( core::kinematics::MoveMap& mm, bool new_setting ) const override {
 		TopologyClaimerCOP owner_op( owner() );
 		core::Size pos = owner_op->broker().sequence_number_resolver().find_global_pose_number( local_pos_ );
 		mm.set_bb( pos, new_setting );
 	}
 
-	virtual void show(std::ostream& os) const {
+	void show(std::ostream& os) const override {
 		TopologyClaimerCOP owner_op( owner() );
 		os << "DofClaim-" << str_type() << " owned by a " << (owner_op ? owner_op->type() : "(Unknown)") << " at ("
 			<< local_pos_.first << ", " << local_pos_.second << ")";
@@ -98,7 +98,7 @@ public:
 	//        return str_stream.str();
 	//    }
 
-	virtual std::string str_type() const {
+	std::string str_type() const override {
 		return "BB";
 	}
 

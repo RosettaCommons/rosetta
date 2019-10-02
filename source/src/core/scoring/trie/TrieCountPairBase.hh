@@ -68,7 +68,7 @@ public:
 	/// of an infinite chemical separation.
 	static const Size INFINITE_SEPARATION = 5;
 
-	virtual ~TrieCountPairBase();
+	~TrieCountPairBase() override;
 	// There are as many as T*K*M*N^2 different type resolution functions for
 	// M different scoring functions with
 	// N different count pair data types, spread over

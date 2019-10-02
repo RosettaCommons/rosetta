@@ -40,26 +40,26 @@ public:
 		core::Size const & jump_num );
 
 	//destructor
-	~MC_RNA_OneJump();
+	~MC_RNA_OneJump() override;
 
 	/// @brief Initialization
-	void init() {
+	void init() override {
 		set_init( true );
 		reset();
 	}
 
 	/// @brief Reset to current angle
-	void reset() { active_jump_ = stored_jump_; }
+	void reset() override { active_jump_ = stored_jump_; }
 
 	/// @brief Update the active jump based on stored
 	/// (do not update stored_jump_)
-	void operator++();
+	void operator++() override;
 
 	/// @brief Update the stored jump to match active jump
-	void update();
+	void update() override;
 
 	/// @brief Apply the active jump to pose
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Get the stored jump
 	core::kinematics::Jump stored_jump() const { return stored_jump_; }
@@ -84,16 +84,14 @@ public:
 	}
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::MC_RNA_ONE_JUMP; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::MC_RNA_ONE_JUMP; }
 
 	/// @brief output summary of class
-	virtual
-	void show( std::ostream & out, Size const indent) const;
+	void show( std::ostream & out, Size const indent) const override;
 
 	/// @brief return OP to the subsampler that controls exactly this torsion_id (assume only one).
-	virtual
 	MC_SamplerOP
-	find( core::id::TorsionID const & torsion_id );
+	find( core::id::TorsionID const & torsion_id ) override;
 
 private:
 

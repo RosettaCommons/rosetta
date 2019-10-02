@@ -47,7 +47,7 @@ public:
 	IndependentLoopMover( GuardedLoopsFromFileOP guarded_loops );
 
 	//destructor
-	virtual ~IndependentLoopMover();
+	~IndependentLoopMover() override;
 
 	void set_defaults();
 

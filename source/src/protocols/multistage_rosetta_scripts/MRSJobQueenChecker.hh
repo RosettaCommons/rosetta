@@ -34,7 +34,7 @@ public:
 	MRSJobQueenChecker();
 
 	//destructor
-	~MRSJobQueenChecker();
+	~MRSJobQueenChecker() override;
 
 public:
 	///@brief create serialized poses for every input job and use these to predict the amount of memory required for archiving results

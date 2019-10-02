@@ -74,7 +74,7 @@ public:
 
 	/// @brief Default destructor.
 	///
-	virtual ~HBNetEnergy();
+	~HBNetEnergy() override;
 
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.

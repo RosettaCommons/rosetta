@@ -33,21 +33,18 @@ public:
 	BaseBinMapUpdater( protocols::stepwise::modeler::rna::rigid_body::BaseBinMap & base_bin_map );
 
 	//destructor
-	~BaseBinMapUpdater();
+	~BaseBinMapUpdater() override;
 
 public:
 
-	virtual
 	void
-	get_update( sampler::StepWiseSamplerOP sampler );
+	get_update( sampler::StepWiseSamplerOP sampler ) override;
 
-	virtual
 	std::string
-	name() const { return "BaseBinMapUpdater"; }
+	name() const override { return "BaseBinMapUpdater"; }
 
-	virtual
 	StepWiseScreenerType
-	type() const { return BASE_BIN_MAP; }
+	type() const override { return BASE_BIN_MAP; }
 
 private:
 

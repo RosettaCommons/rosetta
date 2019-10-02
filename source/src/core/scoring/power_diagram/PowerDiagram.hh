@@ -114,7 +114,7 @@ public:
 		cell_vertices_.clear();
 		cycles_.clear();
 	}
-	~PDsphere() { cell_vertices_.clear(); }
+	~PDsphere() override { cell_vertices_.clear(); }
 	Size const & res() const { return res_; }
 	Size & nonconst_res() { return res_; }
 	Size const & atom() const { return atom_; }

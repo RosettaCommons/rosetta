@@ -58,7 +58,7 @@ class PoseInputter : public utility::pointer::ReferenceCount
 public:
 
 	PoseInputter();
-	virtual ~PoseInputter();
+	~PoseInputter() override;
 
 	virtual bool job_available_on_command_line() const = 0;
 

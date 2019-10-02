@@ -63,13 +63,12 @@ public:
 	/// @brief Perform a depth-first traversal of the tree that would be effected by
 	/// a DOF change from this atom.  Stop at atoms that have already been traversed.
 	/// Will recurse on younger siblings if a phi on this atom has changed.
-	virtual
 	void
 	dfs(
 		AtomDOFChangeSet & changeset,
 		ResidueCoordinateChangeList & res_change_list,
 		Size const start_atom_index
-	) const;
+	) const override;
 
 	///////////////////////////////////////////////////////////////////////////
 	// go back and forth between DOFs and coords
@@ -78,110 +77,97 @@ public:
 	/// of the subtree being refolded.  Valid only if this atom is the maximal root of a subtree
 	/// requiring coordinate updates -- if any ancestor of this atom requires a coordinate update,
 	/// then the Stub this atom generates for itself will be invalid.
-	virtual
 	void
-	update_xyz_coords();
+	update_xyz_coords() override;
 
 
 	/// @brief update cartesian coordinates for this atom from its input stub and internal cooridnates
-	virtual
 	void
 	update_xyz_coords(
 		Stub & stub
-	);
+	) override;
 
 	using Atom_::update_internal_coords;
 
 	/// @brief update internal coordinates for this atom from its xyz position and input stub
-	virtual
 	void
 	update_internal_coords(
 		Stub & stub,
 		bool const recursive = true
-	);
+	) override;
 
 
 	// useful helper function for manipulating stubs
 	/// @brief update the stub without actually updating coordinates
-	virtual
 	void
 	update_stub(
 		Stub & stub
-	) const;
+	) const override;
 
 
 	///////////////////////////////////////////////////////////////////////////
 	// access DOFs
 
 	/// @brief set degrees of freedom (internal coordinates)
-	virtual
 	void
 	set_dof(
 		DOF_Type const type,
 		core::Real const value
-	);
+	) override;
 
 	/// @brief set degrees of freedom (internal coordinates). For use in
 	/// output-sensitive refold subroutine.
-	virtual
 	void
 	set_dof(
 		DOF_Type const type,
 		core::Real const value,
 		AtomDOFChangeSet & changeset
-	);
+	) override;
 
 	/// @brief get degrees of freedom
-	virtual
 	core::Real
 	dof(
 		DOF_Type const type
-	) const;
+	) const override;
 
 	/// @brief abort if attempt to get jump for a bonded atom
 	inline
-	virtual
 	Jump const &
-	jump() const { abort_bad_call(); return BOGUS_JUMP; /* we never get here */ }
+	jump() const override { abort_bad_call(); return BOGUS_JUMP; /* we never get here */ }
 
 
 	/// @brief abort if attempt to set jump for a bonded atom
 	inline
-	virtual
 	void
-	jump( Jump const & /* jump_in */ ) { abort_bad_call(); }
+	jump( Jump const & /* jump_in */ ) override { abort_bad_call(); }
 
 	/// @brief abort if attempt to set jump for a bonded atom
 	inline
-	virtual
 	void
-	jump( Jump const & /* jump_in */, AtomDOFChangeSet & /*changeset*/ ) { abort_bad_call(); }
+	jump( Jump const & /* jump_in */, AtomDOFChangeSet & /*changeset*/ ) override { abort_bad_call(); }
 
 
 	/// @brief copy this atom
-	virtual
 	AtomOP
-	clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const;
+	clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const override;
 
 
 	///////////////////////////////////////////////////////////////////////////
 	/// @brief  for minimizing,add DOF(PHI,THETA,D) for a BondedAtom into the MinimizerMap
-	virtual
 	void
 	setup_min_map(
 		DOF_ID & last_torsion,
 		DOF_ID_Mask const & allow_move,
 		MinimizerMapBase & min_map
-	) const;
+	) const override;
 
 	/// @brief get rotation axis and end_pos for a BondedAtom.
-	virtual
 	void
 	get_dof_axis_and_end_pos(
 		Vector & axis,
 		Position & end_pos,
 		DOF_Type const type
-	) const;
+	) const override;
 
 
 	///////////////////////////////////////////////////////////////////////////
@@ -189,31 +175,27 @@ public:
 
 	/// @brief bonded atom is a jump? of course not!!!
 	inline
-	virtual
 	bool
-	is_jump() const { return false; }
+	is_jump() const override { return false; }
 
 	///\brief when other atoms are inserted insert after 1st child if available.
 	/// --> this enables us to keep a stub of Downstream Jump atoms inside a single residue
-	virtual
 	bool
-	keep_1st_child_pos() const { return false; }
+	keep_1st_child_pos() const override { return false; }
 
 
 	/// @brief whether a DOF for this atom should be fixed?
-	virtual
 	bool
 	keep_dof_fixed(
 		DOF_Type const type
-	) const;
+	) const override;
 
 
 	///////////////////////////////////////////////////////////////////////////
 
 	/// @brief copy DOFs, xyz's
-	virtual
 	void
-	copy_coords( Atom const & src );
+	copy_coords( Atom const & src ) override;
 
 
 public: // Properties
@@ -224,7 +206,7 @@ public: // Properties
 	/** it is itself */
 	inline
 	AtomCOP
-	stub_atom1() const
+	stub_atom1() const override
 	{
 		return get_self_ptr();
 	}
@@ -235,7 +217,7 @@ public: // Properties
 	/** it is its parent */
 	inline
 	AtomCOP
-	stub_atom2() const
+	stub_atom2() const override
 	{
 		return parent();
 	}
@@ -251,7 +233,7 @@ public: // Properties
 	*/
 	inline
 	AtomCOP
-	stub_atom3() const
+	stub_atom3() const override
 	{
 		//std::cout << "stub_atom3: " << this << ' ' << parent_ << std::endl();
 		AtomCOP parent_op = parent(); // must have parent
@@ -270,26 +252,22 @@ public: // Properties
 		}
 	}
 
-	virtual
 	void
-	steal_inversion(AtomOP steal_from);
+	steal_inversion(AtomOP steal_from) override;
 
 	bool
 	get_inversion() { return inverted_frame_; }
 
 public:
 
-	virtual
 	Atom const *
-	raw_stub_atom1() const;
+	raw_stub_atom1() const override;
 
-	virtual
 	Atom const *
-	raw_stub_atom2() const;
+	raw_stub_atom2() const override;
 
-	virtual
 	Atom const *
-	raw_stub_atom3() const;
+	raw_stub_atom3() const override;
 
 
 private: // Fields

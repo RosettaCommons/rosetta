@@ -54,14 +54,14 @@ public:
 	// less preferred constructor - create a new InterfaceNeighborDefinitionCalculator
 	InterfaceDeltaEnergeticsCalculator( char const chain1_letter, char const chain2_letter );
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override
 	{ return utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator >( name_of_InterfaceNeighborDefinitionCalculator_, score_types_to_ignore_ ); }
 
 protected:
 
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	virtual std::string print( std::string const & key ) const;
-	virtual void recompute( core::pose::Pose const & this_pose );
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override;
+	std::string print( std::string const & key ) const override;
+	void recompute( core::pose::Pose const & this_pose ) override;
 
 private:
 

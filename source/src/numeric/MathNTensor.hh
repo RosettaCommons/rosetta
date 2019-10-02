@@ -153,7 +153,7 @@ public:
 
 	/// @brief Destructor.
 	///
-	~MathNTensor() {
+	~MathNTensor() override {
 		if ( data_ ) delete[] data_;
 	}
 

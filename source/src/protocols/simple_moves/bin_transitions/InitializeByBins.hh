@@ -65,7 +65,7 @@ public:
 
 	/// @brief Destructor.
 	///
-	virtual ~InitializeByBins();
+	~InitializeByBins() override;
 
 
 	/// @brief Clone -- i.e. create a new object copying this one and return an owning pointer to the copy.

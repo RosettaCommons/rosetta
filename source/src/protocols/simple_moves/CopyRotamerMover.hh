@@ -46,7 +46,7 @@ public:
 	CopyRotamerMover( CopyRotamerMover const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~CopyRotamerMover();
+	~CopyRotamerMover() override;
 
 	/////////////////////
 	/// Mover Methods ///

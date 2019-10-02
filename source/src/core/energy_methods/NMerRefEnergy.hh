@@ -59,11 +59,10 @@ public:
 	);
 
 
-	virtual ~NMerRefEnergy();
+	~NMerRefEnergy() override;
 
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
@@ -78,16 +77,15 @@ public:
 		utility::vector1< core::Real > &
 	) const;
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
 
 	virtual
@@ -102,8 +100,7 @@ public:
 
 	/// @brief DunbrackEnergy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	/// @brief read reference energy lists from a vector of filenames
 	void read_nmer_fname_vector( utility::vector1< std::string > const & );
@@ -126,8 +123,7 @@ private:
 	void read_nmer_table_list( std::string const & ref_list_fname );
 	/// @brief read reference tables from option flags
 	void read_nmer_tables_from_options();
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 } // methods

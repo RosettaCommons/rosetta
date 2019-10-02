@@ -33,24 +33,24 @@ public:
 	ResidueListStepWiseSampler( utility::vector1< core::conformation::ResidueOP > const & copy_dofs );
 
 	//destructor
-	~ResidueListStepWiseSampler();
+	~ResidueListStepWiseSampler() override;
 
 public:
 
 	core::conformation::ResidueOP get_residue_at_origin();
 
 	/// @brief Get the total number of rotamers in sampler
-	virtual core::Size size() const{ return copy_dofs_.size(); }
+	core::Size size() const override{ return copy_dofs_.size(); }
 
 	/// @brief Apply the i-th rotamer to pose
 	// do nothing. job is to return a residue.
-	virtual void apply( core::pose::Pose&, core::Size const ){}
+	void apply( core::pose::Pose&, core::Size const ) override{}
 
 	/// @brief Name of the class
-	virtual std::string get_name() const { return "ResidueListStepWiseSampler"; }
+	std::string get_name() const override { return "ResidueListStepWiseSampler"; }
 
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
-	virtual toolbox::SamplerPlusPlusType type() const { return toolbox::RESIDUE_LIST; }
+	toolbox::SamplerPlusPlusType type() const override { return toolbox::RESIDUE_LIST; }
 
 private:
 

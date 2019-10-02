@@ -131,7 +131,7 @@ public:
 
 	RNA_DataInfo( RNA_DataInfo const & src );
 
-	~RNA_DataInfo(){}
+	~RNA_DataInfo() override{}
 
 	RNA_DataInfoOP
 	clone() const

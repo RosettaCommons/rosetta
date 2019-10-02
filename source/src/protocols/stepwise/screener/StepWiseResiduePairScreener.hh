@@ -31,20 +31,18 @@ public:
 	StepWiseResiduePairScreener( Size const res1, Size const res2 );
 
 	//destructor
-	~StepWiseResiduePairScreener();
+	~StepWiseResiduePairScreener() override;
 
 public:
 
-	virtual
 	std::string
-	name() const = 0;
+	name() const override = 0;
 
-	virtual
 	StepWiseScreenerType
-	type() const = 0;
+	type() const override = 0;
 
 	void
-	fast_forward( sampler::StepWiseSamplerOP sampler );
+	fast_forward( sampler::StepWiseSamplerOP sampler ) override;
 
 protected:
 

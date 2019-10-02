@@ -51,10 +51,10 @@ public:
 	ReplicateTask( core::pack::task::PackerTaskOP  native_task );
 	ReplicateTask( core::pose::Pose & native_pose, core::pack::task::TaskFactoryOP  task_factory );
 
-	virtual ~ReplicateTask();
-	virtual TaskOperationOP clone() const;
+	~ReplicateTask() override;
+	TaskOperationOP clone() const override;
 
-	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
+	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const override;
 	//void symmetric_task( core::pose::Pose const & pose, task::PackerTask & task ) const;
 	void set_native_task( core::pack::task::PackerTaskOP native_task);
 

@@ -55,22 +55,21 @@ public:
 	// takes a single chain
 	ChainSelector( char chain );
 
-	virtual ~ChainSelector();
+	~ChainSelector() override;
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.
-	virtual ResidueSelectorOP clone() const;
+	ResidueSelectorOP clone() const override;
 
-	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
+	ResidueSubset apply( core::pose::Pose const & pose ) const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
-	);
+	) override;
 
-	virtual
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

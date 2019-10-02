@@ -37,7 +37,7 @@ class BareMinimumPDEdge : public interaction_graph::PDEdge {
 
 public:
 	BareMinimumPDEdge( interaction_graph::InteractionGraphBase* owner, int first_node_ind, int second_node_ind );
-	~BareMinimumPDEdge();
+	~BareMinimumPDEdge() override;
 
 public:
 
@@ -79,7 +79,7 @@ public:
 		float clash_threshold );
 
 	//destructor
-	~HBondGraphInitializerIG();
+	~HBondGraphInitializerIG() override;
 
 public:
 

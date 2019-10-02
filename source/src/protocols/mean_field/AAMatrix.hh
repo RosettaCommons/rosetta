@@ -60,7 +60,7 @@ public:
 	AAMatrix & operator=( AAMatrix const & object_to_copy );
 
 	/// @brief Destructor
-	~AAMatrix();
+	~AAMatrix() override;
 
 	/// @brief calculates vector of cosine distances between vectors of this AAMatrix and a second AAMatrix
 	/// @details number of elements is the number of positions + 1.  last element is the cosine distance between entire matrices

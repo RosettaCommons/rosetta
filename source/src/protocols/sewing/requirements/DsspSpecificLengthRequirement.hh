@@ -37,7 +37,7 @@ public:
 	//DsspSpecificLengthRequirement(char dssp_code, core::Size min_length, core::Size max_length);
 	DsspSpecificLengthRequirement(DsspSpecificLengthRequirement const & src);
 
-	virtual ~DsspSpecificLengthRequirement() override = default;
+	~DsspSpecificLengthRequirement() override = default;
 
 	DsspSpecificLengthRequirementOP
 	clone() const;

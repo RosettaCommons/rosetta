@@ -47,7 +47,7 @@ public:
 
 public:
 	IdealAbegoGenerator( std::string const & id_val );
-	virtual ~IdealAbegoGenerator();
+	~IdealAbegoGenerator() override;
 
 	IdealAbegoGeneratorOP
 	clone() const;

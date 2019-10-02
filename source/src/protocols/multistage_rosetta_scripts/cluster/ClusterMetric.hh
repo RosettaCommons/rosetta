@@ -37,7 +37,7 @@ class ClusterMetric : public utility::pointer::ReferenceCount
 {
 public:
 	ClusterMetric();
-	~ClusterMetric();
+	~ClusterMetric() override;
 
 	///@brief Measures the distance between this metric and another of the same type.
 	/// You can assume that other has the same type as this

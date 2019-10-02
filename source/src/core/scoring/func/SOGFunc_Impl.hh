@@ -65,7 +65,7 @@ public:
 		upper_bound(10);
 	}
 
-	virtual ~SOGFunc_Impl();
+	~SOGFunc_Impl() override;
 
 	/// @brief Returns the value of this SOGFunc_Impl evaluated at distance x.
 	Real func( Real const x ) const;

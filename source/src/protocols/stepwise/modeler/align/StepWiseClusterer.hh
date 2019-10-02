@@ -41,7 +41,7 @@ public:
 	StepWiseClusterer( options::StepWiseModelerOptionsCOP options );
 
 	//destructor
-	~StepWiseClusterer();
+	~StepWiseClusterer() override;
 
 public:
 

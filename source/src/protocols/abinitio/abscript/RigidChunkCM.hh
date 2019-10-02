@@ -48,7 +48,7 @@ public:
 	RigidChunkCM( core::select::residue_selector::ResidueSelectorCOP selector,
 		core::pose::Pose const& template_pose );
 
-	virtual ~RigidChunkCM() {};
+	~RigidChunkCM() override {};
 
 	EnvClaims yield_claims( core::pose::Pose const&,
 		basic::datacache::WriteableCacheableMapOP ) override;

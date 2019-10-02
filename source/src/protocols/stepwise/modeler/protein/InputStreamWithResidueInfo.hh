@@ -62,7 +62,7 @@ public:
 	InputStreamWithResidueInfo( core::import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
 		utility::vector1< core::Size > const & input_res);
 
-	~InputStreamWithResidueInfo();
+	~InputStreamWithResidueInfo() override;
 
 	core::import_pose::pose_stream::PoseInputStreamOP & pose_input_stream();
 	utility::vector1< core::Size > const & input_res();

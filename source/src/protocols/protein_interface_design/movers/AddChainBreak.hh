@@ -32,7 +32,7 @@ class AddChainBreak : public protocols::moves::Mover
 {
 public :
 	AddChainBreak();
-	virtual ~AddChainBreak();
+	~AddChainBreak() override;
 	void apply( core::pose::Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< AddChainBreak >(); }

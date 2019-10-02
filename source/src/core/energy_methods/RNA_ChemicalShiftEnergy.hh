@@ -46,19 +46,18 @@ public:
 	RNA_ChemicalShiftEnergy();
 
 	/// clone
-	virtual
 	methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose &, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose &, ScoreFunction const & ) const override;
 
 	/////////////////////////////////
 	void
@@ -66,7 +65,7 @@ public:
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const override;
 
 	/////////////////////////////////
 	void
@@ -77,19 +76,18 @@ public:
 		ScoreFunction const &,
 		EnergyMap const & weights,
 		Vector & F1,
-		Vector & F2 ) const;
+		Vector & F2 ) const override;
 
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const override {}
 
 private:
 
 	RNA_ChemicalShiftPotential rna_chemical_shift_potential_; //Can I make this not mutable?
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

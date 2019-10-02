@@ -60,7 +60,7 @@ public:
 
 public:
 	RotamerSets();
-	~RotamerSets();
+	~RotamerSets() override;
 
 	void
 	set_task( task::PackerTaskCOP task);
@@ -82,39 +82,32 @@ public:
 	void
 	dump_pdb( pose::Pose const & pose, std::string const & filename ) const;
 
-	virtual uint nrotamers() const;
-	virtual uint nrotamers_for_moltenres( uint ) const;
+	uint nrotamers() const override;
+	uint nrotamers_for_moltenres( uint ) const override;
 
-	virtual uint nmoltenres() const;
-	virtual uint total_residue() const;
+	uint nmoltenres() const override;
+	uint total_residue() const override;
 
-	virtual
 	uint
-	moltenres_2_resid( uint ) const;
+	moltenres_2_resid( uint ) const override;
 
-	virtual
 	uint
-	resid_2_moltenres( uint ) const;
+	resid_2_moltenres( uint ) const override;
 
-	virtual
 	uint
-	moltenres_for_rotamer( uint ) const;
+	moltenres_for_rotamer( uint ) const override;
 
-	virtual
 	uint
-	res_for_rotamer( uint ) const;
+	res_for_rotamer( uint ) const override;
 
-	virtual
 	core::conformation::ResidueCOP
-	rotamer( uint ) const;
+	rotamer( uint ) const override;
 
-	virtual
 	core::conformation::ResidueCOP
-	rotamer_for_moltenres( uint moltenres_id, uint rotamerid ) const;
+	rotamer_for_moltenres( uint moltenres_id, uint rotamerid ) const override;
 
-	virtual
 	uint
-	nrotamer_offset_for_moltenres( uint ) const;
+	nrotamer_offset_for_moltenres( uint ) const override;
 
 	/// @brief Does this RotamerSets object store a rotamer set for a residue at position resid
 	/// in the pose?
@@ -123,39 +116,31 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	bool has_rotamer_set_for_residue( uint const resid ) const;
 
-	virtual
 	RotamerSetCOP
-	rotamer_set_for_residue( uint resid ) const;
+	rotamer_set_for_residue( uint resid ) const override;
 
-	virtual
 	RotamerSetOP
-	rotamer_set_for_residue( uint resid );
+	rotamer_set_for_residue( uint resid ) override;
 
-	virtual
 	RotamerSetCOP
-	rotamer_set_for_moltenresidue( uint moltenresid ) const;
+	rotamer_set_for_moltenresidue( uint moltenresid ) const override;
 
-	virtual
 	RotamerSetOP
-	rotamer_set_for_moltenresidue( uint moltenresid );
+	rotamer_set_for_moltenresidue( uint moltenresid ) override;
 
-	virtual
-	RotamerSetVector::const_iterator begin()
+	RotamerSetVector::const_iterator begin() override
 	{ return set_of_rotamer_sets_.begin(); }
 
-	virtual
-	RotamerSetVector::const_iterator end()
+	RotamerSetVector::const_iterator end() override
 	{ return set_of_rotamer_sets_.end(); }
 
 	/// convert rotid in full rotamer enumeration into rotamer id on its source residue
-	virtual
 	uint
-	rotid_on_moltenresidue( uint rotid ) const;
+	rotid_on_moltenresidue( uint rotid ) const override;
 
 	/// convert moltenres rotid to id in full rotamer enumeration
-	virtual
 	uint
-	moltenres_rotid_2_rotid( uint moltenres, uint moltenresrotid ) const;
+	moltenres_rotid_2_rotid( uint moltenres, uint moltenresrotid ) const override;
 
 	/// access to packer_task_
 	PackerTaskCOP
@@ -165,11 +150,10 @@ public:
 
 	/// @brief Give the pose a chance to stash any data needed by the _rotset_
 	///        need nonconst access to pose
-	virtual
 	void
 	initialize_pose_for_rotsets_creation(
 		pose::Pose & /*pose*/
-	) const {}
+	) const override {}
 
 	///fd: make this public
 	///    the reason?  we now can update rotamersets interactively from code, so this should be exposed
@@ -268,21 +252,18 @@ public:
 
 public: // WHY? G++, WHY?!
 
-	virtual
 	utility::vector1< uint > const &
-	resid_2_moltenres_vector() const {
+	resid_2_moltenres_vector() const override {
 		return resid_2_moltenres_;
 	}
 
-	virtual
 	utility::vector1< uint > const &
-	moltenres_2_resid_vector() const {
+	moltenres_2_resid_vector() const override {
 		return moltenres_2_resid_;
 	}
 
-	virtual
 	void
-	show( std::ostream & out ) const;
+	show( std::ostream & out ) const override;
 
 private:
 	uint nmoltenres_ = 0;

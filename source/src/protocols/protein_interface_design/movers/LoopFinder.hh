@@ -52,7 +52,7 @@ public:
 		core::Real const iface_cutoff,
 		protocols::loops::LoopsOP loops
 	);
-	virtual ~LoopFinder();
+	~LoopFinder() override;
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< LoopFinder >(); }

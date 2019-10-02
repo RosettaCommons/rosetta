@@ -54,17 +54,15 @@ public:
 		std::ostream & ) const{}
 
 	/// @brief Initialize from the recursive "tag" structure.
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagCOP
-	){}
+	) override{}
 
 	/// @brief The class name (its type) for a particular instance.
 	/// This function allows for better error message delivery.
-	virtual
 	std::string
-	type() const{ return "StepWiseMonteCarloOptions";}
+	type() const override{ return "StepWiseMonteCarloOptions";}
 
 public:
 

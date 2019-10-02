@@ -68,7 +68,7 @@ public:// constructor/destructor
 	// @brief default constructor
 	HelixKinkFilter();
 
-	virtual ~HelixKinkFilter(){}
+	~HelixKinkFilter() override{}
 
 
 public:// virtual constructor

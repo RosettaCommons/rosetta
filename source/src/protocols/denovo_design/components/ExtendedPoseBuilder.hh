@@ -43,7 +43,7 @@ public:
 
 public:
 	ExtendedPoseBuilder();
-	virtual ~ExtendedPoseBuilder();
+	~ExtendedPoseBuilder() override;
 
 	core::pose::PoseOP
 	apply( StructureData const & sd ) const;

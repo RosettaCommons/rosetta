@@ -38,19 +38,18 @@ public:
 		Size const moving_res );
 
 	//destructor
-	~BulgeApplier();
+	~BulgeApplier() override;
 
 public:
 
 	std::string
-	name() const { return "BulgeApplier"; }
+	name() const override { return "BulgeApplier"; }
 
 	StepWiseScreenerType
-	type() const { return BULGE_APPLIER; }
+	type() const override { return BULGE_APPLIER; }
 
-	virtual
 	void
-	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover );
+	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ) override;
 
 private:
 

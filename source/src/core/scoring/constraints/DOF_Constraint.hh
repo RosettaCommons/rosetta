@@ -52,8 +52,7 @@ public:
 		core::scoring::func::FuncOP func,
 		ScoreType t = dof_constraint );
 
-	virtual
-	~DOF_Constraint();
+	~DOF_Constraint() override;
 
 	/// @brief Returns the ScoreType
 	id::DOF_ID const &

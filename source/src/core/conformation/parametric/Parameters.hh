@@ -61,7 +61,7 @@ public:
 	/// @details Deep-copies the residue list and the parameters list.
 	Parameters( Parameters const & src );
 
-	~Parameters();
+	~Parameters() override;
 
 	/// @brief Copy this residue( allocate actual memory for it )
 	///

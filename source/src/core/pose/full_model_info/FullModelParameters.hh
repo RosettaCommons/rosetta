@@ -86,7 +86,7 @@ public:
 	FullModelParameters( FullModelParameters const & src );
 
 	//destructor
-	~FullModelParameters();
+	~FullModelParameters() override;
 
 public:
 

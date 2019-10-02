@@ -55,32 +55,31 @@ public:
 public:
 	RotateSegmentMover();
 
-	virtual
-	~RotateSegmentMover();
+	~RotateSegmentMover() override;
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
-	virtual std::string
-	get_name() const;
+	std::string
+	get_name() const override;
 
 	static std::string
 	class_name();
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
 public:
 	void

@@ -51,10 +51,10 @@ public:
 	ChiralMover( core::Size chiral_seq_position, bool orient_functional_group );
 	ChiralMover( core::Size chiral_seq_position, Chirality chirality, bool orient_functional_group );
 
-	virtual ~ChiralMover();
+	~ChiralMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 

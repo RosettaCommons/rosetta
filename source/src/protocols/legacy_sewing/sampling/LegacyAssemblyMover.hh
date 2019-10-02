@@ -47,13 +47,12 @@ public:
 	LegacyAssemblyMover();
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
-	virtual
 	void
 	apply(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	virtual
 	void
@@ -89,9 +88,8 @@ public:
 		AssemblyOP & assembly
 	);
 
-	virtual
 	bool
-	reinitialize_for_new_input() const;
+	reinitialize_for_new_input() const override;
 
 	void
 	append_movie_frame(
@@ -109,7 +107,6 @@ public:
 		std::string indicator_whether_from_LegacyMonteCarloAssemblyMover_or_LegacyExhaustiveAssemblyMover
 	);
 
-	virtual
 	void
 	parse_my_tag(
 		TagCOP tag,
@@ -117,7 +114,7 @@ public:
 		protocols::filters::Filters_map const &filters,
 		protocols::moves::Movers_map const &movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 	virtual
 	void

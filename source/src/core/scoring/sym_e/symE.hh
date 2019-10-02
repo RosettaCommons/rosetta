@@ -33,31 +33,30 @@ public:
 
 	symEnergy();
 
-	virtual methods::EnergyMethodOP clone() const;
+	methods::EnergyMethodOP clone() const override;
 
-	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
 
-	virtual void setup_for_packing(pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
+	void setup_for_packing(pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
 
-	virtual void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
-	virtual bool defines_intrares_energy( EnergyMap const & weights ) const;
+	bool defines_intrares_energy( EnergyMap const & weights ) const override;
 
-	virtual void eval_intrares_energy(conformation::Residue const & rsd, pose::Pose const & pose, ScoreFunction const & sfxn, EnergyMap & emap) const;
+	void eval_intrares_energy(conformation::Residue const & rsd, pose::Pose const & pose, ScoreFunction const & sfxn, EnergyMap & emap) const override;
 
-	virtual methods::LongRangeEnergyType long_range_type() const;
+	methods::LongRangeEnergyType long_range_type() const override;
 
-	virtual bool defines_residue_pair_energy(const core::pose::Pose& pose, platform::Size res1, platform::Size res2) const;
+	bool defines_residue_pair_energy(const core::pose::Pose& pose, platform::Size res1, platform::Size res2) const override;
 
-	virtual void residue_pair_energy(
+	void residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
-	) const;
-	virtual
-	core::Size version() const;
+	) const override;
+	core::Size version() const override;
 };
 
 

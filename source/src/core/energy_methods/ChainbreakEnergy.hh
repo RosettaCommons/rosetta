@@ -43,18 +43,17 @@ public:
 public:
 	ChainbreakEnergy();
 
-	virtual
 	EnergyMethodOP
-	clone() const {
+	clone() const override {
 		return utility::pointer::make_shared< ChainbreakEnergy >();
 	}
 
 	/// @brief Called at the end of the energy evaluation.
-	virtual void finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
+	void finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const override;
 
 
 	/// @brief Called during gradient-based minimization inside dfunc.
-	virtual void eval_atom_derivative(
+	void eval_atom_derivative(
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
@@ -62,11 +61,11 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
-	virtual void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
-	virtual core::Size version() const;
+	core::Size version() const override;
 };
 
 } // methods

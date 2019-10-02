@@ -59,11 +59,11 @@ public:
 	);
 
 	// destructor
-	~SymDockingInitialPerturbation();
+	~SymDockingInitialPerturbation() override;
 
 	// protocol functions
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	/// do slide into context?
@@ -83,11 +83,11 @@ public:
 		std::map< Size, core::conformation::symmetry::SymDof > const & dofs
 	);
 	// destructor
-	~SymDockingSlideIntoContact();
+	~SymDockingSlideIntoContact() override;
 
 	// protocol functions
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	// dof to allow
@@ -111,10 +111,10 @@ public:
 		std::map< Size, core::conformation::symmetry::SymDof > const & dofs
 	);
 
-	~FaSymDockingSlideTogether();
+	~FaSymDockingSlideTogether() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	// dof to allow
@@ -138,7 +138,7 @@ public:
 		core::conformation::symmetry::SlideCriteriaType score_criteria,
 		std::string SlideCriteriaVal = "AUTOMATIC"
 	);
-	virtual ~SymmetrySlider();
+	~SymmetrySlider() override;
 
 	void setup( core::pose::Pose & pose);
 
@@ -203,7 +203,7 @@ public:
 		std::string const & SlideCriteriaVal = "AUTOMATIC"
 	);
 	void init();
-	void select_jump();
+	void select_jump() override;
 	std::vector<core::Size> slide_order_;
 	//  void select_dir( core::pose::Pose & pose );
 
@@ -228,7 +228,7 @@ public:
 		std::vector<core::Size> const & slide_order = std::vector<core::Size>()
 	);
 
-	void select_jump();
+	void select_jump() override;
 	//  void select_dir( core::pose::Pose & pose );
 private:
 	std::vector<core::Size> slide_order_;
@@ -253,7 +253,7 @@ public:
 		std::string SlideCriteriaVal = "AUTOMATIC"
 	);
 
-	void select_jump();
+	void select_jump() override;
 	//  void select_dir( core::pose::Pose & pose );
 
 };

@@ -88,7 +88,7 @@ public:
 
 private:
 
-	virtual void
+	void
 	insert_fragment(
 		core::pose::Pose & ,//pose,
 		Size const ,//position,

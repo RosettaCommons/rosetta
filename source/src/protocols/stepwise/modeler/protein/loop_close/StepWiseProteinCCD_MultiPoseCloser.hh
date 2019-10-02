@@ -39,14 +39,14 @@ public:
 		sampler::StepWiseSamplerSizedOP sampler );
 
 	//destructor
-	~StepWiseProteinCCD_MultiPoseCloser();
+	~StepWiseProteinCCD_MultiPoseCloser() override;
 
 public:
 
 	/// @brief Apply the minimizer to one pose
-	virtual void apply( core::pose::Pose & pose_to_visualize );
+	void apply( core::pose::Pose & pose_to_visualize ) override;
 
-	virtual std::string get_name() const { return "StepWiseProteinCCD_MultiPoseCloser"; }
+	std::string get_name() const override { return "StepWiseProteinCCD_MultiPoseCloser"; }
 
 	utility::vector1< utility::vector1< core::Real > > const & main_chain_torsion_sets() const;
 

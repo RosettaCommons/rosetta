@@ -39,7 +39,7 @@ public:
 	ParatopeSiteConstraintMover();
 	ParatopeSiteConstraintMover(AntibodyInfoCOP ab_info);
 
-	~ParatopeSiteConstraintMover();
+	~ParatopeSiteConstraintMover() override;
 
 	ParatopeSiteConstraintMover( ParatopeSiteConstraintMover const & src );
 

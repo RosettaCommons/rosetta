@@ -62,7 +62,7 @@ public:// construct/destruct
 	HelixPairing( HelixPairing const & hp );
 
 	/// @brief default destructor
-	virtual ~HelixPairing();
+	~HelixPairing() override;
 
 	/// @brief clone this object
 	HelixPairingOP clone();
@@ -169,7 +169,7 @@ public:// construct/destruct
 	HelixPairingSet( HelixPairingSet const & s );
 
 	/// @brief default destructor
-	virtual ~HelixPairingSet();
+	~HelixPairingSet() override;
 
 	/// @brief clone this object
 	HelixPairingSetOP clone() const;

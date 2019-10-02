@@ -40,7 +40,7 @@ public:
 	///@brief default construct
 	PartnerMotifScorer();
 
-	virtual ~PartnerMotifScorer()=default;
+	~PartnerMotifScorer() override =default;
 
 	PartnerMotifScorer( PartnerMotifScorer const & );
 
@@ -58,10 +58,10 @@ public:
 		data_storage::SmartAssemblyCOP assembly
 	);
 
-	virtual core::Real
+	core::Real
 	get_weight() const override;
 
-	virtual void
+	void
 	set_weight( core::Real ) override;
 
 	std::string

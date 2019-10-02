@@ -56,7 +56,7 @@ public:
 		ObjexxFCL::FArray1D< core::PackerEnergy > & rot_freq
 	);
 
-	virtual ~SimAnnealerBase();
+	~SimAnnealerBase() override;
 
 	virtual void run() = 0;
 

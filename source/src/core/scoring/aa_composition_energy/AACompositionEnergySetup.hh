@@ -95,7 +95,7 @@ public:
 
 	/// @brief Default destructor for AACompositionPropertiesSet.
 	///
-	virtual ~AACompositionPropertiesSet();
+	~AACompositionPropertiesSet() override;
 
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.
@@ -258,7 +258,7 @@ public:
 
 	/// @brief Default destructor for AACompositionEnergySetup.
 	///
-	virtual ~AACompositionEnergySetup();
+	~AACompositionEnergySetup() override;
 
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.

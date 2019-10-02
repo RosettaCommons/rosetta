@@ -34,7 +34,7 @@ public:
 
 	RandomGapSolutionPicker();
 
-	virtual ~RandomGapSolutionPicker();
+	~RandomGapSolutionPicker() override;
 
 	Size pick(core::pose::Pose const &pose, FreePeptide const &free_peptide,
 		vector1<vector1<Real> > const & pivot_torsions, Size const pivot) const override;

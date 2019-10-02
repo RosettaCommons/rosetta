@@ -35,7 +35,7 @@ class CDRClusterFeatures : public features::FeaturesReporter {
 public:
 	CDRClusterFeatures();
 
-	virtual ~CDRClusterFeatures();
+	~CDRClusterFeatures() override;
 
 
 	//Required

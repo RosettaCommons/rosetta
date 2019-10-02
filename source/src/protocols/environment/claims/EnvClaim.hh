@@ -87,7 +87,7 @@ public:
 
 
 	/// @brief Virtual destructor
-	virtual ~EnvClaim();
+	~EnvClaim() override;
 
 	EnvClaim( ClientMoverOP );
 

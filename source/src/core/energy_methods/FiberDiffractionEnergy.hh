@@ -56,15 +56,15 @@ public:
 		scale_factor_(src.scale_factor_)
 	{}
 
-	virtual methods::EnergyMethodOP clone() const;
+	methods::EnergyMethodOP clone() const override;
 
-	virtual void finalize_total_energy(pose::Pose & pose,ScoreFunction const &,EnergyMap & totals) const;
+	void finalize_total_energy(pose::Pose & pose,ScoreFunction const &,EnergyMap & totals) const override;
 
-	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & scorefxn ) const;
+	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & scorefxn ) const override;
 
-	virtual void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const;
+	void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const override;
 
-	virtual void
+	void
 	eval_atom_derivative(
 		id::AtomID const & id,
 		pose::Pose const & pose,
@@ -73,10 +73,10 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-	) const;
+	) const override;
 
-	virtual void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
+	) const override {}
 
 private:
 	//////
@@ -95,8 +95,7 @@ private:
 	mutable core::Real Rsum_obs;
 	mutable core::Real p_, c_;
 	mutable core::Real a_, b_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 };
 
 }

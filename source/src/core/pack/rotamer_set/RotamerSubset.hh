@@ -77,119 +77,96 @@ public:
 		utility::vector1< Size > const & rotamer_subset
 	);
 
-	virtual ~RotamerSubset();
+	~RotamerSubset() override;
 
-	virtual
 	void
 	add_rotamer(
 		conformation::Residue const & rotamer
-	);
+	) override;
 
-	virtual
 	void
 	add_rotamer_into_existing_group(
 		conformation::Residue const & rotamer
-	);
+	) override;
 
-	virtual
 	Size
-	get_n_residue_types() const;
+	get_n_residue_types() const override;
 
-	virtual
 	Size
-	get_n_residue_groups() const;
+	get_n_residue_groups() const override;
 
-	virtual
 	Size
-	get_residue_type_begin( Size which_restype ) const;
+	get_residue_type_begin( Size which_restype ) const override;
 
-	virtual
 	Size
-	get_residue_group_begin( Size which_resgroup ) const;
+	get_residue_group_begin( Size which_resgroup ) const override;
 
-	virtual
 	Size
-	get_n_rotamers_for_residue_type( Size which_restype ) const;
+	get_n_rotamers_for_residue_type( Size which_restype ) const override;
 
-	virtual
 	Size
-	get_n_rotamers_for_residue_group( Size which_resgroup ) const;
+	get_n_rotamers_for_residue_group( Size which_resgroup ) const override;
 
 	/// @brief given a rotamer id, return an int which represents a type for this rotamer.
-	virtual
 	Size
-	get_residue_type_index_for_rotamer( Size which_rotamer ) const ;
+	get_residue_type_index_for_rotamer( Size which_rotamer ) const override ;
 
-	virtual
 	Size
-	get_residue_group_index_for_rotamer( Size which_rotamer ) const;
+	get_residue_group_index_for_rotamer( Size which_rotamer ) const override;
 
-	virtual
 	Size
-	num_rotamers() const;
+	num_rotamers() const override;
 
-	virtual
 	Size
-	id_for_current_rotamer() const;
+	id_for_current_rotamer() const override;
 
-	virtual
 	conformation::ResidueCOP
-	rotamer( Size rot_id ) const;
+	rotamer( Size rot_id ) const override;
 
-	virtual
 	basic::datacache::BasicDataCache &
-	rotamer_data_cache( Size rot_id ) const;
+	rotamer_data_cache( Size rot_id ) const override;
 
-	virtual
 	conformation::Residue const &
-	rotamer_ref( Size rot_id ) const;
+	rotamer_ref( Size rot_id ) const override;
 
-	virtual Rotamers::const_iterator begin() const { return rotamers_.begin(); }
-	virtual Rotamers::const_iterator end() const { return rotamers_.end(); }
+	Rotamers::const_iterator begin() const override { return rotamers_.begin(); }
+	Rotamers::const_iterator end() const override { return rotamers_.end(); }
 
-	virtual
 	conformation::ResidueOP
-	nonconst_rotamer( Size rot_id );
+	nonconst_rotamer( Size rot_id ) override;
 
-	virtual
 	void
-	store_trie( Size method_enum_id, conformation::AbstractRotamerTrieOP trie );
+	store_trie( Size method_enum_id, conformation::AbstractRotamerTrieOP trie ) override;
 
-	virtual
 	conformation::AbstractRotamerTrieCOP
-	get_trie( Size method_enum_id ) const;
+	get_trie( Size method_enum_id ) const override;
 
 	/// @brief removes a single rotamer and causes a rotamer index update
-	virtual
 	void
-	drop_rotamer( Size rot_id );
+	drop_rotamer( Size rot_id ) override;
 
 	/// @brief rotamers_to_delete must be of size nrotmaers -- each position
 	/// in the array that's "true" is removed from the set of rotamers
-	virtual
 	void
-	drop_rotamers( utility::vector1< bool > const & rotamers_to_delete );
+	drop_rotamers( utility::vector1< bool > const & rotamers_to_delete ) override;
 
 	/// @brief deletes the rotamers in the list with the given indices.
 	/// The indices of these rotamers is presumed to be those before any delete operation.
 	/// e.g. if there are four rotamers, and rotamer_indices_to_delete includes 1 & 3,
 	/// then the rotamers that will remain are the rotamers originally indexed as 2 and 4,
 	/// even though their new indices will be 1 & 2.
-	virtual
 	void
-	drop_rotamers_by_index( utility::vector1< Size > const & rotamer_indices_to_delete );
+	drop_rotamers_by_index( utility::vector1< Size > const & rotamer_indices_to_delete ) override;
 
 	/// @brief Give the pose a chance to stash any data needed by the _rotset_
 	///        need nonconst access to pose
-	virtual
 	void
 	initialize_pose_for_rotset_creation(
 		pose::Pose & /*pose*/
-	) const {}
+	) const override {}
 
-	virtual
 	void
-	show( std::ostream & out ) const;
+	show( std::ostream & out ) const override;
 
 private:
 	/// @brief (private) No copy-constructor
@@ -245,23 +222,21 @@ private:
 
 public: // noop functions:
 
-	virtual
 	void build_rotamers(
 		pose::Pose const & the_pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
 		utility::graph::GraphCOP packer_neighbor_graph,
 		bool use_neighbor_context = true
-	);
+	) override;
 
-	virtual
 	void build_dependent_rotamers(
 		RotamerSets const & rotamer_sets,
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
 		utility::graph::GraphCOP packer_neighbor_graph
-	);
+	) override;
 
 	virtual
 	void build_pwat_rotamers(
@@ -270,16 +245,14 @@ public: // noop functions:
 		utility::vector1< Vector > const & new_pwat_rotset
 	);
 
-	virtual
 	void
 	compute_one_body_energies(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
 		utility::graph::GraphCOP packer_neighbor_graph,
-		utility::vector1< core::PackerEnergy > & energies ) const;
+		utility::vector1< core::PackerEnergy > & energies ) const override;
 
-	virtual
 	void
 	compute_one_and_two_body_energies(
 		pose::Pose const & pose,
@@ -288,17 +261,16 @@ public: // noop functions:
 		utility::graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< core::PackerEnergy > & one_body_energies,
 		utility::vector1< utility::vector1< core::PackerEnergy > > & two_body_energies,
-		utility::vector1< core::Size > & packable_neighbors ) const;
+		utility::vector1< core::Size > & packable_neighbors ) const override;
 
 	/// for OptE
-	virtual
 	void
 	compute_one_body_energy_maps(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
 		utility::graph::GraphCOP packer_neighbor_graph,
-		utility::vector1< scoring::EnergyMap > & energies ) const;
+		utility::vector1< scoring::EnergyMap > & energies ) const override;
 
 
 	// DATA

@@ -60,12 +60,12 @@ public:
 		}
 	}
 
-	void do_caching(VallChunkOP);
+	void do_caching(VallChunkOP) override;
 
-	void clean_up() {};
+	void clean_up() override {};
 
 	/// @brief Computes the score
-	virtual bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
+	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 private:
 	char torsion2big_bin_(
@@ -100,7 +100,7 @@ public:
 		bool use_lowest,
 		FragmentPickerOP picker,
 		std::string /* prediction_id */
-	);
+	) override;
 };
 
 } // scores

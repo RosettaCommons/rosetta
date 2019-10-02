@@ -38,21 +38,21 @@ public:
 	{}
 
 	/// @brief returns a clone of this SoedingFunc
-	FuncOP clone() const { return utility::pointer::make_shared< SoedingFunc >( *this ); }
-	virtual bool operator == ( Func const & other ) const;
-	virtual bool same_type_as_me( Func const & other ) const;
+	FuncOP clone() const override { return utility::pointer::make_shared< SoedingFunc >( *this ); }
+	bool operator == ( Func const & other ) const override;
+	bool same_type_as_me( Func const & other ) const override;
 
 	Real
 	compute_func( Real const x ) const;
 
 	/// @brief Returns the value of this SoedingFunc evaluated at distance x.
-	Real func( Real const x ) const;
+	Real func( Real const x ) const override;
 
 	/// @brief Returns the value of the first derivative of this SoedingFunc at distance x.
-	Real dfunc( Real const x ) const;
+	Real dfunc( Real const x ) const override;
 
 	/// @brief show the definition of this SoedingFunc to the specified output stream.
-	virtual void show_definition( std::ostream &out ) const;
+	void show_definition( std::ostream &out ) const override;
 
 	/// @brief Calls show( out ) on this SoedingFunc.
 	friend std::ostream& operator<<(std::ostream& out, const SoedingFunc& f ) {
@@ -61,7 +61,7 @@ public:
 	} // operator<<
 
 	/// @brief Initializes this SoedingFunc from the given istream.
-	void read_data( std::istream & in );
+	void read_data( std::istream & in ) override;
 
 private:
 	Real w1_, mean1_, sdev1_, w2_, mean2_, sdev2_;

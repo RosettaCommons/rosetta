@@ -62,19 +62,18 @@ public:
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.
-	virtual ResidueSelectorOP clone() const;
+	ResidueSelectorOP clone() const override;
 
-	virtual ~ResidueIndexSelector();
+	~ResidueIndexSelector() override;
 
-	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
-	virtual void parse_my_tag(
+	ResidueSubset apply( core::pose::Pose const & pose ) const override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &
-	);
+	) override;
 
-	virtual
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

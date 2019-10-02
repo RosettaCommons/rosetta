@@ -40,7 +40,7 @@ public:
 		SixDTransRotPotential const & potential );
 
 	//destructor
-	~SixDTransRotPotentialEvaluator();
+	~SixDTransRotPotentialEvaluator() override;
 
 public:
 
@@ -53,9 +53,8 @@ private:
 	void
 	figure_out_if_loop_involves_current_pose( core::pose::Pose const & pose );
 
-	virtual
 	void
-	get_f1_f2( Vector & f1, Vector & f2, bool const takeoff ) const;
+	get_f1_f2( Vector & f1, Vector & f2, bool const takeoff ) const override;
 
 private:
 

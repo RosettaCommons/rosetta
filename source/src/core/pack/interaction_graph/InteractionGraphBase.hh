@@ -305,12 +305,11 @@ private:
 class InteractionGraphBase : public AnnealableGraphBase
 {
 public:
-	virtual ~InteractionGraphBase();
+	~InteractionGraphBase() override;
 
 	InteractionGraphBase(int num_nodes);
 
-	virtual
-	int get_num_nodes() const
+	int get_num_nodes() const override
 	{
 		return num_ig_nodes_;
 	}
@@ -318,8 +317,8 @@ public:
 	virtual void initialize( pack_basic::RotamerSetsBase const & rot_sets ) = 0;
 
 	void set_num_states_for_node(int node, int num_states);
-	virtual int get_num_states_for_node(int node) const;
-	virtual int get_num_total_states() const {return num_total_states_;}
+	int get_num_states_for_node(int node) const override;
+	int get_num_total_states() const override {return num_total_states_;}
 	virtual core::PackerEnergy get_one_body_energy_for_node_state( int node, int state) = 0;
 	void add_edge( int node1, int node2);
 	bool get_edge_exists(int node1, int node2) const;
@@ -332,27 +331,27 @@ public:
 
 	/// @brief iterate across edges and nodes and allow them to prepare
 	/// for simulated annealing
-	virtual void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 
-	virtual void  blanket_assign_state_0() = 0;
-	virtual core::PackerEnergy set_state_for_node(int node_ind, int new_state) = 0;
-	virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states) = 0;
-	virtual void consider_substitution(
+	void  blanket_assign_state_0() override = 0;
+	core::PackerEnergy set_state_for_node(int node_ind, int new_state) override = 0;
+	core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states) override = 0;
+	void consider_substitution(
 		int node_ind,
 		int new_state,
 		core::PackerEnergy & delta_energy,
-		core::PackerEnergy & prev_energy_for_node) = 0;
-	virtual core::PackerEnergy commit_considered_substitution() = 0;
-	virtual core::PackerEnergy get_energy_current_state_assignment() = 0;
+		core::PackerEnergy & prev_energy_for_node) override = 0;
+	core::PackerEnergy commit_considered_substitution() override = 0;
+	core::PackerEnergy get_energy_current_state_assignment() override = 0;
 
 	void set_edge_weight( int node1, int node2, Real edge_weight );
 	Real get_edge_weight( int node1, int node2 ) const;
 
 	virtual int get_edge_memory_usage() const = 0;
 	virtual void print_current_state_assignment() const = 0;
-	virtual void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE ) = 0;
+	void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE ) override = 0;
 
-	virtual bool any_vertex_state_unassigned() const;
+	bool any_vertex_state_unassigned() const override;
 
 	void add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & one_body_energies );
 	void update_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & old_energy1b, ObjexxFCL::FArray1< core::PackerEnergy > & new_energy1b);

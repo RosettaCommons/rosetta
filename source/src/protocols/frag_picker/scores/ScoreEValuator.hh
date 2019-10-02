@@ -42,9 +42,9 @@ public:
 		max_rand_ = 12;
 	}
 
-	void do_caching(VallChunkOP);
-	void clean_up();
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
+	void do_caching(VallChunkOP) override;
+	void clean_up() override;
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
 	//bool describe_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map, std::ostream& out);
 private:
 	core::Size max_rand_;

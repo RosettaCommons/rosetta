@@ -33,14 +33,14 @@ public:
 
 	core::pose::Pose ligand_dock_pose;
 
-	virtual void setUp() {
+	void setUp() override {
 		basic::options::option.load_options_from_file("ligand_dock/ligand_dock_flags.txt");
 
 		std::string pdb_file_name= basic::options::option[ basic::options::OptionKeys::in::file::s ]()[1];
 		core::import_pose::pose_from_file(ligand_dock_pose, pdb_file_name, core::import_pose::PDB_file);
 	};
 
-	virtual void run(core::Real scaleFactor) {
+	void run(core::Real scaleFactor) override {
 		protocols::ligand_docking::LigandDockProtocol dock_protocol;
 		core::Size reps( (core::Size)(1 * scaleFactor) );
 		if ( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor.
@@ -49,5 +49,5 @@ public:
 		}
 	};
 
-	virtual void tearDown() {};
+	void tearDown() override {};
 };

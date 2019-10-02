@@ -31,15 +31,15 @@ namespace architects {
 class BetaSheetArchitectCreator : public DeNovoArchitectCreator {
 public:
 	/// @brief Instantiate a particular DeNovoArchitect
-	virtual DeNovoArchitectOP
-	create_architect( std::string const & architect_id ) const;
+	DeNovoArchitectOP
+	create_architect( std::string const & architect_id ) const override;
 
 	/// @brief Return a string that will be used to instantiate the particular DeNovoArchitect
-	virtual std::string
-	keyname() const;
+	std::string
+	keyname() const override;
 
-	virtual void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //namespace architects

@@ -65,8 +65,7 @@ public:
 		nonideal_(false)
 	{}
 
-	virtual
-	~SCMinMinimizerMap() {}
+	~SCMinMinimizerMap() override {}
 
 
 	/// @brief the SCMinMinimizerMap has to know how many residues are in the pose; this allows
@@ -86,23 +85,21 @@ public:
 	/// is indicating that a particular torsion is dependent on another torsion.  Record
 	/// that fact.
 	//fpd seperate implementations in cart and atomtree
-	virtual
 	void
 	add_torsion(
 		DOF_ID const & new_torsion,
 		DOF_ID const & parent
-	) = 0;
+	) override = 0;
 
 	/// @brief Invoked during the depth-first traversal through the AtomTree; the atom
 	/// tree is indicating that a given atom is controlled by a particular DOF.  Record
 	/// that fact.
 	//fpd seperate implementations in cart and atomtree
-	virtual
 	void
 	add_atom(
 		AtomID const & atom_id,
 		DOF_ID const & dof_id
-	) = 0;
+	) override = 0;
 
 	/// @brief Traverse the atom trees in preparation for minimization to tie together all the
 	/// DOFs and the atoms they control.
@@ -118,7 +115,7 @@ public:
 	Size active_residue( Size index ) const {debug_assert( index <= nactive_residues_ ); return active_residues_[ index ]; }
 
 	/// @brief MinimizerMapBase class virtual accessor
-	virtual kinematics::DomainMap const & domain_map() const { return domain_map_; }
+	kinematics::DomainMap const & domain_map() const override { return domain_map_; }
 
 	/// @brief Inline accessor
 	inline kinematics::DomainMap const & dm() const { return domain_map_; }

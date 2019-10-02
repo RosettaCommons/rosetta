@@ -49,7 +49,7 @@ public:
 	WaterPackingInfo( WaterPackingInfo const & src );
 
 	basic::datacache::CacheableDataOP
-	clone() const;
+	clone() const override;
 	//clone() const override
 	//{
 	// return utility::pointer::make_shared< WaterPackingInfo >( *this );

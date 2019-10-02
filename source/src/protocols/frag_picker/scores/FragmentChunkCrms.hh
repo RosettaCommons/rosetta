@@ -55,9 +55,9 @@ public:
 	/// @details fragments will be compared to a given pose, which should have the same number of residues a the query sequence
 	FragmentChunkCrms(core::Size, core::Real, bool, std::string, core::pose::PoseOP, ObjexxFCL::FArray1D_int&);
 
-	~FragmentChunkCrms();
+	~FragmentChunkCrms() override;
 
-	bool score(FragmentCandidateOP, FragmentScoreMapOP);
+	bool score(FragmentCandidateOP, FragmentScoreMapOP) override;
 
 private:
 	std::string cached_scores_id_;
@@ -86,7 +86,7 @@ public:
 		MakeFragmentScoringMethod("FragmentChunkCrms") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
 };
 
 } // scores

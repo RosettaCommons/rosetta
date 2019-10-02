@@ -41,7 +41,7 @@ public:
 	{}
 
 
-	basic::datacache::CacheableDataOP clone() const {
+	basic::datacache::CacheableDataOP clone() const override {
 		return utility::pointer::make_shared< CentroidScatter >( *this );
 	}
 

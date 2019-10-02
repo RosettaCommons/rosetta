@@ -49,7 +49,7 @@ class SecondaryPoseOutputter : public PoseOutputter
 public:
 
 	SecondaryPoseOutputter();
-	virtual ~SecondaryPoseOutputter();
+	~SecondaryPoseOutputter() override;
 
 	/// @brief This responsibility does not belong in the SecondaryPoseOutputter, so it receives
 	/// a no-op implementation in the base class -- it is primarily the responsibility of the
@@ -58,13 +58,13 @@ public:
 		utility::tag::TagCOP output_tag,
 		utility::options::OptionCollection const & job_options,
 		InnerLarvalJob & job
-	) const override final;
+	) const final;
 
 
 	/// @brief This responsibility does not belong in the SecondaryPoseOutputter, so it receives
 	/// a no-frills implementation in the base class -- it is primarily the responsibility of the
 	/// PoseOutputter base class and will not / should not be asked of the SecondaryPoseOutputter.
-	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const override final;
+	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const final;
 
 #ifdef    SERIALIZATION
 public:

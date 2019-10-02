@@ -51,37 +51,31 @@ public:
 	ProQ_Energy( ProQ_Energy const & src);
 
 	/// clone
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
-	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scorefxn ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scorefxn ) const override;
 
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const & scorefxn,
 		EnergyMap & totals
-	) const;
-	virtual
-	core::Size version() const;
+	) const override;
+	core::Size version() const override;
 
 
-	virtual
 	Distance
-	atomic_interaction_cutoff() const;
+	atomic_interaction_cutoff() const override;
 
-	virtual
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {};
+	) const override {};
 
 
 private:

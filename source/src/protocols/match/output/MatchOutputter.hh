@@ -29,26 +29,23 @@ class MatchOutputter : public MatchProcessor {
 public:
 	MatchOutputter();
 
-	virtual
-	~MatchOutputter();
+	~MatchOutputter() override;
 
 	void
-	begin_processing();
+	begin_processing() override;
 
 	void
-	end_processing();
+	end_processing() override;
 
-	virtual
 	void
 	process_match(
 		match const & m
-	);
+	) override;
 
-	virtual
 	void
 	process_match(
 		match_dspos1 const & m
-	);
+	) override;
 
 private:
 

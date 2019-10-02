@@ -36,7 +36,7 @@ namespace palette {
 class NCAADefaultPackerPaletteCreator : public PackerPaletteCreator
 {
 public:
-	virtual ~NCAADefaultPackerPaletteCreator() {}
+	~NCAADefaultPackerPaletteCreator() override {}
 
 	/// @brief Instantiate a new PackerPalette
 	PackerPaletteOP create_packer_palette() const override;

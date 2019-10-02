@@ -48,7 +48,7 @@ class RemodelConstraintGenerator : public protocols::moves::Mover
 {
 public: // typedefs
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~RemodelConstraintGenerator();
+	~RemodelConstraintGenerator() override;
 
 	/// @brief generates constraints and adds them to the pose
 	void apply( core::pose::Pose & pose ) override;
@@ -159,14 +159,14 @@ public:
 		std::string const & id,
 		protocols::constraint_generator::ConstraintGeneratorCOP cg );
 
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
-	virtual void
-	generate_remodel_constraints( core::pose::Pose const & pose );
+	void
+	generate_remodel_constraints( core::pose::Pose const & pose ) override;
 
-	virtual std::string
-	get_name() const;
+	std::string
+	get_name() const override;
 
 private:
 	GenericRemodelConstraintGenerator();

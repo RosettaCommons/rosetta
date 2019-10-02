@@ -94,7 +94,6 @@ public:
 	score( core::scoring::func::XYZ_Func const & xyz,
 		core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const override;
 
-	virtual
 	core::Real
 	dist( core::scoring::func::XYZ_Func const & xyz ) const override;
 

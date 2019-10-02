@@ -52,24 +52,22 @@ public:
 	ReferenceEnergyNoncanonical( utility::vector1< Real > const & weight_list );
 
 	///
-	virtual ~ReferenceEnergyNoncanonical();
+	~ReferenceEnergyNoncanonical() override;
 
-	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	virtual
@@ -84,16 +82,14 @@ public:
 
 	/// @brief DunbrackEnergy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	void init_res_list();
 
 private:
 	utility::vector1< Real > weights_;
 	utility::vector1< std::string > res_list_;
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 

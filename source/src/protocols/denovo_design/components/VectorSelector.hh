@@ -73,8 +73,8 @@ public:
 		count_( 1 )
 	{};
 
-	virtual T
-	select()
+	T
+	select() override
 	{
 		if ( count_ > this->size() ) reset();
 		std::cout << "Count is now " << count_ << " Size is " << this->size() << std::endl;

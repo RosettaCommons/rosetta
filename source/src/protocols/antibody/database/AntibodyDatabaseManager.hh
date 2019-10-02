@@ -125,7 +125,7 @@ public:
 
 	AntibodyDatabaseManager(AntibodyInfoCOP ab_info, bool force_north_paper_db = false);
 
-	virtual ~AntibodyDatabaseManager();
+	~AntibodyDatabaseManager() override;
 
 	AntibodyDatabaseManager( AntibodyDatabaseManager const & src );
 

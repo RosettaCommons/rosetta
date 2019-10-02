@@ -51,12 +51,12 @@ public:
 
 	RNA_RawBaseBaseInfo(): calculated_( false ) {};
 
-	~RNA_RawBaseBaseInfo(){};
+	~RNA_RawBaseBaseInfo() override{};
 
 	RNA_RawBaseBaseInfo( RNA_RawBaseBaseInfo const & src );
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return utility::pointer::make_shared< RNA_RawBaseBaseInfo >( *this );
 	}

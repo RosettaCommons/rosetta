@@ -55,7 +55,7 @@ public:
 
 	ScoreJumpFileSilentStructOP shared_from_this() { return utility::pointer::static_pointer_cast<ScoreJumpFileSilentStruct>( SilentStruct::shared_from_this() ); }
 
-	virtual SilentStructOP clone() const {
+	SilentStructOP clone() const override {
 		return utility::pointer::make_shared< ScoreJumpFileSilentStruct >( *this );
 	}
 
@@ -64,7 +64,7 @@ public:
 	//void resize(Size const nres_in );
 
 	// destructor
-	~ScoreJumpFileSilentStruct() {}
+	~ScoreJumpFileSilentStruct() override {}
 
 	/// @brief Test if this ScoreJumpFileSilentStruct is equal to the given ScoreJumpFileSilentStruct in
 	/// terms of conformation. Doesn't check energies.
@@ -74,41 +74,41 @@ public:
 
 	/// @brief Tells this ScoreJumpFileSilentStruct object to initialize itself from the given set of lines.
 	/// Only initializes energies.
-	virtual bool init_from_lines(
+	bool init_from_lines(
 		utility::vector1< std::string > const & lines,
 		SilentFileData & container
-	);
+	) override;
 
 	/// @brief Configure the conformation of the given Pose with the
 	/// conformational data within this ScoreJumpFileSilentStruct. Calls pose.clear() and
 	/// rebuilds Pose from scratch using the / user-specified residue types.
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set,
 		bool const metapatches  = true
-	) const;
+	) const override;
 
 	/// @brief opposite of fill_pose
-	virtual void fill_struct(
+	void fill_struct(
 		core::pose::Pose const & pose,
 		std::string tag
-	);
+	) override;
 
 	/// @brief Prints the conformation information within this ScoreJumpFileSilentStruct
 	/// to the given std::ostream.
-	virtual void print_conformation( std::ostream & output ) const;
+	void print_conformation( std::ostream & output ) const override;
 
 	/// @brief Prints the header information within this ScoreJumpFileSilentStruct
 	/// to the given std::ostream.
-	virtual void print_header( std::ostream & out ) const;
+	void print_header( std::ostream & out ) const override;
 
 	/// @brief returns the positions of the CA atoms in this ScoreJumpFileSilentStruct.
 	/// Useful for RMS calculations.
-	virtual ObjexxFCL::FArray2D< Real > get_CA_xyz() const;
+	ObjexxFCL::FArray2D< Real > get_CA_xyz() const override;
 
 	/// @brief calculates the RMSD between the C-alpha atoms of a Pose built from the torsions in this
 	/// ScoreJumpFileSilentStruct and the C-alpha atoms from this ScoreJumpFileSilentStruct.
-	virtual Real get_debug_rmsd();
+	Real get_debug_rmsd() override;
 
 	void add_jump( kinematics::Jump jump ) {
 		jumps_.push_back( jump.rt() );
