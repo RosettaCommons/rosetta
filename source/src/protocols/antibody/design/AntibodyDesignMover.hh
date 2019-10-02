@@ -460,7 +460,7 @@ private:
 	core::Real outer_kt_;
 	core::Real inner_kt_;
 
-	bool enable_full_protocol_atom_pair_cst_;
+	//bool enable_full_protocol_atom_pair_cst_;
 	AntibodyDesignProtocolEnum design_protocol_;
 
 	utility::vector1<CDRNameEnum> seq_design_override_;

@@ -291,7 +291,7 @@ AntibodyDesignMover::AntibodyDesignMover( AntibodyDesignMover const & src ):
 	accept_log_(src.accept_log_ ),
 	outer_kt_(src.outer_kt_),
 	inner_kt_(src.inner_kt_),
-	enable_full_protocol_atom_pair_cst_(src.enable_full_protocol_atom_pair_cst_ ),
+	//enable_full_protocol_atom_pair_cst_(src.enable_full_protocol_atom_pair_cst_ ),
 	design_protocol_( src.design_protocol_ ),
 	seq_design_override_(src.seq_design_override_),
 	graft_design_override_(src.graft_design_override_),
