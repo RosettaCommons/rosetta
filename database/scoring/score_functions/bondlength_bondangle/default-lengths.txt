@@ -377,3 +377,7 @@ VAL CG2 2HG2 1.090180 122.8108
 VAL CG2 3HG2 1.090170 122.8108
 VAL N CA 1.458000 361.504
 VAL N H 1.010000 458.304
+
+## fd for sialic acid, the strength of C1-C2 must be higher than default
+Neu C1 C2 1.49 600.0
+

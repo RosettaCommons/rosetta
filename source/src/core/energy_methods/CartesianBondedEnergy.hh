@@ -313,7 +313,7 @@ public:
 	Real k_angle() const { return k_angle_; }
 	Real k_torsion() const { return k_torsion_; }
 	Real k_torsion_proton() const { return k_torsion_proton_; }
-	Real k_torsion_improper() const { return k_length_; }
+	Real k_torsion_improper() const { return k_torsion_improper_; }
 
 	void restype_destruction_observer( core::chemical::RestypeDestructionEvent const & event );
 

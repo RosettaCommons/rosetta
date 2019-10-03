@@ -155,9 +155,9 @@ static basic::Tracer GEOMETRIES( "core.scoring.CartesianBondedEnergy.GEOMETRIES"
 //  --> only if not specified in config files
 static const Real K_LENGTH=300.0;
 static const Real K_ANGLE=80.0;
-static const Real K_TORSION=20.0;
+static const Real K_TORSION=80.0;
 static const Real K_TORSION_PROTON=10.0;  // proton chi
-static const Real K_TORSION_IMPROPER=40.0;
+static const Real K_TORSION_IMPROPER=80.0;
 
 //////////////////////
 /// EnergyMethod Creator
@@ -1054,7 +1054,7 @@ IdealParametersDatabase::generate_impropers_map_res(
 					std::string const & atom4( restype.atom_name( adjacent_atoms[jj] ) );
 
 					atm_name_quad tuple(boost::make_tuple( restag, atom1, atom2, atom3, atom4 ) );
-					core::Real mu(0), K(80);
+					core::Real mu(0), K( k_torsion_ );
 					core::Size period(2);
 					CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu, K, period) );
 					TR << "Adding undefined torsion " << restag << ": " << atom1 << "," << atom2 << "," << atom3 << "," << atom4

@@ -39,7 +39,7 @@ ADD_ATOM_ALIAS  CN4  C10
 ADD_ATOM_ALIAS CAN4  C9  # The numbering is backwards, because that is how it is in .pdb structures for Bacp2,4Ac.
 ADD_ATOM_ALIAS OCN4  O10
 
-ADD_BOND  N4   CN4
+ADD_BOND_TYPE  N4   CN4 AMIDE
 ADD_BOND_TYPE  CN4 OCN4 DOUBLE
 ADD_BOND  CN4 CAN4
 ADD_BOND  N4   HN4
