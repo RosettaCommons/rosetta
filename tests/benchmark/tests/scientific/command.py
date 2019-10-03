@@ -142,6 +142,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         mhc_epitope_energy     = 'numpy matplotlib',
         FlexPepDock            = 'numpy matplotlib',
         docking                  = 'numpy matplotlib',
+        ddg_ala_scan             = 'numpy matplotlib pandas==0.24.2 scipy==1.1.0',
     )
 
     if test.endswith('.debug'): test = test[:-len('.debug')];  debug = True

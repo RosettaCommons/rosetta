@@ -1,0 +1,77 @@
+<ROSETTASCRIPTS><!--
+# The MIT License (MIT)
+#
+# Copyright (c) 2015 Kyle A. Barlow
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+-->
+
+	<SCOREFXNS>
+		<ScoreFunction name="fa_talaris2014" weights="talaris2014"/>
+		<!-- all the score functions do not want to be loaded at the same time, due to the restore_XXXXXX_behavior flags
+		<ScoreFunction name="fa_talaris2013_cart" weights="talaris2013_cart"/>
+		<ScoreFunction name="fa_score12" weights="score12"/>
+		<ScoreFunction name="fa_soft_rep" weights="soft_rep"/>
+		<ScoreFunction name="fa_talaris2013" weights="talaris2013"/>
+		<ScoreFunction name="fa_talaris2014_soft_fa_rep" weights="talaris2014">
+			<Reweight scoretype="fa_rep" weight="0.055"/>
+		</ScoreFunction>
+		<ScoreFunction name="fa_talaris2014_soft_fa_dun" weights="talaris2014">
+			<Reweight scoretype="fa_dun" weight="0.07"/>
+		</ScoreFunction>
+		<ScoreFunction name="fa_interface" weights="interface"/>
+		-->
+	</SCOREFXNS>
+
+	<TASKOPERATIONS>
+		<ReadResfile name="rrf" filename="%%pathtoresfile%%"/>
+		<ReadResfile name="rrf_pack" filename="%%pathtopackresfile%%"/>
+	</TASKOPERATIONS>
+
+	<MOVERS>
+		<MinMover name="minmover" scorefxn="fa_talaris2014"  chi="1" bb="1" jump="ALL" cartesian="0" type="lbfgs_armijo" tolerance="0.001"/>
+		<ddG name="ddgmover" scorefxn="fa_%%currentrepackscorefxn%%" chain_num="%%chainstomove%%" repack_unbound="%%repackunbound%%" repack_bound="%%repackbound%%" relax_bound="false" task_operations="rrf_pack"/>
+	</MOVERS>
+
+	<FILTERS>
+		<DdGScan name="alascan" task_operations="rrf" repeats="%%numberscanrepeats%%" scorefxn="fa_%%currentscorefxn%%" report_diffs="1" write2pdb="1" ddG_mover="ddgmover" />
+	</FILTERS>
+
+	<MOVERS>
+		<ReportToDB name="%%PDBPosID%%" batch_description="%%currentscorefxn%%">
+			<ResidueFeatures/>
+			<PdbDataFeatures/>
+			<ScoreTypeFeatures/>
+			<ScoreFunctionFeatures scorefxn="fa_%%currentscorefxn%%"/>
+			<StructureScoresFeatures scorefxn="fa_%%currentscorefxn%%"/>
+			<ResidueScoresFeatures scorefxn="fa_%%currentscorefxn%%"/>
+			<DdGFeatures ddG_scan_mover="alascan"/>
+		</ReportToDB>
+	</MOVERS>
+
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+
+	<PROTOCOLS>
+		<Add mover_name="%%PDBPosID%%"/>
+		Add filter_name="alascan"/>  
+	</PROTOCOLS>
+
+	<OUTPUT />
+</ROSETTASCRIPTS>
