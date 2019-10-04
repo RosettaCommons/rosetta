@@ -53,6 +53,9 @@ public:
 
 public:
 
+	void set_rechain( bool rechain ) { rechain_ = rechain; }
+	void set_add_terminal_types_on_rechain( bool add ) { add_terminal_types_on_rechain_ = add; }
+	void set_add_jump_on_rechain( bool add ) { add_jump_on_rechain_ = add; }
 
 	protocols::moves::MoverOP
 	clone() const override;
@@ -89,11 +92,21 @@ private:
 	void
 	add_terminus_variants( core::pose::Pose & pose, core::Size const resid ) const;
 
+	/// @brief Adds cutpoint variants to residues resid and resid-1
+	/// @param[in,out] pose  Pose to be modified
+	/// @param[in]     resid Residue number for the residue that would have the lower cutpoint variant
+	/// @details Residue resid-1 will have upper_cutpoint variant, and residue resid will have
+	///          lower_cutpoit variant
+	void
+	add_cutpoint_variants( core::pose::Pose & pose, core::Size const resid ) const;
+
 private:
 	core::select::residue_selector::ResidueSelectorCOP selector_;
 	core::Size nter_overhang_;
 	core::Size cter_overhang_;
 	bool rechain_;
+	bool add_terminal_types_on_rechain_;
+	bool add_jump_on_rechain_;
 };
 
 

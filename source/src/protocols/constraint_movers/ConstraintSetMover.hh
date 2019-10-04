@@ -23,6 +23,8 @@
 
 #include <utility/vector1.hh>
 
+#include <unordered_map>
+
 
 namespace protocols {
 namespace constraint_movers {
@@ -60,6 +62,9 @@ public:
 	void add_constraints( bool const a ){ add_constraints_ = a; }
 	bool add_constraints() const { return add_constraints_; }
 
+	void set_cst_map_file( std::string const & file_name );
+	void set_cst_map_file_contents( std::string const & file_contents );
+
 	std::string
 	get_name() const override;
 
@@ -77,6 +82,9 @@ private:
 	std::string cst_file_;
 	std::string cst_fa_file_;
 	bool add_constraints_; // dflt false; if true add the constraints, rather than replacing
+
+	std::unordered_map< std::string, std::string > file_to_input_map_;
+	std::string current_input_name_; // from the DataMap
 
 };
 

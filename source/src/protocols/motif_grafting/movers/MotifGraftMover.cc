@@ -231,10 +231,13 @@ bool MotifGraftMover::get_next_output( core::pose::Pose & work_pose ) {
 	while ( ! passed_filter ) {
 
 		// Get a MotifMatch from the list, potentially using clustering to find a non-redundant one
-		MotifMatch match( motif_match_results_.top() ); // Needs to be initialized to something to avoid uninitialized var error in gcc 8.2. (VKM, March 2019)
+		//MotifMatch match( motif_match_results_.top() ); // Needs to be initialized to something to avoid uninitialized var error in gcc 8.2. (VKM, March 2019)
+		motif2scaffold_data temp_data; // This is a very temporary fix for the gcc 8.2 initializaiong error pointed out by VKM,
+		MotifMatch match( temp_data ); // and avoids getting values from empty queue, which would caues rosetta to crash. It's better to use pointers as suggested by VKM.'
 		// Note that this code does a lot of copying these MotifMatch objects around.  This could be made more efficient with pointers.
 		numeric::HomogeneousTransform< core::Real > match_xform;
 		if ( gp_r_output_cluster_tolerance_ < 0 ) {
+			if ( motif_match_results_.size() == 0 ) return false;
 			match = motif_match_results_.top();
 			motif_match_results_.pop();
 		} else {

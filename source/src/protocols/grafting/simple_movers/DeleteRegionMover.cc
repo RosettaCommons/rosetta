@@ -20,7 +20,9 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
+#include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
@@ -33,6 +35,7 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+#include <boost/range/algorithm.hpp>
 
 namespace protocols {
 namespace grafting {
@@ -43,7 +46,9 @@ DeleteRegionMover::DeleteRegionMover():
 	selector_(),
 	nter_overhang_(0),
 	cter_overhang_(0),
-	rechain_( false )
+	rechain_( false ),
+	add_terminal_types_on_rechain_( true ),
+	add_jump_on_rechain_( false )
 {
 }
 
@@ -52,7 +57,9 @@ DeleteRegionMover::DeleteRegionMover( core::Size const res_start, core::Size con
 	selector_(),
 	nter_overhang_(0),
 	cter_overhang_(0),
-	rechain_( false )
+	rechain_( false ),
+	add_terminal_types_on_rechain_( true ),
+	add_jump_on_rechain_( false )
 {
 	std::stringstream start, end;
 	start << res_start;
@@ -66,7 +73,9 @@ DeleteRegionMover::DeleteRegionMover( DeleteRegionMover const & src ):
 	protocols::moves::Mover( src ),
 	nter_overhang_( src.nter_overhang_ ),
 	cter_overhang_( src.cter_overhang_ ),
-	rechain_( src.rechain_ )
+	rechain_( src.rechain_ ),
+	add_terminal_types_on_rechain_( src.add_terminal_types_on_rechain_ ),
+	add_jump_on_rechain_( src.add_jump_on_rechain_ )
 {
 	if ( src.selector_ ) selector_ = src.selector_->clone();
 }
@@ -124,6 +133,8 @@ DeleteRegionMover::parse_my_tag(
 {
 	selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
 	rechain_ = tag->getOption< bool >( "rechain", rechain_ );
+	add_terminal_types_on_rechain_ = tag->getOption< bool >( "add_terminal_types_on_rechain", add_terminal_types_on_rechain_ );
+	add_jump_on_rechain_ = tag->getOption< bool >( "add_jump_on_rechain", add_jump_on_rechain_ );
 
 	if ( tag->hasOption( "start" ) && tag->hasOption( "end" ) ) {
 		std::string const start = tag->getOption< std::string >( "start" );
@@ -162,8 +173,23 @@ DeleteRegionMover::apply( core::pose::Pose& pose )
 		protocols::grafting::delete_region( pose, del_start, del_stop );
 
 		if ( rechain_ ) {
-			add_terminus_variants( pose, del_start );
-			pose.conformation().chains_from_termini();
+			if ( add_terminal_types_on_rechain_ ) {
+				add_terminus_variants( pose, del_start );
+				pose.conformation().chains_from_termini();
+			} else {
+				add_cutpoint_variants( pose, del_start );
+				if ( del_start > 1 && del_start <= pose.size() && boost::range::count(pose.conformation().chain_endings(), del_start - 1) == 0 ) {
+					pose.conformation().insert_chain_ending( del_start - 1 );
+				}
+			}
+			if ( add_jump_on_rechain_ ) {
+
+				core::kinematics::FoldTree f( pose.fold_tree() );
+				if ( ! f.is_cutpoint( del_start-1 ) && del_start > 1 && del_start <= pose.size() ) {
+					f.new_jump( del_start - 1, del_start, del_start - 1 );
+				}
+				pose.fold_tree( f );
+			}
 		}
 	}
 
@@ -186,6 +212,23 @@ DeleteRegionMover::add_terminus_variants( core::pose::Pose & pose, core::Size co
 	}
 }
 
+/// @brief Adds terminal variants to residues resid and resid-1
+/// @param[in,out] pose  Pose to be modified
+/// @param[in]     resid Residue number for the residue that would have the lower terminus variant
+/// @details Residue resid-1 will have upper_terminus variant, and residue resid will have
+///          lower_terminus variant
+void
+DeleteRegionMover::add_cutpoint_variants( core::pose::Pose & pose, core::Size const resid ) const
+{
+	// add terminal variants
+	if ( ( resid > 0 ) && ( resid - 1 > 0 ) ) {
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, resid - 1 );
+	}
+	if ( resid <= pose.size() ) {
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, resid );
+	}
+}
+
 std::string DeleteRegionMover::get_name() const {
 	return mover_name();
 }
@@ -200,6 +243,8 @@ void DeleteRegionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	AttributeList attlist;
 	attlist
 		+ XMLSchemaAttribute( "rechain", xsct_rosetta_bool, "Add terminus variants and recompute chains after deleting" )
+		+ XMLSchemaAttribute( "add_terminal_types_on_rechain", xsct_rosetta_bool, "Add terminal types when rechaining" )
+		+ XMLSchemaAttribute( "add_jump_on_rechain", xsct_rosetta_bool, "Add jump when rechaining" )
 		+ XMLSchemaAttribute( "start", xs_string, "First residue in region to delete (PDBNum (24A) or RosettaNum " )
 		+ XMLSchemaAttribute( "end", xs_string,  "Last residue in region to delete" )
 		+ XMLSchemaAttribute( "nter_overhang", xsct_non_negative_integer, "Number of additional residues to delete on the N terminal side" )

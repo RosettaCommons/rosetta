@@ -217,6 +217,7 @@ saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataM
 void
 foreach_movemap_tag(
 	utility::tag::TagCOP const in_tag,
+	basic::datacache::DataMap & data,
 	core::select::movemap::MoveMapFactoryOP mmf
 ){
 	using namespace utility::tag;
@@ -225,7 +226,7 @@ foreach_movemap_tag(
 
 	for ( TagCOP tag : in_tag->getTags() ) {
 		std::string const name( tag->getName() );
-		runtime_assert( name == "Jump" || name == "Chain" || name == "Span" );
+		runtime_assert( name == "Jump" || name == "Chain" || name == "Span" || name == "ResidueSelector" );
 		if ( name == "Jump" ) {
 			auto const num( tag->getOption< int >( "number" ) );
 			bool const setting( tag->getOption< bool >( "setting" ) );
@@ -272,6 +273,22 @@ foreach_movemap_tag(
 			if ( bondangle || bondlength ) {
 				mmf->add_bondangles_action( (bondlength ? mm_enable : mm_disable), span_select );
 				mmf->add_bondlengths_action( (bondlength ? mm_enable : mm_disable), span_select );
+			}
+		}
+		if ( name == "ResidueSelector" ) {
+			core::select::residue_selector::ResidueSelectorCOP selector( core::select::residue_selector::parse_residue_selector( tag, data, "selector" ) );
+			bool const chi( tag->getOption< bool >( "chi" ) );
+			bool const bb( tag->getOption< bool >( "bb" ) );
+			bool const bondangle( tag->getOption< bool >( "bondangle", false ) );
+			bool const bondlength( tag->getOption< bool >( "bondlength", false ) );
+
+			runtime_assert( selector );
+
+			mmf->add_bb_action( (bb ? mm_enable : mm_disable), selector );
+			mmf->add_chi_action( (chi ? mm_enable : mm_disable), selector );
+			if ( bondangle || bondlength ) {
+				mmf->add_bondangles_action( (bondlength ? mm_enable : mm_disable), selector );
+				mmf->add_bondlengths_action( (bondlength ? mm_enable : mm_disable), selector );
 			}
 		}
 	}//for tag
@@ -341,7 +358,7 @@ parse_movemap_factory_legacy(
 	}
 
 	parse_movemap_tag( movemap_tag, mmf );
-	foreach_movemap_tag( movemap_tag, mmf );
+	foreach_movemap_tag( movemap_tag, data, mmf );
 
 	if ( ! from_datamap && movemap_tag->hasOption("name") ) {
 		std::string const name( movemap_tag->getOption< std::string >( "name" ) );
@@ -409,6 +426,15 @@ common_movemap_complex_type_def( utility::tag::XMLSchemaComplexTypeGenerator & c
 		+ XMLSchemaAttribute( "bondangle", xsct_rosetta_bool , "move 3-body angles?" )
 		+ XMLSchemaAttribute( "bondlength", xsct_rosetta_bool , "move 2-body lengths?" );
 	movemap_subelements.add_simple_subelement( "Span", span_attributes , "XRW TO DO, probably a user-defined region of the Pose");
+
+	AttributeList selector_attributes;
+	selector_attributes
+		+ XMLSchemaAttribute::required_attribute( "selector",     xs_string , "Residue selector" )
+		+ XMLSchemaAttribute::required_attribute( "chi",       xsct_rosetta_bool , chi_desc )
+		+ XMLSchemaAttribute::required_attribute( "bb",        xsct_rosetta_bool , bb_desc )
+		+ XMLSchemaAttribute( "bondangle", xsct_rosetta_bool , "move 3-body angles?" )
+		+ XMLSchemaAttribute( "bondlength", xsct_rosetta_bool , "move 2-body lengths?" );
+	movemap_subelements.add_simple_subelement( "ResidueSelector", selector_attributes , "Residue selector defined region of the Pose.");
 	movemap_subelements.complex_type_naming_func( & move_map_tag_namer );
 
 

@@ -196,6 +196,7 @@ public:
 	ResPairMotif & reverse_in_place_unsafe();
 	ResPairMotif   reversed() const;
 	void reset();
+	bool valid() const;
 	Xform xform() const;
 	void  xform(Xform const & _xform );
 	Real6 rt() const;
@@ -455,6 +456,10 @@ public:
 	friend std::ostream & operator<<(std::ostream & out, ResPairMotifQuery const & opt);
 	void copy_opts_swapped(ResPairMotifQuery const & other);
 };
+struct XformSummary {
+	ResPairMotif best_motif;
+	utility::vector1<Real> num_by_cut;
+};
 class MotifHash : public utility::pointer::ReferenceCount {
 public:
 	typedef ResPairMotif Motif;
@@ -487,6 +492,7 @@ public:
 	Size count_motifs(Real6 const & rt) const ;
 	Size count_motifs(Key const & k) const;
 	void find_motifs_with_radius(Real6 const & rt, Real radius, utility::vector1<Motif> & results) const;
+	XformSummary get_motif_summary(Real6 const & rt, Real radius, char ss1, char ss2, utility::vector1<Real> score_cuts, char aa1=0, char aa2=0) const;
 	Size num_motifs() { return motif_umap_.size(); }
 	// Undefined, commenting out to fix PyRosetta build  Key key_of(Motif const & d) const;
 	Real cart_size() const { return cart_size_; }

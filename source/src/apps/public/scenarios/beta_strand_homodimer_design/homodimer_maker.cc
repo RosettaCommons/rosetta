@@ -365,8 +365,8 @@ void HDmakerMover::apply (pose::Pose & pose ) {
 		Real const max_angle(180.0);
 		//moves the input pose, not the copy
 		pose::Pose anti_pose (pose), parl_pose (pose);
-		rigid::RollMoverOP parl_roll_mover( new rigid::RollMover(1 /*start_res*/, n_residues /*stop*/, min_angle, max_angle, parl_vector, center_xyz ) );
-		rigid::RollMoverOP anti_roll_mover( new rigid::RollMover(1 /*start_res*/, n_residues /*stop*/, min_angle, max_angle, anti_vector, center_xyz ) );
+		rigid::RollMoverOP parl_roll_mover( new rigid::RollMover(1 /*start_res*/, n_residues /*stop*/, min_angle, max_angle, parl_vector, center_xyz, true ) );
+		rigid::RollMoverOP anti_roll_mover( new rigid::RollMover(1 /*start_res*/, n_residues /*stop*/, min_angle, max_angle, anti_vector, center_xyz, true ) );
 
 		//apply to pose and output
 		anti_roll_mover->apply( anti_pose );

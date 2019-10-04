@@ -62,6 +62,10 @@ public:
 	void add_new_chain( core::pose::Pose & pose ) const; // Adds new chain to pose
 	void swap_chain( core::pose::Pose & pose ) const; // Adds new chain to pose
 
+	// There's no point in a setter for this. It has to happen during parse_my_tag
+	// void spm_reference_name( std::string const & name ) { spm_reference_name_ = name; }
+	std::string spm_reference_name( ) const { return spm_reference_name_; }
+
 	std::string
 	get_name() const override;
 
@@ -73,6 +77,9 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+private:
+	void
+	load_pose( core::pose::Pose & pose, std::string & name ) const;
 
 private:
 	std::string fname_; //dflt ""; pdb names to load (can accept a comma-separated list)
@@ -81,6 +88,9 @@ private:
 	bool update_PDBInfo_; //dflt true; update chain ids.
 	core::Size swap_chain_number_; //dflt 2; swap chain with specified chain number
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt score12; used to score the new pose
+	std::string spm_reference_name_; // This is only used for display and adding to the pose comments
+	core::pose::PoseCOP spm_reference_pose_;
+
 };
 
 

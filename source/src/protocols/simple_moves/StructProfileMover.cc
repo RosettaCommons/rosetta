@@ -50,6 +50,7 @@
 #include <core/types.hh>
 
 #include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMapObj.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
@@ -386,7 +387,7 @@ vector1<vector1<Real> > StructProfileMover::generate_profile_score_wo_background
 
 
 void StructProfileMover::save_MSAcst_file(vector1<vector1<Real> > profile_score,core::pose::Pose const & pose){
-	std::string profile_name( "profile" );
+	std::string profile_name = profile_save_filename_.empty() ? "profile" : profile_save_filename_;
 	Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
@@ -544,6 +545,12 @@ StructProfileMover::parse_my_tag(
 		if ( selector != nullptr ) {
 			set_residue_selector( *selector );
 		}
+	}
+	if ( data.has( "strings", "current_output_name" ) ) {
+		using StringWrapper = basic::datacache::DataMapObj< std::string >;
+		auto ptr = data.get_ptr< StringWrapper >( "strings", "current_output_name" );
+		runtime_assert( ptr );
+		set_profile_save_name( ptr->obj  + ".profile");
 	}
 }
 

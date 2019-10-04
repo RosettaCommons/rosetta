@@ -277,6 +277,13 @@ contains( std::string const & haystack, std::string const & needle);
 void
 slurp(std::istream & in, std::string & out);
 
+
+/// @brief Remove any characters in "drop" from the front of the string.
+void ltrim( std::string & s, const std::string & drop );
+
+/// @brief Remove any characters in "drop" from the back of the string.
+void rtrim( std::string & s, const std::string & drop );
+
 /// @brief Remove any charachters in "drop" from the front and back of the string.
 /// Use strip() for the value-return version
 void trim( std::string & s, const std::string & drop = " " );

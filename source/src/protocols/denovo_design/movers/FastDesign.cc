@@ -214,7 +214,9 @@ FastDesign::apply( core::pose::Pose & pose )
 	// print movemap
 	if ( get_movemap() && TR.Debug.visible() ) {
 		TR.Debug << "Movemap: ";
-		get_movemap()->show( TR.Debug );
+		core::kinematics::MoveMapOP temp_movemap = get_movemap()->clone();
+		initialize_movemap( pose, *temp_movemap );
+		temp_movemap->show( TR.Debug );
 		TR.Debug << std::endl;
 	}
 

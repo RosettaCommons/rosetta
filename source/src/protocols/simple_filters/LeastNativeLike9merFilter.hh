@@ -24,6 +24,9 @@
 // Project Headers
 #include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
 #include <core/pose/Pose.fwd.hh>
+
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
+
 // Utility headers
 
 // Parser headers
@@ -95,6 +98,16 @@ public:// virtual constructor
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
+	void
+	set_report_mean_median( bool report ) { report_mean_median_ = report; }
+
+	void
+	set_residue_selector( core::select::residue_selector::ResidueSelector const & selector );
+
+private:
+
+	void
+	write_mean_median( Pose const & pose, core::Real mean, core::Real median ) const;
 
 private:
 
@@ -103,6 +116,8 @@ private:
 	protocols::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
 	bool ignore_terminal_res_;
 	bool only_helices_;
+	bool report_mean_median_;
+	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
 
 };
 

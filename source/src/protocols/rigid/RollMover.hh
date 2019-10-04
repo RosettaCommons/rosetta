@@ -43,7 +43,8 @@ public:
 		core::Real min_angle,
 		core::Real max_angle,
 		numeric::xyzVector< core::Real > axis,
-		numeric::xyzVector< core::Real > translate
+		numeric::xyzVector< core::Real > translate,
+		bool legacy_mode = false
 	);
 
 	~RollMover() override;
@@ -93,6 +94,8 @@ private:
 	bool random_roll_;
 	core::Real random_roll_angle_;
 	core::Real random_roll_trans_;
+
+	bool legacy_mode_;
 };//end RollMover
 
 

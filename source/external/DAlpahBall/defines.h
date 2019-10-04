@@ -55,9 +55,10 @@
 #ifndef FSIZE
 #define FSIZE 100
 #endif
+/*40290*/
 
 #ifndef MAX_ATOM
-#define MAX_ATOM 25000
+#define MAX_ATOM 1000000
 #endif
 
 #ifndef MAX_COORD

@@ -77,6 +77,8 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	void set_chis( utility::vector1< core::Real > chis ) { chis_ = chis; }
+
 
 
 private:
@@ -95,6 +97,9 @@ private:
 
 	/// @brief selects which residues to mutate
 	ResidueSelectorCOP selector_;
+
+	/// @brief Use specific chis after mutating
+	utility::vector1< core::Real > chis_;
 
 };
 

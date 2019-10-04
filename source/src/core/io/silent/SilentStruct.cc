@@ -31,6 +31,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 
+#include <core/io/raw_data/ScoreMap.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -617,6 +618,8 @@ void SilentStruct::parse_energies(
 	utility::vector1< std::string > const & energy_names
 ) {
 	std::string tag;
+	std::string prev_tag = "";
+	bool decoy_tag_set = false;
 	Size input_count = 0;
 	Size const energy_names_count( energy_names.size() );
 
@@ -624,11 +627,13 @@ void SilentStruct::parse_energies(
 	for ( auto const & energy_name : energy_names ) {
 		input >> tag;
 		if ( input.fail() || input.bad() ) break;
+		prev_tag = tag;
 		if ( is_float( tag ) && energy_name.compare("description") /*energy name is not "description"*/ ) {
 			Real score_val = static_cast< Real > ( float_of( tag ) );
 			add_energy( energy_name, score_val );
 		} else if ( energy_name == "description" ) {
 			decoy_tag( tag );
+			decoy_tag_set = true;
 		} else {
 			add_string_value( energy_name, tag );
 		}
@@ -641,7 +646,14 @@ void SilentStruct::parse_energies(
 			++input_count;
 		}
 		decoy_tag(tag);
+		decoy_tag_set = true;
 		tr.Warning << "Warning: there were additional columns in the \"SCORE:\" line.  Using the last column (\"" << tag << "\") as the decoy tag." << std::endl;
+	}
+
+	if ( ! decoy_tag_set ) {
+		decoy_tag( prev_tag );
+		decoy_tag_set = true;
+		tr.Warning << "Warning: there were missing columns in the \"SCORE:\" line.  Using the last column (\"" << prev_tag << "\") as the decoy tag." << std::endl;
 	}
 
 	if ( energy_names_count != input_count ) {
@@ -693,26 +705,32 @@ void SilentStruct::energies_from_pose( core::pose::Pose const & pose ) {
 	// set the "score" term to its appropriate value
 	update_score();
 
-	// get arbitrary floating point scores from the map stored in the Pose data cache
-	// these can be accessed through setPoseExtraScore and getPoseExtraScore in core/pose/util.hh
-	if ( pose.data().has( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
-		basic::datacache::CacheableStringFloatMapCOP data
-			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
-			( pose.data().get_const_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
+	// Get the arbitrary score data store in the Pose data cache
+	std::map< std::string, Real > float_data;
+	core::io::raw_data::ScoreMap::add_arbitrary_score_data_from_pose( pose, float_data );
+	for ( auto const & elem : float_data ) {
+		// skip score entry, as it gets confusing
+		if ( elem.first == "score" ) continue;
+		SilentEnergy new_se(
+			elem.first, elem.second, 1.0,
+			static_cast< int > (elem.first.size() + 3) /* width */
+		);
+		tr.Trace << " score energy from pose-cache: " << elem.first << " " << elem.second << std::endl;
+		silent_energies_.push_back( new_se );
+	}
 
-		using std::map;
-		using std::string;
-		for ( auto const & elem : data->map() ) {
-			// skip score entry, as it gets confusing
-			if ( elem.first == "score" ) continue;
-			SilentEnergy new_se(
-				elem.first, elem.second, 1.0,
-				static_cast< int > (elem.first.size() + 3) /* width */
-			);
-			tr.Trace << " score energy from pose-cache: " << elem.first << " " << elem.second << std::endl;
-			silent_energies_.push_back( new_se );
-		}
-	} //  if ( pose.data().has( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) )
+	std::map< std::string, std::string > string_data;
+	core::io::raw_data::ScoreMap::add_arbitrary_string_data_from_pose( pose, string_data );
+	for ( auto const & elem : string_data ) {
+		// skip score entry, as it gets confusing
+		if ( elem.first == "score" ) continue;
+		SilentEnergy new_se(
+			elem.first, elem.second,
+			static_cast< int > (elem.first.size() + 3) /* width */
+		);
+		tr.Trace << " score string from pose-cache: " << elem.first << " " << elem.second << std::endl;
+		silent_energies_.push_back( new_se );
+	}
 
 	// add comments from the Pose
 	using std::map;

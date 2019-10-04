@@ -85,6 +85,28 @@ Ca_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const p
 	return coords;
 }
 
+
+void
+AddChainMover::load_pose( core::pose::Pose & pose, std::string & name ) const {
+
+	if ( fname() != "" ) {
+		utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
+		TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
+		core::Size const random_num = (core::Size) (numeric::random::rg().uniform() * split_names.size()) + 1;
+		std::string const curr_fname( split_names[ random_num ] );
+		TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
+
+		core::import_pose::pose_from_file( pose, curr_fname , core::import_pose::PDB_file);
+	} else {
+		runtime_assert( spm_reference_name() != "" );
+
+		pose = *(spm_reference_pose_->clone());
+		name = spm_reference_name_;
+	}
+
+	pose.conformation().detect_disulfides();
+}
+
 void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is passed by reference. So function does not return anything but modifies pose, and leave it modified. The function is const as it does not modify private member data.
 	if ( swap_chain_number()!=0 ) {
 		return;
@@ -94,18 +116,13 @@ void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is p
 	using namespace core::pose;
 
 	Pose new_pose;
-
-	utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
-	TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
-	core::Size const random_num = (core::Size) (numeric::random::rg().uniform() * split_names.size()) + 1;
-	std::string const curr_fname( split_names[ random_num ] );
-	TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
+	std::string curr_fname;
+	load_pose( new_pose, curr_fname );
+	(*scorefxn()) ( new_pose );
 
 	core::Size old_len = pose.size();
 	TR<<"Before addchain, total residues: "<<old_len<<std::endl;
-	core::import_pose::pose_from_file( new_pose, curr_fname , core::import_pose::PDB_file);
-	new_pose.conformation().detect_disulfides();
-	(*scorefxn()) ( new_pose );
+
 	PDBInfoOP new_info = new_pose.pdb_info();
 	core::Size new_len = new_pose.size();
 
@@ -136,17 +153,11 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
 
 
 	Pose new_chain;
-
-	utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
-	TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
-	core::Size const random_num = (core::Size) (numeric::random::rg().uniform() * split_names.size()) + 1;
-	std::string const curr_fname( split_names[ random_num ] );
-	TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
+	std::string curr_fname;
+	load_pose( new_chain, curr_fname );
+	(*scorefxn()) ( new_chain );
 
 	TR<<"Before addchain, total residues: "<<pose.size()<<std::endl;
-	core::import_pose::pose_from_file( new_chain, curr_fname , core::import_pose::PDB_file);
-	new_chain.conformation().detect_disulfides();
-	(*scorefxn()) ( new_chain );
 
 	// Here we have the new chain in new_chain. This needs to be aligned to chain 2 in pose, and current chain 2 should be deleted.
 	utility::vector1< PoseOP > pose_chains( pose.split_by_chain() ); // splits pose into a vector of poses, with one chain per pose
@@ -209,6 +220,12 @@ AddChainMover::apply( Pose & pose )
 {
 	//runtime_assert( !new_chain() != (swap_chain_number()!=0) ); // You cannot do both new chain and swap chain!
 	//runtime_assert( ( new_chain() && swap_chain_number()==0) || (!new_chain() && swap_chain_number()!=0)); // You cannot do both new chain and swap chain and you have to do one of the two...
+	if ( fname() == "" && spm_reference_name() == "" ) {
+		utility_exit_with_message("AddChainMover: You must set one fname or spm_reference_name!!!");
+	}
+	if ( fname() != "" && spm_reference_name() != "" ) {
+		utility_exit_with_message("AddChainMover: You must can't set both fname and spm_reference_name, pick one!!");
+	}
 	add_new_chain(pose);
 	swap_chain(pose);
 
@@ -241,7 +258,7 @@ AddChainMover::parse_my_tag(
 	core::pose::Pose const & )
 {
 	random_access( tag->getOption< bool >( "random_access", false ) );
-	fname( tag->getOption< std::string >( "file_name" ) );
+	fname( tag->getOption< std::string >( "file_name", "" ) );
 	if ( random_access() ) {
 		utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
 		TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
@@ -253,6 +270,10 @@ AddChainMover::parse_my_tag(
 	update_PDBInfo( tag->getOption< bool >( "update_PDBInfo", true ) );
 	swap_chain_number( tag->getOption< core::Size >( "swap_chain_number", 0 ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
+	if ( tag->hasOption( "spm_reference_name" ) ) {
+		spm_reference_name_ = tag->getOption< std::string >( "spm_reference_name" );
+		spm_reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data, "spm_reference_name");
+	}
 	TR<<"AddChain sets fname: "<<fname()<<" new_chain: "<<new_chain()<<std::endl;
 }
 
@@ -282,7 +303,8 @@ void AddChainMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 		"chains starting from A. PDB numbering starting from 1 in each chain. When false, it will merge the info from the two PDBInfos from each Pose "
 		"by appending the second one to the first one. If both Poses have the same chain name, they will keep it (with the expected issues); be aware of that "
 		"when setting this option to false. This option is always true when swap_chain_number is called.", "true" )
-		+ XMLSchemaAttribute::required_attribute( "file_name", xs_string, "Either a path to the file to read chains from, or a comma-separated list of such if random_access is true." )
+		+ XMLSchemaAttribute::attribute_w_default( "file_name", xs_string, "Either a path to the file to read chains from, or a comma-separated list of such if random_access is true.", "")
+		+ XMLSchemaAttribute::attribute_w_default( "spm_reference_name", xs_string, "The name of a pose saved with SavePoseMover. Use this instead of file_name", "")
 		+ XMLSchemaAttribute::attribute_w_default( "new_chain", xsct_rosetta_bool, chain_warning + "add as a new chain?", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "swap_chain_number", xsct_non_negative_integer, chain_warning + "swap chain with specified chain number", "0" ); //0 is valid as a flag value, so it really is a default and not required
 

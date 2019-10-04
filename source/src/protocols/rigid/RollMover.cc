@@ -80,15 +80,14 @@ void RollMover::apply( core::pose::Pose & pose ) {
 		}
 	}
 
-	if ( use_com_ ) {
-		translate_ = protocols::geometry::center_of_mass(pose, start_res, stop_res);
-	}
+	numeric::xyzVector< core::Real > com = protocols::geometry::center_of_mass(pose, start_res, stop_res);
+	numeric::xyzVector< core::Real > zero( 0, 0, 0 );
+	if ( legacy_mode_ ) com = zero;
 
 	if ( random_roll_ ) {
-		translate_ = protocols::geometry::center_of_mass(pose, start_res, stop_res);
-		translate_.x() += numeric::random::rg().gaussian() * random_roll_trans_;
-		translate_.y() += numeric::random::rg().gaussian() * random_roll_trans_;
-		translate_.z() += numeric::random::rg().gaussian() * random_roll_trans_;
+		translate_.x() = numeric::random::rg().gaussian() * random_roll_trans_;
+		translate_.y() = numeric::random::rg().gaussian() * random_roll_trans_;
+		translate_.z() = numeric::random::rg().gaussian() * random_roll_trans_;
 		angle_ = numeric::random::rg().gaussian() * random_roll_angle_;
 		axis_ = numeric::xyzVector< core::Real >( numeric::random::rg().gaussian(),numeric::random::rg().gaussian(),numeric::random::rg().gaussian() ).normalized();
 	} else {
@@ -100,13 +99,20 @@ void RollMover::apply( core::pose::Pose & pose ) {
 	for ( core::Size i =start_res; i <= stop_res; ++i ) {
 		for ( core::Size j = 1; j <= coords[i].size(); ++j ) {
 
-			// this may look strange but in a global coordinate system
-			// rotation about an axis is easily done by movement to the origin
-			// rotation and then movement back
+			// I think the original intent of the RollMover and its subsequent assumed intent
+			// were different. It seems that the RollMover is designed to "roll" your pose
+			// around the surface of a cylinder where translate_ is the radius.
 
-			coords[i][j] = coords[i][j] - translate_; // translate to origin
+			// Enabling legacy_mode brings this back, but for instance, random_roll definitely doesn't
+			// behave the way you'd expect it to. The mover is especially confusing if you specify translate
+			// and expect the mover to actually translate your pose.
+
+			// Anyways, with how the code is currently written, maybe this would be better called the
+			// transform mover. -- bcov
+
+			coords[i][j] = coords[i][j] - com - (legacy_mode_ ? translate_ : zero ); // translate to origin
 			coords[i][j] = rotation_matrix * coords[i][j]; // rotate atom
-			coords[i][j] = coords[i][j] + translate_; // reverse translate
+			coords[i][j] = coords[i][j] + com + translate_; // translate back to original position then do translate_
 
 		}
 	}
@@ -182,7 +188,6 @@ RollMover::parse_my_tag(
 		}
 
 		bool axis_option_parsed = false;
-		bool translate_option_parsed = false;
 
 		if ( tag->hasOption("axis") ) {
 			switch(tag->getOption<char>("axis")) {
@@ -209,17 +214,12 @@ RollMover::parse_my_tag(
 			} else if ( name == "translate" ) {
 				/*parse translate x,y,z*/
 				translate_ = protocols::rosetta_scripts::parse_xyz_vector(child_tag);
-				translate_option_parsed = true;
 			}
 
 		}
 
 		if ( !axis_option_parsed ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RollMover requires axis option");
-		}
-		if ( !translate_option_parsed ) {
-			use_com_ = true;
-			TR << "No translation given, using the pose's center of mass" << std::endl;
 		}
 
 	}
@@ -259,7 +259,8 @@ RollMover::clone() const
 
 /// @brief
 RollMover::RollMover(
-) : Mover()
+) : Mover(),
+	translate_( 0, 0, 0 )
 {
 	moves::Mover::type( "RollMover" );
 }
@@ -270,7 +271,8 @@ RollMover::RollMover(
 	core::Real min_angle,
 	core::Real max_angle,
 	numeric::xyzVector< core::Real > axis,
-	numeric::xyzVector< core::Real > translate
+	numeric::xyzVector< core::Real > translate,
+	bool legacy_mode /* = false */
 ):
 	Mover(),
 	start_res_(core::pose::make_rid_posenum(start_res)),
@@ -279,7 +281,8 @@ RollMover::RollMover(
 	max_angle_(max_angle),
 	axis_(axis),
 	translate_(translate),
-	random_roll_(false)
+	random_roll_(false),
+	legacy_mode_( legacy_mode )
 {
 	moves::Mover::type( "RollMover" );
 }

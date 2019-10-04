@@ -63,7 +63,8 @@ MakePolyXMover::MakePolyXMover():
 	keep_pro_( false ),
 	keep_gly_( true ),
 	keep_disulfide_cys_( false ),
-	selector_( new core::select::residue_selector::TrueResidueSelector )
+	selector_( new core::select::residue_selector::TrueResidueSelector ),
+	chis_()
 {}
 
 MakePolyXMover::MakePolyXMover( std::string const & aa, bool keep_pro, bool keep_gly, bool keep_disulfide_cys ):
@@ -72,7 +73,8 @@ MakePolyXMover::MakePolyXMover( std::string const & aa, bool keep_pro, bool keep
 	keep_pro_( keep_pro ),
 	keep_gly_( keep_gly ),
 	keep_disulfide_cys_( keep_disulfide_cys ),
-	selector_( new core::select::residue_selector::TrueResidueSelector )
+	selector_( new core::select::residue_selector::TrueResidueSelector ),
+	chis_()
 {}
 
 MakePolyXMover::~MakePolyXMover() = default;
@@ -102,6 +104,27 @@ void MakePolyXMover::apply( Pose & pose )
 	using protocols::toolbox::pose_manipulation::construct_poly_XXX_pose;
 	TR << "Pose is converted to poly " << aa_ << std::endl;
 	construct_poly_XXX_pose( aa_, pose, protein_residues, keep_pro_, keep_gly_, keep_disulfide_cys_ );
+
+	if ( chis_.size() > 0 ) {
+		// This is here to catch an error where someday, someone allows construct_poly_XXX_pose to take
+		//  names instead of name3s. To fix this error, you'll need to make construct_poly_XXX return
+		//  a vector of the positions it actually changed.
+		runtime_assert( aa_.size() == 3 );
+		for ( Size i : protein_residues ) {
+			core::conformation::Residue const & res = pose.residue( i );
+
+			if ( res.name3() != aa_ ) continue;
+
+			if ( res.nchi() != chis_.size() ) {
+				utility_exit_with_message("MakePolyXMover: Bad number of chis specified! Specified "
+					+ utility::to_string( chis_.size() ) + " but " + utility::to_string( res.nchi() )
+					+ " were found at position " + utility::to_string( i ) + "!");
+			}
+			for ( Size ichi = 1; ichi <= chis_.size(); ichi++ ) {
+				pose.set_chi( ichi, i, chis_[ichi] );
+			}
+		}
+	}
 }
 
 /// @brief parse xml
@@ -120,6 +143,9 @@ MakePolyXMover::parse_my_tag(
 
 	ResidueSelectorCOP selector = core::select::residue_selector::parse_residue_selector( tag, data );
 	if ( selector ) selector_ = selector;
+
+	std::string chis_string = tag->getOption<std::string>( "set_chis", "" );
+	chis_ = utility::string_split( chis_string, ',', core::Real(0) );
 
 	TR << "MakePolyXMover was loaded" << std::endl;
 
@@ -161,7 +187,11 @@ void MakePolyXMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute::attribute_w_default(
 		"keep_disulfide_cys", xsct_rosetta_bool,
 		"disulfide CYS is not converted to XXX",
-		"false" );
+		"false" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"set_chis", xs_string,
+		"Set these chis for every residue placed. Must specify same number of chis as in rotamer",
+		"" );
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist );
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),

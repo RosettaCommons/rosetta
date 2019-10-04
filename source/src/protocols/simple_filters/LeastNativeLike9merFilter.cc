@@ -34,9 +34,15 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoringManager.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
+
+
+#include <protocols/jd2/util.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <numeric/util.hh>
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
@@ -57,18 +63,24 @@ namespace simple_filters {
 
 // @brief default constructor
 LeastNativeLike9merFilter::LeastNativeLike9merFilter():
-	Filter( "worst9mer" )
+	Filter( "worst9mer" ),
+	report_mean_median_( false )
 {}
 
 // @brief destructor
 LeastNativeLike9merFilter::~LeastNativeLike9merFilter() = default;
+
+void
+LeastNativeLike9merFilter::set_residue_selector( core::select::residue_selector::ResidueSelector const & selector ) {
+	residue_selector_ = selector.clone();
+}
 
 
 /// @brief
 LeastNativeLike9merFilter::Real
 LeastNativeLike9merFilter::report_sm( const Pose & pose ) const
 {
-	return  compute( pose );
+	return compute( pose );
 }
 
 /// @brief
@@ -88,7 +100,7 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 	dssp.dssp_reduced();
 	std::string dssp_string = dssp.get_dssp_secstruct();
 	Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
-	Real worstRmsd = 0;
+	utility::vector1< Real > rmsds;
 	Size startRes = 1;
 	Size endRes = pose.size()-fragment_length+1;
 	core::conformation::symmetry::SymmetryInfoCOP symminfo(nullptr);
@@ -100,16 +112,22 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 		startRes = startRes+1;
 		endRes = endRes-1;
 	}
+	core::select::residue_selector::ResidueSubset subset(pose.size(), true);
+	if ( residue_selector_ ) subset = residue_selector_->apply(pose);
+
 	for ( Size resid=startRes; resid<=endRes; ++resid ) {
+
+		bool all_within_subset = true;
+		for ( Size jj=0; jj<fragment_length; ++jj ) { if ( ! subset[resid+jj] ) all_within_subset=false; }
+		if ( ! all_within_subset ) continue;
+
 		std::string frag_ss = dssp_string.substr(resid-1,fragment_length);
 		if ( only_helices_ && frag_ss == "HHHHHHHHH" ) {
 			Real tmpRmsd = SSHashedFragmentStore_->lookback(pose,resid,frag_ss,false);
 			if ( tmpRmsd>rmsd_lookup_thresh_ ) {
 				TR << "position:" << resid << " rmsd:" << tmpRmsd <<std::endl;
 			}
-			if ( tmpRmsd>worstRmsd ) {
-				worstRmsd = tmpRmsd;
-			}
+			rmsds.push_back(tmpRmsd);
 		}
 		if ( !only_helices_ ) {
 			if ( frag_ss != "HHHHHHHHH" ) {
@@ -117,12 +135,19 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 				if ( tmpRmsd>rmsd_lookup_thresh_ ) {
 					TR << "position:" << resid << " rmsd:" << tmpRmsd <<std::endl;
 				}
-				if ( tmpRmsd>worstRmsd ) {
-					worstRmsd = tmpRmsd;
-				}
+				rmsds.push_back(tmpRmsd);
 			}
 		}
 	}
+
+	if ( rmsds.size() == 0 ) rmsds.push_back( 0 );
+	if ( report_mean_median_ ) {
+		Real mean = numeric::mean( rmsds );
+		Real median = numeric::median( rmsds );
+		write_mean_median( pose, mean, median );
+	}
+
+	Real worstRmsd = numeric::max( rmsds );
 	return(worstRmsd);
 }
 
@@ -146,7 +171,7 @@ bool LeastNativeLike9merFilter::apply(const Pose & pose ) const
 void
 LeastNativeLike9merFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
+	basic::datacache::DataMap & data,
 	filters::Filters_map const &,
 	Movers_map const &,
 	Pose const & )
@@ -163,8 +188,29 @@ LeastNativeLike9merFilter::parse_my_tag(
 	SSHashedFragmentStore_ = SSHashedFragmentStore::get_instance();
 	SSHashedFragmentStore_->set_threshold_distance(rmsd_lookup_thresh_);
 	TR << "Structures which has the best fragment RMSD at the worst position greater than " << filtered_value_ << " will be filtered." << std::endl;
+	report_mean_median_ = tag->getOption<bool>( "report_mean_median", report_mean_median_ );
 	ignore_terminal_res_ = tag->getOption<bool>("ignore_terminal_residue",true);
+	if ( tag->hasOption( "residue_selector" ) ) {
+		core::select::residue_selector::ResidueSelectorCOP selector( core::select::residue_selector::parse_residue_selector( tag, data, "residue_selector" ) );
+		if ( selector != nullptr ) {
+			set_residue_selector( *selector );
+		}
+	}
+}
 
+
+void
+LeastNativeLike9merFilter::write_mean_median( Pose const & , core::Real mean, core::Real median ) const {
+
+	TR << "Mean: " << mean << " Median: " << median << std::endl;
+	{
+		std::string column_header = this->get_user_defined_name() + "_mean";
+		protocols::jd2::add_string_real_pair_to_current_job( column_header, mean );
+	}
+	{
+		std::string column_header = this->get_user_defined_name() + "_median";
+		protocols::jd2::add_string_real_pair_to_current_job( column_header, median );
+	}
 }
 
 // XRW TEMP filters::FilterOP
@@ -188,6 +234,8 @@ void LeastNativeLike9merFilter::provide_xml_schema( utility::tag::XMLSchemaDefin
 	attlist + XMLSchemaAttribute::attribute_w_default("threshold", xsct_real, "filter threshold", "99.0")
 		+ XMLSchemaAttribute::attribute_w_default("rmsd_lookup_threshold", xsct_real, "if the filtered threshold is not 99, the filtered threshold is equal to the rmsd_lookup_threshold; else it is the default value of 0.40", "0.40")
 		+ XMLSchemaAttribute::attribute_w_default("only_helices", xsct_rosetta_bool, "look at only helices?", "false")
+		+ XMLSchemaAttribute::attribute_w_default("report_mean_median", xsct_rosetta_bool, "Calculate the mean and median rmsd as well?", "false")
+		+ XMLSchemaAttribute( "residue_selector", xs_string, "Only look at worst fragment for residues within residue selector" )
 		+ XMLSchemaAttribute::attribute_w_default("ignore_terminal_resiude", xsct_rosetta_bool, "ignore the terminal residue?", "true");
 
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filters out structures that don't have good fragment RMSD at the worst position.", attlist );

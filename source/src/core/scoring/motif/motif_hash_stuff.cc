@@ -278,6 +278,7 @@ ResPairMotif::ResPairMotif(
 		chi2_[i] = real_to_uint8(chi,-180.0,180.0);
 	}
 }
+bool ResPairMotif::valid() const { return type_!=(uint8_t)RPM_Type_NONE; }
 char ResPairMotif::aa1  () const { return aa1_; }
 char ResPairMotif::aa2  () const { return aa2_; }
 char ResPairMotif::ss1  () const { if ( ss1_=='H'||ss1_=='I'||ss1_=='G' ) return 'H'; else if ( ss1_=='P'||ss1_=='E'||ss1_=='U'||ss1_=='B' ) return 'E'; else if ( ss1_=='S'||ss1_=='T'||ss1_==' '||ss1_=='L' ) return 'L'; else utility_exit_with_message("unknown SS "+string_of(ss1_)); }
@@ -1501,6 +1502,39 @@ void MotifHash::find_motifs_with_radius(Real6 const & rt6, Real radius, vector1<
 	// if(bin6[4]==0) utility_exit_with_message("arst");
 	// if(bin6[5]==0) utility_exit_with_message("arst");
 }
+
+
+XformSummary
+MotifHash::get_motif_summary(Real6 const & rt, Real radius, char ss1, char ss2, utility::vector1<Real> score_cuts,
+	char aa1 /*=0*/, char aa2 /*=0*/
+) const {
+
+	ResPairMotifs motifs;
+	find_motifs_with_radius(rt,radius,motifs);
+	XformSummary summary;
+	summary.num_by_cut.resize(score_cuts.size());
+	for ( ResPairMotifs::const_iterator i = motifs.begin(); i != motifs.end(); ++i ) {
+		if ( i->ss1() != ss1 && i->ss2() != ss2 ) continue;
+		if ( aa1 != 0 && i->aa1() != aa1 ) continue;
+		if ( aa2 != 0 && i->aa2() != aa2 ) continue;
+
+		Real this_score = i->score();
+		if ( ! summary.best_motif.valid() ) {
+			summary.best_motif = *i;
+		} else {
+			if ( this_score < summary.best_motif.score() ) {
+				summary.best_motif = *i;
+			}
+		}
+		for ( Size j = 1; j <= score_cuts.size(); j++ ) {
+			if ( this_score <= score_cuts[j] ) {
+				summary.num_by_cut[j] ++;
+			}
+		}
+	}
+	return summary;
+}
+
 
 ostream & operator << (ostream & out, MotifHash const & x){
 	numeric::geometry::BoundingBox<numeric::xyzVector<numeric::Real> > const & bb(x.hasher_.bounding_box() );

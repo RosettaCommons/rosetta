@@ -55,8 +55,12 @@
 
 void get_surf_vol( int npoints, double *coords, double *radius, double *surf_out, double *vol_out ) {
 	int i;
-	double tmp_coef[MAX_ATOM],tmp_surf,tmp_wsurf,tmp_vol,tmp_wvol, alpha_val=0.0;
-	int tmp_nredundant,tmp_nredalpha,tmp_nat_orig,tmp_list_redundant[MAX_ATOM],tmp_list_redalpha[MAX_ATOM];
+
+	double tmp_surf,tmp_wsurf,tmp_vol,tmp_wvol, alpha_val=0.0;
+	int tmp_nredundant,tmp_nredalpha,tmp_nat_orig;
+	double * tmp_coef = malloc((MAX_COORD)*sizeof(double));
+	int * tmp_list_redalpha = malloc((MAX_COORD)*sizeof(int));
+	int * tmp_list_redundant = malloc((MAX_COORD)*sizeof(int));
 	
 	for( i = 0; i<MAX_ATOM; i++ ) tmp_coef[i] = 1.0;
 	
@@ -83,6 +87,10 @@ void get_surf_vol( int npoints, double *coords, double *radius, double *surf_out
 	for(i=0;i<npoints;i++) {
 		printf("%d %.20lf %.20lf\n",i+1,surf_out[i+4],vol_out[i+4]);
 	}
+
+	free( tmp_coef );
+	free( tmp_list_redalpha );
+	free( tmp_list_redundant );
 	
 	return;
 }
@@ -93,7 +101,9 @@ void get_surf_vol_deriv( int npoints, double *coords, double *radius,
 {
 	int i;
 	double tmp_coef[MAX_ATOM],tmp_surf,tmp_wsurf,tmp_vol,tmp_wvol, alpha_val=0.0;
-	int tmp_nredundant,tmp_nredalpha,tmp_nat_orig,tmp_list_redundant[MAX_ATOM],tmp_list_redalpha[MAX_ATOM];
+	int tmp_nredundant,tmp_nredalpha,tmp_nat_orig;
+	int * tmp_list_redalpha = malloc((MAX_COORD)*sizeof(int));
+	int * tmp_list_redundant = malloc((MAX_COORD)*sizeof(int));
 	
 	for( i = 0; i<MAX_ATOM; i++ ) tmp_coef[i] = 1.0;
 	
@@ -124,6 +134,9 @@ void get_surf_vol_deriv( int npoints, double *coords, double *radius,
    		 dvol_out[3*(i+4)+0], dvol_out[3*(i+4)+1], dvol_out[3*(i+4)+2] );
 	}
 	
+
+	free( tmp_list_redalpha );
+	free( tmp_list_redundant );
 	
 }
 
@@ -141,14 +154,14 @@ double get_alpha20_surf(
 	double alpha_val=0;
 	double coordat[3], radiusat, rad0, rad, x,y,z;
 
-	double tmp_coef[MAX_ATOM];
 	double tmp_surf,tmp_wsurf;
 	double void_surf,void_wsurf;
 	int tmp_nredundant;
 	int tmp_nredalpha;
-	int tmp_list_redundant[MAX_ATOM];
-	int tmp_list_redalpha[MAX_ATOM];
 	int tmp_nat_orig;	
+	double * tmp_coef = malloc((MAX_COORD)*sizeof(double));
+	int * tmp_list_redalpha = malloc((MAX_COORD)*sizeof(int));
+	int * tmp_list_redundant = malloc((MAX_COORD)*sizeof(int));
 
 	double *surf_out = malloc((npoints+4)*sizeof(double));
 
@@ -195,6 +208,10 @@ double get_alpha20_surf(
 		}
 
 	}
+
+	free( tmp_coef );
+	free( tmp_list_redalpha );
+	free( tmp_list_redundant );
 	
 	free(surf_out);
 	return( tmp_wsurf );
@@ -210,16 +227,16 @@ double get_alpha20_surf_weighted_deriv(
 	double alpha_val=0;
 	double coordat[3], radiusat, rad0, rad, x,y,z;
 
-	double tmp_coef[MAX_ATOM];
 	double tmp_surf,tmp_wsurf;
 	// double tmp_deriv_surf[3*MAX_ATOM];
 	double void_surf,void_wsurf;
 	// double void_deriv_surf[3*MAX_ATOM];
 	int tmp_nredundant;
 	int tmp_nredalpha;
-	int tmp_list_redundant[MAX_ATOM];
-	int tmp_list_redalpha[MAX_ATOM];
 	int tmp_nat_orig;	
+	double * tmp_coef = malloc((MAX_COORD)*sizeof(double));
+	int * tmp_list_redalpha = malloc((MAX_COORD)*sizeof(int));
+	int * tmp_list_redundant = malloc((MAX_COORD)*sizeof(int));
 
 	double * surf_out = malloc((npoints+4)  *sizeof(double));
 	double *deriv_out = malloc((npoints+4)*3*sizeof(double));
@@ -286,6 +303,10 @@ double get_alpha20_surf_weighted_deriv(
 	for(i=0;i<npoints;i++) {
 	   printf("%i %.20lf %.20lf %.20lf %.20lf\n",i+1,tot_score[i],deriv_x[i],deriv_y[i],deriv_z[i]);
    }
+
+	free( tmp_coef );
+	free( tmp_list_redalpha );
+	free( tmp_list_redundant );
    
 	free( surf_out);
 	free(deriv_out);
@@ -296,8 +317,11 @@ double get_alpha20_surf_weighted_deriv(
 
 void get_cavballs( int npoints, double *coords, double *radius ) {
 	int i;
-	double tmp_coef[MAX_ATOM],tmp_surf,tmp_wsurf,tmp_vol,tmp_wvol, alpha_val=0.0;
-	int tmp_nredundant,tmp_nredalpha,tmp_nat_orig,tmp_list_redundant[MAX_ATOM],tmp_list_redalpha[MAX_ATOM];
+	double tmp_surf,tmp_wsurf,tmp_vol,tmp_wvol, alpha_val=0.0;
+	int tmp_nredundant,tmp_nredalpha,tmp_nat_orig;
+	double * tmp_coef = malloc((MAX_COORD)*sizeof(double));
+	int * tmp_list_redalpha = malloc((MAX_COORD)*sizeof(int));
+	int * tmp_list_redundant = malloc((MAX_COORD)*sizeof(int));
 	
 	for( i = 0; i<MAX_ATOM; i++ ) tmp_coef[i] = 1.0;
 	
@@ -328,6 +352,10 @@ void get_cavballs( int npoints, double *coords, double *radius ) {
 	for( i = 0; i<ncav; i++ ) {
 		printf("%i %f %f %f %f\n",i+1,x[i],y[i],z[i],r[i]);
 	}
+	
+	free( tmp_coef );
+	free( tmp_list_redalpha );
+	free( tmp_list_redundant );
 }
 
 

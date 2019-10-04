@@ -89,6 +89,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() :
 	residue_surface_cutoff_( 45.0 ),
 	atomic_depth_selection_( -1.0 ),
 	atomic_depth_probe_radius_( 2.3f ),
+	atomic_depth_resolution_( 0.25f ),
 	upper_threshold_( 20 ),
 	jump_num_( 1 ),
 	residue_selector_( /* NULL */ ),
@@ -143,6 +144,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold
 	residue_surface_cutoff_( 45.0 ),
 	atomic_depth_selection_( -1.0 ),
 	atomic_depth_probe_radius_( 2.3f ),
+	atomic_depth_resolution_( 0.25f ),
 	upper_threshold_( upper_threshold ),
 	jump_num_( 1 ),
 	residue_selector_( residue_selector ),
@@ -189,6 +191,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( BuriedUnsatHbondFilter const & r
 	residue_surface_cutoff_( rval.residue_surface_cutoff_ ),
 	atomic_depth_selection_( rval.atomic_depth_selection_ ),
 	atomic_depth_probe_radius_( rval.atomic_depth_probe_radius_ ),
+	atomic_depth_resolution_( rval.atomic_depth_resolution_ ),
 	upper_threshold_( rval.upper_threshold_ ),
 	jump_num_( rval.jump_num_ ),
 	residue_selector_( rval.residue_selector_ ),
@@ -225,6 +228,7 @@ BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 	residue_surface_cutoff_ = tag->getOption<core::Real>( "residue_surface_cutoff", 45.0 );
 	atomic_depth_selection_ = tag->getOption<core::Real>( "atomic_depth_selection", -1.0 );
 	atomic_depth_probe_radius_ = tag->getOption<core::Real>( "atomic_depth_probe_radius", 2.3 );
+	atomic_depth_resolution_ = tag->getOption<core::Real>( "atomic_depth_resolution", 0.25 );
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );
 
@@ -419,7 +423,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 	for ( core::Size resnum : region_to_calculate ) atoms_to_calculate.fill_with( resnum, true );
 
 	if ( atomic_depth_selection_ >= 0 ) {
-		core::id::AtomID_Map< bool > deep_atoms = core::scoring::atomic_depth::atoms_deeper_than( pose, atomic_depth_selection_, ! atomic_depth_deeper_than_, atomic_depth_probe_radius_, true );
+		core::id::AtomID_Map< bool > deep_atoms = core::scoring::atomic_depth::atoms_deeper_than( pose, atomic_depth_selection_, ! atomic_depth_deeper_than_, atomic_depth_probe_radius_, true, atomic_depth_resolution_ );
 		for ( core::Size resnum = 1; resnum <= atoms_to_calculate.size(); resnum++ ) {
 			for ( core::Size atno = 1; atno <= atoms_to_calculate.n_atom(resnum); atno++ ) {
 				atoms_to_calculate( resnum, atno ) = atoms_to_calculate( resnum, atno ) && deep_atoms( resnum, atno );
@@ -647,6 +651,7 @@ void BuriedUnsatHbondFilter::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		+ XMLSchemaAttribute::attribute_w_default( "residue_surface_cutoff", xsct_real, "cutoff to determine which residues are surface if ignore_surface_res=true; default is 45.0 for SASA, 20.0 for VSASA and 2.0 if use_sc_neighbors=true", "45.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_selection", xsct_real, "Include only atoms past a certain depth. Depth is from edge of SASA surface to center of atom. Pose converted to poly-LEU before SASA surface calculation. -1 to disable.", "-1" )
 		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_probe_radius", xsct_real, "Probe radius for atomic_depth_selection. Set this high to exclude pores. Set this low to allow the SASA surface to enter pores.", "2.3" )
+		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_resolution", xsct_real, "Resolution for atomic depth calculations.", "0.25" )
 		+ XMLSchemaAttribute::attribute_w_default( "use_reporter_behavior",xsct_rosetta_bool,"report as filter score the type of unsat turned on; this is now TRUE by default","true")
 		+ XMLSchemaAttribute::attribute_w_default( "use_hbnet_behavior",xsct_rosetta_bool,"no heavy unstas allowed (will return 9999); if no heavy unstas, will count Hpol unsats; FALSE by default; if set to true, will NOT use reporter behavior","false")
 		+ XMLSchemaAttribute::attribute_w_default( "report_all_unsats",xsct_rosetta_bool,"report all unsats","false")

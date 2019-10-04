@@ -11,7 +11,11 @@ int main (int argc, char const *argv[])
 	int i,n,icoef;
 	
 	int npoints;
-	double coords[MAX_COORD],radius[MAX_ATOM],coef[20*MAX_ATOM];
+	// This causes a stack overflow if you go past a certan size
+	// double coords[MAX_COORD],radius[MAX_ATOM],coef[20*MAX_ATOM];
+	double * coords = malloc((MAX_COORD)*sizeof(double));
+	double * radius = malloc((MAX_ATOM)*sizeof(double));
+	double * coef = malloc((20*MAX_ATOM)*sizeof(double));
 	char buf[999];
 	int check;
 	int READ_WEIGHTS = 0;
@@ -116,5 +120,8 @@ int main (int argc, char const *argv[])
 		get_cavballs( npoints, coords, radius );
 	}
 		
+	free( coords );
+	free( radius );
+	free( coef );
 	return 0;
 }

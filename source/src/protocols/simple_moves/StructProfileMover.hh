@@ -53,6 +53,7 @@ public:
 	void save_MSAcst_file(utility::vector1<utility::vector1<core::Real> > profile_score,core::pose::Pose const & pose);
 	void add_MSAcst_to_pose(utility::vector1<utility::vector1<core::Real> > profile_score,core::pose::Pose & pose);
 	core::Real get_cen_deviation(std::vector<core::Real> cenListFrag,utility::vector1<core::Real> cenListModel);
+	void set_profile_save_name( std::string const & name ) { profile_save_filename_ = name; }
 	utility::vector1< core::Real> calc_cenlist(core::pose::Pose const & pose);
 	void apply( Pose & pose ) override;
 	moves::MoverOP clone() const override { return utility::pointer::make_shared< StructProfileMover >( *this ); }
@@ -87,6 +88,7 @@ private:
 	bool eliminate_background_;
 	bool ignore_terminal_res_;
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
+	std::string profile_save_filename_;
 
 };
 

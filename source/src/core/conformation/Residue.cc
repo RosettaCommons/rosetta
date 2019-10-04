@@ -2135,7 +2135,10 @@ Residue::annotated_name( bool const show_all_variants /* = true */ ) const
 	char c = name1();
 	seq += c;
 	if (
-			( !oneletter_code_specifies_aa(c) || name_from_aa( aa_from_oneletter_code(c) ) != name() )
+			// There are 6 names for water that all use 'w'. Rather than ensure the water that
+			//  rosetta defaults to is the same as the last entry stored in setup_name2aa() for aa_h2o,
+			//  I think it's safer to just always write the type of water. - bcov
+			( !oneletter_code_specifies_aa(c) || name_from_aa( aa_from_oneletter_code(c) ) != name() || c == 'w')
 			&& ( show_all_variants || name().substr(0,3) != "CYD")
 			) {
 		seq = seq + '[' + name() + ']';

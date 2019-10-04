@@ -181,6 +181,7 @@ private:
 	core::Real residue_surface_cutoff_;
 	core::Real atomic_depth_selection_;
 	core::Real atomic_depth_probe_radius_;
+	core::Real atomic_depth_resolution_;
 	core::Size upper_threshold_;
 	core::Size jump_num_;
 	core::select::residue_selector::ResidueSelectorOP residue_selector_;

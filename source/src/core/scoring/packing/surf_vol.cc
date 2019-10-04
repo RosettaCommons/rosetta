@@ -135,23 +135,35 @@ get_surf_vol(
 	redi::pstream proc( cmd + " surf_vol" );
 	// proc.precision(20);
 	proc << "NPOINTS" << std::endl << pb.nballs() << std::endl << "COORDS" << std::endl;
+	// std::cout << "NPOINTS" << std::endl << pb.nballs() << std::endl << "COORDS" << std::endl;
 	for( Size i = 1; i <= pb.nballs(); i++ ) {
 		Ball b(pb.ball(i));
 		proc << b.x() << " " << b.y() << " " << b.z() << " " << b.r() + probe_radius << " " << std::endl;
+		//std::cout  << b.x() << " " << b.y() << " " << b.z() << " " << b.r() + probe_radius << " " << std::endl;
 	}
 	// no weights in surf_vol mode
 	proc << "END" << std::endl << redi::peof;
+	// std::cout << "END" << std::endl;
 
 	result.tot_surf = 0.0;
 	result.tot_vol  = 0.0;
 	Size index;
 	Real s,v;
+	std::string ss,sv;
 	for( Size i = 1; i <= pb.nballs(); i++ ) {
-		proc >> index >> s >> v;
+		proc >> index >> ss >> sv;
+		// std::cout << index << " " << ss << " " << sv << std::endl;
+		s = utility::string2Real( ss );
+		v = utility::string2Real( sv );
+		if ( utility::isnan( s ) || utility::isnan( v ) ) {
+			std::cerr << "WARNING!! DALPHABALL output nan at index " << index << std::endl;
+
+		}
 		if( i != index ) {
 			std::cerr << "DALPHABALL output indicies not matching! " << i << "!=" << index << std::endl;
-			std::exit(-1);
+			utility_exit();
 		}
+
 		result.surf[ pb.index_to_id(i) ] = s;
 		result.vol [ pb.index_to_id(i) ] = v;
 		result.tot_surf += s;

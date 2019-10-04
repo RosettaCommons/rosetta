@@ -350,15 +350,15 @@ public:
 
 		//create Z axis
 		axis const zaxis = cross_product( zinc-p1a, zinc-p1b );
-		zmover_ = new protocols::rigid::RollMover( chain_begin, chain_end, -10, 10, zaxis, zinc );
+		zmover_ = new protocols::rigid::RollMover( chain_begin, chain_end, -10, 10, zaxis, zinc, true );
 		//create Y axis
 		core::Angle const create_y_rot( angle_of(zinc-p1a, zinc-p1b) );
 		numeric::xyzMatrix< core::Real > z_rotation_matrix( numeric::rotation_matrix( zaxis, create_y_rot ) );
 		axis const yaxis = ( z_rotation_matrix*(zinc - p1a) );
-		ymover_ = new protocols::rigid::RollMover( chain_begin, chain_end, -10, 10, yaxis, zinc );
+		ymover_ = new protocols::rigid::RollMover( chain_begin, chain_end, -10, 10, yaxis, zinc, true );
 		//create X axis
 		axis const xaxis = cross_product(zaxis, yaxis);
-		xmover_ = new protocols::rigid::RollMover( chain_begin, chain_end, -10, 10, xaxis, zinc );
+		xmover_ = new protocols::rigid::RollMover( chain_begin, chain_end, -10, 10, xaxis, zinc, true );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////

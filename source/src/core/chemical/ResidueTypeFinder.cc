@@ -1104,6 +1104,10 @@ ResidueTypeFinder::filter_special_cases( ResidueTypeCOPs const & rsd_types )  co
 	bool const actually_check_nucleic_acid_virtual_phosphates =
 		check_nucleic_acid_virtual_phosphates_ && !atom_names_soft_.has_value( "P" );
 
+	bool const is_water_and_user_specified = ( aa_ == AA::aa_h2o || name1_ == 'w' ) &&
+		option[ OptionKeys::in::water_type_if_unspecified ].user();
+	std::string const & user_water_name = option[ OptionKeys::in::water_type_if_unspecified ]();
+
 	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
 		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
 
@@ -1115,12 +1119,19 @@ ResidueTypeFinder::filter_special_cases( ResidueTypeCOPs const & rsd_types )  co
 					&& !rsd_type->has_variant_type( FIVE_PRIME_PACKABLE_TRIPHOSPHATE ) ) continue;
 		}
 
+		if ( is_water_and_user_specified ) {
+			if ( rsd_type->name() != user_water_name ) continue;
+		}
+
 		filtered_rsd_types.push_back( rsd_type );
 	}
 	if ( TR.Debug.visible() && filtered_rsd_types.empty() && ! rsd_types.empty() ) {
 		TR.Debug << "No ResidueTypes remain after filtering for special cases:" << std::endl;
 		if ( actually_check_nucleic_acid_virtual_phosphates ) {
 			TR.Debug << "    * Nucleic acid has virtual phosphates." << std::endl;
+		}
+		if ( is_water_and_user_specified ) {
+			TR << "    * Water residue: No match for user specified name: \"" << user_water_name << "\"" << std::endl;
 		}
 	}
 	return filtered_rsd_types;

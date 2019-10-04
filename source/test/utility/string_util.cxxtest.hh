@@ -210,7 +210,7 @@ public:
 		query_sol.push_back(std::make_pair("CG1", " CG1"));
 		query_sol.push_back(std::make_pair("PDCA", "PDCA"));
 		query_sol.push_back(std::make_pair("", "    "));
-		for ( auto const & q_s : query_sol) {
+		for ( auto const & q_s : query_sol ) {
 			TS_ASSERT_EQUALS(utility::pad_atom_name(q_s.first), q_s.second);
 		}
 		TS_ASSERT_THROWS(utility::pad_atom_name("12345"), utility::excn::Exception & );
@@ -349,6 +349,23 @@ public:
 	void test_contains() {
 		std::string s = "MY%STRING";
 		TS_ASSERT( utility::contains( s, "%" ));
+	}
+
+	void test_trims() {
+
+		std::string to_trim = "\r\t\n trim \r\t\n me \r\t\n ";
+
+		std::string trimmed = to_trim;
+		utility::trim(trimmed, "\r\t\n ");
+		std::string ltrimmed = to_trim;
+		utility::ltrim(ltrimmed, "\r\t\n ");
+		std::string rtrimmed = to_trim;
+		utility::rtrim(rtrimmed, "\r\t\n ");
+
+		TS_ASSERT_EQUALS( trimmed, "trim \r\t\n me");
+		TS_ASSERT_EQUALS( ltrimmed, "trim \r\t\n me \r\t\n ");
+		TS_ASSERT_EQUALS( rtrimmed, "\r\t\n trim \r\t\n me");
+
 	}
 
 };

@@ -174,7 +174,7 @@ int ShapeComplementarityCalculator::Calc()
 		for ( int i = 0; i < 2; ++i ) {
 			run_.results.surface[i].trimmedArea = TrimPeripheralBand(run_.dots[i], run_.trimmed_dots[i]);
 			if ( !run_.trimmed_dots[i].size() ) {
-				throw CREATE_EXCEPTION(utility::excn::Exception, "No molecular dots for surface " + utility::to_string( i ));
+				throw CREATE_EXCEPTION(ShapeComplementarityCalculatorException, ("No molecular dots for surface " + utility::to_string( i )).c_str());
 			}
 			run_.results.surface[i].nTrimmedDots = run_.trimmed_dots[i].size();
 			run_.results.surface[i].nAllDots = run_.dots[i].size();
