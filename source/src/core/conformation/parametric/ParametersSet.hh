@@ -21,7 +21,7 @@
 
 // Package headers
 #include <core/conformation/parametric/Parameters.fwd.hh>
-#include <core/conformation/parametric/Parameters.hh> // only MSVC
+#include <core/conformation/parametric/Parameters.hh>  //THIS SHOULD CHANGE TO Parameters.fwd.hh.  (Note that that's included in the previous line, so this line should just be deleted.)
 #include <core/conformation/Conformation.fwd.hh>
 
 // Project headers
@@ -76,12 +76,12 @@ public:
 	/// @brief Delete all owning pointers in the parameters_ list and reset the list.
 	///
 	virtual
-	void clear_parameters_list() { parameters_.clear(); return; }
+	void clear_parameters_list();
 
 	/// @brief Add a Parameters object to the set included in this ParametersSet object.
 	///
 	virtual
-	void add_parameters( ParametersOP new_parameters ) { parameters_.push_back(new_parameters); return; }
+	void add_parameters( ParametersOP new_parameters );
 
 	/// @brief Only for copying Conformation objects, this ensures that the new ParametersSet object's
 	/// Parameters objects have lists of ResidueOPs that point to residues in the new Conformation object,
@@ -89,24 +89,15 @@ public:
 	void update_residue_links( core::conformation::Conformation &new_conf );
 
 	/// @brief Get the number of Parameters objects associated with this ParametersSet.
-	///
-	core::Size n_parameters() const { return parameters_.size(); }
+	core::Size n_parameters() const;
 
 	/// @brief Get a Parameters object by index.
 	///
-	ParametersOP parameters( core::Size const index ) {
-		runtime_assert_string_msg( index>0 && index<=parameters_.size(),
-			"In core::conformation::parametric::ParametersSet::parameters() : Index out of range.  Expect 0 < index <= number of Parameters objects." );
-		return parameters_[index];
-	}
+	ParametersOP parameters( core::Size const index );
 
 	/// @brief Get a Parameters object by index (const-access).
 	///
-	ParametersCOP parameters( core::Size const index ) const {
-		runtime_assert_string_msg( index>0 && index<=parameters_.size(),
-			"In core::conformation::parametric::ParametersSet::parameters() : Index out of range.  Expect 0 < index <= number of Parameters objects." );
-		return parameters_[index];
-	}
+	ParametersCOP parameters( core::Size const index ) const;
 
 	/// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.
 	/// @details Default function can be overridden by derived classes.  The default message just says that the

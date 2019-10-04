@@ -75,103 +75,55 @@ public:
 	inline ParametersAP get_self_weak_ptr() { return ParametersAP( shared_from_this() ); }
 
 	/// @brief Add a residue to the list of residues that these parameters describe.
-	///
-	virtual
-	void add_residue( core::conformation::ResidueCOP residue ) { residue_list_.push_back(residue); return; }
+	void add_residue( core::conformation::ResidueCOP residue );
 
 	/// @brief Get an owning pointer to a residue in the list of residues that these parameters describe.
-	///
-	virtual
-	core::conformation::ResidueCOP residue( core::Size const index ) {
-		debug_assert(index <= residue_list_.size());
-		return residue_list_[index];
-	}
-
-	/// @brief Get a const owning pointer to a residue in the list of residues that these parameters describe.
-	///
-	virtual
-	core::conformation::ResidueCOP residue_cop( core::Size const index ) const {
-		debug_assert(index <= residue_list_.size());
-		return residue_list_[index];
-	}
+	core::conformation::ResidueCOP residue( core::Size const index ) const;
 
 	/// @brief Get a const owning pointer to the first residue in the list of residues that these parameters describe.
 	/// @details  Note that this might not be the first residue in linear sequence, if the residues were put in in non-
 	/// sequential order or the residue numbering has changed.
-	virtual
-	inline
-	core::conformation::ResidueCOP first_residue() const {
-		debug_assert( residue_list_.size() >= 1);
-		return residue_list_[1];
-	}
+	core::conformation::ResidueCOP first_residue() const;
 
 	/// @brief Get a const owning pointer to the last residue in the list of residues that these parameters describe.
 	/// @details  Note that this might not be the last residue in linear sequence, if the residues were put in in non-
 	/// sequential order or the residue numbering has changed.
-	virtual
-	inline
-	core::conformation::ResidueCOP last_residue() const {
-		debug_assert( residue_list_.size() >= 1);
-		return residue_list_[residue_list_.size()];
-	}
+	core::conformation::ResidueCOP last_residue() const;
 
 	/// @brief Get the index of the first residue.
 	/// @details MUST BE REWRITTEN when the OP issue is resolved.
-	virtual
-	inline core::Size first_residue_index() const {
-		debug_assert( residue_list_.size() >=1 );
-		return residue_list_[1]->seqpos();
-	}
+	core::Size first_residue_index() const;
 
 	/// @brief Get the index of the last residue.
 	/// @details MUST BE REWRITTEN when the OP issue is resolved.
-	virtual
-	inline core::Size last_residue_index() const {
-		debug_assert( residue_list_.size() >=1 );
-		return residue_list_[residue_list_.size()]->seqpos();
-	}
+	core::Size last_residue_index() const;
 
 	/// @brief Returns the number (count) of residues that these parameters describe.
-	///
-	virtual
-	inline core::Size n_residue() const {
-		return residue_list_.size();
-	}
+	core::Size n_residue() const;
 
 	/// @brief Clears the list of residues that these parameters describe.
 	///
-	virtual
-	inline void reset_residue_list() { residue_list_.clear(); return; }
+	void reset_residue_list();
 
 	/// @brief Clears the sampling and perturbing information in the individual parameters.
 	void reset_sampling_and_perturbing_info() const;
 
 	/// @brief Assign an element in the residue list to be an owning pointer to an existing residue.
-	///
-	virtual
-	inline
-	void set_residue( core::Size const index, core::conformation::ResidueCOP existing_residue ) {
-		debug_assert( index > 0 && index <= residue_list_.size() );
-		residue_list_[index] = existing_residue;
-		return;
-	}
+	void set_residue( core::Size const index, core::conformation::ResidueCOP existing_residue );
 
-	/// @brief Get the number of parameters stored in this Parameters obejct.
-	inline core::Size num_parameters() const { return parameter_list_.size(); }
+	/// @brief Get the number of parameters stored in this Parameters object.
+	core::Size num_parameters() const;
 
 	/// @brief Add a parameter.
 	/// @details Does NOT clone the parameter, but stores the OP directly.
-	virtual
 	void add_parameter( ParameterOP parameter );
 
 	/// @brief Access a parameter, by index.
 	/// @details Non-const access.
-	virtual
 	ParameterOP parameter_op( core::Size const index ) const;
 
 	/// @brief Access a parameter, by index.
 	/// @details Const access.
-	virtual
 	ParameterCOP parameter_cop( core::Size const index ) const;
 
 	/// @brief Replace one of the contained parameter objects with

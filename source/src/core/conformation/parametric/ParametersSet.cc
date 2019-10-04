@@ -82,6 +82,22 @@ ParametersSet::clone() const
 	return utility::pointer::make_shared< ParametersSet >( *this );
 }
 
+/// @brief Delete all owning pointers in the parameters_ list and reset the list.
+///
+void
+ParametersSet::clear_parameters_list() {
+	parameters_.clear();
+}
+
+/// @brief Add a Parameters object to the set included in this ParametersSet object.
+///
+void
+ParametersSet::add_parameters(
+	ParametersOP new_parameters
+) {
+	parameters_.push_back(new_parameters);
+}
+
 /// @brief Only for copying Conformation objects, this ensures that the new ParametersSet object's
 /// Parameters objects have lists of ResidueOPs that point to residues in the new Conformation object,
 /// rather than to residues that only exist in the Parameters objects.
@@ -98,6 +114,30 @@ void ParametersSet::update_residue_links( core::conformation::Conformation &new_
 		}
 	}
 	return;
+}
+
+/// @brief Get the number of Parameters objects associated with this ParametersSet.
+core::Size
+ParametersSet::n_parameters() const {
+	return parameters_.size();
+}
+
+/// @brief Get a Parameters object by index.
+///
+ParametersOP
+ParametersSet::parameters( core::Size const index ) {
+	runtime_assert_string_msg( index>0 && index<=parameters_.size(),
+		"In core::conformation::parametric::ParametersSet::parameters() : Index out of range.  Expect 0 < index <= number of Parameters objects." );
+	return parameters_[index];
+}
+
+/// @brief Get a Parameters object by index (const-access).
+///
+ParametersCOP
+ParametersSet::parameters( core::Size const index ) const {
+	runtime_assert_string_msg( index>0 && index<=parameters_.size(),
+		"In core::conformation::parametric::ParametersSet::parameters() : Index out of range.  Expect 0 < index <= number of Parameters objects." );
+	return parameters_[index];
 }
 
 /// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.

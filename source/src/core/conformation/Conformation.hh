@@ -59,7 +59,7 @@
 #include <core/conformation/membrane/MembraneInfo.fwd.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.fwd.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSetObserver.fwd.hh>
-#include <core/conformation/parametric/ParametersSet.hh>
+#include <core/conformation/parametric/ParametersSet.hh> //THIS SHOULD CHANGE TO ParametersSet.fwd.hh.
 #include <core/conformation/parametric/Parameters.fwd.hh>
 #include <core/conformation/ConformationTests.fwd.hh> //Forward declaration of unit test class needed for friendship
 
@@ -893,58 +893,28 @@ public: // Access to the ParametersSets -- Vikram K. Mulligan (vmullig@uw.edu), 
 	/// @brief Create a new (empty) ParametersSet object and add its owning pointer
 	/// to the current Conformation object.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	virtual
-	void create_new_parameters_set() {
-		parameters_set_.push_back( utility::pointer::make_shared< ParametersSet >() );
-		return;
-	}
+	void create_new_parameters_set();
 
 	/// @brief Add a (predefined) ParametersSet object (via its owning pointer)
 	/// to the current Conformation object.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	virtual
-	void add_parameters_set( ParametersSetOP newset ) {
-		parameters_set_.push_back( newset );
-		return;
-	}
+	void add_parameters_set( ParametersSetOP newset );
 
 	/// @brief Get the number of parameters sets defined for this Conformation.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	virtual
-	core::Size n_parameters_sets() const {
-		return parameters_set_.size();
-	}
+	core::Size n_parameters_sets() const;
 
 	/// @brief Delete the list of ParametersSetOP objects.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	virtual
-	void clear_parameters_set_list() {
-		parameters_set_.clear();
-		return;
-	}
+	void clear_parameters_set_list();
 
 	/// @brief Access one of the ParametersSets objects linked to this Conformation.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	virtual
-	ParametersSetOP parameters_set( core::Size const index ) {
-		runtime_assert_string_msg(index > 0 && index <= parameters_set_.size(),
-			"In core::conformation::Conformation::parameters_set() : Index is out of range. "
-			"Index value is expected to be greater than zero and less than or equal to "
-			"the number of parameters sets in this Conformation object.");
-		return parameters_set_[index];
-	}
+	ParametersSetOP parameters_set( core::Size const index );
 
 	/// @brief Const access to one of the ParametersSets objects linked to this Conformation.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	virtual
-	ParametersSetCOP parameters_set( core::Size const index ) const {
-		runtime_assert_string_msg(index > 0 && index <= parameters_set_.size(),
-			"In core::conformation::Conformation::parameters_set() : Index is out of range. "
-			"Index value is expected to be greater than zero and less than or equal to "
-			"the number of parameters sets in this Conformation object.");
-		return parameters_set_[index];
-	}
-
+	ParametersSetCOP parameters_set( core::Size const index ) const;
 
 public:  // Conformation Cutting/Pasting
 

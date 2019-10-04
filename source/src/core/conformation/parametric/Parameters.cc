@@ -22,7 +22,8 @@
 // Basic headers
 #include <basic/Tracer.hh>
 
-// Numeric headers
+// Core headers
+#include <core/conformation/Residue.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -89,12 +90,90 @@ Parameters::clone() const
 	return utility::pointer::make_shared< Parameters >( *this );
 }
 
+/// @brief Add a residue to the list of residues that these parameters describe.
+void
+Parameters::add_residue(
+	core::conformation::ResidueCOP residue
+) {
+	residue_list_.push_back(residue);
+}
+
+/// @brief Get an owning pointer to a residue in the list of residues that these parameters describe.
+core::conformation::ResidueCOP
+Parameters::residue( core::Size const index ) const {
+	debug_assert(index <= residue_list_.size());
+	return residue_list_[index];
+}
+
+/// @brief Get a const owning pointer to the first residue in the list of residues that these parameters describe.
+/// @details  Note that this might not be the first residue in linear sequence, if the residues were put in in non-
+/// sequential order or the residue numbering has changed.
+core::conformation::ResidueCOP
+Parameters::first_residue() const {
+	debug_assert( residue_list_.size() >= 1);
+	return residue_list_[1];
+}
+
+/// @brief Get a const owning pointer to the last residue in the list of residues that these parameters describe.
+/// @details  Note that this might not be the last residue in linear sequence, if the residues were put in in non-
+/// sequential order or the residue numbering has changed.
+core::conformation::ResidueCOP
+Parameters::last_residue() const {
+	debug_assert( residue_list_.size() >= 1);
+	return residue_list_[residue_list_.size()];
+}
+
+/// @brief Get the index of the first residue.
+/// @details MUST BE REWRITTEN when the OP issue is resolved.
+core::Size
+Parameters::first_residue_index() const {
+	debug_assert( residue_list_.size() >=1 );
+	return residue_list_[1]->seqpos();
+}
+
+/// @brief Get the index of the last residue.
+/// @details MUST BE REWRITTEN when the OP issue is resolved.
+core::Size
+Parameters::last_residue_index() const {
+	debug_assert( residue_list_.size() >=1 );
+	return residue_list_[residue_list_.size()]->seqpos();
+}
+
+/// @brief Returns the number (count) of residues that these parameters describe.
+core::Size
+Parameters::n_residue() const {
+	return residue_list_.size();
+}
+
+/// @brief Clears the list of residues that these parameters describe.
+///
+void
+Parameters::reset_residue_list() {
+	residue_list_.clear();
+}
+
 /// @brief Clears the sampling and perturbing information in the individual parameters.
 void
 Parameters::reset_sampling_and_perturbing_info() const {
 	for ( core::Size i(1), imax(parameter_list_.size()); i<=imax; ++i ) {
 		parameter_list_[i]->reset_sampling_and_perturbation_settings();
 	}
+}
+
+/// @brief Assign an element in the residue list to be an owning pointer to an existing residue.
+void
+Parameters::set_residue(
+	core::Size const index,
+	core::conformation::ResidueCOP existing_residue
+) {
+	debug_assert( index > 0 && index <= residue_list_.size() );
+	residue_list_[index] = existing_residue;
+}
+
+/// @brief Get the number of parameters stored in this Parameters object.
+core::Size
+Parameters::num_parameters() const {
+	return parameter_list_.size();
 }
 
 /// @brief Add a parameter.

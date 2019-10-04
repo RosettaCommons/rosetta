@@ -2169,6 +2169,59 @@ Conformation::fix_disulfides( utility::vector1< std::pair< Size, Size > > const 
 	} //done with this disulfide
 }
 
+/// @brief Create a new (empty) ParametersSet object and add its owning pointer
+/// to the current Conformation object.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+Conformation::create_new_parameters_set() {
+	parameters_set_.push_back( utility::pointer::make_shared< ParametersSet >() );
+}
+
+/// @brief Add a (predefined) ParametersSet object (via its owning pointer)
+/// to the current Conformation object.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+Conformation::add_parameters_set( ParametersSetOP newset ) {
+	parameters_set_.push_back( newset );
+}
+
+/// @brief Get the number of parameters sets defined for this Conformation.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+core::Size
+Conformation::n_parameters_sets() const {
+	return parameters_set_.size();
+}
+
+/// @brief Delete the list of ParametersSetOP objects.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+Conformation::clear_parameters_set_list() {
+	parameters_set_.clear();
+}
+
+/// @brief Access one of the ParametersSets objects linked to this Conformation.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+core::conformation::parametric::ParametersSetOP
+Conformation::parameters_set( core::Size const index ) {
+	runtime_assert_string_msg(index > 0 && index <= parameters_set_.size(),
+		"In core::conformation::Conformation::parameters_set() : Index is out of range. "
+		"Index value is expected to be greater than zero and less than or equal to "
+		"the number of parameters sets in this Conformation object.");
+	return parameters_set_[index];
+}
+
+/// @brief Const access to one of the ParametersSets objects linked to this Conformation.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+core::conformation::parametric::ParametersSetCOP
+Conformation::parameters_set( core::Size const index ) const {
+	runtime_assert_string_msg(index > 0 && index <= parameters_set_.size(),
+		"In core::conformation::Conformation::parameters_set() : Index is out of range. "
+		"Index value is expected to be greater than zero and less than or equal to "
+		"the number of parameters sets in this Conformation object.");
+	return parameters_set_[index];
+}
+
+
 // Detect existing disulfides from the protein structure.
 /// @details For full atom confomations, looks at SG-SG distance. If the SG-SG
 /// are about 2.02 A apart, calls it a disulfide bond. For centroid and other
@@ -2560,7 +2613,7 @@ Conformation::insert_conformation_by_jump(
 					core::Size n_res( conf.parameters_set(iset)->parameters(iparams)->n_residue() );
 					if ( n_res == 0 ) continue;
 					for ( core::Size ires=1; ires<=n_res; ++ires ) { //Loop through all Residue objects in this Parameters object
-						core::Size old_index( conf.parameters_set(iset)->parameters(iparams)->residue_cop(ires)->seqpos() );
+						core::Size old_index( conf.parameters_set(iset)->parameters(iparams)->residue(ires)->seqpos() );
 						core::Size new_index( old_index + insert_seqpos - 1 );
 						//Replace the owning pointer to the Residue object with one pointing at the corresponding residue in this Conformation object:
 						parameters_set(curset)->parameters(iparams)->set_residue(ires, residue_cop(new_index)  );
