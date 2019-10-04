@@ -61,15 +61,8 @@ class Viewer:
         
         self.modules += [other]
         
-        return Viewer(
-            poses=self.poses,
-            pdbstrings=self.pdbstrings,
-            window_size=self.window_size,
-            modules=self.modules,
-            delay=self.delay,
-            continuous_update=self.continuous_update,
-            *args, **kwargs
-        )
+        return Viewer(poses=self.poses, pdbstrings=self.pdbstrings, window_size=self.window_size, modules=self.modules,
+            delay=self.delay, continuous_update=self.continuous_update, *args, **kwargs)
 
     def __radd__(self, other):
 
@@ -215,7 +208,7 @@ def init(packed_and_poses_and_pdbs=None, window_size=None, modules=None,
         `delay`
         
         `float` time delay in seconds before rendering the Viewer in a Jupyter notebook, which is useful to prevent
-        overburdening the Jupyter notebook client if `for` looping over quick modifications to a `Pose`.
+        overburdening the Jupyter notebook client if `for` looping over quick modifications to a `Pose`, and should be >= 0.
         Default: 0.25
 
     fifth : optional
@@ -294,12 +287,17 @@ def init(packed_and_poses_and_pdbs=None, window_size=None, modules=None,
     @functools.singledispatch
     def to_delay(obj):
         _logger.warning(
-            "Input argument 'delay' should be an instance of float. Setting 'delay' to default."
+            "Input argument 'delay' should be an instance of float that is >= 0. Setting 'delay' to default."
         )
         return _default_delay
 
     to_delay.register(type(None), lambda obj: _default_delay)
     to_delay.register(int, lambda obj: float(obj))
+
+    @to_delay.register(float)
+    def _(obj):
+        assert obj >= 0, "Input argument 'delay' must be an instance of float that is >= 0."
+        return obj
 
     @to_delay.register(str)
     def _(obj):

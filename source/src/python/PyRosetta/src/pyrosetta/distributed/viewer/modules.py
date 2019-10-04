@@ -185,11 +185,8 @@ class setStyle:
 
     Example:
     
-    view = viewer.init(poses) \
-        + viewer.setStyle(
-            command=
-                {"hetflag": True}, {"stick": {"singleBond": False, "colorscheme": "whiteCarbon", "radius": 0.25}}
-        )
+    command = {"hetflag": True}, {"stick": {"singleBond": False, "colorscheme": "greyCarbon", "radius": 0.15}}
+    view = viewer.init(poses) + viewer.setStyle(command=command)
     """
     def __init__(self, residue_selector=None,
                  cartoon=True, cartoon_color="spectrum",
@@ -223,9 +220,9 @@ class setStyle:
     def apply(self, viewer, pose, pdbstring):
 
         if self.command:
-            if isinstance(cmd, tuple):
+            if isinstance(self.command, tuple):
                 viewer.setStyle(*self.command)
-            elif isinstance(cmd, dict):
+            elif isinstance(self.command, dict):
                 viewer.setStyle(self.command)
             else:
                 raise ValueError("setStyle argument 'command' should be an instance of tuple or dict.")
