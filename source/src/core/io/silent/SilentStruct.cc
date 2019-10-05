@@ -652,7 +652,12 @@ void SilentStruct::parse_energies(
 
 	if ( ! decoy_tag_set ) {
 		decoy_tag( prev_tag );
-		decoy_tag_set = true;
+		//decoy_tag_set = true;
+		// Note: clang_analysis complains about the line above.
+		// I'm commenting it out, since decoy_tag_set is never
+		// read after this point, but any developer who uses this
+		// variable after this point should uncomment it.
+		//      --VKM, 5 Oct. 2019
 		tr.Warning << "Warning: there were missing columns in the \"SCORE:\" line.  Using the last column (\"" << prev_tag << "\") as the decoy tag." << std::endl;
 	}
 
