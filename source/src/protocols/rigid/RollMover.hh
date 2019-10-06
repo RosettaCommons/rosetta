@@ -89,7 +89,7 @@ private:
 	core::Real max_angle_;
 	numeric::xyzVector< core::Real > axis_;
 	/// @brief If true, overwrite the translate_ vector with the apply() Pose's center of mass.
-	bool use_com_ = false;
+	//bool use_com_ = false;
 	numeric::xyzVector< core::Real > translate_;
 	bool random_roll_;
 	core::Real random_roll_angle_;
