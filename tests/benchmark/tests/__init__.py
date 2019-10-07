@@ -301,10 +301,10 @@ def parallel_execute(name, jobs, rosetta_dir, working_dir, cpu_count, time=16):
     '''
     allowed_time = int(time*60)
     job_file_name = working_dir + '/' + name
-    with file(job_file_name + '.json', 'w') as f: json.dump(jobs, f, sort_keys=True, indent=2) # JSON handles unicode internally
+    with open(job_file_name + '.json', 'w') as f: json.dump(jobs, f, sort_keys=True, indent=2) # JSON handles unicode internally
     execute("Running {} in parallel with {} CPU's...".format(name, cpu_count), 'cd {working_dir} && ulimit -t {allowed_time} && {rosetta_dir}/tests/benchmark/util/parallel.py -j{cpu_count} {job_file_name}.json'.format(**vars()))
 
-    return json.load( file(job_file_name+'.results.json') )
+    with open(job_file_name+'.results.json') as f: return json.load(f)
 
 
 def calculate_extension(platform, mode='release'):

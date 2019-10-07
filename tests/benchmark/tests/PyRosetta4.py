@@ -103,7 +103,7 @@ def run_notebook_tests(rosetta_dir, working_dir, platform, config, hpc_driver, v
     memory = config['memory'];  jobs = config['cpu_count'];  skip_compile = config.get('skip_compile', False)
     TR = Tracer(verbose)
 
-    P = build_and_install_pyrosetta(working_dir, rosetta_dir, platform, jobs, config, mode='MinSizeRel', packages='ipython nbconvert', skip_compile=skip_compile)
+    P = build_and_install_pyrosetta(working_dir, rosetta_dir, platform, jobs, config, mode='MinSizeRel', packages='ipython nbconvert matplotlib biopython', skip_compile=skip_compile)
 
     codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(P.output)
 
@@ -118,14 +118,31 @@ def run_notebook_tests(rosetta_dir, working_dir, platform, config, hpc_driver, v
         notebooks = [ f[:-len('.ipynb')] for f in os.listdir(notebooks_path) if f.endswith('.ipynb') and f not in ('index.ipynb', 'toc.ipynb') ]
         TR(f'notebooks: {notebooks}')
 
+        jobs = {}
+        for n in notebooks:
+            command_line = f'cd {notebooks_path} && {P.python_virtual_environment.python} -m nbconvert --to script {n}.ipynb && export DEBUG="DEBUG" && {rosetta_dir}/source/test/timelimit.py 8 {P.python_virtual_environment.bin}/ipython {n}.py'
+            jobs[n] = command_line
+
+        notebook_test_results = parallel_execute('notebook_tests', jobs, rosetta_dir, working_dir, config['cpu_count'], time=60)
+
         sub_tests = {}
         test_state = False
-        for n in notebooks:
-            command_line = f'cd {notebooks_path} && {P.python_virtual_environment.python} -m nbconvert --to script {n}.ipynb && {rosetta_dir}/source/test/timelimit.py 8 {P.python_virtual_environment.python} {n}.py'
-            res, output = execute(f'Running converting and running notebook {n}...', command_line, return_='tuple', add_message_and_command_line_to_output=True)
+        for n, d in notebook_test_results.items():
+            res = d['result']
+            output = d['output']
+
+            output = jobs[n] + '\n' + output
             sub_tests[n] = {_StateKey_ : _S_failed_ if res else _S_passed_, _LogKey_ : output }
             test_state |= res
             with open(f'{notebooks_path}/{n}.output', 'w') as f: f.write(output)
+
+
+        # for n in notebooks:
+        #     command_line = f'cd {notebooks_path} && {P.python_virtual_environment.python} -m nbconvert --to script {n}.ipynb && {rosetta_dir}/source/test/timelimit.py 8 {P.python_virtual_environment.python} {n}.py'
+        #     res, output = execute(f'Running converting and running notebook {n}...', command_line, return_='tuple', add_message_and_command_line_to_output=True)
+        #     sub_tests[n] = {_StateKey_ : _S_failed_ if res else _S_passed_, _LogKey_ : output }
+        #     test_state |= res
+        #     with open(f'{notebooks_path}/{n}.output', 'w') as f: f.write(output)
 
         results = {_StateKey_ : _S_failed_ if test_state else _S_passed_, _ResultsKey_: {_TestsKey_ : sub_tests}, _LogKey_ : P.output }
 
