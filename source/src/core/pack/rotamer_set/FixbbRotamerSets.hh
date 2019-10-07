@@ -55,21 +55,39 @@ public:
 	FixbbRotamerSets();
 	~FixbbRotamerSets() override;
 
+	// we want to make sure that this class in bound in PyRosetta so PyRosetts `knows` that core::pack::rotamer_set::RotamerSets is descendant of core::pack_basic::RotamerSetsBase
+	// and for that we need all intermediate base classes to be bindable in Python, however classes with pure-virtual version of both const and non-const functions is not bindable in Python
+	// so we have to change class definition slightly for PyRosetta and declared `const` version of function with default implementation
+	// Note that we do not expect `FixbbRotamerSets` to be derived-from in Python - we just need it to be bound in Python
+#ifdef PYROSETTA
+	virtual
+	RotamerSetCOP
+	rotamer_set_for_residue( uint resid ) const { return RotamerSetCOP(); }
+#else
 	virtual
 	RotamerSetCOP
 	rotamer_set_for_residue( uint resid ) const = 0;
+#endif
 
 	virtual
 	RotamerSetOP
 	rotamer_set_for_residue( uint resid ) = 0;
 
+
+#ifdef PYROSETTA
+	virtual
+	RotamerSetCOP
+	rotamer_set_for_moltenresidue( uint moltenresid ) const { return RotamerSetCOP(); }
+#else
 	virtual
 	RotamerSetCOP
 	rotamer_set_for_moltenresidue( uint moltenresid ) const = 0;
+#endif
 
 	virtual
 	RotamerSetOP
 	rotamer_set_for_moltenresidue( uint moltenresid ) = 0;
+
 
 	virtual
 	RotamerSetVector::const_iterator begin() = 0;

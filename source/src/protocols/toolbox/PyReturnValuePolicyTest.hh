@@ -111,6 +111,68 @@ inline void take_pose_op(core::pose::PoseOP const &) {}
 void out_of_bounds_memory_access();
 
 
+
+
+// PyRosetta inheritance tests
+namespace py_inheritance_test {
+class Base : public utility::pointer::ReferenceCount {
+public:
+	Base() : data_(0) {};
+	~Base() override = default;
+
+	virtual std::string who_am_i() { data_++; return "Base"; }
+private:
+	int data_;
+};
+
+
+class O_1A : public Base {
+public:
+	std::string who_am_i() override { return "B1A"; }
+};
+
+class O_1B : public Base {
+public:
+	std::string who_am_i() override { return "O_1B"; }
+};
+
+
+
+class O_2A : public O_1A {
+public:
+	std::string who_am_i() override { return "O_2A"; }
+};
+
+class O_2B : public O_1B {
+public:
+	std::string who_am_i() override { return "O_2B"; }
+};
+
+
+
+class O_2A2B : public O_2A, public O_2B {
+public:
+	std::string who_am_i() override { return "O_2A2B"; }
+};
+
+
+inline std::string take_Base_reference(Base &r) { return r.who_am_i(); }
+inline std::string take_Base_pointer  (Base *p) { return p->who_am_i(); }
+inline std::string take_Base_SP       (utility::pointer::shared_ptr<Base> &s) { return s->who_am_i(); }
+
+inline std::string take_O_1A_reference(O_1A &r) { return r.who_am_i(); }
+inline std::string take_O_1A_pointer  (O_1A *p) { return p->who_am_i(); }
+inline std::string take_O_1A_SP       (utility::pointer::shared_ptr<O_1A> &s) { return s->who_am_i(); }
+
+inline std::string take_O_2A_reference(O_2A &r) { return r.who_am_i(); }
+inline std::string take_O_2A_pointer  (O_2A *p) { return p->who_am_i(); }
+inline std::string take_O_2A_SP       (utility::pointer::shared_ptr<O_2A> &s) { return s->who_am_i(); }
+
+
+
+} //namespace py_inheritance_test
+
+
 } //toolbox
 } //protocols
 
