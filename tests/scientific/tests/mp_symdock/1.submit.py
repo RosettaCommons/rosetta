@@ -33,7 +33,7 @@ command_line = '''
 -in:file:s {rosetta_dir}/tests/scientific/data/{testname}/{target}_opm__0001_INPUT.pdb
 -in:file:native {rosetta_dir}/tests/scientific/data/{testname}/{target}_opm__0001.pdb
 -mp:setup:spanfiles {rosetta_dir}/tests/scientific/data/{testname}/{target}_opm_A.span
--mp:scoring:hbond
+-mp:scoring:hbond 0
 -nstruct {nstruct}
 -symmetry:symmetry_definition {rosetta_dir}/tests/scientific/data/{testname}/{target}.sym
 -symmetry:initialize_rigid_body_dofs

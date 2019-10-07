@@ -36,7 +36,7 @@ command_line = '''
 -out:file:scorefile {prefix}/{target}.score
 -out:path:pdb {prefix}
 -score:weights mpframework_docking_fa_2015.wts
--mp:scoring:hbond 1
+-mp:scoring:hbond 0
 -nstruct {nstruct}
 -docking:partners {target[5]}_{target[6]}
 -dock_pert 3 8
