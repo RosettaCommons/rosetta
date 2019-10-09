@@ -69,13 +69,13 @@ def main(args):
         print (targets[i], "\t", end=""),
         val_cutoff = check_min_e( y, min_e_cutoffs[targets[i]] )
         target_results.update( val_cutoff )
-        target_results.update( {"Min E:": max(x)})
+        target_results.update( {"Min E:": min(y)})
 
         # check lowest scoring model has low RMSD
         print (targets[i], "\t", end=""),
         val_topscoring = check_rmsd_of_topscoring( x, min_e_rmsd_cutoffs[targets[i]] )
         target_results.update( val_topscoring )
-        target_results.update( {"Min E RMSD:": x[0]})
+        target_results.update( {"Min RMSD of 400 topscoring:": min(x[:400])})
 
         results.update( {targets[i] : target_results} )
         print ("\n")
@@ -83,26 +83,15 @@ def main(args):
     benchmark.save_variables('targets nstruct working_dir testname results scorefiles min_e_cutoffs min_e_rmsd_cutoffs')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
 
 #=======================================
-def check_all_values_below_cutoff( rmsd_col, cutoff, tag ):
-
-    out = "All " + tag + "s < " + str( cutoff )
-    print (out, end=""),
-
-    if all( i <= cutoff for i in rmsd_col ):
-        value = "TRUE"
-    else:
-        value = "FALSE"
-
-    print (value)
-    return {out : value}
-
-#=======================================
 def check_rmsd_of_topscoring( rmsd_col_sorted, cutoff ):
+    """
+    400 top scoring is 5%
+    """
 
-    out = "rmsd of topscoring model below " + str( cutoff )
+    out = "min rmsd of 400 topscoring models below " + str( cutoff )
     print (out, "\t", end="")
 
-    if rmsd_col_sorted[0] <= cutoff:
+    if min(rmsd_col_sorted[:400]) <= cutoff:
         value = "TRUE"
     else:
         value = "FALSE"

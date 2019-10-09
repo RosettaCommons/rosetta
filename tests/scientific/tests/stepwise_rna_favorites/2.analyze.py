@@ -23,10 +23,6 @@ results = {}
 scorefiles = []
 #logfiles = []
 
-# TODO: populate me for each target.
-rmsd_cutoffs = {}
-
-# TODO: populate me for each target.
 min_e_cutoffs = {'gagua_pentaloop': -3, 'gcaa_tetraloop': -7, 'gg_mismatch': -9, 'j44a_p4p6': -14, 'r2_4x4': -14, 'srl_fixed': -6, 'srl_free_bulgedG': -8, 'srp_domainIV': -10, 'srp_domainIV_fixed': -9, 'tandem_ga_imino': -14, 'tandem_ga_sheared': -16, 'uucg_tetraloop': 0.5 }
 min_e_rmsd_cutoffs = { 'gagua_pentaloop': 3, 'gcaa_tetraloop': 1.6, 'gg_mismatch': 1.8, 'j44a_p4p6': 4, 'r2_4x4': 4, 'srl_fixed': 6.2, 'srl_free_bulgedG': 6, 'srp_domainIV': 4, 'srp_domainIV_fixed': 3.5, 'tandem_ga_imino': 3, 'tandem_ga_sheared': 2, 'uucg_tetraloop': 3 }
 
@@ -38,8 +34,6 @@ def main(args):
 
     # scorefiles and logfiles
     scorefiles.extend( [ f'{working_dir}/output/{t}/{t}.out' for t in targets ] )
-    #logfiles.extend( [ f'{working_dir}/hpc-logs/hpc.{testname}-{t}.*.log' for t in targets ] )
-
 
     # go through scorefiles of targets
     for i in range( 0, len( scorefiles ) ):
@@ -62,13 +56,13 @@ def main(args):
         print (targets[i], "\t", end=""),
         val_cutoff = check_min_e( y, min_e_cutoffs[targets[i]] )
         target_results.update( val_cutoff )
-        target_results.update( {"Min E:": max(x)})
+        target_results.update( {"Min E:": min(y)})
 
         # check lowest scoring model has low RMSD
         print (targets[i], "\t", end=""),
         val_topscoring = check_rmsd_of_topscoring( x, min_e_rmsd_cutoffs[targets[i]] )
         target_results.update( val_topscoring )
-        target_results.update( {"Min E RMSD:": x[0]})
+        target_results.update( {"Best RMSD of top 10:": min(x[:10])})
 
         results.update( {targets[i] : target_results} )
         print ("\n")
@@ -76,26 +70,15 @@ def main(args):
     benchmark.save_variables('targets nstruct working_dir testname results scorefiles min_e_cutoffs min_e_rmsd_cutoffs')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
 
 #=======================================
-def check_all_values_below_cutoff( rmsd_col, cutoff, tag ):
-
-    out = "All " + tag + "s < " + str( cutoff )
-    print (out, end=""),
-
-    if all( i <= cutoff for i in rmsd_col ):
-        value = "TRUE"
-    else:
-        value = "FALSE"
-
-    print (value)
-    return {out : value}
-
-#=======================================
 def check_rmsd_of_topscoring( rmsd_col_sorted, cutoff ):
-
-    out = "rmsd of low scoring model below " + str( cutoff )
+    """
+    Top 10 lowest scoring is 5%
+    """
+    
+    out = "best RMSD of 10 lowest scoring models below " + str( cutoff )
     print (out, "\t", end="")
 
-    if rmsd_col_sorted[0] <= cutoff:
+    if min(rmsd_col_sorted[:10]) <= cutoff:
         value = "TRUE"
     else:
         value = "FALSE"
@@ -106,7 +89,7 @@ def check_rmsd_of_topscoring( rmsd_col_sorted, cutoff ):
 #=======================================
 def check_min_e( energy_col_sorted, cutoff ):
 
-    out = "energy of low scoring model below " + str( cutoff )
+    out = "energy of lowest scoring model below " + str( cutoff )
     print (out, "\t", end="")
 
     if energy_col_sorted[0] <= cutoff:
