@@ -163,3 +163,39 @@ def check_for_2d_top_values( xcol, ycol, xtag, ytag, xcutoff, ycutoff, filehandl
 	npasses = sum(passed)
 	filehandle.write( str( npasses ) + " (" + str(x_val) + ", " + str(y_val) + ")\n" )
 	return {out : (npasses,x_val,y_val)}
+
+#=======================================
+# @brief Given a list of scores, a matching list of rmsds, and values for lambda and kbt,
+# compute the PNear value (a measure of fold propensity, with 0 meaning that the sequence does
+# not spend any time in the native state, and 1 meaning that it spends all of its time in the
+# native state).
+# @details Lambda is a value in Angstroms indicating the breadth of the Gaussian used to define
+# "native-like-ness".  The bigger the value, the more permissive the calculation is to structures
+# that deviate from native.  Typical values for peptides range from 1.5 to 2.0, and for proteins
+# from 2.0 to perhaps 4.0.  The value of kbt, in energy units, determines how large an energy gap
+# must be in order for a sequence to be said to favour the native state.  The default value, 0.62,
+# should correspond to physiological temperature for ref2015 or any other scorefunction with units
+# of kcal/mol.
+# @note Unlike the Conway discrimination score, the PNear calculation uses no hard cutoffs.  This is
+# advantageous for repeated testing: if the scatter of points on the RMSD plot changes very slightly
+# from run to run, the PNear value will only change by a small amount, whereas any metric dependent
+# on hard cutoffs could change by a large amount if a low-energy point crosses an RMSD threshold.
+# @author Vikram K. Mulligan (vmulligan@flatironinstitute.org
+def calculate_pnear( scores, rmsds, lambda_val=1.5, kbt=0.62 ) :
+    nscores = len(scores)
+    assert nscores == len(rmsds), "Error in calculate_pnear(): The scores and rmsds lists must be of the same length."
+    assert nscores > 0, "Error in calculate_pnear(): At least one score/rmsd pair must be provided."
+    assert kbt > 1e-15, "Error in calculate_pnear(): kbt must be greater than zero!"
+    assert lambda_val > 1e-15, "Error in calculate_pnear(): lambda must be greater than zero!"
+    minscore = min( scores )
+    weighted_sum = 0.0
+    Z = 0.0
+    lambdasq = lambda_val * lambda_val
+    for i in range( nscores ) :
+        val1 = exp( -( rmsds[i] * rmsds[i] ) / lambdasq )
+        val2 = exp( -( scores[i] - minscore ) / kbt )
+        weighted_sum += val1*val2
+        Z += val2
+    assert Z > 1e-15, "Math error in calculate_pnear()!  This shouldn't happen."
+    return weighted_sum/Z
+
