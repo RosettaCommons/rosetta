@@ -102,12 +102,14 @@ def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_dr
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     # map from test name to a space-separated-string-of-python-packages to be installed, for example: docking='numpy panda==0.23.4'
     # If package have not-yet-stable-api please make sure to SPECIFY THE EXACT VERSION of package to use so our testing-scripts
-    # will not accidently break when a new version of upstream package got released in the future
+    # will not accidentally break when a new version of upstream package got released in the future
     tests = dict(
         _template_               = '',
         cartesian_relax          = 'numpy matplotlib',
         fast_relax               = 'numpy matplotlib',
         fast_relax_5iter         = 'numpy matplotlib',
+
+        dock_glycans           = 'numpy matplotlib',
 
         stepwise_rna_favorites = 'numpy matplotlib',
         rna_denovo_favorites   = 'numpy matplotlib',
