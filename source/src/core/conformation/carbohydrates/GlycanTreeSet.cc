@@ -404,11 +404,18 @@ GlycanTreeSet::on_length_change( core::conformation::signals::LengthEvent const 
 				new_trees[ new_position ] = new_tree;
 			} else if ( parent == 0 ) {
 				///Beginning of tree, not connected to protein.
-				GlycanTreeOP old_tree = glycan_res_to_tree_[ child ];
-				glycan_tree_set_.erase( old_tree->get_start() );
-
-				old_tree->update_start_position( new_position );
-				new_trees[ event.position] = old_tree ;
+				//fd: check to ensure we're not inserting entire glycan tree
+				//fd:    (as with symmetrization of free glycan)
+				//fd: if so, make a new tree
+				if ( glycan_res_to_tree_.find( child ) != glycan_res_to_tree_.end() ) {
+					GlycanTreeOP old_tree = glycan_res_to_tree_[ child ];
+					glycan_tree_set_.erase( old_tree->get_start() );
+					old_tree->update_start_position( new_position );
+					new_trees[ event.position] = old_tree ;
+				} else {
+					GlycanTreeOP new_tree = utility::pointer::make_shared< GlycanTree >( *event.conformation, new_position );
+					new_trees[ new_position ] = new_tree;
+				}
 			}
 		}
 
