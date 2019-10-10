@@ -43,7 +43,7 @@ MonteCarloInterface::MonteCarloInterface(
 	init_interface_analyzer();
 	set_interface( interface );
 	read_cmd_line_options();
-	reset(init_pose);
+	MonteCarloInterface::reset(init_pose); // Note that the baseclass reset() has already been called in its constructor
 }
 
 

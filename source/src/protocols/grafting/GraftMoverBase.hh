@@ -47,7 +47,7 @@ public:
 	/// @details Overhang residues are residues not being inserted into the scaffold.
 	/// These residues are deleted before insertion and are used by classes usually for superposition or
 	/// Initial orientation of the insert relative to the scaffold.
-	virtual void
+	void
 	set_piece(core::pose::Pose const & piece, core::Size Nter_overhang_length, core::Size Cter_overhang_length);
 
 	virtual void

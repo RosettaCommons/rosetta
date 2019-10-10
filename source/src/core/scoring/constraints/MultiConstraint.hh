@@ -151,9 +151,17 @@ public:
 	}
 
 protected:
+
 	/// @brief Explicit copy constructor so that derived classes will recieve a deep copy
 	/// of the member constraints held in this class.
 	MultiConstraint( MultiConstraint const & src );
+
+	struct dont_copy_constraints {}; /// non-public key for special constructor
+
+	/// @brief a copy constructor where the underlying constraints aren't copied.
+	/// (For subclasses which handle their own constraint copying.
+	MultiConstraint( MultiConstraint const & src, dont_copy_constraints const & );
+
 
 	/// @brief Return a vector of Constraints that are clones of the member constraints.
 	ConstraintCOPs cloned_member_constraints() const;
@@ -169,7 +177,7 @@ private:
 	std::map< AtomID, ConstraintCOPs > atomid_to_csts_;
 
 
-	core::Size report_this_as_effective_sequence_separation_;
+	core::Size report_this_as_effective_sequence_separation_ = 0;
 
 #ifdef    SERIALIZATION
 public:

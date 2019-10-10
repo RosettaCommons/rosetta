@@ -304,16 +304,20 @@ Slice::compute_surface()
 	for ( auto e : events_ ) {
 		// std::cerr << "EVENT " << e << " " << e->x << " " << e->y << " " << e->kind << std::endl;
 		Circle *circle = e->circle;
+		debug_assert( circle != nullptr );
 		if     ( circle->tcw  ) e->trace_ = circle->tcw;
 		else if ( circle->tccw ) e->trace_ = circle->tccw;
 		if ( e->kind == ENTER ) {
 			traces_.push_back( new trace( accum_, e, false, circle, 0.0, nullptr           ) );
 			traces_.push_back( new trace( accum_, e, true , circle, 0.0, traces_.back() ) );
 		} else if ( e->kind == EXIT ) {
+			debug_assert( circle->tcw );
+			debug_assert( circle->tccw );
 			circle->tcw ->end( circle->tccw );
 			circle->tccw->end( circle->tcw  );
 		} else if ( e->kind == ISECT ) {
 			Circle *ccwcircle = e->ccw;
+			debug_assert( ccwcircle );
 			if     ( ccwcircle->tcw  ) e->trace_ = ccwcircle->tcw;
 			else if ( ccwcircle->tccw ) e->trace_ = ccwcircle->tccw;
 			bool have_cw_trace  = (    circle->tcw  != nullptr && e->y > circle->y    );

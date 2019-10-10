@@ -64,7 +64,7 @@ FragmentMover::FragmentMover(std::string const & type) {
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb(true); // standard MoveMap
 
-	set_movemap( movemap );
+	FragmentMover::set_movemap( movemap ); // Virtual dispatch doesn't work fully in constructor
 	protocols::moves::Mover::type(type);
 }
 
@@ -76,7 +76,7 @@ FragmentMover::FragmentMover(
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb( true ); //standard movemap
 
-	set_movemap( movemap );
+	FragmentMover::set_movemap( movemap ); // Virtual dispatch doesn't work fully in constructor
 	protocols::moves::Mover::type( type );
 }
 
@@ -89,7 +89,7 @@ FragmentMover::FragmentMover(
 	fragset_( std::move( fragset ) )
 {
 	protocols::moves::Mover::type( type );
-	set_movemap( movemap );
+	FragmentMover::set_movemap( movemap ); // Virtual dispatch doesn't work fully in constructor
 }
 
 bool FragmentMover::apply( pose::Pose & pose, Size pos ) const {

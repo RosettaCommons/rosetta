@@ -70,12 +70,6 @@ public:
 	~WobbleMover() override;
 	std::string get_name() const override;
 
-	void set_defaults() override {
-		buffer_length_=3;
-		forward_threshold_ = 0.3;
-		backward_threshold_ = 0.3;
-	};
-
 	void set_buffer_length( core::Size setting ) {
 		buffer_length_ = setting;
 	};
@@ -99,11 +93,11 @@ protected:
 
 private:
 	/// @brief how many variable residues on opposite side of fragment
-	core::Size buffer_length_;
+	core::Size buffer_length_ = 3;
 
 	/// @brief cutoffs that ccd has to undercut to be accepted
-	core::Real forward_threshold_;
-	core::Real backward_threshold_;
+	core::Real forward_threshold_ = 0.3;
+	//core::Real backward_threshold_ = 0.3;
 };
 
 } //abinitio

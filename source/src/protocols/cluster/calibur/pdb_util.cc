@@ -129,10 +129,8 @@ filetype( std::string const & filename )
 		input.close();
 		return UNKNOWN;
 	}
-	auto *name = new char[strlen(token)+1];
-	strcpy(name, token);
 
-	std::ifstream pdbfile(name); // check if name is a file
+	std::ifstream pdbfile(token); // check if token (name) is a file
 	if ( pdbfile ) {
 		pdbfile.close();
 		input.close();

@@ -154,7 +154,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 	determine_if_designing();
 	determine_if_repacking();
 	// assert packable by default
-	runtime_assert( being_packed() );
+	runtime_assert( ResidueLevelTask_::being_packed() ); // Virtual dispatch doesn't work fully in constructor
 	// This is the same assertion, really, but coded directly
 	runtime_assert( ! allowed_residue_types_.empty() );
 }

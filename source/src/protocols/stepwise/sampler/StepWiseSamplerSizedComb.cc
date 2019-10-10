@@ -52,7 +52,7 @@ StepWiseSamplerSizedComb::StepWiseSamplerSizedComb( StepWiseSamplerSizedOP outer
 {
 	rotamer_list_.push_back( inner_loop_rotamer );
 	rotamer_list_.push_back( outer_loop_rotamer );
-	init();
+	StepWiseSamplerSizedComb::init(); // Virtual dispatch doesn't fully work in constructors -- THIS PROBABLY DOESN'T DO WHAT THE ORIGINAL AUTHOR INTENDED
 }
 
 StepWiseSamplerSizedComb::~StepWiseSamplerSizedComb()= default;

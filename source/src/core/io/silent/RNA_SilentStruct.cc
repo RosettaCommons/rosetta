@@ -79,7 +79,7 @@ RNA_SilentStruct::RNA_SilentStruct(
 	SilentStruct( opts ),
 	fullatom_( fa )
 {
-	fill_struct( pose, tag );
+	RNA_SilentStruct::fill_struct( pose, tag ); // Virtual dispatch doesn't work fully in constructor
 } // RNA_SilentStruct
 
 // RNA_SilentStruct::RNA_SilentStruct( core::io::silent::RNA_SilentStruct const & src )

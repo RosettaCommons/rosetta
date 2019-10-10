@@ -69,16 +69,14 @@ public:
 	MetalSiteFinderMover();
 	//Copy constructor
 	MetalSiteFinderMover (MetalSiteFinderMover const & other);
-	//Destructor
-	virtual ~MetalSiteFinderMover();
 	//Set private data
 	//Get private data
 	//Virtual methods
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 	void initialize_from_options();
-	virtual void apply(core::pose::Pose & pose);
-	virtual std::string get_name() const;
+	void apply(core::pose::Pose & pose) override;
+	std::string get_name() const override;
 	//For RosettaScripts
 	//Any other methods
 private:
@@ -108,7 +106,6 @@ MetalSiteFinderMover::MetalSiteFinderMover(MetalSiteFinderMover const & other):
 	protocols::moves::Mover(other)
 {
 }
-MetalSiteFinderMover::~MetalSiteFinderMover(){}
 
 //Virtual methods
 protocols::moves::MoverOP MetalSiteFinderMover::clone() const{

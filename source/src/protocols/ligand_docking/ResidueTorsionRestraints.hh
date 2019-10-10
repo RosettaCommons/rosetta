@@ -50,20 +50,19 @@ public:
 	~ResidueTorsionRestraints() override = default;
 
 	/// @brief Constrain residue torsions for specified pose.
-	virtual void enable( core::pose::Pose & pose );
+	void enable( core::pose::Pose & pose );
 
 	/// @brief Remove residue torsions constraints added by this object (if any).
-	virtual void disable( core::pose::Pose & pose );
+	void disable( core::pose::Pose & pose );
 
 	bool operator==(const ResidueTorsionRestraints &other);
 
 private:
 
 	/// @brief Shared logic for creating torsional constraints
-	virtual void setup_constraints(core::pose::Pose & pose);
+	void setup_constraints(core::pose::Pose & pose);
 
 	/// @brief Shared logic; returns old_constraints without my_constraints_
-	virtual
 	core::scoring::constraints::ConstraintSetOP
 	without_my_constraints(
 		core::scoring::constraints::ConstraintSetCOP old_constraints,

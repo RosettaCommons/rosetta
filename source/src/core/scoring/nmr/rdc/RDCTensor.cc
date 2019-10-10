@@ -72,7 +72,7 @@ RDCTensor::RDCTensor(utility::vector1<Real> const & tensor_params) :
 	rdc_tensor_diagonalized_(false),
 	rdc_tensor_reconfigured_(false)
 {
-	set_tensor_in_arbitrary_frame(tensor_params);
+	RDCTensor::set_tensor_in_arbitrary_frame(tensor_params); // Virtual dispatch doesn't work fully in constructor
 }
 
 /// @brief copy constructor

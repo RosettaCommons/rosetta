@@ -37,7 +37,7 @@ static basic::Tracer TR( "core.indexed_structure_store.BinaryFragmentStoreBacken
 
 BinaryFragmentStoreBackend::BinaryFragmentStoreBackend(std::string target_path)
 {
-	set_target_filename(target_path);
+	BinaryFragmentStoreBackend::set_target_filename(target_path); // Virtual dispatch doesn't work fully in constructor
 }
 
 void BinaryFragmentStoreBackend::set_target_filename(std::string target_filename) {

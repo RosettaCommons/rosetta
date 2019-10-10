@@ -96,7 +96,7 @@ protected:
 	virtual void deserialize() {} ;
 
 	/// @brief Make a unique number out of Processor Number and unix timestamp ?
-	virtual void create_unique_id(){};
+	void create_unique_id() {}; // Can't be virtual - called from the constructor
 
 protected:
 
@@ -150,7 +150,9 @@ public:
 	/// @brief this structure can contain any non-dynamicly allocated data.
 	///  Any simple data types can be used here, ints, real, floats, char, etc..
 	struct WU_Header{
-		char  wu_type_[128];
+		static constexpr unsigned int BUFFER_SIZE = 128;
+
+		char  wu_type_[BUFFER_SIZE];
 		// Some unique id
 		core::Size  id_;
 
@@ -168,7 +170,7 @@ public:
 		core::Size  extra_data_4_;
 
 		/// protocols can put arbitrary small header data here
-		char  options_[128];
+		char  options_[BUFFER_SIZE];
 	};
 
 	core::Size last_received_from(){ return last_received_from_; }

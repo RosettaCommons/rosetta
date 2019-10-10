@@ -57,7 +57,7 @@ public:
 	///@brief
 	///  1. Extracts the energy from the Energies object
 	///  2. Extract a clone of the SimpleMetricData from the pose.
-	virtual void
+	void
 	extract_summary(
 		core::pose::Pose const & pose
 	);

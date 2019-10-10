@@ -142,11 +142,11 @@ public:
 	std::string get_name() const override;
 
 	//@brief override cycle setting ( init() -> sets it according to cmd-line options )
-	virtual void set_cycles( core::Real increase_cycles = 1.0 );
+	void set_cycles( core::Real increase_cycles = 1.0 );
 
 	//@brief set weight - effective for all scoring functions  stage == -1 --> set weight for all stages
 	// mod -1 (ignored) ,  in stage3 mod = 1 --> 3a , mod = 2 --> 3b
-	virtual void set_score_weight( core::scoring::ScoreType, core::Real setting, StageID stage = ALL_STAGES );
+	void set_score_weight( core::scoring::ScoreType, core::Real setting, StageID stage = ALL_STAGES );
 
 	virtual checkpoint::CheckPointer &get_checkpoints() { return checkpoints_; }
 

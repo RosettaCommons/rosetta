@@ -144,7 +144,7 @@ Embedding::Embedding(
 		this->invert();
 	}
 
-	this->show( TR );
+	Embedding::show( TR ); // Can't do proper virtual dispatch in the constructor
 
 }// from topology and pose
 

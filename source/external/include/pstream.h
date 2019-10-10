@@ -1306,7 +1306,7 @@ namespace redi
     {
       const bool running = is_open();
 
-      sync(); // this might call wait() and reap the child process
+      basic_pstreambuf<C,T>::sync(); // this might call wait() and reap the child process
 
       // rather than trying to work out whether or not we need to clean up
       // just do it anyway, all cleanup functions are safe to call twice.

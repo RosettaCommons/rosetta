@@ -45,16 +45,8 @@ public:
 
 public:
 	/// @brief Default constructor.
-	RestrictToLoopsAndNeighbors();
+	RestrictToLoopsAndNeighbors() = default;
 
-	/// @brief Copy constructor.
-	RestrictToLoopsAndNeighbors(RestrictToLoopsAndNeighbors const & src);
-
-	/// @brief Default destructor.
-	~RestrictToLoopsAndNeighbors() override;
-
-	/// @brief Assignment operator.
-	RestrictToLoopsAndNeighbors & operator=( RestrictToLoopsAndNeighbors const & rhs );
 
 	/// @copydoc RestrictToLoops::clone
 	core::pack::task::operation::TaskOperationOP clone() const override;
@@ -80,13 +72,9 @@ public:
 	void set_cutoff_distance( core::Real cutoff_distance );
 
 private:
-	void init() override;
-	void init_for_copy( RestrictToLoopsAndNeighbors & lhs, RestrictToLoopsAndNeighbors const & rhs);
-
-private:
-	bool include_neighbors_;
-	bool design_neighbors_;
-	core::Real cutoff_distance_;
+	bool include_neighbors_ = true;
+	bool design_neighbors_ = false;
+	core::Real cutoff_distance_ = 10.0;
 
 };
 

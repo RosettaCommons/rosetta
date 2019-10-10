@@ -60,7 +60,7 @@ ScoreJumpFileSilentStruct::ScoreJumpFileSilentStruct(
 ) :
 	SilentStruct( opts )
 {
-	fill_struct( pose, tag );
+	ScoreJumpFileSilentStruct::fill_struct( pose, tag ); // Virtual function dispatch doesn't work fully during constructor
 	decoy_tag( tag );
 } // ScoreJumpFileSilentStruct
 

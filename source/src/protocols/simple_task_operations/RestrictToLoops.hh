@@ -28,6 +28,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <utility/pointer/deep_copy.hh>
 
 // C++ headers
 #include <string>
@@ -43,16 +44,7 @@ public:
 public:
 
 	/// @brief Default constructor.
-	RestrictToLoops();
-
-	/// @brief Copy constructor.
-	RestrictToLoops( RestrictToLoops const & src );
-
-	/// @brief Default destructor.
-	~RestrictToLoops() override;
-
-	/// @brief Assignment operator.
-	RestrictToLoops & operator= ( RestrictToLoops const & rhs );
+	RestrictToLoops() = default;
 
 	/// @brief Return a deep-copied OP.
 	core::pack::task::operation::TaskOperationOP clone() const override;
@@ -64,14 +56,6 @@ public:
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static void provide_attributes( utility::tag::AttributeList & attributes );
 	static std::string keyname() { return "RestrictToLoops"; }
-
-protected:
-
-	/// @brief Help construct instances of this class.
-	virtual void init();
-
-	/// @brief Help copy instances of this class.
-	virtual void copy( RestrictToLoops & lhs, RestrictToLoops const & rhs );
 
 public:
 
@@ -115,9 +99,9 @@ protected:
 		bool design_neighbors ) const;
 
 private:
-	bool design_loops_;
-	bool restrict_only_design_;
-	loops::LoopsCOP loops_;
+	bool design_loops_ = false;
+	bool restrict_only_design_ = false;
+	utility::pointer::DeepCopyOP< loops::Loops const > loops_;
 
 };
 

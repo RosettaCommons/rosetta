@@ -46,12 +46,6 @@ public: // Creation
 	{}
 
 
-	/// @brief Destructor
-	inline
-
-	~icstream() {}
-
-
 public: // Methods: conversion
 
 

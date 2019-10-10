@@ -156,7 +156,7 @@ public:
 		return fullatom_;
 	}
 
-	virtual void fullatom( bool fullatom ) {
+	void fullatom( bool fullatom ) {
 		fullatom_ = fullatom;
 	}
 

@@ -140,14 +140,14 @@ public:
 	std::string network_mode_;
 	bool map_to_cen_atom_;
 
+	bool calibration_eliminate_;
+	bool calibration_use_median_;
+	core::Size calibration_cycles_;
 	core::Real calibration_convergence_;
 	core::Real calibration_max_noe_dist_;
 	core::Real calibration_stop_nudging_;
 	core::Real calibration_start_nudging_;
 	core::Real calibration_max_nudging_;
-	bool calibration_eliminate_;
-	bool calibration_use_median_;
-	core::Size calibration_cycles_;
 
 	utility::vector1<core::Real> prob_sigmoid_tau_;
 	utility::vector1<core::Real> prob_sigmoid_m_;

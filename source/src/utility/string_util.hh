@@ -452,6 +452,12 @@ get_resnum_and_segid_from_one_tag( std::string const & tag,
 platform::Size
 get_num_digits( platform::Size value);
 
+/// @brief Copy the contents of a string to a given C-style string buffer (with the given maximum length)
+/// The output will be truncated if greater than length, and null terminator will be added.
+/// @details To be clear, this is only to be used for limited situations. Avoiding c-style strings is preferred.
+void
+copy_to_cstr_buffer( std::string const & str, char * buffer, platform::Size buffer_length);
+
 }  // namespace utility
 
 #endif  // INCLUDED_utility_string_util_HH

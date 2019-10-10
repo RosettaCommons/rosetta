@@ -41,18 +41,16 @@ namespace constraints {
 
 /// @brief default Constructor
 MultiConstraint::MultiConstraint( ScoreType const & t /* = dof_constraint */ ) :
-	Constraint( t ),
-	report_this_as_effective_sequence_separation_( 0 )
+	Constraint( t )
 {}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
 MultiConstraint::MultiConstraint( ConstraintCOPs const & cst_in, ScoreType const & t ):
-	Constraint( t ),  //this is temporary, multi constraint shouldn't have a score type
-	report_this_as_effective_sequence_separation_( 0 )
+	Constraint( t )  //this is temporary, multi constraint shouldn't have a score type
 {
 	for ( auto const &elem : cst_in ) {
-		add_individual_constraint( elem );
+		MultiConstraint::add_individual_constraint( elem ); // Virtual dispatch doesn't work fully during constructor
 	} //loop over all input csts that make up this multi constraint
 }// constructor
 
@@ -311,9 +309,14 @@ MultiConstraint::MultiConstraint( MultiConstraint const & src ) :
 	report_this_as_effective_sequence_separation_( src.report_this_as_effective_sequence_separation_ )
 {
 	for ( auto const & cst : src.member_constraints_ ) {
-		add_individual_constraint( cst->clone() );
+		MultiConstraint::add_individual_constraint( cst->clone() ); // Virtual dispatch doesn't fully work in constructors
 	}
 }
+
+MultiConstraint::MultiConstraint( MultiConstraint const & src, dont_copy_constraints const & ) :
+	Constraint( src ),
+	report_this_as_effective_sequence_separation_( src.report_this_as_effective_sequence_separation_ )
+{}
 
 /// @brief Return a vector of Constraints that are clones of the member constraints.
 ConstraintCOPs

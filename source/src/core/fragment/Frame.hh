@@ -286,7 +286,7 @@ protected:
 	/// class of FragData, e.g., based on BBTorsionSRFD,
 	/// if you want to have different fragment for other dof's at the same sequence position create a new Frame.
 	/// Users of the fragment-core are aware that multiple Frames for the same sequence position may exist.
-	virtual bool is_compatible( FragDataCOP new_frag ) const;
+	bool is_compatible( FragDataCOP new_frag ) const;
 
 	void init_length( core::Size start, core::Size end, core::Size length );
 

@@ -150,9 +150,10 @@ MakeLayerMover::apply( core::pose::Pose & pose ) {
 
 	core::pose::Pose posebase;
 	utility::vector1<Size> Ajumps, Bjumps, monomer_jumps, monomer_anchors;
-	Size base_monomer;
 
+	Size base_monomer = -1; // Obviously bogus value - build_layer_of_virtuals() should set
 	build_layer_of_virtuals( posebase, Ajumps, Bjumps, monomer_anchors, base_monomer);
+	debug_assert( base_monomer != core::Size(-1) );
 
 	Size nvrt = posebase.size();
 	Size nres_monomer = pose.size();

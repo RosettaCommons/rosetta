@@ -1544,16 +1544,18 @@ ResidueType::copy_other_info(
 void
 ResidueType::initialize_derived_data() {
 
+	core::Size natoms = ResidueType::natoms(); // Can't do virtual dispatch from constructor
+
 	//////////////////////
 	// Atom Path distances
 	//////////////////////
 
 	//Requires that nbrs()/bonded_neighbor_ be correct
 	ObjexxFCL::FArray2D_int path_distances( get_residue_path_distances( *this ));
-	path_distance_.resize( natoms() );
-	for ( Size ii = 1; ii <= natoms(); ++ii ) {
-		path_distance_[ ii ].resize( natoms() );
-		for ( Size jj = 1; jj <= natoms(); ++jj ) {
+	path_distance_.resize( natoms );
+	for ( Size ii = 1; ii <= natoms; ++ii ) {
+		path_distance_[ ii ].resize( natoms );
+		for ( Size jj = 1; jj <= natoms; ++jj ) {
 			path_distance_[ ii ][ jj ] = path_distances( ii, jj );
 		}
 	}
@@ -1563,12 +1565,12 @@ ResidueType::initialize_derived_data() {
 	//////////////////////
 
 	dihedral_atom_sets_.clear();
-	dihedrals_for_atom_.resize( natoms() );
-	for ( Size ii = 1; ii <= natoms(); ++ii ) dihedrals_for_atom_[ ii ].clear();
+	dihedrals_for_atom_.resize( natoms );
+	for ( Size ii = 1; ii <= natoms; ++ii ) dihedrals_for_atom_[ ii ].clear();
 
 	// get for all pairs of atoms separated by 1 bond
-	for ( Size central_atom1 = 1; central_atom1 < natoms(); ++central_atom1 ) {
-		for ( Size central_atom2 = central_atom1+1; central_atom2 <= natoms(); ++central_atom2 ) {
+	for ( Size central_atom1 = 1; central_atom1 < natoms; ++central_atom1 ) {
+		for ( Size central_atom2 = central_atom1+1; central_atom2 <= natoms; ++central_atom2 ) {
 			if ( path_distance_[ central_atom1 ][ central_atom2 ] == 1 ) {
 
 				// get all atoms separated from central_atom1/2 by one bond that are not central_atom2/1
@@ -1576,13 +1578,13 @@ ResidueType::initialize_derived_data() {
 				utility::vector1< Size > ca2d1;
 
 				// ca1
-				for ( Size i = 1; i <= natoms(); ++i ) {
+				for ( Size i = 1; i <= natoms; ++i ) {
 					if ( ( path_distance_[ central_atom1 ][ i ] == 1 ) && ( i != central_atom2 ) ) {
 						ca1d1.push_back( i );
 					}
 				}
 				// ca2
-				for ( Size i = 1; i <= natoms(); ++i ) {
+				for ( Size i = 1; i <= natoms; ++i ) {
 					if ( ( path_distance_[ central_atom2 ][ i ] == 1 ) && ( i != central_atom1 ) ) {
 						ca2d1.push_back( i );
 					}
@@ -1610,11 +1612,11 @@ ResidueType::initialize_derived_data() {
 	///////////////////////////////
 
 	bondangle_atom_sets_.clear();
-	bondangles_for_atom_.resize( natoms() );
-	for ( Size ii = 1; ii <= natoms(); ++ii ) bondangles_for_atom_[ ii ].clear();
+	bondangles_for_atom_.resize( natoms );
+	for ( Size ii = 1; ii <= natoms; ++ii ) bondangles_for_atom_[ ii ].clear();
 
 	// iterate over all atoms that could be a central atom
-	for ( Size central_atom = 1; central_atom <= natoms(); ++central_atom ) {
+	for ( Size central_atom = 1; central_atom <= natoms; ++central_atom ) {
 
 		AtomIndices const & bonded_neighbors(bonded_neighbor(central_atom) );
 		Size const num_bonded_neighbors( bonded_neighbors.size() );
@@ -1644,14 +1646,14 @@ ResidueType::initialize_derived_data() {
 	atoms_within_one_bond_of_a_residue_connection_.resize( residue_connections_.size() );
 	for ( Size ii = 1; ii <= residue_connections_.size(); ++ii ) atoms_within_one_bond_of_a_residue_connection_[ ii ].clear();
 
-	within1bonds_sets_for_atom_.resize( natoms() );
-	for ( Size ii = 1; ii <= natoms(); ++ii ) within1bonds_sets_for_atom_[ ii ].clear();
+	within1bonds_sets_for_atom_.resize( natoms );
+	for ( Size ii = 1; ii <= natoms; ++ii ) within1bonds_sets_for_atom_[ ii ].clear();
 
 	atoms_within_two_bonds_of_a_residue_connection_.resize( residue_connections_.size() );
 	for ( Size ii = 1; ii <= residue_connections_.size(); ++ii ) atoms_within_two_bonds_of_a_residue_connection_[ ii ].clear();
 
-	within2bonds_sets_for_atom_.resize( natoms() );
-	for ( Size ii = 1; ii <= natoms(); ++ii ) within2bonds_sets_for_atom_[ ii ].clear();
+	within2bonds_sets_for_atom_.resize( natoms );
+	for ( Size ii = 1; ii <= natoms; ++ii ) within2bonds_sets_for_atom_[ ii ].clear();
 
 	for ( Size ii = 1; ii <= residue_connections_.size(); ++ii ) {
 		Size const ii_resconn_atom = residue_connections_[ ii ].atomno();
@@ -1732,7 +1734,7 @@ ResidueType::update_derived_data() {
 
 	// RM: Is this really needed, and if so, can/should it be generalized?
 	// Set up some atom properties
-	for ( Size ii = 1; ii <= natoms(); ++ii ) {
+	for ( Size ii = 1; ii <= ResidueType::natoms(); ++ii ) {
 		debug_assert( atomic_properties_[ ii ] != nullptr );
 		// Am I an aromatic carbon atom with a free valence?
 		// Can also be specified in params, but add if not already set!
@@ -1752,7 +1754,7 @@ ResidueType::update_derived_data() {
 	////////////////////////////////////
 
 	// Set the RamaPrePro potential name to be this residue's name.
-	if ( is_base_type() ) {
+	if ( ResidueType::is_base_type() ) {
 		if ( !get_rama_prepro_map_file_name(false).empty() && get_rama_prepro_mainchain_torsion_potential_name(false).empty() ) {
 			set_rama_prepro_mainchain_torsion_potential_name( name(), false );
 		}
@@ -1856,7 +1858,9 @@ ResidueType::update_ring_conformer_sets() {
 
 void
 ResidueType::update_last_controlling_chi() {
-	last_controlling_chi_.resize( natoms() );
+	core::Size natoms = ResidueType::natoms(); // This can be called from the constructor, where we can't do virtual dispatch
+
+	last_controlling_chi_.resize( natoms );
 	std::fill( last_controlling_chi_.begin(), last_controlling_chi_.end(), 0 );
 
 	/// 1. First we have to mark all the atoms who are direct descendants of the 3rd
@@ -1898,7 +1902,7 @@ ResidueType::update_last_controlling_chi() {
 
 	/// get ready to allocate space in the atoms_last_controlled_by_chi_ arrays
 	utility::vector1< Size > natoms_for_chi( nchi(), 0 );
-	for ( Size ii = 1; ii <= natoms(); ++ii ) {
+	for ( Size ii = 1; ii <= natoms; ++ii ) {
 		if ( last_controlling_chi_[ ii ] != 0 ) {
 			++natoms_for_chi[ last_controlling_chi_[ ii ] ];
 		}
@@ -1912,7 +1916,7 @@ ResidueType::update_last_controlling_chi() {
 	}
 
 	/// fill the arrays
-	for ( Size ii = 1; ii <= natoms(); ++ii ) {
+	for ( Size ii = 1; ii <= natoms; ++ii ) {
 		if ( last_controlling_chi_[ ii ] != 0 ) {
 			atoms_last_controlled_by_chi_[ last_controlling_chi_[ ii ]].push_back( ii );
 		}
@@ -1950,7 +1954,8 @@ ResidueType::note_chi_controls_atom( Size chi, Size atomno )
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void
 ResidueType::update_polymer_dependent_groups() {
-	core::Size const n_atom( natoms() );
+	core::Size const n_atom( ResidueType::natoms() ); // This can be called from the constructor, where we can't do virtual dispatch
+
 	has_polymer_dependent_groups_ = false;
 	atom_depends_on_lower_polymeric_connection_.resize( n_atom, false );
 	atom_depends_on_upper_polymeric_connection_.resize( n_atom, false );
@@ -1984,7 +1989,7 @@ ResidueType::update_polymer_dependent_groups() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void
 ResidueType::update_nonpolymer_dependent_groups() {
-	core::Size const n_atom( natoms() );
+	core::Size const n_atom( ResidueType::natoms() ); // This can be called from the constructor, where we can't do virtual dispatch
 	atom_depends_on_connection_.resize( n_possible_residue_connections(), utility::vector1< bool >( n_atom, false ) );
 
 	bool nothing_changed(true);

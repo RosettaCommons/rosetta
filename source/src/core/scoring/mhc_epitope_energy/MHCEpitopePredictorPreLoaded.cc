@@ -51,22 +51,14 @@ using namespace cppdb;
 void MHCEpitopePredictorPreLoaded::check_file_size( std::string const &filename, core::Size warn_threshold ) const {
 	core::Real filesize = 0; // Will be used to store the file's size, in bytes.
 
-	// If we switch to C++17, re-write from here to replace stat() function with std::filesystem::file_size()
-	// Get rid of the c-string and the platform-specific stuff.
-	// Need to get filename as a C-string for use with stat(): filecstring
-	char *filecstring = new char[ filename.length() + 1 ];
-	std::strcpy( filecstring, filename.c_str() );
-
 	// The following is using the stat() function to get the file's size.  If we switch to C++17, it should be switched to std::filesystem::file_size() to make it platform agnostic.
 #ifdef WIN32
 	struct _stat file_info; // stat object contains all file info.
-	_stat( filecstring, &file_info ); // Get filename's info and store in file_info buffer object.
+	_stat( filename.c_str(), &file_info ); // Get filename's info and store in file_info buffer object.
 #else
 	struct stat file_info; // stat object contains all file info.
-	stat( filecstring, &file_info ); // Get filename's info and store in file_info buffer object.
+	stat( filename.c_str(), &file_info ); // Get filename's info and store in file_info buffer object.
 #endif
-
-	delete[] filecstring; // Deallocate the c-string.
 
 	filesize = file_info.st_size; // Put the filesize (in bytes) into filesize.
 

@@ -65,23 +65,6 @@ std::string RestrictToLoopsCreator::keyname() const
 	return RestrictToLoops::keyname();
 }
 
-RestrictToLoops::RestrictToLoops() : parent() {
-	init();
-}
-
-RestrictToLoops::RestrictToLoops( RestrictToLoops const & rhs ) : parent(rhs) {
-	copy(*this, rhs);
-}
-
-RestrictToLoops::~RestrictToLoops() = default;
-
-RestrictToLoops & RestrictToLoops::operator = ( RestrictToLoops const & rhs ) {
-	if ( this == &rhs ) return *this;
-	parent::operator=(rhs);
-	copy(*this, rhs);
-	return *this;
-}
-
 TaskOperationOP RestrictToLoops::clone() const {
 	return utility::pointer::make_shared< RestrictToLoops >(*this);
 }
@@ -116,18 +99,6 @@ void RestrictToLoops::provide_attributes( AttributeList & attributes ) {
 		+ XMLSchemaAttribute( "design", xsct_rosetta_bool , "XRW TO DO" )
 		+ XMLSchemaAttribute( "restrict_only_design_to_loops", xsct_rosetta_bool , "XRW TO DO" )
 		+ XMLSchemaAttribute( "loops_file", xs_string , "XRW TO DO" );
-}
-
-void RestrictToLoops::init() {
-	set_design_loop( false );
-	set_restrict_only_design_to_loops( false );
-	set_loops( nullptr );
-}
-
-void RestrictToLoops::copy( RestrictToLoops & lhs, RestrictToLoops const & rhs ) {
-	lhs.design_loops_ = rhs.design_loops_;
-	lhs.restrict_only_design_ = rhs.restrict_only_design_;
-	lhs.loops_ = utility::pointer::make_shared< Loops >( *rhs.loops_ );
 }
 
 void RestrictToLoops::apply( Pose const & pose, PackerTask & task ) const {

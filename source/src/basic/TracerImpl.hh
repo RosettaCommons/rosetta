@@ -37,7 +37,7 @@ protected: /// Inner class declaration
 	class basic_tstringbuf : public std::basic_stringbuf<_CharT, _Traits> {
 	public:
 		basic_tstringbuf(basic_otstream *ot) : otsream_(ot) {}
-		virtual ~basic_tstringbuf() {}
+		~basic_tstringbuf() override {}
 
 	protected:
 		int sync() override {

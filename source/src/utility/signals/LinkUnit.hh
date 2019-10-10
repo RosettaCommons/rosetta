@@ -79,6 +79,7 @@ public:
 	template< typename Function >
 	inline
 	Function & fref() {
+		debug_assert( fn );
 		return ( *static_cast< Function * >( fn ) );
 	}
 

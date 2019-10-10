@@ -91,9 +91,6 @@ public:
 	ZincStatisticGenerator(){
 	}
 
-	~ZincStatisticGenerator(){
-	}
-
 	void
 	initialize_from_options(){
 

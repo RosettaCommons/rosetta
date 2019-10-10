@@ -77,9 +77,8 @@ public:
 
 	~RotamerConstraint() override;
 
-	virtual
 	void
-	add_residue( conformation::Residue const & rsd );
+	add_residue( conformation::Residue const & rsd ); // Called from constructor, so being virtual is an issue
 
 	scoring::constraints::ConstraintOP
 	clone() const override;

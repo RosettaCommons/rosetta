@@ -1002,4 +1002,14 @@ remove_from_string( std::string const & source, std::string const & remove){
 	return new_s;
 }
 
+void
+copy_to_cstr_buffer( std::string const & str, char * buffer, platform::Size buffer_length) {
+	str.copy( buffer, buffer_length - 1 ); // Copy up to buffer_length-1 charachters into the buffer.
+	if ( str.size() >= buffer_length ) {
+		buffer[ buffer_length-1 ] = '\0'; // Null terminate last character in the buffer
+	} else {
+		buffer[ str.size() ] = '\0'; // Null terminate one past the end.
+	}
+}
+
 } // namespace utility

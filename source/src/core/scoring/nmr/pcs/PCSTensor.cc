@@ -69,7 +69,7 @@ PCSTensor::PCSTensor(utility::vector1<Real> const & tensor_params) :
 	pcs_tensor_diagonalized_(false),
 	pcs_tensor_reconfigured_(false)
 {
-	set_tensor_in_arbitrary_frame(tensor_params);
+	PCSTensor::set_tensor_in_arbitrary_frame(tensor_params); // Virtual dispatch doesn't work fully in constructors
 }
 
 /// @brief copy constructor

@@ -84,7 +84,7 @@ TMHTopologySamplerClaimer::TMHTopologySamplerClaimer()
 	topology_root_res_(0),
 	tmhelix_(0)
 {
-	set_defaults();
+	TMHTopologySamplerClaimer::set_defaults(); // Virtual dispatch doesn't work fully during constructor
 }
 
 TMHTopologySamplerClaimer::TMHTopologySamplerClaimer(TopologyBrokerOP /*broker*/)
@@ -97,7 +97,7 @@ TMHTopologySamplerClaimer::TMHTopologySamplerClaimer(TopologyBrokerOP /*broker*/
 	topology_root_res_(0),
 	tmhelix_(0)
 {
-	set_defaults();
+	TMHTopologySamplerClaimer::set_defaults(); // Virtual dispatch doesn't work fully during constructor
 }
 
 TMHTopologySamplerClaimer::~TMHTopologySamplerClaimer() = default;

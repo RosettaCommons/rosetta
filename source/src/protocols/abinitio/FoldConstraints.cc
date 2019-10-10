@@ -99,7 +99,7 @@ FoldConstraints::FoldConstraints(
 	constraint_weight_( 1.0 ), run_( 0 )
 {
 	BaseClass::type( "FoldConstraints" );
-	set_default_options();
+	FoldConstraints::set_default_options(); // WARNING - Even unqualified, this never will call a derived class's version. (This may be a bug.)
 }
 
 /// @brief c'stor from FragSets --- ClassicFragmentMover and SmoothFragmentMover will be created
@@ -111,7 +111,7 @@ FoldConstraints::FoldConstraints(
 	constraint_weight_( 1.0 ), run_( 0 )
 {
 	BaseClass::type( "FoldConstraints" );
-	set_default_options();
+	FoldConstraints::set_default_options(); // WARNING - Even unqualified, this never will call a derived class's version. (This may be a bug.)
 }
 
 /// @details SHALLOW copy.

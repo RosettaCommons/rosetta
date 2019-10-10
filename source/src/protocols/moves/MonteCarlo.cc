@@ -104,7 +104,7 @@ MonteCarlo::MonteCarlo(
 	lowest_score_pose_ = utility::pointer::make_shared< Pose >();
 	// score_function_ = new ScoreFunction(scorefxn);
 	score_function_ = scorefxn.clone();
-	reset( init_pose );
+	MonteCarlo::reset( init_pose ); // IMPORTANT - you probably need to call subclass reset() in derived class's constructors.
 
 	last_check_ = 0;
 	check_frequency_ = basic::options::option[ basic::options::OptionKeys::mc::convergence_check_frequency ]();

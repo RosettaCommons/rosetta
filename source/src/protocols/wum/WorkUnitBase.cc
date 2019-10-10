@@ -26,7 +26,7 @@
 
 #include <utility>
 #include <utility/vector1.hh>
-
+#include <utility/string_util.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -164,13 +164,7 @@ WorkUnitBase::raw_data_dump( unsigned char ** raw_data_ptr ) const
 
 void
 WorkUnitBase::set_wu_type( const std::string &text ){
-#ifndef __CYGWIN__ // Workaround for CygWin and GCC 4.5
-	unsigned int length = std::min( (int)text.length(), int(128) );
-#else
-		unsigned int length = min( (int)text.length(), int(128) );
-#endif
-	if ( length == 0 ) return;
-	strcpy( &header.wu_type_[0], text.c_str() );
+	utility::copy_to_cstr_buffer( text, &header.wu_type_[0], header.BUFFER_SIZE );
 }
 
 std::string WorkUnitBase::get_wu_type() const {
@@ -180,13 +174,7 @@ std::string WorkUnitBase::get_wu_type() const {
 
 void
 WorkUnitBase::set_options( const std::string &text ){
-#ifndef __CYGWIN__ // Workaround for CygWin and GCC 4.5
-	unsigned int length = std::min( (int)text.length(), (int)128 );
-#else
-		unsigned int length = min( (int)text.length(), (int)128 );
-#endif
-	if ( length == 0 ) return;
-	strcpy( &header.options_[0], text.c_str() );
+	utility::copy_to_cstr_buffer( text, &header.options_[0], header.BUFFER_SIZE );
 }
 
 std::string WorkUnitBase::get_options() const {

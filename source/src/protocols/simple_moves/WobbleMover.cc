@@ -53,7 +53,6 @@ WobbleMover::WobbleMover(
 	protocols::simple_moves::ClassicFragmentMover( fragset, movemap, "WobbleMover" ), // explicit initialization of virtual base class required
 	protocols::simple_moves::SmoothFragmentMover( fragset, movemap, cost, "WobbleMover")
 {
-	set_defaults();
 }
 
 WobbleMover::WobbleMover(
@@ -63,7 +62,6 @@ WobbleMover::WobbleMover(
 	protocols::simple_moves::ClassicFragmentMover( fragset, movemap, "WobbleMover" ), // explicit initialization of virtual base class required
 	protocols::simple_moves::SmoothFragmentMover( fragset, movemap, utility::pointer::make_shared< protocols::simple_moves::GunnCost >(), "WobbleMover")
 {
-	set_defaults();
 }
 
 /// Copy constructor disabled until the virtual base class

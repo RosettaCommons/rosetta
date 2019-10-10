@@ -448,7 +448,7 @@ public: // Predicate
 	/// @brief Dimensions Initialized?
 	inline
 	bool
-	dimensions_initialized() const override
+	dimensions_initialized() const final // Needs to be final as it's used in the constructor
 	{
 		return ( ( I1_.initialized() ) && ( I2_.initialized() ) && ( I3_.initialized() ) && ( I4_.initialized() ) );
 	}

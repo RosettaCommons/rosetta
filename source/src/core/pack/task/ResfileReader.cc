@@ -289,7 +289,7 @@ ResfileContents::parse_body_line(
 			ResfileCommandOP command(
 				locate_command(which_token, tokens, command_map, lineno));
 			Size const saved_which_token(which_token);
-			Size which_token_i;
+			Size which_token_i = -1; // Initialize to an obviously bogus value.
 			// The number in pdb files is not straight
 			for ( Size i = resid_start; i <= resid_end; ++i ) {
 				which_token_i = saved_which_token;
@@ -297,6 +297,7 @@ ResfileContents::parse_body_line(
 				command_i->initialize_from_tokens(tokens, which_token_i, i);
 				residue_range_commands[i].push_back(command_i);
 			}
+			debug_assert( which_token_i != core::Size(-1) );
 			which_token = which_token_i;
 			found_commands = true;
 		}

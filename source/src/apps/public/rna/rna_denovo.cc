@@ -162,13 +162,12 @@ public:
 		add_option( OptionKeys::rna::denovo::output_res_num );
 	}
 
-	virtual
 	JobOP
 	complete_larval_job_maturation(
 		protocols::jd3::LarvalJobCOP larval_job,
 		utility::options::OptionCollectionCOP job_options,
 		utility::vector1< JobResultCOP > const & // input_job_results
-	) {
+	) override {
 
 		MoverAndChunkLibraryJobOP mature_job( new MoverAndChunkLibraryJob );
 

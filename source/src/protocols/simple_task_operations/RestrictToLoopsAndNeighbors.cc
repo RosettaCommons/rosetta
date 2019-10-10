@@ -52,30 +52,6 @@ using utility::tag::TagCOP;
 ////////////////////////////////////////////// BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// @brief default constructor
-RestrictToLoopsAndNeighbors::RestrictToLoopsAndNeighbors() : parent()
-{
-	init();
-}
-
-/// @brief copy constructor
-RestrictToLoopsAndNeighbors::RestrictToLoopsAndNeighbors( RestrictToLoopsAndNeighbors const & rhs ) : parent(rhs)
-{
-	init_for_copy( *this, rhs );
-}
-
-/// @brief assignment operator
-RestrictToLoopsAndNeighbors & RestrictToLoopsAndNeighbors::operator=( RestrictToLoopsAndNeighbors const & rhs ){
-	//abort self-assignment
-	if ( this == &rhs ) return *this;
-	parent::operator=( rhs );
-	init_for_copy( *this, rhs );
-	return *this;
-}
-
-//destructor
-RestrictToLoopsAndNeighbors::~RestrictToLoopsAndNeighbors() = default;
-
 //@brief clone operator, calls the copy constructor
 TaskOperationOP
 RestrictToLoopsAndNeighbors::clone() const
@@ -121,22 +97,6 @@ void RestrictToLoopsAndNeighbors::provide_xml_schema( utility::tag::XMLSchemaDef
 void RestrictToLoopsAndNeighbors::apply( Pose const & pose, PackerTask & task ) const
 {
 	apply_helper(pose, task, include_neighbors(), cutoff_distance(), design_neighbors());
-}
-
-void RestrictToLoopsAndNeighbors::init()
-{
-	parent::init();
-	set_include_neighbors( true );
-	set_design_neighbors( false );
-	set_cutoff_distance( 10.0 );
-}
-
-void RestrictToLoopsAndNeighbors::init_for_copy( RestrictToLoopsAndNeighbors & lhs, RestrictToLoopsAndNeighbors const & rhs)
-{
-	parent::copy(lhs, rhs);
-	lhs.include_neighbors_ = rhs.include_neighbors_;
-	lhs.cutoff_distance_ = rhs.cutoff_distance_;
-	lhs.design_neighbors_ = rhs.design_neighbors_;
 }
 
 bool RestrictToLoopsAndNeighbors::include_neighbors() const

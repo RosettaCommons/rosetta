@@ -79,10 +79,10 @@ public:
 private:
 	// Private methods /////////////////////////////////////////////////////////
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
-	virtual void copy_data(MatchScoreWriter object_to_copy_to, MatchScoreWriter object_to_copy_from);
+	void copy_data(MatchScoreWriter object_to_copy_to, MatchScoreWriter object_to_copy_from);
 
 	// Initialize data members.
-	virtual void init();
+	void init(); // Called from constructor, so virtual is a bit pointless
 
 
 	// Private data ////////////////////////////////////////////////////////////

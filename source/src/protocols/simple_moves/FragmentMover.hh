@@ -227,9 +227,6 @@ public: //this is actually protected: but need public for some unit-testing
 		core::pose::Pose &pose
 	) const;
 
-	/// @brief set defaults
-	virtual void set_defaults();
-
 	// A Fragment mover has to make choices according which fragments are retrieved from the fragset_.
 	// the following virtual functions may be overloaded to influence these choices.
 	// generally they return bool if they were successfully in choosing a value
@@ -268,6 +265,11 @@ public: //this is actually protected: but need public for some unit-testing
 	/// @brief returns true if the ss string is acceptable
 	virtual bool
 	valid_ss( std::string const & new_ss ) const;
+
+private:
+
+	/// @brief set defaults
+	void set_defaults(); // Used by the constructor
 
 private:
 	// these parameters seem to be more like constant options and therefore I didn't

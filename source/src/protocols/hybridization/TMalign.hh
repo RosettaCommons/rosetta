@@ -94,6 +94,10 @@ public:
 		std::vector <core::Real> & xx);
 
 	void
+	resize_for_xyz_matrix(
+		std::vector <std::vector <core::Real> > & xx);
+
+	void
 	convert_xyz_to_matrix(
 		numeric::xyzMatrix <core::Real> const & x,
 		std::vector <std::vector <core::Real> > & xx);

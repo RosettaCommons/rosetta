@@ -88,8 +88,8 @@ public:
 	void
 	set_cycles(core::Size cycles);
 
-	virtual void
-	set_defaults();
+	void
+	set_defaults(); // Called from the constructor, so shouldn't be virtual
 
 	/// @brief Grafts the piece into the pose, uses CCD to close the connection.  Insert does not change dihedral space, but DOES change cartesian space by default.
 	///Does not repack any sidechains.
@@ -156,11 +156,11 @@ public:
 public:
 
 	/// @brief Sets scaffold flexiblity on either end of scaffold
-	virtual void
+	void
 	set_scaffold_flexibility(core::Size const Nter_scaffold_flexibility, core::Size const Cter_scaffold_flexibility);
 
 	/// @brief Sets insert flexibility on either end of insert
-	virtual void
+	void
 	set_insert_flexibility(core::Size const Nter_insert_flexibility, core::Size const Cter_insert_flexibility);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

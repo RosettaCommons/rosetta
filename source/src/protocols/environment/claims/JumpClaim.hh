@@ -115,7 +115,7 @@ protected:
 	//protected and not public because it can return garbage if the value isn't set.
 	LocalPosition const& cut() const;
 
-	virtual void validate() const;
+	void validate() const; // Called from constructor, so virtual is an issue
 
 private:
 

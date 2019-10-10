@@ -277,7 +277,7 @@ def execute(message, command_line, return_='status', until_successes=False, term
 
 def parallel_execute(name, jobs, rosetta_dir, working_dir, cpu_count, time=16):
     ''' Execute command line in parallel on local host
-        time is specify upper time limit in minutes after which jobs will be automatically terminated
+        time specifies the upper limit for cpu-usage runtime (in minutes) for any one process in the parallel execution.
 
         jobs should be dict with following structure:
         {
@@ -299,10 +299,15 @@ def parallel_execute(name, jobs, rosetta_dir, working_dir, cpu_count, time=16):
             ...
         }
     '''
-    allowed_time = int(time*60)
     job_file_name = working_dir + '/' + name
     with open(job_file_name + '.json', 'w') as f: json.dump(jobs, f, sort_keys=True, indent=2) # JSON handles unicode internally
-    execute("Running {} in parallel with {} CPU's...".format(name, cpu_count), 'cd {working_dir} && ulimit -t {allowed_time} && {rosetta_dir}/tests/benchmark/util/parallel.py -j{cpu_count} {job_file_name}.json'.format(**vars()))
+    if time is not None:
+        allowed_time = int(time*60)
+        ulimit_command = f'ulimit -t {allowed_time} && '
+    else:
+        ulimit_command = ''
+    command = f'cd {working_dir} && ' + ulimit_command + f'{rosetta_dir}/tests/benchmark/util/parallel.py -j{cpu_count} {job_file_name}.json'
+    execute("Running {} in parallel with {} CPU's...".format(name, cpu_count), command )
 
     with open(job_file_name+'.results.json') as f: return json.load(f)
 

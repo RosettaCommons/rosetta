@@ -56,9 +56,6 @@ HierarchicalHybridJD_JobResultsSummary::HierarchicalHybridJD_JobResultsSummary(
 	cis_peptide_bonds_(cis_peptide_bonds)
 {}
 
-/// @brief Explicit virtual destructor.
-///
-HierarchicalHybridJD_JobResultsSummary::~HierarchicalHybridJD_JobResultsSummary() = default;
 
 /// @brief Clone operator: make a copy of this object and return an OP to the copy.
 HierarchicalHybridJD_ResultsSummaryBaseOP

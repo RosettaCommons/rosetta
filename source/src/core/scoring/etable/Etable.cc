@@ -507,8 +507,9 @@ Etable::make_pairenergy_table()
 			string ename = etable.first;
 			string fname = header+"."+ename+".etable";
 			TR << "output_etable: writing etable: " << ename << " to " << fname << std::endl;
+			TR << "(Note: this is the output from the base Etable - this may or may not be overwritten by the subsequent output from a derived type.)" << std::endl;
 			ofstream out(fname.c_str());
-			output_etable(*(etable.second),ename,out);
+			Etable::output_etable(*(etable.second),ename,out); // Virtual dispatch doesn't fully work for functions called from the constructor
 			out.close();
 		}
 	}

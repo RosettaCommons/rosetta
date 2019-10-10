@@ -550,7 +550,7 @@ void Tag::read( std::string const & str ) {
 		throw CREATE_EXCEPTION(utility::excn::BadInput, err_msg.str() );
 	}
 
-} // read
+} // NOLINT -- Needed as the spirit parse() function somehow stashes stuff into a global variable
 
 /*
 void Tag::read(std::istream& in ) {

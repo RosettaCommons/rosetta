@@ -391,7 +391,7 @@ void EvaluatedArchive::set_weight( std::string const& column, core::Real weight 
 	if ( weight > 0.01 ) {
 		dummy_score_variations_[ column ] = 1.0; // to make sure we have a value ( e.g., in case we do no local evaluation )
 		scores_are_clean_ = false; //need to re-determine the score-variations
-		invalidate_score_variations();
+		invalidate_score_variations(); // NOLINT - When set from the constructor, this doesn't necessarily invoke the derived class's version
 	}
 }
 

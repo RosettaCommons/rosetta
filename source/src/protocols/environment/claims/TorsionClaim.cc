@@ -75,7 +75,7 @@ TorsionClaim::TorsionClaim( ClientMoverOP owner,
 	claim_sidechain_ = tag->getOption< bool >( "sidechain", false );
 	if ( !claim_sidechain_ && !claim_backbone_ ) {
 		utility::tag::TagCOP tag_parent = tag->getParent().lock();
-		tr.Warning << type() << " owned by mover named "
+		tr.Warning << TorsionClaim::type() << " owned by mover named " // Virtual dispatch doesn't work fully in constructor
 			<< tag_parent->getOption< std::string >( "name" )
 			<< " was not configured to claim neither sidechains nor backbone torsions."
 			<< " Are you sure this is what you wanted?" << std::endl;

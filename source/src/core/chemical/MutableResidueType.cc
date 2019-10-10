@@ -2078,7 +2078,7 @@ MutableResidueType::validate_residue_type() const {
 	bool success = true;
 
 	// Check if the all_atoms() vector is messed up.
-	if ( natoms() != ordered_atoms_.size() ) {
+	if ( MutableResidueType::natoms() != ordered_atoms_.size() ) {
 		success = false;
 		TR.Error << "Residue " << name() << " has an inconsistent atom list: " << ordered_atoms_.size() << " vs. " << natoms() << std::endl;
 	}

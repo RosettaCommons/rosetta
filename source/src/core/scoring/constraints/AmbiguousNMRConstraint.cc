@@ -55,9 +55,13 @@ AmbiguousNMRConstraint::AmbiguousNMRConstraint( func::FuncOP func ):
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
 AmbiguousNMRConstraint::AmbiguousNMRConstraint( ConstraintCOPs const & cst_in, func::FuncOP func ):
-	MultiConstraint( cst_in, atom_pair_constraint ),
+	MultiConstraint( atom_pair_constraint ), // Can't use parallel one in base class, as it doesn't call the correct add_individual_constraint()
 	func_(std::move( func ))
 {
+	for ( auto const &elem : cst_in ) {
+		AmbiguousNMRConstraint::add_individual_constraint( elem ); // Virtual dispatch doesn't work fully during constructor
+	} //loop over all input csts that make up this multi constraint
+
 	// init_cst_score_types();
 	debug_assert ( member_constraints().size() > 0 );
 }
@@ -305,9 +309,13 @@ AmbiguousNMRConstraint::add_individual_constraint( ConstraintCOP cst_in )
 }
 
 AmbiguousNMRConstraint::AmbiguousNMRConstraint( AmbiguousNMRConstraint const & src ) :
-	MultiConstraint( src ),
+	MultiConstraint( src, MultiConstraint::dont_copy_constraints() ),
 	func_( src.func_ ? src.func_->clone() : src.func_ )
-{}
+{
+	for ( auto const & cst : src.member_constraints() ) {
+		AmbiguousNMRConstraint::add_individual_constraint( cst->clone() ); // Virtual dispatch doesn't fully work in constructors
+	}
+}
 
 
 } //constraints

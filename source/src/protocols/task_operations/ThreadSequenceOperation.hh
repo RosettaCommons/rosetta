@@ -48,8 +48,8 @@ public:
 
 	TaskOperationOP clone() const override;
 
-	virtual void target_sequence( std::string const & seq );
-	virtual std::string target_sequence() const;
+	void target_sequence( std::string const & seq );
+	std::string target_sequence() const;
 
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;

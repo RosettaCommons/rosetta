@@ -677,9 +677,7 @@ Clustering::readDecoyNames()
 		input.getline(buf, 400);
 		char* token = strtok(buf, " ");
 		if ( !token ) continue;
-		auto* name = new char[strlen(token)+1];
-		strcpy(name, token);
-		names_.push_back(name);
+		names_.push_back(token);
 	}
 	input.close();
 	std::cout << "Read " << names_.size() << " decoy names" << std::endl;

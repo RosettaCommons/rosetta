@@ -97,11 +97,12 @@ FragmentCM::FragmentCM():
 FragmentCM::FragmentCM( simple_moves::FragmentMoverOP mover,
 	core::select::residue_selector::ResidueSelectorCOP selector ):
 	ClientMover(),
+	mover_( mover ),
 	selector_(std::move( selector )),
 	bInitialize_( true ),
 	bYieldCutBias_( false )
 {
-	set_mover( mover );
+	type( FragmentCM::get_name() ); // Virtual dispatch doesn't fully work in the constructor
 }
 
 FragmentCM::~FragmentCM() = default;

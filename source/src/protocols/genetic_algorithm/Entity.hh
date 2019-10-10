@@ -132,6 +132,7 @@ public:
 	~Entity() override;
 
 	//// @brief construct Entity from std::string (e.g. from file)
+	/// @note Do not call this from derived classes unless you understand its limitations
 	Entity( std::string const & line );
 
 	virtual OP clone() const;

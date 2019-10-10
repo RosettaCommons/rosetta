@@ -469,7 +469,7 @@ MinimizationEdge::MinimizationEdge(
 	weight_( 1.0 ),
 	dweight_( 1.0 )
 {
-	copy_from( & example_edge );
+	MinimizationEdge::copy_from( & example_edge ); // Virtual dispatch doesn't work fully in constructor
 }
 
 /// @brief virtual dstor; The MinimizationEdge must free the array pool element it

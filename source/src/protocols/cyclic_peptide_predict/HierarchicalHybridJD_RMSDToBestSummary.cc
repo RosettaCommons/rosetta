@@ -36,9 +36,6 @@ HierarchicalHybridJD_RMSDToBestSummary::HierarchicalHybridJD_RMSDToBestSummary(
 	rmsd_to_best_( rmsd_to_best )
 {}
 
-/// @brief Destructor.
-HierarchicalHybridJD_RMSDToBestSummary::~HierarchicalHybridJD_RMSDToBestSummary(){}
-
 /// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 HierarchicalHybridJD_ResultsSummaryBaseOP
 HierarchicalHybridJD_RMSDToBestSummary::clone() const {

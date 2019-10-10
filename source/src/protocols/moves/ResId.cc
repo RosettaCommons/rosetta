@@ -23,24 +23,12 @@
 namespace protocols {
 namespace moves {
 
-ResId::ResId() {
-	modifiable( true );
-}
-
-ResId::~ResId() = default;
-
-ResId::ResId( core::Size const r ){
-	set_resid( r );
-	modifiable( true );
-}
+ResId::ResId( core::Size const r ):
+	resid_( r )
+{}
 
 core::Size
 ResId::get_resid() const{
-	return( resid_ );
-}
-
-core::Size &
-ResId::get_resid(){
 	return( resid_ );
 }
 

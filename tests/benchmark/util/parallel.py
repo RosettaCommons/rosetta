@@ -72,7 +72,7 @@ class Runner:
 
 
     def signal_handler(self, signal_, f):
-        sys.stderr('Ctrl-C pressed... killing child jobs...\n')
+        sys.stderr.write('Ctrl-C pressed... killing child jobs...\n')
         for pid in self.jobs:
             os.killpg(os.getpgid(pid), signal.SIGKILL)
 
@@ -196,6 +196,11 @@ class Runner:
                     results[c]['result_file'] = result_file
 
                     if os.path.isfile(output_file): os.remove(output_file)
+
+                    # We need the directory to exist if it doesn't already.
+                    output_dir = os.path.dirname( output_file )
+                    if not os.path.exists( output_dir ):
+                        os.makedirs( output_dir )
 
                     pid = self.mfork()
                     if not pid:  # we are the child process

@@ -194,6 +194,7 @@ void RepeatParameterFilter::calculate_helical_parameters_helper( core::pose::Pos
 		x_A.col(i)=A.col(i)-c_A;
 		x_B.col(i)=B.col(i)-c_B;
 	}
+	debug_assert( x_A.cols() != 0 );
 	Matrix3f cov= (x_B * x_A.transpose()) / x_A.cols();
 	JacobiSVD<MatrixXf> svd(cov, ComputeFullU | ComputeFullV);
 

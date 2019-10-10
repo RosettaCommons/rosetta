@@ -117,7 +117,7 @@ BinarySilentStruct::BinarySilentStruct(
 	bJumps_use_IntraResStub_ = false;
 	symminfo_ = utility::pointer::make_shared< core::conformation::symmetry::SymmetryInfo >();
 	symminfo_->set_use_symmetry(false);
-	fill_struct( pose, tag );
+	BinarySilentStruct::fill_struct( pose, tag ); // Virtual dispatch doesn't work fully in constructor
 } // BinarySilentStruct
 
 BinarySilentStruct::~BinarySilentStruct() = default;

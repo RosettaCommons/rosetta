@@ -140,7 +140,7 @@ Entity::Entity() :
 Entity::Entity( std::string const & line )
 {
 	std::istringstream linestream( line );
-	if ( !read_checkpoint(linestream) ) utility_exit_with_message( "invalid string " + line );
+	if ( !Entity::read_checkpoint(linestream) ) utility_exit_with_message( "invalid string " + line ); // Virtual dispatch doesn't fully work in constructors
 }
 
 Entity::Entity( Entity const & entity ) :

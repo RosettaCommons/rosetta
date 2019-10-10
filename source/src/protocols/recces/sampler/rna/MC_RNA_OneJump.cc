@@ -59,7 +59,7 @@ MC_RNA_OneJump::MC_RNA_OneJump( core::pose::Pose const & pose,
 
 	stored_upstream_stub_ = scratch_pose_->conformation().upstream_jump_stub( 1 ); // only 1 jump in 2-residue scratch pose
 	active_jump_ = scratch_pose_->jump( 1 );
-	update();
+	MC_RNA_OneJump::update(); // Virtual dispatch doesn't work fully in constructor
 
 	set_name( "MC_RNA_OneJump" );
 }

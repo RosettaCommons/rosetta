@@ -49,9 +49,6 @@ public:
 		core::Size const jobindex_on_originating_node
 	);
 
-	/// @brief Destructor.
-	virtual ~HierarchicalHybridJD_ResultsSummaryBase();
-
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	virtual HierarchicalHybridJD_ResultsSummaryBaseOP clone() const = 0;
 

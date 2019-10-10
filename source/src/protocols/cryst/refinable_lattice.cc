@@ -1046,7 +1046,6 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 
 	core::pose::Pose posebase;
 	utility::vector1<Size> Ajumps, Bjumps, Cjumps, monomer_jumps, monomer_anchors;
-	Size base_monomer;
 
 	numeric::xyzVector< core::Real > max_extent(0,0,0);
 	for ( Size i=1; i<= pose.size(); ++i ) {
@@ -1076,7 +1075,9 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 	TR.Debug << "using extent = " << EXTEND[0] << "," << EXTEND[1] << "," << EXTEND[2] << std::endl;
 	TR.Debug << "  max_extent = " << max_extent[0] << "," << max_extent[1] << "," << max_extent[2] << std::endl;
 
+	Size base_monomer = -1; // Obviously bogus value - build_lattice_of_virtuals() should reset
 	build_lattice_of_virtuals( posebase, EXTEND, Ajumps, Bjumps, Cjumps, monomer_anchors, base_monomer);
+	debug_assert( base_monomer != core::Size(-1) );
 
 	Size nvrt = posebase.size();
 	Size nres_monomer = pose.size();
@@ -1219,6 +1220,7 @@ MakeLatticeMover::detect_connecting_subunits(
 
 	utility::vector1<numeric::xyzVector< core::Real >> monomer_cas(nIntCtrs);
 
+	debug_assert( basesubunit <= num_monomers );
 	numeric::xyzVector< core::Real > T0 = pose.residue(monomer_anchors[basesubunit]).xyz("ORIG");
 	runtime_assert( T0.length() < 1e-6);
 

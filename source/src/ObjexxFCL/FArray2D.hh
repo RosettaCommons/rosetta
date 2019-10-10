@@ -452,7 +452,7 @@ public: // Predicate
 
 	/// @brief Dimensions Initialized?
 	bool
-	dimensions_initialized() const override
+	dimensions_initialized() const final // Needs final as its used in the constructor
 	{
 		return ( ( I1_.initialized() ) && ( I2_.initialized() ) );
 	}

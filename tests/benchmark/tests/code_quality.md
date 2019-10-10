@@ -11,6 +11,11 @@ Check if serialization routines are properly implemented for those classes which
 Run the Clang Static Analyzer on Rosetta and report any issues found.
 
 ----
+### clang_tidy
+Run Clang Tidy on Rosetta and report issues found.
+(Does not modify code.)
+
+----
 ### beautification
 Check if new code in branch if beautified according to Rosetta standards.
 

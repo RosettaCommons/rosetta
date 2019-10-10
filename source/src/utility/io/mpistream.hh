@@ -103,7 +103,7 @@ public:
 	}
 
 
-	virtual std::streamsize flush_final() {
+	std::streamsize flush_final() { // Called by destructor - shouldn't be virtual.
 		return flush( true );
 	}
 
@@ -115,7 +115,7 @@ public:
 	//void release_file();
 	void print_header( std::string const& );
 private:
-	virtual std::streamsize flush( bool final );
+	std::streamsize flush( bool final ); // Called by destructor - shouldn't be virtual.
 	bool send_to_master( char_type*, std::streamsize );
 	std::size_t fill_input_buffer();
 

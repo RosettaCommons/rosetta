@@ -52,7 +52,7 @@ namespace pose_outputters {
 
 ScoreFileOutputter::ScoreFileOutputter() = default;
 
-ScoreFileOutputter::~ScoreFileOutputter() { flush(); }
+ScoreFileOutputter::~ScoreFileOutputter() { ScoreFileOutputter::flush(); } // Virtual dispatch doesn't work fully during destruction
 
 std::string
 ScoreFileOutputter::outputter_for_job(

@@ -41,9 +41,6 @@ HierarchicalHybridJD_ResultsSummaryBase::HierarchicalHybridJD_ResultsSummaryBase
 	runtime_assert( jobindex_on_originating_node_ > 0);
 }
 
-/// @brief Destructor.
-HierarchicalHybridJD_ResultsSummaryBase::~HierarchicalHybridJD_ResultsSummaryBase(){}
-
 /// @brief Set the MPI rank of the process that initially carried out this job.
 ///
 void

@@ -81,7 +81,7 @@ PDBSilentStruct::PDBSilentStruct(
 	core::pose::Pose const & pose,
 	std::string tag
 ) : SilentStruct( opts ) {
-	fill_struct( pose, tag );
+	PDBSilentStruct::fill_struct( pose, tag ); // Virtual function dispatch doesn't work fully during constructor
 } // PDBSilentStruct
 
 void PDBSilentStruct::print_header( std::ostream & out ) {

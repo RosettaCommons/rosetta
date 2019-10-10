@@ -47,9 +47,6 @@ public:
 	/// @brief Copy constructor.
 	HierarchicalHybridJD_RMSDToBestSummary(HierarchicalHybridJD_RMSDToBestSummary const & ) = default;
 
-	/// @brief Destructor.
-	virtual ~HierarchicalHybridJD_RMSDToBestSummary();
-
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	HierarchicalHybridJD_ResultsSummaryBaseOP clone() const override;
 

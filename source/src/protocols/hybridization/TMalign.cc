@@ -398,6 +398,15 @@ TMalign::convert_xyz_to_vector(
 }
 
 void
+TMalign::resize_for_xyz_matrix(
+	std::vector <std::vector <core::Real> > & xx) {
+	xx.resize(3);
+	for ( Size i = 0; i<3; ++i ) {
+		xx[i].resize(3);
+	}
+}
+
+void
 TMalign::convert_xyz_to_matrix(
 	numeric::xyzMatrix <core::Real> const & x,
 	std::vector <std::vector <core::Real> > & xx) {
@@ -460,7 +469,7 @@ bool  TMalign::Kabsch(
 	convert_xyz_to_vector(t,tt);
 
 	std::vector < std::vector < core::Real > > uu;
-	convert_xyz_to_matrix(u,uu);
+	resize_for_xyz_matrix(uu);
 
 	bool retval = Kabsch(xx,yy,n,mode,rms,tt,uu);
 	convert_vector_to_xyz(tt,t);

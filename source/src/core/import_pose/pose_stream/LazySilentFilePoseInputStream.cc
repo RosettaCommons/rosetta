@@ -67,7 +67,7 @@ LazySilentFilePoseInputStream::LazySilentFilePoseInputStream( utility::vector1< 
 LazySilentFilePoseInputStream::LazySilentFilePoseInputStream() :
 	sfd_( core::io::silent::SilentFileOptions() )
 {
-	reset();
+	LazySilentFilePoseInputStream::reset(); // Virtual dispatch doesn't work fully during constructor
 }
 
 bool LazySilentFilePoseInputStream::has_another_pose() {

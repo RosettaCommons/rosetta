@@ -29,18 +29,16 @@ namespace moves {
 //// Override the get and set methods in containers of ResId objects (see CompoundStatementFilter and DockDesignMover for examples)
 class ResId{
 public:
-	ResId();
+	ResId() = default;
 	ResId( core::Size const r );
 	virtual void set_resid( core::Size const r );
 	virtual core::Size get_resid() const;
-	virtual core::Size & get_resid();
 	/// @brief should another method be able to modify resid_. This is used by modify_ResId_based_object as a test
-	virtual bool modifiable() const;
-	virtual void modifiable( bool const u );
-	virtual ~ResId();
+	bool modifiable() const;
+	void modifiable( bool const u );
 private:
-	core::Size resid_;
-	bool modifiable_;// defaults to true
+	core::Size resid_ = 0;
+	bool modifiable_ = true;
 };
 
 /// @brief Checks whether a referencecount object is a derived from ResId and if so, sets its resid

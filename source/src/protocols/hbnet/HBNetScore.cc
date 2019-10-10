@@ -39,7 +39,7 @@ HBNetScore::HBNetScore() :
 	threshold_( 0 ),
 	hbond_threshold_( -0.25 )
 {
-	scorename_ = name();
+	scorename_ = HBNetScore::name(); // Virtual dispatch doesn't work fully in constructors
 }
 
 HBNetScore::HBNetScore( protocols::filters::Filter const & src ) :
@@ -50,7 +50,7 @@ HBNetScore::HBNetScore( HBNetScore const & src ) :
 	threshold_( src.threshold_ ),
 	hbond_threshold_( src.hbond_threshold_ )
 {
-	scorename_ = name();
+	scorename_ = HBNetScore::name(); // Virtual dispatch doesn't work fully in constructors
 }
 
 

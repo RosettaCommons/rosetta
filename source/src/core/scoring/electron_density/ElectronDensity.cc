@@ -3265,8 +3265,7 @@ bool ElectronDensity::writeMRC(std::string mapfilename) {
 	outx.write(reinterpret_cast <char*>(ori_float), sizeof(float)*3);
 
 	// Write "MAP" at byte 208, indicating a CCP4 file.
-	char buff_s[80]; strcpy(buff_s, "MAP DD  ");
-	outx.write(reinterpret_cast <char*>(buff_s), 8);
+	outx.write("MAP DD  ", 8);
 
 	// fill remainder of head with junk
 	int nJunkWords = (1024 - 216) /4;

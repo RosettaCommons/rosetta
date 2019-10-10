@@ -89,7 +89,7 @@ public:
 	virtual void print_generation_statistics( std::ostream & os, core::Size gen_num ) const;
 	virtual void print_population( std::ostream & ) const;
 	virtual void print_cache( std::ostream & ) const;
-	virtual std::string entities_checkpoint_filename(std::string suffix = "") const;
+	std::string entities_checkpoint_filename(std::string suffix = "") const; // Can be called during destructor, so shouldn't be virtual
 	/// @brief for checkpointing fitness cache
 	virtual bool read_entities_checkpoint( bool overwrite = false );
 	/// @brief for checkpointing fitness cache
@@ -99,7 +99,7 @@ public:
 	virtual bool read_generations_checkpoint();
 	virtual bool read_checkpoint();
 	/// @brief allows the prevention of accidental reuse of checkpoint files
-	virtual void rename_checkpoint_files() const;
+	void rename_checkpoint_files() const; // Called from destructor, so being virtual is an issue
 	virtual EntityCOP entity_template() const;
 	virtual void set_entity_template(EntityCOP entity);
 	virtual EntityOP new_entity();

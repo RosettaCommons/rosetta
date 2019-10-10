@@ -505,7 +505,7 @@ Graph::Graph( platform::Size num_nodes ) :
 	focused_edge_( nullptr )
 {
 	for ( platform::Size ii = 1; ii <= num_nodes; ++ii ) {
-		nodes_[ ii ] = create_new_node( ii );
+		nodes_[ ii ] = Graph::create_new_node( ii );
 	}
 }
 
@@ -529,7 +529,7 @@ Graph::Graph( Graph const & source ) :
 	focused_edge_( nullptr )
 {
 	for ( platform::Size ii = 1; ii <= num_nodes_; ++ii ) {
-		nodes_[ ii ] = create_new_node( ii );
+		nodes_[ ii ] = Graph::create_new_node( ii );
 		nodes_[ ii ]->copy_from( source.nodes_[ii] );
 	}
 

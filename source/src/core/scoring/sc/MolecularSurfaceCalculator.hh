@@ -208,7 +208,7 @@ public:
 	MolecularSurfaceCalculator();
 	~MolecularSurfaceCalculator() override;
 	virtual int Init();
-	virtual void Reset();
+	void Reset(); // May be called by the destructor - shouldn't be virtual
 #if defined(WIN32) && !defined(WIN_PYROSETTA)
 	int AddAtomWIN32(int molecule, Atom &atom);
 #else

@@ -797,7 +797,7 @@ PDEdge::PDEdge
 	),
 	energies_updated_since_last_prep_for_simA_( true )
 {
-	force_all_aa_neighbors();
+	PDEdge::force_all_aa_neighbors(); // Virtual dispatch doesn't work fully in constructor
 }
 
 /// @brief destructor

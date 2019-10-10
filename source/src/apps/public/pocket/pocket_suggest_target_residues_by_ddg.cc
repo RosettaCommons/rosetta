@@ -49,6 +49,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/string_util.hh>
 #include <string>
 #include <ObjexxFCL/string.functions.hh>
 
@@ -411,8 +412,8 @@ core::Real interface_residue_ddg (core::pose::Pose const & pose, core::Size resn
 	core::Real out=0;
 	for ( auto const & it : interface ) {
 		char * token;
-		char * str = new char[it.length()+1];
-		strcpy (str, it.c_str());
+		char * str = new char[it.length()+1]; // Need a modifiable char* for strtok()
+		utility::copy_to_cstr_buffer( it, str, it.length()+1 );
 		token = strtok (str, " ");
 		int token_count=0;
 		while ( token != nullptr ) {
@@ -445,8 +446,8 @@ bool is_interface_residue (const char chain, const int resno){
 	if ( chains.count(chain)==0 ) return out;
 	for ( auto const & it : interface ) {
 		char * token;
-		char * str = new char[it.length()+1];
-		strcpy (str, it.c_str());
+		char * str = new char[it.length()+1]; // Need a modifiable char* for strtok()
+		utility::copy_to_cstr_buffer( it, str, it.length()+1 );
 		token = strtok (str, " ");
 		int token_count=0;
 		while ( token != nullptr ) {

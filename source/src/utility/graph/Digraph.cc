@@ -493,7 +493,7 @@ Digraph::Digraph( platform::Size num_nodes ) :
 	focused_edge_( nullptr )
 {
 	for ( platform::Size ii = 1; ii <= num_nodes; ++ii ) {
-		nodes_[ ii ] = create_new_node( ii );
+		nodes_[ ii ] = Digraph::create_new_node( ii );
 	}
 }
 
@@ -517,7 +517,7 @@ Digraph::Digraph( Digraph const & source ) :
 	focused_edge_( nullptr )
 {
 	for ( platform::Size ii = 1; ii <= num_nodes_; ++ii ) {
-		nodes_[ ii ] = create_new_node( ii );
+		nodes_[ ii ] = Digraph::create_new_node( ii );
 		nodes_[ ii ]->copy_from( source.nodes_[ii] );
 	}
 
@@ -590,7 +590,7 @@ Digraph::add_edge(platform::Size tail_index, platform::Size head_index)
 {
 	debug_assert( ! get_edge_exists( tail_index, head_index ) );
 
-	DirectedEdge* new_edge = create_new_edge(tail_index, head_index);
+	DirectedEdge* new_edge = create_new_edge(tail_index, head_index); // NOLINT -- This can be called indirectly from one of the constructors in a fashion which is (sort-of) safe
 	edge_list_.push_back( new_edge );
 	++num_edges_;
 	new_edge->set_pos_in_owners_list( edge_list_.last() );

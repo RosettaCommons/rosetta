@@ -118,15 +118,15 @@ public:
 	//Copy constructor
 	BacksideHbondFinderMover (BacksideHbondFinderMover const & other);
 	//Destructor
-	virtual ~BacksideHbondFinderMover();
+	~BacksideHbondFinderMover() override;
 	//Set private data
 	//Get private data
 	//Virtual methods
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 	void mutate_residue( core::pose::Pose & pose, core::Size res_position, std::string target_res_name, bool );
-	virtual void apply(core::pose::Pose & pose);
-	virtual std::string get_name() const;
+	void apply(core::pose::Pose & pose) override;
+	std::string get_name() const override;
 	core::Real get_atom_sasa_cutoff() const{ return atom_sasa_cutoff_; }
 	void set_atom_sasa_cutoff( core::Size cutoff ){ atom_sasa_cutoff_ = cutoff; }
 	core::Real get_neighbor_distance_cutoff() const{ return neighbor_distance_cutoff_; }

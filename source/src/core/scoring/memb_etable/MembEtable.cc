@@ -339,9 +339,9 @@ MembEtable::make_pairenergy_table()
 		for ( auto & etable : etables ) {
 			string ename = etable.first;
 			string fname = header+"."+ename+".etable";
-			TR << "output_etable: writing etable: " << ename << " to " << fname << std::endl;
+			TR << "output_etable: writing Membrane etable: " << ename << " to " << fname << std::endl;
 			ofstream out(fname.c_str());
-			output_etable(*(etable.second),ename,out);
+			MembEtable::output_etable(*(etable.second),ename,out); // Virtual dispatch doesn't fully work in functions called from the constructor
 			out.close();
 		}
 	}

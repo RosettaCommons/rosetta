@@ -71,6 +71,12 @@ void check_score_function ( core::scoring::ScoreFunctionOP sfxn ) {
 void read_in_pdbs( utility::vector1<core::pose::PoseOP> &poses, core::Size &n_poses, core::Size &num_res ) {
 	core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
 	//Import each pose
+	n_poses = poses.size();
+	if ( n_poses == 0 ) {
+		num_res = 0;
+	} else {
+		num_res = poses.back()->total_residue();
+	}
 	while ( input.has_another_pose() ) {
 		n_poses++;
 		core::pose::PoseOP mypose( new core::pose::Pose );
