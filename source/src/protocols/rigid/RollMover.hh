@@ -84,18 +84,18 @@ private:
 
 	core::pose::ResidueIndexDescriptionCOP start_res_;
 	core::pose::ResidueIndexDescriptionCOP stop_res_;
-	core::Real angle_;
-	core::Real min_angle_;
-	core::Real max_angle_;
-	numeric::xyzVector< core::Real > axis_;
+	core::Real angle_ = 0.0;
+	core::Real min_angle_ = 0.0;
+	core::Real max_angle_ = 0.0;
+	numeric::xyzVector< core::Real > axis_ = {0,0,0};
 	/// @brief If true, overwrite the translate_ vector with the apply() Pose's center of mass.
 	//bool use_com_ = false;
-	numeric::xyzVector< core::Real > translate_;
-	bool random_roll_;
-	core::Real random_roll_angle_;
-	core::Real random_roll_trans_;
+	numeric::xyzVector< core::Real > translate_ = {0,0,0};
+	bool random_roll_ = false;
+	core::Real random_roll_angle_ = 0.0;
+	core::Real random_roll_trans_ = 0.0;
 
-	bool legacy_mode_;
+	bool legacy_mode_ = false;
 };//end RollMover
 
 

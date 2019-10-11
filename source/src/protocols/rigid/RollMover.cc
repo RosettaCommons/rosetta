@@ -259,8 +259,7 @@ RollMover::clone() const
 
 /// @brief
 RollMover::RollMover(
-) : Mover(),
-	translate_( 0, 0, 0 )
+) : Mover()
 {
 	moves::Mover::type( "RollMover" );
 }
