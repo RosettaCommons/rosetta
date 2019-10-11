@@ -35,6 +35,10 @@
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
+#include <core/io/pdb/pdb_writer.hh>
+#include <core/io/AtomInformation.hh>
+#include <core/io/StructFileRep.hh>
+#include <core/io/StructFileRepOptions.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -428,16 +432,33 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 		core::scoring::electron_density::ElectronDensity mapdmp = core::scoring::electron_density::getDensityMap();
 		mapdmp.set_data(rot);
 		mapdmp.writeMRC( "filter.mrc" );
+
 		//dump the points
-		std::ofstream outpoints;
-		outpoints.open("selectedpoints.txt", std::ofstream::app);
+		core::io::StructFileRep sfr;
+		auto & chains = sfr.chains();
+		chains.push_back(utility::vector0<core::io::AtomInformation>());
+		core::io::StructFileRepOptionsCOP options = utility::pointer::make_shared< core::io::StructFileRepOptions >();
+		core::io::AtomInformation ai;
 		for ( Size i=1; i<=points_to_search_.size(); i++ ) {
+			ai.serial = i;
+			ai.name = "MG  ";
+			ai.resName = " MG";
+			ai.chainID = 'A';
 			numeric::xyzVector< core::Real > x_cart;
 			numeric::xyzVector< core::Real > x_idx = points_to_search_[i];
 			core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
-			outpoints << "ATOM " << utility::to_string(i) << " " << x_cart[0] << " " << x_cart[1] << " " << x_cart[2] << std::endl;
+			ai.x = x_cart[0];
+			ai.y = x_cart[1];
+			ai.z = x_cart[2];
+			ai.occupancy = 1.0;
+			ai.element = "MG";
+			chains[0].push_back(ai);
 		}
-		outpoints.close();
+
+		std::string const pdb_contents(core::io::pdb::create_pdb_contents_from_sfr(sfr, options));
+		utility::io::ozstream file(std::string("selectedpoints.pdb").c_str(), std::ios::out | std::ios::binary);
+		file.write( pdb_contents.c_str(), pdb_contents.size() );
+		file.close();
 	}
 
 	if ( native_ ) TR << "Closest point to native: " << std::sqrt(minDistNative) << std::endl;
