@@ -34,6 +34,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/import_pose/import_pose_options.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -165,6 +166,62 @@ public:
 		TS_ASSERT( pose->residue_type(pose->total_residue()).has_variant_type( core::chemical::CUTPOINT_LOWER ) );
 		TS_ASSERT( pose->residue(1).connected_residue_at_lower() == pose->total_residue() );
 		TS_ASSERT( pose->residue(pose->total_residue()).connected_residue_at_upper() == 1 );
+	}
+
+	/// @brief Test that we can correctly read poses without adding termini to user-specified chains.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void test_read_pose_without_terminal_variant_types() {
+		core::import_pose::ImportPoseOptions options1, options2, options3, options4;
+		options1.set_pack_missing_sidechains(false);
+		options2.set_pack_missing_sidechains(false);
+		options3.set_pack_missing_sidechains(false);
+		options4.set_pack_missing_sidechains(false);
+		options2.set_check_if_residues_are_Ntermini( "" );
+		options2.set_check_if_residues_are_Ctermini( "" );
+		options3.set_check_if_residues_are_Ntermini( "B" );
+		options3.set_check_if_residues_are_Ctermini( "B" );
+		options4.set_check_if_residues_are_Ntermini( "AC" );
+		options4.set_check_if_residues_are_Ctermini( "AC" );
+
+		core::pose::PoseOP pose1( core::import_pose::pose_from_file( "core/io/pose_from_sfr/1IJ3_cleaned.pdb" , options1, false, core::import_pose::PDB_file  ) );
+		core::pose::PoseOP pose2( core::import_pose::pose_from_file( "core/io/pose_from_sfr/1IJ3_cleaned.pdb" , options2, false, core::import_pose::PDB_file  ) );
+		core::pose::PoseOP pose3( core::import_pose::pose_from_file( "core/io/pose_from_sfr/1IJ3_cleaned.pdb" , options3, false, core::import_pose::PDB_file  ) );
+		core::pose::PoseOP pose4( core::import_pose::pose_from_file( "core/io/pose_from_sfr/1IJ3_cleaned.pdb" , options4, false, core::import_pose::PDB_file  ) );
+
+		core::Size const res1A(1), resNA(31), res1B(32), resNB(62), res1C(63), resNC(93); //Start and end indices of all chains in the test structure.
+
+		//Pose 1 should have termini.
+		TS_ASSERT( pose1->residue_type(res1A).is_lower_terminus() );
+		TS_ASSERT( pose1->residue_type(resNA).is_upper_terminus() );
+		TS_ASSERT( pose1->residue_type(res1B).is_lower_terminus() );
+		TS_ASSERT( pose1->residue_type(resNB).is_upper_terminus() );
+		TS_ASSERT( pose1->residue_type(res1C).is_lower_terminus() );
+		TS_ASSERT( pose1->residue_type(resNC).is_upper_terminus() );
+
+		//Pose 2 should have no termini.
+		TS_ASSERT( !pose2->residue_type(res1A).is_lower_terminus() );
+		TS_ASSERT( !pose2->residue_type(resNA).is_upper_terminus() );
+		TS_ASSERT( !pose2->residue_type(res1B).is_lower_terminus() );
+		TS_ASSERT( !pose2->residue_type(resNB).is_upper_terminus() );
+		TS_ASSERT( !pose2->residue_type(res1C).is_lower_terminus() );
+		TS_ASSERT( !pose2->residue_type(resNC).is_upper_terminus() );
+
+		//Pose 3 should have termini ONLY on chain B.
+		TS_ASSERT( !pose3->residue_type(res1A).is_lower_terminus() );
+		TS_ASSERT( !pose3->residue_type(resNA).is_upper_terminus() );
+		TS_ASSERT( pose3->residue_type(res1B).is_lower_terminus() );
+		TS_ASSERT( pose3->residue_type(resNB).is_upper_terminus() );
+		TS_ASSERT( !pose3->residue_type(res1C).is_lower_terminus() );
+		TS_ASSERT( !pose3->residue_type(resNC).is_upper_terminus() );
+
+		//Pose 4 should have termini ONLY on chains A and C.
+		TS_ASSERT( pose4->residue_type(res1A).is_lower_terminus() );
+		TS_ASSERT( pose4->residue_type(resNA).is_upper_terminus() );
+		TS_ASSERT( !pose4->residue_type(res1B).is_lower_terminus() );
+		TS_ASSERT( !pose4->residue_type(resNB).is_upper_terminus() );
+		TS_ASSERT( pose4->residue_type(res1C).is_lower_terminus() );
+		TS_ASSERT( pose4->residue_type(resNC).is_upper_terminus() );
+
 	}
 
 };

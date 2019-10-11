@@ -1665,14 +1665,14 @@ bool PoseFromSFRBuilder::determine_check_Ntermini_for_this_chain( char chainID )
 {
 	std::string const & nterm_chains = options_.check_if_residues_are_Ntermini();
 	return "ALL" == nterm_chains ||
-		std::find( nterm_chains.begin(), nterm_chains.end(), chainID ) == nterm_chains.end();
+		std::find( nterm_chains.begin(), nterm_chains.end(), chainID ) != nterm_chains.end();
 }
 
 bool PoseFromSFRBuilder::determine_check_Ctermini_for_this_chain( char chainID ) const
 {
 	std::string const & cterm_chains = options_.check_if_residues_are_Ctermini();
 	return "ALL" == cterm_chains ||
-		std::find( cterm_chains.begin(), cterm_chains.end(), chainID ) == cterm_chains.end();
+		std::find( cterm_chains.begin(), cterm_chains.end(), chainID ) != cterm_chains.end();
 }
 
 
