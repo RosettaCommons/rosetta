@@ -44,7 +44,7 @@ For this benchmark set, a model is generated in ~100s. Which makes 100s x 5prote
 #### How do you define a pass/fail for this test?
 #### How were any cutoffs defined?
 
-Since the energy landscape of flexible linkers is quite flat, it is difficult to identify a near-native model by score alone. Relaxed natives have scored better than built models, as shown in the paper, figure 2, but sampling so close to the native remains a challenge. We therefore check for RMSDs<10A for at least 2 of the models, which is 0.06%. For score, we ask whether 3 of the models are below the score cutoff which was set from the avg score during the first run, then adjusted visually. RMSD values remain large due to the lever arm effect. Cutoffs were defined by running the protocol a couple of times and adjusting the cutoffs for the test to pass. 
+Since the energy landscape of flexible linkers is quite flat, it is difficult to identify a near-native model by score alone. Relaxed natives have scored better than built models, as shown in the paper, figure 2, but sampling so close to the native remains a challenge. We therefore check for RMSDs<15A for at least 2 of the models, which is 0.06%. For score, we ask whether 3 of the models are below the score cutoff which was set from the avg score during the first run, then adjusted visually. RMSD values remain large due to the lever arm effect. Cutoffs were defined by running the protocol a couple of times and adjusting the cutoffs for the test to pass. 
 
 ## KEY RESULTS
 #### What is the baseline to compare things to - experimental data or a previous Rosetta protocol?

@@ -37,7 +37,7 @@ NGK: 571 CPU hours | KIC-FRAG:766 CPU hours | KIC: 621 CPU hours | CCD: 498 CPU 
 #### What are the performance metrics used and why were they chosen?
 #### How do you define a pass/fail for this test?
 #### How were any cutoffs defined?
-The total_score and rmsd (loop_rms) to the native were used as metrics. These values are plotted with expectation of forming a funnel shape. However, in actual modeling process, we don't know the native conformation, which makes the score vs rmsd plot not very useful. We rely mostly on the far-perfect Rosetta scoring function to make a decision. Here we chose 10% cutoff for score vs rmsd to describe ultimate pass/fail. The test will pass if we can find any structures in the top 10% scoring models that has rmsd to the native less than a cutoff value. We used a high cutoff value at 3.5A for the difficult case (2TGI) while the other cases have the cutoffs at 1.5A. 
+The total_score and rmsd (loop_rms) to the native were used as metrics. These values are plotted with expectation of forming a funnel shape. However, in actual modeling process, we don't know the native conformation, which makes the score vs rmsd plot not very useful. We rely mostly on the far-perfect Rosetta scoring function to make a decision. Here we chose 10% cutoff for score vs rmsd to describe ultimate pass/fail. The test will pass if we can find any structures in the top 10% scoring models that has rmsd to the native less than a cutoff value. We use a cutoff of 2.0A for all loop modeling protocols and all targets. 
 
 ## KEY RESULTS
 #### What is the baseline to compare things to - experimental data or a previous Rosetta protocol?

@@ -50,7 +50,7 @@ command_line = '''
 -no_color
 '''.replace('\n', ' ').replace('  ', ' ')
 
-nstruct = 2 if debug else 5  # TEMP: for server testing; should be 500
+nstruct = 2 if debug else 500
 
 targets = '1DIW 1GU3 1MFA 1OF4'.split()
 targets = targets[:2] if debug else targets

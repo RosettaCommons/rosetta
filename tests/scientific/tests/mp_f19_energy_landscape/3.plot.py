@@ -83,7 +83,7 @@ for i in range( 0, len( energy_landscapes ) ):
 
 	# Calculate the minimum energy point
 	zmin, anglemin = energy_landscape_metrics.compute_minimum_energy_orientation( zcoords_arr, angles_arr, total_scores_arr )
-	plt.plot( anglemin, zmin, 'white' )
+	plt.plot( anglemin, zmin, 'wo', markersize=12 )
 	
 #save figure
 plt.tight_layout()

@@ -46,12 +46,15 @@ height = 6 * nrows
 plt.rc("font", size=20)
 plt.rcParams['figure.figsize'] = width, height #width, height
 
+# get number of fields in scorefile
+nfields = len( subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[0] + " | grep " + y_label + " | head -n1" ).split())
+
 # go through scorefiles
 for i in range( 0, len( scorefiles ) ):
 
 	# read in score file
-	x = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + x_index + "}'" ).splitlines()
-	y = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + y_index + "}'" ).splitlines()
+	x = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " | awk '{print $" + x_index + "}'" ).splitlines()
+	y = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " | awk '{print $" + y_index + "}'" ).splitlines()
 	
 	# map all values to floats
 	x = list( map( float, x ) )
