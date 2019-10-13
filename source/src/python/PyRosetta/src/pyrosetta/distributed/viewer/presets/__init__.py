@@ -15,10 +15,14 @@ import pyrosetta.distributed.viewer as viewer
 viewer.presets.ligandsAndMetals(poses, window_size=(800, 600), continuous_update=True)
 --------------------------------------------------------------------------------
 
-Contribute your own preset Viewer:
- 1. Edit ~Rosetta/main/source/src/python/PyRosetta/src/pyrosetta/distributed/viewer/presets/__init__.py 
- 2. Copy and modify the "templatePreset" function, renaming it to the name of your new preset Viewer.
- 3. Add the name of your new preset Viewer to the __all__ list.
+For Developers: contribute your own preset Viewer
+ 1. Edit `~Rosetta/main/source/src/python/PyRosetta/src/pyrosetta/distributed/viewer/presets/__init__.py`
+ 2. Copy and modify the `templatePreset` function, renaming it to the name of your new preset Viewer (e.g. `myCustomPreset` in step #5).
+ 3. Add the name of your new preset Viewer to the `__all__` list.
+ 4. Merge pull request into `RosettaCommons/main`
+ 5. Example using it:
+    import pyrosetta.distributed.viewer as viewer
+    viewer.presets.myCustomPreset(poses, window_size=(800, 600), continuous_update=True)
 """
 
 import logging
@@ -39,7 +43,7 @@ def coreBoundarySurface(packed_and_poses_and_pdbs=None, *args, **kwargs):
     """
     Display core residues as 'blackCarbon' sticks, boundary residues as 'greyCarbon' sticks, and surface residues
     as 'whiteCarbon' sticks, with 'spectrum' cartoon representation, using the default arguments in
-    pyrosetta.rosetta.core.select.residue_selector.LayerSelector() to select layers.
+    `pyrosetta.rosetta.core.select.residue_selector.LayerSelector()` to select layers.
 
     @klimaj
     """
@@ -68,8 +72,8 @@ def coreBoundarySurface(packed_and_poses_and_pdbs=None, *args, **kwargs):
 
 def ligandsAndMetals(packed_and_poses_and_pdbs=None, *args, **kwargs):
     """
-    Display residues with ResidueProperty.LIGAND as 'brownCarbon' sticks with opaque surface,
-    and ResidueProperty.METAL as 'chainHetatm' spheres, with 'spectrum' cartoon representation,
+    Display residues with `ResidueProperty.LIGAND` as 'brownCarbon' sticks with opaque surface,
+    and `ResidueProperty.METAL` as 'chainHetatm' spheres, with 'spectrum' cartoon representation,
     disulfide bonds, polar hydrogens, and dashed hydrogen bonds.
 
     @klimaj

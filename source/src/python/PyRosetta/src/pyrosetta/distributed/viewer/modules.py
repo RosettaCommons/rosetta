@@ -29,9 +29,21 @@ _logger = logging.getLogger("pyrosetta.distributed.viewer")
 
 class setBackgroundColor:
     """
-    Set viewer background color with either Hexcode or standard colors.
-    Default: 0xffffffff
+    Set Viewer background color with either Hexcode or standard colors.
+    
+    Parameters
+    ----------
+    first : optional
+        `color`
+
+        Hexcode literal (e.g. 0xffffffff) or `str` indicating a standard color (e.g. "black").
+        Default: 0xffffffff
+
+    Returns
+    -------
+    A Viewer instance.
     """
+
     def __init__(self, color=0xffffffff):
 
         self.color = color
@@ -45,8 +57,26 @@ class setBackgroundColor:
 
 class setDisulfides:
     """
-    Display disulfide bonds according to pyrosetta.rosetta.core.conformation.is_disulfide_bond
-    for all combinations of cysteine residues in the Pose.
+    Display disulfide bonds according to `pyrosetta.rosetta.core.conformation.is_disulfide_bond()`
+    for all combinations of cysteine residues in each initialized `.pdb` file, `Pose` or `PackedPose` object.
+    
+    Parameters
+    ----------
+    first : optional
+        `color`
+
+        `str` indicating a standard color (e.g. "black").
+        Default: "gold"
+
+    second : optional
+        `radius`
+
+        `float` or `int` indicating the radius of the stick connecting the atoms participating in each disulfide bond.
+        Default: 0.5
+
+    Returns
+    -------
+    A Viewer instance.
     """
     def __init__(self, color="gold", radius=0.5):
 
@@ -84,11 +114,41 @@ class setDisulfides:
 
 
 class setHydrogenBonds:
-    """Show hydrogen bonds according to pose.get_hbonds()."""
+    """
+    Display hydrogen bonds according to `pyrosetta.rosetta.core.pose.Pose.get_hbonds()`
+    in each initialized `.pdb` file, `Pose` or `PackedPose` object.
+    
+    Parameters
+    ----------
+    first : optional
+        `color`
+
+        `str` indicating a standard color (e.g. "yellow").
+        Default: "black"
+
+    second : optional
+        `dashed`
+
+        `True` or `False` to show hydrogen bonds as dashed lines.
+        If `True`, then option `radius` must be `None`.
+        If `False`, then option `radius` must be specified.
+        Default: True
+
+    third : optional
+        `radius`
+
+        `float` or `int` indicating the radius of the solid (non-dashed) stick connecting the atoms participating
+        in each hydrogen bond. If set, this automatically sets the option `dashed` to `False`.
+        Default: None
+
+    Returns
+    -------
+    A Viewer instance.
+    """
     def __init__(self, color="black", dashed=True, radius=None):
 
-        self.dashed = dashed
         self.color = color
+        self.dashed = dashed
         self.radius = radius
 
     @pyrosetta.distributed.requires_init
@@ -131,7 +191,33 @@ class setHydrogenBonds:
 
 
 class setHydrogens:
-    """Show all or only polar hydrogen atoms."""
+    """
+    Show all or only polar hydrogen atoms in each initialized `.pdb` file, `Pose` or `PackedPose` object.
+    
+    Parameters
+    ----------
+    first : optional
+        `color`
+
+        `str` indicating a standard color (e.g. "grey").
+        Default: "white"
+
+    second : optional
+        `radius`
+
+        `float` or `int` indicating the radius of the hydrogen atom stick represnetations.
+        Default: 0.05
+
+    third : optional
+        `polar_only`
+
+        `True` or `False`. `True` to show only polar hydrogen atoms, and `False` to show all hydrogen atoms.
+        Default: False
+
+    Returns
+    -------
+    A Viewer instance.
+    """
     def __init__(self, color="white", radius=0.05, polar_only=False):
 
         self.color = color
@@ -178,15 +264,102 @@ class setHydrogens:
 
 class setStyle:
     """
-    Show and color cartoon, and/or show heavy atoms with style 'line', 'cross', 'stick', or 'sphere'
-    with provided 'color' and 'radius'. If 'residue_selector' argument is provided, apply styles only
-    to selected residues. If the 'command' argument is provided, override all other arguments and 
-    pass py3Dmol.view.setStyle commands directly to the Viewer object.
-
-    Example:
+    Show and color cartoon, and/or show heavy atoms with provided style, color and radius for each initialized
+    `.pdb` file, `Pose` or `PackedPose` object. If the `residue_selector` argument is provided, apply styles
+    only to the selected residues. If the `command` argument is provided, override all other arguments and pass
+    `py3Dmol.view.setStyle()` commands to the Viewer.
     
-    command = {"hetflag": True}, {"stick": {"singleBond": False, "colorscheme": "greyCarbon", "radius": 0.15}}
-    view = viewer.init(poses) + viewer.setStyle(command=command)
+    Parameters
+    ----------
+    first : optional
+        `residue_selector`
+        
+        An instance of `pyrosetta.rosetta.core.select.residue_selector.ResidueSelector` on which to apply the style(s).
+        Default: None
+
+    second : optional
+        `cartoon`
+        
+        `True` or `False` to show cartoon representation.
+        Default: True
+
+    third : optional
+        `cartoon_color`
+        
+        Hexcode literal (e.g. 0xAF10AB) or `str` indicating a standard color (e.g. "grey") for the cartoon representation.
+        If "spectrum", apply reversed color gradient based on residue numbers. The option `cartoon` must also be set to `True`.
+        Default: "spectrum"
+        Reference: https://3dmol.csb.pitt.edu/doc/types.html#ColorSpec
+
+    fourth : optional
+        `style`
+
+        `str` indicating a representation style of heavy atoms, choosing from either "line", "cross", "stick", or "sphere".
+        Default: "stick"
+
+    fifth : optional
+        `colorscheme`
+        
+        `str` indicating the color scheme for heavy atoms represented by the `style` option. Options include:
+            A lower-case standard color followed by "Carbon" (e.g. "orangeCarbon")
+            "ssPyMOL": PyMol secondary colorscheme
+            "ssJmol": Jmol secondary colorscheme
+            "Jmol": Jmol primary colorscheme
+            "default": default colorscheme
+            "amino": amino acid colorscheme
+            "shapely": shapely protien colorscheme
+            "nucleic": nucleic acid colorscheme
+            "chain": standard chain colorscheme
+            "chainHetatm": chain Hetatm colorscheme
+        Default: "blackCarbon"
+        Reference: https://3dmol.csb.pitt.edu/doc/types.html#ColorschemeSpec
+        
+    sixth : optional
+        `radius`
+
+        `float` or `int` indicating the radius of the heavy atoms represented by the `style` option.
+        Default: 0.1
+
+    seventh : optional
+        `label`
+
+        `True` or `False` to show labels next to residues selected by the `residue_selector` option. 
+        Default: True
+
+    eighth : optional
+        `label_fontsize`
+
+        `int` or `float` indicating the font size of labels next to residues selected by the `residue_selector` option,
+        only if `label` is `True`.
+        Default: 12
+
+    ninth : optional
+        `label_background`
+
+        `True` or `False` to show the background of labels next to residues selected by the `residue_selector` option,
+        only if `label` is `True`.
+        Default: False
+
+    tenth : optional
+        `label_fontcolor`
+
+        `str` indicating a standard font color (e.g. "grey") for label text next to residues selected by the `residue_selector` option,
+        only if `label` is `True`.
+        Default: "black"
+
+    eleventh : optional
+        `command`
+        
+        `dict` or `tuple` of `dict`s of `py3Dmol.view.setStyle()` commands. If specified, this option overrides all other options.
+        Default: None
+        Example:
+            command = {"hetflag": True}, {"stick": {"singleBond": False, "colorscheme": "greyCarbon", "radius": 0.15}}
+            view = viewer.init(poses) + viewer.setStyle(command=command)
+            view.show()
+
+    Returns
+    -------
+    A Viewer instance.
     """
     def __init__(self, residue_selector=None,
                  cartoon=True, cartoon_color="spectrum",
@@ -273,13 +446,62 @@ class setStyle:
 
 class setSurface:
     """
-    Show surface with argument 'opacity' for residues in 'residue_selector' within the pose.
-    py3Dmol supports the following 'surface_type' arguments:
+    Show the specified surface for each initialized `.pdb` file, `Pose` or `PackedPose` object.
 
-    "VDW": Van der Waals surface
-    "MS": Molecular surface
-    "SES": Solvent excluded surface
-    "SAS": Solvent accessible surface
+    Parameters
+    ----------
+    first : optional
+        `residue_selector`
+        
+        An instance of `pyrosetta.rosetta.core.select.residue_selector.ResidueSelector` to select residues
+        on which to apply the surface.
+        Default: None
+
+    second : optional
+        `surface_type`
+
+        `str` indicating surface type to be displayed. py3Dmol supports the following options:
+            "VDW": Van der Waals surface
+            "MS": Molecular surface
+            "SES": Solvent excluded surface
+            "SAS": Solvent accessible surface
+        Default: "VDW"
+
+    third : optional
+        `opacity`
+
+        `float` or `int` between 0 and 1 for opacity of the displayed surface.
+        Default: 0.5
+
+    fourth : optional
+        `color`
+
+        `str` indicating a standard color (e.g. "grey") of the surface to be displayed. 
+        Either `color` or `colorscheme` may be specified, where `colorscheme` overrides `color`.
+        Default: None
+
+    fifth : optional
+        `colorscheme`
+
+        `str` indicating the color scheme of the surface to be displayed.
+        Either `color` or `colorscheme` may be specified, where `colorscheme` overrides `color`.
+        Options include:
+            A lower-case standard color followed by "Carbon" (e.g. "yellowCarbon")
+            "ssPyMOL": PyMol secondary colorscheme
+            "ssJmol": Jmol secondary colorscheme
+            "Jmol": Jmol primary colorscheme
+            "default": default colorscheme
+            "amino": amino acid colorscheme
+            "shapely": shapely protien colorscheme
+            "nucleic": nucleic acid colorscheme
+            "chain": standard chain colorscheme
+            "chainHetatm": chain Hetatm colorscheme
+        Default: None
+        Reference: https://3dmol.csb.pitt.edu/doc/types.html#ColorschemeSpec
+        
+    Returns
+    -------
+    A Viewer instance.
     """
     def __init__(self, residue_selector=None, surface_type="VDW", opacity=0.5, color=None, colorscheme=None):
 
@@ -339,8 +561,20 @@ class setSurface:
 
 class setZoom:
     """
-    Set zoom magnification factor. Values >1 zoom in, <1 zoom out.
-    Default: 2
+    Set the zoom magnification factor of each initialized `.pdb` file, `Pose` or `PackedPose` object.
+    Values >1 zoom in, and values <1 zoom out.
+    
+    Parameters
+    ----------
+    first : optional
+        `factor`
+
+        `float` or `int` indicating the zoom magnification factor.
+        Default: 2
+
+    Returns
+    -------
+    A Viewer instance.
     """
     def __init__(self, factor=2):
 
@@ -354,7 +588,21 @@ class setZoom:
 
 
 class setZoomTo:
-    """Zoom into a ResidueSelector."""
+    """
+    Zoom to a `ResidueSelector` in each initialized `.pdb` file, `Pose` or `PackedPose` object.
+    
+    Parameters
+    ----------
+    first : optional
+        `residue_selector`
+
+        An instance of `pyrosetta.rosetta.core.select.residue_selector.ResidueSelector` into which to zoom.
+        Default: None
+
+    Returns
+    -------
+    A Viewer instance.
+    """
     def __init__(self, residue_selector=None):
 
         if not residue_selector:
@@ -381,7 +629,7 @@ class setZoomTo:
 
 
 class ViewerInputError(Exception):
-    """Exception raised for errors with the input argument 'residue_selector'."""
+    """Exception raised for errors with the input argument `residue_selector`."""
     def __init__(self, obj):
 
         super().__init__(
@@ -395,7 +643,7 @@ class ViewerInputError(Exception):
 
 def _pose_to_residue_chain_tuples(pose, residue_selector, logger=_logger):
     """
-    Given a Pose object and ResidueSelector object, return a tuple of lists containing
+    Given a `Pose` object and `ResidueSelector` object, return a `tuple` of `list`s containing
     PDB residue numbers and chain IDs for the selection.
     """
 
@@ -410,7 +658,7 @@ def _pose_to_residue_chain_tuples(pose, residue_selector, logger=_logger):
         return map(list, zip(*residue_chain_tuples))
 
 def _pdbstring_to_pose(pdbstring, class_name, logger=_logger):
-    """Convert pdbstring to pose with logging."""
+    """Convert pdbstring to a `Pose` with logging."""
     logger.info(
         " ".join("{0} requires pyrosetta.rosetta.core.pose.Pose object but given input .pdb file. \
         Now instantiating pyrosetta.rosetta.core.pose.Pose object from input .pdb file. \

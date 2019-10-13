@@ -166,7 +166,7 @@ class Viewer:
 
 
 class ViewerInputError(Exception):
-    """Exception raised for errors with the input argument 'packed_and_poses_and_pdbs'."""
+    """Exception raised for errors with the input argument `packed_and_poses_and_pdbs`."""
     def __init__(self, obj):
 
         super().__init__(
@@ -201,13 +201,13 @@ def init(packed_and_poses_and_pdbs=None, window_size=None, modules=None,
         `modules`
         
         `list` of instantiated visualization modules to run upon changing amongst `packed_and_poses_and_pdbs` objects
-        with the slider, matching the namespace pyrosetta.distributed.viewer.set*
+        with the slider, matching the namespace `pyrosetta.distributed.viewer.set*`
         Default: []
 
     fourth : optional
         `delay`
         
-        `float` time delay in seconds before rendering the Viewer in a Jupyter notebook, which is useful to prevent
+        `float` or `int` time delay in seconds before rendering the Viewer in a Jupyter notebook, which is useful to prevent
         overburdening the Jupyter notebook client if `for` looping over quick modifications to a `Pose`, and should be >= 0.
         Default: 0.25
 
@@ -320,7 +320,7 @@ def init(packed_and_poses_and_pdbs=None, window_size=None, modules=None,
         delay=delay, continuous_update=continuous_update, *args, **kwargs)
 
 def expand_notebook():
-    """Expand Jupyter notebook cell width."""
+    """Expand Jupyter notebook cell to maximum width."""
     try:
         _logger.debug("IPython.core.display expanding Jupyter notebook cell width.")
         display(HTML("<style>.container { width:100% !important; }</style>"))

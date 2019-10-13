@@ -127,17 +127,17 @@ viewer.presets.coreBoundarySurface(poses, window_size=(800, 600), continuous_upd
 
 --------------------------------------------------------------------------------
 
-The Viewer quickly renders .pdb files, dynamically instantiating Pose objects if required
-for certain visualization modules (matching the name "viewer.set*"). So when adding
-visualization modules to the Viewer or using presets, passing Pose or PackedPose objects to the
-Viewer is suggested for quicker rendering. If a Pose object or list, tuple, or set of Pose
-objects are provided to the Viewer, the Pose(s) pointer location(s) in memory remain fixed, and so
-the Viewer can dynamically update upon Pose conformational changes by calling the show() method.
+The Viewer quickly renders `.pdb` files, dynamically instantiating `Pose` objects if required
+for certain visualization modules (matching the name `viewer.set*`). So when adding
+visualization modules to the Viewer or using presets, passing `Pose` or `PackedPose` objects to the
+Viewer is suggested for quicker rendering. If a `Pose` object or `list`, `tuple`, or `set` of `Pose`
+objects are provided to the Viewer, the `Pose`(s) pointer location(s) in memory remain fixed, and so
+the Viewer can dynamically update upon `Pose` conformational changes by calling the `show()` method.
 The Viewer applies visualization modules in the same order they are added (from left to right),
-so layering different styles (and ResidueSelectors) on top of one another becomes possible.
-The user must have already initialized PyRosetta providing .params files for any ligands and 
-non-canonical residues in the Pose, otherwise pyrosetta.distributed automatically initializes
-PyRosetta with default options.
+so layering different styles (and `ResidueSelector`s) on top of one another becomes possible.
+The user must have already initialized PyRosetta providing `.params` files for any ligands and 
+non-canonical residues in the input molecule(s), otherwise `pyrosetta.distributed` automatically 
+initializes PyRosetta with default command line options.
 """
 
 import warnings
