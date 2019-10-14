@@ -115,8 +115,10 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         rna_denovo_favorites   = 'numpy matplotlib',
         simple_cycpep_predict  = 'numpy matplotlib',
 
-        enzyme_design            = 'numpy matplotlib',
-        cofactor_binding_sites   = 'numpy matplotlib',
+
+        enzyme_design          = 'numpy matplotlib',
+        fragments_picking      = 'numpy matplotlib',
+        cofactor_binding_sites = 'numpy matplotlib',
 
         mp_f19_energy_landscape  = 'numpy matplotlib scipy',
         mp_f19_sequence_recovery = 'numpy matplotlib',
