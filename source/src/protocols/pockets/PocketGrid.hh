@@ -65,6 +65,7 @@ public:
 	bool isTarget(core::Size numTargets = 2) const {return target_ && (numTargets==1 || subtarget_);};
 	bool isSolventExposed() const {return solventExposed_;};
 	void add (core::Size x, core::Size y, core::Size z);
+	//core::Size get_count() const {return count_;};
 	struct Cxyz {
 		core::Size x;
 		core::Size y;
@@ -114,7 +115,7 @@ public:
 	core::Real getLargestClusterSize( core::Real const & stepSize, core::Real const & minClusterSize, core::Size const & numTargets, bool ignoreBuried, bool ignoreSurface );
 	core::Real getNetClusterSize( core::Real const & stepSize, core::Real const & minClusterSize, core::Size const & numTargets, bool ignoreBuried, bool ignoreSurface );
 	core::Size size() { return clusters_.size(); }
-
+	//std::list <PCluster> outCluster() {return clusters_;};
 private:
 	std::list <PCluster> clusters_;
 
@@ -373,6 +374,10 @@ public:
 	core::Real get_pocket_distance( PocketGrid const & template_pocket ) const { return get_pocket_distance( template_pocket, ""); };
 	core::Real get_pocket_distance( PocketGrid const & template_pocket, std::string const & comparison_pdbname ) const;
 	utility::vector1<core::Real> getBounds();
+
+	core::Size GetExemplarNumClusters() const;
+	core::Size GetExemplarNumAtoms() const;
+	core::Size GetExemplarNumPolarAtoms() const;
 
 	void write_pocketGrid_to_pdb( std::string const & output_filename );
 	void alter_espGrid( std::string const & espGrid_filename );

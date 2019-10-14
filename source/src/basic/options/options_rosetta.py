@@ -7073,7 +7073,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'pocket_probe_radius',	     'Real',default='1.0',desc='radius of surface probe molecule'),
 		Option( 'central_relax_pdb_num',     'String',default='-1',desc='Residue number:(optional)Chain around which to do Pocket Constraint'),
 		Option( 'pocket_ntrials',	     'Integer',default='100000',desc='Number of trials to use for backrub'),
-		Option( 'pocket_num_angles',	     'Integer',default='1',desc='Number of different pose angles to measure pocket score at'),
+		Option( 'pocket_num_angles',	     'Integer',default='100',desc='Number of different pose angles to measure pocket score at'),
 		Option( 'pocket_side', 'Boolean', desc="Include only side chain residues for target surface", default='false' ),
 		Option( 'pocket_dump_pdbs', 'Boolean', desc="Generate PDB files",default='false' ),
 		Option( 'pocket_dump_exemplars', 'Boolean', desc="Generate exemplar PDB files",default='false' ),

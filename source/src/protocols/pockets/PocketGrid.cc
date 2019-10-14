@@ -1433,15 +1433,17 @@ void PocketGrid::dumpGridToFile( std::string const & output_filename ) {
 	int counter=1;
 	int counter2=9;
 
-	outPDB_stream<<"ATOM      1  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
-	outPDB_stream<<"ATOM      2  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
-	outPDB_stream<<"ATOM      3  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
-	outPDB_stream<<"ATOM      4  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
-	outPDB_stream<<"ATOM      5  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
-	outPDB_stream<<"ATOM      6  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
-	outPDB_stream<<"ATOM      7  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
-	outPDB_stream<<"ATOM      8  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
+	numeric::xyzMatrix<core::Real> inv_rot_mat;
+	inv_rot_mat = rot_mat_.inverse();
 
+	outPDB_stream<<"ATOM      1  C   C       1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
+	outPDB_stream<<"ATOM      2  C   C       1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
+	outPDB_stream<<"ATOM      3  C   C       1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
+	outPDB_stream<<"ATOM      4  C   C       1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
+	outPDB_stream<<"ATOM      5  C   C       1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
+	outPDB_stream<<"ATOM      6  C   C       1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
+	outPDB_stream<<"ATOM      7  C   C       1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
+	outPDB_stream<<"ATOM      8  C   C       1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<(xdim_-1)*stepSize_+xcorn_<<std::setw(8)<<(ydim_-1)*stepSize_+ycorn_<<std::setw(8)<<(zdim_-1)*stepSize_+zcorn_<<std::endl;
 
 	core::Size x,y,z;
 	for ( x=0; x<(xdim_); x++ ) {
@@ -1510,15 +1512,23 @@ void PocketGrid::dumpGridToFile( std::string const & output_filename ) {
 				}
 
 				tmp.str(std::string());
-				tmp<<"          "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x*stepSize_+xcorn_<<std::setw(8)<<y*stepSize_+ycorn_<<std::setw(8)<<z*stepSize_+zcorn_<<std::endl;
+
+
+				//Align the output grid to the right coordinate frame
+				numeric::xyzVector<core::Real> coord(x*stepSize_+xcorn_,y*stepSize_+ycorn_,z*stepSize_+zcorn_);
+				coord = inv_rot_mat * coord;
+				tmp<<"     1    " <<  std::setw(8)<<std::fixed<<std::setprecision(3)<<coord.x()<<std::setw(8)<<coord.y()<<std::setw(8)<<coord.z()<<std::endl;
+
 				concatenated_pdb_info += tmp.str();
 				counter++;
 				outPDB_stream<<concatenated_pdb_info;
+				counter2++;
 			}
 		}
 	}
 
-	int clustNo=1;
+	//int clustNo=1;
+	core::Size clustNo=2;
 	bool smallPocket;
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) smallPocket=true;
@@ -1557,7 +1567,10 @@ void PocketGrid::dumpGridToFile( std::string const & output_filename ) {
 			else if ( clustNo<1000 ) concatenated_pdb_info += " ";
 			concatenated_pdb_info += tmp.str()+"  ";
 			tmp.str(std::string());
-			tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
+
+			numeric::xyzVector<core::Real> coord_two(point.x*stepSize_+xcorn_,point.y*stepSize_+ycorn_,point.z*stepSize_+zcorn_);
+			coord_two = inv_rot_mat * coord_two;
+			tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord_two.x()<<std::setw(8)<<coord_two.y()<<std::setw(8)<<coord_two.z()<<std::endl;
 			concatenated_pdb_info += tmp.str();
 			counter2++;
 			outPDB_stream<<concatenated_pdb_info;
@@ -1588,6 +1601,11 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 	int clustNo=1;
 	//bool smallPocket;
 	int count=0;
+
+	//This will generate a new matrix called inv_rot_mat that can be multiplied by each coordinate to get us back to the original frame
+	numeric::xyzMatrix<core::Real> inv_rot_mat;
+	inv_rot_mat = rot_mat_.inverse();
+
 	for ( auto & cluster : c_clusters_.clusters_ ) {
 		count++;
 
@@ -1633,14 +1651,19 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 			concatenated_pdb_info += tmp.str()+"  ";
 			tmp.str(std::string());
 			if ( point.atom_type.compare("C") == 0 ) {
-				tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<"  1.00  2.03           "<<point.atom_type<<std::endl;
+				//Apply the transformation matrix to the coordintes
+				numeric::xyzVector<core::Real> coord(point.x*stepSize_+xcorn_,point.y*stepSize_+ycorn_,point.z*stepSize_+zcorn_);
+				coord = inv_rot_mat * coord;
+				tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord.x()<<std::setw(8)<<coord.y()<<std::setw(8)<<coord.z()<<"  1.00  2.03           "<<point.atom_type<<std::endl;
 			} else {
+				numeric::xyzVector<core::Real> coord(point.absX,point.absY,point.absZ);
+				coord = inv_rot_mat * coord;
 				if ( point.atom_type.compare("BBe") == 0 ) {
-					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<"  1.00  2.03          Be"<<std::endl;
+					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord.x()<<std::setw(8)<<coord.y()<<std::setw(8)<<coord.z()<<"  1.00  2.03          Be"<<std::endl;
 				} else if ( point.atom_type.compare("BNe") == 0 ) {
-					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<"  1.00  2.03          Ne"<<std::endl;
+					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord.x()<<std::setw(8)<<coord.y()<<std::setw(8)<<coord.z()<<"  1.00  2.03          Ne"<<std::endl;
 				} else {
-					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<"  1.00  2.03          "<<point.atom_type<<std::endl;
+					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord.x()<<std::setw(8)<<coord.y()<<std::setw(8)<<coord.z()<<"  1.00  2.03          "<<point.atom_type<<std::endl;
 				}
 			}
 
@@ -1658,6 +1681,79 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 
 }
 
+
+core::Size PocketGrid::GetExemplarNumClusters() const{
+	core::Size ClustNo =0;
+	//Find number of clusters, store it in num_clusters, and then return it.
+	for ( auto & cluster : c_clusters_.clusters_ ) {
+		if ( !cluster.isTarget(numTargets_) ) {
+			continue;
+		}
+		//Require at least 5 hydrophobic carbon atoms to dump exemplar to a file
+		int ccount = 0;
+		for ( auto & point : cluster.points_ ) {
+			if ( point.atom_type.compare("C") == 0 ) {
+				ccount++;
+			}
+		}
+		if ( ccount <5 && limitExemplars_ ) {
+			continue;
+		}
+		ClustNo++;
+	}
+	return ClustNo;
+}
+
+
+core::Size PocketGrid::GetExemplarNumAtoms() const{
+	core::Size num_atoms =0;
+	//Get number of exemplar atoms, store in num_atoms, return it.
+	for ( auto & cluster : c_clusters_.clusters_ ) {
+		if ( !cluster.isTarget(numTargets_) ) {
+			continue;
+		}
+		//Require at least 5 hydrophobic carbon atoms to dump exemplar to a file
+		core::Size ccount = 0;
+		for ( auto & point : cluster.points_ ) {
+			if ( point.atom_type.compare("C") == 0 ) {
+				ccount++;
+			}
+			num_atoms++;
+		}
+		if ( ccount <5 && limitExemplars_ ) {
+			continue;
+		}
+	}
+	return num_atoms;
+}
+
+
+core::Size PocketGrid::GetExemplarNumPolarAtoms() const{
+	core::Size num_polar=0;
+	//Get number of polar atoms, replace num_polar with it and return it.
+	for ( auto & cluster : c_clusters_.clusters_ ) {
+		if ( !cluster.isTarget(numTargets_) ) {
+			continue;
+		}
+		//Require at least 5 hydrophobic carbon atoms to dump exemplar to a file
+		core::Size ccount = 0;
+		for ( auto & point : cluster.points_ ) {
+			if ( point.atom_type.compare("C") == 0 ) {
+				ccount++;
+			}
+		}
+		if ( ccount <5 && limitExemplars_ ) {
+			continue;
+		}
+		for ( auto & point : cluster.points_ ) {
+			if ( point.atom_type.compare("C") != 0 ) {
+				num_polar++;
+			}
+		}
+	}
+
+	return num_polar;
+}
 
 void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bool minipock ){
 
