@@ -65,9 +65,9 @@ struct motif2scaffold_indexes
 struct motif2scaffold_data
 {
 	utility::vector1< motif2scaffold_indexes > v_indexes;
-	numeric::xyzMatrix< core::Real > RotM;
-	numeric::xyzVector< core::Real > TvecA;
-	numeric::xyzVector< core::Real > TvecB;
+	numeric::xyzMatrix< core::Real > RotM = numeric::xyzMatrix< core::Real >(0.0);
+	numeric::xyzVector< core::Real > TvecA = {0.0, 0.0, 0.0};
+	numeric::xyzVector< core::Real > TvecB = {0.0, 0.0, 0.0};
 	core::Real RMSD = 0;
 	core::Real motif_fragments_RMSD = 0;
 	core::Size clash_score = 0;
