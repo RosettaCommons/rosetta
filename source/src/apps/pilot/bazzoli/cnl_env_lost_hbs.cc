@@ -202,7 +202,7 @@ bool is_hbond(AtomID const& don, AtomID const& acc, Pose const& ps,
 			acc_rsd.atom(base).xyz(), acc_rsd.atom(base2).xyz(),
 			unweighted_energy, false, derivs);
 
-		if ( unweighted_energy < MAX_HB_ENERGY ) {
+		if ( unweighted_energy < hbond_set.hbond_options().max_hb_energy() ) {
 			return true;
 		} else {
 			return false;

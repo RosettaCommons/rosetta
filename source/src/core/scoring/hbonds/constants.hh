@@ -48,7 +48,7 @@ static core::Real const MAX_xD = { 1.0 }; // cos( radians( 180.0 - 180.0 ) )  //
 static core::Real const MIN_R2 = { MIN_R * MIN_R };
 static core::Real const MAX_R2 = { MAX_R * MAX_R };
 
-static core::Real const MAX_HB_ENERGY = { 0.0 }; // at and above this cutoff, not considered a hbond
+// static core::Real const MAX_HB_ENERGY = { 0.0 }; // now in hbond options
 
 } // namespace hbonds
 } // namespace scoring

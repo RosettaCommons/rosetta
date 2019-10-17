@@ -90,6 +90,15 @@ public:
 
 	static void append_schema_attributes( utility::tag::AttributeList & attributes );
 
+	/// @brief Max possible hbond energy
+	/// @details Under nearly all circumstances this should be set to 0.0
+	/// @details Originally made an option to allow BuriedUnsatFilter to allow really bad hbonds
+	Real
+	max_hb_energy() const;
+
+	void
+	max_hb_energy( Real const setting );
+
 	/// @brief Double counted hbonds include:
 	/// @brief  - Hydrogen bonds to self
 	/// @brief  - Backbone - sidechain hydrogen bonds where the backbone partner is forming a backbone - backbone hydrogen bond.
@@ -276,6 +285,7 @@ public:
 
 private:
 
+	Real max_hb_energy_; // This used to be MAX_HB_ENERGY which was 0
 	bool exclude_DNA_DNA_;
 	bool exclude_intra_res_protein_;
 	bool exclude_intra_res_RNA_;

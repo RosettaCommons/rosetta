@@ -28,6 +28,7 @@
 #include <basic/MetricValue.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // core headers
 //#include <core/pose/util.tmpl.hh>
@@ -87,7 +88,8 @@ NumberHBondsCalculator::NumberHBondsCalculator() :
 	special_region_Hbonds_( /* NULL */ ),
 	atom_Hbonds_( /* NULL */ ),
 	residue_Hbonds_( /* NULL */ ),
-	ref_residue_total_energies_( /* NULL */ )
+	ref_residue_total_energies_( /* NULL */ ),
+	max_hb_energy_( basic::options::option[ basic::options::OptionKeys::score::hb_max_energy ] )
 	//hbond_set_( /* NULL */ ),
 	//hb_database_( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) )
 {}
@@ -100,7 +102,8 @@ NumberHBondsCalculator::NumberHBondsCalculator( bool const generous, std::set< c
 	special_region_Hbonds_( /* NULL */ ),
 	atom_Hbonds_( /* NULL */ ),
 	residue_Hbonds_( /* NULL */ ),
-	ref_residue_total_energies_( /* NULL */ )
+	ref_residue_total_energies_( /* NULL */ ),
+	max_hb_energy_( basic::options::option[ basic::options::OptionKeys::score::hb_max_energy ] )
 	//hbond_set_( /* NULL */ ),
 	//hb_database_( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) )
 {}
@@ -189,6 +192,7 @@ NumberHBondsCalculator::recompute( Pose const & this_pose )
 		new_options.exclude_intra_res_RNA( false );
 		new_options.exclude_self_hbonds(false);
 	}
+	new_options.max_hb_energy( max_hb_energy_ );
 	HBondSetOP hb_set( new HBondSet( new_options, this_pose.size() ) ); // we need to recompute HBondSet each time
 
 	determine_res_to_recompute( this_pose, res_to_recompute );
@@ -420,6 +424,7 @@ protocols::simple_pose_metric_calculators::NumberHBondsCalculator::save( Archive
 	arc( CEREAL_NVP( residue_Hbonds_ ) ); // utility::vector1<core::Size>
 	arc( CEREAL_NVP( ref_residue_total_energies_ ) ); // utility::vector1<core::Real>
 	arc( CEREAL_NVP( special_region_ ) ); // std::set<core::Size>
+	arc( CEREAL_NVP( max_hb_energy_ ) ); // core::Real
 }
 
 /// @brief Automatically generated deserialization method
@@ -437,6 +442,7 @@ protocols::simple_pose_metric_calculators::NumberHBondsCalculator::load( Archive
 	arc( residue_Hbonds_ ); // utility::vector1<core::Size>
 	arc( ref_residue_total_energies_ ); // utility::vector1<core::Real>
 	arc( special_region_ ); // std::set<core::Size>
+	arc( max_hb_energy_ ); // core::Real
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::simple_pose_metric_calculators::NumberHBondsCalculator );

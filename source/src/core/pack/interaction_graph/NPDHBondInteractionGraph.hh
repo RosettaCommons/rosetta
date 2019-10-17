@@ -1507,7 +1507,7 @@ create_hbonds_one_way(
 			Vector const & jjxyz = don_res.xyz( jj_at );
 			if ( iixyz.distance_squared( jjxyz ) > core::scoring::hbonds::MAX_R2 ) continue;
 			Real e = core::scoring::hbonds::hb_energy( database, hbondoptions, hbset, acc_res, ii_at, don_res, jj_at );
-			if ( e >= core::scoring::hbonds::MAX_HB_ENERGY ) continue;
+			if ( e >= hbondoptions.max_hb_energy() ) continue;
 			NPDHBondOP hb = ig.unused_hbond();
 			hb->energy_ = e;
 			hb->don_wt_ = -1234;

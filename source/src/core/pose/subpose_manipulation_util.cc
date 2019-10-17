@@ -223,7 +223,7 @@ pdbslice(
 }
 
 ////////////////////////////////////////////////////////////////////////////
-void
+utility::vector1< int >
 partition_pose_by_jump(
 	pose::Pose const & src,
 	int const jump_number,
@@ -242,14 +242,22 @@ partition_pose_by_jump(
 	ObjexxFCL::FArray1D_bool partner1_pos( nres, false ); // FARRAY! DOH!!
 	src.fold_tree().partition_by_jump( jump_number, partner1_pos );
 
+	utility::vector1< int > offset_into_new_pose;
 	utility::vector1< Size > partner1_pos_list, partner2_pos_list;
 	for ( Size i=1; i<= nres; ++i ) {
-		if ( partner1_pos(i) ) partner1_pos_list.push_back( i );
-		else partner2_pos_list.push_back( i );
+		if ( partner1_pos(i) ) {
+			partner1_pos_list.push_back( i );
+			offset_into_new_pose.push_back( - int(partner1_pos_list.size()) );
+		} else {
+			partner2_pos_list.push_back( i );
+			offset_into_new_pose.push_back( int(partner2_pos_list.size()) );
+		}
 	}
 
 	create_subpose( src, partner1_pos_list, f1, partner1 );
 	create_subpose( src, partner2_pos_list, f2, partner2 );
+
+	return offset_into_new_pose;
 }
 
 

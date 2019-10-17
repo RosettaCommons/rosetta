@@ -66,10 +66,14 @@
 #include <utility/string_util.hh>
 #include <utility/assert.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 #include <basic/MetricValue.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 #include <basic/options/keys/bunsat_calc2.OptionKeys.gen.hh>
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
+
+#include <boost/format.hpp>
 
 using namespace core;
 using namespace core::pose;
@@ -114,6 +118,7 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	burial_cutoff_( burial_cutoff ),
 	probe_radius_( basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] ),
 	residue_surface_cutoff_( 45.0 ),
+	max_hbond_energy_( basic::options::option[basic::options::OptionKeys::score::hb_max_energy] ),
 	generous_hbonds_( generous ),
 	legacy_counting_( legacy ),
 	vsasa_( vsasa ),
@@ -152,6 +157,7 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	burial_cutoff_( burial_cutoff ),
 	probe_radius_( basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] ),
 	residue_surface_cutoff_( 45.0 ),
+	max_hbond_energy_( basic::options::option[basic::options::OptionKeys::score::hb_max_energy] ),
 	generous_hbonds_( generous ),
 	legacy_counting_( legacy ),
 	vsasa_( vsasa ),
@@ -175,6 +181,7 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	core::Real const burial_cutoff,
 	core::Real const probe_r,
 	core::Real const residue_surface_cutoff,
+	core::Real const max_hbond_energy,
 	bool const generous,
 	bool const legacy,
 	bool const vsasa,
@@ -192,6 +199,7 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	burial_cutoff_( burial_cutoff ),
 	probe_radius_( probe_r ),
 	residue_surface_cutoff_( residue_surface_cutoff ),
+	max_hbond_energy_( max_hbond_energy ),
 	generous_hbonds_( generous ),
 	legacy_counting_( legacy ),
 	vsasa_( vsasa ),
@@ -212,8 +220,18 @@ BuriedUnsatisfiedPolarsCalculator::assert_calculators()
 		name_of_hbond_calc_ = ( generous_hbonds_ ) ? "bur_unsat_calc_generous_hbond_calc" : "bur_unsat_calc_legacy_hbond_calc";
 		// potentially will need instances of both if want to run in same pose or XML
 		// default now uses generous h-bonds (counts all h-bonds); if generous_hbonds_=false, use lagacy behavior, which only counts h-bonds that sfxn respects
+		if ( max_hbond_energy_ != basic::options::option[basic::options::OptionKeys::score::hb_max_energy] ) {
+			name_of_hbond_calc_ += "_max_hb_" + boost::str(boost::format("%.3f")%max_hbond_energy_);
+		}
+
 		if ( !CalculatorFactory::Instance().check_calculator_exists( name_of_hbond_calc_ ) ) {
-			CalculatorFactory::Instance().register_calculator( name_of_hbond_calc_, utility::pointer::make_shared< NumberHBondsCalculator >( generous_hbonds_ ) );
+			utility::pointer::shared_ptr<NumberHBondsCalculator> calc = utility::pointer::make_shared<NumberHBondsCalculator>( generous_hbonds_ );
+
+			if ( max_hbond_energy_ != basic::options::option[basic::options::OptionKeys::score::hb_max_energy] ) {
+				calc->set_max_hb_energy( max_hbond_energy_ );
+			}
+
+			CalculatorFactory::Instance().register_calculator( name_of_hbond_calc_, calc );
 		}
 	}
 	if ( name_of_sasa_calc_ == "dalphaball" ) {
@@ -510,6 +528,7 @@ protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator::sa
 	arc( CEREAL_NVP( residue_surface_cutoff_ ) ); // core::Real
 	arc( CEREAL_NVP( special_region_ ) ); // core::id::AtomID_Map<_Bool>
 	arc( CEREAL_NVP( special_region_entire_residue_ ) ); // bool
+	arc( CEREAL_NVP( max_hbond_energy_ ) ); // Real
 	arc( CEREAL_NVP( generous_hbonds_ ) ); // bool
 	arc( CEREAL_NVP( legacy_counting_ ) ); // bool
 	arc( CEREAL_NVP( vsasa_ ) ); // bool
@@ -535,6 +554,7 @@ protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator::lo
 	arc( residue_surface_cutoff_ ); // core::Real
 	arc( special_region_ ); // core::id::AtomID_Map<_Bool>
 	arc( special_region_entire_residue_ ); // bool
+	arc( max_hbond_energy_ ); // Real
 	arc( generous_hbonds_ ); // bool
 	arc( legacy_counting_ ); // bool
 	arc( vsasa_ ); // bool

@@ -519,7 +519,7 @@ identify_hbonds_1way(
 				acc_rsd.atom(base2).xyz(),
 				unweighted_energy, evaluate_derivative, derivs);
 
-			if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
+			if ( unweighted_energy >= hbond_set.hbond_options().max_hb_energy() ) continue;
 
 			Real environmental_weight
 				(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
@@ -615,7 +615,7 @@ identify_hbonds_1way(
 				acc_rsd.atom(base2).xyz(),
 				unweighted_energy, evaluate_derivative, derivs);
 
-			if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
+			if ( unweighted_energy >= options.max_hb_energy() ) continue;
 
 			Real environmental_weight
 				(!options.use_hb_env_dep() ? 1 :
@@ -745,7 +745,7 @@ identify_hbonds_1way(
 				acc_rsd.atom(base2).xyz(),
 				unweighted_energy, evaluate_derivative, derivs);
 
-			if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
+			if ( unweighted_energy >= options.max_hb_energy() ) continue;
 			//std::cout << std::endl << "Found a hydrogen bond" << std::endl;
 			num_hbonds[don_rsd.seqpos()]++;
 			num_hbonds[acc_rsd.seqpos()]++;
@@ -833,7 +833,7 @@ hb_energy(
 		acc_rsd.xyz( base2),
 		unweighted_energy, false /*evaluate_derivative*/, DUMMY_DERIVS );
 
-	if ( unweighted_energy >= MAX_HB_ENERGY ) return unweighted_energy;
+	if ( unweighted_energy >= options.max_hb_energy() ) return unweighted_energy;
 
 	Real environmental_weight (!options.use_hb_env_dep() ? 1 :
 		get_environment_dependent_weight(hbe_type, hbset.nbrs( don_rsd.seqpos() ),
@@ -955,7 +955,7 @@ identify_intra_res_hbonds(
 				rsd.atom(base2).xyz(),
 				unweighted_energy, evaluate_derivative, derivs);
 
-			if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
+			if ( unweighted_energy >= hbond_set.hbond_options().max_hb_energy() ) continue;
 
 			Real environmental_weight
 				(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
@@ -1363,7 +1363,7 @@ identify_hbonds_1way_membrane(
 				acc_rsd.atom(base2).xyz(),
 				unweighted_energy, evaluate_derivative, derivs);
 
-			if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
+			if ( unweighted_energy >= hbond_set.hbond_options().max_hb_energy() ) continue;
 
 			//pba membrane depth dependent correction to the environmental_weight
 			Real environmental_weight(
@@ -1454,7 +1454,7 @@ identify_hbonds_1way_membrane(
 				acc_rsd.atom(base2).xyz(),
 				unweighted_energy, evaluate_derivative, derivs);
 
-			if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
+			if ( unweighted_energy >= options.max_hb_energy() ) continue;
 
 			//pba membrane depth dependent weight
 

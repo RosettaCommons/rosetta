@@ -741,7 +741,7 @@ HBondEnergy::hbond_derivs_1way(
 				acc_rsd.atom(base2).xyz(),
 				unweighted_energy, true /*eval deriv*/, deriv);
 
-			if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
+			if ( unweighted_energy >= options_->max_hb_energy() ) continue;
 
 			//pba buggy?
 			Real weighted_energy = // evn weight * weight-set[ hbtype ] weight
@@ -1545,7 +1545,7 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 		hbenergy, false, DUMMY_DERIVS );
 	//std::cout << "drawn_out_heavyatom_hydrogenatom_energy " << hbenergy << " " << at1 << " " << at2 << std::endl;
 
-	if ( hbenergy >= MAX_HB_ENERGY ) return 0.0; // no hbond
+	if ( hbenergy >= options_->max_hb_energy() ) return 0.0; // no hbond
 
 	//std::cout << "drawn_out_heavyatom_hydrogenatom_energy " << hbenergy << " " << at1 << " " << at2 << std::endl;
 

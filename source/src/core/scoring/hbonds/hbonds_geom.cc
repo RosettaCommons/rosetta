@@ -934,7 +934,7 @@ hbond_compute_energy(
 		utility_exit_with_message("Can't get energy for hbond interaction.");
 	}
 
-	energy = MAX_HB_ENERGY + 1.0f;
+	energy = hbondoptions.max_hb_energy() + 1.0f;
 	apply_chi_torsion_penalty = false;
 	dE_dr = dE_dxD = dE_dxH = dE_dxH2 = dE_dBAH = dE_dchi = 0.0;
 
@@ -994,19 +994,19 @@ hbond_compute_energy(
 	core::Real const acc_don_scale = database.acc_strength( hbt.acc_type() ) * database.don_strength( hbt.don_type() );
 
 	if ( FSr == Real(0.0) && FLr == Real(0.0) ) {
-		// is dAHdis out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
+		// is dAHdis out of range for both its fade function and its polynnomials?  Then set energy > hbondoptions.max_hb_energy().
 		if ( dAHdis < database.AHdist_poly_lookup( hbe )->xmin() ||
 				dAHdis > database.AHdist_poly_lookup( hbe )->xmax() ) {
-			energy = MAX_HB_ENERGY + Real(1.0);
+			energy = hbondoptions.max_hb_energy() + Real(1.0);
 			return;
 		}
 	}
 
 	if ( FxH == Real(0.0) || (use_softmax && FxH2 == Real(0.0)) ) {
-		// is xH out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
+		// is xH out of range for both its fade function and its polynnomials?  Then set energy > hbondoptions.max_hb_energy().
 		if ( ( dxH < database.cosBAH_short_poly_lookup( hbe )->xmin() && dxH < database.cosBAH_long_poly_lookup( hbe )->xmin() ) ||
 				( dxH > database.cosBAH_short_poly_lookup( hbe )->xmax() && dxH > database.cosBAH_long_poly_lookup( hbe )->xmax() ) ) {
-			energy = MAX_HB_ENERGY + Real(1.0);
+			energy = hbondoptions.max_hb_energy() + Real(1.0);
 			return;
 		}
 	}
@@ -1023,17 +1023,17 @@ hbond_compute_energy(
 	}
 
 	if ( FxD == Real(0.0) ) {
-		// is xD out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
+		// is xD out of range for both its fade function and its polynnomials?  Then set energy > hbondoptions.max_hb_energy().
 		if ( use_cosAHD ) {
 			if ( ( dxD < database.cosAHD_short_poly_lookup( hbe )->xmin() && dxD < database.cosAHD_long_poly_lookup( hbe )->xmin() ) ||
 					( dxD > database.cosAHD_short_poly_lookup( hbe )->xmax() && dxD > database.cosAHD_long_poly_lookup( hbe )->xmax() ) ) {
-				energy = MAX_HB_ENERGY + Real(1.0);
+				energy = hbondoptions.max_hb_energy() + Real(1.0);
 				return;
 			}
 		} else {
 			if ( ( AHD < database.cosAHD_short_poly_lookup( hbe )->xmin() && AHD < database.cosAHD_long_poly_lookup( hbe )->xmin() ) ||
 					( AHD > database.cosAHD_short_poly_lookup( hbe )->xmax() && AHD > database.cosAHD_long_poly_lookup( hbe )->xmax() ) ) {
-				energy = MAX_HB_ENERGY + Real(1.0);
+				energy = hbondoptions.max_hb_energy() + Real(1.0);
 				return;
 			}
 		}
@@ -1245,7 +1245,7 @@ hb_energy_deriv_u2(
 	//    dE_dxD  - deriv w/respect to cos(thetaD)
 	//    dE_dxH  - deriv w/respect to cos(thetaH)
 
-	energy = MAX_HB_ENERGY + 1.0f;
+	energy = hbondoptions.max_hb_energy() + 1.0f;
 	//deriv.first = Vector( 0.0 );
 	//deriv.second = Vector( 0.0 );
 
@@ -1337,7 +1337,7 @@ hb_energy_deriv_u2(
 		dE_dBAH,
 		dE_dchi);
 
-	if ( energy >= MAX_HB_ENERGY ) return;
+	if ( energy >= hbondoptions.max_hb_energy() ) return;
 
 	deriv.h_deriv.f1() = deriv.h_deriv.f2() = Vector(0.0);
 	deriv.acc_deriv.f1() = deriv.acc_deriv.f2() = Vector(0.0);

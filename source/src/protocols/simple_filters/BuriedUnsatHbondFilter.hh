@@ -32,6 +32,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/id/AtomID_Map.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -97,7 +98,9 @@ public:
 	void set_report_bb_heavy_atom_unsats( bool report_bb_heavy_atom_unsats ){ report_bb_heavy_atom_unsats_ = report_bb_heavy_atom_unsats; };
 	void set_report_nonheavy_unsats( bool report_nonheavy_unsats ){ report_nonheavy_unsats_ = report_nonheavy_unsats; };
 	void set_atomic_depth_deeper_than( bool atomic_depth_deeper_than ) { atomic_depth_deeper_than_ = atomic_depth_deeper_than; };
+	void set_atomic_depth_poly_leu( bool atomic_depth_poly_leu ) { atomic_depth_poly_leu_ = atomic_depth_poly_leu; };
 
+	void set_max_hbond_energy( core::Real max_hbond_energy ){ max_hbond_energy_ = max_hbond_energy; }
 	void set_probe_radius( core::Real probe_radius ){ probe_radius_ = probe_radius; };
 	void set_burial_cutoff( core::Real burial_cutoff ){ burial_cutoff_ = burial_cutoff; };
 	void set_probe_radius_apo( core::Real probe_radius_apo ){ probe_radius_apo_ = probe_radius_apo; };
@@ -105,6 +108,8 @@ public:
 	void set_residue_surface_cutoff( core::Real residue_surface_cutoff ){ residue_surface_cutoff_ = residue_surface_cutoff; };
 	void set_atomic_depth_selection( core::Real atomic_depth_selection ) { atomic_depth_selection_ = atomic_depth_selection; };
 	void set_atomic_depth_probe_radius( core::Real atomic_depth_probe_radius ) { atomic_depth_probe_radius_ = atomic_depth_probe_radius; };
+	void set_atomic_depth_resolution( core::Real atomic_depth_resolution ) { atomic_depth_resolution_ = atomic_depth_resolution; };
+	void set_atomic_depth_apo_surface( core::Real atomic_depth_apo_surface ){ atomic_depth_apo_surface_ = atomic_depth_apo_surface; }
 	void set_upper_threshold( core::Size upper_threshold ){ upper_threshold_ = upper_threshold; };
 	void set_jump_num( core::Size jump_num ){ jump_num_ = jump_num; };
 	void set_dalphaball_sasa( ){ name_of_sasa_calc_ = "dalphaball"; };
@@ -153,6 +158,10 @@ private:
 		}
 	};
 
+
+	core::id::AtomID_Map< bool >
+	get_deep_apo_atoms( core::pose::Pose const & pose ) const;
+
 private:
 	std::string name_of_sasa_calc_;
 	std::string sym_dof_names_;
@@ -174,6 +183,8 @@ private:
 	bool report_bb_heavy_atom_unsats_;
 	bool report_nonheavy_unsats_;
 	bool atomic_depth_deeper_than_;
+	bool atomic_depth_poly_leu_;
+	core::Real max_hbond_energy_;
 	core::Real probe_radius_;
 	core::Real burial_cutoff_;
 	core::Real probe_radius_apo_;
@@ -182,6 +193,7 @@ private:
 	core::Real atomic_depth_selection_;
 	core::Real atomic_depth_probe_radius_;
 	core::Real atomic_depth_resolution_;
+	core::Real atomic_depth_apo_surface_;
 	core::Size upper_threshold_;
 	core::Size jump_num_;
 	core::select::residue_selector::ResidueSelectorOP residue_selector_;

@@ -41,6 +41,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.tmpl.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -49,6 +50,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 #include <basic/options/keys/bunsat_calc2.OptionKeys.gen.hh>
 // XSD XRW Includes
@@ -82,6 +84,8 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() :
 	report_bb_heavy_atom_unsats_( false ),
 	report_nonheavy_unsats_( false ),
 	atomic_depth_deeper_than_( true ),
+	atomic_depth_poly_leu_( true ),
+	max_hbond_energy_( basic::options::option[basic::options::OptionKeys::score::hb_max_energy] ),
 	probe_radius_( basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] ),
 	burial_cutoff_( basic::options::option[basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff] ),
 	probe_radius_apo_( -1.0 ),
@@ -90,6 +94,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() :
 	atomic_depth_selection_( -1.0 ),
 	atomic_depth_probe_radius_( 2.3f ),
 	atomic_depth_resolution_( 0.25f ),
+	atomic_depth_apo_surface_( 0.0 ),
 	upper_threshold_( 20 ),
 	jump_num_( 1 ),
 	residue_selector_( /* NULL */ ),
@@ -137,6 +142,8 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold
 	report_bb_heavy_atom_unsats_( false ),
 	report_nonheavy_unsats_( false ),
 	atomic_depth_deeper_than_( true ),
+	atomic_depth_poly_leu_( true ),
+	max_hbond_energy_( basic::options::option[basic::options::OptionKeys::score::hb_max_energy] ),
 	probe_radius_( basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] ),
 	burial_cutoff_( basic::options::option[basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff] ),
 	probe_radius_apo_( -1.0 ),
@@ -145,6 +152,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold
 	atomic_depth_selection_( -1.0 ),
 	atomic_depth_probe_radius_( 2.3f ),
 	atomic_depth_resolution_( 0.25f ),
+	atomic_depth_apo_surface_( 0.0 ),
 	upper_threshold_( upper_threshold ),
 	jump_num_( 1 ),
 	residue_selector_( residue_selector ),
@@ -184,6 +192,8 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( BuriedUnsatHbondFilter const & r
 	report_bb_heavy_atom_unsats_( rval.report_bb_heavy_atom_unsats_ ),
 	report_nonheavy_unsats_( rval.report_nonheavy_unsats_ ),
 	atomic_depth_deeper_than_( rval.atomic_depth_deeper_than_ ),
+	atomic_depth_poly_leu_( rval.atomic_depth_poly_leu_ ),
+	max_hbond_energy_( rval.max_hbond_energy_ ),
 	probe_radius_( rval.probe_radius_ ),
 	burial_cutoff_( rval.burial_cutoff_ ),
 	probe_radius_apo_( rval.probe_radius_apo_ ),
@@ -192,6 +202,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( BuriedUnsatHbondFilter const & r
 	atomic_depth_selection_( rval.atomic_depth_selection_ ),
 	atomic_depth_probe_radius_( rval.atomic_depth_probe_radius_ ),
 	atomic_depth_resolution_( rval.atomic_depth_resolution_ ),
+	atomic_depth_apo_surface_( rval.atomic_depth_apo_surface_ ),
 	upper_threshold_( rval.upper_threshold_ ),
 	jump_num_( rval.jump_num_ ),
 	residue_selector_( rval.residue_selector_ ),
@@ -214,6 +225,7 @@ BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 	print_out_info_to_pdb_ = tag->getOption<bool>( "print_out_info_to_pdb", false );
 	only_interface_ = tag->getOption<bool>( "only_interface", false );
 	atomic_depth_deeper_than_ = tag->getOption<bool>( "atomic_depth_deeper_than", true );
+	atomic_depth_poly_leu_ = tag->getOption<bool>( "atomic_depth_poly_leu", true );
 
 	if ( tag->hasOption( "probe_radius" ) ) name_of_sasa_calc_="nondefault"; // ensure that probe radius gets updated in Unsat Calc and SASA Calc
 	if ( tag->getOption<bool>( "dalphaball_sasa", false ) ) {
@@ -221,6 +233,7 @@ BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 	}
 
 
+	max_hbond_energy_ = tag->getOption<core::Real>( "max_hbond_energy", basic::options::option[basic::options::OptionKeys::score::hb_max_energy] ); // default is 0.0
 	probe_radius_ = tag->getOption<core::Real>( "probe_radius", basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] ); // default is 1.4
 	burial_cutoff_ = tag->getOption<core::Real>( "burial_cutoff", basic::options::option[basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff] ); // default is 0.3
 	probe_radius_apo_ = tag->getOption<core::Real>( "probe_radius_apo", -1.0 );
@@ -229,6 +242,7 @@ BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 	atomic_depth_selection_ = tag->getOption<core::Real>( "atomic_depth_selection", -1.0 );
 	atomic_depth_probe_radius_ = tag->getOption<core::Real>( "atomic_depth_probe_radius", 2.3 );
 	atomic_depth_resolution_ = tag->getOption<core::Real>( "atomic_depth_resolution", 0.25 );
+	atomic_depth_apo_surface_ = tag->getOption<core::Real>( "atomic_depth_apo_surface", -1.0 );
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );
 
@@ -423,7 +437,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 	for ( core::Size resnum : region_to_calculate ) atoms_to_calculate.fill_with( resnum, true );
 
 	if ( atomic_depth_selection_ >= 0 ) {
-		core::id::AtomID_Map< bool > deep_atoms = core::scoring::atomic_depth::atoms_deeper_than( pose, atomic_depth_selection_, ! atomic_depth_deeper_than_, atomic_depth_probe_radius_, true, atomic_depth_resolution_ );
+		core::id::AtomID_Map< bool > deep_atoms = core::scoring::atomic_depth::atoms_deeper_than( pose, atomic_depth_selection_, ! atomic_depth_deeper_than_, atomic_depth_probe_radius_, atomic_depth_poly_leu_, atomic_depth_resolution_ );
 		for ( core::Size resnum = 1; resnum <= atoms_to_calculate.size(); resnum++ ) {
 			for ( core::Size atno = 1; atno <= atoms_to_calculate.n_atom(resnum); atno++ ) {
 				atoms_to_calculate( resnum, atno ) = atoms_to_calculate( resnum, atno ) && deep_atoms( resnum, atno );
@@ -438,7 +452,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 
 	std::string name_of_hbond_calc = ( generous_hbonds_ ) ? "default" : "legacy";
 
-	BuriedUnsatisfiedPolarsCalculator calc_bound( name_of_sasa_calc_, name_of_hbond_calc, atoms_to_calculate, burial_cutoff_, probe_radius_, residue_surface_cutoff_, generous_hbonds_, legacy_counting_, use_vsasa_, use_sc_neighbors_, ignore_surface_res_ );
+	BuriedUnsatisfiedPolarsCalculator calc_bound( name_of_sasa_calc_, name_of_hbond_calc, atoms_to_calculate, burial_cutoff_, probe_radius_, residue_surface_cutoff_, max_hbond_energy_, generous_hbonds_, legacy_counting_, use_vsasa_, use_sc_neighbors_, ignore_surface_res_ );
 	basic::MetricValue< core::Size > mv_all_heavy, mv_bb_heavy, mv_countable_nonheavy, mv_all_unsat;
 	basic::MetricValue< core::id::AtomID_Map< bool > > mv_unsat_map;
 	basic::MetricValue< core::id::AtomID_Map< bool > > mv_unbound_unsat_map;
@@ -462,6 +476,9 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		buried_unsat_hbond_filter_tracer << "  all_heavy_atom_unsats = " << all_heavy_atom_unsats << std::endl << "  bb_heavy_atom_unsats = " << bb_heavy_atom_unsats << std::endl << "  sc_heavy_atom_unsats = " << sc_heavy_atom_unsats << std::endl << "  countable_nonheavy_unsats = " << countable_nonheavy_unsats << std::endl;
 	}
 	// DDG style separate and compare bound to unbound
+
+	core::id::AtomID_Map< bool > deep_apo_atoms;
+
 	bool ddG_was_computed( false );
 	if ( use_ddG_style_ && jump_num_ > 0 && pose.num_chains() > 1 ) { // UPDATED TO USE sym_dofs for Symmetry like the SymUnsatFilter does
 
@@ -493,6 +510,11 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 			trans_mover.trans_axis( trans_mover.trans_axis() );
 			trans_mover.step_size(unbound_dist);
 			trans_mover.apply( unbound );
+
+			if ( atomic_depth_apo_surface_ >= 0 ) {
+				deep_apo_atoms = get_deep_apo_atoms( pose );
+			}
+
 		}
 		unbound.update_residue_neighbors();
 		(*sfxn_)(unbound ); // score the new pose, or we get assertion error.
@@ -503,7 +525,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 
 		core::Real use_probe_radius_apo = probe_radius_apo_ >= 0 ? probe_radius_apo_ : probe_radius_;
 		core::Real use_burial_cutoff_apo = burial_cutoff_apo_ >= 0 ? burial_cutoff_apo_ : burial_cutoff_;
-		BuriedUnsatisfiedPolarsCalculator calc_unbound( name_of_sasa_calc_, name_of_hbond_calc, atoms_to_calculate, use_burial_cutoff_apo, use_probe_radius_apo, residue_surface_cutoff_, generous_hbonds_, legacy_counting_, use_vsasa_, use_sc_neighbors_, false );
+		BuriedUnsatisfiedPolarsCalculator calc_unbound( name_of_sasa_calc_, name_of_hbond_calc, atoms_to_calculate, use_burial_cutoff_apo, use_probe_radius_apo, residue_surface_cutoff_, max_hbond_energy_, generous_hbonds_, legacy_counting_, use_vsasa_, use_sc_neighbors_, false );
 
 		calc_unbound.get("atom_bur_unsat", mv_unbound_unsat_map, unbound);
 
@@ -535,6 +557,8 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 			if ( ignore_bb_heavy_unsats_ && pose.residue(r).atom_is_backbone(a) && a <= pose.residue(r).nheavyatoms() /* don't want backbone H's */ ) continue;
 			if ( mv_unsat_map.value()(r,a) ) {
 				if ( ddG_was_computed && mv_unbound_unsat_map.value()(r,a) ) continue; // for ddG, if it's also Unsat in the Unbound case, we don't care
+				if ( ddG_was_computed && ! deep_apo_atoms.empty() && deep_apo_atoms(r,a) ) continue; // Skip things that stayed deep
+
 				std::string unsat_type = ( pose.residue(r).atom_is_polar_hydrogen(a) ) ? "Hpol" : "HEAVY";
 				std::string temp_str = "      Unsatisfied " + unsat_type + " polar atom at residue " + utility::to_string( r ) + ": " + pose.residue( r ).name3() + " " + pose.residue(r).atom_name(a);
 				unsat_atom_messages.push_back( temp_str );
@@ -610,6 +634,40 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 	return core::Real(all_heavy_atom_unsats);
 }
 
+
+core::id::AtomID_Map< bool >
+BuriedUnsatHbondFilter::get_deep_apo_atoms( core::pose::Pose const & pose ) const {
+
+	// This function is really slow. But if we don't split the pose like this, it's even slower!
+
+	core::pose::Pose upstream;
+	core::pose::Pose downstream;
+
+	utility::vector1< int > new_indices = core::pose::partition_pose_by_jump( pose, jump_num_, upstream, downstream );
+
+	core::id::AtomID_Map< bool > deep_upstream = core::scoring::atomic_depth::atoms_deeper_than( upstream, atomic_depth_apo_surface_, false, atomic_depth_probe_radius_, atomic_depth_poly_leu_, atomic_depth_resolution_ );
+	core::id::AtomID_Map< bool > deep_downstream = core::scoring::atomic_depth::atoms_deeper_than( downstream, atomic_depth_apo_surface_, false, atomic_depth_probe_radius_, atomic_depth_poly_leu_, atomic_depth_resolution_ );
+
+	core::id::AtomID_Map< bool > deep_apo_atoms;
+	core::pose::initialize_atomid_map( deep_apo_atoms, pose, false );
+
+	for ( core::Size i_pose_res = 1; i_pose_res <= pose.size(); i_pose_res++ ) {
+
+		int raw_other_res = new_indices[ i_pose_res ];
+		core::Size j_other_res = std::abs<int>( raw_other_res );
+		core::id::AtomID_Map< bool > const & other_map = raw_other_res < 0 ? deep_upstream : deep_downstream;
+
+		runtime_assert( deep_apo_atoms.n_atom( i_pose_res ) == other_map.n_atom( j_other_res ) );
+
+		for ( core::Size iatom = 1; iatom <= deep_apo_atoms.n_atom( i_pose_res ); iatom++ ) {
+			deep_apo_atoms( i_pose_res, iatom ) = other_map( j_other_res, iatom );
+		}
+	}
+
+	return deep_apo_atoms;
+}
+
+
 void
 BuriedUnsatHbondFilter::task_factory( core::pack::task::TaskFactoryOP tf ){
 	task_factory_ = tf;
@@ -634,6 +692,7 @@ void BuriedUnsatHbondFilter::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::attribute_w_default( "use_legacy_options", xsct_rosetta_bool, "revert to legacy options (equivalent to old, original BuriedUnsat Filter; WARNING! If this is true, will overwrite all other options", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "generous_hbonds", xsct_rosetta_bool, "count all h-bonds (not just those scored by the default scorefxn in rosetta", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_hbond_energy", xsct_real, "Max energy for an hbond to be accepted as making an hbond. This can go positive!!! Defaults to -score::hb_max_energy (which defaults to 0).", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "use_vsasa", xsct_rosetta_bool, "use vsasa insteady of legacy sasa for burial calculation", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "ignore_surface_res", xsct_rosetta_bool, "many polar atoms on surface atoms get flagged as buried unsat becuause they are occluded by a long sidechina (e.g. Lys or Arg) that could easily move out of the way; this option ignores surface residues, as deinfed by SASA (default) or sc_neighbors if use_sc_neighbors=true", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "ignore_bb_heavy_unsats", xsct_rosetta_bool, "ignore bb heayy atom unsats when using hbnet-style behavior", "false" )
@@ -652,6 +711,7 @@ void BuriedUnsatHbondFilter::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_selection", xsct_real, "Include only atoms past a certain depth. Depth is from edge of SASA surface to center of atom. Pose converted to poly-LEU before SASA surface calculation. -1 to disable.", "-1" )
 		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_probe_radius", xsct_real, "Probe radius for atomic_depth_selection. Set this high to exclude pores. Set this low to allow the SASA surface to enter pores.", "2.3" )
 		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_resolution", xsct_real, "Resolution for atomic depth calculations.", "0.25" )
+		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_apo_surface", xsct_real, "If set greater than 0, atoms must be less deep than this to be considered buried during ddG calculations.", "-1.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "use_reporter_behavior",xsct_rosetta_bool,"report as filter score the type of unsat turned on; this is now TRUE by default","true")
 		+ XMLSchemaAttribute::attribute_w_default( "use_hbnet_behavior",xsct_rosetta_bool,"no heavy unstas allowed (will return 9999); if no heavy unstas, will count Hpol unsats; FALSE by default; if set to true, will NOT use reporter behavior","false")
 		+ XMLSchemaAttribute::attribute_w_default( "report_all_unsats",xsct_rosetta_bool,"report all unsats","false")
@@ -660,6 +720,7 @@ void BuriedUnsatHbondFilter::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		+ XMLSchemaAttribute::attribute_w_default( "report_bb_heavy_atom_unsats",xsct_rosetta_bool,"report back bone heavy atom unsats","false")
 		+ XMLSchemaAttribute::attribute_w_default( "report_nonheavy_unsats",xsct_rosetta_bool,"report non heavy atom unsats","false")
 		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_deeper_than",xsct_rosetta_bool, "If true, only atoms deeper than atomic_depth_selection are included. If false, only atoms less deep than atomic_depth_selection are included.", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_poly_leu",xsct_rosetta_bool, "Convert pose to poly-leu before calculating depth? Gives stable, sequence independent values that align with approximate_buried_unsat_penalty.", "true" )
 		+ XMLSchemaAttribute( "sym_dof_names" , xs_string , "For multicomponent symmetry: what jump(s) used for ddG-like separation. (From Dr. Bale: For multicomponent systems, one can simply pass the names of the sym_dofs that control the master jumps. For one component systems, jump can still be used.)  IF YOU DEFIN THIS OPTION, Will use ddG-style separation for the calulation; if you do not want this, pass a residue selector instead of defining symdofs." )
 		+ XMLSchemaAttribute( "residue_selector", xs_string, "residue selector that tells the filter to restrict the Unsat search to only those residues" );
 	rosetta_scripts::attributes_for_get_score_function_name( attlist );

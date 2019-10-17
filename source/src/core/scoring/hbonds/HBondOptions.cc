@@ -68,6 +68,7 @@ HBondOptions::HBondOptions(
 	utility::options::OptionCollection const & options,
 	std::string const & params_db_tag
 ):
+	max_hb_energy_( 0.0 ),
 	exclude_DNA_DNA_( true ),
 	exclude_intra_res_protein_( true ),
 	exclude_intra_res_RNA_( false ),
@@ -119,6 +120,7 @@ void HBondOptions::initialize_from_options( utility::options::OptionCollection c
 		mphbond_ = options[ OptionKeys::mp::scoring::hbond ];
 	}
 
+	max_hb_energy_ = options[OptionKeys::score::hb_max_energy];
 	exclude_DNA_DNA_ = options[OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	decompose_bb_hb_into_pair_energies_ = options[ OptionKeys::score::hbond_bb_per_residue_energy ];
 	use_sp2_chi_penalty_ = options[OptionKeys::corrections::score::hb_sp2_chipen ];
@@ -175,6 +177,7 @@ HBondOptions::list_options_read( utility::options::OptionKeyList & option_list )
 		+ OptionKeys::mp::scoring::hbond
 		+ OptionKeys::score::hbond_bb_per_residue_energy
 		+ OptionKeys::score::hbond_disable_bbsc_exclusion_rule
+		+ OptionKeys::score::hb_max_energy
 		+ OptionKeys::score::hbond_params
 		+ OptionKeys::score::ldsrbb_high_scale
 		+ OptionKeys::score::ldsrbb_low_scale
@@ -198,6 +201,7 @@ HBondOptions::~HBondOptions()= default;
 HBondOptions &
 HBondOptions::operator=( HBondOptions const & src )
 {
+	max_hb_energy_ = src.max_hb_energy_;
 	exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
 	exclude_intra_res_protein_ = src.exclude_intra_res_protein_;
 	exclude_intra_res_RNA_ = src.exclude_intra_res_RNA_;
@@ -255,6 +259,10 @@ HBondOptions::parse_my_tag(
 		decompose_bb_hb_into_pair_energies( tag->getOption<bool>( "decompose_bb_hb_into_pair_energies" ) );
 	}
 
+
+	if ( tag->hasOption( "hbonds__hb_max_energy" ) ) {
+		max_hb_energy( tag->getOption<Real>( "hb_max_energy" ) );
+	}
 	if ( tag->hasOption( "hbonds__exclude_DNA_DNA_hbond" ) ) {
 		exclude_DNA_DNA( tag->getOption<bool>( "hbonds__exclude_DNA_DNA_hbond" ) );
 	}
@@ -327,6 +335,7 @@ HBondOptions::append_schema_attributes( utility::tag::AttributeList & attributes
 		+ XMLSchemaAttribute( "use_hb_env_dep", xsct_rosetta_bool , "Enable environmental dependent weighting of hydrogen bond terms" )
 		+ XMLSchemaAttribute( "smooth_hb_env_dep", xsct_rosetta_bool , "Smooth environmental dependence of hbond term" )
 		+ XMLSchemaAttribute( "decompose_bb_hb_into_pair_energies", xsct_rosetta_bool , "Should backbone-backbone hydrogen bonds be split between the two participating residues?" )
+		+ XMLSchemaAttribute( "hbonds__hb_max_energy", xsct_real , "Max possible hbond energy. Under nearly all circumstances this should be set to 0.0." )
 		+ XMLSchemaAttribute( "hbonds__exclude_DNA_DNA_hbond", xsct_rosetta_bool , "Same as exclude_DNA_DNA_hbond" )
 		+ XMLSchemaAttribute( "hbonds__use_hb_env_dep_DNA", xsct_rosetta_bool , "Same as use_hb_env_dep_DNA" )
 		+ XMLSchemaAttribute( "hbonds__put_intra_into_total", xsct_rosetta_bool , "Include intra-res hbond score in total" )
@@ -348,6 +357,16 @@ HBondOptions::append_schema_attributes( utility::tag::AttributeList & attributes
 		+ XMLSchemaAttribute( "hbonds__Mbhbond", xsct_rosetta_bool , "XRW TO DO" )
 		+ XMLSchemaAttribute( "hbonds__mphbond", xsct_rosetta_bool , "XRW TO DO" );
 
+}
+
+Real
+HBondOptions::max_hb_energy() const {
+	return max_hb_energy_;
+}
+
+void
+HBondOptions::max_hb_energy( Real const setting ) {
+	max_hb_energy_ = setting;
 }
 
 
@@ -593,7 +612,8 @@ void HBondOptions::length_dependent_srbb_maxlength( Size setting ) { ldsrbb_maxl
 bool
 operator==( HBondOptions const & a, HBondOptions const & b )
 {
-	return ( ( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
+	return ( ( a.max_hb_energy_ == b.max_hb_energy_ ) &&
+		( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
 		( a.exclude_intra_res_protein_ == b.exclude_intra_res_protein_  ) &&
 		( a.exclude_intra_res_RNA_ == b.exclude_intra_res_RNA_  ) &&
 		( a.put_intra_into_total_ == b.put_intra_into_total_  ) &&
@@ -637,6 +657,7 @@ operator<< ( std::ostream & out, const HBondOptions & options ){
 void
 HBondOptions::show( std::ostream & out ) const
 {
+	out <<"HBondOptions::show: hb_max_energy: " << max_hb_energy_ << std::endl;
 	out <<"HBondOptions::show: exclude_DNA_DNA: "
 		<<( exclude_DNA_DNA_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: exclude_intra_res_protein_: "
@@ -690,6 +711,7 @@ HBondOptions::show( std::ostream & out ) const
 template< class Archive >
 void
 core::scoring::hbonds::HBondOptions::save( Archive & arc ) const {
+	arc( CEREAL_NVP( max_hb_energy_ ) ); // Real
 	arc( CEREAL_NVP( exclude_DNA_DNA_ ) ); // _Bool
 	arc( CEREAL_NVP( exclude_intra_res_protein_ ) ); // _Bool
 	arc( CEREAL_NVP( exclude_intra_res_RNA_ ) ); // _Bool
@@ -722,6 +744,7 @@ core::scoring::hbonds::HBondOptions::save( Archive & arc ) const {
 template< class Archive >
 void
 core::scoring::hbonds::HBondOptions::load( Archive & arc ) {
+	arc( max_hb_energy_ ); // Real
 	arc( exclude_DNA_DNA_ ); // _Bool
 	arc( exclude_intra_res_protein_ ); // _Bool
 	arc( exclude_intra_res_RNA_ ); // _Bool

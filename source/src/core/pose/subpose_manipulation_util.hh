@@ -92,8 +92,11 @@ void
 pdbslice( pose::Pose & pose,
 	utility::vector1< Size > const & slice_res );
 
-// for partition_by_jump: both new poses start residue numbering from 1 and don't keep the original numbering!
-void
+// @brief Create two new poses from the partition over a jump
+// @details Both new poses start residue numbering from 1 and don't keep the original numbering!
+// Return value is mapping from original seqpos to new seqpos where negative numbers are in partner1
+//
+utility::vector1< int >
 partition_pose_by_jump(
 	pose::Pose const & src,
 	int const jump_number,

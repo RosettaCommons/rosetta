@@ -55,7 +55,8 @@ public:
 	//core::pose::metrics::PoseMetricCalculatorOP clone() const;
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const override {
-		return utility::pointer::make_shared< NumberHBondsCalculator >( use_generous_hbonds_, special_region_ ); };
+		return utility::pointer::make_shared< NumberHBondsCalculator >( *this );
+	};
 
 	static core::Real
 	sum_Hbond_terms( core::scoring::EnergyMap const & emap );
@@ -68,6 +69,7 @@ public:
 	//core::id::AtomID_Map< core::Size > get_atom_honds(){ return atom_Hbonds_; };
 	utility::vector1< core::Size > get_residue_hbonds(){ return residue_Hbonds_; };
 	//core::scoring::hbonds::HBondSetCOP get_hbond_set() { return hbond_set_; };
+	void set_max_hb_energy( core::Real energy ) { max_hb_energy_ = energy; }
 
 protected:
 
@@ -98,6 +100,7 @@ private:
 	core::id::AtomID_Map< core::Size > atom_Hbonds_;
 	utility::vector1< core::Size > residue_Hbonds_;
 	utility::vector1< core::Real > ref_residue_total_energies_; //holds the calculated energies to prevent unnecessary recalculation
+	core::Real max_hb_energy_;
 	//core::scoring::hbonds::HBondSetOP hbond_set_;
 	//core::scoring::hbonds::HBondDatabaseCOP hb_database_;
 

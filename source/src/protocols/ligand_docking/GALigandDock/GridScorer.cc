@@ -138,7 +138,7 @@ get_hbond_score_weighted (
 		D,H,A,B,B_0,
 		energy, false, core::scoring::hbonds::DUMMY_DERIVS
 	);
-	if ( energy<core::scoring::hbonds::MAX_HB_ENERGY ) {
+	if ( energy<hbopt.max_hb_energy() ) {
 		switch(core::scoring::hbonds::get_hbond_weight_type(hbt.eval_type())){
 		case core::scoring::hbonds::hbw_SR_BB_SC :
 		case core::scoring::hbonds::hbw_LR_BB_SC :
@@ -1782,7 +1782,7 @@ GridScorer::derivatives(
 					D,H,A,B,B_0,
 					energy, true, dhb_dxs
 				);
-				if ( energy<core::scoring::hbonds::MAX_HB_ENERGY ) {
+				if ( energy<hbopt.max_hb_energy() ) {
 					switch(core::scoring::hbonds::get_hbond_weight_type(hbt.eval_type())){
 					case core::scoring::hbonds::hbw_SR_BB_SC :
 					case core::scoring::hbonds::hbw_LR_BB_SC :
@@ -1823,7 +1823,7 @@ GridScorer::derivatives(
 					D,H,A,B,B_0,
 					energy, true, dhb_dxs
 				);
-				if ( energy<core::scoring::hbonds::MAX_HB_ENERGY ) {
+				if ( energy<hbopt.max_hb_energy() ) {
 					switch(core::scoring::hbonds::get_hbond_weight_type(hbt.eval_type())){
 					case core::scoring::hbonds::hbw_SR_BB_SC :
 					case core::scoring::hbonds::hbw_LR_BB_SC :
@@ -1965,7 +1965,7 @@ GridScorer::derivatives(
 							D,H,A,B,B_0,
 							energy, true, dhb_dxs
 						);
-						if ( energy<core::scoring::hbonds::MAX_HB_ENERGY ) {
+						if ( energy<hbopt.max_hb_energy() ) {
 							switch(core::scoring::hbonds::get_hbond_weight_type(hbt.eval_type())){
 							case core::scoring::hbonds::hbw_SR_BB_SC :
 							case core::scoring::hbonds::hbw_LR_BB_SC :
@@ -2010,7 +2010,7 @@ GridScorer::derivatives(
 							D,H,A,B,B_0,
 							energy, true, dhb_dxs
 						);
-						if ( energy<core::scoring::hbonds::MAX_HB_ENERGY ) {
+						if ( energy<hbopt.max_hb_energy() ) {
 							switch(core::scoring::hbonds::get_hbond_weight_type(hbt.eval_type())){
 							case core::scoring::hbonds::hbw_SR_BB_SC :
 							case core::scoring::hbonds::hbw_LR_BB_SC :
