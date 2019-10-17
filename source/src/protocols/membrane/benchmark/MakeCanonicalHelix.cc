@@ -88,10 +88,6 @@ MakeCanonicalHelix::fresh_instance() const
 	return utility::pointer::make_shared< MakeCanonicalHelix >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP MakeCanonicalHelix::get_name() const {
-// XRW TEMP  return "MakeCanonicalHelix";
-// XRW TEMP }
 
 void
 MakeCanonicalHelix::show(std::ostream & output) const
@@ -133,20 +129,8 @@ MakeCanonicalHelix::is_valid( core::pose::Pose& pose ) {
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MakeCanonicalHelixCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MakeCanonicalHelix >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MakeCanonicalHelixCreator::keyname() const {
-// XRW TEMP  return MakeCanonicalHelix::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MakeCanonicalHelix::mover_name(){
-// XRW TEMP  return "MakeCanonicalHelix";
-// XRW TEMP }
 
 std::string MakeCanonicalHelix::get_name() const {
 	return mover_name();

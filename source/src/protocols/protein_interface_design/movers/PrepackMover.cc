@@ -62,22 +62,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.PrepackMover" );
 
-// XRW TEMP std::string
-// XRW TEMP PrepackMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PrepackMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PrepackMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PrepackMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PrepackMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "Prepack";
-// XRW TEMP }
 
 PrepackMover::PrepackMover() :
 	protocols::minimization_packing::PackRotamersMover( PrepackMover::mover_name() ),
@@ -201,10 +187,6 @@ void PrepackMover::apply( pose::Pose & pose )
 	TR.flush();
 }
 
-// XRW TEMP std::string
-// XRW TEMP PrepackMover::get_name() const {
-// XRW TEMP  return PrepackMover::mover_name();
-// XRW TEMP }
 
 void
 PrepackMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )

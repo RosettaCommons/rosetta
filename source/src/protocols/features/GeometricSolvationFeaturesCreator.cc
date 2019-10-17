@@ -26,17 +26,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP GeometricSolvationFeaturesCreator::GeometricSolvationFeaturesCreator() {}
-// XRW TEMP GeometricSolvationFeaturesCreator::~GeometricSolvationFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP GeometricSolvationFeaturesCreator::create_features_reporter() const {
-// XRW TEMP
-// XRW TEMP  core::scoring::methods::EnergyMethodOptions options;
-// XRW TEMP  return utility::pointer::make_shared< GeometricSolvationFeatures >(options);
-// XRW TEMP }
 
-// XRW TEMP std::string GeometricSolvationFeaturesCreator::type_name() const {
-// XRW TEMP  return "GeometricSolvationFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

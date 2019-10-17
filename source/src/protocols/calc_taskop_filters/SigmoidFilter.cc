@@ -32,11 +32,7 @@ namespace calc_taskop_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.Sigmoid" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SigmoidFilterCreator::create_filter() const { return utility::pointer::make_shared< Sigmoid >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SigmoidFilterCreator::keyname() const { return "Sigmoid"; }
 
 //default ctor
 Sigmoid::Sigmoid() :

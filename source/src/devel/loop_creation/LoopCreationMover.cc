@@ -88,22 +88,8 @@ static basic::Tracer TR( "devel.loop_creation.LoopCreationMover" );
 using namespace core;
 
 //****CREATOR METHODS****//
-// XRW TEMP std::string
-// XRW TEMP LoopCreationMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoopCreationMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoopCreationMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopCreationMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoopCreationMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LoopCreationMover";
-// XRW TEMP }
 //****END CREATOR METHODS****//
 
 /// @brief default constructor
@@ -163,10 +149,6 @@ LoopCreationMover::fresh_instance() const {
 	return utility::pointer::make_shared< LoopCreationMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoopCreationMover::get_name() const {
-// XRW TEMP  return "LoopCreationMover";
-// XRW TEMP }
 
 protocols::loops::Loop
 LoopCreationMover::get_last_created_loop() const

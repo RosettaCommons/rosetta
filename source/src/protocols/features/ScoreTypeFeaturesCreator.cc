@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP ScoreTypeFeaturesCreator::ScoreTypeFeaturesCreator() {}
-// XRW TEMP ScoreTypeFeaturesCreator::~ScoreTypeFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP ScoreTypeFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< ScoreTypeFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string ScoreTypeFeaturesCreator::type_name() const {
-// XRW TEMP  return "ScoreTypeFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

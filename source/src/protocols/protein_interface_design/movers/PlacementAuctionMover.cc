@@ -71,22 +71,8 @@ namespace movers {
 using namespace protocols::moves;
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP PlacementAuctionMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PlacementAuctionMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PlacementAuctionMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PlacementAuctionMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PlacementAuctionMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "Auction";
-// XRW TEMP }
 
 PlacementAuctionMover::PlacementAuctionMover() :
 	calc_taskop_movers::DesignRepackMover( PlacementAuctionMover::mover_name() )
@@ -328,10 +314,6 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 	TR.flush();
 }
 
-// XRW TEMP std::string
-// XRW TEMP PlacementAuctionMover::get_name() const {
-// XRW TEMP  return PlacementAuctionMover::mover_name();
-// XRW TEMP }
 
 void
 PlacementAuctionMover::host_chain( core::Size const hc ){

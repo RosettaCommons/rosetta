@@ -106,23 +106,8 @@ using basic::t_info;
 using basic::t_debug;
 static basic::Tracer TR( "devel.motifs.MotifDnaPacker" );
 
-// XRW TEMP std::string
-// XRW TEMP MotifDnaPackerCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return MotifDnaPacker::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MotifDnaPackerCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< MotifDnaPacker >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MotifDnaPacker::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MotifDnaPacker";
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief lightweight default constructor
@@ -186,10 +171,6 @@ MotifDnaPacker::clone() const
 	return utility::pointer::make_shared< MotifDnaPacker >( *this );
 }
 
-// XRW TEMP std::string
-// XRW TEMP MotifDnaPacker::get_name() const {
-// XRW TEMP  return MotifDnaPacker::mover_name();
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief

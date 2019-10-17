@@ -98,8 +98,6 @@ TaskOperationFeatures::TaskOperationFeatures(TaskOperationFeatures const &) :
 
 TaskOperationFeatures::~TaskOperationFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP TaskOperationFeatures::type_name() const { return "TaskOperationFeatures"; }
 
 void
 TaskOperationFeatures::write_schema_to_db(

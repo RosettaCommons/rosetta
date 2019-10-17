@@ -54,11 +54,7 @@ using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.simple_filters.NMerSVMEnergyFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP NMerSVMEnergyFilterCreator::create_filter() const { return utility::pointer::make_shared< NMerSVMEnergyFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP NMerSVMEnergyFilterCreator::keyname() const { return "NMerSVMEnergy"; }
 
 //default ctor
 NMerSVMEnergyFilter::NMerSVMEnergyFilter() :

@@ -116,22 +116,8 @@ static basic::Tracer TR_spec( "protocols.dna.Specificity" );
 
 // for comparing ResTypeSequence, which contain ResidueTypeCOP pointers (must dereference for sorting purposes)
 
-// XRW TEMP std::string
-// XRW TEMP DnaInterfacePackerCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DnaInterfacePacker::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DnaInterfacePackerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DnaInterfacePacker >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DnaInterfacePacker::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DnaInterfacePacker";
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief lightweight default constructor
@@ -214,10 +200,6 @@ DnaInterfacePacker::clone() const
 	return utility::pointer::make_shared< DnaInterfacePacker >( *this );
 }
 
-// XRW TEMP std::string
-// XRW TEMP DnaInterfacePacker::get_name() const {
-// XRW TEMP  return DnaInterfacePacker::mover_name();
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief runs the packer, with support for efficiently looping over multiple explicit DNA sequences (provided that they can be represented by the RotamerSets/InteractionGraph)

@@ -42,13 +42,7 @@ using namespace std;
 using core::Size;
 using core::Real;
 
-// XRW TEMP protocols::moves::MoverOP LoopmodelWrapperCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopmodelWrapper >();
-// XRW TEMP }
 
-// XRW TEMP std::string LoopmodelWrapperCreator::keyname() const {
-// XRW TEMP  return "LoopmodelWrapper";
-// XRW TEMP }
 
 protocols::moves::MoverOP LoopmodelWrapper::clone() const {
 	return utility::pointer::make_shared< LoopmodelWrapper >();

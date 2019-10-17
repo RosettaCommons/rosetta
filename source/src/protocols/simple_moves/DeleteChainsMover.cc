@@ -138,28 +138,10 @@ DeleteChainsMover::apply( Pose & pose )
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// XRW TEMP std::string
-// XRW TEMP DeleteChainsMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DeleteChainsMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DeleteChainsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DeleteChainsMover >();
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP DeleteChainsMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DeleteChainsMover";
-// XRW TEMP }
 
 
-// XRW TEMP std::string
-// XRW TEMP DeleteChainsMover::get_name() const {
-// XRW TEMP  return DeleteChainsMover::mover_name();
-// XRW TEMP }
+
+
 
 moves::MoverOP
 DeleteChainsMover::clone() const

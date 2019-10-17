@@ -97,17 +97,7 @@ BridgeChainsMover::fresh_instance() const
 	return utility::pointer::make_shared< BridgeChainsMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP BridgeChainsMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return BridgeChainsMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BridgeChainsMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "BridgeChainsMover";
-// XRW TEMP }
 
 void
 BridgeChainsMover::show( std::ostream & output ) const

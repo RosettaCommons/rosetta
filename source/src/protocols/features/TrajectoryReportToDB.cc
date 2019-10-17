@@ -112,22 +112,8 @@ TrajectoryReportToDB::get_cycle_counts() const {
 	return cycle_counts_;
 }
 
-// XRW TEMP std::string
-// XRW TEMP TrajectoryReportToDBCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return TrajectoryReportToDB::mover_name();
-// XRW TEMP }
 
-// XRW TEMP moves::MoverOP
-// XRW TEMP TrajectoryReportToDBCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< TrajectoryReportToDB >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP TrajectoryReportToDB::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "TrajectoryReportToDB";
-// XRW TEMP }
 
 static basic::Tracer TR( "protocols.features.TrajectoryReportToDB" );
 

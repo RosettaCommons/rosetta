@@ -80,20 +80,8 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-// XRW TEMP std::string
-// XRW TEMP RigidChunkCMCreator::keyname() const {
-// XRW TEMP  return RigidChunkCM::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RigidChunkCMCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RigidChunkCM >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RigidChunkCM::mover_name() {
-// XRW TEMP  return "RigidChunkCM";
-// XRW TEMP }
 
 // This could be adapted to underpin the loops::Loops object, probably.
 class ResidueChunkSelection {
@@ -859,20 +847,6 @@ core::select::residue_selector::ResidueSelectorCOP RigidChunkCM::templ_selector(
 	return templ_selector_;
 }
 
-// XRW TEMP std::string RigidChunkCM::get_name() const {
-// XRW TEMP  std::ostringstream ss;
-// XRW TEMP  ss << "RigidChunkCM(";
-// XRW TEMP
-// XRW TEMP  if ( xml_name_ == "" ) {
-// XRW TEMP   ss << sim_selector()->get_name() << "+" << templ_selector()->get_name();
-// XRW TEMP   return ss.str();
-// XRW TEMP  } else {
-// XRW TEMP   ss << xml_name_;
-// XRW TEMP  }
-// XRW TEMP
-// XRW TEMP  ss << ")";
-// XRW TEMP  return ss.str();
-// XRW TEMP }
 
 void RigidChunkCM::passport_updated() {
 	if ( !has_passport() ) {

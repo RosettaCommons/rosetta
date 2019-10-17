@@ -68,8 +68,6 @@ ResidueTypesFeatures::ResidueTypesFeatures()
 
 ResidueTypesFeatures::~ResidueTypesFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP ResidueTypesFeatures::type_name() const { return "ResidueTypesFeatures"; }
 
 void
 ResidueTypesFeatures::write_schema_to_db(

@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP StructureFeaturesCreator::StructureFeaturesCreator() {}
-// XRW TEMP StructureFeaturesCreator::~StructureFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP StructureFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< StructureFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string StructureFeaturesCreator::type_name() const {
-// XRW TEMP  return "StructureFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

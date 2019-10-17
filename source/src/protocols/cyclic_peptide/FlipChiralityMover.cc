@@ -51,22 +51,8 @@ static basic::Tracer TR( "protocols.cyclic_peptide.FlipChiralityMover" );
 namespace protocols {
 namespace cyclic_peptide {
 
-// XRW TEMP std::string
-// XRW TEMP FlipChiralityMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FlipChiralityMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FlipChiralityMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FlipChiralityMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FlipChiralityMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "FlipChiralityMover";
-// XRW TEMP }
 
 /// @brief Constructor for FlipChirality mover.
 ///
@@ -153,9 +139,6 @@ void FlipChiralityMover::apply( core::pose::Pose & pose )
 
 
 /// @brief Returns the name of this mover ("FlipChiralityMover").
-// XRW TEMP std::string FlipChiralityMover::get_name() const{
-// XRW TEMP  return "FlipChiralityMover";
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///

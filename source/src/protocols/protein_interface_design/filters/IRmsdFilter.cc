@@ -128,11 +128,7 @@ IRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP IRmsdFilterCreator::create_filter() const { return utility::pointer::make_shared< IRmsdFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP IRmsdFilterCreator::keyname() const { return "IRmsd"; }
 
 std::string IRmsdFilter::name() const {
 	return class_name();

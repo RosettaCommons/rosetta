@@ -91,22 +91,8 @@ namespace seeded_abinitio {
 using namespace protocols::moves;
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP CloseFoldCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CloseFold::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CloseFoldCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CloseFold >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CloseFold::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "CloseFold";
-// XRW TEMP }
 
 
 CloseFold::~CloseFold() = default;
@@ -430,10 +416,6 @@ CloseFold::apply( core::pose::Pose & pose ){
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP CloseFold::get_name() const {
-// XRW TEMP  return CloseFold::mover_name();
-// XRW TEMP }
 
 void
 CloseFold::parse_my_tag(

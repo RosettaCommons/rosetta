@@ -274,11 +274,7 @@ void SecondaryStructureCountFilter::report( std::ostream & out, core::pose::Pose
 	out << " Pose has " << num_helix_pose_ << " helix " << num_sheet_pose_  << " sheet " << num_loop_pose_ << " loop (filtered elements) according to dssp_reduced definition." <<  std::endl;
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SecondaryStructureCountFilterCreator::create_filter() const { return utility::pointer::make_shared< SecondaryStructureCountFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SecondaryStructureCountFilterCreator::keyname() const { return "SecondaryStructureCount"; }
 
 std::string SecondaryStructureCountFilter::name() const {
 	return class_name();

@@ -83,22 +83,8 @@ using basic::t_debug;
 using basic::t_trace;
 static basic::Tracer TR( "protocols.dna.DesignProteinBackboneAroundDNA", t_info );
 
-// XRW TEMP std::string
-// XRW TEMP DesignProteinBackboneAroundDNACreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DesignProteinBackboneAroundDNA::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DesignProteinBackboneAroundDNACreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DesignProteinBackboneAroundDNA >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DesignProteinBackboneAroundDNA::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DesignProteinBackboneAroundDNA";
-// XRW TEMP }
 
 DesignProteinBackboneAroundDNA::DesignProteinBackboneAroundDNA() :
 	protocols::minimization_packing::PackRotamersMover( DesignProteinBackboneAroundDNA::mover_name() ),
@@ -224,10 +210,6 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 	pose.fold_tree( ft_orig ); // restore original fold tree
 }
 
-// XRW TEMP std::string
-// XRW TEMP DesignProteinBackboneAroundDNA::get_name() const {
-// XRW TEMP  return DesignProteinBackboneAroundDNA::mover_name();
-// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void DesignProteinBackboneAroundDNA::parse_my_tag(

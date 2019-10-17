@@ -55,23 +55,8 @@ static basic::Tracer TR( "protocols.legacy_sewing.LegacyAddStartnodeFragments" )
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LegacyAddStartnodeFragmentsCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< LegacyAddStartnodeFragments >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyAddStartnodeFragmentsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LegacyAddStartnodeFragments::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyAddStartnodeFragments::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LegacyAddStartnodeFragments";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 LegacyAddStartnodeFragments::clone() const {
@@ -82,10 +67,6 @@ LegacyAddStartnodeFragments::fresh_instance() const {
 	return utility::pointer::make_shared< LegacyAddStartnodeFragments >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyAddStartnodeFragments::get_name() const {
-// XRW TEMP  return "LegacyAddStartnodeFragments";
-// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////  LegacyAddStartnodeFragments function   //////////////////////////////////

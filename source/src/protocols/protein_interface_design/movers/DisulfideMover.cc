@@ -83,22 +83,8 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.DisulfideMov
 
 const core::scoring::disulfides::CentroidDisulfidePotential DisulfideMover::potential_;
 
-// XRW TEMP std::string
-// XRW TEMP DisulfideMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DisulfideMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DisulfideMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DisulfideMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DisulfideMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DisulfideMover";
-// XRW TEMP }
 
 /// @brief default ctor
 DisulfideMover::DisulfideMover() :
@@ -238,10 +224,6 @@ void DisulfideMover::apply( Pose & pose ) {
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP DisulfideMover::get_name() const {
-// XRW TEMP  return DisulfideMover::mover_name();
-// XRW TEMP }
 
 /// @brief Find all residues which could disulfide bond to a target
 /// @return pairs of residues (target, host) from the target protein and the

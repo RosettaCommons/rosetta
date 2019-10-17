@@ -47,22 +47,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.simple_moves.DumpPdb" );
 
-// XRW TEMP std::string
-// XRW TEMP DumpPdbCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DumpPdb::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DumpPdbCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DumpPdb >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DumpPdb::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DumpPdb";
-// XRW TEMP }
 
 DumpPdb::DumpPdb():
 	protocols::moves::Mover( DumpPdb::mover_name() ),
@@ -118,10 +104,6 @@ DumpPdb::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, proto
 	TR << "dump_pdb mover with filename "<<fname_<<std::endl;
 }
 
-// XRW TEMP std::string
-// XRW TEMP DumpPdb::get_name() const {
-// XRW TEMP  return DumpPdb::mover_name();
-// XRW TEMP }
 
 std::string DumpPdb::get_name() const {
 	return mover_name();

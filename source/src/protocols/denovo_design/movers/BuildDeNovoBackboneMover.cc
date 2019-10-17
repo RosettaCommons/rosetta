@@ -158,17 +158,7 @@ BuildDeNovoBackboneMover::fresh_instance() const
 	return utility::pointer::make_shared< BuildDeNovoBackboneMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP BuildDeNovoBackboneMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return BuildDeNovoBackboneMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BuildDeNovoBackboneMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "BuildDeNovoBackboneMover";
-// XRW TEMP }
 
 std::string const &
 BuildDeNovoBackboneMover::id() const
@@ -833,17 +823,7 @@ BuildDeNovoBackboneMover::set_stop_segments( SegmentNameSet const & segments )
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP BuildDeNovoBackboneMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< BuildDeNovoBackboneMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BuildDeNovoBackboneMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return BuildDeNovoBackboneMover::mover_name();
-// XRW TEMP }
 
 std::string BuildDeNovoBackboneMover::get_name() const {
 	return mover_name();

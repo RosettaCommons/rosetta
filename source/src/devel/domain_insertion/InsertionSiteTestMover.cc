@@ -107,11 +107,6 @@ InsertionSiteTestMover::clone() const{
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP InsertionSiteTestMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "InsertionSiteTestMover";
-// XRW TEMP }
 
 
 /// @details
@@ -502,22 +497,8 @@ InsertionSiteTestMover::evaluate_insert_pose(
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP InsertionSiteTestMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return InsertionSiteTestMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP InsertionSiteTestMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< InsertionSiteTestMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP InsertionSiteTestMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "InsertionSiteTestMover";
-// XRW TEMP }
 
 std::string InsertionSiteTestMover::get_name() const {
 	return mover_name();

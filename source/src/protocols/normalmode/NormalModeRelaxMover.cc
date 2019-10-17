@@ -78,21 +78,7 @@ using namespace ObjexxFCL::format;
 using namespace core;
 
 // Creator stuffs first
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP NormalModeRelaxMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< NormalModeRelaxMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP NormalModeRelaxMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "NormalModeRelax";
-// XRW TEMP }
-// XRW TEMP std::string
-// XRW TEMP NormalModeRelaxMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return NormalModeRelaxMover::mover_name();
-// XRW TEMP }
 
 ///////////////////////////
 
@@ -179,10 +165,6 @@ NormalModeRelaxMover::set_default()
 	sfxn_cen_ = scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" );
 }
 
-// XRW TEMP std::string
-// XRW TEMP NormalModeRelaxMover::get_name() const {
-// XRW TEMP  return NormalModeRelaxMover::mover_name();
-// XRW TEMP }
 
 void
 NormalModeRelaxMover::apply( pose::Pose &pose )

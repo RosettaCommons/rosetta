@@ -56,20 +56,8 @@ using namespace core::kinematics;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.HotspotDisjointedFoldTreeMover" );
 
-// XRW TEMP std::string HotspotDisjointedFoldTreeMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return HotspotDisjointedFoldTreeMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP HotspotDisjointedFoldTreeMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< HotspotDisjointedFoldTreeMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP HotspotDisjointedFoldTreeMover::mover_name() {
-// XRW TEMP  return "HotspotDisjointedFoldTree";
-// XRW TEMP }
 
 HotspotDisjointedFoldTreeMover::HotspotDisjointedFoldTreeMover( ) :
 	protocols::moves::Mover( HotspotDisjointedFoldTreeMover::mover_name()  ),
@@ -82,9 +70,6 @@ HotspotDisjointedFoldTreeMover::HotspotDisjointedFoldTreeMover( ) :
 
 HotspotDisjointedFoldTreeMover::~HotspotDisjointedFoldTreeMover( ) = default;
 
-// XRW TEMP std::string HotspotDisjointedFoldTreeMover::get_name() const {
-// XRW TEMP  return HotspotDisjointedFoldTreeMover::mover_name();
-// XRW TEMP }
 
 /// @details generates a foldtree that links the nearest residues on chain 1 to key residues on chain 2 and breaks the chain around the key residues on chain 2
 core::kinematics::FoldTreeOP

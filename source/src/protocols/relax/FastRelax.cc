@@ -251,22 +251,8 @@ namespace relax {
 using namespace ObjexxFCL;
 
 
-// XRW TEMP std::string
-// XRW TEMP FastRelaxCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FastRelax::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FastRelaxCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FastRelax >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FastRelax::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "FastRelax";
-// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  FastRelax main code:

@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP ResidueConformationFeaturesCreator::ResidueConformationFeaturesCreator() {}
-// XRW TEMP ResidueConformationFeaturesCreator::~ResidueConformationFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP ResidueConformationFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< ResidueConformationFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string ResidueConformationFeaturesCreator::type_name() const {
-// XRW TEMP  return "ResidueConformationFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

@@ -197,10 +197,6 @@ loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 	return loops::loop_mover::Success;
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoopMover_SlidingWindow::get_name() const {
-// XRW TEMP  return "LoopMover_SlidingWindow";
-// XRW TEMP }
 
 basic::Tracer & LoopMover_SlidingWindow::tr() const
 {

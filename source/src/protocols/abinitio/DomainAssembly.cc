@@ -59,22 +59,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.DomainAssembly" );
 
-// XRW TEMP std::string
-// XRW TEMP DomainAssemblyCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DomainAssembly::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DomainAssemblyCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DomainAssembly >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DomainAssembly::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DomainAssembly";
-// XRW TEMP }
 
 DomainAssembly::DomainAssembly() :
 	protocols::moves::Mover( DomainAssembly::mover_name() )
@@ -210,10 +196,6 @@ DomainAssembly::apply( core::pose::Pose & pose )
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( pose );
 }
 
-// XRW TEMP std::string
-// XRW TEMP DomainAssembly::get_name() const {
-// XRW TEMP  return DomainAssembly::mover_name();
-// XRW TEMP }
 
 void
 DomainAssembly::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )

@@ -50,26 +50,12 @@ static basic::Tracer TR( "protocols.fldsgn.potentials.SetAACompositionPotential"
 
 
 /// @brief
-// XRW TEMP std::string
-// XRW TEMP SetAACompositionPotentialCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SetAACompositionPotential::mover_name();
-// XRW TEMP }
 
 
 /// @brief
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetAACompositionPotentialCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetAACompositionPotential >();
-// XRW TEMP }
 
 
 /// @brief
-// XRW TEMP std::string
-// XRW TEMP SetAACompositionPotential::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SetAACompositionPotential";
-// XRW TEMP }
 
 
 /// @brief default constructor
@@ -170,10 +156,6 @@ SetAACompositionPotential::apply( Pose & )
 
 
 /// @brief
-// XRW TEMP std::string
-// XRW TEMP SetAACompositionPotential::get_name() const {
-// XRW TEMP  return SetAACompositionPotential::mover_name();
-// XRW TEMP }
 /// @brief parse xml
 void
 SetAACompositionPotential::parse_my_tag(

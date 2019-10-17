@@ -41,11 +41,7 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.TotalSasaFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP TotalSasaFilterCreator::create_filter() const { return utility::pointer::make_shared< TotalSasaFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP TotalSasaFilterCreator::keyname() const { return "TotalSasa"; }
 
 
 TotalSasaFilter::TotalSasaFilter() :

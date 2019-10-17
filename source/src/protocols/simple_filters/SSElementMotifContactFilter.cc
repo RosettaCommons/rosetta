@@ -321,11 +321,7 @@ SSElementMotifContactFilter::parse_my_tag(
 
 }
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP SSElementMotifContactFilterCreator::create_filter() const { return utility::pointer::make_shared< SSElementMotifContactFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SSElementMotifContactFilterCreator::keyname() const { return "SSDegree"; }
 
 std::string SSElementMotifContactFilter::name() const {
 	return class_name();

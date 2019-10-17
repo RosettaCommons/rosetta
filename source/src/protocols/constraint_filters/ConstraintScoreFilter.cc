@@ -119,23 +119,8 @@ ConstraintScoreFilter::report( std::ostream &, core::pose::Pose const & ) const
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ConstraintScoreFilterCreator::create_filter() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< ConstraintScoreFilter >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ConstraintScoreFilterCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ConstraintScoreFilter::class_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ConstraintScoreFilter::class_name()
-// XRW TEMP {
-// XRW TEMP  return "ConstraintScore";
-// XRW TEMP }
 
 std::string ConstraintScoreFilter::name() const {
 	return class_name();

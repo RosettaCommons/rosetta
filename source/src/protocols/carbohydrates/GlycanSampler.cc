@@ -293,10 +293,6 @@ GlycanSampler::fresh_instance() const
 	return utility::pointer::make_shared< GlycanSampler >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP GlycanSampler::get_name() const {
-// XRW TEMP  return "GlycanSampler";
-// XRW TEMP }
 
 void
 GlycanSampler::show(std::ostream & output) const

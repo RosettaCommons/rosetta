@@ -115,10 +115,6 @@ InterfaceFeatures::set_interface_chains(vector1<std::string> const & interfaces)
 
 InterfaceFeatures::~InterfaceFeatures()= default;
 
-// XRW TEMP std::string
-// XRW TEMP InterfaceFeatures::type_name() const {
-// XRW TEMP  return "InterfaceFeatures";
-// XRW TEMP }
 
 void
 InterfaceFeatures::parse_my_tag(

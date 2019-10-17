@@ -65,22 +65,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.TopologyBrokerMover" );
 
-// XRW TEMP std::string
-// XRW TEMP TopologyBrokerMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return TopologyBrokerMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP TopologyBrokerMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< TopologyBrokerMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP TopologyBrokerMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "TopologyBrokerMover";
-// XRW TEMP }
 
 TopologyBrokerMover::TopologyBrokerMover() : calc_taskop_movers::DesignRepackMover( TopologyBrokerMover::mover_name() ) {}
 TopologyBrokerMover::~TopologyBrokerMover() = default;
@@ -154,10 +140,6 @@ TopologyBrokerMover::apply( pose::Pose & pose )
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP TopologyBrokerMover::get_name() const {
-// XRW TEMP  return TopologyBrokerMover::mover_name();
-// XRW TEMP }
 
 void
 TopologyBrokerMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )

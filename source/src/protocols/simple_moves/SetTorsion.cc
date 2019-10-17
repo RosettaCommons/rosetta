@@ -74,22 +74,8 @@ using core::conformation::Residue;
 
 static basic::Tracer TR( "protocols.simple_moves.SetTorsion" );
 
-// XRW TEMP std::string
-// XRW TEMP SetTorsionCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SetTorsion::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetTorsionCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetTorsion >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetTorsion::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SetTorsion";
-// XRW TEMP }
 
 SetTorsion::~SetTorsion() = default;
 
@@ -281,10 +267,6 @@ void SetTorsion::apply( Pose & pose ) {
 	pose.update_residue_neighbors();
 }
 
-// XRW TEMP std::string
-// XRW TEMP SetTorsion::get_name() const {
-// XRW TEMP  return SetTorsion::mover_name();
-// XRW TEMP }
 
 void SetTorsion::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,

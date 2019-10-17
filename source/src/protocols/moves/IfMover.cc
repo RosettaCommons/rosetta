@@ -73,9 +73,6 @@ core::pose::PoseOP IfMover::get_additional_output() {
 	return get_additional_output_true_mover();
 }
 
-// XRW TEMP std::string IfMover::get_name() const {
-// XRW TEMP  return IfMover::mover_name();
-// XRW TEMP }
 
 void IfMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,

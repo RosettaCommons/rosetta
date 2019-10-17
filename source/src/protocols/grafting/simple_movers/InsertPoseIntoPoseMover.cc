@@ -84,10 +84,6 @@ InsertPoseIntoPoseMover::end() const {
 	return end_;
 }
 
-// XRW TEMP std::string
-// XRW TEMP InsertPoseIntoPoseMover::get_name() const {
-// XRW TEMP  return "InsertPoseIntoPoseMover";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 InsertPoseIntoPoseMover::clone() const {
@@ -110,20 +106,8 @@ InsertPoseIntoPoseMover::parse_my_tag(
 
 }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP InsertPoseIntoPoseMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< InsertPoseIntoPoseMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP InsertPoseIntoPoseMoverCreator::keyname() const {
-// XRW TEMP  return InsertPoseIntoPoseMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP InsertPoseIntoPoseMover::mover_name(){
-// XRW TEMP  return "InsertPoseIntoPoseMover";
-// XRW TEMP }
 
 void
 InsertPoseIntoPoseMover::apply(core::pose::Pose& pose) {

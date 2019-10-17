@@ -82,10 +82,6 @@ CstInfoMover::fresh_instance() const
 	return utility::pointer::make_shared< CstInfoMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP CstInfoMover::get_name() const {
-// XRW TEMP  return "CstInfoMover";
-// XRW TEMP }
 
 void
 CstInfoMover::show(std::ostream & output) const
@@ -207,20 +203,8 @@ CstInfoMover::get_constraints_from_pose( core::pose::Pose const & pose ) const {
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CstInfoMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CstInfoMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CstInfoMoverCreator::keyname() const {
-// XRW TEMP  return CstInfoMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CstInfoMover::mover_name(){
-// XRW TEMP  return "CstInfoMover";
-// XRW TEMP }
 
 std::string CstInfoMover::get_name() const {
 	return mover_name();

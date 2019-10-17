@@ -98,8 +98,6 @@ ResidueTotalScoresFeatures::ResidueTotalScoresFeatures( ResidueTotalScoresFeatur
 
 ResidueTotalScoresFeatures::~ResidueTotalScoresFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP ResidueTotalScoresFeatures::type_name() const { return "ResidueTotalScoresFeatures"; }
 
 void
 ResidueTotalScoresFeatures::write_schema_to_db(

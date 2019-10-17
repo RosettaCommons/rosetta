@@ -259,9 +259,6 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 
 
 /// @brief Returns the name of this mover ("FitSimpleHelix").
-// XRW TEMP std::string FitSimpleHelix::get_name() const{
-// XRW TEMP  return "FitSimpleHelix";
-// XRW TEMP }
 
 /// @brief Function to retrieve the final values of the helical parameters, post-fit.
 /// @details Call this function after the "apply" function, and pass it containers for

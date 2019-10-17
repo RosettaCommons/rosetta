@@ -43,23 +43,8 @@ using namespace core::scoring;
 using namespace constraints;
 using namespace utility::tag;
 
-// XRW TEMP std::string
-// XRW TEMP ClearCompositionConstraintsMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ClearCompositionConstraintsMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ClearCompositionConstraintsMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< ClearCompositionConstraintsMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ClearCompositionConstraintsMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ClearCompositionConstraintsMover";
-// XRW TEMP }
 
 /// @brief Default Constructor
 ///
@@ -92,10 +77,6 @@ protocols::moves::MoverOP ClearCompositionConstraintsMover::fresh_instance() con
 
 /// @brief Returns the name of this mover ("ClearCompositionConstraintsMover").
 ///
-// XRW TEMP std::string
-// XRW TEMP ClearCompositionConstraintsMover::get_name() const {
-// XRW TEMP  return ClearCompositionConstraintsMover::mover_name();
-// XRW TEMP }
 
 /// @brief Actually apply the mover to a pose.
 ///

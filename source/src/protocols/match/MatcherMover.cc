@@ -66,22 +66,8 @@ namespace match {
 
 static basic::Tracer tr( "protocols.match.MatcherMover" );
 
-// XRW TEMP std::string
-// XRW TEMP MatcherMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return MatcherMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MatcherMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MatcherMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MatcherMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MatcherMover";
-// XRW TEMP }
 
 MatcherMover::MatcherMover( bool incorporate_matches_into_pose ):
 	protocols::rosetta_scripts::MultiplePoseMover(),
@@ -245,11 +231,6 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 	return true;
 } //MatcherMover::process_pose function
 
-// XRW TEMP std::string
-// XRW TEMP MatcherMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "MatcherMover";
-// XRW TEMP }
 
 void
 MatcherMover::setup_seqpos_from_selectors( protocols::match::MatcherTask & mtask, core::pose::Pose const & pose ) const

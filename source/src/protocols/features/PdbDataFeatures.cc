@@ -88,10 +88,6 @@ PdbDataFeatures::PdbDataFeatures(PdbDataFeatures const & ) : FeaturesReporter()
 
 PdbDataFeatures::~PdbDataFeatures() = default;
 
-// XRW TEMP string PdbDataFeatures::type_name() const
-// XRW TEMP {
-// XRW TEMP  return "PdbDataFeatures";
-// XRW TEMP }
 
 void
 PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{

@@ -75,10 +75,6 @@ IdealizeAnomericHydrogens::fresh_instance() const
 	return utility::pointer::make_shared< IdealizeAnomericHydrogens >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP IdealizeAnomericHydrogens::get_name() const {
-// XRW TEMP  return "IdealizeAnomericHydrogens";
-// XRW TEMP }
 
 void
 IdealizeAnomericHydrogens::apply( core::pose::Pose & pose )
@@ -111,20 +107,8 @@ IdealizeAnomericHydrogens::apply( core::pose::Pose & pose )
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP IdealizeAnomericHydrogensCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< IdealizeAnomericHydrogens >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP IdealizeAnomericHydrogensCreator::keyname() const {
-// XRW TEMP  return IdealizeAnomericHydrogens::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP IdealizeAnomericHydrogens::mover_name(){
-// XRW TEMP  return "IdealizeAnomericHydrogens";
-// XRW TEMP }
 
 std::string IdealizeAnomericHydrogens::get_name() const {
 	return mover_name();

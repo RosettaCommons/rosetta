@@ -65,10 +65,6 @@ CDRClusterFeatures::CDRClusterFeatures():
 
 CDRClusterFeatures::~CDRClusterFeatures()= default;
 
-// XRW TEMP std::string
-// XRW TEMP CDRClusterFeatures::type_name() const {
-// XRW TEMP  return "CDRClusterFeatures";
-// XRW TEMP }
 
 void
 CDRClusterFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const {

@@ -87,10 +87,6 @@ ShearMinCCDTrial & ShearMinCCDTrial::operator=( ShearMinCCDTrial const & rhs ){
 ShearMinCCDTrial::~ShearMinCCDTrial() = default;
 
 /// @brief Each derived class must specify its name.
-// XRW TEMP std::string ShearMinCCDTrial::get_name() const
-// XRW TEMP {
-// XRW TEMP  return type();
-// XRW TEMP }
 
 moves::MoverOP ShearMinCCDTrial::clone() const
 {
@@ -219,15 +215,8 @@ void ShearMinCCDTrial::setup_objects( Pose const & pose )
 	LoopRefineInnerCycle::setup_objects( pose );
 }
 
-// XRW TEMP ShearMinCCDTrialCreator::~ShearMinCCDTrialCreator() {}
 
-// XRW TEMP moves::MoverOP ShearMinCCDTrialCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ShearMinCCDTrial >();
-// XRW TEMP }
 
-// XRW TEMP std::string ShearMinCCDTrialCreator::keyname() const {
-// XRW TEMP  return "ShearMinCCDTrial";
-// XRW TEMP }
 
 std::string ShearMinCCDTrial::get_name() const {
 	return mover_name();

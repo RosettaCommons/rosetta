@@ -70,22 +70,8 @@ namespace loop_creation {
 static basic::Tracer TR( "protocols.loophash.FragmentLoopInserter" );
 
 //****CREATOR METHODS****//
-// XRW TEMP std::string
-// XRW TEMP FragmentLoopInserterCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FragmentLoopInserter::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FragmentLoopInserterCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FragmentLoopInserter >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FragmentLoopInserter::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "FragmentLoopInserter";
-// XRW TEMP }
 //****END CREATOR METHODS****//
 
 FragmentLoopInserter::FragmentLoopInserter():
@@ -126,10 +112,6 @@ FragmentLoopInserter::fresh_instance() const {
 	return utility::pointer::make_shared< FragmentLoopInserter >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP FragmentLoopInserter::get_name() const {
-// XRW TEMP  return "FragmentLoopInserter";
-// XRW TEMP }
 
 void
 FragmentLoopInserter::apply(

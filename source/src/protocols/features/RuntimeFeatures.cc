@@ -57,13 +57,7 @@ using utility::sql_database::sessionOP;
 namespace protocols {
 namespace features {
 
-// XRW TEMP FeaturesReporterOP RuntimeFeaturesCreator::create_features_reporter() const { // {{{1
-// XRW TEMP  return utility::pointer::make_shared< RuntimeFeatures >();
-// XRW TEMP }
 
-// XRW TEMP string RuntimeFeaturesCreator::type_name() const { // {{{1
-// XRW TEMP  return "RuntimeFeatures";
-// XRW TEMP }
 // }}}1
 
 RuntimeFeatures::RuntimeFeatures() = default; // {{{1

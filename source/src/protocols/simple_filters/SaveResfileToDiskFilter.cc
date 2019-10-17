@@ -222,11 +222,7 @@ SaveResfileToDiskFilter::report( std::ostream & out, core::pose::Pose const & po
 out << "SaveResfileToDiskFilter returns " << compute( pose ) << std::endl;
 }
 */
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SaveResfileToDiskFilterCreator::create_filter() const { return utility::pointer::make_shared< SaveResfileToDiskFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SaveResfileToDiskFilterCreator::keyname() const { return "SaveResfileToDisk"; }
 
 std::string SaveResfileToDiskFilter::name() const {
 	return class_name();

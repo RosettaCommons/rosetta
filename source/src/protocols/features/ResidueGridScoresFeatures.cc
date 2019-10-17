@@ -41,22 +41,9 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP ResidueGridScoresFeaturesCreator::ResidueGridScoresFeaturesCreator()
-// XRW TEMP {
-// XRW TEMP
-// XRW TEMP }
 
-// XRW TEMP ResidueGridScoresFeaturesCreator::~ResidueGridScoresFeaturesCreator() = default;
 
-// XRW TEMP protocols::features::FeaturesReporterOP ResidueGridScoresFeaturesCreator::create_features_reporter() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< ResidueGridScoresFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string ResidueGridScoresFeaturesCreator::type_name() const
-// XRW TEMP {
-// XRW TEMP  return "ResidueGridScoresFeatures";
-// XRW TEMP }
 
 ResidueGridScoresFeatures::ResidueGridScoresFeatures() : chain_(' ')
 {
@@ -68,10 +55,6 @@ ResidueGridScoresFeatures::ResidueGridScoresFeatures(ResidueGridScoresFeatures c
 
 ResidueGridScoresFeatures::~ResidueGridScoresFeatures() = default;
 
-// XRW TEMP std::string ResidueGridScoresFeatures::type_name() const
-// XRW TEMP {
-// XRW TEMP  return "ResidueGridScoresFeatures";
-// XRW TEMP }
 
 void ResidueGridScoresFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
 {

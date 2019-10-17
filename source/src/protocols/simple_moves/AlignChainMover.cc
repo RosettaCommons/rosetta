@@ -33,22 +33,8 @@ static basic::Tracer TR( "protocols.simple_moves.AlignChainMover" );
 namespace protocols {
 namespace simple_moves {
 
-// XRW TEMP std::string
-// XRW TEMP AlignChainMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AlignChainMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AlignChainMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AlignChainMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AlignChainMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AlignChain";
-// XRW TEMP }
 
 AlignChainMover::AlignChainMover()
 : moves::Mover("AlignChain"),
@@ -112,10 +98,6 @@ AlignChainMover::apply( Pose & in_pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP AlignChainMover::get_name() const {
-// XRW TEMP  return AlignChainMover::mover_name();
-// XRW TEMP }
 
 moves::MoverOP
 AlignChainMover::clone() const

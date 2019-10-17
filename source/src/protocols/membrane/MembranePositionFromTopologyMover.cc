@@ -107,22 +107,10 @@ MembranePositionFromTopologyMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MembranePositionFromTopologyMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MembranePositionFromTopologyMover >();
-// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-// XRW TEMP std::string
-// XRW TEMP MembranePositionFromTopologyMoverCreator::keyname() const {
-// XRW TEMP  return MembranePositionFromTopologyMover::mover_name();
-// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-// XRW TEMP std::string
-// XRW TEMP MembranePositionFromTopologyMover::mover_name() {
-// XRW TEMP  return "MembranePositionFromTopologyMover";
-// XRW TEMP }
 
 /////////////////////
 /// Mover Methods ///
@@ -196,10 +184,6 @@ MembranePositionFromTopologyMover::apply( core::pose::Pose & pose ) {
 } // apply
 
 /// @brief Get the name of this mover
-// XRW TEMP std::string
-// XRW TEMP MembranePositionFromTopologyMover::get_name() const {
-// XRW TEMP  return "MembranePositionFromTopologyMover";
-// XRW TEMP }
 
 std::string MembranePositionFromTopologyMover::get_name() const {
 	return mover_name();

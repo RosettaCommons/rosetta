@@ -375,25 +375,9 @@ moves::MoverOP AddConstraintsToCurrentConformationMover::fresh_instance() const 
 	return utility::pointer::make_shared< AddConstraintsToCurrentConformationMover >();
 }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AddConstraintsToCurrentConformationMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AddConstraintsToCurrentConformationMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AddConstraintsToCurrentConformationMoverCreator::keyname() const {
-// XRW TEMP  return AddConstraintsToCurrentConformationMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AddConstraintsToCurrentConformationMover::mover_name() {
-// XRW TEMP  return "AddConstraintsToCurrentConformationMover";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AddConstraintsToCurrentConformationMover::get_name() const {
-// XRW TEMP  return "AddConstraintsToCurrentConformationMover";
-// XRW TEMP }
 
 std::string AddConstraintsToCurrentConformationMover::get_name() const {
 	return mover_name();

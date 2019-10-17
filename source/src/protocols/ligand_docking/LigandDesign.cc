@@ -53,22 +53,8 @@ namespace ligand_docking {
 
 static basic::Tracer ligand_design_tracer( "protocols.ligand_docking.LigandDesign", basic::t_debug );
 
-// XRW TEMP std::string
-// XRW TEMP LigandDesignCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LigandDesign::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LigandDesignCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LigandDesign >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LigandDesign::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LigandDesign";
-// XRW TEMP }
 
 LigandDesign::LigandDesign(): Mover("LigandDesign"){
 	Mover::type( "LigandDesign" );
@@ -102,9 +88,6 @@ protocols::moves::MoverOP LigandDesign::fresh_instance() const {
 	return utility::pointer::make_shared< LigandDesign >();
 }
 
-// XRW TEMP std::string LigandDesign::get_name() const{
-// XRW TEMP  return "LigandDesign";
-// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void

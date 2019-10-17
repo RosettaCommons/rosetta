@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP PoseConformationFeaturesCreator::PoseConformationFeaturesCreator() {}
-// XRW TEMP PoseConformationFeaturesCreator::~PoseConformationFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP PoseConformationFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< PoseConformationFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string PoseConformationFeaturesCreator::type_name() const {
-// XRW TEMP  return "PoseConformationFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

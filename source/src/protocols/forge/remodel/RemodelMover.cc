@@ -165,20 +165,8 @@ namespace remodel {
 static basic::Tracer TR( "protocols.forge.remodel.RemodelMover" );
 
 // parser
-// XRW TEMP std::string
-// XRW TEMP RemodelMoverCreator::keyname() const {
-// XRW TEMP  return RemodelMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RemodelMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RemodelMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RemodelMover::mover_name() {
-// XRW TEMP  return "RemodelMover";
-// XRW TEMP }
 
 ///
 /// @brief
@@ -1417,9 +1405,6 @@ forge::remodel::RemodelData RemodelMover::setup_remodel_data_for_loop_btw_parame
 
 
 /// @brief get_name function for JobDistributor
-// XRW TEMP std::string RemodelMover::get_name() const {
-// XRW TEMP  return "RemodelMover";
-// XRW TEMP }
 
 ///
 /// @brief

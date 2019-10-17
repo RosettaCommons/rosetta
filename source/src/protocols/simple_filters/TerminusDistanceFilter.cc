@@ -60,11 +60,7 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.TerminusDistanceFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP TerminusDistanceFilterCreator::create_filter() const { return utility::pointer::make_shared< TerminusDistanceFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP TerminusDistanceFilterCreator::keyname() const { return "TerminusDistance"; }
 
 TerminusDistanceFilter::~TerminusDistanceFilter()= default;
 

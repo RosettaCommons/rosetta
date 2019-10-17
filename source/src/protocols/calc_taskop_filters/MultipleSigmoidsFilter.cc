@@ -38,11 +38,7 @@ namespace calc_taskop_filters {
 static basic::Tracer TR( "protocols.calc_taskop_filters.MultipleSigmoids" );
 using namespace protocols::filters;
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP MultipleSigmoidsFilterCreator::create_filter() const { return utility::pointer::make_shared< MultipleSigmoids >(); }
 
-// XRW TEMP std::string
-// XRW TEMP MultipleSigmoidsFilterCreator::keyname() const { return "MultipleSigmoids"; }
 
 MultipleSigmoids::MultipleSigmoids() :
 	protocols::filters::Filter( "MultipleSigmoids" ),

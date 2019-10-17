@@ -69,11 +69,7 @@ MolarMassFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 	mass_limit_ = tag->getOption<core::Size>("mass_limit");
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP MolarMassFilterCreator::create_filter() const { return utility::pointer::make_shared< MolarMassFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP MolarMassFilterCreator::keyname() const { return "MolarMass"; }
 
 std::string MolarMassFilter::name() const {
 	return class_name();

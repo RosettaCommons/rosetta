@@ -166,26 +166,10 @@ SymFoldandDockRbTrialMover::parse_my_tag(
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP SymFoldandDockRbTrialMover::get_name() const {
-// XRW TEMP  return "SymFoldandDockRbTrialMover";
-// XRW TEMP }
 
 
-// XRW TEMP std::string
-// XRW TEMP SymFoldandDockRbTrialMoverCreator::keyname() const {
-// XRW TEMP  return SymFoldandDockRbTrialMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SymFoldandDockRbTrialMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SymFoldandDockRbTrialMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SymFoldandDockRbTrialMover::mover_name() {
-// XRW TEMP  return "SymFoldandDockRbTrialMover";
-// XRW TEMP }
 
 std::string SymFoldandDockRbTrialMover::get_name() const {
 	return mover_name();

@@ -213,11 +213,7 @@ LeastNativeLike9merFilter::write_mean_median( Pose const & , core::Real mean, co
 	}
 }
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP LeastNativeLike9merFilterCreator::create_filter() const { return protocols::filters::FilterOP(new LeastNativeLike9merFilter); }
 
-// XRW TEMP std::string
-// XRW TEMP LeastNativeLike9merFilterCreator::keyname() const { return "worst9mer"; }
 
 std::string LeastNativeLike9merFilter::name() const {
 	return class_name();

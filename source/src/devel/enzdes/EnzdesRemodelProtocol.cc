@@ -214,22 +214,8 @@ EnzdesRemodelProtocol::get_name() const {
 	return "EnzdesRemodelProtocol";
 }
 
-// XRW TEMP std::string
-// XRW TEMP EnzdesRemodelMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return EnzdesRemodelMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP EnzdesRemodelMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< EnzdesRemodelMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP EnzdesRemodelMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "EnzdesRemodelMover";
-// XRW TEMP }
 
 
 EnzdesRemodelMover::EnzdesRemodelMover()
@@ -421,10 +407,6 @@ EnzdesRemodelMover::apply(
 	orig_task_ = nullptr;
 }
 
-// XRW TEMP std::string
-// XRW TEMP EnzdesRemodelMover::get_name() const {
-// XRW TEMP  return "EnzdesRemodelMover";
-// XRW TEMP }
 
 void
 EnzdesRemodelMover::parse_my_tag(

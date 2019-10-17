@@ -52,22 +52,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.HotspotHasherMover" );
 
-// XRW TEMP std::string
-// XRW TEMP HotspotHasherMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return HotspotHasherMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP HotspotHasherMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< HotspotHasherMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP HotspotHasherMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "HotspotHasher";
-// XRW TEMP }
 
 HotspotHasherMover::HotspotHasherMover() : protocols::moves::Mover( HotspotHasherMover::mover_name() ) { }
 HotspotHasherMover::HotspotHasherMover(
@@ -201,10 +187,6 @@ void HotspotHasherMover::apply( core::pose::Pose & pose ) {
 	}
 } // HotspotHasherMover::apply
 
-// XRW TEMP std::string
-// XRW TEMP HotspotHasherMover::get_name() const {
-// XRW TEMP  return HotspotHasherMover::mover_name();
-// XRW TEMP }
 
 
 void

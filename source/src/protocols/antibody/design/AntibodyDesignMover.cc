@@ -1648,10 +1648,6 @@ AntibodyDesignMover::finalize_pose(AntibodyInfoCOP ab_info, core::pose::Pose & p
 
 ////////////////////////////////////////////// Boiler Plate ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// XRW TEMP std::string
-// XRW TEMP AntibodyDesignMover::get_name() const{
-// XRW TEMP  return "AntibodyDesignMover";
-// XRW TEMP }
 
 void
 AntibodyDesignMover::show(std::ostream & output) const{

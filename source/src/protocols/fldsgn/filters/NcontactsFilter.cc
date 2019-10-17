@@ -120,11 +120,7 @@ NcontactsFilter::parse_my_tag(
 	filter_value_ = tag->getOption< Real >( "value", 0.0 );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP NcontactsFilterCreator::create_filter() const { return utility::pointer::make_shared< NcontactsFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP NcontactsFilterCreator::keyname() const { return "Ncontacts"; }
 
 std::string NcontactsFilter::name() const {
 	return class_name();

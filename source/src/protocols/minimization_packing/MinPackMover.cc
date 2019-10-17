@@ -57,22 +57,8 @@ using basic::t_warning;
 static basic::Tracer TR( "protocols.minimization_packing.MinPackMover" );
 
 
-// XRW TEMP std::string
-// XRW TEMP MinPackMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return MinPackMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MinPackMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MinPackMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MinPackMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MinPackMover";
-// XRW TEMP }
 
 MinPackMover::MinPackMover() :
 	protocols::moves::Mover("MinPackMover"),
@@ -167,10 +153,6 @@ MinPackMover::apply( Pose & pose )
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP MinPackMover::get_name() const {
-// XRW TEMP  return MinPackMover::mover_name();
-// XRW TEMP }
 
 /// @brief when the PackerTask was not generated locally, verify compatibility with pose
 /// @details the pose residue types must be equivalent to the ones used to generate the ResidueLevelTasks, because of the way that prevent_repacking and its associated flags work

@@ -141,8 +141,6 @@ AtomAtomPairFeatures::AtomAtomPairFeatures(AtomAtomPairFeatures const & ) = defa
 
 AtomAtomPairFeatures::~AtomAtomPairFeatures()= default;
 
-// XRW TEMP string
-// XRW TEMP AtomAtomPairFeatures::type_name() const { return "AtomAtomPairFeatures"; }
 
 void
 AtomAtomPairFeatures::write_schema_to_db(

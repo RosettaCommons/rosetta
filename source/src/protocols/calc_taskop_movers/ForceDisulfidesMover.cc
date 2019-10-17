@@ -127,10 +127,6 @@ ForceDisulfidesMover::scorefxn() const{
 	return scorefxn_;
 }
 
-// XRW TEMP std::string
-// XRW TEMP ForceDisulfidesMover::get_name() const {
-// XRW TEMP  return "ForceDisulfidesMover";
-// XRW TEMP }
 
 void
 ForceDisulfidesMover::parse_my_tag(

@@ -245,11 +245,7 @@ GetRBDOFValues::report( std::ostream & out, Pose const & pose ) const
 	out << "GetRBDOFValues returns " << compute( pose, false, sym_dof_name(), jump_id(), axis(), radial_disp(), angle(), init_disp(), init_angle(), get_init_value() ) << std::endl;
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP GetRBDOFValuesCreator::create_filter() const { return utility::pointer::make_shared< GetRBDOFValues >(); }
 
-// XRW TEMP std::string
-// XRW TEMP GetRBDOFValuesCreator::keyname() const { return "GetRBDOFValues"; }
 
 std::string GetRBDOFValues::name() const {
 	return class_name();

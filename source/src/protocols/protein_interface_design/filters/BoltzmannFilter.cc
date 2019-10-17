@@ -234,11 +234,7 @@ BoltzmannFilter::clone() const{
 	return utility::pointer::make_shared< BoltzmannFilter >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP BoltzmannFilterCreator::create_filter() const { return utility::pointer::make_shared< BoltzmannFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP BoltzmannFilterCreator::keyname() const { return "Boltzmann"; }
 
 std::string BoltzmannFilter::name() const {
 	return class_name();

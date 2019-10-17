@@ -69,20 +69,8 @@ using namespace chemical;
 using namespace conformation;
 
 
-// XRW TEMP std::string
-// XRW TEMP JumpRotamerSidechainMoverCreator::keyname() const {
-// XRW TEMP  return JumpRotamerSidechainMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP JumpRotamerSidechainMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< JumpRotamerSidechainMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP JumpRotamerSidechainMover::mover_name() {
-// XRW TEMP  return "JumpRotamerSidechain";
-// XRW TEMP }
 
 
 JumpRotamerSidechainMover::JumpRotamerSidechainMover() {
@@ -123,10 +111,6 @@ JumpRotamerSidechainMover::parse_my_tag(
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP JumpRotamerSidechainMover::get_name() const {
-// XRW TEMP  return "JumpRotamerSidechainMover";
-// XRW TEMP }
 
 
 void

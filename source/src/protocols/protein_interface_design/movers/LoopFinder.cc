@@ -63,22 +63,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.LoopFinder" );
 
-// XRW TEMP std::string
-// XRW TEMP LoopFinderCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoopFinder::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoopFinderCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopFinder >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoopFinder::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LoopFinder";
-// XRW TEMP }
 
 LoopFinder::LoopFinder() :
 	calc_taskop_movers::DesignRepackMover( LoopFinder::mover_name() )
@@ -195,10 +181,6 @@ LoopFinder::apply( core::pose::Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoopFinder::get_name() const {
-// XRW TEMP  return LoopFinder::mover_name();
-// XRW TEMP }
 
 
 void

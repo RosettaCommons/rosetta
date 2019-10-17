@@ -41,20 +41,8 @@ namespace protocols {
 namespace environment {
 
 // creator
-// XRW TEMP std::string
-// XRW TEMP EnvMoverCreator::keyname() const {
-// XRW TEMP  return EnvMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP EnvMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< EnvMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP EnvMover::mover_name() {
-// XRW TEMP  return "Environment";
-// XRW TEMP }
 
 EnvMover::EnvMover():
 	Mover(),
@@ -207,9 +195,6 @@ void EnvMover::add_registered_mover( protocols::moves::MoverOP mover_in ) {
 }
 
 
-// XRW TEMP std::string EnvMover::get_name() const {
-// XRW TEMP  return "EnvMover("+env_->name()+")";
-// XRW TEMP }
 
 moves::MoverOP EnvMover::clone() const {
 	return utility::pointer::make_shared< EnvMover >( *this );

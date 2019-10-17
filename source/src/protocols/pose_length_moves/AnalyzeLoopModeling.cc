@@ -67,20 +67,9 @@ using utility::vector1;
 
 AnalyzeLoopModeling::AnalyzeLoopModeling():moves::Mover("AnalyzeLoopModeling"){}
 
-// XRW TEMP std::string AnalyzeLoopModelingCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AnalyzeLoopModeling::mover_name();
-// XRW TEMP }
-
-// XRW TEMP std::string AnalyzeLoopModeling::mover_name(){
-// XRW TEMP  return "AnalyzeLoopModeling";
-// XRW TEMP }
 
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AnalyzeLoopModelingCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AnalyzeLoopModeling >();
-// XRW TEMP }
+
 
 protocols::loops::Loops AnalyzeLoopModeling::get_loops(core::pose::Pose const & pose){
 	protocols::loops::Loops pose_loops;
@@ -237,9 +226,6 @@ void AnalyzeLoopModeling::apply(core::pose::Pose & pose) {
 }
 
 
-// XRW TEMP std::string AnalyzeLoopModeling::get_name() const {
-// XRW TEMP  return "AnalyzeLoopModeling";
-// XRW TEMP }
 
 void
 AnalyzeLoopModeling::parse_my_tag(

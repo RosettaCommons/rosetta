@@ -102,22 +102,8 @@ namespace movers {
 using namespace protocols::moves;
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP PlaceSimultaneouslyMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PlaceSimultaneouslyMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PlaceSimultaneouslyMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PlaceSimultaneouslyMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PlaceSimultaneouslyMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "PlaceSimultaneously";
-// XRW TEMP }
 
 PlaceSimultaneouslyMover::~PlaceSimultaneouslyMover() = default;
 
@@ -726,10 +712,6 @@ PlaceSimultaneouslyMover::apply( core::pose::Pose & pose )
 	set_last_move_status( protocols::moves::MS_SUCCESS );
 }
 
-// XRW TEMP std::string
-// XRW TEMP PlaceSimultaneouslyMover::get_name() const {
-// XRW TEMP  return PlaceSimultaneouslyMover::mover_name();
-// XRW TEMP }
 
 /// @details This should be called before failing placesimultaneously.
 void

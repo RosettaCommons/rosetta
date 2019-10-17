@@ -188,11 +188,7 @@ ClashWithTargetFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache:
 
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ClashWithTargetFilterCreator::create_filter() const { return utility::pointer::make_shared< ClashWithTargetFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ClashWithTargetFilterCreator::keyname() const { return "ClashWithTarget"; }
 
 std::string ClashWithTargetFilter::name() const {
 	return class_name();

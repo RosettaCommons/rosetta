@@ -63,22 +63,8 @@ namespace enzdes {
 
 static basic::Tracer TR( "protocols.enzdes.BackboneSampler" );
 
-// XRW TEMP std::string
-// XRW TEMP BackboneSamplerCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return BackboneSampler::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP BackboneSamplerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< BackboneSampler >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BackboneSampler::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "BackboneSampler";
-// XRW TEMP }
 BackboneSampler::BackboneSampler() :
 	LigandBaseProtocol(),
 	bb_moves_( 1000 ),
@@ -188,10 +174,6 @@ BackboneSampler::apply( Pose & pose )
 	//  pose.dump_pdb("BBG_pose.pdb");
 }
 
-// XRW TEMP std::string
-// XRW TEMP BackboneSampler::get_name() const {
-// XRW TEMP  return BackboneSampler::mover_name();
-// XRW TEMP }
 
 void BackboneSampler::parse_my_tag(
 	utility::tag::TagCOP tag,

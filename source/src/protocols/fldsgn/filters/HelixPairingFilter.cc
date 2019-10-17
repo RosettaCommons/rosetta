@@ -408,11 +408,7 @@ HelixPairingFilter::find_missing_helices(
 	return missing;
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HelixPairingFilterCreator::create_filter() const { return utility::pointer::make_shared< HelixPairingFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP HelixPairingFilterCreator::keyname() const { return "HelixPairing"; }
 
 std::string HelixPairingFilter::name() const {
 	return class_name();

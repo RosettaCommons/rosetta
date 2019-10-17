@@ -280,11 +280,7 @@ ClashCheckFilter::report( std::ostream & out, core::pose::Pose const & pose ) co
 	out << "ClashCheckFilter returns " << compute( pose, false, false ) << std::endl;
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ClashCheckFilterCreator::create_filter() const { return utility::pointer::make_shared< ClashCheckFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ClashCheckFilterCreator::keyname() const { return "ClashCheck"; }
 
 std::string ClashCheckFilter::name() const {
 	return class_name();

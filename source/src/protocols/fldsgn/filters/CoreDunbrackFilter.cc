@@ -218,11 +218,7 @@ CoreDunbrackFilter::parse_my_tag(
 
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP CoreDunbrackFilterCreator::create_filter() const { return utility::pointer::make_shared< CoreDunbrackFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP CoreDunbrackFilterCreator::keyname() const { return "CoreDunbrack"; }
 
 std::string CoreDunbrackFilter::name() const {
 	return class_name();

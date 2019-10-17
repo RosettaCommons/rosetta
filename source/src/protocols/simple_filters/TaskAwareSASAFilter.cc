@@ -206,11 +206,7 @@ TaskAwareSASAFilter::report( std::ostream & out, core::pose::Pose const & pose )
 	out << "TaskAwareSASAFilter returns " << compute( pose, false ) << std::endl;
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP TaskAwareSASAFilterCreator::create_filter() const { return utility::pointer::make_shared< TaskAwareSASAFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP TaskAwareSASAFilterCreator::keyname() const { return "TaskAwareSASA"; }
 
 std::string TaskAwareSASAFilter::name() const {
 	return class_name();

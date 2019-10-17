@@ -69,20 +69,8 @@ namespace protocols {
 namespace simple_moves {
 namespace sidechain_moves {
 
-// XRW TEMP std::string
-// XRW TEMP SidechainMCMoverCreator::keyname() const {
-// XRW TEMP  return SidechainMCMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SidechainMCMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SidechainMCMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SidechainMCMover::mover_name() {
-// XRW TEMP  return "SidechainMC";
-// XRW TEMP }
 
 SidechainMCMover::SidechainMCMover():
 	protocols::simple_moves::sidechain_moves::SidechainMover(),
@@ -307,10 +295,6 @@ SidechainMCMover::apply(
 	type("sc_mc");
 }
 
-// XRW TEMP std::string
-// XRW TEMP SidechainMCMover::get_name() const {
-// XRW TEMP  return "SidechainMCMover";
-// XRW TEMP }
 
 bool
 SidechainMCMover::pass_metropolis(core::Real delta_energy , core::Real last_proposal_density_ratio ){

@@ -47,22 +47,8 @@ static basic::Tracer TR( "protocols.simple_moves.SwitchChainOrderMover" );
 namespace protocols {
 namespace simple_moves {
 
-// XRW TEMP std::string
-// XRW TEMP SwitchChainOrderMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SwitchChainOrderMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SwitchChainOrderMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SwitchChainOrderMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SwitchChainOrderMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SwitchChainOrder";
-// XRW TEMP }
 
 SwitchChainOrderMover::SwitchChainOrderMover()
 : moves::Mover("SwitchChainOrder"),
@@ -145,10 +131,6 @@ SwitchChainOrderMover::apply( Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP SwitchChainOrderMover::get_name() const {
-// XRW TEMP  return SwitchChainOrderMover::mover_name();
-// XRW TEMP }
 
 moves::MoverOP
 SwitchChainOrderMover::clone() const

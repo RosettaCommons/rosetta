@@ -61,11 +61,7 @@ namespace simple_ddg {
 
 static basic::Tracer TR( "protocols.simple_filters.AlaScan" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AlaScanFilterCreator::create_filter() const { return utility::pointer::make_shared< AlaScan >(); }
 
-// XRW TEMP std::string
-// XRW TEMP AlaScanFilterCreator::keyname() const { return "AlaScan"; }
 
 
 void

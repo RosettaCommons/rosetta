@@ -46,22 +46,8 @@ namespace simple_moves {
 
 static basic::Tracer TR( "protocols.simple_moves.PDBReloadMover" );
 
-// XRW TEMP std::string
-// XRW TEMP PDBReloadMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PDBReloadMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PDBReloadMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PDBReloadMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PDBReloadMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "PDBReload";
-// XRW TEMP }
 
 PDBReloadMover::PDBReloadMover() :
 	protocols::moves::Mover("PDBReloadMover")
@@ -88,10 +74,6 @@ PDBReloadMover::apply( Pose & pose ) {
 	core::import_pose::pose_from_pdbstring(pose, ss.str());
 }
 
-// XRW TEMP std::string
-// XRW TEMP PDBReloadMover::get_name() const {
-// XRW TEMP  return "PDBReloadMover";
-// XRW TEMP }
 
 void
 PDBReloadMover::parse_my_tag( utility::tag::TagCOP const /*tag*/,

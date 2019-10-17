@@ -37,13 +37,7 @@ using core::pose::Pose;
 using core::pack::task::TaskFactoryOP;
 using core::scoring::ScoreFunctionOP;
 
-// XRW TEMP protocols::moves::MoverOP RepackingRefinerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RepackingRefiner >();
-// XRW TEMP }
 
-// XRW TEMP std::string RepackingRefinerCreator::keyname() const {
-// XRW TEMP  return "RepackingRefiner";
-// XRW TEMP }
 
 RepackingRefiner::RepackingRefiner(Size repack_period)
 : repack_period_(repack_period),

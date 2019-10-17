@@ -211,11 +211,7 @@ HolesFilter::parse_my_tag(
 	}
 }
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP HolesFilterCreator::create_filter() const { return utility::pointer::make_shared< HolesFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP HolesFilterCreator::keyname() const { return "Holes"; }
 
 std::string HolesFilter::name() const {
 	return class_name();

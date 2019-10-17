@@ -46,22 +46,8 @@ namespace simple_moves {
 using basic::Error;
 using basic::Warning;
 
-// XRW TEMP std::string
-// XRW TEMP AddChainMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AddChainMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AddChainMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AddChainMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AddChainMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AddChain";
-// XRW TEMP }
 
 AddChainMover::AddChainMover()
 : moves::Mover("AddChain"),
@@ -232,10 +218,6 @@ AddChainMover::apply( Pose & pose )
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP AddChainMover::get_name() const {
-// XRW TEMP  return AddChainMover::mover_name();
-// XRW TEMP }
 
 moves::MoverOP
 AddChainMover::clone() const

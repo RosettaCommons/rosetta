@@ -543,18 +543,8 @@ OopCreatorMover::parse_my_tag(
 }
 
 // MoverCreator
-// XRW TEMP moves::MoverOP
-// XRW TEMP OopCreatorMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< OopCreatorMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string OopCreatorMoverCreator::keyname() const {
-// XRW TEMP  return OopCreatorMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string OopCreatorMover::mover_name(){
-// XRW TEMP  return "OopCreatorMover";
-// XRW TEMP }
 
 std::string OopCreatorMover::get_name() const {
 	return mover_name();

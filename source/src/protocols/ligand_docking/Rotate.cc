@@ -57,22 +57,8 @@ namespace ligand_docking {
 
 static basic::Tracer TR( "protocols.ligand_docking.ligand_options.rotate" );
 
-// XRW TEMP std::string
-// XRW TEMP RotateCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return Rotate::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RotateCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< Rotate >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP Rotate::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "Rotate";
-// XRW TEMP }
 
 Ligand_info::Ligand_info():residues(), atr(0), rep(0), jump(){}
 
@@ -117,9 +103,6 @@ protocols::moves::MoverOP Rotate::fresh_instance() const {
 	return utility::pointer::make_shared< Rotate >();
 }
 
-// XRW TEMP std::string Rotate::get_name() const{
-// XRW TEMP  return "Rotate";
-// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void

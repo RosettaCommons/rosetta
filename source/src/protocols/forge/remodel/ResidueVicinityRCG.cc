@@ -115,23 +115,8 @@ ResidueVicinityInfo::set_lt_dih( core::scoring::func::FuncOP lt_dih ){
 
 
 //ResidueVicinityConstraintsCreator Functions
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ResidueVicinityCstGeneratorCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< ResidueVicinityRCG >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ResidueVicinityCstGeneratorCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ResidueVicinityRCG::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ResidueVicinityRCG::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ResidueVicinityCstCreator";
-// XRW TEMP }
 
 ResidueVicinityRCG::ResidueVicinityRCG()
 : RemodelConstraintGenerator(),
@@ -174,11 +159,6 @@ ResidueVicinityRCG::parse_my_tag( TagCOP const tag,
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP ResidueVicinityRCG::get_name() const
-// XRW TEMP {
-// XRW TEMP  return ResidueVicinityRCG::mover_name();
-// XRW TEMP }
 
 
 protocols::moves::MoverOP

@@ -125,10 +125,6 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 GreedyOptMutationMover::~GreedyOptMutationMover()= default;
 
 //creators
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP GreedyOptMutationMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< GreedyOptMutationMover >();
-// XRW TEMP }
 
 protocols::moves::MoverOP
 GreedyOptMutationMover::clone() const{
@@ -136,22 +132,8 @@ GreedyOptMutationMover::clone() const{
 }
 
 //name getters
-// XRW TEMP std::string
-// XRW TEMP GreedyOptMutationMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return GreedyOptMutationMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP GreedyOptMutationMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "GreedyOptMutationMover";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP GreedyOptMutationMover::get_name() const {
-// XRW TEMP  return GreedyOptMutationMover::mover_name();
-// XRW TEMP }
 
 // setter - getter pairs
 void

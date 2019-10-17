@@ -34,22 +34,8 @@ static basic::Tracer TR( "protocols.simple_moves.LoadUnboundRotMover" );
 namespace protocols {
 namespace simple_moves {
 
-// XRW TEMP std::string
-// XRW TEMP LoadUnboundRotMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoadUnboundRotMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoadUnboundRotMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoadUnboundRotMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoadUnboundRotMover::mover_name()
-// XRW TEMP { //this is the string name that was hardcoded into the Parser at SVN 46190
-// XRW TEMP  return "load_unbound_rot";
-// XRW TEMP }
 
 LoadUnboundRotMover::LoadUnboundRotMover()
 : protocols::moves::Mover("LoadUnboundRotMover")
@@ -63,10 +49,6 @@ void LoadUnboundRotMover::apply( core::pose::Pose & pose ){
 	return;
 }//apply
 
-// XRW TEMP std::string
-// XRW TEMP LoadUnboundRotMover::get_name() const {
-// XRW TEMP  return LoadUnboundRotMover::mover_name();
-// XRW TEMP }
 
 protocols::moves::MoverOP LoadUnboundRotMover::fresh_instance() const { return utility::pointer::make_shared< LoadUnboundRotMover >(); }
 protocols::moves::MoverOP LoadUnboundRotMover::clone() const { return utility::pointer::make_shared< LoadUnboundRotMover >( *this ); }

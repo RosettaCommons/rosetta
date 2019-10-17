@@ -57,13 +57,7 @@ using protocols::loop_modeling::FTR_LOOPS_WITH_CUTS;
 namespace protocols {
 namespace kinematic_closure {
 
-// XRW TEMP protocols::moves::MoverOP KicMoverCreator::create_mover() const { // {{{1
-// XRW TEMP  return utility::pointer::make_shared< KicMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string KicMoverCreator::keyname() const { // {{{1
-// XRW TEMP  return "KicMover";
-// XRW TEMP }
 // }}}1
 
 KicMover::KicMover() { // {{{1

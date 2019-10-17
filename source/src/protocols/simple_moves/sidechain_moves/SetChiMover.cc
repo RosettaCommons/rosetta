@@ -46,22 +46,8 @@ using core::conformation::Residue;
 
 static basic::Tracer TR( "protocols.simple_moves.sidechain_moves.SetChiMover" );
 
-// XRW TEMP std::string
-// XRW TEMP SetChiMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SetChiMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetChiMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetChiMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetChiMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SetChiMover";
-// XRW TEMP }
 
 SetChiMover::~SetChiMover() = default;
 
@@ -105,10 +91,6 @@ void SetChiMover::apply( Pose & pose ) {
 	pose.update_residue_neighbors();
 }
 
-// XRW TEMP std::string
-// XRW TEMP SetChiMover::get_name() const {
-// XRW TEMP  return SetChiMover::mover_name();
-// XRW TEMP }
 
 void SetChiMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,

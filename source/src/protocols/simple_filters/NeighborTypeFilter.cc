@@ -31,11 +31,7 @@ namespace simple_filters {
 
 static basic::Tracer neighbor_type_filter_tracer( "protocols.simple_filters.NeighborTypeFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP NeighborTypeFilterCreator::create_filter() const { return utility::pointer::make_shared< NeighborTypeFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP NeighborTypeFilterCreator::keyname() const { return "NeighborType"; }
 
 NeighborTypeFilter::~NeighborTypeFilter() = default;
 

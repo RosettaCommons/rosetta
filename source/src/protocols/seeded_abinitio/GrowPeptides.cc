@@ -85,20 +85,8 @@ namespace seeded_abinitio {
 using namespace protocols::moves;
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP GrowPeptidesCreator::keyname() const{
-// XRW TEMP  return GrowPeptides::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP GrowPeptidesCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< GrowPeptides >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP GrowPeptides::mover_name(){
-// XRW TEMP  return "GrowPeptides";
-// XRW TEMP }
 
 
 GrowPeptides::GrowPeptides() = default;
@@ -337,10 +325,6 @@ GrowPeptides::setup_cached_observers( core::pose::Pose & pose ){
 	pose.observer_cache().set( core::pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR, lencollect );
 }
 
-// XRW TEMP std::string
-// XRW TEMP GrowPeptides::get_name() const {
-// XRW TEMP  return GrowPeptides::mover_name();
-// XRW TEMP }
 
 void
 GrowPeptides::parse_my_tag(

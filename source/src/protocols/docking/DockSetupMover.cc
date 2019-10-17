@@ -199,22 +199,8 @@ DockSetupMover::parse_my_tag(
 
 /// ------------------ End initializing helpers ---------------------------------
 
-// XRW TEMP std::string
-// XRW TEMP DockSetupMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DockSetupMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DockSetupMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DockSetupMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DockSetupMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DockSetupMover";
-// XRW TEMP }
 
 std::string DockSetupMover::get_name() const {
 	return mover_name();

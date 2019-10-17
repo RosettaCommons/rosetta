@@ -56,22 +56,8 @@ namespace ligand_docking {
 
 static basic::Tracer grow_ligand_tracer( "protocols.ligand_docking.GrowLigand", basic::t_debug );
 
-// XRW TEMP std::string
-// XRW TEMP GrowLigandCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return GrowLigand::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP GrowLigandCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< GrowLigand >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP GrowLigand::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "GrowLigand";
-// XRW TEMP }
 
 GrowLigand::GrowLigand():
 	Mover("GrowLigand"),
@@ -113,9 +99,6 @@ protocols::moves::MoverOP GrowLigand::fresh_instance() const {
 	return utility::pointer::make_shared< GrowLigand >();
 }
 
-// XRW TEMP std::string GrowLigand::get_name() const{
-// XRW TEMP  return "GrowLigand";
-// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void

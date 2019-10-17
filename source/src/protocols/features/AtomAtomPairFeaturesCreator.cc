@@ -24,15 +24,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP AtomAtomPairFeaturesCreator::AtomAtomPairFeaturesCreator() {}
-// XRW TEMP AtomAtomPairFeaturesCreator::~AtomAtomPairFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP AtomAtomPairFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< AtomAtomPairFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string AtomAtomPairFeaturesCreator::type_name() const {
-// XRW TEMP  return "AtomAtomPairFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

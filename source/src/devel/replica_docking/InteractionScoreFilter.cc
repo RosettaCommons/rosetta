@@ -39,11 +39,7 @@ namespace replica_docking {
 
 static basic::Tracer TR( "devel.replica_docking.InteractionScoreFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP InteractionScoreFilterCreator::create_filter() const { return utility::pointer::make_shared< InteractionScoreFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP InteractionScoreFilterCreator::keyname() const { return "I_sc"; }
 
 
 InteractionScoreFilter::InteractionScoreFilter() :

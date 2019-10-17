@@ -55,20 +55,8 @@ static basic::Tracer TR( "protocols.rosetta_scripts.MultiplePoseMover" );
 
 ////////////////////////////////////////////////////////////////////////
 
-// XRW TEMP std::string MultiplePoseMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MultiplePoseMover";
-// XRW TEMP }
 
-// XRW TEMP std::string MultiplePoseMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP MultiplePoseMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< MultiplePoseMover >();
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -89,10 +77,6 @@ MultiplePoseMover::MultiplePoseMover() :
 {
 }
 
-// XRW TEMP std::string MultiplePoseMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return MultiplePoseMover::mover_name();
-// XRW TEMP }
 
 /// @brief Process input pose
 void MultiplePoseMover::apply(core::pose::Pose& pose)

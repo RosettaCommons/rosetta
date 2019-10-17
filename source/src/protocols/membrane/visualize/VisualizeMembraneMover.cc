@@ -159,22 +159,10 @@ VisualizeMembraneMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP VisualizeMembraneMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< VisualizeMembraneMover >();
-// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-// XRW TEMP std::string
-// XRW TEMP VisualizeMembraneMoverCreator::keyname() const {
-// XRW TEMP  return VisualizeMembraneMover::mover_name();
-// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-// XRW TEMP std::string
-// XRW TEMP VisualizeMembraneMover::mover_name() {
-// XRW TEMP  return "VisualizeMembraneMover";
-// XRW TEMP }
 
 /////////////////////
 /// Mover Methods ///
@@ -232,10 +220,6 @@ VisualizeMembraneMover::apply( core::pose::Pose & pose ) {
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP VisualizeMembraneMover::get_name() const {
-// XRW TEMP  return "VisualizeMembraneMover";
-// XRW TEMP }
 
 //////////////////////
 /// Helper Methods ///

@@ -53,22 +53,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.SaveAndRetrieveSidechains" );
 
-// XRW TEMP std::string
-// XRW TEMP SaveAndRetrieveSidechainsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SaveAndRetrieveSidechains::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SaveAndRetrieveSidechainsCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SaveAndRetrieveSidechains >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SaveAndRetrieveSidechains::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SaveAndRetrieveSidechains";
-// XRW TEMP }
 
 SaveAndRetrieveSidechains::SaveAndRetrieveSidechains() :
 	calc_taskop_movers::DesignRepackMover( SaveAndRetrieveSidechains::mover_name() )
@@ -170,10 +156,6 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 	TR.flush();
 }
 
-// XRW TEMP std::string
-// XRW TEMP SaveAndRetrieveSidechains::get_name() const {
-// XRW TEMP  return SaveAndRetrieveSidechains::mover_name();
-// XRW TEMP }
 
 void
 SaveAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )

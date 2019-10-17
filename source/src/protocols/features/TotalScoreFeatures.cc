@@ -57,13 +57,7 @@ using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
 using utility::tools::make_vector;
 
-// XRW TEMP FeaturesReporterOP TotalScoreFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< TotalScoreFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string TotalScoreFeaturesCreator::type_name() const {
-// XRW TEMP  return "TotalScoreFeatures";
-// XRW TEMP }
 
 TotalScoreFeatures::TotalScoreFeatures()
 : scorefxn_(core::scoring::get_score_function()) {}
@@ -73,9 +67,6 @@ TotalScoreFeatures::TotalScoreFeatures(ScoreFunctionOP scorefxn)
 
 TotalScoreFeatures::~TotalScoreFeatures() = default;
 
-// XRW TEMP string TotalScoreFeatures::type_name() const {
-// XRW TEMP  return "TotalScoreFeatures";
-// XRW TEMP }
 
 ScoreFunctionCOP TotalScoreFeatures::scorefxn() const {
 	return scorefxn_;

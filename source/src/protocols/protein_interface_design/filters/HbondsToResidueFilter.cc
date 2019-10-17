@@ -88,11 +88,7 @@ namespace filters {
 static basic::Tracer TR( "protocols.protein_interface_design.filters.HbondsToResidueFilter" );
 using core::pose::Pose;
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HbondsToResidueFilterCreator::create_filter() const { return utility::pointer::make_shared< HbondsToResidueFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP HbondsToResidueFilterCreator::keyname() const { return "HbondsToResidue"; }
 
 /// @brief Default constructor.
 ///

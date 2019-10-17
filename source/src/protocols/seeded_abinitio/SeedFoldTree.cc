@@ -66,22 +66,8 @@ namespace seeded_abinitio {
 using namespace protocols::moves;
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP SeedFoldTreeCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SeedFoldTree::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SeedFoldTreeCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SeedFoldTree >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SeedFoldTree::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SeedFoldTree";
-// XRW TEMP }
 
 SeedFoldTree::~SeedFoldTree() = default;
 
@@ -712,10 +698,6 @@ SeedFoldTree::get_cutpoints(){ return cut_points_ ;}
 std::set< core::Size >
 SeedFoldTree::get_folding_vertices(){ return folding_vertices_;}
 
-// XRW TEMP std::string
-// XRW TEMP SeedFoldTree::get_name() const {
-// XRW TEMP  return SeedFoldTree::mover_name();
-// XRW TEMP }
 
 
 void

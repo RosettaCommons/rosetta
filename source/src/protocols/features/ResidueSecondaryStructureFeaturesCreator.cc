@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP ResidueSecondaryStructureFeaturesCreator::ResidueSecondaryStructureFeaturesCreator() {}
-// XRW TEMP ResidueSecondaryStructureFeaturesCreator::~ResidueSecondaryStructureFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP ResidueSecondaryStructureFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< ResidueSecondaryStructureFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string ResidueSecondaryStructureFeaturesCreator::type_name() const {
-// XRW TEMP  return "ResidueSecondaryStructureFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

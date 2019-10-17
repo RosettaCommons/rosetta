@@ -46,22 +46,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.AddChainBreak" );
 
-// XRW TEMP std::string
-// XRW TEMP AddChainBreakCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AddChainBreak::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AddChainBreakCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AddChainBreak >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AddChainBreak::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AddChainBreak";
-// XRW TEMP }
 
 AddChainBreak::AddChainBreak() :
 	protocols::moves::Mover( AddChainBreak::mover_name() ),
@@ -155,10 +141,6 @@ AddChainBreak::apply( core::pose::Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP AddChainBreak::get_name() const {
-// XRW TEMP  return AddChainBreak::mover_name();
-// XRW TEMP }
 
 std::string AddChainBreak::get_name() const {
 	return mover_name();

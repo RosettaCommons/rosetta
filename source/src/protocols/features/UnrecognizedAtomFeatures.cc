@@ -108,8 +108,6 @@ UnrecognizedAtomFeatures::UnrecognizedAtomFeatures(
 
 UnrecognizedAtomFeatures::~UnrecognizedAtomFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP UnrecognizedAtomFeatures::type_name() const { return "UnrecognizedAtomFeatures"; }
 
 void
 UnrecognizedAtomFeatures::write_schema_to_db(

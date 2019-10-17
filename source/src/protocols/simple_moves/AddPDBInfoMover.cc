@@ -47,22 +47,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.simple_moves.AddPDBInfoMover" );
 
-// XRW TEMP std::string
-// XRW TEMP AddPDBInfoMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AddPDBInfoMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AddPDBInfoMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AddPDBInfoMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AddPDBInfoMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AddPDBInfoMover";
-// XRW TEMP }
 
 AddPDBInfoMover::AddPDBInfoMover():
 	protocols::moves::Mover( AddPDBInfoMover::mover_name() )
@@ -91,10 +77,6 @@ protocols::moves::MoverOP
 AddPDBInfoMover::clone() const {
 	return( utility::pointer::make_shared< AddPDBInfoMover >( *this ) );
 }
-// XRW TEMP std::string
-// XRW TEMP AddPDBInfoMover::get_name() const {
-// XRW TEMP  return AddPDBInfoMover::mover_name();
-// XRW TEMP }
 
 std::string AddPDBInfoMover::get_name() const {
 	return mover_name();

@@ -110,8 +110,6 @@ ResidueScoresFeatures::ResidueScoresFeatures( ResidueScoresFeatures const & src)
 
 ResidueScoresFeatures::~ResidueScoresFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP ResidueScoresFeatures::type_name() const { return "ResidueScoresFeatures"; }
 
 void
 ResidueScoresFeatures::write_schema_to_db(

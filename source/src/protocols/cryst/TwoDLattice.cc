@@ -122,14 +122,8 @@ using namespace conformation::symmetry;
 ////////////////////////////////////////////////////
 
 // creators
-// XRW TEMP std::string
-// XRW TEMP MakeLayerMoverCreator::keyname() const { return MakeLayerMover::mover_name(); }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MakeLayerMoverCreator::create_mover() const { return utility::pointer::make_shared< MakeLayerMover >(); }
 
-// XRW TEMP std::string
-// XRW TEMP MakeLayerMover::mover_name() { return "MakeLayerMover"; }
 
 ////////////////////////////////////////////////////
 

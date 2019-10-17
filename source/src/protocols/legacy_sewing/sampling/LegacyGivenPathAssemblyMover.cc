@@ -42,23 +42,8 @@ static basic::Tracer TR( "protocols.legacy_sewing.sampling.LegacyGivenPathAssemb
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LegacyGivenPathAssemblyMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< LegacyGivenPathAssemblyMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyGivenPathAssemblyMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LegacyGivenPathAssemblyMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyGivenPathAssemblyMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LegacyGivenPathAssemblyMover";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 LegacyGivenPathAssemblyMover::clone() const {
@@ -69,10 +54,6 @@ LegacyGivenPathAssemblyMover::fresh_instance() const {
 	return utility::pointer::make_shared< LegacyGivenPathAssemblyMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyGivenPathAssemblyMover::get_name() const {
-// XRW TEMP  return "LegacyGivenPathAssemblyMover";
-// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////  LegacyGivenPathAssemblyMover function   //////////////////////////////////

@@ -52,22 +52,8 @@ using namespace core;
 using namespace utility;
 
 // -------------  Mover Creator -------------
-// XRW TEMP std::string
-// XRW TEMP ExtractSubposeMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ExtractSubposeMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ExtractSubposeMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ExtractSubposeMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ExtractSubposeMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ExtractSubposeMover";
-// XRW TEMP }
 // -------------  Mover Creator -------------
 
 ExtractSubposeMover::ExtractSubposeMover() :

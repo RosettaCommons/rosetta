@@ -88,11 +88,7 @@ BundleReporterFilter::BundleReporterFilter( BundleReporterFilter const &src ) :
 static basic::Tracer TR( "protocols.helical_bundle.BundleReporterFilter" );
 static basic::Tracer TRReport( "protocols.helical_bundle.BundleReporterFilter.REPORT" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP BundleReporterFilterCreator::create_filter() const { return utility::pointer::make_shared< BundleReporterFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP BundleReporterFilterCreator::keyname() const { return "BundleReporter"; }
 
 /// @brief Destructor.
 ///

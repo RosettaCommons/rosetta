@@ -160,14 +160,7 @@ StoreCombinedStoredTasksMover::parse_my_tag( TagCOP const tag, basic::datacache:
 }
 
 // @brief Identification
-// XRW TEMP std::string StoreCombinedStoredTasksMoverCreator::keyname() const { return StoreCombinedStoredTasksMover::mover_name(); }
-// XRW TEMP std::string StoreCombinedStoredTasksMover::mover_name() { return "StoreCombinedStoredTasksMover"; }
-// XRW TEMP std::string StoreCombinedStoredTasksMover::get_name() const { return "StoreCombinedStoredTasksMover"; }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP StoreCombinedStoredTasksMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< StoreCombinedStoredTasksMover >();
-// XRW TEMP }
 
 protocols::moves::MoverOP
 StoreCombinedStoredTasksMover::clone() const {

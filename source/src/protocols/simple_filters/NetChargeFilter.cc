@@ -57,11 +57,7 @@ NetChargeFilter::NetChargeFilter() :
 	net_charge_min_( -100 ),
 	task_factory_( /* NULL */ ) {}
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP NetChargeFilterCreator::create_filter() const { return utility::pointer::make_shared< NetChargeFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP NetChargeFilterCreator::keyname() const { return "NetCharge"; }
 
 NetChargeFilter::~NetChargeFilter()= default;
 

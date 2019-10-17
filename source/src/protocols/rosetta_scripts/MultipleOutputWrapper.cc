@@ -60,20 +60,8 @@ using namespace protocols::moves;
 
 ////////////////////////////////////////////////////////////////////////
 
-// XRW TEMP std::string MultipleOutputWrapper::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MultipleOutputWrapper";
-// XRW TEMP }
 
-// XRW TEMP std::string MultipleOutputWrapperCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return mover_name();
-// XRW TEMP }
 
-// XRW TEMP MoverOP MultipleOutputWrapperCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< MultipleOutputWrapper >();
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -90,10 +78,6 @@ MultipleOutputWrapper::MultipleOutputWrapper() :
 {
 }
 
-// XRW TEMP std::string MultipleOutputWrapper::get_name() const
-// XRW TEMP {
-// XRW TEMP  return MultipleOutputWrapper::mover_name();
-// XRW TEMP }
 
 /// @brief Process all input poses (provided pose and from previous mover)
 void MultipleOutputWrapper::apply(core::pose::Pose& pose)

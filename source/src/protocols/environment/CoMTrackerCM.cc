@@ -81,20 +81,8 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-// XRW TEMP std::string
-// XRW TEMP CoMTrackerCMCreator::keyname() const {
-// XRW TEMP  return CoMTrackerCM::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CoMTrackerCMCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CoMTrackerCM >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CoMTrackerCM::mover_name() {
-// XRW TEMP  return "CoMTrackerCM";
-// XRW TEMP }
 
 CoMTrackerCM::CoMTrackerCM():
 	ClientMover()
@@ -313,9 +301,6 @@ claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
 	return claim_list;
 }
 
-// XRW TEMP std::string CoMTrackerCM::get_name() const {
-// XRW TEMP  return "CoMTrackerCM('"+name_+"')";
-// XRW TEMP }
 
 moves::MoverOP CoMTrackerCM::fresh_instance() const {
 	return utility::pointer::make_shared< CoMTrackerCM >();

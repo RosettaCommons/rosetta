@@ -102,11 +102,7 @@ RangeFilter::parse_my_tag(
 	debug_assert(lower_bound_ < upper_bound_);
 }
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP RangeFilterCreator::create_filter() const { return utility::pointer::make_shared< RangeFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP RangeFilterCreator::keyname() const { return "Range"; }
 
 std::string RangeFilter::name() const {
 	return class_name();

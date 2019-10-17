@@ -55,8 +55,6 @@ RadiusOfGyrationFeatures::RadiusOfGyrationFeatures( RadiusOfGyrationFeatures con
 
 RadiusOfGyrationFeatures::~RadiusOfGyrationFeatures()= default;
 
-// XRW TEMP string
-// XRW TEMP RadiusOfGyrationFeatures::type_name() const { return "RadiusOfGyrationFeatures"; }
 
 void
 RadiusOfGyrationFeatures::write_schema_to_db(

@@ -95,10 +95,6 @@ ProteinResidueConformationFeatures::ProteinResidueConformationFeatures(
 }
 
 
-// XRW TEMP string
-// XRW TEMP ProteinResidueConformationFeatures::type_name() const {
-// XRW TEMP  return "ProteinResidueConformationFeatures";
-// XRW TEMP }
 
 void
 ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{

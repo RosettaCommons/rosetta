@@ -106,11 +106,7 @@ void PoseInfoFilter::parse_my_tag( utility::tag::TagCOP const,
 	// Right now we don't have any options to control, so don't bother doing anything.
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP PoseInfoFilterCreator::create_filter() const { return utility::pointer::make_shared< PoseInfoFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP PoseInfoFilterCreator::keyname() const { return "PoseInfo"; }
 
 std::string PoseInfoFilter::name() const {
 	return class_name();

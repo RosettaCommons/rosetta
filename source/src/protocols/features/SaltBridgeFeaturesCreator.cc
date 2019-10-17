@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP SaltBridgeFeaturesCreator::SaltBridgeFeaturesCreator() {}
-// XRW TEMP SaltBridgeFeaturesCreator::~SaltBridgeFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP SaltBridgeFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< SaltBridgeFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string SaltBridgeFeaturesCreator::type_name() const {
-// XRW TEMP  return "SaltBridgeFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

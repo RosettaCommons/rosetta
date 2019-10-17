@@ -102,11 +102,7 @@ void SavePoseConstraintToFileFilter::parse_my_tag( utility::tag::TagCOP tag,
 	}//require a filename to be specified
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SavePoseConstraintToFileFilterCreator::create_filter() const { return utility::pointer::make_shared< SavePoseConstraintToFileFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SavePoseConstraintToFileFilterCreator::keyname() const { return "SavePoseConstraintToFile"; }
 
 std::string SavePoseConstraintToFileFilter::name() const {
 	return class_name();

@@ -33,22 +33,8 @@ static basic::Tracer TR( "protocols.simple_moves.ContingentAcceptMover" );
 namespace protocols {
 namespace simple_moves {
 
-// XRW TEMP std::string
-// XRW TEMP ContingentAcceptMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ContingentAcceptMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ContingentAcceptMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ContingentAcceptMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ContingentAcceptMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ContingentAccept";
-// XRW TEMP }
 
 ContingentAcceptMover::ContingentAcceptMover()
 : moves::Mover("ContingentAccept"),
@@ -87,10 +73,6 @@ ContingentAcceptMover::apply( Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP ContingentAcceptMover::get_name() const {
-// XRW TEMP  return ContingentAcceptMover::mover_name();
-// XRW TEMP }
 
 moves::MoverOP
 ContingentAcceptMover::clone() const

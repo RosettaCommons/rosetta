@@ -322,27 +322,9 @@ PeptideStubMover::add_residue(
 moves::MoverOP PeptideStubMover::clone() const { return utility::pointer::make_shared< PeptideStubMover >( *this ); }
 moves::MoverOP PeptideStubMover::fresh_instance() const { return utility::pointer::make_shared< PeptideStubMover >(); }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PeptideStubMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PeptideStubMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PeptideStubMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PeptideStubMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PeptideStubMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "PeptideStubMover";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PeptideStubMover::get_name() const {
-// XRW TEMP  return "PeptideStubMover";
-// XRW TEMP }
 
 //Private functions:
 

@@ -115,22 +115,8 @@ using namespace protocols::moves;
 using namespace core;
 using namespace utility;
 
-// XRW TEMP std::string
-// XRW TEMP InterfaceAnalyzerMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return InterfaceAnalyzerMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP InterfaceAnalyzerMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< InterfaceAnalyzerMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP InterfaceAnalyzerMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "InterfaceAnalyzerMover";
-// XRW TEMP }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////InterfaceAnalyzerMover///////////////////////////////////////////////////////////

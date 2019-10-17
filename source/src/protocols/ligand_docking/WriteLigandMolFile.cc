@@ -40,22 +40,8 @@ namespace ligand_docking {
 
 static basic::Tracer write_ligand_tracer( "protocols.ligand_docking.WriteLigandMolFile" );
 
-// XRW TEMP std::string
-// XRW TEMP WriteLigandMolFileCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return WriteLigandMolFile::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP WriteLigandMolFileCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< WriteLigandMolFile >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP WriteLigandMolFile::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "WriteLigandMolFile";
-// XRW TEMP }
 
 WriteLigandMolFile::WriteLigandMolFile() :
 	Mover("WriteLigandMolFile"), chain_(""),directory_(""),prefix_(""),hash_file_names_(false)
@@ -83,10 +69,6 @@ protocols::moves::MoverOP WriteLigandMolFile::fresh_instance() const
 	return utility::pointer::make_shared< WriteLigandMolFile >();
 }
 
-// XRW TEMP std::string WriteLigandMolFile::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "WriteLigandMolFile";
-// XRW TEMP }
 
 void WriteLigandMolFile::parse_my_tag(
 	utility::tag::TagCOP tag,

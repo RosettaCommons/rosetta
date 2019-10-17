@@ -105,8 +105,6 @@ WaterFeatures::WaterFeatures(
 	don_dist_cutoff_(src.don_dist_cutoff_)
 {}
 
-// XRW TEMP std::string
-// XRW TEMP WaterFeatures::type_name() const { return "WaterFeatures"; }
 
 void
 WaterFeatures::write_schema_to_db(

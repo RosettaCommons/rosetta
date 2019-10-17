@@ -54,22 +54,8 @@ namespace cyclic_peptide {
 
 static basic::Tracer TR("protocols.cyclic_peptide.TryDisulfPermutations");
 
-// XRW TEMP std::string
-// XRW TEMP TryDisulfPermutationsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return TryDisulfPermutations::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP TryDisulfPermutationsCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< TryDisulfPermutations >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP TryDisulfPermutations::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "TryDisulfPermutations";
-// XRW TEMP }
 
 /// @brief Creator for TryDisulfPermutations mover.
 TryDisulfPermutations::TryDisulfPermutations():
@@ -204,9 +190,6 @@ void TryDisulfPermutations::apply (
 
 
 /// @brief Returns the name of this mover ("TryDisulfPermutations").
-// XRW TEMP std::string TryDisulfPermutations::get_name() const{
-// XRW TEMP  return "TryDisulfPermutations";
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///

@@ -38,11 +38,7 @@ namespace calc_taskop_filters {
 static basic::Tracer TR( "protocols.calc_taskop_filters.Operator" );
 using namespace protocols::filters;
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP OperatorFilterCreator::create_filter() const { return utility::pointer::make_shared< Operator >(); }
 
-// XRW TEMP std::string
-// XRW TEMP OperatorFilterCreator::keyname() const { return "Operator"; }
 
 //default ctor
 Operator::Operator() :

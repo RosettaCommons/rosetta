@@ -89,25 +89,9 @@ ChangeAndResetFoldTreeMover::fresh_instance() const {
 	return utility::pointer::make_shared< ChangeAndResetFoldTreeMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP ChangeAndResetFoldTreeMover::get_name() const {
-// XRW TEMP  return "ChangeAndResetFoldTreeMover";
-// XRW TEMP }
 
-// XRW TEMP MoverOP
-// XRW TEMP ChangeAndResetFoldTreeMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ChangeAndResetFoldTreeMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ChangeAndResetFoldTreeMoverCreator::keyname() const {
-// XRW TEMP  return ChangeAndResetFoldTreeMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ChangeAndResetFoldTreeMover::mover_name() {
-// XRW TEMP  return "ChangeAndResetFoldTreeMover";
-// XRW TEMP }
 
 //void
 //ChangeAndResetFoldTreeMover::parse_my_tag(

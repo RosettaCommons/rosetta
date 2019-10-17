@@ -40,22 +40,8 @@ using core::pose::Pose;
 
 static basic::Tracer TR( "protocols.simple_moves.MembraneTopology" );
 
-// XRW TEMP std::string
-// XRW TEMP MembraneTopologyCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return MembraneTopology::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MembraneTopologyCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MembraneTopology >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MembraneTopology::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MembraneTopology";
-// XRW TEMP }
 
 MembraneTopology::~MembraneTopology() = default;
 
@@ -72,10 +58,6 @@ void MembraneTopology::apply( Pose & pose ) {
 	TR<<"Setting pose's membrane topology according to span file "<<span_file()<<std::endl;
 }
 
-// XRW TEMP std::string
-// XRW TEMP MembraneTopology::get_name() const {
-// XRW TEMP  return MembraneTopology::mover_name();
-// XRW TEMP }
 
 void MembraneTopology::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,

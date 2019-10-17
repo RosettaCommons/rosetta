@@ -28,13 +28,7 @@ namespace protocols {
 namespace loop_modeling {
 namespace utilities {
 
-// XRW TEMP moves::MoverOP PrepareForCentroidCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PrepareForCentroid >();
-// XRW TEMP }
 
-// XRW TEMP string PrepareForCentroidCreator::keyname() const {
-// XRW TEMP  return "PrepareForCentroid";
-// XRW TEMP }
 
 PrepareForCentroid::PrepareForCentroid() = default;
 

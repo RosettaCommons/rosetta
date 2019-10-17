@@ -82,22 +82,8 @@ namespace ligand_docking {
 
 static basic::Tracer high_res_docker_tracer( "protocols.ligand_docking.ligand_options.Protocol", basic::t_debug );
 
-// XRW TEMP std::string
-// XRW TEMP HighResDockerCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return HighResDocker::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP HighResDockerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< HighResDocker >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP HighResDocker::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "HighResDocker";
-// XRW TEMP }
 
 /// @brief
 HighResDocker::HighResDocker():
@@ -143,9 +129,6 @@ protocols::moves::MoverOP HighResDocker::fresh_instance() const {
 	return utility::pointer::make_shared< HighResDocker >();
 }
 
-// XRW TEMP std::string HighResDocker::get_name() const{
-// XRW TEMP  return "HighResDocker";
-// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void

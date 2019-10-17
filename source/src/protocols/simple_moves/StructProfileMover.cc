@@ -112,20 +112,9 @@ StructProfileMover::set_residue_selector( core::select::residue_selector::Residu
 }
 
 
-// XRW TEMP std::string StructProfileMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return StructProfileMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP std::string StructProfileMover::mover_name(){
-// XRW TEMP  return "StructProfileMover";
-// XRW TEMP }
 
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP StructProfileMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< StructProfileMover >();
-// XRW TEMP }
+
 
 
 
@@ -515,9 +504,6 @@ void StructProfileMover::apply(core::pose::Pose & pose) {
 }
 
 
-// XRW TEMP std::string StructProfileMover::get_name() const {
-// XRW TEMP  return "StructProfileMover";
-// XRW TEMP }
 
 void
 StructProfileMover::parse_my_tag(

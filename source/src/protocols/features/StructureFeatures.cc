@@ -91,8 +91,6 @@ StructureFeatures::StructureFeatures( StructureFeatures const & ) :
 
 StructureFeatures::~StructureFeatures()= default;
 
-// XRW TEMP string
-// XRW TEMP StructureFeatures::type_name() const { return "StructureFeatures"; }
 
 void
 StructureFeatures::write_schema_to_db(

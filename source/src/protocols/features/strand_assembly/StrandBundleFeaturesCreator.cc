@@ -26,15 +26,7 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
-// XRW TEMP StrandBundleFeaturesCreator::StrandBundleFeaturesCreator() {}
-// XRW TEMP StrandBundleFeaturesCreator::~StrandBundleFeaturesCreator() {}
-// XRW TEMP FeaturesReporterOP StrandBundleFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< StrandBundleFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string StrandBundleFeaturesCreator::type_name() const {
-// XRW TEMP  return "StrandBundleFeatures";
-// XRW TEMP }
 
 } //namespace strand_assembly
 } //namespace features

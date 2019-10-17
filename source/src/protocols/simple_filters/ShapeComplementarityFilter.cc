@@ -506,11 +506,7 @@ ShapeComplementarityFilter::print_sc_results(
 	tr << "Interface seperation: " << r.distance << std::endl;
 }
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP ShapeComplementarityFilterCreator::create_filter() const { return utility::pointer::make_shared< ShapeComplementarityFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ShapeComplementarityFilterCreator::keyname() const { return "ShapeComplementarity"; }
 
 std::string ShapeComplementarityFilter::name() const {
 	return class_name();

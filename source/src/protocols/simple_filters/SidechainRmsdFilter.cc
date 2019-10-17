@@ -45,11 +45,7 @@ namespace simple_filters {
 
 static basic::Tracer sidechain_rmsd_filter_tracer( "protocols.simple_filters.SidechainRmsdFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SidechainRmsdFilterCreator::create_filter() const { return utility::pointer::make_shared< SidechainRmsdFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SidechainRmsdFilterCreator::keyname() const { return "SidechainRmsd"; }
 
 SidechainRmsdFilter::SidechainRmsdFilter() : filters::Filter( "SidechainRmsd"  ) {}
 

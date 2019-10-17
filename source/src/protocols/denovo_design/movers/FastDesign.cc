@@ -74,17 +74,7 @@ namespace denovo_design {
 namespace movers {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// XRW TEMP std::string
-// XRW TEMP FastDesignCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FastDesign::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FastDesignCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< FastDesign >();
-// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  FastDesign main code:
@@ -133,17 +123,7 @@ FastDesign::FastDesign(
 //// nothing needs to be cleaned. C++ will take care of that for us.
 FastDesign::~FastDesign() = default;
 
-// XRW TEMP std::string
-// XRW TEMP FastDesign::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "FastDesign";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FastDesign::get_name() const
-// XRW TEMP {
-// XRW TEMP  return FastDesign::mover_name();
-// XRW TEMP }
 
 /// @brief return an blank version of ourselves
 protocols::moves::MoverOP

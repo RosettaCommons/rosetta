@@ -55,52 +55,16 @@ namespace symmetry {
 static basic::Tracer TR( "protocols.simple_moves.symmetry.SetupForSymmetryMover" );
 
 // creators
-// XRW TEMP std::string
-// XRW TEMP SetupForSymmetryMoverCreator::keyname() const {
-// XRW TEMP  return SetupForSymmetryMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetupForSymmetryMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetupForSymmetryMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetupForSymmetryMover::mover_name() {
-// XRW TEMP  return "SetupForSymmetry";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ExtractAsymmetricUnitMoverCreator::keyname() const {
-// XRW TEMP  return ExtractAsymmetricUnitMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ExtractAsymmetricUnitMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ExtractAsymmetricUnitMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ExtractAsymmetricUnitMover::mover_name() {
-// XRW TEMP  return "ExtractAsymmetricUnit";
-// XRW TEMP }
 
 ////////////////////
 
-// XRW TEMP std::string
-// XRW TEMP ExtractAsymmetricPoseMoverCreator::keyname() const {
-// XRW TEMP  return ExtractAsymmetricPoseMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ExtractAsymmetricPoseMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ExtractAsymmetricPoseMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ExtractAsymmetricPoseMover::mover_name() {
-// XRW TEMP  return "ExtractAsymmetricPose";
-// XRW TEMP }
 
 ////////////////////
 
@@ -465,10 +429,6 @@ ExtractAsymmetricUnitMover::set_keep_unknown_aas( bool const keep_unk )
 	keep_unknown_aas_ = keep_unk;
 }
 
-// XRW TEMP std::string
-// XRW TEMP ExtractAsymmetricUnitMover::get_name() const {
-// XRW TEMP  return ExtractAsymmetricUnitMover::mover_name();
-// XRW TEMP }
 
 std::string ExtractAsymmetricUnitMover::get_name() const {
 	return mover_name();
@@ -541,10 +501,6 @@ void ExtractAsymmetricPoseMover::parse_my_tag(
 	clear_sym_def( tag->getOption< bool >( "clear_sym_def", clear_sym_def_ ) );
 }
 
-// XRW TEMP std::string
-// XRW TEMP ExtractAsymmetricPoseMover::get_name() const {
-// XRW TEMP  return ExtractAsymmetricPoseMover::mover_name();
-// XRW TEMP }
 
 void
 ExtractAsymmetricPoseMover::clear_sym_def( bool const clr_sym_def )

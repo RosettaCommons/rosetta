@@ -70,20 +70,9 @@ using utility::vector1;
 
 InsertResMover::InsertResMover():moves::Mover("InsertResMover"){}
 
-// XRW TEMP std::string InsertResMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return InsertResMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP std::string InsertResMover::mover_name(){
-// XRW TEMP  return "InsertResMover";
-// XRW TEMP }
 
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP InsertResMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< InsertResMover >();
-// XRW TEMP }
+
 
 numeric::xyzVector<core::Real>
 InsertResMover::center_of_mass(core::pose::Pose const & pose) {
@@ -214,9 +203,6 @@ void InsertResMover::apply(core::pose::Pose & pose) {
 }
 
 
-// XRW TEMP std::string InsertResMover::get_name() const {
-// XRW TEMP  return "InsertResMover";
-// XRW TEMP }
 
 void
 InsertResMover::parse_my_tag(

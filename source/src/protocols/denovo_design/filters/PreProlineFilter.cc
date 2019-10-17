@@ -50,22 +50,8 @@ namespace protocols {
 namespace denovo_design {
 namespace filters {
 
-// XRW TEMP std::string
-// XRW TEMP PreProlineFilterCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PreProlineFilter::class_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP PreProlineFilterCreator::create_filter() const {
-// XRW TEMP  return utility::pointer::make_shared< PreProlineFilter >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PreProlineFilter::class_name()
-// XRW TEMP {
-// XRW TEMP  return "PreProline";
-// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  PreProlineFilter main code:

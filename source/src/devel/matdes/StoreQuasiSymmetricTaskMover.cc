@@ -303,15 +303,7 @@ StoreQuasiSymmetricTaskMover::parse_my_tag( TagCOP const tag, basic::datacache::
 }
 
 // @brief Identification
-// XRW TEMP std::string StoreQuasiSymmetricTaskMoverCreator::keyname() const { return StoreQuasiSymmetricTaskMover::mover_name(); }
-// XRW TEMP std::string StoreQuasiSymmetricTaskMover::mover_name() { return "StoreQuasiSymmetricTaskMover"; }
-// XRW TEMP std::string StoreQuasiSymmetricTaskMover::get_name() const { return "StoreQuasiSymmetricTaskMover"; }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP StoreQuasiSymmetricTaskMoverCreator::create_mover() const {
-// XRW TEMP  //return new StoreQuasiSymmetricTaskMover;
-// XRW TEMP  return utility::pointer::make_shared< StoreQuasiSymmetricTaskMover >();
-// XRW TEMP }
 
 protocols::moves::MoverOP
 StoreQuasiSymmetricTaskMover::clone() const {

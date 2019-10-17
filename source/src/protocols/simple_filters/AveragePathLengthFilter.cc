@@ -36,11 +36,7 @@ using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.simple_filters.AveragePathLengthFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AveragePathLengthFilterCreator::create_filter() const { return utility::pointer::make_shared< AveragePathLengthFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP AveragePathLengthFilterCreator::keyname() const { return "AveragePathLength"; }
 
 
 //default ctor

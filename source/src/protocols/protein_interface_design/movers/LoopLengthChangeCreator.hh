@@ -24,8 +24,6 @@ namespace movers {
 class LoopLengthChangeCreator : public moves::MoverCreator
 {
 public:
-	// XRW TEMP  virtual moves::MoverOP create_mover() const;
-	// XRW TEMP  virtual std::string keyname() const;
 	static  std::string mover_name();
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;

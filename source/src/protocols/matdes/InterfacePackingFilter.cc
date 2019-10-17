@@ -309,11 +309,7 @@ InterfacePackingFilter::clone() const{
 	return utility::pointer::make_shared< InterfacePackingFilter >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP InterfacePackingFilterCreator::create_filter() const { return utility::pointer::make_shared< InterfacePackingFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP InterfacePackingFilterCreator::keyname() const { return "InterfacePacking"; }
 
 std::string InterfacePackingFilter::name() const {
 	return class_name();

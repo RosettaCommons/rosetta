@@ -216,12 +216,6 @@ AntibodyCDRGrafter::fresh_instance() const
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP AntibodyCDRGrafter::get_name() const {
-// XRW TEMP
-// XRW TEMP  return "AntibodyCDRGrafter";
-// XRW TEMP
-// XRW TEMP }
 
 void
 AntibodyCDRGrafter::setup_classes(){
@@ -547,20 +541,8 @@ AntibodyCDRGrafter::apply_to_cdr(core::pose::Pose& pose, core::pose::Pose & cdr_
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AntibodyCDRGrafterCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AntibodyCDRGrafter >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AntibodyCDRGrafterCreator::keyname() const {
-// XRW TEMP  return AntibodyCDRGrafter::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AntibodyCDRGrafter::mover_name(){
-// XRW TEMP  return "AntibodyCDRGrafter";
-// XRW TEMP }
 
 std::string AntibodyCDRGrafter::get_name() const {
 	return mover_name();

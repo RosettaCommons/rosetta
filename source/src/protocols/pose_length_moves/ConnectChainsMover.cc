@@ -61,20 +61,9 @@ using utility::vector1;
 
 ConnectChainsMover::ConnectChainsMover():moves::Mover("ConnectChainsMover"){}
 
-// XRW TEMP std::string ConnectChainsMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ConnectChainsMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP std::string ConnectChainsMover::mover_name(){
-// XRW TEMP  return "ConnectChainsMover";
-// XRW TEMP }
 
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ConnectChainsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ConnectChainsMover >();
-// XRW TEMP }
+
 
 
 void ConnectChainsMover::parse_input(vector1<std::string> & individual_chains,vector1< vector1 <std::string> > & chains_in_poses){
@@ -230,9 +219,6 @@ void ConnectChainsMover::apply(core::pose::Pose & pose) {
 }
 
 
-// XRW TEMP std::string ConnectChainsMover::get_name() const {
-// XRW TEMP  return "ConnectChainsMover";
-// XRW TEMP }
 
 void
 ConnectChainsMover::parse_my_tag(

@@ -951,16 +951,7 @@ FindZnCoordinatingResidues::closest_distance_to_desired_vrt(
 }
 /////////////////////////////////////////////////////////////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP InsertZincCoordinationRemarkLinesCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< InsertZincCoordinationRemarkLines >();
-// XRW TEMP }
 
-// XRW TEMP std::string InsertZincCoordinationRemarkLinesCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return "InsertZincCoordinationRemarkLines";
-// XRW TEMP }
 
 
 /////////////////////////////////////////////////////////////////////
@@ -971,8 +962,6 @@ InsertZincCoordinationRemarkLines::~InsertZincCoordinationRemarkLines() = defaul
 protocols::moves::MoverOP
 InsertZincCoordinationRemarkLines::clone() const { return utility::pointer::make_shared< InsertZincCoordinationRemarkLines >(); }
 
-// XRW TEMP std::string
-// XRW TEMP InsertZincCoordinationRemarkLines::get_name() const { return "InsertZincCoordinationRemarkLines"; }
 
 void InsertZincCoordinationRemarkLines::apply( core::pose::Pose & p )
 {
@@ -1246,15 +1235,6 @@ ZnCoordNumHbondCalculator::recompute( core::pose::Pose const & this_pose )
 
 /////////////////////////////////////////////////////////////////////////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoadZnCoordNumHbondCalculatorMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< LoadZnCoordNumHbondCalculatorMover >();
-// XRW TEMP }
-// XRW TEMP std::string LoadZnCoordNumHbondCalculatorMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return "LoadZnCoordNumHbondCalculatorMover";
-// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -1269,8 +1249,6 @@ LoadZnCoordNumHbondCalculatorMover::clone() const {
 	return utility::pointer::make_shared< LoadZnCoordNumHbondCalculatorMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoadZnCoordNumHbondCalculatorMover::get_name() const { return "LoadZnCoordNumHbondCalculatorMover"; }
 
 void
 LoadZnCoordNumHbondCalculatorMover::apply( core::pose::Pose & )

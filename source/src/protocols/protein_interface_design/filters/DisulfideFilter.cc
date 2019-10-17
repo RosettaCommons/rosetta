@@ -147,11 +147,7 @@ void DisulfideFilter::parse_my_tag( utility::tag::TagCOP tag,
 	}
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP DisulfideFilterCreator::create_filter() const { return utility::pointer::make_shared< DisulfideFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP DisulfideFilterCreator::keyname() const { return "DisulfideFilter"; }
 
 std::string DisulfideFilter::name() const {
 	return class_name();

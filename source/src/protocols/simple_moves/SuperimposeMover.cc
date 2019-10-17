@@ -53,22 +53,8 @@ namespace simple_moves {
 
 static basic::Tracer TR( "protocols.simple_moves.SuperimposeMover" );
 
-// XRW TEMP std::string
-// XRW TEMP SuperimposeMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SuperimposeMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SuperimposeMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SuperimposeMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SuperimposeMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "Superimpose";
-// XRW TEMP }
 
 SuperimposeMover::SuperimposeMover() :
 	protocols::moves::Mover("SuperimposeMover"),
@@ -229,10 +215,6 @@ SuperimposeMover::apply( Pose & pose ) {
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP SuperimposeMover::get_name() const {
-// XRW TEMP  return "SuperimposeMover";
-// XRW TEMP }
 
 void
 SuperimposeMover::parse_my_tag( utility::tag::TagCOP tag,

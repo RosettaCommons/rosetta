@@ -267,11 +267,7 @@ InterlockingAromaFilter::parse_my_tag(
 	verbose_ = tag->getOption<bool>( "verbose", true );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP InterlockingAromaFilterCreator::create_filter() const { return utility::pointer::make_shared< InterlockingAromaFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP InterlockingAromaFilterCreator::keyname() const { return "InterlockingAroma"; }
 
 std::string InterlockingAromaFilter::name() const {
 	return class_name();

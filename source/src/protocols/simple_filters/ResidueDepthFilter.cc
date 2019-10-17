@@ -78,11 +78,7 @@ mycomp( const std::pair< core::Real, core::Size >& lhs,
 	const std::pair< core::Real, core::Size >& rhs )
 { return lhs.first < rhs.first; }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ResidueDepthFilterCreator::create_filter() const { return utility::pointer::make_shared< ResidueDepthFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ResidueDepthFilterCreator::keyname() const { return "ResidueDepth"; }
 
 ////////////////////////////////////////////////////////////////////////
 

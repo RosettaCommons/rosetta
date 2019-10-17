@@ -42,20 +42,8 @@ namespace protocols {
 namespace canonical_sampling {
 
 
-// XRW TEMP std::string
-// XRW TEMP TrialCounterObserverCreator::keyname() const {
-// XRW TEMP  return TrialCounterObserver::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP TrialCounterObserverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< TrialCounterObserver >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP TrialCounterObserver::mover_name() {
-// XRW TEMP  return "TrialCounterObserver";
-// XRW TEMP }
 
 
 TrialCounterObserver::TrialCounterObserver(
@@ -66,9 +54,6 @@ TrialCounterObserver::TrialCounterObserver(
 
 TrialCounterObserver::~TrialCounterObserver() = default;
 
-// XRW TEMP std::string TrialCounterObserver::get_name() const {
-// XRW TEMP  return "TrialCounterObserver";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 TrialCounterObserver::clone() const {

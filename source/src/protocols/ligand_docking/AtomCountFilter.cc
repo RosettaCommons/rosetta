@@ -68,11 +68,7 @@ AtomCountFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AtomCountFilterCreator::create_filter() const { return utility::pointer::make_shared< AtomCountFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP AtomCountFilterCreator::keyname() const { return "AtomCount"; }
 
 std::string AtomCountFilter::name() const {
 	return class_name();

@@ -41,22 +41,8 @@ namespace ligand_docking {
 
 static basic::Tracer slide_together_tracer( "protocols.ligand_docking.ligand_options.slide_together" );
 
-// XRW TEMP std::string
-// XRW TEMP SlideTogetherCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SlideTogether::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SlideTogetherCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SlideTogether >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SlideTogether::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SlideTogether";
-// XRW TEMP }
 
 SlideTogether::SlideTogether()= default;
 
@@ -74,9 +60,6 @@ protocols::moves::MoverOP SlideTogether::fresh_instance() const {
 	return utility::pointer::make_shared< SlideTogether >();
 }
 
-// XRW TEMP std::string SlideTogether::get_name() const{
-// XRW TEMP  return "SlideTogether";
-// XRW TEMP }
 
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void

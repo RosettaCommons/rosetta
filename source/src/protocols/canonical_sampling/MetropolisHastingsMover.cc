@@ -87,20 +87,8 @@ static basic::Tracer tr( "protocols.canonical_sampling.MetropolisHastingsMover" 
 namespace protocols {
 namespace canonical_sampling {
 
-// XRW TEMP std::string
-// XRW TEMP MetropolisHastingsMoverCreator::keyname() const {
-// XRW TEMP  return MetropolisHastingsMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MetropolisHastingsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MetropolisHastingsMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MetropolisHastingsMover::mover_name() {
-// XRW TEMP  return "MetropolisHastings";
-// XRW TEMP }
 
 MetropolisHastingsMover::MetropolisHastingsMover() :
 	monte_carlo_(/*0*/),
@@ -424,11 +412,6 @@ MetropolisHastingsMover::wind_down_simulation( core::pose::Pose& pose) {
 	if ( output_name_from_job_distributor_ ) set_output_name("");
 }
 
-// XRW TEMP std::string
-// XRW TEMP MetropolisHastingsMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "MetropolisHastingsMover";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 MetropolisHastingsMover::clone() const

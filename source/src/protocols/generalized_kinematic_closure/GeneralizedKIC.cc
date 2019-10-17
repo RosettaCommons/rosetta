@@ -66,22 +66,8 @@ namespace generalized_kinematic_closure {
 
 static basic::Tracer TR( "protocols.generalized_kinematic_closure.GeneralizedKIC" );
 
-// XRW TEMP std::string
-// XRW TEMP GeneralizedKICCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return GeneralizedKIC::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP GeneralizedKICCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< GeneralizedKIC >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP GeneralizedKIC::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "GeneralizedKIC";
-// XRW TEMP }
 
 /// @brief Constructor for GeneralizedKIC mover.
 ///
@@ -265,9 +251,6 @@ void GeneralizedKIC::apply ( core::pose::Pose & pose )
 
 
 /// @brief Returns the name of this mover ("GeneralizedKIC").
-// XRW TEMP std::string GeneralizedKIC::get_name() const{
-// XRW TEMP  return "GeneralizedKIC";
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///

@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP HelixCapFeaturesCreator::HelixCapFeaturesCreator() {}
-// XRW TEMP HelixCapFeaturesCreator::~HelixCapFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP HelixCapFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< HelixCapFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string HelixCapFeaturesCreator::type_name() const {
-// XRW TEMP  return "HelixCapFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

@@ -37,11 +37,6 @@ SheetRemodelConstraintGenerator::SheetRemodelConstraintGenerator():
 
 SheetRemodelConstraintGenerator::~SheetRemodelConstraintGenerator() = default;
 
-// XRW TEMP std::string
-// XRW TEMP SheetRemodelConstraintGenerator::get_name() const
-// XRW TEMP {
-// XRW TEMP  return SheetRemodelConstraintGenerator::mover_name();
-// XRW TEMP }
 
 protocols::moves::MoverOP
 SheetRemodelConstraintGenerator::clone() const
@@ -72,17 +67,7 @@ SheetRemodelConstraintGenerator::generate_remodel_constraints( core::pose::Pose 
 	add_constraints( cg_->apply( pose ) );
 }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SheetRemodelConstraintGeneratorCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< SheetRemodelConstraintGenerator >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SheetRemodelConstraintGeneratorCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SheetRemodelConstraintGenerator::mover_name();
-// XRW TEMP }
 
 std::string SheetRemodelConstraintGenerator::get_name() const {
 	return mover_name();

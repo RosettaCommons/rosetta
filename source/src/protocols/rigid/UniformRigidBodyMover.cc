@@ -46,20 +46,8 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-// XRW TEMP std::string
-// XRW TEMP UniformRigidBodyMoverCreator::keyname() const {
-// XRW TEMP  return UniformRigidBodyMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP UniformRigidBodyMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< UniformRigidBodyMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP UniformRigidBodyMover::mover_name() {
-// XRW TEMP  return "UniformRigidBodyMover";
-// XRW TEMP }
 
 UniformRigidBodyMover::UniformRigidBodyMover():
 	ThermodynamicMover(),
@@ -126,9 +114,6 @@ void UniformRigidBodyMover::parse_my_tag( utility::tag::TagCOP tag,
 	target_jump_ = tag->getOption< JumpNumber >("target_jump", NO_JUMP );
 }
 
-// XRW TEMP std::string UniformRigidBodyMover::get_name() const {
-// XRW TEMP  return "UniformRigidBodyMover";
-// XRW TEMP }
 
 utility::vector1<core::id::TorsionID_Range>
 UniformRigidBodyMover::torsion_id_ranges( core::pose::Pose & ) {

@@ -57,8 +57,6 @@ ProteinBackboneTorsionAngleFeatures::ProteinBackboneTorsionAngleFeatures( Protei
 
 ProteinBackboneTorsionAngleFeatures::~ProteinBackboneTorsionAngleFeatures()= default;
 
-// XRW TEMP string
-// XRW TEMP ProteinBackboneTorsionAngleFeatures::type_name() const { return "ProteinBackboneTorsionAngleFeatures"; }
 
 void
 ProteinBackboneTorsionAngleFeatures::write_schema_to_db(

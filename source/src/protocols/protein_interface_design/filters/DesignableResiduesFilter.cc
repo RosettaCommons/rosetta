@@ -203,11 +203,7 @@ DesignableResiduesFilter::clone() const{
 	return utility::pointer::make_shared< DesignableResiduesFilter >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP DesignableResiduesFilterCreator::create_filter() const { return utility::pointer::make_shared< DesignableResiduesFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP DesignableResiduesFilterCreator::keyname() const { return "DesignableResidues"; }
 
 std::string DesignableResiduesFilter::name() const {
 	return class_name();

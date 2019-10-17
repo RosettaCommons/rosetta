@@ -578,11 +578,7 @@ RotamerBoltzmannWeight::compute_entropy_reduction( bool const cer ){
 	compute_entropy_reduction_ = cer ;
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP RotamerBoltzmannWeightFilterCreator::create_filter() const { return utility::pointer::make_shared< RotamerBoltzmannWeight >(); }
 
-// XRW TEMP std::string
-// XRW TEMP RotamerBoltzmannWeightFilterCreator::keyname() const { return "RotamerBoltzmannWeight"; }
 
 bool
 RotamerBoltzmannWeight::skip_ala_scan() const

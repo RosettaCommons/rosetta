@@ -233,27 +233,9 @@ DeclareBond::parse_my_tag(
 moves::MoverOP DeclareBond::clone() const { return utility::pointer::make_shared< DeclareBond >( *this ); }
 moves::MoverOP DeclareBond::fresh_instance() const { return utility::pointer::make_shared< DeclareBond >(); }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DeclareBondCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DeclareBond >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DeclareBondCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DeclareBond::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DeclareBond::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DeclareBond";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DeclareBond::get_name() const {
-// XRW TEMP  return "DeclareBond";
-// XRW TEMP }
 
 std::string DeclareBond::get_name() const {
 	return mover_name();

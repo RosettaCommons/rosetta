@@ -96,10 +96,6 @@ AntibodyFeatures::set_interface_chains(utility::vector1<std::string> const & int
 	intermediate_interfaces_ = intermediate_interfaces;
 }
 
-// XRW TEMP std::string
-// XRW TEMP AntibodyFeatures::type_name() const {
-// XRW TEMP  return "AntibodyFeatures";
-// XRW TEMP }
 
 void
 AntibodyFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const {

@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP RadiusOfGyrationFeaturesCreator::RadiusOfGyrationFeaturesCreator() {}
-// XRW TEMP RadiusOfGyrationFeaturesCreator::~RadiusOfGyrationFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP RadiusOfGyrationFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< RadiusOfGyrationFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string RadiusOfGyrationFeaturesCreator::type_name() const {
-// XRW TEMP  return "RadiusOfGyrationFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

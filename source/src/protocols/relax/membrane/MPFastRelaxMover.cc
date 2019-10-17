@@ -140,22 +140,10 @@ MPFastRelaxMover::parse_my_tag(
 {}
 
 /// @brief Create a new copy of this mover
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MPFastRelaxMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MPFastRelaxMover >();
-// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-// XRW TEMP std::string
-// XRW TEMP MPFastRelaxMoverCreator::keyname() const {
-// XRW TEMP  return MPFastRelaxMover::mover_name();
-// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-// XRW TEMP std::string
-// XRW TEMP MPFastRelaxMover::mover_name() {
-// XRW TEMP  return "MPFastRelaxMover";
-// XRW TEMP }
 
 /////////////////////
 /// Mover methods ///
@@ -208,10 +196,6 @@ MPFastRelaxMover::apply( core::pose::Pose & pose ) {
 
 /// @brief Get name (MPFastRelaxMover)
 /// @details Get the name of this mover
-// XRW TEMP std::string
-// XRW TEMP MPFastRelaxMover::get_name() const {
-// XRW TEMP  return "MPFastRelaxMover";
-// XRW TEMP }
 
 /// @brief Create a custom foldtree anchored at the COM
 /// @details Generate a foldtree where the membrane residue

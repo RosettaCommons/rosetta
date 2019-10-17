@@ -103,10 +103,6 @@ ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP ModifyVariantTypeMover::get_name() const {
-// XRW TEMP  return "ModifyVariantType";
-// XRW TEMP }
 
 moves::MoverOP
 ModifyVariantTypeMover::clone() const

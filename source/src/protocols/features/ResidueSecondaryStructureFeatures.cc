@@ -68,8 +68,6 @@ ResidueSecondaryStructureFeatures::ResidueSecondaryStructureFeatures(ResidueSeco
 
 ResidueSecondaryStructureFeatures::~ResidueSecondaryStructureFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP ResidueSecondaryStructureFeatures::type_name() const { return "ResidueSecondaryStructureFeatures"; }
 
 void
 ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{

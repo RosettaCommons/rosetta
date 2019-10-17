@@ -1424,11 +1424,7 @@ ResidueConformerFilter::get_current_conformer( core::pose::Pose const & pose ) c
 }
 
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP DiffAtomSasaFilterCreator::create_filter() const { return utility::pointer::make_shared< DiffAtomSasaFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP DiffAtomSasaFilterCreator::keyname() const { return "DiffAtomBurial"; }
 
 std::string DiffAtomSasaFilter::name() const {
 	return class_name();
@@ -1471,11 +1467,7 @@ void DiffAtomSasaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefin
 }
 
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP EnzScoreFilterCreator::create_filter() const { return utility::pointer::make_shared< EnzScoreFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP EnzScoreFilterCreator::keyname() const { return "EnzScore"; }
 
 std::string EnzScoreFilter::name() const {
 	return class_name();
@@ -1519,11 +1511,7 @@ void EnzScoreFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 }
 
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP LigBurialFilterCreator::create_filter() const { return utility::pointer::make_shared< LigBurialFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP LigBurialFilterCreator::keyname() const { return "LigBurial"; }
 
 std::string LigBurialFilter::name() const {
 	return class_name();
@@ -1559,11 +1547,7 @@ void LigBurialFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 }
 
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP LigDSasaFilterCreator::create_filter() const { return utility::pointer::make_shared< LigDSasaFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP LigDSasaFilterCreator::keyname() const { return "DSasa"; }
 
 std::string LigDSasaFilter::name() const {
 	return class_name();
@@ -1598,11 +1582,7 @@ void LigDSasaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 }
 
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP LigInterfaceEnergyFilterCreator::create_filter() const { return utility::pointer::make_shared< LigInterfaceEnergyFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP LigInterfaceEnergyFilterCreator::keyname() const { return "LigInterfaceEnergy"; }
 
 std::string LigInterfaceEnergyFilter::name() const {
 	return class_name();
@@ -1642,11 +1622,7 @@ void LigInterfaceEnergyFilterCreator::provide_xml_schema( utility::tag::XMLSchem
 }
 
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP RepackWithoutLigandFilterCreator::create_filter() const { return utility::pointer::make_shared< RepackWithoutLigandFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP RepackWithoutLigandFilterCreator::keyname() const { return "RepackWithoutLigand"; }
 
 std::string RepackWithoutLigandFilter::name() const {
 	return class_name();
@@ -1697,11 +1673,7 @@ void RepackWithoutLigandFilterCreator::provide_xml_schema( utility::tag::XMLSche
 }
 
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP EnzdesScorefileFilterCreator::create_filter() const { return utility::pointer::make_shared< EnzdesScorefileFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP EnzdesScorefileFilterCreator::keyname() const { return "EnzdesScorefileFilter"; }
 
 std::string EnzdesScorefileFilter::name() const {
 	return class_name();
@@ -1735,11 +1707,7 @@ void EnzdesScorefileFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDe
 }
 
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP ResidueConformerFilterCreator::create_filter() const { return utility::pointer::make_shared< ResidueConformerFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ResidueConformerFilterCreator::keyname() const { return "ResidueConformerFilter"; }
 
 std::string ResidueConformerFilter::name() const {
 	return class_name();

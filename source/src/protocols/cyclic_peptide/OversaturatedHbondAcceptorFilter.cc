@@ -384,23 +384,8 @@ OversaturatedHbondAcceptorFilter::compute(
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP OversaturatedHbondAcceptorFilterCreator::create_filter() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< OversaturatedHbondAcceptorFilter >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP OversaturatedHbondAcceptorFilterCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return OversaturatedHbondAcceptorFilter::class_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP OversaturatedHbondAcceptorFilter::class_name()
-// XRW TEMP {
-// XRW TEMP  return "OversaturatedHbondAcceptorFilter";
-// XRW TEMP }
 
 std::string OversaturatedHbondAcceptorFilter::name() const {
 	return class_name();

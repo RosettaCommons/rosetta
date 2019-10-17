@@ -63,22 +63,8 @@ namespace helical_bundle {
 static basic::Tracer TR("protocols.helical_bundle.BackboneGridSampler");
 static basic::Tracer TR_Results("protocols.helical_bundle.BackboneGridSampler.Results");
 
-// XRW TEMP std::string
-// XRW TEMP BackboneGridSamplerCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return BackboneGridSampler::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP BackboneGridSamplerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< BackboneGridSampler >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BackboneGridSampler::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "BackboneGridSampler";
-// XRW TEMP }
 
 ///
 /// @brief Creator for BackboneGridSampler mover.
@@ -412,9 +398,6 @@ void BackboneGridSampler::apply (core::pose::Pose & pose)
 
 ///
 /// @brief Returns the name of this mover ("BackboneGridSampler").
-// XRW TEMP std::string BackboneGridSampler::get_name() const{
-// XRW TEMP  return "BackboneGridSampler";
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///

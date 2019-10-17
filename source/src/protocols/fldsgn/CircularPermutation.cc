@@ -55,22 +55,8 @@ namespace fldsgn {
 
 static basic::Tracer TR( "protocols.fldsgn.CircularPermutation" );
 
-// XRW TEMP std::string
-// XRW TEMP CircularPermutationCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CircularPermutation::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CircularPermutationCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CircularPermutation >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CircularPermutation::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "CircularPermutation";
-// XRW TEMP }
 
 
 /// @brief default constructor
@@ -143,10 +129,6 @@ CircularPermutation::which_chain( Size const pos, Pose const & pose ) const
 	return 0;
 }
 
-// XRW TEMP std::string
-// XRW TEMP CircularPermutation::get_name() const {
-// XRW TEMP  return CircularPermutation::mover_name();
-// XRW TEMP }
 
 
 /// @brief

@@ -119,8 +119,6 @@ ScoreFunctionFeatures::ScoreFunctionFeatures(
 
 ScoreFunctionFeatures::~ScoreFunctionFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP ScoreFunctionFeatures::type_name() const { return "ScoreFunctionFeatures"; }
 
 void
 ScoreFunctionFeatures::write_schema_to_db(

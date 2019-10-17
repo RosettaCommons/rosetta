@@ -68,22 +68,8 @@ namespace movers {
 
 using namespace protocols::moves;
 
-// XRW TEMP std::string
-// XRW TEMP InterfaceRecapitulationMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return InterfaceRecapitulationMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP InterfaceRecapitulationMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< InterfaceRecapitulationMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP InterfaceRecapitulationMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "InterfaceRecapitulation";
-// XRW TEMP }
 
 InterfaceRecapitulationMover::InterfaceRecapitulationMover() :
 	Mover( InterfaceRecapitulationMover::mover_name() ),
@@ -151,10 +137,6 @@ InterfaceRecapitulationMover::apply( core::pose::Pose & pose ){
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP InterfaceRecapitulationMover::get_name() const {
-// XRW TEMP  return InterfaceRecapitulationMover::mover_name();
-// XRW TEMP }
 
 void
 InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const & movers, core::pose::Pose const & pose ){

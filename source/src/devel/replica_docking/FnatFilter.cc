@@ -44,11 +44,7 @@ static basic::Tracer TR( "devel.replica_docking.FnatFilter" );
 namespace devel {
 namespace replica_docking {
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP FnatFilterCreator::create_filter() const { return utility::pointer::make_shared< FnatFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP FnatFilterCreator::keyname() const { return "Fnat"; }
 
 void FnatFilter::register_options() {
 	using namespace basic::options;

@@ -90,11 +90,6 @@ FusePosesNtoCMover::clone() const{
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP FusePosesNtoCMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "FusePosesNtoCMover";
-// XRW TEMP }
 
 
 /// @details
@@ -723,22 +718,8 @@ set_superpose_residues_in_atom_map(
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP FusePosesNtoCMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FusePosesNtoCMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FusePosesNtoCMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FusePosesNtoCMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FusePosesNtoCMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "FusePosesNtoCMover";
-// XRW TEMP }
 
 std::string FusePosesNtoCMover::get_name() const {
 	return mover_name();
@@ -807,11 +788,6 @@ SetupCoiledCoilFoldTreeMover::clone() const{
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP SetupCoiledCoilFoldTreeMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "SetupCoiledCoilFoldTreeMover";
-// XRW TEMP }
 
 
 /// @details
@@ -908,22 +884,8 @@ SetupCoiledCoilFoldTreeMover::parse_my_tag(
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP SetupCoiledCoilFoldTreeMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SetupCoiledCoilFoldTreeMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetupCoiledCoilFoldTreeMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetupCoiledCoilFoldTreeMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetupCoiledCoilFoldTreeMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SetupCoiledCoilFoldTreeMover";
-// XRW TEMP }
 
 std::string SetupCoiledCoilFoldTreeMover::get_name() const {
 	return mover_name();

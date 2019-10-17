@@ -1457,10 +1457,6 @@ LoopRelaxMover::get_loops() {
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP LoopRelaxMover::get_name() const {
-// XRW TEMP  return "LoopRelaxMover";
-// XRW TEMP }
 
 void LoopRelaxMover::set_defaults_() {
 	using namespace basic::options;
@@ -1511,22 +1507,8 @@ LoopRelaxMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data,
 	loops( loops::loops_definers::load_loop_definitions(tag, data, pose) );
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoopRelaxMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoopRelaxMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoopRelaxMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopRelaxMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoopRelaxMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LoopRelaxMover";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 LoopRelaxMover::fresh_instance() const{ return utility::pointer::make_shared< LoopRelaxMover >(); }

@@ -47,27 +47,9 @@ using namespace protocols::moves;
 namespace protocols {
 namespace monte_carlo {
 
-// XRW TEMP std::string
-// XRW TEMP MonteCarloTestCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return MonteCarloTest::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MonteCarloTestCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MonteCarloTest >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MonteCarloTest::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MonteCarloTest";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MonteCarloTest::get_name() const {
-// XRW TEMP  return MonteCarloTest::mover_name();
-// XRW TEMP }
 
 
 /// @brief default constructor

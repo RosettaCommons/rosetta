@@ -82,20 +82,8 @@ using namespace core;
 /// creator
 
 
-// XRW TEMP std::string
-// XRW TEMP OptimizeThreadingMoverCreator::keyname() const {
-// XRW TEMP  return OptimizeThreadingMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP OptimizeThreadingMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< OptimizeThreadingMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP OptimizeThreadingMover::mover_name() {
-// XRW TEMP  return "OptimizeThreading";
-// XRW TEMP }
 
 
 //////////////////

@@ -50,22 +50,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.BuildAlaPose" );
 
-// XRW TEMP std::string
-// XRW TEMP BuildAlaPoseCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return BuildAlaPose::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP BuildAlaPoseCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< BuildAlaPose >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BuildAlaPose::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "build_Ala_pose";
-// XRW TEMP }
 
 BuildAlaPose::BuildAlaPose() : calc_taskop_movers::DesignRepackMover( BuildAlaPose::mover_name() ),
 	AA_("ALA")
@@ -115,10 +101,6 @@ BuildAlaPose::apply( pose::Pose & pose )
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( pose );
 }
 
-// XRW TEMP std::string
-// XRW TEMP BuildAlaPose::get_name() const {
-// XRW TEMP  return BuildAlaPose::mover_name();
-// XRW TEMP }
 
 void
 BuildAlaPose::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )

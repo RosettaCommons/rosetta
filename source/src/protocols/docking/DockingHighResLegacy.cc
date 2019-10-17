@@ -702,28 +702,10 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 	//DockingHighRes::set_task_factory( local_tf );
 }
 
-// XRW TEMP std::string
-// XRW TEMP DockingHighResLegacy::get_name() const {
-// XRW TEMP  return "DockingHighResLegacy";
-// XRW TEMP }
 
 // creator methods
-// XRW TEMP std::string
-// XRW TEMP DockingHighResLegacyCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DockingHighResLegacy::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DockingHighResLegacyCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DockingHighResLegacy >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DockingHighResLegacy::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DockingHighResLegacy";
-// XRW TEMP }
 
 std::string DockingHighResLegacy::get_name() const {
 	return mover_name();

@@ -87,10 +87,6 @@ ResidueConformationFeatures::ResidueConformationFeatures(
 	compact_residue_schema_ = basic::options::option[basic::options::OptionKeys::inout::dbms::use_compact_residue_schema]();
 }
 
-// XRW TEMP string
-// XRW TEMP ResidueConformationFeatures::type_name() const {
-// XRW TEMP  return "ResidueConformationFeatures";
-// XRW TEMP }
 
 void
 ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{

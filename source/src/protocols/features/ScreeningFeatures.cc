@@ -55,10 +55,6 @@ ScreeningFeatures::ScreeningFeatures(ScreeningFeatures const & ) = default;
 
 ScreeningFeatures::~ScreeningFeatures() = default;
 
-// XRW TEMP std::string ScreeningFeatures::type_name() const
-// XRW TEMP {
-// XRW TEMP  return "ScreeningFeatures";
-// XRW TEMP }
 
 void ScreeningFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
 {

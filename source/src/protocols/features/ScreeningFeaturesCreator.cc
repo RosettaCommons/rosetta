@@ -24,15 +24,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP ScreeningFeaturesCreator::ScreeningFeaturesCreator() {}
-// XRW TEMP ScreeningFeaturesCreator::~ScreeningFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP ScreeningFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< ScreeningFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string ScreeningFeaturesCreator::type_name() const {
-// XRW TEMP  return "ScreeningFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

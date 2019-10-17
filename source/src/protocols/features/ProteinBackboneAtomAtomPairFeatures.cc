@@ -67,8 +67,6 @@ ProteinBackboneAtomAtomPairFeatures::ProteinBackboneAtomAtomPairFeatures( Protei
 
 ProteinBackboneAtomAtomPairFeatures::~ProteinBackboneAtomAtomPairFeatures()= default;
 
-// XRW TEMP string
-// XRW TEMP ProteinBackboneAtomAtomPairFeatures::type_name() const { return "ProteinBackboneAtomAtomPairFeatures"; }
 
 void
 ProteinBackboneAtomAtomPairFeatures::write_schema_to_db(

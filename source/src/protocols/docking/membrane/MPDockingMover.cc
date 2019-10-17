@@ -197,32 +197,16 @@ MPDockingMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MPDockingMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MPDockingMover >();
-// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-// XRW TEMP std::string
-// XRW TEMP MPDockingMoverCreator::keyname() const {
-// XRW TEMP  return MPDockingMover::mover_name();
-// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-// XRW TEMP std::string
-// XRW TEMP MPDockingMover::mover_name() {
-// XRW TEMP  return "MPDockingMover";
-// XRW TEMP }
 
 /////////////////////
 /// Mover Methods ///
 /////////////////////
 
 /// @brief Get the name of this Mover (MPDockingMover)
-// XRW TEMP std::string
-// XRW TEMP MPDockingMover::get_name() const {
-// XRW TEMP  return "MPDockingMover";
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 // set inner cycles in DockingProtocol

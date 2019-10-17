@@ -101,11 +101,6 @@ RunSimpleMetricsMover::fresh_instance() const
 	return utility::pointer::make_shared< RunSimpleMetricsMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP RunSimpleMetricsMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return RunSimpleMetricsMover::mover_name();
-// XRW TEMP }
 
 void
 RunSimpleMetricsMover::apply( core::pose::Pose & pose, std::string const & prefix, std::string const & suffix){

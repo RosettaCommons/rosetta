@@ -44,13 +44,7 @@ using core::scoring::ScoreFunctionCOP;
 using protocols::minimization_packing::MinMover;
 using protocols::minimization_packing::MinMoverOP;
 
-// XRW TEMP protocols::moves::MoverOP MinimizationRefinerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MinimizationRefiner >();
-// XRW TEMP }
 
-// XRW TEMP std::string MinimizationRefinerCreator::keyname() const {
-// XRW TEMP  return "MinimizationRefiner";
-// XRW TEMP }
 
 MinimizationRefiner::MinimizationRefiner(
 	bool cartesian, MinimizerOptionsOP options) {

@@ -99,22 +99,8 @@ static basic::Tracer TR( "protocols.protein_interface_design.BackrubDDMover" );
 using Real = core::Real;
 using Pose = core::pose::Pose;
 
-// XRW TEMP std::string
-// XRW TEMP BackrubDDMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return BackrubDDMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP BackrubDDMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< BackrubDDMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BackrubDDMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "BackrubDD";
-// XRW TEMP }
 
 BackrubDDMover::BackrubDDMover() :
 	calc_taskop_movers::DesignRepackMover( "BackrubDD" ),

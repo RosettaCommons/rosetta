@@ -86,8 +86,6 @@ RotamerBoltzmannWeightFeatures::RotamerBoltzmannWeightFeatures(RotamerBoltzmannW
 
 RotamerBoltzmannWeightFeatures::~RotamerBoltzmannWeightFeatures()= default;
 
-// XRW TEMP string
-// XRW TEMP RotamerBoltzmannWeightFeatures::type_name() const { return "RotamerBoltzmannWeightFeatures"; }
 
 void
 RotamerBoltzmannWeightFeatures::write_schema_to_db(

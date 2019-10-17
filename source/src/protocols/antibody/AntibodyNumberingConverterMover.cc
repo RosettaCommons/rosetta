@@ -305,17 +305,7 @@ AntibodyNumberingConverterMover::fresh_instance() const
 	return utility::pointer::make_shared< AntibodyNumberingConverterMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP AntibodyNumberingConverterMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return AntibodyNumberingConverterMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AntibodyNumberingConverterMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AntibodyNumberingConverterMover";
-// XRW TEMP }
 
 void
 AntibodyNumberingConverterMover::show( std::ostream & output ) const
@@ -334,17 +324,7 @@ operator<<( std::ostream & os, AntibodyNumberingConverterMover const & mover )
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AntibodyNumberingConverterMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< AntibodyNumberingConverterMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AntibodyNumberingConverterMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AntibodyNumberingConverterMover::mover_name();
-// XRW TEMP }
 
 std::string AntibodyNumberingConverterMover::get_name() const {
 	return mover_name();

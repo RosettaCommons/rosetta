@@ -48,22 +48,8 @@ namespace protocols {
 namespace monte_carlo {
 
 
-// XRW TEMP std::string
-// XRW TEMP GenericSimulatedAnnealerCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return GenericSimulatedAnnealer::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP GenericSimulatedAnnealerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< GenericSimulatedAnnealer >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP GenericSimulatedAnnealer::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "GenericSimulatedAnnealer";
-// XRW TEMP }
 
 /// @brief default constructor
 GenericSimulatedAnnealer::GenericSimulatedAnnealer():
@@ -723,10 +709,6 @@ GenericSimulatedAnnealer::apply_mover( core::pose::Pose & pose ) {
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP GenericSimulatedAnnealer::get_name() const {
-// XRW TEMP  return GenericSimulatedAnnealer::mover_name();
-// XRW TEMP }
 
 /// @brief parse xml file
 void

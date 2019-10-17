@@ -161,8 +161,6 @@ HBondFeatures::HBondFeatures(HBondFeatures const & src) :
 
 HBondFeatures::~HBondFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP HBondFeatures::type_name() const { return "HBondFeatures"; }
 
 void
 HBondFeatures::write_schema_to_db(

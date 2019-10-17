@@ -77,22 +77,8 @@ using core::scoring::ScoreFunctionOP;
 static basic::Tracer TR( "protocols.loophash.LoopHashDiversifier" );
 
 ///****Creator Methods****///
-// XRW TEMP std::string
-// XRW TEMP LoopHashDiversifierCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoopHashDiversifier::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoopHashDiversifierCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopHashDiversifier >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoopHashDiversifier::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LoopHashDiversifier";
-// XRW TEMP }
 ///****End Creator Methods****///
 
 LoopHashDiversifier::~LoopHashDiversifier() = default;
@@ -349,10 +335,6 @@ LoopHashDiversifier::apply( Pose & pose )
 // return pose;
 //}
 
-// XRW TEMP std::string
-// XRW TEMP LoopHashDiversifier::get_name() const {
-// XRW TEMP  return LoopHashDiversifier::mover_name();
-// XRW TEMP }
 
 void
 LoopHashDiversifier::parse_my_tag(

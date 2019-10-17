@@ -151,10 +151,6 @@ LoopMover_Refine_CCD::LoopMover_Refine_CCD(
 //destructor
 LoopMover_Refine_CCD::~LoopMover_Refine_CCD() = default;
 
-// XRW TEMP std::string
-// XRW TEMP LoopMover_Refine_CCD::get_name() const {
-// XRW TEMP  return "LoopMover_Refine_CCD";
-// XRW TEMP }
 
 void
 LoopMover_Refine_CCD::show(std::ostream & output) const
@@ -385,15 +381,8 @@ basic::Tracer & LoopMover_Refine_CCD::tr() const
 	return TR;
 }
 
-// XRW TEMP LoopMover_Refine_CCDCreator::~LoopMover_Refine_CCDCreator() {}
 
-// XRW TEMP moves::MoverOP LoopMover_Refine_CCDCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopMover_Refine_CCD >();
-// XRW TEMP }
 
-// XRW TEMP std::string LoopMover_Refine_CCDCreator::keyname() const {
-// XRW TEMP  return "LoopMover_Refine_CCD";
-// XRW TEMP }
 
 core::scoring::ScoreFunctionOP LoopMover_Refine_CCD::get_new_ramping_scorefxn()
 {

@@ -174,22 +174,10 @@ SymmetricAddMembraneMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SymmetricAddMembraneMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SymmetricAddMembraneMover >();
-// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-// XRW TEMP std::string
-// XRW TEMP SymmetricAddMembraneMoverCreator::keyname() const {
-// XRW TEMP  return SymmetricAddMembraneMover::mover_name();
-// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-// XRW TEMP std::string
-// XRW TEMP SymmetricAddMembraneMover::mover_name() {
-// XRW TEMP  return "SymmetricAddMembraneMover";
-// XRW TEMP }
 
 
 /////////////////////
@@ -197,10 +185,6 @@ SymmetricAddMembraneMover::parse_my_tag(
 /////////////////////
 
 /// @brief Get the name of this Mover (SymmetricAddMembraneMover)
-// XRW TEMP std::string
-// XRW TEMP SymmetricAddMembraneMover::get_name() const {
-// XRW TEMP  return "SymmetricAddMembraneMover";
-// XRW TEMP }
 
 
 /////////////////////

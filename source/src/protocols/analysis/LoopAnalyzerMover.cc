@@ -274,10 +274,6 @@ LoopAnalyzerMover::clone() const
 	return utility::pointer::make_shared< LoopAnalyzerMover >( *this );
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoopAnalyzerMover::get_name() const {
-// XRW TEMP  return "LoopAnalyzerMover";
-// XRW TEMP }
 
 //////////////////////////getters, setters/////////////////////
 /// @brief set loops object, because public setters/getters are a rule
@@ -395,22 +391,8 @@ void LoopAnalyzerMover::calculate_all_chainbreaks( core::pose::Pose & pose )
 
 ////////////////////creator/////////////////////////////
 
-// XRW TEMP std::string
-// XRW TEMP LoopAnalyzerMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoopAnalyzerMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoopAnalyzerMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopAnalyzerMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoopAnalyzerMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LoopAnalyzerMover";
-// XRW TEMP }
 
 std::string LoopAnalyzerMover::get_name() const {
 	return mover_name();

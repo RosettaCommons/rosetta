@@ -40,22 +40,8 @@ namespace protocols {
 namespace forge {
 namespace constraints {
 
-// XRW TEMP std::string
-// XRW TEMP RemoveRemodelCstsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RemoveRemodelCsts::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RemoveRemodelCstsCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RemoveRemodelCsts >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RemoveRemodelCsts::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "RemoveRemodelCsts";
-// XRW TEMP }
 
 /// @brief
 RemoveRemodelCsts::RemoveRemodelCsts()
@@ -98,11 +84,6 @@ RemoveRemodelCsts::parse_my_tag( TagCOP const tag,
 	TR << "Cst generator =" << generator_->get_name() << " with name=" << generator_id_ << std::endl;
 }
 
-// XRW TEMP std::string
-// XRW TEMP RemoveRemodelCsts::get_name() const
-// XRW TEMP {
-// XRW TEMP  return RemoveRemodelCsts::mover_name();
-// XRW TEMP }
 
 protocols::moves::MoverOP
 RemoveRemodelCsts::fresh_instance() const

@@ -36,20 +36,8 @@ namespace minimization_packing {
 
 static basic::Tracer TR( "protocols.minimization_packing.SaneMinMover" );
 
-// XRW TEMP std::string
-// XRW TEMP SaneMinMoverCreator::keyname() const {
-// XRW TEMP  return SaneMinMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SaneMinMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SaneMinMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SaneMinMover::mover_name() {
-// XRW TEMP  return "SaneMinMover";
-// XRW TEMP }
 
 // default constructor
 SaneMinMover::SaneMinMover() : protocols::moves::Mover("SaneMinMover") {
@@ -111,10 +99,6 @@ SaneMinMover::apply( core::pose::Pose & pose ) {
 	TR.flush();
 }
 
-// XRW TEMP std::string
-// XRW TEMP SaneMinMover::get_name() const {
-// XRW TEMP  return SaneMinMover::mover_name();
-// XRW TEMP }
 
 protocols::moves::MoverOP SaneMinMover::clone() const { return utility::pointer::make_shared< protocols::minimization_packing::SaneMinMover >( *this ); }
 

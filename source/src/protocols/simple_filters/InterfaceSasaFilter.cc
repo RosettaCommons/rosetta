@@ -43,11 +43,7 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.InterfaceSasaFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP InterfaceSasaFilterCreator::create_filter() const { return utility::pointer::make_shared< InterfaceSasaFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP InterfaceSasaFilterCreator::keyname() const { return "Sasa"; }
 
 
 InterfaceSasaFilter::InterfaceSasaFilter() :

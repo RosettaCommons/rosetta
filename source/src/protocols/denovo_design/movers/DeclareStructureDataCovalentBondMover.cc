@@ -175,17 +175,7 @@ DeclareStructureDataCovalentBondMover::clone() const
 	return utility::pointer::make_shared< DeclareStructureDataCovalentBondMover >( *this );
 }
 
-// XRW TEMP std::string
-// XRW TEMP DeclareStructureDataCovalentBondMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return DeclareStructureDataCovalentBondMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DeclareStructureDataCovalentBondMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DeclareStructureDataCovalentBondMover";
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Creator ///
@@ -193,17 +183,7 @@ DeclareStructureDataCovalentBondMover::clone() const
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DeclareStructureDataCovalentBondMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< DeclareStructureDataCovalentBondMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DeclareStructureDataCovalentBondMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DeclareStructureDataCovalentBondMover::mover_name();
-// XRW TEMP }
 
 std::string DeclareStructureDataCovalentBondMover::get_name() const {
 	return mover_name();

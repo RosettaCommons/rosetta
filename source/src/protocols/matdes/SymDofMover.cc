@@ -65,22 +65,8 @@ using Vec = numeric::xyzVector<Real>;
 using Mat = numeric::xyzMatrix<Real>;
 
 // -------------  Mover Creator -------------
-// XRW TEMP std::string
-// XRW TEMP SymDofMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SymDofMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SymDofMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SymDofMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SymDofMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SymDofMover";
-// XRW TEMP }
 // -------------  Mover Creator -------------
 
 SymDofMover::SymDofMover() :

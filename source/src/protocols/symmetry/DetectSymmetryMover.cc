@@ -48,20 +48,8 @@ namespace symmetry {
 static basic::Tracer TR( "protocols.simple_moves.symmetry.DetectSymmetry" );
 
 // creators
-// XRW TEMP std::string
-// XRW TEMP DetectSymmetryMoverCreator::keyname() const {
-// XRW TEMP  return DetectSymmetry::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DetectSymmetryMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DetectSymmetry >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DetectSymmetry::mover_name() {
-// XRW TEMP  return "DetectSymmetry";
-// XRW TEMP }
 
 ////////////////////
 DetectSymmetry::DetectSymmetry():

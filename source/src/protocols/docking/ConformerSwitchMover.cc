@@ -71,22 +71,8 @@ ConformerSwitchMover::ConformerSwitchMover() :
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP ConformerSwitchMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ConformerSwitchMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ConformerSwitchMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ConformerSwitchMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ConformerSwitchMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ConformerSwitchMover";
-// XRW TEMP }
 
 //constructor with arguments
 ConformerSwitchMover::ConformerSwitchMover(
@@ -240,9 +226,6 @@ void ConformerSwitchMover::switch_conformer(
 	pose.copy_segment( ensemble_->conf_size(), new_conf, ensemble_->start_res(), 1);
 }
 
-// XRW TEMP std::string ConformerSwitchMover::get_name() const {
-// XRW TEMP  return ConformerSwitchMover::mover_name();
-// XRW TEMP }
 
 std::string ConformerSwitchMover::get_name() const {
 	return mover_name();

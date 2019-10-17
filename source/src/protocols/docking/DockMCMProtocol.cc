@@ -285,10 +285,6 @@ core::scoring::ScoreFunctionCOP DockMCMProtocol::scorefxn_packing() const {
 	return scorefxn_pack();
 }
 
-// XRW TEMP std::string
-// XRW TEMP DockMCMProtocol::get_name() const {
-// XRW TEMP  return "DockMCMProtocol";
-// XRW TEMP }
 
 std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp )
 {
@@ -303,22 +299,8 @@ std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp )
 }
 
 // creator methods
-// XRW TEMP std::string
-// XRW TEMP DockMCMProtocolCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DockMCMProtocol::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DockMCMProtocolCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DockMCMProtocol >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DockMCMProtocol::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DockMCMProtocol";
-// XRW TEMP }
 
 std::string DockMCMProtocol::get_name() const {
 	return mover_name();

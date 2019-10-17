@@ -108,9 +108,6 @@ void StructPerturberCM::apply( core::pose::Pose& pose ){
 	}
 }
 
-// XRW TEMP std::string StructPerturberCM::get_name() const {
-// XRW TEMP  return "StructPerturberCM";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 StructPerturberCM::clone() const {

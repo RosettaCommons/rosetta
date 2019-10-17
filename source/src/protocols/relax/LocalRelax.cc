@@ -129,20 +129,8 @@ using namespace core;
 static basic::Tracer TR("LocalRelax");
 
 
-// XRW TEMP std::string
-// XRW TEMP LocalRelaxCreator::keyname() const {
-// XRW TEMP  return LocalRelax::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LocalRelaxCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LocalRelax >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LocalRelax::mover_name() {
-// XRW TEMP  return "LocalRelax";
-// XRW TEMP }
 
 
 LocalRelax::LocalRelax() {

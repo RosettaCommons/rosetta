@@ -70,20 +70,8 @@ using namespace chemical;
 using namespace conformation;
 
 
-// XRW TEMP std::string
-// XRW TEMP PerturbRotamerSidechainMoverCreator::keyname() const {
-// XRW TEMP  return PerturbRotamerSidechainMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PerturbRotamerSidechainMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PerturbRotamerSidechainMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PerturbRotamerSidechainMover::mover_name() {
-// XRW TEMP  return "PerturbRotamerSidechain";
-// XRW TEMP }
 
 
 PerturbRotamerSidechainMover::PerturbRotamerSidechainMover() {
@@ -125,10 +113,6 @@ PerturbRotamerSidechainMover::parse_my_tag(
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP PerturbRotamerSidechainMover::get_name() const {
-// XRW TEMP  return "PerturbRotamerSidechainMover";
-// XRW TEMP }
 
 void
 PerturbRotamerSidechainMover::make_chi_move(

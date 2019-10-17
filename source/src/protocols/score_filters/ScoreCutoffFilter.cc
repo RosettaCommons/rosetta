@@ -260,11 +260,7 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 
 }
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP ScoreCutoffFilterCreator::create_filter() const { return utility::pointer::make_shared< ScoreCutoffFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ScoreCutoffFilterCreator::keyname() const { return "ScoreCutoffFilter"; }
 
 std::string ScoreCutoffFilter::name() const {
 	return class_name();

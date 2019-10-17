@@ -100,8 +100,6 @@ ChargeChargeFeatures::ChargeChargeFeatures(
 	distance_cutoff_(src.distance_cutoff_)
 {}
 
-// XRW TEMP string
-// XRW TEMP ChargeChargeFeatures::type_name() const { return "ChargeChargeFeatures"; }
 
 void
 ChargeChargeFeatures::write_schema_to_db(

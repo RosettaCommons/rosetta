@@ -38,11 +38,7 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.ResidueSelectionDistanceFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ResidueSelectionDistanceFilterCreator::create_filter() const { return utility::pointer::make_shared< ResidueSelectionDistanceFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ResidueSelectionDistanceFilterCreator::keyname() const { return "ResidueSelectionDistance"; }
 
 ResidueSelectionDistanceFilter::~ResidueSelectionDistanceFilter()= default;
 

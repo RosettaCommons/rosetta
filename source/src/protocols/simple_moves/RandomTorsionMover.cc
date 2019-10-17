@@ -331,19 +331,10 @@ RandomTorsionMover::parse_my_tag(
 }
 
 /// @brief RandomTorsionMoverCreator interface, name of the mover
-// XRW TEMP std::string RandomTorsionMover::mover_name() {
-// XRW TEMP  return "RandomTorsionMover";
-// XRW TEMP }
 
 /// @brief RandomTorsionMoverCreator interface, returns a unique key name to be used in xml file
-// XRW TEMP std::string RandomTorsionMoverCreator::keyname() const {
-// XRW TEMP  return RandomTorsionMover::mover_name();
-// XRW TEMP }
 
 /// @brief RandomTorsionMoverCreator interface, return a new instance
-// XRW TEMP protocols::moves::MoverOP RandomTorsionMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RandomTorsionMover >();
-// XRW TEMP }
 
 std::string RandomTorsionMover::get_name() const {
 	return mover_name();

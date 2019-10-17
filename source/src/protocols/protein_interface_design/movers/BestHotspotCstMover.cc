@@ -47,22 +47,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.BestHotspotCstMover" );
 
-// XRW TEMP std::string
-// XRW TEMP BestHotspotCstMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return BestHotspotCstMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP BestHotspotCstMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< BestHotspotCstMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BestHotspotCstMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "BestHotspotCst";
-// XRW TEMP }
 
 
 BestHotspotCstMover::BestHotspotCstMover() :
@@ -135,10 +121,6 @@ BestHotspotCstMover::apply( pose::Pose & pose )
 	TR << std::endl;
 }
 
-// XRW TEMP std::string
-// XRW TEMP BestHotspotCstMover::get_name() const {
-// XRW TEMP  return BestHotspotCstMover::mover_name();
-// XRW TEMP }
 
 void BestHotspotCstMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {

@@ -63,17 +63,8 @@ static basic::Tracer TR( "protocols.moves.ContactMap" );
 
 ///////////////////////////////  ContactMapCreator  ///////////////////////////////
 
-// XRW TEMP std::string ContactMapCreator::keyname() const {
-// XRW TEMP  return ContactMap::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP ContactMapCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ContactMap >();
-// XRW TEMP }
 
-// XRW TEMP std::string ContactMap::mover_name() {
-// XRW TEMP  return "ContactMap";
-// XRW TEMP }
 
 
 ///////////////////////////////  ContactMap  ///////////////////////////////
@@ -106,9 +97,6 @@ moves::MoverOP ContactMap::fresh_instance() const {
 	return utility::pointer::make_shared< ContactMap >();
 }
 
-// XRW TEMP std::string ContactMap::get_name() const {
-// XRW TEMP  return ContactMap::mover_name();
-// XRW TEMP }
 
 /// @brief Processes options specified in xml-file and sets up the ContactMap
 void ContactMap::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,

@@ -24,15 +24,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP SmotifFeaturesCreator::SmotifFeaturesCreator() {}
-// XRW TEMP SmotifFeaturesCreator::~SmotifFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP SmotifFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< SmotifFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string SmotifFeaturesCreator::type_name() const {
-// XRW TEMP  return "SmotifFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP SimpleMetricFeaturesCreator::SimpleMetricFeaturesCreator() {}
-// XRW TEMP SimpleMetricFeaturesCreator::~SimpleMetricFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP SimpleMetricFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< SimpleMetricFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string SimpleMetricFeaturesCreator::type_name() const {
-// XRW TEMP  return "SimpleMetricFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

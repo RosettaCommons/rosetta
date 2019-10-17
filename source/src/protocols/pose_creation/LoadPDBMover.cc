@@ -32,22 +32,8 @@ static basic::Tracer TR( "protocols.simple_moves.LoadPDBMover" );
 namespace protocols {
 namespace simple_moves {
 
-// XRW TEMP std::string
-// XRW TEMP LoadPDBMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoadPDBMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoadPDBMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoadPDBMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoadPDBMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LoadPDB";
-// XRW TEMP }
 
 LoadPDBMover::LoadPDBMover()
 : moves::Mover("LoadPDB"),
@@ -71,10 +57,6 @@ LoadPDBMover::apply( Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoadPDBMover::get_name() const {
-// XRW TEMP  return LoadPDBMover::mover_name();
-// XRW TEMP }
 
 moves::MoverOP
 LoadPDBMover::clone() const

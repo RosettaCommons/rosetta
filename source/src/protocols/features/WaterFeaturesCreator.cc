@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP WaterFeaturesCreator::WaterFeaturesCreator() {}
-// XRW TEMP WaterFeaturesCreator::~WaterFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP WaterFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< WaterFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string WaterFeaturesCreator::type_name() const {
-// XRW TEMP  return "WaterFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

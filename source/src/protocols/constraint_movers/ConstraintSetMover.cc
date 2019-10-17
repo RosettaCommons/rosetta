@@ -46,23 +46,8 @@ using namespace scoring;
 using namespace constraints;
 using namespace utility::tag;
 
-// XRW TEMP std::string
-// XRW TEMP ConstraintSetMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ConstraintSetMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ConstraintSetMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< ConstraintSetMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ConstraintSetMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ConstraintSetMover";
-// XRW TEMP }
 
 ConstraintSetMover::ConstraintSetMover()
 : protocols::moves::Mover( ConstraintSetMover::mover_name() )
@@ -237,10 +222,6 @@ void ConstraintSetMover::set_cst_map_file_contents( std::string const & file_con
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP ConstraintSetMover::get_name() const {
-// XRW TEMP  return ConstraintSetMover::mover_name();
-// XRW TEMP }
 
 protocols::moves::MoverOP ConstraintSetMover::clone() const { return utility::pointer::make_shared< protocols::constraint_movers::ConstraintSetMover >( *this ); }
 protocols::moves::MoverOP ConstraintSetMover::fresh_instance() const { return utility::pointer::make_shared< ConstraintSetMover >(); }

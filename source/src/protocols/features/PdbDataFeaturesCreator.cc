@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP PdbDataFeaturesCreator::PdbDataFeaturesCreator() {}
-// XRW TEMP PdbDataFeaturesCreator::~PdbDataFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP PdbDataFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< PdbDataFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string PdbDataFeaturesCreator::type_name() const {
-// XRW TEMP  return "PdbDataFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

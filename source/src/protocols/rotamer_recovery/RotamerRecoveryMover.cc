@@ -23,22 +23,8 @@
 namespace protocols {
 namespace rotamer_recovery {
 
-// XRW TEMP std::string
-// XRW TEMP RotamerRecoveryMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RotamerRecoveryMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP moves::MoverOP
-// XRW TEMP RotamerRecoveryMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RotamerRecoveryMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RotamerRecoveryMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "RotamerRecoveryMover";
-// XRW TEMP }
 
 }
 }
@@ -193,10 +179,6 @@ RotamerRecoveryMover::apply( Pose & pose
 	rotamer_recovery_->run(pose, *scfxn, *packer_task);
 }
 
-// XRW TEMP string
-// XRW TEMP RotamerRecoveryMover::get_name() const {
-// XRW TEMP  return "RotamerRecoveryMover";
-// XRW TEMP }
 
 MoverOP
 RotamerRecoveryMover::fresh_instance() const {

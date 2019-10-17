@@ -47,11 +47,7 @@ using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.simple_filters.DisulfideEntropyFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP DisulfideEntropyFilterCreator::create_filter() const { return utility::pointer::make_shared< DisulfideEntropyFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP DisulfideEntropyFilterCreator::keyname() const { return "DisulfideEntropy"; }
 
 
 //default ctor

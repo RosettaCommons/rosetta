@@ -73,22 +73,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceOnLoop" );
 
-// XRW TEMP std::string
-// XRW TEMP PlaceOnLoopCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PlaceOnLoop::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PlaceOnLoopCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PlaceOnLoop >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PlaceOnLoop::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "PlaceOnLoop";
-// XRW TEMP }
 
 PlaceOnLoop::PlaceOnLoop() :
 	calc_taskop_movers::DesignRepackMover( PlaceOnLoop::mover_name() ),
@@ -270,10 +256,6 @@ PlaceOnLoop::apply( Pose & pose )
 	else set_last_move_status( FAIL_RETRY );
 }
 
-// XRW TEMP std::string
-// XRW TEMP PlaceOnLoop::get_name() const {
-// XRW TEMP  return PlaceOnLoop::mover_name();
-// XRW TEMP }
 
 void
 PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )

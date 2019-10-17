@@ -32,23 +32,9 @@ namespace devel {
 namespace denovo_design {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// XRW TEMP std::string
-// XRW TEMP ConnectJumpsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ConnectJumps::mover_name();
-// XRW TEMP }
 
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ConnectJumpsCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ConnectJumps >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ConnectJumps::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ConnectJumps";
-// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  ConnectJumps main code:
@@ -71,11 +57,6 @@ ConnectJumps::clone() const
 	return utility::pointer::make_shared< ConnectJumps >(*this);
 }
 
-// XRW TEMP std::string
-// XRW TEMP ConnectJumps::get_name() const
-// XRW TEMP {
-// XRW TEMP  return ConnectJumps::mover_name();
-// XRW TEMP }
 
 void ConnectJumps::apply( core::pose::Pose & pose )
 {

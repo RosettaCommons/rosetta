@@ -140,10 +140,6 @@ LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(
 //destructors
 LoopMover_Perturb_QuickCCD::~LoopMover_Perturb_QuickCCD()= default;
 
-// XRW TEMP std::string
-// XRW TEMP LoopMover_Perturb_QuickCCD::get_name() const {
-// XRW TEMP  return "LoopMover_Perturb_QuickCCD";
-// XRW TEMP }
 
 //clone
 protocols::moves::MoverOP LoopMover_Perturb_QuickCCD::clone() const {
@@ -376,15 +372,8 @@ basic::Tracer & LoopMover_Perturb_QuickCCD::tr() const
 	return TR;
 }
 
-// XRW TEMP LoopMover_Perturb_QuickCCDCreator::~LoopMover_Perturb_QuickCCDCreator() {}
 
-// XRW TEMP moves::MoverOP LoopMover_Perturb_QuickCCDCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopMover_Perturb_QuickCCD >();
-// XRW TEMP }
 
-// XRW TEMP std::string LoopMover_Perturb_QuickCCDCreator::keyname() const {
-// XRW TEMP  return "LoopMover_Perturb_QuickCCD";
-// XRW TEMP }
 
 std::string LoopMover_Perturb_QuickCCD::get_name() const {
 	return mover_name();

@@ -87,8 +87,6 @@ using cppdb::statement;
 
 static basic::Tracer tr( "protocols.features.ProteinRMSDFeatures" );
 
-// XRW TEMP string
-// XRW TEMP ProteinRMSDFeatures::type_name() const { return "ProteinRMSDFeatures"; }
 
 
 PoseCOP

@@ -56,20 +56,8 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-// XRW TEMP std::string
-// XRW TEMP ScriptCMCreator::keyname() const {
-// XRW TEMP  return ScriptCM::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ScriptCMCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ScriptCM >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ScriptCM::mover_name() {
-// XRW TEMP  return "ScriptCM";
-// XRW TEMP }
 
 ScriptCM::ScriptCM():
 	ClientMover(),
@@ -160,9 +148,6 @@ claims::EnvClaims ScriptCM::yield_claims( core::pose::Pose const&,
 	return claim_list_;
 }
 
-// XRW TEMP std::string ScriptCM::get_name() const {
-// XRW TEMP  return "ScriptCM("+name()+")";
-// XRW TEMP }
 
 moves::MoverOP ScriptCM::fresh_instance() const {
 	return utility::pointer::make_shared< ScriptCM >();

@@ -400,25 +400,9 @@ moves::MoverOP BackboneTorsionPerturbation::fresh_instance() const {
 	return utility::pointer::make_shared< BackboneTorsionPerturbation >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP BackboneTorsionPerturbation::get_name() const {
-// XRW TEMP  return "BackboneTorsionPerturbation";
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP BackboneTorsionPerturbationCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< BackboneTorsionPerturbation >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BackboneTorsionPerturbationCreator::keyname() const {
-// XRW TEMP  return BackboneTorsionPerturbation::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BackboneTorsionPerturbation::mover_name() {
-// XRW TEMP  return "BackboneTorsionPerturbation";
-// XRW TEMP }
 
 std::string BackboneTorsionPerturbation::get_name() const {
 	return mover_name();

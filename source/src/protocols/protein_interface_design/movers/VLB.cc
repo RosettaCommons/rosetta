@@ -66,22 +66,8 @@ using namespace protocols::forge::components;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.VLB" );
 
-// XRW TEMP std::string
-// XRW TEMP VLBCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return VLB::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP VLBCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< VLB >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP VLB::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "VLB";
-// XRW TEMP }
 
 VLB::VLB() :
 	protocols::moves::Mover( VLB::mover_name() )
@@ -122,10 +108,6 @@ VLB::apply( pose::Pose & pose ) {
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP VLB::get_name() const {
-// XRW TEMP  return VLB::mover_name();
-// XRW TEMP }
 
 protocols::moves::MoverOP VLB::clone() const {
 	return( utility::pointer::make_shared< VLB >( *this ));

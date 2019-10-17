@@ -226,11 +226,7 @@ SSElementLengthFilter::parse_my_tag(
 
 }
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP SSElementLengthFilterCreator::create_filter() const { return protocols::filters::FilterOP(new SSElementLengthFilter); }
 
-// XRW TEMP std::string
-// XRW TEMP SSElementLengthFilterCreator::keyname() const { return "SSBisectddGFilter"; }
 
 std::string SSElementLengthFilter::name() const {
 	return class_name();

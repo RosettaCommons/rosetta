@@ -61,23 +61,8 @@ static basic::Tracer TR( "protocols.enzdes.EnzRepackMinimize" );
 namespace protocols {
 namespace enzdes {
 
-// XRW TEMP std::string
-// XRW TEMP EnzRepackMinimizeCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return EnzRepackMinimize::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP EnzRepackMinimizeCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< EnzRepackMinimize >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP EnzRepackMinimize::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "EnzRepackMinimize";
-// XRW TEMP }
 
 EnzRepackMinimize::EnzRepackMinimize() :
 	protocols::moves::Mover( "EnzRepackMinimize" ),

@@ -59,20 +59,8 @@
 namespace protocols {
 namespace canonical_sampling {
 
-// XRW TEMP std::string
-// XRW TEMP MetricRecorderCreator::keyname() const {
-// XRW TEMP  return MetricRecorder::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MetricRecorderCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MetricRecorder >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MetricRecorder::mover_name() {
-// XRW TEMP  return "MetricRecorder";
-// XRW TEMP }
 
 MetricRecorder::MetricRecorder() :
 	stride_(1),
@@ -111,11 +99,6 @@ MetricRecorder::fresh_instance() const
 	return utility::pointer::make_shared< MetricRecorder >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP MetricRecorder::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "MetricRecorder";
-// XRW TEMP }
 
 void
 MetricRecorder::parse_my_tag(

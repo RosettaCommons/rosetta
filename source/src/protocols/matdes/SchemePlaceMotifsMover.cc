@@ -50,22 +50,8 @@ using core::pose::Pose;
 
 
 // -------------  Mover Creator -------------
-// XRW TEMP std::string
-// XRW TEMP SchemePlaceMotifsMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SchemePlaceMotifsMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SchemePlaceMotifsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SchemePlaceMotifsMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SchemePlaceMotifsMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SchemePlaceMotifs";
-// XRW TEMP }
 
 // -------------  Mover Creator -------------
 

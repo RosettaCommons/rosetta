@@ -44,11 +44,7 @@ static basic::Tracer TR( "devel.replica_docking.LrmsdFilter" );
 namespace devel {
 namespace replica_docking {
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP LrmsdFilterCreator::create_filter() const { return utility::pointer::make_shared< LrmsdFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP LrmsdFilterCreator::keyname() const { return "Lrmsd"; }
 
 void LrmsdFilter::register_options() {
 	using namespace basic::options;

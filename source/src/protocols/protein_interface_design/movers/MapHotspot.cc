@@ -71,22 +71,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.MapHotspot" );
 
-// XRW TEMP std::string
-// XRW TEMP MapHotspotCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return MapHotspot::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MapHotspotCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MapHotspot >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MapHotspot::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MapHotspot";
-// XRW TEMP }
 
 MapHotspot::MapHotspot() : protocols::moves::Mover( MapHotspot::mover_name() ) {}
 
@@ -285,10 +271,6 @@ MapHotspot::apply( core::pose::Pose & pose ){
 	set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 }
 
-// XRW TEMP std::string
-// XRW TEMP MapHotspot::get_name() const {
-// XRW TEMP  return MapHotspot::mover_name();
-// XRW TEMP }
 
 void
 MapHotspot::parse_my_tag( utility::tag::TagCOP tag,

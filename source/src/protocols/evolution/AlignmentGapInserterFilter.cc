@@ -68,11 +68,7 @@ using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.evolution.AlignmentGapInserter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AlignmentGapInserterFilterCreator::create_filter() const { return utility::pointer::make_shared< AlignmentGapInserter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP AlignmentGapInserterFilterCreator::keyname() const { return "AlignmentGapInserter"; }
 
 //default ctor
 AlignmentGapInserter::AlignmentGapInserter() :

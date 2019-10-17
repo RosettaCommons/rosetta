@@ -406,11 +406,7 @@ SymUnsatHbondFilter::report( std::ostream & out, core::pose::Pose const & pose )
 	out<<"# unsatisfied hbonds: "<< unsat_hbonds<<'\n';
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SymUnsatHbondFilterCreator::create_filter() const { return utility::pointer::make_shared< SymUnsatHbondFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SymUnsatHbondFilterCreator::keyname() const { return "SymUnsatHbonds"; }
 
 std::string SymUnsatHbondFilter::name() const {
 	return class_name();

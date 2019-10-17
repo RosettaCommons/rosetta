@@ -75,22 +75,8 @@ using basic::Error;
 using basic::Warning;
 static basic::Tracer TR( "protocols.simple_moves.ScoreMover" );
 
-// XRW TEMP std::string
-// XRW TEMP ScoreMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ScoreMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ScoreMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ScoreMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ScoreMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ScoreMover";
-// XRW TEMP }
 
 ScoreMover::ScoreMover() :
 	moves::Mover( ScoreMover::mover_name() ),
@@ -191,10 +177,6 @@ ScoreMover::apply( Pose & pose ) {
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP ScoreMover::get_name() const {
-// XRW TEMP  return ScoreMover::mover_name();
-// XRW TEMP }
 
 void ScoreMover::parse_my_tag(
 	TagCOP const tag,

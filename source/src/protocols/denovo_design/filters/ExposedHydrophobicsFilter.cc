@@ -59,22 +59,8 @@ namespace filters {
 
 std::string const ExposedHydrophobicsFilter::hydrophobic_residues_ = "MLIVFAWY";
 
-// XRW TEMP std::string
-// XRW TEMP ExposedHydrophobicsFilterCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ExposedHydrophobicsFilter::class_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ExposedHydrophobicsFilterCreator::create_filter() const {
-// XRW TEMP  return utility::pointer::make_shared< ExposedHydrophobicsFilter >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ExposedHydrophobicsFilter::class_name()
-// XRW TEMP {
-// XRW TEMP  return "ExposedHydrophobics";
-// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  ExposedHydrophobicsFilter main code:

@@ -60,22 +60,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.ShoveResidueMover" );
 
-// XRW TEMP std::string
-// XRW TEMP ShoveResidueMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ShoveResidueMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ShoveResidueMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ShoveResidueMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ShoveResidueMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ShoveResidueMover";
-// XRW TEMP }
 
 
 ShoveResidueMover::ShoveResidueMover() :
@@ -115,10 +101,6 @@ ShoveResidueMover::apply ( pose::Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP ShoveResidueMover::get_name() const {
-// XRW TEMP  return ShoveResidueMover::mover_name();
-// XRW TEMP }
 
 void
 ShoveResidueMover::parse_my_tag( TagCOP const tag,

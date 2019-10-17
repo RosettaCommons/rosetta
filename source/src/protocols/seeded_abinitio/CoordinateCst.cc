@@ -66,22 +66,8 @@ using namespace protocols::moves;
 static basic::Tracer TR( "protocols.seeded_abinitio.CoordinateCst" );
 static basic::Tracer TR_debug( "CoordinateCst.Debug" );
 
-// XRW TEMP std::string
-// XRW TEMP CoordinateCstCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CoordinateCst::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CoordinateCstCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CoordinateCst >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CoordinateCst::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "CoordinateCst";
-// XRW TEMP }
 
 CoordinateCst::~CoordinateCst() = default;
 
@@ -276,10 +262,6 @@ CoordinateCst::apply( pose::Pose & pose )
 }//end apply
 
 
-// XRW TEMP std::string
-// XRW TEMP CoordinateCst::get_name() const {
-// XRW TEMP  return CoordinateCst::mover_name();
-// XRW TEMP }
 
 
 void

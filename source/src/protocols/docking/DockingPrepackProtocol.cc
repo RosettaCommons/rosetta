@@ -275,27 +275,10 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 	//pose.dump_pdb( basename + ".prepack.pdb" ); //SSRB:Taking out .prepack.pdb because JD2 already handles the output
 }
 
-// XRW TEMP std::string DockingPrepackProtocol::get_name() const {
-// XRW TEMP  return "DockingPrepackProtocol";
-// XRW TEMP }
 
 // creator methods
-// XRW TEMP std::string
-// XRW TEMP DockingPrepackProtocolCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DockingPrepackProtocol::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DockingPrepackProtocolCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DockingPrepackProtocol >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DockingPrepackProtocol::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DockingPrepackProtocol";
-// XRW TEMP }
 
 std::string DockingPrepackProtocol::get_name() const {
 	return mover_name();

@@ -143,26 +143,9 @@ void DockMinMover::apply( core::pose::Pose & pose ) {
 }
 
 // creator methods
-// XRW TEMP std::string DockMinMover::get_name() const {
-// XRW TEMP  return "DockMinMover";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DockMinMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DockMinMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DockMinMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DockMinMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DockMinMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DockMinMover";
-// XRW TEMP }
 
 std::string DockMinMover::get_name() const {
 	return mover_name();

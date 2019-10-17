@@ -61,10 +61,6 @@ JobDataFeatures::JobDataFeatures(JobDataFeatures const & ) : protocols::features
 
 JobDataFeatures::~JobDataFeatures() = default;
 
-// XRW TEMP std::string JobDataFeatures::type_name() const
-// XRW TEMP {
-// XRW TEMP  return "JobDataFeatures";
-// XRW TEMP }
 
 void
 JobDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{

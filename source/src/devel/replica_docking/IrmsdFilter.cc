@@ -44,11 +44,7 @@ static basic::Tracer TR( "devel.replica_docking.IrmsdFilter" );
 namespace devel {
 namespace replica_docking {
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP IrmsdFilterCreator::create_filter() const { return utility::pointer::make_shared< IrmsdFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP IrmsdFilterCreator::keyname() const { return "Irms"; }
 
 void IrmsdFilter::register_options() {
 	using namespace basic::options;

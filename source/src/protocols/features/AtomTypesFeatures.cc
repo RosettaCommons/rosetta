@@ -65,8 +65,6 @@ AtomTypesFeatures::AtomTypesFeatures() = default;
 
 AtomTypesFeatures::~AtomTypesFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP AtomTypesFeatures::type_name() const { return "AtomTypesFeatures"; }
 
 void
 AtomTypesFeatures::write_schema_to_db(

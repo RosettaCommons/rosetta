@@ -81,9 +81,6 @@ void ExtendedPoseMover::apply(core::pose::Pose& pose) {
 	}
 }
 
-// XRW TEMP std::string ExtendedPoseMover::get_name() const {
-// XRW TEMP  return "ExtendedPoseMover";
-// XRW TEMP }
 
 const std::string& ExtendedPoseMover::sequence() const {
 	return sequence_;

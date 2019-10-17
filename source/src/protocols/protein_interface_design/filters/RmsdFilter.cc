@@ -517,11 +517,7 @@ utility::vector1< numeric::xyzVector< core::Real > >Ca_coords( core::pose::Pose 
 	return coords;
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP RmsdFilterCreator::create_filter() const { return utility::pointer::make_shared< RmsdFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP RmsdFilterCreator::keyname() const { return "Rmsd"; }
 
 std::string RmsdFilter::name() const {
 	return class_name();

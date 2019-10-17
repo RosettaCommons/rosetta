@@ -845,10 +845,6 @@ void LoopMover_Refine_KIC::apply(
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoopMover_Refine_KIC::get_name() const {
-// XRW TEMP  return "LoopMover_Refine_KIC";
-// XRW TEMP }
 
 void
 LoopMover_Refine_KIC::show(std::ostream & output) const
@@ -948,15 +944,8 @@ basic::Tracer & LoopMover_Refine_KIC::tr() const
 	return TR;
 }
 
-// XRW TEMP LoopMover_Refine_KICCreator::~LoopMover_Refine_KICCreator() {}
 
-// XRW TEMP moves::MoverOP LoopMover_Refine_KICCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopMover_Refine_KIC >();
-// XRW TEMP }
 
-// XRW TEMP std::string LoopMover_Refine_KICCreator::keyname() const {
-// XRW TEMP  return "LoopMover_Refine_KIC";
-// XRW TEMP }
 
 std::string LoopMover_Refine_KIC::get_name() const {
 	return mover_name();

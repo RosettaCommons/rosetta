@@ -46,23 +46,8 @@ namespace protocols {
 namespace forge {
 namespace constraints {
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP InvrotTreeCstGeneratorCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< InvrotTreeRCG >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP InvrotTreeCstGeneratorCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return InvrotTreeRCG::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP InvrotTreeRCG::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "InvrotTreeCstGenerator";
-// XRW TEMP }
 
 InvrotTreeRCG::InvrotTreeRCG()
 : RemodelConstraintGenerator(),
@@ -111,11 +96,6 @@ InvrotTreeRCG::parse_my_tag( TagCOP const tag,
 	set_add_ligand_to_pose( tag->getOption<bool>( "add_ligand_to_pose", add_ligand_to_pose_ ) );
 }
 
-// XRW TEMP std::string
-// XRW TEMP InvrotTreeRCG::get_name() const
-// XRW TEMP {
-// XRW TEMP  return InvrotTreeRCG::mover_name();
-// XRW TEMP }
 
 protocols::moves::MoverOP
 InvrotTreeRCG::fresh_instance() const

@@ -73,22 +73,8 @@ static basic::Tracer TR( "devel.denovo_design.RestrictRegion" );
 namespace devel {
 namespace denovo_design {
 
-// XRW TEMP std::string
-// XRW TEMP RestrictRegionCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RestrictRegion::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RestrictRegionCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RestrictRegion >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RestrictRegion::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "RestrictRegion";
-// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  RestrictRegion main code:
@@ -206,11 +192,6 @@ RestrictRegion::parse_my_tag(
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP RestrictRegion::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "RestrictRegion";
-// XRW TEMP }
 
 /// @brief Does the RestrictRegion moves
 void

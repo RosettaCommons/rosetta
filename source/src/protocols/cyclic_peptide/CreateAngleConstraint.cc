@@ -126,27 +126,9 @@ CreateAngleConstraint::parse_my_tag(
 moves::MoverOP CreateAngleConstraint::clone() const { return utility::pointer::make_shared< CreateAngleConstraint >( *this ); }
 moves::MoverOP CreateAngleConstraint::fresh_instance() const { return utility::pointer::make_shared< CreateAngleConstraint >(); }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CreateAngleConstraintCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CreateAngleConstraint >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CreateAngleConstraintCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CreateAngleConstraint::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CreateAngleConstraint::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "CreateAngleConstraint";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CreateAngleConstraint::get_name() const {
-// XRW TEMP  return "CreateAngleConstraint";
-// XRW TEMP }
 
 std::string CreateAngleConstraint::get_name() const {
 	return mover_name();

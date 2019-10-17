@@ -152,20 +152,8 @@ static basic::Tracer TR( "protocols.hybridization.CartesianSampler" );
 
 /////////////
 // creator
-// XRW TEMP std::string
-// XRW TEMP CartesianSamplerCreator::keyname() const {
-// XRW TEMP  return CartesianSampler::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CartesianSamplerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CartesianSampler >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CartesianSampler::mover_name() {
-// XRW TEMP  return "CartesianSampler";
-// XRW TEMP }
 
 ////////////
 

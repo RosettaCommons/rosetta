@@ -647,17 +647,7 @@ ThermalSamplingMover::clone() const
 	return utility::pointer::make_shared< ThermalSamplingMover >( *this );
 }
 
-// XRW TEMP std::string
-// XRW TEMP ThermalSamplingMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return ThermalSamplingMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ThermalSamplingMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ThermalSamplingMover";
-// XRW TEMP }
 
 void
 ThermalSamplingMover::show( std::ostream & output ) const
@@ -674,17 +664,7 @@ operator<<( std::ostream & os, ThermalSamplingMover const & mover )
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ThermalSamplingMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< ThermalSamplingMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ThermalSamplingMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ThermalSamplingMover::mover_name();
-// XRW TEMP }
 
 std::string ThermalSamplingMover::get_name() const {
 	return mover_name();

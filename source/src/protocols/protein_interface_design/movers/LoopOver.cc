@@ -36,22 +36,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.LoopOver" );
 
-// XRW TEMP std::string
-// XRW TEMP LoopOverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoopOver::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoopOverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopOver >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoopOver::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LoopOver";
-// XRW TEMP }
 
 LoopOver::LoopOver():
 	protocols::moves::Mover( LoopOver::mover_name() ),
@@ -115,10 +101,6 @@ LoopOver::apply( core::pose::Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoopOver::get_name() const {
-// XRW TEMP  return LoopOver::mover_name();
-// XRW TEMP }
 
 void
 LoopOver::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &filters, protocols::moves::Movers_map const &movers, core::pose::Pose const & )

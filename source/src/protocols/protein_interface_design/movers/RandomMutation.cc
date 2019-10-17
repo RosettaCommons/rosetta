@@ -49,22 +49,8 @@ using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.RandomMutation" );
 
-// XRW TEMP std::string
-// XRW TEMP RandomMutationCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RandomMutation::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RandomMutationCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RandomMutation >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RandomMutation::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "RandomMutation";
-// XRW TEMP }
 
 RandomMutation::RandomMutation() :
 	Mover( RandomMutation::mover_name() ),
@@ -147,10 +133,6 @@ RandomMutation::apply( core::pose::Pose & pose )
 	(*scorefxn())(pose);
 }
 
-// XRW TEMP std::string
-// XRW TEMP RandomMutation::get_name() const {
-// XRW TEMP  return RandomMutation::mover_name();
-// XRW TEMP }
 
 void
 RandomMutation::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )

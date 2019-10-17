@@ -32,11 +32,7 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.SequenceDistance" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SequenceDistanceFilterCreator::create_filter() const { return utility::pointer::make_shared< SequenceDistance >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SequenceDistanceFilterCreator::keyname() const { return "SequenceDistance"; }
 
 //default ctor
 SequenceDistance::SequenceDistance() :

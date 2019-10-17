@@ -69,17 +69,7 @@ MakeAsymmetricStructureDataMover::fresh_instance() const
 	return utility::pointer::make_shared< MakeAsymmetricStructureDataMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP MakeAsymmetricStructureDataMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return MakeAsymmetricStructureDataMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MakeAsymmetricStructureDataMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MakeAsymmetricStructureDataMover";
-// XRW TEMP }
 
 void
 MakeAsymmetricStructureDataMover::show( std::ostream & output ) const
@@ -139,17 +129,7 @@ MakeAsymmetricStructureDataMover::apply( core::pose::Pose & pose )
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MakeAsymmetricStructureDataMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< MakeAsymmetricStructureDataMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MakeAsymmetricStructureDataMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return MakeAsymmetricStructureDataMover::mover_name();
-// XRW TEMP }
 
 std::string MakeAsymmetricStructureDataMover::get_name() const {
 	return mover_name();

@@ -49,22 +49,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.RepackMinimize" );
 
-// XRW TEMP std::string
-// XRW TEMP RepackMinimizeCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RepackMinimize::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RepackMinimizeCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RepackMinimize >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RepackMinimize::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "RepackMinimize";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 RepackMinimize::clone() const {
@@ -138,10 +124,6 @@ RepackMinimize::apply( pose::Pose & pose )
 	(*scorefxn_minimize_)( pose );
 }
 
-// XRW TEMP std::string
-// XRW TEMP RepackMinimize::get_name() const {
-// XRW TEMP  return RepackMinimize::mover_name();
-// XRW TEMP }
 
 
 void

@@ -45,21 +45,9 @@ namespace qsar {
 
 static basic::Tracer TR( "protocols.qsar.RenderGridsToKinemage" );
 
-// XRW TEMP std::string RenderGridsToKinemageCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RenderGridsToKinemage::mover_name();
-// XRW TEMP }
 
 
-// XRW TEMP moves::MoverOP RenderGridsToKinemageCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< RenderGridsToKinemage >();
-// XRW TEMP }
 
-// XRW TEMP std::string RenderGridsToKinemage::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "RenderGridsToKinemage";
-// XRW TEMP }
 
 ColorGradient::ColorGradient(numeric::xyzVector<core::Real> const & value,
 	core::Real const & lower,
@@ -94,10 +82,6 @@ protocols::moves::MoverOP RenderGridsToKinemage::clone() const
 	return utility::pointer::make_shared< RenderGridsToKinemage >(*this);
 }
 
-// XRW TEMP std::string RenderGridsToKinemage::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "RenderGridsToKinemage";
-// XRW TEMP }
 
 
 void RenderGridsToKinemage::apply(core::pose::Pose & pose)

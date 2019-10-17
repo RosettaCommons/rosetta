@@ -30,20 +30,8 @@ namespace simple_moves {
 
 static basic::Tracer TR( "protocols.simple_moves.AddJobPairData" );
 
-// XRW TEMP std::string AddJobPairDataCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AddJobPairData::mover_name();
-// XRW TEMP }
 
-// XRW TEMP moves::MoverOP AddJobPairDataCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< AddJobPairData >();
-// XRW TEMP }
 
-// XRW TEMP std::string AddJobPairData::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AddJobPairData";
-// XRW TEMP }
 
 AddJobPairData::AddJobPairData() :
 	string_key_(""),
@@ -91,10 +79,6 @@ void AddJobPairData::apply( Pose & pose)
 	}
 }
 
-// XRW TEMP std::string AddJobPairData::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "AddJobPairData";
-// XRW TEMP }
 
 moves::MoverOP AddJobPairData::clone() const
 {

@@ -88,20 +88,8 @@ namespace protocols {
 namespace canonical_sampling {
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP HamiltonianExchangeCreator::keyname() const {
-// XRW TEMP  return HamiltonianExchange::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP HamiltonianExchangeCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< HamiltonianExchange >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP HamiltonianExchange::mover_name() {
-// XRW TEMP  return "HamiltonianExchange";
-// XRW TEMP }
 
 HamiltonianExchange::HamiltonianExchange() :
 	exchange_grid_dimension_( 1 ),
@@ -145,11 +133,6 @@ HamiltonianExchange& HamiltonianExchange::operator=( HamiltonianExchange const& 
 HamiltonianExchange::~HamiltonianExchange() = default;
 
 
-// XRW TEMP std::string
-// XRW TEMP HamiltonianExchange::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "HamiltonianExchange";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 HamiltonianExchange::clone() const

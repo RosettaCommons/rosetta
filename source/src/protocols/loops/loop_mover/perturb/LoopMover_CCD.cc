@@ -143,10 +143,6 @@ LoopMover_Perturb_CCD::LoopMover_Perturb_CCD(
 //destructor
 LoopMover_Perturb_CCD::~LoopMover_Perturb_CCD() = default;
 
-// XRW TEMP std::string
-// XRW TEMP LoopMover_Perturb_CCD::get_name() const {
-// XRW TEMP  return "LoopMover_Perturb_CCD";
-// XRW TEMP }
 
 void
 LoopMover_Perturb_CCD::show(std::ostream & output) const
@@ -459,15 +455,8 @@ basic::Tracer & LoopMover_Perturb_CCD::tr() const
 	return TR;
 }
 
-// XRW TEMP LoopMover_Perturb_CCDCreator::~LoopMover_Perturb_CCDCreator() {}
 
-// XRW TEMP moves::MoverOP LoopMover_Perturb_CCDCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopMover_Perturb_CCD >();
-// XRW TEMP }
 
-// XRW TEMP std::string LoopMover_Perturb_CCDCreator::keyname() const {
-// XRW TEMP  return "LoopMover_Perturb_CCD";
-// XRW TEMP }
 
 std::string LoopMover_Perturb_CCD::get_name() const {
 	return mover_name();

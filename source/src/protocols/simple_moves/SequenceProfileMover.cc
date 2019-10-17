@@ -68,10 +68,6 @@ SequenceProfileMover::apply( core::pose::Pose & pose )
 	TR << "Added sequence profile constraints specified in file " << cst_file_name_ << "." << std::endl;
 }
 
-// XRW TEMP std::string
-// XRW TEMP SequenceProfileMover::get_name() const {
-// XRW TEMP  return SequenceProfileMover::mover_name();
-// XRW TEMP }
 
 protocols::moves::MoverOP
 SequenceProfileMover::clone() const{
@@ -108,22 +104,8 @@ SequenceProfileMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
 	TR << "Changed all scorefxns to have profile weights of " << profile_wgt_ << std::endl;
 } //end parse_my_tag
 
-// XRW TEMP std::string
-// XRW TEMP SequenceProfileMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SequenceProfileMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SequenceProfileMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SequenceProfileMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SequenceProfileMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "profile";
-// XRW TEMP }
 
 std::string SequenceProfileMover::get_name() const {
 	return mover_name();

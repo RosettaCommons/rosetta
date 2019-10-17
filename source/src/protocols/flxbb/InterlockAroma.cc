@@ -54,22 +54,8 @@ namespace protocols {
 namespace flxbb {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// XRW TEMP std::string
-// XRW TEMP InterlockAromaCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return InterlockAroma::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP InterlockAromaCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< InterlockAroma >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP InterlockAroma::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "InterlockAroma";
-// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 InterlockAroma::InterlockAroma() :
@@ -222,10 +208,6 @@ InterlockAroma::apply( Pose & pose )
 
 } // InterlockAroma::apply
 
-// XRW TEMP std::string
-// XRW TEMP InterlockAroma::get_name() const {
-// XRW TEMP  return InterlockAroma::mover_name();
-// XRW TEMP }
 
 /// @brief parse xml
 void

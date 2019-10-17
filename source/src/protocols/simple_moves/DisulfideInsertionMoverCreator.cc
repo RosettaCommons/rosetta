@@ -23,17 +23,7 @@
 namespace protocols {
 namespace simple_moves {
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DisulfideInsertionMoverCreator::create_mover() const {
-// XRW TEMP  core::Size const DEFAULT_CHAIN = 1;
-// XRW TEMP  protocols::moves::MoverOP mover( new protocols::simple_moves::DisulfideInsertionMover(DEFAULT_CHAIN) );
-// XRW TEMP  return mover;
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DisulfideInsertionMoverCreator::keyname() const {
-// XRW TEMP  return "DisulfideInsertion";
-// XRW TEMP }
 
 } //namespace simple_moves
 } //namespace protocols

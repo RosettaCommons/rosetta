@@ -49,22 +49,8 @@ namespace splice {
 
 using namespace::protocols;
 
-// XRW TEMP std::string
-// XRW TEMP RBOutMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RBOutMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RBOutMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RBOutMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RBOutMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "RBOut";
-// XRW TEMP }
 
 RBOutMover::RBOutMover(): moves::Mover("RBOut")
 {}
@@ -195,10 +181,6 @@ RBOutMover::apply( Pose & pose )
 	TR<<"Wrote jump info: "<<pose_disulf_jump<<source_pdb_name<<std::endl;
 }
 
-// XRW TEMP std::string
-// XRW TEMP RBOutMover::get_name() const {
-// XRW TEMP  return RBOutMover::mover_name();
-// XRW TEMP }
 
 moves::MoverOP
 RBOutMover::clone() const

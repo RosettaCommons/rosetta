@@ -119,22 +119,10 @@ VisualizeEmbeddingMover::fresh_instance() const {
 }
 
 /// @brief Create a new copy of this mover
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP VisualizeEmbeddingMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< VisualizeEmbeddingMover >();
-// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-// XRW TEMP std::string
-// XRW TEMP VisualizeEmbeddingMoverCreator::keyname() const {
-// XRW TEMP  return VisualizeEmbeddingMover::mover_name();
-// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-// XRW TEMP std::string
-// XRW TEMP VisualizeEmbeddingMover::mover_name() {
-// XRW TEMP  return "VisualizeEmbeddingMover";
-// XRW TEMP }
 
 /////////////////////
 /// Mover Methods ///
@@ -217,10 +205,6 @@ VisualizeEmbeddingMover::apply( core::pose::Pose & pose ) {
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP VisualizeEmbeddingMover::get_name() const {
-// XRW TEMP  return "VisualizeEmbeddingMover";
-// XRW TEMP }
 
 //////////////////////
 /// Helper Methods ///

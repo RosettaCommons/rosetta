@@ -86,17 +86,7 @@ SetResidueAliasMover::fresh_instance() const
 	return utility::pointer::make_shared< SetResidueAliasMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP SetResidueAliasMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return SetResidueAliasMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetResidueAliasMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SetResidueAlias";
-// XRW TEMP }
 
 void
 SetResidueAliasMover::show( std::ostream & output ) const
@@ -138,17 +128,7 @@ SetResidueAliasMover::apply( core::pose::Pose & pose )
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetResidueAliasMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< SetResidueAliasMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetResidueAliasMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SetResidueAliasMover::mover_name();
-// XRW TEMP }
 
 std::string SetResidueAliasMover::get_name() const {
 	return mover_name();

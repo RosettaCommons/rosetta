@@ -130,11 +130,7 @@ StubScoreFilter::clone() const{
 	return utility::pointer::make_shared< StubScoreFilter >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP StubScoreFilterCreator::create_filter() const { return utility::pointer::make_shared< StubScoreFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP StubScoreFilterCreator::keyname() const { return "StubScore"; }
 
 std::string StubScoreFilter::name() const {
 	return class_name();

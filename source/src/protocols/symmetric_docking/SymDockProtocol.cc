@@ -604,10 +604,6 @@ SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP SymDockProtocol::get_name() const {
-// XRW TEMP  return "SymDockProtocol";
-// XRW TEMP }
 
 
 core::Real
@@ -791,22 +787,8 @@ SymDockProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 }//end parse_my_tag
 
 
-// XRW TEMP std::string
-// XRW TEMP SymDockProtocolCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SymDockProtocol::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SymDockProtocolCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SymDockProtocol >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SymDockProtocol::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SymDockProtocol";
-// XRW TEMP }
 
 std::string SymDockProtocol::get_name() const {
 	return mover_name();

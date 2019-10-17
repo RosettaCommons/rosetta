@@ -56,22 +56,8 @@ using namespace protocols::scoring;
 
 static basic::Tracer tr( "devel.replica_docking.AddEncounterConstraintMover" );
 
-// XRW TEMP std::string
-// XRW TEMP AddEncounterConstraintMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AddEncounterConstraintMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP moves::MoverOP
-// XRW TEMP AddEncounterConstraintMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AddEncounterConstraintMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AddEncounterConstraintMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AddEncounterConstraintMover";
-// XRW TEMP }
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -105,10 +91,6 @@ AddEncounterConstraintMover::apply(pose::Pose& pose){
 	tr.Debug << "Encounter constraints have been applied" << std::endl;
 }
 
-// XRW TEMP std::string
-// XRW TEMP AddEncounterConstraintMover::get_name() const {
-// XRW TEMP  return AddEncounterConstraintMover::mover_name();
-// XRW TEMP }
 
 void
 AddEncounterConstraintMover::parse_my_tag(

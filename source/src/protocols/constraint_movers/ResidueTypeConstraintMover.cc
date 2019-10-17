@@ -43,22 +43,8 @@ using namespace constraints;
 
 using namespace utility::tag;
 
-// XRW TEMP std::string
-// XRW TEMP ResidueTypeConstraintMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ResidueTypeConstraintMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ResidueTypeConstraintMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ResidueTypeConstraintMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ResidueTypeConstraintMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ResidueTypeConstraintMover";
-// XRW TEMP }
 
 // constructors
 ResidueTypeConstraintMover::ResidueTypeConstraintMover()
@@ -86,10 +72,6 @@ ResidueTypeConstraintMover::apply( Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP ResidueTypeConstraintMover::get_name() const {
-// XRW TEMP  return ResidueTypeConstraintMover::mover_name();
-// XRW TEMP }
 
 protocols::moves::MoverOP ResidueTypeConstraintMover::clone() const { return utility::pointer::make_shared< protocols::constraint_movers::ResidueTypeConstraintMover >( *this ); }
 protocols::moves::MoverOP ResidueTypeConstraintMover::fresh_instance() const { return utility::pointer::make_shared< ResidueTypeConstraintMover >(); }

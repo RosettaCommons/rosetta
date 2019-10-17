@@ -48,11 +48,7 @@ using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.simple_filters.ResidueCountFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ResidueCountFilterCreator::create_filter() const { return utility::pointer::make_shared< ResidueCountFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ResidueCountFilterCreator::keyname() const { return "ResidueCount"; }
 
 //default ctor
 ResidueCountFilter::ResidueCountFilter() :

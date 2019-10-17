@@ -41,22 +41,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.SetupHotspotConstraintsMover" );
 
-// XRW TEMP std::string
-// XRW TEMP SetupHotspotConstraintsMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SetupHotspotConstraintsMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetupHotspotConstraintsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetupHotspotConstraintsMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetupHotspotConstraintsMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SetupHotspotConstraints";
-// XRW TEMP }
 
 SetupHotspotConstraintsMover::SetupHotspotConstraintsMover() :
 	protocols::moves::Mover( "SetupHotspotConstraintsMover" ),
@@ -140,10 +126,6 @@ SetupHotspotConstraintsMover::apply( core::pose::Pose & pose ) {
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP SetupHotspotConstraintsMover::get_name() const {
-// XRW TEMP  return "SetupHotspotConstraintsMover";
-// XRW TEMP }
 
 /// This needs to be parsed before all other movers b/c it changes scorefxns
 void

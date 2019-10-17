@@ -106,8 +106,6 @@ using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowDataBaseOP;
 using basic::database::insert_statement_generator::RowData;
 
-// XRW TEMP string
-// XRW TEMP PoseConformationFeatures::type_name() const { return "PoseConformationFeatures"; }
 
 void
 PoseConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{

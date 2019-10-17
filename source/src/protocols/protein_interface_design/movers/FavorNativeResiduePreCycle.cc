@@ -34,26 +34,10 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.FavorNativeResiduePreCycle" );
 
-// XRW TEMP std::string FavorNativeResiduePreCycleCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FavorNativeResiduePreCycle::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FavorNativeResiduePreCycleCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FavorNativeResiduePreCycle >();
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP FavorNativeResiduePreCycle::mover_name() {
-// XRW TEMP  return "FavorNativeResidue";
-// XRW TEMP }
 
 
-// XRW TEMP std::string
-// XRW TEMP FavorNativeResiduePreCycle::get_name() const {
-// XRW TEMP  return "FavorNativeResidue";
-// XRW TEMP }
+
+
 
 FavorNativeResiduePreCycle::~FavorNativeResiduePreCycle() = default;
 

@@ -56,20 +56,8 @@ using namespace core;
 /// creator
 
 
-// XRW TEMP std::string
-// XRW TEMP MakeStarTopologyMoverCreator::keyname() const {
-// XRW TEMP  return MakeStarTopologyMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MakeStarTopologyMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MakeStarTopologyMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MakeStarTopologyMover::mover_name() {
-// XRW TEMP  return "MakeStarTopology";
-// XRW TEMP }
 
 
 //////////////////

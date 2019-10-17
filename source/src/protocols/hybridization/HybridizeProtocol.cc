@@ -191,20 +191,8 @@ using namespace protocols::loops;
 
 /////////////
 // creator
-// XRW TEMP std::string
-// XRW TEMP HybridizeProtocolCreator::keyname() const {
-// XRW TEMP  return HybridizeProtocol::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP HybridizeProtocolCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< HybridizeProtocol >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP HybridizeProtocol::mover_name() {
-// XRW TEMP  return "Hybridize";
-// XRW TEMP }
 
 
 /////////////
@@ -1915,10 +1903,6 @@ HybridizeProtocol::do_intrastage_docking(core::pose::Pose & pose) {
 protocols::moves::MoverOP HybridizeProtocol::clone() const { return utility::pointer::make_shared< HybridizeProtocol >( *this ); }
 protocols::moves::MoverOP HybridizeProtocol::fresh_instance() const { return utility::pointer::make_shared< HybridizeProtocol >(); }
 
-// XRW TEMP std::string
-// XRW TEMP HybridizeProtocol::get_name() const {
-// XRW TEMP  return "HybridizeProtocol";
-// XRW TEMP }
 
 void
 HybridizeProtocol::parse_my_tag(

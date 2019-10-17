@@ -155,11 +155,7 @@ void AtomicContactFilter::parse_my_tag( utility::tag::TagCOP tag,
 	TR<<"AtomicContact filter between residues "<<residue1_<<" and "<<get_resid()<<" with distance cutoff of "<<distance_<<std::endl;
 }
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP AtomicContactFilterCreator::create_filter() const { return utility::pointer::make_shared< AtomicContactFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP AtomicContactFilterCreator::keyname() const { return "AtomicContact"; }
 
 std::string AtomicContactFilter::name() const {
 	return class_name();

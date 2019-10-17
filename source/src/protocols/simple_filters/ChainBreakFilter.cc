@@ -31,11 +31,7 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.ChainBreak" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ChainBreakFilterCreator::create_filter() const { return utility::pointer::make_shared< ChainBreak >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ChainBreakFilterCreator::keyname() const { return "ChainBreak"; }
 
 //default ctor
 ChainBreak::ChainBreak() :

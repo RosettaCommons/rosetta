@@ -69,22 +69,8 @@ namespace ligand_docking {
 
 static basic::Tracer minimize_backbone_tracer( "protocols.ligand_docking.ligand_options.MinimizeBackbone", basic::t_debug );
 
-// XRW TEMP std::string
-// XRW TEMP MinimizeBackboneCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return MinimizeBackbone::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MinimizeBackboneCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MinimizeBackbone >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MinimizeBackbone::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MinimizeBackbone";
-// XRW TEMP }
 
 MinimizeBackbone::MinimizeBackbone():
 	protocols::moves::Mover(),
@@ -108,9 +94,6 @@ protocols::moves::MoverOP MinimizeBackbone::fresh_instance() const {
 	return utility::pointer::make_shared< MinimizeBackbone >();
 }
 
-// XRW TEMP std::string MinimizeBackbone::get_name() const{
-// XRW TEMP  return "MinimizeBackbone";
-// XRW TEMP }
 
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void

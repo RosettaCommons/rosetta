@@ -81,20 +81,8 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-// XRW TEMP std::string
-// XRW TEMP FragmentJumpCMCreator::keyname() const {
-// XRW TEMP  return FragmentJumpCM::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FragmentJumpCMCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FragmentJumpCM >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FragmentJumpCM::mover_name() {
-// XRW TEMP  return "FragmentJumpCM";
-// XRW TEMP }
 
 FragmentJumpCM::FragmentJumpCM():
 	Parent(),
@@ -263,9 +251,6 @@ claims::EnvClaims FragmentJumpCM::build_claims( utility::vector1< bool > const& 
 	return claim_list;
 }
 
-// XRW TEMP std::string FragmentJumpCM::get_name() const {
-// XRW TEMP  return "FragmentJumpCM";
-// XRW TEMP }
 
 void FragmentJumpCM::set_topology( std::string const& ss_info_file,
 	std::string const& pairing_file,

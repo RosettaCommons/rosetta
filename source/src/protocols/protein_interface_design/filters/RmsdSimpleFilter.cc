@@ -362,13 +362,7 @@ void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP tag,
 	}
 }
 
-// XRW TEMP protocols::filters::FilterOP RmsdSimpleFilterCreator::create_filter() const {
-// XRW TEMP  return utility::pointer::make_shared< RmsdSimpleFilter >();
-// XRW TEMP }
 
-// XRW TEMP std::string RmsdSimpleFilterCreator::keyname() const {
-// XRW TEMP  return "RmsdSimple";
-// XRW TEMP }
 
 std::string RmsdSimpleFilter::name() const {
 	return class_name();

@@ -385,11 +385,7 @@ RelativePoseFilter::clone() const{
 	return utility::pointer::make_shared< RelativePoseFilter >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP RelativePoseFilterCreator::create_filter() const { return utility::pointer::make_shared< RelativePoseFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP RelativePoseFilterCreator::keyname() const { return "RelativePose"; }
 
 protocols::moves::MoverOP
 RelativePoseFilter::relax_mover() const{

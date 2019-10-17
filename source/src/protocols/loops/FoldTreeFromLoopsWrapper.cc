@@ -74,10 +74,6 @@ FoldTreeFromLoops::apply( core::pose::Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP FoldTreeFromLoops::get_name() const {
-// XRW TEMP  return FoldTreeFromLoops::mover_name();
-// XRW TEMP }
 
 void
 FoldTreeFromLoops::parse_my_tag(
@@ -111,22 +107,8 @@ LoopsOP FoldTreeFromLoops::loops() const
 	return loops_;
 }
 
-// XRW TEMP std::string
-// XRW TEMP FoldTreeFromLoopsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FoldTreeFromLoops::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FoldTreeFromLoopsCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FoldTreeFromLoops >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FoldTreeFromLoops::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "FoldTreeFromLoops";
-// XRW TEMP }
 
 std::string FoldTreeFromLoops::get_name() const {
 	return mover_name();

@@ -133,20 +133,8 @@ private:
 
 
 // creator
-// XRW TEMP std::string
-// XRW TEMP AbscriptMoverCreator::keyname() const {
-// XRW TEMP  return AbscriptMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AbscriptMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AbscriptMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AbscriptMover::mover_name() {
-// XRW TEMP  return "AbscriptMover";
-// XRW TEMP }
 
 core::scoring::ScoreFunctionOP setup_score( std::string const& scorename,
 	basic::options::FileVectorOptionKey optkey ) {
@@ -523,9 +511,6 @@ void AbscriptMover::add_frags(
 	stage_movers_[ IVb ]->add_submover( claim_smooth, 1.0 );
 }
 
-// XRW TEMP std::string AbscriptMover::get_name() const {
-// XRW TEMP  return "AbscriptMover";
-// XRW TEMP }
 
 void verify_stage_ID( std::map< std::string, StageID > const& id_map, std::string const& id ){
 	if ( id_map.find( id ) == id_map.end() ) {

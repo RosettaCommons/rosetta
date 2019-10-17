@@ -67,22 +67,8 @@ namespace ligand_docking {
 
 static basic::Tracer TR( "protocols.ligand_docking.StartFrom" );
 
-// XRW TEMP std::string
-// XRW TEMP StartFromCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return StartFrom::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP StartFromCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< StartFrom >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP StartFrom::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "StartFrom";
-// XRW TEMP }
 
 /// @brief
 StartFrom::StartFrom():
@@ -105,9 +91,6 @@ protocols::moves::MoverOP StartFrom::fresh_instance() const {
 	return utility::pointer::make_shared< StartFrom >();
 }
 
-// XRW TEMP std::string StartFrom::get_name() const{
-// XRW TEMP  return "StartFrom";
-// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void

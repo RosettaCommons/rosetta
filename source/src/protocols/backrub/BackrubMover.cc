@@ -261,10 +261,6 @@ BackrubMover::apply(
 	update_type();
 }
 
-// XRW TEMP std::string
-// XRW TEMP BackrubMover::get_name() const {
-// XRW TEMP  return "BackrubMover";
-// XRW TEMP }
 
 // /// @details
 // void

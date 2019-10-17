@@ -31,11 +31,7 @@ using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.simple_filters.FileExistFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP FileExistFilterCreator::create_filter() const { return utility::pointer::make_shared< FileExistFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP FileExistFilterCreator::keyname() const { return "FileExist"; }
 
 //default ctor
 FileExistFilter::FileExistFilter() :

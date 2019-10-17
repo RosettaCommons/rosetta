@@ -83,8 +83,6 @@ OrbitalsFeatures::OrbitalsFeatures( OrbitalsFeatures const & ) :
 
 OrbitalsFeatures::~OrbitalsFeatures()= default;
 
-// XRW TEMP string
-// XRW TEMP OrbitalsFeatures::type_name() const { return "OrbitalsFeatures"; }
 void
 OrbitalsFeatures::write_schema_to_db(
 	sessionOP db_session

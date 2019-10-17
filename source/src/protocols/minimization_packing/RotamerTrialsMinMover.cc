@@ -105,10 +105,6 @@ RotamerTrialsMinMover::apply( core::pose::Pose & pose )
 	RTMin.rtmin( pose, *scorefxn_, task(pose) );
 }
 
-// XRW TEMP std::string
-// XRW TEMP RotamerTrialsMinMover::get_name() const {
-// XRW TEMP  return "RotamerTrialsMinMover";
-// XRW TEMP }
 
 void
 RotamerTrialsMinMover::show(std::ostream & output) const
@@ -186,23 +182,8 @@ RotamerTrialsMinMover::clone() const
 	return utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMinMover >( *this );
 }
 
-// XRW TEMP std::string
-// XRW TEMP RotamerTrialsMinMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RotamerTrialsMinMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RotamerTrialsMinMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< RotamerTrialsMinMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RotamerTrialsMinMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "RotamerTrialsMinMover";
-// XRW TEMP }
 
 std::string RotamerTrialsMinMover::get_name() const {
 	return mover_name();

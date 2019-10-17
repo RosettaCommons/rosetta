@@ -88,17 +88,7 @@ FilterReportAsPoseExtraScoresMover::fresh_instance() const
 	return utility::pointer::make_shared< FilterReportAsPoseExtraScoresMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP FilterReportAsPoseExtraScoresMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return FilterReportAsPoseExtraScoresMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FilterReportAsPoseExtraScoresMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "FilterReportAsPoseExtraScoresMover";
-// XRW TEMP }
 
 void
 FilterReportAsPoseExtraScoresMover::show( std::ostream & output ) const
@@ -136,17 +126,7 @@ void FilterReportAsPoseExtraScoresMover::set_report_as( std::string const & repo
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FilterReportAsPoseExtraScoresMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< FilterReportAsPoseExtraScoresMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FilterReportAsPoseExtraScoresMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FilterReportAsPoseExtraScoresMover::mover_name();
-// XRW TEMP }
 
 std::string FilterReportAsPoseExtraScoresMover::get_name() const {
 	return mover_name();

@@ -96,11 +96,6 @@ AddConstraints::fresh_instance() const
 	return utility::pointer::make_shared< AddConstraints >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP AddConstraints::get_name() const
-// XRW TEMP {
-// XRW TEMP  return AddConstraints::mover_name();
-// XRW TEMP }
 
 void
 AddConstraints::apply( core::pose::Pose & pose )
@@ -134,17 +129,7 @@ AddConstraints::add_generator( ConstraintGeneratorCOP cst_generator )
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AddConstraintsCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< AddConstraints >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AddConstraintsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AddConstraints::mover_name();
-// XRW TEMP }
 
 std::string AddConstraints::get_name() const {
 	return mover_name();

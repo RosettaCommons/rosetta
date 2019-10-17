@@ -57,20 +57,8 @@ namespace symmetry {
 static basic::Tracer TZ( "protocols.simple_moves.symmetry.SetupNCSMover" );
 
 // creators
-// XRW TEMP std::string
-// XRW TEMP SetupNCSMoverCreator::keyname() const {
-// XRW TEMP  return SetupNCSMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetupNCSMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetupNCSMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetupNCSMover::mover_name() {
-// XRW TEMP  return "SetupNCS";
-// XRW TEMP }
 
 ////////////////////
 ////////////////////
@@ -377,10 +365,6 @@ void SetupNCSMover::parse_my_tag(
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP SetupNCSMover::get_name() const {
-// XRW TEMP  return SetupNCSMover::mover_name();
-// XRW TEMP }
 
 std::string SetupNCSMover::get_name() const {
 	return mover_name();

@@ -38,13 +38,7 @@ using protocols::loops::loop_closure::kinematic_closure::KinematicMover;
 using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber;
 using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP;
 
-// XRW TEMP protocols::moves::MoverOP LegacyKicSamplerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LegacyKicSampler >();
-// XRW TEMP }
 
-// XRW TEMP std::string LegacyKicSamplerCreator::keyname() const {
-// XRW TEMP  return "LegacyKicSampler";
-// XRW TEMP }
 
 LegacyKicSampler::LegacyKicSampler() {
 

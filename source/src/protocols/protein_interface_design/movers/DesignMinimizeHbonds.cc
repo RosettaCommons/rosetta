@@ -52,22 +52,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.DesignMinimizeHbonds" );
 
-// XRW TEMP std::string
-// XRW TEMP DesignMinimizeHbondsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DesignMinimizeHbonds::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DesignMinimizeHbondsCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DesignMinimizeHbonds >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DesignMinimizeHbonds::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DesignMinimizeHbonds";
-// XRW TEMP }
 
 DesignMinimizeHbonds::DesignMinimizeHbonds() :
 	calc_taskop_movers::DesignRepackMover( DesignMinimizeHbonds::mover_name() )
@@ -268,10 +254,6 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 	TR.flush();
 }
 
-// XRW TEMP std::string
-// XRW TEMP DesignMinimizeHbonds::get_name() const {
-// XRW TEMP  return DesignMinimizeHbonds::mover_name();
-// XRW TEMP }
 
 void
 DesignMinimizeHbonds::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const & filters, Movers_map const & movers, core::pose::Pose const & pose )

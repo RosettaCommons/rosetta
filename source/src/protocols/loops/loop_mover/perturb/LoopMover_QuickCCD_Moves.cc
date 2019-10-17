@@ -98,10 +98,6 @@ LoopMover_Perturb_QuickCCD_Moves::LoopMover_Perturb_QuickCCD_Moves(
 {
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoopMover_Perturb_QuickCCD_Moves::get_name() const {
-// XRW TEMP  return "LoopMover_Perturb_QuickCCD_Moves";
-// XRW TEMP }
 
 LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	core::pose::Pose & pose,
@@ -314,16 +310,9 @@ basic::Tracer & LoopMover_Perturb_QuickCCD_Moves::tr() const
 	return TR;
 }
 
-// XRW TEMP LoopMover_Perturb_QuickCCD_MovesCreator::~LoopMover_Perturb_QuickCCD_MovesCreator() {}
 
 
-// XRW TEMP moves::MoverOP LoopMover_Perturb_QuickCCD_MovesCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopMover_Perturb_QuickCCD_Moves >();
-// XRW TEMP }
 
-// XRW TEMP std::string LoopMover_Perturb_QuickCCD_MovesCreator::keyname() const {
-// XRW TEMP  return "LoopMover_Perturb_QuickCCD_Moves";
-// XRW TEMP }
 
 std::string LoopMover_Perturb_QuickCCD_Moves::get_name() const {
 	return mover_name();

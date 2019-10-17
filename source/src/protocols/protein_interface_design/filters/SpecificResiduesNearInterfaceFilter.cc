@@ -54,15 +54,7 @@ using utility::vector1;
 static basic::Tracer TR( "protocols.protein_interface_design.filters.SpecificResiduesNearInterfaceFilter" );
 
 ////////////  Creator ////////////////////////
-// XRW TEMP FilterOP
-// XRW TEMP SpecificResiduesNearInterfaceFilterCreator::create_filter() const {
-// XRW TEMP  return utility::pointer::make_shared< SpecificResiduesNearInterfaceFilter >();
-// XRW TEMP }
 
-// XRW TEMP string
-// XRW TEMP SpecificResiduesNearInterfaceFilterCreator::keyname() const {
-// XRW TEMP  return "SpecificResiduesNearInterface";
-// XRW TEMP }
 /////////// End Creator /////////////////////
 
 

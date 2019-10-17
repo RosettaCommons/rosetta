@@ -70,20 +70,8 @@ using namespace environment;
 
 
 // creator
-// XRW TEMP std::string
-// XRW TEMP FragmentCMCreator::keyname() const {
-// XRW TEMP  return FragmentCM::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FragmentCMCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FragmentCM >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FragmentCM::mover_name() {
-// XRW TEMP  return "FragmentCM";
-// XRW TEMP }
 
 
 FragmentCM::FragmentCM():

@@ -175,11 +175,6 @@ CCDLoopClosureMover::show( std::ostream & output ) const
 }
 
 // Mover methods
-// XRW TEMP std::string
-// XRW TEMP CCDLoopClosureMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return type();
-// XRW TEMP }
 
 protocols::moves::MoverOP
 CCDLoopClosureMover::clone() const
@@ -802,22 +797,8 @@ operator<< ( std::ostream & os, CCDLoopClosureMover const & mover )
 
 
 // Creator methods ////////////////////////////////////////////////////////////
-// XRW TEMP std::string
-// XRW TEMP CCDLoopClosureMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CCDLoopClosureMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CCDLoopClosureMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CCDLoopClosureMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CCDLoopClosureMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "CCDLoopClosureMover";
-// XRW TEMP }
 
 std::string CCDLoopClosureMover::get_name() const {
 	return mover_name();

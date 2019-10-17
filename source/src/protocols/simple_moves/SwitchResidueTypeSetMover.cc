@@ -35,22 +35,8 @@ static basic::Tracer TR( "protocols.simple_moves.SwitchResidueTypeSetMover" );
 namespace protocols {
 namespace simple_moves {
 
-// XRW TEMP std::string
-// XRW TEMP SwitchResidueTypeSetMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SwitchResidueTypeSetMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SwitchResidueTypeSetMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SwitchResidueTypeSetMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SwitchResidueTypeSetMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SwitchResidueTypeSetMover";
-// XRW TEMP }
 
 SwitchResidueTypeSetMover::SwitchResidueTypeSetMover()
 : moves::Mover("SwitchResidueTypeSetMover")
@@ -77,10 +63,6 @@ SwitchResidueTypeSetMover::apply( Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP SwitchResidueTypeSetMover::get_name() const {
-// XRW TEMP  return SwitchResidueTypeSetMover::mover_name();
-// XRW TEMP }
 
 void
 SwitchResidueTypeSetMover::show(std::ostream & output) const

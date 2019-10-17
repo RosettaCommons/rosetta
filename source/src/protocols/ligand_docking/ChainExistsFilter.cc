@@ -61,11 +61,7 @@ ChainExistsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 	chain_ = tag->getOption<std::string>("chain");
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ChainExistsFilterCreator::create_filter() const { return utility::pointer::make_shared< ChainExistsFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ChainExistsFilterCreator::keyname() const { return "ChainExists"; }
 
 std::string ChainExistsFilter::name() const {
 	return class_name();

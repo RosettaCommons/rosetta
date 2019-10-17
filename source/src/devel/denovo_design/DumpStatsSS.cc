@@ -47,22 +47,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "devel/denovo_design/movers/DumpStatsSS" );
 
-// XRW TEMP std::string
-// XRW TEMP DumpStatsSSCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DumpStatsSS::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DumpStatsSSCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DumpStatsSS >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DumpStatsSS::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DumpStatsSS";
-// XRW TEMP }
 
 DumpStatsSS::DumpStatsSS():
 	protocols::moves::Mover( DumpStatsSS::mover_name() ),
@@ -169,10 +155,6 @@ DumpStatsSS::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 	*output_ << "score svmProb psiProb time sequence" << std::endl;
 }
 
-// XRW TEMP std::string
-// XRW TEMP DumpStatsSS::get_name() const {
-// XRW TEMP  return DumpStatsSS::mover_name();
-// XRW TEMP }
 
 std::string DumpStatsSS::get_name() const {
 	return mover_name();

@@ -47,11 +47,7 @@ namespace simple_filters {
 using Xform = numeric::xyzTransform<core::Real>;
 static basic::Tracer TR( "protocols.simple_moves.MotifScoreFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP MotifScoreFilterCreator::create_filter() const { return utility::pointer::make_shared< MotifScoreFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP MotifScoreFilterCreator::keyname() const { return "MotifScore"; }
 
 MotifScoreFilter::MotifScoreFilter(){
 	mman_ = core::scoring::motif::MotifHashManager::get_instance();

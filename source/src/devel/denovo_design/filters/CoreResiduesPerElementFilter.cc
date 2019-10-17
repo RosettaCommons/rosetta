@@ -53,22 +53,8 @@ namespace devel {
 namespace denovo_design {
 namespace filters {
 
-// XRW TEMP std::string
-// XRW TEMP CoreResiduesPerElementFilterCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CoreResiduesPerElementFilter::class_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP CoreResiduesPerElementFilterCreator::create_filter() const {
-// XRW TEMP  return utility::pointer::make_shared< CoreResiduesPerElementFilter >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CoreResiduesPerElementFilter::class_name()
-// XRW TEMP {
-// XRW TEMP  return "CoreResiduesPerElement";
-// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  CoreResiduesPerElementFilter main code:

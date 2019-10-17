@@ -81,11 +81,7 @@ TimeFilter::apply( core::pose::Pose const & p ) const{
 	return true;
 }
 
-// XRW TEMP FilterOP
-// XRW TEMP TimeFilterCreator::create_filter() const { return utility::pointer::make_shared< TimeFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP TimeFilterCreator::keyname() const { return "Time"; }
 
 std::string TimeFilter::name() const {
 	return class_name();

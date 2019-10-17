@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP BetaTurnDetectionFeaturesCreator::BetaTurnDetectionFeaturesCreator() {}
-// XRW TEMP BetaTurnDetectionFeaturesCreator::~BetaTurnDetectionFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP BetaTurnDetectionFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< BetaTurnDetectionFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string BetaTurnDetectionFeaturesCreator::type_name() const {
-// XRW TEMP  return "BetaTurnDetectionFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

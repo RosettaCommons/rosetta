@@ -65,22 +65,8 @@ namespace devel {
 namespace denovo_design {
 namespace filters {
 
-// XRW TEMP std::string
-// XRW TEMP CavityVolumeFilterCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CavityVolumeFilter::class_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP CavityVolumeFilterCreator::create_filter() const {
-// XRW TEMP  return utility::pointer::make_shared< CavityVolumeFilter >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CavityVolumeFilter::class_name()
-// XRW TEMP {
-// XRW TEMP  return "CavityVolume";
-// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  CavityVolumeFilter main code:

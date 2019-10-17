@@ -59,22 +59,8 @@ namespace protocols {
 namespace fldsgn {
 namespace potentials {
 
-// XRW TEMP std::string
-// XRW TEMP SetSecStructEnergiesCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SetSecStructEnergies::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetSecStructEnergiesCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetSecStructEnergies >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetSecStructEnergies::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SetSecStructEnergies";
-// XRW TEMP }
 
 
 /// @brief default constructor
@@ -304,10 +290,6 @@ void SetSecStructEnergies::apply( Pose & pose )
 }
 
 /// @brief
-// XRW TEMP std::string
-// XRW TEMP SetSecStructEnergies::get_name() const {
-// XRW TEMP  return SetSecStructEnergies::mover_name();
-// XRW TEMP }
 
 
 /// @brief parse xml

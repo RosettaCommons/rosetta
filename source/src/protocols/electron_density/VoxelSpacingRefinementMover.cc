@@ -334,22 +334,8 @@ VoxelSpacingRefinementMover::parse_my_tag(TagCOP const tag, basic::datacache::Da
 
 }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP VoxelSpacingRefinementMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< VoxelSpacingRefinementMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP VoxelSpacingRefinementMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return VoxelSpacingRefinementMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP VoxelSpacingRefinementMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "VoxelSpacingRefinement";
-// XRW TEMP }
 
 std::string VoxelSpacingRefinementMover::get_name() const {
 	return mover_name();

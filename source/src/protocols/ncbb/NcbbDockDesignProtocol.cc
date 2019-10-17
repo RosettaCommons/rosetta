@@ -505,17 +505,8 @@ NcbbDockDesignProtocol::parse_my_tag(
 }
 
 // MoverCreator
-// XRW TEMP moves::MoverOP NcbbDockDesignProtocolCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< NcbbDockDesignProtocol >();
-// XRW TEMP }
 
-// XRW TEMP std::string NcbbDockDesignProtocolCreator::keyname() const {
-// XRW TEMP  return NcbbDockDesignProtocol::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string NcbbDockDesignProtocol::mover_name(){
-// XRW TEMP  return "NcbbDockDesign";
-// XRW TEMP }
 
 std::string NcbbDockDesignProtocol::get_name() const {
 	return mover_name();

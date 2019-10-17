@@ -275,11 +275,7 @@ FragmentSpecification const & FragmentLookupFilter::fragment_specification()
 	return target_lookup_->fragment_specification();
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP FragmentLookupFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FragmentLookupFilter ); }
 
-// XRW TEMP std::string
-// XRW TEMP FragmentLookupFilterCreator::keyname() const { return "FragmentLookupFilter"; }
 
 std::string FragmentLookupFilter::name() const {
 	return class_name();

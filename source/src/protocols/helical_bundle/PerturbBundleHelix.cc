@@ -55,22 +55,8 @@ namespace helical_bundle {
 
 static basic::Tracer TR("protocols.helical_bundle.PerturbBundleHelix");
 
-// XRW TEMP std::string
-// XRW TEMP PerturbBundleHelixCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PerturbBundleHelix::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PerturbBundleHelixCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PerturbBundleHelix >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PerturbBundleHelix::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "PerturbBundleHelix";
-// XRW TEMP }
 
 
 /// @brief Creator for PerturbBundleHelix mover.

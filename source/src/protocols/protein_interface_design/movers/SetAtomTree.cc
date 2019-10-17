@@ -58,22 +58,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.SetAtomTree" );
 
-// XRW TEMP std::string
-// XRW TEMP SetAtomTreeCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SetAtomTree::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetAtomTreeCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetAtomTree >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetAtomTree::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AtomTree";
-// XRW TEMP }
 
 //initializing
 core::Size anchor_num = 0;
@@ -482,10 +468,6 @@ SetAtomTree::apply( core::pose::Pose & pose )
 	TR<<"New fold tree: "<<pose.fold_tree()<<std::endl;
 }
 
-// XRW TEMP std::string
-// XRW TEMP SetAtomTree::get_name() const {
-// XRW TEMP  return SetAtomTree::mover_name();
-// XRW TEMP }
 
 core::kinematics::FoldTreeOP
 SetAtomTree::fold_tree() const{ return fold_tree_; }

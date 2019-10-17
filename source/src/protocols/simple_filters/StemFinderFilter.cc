@@ -39,11 +39,7 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.StemFinder" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP StemFinderFilterCreator::create_filter() const { return utility::pointer::make_shared< StemFinder >(); }
 
-// XRW TEMP std::string
-// XRW TEMP StemFinderFilterCreator::keyname() const { return "StemFinder"; }
 
 //default ctor
 StemFinder::StemFinder() :

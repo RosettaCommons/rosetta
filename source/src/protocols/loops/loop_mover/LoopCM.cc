@@ -56,20 +56,8 @@ namespace loop_mover {
 static basic::Tracer tr( "protocols.loops.loop_mover.LoopCM", basic::t_info );
 
 // creator
-// XRW TEMP std::string
-// XRW TEMP LoopCMCreator::keyname() const {
-// XRW TEMP  return LoopCM::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoopCMCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopCM >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoopCM::mover_name() {
-// XRW TEMP  return "LoopCM";
-// XRW TEMP }
 
 std::string const CCD( "CCD" );
 std::string const KIC( "KIC" );
@@ -225,9 +213,6 @@ void LoopCM::passport_updated() {
 	}
 }
 
-// XRW TEMP std::string LoopCM::get_name() const {
-// XRW TEMP  return "LoopCM(" + algorithm_ + +"_" + style_ + ")";
-// XRW TEMP }
 
 std::string LoopCM::get_name() const {
 	return mover_name();

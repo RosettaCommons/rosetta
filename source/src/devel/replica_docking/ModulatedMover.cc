@@ -34,20 +34,8 @@ static basic::Tracer tr( "devel.replica_docking.ModulatedMover" );
 namespace devel {
 namespace replica_docking {
 
-// XRW TEMP std::string
-// XRW TEMP ModulatedMoverCreator::keyname() const {
-// XRW TEMP  return ModulatedMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ModulatedMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ModulatedMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ModulatedMover::mover_name() {
-// XRW TEMP  return "ModulatedMover";
-// XRW TEMP }
 
 ModulatedMover::ModulatedMover() :
 	tempering_( /* NULL */ )
@@ -64,11 +52,6 @@ ModulatedMover::ModulatedMover( ModulatedMover const& other ) : ThermodynamicMov
 
 ModulatedMover::~ModulatedMover() = default;
 
-// XRW TEMP std::string
-// XRW TEMP ModulatedMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "ModulatedMover";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 ModulatedMover::clone() const

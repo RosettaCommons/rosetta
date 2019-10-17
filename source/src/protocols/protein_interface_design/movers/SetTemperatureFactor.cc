@@ -45,22 +45,8 @@ using protocols::moves::ResId;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.SetTemperatureFactor" );
 
-// XRW TEMP std::string
-// XRW TEMP SetTemperatureFactorCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SetTemperatureFactor::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetTemperatureFactorCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetTemperatureFactor >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetTemperatureFactor::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SetTemperatureFactor";
-// XRW TEMP }
 
 SetTemperatureFactor::SetTemperatureFactor() :
 	Mover( SetTemperatureFactor::mover_name() ),
@@ -87,10 +73,6 @@ SetTemperatureFactor::apply( core::pose::Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP SetTemperatureFactor::get_name() const {
-// XRW TEMP  return SetTemperatureFactor::mover_name();
-// XRW TEMP }
 
 void
 SetTemperatureFactor::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & )

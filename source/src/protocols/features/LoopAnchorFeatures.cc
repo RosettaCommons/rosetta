@@ -86,8 +86,6 @@ LoopAnchorFeatures::LoopAnchorFeatures( LoopAnchorFeatures const & src) :
 
 LoopAnchorFeatures::~LoopAnchorFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP LoopAnchorFeatures::type_name() const { return "LoopAnchorFeatures"; }
 
 void
 LoopAnchorFeatures::write_schema_to_db(

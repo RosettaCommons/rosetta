@@ -146,10 +146,6 @@ MatDesGreedyOptMutationMover::MatDesGreedyOptMutationMover(
 MatDesGreedyOptMutationMover::~MatDesGreedyOptMutationMover()= default;
 
 //creators
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MatDesGreedyOptMutationMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MatDesGreedyOptMutationMover >();
-// XRW TEMP }
 
 protocols::moves::MoverOP
 MatDesGreedyOptMutationMover::clone() const{
@@ -157,22 +153,8 @@ MatDesGreedyOptMutationMover::clone() const{
 }
 
 //name getters
-// XRW TEMP std::string
-// XRW TEMP MatDesGreedyOptMutationMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return MatDesGreedyOptMutationMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MatDesGreedyOptMutationMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MatDesGreedyOptMutationMover";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MatDesGreedyOptMutationMover::get_name() const {
-// XRW TEMP  return MatDesGreedyOptMutationMover::mover_name();
-// XRW TEMP }
 
 // setter - getter pairs
 void

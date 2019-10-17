@@ -571,17 +571,8 @@ OopDockDesignProtocol::parse_my_tag
 }
 
 // MoverCreator
-// XRW TEMP moves::MoverOP OopDockDesignProtocolCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< OopDockDesignProtocol >();
-// XRW TEMP }
 
-// XRW TEMP std::string OopDockDesignProtocolCreator::keyname() const {
-// XRW TEMP  return OopDockDesignProtocol::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string OopDockDesignProtocol::mover_name(){
-// XRW TEMP  return "OopDockDesign";
-// XRW TEMP }
 
 std::string OopDockDesignProtocol::get_name() const {
 	return mover_name();

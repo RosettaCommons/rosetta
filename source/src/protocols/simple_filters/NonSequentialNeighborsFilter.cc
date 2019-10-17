@@ -30,11 +30,7 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.NonSequentialNeighborsFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP NonSequentialNeighborsFilterCreator::create_filter() const { return utility::pointer::make_shared< NonSequentialNeighborsFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP NonSequentialNeighborsFilterCreator::keyname() const { return "NonSequentialNeighbors"; }
 
 //default ctor
 NonSequentialNeighborsFilter::NonSequentialNeighborsFilter() :

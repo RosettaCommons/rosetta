@@ -53,22 +53,8 @@ namespace bin_transitions {
 
 static basic::Tracer TR( "protocols.simple_moves.bin_transitions.InitializeByBins" );
 
-// XRW TEMP std::string
-// XRW TEMP InitializeByBinsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return InitializeByBins::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP InitializeByBinsCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< InitializeByBins >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP InitializeByBins::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "InitializeByBins";
-// XRW TEMP }
 
 /// @brief Default constructor
 ///
@@ -96,10 +82,6 @@ InitializeByBins::InitializeByBins( InitializeByBins const &src ) :
 ///
 InitializeByBins::~InitializeByBins() = default;
 
-// XRW TEMP std::string
-// XRW TEMP InitializeByBins::get_name() const {
-// XRW TEMP  return InitializeByBins::mover_name();
-// XRW TEMP }
 
 /// @brief Apply the mover to a pose.
 ///

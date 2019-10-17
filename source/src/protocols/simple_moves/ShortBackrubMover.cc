@@ -52,20 +52,8 @@ static basic::Tracer TR( "protocols.simple_moves.ShortBackrubMover" );
 namespace protocols {
 namespace simple_moves {
 
-// XRW TEMP std::string
-// XRW TEMP ShortBackrubMoverCreator::keyname() const {
-// XRW TEMP  return ShortBackrubMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ShortBackrubMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ShortBackrubMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ShortBackrubMover::mover_name() {
-// XRW TEMP  return "ShortBackrubMover";
-// XRW TEMP }
 
 // default constructor
 ShortBackrubMover::ShortBackrubMover() : protocols::moves::Mover(),
@@ -218,10 +206,6 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP ShortBackrubMover::get_name() const {
-// XRW TEMP  return "ShortBackrubMover";
-// XRW TEMP }
 
 // setters
 void ShortBackrubMover::set_resnum( core::Size resnum ) { resnum_ = resnum; }

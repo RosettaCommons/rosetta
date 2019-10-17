@@ -23,15 +23,8 @@
 namespace protocols {
 namespace loop_build {
 
-// XRW TEMP LoopMover_SlidingWindowCreator::~LoopMover_SlidingWindowCreator() = default;
 
-// XRW TEMP moves::MoverOP LoopMover_SlidingWindowCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< loop_build::LoopMover_SlidingWindow >();
-// XRW TEMP }
 
-// XRW TEMP std::string LoopMover_SlidingWindowCreator::keyname() const {
-// XRW TEMP  return "LoopMover_SlidingWindow";
-// XRW TEMP }
 
 } //namespace
 } //namespace

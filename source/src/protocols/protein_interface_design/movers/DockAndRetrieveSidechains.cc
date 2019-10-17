@@ -50,22 +50,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.DockAndRetrieveSidechains" );
 
-// XRW TEMP std::string
-// XRW TEMP DockAndRetrieveSidechainsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DockAndRetrieveSidechains::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DockAndRetrieveSidechainsCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DockAndRetrieveSidechains >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DockAndRetrieveSidechains::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "Docking";
-// XRW TEMP }
 
 DockAndRetrieveSidechains::DockAndRetrieveSidechains() :
 	protocols::moves::Mover( DockAndRetrieveSidechains::mover_name() )
@@ -115,10 +101,6 @@ DockAndRetrieveSidechains::apply( core::pose::Pose & pose )
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP DockAndRetrieveSidechains::get_name() const {
-// XRW TEMP  return DockAndRetrieveSidechains::mover_name();
-// XRW TEMP }
 
 void
 DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )

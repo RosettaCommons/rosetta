@@ -43,23 +43,8 @@ static basic::Tracer TR( "protocols.legacy_sewing.sampling.LegacyMonteCarloAssem
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LegacyMonteCarloAssemblyMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< LegacyMonteCarloAssemblyMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyMonteCarloAssemblyMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LegacyMonteCarloAssemblyMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyMonteCarloAssemblyMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LegacyMonteCarloAssemblyMover";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 LegacyMonteCarloAssemblyMover::clone() const {
@@ -71,10 +56,6 @@ LegacyMonteCarloAssemblyMover::fresh_instance() const {
 	return utility::pointer::make_shared< LegacyMonteCarloAssemblyMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyMonteCarloAssemblyMover::get_name() const {
-// XRW TEMP  return "LegacyMonteCarloAssemblyMover";
-// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////  LegacyMonteCarloAssemblyMover function   //////////////////////////////////

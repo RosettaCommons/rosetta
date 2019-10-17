@@ -172,11 +172,7 @@ void AtomicDistanceFilter::parse_my_tag( utility::tag::TagCOP tag,
 	TR<<"AtomicDistance filter between "<<*residue1_<<" atom "<<(astype1_?"type ":"name ")<<atomdesg1_<<" and "<<*residue2_<<" atom "<<(astype2_?"type ":"name ")<<atomdesg2_<<" with distance cutoff of "<<distance_<<std::endl;
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AtomicDistanceFilterCreator::create_filter() const { return utility::pointer::make_shared< AtomicDistanceFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP AtomicDistanceFilterCreator::keyname() const { return "AtomicDistance"; }
 
 std::string AtomicDistanceFilter::name() const {
 	return class_name();

@@ -332,11 +332,7 @@ SSElementBisectddGFilter::parse_my_tag(
 
 }
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP SSElementBisectddGFilterCreator::create_filter() const { return utility::pointer::make_shared< SSElementBisectddGFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SSElementBisectddGFilterCreator::keyname() const { return "SSBisectddGFilter"; }
 
 std::string SSElementBisectddGFilter::name() const {
 	return class_name();

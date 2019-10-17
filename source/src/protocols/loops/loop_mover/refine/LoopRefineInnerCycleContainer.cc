@@ -75,10 +75,6 @@ LoopRefineInnerCycleContainer & LoopRefineInnerCycleContainer::operator=( LoopRe
 LoopRefineInnerCycleContainer::~LoopRefineInnerCycleContainer() = default;
 
 /// @brief Each derived class must specify its name.
-// XRW TEMP std::string LoopRefineInnerCycleContainer::get_name() const
-// XRW TEMP {
-// XRW TEMP  return type();
-// XRW TEMP }
 
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
@@ -228,15 +224,8 @@ std::ostream & operator<<(std::ostream& out, LoopRefineInnerCycleContainer const
 	return out;
 }
 
-// XRW TEMP LoopRefineInnerCycleContainerCreator::~LoopRefineInnerCycleContainerCreator() {}
 
-// XRW TEMP moves::MoverOP LoopRefineInnerCycleContainerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopRefineInnerCycleContainer >();
-// XRW TEMP }
 
-// XRW TEMP std::string LoopRefineInnerCycleContainerCreator::keyname() const {
-// XRW TEMP  return "LoopRefineInnerCycleContainer";
-// XRW TEMP }
 
 std::string LoopRefineInnerCycleContainer::get_name() const {
 	return mover_name();

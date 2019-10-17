@@ -58,22 +58,8 @@ namespace ligand_docking {
 
 static basic::Tracer compute_rdf_tracer( "protocols.ligand_docking.ComputeLigandRDF" );
 
-// XRW TEMP std::string
-// XRW TEMP ComputeLigandRDFCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ComputeLigandRDF::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ComputeLigandRDFCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ComputeLigandRDF >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ComputeLigandRDF::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ComputeLigandRDF";
-// XRW TEMP }
 
 
 ComputeLigandRDF::ComputeLigandRDF() : mode_(""),ligand_chain_(""),bin_count_(100), smoothing_factor_(100.0),range_squared_(100.0)
@@ -116,10 +102,6 @@ void ComputeLigandRDF::apply( core::pose::Pose & pose )
 	}
 }
 
-// XRW TEMP std::string ComputeLigandRDF::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "ComputeLigandRDF";
-// XRW TEMP }
 
 void ComputeLigandRDF::parse_my_tag
 (

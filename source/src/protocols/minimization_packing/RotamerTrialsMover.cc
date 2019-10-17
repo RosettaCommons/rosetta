@@ -55,20 +55,8 @@ static basic::Tracer TR( "protocols.minimization_packing.RotamerTrialsMover" );
 namespace protocols {
 namespace minimization_packing {
 
-// XRW TEMP std::string
-// XRW TEMP RotamerTrialsMoverCreator::keyname() const {
-// XRW TEMP  return RotamerTrialsMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RotamerTrialsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RotamerTrialsMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RotamerTrialsMover::mover_name() {
-// XRW TEMP  return "RotamerTrialsMover";
-// XRW TEMP }
 
 // default constructor
 RotamerTrialsMover::RotamerTrialsMover() : protocols::moves::Mover()
@@ -137,10 +125,6 @@ RotamerTrialsMover::apply( core::pose::Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP RotamerTrialsMover::get_name() const {
-// XRW TEMP  return "RotamerTrialsMover";
-// XRW TEMP }
 
 void
 RotamerTrialsMover::show(std::ostream & output) const

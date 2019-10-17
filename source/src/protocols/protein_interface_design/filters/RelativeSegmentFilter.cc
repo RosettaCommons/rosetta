@@ -32,11 +32,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.filters.RelativeSeg
 
 using core::pose::Pose;
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP RelativeSegmentFilterCreator::create_filter() const { return utility::pointer::make_shared< RelativeSegmentFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP RelativeSegmentFilterCreator::keyname() const { return "RelativeSegment"; }
 
 bool
 RelativeSegmentFilter::apply( Pose const & pose ) const {

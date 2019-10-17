@@ -58,8 +58,6 @@ BetaTurnDetectionFeatures::BetaTurnDetectionFeatures( BetaTurnDetectionFeatures 
 
 BetaTurnDetectionFeatures::~BetaTurnDetectionFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP BetaTurnDetectionFeatures::type_name() const { return "BetaTurnDetectionFeatures"; }
 
 void
 BetaTurnDetectionFeatures::write_schema_to_db(

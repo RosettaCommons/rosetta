@@ -130,22 +130,10 @@ AddMPLigandMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AddMPLigandMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AddMPLigandMover >();
-// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-// XRW TEMP std::string
-// XRW TEMP AddMPLigandMoverCreator::keyname() const {
-// XRW TEMP  return AddMPLigandMover::mover_name();
-// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-// XRW TEMP std::string
-// XRW TEMP AddMPLigandMover::mover_name() {
-// XRW TEMP  return "AddMPLigandMover";
-// XRW TEMP }
 
 /////////////////////
 /// Mover Methods ///
@@ -228,10 +216,6 @@ AddMPLigandMover::apply( core::pose::Pose & pose ) {
 }
 
 /// @brief Show the name of this mvoer
-// XRW TEMP std::string
-// XRW TEMP AddMPLigandMover::get_name() const {
-// XRW TEMP  return "AddMPLigandMover";
-// XRW TEMP }
 
 std::string AddMPLigandMover::get_name() const {
 	return mover_name();

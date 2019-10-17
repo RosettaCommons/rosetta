@@ -84,11 +84,6 @@ RemoveConstraints::fresh_instance() const
 	return utility::pointer::make_shared< RemoveConstraints >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP RemoveConstraints::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "RemoveConstraints";
-// XRW TEMP }
 
 void
 RemoveConstraints::apply( core::pose::Pose & pose )
@@ -123,17 +118,7 @@ RemoveConstraints::add_generator( ConstraintGeneratorCOP generator )
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RemoveConstraintsCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< RemoveConstraints >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RemoveConstraintsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RemoveConstraints::mover_name();
-// XRW TEMP }
 
 std::string RemoveConstraints::get_name() const {
 	return mover_name();

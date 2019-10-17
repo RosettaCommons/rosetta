@@ -79,23 +79,8 @@ static basic::Tracer TR( "protocols.legacy_sewing.LegacyRepeatAssemblyMover" );
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LegacyRepeatAssemblyMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< LegacyRepeatAssemblyMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyRepeatAssemblyMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LegacyRepeatAssemblyMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyRepeatAssemblyMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LegacyRepeatAssemblyMover";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 LegacyRepeatAssemblyMover::clone() const {
@@ -106,10 +91,6 @@ LegacyRepeatAssemblyMover::fresh_instance() const {
 	return utility::pointer::make_shared< LegacyRepeatAssemblyMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyRepeatAssemblyMover::get_name() const {
-// XRW TEMP  return "LegacyRepeatAssemblyMover";
-// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////  LegacyRepeatAssemblyMover function   //////////////////////////////////

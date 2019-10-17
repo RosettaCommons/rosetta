@@ -219,11 +219,7 @@ ParallelBetaPairingPreferenceFilter::parse_my_tag(
 	verbose_ = tag->getOption<bool>( "verbose", false );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ParallelBetaPairingPreferenceFilterCreator::create_filter() const { return utility::pointer::make_shared< ParallelBetaPairingPreferenceFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ParallelBetaPairingPreferenceFilterCreator::keyname() const { return "ParallelBetaPairingPreference"; }
 
 std::string ParallelBetaPairingPreferenceFilter::name() const {
 	return class_name();

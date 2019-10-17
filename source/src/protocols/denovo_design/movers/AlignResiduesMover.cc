@@ -115,17 +115,7 @@ AlignResiduesMover::fresh_instance() const
 	return utility::pointer::make_shared< AlignResiduesMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP AlignResiduesMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return AlignResiduesMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AlignResiduesMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AlignResiduesMover";
-// XRW TEMP }
 
 void
 AlignResiduesMover::show( std::ostream & output ) const
@@ -387,17 +377,7 @@ AlignResiduesMover::set_id( std::string const & idval )
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AlignResiduesMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< AlignResiduesMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AlignResiduesMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AlignResiduesMover::mover_name();
-// XRW TEMP }
 
 std::string AlignResiduesMover::get_name() const {
 	return mover_name();

@@ -82,8 +82,6 @@ TrajectoryMapFeatures::TrajectoryMapFeatures( TrajectoryMapFeatures const & src)
 
 TrajectoryMapFeatures::~TrajectoryMapFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP TrajectoryMapFeatures::type_name() const { return "TrajectoryMapFeatures"; }
 
 void
 TrajectoryMapFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{

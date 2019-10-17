@@ -73,22 +73,8 @@ using core::conformation::Residue;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.DockWithHotspotMover" );
 
-// XRW TEMP std::string
-// XRW TEMP DockWithHotspotMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DockWithHotspotMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DockWithHotspotMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DockWithHotspotMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DockWithHotspotMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DockWithHotspotMover";
-// XRW TEMP }
 
 /// @brief default ctor
 DockWithHotspotMover::DockWithHotspotMover() :
@@ -160,10 +146,6 @@ void DockWithHotspotMover::apply( Pose & pose ) {
 	set_last_move_status( protocols::moves::MS_SUCCESS);
 }
 
-// XRW TEMP std::string
-// XRW TEMP DockWithHotspotMover::get_name() const {
-// XRW TEMP  return DockWithHotspotMover::mover_name();
-// XRW TEMP }
 
 
 /**

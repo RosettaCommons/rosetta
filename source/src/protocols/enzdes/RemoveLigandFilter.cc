@@ -58,17 +58,7 @@ using core::pose::PoseOP;
 using core::pose::Pose;
 using core::Real;
 
-// XRW TEMP std::string
-// XRW TEMP RemoveLigandFilterCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return "RemoveLigandFilter";
-// XRW TEMP }
 
-// XRW TEMP FilterOP
-// XRW TEMP RemoveLigandFilterCreator::create_filter() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< RemoveLigandFilter >();
-// XRW TEMP }
 
 
 

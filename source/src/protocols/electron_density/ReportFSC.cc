@@ -207,22 +207,8 @@ ReportFSC::parse_my_tag(
 	}
 }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ReportFSCCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ReportFSC >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ReportFSCCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ReportFSC::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ReportFSC::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ReportFSC";
-// XRW TEMP }
 
 std::string ReportFSC::get_name() const {
 	return mover_name();

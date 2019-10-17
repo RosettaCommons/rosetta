@@ -46,27 +46,9 @@ using namespace protocols::moves;
 namespace protocols {
 namespace monte_carlo {
 
-// XRW TEMP std::string
-// XRW TEMP MonteCarloRecoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return MonteCarloRecover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MonteCarloRecoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MonteCarloRecover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MonteCarloRecover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MonteCarloRecover";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MonteCarloRecover::get_name() const {
-// XRW TEMP  return MonteCarloRecover::mover_name();
-// XRW TEMP }
 
 
 /// @brief default constructor

@@ -24,15 +24,7 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
-// XRW TEMP SandwichFeaturesCreator::SandwichFeaturesCreator() {}
-// XRW TEMP SandwichFeaturesCreator::~SandwichFeaturesCreator() {}
-// XRW TEMP FeaturesReporterOP SandwichFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< SandwichFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string SandwichFeaturesCreator::type_name() const {
-// XRW TEMP  return "SandwichFeatures";
-// XRW TEMP }
 
 } //namespace strand_assembly
 } //namespace features

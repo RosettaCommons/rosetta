@@ -96,11 +96,7 @@ StubScoreLoopsFilter::clone() const{
 	return utility::pointer::make_shared< StubScoreLoopsFilter >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP StubScoreLoopsFilterCreator::create_filter() const { return utility::pointer::make_shared< StubScoreLoopsFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP StubScoreLoopsFilterCreator::keyname() const { return "StubScoreLoops"; }
 
 std::string StubScoreLoopsFilter::name() const {
 	return class_name();

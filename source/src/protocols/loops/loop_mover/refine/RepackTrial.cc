@@ -83,10 +83,6 @@ RepackTrial & RepackTrial::operator=( RepackTrial const & rhs ){
 RepackTrial::~RepackTrial() = default;
 
 /// @brief Each derived class must specify its name.
-// XRW TEMP std::string RepackTrial::get_name() const
-// XRW TEMP {
-// XRW TEMP  return type();
-// XRW TEMP }
 
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
@@ -195,15 +191,8 @@ std::ostream & operator<<(std::ostream& out, RepackTrial const & repack_trial )
 	return out;
 }
 
-// XRW TEMP RepackTrialCreator::~RepackTrialCreator() {}
 
-// XRW TEMP moves::MoverOP RepackTrialCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RepackTrial >();
-// XRW TEMP }
 
-// XRW TEMP std::string RepackTrialCreator::keyname() const {
-// XRW TEMP  return "RepackTrial";
-// XRW TEMP }
 
 std::string RepackTrial::get_name() const {
 	return mover_name();

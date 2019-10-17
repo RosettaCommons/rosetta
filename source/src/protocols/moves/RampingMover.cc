@@ -128,9 +128,6 @@ InvGeometricFunc::func( Real x ) const
 	return std::exp( -1 * ( 1 - x ) * inv_one_minus_xval_at_0p5_ * ln_0p5 );
 }
 
-// XRW TEMP MoverOP RampingMoverCreator::create_mover() const { return utility::pointer::make_shared< RampingMover >(); }
-// XRW TEMP std::string RampingMoverCreator::keyname() const { return RampingMover::mover_name(); }
-// XRW TEMP std::string RampingMover::mover_name() { return "RampingMover"; }
 
 
 /// RampingMover

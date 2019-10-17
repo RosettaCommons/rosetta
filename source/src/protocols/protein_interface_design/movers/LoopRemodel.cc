@@ -97,22 +97,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.LoopRemodel" );
 
-// XRW TEMP std::string
-// XRW TEMP LoopRemodelCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoopRemodel::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoopRemodelCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopRemodel >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoopRemodel::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LoopRemodel";
-// XRW TEMP }
 
 LoopRemodel::~LoopRemodel() = default;
 
@@ -380,10 +366,6 @@ LoopRemodel::apply( core::pose::Pose & pose )
 	} else TR << "No loops found!" << std::endl;
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoopRemodel::get_name() const {
-// XRW TEMP  return LoopRemodel::mover_name();
-// XRW TEMP }
 
 // true if all fragments picked.
 // false if something went wrong

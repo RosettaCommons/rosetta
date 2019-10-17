@@ -38,22 +38,8 @@ using namespace conformation;
 
 static basic::Tracer TR( "protocols.dna.SeparateDnaFromNonDna", basic::t_info );
 
-// XRW TEMP std::string
-// XRW TEMP SeparateDnaFromNonDnaCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SeparateDnaFromNonDna::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SeparateDnaFromNonDnaCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SeparateDnaFromNonDna >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SeparateDnaFromNonDna::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SeparateDnaFromNonDna";
-// XRW TEMP }
 
 SeparateDnaFromNonDna::SeparateDnaFromNonDna()
 : Mover( SeparateDnaFromNonDna::mover_name() ),
@@ -176,10 +162,6 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 	TR.flush();
 }
 
-// XRW TEMP std::string
-// XRW TEMP SeparateDnaFromNonDna::get_name() const {
-// XRW TEMP  return SeparateDnaFromNonDna::mover_name();
-// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void SeparateDnaFromNonDna::parse_my_tag(

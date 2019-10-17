@@ -749,7 +749,6 @@ void FalseFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 }
 
 
-// XRW TEMP StochasticFilterCreator::create_filter() const { return utility::pointer::make_shared< StochasticFilter >(); }
 
 
 std::string StochasticFilter::name() const {
@@ -785,11 +784,7 @@ void StochasticFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 }
 
 
-// XRW TEMP FilterOP
-// XRW TEMP CompoundFilterCreator::create_filter() const { return utility::pointer::make_shared< CompoundFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP CompoundFilterCreator::keyname() const { return "CompoundStatement"; }
 
 std::string CompoundFilter::name() const {
 	return class_name();
@@ -837,11 +832,7 @@ void CompoundFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 }
 
 
-// XRW TEMP FilterOP
-// XRW TEMP CombinedFilterCreator::create_filter() const { return utility::pointer::make_shared< CombinedFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP CombinedFilterCreator::keyname() const { return "CombinedValue"; }
 
 std::string CombinedFilter::name() const {
 	return class_name();
@@ -885,11 +876,7 @@ void CombinedFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 }
 
 
-// XRW TEMP FilterOP
-// XRW TEMP MoveBeforeFilterCreator::create_filter() const { return utility::pointer::make_shared< MoveBeforeFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP MoveBeforeFilterCreator::keyname() const { return "MoveBeforeFilter"; }
 
 std::string MoveBeforeFilter::name() const {
 	return class_name();
@@ -941,11 +928,7 @@ void MoveBeforeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 }
 
 
-// XRW TEMP FilterOP
-// XRW TEMP IfThenFilterCreator::create_filter() const { return utility::pointer::make_shared< IfThenFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP IfThenFilterCreator::keyname() const { return "IfThenFilter"; }
 
 std::string IfThenFilter::name() const {
 	return class_name();

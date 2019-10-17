@@ -83,20 +83,8 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-// XRW TEMP std::string
-// XRW TEMP AbscriptLoopCloserCMCreator::keyname() const {
-// XRW TEMP  return AbscriptLoopCloserCM::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AbscriptLoopCloserCMCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AbscriptLoopCloserCM >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AbscriptLoopCloserCM::mover_name() {
-// XRW TEMP  return "AbscriptLoopCloserCM";
-// XRW TEMP }
 
 AbscriptLoopCloserCM::AbscriptLoopCloserCM():
 	Parent(),
@@ -357,9 +345,6 @@ void AbscriptLoopCloserCM::broking_finished( EnvClaimBroker::BrokerResult const&
 	debug_assert( final_ft_ );
 }
 
-// XRW TEMP std::string AbscriptLoopCloserCM::get_name() const {
-// XRW TEMP  return "AbscriptLoopCloserCM";
-// XRW TEMP }
 
 moves::MoverOP AbscriptLoopCloserCM::clone() const {
 	return utility::pointer::make_shared< AbscriptLoopCloserCM >( *this );

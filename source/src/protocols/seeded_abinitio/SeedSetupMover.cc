@@ -64,22 +64,8 @@ using namespace core;
 
 static basic::Tracer TR( "protocols.seeded_abinitio.SeedSetupMover" );
 
-// XRW TEMP std::string
-// XRW TEMP SeedSetupMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SeedSetupMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SeedSetupMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SeedSetupMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SeedSetupMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SeedSetupMover";
-// XRW TEMP }
 
 SeedSetupMover::~SeedSetupMover() = default;
 
@@ -385,10 +371,6 @@ SeedSetupMover::apply( core::pose::Pose & pose ){
 	TR.flush();
 }//end apply
 
-// XRW TEMP std::string
-// XRW TEMP SeedSetupMover::get_name() const {
-// XRW TEMP  return SeedSetupMover::mover_name();
-// XRW TEMP }
 
 void
 SeedSetupMover::parse_my_tag( TagCOP const tag,

@@ -134,22 +134,8 @@ using namespace protocols::moves;
 
 static basic::Tracer tr( "protocols.protein_interface_design.movers.SetupHotspotConstraintsLoopsMover" );
 
-// XRW TEMP std::string
-// XRW TEMP SetupHotspotConstraintsLoopsMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SetupHotspotConstraintsLoopsMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetupHotspotConstraintsLoopsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetupHotspotConstraintsLoopsMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetupHotspotConstraintsLoopsMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SetupHotspotConstraintsLoops";
-// XRW TEMP }
 
 SetupHotspotConstraintsLoopsMover::SetupHotspotConstraintsLoopsMover() :
 	protocols::moves::Mover( "SetupHotspotConstraintsLoopsMover" ),
@@ -347,10 +333,6 @@ SetupHotspotConstraintsLoopsMover::apply( core::pose::Pose & pose ) {
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP SetupHotspotConstraintsLoopsMover::get_name() const {
-// XRW TEMP  return "SetupHotspotConstraintsLoopsMover";
-// XRW TEMP }
 
 /// This needs to be parsed before all other movers b/c it changes scorefxns
 void

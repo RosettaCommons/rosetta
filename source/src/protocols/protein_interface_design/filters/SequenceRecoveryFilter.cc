@@ -325,11 +325,7 @@ SequenceRecoveryFilter::clone() const{
 	return utility::pointer::make_shared< SequenceRecoveryFilter >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SequenceRecoveryFilterCreator::create_filter() const { return utility::pointer::make_shared< SequenceRecoveryFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SequenceRecoveryFilterCreator::keyname() const { return "SequenceRecovery"; }
 
 std::string SequenceRecoveryFilter::name() const {
 	return class_name();

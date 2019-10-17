@@ -66,20 +66,8 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-// XRW TEMP std::string
-// XRW TEMP UniformRigidBodyCMCreator::keyname() const {
-// XRW TEMP  return UniformRigidBodyCM::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP UniformRigidBodyCMCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< UniformRigidBodyCM >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP UniformRigidBodyCM::mover_name() {
-// XRW TEMP  return "UniformRigidBodyCM";
-// XRW TEMP }
 
 UniformRigidBodyCM::UniformRigidBodyCM():
 	ClientMover(),
@@ -165,11 +153,6 @@ claims::EnvClaims UniformRigidBodyCM::yield_claims( core::pose::Pose const&,
 	return claim_list;
 }
 
-// XRW TEMP std::string UniformRigidBodyCM::get_name() const {
-// XRW TEMP  std::ostringstream name;
-// XRW TEMP  name << "UniformRigidBodyCM" << mobile_label_;
-// XRW TEMP  return name.str();
-// XRW TEMP }
 
 moves::MoverOP UniformRigidBodyCM::fresh_instance() const {
 	return utility::pointer::make_shared< UniformRigidBodyCM >();

@@ -70,20 +70,8 @@ namespace protocols {
 namespace simple_moves {
 namespace sidechain_moves {
 
-// XRW TEMP std::string
-// XRW TEMP SidechainMoverCreator::keyname() const {
-// XRW TEMP  return SidechainMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SidechainMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SidechainMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SidechainMover::mover_name() {
-// XRW TEMP  return "Sidechain";
-// XRW TEMP }
 
 SidechainMover::SidechainMover():
 	rotamer_library_( * core::pack::dunbrack::RotamerLibrary::get_instance() ),
@@ -655,10 +643,6 @@ SidechainMover::apply(
 	PROF_STOP( basic::APPLY_SC_MOVE );
 }
 
-// XRW TEMP std::string
-// XRW TEMP SidechainMover::get_name() const {
-// XRW TEMP  return "SidechainMover";
-// XRW TEMP }
 
 
 core::Real

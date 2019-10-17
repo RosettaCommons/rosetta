@@ -46,11 +46,7 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.SSMotifFinder" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SSMotifFinderFilterCreator::create_filter() const { return utility::pointer::make_shared< SSMotifFinder >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SSMotifFinderFilterCreator::keyname() const { return "SSMotifFinder"; }
 
 //default ctor
 SSMotifFinder::SSMotifFinder() :

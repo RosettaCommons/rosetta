@@ -282,11 +282,7 @@ OligomericAverageDegreeFilter::report( std::ostream & out, core::pose::Pose cons
 	out << "OligomericAverageDegreeFilter returns " << compute( pose, verbose_, write2pdb_ ) << std::endl;
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP OligomericAverageDegreeFilterCreator::create_filter() const { return utility::pointer::make_shared< OligomericAverageDegreeFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP OligomericAverageDegreeFilterCreator::keyname() const { return "OligomericAverageDegree"; }
 
 std::string OligomericAverageDegreeFilter::name() const {
 	return class_name();

@@ -85,20 +85,8 @@ using namespace core;
 /// creator
 
 
-// XRW TEMP std::string
-// XRW TEMP IdealizeHelicesMoverCreator::keyname() const {
-// XRW TEMP  return IdealizeHelicesMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP IdealizeHelicesMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< IdealizeHelicesMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP IdealizeHelicesMover::mover_name() {
-// XRW TEMP  return "IdealizeHelices";
-// XRW TEMP }
 
 
 //////////////////

@@ -76,11 +76,7 @@ ContingentFilter::parse_my_tag( utility::tag::TagCOP const,
 	TR.Info << "ContingentFilter"<<std::endl;
 }
 
-// XRW TEMP FilterOP
-// XRW TEMP ContingentFilterCreator::create_filter() const { return utility::pointer::make_shared< ContingentFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ContingentFilterCreator::keyname() const { return "ContingentFilter"; }
 
 std::string ContingentFilter::name() const {
 	return class_name();

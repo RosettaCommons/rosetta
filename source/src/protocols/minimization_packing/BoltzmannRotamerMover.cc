@@ -61,20 +61,8 @@ bool compare_values(
 namespace protocols {
 namespace minimization_packing {
 
-// XRW TEMP std::string
-// XRW TEMP BoltzmannRotamerMoverCreator::keyname() const {
-// XRW TEMP  return BoltzmannRotamerMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP BoltzmannRotamerMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< BoltzmannRotamerMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BoltzmannRotamerMover::mover_name() {
-// XRW TEMP  return "BoltzmannRotamerMover";
-// XRW TEMP }
 
 // default constructor
 BoltzmannRotamerMover::BoltzmannRotamerMover() : protocols::moves::Mover()
@@ -297,10 +285,6 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP BoltzmannRotamerMover::get_name() const {
-// XRW TEMP  return "BoltzmannRotamerMover";
-// XRW TEMP }
 
 void
 BoltzmannRotamerMover::show(std::ostream & output) const

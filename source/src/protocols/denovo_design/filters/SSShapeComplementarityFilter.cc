@@ -54,22 +54,8 @@ namespace protocols {
 namespace denovo_design {
 namespace filters {
 
-// XRW TEMP std::string
-// XRW TEMP SSShapeComplementarityFilterCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SSShapeComplementarityFilter::class_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SSShapeComplementarityFilterCreator::create_filter() const {
-// XRW TEMP  return utility::pointer::make_shared< SSShapeComplementarityFilter >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SSShapeComplementarityFilter::class_name()
-// XRW TEMP {
-// XRW TEMP  return "SSShapeComplementarity";
-// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  SSShapeComplementarityFilter main code:

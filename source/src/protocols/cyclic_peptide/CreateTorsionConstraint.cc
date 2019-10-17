@@ -137,27 +137,9 @@ CreateTorsionConstraint::parse_my_tag(
 moves::MoverOP CreateTorsionConstraint::clone() const { return utility::pointer::make_shared< CreateTorsionConstraint >( *this ); }
 moves::MoverOP CreateTorsionConstraint::fresh_instance() const { return utility::pointer::make_shared< CreateTorsionConstraint >(); }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CreateTorsionConstraintCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CreateTorsionConstraint >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CreateTorsionConstraintCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CreateTorsionConstraint::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CreateTorsionConstraint::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "CreateTorsionConstraint";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CreateTorsionConstraint::get_name() const {
-// XRW TEMP  return "CreateTorsionConstraint";
-// XRW TEMP }
 
 std::string CreateTorsionConstraint::get_name() const {
 	return mover_name();

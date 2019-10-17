@@ -54,20 +54,8 @@ using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.simple_moves.FavorSequenceProfile" );
 
-// XRW TEMP std::string FavorSequenceProfileCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FavorSequenceProfile::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FavorSequenceProfileCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FavorSequenceProfile >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FavorSequenceProfile::mover_name() {
-// XRW TEMP  return "FavorSequenceProfile";
-// XRW TEMP }
 
 
 FavorSequenceProfile::FavorSequenceProfile( ) :

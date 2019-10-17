@@ -43,22 +43,8 @@ namespace ligand_docking {
 
 static basic::Tracer add_hydrogens_tracer( "protocols.ligand_docking.LigandDesign", basic::t_debug );
 
-// XRW TEMP std::string
-// XRW TEMP AddHydrogensCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AddHydrogens::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AddHydrogensCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AddHydrogens >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AddHydrogens::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AddHydrogens";
-// XRW TEMP }
 
 AddHydrogens::AddHydrogens():
 	//utility::pointer::ReferenceCount(),
@@ -80,9 +66,6 @@ protocols::moves::MoverOP AddHydrogens::fresh_instance() const {
 	return utility::pointer::make_shared< AddHydrogens >();
 }
 
-// XRW TEMP std::string AddHydrogens::get_name() const{
-// XRW TEMP  return "AddHydrogens";
-// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void

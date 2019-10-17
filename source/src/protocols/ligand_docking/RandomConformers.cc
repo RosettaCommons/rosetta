@@ -50,22 +50,8 @@ namespace ligand_docking {
 
 static basic::Tracer random_conformer_tracer( "protocols.ligand_docking.ligand_options.RandomConformers", basic::t_debug );
 
-// XRW TEMP std::string
-// XRW TEMP RandomConformersCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RandomConformers::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RandomConformersCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RandomConformers >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RandomConformers::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "RandomConformers";
-// XRW TEMP }
 
 RandomConformers::RandomConformers():
 	//utility::pointer::ReferenceCount(),
@@ -84,9 +70,6 @@ protocols::moves::MoverOP RandomConformers::fresh_instance() const {
 	return utility::pointer::make_shared< RandomConformers >();
 }
 
-// XRW TEMP std::string RandomConformers::get_name() const{
-// XRW TEMP  return "RandomConformers";
-// XRW TEMP }
 
 //void RandomConformers::set_chain(std::string chain)
 //{

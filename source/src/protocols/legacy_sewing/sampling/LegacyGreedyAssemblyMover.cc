@@ -42,23 +42,8 @@ static basic::Tracer TR( "protocols.legacy_sewing.sampling.LegacyGreedyAssemblyM
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LegacyGreedyAssemblyMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< LegacyGreedyAssemblyMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyGreedyAssemblyMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LegacyGreedyAssemblyMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyGreedyAssemblyMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LegacyGreedyAssemblyMover";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 LegacyGreedyAssemblyMover::clone() const {
@@ -69,10 +54,6 @@ LegacyGreedyAssemblyMover::fresh_instance() const {
 	return utility::pointer::make_shared< LegacyGreedyAssemblyMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyGreedyAssemblyMover::get_name() const {
-// XRW TEMP  return "LegacyGreedyAssemblyMover";
-// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////  LegacyGreedyAssemblyMover function   //////////////////////////////////

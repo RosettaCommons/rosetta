@@ -160,11 +160,7 @@ Torsion::clone() const{
 	return utility::pointer::make_shared< Torsion >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP TorsionCreator::create_filter() const { return utility::pointer::make_shared< Torsion >(); }
 
-// XRW TEMP std::string
-// XRW TEMP TorsionCreator::keyname() const { return "Torsion"; }
 
 core::pack::task::TaskFactoryOP
 Torsion::task_factory() const{ return task_factory_; }

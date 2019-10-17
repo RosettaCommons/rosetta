@@ -79,8 +79,6 @@ ProteinBondGeometryFeatures::ProteinBondGeometryFeatures( ProteinBondGeometryFea
 
 ProteinBondGeometryFeatures::~ProteinBondGeometryFeatures()= default;
 
-// XRW TEMP string
-// XRW TEMP ProteinBondGeometryFeatures::type_name() const { return "ProteinBondGeometryFeatures"; }
 
 void
 ProteinBondGeometryFeatures::write_schema_to_db(

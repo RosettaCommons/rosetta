@@ -134,27 +134,9 @@ CreateDistanceConstraint::parse_my_tag(
 moves::MoverOP CreateDistanceConstraint::clone() const { return utility::pointer::make_shared< CreateDistanceConstraint >( *this ); }
 moves::MoverOP CreateDistanceConstraint::fresh_instance() const { return utility::pointer::make_shared< CreateDistanceConstraint >(); }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CreateDistanceConstraintCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CreateDistanceConstraint >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CreateDistanceConstraintCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CreateDistanceConstraint::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CreateDistanceConstraint::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "CreateDistanceConstraint";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CreateDistanceConstraint::get_name() const {
-// XRW TEMP  return "CreateDistanceConstraint";
-// XRW TEMP }
 
 std::string CreateDistanceConstraint::get_name() const {
 	return mover_name();

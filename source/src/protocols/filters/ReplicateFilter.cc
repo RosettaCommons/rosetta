@@ -138,11 +138,7 @@ ReplicateFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 	threshold_ = tag_ptr->getOption<core::Real>( "threshold", 0.0 );
 }
 
-// XRW TEMP FilterOP
-// XRW TEMP ReplicateFilterCreator::create_filter() const { return utility::pointer::make_shared< ReplicateFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ReplicateFilterCreator::keyname() const { return "ReplicateFilter"; }
 
 std::string ReplicateFilter::name() const {
 	return class_name();

@@ -138,23 +138,8 @@ protocols::loops::LoopsCOP const & LoopAnalyzerFilter::get_loops( void ) const {
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP LoopAnalyzerFilterCreator::create_filter() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< LoopAnalyzerFilter >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoopAnalyzerFilterCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoopAnalyzerFilter::class_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoopAnalyzerFilter::class_name()
-// XRW TEMP {
-// XRW TEMP  return "LoopAnalyzerFilter";
-// XRW TEMP }
 
 std::string LoopAnalyzerFilter::name() const {
 	return class_name();

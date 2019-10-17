@@ -66,25 +66,9 @@ KeepRegionMover::fresh_instance() const {
 	return utility::pointer::make_shared< KeepRegionMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP KeepRegionMover::get_name() const {
-// XRW TEMP  return "KeepRegionMover";
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP KeepRegionMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< KeepRegionMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP KeepRegionMoverCreator::keyname() const {
-// XRW TEMP  return KeepRegionMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP KeepRegionMover::mover_name() {
-// XRW TEMP  return "KeepRegionMover";
-// XRW TEMP }
 
 void
 KeepRegionMover::parse_my_tag(

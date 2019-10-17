@@ -68,11 +68,7 @@ HBondDonorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HBondDonorFilterCreator::create_filter() const { return utility::pointer::make_shared< HBondDonorFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP HBondDonorFilterCreator::keyname() const { return "HBondDonor"; }
 
 std::string HBondDonorFilter::name() const {
 	return class_name();

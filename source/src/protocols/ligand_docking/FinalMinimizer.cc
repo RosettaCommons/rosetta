@@ -50,22 +50,8 @@ namespace ligand_docking {
 
 static basic::Tracer TR( "protocols.ligand_docking.ligand_options.FinalMinimizer" );
 
-// XRW TEMP std::string
-// XRW TEMP FinalMinimizerCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FinalMinimizer::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FinalMinimizerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FinalMinimizer >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FinalMinimizer::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "FinalMinimizer";
-// XRW TEMP }
 
 FinalMinimizer::FinalMinimizer():
 	Mover("FinalMinimizer"),
@@ -95,9 +81,6 @@ protocols::moves::MoverOP FinalMinimizer::fresh_instance() const {
 	return utility::pointer::make_shared< FinalMinimizer >();
 }
 
-// XRW TEMP std::string FinalMinimizer::get_name() const{
-// XRW TEMP  return "FinalMinimizer";
-// XRW TEMP }
 
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void

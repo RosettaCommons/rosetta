@@ -265,25 +265,14 @@ void LoopMover_Refine_Backrub::apply(
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoopMover_Refine_Backrub::get_name() const {
-// XRW TEMP  return "LoopMover_Refine_Backrub";
-// XRW TEMP }
 
 basic::Tracer & LoopMover_Refine_Backrub::tr() const
 {
 	return TR;
 }
 
-// XRW TEMP LoopMover_Refine_BackrubCreator::~LoopMover_Refine_BackrubCreator() {}
 
-// XRW TEMP moves::MoverOP LoopMover_Refine_BackrubCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopMover_Refine_Backrub >();
-// XRW TEMP }
 
-// XRW TEMP std::string LoopMover_Refine_BackrubCreator::keyname() const {
-// XRW TEMP  return "LoopMover_Refine_Backrub";
-// XRW TEMP }
 
 std::string LoopMover_Refine_Backrub::get_name() const {
 	return mover_name();

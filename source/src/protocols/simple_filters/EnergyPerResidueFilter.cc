@@ -49,11 +49,7 @@ namespace simple_filters {
 
 static basic::Tracer energy_per_residue_filter_tracer( "protocols.simple_filters.EnergyPerResidueFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP EnergyPerResidueFilterCreator::create_filter() const { return utility::pointer::make_shared< EnergyPerResidueFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP EnergyPerResidueFilterCreator::keyname() const { return "EnergyPerResidue"; }
 
 EnergyPerResidueFilter::EnergyPerResidueFilter(
 	core::Size const resnum,

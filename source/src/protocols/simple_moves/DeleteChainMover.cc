@@ -30,27 +30,9 @@ namespace simple_moves {
 
 static basic::Tracer TR( "protocols.simple_moves.DeleteChainMover" );
 
-// XRW TEMP std::string
-// XRW TEMP DeleteChainMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DeleteChainMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DeleteChainMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DeleteChainMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DeleteChainMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DeleteChain";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DeleteChainMover::get_name() const {
-// XRW TEMP  return DeleteChainMover::mover_name();
-// XRW TEMP }
 
 moves::MoverOP
 DeleteChainMover::clone() const

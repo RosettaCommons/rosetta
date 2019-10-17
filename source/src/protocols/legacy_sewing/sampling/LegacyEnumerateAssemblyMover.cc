@@ -47,23 +47,8 @@ static basic::Tracer TR( "protocols.legacy_sewing.sampling.LegacyEnumerateAssemb
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LegacyEnumerateAssemblyMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< LegacyEnumerateAssemblyMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyEnumerateAssemblyMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LegacyEnumerateAssemblyMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyEnumerateAssemblyMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LegacyEnumerateAssemblyMover";
-// XRW TEMP }
 
 
 protocols::moves::MoverOP

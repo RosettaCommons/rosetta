@@ -73,8 +73,6 @@ AtomInResidueAtomInResiduePairFeatures::AtomInResidueAtomInResiduePairFeatures( 
 
 AtomInResidueAtomInResiduePairFeatures::~AtomInResidueAtomInResiduePairFeatures()= default;
 
-// XRW TEMP string
-// XRW TEMP AtomInResidueAtomInResiduePairFeatures::type_name() const { return "AtomInResidueAtomInResiduePairFeatures"; }
 
 void
 AtomInResidueAtomInResiduePairFeatures::write_schema_to_db(

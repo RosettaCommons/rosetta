@@ -100,10 +100,6 @@ SymFoldandDockSlideTrialMover::apply( core::pose::Pose & pose ) {
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP SymFoldandDockSlideTrialMover::get_name() const {
-// XRW TEMP  return "SymFoldandDockSlideTrialMover";
-// XRW TEMP }
 
 void
 SymFoldandDockSlideTrialMover::parse_my_tag(
@@ -121,20 +117,8 @@ SymFoldandDockSlideTrialMover::parse_my_tag(
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP SymFoldandDockSlideTrialMoverCreator::keyname() const {
-// XRW TEMP  return SymFoldandDockSlideTrialMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SymFoldandDockSlideTrialMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SymFoldandDockSlideTrialMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SymFoldandDockSlideTrialMover::mover_name() {
-// XRW TEMP  return "SymFoldandDockSlideTrialMover";
-// XRW TEMP }
 
 std::string SymFoldandDockSlideTrialMover::get_name() const {
 	return mover_name();

@@ -112,20 +112,8 @@ numeric::xyzMatrix<core::Real> random_rotation(core::Real magnitude) {
 	return (numeric::rotation_matrix_degrees( axis, magnitude ));
 }
 
-// XRW TEMP std::string
-// XRW TEMP PeriodicBoxMoverCreator::keyname() const {
-// XRW TEMP  return PeriodicBoxMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PeriodicBoxMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PeriodicBoxMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PeriodicBoxMover::mover_name() {
-// XRW TEMP  return "PeriodicBoxMover";
-// XRW TEMP }
 
 PeriodicBoxMover::PeriodicBoxMover()
 : Mover("PeriodicBoxMover") {
@@ -169,10 +157,6 @@ PeriodicBoxMover::PeriodicBoxMover()
 	sf_ = core::scoring::get_score_function();
 }
 
-// XRW TEMP std::string
-// XRW TEMP PeriodicBoxMover::get_name() const {
-// XRW TEMP  return PeriodicBoxMover::mover_name();
-// XRW TEMP }
 
 protocols::moves::MoverOP
 PeriodicBoxMover::clone() const {

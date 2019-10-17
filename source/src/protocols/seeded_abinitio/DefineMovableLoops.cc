@@ -65,22 +65,8 @@ namespace seeded_abinitio {
 using namespace protocols::moves;
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP DefineMovableLoopsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DefineMovableLoops::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DefineMovableLoopsCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DefineMovableLoops >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DefineMovableLoops::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DefineMovableLoops";
-// XRW TEMP }
 
 DefineMovableLoops::~DefineMovableLoops() = default;
 
@@ -270,10 +256,6 @@ DefineMovableLoops::apply( core::pose::Pose & pose ){
 
 }
 
-// XRW TEMP std::string
-// XRW TEMP DefineMovableLoops::get_name() const {
-// XRW TEMP  return DefineMovableLoops::mover_name();
-// XRW TEMP }
 
 void
 DefineMovableLoops::parse_my_tag(

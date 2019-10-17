@@ -52,22 +52,8 @@ namespace ligand_docking {
 
 static basic::Tracer translate_tracer( "protocols.ligand_docking.ligand_options.translate", basic::t_debug );
 
-// XRW TEMP std::string
-// XRW TEMP TranslateCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return Translate::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP TranslateCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< Translate >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP Translate::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "Translate";
-// XRW TEMP }
 
 /// @brief
 Translate::Translate():
@@ -104,9 +90,6 @@ protocols::moves::MoverOP Translate::fresh_instance() const {
 	return utility::pointer::make_shared< Translate >();
 }
 
-// XRW TEMP std::string Translate::get_name() const{
-// XRW TEMP  return "Translate";
-// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void

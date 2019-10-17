@@ -86,20 +86,8 @@ namespace protocols {
 namespace canonical_sampling {
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP SimulatedTemperingCreator::keyname() const {
-// XRW TEMP  return SimulatedTempering::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SimulatedTemperingCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SimulatedTempering >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SimulatedTempering::mover_name() {
-// XRW TEMP  return "SimulatedTempering";
-// XRW TEMP }
 
 SimulatedTempering::SimulatedTempering() {
 	set_defaults();
@@ -211,11 +199,6 @@ SimulatedTempering::temperature_move( core::Real score ) {
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP SimulatedTempering::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "SimulatedTempering";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 SimulatedTempering::clone() const

@@ -54,22 +54,8 @@ using namespace core;
 using namespace utility;
 
 // -------------  Mover Creator -------------
-// XRW TEMP std::string
-// XRW TEMP SymmetrizerMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return Symmetrizer::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SymmetrizerMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< Symmetrizer >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP Symmetrizer::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "Symmetrizer";
-// XRW TEMP }
 // -------------  Mover Creator -------------
 
 Symmetrizer::Symmetrizer() :

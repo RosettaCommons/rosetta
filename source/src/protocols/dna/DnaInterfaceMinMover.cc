@@ -58,22 +58,8 @@ using basic::t_debug;
 using basic::t_trace;
 static basic::Tracer TR( "protocols.dna.DnaInterfaceMinMover", t_info );
 
-// XRW TEMP std::string
-// XRW TEMP DnaInterfaceMinMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DnaInterfaceMinMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DnaInterfaceMinMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DnaInterfaceMinMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DnaInterfaceMinMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DnaInterfaceMinMover";
-// XRW TEMP }
 
 DnaInterfaceMinMover::DnaInterfaceMinMover()
 : protocols::minimization_packing::MinMover("DnaInterfaceMinMover"),

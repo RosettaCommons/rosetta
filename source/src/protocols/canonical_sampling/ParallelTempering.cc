@@ -84,20 +84,8 @@ namespace protocols {
 namespace canonical_sampling {
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP ParallelTemperingCreator::keyname() const {
-// XRW TEMP  return ParallelTempering::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ParallelTemperingCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ParallelTempering >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ParallelTempering::mover_name() {
-// XRW TEMP  return "ParallelTempering";
-// XRW TEMP }
 
 ParallelTempering::ParallelTempering() :
 	rank_( -1 ),
@@ -331,11 +319,6 @@ ParallelTempering::shuffle_temperatures( const core::Real *energies ) {
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP ParallelTempering::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "ParallelTempering";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 ParallelTempering::clone() const

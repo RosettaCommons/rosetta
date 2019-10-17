@@ -26,15 +26,7 @@ namespace protocols {
 namespace features {
 namespace helixAssembly {
 
-// XRW TEMP HelixBundleFeaturesCreator::HelixBundleFeaturesCreator() {}
-// XRW TEMP HelixBundleFeaturesCreator::~HelixBundleFeaturesCreator() {}
-// XRW TEMP FeaturesReporterOP HelixBundleFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< HelixBundleFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string HelixBundleFeaturesCreator::type_name() const {
-// XRW TEMP  return "HelixBundleFeatures";
-// XRW TEMP }
 
 } //namespace helixAssembly
 } //namespace features

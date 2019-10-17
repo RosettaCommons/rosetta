@@ -53,22 +53,8 @@ static  basic::Tracer TR( "protocols.relax.AtomCoordinateCstMover" );
 namespace protocols {
 namespace relax {
 
-// XRW TEMP std::string
-// XRW TEMP AtomCoordinateCstMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AtomCoordinateCstMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AtomCoordinateCstMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AtomCoordinateCstMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AtomCoordinateCstMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AtomCoordinateCstMover";
-// XRW TEMP }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

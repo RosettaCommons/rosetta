@@ -76,22 +76,8 @@ using bools = utility::vector1<bool>;
 
 static basic::Tracer TR( "protocols.evolution.NucleotideMutation" );
 
-// XRW TEMP std::string
-// XRW TEMP NucleotideMutationCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return NucleotideMutation::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP NucleotideMutationCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< NucleotideMutation >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP NucleotideMutation::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "NucleotideMutation";
-// XRW TEMP }
 
 NucleotideMutation::NucleotideMutation() :
 	Mover( NucleotideMutation::mover_name() ),
@@ -450,10 +436,6 @@ NucleotideMutation::apply( core::pose::Pose & pose )
 	TR << "aa seq after mut " << core::pose::get_all_comments(pose)[ "aa_seq" ] << std::endl;
 }
 
-// XRW TEMP std::string
-// XRW TEMP NucleotideMutation::get_name() const {
-// XRW TEMP  return NucleotideMutation::mover_name();
-// XRW TEMP }
 
 void
 NucleotideMutation::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )

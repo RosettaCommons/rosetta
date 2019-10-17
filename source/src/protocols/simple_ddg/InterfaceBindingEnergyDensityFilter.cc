@@ -48,11 +48,7 @@ using namespace protocols::simple_filters;
 
 static basic::Tracer TR( "protocols.simple_ddg.InterfaceBindingEnergyDensityFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP InterfaceBindingEnergyDensityFilterCreator::create_filter() const { return utility::pointer::make_shared< InterfaceBindingEnergyDensityFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP InterfaceBindingEnergyDensityFilterCreator::keyname() const { return "InterfaceBindingEnergyDensityFilter"; }
 
 
 InterfaceBindingEnergyDensityFilter::InterfaceBindingEnergyDensityFilter() :

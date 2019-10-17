@@ -88,8 +88,6 @@ using cppdb::statement;
 
 static basic::Tracer tr( "protocols.features.ProteinRMSDNoSuperpositionFeatures" );
 
-// XRW TEMP string
-// XRW TEMP ProteinRMSDNoSuperpositionFeatures::type_name() const { return "ProteinRMSDNoSuperpositionFeatures"; }
 
 
 PoseCOP

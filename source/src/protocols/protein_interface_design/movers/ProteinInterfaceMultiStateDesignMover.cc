@@ -83,22 +83,8 @@ using basic::t_debug;
 using basic::t_trace;
 static basic::Tracer TR( "protocols.protein_interface_design.movers.ProteinInterfaceMultiStateDesignMover", t_info );
 
-// XRW TEMP std::string
-// XRW TEMP ProteinInterfaceMultiStateDesignMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ProteinInterfaceMultiStateDesignMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ProteinInterfaceMultiStateDesignMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ProteinInterfaceMultiStateDesignMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ProteinInterfaceMultiStateDesignMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ProteinInterfaceMS";
-// XRW TEMP }
 
 ProteinInterfaceMultiStateDesignMover::ProteinInterfaceMultiStateDesignMover() :
 	protocols::minimization_packing::PackRotamersMover( ProteinInterfaceMultiStateDesignMover::mover_name() ),
@@ -169,10 +155,6 @@ ProteinInterfaceMultiStateDesignMover::apply( Pose & pose )
 	output_alternative_states( pose );
 }
 
-// XRW TEMP std::string
-// XRW TEMP ProteinInterfaceMultiStateDesignMover::get_name() const {
-// XRW TEMP  return ProteinInterfaceMultiStateDesignMover::mover_name();
-// XRW TEMP }
 
 void
 ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(

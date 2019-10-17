@@ -60,22 +60,8 @@ namespace devel {
 namespace denovo_design {
 namespace filters {
 
-// XRW TEMP std::string
-// XRW TEMP FoldabilityFilterCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FoldabilityFilter::class_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP FoldabilityFilterCreator::create_filter() const {
-// XRW TEMP  return utility::pointer::make_shared< FoldabilityFilter >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FoldabilityFilter::class_name()
-// XRW TEMP {
-// XRW TEMP  return "Foldability";
-// XRW TEMP }
 
 /*
 NOTES

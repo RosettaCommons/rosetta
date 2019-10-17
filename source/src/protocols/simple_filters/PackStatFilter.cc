@@ -129,11 +129,7 @@ PackStatFilter::parse_my_tag(
 	repeats_ = tag->getOption<core::Size>( "repeats", 1 );
 }
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP PackStatFilterCreator::create_filter() const { return utility::pointer::make_shared< PackStatFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP PackStatFilterCreator::keyname() const { return "PackStat"; }
 
 std::string PackStatFilter::name() const {
 	return class_name();

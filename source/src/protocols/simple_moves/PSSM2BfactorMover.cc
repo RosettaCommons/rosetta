@@ -41,22 +41,8 @@ static basic::Tracer TR( "protocols.simple_moves.PSSM2BfactorMover" );
 namespace protocols {
 namespace simple_moves {
 
-// XRW TEMP std::string
-// XRW TEMP PSSM2BfactorMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PSSM2BfactorMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PSSM2BfactorMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PSSM2BfactorMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PSSM2BfactorMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "PSSM2Bfactor";
-// XRW TEMP }
 
 PSSM2BfactorMover::PSSM2BfactorMover()
 : moves::Mover("PSSM2Bfactor"),
@@ -141,10 +127,6 @@ PSSM2BfactorMover::apply( Pose & pose )
 	TR<<"Read "<<cst_num<<" sequence constraints"<<std::endl;
 }
 
-// XRW TEMP std::string
-// XRW TEMP PSSM2BfactorMover::get_name() const {
-// XRW TEMP  return PSSM2BfactorMover::mover_name();
-// XRW TEMP }
 
 moves::MoverOP
 PSSM2BfactorMover::clone() const

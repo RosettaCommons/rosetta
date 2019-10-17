@@ -182,10 +182,6 @@ ParsedProtocol::apply( Pose & pose )
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP ParsedProtocol::get_name() const {
-// XRW TEMP  return ParsedProtocol::mover_name();
-// XRW TEMP }
 
 void ParsedProtocol::final_scorefxn( core::scoring::ScoreFunctionCOP scorefxn )
 {

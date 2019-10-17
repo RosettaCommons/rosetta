@@ -412,11 +412,7 @@ SecondaryStructureFilter::get_filtered_secstruct( core::pose::Pose const & pose 
 	return pose.secstruct();
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SecondaryStructureFilterCreator::create_filter() const { return utility::pointer::make_shared< SecondaryStructureFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SecondaryStructureFilterCreator::keyname() const { return "SecondaryStructure"; }
 
 std::string SecondaryStructureFilter::name() const {
 	return class_name();

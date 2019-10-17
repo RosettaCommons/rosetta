@@ -71,15 +71,7 @@ namespace features {
 /////////////  Creator functions   ////////////////////////
 ///////////////////////////////////////////////////////////
 
-// XRW TEMP ModelFeaturesCreator::ModelFeaturesCreator() {}
-// XRW TEMP ModelFeaturesCreator::~ModelFeaturesCreator() = default;
-// XRW TEMP protocols::features::FeaturesReporterOP ModelFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< ModelFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string ModelFeaturesCreator::type_name() const {
-// XRW TEMP  return "ModelFeatures";
-// XRW TEMP }
 
 ///////////////////////////////////////////////////////////
 ///////////////  Class functions   ////////////////////////

@@ -73,20 +73,8 @@ namespace protocols {
 namespace canonical_sampling {
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP SilentTrajectoryRecorderCreator::keyname() const {
-// XRW TEMP  return SilentTrajectoryRecorder::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SilentTrajectoryRecorderCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SilentTrajectoryRecorder >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SilentTrajectoryRecorder::mover_name() {
-// XRW TEMP  return "SilentTrajectoryRecorder";
-// XRW TEMP }
 
 SilentTrajectoryRecorder::SilentTrajectoryRecorder() {
 	using namespace basic::options;
@@ -115,11 +103,6 @@ SilentTrajectoryRecorder::fresh_instance() const
 	return utility::pointer::make_shared< SilentTrajectoryRecorder >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP SilentTrajectoryRecorder::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "SilentTrajectoryRecorder";
-// XRW TEMP }
 
 void
 SilentTrajectoryRecorder::parse_my_tag(

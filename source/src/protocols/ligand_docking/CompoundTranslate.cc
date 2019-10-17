@@ -45,22 +45,8 @@ namespace ligand_docking {
 static basic::Tracer translate_tracer( "protocols.ligand_docking.CompoundTranslate", basic::t_debug );
 
 
-// XRW TEMP std::string
-// XRW TEMP CompoundTranslateCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CompoundTranslate::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CompoundTranslateCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CompoundTranslate >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CompoundTranslate::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "CompoundTranslate";
-// XRW TEMP }
 
 /// @brief
 CompoundTranslate::CompoundTranslate():
@@ -80,9 +66,6 @@ protocols::moves::MoverOP CompoundTranslate::fresh_instance() const {
 	return utility::pointer::make_shared< CompoundTranslate >();
 }
 
-// XRW TEMP std::string CompoundTranslate::get_name() const{
-// XRW TEMP  return "CompoundTranslate";
-// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void

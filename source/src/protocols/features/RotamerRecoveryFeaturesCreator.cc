@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP RotamerRecoveryFeaturesCreator::RotamerRecoveryFeaturesCreator() {}
-// XRW TEMP RotamerRecoveryFeaturesCreator::~RotamerRecoveryFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP RotamerRecoveryFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< RotamerRecoveryFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string RotamerRecoveryFeaturesCreator::type_name() const {
-// XRW TEMP  return "RotamerRecoveryFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

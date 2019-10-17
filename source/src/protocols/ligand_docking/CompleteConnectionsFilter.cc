@@ -70,11 +70,7 @@ CompleteConnectionsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::dataca
 	chain_ = tag->getOption<std::string>("chain");
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP CompleteConnectionsFilterCreator::create_filter() const { return utility::pointer::make_shared< CompleteConnectionsFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP CompleteConnectionsFilterCreator::keyname() const { return "CompleteConnections"; }
 
 std::string CompleteConnectionsFilter::name() const {
 	return class_name();

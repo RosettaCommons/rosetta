@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP DdGFeaturesCreator::DdGFeaturesCreator() {}
-// XRW TEMP DdGFeaturesCreator::~DdGFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP DdGFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< DdGFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string DdGFeaturesCreator::type_name() const {
-// XRW TEMP  return "DdGFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

@@ -330,11 +330,7 @@ MutationsFilter::clone() const{
 	return utility::pointer::make_shared< MutationsFilter >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP MutationsFilterCreator::create_filter() const { return utility::pointer::make_shared< MutationsFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP MutationsFilterCreator::keyname() const { return "Mutations"; }
 
 std::string MutationsFilter::name() const {
 	return class_name();

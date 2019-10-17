@@ -151,10 +151,6 @@ SimpleGlycosylateMover::fresh_instance() const
 	return utility::pointer::make_shared< SimpleGlycosylateMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP SimpleGlycosylateMover::get_name() const {
-// XRW TEMP  return "SimpleGlycosylateMover";
-// XRW TEMP }
 
 void
 SimpleGlycosylateMover::show(std::ostream & output) const
@@ -384,20 +380,8 @@ SimpleGlycosylateMover::apply( core::pose::Pose& pose ){
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SimpleGlycosylateMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SimpleGlycosylateMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SimpleGlycosylateMoverCreator::keyname() const {
-// XRW TEMP  return SimpleGlycosylateMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SimpleGlycosylateMover::mover_name(){
-// XRW TEMP  return "SimpleGlycosylateMover";
-// XRW TEMP }
 
 std::string SimpleGlycosylateMover::get_name() const {
 	return mover_name();

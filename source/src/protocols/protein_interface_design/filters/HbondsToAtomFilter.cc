@@ -85,11 +85,7 @@ namespace filters {
 static basic::Tracer TR( "protocols.protein_interface_design.filters.HbondsToAtomFilter" );
 using core::pose::Pose;
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HbondsToAtomFilterCreator::create_filter() const { return utility::pointer::make_shared< HbondsToAtomFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP HbondsToAtomFilterCreator::keyname() const { return "HbondsToAtom"; }
 
 bool
 HbondsToAtomFilter::apply( Pose const & pose ) const {

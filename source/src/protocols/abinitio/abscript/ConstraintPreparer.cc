@@ -60,20 +60,8 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-// XRW TEMP std::string
-// XRW TEMP ConstraintPreparerCreator::keyname() const {
-// XRW TEMP  return ConstraintPreparer::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ConstraintPreparerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ConstraintPreparer >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ConstraintPreparer::mover_name() {
-// XRW TEMP  return "ConstraintPreparer";
-// XRW TEMP }
 
 ConstraintPreparer::ConstraintPreparer():
 	Parent(),
@@ -214,9 +202,6 @@ void ConstraintPreparer::combine_exclude_file( std::string const& filename ){
 	rigid_core.transfer_to_residue_vector( combine_exclude_res_, true );
 }
 
-// XRW TEMP std::string ConstraintPreparer::get_name() const {
-// XRW TEMP  return "ConstraintPreparer";
-// XRW TEMP }
 
 std::string ConstraintPreparer::get_name() const {
 	return mover_name();

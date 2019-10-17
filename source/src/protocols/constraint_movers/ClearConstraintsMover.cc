@@ -45,27 +45,9 @@ ClearConstraintsMover::parse_my_tag(
 moves::MoverOP ClearConstraintsMover::clone() const { return utility::pointer::make_shared< ClearConstraintsMover >( *this ); }
 moves::MoverOP ClearConstraintsMover::fresh_instance() const { return utility::pointer::make_shared< ClearConstraintsMover >(); }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ClearConstraintsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ClearConstraintsMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ClearConstraintsMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ClearConstraintsMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ClearConstraintsMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ClearConstraintsMover";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ClearConstraintsMover::get_name() const {
-// XRW TEMP  return "ClearConstraintsMover";
-// XRW TEMP }
 
 std::string ClearConstraintsMover::get_name() const {
 	return mover_name();

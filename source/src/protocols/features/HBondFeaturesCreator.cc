@@ -25,15 +25,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP HBondFeaturesCreator::HBondFeaturesCreator() {}
-// XRW TEMP HBondFeaturesCreator::~HBondFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP HBondFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< HBondFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string HBondFeaturesCreator::type_name() const {
-// XRW TEMP  return "HBondFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

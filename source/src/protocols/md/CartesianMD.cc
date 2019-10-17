@@ -95,22 +95,8 @@ using namespace core;
 using namespace ObjexxFCL::format;
 
 // creator
-// XRW TEMP std::string
-// XRW TEMP CartesianMDCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CartesianMD::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CartesianMDCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CartesianMD >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CartesianMD::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "CartesianMD";
-// XRW TEMP }
 
 
 // mover
@@ -175,10 +161,6 @@ CartesianMD::clone() const {
 	return utility::pointer::make_shared< CartesianMD >(*this);
 }
 
-// XRW TEMP std::string CartesianMD::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "CartesianMD";
-// XRW TEMP }
 
 void CartesianMD::get_native_info( core::pose::Pose const &pose )
 {

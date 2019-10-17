@@ -260,17 +260,7 @@ TR << "Set mover NOT to copy residue side-chain bond lengths." << std::endl;
 }*/
 
 /// @brief Get the name of the Mover
-// XRW TEMP std::string
-// XRW TEMP CopyRotamerMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return CopyRotamerMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CopyRotamerMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "CopyRotamer";
-// XRW TEMP }
 
 std::ostream &
 operator<<( std::ostream & os, CopyRotamerMover const & mover )
@@ -281,17 +271,7 @@ operator<<( std::ostream & os, CopyRotamerMover const & mover )
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CopyRotamerMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< CopyRotamerMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CopyRotamerMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CopyRotamerMover::mover_name();
-// XRW TEMP }
 
 std::string CopyRotamerMover::get_name() const {
 	return mover_name();

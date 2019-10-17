@@ -69,23 +69,8 @@ static basic::Tracer TR( "protocols.legacy_sewing.LegacyAppendAssemblyMover" );
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LegacyAppendAssemblyMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< LegacyAppendAssemblyMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyAppendAssemblyMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LegacyAppendAssemblyMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyAppendAssemblyMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LegacyAppendAssemblyMover";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 LegacyAppendAssemblyMover::clone() const {
@@ -96,10 +81,6 @@ LegacyAppendAssemblyMover::fresh_instance() const {
 	return utility::pointer::make_shared< LegacyAppendAssemblyMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyAppendAssemblyMover::get_name() const {
-// XRW TEMP  return "LegacyAppendAssemblyMover";
-// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////  LegacyAppendAssemblyMover function   //////////////////////////////////

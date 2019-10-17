@@ -29,20 +29,8 @@ namespace simple_moves {
 
 static basic::Tracer TR( "protocols.simple_moves.FavorSymmetricSequence" );
 
-// XRW TEMP std::string FavorSymmetricSequenceCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FavorSymmetricSequence::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP FavorSymmetricSequenceCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< FavorSymmetricSequence >();
-// XRW TEMP }
 
-// XRW TEMP std::string FavorSymmetricSequence::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "FavorSymmetricSequence";
-// XRW TEMP }
 
 FavorSymmetricSequence::FavorSymmetricSequence() : symmetric_units_(0), penalty_(0.0)
 {
@@ -77,10 +65,6 @@ void FavorSymmetricSequence::apply(core::pose::Pose & pose)
 	}
 }
 
-// XRW TEMP std::string FavorSymmetricSequence::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "FavorSymmetricSequence";
-// XRW TEMP }
 
 void FavorSymmetricSequence::parse_my_tag(
 	utility::tag::TagCOP tag,

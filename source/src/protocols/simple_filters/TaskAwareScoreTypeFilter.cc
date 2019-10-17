@@ -377,11 +377,7 @@ TaskAwareScoreTypeFilter::clone() const{
 	return utility::pointer::make_shared< TaskAwareScoreTypeFilter >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP TaskAwareScoreTypeFilterCreator::create_filter() const { return utility::pointer::make_shared< TaskAwareScoreTypeFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP TaskAwareScoreTypeFilterCreator::keyname() const { return "TaskAwareScoreType"; }
 
 std::string TaskAwareScoreTypeFilter::name() const {
 	return class_name();

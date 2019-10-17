@@ -64,10 +64,6 @@ ReplaceRegionMover::ReplaceRegionMover(const ReplaceRegionMover& ) = default;
 
 ReplaceRegionMover::~ReplaceRegionMover()= default;
 
-// XRW TEMP std::string
-// XRW TEMP ReplaceRegionMover::get_name() const {
-// XRW TEMP  return "ReplaceRegionMover";
-// XRW TEMP }
 
 
 void
@@ -87,20 +83,8 @@ ReplaceRegionMover::parse_my_tag(
 	target_pose_start_= tag->getOption<std::string>("target_pose_start");
 }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ReplaceRegionMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ReplaceRegionMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ReplaceRegionMoverCreator::keyname() const {
-// XRW TEMP  return ReplaceRegionMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ReplaceRegionMover::mover_name(){
-// XRW TEMP  return "ReplaceRegionMover";
-// XRW TEMP }
 
 void ReplaceRegionMover::src_pose_start(std::string const & start){ src_pose_start_ = start; }
 std::string const & ReplaceRegionMover::src_pose_start() const{ return src_pose_start_; }

@@ -513,11 +513,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 	}
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AtomicContactCountFilterCreator::create_filter() const { return utility::pointer::make_shared< AtomicContactCountFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP AtomicContactCountFilterCreator::keyname() const { return "AtomicContactCount"; }
 
 std::string AtomicContactCountFilter::name() const {
 	return class_name();

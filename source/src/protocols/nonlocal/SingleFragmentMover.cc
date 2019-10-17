@@ -132,9 +132,6 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
 	TR.Debug << "Inserted fragment at position " << insertion_pos << std::endl;
 }
 
-// XRW TEMP std::string SingleFragmentMover::get_name() const {
-// XRW TEMP  return "SingleFragmentMover";
-// XRW TEMP }
 
 protocols::moves::MoverOP SingleFragmentMover::clone() const {
 	return utility::pointer::make_shared< SingleFragmentMover >(*this);

@@ -174,32 +174,16 @@ utility::vector1< std::string > MPDockingSetupMover::get_spanfiles() const {
 }
 
 /// @brief Create a new copy of this mover
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MPDockingSetupMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MPDockingSetupMover >();
-// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-// XRW TEMP std::string
-// XRW TEMP MPDockingSetupMoverCreator::keyname() const {
-// XRW TEMP  return MPDockingSetupMover::mover_name();
-// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-// XRW TEMP std::string
-// XRW TEMP MPDockingSetupMover::mover_name() {
-// XRW TEMP  return "MPDockingSetupMover";
-// XRW TEMP }
 
 /////////////////////
 /// Mover Methods ///
 /////////////////////
 
 /// @brief Get the name of this Mover (MPDockingSetupMover)
-// XRW TEMP std::string
-// XRW TEMP MPDockingSetupMover::get_name() const {
-// XRW TEMP  return "MPDockingSetupMover";
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 

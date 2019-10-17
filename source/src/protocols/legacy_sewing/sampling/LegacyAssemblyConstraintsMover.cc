@@ -227,23 +227,8 @@ void LegacyReadRepeatNativeRotamersFileCreator::provide_xml_schema( utility::tag
 ////////////////////////  Boiler Plate Mover Code   ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LegacyAssemblyConstraintsMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< LegacyAssemblyConstraintsMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyAssemblyConstraintsMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LegacyAssemblyConstraintsMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyAssemblyConstraintsMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LegacyAssemblyConstraintsMover";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 LegacyAssemblyConstraintsMover::clone() const {
@@ -255,10 +240,6 @@ LegacyAssemblyConstraintsMover::fresh_instance() const {
 	return utility::pointer::make_shared< LegacyAssemblyConstraintsMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP LegacyAssemblyConstraintsMover::get_name() const {
-// XRW TEMP  return "LegacyAssemblyConstraintsMover";
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Mover  Functions   ////////////////////////////////////

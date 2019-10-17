@@ -59,22 +59,8 @@ static basic::Tracer TR( "protocols.simple_moves.BBGaussianMover" );
 namespace protocols {
 namespace simple_moves {
 
-// XRW TEMP std::string
-// XRW TEMP BBGaussianMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return BBGaussianMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP BBGaussianMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< BBGaussianMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BBGaussianMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "BBGaussian";
-// XRW TEMP }
 
 ///////////////////////////////////////////////////
 BBGaussianMover::BBGaussianMover()
@@ -113,9 +99,6 @@ BBGaussianMover::clone() const {
 	return static_cast< protocols::moves::MoverOP >(mp);
 }
 
-// XRW TEMP std::string BBGaussianMover::get_name() const {
-// XRW TEMP  return "BBGaussianMover";
-// XRW TEMP }
 
 void BBGaussianMover::resize(Size n_end_atom, Size n_dof_angle, Size n_pert_res)
 {

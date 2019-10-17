@@ -236,22 +236,8 @@ ReportEffectivePKA::parse_my_tag(
 	}
 }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ReportEffectivePKACreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ReportEffectivePKA >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ReportEffectivePKACreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ReportEffectivePKA::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ReportEffectivePKA::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ReportEffectivePKA";
-// XRW TEMP }
 
 std::string ReportEffectivePKA::get_name() const {
 	return mover_name();

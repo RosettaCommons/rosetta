@@ -56,27 +56,9 @@ SaveSequenceToCommentsMover::parse_my_tag(
 moves::MoverOP SaveSequenceToCommentsMover::clone() const { return utility::pointer::make_shared< SaveSequenceToCommentsMover >( *this ); }
 moves::MoverOP SaveSequenceToCommentsMover::fresh_instance() const { return utility::pointer::make_shared< SaveSequenceToCommentsMover >(); }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SaveSequenceToCommentsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SaveSequenceToCommentsMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SaveSequenceToCommentsMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SaveSequenceToCommentsMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SaveSequenceToCommentsMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SaveSequenceToCommentsMover";
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SaveSequenceToCommentsMover::get_name() const {
-// XRW TEMP  return "SaveSequenceToCommentsMover";
-// XRW TEMP }
 
 std::string SaveSequenceToCommentsMover::get_name() const {
 	return mover_name();

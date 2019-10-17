@@ -105,22 +105,10 @@ AddMembraneSpanTermZConstraint::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AddMembraneSpanTermZConstraintCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AddMembraneSpanTermZConstraint >();
-// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-// XRW TEMP std::string
-// XRW TEMP AddMembraneSpanTermZConstraintCreator::keyname() const {
-// XRW TEMP  return AddMembraneSpanTermZConstraint::mover_name();
-// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-// XRW TEMP std::string
-// XRW TEMP AddMembraneSpanTermZConstraint::mover_name() {
-// XRW TEMP  return "AddMembraneSpanTermZConstraint";
-// XRW TEMP }
 
 
 /////////////////////

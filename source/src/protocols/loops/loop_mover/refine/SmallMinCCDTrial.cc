@@ -90,10 +90,6 @@ SmallMinCCDTrial & SmallMinCCDTrial::operator=( SmallMinCCDTrial const & rhs ){
 SmallMinCCDTrial::~SmallMinCCDTrial() = default;
 
 /// @brief Each derived class must specify its name.
-// XRW TEMP std::string SmallMinCCDTrial::get_name() const
-// XRW TEMP {
-// XRW TEMP  return type();
-// XRW TEMP }
 
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
@@ -364,15 +360,8 @@ void SmallMinCCDTrial::debug_five( Pose & pose )
 ////////////////////////////////////// END OF EXCESSIVE DEBUG OUTPUT //////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// XRW TEMP SmallMinCCDTrialCreator::~SmallMinCCDTrialCreator() {}
 
-// XRW TEMP moves::MoverOP SmallMinCCDTrialCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SmallMinCCDTrial >();
-// XRW TEMP }
 
-// XRW TEMP std::string SmallMinCCDTrialCreator::keyname() const {
-// XRW TEMP  return "SmallMinCCDTrial";
-// XRW TEMP }
 
 std::string SmallMinCCDTrial::get_name() const {
 	return mover_name();

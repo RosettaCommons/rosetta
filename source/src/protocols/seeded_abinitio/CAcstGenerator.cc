@@ -49,22 +49,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.seeded_abinitio.CAcstGenerator" );
 
-// XRW TEMP std::string
-// XRW TEMP CAcstGeneratorCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CAcstGenerator::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CAcstGeneratorCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CAcstGenerator >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CAcstGenerator::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "CAcstGenerator";
-// XRW TEMP }
 
 CAcstGenerator::~CAcstGenerator() = default;
 
@@ -289,10 +275,6 @@ CAcstGenerator::apply( pose::Pose & pose ){
 	TR.flush();
 }
 
-// XRW TEMP std::string
-// XRW TEMP CAcstGenerator::get_name() const {
-// XRW TEMP  return CAcstGenerator::mover_name();
-// XRW TEMP }
 
 
 void

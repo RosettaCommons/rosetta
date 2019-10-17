@@ -119,32 +119,16 @@ MPSymDockMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MPSymDockMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MPSymDockMover >();
-// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-// XRW TEMP std::string
-// XRW TEMP MPSymDockMoverCreator::keyname() const {
-// XRW TEMP  return MPSymDockMover::mover_name();
-// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-// XRW TEMP std::string
-// XRW TEMP MPSymDockMover::mover_name() {
-// XRW TEMP  return "MPSymDockMover";
-// XRW TEMP }
 
 //////////////////////
 /// Mover Methods  ///
 //////////////////////
 
 /// @brief Return the name of this mover (MPSymDockMover)
-// XRW TEMP std::string
-// XRW TEMP MPSymDockMover::get_name() const {
-// XRW TEMP  return "MPSymDockMover";
-// XRW TEMP }
 
 /// @brief Apply Method: Symmetric Docking in the membrane
 /// @details Setup pose for symmetry, add the membrane components to the total pose,

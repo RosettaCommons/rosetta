@@ -602,10 +602,6 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	return loop_mover::Success;
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoopMover_Perturb_KIC::get_name() const {
-// XRW TEMP  return "LoopMover_Perturb_KIC";
-// XRW TEMP }
 
 void
 LoopMover_Perturb_KIC::show(std::ostream & output) const
@@ -628,15 +624,8 @@ basic::Tracer & LoopMover_Perturb_KIC::tr() const
 	return TR;
 }
 
-// XRW TEMP LoopMover_Perturb_KICCreator::~LoopMover_Perturb_KICCreator() {}
 
-// XRW TEMP moves::MoverOP LoopMover_Perturb_KICCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopMover_Perturb_KIC >();
-// XRW TEMP }
 
-// XRW TEMP std::string LoopMover_Perturb_KICCreator::keyname() const {
-// XRW TEMP  return "LoopMover_Perturb_KIC";
-// XRW TEMP }
 
 std::string LoopMover_Perturb_KIC::get_name() const {
 	return mover_name();

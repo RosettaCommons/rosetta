@@ -80,10 +80,6 @@ DeleteRegionMover::DeleteRegionMover( DeleteRegionMover const & src ):
 	if ( src.selector_ ) selector_ = src.selector_->clone();
 }
 
-// XRW TEMP std::string
-// XRW TEMP DeleteRegionMover::get_name() const {
-// XRW TEMP  return "DeleteRegionMover";
-// XRW TEMP }
 
 void
 DeleteRegionMover::region( std::string const & res_start, std::string const & res_end )
@@ -108,20 +104,8 @@ DeleteRegionMover::fresh_instance() const {
 	return utility::pointer::make_shared< DeleteRegionMover >();
 }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DeleteRegionMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DeleteRegionMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DeleteRegionMoverCreator::keyname() const {
-// XRW TEMP  return DeleteRegionMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DeleteRegionMover::mover_name(){
-// XRW TEMP  return "DeleteRegionMover";
-// XRW TEMP }
 
 void
 DeleteRegionMover::parse_my_tag(

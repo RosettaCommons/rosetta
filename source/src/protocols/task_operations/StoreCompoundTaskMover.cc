@@ -350,14 +350,7 @@ StoreCompoundTaskMover::parse_my_tag(
 }
 
 // @brief Identification
-// XRW TEMP std::string StoreCompoundTaskMoverCreator::keyname() const { return StoreCompoundTaskMover::mover_name(); }
-// XRW TEMP std::string StoreCompoundTaskMover::mover_name() { return "StoreCompoundTaskMover"; }
-// XRW TEMP std::string StoreCompoundTaskMover::get_name() const { return "StoreCompoundTaskMover"; }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP StoreCompoundTaskMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< StoreCompoundTaskMover >();
-// XRW TEMP }
 
 protocols::moves::MoverOP
 StoreCompoundTaskMover::clone() const {

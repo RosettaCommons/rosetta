@@ -51,10 +51,6 @@ SymFoldandDockMoveRbJumpMover::apply( core::pose::Pose & pose )
 	core::pose::symmetry::find_new_symmetric_jump_residues( pose );
 }
 
-// XRW TEMP std::string
-// XRW TEMP SymFoldandDockMoveRbJumpMover::get_name() const {
-// XRW TEMP  return "SymFoldandDockMoveRbJumpMover";
-// XRW TEMP }
 
 void
 SymFoldandDockMoveRbJumpMover::parse_my_tag(
@@ -67,20 +63,8 @@ SymFoldandDockMoveRbJumpMover::parse_my_tag(
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP SymFoldandDockMoveRbJumpMoverCreator::keyname() const {
-// XRW TEMP  return SymFoldandDockMoveRbJumpMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SymFoldandDockMoveRbJumpMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SymFoldandDockMoveRbJumpMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SymFoldandDockMoveRbJumpMover::mover_name() {
-// XRW TEMP  return "SymFoldandDockMoveRbJumpMover";
-// XRW TEMP }
 
 std::string SymFoldandDockMoveRbJumpMover::get_name() const {
 	return mover_name();

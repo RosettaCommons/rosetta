@@ -1335,22 +1335,8 @@ DockingProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 }//end parse_my_tag
 
 
-// XRW TEMP std::string
-// XRW TEMP DockingProtocolCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DockingProtocol::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DockingProtocolCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< DockingProtocol >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DockingProtocol::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DockingProtocol";
-// XRW TEMP }
 
 std::string DockingProtocol::get_name() const {
 	return mover_name();

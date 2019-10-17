@@ -37,22 +37,8 @@ namespace protocols {
 namespace forge {
 namespace constraints {
 
-// XRW TEMP std::string
-// XRW TEMP NtoCConstraintGeneratorCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return NtoCConstraintGenerator::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP NtoCConstraintGeneratorCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< NtoCConstraintGenerator >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP NtoCConstraintGenerator::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "NtoCConstraintGenerator";
-// XRW TEMP }
 
 /// @brief
 NtoCConstraintGenerator::NtoCConstraintGenerator():
@@ -85,11 +71,6 @@ NtoCConstraintGenerator::parse_my_tag( TagCOP const tag,
 	cg_.set_max_distance( tag->getOption< core::Real >( "dist", cg_.max_distance() ) );
 }
 
-// XRW TEMP std::string
-// XRW TEMP NtoCConstraintGenerator::get_name() const
-// XRW TEMP {
-// XRW TEMP  return NtoCConstraintGenerator::mover_name();
-// XRW TEMP }
 
 protocols::moves::MoverOP
 NtoCConstraintGenerator::fresh_instance() const

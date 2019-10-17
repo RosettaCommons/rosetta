@@ -52,11 +52,7 @@ using namespace ObjexxFCL::format;
 
 static basic::Tracer TR( "protocols.simple_filters.NMerPSSMEnergyFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP NMerPSSMEnergyFilterCreator::create_filter() const { return utility::pointer::make_shared< NMerPSSMEnergyFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP NMerPSSMEnergyFilterCreator::keyname() const { return "NMerPSSMEnergy"; }
 
 //default ctor
 NMerPSSMEnergyFilter::NMerPSSMEnergyFilter() :

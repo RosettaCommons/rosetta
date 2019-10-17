@@ -49,22 +49,8 @@ namespace splice {
 
 using namespace::protocols;
 
-// XRW TEMP std::string
-// XRW TEMP RBInMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RBInMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RBInMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RBInMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RBInMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "RBIn";
-// XRW TEMP }
 
 RBInMover::RBInMover(): moves::Mover("RBIn"),
 	RB_dbase_(""),
@@ -231,10 +217,6 @@ RBInMover::apply( Pose & pose ){
 	checkpoint();
 }
 
-// XRW TEMP std::string
-// XRW TEMP RBInMover::get_name() const {
-// XRW TEMP  return RBInMover::mover_name();
-// XRW TEMP }
 
 moves::MoverOP
 RBInMover::clone() const

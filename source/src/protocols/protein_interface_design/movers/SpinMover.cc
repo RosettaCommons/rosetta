@@ -43,20 +43,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.SpinMover" );
 
-// XRW TEMP std::string SpinMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SpinMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SpinMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SpinMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SpinMover::mover_name() {
-// XRW TEMP  return "SpinMover";
-// XRW TEMP }
 
 SpinMover::SpinMover( ) :
 	protocols::moves::Mover( SpinMover::mover_name()  )
@@ -69,9 +57,6 @@ SpinMover::SpinMover( core::Size jump_num ) :
 	jump_num_(jump_num)
 { }
 
-// XRW TEMP std::string SpinMover::get_name() const {
-// XRW TEMP  return SpinMover::mover_name();
-// XRW TEMP }
 
 void
 SpinMover::apply( core::pose::Pose & pose )

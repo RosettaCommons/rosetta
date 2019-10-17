@@ -129,8 +129,6 @@ StructureScoresFeatures::StructureScoresFeatures(
 
 StructureScoresFeatures::~StructureScoresFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP StructureScoresFeatures::type_name() const { return "StructureScoresFeatures"; }
 
 void
 StructureScoresFeatures::write_schema_to_db(

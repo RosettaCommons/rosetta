@@ -460,11 +460,7 @@ HSSTripletFilter::get_hss3s( Pose const & pose ) const
 	return HSSTriplets();
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HSSTripletFilterCreator::create_filter() const { return utility::pointer::make_shared< HSSTripletFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP HSSTripletFilterCreator::keyname() const { return "HSSTriplet"; }
 
 std::string HSSTripletFilter::name() const {
 	return class_name();

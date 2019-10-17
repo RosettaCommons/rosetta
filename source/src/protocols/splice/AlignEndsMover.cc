@@ -39,22 +39,8 @@ namespace splice {
 
 using namespace::protocols;
 
-// XRW TEMP std::string
-// XRW TEMP AlignEndsMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AlignEndsMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AlignEndsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AlignEndsMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AlignEndsMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AlignEnds";
-// XRW TEMP }
 
 AlignEndsMover::AlignEndsMover(): moves::Mover("AlignEnds"),
 	distance_threshold_( 18.0 ),
@@ -247,10 +233,6 @@ AlignEndsMover::apply( Pose & pose ){
 	apply_superposition_transform( pose, rotation, to_init_center, to_fit_center );
 }
 
-// XRW TEMP std::string
-// XRW TEMP AlignEndsMover::get_name() const {
-// XRW TEMP  return AlignEndsMover::mover_name();
-// XRW TEMP }
 
 moves::MoverOP
 AlignEndsMover::clone() const

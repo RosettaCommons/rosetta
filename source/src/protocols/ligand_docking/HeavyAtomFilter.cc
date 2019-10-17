@@ -69,11 +69,7 @@ HeavyAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HeavyAtomFilterCreator::create_filter() const { return utility::pointer::make_shared< HeavyAtomFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP HeavyAtomFilterCreator::keyname() const { return "HeavyAtom"; }
 
 std::string HeavyAtomFilter::name() const {
 	return class_name();

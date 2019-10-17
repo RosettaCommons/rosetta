@@ -67,11 +67,7 @@ HBondAcceptorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HBondAcceptorFilterCreator::create_filter() const { return utility::pointer::make_shared< HBondAcceptorFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP HBondAcceptorFilterCreator::keyname() const { return "HBondAcceptor"; }
 
 std::string HBondAcceptorFilter::name() const {
 	return class_name();

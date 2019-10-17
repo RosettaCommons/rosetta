@@ -109,133 +109,37 @@ using namespace scoring;
 /// creators
 
 
-// XRW TEMP std::string
-// XRW TEMP ReportGradientsMoverCreator::keyname() const {
-// XRW TEMP  return ReportGradientsMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ReportGradientsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ReportGradientsMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ReportGradientsMover::mover_name() {
-// XRW TEMP  return "ReportGradients";
-// XRW TEMP }
 
 ///
 
-// XRW TEMP std::string
-// XRW TEMP SetCrystWeightMoverCreator::keyname() const {
-// XRW TEMP  return SetCrystWeightMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetCrystWeightMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetCrystWeightMover >();
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP SetCrystWeightMover::mover_name() {
-// XRW TEMP  return "SetCrystWeight";
-// XRW TEMP }
 
 
-// XRW TEMP std::string
-// XRW TEMP RecomputeDensityMapMoverCreator::keyname() const {
-// XRW TEMP  return RecomputeDensityMapMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RecomputeDensityMapMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RecomputeDensityMapMover >();
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP RecomputeDensityMapMover::mover_name() {
-// XRW TEMP  return "RecomputeDensityMap";
-// XRW TEMP }
 
 
-// XRW TEMP std::string
-// XRW TEMP LoadDensityMapMoverCreator::keyname() const {
-// XRW TEMP  return LoadDensityMapMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoadDensityMapMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoadDensityMapMover >();
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP LoadDensityMapMover::mover_name() {
-// XRW TEMP  return "LoadDensityMap";
-// XRW TEMP }
 
 
-// XRW TEMP std::string
-// XRW TEMP FitBfactorsMoverCreator::keyname() const {
-// XRW TEMP  return FitBfactorsMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FitBfactorsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FitBfactorsMover >();
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP FitBfactorsMover::mover_name() {
-// XRW TEMP  return "FitBfactors";
-// XRW TEMP }
 
 
-// XRW TEMP std::string
-// XRW TEMP UpdateSolventMoverCreator::keyname() const {
-// XRW TEMP  return UpdateSolventMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP UpdateSolventMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< UpdateSolventMover >();
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP UpdateSolventMover::mover_name() {
-// XRW TEMP  return "UpdateSolvent";
-// XRW TEMP }
 
 
-// XRW TEMP std::string
-// XRW TEMP TagPoseWithRefinementStatsMoverCreator::keyname() const {
-// XRW TEMP  return TagPoseWithRefinementStatsMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP TagPoseWithRefinementStatsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< TagPoseWithRefinementStatsMover >();
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP TagPoseWithRefinementStatsMover::mover_name() {
-// XRW TEMP  return "TagPoseWithRefinementStats";
-// XRW TEMP }
 
 
-// XRW TEMP std::string
-// XRW TEMP SetRefinementOptionsMoverCreator::keyname() const {
-// XRW TEMP  return SetRefinementOptionsMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetRefinementOptionsMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetRefinementOptionsMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetRefinementOptionsMover::mover_name() {
-// XRW TEMP  return "SetRefinementOptions";
-// XRW TEMP }
+
+
+
+
+
+
+
+
+
+
+
+
 
 //////////////////
 //////////////////

@@ -43,23 +43,8 @@ namespace protocols {
 namespace forge {
 namespace constraints {
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP InverseRotamersCstGeneratorCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< InverseRotamersRCG >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP InverseRotamersCstGeneratorCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return InverseRotamersRCG::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP InverseRotamersRCG::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "InverseRotamersCstGenerator";
-// XRW TEMP }
 
 InverseRotamersRCG::InverseRotamersRCG()
 : RemodelConstraintGenerator(),
@@ -97,11 +82,6 @@ InverseRotamersRCG::parse_my_tag( TagCOP const tag,
 	//nothing here right now
 }
 
-// XRW TEMP std::string
-// XRW TEMP InverseRotamersRCG::get_name() const
-// XRW TEMP {
-// XRW TEMP  return InverseRotamersRCG::mover_name();
-// XRW TEMP }
 
 
 protocols::moves::MoverOP

@@ -40,11 +40,7 @@ namespace buns {
 
 static basic::Tracer TR( "devel.buns.BuriedUnsatHbondFilter2" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP BuriedUnsatHbondFilter2Creator::create_filter() const { return utility::pointer::make_shared< BuriedUnsatHbondFilter2 >(); }
 
-// XRW TEMP std::string
-// XRW TEMP BuriedUnsatHbondFilter2Creator::keyname() const { return "BuriedUnsatHbonds2"; }
 
 BuriedUnsatHbondFilter2::BuriedUnsatHbondFilter2( core::Size const upper_threshold, core::Size const jump_num ) :
 	protocols::filters::Filter( "BuriedUnsatHbonds2" ),

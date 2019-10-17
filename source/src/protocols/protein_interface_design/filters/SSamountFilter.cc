@@ -235,13 +235,7 @@ void SSamountFilter::parse_my_tag( utility::tag::TagCOP tag,
 	}
 }
 
-// XRW TEMP protocols::filters::FilterOP SSamountFilterCreator::create_filter() const {
-// XRW TEMP  return utility::pointer::make_shared< SSamountFilter >();
-// XRW TEMP }
 
-// XRW TEMP std::string SSamountFilterCreator::keyname() const {
-// XRW TEMP  return "SSamount";
-// XRW TEMP }
 
 std::string SSamountFilter::name() const {
 	return class_name();

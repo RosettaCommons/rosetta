@@ -23,15 +23,7 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP ChargeChargeFeaturesCreator::ChargeChargeFeaturesCreator() {}
-// XRW TEMP ChargeChargeFeaturesCreator::~ChargeChargeFeaturesCreator() = default;
-// XRW TEMP FeaturesReporterOP ChargeChargeFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< ChargeChargeFeatures >();
-// XRW TEMP }
 
-// XRW TEMP std::string ChargeChargeFeaturesCreator::type_name() const {
-// XRW TEMP  return "ChargeChargeFeatures";
-// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

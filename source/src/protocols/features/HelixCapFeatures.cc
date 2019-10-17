@@ -64,11 +64,6 @@ HelixCapFeatures::HelixCapFeatures( HelixCapFeatures const & /*src*/ ) : Feature
 HelixCapFeatures::~HelixCapFeatures()= default;
 
 /// @brief return string with class name
-// XRW TEMP std::string
-// XRW TEMP HelixCapFeatures::type_name() const
-// XRW TEMP {
-// XRW TEMP  return "HelixCapFeatures";
-// XRW TEMP }
 
 /// @brief generate the table schemas and write them to the database
 void

@@ -47,22 +47,8 @@ using namespace protocols::moves;
 static basic::Tracer TR( "protocols.protein_interface_design.movers.AddSidechainConstraintsToHotspots" );
 static basic::Tracer TR_cst( "protocols.protein_interface_design.movers.AddSidechainConstraintsToHotspots_csts" );
 
-// XRW TEMP std::string
-// XRW TEMP AddSidechainConstraintsToHotspotsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AddSidechainConstraintsToHotspots::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AddSidechainConstraintsToHotspotsCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AddSidechainConstraintsToHotspots >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AddSidechainConstraintsToHotspots::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AddSidechainConstraintsToHotspots";
-// XRW TEMP }
 
 
 AddSidechainConstraintsToHotspots::AddSidechainConstraintsToHotspots() :
@@ -110,10 +96,6 @@ AddSidechainConstraintsToHotspots::apply( Pose & pose )
 	TR.flush();
 }
 
-// XRW TEMP std::string
-// XRW TEMP AddSidechainConstraintsToHotspots::get_name() const {
-// XRW TEMP  return AddSidechainConstraintsToHotspots::mover_name();
-// XRW TEMP }
 
 void
 AddSidechainConstraintsToHotspots::parse_my_tag( TagCOP const tag,

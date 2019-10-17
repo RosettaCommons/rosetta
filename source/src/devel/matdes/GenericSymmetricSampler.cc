@@ -52,22 +52,8 @@ using namespace utility;
 
 //////////////////////////////////////////////
 /// creator
-// XRW TEMP std::string
-// XRW TEMP GenericSymmetricSamplerCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return GenericSymmetricSampler::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP GenericSymmetricSamplerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< GenericSymmetricSampler >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP GenericSymmetricSampler::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "GenericSymmetricSampler";
-// XRW TEMP }
 
 //////////////////////////////////////////////
 /// mover

@@ -79,8 +79,6 @@ using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowDataBaseOP;
 using basic::database::insert_statement_generator::RowData;
 
-// XRW TEMP string
-// XRW TEMP PoseCommentsFeatures::type_name() const { return "PoseCommentsFeatures"; }
 
 void
 PoseCommentsFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{

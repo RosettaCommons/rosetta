@@ -40,22 +40,8 @@ static basic::Tracer TR( "protocols.pose_creation.MakePolyXMover" );
 namespace protocols {
 namespace pose_creation {
 
-// XRW TEMP std::string
-// XRW TEMP MakePolyXMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return MakePolyXMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MakePolyXMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< MakePolyXMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP MakePolyXMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "MakePolyX";
-// XRW TEMP }
 
 MakePolyXMover::MakePolyXMover():
 	protocols::moves::Mover( MakePolyXMover::mover_name() ),

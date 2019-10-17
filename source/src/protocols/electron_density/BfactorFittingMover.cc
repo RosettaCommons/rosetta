@@ -585,22 +585,8 @@ BfactorFittingMover::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
 	}
 }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP BfactorFittingMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< BfactorFittingMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BfactorFittingMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return BfactorFittingMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BfactorFittingMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "BfactorFitting";
-// XRW TEMP }
 
 std::string BfactorFittingMover::get_name() const {
 	return mover_name();

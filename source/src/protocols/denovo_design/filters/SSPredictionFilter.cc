@@ -290,15 +290,7 @@ void SSPredictionFilter::parse_my_tag(
 	}
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SSPredictionFilterCreator::create_filter() const {
-// XRW TEMP  return utility::pointer::make_shared< SSPredictionFilter >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SSPredictionFilterCreator::keyname() const {
-// XRW TEMP  return "SSPrediction";
-// XRW TEMP }
 
 std::string SSPredictionFilter::name() const {
 	return class_name();

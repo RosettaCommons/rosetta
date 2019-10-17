@@ -37,13 +37,7 @@ using core::pose::Pose;
 using core::pack::task::TaskFactoryOP;
 using core::scoring::ScoreFunctionOP;
 
-// XRW TEMP protocols::moves::MoverOP RotamerTrialsRefinerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RotamerTrialsRefiner >();
-// XRW TEMP }
 
-// XRW TEMP std::string RotamerTrialsRefinerCreator::keyname() const {
-// XRW TEMP  return "RotamerTrialsRefiner";
-// XRW TEMP }
 
 void RotamerTrialsRefiner::parse_my_tag(
 	utility::tag::TagCOP tag,

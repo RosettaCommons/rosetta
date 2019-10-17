@@ -362,20 +362,8 @@ RigidBodyPerturbNoCenterMover::parse_my_tag(
 	trans_mag_ = tag->getOption< core::Real >( "trans_mag", 0.4 );
 }
 
-// XRW TEMP std::string
-// XRW TEMP RigidBodyPerturbNoCenterMoverCreator::keyname() const {
-// XRW TEMP  return RigidBodyPerturbNoCenterMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RigidBodyPerturbNoCenterMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RigidBodyPerturbNoCenterMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RigidBodyPerturbNoCenterMover::mover_name() {
-// XRW TEMP  return "RigidBodyPerturbNoCenter";
-// XRW TEMP }
 
 moves::MoverOP
 RigidBodyPerturbNoCenterMover::clone() const {
@@ -465,10 +453,6 @@ RigidBodyPerturbNoCenterMover::apply( core::pose::Pose & pose )
 	pose.set_jump( rb_jump_, flexible_jump );
 }
 
-// XRW TEMP std::string
-// XRW TEMP RigidBodyPerturbNoCenterMover::get_name() const {
-// XRW TEMP  return "RigidBodyPerturbNoCenterMover";
-// XRW TEMP }
 
 std::string RigidBodyPerturbNoCenterMover::get_name() const {
 	return mover_name();
@@ -893,10 +877,6 @@ core::Vector RigidBodyTiltMover::find_tilt_center(
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP RigidBodyTiltMover::get_name() const {
-// XRW TEMP  return "RigidBodyTiltMover";
-// XRW TEMP }
 
 void
 RigidBodyTiltMover::parse_my_tag( utility::tag::TagCOP tag,
@@ -938,20 +918,8 @@ RigidBodyTiltMover::fresh_instance() const {
 	return utility::pointer::make_shared< RigidBodyTiltMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP RigidBodyTiltMoverCreator::keyname() const {
-// XRW TEMP  return RigidBodyTiltMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RigidBodyTiltMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RigidBodyTiltMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RigidBodyTiltMover::mover_name() {
-// XRW TEMP  return "RigidBodyTiltMover";
-// XRW TEMP }
 
 std::string RigidBodyTiltMover::get_name() const {
 	return mover_name();
@@ -1078,10 +1046,6 @@ RigidBodyTransMover::apply( core::pose::Pose & pose )
 
 /////////////////// ROSETTA SCRIPTS STUFF //////////////////////////////
 
-// XRW TEMP std::string
-// XRW TEMP RigidBodyTransMover::get_name() const {
-// XRW TEMP  return "RigidBodyTransMover";
-// XRW TEMP }
 
 void
 RigidBodyTransMover::parse_my_tag( utility::tag::TagCOP tag,
@@ -1107,20 +1071,8 @@ RigidBodyTransMover::fresh_instance() const {
 	return utility::pointer::make_shared< RigidBodyTransMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP RigidBodyTransMoverCreator::keyname() const {
-// XRW TEMP  return RigidBodyTransMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RigidBodyTransMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RigidBodyTransMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RigidBodyTransMover::mover_name() {
-// XRW TEMP  return "RigidBodyTransMover";
-// XRW TEMP }
 
 std::string RigidBodyTransMover::get_name() const {
 	return mover_name();

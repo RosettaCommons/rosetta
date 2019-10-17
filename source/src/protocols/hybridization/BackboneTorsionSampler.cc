@@ -382,25 +382,9 @@ moves::MoverOP BackboneTorsionSampler::fresh_instance() const {
 	return utility::pointer::make_shared< BackboneTorsionSampler >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP BackboneTorsionSampler::get_name() const {
-// XRW TEMP  return "BackboneTorsionSampler";
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP BackboneTorsionSamplerCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< BackboneTorsionSampler >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BackboneTorsionSamplerCreator::keyname() const {
-// XRW TEMP  return BackboneTorsionSampler::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP BackboneTorsionSampler::mover_name() {
-// XRW TEMP  return "BackboneTorsionSampler";
-// XRW TEMP }
 
 std::string BackboneTorsionSampler::get_name() const {
 	return mover_name();

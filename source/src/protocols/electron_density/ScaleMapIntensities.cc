@@ -233,22 +233,8 @@ ScaleMapIntensities::parse_my_tag(
 	}
 }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ScaleMapIntensitiesCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ScaleMapIntensities >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ScaleMapIntensitiesCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ScaleMapIntensities::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ScaleMapIntensities::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ScaleMapIntensities";
-// XRW TEMP }
 
 std::string ScaleMapIntensities::get_name() const {
 	return mover_name();

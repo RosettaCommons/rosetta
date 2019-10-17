@@ -69,20 +69,8 @@ using namespace chemical;
 using namespace conformation;
 
 
-// XRW TEMP std::string
-// XRW TEMP PerturbChiSidechainMoverCreator::keyname() const {
-// XRW TEMP  return PerturbChiSidechainMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PerturbChiSidechainMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PerturbChiSidechainMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PerturbChiSidechainMover::mover_name() {
-// XRW TEMP  return "PerturbChiSidechain";
-// XRW TEMP }
 
 
 PerturbChiSidechainMover::PerturbChiSidechainMover() {
@@ -125,10 +113,6 @@ PerturbChiSidechainMover::parse_my_tag(
 	gaussian_ = tag->getOption<bool>( "gaussian", gaussian_ );
 }
 
-// XRW TEMP std::string
-// XRW TEMP PerturbChiSidechainMover::get_name() const {
-// XRW TEMP  return "PerturbChiSidechainMover";
-// XRW TEMP }
 
 void
 PerturbChiSidechainMover::make_chi_move(

@@ -1405,10 +1405,6 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 } // END: FlexPepDockingProtocol::apply
 
 
-// XRW TEMP std::string
-// XRW TEMP FlexPepDockingProtocol::get_name() const {
-// XRW TEMP  return "FlexPepDockingProtocol";
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // @brief mark peptide residues that are in the native structure interface,
@@ -1854,17 +1850,8 @@ void FlexPepDockingProtocol::parse_my_tag(
 
 //////////////////////////FlexPepDockingProtocolCreator//////////////////////////////
 
-// XRW TEMP moves::MoverOP FlexPepDockingProtocolCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FlexPepDockingProtocol >(1, true, true);
-// XRW TEMP }
 
-// XRW TEMP std::string FlexPepDockingProtocolCreator::keyname() const {
-// XRW TEMP  return FlexPepDockingProtocol::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string FlexPepDockingProtocol::mover_name(){
-// XRW TEMP  return "FlexPepDock";
-// XRW TEMP }
 
 std::string FlexPepDockingProtocol::get_name() const {
 	return mover_name();

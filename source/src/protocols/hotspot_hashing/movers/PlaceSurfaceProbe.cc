@@ -236,22 +236,8 @@ PlaceSurfaceProbe::parse_my_tag( utility::tag::TagCOP tag,
 	refinement_pattern_ = initialize_refinement_pattern();
 }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PlaceSurfaceProbeCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< PlaceSurfaceProbe >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PlaceSurfaceProbeCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return "PlaceSurfaceProbe";
-// XRW TEMP }
 
-// XRW TEMP std::string PlaceSurfaceProbe::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "PlaceSurfaceProbeMover";
-// XRW TEMP }
 
 std::string PlaceSurfaceProbe::get_name() const {
 	return mover_name();

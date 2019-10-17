@@ -51,22 +51,8 @@ namespace loop_creation {
 static basic::Tracer TR( "devel.loop_creation.CCDLoopCloser" );
 
 //****CREATOR METHODS****//
-// XRW TEMP std::string
-// XRW TEMP CCDLoopCloserCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return CCDLoopCloser::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CCDLoopCloserCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CCDLoopCloser >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CCDLoopCloser::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "CCDLoopCloser";
-// XRW TEMP }
 //****END CREATOR METHODS****//
 
 
@@ -118,10 +104,6 @@ CCDLoopCloser::fresh_instance() const {
 	return utility::pointer::make_shared< CCDLoopCloser >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP CCDLoopCloser::get_name() const {
-// XRW TEMP  return "CCDLoopCloser";
-// XRW TEMP }
 
 void
 CCDLoopCloser::init(){

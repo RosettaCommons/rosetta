@@ -89,10 +89,6 @@ using cppdb::result;
 
 static basic::Tracer TR( "protocols.features.RotamerFeatures" );
 
-// XRW TEMP string
-// XRW TEMP RotamerFeatures::type_name() const {
-// XRW TEMP  return "RotamerFeatures";
-// XRW TEMP }
 
 void
 RotamerFeatures::write_schema_to_db(

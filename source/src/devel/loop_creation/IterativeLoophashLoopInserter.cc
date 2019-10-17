@@ -68,22 +68,8 @@ namespace loop_creation {
 static basic::Tracer TR( "protocols.loophash.IterativeLoophashLoopInserter" );
 
 //****CREATOR METHODS****//
-// XRW TEMP std::string
-// XRW TEMP IterativeLoophashLoopInserterCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return IterativeLoophashLoopInserter::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP IterativeLoophashLoopInserterCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< IterativeLoophashLoopInserter >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP IterativeLoophashLoopInserter::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "IterativeLoophashLoopInserter";
-// XRW TEMP }
 //****END CREATOR METHODS****//
 
 IterativeLoophashLoopInserter::IterativeLoophashLoopInserter():
@@ -101,10 +87,6 @@ IterativeLoophashLoopInserter::fresh_instance() const {
 	return utility::pointer::make_shared< IterativeLoophashLoopInserter >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP IterativeLoophashLoopInserter::get_name() const {
-// XRW TEMP  return "IterativeLoophashLoopInserter";
-// XRW TEMP }
 
 void
 IterativeLoophashLoopInserter::apply(

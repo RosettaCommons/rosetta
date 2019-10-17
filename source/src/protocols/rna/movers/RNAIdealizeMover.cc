@@ -116,17 +116,7 @@ RNAIdealizeMover::fresh_instance() const
 	return utility::pointer::make_shared< RNAIdealizeMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP RNAIdealizeMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return RNAIdealizeMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RNAIdealizeMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "RNAIdealizeMover";
-// XRW TEMP }
 
 void
 RNAIdealizeMover::show( std::ostream & output ) const
@@ -655,17 +645,7 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RNAIdealizeMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< RNAIdealizeMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RNAIdealizeMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RNAIdealizeMover::mover_name();
-// XRW TEMP }
 
 std::string RNAIdealizeMover::get_name() const {
 	return mover_name();

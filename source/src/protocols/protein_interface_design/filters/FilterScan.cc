@@ -577,11 +577,7 @@ FilterScanFilter::clone() const{
 	return utility::pointer::make_shared< FilterScanFilter >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP FilterScanFilterCreator::create_filter() const { return utility::pointer::make_shared< FilterScanFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP FilterScanFilterCreator::keyname() const { return "FilterScan"; }
 
 void
 FilterScanFilter::dump_pdb( bool const d ){

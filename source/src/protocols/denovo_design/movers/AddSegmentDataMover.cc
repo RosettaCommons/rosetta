@@ -87,17 +87,7 @@ AddSegmentDataMover::fresh_instance() const
 	return utility::pointer::make_shared< AddSegmentDataMover >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP AddSegmentDataMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return AddSegmentDataMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AddSegmentDataMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "AddSegmentDataMover";
-// XRW TEMP }
 
 void
 AddSegmentDataMover::show( std::ostream & output ) const
@@ -146,17 +136,7 @@ AddSegmentDataMover::create_segment( components::StructureData & perm ) const
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AddSegmentDataMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< AddSegmentDataMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AddSegmentDataMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return AddSegmentDataMover::mover_name();
-// XRW TEMP }
 
 std::string AddSegmentDataMover::get_name() const {
 	return mover_name();

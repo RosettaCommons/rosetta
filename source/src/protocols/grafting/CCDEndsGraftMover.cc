@@ -92,23 +92,9 @@ CCDEndsGraftMover::CCDEndsGraftMover(
 	copy_pdbinfo(copy_pdb_info);
 }
 
-// XRW TEMP std::string
-// XRW TEMP CCDEndsGraftMover::get_name() const { return "CCDEndsGraftMover"; }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP CCDEndsGraftMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< CCDEndsGraftMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CCDEndsGraftMoverCreator::keyname() const {
-// XRW TEMP  return CCDEndsGraftMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP CCDEndsGraftMover::mover_name(){
-// XRW TEMP  return "CCDEndsGraftMover";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 CCDEndsGraftMover::clone() const{

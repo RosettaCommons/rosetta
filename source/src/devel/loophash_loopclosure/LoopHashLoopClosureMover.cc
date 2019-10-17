@@ -77,25 +77,8 @@ std::ostream& operator<< (std::ostream& out , const MyLoop & loop ) {
 	return out;
 }
 
-// XRW TEMP LoopHashLoopClosureMoverCreator::LoopHashLoopClosureMoverCreator() = default;
-// XRW TEMP LoopHashLoopClosureMoverCreator::~LoopHashLoopClosureMoverCreator() = default;
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoopHashLoopClosureMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< LoopHashLoopClosureMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoopHashLoopClosureMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoopHashLoopClosureMover::mover_name();
-// XRW TEMP }
-// XRW TEMP std::string
-// XRW TEMP LoopHashLoopClosureMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LoopHashLoopClosureMover";
-// XRW TEMP }
 
 LoopHashLoopClosureMover::LoopHashLoopClosureMover() = default;
 LoopHashLoopClosureMover::~LoopHashLoopClosureMover() = default;
@@ -123,11 +106,6 @@ LoopHashLoopClosureMover::apply( core::pose::Pose & pose )
 	remodel_ = utility::pointer::make_shared< protocols::forge::remodel::RemodelMover >();
 	remodel_->apply(pose);
 }
-// XRW TEMP std::string
-// XRW TEMP LoopHashLoopClosureMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "LoopHashLoopClosureMover";
-// XRW TEMP }
 protocols::moves::MoverOP
 LoopHashLoopClosureMover::clone() const {
 	return utility::pointer::make_shared< LoopHashLoopClosureMover >( *this );

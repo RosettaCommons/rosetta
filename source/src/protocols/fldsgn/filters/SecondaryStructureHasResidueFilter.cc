@@ -263,11 +263,7 @@ void SecondaryStructureHasResidueFilter::report( std::ostream & out, core::pose:
 	out << "See SecondaryStructureHasResidueFilter tracer log for report" << std::endl;
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SecondaryStructureHasResidueFilterCreator::create_filter() const { return utility::pointer::make_shared< SecondaryStructureHasResidueFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SecondaryStructureHasResidueFilterCreator::keyname() const { return "SecondaryStructureHasResidue"; }
 
 std::string SecondaryStructureHasResidueFilter::name() const {
 	return class_name();

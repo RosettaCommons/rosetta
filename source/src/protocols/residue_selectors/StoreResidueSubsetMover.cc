@@ -109,30 +109,10 @@ StoreResidueSubsetMover::parse_my_tag( TagCOP const tag, basic::datacache::DataM
 }
 
 // @brief Identification
-// XRW TEMP std::string
-// XRW TEMP StoreResidueSubsetMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return StoreResidueSubsetMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP StoreResidueSubsetMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "StoreResidueSubset";
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP StoreResidueSubsetMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "StoreResidueSubset";
-// XRW TEMP }
 
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP StoreResidueSubsetMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< StoreResidueSubsetMover >();
-// XRW TEMP }
+
+
 
 protocols::moves::MoverOP
 StoreResidueSubsetMover::clone() const

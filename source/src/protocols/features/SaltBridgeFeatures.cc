@@ -102,8 +102,6 @@ SaltBridgeFeatures::SaltBridgeFeatures(
 	distance_cutoff_(src.distance_cutoff_)
 {}
 
-// XRW TEMP string
-// XRW TEMP SaltBridgeFeatures::type_name() const { return "SaltBridgeFeatures"; }
 
 void
 SaltBridgeFeatures::write_schema_to_db(

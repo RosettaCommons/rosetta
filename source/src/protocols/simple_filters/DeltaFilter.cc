@@ -258,11 +258,7 @@ DeltaFilter::clone() const{
 	return utility::pointer::make_shared< DeltaFilter >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP DeltaFilterCreator::create_filter() const { return utility::pointer::make_shared< DeltaFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP DeltaFilterCreator::keyname() const { return "Delta"; }
 
 protocols::moves::MoverOP
 DeltaFilter::relax_mover() const{

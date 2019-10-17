@@ -151,11 +151,7 @@ AverageDegreeFilter::clone() const{
 	return utility::pointer::make_shared< AverageDegreeFilter >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AverageDegreeFilterCreator::create_filter() const { return utility::pointer::make_shared< AverageDegreeFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP AverageDegreeFilterCreator::keyname() const { return "AverageDegree"; }
 
 std::string AverageDegreeFilter::name() const {
 	return class_name();

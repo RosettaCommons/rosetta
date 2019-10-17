@@ -119,11 +119,7 @@ LRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 	movable_jumps_.push_back(jump_num);
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP LRmsdFilterCreator::create_filter() const { return utility::pointer::make_shared< LRmsdFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP LRmsdFilterCreator::keyname() const { return "LRmsd"; }
 
 std::string LRmsdFilter::name() const {
 	return class_name();

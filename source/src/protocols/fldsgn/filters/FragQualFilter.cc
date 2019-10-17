@@ -140,11 +140,7 @@ FragQualFilter::parse_my_tag(
 
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP FragQualFilterCreator::create_filter() const { return utility::pointer::make_shared< FragQualFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP FragQualFilterCreator::keyname() const { return "FragQual"; }
 
 std::string FragQualFilter::name() const {
 	return class_name();

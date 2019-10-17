@@ -769,20 +769,9 @@ void PossibleLoop::minimize_loop(core::scoring::ScoreFunctionOP scorefxn,bool id
 NearNativeLoopCloser::NearNativeLoopCloser():moves::Mover("NearNativeLoopCloser"){
 }
 
-// XRW TEMP std::string NearNativeLoopCloserCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return NearNativeLoopCloser::mover_name();
-// XRW TEMP }
-
-// XRW TEMP std::string NearNativeLoopCloser::mover_name(){
-// XRW TEMP  return "NearNativeLoopCloser";
-// XRW TEMP }
 
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP NearNativeLoopCloserCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< NearNativeLoopCloser >();
-// XRW TEMP }
+
 
 
 NearNativeLoopCloser::NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,Size loopLengthRangeLow, Size loopLengthRangeHigh,Size resBeforeLoop,Size resAfterLoop,char chainBeforeLoop, char chainAfterLoop,Real rmsThreshold, Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed,std::string closure_type,std::string allowed_loop_abegos){

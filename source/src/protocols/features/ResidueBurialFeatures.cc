@@ -78,8 +78,6 @@ ResidueBurialFeatures::ResidueBurialFeatures(ResidueBurialFeatures const & src) 
 
 ResidueBurialFeatures::~ResidueBurialFeatures()= default;
 
-// XRW TEMP string
-// XRW TEMP ResidueBurialFeatures::type_name() const { return "ResidueBurialFeatures"; }
 
 void
 ResidueBurialFeatures::write_schema_to_db(

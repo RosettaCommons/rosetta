@@ -55,22 +55,8 @@ using namespace core;
 using namespace utility;
 
 // -------------  Mover Creator -------------
-// XRW TEMP std::string
-// XRW TEMP TaskAwareSymMinMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return TaskAwareSymMinMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP TaskAwareSymMinMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< TaskAwareSymMinMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP TaskAwareSymMinMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "TaskAwareSymMinMover";
-// XRW TEMP }
 // -------------  Mover Creator -------------
 
 TaskAwareSymMinMover::TaskAwareSymMinMover() :

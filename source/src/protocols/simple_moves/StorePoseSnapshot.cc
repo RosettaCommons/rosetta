@@ -63,22 +63,8 @@ using core::conformation::Residue;
 
 static basic::Tracer TR( "protocols.simple_moves.StorePoseSnapshot" );
 
-// XRW TEMP std::string
-// XRW TEMP StorePoseSnapshotCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return StorePoseSnapshot::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP StorePoseSnapshotCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< StorePoseSnapshot >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP StorePoseSnapshot::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "StorePoseSnapshot";
-// XRW TEMP }
 
 StorePoseSnapshot::~StorePoseSnapshot() = default;
 
@@ -111,10 +97,6 @@ void StorePoseSnapshot::apply( Pose & pose ) {
 
 /// @brief Get the mover name.
 ///
-// XRW TEMP std::string
-// XRW TEMP StorePoseSnapshot::get_name() const {
-// XRW TEMP  return StorePoseSnapshot::mover_name();
-// XRW TEMP }
 
 /// @brief Parse RosettaScripts XML to set up this mover.
 /// @details This is called at script initialization, long before the apply()

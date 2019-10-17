@@ -1106,19 +1106,10 @@ PyMOLObserverOP AddPyMOLObserver_to_conformation(core::pose::Pose &p, bool keep_
 }
 
 /// @brief PyMOLMoverCreator interface, name of the mover
-// XRW TEMP std::string PyMOLMover::mover_name() {
-// XRW TEMP  return "PyMOLMover";
-// XRW TEMP }
 
 /// @brief PyMOLMoverCreator interface, returns a unique key name to be used in xml file
-// XRW TEMP std::string PyMOLMoverCreator::keyname() const {
-// XRW TEMP  return PyMOLMover::mover_name();
-// XRW TEMP }
 
 /// @brief PyMOLMoverCreator interface, return a new instance
-// XRW TEMP protocols::moves::MoverOP PyMOLMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PyMOLMover >();
-// XRW TEMP }
 
 /// @brief allows for the setting of certain variabel from the rosetta scripts interface, only keep history
 void

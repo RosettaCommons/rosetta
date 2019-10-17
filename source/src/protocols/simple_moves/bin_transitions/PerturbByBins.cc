@@ -53,22 +53,8 @@ namespace bin_transitions {
 
 static basic::Tracer TR( "protocols.simple_moves.bin_transitions.PerturbByBins" );
 
-// XRW TEMP std::string
-// XRW TEMP PerturbByBinsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PerturbByBins::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PerturbByBinsCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PerturbByBins >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PerturbByBins::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "PerturbByBins";
-// XRW TEMP }
 
 /// @brief Default constructor
 ///
@@ -100,10 +86,6 @@ PerturbByBins::PerturbByBins( PerturbByBins const &src ) :
 ///
 PerturbByBins::~PerturbByBins() = default;
 
-// XRW TEMP std::string
-// XRW TEMP PerturbByBins::get_name() const {
-// XRW TEMP  return PerturbByBins::mover_name();
-// XRW TEMP }
 
 /// @brief Apply the mover to a pose.
 ///

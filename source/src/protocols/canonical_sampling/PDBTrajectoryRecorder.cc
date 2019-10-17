@@ -45,20 +45,8 @@
 namespace protocols {
 namespace canonical_sampling {
 
-// XRW TEMP std::string
-// XRW TEMP PDBTrajectoryRecorderCreator::keyname() const {
-// XRW TEMP  return PDBTrajectoryRecorder::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PDBTrajectoryRecorderCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PDBTrajectoryRecorder >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PDBTrajectoryRecorder::mover_name() {
-// XRW TEMP  return "PDBTrajectoryRecorder";
-// XRW TEMP }
 
 PDBTrajectoryRecorder::PDBTrajectoryRecorder()
 {
@@ -83,11 +71,6 @@ PDBTrajectoryRecorder::fresh_instance() const
 	return utility::pointer::make_shared< PDBTrajectoryRecorder >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP PDBTrajectoryRecorder::get_name() const
-// XRW TEMP {
-// XRW TEMP  return "PDBTrajectoryRecorder";
-// XRW TEMP }
 
 void
 PDBTrajectoryRecorder::parse_my_tag(

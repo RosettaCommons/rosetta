@@ -138,8 +138,6 @@ RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 
 RotamerRecoveryFeatures::~RotamerRecoveryFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP RotamerRecoveryFeatures::type_name() const { return "RotamerRecoveryFeatures"; }
 
 vector1<string>
 RotamerRecoveryFeatures::features_reporter_dependencies() const {

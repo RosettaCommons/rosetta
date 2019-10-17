@@ -193,22 +193,10 @@ FlipMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FlipMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FlipMover >();
-// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-// XRW TEMP std::string
-// XRW TEMP FlipMoverCreator::keyname() const {
-// XRW TEMP  return FlipMover::mover_name();
-// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-// XRW TEMP std::string
-// XRW TEMP FlipMover::mover_name() {
-// XRW TEMP  return "FlipMover";
-// XRW TEMP }
 
 
 /////////////////////
@@ -216,10 +204,6 @@ FlipMover::parse_my_tag(
 /////////////////////
 
 /// @brief Get the name of this Mover (FlipMover)
-// XRW TEMP std::string
-// XRW TEMP FlipMover::get_name() const {
-// XRW TEMP  return "FlipMover";
-// XRW TEMP }
 
 /// @brief Flip the downstream partner in the membrane
 void FlipMover::apply( core::pose::Pose & pose ) {

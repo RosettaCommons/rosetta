@@ -74,21 +74,8 @@ namespace movers {
 static basic::Tracer TR( "protocols.moves.LoopRemodelFromCommandLine" );
 static basic::Tracer TR_report( "protocols.moves.LoopRemodelFromCommandLine.REPORT" );
 
-// XRW TEMP std::string
-// XRW TEMP LoopMoverFromCommandLineCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoopMoverFromCommandLine::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoopMoverFromCommandLineCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopMoverFromCommandLine >();
-// XRW TEMP }
 
-// XRW TEMP std::string LoopMoverFromCommandLine::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LoopMoverFromCommandLine";
-// XRW TEMP }
 
 LoopMoverFromCommandLine::~LoopMoverFromCommandLine() = default;
 
@@ -244,10 +231,6 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 		}//end single loop
 	}//loops>0
 }
-// XRW TEMP std::string
-// XRW TEMP LoopMoverFromCommandLine::get_name() const {
-// XRW TEMP  return LoopMoverFromCommandLine::mover_name();
-// XRW TEMP }
 void
 LoopMoverFromCommandLine::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {

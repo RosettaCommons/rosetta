@@ -55,22 +55,8 @@ static basic::Tracer TR( "protocols.minimization_packing.TaskAwareMinMover" );
 namespace protocols {
 namespace minimization_packing {
 
-// XRW TEMP std::string
-// XRW TEMP TaskAwareMinMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return TaskAwareMinMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP TaskAwareMinMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< TaskAwareMinMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP TaskAwareMinMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "TaskAwareMinMover";
-// XRW TEMP }
 
 TaskAwareMinMover::TaskAwareMinMover()
 : protocols::moves::Mover("TaskAwareMinMover"),
@@ -169,10 +155,6 @@ void TaskAwareMinMover::apply( core::pose::Pose & pose ){
 
 }//apply
 
-// XRW TEMP std::string
-// XRW TEMP TaskAwareMinMover::get_name() const {
-// XRW TEMP  return TaskAwareMinMover::mover_name();
-// XRW TEMP }
 
 protocols::moves::MoverOP TaskAwareMinMover::fresh_instance() const { return utility::pointer::make_shared< TaskAwareMinMover >(); }
 protocols::moves::MoverOP TaskAwareMinMover::clone() const { return utility::pointer::make_shared< protocols::minimization_packing::TaskAwareMinMover >( *this ); }

@@ -61,11 +61,7 @@ namespace simple_filters {
 static basic::Tracer TR( "protocols.simple_filters.SymmetricMotifFilter" );
 
 // creator
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SymmetricMotifFilterCreator::create_filter() const { return utility::pointer::make_shared< SymmetricMotifFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP SymmetricMotifFilterCreator::keyname() const { return "SymmetricMotif"; }
 
 // helper functions
 void R2quat( numeric::xyzMatrix< core::Real > R, Quat &Q ) {

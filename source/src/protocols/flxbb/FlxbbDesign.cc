@@ -77,22 +77,8 @@ namespace protocols {
 namespace flxbb {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// XRW TEMP std::string
-// XRW TEMP FlxbbDesignCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FlxbbDesign::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FlxbbDesignCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FlxbbDesign >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP FlxbbDesign::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "FlxbbDesign";
-// XRW TEMP }
 
 /// @brief default constructor
 FlxbbDesignPack::FlxbbDesignPack() :
@@ -602,10 +588,6 @@ void FlxbbDesign::apply( pose::Pose & pose )
 
 } // FlxbbDesign::apply
 
-// XRW TEMP std::string
-// XRW TEMP FlxbbDesign::get_name() const {
-// XRW TEMP  return FlxbbDesign::mover_name();
-// XRW TEMP }
 
 /// @brief parse xml
 void

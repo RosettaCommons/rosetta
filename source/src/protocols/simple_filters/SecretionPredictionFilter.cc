@@ -257,11 +257,7 @@ SecretionPredictionFilter::parse_my_tag(
 	window_size_=19;
 }
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP SecretionPredictionFilterCreator::create_filter() const { return protocols::filters::FilterOP(new SecretionPredictionFilter); }
 
-// XRW TEMP std::string
-// XRW TEMP SecretionPredictionFilterCreator::keyname() const { return "SSBisectddGFilter"; }
 
 std::string SecretionPredictionFilter::name() const {
 	return class_name();

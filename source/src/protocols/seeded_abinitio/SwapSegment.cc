@@ -63,21 +63,8 @@ namespace seeded_abinitio {
 using namespace protocols::moves;
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP SwapSegmentCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SwapSegment::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SwapSegmentCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SwapSegment >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SwapSegment::mover_name(){
-// XRW TEMP  return "SwapSegment";
-// XRW TEMP }
 
 
 SwapSegment::~SwapSegment() = default;
@@ -216,10 +203,6 @@ SwapSegment::apply( core::pose::Pose & pose )
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP SwapSegment::get_name() const {
-// XRW TEMP  return SwapSegment::mover_name();
-// XRW TEMP }
 
 void
 SwapSegment::parse_my_tag(

@@ -62,22 +62,8 @@ static basic::Tracer TR( "protocols.simple_moves.ConsensusDesignMover" );
 namespace protocols {
 namespace calc_taskop_movers {
 
-// XRW TEMP std::string
-// XRW TEMP ConsensusDesignMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ConsensusDesignMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ConsensusDesignMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ConsensusDesignMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ConsensusDesignMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ConsensusDesignMover";
-// XRW TEMP }
 
 
 ConsensusDesignMover::ConsensusDesignMover()
@@ -221,10 +207,6 @@ ConsensusDesignMover::create_sequence_profile_constraints(
 	return csts;
 }
 
-// XRW TEMP std::string
-// XRW TEMP ConsensusDesignMover::get_name() const {
-// XRW TEMP  return "ConsensusDesignMover";
-// XRW TEMP }
 
 void
 ConsensusDesignMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )

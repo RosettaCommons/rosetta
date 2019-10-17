@@ -52,11 +52,7 @@ namespace fldsgn {
 
 // -------------  Mover Creator -------------
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MatchResiduesMoverCreator::create_mover() const { return utility::pointer::make_shared< MatchResiduesMover >(); }
 
-// XRW TEMP std::string
-// XRW TEMP MatchResiduesMoverCreator::keyname() const { return "MatchResiduesMover"; }
 
 // -------------  Mover Creator -------------
 

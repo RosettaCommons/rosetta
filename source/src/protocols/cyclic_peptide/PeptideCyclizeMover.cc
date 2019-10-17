@@ -88,22 +88,8 @@ moves::MoverOP PeptideCyclizeMover::fresh_instance() const
 	return utility::pointer::make_shared< PeptideCyclizeMover >();
 }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PeptideCyclizeMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PeptideCyclizeMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PeptideCyclizeMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PeptideCyclizeMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PeptideCyclizeMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "PeptideCyclizeMover";
-// XRW TEMP }
 
 ///@brief destructor of the mover
 //
@@ -285,10 +271,6 @@ void PeptideCyclizeMover::apply( core::pose::Pose & pose )
 
 /// @brief Returns the name of this mover ("PeptideCyclizeMover").
 
-// XRW TEMP std::string
-// XRW TEMP PeptideCyclizeMover::get_name() const {
-// XRW TEMP  return "PeptideCyclizeMover";
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///

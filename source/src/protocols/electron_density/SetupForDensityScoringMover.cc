@@ -65,22 +65,8 @@ static basic::Tracer TR( "protocols.electron_density.util" );
 using namespace protocols;
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP SetupForDensityScoringMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SetupForDensityScoringMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SetupForDensityScoringMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SetupForDensityScoringMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SetupForDensityScoringMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "SetupForDensityScoring";
-// XRW TEMP }
 
 ///////////////////////////////////////
 ///////////////////////////////////////
@@ -109,10 +95,6 @@ SetupForDensityScoringMover::clone() const {
 	return( utility::pointer::make_shared< SetupForDensityScoringMover >( *this ) );
 }
 
-// XRW TEMP std::string
-// XRW TEMP SetupForDensityScoringMover::get_name() const {
-// XRW TEMP  return SetupForDensityScoringMover::mover_name();
-// XRW TEMP }
 
 void SetupForDensityScoringMover::mask( protocols::loops::Loops const & loops ) {
 	mask_reses_.clear();

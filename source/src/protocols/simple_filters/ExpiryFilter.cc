@@ -30,11 +30,7 @@ using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.simple_filters.ExpiryFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ExpiryFilterCreator::create_filter() const { return utility::pointer::make_shared< ExpiryFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ExpiryFilterCreator::keyname() const { return "Expiry"; }
 
 //default ctor
 ExpiryFilter::ExpiryFilter() :

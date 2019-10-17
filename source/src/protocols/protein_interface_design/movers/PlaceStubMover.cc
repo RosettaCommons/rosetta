@@ -125,22 +125,8 @@ CoordinateConstraintStack::coord_csts( utility::vector1< core::scoring::constrai
 
 CoordinateConstraintStackOP CoordinateConstraintStack::parent() const { return parent_; }
 
-// XRW TEMP std::string
-// XRW TEMP PlaceStubMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PlaceStubMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PlaceStubMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PlaceStubMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PlaceStubMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "PlaceStub";
-// XRW TEMP }
 
 PlaceStubMover::PlaceStubMover() :
 	calc_taskop_movers::DesignRepackMover( PlaceStubMover::mover_name() ),
@@ -979,10 +965,6 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 	set_last_move_status( protocols::moves::FAIL_RETRY );
 }
 
-// XRW TEMP std::string
-// XRW TEMP PlaceStubMover::get_name() const {
-// XRW TEMP  return PlaceStubMover::mover_name();
-// XRW TEMP }
 
 /// @details reapply saved coord constraints and refresh placed_stubs and prevent_repacking
 /// Nov09 changed logic: curr_coordinate constraints are removed only

@@ -69,11 +69,7 @@ namespace score_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.GeometryFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP GeometryFilterCreator::create_filter() const { return utility::pointer::make_shared< GeometryFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP GeometryFilterCreator::keyname() const { return "Geometry"; }
 
 GeometryFilter::GeometryFilter() :
 	filters::Filter( "GeometryFilter" ),

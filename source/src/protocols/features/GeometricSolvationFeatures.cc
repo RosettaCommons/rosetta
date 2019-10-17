@@ -77,8 +77,6 @@ GeometricSolvationFeatures::GeometricSolvationFeatures(
 	geo_sol_energy_(src.geo_sol_energy_)
 {}
 
-// XRW TEMP string
-// XRW TEMP GeometricSolvationFeatures::type_name() const { return "GeometricSolvationFeatures"; }
 
 void
 GeometricSolvationFeatures::write_schema_to_db(

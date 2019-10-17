@@ -42,22 +42,8 @@ namespace movers {
 using namespace protocols::moves;
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP SubroutineMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return SubroutineMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SubroutineMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SubroutineMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SubroutineMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "Subroutine";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 SubroutineMover::clone() const {
@@ -100,10 +86,6 @@ SubroutineMover::SubroutineMover() :
 	mover_( /* NULL */ )
 {}
 
-// XRW TEMP std::string
-// XRW TEMP SubroutineMover::get_name() const {
-// XRW TEMP  return SubroutineMover::mover_name();
-// XRW TEMP }
 
 std::string SubroutineMover::get_name() const {
 	return mover_name();

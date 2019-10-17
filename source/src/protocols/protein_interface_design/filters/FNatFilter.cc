@@ -128,11 +128,7 @@ FNatFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP FNatFilterCreator::create_filter() const { return utility::pointer::make_shared< FNatFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP FNatFilterCreator::keyname() const { return "FNat"; }
 
 std::string FNatFilter::name() const {
 	return class_name();

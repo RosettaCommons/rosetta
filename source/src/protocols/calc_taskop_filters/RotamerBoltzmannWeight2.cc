@@ -384,23 +384,8 @@ RotamerBoltzmannWeight2::calculator_id() const
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP RotamerBoltzmannWeight2Creator::create_filter() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< RotamerBoltzmannWeight2 >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RotamerBoltzmannWeight2Creator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RotamerBoltzmannWeight2::class_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP RotamerBoltzmannWeight2::class_name()
-// XRW TEMP {
-// XRW TEMP  return "RotamerBoltzmannWeight2";
-// XRW TEMP }
 
 std::string RotamerBoltzmannWeight2::name() const {
 	return class_name();

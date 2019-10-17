@@ -136,10 +136,6 @@ RollMover::set_min_max_angles( core::Real min_angle, core::Real max_angle ) {
 	max_angle_ = max_angle;
 }
 
-// XRW TEMP std::string
-// XRW TEMP RollMover::get_name() const {
-// XRW TEMP  return "RollMover";
-// XRW TEMP }
 
 void
 RollMover::parse_my_tag(
@@ -225,23 +221,9 @@ RollMover::parse_my_tag(
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP RollMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RollMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP RollMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "RollMover";
-// XRW TEMP }
 
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RollMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RollMover >();
-// XRW TEMP }
+
 
 /// @brief required in the context of the parser/scripting scheme
 moves::MoverOP

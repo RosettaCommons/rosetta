@@ -96,23 +96,8 @@ namespace docking {
 
 
 // Creator part for DockingInitialPerturbation, used in scripts
-// XRW TEMP std::string
-// XRW TEMP DockingInitialPerturbationCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return DockingInitialPerturbation::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DockingInitialPerturbationCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< DockingInitialPerturbation >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP DockingInitialPerturbation::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "DockingInitialPerturbation";
-// XRW TEMP }
 
 
 // initial perturbation on one of the partners
@@ -412,10 +397,6 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 
 
 }
-// XRW TEMP std::string
-// XRW TEMP DockingInitialPerturbation::get_name() const {
-// XRW TEMP  return "DockingInitialPerturbation";
-// XRW TEMP }
 
 void
 DockingInitialPerturbation::parse_my_tag(

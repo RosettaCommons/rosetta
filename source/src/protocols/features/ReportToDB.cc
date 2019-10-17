@@ -76,22 +76,8 @@
 namespace protocols {
 namespace features {
 
-// XRW TEMP std::string
-// XRW TEMP ReportToDBCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ReportToDB::mover_name();
-// XRW TEMP }
 
-// XRW TEMP moves::MoverOP
-// XRW TEMP ReportToDBCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< ReportToDB >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP ReportToDB::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ReportToDB";
-// XRW TEMP }
 
 /// Macros are not properly caught and passed along by my #inclusion
 /// cleanup script

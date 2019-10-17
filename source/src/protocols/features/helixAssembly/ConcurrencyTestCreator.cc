@@ -27,15 +27,7 @@ namespace protocols {
 namespace features {
 namespace helixAssembly {
 
-// XRW TEMP ConcurrencyTestCreator::ConcurrencyTestCreator() {}
-// XRW TEMP ConcurrencyTestCreator::~ConcurrencyTestCreator() {}
-// XRW TEMP FeaturesReporterOP ConcurrencyTestCreator::create_features_reporter() const {
-// XRW TEMP  return utility::pointer::make_shared< ConcurrencyTest >();
-// XRW TEMP }
 
-// XRW TEMP std::string ConcurrencyTestCreator::type_name() const {
-// XRW TEMP  return "ConcurrencyTest";
-// XRW TEMP }
 
 } //namespace helixAssembly
 } //namespace features

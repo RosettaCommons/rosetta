@@ -147,10 +147,6 @@ SampleTiltAngles::fresh_instance() const
 	return utility::pointer::make_shared< SampleTiltAngles >();
 }
 
-// XRW TEMP std::string
-// XRW TEMP SampleTiltAngles::get_name() const {
-// XRW TEMP  return "SampleTiltAngles";
-// XRW TEMP }
 
 void
 SampleTiltAngles::show(std::ostream & output) const
@@ -278,20 +274,8 @@ SampleTiltAngles::write_score_to_outfiles(
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SampleTiltAnglesCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< SampleTiltAngles >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SampleTiltAnglesCreator::keyname() const {
-// XRW TEMP  return SampleTiltAngles::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP SampleTiltAngles::mover_name(){
-// XRW TEMP  return "SampleTiltAngles";
-// XRW TEMP }
 
 std::string SampleTiltAngles::get_name() const {
 	return mover_name();

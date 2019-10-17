@@ -145,8 +145,6 @@ AnchoredGraftMover::clone() const{
 	return utility::pointer::make_shared< AnchoredGraftMover >(*this);
 }
 
-// XRW TEMP std::string
-// XRW TEMP AnchoredGraftMover::get_name() const { return "AnchoredGraftMover"; }
 
 protocols::moves::MoverOP
 AnchoredGraftMover::fresh_instance() const
@@ -493,20 +491,8 @@ AnchoredGraftMover::final_repack(){
 	return final_repack_;
 }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP AnchoredGraftMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< AnchoredGraftMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AnchoredGraftMoverCreator::keyname() const {
-// XRW TEMP  return AnchoredGraftMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP AnchoredGraftMover::mover_name(){
-// XRW TEMP  return "AnchoredGraftMover";
-// XRW TEMP }
 
 void
 AnchoredGraftMover::set_loops(protocols::loops::LoopsOP loops){

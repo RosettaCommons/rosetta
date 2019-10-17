@@ -43,22 +43,8 @@ namespace protein_interface_design {
 namespace movers {
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.TaskAwareCsts" );
-// XRW TEMP std::string
-// XRW TEMP TaskAwareCstsCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return TaskAwareCsts::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP TaskAwareCstsCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< TaskAwareCsts >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP TaskAwareCsts::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "TaskAwareCsts";
-// XRW TEMP }
 
 TaskAwareCsts::TaskAwareCsts() :
 	Mover( TaskAwareCsts::mover_name() ),
@@ -96,10 +82,6 @@ TaskAwareCsts::apply( core::pose::Pose & pose )
 	pose.add_constraints( cst );
 }
 
-// XRW TEMP std::string
-// XRW TEMP TaskAwareCsts::get_name() const {
-// XRW TEMP  return TaskAwareCsts::mover_name();
-// XRW TEMP }
 
 void
 TaskAwareCsts::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )

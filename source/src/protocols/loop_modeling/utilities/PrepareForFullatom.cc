@@ -77,13 +77,7 @@ namespace protocols {
 namespace loop_modeling {
 namespace utilities {
 
-// XRW TEMP moves::MoverOP PrepareForFullatomCreator::create_mover() const { // {{{1
-// XRW TEMP  return utility::pointer::make_shared< PrepareForFullatom >();
-// XRW TEMP }
 
-// XRW TEMP string PrepareForFullatomCreator::keyname() const { // {{{1
-// XRW TEMP  return "PrepareForFullatom";
-// XRW TEMP }
 // }}}1
 
 PrepareForFullatom::PrepareForFullatom() // {{{1

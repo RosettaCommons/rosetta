@@ -86,10 +86,6 @@ VirtualRootMover::apply( core::pose::Pose & pose ) {
 	}
 }
 
-// XRW TEMP std::string
-// XRW TEMP VirtualRootMover::get_name() const {
-// XRW TEMP  return VirtualRootMover::mover_name();
-// XRW TEMP }
 
 void VirtualRootMover::parse_my_tag(
 	TagCOP const tag,

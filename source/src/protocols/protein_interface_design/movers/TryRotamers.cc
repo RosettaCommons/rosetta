@@ -59,22 +59,8 @@ using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.TryRotamers" );
 
-// XRW TEMP std::string
-// XRW TEMP TryRotamersCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return TryRotamers::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP TryRotamersCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< TryRotamers >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP TryRotamers::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "TryRotamers";
-// XRW TEMP }
 
 
 TryRotamers::TryRotamers() :
@@ -217,10 +203,6 @@ TryRotamers::apply ( pose::Pose & pose )
 	pose.fold_tree( saved_ft );
 }
 
-// XRW TEMP std::string
-// XRW TEMP TryRotamers::get_name() const {
-// XRW TEMP  return TryRotamers::mover_name();
-// XRW TEMP }
 
 void
 TryRotamers::parse_my_tag( TagCOP const tag,

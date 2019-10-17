@@ -107,11 +107,7 @@ InterfaceHolesFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	TR<<"Using jump number " << rb_jump_ << " with threshold "<< threshold_ <<std::endl;
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP InterfaceHolesFilterCreator::create_filter() const { return utility::pointer::make_shared< InterfaceHolesFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP InterfaceHolesFilterCreator::keyname() const { return "InterfaceHoles"; }
 
 std::string InterfaceHolesFilter::name() const {
 	return class_name();

@@ -44,11 +44,7 @@ namespace simple_ddg {
 
 static basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP DdgFilterCreator::create_filter() const { return utility::pointer::make_shared< DdgFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP DdgFilterCreator::keyname() const { return "Ddg"; }
 
 
 DdgFilter::DdgFilter() :

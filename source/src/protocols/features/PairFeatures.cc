@@ -67,8 +67,6 @@ PairFeatures::PairFeatures( PairFeatures const & ) :
 
 PairFeatures::~PairFeatures()= default;
 
-// XRW TEMP string
-// XRW TEMP PairFeatures::type_name() const { return "PairFeatures"; }
 
 void
 PairFeatures::write_schema_to_db(

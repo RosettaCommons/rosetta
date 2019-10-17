@@ -37,22 +37,8 @@ using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.PatchdockTransform" );
 
-// XRW TEMP std::string
-// XRW TEMP PatchdockTransformCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PatchdockTransform::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PatchdockTransformCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PatchdockTransform >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PatchdockTransform::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "PatchdockTransform";
-// XRW TEMP }
 
 PatchdockTransform::PatchdockTransform() :
 	Mover()
@@ -76,10 +62,6 @@ PatchdockTransform::apply( core::pose::Pose & pose )
 	pd_reader()->transform_pose( pose, 2/*chain*/, t );
 }
 
-// XRW TEMP std::string
-// XRW TEMP PatchdockTransform::get_name() const {
-// XRW TEMP  return PatchdockTransform::mover_name();
-// XRW TEMP }
 
 void
 PatchdockTransform::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &,

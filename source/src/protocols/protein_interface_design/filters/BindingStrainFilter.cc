@@ -175,11 +175,7 @@ BindingStrainFilter::clone() const{
 	return utility::pointer::make_shared< BindingStrainFilter >( *this );
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP BindingStrainFilterCreator::create_filter() const { return utility::pointer::make_shared< BindingStrainFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP BindingStrainFilterCreator::keyname() const { return "BindingStrain"; }
 
 protocols::moves::MoverOP
 BindingStrainFilter::relax_mover() const{

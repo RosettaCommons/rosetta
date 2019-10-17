@@ -130,11 +130,7 @@ InterRepeatContactFilter::parse_my_tag(
 	tr << "Structures which have InterRepeatContacts less than " << filtered_value_ << " will be filtered." << std::endl;
 }
 
-// XRW TEMP filters::FilterOP
-// XRW TEMP InterRepeatContactFilterCreator::create_filter() const { return utility::pointer::make_shared< InterRepeatContactFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP InterRepeatContactFilterCreator::keyname() const { return "InterRepeatContactsPerResidue"; }
 
 std::string InterRepeatContactFilter::name() const {
 	return class_name();

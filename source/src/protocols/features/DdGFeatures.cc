@@ -98,8 +98,6 @@ DdGFeatures::DdGFeatures( DdGFeatures const & ) = default;
 
 DdGFeatures::~DdGFeatures() = default;
 
-// XRW TEMP string
-// XRW TEMP DdGFeatures::type_name() const { return "DdGFeatures"; }
 
 void
 DdGFeatures::write_schema_to_db(

@@ -71,22 +71,8 @@ namespace movers {
 using namespace protocols::moves;
 using namespace core;
 
-// XRW TEMP std::string
-// XRW TEMP PlacementMinimizationMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return PlacementMinimizationMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP PlacementMinimizationMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< PlacementMinimizationMover >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP PlacementMinimizationMover::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "PlacementMinimization";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 PlacementMinimizationMover::clone() const {
@@ -249,10 +235,6 @@ PlacementMinimizationMover::PlacementMinimizationMover() :
 	cb_force_( 0.0 )
 {}
 
-// XRW TEMP std::string
-// XRW TEMP PlacementMinimizationMover::get_name() const {
-// XRW TEMP  return PlacementMinimizationMover::mover_name();
-// XRW TEMP }
 
 std::string PlacementMinimizationMover::get_name() const {
 	return mover_name();

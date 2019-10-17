@@ -74,22 +74,8 @@ using core::scoring::ScoreFunctionOP;
 
 static basic::Tracer TR( "protocols.loophash.LoopHashMoverWrapper" );
 
-// XRW TEMP std::string
-// XRW TEMP LoopHashMoverWrapperCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoopHashMoverWrapper::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoopHashMoverWrapperCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< LoopHashMoverWrapper >();
-// XRW TEMP }
 
-// XRW TEMP std::string
-// XRW TEMP LoopHashMoverWrapper::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LoopHash";
-// XRW TEMP }
 
 
 LoopHashMoverWrapper::LoopHashMoverWrapper() :
@@ -300,10 +286,6 @@ LoopHashMoverWrapper::get_additional_output() {
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP LoopHashMoverWrapper::get_name() const {
-// XRW TEMP  return LoopHashMoverWrapper::mover_name();
-// XRW TEMP }
 
 void
 LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,

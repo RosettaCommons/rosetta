@@ -290,11 +290,7 @@ void DdGScan::write_to_pdb(
 
 }
 
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP DdGScanCreator::create_filter() const { return utility::pointer::make_shared< DdGScan >(); }
 
-// XRW TEMP std::string
-// XRW TEMP DdGScanCreator::keyname() const { return "DdGScan"; }
 
 std::string DdGScan::name() const {
 	return class_name();

@@ -52,11 +52,7 @@ neighbors_( neighbors ),
 distance_threshold_( distance_threshold ),
 task_factory_( NULL ) {}
 */
-// XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ResidueBurialFilterCreator::create_filter() const { return utility::pointer::make_shared< ResidueBurialFilter >(); }
 
-// XRW TEMP std::string
-// XRW TEMP ResidueBurialFilterCreator::keyname() const { return "ResidueBurial"; }
 
 ResidueBurialFilter::~ResidueBurialFilter()= default;
 

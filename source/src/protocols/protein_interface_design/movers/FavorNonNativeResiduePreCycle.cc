@@ -35,26 +35,10 @@ using namespace protocols::moves;
 
 static basic::Tracer favor_nonnative_residue_tracer( "protocols.protein_interface_design.movers.FavorNonNativeResiduePreCycle" );
 
-// XRW TEMP std::string FavorNonNativeResiduePreCycleCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FavorNonNativeResiduePreCycle::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FavorNonNativeResiduePreCycleCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< FavorNonNativeResiduePreCycle >();
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP FavorNonNativeResiduePreCycle::mover_name() {
-// XRW TEMP  return "FavorNonNativeResidue";
-// XRW TEMP }
 
 
-// XRW TEMP std::string
-// XRW TEMP FavorNonNativeResiduePreCycle::get_name() const {
-// XRW TEMP  return "FavorNonNativeResiduePreCycle";
-// XRW TEMP }
+
+
 
 FavorNonNativeResiduePreCycle::~FavorNonNativeResiduePreCycle() = default;
 

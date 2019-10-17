@@ -53,17 +53,7 @@ namespace denovo_design {
 namespace movers {
 ///////////////////////////////////////////////////////////////////////////////
 
-// XRW TEMP std::string
-// XRW TEMP ExtendChainMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ExtendChainMover::mover_name();
-// XRW TEMP }
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ExtendChainMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return utility::pointer::make_shared< ExtendChainMover >();
-// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  ExtendChainMover main code:
@@ -100,11 +90,6 @@ ExtendChainMover::fresh_instance() const
 }
 
 /// @brief return a fresh instance of ourselves
-// XRW TEMP std::string
-// XRW TEMP ExtendChainMover::get_name() const
-// XRW TEMP {
-// XRW TEMP  return ExtendChainMover::mover_name();
-// XRW TEMP }
 
 void
 ExtendChainMover::parse_my_tag(

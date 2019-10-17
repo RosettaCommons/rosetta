@@ -92,8 +92,6 @@ using namespace core::simple_metrics;
 
 static basic::Tracer TR( "protocols.features.SimpleMetricFeatures" );
 
-// XRW TEMP string
-// XRW TEMP SimpleMetricFeatures::type_name() const { return "SimpleMetricFeatures"; }
 
 
 

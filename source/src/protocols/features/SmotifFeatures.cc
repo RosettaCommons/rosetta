@@ -71,11 +71,6 @@ SmotifFeatures::SmotifFeatures( SmotifFeatures const & /*src*/ ) : FeaturesRepor
 SmotifFeatures::~SmotifFeatures()= default;
 
 /// @brief return string with class name
-// XRW TEMP std::string
-// XRW TEMP SmotifFeatures::type_name() const
-// XRW TEMP {
-// XRW TEMP  return "SmotifFeatures";
-// XRW TEMP }
 
 /// @brief generate the table schemas and write them to the database
 void

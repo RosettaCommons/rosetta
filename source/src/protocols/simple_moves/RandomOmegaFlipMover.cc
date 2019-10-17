@@ -159,19 +159,10 @@ RandomOmegaFlipMover::parse_my_tag(
 }
 
 /// @brief RandomOmegaFlipMoverCreator interface, name of the mover
-// XRW TEMP std::string RandomOmegaFlipMover::mover_name() {
-// XRW TEMP  return "RandomOmegaFlipMover";
-// XRW TEMP }
 
 /// @brief RandomOmegaFlipMoverCreator interface, returns a unique key name to be used in xml file
-// XRW TEMP std::string RandomOmegaFlipMoverCreator::keyname() const {
-// XRW TEMP  return RandomOmegaFlipMover::mover_name();
-// XRW TEMP }
 
 /// @brief RandomOmegaFlipMoverCreator interface, return a new instance
-// XRW TEMP protocols::moves::MoverOP RandomOmegaFlipMoverCreator::create_mover() const {
-// XRW TEMP  return utility::pointer::make_shared< RandomOmegaFlipMover >();
-// XRW TEMP }
 
 std::string RandomOmegaFlipMover::get_name() const {
 	return mover_name();
