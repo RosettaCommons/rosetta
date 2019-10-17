@@ -1096,13 +1096,13 @@ void JobDistributor::jd2_signal_handler(int signal_)
 {
 	std::cout << "Got some signal... It is:" << signal_ << std::endl;
 	if ( signal_ == SIGINT ) {
-		std::cout << "Ctrl-c was pressed!" << std::endl;
+		std::cout << "Signal " << signal_ << " (SIGINT) means that the process was interrupted, usually by the user (e.g. Ctrl+C was pressed)." << std::endl;
 	}
 	if ( signal_ == SIGABRT ) {
-		std::cout << "Process was aborted!" << std::endl;
+		std::cout << "Signal " << signal_ << " (SIGABRT) means that the process was aborted.  This usually means an internal Rosetta error caused by (often) bad inputs, (sometimes) developer error, or (rarely) hardware problems." << std::endl;
 	}
 	if ( signal_ == SIGTERM ) {
-		std::cout << "Process was terminated!" << std::endl;
+		std::cout << "Signal " << signal_ << " (SIGTERM) means that the process was terminated.  This usually means that something external to Rosetta, such as a queing system, aborted the process (e.g. due to a time or resource limit)." << std::endl;
 	}
 
 #ifndef WIN32
@@ -1110,7 +1110,7 @@ void JobDistributor::jd2_signal_handler(int signal_)
 	// if (signal_ == SIGKILL)
 	//  std::cout << "Process was SIGKILL!" << std::endl;
 	if ( signal_ == SIGQUIT ) {
-		std::cout << "Process was SIGQUIT!" << std::endl;
+		std::cout << "Signal " << signal_ << " (SIGQUIT) means that the dump core signal was received.  This is usually triggered by the user (e.g. with Ctrl+\\ on Linux systems)." << std::endl;
 	}
 #endif
 
