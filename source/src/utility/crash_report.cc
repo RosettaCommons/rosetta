@@ -175,7 +175,7 @@ get_extras() {
 #elif defined(MPICH_VERSION)
 		extras += "(MPICH " MPICH_VERSION ")";
 #else
-		extras += "(MPI other)"
+		extras += "(MPI other)";
 #endif
 #endif
 #ifdef USEMYSQL
