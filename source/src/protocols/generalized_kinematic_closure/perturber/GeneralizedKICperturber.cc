@@ -334,7 +334,7 @@ core::Size GeneralizedKICperturber::get_loop_index (
 	}
 
 	if ( fail_if_not_found ) {
-		utility_exit_with_message("Residue does not exist in loop.  Exiting from GeneralizedKICperturber::get_loop_index with error status.");
+		utility_exit_with_message("Residue " + std::to_string( original_pose_index ) + " does not exist in loop.  Exiting from GeneralizedKICperturber::get_loop_index with error status.");
 	}
 
 	return 0;
