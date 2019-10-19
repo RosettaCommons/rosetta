@@ -12,7 +12,7 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com), XRW 2016 Team
 /// @author Sergey Lyskov (Sergey.Lyskov@jhu.edu)
 /// @author Labonte <JWLabonte@jhu.edu>
-
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) to remove make_shared from header, 17 Oct. 2019.
 
 // Unit headers
 #include <core/io/pdb/pdb_writer.hh>
@@ -158,8 +158,9 @@ dump_pdb(
 	pose::Pose const & pose,
 	std::ostream & out,
 	id::AtomID_Mask const & mask,
-	core::io::StructFileRepOptionsCOP options
+	core::io::StructFileRepOptionsCOP options //= nullptr
 ) {
+	if ( options == nullptr ) options = utility::pointer::make_shared< core::io::StructFileRepOptions >();
 	PoseToStructFileRepConverter converter( *options );
 	converter.init_from_pose( pose, mask );
 	std::string const data( create_pdb_contents_from_sfr(*converter.sfr(), options) );
@@ -173,8 +174,9 @@ dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
 	utility::vector1< core::Size > const & residue_indices,
-	core::io::StructFileRepOptionsCOP options
+	core::io::StructFileRepOptionsCOP options //= nullptr
 ) {
+	if ( options == nullptr ) options = utility::pointer::make_shared< core::io::StructFileRepOptions >();
 	io::pose_to_sfr::PoseToStructFileRepConverter pu( *options );
 	String data;
 	pu.init_from_pose( pose, residue_indices );
@@ -309,8 +311,9 @@ add_to_multimodel_pdb(
 std::string
 create_pdb_contents_from_sfr(
 	StructFileRep const & sfr,
-	core::io::StructFileRepOptionsCOP options
+	core::io::StructFileRepOptionsCOP options //=nullptr
 ) {
+	if ( options==nullptr ) options = utility::pointer::make_shared< core::io::StructFileRepOptions >();
 	std::string pdb_contents;
 
 	utility::vector1< Record > records( create_records_from_sfr( sfr , options ) );
@@ -355,10 +358,12 @@ create_pdb_line_from_record( Record const & record )
 std::vector< Record >
 create_records_from_sfr(
 	StructFileRep const & sfr,
-	core::io::StructFileRepOptionsCOP options )
-{
+	core::io::StructFileRepOptionsCOP options /*=nullptr*/
+) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+
+	if ( options == nullptr ) options = utility::pointer::make_shared< core::io::StructFileRepOptions >();
 
 	Record R;
 	std::vector< Record > VR;
@@ -705,45 +710,24 @@ create_pdb_info_for_single_residue_pose(
 	return pdb_info;
 }
 
-/// @note Python compatible wrapper avoiding reference parameter
-void
-dump_pdb_residue(
-	conformation::Residue const & rsd,
-	std::ostream & out,
-	core::Size start_atom_number,
-	core::io::StructFileRepOptionsCOP options
-) {
-	dump_pdb_residue(rsd, start_atom_number, out, options);
-}
-
 std::string
 dump_pdb_residue(
 	conformation::Residue const & rsd,
-	core::io::StructFileRepOptionsCOP options,
-	core::Size start_atom_number
+	core::io::StructFileRepOptionsCOP options /*=nullptr*/,
+	core::Size start_atom_number /*=1*/
 
 ){
+	if ( options == nullptr ) options = utility::pointer::make_shared< core::io::StructFileRepOptions >();
 	return dump_pdb_residue(rsd, start_atom_number, options);
 }
 
-void
-dump_pdb_residue(
-	conformation::Residue const & rsd,
-	core::Size & atom_number,
-	std::ostream & out,
-	core::io::StructFileRepOptionsCOP options
-) {
-	std::string data = dump_pdb_residue(rsd, atom_number, options);
-	out.write( data.c_str(), data.size() );
-}
-
 std::string
 dump_pdb_residue(
 	conformation::Residue const & rsd,
 	core::Size & atom_number,
-	core::io::StructFileRepOptionsCOP options
+	core::io::StructFileRepOptionsCOP options // = nullptr
 ) {
-
+	if ( options == nullptr ) options = utility::pointer::make_shared< core::io::StructFileRepOptions >();
 	pose::Pose pose;
 	pose.append_residue_by_jump( *(rsd.clone()), 1 );
 
@@ -755,6 +739,30 @@ dump_pdb_residue(
 	std::string data = create_pdb_contents_from_sfr(*converter.sfr(), options);
 	return data;
 
+}
+
+/// @note Python compatible wrapper avoiding reference parameter
+void
+dump_pdb_residue(
+	conformation::Residue const & rsd,
+	std::ostream & out,
+	core::Size start_atom_number,
+	core::io::StructFileRepOptionsCOP options // = nullptr
+) {
+	if ( options == nullptr ) options = utility::pointer::make_shared< core::io::StructFileRepOptions >();
+	dump_pdb_residue(rsd, start_atom_number, out, options);
+}
+
+void
+dump_pdb_residue(
+	conformation::Residue const & rsd,
+	core::Size & atom_number,
+	std::ostream & out,
+	core::io::StructFileRepOptionsCOP options // = nullptr
+) {
+	if ( options == nullptr ) options = utility::pointer::make_shared< core::io::StructFileRepOptions >();
+	std::string data = dump_pdb_residue(rsd, atom_number, options);
+	out.write( data.c_str(), data.size() );
 }
 
 
