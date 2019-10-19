@@ -63,8 +63,7 @@ class FragmentStore : public utility::pointer::ReferenceCount , public utility::
 
 {
 public:
-	// @brief Basic fragment store, holds a collection of structure and associated residue entries.
-	FragmentStore();
+	// @brief Basic structure store, holds a collection of structure and associated residue entries.
 	FragmentStore(FragmentSpecification fragment_specification, numeric::Size num_fragments = 0);
 
 	/// self pointer
@@ -117,6 +116,10 @@ private:
 	FragmentLookupOP fragLookupOP_; //stored here to cache the removal of center of mass
 
 };
+
+struct _map_string_vector_Size : public std::map<std::string, std::vector<numeric::Size> > {};
+struct _map_string_vector_Real : public std::map<std::string, std::vector<numeric::Real> > {};
+struct _map_string_vector_vector_Real : public std::map<std::string, std::vector<std::vector<numeric::Real>> > {};
 
 }
 }

@@ -35,12 +35,6 @@ std::ostream& operator<<(std::ostream& os, const FragmentSpecification& s)
 	return os;
 }
 
-FragmentStore::FragmentStore()
-{
-	fragment_specification = FragmentSpecification();
-	num_fragments_ = 0;
-}
-
 FragmentStore::FragmentStore(
 	FragmentSpecification fragment_spec,
 	numeric::Size num_fragments
