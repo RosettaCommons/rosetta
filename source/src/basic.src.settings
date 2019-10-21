@@ -46,6 +46,7 @@ sources = {
 	"basic/datacache": [
 		"BasicDataCache",
 		"CacheableData",
+		"CacheableResRotPairFloatMap",
 		"CacheableStringFloatMap",
 		"CacheableStringIntegerMap",
 		"CacheableString",

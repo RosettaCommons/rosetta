@@ -33,6 +33,7 @@
 #include <boost/format.hpp>
 
 #include <chrono>
+#include <thread>
 
 namespace core {
 namespace pack {
@@ -41,6 +42,7 @@ namespace approximate_buried_unsat_penalty {
 
 static basic::Tracer TR( "core.pack.guidance_scoreterms.approximate_buried_unsat_penalty" );
 
+using basic::datacache::ResRotPair;
 
 
 typedef std::pair<Size,Size> ScratchVectorLimits;
@@ -209,7 +211,7 @@ prestore_sc_oversat(
 
 void
 accumulate_oversats(
-	basic::datacache::CacheableUint64MathMatrixFloatMapOP const & score_map,
+	basic::datacache::CacheableResRotPairFloatMapOP const & score_map,
 	pack::rotamer_set::RotamerSetsOP const & complete_rotsets,
 	utility::vector1<bool> const & is_asu,
 	ReweightData & reweight_data,
@@ -325,7 +327,7 @@ accumulate_oversats(
 //
 //
 
-basic::datacache::CacheableUint64MathMatrixFloatMapOP
+basic::datacache::CacheableResRotPairFloatMapOP
 three_body_approximate_buried_unsat_calculation(
 	pose::Pose const & pose,
 	pack::rotamer_set::RotamerSetsOP const & rotsets,
@@ -337,10 +339,12 @@ three_body_approximate_buried_unsat_calculation(
 	float minimum_hb_cut /* =0 */,
 	bool all_atoms_active /* =false */,
 	float oversat_penalty_in /* =1 */,
-	bool assume_const_backbone /* =true */
+	bool assume_const_backbone /* =true */,
+	UnsatCorrectionOptions const & cor_opt /* = UnsatCorrectionOptions() */,
+	HBondBonusOptions const & bonus_opt /* = HBondBonusOptions() */
 ) {
 	const float PENALTY = 1.0f;
-	basic::datacache::CacheableUint64MathMatrixFloatMapOP score_map ( utility::pointer::make_shared< basic::datacache::CacheableUint64MathMatrixFloatMap >() );
+	basic::datacache::CacheableResRotPairFloatMapOP score_map ( utility::pointer::make_shared< basic::datacache::CacheableResRotPairFloatMap >() );
 
 
 	// We don't strictly need to do this. But it will keep the memory requirements down for giant symmetries
@@ -355,6 +359,7 @@ three_body_approximate_buried_unsat_calculation(
 			is_asu[seqpos] = symm_info->bb_follows( seqpos ) == 0;
 		}
 	}
+
 
 	// for ( Size irotset = 1; irotset <= rotsets->nmoltenres(); irotset++ ) {
 	//  Size resnum = rotsets->moltenres_2_resid(irotset);
@@ -390,11 +395,24 @@ three_body_approximate_buried_unsat_calculation(
 	runtime_assert( complete_rotsets );
 	runtime_assert( hb_graph->num_nodes() == complete_rotsets->nrotamers() );
 
+	// std::cout << "Sleeping after hbond graph" << std::endl;
+	// std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+
+	// SYMMETRY HACK
+	// We need to know how many rotamers are available at each position when it comes time to score rotamers
+	// Store this information into rotamer 0
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		score_map->map()[ResRotPair(i, 0, 0, 0)] = complete_rotsets->nrotamers_for_moltenres( complete_rotsets->resid_2_moltenres( i ) );
+	}
+
 
 	// Next, we need to create the AtomicDepth object and figure out which nodes are buried
 	scoring::atomic_depth::AtomicDepth atomic_depth( pose, atomic_depth_probe_radius, true, atomic_depth_resolution );
 
 	chemical::AtomTypeSet const & atom_type_set = pose.residue(1).type().atom_type_set();
+
+	// std::cout << "Sleeping after atomic depth" << std::endl;
+	// std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
 	// Now we begin the algorithm
 
@@ -501,6 +519,9 @@ three_body_approximate_buried_unsat_calculation(
 						}
 					}
 
+					// For hydroxyl_wants_h, don't count h-bonds to hydroxyl O
+					if ( cor_opt.hydroxyl_wants_h && info.is_hydroxyl() && ! we_are_the_donor ) continue;
+
 					hbonding_rotamers.emplace_back( other_atom, other_node );
 				}
 			}
@@ -514,9 +535,40 @@ three_body_approximate_buried_unsat_calculation(
 				num_hs = rotamer->attached_H_end( info.local_atom_id() ) - rotamer->attached_H_begin( info.local_atom_id() ) + 1;
 			}
 
-			const float buried_penalty =  num_hs >= 3 ?  PENALTY * 3 :  PENALTY;
-			const float hbond_bonus =     num_hs >= 3 ? -PENALTY * 2 : -PENALTY;
-			const float oversat_penalty = num_hs >= 3 ?  PENALTY     : oversat_penalty_in;
+			bool is_N = rotamer->atom_type( info.local_atom_id() ).element() == "N";
+			bool is_carboxyl = rotamer->atom_type( info.local_atom_id() ).atom_type_name() == "OOC";
+
+			// default values that look like this. 1 0 0 1 3
+			float buried_penalty =  PENALTY;
+			float hbond_bonus =     -PENALTY;
+			float oversat_penalty = oversat_penalty_in;
+
+			if ( num_hs >= 3 ) { // standard LYS handling. 3 1 0 0 1 3
+				buried_penalty =  PENALTY * 3;
+				hbond_bonus =    -PENALTY * 2;
+				oversat_penalty = oversat_penalty_in;
+
+			} else if ( cor_opt.nh2_wants_2 && is_N && num_hs == 2 ) {   // force NH2 to have 2. 2 0.5 0 0.5 2
+				buried_penalty =  PENALTY * 2;
+				hbond_bonus =    -PENALTY * 1.5;
+				oversat_penalty = oversat_penalty_in;
+
+			} else if ( cor_opt.nh1_wants_1 && is_N && num_hs <= 1 ) {   // force NH1 to have 1. 1 0 1 3
+				buried_penalty =  PENALTY;
+				hbond_bonus =    -PENALTY;
+				oversat_penalty = oversat_penalty_in * 2;
+
+			} else if ( cor_opt.hydroxyl_wants_h && info.is_hydroxyl() ) { // extra tight bound on hydroxyls. 1 0 1 3
+				buried_penalty =  PENALTY;
+				hbond_bonus =    -PENALTY;
+				oversat_penalty = oversat_penalty_in * 2;
+
+			} else if ( cor_opt.carboxyl_wants_2 && is_carboxyl ) { // force carboxyls to have 2. 2 0.5 0 0.5 2
+				buried_penalty =  PENALTY * 2;
+				hbond_bonus =    -PENALTY * 1.5;
+				oversat_penalty = oversat_penalty_in;
+
+			}
 
 			// First we store the buried unsat penalty to whomever owns it
 
@@ -681,16 +733,189 @@ three_body_approximate_buried_unsat_calculation(
 	accumulate_oversats( score_map, complete_rotsets, is_asu, reweight_data, oversat_map, oversat_scratch );
 
 
+	//////////////////////////////////// HBond Bonus //////////////////////////////////////
+	// This is separate from buried unsats. This is just the best place to put it
+
+	// Iterate accross all rotamers
+	// Iterate accross all hbonds from rotamer / Only look at hbonds to greater rotamers
+	// if ( assume_const_backbone ):
+	//     hbond_to_sidechain: -- twobody this -> that
+	//     hbond_to_backbone: -- onebody -> this
+	//     hbond_from_backbone -- onebody -> that
+	//     backbone_to_backbone -- zerobody
+	// else:
+	//     hbond_to_sidechain: -- twobody this -> that
+	//     hbond_to_backbone: -- twobody this -> that
+	//     hbond_from_backbone: -- twobody this -> that
+	//     backbone_to_backbone -- twobody this -> that
+
+	if ( bonus_opt.any() ) {
+
+		for ( Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
+
+			// These nodes are one-to-one with the complete_rotsets rotamers
+			scoring::hbonds::graph::HBondNode * hbnode = hb_graph->get_node( ihbnode );
+			runtime_assert( hbnode );
+			conformation::ResidueCOP rotamer = complete_rotsets->rotamer( ihbnode );
+			Size node_resnum = complete_rotsets->res_for_rotamer( ihbnode );
+
+			// This is all the polar atoms on the rotamer
+			boost::container::flat_set< scoring::hbonds::graph::AtomInfo > const & hbnode_atoms =
+				hbnode->polar_sc_atoms_not_satisfied_by_background();
+
+			for ( Size inodeat = 1; inodeat <= hbnode_atoms.size(); inodeat++ ) {
+
+				scoring::hbonds::graph::AtomInfo const & info =
+					* std::next( hbnode_atoms.begin(), inodeat - 1 );
+
+				if ( info.is_hydrogen() ) continue;
+
+				// Now we know we found a heavy atom
+
+				// Backbone atom gate 1 //////////////////
+				// Only allow backbone atoms from rotamer 1
+				if ( assume_const_backbone && info.is_backbone() ) {
+					if ( complete_rotsets->rotid_on_moltenresidue( ihbnode ) != 1 ) continue;
+				}
+
+				bool we_should_store = all_atoms_active;
+				we_should_store |= position_had_rotset[ node_resnum ] && ! ( assume_const_backbone && info.is_backbone() );
+
+
+				for ( utility::graph::LowMemEdgeListIter it = hbnode->edge_list_begin( *hb_graph );
+						it != hbnode->edge_list_end( *hb_graph );
+						++it ) {
+
+					scoring::hbonds::graph::HBondEdge * hb_edge =
+						static_cast< scoring::hbonds::graph::HBondEdge * >( *it );
+					Size first_node = hb_edge->get_first_node_ind();
+					Size second_node = hb_edge->get_second_node_ind();
+
+					bool we_are_the_first_node = first_node == ihbnode;
+					Size other_node = we_are_the_first_node ? second_node : first_node;
+
+					// Only allow hbonds in the downstream direction
+					if ( other_node <= ihbnode ) continue;
+
+					conformation::ResidueCOP other_rotamer = complete_rotsets->rotamer( other_node );
+
+					for ( scoring::hbonds::graph::HBondInfo const & hb_info : hb_edge->hbonds() ) {
+						//          first is donor   0        1
+						//  we are first   0        don      acc
+						//                 1        acc      don
+						//                                           xor
+						bool we_are_the_donor = ! ( we_are_the_first_node ^ hb_info.first_node_is_donor() );
+
+						Size check_atom = we_are_the_donor ? hb_info.local_atom_id_D() : hb_info.local_atom_id_A();
+						if ( info.local_atom_id() != check_atom ) continue;
+
+
+						// Ok, now we know that this hbond actually involves the buried atom we're looking at.
+						//  Which implies that the node we are looking at hbonds to our buried atom
+
+						Size other_atom = we_are_the_donor ? hb_info.local_atom_id_A() : hb_info.local_atom_id_D();
+
+						// Backbone atom gate 2 //////////////////
+						// Only allow backbone atoms from rotamer 1
+						if ( assume_const_backbone && other_rotamer->atom_is_backbone(other_atom) ) {
+							if ( complete_rotsets->rotid_on_moltenresidue( other_node ) != 1 ) {
+								continue;
+							}
+						}
+
+						Size other_resnum = complete_rotsets->res_for_rotamer( other_node );
+
+						bool other_should_store = all_atoms_active;
+						other_should_store |= position_had_rotset[ other_resnum ] && ! ( assume_const_backbone && other_rotamer->atom_is_backbone(other_atom) );
+
+						//////////////////////////////////// Calculate and apply HBond Bonus //////////////////////////////////////
+
+						conformation::ResidueCOP donor_res = we_are_the_donor ? rotamer : other_rotamer;
+						Size donor_resnum = we_are_the_donor ? node_resnum : other_resnum;
+						Size donor_atom = hb_info.local_atom_id_D();
+
+						conformation::ResidueCOP acceptor_res = ! we_are_the_donor ? rotamer : other_rotamer;
+						Size acceptor_resnum = ! we_are_the_donor ? node_resnum : other_resnum;
+						Size acceptor_atom = hb_info.local_atom_id_A();
+
+						// std::cout << "HERE " << bonus_opt.ser_to_helix_bb() << node_resnum << " " << other_resnum << " " << donor_resnum << " "
+						//  << donor_res->atom_name(donor_atom) << " " << acceptor_resnum << " " << acceptor_res->atom_name(acceptor_atom) << std::endl;
+
+						float bonus = 0;
+
+						if ( bonus_opt.cross_chain_bonus() != 0 ) {
+							if ( pose.chain( donor_resnum ) != pose.chain( acceptor_resnum ) ) {
+								bonus += bonus_opt.cross_chain_bonus();
+							}
+						}
+
+						if ( bonus_opt.ser_to_helix_bb() != 0 ) {
+
+							// i -> i-4 hbonds where i is SER or THR, donor atom is OG or OG1 and acceptor atom is O
+							if ( donor_resnum - acceptor_resnum == 4 &&
+									pose.chain( node_resnum ) == pose.chain( other_resnum ) &&
+									acceptor_res->atom_name( acceptor_atom ) == " O  " ) {
+
+								if ( donor_res->name1() == 'T' && donor_res->atom_name( donor_atom ) == " OG1" ) {
+									bonus += bonus_opt.ser_to_helix_bb();
+								}
+								if ( donor_res->name1() == 'S' && donor_res->atom_name( donor_atom ) == " OG " ) {
+									bonus += bonus_opt.ser_to_helix_bb();
+								}
+							}
+						}
+
+						if ( bonus != 0 ) {
+
+							if ( we_should_store && other_should_store ) {
+								add_to_twobody( score_map, complete_rotsets, is_asu, reweight_data,
+									node_resnum, complete_rotsets->rotid_on_moltenresidue( ihbnode ),
+									other_resnum, complete_rotsets->rotid_on_moltenresidue( other_node ), bonus );
+
+								// std::cout << boost::str(boost::format("BON: TwoB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+								//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+								//  %other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_node )
+								//  %bonus) << std::endl;
+							} else if ( we_should_store ) {
+								add_to_onebody( score_map, complete_rotsets, is_asu, node_resnum, complete_rotsets->rotid_on_moltenresidue( ihbnode ), bonus );
+								// std::cout << boost::str(boost::format("BON: OneB *Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+								//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+								//  %other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_node )
+								//  %bonus) << std::endl;
+							} else if ( other_should_store ) {
+								add_to_onebody( score_map, complete_rotsets, is_asu, other_resnum, complete_rotsets->rotid_on_moltenresidue( other_node ), bonus );
+								// std::cout << boost::str(boost::format("BON: OneB Res: %i %s Rot: %i *Res: %i %s Rot: %i Score: %6.3f")
+								//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+								//  %other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_node )
+								//  %bonus) << std::endl;
+							} else {
+								// zero_body += bonus;
+								// std::cout << boost::str(boost::format("BON: ZeroB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+								//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+								//  %other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_node )
+								//  %bonus) << std::endl;
+							}
+						}
+
+					}
+				}
+			}
+		}
+	}
+
+
+
+
+
+
 	//////////////////////////////////// Debugging info //////////////////////////////////////
 
 	// Calculate memory use
 
 	Size mem_use = 0;
-	for ( std::pair<uint64_t, numeric::MathMatrix<float>> pair : score_map->map() ) {
-		mem_use += sizeof(float) * pair.second.size();
-	}
-
-	TR << "Mem use: " << mem_use << " bytes" << std::endl;
+	// http://jsteemann.github.io/blog/2016/06/14/how-much-memory-does-an-stl-container-use/
+	mem_use += score_map->map().size() * ( sizeof(ResRotPair) + sizeof(float) + 20 );
+	TR << "Rough mem use: " << mem_use << " bytes" << std::endl;
 
 	return score_map;
 }
@@ -698,7 +923,7 @@ three_body_approximate_buried_unsat_calculation(
 
 void
 accumulate_oversats(
-	basic::datacache::CacheableUint64MathMatrixFloatMapOP const & score_map,
+	basic::datacache::CacheableResRotPairFloatMapOP const & score_map,
 	pack::rotamer_set::RotamerSetsOP const & complete_rotsets,
 	utility::vector1<bool> const & is_asu,
 	ReweightData & reweight_data,
@@ -766,8 +991,8 @@ accumulate_oversats(
 
 void
 add_to_onebody(
-	basic::datacache::CacheableUint64MathMatrixFloatMapOP const & score_map,
-	pack::rotamer_set::RotamerSetsOP const & rotsets,
+	basic::datacache::CacheableResRotPairFloatMapOP const & score_map,
+	pack::rotamer_set::RotamerSetsOP const &,
 	utility::vector1<bool> const & is_asu,
 	Size resnum,
 	Size rotamer_id,
@@ -775,18 +1000,8 @@ add_to_onebody(
 ) {
 	if ( ! is_asu[resnum] ) return;
 
-	uint64_t key = map_key_oneb( resnum );
-	if ( score_map->map().count( key ) == 0 ) {
+	score_map->map()[ResRotPair(resnum, rotamer_id, 0, 0)] += adder;
 
-		score_map->map().emplace( std::piecewise_construct, std::forward_as_tuple( key ), std::forward_as_tuple(
-			// Add +1 because this is 0 offset
-			rotsets->nrotamers_for_moltenres( rotsets->resid_2_moltenres( resnum ) ) + 1, 1+1, 0.0f ));
-	}
-
-	numeric::MathMatrix<float> & mm = score_map->map()[key];
-	assert( rotamer_id < mm.get_number_rows() );
-
-	mm( rotamer_id, 1 ) += adder;
 	// std::cout << mm( rotamer_id, 1 ) << std::endl;
 
 	// std::cout << "Oneb: " << resnum << " " << adder << std::endl;
@@ -794,7 +1009,7 @@ add_to_onebody(
 
 void
 add_to_twobody(
-	basic::datacache::CacheableUint64MathMatrixFloatMapOP const & score_map,
+	basic::datacache::CacheableResRotPairFloatMapOP const & score_map,
 	pack::rotamer_set::RotamerSetsOP const & rotsets,
 	utility::vector1<bool> const & is_asu,
 	ReweightData & reweight_data,
@@ -820,53 +1035,23 @@ add_to_twobody(
 	Size ro1 = swap ? rotamer_id2 : rotamer_id1;
 	Size ro2 = swap ? rotamer_id1 : rotamer_id2;
 
-	uint64_t key = map_key_twob( r1, r2 );
-	if ( score_map->map().count( key ) == 0 ) {
-
-		score_map->map().emplace( std::piecewise_construct, std::forward_as_tuple( key ), std::forward_as_tuple(
-			// Add +1 because this is 0 offset
-			rotsets->nrotamers_for_moltenres( rotsets->resid_2_moltenres( r1 ) ) + 1,
-			rotsets->nrotamers_for_moltenres( rotsets->resid_2_moltenres( r2 ) ) + 1, 0.0f ));
-	}
-
 	float reweight = 1.0f;
 	if ( reweight_data.edge_reweights ) {
-		if ( reweight_data.stored_edge_reweights.count( key ) == 0 ) {
+		ResRotPair edge_pair( r1, 0, r2, 0 );
+		if ( reweight_data.stored_edge_reweights.count( edge_pair ) == 0 ) {
 			if ( reweight_data.task ) {
 				reweight = reweight_data.edge_reweights->res_res_weight( reweight_data.pose, *reweight_data.task, r1, r2 );
 			} else {
 				reweight = reweight_data.edge_reweights->res_res_weight( reweight_data.pose, core::pack::task::PackerTask_(), r1, r2 );
 			}
-
-			reweight_data.stored_edge_reweights[ key ] = reweight;
+			reweight_data.stored_edge_reweights[ edge_pair ] = reweight;
 		} else {
-			reweight = reweight_data.stored_edge_reweights.at( key );
+			reweight = reweight_data.stored_edge_reweights.at( edge_pair );
 		}
 	}
 
+	score_map->map()[ResRotPair(r1, ro1, r2, ro2)] += adder / reweight; // Divide by reweight!!! We are trying to cancel them
 
-	numeric::MathMatrix<float> & mm = score_map->map()[key];
-	assert( ro1 < mm.get_number_rows() );
-	assert( ro2 < mm.get_number_cols() );
-
-	mm( ro1, ro2 ) += adder / reweight;   // Divide by reweight!!! We are trying to cancel them
-	// std::cout << mm( ro1, ro2 ) << std::endl;
-	// std::cout << "Twob: " << r1 << " " << r2 << " " << adder << std::endl;
-}
-
-
-uint64_t
-map_key_twob( Size resnum1, Size resnum2 ) {
-	debug_assert( resnum1 <= resnum2 );
-	debug_assert( resnum1 != 0 );
-
-	return uint64_t(resnum1) << 32 | uint64_t(resnum2);
-}
-
-uint64_t
-map_key_oneb( Size resnum1 ) {
-
-	return uint64_t(resnum1);
 }
 
 

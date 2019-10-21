@@ -183,6 +183,15 @@ ScoreFunctionLoader::create_scorefxn_from_tag(
 			if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_assume_const_backbone" ) ) {
 				emoptions.approximate_buried_unsat_penalty_assume_const_backbone( mod_tag->getOption<bool>("approximate_buried_unsat_penalty_assume_const_backbone") );
 			}
+			if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_natural_corrections1" ) ) {
+				emoptions.approximate_buried_unsat_penalty_natural_corrections1( mod_tag->getOption<bool>("approximate_buried_unsat_penalty_natural_corrections1") );
+			}
+			if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_hbond_bonus_cross_chain" ) ) {
+				emoptions.approximate_buried_unsat_penalty_hbond_bonus_cross_chain( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_hbond_bonus_cross_chain") );
+			}
+			if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb" ) ) {
+				emoptions.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb") );
+			}
 
 			//Options for buried_unsatisfied_penalty energy:
 			if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_angle_exponent" ) ) {
@@ -437,6 +446,9 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_burial_resolution", xsct_real, "The resolution for the atomic depth calculation." )
 		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_oversat_penalty", xsct_real, "The penalty between atoms that both satisfy the same atom. If we let X = weight_of_approximate_buried_unsat_penalty. Then in general, a buried unsat is worth X, a satisfied unsat is worth 0, a doubly satisfied unsat is worth X * ( setting-1.0 ), a triply satisfied unsat is worth X * ( -2 + 3 * setting ), a N-ly satisfied unsat is worth X * ( 1 - N + 0.5 * N * (N - 1) ).")
 		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_assume_const_backbone", xsct_rosetta_bool, "Should we assume that the backbone atoms will not change during a packing trajectory? (i.e. no positions that include normal aa and proline or n-methyl) If set to false, this energy method takes longer to compute. (~ 2X as long)")
+		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_natural_corrections1", xsct_rosetta_bool, "Apply the following corrections to buried unsat penalty: nh2_wants_2, nh1_wants_1, hydroxyl_wants_h, carboxyl_wants_2")
+		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_hbond_bonus_cross_chain", xsct_real, "Apply a bonus factor to hydrogen bonds accross chains.")
+		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb", xsct_real, "Apply a bonus factor to the classic SER/THR i - i-4 h-bond. OG/OG1 - O. Set this positive to penalize.")
 
 		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_cone_angle_exponent", xsct_real, "The angle exponent for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )
 		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_cone_angle_shift_factor", xsct_real, "The angle shift factor for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )

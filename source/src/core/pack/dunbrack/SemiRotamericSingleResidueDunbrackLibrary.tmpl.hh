@@ -595,7 +595,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector_bbdep(
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	parent::get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
 
-	Real const requisit_probability = buried ? 0.95 : 0.87;
+	// SemiRotamericSingleResidueDunbrackLibrary has its own set of probabilities. This is old stuff -- bcov
+	Real const requisit_probability = this->probability_to_accumulate_while_building_rotamers( buried ); // buried ? 0.95 : 0.87;
 	//grandparent::probability_to_accumulate_while_building_rotamers( buried ); -- 98/95 split generates too many samples
 	Real accumulated_probability( 0.0 );
 

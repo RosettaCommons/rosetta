@@ -17,6 +17,7 @@
 
 // Unit headers
 #include <core/pack/guidance_scoreterms/approximate_buried_unsat_penalty/ApproximateBuriedUnsatPenalty.fwd.hh>
+#include <core/pack/guidance_scoreterms/approximate_buried_unsat_penalty/util.hh>
 
 // Package headers
 #include <core/pack_basic/RotamerSetsBase.hh>
@@ -24,7 +25,7 @@
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <basic/datacache/CacheableUint64MathMatrixFloatMap.hh>
+#include <basic/datacache/CacheableResRotPairFloatMap.hh>
 
 #include <utility/vector1.hh>
 
@@ -184,7 +185,7 @@ public:
 
 private:
 
-	basic::datacache::CacheableUint64MathMatrixFloatMapCOP
+	basic::datacache::CacheableResRotPairFloatMapCOP
 	get_energies_cache( pose::Pose const & pose ) const;
 
 
@@ -217,6 +218,9 @@ private:
 	//   a changing backbone (proline, n-methyl, etc.). The tradeoff is that
 	//   simulating the changing backbone makes it slower.
 	bool assume_const_backbone_;
+
+	UnsatCorrectionOptions cor_opt_;
+	mutable HBondBonusOptions hbond_bonus_opt_;
 
 	// We have to jump through some hoops to give the scorefunction the energies
 	//  of rotamers interacting with their symmetric copies. It asks for the energies

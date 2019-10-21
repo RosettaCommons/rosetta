@@ -1482,6 +1482,10 @@ Options = Option_Group( '',
 		Option( 'approximate_buried_unsat_penalty_burial_resolution', 'Real', desc="The resolution for the atomic depth calculation.", default="0.5f" ),
 		Option( 'approximate_buried_unsat_penalty_oversat_penalty', 'Real', desc="The penalty between atoms that both satisfy the same atom. If we let X = weight_of_approximate_buried_unsat_penalty. Then in general, a buried unsat is worth X, a satisfied unsat is worth 0, a doubly satisfied unsat is worth X * ( setting-1.0 ), a triply satisfied unsat is worth X * ( -2 + 3 * setting ), a N-ly satisfied unsat is worth X * ( 1 - N + 0.5 * N * (N - 1) ).", default="1.0" ),
 		Option( 'approximate_buried_unsat_penalty_assume_const_backbone', 'Boolean', desc="Should we assume that the backbone atoms will not change during a packing trajectory? (i.e. no positions that include normal aa and proline or n-methyl) If set to false, this energy method takes longer to compute. (~ 2X as long)", default="true" ),
+		Option( 'approximate_buried_unsat_penalty_natural_corrections1', 'Boolean', desc="Apply the following corrections to buried unsat penalty: nh2_wants_2, nh1_wants_1, hydroxyl_wants_h, carboxyl_wants_2", default="false" ),
+		Option( 'approximate_buried_unsat_penalty_hbond_bonus_cross_chain', 'Real', desc="Apply a bonus factor to hydrogen bonds accross chains. Remember to set this negative.", default="0" ),
+		Option( 'approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb', 'Real', desc="Apply a bonus factor to the classic SER/THR i - i-4 h-bond. OG/OG1 - O. Set this positive to penalize.", default="0" ),
+
 		Option( 'aspartimide_penalty_value', 'Real', desc='The penalty for each aspartimide-forming two-residue sequence found, when the aspartimide_penalty score term weight is set to 1.0.  Default is 25.0.', default='25.0' ),
 
 		Option( 'buried_unsatisfied_penalty_cone_angle_exponent', 'Real', desc='The angle exponent for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy.', default='2.0' ),
@@ -1767,10 +1771,16 @@ Options = Option_Group( '',
 			default="false",
 			),
 		Option( 'dunbrack_prob_buried', 'Real', default='0.98', lower='0', upper='1',
-			desc="fraction of possible dunbrack rotamers to include in each single residue rotamer set, for \'buried\' residues"
+			desc="fraction of possible dunbrack rotamers to include in each single residue rotamer set, for \'buried\' residues RotamericSingleResidueDunbrackLibrary"
 			),
 		Option( 'dunbrack_prob_nonburied', 'Real', default='0.95', lower='0', upper='1',
-			desc="fraction of possible dunbrack rotamers to include in each single residue rotamer set, for \'nonburied\' residues"
+			desc="fraction of possible dunbrack rotamers to include in each single residue rotamer set, for \'nonburied\' residues RotamericSingleResidueDunbrackLibrary"
+			),
+		Option( 'dunbrack_prob_buried_semi', 'Real', default='0.95', lower='0', upper='1',
+			desc="fraction of possible dunbrack rotamers to include in each single residue rotamer set, for \'buried\' residues in SemiRotamericSingleResidueDunbrackLibrary"
+			),
+		Option( 'dunbrack_prob_nonburied_semi', 'Real', default='0.87', lower='0', upper='1',
+			desc="fraction of possible dunbrack rotamers to include in each single residue rotamer set, for \'nonburied\' residues in SemiRotamericSingleResidueDunbrackLibrary"
 			),
 #		Option( 'dunbrack_prob_nonburied_semirotameric', 'Real', default='0.95', lower='0', upper='1',
 #			desc="fraction of possible dunbrack rotamers to include in each single residue rotamer set, for \'nonburied\', semi-rotameric residues"

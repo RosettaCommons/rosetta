@@ -181,6 +181,9 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	approximate_buried_unsat_penalty_burial_resolution_(0.5f),
 	approximate_buried_unsat_penalty_oversat_penalty_(1.0f),
 	approximate_buried_unsat_penalty_assume_const_backbone_(true),
+	approximate_buried_unsat_penalty_natural_corrections1_(false),
+	approximate_buried_unsat_penalty_hbond_bonus_cross_chain_(0),
+	approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_(0),
 
 	bond_angle_residue_type_param_set_(/* NULL */)
 {
@@ -309,6 +312,9 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		approximate_buried_unsat_penalty_burial_resolution_ = src.approximate_buried_unsat_penalty_burial_resolution_;
 		approximate_buried_unsat_penalty_oversat_penalty_ = src.approximate_buried_unsat_penalty_oversat_penalty_;
 		approximate_buried_unsat_penalty_assume_const_backbone_ = src.approximate_buried_unsat_penalty_assume_const_backbone_;
+		approximate_buried_unsat_penalty_natural_corrections1_ = src.approximate_buried_unsat_penalty_natural_corrections1_;
+		approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ = src.approximate_buried_unsat_penalty_hbond_bonus_cross_chain_;
+		approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ = src.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_;
 	}
 	return *this;
 }
@@ -410,6 +416,10 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	approximate_buried_unsat_penalty_burial_resolution_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_burial_resolution ]();
 	approximate_buried_unsat_penalty_oversat_penalty_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_oversat_penalty ]();
 	approximate_buried_unsat_penalty_assume_const_backbone_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_assume_const_backbone ]();
+	approximate_buried_unsat_penalty_natural_corrections1_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_natural_corrections1 ]();
+	approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_hbond_bonus_cross_chain ]();
+	approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb ]();
+
 
 	// check to see if the unfolded state command line options are set by the user
 	if ( options[ basic::options::OptionKeys::unfolded_state::unfolded_energies_file].user() ) {
@@ -514,6 +524,9 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_burial_resolution
 		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_oversat_penalty
 		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_assume_const_backbone
+		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_natural_corrections1
+		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_hbond_bonus_cross_chain
+		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb
 		+ basic::options::OptionKeys::corrections::water::ordered_wat_penalty
 		+ basic::options::OptionKeys::corrections::water::ordered_pt_wat_penalty;
 }
@@ -1431,6 +1444,27 @@ EnergyMethodOptions::approximate_buried_unsat_penalty_assume_const_backbone( boo
 	approximate_buried_unsat_penalty_assume_const_backbone_ = setting;
 }
 
+/// @brief Set the natural corrections 1 for approximate_buried_unsat_penalty.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+void
+EnergyMethodOptions::approximate_buried_unsat_penalty_natural_corrections1( bool const setting ) {
+	approximate_buried_unsat_penalty_natural_corrections1_ = setting;
+}
+
+/// @brief Set the hbond_bonus_cross_chain for approximate_buried_unsat_penalty.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+void
+EnergyMethodOptions::approximate_buried_unsat_penalty_hbond_bonus_cross_chain( core::Real const setting ) {
+	approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ = setting;
+}
+
+/// @brief Set the hbond_bonus_ser_to_helix_bb for approximate_buried_unsat_penalty.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+void
+EnergyMethodOptions::approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb( core::Real const setting ) {
+	approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ = setting;
+}
+
 /// @brief Get the energy threshold above which a hydrogen bond is not counted.
 /// @details Used by the ApproximateBuriedUnsatPenalty energy.
 core::Real
@@ -1471,6 +1505,27 @@ EnergyMethodOptions::approximate_buried_unsat_penalty_oversat_penalty() const {
 bool
 EnergyMethodOptions::approximate_buried_unsat_penalty_assume_const_backbone() const {
 	return approximate_buried_unsat_penalty_assume_const_backbone_;
+}
+
+/// @brief Get the natural corrections 1 for approximate_buried_unsat_penalty.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+bool
+EnergyMethodOptions::approximate_buried_unsat_penalty_natural_corrections1() const {
+	return approximate_buried_unsat_penalty_natural_corrections1_;
+}
+
+/// @brief Get the hbond_bonus_cross_chain for approximate_buried_unsat_penalty.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+core::Real
+EnergyMethodOptions::approximate_buried_unsat_penalty_hbond_bonus_cross_chain() const {
+	return approximate_buried_unsat_penalty_hbond_bonus_cross_chain_;
+}
+
+/// @brief Get the hbond_bonus_ser_to_helix_bb for approximate_buried_unsat_penalty.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+core::Real
+EnergyMethodOptions::approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb() const {
+	return approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_;
 }
 
 utility::vector1< core::Real > const &
@@ -1700,7 +1755,10 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.approximate_buried_unsat_penalty_burial_probe_radius_ == b.approximate_buried_unsat_penalty_burial_probe_radius_ ) &&
 		( a.approximate_buried_unsat_penalty_burial_resolution_ == b.approximate_buried_unsat_penalty_burial_resolution_ ) &&
 		( a.approximate_buried_unsat_penalty_oversat_penalty_ == b.approximate_buried_unsat_penalty_oversat_penalty_ ) &&
-		( a.approximate_buried_unsat_penalty_assume_const_backbone_ == b.approximate_buried_unsat_penalty_assume_const_backbone_ )
+		( a.approximate_buried_unsat_penalty_assume_const_backbone_ == b.approximate_buried_unsat_penalty_assume_const_backbone_ ) &&
+		( a.approximate_buried_unsat_penalty_natural_corrections1_ == b.approximate_buried_unsat_penalty_natural_corrections1_ ) &&
+		( a.approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ == b.approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ ) &&
+		( a.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ == b.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ )
 	);
 }
 
@@ -1845,6 +1903,9 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_burial_resolution_: " << approximate_buried_unsat_penalty_burial_resolution_ << std::endl;
 	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_oversat_penalty_: " << approximate_buried_unsat_penalty_oversat_penalty_ << std::endl;
 	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_assume_const_backbone_:" << approximate_buried_unsat_penalty_assume_const_backbone_ << std::endl;
+	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_natural_corrections1_:" << approximate_buried_unsat_penalty_natural_corrections1_ << std::endl;
+	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_hbond_bonus_cross_chain_:" << approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ << std::endl;
+	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_:" << approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ << std::endl;
 
 	out << "EnergyMethodOptions::show: bond_angle_central_atoms_to_score:";
 	if ( bond_angle_residue_type_param_set_ ) {
@@ -2199,6 +2260,9 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( approximate_buried_unsat_penalty_burial_resolution_ ) ); // core::Real
 	arc( CEREAL_NVP( approximate_buried_unsat_penalty_oversat_penalty_ ) ); // core::Real
 	arc( CEREAL_NVP( approximate_buried_unsat_penalty_assume_const_backbone_ ) ); // bool
+	arc( CEREAL_NVP( approximate_buried_unsat_penalty_natural_corrections1_ ) ); // bool
+	arc( CEREAL_NVP( approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ ) ); // core::Real
+	arc( CEREAL_NVP( approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ ) ); // core::Real
 	arc( CEREAL_NVP( ordered_pt_wat_penalty_ ) );
 	arc( CEREAL_NVP( ordered_wat_penalty_ ) );
 }
@@ -2313,6 +2377,9 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( approximate_buried_unsat_penalty_burial_resolution_ ); // core::Real
 	arc( approximate_buried_unsat_penalty_oversat_penalty_ ); // core::Real
 	arc( approximate_buried_unsat_penalty_assume_const_backbone_ ); // bool
+	arc( approximate_buried_unsat_penalty_natural_corrections1_ ); // bool
+	arc( approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ ); // core::Real
+	arc( approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ ); // core::Real
 	arc( ordered_pt_wat_penalty_ );
 	arc( ordered_wat_penalty_ );
 }

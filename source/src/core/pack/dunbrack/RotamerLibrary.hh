@@ -382,6 +382,10 @@ private:
 	core::Real prob_buried_;
 	core::Real prob_nonburied_;
 
+	// This isn't a new feature, these were simply ignored previously -- bcov
+	core::Real prob_buried_semi_;
+	core::Real prob_nonburied_semi_;
+
 	std::string dun02_file_;
 
 	bool dun10_;

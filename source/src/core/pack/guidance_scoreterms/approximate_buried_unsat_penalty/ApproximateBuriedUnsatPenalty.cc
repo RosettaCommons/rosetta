@@ -45,6 +45,7 @@ namespace pack {
 namespace guidance_scoreterms {
 namespace approximate_buried_unsat_penalty {
 
+using basic::datacache::ResRotPair;
 
 
 scoring::methods::EnergyMethodOP
@@ -106,6 +107,21 @@ ApproximateBuriedUnsatPenalty::ApproximateBuriedUnsatPenalty(
 		scorefxn_hbond_->set_weight( scoring::hbond_bb_sc, 1.0 );
 		scorefxn_hbond_->set_weight( scoring::hbond_sc, 1.0 );
 	}
+
+
+	if ( options.approximate_buried_unsat_penalty_natural_corrections1() ) {
+		cor_opt_.nh2_wants_2 = true;
+		cor_opt_.nh1_wants_1 = true;
+		cor_opt_.hydroxyl_wants_h = true;
+		cor_opt_.carboxyl_wants_2 = true;
+	}
+
+	if ( options.approximate_buried_unsat_penalty_hbond_bonus_cross_chain() != 0 ) {
+		hbond_bonus_opt_.cross_chain_bonus_ = options.approximate_buried_unsat_penalty_hbond_bonus_cross_chain();
+	}
+	if ( options.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb() != 0 ) {
+		hbond_bonus_opt_.ser_to_helix_bb_ = options.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb();
+	}
 }
 
 scoring::methods::EnergyMethodOP
@@ -127,7 +143,7 @@ void
 ApproximateBuriedUnsatPenalty::setup_for_packing_with_rotsets(
 	pose::Pose & pose,
 	pack_basic::RotamerSetsBaseOP const & rotsets_in,
-	scoring::ScoreFunction const &
+	scoring::ScoreFunction const & sfxn
 ) const {
 
 	runtime_assert( rotsets_in );
@@ -143,7 +159,10 @@ ApproximateBuriedUnsatPenalty::setup_for_packing_with_rotsets(
 	scoring::ScoreFunctionOP const & use_scorefxn_bb = assume_const_backbone_ ? scorefxn_bb_ : nullptr;
 
 
-	basic::datacache::CacheableUint64MathMatrixFloatMapOP energies =
+	hbond_bonus_opt_.scorefxn_weight_ = sfxn.weights()[ core::scoring::approximate_buried_unsat_penalty ];
+
+
+	basic::datacache::CacheableResRotPairFloatMapOP energies =
 		three_body_approximate_buried_unsat_calculation(
 		pose,
 		rotsets,
@@ -155,7 +174,9 @@ ApproximateBuriedUnsatPenalty::setup_for_packing_with_rotsets(
 		hbond_energy_threshold_,
 		false,   // false for packing
 		oversat_penalty_,
-		assume_const_backbone_
+		assume_const_backbone_,
+		cor_opt_,
+		hbond_bonus_opt_
 	);
 	pose.data().set( pose::datacache::CacheableDataType::APPROXIMATE_UNSAT_POSE_INFO, energies );
 }
@@ -185,20 +206,14 @@ ApproximateBuriedUnsatPenalty::evaluate_rotamer_intrares_energy_maps(
 	utility::vector1< scoring::EnergyMap > & emaps
 ) const {
 
-	basic::datacache::CacheableUint64MathMatrixFloatMapCOP energies_map = get_energies_cache( pose );
+	basic::datacache::CacheableResRotPairFloatMapCOP energies_map = get_energies_cache( pose );
 
 	Size seqpos = set.resid();
 
-	uint64_t key = map_key_oneb( seqpos );
-
-	if ( energies_map->map().count( key ) == 0 ) return;
-
-	numeric::MathMatrix<float> const & matrix = energies_map->map().at( key );
-
-	runtime_assert( matrix.get_number_rows() - 1 == set.num_rotamers() );
-
 	for ( Size irot = 1; irot <= set.num_rotamers(); irot++ ) {
-		emaps[ irot ][ core::scoring::approximate_buried_unsat_penalty ] += matrix( irot, 1 );
+		ResRotPair resrot( seqpos, irot, 0, 0 );
+		if ( energies_map->map().count( resrot ) == 0 ) continue;
+		emaps[ irot ][ core::scoring::approximate_buried_unsat_penalty ] += energies_map->map().at(resrot);
 	}
 }
 
@@ -218,61 +233,68 @@ ApproximateBuriedUnsatPenalty::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set_a = swap ? set2 : set1;
 	conformation::RotamerSetBase const & set_b = swap ? set1 : set2;
 
+	Size seqpos_a = set_a.resid();
+	Size seqpos_b = set_b.resid();
+
 	// !swap -> energy_table( b, a )
 	//  swap -> energy_table( a, b )
 
-	basic::datacache::CacheableUint64MathMatrixFloatMapCOP energies = get_energies_cache( pose );
+	basic::datacache::CacheableResRotPairFloatMapCOP energies = get_energies_cache( pose );
 
-	uint64_t key = map_key_twob( set_a.resid(), set_b.resid() );
-
-	if ( energies->map().count( key ) == 0 ) return;
-
-	numeric::MathMatrix<float> const & matrix = energies->map().at( key );
 
 	Real weight = sfxn.weights()[ core::scoring::approximate_buried_unsat_penalty ];
 
 	// When evaluating a symmetric rotamer against itself, the scorefunction walks down the diagonal
 	//  and asks for every pair individually. We detect this behavior and runtime_assert everywhere to
 	//  make sure this works correctly.
-	if ( core::pose::symmetry::is_symmetric( pose ) && set_a.num_rotamers() == 1 && set_b.num_rotamers() == 1
-			&& ( matrix.get_number_rows() != 1 || matrix.get_number_cols() != 1 ) ) {
-		runtime_assert( matrix.get_number_rows() == matrix.get_number_cols() );
+	if ( core::pose::symmetry::is_symmetric( pose ) && set_a.num_rotamers() == 1 && set_b.num_rotamers() == 1 ) {
 
-		// Are we starting on a new self-interaction?
-		if ( set_a.resid() != symm_vs_self_asu_resnum1 || set_b.resid() != symm_vs_self_asu_resnum2 ) {
-			// Make sure we finished the last self-interaction
-			runtime_assert( symm_vs_self_rotamer_count == 0 );
+		// Get the cached nrotamers that were hidden in the map
+		Size nrots_a = energies->map().at( {seqpos_a, 0, 0, 0} );
+		Size nrots_b = energies->map().at( {seqpos_b, 0, 0, 0} );
 
-			symm_vs_self_asu_resnum1 = set_a.resid();
-			symm_vs_self_asu_resnum2 = set_b.resid();
-			// symm_vs_self_rotamer_count = 0;
+		if ( nrots_a != 1 && nrots_b != 1 ) {
+
+			// If this is a symmetric rotamer vs itself, there should be the same number of rotamers
+			runtime_assert( nrots_a == nrots_b );
+
+			// Are we starting on a new self-interaction?
+			if ( seqpos_a != symm_vs_self_asu_resnum1 || seqpos_b != symm_vs_self_asu_resnum2 ) {
+				// Make sure we finished the last self-interaction
+				runtime_assert( symm_vs_self_rotamer_count == 0 );
+
+				symm_vs_self_asu_resnum1 = set_a.resid();
+				symm_vs_self_asu_resnum2 = set_b.resid();
+				// symm_vs_self_rotamer_count = 0;
+			}
+
+			symm_vs_self_rotamer_count ++;
+
+			// std::cout << "SPos: " << set1.resid() << " " << set2.resid() << " " << symm_vs_self_rotamer_count << " " << matrix( symm_vs_self_rotamer_count, symm_vs_self_rotamer_count ) << std::endl;
+
+			ResRotPair resrot( seqpos_a, symm_vs_self_rotamer_count, seqpos_b, symm_vs_self_rotamer_count );
+			if ( energies->map().count(resrot) != 0 ) {
+				energy_table( 1, 1 ) += energies->map().at(resrot) * weight;
+			}
+
+			// This is the last one, reset everything back to zero so we know we finished it.
+			if ( symm_vs_self_rotamer_count == nrots_a ) {
+				symm_vs_self_asu_resnum1 = 0;
+				symm_vs_self_asu_resnum2 = 0;
+				symm_vs_self_rotamer_count = 0;
+			}
+
+			return;
 		}
-
-		symm_vs_self_rotamer_count ++;
-
-		// std::cout << "SPos: " << set1.resid() << " " << set2.resid() << " " << symm_vs_self_rotamer_count << " " << matrix( symm_vs_self_rotamer_count, symm_vs_self_rotamer_count ) << std::endl;
-
-		energy_table( 1, 1 ) += matrix( symm_vs_self_rotamer_count, symm_vs_self_rotamer_count ) * weight;
-
-		// This is the last one, reset everything back to zero so we know we finished it.
-		if ( symm_vs_self_rotamer_count == matrix.get_number_rows() - 1 ) {
-			symm_vs_self_asu_resnum1 = 0;
-			symm_vs_self_asu_resnum2 = 0;
-			symm_vs_self_rotamer_count = 0;
-		}
-
-		return;
 	}
 
 	// std::cout << "Pos: " << set1.resid() << " " << set2.resid() << " " << matrix( symm_vs_self_rotamer_count, symm_vs_self_rotamer_count ) << std::endl;
 
-
-	runtime_assert( matrix.get_number_rows() - 1 == set_a.num_rotamers() );
-	runtime_assert( matrix.get_number_cols() - 1 == set_b.num_rotamers() );
-
 	for ( Size ia = 1; ia <= set_a.num_rotamers(); ia++ ) {
 		for ( Size ib = 1; ib <= set_b.num_rotamers(); ib++ ) {
-			const float val = matrix( ia, ib ) * weight;
+			ResRotPair resrot( seqpos_a, ia, seqpos_b, ib );
+			if ( energies->map().count(resrot) == 0 ) continue;
+			const float val = energies->map().at(resrot) * weight;
 			if ( swap ) {
 				energy_table( ia, ib ) += val;
 				// std::cout << boost::str(boost::format("Res: %i Rot: %i Res: %i Rot: %i Score: %6.3f")%set2.resid()%ia%set1.resid()%ib%val) << std::endl;
@@ -288,7 +310,7 @@ ApproximateBuriedUnsatPenalty::evaluate_rotamer_pair_energies(
 void
 ApproximateBuriedUnsatPenalty::setup_for_scoring(
 	pose::Pose & pose,
-	scoring::ScoreFunction const &
+	scoring::ScoreFunction const & sfxn
 ) const {
 	if ( mode_ == MINIMIZING ) return;
 	mode_ = SCORING;
@@ -298,7 +320,9 @@ ApproximateBuriedUnsatPenalty::setup_for_scoring(
 	task->temporarily_fix_everything();
 	empty_set->set_task( task );
 
-	basic::datacache::CacheableUint64MathMatrixFloatMapOP energies =
+	hbond_bonus_opt_.scorefxn_weight_ = sfxn.weights()[ core::scoring::approximate_buried_unsat_penalty ];
+
+	basic::datacache::CacheableResRotPairFloatMapOP energies =
 		three_body_approximate_buried_unsat_calculation(
 		pose,
 		empty_set,
@@ -310,7 +334,9 @@ ApproximateBuriedUnsatPenalty::setup_for_scoring(
 		hbond_energy_threshold_,
 		true,    // true for scoring
 		oversat_penalty_,
-		true // this doesn't actually matter here. The backbone is const becase we aren't packing
+		true, // this doesn't actually matter here. The backbone is const becase we aren't packing
+		cor_opt_,
+		hbond_bonus_opt_
 	);
 
 	pose.data().set( pose::datacache::CacheableDataType::APPROXIMATE_UNSAT_POSE_INFO, energies );
@@ -358,7 +384,7 @@ ApproximateBuriedUnsatPenalty::residue_pair_energy(
 			"ApproximateBuriedUnsatPenalty: residue_pair_energy should never be called during packing!!!" );
 	}
 
-	basic::datacache::CacheableUint64MathMatrixFloatMapCOP energies = get_energies_cache( pose );
+	basic::datacache::CacheableResRotPairFloatMapCOP energies = get_energies_cache( pose );
 
 	Size seqpos1 = res1.seqpos();
 	Size seqpos2 = res2.seqpos();
@@ -366,13 +392,12 @@ ApproximateBuriedUnsatPenalty::residue_pair_energy(
 	bool swap = seqpos2 < seqpos1;
 	Size s1 = swap ? seqpos2 : seqpos1;
 	Size s2 = swap ? seqpos1 : seqpos2;
-	uint64_t key = map_key_twob( s1, s2 );
 
-	if ( energies->map().count( key ) == 0 ) return;
+	ResRotPair resrot( s1, 1, s2, 1 );
 
-	numeric::MathMatrix<float> const & matrix = energies->map().at( key );
+	if ( energies->map().count( resrot ) == 0 ) return;
 
-	float value = matrix( 1, 1 );
+	float value = energies->map().at( resrot );
 	emap[ scoring::approximate_buried_unsat_penalty ] += value;
 
 }
@@ -391,29 +416,26 @@ ApproximateBuriedUnsatPenalty::eval_intrares_energy(
 			" ApproximateBuriedUnsatPenalty: eval_intrares_energy should never be called during packing!!!" );
 	}
 
-	basic::datacache::CacheableUint64MathMatrixFloatMapCOP energies = get_energies_cache( pose );
+	basic::datacache::CacheableResRotPairFloatMapCOP energies = get_energies_cache( pose );
 
 	Size seqpos = res.seqpos();
 
-	uint64_t key = map_key_oneb( seqpos );
+	ResRotPair resrot( seqpos, 1, 0, 0 );
+	if ( energies->map().count( resrot ) == 0 ) return;
 
-	if ( energies->map().count( key ) == 0 ) return;
-
-	numeric::MathMatrix<float> const & matrix = energies->map().at( key );
-
-	float value = matrix( 1, 1 );
+	float value = energies->map().at( resrot );
 	emap[ scoring::approximate_buried_unsat_penalty ] += value;
 
 }
 
 
-basic::datacache::CacheableUint64MathMatrixFloatMapCOP
+basic::datacache::CacheableResRotPairFloatMapCOP
 ApproximateBuriedUnsatPenalty::get_energies_cache( pose::Pose const & pose ) const {
 
-	basic::datacache::CacheableUint64MathMatrixFloatMapCOP energies = nullptr;
+	basic::datacache::CacheableResRotPairFloatMapCOP energies = nullptr;
 
 	if ( pose.data().has( pose::datacache::CacheableDataType::APPROXIMATE_UNSAT_POSE_INFO ) ) {
-		energies = utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableUint64MathMatrixFloatMap const > (
+		energies = utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableResRotPairFloatMap const > (
 			pose.data().get_const_ptr( pose::datacache::CacheableDataType::APPROXIMATE_UNSAT_POSE_INFO ) );
 
 	}

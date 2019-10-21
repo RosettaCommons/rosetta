@@ -61,6 +61,8 @@ static basic::Tracer TR("core.pack.guidance_scoreterms.approximate_buried_unsat_
 
 class ApproximateBuriedUnsatPenaltyTests : public CxxTest::TestSuite
 {
+
+	bool old_sym = false;
 public:
 	void setUp()
 	{
@@ -136,6 +138,20 @@ public:
 		std::string symdef_file = basic::database::full_name( "symmetry/cyclic/C3_Z.sym" );
 		protocols::symmetry::SetupForSymmetryMover setup( symdef_file, basic::options::option );
 		setup.apply( *pose_p );
+		return pose_p;
+	}
+
+	core::pose::PoseOP
+	get_natural_corrections1() {
+		core::pose::PoseOP pose_p( new core::pose::Pose() );
+		import_pose::pose_from_file( *pose_p, "core/pack/guidance_scoreterms/approximate_buried_unsat_penalty/natural_corrections1.pdb" );
+		return pose_p;
+	}
+
+	core::pose::PoseOP
+	get_thr_ser_to_bb() {
+		core::pose::PoseOP pose_p( new core::pose::Pose() );
+		import_pose::pose_from_file( *pose_p, "core/pack/guidance_scoreterms/approximate_buried_unsat_penalty/thr_ser_to_bb.pdb" );
 		return pose_p;
 	}
 
@@ -321,6 +337,71 @@ public:
 			TS_ASSERT( buried( 6, pose.residue(6).atom_index("ND2") ) );
 
 		}
+		{
+			pose::Pose pose = *get_natural_corrections1();
+
+			core::id::AtomID_Map< bool > buried = scoring::atomic_depth::atoms_deeper_than(
+				pose, 0, false, 0.1, burial_resolution );
+
+
+			TS_ASSERT( buried( 1, pose.residue(1).atom_index("N") ) );
+			TS_ASSERT( buried( 1, pose.residue(1).atom_index("O") ) );
+			TS_ASSERT( buried( 1, pose.residue(1).atom_index("OG") ) );
+
+			TS_ASSERT( buried( 2, pose.residue(2).atom_index("N") ) );
+			TS_ASSERT( buried( 2, pose.residue(2).atom_index("O") ) );
+			TS_ASSERT( buried( 2, pose.residue(2).atom_index("OG") ) );
+
+			TS_ASSERT( buried( 3, pose.residue(3).atom_index("N") ) );
+			TS_ASSERT( buried( 3, pose.residue(3).atom_index("O") ) );
+			TS_ASSERT( buried( 3, pose.residue(3).atom_index("OD1") ) );
+			TS_ASSERT( buried( 3, pose.residue(3).atom_index("OD2") ) );
+
+			TS_ASSERT( buried( 4, pose.residue(4).atom_index("N") ) );
+			TS_ASSERT( buried( 4, pose.residue(4).atom_index("O") ) );
+			TS_ASSERT( buried( 4, pose.residue(4).atom_index("OD1") ) );
+			TS_ASSERT( buried( 4, pose.residue(4).atom_index("ND2") ) );
+
+			TS_ASSERT( buried( 5, pose.residue(5).atom_index("N") ) );
+			TS_ASSERT( buried( 5, pose.residue(5).atom_index("O") ) );
+			TS_ASSERT( buried( 5, pose.residue(5).atom_index("OE1") ) );
+			TS_ASSERT( buried( 5, pose.residue(5).atom_index("NE2") ) );
+
+			TS_ASSERT( buried( 6, pose.residue(6).atom_index("N") ) );
+			TS_ASSERT( buried( 6, pose.residue(6).atom_index("O") ) );
+			TS_ASSERT( buried( 6, pose.residue(6).atom_index("OE1") ) );
+			TS_ASSERT( buried( 6, pose.residue(6).atom_index("OE2") ) );
+
+		}
+		{
+			pose::Pose pose = *get_thr_ser_to_bb();
+
+			core::id::AtomID_Map< bool > buried = scoring::atomic_depth::atoms_deeper_than(
+				pose, 0, false, 0.1, burial_resolution );
+
+
+			TS_ASSERT( buried( 1, pose.residue(1).atom_index("N") ) );
+			TS_ASSERT( buried( 1, pose.residue(1).atom_index("O") ) );
+
+			TS_ASSERT( buried( 2, pose.residue(2).atom_index("N") ) );
+			TS_ASSERT( buried( 2, pose.residue(2).atom_index("O") ) );
+
+			TS_ASSERT( buried( 3, pose.residue(3).atom_index("N") ) );
+			TS_ASSERT( buried( 3, pose.residue(3).atom_index("O") ) );
+
+			TS_ASSERT( buried( 4, pose.residue(4).atom_index("N") ) );
+			TS_ASSERT( buried( 4, pose.residue(4).atom_index("O") ) );
+
+			TS_ASSERT( buried( 5, pose.residue(5).atom_index("N") ) );
+			TS_ASSERT( buried( 5, pose.residue(5).atom_index("O") ) );
+			TS_ASSERT( buried( 5, pose.residue(5).atom_index("OG") ) );
+
+			TS_ASSERT( buried( 6, pose.residue(6).atom_index("N") ) );
+			TS_ASSERT( buried( 6, pose.residue(6).atom_index("O") ) );
+			TS_ASSERT( buried( 6, pose.residue(6).atom_index("OXT") ) );
+			TS_ASSERT( buried( 6, pose.residue(6).atom_index("OG1") ) );
+
+		}
 
 	}
 
@@ -335,7 +416,10 @@ public:
 		utility::vector1<Real> expected_scores,
 		bool add_ig_edge_reweight = false,
 		bool assume_const_backbone = false,
-		bool bury_everything = false
+		bool bury_everything = false,
+		bool natural_corrections1 = false,
+		core::Real cross_chain_bonus = 0,
+		core::Real ser_bb_bonus = 0
 	) {
 
 
@@ -344,6 +428,9 @@ public:
 		using namespace core::select::residue_selector;
 
 		scoring::ScoreFunctionOP sfxn ( new scoring::ScoreFunction() );
+		if ( old_sym ) {
+			sfxn = utility::pointer::make_shared<core::scoring::symmetry::SymmetricScoreFunction>( );
+		}
 
 		scoring::methods::EnergyMethodOptions options = sfxn->energy_method_options();
 		options.approximate_buried_unsat_penalty_hbond_energy_threshold( -0.25 );
@@ -351,6 +438,9 @@ public:
 		options.approximate_buried_unsat_penalty_burial_probe_radius( bury_everything ? 0.1 : burial_probe_radius );
 		options.approximate_buried_unsat_penalty_burial_resolution( burial_resolution );
 		options.approximate_buried_unsat_penalty_assume_const_backbone( assume_const_backbone );
+		options.approximate_buried_unsat_penalty_natural_corrections1( natural_corrections1 );
+		options.approximate_buried_unsat_penalty_hbond_bonus_cross_chain( cross_chain_bonus );
+		options.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb( ser_bb_bonus );
 		sfxn->set_energy_method_options( options );
 
 		sfxn->set_weight( scoring::approximate_buried_unsat_penalty, 10.0 );
@@ -835,11 +925,15 @@ public:
 	// In this test, residue 1 is asparagine and is making hbonds to both symmetric copies of itself
 	//   all atoms are buried
 	void test_scoring_C3_asn(){
+		// if ( no_sym ) return;
 		pose::Pose pose = *get_C3_asn();
 
 		// We only need our scoreterm
 
 		scoring::ScoreFunctionOP sfxn ( new scoring::ScoreFunction() );
+		if ( old_sym ) {
+			sfxn = utility::pointer::make_shared<core::scoring::symmetry::SymmetricScoreFunction>( );
+		}
 		scoring::methods::EnergyMethodOptions options = sfxn->energy_method_options();
 		options.approximate_buried_unsat_penalty_hbond_energy_threshold( 0 );
 		options.approximate_buried_unsat_penalty_burial_atomic_depth( 0 );
@@ -869,6 +963,7 @@ public:
 	// In this test, residue 1 is asparagine and is making hbonds to both symmetric copies of itself
 	//   all atoms are buried
 	void test_packing_C3_asn(){
+		// if ( no_sym ) return;
 		pose::Pose pose = *get_C3_asn();
 
 		std::string allow_repacking_res = "1";
@@ -892,11 +987,15 @@ public:
 	// In this test, residue 1 and 2 are asparagine and are hbonded to 2* and 1* respectively
 	//   all atoms are buried
 	void test_scoring_C3_NN(){
+		// if ( no_sym ) return;
 		pose::Pose pose = *get_C3_NN();
 
 		// We only need our scoreterm
 
 		scoring::ScoreFunctionOP sfxn ( new scoring::ScoreFunction() );
+		if ( old_sym ) {
+			sfxn = utility::pointer::make_shared<core::scoring::symmetry::SymmetricScoreFunction>( );
+		}
 		scoring::methods::EnergyMethodOptions options = sfxn->energy_method_options();
 		options.approximate_buried_unsat_penalty_hbond_energy_threshold( 0 );
 		options.approximate_buried_unsat_penalty_burial_atomic_depth( 0 );
@@ -927,6 +1026,7 @@ public:
 	// In this test, residue 1 is asparagine and is making hbonds to both symmetric copies of itself
 	//  Tests assume_const_backbone
 	void test_packing_C3_NN(){
+		// if ( no_sym ) return;
 		pose::Pose pose = *get_C3_NN();
 
 		std::string allow_repacking_res = "1,2";
@@ -955,11 +1055,15 @@ public:
 	//   Designed to test oversats at symmetry interfaces
 	//   all atoms are buried
 	void test_scoring_C3_super_NN(){
+		// if ( no_sym ) return;
 		pose::Pose pose = *get_C3_super_NN();
 
 		// We only need our scoreterm
 
 		scoring::ScoreFunctionOP sfxn ( new scoring::ScoreFunction() );
+		if ( old_sym ) {
+			sfxn = utility::pointer::make_shared<core::scoring::symmetry::SymmetricScoreFunction>();
+		}
 		scoring::methods::EnergyMethodOptions options = sfxn->energy_method_options();
 		options.approximate_buried_unsat_penalty_hbond_energy_threshold( 0 );
 		options.approximate_buried_unsat_penalty_burial_atomic_depth( 0 );
@@ -1013,6 +1117,7 @@ public:
 	// In this test, residue 1 is asparagine and is making hbonds to both symmetric copies of itself
 	//  Tests assume_const_backbone
 	void test_packing_C3_super_NN(){
+		// if ( no_sym ) return;
 		pose::Pose pose = *get_C3_super_NN();
 
 		std::string allow_repacking_res = "1,2,3,4,5";
@@ -1040,6 +1145,156 @@ public:
 
 	}
 
+
+
+	// In this test, residue 2 is proline and residue 4 is trying to h-bond to it
+	//   all atoms are buried
+	void test_scoring_natural_corrections1_test(){
+		pose::Pose pose = *get_natural_corrections1();
+
+		// We only need our scoreterm
+
+		scoring::ScoreFunctionOP sfxn ( new scoring::ScoreFunction() );
+		scoring::methods::EnergyMethodOptions options = sfxn->energy_method_options();
+		options.approximate_buried_unsat_penalty_hbond_energy_threshold( 0 );
+		options.approximate_buried_unsat_penalty_burial_atomic_depth( 0 );
+		options.approximate_buried_unsat_penalty_burial_probe_radius( 0.1 );
+		options.approximate_buried_unsat_penalty_burial_resolution( burial_resolution );
+		options.approximate_buried_unsat_penalty_natural_corrections1( true );
+		sfxn->set_energy_method_options( options );
+
+		sfxn->set_weight( scoring::approximate_buried_unsat_penalty, 1.0 );
+
+		sfxn->score( pose );
+
+		scoring::Energies const & energies = pose.energies();
+
+		// Remember that pair energies get halved
+		TS_ASSERT_DELTA( energies.residue_total_energy( 1 ), 4.5, 0.01 );  // 1 + 1 + 3 - 0.5      // O, OG, NH3, 1 hbond
+		TS_ASSERT_DELTA( energies.residue_total_energy( 2 ), 5.5, 0.01 );  // 2 + 2 + 1 + 1 - 0.5      // O, OXT, OG, N, 1 hbond
+		TS_ASSERT_DELTA( energies.residue_total_energy( 3 ), 5.5, 0.01 );  // 1 + 3 + 2 + 2 - 0.75*4 + 0.5 // O, NH3, OD1, OD2, 2 carb hbond, 2 amide hbond, 1 over
+		TS_ASSERT_DELTA( energies.residue_total_energy( 4 ), 7, 0.01 );  // 2 + 2 + 1 + 1 + 2 - 0.75*2 + 0.5  // O, OXT, N, OD1, ND2, 1 carb hbond 1 amide hbond, 1 over
+		TS_ASSERT_DELTA( energies.residue_total_energy( 5 ), 4.5, 0.01 );  // 1 + 3 + 1 + 2 - 0.75*4 + 0.5     // O, NH3, OE1, NE2, 2 carb hbond, 2 amide hbond, 1 over
+		TS_ASSERT_DELTA( energies.residue_total_energy( 6 ), 8, 0.01 );  // 2 + 2 + 1 + 2 + 2 - 0.75*2 + 0.5  // O, OXT, N, OE1, OE2, 2 carb hbond, 2 amide hbond, 1 over
+
+		scoring::EnergyGraph const & energy_graph = energies.energy_graph();
+
+		// hbonds
+		assert_edge( energy_graph, 1, 2, -1 );
+		assert_edge( energy_graph, 3, 4, -3 );
+		assert_edge( energy_graph, 3, 5, -3 );
+		assert_edge( energy_graph, 3, 6, 1 );
+		assert_edge( energy_graph, 4, 5, 1 );
+		assert_edge( energy_graph, 5, 6, -3 );
+
+	}
+
+	// In this test, residue 2 is proline and every atom is buried
+	//  Tests assume_const_backbone
+	void test_packing_natural_corrections1_cross_chain_test(){
+		pose::Pose pose = *get_natural_corrections1();
+
+		std::string allow_repacking_res = "1,2,3,4,5,6";
+
+		utility::vector1<std::pair<std::string, std::string> > designables { { "1", "AS" }, { "2", "AS" },
+			{ "3", "AD" }, { "4", "AN" }, { "5", "AQ" }, { "6", "AE" },  };
+
+		utility::vector1<Size> our_res { 1, 2, 3, 4, 5, 6 };
+
+		utility::vector1<Real> expected_scores_no_bonus {
+			0,  // fix a buried unsat, cause a buried unsat
+			0,  // insert a pre-satisfied buried unsat
+			-10,  // 20 + 20 unsats, -15 -15 -15 -15 hbonds, +10 oversat w 6
+			10, // 20 + 10 unsats, -15 -15 hbonds, +10 oversat w 5
+			-20, // 20 + 10 unsats, -15 -15 -15 -15 hbonds, +10 oversat w 4
+			20, // 20 + 20 unsats, -15 -15 hbonds, +10 oversat w 3
+			};
+
+		core::Real bonus = 13;
+
+		utility::vector1<Real> expected_scores_bonus {
+			0,  // fix a buried unsat, cause a buried unsat
+			0,  // insert a pre-satisfied buried unsat
+			-10+bonus,  // 20 + 20 unsats, -15 -15 -15 -15 hbonds, +10 oversat w 6
+			10, // 20 + 10 unsats, -15 -15 hbonds, +10 oversat w 5
+			-20+bonus, // 20 + 10 unsats, -15 -15 -15 -15 hbonds, +10 oversat w 4
+			20, // 20 + 20 unsats, -15 -15 hbonds, +10 oversat w 3
+			};
+
+		do_test_packing( pose, allow_repacking_res, designables, our_res, expected_scores_no_bonus, false, false, true, true );
+		do_test_packing( pose, allow_repacking_res, designables, our_res, expected_scores_bonus,    false, false, true, true, bonus );
+
+	}
+
+
+	// In this test, residue 2 is proline and residue 4 is trying to h-bond to it
+	//   all atoms are buried
+	void test_scoring_thr_ser_to_bb_test(){
+		pose::Pose pose = *get_thr_ser_to_bb();
+
+		// We only need our scoreterm
+
+		float bonus = 27;
+
+		scoring::ScoreFunctionOP sfxn ( new scoring::ScoreFunction() );
+		scoring::methods::EnergyMethodOptions options = sfxn->energy_method_options();
+		options.approximate_buried_unsat_penalty_hbond_energy_threshold( 0 );
+		options.approximate_buried_unsat_penalty_burial_atomic_depth( 0 );
+		options.approximate_buried_unsat_penalty_burial_probe_radius( 0.1 );
+		options.approximate_buried_unsat_penalty_burial_resolution( burial_resolution );
+		options.approximate_buried_unsat_penalty_natural_corrections1( true );
+		options.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb( bonus );
+		sfxn->set_energy_method_options( options );
+
+		sfxn->set_weight( scoring::approximate_buried_unsat_penalty, 1.0 );
+
+		sfxn->score( pose );
+
+		scoring::Energies const & energies = pose.energies();
+
+		// Remember that pair energies get halved
+		TS_ASSERT_DELTA( energies.residue_total_energy( 1 ), 2+bonus/2, 0.01 );  // 1 + 3 - 2  // OG, NH3, 4 hbonds, 1/2 bonus
+		TS_ASSERT_DELTA( energies.residue_total_energy( 2 ), 0+bonus/2, 0.01 );  // 1 + 1 + -2       // O, N, 4 hbonds, 1/2 bonus
+		TS_ASSERT_DELTA( energies.residue_total_energy( 3 ), 2, 0.01 );  // 1 + 1  // O, N
+		TS_ASSERT_DELTA( energies.residue_total_energy( 4 ), 2, 0.01 );  // 1 + 1  // O, N
+		TS_ASSERT_DELTA( energies.residue_total_energy( 5 ), 2+bonus/2, 0.01 );  // 1 + 1 + 1 + -2 + 1    // O, N, OG1, NE2, 4 hbonds, 2 oversat, 1/2 bonus
+		TS_ASSERT_DELTA( energies.residue_total_energy( 6 ), 5+bonus/2, 0.01 );  // 2 + 2 + 1 + 1 -2 + 1  // O, OXT, N, OG1, 4 hbonds, 2 oversat, 1/2 bonus
+
+		scoring::EnergyGraph const & energy_graph = energies.energy_graph();
+
+		// hbonds
+		assert_edge( energy_graph, 1, 5, -4+bonus );
+		assert_edge( energy_graph, 2, 6, -4+bonus );
+
+	}
+
+	// In this test, residue 2 is proline and every atom is buried
+	//  Tests assume_const_backbone
+	void test_packing_thr_ser_to_bb_test(){
+		pose::Pose pose = *get_thr_ser_to_bb();
+
+		std::string allow_repacking_res = "5,6";
+
+		utility::vector1<std::pair<std::string, std::string> > designables { { "5", "AS" }, { "6", "AT" } };
+
+		utility::vector1<Size> our_res { 5, 6 };
+
+		utility::vector1<Real> expected_scores_no_bonus {
+			0, // 10 unsats, -10 -10 hbonds, +10 oversat w self
+			0, // 10 unsats, -10 -10 hbonds, +10 oversat w self
+			};
+
+		core::Real bonus = 13;
+
+		utility::vector1<Real> expected_scores_bonus {
+			0+bonus, // 10 unsats, -10 -10 hbonds, +10 oversat w self
+			0+bonus, // 10 unsats, -10 -10 hbonds, +10 oversat w self
+			};
+
+		do_test_packing( pose, allow_repacking_res, designables, our_res, expected_scores_no_bonus, false, false, true, true, 0 );
+		do_test_packing( pose, allow_repacking_res, designables, our_res, expected_scores_bonus,    false, false, true, true, 0, bonus );
+
+	}
 
 
 };

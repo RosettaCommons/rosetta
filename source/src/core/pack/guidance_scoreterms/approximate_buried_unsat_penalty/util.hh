@@ -24,9 +24,10 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack_basic/RotamerSetsBase.hh>
 
-#include <basic/datacache/CacheableUint64MathMatrixFloatMap.hh>
+#include <basic/datacache/CacheableResRotPairFloatMap.hh>
 
 #include <utility/vector1.hh>
+#include <unordered_map>
 
 
 namespace core {
@@ -35,7 +36,49 @@ namespace guidance_scoreterms {
 namespace approximate_buried_unsat_penalty {
 
 
-basic::datacache::CacheableUint64MathMatrixFloatMapOP
+struct UnsatCorrectionOptions {
+
+public:
+	UnsatCorrectionOptions() :
+		nh2_wants_2(false),
+		nh1_wants_1(false),
+		hydroxyl_wants_h(false),
+		carboxyl_wants_2(false)
+	{}
+
+	bool nh2_wants_2;
+	bool nh1_wants_1;
+	bool hydroxyl_wants_h;
+	bool carboxyl_wants_2;
+};
+
+struct HBondBonusOptions {
+
+public:
+	HBondBonusOptions() :
+		scorefxn_weight_(1),
+		cross_chain_bonus_(0),
+		ser_to_helix_bb_(0)
+	{}
+
+	float scorefxn_weight_;
+	float cross_chain_bonus_;
+	float ser_to_helix_bb_;
+
+	bool any() const {
+		return cross_chain_bonus_ != 0 || ser_to_helix_bb_ != 0;
+	}
+
+	float cross_chain_bonus() const {
+		return cross_chain_bonus_ / scorefxn_weight_;
+	}
+	float ser_to_helix_bb() const {
+		return ser_to_helix_bb_ / scorefxn_weight_;
+	}
+};
+
+
+basic::datacache::CacheableResRotPairFloatMapOP
 three_body_approximate_buried_unsat_calculation(
 	pose::Pose const & pose,
 	pack::rotamer_set::RotamerSetsOP const & rotsets,
@@ -47,12 +90,15 @@ three_body_approximate_buried_unsat_calculation(
 	float minimum_hb_cut = 0,
 	bool all_atoms_active = false,
 	float oversat_penalty = 1,
-	bool assume_const_backbone = true
+	bool assume_const_backbone = true,
+	UnsatCorrectionOptions const & cor_opt = UnsatCorrectionOptions(),
+	HBondBonusOptions const & bonus_opt = HBondBonusOptions()
+
 );
 
 void
 add_to_onebody(
-	basic::datacache::CacheableUint64MathMatrixFloatMapOP const & score_map,
+	basic::datacache::CacheableResRotPairFloatMapOP const & score_map,
 	pack::rotamer_set::RotamerSetsOP const & rotsets,
 	utility::vector1<bool> const & is_asu,
 	Size resnum,
@@ -69,13 +115,13 @@ struct ReweightData {
 	pose::Pose const & pose;
 	task::PackerTaskCOP task;
 	task::IGEdgeReweightContainerCOP edge_reweights;
-	std::unordered_map< uint64_t, float > stored_edge_reweights;
+	std::unordered_map< basic::datacache::ResRotPair, float, basic::datacache::ResRotPairHasher > stored_edge_reweights;
 };
 
 
 void
 add_to_twobody(
-	basic::datacache::CacheableUint64MathMatrixFloatMapOP const & score_map,
+	basic::datacache::CacheableResRotPairFloatMapOP const & score_map,
 	pack::rotamer_set::RotamerSetsOP const & rotsets,
 	utility::vector1<bool> const & is_asu,
 	ReweightData & reweight_data,
@@ -86,11 +132,6 @@ add_to_twobody(
 	float adder
 );
 
-uint64_t
-map_key_twob( Size resnum1, Size resnum2 );
-
-uint64_t
-map_key_oneb( Size resnum1 );
 
 }
 }

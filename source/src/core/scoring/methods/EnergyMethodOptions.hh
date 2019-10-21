@@ -801,6 +801,18 @@ public:
 	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
 	void approximate_buried_unsat_penalty_assume_const_backbone( bool const setting );
 
+	/// @brief Set the natural corrections 1 for approximate_buried_unsat_penalty.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	void approximate_buried_unsat_penalty_natural_corrections1( bool const setting );
+
+	/// @brief Set the hbond_bonus_cross_chain for approximate_buried_unsat_penalty.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	void approximate_buried_unsat_penalty_hbond_bonus_cross_chain( core::Real const setting );
+
+	/// @brief Set the hbond_bonus_ser_to_helix_bb for approximate_buried_unsat_penalty.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	void approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb( core::Real const setting );
+
 
 	/// @brief Get the energy threshold above which a hydrogen bond is not counted.
 	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
@@ -826,6 +838,17 @@ public:
 	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
 	bool approximate_buried_unsat_penalty_assume_const_backbone() const;
 
+	/// @brief Get the natural corrections 1 for approximate_buried_unsat_penalty.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	bool approximate_buried_unsat_penalty_natural_corrections1() const;
+
+	/// @brief Get the hbond_bonus_cross_chain for approximate_buried_unsat_penalty.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	core::Real approximate_buried_unsat_penalty_hbond_bonus_cross_chain() const;
+
+	/// @brief Get the hbond_bonus_ser_to_helix_bb for approximate_buried_unsat_penalty.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	core::Real approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb() const;
 
 	utility::vector1< core::Real > const & get_density_sc_scale_byres() const;
 	void set_density_sc_scale_byres(core::Real newscscale);
@@ -1101,6 +1124,9 @@ private:
 	core::Real approximate_buried_unsat_penalty_burial_resolution_;
 	core::Real approximate_buried_unsat_penalty_oversat_penalty_;
 	bool approximate_buried_unsat_penalty_assume_const_backbone_;
+	bool approximate_buried_unsat_penalty_natural_corrections1_;
+	core::Real approximate_buried_unsat_penalty_hbond_bonus_cross_chain_;
+	core::Real approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_;
 
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;
