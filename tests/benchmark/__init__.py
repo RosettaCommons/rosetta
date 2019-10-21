@@ -20,14 +20,14 @@ import benchmark.hpc_drivers
 import benchmark.tests
 
 from benchmark.tests import execute, to_bytes
-from benchmark.tests import _StateKey_, _ResultsKey_, _LogKey_
+from benchmark.tests import _StateKey_, _ResultsKey_, _LogKey_, _DescriptionKey_
 from benchmark.tests import _S_passed_, _S_failed_, _S_build_failed_, _S_script_failed_
 from benchmark.tests import _multi_step_config_, _multi_step_error_, _multi_step_result_
 
 __all__ = ['execute', 'to_bytes',
            'config', 'error', 'build_rosetta', 'calculate_extension', 'hpc_driver',
            '_S_passed_', '_S_failed_', '_S_build_failed_', '_S_script_failed_',
-           '_StateKey_', '_ResultsKey_', '_LogKey_',
+           '_StateKey_', '_ResultsKey_', '_LogKey_', '_DescriptionKey_',
            '_multi_step_config_', '_multi_step_error_', '_multi_step_result_',
 ]
 

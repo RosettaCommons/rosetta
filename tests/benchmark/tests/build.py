@@ -28,9 +28,9 @@ tests = dict(
     release   = NT(command='{python} ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
     static    = NT(command='{python} ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
 
-    ninja_debug    = NT(command='./ninja_build.py debug -remake -j{jobs}', incremental=True),
-    ninja_release  = NT(command='./ninja_build.py release -remake -j{jobs}', incremental=True),
-    ninja_graphics = NT(command='./ninja_build.py graphics -remake -j{jobs}', incremental=True),
+    ninja_debug    = NT(command='./ninja_build.py debug    -v -remake -j{jobs}', incremental=True),
+    ninja_release  = NT(command='./ninja_build.py release  -v -remake -j{jobs}', incremental=True),
+    ninja_graphics = NT(command='./ninja_build.py graphics -v -remake -j{jobs}', incremental=True),
 
     #PyRosetta = NT(command='BuildPyRosetta.sh -u --monolith -j{jobs}', incremental=True),
 
@@ -73,6 +73,7 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
     platform_suffix = platform_to_pretty_string(platform)
+
     skip_compile = config.get('skip_compile', False) # Don't skip the actual build we're testing, just the compilation/installation of other things
 
     if not skip_compile:
@@ -84,8 +85,8 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
         qmake = config['qmake']
         qt_extras = '-spec linux-clang ' if (compiler == 'clang' and platform['os'] == 'linux') else ''
     else:
-        qmake = '<none>'
-        gt_extras = '<none>'
+        qmake = 'qmake-path-is-not-defined-in-daemon-config'
+        gt_extras = 'none-because-qmake-path-was-not-defined-in-daemon-config'
 
     command_line = tests[test].command.format( **vars() )
 
@@ -100,13 +101,12 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     res_code = _S_failed_ if res else _S_passed_
 
-    if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
+    if not res and len(output) > 64*1024: output = '...truncated...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
 
-
-    if len(output) > 1024*1024*1:  # truncating logs if they too large (more then 1Mb in size)...
-        lines = output.split('\n')
-        output = '\n'.join( lines[:32] + ['...truncated...'] + lines[-32:] )
-
+    # Moved to benchmark.py
+    # if len(output) > 1024*1024*1:  # truncating logs if they too large (more then 1Mb in size)...
+    #     lines = output.split('\n')
+    #     output = '\n'.join( lines[:32] + ['...truncated...'] + lines[-32:] )
 
     output = 'Running: {}\n'.format(command_line) + output  # Making sure that exact command line used is stored
 

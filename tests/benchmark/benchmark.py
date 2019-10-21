@@ -14,7 +14,7 @@
 
 from __future__ import print_function
 
-import os, os.path, sys, imp, shutil, json, platform
+import os, os.path, sys, imp, shutil, json, platform, re
 import codecs
 
 from configparser import ConfigParser
@@ -22,6 +22,7 @@ import argparse
 
 from tests import *  # execute, Tests states and key names
 from hpc_drivers import *
+
 
 # Calculating value of Platform dict
 Platform = {}
@@ -38,6 +39,265 @@ Platform['compiler'] = 'gcc' if Platform['os'] == 'linux' else 'clang'
 Platform['python'] = sys.executable
 
 
+class Setup(object):
+    __slots__ = 'test working_dir platform config compare debug'.split()  # daemon path_to_previous_test
+    def __init__(self, **attrs):
+        #self.daemon = True
+        for k, v in attrs.items(): setattr(self, k, v)
+
+
+def setup_from_options(options):
+    ''' Create Setup object based on user supplied options, config files and auto-detection
+    '''
+    platform = dict(Platform)
+
+    if options.suffix: options.suffix = '.' + options.suffix
+
+    platform['extras'] = options.extras.split(',') if options.extras else []
+    platform['python'] = options.python
+    #platform['options'] = json.loads( options.options ) if options.options else {}
+
+    if options.memory: memory = options.memory
+    elif platform['os'] in ['linux', 'ubuntu']: memory = int( execute('Getting memory info...', 'free -m', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split('\n')[1].split()[1]) // 1024
+    elif platform['os'] == 'mac':   memory = int( execute('Getting memory info...', 'sysctl -a | grep hw.memsize', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split()[1]) // 1024 // 1024 // 1024
+
+    platform['compiler'] = options.compiler
+
+    if os.path.isfile(options.config):
+        Config = ConfigParser( dict(here=os.path.abspath('./') ) )
+
+        with open(options.config) as f: Config.readfp(f)
+
+    else:
+        Config = ConfigParser()
+        Config.set('DEFAULT', 'cpu_count',  '1')
+        Config.set('DEFAULT', 'hpc_driver', 'MultiCore')
+        Config.set('DEFAULT', 'branch',     'unknown')
+        Config.set('DEFAULT', 'revision',   '42')
+        Config.set('DEFAULT', 'user_name',  'Jane Roe')
+        Config.set('DEFAULT', 'user_email', 'jane.roe@university.edu')
+        Config.add_section('config')
+
+    if options.jobs: Config.set('DEFAULT', 'cpu_count', str(options.jobs) )
+    Config.set('DEFAULT', 'memory',    str(memory) )
+
+    #config = Config.items('config')
+    config = { section: dict(Config.items(section)) for section in Config.sections() }
+    config.update( config.pop('config').items() )
+    config = dict(config,
+                  cpu_count = Config.getint('DEFAULT', 'cpu_count'),
+                  memory = memory,
+                  revision = Config.getint('DEFAULT', 'revision'),
+                  emulation=True,
+    )  # debug=options.debug,
+
+    if 'results_root' not in config: config['results_root'] = os.path.abspath('./results/')
+
+    if 'prefix' not in config: config['prefix'] = os.path.abspath( config['results_root'] + '/prefix')
+
+    if options.skip_compile is not None: config['skip_compile'] = options.skip_compile
+
+    #print(f'Results path: {config["results_root"]}')
+    #print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True, indent=2), Platform))
+
+    if options.compare: print('Comparing tests {} with suffixes: {}'.format(options.args, options.compare) )
+    else: print('Running tests: {}'.format(options.args) )
+
+    if len(options.args) != 1: print('Error: Single test-name-to-run should be supplied!');  sys.exit(1)
+    else:
+        test = options.args[0]
+        if test.startswith('tests/'): test = test.partition('tests/')[2][:-3]  # removing dir prefix and .py suffix
+
+    if options.compare:
+        compare = options.compare[0], options.compare[1]  # (this test suffix, previous test suffix)
+        working_dir = os.path.abspath( config['results_root'] + f'/{platform["os"]}.{test}' )  # will be a root dir with sub-dirs (options.compare[0], options.compare[1])
+    else:
+        compare = None
+        working_dir = os.path.abspath( config['results_root'] + f'/{platform["os"]}.{test}{options.suffix}' )
+
+
+    if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
+    os.makedirs(working_dir)
+
+    setup = Setup(
+        test        = test,
+        working_dir = working_dir,
+        platform    = platform,
+        config      = config,
+        compare     = compare,
+        debug       = options.debug,
+        #daemon      = False,
+    )
+
+    setup_as_json = json.dumps( { k : getattr(setup, k) for k in setup.__slots__}, sort_keys=True, indent=2)
+    with open(working_dir + '/.setup.json', 'w') as f: f.write(setup_as_json)
+
+    #print(f'Detected hardware platform: {Platform}')
+    print(f'Setup: {setup_as_json}')
+    return setup
+
+
+def truncate_log(log):
+    _max_log_size_  = 1024*1024*1
+    _max_line_size_ = _max_log_size_ // 2
+
+    if len(log) > _max_log_size_:
+        new = log
+        lines = log.split('\n')
+
+        if len(lines) > 256:
+            new_lines = lines[:32] + ['...truncated...'] + lines[-128:]
+            new = '\n'.join(new_lines)
+
+        if len(new) > _max_log_size_: # special case for Ninja logs that does not use \n
+            lines = re.split(r'[\r\n]*', log)  #t.log.split('\r')
+            if len(lines) > 256: new = '\n'.join( lines[:32] + ['...truncated...'] + lines[-128:] )
+
+        if len(new) > _max_log_size_: # going to try to truncate each individual line...
+            print(f'Trying to truncate log line-by-line...')
+            new = '\n'.join( (
+                ( line[:_max_line_size_//3] + '...truncated...' + line[-_max_line_size_//3:] ) if line > _max_line_size_ else line
+                for line in new_lines ) )
+
+        if len(new) > _max_log_size_: # fall-back strategy in case all of the above failed...
+            print(f'WARNING: could not truncate log line-by-line, falling back to raw truncate...')
+            new = 'WARNING: could not truncate test log line-by-line, falling back to raw truncate!\n...truncated...\n' + ( '\n'.join(lines) )[-_max_log_size_+256:]
+
+        print( 'Trunacting test output log: {0}MiB → {1}MiB'.format(len(log)/1024/1024, len(new)/1024/1024) )
+        log = new
+
+    return log
+
+
+
+
+def find_test_description(test_name, test_script_file_name):
+    ''' return content of test-description file if any or None if no description was found
+    '''
+
+    def find_description_file(prefix, test_name):
+        fname = prefix + test_name + '.md'
+        if os.path.isfile(fname): return fname
+        return prefix + 'md'
+
+    description_file_name =  find_description_file( test_script_file_name[:-len('command.py')] + 'description.', test_name) if test_script_file_name.endswith('/command.py') else find_description_file(test_script_file_name[:-len('py')], test_name)
+
+    if description_file_name  and  os.path.isfile(description_file_name):
+        print(f'Found test suite description in file: {description_file_name!r}')
+        with open(description_file_name, encoding='utf-8', errors='backslashreplace') as f: description = f.read()
+        return description
+
+    else: return None
+
+
+
+def run_test(setup):
+    #print(f'{setup!r}')
+    suite, rest = setup.test.split('.'), []
+    while suite:
+        #print( f'suite: {suite}, test: {rest}' )
+
+        file_name = '/'.join( ['tests'] + suite ) + '.py'
+        if os.path.isfile(file_name): break
+
+        file_name = '/'.join( ['tests'] + suite ) + '/command.py'
+        if os.path.isfile(file_name): break
+
+        rest.insert(0, suite.pop())
+
+
+    test = '.'.join( suite + rest )
+    test_name = '.'.join(rest)
+
+    print( f'Loading test from: {file_name}, suite+test: {test!r}, test: {test_name!r}' )
+    test_suite = imp.load_source('test_suite', file_name)
+
+    test_description = find_test_description(test_name, file_name)
+
+    if setup.compare:
+        #working_dir_1 = os.path.abspath( config['results_root'] + f'/{Platform["os"]}.{test}.{Options.compare[0]}' )
+        working_dir_1 = setup.working_dir + f'/{setup.compare[0]}'
+
+        working_dir_2        = setup.compare[1]  and  ( setup.working_dir + f'/{setup.compare[1]}' )
+        res_2_json_file_path = setup.compare[1]  and  f'{working_dir_2}/.execution.results.json'
+
+        res_1 = json.load( open(working_dir_1 + '/.execution.results.json') )  # ["results"]
+
+        if setup.compare[1] and ( not os.path.isfile(res_2_json_file_path) ):
+            setup.compare[1] = None
+            state_override = _S_failed_
+        else:
+            state_override = None
+
+        if setup.compare[1] == None: res_2, working_dir_2 = None, None
+        else:
+            #working_dir_2 = os.path.abspath( config['results_root'] + f'/{Platform["os"]}.{test}.{Options.compare[1]}' )
+            res_2 = json.load( open(res_2_json_file_path) )
+
+        res = test_suite.compare(test, res_1, working_dir_1, res_2, working_dir_2)
+
+        if state_override:
+            log_prefix = \
+                f'WARNING: Previous test results does not have `.execution.results.json` file, so comparision with None was performed instead!\n' \
+                f'WARNING: Overriding calcualted test state `{res[_StateKey_]}` → `{_S_failed_}`...\n\n'
+
+            res[_LogKey_] = log_prefix + res[_LogKey_]
+            res[_StateKey_] = _S_failed_
+
+
+        # Caution! Some of the strings in the result object may be unicode. Be robust to unicode in the log messages.
+        with codecs.open(setup.working_dir+'/.comparison.log.txt', 'w', encoding='utf-8', errors='replace') as f: f.write( truncate_log( res[_LogKey_] ) )
+
+        res[_LogKey_] = truncate_log( res[_LogKey_] )
+
+        print( 'Comparison finished with output:\n{}'.format( res[_LogKey_] ) )
+
+        with open(setup.working_dir+'/.comparison.results.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
+
+        #print( 'Comparison finished with results:\n{}'.format( json.dumps(res, sort_keys=True, indent=2) ) )
+        if 'summary' in res: print('Summary section:\n{}'.format( json.dumps(res['summary'], sort_keys=True, indent=2) ) )
+
+        print( f'Output results of this comparison saved to {working_dir_1}/.comparison.results.json\nComparison log saved into {working_dir_1}/.comparison.log.txt' )
+
+
+    else:
+        working_dir = setup.working_dir  #os.path.abspath( setup.config['results_root'] + f'/{platform["os"]}.{test}{options.suffix}' )
+
+        hpc_driver_name = setup.config['hpc_driver']
+        hpc_driver = eval(hpc_driver_name + '_HPC_Driver')(working_dir, setup.config, tracer=print, set_daemon_message=lambda x:None) if hpc_driver_name else None
+
+        api_version = test_suite._api_version_ if hasattr(test_suite, '_api_version_') else ''
+
+        # if api_version < '1.0':
+        #     res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Config.cpu_count, verbose=True, debug=Options.debug)
+        # else:
+
+        if api_version == '1.0': res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(setup.platform), config=setup.config, hpc_driver=hpc_driver, verbose=True, debug=setup.debug)
+        else:
+            print(f'Test benchmark api_version={api_version} is not supported!'); sys.exit(1)
+
+        if not isinstance(res, dict): print(f'Test returned result of type {type(res)} while dict-like object was expected, please check that test-script have correct `return` statment! Terminating...'); sys.exit(1)
+
+        # Caution! Some of the strings in the result object may be unicode. Be robust to unicode in the log messages
+        with codecs.open(working_dir+'/.execution.log.txt', 'w', encoding='utf-8', errors='replace') as f: f.write( res[_LogKey_] )
+
+        res[_LogKey_] = truncate_log( res[_LogKey_] )
+
+        if _DescriptionKey_ not in res: res[_DescriptionKey_] = test_description
+
+        if res[_StateKey_] not in _S_Values_: print( 'Warning!!! Test {} failed with unknow result code: {}'.format(test_name, res[_StateKey_]) )
+        else: print( f'Test {test} finished output:\n{res[_LogKey_]}\n----------------------------------------------------------------\nState: {res[_StateKey_]!r} | ', end='')
+
+        # JSON by default serializes to an ascii-encoded format
+        with open(working_dir+'/.execution.results.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
+
+        print( f'Output and full log of this test saved to:\n{working_dir}/.execution.results.json\n{working_dir}/.execution.log.txt' )
+
+
+
+
+
+
 def main(args):
     ''' Script to Run arbitrary Rosetta test
     '''
@@ -47,10 +307,7 @@ def main(args):
 
     parser.add_argument('-j', '--jobs', default=0, type=int, help="Number of processors to use on when building. (default: use value from config file or 1)")
 
-    parser.add_argument('-m', '--memory',
-      default=0, type=int,
-      help="Amount of memory to use (default: use 2Gb per job",
-    )
+    parser.add_argument('-m', '--memory', default=0, type=int, help="Amount of memory to use (default: use 2Gb per job")
 
     parser.add_argument('--compiler', default=Platform['compiler'], help="Compiler to use")
 
@@ -72,157 +329,27 @@ def main(args):
 
     #parser.add_argument("--results-root", default=None, action="store", help="Location of `results` dir default is to use `./results`")
 
+    parser.add_argument("--setup", default=None, help="Specify JSON file with setup information. When this option supplied all other config and commandline options is ignored and auto-detection disable. Test, platform info will be gathered from provided JSON file. This option is designed to be used in daemon mode." )
+
+
     parser.add_argument('args', nargs=argparse.REMAINDER)
 
-    global Options;
-    Options = parser.parse_args(args=args[1:])
+    options = parser.parse_args(args=args[1:])
 
-    if any( [a.startswith('-') for a in Options.args] ) :
+    if any( [a.startswith('-') for a in options.args] ) :
         print( '\nWARNING WARNING WARNING WARNING\n' )
-        print( '\tInterpreting', ' '.join(["'"+a+"'" for a in Options.args if a.startswith('-')]), 'as test name(s), rather than as option(s).'  )
+        print( '\tInterpreting', ' '.join(["'"+a+"'" for a in options.args if a.startswith('-')]), 'as test name(s), rather than as option(s).'  )
         print( "\tTry moving it before any test name, if that's not what you want."  )
         print( '\nWARNING WARNING WARNING WARNING\n'  )
 
-    if Options.suffix: Options.suffix = '.' + Options.suffix
 
-    Platform['extras'] = Options.extras.split(',') if Options.extras else []
-    Platform['python'] = Options.python
-    #Platform['options'] = json.loads( Options.options ) if Options.options else {}
-
-    if Options.memory: memory = Options.memory
-    elif Platform['os'] in ['linux', 'ubuntu']: memory = int( execute('Getting memory info...', 'free -m', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split('\n')[1].split()[1]) // 1024
-    elif Platform['os'] == 'mac':   memory = int( execute('Getting memory info...', 'sysctl -a | grep hw.memsize', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split()[1]) // 1024 // 1024 // 1024
-
-    Platform['compiler'] = Options.compiler
-
-    if os.path.isfile(Options.config):
-        Config = ConfigParser( dict(here=os.path.abspath('./') ) )
-
-        with open(Options.config) as f: Config.readfp(f)
+    if options.setup:
+        with open(options.setup) as f: setup = Setup( **json.load(f) )
 
     else:
-        Config = ConfigParser()
-        Config.set('DEFAULT', 'cpu_count',  '1')
-        Config.set('DEFAULT', 'hpc_driver', 'MultiCore')
-        Config.set('DEFAULT', 'branch',     'unknown')
-        Config.set('DEFAULT', 'revision',   '42')
-        Config.set('DEFAULT', 'user_name',  'Jane Roe')
-        Config.set('DEFAULT', 'user_email', 'jane.roe@university.edu')
-        Config.add_section('config')
+        setup = setup_from_options(options)
 
-    if Options.jobs: Config.set('DEFAULT', 'cpu_count', str(Options.jobs) )
-    Config.set('DEFAULT', 'memory',    str(memory) )
-
-    #config = Config.items('config')
-    config = { section: dict(Config.items(section)) for section in Config.sections() }
-    config.update( config.pop('config').items() )
-    config = dict(config, cpu_count=Config.getint('DEFAULT', 'cpu_count'), memory=memory, debug=Options.debug, emulation=True)
-
-    if 'results_root' not in config: config['results_root'] = os.path.abspath('./results/')
-
-    if 'prefix' not in config: config['prefix'] = os.path.abspath( config['results_root'] + '/prefix')
-
-    if Options.skip_compile is not None: config['skip_compile'] = Options.skip_compile
-
-    #print(f'Results path: {config["results_root"]}')
-    print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True, indent=2), Platform))
-
-    if Options.compare: print('Comparing tests {} with suffixes: {}'.format(Options.args, Options.compare) )
-    else: print('Running tests: {}'.format(Options.args) )
-
-
-    # def compare(fun):
-    #     working_dir_1 = os.path.abspath('./results/' + test + '.' + Options.compare[0])
-    #     working_dir_2 = os.path.abspath('./results/' + test + '.' + Options.compare[1])
-    #     res_1 = json.load( file(working_dir_1 + '/output.results.json') )
-    #     res_2 = json.load( file(working_dir_1 + '/output.results.json') )
-    #     res = fun(res_1, working_dir_1, res_2, working_dir_2)
-    #     print json.dumps(res, sort_keys=True, indent=2)
-    #     sys.exit(0)
-
-
-    for test in Options.args:
-        if test.startswith('tests/'): test = test.partition('tests/')[2][:-3]  # removing dir prefix and .py suffix
-
-        #suite_name = ''
-        # while test:
-        #     suite_name_add_on, _, test_name = test.partition('.')
-        #     #print( f'suite_name: {suite_name}, suite_name_add_on: {suite_name_add_on}, test_name: {test_name}' )
-        #     suite_name += '/' + suite_name_add_on
-
-        #     # file_name = 'tests' + suite_name + '/' + test_name + '.py'
-        #     # if os.path.isfile(file_name): test_name = ''; break
-
-        #     file_name = 'tests' + suite_name + '.py'
-        #     if os.path.isfile(file_name): break
-
-        #     file_name = 'tests' + suite_name + '/command.py'
-        #     if os.path.isfile(file_name): break
-
-        #     test = test_name
-
-        suite, rest = test.split('.'), []
-        while suite:
-            #print( f'suite: {suite}, test: {rest}' )
-
-            file_name = '/'.join( ['tests'] + suite ) + '.py'
-            if os.path.isfile(file_name): break
-
-            file_name = '/'.join( ['tests'] + suite ) + '/command.py'
-            if os.path.isfile(file_name): break
-
-            rest.insert(0, suite.pop())
-
-
-        test = '.'.join( suite + rest )
-        test_name = '.'.join(rest)
-
-        print( f'Loading test from: {file_name}, suite+test: {test!r}, test: {test_name!r}' )
-        test_suite = imp.load_source('test_suite', file_name)
-
-        if Options.compare:
-            working_dir_1 = os.path.abspath( config['results_root'] + f'/{Platform["os"]}.{test}.{Options.compare[0]}' )
-            res_1 = json.load( open(working_dir_1 + '/output.results.json') )["results"]
-
-            if Options.compare[1] == 'None': res_2, working_dir_2 = None, None
-            else:
-                working_dir_2 = os.path.abspath( config['results_root'] + f'/{Platform["os"]}.{test}.{Options.compare[1]}' )
-                res_2 = json.load( open(working_dir_2 + '/output.results.json') )["results"]
-
-            res = test_suite.compare(test, res_1, working_dir_1, res_2, working_dir_2)
-
-            with open(working_dir_1+'/output.compare.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
-
-            print( 'Comparison finished with results:\n{}'.format( json.dumps(res, sort_keys=True, indent=2) ) )
-
-            if 'summary' in res: print('Summary section:\n{}'.format( json.dumps(res['summary'], sort_keys=True, indent=2) ) )
-            print( 'Output this comparison saved to {0}/output.compare.json'.format(working_dir_1) )
-
-
-        else:
-            working_dir = os.path.abspath( config['results_root'] + f'/{Platform["os"]}.{test}{Options.suffix}' )
-            if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
-            os.makedirs(working_dir)
-
-            hpc_driver = eval(config['hpc_driver'] + '_HPC_Driver')(working_dir, Config, tracer=print, set_daemon_message=lambda x:None)
-
-            api_version = test_suite._api_version_ if hasattr(test_suite, '_api_version_') else ''
-
-            if api_version < '1.0':
-                res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Config.cpu_count, verbose=True, debug=Options.debug)
-            else:
-                res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), config=config, hpc_driver=hpc_driver, verbose=True, debug=Options.debug)
-
-            if res[_StateKey_] not in _S_Values_: print( 'Warning!!! Test {} failed with unknow result code: {}'.format(test_name, res[_StateKey_]) )
-            else: print( f'Test {test} finished output:\n{res[_LogKey_]}\n----------------------------------------------------------------\nState: {res[_StateKey_]!r} | ', end='')
-
-            print( 'Output and log of this test saved to:\n{0}/output.results.json\n{0}/output.log'.format(working_dir) )
-
-            # Caution! Some of the strings in the result object may be unicode.
-            with codecs.open(working_dir+'/output.log'.format(test), 'w', encoding='utf-8', errors='replace') as f: # Be robust to unicode in the log messages
-                    f.write(res[_LogKey_])
-            # Json by default serializes to an ascii-encoded format
-            with open(working_dir+'/output.results.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
+    run_test(setup)
 
 
 if __name__ == "__main__": main(sys.argv)
