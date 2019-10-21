@@ -2516,6 +2516,7 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one, ut
 /// (3) chains: chain endings are inserted before insert_seqpos, and after insert_seqpos+conf.size()-1
 ///  ie. at the beginning and ending of the inserted conformation; all internal chain endings from conf are used
 /// (4) atom_tree: setup_atom_tree is called to rebuild from scratch using the fold_tree
+/// (5) Residue append observers are notified AFTER addition of ALL residues into the conformation)
 void
 Conformation::insert_conformation_by_jump(
 	Conformation const & conf,
@@ -2543,6 +2544,13 @@ Conformation::insert_conformation_by_jump(
 		residue( insert_seqpos-1 ).is_polymer_bonded( insert_seqpos ) );
 	if ( fold_tree_polymer_bond || residues_polymer_bond ) {
 		utility_exit_with_message("cant insert 'by_jump' into a polymer stretch");
+	}
+
+	// clear glycan trees and observers:
+	//  Append events are triggered after all trees and residues have been duplicated.
+	//  Therefore, we clear the tree and regenerate it following symmetrization
+	if ( glycan_tree_set() ) {
+		clear_glycan_trees();
 	}
 
 	// sequence numbering of existing residues, *_moved --> do this before changing residues_ array
@@ -2632,6 +2640,11 @@ Conformation::insert_conformation_by_jump(
 	// Notify length observers
 	for ( core::Size i = insert_seqpos; i < insert_size + insert_seqpos; i++ ) {
 		notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_APPEND, i - 1, 1, &residue(i)), false );
+	}
+
+	// Add glycan tree set and attach observers
+	if ( contains_carbohydrate_residues() ) {
+		setup_glycan_trees();
 	}
 }
 

@@ -919,6 +919,7 @@ public: // Access to the ParametersSets -- Vikram K. Mulligan (vmullig@uw.edu), 
 public:  // Conformation Cutting/Pasting
 
 	/// @brief  Insert one conformation into another. See FoldTree::insert_fold_tree_by_jump
+	/// @details Calls residue append observers AFTER addition of all residues
 	virtual
 	void
 	insert_conformation_by_jump(
