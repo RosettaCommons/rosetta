@@ -681,8 +681,7 @@ SymmetricRotamerSets::orient_rotamer_set_to_symmetric_partner(
 	uint const & seqpos,
 	uint const & sympos,
 	bool const set_up_mirror_types_if_has_mirror_symmetry/*=false*/
-)
-{
+) const {
 
 	RotamerSetCOP rotset_in = rotamer_set_for_residue( seqpos );
 	RotamerSetOP sym_rotamer_set = RotamerSetFactory::create_rotamer_set( pose );

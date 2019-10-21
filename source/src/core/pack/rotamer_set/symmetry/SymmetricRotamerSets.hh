@@ -114,7 +114,7 @@ private:
 		uint const & setpos,
 		uint const & symmpos,
 		bool const set_up_mirror_types_if_has_mirror_symmetry=false
-	);
+	) const;
 
 	bool
 	final_visit_to_edge(
