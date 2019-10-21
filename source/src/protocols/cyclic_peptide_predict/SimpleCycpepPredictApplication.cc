@@ -3538,7 +3538,7 @@ SimpleCycpepPredictApplication::genkic_close(
 		if ( pose->residue_type(i).is_alpha_aa() || pose->residue_type(i).is_oligourea() || pose->residue_type(i).is_peptoid() || pose->residue_type(i).is_aramid() ) {
 			core::Size const res_in_original( original_position(i, cyclic_offset, pose->size() ) ); //Get the index of this position in the original pose (prior to any circular permutation).
 			if ( user_set_alpha_dihedrals_.count(res_in_original) ) { //If this position is being set to a particular value...
-				runtime_assert_string_msg( pose->residue_type(i).is_alpha_aa(), "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication: dihedral setting currently only works for alpha-amino acids." );
+				runtime_assert_string_msg( pose->residue_type(i).is_alpha_aa() || pose->residue_type(i).is_peptoid(), "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication: dihedral setting currently only works for alpha-amino acids and peptoids." );
 				genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::set_dihedral );
 				core::id::NamedAtomID Natom( "N", i );
 				core::id::NamedAtomID CAatom( "CA", i );
