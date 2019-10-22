@@ -1,0 +1,5 @@
+method svm_rank
+svm_sequence_length 9 3
+svm_file sequence/mhc_svms/HLA-DRB10101_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model
+svm_rank sequence/mhc_rank_svm_scores/HLA-DRB10101.libsvm.test.out.sort.gz
+svm_pssm_features sequence/mhc_pssms/HLA-DRB10101_nooverlap.9mer.norm.pssm

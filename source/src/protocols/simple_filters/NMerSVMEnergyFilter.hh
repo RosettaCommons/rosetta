@@ -25,7 +25,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/energy_methods/NMerSVMEnergy.hh>
+#include <core/scoring/nmer/NMerSVMEnergy.hh>
 
 namespace protocols {
 namespace simple_filters {

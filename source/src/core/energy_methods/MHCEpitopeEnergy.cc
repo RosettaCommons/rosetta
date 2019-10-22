@@ -178,8 +178,10 @@ void MHCEpitopeEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFunc
 
 	TR.Debug << "finalizing score" << std::endl;
 
-	// Need to make sure we have the symmetry information stored, in order to multiply accordingly
-	if ( symm_multipliers_.size() == 0 ) setup_symmetry(pose);
+	// Setup and store the symmetry information, in order to multiply accordingly
+	// Could be skipped under certain situations for improved performance, but hard to catch without storing info in pose.
+	// Because this won't run during simulated annealing, it is probably fine this way.
+	setup_symmetry(pose);
 
 	//Number of residues:
 	core::Size const nres( pose.size() );
@@ -309,8 +311,10 @@ MHCEpitopeEnergy::set_up_residuearrayannealableenergy_for_packing (
 		score_caches_.push_back(cache);
 	}
 
-	// Need to make sure we have the symmetry information stored, in order to multiply accordingly
-	if ( symm_multipliers_.size() == 0 ) setup_symmetry(pose);
+	// Setup and store the symmetry information, in order to multiply accordingly
+	// Could be skipped under certain situations for improved performance, but hard to catch without storing info in pose.
+	// Because this won't run during simulated annealing, it is probably fine this way.
+	setup_symmetry(pose);
 
 	// Finally populate the caches by full rescore
 	// Create a vector of size nres
@@ -517,51 +521,91 @@ core::Real MHCEpitopeEnergy::full_rescore(
 		if ( helper->is_default() ) continue; // default contributes 0 to score, so just bypass
 
 		// Loop over peptide starting positions
-		// Generate a "peptide" of A's of the appropriate length
+		// Generate a "peptide" padded to the appropriate length
 		core::Size len = helper->get_peptide_length();
-		std::string peptide(len, 'A');
-		core::Size const stop = reslist.size()-len+1; // Set stop to the last residue where an epitope could start
+		core::Size overhang = helper->get_overhang_length();
+		std::string peptide(len, pad);
+		// Set stop to the last residue anchoring a scored peptide.
+		// reslist.size() is the highest residue number, while len gives the peptide length.
+		// If 100 residues with a peptide length of 15 and no overhang, the last scored peptide is at residue 86.
+		// A peptide can further be broken into a core (which must be there) and overhangs, which might or might not be there for terminal peptides,
+		// and are padded to fill the specified size if not. In the above example, if overhang is 3 (so 9 core and 3 on each end)...
+		// ... the last peptide extends from 89 to 100, with the core at 92 (100-(15-2*3)+1), the N-terminal overhang spanning 89-91,
+		// and 3 pad characters for C-overhang. This peptide is stored at 92, its core position.
+		int const stop = reslist.size()-(len-2*overhang)+1; // 86 in example 1, 92 in example 2
+		core::Size curr_chunk_start = 1; // Keeps track for cases where there are chain breaks and noncanonicals
 		// Loop over all peptide starting positions
-		for ( core::Size start=1; start <= stop; start++ ) {
+		for ( int start=1; start <= stop; ++start ) {
 			//BJY: It is tempting to throw this code into its own function and call it from full_rescore and update_score, to avoid duplication.
 			//BJY: The treatment of the masks and cache are a bit different between the two.  TODO.
 			//CBK: yeah, that's why it's duplicated -- the amount of duplication is probably less than the amount of ugliness to handle that
 			if ( symm_multipliers_[start] == 0 ) continue; // not in asymmetric unit, so doesn't contribute
 			if ( !masks[ihelper][start] ) continue; // doesn't contribute to this because it's masked
-			bool chain_break=false, noncanon=false;
-			core::Size i=0; // need outside of loop, to jump if not contiguous
+
+			// Build the peptide string for position i
+			// Three bool flags here: one to flag a chainbreak, one to flag a non-canonical amino acid, and one to indicate whether we should still score a "chunk"
+			// The latter becomes an issue if the chain_break or noncanon occurs in the overhang region of a peptide
+			bool chain_break=false, noncanon=false, score_chunk = true;
+			// If we have an overhang (for example, 3), we need to start prior to the terminus (at -3 instead of 0) and pad it.
+			int i=-overhang; // need outside of loop, to jump if not contiguous; must be an int, since in case of overhang will be negative
 			// Check for chainbreaks, noncannonicals, and symmetry breaks.
-			for ( ; i < len; i++ ) {
+			for ( ; i < int(len-overhang); ++i ) {
+				if ( start+i < int(curr_chunk_start) ) { //If we are extending into the previous chain
+					// Pad with the padding character and move on
+					peptide[i+overhang] = pad;
+					continue;
+				}
+				if ( start+i > int(reslist.size()) ) { //If we are extending past the end of the pose
+					// Pad with the padding character and move on
+					peptide[i+overhang] = pad;
+					continue;
+				}
 				if ( symm_multipliers_[start+i] == 0 ) {
 					// Went into symmetric clone; treat like chain break
-					chain_break = true;
+					chain_break = true; //C-terminal padding dealt with in the if ( chain_break || noncanon ) statement below
 					break;
 				}
 				core::conformation::ResidueCOP res = reslist[start+i];
 				// If the chain id is different from the previous residue's chain id, flag it as a chainbreak.
+				// If i<=0, this means we are on the first core residue.  If there are overhangs, they will have been padded if in the previous chain.
+				// Chain ID must be different from previous res (start+i-1) chain ID.
 				if ( i>0 && res->chain() != reslist[start+i-1]->chain() ) {
-					chain_break = true;
+					chain_break = true; //C-terminal padding dealt with in the if ( chain_break || noncanon ) statement below
 					break;
 				}
 				// If the restype is not a canonical AA, flag it as noncanonical.
 				// This will catch ligands too.
 				if ( res->type().aa() > core::chemical::AA::num_canonical_aas ) {
-					noncanon = true;
+					noncanon = true; //C-terminal padding dealt with in the if ( chain_break || noncanon ) statement below
 					break;
 				}
 				// If the residue is not flagged, change peptide to include it at the appropriate position.
-				peptide[i] = res->name1();
+				peptide[i+overhang] = res->name1();
 			}
 			if ( chain_break || noncanon ) {
-				if ( chain_break ) i--; // will pick up with this AA (just different chain) vs. will skip over it (noncanonical)
-				if ( cache ) {
-					// Zero out the contributions from peptides spanning the position
-					for ( core::Size j=0; j<=i && start+j<=stop; j++ ) {
-						score_caches_[ihelper]->scores_[start+j] = 0;
+				// Pad the rest of the current peptide
+				peptide.replace(i+overhang, std::string::npos, len - (i+overhang), pad ); // Replace characters from i to the end of the peptide with pad
+
+				// If the chain_break or noncanon is in the overhang regions, we have padded out to the end of the sequence.
+				// We should still score the peptide, and shouldn't zero out the cache or update the start position.
+				// Only do that if we chainbreak/noncannon in the core region.
+				// (chain_break is only flagged for core and C-terminal chainbreaks... N-term is padded above.)
+				if ( i < int(len - 2*overhang) ) {
+					score_chunk = false;
+					if ( chain_break ) {
+						curr_chunk_start = start + i; // for N-terminal-side padding of next peptide
+						i--; // will pick up with this AA (just different chain) vs. will skip over it (noncanonical)
 					}
+					if ( cache ) {
+						// Zero out the contributions from peptides spanning the position
+						for ( int j=0; j<=i && start+j<=stop; ++j ) {
+							score_caches_[ihelper]->scores_[start+j] = 0;
+						}
+					}
+					start += i; // jump to this point, since everything else before it will also be broken (note that start will also be incremented as normal in for-loop)
 				}
-				start += i; // jump to this point, since everything else before it will also be broken (note that i will also be incremented as normal in for-loop)
-			} else {
+			}
+			if ( score_chunk ) {
 				// Deal with raw and xformed scores in separate steps so can cache and xform appropriately
 				// Start with raw score from epitope predictor
 				core::Real score = helper->raw_score(peptide);
@@ -613,24 +657,47 @@ core::Real MHCEpitopeEnergy::update_score(
 
 		// Loop over peptide starting positions
 		core::Size len = helper->get_peptide_length();
-		std::string peptide(len, 'A');
+		core::Size overhang = helper->get_overhang_length();
+		std::string peptide(len, pad);
 
 		// Starting peptide: upstream by len, as long as in the same chain as the substitution
 		if ( subst_resid <= len ) cache->considered_start_ = 1;
-		else cache->considered_start_ = subst_resid-len+1;
+		else cache->considered_start_ = subst_resid-(len-overhang)+1;
 		core::Size chain(reslist[subst_resid]->chain());
 		while ( reslist[cache->considered_start_]->chain() != chain ) cache->considered_start_++;
 
-		// Ending peptide: the substitution position itself, as long as there's len worth of protein after it
-		cache->considered_stop_ = reslist.size()-len+1;
-		if ( subst_resid < cache->considered_stop_ ) cache->considered_stop_ = subst_resid;
+		// The earliest residue we could encounter in this loop is considered_start_ + lowest_possible_i, which is -overhang.
+		// Check if it is in the same chain as the substituted residue.  If not, move forward through the pose until we get onto the same chain.
+		core::Size curr_chunk_start = cache->considered_start_ - overhang;
+		while ( curr_chunk_start <= subst_resid ) {
+			// If proposed curr_chunk_start is of the same chain as considered_start_'s chain, we're done
+			if ( reslist[curr_chunk_start]->chain() == chain ) break;
+			++curr_chunk_start; //Otherwise, loop around again
+		}
 
-		for ( core::Size start = cache->considered_start_; start <= cache->considered_stop_; start++ ) {
+		// Ending peptide: the substitution position itself, as long as there's enough protein after it
+		cache->considered_stop_ = reslist.size()-(len-2*overhang)+1;
+		if ( subst_resid < cache->considered_stop_ ) cache->considered_stop_ = subst_resid + overhang;
+
+		for ( int start = cache->considered_start_; start <= int(cache->considered_stop_); ++start ) {
 			if ( symm_multipliers_[start] == 0 ) continue; // not in asymmetric unit
 			if ( !setup_helper_masks_for_packing_[ihelper][start] ) continue; // doesn't contribute to this one
-			bool chain_break=false, noncanon=false;
-			core::Size i=0; // need outside of loop, to jump if not contiguous
-			for ( ; i < len; i++ ) {
+			// Build the peptide string
+			// Flags for detecting a chainbreak or noncanonical, as well as a flag to indicate whether to score a peptide.
+			bool chain_break=false, noncanon=false, score_chunk = true;
+			// If we have an overhang (for example, 3), we need to start prior to the terminus (at -3 instead of 0) and pad it.
+			int i=-overhang; // need outside of loop, to jump if not contiguous (must be an int, in case of overhang)
+			for ( ; i < int(len-overhang); ++i ) {
+				if ( start+i < int(curr_chunk_start) ) {
+					peptide[i+overhang] = pad;
+					continue;
+				}
+				if ( start+i > int(reslist.size()) ) {
+					// leave rest of peptide as padding
+					peptide[i+overhang] = pad;
+					continue;
+				}
+
 				if ( symm_multipliers_[start+i] == 0 ) {
 					// Went into symmetric clone; treat like chain break
 					chain_break = true;
@@ -645,17 +712,31 @@ core::Real MHCEpitopeEnergy::update_score(
 					noncanon = true;
 					break;
 				}
-				peptide[i] = res->name1();
+				peptide[i+overhang] = res->name1();
 			}
 			if ( chain_break || noncanon ) {
-				if ( chain_break ) i--; // will pick up with this AA (just different chain) vs. will skip over it (noncanonical)
-				for ( core::Size j=0; j<=i && start+j<=cache->considered_stop_; j++ ) {
-					// Zero out the contributions from peptides spanning the position
-					cache->considered_scores_[start+j] = 0;
-					considered_total_ -= symm_multipliers_[start+j] * cst_weights[ihelper] * cache->scores_[start+j];
+				// Pad the rest of the current peptide
+				peptide.replace(i+overhang, std::string::npos, len - (i+overhang), pad ); // Replace characters from i to the end of the peptide with pad
+
+				// If the chain_break or noncanon is in the overhang regions, we have padded out to the end of the sequence.
+				// We should still score the peptide, and shouldn't zero out the cache or update the start position.
+				// Only do that if we chainbreak/noncannon in the core region.
+				// (chain_break is only flagged for core and C-terminal chainbreaks... N-term is padded above.)
+				if ( i < int(len - 2*overhang) ) {
+					score_chunk = false;
+					if ( chain_break ) {
+						curr_chunk_start = start + i; // for N-terminal-side padding of next peptide
+						i--; // will pick up with this AA (just different chain) vs. will skip over it (noncanonical)
+					}
+					for ( int j=0; j<=i && start+j<=int(cache->considered_stop_); ++j ) {
+						// Zero out the contributions from peptides spanning the position
+						cache->considered_scores_[start+j] = 0;
+						considered_total_ -= symm_multipliers_[start+j] * cst_weights[ihelper] * cache->scores_[start+j];
+					}
+					start += i; // jump to this point, since everything else before it will also be broken (note that i will also be incremented as normal in for-loop)
 				}
-				start += i; // jump to this point, since everything else before it will also be broken (note that i will also be incremented as normal in for-loop)
-			} else {
+			}
+			if ( score_chunk ) {
 				// Compute the epitope (xforming as needed)
 				cache->considered_scores_[start] = helper->score(peptide, score_caches_[ihelper]->native_scores_[start]);
 				// Update the considered total by subtracting out the contribution from what was there

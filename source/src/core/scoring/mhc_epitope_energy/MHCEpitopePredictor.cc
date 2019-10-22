@@ -30,6 +30,7 @@ template< class Archive >
 void
 core::scoring::mhc_epitope_energy::MHCEpitopePredictor::save( Archive & arc ) const {
 	arc( CEREAL_NVP( peptide_length_ ) ); // core::Size
+	arc( CEREAL_NVP( overhang_length_ ) ); // core::Size
 }
 
 /// @brief Automatically generated deserialization method
@@ -37,6 +38,7 @@ template< class Archive >
 void
 core::scoring::mhc_epitope_energy::MHCEpitopePredictor::load( Archive & arc ) {
 	arc( peptide_length_ ); // core::Size
+	arc( overhang_length_ ); // core::Size
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::mhc_epitope_energy::MHCEpitopePredictor );

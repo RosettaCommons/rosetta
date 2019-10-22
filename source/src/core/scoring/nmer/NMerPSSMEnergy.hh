@@ -7,22 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/energy_methods/NMerRefEnergy.hh
-/// @brief  Reference energy method declaration
+/// @file   core/scoring/nmer/NMerPSSMEnergy.hh
+/// @brief  PSSM energy method declaration
 /// @author Indigo King (indigo.c.king@gmail.com)
 
 
-#ifndef INCLUDED_core_scoring_methods_NMerRefEnergy_hh
-#define INCLUDED_core_scoring_methods_NMerRefEnergy_hh
+#ifndef INCLUDED_core_scoring_methods_NMerPSSMEnergy_hh
+#define INCLUDED_core_scoring_methods_NMerPSSMEnergy_hh
 
 // Unit headers
-#include <core/energy_methods/NMerRefEnergy.fwd.hh>
+#include <core/scoring/nmer/NMerPSSMEnergy.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
+#include <core/chemical/AA.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
@@ -31,7 +32,6 @@
 #include <basic/Tracer.hh>
 #include <map>
 
-
 // Utility headers
 
 
@@ -39,7 +39,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-class NMerRefEnergy : public ContextIndependentOneBodyEnergy
+class NMerPSSMEnergy : public ContextIndependentOneBodyEnergy
 {
 public:
 	typedef ContextIndependentOneBodyEnergy parent;
@@ -47,35 +47,32 @@ public:
 public:
 
 
-	NMerRefEnergy();
-
-	// a vector of maps, each subsequence->score lookup table pushed onto the vector (see header)
-	NMerRefEnergy( utility::vector1< std::map< std::string, core::Real > > const & nmer_ref_energies_in );
+	NMerPSSMEnergy();
 
 
-	NMerRefEnergy(
+	NMerPSSMEnergy( utility::vector1< std::map< core::chemical::AA, utility::vector1< core::Real > > > const & all_nmer_pssms_in );
+
+
+	NMerPSSMEnergy(
 		core::Size const nmer_length,
-		utility::vector1< std::string > const & fname_vec
+		bool const gate_pssm_scores,
+		core::Real const nmer_pssm_scorecut,
+		utility::vector1< std::string > const & pssm_fname_vec
 	);
 
 
-	~NMerRefEnergy() override;
+	~NMerPSSMEnergy() override;
 
 	EnergyMethodOP
 	clone() const override;
+
+	virtual
+	bool operator== ( NMerPSSMEnergy const & /*other*/ ) const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	/// @brief return the reference energy for a given reference list at a nmer frame sequence position
-	void
-	get_residue_energy_by_table(
-		core::pose::Pose const &,
-		core::Size const,
-		core::Real &,
-		utility::vector1< core::Real > &
-	) const;
 
 	void
 	residue_energy(
@@ -102,27 +99,33 @@ public:
 	/// context graphs are required
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
-	/// @brief read reference energy lists from a vector of filenames
-	void read_nmer_fname_vector( utility::vector1< std::string > const & );
-
-	//methods to init from outside (for filter construction)
-	void nmer_length( Size const nmer_length );
-	/// @brief init all options from option flags
-	void initialize_from_options();
-	/// @brief return number of tables currently loaded in memory
-	core::Size n_tables() const;
+	/// @brief read a file containing a list of pssm filenames and load them
+	void read_nmer_pssm_list( std::string );
+	/// @brief accept a vector of pssm filenames and load them
+	void read_nmer_pssm_fname_vector( utility::vector1< std::string > const & );
+	/// @brief read a pssm file and load it
+	void read_nmer_pssm( std::string );
+	/// @brief define length N of NMer polymer subsequence to calculate (must match pssm)
+	void nmer_length( core::Size const );
+	/// @brief set minimum value for low scoring nmers?
+	void gate_pssm_scores( bool const );
+	/// @brief nmer pssm scorecut gate for ignoring low scoring nmers
+	void nmer_pssm_scorecut( core::Real const );
+	/// @brief return the pssm energy of a single pssm for one entry in the pssm matrix
+	core::Real pssm_energy_at_frame_seqpos( core::Size const, core::chemical::AA const, core::Size const ) const;
+	/// @brief return the number of total pssms loaded
+	core::Size n_pssms() const;
 
 private:
-	utility::vector1< std::map< std::string, core::Real > > nmer_ref_energies_;
+	// If any new private variables are added, be sure to update the == operator.
+	utility::vector1< std::map< core::chemical::AA, utility::vector1< core::Real > > > all_nmer_pssms_;
 	core::Size nmer_length_;
 	core::Size nmer_cterm_;
+	bool gate_pssm_scores_;
+	core::Real nmer_pssm_scorecut_;
 
-	/// @brief read reference energies from a file containing seq strings and values
-	void read_nmer_table( std::string const & ref_fname );
-	/// @brief read reference energy lists from a file containing a list of filenames
-	void read_nmer_table_list( std::string const & ref_list_fname );
-	/// @brief read reference tables from option flags
-	void read_nmer_tables_from_options();
+	void read_nmer_pssms_from_options();
+	void initialize_from_options();
 	core::Size version() const override;
 };
 

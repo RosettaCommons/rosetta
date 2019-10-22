@@ -23,6 +23,7 @@
 #include <core/chemical/AA.hh>
 
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorMatrix.hh>
+#include <core/scoring/ScoringManager.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -133,11 +134,16 @@ core::Real MHCEpitopePredictorMatrix::score(std::string const &pep)
 
 /// @brief Gets the next line that is not blank and not commented out by a #.
 ///
-utility::io::izstream &get_useful_line(utility::io::izstream &stream, std::string &line) {
-	while ( getline(stream, line) ) {
+std::string get_useful_line(std::list<std::string> & matrix) {
+	std::list<std::string>::iterator it = matrix.begin();
+	std::string line;
+	while ( it != matrix.end() ) {
+		line = matrix.front();
+		matrix.pop_front();
+		it = matrix.begin(); // Make sure that we still have a valid iterator, pointing to the new first element.
 		if ( line.size() > 0 && line[0] != '#' ) break;
 	}
-	return stream;
+	return line;
 }
 
 void MHCEpitopePredictorMatrix::load_matrix(std::string const &filename)
@@ -147,16 +153,12 @@ void MHCEpitopePredictorMatrix::load_matrix(std::string const &filename)
 	// TODO: This implementation is very fragile
 	// TODO: It is also propred-specific, though if there were another ready example of a PWM-based predictor, could easily be generalized
 
-	// The filename allows specifying different sets of matrices, so find the right one.
-	utility::file::FileName resolved_fn = basic::database::full_name("scoring/score_functions/mhc_epitope/"+filename+".txt");
-	utility::io::izstream input(resolved_fn);
-	if ( !input ) utility_exit_with_message("ERROR: Unable to open file " + filename + ", resolved to "+resolved_fn.name());
-	TR << "Reading matrix predictor from " << resolved_fn.name() << std::endl;
+	// Read the entire file contents from the ScoringManager as a std::list of file lines.  Each line is an element in the list.
+	std::list<std::string> matrix_contents( core::scoring::ScoringManager::get_instance()->get_mhc_matrix_contents(filename) );
 
 	// To allow for expansion of format, the first non-blank, non-comment line says the format.
 	// Currently that must be propred. Otherwise exit with an error.
-	std::string line;
-	get_useful_line(input, line);
+	std::string line = get_useful_line(matrix_contents);
 	if ( line != "propred" ) {
 		utility_exit_with_message("ERROR: Unknown epitope predictor " + line);
 	} else {
@@ -164,16 +166,16 @@ void MHCEpitopePredictorMatrix::load_matrix(std::string const &filename)
 	}
 
 	// The second line should indicate the length of the peptides (9 for Propred)
-	get_useful_line(input, line);
+	line = get_useful_line(matrix_contents);
 	set_peptide_length(utility::string2int(line));
 
 	// The third line gives the amino acid order in the matrix, using one letter codes and no spaces.
 	std::string aas;
-	get_useful_line(input, aas);
+	aas = get_useful_line(matrix_contents);
 	if ( aas.size() != 20 ) utility_exit_with_message("ERROR: Wrong # AA types for epitope predictor " + line);
 
 	// The fourth line gives the number of alleles being specified in the matrix.
-	get_useful_line(input, line);
+	line = get_useful_line(matrix_contents);
 	Size nallele = utility::string2int(line);
 	TR.Debug << nallele << " alleles" << std::endl;
 	alleles_.resize(nallele);
@@ -182,14 +184,14 @@ void MHCEpitopePredictorMatrix::load_matrix(std::string const &filename)
 	for ( core::Size a=1; a<=nallele; a++ ) {
 		// Read the name of the allele.
 		std::string name;
-		get_useful_line(input, name);
+		name = get_useful_line(matrix_contents);
 		TR.Debug << "reading allele # " << a << " '" << name << "'" << std::endl;
 		// The first line in the matrix is the list of thresholds.
 		// The thresholds indicate the cutoff in the table that represents the best X% of binders.
 		// In a Propred matrix, the "X%" corresponds to 1-10% in increments of 1 percentage point.
 		// We store this in the vector threshes.  In a propred matrix, threshes[X] will be the score cutoff
 		// for the top X% of binders.
-		get_useful_line(input, line);
+		line = get_useful_line(matrix_contents);
 		std::istringstream thresh_stream( line );
 		utility::vector1< Real > threshes;
 		core::Real thresh;
@@ -206,7 +208,7 @@ void MHCEpitopePredictorMatrix::load_matrix(std::string const &filename)
 		// Store the weights in row, and then store each row in profile to get the full matrix.
 		for ( core::Size p=1; p<=get_peptide_length(); p++ ) {
 			AlleleMatrix::Weights row;
-			get_useful_line(input, line);
+			line = get_useful_line(matrix_contents);
 			std::istringstream row_stream( line );
 			for ( core::Size aa=0; aa<20; aa++ ) {
 				row_stream >> row[aas[aa]];

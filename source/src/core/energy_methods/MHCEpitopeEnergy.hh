@@ -232,6 +232,12 @@ private:
 	/// and multiply them by these factors (a constant for each position).
 	/// @details The value 0 indicates that the position is in a symmetric clone.
 	mutable utility::vector1<core::Size> symm_multipliers_;
+
+	/// @brief The character to use for padding sequences that extend past the end of a chain.
+	/// @details For example, nmer SVMs require the have non-core termini that need to be padded with dummy residues
+	/// to avoid skipping the first and last few peptides in scoring.
+	/// Pad with something that guarantees not to be scored. I think NetMHC actually scores an 'X', so using '-' here, but can change as needed.
+	const char pad = '-';
 };
 
 } // mhc_epitope_energy

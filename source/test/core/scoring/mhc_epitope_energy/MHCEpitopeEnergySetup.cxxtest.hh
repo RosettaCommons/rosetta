@@ -211,6 +211,68 @@ public:
 		TR << "End of test_mhc_init_csv." << std::endl;
 	}
 
+	/// @brief Parse the mhc_epitope parameters from an .mhc file format, and test them.
+	/// @brief This uses a NMer SVM-type setup
+	/// @author Brahm Yachnin
+	void test_mhc_init_svm( ) {
+		// Make a new MHCEpitopeEnergySetup object.
+		MHCEpitopeEnergySetupOP mhc_from_file( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
+
+		// The setup object should be the default, always-zero predictor.
+		TS_ASSERT( mhc_from_file->is_default() );
+
+		// Initialize from a .mhc file
+		mhc_from_file->initialize_from_file( "core/scoring/mhc_epitope_energy/nmer_svm.mhc" );
+
+		// The setup object should no longer be the default.
+		TS_ASSERT( ! mhc_from_file->is_default() );
+
+		// We are using an NMer predictor with length 9 and termini of 3, equalling 15
+		TS_ASSERT_EQUALS( mhc_from_file->get_peptide_length(), 15 );
+		// Get the raw score from an arbitrary peptide using the predictor.
+		core::Real nmer_svm_pssm_rawscore = mhc_from_file->raw_score("YFCTRAFRILAWIGI");
+
+		// Make another MHCEpitopeEnergySetup object, this time to config using "file contents."
+		MHCEpitopeEnergySetupOP mhc_from_string( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
+
+		// Set up a string object that matches the .mhc file
+		std::string config_string = "method svm\n";
+
+		// Initialize it using the string
+		mhc_from_string->initialize_from_file_contents( config_string );
+
+		// The file and file contents predictors should be the same.
+		TS_ASSERT_EQUALS( mhc_from_file->report(), mhc_from_string->report() ); //I think this is the best we can do without comparing all accessors.
+
+		// Test using operator==
+		TS_ASSERT_EQUALS ( *mhc_from_file == *mhc_from_string, true );
+
+		// One that uses rank
+		MHCEpitopeEnergySetupOP mhc_from_string_rank( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
+		std::string config_string_rank = "method svm_rank\n";
+		mhc_from_string_rank->initialize_from_file_contents( config_string_rank );
+		TS_ASSERT_DIFFERS ( *mhc_from_string_rank, *mhc_from_string );
+		core::Real nmer_svm_rank_rawscore = mhc_from_string_rank->raw_score("YFCTRAFRILAWIGI");
+
+		// One that does not use pssm
+		MHCEpitopeEnergySetupOP mhc_from_string_nopssm( utility::pointer::make_shared<MHCEpitopeEnergySetup>() );
+		std::string config_string_nopssm = "method svm\nsvm_pssm_features off";
+		mhc_from_string_nopssm->initialize_from_file_contents( config_string_nopssm );
+		TS_ASSERT_DIFFERS ( *mhc_from_string_nopssm, *mhc_from_string );
+		core::Real nmer_svm_nopssm = mhc_from_string_nopssm->raw_score("YFCTRAFRILAWIGI");
+
+		// Check scores for all three of these.
+		TS_ASSERT_DELTA( nmer_svm_pssm_rawscore, 0.2050, 0.0001 );
+		TS_ASSERT_DELTA( nmer_svm_rank_rawscore, 0.5722, 0.0001 );
+		TS_ASSERT_DELTA( nmer_svm_nopssm, 0.2239, 0.0001 );
+
+		TS_ASSERT_DIFFERS( nmer_svm_pssm_rawscore, nmer_svm_rank_rawscore );
+		TS_ASSERT_DIFFERS( nmer_svm_pssm_rawscore, nmer_svm_nopssm );
+		TS_ASSERT_DIFFERS( nmer_svm_rank_rawscore, nmer_svm_nopssm );
+
+		TR << "End of test_mhc_init_svm." << std::endl;
+	}
+
 	/// @brief Use the raw xform settings and test that raw_score and xform work.
 	/// @author Brahm Yachnin
 	void test_mhc_xformed_raw( ) {

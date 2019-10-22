@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/energy_methods/NMerSVMEnergy.cc
+/// @file   core/scoring/nmer/NMerSVMEnergy.cc
 /// @brief  SVM sequence profile energy method implementation
 /// @author Indigo King (indigo.c.king@gmail.com)
 /// @author Vikram K. Mulligan (vmulligan@flatironinstititue.org) -- Implemented lazy, one-time, threadsafe loading of all data read from files, and
 /// replaced reads of global options system with reads from local EnergyMethodsOptions class.
 
 // Unit headers
-#include <core/energy_methods/NMerSVMEnergy.hh>
-#include <core/energy_methods/NMerSVMEnergyCreator.hh>
+#include <core/scoring/nmer/NMerSVMEnergy.hh>
+#include <core/scoring/nmer/NMerSVMEnergyCreator.hh>
 
 // Package headers
 #include <core/scoring/EnergyMap.hh>
@@ -26,7 +26,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/energy_methods/NMerPSSMEnergy.hh>
+#include <core/scoring/nmer/NMerPSSMEnergy.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <basic/database/open.hh>
 #include <utility/file/file_sys_util.hh>
@@ -109,6 +109,11 @@ NMerSVMEnergy::avg_rank_as_energy( bool const avg_rank_as_energy ){
 	avg_rank_as_energy_ = avg_rank_as_energy;
 }
 
+bool
+NMerSVMEnergy::avg_rank_as_energy() const{
+	return avg_rank_as_energy_;
+}
+
 void
 NMerSVMEnergy::gate_svm_scores( bool const gate_svm_scores ){
 	gate_svm_scores_ = gate_svm_scores;
@@ -186,9 +191,7 @@ NMerSVMEnergy::NMerSVMEnergy(
 	nmer_pssm_.gate_pssm_scores( false );
 	nmer_pssm_.nmer_pssm_scorecut( 0.0 );
 	nmer_pssm_.read_nmer_pssm_fname_vector( pssm_fname_vec );
-	NMerSVMEnergy::read_aa_encoding_matrix(
-		//default to database BLOSUM62
-		basic::database::full_name( "sequence/substitution_matrix/BLOSUM62.prob.rescale" ) );
+	NMerSVMEnergy::read_aa_encoding_matrix( "sequence/substitution_matrix/BLOSUM62.prob.rescale" ); //default to database BLOSUM62
 }
 
 // full ctor init with vector of svm filenames with custom encoding matrix
@@ -317,6 +320,14 @@ NMerSVMEnergy::read_nmer_svm_rank( std::string const & svm_rank_fname ) {
 	all_nmer_svms_ranks_.push_back( nmer_svm_rank );
 }
 
+// Load the pssm's features and initialize so as to use them
+void
+NMerSVMEnergy::read_pssm_features( std::string const filename ){
+	use_pssm_features_ = true;
+	nmer_pssm_.read_nmer_pssm_list(filename);
+	nmer_pssm_.nmer_length(nmer_length_);
+}
+
 //load the map that featurizes each aa in the sequence
 //for smooth encoding, load BLOSUM62 or similar
 //for exact encoding, load an identity matrix
@@ -333,6 +344,23 @@ EnergyMethodOP
 NMerSVMEnergy::clone() const
 {
 	return utility::pointer::make_shared< NMerSVMEnergy >( *this );
+}
+
+bool NMerSVMEnergy::operator== ( NMerSVMEnergy const & other ) const
+{
+	// Check member variables
+	if ( all_nmer_svms_ != other.all_nmer_svms_ ) return false;
+	if ( all_nmer_svms_ranks_ != other.all_nmer_svms_ranks_ ) return false;
+	if ( aa_encoder_ != other.aa_encoder_ ) return false;
+	if ( nmer_length_ != other.nmer_length_ ) return false;
+	if ( nmer_cterm_ != other.nmer_cterm_ ) return false;
+	if ( term_length_ != other.term_length_ ) return false;
+	if ( gate_svm_scores_ != other.gate_svm_scores_ ) return false;
+	if ( use_pssm_features_ != other.use_pssm_features_ ) return false;
+	if ( avg_rank_as_energy_ != other.avg_rank_as_energy_ ) return false;
+	if ( nmer_svm_scorecut_ != other.nmer_svm_scorecut_ ) return false;
+	if ( !(nmer_pssm_ == other.nmer_pssm_ ) ) return false;
+	return true;
 }
 
 //methods called by const methods must be const!
@@ -478,6 +506,67 @@ NMerSVMEnergy::add_pssm_features( std::string const & seq, Size const isvm, vect
 	}
 }
 
+
+/// @brief the main compute function, rsd_energy_avg is the default return value for residue energy
+/// @brief optionally return normalized rank avg value instead
+void
+NMerSVMEnergy::get_residue_energy_from_sequence(
+	std::string const &peptide,
+	Size const &chain_p1_seq_pos,
+	Real & rsd_energy_avg,
+	Real & rsd_rank_avg,
+	vector1< Real > & rsd_svm_energies,
+	vector1< Real > & rsd_svm_ranks
+) const
+{
+	// CBK: extracted all this code from the original get_residue_energy_by_svm to allow calling with a sequence instead of a pose
+	// CBK: TODOs are thoughts raised during this extraction
+
+	// TODO: option to skip the per-svm tabulation? (MHCEpitopePredictorSVM just wastes it currently)
+	debug_assert( rsd_svm_energies.size() == n_svms() );
+
+	rsd_energy_avg = 0.;
+	rsd_rank_avg = 0.;
+
+	//encode nmer string --> feature(Svm_node) vector
+	for ( Size isvm = 1; isvm <= n_svms(); ++isvm ) {
+		// TODO: not quite clear on the chain_p1_seq_pos in general; passed it on from the caller for the NMer version, and passed in 1 for the MHCEpitope version
+		// why's it core::Size const & -- shouldn't Size be good enough?
+		vector1< Real > feature_vals( encode_nmer( peptide, chain_p1_seq_pos, isvm ) );
+		vector1< Svm_node_rosettaOP > nmer_features( get_svm_nodes( feature_vals ) );
+		//get this svm model
+		Svm_rosettaCOP nmer_svm_model( all_nmer_svms_[ isvm ] );
+		//Svm_rosetta funxn to wrap svm_predict, see Svm_rosetta::predict_probability for template,
+		Real rsd_svm_energy( nmer_svm_model->predict( nmer_features ) );
+		//gate energy at svm_scorecut, thus ignoring low-scoring nmers
+		if ( gate_svm_scores_ && rsd_svm_energy < nmer_svm_scorecut_ ) rsd_svm_energy = nmer_svm_scorecut_;
+		//store this svms rsd energy
+		rsd_svm_energies[ isvm ] = rsd_svm_energy;
+		//normalize energy by number of svms used
+		//otherwise avg scores would become huge if we use lots of svms instead of just 1
+		rsd_energy_avg += ( rsd_svm_energy / n_svms() );
+
+		// calc svm score rank for each svm
+		// TODO: modified this to bypass if not using rank as energy (and thus might not even have a rank file loaded, as in the gfp example)
+		// TODO: maybe change header to only compute and return one or the other, depending on that flag?
+		if ( ! avg_rank_as_energy_ ) continue;
+
+		// TODO: binary search? round & hash?
+		vector1< core::Real > const & nmer_svm_rank( all_nmer_svms_ranks_[ isvm ] );
+		Size rank( 1 );
+		for ( Size irank = 1; irank <= nmer_svm_rank.size(); ++irank ) {
+			if ( nmer_svm_rank[ irank ] > rsd_svm_energy || irank == nmer_svm_rank.size() ) {
+				rank = irank;
+				break;
+			}
+		}
+		// calc fraction of rank, low rank is lower scoring subseq
+		core::Real const rsd_svm_rank_fraction( core::Real( rank ) / core::Real( nmer_svm_rank.size() ) );
+		rsd_svm_ranks[ isvm ] = rsd_svm_rank_fraction;
+		rsd_rank_avg += ( rsd_svm_rank_fraction / n_svms() );
+	}
+}
+
 /// @brief the main compute function, rsd_energy_avg is the default return value for residue energy
 /// @brief optionally return normalized rank avg value instead
 void
@@ -490,7 +579,6 @@ NMerSVMEnergy::get_residue_energy_by_svm(
 	vector1< Real > & rsd_svm_ranks
 ) const
 {
-	debug_assert( rsd_svm_energies.size() == n_svms() );
 	//for now, just assign all of the p1=seqpos frame's nmer_svm energy to this residue
 	//TODO: distribute frame's nmer_svm energy evenly across the nmer
 	//TODO: avoid wasting calc time by storing nmer_value, nmer_val_out_of_date in pose cacheable data
@@ -500,43 +588,12 @@ NMerSVMEnergy::get_residue_energy_by_svm(
 	//TODO: how deal w/ sequences shorter than nmer_length_?
 	// this matters at both termini… maybe take max of all overlapping frames w/ missing res as 'X'?
 	// go ahead and bail if we fall off the end of the chain
-	rsd_energy_avg = 0.;
-	rsd_rank_avg = 0.;
 	if ( p1_seqpos + nmer_length_ - 1 <= pose.conformation().chain_end( pose.chain( p1_seqpos ) ) ) {
 		//need p1 position in this chain's sequence, offset with index of first res
 		Size const chain_p1_seqpos( p1_seqpos - pose.conformation().chain_begin( pose.chain( p1_seqpos ) ) + 1 );
-		std::string const & chain_sequence( pose.chain_sequence( pose.chain( p1_seqpos ) ) );
+		std::string const chain_sequence( pose.chain_sequence( pose.chain( p1_seqpos ) ) );
 
-		//encode nmer string --> feature(Svm_node) vector
-		for ( Size isvm = 1; isvm <= n_svms(); ++isvm ) {
-			vector1< Svm_node_rosettaOP > p1_seqpos_nmer_features(
-				get_svm_nodes( encode_nmer( chain_sequence, chain_p1_seqpos, isvm ) ) );
-			//get this svm model
-			Svm_rosettaCOP nmer_svm_model( all_nmer_svms_[ isvm ] );
-			//Svm_rosetta funxn to wrap svm_predict, see Svm_rosetta::predict_probability for template,
-			Real rsd_svm_energy( nmer_svm_model->predict( p1_seqpos_nmer_features ) );
-			//gate energy at svm_scorecut, thus ignoring low-scoring nmers
-			if ( gate_svm_scores_ && rsd_svm_energy < nmer_svm_scorecut_ ) rsd_svm_energy = nmer_svm_scorecut_;
-			//store this svms rsd energy
-			rsd_svm_energies[ isvm ] = rsd_svm_energy;
-			//normalize energy by number of svms used
-			//otherwise avg scores would become huge if we use lots of svms instead of just 1
-			rsd_energy_avg += ( rsd_svm_energy / n_svms() );
-
-			// calc svm score rank for each svm
-			vector1< core::Real > const & nmer_svm_rank( all_nmer_svms_ranks_[ isvm ] );
-			Size rank( 1 );
-			for ( Size irank = 1; irank <= nmer_svm_rank.size(); ++irank ) {
-				if ( nmer_svm_rank[ irank ] > rsd_svm_energy || irank == nmer_svm_rank.size() ) {
-					rank = irank;
-					break;
-				}
-			}
-			// calc fraction of rank, low rank is lower scoring subseq
-			core::Real const rsd_svm_rank_fraction( core::Real( rank ) / core::Real( nmer_svm_rank.size() ) );
-			rsd_svm_ranks[ isvm ] = rsd_svm_rank_fraction;
-			rsd_rank_avg += ( rsd_svm_rank_fraction / n_svms() );
-		}
+		get_residue_energy_from_sequence( chain_sequence, chain_p1_seqpos, rsd_energy_avg, rsd_rank_avg, rsd_svm_energies, rsd_svm_ranks );
 	}
 }
 
@@ -554,7 +611,9 @@ NMerSVMEnergy::residue_energy(
 	Real rsd_rank_avg( 0. );
 	vector1< Real > rsd_svm_energies( n_svms(), Real( 0. ) );
 	vector1< Real > rsd_svm_ranks( n_svms(), Real( 0. ) );
+
 	get_residue_energy_by_svm( pose, seqpos, rsd_energy_avg, rsd_rank_avg, rsd_svm_energies, rsd_svm_ranks );
+
 	if ( avg_rank_as_energy_ ) emap[ nmer_svm ] += rsd_rank_avg;
 	else emap[ nmer_svm ] += rsd_energy_avg;
 }

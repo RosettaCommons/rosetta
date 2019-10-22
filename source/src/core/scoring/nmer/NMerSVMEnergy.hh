@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/energy_methods/NMerSVMEnergy.hh
+/// @file   core/scoring/nmer/NMerSVMEnergy.hh
 /// @brief  SVM energy method declaration
 /// @author Indigo King (indigo.c.king@gmail.com)
 /// @author Vikram K. Mulligan (vmulligan@flatironinstititue.org) -- Implemented lazy, one-time, threadsafe loading of all data read from files, and
@@ -18,13 +18,13 @@
 #define INCLUDED_core_scoring_methods_NMerSVMEnergy_hh
 
 // Unit headers
-#include <core/energy_methods/NMerSVMEnergy.fwd.hh>
+#include <core/scoring/nmer/NMerSVMEnergy.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/energy_methods/NMerPSSMEnergy.hh>
+#include <core/scoring/nmer/NMerPSSMEnergy.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
@@ -92,6 +92,9 @@ public:
 	EnergyMethodOP
 	clone() const override;
 
+	virtual
+	bool operator== ( NMerSVMEnergy const & /*other*/ ) const;
+
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
@@ -122,6 +125,18 @@ public:
 	/// context graphs are required
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
+	// CBK: separated out core code taking a peptide sequence as a string, instead of taking a pose, for use by MHCEpitopePredictorSVM in the mhc_epitope_energy scoring term
+	// left the original there too since it's called by NMerSVMEnergyFilter
+	void
+	get_residue_energy_from_sequence(
+		std::string const &,
+		core::Size const &,
+		core::Real &,
+		core::Real &,
+		utility::vector1< core::Real > &,
+		utility::vector1< core::Real > &
+	) const;
+
 	void
 	get_residue_energy_by_svm(
 		core::pose::Pose const &,
@@ -131,12 +146,15 @@ public:
 		utility::vector1< core::Real > &,
 		utility::vector1< core::Real > &
 	) const;
+
 	void read_nmer_svm_list( std::string const & );
 	void read_nmer_svm( std::string const & );
 	void read_nmer_svm_rank_list( std::string const & );
 	void read_nmer_svm_rank( std::string const & );
+
 	void read_nmer_svm_fname_vector( utility::vector1< std::string > const & );
 	void read_nmer_svm_rank_fname_vector( utility::vector1< std::string > const & );
+	void read_pssm_features( std::string const ); // TODO: just bolted this in here for initialization from .mhc file
 	core::Size n_svms() const;
 	void read_aa_encoding_matrix( std::string const & );
 	void nmer_length( core::Size const );
@@ -145,6 +163,7 @@ public:
 	core::Size term_length() const;
 	void use_pssm_features( bool const );
 	void avg_rank_as_energy( bool const );
+	bool avg_rank_as_energy() const;
 	void gate_svm_scores( bool const );
 	void nmer_svm_scorecut( core::Real const );
 	utility::vector1< utility::libsvm::Svm_node_rosettaOP > get_svm_nodes( utility::vector1< core::Real > const & ) const;

@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/energy_methods/NMerPSSMEnergy.fwd.hh
-/// @brief  PSSMerence energy method forward declaration
+/// @file   core/scoring/nmer/NMerRefEnergy.fwd.hh
+/// @brief  Reference energy method forward declaration
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLUDED_core_scoring_methods_NMerPSSMEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_NMerPSSMEnergy_fwd_hh
+#ifndef INCLUDED_core_scoring_methods_NMerRefEnergy_fwd_hh
+#define INCLUDED_core_scoring_methods_NMerRefEnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -21,10 +21,10 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-class NMerPSSMEnergy;
+class NMerRefEnergy;
 
-typedef utility::pointer::shared_ptr< NMerPSSMEnergy > NMerPSSMEnergyOP;
-typedef utility::pointer::shared_ptr< NMerPSSMEnergy const > NMerPSSMEnergyCOP;
+typedef utility::pointer::shared_ptr< NMerRefEnergy > NMerRefEnergyOP;
+typedef utility::pointer::shared_ptr< NMerRefEnergy const > NMerRefEnergyCOP;
 
 } // methods
 } // scoring

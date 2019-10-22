@@ -16,7 +16,9 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/energy_methods/NMerSVMEnergy.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/energy_methods/MHCEpitopeEnergy.hh>
+#include <core/scoring/nmer/NMerSVMEnergy.hh>
 
 #include <platform/types.hh>
 
@@ -98,113 +100,185 @@ public:
 			pssm_fname_vec
 		);
 
+		// Set up MHCEpitopeEnergy objects identical to the NMerSVMEnergy objects above
+		utility::vector1< std::string > mhc_nmer_file(1, "core/scoring/mhc_epitope_energy/nmer_unittest.mhc");
+		utility::vector1< std::string > mhc_nmer_rank_file(1, "core/scoring/mhc_epitope_energy/nmer_rank_unittest.mhc");
+		methods::EnergyMethodOptions options_mhc_nmer;
+		methods::EnergyMethodOptions options_mhc_nmer_rank;
+		options_mhc_nmer.set_mhc_epitope_setup_files(mhc_nmer_file);
+		options_mhc_nmer_rank.set_mhc_epitope_setup_files(mhc_nmer_rank_file);
+		mhc_epitope_energy::MHCEpitopeEnergyOP mhc_energy_nmer( utility::pointer::make_shared<mhc_epitope_energy::MHCEpitopeEnergy>(options_mhc_nmer) );
+		mhc_epitope_energy::MHCEpitopeEnergyOP mhc_energy_nmer_rank( utility::pointer::make_shared<mhc_epitope_energy::MHCEpitopeEnergy>(options_mhc_nmer_rank) );
+
+		// Also setup appropriate scorefunctions
+		ScoreFunction scorefxn_mhc_nmer;
+		ScoreFunction scorefxn_mhc_nmer_rank;
+		scorefxn_mhc_nmer.set_weight(mhc_epitope, 1);
+		scorefxn_mhc_nmer_rank.set_weight(mhc_epitope, 1);
+		scorefxn_mhc_nmer.set_energy_method_options(options_mhc_nmer);
+		scorefxn_mhc_nmer_rank.set_energy_method_options(options_mhc_nmer_rank);
+
+		// Create variables to keep track of the total score
+		core::Real nmer_svm_total = 0, nmer_svm_rank_total = 0;
+
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 1 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.111528, 1e-4 );
+			core::Real emap_result = emap[ nmer_svm ];
+			nmer_svm_total += emap_result;
+			TS_ASSERT_DELTA( emap_result, 0.111528, 1e-4 );
 			EnergyMap emap_rank;
 			nmer_svm_energy_rank.residue_energy( trpcage.residue( 1 ), trpcage, emap_rank );
-			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.15003, 1e-4 );
+			core::Real emap_rank_result = emap_rank[ nmer_svm ];
+			nmer_svm_rank_total += emap_rank_result;
+			TS_ASSERT_DELTA( emap_rank_result, 0.15003, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 2 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.287198, 1e-4 );
+			core::Real emap_result = emap[ nmer_svm ];
+			nmer_svm_total += emap_result;
+			TS_ASSERT_DELTA( emap_result, 0.287198, 1e-4 );
 			EnergyMap emap_rank;
 			nmer_svm_energy_rank.residue_energy( trpcage.residue( 2 ), trpcage, emap_rank );
-			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.43363, 1e-4 );
+			core::Real emap_rank_result = emap_rank[ nmer_svm ];
+			nmer_svm_rank_total += emap_rank_result;
+			TS_ASSERT_DELTA( emap_rank_result, 0.43363, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 3 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.260367, 1e-4 );
+			core::Real emap_result = emap[ nmer_svm ];
+			nmer_svm_total += emap_result;
+			TS_ASSERT_DELTA( emap_result, 0.260367, 1e-4 );
 			EnergyMap emap_rank;
 			nmer_svm_energy_rank.residue_energy( trpcage.residue( 3 ), trpcage, emap_rank );
-			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.38091, 1e-4 );
+			core::Real emap_rank_result = emap_rank[ nmer_svm ];
+			nmer_svm_rank_total += emap_rank_result;
+			TS_ASSERT_DELTA( emap_rank_result, 0.38091, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 4 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.446798, 1e-4 );
+			core::Real emap_result = emap[ nmer_svm ];
+			nmer_svm_total += emap_result;
+			TS_ASSERT_DELTA( emap_result, 0.446798, 1e-4 );
 			EnergyMap emap_rank;
 			nmer_svm_energy_rank.residue_energy( trpcage.residue( 4 ), trpcage, emap_rank );
-			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.74495, 1e-4 );
+			core::Real emap_rank_result = emap_rank[ nmer_svm ];
+			nmer_svm_rank_total += emap_rank_result;
+			TS_ASSERT_DELTA( emap_rank_result, 0.74495, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 5 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.319999, 1e-4 );
+			core::Real emap_result = emap[ nmer_svm ];
+			nmer_svm_total += emap_result;
+			TS_ASSERT_DELTA( emap_result, 0.319999, 1e-4 );
 			EnergyMap emap_rank;
 			nmer_svm_energy_rank.residue_energy( trpcage.residue( 5 ), trpcage, emap_rank );
-			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.50097, 1e-4 );
+			core::Real emap_rank_result = emap_rank[ nmer_svm ];
+			nmer_svm_rank_total += emap_rank_result;
+			TS_ASSERT_DELTA( emap_rank_result, 0.50097, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 6 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.470622, 1e-4 );
+			core::Real emap_result = emap[ nmer_svm ];
+			nmer_svm_total += emap_result;
+			TS_ASSERT_DELTA( emap_result, 0.470622, 1e-4 );
 			EnergyMap emap_rank;
 			nmer_svm_energy_rank.residue_energy( trpcage.residue( 6 ), trpcage, emap_rank );
-			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.78319, 1e-4 );
+			core::Real emap_rank_result = emap_rank[ nmer_svm ];
+			nmer_svm_rank_total += emap_rank_result;
+			TS_ASSERT_DELTA( emap_rank_result, 0.78319, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 7 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.325501, 1e-4 );
+			core::Real emap_result = emap[ nmer_svm ];
+			nmer_svm_total += emap_result;
+			TS_ASSERT_DELTA( emap_result, 0.325501, 1e-4 );
 			EnergyMap emap_rank;
 			nmer_svm_energy_rank.residue_energy( trpcage.residue( 7 ), trpcage, emap_rank );
-			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.5122, 1e-4 );
+			core::Real emap_rank_result = emap_rank[ nmer_svm ];
+			nmer_svm_rank_total += emap_rank_result;
+			TS_ASSERT_DELTA( emap_rank_result, 0.5122, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 8 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.0427313, 1e-4 );
+			core::Real emap_result = emap[ nmer_svm ];
+			nmer_svm_total += emap_result;
+			TS_ASSERT_DELTA( emap_result, 0.0427313, 1e-4 );
 			EnergyMap emap_rank;
 			nmer_svm_energy_rank.residue_energy( trpcage.residue( 8 ), trpcage, emap_rank );
-			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.0871, 1e-4 );
+			core::Real emap_rank_result = emap_rank[ nmer_svm ];
+			nmer_svm_rank_total += emap_rank_result;
+			TS_ASSERT_DELTA( emap_rank_result, 0.0871, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 9 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], -0.0288486, 1e-4 );
+			core::Real emap_result = emap[ nmer_svm ];
+			nmer_svm_total += emap_result;
+			TS_ASSERT_DELTA( emap_result, -0.0288486, 1e-4 );
 			EnergyMap emap_rank;
 			nmer_svm_energy_rank.residue_energy( trpcage.residue( 9 ), trpcage, emap_rank );
-			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.04636, 1e-4 );
+			core::Real emap_rank_result = emap_rank[ nmer_svm ];
+			nmer_svm_rank_total += emap_rank_result;
+			TS_ASSERT_DELTA( emap_rank_result, 0.04636, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 10 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], -0.0679406, 1e-4 );
+			core::Real emap_result = emap[ nmer_svm ];
+			nmer_svm_total += emap_result;
+			TS_ASSERT_DELTA( emap_result, -0.0679406, 1e-4 );
 			EnergyMap emap_rank;
 			nmer_svm_energy_rank.residue_energy( trpcage.residue( 10 ), trpcage, emap_rank );
-			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.0319, 1e-4 );
+			core::Real emap_rank_result = emap_rank[ nmer_svm ];
+			nmer_svm_rank_total += emap_rank_result;
+			TS_ASSERT_DELTA( emap_rank_result, 0.0319, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 11 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], -0.273094, 1e-4 );
+			core::Real emap_result = emap[ nmer_svm ];
+			nmer_svm_total += emap_result;
+			TS_ASSERT_DELTA( emap_result, -0.273094, 1e-4 );
 			EnergyMap emap_rank;
 			nmer_svm_energy_rank.residue_energy( trpcage.residue( 11 ), trpcage, emap_rank );
-			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.0035, 1e-4 );
+			core::Real emap_rank_result = emap_rank[ nmer_svm ];
+			nmer_svm_rank_total += emap_rank_result;
+			TS_ASSERT_DELTA( emap_rank_result, 0.0035, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 12 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.151785, 1e-4 );
+			core::Real emap_result = emap[ nmer_svm ];
+			nmer_svm_total += emap_result;
+			TS_ASSERT_DELTA( emap_result, 0.151785, 1e-4 );
 			EnergyMap emap_rank;
 			nmer_svm_energy_rank.residue_energy( trpcage.residue( 12 ), trpcage, emap_rank );
-			TS_ASSERT_DELTA( emap_rank[ nmer_svm ], 0.20042, 1e-4 );
+			core::Real emap_rank_result = emap_rank[ nmer_svm ];
+			nmer_svm_rank_total += emap_rank_result;
+			TS_ASSERT_DELTA( emap_rank_result, 0.20042, 1e-4 );
 		}
+
+		TS_ASSERT_DELTA( nmer_svm_total, scorefxn_mhc_nmer(trpcage), 1e-4 );
+		TS_ASSERT_DELTA( nmer_svm_rank_total, scorefxn_mhc_nmer_rank(trpcage), 1e-4 );
 	}
 };
 

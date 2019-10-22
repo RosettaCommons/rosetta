@@ -632,6 +632,7 @@ sources = {
 		"MHCEpitopePredictorExternal",
 		"MHCEpitopePredictorMatrix",
 		"MHCEpitopePredictorPreLoaded",
+		"MHCEpitopePredictorSVM",
 	],
 	"core/scoring/mm": [
 		"MMBondAngleLibrary",
@@ -657,6 +658,11 @@ sources = {
 	"core/scoring/netcharge_energy": [
 		"NetChargeConstraint",
 		"NetChargeEnergySetup",
+	],
+	"core/scoring/nmer": [
+		"NMerRefEnergy",
+		"NMerPSSMEnergy",
+		"NMerSVMEnergy",
 	],
 	"core/scoring/nmr": [
 		"util",

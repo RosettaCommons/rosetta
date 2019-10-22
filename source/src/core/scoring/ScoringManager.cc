@@ -80,6 +80,7 @@
 #include <core/scoring/dna/DNA_DihedralPotential.hh>
 #include <core/scoring/SplitUnfoldedTwoBodyPotential.hh>
 #include <core/scoring/elec/util.hh>
+#include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorPreLoaded.hh>
 
 // Package headers
 #include <core/scoring/methods/EnergyMethodCreator.hh>
@@ -122,8 +123,7 @@
 #include <utility/thread/threadsafe_creation.hh>
 #include <utility/libsvm/Svm_rosetta.hh>
 #include <utility/pointer/memory.hh>
-
-#include <utility/pointer/memory.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -193,6 +193,8 @@ ScoringManager::ScoringManager() :
 	nmer_svm_rank_list_mutex_(),
 	nmer_svm_rank_mutex_(),
 	nmer_svm_aa_encoding_matrix_mutex_(),
+
+	mhc_matrix_contents_mutex_(),
 
 	p_aa_mutex_(),
 	p_aa_ss_mutex_(),
@@ -978,6 +980,16 @@ ScoringManager::get_nmer_svm_rank(
 	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( nmer_svm_rank_mutex_ ), filename, nmer_svm_rank_map_ ) );
 }
 
+/// @brief Get a const reference to an NMerPSSM std::map.
+/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+std::map<core::chemical::AA, utility::vector1<core::Real> > const &
+ScoringManager::get_nmer_pssm(
+	std::string const & filename, core::Size nmer_length
+) const {
+	boost::function< utility::pointer::shared_ptr< std::map<core::chemical::AA, utility::vector1<core::Real> > > () > creator( boost::bind( &ScoringManager::create_nmer_pssm, boost::cref(filename), boost::cref(nmer_length) ) );
+	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( nmer_pssm_mutex_ ), filename, nmer_pssm_map_ ) );
+}
+
 /// @brief Get the map of AA oneletter code->vector of floats used by the NMerSVMEnergy.
 /// @details Loaded lazily in a threadsafe manner.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
@@ -1414,6 +1426,40 @@ ScoringManager::get_cloned_mhc_epitope_setup_helpers(
 	return return_vect;
 }
 
+/// @brief Get a const reference to a std::list containing the contents of a MHCEpitopePredictorMatrix matrix file.
+/// @details This is a matrix file containing, for example, Propred data to be used by MHCEpitopePredictorMatrix.
+/// @details The file will be loaded as a list and sent back to the Predictor to be parsed, to avoid doing the latter in the ScoringManager class.
+/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+std::list<std::string> const &
+ScoringManager::get_mhc_matrix_contents(
+	std::string const & filename
+) const{
+	boost::function< utility::pointer::shared_ptr< std::list<std::string> > () > creator( boost::bind( &ScoringManager::create_mhc_matrix_contents, filename ) );
+	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( mhc_matrix_contents_mutex_ ), filename, mhc_matrix_contents_map_ ) );
+}
+
+/// @brief Get a const reference to a std::pair containing the a map corresponding a sqlite MHC db and the peptide length.
+/// @details This is a PreLoaded database containing, for example, NetMHCII data to be used by MHCEpitopePredictorPreLoaded.
+/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+std::pair<std::map<std::string, core::Real>, core::Size> const &
+ScoringManager::get_mhc_map_from_db(
+	std::string const & filename
+) const{
+	boost::function< utility::pointer::shared_ptr< std::pair<std::map<std::string, core::Real>, core::Size> > () > creator( boost::bind( &ScoringManager::create_mhc_map_from_db, filename ) );
+	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( mhc_sqlite_db_contents_mutex_ ), filename, mhc_sqlite_db_contents_map_ ) );
+}
+
+/// @brief Get a const reference to a std::list containing the contents of a MHCEpitopePredictorPreLoaded csv database file.
+/// @details This is a PreLoaded csv containing, for example, NetMHCII data to be used by MHCEpitopePredictorPreLoaded.
+/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+std::list<std::string> const &
+ScoringManager::get_mhc_csv_contents(
+	std::string const & filename
+) const{
+	boost::function< utility::pointer::shared_ptr< std::list <std::string> > () > creator( boost::bind( &ScoringManager::create_mhc_csv_contents, filename ) );
+	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( mhc_csv_db_contents_mutex_ ), filename, mhc_csv_db_contents_map_ ) );
+}
+
 /// @brief Get a particular MainchainScoreTable for the rama_prepro score term.
 /// @details If this has not yet been populated, loads the data from disk (lazy loading)
 /// in a threadsafe manner.
@@ -1703,6 +1749,51 @@ ScoringManager::create_nmer_svm_rank(
 	return nmer_svm_rank;
 }
 
+/// @brief Create an instance of an NMerPSSM std::map, by reading data from disk.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+utility::pointer::shared_ptr< std::map<core::chemical::AA, utility::vector1<core::Real> > >
+ScoringManager::create_nmer_pssm(
+	std::string const & filename, core::Size nmer_length
+) {
+	std::string pssm_fname( filename );
+	if ( !utility::file::file_exists( pssm_fname ) ) {
+		pssm_fname = basic::database::full_name( pssm_fname, false );
+	}
+	TR << "reading NMerPSSMEnergy scores from " << pssm_fname << std::endl;
+	utility::io::izstream in_stream( pssm_fname );
+	if ( !in_stream.good() ) {
+		utility_exit_with_message( "[ERROR] Error opening NMerPSSMEnergy file" );
+	}
+
+	std::map< chemical::AA, utility::vector1< core::Real > > nmer_pssm;
+	std::string line;
+	while ( getline( in_stream, line) ) {
+		utility::vector1< std::string > const tokens( utility::string_split_multi_delim( line, " \t" ) );
+		//skip comments
+		if ( tokens[ 1 ][ 0 ] == '#' ) continue;
+		char const char_aa( tokens[ 1 ][ 0 ] );
+		chemical::AA aa( chemical::aa_from_oneletter_code( char_aa ));
+		if ( nmer_pssm.count( aa ) ) {
+			utility_exit_with_message( "[ERROR] NMer PSSM energy database file "
+				+ pssm_fname + " has double entry for aa " + char_aa );
+		}
+		if ( tokens.size() != nmer_length + 1 ) {
+			utility_exit_with_message( "[ERROR] NMer PSSM database file "
+				+ pssm_fname + " has wrong number entries at line " + line
+				+ "\n\tfound: " + utility::to_string( tokens.size() ) + " expected: " + utility::to_string( Size( nmer_length + 1 ) ) + "\nNote: Whitespace delimited!" );
+		}
+		utility::vector1< Real > seqpos_scores( nmer_length, 0.0 );
+		for ( Size ival = 2; ival <= tokens.size(); ++ival ) {
+			Real const score( atof( tokens[ ival ].c_str() ) );
+			seqpos_scores[ ival - 1 ] = score;
+		}
+		nmer_pssm[ aa ] = seqpos_scores;
+	}
+	return utility::pointer::make_shared< std::map< chemical::AA, utility::vector1< core::Real > > >(nmer_pssm);
+}
+
 /// Create an instance of an aa floats list used by the NMerSVMEnergy.
 /// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
 /// @note Not intended for use outside of ScoringManager.
@@ -1742,6 +1833,132 @@ ScoringManager::create_nmer_svm_aa_matrix(
 		(*aa_encoder)[ aa ] = aa_vals;
 	}
 	return aa_encoder;
+}
+
+/// @brief Create an instance of the file contents of a MHCEpitopePredictorMatrix matrix, by reading data from disk.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+utility::pointer::shared_ptr< std::list<std::string> >
+ScoringManager::create_mhc_matrix_contents(
+	std::string const & filename
+) {
+	// The filename allows specifying different sets of matrices, so find the right one.
+	utility::file::FileName resolved_fn = basic::database::full_name("scoring/score_functions/mhc_epitope/"+filename+".txt");
+	utility::io::izstream input(resolved_fn);
+	if ( !input ) utility_exit_with_message("ERROR: Unable to open file " + filename + ", resolved to "+resolved_fn.name());
+	TR << "Reading matrix predictor from " << resolved_fn.name() << std::endl;
+
+	// Read the entire file in, and store as std::list.  Each line is an element in the list.
+	std::list<std::string> matrix_contents;
+	std::string nextline;
+	while ( getline(input, nextline) ) {
+		matrix_contents.push_back(nextline);
+	}
+
+	return utility::pointer::make_shared<std::list<std::string>>(matrix_contents);
+}
+
+/// @brief Load the sqlite database from disk.  Store peptides/scores as std::map, and length as core::Size.  Return as a std::pair.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+utility::pointer::shared_ptr< std::pair<std::map<std::string, core::Real>, core::Size> >
+ScoringManager::create_mhc_map_from_db(std::string const &filename)
+{
+	std::string db_filename = ""; //Actual location of the db filename
+	// Look for a copy of the file
+	utility::io::izstream infile;
+	infile.open( filename );
+	// If the filename is found, store in db_filename.  Otherwise, look in the database.
+	if ( infile.good() ) {
+		db_filename = filename;
+	} else {
+		db_filename = basic::database::full_name("scoring/score_functions/mhc_epitope/"+filename);
+	}
+	TR << "Connecting to " << db_filename << " external database." << std::endl;
+	// Output a warning if db_filename is bigger than 1 GB (1073741824 bytes).
+	core::scoring::mhc_epitope_energy::MHCEpitopePredictorPreLoaded::check_file_size( db_filename, 1073741824 );
+
+	// Create the std::map containing to contain the peptide-->score values
+	std::map<std::string, core::Real> scores;
+	// Create a core::Real which will contain the peptide length
+	core::Size pep_length(0);
+
+	// Basic SQL stuff following test/utility/sql_database/DatabaseSessionManagerTests.cxxtest.hh
+	try {
+		// Establish the connection
+		utility::sql_database::DatabaseSessionManager * scm( utility::sql_database::DatabaseSessionManager::get_instance() );
+
+		utility::sql_database::sessionOP session(scm->get_session_sqlite3( db_filename, utility::sql_database::TransactionMode::standard, 0, true, -1 )); // readonly set to true here, everything else is default settings.
+
+		// Fetch the metadata
+		// TODO: anything else important here?
+		cppdb::result meta = (*session) << "SELECT name,value from meta";
+		while ( meta.next() ) {
+			std::string name, val;
+			meta >> name >> val;
+			TR.Debug << name << ":" << val << std::endl;
+			if ( name == "peptide_length" ) pep_length = utility::string2int(val);
+		}
+
+		// Make sure we know how long peptides are supposed to be
+		if ( pep_length == 0 ) utility_exit_with_message("Database didn't specify peptide length");
+
+		// Now load the map
+		cppdb::result pep_scores = (*session) << "SELECT peptide,score from epitopes";
+		while ( pep_scores.next() ) {
+			std::string peptide;
+			core::Real score;
+			pep_scores >> peptide >> score;
+			TR.Debug << peptide << ":" << score << std::endl;
+			scores[peptide] = score;
+		}
+	}
+catch (std::exception const &e) {
+	utility_exit_with_message("Unable to open valid database " + db_filename + ": " + e.what());
+}
+
+	return(utility::pointer::make_shared< std::pair<std::map<std::string, core::Real>, core::Size> >(std::make_pair(scores, pep_length)));
+}
+
+/// @brief Load the csv database file contents from disk and store as a std::list
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+utility::pointer::shared_ptr< std::list<std::string> >
+ScoringManager::create_mhc_csv_contents(std::string const &filename)
+{
+	using namespace utility::io;
+
+	std::string db_filename = ""; //Actual location of the db filename
+	// Look for a copy of the file
+	izstream infile;
+	infile.open( filename );
+	// If the filename is found, store in db_filename.  Otherwise, look in the database.
+	if ( infile.good() ) {
+		db_filename = filename;
+	} else {
+		db_filename = basic::database::full_name("scoring/score_functions/mhc_epitope/"+filename);
+	}
+	infile.close();
+	TR << "Reading epitopes from file " << db_filename << std::endl;
+	// Output a warning if filename is bigger than 1 GB (1073741824 bytes).
+	core::scoring::mhc_epitope_energy::MHCEpitopePredictorPreLoaded::check_file_size( db_filename, 1073741824 );
+
+	//izstream infile;
+	infile.open( db_filename );
+	if ( !infile.good() ) utility_exit_with_message("ERROR: Unable to open file " + db_filename);
+
+	// Read the entire file in, and store as std::list.  Each line is an element in the list.
+	std::list<std::string> csv_contents;
+	std::string nextline;
+	while ( getline(infile, nextline) ) {
+		csv_contents.push_back(nextline);
+	}
+	infile.close();
+
+	return utility::pointer::make_shared< std::list<std::string> >(csv_contents);
 }
 
 /// @brief Create an instance of the P_AA object, by owning pointer.

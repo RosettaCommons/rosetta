@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/core/energy_methods/NMerPSSMEnergyCreator.hh
-/// @brief  Declaration for the class that connects NMerPSSMEnergy with the ScoringManager
+/// @file   src/core/scoring/nmer/NMerSVMEnergyCreator.hh
+/// @brief  Declaration for the class that connects NMerSVMEnergy with the ScoringManager
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_scoring_methods_NMerPSSMEnergyCreator_hh
-#define INCLUDED_core_scoring_methods_NMerPSSMEnergyCreator_hh
+#ifndef INCLUDED_core_scoring_methods_NMerSVMEnergyCreator_hh
+#define INCLUDED_core_scoring_methods_NMerSVMEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -26,10 +26,10 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-class NMerPSSMEnergyCreator : public EnergyMethodCreator
+class NMerSVMEnergyCreator : public EnergyMethodCreator
 {
 public:
-	/// @brief Instantiate a new NMerPSSMEnergy
+	/// @brief Instantiate a new NMerSVMEnergy
 	methods::EnergyMethodOP
 	create_energy_method(
 		methods::EnergyMethodOptions const &

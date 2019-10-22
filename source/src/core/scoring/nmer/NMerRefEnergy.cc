@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/energy_methods/NMerRefEnergy.hh
+/// @file   core/scoring/nmer/NMerRefEnergy.hh
 /// @brief  Reference energy method implementation
 /// @author Indigo King (indigo.c.king@gmail.com)
 
 // Unit headers
-#include <core/energy_methods/NMerRefEnergy.hh>
-#include <core/energy_methods/NMerRefEnergyCreator.hh>
+#include <core/scoring/nmer/NMerRefEnergy.hh>
+#include <core/scoring/nmer/NMerRefEnergyCreator.hh>
 
 // Package headers
 #include <core/scoring/EnergyMap.hh>

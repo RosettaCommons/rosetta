@@ -20,6 +20,7 @@
 #include <utility/file/FileName.fwd.hh>
 #include <utility/vector1.hh>
 #include <map>
+#include <list>
 
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -60,9 +61,8 @@ public:
 	/// @brief Accessor for the peptide->score map object
 	std::map< std::string, core::Real > get_scores_map() const { return scores_; }
 
-private:
 	/// @brief Check for the size of a file and print a warning if appropriate.
-	void check_file_size ( std::string const &filename, core::Size warn_threshold ) const;
+	static void check_file_size ( std::string const &filename, core::Size const warn_threshold );
 
 private:
 	/// @brief peptide->score

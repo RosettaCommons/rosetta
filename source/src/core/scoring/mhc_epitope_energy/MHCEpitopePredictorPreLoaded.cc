@@ -23,6 +23,7 @@
 #include <cppdb/frontend.h>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
+#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorPreLoaded.hh>
 #include <sys/stat.h> // For getting file size with stat().  If we move to C++17, should switch to std::filesystem::file_size() function
 
@@ -48,7 +49,7 @@ using namespace utility::sql_database;
 using namespace cppdb;
 
 /// @brief Check for the size of a file and print a warning if appropriate.
-void MHCEpitopePredictorPreLoaded::check_file_size( std::string const &filename, core::Size warn_threshold ) const {
+void MHCEpitopePredictorPreLoaded::check_file_size( std::string const &filename, core::Size const warn_threshold ) {
 	core::Real filesize = 0; // Will be used to store the file's size, in bytes.
 
 	// The following is using the stat() function to get the file's size.  If we switch to C++17, it should be switched to std::filesystem::file_size() to make it platform agnostic.
@@ -76,90 +77,34 @@ void MHCEpitopePredictorPreLoaded::check_file_size( std::string const &filename,
 void MHCEpitopePredictorPreLoaded::load_database(std::string const &filename)
 {
 	filetype_ = LOAD_DATABASE;
+	filename_ = filename;
 
-	std::string db_filename = ""; //Actual location of the db filename
-	// Look for a copy of the file
-	utility::io::izstream infile;
-	infile.open( filename );
-	// If the filename is found, store in db_filename.  Otherwise, look in the database.
-	if ( infile.good() ) {
-		db_filename = filename;
-	} else {
-		db_filename = basic::database::full_name("scoring/score_functions/mhc_epitope/"+filename);
-	}
-	TR << "Connecting to " << db_filename << " external database." << std::endl;
-	// Output a warning if db_filename is bigger than 1 GB (1073741824 bytes).
-	check_file_size( db_filename, 1073741824 );
+	// Get the mhc map and peptide length from the database, returned as a std::pair.
+	std::pair<std::map<std::string, core::Real>, core::Size> scores_length( core::scoring::ScoringManager::get_instance()->get_mhc_map_from_db(filename) );
 
-	filename_ = db_filename;
-
-	// Basic SQL stuff following test/utility/sql_database/DatabaseSessionManagerTests.cxxtest.hh
-
-	try {
-		// Establish the connection
-		DatabaseSessionManager * scm( DatabaseSessionManager::get_instance() );
-
-		utility::sql_database::sessionOP session(scm->get_session_sqlite3( db_filename, utility::sql_database::TransactionMode::standard, 0, true, -1 )); // readonly set to true here, everything else is default settings.
-
-		// Fetch the metadata
-		// TODO: anything else important here?
-		cppdb::result meta = (*session) << "SELECT name,value from meta";
-		while ( meta.next() ) {
-			std::string name, val;
-			meta >> name >> val;
-			TR.Debug << name << ":" << val << std::endl;
-			if ( name == "peptide_length" ) set_peptide_length(utility::string2int(val));
-		}
-
-		// Make sure we know how long peptides are supposed to be
-		if ( get_peptide_length() == 0 ) utility_exit_with_message("Database didn't specify peptide length");
-
-		// Now load the map
-		cppdb::result pep_scores = (*session) << "SELECT peptide,score from epitopes";
-		while ( pep_scores.next() ) {
-			std::string peptide;
-			core::Real score;
-			pep_scores >> peptide >> score;
-			TR.Debug << peptide << ":" << score << std::endl;
-			scores_[peptide] = score;
-		}
-	}
-catch (std::exception const &e) {
-	utility_exit_with_message("Unable to open valid database " + db_filename + ": " + e.what());
-}
+	// Extract those values and store in the appropriate member variables.
+	scores_ = scores_length.first;
+	set_peptide_length( scores_length.second );
 }
 
 void MHCEpitopePredictorPreLoaded::load_csv(std::string const &filename)
 {
-	using namespace utility::io;
-
 	filetype_ = LOAD_CSV;
+	filename_ = filename;
 
-	std::string db_filename = ""; //Actual location of the db filename
-	// Look for a copy of the file
-	izstream infile;
-	infile.open( filename );
-	// If the filename is found, store in db_filename.  Otherwise, look in the database.
-	if ( infile.good() ) {
-		db_filename = filename;
-	} else {
-		db_filename = basic::database::full_name("scoring/score_functions/mhc_epitope/"+filename);
-	}
-	infile.close();
-	TR << "Reading epitopes from file " << db_filename << std::endl;
-	// Output a warning if filename is bigger than 1 GB (1073741824 bytes).
-	check_file_size( db_filename, 1073741824 );
-
-	filename_ = db_filename;
+	// Read the entire file contents from the ScoringManager as a std::list of file lines.  Each line is an element in the list.
+	std::list<std::string> csv_contents( core::scoring::ScoringManager::get_instance()->get_mhc_csv_contents(filename) );
+	std::list<std::string>::iterator it = csv_contents.begin();
 
 	// TODO: very simple csv parsing (but that's presumably all we need). if is there a robust library, wouldn't hurt to use it instead
-	//izstream infile;
-	infile.open( db_filename );
-	if ( !infile.good() ) utility_exit_with_message("ERROR: Unable to open file " + db_filename);
 
 	std::string curline(""); //Buffer for current line.
 	bool got_header = false;
-	while ( getline(infile, curline) ) {
+	while ( it != csv_contents.end() ) {
+		curline = csv_contents.front();
+		csv_contents.pop_front();
+		it = csv_contents.begin(); // Make sure that we still have a valid iterator, pointing to the new first element.
+
 		if ( curline.size() < 1 || curline[0]=='#' ) continue; //Ignore blank lines and comments
 		// First real row should be a header; ignore it too
 		if ( ! got_header ) {
@@ -183,12 +128,12 @@ void MHCEpitopePredictorPreLoaded::load_csv(std::string const &filename)
 		// TODO: check for / handle duplicates? maybe have an option to warn/error
 		scores_[peptide] = score;
 	}
-	infile.close();
 
 	if ( get_peptide_length() == 0 ) {
 		utility_exit_with_message("ERROR: no peptides in the file");
 		// if epitope length remains 0, bad things happen in extracting and scoring peptides, so bail
 	}
+
 }
 
 bool MHCEpitopePredictorPreLoaded::operator==(MHCEpitopePredictor const &other)

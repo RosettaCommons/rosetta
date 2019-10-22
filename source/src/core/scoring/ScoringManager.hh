@@ -481,6 +481,10 @@ public:
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	utility::vector1< core::Real > const & get_nmer_svm_rank( std::string const & filename ) const;
 
+	/// @brief Get a const reference to an NMerPSSM.
+	/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+	std::map<core::chemical::AA, utility::vector1<core::Real> > const & get_nmer_pssm( std::string const & filename, core::Size nmer_length ) const;
+
 	/// @brief Get the map of AA oneletter code->vector of floats used by the NMerSVMEnergy.
 	/// @details Loaded lazily in a threadsafe manner.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
@@ -664,6 +668,23 @@ public:
 	/// @author Chris Bailey-Kellogg (cbk@cs.dartmouth.edu), copied from Vikram K. Mulligan's netcharge_energy
 	utility::vector1< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupOP > get_cloned_mhc_epitope_setup_helpers( core::scoring::methods::EnergyMethodOptions const &options ) const;
 
+	/// @brief Get a const reference to a std::list containing the contents of a MHCEpitopePredictorMatrix matrix file.
+	/// @details This is a matrix file containing, for example, Propred data to be used by MHCEpitopePredictorMatrix.
+	/// @details The file will be loaded as a list and sent back to the Predictor to be parsed, to avoid doing the latter in the ScoringManager class.
+	/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+	std::list<std::string> const & get_mhc_matrix_contents( std::string const & filename) const;
+
+	/// @brief Get a const reference to a std::pair containing the a map corresponding a sqlite MHC db and the peptide length.
+	/// @details This is a PreLoaded database containing, for example, NetMHCII data to be used by MHCEpitopePredictorPreLoaded.
+	/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+	std::pair<std::map<std::string, core::Real>, core::Size> const & get_mhc_map_from_db( std::string const & filename ) const;
+
+	/// @brief Get a const reference to a std::list containing the contents of a MHCEpitopePredictorPreLoaded csv database file.
+	/// @details This is a PreLoaded csv containing, for example, NetMHCII data to be used by MHCEpitopePredictorPreLoaded.
+	/// @details The file will be loaded as a list and sent back to the Predictor to be parsed, to avoid doing the latter in the ScoringManager class.
+	/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+	std::list<std::string> const & get_mhc_csv_contents( std::string const & filename ) const;
+
 	/// @brief Create an instance of an MHCEpitopeEnergySetup object, by owning pointer.
 	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
 	/// @note Not intended for use outside of ScoringManager.
@@ -796,11 +817,35 @@ private:
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	static utility::pointer::shared_ptr< utility::vector1< core::Real > > create_nmer_svm_rank( std::string const & filename );
 
+	/// @brief Create an instance of an NMerPSSM object, by reading data from disk.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+	static utility::pointer::shared_ptr< std::map<core::chemical::AA, utility::vector1<core::Real> > > create_nmer_pssm(std::string const & filename, core::Size nmer_length);
+
 	/// Create an instance of an aa floats list used by the NMerSVMEnergy.
 	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
 	/// @note Not intended for use outside of ScoringManager.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	static utility::pointer::shared_ptr< std::map< char, utility::vector1< core::Real > > > create_nmer_svm_aa_matrix( std::string const & filename );
+
+	/// @brief Create an instance of the file contents of a MHCEpitopePredictorMatrix matrix, by reading data from disk.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+	static utility::pointer::shared_ptr< std::list<std::string> > create_mhc_matrix_contents( std::string const & filename );
+
+	/// @brief Load the sqlite database from disk.  Store peptides/scores as std::map, and length as core::Size.  Return as a std::pair.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+	static utility::pointer::shared_ptr< std::pair<std::map<std::string, core::Real>, core::Size> > create_mhc_map_from_db(std::string const &filename);
+
+	/// @brief Load the csv database file contents from disk and store as a std::list
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Brahm Yachnin (brahm.yachnin@rutgers.edu).
+	static utility::pointer::shared_ptr< std::list<std::string> > create_mhc_csv_contents(std::string const &filename);
 
 	/// @brief Create an instance of the P_AA object, by owning pointer.
 	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
@@ -1186,7 +1231,12 @@ private:
 	mutable utility::thread::ReadWriteMutex nmer_svm_mutex_;
 	mutable utility::thread::ReadWriteMutex nmer_svm_rank_list_mutex_;
 	mutable utility::thread::ReadWriteMutex nmer_svm_rank_mutex_;
+	mutable utility::thread::ReadWriteMutex nmer_pssm_mutex_;
 	mutable utility::thread::ReadWriteMutex nmer_svm_aa_encoding_matrix_mutex_;
+
+	mutable utility::thread::ReadWriteMutex mhc_matrix_contents_mutex_;
+	mutable utility::thread::ReadWriteMutex mhc_sqlite_db_contents_mutex_;
+	mutable utility::thread::ReadWriteMutex mhc_csv_db_contents_mutex_;
 
 	mutable std::mutex p_aa_mutex_;
 	mutable std::mutex p_aa_ss_mutex_;
@@ -1327,7 +1377,12 @@ private:
 	mutable std::map< std::string, utility::libsvm::Svm_rosettaOP > nmer_svm_map_;
 	mutable std::map< std::string, utility::pointer::shared_ptr< std::string > > nmer_svm_rank_list_file_contents_map_;
 	mutable std::map< std::string, utility::pointer::shared_ptr< utility::vector1< core::Real > > > nmer_svm_rank_map_;
+	mutable std::map< std::string, utility::pointer::shared_ptr< std::map<core::chemical::AA, utility::vector1<core::Real> > > > nmer_pssm_map_;
 	mutable std::map< std::string, utility::pointer::shared_ptr< std::map< char, utility::vector1< core::Real > > > > nmer_svm_aa_matrix_map_;
+
+	mutable std::map< std::string, utility::pointer::shared_ptr< std::list< std::string > > > mhc_matrix_contents_map_;
+	mutable std::map< std::string, utility::pointer::shared_ptr< std::pair<std::map<std::string, core::Real>, core::Size> > > mhc_sqlite_db_contents_map_;
+	mutable std::map< std::string, utility::pointer::shared_ptr< std::list< std::string > > > mhc_csv_db_contents_map_;
 
 	mutable P_AAOP p_aa_;
 	mutable P_AA_ssOP p_aa_ss_;

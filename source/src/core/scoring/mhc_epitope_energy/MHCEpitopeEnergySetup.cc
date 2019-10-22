@@ -18,12 +18,15 @@
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorExternal.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorMatrix.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorPreLoaded.hh>
+#include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorSVM.hh>
 
 // Package headers
 #include <core/scoring/EnergyMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/nmer/NMerSVMEnergy.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Options system
 #include <basic/options/option.hh>
@@ -38,6 +41,7 @@
 
 // Other Headers
 #include <basic/Tracer.hh>
+#include <basic/database/open.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/memory.hh>
@@ -130,7 +134,7 @@ void MHCEpitopeEnergySetup::initialize_from_file( std::string const &filename ) 
 	infile.close();
 
 	if ( TR.Debug.visible() ) TR.Debug << "Read complete.  Parsing epitope prediction specs." << std::endl;
-	parse_specs( lines );
+	setup_predictor( lines );
 
 	return;
 }
@@ -161,7 +165,7 @@ MHCEpitopeEnergySetup::initialize_from_file_contents(
 	}
 
 	if ( TR.Debug.visible() ) TR.Debug << "Initial processing of file contents string complete.  Parsing epitope prediction specs." << std::endl;
-	parse_specs( lines );
+	setup_predictor( lines );
 }
 
 /// @brief The MHC epitope score for the peptide, as returned by the predictor
@@ -198,9 +202,9 @@ std::string MHCEpitopeEnergySetup::report() const {
 }
 
 /// @details
-void MHCEpitopeEnergySetup::parse_specs( utility::vector1 < std::string > const & lines ) {
+void MHCEpitopeEnergySetup::setup_predictor( utility::vector1 < std::string > const & lines ) {
 
-	static const std::string errmsg("Error in core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup::parse_specs():  ");
+	static const std::string errmsg("Error in core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup::setup_predictor():  ");
 
 	core::Size const nlines( lines.size() ); //Number of lines we'll be going through.
 
@@ -208,10 +212,12 @@ void MHCEpitopeEnergySetup::parse_specs( utility::vector1 < std::string > const 
 
 	// TODO: very fragile -- do more error checking and friendly error reporting
 
-	// The first line of the .mhc file contains the method keyword, the method type, and for the filename of the reference data.
+	// The first non-comment / non-empty line of the .mhc file contains the method keyword, the method type, and for the filename of the reference data.
+	core::Size line_no = 1;
+	while ( lines[line_no].size() == 0 || lines[line_no][0] == '#' ) line_no++;
 
 	// Get method from first line
-	std::istringstream firstline(lines[1]);
+	std::istringstream firstline(lines[line_no]);
 	std::string keyword, method, filename;
 	firstline >> keyword;
 	firstline >> method;
@@ -221,6 +227,57 @@ void MHCEpitopeEnergySetup::parse_specs( utility::vector1 < std::string > const 
 	MHCEpitopePredictorExternalOP pred_external;
 	MHCEpitopePredictorMatrixOP pred_matrix;
 	MHCEpitopePredictorPreLoadedOP pred_pre;
+	MHCEpitopePredictorSVMOP pred_svm;
+
+	core::scoring::methods::NMerSVMEnergyOP svm; // A NMerSVMEnergy object that is used with the SVM predictor
+
+	// NMer variables get set to their defaults here
+	// SVM database files
+	utility::vector1< std::string > nmer_svm = { //svm_fname_vec
+		"sequence/mhc_svms/HLA-DRB10101_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model",
+		"sequence/mhc_svms/HLA-DRB10301_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model",
+		"sequence/mhc_svms/HLA-DRB10401_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model",
+		"sequence/mhc_svms/HLA-DRB10701_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model",
+		"sequence/mhc_svms/HLA-DRB10802_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model",
+		"sequence/mhc_svms/HLA-DRB11101_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model",
+		"sequence/mhc_svms/HLA-DRB11302_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model",
+		"sequence/mhc_svms/HLA-DRB11501_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model"
+		};
+	utility::vector1< std::string > nmer_rank = { //svm_rank_fname_vec
+		"sequence/mhc_rank_svm_scores/HLA-DRB10101.libsvm.test.out.sort.gz",
+		"sequence/mhc_rank_svm_scores/HLA-DRB10301.libsvm.test.out.sort.gz",
+		"sequence/mhc_rank_svm_scores/HLA-DRB10401.libsvm.test.out.sort.gz",
+		"sequence/mhc_rank_svm_scores/HLA-DRB10701.libsvm.test.out.sort.gz",
+		"sequence/mhc_rank_svm_scores/HLA-DRB10802.libsvm.test.out.sort.gz",
+		"sequence/mhc_rank_svm_scores/HLA-DRB11101.libsvm.test.out.sort.gz",
+		"sequence/mhc_rank_svm_scores/HLA-DRB11302.libsvm.test.out.sort.gz",
+		"sequence/mhc_rank_svm_scores/HLA-DRB11501.libsvm.test.out.sort.gz"
+		};
+	utility::vector1< std::string > nmer_pssm = { //pssm_fname_vec
+		"sequence/mhc_pssms/HLA-DRB10101_nooverlap.9mer.norm.pssm",
+		"sequence/mhc_pssms/HLA-DRB10301_nooverlap.9mer.norm.pssm",
+		"sequence/mhc_pssms/HLA-DRB10401_nooverlap.9mer.norm.pssm",
+		"sequence/mhc_pssms/HLA-DRB10701_nooverlap.9mer.norm.pssm",
+		"sequence/mhc_pssms/HLA-DRB10802_nooverlap.9mer.norm.pssm",
+		"sequence/mhc_pssms/HLA-DRB11101_nooverlap.9mer.norm.pssm",
+		"sequence/mhc_pssms/HLA-DRB11302_nooverlap.9mer.norm.pssm",
+		"sequence/mhc_pssms/HLA-DRB11501_nooverlap.9mer.norm.pssm"
+		};
+
+	core::Size nmer_core_length = 9; //nmer_ref_seq_length
+	core::Size nmer_term_length = 3; //nmer_svm_term_length
+	bool nmer_use_pssm_feat = true; //nmer_svm_pssm_feat
+	std::string nmer_aa_matrix = "sequence/substitution_matrix/BLOSUM62.prob.rescale"; //nmer_svm_aa_matrix
+
+	// TODO: nmer_svm_scorecut has a similar job to xform.  For now, set it fixed to 0 (and gate_svm_scores to false).
+	// TODO: To make use of this, we would need to think about how it would interact with xform if both were used.
+	core::Real const nmer_svm_scorecut = 0;  //nmer_svm_scorecut
+	bool const nmer_gate_svm_scores = false; //gate_svm_scores
+
+	// How to handle svm vs. svm_rank.  Assuming svm_rank by default
+	bool nmer_avg_rank_as_energy = true; //nmer_svm_avg_rank_as_energy
+	// NMer variables all set to their defaults now.
+
 	if ( method == "matrix" ) {
 		// For matrix methods, read the filename containing the matrix, and use it to create a new MHCEpitopePredictorMatrix object.
 		firstline >> filename;
@@ -247,13 +304,29 @@ void MHCEpitopeEnergySetup::parse_specs( utility::vector1 < std::string > const 
 		} else {
 			utility_exit_with_message("ERROR: Unknown preloaded file type " + filetype);
 		}
+	} else if ( method == "svm" || method == "svm_rank" ) {
+		// For svm or svm_rank, we need to create an NMerSVMEnergy object.
+		// All the NMerSVMEnergy settings have defaults, which are set above and prefixed with 'nmer_'
+
+		// NOTE: Unlike other Predictors, we are not going to set predictor_ until after parsing the rest of the mhc file.
+
+		// If we use svm instead of svm_rank, set to false and clear nmer_rank
+		if ( method == "svm" ) {
+			nmer_avg_rank_as_energy = false;
+			nmer_rank.clear();
+		}
 	} else {
 		utility_exit_with_message("ERROR: Unknown epitope prediction method " + method);
 	}
 
-	for ( core::Size i=2; i<=nlines; ++i ) { //Loop through all remaining lines, containing options
-		TR.Debug << "option: '" << lines[i] << "'" << std::endl;
-		std::istringstream line(lines[i]);
+	for ( line_no++; line_no<=nlines; ++line_no ) { //Loop through all remaining lines, containing options
+		if ( lines[line_no].size() == 0 ) continue;
+		if ( lines[line_no][0] == '#' ) {
+			TR.Debug << lines[line_no] << std::endl;
+			continue;
+		}
+		TR.Debug << "option: '" << lines[line_no] << "'" << std::endl;
+		std::istringstream line(lines[line_no]);
 		std::string option;
 		line >> option;
 		if ( option == "alleles" ) {
@@ -277,7 +350,7 @@ void MHCEpitopeEnergySetup::parse_specs( utility::vector1 < std::string > const 
 			} else if ( handler == "penalize" || handler == "score" ) {
 				line >> unseen;
 			} else {
-				TR.Error << "Unknown unseen handler " << handler << "; ignoring: " << lines[i] << std::endl;
+				TR.Error << "Unknown unseen handler " << handler << "; ignoring: " << lines[line_no] << std::endl;
 			}
 			if ( method=="external" ) pred_external->set_unseen_score(unseen);
 			else if ( method=="preloaded" ) pred_pre->set_unseen_score(unseen);
@@ -304,12 +377,69 @@ void MHCEpitopeEnergySetup::parse_specs( utility::vector1 < std::string > const 
 				line >> score_offset_;
 				apply_offset_ = true;
 			} else {
-				TR.Error << "Unknown xform; ignoring:" << lines[i] << std::endl;
+				TR.Error << "Unknown xform; ignoring:" << lines[line_no] << std::endl;
 			}
+			//nmer/svm-specific options start here, overriding the defaults above
+		} else if ( option == "svm_file" && (method=="svm" || method=="svm_rank") ) {
+			// Set which svms to use
+			// defaults to using the filenames given in nmer_pssm
+			// If given whitespace-delimited filenames, uses that instead.
+			line >> filename;
+			nmer_svm = utility::split_whitespace(filename);
+		} else if ( option == "svm_rank" && (method=="svm" || method=="svm_rank") ) {
+			// Set which svm_rank files to use
+			// defaults to using the filenames given in nmer_rank
+			// If given whitespace-delimited filenames, uses that instead.
+			// TODO: Exit if not using svm_rank?
+			// TODO: Or, do we drop the svm vs. svm_rank distinction, and handle as with pssm_features below.
+			line >> filename;
+			nmer_rank = utility::split_whitespace(filename);
+		} else if ( option == "svm_pssm_features" && (method=="svm" || method=="svm_rank") ) {
+			// Set whether to use pssm features, and what files to point to.
+			// defaults to using the filenames given in nmer_pssm
+			// If given 'svm_pssm_features off', turns this off.
+			// If given whitespace-delimited filenames, uses that.
+			line >> filename;
+			if ( filename == "off" ) {
+				nmer_use_pssm_feat = false;
+				nmer_pssm.clear();
+			} else {
+				nmer_use_pssm_feat = true; //Should be true anyway.
+				nmer_pssm = utility::split_whitespace(filename);
+			}
+		} else if ( option == "svm_sequence_length" && (method=="svm" || method=="svm_rank") ) {
+			// Get the core and term sequence lengths:
+			// default: svm_sequence_length 9 3
+			// TODO: If only one is given, then it will be the core sequence and the term will stay at 3.  OK?
+			line >> nmer_core_length;
+			line >> nmer_term_length;
+		} else if ( option == "svm_aa_matrix" && (method=="svm" || method=="svm_rank") ) {
+			// Get the amino acid encoding matrix.
+			// default: svm_aa_matrix sequence/substitution_matrix/BLOSUM62.prob.rescale //from the database
+			line >> nmer_aa_matrix;
 		} else {
-			TR.Error << "Unknown option; ignoring:" << lines[i] << std::endl;
+			TR.Error << "Unknown option; ignoring:" << lines[line_no] << std::endl;
 		}
 	} //End loop through all lines
+
+	// If we are using svm or svm_rank, set up the NMerSVMEnergy object and set the predictor here.
+	if ( method == "svm" || method == "svm_rank" ) {
+		svm = core::scoring::methods::NMerSVMEnergyOP(utility::pointer::make_shared<core::scoring::methods::NMerSVMEnergy>(
+			nmer_core_length, //nmer_length
+			nmer_gate_svm_scores, //gate_svm_scores
+			nmer_term_length, //term_length
+			nmer_use_pssm_feat, //use_pssm_features
+			nmer_avg_rank_as_energy, //avg_rank_as_energy
+			nmer_svm_scorecut, //nmer_svm_scorecut
+			nmer_svm, //svm_fname_vec
+			nmer_rank, //svm_rank_fname_vec
+			nmer_pssm, //pssm_fname_vec
+			nmer_aa_matrix //aa_matrix
+			)
+		);
+
+		predictor_ = utility::pointer::make_shared<MHCEpitopePredictorSVM>(svm);
+	}
 
 	TR << "Parsing complete.  MHC setup settings: " << std::endl;
 	TR << report();

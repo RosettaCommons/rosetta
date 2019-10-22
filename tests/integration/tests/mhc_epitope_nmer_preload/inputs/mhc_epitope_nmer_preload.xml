@@ -1,17 +1,17 @@
 <ROSETTASCRIPTS>
-Keywords: deimmunization, mhc_epitope, symmetry, propred, database
+Keywords: deimmunization, mhc_epitope, symmetry, nmer, database
 Author: Brahm Yachnin, Chris Bailey-Kellogg
 Email: brahm.yachnin@rutgers.edu, cbk@cs.dartmouth.edu
 
 This integration test runs a packing and minimization trajectory with the mhc_epitope scoreterm
-turned on.  Globally, the scoreterm uses the "nmer" SVM method (SEE NOTE) to prevent the epitope counts from
-increasing beyond native.  An MHC constraint is also applied, which uses a pre-loaded NetMHCII CSV
-database file (generated specifically for this hotspot) to specifically reduce immunogenicity at
+turned on.  An MHC constraint is applied, which uses a pre-loaded NetMHCII CSV database file
+(generated specifically for this hotspot) to specifically reduce immunogenicity at
 that hotspot.  Catalytic residue restrictions are applied, and design is allowed only around the
 hotspot.
 
-NOTE: Currently, this is using the Propred instead of nmer, because nmer has not yet been implemented.
-Once nmer is working, we will switch this over to use that predictor.
+After execution, the final scoring is done with nmer-based scores that cover the entire pose in the OUTPUT
+tag.  This is not used during packing as it is very slow.  If faster SVMs are added in the future, it would
+be worthwhile to add this to the packing trajectory as well.
 
 This is a reasonable way of setting up a de-immunization trajectory, with the following caveats:
 -Standard design settings (e.g. -ex1 -ex2) should be applied as usual (excluded to reduce test runtime).
@@ -29,7 +29,10 @@ or AAComposition design guidance terms, could also be used here.
 	<SCOREFXNS>
 		<ScoreFunction name="ref_deimm" weights="ref2015.wts">
 		  <Reweight scoretype="mhc_epitope" weight="2"/>
-		  <Set mhc_epitope_setup_file="inputs/nmer_relative.mhc"/>
+		</ScoreFunction>
+		<ScoreFunction name="ref_deimm_nmer" weights="ref2015.wts">
+		  <Reweight scoretype="mhc_epitope" weight="2"/>
+		  <Set mhc_epitope_setup_file="inputs/nmer_rank.mhc"/>
 		</ScoreFunction>
 	</SCOREFXNS>
 	
@@ -77,5 +80,5 @@ or AAComposition design guidance terms, could also be used here.
 		<Add mover_name="pack"/>
 		<Add mover_name="min"/>
 	</PROTOCOLS>
-	<OUTPUT scorefxn="ref_deimm"/>
+	<OUTPUT scorefxn="ref_deimm_nmer"/>
 </ROSETTASCRIPTS>

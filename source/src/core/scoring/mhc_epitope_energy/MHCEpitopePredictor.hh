@@ -51,14 +51,25 @@ public:
 	/// @brief The length required by this predictor for peptides
 	core::Size get_peptide_length() const { return peptide_length_; }
 
+	core::Size get_overhang_length() const { return overhang_length_; }
+
 private:
 	/// @brief The length required by this predictor for peptides
 	/// @details Must be set at some point before using the predictor, but since it might only be determined upon load from disk/database, not required by constructor
 	core::Size peptide_length_=0;
 
+	/// @brief If the peptide has a core peptide plus overhangs, how many residues are in the overhangs (on both the N- and C-terminus)?
+	/// @details For example, if we have a total peptide length of 15, with a core of 9 residues and overhangs of 3 residues on
+	/// both sides, peptide_length_ should be 15 and overhang_length should be 3. This allows handling shorter peptides that are padded on the N and/or C termini.
+	/// If the whole peptide is considered, over all its cores, then the offset is 0.
+	core::Size overhang_length_=0;
+
 protected:
 	/// @brief Setter for peptide_length, for derived classes to set upon initialization
 	void set_peptide_length(core::Size peptide_length) { peptide_length_ = peptide_length; }
+
+	/// @brief Setter for peptide_length, for derived classes to set upon initialization
+	void set_overhang_length(core::Size overhang_length) { overhang_length_ = overhang_length; }
 
 #ifdef    SERIALIZATION
 public:

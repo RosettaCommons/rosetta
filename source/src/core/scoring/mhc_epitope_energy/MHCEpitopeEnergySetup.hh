@@ -107,6 +107,11 @@ public:
 	/// @brief How long are the peptides to be predicted?
 	core::Size get_peptide_length() const { return predictor_->get_peptide_length(); }
 
+	/// @brief If the peptide has a core peptide plus overhangs, how many residues are in the overhangs (on both the N- and C-terminus)?
+	/// @details For example, if we have a total peptide length of 15, with a core of 9 residues and overhangs of 3 residues on
+	/// both sides, peptide_length_ should be 15 and overhang_length should be 3.
+	core::Size get_overhang_length() const { return predictor_->get_overhang_length(); }
+
 	/// @brief The MHC epitope score for the peptide, as returned by the predictor
 	core::Real raw_score(std::string peptide) const;
 
@@ -117,7 +122,7 @@ public:
 	core::Real score(std::string peptide, core::Real native) const { return xform(raw_score(peptide), native); }
 
 	/// @brief Getter for predictor_ (MHCEpitopePredictorOP)
-	MHCEpitopePredictorOP get_predictor() { return predictor_; }
+	MHCEpitopePredictorOP get_predictor() const { return predictor_; }
 
 	/// @brief Return whether using relative or absolute scoring.
 	bool get_relative() const { return relative_; }
@@ -137,8 +142,10 @@ private:
 	Private functions:
 	******************/
 
-	/// @brief Parse the data from an mhc-format file, and create the appropriate MHCEpitopePredictor object. Might trigger a follow-up read from disk to initialize the predictor.
-	void parse_specs( utility::vector1 < std::string > const &lines );
+	/// @brief Parse the data from an mhc-format file, and create the appropriate MHCEpitopePredictor object.
+	/// @details Generally speaking, Predictor creation will trigger disk reads to the appropriate database files.
+	/// @details Only call setup_predictor prior to packing trajectories to avoid triggering repeated disk reads.
+	void setup_predictor( utility::vector1 < std::string > const &lines );
 
 private:
 

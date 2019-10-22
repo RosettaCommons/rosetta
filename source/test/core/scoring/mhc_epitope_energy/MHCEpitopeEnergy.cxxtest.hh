@@ -15,7 +15,8 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <core/energy_methods/MHCEpitopeEnergy.hh>
-#include <core/energy_methods/MHCEpitopeEnergyCreator.hh>
+#include <core/scoring/nmer/NMerSVMEnergy.hh>
+#include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorSVM.hh>
 
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/protein_interface_design/movers/AddChainBreak.hh>
@@ -34,8 +35,11 @@
 
 // Package Headers
 #include <test/core/init_util.hh>
+#include <test/util/pose_funcs.hh>
+#include <basic/database/open.hh>
 
 #include <core/pose/util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <basic/Tracer.hh>
@@ -43,7 +47,6 @@
 //Auto Headers
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
-
 
 static basic::Tracer TR("core.scoring.mhc_epitope_energy.MHCEpitopeEnergy.cxxtest");
 
@@ -505,4 +508,122 @@ public:
 		TR << "End of test_mhc_energy_packer." << std::endl;
 	}
 
+	/// @brief Test the mhc_epitope with overhangs, comparing the Predictor and the scorefunction.
+	/// @author Brahm Yachnin
+	void test_mhc_energy_overhangs() {
+		//Setup the config file
+		utility::vector1< std::string > files(1, "core/scoring/mhc_epitope_energy/nmer_svm.mhc");
+		methods::EnergyMethodOptions options;
+		options.set_mhc_epitope_setup_files(files);
+
+		//Associate the config with the scorefunction
+		ScoreFunction scorefxn;
+		scorefxn.set_weight( mhc_epitope, 1 );
+		scorefxn.set_energy_method_options(options);
+
+		//Create a NMerSVMEnergy object with the default features used by nmer_svm.mhc
+		//Create an NMer object for use with the Predictor, with rank and with no PSSM
+		methods::NMerSVMEnergyOP nmer_svm( utility::pointer::make_shared<methods::NMerSVMEnergy>
+			(
+			9, //nmer_length
+			false, //gate_svm_scores
+			3, //term_length
+			true, //use_pssm_features
+			false, //avg_rank_as_energy
+			0, //nmer_svm_scorecut
+			utility::vector1<std::string>({
+			basic::database::full_name( "sequence/mhc_svms/HLA-DRB10101_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model" ),
+			basic::database::full_name( "sequence/mhc_svms/HLA-DRB10301_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model" ),
+			basic::database::full_name( "sequence/mhc_svms/HLA-DRB10401_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model" ),
+			basic::database::full_name( "sequence/mhc_svms/HLA-DRB10701_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model" ),
+			basic::database::full_name( "sequence/mhc_svms/HLA-DRB10802_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model" ),
+			basic::database::full_name( "sequence/mhc_svms/HLA-DRB11101_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model" ),
+			basic::database::full_name( "sequence/mhc_svms/HLA-DRB11302_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model" ),
+			basic::database::full_name( "sequence/mhc_svms/HLA-DRB11501_nooverlap.libsvm.dat.noscale.nu0.5.min_mse.model" )
+			}), //svm_fname_vec
+			utility::vector1<std::string>(), //svm_rank_fname_vec
+			utility::vector1<std::string>({
+			basic::database::full_name( "sequence/mhc_pssms/HLA-DRB10101_nooverlap.9mer.norm.pssm" ),
+			basic::database::full_name( "sequence/mhc_pssms/HLA-DRB10301_nooverlap.9mer.norm.pssm" ),
+			basic::database::full_name( "sequence/mhc_pssms/HLA-DRB10401_nooverlap.9mer.norm.pssm" ),
+			basic::database::full_name( "sequence/mhc_pssms/HLA-DRB10701_nooverlap.9mer.norm.pssm" ),
+			basic::database::full_name( "sequence/mhc_pssms/HLA-DRB10802_nooverlap.9mer.norm.pssm" ),
+			basic::database::full_name( "sequence/mhc_pssms/HLA-DRB11101_nooverlap.9mer.norm.pssm" ),
+			basic::database::full_name( "sequence/mhc_pssms/HLA-DRB11302_nooverlap.9mer.norm.pssm" ),
+			basic::database::full_name( "sequence/mhc_pssms/HLA-DRB11501_nooverlap.9mer.norm.pssm" )
+			}), //pssm_fname_vec
+			basic::database::full_name( "sequence/substitution_matrix/BLOSUM62.prob.rescale" )
+			)
+		);
+
+		//Create an SVM Predictor from that NmerSVMEnergy object
+		MHCEpitopePredictorSVMOP pred_svm( utility::pointer::make_shared<MHCEpitopePredictorSVM>(nmer_svm) );
+
+
+		//Create a trpcage pose, and get its sequence, padded with '-' (should be the pad variable from MHCEpitopeEnergy class)
+		Pose trpcage( create_trpcage_ideal_pose() );
+		std::string trpcage_seq = "---" + trpcage.sequence() + "---";
+
+		//Variable for keeping track of the Predictor scores
+		core::Real pred_scores = 0;
+
+		//Loop over the 15mers (including padded sequence)
+		for ( core::Size startpos = 0; startpos <= (trpcage_seq.length() - 15); ++startpos ) {
+			std::string peptide = trpcage_seq.substr(startpos, 15); // Get the next 15mer
+			pred_scores += pred_svm->score(peptide);
+		}
+
+		//pred_scores should be the same as the total score for the entire pose
+		TS_ASSERT_DELTA( pred_scores, scorefxn(trpcage), 10e-4 );
+
+		TR << "End of test_mhc_overhangs." << std::endl;
+	}
+
+	/// @brief Create four poses, and score them with a Predictor that uses defined core and overhang regions.  Combine into a multi-chain pose and make sure they are still scored properly.
+	/// @details The three poses will include the Trpcage, a pose that doesn't include a full 15mer but includes a core 9mer (should be scored), a pose that is smaller than the core 9mer
+	/// @details (should not be scored), and a larger pose (part of 1ten).
+	/// @author Brahm Yachnin
+	void test_mhc_energy_overhangs_multichain() {
+		//Setup the config file
+		utility::vector1< std::string > files(1, "core/scoring/mhc_epitope_energy/nmer_svm.mhc");
+		methods::EnergyMethodOptions options;
+		options.set_mhc_epitope_setup_files(files);
+
+		//Associate the config with the scorefunction
+		ScoreFunction scorefxn;
+		scorefxn.set_weight( mhc_epitope, 1 );
+		scorefxn.set_energy_method_options(options);
+
+		//Create the four poses
+		Pose pose1_trpcage(create_trpcage_ideal_pose());
+		Pose pose2_11mer;
+		Pose pose3_8mer;
+		Pose pose4_1ten1(fullatom_pose_from_string( pdb_string_1ten1() ));
+		make_pose_from_sequence( pose2_11mer, "WARPMILWDMS", "fa_standard");
+		make_pose_from_sequence( pose3_8mer, "PISMTWMC", "fa_standard");
+
+		//Create a pose that includes all four poses, each as a new chain
+		Pose full_pose(pose1_trpcage);
+		append_pose_to_pose(full_pose, pose2_11mer, true);
+		append_pose_to_pose(full_pose, pose3_8mer, true);
+		append_pose_to_pose(full_pose, pose4_1ten1, true);
+
+		//Calculate the score of each of the four small poses using the scorefunction.
+		core::Real pose1_energy = scorefxn(pose1_trpcage);
+		core::Real pose2_energy = scorefxn(pose2_11mer);
+		core::Real pose3_energy = scorefxn(pose3_8mer);
+		core::Real pose4_energy = scorefxn(pose4_1ten1);
+		core::Real fullpose_energy = scorefxn(full_pose);
+
+		//Check the scores of each of the four poses
+		TS_ASSERT_DELTA( pose1_energy, 0.5884, 0.0001 );
+		TS_ASSERT_DELTA( pose2_energy, 0.1103, 0.0001 );
+		TS_ASSERT_EQUALS( pose3_energy, 0 );
+		TS_ASSERT_DELTA( pose4_energy, 7.6081, 0.0001 );
+
+		//Check that the full_pose score is equal to the sum of the four subposes
+		TS_ASSERT_DELTA( fullpose_energy, pose1_energy + pose2_energy + pose3_energy + pose4_energy, 0.0001 );
+
+		TR << "End of test_mhc_energy_overhangs_multichain." << std::endl;
+	}
 };

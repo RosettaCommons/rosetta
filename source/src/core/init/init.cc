@@ -56,9 +56,9 @@
 #include <core/energy_methods/EnvSmoothEnergyCreator.hh>
 #include <core/energy_methods/IntermolEnergyCreator.hh>
 #include <core/energy_methods/MissingEnergyCreator.hh>
-#include <core/energy_methods/NMerRefEnergyCreator.hh>
-#include <core/energy_methods/NMerPSSMEnergyCreator.hh>
-#include <core/energy_methods/NMerSVMEnergyCreator.hh>
+#include <core/scoring/nmer/NMerRefEnergyCreator.hh>
+#include <core/scoring/nmer/NMerPSSMEnergyCreator.hh>
+#include <core/scoring/nmer/NMerSVMEnergyCreator.hh>
 #include <core/energy_methods/OmegaTetherEnergyCreator.hh>
 #include <core/energy_methods/OtherPoseEnergyCreator.hh>
 #include <core/energy_methods/P_AA_EnergyCreator.hh>

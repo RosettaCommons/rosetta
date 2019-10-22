@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/energy_methods/NMerPSSMEnergy.hh
+/// @file   core/scoring/nmer/NMerPSSMEnergy.hh
 /// @brief  PSSMerence energy method implementation
 /// @author Indigo King (indigo.c.king@gmail.com)
 
 // Unit headers
-#include <core/energy_methods/NMerPSSMEnergy.hh>
-#include <core/energy_methods/NMerPSSMEnergyCreator.hh>
+#include <core/scoring/nmer/NMerPSSMEnergy.hh>
+#include <core/scoring/nmer/NMerPSSMEnergyCreator.hh>
 
 // Package headers
 #include <core/scoring/EnergyMap.hh>
@@ -23,6 +23,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/scoring/ScoringManager.hh>
 #include <basic/database/open.hh>
 #include <utility/file/file_sys_util.hh>
 
@@ -185,39 +186,7 @@ void NMerPSSMEnergy::read_nmer_pssm_fname_vector( utility::vector1< std::string 
 // PSSM format is 1 AA per line w/ nmer_length_ score vals
 void NMerPSSMEnergy::read_nmer_pssm( std::string pssm_fname ) {
 
-	if ( !utility::file::file_exists( pssm_fname ) ) {
-		pssm_fname = basic::database::full_name( pssm_fname, false );
-	}
-	TR << "reading NMerPSSMEnergy scores from " << pssm_fname << std::endl;
-	utility::io::izstream in_stream( pssm_fname );
-	if ( !in_stream.good() ) {
-		utility_exit_with_message( "[ERROR] Error opening NMerPSSMEnergy file" );
-	}
-
-	std::map< chemical::AA, utility::vector1< core::Real > > nmer_pssm;
-	std::string line;
-	while ( getline( in_stream, line) ) {
-		utility::vector1< std::string > const tokens( utility::string_split_multi_delim( line, " \t" ) );
-		//skip comments
-		if ( tokens[ 1 ][ 0 ] == '#' ) continue;
-		char const char_aa( tokens[ 1 ][ 0 ] );
-		chemical::AA aa( chemical::aa_from_oneletter_code( char_aa ));
-		if ( nmer_pssm.count( aa ) ) {
-			utility_exit_with_message( "[ERROR] NMer PSSM energy database file "
-				+ pssm_fname + " has double entry for aa " + char_aa );
-		}
-		if ( tokens.size() != nmer_length_ + 1 ) {
-			utility_exit_with_message( "[ERROR] NMer PSSM database file "
-				+ pssm_fname + " has wrong number entries at line " + line
-				+ "\n\tfound: " + utility::to_string( tokens.size() ) + " expected: " + utility::to_string( Size( nmer_length_ + 1 ) ) + "\nNote: Whitespace delimited!" );
-		}
-		utility::vector1< Real > seqpos_scores( nmer_length_, 0.0 );
-		for ( Size ival = 2; ival <= tokens.size(); ++ival ) {
-			Real const score( atof( tokens[ ival ].c_str() ) );
-			seqpos_scores[ ival - 1 ] = score;
-		}
-		nmer_pssm[ aa ] = seqpos_scores;
-	}
+	std::map< core::chemical::AA, utility::vector1< core::Real > > const & nmer_pssm( core::scoring::ScoringManager::get_instance()->get_nmer_pssm( pssm_fname, nmer_length_ ) );
 	all_nmer_pssms_.push_back( nmer_pssm );
 }
 
@@ -226,6 +195,17 @@ EnergyMethodOP
 NMerPSSMEnergy::clone() const
 {
 	return utility::pointer::make_shared< NMerPSSMEnergy >( *this );
+}
+
+bool NMerPSSMEnergy::operator== ( NMerPSSMEnergy const & other ) const
+{
+	// Check member variables
+	if ( all_nmer_pssms_ != other.all_nmer_pssms_ ) return false;
+	if ( nmer_length_ != other.nmer_length_ ) return false;
+	if ( nmer_cterm_ != other.nmer_cterm_ ) return false;
+	if ( gate_pssm_scores_ != other.gate_pssm_scores_ ) return false;
+	if ( nmer_pssm_scorecut_ != other.nmer_pssm_scorecut_ ) return false;
+	return true;
 }
 
 core::Size

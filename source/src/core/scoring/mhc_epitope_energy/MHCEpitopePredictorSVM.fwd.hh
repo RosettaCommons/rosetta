@@ -7,28 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/energy_methods/NMerRefEnergy.fwd.hh
-/// @brief  Reference energy method forward declaration
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @file core/scoring/mhc_epitope_energy/MHCEpitopePredictorSVM.fwd.hh
+/// @brief forward declaration for class MHCEpitopePredictorSVM
+/// @author
 
-
-#ifndef INCLUDED_core_scoring_methods_NMerRefEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_NMerRefEnergy_fwd_hh
+#ifndef INCLUDED_core_scoring_mhc_epitope_energy_MHCEpitopePredictorSVM_fwd_hh
+#define INCLUDED_core_scoring_mhc_epitope_energy_MHCEpitopePredictorSVM_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace mhc_epitope_energy {
 
-class NMerRefEnergy;
+class MHCEpitopePredictorSVM;
+typedef utility::pointer::shared_ptr< MHCEpitopePredictorSVM > MHCEpitopePredictorSVMOP;
+typedef utility::pointer::shared_ptr< MHCEpitopePredictorSVM const > MHCEpitopePredictorSVMCOP;
 
-typedef utility::pointer::shared_ptr< NMerRefEnergy > NMerRefEnergyOP;
-typedef utility::pointer::shared_ptr< NMerRefEnergy const > NMerRefEnergyCOP;
-
-} // methods
+} // mhc_epitope_energy
 } // scoring
 } // core
-
 
 #endif

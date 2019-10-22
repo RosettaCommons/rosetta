@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/energy_methods/NMerSVMEnergy.fwd.hh
+/// @file   core/scoring/nmer/NMerSVMEnergy.fwd.hh
 /// @brief  SVMerence energy method forward declaration
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
