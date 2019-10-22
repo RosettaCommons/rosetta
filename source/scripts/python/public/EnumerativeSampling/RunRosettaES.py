@@ -507,7 +507,7 @@ def combine_lps(args):
             for line in lpsfile.readlines():
                 if len(line.split()) == 1:
                     beamcount = beamcount + 1
-            beamcount = beamcount / 2
+            beamcount = int(beamcount / 2)
             strbeamcount = str(beamcount)
             combinedlps.write(strbeamcount + "\n")
             lpsfile.seek(0)
