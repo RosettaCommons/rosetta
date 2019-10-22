@@ -338,13 +338,30 @@ public:
 
 	static void register_factory_prototypes();
 
+	void
+	parse_resources_tag(
+		utility::tag::TagCOP resources_tag,
+		basic::datacache::DataMap & data,
+		basic::resource_manager::ResourceManagerOP resource_manager
+	) const;
+
+	// @details Will return true if the pose was modified.
+	bool
+	parse_apply_to_pose_tag(
+		utility::tag::TagCOP apply_tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map & filters,
+		protocols::moves::Movers_map & movers,
+		core::pose::Pose & pose
+	) const;
+
 	void instantiate_filter(
 		utility::tag::TagCOP const & tag_ptr,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map & filters,
 		protocols::moves::Movers_map & movers,
 		core::pose::Pose & pose
-	);
+	) const;
 
 	void instantiate_mover(
 		utility::tag::TagCOP const & tag_ptr,
@@ -352,7 +369,7 @@ public:
 		protocols::filters::Filters_map & filters,
 		protocols::moves::Movers_map & movers,
 		core::pose::Pose & pose
-	);
+	) const;
 
 	/// @brief Instantiate a PackerPalette object.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -362,7 +379,7 @@ public:
 		protocols::filters::Filters_map & filters,
 		protocols::moves::Movers_map & movers,
 		core::pose::Pose & pose
-	);
+	) const;
 
 	void instantiate_taskoperation(
 		utility::tag::TagCOP const & tag_ptr,
@@ -370,7 +387,7 @@ public:
 		protocols::filters::Filters_map & filters,
 		protocols::moves::Movers_map & movers,
 		core::pose::Pose & pose
-	);
+	) const;
 
 	utility::tag::TagCOP
 	find_rosettascript_tag(
@@ -380,14 +397,23 @@ public:
 		const std::string & option_value
 	);
 
-	void import_tags(
-		std::set< ImportTagName > & import_tag_names,
-		utility::tag::TagCOP & my_tag,
+	void
+	parse_import_tag(
+		utility::tag::TagCOP import_tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map & filters,
 		protocols::moves::Movers_map & movers,
 		core::pose::Pose & pose
-	);
+	) const;
+
+	void import_tags(
+		std::set< ImportTagName > & import_tag_names,
+		utility::tag::TagCOP my_tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map & filters,
+		protocols::moves::Movers_map & movers,
+		core::pose::Pose & pose
+	) const;
 
 	void
 	validate_input_script_against_xsd(

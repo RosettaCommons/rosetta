@@ -479,18 +479,17 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	basic::resource_manager::ResourceManagerOP resource_manager
 )
 {
+	if ( !tag->hasTag("PROTOCOLS") ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "parser::protocol file must specify PROTOCOLS section");
+	}
+
 	if ( options[ OptionKeys::in::file::native ].user() ) {
 		load_native( options[ OptionKeys::in::file::native ].value() );
 	}
 
-	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
-
 	Movers_map movers;
 	protocols::filters::Filters_map filters;
 	basic::datacache::DataMap data; // abstract objects, such as scorefunctions, to be used by filter and movers
-	std::set< ImportTagName > import_tag_names;
-
-	MoverOP mover;
 
 	typedef std::pair< std::string const, MoverOP > StringMover_pair;
 	typedef std::pair< std::string const, protocols::filters::FilterOP > StringFilter_pair;
@@ -510,8 +509,9 @@ RosettaScriptsParser::generate_mover_for_protocol(
 		}
 	}
 
+	////////////////////////////////////////////
+	///// Set up some defaults in the data maps
 
-	//setting up some defaults
 	protocols::filters::FilterOP true_filter( new protocols::filters::TrueFilter );
 	protocols::filters::FilterOP false_filter( new protocols::filters::FalseFilter );
 	filters.insert( StringFilter_pair( "true_filter", true_filter ) );
@@ -548,167 +548,47 @@ RosettaScriptsParser::generate_mover_for_protocol(
 		data.add_resource("options", local_options_);
 	}
 
+	///////////////////////////////////////////////////////////////////
+	// Go through the subtags, creating/loading the associated objects
+	// Most subtags should be handled by their respective Data loaders.
+	// Some subtags are handled specially for technical/historical reasons.
+	//
 	// Data Loaders -- each data loader handles one of the top-level blocks of a
 	// rosetta script.  These blocks are handled by the RosettaScriptsParser itself;
 	// other data loaders may be registered with the DataLoaderFactory at load time
 	// so that arbitrary data, living in any library, can be loaded into the DataMap
 	// through the XML interface.
-	std::set< std::string > non_data_loader_tags;
-	non_data_loader_tags.insert( "RESOURCES" );
-	non_data_loader_tags.insert( "MOVERS" );
-	non_data_loader_tags.insert( "APPLY_TO_POSE" );
-	non_data_loader_tags.insert( "FILTERS" );
-	non_data_loader_tags.insert( "PROTOCOLS" );
-	non_data_loader_tags.insert( "OUTPUT" );
-	non_data_loader_tags.insert( "IMPORT" );
-
-	// Load in data into the basic::datacache::DataMap object.  All tags beside those listed
-	// in the non_data_loader_tags set are considered DataLoader tags.
-	TagCOPs const all_tags = tag->getTags();
-	for ( Size ii = 0; ii < all_tags.size(); ++ii ) {
-		using namespace protocols::parser;
-		TagCOP iitag = all_tags[ ii ];
-		if ( non_data_loader_tags.find( iitag->getName() ) != non_data_loader_tags.end() ) continue;
-		DataLoaderOP loader = DataLoaderFactory::get_instance()->newDataLoader( iitag->getName() );
-		loader->load_data( pose, iitag, data );
-	}
-
-	if ( !tag->hasTag("PROTOCOLS") ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "parser::protocol file must specify PROTOCOLS section");
-	}
-
-	// Round 1: Import previously defined filters and movers, and add Resources to the DataMap from the
-	// ResourceManager
-	std::ostringstream resource_error_oss;
-	for ( TagCOP curr_tag : all_tags ) {
-
-		////// IMPORT
-		if ( curr_tag->getName() != "IMPORT" && curr_tag->getName() != "RESOURCES" ) {
-			continue;
-		}
-
-		if ( curr_tag->getName() == "IMPORT" ) {
-
-			if ( curr_tag->hasOption("packer_palettes") ) {
-				// Import task operations
-				std::string pp_str( curr_tag->getOption<std::string>("packer_palettes") );
-				std::istringstream pp_ss(pp_str);
-				std::string pp_name;
-				while ( std::getline(pp_ss, pp_name, ',') ) {
-					import_tag_names.insert(std::make_pair("PACKER_PALETTES", pp_name));
-				}
-			}//fi packer_palettes
-
-			if ( curr_tag->hasOption("taskoperations") ) {
-				// Import task operations
-				std::string taskoperations_str( curr_tag->getOption<std::string>("taskoperations") );
-				std::istringstream taskoperation_ss(taskoperations_str);
-				std::string taskoperation_name;
-				while ( std::getline(taskoperation_ss, taskoperation_name, ',') ) {
-					import_tag_names.insert(std::make_pair("TASKOPERATIONS", taskoperation_name));
-				}
-			}//fi taskoperations
-
-			if ( curr_tag->hasOption("filters") ) {
-				// Import filters
-				std::string filters_str( curr_tag->getOption<std::string>("filters") );
-				std::istringstream filters_ss(filters_str);
-				std::string filter_name;
-				while ( std::getline(filters_ss, filter_name, ',') ) {
-					import_tag_names.insert(std::make_pair("FILTERS", filter_name));
-				}
-			}//fi filters
-
-			if ( curr_tag->hasOption("movers") ) {
-				// Import movers
-				std::string movers_str( curr_tag->getOption<std::string>("movers") );
-				std::istringstream movers_ss(movers_str);
-				std::string mover_name;
-				while ( std::getline(movers_ss, mover_name, ',') ) {
-					import_tag_names.insert(std::make_pair("MOVERS", mover_name));
-				}
-			}//fi movers
+	//
+	for ( TagCOP curr_tag : tag->getTags() ) {
+		if ( curr_tag->getName() == "PROTOCOLS" || curr_tag->getName() == "OUTPUT" ) {
+			continue; // We'll deal with the PROTOCOLS & OUTPUT section later.
 		} else if ( curr_tag->getName() == "RESOURCES" ) {
-			for ( auto const & subtag : curr_tag->getTags() ) {
-				debug_assert( subtag->getName() == "Resource" );
-				std::string resource_name = subtag->getOption< std::string >( "name" );
-				if ( ! resource_manager ) {
-					resource_error_oss << "The requested resource \"" << resource_name << "\" cannot be retrieved because";
-					resource_error_oss << " no ResourceManager has been provided. Perhaps you are not using rosetta_scripts_jd3?\n";
-				} else if ( ! resource_manager->has_resource( resource_name ) ) {
-					resource_error_oss << "The requested resource \"" << resource_name << "\" was not found in the";
-					resource_error_oss << " ResourceManager. The following resources are available from the ResourceManager\n";
-					for ( auto const & resname : resource_manager->resources_that_have_been_declared() ) {
-						resource_error_oss << "   " << resname << "\n";
-					}
-				} else {
-					TR << "Loading resource \"" << resource_name << "\" into the DataMap" << std::endl;
-					data.add_resource( resource_name, resource_manager->get_resource( resource_name ) );
-				}
-			}
-		}
-
-	}// for curr_tag
-
-	{ // scope -- process possible errors from the RESOURCES block.
-		std::string errstring = resource_error_oss.str();
-		if ( ! errstring.empty() ) {
-			throw CREATE_EXCEPTION( utility::excn::Exception, errstring );
-		}
-	}
-
-
-	// Attempt to find and import requested objects; throws exception on failure
-	if ( import_tag_names.size() > 0 ) {
-		import_tags(import_tag_names, tag, data, filters, movers, pose);
-	}
-
-	// Round 2: Process definitions in this ROSETTASCRIPTS block
-	for ( TagCOP curr_tag : all_tags ) {
-
-		///// APPLY TO POSE
-		if ( curr_tag->getName() == "APPLY_TO_POSE" ) {
-			// section is not mandatory
-			// apply to pose may affect all of the scorefxn definitions below, so it is called first.
-			TagCOPs const apply_tags( curr_tag->getTags() );
-
-			for ( TagCOP apply_tag_ptr : apply_tags ) {
-				std::string const mover_type( apply_tag_ptr->getName() );
-				MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, filters, movers, pose ) );
-				runtime_assert( new_mover != nullptr );
-				new_mover->apply( pose );
-				TR << "Defined and applied mover of type " << mover_type << std::endl;
-				bool const name_exists( movers.find( mover_type ) != movers.end() );
-				if ( name_exists ) {
-					throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can't apply_to_pose the same mover twice for " + mover_type);
-				}
-
-				modified_pose = true;
-			} // done apply_tag_ptr
-
-		}//  fi apply_to_pose
-		TR.flush();
-
-		////// FILTERS
-		if ( curr_tag->getName() == "FILTERS" ) {
+			parse_resources_tag( curr_tag, data, resource_manager);
+		} else if ( curr_tag->getName() == "FILTERS" ) {
 			for ( TagCOP tag_ptr : curr_tag->getTags() ) {
 				instantiate_filter(tag_ptr, data, filters, movers, pose);
 			}
-		}
-		TR.flush();
-
-		////// MOVERS
-		if ( curr_tag->getName() == "MOVERS" ) {
+		} else if ( curr_tag->getName() == "MOVERS" ) {
 			for ( TagCOP tag_ptr : curr_tag->getTags() ) {
 				instantiate_mover(tag_ptr, data, filters, movers, pose);
 			}
+		} else if ( curr_tag->getName() == "APPLY_TO_POSE" ) {
+			// Don't short-circuit the evaluation (but *do* use or-combining).
+			modified_pose |= parse_apply_to_pose_tag( curr_tag, data, filters, movers, pose );
+		} else if ( curr_tag->getName() == "IMPORT" ) {
+			parse_import_tag( curr_tag, data, filters, movers, pose );
+		} else {
+			// All other tags are considered DataLoader tags.
+			using namespace protocols::parser;
+			DataLoaderOP loader = DataLoaderFactory::get_instance()->newDataLoader( curr_tag->getName() );
+			loader->load_data( pose, curr_tag, data );
 		}
 		TR.flush();
+	}
 
-	}// for curr_tag
-
-	////// ADD MOVER FILTER PAIRS
+	////// Setup the actual main protocol block.
 	TagCOP const protocols_tag( tag->getTag("PROTOCOLS") );
+	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
 	protocol->parse_my_tag( protocols_tag, data, filters, movers, pose );
 	TR.flush();
 
@@ -839,6 +719,77 @@ RosettaScriptsParser::parse_protocol_tag( Pose & pose, utility::tag::TagCOP prot
 	return mover;
 }
 
+void
+RosettaScriptsParser::parse_resources_tag(
+	utility::tag::TagCOP resources_tag,
+	basic::datacache::DataMap & data,
+	basic::resource_manager::ResourceManagerOP resource_manager ) const
+{
+	std::ostringstream resource_error_oss;
+
+	for ( auto const & subtag : resources_tag->getTags() ) {
+		debug_assert( subtag->getName() == "Resource" );
+		std::string resource_name = subtag->getOption< std::string >( "name" );
+		if ( ! resource_manager ) {
+			resource_error_oss << "The requested resource \"" << resource_name << "\" cannot be retrieved because";
+			resource_error_oss << " no ResourceManager has been provided. Perhaps you are not using rosetta_scripts_jd3?\n";
+		} else if ( ! resource_manager->has_resource( resource_name ) ) {
+			resource_error_oss << "The requested resource \"" << resource_name << "\" was not found in the";
+			resource_error_oss << " ResourceManager. The following resources are available from the ResourceManager\n";
+			for ( auto const & resname : resource_manager->resources_that_have_been_declared() ) {
+				resource_error_oss << "   " << resname << "\n";
+			}
+		} else {
+			TR << "Loading resource \"" << resource_name << "\" into the DataMap" << std::endl;
+			data.add_resource( resource_name, resource_manager->get_resource( resource_name ) );
+		}
+	}
+
+	// scope -- process possible errors from the RESOURCES block.
+	std::string errstring = resource_error_oss.str();
+	if ( ! errstring.empty() ) {
+		throw CREATE_EXCEPTION( utility::excn::Exception, errstring );
+	}
+}
+
+bool
+RosettaScriptsParser::parse_apply_to_pose_tag(
+	utility::tag::TagCOP apply_tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map & filters,
+	protocols::moves::Movers_map & movers,
+	core::pose::Pose & pose
+) const
+{
+	bool modified_pose = false;
+
+	// An empty APPLY_TO_POSE tag is fine (and common) - it's only when there's content in it that we have concerns.
+	// Only warn if we're actually going to try to modify the pose.
+	for ( TagCOP apply_tag_ptr : apply_tag->getTags() ) {
+		std::string const mover_type( apply_tag_ptr->getName() );
+		TR.Warning << "==================================================================================" << std::endl;
+		TR.Warning << std::endl;
+		TR.Warning << "The APPLY_TO_POSE section is deprecated. Please edit your XML to remove it." <<  std::endl;
+		TR.Warning << std::endl;
+		TR.Warning << "You should be able to get effectively the same results by" <<  std::endl;
+		TR.Warning << "moving things to the PROTOCOLS section." << std::endl;
+		TR.Warning << std::endl;
+		TR.Warning << "==================================================================================" << std::endl;
+
+		protocols::moves::MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, filters, movers, pose ) );
+		runtime_assert( new_mover != nullptr );
+		new_mover->apply( pose );
+		modified_pose = true;
+		TR << "Defined and applied mover of type " << mover_type << std::endl;
+		bool const name_exists( movers.find( mover_type ) != movers.end() );
+		if ( name_exists ) {
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can't apply_to_pose the same mover twice for " + mover_type);
+		}
+
+	} // done apply_tag_ptr
+
+	return modified_pose;
+}
 
 /// @brief Instantiate a new filter and add it to the list of defined filters for this ROSETTASCRIPTS block
 void
@@ -848,7 +799,7 @@ RosettaScriptsParser::instantiate_filter(
 	protocols::filters::Filters_map & filters,
 	Movers_map & movers,
 	core::pose::Pose & pose
-) {
+) const {
 	std::string const type( tag_ptr->getName() );
 	if ( ! tag_ptr->hasOption("name") ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can't define unnamed Filter of type " + type);
@@ -874,7 +825,7 @@ RosettaScriptsParser::instantiate_mover(
 	protocols::filters::Filters_map & filters,
 	Movers_map & movers,
 	core::pose::Pose & pose
-) {
+) const {
 	std::string const type( tag_ptr->getName() );
 	if ( ! tag_ptr->hasOption("name") ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can't define unnamed Mover of type " + type);
@@ -900,7 +851,7 @@ void RosettaScriptsParser::instantiate_packer_palette(
 	protocols::filters::Filters_map & /*filters*/,
 	Movers_map & /*movers*/,
 	core::pose::Pose & /*pose*/
-) {
+) const {
 	using namespace core::pack::palette;
 
 	std::string const type( tag_ptr->getName() );
@@ -928,7 +879,7 @@ RosettaScriptsParser::instantiate_taskoperation(
 	protocols::filters::Filters_map & /*filters*/,
 	Movers_map & /*movers*/,
 	core::pose::Pose & /*pose*/
-) {
+) const {
 	using namespace core::pack::task::operation;
 
 	std::string const type( tag_ptr->getName() );
@@ -991,17 +942,73 @@ RosettaScriptsParser::find_rosettascript_tag(
 	return nullptr;
 }
 
+void
+RosettaScriptsParser::parse_import_tag(
+	utility::tag::TagCOP import_tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map & filters,
+	protocols::moves::Movers_map & movers,
+	core::pose::Pose & pose
+) const {
+	std::set< ImportTagName > import_tag_names;
+
+	if ( import_tag->hasOption("packer_palettes") ) {
+		// Import task operations
+		std::string pp_str( import_tag->getOption<std::string>("packer_palettes") );
+		std::istringstream pp_ss(pp_str);
+		std::string pp_name;
+		while ( std::getline(pp_ss, pp_name, ',') ) {
+			import_tag_names.insert(std::make_pair("PACKER_PALETTES", pp_name));
+		}
+	}//fi packer_palettes
+
+	if ( import_tag->hasOption("taskoperations") ) {
+		// Import task operations
+		std::string taskoperations_str( import_tag->getOption<std::string>("taskoperations") );
+		std::istringstream taskoperation_ss(taskoperations_str);
+		std::string taskoperation_name;
+		while ( std::getline(taskoperation_ss, taskoperation_name, ',') ) {
+			import_tag_names.insert(std::make_pair("TASKOPERATIONS", taskoperation_name));
+		}
+	}//fi taskoperations
+
+	if ( import_tag->hasOption("filters") ) {
+		// Import filters
+		std::string filters_str( import_tag->getOption<std::string>("filters") );
+		std::istringstream filters_ss(filters_str);
+		std::string filter_name;
+		while ( std::getline(filters_ss, filter_name, ',') ) {
+			import_tag_names.insert(std::make_pair("FILTERS", filter_name));
+		}
+	}//fi filters
+
+	if ( import_tag->hasOption("movers") ) {
+		// Import movers
+		std::string movers_str( import_tag->getOption<std::string>("movers") );
+		std::istringstream movers_ss(movers_str);
+		std::string mover_name;
+		while ( std::getline(movers_ss, mover_name, ',') ) {
+			import_tag_names.insert(std::make_pair("MOVERS", mover_name));
+		}
+	}//fi movers
+
+	// Attempt to find and import requested objects; throws exception on failure
+	if ( import_tag_names.size() > 0 ) {
+		import_tags(import_tag_names, import_tag->getParent().lock(), data, filters, movers, pose);
+	}
+}
+
 /// @brief Import filters, movers, ... specified in the IMPORT tag
 /// in the order they were originally defined elsewhere in the script
 void
 RosettaScriptsParser::import_tags(
 	std::set< ImportTagName > & import_tag_names,
-	utility::tag::TagCOP & my_tag,
+	utility::tag::TagCOP my_tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map & filters,
 	protocols::moves::Movers_map & movers,
 	core::pose::Pose & pose
-) {
+) const {
 	// Process all parent ROSETTASCRIPTS tags, one at a time
 	TagCAP curr_level_tag_ap(my_tag);
 
