@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   basic/datacache/CacheableResRotPairFloatMap.hh
-/// @brief
+/// @brief  A CacheableData that stores a std::map<ResRotPair,float>
 /// @author Brian Coventry
 
 
@@ -93,8 +93,8 @@ struct ResRotPairHasher {
 
 #ifdef    SERIALIZATION
 public:
-	template< class Archive > void save( Archive & arc ) const {}
-	template< class Archive > void load( Archive & arc ) {}
+	template< class Archive > void save( Archive & ) const {}
+	template< class Archive > void load( Archive & ) {}
 #endif // SERIALIZATION
 };
 
