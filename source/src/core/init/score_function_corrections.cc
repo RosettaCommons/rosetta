@@ -1065,7 +1065,7 @@ init_beta_nov16_correction( utility::options::OptionCollection & options, bool s
 		//fd & rpav: water
 		params.push_back("fa_standard:Opoint:LJ_RADIUS:1.542743");
 		params.push_back("fa_standard:Opoint:LJ_WDEPTH:0.161947");
-		params.push_back("fa_standard:Opoint:LK_VOLUME:0");
+		params.push_back("fa_standard:Opoint:LK_VOLUME:10.8000");
 		params.push_back("fa_standard:Owat:LJ_RADIUS:1.542743");
 		params.push_back("fa_standard:Owat:LJ_WDEPTH:0.161947");
 		params.push_back("fa_standard:Owat:LK_DGFREE:-4.5480");

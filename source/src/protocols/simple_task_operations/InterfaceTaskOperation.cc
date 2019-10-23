@@ -43,12 +43,14 @@ InterfaceTaskOperation::InterfaceTaskOperation() : parent()
 {
 	movable_jumps_ = utility::vector1_int();
 	movable_jumps_.push_back( 1 );
+	movable_chains_ = utility::vector1_int();
 }
 InterfaceTaskOperation::InterfaceTaskOperation( InterfaceTaskOperation const & old_instance ) :
 	//utility::pointer::ReferenceCount(),
 	parent( old_instance )
 {
 	movable_jumps_ = old_instance.movable_jumps_;
+	movable_chains_ = old_instance.movable_chains_;
 }
 
 void InterfaceTaskOperation::add_movable_jump( int const additional_jump ) {
@@ -57,6 +59,19 @@ void InterfaceTaskOperation::add_movable_jump( int const additional_jump ) {
 
 void InterfaceTaskOperation::set_movable_jumps( utility::vector1_int const & movable_jumps ) {
 	movable_jumps_ = movable_jumps;
+}
+
+void InterfaceTaskOperation::add_movable_chain( int const additional_chain ) {
+	movable_chains_.push_back( additional_chain );
+}
+
+void InterfaceTaskOperation::set_movable_chains( utility::vector1_int const & movable_chains ) {
+	movable_chains_ = movable_chains;
+}
+
+utility::vector1_int const &
+InterfaceTaskOperation::movable_chains() const{
+	return movable_chains_;
 }
 
 utility::vector1_int const &

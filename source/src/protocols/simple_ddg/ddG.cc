@@ -14,6 +14,7 @@
 /// @author Sarel Fleishman (sarelf@u.washington.edu)
 /// @author Sachko Honda (honda@apl.washington.edu)
 /// @author Kyle Barlow (kb@kylebarlow.com)
+/// @author Ryan Pavlovicz (rpavlov@uw.edu) -- solvating poses
 /// Additional notes by Honda on 12/16/2012
 /// When this mover is called with PB_elec (PB potential energy) in scorefxn,
 /// it enables caching poses in two (bound/unbound) states so that subsequent calls can avoid
@@ -23,6 +24,8 @@
 ///
 #include <core/types.hh>
 
+#include <core/import_pose/import_pose.hh>
+
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
@@ -30,6 +33,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/rms_util.hh>
+#include <core/scoring/rms_util.tmpl.hh>
 
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -63,7 +68,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/simple_moves/WaterBoxMover.hh>
+#include <protocols/simple_moves/ExplicitWaterMover.hh>
 
 #include <numeric/xyzVector.hh>
 
@@ -73,6 +78,8 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/pb_potential.OptionKeys.gen.hh>
 
 //debug tools
@@ -100,7 +107,7 @@ using core::conformation::symmetry::SymmetryInfoCOP;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.ddG" );
+static basic::Tracer TR( "protocols.simple_ddg.ddG" );
 
 using namespace core;
 using namespace protocols::simple_ddg;
@@ -118,8 +125,17 @@ ddG::ddG() :
 	relax_bound_(false),
 	relax_unbound_(true),
 	solvate_(false),
+	solvate_unbound_(false),
+	solvate_rbmin_(false),
+	min_water_jump_(false),
 	pb_enabled_(false),
-	translate_by_(1000)
+	translate_by_(1000.0),
+	bound_HOH_(0),
+	bound_HOH_V_(0),
+	unbound_HOH_(0),
+	unbound_HOH_V_(0),
+	bound_rmsd_(1e6),
+	bound_rmsd_super_(1e6)
 {
 	bound_energies_.clear();
 	unbound_energies_.clear();
@@ -140,8 +156,17 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	relax_bound_(false),
 	relax_unbound_(true),
 	solvate_(false),
+	solvate_unbound_(false),
+	solvate_rbmin_(false),
+	min_water_jump_(false),
 	pb_enabled_(false),
-	translate_by_(1000)
+	translate_by_(1000.0),
+	bound_HOH_(0),
+	bound_HOH_V_(0),
+	unbound_HOH_(0),
+	unbound_HOH_V_(0),
+	bound_rmsd_(1e6),
+	bound_rmsd_super_(1e6)
 {
 	scorefxn_ = scorefxn_in->clone();
 
@@ -176,8 +201,17 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	relax_bound_(false),
 	relax_unbound_(true),
 	solvate_(false),
+	solvate_unbound_(false),
+	solvate_rbmin_(false),
+	min_water_jump_(false),
 	pb_enabled_(false),
-	translate_by_(1000)
+	translate_by_(1000.0),
+	bound_HOH_(0),
+	bound_HOH_V_(0),
+	unbound_HOH_(0),
+	unbound_HOH_V_(0),
+	bound_rmsd_(1e6),
+	bound_rmsd_super_(1e6)
 {
 	scorefxn_ = scorefxn_in->clone();
 	chain_ids_ = chain_ids;
@@ -217,7 +251,10 @@ void ddG::parse_my_tag(
 	relax_bound_ = tag->getOption<bool>("relax_bound",false);
 	relax_unbound_ = tag->getOption<bool>("relax_unbound",false);
 	solvate_ = tag->getOption<bool>("solvate",false);
-	translate_by_ = tag->getOption<core::Real>("translate_by", 1000);
+	solvate_unbound_ = tag->getOption<bool>("solvate_unbound",false);
+	solvate_rbmin_ = tag->getOption<bool>("solvate_rbmin",false);
+	min_water_jump_ = tag->getOption<bool>("min_water_jump",false);
+	translate_by_ = tag->getOption<core::Real>("translate_by", 1000.0);
 
 	if ( tag->hasOption( "relax_mover" ) ) {
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
@@ -249,7 +286,7 @@ void ddG::parse_my_tag(
 	if ( std::find(chain_ids_.begin(), chain_ids_.end(), 1) != chain_ids_.end() ) {
 		// Instead of throwing error in the case, we invert the chains to be moved to take care of this
 		utility::vector1<core::Size> inverted_chain_ids_;
-		for ( core::Size i=1 ; i <= pose.conformation().num_chains() ; i++ ) {
+		for ( core::Size i=1 ; i <= pose.conformation().num_chains() ; ++i ) {
 			if ( std::find(chain_ids_.begin(), chain_ids_.end(), i) == chain_ids_.end() ) {
 				inverted_chain_ids_.push_back(i);
 			}
@@ -265,11 +302,11 @@ void ddG::parse_my_tag(
 		// Set this to PB enabled
 		pb_enabled_ = true;
 		TR << "PB enabled.  Translation distance = " << translate_by_ << " A" << std::endl;
-		if ( tag->hasOption("translate_by") && translate_by_ > 100 ) {
+		if ( tag->hasOption("translate_by") && translate_by_ > 100.0 ) {
 			TR.Warning << "Translation distance may be too large for PB-enabled scoring.  Consider 100 (default for PB enabled runs) if you run out of memory."<< std::endl;
 			TR.Warning.flush();
 		} else if ( !tag->hasOption("translate_by") ) {
-			translate_by_ = 100;
+			translate_by_ = 100.0;
 			TR.Warning << "Translation distance set to 100 in order to save memory for the PB calculations."<<std::endl;
 			TR.Warning.flush();
 		}
@@ -334,6 +371,16 @@ void ddG::apply(Pose & pose)
 	}
 
 	setPoseExtraScore(pose, "ddg",average_ddg);
+	setPoseExtraScore(pose, "bound_HOH", bound_HOH_);
+	setPoseExtraScore(pose, "bound_HOH_V", bound_HOH_V_);
+	setPoseExtraScore(pose, "unbound_HOH", unbound_HOH_);
+	setPoseExtraScore(pose, "unbound_HOH_V", unbound_HOH_V_);
+
+	if ( native_ ) {
+		setPoseExtraScore(pose, "bound_ligand_rmsd_no_super", bound_rmsd_);
+		setPoseExtraScore(pose, "bound_ligand_rmsd_with_super", bound_rmsd_super_);
+	}
+
 	if ( per_residue_ddg_ ) {
 		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			std::string residue_string(utility::to_string<core::Size>(i));
@@ -384,24 +431,57 @@ ddG::report_ddG( std::ostream & out ) const
 
 	using ObjexxFCL::format::F;
 	using ObjexxFCL::format::LJ;
-	out << "-----------------------------------------\n";
-	out << " Scores                       Wghtd.Score\n";
-	out << "-----------------------------------------\n";
-	auto unbound_it=unbound_energies_.begin();
-	for ( auto const & bound_energie : bound_energies_ ) {
+	out << "\n-------------------------------------------------------------------\n";
+	out << " Scores                       Bound      Unbound      Wghtd.Delta\n";
+	out << "-------------------------------------------------------------------\n";
+	std::map< ScoreType, Real >::const_iterator unbound_it=unbound_energies_.begin();
+	for ( std::map< ScoreType, Real >::const_iterator bound_it=bound_energies_.begin();
+			bound_it!=bound_energies_.end();
+			++bound_it
+			) {
 		if ( unbound_it != unbound_energies_.end() ) {
-			if ( std::abs( unbound_it->second ) > 0.001 || std::abs( bound_energie.second ) > 0.001 ) {
-				out << ' ' << LJ( 24, bound_energie.first ) << ' ' << F( 9,3, bound_energie.second - unbound_it->second )<<'\n';
+			if ( std::abs( unbound_it->second ) > 0.001 || std::abs( bound_it->second ) > 0.001 ) {
+				out << ' ' << LJ( 24, bound_it->first ) << " " << F( 9,3, bound_it->second ) << "    " << F ( 9,3, unbound_it->second ) << "    " << F( 9,3, bound_it->second - unbound_it->second )<<'\n';
 			}
 			++unbound_it;
 		} else {
-			if ( std::abs( bound_energie.second ) > 0.001 ) {
-				out << ' ' << LJ( 24, bound_energie.first ) << ' ' << F( 9,3, bound_energie.second )<<'\n';
+			if ( std::abs( bound_it->second ) > 0.001 ) {
+				out << ' ' << LJ( 24, bound_it->first ) << ' ' << F( 9,3, bound_it->second )<<'\n';
 			}
 		}
 	}
-	out << "-----------------------------------------\n";
+	out << " " << LJ( 24, "total" ) << " " << F( 9,3, sum_bound() ) << "    " << F( 9,3, sum_unbound() ) <<'\n';
+	out << "-------------------------------------------------------------------\n";
 	out << "Sum ddg: "<< sum_ddG()<<std::endl;
+}
+
+
+/// @details returns energy sum of bound pose
+Real
+ddG::sum_bound() const
+{
+	Real sum_energy(0.0);
+
+	for ( std::map< ScoreType, Real >:: const_iterator bound_it=bound_energies_.begin();
+			bound_it!=bound_energies_.end();
+			++bound_it ) {
+		sum_energy += bound_it->second;
+	}
+	return sum_energy;
+}
+
+/// @details returns energy sum of unbound pose
+Real
+ddG::sum_unbound() const
+{
+	Real sum_energy(0.0);
+
+	for ( std::map< ScoreType, Real >:: const_iterator unbound_it=unbound_energies_.begin();
+			unbound_it!=unbound_energies_.end();
+			++unbound_it ) {
+		sum_energy += unbound_it->second;
+	}
+	return sum_energy;
 }
 
 /// @details returns the total ddG
@@ -422,6 +502,40 @@ ddG::sum_ddG() const
 	return sum_energy;
 }
 
+/// @brief removed water and virtual residues from pose to hopefully make its size match that of an input native
+void
+ddG::clean_pose( pose::Pose & pose_copy )
+{
+	for ( Size i=pose_copy.size(); i >= 1; --i ) {
+		if ( ( pose_copy.residue( i ).is_water() ) || ( pose_copy.residue( i ).is_virtual_residue() ) ) {
+			pose_copy.conformation().delete_residue_slow( i );
+		}
+	}
+}
+
+/// @brief compute the rmsd of a pose to an input native with superposition
+void
+ddG::compute_rmsd_with_super( pose::Pose & pose, core::Real & input_rmsd_super, core::Real & input_rmsd )
+{
+	// make a copy of the working pose to return to at end
+	pose::Pose pose_copy( pose );
+	// remove waters and virutals from the working pose
+	// we have to work with the main pose object because of the limitation in partition_by_jump
+	clean_pose( pose );
+
+	ObjexxFCL::FArray1D_bool temp_part( pose.size(), false );
+	ObjexxFCL::FArray1D_bool superpos_partner( pose.size(), false );
+
+	pose.fold_tree().partition_by_jump( core::pose::get_jump_id_from_chain_id(chain_ids_[1],pose), temp_part );
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		if ( temp_part( i ) ) superpos_partner( i ) = false;
+		else superpos_partner( i ) = true;
+	}
+	input_rmsd_super = core::scoring::rmsd_with_super_subset( *native_, pose, superpos_partner, is_protein_CA );
+	input_rmsd = core::scoring::native_CA_rmsd(  *native_, pose );
+	// return working pose to the copy
+	pose = pose_copy;
+}
 
 /// @brief compute the energy of the repacked complex in the bound and unbound states
 /// @param pose_in  The base pose.
@@ -437,6 +551,27 @@ ddG::calculate( pose::Pose const & pose_original )
 	// work on a copy, don't/can't modify the original comformation.
 	pose::Pose pose = pose_original;
 	pose.update_residue_neighbors(); // Neighbors needed for task operation calculations later
+
+	// get native for rmsd bound/unbound rmsd calculations
+	core::Size lig_id_ = 0, lig_id_native_ = 0;
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
+		native_ = core::pose::PoseOP( new core::pose::Pose() );
+		core::import_pose::pose_from_file( *native_, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() , core::import_pose::PDB_file);
+		// calculate lig_id separate for native in case native pose had different numbering
+
+		lig_id_native_ = static_cast< core::Size >( native_->fold_tree().downstream_jump_residue( core::pose::get_jump_id_from_chain_id(chain_ids_[1], *native_) ) );
+		lig_id_ = static_cast< core::Size >( pose.fold_tree().downstream_jump_residue( core::pose::get_jump_id_from_chain_id(chain_ids_[1],pose) ) );
+		core::Real input_rmsd( 0 );
+		core::Real input_rmsd_super( 0 );
+		if ( pose.residue(lig_id_).is_ligand() ) {
+			input_rmsd = automorphic_rmsd(native_->residue(lig_id_native_), pose.residue(lig_id_), false /*don't superimpose*/);
+			input_rmsd_super = automorphic_rmsd(native_->residue(lig_id_native_), pose.residue(lig_id_), true /*don't superimpose*/);
+		} else {
+			compute_rmsd_with_super( pose, input_rmsd_super, input_rmsd );
+		}
+		setPoseExtraScore(pose, "initial_ligand_rmsd_no_super", input_rmsd);
+		setPoseExtraScore(pose, "initial_ligand_rmsd_with_super", input_rmsd_super);
+	}
 
 	// Dummy state as default (<= pb_enabled_=false)
 	std::string original_state = "stateless";
@@ -478,7 +613,7 @@ ddG::calculate( pose::Pose const & pose_original )
 
 	// fd: now solvate the bound pose
 	if ( solvate_ ) {
-		if ( ! repack_bound_ ) {
+		if ( !repack_bound() ) {
 			// make a "null" packer task
 			task_ = core::pack::task::TaskFactory::create_packer_task( pose );
 			for ( Size i(1); i <= pose.total_residue(); ++i ) {
@@ -489,24 +624,16 @@ ddG::calculate( pose::Pose const & pose_original )
 		core::scoring::ScoreFunctionOP sfwater = scorefxn_->clone();
 		sfwater->set_weight( core::scoring::pointwater, 1.0 );
 		setup_task(pose);
-		protocols::simple_moves::WaterBoxMover wb(sfwater);
-		wb.set_taskop( task_ );
-		wb.apply( pose );
+
+		protocols::simple_moves::ExplicitWaterMover ewm(sfwater);
+		ewm.set_taskop( task_ );
+		ewm.apply( pose );
 		setup_solvated_task( pose, true ); // true = we're bound
-	}
 
-	if ( repack_bound() || solvate_ ) {
 		pack::pack_rotamers( pose, *scorefxn_, task_ );
-
-		//Dump pdb after repacking
-		//name = protocols::jd2::current_output_name();
-		//name_b = name + "_BOUND_after_repack_" + utility::timestamp_short() + ".pdb";
-		//TR << "DEBUGGING: dumping pdb - " << name_b << std::endl;
-		//protocols::simple_moves::DumpPdb dump_bound_after_repack(name_b);
-		//dump_bound_after_repack.apply(pose);
-
-		// if we're solvating, we also need to minimize
-		if ( solvate_ ) do_minimize( pose );
+		do_minimize( pose );
+	} else if ( repack_bound() ) {
+		pack::pack_rotamers( pose, *scorefxn_, task_ );
 	}
 
 	if ( relax_bound() && relax_mover() ) {
@@ -519,41 +646,65 @@ ddG::calculate( pose::Pose const & pose_original )
 		fill_per_residue_energy_vector(pose, bound_per_residue_energies_);
 	}
 
+	if ( solvate_ ) {
+		for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
+			if ( pose.residue(i).name() == "HOH" ) ++bound_HOH_;
+			if ( pose.residue(i).name() == "HOH_V" ) ++bound_HOH_V_;
+		}
+		TR << "number of waters in bound state ( HOH / HOH_V ) = " << bound_HOH_ << " / " << bound_HOH_V_ << std::endl;
+	}
+
+	if ( native_ ) {
+
+		if ( pose.residue(lig_id_).is_ligand() ) {
+			bound_rmsd_ = automorphic_rmsd(native_->residue(lig_id_native_), pose.residue(lig_id_), false /*don't superimpose*/);
+			bound_rmsd_super_ = automorphic_rmsd(native_->residue(lig_id_native_), pose.residue(lig_id_), true /*don't superimpose*/);
+			TR << "bound_rmsd = " << bound_rmsd_ << std::endl;
+		} else {
+			compute_rmsd_with_super( pose, bound_rmsd_super_, bound_rmsd_ );
+			TR << "bound_rmsd = " << bound_rmsd_ << std::endl;
+		}
+	}
+
+	//pose.dump_pdb("final_bound.pdb");
+
 	//---------------------------------
 	// Unbound state
 	//---------------------------------
 	if ( unbind(pose) ) {
 		if ( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_unbound_tag());
 
-		// solvation mode requires updating packer task
 		if ( solvate_ ) {
+			if ( solvate_unbound_ ) {
+				core::scoring::ScoreFunctionOP sfwater = scorefxn_->clone();
+				sfwater->set_weight( core::scoring::pointwater, 1.0 );
+				protocols::simple_moves::ExplicitWaterMover ewm(sfwater);
+				ewm.set_mode( "append" );
+
+				if ( !repack_unbound_ ) {
+					// recall what was previously packed in the bound state and allow it to solvate
+					utility::vector1<bool> to_solvate(task_->total_residue());
+					for ( core::Size i=1; i<=task_->total_residue(); ++i ) {
+						// select all packed/designed residues from original task, excluding waters
+						to_solvate[i] = !pose.residue(i).is_water()
+							&& (task_->design_residue( i ) || task_->pack_residue( i ));
+					}
+					// this will allow the solvation of residues that remain fixed in the ExplicitWaterMover
+					ewm.set_gen_fixed( to_solvate );
+				}
+
+				// now setup the unbound packer task (waters may move, and sidechains if pack_unbound)
+				setup_solvated_task( pose, false );
+				ewm.set_taskop( task_ );
+				ewm.apply( pose );
+				// we might need to call setup_solvated_task again if new waters were added
+			}
+			// setup the unbound packer task (waters may move, and sidechains if pack_unbound)
 			setup_solvated_task( pose, false ); // false = we're unbound
-		}
-
-		//Dump pdb before repacking
-		//name = protocols::jd2::current_output_name();
-		//name_b = name + "_UNBOUND_before_repack_" + utility::timestamp_short() + ".pdb";
-		//TR << "DEBUGGING: dumping pdb - " << name_b << std::endl;
-		//protocols::simple_moves::DumpPdb dump_unbound_before_repack(name_b);
-		//dump_unbound_before_repack.apply(pose);
-
-		// if we solvate, even if we don't repack unbound,
-		//    we need to give waters a chance to virtualize
-		if ( solvate_ || repack_unbound_ ) {
-
-
-			// Use the same task which was setup earlier
 			pack::pack_rotamers( pose, *scorefxn_, task_ );
-
-			//Dump pdb after repacking
-			//name = protocols::jd2::current_output_name();
-			//name_b = name + "_UNBOUND_after_repack_" + utility::timestamp_short() + ".pdb";
-			//TR << "DEBUGGING: dumping pdb - " << name_b << std::endl;
-			//protocols::simple_moves::DumpPdb dump_unbound_after_repack(name_b);
-			//dump_unbound_after_repack.apply(pose);
-
-			// if we're solvating, we also need to minimize
-			if ( solvate_ ) do_minimize( pose );
+			do_minimize( pose );
+		} else if ( repack_unbound_ ) {
+			pack::pack_rotamers( pose, *scorefxn_, task_ );
 		}
 
 		if ( relax_unbound() && relax_mover() ) {
@@ -566,6 +717,14 @@ ddG::calculate( pose::Pose const & pose_original )
 			fill_per_residue_energy_vector(pose, unbound_per_residue_energies_);
 		}
 
+		if ( solvate_ ) {
+			for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
+				if ( pose.residue(i).name() == "HOH" ) ++unbound_HOH_;
+				if ( pose.residue(i).name() == "HOH_V" ) ++unbound_HOH_V_;
+			}
+			TR << "number of waters in unbound state ( HOH / HOH_V ) = " << unbound_HOH_ << " / " << unbound_HOH_V_ << std::endl;
+		}
+
 		//----------------------------------
 		// Return to the original state
 		//----------------------------------
@@ -574,6 +733,10 @@ ddG::calculate( pose::Pose const & pose_original )
 			pb_cached_data_ = cached_data;
 		}
 	} // End unbind if
+
+	//pose.dump_pdb("final_unbound.pdb");
+
+
 }
 
 void
@@ -595,7 +758,7 @@ ddG::setup_task( pose::Pose const & pose) {
 		//designing residues
 		utility::vector1< bool > designing_resis = task_->designing_residues();
 		TR << "select ddg_designing_resis, resi ";
-		for ( Size ir=1; ir<=designing_resis.size(); ir++ ) {
+		for ( Size ir=1; ir<=designing_resis.size(); ++ir ) {
 			if ( designing_resis[ir] ) {
 				TR << ir << "+";
 			}
@@ -604,7 +767,7 @@ ddG::setup_task( pose::Pose const & pose) {
 		//repacking residues
 		utility::vector1< bool > repacking_resis = task_->repacking_residues();
 		TR << "select ddg_repacking_resis, resi ";
-		for ( Size ir=1; ir<=repacking_resis.size(); ir++ ) {
+		for ( Size ir=1; ir<=repacking_resis.size(); ++ir ) {
 			if ( repacking_resis[ir] ) {
 				TR << ir << "+";
 			}
@@ -676,6 +839,7 @@ ddG::duplicate_waters_across_jump( Pose & pose, Size jumpnum ) const {
 
 	core::Size nres = pose.total_residue();
 
+	TR << "calling fold_tree().partition_by_jump() in duplicate_waters_across_jump function" << std::endl;
 	utility::vector1< bool > pose_split = pose.fold_tree().partition_by_jump(jumpnum);
 
 	for ( core::Size i=nres; i>=1; --i ) {
@@ -700,7 +864,7 @@ ddG::duplicate_waters_across_jump( Pose & pose, Size jumpnum ) const {
 				new_res->set_xyz(  "O", res.atom("O").xyz() );
 				new_res->set_xyz( "H1", res.atom("H1").xyz() );
 				new_res->set_xyz( "H2", res.atom("H2").xyz() );
-				pose.append_residue_by_jump( *new_res, mindist );
+				pose.append_residue_by_jump( *new_res, minres );
 
 				// this chain lettering is currently rejected -- need to fix  // fd: ???
 				pose.pdb_info()->set_resinfo( pose.total_residue(), pose.pdb_info()->chain(minres), pose.total_residue(), ' ');
@@ -719,6 +883,30 @@ ddG::do_minimize( Pose & pose ) const
 	mm->set_jump( false );
 	mm->set_chi( false );
 	mm->set_bb( false );
+
+	if ( solvate_rbmin_ ) {
+		// get jump # of interface
+		if ( chain_ids_.size() > 0 ) {
+			for ( core::Size current_chain_id : chain_ids_ ) {
+				core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
+				mm->set_jump( current_jump_id, true );
+			}
+		} else if ( rb_jump_ != 0 ) {
+			mm->set_jump( rb_jump_, true );
+		}
+	}
+
+	if ( min_water_jump_ ) {
+		// allow waters jumps to minimize
+		for ( int j=1; j<=(int)pose.fold_tree().num_jump(); ++j ) {
+			kinematics::Edge jump_j = pose.fold_tree().jump_edge( j );
+			Size const us_res = pose.fold_tree().upstream_jump_residue( j );
+			Size const ds_res = pose.fold_tree().downstream_jump_residue( j );
+			if ( pose.residue(us_res).is_water() || pose.residue(ds_res).is_water() ) {
+				mm->set_jump( j, true );
+			}
+		}
+	}
 
 	Size const nres( task_->total_residue() );
 	for ( Size i(1); i <=nres; ++i ) {
@@ -845,8 +1033,8 @@ ddG::define_ddG_schema() {
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"translate_by", xs_decimal,
-		"XSD XRW TO DO",
-		"1000");
+		"Distance in Angstroms by which to separate the components of the bound state",
+		"1000.0");
 
 	attlist + XMLSchemaAttribute(
 		"relax_mover", xs_string,
@@ -867,7 +1055,22 @@ ddG::define_ddG_schema() {
 	// fd
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"solvate", xsct_rosetta_bool,
-		"Solvate both bound and unbound pose (using WaterBox mover)",
+		"Solvate bound pose (using ExplicitWater mover)",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"solvate_unbound", xsct_rosetta_bool,
+		"Solvate unbound pose (using ExplicitWater mover)",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"solvate_rbmin", xsct_rosetta_bool,
+		"Use rigid-body minimization following solvation",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"min_water_jump", xsct_rosetta_bool,
+		"Include waters in rigid-body minimization following solvation and packing",
 		"false");
 
 	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );

@@ -521,6 +521,7 @@ static MoverRegistrator< pose_creation::SliceToMiniProteinMoverCreator > reg_Sli
 
 static MoverRegistrator< simple_moves::AddChainMoverCreator > reg_AddChainMoverCreator;
 static MoverRegistrator< simple_moves::AddJobPairDataCreator > reg_AddJobPairDataCreator;
+static MoverRegistrator< simple_moves::AddPDBInfoMoverCreator > reg_AddPDBInfoMoverCreator;
 static MoverRegistrator< simple_moves::AddResidueLabelMoverCreator > reg_AddResidueLabelMoverCreator;
 static MoverRegistrator< simple_moves::AlignChainMoverCreator > reg_AlignChainCreator;
 static MoverRegistrator< simple_moves::BBGaussianMoverCreator > reg_BBGaussianMoverCreator;
@@ -539,7 +540,7 @@ static MoverRegistrator< simple_ddg::ddGCreator> reg_ddGCreator;
 static MoverRegistrator< simple_moves::DisulfideInsertionMoverCreator > reg_DisulfideInsertionMoverCreator;
 static MoverRegistrator< simple_moves::DumpSingleResidueRotamersCreator > reg_DumpSingleResidueRotamersCreator;
 static MoverRegistrator< simple_moves::DumpPdbCreator > reg_DumpPdbCreator;
-static MoverRegistrator< simple_moves::AddPDBInfoMoverCreator > reg_AddPDBInfoMoverCreator;
+static MoverRegistrator< simple_moves::ExplicitWaterMoverCreator > reg_ExplicitWaterMoverCreator;
 static MoverRegistrator< simple_moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
 static MoverRegistrator< simple_moves::FavorSymmetricSequenceCreator > reg_FavorSymmetricSequenceCreator;
 static MoverRegistrator< calc_taskop_movers::ForceDisulfidesMoverCreator > reg_ForceDisulfidesMoverCreator;
@@ -585,7 +586,6 @@ static MoverRegistrator< simple_moves::SwitchResidueTypeSetMoverCreator > reg_Sw
 static MoverRegistrator< simple_moves::SwitchChainOrderMoverCreator > reg_SwitchChainOrderMoverCreator;
 static MoverRegistrator< simple_moves::TumbleCreator > reg_TumbleCreator;
 static MoverRegistrator< simple_moves::VirtualRootMoverCreator > reg_VirtualRootMoverCreator;
-static MoverRegistrator< simple_moves::WaterBoxMoverCreator > reg_WaterBoxMoverCreator;
 static MoverRegistrator< simple_moves::WriteSSEMoverCreator > reg_WriteSSEMoverCreator;
 
 static MoverRegistrator< simple_moves::bin_transitions::InitializeByBinsCreator > reg_InitializeByBinsCreator;

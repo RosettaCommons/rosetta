@@ -41,12 +41,16 @@ public:
 
 	void set_movable_jumps( utility::vector1_int const & movable_jumps );
 	void add_movable_jump( int const additional_jump );
+	void set_movable_chains( utility::vector1_int const & movable_chains );
+	void add_movable_chain( int const additional_chain );
 	utility::vector1_int const & movable_jumps() const;
+	utility::vector1_int const & movable_chains() const;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "InterfaceTaskOperation"; }
 
 private:
 	utility::vector1_int movable_jumps_;
+	utility::vector1_int movable_chains_; // specify chains.  Will get mapped to jumps
 };
 
 }

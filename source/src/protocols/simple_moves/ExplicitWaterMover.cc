@@ -7,11 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file WaterBoxMover.cc
+/// @file ExplicitWaterMover.cc
+/// @brief add explicit water molecules to surface of biomolecule
+/// @author Ryan Pavlovicz (rpavlov@uw.edu)
+/// @author Frank DiMaio (dimaio@uw.edu)
 
 // Unit headers
-#include <protocols/simple_moves/WaterBoxMover.hh>
-#include <protocols/simple_moves/WaterBoxMoverCreator.hh>
+#include <protocols/simple_moves/ExplicitWaterMover.hh>
+#include <protocols/simple_moves/ExplicitWaterMoverCreator.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -78,13 +81,13 @@
 namespace protocols {
 namespace simple_moves {
 
-static basic::Tracer TR("protocols.moves.WaterBoxMover");
+static basic::Tracer TR("protocols.moves.ExplicitWaterMover");
 
 
-WaterRotsDB WaterBoxMover::water_rots_db_;
+WaterRotsDB ExplicitWaterMover::water_rots_db_;
 
 #ifdef MULTI_THREADED
-utility::thread::ReadWriteMutex WaterBoxMover::db_mutex_;
+utility::thread::ReadWriteMutex ExplicitWaterMover::db_mutex_;
 #endif
 
 // adds a single water to the water hash
@@ -300,38 +303,38 @@ WaterRotsDB::initialize() {
 
 
 std::string
-WaterBoxMoverCreator::keyname() const {
-	return WaterBoxMoverCreator::mover_name();
+ExplicitWaterMoverCreator::keyname() const {
+	return ExplicitWaterMoverCreator::mover_name();
 }
 
 protocols::moves::MoverOP
-WaterBoxMoverCreator::create_mover() const {
-	return utility::pointer::make_shared< WaterBoxMover >();
+ExplicitWaterMoverCreator::create_mover() const {
+	return utility::pointer::make_shared< ExplicitWaterMover >();
 }
 
 std::string
-WaterBoxMover::mover_name() {
-	return WaterBoxMoverCreator::mover_name();
+ExplicitWaterMover::mover_name() {
+	return ExplicitWaterMoverCreator::mover_name();
 }
 
 std::string
-WaterBoxMoverCreator::mover_name() {
-	return "WaterBoxMover";
+ExplicitWaterMoverCreator::mover_name() {
+	return "ExplicitWaterMover";
 }
 
-void WaterBoxMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+void ExplicitWaterMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	WaterBoxMover::provide_xml_schema( xsd );
+	ExplicitWaterMover::provide_xml_schema( xsd );
 }
 
-void WaterBoxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+void ExplicitWaterMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	auto ct_gen = define_water_box_mover_schema();
+	auto ct_gen = define_explicit_water_mover_schema();
 	ct_gen->write_complex_type_to_schema(xsd);
 }
 
 void
-WaterBoxMover::init() {
+ExplicitWaterMover::init() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -358,23 +361,23 @@ WaterBoxMover::init() {
 }
 
 std::string
-WaterBoxMover::get_name() const {
-	return WaterBoxMoverCreator::mover_name();
+ExplicitWaterMover::get_name() const {
+	return ExplicitWaterMoverCreator::mover_name();
 }
 
 protocols::moves::MoverOP
-WaterBoxMover::clone() const {
-	return utility::pointer::make_shared< WaterBoxMover >( *this );
+ExplicitWaterMover::clone() const {
+	return utility::pointer::make_shared< ExplicitWaterMover >( *this );
 }
 
 protocols::moves::MoverOP
-WaterBoxMover::fresh_instance() const {
-	return utility::pointer::make_shared< WaterBoxMover >();
+ExplicitWaterMover::fresh_instance() const {
+	return utility::pointer::make_shared< ExplicitWaterMover >();
 }
 
 // helper function to delete (all or virtualized) waters from a pose
 void
-WaterBoxMover::delete_waters( core::pose::Pose &pose, bool virt_only ) {
+ExplicitWaterMover::delete_waters( core::pose::Pose &pose, bool virt_only ) {
 	core::Size nres = pose.total_residue();
 
 	for ( core::Size i=nres; i>=1; --i ) {
@@ -390,7 +393,7 @@ WaterBoxMover::delete_waters( core::pose::Pose &pose, bool virt_only ) {
 
 /// setup the initial packing step
 void
-WaterBoxMover::setup_pack( core::pose::Pose & pose ) {
+ExplicitWaterMover::setup_pack( core::pose::Pose & pose ) {
 	using namespace core::pack::interaction_graph;
 
 	pose.update_residue_neighbors();
@@ -456,7 +459,7 @@ WaterBoxMover::setup_pack( core::pose::Pose & pose ) {
 
 
 void
-WaterBoxMover::build_backbone_rotamer_clouds(
+ExplicitWaterMover::build_backbone_rotamer_clouds(
 	core::pose::Pose const & pose,
 	PWatRotamerCloud & retval
 ) {
@@ -492,12 +495,14 @@ WaterBoxMover::build_backbone_rotamer_clouds(
 	// now build waters for all residues
 	// TODO: do we apply the taskop here????
 	core::Size nwaterres=0, nwaterrot=0;
-	for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		core::conformation::Residue const &res_i = pose.residue(i);
 
 		// split protein/ligand logic
 		if ( res_i.is_protein() ) {
-			if ( !gen_fixed_ && !task_->design_residue( i ) && !task_->pack_residue( i ) ) continue;
+			bool packing_res_i = (task_->design_residue( i ) || task_->pack_residue( i ));
+			bool generate_for_fixed = gen_fixed_ || (i<=gen_fixed_byres_.size() && gen_fixed_byres_[i]);
+			if ( !packing_res_i && !generate_for_fixed ) continue;
 
 			// store water clouds indexed by base atom type
 			std::map< core::Size, utility::vector1< core::Vector > > waters_i;
@@ -623,7 +628,7 @@ WaterBoxMover::build_backbone_rotamer_clouds(
 
 
 void
-WaterBoxMover::build_lkboverlap_rotamer_clouds(
+ExplicitWaterMover::build_lkboverlap_rotamer_clouds(
 	core::pose::Pose const & pose,
 	PWatRotamerCloud & retval
 ) {
@@ -642,11 +647,20 @@ WaterBoxMover::build_lkboverlap_rotamer_clouds(
 	// (1) get lkball positions from packable side chains
 	AtomHash allwaters( lkb_rotset_radius_+1.0 );
 
+	core::Size nflex=0, nfixed=0, nrots=0;
+
 	for ( Size i=1; i <= task_->total_residue(); ++i ) {
+		// fd: this may be desirable (building, say, second shell waters)
+		//     but I think more often it is not
+		// maybe make it an option?
+		if ( pose.residue_type(i).is_water() ) continue;
 
 		if ( task_->design_residue( i ) || task_->pack_residue( i ) ) {
 			using namespace core::pack::rotamer_set;
 			RotamerSetOP res_rotset = rotamer_sets_->rotamer_set_for_residue( i );
+
+			nflex++;
+			nrots+=res_rotset->num_rotamers();
 
 			for ( Size ii=1; ii <= res_rotset->num_rotamers(); ++ii ) {
 				core::conformation::Residue res_rot = *res_rotset->rotamer( ii );
@@ -666,26 +680,32 @@ WaterBoxMover::build_lkboverlap_rotamer_clouds(
 					}
 				}
 			}
-		} else if ( gen_fixed_ ) {  // residue not being packed/designed
-			// get lkball positions for fixed residues
-			core::scoring::lkball::LKB_ResidueInfoOP lkb_resinfo( new core::scoring::lkball::LKB_ResidueInfo( pose.residue(i) ) );
+		} else {  // residue not being packed/designed
+			bool generate_for_fixed = gen_fixed_ || (i<=gen_fixed_byres_.size() && gen_fixed_byres_[i]);
+			if ( generate_for_fixed ) {
+				nfixed++;
 
-			utility::vector1< core::Size > const & rsdin_waters = lkb_resinfo->n_attached_waters();
-			utility::vector1< core::Size > const & rsdiwater_offset = lkb_resinfo->water_offset_for_atom();
-			core::scoring::lkball::WaterCoords const & rsdiwaters = lkb_resinfo->waters();
+				// get lkball positions for fixed residues
+				core::scoring::lkball::LKB_ResidueInfoOP lkb_resinfo( new core::scoring::lkball::LKB_ResidueInfo( pose.residue(i) ) );
 
-			for ( Size j=1; j <= rsdin_waters.size(); ++j ) {
-				for ( Size k=1; k <= rsdin_waters[j]; ++k ) {
-					Size k_wat_ind = k + rsdiwater_offset[j];
-					// "exposure" check
-					//if ( allprotein.get_neighborcount( rsdiwaters[j][k], neighbrad ) > neighbcountcut) {
-					allwaters.add_point( i, rsdiwaters[k_wat_ind] );
-					//}
+				utility::vector1< core::Size > rsdin_waters = lkb_resinfo->n_attached_waters();
+				utility::vector1< utility::fixedsizearray1< core::Vector, 4 > > rsdiwaters = lkb_resinfo->waters();
+
+				for ( Size j=1; j <= rsdiwaters.size(); ++j ) {
+					for ( Size k=1; k <= rsdin_waters[j]; ++k ) {
+						// "exposure" check
+						//if ( allprotein.get_neighborcount( rsdiwaters[j][k], neighbrad ) > neighbcountcut) {
+						allwaters.add_point( i, rsdiwaters[j][k] );
+						//}
+					}
 				}
 			}
 		}
+
 	}  // loop over nres
-	TR << "build_lkboverlap_rotamer_clouds initially generated " << allwaters.npoints() << " waters" << std::endl;
+	TR << "build_lkboverlap_rotamer_clouds generated " << allwaters.npoints() << " waters"
+		<< " at " << nflex << " packable ("<<nrots<<" rots) and " << nfixed << " fixed positions"
+		<< std::endl;
 
 	// (2) identify overlaps
 	allwaters.trim_to_heterogeneous_clusters(lkb_overlap_dist_);
@@ -701,7 +721,7 @@ WaterBoxMover::build_lkboverlap_rotamer_clouds(
 // updates: rotamersets, task, and pose with additional clouds
 //   applies bump check
 void
-WaterBoxMover::attach_rotamer_clouds_to_pose_and_rotset(
+ExplicitWaterMover::attach_rotamer_clouds_to_pose_and_rotset(
 	core::pose::Pose &pose,
 	PWatRotamerCloud &watercloud
 ) {
@@ -800,7 +820,7 @@ WaterBoxMover::attach_rotamer_clouds_to_pose_and_rotset(
 
 /// run packing trajectory
 void
-WaterBoxMover::run_pack(
+ExplicitWaterMover::run_pack(
 	core::pose::Pose & pose,
 	utility::vector0< int > rot_to_pack,
 	utility::vector1< core::pack::annealer::PointDwell > & all_rot
@@ -826,7 +846,7 @@ WaterBoxMover::run_pack(
 
 /// update task to include all waters
 core::pack::task::PackerTaskOP
-WaterBoxMover::update_packer_task(
+ExplicitWaterMover::update_packer_task(
 	Pose const & pose,
 	core::pack::task::PackerTaskCOP & packer_task
 ) {
@@ -871,7 +891,7 @@ WaterBoxMover::update_packer_task(
 /// inefficient but probably okay (there should not be many waters
 ///      passing filters else rotatible waters would take excessively long)
 void
-WaterBoxMover::cluster_rotset( utility::vector1< core::pack::annealer::PointDwell > &rotset ) {
+ExplicitWaterMover::cluster_rotset( utility::vector1< core::pack::annealer::PointDwell > &rotset ) {
 	if ( rotset.size() == 0 ) return;
 
 	TR << "Clustering " << rotset.size() << " PWAT rotamers " << std::endl;
@@ -979,7 +999,7 @@ WaterBoxMover::cluster_rotset( utility::vector1< core::pack::annealer::PointDwel
 
 /// find closest protein residue
 core::Size
-WaterBoxMover::find_closest( core::pose::Pose const & pose, core::Vector Ocoord ) {
+ExplicitWaterMover::find_closest( core::pose::Pose const & pose, core::Vector Ocoord ) {
 	core::Real mindist = 1e6;
 	core::Size attach_to = 0;
 	for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
@@ -991,12 +1011,12 @@ WaterBoxMover::find_closest( core::pose::Pose const & pose, core::Vector Ocoord 
 			attach_to = i;
 		}
 	}
-	TR << "Attaching new water to residue " << attach_to << " with distance = " << mindist << std::endl;
+	TR.Debug << "Attaching new water to residue " << attach_to << " with distance = " << mindist << std::endl;
 	return attach_to;
 }
 
 void
-WaterBoxMover::get_water_recovery( core::pose::Pose const & pose, bool incl_vrt ) {
+ExplicitWaterMover::get_water_recovery( core::pose::Pose const & pose, bool incl_vrt ) {
 	if ( !native_ ) return;
 
 	utility::vector1< core::Vector > native_hoh, predicted_hoh;
@@ -1034,7 +1054,7 @@ WaterBoxMover::get_water_recovery( core::pose::Pose const & pose, bool incl_vrt 
 
 // main apply function
 void
-WaterBoxMover::apply( Pose & pose ) {
+ExplicitWaterMover::apply( Pose & pose ) {
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::pack::task;
@@ -1083,9 +1103,9 @@ WaterBoxMover::apply( Pose & pose ) {
 	std::sort(kept_rots.begin(), kept_rots.end(),
 		[](core::pack::annealer::PointDwell const &a, core::pack::annealer::PointDwell const &b) {return a.dwell > b.dwell;});
 
-	TR << "Rotamers with dwell time > " << dwell_cutoff_ << " = " << kept_rots.size() << std::endl;
+	TR.Debug << "Rotamers with dwell time > " << dwell_cutoff_ << " = " << kept_rots.size() << std::endl;
 	for ( Size x = 1; x <= kept_rots.size(); ++x ) {
-		TR << "   " << x << " " << kept_rots[x].xyz.to_string() << " " << kept_rots[x].dwell << std::endl;
+		TR.Debug << "   " << x << " " << kept_rots[x].xyz.to_string() << " " << kept_rots[x].dwell << std::endl;
 	}
 
 	// cluster and resort
@@ -1098,14 +1118,14 @@ WaterBoxMover::apply( Pose & pose ) {
 	if ( watlim_scale_ > 0 ) {
 		nkeep = (core::Size) std::ceil( watlim_scale_ * orig_nres );
 		if ( nkeep < kept_rots.size() ) {
-			TR << "Limiting generated waters to " << nkeep << std::endl;
+			TR.Debug << "Limiting generated waters to " << nkeep << std::endl;
 		}
 	}
 
 	// all that work to go back to original pose
 	//   but now we add centroids as rotatable waters
 	for ( Size x = 1; x <= nkeep; ++x ) {
-		TR << "  centroid #" << x << ": " << kept_rots[x].xyz.to_string() << " with cumulative dwell time of " << kept_rots[x].dwell << std::endl;
+		TR.Debug << "  centroid #" << x << ": " << kept_rots[x].xyz.to_string() << " with cumulative dwell time of " << kept_rots[x].dwell << std::endl;
 
 		ResidueOP vrt_wat = ResidueFactory::create_residue( rsd_set->name_map("HOH_V") );
 		core::Vector const OH1( vrt_wat->xyz("H1") - vrt_wat->xyz("O") );
@@ -1128,7 +1148,7 @@ WaterBoxMover::apply( Pose & pose ) {
 
 
 void
-WaterBoxMover::parse_my_tag(
+ExplicitWaterMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap,
 	filters::Filters_map const &,
@@ -1186,7 +1206,7 @@ WaterBoxMover::parse_my_tag(
 }
 
 utility::tag::XMLSchemaComplexTypeGeneratorOP
-WaterBoxMover::define_water_box_mover_schema() {
+ExplicitWaterMover::define_explicit_water_mover_schema() {
 	using namespace utility::tag;
 	AttributeList attlist;
 

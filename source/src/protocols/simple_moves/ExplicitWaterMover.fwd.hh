@@ -7,26 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/moves/WaterBoxMoverCreator.hh
+/// @file ExplicitWaterMover.fwd.hh
+/// @author Ryan Pavlovicz (rpavlov@uw.edu)
+/// @author Frank DiMaio (dimaio@uw.edu)
 
-#ifndef INCLUDED_protocols_moves_WaterBoxMoverCreator_hh
-#define INCLUDED_protocols_moves_WaterBoxMoverCreator_hh
+#ifndef INCLUDED_protocols_moves_ExplicitWaterMover_fwd_hh
+#define INCLUDED_protocols_moves_ExplicitWaterMover_fwd_hh
 
-#include <protocols/moves/MoverCreator.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace simple_moves {
 
-class WaterBoxMoverCreator : public protocols::moves::MoverCreator {
-public:
-	protocols::moves::MoverOP create_mover() const override;
-	std::string keyname() const override;
-	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
-	static std::string mover_name();
-};
+class ExplicitWaterMover;
+typedef utility::pointer::shared_ptr< ExplicitWaterMover > ExplicitWaterMoverOP;
+typedef utility::pointer::shared_ptr< ExplicitWaterMover const > ExplicitWaterMoverCOP;
 
-}
-}
+} // moves
+} // protocols
 
 #endif
-

@@ -50,8 +50,12 @@ public :
 	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump=1 );
 	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, utility::vector1<core::Size> const & chain_ids );
 	void apply (Pose & pose) override;
+	void clean_pose( Pose & pose_copy );
+	void compute_rmsd_with_super( Pose & pose, Real & input_rmsd_super, Real & input_rmsd );
 	virtual void calculate( Pose const & pose_in );
 	virtual void report_ddG( std::ostream & out ) const;
+	virtual Real sum_bound() const;
+	virtual Real sum_unbound() const;
 	virtual Real sum_ddG() const;
 
 	core::Size rb_jump() const { return rb_jump_; }
@@ -143,7 +147,7 @@ private :
 	bool repack_bound_;
 	bool relax_bound_;
 	bool relax_unbound_;
-	bool solvate_; //fd solvate the bound and unbound states
+	bool solvate_, solvate_unbound_, solvate_rbmin_, min_water_jump_; //fd solvate the bound and unbound states
 
 	/// info carrier for poisson-boltzmann potential energy computation
 	core::scoring::methods::PBLifetimeCacheOP pb_cached_data_;
@@ -152,6 +156,14 @@ private :
 	bool pb_enabled_;
 	/// distance in A to separate moledules
 	core::Real translate_by_; //dflt set to 1000. Default resets to 100 for RosettaScripts with a scorefxn containing PB_elec.
+
+	// native pose read if provided via command line
+	core::pose::PoseOP native_;
+
+	// number of waters in final bound and unbound state
+	core::Size bound_HOH_, bound_HOH_V_, unbound_HOH_, unbound_HOH_V_;
+	core::Real bound_rmsd_, bound_rmsd_super_;
+
 };
 
 } // movers

@@ -217,9 +217,7 @@ void FixbbPwatSimAnnealer::run() {
 			current_rotamer.dwell = (core::Real)rot_states[x][y] / (core::Real)record_count;
 			core::conformation::ResidueCOP pwat_rot = rotamer_sets()->rotamer_set_for_moltenresidue(x)->rotamer(y);
 			current_rotamer.xyz = pwat_rot->xyz("O");
-			if ( current_rotamer.dwell >= min_dwell_ ) {
-				all_rot_.push_back(current_rotamer);
-			}
+			all_rot_.push_back(current_rotamer);
 		}
 	}
 

@@ -689,6 +689,7 @@ sources = {
 		"DumpPdb",
 		"DumpSingleResidueRotamers",
 
+		"ExplicitWaterMover",
 		"FavorSequenceProfile",
 		"FavorSymmetricSequence",
 
@@ -731,7 +732,6 @@ sources = {
 		"Tumble",
 		"UniformPositionMover",
 		"VirtualRootMover",
-		"WaterBoxMover",
 		"WriteSSEMover",
 		"WobbleMover",
 	],

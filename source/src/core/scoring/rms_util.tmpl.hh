@@ -165,11 +165,14 @@ rmsd_with_super_subset(
 	T* predicate
 )
 {
-	debug_assert( subset.size() == pose1.size() );
-	debug_assert( subset.size() == pose2.size() );
+	// previous assertion was that size of pose1 and pose2 be of subset.size()
+	// changed this to allow pose1 or pose2 to be larger than subset (which is generally based off of pose1)
+	// in cases where one pose changes in size due to addition of water molecules for example - rpav 10.07.19
+	debug_assert( subset.size() <= pose1.size() );
+	debug_assert( subset.size() <= pose2.size() );
 
 	utility::vector1< core::Size > selected_residues;
-	for ( core::Size ii = 1; ii <= pose1.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
 		if ( subset( ii ) ) {
 			selected_residues.push_back( ii );
 		}
@@ -347,11 +350,13 @@ rmsd_no_super_subset(
 	T* predicate
 )
 {
-	debug_assert( subset.size() == pose1.size() );
-	debug_assert( subset.size() == pose2.size() );
+	// changed assertion similar to rmsd_with_super_subset
+	// rpav 10.07.19
+	debug_assert( subset.size() <= pose1.size() );
+	debug_assert( subset.size() <= pose2.size() );
 
 	utility::vector1< core::Size > selected_residues;
-	for ( core::Size ii = 1; ii <= pose1.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
 		if ( subset( ii ) ) {
 			selected_residues.push_back( ii );
 		}

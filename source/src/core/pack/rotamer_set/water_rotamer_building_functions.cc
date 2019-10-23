@@ -181,7 +181,7 @@ build_rotated_water_rotamers(
 			Vector neighborO =  neighbor.xyz("O");
 			Real dist = O.distance( neighborO );
 			if ( dist <= CO_cutoff ) {
-				COs.push_back( neighborO ); // save all incase there are > 1
+				COs.push_back( neighborO );
 			}
 		}
 	}

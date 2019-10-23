@@ -250,8 +250,10 @@ void find_interface_pointing_residues_from_neighbs(
 	//itterate over pairs
 	for ( auto chain1_it = interface_pairs.first.begin();  chain1_it!=interface_pairs.first.end(); ++chain1_it ) {
 		conformation::Residue ch1residue(pose.residue(*chain1_it));
+		if ( ch1residue.is_water() ) continue; // exclude water from allowing interface to expand
 		for ( unsigned long chain2_it : interface_pairs.second ) {
 			conformation::Residue ch2residue(pose.residue(chain2_it));
+			if ( ch2residue.is_water() ) continue; // exlude water from allowing interface to expand
 			//check to see if both are already in the interface
 			if ( interface_residues[*chain1_it] && interface_residues[chain2_it] ) {
 				continue;

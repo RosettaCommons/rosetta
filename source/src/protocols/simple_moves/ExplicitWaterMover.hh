@@ -7,12 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file WaterBoxMover.hh
+/// @file ExplicitWaterMover.hh
+/// @author Ryan Pavlovicz (rpavlov@uw.edu)
+/// @author Frank DiMaio (dimaio@uw.edu)
 
-#ifndef INCLUDED_protocols_moves_WaterBoxMover_hh
-#define INCLUDED_protocols_moves_WaterBoxMover_hh
+#ifndef INCLUDED_protocols_moves_ExplicitWaterMover_hh
+#define INCLUDED_protocols_moves_ExplicitWaterMover_hh
 
-#include <protocols/simple_moves/WaterBoxMover.fwd.hh>
+#include <protocols/simple_moves/ExplicitWaterMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/pack/task/PackerTask.fwd.hh>
@@ -147,13 +149,13 @@ private:
 
 //
 // A class that solvates a pose
-class WaterBoxMover : public protocols::moves::Mover {
+class ExplicitWaterMover : public protocols::moves::Mover {
 public:
-	WaterBoxMover() : Mover("WaterBoxMover") {
+	ExplicitWaterMover() : Mover("ExplicitWaterMover") {
 		init();
 	}
 
-	WaterBoxMover(core::scoring::ScoreFunctionOP sfin): Mover("WaterBoxMover"), sf_ (sfin) {
+	ExplicitWaterMover(core::scoring::ScoreFunctionOP sfin): Mover("ExplicitWaterMover"), sf_ (sfin) {
 		init();
 	}
 
@@ -210,6 +212,9 @@ public:
 	Size
 	find_closest( Pose const & pose, core::Vector Ocoord );
 
+	// set the mode
+	void set_mode( std::string val ) { mode_ = val; }
+
 	// setters
 	void set_lkb_overlap_dist( core::Real val ) { lkb_overlap_dist_=val; }
 	void set_lkb_clust_rad( core::Real val ) { lkb_clust_rad_=val; }
@@ -219,6 +224,7 @@ public:
 	void set_clust_cutoff( core::Real val ) { clust_cutoff_=val; }
 	void set_watlim_scale( core::Real val ) { watlim_scale_=val; }
 	void set_gen_fixed( bool val ) { gen_fixed_=val; }
+	void set_gen_fixed( utility::vector1<bool> val ) { gen_fixed_byres_=val; }
 	void set_taskop( core::pack::task::PackerTaskCOP val ) { task_=val; }
 
 	// RS stuff
@@ -236,7 +242,7 @@ public:
 
 	static
 	utility::tag::XMLSchemaComplexTypeGeneratorOP
-	define_water_box_mover_schema();
+	define_explicit_water_mover_schema();
 
 	static
 	void
@@ -267,7 +273,10 @@ private:
 	core::Real dwell_cutoff_; // dwell cutoff after packing, before clustering
 	core::Real clust_radius_, clust_cutoff_; // clustering parameters after packing
 	core::Real watlim_scale_; // limit number of waters to an absolute factor (scaled by #protein res)
+
+	// generate waters at fixed input positions
 	bool gen_fixed_;
+	utility::vector1<bool> gen_fixed_byres_;
 
 	core::pose::PoseOP native_; // native (if given)
 

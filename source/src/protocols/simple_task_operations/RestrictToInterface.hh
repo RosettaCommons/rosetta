@@ -151,7 +151,7 @@ public:
 
 	TaskOperationOP clone() const override;
 	void rb_jump( int jump_in );
-	//void set_movable_jumps( utility::vector1_int const movable_jumps );
+	void rb_chain( int chain_in );
 	void distance( core::Real const distance_in );
 	void symmetric_task( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 

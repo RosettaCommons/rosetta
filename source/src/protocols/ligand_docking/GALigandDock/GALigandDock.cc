@@ -40,7 +40,7 @@
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/WaterBoxMover.hh>
+#include <protocols/simple_moves/ExplicitWaterMover.hh>
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -1141,7 +1141,7 @@ GALigandDock::final_cartligmin(
 	//scfxn_cartmin->show( TR, pose );
 }
 
-// use WaterBoxMover to solvate ligand
+// use ExplicitWaterMover to solvate ligand
 void
 GALigandDock::final_solvate(
 	LigandConformer & gene,
@@ -1166,7 +1166,7 @@ GALigandDock::final_solvate(
 	core::scoring::ScoreFunctionOP sfwater = scfxn_->clone();
 	sfwater->set_weight( core::scoring::pointwater, 1.0 );
 
-	protocols::simple_moves::WaterBoxMover wb(sfwater);
+	protocols::simple_moves::ExplicitWaterMover wb(sfwater);
 	wb.set_taskop( task_new );
 	wb.apply( pose );
 }
@@ -1875,7 +1875,7 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "premin_ligand", xsct_rosetta_bool, "Cartmin ligand-only at the beginning");
 	attlist + XMLSchemaAttribute( "min_neighbor", xsct_rosetta_bool, "If cartmin is enabled, also cartmin SCs before and after final relax.");
 	attlist + XMLSchemaAttribute( "full_repack_before_finalmin", xsct_rosetta_bool, "Full repack before final relax.");
-	attlist + XMLSchemaAttribute( "final_solvate", xsct_rosetta_bool, "Solvate pose (via WaterBoxMover) in final optimize. Default: false");
+	attlist + XMLSchemaAttribute( "final_solvate", xsct_rosetta_bool, "Solvate pose (via ExplicitWaterMover) in final optimize. Default: false");
 	attlist + XMLSchemaAttribute( "fastrelax_script", xs_string, "FastRelax script file for exact minimize.");
 	attlist + XMLSchemaAttribute( "move_water", xsct_rosetta_bool, "Move water at final relaxation.");
 	attlist + XMLSchemaAttribute( "redefine_flexscs_at_relax", xsct_rosetta_bool, "Redefine movable residues at final relaxation.");

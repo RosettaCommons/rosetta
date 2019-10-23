@@ -17,6 +17,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/pose/chains_util.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/conformation/Conformation.hh>
@@ -214,23 +215,25 @@ RestrictToInterface::apply(
 	using core::Size;
 	utility::vector1<bool> is_interface( pose.size(), false );
 
-	core::Size num_jump_ = movable_jumps().size();
-	for ( Size jj=1; jj<=num_jump_; jj++ ) {
-		//protocols::scoring::Interface interface( movable_jumps()[jj] );
-		//interface.distance( distance_ );
-		//interface.calculate( pose );
-		//for ( Size ii=1; ii<=pose.size(); ++ii ) {
-		// if ( interface.is_interface(ii) ) {
-		//  is_interface[ii] = true;
-		// }
-		//}
+	utility::vector1<int> jumps = movable_jumps();
+	//fd if a chain_num is given, prefer that
+	if ( movable_chains().size()>0 ) {
+		jumps.clear();
 
-		//fd logic above is very problematic:
+		//fd: to match the behavior of 'simple_ddg', only use the first jump
+		for ( core::Size i=1; i<=movable_chains().size(); ++i ) {
+			jumps.push_back( core::pose::get_jump_id_from_chain_id(movable_chains()[i],pose));
+		}
+	}
+
+	core::Size num_jump_ = jumps.size();
+	for ( Size jj=1; jj<=num_jump_; jj++ ) {
+		//fd prior logic was very problematic:
 		// * it uses only the stored energy graph, which may be computed with less distance than distance_
 		// * it depends on interaction radius of last scorefunction used, which may vary, giving diff results
 		// * Instead we replace this logic.  Similar to it, though, we use neighboratoms for all but ligands.
 		ObjexxFCL::FArray1D_bool partition( pose.size(),false );
-		pose.fold_tree().partition_by_jump( movable_jumps()[jj], partition );
+		pose.fold_tree().partition_by_jump( jumps[jj], partition );
 
 		for ( Size ires=1; ires<=pose.size(); ++ires ) {
 			if ( pose.residue_type(ires).is_water() ) continue;
@@ -301,15 +304,12 @@ void RestrictToInterface::symmetric_task(
 }
 
 void RestrictToInterface::rb_jump( int jump_in ) {
-
 	add_movable_jump( jump_in );
 }
 
-/*
-void RestrictToInterface::set_movable_jumps( utility::vector1_int const movable_jumps ) {
-rb_jump_ = movable_jumps;
+void RestrictToInterface::rb_chain( int chain_in ) {
+	add_movable_chain( chain_in );
 }
-*/
 
 void RestrictToInterface::distance( core::Real const distance_in ) {
 	distance_ = distance_in;
@@ -319,6 +319,14 @@ void
 RestrictToInterface::parse_tag( TagCOP tag , DataMap & )
 {
 	add_movable_jump( ( tag->getOption< core::Size >( "jump", 1 ) ) );
+
+	if ( tag->hasOption("chain_num") ) {
+		add_movable_chain( ( tag->getOption< core::Size >( "chain_num" ) ) );
+	}
+
+	//fd sanity check: ensure both jump and chain have not been provided (since chain overrides jump)
+	runtime_assert( !tag->hasOption("chain_num") || !tag->hasOption("jump") );
+
 	distance_ = tag->getOption< core::Real >( "distance", 8 )  ;
 	include_all_water_ = tag->getOption<bool>( "include_all_water", 0 );
 }
@@ -328,7 +336,8 @@ void RestrictToInterface::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "jump", xsct_non_negative_integer, "XRW TO DO",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "jump", xsct_non_negative_integer, "compute interface for this jump number",  "1"  )
+		+ XMLSchemaAttribute(  "chain_num", xsct_non_negative_integer, "compute interface for jump associated with this chain number" )
 		+ XMLSchemaAttribute::attribute_w_default(  "distance", xsct_real, "XRW TO DO",  "8"  )
 		+ XMLSchemaAttribute::attribute_w_default(  "include_all_water", xsct_rosetta_bool, "add all water to interface",  "false"  );
 
