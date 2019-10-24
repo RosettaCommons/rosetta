@@ -30,14 +30,14 @@ public:
 	/// @brief MHCEpitopePredictorSVM constructor, taking a NMerSVMEnergyOP configured with scoring options.
 	MHCEpitopePredictorSVM(core::scoring::methods::NMerSVMEnergyOP);
 
-	virtual ~MHCEpitopePredictorSVM() {}
+	~MHCEpitopePredictorSVM() override {}
 
-	virtual bool operator==(MHCEpitopePredictor const & /* other */);
+	bool operator==(MHCEpitopePredictor const & /* other */) override;
 
-	std::string report() const;
+	std::string report() const override;
 
 	/// @brief Scores a peptide
-	virtual core::Real score(std::string const &pep);
+	core::Real score(std::string const &pep) override;
 
 	/// @brief Accessor for the svm_ (NMerSVMEnergy object) being used by the Predictor for scoring.
 	core::scoring::methods::NMerSVMEnergyOP get_svm() const {return svm_;}
