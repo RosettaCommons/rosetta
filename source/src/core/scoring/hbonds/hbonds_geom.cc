@@ -228,11 +228,11 @@ bah_chi_compute_energy_sp2(
 	Real const  H((cos(2*chi) + 1) * 0.5);
 	Real F(0), G(0);
 
-	if ( BAH >= pi * 2/3 ) {
+	if ( BAH >= pi * 2.0/3.0 ) {
 		F = d/2 * cos(3 * PI_minus_BAH) + d/2 - 0.5;
 		G = d - 0.5;
-	} else if ( BAH >= pi * (2/3 - l) ) {
-		Real const outer_rise(cos(pi - (pi*2/3 -  BAH)/l));
+	} else if ( BAH >= pi * (2.0/3.0 - l) ) {
+		Real const outer_rise(cos(pi - (pi*2.0/3.0 -  BAH)/l));
 		F = m/2 * outer_rise + m/2 - 0.5;
 		G = (m - d)/2 * outer_rise + (m - d)/2 + d - 0.5;
 	} else {
@@ -247,7 +247,7 @@ bah_chi_compute_energy_sp2(
 		Real dF_dBAH(0), dG_dBAH(0);
 		if ( BAH >= pi * 2/3 ) {
 			dF_dBAH = 3 * d/2 * sin(3 * PI_minus_BAH);
-		} else if ( BAH >= pi * (2/3 - l) ) {
+		} else if ( BAH >= pi * (2.0/3.0 - l) ) {
 			Real const d_outer_rise_dBAH( -1/l * sin(pi - (2*pi/3 - BAH)/l) );
 			dF_dBAH = m/2 * d_outer_rise_dBAH;
 			dG_dBAH = (m - d)/2 * d_outer_rise_dBAH;
