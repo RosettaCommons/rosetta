@@ -1100,7 +1100,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 
 	utility::vector1 < protocols::loops::Loops > template_chunks_working;
 
-	// subdivide chunks if they are too long
+	// randomly subdivide chunks if they are too long
 	if ( max_contig_insertion_>0 ) {
 		for ( core::Size i=1; i<=template_chunks_.size(); ++i ) {
 			protocols::loops::Loops new_chunks_i;
@@ -1109,11 +1109,22 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 				core::Size start_ij = template_chunks_[i][j].start();
 				core::Size stop_ij = template_chunks_[i][j].stop();
 
-				if ( stop_ij - start_ij + 1 > max_contig_insertion_ ) {
-					TR << "splitting chunk " << start_ij << "," << stop_ij << std::endl;
-					for ( core::Size k=start_ij; k<=stop_ij - max_contig_insertion_+1; ++k ) {
-						new_chunks_i.add_loop( k, k+max_contig_insertion_-1 );
+				core::Size npieces =  1 + (stop_ij - start_ij + 1) / max_contig_insertion_;
+				core::Size actual_max_contig_size = (stop_ij - start_ij + 1) / npieces;
+
+				if ( npieces > 1 ) {
+					TR << "splitting chunk " << start_ij << "," << stop_ij << " into " << npieces << " pieces" << std::endl;
+
+					// add a random offset to each chunk boundary so chunking is semi-random
+					core::Size max_offset = max_contig_insertion_/4;
+
+					core::Size next_start=start_ij, next_stop;
+					for ( core::Size k=1; k<npieces; ++k ) {
+						next_stop = start_ij + k*actual_max_contig_size + numeric::random::rg().random_range(-max_offset, max_offset);
+						new_chunks_i.add_loop( next_start, next_stop );
+						next_start = next_stop+1;
 					}
+					new_chunks_i.add_loop( next_start, stop_ij );
 				} else {
 					new_chunks_i.add_loop(start_ij,stop_ij );
 				}
@@ -1125,7 +1136,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	}
 
 	ChunkTrialMoverOP random_sample_chunk_mover(
-		new ChunkTrialMover(template_poses_, template_chunks_, true /*use_random_template*/, random_chunk, residue_sample_template_) );
+		new ChunkTrialMover(template_poses_, template_chunks_working, true /*use_random_template*/, random_chunk, residue_sample_template_) );
 	random_sample_chunk_mover->set_max_registry_shift(max_registry_shift_);
 
 	// ignore strand pair templates, they will be sampled by a jump mover

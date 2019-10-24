@@ -274,19 +274,6 @@ HybridizeProtocol::HybridizeProtocol(
 	no_global_frame_ = false;
 	linmin_only_ = false;
 
-	// default scorefunctions
-	//    stage2 scorefunctions are initialized in CartesianHybridize
-	//    fa_scorefxn_ = core::scoring::get_score_function();
-	//    core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fa_scorefxn_ );
-
-
-	//    if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-	//        utility::vector1< std::string > cst_files = option[ OptionKeys::constraints::cst_fa_file ]();
-	//        core::Size choice = core::Size( numeric::random::rg().random_range( 1, cst_files.size() ) );
-	//        fa_cst_fn_ = cst_files[choice];
-	//        TR.Info << "Fullatom Constraint choice: " << fa_cst_fn_ << std::endl;
-	//    }
-
 	batch_relax_ = 1;
 	relax_repeats_ = 5;
 
@@ -303,86 +290,10 @@ HybridizeProtocol::HybridizeProtocol(
 	FragSetOP frags3 = FragmentIO().read_data( frag3_fn );
 	fragments_small_.push_back(frags3);
 
-	// native
-	//    if ( option[ in::file::native ].user() ) {
-	//        native_ = utility::pointer::make_shared< core::pose::Pose >();
-	//        if ( option[in::file::fullatom]() ) {
-	//            core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
-	//        } else {
-	//            core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-	//            core::import_pose::pose_from_pdb( *native_, *residue_set, option[ in::file::native ]()  );
-	//        }
-	//    } else if ( option[ evaluation::align_rmsd_target ].user() ) {
-	//        native_ = utility::pointer::make_shared< core::pose::Pose >();
-	//        utility::vector1< std::string > const & align_rmsd_target( option[ evaluation::align_rmsd_target ]() );
-	//        core::import_pose::pose_from_pdb( *native_, align_rmsd_target[1] ); // just use the first one for now
-	//    }
-
-	// strand pairings
-	//    pairings_file_ = option[jumps::pairing_file]();
-	//    if ( option[jumps::sheets].user() ) {
-	//        sheets_ = option[jumps::sheets]();
-	//    } else {
-	//        random_sheets_ = option[jumps::random_sheets]();
-	//    }
-	//    filter_templates_ = option[jumps::filter_templates]();
-
-
-	//if( tag->hasOption( "task_operations" ) ){
-	//FPD   remove this option, it was used as a residue selector and not as options controlling packing
-	//      the 'DetailedControls' tag should replace one part of this, and a separate mover should generate interface constraints
-
-	// force starting template
-	//FPD   removed this option; it is redundant with weights! (set weight to 0 for templates we do not start with)
-
-
-
-	// tons of ab initio options
-	//    if ( tag->hasOption( "add_hetatm" ) ) {
-	//        add_hetatm_ = tag->getOption< bool >( "add_hetatm" );
-	//    }
-	//    if ( tag->hasOption( "hetatm_cst_weight" ) ) {
-	//        hetatm_self_cst_weight_ = tag->getOption< core::Real >( "hetatm_cst_weight" );
-	//    }
-	//    if ( tag->hasOption( "hetatm_to_protein_cst_weight" ) ) {
-	//        hetatm_prot_cst_weight_ = tag->getOption< core::Real >( "hetatm_to_protein_cst_weight" );
-	//    }
-
 	// scorefxns
 	set_stage1_scorefxn(stage1_scorefxn_in);
 	set_stage2_scorefxn(stage2_scorefxn_in);
 	set_fullatom_scorefxn(fa_scorefxn_in);
-
-	//    stage1_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( stage1_scorefxn );
-	//    stage2_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( stage2_scorefxn );
-	//    fa_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( fa_scorefxn );
-
-	//    if ( tag->hasOption( "stage2_min_scorefxn" ) ) {
-	//        std::string const scorefxn_name( tag->getOption<std::string>( "stage2_min_scorefxn" ) );
-	//        stage2min_scorefxn_ = (data.get< ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
-	//    }
-	//    if ( tag->hasOption( "stage2_pack_scorefxn" ) ) {
-	//        if ( !cenrot_ ) {
-	//            TR << "Warning! Ignoring stage2_pack_scorefxn declaration since cenrot is not set." << std::endl;
-	//        } else {
-	//            std::string const scorefxn_name( tag->getOption<std::string>( "stage2_pack_scorefxn" ) );
-	//            stage2pack_scorefxn_ = (data.get< ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
-	//        }
-	//    }
-
-	// user constraints
-	//    if ( tag->hasOption( "coord_cst_res" ) ) {
-	//        user_csts_ = core::pose::get_resnum_list_ordered( tag->getOption<std::string>( "coord_cst_res" ), pose );
-	//    }
-
-	// if user constraints are defined, make sure coord_csts are defined in at least one stage
-	//    if ( user_csts_.size() > 0 ) {
-	//        runtime_assert(
-	//                       stage1_scorefxn_->get_weight( core::scoring::coordinate_constraint ) > 0 ||
-	//                       stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) > 0 ||
-	//                       fa_scorefxn_->get_weight( core::scoring::coordinate_constraint ) > 0 );
-	//    }
-
 
 	cen_cst_in_ = cen_cst_in;
 	fa_cst_in_ = fa_cst_in;
