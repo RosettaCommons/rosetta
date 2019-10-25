@@ -371,10 +371,13 @@ void ddG::apply(Pose & pose)
 	}
 
 	setPoseExtraScore(pose, "ddg",average_ddg);
-	setPoseExtraScore(pose, "bound_HOH", bound_HOH_);
-	setPoseExtraScore(pose, "bound_HOH_V", bound_HOH_V_);
-	setPoseExtraScore(pose, "unbound_HOH", unbound_HOH_);
-	setPoseExtraScore(pose, "unbound_HOH_V", unbound_HOH_V_);
+
+	if ( solvate_ ) {
+		setPoseExtraScore(pose, "bound_HOH", bound_HOH_);
+		setPoseExtraScore(pose, "bound_HOH_V", bound_HOH_V_);
+		setPoseExtraScore(pose, "unbound_HOH", unbound_HOH_);
+		setPoseExtraScore(pose, "unbound_HOH_V", unbound_HOH_V_);
+	}
 
 	if ( native_ ) {
 		setPoseExtraScore(pose, "bound_ligand_rmsd_no_super", bound_rmsd_);
@@ -515,26 +518,23 @@ ddG::clean_pose( pose::Pose & pose_copy )
 
 /// @brief compute the rmsd of a pose to an input native with superposition
 void
-ddG::compute_rmsd_with_super( pose::Pose & pose, core::Real & input_rmsd_super, core::Real & input_rmsd )
+ddG::compute_rmsd_with_super( pose::Pose const & pose, core::Real & input_rmsd_super, core::Real & input_rmsd )
 {
-	// make a copy of the working pose to return to at end
+	// make a copy of the input pose to modify
 	pose::Pose pose_copy( pose );
 	// remove waters and virutals from the working pose
-	// we have to work with the main pose object because of the limitation in partition_by_jump
-	clean_pose( pose );
+	clean_pose( pose_copy );
 
-	ObjexxFCL::FArray1D_bool temp_part( pose.size(), false );
-	ObjexxFCL::FArray1D_bool superpos_partner( pose.size(), false );
+	ObjexxFCL::FArray1D_bool temp_part( pose_copy.size(), false );
+	ObjexxFCL::FArray1D_bool superpos_partner( pose_copy.size(), false );
 
-	pose.fold_tree().partition_by_jump( core::pose::get_jump_id_from_chain_id(chain_ids_[1],pose), temp_part );
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	pose_copy.fold_tree().partition_by_jump( core::pose::get_jump_id_from_chain_id(chain_ids_[1],pose_copy), temp_part );
+	for ( Size i = 1; i <= pose_copy.size(); ++i ) {
 		if ( temp_part( i ) ) superpos_partner( i ) = false;
 		else superpos_partner( i ) = true;
 	}
-	input_rmsd_super = core::scoring::rmsd_with_super_subset( *native_, pose, superpos_partner, is_protein_CA );
-	input_rmsd = core::scoring::native_CA_rmsd(  *native_, pose );
-	// return working pose to the copy
-	pose = pose_copy;
+	input_rmsd_super = core::scoring::rmsd_with_super_subset( *native_, pose_copy, superpos_partner, is_protein_CA );
+	input_rmsd = core::scoring::native_CA_rmsd(  *native_, pose_copy );
 }
 
 /// @brief compute the energy of the repacked complex in the bound and unbound states

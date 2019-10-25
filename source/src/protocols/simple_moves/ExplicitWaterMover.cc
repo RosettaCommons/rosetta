@@ -688,8 +688,8 @@ ExplicitWaterMover::build_lkboverlap_rotamer_clouds(
 				// get lkball positions for fixed residues
 				core::scoring::lkball::LKB_ResidueInfoOP lkb_resinfo( new core::scoring::lkball::LKB_ResidueInfo( pose.residue(i) ) );
 
-				utility::vector1< core::Size > rsdin_waters = lkb_resinfo->n_attached_waters();
-				utility::vector1< utility::fixedsizearray1< core::Vector, 4 > > rsdiwaters = lkb_resinfo->waters();
+				utility::vector1< core::Size > const & rsdin_waters = lkb_resinfo->n_attached_waters();
+				utility::vector1< utility::fixedsizearray1< core::Vector, 4 > > const & rsdiwaters = lkb_resinfo->waters();
 
 				for ( Size j=1; j <= rsdiwaters.size(); ++j ) {
 					for ( Size k=1; k <= rsdin_waters[j]; ++k ) {

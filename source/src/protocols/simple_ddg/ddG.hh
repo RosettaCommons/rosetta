@@ -51,7 +51,7 @@ public :
 	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, utility::vector1<core::Size> const & chain_ids );
 	void apply (Pose & pose) override;
 	void clean_pose( Pose & pose_copy );
-	void compute_rmsd_with_super( Pose & pose, Real & input_rmsd_super, Real & input_rmsd );
+	void compute_rmsd_with_super( Pose const & pose, Real & input_rmsd_super, Real & input_rmsd );
 	virtual void calculate( Pose const & pose_in );
 	virtual void report_ddG( std::ostream & out ) const;
 	virtual Real sum_bound() const;
