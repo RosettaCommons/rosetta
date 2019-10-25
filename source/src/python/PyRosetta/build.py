@@ -613,7 +613,9 @@ def generate_bindings(rosetta_source_path):
     binder_config = list(Options.binder_config)
     config = ''
     for config_file in binder_config:
+        config += '\n# ' + config_file + '\n'
         with open(config_file) as f: config += f.read()
+
     if 'clang' not in Options.compiler: config += open('rosetta.gcc.config').read()
     with open(prefix + 'rosetta.config', 'w') as f: f.write(config)
     signature_update(config)
