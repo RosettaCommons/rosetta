@@ -254,7 +254,7 @@ HybridizeProtocol::HybridizeProtocol(
 	cenrot_ = false;
 
 	csts_from_frags_ = false;  // generate dihedral constraints from fragments
-	max_contig_insertion_ = -1;  // don't insert contigs larger than this size (-1 ==> don't limit)
+	max_contig_insertion_ = 0;  // don't insert contigs larger than this size (0 ==> don't limit)
 	min_after_stage1_ = false;   // tors min after stage1
 	fragprob_stage2_ = 0.3;  // ratio of fragment vs. template moves
 	randfragprob_stage2_ = 0.5; // given a fragmove, how often is it applied to a random position (as opposed to a chainbreak position)
@@ -339,7 +339,7 @@ HybridizeProtocol::init() {
 	cenrot_ = option[corrections::score::cenrot]();
 
 	csts_from_frags_ = false;  // generate dihedral constraints from fragments
-	max_contig_insertion_ = -1;  // don't insert contigs larger than this size (-1 ==> don't limit)
+	max_contig_insertion_ = 0;  // don't insert contigs larger than this size (0 ==> don't limit)
 	min_after_stage1_ = false;   // tors min after stage1
 	fragprob_stage2_ = 0.3;  // ratio of fragment vs. template moves
 	randfragprob_stage2_ = 0.5; // given a fragmove, how often is it applied to a random position (as opposed to a chainbreak position)
@@ -1322,14 +1322,6 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		allowed_to_move.resize(pose.size(),true);
 		for ( int i=1; i<=(int)residue_sample_template_.size(); ++i ) allowed_to_move[i] = allowed_to_move[i] && residue_sample_template_[i];
 		for ( int i=1; i<=(int)residue_sample_abinitio_.size(); ++i ) allowed_to_move[i] = allowed_to_move[i] && residue_sample_abinitio_[i];
-
-		// (7) steal crystal parameters (if specified)
-		if ( templates_[initial_template_index]->pdb_info() ) {
-			core::io::CrystInfo ci = templates_[initial_template_index]->pdb_info()->crystinfo();
-			if ( ci.A()*ci.B()*ci.C() != 0 ) {
-				pose.pdb_info()->set_crystinfo( ci );
-			}
-		}
 
 		// STAGE 1
 		//fpd constraints are handled a little bit weird

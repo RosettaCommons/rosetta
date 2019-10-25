@@ -288,7 +288,7 @@ FoldTreeHybridize::init() {
 
 	overlap_chainbreaks_ = option[ jumps::overlap_chainbreak ](); // default is true
 
-	max_contig_insertion_ = -1;  // dont limit by default
+	max_contig_insertion_ = 0;  // don't insert contigs larger than this size (0 ==> don't limit)
 
 	// evaluation
 	// native
@@ -1109,6 +1109,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 				core::Size start_ij = template_chunks_[i][j].start();
 				core::Size stop_ij = template_chunks_[i][j].stop();
 
+				// try to evenly divide into pieces around max_contig_insertion_ in size
 				core::Size npieces =  1 + (stop_ij - start_ij + 1) / max_contig_insertion_;
 				core::Size actual_max_contig_size = (stop_ij - start_ij + 1) / npieces;
 
@@ -1116,9 +1117,12 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 					TR << "splitting chunk " << start_ij << "," << stop_ij << " into " << npieces << " pieces" << std::endl;
 
 					// add a random offset to each chunk boundary so chunking is semi-random
-					core::Size max_offset = max_contig_insertion_/4;
+					// n/4 here ensures the size of chunks will vary between 50% and 150% of max_contig_size_
+					//   (note that max_contig_size is a bit misnamed as we can have chunks a bit longer)
+					core::Size max_offset = actual_max_contig_size/4;
+					core::Size next_start = start_ij;
+					core::Size next_stop;
 
-					core::Size next_start=start_ij, next_stop;
 					for ( core::Size k=1; k<npieces; ++k ) {
 						next_stop = start_ij + k*actual_max_contig_size + numeric::random::rg().random_range(-max_offset, max_offset);
 						new_chunks_i.add_loop( next_start, next_stop );

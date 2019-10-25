@@ -204,7 +204,7 @@ CartesianHybridize::init() {
 	no_global_frame_ = option[cm::hybridize::no_global_frame]();
 	linmin_only_ = option[cm::hybridize::linmin_only]();
 	cenrot_ = option[corrections::score::cenrot]();
-	max_contig_insertion_ = -1;
+	max_contig_insertion_ = 0;  // don't insert contigs larger than this size (0 ==> don't limit)
 
 	// only adjustable via methods
 	cartfrag_overlap_ = 2;
@@ -550,7 +550,7 @@ CartesianHybridize::apply( Pose & pose ) {
 			int start_ij = (int) templates_[i]->pdb_info()->number( template_contigs_[i][j].start() );
 			int stop_ij = (int) templates_[i]->pdb_info()->number( template_contigs_[i][j].stop() );
 
-			if ( max_contig_insertion_>=0 && stop_ij-start_ij+1 >= max_contig_insertion_ ) continue;
+			if ( max_contig_insertion_>0 && stop_ij-start_ij+1 >= max_contig_insertion_ ) continue;
 
 			if  ( start_ij > (int)n_prot_res ) continue;
 			bool movable = true;
