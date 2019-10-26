@@ -32,7 +32,7 @@ sampling_beyond_2_6_A = False
 big_energy_gap = False
 overall_pass = False
 
-samples_expected = 1500 if debug else 50000
+samples_expected = 6000 if debug else 260000
 
 # If bool is true, print YES; otherwise print NO
 def bool_to_string( bool_in ):
@@ -63,7 +63,7 @@ if( total_samples > samples_expected ) :
 	enough_sampling = True
 
 # Check that PNear is reasonable:
-if ( pnear >0.92 ):
+if ( pnear >0.94 ):
 	pnear_good = True	
 
 # Cheack that lowest energy is first entry
@@ -120,10 +120,10 @@ with open( outfile, "w" ) as f:
 	f.write( "\n" )
 
 	if( debug == True ):
-		f.write( "More than 1,500 samples?\t" + bool_to_string( enough_sampling ) + "\n" )
+		f.write( "More than 6,000 samples?\t" + bool_to_string( enough_sampling ) + "\n" )
 	else:
-		f.write( "More than 50,000 samples?\t" + bool_to_string( enough_sampling ) + "\n" )
-	f.write( "PNear value over 0.92?\t" + bool_to_string( pnear_good ) + "\n" )
+		f.write( "More than 260,000 samples?\t" + bool_to_string( enough_sampling ) + "\n" )
+	f.write( "PNear value over 0.94?\t" + bool_to_string( pnear_good ) + "\n" )
 	f.write( "Lowest energy under 0.3 A RMSD?\t" + bool_to_string( lowest_E_close_enough ) + "\n" )
 	f.write( "Sampling below 0.25 A RMSD?\t" + bool_to_string( sampling_under_0_25_A ) + "\n" )
 	f.write( "Sampling beyond 1.5 A RMSD?\t" + bool_to_string( sampling_beyond_1_5_A ) + "\n" )
