@@ -3345,6 +3345,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		## become an extension of JD2/JD3 - Added 8/3/15
 		Option_Group( 'output',
 			Option( 'normalize_to_thk', 'Boolean', desc='Output an additional MEM resdiue data in the PDB where the membrane normal is scaled to match the current membrane thickness (Makes sense for IMM Models' ),
+			Option( 'output_mem_to_pdb', 'Boolean', desc='Do not output a MEM residue in the output PDB' ),
 		),
 	),
 

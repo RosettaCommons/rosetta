@@ -157,6 +157,12 @@ public: // Chemical information about this membrane
 	/// t = -(1/b) * ln(1/A)
 	core::Real water_pseudo_thickness() const;
 
+	/// @brief Access function to change the value of the pseudo-thickness parameter
+	/// @details A parameter in the logistic membrane definition
+	void water_pseudo_thickness( core::Real const p ) {
+		transformed_water_thickness_ = p;
+	}
+
 public: // Functions to define spatially-dependent hydration
 
 	/// UNDER CONSTRUCTION - Derivative functions ///

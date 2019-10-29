@@ -810,6 +810,7 @@ sources = {
 		"enumerate_rotamers",
 		"mp_rsd_energies",
 		"color_by_lipid_type",
+		"find_optimal_hydrophobic_thk",
 	],
 	"pilot/rayyrw" : [
 		#"replonly",
