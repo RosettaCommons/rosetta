@@ -735,7 +735,7 @@ identify_chunks(
 				res_list_current.clear();
 				res_list_current.insert(*res_list_unsliced.begin());
 				res_list_unsliced.erase(res_list_unsliced.begin());
-				chunk_size = Size( res_list_unsliced.size() / n_chunk_left * 1.1 );
+				chunk_size = Size( 1.1 * res_list_unsliced.size() / n_chunk_left );
 				n_chunk_left -= 1;
 			}
 		}

@@ -210,7 +210,7 @@ utility::vector1< bool > compute_unique_chains( Pose & pose ) {
 				}
 
 				// compute sequence identity
-				core::Real seqid = num_ident_res / seq1.size();
+				core::Real seqid = core::Real( num_ident_res ) / seq1.size();
 				TR << "seqid " << seqid << std::endl;
 
 				// if sequence identity >= 95%, add a true to the uniq_chains

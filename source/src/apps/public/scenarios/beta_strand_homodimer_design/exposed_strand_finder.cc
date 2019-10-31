@@ -580,8 +580,8 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
 			}
 
 			// look for fragments that are beta_length in the given regions
-			auto nfrags_pose   = Size( floor( (pose_sheet_length-beta_length_+2)/2 ) );
-			auto nfrags_native =  Size( floor( (native_sheet_length-beta_length_+2)/2 ) );
+			core::Size nfrags_pose   = (pose_sheet_length-beta_length_+2)/2; // Integer (truncated) division
+			core::Size nfrags_native =  (native_sheet_length-beta_length_+2)/2; // Integer (truncated) division
 
 			Size native_current (native_start), pose_current;
 			for ( Size jj = 1; jj<=nfrags_native; ++jj ) {

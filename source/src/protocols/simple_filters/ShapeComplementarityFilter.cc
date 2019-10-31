@@ -204,7 +204,7 @@ ShapeComplementarityFilter::write_area( Pose const & pose, core::Real const area
 				if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 				if ( !is_upstream(i) ) ndownstream++;
 			}
-			int_area /= (Real)( ndownstream / core::pose::symmetry::symmetry_info(pose)->get_nres_subunit() );
+			int_area /= core::Real(ndownstream) / core::pose::symmetry::symmetry_info(pose)->get_nres_subunit();
 		}
 	}
 	protocols::jd2::add_string_real_pair_to_current_job( column_header, int_area );

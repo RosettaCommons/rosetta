@@ -145,7 +145,7 @@ write_hashing_scores_to_file(
 		TR << "segment_matches.size(): " << segment_matches.size() << std::endl;
 		TR << "sum/segment_matches.size(): " << sum/segment_matches.size() << std::endl;
 		if ( segment_matches.size() > 0 ) {
-			average_segment_score = sum/segment_matches.size();
+			average_segment_score = core::Real(sum)/segment_matches.size();
 		}
 		file
 			<< basis_residues.first.model_id << " "

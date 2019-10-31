@@ -522,10 +522,14 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 
 	TR << "n_cycles: " << n_cycle_ << std::endl;
 	TR << "Total accept rate: " << core::Real( n_accept_total ) / n_cycle_ << std::endl;
-	TR << "Backbone accept rate: " << core::Real( n_accept_backbone ) / ((n_cycle_ / 2) - (n_cycle_ / 10)) << std::endl;
-	TR << "Chi accept rate: " << core::Real( n_accept_chi ) / (n_cycle_ / 2) << std::endl;
-	TR << "Standard accept rate: " << core::Real( n_accept_standard ) / (n_cycle_ / 10) << std::endl;
-	TR << "Temp jump accept rate: " << core::Real( n_t_jumps_accept ) / (n_cycle_ / t_jump_interval) << std::endl;
+	core::Size nbackbone_cycle = (n_cycle_ / 2) - (n_cycle_ / 10); // I think the integer truncation is what is desired
+	TR << "Backbone accept rate: " << core::Real( n_accept_backbone ) / nbackbone_cycle << std::endl;
+	core::Size nchi_cycle = n_cycle_ / 2;
+	TR << "Chi accept rate: " << core::Real( n_accept_chi ) / nchi_cycle << std::endl;
+	core::Size nstandard_cycle = n_cycle_ / 10;
+	TR << "Standard accept rate: " << core::Real( n_accept_standard ) / nstandard_cycle << std::endl;
+	core::Size njump_cycle = n_cycle_ / t_jump_interval;
+	TR << "Temp jump accept rate: " << core::Real( n_t_jumps_accept ) / njump_cycle << std::endl;
 
 	// If we're being called from an app that wants to dump data after sampling
 	// like recces_turner or thermal_sampler

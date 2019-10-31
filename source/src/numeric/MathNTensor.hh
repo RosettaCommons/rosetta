@@ -159,7 +159,7 @@ public:
 
 	T sum() const
 	{
-		return std::accumulate( data_, data_ + size_, 0 );
+		return std::accumulate( data_, data_ + size_, T(0) );
 	}
 
 	/// @brief Is the position in the N-Tensor given by the positions vector a valid position?

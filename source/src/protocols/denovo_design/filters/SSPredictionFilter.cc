@@ -203,7 +203,7 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const
 					++count;
 				}
 			}
-			return count / sequence.size();
+			return core::Real(count) / sequence.size();
 		}
 	} else {
 		runtime_assert( psipred_interface_ != nullptr );

@@ -194,11 +194,11 @@ void
 LoopClosure::ramp_chainbreak( Size iter, Size total ) const {
 	runtime_assert( total > 0 );
 	if ( iter < static_cast< Size >( total/2.0) ) {
-		core::Real const progress( iter/total * 2.0 );
+		core::Real const progress( core::Real(iter)/total * 2.0 );
 		scorefxn_->set_weight( scoring::linear_chainbreak, progress * final_weight_linear_chainbreak_ );
 		scorefxn_->set_weight( scoring::overlap_chainbreak, 0.0 );
 	} else {
-		core::Real const progress( iter/total );
+		core::Real const progress( core::Real(iter)/total );
 		scorefxn_->set_weight( scoring::linear_chainbreak, 1.0 );
 		scorefxn_->set_weight( scoring::overlap_chainbreak, progress * final_weight_overlap_chainbreak_ );
 	}

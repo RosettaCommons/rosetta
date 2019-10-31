@@ -211,7 +211,7 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 		break;
 	case 5 :
 		// Adjust input to the nearest 18th degree.
-		adjusted_phi = uint( ( nonnegative_principal_angle_degrees( parameters[ PHI ] ) + 18/2 ) / 18 ) * 18;
+		adjusted_phi = uint( ( nonnegative_principal_angle_degrees( parameters[ PHI ] ) + 18.0/2 ) / 18.0 ) * 18;
 
 		if ( TR.Debug.visible() ) {
 			TR.Debug << "Searching for phi = " << adjusted_phi << "..." << endl;
@@ -227,8 +227,8 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 	case 6 :
 		// Adjust input to the nearest 30th and 45th degrees, respectively.
 		// TODO: Use numeric::nearest_angle_degrees.
-		adjusted_phi = uint( ( nonnegative_principal_angle_degrees( parameters[ PHI ] ) + 30/2 ) / 30 ) * 30;
-		adjusted_theta = uint( ( nonnegative_principal_angle_degrees( parameters[ THETA ] ) + 45/2 ) / 45 ) * 45;
+		adjusted_phi = uint( ( nonnegative_principal_angle_degrees( parameters[ PHI ] ) + 30.0/2 ) / 30.0 ) * 30;
+		adjusted_theta = uint( ( nonnegative_principal_angle_degrees( parameters[ THETA ] ) + 45.0/2 ) / 45.0 ) * 45;
 
 		// Theta must be between 0 and 180.
 		if ( adjusted_theta > 180 ) {

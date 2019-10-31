@@ -404,7 +404,7 @@ LeGrandSasa::get_2way_orientation(
 	}
 
 	// can take a shortcut to get phi_b2a
-	Real phi_b2a = num_phi_ / 2 - phi_a2b;
+	Real phi_b2a = num_phi_ / 2.0 - phi_a2b;
 #ifdef FILE_DEBUG
 	Real temp_phi_b2a = phi_b2a;
 #endif

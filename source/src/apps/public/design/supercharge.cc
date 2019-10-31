@@ -284,7 +284,7 @@ public:
 
 
 				Size number_of_sidechain_atoms = i_rsd.nheavyatoms() - 4; // four backbone atoms, would equal 0 if residue is Glycine and this would cause a crash
-				avnapsa_value = total_atom_neighbors_of_sidechain / number_of_sidechain_atoms;
+				avnapsa_value = core::Real(total_atom_neighbors_of_sidechain) / number_of_sidechain_atoms;
 
 				TR << "residue: " << i << "  heavy: " << i_rsd.nheavyatoms() << "  " << "sidechain: " << i_rsd.first_sidechain_atom() << "  AvNAPSA_value: " << avnapsa_value << std::endl;
 
@@ -609,7 +609,7 @@ public:
 
 
 				Size number_of_sidechain_atoms = i_rsd.nheavyatoms() - 4; // four backbone atoms, would equal 0 if residue is Glycine and this would cause a crash
-				avnapsa_value = total_atom_neighbors_of_sidechain / number_of_sidechain_atoms;
+				avnapsa_value = core::Real( total_atom_neighbors_of_sidechain ) / number_of_sidechain_atoms;
 
 				//TR << "residue: " << i << "  heavy: " << i_rsd.nheavyatoms() << "  " << "sidechain: " << i_rsd.first_sidechain_atom() << "  AvNAPSA_value: " << avnapsa_value << std::endl;
 

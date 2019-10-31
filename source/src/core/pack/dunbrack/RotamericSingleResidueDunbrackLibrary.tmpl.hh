@@ -135,18 +135,18 @@ RotamericSingleResidueDunbrackLibrary< T, N >::RotamericSingleResidueDunbrackLib
 		BB_BINRANGE[ 1 ] = 10;
 		for ( Size i = 2; i <= N; ++i ) {
 			N_BB_BINS[ i ] = 36;
-			BB_BINRANGE[ i ] = 360 / N_BB_BINS[ i ];
+			BB_BINRANGE[ i ] = 360.0 / N_BB_BINS[ i ];
 		}
 	} else {
 		if ( reduced_resolution_library ) {
 			for ( Size i = 1; i <= N; ++i ) {
 				N_BB_BINS[ i ] = 12;
-				BB_BINRANGE[ i ] = 360 / N_BB_BINS[ i ];
+				BB_BINRANGE[ i ] = 360.0 / N_BB_BINS[ i ];
 			}
 		} else {
 			for ( Size i = 1; i <= N; ++i ) {
 				N_BB_BINS[ i ] = 36;
-				BB_BINRANGE[ i ] = 360 / N_BB_BINS[ i ];
+				BB_BINRANGE[ i ] = 360.0 / N_BB_BINS[ i ];
 			}
 		}
 	}

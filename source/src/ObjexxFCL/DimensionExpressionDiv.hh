@@ -192,7 +192,7 @@ public: // Inspector
 		assert( exp2_p_ );
 		assert( exp2_p_->operator ()() != 0.0 );
 		if ( integer() ) { // Do integer division
-			return static_cast< double >( exp1_p_->ivalue() / exp2_p_->ivalue() );
+			return static_cast< double >( exp1_p_->ivalue() / exp2_p_->ivalue() ); // NOLINT(bugprone-integer-division) Integer division deliberate
 		} else {
 			return ( exp1_p_->operator ()() / exp2_p_->operator ()() );
 		}
@@ -208,7 +208,7 @@ public: // Inspector
 		assert( exp2_p_ );
 		assert( exp2_p_->value() != 0.0 );
 		if ( integer() ) { // Do integer division
-			return static_cast< double >( exp1_p_->ivalue() / exp2_p_->ivalue() );
+			return static_cast< double >( exp1_p_->ivalue() / exp2_p_->ivalue() ); // NOLINT(bugprone-integer-division) Integer division deliberate
 		} else {
 			return ( exp1_p_->value() / exp2_p_->value() );
 		}

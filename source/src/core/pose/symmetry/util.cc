@@ -813,7 +813,7 @@ find_new_symmetric_jump_residues( core::pose::Pose & pose )
 	Size anchor_start ( pose::symmetry::find_symmetric_basejump_anchor( pose ) );
 
 	//Looking in central half of each segment -- pick a random point.
-	Size anchor = static_cast<Size>( numeric::random::rg().uniform() * (nres_subunit/2) ) +
+	Size anchor = static_cast<Size>( numeric::random::rg().uniform() * core::Size(nres_subunit/2) ) +
 		(nres_subunit/4) + 1;
 
 	if ( basic::options::option[ basic::options::OptionKeys::fold_and_dock::set_anchor_at_closest_point ] ) {

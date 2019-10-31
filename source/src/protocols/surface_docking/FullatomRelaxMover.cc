@@ -150,8 +150,8 @@ void FullatomRelaxMover::setup_movers( const core::pose::Pose & pose )
 }
 
 void FullatomRelaxMover::set_smallmovesize(Size scale){
-	small_mover_->angle_max('H',scale/3);
-	small_mover_->angle_max('E',scale/2);
+	small_mover_->angle_max('H',scale/3.0);
+	small_mover_->angle_max('E',scale/2.0);
 	small_mover_->angle_max('L',scale);
 }
 

@@ -605,7 +605,7 @@ RNA_DMS_Potential::get_occupancy_densities( utility::vector1< Real > & occupancy
 
 	occupancy_densities.clear();
 	for ( Size k = 1; k < shells.size(); k++ ) {
-		Real const shell_volume = (4 / 3) * numeric::constants::d::pi * ( pow( shells[k+1], 3 ) - pow( shells[k], 3 ) );
+		Real const shell_volume = (4.0 / 3.0) * numeric::constants::d::pi * ( pow( shells[k+1], 3 ) - pow( shells[k], 3 ) );
 		occupancy_densities.push_back( static_cast<Real>( num_atoms_in_shells[ k ] )/ shell_volume );
 	}
 }

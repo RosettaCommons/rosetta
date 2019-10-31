@@ -364,7 +364,7 @@ get_quota_per_silent( core::Size const nsilent,
 		nquota.resize( 0 );
 		core::Size nsum( 0 );
 		for ( core::Size isilent = 1; isilent < nsilent; ++isilent ) {
-			core::Size n = core::Real(nout/nsilent);
+			core::Size n = nout/nsilent; // Integer (trucated) division -- This may or may not be what the original author intended
 			nquota.push_back( n );
 			nsum+=n;
 		}

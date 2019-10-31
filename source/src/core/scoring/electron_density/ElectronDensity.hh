@@ -48,7 +48,9 @@ namespace electron_density {
 
 const core::Real MAX_FLT = 1e37;
 
+int pos_mod(int x,int y);
 float pos_mod(float x,float y);
+core::Real pos_mod(core::Real x,core::Real y);
 
 class ElectronDensity : public utility::pointer::ReferenceCount {
 public:

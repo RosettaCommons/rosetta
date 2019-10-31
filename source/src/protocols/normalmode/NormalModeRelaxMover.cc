@@ -372,7 +372,7 @@ NormalModeRelaxMover::apply_on_pose( pose::Pose &pose, core::kinematics::MoveMap
 		NM_.solve( pose );
 		clock_t endtime = clock();
 		// important for bigger system to trace time limiting step
-		TR << "NM solved in " << (Real)((endtime - starttime)/CLOCKS_PER_SEC) << " sec." << std::endl;
+		TR << "NM solved in " << core::Real(endtime - starttime)/CLOCKS_PER_SEC << " sec." << std::endl;
 		//refresh_normalmode_ = false;
 	}
 

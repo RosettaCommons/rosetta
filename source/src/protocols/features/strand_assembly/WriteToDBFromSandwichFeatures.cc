@@ -537,13 +537,13 @@ WriteToDB_dssp_ratio_in_sw (
 
 	statement update_statement(basic::database::safely_prepare_statement(update, db_session));
 
-	Real rounded = round_to_Real(H_num*100/dssp_pose.size());
+	Real rounded = round_to_Real(H_num*100.0/dssp_pose.size());
 	update_statement.bind(1, rounded);
 
-	rounded = round_to_Real(E_num*100/dssp_pose.size());
+	rounded = round_to_Real(E_num*100.0/dssp_pose.size());
 	update_statement.bind(2, rounded);
 
-	rounded = round_to_Real(L_num*100/dssp_pose.size());
+	rounded = round_to_Real(L_num*100.0/dssp_pose.size());
 	update_statement.bind(3, rounded);
 
 	update_statement.bind(4, struct_id);
@@ -611,7 +611,7 @@ WriteToDB_hydrophobic_ratio_net_charge (
 	if ( number_of_hydrophobic_res+number_of_hydrophilic_res == 0 ) {
 		utility_exit_with_message("Number of hydrophobic + hydrophilic residues is zero - unable to calculate hydrophobic percentage.");
 	}
-	Real ratio_hydrophobic_philic_of_sw_in_percent = (number_of_hydrophobic_res*100)/(number_of_hydrophobic_res+number_of_hydrophilic_res);
+	Real ratio_hydrophobic_philic_of_sw_in_percent = (number_of_hydrophobic_res*100.0)/(number_of_hydrophobic_res+number_of_hydrophilic_res);
 	insert_stmt.bind(4, ratio_hydrophobic_philic_of_sw_in_percent);
 	insert_stmt.bind(5, number_of_RK_in_sw);
 	insert_stmt.bind(6, number_of_DE_in_sw);

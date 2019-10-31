@@ -92,7 +92,7 @@ Embedding::Embedding(
 	using namespace numeric::conversions;
 
 	// initializations
-	core::Real increment = 360 / topology.nspans();
+	core::Real increment = 360.0 / topology.nspans();
 
 	// get position around a circle
 	for ( core::Size i = 1; i <= topology.nspans(); ++i ) {

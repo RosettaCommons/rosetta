@@ -1054,7 +1054,7 @@ void MRSJobQueen::assign_output_index(
 ) {
 	output_index.primary_output_index = global_job_id;
 	output_index.n_primary_outputs =
-		std::accumulate( num_total_jobs_for_stage_.begin(), num_total_jobs_for_stage_.end(), 0 );
+		std::accumulate( num_total_jobs_for_stage_.begin(), num_total_jobs_for_stage_.end(), core::Size(0) );
 
 	output_index.secondary_output_index = local_result_id;
 	output_index.n_secondary_outputs = max_num_results_to_keep_per_instance_for_stage_.back();

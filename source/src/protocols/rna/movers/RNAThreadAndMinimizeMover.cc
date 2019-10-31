@@ -346,7 +346,7 @@ void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size cons
 				TR << "Perturbation " << rr << ": moving " << moving << " move accepted absolutely " << old_score << " to " << new_score << "." << std::endl;
 				recovered_low = pose;
 				// Temp is 10 - rr/10
-			} else if ( numeric::random::rg().uniform() < std::exp( -1 * ( new_score - old_score ) / ((npert-rr)/10) ) ) {
+			} else if ( numeric::random::rg().uniform() < std::exp( -1 * ( new_score - old_score ) / ((npert-rr)/10.0) ) ) {
 				TR << "Perturbation " << rr << ": moving " << moving << " move accepted thermally  " << old_score << " to " << new_score << "." << std::endl;
 			} else {
 				TR << "Perturbation " << rr << ": moving " << moving << " move rejected! " << old_score << " to " << new_score << "." << std::endl;

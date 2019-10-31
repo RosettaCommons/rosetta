@@ -119,7 +119,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 		target_lookup_->lookup_closest_pose_fragments(target_pose, std::back_inserter(lookup_result), std::back_inserter(lookup_residue));
 	}
 
-	float elapsed_seconds = (clock() - start_t) / CLOCKS_PER_SEC;
+	float elapsed_seconds = float( clock() - start_t ) / CLOCKS_PER_SEC;
 
 	if ( TR.visible() ) TR << boost::format("lookup returned results: %s seconds: %s") % lookup_result.size() % elapsed_seconds << std::endl;
 

@@ -296,16 +296,16 @@ void SpinAroundPartnerMover::apply( core::pose::Pose & pose ) {
 		x_ = static_cast< core::Real > ( numeric::random::random_range( 0, range_ ) );
 		y_ = static_cast< core::Real > ( numeric::random::random_range( 0, range_ ) );
 
-		x_ -= ( range_ / 2 );
-		y_ -= ( range_ / 2 );
+		x_ -= ( range_ / 2.0 );
+		y_ -= ( range_ / 2.0 );
 
 		// reset if they are within 50A to the downstream center
 		core::Real radius = sqrt( pow( ( emb_up->center().x()-x_ ), 2 ) + pow( ( emb_up->center().y()-y_ ), 2 ) );
 		while ( radius <= 50.0 ) {
 			x_ = static_cast< core::Real > ( numeric::random::random_range( 0, range_ ) );
 			y_ = static_cast< core::Real > ( numeric::random::random_range( 0, range_ ) );
-			x_ -= ( range_ / 2 );
-			y_ -= ( range_ / 2 );
+			x_ -= ( range_ / 2.0 );
+			y_ -= ( range_ / 2.0 );
 			radius = sqrt( pow( ( emb_up->center().x()-x_ ), 2 ) + pow( ( emb_up->center().y()-y_ ), 2 ) );
 		}
 

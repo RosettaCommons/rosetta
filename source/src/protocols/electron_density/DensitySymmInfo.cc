@@ -267,9 +267,9 @@ DensitySymmInfo::autocorrelate(
 	// currently we have 'B': the translation between the original and rotated center
 	// we need to get 'T': the translation from the rotation center to the true center
 	best_idx = best_idx-1.0;
-	if ( best_idx[0]>=dens.u1()/2 ) best_idx[0]-=dens.u1();
-	if ( best_idx[1]>=dens.u2()/2 ) best_idx[1]-=dens.u2();
-	if ( best_idx[2]>=dens.u3()/2 ) best_idx[2]-=dens.u3();
+	if ( best_idx[0]>=dens.u1()/2.0 ) best_idx[0]-=dens.u1();
+	if ( best_idx[1]>=dens.u2()/2.0 ) best_idx[1]-=dens.u2();
+	if ( best_idx[2]>=dens.u3()/2.0 ) best_idx[2]-=dens.u3();
 
 	// first get 'T_hat', a vector from rot axis to midpoint of orig and rotated center
 	core::Real lenT = best_idx.length() / (2 * tan(angle/2));
