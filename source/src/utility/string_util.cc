@@ -539,7 +539,7 @@ file_contents( std::string const & file_name )
 	if ( ! textstream ) {
 		throw CREATE_EXCEPTION(excn::Exception, "Could not open file " + file_name  );
 	}
-	int strsize( 0 );
+	platform::Size strsize( 0 );
 	while ( getline(textstream, line) ) {
 		text.push_back(line + "\n");
 		strsize += line.size() + 1;
@@ -548,7 +548,7 @@ file_contents( std::string const & file_name )
 
 	std::string alltext;
 	alltext.reserve( strsize );
-	for ( unsigned int ii = 1; ii <= text.size(); ++ ii ) {
+	for ( platform::Size ii = 1; ii <= text.size(); ++ ii ) {
 		alltext += text[ii];
 	}
 	return alltext;
