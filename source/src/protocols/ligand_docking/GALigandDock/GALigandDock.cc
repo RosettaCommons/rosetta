@@ -1429,14 +1429,16 @@ GALigandDock::generate_perturbed_structures(
 			genes_ref.push_back( gene );
 		}
 
-		// take best scoring subset
-		std::sort(genes_ref.begin(), genes_ref.end(),
-			[&](LigandConformer const &lig_i, LigandConformer const &lig_j){ return lig_i.score() < lig_j.score(); } );
-		for ( core::Size i=1; i<=nstruct_ref; ++i ) {
-			genes_sel.push_back( genes_ref[i] );
+		if ( nrefgen > 0 ) {
+			// take best scoring subset
+			std::sort(genes_ref.begin(), genes_ref.end(),
+				[&](LigandConformer const &lig_i, LigandConformer const &lig_j){ return lig_i.score() < lig_j.score(); } );
+			for ( core::Size i=1; i<=nstruct_ref; ++i ) {
+				genes_sel.push_back( genes_ref[i] );
+			}
+			TR << "Ref scorecut = " << genes_ref[nstruct_ref].score() << std::endl;
+			nleft -= nstruct_ref;
 		}
-		TR << "Ref scorecut = " << genes_ref[nstruct_ref].score() << std::endl;
-		nleft -= nstruct_ref;
 	} // if
 
 
