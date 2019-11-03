@@ -1,0 +1,23 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+		<ScoreFunction name="scorefxn" weights="ref2015" >
+			<Reweight scoretype="dump_trajectory" weight="1" />
+		</ScoreFunction>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_core" resnums="3,6,7,9,16" />
+		<Not name="select_not_core" selector="select_core" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<OperateOnResidueSubset name="only_repack_core_positions" selector="select_not_core" >
+			<PreventRepackingRLT />
+		</OperateOnResidueSubset>
+	</TASKOPERATIONS>
+   	<MOVERS>
+		<PackRotamersMover name="pack" scorefxn="scorefxn" task_operations="only_repack_core_positions" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="pack"/>
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>

@@ -582,7 +582,6 @@ public:
 		pose::Pose & pose
 	) const;
 
-
 	/// @brief Lets the scoring functions cache anything they need to calculate
 	/// energies in a packing step (rotamer_trials or pack_rotamers)
 	/// @note: the Etable caches tries for each of the residues, the

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/energy_methods/DumpTrajectoryEnergy.hh
+/// @file core/scoring/util_methods/DumpTrajectoryEnergy.hh
 /// @brief Headers for an EnergyMethod that dumps trajectories to file.
 /// @details Dumps trajectories of the minimizer and packer to file when the dump_trajectory
 /// ScoreType is enable. Output may be controlled through the dump_trajectory:* flags.
 /// @author Brian Coventry (bcov@uw.edu). - dump minimizer
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org) - Added support for dumping during packer trajectories.
+
 
 // Goals for this class
 // 1. Enabling the dump_trajectory ScoreType should be sufficient to dump trajectories.
@@ -29,7 +29,7 @@
 #define INCLUDED_core_scoring_util_methods_DumpTrajectoryEnergy_hh
 
 // Unit headers
-#include <core/energy_methods/DumpTrajectoryEnergy.fwd.hh>
+#include <core/scoring/util_methods/DumpTrajectoryEnergy.fwd.hh>
 
 // Package headers
 #include <core/scoring/annealing/ResidueArrayAnnealableEnergy.hh>
@@ -81,7 +81,7 @@ public:
 	/// class Energies.
 	void indicate_required_context_graphs( utility::vector1< bool > &context_graphs_required ) const override;
 
-	/// @brief DumpTrajectoryEnergy is version 2 right now.
+	/// @brief DumpTrajectoryEnergy is version 2.0 right now.
 	///
 	core::Size version() const override;
 
@@ -96,7 +96,7 @@ public:
 	void setup_for_scoring( core::pose::Pose &pose, core::scoring::ScoreFunction const &sfxn) const override;
 
 	/// @brief Dump out a pose whenever we evaluate the energy.
-	void finalize_total_energy( core::pose::Pose & pose, core::scoring::ScoreFunction const & sfxn, core::scoring::EnergyMap & total_energy ) const override;
+	void finalize_total_energy( pose::Pose & pose, ScoreFunction const & sfxn, EnergyMap & total_energy ) const override;
 
 	/// @brief This is where the state_ moves to MINIMIZING.
 	void setup_for_minimizing( pose::Pose & , ScoreFunction const & , kinematics::MinimizerMapBase const &) const override;
@@ -125,7 +125,6 @@ public:
 	///
 	core::Real calculate_energy(
 		utility::vector1< core::conformation::ResidueCOP > const &resvect,
-		utility::vector1< core::Size > const & rotamer_ids,
 		core::Size const substitution_position = 0
 	) const override;
 
@@ -179,7 +178,7 @@ private:
 	/// @details This is used to give the models numbers in the pdb
 	mutable Size dumped_frames_;
 
-	/// @brief Prefix for dump files.
+	/// @brief Prefix for dump files (?).
 	std::string dump_prefix_;
 
 	/// @brief If true, output is g-zipped.
@@ -189,7 +188,7 @@ private:
 	/// @details Defaults to 1.  Higher settings allow sparser trajectory sampling.
 	core::Size dump_on_every_nth_call_;
 
-	/// @brief How many times has this function been called?
+	/// @brief How many times has this funciton been called?
 	/// @details Used to determine when we should dump a pose.
 	mutable core::Size call_count_;
 

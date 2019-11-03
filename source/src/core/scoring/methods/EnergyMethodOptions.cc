@@ -27,6 +27,7 @@
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
+#include <basic/options/keys/dump_trajectory.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/unfolded_state.OptionKeys.gen.hh>
@@ -185,6 +186,10 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	approximate_buried_unsat_penalty_hbond_bonus_cross_chain_(0),
 	approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_(0),
 
+	dump_trajectory_prefix_(""),
+	dump_trajectory_gz_(false),
+	dump_trajectory_stride_(1),
+
 	bond_angle_residue_type_param_set_(/* NULL */)
 {
 	initialize_from_options( options );
@@ -315,6 +320,9 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		approximate_buried_unsat_penalty_natural_corrections1_ = src.approximate_buried_unsat_penalty_natural_corrections1_;
 		approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ = src.approximate_buried_unsat_penalty_hbond_bonus_cross_chain_;
 		approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ = src.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_;
+		dump_trajectory_prefix_ = src.dump_trajectory_prefix_;
+		dump_trajectory_gz_ = src.dump_trajectory_gz_;
+		dump_trajectory_stride_ = src.dump_trajectory_stride_;
 	}
 	return *this;
 }
@@ -420,6 +428,11 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_hbond_bonus_cross_chain ]();
 	approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb ]();
 
+
+	// Options for the DumpTrajectoryEnergy:
+	dump_trajectory_prefix( options[basic::options::OptionKeys::dump_trajectory::prefix]() );
+	dump_trajectory_gz( options[basic::options::OptionKeys::dump_trajectory::gz]() );
+	dump_trajectory_stride( options[basic::options::OptionKeys::dump_trajectory::stride]() );
 
 	// check to see if the unfolded state command line options are set by the user
 	if ( options[ basic::options::OptionKeys::unfolded_state::unfolded_energies_file].user() ) {
@@ -527,6 +540,11 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_natural_corrections1
 		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_hbond_bonus_cross_chain
 		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb
+
+		+ basic::options::OptionKeys::dump_trajectory::prefix
+		+ basic::options::OptionKeys::dump_trajectory::gz
+		+ basic::options::OptionKeys::dump_trajectory::stride
+
 		+ basic::options::OptionKeys::corrections::water::ordered_wat_penalty
 		+ basic::options::OptionKeys::corrections::water::ordered_pt_wat_penalty;
 }
@@ -1528,6 +1546,39 @@ EnergyMethodOptions::approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_b
 	return approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_;
 }
 
+//////////////////////////////////////// DumpTrajectoryEnergy settings ////////////////////////////////////////
+
+/// @brief Set the prefix for the dump_trajectory energy's output.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+EnergyMethodOptions::dump_trajectory_prefix(
+	std::string const & setting
+) {
+	dump_trajectory_prefix_ = setting;
+}
+
+/// @brief Set whether the dump_trajectory energy produces g-zipped output.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+EnergyMethodOptions::dump_trajectory_gz(
+	bool const setting
+) {
+	dump_trajectory_gz_ = setting;
+}
+
+/// @brief Set the number of function evaluations that elapse before the dump_trajectory mover produces output.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+/// @note The input must be greater than zero.  There's a check for this.  (The function signature takes a signed long
+/// because the options system parses signed integers, so we need to check that the user hasn't provided a negative
+/// number.)
+void
+EnergyMethodOptions::dump_trajectory_stride(
+	signed long int setting
+) {
+	runtime_assert_string_msg( setting > 0, "Error in EnergyMethodOptions::dump_trajectory_stride(): The stride for the DumpTrajectoryEnergy must be greater than or equal to 1." );
+	dump_trajectory_stride_ = static_cast< core::Size >( setting ); //Static cast to achieve signed->unsigned conversion without making the compiler complain.
+}
+
 utility::vector1< core::Real > const &
 EnergyMethodOptions::get_density_sc_scale_byres() const {
 	return fastdens_perres_weights_;
@@ -1758,7 +1809,12 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.approximate_buried_unsat_penalty_assume_const_backbone_ == b.approximate_buried_unsat_penalty_assume_const_backbone_ ) &&
 		( a.approximate_buried_unsat_penalty_natural_corrections1_ == b.approximate_buried_unsat_penalty_natural_corrections1_ ) &&
 		( a.approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ == b.approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ ) &&
-		( a.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ == b.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ )
+		( a.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ == b.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ ) &&
+
+		( a.dump_trajectory_prefix_ == b.dump_trajectory_prefix_ ) &&
+		( a.dump_trajectory_gz_ == b.dump_trajectory_gz_) &&
+		( a.dump_trajectory_stride_ == b.dump_trajectory_stride_)
+
 	);
 }
 
@@ -1906,6 +1962,10 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_natural_corrections1_:" << approximate_buried_unsat_penalty_natural_corrections1_ << std::endl;
 	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_hbond_bonus_cross_chain_:" << approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ << std::endl;
 	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_:" << approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ << std::endl;
+
+	out << "EnergyMethodOptions::show: dump_trajectory_prefix_: " << dump_trajectory_prefix_ << std::endl;
+	out << "EnergyMethodOptions::show: dump_trajectory_gz_: " << ( dump_trajectory_gz_ ? "TRUE" : "FALSE" ) << std::endl;
+	out << "EnergyMethodOptions::show: dump_trajectory_stride_: " << dump_trajectory_stride_ << std::endl;
 
 	out << "EnergyMethodOptions::show: bond_angle_central_atoms_to_score:";
 	if ( bond_angle_residue_type_param_set_ ) {
@@ -2263,6 +2323,9 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( approximate_buried_unsat_penalty_natural_corrections1_ ) ); // bool
 	arc( CEREAL_NVP( approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ ) ); // core::Real
 	arc( CEREAL_NVP( approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ ) ); // core::Real
+	arc( CEREAL_NVP( dump_trajectory_prefix_ ) ); // std::string
+	arc( CEREAL_NVP( dump_trajectory_gz_ ) ); // bool
+	arc( CEREAL_NVP( dump_trajectory_stride_ ) ); // core::Size
 	arc( CEREAL_NVP( ordered_pt_wat_penalty_ ) );
 	arc( CEREAL_NVP( ordered_wat_penalty_ ) );
 }
@@ -2380,6 +2443,9 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( approximate_buried_unsat_penalty_natural_corrections1_ ); // bool
 	arc( approximate_buried_unsat_penalty_hbond_bonus_cross_chain_ ); // core::Real
 	arc( approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_ ); // core::Real
+	arc( dump_trajectory_prefix_ ); // std::string
+	arc( dump_trajectory_gz_ ); // bool
+	arc( dump_trajectory_stride_ ); // core::Size
 	arc( ordered_pt_wat_penalty_ );
 	arc( ordered_wat_penalty_ );
 }

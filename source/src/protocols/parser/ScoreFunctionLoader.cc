@@ -247,6 +247,17 @@ ScoreFunctionLoader::create_scorefxn_from_tag(
 
 			////// End NMerSVMEnergy options //////
 
+			//Options for the dump trajectory energy:
+			if ( mod_tag->hasOption("dump_trajectory_prefix") ) {
+				emoptions.dump_trajectory_prefix( mod_tag->getOption<std::string>("dump_trajectory_prefix") );
+			}
+			if ( mod_tag->hasOption("dump_trajectory_gz") ) {
+				emoptions.dump_trajectory_gz( mod_tag->getOption<bool>("dump_trajectory_gz") );
+			}
+			if ( mod_tag->hasOption("dump_trajectory_stride") ) {
+				emoptions.dump_trajectory_stride( mod_tag->getOption<core::Size>("dump_trajectory_stride") );
+			}
+
 			//Options for voids_penalty energy:
 			if ( mod_tag->hasOption("voids_penalty_energy_containing_cones_cutoff") ) {
 				emoptions.voids_penalty_energy_containing_cones_cutoff( mod_tag->getOption<core::Size>("voids_penalty_energy_containing_cones_cutoff") );
@@ -456,6 +467,10 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_cone_dist_midpoint", xsct_real, "The distance midpoint for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )
 		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_burial_threshold", xsct_real, "The number of cones in which a point must lie to be considered buried by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )
 		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_hbond_energy_threshold", xsct_real, "The energy threshold above which a hydrogen bond is not counted, used by the BuriedUnsatPenalty energy." )
+
+		+ XMLSchemaAttribute( "dump_trajectory_prefix", xs_string, "If the dump_trajectory scoreterm is used, this is the prefix for the filename to which we're dumping." )
+		+ XMLSchemaAttribute( "dump_trajectory_gz", xsct_rosetta_bool, "If the dump_trajectory scoreterm is used, this determines whether we write to gzipped files.  False by defualt." )
+		+ XMLSchemaAttribute( "dump_trajectory_stride", xsct_positive_integer, "If the dump_trajectory scoreterm is used, this is the frequency with which we write.  Every Nth evaluation of the score term, a pose will be written.  Default 1." )
 
 		+ XMLSchemaAttribute( "voids_penalty_energy_containing_cones_cutoff", xsct_non_negative_integer, "The minimum number of sidechain cones in which a voxel must lie in order for that voxel to be considered to be buried.  Defaults to 6 cones." )
 		+ XMLSchemaAttribute( "voids_penalty_energy_voxel_size", xsct_real , "The voxel size (in Angstroms) used in the voids_penalty score term's calculation.  Default 0.5 Angstroms." )

@@ -850,6 +850,36 @@ public:
 	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
 	core::Real approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb() const;
 
+	//////////////////////////////////////// DumpTrajectoryEnergy settings ////////////////////////////////////////
+
+	/// @brief Set the prefix for the dump_trajectory energy's output.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void dump_trajectory_prefix( std::string const & setting );
+
+	/// @brief Set whether the dump_trajectory energy produces g-zipped output.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void dump_trajectory_gz( bool const setting );
+
+	/// @brief Set the number of function evaluations that elapse before the dump_trajectory mover produces output.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	/// @note The input must be greater than zero.  There's a check for this.  (The function signature takes a signed long
+	/// because the options system parses signed integers, so we need to check that the user hasn't provided a negative
+	/// number.)
+	void dump_trajectory_stride( signed long int setting );
+
+	/// @brief Get the prefix for the dump_trajectory energy's output.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string const & dump_trajectory_prefix() const { return dump_trajectory_prefix_; }
+
+	/// @brief Get whether the dump_trajectory energy produces g-zipped output.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	inline bool dump_trajectory_gz() const { return dump_trajectory_gz_; }
+
+	/// @brief Get the number of function evaluations that elapse before the dump_trajectory mover produces output.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	inline core::Size dump_trajectory_stride() const { return dump_trajectory_stride_; }
+
+
 	utility::vector1< core::Real > const & get_density_sc_scale_byres() const;
 	void set_density_sc_scale_byres(core::Real newscscale);
 	void set_density_sc_scale_byres(core::chemical::AA aa, core::Real newscscale);
@@ -1127,6 +1157,11 @@ private:
 	bool approximate_buried_unsat_penalty_natural_corrections1_;
 	core::Real approximate_buried_unsat_penalty_hbond_bonus_cross_chain_;
 	core::Real approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_;
+
+	//Options for DumpTrajectoryEnergy:
+	std::string dump_trajectory_prefix_;
+	bool dump_trajectory_gz_;
+	core::Size dump_trajectory_stride_;
 
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;

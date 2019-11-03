@@ -25,6 +25,7 @@ external/DAlpahBall/DAlphaBall.*
 /tools/build/user.options
 /tools/build/site.settings
 /tools/build/site.options
+/.vscode
 /xcode/build
 /xcode/Rosetta.xcodeproj/project.xcworkspace/
 /xcode/Rosetta.xcodeproj/xcuserdata

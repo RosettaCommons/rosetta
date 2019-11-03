@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/energy_methods/DumpTrajectoryEnergy.cc
+/// @file core/scoring/util_methods/DumpTrajectoryEnergy.cc
 /// @brief An EnergyMethod that dumps trajectories to file.
 /// @details Dumps trajectories of the minimizer and packer to file when the dump_trajectory
 /// ScoreType is enable. Output may be controlled through the dump_trajectory:* flags.
@@ -15,8 +15,8 @@
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org) - Added support for dumping during packer trajectories.
 
 // Unit headers
-#include <core/energy_methods/DumpTrajectoryEnergy.hh>
-#include <core/energy_methods/DumpTrajectoryEnergyCreator.hh>
+#include <core/scoring/util_methods/DumpTrajectoryEnergy.hh>
+#include <core/scoring/util_methods/DumpTrajectoryEnergyCreator.hh>
 
 // Package headers
 #include <core/scoring/methods/EnergyMethod.hh>
@@ -28,7 +28,6 @@
 
 // Options system
 #include <basic/options/option.hh>
-#include <basic/options/keys/dump_trajectory.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/sys_util.hh>
@@ -49,7 +48,7 @@ static basic::Tracer TR("core.scoring.util_methods.DumpTrajectoryEnergy");
 core::scoring::methods::EnergyMethodOP
 DumpTrajectoryEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const & options ) const
 {
-	return utility::pointer::make_shared< DumpTrajectoryEnergy >( options );
+	return core::scoring::methods::EnergyMethodOP( new DumpTrajectoryEnergy( options ) );
 }
 
 /// @brief Defines the score types that this energy method calculates.
@@ -64,8 +63,8 @@ DumpTrajectoryEnergyCreator::score_types_for_method() const
 
 /// @brief Options constructor.
 ///
-DumpTrajectoryEnergy::DumpTrajectoryEnergy ( core::scoring::methods::EnergyMethodOptions const &options ) :
-	parent1( utility::pointer::make_shared< DumpTrajectoryEnergyCreator >() ),
+DumpTrajectoryEnergy::DumpTrajectoryEnergy ( core::scoring::methods::EnergyMethodOptions const & options ) :
+	parent1( core::scoring::methods::EnergyMethodCreatorOP( new DumpTrajectoryEnergyCreator ) ),
 	parent2( ),
 	state_( IDLE ),
 	dump_filename_( "" ),
@@ -79,8 +78,9 @@ DumpTrajectoryEnergy::DumpTrajectoryEnergy ( core::scoring::methods::EnergyMetho
 /// @brief Copy constructor.
 /// @details Must move to IDLE before we duplicate.
 DumpTrajectoryEnergy::DumpTrajectoryEnergy( DumpTrajectoryEnergy const &src ) :
-	parent1( utility::pointer::make_shared< DumpTrajectoryEnergyCreator >() ),
-	parent2( src ) {
+	parent1( core::scoring::methods::EnergyMethodCreatorOP( new DumpTrajectoryEnergyCreator ) ),
+	parent2( src )
+{
 
 	// Move to IDLE first. This class abuses mutable so we must do this first.
 	src.try_move_to_idle();
@@ -102,7 +102,7 @@ DumpTrajectoryEnergy::~DumpTrajectoryEnergy() {}
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 core::scoring::methods::EnergyMethodOP DumpTrajectoryEnergy::clone() const {
-	return utility::pointer::make_shared< DumpTrajectoryEnergy >(*this);
+	return core::scoring::methods::EnergyMethodOP( new DumpTrajectoryEnergy(*this) );
 }
 
 /// @brief DumpTrajectoryEnergy is context-independent and thus indicates that no context graphs need to be maintained by
@@ -137,6 +137,7 @@ DumpTrajectoryEnergy::setup_for_scoring(
 	}
 }
 
+
 /// @brief Dump out a pose whenever we evaluate the energy.
 void
 DumpTrajectoryEnergy::finalize_total_energy(
@@ -154,7 +155,6 @@ DumpTrajectoryEnergy::finalize_total_energy(
 void
 DumpTrajectoryEnergy::setup_for_minimizing( pose::Pose & , ScoreFunction const & , kinematics::MinimizerMapBase const &) const {
 	start_new_activity( MINIMIZING );
-
 }
 
 /// @brief Reset the state to IDLE
@@ -181,7 +181,6 @@ DumpTrajectoryEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction co
 /********************************************************************
 Packing
 ********************************************************************/
-
 
 /// @brief This is where the state_ moves to PACKING.
 ///
@@ -211,25 +210,18 @@ DumpTrajectoryEnergy::clean_up_residuearrayannealableenergy_after_packing(
 core::Real
 DumpTrajectoryEnergy::calculate_energy(
 	utility::vector1< core::conformation::ResidueCOP > const &residues,
-	utility::vector1< core::Size > const &,
-	core::Size const /*substitution_position = 0*/
-) const {
-	if ( call_count_ % dump_on_every_nth_call_ == 0 ) {
-		core::pose::Pose pose;
-		for ( core::Size i(1), imax(residues.size()); i<=imax; ++i ) {
-			if ( i == 1 || !residues[i]->is_polymer() || !residues[i]->is_polymer_bonded(i-1) )  {
-				pose.append_residue_by_jump( *(residues[i]), 1, "", "", true );
-			} else {
-				pose.append_residue_by_bond( *(residues[i]), false, 0, i-1, 0, false, false );
-			}
+	core::Size const /*substitution_position = 0*/ ) const {
+	core::pose::Pose pose;
+	for ( core::Size i(1), imax(residues.size()); i<=imax; ++i ) {
+		if ( i == 1 || !residues[i]->is_polymer() || !residues[i]->is_polymer_bonded(i-1) )  {
+			pose.append_residue_by_jump( *(residues[i]), 1, "", "", true );
+		} else {
+			pose.append_residue_by_bond( *(residues[i]), false, 0, i-1, 0, false, false );
 		}
-		dump_pose(pose);
-	} else {
-		++call_count_;
 	}
+	dump_pose(pose);
 	return 0;
 }
-
 
 /********************************************************************
 Dumping
@@ -282,14 +274,14 @@ DumpTrajectoryEnergy::start_new_activity( DumpState new_state ) const {
 		if ( TR.visible() ) {
 			TR << "Dumping scoring trajectory to: ";
 		}
-		filename << "_score";
+		filename << "score_";
 		break;
 	}
 	case MINIMIZING : {
 		if ( TR.visible() ) {
 			TR << "Dumping minimization trajectory to: ";
 		}
-		filename << "_min";
+		filename << "min_";
 		call_count_ = 0;
 		break;
 	}
@@ -297,7 +289,7 @@ DumpTrajectoryEnergy::start_new_activity( DumpState new_state ) const {
 		if ( TR.visible() ) {
 			TR << "Dumping packer trajectory to: ";
 		}
-		filename << "_pack";
+		filename << "pack_";
 		call_count_ = 0;
 	}
 	}
@@ -338,6 +330,8 @@ DumpTrajectoryEnergy::dump_pose(
 
 	++call_count_;
 }
+
+
 
 
 } // util_methods

@@ -5562,6 +5562,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	Option_Group( 'dump_trajectory',
 		Option( 'prefix', 'String', desc='Prefix to use when dumping trajectories with dump_trajectory ScoreType.', default='traj'),
 		Option( 'gz', 'Boolean', desc='Dump trajectories in .pdb.gz format.', default='false'),
+		Option( 'stride', 'Integer', desc='The stride for trajectory dumping.  This defaults to 1, meaning that a pose is dumped for every function call.  Higher values dump a pose after every Nth function call, allowing sparser sampling of trajectories.', default='1' ),
 	), # -dump_trajectory
 
 	Option_Group( 'edensity',
