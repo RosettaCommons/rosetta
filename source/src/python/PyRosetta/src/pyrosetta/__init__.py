@@ -10,7 +10,7 @@ from __future__ import absolute_import
 ###############################################################################
 # Imports.
 # Standard library.
-import os, sys
+import os, sys, shlex
 
 import pyrosetta.rosetta as rosetta
 import pyrosetta.bindings
@@ -146,6 +146,9 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
         init('-pH -database /home/me/pyrosetta/rosetta_database')  # overrides default flags - be sure to include the dB last
     """
 
+    if not isinstance(options, (str, list)) or not isinstance(extra_options, (str, list)):
+        raise Exception("Command line rosetta arguments must be passed as list or string!")
+    
     if set_logging_handler is None and _is_interactive():
         set_logging_handler = "interactive"
     elif notebook is not None:
@@ -163,7 +166,12 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
     if (set_logging_handler):
         logging_support.set_logging_sink()
 
-    args = ['PyRosetta'] + options.split() + extra_options.split()
+    if isinstance(options, str):
+        options = shlex.split(options)
+    if isinstance(extra_options, str):
+        extra_options = shlex.split(extra_options)
+        
+    args = ['PyRosetta'] + options + extra_options
 
     # Attempt to resolve database location from environment if not present, else fallback
     # to rosetta's standard resolution
