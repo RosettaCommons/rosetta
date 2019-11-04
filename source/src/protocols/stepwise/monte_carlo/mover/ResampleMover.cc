@@ -242,9 +242,13 @@ ResampleMover::apply( pose::Pose & pose,
 		TransientCutpointHandler cutpoint_handler( remodel_suite, cutpoint_suite );
 		if ( ! minimize_single_res_ ) cutpoint_handler.set_minimize_res( moving_res );
 
+		// if ( pose.residue_type( cutpoint_suite + 1 ).is_RNA() || pose.residue_type( cutpoint_suite + 1 ).is_protein() || pose.residue_type( cutpoint_suite + 1 ).is_peptoid() || pose.residue_type( cutpoint_suite + 1 ).is_TNA() ) {
 		cutpoint_handler.put_in_cutpoints( pose );
 		stepwise_modeler_->apply( pose );
 		cutpoint_handler.take_out_cutpoints( pose );
+		// } else {
+		//  stepwise_modeler_->apply( pose );
+		// }
 	}
 
 	if ( did_mutation ) move_type += "-mut";

@@ -227,6 +227,11 @@ std::string const default_jump_atom( chemical::ResidueType const & rsd ) {
 		return " CG2";
 	}
 
+	if ( rsd.is_polymer() ) {
+		// AMW new support
+		return rsd.atom_name( 1 );
+	}
+
 	if ( rsd.name3() == " MG" )  return "MG  ";
 	if ( rsd.name3() == "HOH" )  return " O  ";
 	if ( rsd.name3() == " ZN" )  return "ZN  ";

@@ -145,6 +145,9 @@ private:
 	initialize_ligand_bond_sampler( core::pose::Pose const & pose );
 
 	sampler::StepWiseSamplerOP
+	initialize_generic_polymer_bond_sampler( core::pose::Pose const & pose );
+
+	sampler::StepWiseSamplerOP
 	initialize_carbohydrate_bond_sampler( core::pose::Pose const & pose );
 
 	void

@@ -438,6 +438,8 @@ correctly_add_cutpoint_variants(
 	if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( cutpoint_res ) );
 
 	correctly_remove_variants_incompatible_with_lower_cutpoint_variant( pose, cutpoint_res );
+	//if ( pose.residue_type( next_res ).is_RNA() || pose.residue_type( next_res ).is_TNA()
+	//  || pose.residue_type( next_res ).is_protein() || pose.residue_type( next_res ).is_peptoid() ) {
 	correctly_remove_variants_incompatible_with_upper_cutpoint_variant( pose, next_res );
 
 	if ( pose.residue_type( cutpoint_res ).is_RNA() ) rna::position_cutpoint_phosphate_torsions( pose, cutpoint_res, next_res );
@@ -535,6 +537,11 @@ fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) 
 		if ( pose.residue_type( res ).has_variant_type( CUTPOINT_LOWER ) &&
 				pose.residue_type( res + 1 ).has_variant_type( CUTPOINT_UPPER ) ) return;
 
+		if ( !( pose.residue_type( res ).is_RNA() || pose.residue_type( res ).is_protein()
+				|| pose.residue_type( res ).is_peptoid() || pose.residue_type( res ).is_TNA() ) ) return;
+		if ( !( pose.residue_type( res + 1 ).is_RNA() || pose.residue_type( res + 1 ).is_protein()
+				|| pose.residue_type( res + 1 ).is_peptoid() || pose.residue_type( res + 1 ).is_TNA() ) ) return;
+
 		// can happen after additions
 		core::pose::correctly_add_cutpoint_variants( pose, res );
 
@@ -584,6 +591,12 @@ fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const 
 
 		if ( pose.residue_type( res - 1 ).has_variant_type( CUTPOINT_LOWER ) &&
 				pose.residue_type( res  ).has_variant_type( CUTPOINT_UPPER ) ) return;
+
+		if ( !( pose.residue_type( res ).is_RNA() || pose.residue_type( res ).is_protein()
+				|| pose.residue_type( res ).is_peptoid() || pose.residue_type( res ).is_TNA() ) ) return;
+		if ( !( pose.residue_type( res - 1 ).is_RNA() || pose.residue_type( res - 1 ).is_protein()
+				|| pose.residue_type( res - 1 ).is_peptoid() || pose.residue_type( res - 1 ).is_TNA() ) ) return;
+
 
 		// can happen after additions
 		core::pose::correctly_add_cutpoint_variants( pose, res - 1 );

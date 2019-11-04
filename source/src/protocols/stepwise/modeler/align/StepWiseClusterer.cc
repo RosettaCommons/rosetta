@@ -236,9 +236,13 @@ StepWiseClusterer::initialize_parameters( pose::Pose const & pose ) {
 			// won't matter.
 			if ( max_decoys_ == 0   ) max_decoys_ = 108;
 			if ( cluster_rmsd_ == 0 ) cluster_rmsd_ = 0.5;
+		} else if ( pose.residue_type( calc_rms_res_[1] ).is_polymer() ) {
+			// Arbitrarily suggest that if the first calc_rms_res_ is a generic
+			// bonded entity, use RNA-like parameters
+			if ( max_decoys_ == 0   ) max_decoys_ = 108;
+			if ( cluster_rmsd_ == 0 ) cluster_rmsd_ = 0.5;
 		} else {
-			utility_exit_with_message( "Not sure how to calculate RMSD of something that is not RNA or protein" );
-			runtime_assert( max_decoys_ > 0 );
+			utility_exit_with_message( "This should never come up -- neither polymer nor nonpolymer?" );
 		}
 	} else {
 		runtime_assert(  max_decoys_ > 0 );

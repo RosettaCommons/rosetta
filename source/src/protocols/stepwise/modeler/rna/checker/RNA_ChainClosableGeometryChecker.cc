@@ -146,15 +146,19 @@ bool
 RNA_ChainClosableGeometryChecker::check_chain_closable_geometry( core::conformation::Residue const & five_prime_residue,
 	core::conformation::Residue const & three_prime_residue ) const {
 
-	if ( five_prime_residue.is_TNA() && three_prime_residue.is_TNA() ) {
-		return check_chain_closable_geometry( five_prime_residue.xyz( " O2'" ), three_prime_residue.xyz( " C3'" ) );
-	} else if ( five_prime_residue.is_TNA() && !three_prime_residue.is_TNA() ) {
-		return check_chain_closable_geometry( five_prime_residue.xyz( " O2'" ), three_prime_residue.xyz( " C5'" ) );
-	} else if ( !five_prime_residue.is_TNA() && three_prime_residue.is_TNA() ) {
-		return check_chain_closable_geometry( five_prime_residue.xyz( " O3'" ), three_prime_residue.xyz( " C3'" ) );
-	} else { //if ( !five_prime_residue.is_TNA() && !three_prime_residue.is_TNA() ) {
+	if ( five_prime_residue.is_RNA() && three_prime_residue.is_RNA() ) {
 		return check_chain_closable_geometry( five_prime_residue.xyz( " O3'" ), three_prime_residue.xyz( " C5'" ) );
+	} else if ( five_prime_residue.is_TNA() && three_prime_residue.is_TNA() ) {
+		return check_chain_closable_geometry( five_prime_residue.xyz( " O2'" ), three_prime_residue.xyz( " C3'" ) );
+	} else if ( five_prime_residue.is_TNA() && three_prime_residue.is_RNA() ) {
+		return check_chain_closable_geometry( five_prime_residue.xyz( " O2'" ), three_prime_residue.xyz( " C5'" ) );
+	} else if ( five_prime_residue.is_RNA() && three_prime_residue.is_TNA() ) {
+		return check_chain_closable_geometry( five_prime_residue.xyz( " O3'" ), three_prime_residue.xyz( " C3'" ) );
 	}
+
+	// Otherwise just return true. It's some other kind of thing?
+	return true;
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

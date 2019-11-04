@@ -252,7 +252,10 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 
 	std::string full_sequence = full_model_info.full_sequence();
 	Size nres = full_sequence.size();
-	if ( full_sequence[ nres - 1] == 'X' ) {
+	// AMW: only make this transformation if the X is not in the non_standard_residue_map
+	// i.e., if it's a VRT X not a ligand or polymer.
+	if ( full_sequence[ nres - 1] == 'X'
+			&& full_model_info.full_model_parameters()->non_standard_residue_map().find( nres ) == full_model_info.full_model_parameters()->non_standard_residue_map().end() ) {
 		full_sequence = full_sequence.substr( 0, nres - 1 );
 		nres -= 1;
 	}
@@ -263,8 +266,8 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 	std::map< Size, bool > is_prepend_map; // used for rmsd calculations -- include phosphate. May not be necessary.
 	utility::vector1< Size > calc_rms_res_ = calc_rms_res;
 	if ( calc_rms_res_.size() == 0 ) calc_rms_res_.push_back( full_model_info.sub_to_full( rebuild_res ) );
-	for ( Size i = 1; i <= calc_rms_res_.size(); i++ ) {
-		Size const & n = calc_rms_res_[ i ];
+
+	for ( Size const n : calc_rms_res_ ) {
 		if ( is_working_res[ n ] ) {
 			is_prepend_map[ n ] = is_prepend; //pose.residue_type( full_model_info.full_to_sub( n ) ).has_variant_type( "VIRTUAL_PHOSPHATE" );
 		}

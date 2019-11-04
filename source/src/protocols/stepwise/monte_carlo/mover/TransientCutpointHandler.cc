@@ -86,7 +86,10 @@ TransientCutpointHandler::put_in_cutpoints(
 	if ( change_foldtree_ ) prepare_fold_tree_for_erraser( pose );
 
 	// It can't be "cutpoint suite" that would be the cutpoint in the FT... I don't think...
-	pose::correctly_add_cutpoint_variants( pose, cutpoint_suite_ );
+	if ( pose.residue_type( cutpoint_suite_ + 1 ).is_RNA() || pose.residue_type( cutpoint_suite_ + 1 ).is_protein()
+			|| pose.residue_type( cutpoint_suite_ + 1 ).is_peptoid() || pose.residue_type( cutpoint_suite_ + 1 ).is_TNA() ) {
+		pose::correctly_add_cutpoint_variants( pose, cutpoint_suite_ );
+	}
 	apply_suite_torsion_info( pose, suite_torsion_info );
 
 	// reset the alpha torsion to its original value
@@ -130,6 +133,7 @@ TransientCutpointHandler::prepare_fold_tree_for_erraser( core::pose::Pose & pose
 		default_jump_atom( pose.residue_type( jump_end_   ) ) );
 
 	pose.fold_tree( f );
+	TR.Trace << "New FT: " << pose.fold_tree() << std::endl;
 }
 
 
@@ -147,8 +151,11 @@ TransientCutpointHandler::take_out_cutpoints(
 	Pose pose = viewer_pose; // prevent some conflicts with graphics. Note potential slowdown.
 #endif
 
-	remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_suite_   );
-	remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, cutpoint_suite_ + 1 );
+	if ( pose.residue_type( cutpoint_suite_ + 1 ).is_RNA() || pose.residue_type( cutpoint_suite_ + 1 ).is_protein()
+			|| pose.residue_type( cutpoint_suite_ + 1 ).is_peptoid() || pose.residue_type( cutpoint_suite_ + 1 ).is_TNA() ) {
+		remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_suite_   );
+		remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, cutpoint_suite_ + 1 );
+	}
 
 	// return to simple fold tree
 	if ( change_foldtree_ ) {

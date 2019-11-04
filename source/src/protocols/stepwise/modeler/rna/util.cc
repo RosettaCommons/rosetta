@@ -1725,6 +1725,10 @@ add_harmonic_chain_break_constraint( pose::Pose & pose, Size const five_prime_re
 	using numeric::conversions::radians;
 
 	Size three_prime_res = five_prime_res + 1;
+
+	// These wouldn't be the right constraint geometry even if we tried.
+	if ( !pose.residue_type( three_prime_res ).is_NA() ) return;
+
 	//    From RAD.param file
 	//   ICOOR_INTERNAL  UPPER -175.907669   60.206192    1.607146   O3'   C3'   C4'  , Upper is P1
 	//    ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'  , Lower is O3'
@@ -1827,8 +1831,11 @@ figure_out_moving_rna_chain_breaks( pose::Pose const & pose,
 	rna_chain_break_gap_sizes.clear();
 
 	for ( Size n = 1; n <= chain_break_gap_sizes.size(); n++ ) {
-		if ( !pose.residue_type( five_prime_chain_breaks[n] ).is_NA() ) continue;
-		runtime_assert( pose.residue_type( three_prime_chain_breaks[n] ).is_NA() );
+		if ( five_prime_chain_breaks.size() >= n && !pose.residue_type( five_prime_chain_breaks[n] ).is_NA() ) continue;
+
+		// AMW now not necessarily true! could be a 'generic polymer' or even protein
+		//runtime_assert( pose.residue_type( three_prime_chain_breaks[n] ).is_NA() );
+
 		rna_five_prime_chain_breaks.push_back( five_prime_chain_breaks[n] );
 		rna_three_prime_chain_breaks.push_back( three_prime_chain_breaks[n] );
 		rna_chain_break_gap_sizes.push_back( chain_break_gap_sizes[n] );

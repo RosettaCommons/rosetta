@@ -671,14 +671,14 @@ slice( pose::Pose & sliced_out_pose,
 		ResidueOP rsd = pose.residue( j ).clone();
 
 		bool const after_cutpoint = ( j == 1 || ( pose.fold_tree().is_cutpoint( j - 1 ) ) );
-		if ( after_cutpoint ) rsd = remove_variant_type_from_residue( *rsd, chemical::LOWER_TERMINUS_VARIANT, pose );
+		if ( after_cutpoint && rsd->has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ) rsd = remove_variant_type_from_residue( *rsd, chemical::LOWER_TERMINUS_VARIANT, pose );
 		if ( !after_cutpoint && !slice_res.has_value( j - 1 ) ) num_five_prime_connections++;
 
 		bool const jump_to_previous = check_jump_to_previous_residue_in_chain( pose, j, slice_res );
 		if ( jump_to_previous ) num_jumps_to_previous++;
 
 		bool const before_cutpoint = ( j == pose.size() || ( pose.fold_tree().is_cutpoint( j ) ) );
-		if ( before_cutpoint ) rsd = remove_variant_type_from_residue( *rsd, chemical::UPPER_TERMINUS_VARIANT, pose ); // got to be safe.
+		if ( before_cutpoint && rsd->has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) rsd = remove_variant_type_from_residue( *rsd, chemical::UPPER_TERMINUS_VARIANT, pose ); // got to be safe.
 		if ( !before_cutpoint && !slice_res.has_value( j + 1 ) ) num_three_prime_connections++;
 
 		bool const jump_to_next = check_jump_to_next_residue_in_chain( pose, j, slice_res );
@@ -1179,8 +1179,16 @@ figure_out_moving_chain_breaks( pose::Pose const & pose,
 		if ( gap_size == 0 ) {
 			runtime_assert( five_prime_chain_break == n ); // no rewind past bulges
 			runtime_assert( three_prime_chain_break == n + 1 ); // no fast forward past bulges
-			runtime_assert( pose.residue_type( five_prime_chain_break ).has_variant_type( chemical::CUTPOINT_LOWER ) );
-			runtime_assert( pose.residue_type( three_prime_chain_break ).has_variant_type( chemical::CUTPOINT_UPPER ) );
+
+			// This condition only holds if those cutpoint types can be applied, which fails for some polymers.
+			if ( ( pose.residue_type( five_prime_chain_break ).is_RNA() || pose.residue_type( five_prime_chain_break ).is_protein()
+					|| pose.residue_type( five_prime_chain_break ).is_peptoid() || pose.residue_type( five_prime_chain_break ).is_TNA() ) &&
+					( pose.residue_type( three_prime_chain_break ).is_RNA() || pose.residue_type( three_prime_chain_break ).is_protein()
+					|| pose.residue_type( three_prime_chain_break ).is_peptoid() || pose.residue_type( three_prime_chain_break ).is_TNA() ) ) {
+				runtime_assert( pose.residue_type( five_prime_chain_break ).has_variant_type( chemical::CUTPOINT_LOWER ) );
+				runtime_assert( pose.residue_type( three_prime_chain_break ).has_variant_type( chemical::CUTPOINT_UPPER ) );
+			}
+
 			cutpoints_closed.push_back( n );
 		}
 
@@ -1482,7 +1490,8 @@ is_protein( pose::Pose const & pose, utility::vector1< Size > const & moving_res
 	if ( pose.residue_type( example_res ).is_protein() || pose.residue_type( example_res ).is_peptoid() ) {
 		return true;
 	} else {
-		runtime_assert( pose.residue_type( example_res ).is_RNA() || pose.residue_type( example_res ).is_TNA() || pose.residue_type( example_res ).is_carbohydrate() || pose.residue_type( example_res ).is_aramid() || !pose.residue_type( example_res ).is_polymer() );
+		// It can be polymer or not polymer at this point, so we are done with conditions.
+		//runtime_assert( pose.residue_type( example_res ).is_RNA() || pose.residue_type( example_res ).is_TNA() || pose.residue_type( example_res ).is_carbohydrate() || pose.residue_type( example_res ).is_aramid() || !pose.residue_type( example_res ).is_polymer() );
 		return false;
 	}
 }

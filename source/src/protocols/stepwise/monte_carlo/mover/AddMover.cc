@@ -530,10 +530,14 @@ AddMover::setup_initial_torsions( pose::Pose & pose ) {
 	if ( suite_num_ > 0 && pose.residue_type( suite_num_ ).is_RNA() ) {
 		if ( start_added_residue_in_aform_ ) {
 			rna_torsion_mover_->apply_suite_torsion_Aform( pose, suite_num_ );
-			if ( nucleoside_num_ > 0 ) rna_torsion_mover_->apply_nucleoside_torsion_Aform( pose, nucleoside_num_ );
+			if ( nucleoside_num_ > 0 && pose.residue_type( nucleoside_num_ ).is_RNA() ) rna_torsion_mover_->apply_nucleoside_torsion_Aform( pose, nucleoside_num_ );
 		} else {
 			rna_torsion_mover_->apply_random_suite_torsion( pose, suite_num_ );
-			if ( nucleoside_num_ > 0 ) rna_torsion_mover_->apply_random_nucleoside_torsion( pose, nucleoside_num_ );
+			if ( nucleoside_num_ > 0 && pose.residue_type( nucleoside_num_ ).is_RNA() ) rna_torsion_mover_->apply_random_nucleoside_torsion( pose, nucleoside_num_ );
+			if ( nucleoside_num_ > 0 && pose.residue_type( nucleoside_num_ ).is_polymer() ) {
+				// AMW TODO: random torsions or something idk
+				// pass
+			}
 		}
 
 		// rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num_, sample_range_large_);

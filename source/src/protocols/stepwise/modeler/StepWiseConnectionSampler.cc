@@ -398,10 +398,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	PartitionContactScreenerOP atr_rep_screener;
 	if ( options_->atr_rep_screen() && moving_res_list_.size() > 0 &&
 			( options_->atr_rep_screen_for_docking() || !rigid_body_modeler_ )
-			&& !pose.residue_type( moving_res_ ).is_carbohydrate()
-			&& !pose.residue_type( moving_res_ ).is_DNA()
-			&& !pose.residue_type( moving_res_ ).is_TNA()
-			&& !pose.residue_type( moving_res_ ).is_protein()
+			&& pose.residue_type( moving_res_ ).is_RNA()
 			&& !pose.residue_type( moving_res_ ).has_variant_type( core::chemical::DEOXY_O2PRIME ) ) {
 		atr_rep_screener = utility::pointer::make_shared< PartitionContactScreener >( *screening_pose_, working_parameters_, use_loose_rep_cutoff, scorefxn_->energy_method_options() );
 		screeners_.push_back( atr_rep_screener );
@@ -409,7 +406,9 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 
 	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
 		if ( kic_modeler_ && n == 1 ) continue; // if KIC, first one is screened above, actually.
-		screeners_.push_back( utility::pointer::make_shared< RNA_ChainClosureScreener >( rna_chain_closure_checkers_[ n ] ) );
+		if ( screening_pose_->residue_type( rna_cutpoints_closed_[n] ).is_NA() && screening_pose_->residue_type( rna_cutpoints_closed_[n] + 1 ).is_NA() ) {
+			screeners_.push_back( utility::pointer::make_shared< RNA_ChainClosureScreener >( rna_chain_closure_checkers_[ n ] ) );
+		}
 	}
 
 	for ( Size n = 1; n <= protein_ccd_closers_.size(); n++ )  screeners_.push_back( utility::pointer::make_shared< ProteinCCD_ClosureScreener >( protein_ccd_closers_[n], *protein_ccd_poses_[n] ) );
@@ -475,6 +474,7 @@ StepWiseConnectionSampler::initialize_pose( pose::Pose & pose  ){
 	}
 
 	// note that constraint addition must happen after all variant changes (or the atom numbering will be off).
+	// AMW: why is this not being handled by chainbreak scoreterm alone, if applicable??
 	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) rna::add_harmonic_chain_break_constraint( pose, rna_cutpoints_closed_[ n ] );
 
 	return true;
@@ -507,8 +507,10 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	}
 	if ( options_->virtualize_packable_moieties_in_screening_pose() ) phosphate::remove_terminal_phosphates( *screening_pose_ );
 	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
-		add_variant_type_to_pose_residue( *screening_pose_, core::chemical::VIRTUAL_PHOSPHATE,
-			rna_cutpoints_closed_[n] + 1 ); // PS May 31, 2010 -- updated to all cutpoints by rhiju, feb. 2014
+		if ( screening_pose_->residue_type( rna_cutpoints_closed_[n] + 1 ).is_NA() ) {
+			add_variant_type_to_pose_residue( *screening_pose_, core::chemical::VIRTUAL_PHOSPHATE,
+				rna_cutpoints_closed_[n] + 1 ); // PS May 31, 2010 -- updated to all cutpoints by rhiju, feb. 2014
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////
@@ -561,8 +563,13 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 
 	screening_pose_->remove_constraints(); // chain closure actually assumes no constraints in pose -- it sets up its own constraints.
 	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
-		rna_chain_closure_checkers_.push_back( utility::pointer::make_shared< RNA_ChainClosureChecker >( *screening_pose_, rna_cutpoints_closed_[n] ) );
-		rna_chain_closure_checkers_[n]->set_reinitialize_CCD_torsions( options_->reinitialize_CCD_torsions() );
+		// AMW TODO: I am not sure if this condition is safe to the rare case that we're looking at a cyclic cutpoint, in which case
+		// instead of looking at rna_cutpoints_closed_[n] + 1 we either need to go into cyclize_res or we need to find the
+		// similarly indexed rna_three_prime_chain_breaks_ for every rna_five_prime_chain_breaks_ or something.
+		if ( screening_pose_->residue_type( rna_cutpoints_closed_[n] ).is_NA() && screening_pose_->residue_type( rna_cutpoints_closed_[n] + 1 ).is_NA() ) {
+			rna_chain_closure_checkers_.push_back( utility::pointer::make_shared< RNA_ChainClosureChecker >( *screening_pose_, rna_cutpoints_closed_[n] ) );
+			rna_chain_closure_checkers_[rna_chain_closure_checkers_.size()]->set_reinitialize_CCD_torsions( options_->reinitialize_CCD_torsions() );
+		}
 	}
 
 	// AMW TODO: carbohydrate loop closers?
@@ -736,6 +743,8 @@ StepWiseConnectionSampler::initialize_sampler( pose::Pose const & pose ){
 			sampler_ = initialize_ligand_bond_sampler( pose );
 		}
 	} else {
+		// AMW: We now default to a 'bonded ligand' sampler.
+		// This means that we DO NOT call initialize_rna_bond_sampler if moving_res_ == 0 anymore.
 		if ( protein_connection_ ) {
 			sampler_ = initialize_protein_bond_sampler( pose );
 		} else if ( moving_res_ != 0 && pose.residue_type( moving_res_ ).is_carbohydrate() ) {
@@ -744,9 +753,11 @@ StepWiseConnectionSampler::initialize_sampler( pose::Pose const & pose ){
 		} else if ( moving_res_ != 0 && pose.residue_type( moving_res_ ).is_TNA() ) {
 			TR << "Sampling TNA" << std::endl;
 			sampler_ = initialize_tna_bond_sampler( pose );
-		} else {
-			runtime_assert( moving_res_ == 0 || pose.residue_type( moving_res_ ).is_RNA() );
+		} else if ( moving_res_ == 0 || pose.residue_type( moving_res_ ).is_RNA() ) {
 			sampler_ = initialize_rna_bond_sampler( pose );
+		} else { // if ( moving_res_ != 0 ) {
+			runtime_assert( pose.residue_type( moving_res_ ).is_polymer() );
+			sampler_ = initialize_generic_polymer_bond_sampler( pose );
 		}
 	}
 
@@ -812,6 +823,34 @@ StepWiseConnectionSampler::initialize_tna_bond_sampler( pose::Pose const & pose 
 	return sampler;
 }
 
+
+//////////////////////////////////////////////////////////////////////
+sampler::StepWiseSamplerOP
+StepWiseConnectionSampler::initialize_generic_polymer_bond_sampler( pose::Pose const & pose ) {
+	using namespace sampler;
+	if ( moving_res_list_.size() == 0 ) return nullptr;
+
+	// AMW: Note that this won't work if the residue is LINKed to another residue, but it does not
+	// have the polymer property...
+	utility::vector1< Real > allowed_values{ -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 };
+	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
+	TR << "Setting up bonded polymer sampler for " << pose.residue_type( moving_res_ ).name() << std::endl;
+	// AMW: be very careful here because it's not clear all of these will be very useful.
+	for ( Size ii = 1; ii <= pose.residue_type( moving_res_ ).mainchain_atoms().size(); ++ii ) {
+		// skip if lower connect not there. Might be bad if it exists but is unfulfilled?
+		// ideally skip if it's there but unfulfilled
+		//if ( !pose.residue_type( moving_res_ ).lower_connect_id() && ii == 1 ) continue;
+		// This was a good idea... but... what if you naturally don't have an upper
+		//if ( !pose.residue_type( moving_res_ ).upper_connect_id() && ii >= pose.residue_type( moving_res_ ).mainchain_atoms().size() - 1 ) continue;
+
+		sampler->add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( core::id::TorsionID( moving_res_, id::BB, ii ), allowed_values ) );
+	}
+	for ( Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
+		sampler->add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( core::id::TorsionID( moving_res_, id::CHI, ii ), allowed_values ) );
+	}
+	sampler->init();
+	return sampler;
+}
 
 //////////////////////////////////////////////////////////////////////
 sampler::StepWiseSamplerOP

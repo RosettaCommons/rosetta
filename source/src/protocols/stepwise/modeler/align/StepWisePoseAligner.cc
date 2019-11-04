@@ -149,6 +149,8 @@ StepWisePoseAligner::get_rmsd_no_superimpose( pose::Pose const & pose,
 	superimpose_rmsd_ = 0.0;
 	rmsd_ = 0.0;
 
+	//TR << "TEST" << *(const_full_model_info( pose ).full_model_parameters()) << std::endl;
+
 	//TR << "At problem call to get_rmsd_no_superimpose, check_align is " << check_align << std::endl;
 	if ( check_align ) runtime_assert( pose.annotated_sequence() == annotated_sequence_used_for_atom_id_maps_ );
 
@@ -348,7 +350,8 @@ StepWisePoseAligner::get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID 
 	for ( Size n = 1; n < pose.size(); n++ ) {
 
 		if ( ( pose.residue_type( n ).is_RNA()     && pose.residue_type( n + 1 ).is_RNA() ) ||
-				( pose.residue_type( n ).is_protein() && pose.residue_type( n + 1 ).is_protein() ) ) {
+				( pose.residue_type( n ).is_protein() && pose.residue_type( n + 1 ).is_protein() ) ||
+				( pose.residue_type( n ).is_RNA() && pose.residue_type( n + 1 ).is_polymer() ) ) {
 			// Atoms at ends of rebuilt loops:
 			if ( !pose.fold_tree().is_cutpoint( n ) || pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ) {
 				if ( calc_rms_res.has_value( n ) || calc_rms_res.has_value( n+1) ) {
