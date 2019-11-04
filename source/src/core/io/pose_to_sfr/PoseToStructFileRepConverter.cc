@@ -787,7 +787,7 @@ PoseToStructFileRepConverter::get_ssbond_record( core::pose::Pose const & pose, 
 
 	// Calculate bond distance.
 	uint start_atom_index = pose.residue_type( ii ).atom_index( pose.residue_type( ii ).get_disulfide_atom_name() );
-	uint stop_atom_index = pose.residue_type( jj ).atom_index( pose.residue_type( ii ).get_disulfide_atom_name() );
+	uint stop_atom_index = pose.residue_type( jj ).atom_index( pose.residue_type( jj ).get_disulfide_atom_name() );
 	ssbond.length = pose.residue( ii ).xyz( start_atom_index ).distance(
 		pose.residue( jj ).xyz( stop_atom_index ) );
 	// pose.conformation().bond_length(
