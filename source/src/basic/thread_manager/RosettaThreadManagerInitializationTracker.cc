@@ -22,9 +22,14 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 
 // C++ headers
 #include <string>
+#ifdef MULTI_THREADED
+#include <thread>
+#endif
 
 // Construct tracer.
 static basic::Tracer TR( "basic.thread_manager.RosettaThreadManagerInitializationTracker" );
@@ -37,8 +42,26 @@ namespace thread_manager {
 
 // Private methods ////////////////////////////////////////////////////////////
 // Empty constructor
-RosettaThreadManagerInitializationTracker::RosettaThreadManagerInitializationTracker()
-{}
+RosettaThreadManagerInitializationTracker::RosettaThreadManagerInitializationTracker() :
+	total_threads_( basic::options::option[ basic::options::OptionKeys::multithreading::total_threads ]() )
+{
+#ifdef MULTI_THREADED
+	if ( total_threads_ == 0 ) {
+		total_threads_ = std::thread::hardware_concurrency();
+		if ( total_threads_ == 0 ) { //Could not determine number of threads (should be rare).
+			total_threads_ = 1;
+		}
+	}
+#else
+	runtime_assert_string_msg(
+		total_threads_ == 0 || total_threads_ == 1,
+		"Error in RosettaThreadManagerInitializationTracker constructor: The number of threads in the single-threaded build of Rosetta must be 1.  Please compile with the \"extras=cxx11thread\" option to take advantage of multi=threading."
+	);
+	if ( total_threads_ == 0 ) {
+		total_threads_ = 1;
+	}
+#endif
+}
 
 /// @brief Determine whether thread launch has started.
 bool

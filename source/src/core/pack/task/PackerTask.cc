@@ -10,6 +10,7 @@
 /// @file   core/pack/task/PackerTask.cc
 /// @brief  Task class to describe packer's behavior
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added support for multithreading.
 
 // Unit Headers
 #include <core/pack/task/PackerTask.hh>

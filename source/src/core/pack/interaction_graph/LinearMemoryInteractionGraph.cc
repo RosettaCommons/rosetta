@@ -1374,13 +1374,13 @@ LinearMemoryInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 }
 
 void
-LinearMemoryInteractionGraph::prepare_for_simulated_annealing()
+LinearMemoryInteractionGraph::prepare_graph_for_simulated_annealing()
 {
 	if ( first_time_prepping_for_simA_ ) {
 		set_recent_history_sizes();
 		first_time_prepping_for_simA_ = false;
 	}
-	InteractionGraphBase::prepare_for_simulated_annealing();
+	InteractionGraphBase::prepare_graph_for_simulated_annealing();
 
 }
 

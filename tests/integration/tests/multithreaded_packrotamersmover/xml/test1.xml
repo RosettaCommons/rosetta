@@ -1,0 +1,15 @@
+<!-- Design with no options. -->
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<MOVERS>
+		<PackRotamersMover name="design" scorefxn="r15" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="design" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15" />
+</ROSETTASCRIPTS>

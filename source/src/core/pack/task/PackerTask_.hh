@@ -13,6 +13,7 @@
 /// to see how it behaves internally.
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 /// @author Steven Lewis
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added support for multithreading.
 
 #ifndef INCLUDED_core_pack_task_PackerTask__hh
 #define INCLUDED_core_pack_task_PackerTask__hh
@@ -63,20 +64,28 @@ class PackerTask_ : public PackerTask
 {
 public:
 	/// @brief constructor; the PackerTask will always need a pose!
-	PackerTask_();
+	/// @note Can optionally specify the number of interaction graph threads to request.  The default (0)
+	/// means to use all available threads.  In the single-threaded build, must always be 0 or 1.
+	PackerTask_( core::Size const ig_threads_to_request = 0 );
 
 	/// @brief Initialization constructor that needs a pose.  A DefaultPackerPalette
 	/// is automatically created using the ResidueTypeSet of the pose.
+	/// @note Can optionally specify the number of interaction graph threads to request.  The default (0)
+	/// means to use all available threads.  In the single-threaded build, must always be 0 or 1.
 	PackerTask_(
-		pose::Pose const & pose
+		pose::Pose const & pose,
+		core::Size const ig_threads_to_request = 0
 	);
 
 
 	/// @brief Initialization constructor that needs a pose and a PackerPalette.
 	/// @details The input PackerPalette is cloned.
+	/// @note Can optionally specify the number of interaction graph threads to request.  The default (0)
+	/// means to use all available threads.  In the single-threaded build, must always be 0 or 1.
 	PackerTask_(
 		pose::Pose const & pose,
-		core::pack::palette::PackerPaletteCOP const & packer_palette
+		core::pack::palette::PackerPaletteCOP const & packer_palette,
+		core::Size const ig_threads_to_request = 0
 	);
 
 	/// @brief dtor
@@ -84,6 +93,11 @@ public:
 
 	/// @brief copy method
 	PackerTaskOP clone() const override;
+
+	/// @brief Check that the number of threads to request is reasonable.
+	/// @details Does nothing in multithreaded build.  In single-threaded build, checks
+	/// that number of threads to request is 0 (use all available, which is 1) or 1.
+	void check_threads() const;
 
 	/// @brief replace a given residue task with a brand new one NOTE: This should be the only way to break commutativity!!!!
 	void clean_residue_task( conformation::Residue const & original_residue, Size const seqpos, core::pose::Pose const & pose) override;
@@ -390,6 +404,22 @@ public:
 	symmetrize_by_intersection() const override;
 
 	/////////////////////////////////////
+	/// For multithreading            ///
+	/////////////////////////////////////
+
+	/// @brief How many threads should the packer request for interaction graph precomputation?
+	/// @details Must be implemented by derived class.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	core::Size ig_threads_to_request() const override;
+
+	/// @brief Limit the interaction graph setup threads.
+	/// @details If the current ig_threads_to_request_ is zero, setting replaces it.  If setting is zero, this
+	/// does nothing.  Otherwise, setting replaces ig_threads_to_request_ if and only if it is less than
+	/// ig_threads_to_request_.  This preserves commutativity.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org)
+	void limit_ig_setup_threads( core::Size const setting ) override;
+
+	/////////////////////////////////////
 	/// For use only inside the packer //
 	/////////////////////////////////////
 
@@ -484,6 +514,11 @@ private:
 	/// @brief The PackerPalette, which tells the PackerTask what the default set of residue types is in the absence of TaskOperations.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	core::pack::palette::PackerPaletteCOP packer_palette_;
+
+	/// @brief The number of threads to request for interaction graph precomputation.
+	/// @details The default, 0, means to request all available threads (multithreaded build) or
+	/// 1 thread (non-threaded build).  In the non-threaded build, only 1 thread can be requested.
+	core::Size ig_threads_to_request_ = 0;
 
 #ifdef    SERIALIZATION
 public:

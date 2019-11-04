@@ -10,6 +10,7 @@
 /// @file   core/pack/pack_missing_sidechains.cc
 /// @brief  function to fix missing sidechains in input PDBs (especially those surface lysines that get sidechain-backbone clashes!)
 /// @author Steven Lewis smlewi@gmail.com
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitue.org) to allow multi-threaded interaction graph setup.
 
 // Unit headers
 #include <core/pack/pack_missing_sidechains.hh>
@@ -30,6 +31,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 
 #include <core/id/AtomID_Map.hh>
 #include <utility/vector0.hh>
@@ -44,19 +47,33 @@ static basic::Tracer TR( "core.pack.pack_missing_sidechains" );
 namespace core {
 namespace pack {
 
-/// @details this function will run rotamer trials on sidechains with missing density.  It first sets up a PackerTask with repacking freedom for residues with sidechain missing atoms in the missing AtomID_Mask, then runs rotamer_trials.  This function is smart enough to ignore missing virtual atoms
+/// @brief This function runs rotamer trials on residues missing sidechain density (as described
+/// by the AtomID_Mask).
+/// @details this function will run rotamer trials on sidechains with missing density.  It
+/// first sets up a PackerTask with repacking freedom for residues with sidechain missing atoms
+/// in the missing AtomID_Mask, then runs rotamer_trials.  This function is smart enough to
+/// ignore missing virtual atoms
+/// @note In multi-threaded builds, this function takes an extra parameter for
+/// the number of threads to request, for parallel interaction graph precomputation.
 void
 pack_missing_sidechains(
 	core::pose::Pose & pose,
 	core::id::AtomID_Mask const & missing
-)
-{
+#ifdef MULTI_THREADED
+	,
+	core::Size const threads_to_request
+#endif
+) {
 	utility::vector1_bool repackable;
 	bool something_to_pack = figure_out_repackable_residues( pose, missing, repackable );
 	if ( !something_to_pack ) return;
 
 	//build a PackerTask to control rotamer_trials
+#ifdef MULTI_THREADED
+	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose, threads_to_request );
+#else
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
+#endif
 	task->initialize_from_command_line();
 	task->restrict_to_repacking();
 

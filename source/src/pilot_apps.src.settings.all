@@ -1108,6 +1108,8 @@ sources = {
 		#"simple_cycpep_predict",
 		"symmetrize_old_ramamap",
 		"tensorflow_test1",
+		"test_multithreaded_ig_correctness",
+		"test_multithreaded_packing_performance",
 		"test_rosetta_thread_manager_advanced_API",
 		"test_rosetta_thread_manager_basic_API",
 	],

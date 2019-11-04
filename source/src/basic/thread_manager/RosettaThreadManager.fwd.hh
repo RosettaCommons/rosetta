@@ -14,8 +14,6 @@
 /// gradient vector, or interaction graph.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
-#ifdef MULTI_THREADED
-
 #ifndef INCLUDED_basic_thread_manager_RosettaThreadManager_fwd_hh
 #define INCLUDED_basic_thread_manager_RosettaThreadManager_fwd_hh
 
@@ -44,5 +42,3 @@ typedef utility::pointer::shared_ptr< std::function< void () > > RosettaThreadFu
 } //basic
 
 #endif //INCLUDED_basic_thread_manager_RosettaThreadManager_fwd_hh
-
-#endif //MULTI_THREADED

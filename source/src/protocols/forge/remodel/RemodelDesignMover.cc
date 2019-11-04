@@ -576,7 +576,7 @@ core::Real build_and_score_disulfide(core::pose::Pose & blank_pose, core::scorin
 	//make_disulfide(blank_pose, disulf, mm);
 
 	core::conformation::form_disulfide(blank_pose.conformation(), res1, res2);
-	core::util:: rebuild_disulfide(blank_pose, res1,res2, nullptr /*task*/, nullptr /*scfxn*/, mm, nullptr /*min scfxn*/);
+	core::util:: rebuild_disulfide(blank_pose, res1,res2, 0, nullptr /*task*/, nullptr /*scfxn*/, mm, nullptr /*min scfxn*/);
 
 	core::Real const score = (*sfxn)(blank_pose) * 0.50;
 	//sfxn->show( TR, blank_pose );
@@ -824,7 +824,7 @@ void RemodelDesignMover::make_disulfide(Pose & pose, utility::vector1<std::pair<
 	//utility::vector1<std::pair<Size,Size>> dummy_vector;
 	for ( auto & disulf_partner : disulf_partners ) {
 		core::conformation::form_disulfide(pose.conformation(), disulf_partner.first, disulf_partner.second );
-		core::util:: rebuild_disulfide(pose, disulf_partner.first, disulf_partner.second, nullptr /*task*/, nullptr /*scfxn*/, mm, nullptr /*min scfxn*/);
+		core::util:: rebuild_disulfide(pose, disulf_partner.first, disulf_partner.second, 0, nullptr /*task*/, nullptr /*scfxn*/, mm, nullptr /*min scfxn*/);
 		TR << "build_disulf between " << disulf_partner.first << " and " << disulf_partner.second << std::endl;
 		// pose.dump_pdb("disulf.pdb");
 	}

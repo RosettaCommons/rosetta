@@ -110,7 +110,7 @@ public:
 		pack::interaction_graph::AnnealableGraphBaseOP ig = nullptr;
 
 		pack::pack_rotamers_setup( pose, *sfxn, task, rotsets, ig );
-		ig->prepare_for_simulated_annealing();
+		ig->prepare_graph_for_simulated_annealing();
 		ig->blanket_assign_state_0();
 
 		// First lets make sure that the ig and the rotsets are mirrors of each other

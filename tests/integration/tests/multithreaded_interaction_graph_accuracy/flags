@@ -1,0 +1,8 @@
+-multithreading:interaction_graph_threads 20
+-multithreading:total_threads 20
+-packing:repack_only true
+-in:file:s inputs/3N0G_trim.pdb
+-mute all
+-unmute apps.pilot.vmullig
+-expected_node_count 313
+-expected_edge_count 3486

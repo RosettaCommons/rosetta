@@ -217,7 +217,7 @@ private:
 	push_back_rotamer( conformation::ResidueOP );
 
 	void
-	update_rotamer_offsets() const;
+	update_rotamer_offsets() const override;
 
 
 public: // noop functions:
@@ -251,7 +251,9 @@ public: // noop functions:
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
 		utility::graph::GraphCOP packer_neighbor_graph,
-		utility::vector1< core::PackerEnergy > & energies ) const override;
+		utility::vector1< core::PackerEnergy > & energies,
+		bool const no_update = false
+	) const override;
 
 	void
 	compute_one_and_two_body_energies(

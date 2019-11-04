@@ -291,6 +291,7 @@
 #include <core/pack/task/operation/ResLvlTaskOperationCreators.hh>
 #include <core/pack/task/operation/ResFilterRegistrator.hh>
 #include <core/pack/task/operation/ResFilterCreators.hh>
+#include <core/pack/task/operation/RestrictInteractionGraphThreadsOperationCreator.hh>
 // (end for registering TaskOperations, ResLvlTaskOperations, and ResFilters)
 
 // ResidueSelectors
@@ -728,6 +729,7 @@ static TaskOperationRegistrator< RestrictToResiduePropertiesCreator > RestrictTo
 static TaskOperationRegistrator< ProhibitResiduePropertiesCreator > ProhibitResiduePropertiesCreator_registrator;
 static TaskOperationRegistrator< RestrictResidueToRepackingCreator > RestrictResidueToRepackingCreator_registrator;
 static TaskOperationRegistrator< RestrictToRepackingCreator > RestrictToRepackingCreator_registrator;
+static TaskOperationRegistrator< RestrictInteractionGraphThreadsOperationCreator > RestrictInteractionGraphThreadsOperationCreator_registrator;
 static TaskOperationRegistrator< OperateOnCertainResiduesCreator > OperateOnCertainResiduesCreator_registrator;
 static TaskOperationRegistrator< OperateOnResidueSubsetCreator > OperateOnResidueSubsetCreator_registrator;
 static TaskOperationRegistrator< NoRepackDisulfidesCreator > NoRepackDisulfidesCreator_registrator;

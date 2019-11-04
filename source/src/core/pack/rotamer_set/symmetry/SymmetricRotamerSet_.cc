@@ -88,7 +88,8 @@ SymmetricRotamerSet_::compute_one_body_energies(
 	scoring::ScoreFunction const & sf,
 	task::PackerTask const & task,
 	utility::graph::GraphCOP packer_neighbor_graph,
-	utility::vector1< core::PackerEnergy > & energies
+	utility::vector1< core::PackerEnergy > & energies,
+	bool const no_update /*= false*/
 ) const
 {
 	using namespace conformation;
@@ -96,7 +97,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 
 	//fpd  make sure the pose is symmetric
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) {
-		RotamerSet_::compute_one_body_energies( pose, sf, task, packer_neighbor_graph, energies );
+		RotamerSet_::compute_one_body_energies( pose, sf, task, packer_neighbor_graph, energies, no_update );
 		return;
 	}
 

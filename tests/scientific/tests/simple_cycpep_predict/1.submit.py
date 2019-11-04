@@ -44,6 +44,7 @@ command_line = '''
 -cyclic_peptide:MPI_batchsize_by_level 1
 -cyclic_peptide:MPI_auto_2level_distribution true
 -out:file:silent out.silent
+-multithreading:total_threads 1
 -threads_per_slave 1
 -cyclic_peptide:MPI_stop_after_time {run_time}
 -out:file:silent out.silent

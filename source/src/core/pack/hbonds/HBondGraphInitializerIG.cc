@@ -162,14 +162,24 @@ void HBondGraphInitializerIG::eval_rot_pair(
 		uint32_t rot2 = swap ? global_rot1 : global_rot2;
 
 		std::pair<uint32_t, uint32_t> key( rot1, rot2 );
-
-		future_edges_[ key ] += two_body_energy;
+#ifdef MULTI_THREADED
+		utility::thread::WriteLockGuard writeguard( future_edges_mutex_ );
+#endif
+		if ( future_edges_.count(key) == 0 ) {
+			future_edges_[ key ] = two_body_energy;
+		} else {
+			future_edges_[ key ] += two_body_energy;
+		}
 	}
 }
 
 void HBondGraphInitializerIG::finalize_hbond_graph() {
 
 	using namespace scoring::hbonds::graph;
+
+#ifdef MULTI_THREADED
+	utility::thread::WriteLockGuard writeguard( future_edges_mutex_ );
+#endif
 
 	for ( auto const & key_val : future_edges_ ) {
 

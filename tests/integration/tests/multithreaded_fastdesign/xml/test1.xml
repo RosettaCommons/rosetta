@@ -1,0 +1,23 @@
+<!-- FastDesign with options to limit design to the core. -->
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Layer name="select_core" select_core="true" select_boundary="true" select_surface="false" />
+		<Not name="select_boundary_surface" selector="select_core" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<OperateOnResidueSubset name="no_design_surface" selector="select_boundary_surface">
+			<RestrictToRepackingRLT />
+		</OperateOnResidueSubset>
+		<ReadResfile  name="restrict_core" selector="select_core" filename="core.resfile" />
+	</TASKOPERATIONS>
+	<MOVERS>
+		<FastDesign name="design" scorefxn="r15" task_operations="restrict_core,no_design_surface" repeats="1" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="design" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15" />
+</ROSETTASCRIPTS>

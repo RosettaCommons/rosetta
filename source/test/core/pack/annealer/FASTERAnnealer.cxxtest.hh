@@ -93,7 +93,11 @@ public:
 		//FASTERInteractionGraphOP faster_ig = new FASTERInteractionGraph( 20 );
 		//core::pack::pack_rotamers_setup( *trpcage, *sfxn, task, rot_sets, ig );
 
-		rotsets->compute_energies( *trpcage, *sfxn, packer_neighbor_graph, faster_ig );
+#ifdef MULTI_THREADED
+		rotsets->compute_energies( *trpcage, *sfxn, packer_neighbor_graph, faster_ig, 2 );
+#else
+		rotsets->compute_energies( *trpcage, *sfxn, packer_neighbor_graph, faster_ig, 1 );
+#endif
 
 		/*for ( Size ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
 		std::cout << "Rotset " << ii << " with " << rotsets->rotamer_set_for_moltenresidue(ii)->num_rotamers() << " rotamers" << std::endl;

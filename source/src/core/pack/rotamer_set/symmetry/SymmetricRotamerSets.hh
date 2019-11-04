@@ -58,30 +58,29 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
 		utility::graph::GraphCOP packer_neighbor_graph,
-		interaction_graph::InteractionGraphBaseOP ig
+		interaction_graph::InteractionGraphBaseOP ig,
+		core::Size const threads_to_request
 	) override;
 
-	// Note: The following is identical to the same function in the base class, and should
-	// not be overridden.  This is unnecessary code duplication.  VKM, 6 Aug. 2019.
-	/*void
-	compute_one_body_energies(
-	pose::Pose const & pose,
-	scoring::ScoreFunction const & scfxn,
-	utility::graph::GraphCOP packer_neighbor_graph,
-	interaction_graph::InteractionGraphBaseOP ig
-	) override;*/
+public:
 
-	/// @brief precomputes all rotamer pair energies between neighboring RotamerSets( residues )
-	/// and stores those energies in an intereaction graph capable of storing them
-	/// public so it can be used by the GreenPacker.
+	/// @brief Append to a vector of calculations that already contains one-body energy calculations additonal work units
+	/// for two-body energy calculations, for subsequent multi-threaded evaluation.
+	/// @details Each individual calculation is for the interaction of all possible rotamer pairs at two positions.  Again,
+	/// not as granular as conceivably possible, but easier to set up.
+	/// @note The work_vector vector is extended by this operation.  This version is for the symmetric case.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org).
 	void
-	precompute_two_body_energies(
-		pose::Pose const & pose,
-		scoring::ScoreFunction const & scfxn,
+	append_two_body_energy_computations_to_work_vector(
+		core::pose::Pose const & pose,
+		core::scoring::ScoreFunction const & scfxn,
 		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
-		bool const finalize_edges = true
-	) override;
+		utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > & work_vector,
+		basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignment_info
+	) const override;
+
+public:
 
 	//fpd function to set some pose data needed SymmetricRotamerSets
 	void
@@ -108,13 +107,25 @@ private:
 		interaction_graph::SymmOnTheFlyInteractionGraphOP otfig
 	);
 
+public:
+
+	/// @brief Generate a new rotamer set oriented onto a reference rotamer set by cloning the reference set and reorienting
+	/// using symmetry information.  Return an owning pointer to the new, reoriented rotamer set.
+	/// @details Orients all rotamers in a rotamer_set to a different (symmetrical) position
+	/// @note If set_up_mirror_symmetry_if_has_mirror_symmetry_ is true, then residues in mirrored subunits have their
+	/// ResidueTypes switched to the types of the opposite chirality.  If false (the default), then they keep the same
+	/// types, and only have their geometry mirrored.  The default is false, which is computationally less expensive
+	/// at the expense of having the incorrect types in mirrored subunits.
+	static
 	RotamerSetOP
 	orient_rotamer_set_to_symmetric_partner(
 		pose::Pose const & pose,
-		uint const & setpos,
+		RotamerSetCOP rotset_for_seqpos,
 		uint const & symmpos,
 		bool const set_up_mirror_types_if_has_mirror_symmetry=false
-	) const;
+	);
+
+private:
 
 	bool
 	final_visit_to_edge(

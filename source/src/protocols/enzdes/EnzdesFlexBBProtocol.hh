@@ -290,7 +290,8 @@ public:
 	calculate_rotamer_set_design_targets_partition_sum(
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunctionCOP scorefxn,
-		core::pack::task::PackerTaskCOP task
+		core::pack::task::PackerTaskCOP task,
+		core::Size const threads_to_request
 	) const;
 
 

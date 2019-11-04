@@ -273,7 +273,7 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 		movemap = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	}
 	movemap->set_bb_true_range(this_pose_n_cyd, this_pose_c_cyd);
-	core::util::rebuild_disulfide(peptide_receptor_pose, this_pose_n_cyd, this_pose_c_cyd,
+	core::util::rebuild_disulfide(peptide_receptor_pose, this_pose_n_cyd, this_pose_c_cyd, 0,
 		/*packer_task=*/nullptr,
 		/*packer_score=*/scorefxn_,
 		/*mm=*/movemap,

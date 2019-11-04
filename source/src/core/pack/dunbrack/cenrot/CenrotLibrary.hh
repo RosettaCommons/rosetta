@@ -39,10 +39,6 @@
 // C++ headers
 #include <utility/vector1.hh>
 
-#ifdef MULTI_THREADED
-#include <thread>
-#endif
-
 namespace core {
 namespace pack {
 namespace dunbrack {

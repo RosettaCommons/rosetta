@@ -11,6 +11,7 @@
 /// @brief A collection of procedures for manipulating disulfide bonds
 /// @author Spencer Bliven <blivens@u.washington.edu>
 /// @date 4/30/2009
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitue.org) to allow multi-threaded interaction graph setup.
 
 // Unit Headers
 #include <core/util/disulfide_util.hh>
@@ -41,6 +42,8 @@
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -68,12 +71,18 @@ using core::kinematics::MoveMapOP;
 static basic::Tracer TR( "protocols.toolbox.disulfide_util" );
 
 /// @details A convenience function for calling core::util:: rebuild_disulfide() with
-///  only a single disulfide bond.  Supports symmetric poses.
+/// only a single disulfide bond.  Supports symmetric poses.
+/// @note In multi-threaded builds, this function takes an extra parameter for
+/// the number of threads to request, for parallel interaction graph precomputation.
 void
-rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
+rebuild_disulfide(
+	Pose & pose,
+	Size lower_res,
+	Size upper_res,
+	core::Size const threads_to_request,
 	PackerTaskOP packer_task, ScoreFunctionOP packer_score,
-	MoveMapOP mm, ScoreFunctionOP minimizer_score )
-{
+	MoveMapOP mm, ScoreFunctionOP minimizer_score
+) {
 	vector1< pair<Size,Size> > disulfides;
 
 	//If this is a symmetric pose, add the equivalent positions:
@@ -116,10 +125,8 @@ rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
 		// nonsymmetric, do nothing
 		disulfides.emplace_back( lower_res, upper_res );
 	}
-
-	core::util:: rebuild_disulfide(pose, disulfides, packer_task, packer_score, mm, minimizer_score);
+	core::util::rebuild_disulfide(pose, disulfides, threads_to_request, packer_task, packer_score, mm, minimizer_score);
 }
-
 
 /// @details
 /// @pre The two residues specified should already be disulfide-forming types with a bond
@@ -133,8 +140,10 @@ rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
 ///  you should prevent repacking on all residues except the two targets.
 ///
 /// @param pose[in,out] The pose to modify with a disulfides
-/// @param lower_res[in] The first residue of the disulfide
-/// @param upper_res[in] The second residue of the disulfide
+/// @param disulfides[in] A list of pairs of residue indices indicating pairs of disulfide-
+/// bonded residues.
+/// @param threads_to_request In the multi-threaded build only, this extra parameter
+/// allows more than one thread to be requested for packer setup.
 /// @param packer_task[in] A task to control repacking. Defaults to repacking
 ///  lower_res \& upper_res if ommitted or NULL.
 /// @param packer_score[in] A scoring function to use while repacking. Use default
@@ -146,11 +155,12 @@ rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
 void
 rebuild_disulfide( core::pose::Pose & pose,
 	utility::vector1<std::pair<core::Size, core::Size> > disulfides,
+	core::Size const threads_to_request,
 	core::pack::task::PackerTaskOP packer_task,
 	core::scoring::ScoreFunctionOP packer_score,
 	core::kinematics::MoveMapOP mm,
-	core::scoring::ScoreFunctionOP minimizer_score )
-{
+	core::scoring::ScoreFunctionOP minimizer_score
+) {
 	// Quick lookup of whether a residue is a disulfide or not
 	vector1<bool> is_disulf(pose.size(), false);
 
@@ -168,7 +178,7 @@ rebuild_disulfide( core::pose::Pose & pose,
 
 	// Set up any NULL parameters
 	if ( !packer_task ) {
-		packer_task = core::pack::task::TaskFactory::create_packer_task( pose );
+		packer_task = core::pack::task::TaskFactory::create_packer_task( pose, threads_to_request );
 		packer_task->initialize_from_command_line().or_include_current( true );
 		packer_task->restrict_to_repacking();
 

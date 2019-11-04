@@ -23,6 +23,7 @@
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
+#include <core/types.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -58,6 +59,8 @@ public:
 	/// Pose residue neighbors updated.
 	/// ScoreFunction setup for packing.
 	/// Rotamer sets built.
+	/// @note In multi-threaded builds, this function takes an extra parameter: a number
+	/// of threads to request, for multi-threaded construction of the interaction graph.
 	static
 	InteractionGraphBaseOP
 	create_and_initialize_two_body_interaction_graph(
@@ -65,7 +68,8 @@ public:
 		rotamer_set::RotamerSets & rotsets,
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		utility::graph::GraphCOP packer_neighbor_graph);
+		utility::graph::GraphCOP packer_neighbor_graph
+	);
 
 	/// @brief Create and initialize annealable graph for the given
 	/// pose, rotamer sets, packer task and score function. Initalizes
@@ -78,7 +82,9 @@ public:
 	/// ScoreFunction setup for packing.
 	/// Rotamer sets built.
 	/// @note Pose is nonconst as there may still be data to cache in
-	/// the pose at this point.
+	/// the pose at this point.  Also note that in multi-threaded builds,
+	/// this function takes an extra parameter: a number of threads to
+	/// request, for multi-threaded construction of the interaction graph.
 	static
 	AnnealableGraphBaseOP
 	create_and_initialize_annealing_graph(
@@ -86,7 +92,8 @@ public:
 		rotamer_set::RotamerSets & rotsets,
 		pose::Pose & pose,
 		scoring::ScoreFunction const & scfxn,
-		utility::graph::GraphCOP packer_neighbor_graph);
+		utility::graph::GraphCOP packer_neighbor_graph
+	);
 
 private:
 

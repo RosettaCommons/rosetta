@@ -11,19 +11,16 @@
 /// @brief A collection of procedures for manipulating disulfide bonds
 /// @author Spencer Bliven <blivens@u.washington.edu>
 /// @date 4/30/2009
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitue.org) to allow multi-threaded interaction graph setup.
 
 #ifndef INCLUDED_core_util_disulfide_util_HH
 #define INCLUDED_core_util_disulfide_util_HH
 
 // Project Headers
 #include <core/types.hh>
-
 #include <core/kinematics/MoveMap.fwd.hh>
-
 #include <core/pack/task/PackerTask.fwd.hh>
-
 #include <core/pose/Pose.fwd.hh>
-
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
@@ -39,21 +36,28 @@ namespace util {
 
 /// @brief Rebuild a pair of cysteines (and possibly surrounding residues) so
 ///  that they form a near-ideal disulfide bond.  Supports symmetric poses.
-void rebuild_disulfide( core::pose::Pose & pose,
+void rebuild_disulfide(
+	core::pose::Pose & pose,
 	core::Size lower_res, core::Size upper_res,
+	core::Size const threads_to_request,
 	core::pack::task::PackerTaskOP packer_task = nullptr,
 	core::scoring::ScoreFunctionOP packer_score = nullptr,
 	core::kinematics::MoveMapOP mm = nullptr,
-	core::scoring::ScoreFunctionOP minimizer_score = nullptr );
+	core::scoring::ScoreFunctionOP minimizer_score = nullptr
+);
+
 
 /// @brief Rebuild a number of pairs of cysteines (and possibly surrounding
 ///  residues) so that they form near-ideal disulfide bonds
-void rebuild_disulfide( core::pose::Pose & pose,
+void rebuild_disulfide(
+	core::pose::Pose & pose,
 	utility::vector1<std::pair<core::Size, core::Size> > disulfides,
+	core::Size const threads_to_request,
 	core::pack::task::PackerTaskOP packer_task = nullptr,
 	core::scoring::ScoreFunctionOP packer_score = nullptr,
 	core::kinematics::MoveMapOP mm = nullptr,
-	core::scoring::ScoreFunctionOP minimizer_score = nullptr );
+	core::scoring::ScoreFunctionOP minimizer_score = nullptr
+);
 
 } // util
 } // core

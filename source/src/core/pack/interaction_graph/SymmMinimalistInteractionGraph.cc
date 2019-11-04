@@ -927,12 +927,12 @@ SymmMinimalistInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 }
 
 void
-SymmMinimalistInteractionGraph::prepare_for_simulated_annealing()
+SymmMinimalistInteractionGraph::prepare_graph_for_simulated_annealing()
 {
 	if ( first_time_prepping_for_simA_ ) {
 		first_time_prepping_for_simA_ = false;
 	}
-	InteractionGraphBase::prepare_for_simulated_annealing();
+	InteractionGraphBase::prepare_graph_for_simulated_annealing();
 }
 
 unsigned int

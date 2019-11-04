@@ -217,6 +217,7 @@ sources = {
 		"ResFilters",
 		"ResLvlTaskOperationFactory",
 		"ResLvlTaskOperations",
+		"RestrictInteractionGraphThreadsOperation",
 		"TaskOperation",
 		"TaskOperationFactory",
 		"TaskOperations",

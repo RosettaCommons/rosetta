@@ -1,0 +1,7 @@
+-in:file:s inputs/1l2y.pdb
+-out:suffix _3
+-parser:protocol xml/test3.xml
+#The xml above overrides the interaction_graph_threads option below.
+-interaction_graph_threads 20
+-multithreading:total_threads 20
+-mute basic.random.init_random_generator basic.thread_manager.RosettaThreadManager basic.thread_manager.RosettaThread

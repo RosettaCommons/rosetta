@@ -485,7 +485,7 @@ public:
 	void initialize( pack_basic::RotamerSetsBase const & rot_sets ) override;
 
 	// Virtual public methods from InteractionGraphBase
-	void prepare_for_simulated_annealing() override;
+	void prepare_graph_for_simulated_annealing() override;
 	void  blanket_assign_state_0() override;
 	core::PackerEnergy set_state_for_node( int node_ind, int new_state ) override;
 	core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int& node_states ) override;
@@ -2582,7 +2582,7 @@ void SurfaceEdge< V, E, G >::prepare_for_simulated_annealing() {
 			//   TR_EDGE << "prepare_for_simulated_annealing - dropping edge e(" << parent::get_node_index( 0 )
 			//    << "," << parent::get_node_index( 1 ) << ")" << std::endl;
 			//#endif
-			delete this;
+			E::mark_edge_for_deletion();
 		}
 	}
 }
@@ -2963,7 +2963,7 @@ SurfaceInteractionGraph< V, E, G >::~SurfaceInteractionGraph() {}
 /// to the Pose, the Task, and the RotamerSets objects since it needs all of these things to do tasks 1) and 2).
 ///
 ///
-/// prepare_for_simulated_annealing gets called by the FixbbSA::run() method.  Before this method, the
+/// prepare_graph_for_simulated_annealing gets called by the FixbbSA::run() method.  Before this method, the
 /// rotamersets object has called compute_energies() (the whole process being started in pack_rotamers)
 /// which calls initialize() on the IG.  I need to place the SIG init method directly after the IG init
 /// method that the RS object calls.
@@ -3221,7 +3221,7 @@ int SurfaceInteractionGraph< V, E, G >::bg_node_2_resid( int node_index ) {
 /// Prepares the graph to begin simulated annealing.
 ///
 /// @details
-/// Invokes both base-class prepare_for_simulated_annealing subroutines:
+/// Invokes both base-class prepare_graph_for_simulated_annealing subroutines:
 /// InteractionGraphBase first, to prepare the SurfaceNodes and SurfaceEdges.
 /// Then the AdditionalBackgroundNodesInteractionGraph, to prepare the
 /// SurfaceBackgroundNodes, the SurfaceBackgroundEdges, and to do a little more
@@ -3233,11 +3233,11 @@ int SurfaceInteractionGraph< V, E, G >::bg_node_2_resid( int node_index ) {
 /// during any single sim annealing process, but that move between anealings.
 ///
 template < typename V, typename E, typename G >
-void SurfaceInteractionGraph< V, E, G >::prepare_for_simulated_annealing() {
+void SurfaceInteractionGraph< V, E, G >::prepare_graph_for_simulated_annealing() {
 
 	if ( prepared_for_simulated_annealing_ ) {
 
-		// for the unit tests and potentially other use cases, prepare_for_simulated_annealing may be called more than once.
+		// for the unit tests and potentially other use cases, prepare_graph_for_simulated_annealing may be called more than once.
 		// the graph will go into an unassigned state when blanket_assign_state_0 is called, but the starting hASA values
 		// could be wrong if any consider_sub() calls were called after the first prep_for_simA() call but before the second
 		// prep_for_simA() call.  But we don't need to go through and recalculate neighbors and creating Nodes/Edges and all
@@ -3258,17 +3258,17 @@ void SurfaceInteractionGraph< V, E, G >::prepare_for_simulated_annealing() {
 	// when trying to determine how many se hp nbs a given Node has.
 	detect_background_residue_and_first_class_residue_neighbors();
 
-	// G::prepare() calls InteractionGraphBase::prepare_for_simulated_annealing() - LinmemIG implements one but it also
+	// G::prepare() calls InteractionGraphBase::prepare_graph_for_simulated_annealing() - LinmemIG implements one but it also
 	// calls the IGBase method.  The IGBase method, in turn, calls prep_for_simA() on all the FC nodes.
-	G::prepare_for_simulated_annealing();
+	G::prepare_graph_for_simulated_annealing();
 
 	// parent::prepare() calls prep_for_simA() on all the BGNodes
-	parent::prepare_for_simulated_annealing();
+	parent::prepare_graph_for_simulated_annealing();
 
 	prepared_for_simulated_annealing_ = true;
 
 #ifdef FILE_DEBUG
-	TR_SIG << "prepare_for_simulated_annealing: number edges in graph: " << parent::get_num_edges() << std::endl;
+	TR_SIG << "prepare_graph_for_simulated_annealing: number edges in graph: " << parent::get_num_edges() << std::endl;
 #endif
 
 }

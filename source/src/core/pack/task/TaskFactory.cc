@@ -10,7 +10,7 @@
 /// @file   core/pack/task/TaskFactory.hh
 /// @brief  Task class to describe packer's behavior header
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
-/// @author Vikram K. Mulligan (vmullig@uw.edu) -- added support for PackerPalettes.
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- added support for PackerPalettes, multithreading.
 
 #include <utility/exit.hh>
 
@@ -30,6 +30,8 @@
 
 // Basic Headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -96,8 +98,11 @@ TaskFactory::modify_task( core::pose::Pose const & pose, PackerTaskOP task ) con
 
 // Non static version.
 PackerTaskOP
-TaskFactory::create_task_and_apply_taskoperations( pose::Pose const & pose ) const
+TaskFactory::create_task_and_apply_taskoperations( pose::Pose const & pose, core::Size const ig_threads_to_request /*=0*/ ) const
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	// If a PackerPalette has not been set, use the default one.
 	core::pack::palette::PackerPaletteOP packer_palette( packer_palette_ );
 	if ( packer_palette == nullptr ) {
@@ -109,7 +114,7 @@ TaskFactory::create_task_and_apply_taskoperations( pose::Pose const & pose ) con
 	if ( pose.total_residue() > 0 && packer_palette->residue_type_setCOP() != pose_typeset ) {
 		packer_palette->set_residue_type_set( pose_typeset );
 	}
-	PackerTaskOP task( utility::pointer::make_shared< PackerTask_ >( pose, packer_palette ) );
+	PackerTaskOP task( utility::pointer::make_shared< PackerTask_ >( pose, packer_palette, (ig_threads_to_request == 0 ? option[multithreading::interaction_graph_threads]() : ig_threads_to_request ) ) );
 	modify_task( pose, task );
 	if ( TR.Trace.visible() ) {
 		TR.Trace << "PackerTask created by TaskFactory:" << std::endl;
@@ -162,10 +167,11 @@ TaskFactory::clear()
 /// @details Returns a new PackerTask with NO TaskOperations, and a default PackerPalette applied.
 PackerTaskOP
 TaskFactory::create_packer_task(
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	core::Size const ig_threads_to_request /*=0*/
 )
 {
-	return utility::pointer::make_shared< PackerTask_ >( pose );
+	return utility::pointer::make_shared< PackerTask_ >( pose, ( ig_threads_to_request == 0 ? basic::options::option[basic::options::OptionKeys::multithreading::interaction_graph_threads]() : ig_threads_to_request ) );
 }
 
 /// @brief Static construction of a task
@@ -175,9 +181,10 @@ TaskFactory::create_packer_task(
 PackerTaskOP
 TaskFactory::create_packer_task(
 	pose::Pose const & pose,
-	core::pack::palette::PackerPaletteCOP palette
+	core::pack::palette::PackerPaletteCOP palette,
+	core::Size const ig_threads_to_request /*=0*/
 ) {
-	return utility::pointer::make_shared< PackerTask_ >( pose, palette );
+	return utility::pointer::make_shared< PackerTask_ >( pose, palette, ( ig_threads_to_request == 0 ? basic::options::option[basic::options::OptionKeys::multithreading::interaction_graph_threads]() : ig_threads_to_request ) );
 }
 
 void

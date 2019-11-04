@@ -103,7 +103,11 @@ using namespace ObjexxFCL::format;
 class NPDHBondInteractionGraphTests : public CxxTest::TestSuite {
 
 	void setUp() {
+#ifdef MULTI_THREADED
+		core_init_with_additional_options( "-multithreading:total_threads 2" );
+#else
 		core_init();
+#endif
 	}
 
 	void tearDown() {}
@@ -728,9 +732,13 @@ public:
 		ig->set_packer_task( *task );
 		ig->set_rotamer_sets( *rotsets );
 
-		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig );
+#ifdef MULTI_THREADED
+		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig, 2 );
+#else
+		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig, 1 );
+#endif
 
-		ig->prepare_for_simulated_annealing();
+		ig->prepare_graph_for_simulated_annealing();
 
 		ObjexxFCL::FArray1D_int state1( trpcage->total_residue(), input_sc_rot );
 		for ( Size netres : res_in_network ) {
@@ -933,9 +941,13 @@ public:
 		ig->set_packer_task( *task );
 		ig->set_rotamer_sets( *rotsets );
 
-		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig );
+#ifdef MULTI_THREADED
+		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig, 2 );
+#else
+		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig, 1 );
+#endif
 
-		ig->prepare_for_simulated_annealing();
+		ig->prepare_graph_for_simulated_annealing();
 
 		ObjexxFCL::FArray1D_int state1( trpcage->total_residue(), input_sc_rot );
 		for ( Size netres : res_in_network ) {
@@ -1103,9 +1115,13 @@ public:
 		ig->set_packer_task( *task );
 		ig->set_rotamer_sets( *rotsets );
 
-		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig );
+#ifdef MULTI_THREADED
+		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig, 2 );
+#else
+		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig, 1 );
+#endif
 
-		ig->prepare_for_simulated_annealing();
+		ig->prepare_graph_for_simulated_annealing();
 
 		ObjexxFCL::FArray1D_int state1( trpcage->total_residue(), input_sc_rot );
 		for ( Size netres : res_in_network ) {
@@ -1309,9 +1325,13 @@ public:
 		ig->set_packer_task( *task );
 		ig->set_rotamer_sets( *rotsets );
 
-		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig );
+#ifdef MULTI_THREADED
+		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig, 2 );
+#else
+		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig, 1 );
+#endif
 
-		ig->prepare_for_simulated_annealing();
+		ig->prepare_graph_for_simulated_annealing();
 
 		ObjexxFCL::FArray1D_int state1( res_in_subnetwork.size(), leu_rot );
 		for ( Size netres : res_in_subnetwork ) {
@@ -1380,9 +1400,13 @@ public:
 		//  ig->set_rotamer_sets( *rotsets );
 		//  ig->set_score_weight( 1.0 );
 		//
-		//  rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig );
+		//  #ifdef MULTI_THREADED
+		//  rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig, 2 );
+		//  #else
+		//  rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig, 1 );
+		//  #endif
 		//
-		//  ig->prepare_for_simulated_annealing();
+		//  ig->prepare_graph_for_simulated_annealing();
 		//
 		//  lex.begin();
 		//  while ( ! lex.at_end() ) {
@@ -1535,9 +1559,13 @@ public:
 		ig->set_packer_task( *task );
 		ig->set_rotamer_sets( *rotsets );
 
-		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig );
+#ifdef MULTI_THREADED
+		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig, 2 );
+#else
+		rotsets->compute_energies( *trpcage, *sfxn, neighbors, ig, 1 );
+#endif
 
-		ig->prepare_for_simulated_annealing();
+		ig->prepare_graph_for_simulated_annealing();
 
 		ObjexxFCL::FArray1D_int state1( res_in_subnetwork.size(), leu_rot );
 		for ( Size netres : res_in_subnetwork ) {

@@ -21,6 +21,9 @@
 // Utility header
 #include <utility/SingletonBase.hh>
 
+// Platform headers
+#include <platform/types.hh>
+
 #ifdef MULTI_THREADED
 #include <utility/thread/ReadWriteMutex.hh>
 #endif
@@ -54,11 +57,19 @@ public:
 	/// @brief Store the fact that threads have been launched.
 	void mark_thread_manager_as_initialized();
 
+	/// @brief Get the total number of threads that have been launched or which
+	/// will be launched.
+	/// @details Read from options system.  If options system specifies "0", set to
+	/// number of cores in system.
+	inline platform::Size total_threads() const { return total_threads_; }
+
 private:  // Private data /////////////////////////////////////////////////////
 
 	bool thread_manager_initialization_begun_ = false;
 
 	bool thread_manager_was_initialized_ = false;
+
+	platform::Size total_threads_ = 0;
 
 #ifdef MULTI_THREADED
 	mutable utility::thread::ReadWriteMutex initialization_mutex_;

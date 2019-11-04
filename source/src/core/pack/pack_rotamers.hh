@@ -10,6 +10,7 @@
 /// @file   core/pack/pack_rotamers.hh
 /// @brief  pack rotamers module header
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitue.org) to allow multi-threaded interaction graph setup.
 
 #ifndef INCLUDED_core_pack_pack_rotamers_hh
 #define INCLUDED_core_pack_pack_rotamers_hh
@@ -42,6 +43,11 @@ namespace core {
 namespace pack {
 
 
+/// @brief The entry point to calling the packer, which optimizes side-chain identities and conformations
+/// (if you're designing) or conformations alone (if you're predicting structures).
+/// @details Wraps the two very distinct and separate stages of rotamer packing,
+/// which are factored so that they may be called asynchronously.
+/// Use this wrapper as a base model for higher-level packing routines (such as pack_rotamers_loop).
 void
 pack_rotamers(
 	pose::Pose & pose,
@@ -58,6 +64,7 @@ pack_rotamers_loop(
 	utility::vector1< std::pair< Real, std::string > > & results
 );
 
+/// @brief Run the FixbbSimAnnealer multiple times using the same InteractionGraph, storing the results.
 void
 pack_rotamers_loop(
 	pose::Pose & pose,
@@ -76,6 +83,9 @@ pack_rotamers_loop(
 	Size const nloop
 );
 
+/// @brief Get rotamers, compute energies.
+/// @note In multi-threaded builds, this function takes an extra parameter for
+/// the number of threads to request, for parallel interaction graph precomputation.
 void
 pack_rotamers_setup(
 	pose::Pose & pose,
@@ -85,7 +95,7 @@ pack_rotamers_setup(
 	interaction_graph::AnnealableGraphBaseOP & ig
 );
 
-// PyRosetta compatible version
+/// @brief PyRosetta compatible version.
 interaction_graph::AnnealableGraphBaseOP
 pack_rotamers_setup(
 	pose::Pose & pose,

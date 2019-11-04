@@ -126,7 +126,7 @@ void FlexbbSimAnnealer::run()
 		nsteps_for_rot(i) = 0;
 	}
 
-	ig_->prepare_for_simulated_annealing();
+	ig_->prepare_graph_for_simulated_annealing();
 
 	set_lowtemp( 0.2 ); // go colder than regular SA!
 

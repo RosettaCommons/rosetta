@@ -69,7 +69,9 @@ public:
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
 		utility::graph::GraphCOP packer_neighbor_graph,
-		utility::vector1< core::PackerEnergy > & energies ) const override;
+		utility::vector1< core::PackerEnergy > & energies,
+		bool const no_update = false
+	) const override;
 
 	void
 	PackerEnergyMultiply(

@@ -214,23 +214,33 @@ InteractionGraphFactory::create_interaction_graph(
 
 }
 
+/// @brief Create and initialize two-body interaction graph for the given
+/// pose, rotamer sets, packer task and score function.
+///
+/// Call only valid after:
+/// Pose has been scored by scorefxn.
+/// Pose residue neighbors updated.
+/// ScoreFunction setup for packing.
+/// Rotamer sets built.
+/// @note In multi-threaded builds, this function takes an extra parameter: a number
+/// of threads to request, for multi-threaded construction of the interaction graph.
 InteractionGraphBaseOP
 InteractionGraphFactory::create_and_initialize_two_body_interaction_graph(
 	task::PackerTask const & packer_task,
 	rotamer_set::RotamerSets & rotsets,
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
-	utility::graph::GraphCOP packer_neighbor_graph)
-{
+	utility::graph::GraphCOP packer_neighbor_graph
+) {
 	InteractionGraphBaseOP ig = create_interaction_graph( packer_task, rotsets, pose, scfxn, *packer_neighbor_graph);
 
 	PROF_START( basic::GET_ENERGIES );
-	rotsets.compute_energies( pose, scfxn, packer_neighbor_graph, ig );
+	rotsets.compute_energies( pose, scfxn, packer_neighbor_graph, ig, packer_task.ig_threads_to_request() );
 	PROF_STOP( basic::GET_ENERGIES );
 	unsigned int mem_usage( ig->getTotalMemoryUsage() );
 	T.Debug << "IG: " << mem_usage << " bytes" << std::endl;
-	if ( mem_usage > 25*1024*1024 ) { // 25 MB - threshold picked somewhat arbitrarily
-		T << "High IG memory usage (>25 MB). If this becomes an issue, consider using a different interaction graph type." << std::endl;
+	if ( mem_usage > 256*1024*1024 ) { // 256 MB - threshold picked somewhat arbitrarily
+		T << "High IG memory usage (>256 MB). If this becomes an issue, consider using a different interaction graph type." << std::endl;
 	}
 
 	setup_IG_res_res_weights(pose, packer_task, rotsets, *ig);
@@ -238,14 +248,28 @@ InteractionGraphFactory::create_and_initialize_two_body_interaction_graph(
 	return ig;
 }
 
+/// @brief Create and initialize annealable graph for the given
+/// pose, rotamer sets, packer task and score function. Initalizes
+/// two-body interaction graph, as well as other annealable graphs
+/// sepecified by the given score function and task.
+/// @details
+/// Call only valid after:
+/// Pose has been scored by scorefxn.
+/// Pose residue neighbors updated.
+/// ScoreFunction setup for packing.
+/// Rotamer sets built.
+/// @note Pose is nonconst as there may still be data to cache in
+/// the pose at this point.  Also note that in multi-threaded builds,
+/// this function takes an extra parameter: a number of threads to
+/// request, for multi-threaded construction of the interaction graph.
 AnnealableGraphBaseOP
 InteractionGraphFactory::create_and_initialize_annealing_graph(
 	task::PackerTask const & packer_task,
 	rotamer_set::RotamerSets & rotsets,
 	pose::Pose & pose,
 	scoring::ScoreFunction const & scfxn,
-	utility::graph::GraphCOP packer_neighbor_graph)
-{
+	utility::graph::GraphCOP packer_neighbor_graph
+) {
 	//Clear cached information in the pose that the ResidueArrayAnnealableEneriges use:
 	clear_cached_residuearrayannealableenergy_information(pose);
 

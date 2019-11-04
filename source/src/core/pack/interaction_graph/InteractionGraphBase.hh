@@ -10,6 +10,7 @@
 /// @file   core/pack/interaction_graph/InteractionGraphBase.hh
 /// @brief  Interaction graph base class header
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitue.org) to allow multi-threaded interaction graph setup.
 
 #ifndef INCLUDED_core_pack_interaction_graph_InteractionGraphBase_hh
 #define INCLUDED_core_pack_interaction_graph_InteractionGraphBase_hh
@@ -21,6 +22,7 @@
 // Package Headers
 
 #include <core/pack_basic/RotamerSetsBase.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -37,6 +39,8 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <utility/vector1_bool.hh>
+
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
 
 namespace core {
 namespace pack {
@@ -208,7 +212,13 @@ public:
 
 	virtual void set_edge_weight( Real weight ) = 0;
 
+	/// @brief Has this edge indicated that it can be deleted?
+	inline bool marked_for_deletion() const { return marked_for_deletion_; }
+
 protected:
+
+	/// @brief Mark this edge so that it can be deleted.
+	inline void mark_edge_for_deletion() { marked_for_deletion_ = true; }
 
 	//Read access to private data granted to derived classes
 	inline
@@ -294,6 +304,9 @@ private:
 	/// energy by the old weight and multiplying by the new weight.
 	Real edge_weight_;
 
+	/// @brief Allow deferred deletion of edges.
+	bool marked_for_deletion_ = false;
+
 
 	//no default constructor, uncopyable
 	EdgeBase();
@@ -329,9 +342,31 @@ public:
 	void output_connectivity(std::ostream & os) const;
 	void output_dimacs(std::ostream & os) const;
 
+	/// @brief Compute and store the onebody energy for all rotamers at a position.  Safe for
+	/// a multithreaded context.
+	/// @details Requires that the number of states was already set.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void set_onebody_energies_multithreaded(
+		core::Size const node_index,
+		core::pack::rotamer_set::RotamerSetCOP rotset,
+		core::pose::Pose const & pose,
+		core::scoring::ScoreFunction const & sfxn,
+		task::PackerTask const & task,
+		utility::graph::GraphCOP packer_neighbor_graph,
+		basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignments
+	);
+
 	/// @brief iterate across edges and nodes and allow them to prepare
 	/// for simulated annealing
-	void prepare_for_simulated_annealing() override;
+	void prepare_graph_for_simulated_annealing() override;
+
+protected:
+
+	/// @brief Remove those edges that have marked themselves for deletion.
+	/// @author Vikram K. Mulligan (vmulligan@flatirioninstitute.org).
+	void clean_up_edges_marked_for_deletion();
+
+public:
 
 	void  blanket_assign_state_0() override = 0;
 	core::PackerEnergy set_state_for_node(int node_ind, int new_state) override = 0;
@@ -410,6 +445,13 @@ public:
 	/// @brief return a const reference to an edge pointed at by the list iterator
 	EdgeBase const & get_edge() const;
 
+	/// @brief Iterates over all edges and calls declare_energies_final() on
+	/// all of them.  Takes O(N) time, where N is the number of edges.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual
+	void
+	declare_all_edge_energies_final();
+
 	friend class NodeBase;
 	friend class EdgeBase;
 
@@ -426,8 +468,15 @@ public:
 	/// though, their use is strongly discouraged except for in writing unit tests
 	/// to ensure that the graphs are properly implemented.
 
-	EdgeBase const * find_edge(int node1, int node2) const;
-	EdgeBase * find_edge(int node1, int node2);
+	/// @brief Find an edge and return a const pointer to it.
+	/// @details By default, the last edge accessed is cached, for faster lookups.  If use_threadsafe_lookup is true,
+	/// we avoid the caching.
+	EdgeBase const * find_edge(int node1, int node2, bool const use_threadsafe_lookup = false) const;
+
+	/// @brief Find an edge and return a nonconst pointer to it.
+	/// @details By default, the last edge accessed is cached, for faster lookups.  If use_threadsafe_lookup is true,
+	/// we avoid the caching.
+	EdgeBase * find_edge(int node1, int node2, bool const use_threadsafe_lookup = false);
 
 	virtual NodeBase* create_new_node( int node_index, int num_states) = 0;
 	virtual EdgeBase* create_new_edge( int index1, int index2) = 0;
@@ -449,6 +498,12 @@ public:
 	std::list< EdgeBase* >::iterator get_edge_list_begin()
 	{
 		return ig_edge_list_.begin();
+	}
+
+	inline
+	std::list< EdgeBase* >::iterator get_edge_list_end()
+	{
+		return ig_edge_list_.end();
 	}
 
 	inline

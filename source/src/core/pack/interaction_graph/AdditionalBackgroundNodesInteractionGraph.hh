@@ -296,6 +296,8 @@ public:
 	virtual unsigned int count_static_memory() const = 0;
 	virtual unsigned int count_dynamic_memory() const;
 
+	inline bool bgtfce_marked_for_deletion() { return marked_for_deletion_; }
+
 protected:
 	inline
 	FirstClassNode< V, E, G >* get_first_class_node() const { return first_class_node_; }
@@ -305,6 +307,8 @@ protected:
 
 	inline
 	AdditionalBackgroundNodesInteractionGraph< V, E, G >* get_owner() const { return owner_; }
+
+	inline void bgtfce_mark_edge_for_deletion() { marked_for_deletion_ = true; }
 
 
 private:
@@ -321,6 +325,8 @@ private:
 	BackgroundEdgeListIter pos_in_owners_edge_list_;
 
 	AdditionalBackgroundNodesInteractionGraph< V, E, G > * owner_;
+
+	bool marked_for_deletion_ = false;
 
 	//no default constructor, uncopyable
 	BackgroundToFirstClassEdge();
@@ -360,6 +366,11 @@ public:
 	int get_num_background_nodes() const { return num_bg_nodes_; }
 
 protected:
+
+	/// @brief Remove those BackgroundToFirstClassEdges that have marked themselves for deletion.
+	/// @author Vikram K. Mulligan (vmulligan@flatirioninstitute.org).
+	void clean_up_bgtfc_edges_marked_for_deletion();
+
 	void drop_background_edge( BackgroundEdgeListIter iter);
 
 	// Factory methods for background nodes and edges
@@ -382,7 +393,7 @@ protected:
 		return bg_nodes_[ index ];
 	}
 
-	void prepare_for_simulated_annealing() override;
+	void prepare_graph_for_simulated_annealing() override;
 
 	inline
 	BackgroundEdgeListConstIter get_bg_edge_list_begin() const {
@@ -452,7 +463,6 @@ FirstClassNode< V, E, G >::add_background_edge( BackgroundToFirstClassEdge< V, E
 	bg_edge_vector_up_to_date_ = false;
 	return bg_edge_list_.insert( bg_edge_list_.end(), edge_ptr );
 }
-
 
 /// @brief
 /// Removes an edge from the node's BackgroundToFirstClassEdge list
@@ -955,6 +965,20 @@ AdditionalBackgroundNodesInteractionGraph< V, E, G >::~AdditionalBackgroundNodes
 	}
 }
 
+/// @brief Remove those BackgroundToFirstClassEdges that have marked themselves for deletion.
+/// @author Vikram K. Mulligan (vmulligan@flatirioninstitute.org).
+template < typename V, typename E, typename G >
+void
+AdditionalBackgroundNodesInteractionGraph< V, E, G >::clean_up_bgtfc_edges_marked_for_deletion() {
+	for ( BackgroundEdgeListIter it( bg_to_fc_edge_list_.begin() ); it!=bg_to_fc_edge_list_.end(); /*No increment here.*/ ) {
+		BackgroundEdgeListIter it2 = it;
+		++it2;
+		if ( (*it)->bgtfce_marked_for_deletion() ) {
+			delete (*it); //Destructor triggers update of ig_edge_list_ and other containers that held pointer.  This can invalidate the iterator.
+		}
+		it = it2;
+	}
+}
 
 /// @brief
 /// Constant time edge removal.
@@ -1046,10 +1070,10 @@ AdditionalBackgroundNodesInteractionGraph< V, E, G >::find_background_edge( int 
 /// should be removed before the second class nodes update their edge vectors.
 ///
 /// @remarks
-/// does not invoke InteractionGraphBase::prepare_for_simulated_annealing()
+/// does not invoke InteractionGraphBase::prepare_graph_for_simulated_annealing()
 ///
 template < typename V, typename E, typename G >
-void AdditionalBackgroundNodesInteractionGraph< V, E, G >::prepare_for_simulated_annealing() {
+void AdditionalBackgroundNodesInteractionGraph< V, E, G >::prepare_graph_for_simulated_annealing() {
 
 	for ( BackgroundEdgeListIter iter = bg_to_fc_edge_list_.begin(); iter != bg_to_fc_edge_list_.end(); ) { //note: no increment statement here
 
@@ -1063,6 +1087,8 @@ void AdditionalBackgroundNodesInteractionGraph< V, E, G >::prepare_for_simulated
 		(*iter)->prepare_for_simulated_annealing();
 		iter = next_iter;
 	}
+
+	clean_up_bgtfc_edges_marked_for_deletion();
 
 	for ( int ii = 1; ii <= num_bg_nodes_; ++ii ) {
 		// BackgroundNode::prepare_for_simulated_annealing() is a pure virtual

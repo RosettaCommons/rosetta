@@ -671,12 +671,15 @@ RotamerSet_::compute_one_body_energies(
 	scoring::ScoreFunction const & sf,
 	task::PackerTask const & task,
 	utility::graph::GraphCOP packer_neighbor_graph,
-	utility::vector1< core::PackerEnergy > & energies
+	utility::vector1< core::PackerEnergy > & energies,
+	bool const no_update /*= false*/
 ) const
 {
 	using namespace conformation;
 	using namespace scoring;
-	update_rotamer_offsets();
+	if ( !no_update ) {
+		update_rotamer_offsets();
+	}
 
 	std::fill( energies.begin(), energies.end(), core::PackerEnergy( 0.0 ) );
 

@@ -11,6 +11,7 @@
 /// @brief The Hydrate Protocol
 /// @detailed
 /// @author Joaquin Ambia, Jason K. Lai
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) to permit multi-threaded packing.
 
 #ifndef INCLUDED_protocols_hydrate_Hydrate_HH
 #define INCLUDED_protocols_hydrate_Hydrate_HH
@@ -71,6 +72,15 @@ public:
 	/// @brief  Apply the corresponding move to <input_pose>.
 	void apply(core::pose::Pose & input_pose) override;
 
+#ifdef MULTI_THREADED
+	/// @brief Set the number of threads to use for interaction graph precomputation during packing.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void set_interaction_graph_threads( core::Size const setting );
+
+	/// @brief Get the number of threads to use for interaction graph precomputation during packing.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	core::Size interaction_graph_threads() const;
+#endif
 
 private:
 	// Initialize data members.
@@ -88,6 +98,13 @@ private:
 	bool short_residence_time_mode_; // Triggers a different algorithm to add water
 	core::Real near_water_threshold_;  // Distance between a wat molecule and a residue to consider it flexible; yumeng
 	bool minimize_bb_where_packing_;  // The minimizer will also minimize the backbone in the regions that were packed; yumeng
+
+#ifdef MULTI_THREADED
+	/// @brief The number of threads to use for interaction graph computation during packing.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	core::Size interaction_graph_threads_ = 1;
+#endif
+
 };  // class Hydrate
 
 }  // namespace hydrate

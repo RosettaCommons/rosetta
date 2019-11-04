@@ -13,7 +13,7 @@
 /// to see how it behaves internally.
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 /// @author Steven Lewis (smlewi@gmail.com)
-
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added support for multithreading.
 
 //Unit Headers
 #include <core/pack/task/PackerTask_.hh>
@@ -204,12 +204,37 @@ PackerTask_::symmetrize_by_intersection() const {
 	return symmetry_status_ == REQUEST_SYMMETRIZE_BY_INTERSECTION;
 }
 
-PackerTask_::PackerTask_():
+/// @brief How many threads should the packer request for interaction graph precomputation?
+/// @details Must be implemented by derived class.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+core::Size
+PackerTask_::ig_threads_to_request() const {
+	return ig_threads_to_request_;
+}
+
+/// @brief Limit the interaction graph setup threads.
+/// @details If the current ig_threads_to_request_ is zero, setting replaces it.  If setting is zero, this
+/// does nothing.  Otherwise, setting replaces ig_threads_to_request_ if and only if it is less than
+/// ig_threads_to_request_.  This preserves commutativity.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org)
+void
+PackerTask_::limit_ig_setup_threads(
+	core::Size const setting
+) {
+	if ( setting == 0 ) return; //Do nothing if the setting is "all available threads".
+	if ( ig_threads_to_request_ == 0 || ig_threads_to_request_ > setting ) {
+		ig_threads_to_request_ = setting;
+	}
+}
+
+PackerTask_::PackerTask_( core::Size const ig_threads_to_request /*=0*/ ):
 	nres_(0 ),
 	pack_residue_( nres_, true ),
 	n_to_be_packed_( nres_ ),
-	packer_palette_(/*NULL*/)
+	packer_palette_(/*NULL*/),
+	ig_threads_to_request_( ig_threads_to_request )
 {
+	check_threads();
 	IG_edge_reweights_ = nullptr; //default stays empty, no reweighting
 }
 
@@ -217,13 +242,16 @@ PackerTask_::PackerTask_():
 ///nres_ is copied from the pose, all residues are set to be packable by default, and bump_check is true
 ///the constructor reads NEITHER the command line flags NOR a resfile; this must be done after creation!
 PackerTask_::PackerTask_(
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	core::Size const ig_threads_to_request /*=0*/
 ) :
 	nres_( pose.size() ),
 	pack_residue_( nres_, true ),
 	n_to_be_packed_( nres_ ),
-	packer_palette_() //Initialized below
+	packer_palette_(), //Initialized below
+	ig_threads_to_request_( ig_threads_to_request )
 {
+	check_threads();
 	//Create PackerPalette:
 	{
 		core::pack::palette::PackerPaletteOP new_palette( core::pack::palette::PackerPaletteFactory::get_instance()->create_packer_palette_from_global_defaults() );
@@ -245,17 +273,20 @@ PackerTask_::PackerTask_(
 }
 
 /// @details constructor requires a pose.  most settings are in ResidueLevelTask
-///nres_ is copied from the pose, all residues are set to be packable by default, and bump_check is true
-///the constructor reads NEITHER the command line flags NOR a resfile; this must be done after creation!
+/// nres_ is copied from the pose, all residues are set to be packable by default, and bump_check is true
+/// the constructor reads NEITHER the command line flags NOR a resfile; this must be done after creation!
 PackerTask_::PackerTask_(
 	pose::Pose const & pose,
-	core::pack::palette::PackerPaletteCOP const & packer_palette
+	core::pack::palette::PackerPaletteCOP const & packer_palette,
+	core::Size const ig_threads_to_request /*=0*/
 ) :
 	nres_( pose.size() ),
 	pack_residue_( nres_, true ),
 	n_to_be_packed_( nres_ ),
-	packer_palette_( packer_palette == nullptr ? nullptr : packer_palette->clone() )
+	packer_palette_( packer_palette == nullptr ? nullptr : packer_palette->clone() ),
+	ig_threads_to_request_( ig_threads_to_request )
 {
+	check_threads();
 	//create residue-level tasks
 	residue_tasks_.reserve( nres_ );
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
@@ -276,6 +307,19 @@ PackerTask_::clone() const
 	// rely on compiler-generated copy ctor
 	PackerTaskOP newtask( new PackerTask_( *this ) );
 	return newtask;
+}
+
+/// @brief Check that the number of threads to request is reasonable.
+/// @details Does nothing in multithreaded build.  In single-threaded build, checks
+/// that number of threads to request is 0 (use all available, which is 1) or 1.
+void
+PackerTask_::check_threads() const {
+#ifndef MULTI_THREADED
+	runtime_assert_string_msg(
+		ig_threads_to_request_ == 0 || ig_threads_to_request_ == 1,
+		"Error in PackerTask_::check_threads(): In the single-threaded build of Rosetta, you cannot request more than one thread.  Use the \"extras=cxx11thread\" option during compilation to enable multi-threading.")
+		;
+#endif
 }
 
 Size PackerTask_::total_residue() const
@@ -581,6 +625,13 @@ PackerTask_::show( std::ostream & out ) const {
 	out << "#Packer_Task" << std::endl;
 	out <<                   std::endl;
 
+	out << "Threads to request: ";
+	if ( ig_threads_to_request_ == 0 ) {
+		out << "ALL AVAILABLE" << std::endl;
+	} else {
+		out << ig_threads_to_request_ << std::endl;
+	}
+	out << std::endl;
 
 	out << "resid\tpack?\tdesign?\tallowed_aas" << std::endl;
 
@@ -1143,6 +1194,7 @@ core::pack::task::PackerTask_::save( Archive & arc ) const {
 	arc( CEREAL_NVP( rotsetsops_ ) ); // rotamer_set::RotSetsOperationList
 	arc( CEREAL_NVP( symmetry_status_ ) ); // enum core::pack::task::PackerTaskSymmetryStatus
 	arc( CEREAL_NVP( packer_palette_ ) ); // core::pack::palette::PackerPaletteCOP
+	arc( CEREAL_NVP( ig_threads_to_request_) ); //Size
 }
 
 /// @brief Automatically generated deserialization method
@@ -1181,6 +1233,7 @@ core::pack::task::PackerTask_::load( Archive & arc ) {
 	arc( rotsetsops_ ); // rotamer_set::RotSetsOperationList
 	arc( symmetry_status_ ); // enum core::pack::task::PackerTaskSymmetryStatus
 	arc( packer_palette_ ); // core::pack::palette::PackerPaletteCOP
+	arc( ig_threads_to_request_ ); //Size
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pack::task::PackerTask_ );

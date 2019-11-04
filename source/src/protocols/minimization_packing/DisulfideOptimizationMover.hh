@@ -10,6 +10,7 @@
 /// @file protocols/minimization_packing/DisulfideOptimizationMover.hh
 /// @brief A Mover to jointly optimize the geometry of a pair of disulfide-bonded residues.
 /// @author Andy Watkins (andy.watkins2@gmail.com)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) to permit multi-threaded packing.
 
 #ifndef INCLUDED_protocols_minimization_packing_DisulfideOptimizationMover_HH
 #define INCLUDED_protocols_minimization_packing_DisulfideOptimizationMover_HH
@@ -110,6 +111,14 @@ public:
 		final_optimization_n_iter_ = final_optimization_n_iter;
 	}
 
+	/// @brief Set threads to request for packing.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void set_interaction_graph_threads( core::Size const setting );
+
+	/// @brief Set threads to request for packing.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	inline core::Size interaction_graph_threads() const { return interaction_graph_threads_; }
+
 private: // methods
 
 	void break_repack_reform( Pose & pose, utility::vector1< Size > const & cys_pos );
@@ -119,6 +128,10 @@ private: // data
 	core::scoring::ScoreFunctionCOP sfxn_ = nullptr;
 	Size final_optimization_n_iter_ = 0;
 
+	/// @brief The number of threads to request for multi-threaded packing.
+	/// @details Must be 0 or 1 unless this is a multi-threaded build of Rosetta. Zero indicates
+	/// that we're looking up the threads from options.
+	core::Size interaction_graph_threads_ = 0;
 };
 
 std::ostream &

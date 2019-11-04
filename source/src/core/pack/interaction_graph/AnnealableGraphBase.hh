@@ -62,7 +62,7 @@ public:
 
 	/// @brief Utility signal.
 	/// @details Must be implemented by derived classes.
-	virtual void prepare_for_simulated_annealing() = 0;
+	virtual void prepare_graph_for_simulated_annealing() = 0;
 
 	/// @brief State initialization
 	/// @details Must be implemented by derived classes.

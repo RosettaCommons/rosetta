@@ -41,6 +41,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
+#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 
 
 #include <utility/vector1.hh>
@@ -409,7 +410,7 @@ public:
 		lmig->set_score_function( *scorefxn_ );
 		lmig->set_recent_history_size( task_->linmem_ig_history_size() );
 		ig_ = lmig;
-		rotsets_->compute_energies( *pose_, *scorefxn_, packer_neighbor_graph_, ig_ );
+		rotsets_->compute_energies( *pose_, *scorefxn_, packer_neighbor_graph_, ig_, basic::options::option[ basic::options::OptionKeys::multithreading::interaction_graph_threads ]() );
 	}
 
 	void setup_for_pdig() {
@@ -417,7 +418,7 @@ public:
 		task_ = redesign_20();
 		prepare_rotamer_sets();
 		ig_ = utility::pointer::make_shared< PDInteractionGraph >( task_->num_to_be_packed() );
-		rotsets_->compute_energies( *pose_, *scorefxn_, packer_neighbor_graph_, ig_ );
+		rotsets_->compute_energies( *pose_, *scorefxn_, packer_neighbor_graph_, ig_, basic::options::option[ basic::options::OptionKeys::multithreading::interaction_graph_threads ]() );
 	}
 
 	void setup_for_denseig() {
@@ -427,8 +428,7 @@ public:
 		for ( Size ii = 1; ii <= 20; ++ii ) task_->nonconst_residue_task( ii ).restrict_to_repacking();
 		prepare_rotamer_sets();
 		ig_ = utility::pointer::make_shared< DensePDInteractionGraph >( task_->num_to_be_packed() );
-		rotsets_->compute_energies( *pose_, *scorefxn_, packer_neighbor_graph_, ig_ );
-
+		rotsets_->compute_energies( *pose_, *scorefxn_, packer_neighbor_graph_, ig_, basic::options::option[ basic::options::OptionKeys::multithreading::interaction_graph_threads ]() );
 	}
 
 private:

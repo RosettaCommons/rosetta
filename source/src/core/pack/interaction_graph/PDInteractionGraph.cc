@@ -978,7 +978,7 @@ void PDEdge::declare_energies_final()
 void PDEdge::prepare_for_simulated_annealing()
 {
 	prepare_for_simulated_annealing_no_deletion();
-	if ( two_body_energies_.get_table_size() == 0 ) delete this;
+	if ( two_body_energies_.get_table_size() == 0 ) mark_edge_for_deletion();
 }
 
 /*

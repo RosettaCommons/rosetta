@@ -52,6 +52,7 @@
 // Option Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 
 // Utility header
 #include <utility/vector1.hh>
@@ -71,6 +72,7 @@ void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
 	core::chemical::ResidueTypeSet const & type_set,
+	core::Size const threads_to_request,
 	bool allow_sloppy_match,
 	bool switch_protein_res_only,
 	bool keep_energies
@@ -205,7 +207,7 @@ switch_to_residue_type_set(
 
 	// After a CEN->FA transition, rebuild the disulfides
 	if ( type_set.mode() == chemical::FULL_ATOM_t && basic::options::option[ basic::options::OptionKeys::run::rebuild_disulf ]() ) {
-		rebuild_fa_disulfides(pose);
+		rebuild_fa_disulfides(pose, threads_to_request == 0 ? basic::options::option[basic::options::OptionKeys::multithreading::interaction_graph_threads]() : threads_to_request);
 	}
 }
 
@@ -213,24 +215,26 @@ void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
 	core::chemical::TypeSetMode type_set_mode,
+	core::Size const threads_to_request,
 	bool allow_sloppy_match,
 	bool switch_protein_res_only,
 	bool keep_energies
 ) {
 	core::chemical::ResidueTypeSetCOP type_set( pose.residue_type_set_for_pose( type_set_mode ) );
-	switch_to_residue_type_set( pose, *type_set, allow_sloppy_match, switch_protein_res_only, keep_energies );
+	switch_to_residue_type_set( pose, *type_set, threads_to_request, allow_sloppy_match, switch_protein_res_only, keep_energies );
 }
 
 void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
 	std::string const & type_set_name,
+	core::Size const threads_to_request,
 	bool allow_sloppy_match,
 	bool switch_protein_res_only,
 	bool keep_energies
 ) {
 	core::chemical::ResidueTypeSetCOP type_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( type_set_name ) );
-	switch_to_residue_type_set( pose, *type_set, allow_sloppy_match, switch_protein_res_only, keep_energies );
+	switch_to_residue_type_set( pose, *type_set, threads_to_request, allow_sloppy_match, switch_protein_res_only, keep_energies );
 }
 
 void
@@ -422,9 +426,13 @@ generate_replacement_restype(
 	}
 }
 
+
+/// @note In multi-threaded builds, this function takes an extra parameter for
+/// the number of threads to request, for parallel interaction graph precomputation.
 void
 rebuild_fa_disulfides(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	core::Size const threads_to_request
 ) {
 	debug_assert( pose.is_fullatom() );
 
@@ -468,7 +476,7 @@ rebuild_fa_disulfides(
 		}
 
 		// Rebuild disulfides
-		core::util::rebuild_disulfide(pose, disulfides, task, nullptr, mm, nullptr);
+		core::util::rebuild_disulfide(pose, disulfides, threads_to_request == 0 ? basic::options::option[basic::options::OptionKeys::multithreading::interaction_graph_threads]() : threads_to_request, task, nullptr, mm, nullptr);
 	}
 }
 

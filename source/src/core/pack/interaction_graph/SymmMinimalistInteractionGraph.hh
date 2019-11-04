@@ -279,7 +279,7 @@ public:
 	void print_current_state_assignment() const override;
 	void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE ) override;
 	core::PackerEnergy get_energy_sum_for_vertex_group( int group_id ) override;
-	void prepare_for_simulated_annealing() override;
+	void prepare_graph_for_simulated_annealing() override;
 
 	//bool build_sc_only_rotamer() const;
 

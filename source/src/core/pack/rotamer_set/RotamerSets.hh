@@ -10,6 +10,7 @@
 /// @file   core/pack/RotamerSet/RotamerSets.hh
 /// @brief  RotamerSets class declaration
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitue.org) to allow multi-threaded interaction graph setup.
 
 
 #ifndef INCLUDED_core_pack_rotamer_set_RotamerSets_hh
@@ -43,6 +44,8 @@
 
 #include <utility/vector1.hh>
 
+#include <basic/thread_manager/RosettaThreadManager.fwd.hh>
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -167,43 +170,55 @@ public:
 private:
 	void copy_residue_conenctions_and_variants(pose::Pose const & pose, conformation::ResidueOP cloneRes, Size seqpos, Size asym_length);
 
+public:
+
+	/// @brief Construct a vector of calculations for the one-body energies in the interaction graph, for
+	/// subsequent multi-threaded evaluation.
+	/// @details Each individual calculation is for all one-body energies at a packable position.  This isn't as granular
+	/// as possible, but more finely-grained parallelism would be harder to implement (and anyways the one-body energies
+	/// are much less expensive than the two-body energies).
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org).
+	virtual
+	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP >
+	construct_one_body_energy_work_vector(
+		core::pose::Pose const & pose,
+		core::scoring::ScoreFunction const & scfxn,
+		utility::graph::GraphCOP packer_neighbor_graph,
+		interaction_graph::InteractionGraphBaseOP ig,
+		basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignment_info
+	) const;
+
+	/// @brief Append to a vector of calculations that already contains one-body energy calculations additonal work units
+	/// for two-body energy calculations, for subsequent multi-threaded evaluation.
+	/// @details Each individual calculation is for the interaction of all possible rotamer pairs at two positions.  Again,
+	/// not as granular as conceivably possible, but easier to set up.
+	/// @note The work_vector vector is extended by this operation.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org).
+	virtual
+	void
+	append_two_body_energy_computations_to_work_vector(
+		core::pose::Pose const & pose,
+		core::scoring::ScoreFunction const & scfxn,
+		utility::graph::GraphCOP packer_neighbor_graph,
+		interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
+		utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > & work_vector,
+		basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignment_info
+	) const;
 
 public:
 
 	/// @brief Precompute all rotamer pair and rotamer one-body energies, populating
 	/// the given interaction graph.
+	/// @note In the multithreaded case, this function requests that work be done in threads.  It
+	/// takes as input the number of threads to request.
 	virtual
 	void
 	compute_energies(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
 		utility::graph::GraphCOP packer_neighbor_graph,
-		interaction_graph::InteractionGraphBaseOP ig
-	);
-
-	/// @brief Precompute all rotamer one-body energies, populating the given
-	/// interaction graph.
-	virtual
-	void
-	compute_one_body_energies(
-		pose::Pose const & pose,
-		scoring::ScoreFunction const & scfxn,
-		utility::graph::GraphCOP packer_neighbor_graph,
-		interaction_graph::InteractionGraphBaseOP ig
-	);
-
-	/// @brief Precompute all rotamer pair energies between neighboring RotamerSets (residues)
-	/// populating the given interaction graph.
-	///
-	/// Public so it can be used by the GreenPacker.
-	virtual
-	void
-	precompute_two_body_energies(
-		pose::Pose const & pose,
-		scoring::ScoreFunction const & scfxn,
-		utility::graph::GraphCOP packer_neighbor_graph,
-		interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
-		bool const finalize_edges = true
+		interaction_graph::InteractionGraphBaseOP ig,
+		core::Size const threads_to_request
 	);
 
 private:

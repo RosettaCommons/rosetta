@@ -1,0 +1,5 @@
+-in:file:s inputs/1l2y.pdb
+-out:suffix _1
+-interaction_graph_threads 20
+-multithreading:total_threads 20
+-mute basic.random.init_random_generator basic.thread_manager.RosettaThreadManager basic.thread_manager.RosettaThread

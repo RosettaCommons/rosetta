@@ -32,6 +32,10 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
+#ifdef MULTI_THREADED
+#include <basic/options/option.hh>
+#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
+#endif
 
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
@@ -75,6 +79,12 @@ ApproximateBuriedUnsatPenalty::ApproximateBuriedUnsatPenalty(
 	oversat_penalty_( options.approximate_buried_unsat_penalty_oversat_penalty() ),
 	assume_const_backbone_( options.approximate_buried_unsat_penalty_assume_const_backbone() )
 {
+#ifdef MULTI_THREADED
+	if ( basic::options::option[ basic::options::OptionKeys::multithreading::total_threads ]() != 1 ) {
+		utility_exit_with_message( "The ApproximateBuriedUnsatPenalty is fundamentally non-threadsafe.  In the multithreaded build of Rosetta, it can only be used with the \"-multithreading:total_threads 1\" option.  If this is a problem for your workflow, please contact Vikram K. Mulligan (vmulligan@flatironinstitute.org) and Brian Coventry (bcov@uw.edu)." );
+	}
+#endif
+
 	{
 		scorefxn_sc_ = scoring::ScoreFunctionOP ( new scoring::ScoreFunction() );
 		core::scoring::methods::EnergyMethodOptions opts = scorefxn_sc_->energy_method_options();

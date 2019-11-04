@@ -119,8 +119,11 @@ public:
 
 		// if the tests are run manually (or one suite at a time), that doesn't mute all of the tracer output by default.  Place
 		// a mute here because the interaction graphs generate tons of debugging output (in DEBUG mode anyway).
+#ifdef MULTI_THREADED
+		core_init_with_additional_options( "-multithreading:total_threads 2 -no_optH -mute core.io core.init core.mm -restore_pre_talaris_2013_behavior -override_rsd_type_limit" );
+#else
 		core_init_with_additional_options( "-no_optH -mute core.io core.init core.mm -restore_pre_talaris_2013_behavior -override_rsd_type_limit" );
-
+#endif
 
 		// To create a HPatch Interaction Graph object, we need to create a few other objects like a Pose, a ScoreFunction,
 		// a PackerTask and a RotamerSets object.  Create all of these objects here in the suite-level fixture since they'll
@@ -173,8 +176,11 @@ public:
 		pdhig->set_rotamer_sets( *rotsets );
 
 		// compute_energies() does some initialization of the interaction graph and computes the energies
-		rotsets->compute_energies( pose, *scorefxn, packer_neighbor_graph, static_cast< interaction_graph::InteractionGraphBaseOP >(pdhig) );
-
+#ifdef MULTI_THREADED
+		rotsets->compute_energies( pose, *scorefxn, packer_neighbor_graph, static_cast< interaction_graph::InteractionGraphBaseOP >(pdhig), 2 );
+#else
+		rotsets->compute_energies( pose, *scorefxn, packer_neighbor_graph, static_cast< interaction_graph::InteractionGraphBaseOP >(pdhig), 1 );
+#endif
 
 		// Now that we have an interaction graph, a pose, scorefunction, etc, we have everything we need to run the
 		// packer except for an annealer. Use just a plain FixbbAnnealer. Go ahead and create a FixbbSA here.  In the
@@ -209,7 +215,7 @@ public:
 	void setUp() {
 		initialize_suite();
 		TR << "Initializing IG..." << std::endl;
-		pdhig->prepare_for_simulated_annealing();
+		pdhig->prepare_graph_for_simulated_annealing();
 		pdhig->blanket_assign_state_0();
 		pdhig->set_errorfull_deltaE_threshold( threshold_for_deltaE_inaccuracy );
 		//std::cout << std::endl;
@@ -880,7 +886,11 @@ public:
 
 		TR << "\tcomputing rotamer pair energies..." << std::endl;
 		// compute_energies() does some initialization of the interaction graph and computes the energies
-		rotsets->compute_energies( pose, *scorefxn, packer_neighbor_graph, static_cast< interaction_graph::InteractionGraphBaseOP >(lmhig) );
+#ifdef MULTI_THREADED
+		rotsets->compute_energies( pose, *scorefxn, packer_neighbor_graph, static_cast< interaction_graph::InteractionGraphBaseOP >(lmhig), 2 );
+#else
+		rotsets->compute_energies( pose, *scorefxn, packer_neighbor_graph, static_cast< interaction_graph::InteractionGraphBaseOP >(lmhig), 1 );
+#endif
 
 		/// Parameters passed by reference in annealers constructor to which it writes at the completion of sim annealing.
 		bool start_with_current = false;

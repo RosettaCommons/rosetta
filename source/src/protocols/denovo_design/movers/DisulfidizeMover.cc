@@ -703,7 +703,7 @@ DisulfidizeMover::make_disulfide(
 	mm->set_chi( res2, true );
 
 	core::conformation::form_disulfide( pose.conformation(), res1, res2, allow_d_cys_, !allow_l_cys_ ); //Updated for D-residues
-	core::util::rebuild_disulfide( pose, res1, res2,
+	core::util::rebuild_disulfide( pose, res1, res2, 0,
 		nullptr, //task
 		sfxn, //sfxn
 		mm, // movemap

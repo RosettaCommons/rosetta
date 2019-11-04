@@ -66,7 +66,7 @@ class ApproximateBuriedUnsatPenaltyTests : public CxxTest::TestSuite
 public:
 	void setUp()
 	{
-		core_init();
+		core_init_with_additional_options( "-multithreading:total_threads 1" );
 	}
 
 	core::pose::PoseOP
@@ -478,7 +478,7 @@ public:
 		pack::interaction_graph::AnnealableGraphBaseOP ig = nullptr;
 
 		pack::pack_rotamers_setup( pose, *sfxn, task, rotsets, ig );
-		ig->prepare_for_simulated_annealing();
+		ig->prepare_graph_for_simulated_annealing();
 		ig->blanket_assign_state_0();
 
 		// First lets make sure that the ig and the rotsets are mirrors of each other

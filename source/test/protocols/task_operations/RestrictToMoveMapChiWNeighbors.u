@@ -1,5 +1,7 @@
 #Packer_Task
 
+Threads to request: ALL AVAILABLE
+
 resid	pack?	design?	allowed_aas
 1	TRUE	FALSE	CYS:NtermProteinFull
 2	TRUE	FALSE	GLY

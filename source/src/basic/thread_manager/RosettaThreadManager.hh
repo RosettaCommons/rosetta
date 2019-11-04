@@ -12,38 +12,49 @@
 /// execution of functions.  This allows multithreading at many different levels in the Rosetta
 /// library hierarchy, from job-level parallel execution down to parallel computation of a score,
 /// gradient vector, or interaction graph.
+/// @note In single-threaded builds, this object still exists.  It accepts vectors of work and executes
+/// them directly, in this case.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
-#ifdef MULTI_THREADED
 
 #ifndef INCLUDED_basic_thread_manager_RosettaThreadManager_hh
 #define INCLUDED_basic_thread_manager_RosettaThreadManager_hh
 
 // Unit headers
 #include <basic/thread_manager/RosettaThreadManager.fwd.hh>
-#include <basic/thread_manager/RosettaThreadPool.fwd.hh>
 #include <basic/thread_manager/RosettaThreadAssignmentInfo.fwd.hh>
-#include <basic/thread_manager/RosettaThreadManagerAdvancedAPIKey.hh>
+
+#ifdef MULTI_THREADED
 #include <basic/thread_manager/RosettaThreadManagerInitializationTracker.hh>
+#include <basic/thread_manager/RosettaThreadPool.fwd.hh>
+#endif
+#include <basic/thread_manager/RosettaThreadManagerAdvancedAPIKey.hh>
 
 // Utility header
 #include <utility/SingletonBase.hh>
-#include <utility/thread/ReadWriteMutex.hh>
 #include <utility/vector1.hh>
+#ifdef MULTI_THREADED
+#include <utility/thread/ReadWriteMutex.hh>
+#endif
 
 // Platform headers
 #include <platform/types.hh>
 
 // C++ header
 #include <functional>
+#ifdef MULTI_THREADED
+#include <map>
 #include <mutex>
 #include <thread>
-#include <map>
+#endif
 
 namespace basic {
 namespace thread_manager {
 
-/// @brief A manager that maintains a threadpool and handles requests for threads for multithreaded execution of functions.  This allows multithreading at many different levels in the Rosetta library hierarchy, from job-level parallel execution down to parallel computation of a score, gradient vector, or interaction graph.
+/// @brief A manager that maintains a threadpool and handles requests for threads for multithreaded execution of functions.  This allows
+/// multithreading at many different levels in the Rosetta library hierarchy, from job-level parallel execution down to parallel
+/// computation of a score, gradient vector, or interaction graph.
+/// @note In single-threaded builds, this object still exists.  It accepts vectors of work and executes them directly, in this case.
 class RosettaThreadManager : public utility::SingletonBase< RosettaThreadManager > {
 	friend class utility::SingletonBase< RosettaThreadManager >;
 
@@ -61,18 +72,41 @@ private:  // Private methods //////////////////////////////////////////////////
 	/// @brief Destructor.  Non-empty, since threads must be spun down.
 	~RosettaThreadManager();
 
+#ifdef MULTI_THREADED
 	/// @brief Creates the thread pool if it has not yet been created.  Safe to call repeatedly.  The
 	/// thread_pool_mutex_ must be locked before calling this function!
 	/// @details Accesses the global options system to determine the number of threads to launch.
 	void create_thread_pool();
+#endif
 
 public:  // Public methods ////////////////////////////////////////////////////
 
+#ifdef MULTI_THREADED
+
+	/// @brief Trigger launch of threads.
+	/// @details Does nothing if threads already launched.
+	void launch_threads();
+
+#endif
+
+	/// @brief Get the total number of threads that have been launched or will be launched.
+	/// @details This corresponds to the -multithreading:total_threads option, but it does not access the options system repatedly.d
+	/// @note Always returns 1 in the non-threaded build.
+	inline static platform::Size total_threads() {
+#ifdef MULTI_THREADED
+		return RosettaThreadManagerInitializationTracker::get_instance()->total_threads();
+#else
+		return 1;
+#endif
+	}
+
+#ifdef MULTI_THREADED
 	/// @brief Report whether the RosettaThreadManager was initialized (i.e. whether threads have been launched).
 	inline static bool thread_manager_was_initialized() { return RosettaThreadManagerInitializationTracker::get_instance()->thread_manager_was_initialized(); }
 
 	/// @brief Report whether the RosettaThreadManager initialization has begun (i.e. whether threads have been launched OR are in the process of being launched).
 	inline static bool thread_manager_initialization_begun() { return RosettaThreadManagerInitializationTracker::get_instance()->thread_manager_initialization_begun(); }
+#endif
 
 	/// @brief BASIC API THAT SHOULD BE USED IN MOST CIRCUMSTANCES.  Given a vector of functions that were bundled with
 	/// their arguments with std::bind, each of which can be executed in any order and each of which is safe to execute
@@ -89,6 +123,27 @@ public:  // Public methods ////////////////////////////////////////////////////
 	void
 	do_work_vector_in_threads(
 		utility::vector1< RosettaThreadFunctionOP > const & vector_of_work,
+		platform::Size const requested_thread_count,
+		RosettaThreadAssignmentInfoOP thread_assignment = nullptr
+	);
+
+	/// @brief VARIANT BASIC API THAT SHOULD BE USED WHERE THE BASIC API CAN'T BE USED.  Given a vector of vectors of functions
+	/// that were bundled with their arguments with std::bind, run all of these in threads.  In this case, the bundled functions
+	/// are in groups, where the individual functions within a group can run in any order (and are safe to run concurrently),
+	/// but the groups must be run sequentially.  This is useful when, for example, you have a bunch of calculations to do, and
+	/// then some finalization tasks to do after the calculations are done, and you don't want to re-request threads.
+	/// @details The bundled functions should be atomistic pieces of work.  They should be bundled with their arguments with
+	/// std::bind, and the arguments should include the place to store output (i.e. they should return void).  These functions
+	/// should not handle any mutexes themselves, but should ensure that they are operating only on memory locations that no
+	/// other functions in the vector are operating on.
+	/// @note Under the hood, this sets up appropriate mutexes and then calls run_function_in_threads() to do the work.  The work
+	/// is done concurrently in 1 <= actual count <= min( requested thread count, total thread count ) threads.  The function blocks
+	/// until all threads have finished their work, which means that the individual work units should be small, that the longest-running
+	/// work unit should be short compared to the total runtime, and that the number of work units should be much greater than the
+	/// number of threads requested.
+	void
+	do_multistage_work_vector_in_threads(
+		utility::vector1< utility::vector1< RosettaThreadFunctionOP > > const & multistage_vector_of_work,
 		platform::Size const requested_thread_count,
 		RosettaThreadAssignmentInfoOP thread_assignment = nullptr
 	);
@@ -137,6 +192,8 @@ public:  // Public methods ////////////////////////////////////////////////////
 
 private:  // Private fxns /////////////////////////////////////////////////////
 
+#ifdef MULTI_THREADED
+
 	/// @brief The function that is passed by do_work_vector_in_threads() to run_function_in_threads() to run in parallel,
 	/// to execute a vector of work in a threadsafe manner.
 	void
@@ -146,17 +203,41 @@ private:  // Private fxns /////////////////////////////////////////////////////
 		utility::vector1< bool > & jobs_completed
 	) const;
 
+	/// @brief The function that is passed by do_multistage_work_vector_in_threads() to run_function_in_threads() to run in parallel,
+	/// to execute a vector of work in a threadsafe manner.
+	void
+	multistage_work_vector_thread_function(
+		utility::vector1< utility::vector1< RosettaThreadFunctionOP > > const & multistage_vector_of_work,
+		utility::vector1< utility::pointer::shared_ptr< utility::vector1< utility::thread::ReadWriteMutex > > > & multistage_job_mutexes,
+		utility::vector1< utility::vector1< bool > > & multistage_jobs_completed,
+		std::mutex & barrier_mutex,
+		utility::vector1< platform::Size > & barrier_threadcount,
+		std::condition_variable & barrier_cv,
+		RosettaThreadAssignmentInfoOP thread_assignment
+	) const;
+
+#endif
+
 private:  // Private data /////////////////////////////////////////////////////
+
+#ifdef MULTI_THREADED
+
+	/// @brief The number of threads to launch.
+	/// @details Read from options system.  If the options system specifies "0",
+	/// this is set to the number of cores available on the current node.
+	platform::Size nthreads_ = 0;
 
 	/// @brief The pool of always-running threads that we always manage.  Created on the first call to
 	/// run_function_in_threads().
 	RosettaThreadPoolOP thread_pool_ = nullptr;
 
 	/// @brief A mutex for locking the thread pool during creation or access.
-	std::mutex thread_pool_mutex_;
+	mutable std::mutex thread_pool_mutex_;
 
 	/// @brief Map of system thread ID to Rosetta thread index.
 	std::map< std::thread::id, platform::Size > thread_id_to_rosetta_thread_index_;
+
+#endif
 
 };
 
@@ -165,4 +246,3 @@ private:  // Private data /////////////////////////////////////////////////////
 
 #endif //INCLUDED_basic/thread_manager_RosettaThreadManager_fwd_hh
 
-#endif //MULTI_THREADED

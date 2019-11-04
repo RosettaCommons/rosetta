@@ -582,7 +582,7 @@ public:
 	void set_background_residue_rotamer_dots( Size residue, conformation::Residue const & rotamer );
 	void set_rotamer_dots_for_node_state( Size node_index, Size state, conformation::Residue const & rotamer );
 
-	void prepare_for_simulated_annealing() override;
+	void prepare_graph_for_simulated_annealing() override;
 
 	void blanket_assign_state_0() override;
 	Real get_hpatch_score();
@@ -2147,7 +2147,7 @@ void HPatchEdge< V, E, G >::prepare_for_simulated_annealing() {
 			TR_EDGE << "prepare_for_simulated_annealing - dropping edge e(" << parent::get_node_index( 0 )
 				<< "," << parent::get_node_index( 1 ) << ")" << std::endl;
 #endif
-			delete this;
+			E::mark_edge_for_deletion();
 		}
 	}
 }
@@ -2746,7 +2746,7 @@ HPatchInteractionGraph<V, E, G>::set_rotamer_sets( rotamer_set::RotamerSets cons
 /// to the Pose, the Task, and the RotamerSets objects since it needs all of these things to do tasks 1) and 2).
 /// (For the port of this HPatchIG, we might not need the task and rotamer sets objects.)
 ///
-/// prepare_for_simulated_annealing gets called by the FixbbSA::run() method.  Before this method, the
+/// prepare_graph_for_simulated_annealing gets called by the FixbbSA::run() method.  Before this method, the
 /// rotamersets object has called compute_energies() (the whole process being started in pack_rotamers)
 /// which calls initialize() on the IG.  I need to place the HIG init method directly after the IG init
 /// method that the RS object calls.
@@ -3023,7 +3023,7 @@ void HPatchInteractionGraph< V, E, G >::set_rotamer_dots_for_node_state( Size no
 /// Prepares the graph to begin simulated annealing.
 ///
 /// @details
-/// Invokes both base-class prepare_for_simulated_annealing subroutines: InteractionGraphBase first, to prepare the
+/// Invokes both base-class prepare_graph_for_simulated_annealing subroutines: InteractionGraphBase first, to prepare the
 /// HPatchNodes and HPatchEdges. Then the AdditionalBackgroundNodesInteractionGraph, to prepare the HPatchBackgroundNodes,
 /// the HPatchBackgroundEdges, and to do a little more preparing of the HPatchNodes.
 /// Also computes background/background overlap.
@@ -3034,7 +3034,7 @@ void HPatchInteractionGraph< V, E, G >::set_rotamer_dots_for_node_state( Size no
 /// with ligands (ligands that stay fixed during any single sim annealing process, but that move between anealings.
 ///
 template < typename V, typename E, typename G >
-void HPatchInteractionGraph< V, E, G >::prepare_for_simulated_annealing() {
+void HPatchInteractionGraph< V, E, G >::prepare_graph_for_simulated_annealing() {
 
 	if ( prepared_for_simulated_annealing_ ) {
 
@@ -3042,7 +3042,7 @@ void HPatchInteractionGraph< V, E, G >::prepare_for_simulated_annealing() {
 		//detect_background_residue_and_first_class_residue_overlap();
 
 		// chains up to the IGBase method which, in turn, calls prep_for_simA() on all the FC Edges, and then all FC nodes.
-		//G::prepare_for_simulated_annealing();
+		//G::prepare_graph_for_simulated_annealing();
 		// Edge::prep_for_simA() drops edges if 1) the two-body energies stored on that node are empty and 2) the incident
 		// nodes on that edge don't have any sphere overlaps. None of this needs to be redone.
 		//
@@ -3057,7 +3057,7 @@ void HPatchInteractionGraph< V, E, G >::prepare_for_simulated_annealing() {
 		// to fill the node_states_coverage_of_bg_res_ vector. That part doesn't really need to be repeated, so it only gets
 		// done if the BGEdge::prep_for_simA boolean isn't set. The reason we do need to call initialize_overlap_cache() though
 		// is that the RotamerDotsCache objects get resized (and hence cleared) in that function.
-		parent::prepare_for_simulated_annealing();
+		parent::prepare_graph_for_simulated_annealing();
 
 		// this method should get repeated to get BGNodes back to the right state
 		initialize_bg_bg_overlaps();
@@ -3067,15 +3067,15 @@ void HPatchInteractionGraph< V, E, G >::prepare_for_simulated_annealing() {
 
 	detect_background_residue_and_first_class_residue_overlap();
 
-	// G::prepare() calls InteractionGraphBase::prepare_for_simulated_annealing() - LinmemIG implements one but it also
+	// G::prepare() calls InteractionGraphBase::prepare_graph_for_simulated_annealing() - LinmemIG implements one but it also
 	// calls the IGBase method.  The IGBase method, in turn, calls prep_for_simA() on all the FC Edges, and then all FC nodes.
-	G::prepare_for_simulated_annealing();
+	G::prepare_graph_for_simulated_annealing();
 
 	// parent::prepare() calls prep_for_simA() on all the BGNodes
-	parent::prepare_for_simulated_annealing();
+	parent::prepare_graph_for_simulated_annealing();
 
 #ifdef FILE_DEBUG
-	TR_HIG << "prepare_for_simulated_annealing(): initializing background-background overlap" << std::endl;
+	TR_HIG << "prepare_graph_for_simulated_annealing(): initializing background-background overlap" << std::endl;
 #endif
 
 	initialize_bg_bg_overlaps();
@@ -3084,7 +3084,7 @@ void HPatchInteractionGraph< V, E, G >::prepare_for_simulated_annealing() {
 	prepared_for_simulated_annealing_ = true;
 
 #ifdef FILE_DEBUG
-	TR_HIG << "prepare_for_simulated_annealing: number edges in graph: " << parent::get_num_edges() << std::endl;
+	TR_HIG << "prepare_graph_for_simulated_annealing: number edges in graph: " << parent::get_num_edges() << std::endl;
 #endif
 
 }

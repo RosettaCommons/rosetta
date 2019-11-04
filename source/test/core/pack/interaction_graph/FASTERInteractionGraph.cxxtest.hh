@@ -46,7 +46,11 @@ class FASTERInteractionGraphTests : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
+#ifdef MULTI_THREADED
+		core_init_with_additional_options( "-multithreading:total_threads 2 -restore_pre_talaris_2013_behavior -override_rsd_type_limit" );
+#else
 		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior -override_rsd_type_limit" );
+#endif
 	}
 
 	void test_instantiate_FASTER_ig() {
@@ -88,7 +92,11 @@ public:
 		FASTERInteractionGraphOP faster_ig( new FASTERInteractionGraph( 3 ) );
 		//core::pack::pack_rotamers_setup( *trpcage, *sfxn, task, rot_sets, ig );
 
-		rotsets->compute_energies( *trpcage, *sfxn, packer_neighbor_graph, faster_ig );
+#ifdef MULTI_THREADED
+		rotsets->compute_energies( *trpcage, *sfxn, packer_neighbor_graph, faster_ig, 2 );
+#else
+		rotsets->compute_energies( *trpcage, *sfxn, packer_neighbor_graph, faster_ig, 1 );
+#endif
 
 		/*for ( Size ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
 		std::cout << "Rotset " << ii << " with " << rotsets->rotamer_set_for_moltenresidue(ii)->num_rotamers() << " rotamers" << std::endl;
@@ -96,7 +104,7 @@ public:
 
 		//std::cout.precision( 8 );
 
-		faster_ig->prepare_for_simulated_annealing();
+		faster_ig->prepare_graph_for_simulated_annealing();
 		faster_ig->prepare_for_FASTER();
 
 		faster_ig->assign_BMEC();

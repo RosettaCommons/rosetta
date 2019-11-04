@@ -173,7 +173,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 	core::PackerEnergy currentenergy = 0.0;
 
-	ig_->prepare_for_simulated_annealing();
+	ig_->prepare_graph_for_simulated_annealing();
 	ig_->blanket_assign_state_0();
 	//--------------------------------------------------------------------
 	if ( num_rots_to_pack() == 0 ) return;

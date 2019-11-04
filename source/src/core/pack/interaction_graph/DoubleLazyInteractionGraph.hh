@@ -413,7 +413,7 @@ public:
 	void initialize( pack_basic::RotamerSetsBase const & rot_sets ) override;
 
 	//virtual methods inherited from InteractionGraphBase
-	void prepare_for_simulated_annealing() override;
+	void prepare_graph_for_simulated_annealing() override;
 	void  blanket_assign_state_0() override;
 	core::PackerEnergy set_state_for_node(int node_ind, int new_state) override;
 	core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states) override;

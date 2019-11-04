@@ -850,7 +850,7 @@ LazyEdge::prepare_for_simulated_annealing()
 	if ( ! ran_annealing_since_pair_energy_table_cleared_ ) {
 		ran_annealing_since_pair_energy_table_cleared_ = true;
 		if ( two_body_energies_.size() == 0 ) {
-			delete this;
+			mark_edge_for_deletion();
 			return;
 		}
 		return;

@@ -70,7 +70,7 @@ public:
 
 	/// @brief Utility signal.
 	///
-	void prepare_for_simulated_annealing() override;
+	void prepare_graph_for_simulated_annealing() override;
 
 	/// @brief State initialization.  Set all nodes to state zero.
 	///

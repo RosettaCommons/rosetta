@@ -185,7 +185,7 @@ int ResidueArrayAnnealingEvaluator::get_num_total_states() const
 	return count;
 }
 
-void ResidueArrayAnnealingEvaluator::prepare_for_simulated_annealing()
+void ResidueArrayAnnealingEvaluator::prepare_graph_for_simulated_annealing()
 {
 }
 

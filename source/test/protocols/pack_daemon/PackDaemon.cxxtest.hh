@@ -337,8 +337,8 @@ public:
 		ObjexxFCL::FArray1D_int network_state_orig( 3 );
 		ObjexxFCL::FArray1D_int network_state_sset( 3 );
 
-		precomp_ig->prepare_for_simulated_annealing();
-		denseig->prepare_for_simulated_annealing();
+		precomp_ig->prepare_graph_for_simulated_annealing();
+		denseig->prepare_graph_for_simulated_annealing();
 
 		network_state_sset( 1 ) = 1; network_state_sset( 2 ) = 4; network_state_sset( 3 ) = 18;
 		for ( Size ii = 1; ii <= 3; ++ii ) {
@@ -454,8 +454,8 @@ public:
 		ObjexxFCL::FArray1D_int network_state_orig( 3 );
 		ObjexxFCL::FArray1D_int network_state_sset( 3 );
 
-		precomp_ig->prepare_for_simulated_annealing();
-		double_dense_ig->prepare_for_simulated_annealing();
+		precomp_ig->prepare_graph_for_simulated_annealing();
+		double_dense_ig->prepare_graph_for_simulated_annealing();
 
 		precomp_ig->blanket_assign_state_0();
 		double_dense_ig->blanket_assign_state_0();

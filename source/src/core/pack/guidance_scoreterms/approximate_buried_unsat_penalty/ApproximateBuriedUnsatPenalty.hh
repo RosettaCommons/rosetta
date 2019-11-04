@@ -40,6 +40,8 @@ namespace approximate_buried_unsat_penalty {
 class ApproximateBuriedUnsatPenalty : public scoring::methods::ContextDependentTwoBodyEnergy {
 
 public:
+	ApproximateBuriedUnsatPenalty() = delete;
+
 	ApproximateBuriedUnsatPenalty( core::scoring::methods::EnergyMethodOptions const & options );
 
 	scoring::methods::EnergyMethodOP

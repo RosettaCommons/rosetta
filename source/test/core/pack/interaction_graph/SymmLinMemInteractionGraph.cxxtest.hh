@@ -65,7 +65,11 @@ class SymmLinMemInteractionGraphTests : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
+#ifdef MULTI_THREADED
+		core_init_with_additional_options( "-multithreading:total_threads 2 -no_optH -symmetry:symmetry_definition core/scoring/symmetry/sym_def.dat" );
+#else
 		core_init_with_additional_options( "-no_optH -symmetry:symmetry_definition core/scoring/symmetry/sym_def.dat" );
+#endif
 	}
 
 	core::PackerEnergy
@@ -385,11 +389,16 @@ public:
 		symlinmem_ig->set_pose( pose );
 		symlinmem_ig->set_score_function( *sfxn );
 
-		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, symlinmem_ig );
-		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, regular_ig );
+#ifdef MULTI_THREADED
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, symlinmem_ig, 2 );
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, regular_ig, 2 );
+#else
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, symlinmem_ig, 1 );
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, regular_ig, 1 );
+#endif
 
-		regular_ig->prepare_for_simulated_annealing();
-		symlinmem_ig->prepare_for_simulated_annealing();
+		regular_ig->prepare_graph_for_simulated_annealing();
+		symlinmem_ig->prepare_graph_for_simulated_annealing();
 
 		// OK: let's make sure that when we ask for a rotamer from a particular node on a non-asu,
 		// we get back the right set of coordinates for that rotamer.
@@ -694,11 +703,16 @@ public:
 		symlinmem_ig->set_pose( pose );
 		symlinmem_ig->set_score_function( *sfxn );
 
-		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, symlinmem_ig );
-		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, regular_ig );
+#ifdef MULTI_THREADED
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, symlinmem_ig, 2 );
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, regular_ig, 2 );
+#else
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, symlinmem_ig, 1);
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, regular_ig, 1 );
+#endif
 
-		regular_ig->prepare_for_simulated_annealing();
-		symlinmem_ig->prepare_for_simulated_annealing();
+		regular_ig->prepare_graph_for_simulated_annealing();
+		symlinmem_ig->prepare_graph_for_simulated_annealing();
 
 		verify_that_rotamer_coordinates_are_right( symlinmem_ig, symm_info, pose, task, rotsets );
 		verify_proper_edges_exist( symlinmem_ig, symm_info, pose, sfxn, rotsets );

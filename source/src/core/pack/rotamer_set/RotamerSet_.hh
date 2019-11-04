@@ -124,13 +124,16 @@ public:
 
 
 	/// @brief Computes the packers "one body energies" for the set of rotamers.
+	/// @note If no_update is true, we skip the lazy update of rotamers (which is potentially not threadsafe).
 	void
 	compute_one_body_energies(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
 		utility::graph::GraphCOP packer_neighbor_graph,
-		utility::vector1< core::PackerEnergy > & energies ) const override;
+		utility::vector1< core::PackerEnergy > & energies,
+		bool const no_update = false
+	) const override;
 
 	/// @brief Computes the packers one body energies for the set of rotamers as well
 	/// as two body energies for neighboring positions defined as packable by the task.
@@ -375,10 +378,12 @@ private:
 	void
 	push_back_rotamers( Rotamers const & );
 
+public:
+
 	/// @brief Lazy update of rotamer indices and offsets and integration of those rotamers
 	/// in the rotamers_waiting_for_sort_ list.
 	void
-	update_rotamer_offsets() const;
+	update_rotamer_offsets() const override;
 
 	// DATA
 private:

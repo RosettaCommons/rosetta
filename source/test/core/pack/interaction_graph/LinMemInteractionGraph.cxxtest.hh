@@ -60,7 +60,11 @@ class LinMemInteractionGraphTests : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
+#ifdef MULTI_THREADED
+		core_init_with_additional_options( "-multithreading:total_threads 2" );
+#else
 		core_init();
+#endif
 	}
 
 	void test_linmem_ig() {
@@ -116,11 +120,16 @@ public:
 		linmem_ig->set_pose( pose );
 		linmem_ig->set_score_function( *sfxn );
 
-		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, linmem_ig );
-		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, regular_ig );
+#ifdef MULTI_THREADED
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, linmem_ig, 2 );
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, regular_ig, 2 );
+#else
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, linmem_ig, 1 );
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, regular_ig, 1 );
+#endif
 
-		regular_ig->prepare_for_simulated_annealing();
-		linmem_ig->prepare_for_simulated_annealing();
+		regular_ig->prepare_graph_for_simulated_annealing();
+		linmem_ig->prepare_graph_for_simulated_annealing();
 
 
 		// now let's make sure that the on-the-fly interaction graph is correctly calculating the

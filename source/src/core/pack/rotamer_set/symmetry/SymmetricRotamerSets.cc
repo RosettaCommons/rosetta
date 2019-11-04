@@ -35,17 +35,24 @@
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 
+#include <basic/thread_manager/RosettaThreadManager.hh>
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
+
 
 // C++
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
 
+#include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
+static basic::Tracer TR( "core.pack.rotamer_set.symmetry.SymmetricRotamerSets", basic::t_info );
 
 using namespace ObjexxFCL;
 
+// The multiplier cutoff below which we ignore interactions.
+#define SYMM_INFO_SCORE_MULTIPLY_CUTOFF 1e-3
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -72,86 +79,79 @@ SymmetricRotamerSets::compute_energies(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
 	utility::graph::GraphCOP packer_neighbor_graph,
-	interaction_graph::InteractionGraphBaseOP ig
-)
-{
+	interaction_graph::InteractionGraphBaseOP ig,
+	core::Size const threads_to_request
+) {
 	using namespace interaction_graph;
 	using namespace scoring;
 
 	ig->initialize( *this );
-	compute_one_body_energies( pose, scfxn, packer_neighbor_graph, ig );
+	//We create a vector of computations to do.
+	basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info( utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >(basic::thread_manager::RosettaThreadRequestOriginatingLevel::CORE_PACK) );
+	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector;
+	work_vector = construct_one_body_energy_work_vector( pose, scfxn, packer_neighbor_graph, ig, thread_assignment_info );
 
 	PrecomputedPairEnergiesInteractionGraphOP pig =
 		utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph > ( ig );
 	if ( pig ) {
-		precompute_two_body_energies( pose, scfxn, packer_neighbor_graph, pig );
+		//We append to the vector of computations to do.
+		append_two_body_energy_computations_to_work_vector( pose, scfxn, packer_neighbor_graph, pig, work_vector, thread_assignment_info );
+		basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, threads_to_request, thread_assignment_info );
+
+		//In a single thread, finalize the edges (not threadsafe):
+		pig->declare_all_edge_energies_final();
 	} else {
 		SymmOnTheFlyInteractionGraphOP symotfig =
 			utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::SymmOnTheFlyInteractionGraph > ( ig );
 		if ( symotfig ) {
+			if ( (threads_to_request == 0 || threads_to_request > 1) && basic::thread_manager::RosettaThreadManager::total_threads() > 1 ) {
+				TR.Warning << "Cannot pre-compute an on-the-fly interaction graph in threads.  Only precomputing single-body energies in threads." << std::endl;
+			}
+			basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, threads_to_request, thread_assignment_info );
 			prepare_symm_otf_interaction_graph( pose, scfxn, packer_neighbor_graph, symotfig );
 		} else {
 			utility_exit_with_message( "Encountered incompatible interaction graph type in SymmetricRotamerSets::compute_energies" );
 		}
 	}
 
+#ifdef MULTI_THREADED
+	TR << "Completed interaction graph pre-calculation in " << thread_assignment_info->get_assigned_total_thread_count() << " available threads (" << (thread_assignment_info->get_requested_thread_count() == 0 ? std::string( "all available" ) : std::to_string( thread_assignment_info->get_requested_thread_count() ) ) << " had been requested)." << std::endl;
+#endif
 }
 
-/*
-// Note: The following is identical to the same function in the base class, and should
-// not be overridden.  This is unnecessary code duplication.  VKM, 6 Aug. 2019.
-// @details compute all rotamer one-body interactions for a symmetrical rotamer_sets
+/// @brief Append to a vector of calculations that already contains one-body energy calculations additonal work units
+/// for two-body energy calculations, for subsequent multi-threaded evaluation.
+/// @details Each individual calculation is for the interaction of all possible rotamer pairs at two positions.  Again,
+/// not as granular as conceivably possible, but easier to set up.
+/// @note The work_vector vector is extended by this operation.  This version is for the symmetric case.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org).
 void
-SymmetricRotamerSets::compute_one_body_energies(
-pose::Pose const & pose,
-scoring::ScoreFunction const & scfxn,
-utility::graph::GraphCOP packer_neighbor_graph,
-interaction_graph::InteractionGraphBaseOP ig
-)
-{
-// One body energies -- shared between pigs and otfigs
-for ( uint ii = 1; ii <= nmoltenres(); ++ii ) {
-utility::vector1< core::PackerEnergy > one_body_energies( rotamer_set_for_moltenresidue( ii )->num_rotamers() );
-rotamer_set_for_moltenresidue( ii )->compute_one_body_energies(
-pose, scfxn, *task(), packer_neighbor_graph, one_body_energies );
-ig->add_to_nodes_one_body_energy( ii, one_body_energies );
-}
-}
-*/
-
-// @details calculate all rotamer two body interactions and place them in a ig. Adds in
-// energies for symmetrical clone residues into the energy of the master residues. The
-// idea is the following:
-void
-SymmetricRotamerSets::precompute_two_body_energies(
-	pose::Pose const & pose,
-	scoring::ScoreFunction const & scfxn,
+SymmetricRotamerSets::append_two_body_energy_computations_to_work_vector(
+	core::pose::Pose const & pose,
+	core::scoring::ScoreFunction const & scfxn,
 	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
-	bool const finalize_edges
-)
-{
-	using namespace interaction_graph;
-	using namespace scoring;
-
+	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > & work_vector,
+	basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignment_info
+) const {
 	// find SymmInfo
 	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+	runtime_assert( symm_info != nullptr );
 
 	// Two body energies
-	for ( uint ii = 1; ii <= nmoltenres(); ++ii ) {
-		//tt << "pairenergies for ii: " << ii << '\n';
-		uint ii_resid = moltenres_2_resid( ii );
-		// observe that we will loop over only one subunit here
+	for ( core::Size ii(1); ii <= nmoltenres(); ++ii ) {
+		core::Size const ii_resid( moltenres_2_resid( ii ) );
+		// We will loop over only one subunit here.
 		for ( utility::graph::Graph::EdgeListConstIter
 				uli  = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_begin(),
 				ulie = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_end();
 				uli != ulie; ++uli ) {
-			uint jj_resid = (*uli)->get_other_ind( ii_resid );
-			uint jj = resid_2_moltenres( jj_resid ); //pretend we're iterating over jj >= ii
+			core::Size jj_resid = (*uli)->get_other_ind( ii_resid );
+			core::Size jj = resid_2_moltenres( jj_resid ); //pretend we're iterating over jj >= ii
 			// if jj_resid is not repackable and jj_resid is not in a different subunit continue
-			uint jj_resid_master(0);
+			core::Size jj_resid_master(0);
 			if ( symm_info->chi_follows( jj_resid ) == 0  ) {
 				// jj_resid is independent like ii_resid
 				if ( jj == 0 ) continue;
@@ -161,71 +161,48 @@ SymmetricRotamerSets::precompute_two_body_energies(
 				// if jj_resid is in a different subunit we need to know its master
 				jj_resid_master = symm_info->chi_follows( jj_resid );
 			}
-			// find out the moltenres id for the master
-			uint jj_master = resid_2_moltenres( jj_resid_master );
-			// if the master is not repackable continue
+			// Find out the moltenres id for the master:
+			core::Size jj_master = resid_2_moltenres( jj_resid_master );
+			// If the master is not repackable continue:
 			if ( jj_master == 0 ) continue;
-			// if we the ii_resid and jj_resid_master have an edge this intersubunit
-			// interaction is already being calculated
-			//   if ( packer_neighbor_graph->get_edge_exists(ii_resid,jj_resid_master ) && jj == 0 ) continue;
+			// If we the ii_resid and jj_resid_master have an edge this intersubunit.
 
-			if ( fabs( symm_info->score_multiply(ii_resid,jj_resid) )<1e-3 ) continue;
-			uint ii_master = ii;
-			uint ii_resid_master = ii_resid;
+			if ( fabs( symm_info->score_multiply(ii_resid,jj_resid) ) <  SYMM_INFO_SCORE_MULTIPLY_CUTOFF ) continue;
+			core::Size ii_master( ii );
 
-			// the self interaction energy is already calculated in the one-body ter,
+			// The self interaction energy is already calculated in the one-body term,
 			if ( ii_master == jj_master ) continue;
-			// swap the order of the nodes that form the edge if jj_resid_master < ii_resid.
+			// Swap the order of the nodes that form the edge if jj_resid_master < ii_resid.
 			// Edges are always stored as pairs (a, b) where a > b. This only happens if we
-			// are calculation interactions from the controling subunit to another subunit
+			// are calculating interactions from the controling subunit to another subunit.
 			bool swap( false );
 			if ( jj_resid_master < ii_resid ) {
 				swap = true;
-				uint temp_ii = ii_master;
-				uint temp_ii_resid = ii_resid_master;
+				core::Size temp_ii = ii_master;
 				ii_master = jj_master;
-				ii_resid_master = jj_resid_master;
 				jj_master = temp_ii;
-				jj_resid_master = temp_ii_resid;
 			}
 
-			// make a pair energy table to store use jj_master and ii_master
-			// to size the array ( if we have have a intersubunit interaction)
-			FArray2D< core::PackerEnergy > pair_energy_table(
-				nrotamers_for_moltenres( jj_master ),
-				nrotamers_for_moltenres( ii_master ), 0.0 );
+			RotamerSetCOP ii_rotset( rotamer_set_for_moltenresidue( ii_master ) );
+			RotamerSetCOP jj_rotset( rotamer_set_for_moltenresidue( jj_master ) );
 
-			RotamerSetOP ii_rotset = rotamer_set_for_moltenresidue( ii_master );
-			RotamerSetOP jj_rotset = rotamer_set_for_moltenresidue( jj_master );
-
-			// we have a intersubunit interaction then calculate the interaction
-			// here instead of the intrasubunit interaction. If jj == 0 then we will calculate
-			// intrasubunit interaction. If we swapped the order we have to orient ii instead of jj
-			//if ( symm_info->chi_follows( jj_resid ) != 0 ) { runtime_assert( jj == 0 ); } // otherwise clone pos packable
-			if ( symm_info->chi_follows( jj_resid ) != 0 && jj == 0 ) {
-				if ( swap ) {
-					RotamerSetOP rotated_ii_rotset(
-						orient_rotamer_set_to_symmetric_partner(pose,ii_resid_master,jj_resid) );
-					ii_rotset = rotated_ii_rotset;
-					scfxn.prepare_rotamers_for_packing( pose, *ii_rotset );
-				} else {
-					RotamerSetOP rotated_jj_rotset(
-						orient_rotamer_set_to_symmetric_partner(pose,jj_resid_master,jj_resid) );
-					jj_rotset = rotated_jj_rotset;
-					scfxn.prepare_rotamers_for_packing( pose, *jj_rotset );
-				}
-			}
-			scfxn.evaluate_rotamer_pair_energies(
-				*ii_rotset, *jj_rotset, pose, pair_energy_table );
-
-			// Apply the multiplication factors
-			pair_energy_table *= symm_info->score_multiply(ii_resid,jj_resid);
-
+			// Add the edge to the interaction graph:
 			if ( !pig->get_edge_exists( ii_master, jj_master ) ) {
 				pig->add_edge( ii_master, jj_master );
 			}
-			pig->add_to_two_body_energies_for_edge( ii_master, jj_master, pair_energy_table );
 
+			//NOTE: The behaviour of std::bind is to pass EVERYTHING by copy UNLESS std::cref or std::ref is used.  So in
+			//the following, all of the std::pairs are passed by copy.
+			work_vector.push_back(
+				utility::pointer::make_shared< basic::thread_manager::RosettaThreadFunction >(
+				std::bind(
+				&interaction_graph::PrecomputedPairEnergiesInteractionGraph::set_twobody_energies_multithreaded, pig.get(),
+				std::make_pair( ii_master, jj_master ), std::make_pair( ii_rotset, jj_rotset ), std::cref(pose), std::cref(scfxn),
+				thread_assignment_info, false, symm_info, std::make_pair( ii_resid, jj_resid ),
+				symm_info->chi_follows( jj_resid ) != 0 && jj == 0, swap
+				)
+				)
+			);
 		}
 	}
 
@@ -233,26 +210,25 @@ SymmetricRotamerSets::precompute_two_body_energies(
 	// by the LRnergy container object
 	// The logic here is exactly the same as for the non-lr energy calculation in terms of symmetry
 	for ( auto
-			lr_iter = scfxn.long_range_energies_begin(),
-			lr_end  = scfxn.long_range_energies_end();
+			lr_iter( scfxn.long_range_energies_begin() ),
+			lr_end( scfxn.long_range_energies_end() );
 			lr_iter != lr_end; ++lr_iter ) {
-		LREnergyContainerCOP lrec = pose.energies().long_range_container( (*lr_iter)->long_range_type() );
+		core::scoring::LREnergyContainerCOP lrec( pose.energies().long_range_container( (*lr_iter)->long_range_type() ) );
 		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
-		// Potentially O(N^2) operation...
 
-		for ( uint ii = 1; ii <= nmoltenres(); ++ ii ) {
-			uint const ii_resid = moltenres_2_resid( ii );
+		for ( core::Size ii = 1; ii <= nmoltenres(); ++ ii ) {
+			core::Size const ii_resid = moltenres_2_resid( ii );
 
-			for ( ResidueNeighborConstIteratorOP
+			for ( core::scoring::ResidueNeighborConstIteratorOP
 					rni = lrec->const_neighbor_iterator_begin( ii_resid ),
 					rniend = lrec->const_neighbor_iterator_end( ii_resid );
 					(*rni) != (*rniend); ++(*rni) ) {
-				Size jj_resid = ( rni->upper_neighbor_id() == ii_resid ? rni->lower_neighbor_id() : rni->upper_neighbor_id() );
+				core::Size jj_resid = ( rni->upper_neighbor_id() == ii_resid ? rni->lower_neighbor_id() : rni->upper_neighbor_id() );
 
-				uint jj = resid_2_moltenres( jj_resid ); //pretend we're iterating over jj >= ii
-				//    if ( jj == 0 ) continue; // Andrew, remove this magic number! (it's the signal that jj_resid is not "molten")
+				core::Size jj = resid_2_moltenres( jj_resid ); //pretend we're iterating over jj >= ii
+
 				// if jj_resid is not repackable and jj_resid is not in a different subunit continue
-				uint jj_resid_master(0);
+				core::Size jj_resid_master(0);
 				if ( symm_info->chi_follows( jj_resid ) == 0  ) {
 					// jj_resid is independent like ii_resid
 					if ( jj == 0 ) continue;
@@ -263,17 +239,14 @@ SymmetricRotamerSets::precompute_two_body_energies(
 					jj_resid_master = symm_info->chi_follows( jj_resid );
 				}
 				// find out the moltenres id for the master
-				uint jj_master = resid_2_moltenres( jj_resid_master );
+				core::Size jj_master = resid_2_moltenres( jj_resid_master );
 				// if the master is not repackable continue
 				if ( jj_master == 0 ) continue;
-				// if we the ii_resid and jj_resid_master have an edge this intersubunit
-				// interaction is already being calculated
-				//   if ( packer_neighbor_graph->get_edge_exists(ii_resid,jj_resid_master ) && jj == 0 ) continue;
+				// if the ii_resid and jj_resid_master have an edge this intersubunit.
 
-				if ( fabs( symm_info->score_multiply(ii_resid,jj_resid)) <1e-3 ) continue;
+				if ( fabs( symm_info->score_multiply(ii_resid,jj_resid)) < SYMM_INFO_SCORE_MULTIPLY_CUTOFF ) continue;
 
-				uint ii_master = ii;
-				uint ii_resid_master = ii_resid;
+				core::Size ii_master = ii;
 
 				// the self interaction energy is already calculated in the one-body ter,
 				if ( ii_master == jj_master ) continue;
@@ -283,60 +256,30 @@ SymmetricRotamerSets::precompute_two_body_energies(
 				bool swap( false );
 				if ( jj_resid_master < ii_resid ) {
 					swap = true;
-					uint temp_ii = ii_master;
-					uint temp_ii_resid = ii_resid_master;
+					core::Size temp_ii = ii_master;
 					ii_master = jj_master;
-					ii_resid_master = jj_resid_master;
 					jj_master = temp_ii;
-					jj_resid_master = temp_ii_resid;
 				}
 
-				// make a pair energy table to store use jj_master and ii_master
-				// to size the array ( if we have have a intersubunit interaction)
-				FArray2D< core::PackerEnergy > pair_energy_table(
-					nrotamers_for_moltenres( jj_master ),
-					nrotamers_for_moltenres( ii_master ), 0.0 );
+				RotamerSetCOP ii_rotset = rotamer_set_for_moltenresidue( ii_master );
+				RotamerSetCOP jj_rotset = rotamer_set_for_moltenresidue( jj_master );
 
-				RotamerSetOP ii_rotset = rotamer_set_for_moltenresidue( ii_master );
-				RotamerSetOP jj_rotset = rotamer_set_for_moltenresidue( jj_master );
-
-				// we have a intersubunit interaction then calculate the interaction
-				// here instead of the intrasubunit interaction. If jj == 0 then we will calculate
-				// intrasubunit interaction. If we swapped the order we have to orient ii instead of jj
-				if ( symm_info->chi_follows( jj_resid ) != 0 && jj == 0 ) {
-					if ( swap ) {
-						RotamerSetOP rotated_ii_rotset(
-							orient_rotamer_set_to_symmetric_partner(pose,ii_resid_master,jj_resid) );
-						ii_rotset = rotated_ii_rotset;
-						scfxn.prepare_rotamers_for_packing( pose, *ii_rotset );
-					} else {
-						RotamerSetOP rotated_jj_rotset(
-							orient_rotamer_set_to_symmetric_partner(pose,jj_resid_master,jj_resid) );
-						jj_rotset = rotated_jj_rotset;
-						scfxn.prepare_rotamers_for_packing( pose, *jj_rotset );
-					}
+				if ( ! pig->get_edge_exists( ii_master, jj_master ) ) {
+					pig->add_edge( ii_master, jj_master );
 				}
-				(*lr_iter)->evaluate_rotamer_pair_energies(
-					*ii_rotset, *jj_rotset, pose, scfxn, scfxn.weights(), pair_energy_table );
 
-				pair_energy_table *= symm_info->score_multiply(ii_resid,jj_resid);
-
-				if ( ! pig->get_edge_exists( ii_master, jj_master ) ) { pig->add_edge( ii_master, jj_master ); }
-				pig->add_to_two_body_energies_for_edge( ii_master, jj_master, pair_energy_table );
-
-			}
-		}
-	}
-
-
-	/// yes, this is O(N^2) but the logic for doing it correctly in the loops above is really hairy
-	/// for the time being, this works.
-	if ( !finalize_edges ) return;
-
-	for ( Size ii=1; ii<= nmoltenres(); ++ii ) {
-		for ( Size jj=ii+1; jj<= nmoltenres(); ++jj ) {
-			if ( pig->get_edge_exists( ii, jj ) ) {
-				pig->declare_edge_energies_final( ii, jj );
+				//NOTE: The behaviour of std::bind is to pass EVERYTHING by copy UNLESS std::cref or std::ref is used.  So in
+				//the following, all of the std::pairs are passed by copy.
+				work_vector.push_back(
+					utility::pointer::make_shared< basic::thread_manager::RosettaThreadFunction >(
+					std::bind(
+					&interaction_graph::PrecomputedPairEnergiesInteractionGraph::add_longrange_twobody_energies_multithreaded, pig.get(),
+					std::make_pair( ii_master, jj_master ), std::make_pair( ii_rotset, jj_rotset ), std::cref(pose), *lr_iter, std::cref(scfxn),
+					thread_assignment_info, false, symm_info, std::make_pair( ii_resid, jj_resid ),
+					symm_info->chi_follows( jj_resid ) != 0 && jj == 0, swap
+					)
+					)
+				);
 			}
 		}
 	}
@@ -670,7 +613,9 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 
 }
 
-/// @details orients all rotamers in a rotamer_set to a different (symmetrical) position
+/// @brief Generate a new rotamer set oriented onto a reference rotamer set by cloning the reference set and reorienting
+/// using symmetry information.  Return an owning pointer to the new, reoriented rotamer set.
+/// @details Orients all rotamers in a rotamer_set to a different (symmetrical) position
 /// @note If set_up_mirror_symmetry_if_has_mirror_symmetry_ is true, then residues in mirrored subunits have their
 /// ResidueTypes switched to the types of the opposite chirality.  If false (the default), then they keep the same
 /// types, and only have their geometry mirrored.  The default is false, which is computationally less expensive
@@ -678,12 +623,11 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 RotamerSetOP
 SymmetricRotamerSets::orient_rotamer_set_to_symmetric_partner(
 	pose::Pose const & pose,
-	uint const & seqpos,
+	RotamerSetCOP rotset_for_seqpos,
 	uint const & sympos,
 	bool const set_up_mirror_types_if_has_mirror_symmetry/*=false*/
-) const {
+) {
 
-	RotamerSetCOP rotset_in = rotamer_set_for_residue( seqpos );
 	RotamerSetOP sym_rotamer_set = RotamerSetFactory::create_rotamer_set( pose );
 	sym_rotamer_set->set_resid(sympos);
 
@@ -692,7 +636,7 @@ SymmetricRotamerSets::orient_rotamer_set_to_symmetric_partner(
 
 	core::conformation::symmetry::MirrorSymmetricConformationCOP mirrorconf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::MirrorSymmetricConformation const>( pose.conformation_ptr() ) );
 
-	for ( const auto & rot : *rotset_in ) {
+	for ( const auto & rot : *rotset_for_seqpos ) {
 		bool mirrored(false);
 		if ( mirrorconf ) { //If this is a mirror symmetric conformation, figure out whether this subunit is mirrored:
 			mirrored = mirrorconf->res_is_mirrored( sympos );

@@ -162,7 +162,9 @@ public:
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
 		utility::graph::GraphCOP packer_neighbor_graph,
-		utility::vector1< core::PackerEnergy > & energies ) const = 0;
+		utility::vector1< core::PackerEnergy > & energies,
+		bool const no_update = false
+	) const = 0;
 
 	virtual
 	void
@@ -245,6 +247,14 @@ public:
 	initialize_pose_for_rotset_creation(
 		pose::Pose & pose
 	) const = 0;
+
+public:
+
+	/// @brief Lazy update of rotamer indices and offsets and integration of those rotamers
+	/// in the rotamers_waiting_for_sort_ list.
+	virtual
+	void
+	update_rotamer_offsets() const = 0;
 
 private:
 	// deny use of the copy constructor (no pass-by-value)

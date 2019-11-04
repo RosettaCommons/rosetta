@@ -10,6 +10,7 @@
 /// @file   core/pack/pack_rotamers.cc
 /// @brief  pack rotamers module
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitue.org) to allow multi-threaded interaction graph setup.
 
 // Unit Headers
 #include <core/pack/pack_rotamers.hh>
@@ -46,6 +47,7 @@
 
 // option key includes
 
+#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <utility/thread/backwards_thread_local.hh> //For THREAD_LOCAL
 
@@ -62,16 +64,19 @@ using core::conformation::symmetry::SymmetricConformation;
 
 static basic::Tracer tt( "core.pack.pack_rotamers", basic::t_info );
 
+/// @brief The entry point to calling the packer, which optimizes side-chain identities and conformations
+/// (if you're designing) or conformations alone (if you're predicting structures).
 /// @details Wraps the two very distinct and separate stages of rotamer packing,
 /// which are factored so that they may be called asynchronously.
-/// Use this wrapper as a base model for higher-level packing routines (such as pack_rotamers_loop)
+/// Use this wrapper as a base model for higher-level packing routines (such as pack_rotamers_loop).
+/// @note In multi-threaded builds, this function takes an extra parameter for
+/// the number of threads to request, for parallel interaction graph precomputation.
 void
 pack_rotamers(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & scfxn,
 	task::PackerTaskCOP task
-)
-{
+) {
 	using namespace interaction_graph;
 	using namespace rotamer_set;
 
@@ -104,20 +109,23 @@ pack_rotamers(
 	PROF_STOP ( basic::PACK_ROTAMERS );
 }
 
-// @details run the FixbbSimAnnealer multiple times using the same InteractionGraph, storing the results
+/// @details run the FixbbSimAnnealer multiple times using the same InteractionGraph, storing the results.
+/// @note In multi-threaded builds, this function takes an extra parameter for
+/// the number of threads to request, for parallel interaction graph precomputation.
 void
 pack_rotamers_loop(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & scfxn,
 	task::PackerTaskCOP task,
 	Size const nloop
-)
-{
+) {
 	utility::vector1< std::pair< Real, std::string > > results;
 	pack_rotamers_loop( pose, scfxn, task, nloop, results );
 }
 
-// @details run the FixbbSimAnnealer multiple times using the same InteractionGraph, storing the results
+/// @details run the FixbbSimAnnealer multiple times using the same InteractionGraph, storing the results
+/// @note In multi-threaded builds, this function takes an extra parameter for
+/// the number of threads to request, for parallel interaction graph precomputation.
 void
 pack_rotamers_loop(
 	pose::Pose & pose,
@@ -125,13 +133,14 @@ pack_rotamers_loop(
 	task::PackerTaskCOP task,
 	Size const nloop,
 	utility::vector1< std::pair< Real, std::string > > & results
-)
-{
+) {
 	utility::vector1< pose::PoseOP > pose_list;
 	pack_rotamers_loop( pose, scfxn, task, nloop, results, pose_list );
 }
 
-// @details run the FixbbSimAnnealer multiple times using the same InteractionGraph, storing the results
+/// @brief Run the FixbbSimAnnealer multiple times using the same InteractionGraph, storing the results.
+/// @note In multi-threaded builds, this function takes an extra parameter for
+/// the number of threads to request, for parallel interaction graph precomputation.
 void
 pack_rotamers_loop(
 	pose::Pose & pose,
@@ -140,8 +149,7 @@ pack_rotamers_loop(
 	Size const nloop,
 	utility::vector1< std::pair< Real, std::string > > & results,
 	utility::vector1< pose::PoseOP > & pose_list
-)
-{
+) {
 	using namespace ObjexxFCL::format;
 	using namespace interaction_graph;
 	using namespace rotamer_set;
@@ -181,7 +189,9 @@ pack_rotamers_loop(
 	pack_rotamers_cleanup( pose, ig );
 }
 
-// @details get rotamers, compute energies
+/// @brief Get rotamers, compute energies.
+/// @note In multi-threaded builds, this function takes an extra parameter for
+/// the number of threads to request, for parallel interaction graph precomputation.
 void
 pack_rotamers_setup(
 	pose::Pose & pose,
@@ -189,8 +199,7 @@ pack_rotamers_setup(
 	task::PackerTaskCOP task,
 	rotamer_set::RotamerSetsOP rotsets,
 	interaction_graph::AnnealableGraphBaseOP & ig
-)
-{
+) {
 	using namespace interaction_graph;
 
 	pack_scorefxn_pose_handshake( pose, scfxn );
@@ -222,17 +231,27 @@ pack_rotamers_setup(
 	tt << "built " << rotsets->nrotamers() << " rotamers at "
 		<< rotsets->nmoltenres() << " positions." << std::endl;
 
+#ifdef MULTI_THREADED
+	core::Size const threads_to_request( task->ig_threads_to_request() );
+	tt << "Requesting ";
+	if ( threads_to_request == 0 ) {
+		tt << "all available";
+	} else {
+		tt << threads_to_request;
+	}
+	tt << " threads for interaction graph computation." << std::endl;
+#endif
 	ig = InteractionGraphFactory::create_and_initialize_annealing_graph(*task, *rotsets, pose, scfxn, packer_neighbor_graph );
 }
 
-// PyRosetta compatible version
+/// @brief PyRosetta compatible version.
 interaction_graph::AnnealableGraphBaseOP
 pack_rotamers_setup(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & scfxn,
 	task::PackerTaskCOP task,
-	rotamer_set::RotamerSetsOP rotsets)
-{
+	rotamer_set::RotamerSetsOP rotsets
+) {
 	interaction_graph::AnnealableGraphBaseOP ig;
 	pack_rotamers_setup(pose, scfxn, task, rotsets, ig);
 	return ig;

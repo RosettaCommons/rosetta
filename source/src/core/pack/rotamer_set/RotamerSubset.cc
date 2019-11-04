@@ -478,7 +478,8 @@ RotamerSubset::compute_one_body_energies(
 	scoring::ScoreFunction const &,
 	task::PackerTask const &,
 	utility::graph::GraphCOP,
-	utility::vector1< core::PackerEnergy > &
+	utility::vector1< core::PackerEnergy > &,
+	bool const /*=false*/
 ) const
 {}
 

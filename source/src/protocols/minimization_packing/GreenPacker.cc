@@ -36,6 +36,8 @@
 
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
+#include <basic/thread_manager/RosettaThreadManager.hh>
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
 
 /// Numeric headers
 #include <numeric/numeric.functions.hh>
@@ -430,7 +432,8 @@ GreenPacker::setup_reference_data( core::pose::Pose & pose )
 	create_reference_packer_task( pose );
 	create_reference_packer_neighbor_graph( pose );
 	create_reference_rotamers( pose );
-	compute_reference_intragroup_rpes( pose );
+	debug_assert( reference_task_ != nullptr );
+	compute_reference_intragroup_rpes( pose, reference_task_->ig_threads_to_request() );
 	create_reference_data_ = false; // next time, we'll reuse these energies
 }
 
@@ -442,7 +445,8 @@ GreenPacker::repack( core::pose::Pose & pose )
 	create_fresh_packer_neighbor_graph( pose );
 	create_fresh_rotamers( pose );
 	find_reference_and_current_rotamer_correspondence( pose );
-	compute_energies( pose );
+	debug_assert( current_task_ != nullptr );
+	compute_energies( pose, current_task_->ig_threads_to_request() );
 	run_sa( pose );
 	cleanup( pose );
 }
@@ -527,7 +531,8 @@ GreenPacker::create_reference_rotamers(
 
 void
 GreenPacker::compute_reference_intragroup_rpes(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	core::Size const threads_to_request
 )
 {
 	using namespace core::pack::interaction_graph;
@@ -543,16 +548,23 @@ GreenPacker::compute_reference_intragroup_rpes(
 	/// pointless... just because it's pointless doesn't mean it should fail,
 	/// though, so this code should be revised in the future.
 	if ( ! pig ) {
-		utility_exit_with_message( "GreenPacker asked to use on-the-fly interaction graph.  Why?" );
+		utility_exit_with_message( "GreenPacker asked to use on-the-fly interaction graph.  Why?  (This is almost certainly a developer error.  Users should not see this message.  If you do, contact a developer.)" );
 	}
 	pig->initialize( *reference_rotamer_sets_ );
 
-	reference_rotamer_sets_->precompute_two_body_energies(
+	// The following lines pre-compute the twobody energies, using threads if available:
+	basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info( utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >(basic::thread_manager::RosettaThreadRequestOriginatingLevel::PROTOCOLS_MINIMIZATION_PACKING) ); //Keeps track of the *actual* threads assigned (as opposed to requested), for later reporting.
+	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector; //Storage for the list of work to be done.
+	reference_rotamer_sets_->append_two_body_energy_computations_to_work_vector(
 		pose,
 		*ci_sfxn_,
 		reference_packer_neighbor_graph_,
-		pig
-	);
+		pig,
+		work_vector,
+		thread_assignment_info
+	); //Make a list of the work to be done.
+	basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, threads_to_request, thread_assignment_info ); //Do the work, in threads if available.
+	pig->declare_all_edge_energies_final(); //In a single thread, finalize the edges (not threadsafe, but happens in O(Nedge) time).
 
 	ci_rpes_ = pig;
 
@@ -780,7 +792,8 @@ GreenPacker::initialize_internal_correspondence_data(
 
 void
 GreenPacker::compute_energies(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	core::Size const threads_to_request
 )
 {
 	using namespace core::pack::interaction_graph;
@@ -809,17 +822,37 @@ GreenPacker::compute_energies(
 
 	/// 1. Compute all pair energies across the interface, and declare those edges final.
 	/// Let the rotamer sets class do all the hard work here...
-	current_rotamer_sets_->precompute_two_body_energies(
-		pose, *full_sfxn_,
-		current_inter_group_packer_neighbor_graph_, pig
+	basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info(
+		utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >(
+		basic::thread_manager::RosettaThreadRequestOriginatingLevel::PROTOCOLS_MINIMIZATION_PACKING
+		)
 	);
+	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector1;
+	reference_rotamer_sets_->append_two_body_energy_computations_to_work_vector(
+		pose,
+		*full_sfxn_,
+		current_inter_group_packer_neighbor_graph_,
+		pig,
+		work_vector1,
+		thread_assignment_info
+	);
+	// We'll hold off on actually doing the work above until step 2.
 
 	/// 2. Compute batch CD pair energies for intra-group edges
 	/// Let the rotamer sets class do all the hard work here...
-	current_rotamer_sets_->precompute_two_body_energies(
-		pose, *cd_sfxn_,
-		current_intra_group_packer_neighbor_graph_, pig
+	current_rotamer_sets_->append_two_body_energy_computations_to_work_vector(
+		pose,
+		*cd_sfxn_,
+		current_intra_group_packer_neighbor_graph_,
+		pig,
+		work_vector1,
+		thread_assignment_info
 	);
+	//Now do all of the work from steps 1 and 2:
+	basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector1, threads_to_request, thread_assignment_info );
+
+	/// 2.5 In a single thread, finalize all of the edges (not threadsafe):
+	pig->declare_all_edge_energies_final();
 
 	/// 3. Add in CI pair energies for intra-group edges where both rotamers have a correspondence
 	add_precomputed_energies( pose, pig );
@@ -828,8 +861,8 @@ GreenPacker::compute_energies(
 	compute_absent_energies( pose, pig );
 
 	/// 5. Compute one-body energies
-	current_rotamer_sets_->compute_one_body_energies(
-		pose, *full_sfxn_, current_packer_neighbor_graph_, pig );
+	work_vector1 = current_rotamer_sets_->construct_one_body_energy_work_vector( pose, *full_sfxn_, current_packer_neighbor_graph_, pig, thread_assignment_info );
+	basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector1, threads_to_request, thread_assignment_info );
 
 	current_ig_ = pig;
 }

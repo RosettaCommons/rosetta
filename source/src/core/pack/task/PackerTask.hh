@@ -11,6 +11,7 @@
 /// @brief  Task class to describe packer's behavior header
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 /// @author Steven Lewis
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added support for multithreading.
 
 #ifndef INCLUDED_core_pack_task_PackerTask_hh
 #define INCLUDED_core_pack_task_PackerTask_hh
@@ -326,6 +327,15 @@ public:
 	virtual
 	bool
 	symmetrize_by_intersection() const = 0;
+
+	/// @brief How many threads should the packer request for interaction graph precomputation?
+	/// @details Must be implemented by derived class.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual core::Size ig_threads_to_request() const = 0;
+
+	/// @brief Limit the interaction graph setup threads.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org)
+	virtual void limit_ig_setup_threads( core::Size const setting ) = 0;
 
 #ifdef    SERIALIZATION
 public:

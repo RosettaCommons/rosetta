@@ -752,7 +752,7 @@ DoubleLazyEdge::prepare_for_simulated_annealing()
 				}
 			}
 		}
-		delete this;
+		mark_edge_for_deletion();
 	}
 }
 
@@ -1286,9 +1286,9 @@ DoubleLazyInteractionGraph::initialize(
 }
 
 void
-DoubleLazyInteractionGraph::prepare_for_simulated_annealing()
+DoubleLazyInteractionGraph::prepare_graph_for_simulated_annealing()
 {
-	InteractionGraphBase::prepare_for_simulated_annealing();
+	InteractionGraphBase::prepare_graph_for_simulated_annealing();
 
 	if ( memory_max_for_rpes_ == 0 ) return;
 

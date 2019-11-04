@@ -105,10 +105,10 @@ int MultiplexedAnnealableGraph::get_num_total_states() const
 	return num_states;
 }
 
-void MultiplexedAnnealableGraph::prepare_for_simulated_annealing()
+void MultiplexedAnnealableGraph::prepare_graph_for_simulated_annealing()
 {
 	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
-		subgraph->prepare_for_simulated_annealing();
+		subgraph->prepare_graph_for_simulated_annealing();
 	}
 }
 

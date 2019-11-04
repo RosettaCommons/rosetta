@@ -59,8 +59,11 @@ class SymmMinimalistInteractionGraphTests : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
+#ifdef MULTI_THREADED
+		core_init_with_additional_options( "-no_optH -symmetry:symmetry_definition core/scoring/symmetry/sym_def.dat -multithreading:total_threads 2" );
+#else
 		core_init_with_additional_options( "-no_optH -symmetry:symmetry_definition core/scoring/symmetry/sym_def.dat" );
-
+#endif
 	}
 
 	core::PackerEnergy
@@ -154,11 +157,16 @@ public:
 		symmin_ig->set_pose( pose );
 		symmin_ig->set_score_function( *sfxn );
 
-		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, symmin_ig );
-		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, regular_ig );
+#ifdef MULTI_THREADED
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, symmin_ig, 2 );
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, regular_ig, 2 );
+#else
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, symmin_ig, 1 );
+		rotsets->compute_energies( pose, *sfxn, packer_neighbor_graph, regular_ig, 1 );
+#endif
 
-		regular_ig->prepare_for_simulated_annealing();
-		symmin_ig->prepare_for_simulated_annealing();
+		regular_ig->prepare_graph_for_simulated_annealing();
+		symmin_ig->prepare_graph_for_simulated_annealing();
 
 		// OK: let's make sure that when we ask for a rotamer from a particular node on a non-asu,
 		// we get back the right set of coordinates for that rotamer.

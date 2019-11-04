@@ -40,6 +40,7 @@ void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
 	core::chemical::ResidueTypeSet const & type_set,
+	core::Size const threads_to_request = 0,
 	bool allow_sloppy_match = false,
 	bool switch_protein_res_only = false,
 	bool keep_energies = false
@@ -55,6 +56,7 @@ void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
 	core::chemical::TypeSetMode type_set_mode,
+	core::Size const threads_to_request = 0,
 	bool allow_sloppy_match = false,
 	bool switch_protein_res_only = false,
 	bool keep_energies = false
@@ -70,6 +72,7 @@ void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
 	std::string const & type_set_name,
+	core::Size const threads_to_request = 0,
 	bool allow_sloppy_match = false,
 	bool switch_protein_res_only = false,
 	bool keep_energies = false
@@ -96,9 +99,12 @@ generate_replacement_restype(
 	core::chemical::TypeSetMode mode);
 
 /// @brief Rebuild disulfides after a transition to a full atom ResidueTypeSet
+/// @note In multi-threaded builds, this function takes an extra parameter for
+/// the number of threads to request, for parallel interaction graph precomputation.
 void
 rebuild_fa_disulfides(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	core::Size const threads_to_request = 0
 );
 
 } // util

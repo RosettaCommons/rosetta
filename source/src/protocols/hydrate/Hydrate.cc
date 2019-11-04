@@ -11,6 +11,7 @@
 /// @brief A protocol to add explicit water molecules as part of Hydrate/SPaDES.
 /// @detailed
 /// @author Joaquin Ambia Garrido, Jason K. Lai
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) to permit multi-threaded packing.
 
 // Protocols
 #include <protocols/hydrate/Hydrate.hh>
@@ -33,6 +34,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/hydrate.OptionKeys.gen.hh>
+#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
 // Utility headers
@@ -98,6 +100,10 @@ Hydrate::Hydrate(): Mover(),
 	short_residence_time_mode_ = option[short_residence_time_mode ]();
 	near_water_threshold_ = option[ near_water_threshold ]();  //yumeng
 	minimize_bb_where_packing_ = option[ minimize_bb_where_packing ]();  // yumeng
+
+#ifdef MULTI_THREADED
+	set_interaction_graph_threads( option[ multithreading::interaction_graph_threads ]() );
+#endif
 
 	type("Hydrate");
 }
@@ -235,7 +241,11 @@ Hydrate::apply(Pose & pose)
 
 	if ( short_residence_time_mode_  ) partial_hydrate_dew_ = 0; // If running on short residence time dont add water here
 	if ( partial_hydrate_dew_ < 1 ) set_dew_waters_not_to_be_included(pose, partial_hydrate_dew_);
+#ifdef MULTI_THREADED
+	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose, interaction_graph_threads_ ));
+#else
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
+#endif
 	task->initialize_from_command_line(); // -ex1 -ex2  etc.
 	kinematics::MoveMap mm;
 	set_task_and_movemap( pose, protein_flexibility_, task, mm, minimize_bb_where_packing_ );
@@ -259,7 +269,11 @@ Hydrate::apply(Pose & pose)
 	// stay active, near the protein, and then they are packed again without being enforced,
 	core::pack::palette::CustomBaseTypePackerPaletteOP palette( utility::pointer::make_shared< core::pack::palette::CustomBaseTypePackerPalette >() );
 	palette->add_type("TP3");
+#ifdef MULTI_THREADED
+	pack::task::PackerTaskOP sew_task( pack::task::TaskFactory::create_packer_task( pose, palette, interaction_graph_threads_ ));
+#else
 	pack::task::PackerTaskOP sew_task( pack::task::TaskFactory::create_packer_task( pose, palette ));
+#endif
 	sew_task->initialize_from_command_line(); // -ex1 -ex2  etc.
 	(*score_fxn_)(pose);
 	get_ready_for_sew_packing( pose, sew_task);
@@ -272,7 +286,11 @@ Hydrate::apply(Pose & pose)
 		// the rest of the protein considered flexible, using input water rotamers (oxygen position dependent) and
 		// not being enforced to stay near the protein.
 		remove_all_anchors_and_ENF( pose );
+#ifdef MULTI_THREADED
+		pack::task::PackerTaskOP task_strm( pack::task::TaskFactory::create_packer_task( pose, interaction_graph_threads_ ));
+#else
 		pack::task::PackerTaskOP task_strm( pack::task::TaskFactory::create_packer_task( pose ));
+#endif
 		task_strm->initialize_from_command_line(); // -ex1 -ex2  etc.
 		kinematics::MoveMap mm_strm;
 		set_task_and_movemap (pose, protein_flexibility_, task_strm, mm_strm, minimize_bb_where_packing_);
@@ -322,6 +340,24 @@ Hydrate::apply(Pose & pose)
 	show_water_hb_network( pose );
 }
 
+#ifdef MULTI_THREADED
+/// @brief Set the number of threads to use for interaction graph precomputation during packing.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+Hydrate::set_interaction_graph_threads(
+	core::Size const setting
+) {
+	interaction_graph_threads_ = setting;
+}
+
+/// @brief Get the number of threads to use for interaction graph precomputation during packing.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+core::Size
+Hydrate::interaction_graph_threads() const {
+	return interaction_graph_threads_;
+}
+#endif
+
 
 void
 Hydrate::copy_data(
@@ -330,6 +366,9 @@ Hydrate::copy_data(
 {
 	hyd_to.score_fxn_ = hyd_from.score_fxn_;
 	hyd_to.main_task_factory_ = hyd_from.main_task_factory_;
+#ifdef MULTI_THREADED
+	hyd_to.interaction_graph_threads_ = hyd_from.interaction_graph_threads_;
+#endif
 }
 
 }  // namespace hydrate

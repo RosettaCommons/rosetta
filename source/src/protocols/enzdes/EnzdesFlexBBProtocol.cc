@@ -65,6 +65,8 @@
 
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
+#include <basic/thread_manager/RosettaThreadManager.hh>
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
@@ -1507,6 +1509,8 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 	utility::vector1< core::Size > other_design_res;
 	std::set< core::Size > ten_A_neighbors = get_10A_neighbors( pose );
 
+	debug_assert( task != nullptr );
+	core::Size const threads_to_request( task->ig_threads_to_request() );
 	PackerTaskOP looptask_template = task->clone();
 	EnzdesFlexBBProtocolCOP enzdes_protocol( enzdes_protocol_ );
 
@@ -1545,7 +1549,7 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 	scorefxn->setup_for_packing( pose, looptask->repacking_residues(), looptask->designing_residues() );
 
 	utility::vector1< core::Real > native_lig_part_sum_compare;
-	native_lig_part_sum_compare.push_back( calculate_rotamer_set_design_targets_partition_sum( pose, scorefxn, looptask ) );
+	native_lig_part_sum_compare.push_back( calculate_rotamer_set_design_targets_partition_sum( pose, scorefxn, looptask, threads_to_request ) );
 
 	pack_rotamers_loop( pose, *scorefxn, looptask, 1 );
 	(*scorefxn)( pose );
@@ -1571,7 +1575,7 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 		PackerTaskOP looptask = enzutil::recreate_task( pose, *looptask_template );
 
 		utility::vector1< core::Real > lig_part_sum_compare;
-		lig_part_sum_compare.push_back( calculate_rotamer_set_design_targets_partition_sum( pose, scorefxn, looptask ) );
+		lig_part_sum_compare.push_back( calculate_rotamer_set_design_targets_partition_sum( pose, scorefxn, looptask, threads_to_request ) );
 
 		pack_rotamers_loop( pose, *scorefxn, looptask, 1 );
 		(*scorefxn)( pose );
@@ -1624,7 +1628,8 @@ core::Real
 EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 	core::pose::Pose const & pose,
 	core::scoring::ScoreFunctionCOP scorefxn,
-	core::pack::task::PackerTaskCOP task
+	core::pack::task::PackerTaskCOP task,
+	core::Size const threads_to_request
 ) const
 {
 
@@ -1647,7 +1652,12 @@ EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 
 	ig->initialize( *rotsets );
 
-	rotsets->compute_one_body_energies( pose, *scorefxn, packer_neighbor_graph, ig );
+	//The following lines compute onebody energies, in threads if available:
+	//First, make an object that will store the requested and actual thread assignments, for reporting purposes:
+	basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info( utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >(basic::thread_manager::RosettaThreadRequestOriginatingLevel::PROTOCOLS_GENERIC ) );
+	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector; //Storage for the list of work to do.
+	work_vector = rotsets->construct_one_body_energy_work_vector( pose, *scorefxn, packer_neighbor_graph, ig, thread_assignment_info ); //Make a list of work to do.
+	basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, threads_to_request, thread_assignment_info ); //...And do it, in threads, if available.
 
 	//now delete the unnecessary edges from the graph
 	utility::vector1< core::Size > residue_groups( pose.size(), 0 );
@@ -1659,8 +1669,11 @@ EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 	}
 	utility::graph::delete_all_intragroup_edges( *packer_neighbor_graph, residue_groups );
 
-	//and then precompute the energies of (hopefully) only the positions/ligand interactions
-	rotsets->precompute_two_body_energies(  pose, *scorefxn, packer_neighbor_graph, ig );
+	//And then precompute the energies of (hopefully) only the positions/ligand interactions.  We'll do this in threads (if available) too:
+	work_vector.clear(); //Flush the list of work to do.  We'll reuse it.
+	rotsets->append_two_body_energy_computations_to_work_vector( pose, *scorefxn, packer_neighbor_graph, ig, work_vector, thread_assignment_info ); //Make a list of work to do to precompute twobody energies.
+	basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, threads_to_request, thread_assignment_info ); //Do the work, in threads if available.
+	ig->declare_all_edge_energies_final(); //In a single thread, finalize the edges (not threadsafe, but happens in O(N) time, where N is the number of edges.
 
 	for ( core::Size position : positions_ ) {
 

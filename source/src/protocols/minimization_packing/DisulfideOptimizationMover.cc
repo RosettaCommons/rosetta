@@ -10,6 +10,7 @@
 /// @file protocols/minimization_packing/DisulfideOptimizationMover.cc
 /// @brief A Mover to jointly optimize the geometry of a pair of disulfide-bonded residues.
 /// @author Andy Watkins (andy.watkins2@gmail.com)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) to permit multi-threaded packing.
 
 // Unit headers
 #include <protocols/minimization_packing/DisulfideOptimizationMover.hh>
@@ -34,6 +35,8 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
 
 // XSD Includes
@@ -54,7 +57,7 @@ namespace minimization_packing {
 DisulfideOptimizationMover::DisulfideOptimizationMover():
 	protocols::moves::Mover( DisulfideOptimizationMover::mover_name() )
 {
-
+	set_interaction_graph_threads( basic::options::option[basic::options::OptionKeys::multithreading::interaction_graph_threads]() );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +66,8 @@ DisulfideOptimizationMover::DisulfideOptimizationMover( DisulfideOptimizationMov
 	protocols::moves::Mover( src ),
 	selector_( src.selector_->clone() ),
 	sfxn_( src.sfxn_->clone() ),
-	final_optimization_n_iter_( src.final_optimization_n_iter_ )
+	final_optimization_n_iter_( src.final_optimization_n_iter_ ),
+	interaction_graph_threads_( src.interaction_graph_threads_ )
 {
 
 }
@@ -85,9 +89,14 @@ DisulfideOptimizationMover::break_repack_reform( Pose & pose, utility::vector1< 
 	core::conformation::break_disulfide( pose.conformation(), cys_pos[ 1 ], cys_pos[ 2 ] );
 
 	// Repack.
+#ifdef MULTI_THREADED
+	core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose, interaction_graph_threads() ));
+#else
 	core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
+#endif
 	task->initialize_from_command_line();
 	task->restrict_to_repacking();
+
 	core::pack::pack_rotamers( pose, *sfxn_, task );
 
 	// Mutate back to a disulfide. The bond length will likely not be ideal.
@@ -181,6 +190,10 @@ DisulfideOptimizationMover::parse_my_tag(
 		set_selector( selector );
 	}
 
+	if ( tag->hasOption("interaction_graph_threads") ) {
+		set_interaction_graph_threads( tag->getOption<core::Size>( "interaction_graph_threads" ) );
+	}
+
 	if ( tag->hasOption("scorefxn") ) {
 		set_score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
 	} else {
@@ -202,11 +215,26 @@ void DisulfideOptimizationMover::provide_xml_schema( utility::tag::XMLSchemaDefi
 	attlist + XMLSchemaAttribute::attribute_w_default( "final_optimization", xsct_non_negative_integer,
 		"Number of iterations of final optimization (minimization and three more rounds of repack-minimize)", "0" );
 
+	attlist + XMLSchemaAttribute::attribute_w_default( "interaction_graph_threads", xsct_positive_integer,
+		"Number of threads to request for packer interaction graph precalculation.  Only works in multi-threaded Rosetta builds (extras=cxx11threads during compilation).", "1" );
+
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"Optimize the pair of disulfide-bonded residues indicated in the residue selector provided.", attlist );
 }
 
+
+/// @brief Set threads to request for packing.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+DisulfideOptimizationMover::set_interaction_graph_threads(
+	core::Size const setting
+) {
+#ifndef MULTI_THREADED
+	runtime_assert_string_msg( setting == 1 || setting == 0, "Error in DisulfideOptimizationMover::set_interaction_graph_threads(): In the non-threaded build of Rosetta, the number of threads must be 1.  To enable multi-threading, use the extras=cxx11thread option when compiling." );
+#endif
+	interaction_graph_threads_ = setting;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief required in the context of the parser/scripting scheme

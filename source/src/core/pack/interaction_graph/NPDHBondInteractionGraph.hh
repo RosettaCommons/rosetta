@@ -564,7 +564,7 @@ public:
 	void set_num_background_residues( Size num_background_residues );
 	void set_residue_as_background_residue( int residue );
 
-	void prepare_for_simulated_annealing() override;
+	void prepare_graph_for_simulated_annealing() override;
 
 	void blanket_assign_state_0() override;
 	Real get_npd_hbond_score();
@@ -1402,7 +1402,8 @@ void NPDHBondEdge< V, E, G >::prepare_for_simulated_annealing() {
 
 	if ( parent::pd_edge_table_all_zeros() ) {
 		// TO DO: decide when to delete this edge
-		// delete this;
+		// delete this; // DO NOT USE THIS
+		// bgtfce_mark_edge_for_deletion(); // USE THIS
 	}
 }
 
@@ -1906,7 +1907,7 @@ NPDHBondInteractionGraph<V, E, G>::set_rotamer_sets( rotamer_set::RotamerSets co
 /// to the Pose, the Task, and the RotamerSets objects since it needs all of these things to do tasks 1) and 2).
 /// (For the port of this NPDHBondIG, we might not need the task and rotamer sets objects.)
 ///
-/// prepare_for_simulated_annealing gets called by the FixbbSA::run() method.  Before this method, the
+/// prepare_graph_for_simulated_annealing gets called by the FixbbSA::run() method.  Before this method, the
 /// rotamersets object has called compute_energies() (the whole process being started in pack_rotamers)
 /// which calls initialize() on the IG.  I need to place the NPDHBIG init method directly after the IG init
 /// method that the RS object calls.
@@ -2035,22 +2036,22 @@ void NPDHBondInteractionGraph< V, E, G >::set_residue_as_background_residue( int
 /// Prepares the graph to begin simulated annealing.
 ///
 /// @details
-/// Invokes both base-class prepare_for_simulated_annealing subroutines: InteractionGraphBase first, to prepare the
+/// Invokes both base-class prepare_graph_for_simulated_annealing subroutines: InteractionGraphBase first, to prepare the
 /// NPDHBondNodes and NPDHBondEdges. Then the AdditionalBackgroundNodesInteractionGraph, to prepare the NPDHBondBackgroundNodes,
 /// the NPDHBondBackgroundEdges, and to do a little more preparing of the NPDHBondNodes.
 /// Also computes background/background overlap.
 /// This is the 2nd major entry point into the NPDHBIG.
 template < typename V, typename E, typename G >
-void NPDHBondInteractionGraph< V, E, G >::prepare_for_simulated_annealing() {
+void NPDHBondInteractionGraph< V, E, G >::prepare_graph_for_simulated_annealing() {
 
 	if ( prepared_for_simulated_annealing_ ) return;
 
-	// G::prepare() calls InteractionGraphBase::prepare_for_simulated_annealing() - LinmemIG implements one but it also
+	// G::prepare() calls InteractionGraphBase::prepare_graph_for_simulated_annealing() - LinmemIG implements one but it also
 	// calls the IGBase method.  The IGBase method, in turn, calls prep_for_simA() on all the FC Edges, and then all FC nodes.
-	G::prepare_for_simulated_annealing();
+	G::prepare_graph_for_simulated_annealing();
 
 	// parent::prepare() calls prep_for_simA() on all the BGNodes
-	parent::prepare_for_simulated_annealing();
+	parent::prepare_graph_for_simulated_annealing();
 
 	prepared_for_simulated_annealing_ = true;
 

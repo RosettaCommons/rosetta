@@ -22,11 +22,16 @@ class TestConcurrentScripts(unittest.TestCase):
 
         protocol = rosetta_scripts.SingleoutputRosettaScriptsTask("""
         <ROSETTASCRIPTS>
+            <TASKOPERATIONS>
+                #We'll only allow two packing threads within the three launched by this test (for a total of 6), to
+                #avoid a thread explosion:
+                <RestrictInteractionGraphThreadsOperation name="restrict_threads" thread_limit="4" />
+            </TASKOPERATIONS>
             <MOVERS>
-                <FastRelax name="score" repeats="1"/>
+                <FastRelax name="frlx" repeats="1" task_operations="restrict_threads" />
             </MOVERS>
             <PROTOCOLS>
-                <Add mover_name="score"/>
+                <Add mover_name="frlx"/>
             </PROTOCOLS>
         </ROSETTASCRIPTS>
         """)
@@ -43,11 +48,16 @@ class TestConcurrentScripts(unittest.TestCase):
             test_pose = io.pose_from_sequence(seq)
             protocol = rosetta_scripts.SingleoutputRosettaScriptsTask("""
             <ROSETTASCRIPTS>
+                <TASKOPERATIONS>
+                    #We'll only allow two packing threads within the three launched by this test (for a total of 6), to
+                    #avoid a thread explosion:
+                    <RestrictInteractionGraphThreadsOperation name="restrict_threads" thread_limit="4" />
+                </TASKOPERATIONS>
                 <MOVERS>
-                    <FastRelax name="score" repeats="1" />
+                    <FastRelax name="frlx" repeats="1" task_operations="restrict_threads" />
                 </MOVERS>
                 <PROTOCOLS>
-                    <Add mover_name="score"/>
+                    <Add mover_name="frlx"/>
                 </PROTOCOLS>
             </ROSETTASCRIPTS>
             """)

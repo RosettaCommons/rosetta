@@ -1,5 +1,7 @@
 #Packer_Task
 
+Threads to request: ALL AVAILABLE
+
 resid	pack?	design?	allowed_aas
 1	TRUE	TRUE	ALA:NtermProteinFull,CYS:NtermProteinFull,ASP:NtermProteinFull,GLU:NtermProteinFull,PHE:NtermProteinFull,GLY:NtermProteinFull,HIS:NtermProteinFull,HIS_D:NtermProteinFull,ILE:NtermProteinFull,LYS:NtermProteinFull,LEU:NtermProteinFull,MET:NtermProteinFull,ASN:NtermProteinFull,PRO:NtermProteinFull,GLN:NtermProteinFull,ARG:NtermProteinFull,SER:NtermProteinFull,THR:NtermProteinFull,VAL:NtermProteinFull,TRP:NtermProteinFull,TYR:NtermProteinFull
 2	TRUE	TRUE	ALA,ASP,GLU,PHE,HIS,HIS_D,ILE,LYS,LEU,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR

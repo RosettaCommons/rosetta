@@ -244,21 +244,21 @@ private:
 	) const;
 
 
-	void setup_reference_data( Pose & );
+	void setup_reference_data( Pose & pose );
 	void repack( Pose & pose );
 
 	void split_pose_into_groups( Pose & pose );
 	void create_reference_packer_task( Pose & pose );
 	void create_reference_packer_neighbor_graph( Pose & pose );
 	void create_reference_rotamers( Pose & pose );
-	void compute_reference_intragroup_rpes( Pose & pose );
+	void compute_reference_intragroup_rpes( Pose & pose, core::Size const threads_to_request );
 
 	void create_fresh_task( Pose & pose );
 	void create_fresh_packer_neighbor_graph( Pose & pose );
 	void create_fresh_rotamers( Pose & pose );
 	void find_reference_and_current_rotamer_correspondence( Pose & pose );
 	void initialize_internal_correspondence_data( Pose & pose );
-	void compute_energies( Pose & pose );
+	void compute_energies( Pose & pose, core::Size const threads_to_request );
 	void run_sa( Pose & pose );
 	void cleanup( core::pose::Pose &pose );
 
@@ -350,7 +350,6 @@ private:
 	utility::vector1< utility::vector1< Size > > curr_rot_2_orig_rot_;
 	utility::vector1< utility::vector1< Size > > curr_rotamers_with_correspondence_;
 	utility::vector1< utility::vector1< Size > > curr_rotamers_without_correspondence_;
-
 
 };
 

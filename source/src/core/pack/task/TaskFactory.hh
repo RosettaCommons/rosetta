@@ -10,7 +10,7 @@
 /// @file   core/pack/task/PackerTaskFactory.hh
 /// @brief  Factory class for the creation and initialization of PackerTask objects
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
-/// @author Vikram K. Mulligan (vmullig@uw.edu) -- added support for PackerPalettes.
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- added support for PackerPalettes, multithreading.
 
 #ifndef INCLUDED_core_pack_task_TaskFactory_hh
 #define INCLUDED_core_pack_task_TaskFactory_hh
@@ -75,7 +75,7 @@ public:
 
 	/// @brief  Non static version.
 	PackerTaskOP
-	create_task_and_apply_taskoperations( pose::Pose const & pose ) const;
+	create_task_and_apply_taskoperations( pose::Pose const & pose, core::Size const ig_threads_to_request=0 ) const;
 
 	/// @brief Apply each of the TaskOperations in the TaskFactory list to the PackerTask to set it up.
 	/// @details Must be called AFTER PackerTask initialization.  An uninitialized PackerTask
@@ -115,7 +115,7 @@ public:
 	/// @details Returns a new PackerTask with NO TaskOperations or PackerPalette applied.
 	static
 	PackerTaskOP
-	create_packer_task( pose::Pose const & );
+	create_packer_task( pose::Pose const &pose, core::Size const ig_threads_to_request=0 );
 
 	/// @brief Static construction of a task
 	/// @details Returns a new PackerTask with NO TaskOperations, and with a supplied
@@ -123,7 +123,7 @@ public:
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	static
 	PackerTaskOP
-	create_packer_task( pose::Pose const &pose, core::pack::palette::PackerPaletteCOP palette );
+	create_packer_task( pose::Pose const &pose, core::pack::palette::PackerPaletteCOP palette, core::Size const ig_threads_to_request=0 );
 
 private:
 

@@ -65,6 +65,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -385,7 +386,7 @@ int universal_main(
 						(option[ OptionKeys::score::weights ]() == "score_membrane"))
 						&& ( input_pose.is_fullatom() ) ) {
 					std::cout << "switching to centroid" << std::endl;
-					core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID_t );
+					core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID_t, option[ OptionKeys::multithreading::interaction_graph_threads ]() );
 				}
 
 				// Work out the tag. If we are processing more than one silent file, add the file name too!

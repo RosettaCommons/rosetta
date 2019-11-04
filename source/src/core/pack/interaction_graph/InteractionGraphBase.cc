@@ -26,7 +26,15 @@
 //ObjexxFCL Headers
 #include <ObjexxFCL/FArray1A.hh>
 
+// Basic Headers
+#include <basic/Tracer.hh>
+
+#include <basic/thread_manager/RosettaThreadManager.hh>
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
+
 using namespace ObjexxFCL;
+
+static basic::Tracer TR( "core.pack.interaction_graph.interaction_graph_factory", basic::t_info );
 
 namespace core {
 namespace pack {
@@ -685,7 +693,6 @@ EdgeBase::edge_weight( Real new_weight )
 ////////////////////////////////////////////////////////////////////////////////
 InteractionGraphBase::~InteractionGraphBase()
 {
-
 	for ( auto iter = ig_edge_list_.begin();
 			iter != ig_edge_list_.end(); ) {
 		auto next_iter = iter;
@@ -890,10 +897,39 @@ void InteractionGraphBase::drop_all_edges_for_node( int node )
 	nodeptr->drop_all_edges();
 }
 
+/// @brief Compute and store the onebody energy for all rotamers at a position.  Safe for
+/// a multithreaded context.
+/// @details Requires that the number of states was already set.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void InteractionGraphBase::set_onebody_energies_multithreaded(
+	core::Size const node_index,
+	core::pack::rotamer_set::RotamerSetCOP rotset,
+	core::pose::Pose const & pose,
+	core::scoring::ScoreFunction const & sfxn,
+	task::PackerTask const & task,
+	utility::graph::GraphCOP packer_neighbor_graph,
+#ifdef MULTI_THREADED
+	basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignments
+#else
+	basic::thread_manager::RosettaThreadAssignmentInfoCOP
+#endif
+) {
+	debug_assert( node_index > 0 && node_index <= static_cast< core::Size >(num_ig_nodes_) );
+#ifdef MULTI_THREADED
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Computing onebody energies for interaction graph node " << node_index << " in thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " (one of " << thread_assignments->get_assigned_total_thread_count() << " threads assigned)." << std::endl;
+	}
+#endif
+
+	utility::vector1< core::PackerEnergy > one_body_energies( rotset->num_rotamers() );
+	rotset->compute_one_body_energies( pose, sfxn, task, packer_neighbor_graph, one_body_energies );
+	add_to_nodes_one_body_energy( node_index, one_body_energies );
+}
+
 /// @details Edges may decide to delete themselves during this subroutine; therefore
 /// edges are prepared first.  Afterwards, the nodes must update their
 /// edge vector representation.
-void InteractionGraphBase::prepare_for_simulated_annealing()
+void InteractionGraphBase::prepare_graph_for_simulated_annealing()
 {
 	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end();
@@ -906,12 +942,27 @@ void InteractionGraphBase::prepare_for_simulated_annealing()
 		iter = next_iter;
 	}
 
+	clean_up_edges_marked_for_deletion();
+
 	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		get_node(ii)->prepare_for_simulated_annealing();
 	}
 	return;
 }
 
+/// @brief Remove those edges that have marked themselves for deletion.
+/// @author Vikram K. Mulligan (vmulligan@flatirioninstitute.org).
+void
+InteractionGraphBase::clean_up_edges_marked_for_deletion() {
+	for ( std::list< EdgeBase* >::iterator it( ig_edge_list_.begin() ); it!=ig_edge_list_.end(); /*No increment here.*/ ) {
+		std::list< EdgeBase* >::iterator it2 = it;
+		++it2;
+		if ( (*it)->marked_for_deletion() ) {
+			delete (*it); //Destructor triggers update of ig_edge_list_ and other containers that held pointer.  This can invalidate the iterator.
+		}
+		it = it2;
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -1265,6 +1316,17 @@ EdgeBase const & InteractionGraphBase::get_edge() const
 	return **focused_edge_iterator_;
 }
 
+/// @brief Iterates over all edges and calls declare_energies_final() on
+/// all of them.  Takes O(N) time, where N is the number of edges.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+InteractionGraphBase::declare_all_edge_energies_final() {
+	for ( auto it: ig_edge_list_ ) {
+		it->declare_energies_final();
+	}
+	clean_up_edges_marked_for_deletion();
+}
+
 // @brief IGBase dynamic memory: memory cost is for a vector of node pointers and for a list
 // of edge pointers -- stl list elements cost four pointers (I think), so the math is 4 times
 // the number of edges in the graph.  Since this is not a time-sensitive function, I use the
@@ -1563,6 +1625,9 @@ void InteractionGraphBase::drop_edge(std::list< EdgeBase* >::iterator iter)
 /// node1 - [in] - index of the first node
 /// @param
 /// node2 - [in] - index of the second node
+/// @param
+/// use_threadsafe_lookup - [in] - If true, do not cache the last edge for faster
+/// future lookup.  False by default.
 ///
 /// @global_read
 ///
@@ -1575,16 +1640,22 @@ void InteractionGraphBase::drop_edge(std::list< EdgeBase* >::iterator iter)
 /// @author apl
 ///
 ////////////////////////////////////////////////////////////////////////////////
-EdgeBase const * InteractionGraphBase::find_edge(int node1, int node2) const
+EdgeBase const * InteractionGraphBase::find_edge(int node1, int node2, bool const use_threadsafe_lookup /*= false*/) const
 {
+	if ( use_threadsafe_lookup ) {
+		return ig_nodes_[node1]->find_edge(node2);
+	}
 	if ( focused_edge_ == nullptr || !( focused_edge_->same_edge(node1, node2)) ) {
 		focused_edge_ = ig_nodes_[node1]->find_edge(node2);
 	}
 	return focused_edge_;
 }
 
-EdgeBase * InteractionGraphBase::find_edge(int node1, int node2)
+EdgeBase * InteractionGraphBase::find_edge(int node1, int node2, bool const use_threadsafe_lookup /*= false*/)
 {
+	if ( use_threadsafe_lookup ) {
+		return ig_nodes_[node1]->find_edge(node2);
+	}
 	if ( focused_edge_ == nullptr || !( focused_edge_->same_edge(node1, node2)) ) {
 		focused_edge_ = ig_nodes_[node1]->find_edge(node2);
 	}

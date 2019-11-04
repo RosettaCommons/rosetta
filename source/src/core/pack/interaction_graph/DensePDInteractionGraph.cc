@@ -478,7 +478,7 @@ void DensePDEdge::prepare_for_simulated_annealing()
 
 	energies_updated_since_last_prep_for_simA_ = false;
 
-	if ( pd_edge_table_all_zeros() ) delete this;
+	if ( pd_edge_table_all_zeros() ) mark_edge_for_deletion();
 }
 
 /// @brief returns the two body energy corresponding to the current states assigned to

@@ -39,10 +39,14 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
+#include <basic/thread_manager/RosettaThreadManager.hh>
+
 #include <list>
 
 #include <utility/graph/Graph.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace pack {
@@ -66,7 +70,13 @@ scoring::hbonds::graph::HBondGraphOP create_init_and_create_edges_for_hbond_grap
 
 	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, rotamer_sets->task() );
 
-	rotamer_sets->precompute_two_body_energies( pose, sfxn, packer_neighbor_graph, ig, true );
+	//The following lines precompute the twobody interaction energies, using threads if available:
+	//An object to store information about the actual threads that got assigned to the work we'll do.  (Actual threads can be less than requested threads.):
+	basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info( utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >(basic::thread_manager::RosettaThreadRequestOriginatingLevel::CORE_PACK) );
+	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector; //Allocate space for the list of work to be done.
+	rotamer_sets->append_two_body_energy_computations_to_work_vector( pose, sfxn, packer_neighbor_graph, ig, work_vector, thread_assignment_info ); //Make a list of work to be done.
+	basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, rotamer_sets->task()->ig_threads_to_request(), thread_assignment_info ); //Do the work.
+	ig->declare_all_edge_energies_final(); //In a single thread, finalize the edges (not threadsafe, but happens in O(Nedge) time).
 	ig->finalize_hbond_graph();
 
 	//If you are running with symmetry, you still need to score one-body interactions

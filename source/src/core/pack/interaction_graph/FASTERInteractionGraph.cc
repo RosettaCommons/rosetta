@@ -877,7 +877,7 @@ void FASTEREdge::prepare_for_simulated_annealing()
 		if ( two_body_energies_[ ii ] != core::PackerEnergy( 0.0 ) ) { any_non_zero = true; break;}
 	}
 
-	if ( ! any_non_zero ) delete this;
+	if ( ! any_non_zero ) mark_edge_for_deletion();
 }
 
 void FASTEREdge::prepare_for_FASTER()

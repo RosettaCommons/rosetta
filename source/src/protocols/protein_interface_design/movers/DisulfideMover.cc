@@ -204,7 +204,7 @@ void DisulfideMover::apply( Pose & pose ) {
 		}
 
 		// Form disulfide bond
-		core::util:: rebuild_disulfide(*trial_pose,disulf->first, disulf->second,
+		core::util:: rebuild_disulfide(*trial_pose,disulf->first, disulf->second, 0,
 			task_, scorefxn_repack_, mm, scorefxn_minimize_);
 
 		std::string name = trial_pose->residue(disulf->first).name();

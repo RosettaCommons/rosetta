@@ -10,6 +10,7 @@
 /// @file   core/pack/RotamerSet/RotamerSets.cc
 /// @brief  RotamerSets class implementation
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitue.org) to allow multi-threaded interaction graph setup.
 
 // Unit Headers
 #include <core/pack/rotamer_set/RotamerSets.hh>
@@ -58,6 +59,10 @@
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+
+//Headers for the Rosetta thread manager
+#include <basic/thread_manager/RosettaThreadManager.hh>
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
 
 
 static basic::Tracer TR( "core.pack.rotamer_set.RotamerSets", basic::t_info );
@@ -238,7 +243,7 @@ RotamerSets::build_rotamers(
 
 			//Added to handle cases where no equivalent residue has been set. This shouldn't
 			//happen except in special cases (my scenario: add rotamer links and then relax
-			//with coordinate constraints, which addes virtual residues that have no equivalents
+			//with coordinate constraints, which adds virtual residues that have no equivalents
 			//set
 			if ( copies.size() == 0 ) {
 				TR.Warning << "residue " << moltenres_2_resid_[ii] << " has no equivalent residues set!" << std::endl;
@@ -434,103 +439,89 @@ RotamerSets::offset_data_up_to_date() {
 	return old_nrotamers_for_moltenres == nrotamers_for_moltenres_;
 }
 
-// @details For now, this function knows that all RPEs are computed before annealing begins
-// In not very long, this function will understand that there are different ways to compute
-// energies and to store them, but for now, it does not.
-void
-RotamerSets::compute_energies(
-	pose::Pose const & pose,
-	scoring::ScoreFunction const & scfxn,
+/// @brief Construct a vector of calculations for the one-body energies in the interaction graph, for
+/// subsequent multi-threaded evaluation.
+/// @details Each individual calculation is for all one-body energies at a packable position.  This isn't as granular
+/// as possible, but more finely-grained parallelism would be harder to implement (and anyways the one-body energies
+/// are much less expensive than the two-body energies).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org).
+utility::vector1< basic::thread_manager::RosettaThreadFunctionOP >
+RotamerSets::construct_one_body_energy_work_vector(
+	core::pose::Pose const & pose,
+	core::scoring::ScoreFunction const & scfxn,
 	utility::graph::GraphCOP packer_neighbor_graph,
-	interaction_graph::InteractionGraphBaseOP ig
-)
-{
-	using namespace interaction_graph;
-	using namespace scoring;
+	interaction_graph::InteractionGraphBaseOP ig,
+	basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignment_info
+) const {
+	TR.Debug << "Constructing work vector for multi-threaded evaluation of onebody energies." << std::endl;
+	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector;
+	work_vector.reserve( nmoltenres_ );
 
-	ig->initialize( *this );
-	compute_one_body_energies( pose, scfxn, packer_neighbor_graph, ig );
+	//Loop through all packable positions:
+	for ( core::Size i(1); i<=nmoltenres_; ++i ) {
+		//Ensure that the interaction graph can store an energy for each rotamer at position i:
+		set_of_rotamer_sets_[i]->update_rotamer_offsets(); //Call this now, in a single-threaded context, so that we don't do a thread-unsafe operation later.
+		//ig->set_num_states_for_node( i, set_of_rotamer_sets_[i]->num_rotamers() );
 
-	PrecomputedPairEnergiesInteractionGraphOP pig =
-		utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph > ( ig );
-	if ( pig ) {
-		precompute_two_body_energies( pose, scfxn, packer_neighbor_graph, pig );
-	} else {
-		/// is this an on the fly graph?
-		OnTheFlyInteractionGraphOP otfig = utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::OnTheFlyInteractionGraph > ( ig );
-		if ( otfig ) {
-			prepare_otf_graph( pose, scfxn, packer_neighbor_graph, otfig );
-			compute_proline_correction_energies_for_otf_graph( pose, scfxn, packer_neighbor_graph, otfig);
-		} else {
-			utility_exit_with_message("Unknown interaction graph type encountered in RotamerSets::compute_energies()");
-		}
+		work_vector.push_back(
+			utility::pointer::make_shared< basic::thread_manager::RosettaThreadFunction >(
+			std::bind(
+			&interaction_graph::InteractionGraphBase::set_onebody_energies_multithreaded, ig.get(),
+			i, set_of_rotamer_sets_[i], std::cref(pose), std::cref(scfxn), std::cref(*task_), packer_neighbor_graph, thread_assignment_info )
+			)
+		);
 	}
-
+	debug_assert( nmoltenres_ == work_vector.size() ); //Should be true.
+	return work_vector;
 }
 
+/// @brief Append to a vector of calculations that already contains one-body energy calculations additonal work units
+/// for two-body energy calculations, for subsequent multi-threaded evaluation.
+/// @details Each individual calculation is for the interaction of all possible rotamer pairs at two positions.  Again,
+/// not as granular as conceivably possible, but easier to set up.
+/// @note The work_vector vector is extended by this operation.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org).
 void
-RotamerSets::compute_one_body_energies(
-	pose::Pose const & pose,
-	scoring::ScoreFunction const & scfxn,
-	utility::graph::GraphCOP packer_neighbor_graph,
-	interaction_graph::InteractionGraphBaseOP ig
-)
-{
-	// One body energies -- shared between pigs and otfigs
-	for ( uint ii = 1; ii <= nmoltenres_; ++ii ) {
-		utility::vector1< core::PackerEnergy > one_body_energies( set_of_rotamer_sets_[ ii ]->num_rotamers() );
-		set_of_rotamer_sets_[ ii ]->compute_one_body_energies(
-			pose, scfxn, *task_, packer_neighbor_graph, one_body_energies );
-		ig->add_to_nodes_one_body_energy( ii, one_body_energies );
-	}
-}
-
-void
-RotamerSets::precompute_two_body_energies(
-	pose::Pose const & pose,
-	scoring::ScoreFunction const & scfxn,
+RotamerSets::append_two_body_energy_computations_to_work_vector(
+	core::pose::Pose const & pose,
+	core::scoring::ScoreFunction const & scfxn,
 	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
-	bool const finalize_edges
-)
-{
+	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > & work_vector,
+	basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignment_info
+) const {
 	using namespace interaction_graph;
 	using namespace scoring;
 
-	//std::clock_t starttime = clock();
+	TR.Debug << "Constructing work vector for multi-threaded evaluation of pairwise interaction energies." << std::endl;
 
-	// Two body energies
-	//scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-	for ( uint ii = 1; ii <= nmoltenres_; ++ ii ) {
-		//tt << "pairenergies for ii: " << ii << '\n';
-		uint const ii_resid = moltenres_2_resid_[ ii ];
-		//when design comes online, we will want to iterate across
-		//neighbors defined by a larger interaction cutoff
+	// Loop through all packable positions:
+	for ( core::Size ii(1); ii <= nmoltenres_; ++ii ) {
+		// The residue index for the nth packable postion:
+		core::Size const ii_resid = moltenres_2_resid_[ ii ];
+
+		// Iterate over packer neighbours:
 		for ( utility::graph::Graph::EdgeListConstIter
 				uli  = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
 				ulie = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end();
 				uli != ulie; ++uli ) {
 			uint const jj_resid = (*uli)->get_second_node_ind();
 			uint const jj = resid_2_moltenres_[ jj_resid ]; //pretend we're iterating over jj >= ii
-			if ( jj == 0 ) continue; // Andrew, remove this magic number!
-
-			FArray2D< core::PackerEnergy > pair_energy_table(
-				nrotamers_for_moltenres_[ jj ],
-				nrotamers_for_moltenres_[ ii ], 0.0 );
-
-			RotamerSetCOP ii_rotset = set_of_rotamer_sets_[ ii ];
-			RotamerSetCOP jj_rotset = set_of_rotamer_sets_[ jj ];
-
-			scfxn.evaluate_rotamer_pair_energies(
-				*ii_rotset, *jj_rotset, pose, pair_energy_table );
+			if ( jj == 0 ) continue; // Magic number -- zero has special meaning here.  (It's the signal that jj_resid is not "molten".)
 
 			pig->add_edge( ii, jj );
-			pig->add_to_two_body_energies_for_edge( ii, jj, pair_energy_table );
 
-			if ( finalize_edges && ! scfxn.any_lr_residue_pair_energy(pose, ii, jj) ) {
-				pig->declare_edge_energies_final( ii, jj );
-			}
-
+			//NOTE: The behaviour of std::bind is to pass EVERYTHING by copy UNLESS std::cref or std::ref is used.  So in
+			//the following, all of the std::pairs are passed by copy.
+			work_vector.push_back(
+				utility::pointer::make_shared< basic::thread_manager::RosettaThreadFunction >(
+				std::bind(
+				&interaction_graph::PrecomputedPairEnergiesInteractionGraph::set_twobody_energies_multithreaded, pig.get(),
+				std::make_pair( ii, jj ), std::make_pair( set_of_rotamer_sets_[ii], set_of_rotamer_sets_[jj] ), std::cref(pose), std::cref(scfxn),
+				thread_assignment_info, false, nullptr, std::pair< core::Size, core::Size >(0, 0), false, false
+				)
+				)
+			);
 		}
 	}
 
@@ -544,40 +535,97 @@ RotamerSets::precompute_two_body_energies(
 		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 		// Potentially O(N^2) operation...
 
-		for ( uint ii = 1; ii <= nmoltenres_; ++ ii ) {
-			uint const ii_resid = moltenres_2_resid_[ ii ];
+		// Loop over all packable residues:
+		for ( core::Size ii(1); ii <= nmoltenres_; ++ii ) {
 
+			// Get the residue index.
+			core::Size const ii_resid( moltenres_2_resid_[ ii ] );
+
+			//Loop over all residue neighbours:
 			for ( ResidueNeighborConstIteratorOP
 					rni = lrec->const_upper_neighbor_iterator_begin( ii_resid ),
 					rniend = lrec->const_upper_neighbor_iterator_end( ii_resid );
 					(*rni) != (*rniend); ++(*rni) ) {
-				Size const jj_resid = rni->upper_neighbor_id();
 
-				uint const jj = resid_2_moltenres_[ jj_resid ]; //pretend we're iterating over jj >= ii
-				if ( jj == 0 ) continue; // Andrew, remove this magic number! (it's the signal that jj_resid is not "molten")
+				// Index of the other residue:
+				core::Size const jj_resid( rni->upper_neighbor_id() );
+				core::Size const jj( resid_2_moltenres_[ jj_resid ] ); //pretend we're iterating over jj >= ii
+				if ( jj == 0 ) continue; // Andrew, remove this magic number! (It's the signal that jj_resid is not "molten".)
 
-				uint const iiprime( ii < jj ? ii : jj );
-				uint const jjprime( ii < jj ? jj : ii );
+				core::Size const iiprime( ii < jj ? ii : jj );
+				core::Size const jjprime( ii < jj ? jj : ii );
 
-				FArray2D< core::PackerEnergy > pair_energy_table(
-					nrotamers_for_moltenres_[ jjprime ],
-					nrotamers_for_moltenres_[ iiprime ], 0.0 );
+				// Ensure that the edge exists.
+				if ( ! pig->get_edge_exists( iiprime, jjprime ) ) {
+					pig->add_edge( iiprime, jjprime );
+				}
 
-				RotamerSetCOP ii_rotset = set_of_rotamer_sets_[ iiprime ];
-				RotamerSetCOP jj_rotset = set_of_rotamer_sets_[ jjprime ];
-
-				(*lr_iter)->evaluate_rotamer_pair_energies(
-					*ii_rotset, *jj_rotset, pose, scfxn, scfxn.weights(), pair_energy_table );
-
-				if ( ! pig->get_edge_exists( iiprime, jjprime ) ) { pig->add_edge( iiprime, jjprime ); }
-				pig->add_to_two_body_energies_for_edge( iiprime, jjprime, pair_energy_table );
-				if ( finalize_edges ) pig->declare_edge_energies_final( iiprime, jjprime );
+				//NOTE: The behaviour of std::bind is to pass EVERYTHING by copy UNLESS std::cref or std::ref is used.  So in
+				//the following, all of the std::pairs are passed by copy.
+				work_vector.push_back(
+					utility::pointer::make_shared< basic::thread_manager::RosettaThreadFunction >(
+					std::bind(
+					&interaction_graph::PrecomputedPairEnergiesInteractionGraph::add_longrange_twobody_energies_multithreaded, pig.get(),
+					std::make_pair( iiprime, jjprime), std::make_pair( set_of_rotamer_sets_[iiprime], set_of_rotamer_sets_[jjprime] ), std::cref(pose), *lr_iter, std::cref(scfxn),
+					thread_assignment_info, false, nullptr, std::pair< core::Size, core::Size >(0, 0), false, false
+					)
+					)
+				);
 			}
 		}
 	}
+}
 
-	//std::clock_t stoptime = clock();
-	//std::cout << "Precompute rotamer pair energies took " << ((double) stoptime - starttime)/CLOCKS_PER_SEC << " seconds" << std::endl;
+/// @brief Precompute all rotamer pair and rotamer one-body energies, populating
+/// the given interaction graph.
+/// @note In the multithreaded case, this function requests that work be done in threads.  It
+/// takes as input the number of threads to request.
+void
+RotamerSets::compute_energies(
+	pose::Pose const & pose,
+	scoring::ScoreFunction const & scfxn,
+	utility::graph::GraphCOP packer_neighbor_graph,
+	interaction_graph::InteractionGraphBaseOP ig,
+	core::Size const threads_to_request
+) {
+	using namespace interaction_graph;
+	using namespace scoring;
+
+	ig->initialize( *this );
+
+	//In the multithreaded case, we create a vector of computations to do.
+	basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info( utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >(basic::thread_manager::RosettaThreadRequestOriginatingLevel::CORE_PACK) );
+	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector;
+	work_vector = construct_one_body_energy_work_vector( pose, scfxn, packer_neighbor_graph, ig, thread_assignment_info );
+
+	PrecomputedPairEnergiesInteractionGraphOP pig =
+		utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph > ( ig );
+	if ( pig ) {
+		//We append to the vector of computations to do.
+		append_two_body_energy_computations_to_work_vector( pose, scfxn, packer_neighbor_graph, pig, work_vector, thread_assignment_info );
+		basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, threads_to_request, thread_assignment_info );
+
+		//In a single thread, finalize the edges (not threadsafe):
+		pig->declare_all_edge_energies_final();
+	} else {
+		/// is this an on the fly graph?
+		OnTheFlyInteractionGraphOP otfig = utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::OnTheFlyInteractionGraph > ( ig );
+		if ( otfig ) {
+			if ( (threads_to_request == 0 || threads_to_request > 1) && basic::thread_manager::RosettaThreadManager::total_threads() > 1 ) {
+				TR.Warning << "Cannot pre-compute an on-the-fly interaction graph in threads.  Only precomputing single-body energies in threads." << std::endl;
+			}
+			basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, threads_to_request, thread_assignment_info );
+			prepare_otf_graph( pose, scfxn, packer_neighbor_graph, otfig );
+			compute_proline_correction_energies_for_otf_graph( pose, scfxn, packer_neighbor_graph, otfig);
+		} else {
+			utility_exit_with_message("Unknown interaction graph type encountered in RotamerSets::compute_energies()");
+		}
+	}
+
+#ifdef MULTI_THREADED
+	TR << "Completed interaction graph pre-calculation in " << thread_assignment_info->get_assigned_total_thread_count() << " available threads (" << (thread_assignment_info->get_requested_thread_count() == 0 ? std::string( "all available" ) : std::to_string( thread_assignment_info->get_requested_thread_count() ) ) << " had been requested)." << std::endl;
+#endif
+
 }
 
 void

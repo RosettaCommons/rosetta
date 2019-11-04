@@ -1127,7 +1127,7 @@ BasicSimAnnealerRepacker::BasicSimAnnealerRepacker(
 ) :
 	parent( pose, task, ig, rotsets )
 {
-	ig->prepare_for_simulated_annealing();
+	ig->prepare_graph_for_simulated_annealing();
 }
 
 BasicSimAnnealerRepacker::~BasicSimAnnealerRepacker() = default;
@@ -1183,7 +1183,7 @@ DenseIGRepacker::DenseIGRepacker(
 ) :
 	parent( pose, task, ig, rotsets )
 {
-	ig->prepare_for_simulated_annealing();
+	ig->prepare_graph_for_simulated_annealing();
 }
 
 DenseIGRepacker::~DenseIGRepacker() = default;
@@ -1339,7 +1339,7 @@ DoubleDenseIGRepacker::DoubleDenseIGRepacker(
 ) :
 	parent( pose, task, ig, rotsets )
 {
-	ig->prepare_for_simulated_annealing();
+	ig->prepare_graph_for_simulated_annealing();
 }
 
 DoubleDenseIGRepacker::~DoubleDenseIGRepacker() = default;
@@ -1449,7 +1449,7 @@ FASTER_IG_Repacker::FASTER_IG_Repacker(
 	sa_scale_( 0.05 ),
 	ciBR_only_( false )
 {
-	ig->prepare_for_simulated_annealing();
+	ig->prepare_graph_for_simulated_annealing();
 }
 
 FASTER_IG_Repacker::~FASTER_IG_Repacker() = default;

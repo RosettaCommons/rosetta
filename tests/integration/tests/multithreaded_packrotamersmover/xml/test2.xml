@@ -1,0 +1,17 @@
+<!-- Design with no options, overriding the default number of threads. -->
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<RestrictInteractionGraphThreadsOperation name="restrict_threads" thread_limit="40" />
+	</TASKOPERATIONS>
+	<MOVERS>
+        	<!-- Although only 20 threads are available, we'll request 40. -->
+		<PackRotamersMover name="design" scorefxn="r15" task_operations="restrict_threads" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="design" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15" />
+</ROSETTASCRIPTS>
