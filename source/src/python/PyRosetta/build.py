@@ -562,7 +562,10 @@ def generate_bindings(rosetta_source_path):
     ''' Generate bindings using binder tools and return list of source files '''
     setup_source_directory_links(rosetta_source_path)
     maybe_version = '--version {} '.format(Options.version) if Options.version else ''
-    execute('Updating compilation submodules, version, options and residue-type-enum files...', 'cd {rosetta_source_path} && ./update_submodules.sh PyRosetta && ./version.py {maybe_version} && ./update_options.sh && ./update_ResidueType_enum_files.sh'.format(**vars()) )
+    submodule_extras = "PyRosetta"
+    if Options.zmq:
+        submodule_extras = submodule_extras + " zeromq"
+    execute('Updating compilation submodules, version, options and residue-type-enum files...', 'cd {rosetta_source_path} && ./update_submodules.sh {submodule_extras} && ./version.py {maybe_version} && ./update_options.sh && ./update_ResidueType_enum_files.sh'.format(**vars()) )
 
     prefix = get_binding_build_root(rosetta_source_path, source=True) + '/'
 
