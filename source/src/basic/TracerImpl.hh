@@ -367,18 +367,17 @@ private: /// Data members
 
 
 #include <utility/stream_util.hh>
-#include <utility/type_traits/has_insertion_operator.hh>
 
 namespace basic {
 
-template <class T, typename std::enable_if< utility::type_traits::has_insertion_operator_s<T>::value >::type * = nullptr>
+template <class T>
 TracerImpl & operator <<( TracerImpl & TR, T const & entry ) {
 	std::ostream &t(TR);
 	if( TR.visible() ) { t << entry; }
 	return TR;
 }
 
-template <class T, typename std::enable_if< utility::type_traits::has_insertion_operator_s<T>::value >::type * = nullptr>
+template <class T>
 TracerImpl::TracerProxyImpl & operator <<( TracerImpl::TracerProxyImpl & TR, T const & entry ) {
 	std::ostream &t(TR);
 	if( TR.visible() ) { t << entry; }

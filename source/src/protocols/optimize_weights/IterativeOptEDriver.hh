@@ -28,7 +28,7 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/optimization/types.hh>
-#ifdef WIN32
+#if defined(WIN32) || defined(PYROSETTA)
 #include <core/pose/Pose.hh>
 #endif
 #include <core/pack/task/TaskFactory.fwd.hh>

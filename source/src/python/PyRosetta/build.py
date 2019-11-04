@@ -150,7 +150,9 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
     '''
     if not os.path.isdir(prefix_root): os.makedirs(prefix_root)
 
-    llvm_version='4.0.0'
+    # llvm_version='9.0.0'  # v8 and v9 can not be build with Clang-3.4, we if need upgrade to v > 7 then we should probably dynamicly change LLVM version based on complier versions
+    # llvm_version='7.1.0'  # compiling v7.* on clang-3.4 lead to lockup while compiling tools/clang/lib/Sema/SemaChecking.cpp
+    llvm_version='6.0.1'
     prefix = prefix_root + '/llvm-' + llvm_version
 
     build_dir = prefix+'/llvm-' + llvm_version + '.' + Platform + '.' +_machine_name_ + ('.debug' if debug else '.release')
@@ -219,7 +221,7 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
 
         if not os.path.isdir(build_dir): os.makedirs(build_dir)
         execute(
-            'Building tool: {}...'.format(name),
+            'Building tool: {}...'.format(name), # -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=1
             'cd {build_dir} && cmake -G Ninja {config} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja bin/binder clang {jobs}'.format( # we need to build Clang so lib/clang/<version>/include is also built
                 build_dir=build_dir, config=config,
                 jobs="-j{}".format(Options.jobs) if Options.jobs else "",
@@ -849,7 +851,7 @@ def main(args):
             main_repository_root = output.split()[0] # removing \n at the end
 
             if res == 0:
-                execute('Updating Binder and Pybind11 Git submodules...', 'cd {}/.. && git submodule update --init --recursive -- source/src/python/PyRosetta/binder source/external/pybind11'.format(rosetta_source_path) )
+                execute('Updating Binder and Pybind11 Git submodules...', 'cd {}/.. && git submodule update --init -- source/src/python/PyRosetta/binder source/external/pybind11'.format(rosetta_source_path) )  # --recursive
 
                 if main_repository_root == os.path.abspath(rosetta_source_path + '/../'):
                     output = execute('Checking if Binder submodule present...',  'cd {}/.. && git submodule status'.format(rosetta_source_path), return_='output', silent=True)
