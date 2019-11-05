@@ -127,6 +127,40 @@ void Tag::clear() {
 Tag::options_t const&
 Tag::getOptions() const { return mOptions_; }
 
+#ifdef PYROSETTA
+bool Tag::get_option_bool(std::string const& key) const {
+	return Tag::getOption<bool>(key);
+}
+bool Tag::get_option_bool(std::string const& key, bool const& t_default) const {
+	return Tag::getOption<bool>(key, t_default);
+}
+int Tag::get_option_int(std::string const& key) const {
+	return Tag::getOption<int>(key);
+}
+int Tag::get_option_int(std::string const& key, int const& t_default) const {
+	return Tag::getOption<int>(key, t_default);
+}
+std::string Tag::get_option_string(std::string const& key) const {
+	return Tag::getOption<std::string>(key);
+}
+std::string Tag::get_option_string(std::string const& key, string const& t_default) const {
+	return Tag::getOption<std::string>(key, t_default);
+}
+platform::Real Tag::get_option_real(std::string const& key) const {
+	return Tag::getOption<platform::Real>(key);
+}
+platform::Real Tag::get_option_real(std::string const& key, platform::Real const& t_default) const {
+	return Tag::getOption<platform::Real>(key, t_default);
+}
+platform::Size Tag::get_option_size(std::string const& key) const {
+	return Tag::getOption<platform::Size>(key);
+}
+platform::Size Tag::get_option_size(std::string const& key, platform::Size const& t_default) const {
+	return Tag::getOption<platform::Size>(key, t_default);
+}
+#endif
+
+
 void Tag::setOptions( options_t const& options ) {
 	mOptions_ = options;
 	accessed_options_.clear();

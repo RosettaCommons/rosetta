@@ -36,6 +36,10 @@
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
+#ifdef PYROSETTA
+#include <platform/types.hh>
+#endif
+
 namespace utility {
 namespace tag {
 
@@ -149,6 +153,19 @@ public:
 		}
 		return T(); // appease compiler
 	}
+
+#ifdef PYROSETTA
+	bool get_option_bool(std::string const& key) const;
+	bool get_option_bool(std::string const& key, bool const& t_default) const;
+ 	int get_option_int(std::string const& key) const;
+	int get_option_int(std::string const& key, int const& t_default) const;
+	platform::Real get_option_real(std::string const& key) const;
+	platform::Real get_option_real(std::string const& key, platform::Real const& t_default) const;
+	platform::Size get_option_size(std::string const& key) const;
+	platform::Size get_option_size(std::string const& key, platform::Size const& t_default) const;
+	std::string get_option_string(std::string const& key) const;
+	std::string get_option_string(std::string const& key, std::string const& t_default) const;
+#endif
 
 	// See also the explicit specialization of getOption() below.
 
