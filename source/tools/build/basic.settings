@@ -183,6 +183,12 @@ settings = {
                     "Wno-long-long",
                     "Wno-strict-aliasing",
                 ],
+		'link' : [
+		    # looks like of Linux distributions by default use `--enable-new-dtypes` which store rpath in `RUNPATH` field (instead of `RPATH`),
+		    # above lead to situation when path to Rosetta libsqlite3 could not be resolved unless it standard path or in LD_LIBRARY_PATH
+		    # this option restore old behaviour
+		    'Wl,--disable-new-dtags',
+		],
             },
         },
     },
