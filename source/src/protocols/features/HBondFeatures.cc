@@ -152,16 +152,6 @@ HBondFeatures::HBondFeatures(
 	definition_threshold_(0)
 {}
 
-HBondFeatures::HBondFeatures(HBondFeatures const & src) :
-	FeaturesReporter(),
-	scfxn_(src.scfxn_),
-	definition_type_(src.definition_type_),
-	definition_threshold_(src.definition_threshold_)
-{}
-
-HBondFeatures::~HBondFeatures() = default;
-
-
 void
 HBondFeatures::write_schema_to_db(
 	sessionOP db_session

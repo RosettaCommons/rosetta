@@ -62,13 +62,6 @@ static Tracer TR("protocols.features.ResidueSecondaryStructureFeatures");
 
 ResidueSecondaryStructureFeatures::ResidueSecondaryStructureFeatures() = default;
 
-ResidueSecondaryStructureFeatures::ResidueSecondaryStructureFeatures(ResidueSecondaryStructureFeatures const &) :
-	FeaturesReporter()
-{}
-
-ResidueSecondaryStructureFeatures::~ResidueSecondaryStructureFeatures() = default;
-
-
 void
 ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;

@@ -731,8 +731,9 @@ MinimizationGraph::MinimizationGraph( Size num_nodes )
 /// This is because the copy constructor relies on polymorphic functions which
 /// are unavailable during the Graph constructor.  Instead, this function waits
 /// until parent construction is complete, and relies on the assigmnent operator.
-MinimizationGraph::MinimizationGraph( MinimizationGraph const & src )
-:
+MinimizationGraph::MinimizationGraph( // NOLINT(bugprone-copy-constructor-init) -- deliberately not calling parent copy constructor
+	MinimizationGraph const & src
+):
 	parent( ),
 	minimization_edge_pool_( new boost::unordered_object_pool< MinimizationEdge > ( 256 ) )
 {

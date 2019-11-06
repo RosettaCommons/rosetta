@@ -71,13 +71,6 @@ GeometricSolvationFeatures::GeometricSolvationFeatures( core::scoring::methods::
 
 }
 
-GeometricSolvationFeatures::GeometricSolvationFeatures(
-	GeometricSolvationFeatures const & src ) :
-	FeaturesReporter(),
-	geo_sol_energy_(src.geo_sol_energy_)
-{}
-
-
 void
 GeometricSolvationFeatures::write_schema_to_db(
 	sessionOP db_session

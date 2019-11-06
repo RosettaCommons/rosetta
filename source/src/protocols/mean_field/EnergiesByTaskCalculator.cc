@@ -54,14 +54,6 @@ EnergiesByTaskCalculator::EnergiesByTaskCalculator( core::pack::task::PackerTask
 	total_score_( 0.0 )
 {}
 
-EnergiesByTaskCalculator::EnergiesByTaskCalculator(
-	EnergiesByTaskCalculator const & calculator
-) :
-	EnergyDependentCalculator(),
-	task_(calculator.task()),
-	total_score_(calculator.total())
-{}
-
 core::pose::metrics::PoseMetricCalculatorOP
 EnergiesByTaskCalculator::clone() const {
 	return utility::pointer::make_shared< EnergiesByTaskCalculator >(*this);

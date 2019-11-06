@@ -96,16 +96,6 @@ ScoreTypeFeatures::ScoreTypeFeatures(
 	}
 }
 
-ScoreTypeFeatures::ScoreTypeFeatures(
-	ScoreTypeFeatures const & src
-) :
-	FeaturesReporter(),
-	scfxn_(src.scfxn_)
-{}
-
-ScoreTypeFeatures::~ScoreTypeFeatures() = default;
-
-
 void
 ScoreTypeFeatures::write_schema_to_db(
 	sessionOP db_session

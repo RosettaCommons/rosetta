@@ -30,11 +30,6 @@ SSFeature::SSFeature() :
 	ss_type_( INVALID_SS )
 {}
 
-SSFeature::SSFeature( SSFeature const & other ) :
-	ResidueFeature(),
-	ss_type_( other.ss_type() )
-{}
-
 SSFeature::SSFeature( SSType ss ) :
 	ss_type_( ss )
 {}

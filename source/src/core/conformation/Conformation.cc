@@ -129,8 +129,8 @@ Conformation::Conformation() :
 
 // copy constructor
 Conformation::Conformation( Conformation const & src ) :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< Conformation >()
+	utility::pointer::ReferenceCount(src),
+	utility::pointer::enable_shared_from_this< Conformation >(src)
 {
 	basic::ProfileThis doit( basic::CONFORMATION_COPY );
 	// residues

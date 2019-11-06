@@ -60,27 +60,6 @@ PcsDataCenterManager::PcsDataCenterManager(){
 	// utility_exit_with_message( "You shouldn't call the empty constructor for PcsDataCenterManager class" );
 }
 
-PcsDataCenterManager::~PcsDataCenterManager()= default;
-
-PcsDataCenterManager &
-PcsDataCenterManager::operator=( PcsDataCenterManager const &other )
-{
-
-	// TR_PcsDataCenterManager << " = called" << std::endl;
-
-	if ( this != &other ) {
-		PCS_data_all_ = other.PCS_data_all_;
-	}
-	return *this;
-}
-
-PcsDataCenterManager::PcsDataCenterManager(PcsDataCenterManager const &other):
-	CacheableData()
-{
-	// TR_PcsDataCenterManager << " () called" << std::endl;
-	PCS_data_all_ = other.PCS_data_all_;
-}
-
 utility::vector1<PcsDataCenter> &
 PcsDataCenterManager::get_PCS_data_all() {
 	return (PCS_data_all_);

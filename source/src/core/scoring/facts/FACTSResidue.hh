@@ -293,7 +293,7 @@ public:
 
 public:
 	///
-	FACTSRotamerSetInfo( FACTSRotamerSetInfo const & src ): CacheableData() {
+	FACTSRotamerSetInfo( FACTSRotamerSetInfo const & src ): CacheableData(src) {
 		residue_info_.resize( src.size() );
 		for ( Size i=1; i<= src.size(); ++i ) {
 			residue_info_[i] = src.residue_info_[i]->clone();

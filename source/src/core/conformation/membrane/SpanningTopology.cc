@@ -333,7 +333,7 @@ bool SpanningTopology::is_valid() const {
 		if ( i > 1 &&
 				( topology_[ i-1 ]->start() > topology_[ i ]->start() ||
 				topology_[ i-1 ]->end() > topology_[ i ]->end() ) ) {
-			show( TR ); // NOLINT - We can call this from the constructor, which means we don't get proper virtual method resolution.
+			show( TR ); // NOLINT(clang-analyzer-optin.cplusplus.VirtualCall) - We can call this from the constructor, which means we don't get proper virtual method resolution.
 			return false;
 		}
 	}
@@ -498,7 +498,7 @@ SpanningTopology::create_from_spanfile( std::string spanfile, std::map< std::str
 		//  utility_exit_with_message( "SpanningTopology invalid: check your span file!" );
 	}
 
-	this->show( TR ); // NOLINT - We can call this from the constructor, which means we don't get proper virtual method resolution.
+	this->show( TR ); // NOLINT(clang-analyzer-optin.cplusplus.VirtualCall) - We can call this from the constructor, which means we don't get proper virtual method resolution.
 	return *this;
 } // create from spanfile
 
@@ -629,7 +629,7 @@ SpanningTopology::create_from_structure(
 		utility_exit_with_message( "SpanningTopology invalid: check your span file!" );
 	}
 
-	this->show( TR ); // NOLINT - We can call this from the constructor, which means we don't get proper virtual method resolution.
+	this->show( TR ); // NOLINT(clang-analyzer-optin.cplusplus.VirtualCall) - We can call this from the constructor, which means we don't get proper virtual method resolution.
 	return *this;
 
 } // create from structure

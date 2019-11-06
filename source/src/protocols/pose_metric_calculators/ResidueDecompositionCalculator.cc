@@ -48,15 +48,6 @@ ResidueDecompositionCalculator::ResidueDecompositionCalculator():
 {
 }
 
-ResidueDecompositionCalculator::ResidueDecompositionCalculator(
-	ResidueDecompositionCalculator const & calculator
-):
-	StructureDependentCalculator(),
-	residue_decomposition_(calculator.residue_decomposition()),
-	residue_set_numbers_(calculator.residue_set_numbers())
-{
-}
-
 std::string
 ResidueDecompositionCalculator::print(
 	std::string const & key

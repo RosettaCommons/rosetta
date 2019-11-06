@@ -36,7 +36,7 @@ namespace ObjexxFCL {
 
 	/// @brief Copy Constructor
 	Dimension::Dimension( Dimension const & dim ) :
-		ObserverMulti(),
+		ObserverMulti( dim ),
 		exp_p_( new DimensionExpressionRef( dim ) ),
 		initialized_( exp_p_->initialized() ),
 		value_( dim.value_ )

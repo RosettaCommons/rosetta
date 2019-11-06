@@ -41,10 +41,6 @@ public:
 
 	SaltBridgeFeatures(core::Length distance_cutoff);
 
-	SaltBridgeFeatures(SaltBridgeFeatures const & src);
-
-	~SaltBridgeFeatures() override= default;
-
 	core::Length
 	distance_cutoff() const { return distance_cutoff_; }
 

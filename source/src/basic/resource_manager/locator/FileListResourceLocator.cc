@@ -59,17 +59,6 @@ FileListResourceLocator::FileListResourceLocator() :
 
 }
 
-FileListResourceLocator::~FileListResourceLocator() = default;
-
-FileListResourceLocator::FileListResourceLocator(
-	FileListResourceLocator const & /*src*/
-) :
-	basic::resource_manager::ResourceLocator(),
-	open_mode_( std::ios_base::in )
-{
-
-}
-
 void
 FileListResourceLocator::show(std::ostream & out) const
 {

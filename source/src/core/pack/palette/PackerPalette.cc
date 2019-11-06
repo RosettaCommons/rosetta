@@ -124,8 +124,8 @@ PackerPalette::PackerPalette(
 PackerPalette::PackerPalette(
 	PackerPalette const &src
 ) :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< PackerPalette >(),
+	utility::pointer::ReferenceCount(src),
+	utility::pointer::enable_shared_from_this< PackerPalette >(src),
 	restore_pre_talaris_behaviour_(src.restore_pre_talaris_behaviour_),
 	icoor_05_2009_(src.icoor_05_2009_),
 	pH_mode_(src.pH_mode_),

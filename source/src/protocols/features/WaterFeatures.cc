@@ -98,14 +98,6 @@ WaterFeatures::WaterFeatures(
 	don_dist_cutoff_(don_dist_cutoff)
 {}
 
-WaterFeatures::WaterFeatures(
-	WaterFeatures const & src ) :
-	FeaturesReporter(),
-	acc_dist_cutoff_(src.acc_dist_cutoff_),
-	don_dist_cutoff_(src.don_dist_cutoff_)
-{}
-
-
 void
 WaterFeatures::write_schema_to_db(
 	sessionOP db_session

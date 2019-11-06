@@ -71,14 +71,6 @@ ResidueBurialFeatures::ResidueBurialFeatures() :
 	nv_score_(utility::pointer::make_shared< NVscore >())
 {}
 
-ResidueBurialFeatures::ResidueBurialFeatures(ResidueBurialFeatures const & src) :
-	FeaturesReporter(),
-	nv_score_(src.nv_score_)
-{}
-
-ResidueBurialFeatures::~ResidueBurialFeatures()= default;
-
-
 void
 ResidueBurialFeatures::write_schema_to_db(
 	sessionOP db_session

@@ -61,13 +61,6 @@ public:
 
 	PcsDataCenterManager(); //construct
 
-	~PcsDataCenterManager() override; //destruct
-
-	PcsDataCenterManager(PcsDataCenterManager const &other); //copy
-
-	PcsDataCenterManager & // =
-	operator=( PcsDataCenterManager const & src );
-
 	basic::datacache::CacheableDataOP //clone
 	clone() const override;
 

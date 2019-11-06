@@ -226,7 +226,7 @@ public:
 
 	///
 	VdWTinkerRotamerSetInfo( VdWTinkerRotamerSetInfo const & src ):
-		CacheableData()
+		CacheableData(src)
 	{
 		residue_info_.resize( src.size() );
 		for ( Size i=1; i<= src.size(); ++i ) {

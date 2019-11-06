@@ -72,13 +72,6 @@ using basic::database::insert_statement_generator::RowData;
 
 ResidueFeatures::ResidueFeatures() = default;
 
-ResidueFeatures::ResidueFeatures( ResidueFeatures const & ) :
-	FeaturesReporter()
-{}
-
-ResidueFeatures::~ResidueFeatures() = default;
-
-
 void
 ResidueFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;

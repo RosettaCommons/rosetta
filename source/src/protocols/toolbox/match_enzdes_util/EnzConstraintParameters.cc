@@ -211,8 +211,8 @@ void EnzConstraintParameters::init() {
 /// @brief WARNING: currently this probably doesn't copy the functions or active pose constraints
 EnzConstraintParameters::EnzConstraintParameters( EnzConstraintParameters const & other )
 :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< EnzConstraintParameters >(),
+	utility::pointer::ReferenceCount(other),
+	utility::pointer::enable_shared_from_this< EnzConstraintParameters >(other),
 	mcfi_(other.mcfi_),
 	disAB_(other.disAB_), angleA_(other.angleA_), angleB_(other.angleB_),
 	torsionA_(other.torsionA_), torsionB_(other.torsionB_), torsionAB_(other.torsionAB_),

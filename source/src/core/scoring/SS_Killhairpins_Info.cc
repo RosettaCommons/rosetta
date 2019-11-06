@@ -168,13 +168,6 @@ SS_Killhairpins_Info::SS_Killhairpins_Info() :
 {}
 
 
-SS_Killhairpins_Info::SS_Killhairpins_Info( SS_Killhairpins_Info const & src ) :
-	CacheableData(),
-	kill_parallel_( src.kill_parallel_ ),
-	kill_antiparallel_( src.kill_antiparallel_ ),
-	hairpins_ ( src.hairpins_ )
-{}
-
 bool
 SS_Killhairpins_Info::check_hairpin( core::Size const & strand1_res, core::Size const & strand2_res )
 {

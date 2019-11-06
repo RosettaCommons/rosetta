@@ -108,8 +108,11 @@ MMBondAngleResidueTypeParam::init(
 		core::Real mm_Ktheta((mm_pair.first->second).key1());
 		core::Real mm_theta0((mm_pair.first->second).key2());
 
+#ifndef NDEBUG
 		// make sure there was only one set of parameters defined
-		debug_assert(++mm_pair.first == mm_pair.second);
+		++mm_pair.first;
+		runtime_assert(mm_pair.first == mm_pair.second); // The two-step is because clang-tidy doesn't like side effects in assert statements
+#endif
 
 		//TR << " mm_Ktheta: " << mm_Ktheta << " mm_theta0: " << numeric::conversions::degrees(mm_theta0)
 		//   << " rt_theta0: " << numeric::conversions::degrees(residue_type_theta0);

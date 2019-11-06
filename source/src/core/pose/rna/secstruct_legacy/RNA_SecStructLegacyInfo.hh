@@ -53,8 +53,6 @@ public:
 		rna_secstruct_legacy_( rna_secstruct_legacy_string )
 	{}
 
-	RNA_SecStructLegacyInfo( RNA_SecStructLegacyInfo const & src );
-
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{

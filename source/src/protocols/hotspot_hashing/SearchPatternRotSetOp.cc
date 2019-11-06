@@ -47,11 +47,6 @@ SearchPatternRotSetOp::SearchPatternRotSetOp( SearchPatternOP pattern ) :
 	search_stubs_(pattern->Searchpoints())
 {}
 
-SearchPatternRotSetOp::SearchPatternRotSetOp( SearchPatternRotSetOp const & other ) :
-	protocols::toolbox::rotamer_set_operations::RigidBodyMoveBaseRSO(),
-	search_stubs_(other.search_stubs_)
-{}
-
 core::pack::rotamer_set::RotamerSetOperationOP
 SearchPatternRotSetOp::clone() const
 {

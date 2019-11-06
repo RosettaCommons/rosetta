@@ -42,10 +42,6 @@ public:
 
 	WaterFeatures(core::Real acc_dist_cutoff, core::Real don_dist_cutoff);
 
-	WaterFeatures(WaterFeatures const & src);
-
-	~WaterFeatures() override= default;
-
 	core::Real
 	acc_dist_cutoff() const { return acc_dist_cutoff_; }
 

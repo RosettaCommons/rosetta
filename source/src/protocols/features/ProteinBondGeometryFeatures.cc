@@ -72,14 +72,6 @@ ProteinBondGeometryFeatures::ProteinBondGeometryFeatures(){
 	db_ = utility::pointer::make_shared< core::scoring::methods::IdealParametersDatabase >(-1.0,-1.0,-1.0,-1.0,-1.0);
 }
 
-ProteinBondGeometryFeatures::ProteinBondGeometryFeatures( ProteinBondGeometryFeatures const & ) :
-	FeaturesReporter()
-{
-}
-
-ProteinBondGeometryFeatures::~ProteinBondGeometryFeatures()= default;
-
-
 void
 ProteinBondGeometryFeatures::write_schema_to_db(
 	sessionOP db_session

@@ -129,7 +129,7 @@ FullModelInfo::FullModelInfo( pose::Pose & pose ) :
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details Copy constructors must copy all data, not just some...
 FullModelInfo::FullModelInfo( FullModelInfo const & src ) :
-	CacheableData(),
+	CacheableData( src ),
 	res_list_( src.res_list_ ),
 	full_model_parameters_( src.full_model_parameters_ ),
 	submotif_info_list_( src.submotif_info_list_ )

@@ -53,8 +53,6 @@ public:
 	);
 
 
-	TaskAwareSymMinMover(const TaskAwareSymMinMover& rval);
-
 	void apply( core::pose::Pose & pose ) override;
 
 	protocols::moves::MoverOP clone() const override;

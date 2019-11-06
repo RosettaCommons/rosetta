@@ -85,13 +85,6 @@ using basic::database::insert_statement_generator::RowDataBaseOP;
 
 StructureFeatures::StructureFeatures()= default;
 
-StructureFeatures::StructureFeatures( StructureFeatures const & ) :
-	FeaturesReporter()
-{}
-
-StructureFeatures::~StructureFeatures()= default;
-
-
 void
 StructureFeatures::write_schema_to_db(
 	sessionOP db_session

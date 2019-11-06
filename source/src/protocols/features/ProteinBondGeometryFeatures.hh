@@ -41,12 +41,6 @@ class ProteinBondGeometryFeatures : public protocols::features::FeaturesReporter
 public:
 	ProteinBondGeometryFeatures();
 
-	ProteinBondGeometryFeatures( ProteinBondGeometryFeatures const & src );
-
-	~ProteinBondGeometryFeatures() override;
-
-	/// @brief return string with class name
-
 	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(

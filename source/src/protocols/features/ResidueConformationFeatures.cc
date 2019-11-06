@@ -81,13 +81,6 @@ ResidueConformationFeatures::ResidueConformationFeatures()
 	compact_residue_schema_ = basic::options::option[basic::options::OptionKeys::inout::dbms::use_compact_residue_schema]();
 }
 
-ResidueConformationFeatures::ResidueConformationFeatures(
-	ResidueConformationFeatures const & ) : FeaturesReporter()
-{
-	compact_residue_schema_ = basic::options::option[basic::options::OptionKeys::inout::dbms::use_compact_residue_schema]();
-}
-
-
 void
 ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;

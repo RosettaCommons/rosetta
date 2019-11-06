@@ -73,16 +73,6 @@ OrbitalsFeatures::OrbitalsFeatures()
 	}
 }
 
-OrbitalsFeatures::OrbitalsFeatures( OrbitalsFeatures const & ) :
-	FeaturesReporter()
-{
-	if ( basic::options::option[ basic::options::OptionKeys::in::add_orbitals] != 1 ) {
-		utility_exit_with_message( "Trying to run features test without orbitals! Pass the flag -add_orbitals!" );
-	}
-}
-
-OrbitalsFeatures::~OrbitalsFeatures()= default;
-
 void
 OrbitalsFeatures::write_schema_to_db(
 	sessionOP db_session

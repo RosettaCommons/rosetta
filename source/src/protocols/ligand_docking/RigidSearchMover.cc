@@ -57,25 +57,6 @@ RigidSearchMover::RigidSearchMover(int jump_id, int num_trials, core::scoring::S
 }
 
 
-RigidSearchMover::RigidSearchMover(RigidSearchMover const & that):
-	//utility::pointer::ReferenceCount(),
-	Mover(),
-	jump_id_( that.jump_id_ ),
-	num_trials_( that.num_trials_ ),
-	scorefxn_( that.scorefxn_ ),
-	temperature_( that.temperature_ ),
-	rotate_deg_( that.rotate_deg_ ),
-	translate_Ang_( that.translate_Ang_ ),
-	rotate_rsd_( that.rotate_rsd_ ),
-	rotate_atom_( that.rotate_atom_ ),
-	recover_low_( that.recover_low_ )
-{
-}
-
-
-RigidSearchMover::~RigidSearchMover() = default;
-
-
 void RigidSearchMover::apply(core::pose::Pose & pose)
 {
 	clock_t start_time = clock();

@@ -67,11 +67,6 @@ EllipsoidalRandomizationMover::EllipsoidalRandomizationMover() : moves::Mover()
 	init_from_options();
 }
 
-EllipsoidalRandomizationMover::EllipsoidalRandomizationMover( EllipsoidalRandomizationMover const & object_to_copy ) : moves::Mover()
-{
-	copy_data( *this, object_to_copy );
-}
-
 EllipsoidalRandomizationMover::EllipsoidalRandomizationMover( core::Size rb_jump, bool ellipsoid_is_first_partner, bool autofoldtree ) : moves::Mover()
 {
 	set_default();
@@ -81,20 +76,6 @@ EllipsoidalRandomizationMover::EllipsoidalRandomizationMover( core::Size rb_jump
 	rb_jump_ = rb_jump;
 	autofoldtree_ = autofoldtree;
 }
-
-EllipsoidalRandomizationMover &
-EllipsoidalRandomizationMover::operator=( EllipsoidalRandomizationMover const & object_to_copy )
-{
-	if ( this == &object_to_copy ) {
-		return *this;
-	}
-
-	Mover::operator=( object_to_copy );
-	copy_data( *this, object_to_copy );
-	return *this;
-}
-
-EllipsoidalRandomizationMover::~EllipsoidalRandomizationMover()= default;
 
 void
 EllipsoidalRandomizationMover::set_default()
@@ -137,21 +118,6 @@ EllipsoidalRandomizationMover::init_from_options()
 	if ( option[ OptionKeys::docking::randomize2 ].value() ) {
 		ellipsoid_is_first_partner_ = false;
 	}
-}
-
-void
-EllipsoidalRandomizationMover::copy_data( EllipsoidalRandomizationMover object_to_copy_to, EllipsoidalRandomizationMover object_to_copy_from )
-{
-	object_to_copy_to.nbr_atom_centroid_ = object_to_copy_from.nbr_atom_centroid_;
-	object_to_copy_to.nbr_atom_plane_centroid_ = object_to_copy_from.nbr_atom_plane_centroid_;
-	object_to_copy_to.nbr_atom_non_ellipsoid_centroid_ = object_to_copy_from.nbr_atom_non_ellipsoid_centroid_;
-	object_to_copy_to.slide_axis_ = object_to_copy_from.slide_axis_;
-	object_to_copy_to.a_axis_ = object_to_copy_from.a_axis_;
-	object_to_copy_to.b_axis_ = object_to_copy_from.b_axis_;
-	object_to_copy_to.c_axis_ = object_to_copy_from.c_axis_;
-	object_to_copy_to.rb_jump_ = object_to_copy_from.rb_jump_;
-	object_to_copy_to.ellipsoid_is_first_partner_ = object_to_copy_from.ellipsoid_is_first_partner_;
-	object_to_copy_to.partners_ = object_to_copy_from.partners_;
 }
 
 void

@@ -38,7 +38,6 @@ enum SSType {
 class SSFeature : public ResidueFeature {
 public:
 	SSFeature();
-	SSFeature( SSFeature const & other );
 	SSFeature( SSType bin );
 
 	utility::vector1< ResidueFeatureOP >

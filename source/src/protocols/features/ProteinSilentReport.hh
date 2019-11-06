@@ -59,10 +59,6 @@ public:
 public:
 	ProteinSilentReport();
 
-	ProteinSilentReport(ProteinSilentReport const & src);
-
-	~ProteinSilentReport() override;
-
 	core::Size
 	version() override;
 
@@ -146,7 +142,6 @@ private:
 	protocols::features::ResidueFeaturesOP residue_features_;
 	protocols::features::ResidueConformationFeaturesOP residue_conformation_features_;
 	protocols::features::JobDataFeaturesOP job_data_features_;
-	protocols::features::FeaturesReporterFactory * features_reporter_factory_;
 	utility::vector1< protocols::features::FeaturesReporterOP > features_reporters_;
 };
 

@@ -40,12 +40,6 @@ class ResidueBurialFeatures : public protocols::features::FeaturesReporter {
 public:
 	ResidueBurialFeatures();
 
-	ResidueBurialFeatures(ResidueBurialFeatures const & src);
-
-	~ResidueBurialFeatures() override;
-
-	/// @brief return string with class name
-
 
 	/// @brief generate the table schemas and write them to the database
 	void

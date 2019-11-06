@@ -72,73 +72,23 @@ std::ostream & which_ostream( std::ostream & ost, std::ostream & oss, bool const
 	return oss;
 }
 
-//This should be std::numeric_limits<core::Real>::lowest(), but that's cxx11
-core::Real const REAL_FAKE_MIN = -1000000;
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////LoopAnalyzerMover////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 LoopAnalyzerMover::LoopAnalyzerMover( protocols::loops::Loops const & loops, bool const tracer ) :
 	Mover(),
 	loops_(utility::pointer::make_shared< protocols::loops::Loops >(loops)),
-	tracer_(tracer),
-	sf_(/* NULL */),
-	chbreak_sf_(/* NULL */),
-	total_score_(0),
-	max_rama_(REAL_FAKE_MIN),
-	max_chainbreak_(REAL_FAKE_MIN),
-	max_omega_(REAL_FAKE_MIN),
-	max_pbond_(REAL_FAKE_MIN)
+	tracer_(tracer)
 {
 	protocols::moves::Mover::type( "LoopAnalyzer" );
 	set_sf();
 }
 
-LoopAnalyzerMover::~LoopAnalyzerMover() = default;
-
-//Isn't there some fancy way to have ctors call each other to deduplicate this code?
 LoopAnalyzerMover::LoopAnalyzerMover() :
-	Mover(),
-	tracer_(true), // WAG, who knows what user wants
-	sf_(/* NULL */),
-	chbreak_sf_(/* NULL */),
-	total_score_(0),
-	max_rama_(REAL_FAKE_MIN),
-	max_chainbreak_(REAL_FAKE_MIN),
-	max_omega_(REAL_FAKE_MIN),
-	max_pbond_(REAL_FAKE_MIN)
-{
-	protocols::moves::Mover::type( "LoopAnalyzer" );
-	set_sf();
-}
-
-LoopAnalyzerMover::LoopAnalyzerMover( LoopAnalyzerMover const & rhs ) :
-	//utility::pointer::ReferenceCount(),
 	Mover()
 {
-	*this = rhs;
-}
-
-// lhs.scorefxn_minimizer_        = rhs.scorefxn_minimizer_       ;
-
-
-LoopAnalyzerMover & LoopAnalyzerMover::operator=( LoopAnalyzerMover const & rhs ) {
-	if ( this == &rhs ) return *this;
-
-	loops_ = utility::pointer::make_shared< protocols::loops::Loops >(*(rhs.loops_) );
-	tracer_ = rhs.tracer_;
-	positions_ = rhs.positions_; //this is useless data
-	sf_ = rhs.sf_->clone();
-	chbreak_sf_ = rhs.chbreak_sf_->clone();
-	scores_ = rhs.scores_; //useless
-	total_score_ = rhs.total_score_;
-	max_rama_ = rhs.max_rama_;
-	max_chainbreak_ = rhs.max_chainbreak_;
-	max_omega_ = rhs.max_omega_;
-	max_pbond_ = rhs.max_pbond_;
-
-	return *this;
+	protocols::moves::Mover::type( "LoopAnalyzer" );
+	set_sf();
 }
 
 
@@ -280,7 +230,7 @@ LoopAnalyzerMover::clone() const
 void LoopAnalyzerMover::set_loops( protocols::loops::LoopsCOP loops ) { loops_ = loops; }
 
 /// @brief get loops object, because public setters/getters are a rule
-protocols::loops::LoopsCOP const & LoopAnalyzerMover::get_loops( void ) const { return loops_; }
+protocols::loops::LoopsCOP LoopAnalyzerMover::get_loops( void ) const { return loops_; }
 
 core::Real
 LoopAnalyzerMover::get_total_score() const {

@@ -77,16 +77,6 @@ LoopAnchorFeatures::LoopAnchorFeatures() :
 	max_loop_length_(30)
 {}
 
-LoopAnchorFeatures::LoopAnchorFeatures( LoopAnchorFeatures const & src) :
-	FeaturesReporter(),
-	use_single_residue_to_define_anchor_transfrom_(src.use_single_residue_to_define_anchor_transfrom_),
-	min_loop_length_(src.min_loop_length_),
-	max_loop_length_(src.max_loop_length_)
-{}
-
-LoopAnchorFeatures::~LoopAnchorFeatures() = default;
-
-
 void
 LoopAnchorFeatures::write_schema_to_db(
 	sessionOP db_session

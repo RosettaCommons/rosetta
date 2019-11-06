@@ -61,13 +61,6 @@ using cppdb::statement;
 
 PairFeatures::PairFeatures()= default;
 
-PairFeatures::PairFeatures( PairFeatures const & ) :
-	FeaturesReporter()
-{}
-
-PairFeatures::~PairFeatures()= default;
-
-
 void
 PairFeatures::write_schema_to_db(
 	sessionOP db_session

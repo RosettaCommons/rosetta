@@ -79,14 +79,6 @@ RotamerBoltzmannWeightFeatures::RotamerBoltzmannWeightFeatures(
 	rotamer_boltzmann_weight_->type("monomer");
 }
 
-RotamerBoltzmannWeightFeatures::RotamerBoltzmannWeightFeatures(RotamerBoltzmannWeightFeatures const & src) :
-	FeaturesReporter(),
-	rotamer_boltzmann_weight_(src.rotamer_boltzmann_weight_)
-{}
-
-RotamerBoltzmannWeightFeatures::~RotamerBoltzmannWeightFeatures()= default;
-
-
 void
 RotamerBoltzmannWeightFeatures::write_schema_to_db(
 	sessionOP db_session

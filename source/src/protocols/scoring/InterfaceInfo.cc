@@ -47,7 +47,7 @@ namespace protocols {
 namespace scoring {
 
 InterfaceInfo::InterfaceInfo( InterfaceInfo const & src ) :
-	CacheableData(), calculated_(false)
+	CacheableData(src), calculated_(false)
 {
 	rb_jump_ = src.rb_jump_;
 	num_jump_ = src.num_jump_;

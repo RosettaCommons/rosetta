@@ -190,16 +190,12 @@ CustomBaseTypePackerPalette::name() const {
 /// @brief Set up the CustomBaseTypePackerPalette with the standard residues.
 void
 CustomBaseTypePackerPalette::set_up_base_types() {
-	// NOLINTNEXTLINE -- Can be called by constructor, in which case name() doesn't full do virtual dispatch
-	if ( TR.Debug.visible() ) TR.Debug << "Setting up default base types (ACDEFGHIKLMNPQRSTVWY/acgt) for " << name() << "." << std::endl;
 	parent::set_up_default_base_types();
 }
 
 /// @brief Set up the CustomBaseTypePackerPalette with the default set of position-specific behaviours.
 void
 CustomBaseTypePackerPalette::set_up_behaviours() {
-	// NOLINTNEXTLINE -- Can be called by constructor, in which case name() doesn't full do virtual dispatch
-	if ( TR.Debug.visible() ) TR.Debug << "Setting up default PackerPalette behaviours for " << name() << "." << std::endl;
 	parent::set_up_default_special_behaviours();
 	set_only_design_polymer_residues(false);
 	set_only_design_protein_peptoid_dna_saccharide(false);

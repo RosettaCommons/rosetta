@@ -45,13 +45,7 @@ class NativeAntibodySeq : public basic::datacache::CacheableData {
 
 public:
 
-
-
 	NativeAntibodySeq(core::pose::Pose const & pose, AntibodyInfo const & ab_info);
-
-	NativeAntibodySeq( NativeAntibodySeq const & src);
-
-	~NativeAntibodySeq() override;
 
 	/// @brief Sets the sequence from the PDB into this class and into the pose.
 	void

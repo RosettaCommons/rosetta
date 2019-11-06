@@ -97,20 +97,6 @@ NcontactsCalculator::NcontactsCalculator(
 	use_only_calpha_( false )
 {}
 
-/// @brief copy constructor
-NcontactsCalculator::NcontactsCalculator( NcontactsCalculator const & rval ):
-	Super(),
-	condist_( rval.condist_ ),
-	isep_residue_( rval.isep_residue_ ),
-	ignore_loops_( rval.ignore_loops_ ),
-	ignore_same_sselement_( rval.ignore_same_sselement_ ),
-	ignore_same_sheet_( rval.ignore_same_sheet_ ),
-	use_only_calpha_( rval.use_only_calpha_ )
-{}
-
-/// @brief destructor
-NcontactsCalculator::~NcontactsCalculator()= default;
-
 /// @brief
 void
 NcontactsCalculator::lookup(

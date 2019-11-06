@@ -123,9 +123,6 @@ public:
 
 	SS_Killhairpins_Info();
 
-	SS_Killhairpins_Info( SS_Killhairpins_Info const & src );
-
-
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{

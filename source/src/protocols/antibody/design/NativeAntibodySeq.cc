@@ -55,16 +55,6 @@ NativeAntibodySeq::NativeAntibodySeq(const core::pose::Pose &pose,
 	set_sequence(pose, ab_info);
 }
 
-NativeAntibodySeq::NativeAntibodySeq(NativeAntibodySeq const &src):
-	CacheableData(),
-	seq_(src.seq_),
-	cdr_seq_(src.cdr_seq_)
-{
-
-}
-
-NativeAntibodySeq::~NativeAntibodySeq() = default;
-
 basic::datacache::CacheableDataOP
 NativeAntibodySeq::clone() const {
 	return utility::pointer::make_shared< NativeAntibodySeq >(*this);

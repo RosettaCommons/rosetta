@@ -19,8 +19,6 @@
 namespace core {
 namespace scoring {
 
-ContextGraph::~ContextGraph() = default;
-
 
 ContextGraph::ContextGraph()
 :
@@ -31,16 +29,6 @@ ContextGraph::ContextGraph(Size num_nodes)
 :
 	parent( num_nodes )
 {}
-
-ContextGraph::ContextGraph( ContextGraph const & )
-:
-	parent()
-{}
-
-ContextGraph &
-ContextGraph::operator = ( ContextGraph const & source ) {
-	return static_cast< ContextGraph & > ( parent::operator = ( source ) );
-}
 
 
 Size ContextGraph::count_dynamic_memory() const

@@ -157,8 +157,9 @@ TenANeighborGraph::TenANeighborGraph( Size num_nodes)
 	set_num_nodes( num_nodes );
 }
 
-TenANeighborGraph::TenANeighborGraph( TenANeighborGraph const & source )
-:
+TenANeighborGraph::TenANeighborGraph( // NOLINT(bugprone-copy-constructor-init) -- deliberately not calling parent copy constructor
+	TenANeighborGraph const & source
+):
 	parent(),
 	tenA_edge_pool_( new boost::unordered_object_pool< TenANeighborEdge > ( 256 ) )
 {
@@ -169,7 +170,10 @@ TenANeighborGraph::TenANeighborGraph( TenANeighborGraph const & source )
 TenANeighborGraph &
 TenANeighborGraph::operator = ( TenANeighborGraph const & source )
 {
-	return static_cast< TenANeighborGraph & >  (parent::operator = ( source ));
+	parent::operator =( source );
+	// parent::operator=() will both clear the existing data in tenA_edge_pool_ (by calling delete_edge())
+	// and will fill it out with the new info (by calling create_new_edge()) so we don't need to explicitly set it here.
+	return *this;
 }
 
 Distance

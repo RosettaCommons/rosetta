@@ -75,14 +75,6 @@ TrajectoryMapFeatures::TrajectoryMapFeatures() :
 	current_cycle_(0)
 {}
 
-TrajectoryMapFeatures::TrajectoryMapFeatures( TrajectoryMapFeatures const & src) :
-	FeaturesReporter(),
-	current_cycle_(src.current_cycle_)
-{}
-
-TrajectoryMapFeatures::~TrajectoryMapFeatures() = default;
-
-
 void
 TrajectoryMapFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;

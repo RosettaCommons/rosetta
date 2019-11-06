@@ -99,16 +99,6 @@ UnrecognizedAtomFeatures::UnrecognizedAtomFeatures(
 	neighbor_distance_cutoff_(neighbor_distance_cutoff)
 {}
 
-UnrecognizedAtomFeatures::UnrecognizedAtomFeatures(
-	UnrecognizedAtomFeatures const & src
-) :
-	FeaturesReporter(),
-	neighbor_distance_cutoff_(src.neighbor_distance_cutoff_)
-{}
-
-UnrecognizedAtomFeatures::~UnrecognizedAtomFeatures() = default;
-
-
 void
 UnrecognizedAtomFeatures::write_schema_to_db(
 	sessionOP db_session

@@ -161,7 +161,7 @@ MultipoleElecResidueInfo::initialize( conformation::Residue const & rsd )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 MultipoleElecPoseInfo::MultipoleElecPoseInfo( MultipoleElecPoseInfo const & src ):
-	CacheableData()
+	CacheableData(src)
 {
 	Size const src_size( src.size() );
 

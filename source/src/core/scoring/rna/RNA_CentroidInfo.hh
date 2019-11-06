@@ -50,8 +50,6 @@ public:
 
 	RNA_CentroidInfo(): calculated_( false ) {};
 
-	RNA_CentroidInfo( RNA_CentroidInfo const & src );
-
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{

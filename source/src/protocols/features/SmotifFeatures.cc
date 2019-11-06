@@ -64,14 +64,6 @@ SmotifFeatures::SmotifFeatures(core::scoring::ScoreFunctionOP /*scfxn*/)
 {
 }
 
-SmotifFeatures::SmotifFeatures( SmotifFeatures const & /*src*/ ) : FeaturesReporter(/*src*/)
-{
-}
-
-SmotifFeatures::~SmotifFeatures()= default;
-
-/// @brief return string with class name
-
 /// @brief generate the table schemas and write them to the database
 void
 SmotifFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const

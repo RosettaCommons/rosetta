@@ -69,10 +69,6 @@ public:
 		utility::vector1< core::simple_metrics::SimpleMetricCOP > metrics
 	);
 
-	SimpleMetricFeatures( SimpleMetricFeatures const & src );
-
-	~SimpleMetricFeatures() override= default;
-
 public:
 
 	/// @brief return string with class name

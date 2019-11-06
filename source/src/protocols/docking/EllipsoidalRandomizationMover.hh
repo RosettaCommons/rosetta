@@ -36,17 +36,8 @@ public:
 	/// @brief Default constructor
 	EllipsoidalRandomizationMover();
 
-	/// @brief Copy constructor
-	EllipsoidalRandomizationMover( EllipsoidalRandomizationMover const & object_to_copy );
-
 	/// @brief Constructor with arguments
 	EllipsoidalRandomizationMover( core::Size rb_jump, bool ellipsoid_is_first_partner, bool autofoldtree );
-
-	/// @brief Assignment operator
-	EllipsoidalRandomizationMover & operator=( EllipsoidalRandomizationMover const & object_to_copy );
-
-	/// @brief Destructor
-	~EllipsoidalRandomizationMover() override;
 
 	/// @brief Sets up the default values for the object including the movemap and minimization type.
 	void set_default();
@@ -101,9 +92,6 @@ public:
 
 	/// @brief Calculates normal vector from a plane at the docking interface.
 	core::Vector inward_normal_to_plane( utility::vector1< core::Vector > );
-
-	/// @brief Copies data members from one object to another.
-	void copy_data( EllipsoidalRandomizationMover object_to_copy_to, EllipsoidalRandomizationMover object_to_copy_from );
 
 	/// @brief Set the partners_ string.
 	void set_partners( std::string const & );

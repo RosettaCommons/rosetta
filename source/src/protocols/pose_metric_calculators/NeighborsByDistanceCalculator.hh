@@ -53,8 +53,6 @@ public:
 		core::Real dist_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff]
 	);
 
-	NeighborsByDistanceCalculator( NeighborsByDistanceCalculator const & calculator );
-
 	core::pose::metrics::PoseMetricCalculatorOP clone() const override;
 
 	//accessors for non-recomputed input data

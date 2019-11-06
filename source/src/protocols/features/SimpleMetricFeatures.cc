@@ -105,17 +105,6 @@ SimpleMetricFeatures::SimpleMetricFeatures( vector1< SimpleMetricCOP > metrics )
 	set_simple_metrics(metrics);
 }
 
-SimpleMetricFeatures::SimpleMetricFeatures(
-	SimpleMetricFeatures const & src ) :
-	FeaturesReporter(),
-	prefix_(src.prefix_),
-	suffix_(src.suffix_),
-	table_name_(src.table_name_)
-{
-	metrics_ = src.metrics_;
-}
-
-
 void
 SimpleMetricFeatures::add_simple_metric( SimpleMetricCOP metric ){
 	metrics_.push_back( metric );

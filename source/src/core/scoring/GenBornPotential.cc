@@ -94,7 +94,7 @@ GenBornResidueInfo::initialize( conformation::Residue const & rsd )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 GenBornPoseInfo::GenBornPoseInfo( GenBornPoseInfo const & src ):
-	CacheableData()
+	CacheableData(src)
 {
 	Size const src_size( src.size() );
 

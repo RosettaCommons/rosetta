@@ -89,22 +89,8 @@ protected: // Creation
 
 	/// @brief Default constructor
 	inline
-	Atom()
-	{}
+	Atom() = default;
 
-
-	/// @brief Copy constructor
-	inline
-	Atom( Atom const & /*atom*/ ) : // PBHACK!!!
-		ReferenceCount(),
-		utility::pointer::enable_shared_from_this< Atom >()
-	{}
-
-public: // Creation
-
-
-	/// @brief Destructor
-	~Atom() override {}
 
 public: // self pointers
 

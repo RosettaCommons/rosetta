@@ -32,10 +32,6 @@ namespace features {
 class JobDataFeatures :public protocols::features::FeaturesReporter {
 public:
 	JobDataFeatures();
-	JobDataFeatures(JobDataFeatures const & src);
-	~JobDataFeatures() override;
-
-	/// @brief return string with class name
 
 	/// @brief generate the table schemas and write them to the database
 	void

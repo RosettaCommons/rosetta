@@ -46,10 +46,6 @@ public:
 
 	PcsEnergyController(); // Construct
 
-	~PcsEnergyController() override; // Destruct
-
-	PcsEnergyController(PcsEnergyController const & other); // copy
-
 
 	TopologyClaimerOP // clone
 	clone() const override {

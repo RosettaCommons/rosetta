@@ -68,8 +68,8 @@ ReferencePoseSet::ReferencePoseSet() :
 /// @brief Copy constructor.
 ///
 ReferencePoseSet::ReferencePoseSet( ReferencePoseSet const & src ) :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< ReferencePoseSet >(),
+	utility::pointer::ReferenceCount(src),
+	utility::pointer::enable_shared_from_this< ReferencePoseSet >(src),
 	reference_pose_map_()
 {
 	//Loop over and clone all elements in the map:

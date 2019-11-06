@@ -85,18 +85,6 @@ static basic::Tracer TR( "core.scoring.MembranePotential" );
 namespace core {
 namespace scoring {
 
-/// @brief Copy Constructor for a Membrane Embedding Object
-MembraneEmbed::MembraneEmbed( MembraneEmbed const & src ) :
-	CacheableData()
-{
-	depth_=src.depth_;
-	center_=src.center_;
-	penalty_=src.penalty_;
-	normal_=src.normal_;
-	spanning_=src.spanning_;
-	calculated_ = src.calculated_;
-}
-
 /// @brief Initialize a Membrane Embedding Object
 void
 MembraneEmbed::initialize( pose::Pose const & pose )

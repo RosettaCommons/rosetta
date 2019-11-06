@@ -150,9 +150,9 @@ FileSystemResourceLocator::FileSystemResourceLocator(
 FileSystemResourceLocator::FileSystemResourceLocator(
 	FileSystemResourceLocator const & src
 ) :
-	basic::resource_manager::ResourceLocator(),
+	basic::resource_manager::ResourceLocator(src),
 	open_mode_(src.open_mode_),
-	search_paths_( 1, "./" )
+	search_paths_( 1, "./" ) // ??? We don't copy the search paths?? Why not? (Deserves a comment.)
 {}
 
 FileSystemResourceLocator::~FileSystemResourceLocator() = default;

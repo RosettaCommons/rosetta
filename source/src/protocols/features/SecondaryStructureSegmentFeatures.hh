@@ -41,12 +41,6 @@ public:
 	SecondaryStructureSegmentFeatures(
 		core::scoring::ScoreFunctionOP scfxn);
 
-	SecondaryStructureSegmentFeatures( SecondaryStructureSegmentFeatures const & src );
-
-	~SecondaryStructureSegmentFeatures() override;
-
-	/// @brief return string with class name
-
 	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(utility::sql_database::sessionOP db_session) const override;

@@ -103,14 +103,6 @@ ResidueScoresFeatures::ResidueScoresFeatures(
 	scfxn_(std::move(scfxn))
 {}
 
-ResidueScoresFeatures::ResidueScoresFeatures( ResidueScoresFeatures const & src) :
-	FeaturesReporter(),
-	scfxn_(src.scfxn_)
-{}
-
-ResidueScoresFeatures::~ResidueScoresFeatures() = default;
-
-
 void
 ResidueScoresFeatures::write_schema_to_db(
 	sessionOP db_session

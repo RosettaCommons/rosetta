@@ -217,7 +217,7 @@ EnergyGraph::EnergyGraph( Size num_nodes )
 /// This is because the copy constructor relies on polymorphic functions which
 /// are unavailable during the Graph constructor.  Instead, this function waits
 /// until parent construction is complete, and relies on the assigmnent operator.
-EnergyGraph::EnergyGraph( EnergyGraph const & src )
+EnergyGraph::EnergyGraph( EnergyGraph const & src ) // NOLINT(bugprone-copy-constructor-init) -- deliberately not calling parent copy constructor
 :
 	parent( ),
 	energy_edge_pool_( new boost::unordered_object_pool< EnergyEdge > ( 256 ) ),

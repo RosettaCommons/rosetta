@@ -51,13 +51,6 @@ RangeFilter::RangeFilter(Real lower_bound, Real upper_bound, FilterOP  filter ) 
 	upper_bound_( upper_bound )
 {}
 
-// @brief copy constructor
-RangeFilter::RangeFilter( RangeFilter const & rval ) : protocols::filters::Filter(),
-	filter_( rval.filter_),
-	lower_bound_( rval.lower_bound_ ),
-	upper_bound_( rval.upper_bound_ )
-{}
-
 
 /// @brief
 void

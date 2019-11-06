@@ -32,11 +32,6 @@ class FileListResourceLocator : public basic::resource_manager::ResourceLocator
 public:
 	FileListResourceLocator();
 
-	FileListResourceLocator(
-		FileListResourceLocator const & src);
-
-	~FileListResourceLocator() override;
-
 	/// @brief Describe the %FileListResourceLocator to the output stringstream; since
 	/// this class has no data, merely prints the name of the class.
 	void

@@ -16,8 +16,16 @@
 // When supressing errors here, please leave a comment explaining why
 // what you're suppressing isn't really an error.
 
+//////////////////////
+// GENERAL EXCLUSIONS
 
 // This is a check that's error prone, and has been removed from more recent versions of cppcheck.
 unnecessaryForwardDeclaration
 // This triggers for braced initializers in classes
 constStatement
+
+//////////////////////
+// SPECIFIC EXCLUSIONS
+
+// The TenANeighborGraph::tenA_edge_pool_ is handled properly through virtual function calls made by the parent operator
+operatorEqVarError:core/scoring/TenANeighborGraph.cc

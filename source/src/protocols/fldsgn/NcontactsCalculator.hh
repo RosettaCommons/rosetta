@@ -65,13 +65,6 @@ public:// constructor/destructor
 	/// @brief default constructor
 	NcontactsCalculator( Real const condist, Size const isep_sep );
 
-	/// @brief copy constructor
-	NcontactsCalculator( NcontactsCalculator const & rval );
-
-	/// @brief destructor
-	~NcontactsCalculator() override;
-
-
 public:// virtual constructor
 
 

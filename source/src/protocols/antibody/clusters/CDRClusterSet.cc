@@ -135,7 +135,7 @@ BasicCDRClusterSet::BasicCDRClusterSet(utility::vector1<CDRClusterOP> const clus
 }
 
 BasicCDRClusterSet::BasicCDRClusterSet(const BasicCDRClusterSet& src):
-	CacheableData()
+	CacheableData(src)
 {
 	set_clusters(src.clusters_);
 }

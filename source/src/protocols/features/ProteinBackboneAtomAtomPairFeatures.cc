@@ -61,13 +61,6 @@ using cppdb::statement;
 
 ProteinBackboneAtomAtomPairFeatures::ProteinBackboneAtomAtomPairFeatures()= default;
 
-ProteinBackboneAtomAtomPairFeatures::ProteinBackboneAtomAtomPairFeatures( ProteinBackboneAtomAtomPairFeatures const & ) :
-	FeaturesReporter()
-{}
-
-ProteinBackboneAtomAtomPairFeatures::~ProteinBackboneAtomAtomPairFeatures()= default;
-
-
 void
 ProteinBackboneAtomAtomPairFeatures::write_schema_to_db(
 	sessionOP db_session

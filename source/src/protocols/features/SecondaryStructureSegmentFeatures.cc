@@ -52,15 +52,6 @@ SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures(core::scori
 {
 }
 
-SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures(
-	SecondaryStructureSegmentFeatures const & /*src*/ ) : FeaturesReporter(/*src*/)
-{
-}
-
-SecondaryStructureSegmentFeatures::~SecondaryStructureSegmentFeatures()= default;
-
-/// @brief return string with class name
-
 /// @brief generate the table schemas and write them to the database
 void
 SecondaryStructureSegmentFeatures::write_schema_to_db(

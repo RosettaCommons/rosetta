@@ -22,7 +22,7 @@ FilterReporterMover::FilterReporterMover() :
 	Mover(),
 	mover_( nullptr ),
 	filter_( nullptr ),
-	out_( /*streambuf=*/ nullptr )
+	out_( nullptr )
 {
 	filter_mover_ = protocols::moves::FilterMoverOP(
 		new protocols::moves::FilterMover() );
@@ -34,7 +34,7 @@ FilterReporterMover::FilterReporterMover( protocols::moves::MoverOP const & move
 	Mover( mover->type() ),
 	mover_( mover ),
 	filter_( filter ),
-	out_( /*streambuf=*/ nullptr ) // default ctor is protected
+	out_( nullptr )
 {
 	filter_mover_ = protocols::moves::FilterMoverOP(
 		new protocols::moves::FilterMover( mover, filter, max_tries, mover_status ) );
@@ -43,7 +43,7 @@ FilterReporterMover::FilterReporterMover( protocols::moves::MoverOP const & move
 
 FilterReporterMover::FilterReporterMover( FilterReporterMover const & rhs ) :
 	Mover( rhs ),
-	out_( /*streambuf=*/ nullptr ) {
+	out_( nullptr ) {
 	FilterReporterMover::assign( *this, rhs );
 }
 

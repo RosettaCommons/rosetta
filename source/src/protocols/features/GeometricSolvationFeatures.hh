@@ -42,12 +42,6 @@ class GeometricSolvationFeatures : public FeaturesReporter {
 public:
 	GeometricSolvationFeatures(core::scoring::methods::EnergyMethodOptions const& options);
 
-	GeometricSolvationFeatures(GeometricSolvationFeatures const & src);
-
-	~GeometricSolvationFeatures() override= default;
-
-	/// @brief return string with class name
-
 	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(

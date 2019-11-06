@@ -69,9 +69,6 @@ public:
 	/// @brief Default Constructor
 	Membrane_FAEmbed(): calculated_(false) {};
 
-	/// @brief Copy Constructor
-	Membrane_FAEmbed( Membrane_FAEmbed const & src );
-
 	/// @brief Cacheable Data base Mehtod - Clone Object
 	basic::datacache::CacheableDataOP clone() const override {
 		return utility::pointer::make_shared< Membrane_FAEmbed >( *this );

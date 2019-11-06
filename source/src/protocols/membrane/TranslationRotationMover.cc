@@ -109,13 +109,6 @@ TranslationMover::TranslationMover(
 	init_from_cmd();
 }
 
-/// @brief Copy Constructor
-/// @details Create a deep copy of this mover
-TranslationMover::TranslationMover( TranslationMover const & ) = default;
-
-/// @brief Destructor
-TranslationMover::~TranslationMover() = default;
-
 ///////////////////////////////
 /// Rosetta Scripts Methods ///
 ///////////////////////////////
@@ -526,20 +519,6 @@ TranslationRotationMover::TranslationRotationMover(
 	register_options();
 	init_from_cmd();
 }
-
-/// @brief Copy Constructor
-/// @details Create a deep copy of this mover
-TranslationRotationMover::TranslationRotationMover( TranslationRotationMover const & src ) :
-	protocols::moves::Mover(),
-	old_center_( src.old_center_ ),
-	old_normal_( src.old_normal_ ),
-	new_center_( src.new_center_ ),
-	new_normal_( src.new_normal_ ),
-	jumpnum_( src.jumpnum_ )
-{}
-
-/// @brief Destructor
-TranslationRotationMover::~TranslationRotationMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

@@ -40,16 +40,6 @@ class PoseConformationFeatures : public protocols::features::FeaturesReporter {
 public:
 	PoseConformationFeatures(){}
 
-	PoseConformationFeatures(
-		PoseConformationFeatures const & ) :
-		FeaturesReporter()
-	{}
-
-
-	~PoseConformationFeatures() override= default;
-
-	/// @brief return string with class name
-
 	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(utility::sql_database::sessionOP db_session) const override;

@@ -114,8 +114,8 @@ TopologyBroker::TopologyBroker() :
 TopologyBroker::~TopologyBroker() = default;
 
 TopologyBroker::TopologyBroker( const TopologyBroker & tp ) :
-	ReferenceCount(),
-	utility::pointer::enable_shared_from_this< TopologyBroker >(),
+	ReferenceCount(tp),
+	utility::pointer::enable_shared_from_this< TopologyBroker >(tp),
 	claimers_( tp.claimers_ )
 {
 	current_claims_ = tp.current_claims_;

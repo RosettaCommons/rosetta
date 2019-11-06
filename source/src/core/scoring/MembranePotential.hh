@@ -64,9 +64,6 @@ public:
 	/// @brief Default Constructor
 	MembraneEmbed(): calculated_(false), spanning_(false) {};
 
-	/// @brief Copy Constructor
-	MembraneEmbed( MembraneEmbed const & src );
-
 	/// @brief Clone Cacheable Data
 	basic::datacache::CacheableDataOP clone() const override {
 		return utility::pointer::make_shared< MembraneEmbed >( *this );

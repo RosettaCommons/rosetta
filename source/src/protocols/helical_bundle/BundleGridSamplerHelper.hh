@@ -50,10 +50,6 @@ public:
 	///
 	BundleGridSamplerHelper();
 
-	BundleGridSamplerHelper( BundleGridSamplerHelper const & src );
-
-	~BundleGridSamplerHelper() override;
-
 	/// @brief Copy this BundleGridSamplerHelper object( allocate actual memory for it )
 	///
 	virtual

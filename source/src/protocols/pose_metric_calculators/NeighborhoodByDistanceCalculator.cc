@@ -70,9 +70,6 @@ NeighborhoodByDistanceCalculator::NeighborhoodByDistanceCalculator( std::set< co
 {
 }
 
-NeighborhoodByDistanceCalculator::NeighborhoodByDistanceCalculator( NeighborhoodByDistanceCalculator const & calculator ) : parent(), central_residues_(calculator.central_residues_), dist_cutoff_(calculator.dist_cutoff_)
-{}
-
 core::pose::metrics::PoseMetricCalculatorOP NeighborhoodByDistanceCalculator::clone() const
 { return utility::pointer::make_shared< NeighborhoodByDistanceCalculator >(*this); }
 

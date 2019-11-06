@@ -63,14 +63,6 @@ public:
 	///
 	ReferencePose();
 
-	/// @brief Copy constructor
-	///
-	ReferencePose( ReferencePose const & src );
-
-	/// @brief Destructor
-	/// @details Note that Rosetta destructors are generally not called.
-	~ReferencePose() override;
-
 	/// @brief Make a copy of this ReferencePose object (allocate actual memory for it)
 	/// and return an owning pointer to the copy.
 	virtual

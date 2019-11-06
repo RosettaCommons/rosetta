@@ -51,13 +51,6 @@ using utility::sql_database::sessionOP;
 
 ProteinBackboneTorsionAngleFeatures::ProteinBackboneTorsionAngleFeatures()= default;
 
-ProteinBackboneTorsionAngleFeatures::ProteinBackboneTorsionAngleFeatures( ProteinBackboneTorsionAngleFeatures const & ) :
-	FeaturesReporter()
-{}
-
-ProteinBackboneTorsionAngleFeatures::~ProteinBackboneTorsionAngleFeatures()= default;
-
-
 void
 ProteinBackboneTorsionAngleFeatures::write_schema_to_db(
 	sessionOP db_session

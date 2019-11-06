@@ -53,16 +53,6 @@
 namespace core {
 namespace scoring {
 
-/// @details Copy constructors must copy all data, not just some...
-CenListInfo::CenListInfo( CenListInfo const & src ) :
-	CacheableData()
-{
-	fcen6_ = src.fcen6_;
-	fcen10_ = src.fcen10_;
-	fcen12_ = src.fcen12_;
-	calculated_ = src.calculated_;
-}
-
 void
 CenListInfo::initialize( pose::Pose const & pose )
 {

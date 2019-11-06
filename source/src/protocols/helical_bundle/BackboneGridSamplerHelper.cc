@@ -58,24 +58,6 @@ BackboneGridSamplerHelper::BackboneGridSamplerHelper() :
 	n_torsions_.resize(1,0);
 }
 
-BackboneGridSamplerHelper::BackboneGridSamplerHelper( BackboneGridSamplerHelper const & src ) :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< BackboneGridSamplerHelper >(),
-	residues_per_repeat_( src.residues_per_repeat_ ),
-	n_torsions_( src.n_torsions_ ),
-	n_torsions_total_( src.n_torsions_total_ ),
-	residue_indices_( src.residue_indices_ ),
-	allowed_torsion_indices_( src.allowed_torsion_indices_ ),
-	torsion_samples_(src.torsion_samples_),
-	torsion_lower_vals_(src.torsion_lower_vals_),
-	torsion_upper_vals_(src.torsion_upper_vals_),
-	torsion_sample_vals_(src.torsion_sample_vals_),
-	cur_indices_( src.cur_indices_ )
-{
-}
-
-BackboneGridSamplerHelper::~BackboneGridSamplerHelper() = default;
-
 
 /// @brief make a copy of this BackboneGridSamplerHelper object (allocate actual memory for it)
 ///

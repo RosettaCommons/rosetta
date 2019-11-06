@@ -88,14 +88,6 @@ ProteinResidueConformationFeatures::ProteinResidueConformationFeatures()
 	compact_residue_schema_ = basic::options::option[basic::options::OptionKeys::inout::dbms::use_compact_residue_schema]();
 }
 
-ProteinResidueConformationFeatures::ProteinResidueConformationFeatures(
-	ProteinResidueConformationFeatures const & ) : FeaturesReporter()
-{
-	compact_residue_schema_ = basic::options::option[basic::options::OptionKeys::inout::dbms::use_compact_residue_schema]();
-}
-
-
-
 void
 ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 

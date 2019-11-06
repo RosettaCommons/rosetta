@@ -34,12 +34,9 @@ public:
 
 public:
 
-	~ContextGraph() override;
-
 	ContextGraph();
 	ContextGraph(Size num_nodes);
-	ContextGraph( ContextGraph const & source );
-	ContextGraph & operator = ( ContextGraph const & source );
+	ContextGraph( ContextGraph const & source ) = delete; // Directly calling parent Graph copy constructors doesn't work.
 
 	virtual
 	Distance

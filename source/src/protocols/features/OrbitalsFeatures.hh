@@ -41,12 +41,6 @@ class OrbitalsFeatures : public protocols::features::FeaturesReporter {
 public:
 	OrbitalsFeatures();
 
-	OrbitalsFeatures( OrbitalsFeatures const & src );
-
-	~OrbitalsFeatures() override;
-
-	/// @brief return string with class name
-
 	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(

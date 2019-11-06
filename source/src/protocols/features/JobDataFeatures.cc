@@ -57,11 +57,6 @@ using basic::database::insert_statement_generator::RowData;
 
 JobDataFeatures::JobDataFeatures() = default;
 
-JobDataFeatures::JobDataFeatures(JobDataFeatures const & ) : protocols::features::FeaturesReporter() {}
-
-JobDataFeatures::~JobDataFeatures() = default;
-
-
 void
 JobDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 

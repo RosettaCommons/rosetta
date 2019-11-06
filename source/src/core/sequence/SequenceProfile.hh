@@ -72,33 +72,6 @@ public:
 		debug_assert( profile().size() == length() );
 	}
 
-	/// @brief copy ctor
-	SequenceProfile( SequenceProfile const & src ):
-		Sequence()
-	{
-		*this = src;
-	}
-
-	/// @brief assignment operator.
-	SequenceProfile & operator = ( SequenceProfile const & rhs ) {
-		if ( this == &rhs ) return *this;
-
-		id      ( rhs.id() );
-		start   ( rhs.start()    );
-		gap_char( rhs.gap_char() );
-		sequence( rhs.sequence() );
-
-		profile ( rhs.profile() );
-		alphabet( rhs.alphabet() );
-		temp_ = rhs.temp_;
-		negative_better_ = rhs.negative_better_;
-
-		return *this;
-	}
-
-	/// @brief dtor
-	~SequenceProfile() override = default;
-
 	/// @brief Returns an owning pointer to a new SequenceProfile object,
 	/// with data that is a deep copy of the information in this object.
 	SequenceOP clone() const override {

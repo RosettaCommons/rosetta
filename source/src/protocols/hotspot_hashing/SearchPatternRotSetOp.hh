@@ -42,7 +42,6 @@ public:
 	typedef protocols::toolbox::rotamer_set_operations::RigidBodyMoveBaseRSO parent;
 
 	SearchPatternRotSetOp( SearchPatternOP pattern );
-	SearchPatternRotSetOp( SearchPatternRotSetOp const & other );
 
 
 	core::pack::rotamer_set::RotamerSetOperationOP

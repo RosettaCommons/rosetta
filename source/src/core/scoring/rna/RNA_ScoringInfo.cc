@@ -53,24 +53,6 @@ namespace rna {
 RNA_ScoringInfo::RNA_ScoringInfo() = default;
 
 
-/// @details Copy constructors must copy all data, not just some...
-RNA_ScoringInfo::RNA_ScoringInfo( RNA_ScoringInfo const & src ) :
-	CacheableData(),
-	rna_centroid_info_( src.rna_centroid_info_ ),
-	rna_raw_base_base_info_( src.rna_raw_base_base_info_ ),
-	rna_filtered_base_base_info_( src.rna_filtered_base_base_info_ ),
-	rna_data_info_( src.rna_data_info_ ),
-	atom_numbers_for_vdw_calculation_( src.atom_numbers_for_vdw_calculation_ ),
-	atom_numbers_for_mg_calculation_( src.atom_numbers_for_mg_calculation_ ),
-	is_magnesium_( src.is_magnesium_ ),
-	is_interface_( src.is_interface_ ),
-	is_buried_( src.is_buried_ ),
-	vdw_calculation_annotated_sequence_( src.vdw_calculation_annotated_sequence_ ),
-	mg_calculation_annotated_sequence_( src.mg_calculation_annotated_sequence_ )
-{
-}
-
-
 /// @details Pose must already contain a rna_scoring_info object or this method will fail.
 RNA_ScoringInfo const &
 rna_scoring_info_from_pose( pose::Pose const & pose )

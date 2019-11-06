@@ -57,10 +57,6 @@ public:
 public:
 	/// Construction and Destruction
 	MatcherTask();
-	MatcherTask( MatcherTask const & other );
-	MatcherTask & operator = ( MatcherTask const & rhs );
-
-	~MatcherTask() override;
 
 	/// self pointers
 	inline MatcherTaskCOP get_self_ptr() const { return shared_from_this(); }

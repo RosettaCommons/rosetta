@@ -38,8 +38,6 @@ class RigidSearchMover : public protocols::moves::Mover
 public:
 
 	RigidSearchMover(int jump_id, int num_trials, core::scoring::ScoreFunctionCOP scorefxn);
-	RigidSearchMover(RigidSearchMover const & that);
-	~RigidSearchMover() override;
 
 	void apply(core::pose::Pose & pose) override;
 	std::string get_name() const override;

@@ -89,12 +89,6 @@ public:
 		core::Size jumpnum
 	);
 
-	/// @brief Copy Constructor
-	TranslationMover( TranslationMover const & src );
-
-	/// @brief Destructor
-	~TranslationMover() override;
-
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
@@ -296,12 +290,6 @@ public:
 		core::Vector new_normal,
 		core::Size jumpnum
 	);
-
-	/// @brief Copy Constructor
-	TranslationRotationMover( TranslationRotationMover const & src );
-
-	/// @brief Destructor
-	~TranslationRotationMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///

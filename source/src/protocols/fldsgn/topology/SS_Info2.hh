@@ -64,12 +64,6 @@ public:// construct/destruct
 	/// @brief value constructor
 	// SS_Base( Size const & begin, Size const & end, Vector const & v );
 
-	/// @brief copy constructor
-	SS_Base( SS_Base const & s );
-
-	/// @brief destructor
-	~SS_Base() override;
-
 
 public:// accessors
 
@@ -315,12 +309,6 @@ public: // constructor/destructor
 
 	/// @brief value constructor
 	SS_Info2( Pose const & pose, String const & secstruct = "" );
-
-	/// @brief copy constructor
-	SS_Info2( SS_Info2 const & s );
-
-	/// @brief destructor
-	~SS_Info2() override;
 
 
 public:

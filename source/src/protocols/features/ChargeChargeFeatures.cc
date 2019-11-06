@@ -94,13 +94,6 @@ ChargeChargeFeatures::ChargeChargeFeatures(
 	distance_cutoff_(distance_cutoff)
 {}
 
-ChargeChargeFeatures::ChargeChargeFeatures(
-	ChargeChargeFeatures const & src ) :
-	FeaturesReporter(),
-	distance_cutoff_(src.distance_cutoff_)
-{}
-
-
 void
 ChargeChargeFeatures::write_schema_to_db(
 	sessionOP db_session

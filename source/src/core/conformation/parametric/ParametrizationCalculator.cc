@@ -69,8 +69,8 @@ ParametrizationCalculator::ParametrizationCalculator( ParametersOP parameters ) 
 /// @brief Copy constructor.
 /// @details Deep-copies the stored parameters.
 ParametrizationCalculator::ParametrizationCalculator( ParametrizationCalculator const & src ) :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< ParametrizationCalculator >(),
+	utility::pointer::ReferenceCount(src),
+	utility::pointer::enable_shared_from_this< ParametrizationCalculator >(src),
 	parameters_( src.parameters_->clone() )
 {
 }

@@ -57,31 +57,6 @@ public:
 		debug_assert( profile().size() == length() );
 	}
 
-	/// @brief copy ctor
-	ChemicalShiftSequence( ChemicalShiftSequence const & src ):
-		SequenceProfile()
-	{
-		*this = src;
-	}
-
-	/// @brief assignment operator.
-	ChemicalShiftSequence & operator = ( ChemicalShiftSequence const & rhs ) {
-		if ( this == &rhs ) return *this;
-
-		id      ( rhs.id() );
-		start   ( rhs.start() );
-		gap_char( rhs.gap_char() );
-		sequence( rhs.sequence() );
-
-		profile ( rhs.profile() );
-		alphabet( rhs.alphabet() );
-
-		return *this;
-	}
-
-	/// @brief dtor
-	~ChemicalShiftSequence() override = default;
-
 	/// @brief Returns an owning pointer to a new ChemicalShiftSequence object,
 	/// with data that is a deep copy of the information in this object.
 	SequenceOP clone() const override {

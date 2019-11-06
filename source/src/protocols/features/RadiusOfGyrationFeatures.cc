@@ -49,13 +49,6 @@ using cppdb::statement;
 
 RadiusOfGyrationFeatures::RadiusOfGyrationFeatures()= default;
 
-RadiusOfGyrationFeatures::RadiusOfGyrationFeatures( RadiusOfGyrationFeatures const & ) :
-	FeaturesReporter()
-{}
-
-RadiusOfGyrationFeatures::~RadiusOfGyrationFeatures()= default;
-
-
 void
 RadiusOfGyrationFeatures::write_schema_to_db(
 	sessionOP db_session

@@ -160,18 +160,11 @@ private:
 	utility::vector1<core::Real> Z_all_;
 
 public:
-	PCS_data_Ts3();
-
-	~PCS_data_Ts3() override;
+	PCS_data_Ts3() = delete;
 
 	PCS_data_Ts3(PCS_data_input_Ts3 & P_d_i);
 
 	PCS_data_Ts3(PCS_data_input_Ts3 & P_d_i, utility::vector1< bool > const exclude_residues );
-
-	PCS_data_Ts3(PCS_data_Ts3 const &other);
-
-	PCS_data_Ts3 &
-	operator=( PCS_data_Ts3 const & src );
 
 	basic::datacache::CacheableDataOP
 	clone() const override;

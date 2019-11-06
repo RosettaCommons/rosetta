@@ -40,12 +40,6 @@ class ProteinBackboneAtomAtomPairFeatures : public protocols::features::Features
 public:
 	ProteinBackboneAtomAtomPairFeatures();
 
-	ProteinBackboneAtomAtomPairFeatures( ProteinBackboneAtomAtomPairFeatures const & src );
-
-	~ProteinBackboneAtomAtomPairFeatures() override;
-
-	/// @brief return string with class name
-
 	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(

@@ -96,13 +96,6 @@ SaltBridgeFeatures::SaltBridgeFeatures(
 	distance_cutoff_(distance_cutoff)
 {}
 
-SaltBridgeFeatures::SaltBridgeFeatures(
-	SaltBridgeFeatures const & src ) :
-	FeaturesReporter(),
-	distance_cutoff_(src.distance_cutoff_)
-{}
-
-
 void
 SaltBridgeFeatures::write_schema_to_db(
 	sessionOP db_session

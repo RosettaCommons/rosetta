@@ -87,20 +87,6 @@ TaskAwareSymMinMover::TaskAwareSymMinMover(
 //protocols::minimization_packing::TaskAwareMinMover(
 // minmover_in, factory_in) {}
 
-TaskAwareSymMinMover::TaskAwareSymMinMover(const TaskAwareSymMinMover& rval) :
-	// protocols::moves::Mover(),
-	protocols::minimization_packing::TaskAwareMinMover(), //Jeliazkov experimenat
-	scorefxn_( rval.scorefxn_ ),
-	min_chi_( rval.min_chi_),
-	min_bb_( rval.min_bb_),
-	min_rb_( rval.min_rb_),
-	min_type_( rval.min_type_),
-	tolerance_( rval.tolerance_),
-	minmover_( rval.minmover_ ),
-	factory_( rval.factory_),
-	designable_only_( rval.designable_only_ )
-{ }
-
 protocols::moves::MoverOP
 TaskAwareSymMinMover::clone() const {
 	return utility::pointer::make_shared< TaskAwareSymMinMover >( *this );

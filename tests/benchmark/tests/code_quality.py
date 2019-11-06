@@ -234,8 +234,9 @@ def run_clang_tidy_test(rosetta_dir, working_dir, platform, config, hpc_driver=N
     CLANG_TIDY_OPTIONS="-quiet -header-filter='.*'"
     CLANG_TIDY_TESTS = ["clang-diagnostic-*",
                         "clang-analyzer-*",
-                        "bugprone-integer-division",
+                        "bugprone-*",
                         "modernize-use-override",
+                        "-bugprone-forward-declaration-namespace", # Skip - This makes spurious errors when we include the .fwd.hh but not the .hh"
                         "-clang-analyzer-security.FloatLoopCounter", # Skip - There's a number of places in Rosetta where we attempt to evenly sample across a range.
                         "-clang-analyzer-cplusplus.NewDelete", # Skip - There's issues on the test server with shared_ptr in the system headers.
                         "-clang-analyzer-cplusplus.NewDeleteLeaks", # Ibid.

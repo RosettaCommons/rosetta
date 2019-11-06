@@ -557,7 +557,7 @@ HBondSet::HBondSet(
 
 /// copy ctor
 HBondSet::HBondSet( HBondSet const & src ):
-	basic::datacache::CacheableData(),
+	basic::datacache::CacheableData( src ),
 	options_( utility::pointer::make_shared< HBondOptions >( *src.options_ ))
 {
 	for ( Size i=1; i<= src.hbonds_.size(); ++i ) {

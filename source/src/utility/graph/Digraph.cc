@@ -506,8 +506,8 @@ Digraph::Digraph( platform::Size num_nodes ) :
 /// DerivedDirectedNode or DerivedDirectedEdge objects.  Derived class copy constructors should call
 /// the base class assignment operator once the initial construction has been completed.
 Digraph::Digraph( Digraph const & source ) :
-	parent(),
-	utility::pointer::enable_shared_from_this< Digraph >(),
+	parent(source),
+	utility::pointer::enable_shared_from_this< Digraph >(source),
 	num_nodes_( source.num_nodes_ ),
 	nodes_( num_nodes_, (DirectedNode *) nullptr ),
 	num_edges_( 0 ),
@@ -590,7 +590,7 @@ Digraph::add_edge(platform::Size tail_index, platform::Size head_index)
 {
 	debug_assert( ! get_edge_exists( tail_index, head_index ) );
 
-	DirectedEdge* new_edge = create_new_edge(tail_index, head_index); // NOLINT -- This can be called indirectly from one of the constructors in a fashion which is (sort-of) safe
+	DirectedEdge* new_edge = create_new_edge(tail_index, head_index); // NOLINT(clang-analyzer-optin.cplusplus.VirtualCall) -- This can be called indirectly from one of the constructors in a fashion which is (sort-of) safe
 	edge_list_.push_back( new_edge );
 	++num_edges_;
 	new_edge->set_pos_in_owners_list( edge_list_.last() );

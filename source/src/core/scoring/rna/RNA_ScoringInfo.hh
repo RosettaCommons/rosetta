@@ -55,10 +55,6 @@ public:
 
 	RNA_ScoringInfo();
 
-	RNA_ScoringInfo( RNA_ScoringInfo const & src );
-
-	~RNA_ScoringInfo() override{};
-
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{

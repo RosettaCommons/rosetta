@@ -161,18 +161,11 @@ private:
 	utility::vector1<core::Real> Z_all_;
 
 public:
-	PCS_data();
-
-	~PCS_data() override;
+	PCS_data() = delete;
 
 	PCS_data(PCS_data_input & P_d_i);
 
 	PCS_data(PCS_data_input & P_d_i, utility::vector1< bool > const exclude_residues );
-
-	PCS_data(PCS_data const &other);
-
-	PCS_data &
-	operator=( PCS_data const & src );
 
 	basic::datacache::CacheableDataOP
 	clone() const override;

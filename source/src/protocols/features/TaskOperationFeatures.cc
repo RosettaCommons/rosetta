@@ -91,14 +91,6 @@ static Tracer TR("protocols.features.TaskOperationFeatures");
 
 TaskOperationFeatures::TaskOperationFeatures() = default;
 
-TaskOperationFeatures::TaskOperationFeatures(TaskOperationFeatures const &) :
-	FeaturesReporter()
-	// run_once_(src.run_once_)
-{}
-
-TaskOperationFeatures::~TaskOperationFeatures() = default;
-
-
 void
 TaskOperationFeatures::write_schema_to_db(
 	sessionOP db_session

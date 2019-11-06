@@ -93,10 +93,11 @@ DatabaseResourceLocator::DatabaseResourceLocator(
 
 DatabaseResourceLocator::DatabaseResourceLocator(
 	DatabaseResourceLocator const & src
-) : basic::resource_manager::ResourceLocator(),
+) : basic::resource_manager::ResourceLocator(src),
 	database_session_resource_tag_(src.database_session_resource_tag_),
 	sql_command_(src.sql_command_),
 	column_separator_(src.column_separator_)
+	// RM - Are we deliberately not copying the sessionOP?
 {}
 
 

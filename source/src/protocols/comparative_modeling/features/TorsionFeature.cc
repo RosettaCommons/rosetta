@@ -31,11 +31,6 @@ TorsionFeature::TorsionFeature() :
 	torsion_bin_( INVALID )
 {}
 
-TorsionFeature::TorsionFeature( TorsionFeature const & other ) :
-	ResidueFeature(),
-	torsion_bin_( other.torsion_bin() )
-{}
-
 TorsionFeature::TorsionFeature( TorsionBin bin ) :
 	torsion_bin_( bin )
 {}

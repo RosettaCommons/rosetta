@@ -36,12 +36,6 @@ class LoopAnchorFeatures : public FeaturesReporter {
 public:
 	LoopAnchorFeatures();
 
-	LoopAnchorFeatures(LoopAnchorFeatures const & );
-
-	~LoopAnchorFeatures() override;
-
-	/// @brief return string with class name
-
 	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(

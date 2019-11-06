@@ -39,40 +39,6 @@ public:
 
 	/// @brief ctors
 	SequenceCoupling() : temp_( 1.0 ) {}
-	/// @brief copy ctor
-	SequenceCoupling( SequenceCoupling const & src ):
-		SequenceProfile()
-	{
-		*this = src;
-	}
-
-	/*
-	void profile(
-	utility::vector1< utility::vector1< Real > > const & new_profile
-	);
-	utility::vector1< utility::vector1< Real > > const & profile() const;
-	*/
-
-	/// @brief assignment operator.
-	SequenceCoupling& operator = ( SequenceCoupling const & rhs ) {
-		if ( this == &rhs ) return *this;
-
-		id      ( rhs.id() );
-		start   ( rhs.start()    );
-		gap_char( rhs.gap_char() );
-		sequence( rhs.sequence() );
-
-		edgePots( rhs.edgePots() );
-		edgeList( rhs.edgeList() );
-		profile( rhs.profile() );
-		//alphabet( rhs.alphabet() );
-		temp    ( rhs.temp() );
-
-		return *this;
-	}
-
-	/// @brief dtor
-	~SequenceCoupling() override = default;
 
 	/// @brief Read a SequenceCoupling model in GREMLIN format .
 	void read_from_file( FileName const & fn ) override;

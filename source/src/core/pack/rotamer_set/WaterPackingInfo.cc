@@ -35,7 +35,7 @@ namespace rotamer_set {
 WaterPackingInfo::WaterPackingInfo() = default;
 
 WaterPackingInfo::WaterPackingInfo( WaterPackingInfo const & src ):
-	CacheableData(),
+	CacheableData(src),
 	data_( src.data_ )
 {
 	for ( Size i=1; i<= data_.size(); ++i ) {

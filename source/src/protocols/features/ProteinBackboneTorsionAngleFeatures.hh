@@ -40,12 +40,6 @@ class ProteinBackboneTorsionAngleFeatures : public protocols::features::Features
 public:
 	ProteinBackboneTorsionAngleFeatures();
 
-	ProteinBackboneTorsionAngleFeatures( ProteinBackboneTorsionAngleFeatures const & src );
-
-	~ProteinBackboneTorsionAngleFeatures() override;
-
-	/// @brief return string with class name
-
 	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(

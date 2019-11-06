@@ -155,7 +155,7 @@ Pose::~Pose()
 /// @brief copy constructor
 Pose::Pose( Pose const & src ) :
 	ReferenceCount ( src ),
-	utility::pointer::enable_shared_from_this< Pose >()
+	utility::pointer::enable_shared_from_this< Pose >( src )
 {
 	*this = src;
 }

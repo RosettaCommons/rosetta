@@ -42,12 +42,6 @@ public:
 
 	UnrecognizedAtomFeatures(core::Real neighbor_distance_cutoff);
 
-	UnrecognizedAtomFeatures(UnrecognizedAtomFeatures const & src);
-
-	~UnrecognizedAtomFeatures() override;
-
-	/// @brief return string with class name
-
 	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(utility::sql_database::sessionOP db_session) const override;

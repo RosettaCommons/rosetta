@@ -61,12 +61,6 @@ public:
 	HBondFeatures(
 		core::scoring::ScoreFunctionOP scfxn);
 
-	HBondFeatures( HBondFeatures const & src );
-
-	~HBondFeatures() override;
-
-	/// @brief return string with class name
-
 	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(

@@ -55,22 +55,6 @@ BundleGridSamplerHelper::BundleGridSamplerHelper() :
 {
 }
 
-BundleGridSamplerHelper::BundleGridSamplerHelper( BundleGridSamplerHelper const & src ) :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< BundleGridSamplerHelper >(),
-	nDoFs_( src.nDoFs_ ),
-	allowed_dof_types_( src.allowed_dof_types_ ),
-	allowed_dof_helix_indices_( src.allowed_dof_helix_indices_ ),
-	dof_samples_( src.dof_samples_ ),
-	dof_lower_vals_( src.dof_lower_vals_ ),
-	dof_upper_vals_( src.dof_upper_vals_ ),
-	dof_sample_vals_( src.dof_sample_vals_ ),
-	cur_indices_( src.cur_indices_ )
-{
-}
-
-BundleGridSamplerHelper::~BundleGridSamplerHelper() = default;
-
 
 /// @brief make a copy of this BundleGridSamplerHelper object (allocate actual memory for it)
 ///

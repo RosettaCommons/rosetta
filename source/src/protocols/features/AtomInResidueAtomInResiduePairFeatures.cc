@@ -67,13 +67,6 @@ using cppdb::statement;
 
 AtomInResidueAtomInResiduePairFeatures::AtomInResidueAtomInResiduePairFeatures()= default;
 
-AtomInResidueAtomInResiduePairFeatures::AtomInResidueAtomInResiduePairFeatures( AtomInResidueAtomInResiduePairFeatures const & ) :
-	FeaturesReporter()
-{}
-
-AtomInResidueAtomInResiduePairFeatures::~AtomInResidueAtomInResiduePairFeatures()= default;
-
-
 void
 AtomInResidueAtomInResiduePairFeatures::write_schema_to_db(
 	sessionOP db_session

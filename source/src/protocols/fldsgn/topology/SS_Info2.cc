@@ -85,25 +85,6 @@ SS_Base::SS_Base( Size const & begin, Size const & end ):
 }
 
 
-/// @brief copy constructor
-SS_Base::SS_Base( SS_Base const & s ):
-	ReferenceCount(),
-	begin_ ( s.begin_ ),
-	end_ ( s.end_ ),
-	is_geometry_initialized_( s.is_geometry_initialized_ ),
-	orient_ ( s.orient_ ),
-	Nend_orient_( s.Nend_orient_ ),
-	Cend_orient_( s.Cend_orient_ ),
-	Nend_pos_( s.Nend_pos_ ),
-	Cend_pos_( s.Cend_pos_ ),
-	mid_pos_( s.mid_pos_ )
-{}
-
-
-/// @brief destructor
-SS_Base::~SS_Base()= default;
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief default constructor
 Strand::Strand():
@@ -292,24 +273,6 @@ SS_Info2::SS_Info2( Pose const & pose, String const & secstruct ):
 {
 	initialize( pose, secstruct );
 }
-
-
-/// @brief copy constructor
-SS_Info2::SS_Info2( SS_Info2 const & s ):
-	CacheableData(),
-	secstruct_( s.secstruct_ ),
-	bb_pos_( s.bb_pos_ ),
-	strands_( s.strands_ ),
-	strand_id_( s.strand_id_ ),
-	helices_( s.helices_ ),
-	helix_id_( s.helix_id_ ),
-	loop_id_( s.loop_id_ ),
-	ss_element_id_( s.ss_element_id_ )
-{}
-
-
-/// @brief destructor
-SS_Info2::~SS_Info2()= default;
 
 
 /// @brief make clone

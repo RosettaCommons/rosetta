@@ -126,19 +126,6 @@ RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 	reporter_->set_output_level(rotamer_recovery::OL_features);
 }
 
-RotamerRecoveryFeatures::RotamerRecoveryFeatures(
-	RotamerRecoveryFeatures const & src) :
-	FeaturesReporter(),
-	scfxn_(src.scfxn_),
-	reporter_(src.reporter_),
-	protocol_(src.protocol_),
-	comparer_(src.comparer_),
-	task_factory_(src.task_factory_)
-{}
-
-RotamerRecoveryFeatures::~RotamerRecoveryFeatures() = default;
-
-
 vector1<string>
 RotamerRecoveryFeatures::features_reporter_dependencies() const {
 	vector1<string> dependencies;

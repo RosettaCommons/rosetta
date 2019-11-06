@@ -39,17 +39,11 @@ public:
 
 	ChargeChargeFeatures(core::Length distance_cutoff);
 
-	ChargeChargeFeatures(ChargeChargeFeatures const & src);
-
-	~ChargeChargeFeatures() override= default;
-
 	core::Length
 	distance_cutoff() const { return distance_cutoff_; }
 
 	void
 	distance_cutoff(core::Length d) { distance_cutoff_ = d; }
-
-	/// @brief return string with class name
 
 	/// @brief generate the table schemas and write them to the database
 	void

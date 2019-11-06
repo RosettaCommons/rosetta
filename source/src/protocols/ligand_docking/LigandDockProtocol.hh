@@ -84,7 +84,7 @@ public:
 
 private:
 
-	LigandDockProtocol(LigandDockProtocol const & that);
+	LigandDockProtocol(LigandDockProtocol const & ) = delete;
 
 	void
 	classic_protocol(

@@ -53,15 +53,6 @@ public:
 		core::pose::PoseCOP reference_pose
 	);
 
-	ProteinRMSDNoSuperpositionFeatures(
-		ProteinRMSDNoSuperpositionFeatures const & ) :
-		FeaturesReporter()
-	{}
-
-	~ProteinRMSDNoSuperpositionFeatures() override= default;
-
-	/// @brief return string with class name
-
 	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>

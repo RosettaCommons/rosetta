@@ -73,7 +73,7 @@ FACTSPoseInfo::FACTSPoseInfo() :
 {}
 
 // Constructor
-FACTSPoseInfo::FACTSPoseInfo( FACTSPoseInfo const & src ) : CacheableData()
+FACTSPoseInfo::FACTSPoseInfo( FACTSPoseInfo const & src ) : CacheableData(src)
 {
 	Size const src_size( src.size() );
 

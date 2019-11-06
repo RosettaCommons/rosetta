@@ -54,9 +54,6 @@ public:
 	/// @brief ctor for positions, with custom dist_cutoff supplied by user
 	NeighborhoodByDistanceCalculator(std::set< core::Size > const & central_residues, core::Real dist_cutoff);
 
-	/// @brief copy ctor
-	NeighborhoodByDistanceCalculator( NeighborhoodByDistanceCalculator const & calculator );
-
 	core::pose::metrics::PoseMetricCalculatorOP clone() const override;
 
 	//accessors for constant/input data

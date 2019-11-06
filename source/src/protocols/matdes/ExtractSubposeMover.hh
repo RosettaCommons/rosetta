@@ -43,8 +43,6 @@ public:
 	// default constructor
 	ExtractSubposeMover();
 
-	ExtractSubposeMover(const ExtractSubposeMover& rval);
-
 	void apply( core::pose::Pose & pose ) override;
 
 	protocols::moves::MoverOP clone() const override;

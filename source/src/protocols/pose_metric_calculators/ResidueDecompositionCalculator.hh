@@ -44,8 +44,6 @@ protected:
 
 	ResidueDecompositionCalculator();
 
-	ResidueDecompositionCalculator( ResidueDecompositionCalculator const & calculator );
-
 	std::string print( std::string const & key ) const override;
 
 	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override;

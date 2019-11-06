@@ -65,29 +65,6 @@ Parameter::Parameter() :
 {
 }
 
-Parameter::Parameter( Parameter const & src ) :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< Parameter >(),
-	parameter_name_(src.parameter_name_),
-	parameter_description_( src.parameter_description_ ),
-	short_parameter_description_(src.short_parameter_description_),
-	parameter_units_(src.parameter_units_),
-	parameter_type_(src.parameter_type_),
-	can_be_set_(src.can_be_set_),
-	can_be_copied_(src.can_be_copied_),
-	can_be_sampled_(src.can_be_sampled_),
-	can_be_perturbed_(src.can_be_perturbed_),
-	global_for_parameters_set_(src.global_for_parameters_set_),
-	copy_suffix_(src.copy_suffix_),
-	copy_from_parameters_index_(src.copy_from_parameters_index_),
-	value_set_(src.value_set_)
-{
-}
-
-/// @brief Pure virtual destructor.
-/// @details Counter-intuitively, C++ requires pure virtual destructors to be implemented.
-Parameter::~Parameter() {}
-
 /// @brief Set parameter name.
 void
 Parameter::set_parameter_name(

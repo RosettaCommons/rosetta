@@ -59,10 +59,6 @@ NeighborsByDistanceCalculator::NeighborsByDistanceCalculator( core::Size central
 	//not doing anything to std::set<core::Size> - should initialize empty
 {}
 
-NeighborsByDistanceCalculator::NeighborsByDistanceCalculator( NeighborsByDistanceCalculator const & calculator )
-: parent(), central_residue_(calculator.central_residue()), dist_cutoff_(calculator.dist_cutoff())
-{}
-
 core::pose::metrics::PoseMetricCalculatorOP NeighborsByDistanceCalculator::clone() const
 { return utility::pointer::make_shared< NeighborsByDistanceCalculator >(*this); }
 

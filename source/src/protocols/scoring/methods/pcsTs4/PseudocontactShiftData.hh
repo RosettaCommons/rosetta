@@ -171,16 +171,9 @@ private:
 
 public:
 
-	~PCS_data_Ts4() override;
-
 	PCS_data_Ts4(PCS_data_input_Ts4 & P_d_i);
 
 	PCS_data_Ts4(PCS_data_input_Ts4 & P_d_i, utility::vector1< bool > const exclude_residues );
-
-	PCS_data_Ts4(PCS_data_Ts4 const &other);
-
-	PCS_data_Ts4 &
-	operator=( PCS_data_Ts4 const & src );
 
 	basic::datacache::CacheableDataOP
 	clone() const override;

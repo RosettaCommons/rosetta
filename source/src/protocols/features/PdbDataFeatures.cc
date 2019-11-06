@@ -81,14 +81,6 @@ using basic::database::insert_statement_generator::RowDataBaseOP;
 
 PdbDataFeatures::PdbDataFeatures() = default;
 
-PdbDataFeatures::PdbDataFeatures(PdbDataFeatures const & ) : FeaturesReporter()
-{
-
-}
-
-PdbDataFeatures::~PdbDataFeatures() = default;
-
-
 void
 PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;

@@ -59,8 +59,6 @@ Mover::Mover()
 	last_status_( MS_SUCCESS )
 {}
 
-Mover::~Mover()= default;
-
 Mover::Mover( std::string const & type_name ) :
 	utility::pointer::ReferenceCount(),
 	type_( type_name ),
@@ -70,30 +68,6 @@ Mover::Mover( std::string const & type_name ) :
 	last_status_( MS_SUCCESS )
 {}
 
-Mover::Mover( Mover const & other ) :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< Mover >(),
-	type_( other.type_ ),
-	current_tag_( other.current_tag_ ),
-	input_pose_(other.input_pose_),
-	native_pose_(other.native_pose_),
-	last_status_( other.last_status_ ),
-	current_job_( other.current_job_ )
-{}
-
-
-/// @brief assignment operator
-Mover& Mover::operator=( Mover const & rhs ) {
-	//abort self-assignment
-	if ( this == &rhs ) return *this;
-	type_ = rhs.type_;
-	current_tag_ = rhs.current_tag_;
-	input_pose_ = rhs.input_pose_;
-	native_pose_ = rhs.native_pose_;
-	last_status_ = rhs.last_status_;
-	current_job_ = rhs.current_job_;
-	return *this;
-}
 
 PoseCOP
 Mover::get_input_pose() const { return input_pose_; }

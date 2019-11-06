@@ -244,8 +244,8 @@ Residue::Residue(
 
 /// @brief Copy constructor.
 Residue::Residue( Residue const & src ) :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< Residue >(),
+	utility::pointer::ReferenceCount(src),
+	utility::pointer::enable_shared_from_this< Residue >(src),
 	rsd_type_ptr_( src.rsd_type_ptr_ ),
 	rsd_type_(src.rsd_type_)
 {

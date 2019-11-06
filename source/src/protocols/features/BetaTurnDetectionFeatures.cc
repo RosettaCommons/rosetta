@@ -54,7 +54,7 @@ using cppdb::statement;
 BetaTurnDetectionFeatures::BetaTurnDetectionFeatures() : FeaturesReporter(), btd_( utility::pointer::make_shared< BetaTurnDetection >() ) {}
 
 BetaTurnDetectionFeatures::BetaTurnDetectionFeatures( BetaTurnDetectionFeatures const & from ) :
-	FeaturesReporter(), btd_( utility::pointer::make_shared< BetaTurnDetection >( * from.btd_ ) ) {}
+	FeaturesReporter(from), btd_( utility::pointer::make_shared< BetaTurnDetection >( * from.btd_ ) ) {}
 
 BetaTurnDetectionFeatures::~BetaTurnDetectionFeatures() = default;
 

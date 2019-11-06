@@ -59,14 +59,6 @@ using namespace core;
 
 PcsEnergyController::PcsEnergyController() = default;
 
-PcsEnergyController::PcsEnergyController(PcsEnergyController const &):
-	TopologyClaimer()
-{
-}
-
-
-PcsEnergyController::~PcsEnergyController()= default;
-
 void
 PcsEnergyController::set_defaults( ){
 	using namespace protocols::scoring::methods::pcs2;

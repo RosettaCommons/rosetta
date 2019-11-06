@@ -518,8 +518,8 @@ Graph::Graph( platform::Size num_nodes ) :
 /// DerivedNode or DerivedEdge objects.  Derived class copy constructors should call
 /// the base class assignment operator once the initial construction has been completed.
 Graph::Graph( Graph const & source ) :
-	parent(),
-	utility::pointer::enable_shared_from_this< Graph >(),
+	parent(source),
+	utility::pointer::enable_shared_from_this< Graph >(source),
 	num_nodes_( source.num_nodes_ ),
 	nodes_( num_nodes_, (Node *) nullptr ),
 	num_edges_( 0 ),

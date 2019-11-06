@@ -26,6 +26,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
+#include <utility/pointer/deep_copy.hh>
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
@@ -40,11 +41,7 @@ public:
 
 	LoopAnalyzerMover( protocols::loops::Loops const & loops, bool const tracer = false );
 
-	~LoopAnalyzerMover() override;
-
 	LoopAnalyzerMover();
-
-	LoopAnalyzerMover( LoopAnalyzerMover const & rhs );
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void parse_my_tag(
@@ -53,8 +50,6 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
-
-	LoopAnalyzerMover & operator = ( LoopAnalyzerMover const & rhs );
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
@@ -70,7 +65,7 @@ public: ///////////////////getters, setters/////////////
 	void set_loops( protocols::loops::LoopsCOP loops );
 
 	/// @brief get loops object, because public setters/getters are a rule
-	protocols::loops::LoopsCOP const & get_loops( void ) const ;
+	protocols::loops::LoopsCOP get_loops( void ) const ;
 
 	/// @brief set tracer bool, because public setters/getters are a rule
 	inline void set_use_tracer( bool tracer ) { tracer_ = tracer; }
@@ -115,29 +110,32 @@ private:
 	void find_positions( core::pose::Pose const & pose );
 
 private:
+	//This should be std::numeric_limits<core::Real>::lowest(), but that's cxx11
+	static constexpr core::Real REAL_FAKE_MIN = -1000000;
+
 	/// @brief used to store a copy of the input loops
-	protocols::loops::LoopsCOP loops_;
+	utility::pointer::DeepCopyOP< protocols::loops::Loops const > loops_;
 
 	/// @brief output to tracer or PDB/silent file
-	bool tracer_;
+	bool tracer_ = true; // WAG, who knows what user wants
 
 	/// @brief used to calculate positions to examine - loops +- 1 position are interesting, but vary w/termini, etc
 	utility::vector1< core::Size > positions_;
 
 	/// @brief scorefunction used to apply multiple individual terms at once, not as a cohesive unit
-	core::scoring::ScoreFunctionOP sf_;
+	utility::pointer::DeepCopyOP< core::scoring::ScoreFunction > sf_;
 
 	/// @brief scorefunction for chainbreak score
-	core::scoring::ScoreFunctionOP chbreak_sf_;
+	utility::pointer::DeepCopyOP< core::scoring::ScoreFunction > chbreak_sf_;
 
 	///brief remember chainbreak scores
 	utility::vector1< core::Real > scores_;
 
-	core::Real total_score_;
-	core::Real max_rama_;
-	core::Real max_chainbreak_;
-	core::Real max_omega_;
-	core::Real max_pbond_;
+	core::Real total_score_ = 0;
+	core::Real max_rama_ = REAL_FAKE_MIN;
+	core::Real max_chainbreak_ = REAL_FAKE_MIN;
+	core::Real max_omega_ = REAL_FAKE_MIN;
+	core::Real max_pbond_ = REAL_FAKE_MIN;
 
 }; //class LoopAnalyzerMover
 

@@ -57,8 +57,6 @@ public:
 
 	CenListInfo(): calculated_(false) {};
 
-	CenListInfo( CenListInfo const & src );
-
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{

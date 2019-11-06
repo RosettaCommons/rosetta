@@ -175,10 +175,6 @@ public:
 		std::string const & NameOfResidueDecompositionCalculator
 	);
 
-	DecomposeAndReweightEnergiesCalculator(
-		DecomposeAndReweightEnergiesCalculator const & calculator
-	);
-
 	core::pose::metrics::PoseMetricCalculatorOP clone() const override
 	{ return utility::pointer::make_shared< DecomposeAndReweightEnergiesCalculator >( *this ); }
 

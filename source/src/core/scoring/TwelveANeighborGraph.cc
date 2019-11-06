@@ -110,9 +110,11 @@ TwelveANeighborGraph::TwelveANeighborGraph( Size num_nodes )
 	set_num_nodes( num_nodes );
 }
 
-TwelveANeighborGraph::TwelveANeighborGraph( TwelveANeighborGraph const & source )
+TwelveANeighborGraph::TwelveANeighborGraph( // NOLINT(bugprone-copy-constructor-init) -- deliberately not calling parent copy constructor
+	TwelveANeighborGraph const & source
+)
 :
-	parent( source )
+	parent()
 {
 	operator = ( source );
 }
@@ -121,7 +123,8 @@ TwelveANeighborGraph::TwelveANeighborGraph( TwelveANeighborGraph const & source 
 TwelveANeighborGraph &
 TwelveANeighborGraph::operator = ( TwelveANeighborGraph const & source )
 {
-	return static_cast< TwelveANeighborGraph & >  (parent::operator = ( source ));
+	parent::operator =( source );
+	return *this;
 }
 
 Distance

@@ -51,10 +51,6 @@ public:
 
 	RNA_RawBaseBaseInfo(): calculated_( false ) {};
 
-	~RNA_RawBaseBaseInfo() override{};
-
-	RNA_RawBaseBaseInfo( RNA_RawBaseBaseInfo const & src );
-
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{

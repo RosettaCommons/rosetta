@@ -59,8 +59,8 @@ ParametersSet::ParametersSet() :
 /// @brief Copy constructor.
 ///
 ParametersSet::ParametersSet( ParametersSet const & src ) :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< ParametersSet >()
+	utility::pointer::ReferenceCount(src),
+	utility::pointer::enable_shared_from_this< ParametersSet >(src)
 {
 	parameters_.clear();
 	//Make copies of the Parameters objects:

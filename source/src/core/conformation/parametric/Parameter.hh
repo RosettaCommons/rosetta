@@ -78,12 +78,6 @@ public:
 	///
 	Parameter();
 
-	Parameter( Parameter const & src );
-
-	/// @brief Pure virtual destructor.
-	/// @details Counter-intuitively, C++ requires pure virtual destructors to be implemented.
-	~Parameter() override=0;
-
 	/// @brief Make a copy of this object ( allocate actual memory for it )
 	///
 	virtual

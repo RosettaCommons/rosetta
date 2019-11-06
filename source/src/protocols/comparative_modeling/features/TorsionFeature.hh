@@ -41,7 +41,6 @@ enum TorsionBin {
 class TorsionFeature : public ResidueFeature {
 public:
 	TorsionFeature();
-	TorsionFeature( TorsionFeature const & other );
 	TorsionFeature( TorsionBin bin );
 
 	std::string type() const override;

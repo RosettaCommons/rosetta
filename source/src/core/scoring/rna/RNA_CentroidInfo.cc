@@ -52,15 +52,6 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-/// @details Copy constructors must copy all data, not just some...
-RNA_CentroidInfo::RNA_CentroidInfo( RNA_CentroidInfo const & src ) :
-	CacheableData()
-{
-	base_centroids_ = src.base_centroids_;
-	base_stubs_ = src.base_stubs_;
-	calculated_ = src.calculated_;
-}
-
 using Matrix = numeric::xyzMatrix<Real>;
 
 

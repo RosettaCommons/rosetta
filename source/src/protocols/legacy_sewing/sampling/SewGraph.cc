@@ -158,7 +158,9 @@ SewGraph::~SewGraph() {
 /// This is because the copy constructor relies on polymorphic functions which
 /// are unavailable during the Graph constructor.  Instead, this function waits
 /// until parent construction is complete, and relies on the assigmnent operator.
-SewGraph::SewGraph( SewGraph const & src ):
+SewGraph::SewGraph( // NOLINT(bugprone-copy-constructor-init) -- deliberately not calling parent copy constructor
+	SewGraph const & src
+):
 	utility::graph::Graph(),
 	hash_edge_pool_( new boost::unordered_object_pool< HashEdge > ( 256 ) ),
 	model_indices_(src.model_indices_),

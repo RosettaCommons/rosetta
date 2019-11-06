@@ -82,15 +82,6 @@ public:
 		loops::GuardedLoopsFromFileOP guarded_loops
 	);
 
-	/// @brief Copy-ctor; Shallow copy of all data.
-	LoopRelaxMover( LoopRelaxMover const & src );
-
-	/// @brief assignment operator; Shallow copy of all data.
-	LoopRelaxMover & operator = ( LoopRelaxMover const & rhs );
-
-
-	//destructor
-	~LoopRelaxMover() override;
 
 	/// @brief Apply the loop-relax protocol to a Pose.  At the call to this function, the
 	/// loop indices originating from the loop file (which may list indices with PDB identifiers

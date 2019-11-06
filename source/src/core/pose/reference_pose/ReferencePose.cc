@@ -66,20 +66,6 @@ ReferencePose::ReferencePose() :
 {
 }
 
-/// @brief Copy constructor.
-///
-ReferencePose::ReferencePose( ReferencePose const & src ) :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< ReferencePose >(),
-	stores_residue_map_( src.stores_residue_map_ ),
-	residue_map_( src.residue_map_ )
-{
-}
-
-/// @brief Destructor.
-///
-ReferencePose::~ReferencePose() = default;
-
 
 /// @brief Make a copy of this ReferencePose object (allocate actual memory for it)
 /// and return an owning pointer to the copy.

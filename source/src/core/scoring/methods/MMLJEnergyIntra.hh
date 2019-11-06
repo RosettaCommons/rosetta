@@ -46,10 +46,6 @@ public:
 		nblist_( nblist )
 	{}
 
-	NeighborListData( NeighborListData const & src ) :
-		nblist_( src.nblist() )
-	{}
-
 	basic::datacache::CacheableDataOP
 	clone() const override { return utility::pointer::make_shared< NeighborListData >( *this ); }
 

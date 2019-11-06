@@ -120,16 +120,6 @@ StructureScoresFeatures::StructureScoresFeatures(
 	}
 }
 
-StructureScoresFeatures::StructureScoresFeatures(
-	StructureScoresFeatures const & src
-) :
-	FeaturesReporter(),
-	scfxn_(src.scfxn_)
-{}
-
-StructureScoresFeatures::~StructureScoresFeatures() = default;
-
-
 void
 StructureScoresFeatures::write_schema_to_db(
 	utility::sql_database::sessionOP db_session

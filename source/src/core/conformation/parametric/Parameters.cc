@@ -57,8 +57,8 @@ Parameters::Parameters() :
 /// @brief Copy constructor.
 /// @details Deep-copies the residue list and the parameters list.
 Parameters::Parameters( Parameters const & src ) :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< Parameters >()
+	utility::pointer::ReferenceCount(src),
+	utility::pointer::enable_shared_from_this< Parameters >(src)
 {
 	residue_list_.clear();
 	if ( src.residue_list_.size()>0 ) {

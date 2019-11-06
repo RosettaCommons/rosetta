@@ -69,10 +69,6 @@ public:
 		core::Real dist_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff]
 	);
 
-	InterGroupNeighborsCalculator( InterGroupNeighborsCalculator const & calculator );
-
-	~InterGroupNeighborsCalculator() override;
-
 	core::pose::metrics::PoseMetricCalculatorOP clone() const override;
 
 	//accessors for non-recomputed input data

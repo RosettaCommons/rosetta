@@ -49,13 +49,6 @@ namespace pose {
 namespace rna {
 namespace secstruct_legacy {
 
-/// @details Copy constructors must copy all data, not just some...
-RNA_SecStructLegacyInfo::RNA_SecStructLegacyInfo( RNA_SecStructLegacyInfo const & src ) :
-	CacheableData()
-{
-	rna_secstruct_legacy_ = src.rna_secstruct_legacy_;
-}
-
 /// @details Pose must already contain a core::pose::datacache::CacheableDataType::RNA_SCORING_INFO object or this method will fail.
 bool
 has_rna_secstruct_legacy( core::pose::Pose const & pose )

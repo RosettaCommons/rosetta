@@ -707,7 +707,7 @@ LKB_ResidueInfo::clone() const
 
 
 LKB_ResiduesInfo::LKB_ResiduesInfo( LKB_ResiduesInfo const & src ):
-	CacheableData()
+	CacheableData(src)
 {
 	residues_info_.clear();
 	for ( Size i=1; i<= src.size(); ++i ) {

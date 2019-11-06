@@ -525,8 +525,7 @@ update_cached_lkb_resinfo(
 class LKB_ResPairMinData : public basic::datacache::CacheableData {
 public:
 	LKB_ResPairMinData();
-	LKB_ResPairMinData( LKB_ResPairMinData const & src );
-	~LKB_ResPairMinData() override = default;
+
 	basic::datacache::CacheableDataOP clone() const override
 	{ return utility::pointer::make_shared< LKB_ResPairMinData >( *this ); }
 
@@ -554,13 +553,6 @@ using LKB_ResPairMinDataOP = utility::pointer::shared_ptr<LKB_ResPairMinData>;
 using LKB_ResPairMinDataCOP = utility::pointer::shared_ptr<const LKB_ResPairMinData>;
 
 LKB_ResPairMinData::LKB_ResPairMinData()= default;
-
-LKB_ResPairMinData::LKB_ResPairMinData( LKB_ResPairMinData const & src ) :
-	res1_data_( src.res1_data_ ),
-	res2_data_( src.res2_data_ ),
-	initialized_( src.initialized_ )
-{
-}
 
 
 void

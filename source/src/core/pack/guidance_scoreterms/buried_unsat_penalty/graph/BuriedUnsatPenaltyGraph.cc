@@ -811,7 +811,7 @@ BuriedUnsatPenaltyGraph::BuriedUnsatPenaltyGraph(
 }
 
 /// @brief Copy constructor.
-BuriedUnsatPenaltyGraph::BuriedUnsatPenaltyGraph(
+BuriedUnsatPenaltyGraph::BuriedUnsatPenaltyGraph( // NOLINT(bugprone-copy-constructor-init) -- deliberately not calling parent copy constructor
 	BuriedUnsatPenaltyGraph const &src
 ) :
 	parent( ),

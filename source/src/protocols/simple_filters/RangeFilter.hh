@@ -66,11 +66,6 @@ public:// constructor/destructor
 	// @brief default constructor
 	RangeFilter(Real lower_bound, Real upper_bound, FilterOP filter);
 
-	// @brief copy constructor
-	RangeFilter( RangeFilter const & rval );
-
-	~RangeFilter() override= default;
-
 
 public:// virtual constructor
 

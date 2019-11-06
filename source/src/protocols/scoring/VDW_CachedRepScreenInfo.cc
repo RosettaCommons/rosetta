@@ -71,7 +71,7 @@ VDW_CachedRepScreenInfo::VDW_CachedRepScreenInfo( core::pose::Pose const & pose 
 
 /// @details Copy constructors must copy all data, not just some...
 VDW_CachedRepScreenInfo::VDW_CachedRepScreenInfo( VDW_CachedRepScreenInfo const & src ) :
-	CacheableData(),
+	CacheableData( src ),
 	VDW_rep_screen_info_list_( src.VDW_rep_screen_info_list_ ),
 	VDW_screen_bin_( src.VDW_screen_bin_ ) // note, we are not cloning -- this is 'scratch' space that takes a while to initialize.
 {

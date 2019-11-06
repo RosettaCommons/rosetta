@@ -217,49 +217,6 @@ LoopRelaxMover::LoopRelaxMover(
 	guarded_loops_( std::move( guarded_loops ) ) // shallow copy
 {}
 
-/// @brief Copy-ctor; shallow copy of all data object.
-LoopRelaxMover::LoopRelaxMover( LoopRelaxMover const & src ) : moves::Mover(),
-	cmd_line_csts_( src.cmd_line_csts_ ),
-	copy_sidechains_( src.copy_sidechains_ ),
-	n_rebuild_tries_( src.n_rebuild_tries_ ),
-	rebuild_filter_( src.rebuild_filter_ ),
-	remodel_( src.remodel_ ),
-	intermedrelax_( src.intermedrelax_ ),
-	refine_( src.refine_ ),
-	relax_( src.relax_ ),
-	guarded_loops_( src.guarded_loops_ ),
-	cen_scorefxn_( src.cen_scorefxn_ ),
-	fa_scorefxn_( src.fa_scorefxn_ ),
-	frag_libs_( src.frag_libs_ ),
-	compute_rmsd_( src.compute_rmsd_ )
-{}
-
-/// @brief assignment operator; Shallow copy of all data.
-LoopRelaxMover &
-LoopRelaxMover::operator = ( LoopRelaxMover const & rhs )
-{
-	if ( this != &rhs ) {
-		cmd_line_csts_ = rhs.cmd_line_csts_;
-		copy_sidechains_ = rhs.copy_sidechains_;
-		n_rebuild_tries_ = rhs.n_rebuild_tries_;
-		rebuild_filter_ = rhs.rebuild_filter_;
-		remodel_ = rhs.remodel_;
-		intermedrelax_ = rhs.intermedrelax_;
-		refine_ = rhs.refine_;
-		relax_ = rhs.relax_;
-		guarded_loops_ = rhs.guarded_loops_;
-		cen_scorefxn_ = rhs.cen_scorefxn_;
-		fa_scorefxn_ = rhs.fa_scorefxn_;
-		frag_libs_ = rhs.frag_libs_;
-		compute_rmsd_ = rhs.compute_rmsd_;
-	}
-	return *this;
-}
-
-
-//destructor
-LoopRelaxMover::~LoopRelaxMover() = default;
-
 void LoopRelaxMover::frag_libs(
 	utility::vector1< core::fragment::FragSetOP > new_libs
 ) {

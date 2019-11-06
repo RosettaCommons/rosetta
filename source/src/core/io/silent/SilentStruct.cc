@@ -106,8 +106,8 @@ SilentStruct::SilentStruct( SilentFileOptions const & opts ) :
 SilentStruct::~SilentStruct() = default;
 
 SilentStruct::SilentStruct( SilentStruct const & src ) :
-	ReferenceCount(),
-	utility::pointer::enable_shared_from_this< SilentStruct >()
+	ReferenceCount(src),
+	utility::pointer::enable_shared_from_this< SilentStruct >(src)
 {
 	*this = src;
 }
@@ -119,15 +119,19 @@ SilentStruct& SilentStruct::operator= ( SilentStruct const & src ) {
 		nres_ = src.nres_;
 		decoy_tag_ = src.decoy_tag_;
 		sequence_ = src.sequence_;
+		// ??? Is the omission of parent_remarks_map_ deliberate?
 		silent_comments_ = src.silent_comments_;
 		silent_energies_ = src.silent_energies_;
 		cache_remarks_ = src.cache_remarks_;
 		pdbinfo_labels_ = src.pdbinfo_labels_;
-		precision_ = src.precision_;
-		scoreline_prefix_ = src.scoreline_prefix_;
 		residue_numbers_ = src.residue_numbers_;
 		chains_ = src.chains_;
+		// ??? is the omission of other_struct_list_ deliberate?
 		full_model_parameters_ = src.full_model_parameters_;
+		// ??? is the omisson of segment_IDs_ deliberate?
+		// ??? is the omission of submotif_info_list_ deliberate?
+		precision_ = src.precision_;
+		scoreline_prefix_ = src.scoreline_prefix_;
 		options_ = src.options_;
 	}
 	return *this;

@@ -68,19 +68,6 @@ Membrane_FAPotential::Membrane_FAPotential() :
 }
 
 
-/// @brief Copy Constructor for Membrane Fullatom Embedding
-Membrane_FAEmbed::Membrane_FAEmbed( Membrane_FAEmbed const & src ) :
-	CacheableData()
-{
-	fa_center_ = src.fa_center_;
-	fa_proj_ = src.fa_proj_;
-	fa_proj_coord_ = src.fa_proj_coord_;
-	fa_proj_deriv_ = src.fa_proj_deriv_;
-	fa_depth_ = src.fa_depth_;
-	calculated_ = src.calculated_;
-	Fa_Membed_update_ = src.Fa_Membed_update_;
-}
-
 /// @brief Initialize Mmebrane Fullatom Embedding from Options
 void Membrane_FAEmbed::initialize(pose::Pose const & pose)
 {

@@ -131,41 +131,6 @@ PCS_data_per_lanthanides::operator=( PCS_data_per_lanthanides const & other )
 	return *this;
 }
 
-PCS_data::PCS_data(){
-	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_data class" );
-}
-
-PCS_data::~PCS_data()= default;
-
-PCS_data &
-PCS_data::operator=( PCS_data const &other )
-{
-	if ( this != &other ) {
-		n_lanthanides_ = other.n_lanthanides_;
-		n_pcs_spin_ = other.n_pcs_spin_;
-		PCS_data_line_all_spin_ = other.PCS_data_line_all_spin_;
-		PCS_data_per_lanthanides_all_ = other.PCS_data_per_lanthanides_all_;
-		A_all_ = other.A_all_;
-		X_all_ = other.X_all_;
-		Z_all_ = other.Z_all_;
-		Y_all_ = other.Y_all_;
-	}
-	return *this;
-}
-
-PCS_data::PCS_data(PCS_data const &other):
-	CacheableData()
-{
-	n_lanthanides_ = other.n_lanthanides_;
-	n_pcs_spin_ = other.n_pcs_spin_;
-	PCS_data_line_all_spin_ = other.PCS_data_line_all_spin_;
-	PCS_data_per_lanthanides_all_ = other.PCS_data_per_lanthanides_all_;
-	A_all_ = other.A_all_;
-	X_all_ = other.X_all_;
-	Y_all_ = other.Y_all_;
-	Z_all_ = other.Z_all_;
-}
-
 basic::datacache::CacheableDataOP
 PCS_data::clone() const {
 	return utility::pointer::make_shared< PCS_data >( *this );

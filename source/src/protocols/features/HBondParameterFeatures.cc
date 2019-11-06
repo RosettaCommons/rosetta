@@ -87,15 +87,6 @@ HBondParameterFeatures::HBondParameterFeatures(
 	scfxn_(get_score_function())
 {}
 
-HBondParameterFeatures::HBondParameterFeatures(
-	HBondParameterFeatures const & src) :
-	FeaturesReporter(),
-	scfxn_(src.scfxn_)
-{}
-
-HBondParameterFeatures::~HBondParameterFeatures() = default;
-
-
 void
 HBondParameterFeatures::write_schema_to_db(
 	sessionOP db_session

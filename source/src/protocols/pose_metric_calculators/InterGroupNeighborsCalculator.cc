@@ -74,12 +74,6 @@ InterGroupNeighborsCalculator::InterGroupNeighborsCalculator( group_set const & 
 	calc_inter_group_ = utility::pointer::make_shared< CalcInterNeighborGroup >(groups, dist_cutoff);
 }
 
-InterGroupNeighborsCalculator::InterGroupNeighborsCalculator( InterGroupNeighborsCalculator const & calculator )
-: parent(), calc_inter_group_(calculator.calc_inter_group_)
-{}
-
-InterGroupNeighborsCalculator::~InterGroupNeighborsCalculator() = default;
-
 core::pose::metrics::PoseMetricCalculatorOP InterGroupNeighborsCalculator::clone() const
 { return utility::pointer::make_shared< InterGroupNeighborsCalculator >(*this); }
 

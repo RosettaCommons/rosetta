@@ -55,8 +55,6 @@ public:
 
 	RNA_FilteredBaseBaseInfo();
 
-	RNA_FilteredBaseBaseInfo( RNA_FilteredBaseBaseInfo const & src );
-
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{

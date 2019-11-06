@@ -64,15 +64,6 @@ ExtractSubposeMover::ExtractSubposeMover() :
 	extras_( false )
 { }
 
-ExtractSubposeMover::ExtractSubposeMover(const ExtractSubposeMover& rval) :
-	protocols::moves::Mover(),
-	sym_dof_names_( rval.sym_dof_names_ ),
-	prefix_( rval.prefix_ ),
-	suffix_( rval.suffix_ ),
-	contact_dist_( rval.contact_dist_ ),
-	extras_( rval.extras_ )
-{ }
-
 protocols::moves::MoverOP
 ExtractSubposeMover::clone() const {
 	return utility::pointer::make_shared< ExtractSubposeMover >( *this );

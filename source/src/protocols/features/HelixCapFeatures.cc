@@ -57,14 +57,6 @@ HelixCapFeatures::HelixCapFeatures(core::scoring::ScoreFunctionOP /*scfxn*/ )
 {
 }
 
-HelixCapFeatures::HelixCapFeatures( HelixCapFeatures const & /*src*/ ) : FeaturesReporter(/*src*/)
-{
-}
-
-HelixCapFeatures::~HelixCapFeatures()= default;
-
-/// @brief return string with class name
-
 /// @brief generate the table schemas and write them to the database
 void
 HelixCapFeatures::write_schema_to_db(

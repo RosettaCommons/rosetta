@@ -250,7 +250,9 @@ JobDigraph::JobDigraph( platform::Size num_nodes ) :
 
 /// @brief copy constructor relies on factory methods and virtual "copy_from" methods
 /// by calling the assignment operator
-JobDigraph::JobDigraph( JobDigraph const & source ) :
+JobDigraph::JobDigraph( // NOLINT(bugprone-copy-constructor-init) -- deliberately not calling parent copy constructor
+	JobDigraph const & source
+) :
 	parent(),
 	job_edge_pool_( new boost::unordered_object_pool< JobDirectedEdge > ( 256 ) )
 {

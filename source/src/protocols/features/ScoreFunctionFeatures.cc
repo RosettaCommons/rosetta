@@ -109,17 +109,6 @@ ScoreFunctionFeatures::ScoreFunctionFeatures(
 	}
 }
 
-ScoreFunctionFeatures::ScoreFunctionFeatures(
-	ScoreFunctionFeatures const & src
-) :
-	FeaturesReporter(),
-	scfxn_(src.scfxn_),
-	scfxn_name_(src.scfxn_name_)
-{}
-
-ScoreFunctionFeatures::~ScoreFunctionFeatures() = default;
-
-
 void
 ScoreFunctionFeatures::write_schema_to_db(
 	sessionOP db_session

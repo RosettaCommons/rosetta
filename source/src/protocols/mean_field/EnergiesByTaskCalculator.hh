@@ -38,10 +38,6 @@ public:
 		core::pack::task::PackerTaskCOP task
 	);
 
-	EnergiesByTaskCalculator(
-		EnergiesByTaskCalculator const & calculator
-	);
-
 	core::pose::metrics::PoseMetricCalculatorOP clone() const override;
 
 	core::Real total() const { return total_score_; }

@@ -181,14 +181,6 @@ LigandDockProtocol::add_start_from(core::Real x, core::Real y, core::Real z){
 	start_from_pts_.push_back( core::Vector(x, y, z) );
 }
 
-LigandDockProtocol::LigandDockProtocol(LigandDockProtocol const & /*that*/):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover(),
-	LigandBaseProtocol()
-{
-	utility_exit_with_message("copy c-tor not allowed!");
-}
-
 
 LigandDockProtocol::~LigandDockProtocol() = default;
 
@@ -415,7 +407,7 @@ LigandDockProtocol::shear_min_protocol(
 
 	// Set up move map for minimizing.
 	// Have to do this after initial perturb so we get the "right" interface defn.
-	core::kinematics::MoveMapOP movemap = make_movemap(pose, jump_id, sc_interface_padding_, minimize_all_rsds_, /*minimize_backbone_=*/ false, minimize_ligand_, minimize_water_);
+	core::kinematics::MoveMapOP movemap = make_movemap(pose, jump_id, sc_interface_padding_, minimize_all_rsds_, /*include_backbone=*/ false, minimize_ligand_, minimize_water_);
 	//// Really simple movemap -- just ligand DOFs
 	//// This works very poorly!
 	//core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();

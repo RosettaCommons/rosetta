@@ -39,7 +39,7 @@ public:
 
 	/// @brief copy ctor
 	CompositeSequence( CompositeSequence const & src )
-	: Sequence()
+	: Sequence( src )
 	{
 		*this = src;
 	}

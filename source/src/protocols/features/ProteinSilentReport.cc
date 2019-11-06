@@ -104,26 +104,6 @@ ProteinSilentReport::ProteinSilentReport() :
 	features_reporters_.push_back(job_data_features_);
 }
 
-ProteinSilentReport::ProteinSilentReport(ProteinSilentReport const & src) :
-	Report(),
-	initialized_(src.initialized_),
-	database_filter_(src.database_filter_),
-	protocol_id_(src.protocol_id_),
-	structure_map_(src.structure_map_),
-	protocol_features_(src.protocol_features_),
-	pdb_data_features_(src.pdb_data_features_),
-	structure_features_(src.structure_features_),
-	structure_scores_features_(src.structure_scores_features_),
-	score_type_features_(src.score_type_features_),
-	pose_conformation_features_(src.pose_conformation_features_),
-	pose_comments_features_(src.pose_comments_features_),
-	protein_residue_conformation_features_(src.protein_residue_conformation_features_),
-	residue_features_(src.residue_features_),
-	residue_conformation_features_ (src.residue_conformation_features_ ),
-	job_data_features_ ( src.job_data_features_)
-{}
-
-ProteinSilentReport::~ProteinSilentReport() = default;
 
 Size
 ProteinSilentReport::version() { return 1; }

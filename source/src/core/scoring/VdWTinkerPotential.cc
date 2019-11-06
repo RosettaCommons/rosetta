@@ -107,7 +107,7 @@ VdWTinkerResidueInfo::initialize( conformation::Residue const & rsd )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 VdWTinkerPoseInfo::VdWTinkerPoseInfo( VdWTinkerPoseInfo const & src ):
-	CacheableData()
+	CacheableData(src)
 {
 	Size const src_size( src.size() );
 

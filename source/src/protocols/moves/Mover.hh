@@ -72,7 +72,6 @@ public:
 
 public:
 	Mover();
-	~Mover() override;
 
 	// Factory<Mover> functions
 	// this really should be pure
@@ -90,9 +89,6 @@ public:
 
 	/// @brief sets the type for a mover; name_ has been removed (2010/05/14)
 	Mover( std::string const & type_name ); // move-constructed
-
-	Mover( Mover const & other );
-	Mover& operator=( Mover const& other );
 
 
 	///////////////////////////////////////////////////////////////////

@@ -76,19 +76,6 @@ DecomposeAndReweightEnergiesCalculator::DecomposeAndReweightEnergiesCalculator( 
 	}
 }
 
-DecomposeAndReweightEnergiesCalculator::DecomposeAndReweightEnergiesCalculator(
-	DecomposeAndReweightEnergiesCalculator const & calculator
-) :
-	EnergyDependentCalculator(),
-	name_of_ResidueDecompositionCalculator_(calculator.residue_decomposition_calculator()),
-	original_weights_(calculator.original_weights()),
-	other_energies_(calculator.other_energies()),
-	onebody_energies_(calculator.onebody_energies()),
-	twobody_energies_(calculator.twobody_energies()),
-	set_names_(calculator.set_names()),
-	weighted_total_(calculator.weighted_total())
-{}
-
 void DecomposeAndReweightEnergiesCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const {
 
 	if ( key == "weighted_total" ) {

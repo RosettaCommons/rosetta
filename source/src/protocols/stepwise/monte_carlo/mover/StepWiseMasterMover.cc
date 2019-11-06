@@ -118,7 +118,7 @@ protocols::moves::MoverOP StepWiseMasterMover::clone() const {
 
 //Constructor
 StepWiseMasterMover::StepWiseMasterMover( StepWiseMasterMover const & src ):
-	Mover(),
+	Mover( src ),
 	minimize_single_res_( src.minimize_single_res_ ), // changes during run
 	success_( src.success_ ),
 	proposal_density_ratio_( src.proposal_density_ratio_ ),

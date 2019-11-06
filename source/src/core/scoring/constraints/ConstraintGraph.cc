@@ -268,7 +268,11 @@ ConstraintGraph::ConstraintGraph( Size num_nodes )
 	set_num_nodes( num_nodes );
 }
 
-ConstraintGraph::ConstraintGraph( ConstraintGraph const & source ) : parent() {
+ConstraintGraph::ConstraintGraph( // NOLINT(bugprone-copy-constructor-init) -- deliberately not calling parent copy constructor
+	ConstraintGraph const & source
+) :
+	parent()
+{
 	parent::operator = ( source );
 }
 
