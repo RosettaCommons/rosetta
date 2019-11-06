@@ -125,6 +125,7 @@ SilentStruct& SilentStruct::operator= ( SilentStruct const & src ) {
 		cache_remarks_ = src.cache_remarks_;
 		pdbinfo_labels_ = src.pdbinfo_labels_;
 		residue_numbers_ = src.residue_numbers_;
+		segment_IDs_ = src.segment_IDs_;
 		chains_ = src.chains_;
 		// ??? is the omission of other_struct_list_ deliberate?
 		full_model_parameters_ = src.full_model_parameters_;
@@ -1185,7 +1186,6 @@ SilentStruct::print_residue_numbers( std::ostream & out ) const {
 		//  std::cout << "Residue_numbers: " << make_tag_with_dashes( residue_numbers_ ) << std::endl;
 		//  utility_exit_with_message( "Problem with residue_numbers in silent_struct!" );
 	}
-
 	out << "RES_NUM " << make_tag_with_dashes( residue_numbers_, chains_, segment_IDs_ ) <<  " " << decoy_tag() << std::endl;
 
 	if ( segment_IDs_.size() == 0 ) return;
@@ -1216,19 +1216,18 @@ void
 SilentStruct::figure_out_segment_ids_from_line( std::istream & line_stream ) {
 	utility::vector1< int > residue_numbers;
 	utility::vector1< std::string > segment_ids;
-	std::string resnum_string;
-	line_stream >> resnum_string; // the tag (SEGMENT_ID)
-	line_stream >> resnum_string;
-	while ( !line_stream.fail() ) {
-		bool string_ok( false );
-		std::pair< std::vector< int >, std::vector< std::string > > resnum_and_segid = utility::get_resnum_and_segid( resnum_string, string_ok );
-		std::vector< int >  const & resnums       = resnum_and_segid.first;
-		std::vector< std::string > const & segid  = resnum_and_segid.second;
-		if ( string_ok ) {
-			for ( int resnum : resnums ) residue_numbers.push_back( resnum );
-			for ( auto const & i : segid ) segment_ids.push_back( i );
-		} else break;
-		line_stream >> resnum_string;
+	std::string segid_tag;
+	line_stream >> segid_tag; // the tag (SEGMENT_IDS)
+	std::string resnum_string(std::istreambuf_iterator<char>(line_stream), {});
+	platform::Size last_space_pos = resnum_string.find_last_of( ' ' );
+	resnum_string = resnum_string.substr(0, last_space_pos); // remove structure number
+	bool string_ok( false );
+	std::pair< std::vector< int >, std::vector< std::string > > resnum_and_segid = utility::get_resnum_and_segid( resnum_string, string_ok );
+	std::vector< int >  const & resnums       = resnum_and_segid.first;
+	std::vector< std::string > const & segid  = resnum_and_segid.second;
+	if ( string_ok ) {
+		for ( int resnum : resnums ) residue_numbers.push_back( resnum );
+		for ( auto const & i : segid ) segment_ids.push_back( i );
 	}
 
 	if ( residue_numbers_.size() > 0 ) {

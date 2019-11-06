@@ -888,6 +888,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	make_pose_from_sequence( full_pose, full_annotated_sequence, *rsd_set_ );
 	set_output_res_and_chain( full_pose, std::make_tuple( full_model_parameters->conventional_numbering(),
 		full_model_parameters->conventional_chains(), full_model_parameters->conventional_segids()  ) );
+
 	// Check whether the sequence contains protein residues
 	bool is_rna_and_protein = false;
 	for ( core::Size r=1; r<=full_pose.total_residue(); ++r ) {
@@ -1086,7 +1087,6 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		working_obligate_pairs.push_back( BasePair( working_res.index( pos1 ), working_res.index( pos2 ),
 			edge1, edge2, orientation ) );
 	}
-
 	////////////////////
 	// Step 15
 	////////////////////
@@ -1254,7 +1254,6 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 
 	}
 
-
 	////////////////////
 	// Step 17
 	////////////////////
@@ -1321,7 +1320,6 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	options_->set_extra_minimize_res( working_res_map( extra_minimize_res, working_res ) );
 	options_->set_extra_minimize_chi_res( working_res_map( extra_minimize_chi_res, working_res ) );
 	options_->set_output_jump_res( working_res_map( output_jump_res, working_res ) );
-
 	////////////////////
 	// Step 19
 	////////////////////
@@ -1349,9 +1347,11 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	full_model_info->set_res_list( working_res );
 	TR.Debug << working_res << std::endl;
 	// need to include the virtual res if we're using a density map
+
 	TR.Debug << "where the issue is?" << std::endl;
 	set_full_model_info( *pose_, full_model_info );
 	TR.Debug << "done where the issue is?" << std::endl;
+
 }
 
 

@@ -1048,10 +1048,10 @@ ChunkLibraryJobQueen::pose_for_job(
 	if ( ! inner_job ) { throw bad_inner_job_exception(); }
 
 	auto const & input_source = dynamic_cast< ChunkLibraryInputSource const & >( inner_job->input_source() );
-	//TR << "Looking for input source " << job->inner_job()->input_source().input_tag() << " with pose_id " << job->inner_job()->input_source().pose_id() << std::endl;
 	if ( input_pose_index_map_.count( input_source.source_id() ) ) {
 
 		core::pose::PoseOP pose( new core::pose::Pose );
+
 		// Why does the chunk_library job queen use detached_copy? Because it is important in multithreaded
 		// contexts that no two Poses pointing to that same data end up in two separate threads,
 		// and then try to modify that data at the same time.  It turns out there are places
@@ -1068,9 +1068,7 @@ ChunkLibraryJobQueen::pose_for_job(
 			inputter_tag = input_tag->getTags()[ 0 ];
 		}
 	}
-
 	core::pose::PoseOP input_pose = chunk_library_inputter_for_job( *inner_job )->chunk_library_from_input_source( input_source, options, inputter_tag );
-	//TR << "Storing Pose for input source " << job->inner_job()->input_source().input_tag() << " with pose_id " << job->inner_job()->input_source().pose_id() << std::endl;
 	input_pose_index_map_[ input_source.source_id() ] = input_pose;
 
 	core::pose::PoseOP pose( new core::pose::Pose );

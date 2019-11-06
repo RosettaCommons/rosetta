@@ -127,6 +127,7 @@ PDBInfo::PDBInfo(
 			// fpd: wrap around if > 62 chains.
 			// rhiju: note -- got rid of _ as first char of chr_chains.
 			rr.chainID = chr_chains[ (pose.residue( i ).chain() - 1)  % chr_chains.size() ];
+			// TODO: Should add segmentID fix here maybe
 			rr.resSeq = static_cast< int >( i );
 		}
 		rebuild_pdb2pose();

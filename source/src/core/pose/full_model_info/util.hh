@@ -54,6 +54,9 @@ update_constraint_set_from_full_model_info( core::pose::Pose & pose );
 void
 update_disulfides_from_full_model_info( pose::Pose & pose );
 
+utility::vector1< std::string >
+figure_out_conventional_segids_from_full_model_info( pose::Pose const & pose );
+
 utility::vector1< char >
 figure_out_conventional_chains_from_full_model_info( pose::Pose const & pose );
 

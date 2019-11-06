@@ -174,6 +174,10 @@ utility::vector1< char > const &
 FullModelInfo::conventional_chains() const {
 	return full_model_parameters_->conventional_chains();
 }
+utility::vector1< std::string > const &
+FullModelInfo::conventional_segids() const {
+	return full_model_parameters_->conventional_segids();
+}
 utility::vector1< Size > const &
 FullModelInfo::cutpoint_open_in_full_model() const {
 	return full_model_parameters_->get_res_list( CUTPOINT_OPEN );

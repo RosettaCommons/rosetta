@@ -155,6 +155,7 @@ update_pdb_info_from_full_model_info( pose::Pose & pose ){
 	PDBInfoOP pdb_info( new PDBInfo( pose ) );
 	pdb_info->set_numbering( const_full_model_info( pose ).full_model_parameters()->full_to_conventional( res_list ) );
 	pdb_info->set_chains(    figure_out_conventional_chains_from_full_model_info( pose ) );
+	pdb_info->set_segment_ids(    figure_out_conventional_segids_from_full_model_info( pose ) );
 
 	pose.pdb_info( pdb_info );
 }
@@ -259,6 +260,20 @@ reorder_full_model_info_after_prepend( pose::Pose & pose, Size const res_to_add,
 	update_res_list_in_full_model_info_and_pdb_info( pose, res_list_new );
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+utility::vector1< std::string >
+figure_out_conventional_segids_from_full_model_info( pose::Pose const & pose ) {
+	utility::vector1< std::string > segids;
+	utility::vector1< std::string > const & conventional_segids = const_full_model_info( pose ).conventional_segids();
+	if ( conventional_segids.size() > 0 ) {
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+		for ( Size n = 1; n <= pose.size(); n++ ) segids.push_back( conventional_segids[ res_list[n] ] );
+	} else {
+		for ( Size n = 1; n <= pose.size(); n++ ) segids.push_back( "    " );
+	}
+	return segids;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 utility::vector1< char >
