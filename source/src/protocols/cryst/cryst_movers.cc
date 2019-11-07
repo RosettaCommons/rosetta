@@ -726,7 +726,45 @@ void RecomputeDensityMapMoverCreator::provide_xml_schema( utility::tag::XMLSchem
 
 
 ////
-void LoadDensityMapMover::apply( core::pose::Pose & /*pose*/ ) {
+LoadDensityMapMover::LoadDensityMapMover( std::string const & mapfile):
+	Mover(),
+	mapfile_(mapfile)
+
+{
+}
+
+void
+LoadDensityMapMover::set_mapfile(std::string const & mapfile){
+	mapfile_ = mapfile;
+}
+
+void
+LoadDensityMapMover::set_sc_scale(core::Real const sc_scale){
+	sc_scale_ = sc_scale;
+}
+
+void
+LoadDensityMapMover::set_window(core::Size const window){
+	window_ = window;
+}
+
+std::string
+LoadDensityMapMover::get_mapfile(){
+	return mapfile_;
+}
+
+core::Real
+LoadDensityMapMover::get_sc_scale(){
+	return sc_scale_;
+}
+
+core::Size
+LoadDensityMapMover::get_window(){
+	return window_;
+}
+
+void
+LoadDensityMapMover::apply( core::pose::Pose & /*pose*/ ) {
 	using namespace core::scoring::electron_density;
 
 	ElectronDensity& densityMap = getDensityMap(mapfile_, true);
@@ -736,7 +774,8 @@ void LoadDensityMapMover::apply( core::pose::Pose & /*pose*/ ) {
 	densityMap.setSCscaling(sc_scale_);
 }
 
-void LoadDensityMapMover::parse_my_tag(
+void
+LoadDensityMapMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
 	filters::Filters_map const & /*filters*/,
@@ -748,15 +787,18 @@ void LoadDensityMapMover::parse_my_tag(
 	window_ = tag->getOption<core::Size>("window", 3);
 }
 
-std::string LoadDensityMapMover::get_name() const {
+std::string
+LoadDensityMapMover::get_name() const {
 	return mover_name();
 }
 
-std::string LoadDensityMapMover::mover_name() {
+std::string
+LoadDensityMapMover::mover_name() {
 	return "LoadDensityMap";
 }
 
-void LoadDensityMapMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+void
+LoadDensityMapMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 
 	using namespace utility::tag;
@@ -769,7 +811,8 @@ void LoadDensityMapMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "PHENIX crystallographic refinement interface code. Loads an electron density map", attlist );
 }
 
-std::string LoadDensityMapMoverCreator::keyname() const {
+std::string
+LoadDensityMapMoverCreator::keyname() const {
 	return LoadDensityMapMover::mover_name();
 }
 
@@ -778,7 +821,8 @@ LoadDensityMapMoverCreator::create_mover() const {
 	return utility::pointer::make_shared< LoadDensityMapMover >();
 }
 
-void LoadDensityMapMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+void
+LoadDensityMapMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
 	LoadDensityMapMover::provide_xml_schema( xsd );
 }

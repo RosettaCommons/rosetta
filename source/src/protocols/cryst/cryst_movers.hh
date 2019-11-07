@@ -144,10 +144,48 @@ private:
 	bool keep_sidechains_;
 };
 
-
+///@brief This class loads a density map into global data.
+/// Each apply will regenerate this data and force a reload of the data by default.
 class LoadDensityMapMover : public moves::Mover {
 public:
+
+	///@brief Default Constructor
 	LoadDensityMapMover() : Mover(), mapfile_("") {}
+
+	///@brief Constructor with mapfile
+	LoadDensityMapMover( std::string const & mapfile);
+
+	////////////////////////////////////////
+	///////////// Setters //////////////////
+	////////////////////////////////////////
+
+	///@brief Set a mapfile to be loaded
+	void
+	set_mapfile( std::string const & mapfile);
+
+	///@brief Set sidechain scaling in density map to this factor (default 1.0)
+	void
+	set_sc_scale( core::Real const sc_scale);
+
+	///@brief Set window in the density map to this value (default 3).  Used if using window scoring.
+	void
+	set_window( core::Size const window);
+
+	////////////////////////////////////////
+	///////////// Getters //////////////////
+	////////////////////////////////////////
+
+	///@brief Get the mapfile path set for this mover.
+	std::string
+	get_mapfile();
+
+	///@brief Get the sc_scale set for this mover.
+	core::Real
+	get_sc_scale();
+
+	///@brief Get the window set for this mover.
+	core::Size
+	get_window();
 
 	moves::MoverOP clone() const override { return( utility::pointer::make_shared< LoadDensityMapMover >( *this ) ); }
 
@@ -158,6 +196,7 @@ public:
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
+
 
 	std::string
 	get_name() const override;
