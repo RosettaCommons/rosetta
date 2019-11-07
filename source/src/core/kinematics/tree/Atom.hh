@@ -106,10 +106,7 @@ protected: // Assignment
 	/// @brief Copy assignment
 	inline
 	Atom &
-	operator =( Atom const & )
-	{
-		return *this;
-	}
+	operator =( Atom const & ) = default;
 
 
 public: // Methods
