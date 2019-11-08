@@ -17,6 +17,7 @@
 
 // Unit headers
 #include <core/pack/interaction_graph/FASTERInteractionGraph.fwd.hh>
+#include <core/pack/interaction_graph/FASTERInteractionGraphTests.fwd.hh>
 
 // Package Headers
 
@@ -41,6 +42,7 @@ class FASTEREdge;
 
 class FASTERNode : public PrecomputedPairEnergiesNode
 {
+	friend class ::FASTERInteractionGraphTests;
 public:
 	typedef PrecomputedPairEnergiesNode parent;
 public:
@@ -197,6 +199,7 @@ private:
 
 class FASTEREdge : public PrecomputedPairEnergiesEdge
 {
+	friend class ::FASTERInteractionGraphTests;
 public:
 	typedef PrecomputedPairEnergiesEdge parent;
 
@@ -320,6 +323,7 @@ private:
 
 class FASTERInteractionGraph : public PrecomputedPairEnergiesInteractionGraph
 {
+	friend class ::FASTERInteractionGraphTests;
 public:
 	typedef PrecomputedPairEnergiesInteractionGraph parent;
 
