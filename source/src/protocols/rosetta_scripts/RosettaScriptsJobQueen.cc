@@ -179,7 +179,7 @@ RosettaScriptsJobQueen::derived_process_deallocation_message( deallocation::Deal
 }
 
 void
-RosettaScriptsJobQueen::note_preliminary_job_node_is_complete( core::Size pjn_index )
+RosettaScriptsJobQueen::note_preliminary_job_node_is_complete( PrelimJobNodeID const pjn_index )
 {
 	for ( std::string const & resource_name : resources_for_pjn_[ pjn_index ] ) {
 		debug_assert( pjns_requiring_resources_[ resource_name ].count( pjn_index ) );

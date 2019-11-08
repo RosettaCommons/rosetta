@@ -454,7 +454,7 @@ void ChunkLibraryJobQueen::update_job_dag( JobDigraphUpdater & ) {}
 /// the TagOP objects for each preliminary LarvalJob to the derived class through the
 /// refine_job_list method.
 LarvalJobs
-ChunkLibraryJobQueen::determine_job_list( Size job_dag_node_index, Size max_njobs )
+ChunkLibraryJobQueen::determine_job_list( JobDAGNodeID job_dag_node_index, Size max_njobs )
 {
 	// ok -- we're going to look for a job definition file, and failing that, fall back on
 	// the ChunkLibraryInputterFactory to determine where the input sources are coming from.
@@ -531,14 +531,14 @@ void ChunkLibraryJobQueen::note_job_completed( LarvalJobCOP job, JobStatus statu
 		if ( ! inner_job ) { throw bad_inner_job_exception(); }
 
 		utility::options::OptionCollectionOP job_options = options_for_job( *inner_job );
-		for ( Size ii = 1; ii <= nresults; ++ii ) {
+		for ( ResultIndex ii( 1 ); ii <= nresults; ++ii ) {
 			create_and_store_output_specification_for_job_result( job, *job_options, ii, nresults );
 		}
 	}
 
 }
 
-void ChunkLibraryJobQueen::completed_job_summary( LarvalJobCOP, core::Size, JobSummaryOP ) {}
+void ChunkLibraryJobQueen::completed_job_summary( LarvalJobCOP, ResultIndex, JobSummaryOP ) {}
 
 
 std::list< output::OutputSpecificationOP >
@@ -587,7 +587,7 @@ ChunkLibraryJobQueen::result_outputter(
 
 //void ChunkLibraryJobQueen::completed_job_result(
 // LarvalJobCOP job,
-// core::Size result_index,
+// ResultIndex result_index,
 // JobResultOP job_result
 //)
 //{
@@ -872,7 +872,8 @@ ChunkLibraryJobQueen::expand_job_list( ChunkLibraryInnerLarvalJobOP inner_job, c
 	LarvalJobs jobs;
 	core::Size n_to_make = std::min( nstruct, max_larval_jobs_to_create );
 	for ( core::Size jj = 1; jj <= n_to_make; ++jj ) {
-		LarvalJobOP job = LarvalJobOP( new LarvalJob( inner_job, njobs_made_for_curr_inner_larval_job_ + jj, ++larval_job_counter_ ));
+		NStructIndex const nstruct_index( njobs_made_for_curr_inner_larval_job_ + jj );
+		LarvalJobOP job = LarvalJobOP( new LarvalJob( inner_job, nstruct_index, ++larval_job_counter_ ));
 		//TR << "Expand larval job " << larval_job_counter_ << std::endl;
 		jobs.push_back( job );
 	}
@@ -882,7 +883,7 @@ ChunkLibraryJobQueen::expand_job_list( ChunkLibraryInnerLarvalJobOP inner_job, c
 void
 ChunkLibraryJobQueen::create_and_store_output_specification_for_job_result(
 	LarvalJobCOP job,
-	core::Size result_index,
+	ResultIndex result_index,
 	core::Size nresults
 )
 {
@@ -898,7 +899,7 @@ void
 ChunkLibraryJobQueen::create_and_store_output_specification_for_job_result(
 	LarvalJobCOP job,
 	utility::options::OptionCollection const & job_options,
-	core::Size result_index,
+	ResultIndex result_index,
 	core::Size nresults
 )
 {
@@ -917,7 +918,7 @@ output::OutputSpecificationOP
 ChunkLibraryJobQueen::create_output_specification_for_job_result(
 	LarvalJobCOP job,
 	utility::options::OptionCollection const & job_options,
-	core::Size result_index,
+	ResultIndex result_index,
 	core::Size nresults
 )
 {
@@ -979,7 +980,7 @@ ChunkLibraryJobQueen::create_output_specification_for_job_result(
 JobOutputIndex
 ChunkLibraryJobQueen::build_output_index(
 	protocols::jd3::LarvalJobCOP job,
-	Size result_index,
+	ResultIndex result_index,
 	Size n_results_for_job
 )
 {
@@ -997,7 +998,7 @@ ChunkLibraryJobQueen::build_output_index(
 void
 ChunkLibraryJobQueen::assign_output_index(
 	protocols::jd3::LarvalJobCOP,
-	Size,
+	ResultIndex,
 	Size,
 	JobOutputIndex &
 )

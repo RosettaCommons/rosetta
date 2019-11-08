@@ -135,7 +135,7 @@ public:
 	///  However, if you do override this - especially for more complicated protocols - be sure to call similar functions here
 	///
 	LarvalJobs
-	determine_job_list( Size job_dag_node_index, Size max_njobs ) override;
+	determine_job_list( JobDAGNodeID job_dag_node_index, Size max_njobs ) override;
 
 	///@brief Mature the LarvalJob into a full Job that will be run on a processor.
 	/// Calls complete_larval_job_maturation, which you will need to override.
@@ -163,7 +163,7 @@ public:
 	///@details
 	/// Override this method to store any results you need.
 	void
-	completed_job_summary( LarvalJobCOP job, Size result_index, JobSummaryOP summary ) override;
+	completed_job_summary( LarvalJobCOP job, ResultIndex result_index, JobSummaryOP summary ) override;
 
 	///@brief The IDs of jobs that should be discarded, IE not kept in memory for the next set of job nodes.
 	///
@@ -284,10 +284,10 @@ protected:
 	/// Override this function to create LarvalJobs for nodes other than preliminary job nodes.
 	virtual
 	LarvalJobs
-	next_batch_of_larval_jobs_for_job_node( Size job_dag_node_index, Size max_njobs );
+	next_batch_of_larval_jobs_for_job_node( JobDAGNodeID job_dag_node_index, Size max_njobs );
 
 	///@brief Get the current larval job index from the JobTracker.
-	core::Size
+	GlobalJobID
 	current_job_index() const;
 
 protected:
@@ -408,7 +408,7 @@ protected:
 	///  have completed can override this method and then be updated by the SJQ at the completion
 	///  of every PJN.
 	virtual void
-	note_preliminary_job_node_is_complete( core::Size pjn_index );
+	note_preliminary_job_node_is_complete( PrelimJobNodeID pjn_index );
 
 
 protected:
@@ -448,12 +448,20 @@ protected:
 	/// from StandardInnerLarvalJob.  This is invoked by the StandardJobQueen in her determine_job_list
 	/// method just as jobs are prepared. If the base StandardInnerLarvalJob class is desired, then do
 	/// not override this method.
-	virtual StandardInnerLarvalJobOP create_inner_larval_job( core::Size nstruct, core::Size job_node, core::Size preliminary_job_node ) const;
+	virtual StandardInnerLarvalJobOP create_inner_larval_job(
+		core::Size nstruct,
+		JobDAGNodeID job_node,
+		PrelimJobNodeID preliminary_job_node
+	) const;
 
 	/// @brief Factory method for derived classes if they wish to rely on classes derived
 	/// from LarvalJob.  This is invoked by the StandardJobQueen in the expand_job_list method.
 	/// If the base LarvalJob class is desired, then do not override this method.
-	virtual LarvalJobOP create_larval_job( InnerLarvalJobOP job, core::Size nstruct_index, core::Size larval_job_index );
+	virtual LarvalJobOP create_larval_job(
+		InnerLarvalJobOP job,
+		NStructIndex nstruct_index,
+		core::Size larval_job_index
+	);
 
 	/// @brief Adds information regarding the job definition
 	/// (job tag, input source, jobdef tag, and outputter).
@@ -461,8 +469,8 @@ protected:
 	InnerLarvalJobOP
 	create_and_init_inner_larval_job_from_preliminary(
 		core::Size nstruct,
-		core::Size prelim_job_node,
-		core::Size job_node
+		PrelimJobNodeID prelim_job_node,
+		JobDAGNodeID job_node
 	) const;
 
 protected:
@@ -481,7 +489,7 @@ protected:
 	void
 	create_and_store_output_specification_for_job_result(
 		LarvalJobCOP job,
-		core::Size result_index,
+		ResultIndex result_index,
 		core::Size nresults
 	);
 
@@ -497,7 +505,7 @@ protected:
 	create_and_store_output_specification_for_job_result(
 		LarvalJobCOP job,
 		utility::options::OptionCollection const & job_options,
-		core::Size result_index,
+		ResultIndex result_index,
 		core::Size nresults
 	);
 
@@ -512,7 +520,7 @@ protected:
 	create_output_specification_for_job_result(
 		LarvalJobCOP job,
 		utility::options::OptionCollection const & job_options,
-		core::Size result_index,
+		ResultIndex result_index,
 		core::Size nresults
 	);
 
@@ -521,7 +529,7 @@ protected:
 	JobOutputIndex
 	build_output_index(
 		protocols::jd3::LarvalJobCOP larval_job,
-		Size result_index_for_job,
+		ResultIndex result_index_for_job,
 		Size n_results_for_job
 	);
 
@@ -541,7 +549,7 @@ protected:
 	void
 	assign_output_index(
 		protocols::jd3::LarvalJobCOP larval_job,
-		Size result_index_for_job,
+		ResultIndex result_index_for_job,
 		Size n_results_for_job,
 		JobOutputIndex & output_index
 	);
@@ -768,7 +776,7 @@ private:
 	///  Updates PreliminaryLarvalJobTracker
 	///
 	LarvalJobs
-	next_batch_of_larval_jobs_from_prelim( core::Size job_node_index, core::Size max_njobs );
+	next_batch_of_larval_jobs_from_prelim( PrelimJobNodeID job_node_index, core::Size max_njobs );
 
 	///@brief Get the SecondardyPoseOutputter for a job.  An example of an SPO is a scorefile.
 	///
@@ -789,7 +797,7 @@ private:
 
 	/// @brief The SJQ will keep track of all discarded jobs in the discarded_jobs_ diet
 	void
-	note_job_result_discarded( LarvalJobCOP job, Size result_index );
+	note_job_result_discarded( LarvalJobCOP job, ResultIndex result_index );
 
 	utility::options::OptionKeyList
 	concatenate_all_options() const;

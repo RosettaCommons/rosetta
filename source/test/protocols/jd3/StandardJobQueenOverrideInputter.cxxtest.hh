@@ -246,7 +246,7 @@ public:
 		DerivedJobQueen2 djq2;
 		JobDigraphOP job_dag = djq2.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
-		LarvalJobs jobs = djq2.determine_job_list( 1, 100 );
+		LarvalJobs jobs = djq2.determine_job_list( JobDAGNodeID( 1 ), 100 );
 		TS_ASSERT_EQUALS( jobs.size(), 1 );
 		InputSource const & input_source_1 = jobs.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_1.origin(), "Dummy" );
@@ -294,7 +294,7 @@ public:
 		djq2.determine_preliminary_job_list_from_xml_file( jobdef_file );
 		JobDigraphOP job_dag = djq2.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
-		LarvalJobs jobs = djq2.determine_job_list( 1, 100 );
+		LarvalJobs jobs = djq2.determine_job_list( JobDAGNodeID( 1 ), 100 );
 		TS_ASSERT_EQUALS( jobs.size(), 5 );
 		InputSource const & input_source_1 = jobs.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_1.origin(), "Dummy" );
@@ -338,13 +338,13 @@ public:
 		JobDigraphOP job_dag = djq3.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 2 );
 
-		LarvalJobs jobs1 = djq3.determine_job_list( 1, 100 );
+		LarvalJobs jobs1 = djq3.determine_job_list( JobDAGNodeID( 1 ), 100 );
 		TS_ASSERT_EQUALS( jobs1.size(), 1 );
 		InputSource const & input_source_1 = jobs1.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_1.origin(), "PDB" );
 		TS_ASSERT_EQUALS( input_source_1.input_tag(), "1ubq" );
 
-		LarvalJobs jobs2 = djq3.determine_job_list( 2, 100 );
+		LarvalJobs jobs2 = djq3.determine_job_list( JobDAGNodeID( 2 ), 100 );
 		TS_ASSERT_EQUALS( jobs2.size(), 1 );
 		InputSource const & input_source_2 = jobs2.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_2.origin(), "Dummy" );
@@ -392,7 +392,7 @@ public:
 		djq3.determine_preliminary_job_list_from_xml_file( jobdef_file );
 		JobDigraphOP job_dag = djq3.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
-		LarvalJobs jobs = djq3.determine_job_list( 1, 100 );
+		LarvalJobs jobs = djq3.determine_job_list( JobDAGNodeID( 1 ), 100 );
 		TS_ASSERT_EQUALS( jobs.size(), 5 );
 		InputSource const & input_source_1 = jobs.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_1.origin(), "Dummy" );
@@ -423,13 +423,13 @@ public:
 		djq3.determine_preliminary_job_list_from_xml_file( jobdef_file );
 		JobDigraphOP job_dag = djq3.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 2 );
-		LarvalJobs jobs1 = djq3.determine_job_list( 1, 100 );
+		LarvalJobs jobs1 = djq3.determine_job_list( JobDAGNodeID( 1 ), 100 );
 		TS_ASSERT_EQUALS( jobs1.size(), 5 );
 		InputSource const & input_source_1 = jobs1.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_1.origin(), "Dummy" );
 		TS_ASSERT_EQUALS( input_source_1.input_tag(), "dummy_from_tag" );
 
-		LarvalJobs jobs2 = djq3.determine_job_list( 2, 100 );
+		LarvalJobs jobs2 = djq3.determine_job_list( JobDAGNodeID( 2 ), 100 );
 		TS_ASSERT_EQUALS( jobs2.size(), 5 );
 		InputSource const & input_source_2 = jobs2.front()->inner_job()->input_source();
 		TS_ASSERT_EQUALS( input_source_2.origin(), "PDB" );

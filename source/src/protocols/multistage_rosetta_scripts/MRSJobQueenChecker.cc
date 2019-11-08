@@ -123,7 +123,7 @@ MRSJobQueenChecker::create_initial_job_dag() {
 }
 
 std::list< jd3::LarvalJobOP >
-MRSJobQueenChecker::determine_job_list( core::Size, core::Size )  {
+MRSJobQueenChecker::determine_job_list( jd3::JobDAGNodeID, core::Size )  {
 	std::list< jd3::LarvalJobOP > const jobs;
 	return jobs;
 }

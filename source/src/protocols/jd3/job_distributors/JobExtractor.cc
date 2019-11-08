@@ -21,6 +21,7 @@
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/JobQueen.hh>
 #include <protocols/jd3/JobDigraph.hh>
+#include <protocols/jd3/strong_types.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -275,7 +276,8 @@ JobExtractor::query_job_queen_for_more_jobs_for_current_node()
 	TR << "Query job queen for more jobs for current node: " << current_digraph_node_ << std::endl;
 
 	LarvalJobs jobs_for_current_node = job_queen_->determine_job_list_and_track(
-		current_digraph_node_, maximum_jobs_to_hold_in_memory_ );
+		JobDAGNodeID( current_digraph_node_ ),
+		maximum_jobs_to_hold_in_memory_ );
 	TR << "Retrieved " << jobs_for_current_node.size() << " jobs for node " << current_digraph_node_ << std::endl;
 
 	// Make sure that we haven't encountered any previous jobs that have the same job index as this job.
@@ -387,7 +389,7 @@ JobExtractor::find_jobs_for_next_node()
 	if ( ! digraph_nodes_ready_to_be_run_.empty() ) {
 		Size next_node_to_check = digraph_nodes_ready_to_be_run_.front();
 		TR << "Next node to check: " << next_node_to_check << std::endl;
-		current_digraph_node_ = next_node_to_check;
+		current_digraph_node_() = next_node_to_check;
 		digraph_nodes_ready_to_be_run_.pop_front();
 
 		// Possibly recursive call to end up back at find_jobs_for_next_node.
@@ -407,7 +409,7 @@ JobExtractor::find_jobs_for_next_node()
 		// to 0 (which is not a legal digraph node index) so that recursive
 		// calls to this function, as they recover control of flow, will know
 		// that the nodes they queued for checking turned up no jobs.
-		current_digraph_node_ = 0;
+		current_digraph_node_() = 0;
 	}
 
 	// post condition: if there are any nodes that say they are ready

@@ -133,9 +133,9 @@ MRSJobQueen::create_initial_job_dag() {
 
 void
 MRSJobQueen::cluster (
-	core::Size const stage_about_to_start
+	JobDAGNodeID const stage_about_to_start
 ) {
-	core::Size const stage_being_clustered = stage_about_to_start - 1;
+	JobDAGNodeID const stage_being_clustered( stage_about_to_start.value - 1 );
 
 	utility::vector1< ResultElements > results_from_previous_stage =
 		node_managers_[ stage_being_clustered ]->results_to_keep();
@@ -178,9 +178,11 @@ MRSJobQueen::cluster (
 
 std::list< LarvalJobOP >
 MRSJobQueen::determine_job_list(
-	core::Size const job_dag_node_index,
+	JobDAGNodeID const job_dag_node_index,
 	core::Size const max_njobs
 ) {
+	//core::Size const job_dag_node_index = job_dag_node_index_arg;//This makes it easier to do math, at the time that this was written
+
 	TR << "determine_job_list " << max_njobs << " " << num_total_jobs_for_stage_[ job_dag_node_index ] << std::endl;
 	if ( job_dag_node_index > 1 ) {
 		runtime_assert( node_managers_[ job_dag_node_index - 1 ]->all_results_are_in() );//todo remove this if you ever try to fight the sawtooth pattern
@@ -188,8 +190,9 @@ MRSJobQueen::determine_job_list(
 
 	if ( node_managers_[ job_dag_node_index ]->num_jobs_submitted() == 0 ) {
 		debug_assert( current_inner_larval_job_for_stage_.size() == job_dag_node_index - 1 );
-		current_inner_larval_job_for_stage_.push_back(
-			std::pair< InnerLarvalJobOP, core::Size >( 0, num_jobs_per_input_for_stage_[ job_dag_node_index ] ) );
+		current_inner_larval_job_for_stage_.emplace_back( nullptr, num_jobs_per_input_for_stage_[ job_dag_node_index ] );
+		/*current_inner_larval_job_for_stage_.push_back(
+		std::pair< InnerLarvalJobOP, core::Size >( 0, num_jobs_per_input_for_stage_[ job_dag_node_index ] ) );*/
 
 		if ( job_dag_node_index > 1 ) {
 			auto const num_results_for_previous_stage = node_managers_[ job_dag_node_index - 1 ]->num_results_total();
@@ -217,19 +220,20 @@ MRSJobQueen::determine_job_list(
 		if ( node_managers_[ job_dag_node_index ]->done_submitting() ) {
 			break;
 		}
-		core::Size const local_job_id = node_managers_[ job_dag_node_index ]->get_next_local_jobid();
+		LocalJobID const local_job_id( node_managers_[ job_dag_node_index ]->get_next_local_jobid() );
 
 		LarvalJobOP larval_job = 0;
 		if ( job_dag_node_index == 1 ) {
 			larval_job = get_nth_job_for_initial_stage( local_job_id );
 		} else {
-			larval_job = get_nth_job_for_noninitial_stage( job_dag_node_index, local_job_id);
+			larval_job = get_nth_job_for_noninitial_stage( job_dag_node_index, local_job_id );
 		}
 		if ( larval_job ) {
 			jobs.push_back( larval_job );
 			get_job_tracker().increment_current_job_index();
 		} else {
-			node_managers_[ job_dag_node_index ]->note_job_completed( job_offset + local_job_id, 0 );
+			GlobalJobID const gjobid( job_offset + local_job_id );
+			node_managers_[ job_dag_node_index ]->note_job_completed( gjobid, 0 );
 		}
 
 	}
@@ -255,9 +259,9 @@ MRSJobQueen::complete_larval_job_maturation(
 		jd3::standard::StandardInnerLarvalJob const >(
 		job->inner_job() );
 
-	core::Size const input_pose_id = inner->preliminary_job_node();
+	PrelimJobNodeID const input_pose_id = inner->preliminary_job_node();
 	unsigned int const global_job_id = job->job_index();
-	unsigned int const stage = stage_for_global_job_id( global_job_id );
+	unsigned int const stage = stage_for_global_job_id( jd3::GlobalJobID( global_job_id ) );
 
 	core::pose::PoseOP pose = 0;
 	if ( stage == 1 ) {
@@ -278,7 +282,7 @@ MRSJobQueen::complete_larval_job_maturation(
 	msp_job->set_pose( pose );
 	msp_job->set_cluster_metric_tag( cluster_metric_tag_for_stage_[ stage ] );
 
-	ParsedTagCacheOP const data_for_job = tag_manager_.generate_data_for_input_pose_id( input_pose_id, * pose );
+	ParsedTagCacheOP const data_for_job = tag_manager_.generate_data_for_input_pose_id( jd3::PrelimJobNodeID( input_pose_id ), * pose );
 	msp_job->parse_my_tag(
 		tag_for_stage_[ stage ],
 		* pose,
@@ -290,13 +294,13 @@ MRSJobQueen::complete_larval_job_maturation(
 
 void
 MRSJobQueen::note_job_completed(
-	core::Size job_id,
+	GlobalJobID job_id,
 	JobStatus status,
 	core::Size nresults,
 	bool are_you_a_unit_test
 ){
 	runtime_assert( are_you_a_unit_test );
-	core::Size const stage = stage_for_global_job_id( job_id );
+	JobDAGNodeID const stage = stage_for_global_job_id( job_id );
 
 	if ( status != jd3_job_status_success ) {
 		node_managers_[ stage ]->note_job_completed( job_id, 0 );
@@ -310,8 +314,8 @@ MRSJobQueen::note_job_completed(
 void
 MRSJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, core::Size nresults ){
 
-	core::Size const job_id = job->job_index();
-	core::Size const stage = stage_for_global_job_id( job_id );
+	jd3::GlobalJobID const job_id( job->job_index() );
+	JobDAGNodeID const stage( stage_for_global_job_id( job_id ) );
 	TR << "Note job completed for job " << job_id << " in stage " << stage << std::endl;
 
 	if ( status != jd3_job_status_success ) {
@@ -325,7 +329,7 @@ MRSJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, core::Size 
 	if ( stage == num_stages_ ) {
 		InnerLarvalJobCOP inner_job = job->inner_job();
 		utility::options::OptionCollectionOP job_options = options_for_job( *inner_job );
-		for ( core::Size ii = 1; ii <= nresults; ++ii ) {
+		for ( ResultIndex ii( 1 ); ii <= nresults; ++ii ) {
 			TR << "Creating output specification for job " << job_id << " " << ii << std::endl;
 			output::OutputSpecificationOP out_spec = create_output_specification_for_job_result( job, *job_options, ii, nresults );
 			pose_output_specification_for_job_result_id_[ jd3::JobResultID( job_id, ii ) ] = out_spec;
@@ -336,8 +340,12 @@ MRSJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, core::Size 
 
 
 void
-MRSJobQueen::completed_job_summary( core::Size job_id, core::Size result_index, JobSummaryOP summary ){
-	core::Size const stage = stage_for_global_job_id( job_id );
+MRSJobQueen::completed_job_summary(
+	GlobalJobID job_id,
+	ResultIndex result_index,
+	JobSummaryOP summary
+){
+	JobDAGNodeID const stage = stage_for_global_job_id( job_id );
 
 	//TR << "completed_job_summary() for stage=" << stage << " and job_id=" << job_id << " and result_index=" << result_index << std::endl;
 
@@ -388,7 +396,7 @@ std::list< jd3::JobResultID >
 MRSJobQueen::job_results_that_should_be_discarded(){
 	std::list< jd3::JobResultID > list_of_all_job_results_to_be_discarded;
 
-	for ( core::Size stage = num_stages_; stage > 0; --stage ) {
+	for ( JobDAGNodeID stage( num_stages_ ); stage > 0; --stage() ) {
 		//Add job results that are being discarded because they did not score well enough
 		std::list< jd3::JobResultID > job_results_to_be_discarded_for_stage;
 		node_managers_[ stage ]->append_job_results_that_should_be_discarded( job_results_to_be_discarded_for_stage );
@@ -453,7 +461,7 @@ MRSJobQueen::jobs_that_should_be_output() {
 		debug_assert( res_elem_os );
 
 		JobOutputIndex index;
-		assign_output_index( res_elem.global_job_id, res_elem.local_result_id, index );
+		assign_output_index( GlobalJobID( res_elem.global_job_id ), ResultIndex( res_elem.local_result_id ), index );
 		res_elem_os->output_index( index );
 
 		list_to_return.push_back( res_elem_os );
@@ -517,24 +525,25 @@ MRSJobQueen::pose_for_inner_job_derived(
 
 
 LarvalJobOP
-MRSJobQueen::get_nth_job_for_initial_stage( core::Size local_job_id ){
-
-	core::Size const global_job_id = local_job_id;
-	core::Size const pose_input_source_id = 1 + ( ( global_job_id - 1) / num_jobs_per_input_for_stage_[ 1 ] );
+MRSJobQueen::get_nth_job_for_initial_stage(
+	LocalJobID const local_job_id
+){
+	GlobalJobID const global_job_id( local_job_id );//because this is the initial stage
+	protocols::jd3::PrelimJobNodeID const pose_input_source_id( 1 + ( ( global_job_id - 1) / num_jobs_per_input_for_stage_[ 1 ] ) );
 
 	debug_assert( pose_input_source_id );
 	runtime_assert( pose_input_source_id <= num_input_structs_ );
 
 	if ( ++current_inner_larval_job_for_stage_[ 1 ].second > num_jobs_per_input_for_stage_[ 1 ] ) {
 		current_inner_larval_job_for_stage_[ 1 ].first =
-			standard::StandardJobQueen::create_and_init_inner_larval_job_from_preliminary( num_jobs_per_input_for_stage_[ 1 ], pose_input_source_id, 1 );
+			standard::StandardJobQueen::create_and_init_inner_larval_job_from_preliminary( num_jobs_per_input_for_stage_[ 1 ], pose_input_source_id, protocols::jd3::JobDAGNodeID( 1 ) );
 		current_inner_larval_job_for_stage_[ 1 ].second = 1;
 	}
 
 	LarvalJobOP ljob =
 		pointer::make_shared< LarvalJob >(
 		current_inner_larval_job_for_stage_[ 1 ].first,
-		current_inner_larval_job_for_stage_[ 1 ].second,
+		NStructIndex( current_inner_larval_job_for_stage_[ 1 ].second ),
 		global_job_id );
 
 	job_genealogist_->register_new_job( 1, global_job_id, pose_input_source_id );
@@ -543,7 +552,10 @@ MRSJobQueen::get_nth_job_for_initial_stage( core::Size local_job_id ){
 }
 
 LarvalJobOP
-MRSJobQueen::get_nth_job_for_noninitial_stage( core::Size stage, core::Size local_job_id ){
+MRSJobQueen::get_nth_job_for_noninitial_stage(
+	JobDAGNodeID const stage,
+	LocalJobID const local_job_id
+){
 
 	core::Size const prev_job_result_id = 1 + ( local_job_id - 1 ) / num_jobs_per_input_for_stage_[ stage ];
 
@@ -558,11 +570,13 @@ MRSJobQueen::get_nth_job_for_noninitial_stage( core::Size stage, core::Size loca
 
 	if ( !input_job_result.first && !input_job_result.second ) return 0;
 
-	core::Size const pose_input_source_id = input_pose_id_for_jobid( input_job_result.first );
-	debug_assert( pose_input_source_id );
+	PrelimJobNodeID const pose_input_source_id(
+		input_pose_id_for_jobid( jd3::GlobalJobID( input_job_result.first ) ) );
+	debug_assert( pose_input_source_id > 0 );
 
-	core::Size const global_job_id = node_managers_[ stage ]->job_offset() + local_job_id;
-	debug_assert( global_job_id );
+	GlobalJobID const global_job_id(
+		node_managers_[ stage ]->job_offset() + local_job_id );
+	debug_assert( global_job_id > 0 );
 
 	job_genealogist_->register_new_job( stage, global_job_id, stage-1, input_job_result );
 
@@ -580,7 +594,7 @@ MRSJobQueen::get_nth_job_for_noninitial_stage( core::Size stage, core::Size loca
 
 	LarvalJobOP ljob = pointer::make_shared< LarvalJob > (
 		current_inner_larval_job_for_stage_[ stage ].first,
-		current_inner_larval_job_for_stage_[ stage ].second,
+		NStructIndex( current_inner_larval_job_for_stage_[ stage ].second ),
 		global_job_id );
 
 	return ljob;
@@ -784,8 +798,8 @@ MRSJobQueen::parse_job_definition_tags(
 	input_job_tags_.reserve( prelim_larval_jobs.size() );
 	job_results_have_been_discarded_for_stage_.assign( num_stages_, false );
 
-	for ( core::Size ii = 1; ii <= prelim_larval_jobs.size(); ++ii ) {
-		parse_single_job_tag( prelim_larval_jobs[ ii ], ii );
+	for ( PrelimJobNodeID ii( 1 ); ii <= prelim_larval_jobs.size(); ++ii ) {
+		parse_single_job_tag( prelim_larval_jobs[ ii ], PrelimJobNodeID( ii ) );
 
 		InnerLarvalJobOP inner_larval_job_ii = prelim_larval_jobs[ ii ].inner_job;
 		outputters_.push_back( inner_larval_job_ii->outputter() );
@@ -804,8 +818,8 @@ void MRSJobQueen::parse_common_tag( utility::tag::TagCOP common_tag ){
 		if ( subtag->getName() == "PROTOCOLS" ) {
 			utility::vector0< utility::tag::TagCOP > const & protocol_subtags = subtag->getTags();
 
-			core::Size stage_to_merge_after = 0;
-			core::Size current_stage = 0;
+			JobDAGNodeID stage_to_merge_after( 0 );
+			JobDAGNodeID current_stage( 0 );
 			for ( utility::tag::TagCOP stage_subtag : protocol_subtags ) {
 				if ( stage_subtag->getName() == "Stage" ) {
 					++current_stage;
@@ -875,7 +889,7 @@ void MRSJobQueen::parse_common_tag( utility::tag::TagCOP common_tag ){
 }
 
 void MRSJobQueen::parse_single_stage_tag( utility::tag::TagCOP stage_subtag ){
-	core::Size const stage = ++num_stages_;
+	JobDAGNodeID const stage( ++num_stages_ );
 
 	runtime_assert( num_results_to_keep_for_stage_.size() == stage-1 );
 
@@ -948,7 +962,11 @@ void MRSJobQueen::append_job_tag_subelements(
 
 }
 
-void MRSJobQueen::parse_single_job_tag( standard::PreliminaryLarvalJob const & prelim_larval_job, core::Size input_pose_id ){
+void
+MRSJobQueen::parse_single_job_tag(
+	standard::PreliminaryLarvalJob const & prelim_larval_job,
+	PrelimJobNodeID input_pose_id
+){
 	utility::tag::TagCOP job_tag = prelim_larval_job.job_tag;
 	runtime_assert( num_stages_ );
 
@@ -999,7 +1017,8 @@ void MRSJobQueen::determine_validity_of_stage_tags(){//TODO only do this for nod
 		core::pose::PoseOP pose =
 			pose_for_inner_job_derived( prelim_larval_jobs[ ii ].inner_job, * prelim_larval_jobs[ ii ].job_options );
 
-		ParsedTagCacheOP const data_for_job = tag_manager_.generate_data_for_input_pose_id( ii, * pose );
+		ParsedTagCacheOP const data_for_job =
+			tag_manager_.generate_data_for_input_pose_id( PrelimJobNodeID( ii ), * pose );
 
 		short unsigned int stage_count = 0;
 		for ( utility::tag::TagCOP tag : tag_for_stage_ ) {
@@ -1038,25 +1057,27 @@ void MRSJobQueen::determine_validity_of_stage_tags(){//TODO only do this for nod
 
 }
 
-void MRSJobQueen::assign_output_index(
+void
+MRSJobQueen::assign_output_index(
 	LarvalJobCOP larval_job,
-	Size result_index_for_job,
+	ResultIndex result_index_for_job,
 	Size,
 	JobOutputIndex & output_index
 ) {
 	assign_output_index( larval_job->job_index(), result_index_for_job, output_index );
 }
 
-void MRSJobQueen::assign_output_index(
-	core::Size global_job_id,
-	core::Size local_result_id,
+void
+MRSJobQueen::assign_output_index(
+	GlobalJobID const global_job_id,
+	ResultIndex const result_id,
 	JobOutputIndex & output_index
 ) {
 	output_index.primary_output_index = global_job_id;
 	output_index.n_primary_outputs =
 		std::accumulate( num_total_jobs_for_stage_.begin(), num_total_jobs_for_stage_.end(), core::Size(0) );
 
-	output_index.secondary_output_index = local_result_id;
+	output_index.secondary_output_index = result_id;
 	output_index.n_secondary_outputs = max_num_results_to_keep_per_instance_for_stage_.back();
 }
 

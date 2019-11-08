@@ -363,7 +363,7 @@ void StandardJobQueen::update_job_dag( JobDigraphUpdater & ) {}
 /// the TagOP objects for each preliminary LarvalJob to the derived class through the
 /// refine_job_list method.
 LarvalJobs
-StandardJobQueen::determine_job_list( Size job_dag_node_index, Size max_njobs )
+StandardJobQueen::determine_job_list( JobDAGNodeID job_dag_node_index, Size max_njobs )
 {
 	// ok -- we're going to look for a job definition file, and failing that, fall back on
 	// the PoseInputterFactory to determine where the input sources are coming from.
@@ -377,7 +377,8 @@ StandardJobQueen::determine_job_list( Size job_dag_node_index, Size max_njobs )
 
 		// now that the PreliminaryLarvalJobs have been constructed, go ahead
 		// and start delivering LarvalJobs to the JobDistributor.
-		larval_jobs = next_batch_of_larval_jobs_from_prelim( job_dag_node_index, max_njobs );
+		PrelimJobNodeID const pjn_node( job_dag_node_index );
+		larval_jobs = next_batch_of_larval_jobs_from_prelim( pjn_node, max_njobs );
 	} else {
 		larval_jobs = next_batch_of_larval_jobs_for_job_node( job_dag_node_index, max_njobs );
 	}
@@ -386,8 +387,10 @@ StandardJobQueen::determine_job_list( Size job_dag_node_index, Size max_njobs )
 }
 
 LarvalJobs
-StandardJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_index, core::Size max_njobs )
-{
+StandardJobQueen::next_batch_of_larval_jobs_from_prelim(
+	PrelimJobNodeID const job_node_index,
+	core::Size max_njobs
+) {
 	LarvalJobs jobs;
 	if ( prelim_job_tracker_->get_job_node_assigned( job_node_index ) ) return jobs;
 
@@ -433,17 +436,13 @@ StandardJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_ind
 			}
 
 			//Sets last pjn_index or first depending on whether this is the first nstruct being assigned.
-			core::Size starting_index = 0; //Starting global ID we will be giving out
-			core::Size ending_index   = 0; //Final global ID we will be giving out.
-
-
-			starting_index = 1 + current_job_index();
+			GlobalJobID starting_index( 1 + current_job_index() ); //Starting global ID we will be giving out
 
 			////////////////////////////////////////////////////////////
 			///* Expand Job List AND increment the JobTracker's current job index during expansion! *///
 			LarvalJobs curr_jobs = expand_job_list( curr_inner_larval_job, max_to_make );
 
-			ending_index = current_job_index();
+			GlobalJobID ending_index( current_job_index() ); //Final global ID we will be giving out.
 
 			core::Size n_made = curr_jobs.size();
 			if ( max_njobs >= n_made ) {
@@ -475,7 +474,7 @@ StandardJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_ind
 }
 
 LarvalJobs
-StandardJobQueen::next_batch_of_larval_jobs_for_job_node(core::Size /*job_node*/, core::Size /*max_jobs*/){
+StandardJobQueen::next_batch_of_larval_jobs_for_job_node( JobDAGNodeID /*job_node*/, core::Size /*max_jobs*/ ){
 	LarvalJobs jobs;
 	return jobs;
 }
@@ -521,7 +520,7 @@ void StandardJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, S
 {
 	prelim_job_tracker_->track_job_completed(job);
 
-	Size pjn_index = prelim_job_tracker_->get_job_node_for_job_index( job->job_index() );
+	PrelimJobNodeID const pjn_index( prelim_job_tracker_->get_job_node_for_job_index( job->job_index() ) );
 	if ( pjn_index != 0 ) {
 		if ( prelim_job_tracker_->get_job_node_complete( pjn_index ) ) {
 			// Let the derived JobQueen know that all of the jobs for a PJN have completed
@@ -531,14 +530,14 @@ void StandardJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, S
 
 	if ( status == jd3_job_status_success ) {
 		utility::options::OptionCollectionOP job_options = options_for_job( *job->inner_job() );
-		for ( Size ii = 1; ii <= nresults; ++ii ) {
+		for ( ResultIndex ii( 1 ); ii <= nresults; ++ii ) {
 			create_and_store_output_specification_for_job_result( job, *job_options, ii, nresults );
 		}
 	}
 
 }
 
-void StandardJobQueen::completed_job_summary( LarvalJobCOP, core::Size, JobSummaryOP ) {}
+void StandardJobQueen::completed_job_summary( LarvalJobCOP, ResultIndex, JobSummaryOP ) {}
 
 std::list< output::OutputSpecificationOP >
 StandardJobQueen::jobs_that_should_be_output()
@@ -586,7 +585,7 @@ StandardJobQueen::result_outputter(
 
 //void StandardJobQueen::completed_job_result(
 // LarvalJobCOP job,
-// core::Size result_index,
+// ResultIndex result_index,
 // JobResultOP job_result
 //)
 //{
@@ -829,7 +828,7 @@ StandardJobQueen::get_prelim_larval_job_tracker() const {
 }
 
 void
-StandardJobQueen::note_preliminary_job_node_is_complete( core::Size )
+StandardJobQueen::note_preliminary_job_node_is_complete( PrelimJobNodeID )
 {}
 
 /// @details This base class implementation merely returns a one-element list containing the
@@ -843,14 +842,14 @@ StandardJobQueen::refine_preliminary_job( PreliminaryLarvalJob const & prelim_jo
 }
 
 LarvalJobs
-StandardJobQueen::expand_job_list( InnerLarvalJobOP inner_job, core::Size max_larval_jobs_to_create )
-{
+StandardJobQueen::expand_job_list( InnerLarvalJobOP inner_job, core::Size max_larval_jobs_to_create ) {
 	core::Size nstruct = inner_job->nstruct_max();
 	LarvalJobs jobs;
 	core::Size n_to_make = std::min( nstruct, max_larval_jobs_to_create );
 	for ( core::Size jj = 1; jj <= n_to_make; ++jj ) {
 		get_job_tracker().increment_current_job_index();
-		LarvalJobOP job = create_larval_job( inner_job, njobs_made_for_curr_inner_larval_job_ + jj, current_job_index() );
+		NStructIndex const jj_nstruct_index( njobs_made_for_curr_inner_larval_job_ + jj );
+		LarvalJobOP job = create_larval_job( inner_job, jj_nstruct_index, current_job_index() );
 		//TR << "Expand larval job " << current_job_index() << std::endl;
 		jobs.push_back( job );
 	}
@@ -863,7 +862,7 @@ StandardJobQueen::expand_job_list( InnerLarvalJobOP inner_job, core::Size max_la
 LarvalJobOP
 StandardJobQueen::create_larval_job(
 	InnerLarvalJobOP inner_job,
-	core::Size nstruct_index,
+	NStructIndex nstruct_index,
 	core::Size larval_job_index
 )
 {
@@ -872,9 +871,9 @@ StandardJobQueen::create_larval_job(
 
 StandardInnerLarvalJobOP
 StandardJobQueen::create_inner_larval_job(
-	core::Size nstruct,
-	core::Size job_node,
-	core::Size preliminary_job_node
+	core::Size const nstruct,
+	JobDAGNodeID const job_node,
+	PrelimJobNodeID const preliminary_job_node
 ) const
 {
 	return std::make_shared< StandardInnerLarvalJob >( nstruct, job_node, preliminary_job_node );
@@ -882,9 +881,9 @@ StandardJobQueen::create_inner_larval_job(
 
 InnerLarvalJobOP
 StandardJobQueen::create_and_init_inner_larval_job_from_preliminary(
-	core::Size nstruct,
-	core::Size prelim_job_node,
-	core::Size job_node
+	core::Size const nstruct,
+	PrelimJobNodeID const prelim_job_node,
+	JobDAGNodeID const job_node
 ) const
 {
 	InnerLarvalJobOP inner_job = create_inner_larval_job( nstruct, job_node, prelim_job_node );
@@ -902,7 +901,7 @@ StandardJobQueen::create_and_init_inner_larval_job_from_preliminary(
 void
 StandardJobQueen::create_and_store_output_specification_for_job_result(
 	LarvalJobCOP job,
-	core::Size result_index,
+	ResultIndex result_index,
 	core::Size nresults
 )
 {
@@ -916,7 +915,7 @@ void
 StandardJobQueen::create_and_store_output_specification_for_job_result(
 	LarvalJobCOP job,
 	utility::options::OptionCollection const & job_options,
-	core::Size result_index,
+	ResultIndex result_index,
 	core::Size nresults
 )
 {
@@ -935,7 +934,7 @@ output::OutputSpecificationOP
 StandardJobQueen::create_output_specification_for_job_result(
 	LarvalJobCOP job,
 	utility::options::OptionCollection const & job_options,
-	core::Size result_index,
+	ResultIndex result_index,
 	core::Size nresults
 )
 {
@@ -996,7 +995,7 @@ StandardJobQueen::create_output_specification_for_job_result(
 JobOutputIndex
 StandardJobQueen::build_output_index(
 	protocols::jd3::LarvalJobCOP job,
-	Size result_index,
+	ResultIndex result_index,
 	Size n_results_for_job
 )
 {
@@ -1014,7 +1013,7 @@ StandardJobQueen::build_output_index(
 void
 StandardJobQueen::assign_output_index(
 	protocols::jd3::LarvalJobCOP,
-	Size,
+	ResultIndex,
 	Size,
 	JobOutputIndex &
 )
@@ -1375,8 +1374,10 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 		for ( auto pose_source_and_inputter : input_poses_and_inputters ) {
 			PreliminaryLarvalJob prelim_job;
 			++count_prelim_nodes;
+			JobDAGNodeID const dag_node( count_prelim_nodes );
+			PrelimJobNodeID const pjn_node( count_prelim_nodes );
 			InnerLarvalJobOP inner_job =
-				create_inner_larval_job( nstruct, count_prelim_nodes, count_prelim_nodes );
+				create_inner_larval_job( nstruct, dag_node, pjn_node );
 			inner_job->input_source( pose_source_and_inputter.first );
 			inner_job->jobdef_tag( subtag );
 			inner_job->outputter( outputter->class_key() );
@@ -1667,9 +1668,9 @@ StandardJobQueen::get_preliminary_larval_jobs() const {
 	return preliminary_larval_jobs_;
 }
 
-core::Size
+GlobalJobID
 StandardJobQueen::current_job_index() const {
-	return get_job_tracker().current_job_index();
+	return GlobalJobID( get_job_tracker().current_job_index() );
 }
 
 } // namespace standard

@@ -137,7 +137,7 @@ public:
 	~PoolJQ1() {}
 
 
-	LarvalJobs determine_job_list( Size job_node_index, Size max_njobs ) override
+	LarvalJobs determine_job_list( JobDAGNodeID job_node_index, Size max_njobs ) override
 	{
 		//determine_preliminary_job_list(); //Needed for outputter init
 		LarvalJobs jobs;
@@ -181,13 +181,13 @@ public:
 		StandardJobQueen::note_job_completed( larval_job, status, nresults );
 	}
 	//void completed_job_summary( core::Size job_id, core::Size result_index, JobSummaryOP summary ) override { summaries_[ sp(job_id,result_index) ] = summary; }
-	void completed_job_summary( LarvalJobCOP job, core::Size result_index, JobSummaryOP summary ) override { summaries_[ sp(job->job_index(),result_index) ] = summary; }
+	void completed_job_summary( LarvalJobCOP job, ResultIndex result_index, JobSummaryOP summary ) override { summaries_[ sp(job->job_index(),result_index) ] = summary; }
 
 	output::OutputSpecificationOP
 	create_output_specification_for_job_result(
 		LarvalJobCOP job,
 		utility::options::OptionCollection const & job_options,
-		core::Size result_index,
+		ResultIndex result_index,
 		core::Size nresults
 	) override
 	{
@@ -328,7 +328,7 @@ public:
 	{}
 
 
-	LarvalJobs determine_job_list( Size job_node_index, Size max_njobs ) override
+	LarvalJobs determine_job_list( JobDAGNodeID job_node_index, Size max_njobs ) override
 	{
 		determine_preliminary_job_list(); //Needed for outputter init
 		LarvalJobs job_list;
@@ -499,7 +499,7 @@ public:
 	}
 
 
-	void completed_job_summary( LarvalJobCOP job, Size result_index, JobSummaryOP summary ) override {
+	void completed_job_summary( LarvalJobCOP job, ResultIndex result_index, JobSummaryOP summary ) override {
 		summaries_through_larval_job_interface_.push_back( job->job_index() );
 		PoolJQ1::completed_job_summary( job, result_index, summary );
 	}
@@ -526,7 +526,7 @@ public:
 		}
 	}
 
-	LarvalJobs determine_job_list( Size job_node_index, Size max_njobs ) override
+	LarvalJobs determine_job_list( JobDAGNodeID job_node_index, Size max_njobs ) override
 	{
 		if ( job_node_index < 3 ) return PoolJQ3::determine_job_list( job_node_index, max_njobs );
 		LarvalJobs job_list;
@@ -606,7 +606,7 @@ class PoolJQ6 : public PoolJQ1
 	// in the larval job; the master node ought to catch an
 	// exception when it tries to serialize the object and
 	// send it to another node.
-	LarvalJobs determine_job_list( Size job_node_index, Size max_njobs ) override
+	LarvalJobs determine_job_list( JobDAGNodeID job_node_index, Size max_njobs ) override
 	{
 		determine_preliminary_job_list(); //Needed for outputter init
 		LarvalJobs jobs;
@@ -632,7 +632,7 @@ class PoolJQ7 : public PoolJQ1
 	// in the larval job; the master node ought to catch an
 	// exception when it tries to serialize the object and
 	// send it to another node.
-	LarvalJobs determine_job_list( Size, Size max_njobs ) override
+	LarvalJobs determine_job_list( JobDAGNodeID, Size max_njobs ) override
 	{
 		determine_preliminary_job_list(); //Needed for outputter init
 		LarvalJobs jobs;
@@ -852,7 +852,7 @@ public:
 		loaded_from_archive_(false)
 	{}
 
-	LarvalJobs determine_job_list( Size job_node_index, Size max_njobs ) override
+	LarvalJobs determine_job_list( JobDAGNodeID job_node_index, Size max_njobs ) override
 	{
 		TR << "DETERMINE JOB LIST: " << job_node_index << " " << node_2_jobs_given_out_ << std::endl;
 		if ( job_node_index == 2 && ! node_2_jobs_given_out_ ) {
@@ -973,8 +973,8 @@ public:
 	LarvalJobOP
 	create_larval_job(
 		core::Size njobs,
-		core::Size nstruct_id,
-		core::Size job_index
+		NStructIndex nstruct_id,
+		GlobalJobID job_index
 	)
 	{
 		InnerLarvalJobOP inner_job( new InnerLarvalJob( njobs, 1 ) );
@@ -986,8 +986,8 @@ public:
 	LarvalJobOP
 	create_larval_job_w_job1_dep(
 		core::Size njobs,
-		core::Size nstruct_id,
-		core::Size job_index
+		NStructIndex nstruct_id,
+		GlobalJobID job_index
 	)
 	{
 		InnerLarvalJobOP inner_job( new InnerLarvalJob( njobs, 1 ) );
@@ -997,7 +997,33 @@ public:
 		return larval_job;
 	}
 
+	LarvalJobOP
+	create_larval_job_w_job1_dep(
+		core::Size njobs,
+		core::Size nstruct_id,
+		core::Size job_index
+	)
+	{
+		InnerLarvalJobOP inner_job( new InnerLarvalJob( njobs, 1 ) );
+		inner_job->outputter( DummyPoseOutputter::keyname() );
+		inner_job->add_input_job_result_index( sp1(1) );
+		LarvalJobOP larval_job( new LarvalJob( inner_job, NStructIndex( nstruct_id ), GlobalJobID( job_index ) ) );
+		return larval_job;
+	}
 
+
+	std::string
+	serialized_larval_job(
+		core::Size njobs,
+		NStructIndex nstruct_id,
+		GlobalJobID job_index
+	)
+	{
+		LarvalJobOP larval_job = create_larval_job( njobs, nstruct_id, job_index );
+		return serialized_T( larval_job );
+	}
+
+	//This overload just makes the strong refactoring easier
 	std::string
 	serialized_larval_job(
 		core::Size njobs,
@@ -1005,20 +1031,34 @@ public:
 		core::Size job_index
 	)
 	{
-		LarvalJobOP larval_job = create_larval_job( njobs, nstruct_id, job_index );
+		LarvalJobOP larval_job = create_larval_job( njobs, NStructIndex( nstruct_id ), GlobalJobID( job_index ) );
 		return serialized_T( larval_job );
 	}
+
 
 	std::string
 	serialized_larval_job_and_job_result(
 		core::Size njobs,
-		core::Size nstruct_id,
-		core::Size job_index,
+		NStructIndex nstruct_id,
+		GlobalJobID job_index,
 		JobResultOP job_result
 	)
 	{
 		return serialized_larval_job_and_job_result(
 			create_larval_job( njobs, nstruct_id, job_index ), job_result );
+	}
+
+	//This overload just makes the strong refactoring easier
+	std::string
+	serialized_larval_job_and_job_result(
+		core::Size njobs,
+		NStructIndex nstruct_id,
+		core::Size job_index,
+		JobResultOP job_result
+	)
+	{
+		return serialized_larval_job_and_job_result(
+			create_larval_job( njobs, nstruct_id, GlobalJobID( job_index ) ), job_result );
 	}
 
 	std::string
@@ -1172,7 +1212,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 2 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 2, 2, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex( 2 ), 2, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 1 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success );
@@ -1183,7 +1223,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 1 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 1, 1, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex( 1 ), 1, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 2 );
 		send_integer_to_node( 0, 2 );
@@ -1206,7 +1246,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 3 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 3, 3, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex( 3 ), 3, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 1 );
 		send_integer_to_node( 0, 1 );
@@ -1432,11 +1472,11 @@ public:
 		// the serialized job result.
 		send_integer_to_node( 1, mpi_work_pool_jd_accept_and_output_job_result );
 		send_string_to_node( 1, serialized_output_specification( sp1(1), joi(1) ) );
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 2, 1, 1, trpcage_pose_result ) );
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 2, NStructIndex( 1 ), 1, trpcage_pose_result ) );
 
 		send_integer_to_node( 1, mpi_work_pool_jd_accept_and_output_job_result );
 		send_string_to_node( 1, serialized_output_specification( sp1(2), joi(2) ) );
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 2, 2, 2, trpcage_pose_result ) );
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 2, NStructIndex( 2 ), 2, trpcage_pose_result ) );
 
 		// Finally, tell node 1 to spin dow
 		send_integer_to_node( 1, mpi_work_pool_jd_spin_down );
@@ -2033,7 +2073,7 @@ public:
 		SimulateMPI::set_mpi_rank( 0 );
 
 		send_integer_to_node( 1, mpi_work_pool_jd_new_job_available );
-		LarvalJobOP multi_pass_larval_job = create_larval_job( 1, 1, 1 );
+		LarvalJobOP multi_pass_larval_job = create_larval_job( 1, NStructIndex( 1 ), GlobalJobID( 1 ) );
 		multi_pass_larval_job->retry_limit( 5 ); // try this job multiple times
 		send_string_to_node( 1, serialized_T( multi_pass_larval_job ) );
 		send_sizes_to_node( 1, utility::vector1< Size >() );
@@ -2130,7 +2170,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 2 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 2, 2, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex(2), 2, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 1 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success );
@@ -2141,7 +2181,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 1 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 1, 1, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex(1), 1, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 2 );
 		send_integer_to_node( 0, 2 );
@@ -2161,7 +2201,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 3 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 3, 3, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex(3), 3, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 1 );
 		send_integer_to_node( 0, 1 );
@@ -2228,7 +2268,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 4 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 1, 4, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex(1), 4, trpcage_pose_result ));
 
 		send_integer_to_node( 0, 1 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
@@ -2249,7 +2289,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 6 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 3, 6, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex(3), 6, trpcage_pose_result ));
 
 		send_integer_to_node( 0, 3 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
@@ -2270,7 +2310,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 5 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 2, 5, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex(2), 5, trpcage_pose_result ));
 
 		send_integer_to_node( 0, 2 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
@@ -3370,21 +3410,21 @@ public:
 		send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		send_size_to_node( 1, 2 ); // job_id
 		send_size_to_node( 1, 1 ); // result index
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 2, 2, trpcage_pose_result ));
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 2 ), 2, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 2 );
 		send_integer_to_node( 1, 2 ); // node 2 says "I have a message for you, archive"
 		send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		send_size_to_node( 1, 1 ); // job_id
 		send_size_to_node( 1, 1 ); // result index
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 1, 1, trpcage_pose_result ));
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 1 ), 1, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 4 );
 		send_integer_to_node( 1, 4 ); // node 4 says "I have a message for you, archive"
 		send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		send_size_to_node( 1, 3 ); // job_id
 		send_size_to_node( 1, 1 ); // result index
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 3, 3, trpcage_pose_result ));
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 3 ), 3, trpcage_pose_result ));
 
 
 		SimulateMPI::set_mpi_rank( 0 );
@@ -3428,21 +3468,21 @@ public:
 		send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		send_size_to_node( 1, 4 ); // job_id
 		send_size_to_node( 1, 1 ); // result index #1
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 1, 4, trpcage_pose_result ));
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 1 ), 4, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 3 );
 		send_integer_to_node( 1, 3 ); // node 3 says "I have a message for you, archive"
 		send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		send_size_to_node( 1, 5 ); // job_id
 		send_size_to_node( 1, 1 ); // result index #1
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 2, 5, trpcage_pose_result ));
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 2 ), 5, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 4 );
 		send_integer_to_node( 1, 4 ); // node 4 says "I have a message for you, archive"
 		send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		send_size_to_node( 1, 6 ); // job_id
 		send_size_to_node( 1, 1 ); // result index #1
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 3, 6, trpcage_pose_result ));
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 3 ), 6, trpcage_pose_result ));
 
 		// Finally, node 0 asks the archive for job result
 
@@ -3589,7 +3629,7 @@ public:
 
 		SimulateMPI::set_mpi_rank( 1 );
 		send_integer_to_node( 2, mpi_work_pool_jd_job_result_retrieved );
-		send_string_to_node( 2, serialized_larval_job_and_job_result( 1, 1, 1, trpcage_pose_result ));
+		send_string_to_node( 2, serialized_larval_job_and_job_result( 1, NStructIndex( 1 ), 1, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 0 );
 		// tell node 2 where to send the results of job 2:
@@ -3758,7 +3798,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 1 ); // job id
 		send_size_to_node( 0, 1 ); // result id
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 1, 1, 1, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 1, NStructIndex( 1 ), 1, trpcage_pose_result ));
 
 		send_integer_to_node( 0, 1 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
@@ -3943,7 +3983,7 @@ public:
 
 		SimulateMPI::set_mpi_rank(2);
 		send_integer_to_node( 1, mpi_work_pool_jd_job_result_retrieved );
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 1, 1, 6, trpcage_pose_result ) );
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 1, NStructIndex( 1 ), 6, trpcage_pose_result ) );
 
 		SimulateMPI::set_mpi_rank(0);
 		send_integer_to_node( 1, 0 ); // node 0 says "hey, I need to talk to you"
@@ -4452,7 +4492,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 1 ); // job id
 		send_size_to_node( 0, 1 ); // result id
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 1, 1, 1, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 1, NStructIndex( 1 ), 1, trpcage_pose_result ));
 
 		send_integer_to_node( 0, 1 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
@@ -4473,7 +4513,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 2 ); // job id
 		send_size_to_node( 0, 1 ); // num results
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 1, 1, 2, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 1, NStructIndex( 1 ), 2, trpcage_pose_result ));
 
 		send_integer_to_node( 0, 1 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
@@ -4588,7 +4628,7 @@ public:
 		InnerLarvalJobOP inner_job( new InnerLarvalJob( 2, 1 ) );
 		inner_job->outputter( DummyPoseOutputter::keyname() );
 		inner_job->const_data_map().add( "testing", "testing", UndeserializableOP( new Undeserializable ));
-		LarvalJobOP larval_job( new LarvalJob( inner_job, 1, 1 ));
+		LarvalJobOP larval_job( new LarvalJob( inner_job, NStructIndex( 1 ), 1 ));
 
 		std::string undeserializable_larval_job;
 		try {
@@ -4661,7 +4701,7 @@ public:
 
 		// now node 0 sends an un-deserializable job result
 		send_integer_to_node( 1, mpi_work_pool_jd_job_result_retrieved );
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 1, 1, 1, trpcage_pose_result ));
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 1, NStructIndex( 1 ), 1, trpcage_pose_result ));
 
 		// ok -- the worker node will be shut down when the mpi process exits; and this will happen when node 0
 		// has output the error message that we sent and then exits; so for this unit test, just send node 1 a
@@ -4834,7 +4874,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 1 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 1, 1, 1, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 1, NStructIndex( 1 ), 1, trpcage_pose_result ));
 
 		send_integer_to_node( 0, 1 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
@@ -4897,7 +4937,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 1 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 1, 1, 1, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 1, NStructIndex( 1 ), 1, trpcage_pose_result ));
 
 		send_integer_to_node( 0, 1 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
@@ -4978,7 +5018,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 2 ); // job_id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 2, 2, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex( 2 ), 2, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 1 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success );
@@ -4989,7 +5029,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 1 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 1, 1, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex( 1 ), 1, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 2 );
 		send_integer_to_node( 0, 2 );
@@ -5008,7 +5048,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 3 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 3, 3, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex( 3 ), 3, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 1 );
 		send_integer_to_node( 0, 1 );
@@ -5075,7 +5115,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 4 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 1, 4, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex( 1 ), 4, trpcage_pose_result ));
 
 		send_integer_to_node( 0, 1 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
@@ -5096,7 +5136,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 6 ); // job id
 		send_size_to_node( 0, 1 ); // num results
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 3, 6, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex( 3 ), 6, trpcage_pose_result ));
 
 		send_integer_to_node( 0, 3 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
@@ -5117,7 +5157,7 @@ public:
 		send_integer_to_node( 0, mpi_work_pool_jd_archive_job_result );
 		send_size_to_node( 0, 5 ); // job id
 		send_size_to_node( 0, 1 ); // result index
-		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 2, 5, trpcage_pose_result ));
+		send_string_to_node( 0, serialized_larval_job_and_job_result( 3, NStructIndex( 2 ), 5, trpcage_pose_result ));
 
 		send_integer_to_node( 0, 2 );
 		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
@@ -5461,7 +5501,7 @@ public:
 
 		SimulateMPI::set_mpi_rank( 1 );
 		send_integer_to_node( 2, mpi_work_pool_jd_job_result_retrieved );
-		send_string_to_node( 2, serialized_larval_job_and_job_result( 1, 1, 1, trpcage_pose_result ));
+		send_string_to_node( 2, serialized_larval_job_and_job_result( 1, NStructIndex( 1 ), 1, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 0 );
 		// tell node 2 where to send the results of job 2:
@@ -6366,21 +6406,21 @@ public:
 		send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		send_size_to_node( 1, 2 ); // job_id
 		send_size_to_node( 1, 1 ); // result index
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 2, 2, trpcage_pose_result ));
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 2 ), 2, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 2 );
 		send_integer_to_node( 1, 2 ); // node 2 says "I have a message for you, archive"
 		send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		send_size_to_node( 1, 1 ); // job_id
 		send_size_to_node( 1, 1 ); // result index
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 1, 1, trpcage_pose_result ));
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 1 ), 1, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 4 );
 		send_integer_to_node( 1, 4 ); // node 4 says "I have a message for you, archive"
 		send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		send_size_to_node( 1, 3 ); // job_id
 		send_size_to_node( 1, 1 ); // result index
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 3, 3, trpcage_pose_result ));
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 3 ), 3, trpcage_pose_result ));
 
 
 		SimulateMPI::set_mpi_rank( 0 );
@@ -6428,21 +6468,21 @@ public:
 		send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		send_size_to_node( 1, 4 ); // job_id
 		send_size_to_node( 1, 1 ); // result index #1
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 1, 4, trpcage_pose_result ));
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 1 ), 4, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 3 );
 		send_integer_to_node( 1, 3 ); // node 3 says "I have a message for you, archive"
 		send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		send_size_to_node( 1, 5 ); // job_id
 		send_size_to_node( 1, 1 ); // result index #1
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 2, 5, trpcage_pose_result ));
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 2 ), 5, trpcage_pose_result ));
 
 		SimulateMPI::set_mpi_rank( 4 );
 		send_integer_to_node( 1, 4 ); // node 4 says "I have a message for you, archive"
 		send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 		send_size_to_node( 1, 6 ); // job_id
 		send_size_to_node( 1, 1 ); // result index #1
-		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 3, 6, trpcage_pose_result ));
+		send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 3 ), 6, trpcage_pose_result ));
 
 		// Finally, node 0 asks the archive for job result
 
@@ -6600,21 +6640,21 @@ public:
 			send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 			send_size_to_node( 1, 4 ); // job_id
 			send_size_to_node( 1, 1 ); // result index #1
-			send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 1, 4, trpcage_pose_result ));
+			send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 1 ), 4, trpcage_pose_result ));
 
 			SimulateMPI::set_mpi_rank( 3 );
 			send_integer_to_node( 1, 3 ); // node 3 says "I have a message for you, archive"
 			send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 			send_size_to_node( 1, 5 ); // job_id
 			send_size_to_node( 1, 1 ); // result index #1
-			send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 2, 5, trpcage_pose_result ));
+			send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 2 ), 5, trpcage_pose_result ));
 
 			SimulateMPI::set_mpi_rank( 4 );
 			send_integer_to_node( 1, 4 ); // node 4 says "I have a message for you, archive"
 			send_integer_to_node( 1, mpi_work_pool_jd_archive_job_result ); // "please archive this job result"
 			send_size_to_node( 1, 6 ); // job_id
 			send_size_to_node( 1, 1 ); // result index #1
-			send_string_to_node( 1, serialized_larval_job_and_job_result( 3, 3, 6, trpcage_pose_result ));
+			send_string_to_node( 1, serialized_larval_job_and_job_result( 3, NStructIndex( 3 ), 6, trpcage_pose_result ));
 
 			// Finally, node 0 asks the archive for job result
 

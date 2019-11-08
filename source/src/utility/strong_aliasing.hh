@@ -15,6 +15,14 @@
 
 #include <platform/types.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
+
 namespace utility {
 
 //#include <NamedType/named_type.hpp>
@@ -60,7 +68,28 @@ struct StrongT {
 		return value;
 	}
 
+	T& operator() () {
+		return value;
+	}
+
+	//Operator overloads to make common functions easier:
+
+	StrongT< T, Key > &
+	operator+= ( T other ){
+		value += other;
+		return *this;
+	}
+
+	//Prefix increment operator
+	StrongT< T, Key > &
+	operator++ (){
+		++value;
+		return *this;
+	}
+
 };
+
+
 
 template< typename Key >
 using StrongReal = StrongT< platform::Real, Key >;
@@ -68,6 +97,31 @@ using StrongReal = StrongT< platform::Real, Key >;
 template< typename Key >
 using StrongSize = StrongT< platform::Size, Key >;
 
+
+//Serialization Macros
+
+#ifdef SERIALIZATION
+
+#define SERIALIZE_STRONG_SIZE_HH( NAME ) using NAME = utility::StrongSize< struct NAME##_ >;\
+	template < class Archive > void save( Archive & archive, NAME const & );\
+	template < class Archive > void load( Archive & archive, NAME & )
+
+#define SERIALIZE_STRONG_SIZE_CC( NAME ) template < class Archive > void save( Archive & archive, NAME const & t ) { archive( CEREAL_NVP( t.value ) ); } \
+	template < class Archive > void load( Archive & archive, NAME & t ) { archive( t.value ); } \
+	EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( NAME )
+
+
+#define SERIALIZE_STRONG_REAL_HH( NAME ) using NAME = utility::StrongReal< struct NAME##_ >;\
+	template < class Archive > void save( Archive & archive, NAME const & );\
+	template < class Archive > void load( Archive & archive, NAME & )
+
+#define SERIALIZE_STRONG_REAL_CC( NAME ) template < class Archive > void save( Archive & archive, NAME const & t ) { archive( CEREAL_NVP( t.value ) ); } \
+	template < class Archive > void load( Archive & archive, NAME & t ) { archive( t.value ); } \
+	EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( NAME )
+
+#endif
+
 }  // namespace utility
+
 
 #endif  // INCLUDED_utility_strong_aliasing_HH

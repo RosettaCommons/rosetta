@@ -200,7 +200,7 @@ public:
 		djq.create_and_set_initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
 
 		//TS_ASSERT( );
-		LarvalJobs jobs = djq.determine_job_list( 1, 1000 );
+		LarvalJobs jobs = djq.determine_job_list( JobDAGNodeID( 1 ), 1000 );
 		TS_ASSERT( ! jobs.empty() );
 		TS_ASSERT( djq.get_preliminary_larval_jobs_determined());
 
@@ -391,7 +391,7 @@ public:
 		}
 		djq.create_and_set_initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
 
-		LarvalJobs jobs = djq.determine_job_list( 1, 1000 );
+		LarvalJobs jobs = djq.determine_job_list( JobDAGNodeID( 1 ), 1000 );
 
 		utility::vector1< JobResultOP > empty_vector;
 		djq.complete_job_maturation_ = boost::bind( StandardJobQueenTests::callback_complete_larval_job_maturation1, _1, _2 );
@@ -429,7 +429,7 @@ public:
 
 		JobDigraph const & job_graph = djq.get_job_graph();
 		TS_ASSERT_EQUALS( job_graph.num_nodes(), 1);
-		LarvalJobs jobs = djq.determine_job_list( 1, 1000 );
+		LarvalJobs jobs = djq.determine_job_list( JobDAGNodeID( 1 ), 1000 );
 
 		utility::vector1< JobResultOP > empty_vector;
 		djq.complete_job_maturation_ = boost::bind( StandardJobQueenTests::callback_complete_larval_job_maturation2, _1, _2 );
@@ -490,7 +490,7 @@ public:
 		for ( core::Size ii = 1; ii <= 3; ++ii ) prelim_nodes[ ii ] = ii;
 		TS_ASSERT_EQUALS( prelim_tracker.get_preliminary_job_node_indices(), prelim_nodes );
 
-		LarvalJobs jobs = djq.determine_job_list_and_track( 1, 4 );
+		LarvalJobs jobs = djq.determine_job_list_and_track( JobDAGNodeID( 1 ), 4 );
 		prelim_tracker = djq.get_prelim_larval_job_tracker();
 		TS_ASSERT_EQUALS( jobs.size(), 4 );
 		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 1 ), false );
@@ -543,7 +543,7 @@ public:
 		TS_ASSERT( tracker.completed_jobs_for_node(1).member(3));
 		TS_ASSERT( tracker.completed_jobs_for_node(1).member(4));
 
-		jobs = djq.determine_job_list_and_track( 1, 4 );
+		jobs = djq.determine_job_list_and_track( JobDAGNodeID( 1 ), 4 );
 		prelim_tracker = djq.get_prelim_larval_job_tracker();
 		TS_ASSERT_EQUALS( jobs.size(), 1 );
 		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 1 ), true );
@@ -573,7 +573,7 @@ public:
 		TS_ASSERT( ! tracker.completed_jobs_for_node(1).member(7));
 		TS_ASSERT( ! tracker.completed_jobs_for_node(1).member(8));
 
-		jobs = djq.determine_job_list_and_track( 2, 6 );
+		jobs = djq.determine_job_list_and_track( JobDAGNodeID( 2 ), 6 );
 		prelim_tracker = djq.get_prelim_larval_job_tracker();
 		TS_ASSERT_EQUALS( jobs.size(), 6 );
 		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 1 ), true );
@@ -608,7 +608,7 @@ public:
 		TS_ASSERT( tracker.started_jobs().member(10));
 		TS_ASSERT( tracker.started_jobs().member(11));
 
-		jobs = djq.determine_job_list_and_track( 2, 6 );
+		jobs = djq.determine_job_list_and_track( JobDAGNodeID( 2 ), 6 );
 		prelim_tracker = djq.get_prelim_larval_job_tracker();
 
 		TS_ASSERT_EQUALS( jobs.size(), 5 );
@@ -623,7 +623,7 @@ public:
 		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 3 ),   0 );
 		TS_ASSERT_EQUALS( tracker.last_job_for_input_source_id(2), 16);
 
-		jobs = djq.determine_job_list_and_track( 3, 6 );
+		jobs = djq.determine_job_list_and_track( JobDAGNodeID( 3 ), 6 );
 		prelim_tracker = djq.get_prelim_larval_job_tracker();
 		TS_ASSERT_EQUALS( jobs.size(), 3 );
 		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 1 ), true );
@@ -679,7 +679,7 @@ public:
 		for ( core::Size ii = 1; ii <= 3; ++ii ) prelim_nodes[ ii ] = ii;
 		TS_ASSERT_EQUALS( prelim_tracker.get_preliminary_job_node_indices(), prelim_nodes );
 
-		LarvalJobs jobs = djq.determine_job_list( 1, 4 );
+		LarvalJobs jobs = djq.determine_job_list( JobDAGNodeID( 1 ), 4 );
 		for ( LarvalJobOP node1_job : jobs ) {
 			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().source_id(), 1 );
 		}
@@ -690,7 +690,7 @@ public:
 			djq.note_job_completed_and_track( node1_job, jd3_job_status_success, 1 );
 		}
 
-		LarvalJobs jobs2 = djq.determine_job_list( 1, 2 );
+		LarvalJobs jobs2 = djq.determine_job_list( JobDAGNodeID( 1 ), 2 );
 		for ( LarvalJobOP node1_job : jobs2 ) {
 			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().source_id(), 1 );
 		}
@@ -701,7 +701,7 @@ public:
 			djq.note_job_completed_and_track( node1_job, jd3_job_status_success, 1 );
 		}
 
-		LarvalJobs jobs3 = djq.determine_job_list( 2, 10 );
+		LarvalJobs jobs3 = djq.determine_job_list( JobDAGNodeID( 2 ), 10 );
 		TS_ASSERT_EQUALS( jobs3.size(), 10 );
 
 		// After we tell the DJQ that all the jobs for node two have finished and
@@ -721,12 +721,12 @@ public:
 			djq.note_job_completed_and_track( node2_job, jd3_job_status_success, 1 );
 		}
 
-		LarvalJobs jobs4 = djq.determine_job_list( 2, 10 );
+		LarvalJobs jobs4 = djq.determine_job_list( JobDAGNodeID( 2 ), 10 );
 		TS_ASSERT_EQUALS( jobs4.size(), 1 );
 		std::list< deallocation::DeallocationMessageOP > msgs5 = djq.deallocation_messages();
 		TS_ASSERT( msgs5.empty() );
 
-		LarvalJobs jobs5 = djq.determine_job_list( 2, 10 );
+		LarvalJobs jobs5 = djq.determine_job_list( JobDAGNodeID( 2 ), 10 );
 		TS_ASSERT( jobs5.empty() );
 		std::list< deallocation::DeallocationMessageOP > msgs6 = djq.deallocation_messages();
 		TS_ASSERT( msgs6.empty() );
@@ -736,7 +736,7 @@ public:
 			djq.note_job_completed_and_track( node2_job, jd3_job_status_success, 1 );
 		}
 
-		LarvalJobs jobs6 = djq.determine_job_list( 3, 10 );
+		LarvalJobs jobs6 = djq.determine_job_list( JobDAGNodeID( 3 ), 10 );
 		TS_ASSERT_EQUALS( jobs6.size(), 3 );
 		std::list< deallocation::DeallocationMessageOP > msgs7 = djq.deallocation_messages();
 		TS_ASSERT_EQUALS( msgs7.size(), 1 );
@@ -775,7 +775,7 @@ public:
 		for ( core::Size ii = 1; ii <= 3; ++ii ) prelim_nodes[ ii ] = ii;
 		TS_ASSERT_EQUALS( prelim_tracker.get_preliminary_job_node_indices(), prelim_nodes );
 
-		LarvalJobs jobs = djq.determine_job_list( 1, 4 );
+		LarvalJobs jobs = djq.determine_job_list( JobDAGNodeID( 1 ), 4 );
 		for ( LarvalJobOP node1_job : jobs ) {
 			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().source_id(), 1 );
 		}
@@ -786,7 +786,7 @@ public:
 			djq.note_job_completed_and_track( node1_job, jd3_job_status_success, 1 );
 		}
 
-		LarvalJobs jobs2 = djq.determine_job_list( 1, 2 );
+		LarvalJobs jobs2 = djq.determine_job_list( JobDAGNodeID( 1 ), 2 );
 		for ( LarvalJobOP node1_job : jobs2 ) {
 			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().source_id(), 1 );
 		}
@@ -797,7 +797,7 @@ public:
 			djq.note_job_completed_and_track( node1_job, jd3_job_status_success, 1 );
 		}
 
-		LarvalJobs jobs3 = djq.determine_job_list( 2, 10 );
+		LarvalJobs jobs3 = djq.determine_job_list( JobDAGNodeID( 2 ), 10 );
 		TS_ASSERT_EQUALS( jobs3.size(), 10 );
 
 		// After we tell the DJQ that all the jobs for node two have finished and
@@ -817,12 +817,12 @@ public:
 			djq.note_job_completed_and_track( node2_job, jd3_job_status_success, 1 );
 		}
 
-		LarvalJobs jobs4 = djq.determine_job_list( 2, 10 );
+		LarvalJobs jobs4 = djq.determine_job_list( JobDAGNodeID( 2 ), 10 );
 		TS_ASSERT_EQUALS( jobs4.size(), 1 );
 		std::list< deallocation::DeallocationMessageOP > msgs5 = djq.deallocation_messages();
 		TS_ASSERT( msgs5.empty() );
 
-		LarvalJobs jobs5 = djq.determine_job_list( 2, 10 );
+		LarvalJobs jobs5 = djq.determine_job_list( JobDAGNodeID( 2 ), 10 );
 		TS_ASSERT( jobs5.empty() );
 		std::list< deallocation::DeallocationMessageOP > msgs6 = djq.deallocation_messages();
 		TS_ASSERT( msgs6.empty() );
@@ -832,7 +832,7 @@ public:
 			djq.note_job_completed_and_track( node2_job, jd3_job_status_success, 1 );
 		}
 
-		LarvalJobs jobs6 = djq.determine_job_list( 3, 10 );
+		LarvalJobs jobs6 = djq.determine_job_list( JobDAGNodeID( 3 ), 10 );
 		TS_ASSERT_EQUALS( jobs6.size(), 3 );
 		std::list< deallocation::DeallocationMessageOP > msgs7 = djq.deallocation_messages();
 		TS_ASSERT_EQUALS( msgs7.size(), 1 );
@@ -879,7 +879,7 @@ public:
 		for ( core::Size ii = 1; ii <= 3; ++ii ) prelim_nodes[ ii ] = ii;
 		TS_ASSERT_EQUALS( prelim_tracker.get_preliminary_job_node_indices(), prelim_nodes );
 
-		LarvalJobs jobs = djq.determine_job_list( 1, 4 );
+		LarvalJobs jobs = djq.determine_job_list( JobDAGNodeID( 1 ), 4 );
 		for ( LarvalJobOP node1_job : jobs ) {
 			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().source_id(), 1 );
 		}
@@ -890,7 +890,7 @@ public:
 			djq.note_job_completed_and_track( node1_job, jd3_job_status_success, 1 );
 		}
 
-		LarvalJobs jobs2 = djq.determine_job_list( 1, 2 );
+		LarvalJobs jobs2 = djq.determine_job_list( JobDAGNodeID( 1 ), 2 );
 		for ( LarvalJobOP node1_job : jobs2 ) {
 			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().source_id(), 1 );
 		}
@@ -901,7 +901,7 @@ public:
 			djq.note_job_completed_and_track( node1_job, jd3_job_status_success, 1 );
 		}
 
-		LarvalJobs jobs3 = djq.determine_job_list( 2, 10 );
+		LarvalJobs jobs3 = djq.determine_job_list( JobDAGNodeID( 2 ), 10 );
 		TS_ASSERT_EQUALS( jobs3.size(), 10 );
 
 		// After we tell the DJQ that all the jobs for node two have finished and
@@ -915,12 +915,12 @@ public:
 			djq.note_job_completed_and_track( node2_job, jd3_job_status_success, 1 );
 		}
 
-		LarvalJobs jobs4 = djq.determine_job_list( 2, 10 );
+		LarvalJobs jobs4 = djq.determine_job_list( JobDAGNodeID( 2 ), 10 );
 		TS_ASSERT_EQUALS( jobs4.size(), 1 );
 		std::list< deallocation::DeallocationMessageOP > msgs5 = djq.deallocation_messages();
 		TS_ASSERT( msgs5.empty() );
 
-		LarvalJobs jobs5 = djq.determine_job_list( 2, 10 );
+		LarvalJobs jobs5 = djq.determine_job_list( JobDAGNodeID( 2 ), 10 );
 		TS_ASSERT( jobs5.empty() );
 		std::list< deallocation::DeallocationMessageOP > msgs6 = djq.deallocation_messages();
 		TS_ASSERT( msgs6.empty() );
@@ -930,7 +930,7 @@ public:
 			djq.note_job_completed_and_track( node2_job, jd3_job_status_success, 1 );
 		}
 
-		LarvalJobs jobs6 = djq.determine_job_list( 3, 10 );
+		LarvalJobs jobs6 = djq.determine_job_list( JobDAGNodeID( 3 ), 10 );
 		TS_ASSERT_EQUALS( jobs6.size(), 3 );
 
 		// OK! Now the DJQ should say to deallocate the first input pose.

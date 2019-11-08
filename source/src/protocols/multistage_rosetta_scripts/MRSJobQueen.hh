@@ -19,6 +19,7 @@
 #include <protocols/multistage_rosetta_scripts/MRSJobQueen.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/TagManager.hh>
+#include <protocols/jd3/strong_types.hh>
 
 //JD3
 #include <protocols/jd3/JobQueen.hh>
@@ -34,6 +35,7 @@
 #include <protocols/jd3/dag_node_managers/NodeManager.hh>
 #include <protocols/jd3/job_summaries/StandardPoseJobSummary.hh>
 #include <protocols/jd3/output/OutputSpecification.fwd.hh>
+#include <protocols/jd3/strong_types.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
@@ -119,7 +121,7 @@ public:
 	override;
 
 	std::list< jd3::LarvalJobOP > determine_job_list(
-		Size job_dag_node_index,
+		jd3::JobDAGNodeID job_dag_node_index,
 		Size max_njobs
 	) override;
 
@@ -132,7 +134,7 @@ public:
 
 	///@brief this was only created for the unit test. Please do not call this.
 	void note_job_completed(
-		core::Size job_id,
+		jd3::GlobalJobID job_id,
 		jd3::JobStatus status,
 		core::Size nresults,
 		bool are_you_a_unit_test
@@ -153,20 +155,20 @@ public:
 	) override;
 
 	void completed_job_summary(
-		core::Size job_id,
-		core::Size result_index,
+		jd3::GlobalJobID job_id,
+		jd3::ResultIndex result_index,
 		jd3::JobSummaryOP summary
-	) ;
+	);
 
 	void completed_job_summary(
 		jd3::LarvalJobCOP job,
-		core::Size result_index,
+		jd3::ResultIndex result_index,
 		jd3::JobSummaryOP summary
 	) override {
-		completed_job_summary( job->job_index(), result_index, summary );
+		completed_job_summary( jd3::GlobalJobID( job->job_index() ), result_index, summary );
 	}
 
-	core::Size stage_for_global_job_id( core::Size global_job_id ) const;
+	jd3::JobDAGNodeID stage_for_global_job_id( jd3::GlobalJobID global_job_id ) const;
 
 	std::list< jd3::JobResultID > job_results_that_should_be_discarded() override;
 
@@ -179,7 +181,9 @@ public:
 	void determine_validity_of_stage_tags();
 
 	core::Size num_input_structs() const { return num_input_structs_; }
+
 	core::Size num_stages() const { return num_stages_; }
+
 	core::Size num_results_to_keep_for_stage( core::Size stage ) const {
 		return num_results_to_keep_for_stage_[ stage ];
 	}
@@ -199,8 +203,9 @@ protected:
 
 	void all_settings_to_defualt();
 
-	jd3::LarvalJobOP get_nth_job_for_initial_stage( core::Size local_job_id );
-	jd3::LarvalJobOP get_nth_job_for_noninitial_stage( core::Size stage, core::Size local_job_id );
+	jd3::LarvalJobOP get_nth_job_for_initial_stage( jd3::LocalJobID local_job_id );
+
+	jd3::LarvalJobOP get_nth_job_for_noninitial_stage( jd3::JobDAGNodeID stage, jd3::LocalJobID local_job_id );
 
 	void
 	append_common_tag_subelements(
@@ -223,7 +228,10 @@ protected:
 		utility::tag::XMLSchemaComplexTypeGenerator & job_ct_gen
 	) const override ;
 
-	void parse_single_job_tag( jd3::standard::PreliminaryLarvalJob const & prelim_larval_job, core::Size input_pose_id );
+	void parse_single_job_tag(
+		jd3::standard::PreliminaryLarvalJob const & prelim_larval_job,
+		jd3::PrelimJobNodeID input_pose_id
+	);
 
 	static std::string protocols_subelement_mangler( std::string const & name ){
 		return "protocols_multistage_rosetta_scripts_" + name + "_complex_type";
@@ -233,24 +241,25 @@ protected:
 		return "protocols_multistage_rosetta_scripts_job_" + name + "_complex_type";
 	}
 
-	core::Size input_pose_id_for_jobid( core::Size global_jobid ) const;
+	jd3::PrelimJobNodeID
+	input_pose_id_for_jobid( jd3::GlobalJobID global_jobid ) const;
 
 	void print_job_lineage() const;
 
 	void assign_output_index(
 		jd3::LarvalJobCOP larval_job,
-		Size result_index_for_job,
-		Size n_results_for_job,
+		jd3::ResultIndex result_index_for_job,
+		core::Size n_results_for_job,
 		jd3::JobOutputIndex & output_index
 	) override;
 
 	void assign_output_index(
-		core::Size global_job_id,
-		core::Size local_result_id,
+		jd3::GlobalJobID global_job_id,
+		jd3::ResultIndex result_id,
 		jd3::JobOutputIndex & output_index
 	);
 
-	void cluster( core::Size stage_about_to_start );
+	void cluster( jd3::JobDAGNodeID stage_about_to_start );
 
 private:
 	bool has_been_initialized_;
@@ -282,6 +291,7 @@ private:
 	utility::vector1< core::Size > num_structs_output_for_input_job_tag_;
 
 	utility::vector1< std::pair< jd3::InnerLarvalJobOP, core::Size > > current_inner_larval_job_for_stage_;//second element is counter
+
 	jd3::JobGenealogistOP job_genealogist_;
 
 	std::map< jd3::JobResultID, jd3::output::OutputSpecificationOP > pose_output_specification_for_job_result_id_;
@@ -307,18 +317,22 @@ public:
 
 };
 
-inline core::Size MRSJobQueen::stage_for_global_job_id( core::Size global_job_id ) const {
+inline
+jd3::JobDAGNodeID
+MRSJobQueen::stage_for_global_job_id( jd3::GlobalJobID global_job_id ) const {
 	for ( core::Size stage_ii = 2; stage_ii <= num_stages_; ++stage_ii ) {
 		if ( node_managers_[ stage_ii ]->job_offset() >= global_job_id ) {
-			return stage_ii - 1;
+			return jd3::JobDAGNodeID( stage_ii - 1 );
 		}
 	}
-	return num_stages_;
+	return jd3::JobDAGNodeID( num_stages_ );
 }
 
-inline core::Size MRSJobQueen::input_pose_id_for_jobid( core::Size global_jobid ) const{
+inline
+jd3::PrelimJobNodeID
+MRSJobQueen::input_pose_id_for_jobid( jd3::GlobalJobID global_jobid ) const{
 	core::Size const stage = stage_for_global_job_id( global_jobid );
-	return job_genealogist_->input_source_for_job( stage, global_jobid );
+	return jd3::PrelimJobNodeID( job_genealogist_->input_source_for_job( stage, global_jobid ) );
 }
 
 

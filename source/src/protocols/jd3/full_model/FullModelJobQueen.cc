@@ -436,7 +436,7 @@ FullModelJobQueen::create_initial_job_dag()
 	pjn_job_ind_begin_.resize( n_pjns );
 	pjn_job_ind_end_.resize( n_pjns );
 
-	for ( core::Size ii = 1; ii <= n_pjns; ++ii ) {
+	for ( PrelimJobNodeID ii( 1 ); ii <= n_pjns; ++ii ) {
 		preliminary_job_node_inds_[ ii ] = ii;
 		pjn_job_ind_begin_[ ii ] = pjn_job_ind_end_[ ii ] = 0;
 		preliminary_job_nodes_complete_[ ii ] = 0;
@@ -459,7 +459,7 @@ void FullModelJobQueen::update_job_dag( JobDigraphUpdater & ) {}
 /// the TagOP objects for each preliminary LarvalJob to the derived class through the
 /// refine_job_list method.
 LarvalJobs
-FullModelJobQueen::determine_job_list( Size job_dag_node_index, Size max_njobs )
+FullModelJobQueen::determine_job_list( JobDAGNodeID job_dag_node_index, Size max_njobs )
 {
 	// ok -- we're going to look for a job definition file, and failing that, fall back on
 	// the FullModelInputterFactory to determine where the input sources are coming from.
@@ -472,7 +472,8 @@ FullModelJobQueen::determine_job_list( Size job_dag_node_index, Size max_njobs )
 
 		// now that the FullModelPreliminaryLarvalJobs have been constructed, go ahead
 		// and start delivering LarvalJobs to the JobDistributor.
-		larval_jobs = next_batch_of_larval_jobs_from_prelim( job_dag_node_index, max_njobs );
+		PrelimJobNodeID const pjn_id( job_dag_node_index );
+		larval_jobs = next_batch_of_larval_jobs_from_prelim( pjn_id, max_njobs );
 	} else {
 		//JAB - you will want your SJQ to use much more than two sizes to determine LarvalJobs.  Let SJQ developers not have an extra function to possibly override.
 		utility_exit_with_message("Please override determine_job_list from the SJQ if you have more linear Job nodes from the preliminary nodes");
@@ -537,13 +538,13 @@ void FullModelJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, 
 		if ( ! inner_job ) { throw bad_inner_job_exception(); }
 
 		utility::options::OptionCollectionOP job_options = options_for_job( *inner_job );
-		for ( Size ii = 1; ii <= nresults; ++ii ) {
+		for ( ResultIndex ii( 1 ); ii <= nresults; ++ii ) {
 			create_and_store_output_specification_for_job_result( job, *job_options, ii, nresults );
 		}
 	}
 }
 
-void FullModelJobQueen::completed_job_summary( LarvalJobCOP, Size, JobSummaryOP ) {}
+void FullModelJobQueen::completed_job_summary( LarvalJobCOP, ResultIndex, JobSummaryOP ) {}
 
 
 std::list< output::OutputSpecificationOP >
@@ -880,7 +881,8 @@ FullModelJobQueen::expand_job_list( FullModelInnerLarvalJobOP inner_job, core::S
 	LarvalJobs jobs;
 	core::Size n_to_make = std::min( nstruct, max_larval_jobs_to_create );
 	for ( core::Size jj = 1; jj <= n_to_make; ++jj ) {
-		LarvalJobOP job = LarvalJobOP( new LarvalJob( inner_job, njobs_made_for_curr_inner_larval_job_ + jj, ++larval_job_counter_ ));
+		NStructIndex const jj_nstruct_index( njobs_made_for_curr_inner_larval_job_ + jj );
+		LarvalJobOP job = LarvalJobOP( new LarvalJob( inner_job, jj_nstruct_index, ++larval_job_counter_ ));
 		jobs.push_back( job );
 	}
 	return jobs;
@@ -889,7 +891,7 @@ FullModelJobQueen::expand_job_list( FullModelInnerLarvalJobOP inner_job, core::S
 void
 FullModelJobQueen::create_and_store_output_specification_for_job_result(
 	LarvalJobCOP job,
-	core::Size result_index,
+	ResultIndex result_index,
 	core::Size nresults
 )
 {
@@ -905,7 +907,7 @@ void
 FullModelJobQueen::create_and_store_output_specification_for_job_result(
 	LarvalJobCOP job,
 	utility::options::OptionCollection const & job_options,
-	core::Size result_index,
+	ResultIndex result_index,
 	core::Size nresults
 )
 {
@@ -924,7 +926,7 @@ output::OutputSpecificationOP
 FullModelJobQueen::create_output_specification_for_job_result(
 	LarvalJobCOP job,
 	utility::options::OptionCollection const & job_options,
-	core::Size result_index,
+	ResultIndex result_index,
 	core::Size nresults
 )
 {
@@ -986,7 +988,7 @@ FullModelJobQueen::create_output_specification_for_job_result(
 JobOutputIndex
 FullModelJobQueen::build_output_index(
 	protocols::jd3::LarvalJobCOP job,
-	Size result_index,
+	ResultIndex result_index,
 	Size n_results_for_job
 )
 {
@@ -1004,7 +1006,7 @@ FullModelJobQueen::build_output_index(
 void
 FullModelJobQueen::assign_output_index(
 	protocols::jd3::LarvalJobCOP,
-	Size,
+	ResultIndex,
 	Size,
 	JobOutputIndex &
 )
@@ -1508,7 +1510,7 @@ FullModelJobQueen::determine_preliminary_job_list_from_command_line()
 }
 
 LarvalJobs
-FullModelJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_index, core::Size max_njobs )
+FullModelJobQueen::next_batch_of_larval_jobs_from_prelim( PrelimJobNodeID job_node_index, core::Size max_njobs )
 {
 	LarvalJobs jobs;
 	if ( preliminary_job_nodes_complete_[ job_node_index ] ) return jobs;

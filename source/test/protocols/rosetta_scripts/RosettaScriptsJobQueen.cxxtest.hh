@@ -241,10 +241,10 @@ public:
 		JobDigraphOP dag = jq1.create_and_set_initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
 		TS_ASSERT_EQUALS( dag->num_nodes(), 2 );
 
-		LarvalJobs jobs1 = jq1.determine_job_list( 1, 1000 );
+		LarvalJobs jobs1 = jq1.determine_job_list( JobDAGNodeID( 1 ), 1000 );
 		TS_ASSERT_EQUALS( jobs1.size(), 2 );
 
-		LarvalJobs jobs2 = jq1.determine_job_list( 2, 1000 );
+		LarvalJobs jobs2 = jq1.determine_job_list( JobDAGNodeID( 2 ), 1000 );
 		TS_ASSERT_EQUALS( jobs2.size(), 2 );
 
 		utility::vector1< JobResultOP > empty_vector;

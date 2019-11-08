@@ -46,8 +46,8 @@ StandardInnerLarvalJob::StandardInnerLarvalJob( StandardInnerLarvalJob const & s
 
 StandardInnerLarvalJob::StandardInnerLarvalJob(
 	core::Size nstruct,
-	core::Size job_node,
-	core::Size preliminary_job_node
+	JobDAGNodeID job_node,
+	PrelimJobNodeID preliminary_job_node
 ) :
 	parent( nstruct, job_node ),
 	preliminary_job_node_( preliminary_job_node )
@@ -88,7 +88,7 @@ operator<< ( std::ostream & out, const StandardInnerLarvalJob & inner_job )
 	return out;
 }
 
-core::Size
+PrelimJobNodeID
 StandardInnerLarvalJob::preliminary_job_node() const {
 	return preliminary_job_node_;
 }

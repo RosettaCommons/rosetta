@@ -29,6 +29,7 @@
 #include <protocols/jd3/deallocation/DeallocationMessage.fwd.hh>
 #include <protocols/jd3/output/OutputSpecification.fwd.hh>
 #include <protocols/jd3/output/ResultOutputter.fwd.hh>
+#include <protocols/jd3/strong_types.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
@@ -94,7 +95,7 @@ public:
 	///@details Decorator to determine_job_list
 	///
 	LarvalJobs
-	determine_job_list_and_track( Size job_dag_node_index, Size max_njobs );
+	determine_job_list_and_track( JobDAGNodeID job_dag_node_index, Size max_njobs );
 
 public:
 	/// @brief All JobQueens must describe their job input XML format in the form of an XSD
@@ -126,7 +127,7 @@ public:
 	/// The JobDistributor will call this function repeatedly for a single node until the
 	/// %JobQueen returns an empty list, at which point, the JobDistributor will consider
 	/// the node's jobs exhausted.
-	virtual LarvalJobs determine_job_list( Size job_dag_node_index, Size max_njobs ) = 0;
+	virtual LarvalJobs determine_job_list( JobDAGNodeID job_dag_node_index, Size max_njobs ) = 0;
 
 	/// @biref The JobQueen must be able to determine if a particular job has already
 	/// been output. The JobQueen returns "true"
@@ -160,7 +161,7 @@ public:
 	/// JobSummary generated within a Job batch. This guarantee allows the JobQueen to
 	/// aggregate data across all of the Jobs so that Rosetta is able to compute data
 	/// from structures instead of forcing that computation into accessory scripts.
-	virtual void completed_job_summary( LarvalJobCOP job, Size result_index, JobSummaryOP summary ) = 0;
+	virtual void completed_job_summary( LarvalJobCOP job, ResultIndex result_index, JobSummaryOP summary ) = 0;
 
 	/// @brief The JobDistributor asks the JobQueen which JobResults should be queued for output.
 	/// The JobQueen should reply by returning a list of OutputSpecification objects. Each

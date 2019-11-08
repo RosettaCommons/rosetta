@@ -104,7 +104,7 @@ VanillaJobDistributor::go( JobQueenOP queen ) {
 		job_queen_->note_job_completed_and_track(
 			larval_job, job_output.status, job_output.job_results.size() );
 		// deliver the job summaries one at a time
-		for ( Size ii = 1; ii <= job_output.job_results.size(); ++ii ) {
+		for ( ResultIndex ii( 1 ); ii <= job_output.job_results.size(); ++ii ) {
 			job_queen_->completed_job_summary( larval_job, ii, job_output.job_results[ ii ].first );
 			job_results_[ std::make_pair( larval_job->job_index(), ii ) ] =
 				std::make_pair( larval_job, job_output.job_results[ ii ].second );

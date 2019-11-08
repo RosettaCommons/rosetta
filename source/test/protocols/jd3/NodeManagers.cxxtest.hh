@@ -53,31 +53,40 @@ public:
 		//job 4 has 5 results
 
 		manager.get_next_local_jobid();
-		manager.note_job_completed( 1, 4 );
-		manager.register_result( 1, 1, -50 );
-		manager.register_result( 1, 2, -40 );
-		manager.register_result( 1, 3, 3 );
-		manager.register_result( 1, 4, 4 );
+		manager.note_job_completed( GlobalJobID( 1 ), 4 );
+		{
+			GlobalJobID const id1( 1 );
+			manager.register_result( id1, 1, -50 );
+			manager.register_result( id1, 2, -40 );
+			manager.register_result( id1, 3, 3 );
+			manager.register_result( id1, 4, 4 );
+		}
 
 		manager.get_next_local_jobid();
-		manager.note_job_completed( 2, 0 );
+		manager.note_job_completed( GlobalJobID( 2 ), 0 );
 
-		manager.get_next_local_jobid();
-		manager.note_job_completed( 3, 3 );
-		manager.register_result( 3, 1, -30 );
-		manager.register_result( 3, 2, 4 );
-		manager.register_result( 3, 3, 4 );
+		{
+			GlobalJobID const id3( 3 );
+			manager.get_next_local_jobid();
+			manager.note_job_completed( id3, 3 );
+			manager.register_result( id3, 1, -30 );
+			manager.register_result( id3, 2, 4 );
+			manager.register_result( id3, 3, 4 );
+		}
 
 		utility::vector1< ResultElements > const & elems = manager.results_to_keep();
 		TS_ASSERT( manager.done_submitting() );
 
 		manager.get_next_local_jobid();
-		manager.note_job_completed( 4, 5 );
-		manager.register_result( 4, 1, -60 );
-		manager.register_result( 4, 2, -70 );
-		manager.register_result( 4, 3, -80 );
-		manager.register_result( 4, 4, -90 );
-		manager.register_result( 4, 5, -99 );
+		{
+			GlobalJobID const id4( 4 );
+			manager.note_job_completed( id4, 5 );
+			manager.register_result( id4, 1, -60 );
+			manager.register_result( id4, 2, -70 );
+			manager.register_result( id4, 3, -80 );
+			manager.register_result( id4, 4, -90 );
+			manager.register_result( id4, 5, -99 );
+		}
 
 		TS_ASSERT_EQUALS( elems.size(), 3 );
 
@@ -100,6 +109,7 @@ public:
 		TS_ASSERT_EQUALS( manager.num_results_to_keep(), 5 );
 
 		for ( core::Size ii = 1; ii <= 100; ++ii ) {
+			GlobalJobID const ii_gjid( ii );
 			TS_ASSERT_EQUALS( manager.num_jobs_submitted(), ii - 1 );
 			TS_ASSERT( ! manager.done_submitting() );
 			TS_ASSERT_EQUALS( ii, manager.get_next_local_jobid() );
@@ -107,9 +117,9 @@ public:
 			//TS_ASSERT( ! manager.all_results_are_in() );
 
 			TS_ASSERT_EQUALS( manager.num_jobs_completed(), ii - 1 );
-			manager.note_job_completed( ii, 1 );
+			manager.note_job_completed( ii_gjid, 1 );
 			TS_ASSERT_EQUALS( manager.num_jobs_completed(), ii );
-			manager.register_result( ii, 1, core::Real( 0 ) - ii, 1 );
+			manager.register_result( ii_gjid, 1, 0.0 - ii, 1 );
 		}
 
 		TS_ASSERT( manager.all_results_are_in() );
@@ -186,6 +196,8 @@ public:
 		{
 			NodeManager & manager = * managers[ 1 ];
 			for ( core::Size local_job_id = 1; local_job_id <= 5; ++local_job_id ) {
+				GlobalJobID const global_job_id( 0 + local_job_id );
+
 				TS_ASSERT_EQUALS( manager.num_jobs_submitted(), local_job_id - 1 );
 				TS_ASSERT( ! manager.done_submitting() );
 				TS_ASSERT_EQUALS( local_job_id, manager.get_next_local_jobid() );
@@ -193,9 +205,9 @@ public:
 				//TS_ASSERT( ! manager.all_results_are_in() );
 
 				core::Size const num_results = score_for_result_for_local_job_id_node1[ local_job_id ].size();
-				manager.note_job_completed( local_job_id, num_results );
+				manager.note_job_completed( global_job_id, num_results );
 				for ( core::Size result_id = 1; result_id <= num_results; ++result_id ) {
-					manager.register_result( local_job_id, result_id, score_for_result_for_local_job_id_node1[ local_job_id ][ result_id ], 1 );
+					manager.register_result( global_job_id, result_id, score_for_result_for_local_job_id_node1[ local_job_id ][ result_id ], 1 );
 				}
 
 			}
@@ -241,7 +253,7 @@ public:
 		{
 			NodeManager & manager = * managers[ 2 ];
 			for ( core::Size local_job_id = 1; local_job_id <= 10; ++local_job_id ) {
-				core::Size global_job_id = num_jobs_for_node[ 1 ] + local_job_id;
+				GlobalJobID const global_job_id( num_jobs_for_node[ 1 ] + local_job_id );
 
 				TS_ASSERT_EQUALS( manager.num_jobs_submitted(), local_job_id - 1 );
 				TS_ASSERT( ! manager.done_submitting() );
@@ -296,7 +308,7 @@ public:
 		{
 			NodeManager & manager = * managers[ 3 ];
 			for ( core::Size local_job_id = 1; local_job_id <= 1; ++local_job_id ) {
-				core::Size global_job_id = num_jobs_for_node[ 1 ] + num_jobs_for_node[ 2 ] + local_job_id;
+				GlobalJobID const global_job_id( num_jobs_for_node[ 1 ] + num_jobs_for_node[ 2 ] + local_job_id );
 
 				TS_ASSERT_EQUALS( manager.num_jobs_submitted(), local_job_id - 1 );
 				TS_ASSERT( ! manager.done_submitting() );
@@ -352,7 +364,7 @@ public:
 		core::Size const num_segregations = 2;
 
 		EvenlyPartitionedNodeManager manager( job_offset, num_jobs_total, num_results_to_keep, num_segregations );
-		for ( core::Size global_job_id = 101; global_job_id <= 110; ++global_job_id ) {
+		for ( GlobalJobID global_job_id( 101 ); global_job_id <= 110; ++global_job_id.value ) {
 			manager.note_job_completed( global_job_id, 2 );
 		}
 
@@ -380,7 +392,7 @@ public:
 		results.push_back( result( 110, 2, 54, 2 ) );
 
 		for ( result ii : results ) {
-			manager.register_result( ii.global_job_id, ii.local_result_id, ii.score, ii.input_pose_id );
+			manager.register_result( GlobalJobID( ii.global_job_id ), ii.local_result_id, ii.score, ii.input_pose_id );
 		}
 
 		utility::vector1< ResultElements > results_to_keep = manager.results_to_keep();
@@ -407,9 +419,9 @@ public:
 		}
 
 		for ( unsigned int i = 1; i <= 90; ++i ) {
-			snm.note_job_completed( i, 1 );
+			snm.note_job_completed( GlobalJobID( i ), 1 );
 			unsigned int const offset_i = (i + 10) % 90;
-			snm.register_result( i, 1, -1.0 * offset_i );
+			snm.register_result( GlobalJobID( i ), 1, -1.0 * offset_i );
 			TS_ASSERT_EQUALS( snm.done_submitting(), i >= result_threshold );
 			TS_ASSERT_EQUALS( snm.jobs_are_still_running(), i != 90 );
 		}

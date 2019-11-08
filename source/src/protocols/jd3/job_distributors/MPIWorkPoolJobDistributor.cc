@@ -1144,7 +1144,7 @@ MPIWorkPoolJobDistributor::process_archival_complete_message( int worker_node )
 	// either had or had not yet completed the archival process.
 	Size const nsummaries = job_summaries.size();
 	job_queen_->note_job_completed_and_track( larval_job, status, nsummaries );
-	for ( Size ii = 1; ii <= nsummaries; ++ii ) {
+	for ( ResultIndex ii( 1 ); ii <= nsummaries; ++ii ) {
 		job_queen_->completed_job_summary( larval_job, ii, job_summaries[ ii ] );
 	}
 

@@ -44,7 +44,7 @@ static basic::Tracer TR( "protocols.jd3.LarvalJob" );
 namespace protocols {
 namespace jd3 {
 
-LarvalJob::LarvalJob( InnerLarvalJobOP inner_job, core::Size nstruct_index, core::Size job_index ) :
+LarvalJob::LarvalJob( InnerLarvalJobOP inner_job, NStructIndex nstruct_index, core::Size job_index ) :
 	inner_job_(std::move( inner_job )),
 	nstruct_index_( nstruct_index ),
 	job_index_( job_index ),
@@ -123,7 +123,7 @@ std::string LarvalJob::job_tag_with_index_suffix( JobOutputIndex const & output_
 
 /// @brief The index used to identify which job this is out of many that have identical inputs
 /// but different random number seeds (controlled by the command-line flag "nstruct")
-core::Size LarvalJob::nstruct_index() const {
+NStructIndex LarvalJob::nstruct_index() const {
 	return nstruct_index_;
 }
 
@@ -136,7 +136,8 @@ core::Size LarvalJob::nstruct_max() const {
 	return inner_job_->nstruct_max();
 }
 
-core::Size LarvalJob::job_index() const {
+GlobalJobID
+LarvalJob::job_index() const {
 	return job_index_;
 }
 
@@ -220,7 +221,7 @@ void
 protocols::jd3::LarvalJob::save( Archive & arc ) const {
 	//TR << "Serializing LarvalJob" << std::endl;
 	arc( CEREAL_NVP( inner_job_ ) ); // InnerLarvalJobOP
-	arc( CEREAL_NVP( nstruct_index_ ) ); // core::Size
+	arc( CEREAL_NVP( nstruct_index_ ) ); // NStructIndex
 	arc( CEREAL_NVP( job_index_ ) ); // core::Size
 	arc( CEREAL_NVP( status_prefix_ ) ); // std::string
 	arc( CEREAL_NVP( status_suffix_ ) ); // std::string
@@ -237,7 +238,7 @@ protocols::jd3::LarvalJob::load( Archive & arc ) {
 	//TR << "Deserializing LarvalJob" << std::endl;
 
 	arc( inner_job_ ); // InnerLarvalJobOP
-	arc( nstruct_index_ ); // core::Size
+	arc( nstruct_index_ ); // NStructIndex
 	arc( job_index_ ); // core::Size
 	arc( status_prefix_ ); // std::string
 	arc( status_suffix_ ); // std::string

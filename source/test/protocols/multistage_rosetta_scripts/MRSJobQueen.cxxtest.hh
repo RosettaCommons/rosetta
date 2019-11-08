@@ -155,16 +155,16 @@ public:
 
 	void inner_test_node1( MRSJobQueen & zero_queen, MRSJobQueen & worker_queen ) {
 		//should be a total of 10 jobs. Let's collect them 4 at a time
-		std::list< LarvalJobOP > ljobs_1_through_4 = zero_queen.determine_job_list( 1, 4 );
+		std::list< LarvalJobOP > ljobs_1_through_4 = zero_queen.determine_job_list( JobDAGNodeID( 1 ), 4 );
 		TS_ASSERT_EQUALS( ljobs_1_through_4.size(), 4 );
 
-		std::list< LarvalJobOP > ljobs_5_through_8 = zero_queen.determine_job_list( 1, 4 );
+		std::list< LarvalJobOP > ljobs_5_through_8 = zero_queen.determine_job_list( JobDAGNodeID( 1 ), 4 );
 		TS_ASSERT_EQUALS( ljobs_5_through_8.size(), 4 );
 
-		std::list< LarvalJobOP > ljobs_9_through_10 = zero_queen.determine_job_list( 1, 4 );
+		std::list< LarvalJobOP > ljobs_9_through_10 = zero_queen.determine_job_list( JobDAGNodeID( 1 ), 4 );
 		TS_ASSERT_EQUALS( ljobs_9_through_10.size(), 2 );
 
-		std::list< LarvalJobOP > hopefully_no_ljobs = zero_queen.determine_job_list( 1, 4 );
+		std::list< LarvalJobOP > hopefully_no_ljobs = zero_queen.determine_job_list( JobDAGNodeID( 1 ), 4 );
 		TS_ASSERT_EQUALS( hopefully_no_ljobs.size(), 0 );
 
 		utility::vector1< LarvalJobOP > all_ljobs;
@@ -226,12 +226,12 @@ public:
 
 		std::list< core::Real >::iterator it = job_result_scores.begin();
 
-		for ( core::Size global_job_id = 1; global_job_id <= 10; ++global_job_id ) {
+		for ( GlobalJobID global_job_id( 1 ); global_job_id <= 10; ++global_job_id.value ) {
 			//2 results for even numbers, 1 results for odd numbers
 			core::Size const num_results = 1 + ( global_job_id % 2 == 0 ? 1 : 0 );
 			zero_queen.note_job_completed( global_job_id, jd3_job_status_success, num_results, true );
 
-			for ( core::Size job_result_id = 1; job_result_id <= num_results; ++job_result_id ) {
+			for ( ResultIndex job_result_id( 1 ); job_result_id <= num_results; ++job_result_id ) {
 				JobSummaryOP summary( new protocols::jd3::job_summaries::EnergyJobSummary( *it ) );
 				++it;
 				zero_queen.completed_job_summary( global_job_id, job_result_id, summary );
@@ -264,16 +264,16 @@ public:
 
 	void inner_test_node2( MRSJobQueen & zero_queen, MRSJobQueen & worker_queen ) {
 		//make sure no jobs are given for node 1
-		TS_ASSERT_EQUALS( zero_queen.determine_job_list( 1, 4 ).size(), 0 );
+		TS_ASSERT_EQUALS( zero_queen.determine_job_list( JobDAGNodeID( 1 ), 4 ).size(), 0 );
 
 		//should be a total of 8 jobs. Let's collect them 4 at a time
-		std::list< LarvalJobOP > ljobs_1_through_4 = zero_queen.determine_job_list( 2, 4 );
+		std::list< LarvalJobOP > ljobs_1_through_4 = zero_queen.determine_job_list( JobDAGNodeID( 2 ), 4 );
 		TS_ASSERT_EQUALS( ljobs_1_through_4.size(), 4 );
 
-		std::list< LarvalJobOP > ljobs_5_through_8 = zero_queen.determine_job_list( 2, 4 );
+		std::list< LarvalJobOP > ljobs_5_through_8 = zero_queen.determine_job_list( JobDAGNodeID( 2 ), 4 );
 		TS_ASSERT_EQUALS( ljobs_5_through_8.size(), 4 );
 
-		std::list< LarvalJobOP > hopefully_no_ljobs = zero_queen.determine_job_list( 2, 4 );
+		std::list< LarvalJobOP > hopefully_no_ljobs = zero_queen.determine_job_list( JobDAGNodeID( 2 ), 4 );
 		TS_ASSERT_EQUALS( hopefully_no_ljobs.size(), 0 );
 
 		utility::vector1< LarvalJobOP > all_ljobs;
@@ -338,12 +338,12 @@ public:
 		job_result_scores.push_back( -1  );//18,2
 
 		std::list< core::Real >::iterator it = job_result_scores.begin();
-		for ( core::Size global_job_id = 11; global_job_id <= 18; ++global_job_id ) {
+		for ( GlobalJobID global_job_id( 11 ); global_job_id <= 18; ++global_job_id.value ) {
 			//2 results for even numbers, 1 results for odd numbers
 			core::Size const num_results = 1 + ( global_job_id % 2 == 0 ? 1 : 0 );
 			zero_queen.note_job_completed( global_job_id, jd3_job_status_success, num_results, true );
 
-			for ( core::Size job_result_id = 1; job_result_id <= num_results; ++job_result_id ) {
+			for ( ResultIndex job_result_id( 1 ); job_result_id <= num_results; ++job_result_id ) {
 				JobSummaryOP summary( new protocols::jd3::job_summaries::EnergyJobSummary( *it ) );
 				++it;
 				zero_queen.completed_job_summary( global_job_id, job_result_id, summary );
@@ -375,14 +375,14 @@ public:
 
 	void inner_test_node3( MRSJobQueen & zero_queen, MRSJobQueen & worker_queen ) {
 
-		TS_ASSERT_EQUALS( zero_queen.determine_job_list( 1, 1 ).size(), 0 );
-		TS_ASSERT_EQUALS( zero_queen.determine_job_list( 2, 1 ).size(), 0 );
+		TS_ASSERT_EQUALS( zero_queen.determine_job_list( JobDAGNodeID( 1 ), 1 ).size(), 0 );
+		TS_ASSERT_EQUALS( zero_queen.determine_job_list( JobDAGNodeID( 2 ), 1 ).size(), 0 );
 
 		//should be a total of 4 jobs. Let's collect them 4 at a time
-		std::list< LarvalJobOP > ljobs_1_through_4 = zero_queen.determine_job_list( 3, 4 );
+		std::list< LarvalJobOP > ljobs_1_through_4 = zero_queen.determine_job_list( JobDAGNodeID( 3 ), 4 );
 		TS_ASSERT_EQUALS( ljobs_1_through_4.size(), 4 );
 
-		std::list< LarvalJobOP > hopefully_no_ljobs = zero_queen.determine_job_list( 3, 4 );
+		std::list< LarvalJobOP > hopefully_no_ljobs = zero_queen.determine_job_list( JobDAGNodeID( 3 ), 4 );
 		TS_ASSERT_EQUALS( hopefully_no_ljobs.size(), 0 );
 
 		utility::vector1< LarvalJobOP > all_ljobs;
@@ -440,11 +440,11 @@ public:
 		job_result_scores.push_back( -99 );//22,4
 		job_result_scores.push_back( -4  );//22,5
 
-		zero_queen.note_job_completed( 20, jd3_job_status_failed_do_not_retry, 99, true );
+		zero_queen.note_job_completed( GlobalJobID( 20 ), jd3_job_status_failed_do_not_retry, 99, true );
 		//JobSummaryOP summary20( new protocols::jd3::standard::EnergyJobSummary( 9 ) );
 
 		std::list< core::Real >::iterator it = job_result_scores.begin();
-		for ( core::Size global_job_id = 19; global_job_id <= 22; ++global_job_id ) {
+		for ( GlobalJobID global_job_id( 19 ); global_job_id <= 22; ++global_job_id.value ) {
 			if ( global_job_id == 20 ) continue;
 
 			//2 results for even numbers, 1 results for odd numbers
@@ -463,7 +463,7 @@ public:
 
 			zero_queen.note_job_completed( global_job_id, jd3_job_status_success, num_results, true );
 
-			for ( core::Size job_result_id = 1; job_result_id <= num_results; ++job_result_id ) {
+			for ( ResultIndex job_result_id( 1 ); job_result_id <= num_results; ++job_result_id ) {
 				JobSummaryOP summary( new protocols::jd3::job_summaries::EnergyJobSummary( *it ) );
 				++it;
 				zero_queen.completed_job_summary( global_job_id, job_result_id, summary );
@@ -501,14 +501,14 @@ public:
 
 	void inner_test_node4( MRSJobQueen & zero_queen, MRSJobQueen & worker_queen ) {
 
-		TS_ASSERT_EQUALS( zero_queen.determine_job_list( 1, 1 ).size(), 0 );
-		TS_ASSERT_EQUALS( zero_queen.determine_job_list( 2, 1 ).size(), 0 );
-		TS_ASSERT_EQUALS( zero_queen.determine_job_list( 3, 1 ).size(), 0 );
+		TS_ASSERT_EQUALS( zero_queen.determine_job_list( JobDAGNodeID( 1 ), 1 ).size(), 0 );
+		TS_ASSERT_EQUALS( zero_queen.determine_job_list( JobDAGNodeID( 2 ), 1 ).size(), 0 );
+		TS_ASSERT_EQUALS( zero_queen.determine_job_list( JobDAGNodeID( 3 ), 1 ).size(), 0 );
 
-		std::list< LarvalJobOP > ljobs_1_through_3 = zero_queen.determine_job_list( 4, 4 );
+		std::list< LarvalJobOP > ljobs_1_through_3 = zero_queen.determine_job_list( JobDAGNodeID( 4 ), 4 );
 		TS_ASSERT_EQUALS( ljobs_1_through_3.size(), 3 );
 
-		std::list< LarvalJobOP > hopefully_no_ljobs = zero_queen.determine_job_list( 4, 4 );
+		std::list< LarvalJobOP > hopefully_no_ljobs = zero_queen.determine_job_list( JobDAGNodeID( 4 ), 4 );
 		TS_ASSERT_EQUALS( hopefully_no_ljobs.size(), 0 );
 
 		core::Size local_job_id = 0;
@@ -614,18 +614,18 @@ public:
 		JobDigraphOP job_dag = zero_queen.create_and_set_initial_job_dag();
 		check_job_dag( job_dag );
 
-		std::list< LarvalJobOP > all_ljobs = zero_queen.determine_job_list( 1, 100 );
+		std::list< LarvalJobOP > all_ljobs = zero_queen.determine_job_list( JobDAGNodeID( 1 ), 100 );
 		TS_ASSERT_EQUALS( all_ljobs.size(), 10 );
 
 		//Node 2 needs 4 job results from node 1, only supply 2
-		zero_queen.note_job_completed( 1, jd3_job_status_success, 2, true );
+		zero_queen.note_job_completed( GlobalJobID( 1 ), jd3_job_status_success, 2, true );
 		JobSummaryOP summary1( new protocols::jd3::job_summaries::EnergyJobSummary( 1 ) );
 		JobSummaryOP summary2( new protocols::jd3::job_summaries::EnergyJobSummary( 2 ) );
-		zero_queen.completed_job_summary( 1, 1, summary1 );
-		zero_queen.completed_job_summary( 1, 2, summary2 );
+		zero_queen.completed_job_summary( GlobalJobID( 1 ), ResultIndex( 1 ), summary1 );
+		zero_queen.completed_job_summary( GlobalJobID( 1 ), ResultIndex( 2 ), summary2 );
 
 		for ( int i=2; i<=10; ++i ) {
-			zero_queen.note_job_completed( i, jd3_job_status_failed_do_not_retry, 0, true );
+			zero_queen.note_job_completed( GlobalJobID( i ), jd3_job_status_failed_do_not_retry, 0, true );
 		}
 
 		std::list< std::pair< core::Size, core::Size > > jobs_that_should_be_discarded = zero_queen.job_results_that_should_be_discarded();
@@ -633,20 +633,20 @@ public:
 
 
 		//Check Node 2
-		all_ljobs = zero_queen.determine_job_list( 2, 100 );
+		all_ljobs = zero_queen.determine_job_list( JobDAGNodeID( 2 ), 100 );
 		TS_ASSERT_EQUALS( all_ljobs.size(), 4 );
 
 		//Give enough node 2 results. Node 3 expects 4
 		for ( int i=11; i<=14; ++i ) {
-			zero_queen.note_job_completed( i, jd3_job_status_success, 2, true );
+			zero_queen.note_job_completed( GlobalJobID( i ), jd3_job_status_success, 2, true );
 			JobSummaryOP summary1( new protocols::jd3::job_summaries::EnergyJobSummary( 1 ) );
 			JobSummaryOP summary2( new protocols::jd3::job_summaries::EnergyJobSummary( 2 ) );
-			zero_queen.completed_job_summary( i, 1, summary1 );
-			zero_queen.completed_job_summary( i, 2, summary2 );
+			zero_queen.completed_job_summary( GlobalJobID( i ), ResultIndex( 1 ), summary1 );
+			zero_queen.completed_job_summary( GlobalJobID( i ), ResultIndex( 2 ), summary2 );
 		}
 
 		//Check Node 3
-		all_ljobs = zero_queen.determine_job_list( 3, 100 );
+		all_ljobs = zero_queen.determine_job_list( JobDAGNodeID( 3 ), 100 );
 		TS_ASSERT_EQUALS( all_ljobs.size(), 4 );
 	}
 

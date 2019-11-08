@@ -85,11 +85,11 @@ NodeManager::~NodeManager()
 
 void
 NodeManager::register_result(
-	core::Size global_job_id,
-	core::Size local_result_id,
-	core::Real score,
-	core::Size partition,
-	uint64_t token
+	GlobalJobID const global_job_id,
+	core::Size const local_result_id,
+	core::Real const score,
+	core::Size const partition,
+	uint64_t const token
 ){
 
 	++num_results_received_;

@@ -49,7 +49,7 @@ To get the most out of this class, call:
 #include <protocols/jd3/Job.hh>
 #include <protocols/jd3/JobResult.hh>
 #include <protocols/jd3/JobSummary.hh>
-
+#include <protocols/jd3/strong_types.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -91,15 +91,15 @@ public:
 
 	///@brief please call this from your job queen's note_job_completed() function
 	void note_job_completed(
-		core::Size global_job_id,
+		GlobalJobID global_job_id,
 		core::Size nresults
 	);
 
 	///@brief insert this result into the sorted container.
 	///Please specify which partition you want to put it in if you are not using the SimpleNodeManager
 	virtual void register_result(
-		core::Size global_job_id,
-		core::Size local_result_id,
+		GlobalJobID global_job_id,
+		core::Size result_id,
 		core::Real score,
 		core::Size partition = 1,
 		uint64_t token = 0
@@ -244,7 +244,7 @@ public:
 
 inline
 void
-NodeManager::note_job_completed( core::Size, core::Size nresults ){//first arg is global_job_id
+NodeManager::note_job_completed( GlobalJobID, core::Size nresults ){//first arg is global_job_id
 	++num_jobs_completed_;
 	num_results_total_ += nresults;
 }

@@ -24,6 +24,7 @@
 #include <protocols/jd3/LarvalJob.fwd.hh>
 #include <protocols/jd3/JobDigraph.fwd.hh>
 #include <protocols/jd3/JobQueen.fwd.hh>
+#include <protocols/jd3/strong_types.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -131,7 +132,7 @@ private:
 	/// @brief The digraph node for which we are currently
 	/// assigning new jobs -- it is possible for multiple
 	/// digraph nodes to have their jobs running concurrently.
-	Size current_digraph_node_;
+	JobDAGNodeID current_digraph_node_;
 	LarvalJobs jobs_for_current_digraph_node_;
 
 	// The set of all currently running jobs

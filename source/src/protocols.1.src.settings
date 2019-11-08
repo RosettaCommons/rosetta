@@ -148,6 +148,7 @@ sources = {
 		"JobSummary",
 		"JobTracker",
 		"LarvalJob",
+		"strong_types",
 		"util",
 	],
 	"protocols/jd3/dag_node_managers": [

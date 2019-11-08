@@ -30,6 +30,7 @@
 #include <protocols/jd3/pose_outputters/PoseOutputterCreator.fwd.hh>
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.fwd.hh>
 #include <protocols/jd3/full_model/FullModelInnerLarvalJob.fwd.hh>
+#include <protocols/jd3/strong_types.hh>
 
 // project headers
 #include <core/pose/Pose.fwd.hh>
@@ -113,7 +114,7 @@ public:
 	/// will be later matured into actual jobs and run by the JobDistributor.  Classes derived
 	/// from the %FullModelJobQueen need answer a few virtual functions that the %FullModelJobQueen
 	/// will invoke during this process.
-	LarvalJobs determine_job_list( Size job_dag_node_index, Size max_njobs ) override;
+	LarvalJobs determine_job_list( JobDAGNodeID job_dag_node_index, Size max_njobs ) override;
 
 	bool has_job_previously_been_output( protocols::jd3::LarvalJobCOP job ) override;
 
@@ -127,7 +128,7 @@ public:
 
 	/// @brief If the job result that is summarized here should be output, then the SJQ needs to
 	/// have access to the LarvalJob in order to do that.
-	void completed_job_summary( LarvalJobCOP job, Size result_index, JobSummaryOP summary ) override;
+	void completed_job_summary( LarvalJobCOP job, ResultIndex result_index, JobSummaryOP summary ) override;
 
 	std::list< output::OutputSpecificationOP > jobs_that_should_be_output() override;
 	std::list< JobResultID > job_results_that_should_be_discarded() override;
@@ -352,7 +353,7 @@ protected:
 	void
 	create_and_store_output_specification_for_job_result(
 		LarvalJobCOP job,
-		core::Size result_index,
+		ResultIndex result_index,
 		core::Size nresults
 	);
 
@@ -366,7 +367,7 @@ protected:
 	create_and_store_output_specification_for_job_result(
 		LarvalJobCOP job,
 		utility::options::OptionCollection const & job_options,
-		core::Size result_index,
+		ResultIndex result_index,
 		core::Size nresults
 	);
 
@@ -376,7 +377,7 @@ protected:
 	create_output_specification_for_job_result(
 		LarvalJobCOP job,
 		utility::options::OptionCollection const & job_options,
-		core::Size result_index,
+		ResultIndex result_index,
 		core::Size nresults
 	);
 
@@ -385,7 +386,7 @@ protected:
 	JobOutputIndex
 	build_output_index(
 		protocols::jd3::LarvalJobCOP larval_job,
-		Size result_index_for_job,
+		ResultIndex result_index_for_job,
 		Size n_results_for_job
 	);
 
@@ -405,7 +406,7 @@ protected:
 	void
 	assign_output_index(
 		protocols::jd3::LarvalJobCOP larval_job,
-		Size result_index_for_job,
+		ResultIndex result_index_for_job,
 		Size n_results_for_job,
 		JobOutputIndex & output_index
 	);
@@ -507,7 +508,7 @@ private:
 	void
 	determine_preliminary_job_list_from_command_line();
 
-	LarvalJobs next_batch_of_larval_jobs_from_prelim( core::Size job_node_index, core::Size max_njobs );
+	LarvalJobs next_batch_of_larval_jobs_from_prelim( PrelimJobNodeID job_node_index, core::Size max_njobs );
 
 	pose_outputters::SecondaryPoseOutputterOP
 	secondary_outputter_for_job(
@@ -522,7 +523,7 @@ private:
 	);
 
 	/// @brief The FMJQ will keep track of all discarded jobs in the discarded_jobs_ diet
-	//void note_job_result_discarded( LarvalJobCOP job, Size result_index );
+	//void note_job_result_discarded( LarvalJobCOP job, ResultIndex result_index );
 
 	utility::options::OptionKeyList concatenate_all_options() const;
 

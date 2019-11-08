@@ -51,7 +51,10 @@ JobQueen::note_job_completed_and_track(protocols::jd3::LarvalJobCOP job, protoco
 }
 
 LarvalJobs
-JobQueen::determine_job_list_and_track(core::Size job_dag_node_index, core::Size max_n_jobs){
+JobQueen::determine_job_list_and_track(
+	JobDAGNodeID const job_dag_node_index,
+	core::Size const max_n_jobs
+){
 	JQKey key;
 	LarvalJobs larval_jobs = determine_job_list(job_dag_node_index, max_n_jobs);
 	job_tracker_->track_starting_job_list(key, larval_jobs);

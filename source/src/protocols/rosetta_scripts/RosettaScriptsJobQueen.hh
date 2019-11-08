@@ -22,6 +22,7 @@
 //#include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/jd3/strong_types.hh>
 
 // utility headers
 #include <utility/vector1.hh>
@@ -68,7 +69,7 @@ public:
 	derived_process_deallocation_message( jd3::deallocation::DeallocationMessageOP message ) override;
 
 	void
-	note_preliminary_job_node_is_complete( core::Size pjn_index ) override;
+	note_preliminary_job_node_is_complete( jd3::PrelimJobNodeID pjn_index ) override;
 
 	void
 	initialize_resources_for_preliminary_job_nodes();

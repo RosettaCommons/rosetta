@@ -205,7 +205,7 @@ MultiThreadedJobDistributor::process_completed_job( JobRunnerOP job_runner )
 	} else {
 		Size job_index = larval_job->job_index();
 		job_queen_->note_job_completed_and_track( larval_job, output.status, output.job_results.size() );
-		for ( Size ii = 1; ii <= output.job_results.size(); ++ii ) {
+		for ( ResultIndex ii( 1 ); ii <= output.job_results.size(); ++ii ) {
 			job_queen_->completed_job_summary( larval_job, ii, output.job_results[ ii ].first );
 			job_results_[ { job_index, ii } ] = std::make_pair( larval_job, output.job_results[ ii ].second );
 		}

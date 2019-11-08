@@ -22,6 +22,7 @@
 
 // Package headers
 #include <protocols/jd3/InnerLarvalJob.hh>
+#include <protocols/jd3/strong_types.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -53,7 +54,7 @@ public:
 public:
 
 	StandardInnerLarvalJob();
-	StandardInnerLarvalJob( core::Size nstruct, core::Size job_node, core::Size preliminary_job_node );
+	StandardInnerLarvalJob( core::Size nstruct, JobDAGNodeID job_node, PrelimJobNodeID preliminary_job_node );
 	StandardInnerLarvalJob( StandardInnerLarvalJob const & src );
 
 	~StandardInnerLarvalJob() override;
@@ -83,12 +84,12 @@ public:
 
 	///@brief Return the job node this StandardInnerLarvalJob belongs to
 	/// If the Job Node has not been set, we return 0.
-	core::Size
+	PrelimJobNodeID
 	preliminary_job_node() const;
 
 private:
 
-	core::Size preliminary_job_node_;
+	PrelimJobNodeID preliminary_job_node_;
 
 #ifdef    SERIALIZATION
 public:
