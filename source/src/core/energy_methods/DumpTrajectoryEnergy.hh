@@ -25,8 +25,8 @@
 // 8. All configuration for this class should be done through the dump_trajectory::* options
 
 
-#ifndef INCLUDED_core_scoring_util_methods_DumpTrajectoryEnergy_hh
-#define INCLUDED_core_scoring_util_methods_DumpTrajectoryEnergy_hh
+#ifndef INCLUDED_core_energy_methods_DumpTrajectoryEnergy_hh
+#define INCLUDED_core_energy_methods_DumpTrajectoryEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/DumpTrajectoryEnergy.fwd.hh>
