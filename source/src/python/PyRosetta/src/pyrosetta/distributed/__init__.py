@@ -82,7 +82,7 @@ def requires_init(func):
 
     @functools.wraps(func)
     def fwrap(*args, **kwargs):
-        maybe_init()
+        maybe_init(**kwargs)
 
         return func(*args, **kwargs)
 
