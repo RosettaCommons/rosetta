@@ -25,9 +25,9 @@
 
 // C/C++ headers
 #include <string>
+#include <functional>
 
 // External headers
-#include <boost/function.hpp>
 #include <boost/unordered_map.hpp>
 
 // Utility headers
@@ -51,7 +51,7 @@ namespace protocols {
 namespace monte_carlo {
 
 /// @brief Trigger API definition
-typedef boost::function<bool(core::Size,
+typedef std::function<bool(core::Size,
 	core::Size,
 	const core::pose::Pose&,
 	core::scoring::ScoreFunctionOP)> GenericMonteCarloMoverTrigger;
@@ -181,8 +181,7 @@ public: // accessor
 	/// @brief Adds a new trigger, returning its id.
 	///
 	/// Example:
-	/// #include <boost/bind.hpp>
-	/// #include <boost/function.hpp>
+	/// #include <functional>
 	///
 	/// bool no_op(core::Size stage,
 	///            core::Size num_stages,
@@ -191,7 +190,7 @@ public: // accessor
 	///            const core::pose::Pose&,
 	///            core::scoring::ScoreFunctionOP) {}
 	///
-	/// Trigger callback = boost::bind(&no_op, STAGE, NUM_STAGES, _1, _2, _3, _4);
+	/// Trigger callback = std::bind(&no_op, STAGE, NUM_STAGES, _1, _2, _3, _4);
 	/// Size trigger_id = add_trigger(callback);
 	///
 	/// The current stage and number of stages must be bound at creation time.

@@ -150,7 +150,7 @@ POSSIBILITY THEREOF.
 using std::string;
 using std::vector;
 using std::find_if;
-using std::bind2nd;
+using std::bind;
 
 
 GenCont::GenCont()
@@ -165,7 +165,7 @@ bool GenCont::IsInVector(const string& element,
   const vector<string>& contVector, const Char::eCompareType compareType)
 {
     auto where = find_if(contVector.begin(),
-      contVector.end(), bind2nd(StringEqualTo(compareType), element));
+      contVector.end(), bind(StringEqualTo(compareType), std::placeholders::_1, element));
  
     return (where != contVector.end());
 }

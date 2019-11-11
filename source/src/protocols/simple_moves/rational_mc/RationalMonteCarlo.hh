@@ -20,7 +20,7 @@
 #include <string>
 
 // External headers
-#include <boost/function.hpp>
+#include <functional>
 #include <boost/unordered/unordered_map.hpp>
 
 // Project headers
@@ -37,7 +37,7 @@ namespace simple_moves {
 namespace rational_mc {
 
 /// @brief Trigger API definition
-typedef boost::function<void(const core::pose::Pose&)> RationalMonteCarloTrigger;
+typedef std::function<void(const core::pose::Pose&)> RationalMonteCarloTrigger;
 typedef boost::unordered_map<core::Size, RationalMonteCarloTrigger> Triggers;
 
 /// @class Trial-based Monte Carlo minization primitive. Do not modify this

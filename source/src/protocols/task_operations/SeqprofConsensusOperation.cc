@@ -56,6 +56,7 @@
 
 // C++ headers
 #include <string>
+#include <functional>
 
 static basic::Tracer tr( "protocols.task_operations.SeqprofConsensusOperation" );
 
@@ -409,7 +410,7 @@ SeqprofConsensusOperation::create_complex_type_generator( XMLSchemaDefinition & 
 
 	XMLSchemaComplexTypeGeneratorOP ct_generator( new XMLSchemaComplexTypeGenerator );
 	XMLSchemaSimpleSubelementList subelements;
-	boost::function< std::string ( std::string const & ) > taskop_naming_func( & core::pack::task::operation::complex_type_name_for_task_op );
+	std::function< std::string ( std::string const & ) > taskop_naming_func( & core::pack::task::operation::complex_type_name_for_task_op );
 	subelements.add_already_defined_subelement( ProteinInterfaceDesignOperation::keyname(),    taskop_naming_func );
 	subelements.add_already_defined_subelement( RestrictToAlignedSegmentsOperation::keyname(), taskop_naming_func );
 

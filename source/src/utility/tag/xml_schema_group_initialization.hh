@@ -26,7 +26,7 @@
 #include <utility/excn/Exceptions.hh>
 
 // Boost headers
-#include <boost/function.hpp>
+#include <functional>
 
 // C++ headers
 #include <map>
@@ -47,7 +47,7 @@ template < class Creator >
 void define_xml_schema_group(
 	typename std::map< std::string, utility::pointer::shared_ptr< Creator > > const & creator_map,
 	std::string const & widget_group_name,
-	boost::function< std::string( std::string const & ) > const & complex_type_name_for_widget_func,
+	std::function< std::string( std::string const & ) > const & complex_type_name_for_widget_func,
 	XMLSchemaDefinition & xsd
 )
 {

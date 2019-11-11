@@ -98,7 +98,7 @@
 #elif defined USE_BOOST_THREAD
 // Boost headers
 #include <boost/thread.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 #endif
 
 namespace protocols {
@@ -635,18 +635,18 @@ void FragmentPicker::nonlocal_pairs( core::Size const fragment_size, utility::ve
 			for ( core::Size pos = 1; pos <= qPosi_to_run[j].size(); ++pos ) std::cout << " " << qPosi_to_run[j][pos];
 			std::cout << std::endl;
 #if defined MULTI_THREADED
-			threads.push_back( std::thread( boost::bind(
+			threads.push_back( std::thread( std::bind(
 				&FragmentPicker::nonlocal_pairs_at_positions,
 				this,
-				boost::ref(qPosi_to_run[j]),
+				std::ref(qPosi_to_run[j]),
 				fragment_size,
-				boost::ref(skip_position),
-				boost::ref(fragment_set),
-				boost::ref(thread_pairs[j]))));
+				std::ref(skip_position),
+				std::ref(fragment_set),
+				std::ref(thread_pairs[j]))));
 			//&FragmentPicker::nonlocal_pairs_at_positions, this, qPosi_to_run[j], fragment_size, skip_position, fragment_set, thread_pairs[j]));
 #elif defined USE_BOOST_THREAD
-			threads.create_thread(boost::bind(&FragmentPicker::nonlocal_pairs_at_positions, this, boost::ref(qPosi_to_run[j]), fragment_size, boost::ref(skip_position),
-				boost::ref(fragment_set), boost::ref(thread_pairs[j])));
+			threads.create_thread(std::bind(&FragmentPicker::nonlocal_pairs_at_positions, this, std::ref(qPosi_to_run[j]), fragment_size, std::ref(skip_position),
+				std::ref(fragment_set), std::ref(thread_pairs[j])));
 #endif
 		}
 	}
@@ -1047,7 +1047,7 @@ void FragmentPicker::pick_candidates() {
 #if defined MULTI_THREADED
 				threads.push_back(std::thread(&FragmentPicker::pick_chunk_candidates,this,chunks_to_run[j],j));
 #elif defined USE_BOOST_THREAD
-				threads.create_thread(boost::bind(&FragmentPicker::pick_chunk_candidates, this, boost::ref(chunks_to_run[j]), j));
+				threads.create_thread(std::bind(&FragmentPicker::pick_chunk_candidates, this, std::ref(chunks_to_run[j]), j));
 #endif
 			}
 		}

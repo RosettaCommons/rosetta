@@ -20,9 +20,8 @@
 #include <string>
 
 // External headers
-#include <boost/bind.hpp>
+#include <functional>
 #include <boost/format.hpp>
-#include <boost/function.hpp>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -76,7 +75,7 @@
 namespace protocols {
 namespace medal {
 
-using Trigger = boost::function<void (const core::pose::Pose &)>;
+using Trigger = std::function<void (const core::pose::Pose &)>;
 
 static basic::Tracer TR( "protocols.medal.MedalMover" );
 
@@ -354,7 +353,7 @@ protocols::moves::MoverOP MedalMover::create_fragment_mover(
 
 	// Optionally record accepted moves
 	if ( option[OptionKeys::rigid::log_accepted_moves]() ) {
-		mover->add_trigger(boost::bind(&on_pose_accept, _1));
+		mover->add_trigger(std::bind(&on_pose_accept, std::placeholders::_1));
 	}
 
 	return mover;
@@ -387,7 +386,7 @@ protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(
 
 	// Optionally record accepted moves
 	if ( option[OptionKeys::rigid::log_accepted_moves]() ) {
-		mover->add_trigger(boost::bind(&on_pose_accept, _1));
+		mover->add_trigger(std::bind(&on_pose_accept, std::placeholders::_1));
 	}
 
 	return mover;
@@ -421,7 +420,7 @@ protocols::moves::MoverOP MedalMover::create_small_mover(core::pose::PoseOP, cor
 
 	// Optionally record accepted moves
 	if ( option[OptionKeys::rigid::log_accepted_moves]() ) {
-		mover->add_trigger(boost::bind(&on_pose_accept, _1));
+		mover->add_trigger(std::bind(&on_pose_accept, std::placeholders::_1));
 	}
 
 	return mover;

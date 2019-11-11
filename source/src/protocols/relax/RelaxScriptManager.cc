@@ -38,8 +38,7 @@
 #include <fstream>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
+#include <functional>
 
 // Construct tracer.
 static basic::Tracer TR( "protocols.relax.RelaxScriptManager" );
@@ -93,7 +92,7 @@ RelaxScriptManager::get_relax_script(
 	core::scoring::ScoreFunctionCOP sfxn( mover_sfxn == nullptr ? core::scoring::get_score_function( true ) : mover_sfxn );
 	std::string const nearest_sfxn( get_nearest_sfxn_if_in_database( filename, sfxn ) );
 
-	boost::function< RelaxScriptFileContentsOP () > creator( boost::bind( &RelaxScriptManager::create_relax_script_instance, this, boost::cref( filename ), nearest_sfxn, dualspace ) );
+	std::function< RelaxScriptFileContentsOP () > creator( std::bind( &RelaxScriptManager::create_relax_script_instance, this, std::cref( filename ), nearest_sfxn, dualspace ) );
 	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( relax_script_mutex_ ), std::make_tuple( filename, nearest_sfxn, dualspace ), filename_to_filecontents_map_ ) );
 }
 
@@ -329,7 +328,7 @@ RelaxScriptManager::determine_closest_scorefunction(
 	for ( std::string const & candidate : names_of_candidates ) {
 
 		/// @brief The following ensures that the energy maps are only loaded once, and cached:
-		boost::function< EnergyMapContainerCOP () > creator( boost::bind( &RelaxScriptManager::create_energy_map_instance, boost::cref( candidate ) ) );
+		std::function< EnergyMapContainerCOP () > creator( std::bind( &RelaxScriptManager::create_energy_map_instance, std::cref( candidate ) ) );
 		core::scoring::EnergyMap const & dummy_weights( (utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( energy_maps_mutex_ ), candidate, energy_maps_map_ ) )->get_energy_map() );
 
 		core::Real const score( sfxn_distance_squared( target_weights, dummy_weights ) );

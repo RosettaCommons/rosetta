@@ -51,7 +51,7 @@
 #include <numeric/random/random.hh>
 
 #include <boost/thread.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 using namespace core;
 using namespace conformation;
@@ -338,8 +338,8 @@ public:
 			(sf)(*poses_[i]);
 
 			threads.create_thread(
-				boost::bind(
-					&do_rtmin, boost::cref(*scorefxn_), boost::cref(*packer_tasks[i]), boost::cref(*poses_[i]), boost::ref(thread_scores[i]) , boost::ref(abs_thread_scores[i])
+				std::bind(
+					&do_rtmin, std::cref(*scorefxn_), std::cref(*packer_tasks[i]), std::cref(*poses_[i]), std::ref(thread_scores[i]) , std::ref(abs_thread_scores[i])
 				) );
 		}
 		threads.join_all();

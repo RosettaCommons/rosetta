@@ -43,7 +43,7 @@
 #include <utility/options/OptionCollection.hh>
 #include <basic/options/option_macros.hh>
 
-#include <boost/bind.hpp>
+#include <functional>
 
 #ifdef MULTI_THREADED
 #include <thread>
@@ -175,7 +175,7 @@ main( int argc, char * argv [] )
 
 		utility::vector1< std::thread > threads;
 		for ( core::Size i(1); i<=6; ++i ) {
-			threads.push_back( std::thread( boost::bind( &thread_fxn, i, poses[i] ) ) );
+			threads.push_back( std::thread( std::bind( &thread_fxn, i, poses[i] ) ) );
 		}
 		for ( core::Size i(1); i<=6; ++i ) {
 			threads[i].join();

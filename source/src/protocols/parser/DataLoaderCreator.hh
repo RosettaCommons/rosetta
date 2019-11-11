@@ -26,7 +26,7 @@
 #include <string>
 
 // Boost headers -- temp -- move to base class
-#include <boost/function.hpp>
+#include <functional>
 
 namespace protocols {
 namespace parser {
@@ -35,7 +35,7 @@ namespace parser {
 class DataLoaderCreator : public utility::pointer::ReferenceCount
 {
 public:
-	typedef boost::function< std::string ( std::string const & ) > DerivedNameFunction;
+	typedef std::function< std::string ( std::string const & ) > DerivedNameFunction;
 
 public:
 	DataLoaderCreator();

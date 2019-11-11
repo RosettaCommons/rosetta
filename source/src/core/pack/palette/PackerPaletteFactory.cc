@@ -35,9 +35,8 @@
 
 #include <utility/vector0.hh>
 
-// Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
+// STL headers
+#include <functional>
 
 namespace core {
 namespace pack {
@@ -88,7 +87,7 @@ PackerPaletteOP
 PackerPaletteFactory::newPackerPalette(
 	std::string const & type,
 	basic::datacache::DataMap & datamap,
-	TagCOP tag /* = boost::shared_ptr< Tag >() */
+	TagCOP tag
 ) const
 {
 	PackerPaletteCreatorMap::const_iterator iter( packer_palette_creator_map_.find( type ) );
@@ -201,7 +200,7 @@ PackerPaletteFactory::newPackerPalettes( PackerPaletteOPs & ppops, basic::dataca
 /// If the user provides options for additional residues, makes a CustomBaseTypePackerPalette.
 PackerPaletteOP
 PackerPaletteFactory::create_packer_palette_from_global_defaults() const {
-	boost::function< PackerPaletteOP () > creator( boost::bind( &PackerPaletteFactory::initialize_packer_palette_from_global_defaults ) );
+	std::function< PackerPaletteOP () > creator( std::bind( &PackerPaletteFactory::initialize_packer_palette_from_global_defaults ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, default_palette_ , SAFELY_PASS_MUTEX(default_palette_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(default_palette_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return default_palette_->clone();
 }

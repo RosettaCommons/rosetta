@@ -46,8 +46,7 @@
 #include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
+#include <functional>
 
 namespace protocols {
 namespace noesy_assign {
@@ -63,7 +62,7 @@ std::mutex & PeakAssignmentParameters::singleton_mutex() { return singleton_mute
 /// @brief static function to get the instance of ( pointer to) this singleton class
 PeakAssignmentParameters const * PeakAssignmentParameters::get_instance()
 {
-	boost::function< PeakAssignmentParameters * () > creator = boost::bind( &PeakAssignmentParameters::create_singleton_instance );
+	std::function< PeakAssignmentParameters * () > creator = std::bind( &PeakAssignmentParameters::create_singleton_instance );
 	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
 }

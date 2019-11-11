@@ -116,7 +116,7 @@
 #include <utility/excn/Exceptions.hh>
 
 // Boost headers
-#include <boost/function.hpp>
+#include <functional>
 
 // LibXML includes
 #include <libxml/parser.h>
@@ -559,13 +559,13 @@ public:
 	// A function that returns the name for an object given the name of another related object
 	// e.g. the complex_type_name_for_task_op function returns the name for the xs:complexType
 	// for a task operation by modifying the name of that task operation.
-	typedef boost::function< std::string ( std::string const & ) > DerivedNameFunction;
+	typedef std::function< std::string ( std::string const & ) > DerivedNameFunction;
 
 	// A function that returns the name for a particular object, e.g.
 	// ResidueSelectorFactory::residue_selector_xml_schema_group_name gives the name
 	// for the xs:group listing all of the ResidueSelectors accessible through
 	// the factory (and thus all the ResidueSelectors accessible through RosettaScripts).
-	typedef boost::function< std::string () >                      NameFunction;
+	typedef std::function< std::string () >                      NameFunction;
 
 	struct ElementSummary {
 		enum ElementType { ct_simple, ct_ref, ct_group };
@@ -844,13 +844,13 @@ public:
 	// A function that returns the name for an object given the name of another related object
 	// e.g. the complex_type_name_for_task_op function returns the name for the xs:complexType
 	// for a task operation by modifying the name of that task operation.
-	typedef boost::function< std::string ( std::string const & ) > DerivedNameFunction;
+	typedef std::function< std::string ( std::string const & ) > DerivedNameFunction;
 
 	// A function that returns the name for a particular object, e.g.
 	// ResidueSelectorFactory::residue_selector_xml_schema_group_name gives the name
 	// for the xs:group listing all of the ResidueSelectors accessible through
 	// the factory (and thus all the ResidueSelectors accessible through RosettaScripts).
-	typedef boost::function< std::string () >                      NameFunction;
+	typedef std::function< std::string () >                      NameFunction;
 
 
 public:

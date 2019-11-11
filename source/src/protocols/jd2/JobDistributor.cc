@@ -73,6 +73,8 @@
 #include <iterator>
 #endif
 
+#include <functional>
+
 namespace protocols {
 namespace jd2 {
 static basic::Tracer tr( "protocols.jd2.JobDistributor" );
@@ -135,7 +137,7 @@ JobDistributor::has_been_instantiated() {
 /// @brief static function to get the instance of ( pointer to) this singleton class
 JobDistributor * JobDistributor::get_instance()
 {
-	boost::function< JobDistributor * () > creator = boost::bind( &JobDistributor::create_singleton_instance );
+	std::function< JobDistributor * () > creator = std::bind( &JobDistributor::create_singleton_instance );
 	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
 }

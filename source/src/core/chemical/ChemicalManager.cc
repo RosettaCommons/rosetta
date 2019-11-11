@@ -68,10 +68,8 @@
 
 #include <utility/thread/threadsafe_creation.hh>
 
-// Boost headers
-#include <boost/bind.hpp>
-//#include <boost/function.hpp>
-
+// STL headers
+#include <functional>
 
 namespace core {
 namespace chemical {
@@ -97,8 +95,8 @@ ChemicalManager::atom_type_set( std::string const & tag )
 
 		// bind the relevant atom-type-set creation function and its arguments so that
 		// it can be passed to the utility::thread::create_and_insert function.
-		boost::function< utility::pointer::shared_ptr< AtomTypeSet > () > func =
-			boost::bind( &ChemicalManager::create_atom_type_set, this, boost::cref(tag) );
+		std::function< utility::pointer::shared_ptr< AtomTypeSet > () > func =
+			std::bind( &ChemicalManager::create_atom_type_set, this, std::cref(tag) );
 
 #if defined MULTI_THREADED
 		iter = utility::thread::create_and_insert( func, atomtype_mutex_, tag, atom_type_sets_ );
@@ -150,8 +148,8 @@ ChemicalManager::element_set( std::string const & tag )
 
 		// bind the relevant atom-type-set creation function and its arguments so that
 		// it can be passed to the utility::thread::create_and_insert function.
-		boost::function< utility::pointer::shared_ptr< ElementSet > () > func =
-			boost::bind( &ChemicalManager::create_element_set, this, boost::cref(tag) );
+		std::function< utility::pointer::shared_ptr< ElementSet > () > func =
+			std::bind( &ChemicalManager::create_element_set, this, std::cref(tag) );
 
 #if defined MULTI_THREADED
 		iter = utility::thread::create_and_insert( func, elem_mutex_, tag, element_sets_ );
@@ -189,8 +187,8 @@ ChemicalManager::orbital_type_set( std::string const & tag )
 
 		// bind the relevant atom-type-set creation function and its arguments so that
 		// it can be passed to the utility::thread::create_and_insert function.
-		boost::function< utility::pointer::shared_ptr< orbitals::OrbitalTypeSet > () > func =
-			boost::bind( &ChemicalManager::create_orbital_type_set, this, boost::cref(tag) );
+		std::function< utility::pointer::shared_ptr< orbitals::OrbitalTypeSet > () > func =
+			std::bind( &ChemicalManager::create_orbital_type_set, this, std::cref(tag) );
 
 #if defined MULTI_THREADED
 		iter = utility::thread::create_and_insert( func, orbtype_mutex_, tag, orbital_type_sets_ );
@@ -226,8 +224,8 @@ ChemicalManager::mm_atom_type_set( std::string const & tag )
 
 		// bind the relevant mm-atom-type-set creation function and its arguments so that
 		// it can be passed to the utility::thread::create_and_insert function.
-		boost::function< utility::pointer::shared_ptr< MMAtomTypeSet > () > func =
-			boost::bind( &ChemicalManager::create_mm_atom_type_set, this, boost::cref(tag) );
+		std::function< utility::pointer::shared_ptr< MMAtomTypeSet > () > func =
+			std::bind( &ChemicalManager::create_mm_atom_type_set, this, std::cref(tag) );
 
 #if defined MULTI_THREADED
 		iter = utility::thread::create_and_insert( func, mmatomtype_mutex_, tag, mm_atom_type_sets_ );
@@ -297,8 +295,8 @@ ChemicalManager::residue_type_set( std::string const & tag )
 
 		// bind the relevant residue-type-set creation function and its arguments so that
 		// it can be passed to the utility::thread::create_and_insert function.
-		boost::function< utility::pointer::shared_ptr< GlobalResidueTypeSet > () > func =
-			boost::bind( &ChemicalManager::create_residue_type_set, this, boost::cref(tag) );
+		std::function< utility::pointer::shared_ptr< GlobalResidueTypeSet > () > func =
+			std::bind( &ChemicalManager::create_residue_type_set, this, std::cref(tag) );
 
 #if defined MULTI_THREADED
 		iter = utility::thread::create_and_insert( func, restype_mutex_, tag, residue_type_sets_ );
@@ -366,8 +364,8 @@ ChemicalManager::ideal_bond_length_set( std::string const & tag )
 
 		// bind the relevant ideal-bond-length-set creation function and its arguments so that
 		// it can be passed to the utility::thread::create_and_insert function.
-		boost::function< utility::pointer::shared_ptr< IdealBondLengthSet > () > func =
-			boost::bind( &ChemicalManager::create_ideal_bond_length_set, this, boost::cref(tag) );
+		std::function< utility::pointer::shared_ptr< IdealBondLengthSet > () > func =
+			std::bind( &ChemicalManager::create_ideal_bond_length_set, this, std::cref(tag) );
 
 #if defined MULTI_THREADED
 		iter = utility::thread::create_and_insert( func, idealbondlength_mutex_, tag, ideal_bond_length_sets_ );

@@ -29,8 +29,7 @@
 #include <fstream>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
+#include <functional>
 
 // Construct tracer.
 //static basic::Tracer TR( "utility.io.GeneralFileManager" );
@@ -63,7 +62,7 @@ std::string const &
 GeneralFileManager::get_file_contents(
 	std::string const & filename
 ) const {
-	boost::function< GeneralFileContentsOP () > creator( boost::bind( &GeneralFileManager::create_instance, boost::cref( filename ) ) );
+	std::function< GeneralFileContentsOP () > creator( std::bind( &GeneralFileManager::create_instance, std::cref( filename ) ) );
 	auto ptr = utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( io_script_mutex_ ), filename, filename_to_filecontents_map_ );
 	return ptr->get_file_contents();
 }

@@ -34,6 +34,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/io/izstream.hh>
 
+#include <functional>
 
 static basic::Tracer TR( "protocols.sewing.hashing.LigandBindingResPlacer" );
 
@@ -334,7 +335,7 @@ LigandBindingResPlacer::choose_best_metal_coordinator( data_storage::SmartAssemb
 		return std::make_pair( nullptr, false );
 	}
 	//Sort the vector by score
-	//std::sort( res_scores.begin(), res_scores.end(), boost::bind( &std::pair< std::pair< core::Size, core::Size >, std::pair< LigandCoordInfo, core::Real > >::second::second, _1) < boost::bind(  &std::pair< std::pair< core::Size, core::Size >, std::pair< LigandCoordInfo, core::Real > >::second::second, _2 ) );
+	//std::sort( res_scores.begin(), res_scores.end(), std::bind( &std::pair< std::pair< core::Size, core::Size >, std::pair< LigandCoordInfo, core::Real > >::second::second, _1) < std::bind(  &std::pair< std::pair< core::Size, core::Size >, std::pair< LigandCoordInfo, core::Real > >::second::second, _2 ) );
 	//TR << "Sorting vector by score" << std::endl;
 	//see if this lambda function will work
 	std::sort( res_scores.begin(), res_scores.end(), []( std::pair< std::pair< core::Size, core::Size >, std::pair< LigandCoordInfo, core::Real > > const &left, std::pair< std::pair< core::Size, core::Size >, std::pair< LigandCoordInfo, core::Real > > const &right ){

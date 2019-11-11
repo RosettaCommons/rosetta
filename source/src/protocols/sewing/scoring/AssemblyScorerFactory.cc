@@ -32,8 +32,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
+#include <functional>
 #include <boost/foreach.hpp>
 
 
@@ -65,7 +64,7 @@ std::mutex & AssemblyScorerFactory::singleton_mutex() { return singleton_mutex_;
 /// @brief static function to get the instance of ( pointer to) this singleton class
 AssemblyScorerFactory * AssemblyScorerFactory::get_instance()
 {
-boost::function< AssemblyScorerFactory * () > creator = boost::bind( &AssemblyScorerFactory::create_singleton_instance );
+std::function< AssemblyScorerFactory * () > creator = std::bind( &AssemblyScorerFactory::create_singleton_instance );
 utility::thread::safely_create_singleton( creator, instance_ );
 return instance_;
 }

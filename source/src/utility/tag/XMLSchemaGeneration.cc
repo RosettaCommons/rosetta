@@ -1130,7 +1130,7 @@ XMLSchemaSimpleSubelementList::add_subelement(
 bool
 XMLSchemaSimpleSubelementList::simple_element_naming_func_has_been_set() const
 {
-	return ct_naming_func_for_simple_subelements_;
+	return (bool)(ct_naming_func_for_simple_subelements_);
 }
 
 XMLSchemaSimpleSubelementList::DerivedNameFunction
@@ -1307,8 +1307,8 @@ XMLSchemaSimpleSubelementList::element_summary_as_group_subelement(
 class XMLSchemaComplexTypeGeneratorImpl : public utility::pointer::ReferenceCount
 {
 public:
-	using DerivedNameFunction = boost::function<std::string (const std::string &)>;
-	using NameFunction = boost::function<std::string ()>;
+	using DerivedNameFunction = std::function<std::string (const std::string &)>;
+	using NameFunction = std::function<std::string ()>;
 	using ElementSummaries = std::list<XMLSchemaSimpleSubelementList::ElementSummary>;
 
 	enum SetOfSubelementsBehavior { ss_repeatable, ss_optional, ss_required, ss_pick_one_opt, ss_pick_one_req };
@@ -2365,7 +2365,7 @@ XMLSchemaRepeatableCTNode::recursively_write_ct_to_schema( XMLSchemaDefinition &
 			if ( child->element_.element_type == XMLSchemaSimpleSubelementList::ElementSummary::ct_ref ) {
 				my_subelements.add_subelement( child->element_ );
 			} else {
-				debug_assert( ! kids_ct_naming_func_.empty() );
+				debug_assert( kids_ct_naming_func_ );
 				my_subelements.add_subelement( XMLSchemaSimpleSubelementList::element_summary_as_already_defined_subelement(
 					child->element_.element_name,
 					kids_ct_naming_func_ ));
@@ -2377,7 +2377,7 @@ XMLSchemaRepeatableCTNode::recursively_write_ct_to_schema( XMLSchemaDefinition &
 
 	// if there are any grand children, then the mangling function for kid nodes
 	// needs to be set.
-	debug_assert( ! any_have_children || ! kids_ct_naming_func_.empty() );
+	debug_assert( ! any_have_children || kids_ct_naming_func_ );
 
 
 	// OK: create simple subelement list w/ all children where each child is an
@@ -2385,7 +2385,7 @@ XMLSchemaRepeatableCTNode::recursively_write_ct_to_schema( XMLSchemaDefinition &
 	if ( any_have_children ) my_subelements.complex_type_naming_func( kids_ct_naming_func_ );
 
 	XMLSchemaRepeatableCTNodeOP parent = parent_.lock();
-	debug_assert( parent || ! my_naming_func_.empty() );
+	debug_assert( parent || my_naming_func_ );
 
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.element_name( element_.element_name )

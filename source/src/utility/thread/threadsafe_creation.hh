@@ -16,7 +16,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 // Boost headers
-#include <boost/function.hpp>
+#include <functional>
 
 #ifdef MULTI_THREADED
 #include <utility/thread/ReadWriteMutex.hh>
@@ -82,7 +82,7 @@ template < class T >
 inline
 void
 safely_create_singleton(
-	boost::function< T * () > creation_func,
+	std::function< T * () > creation_func,
 #if defined MULTI_THREADED
 	std::atomic< T * > & instance
 #else
@@ -156,7 +156,7 @@ template < class T >
 inline
 void
 safely_create_load_once_object_by_OP(
-	boost::function< utility::pointer::shared_ptr< T > () > creation_func,
+	std::function< utility::pointer::shared_ptr< T > () > creation_func,
 	utility::pointer::shared_ptr< T > & instance,
 #if defined MULTI_THREADED
 	std::mutex &mut,
@@ -213,7 +213,7 @@ safely_create_load_once_object_by_OP(
 #ifdef MULTI_THREADED
 
 /// @brief Safely create and insert an object into a map that is guarded by
-/// a utility::thread::ReadWriteMutex.  Uses boost::function to invoke
+/// a utility::thread::ReadWriteMutex.  Uses std::function to invoke
 /// the creation function only if needed (i.e. it will not invoke the creation
 /// function if the item has already been created by the time the WriteLockGuard
 /// has been acquired.
@@ -230,7 +230,7 @@ safely_create_load_once_object_by_OP(
 template < class T, class L >
 typename std::map< L, utility::pointer::shared_ptr< T > >::const_iterator
 create_and_insert(
-	typename boost::function< utility::pointer::shared_ptr< T > () > builder,
+	typename std::function< utility::pointer::shared_ptr< T > () > builder,
 	utility::thread::ReadWriteMutex & wrm,
 	L const & tname,
 	typename std::map< L, utility::pointer::shared_ptr< T > > & tmap
@@ -257,7 +257,7 @@ create_and_insert(
 template< class T, class K >
 typename utility::pointer::shared_ptr< T >
 safely_check_map_for_key_and_insert_if_absent (
-	typename boost::function< utility::pointer::shared_ptr< T > () > builder,
+	typename std::function< utility::pointer::shared_ptr< T > () > builder,
 #ifdef MULTI_THREADED
 	utility::thread::ReadWriteMutex & wrm,
 #else

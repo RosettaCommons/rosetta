@@ -62,7 +62,7 @@
 //using boost threads
 #ifdef USE_BOOST_THREAD
 #include <boost/thread.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 #endif
 
 using namespace core;
@@ -172,9 +172,9 @@ int main(int argc, char *argv[])
 	for ( Size i = 1; i <= PoseVec.size(); ++i ) {
     		for ( Size j = i ; j <= PoseVec.size(); ++j ) {
 			TR << "i " << i << " j " << j << " ";
-			//boost::thread*  threadij = new boost::thread( &do_tmscore, boost::cref(*PoseVec[i]), boost::cref(*PoseVec[j]), boost::ref(sc_matrix(i,j)));
+			//boost::thread*  threadij = new boost::thread( &do_tmscore, std::cref(*PoseVec[i]), std::cref(*PoseVec[j]), std::ref(sc_matrix(i,j)));
 			//threads.add_thread(threadij);
-			threads.create_thread( boost::bind( &do_tmscore, boost::cref(*PoseVec[i]), boost::cref(*PoseVec[j]), boost::ref(sc_matrix(i,j)) )) ;
+			threads.create_thread( std::bind( &do_tmscore, std::cref(*PoseVec[i]), std::cref(*PoseVec[j]), std::ref(sc_matrix(i,j)) )) ;
 			TR << "thread created"<< std::endl;
 		}
 	}

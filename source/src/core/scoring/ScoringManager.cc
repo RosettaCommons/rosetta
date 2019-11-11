@@ -128,9 +128,8 @@
 // Basic headers
 #include <basic/Tracer.hh>
 
-// Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
+// STL headers
+#include <functional>
 
 static basic::Tracer TR( "core.scoring.ScoringManager" );
 
@@ -358,7 +357,7 @@ ScoringManager::ScoringManager() :
 VdWTinkerPotential const &
 ScoringManager::get_VdWTinkerPotential() const
 {
-	boost::function< VdWTinkerPotentialOP () > creator( boost::bind( &ScoringManager::create_vdw_tinker_potential_instance ) );
+	std::function< VdWTinkerPotentialOP () > creator( std::bind( &ScoringManager::create_vdw_tinker_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, vdw_tinker_potential_, SAFELY_PASS_MUTEX(vdw_tinker_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(vdw_tinker_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *vdw_tinker_potential_;
 }
@@ -369,7 +368,7 @@ ScoringManager::get_VdWTinkerPotential() const
 PairEPotential const &
 ScoringManager::get_PairEPotential() const
 {
-	boost::function< PairEPotentialOP () > creator( boost::bind( &ScoringManager::create_pairE_potential_instance ) );
+	std::function< PairEPotentialOP () > creator( std::bind( &ScoringManager::create_pairE_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, pairE_potential_, SAFELY_PASS_MUTEX(pairE_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(pairE_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *pairE_potential_;
 }
@@ -402,7 +401,7 @@ ScoringManager::factory_register( methods::EnergyMethodCreatorOP creator )
 dna::DNA_BasePotential const &
 ScoringManager::get_DNA_BasePotential() const
 {
-	boost::function< dna::DNA_BasePotentialOP () > creator( boost::bind( &ScoringManager::create_dnabase_potential_instance ) );
+	std::function< dna::DNA_BasePotentialOP () > creator( std::bind( &ScoringManager::create_dnabase_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, DNA_base_potential_, SAFELY_PASS_MUTEX(dnabase_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(dnabase_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *DNA_base_potential_;
 }
@@ -413,7 +412,7 @@ ScoringManager::get_DNA_BasePotential() const
 GenBornPotential const &
 ScoringManager::get_GenBornPotential() const
 {
-	boost::function< GenBornPotentialOP () > creator( boost::bind( &ScoringManager::create_genborn_instance ) );
+	std::function< GenBornPotentialOP () > creator( std::bind( &ScoringManager::create_genborn_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, gen_born_potential_, SAFELY_PASS_MUTEX(genborn_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(genborn_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *gen_born_potential_;
 }
@@ -424,7 +423,7 @@ ScoringManager::get_GenBornPotential() const
 HydroxylTorsionPotential const &
 ScoringManager::get_HydroxylTorsionPotential() const
 {
-	boost::function< HydroxylTorsionPotentialOP () > creator( boost::bind( &ScoringManager::create_hxl_potential_instance ) );
+	std::function< HydroxylTorsionPotentialOP () > creator( std::bind( &ScoringManager::create_hxl_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, hxl_tors_potential_, SAFELY_PASS_MUTEX(hxl_potential_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(hxl_potential_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *hxl_tors_potential_;
 }
@@ -436,7 +435,7 @@ ScoringManager::get_HydroxylTorsionPotential() const
 MultipoleElecPotential const &
 ScoringManager::get_MultipoleElecPotential( methods::EnergyMethodOptions const & options ) const
 {
-	boost::function< MultipoleElecPotentialOP () > creator( boost::bind( &ScoringManager::create_multipole_elec_instance, boost::cref( options ) ) );
+	std::function< MultipoleElecPotentialOP () > creator( std::bind( &ScoringManager::create_multipole_elec_instance, std::cref( options ) ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, multipole_elec_potential_, SAFELY_PASS_MUTEX(multipole_elec_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(multipole_elec_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	//if ( multipole_elec_potential_ == nullptr ) {
 	// multipole_elec_potential_ = utility::pointer::make_shared< MultipoleElecPotential >();
@@ -454,7 +453,7 @@ ScoringManager::get_MultipoleElecPotential( methods::EnergyMethodOptions const &
 SASAPotential const &
 ScoringManager::get_SASAPotential() const
 {
-	boost::function< SASAPotentialOP () > creator( boost::bind( &ScoringManager::create_sasa_potential_instance ) );
+	std::function< SASAPotentialOP () > creator( std::bind( &ScoringManager::create_sasa_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, sasa_potential_, SAFELY_PASS_MUTEX(sasa_potential_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(sasa_potential_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *sasa_potential_;
 }
@@ -465,7 +464,7 @@ ScoringManager::get_SASAPotential() const
 FACTSPotential const &
 ScoringManager::get_FACTSPotential() const
 {
-	boost::function< FACTSPotentialOP () > creator( boost::bind( &ScoringManager::create_facts_potential_instance ) );
+	std::function< FACTSPotentialOP () > creator( std::bind( &ScoringManager::create_facts_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, facts_potential_, SAFELY_PASS_MUTEX(facts_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(facts_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *facts_potential_;
 }
@@ -473,7 +472,7 @@ ScoringManager::get_FACTSPotential() const
 GenericBondedPotential const &
 ScoringManager::get_GenericBondedPotential() const
 {
-	boost::function< GenericBondedPotentialOP () > creator( boost::bind( &ScoringManager::create_generic_bonded_potential_instance ) );
+	std::function< GenericBondedPotentialOP () > creator( std::bind( &ScoringManager::create_generic_bonded_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, generic_bonded_potential_, SAFELY_PASS_MUTEX(generic_bonded_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(generic_bonded_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *generic_bonded_potential_;
 }
@@ -484,7 +483,7 @@ ScoringManager::get_GenericBondedPotential() const
 P_AA const &
 ScoringManager::get_P_AA() const
 {
-	boost::function< P_AAOP () > creator( boost::bind( &ScoringManager::create_p_aa_instance ) );
+	std::function< P_AAOP () > creator( std::bind( &ScoringManager::create_p_aa_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, p_aa_, SAFELY_PASS_MUTEX(p_aa_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(p_aa_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *p_aa_;
 }
@@ -495,7 +494,7 @@ ScoringManager::get_P_AA() const
 P_AA_ss const &
 ScoringManager::get_P_AA_ss() const
 {
-	boost::function< P_AA_ssOP () > creator( boost::bind( &ScoringManager::create_p_aa_ss_instance ) );
+	std::function< P_AA_ssOP () > creator( std::bind( &ScoringManager::create_p_aa_ss_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, p_aa_ss_, SAFELY_PASS_MUTEX(p_aa_ss_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(p_aa_ss_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *p_aa_ss_;
 }
@@ -506,7 +505,7 @@ ScoringManager::get_P_AA_ss() const
 RamachandranCOP
 ScoringManager::get_Ramachandran_ptr() const
 {
-	boost::function< RamachandranOP () > creator( boost::bind( &ScoringManager::create_rama_instance ) );
+	std::function< RamachandranOP () > creator( std::bind( &ScoringManager::create_rama_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, rama_, SAFELY_PASS_MUTEX(rama_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(rama_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return rama_;
 }
@@ -526,7 +525,7 @@ ScoringManager::get_Ramachandran() const
 Ramachandran2BCOP
 ScoringManager::get_Ramachandran2B_ptr() const
 {
-	boost::function< Ramachandran2BOP () > creator( boost::bind( &ScoringManager::create_rama2b_instance ) );
+	std::function< Ramachandran2BOP () > creator( std::bind( &ScoringManager::create_rama2b_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, rama2b_, SAFELY_PASS_MUTEX(rama2b_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(rama2b_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return rama2b_;
 }
@@ -544,7 +543,7 @@ ScoringManager::get_Ramachandran2B() const
 RamaPrePro const &
 ScoringManager::get_RamaPrePro() const
 {
-	boost::function< RamaPreProOP () > creator( boost::bind( &ScoringManager::create_ramapp_instance ) );
+	std::function< RamaPreProOP () > creator( std::bind( &ScoringManager::create_ramapp_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, rama_pp_, SAFELY_PASS_MUTEX(rama_pp_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(rama_pp_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *rama_pp_;
 }
@@ -557,7 +556,7 @@ ScoringManager::get_RamaPrePro() const
 P_AA_ABEGO3 const &
 ScoringManager::get_P_AA_ABEGO3() const
 {
-	boost::function< P_AA_ABEGO3_OP () > creator( boost::bind( &ScoringManager::create_p_aa_abego3_instance ) );
+	std::function< P_AA_ABEGO3_OP () > creator( std::bind( &ScoringManager::create_p_aa_abego3_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, paa_abego3_, SAFELY_PASS_MUTEX(p_aa_abego3_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(p_aa_abego3_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *paa_abego3_;
 }
@@ -568,7 +567,7 @@ ScoringManager::get_P_AA_ABEGO3() const
 dna::DNABFormPotential const &
 ScoringManager::get_DNABFormPotential() const
 {
-	boost::function< dna::DNABFormPotentialOP () > creator( boost::bind( &ScoringManager::create_dna_bform_potential_instance ) );
+	std::function< dna::DNABFormPotentialOP () > creator( std::bind( &ScoringManager::create_dna_bform_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, dnabform_, SAFELY_PASS_MUTEX(dnabform_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(dnabform_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *dnabform_;
 }
@@ -579,7 +578,7 @@ ScoringManager::get_DNABFormPotential() const
 dna::DNATorsionPotential const &
 ScoringManager::get_DNATorsionPotential() const
 {
-	boost::function< dna::DNATorsionPotentialOP () > creator( boost::bind( &ScoringManager::create_dna_torsion_potential_instance ) );
+	std::function< dna::DNATorsionPotentialOP () > creator( std::bind( &ScoringManager::create_dna_torsion_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, dna_torsion_potential_, SAFELY_PASS_MUTEX(dnatorsion_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(dnatorsion_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *dna_torsion_potential_;
 }
@@ -590,7 +589,7 @@ ScoringManager::get_DNATorsionPotential() const
 OmegaTether const &
 ScoringManager::get_OmegaTether() const
 {
-	boost::function< OmegaTetherOP () > creator( boost::bind( &ScoringManager::create_omegatether_instance ) );
+	std::function< OmegaTetherOP () > creator( std::bind( &ScoringManager::create_omegatether_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, omega_, SAFELY_PASS_MUTEX(omegatether_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(omegatether_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *omega_;
 }
@@ -601,7 +600,7 @@ ScoringManager::get_OmegaTether() const
 SmoothEnvPairPotential const &
 ScoringManager::get_SmoothEnvPairPotential() const
 {
-	boost::function< SmoothEnvPairPotentialOP () > creator( boost::bind( &ScoringManager::create_smoothenvpair_instance ) );
+	std::function< SmoothEnvPairPotentialOP () > creator( std::bind( &ScoringManager::create_smoothenvpair_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, smooth_env_pair_potential_, SAFELY_PASS_MUTEX(smoothenvpair_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(smoothenvpair_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *smooth_env_pair_potential_;
 }
@@ -612,7 +611,7 @@ ScoringManager::get_SmoothEnvPairPotential() const
 CenRotEnvPairPotential const &
 ScoringManager::get_CenRotEnvPairPotential() const
 {
-	boost::function< CenRotEnvPairPotentialOP () > creator( boost::bind( &ScoringManager::create_cenrotenvpair_instance) );
+	std::function< CenRotEnvPairPotentialOP () > creator( std::bind( &ScoringManager::create_cenrotenvpair_instance) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, cen_rot_pair_potential_, SAFELY_PASS_MUTEX(cenrotenvpair_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(cenrotenvpair_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *cen_rot_pair_potential_;
 }
@@ -623,7 +622,7 @@ ScoringManager::get_CenRotEnvPairPotential() const
 CenHBPotential const &
 ScoringManager::get_CenHBPotential() const
 {
-	boost::function< CenHBPotentialOP () > creator( boost::bind( &ScoringManager::create_cenhbpotential_instance) );
+	std::function< CenHBPotentialOP () > creator( std::bind( &ScoringManager::create_cenhbpotential_instance) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, cen_hb_potential_, SAFELY_PASS_MUTEX(cenhb_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(cenhb_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *cen_hb_potential_;
 }
@@ -634,7 +633,7 @@ ScoringManager::get_CenHBPotential() const
 EnvPairPotential const &
 ScoringManager::get_EnvPairPotential() const
 {
-	boost::function< EnvPairPotentialOP () > creator( boost::bind( &ScoringManager::create_envpairpotential_instance) );
+	std::function< EnvPairPotentialOP () > creator( std::bind( &ScoringManager::create_envpairpotential_instance) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, env_pair_potential_, SAFELY_PASS_MUTEX(envpair_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(envpair_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *env_pair_potential_;
 }
@@ -645,7 +644,7 @@ ScoringManager::get_EnvPairPotential() const
 dna::DNA_EnvPairPotential const &
 ScoringManager::get_DNA_EnvPairPotential() const
 {
-	boost::function< dna::DNA_EnvPairPotentialOP () > creator( boost::bind( &ScoringManager::create_dna_envpairpotential_instance) );
+	std::function< dna::DNA_EnvPairPotentialOP () > creator( std::bind( &ScoringManager::create_dna_envpairpotential_instance) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, dna_env_pair_potential_, SAFELY_PASS_MUTEX( dnaenvpair_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( dnaenvpair_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *dna_env_pair_potential_;
 }
@@ -656,7 +655,7 @@ ScoringManager::get_DNA_EnvPairPotential() const
 dna::DNA_DihedralPotential const &
 ScoringManager::get_DNA_DihedralPotential() const
 {
-	boost::function< dna::DNA_DihedralPotentialOP () > creator( boost::bind( &ScoringManager::create_dna_dihedralpotential_instance) );
+	std::function< dna::DNA_DihedralPotentialOP () > creator( std::bind( &ScoringManager::create_dna_dihedralpotential_instance) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, dna_dihedral_potential_, SAFELY_PASS_MUTEX( dnadihedral_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( dnadihedral_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *dna_dihedral_potential_;
 }
@@ -667,7 +666,7 @@ ScoringManager::get_DNA_DihedralPotential() const
 SecondaryStructurePotential const &
 ScoringManager::get_SecondaryStructurePotential() const
 {
-	boost::function< SecondaryStructurePotentialOP () > creator( boost::bind( &ScoringManager::create_secondarystructurepotential_instance) );
+	std::function< SecondaryStructurePotentialOP () > creator( std::bind( &ScoringManager::create_secondarystructurepotential_instance) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, secondary_structure_potential_, SAFELY_PASS_MUTEX( secstruct_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( secstruct_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *secondary_structure_potential_;
 }
@@ -679,7 +678,7 @@ ScoringManager::get_SecondaryStructurePotential() const
 AtomVDW const &
 ScoringManager::get_AtomVDW( std::string const & atom_type_set_name ) const
 {
-	boost::function< AtomVDWOP () > creator( boost::bind( &ScoringManager::create_atomvdw_instance, boost::cref( atom_type_set_name ) ) );
+	std::function< AtomVDWOP () > creator( std::bind( &ScoringManager::create_atomvdw_instance, std::cref( atom_type_set_name ) ) );
 	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( atomvdw_mutex_ ), atom_type_set_name, atom_vdw_ ) );
 }
 
@@ -689,7 +688,7 @@ ScoringManager::get_AtomVDW( std::string const & atom_type_set_name ) const
 rna::RNA_AtomVDW const &
 ScoringManager::get_RNA_AtomVDW() const
 {
-	boost::function< rna::RNA_AtomVDWOP () > creator( boost::bind( &ScoringManager::create_rna_atomvdw_instance) );
+	std::function< rna::RNA_AtomVDWOP () > creator( std::bind( &ScoringManager::create_rna_atomvdw_instance) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, rna_atom_vdw_, SAFELY_PASS_MUTEX( rna_atomvdw_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( rna_atomvdw_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *rna_atom_vdw_;
 }
@@ -702,7 +701,7 @@ ScoringManager::get_RNA_AtomVDW() const
 geometric_solvation::DatabaseOccSolEne const &
 ScoringManager::get_DatabaseOccSolEne( std::string const & atom_type_set_name, Real const & min_occ_energy ) const
 {
-	boost::function< geometric_solvation::DatabaseOccSolEneOP () > creator( boost::bind( &ScoringManager::create_database_occsolene_instance, boost::cref( atom_type_set_name ), boost::cref( min_occ_energy ) ) );
+	std::function< geometric_solvation::DatabaseOccSolEneOP () > creator( std::bind( &ScoringManager::create_database_occsolene_instance, std::cref( atom_type_set_name ), std::cref( min_occ_energy ) ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, occ_hbond_sol_database_, SAFELY_PASS_MUTEX( database_occ_sol_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( database_occ_sol_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *occ_hbond_sol_database_;
 }
@@ -713,7 +712,7 @@ ScoringManager::get_DatabaseOccSolEne( std::string const & atom_type_set_name, R
 carbon_hbonds::CarbonHBondPotential const &
 ScoringManager::get_CarbonHBondPotential() const
 {
-	boost::function< carbon_hbonds::CarbonHBondPotentialOP () > creator( boost::bind( &ScoringManager::create_carbon_hbond_potential_instance ) );
+	std::function< carbon_hbonds::CarbonHBondPotentialOP () > creator( std::bind( &ScoringManager::create_carbon_hbond_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, carbon_hbond_potential_, SAFELY_PASS_MUTEX( carbonhbond_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( carbonhbond_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *carbon_hbond_potential_;
 }
@@ -725,7 +724,7 @@ rna::RNA_SuitePotentialCOP
 ScoringManager::get_rna_suite_potential( bool const & calculate_suiteness_bonus, std::string const & suiteness_bonus ) const
 {
 	std::pair< bool, std::string > const key = std::make_pair( calculate_suiteness_bonus, suiteness_bonus );
-	boost::function< rna::RNA_SuitePotentialOP () > creator( boost::bind( &ScoringManager::create_rna_suitepotential_instance, calculate_suiteness_bonus, boost::cref( suiteness_bonus ) ) );
+	std::function< rna::RNA_SuitePotentialOP () > creator( std::bind( &ScoringManager::create_rna_suitepotential_instance, calculate_suiteness_bonus, std::cref( suiteness_bonus ) ) );
 	return rna::RNA_SuitePotentialCOP(
 		utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( rna_suite_mutex_ ), key, rna_suite_potential_ )
 	);
@@ -737,7 +736,7 @@ ScoringManager::get_rna_suite_potential( bool const & calculate_suiteness_bonus,
 rna::TNA_SuitePotential const &
 ScoringManager::get_tna_suite_potential() const
 {
-	boost::function< rna::TNA_SuitePotentialOP () > creator( boost::bind( &ScoringManager::create_tna_suitepotential_instance ) );
+	std::function< rna::TNA_SuitePotentialOP () > creator( std::bind( &ScoringManager::create_tna_suitepotential_instance ) );
 	//return rna::TNA_SuitePotentialCOP(
 	utility::thread::safely_create_load_once_object_by_OP( creator, tna_suite_potential_, SAFELY_PASS_MUTEX( tna_suite_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( tna_suite_bool_ ) );
 	//);
@@ -750,7 +749,7 @@ ScoringManager::get_tna_suite_potential() const
 loop_graph::evaluator::SixDTransRotPotentialCOP
 ScoringManager::get_LoopCloseSixDPotential( std::string const & database_file ) const
 {
-	boost::function< loop_graph::evaluator::SixDTransRotPotentialOP () > creator( boost::bind( &ScoringManager::create_sixdtransrotpotential_instance, boost::cref( database_file ) ) );
+	std::function< loop_graph::evaluator::SixDTransRotPotentialOP () > creator( std::bind( &ScoringManager::create_sixdtransrotpotential_instance, std::cref( database_file ) ) );
 	return loop_graph::evaluator::SixDTransRotPotentialCOP(
 		utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( loopclose_sixdtransrot_mutex_ ), database_file, loop_close_six_d_potential_ )
 	);
@@ -762,7 +761,7 @@ ScoringManager::get_LoopCloseSixDPotential( std::string const & database_file ) 
 rna::RNA_LowResolutionPotentialCOP
 ScoringManager::get_RNA_LowResolutionPotential( std::string const & database_file ) const
 {
-	boost::function< rna::RNA_LowResolutionPotentialOP () > creator( boost::bind( &ScoringManager::create_rna_lowresolutionpotential_instance, boost::cref( database_file ) ) );
+	std::function< rna::RNA_LowResolutionPotentialOP () > creator( std::bind( &ScoringManager::create_rna_lowresolutionpotential_instance, std::cref( database_file ) ) );
 	return rna::RNA_LowResolutionPotentialCOP(
 		utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( rna_lowres_mutex_ ), database_file, rna_low_resolution_potential_ )
 	);
@@ -774,7 +773,7 @@ ScoringManager::get_RNA_LowResolutionPotential( std::string const & database_fil
 rna::RNP_LowResPotential const &
 ScoringManager::get_RNP_LowResPotential() const
 {
-	boost::function< rna::RNP_LowResPotentialOP () > creator( boost::bind( &ScoringManager::create_rnp_lowrespotential_instance ) );
+	std::function< rna::RNP_LowResPotentialOP () > creator( std::bind( &ScoringManager::create_rnp_lowrespotential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, rnp_low_res_potential_, SAFELY_PASS_MUTEX( rnp_lowres_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( rnp_lowres_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *rnp_low_res_potential_;
 }
@@ -785,7 +784,7 @@ ScoringManager::get_RNP_LowResPotential() const
 rna::RNP_LowResPairDistPotential const &
 ScoringManager::get_RNP_LowResPairDistPotential() const
 {
-	boost::function< rna::RNP_LowResPairDistPotentialOP() > creator( boost::bind( &ScoringManager::create_rnp_lowrespairdistpotential_instance ) );
+	std::function< rna::RNP_LowResPairDistPotentialOP() > creator( std::bind( &ScoringManager::create_rnp_lowrespairdistpotential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, rnp_low_res_pair_dist_potential_, SAFELY_PASS_MUTEX( rnp_lowrespairdist_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( rnp_lowrespairdist_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *rnp_low_res_pair_dist_potential_;
 }
@@ -797,7 +796,7 @@ ScoringManager::get_RNP_LowResPairDistPotential() const
 rna::RNP_LowResStackData const &
 ScoringManager::get_RNP_LowResStackData() const
 {
-	boost::function< rna::RNP_LowResStackDataOP () > creator( boost::bind( &ScoringManager::create_rnp_lowresstackdata_instance ) );
+	std::function< rna::RNP_LowResStackDataOP () > creator( std::bind( &ScoringManager::create_rnp_lowresstackdata_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, rnp_low_res_stack_data_, SAFELY_PASS_MUTEX( rnp_lowresstack_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( rnp_lowresstack_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *rnp_low_res_stack_data_;
 }
@@ -808,7 +807,7 @@ ScoringManager::get_RNP_LowResStackData() const
 rna::chemical_shift::RNA_ChemicalShiftPotential const &
 ScoringManager::get_RNA_ChemicalShiftPotential() const
 {
-	boost::function< rna::chemical_shift::RNA_ChemicalShiftPotentialOP () > creator( boost::bind( &ScoringManager::create_rna_chemshiftpotential_instance ) );
+	std::function< rna::chemical_shift::RNA_ChemicalShiftPotentialOP () > creator( std::bind( &ScoringManager::create_rna_chemshiftpotential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, rna_chemical_shift_potential_, SAFELY_PASS_MUTEX( rna_chemshift_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( rna_chemshift_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *rna_chemical_shift_potential_;
 }
@@ -820,7 +819,7 @@ ScoringManager::get_RNA_ChemicalShiftPotential() const
 rna::data::RNA_DMS_Potential &
 ScoringManager::get_RNA_DMS_Potential() const
 {
-	boost::function< rna::data::RNA_DMS_PotentialOP () > creator( boost::bind( &ScoringManager::create_rna_dms_potential_instance ) );
+	std::function< rna::data::RNA_DMS_PotentialOP () > creator( std::bind( &ScoringManager::create_rna_dms_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, rna_dms_potential_, SAFELY_PASS_MUTEX( rna_dms_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( rna_dms_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *rna_dms_potential_;
 }
@@ -832,7 +831,7 @@ ScoringManager::get_RNA_DMS_Potential() const
 rna::data::RNA_DMS_LowResolutionPotential &
 ScoringManager::get_RNA_DMS_LowResolutionPotential() const
 {
-	boost::function< rna::data::RNA_DMS_LowResolutionPotentialOP () > creator( boost::bind( &ScoringManager::create_rna_dms_lowrespotential_instance ) );
+	std::function< rna::data::RNA_DMS_LowResolutionPotentialOP () > creator( std::bind( &ScoringManager::create_rna_dms_lowrespotential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, rna_dms_low_resolution_potential_, SAFELY_PASS_MUTEX( rna_dms_lowres_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( rna_dms_lowres_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *rna_dms_low_resolution_potential_;
 }
@@ -843,7 +842,7 @@ ScoringManager::get_RNA_DMS_LowResolutionPotential() const
 dna::DirectReadoutPotential const &
 ScoringManager::get_DirectReadoutPotential() const
 {
-	boost::function< dna::DirectReadoutPotentialOP () > creator( boost::bind( &ScoringManager::create_dna_directreadoutpotential_instance ) );
+	std::function< dna::DirectReadoutPotentialOP () > creator( std::bind( &ScoringManager::create_dna_directreadoutpotential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, dna_dr_potential_, SAFELY_PASS_MUTEX( dna_directreadout_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( dna_directreadout_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *dna_dr_potential_;
 }
@@ -854,7 +853,7 @@ ScoringManager::get_DirectReadoutPotential() const
 core::scoring::mm::MMLJLibrary const &
 ScoringManager::get_MMLJLibrary() const
 {
-	boost::function< core::scoring::mm::MMLJLibraryOP () > creator( boost::bind( &ScoringManager::create_mm_lj_library_instance ) );
+	std::function< core::scoring::mm::MMLJLibraryOP () > creator( std::bind( &ScoringManager::create_mm_lj_library_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, mm_lj_library_, SAFELY_PASS_MUTEX( mm_lj_library_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( mm_lj_library_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *mm_lj_library_;
 }
@@ -865,7 +864,7 @@ ScoringManager::get_MMLJLibrary() const
 core::scoring::mm::MMLJEnergyTable const &
 ScoringManager::get_MMLJEnergyTable () const
 {
-	boost::function< core::scoring::mm::MMLJEnergyTableOP () > creator( boost::bind( &ScoringManager::create_mm_lj_energy_table_instance ) );
+	std::function< core::scoring::mm::MMLJEnergyTableOP () > creator( std::bind( &ScoringManager::create_mm_lj_energy_table_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, mm_lj_energy_table_, SAFELY_PASS_MUTEX( mm_lj_energytable_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( mm_lj_energytable_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *mm_lj_energy_table_;
 }
@@ -876,7 +875,7 @@ ScoringManager::get_MMLJEnergyTable () const
 core::scoring::mm::MMTorsionLibrary const &
 ScoringManager::get_MMTorsionLibrary() const
 {
-	boost::function< mm::MMTorsionLibraryOP () > creator( boost::bind( &ScoringManager::create_mm_torsion_library_instance ) );
+	std::function< mm::MMTorsionLibraryOP () > creator( std::bind( &ScoringManager::create_mm_torsion_library_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, mm_torsion_library_, SAFELY_PASS_MUTEX( mm_torsionlibrary_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( mm_torsionlibrary_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *mm_torsion_library_;
 }
@@ -887,7 +886,7 @@ ScoringManager::get_MMTorsionLibrary() const
 core::scoring::mm::MMBondAngleLibrary const &
 ScoringManager::get_MMBondAngleLibrary() const
 {
-	boost::function< mm::MMBondAngleLibraryOP () > creator( boost::bind( &ScoringManager::create_mm_bondangle_library_instance ) );
+	std::function< mm::MMBondAngleLibraryOP () > creator( std::bind( &ScoringManager::create_mm_bondangle_library_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, mm_bondangle_library_, SAFELY_PASS_MUTEX( mm_bondanglelibrary_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( mm_bondanglelibrary_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *mm_bondangle_library_;
 }
@@ -898,7 +897,7 @@ ScoringManager::get_MMBondAngleLibrary() const
 core::scoring::mm::MMBondLengthLibrary const &
 ScoringManager::get_MMBondLengthLibrary() const
 {
-	boost::function< mm::MMBondLengthLibraryOP () > creator( boost::bind( &ScoringManager::create_mm_bondlength_library_instance ) );
+	std::function< mm::MMBondLengthLibraryOP () > creator( std::bind( &ScoringManager::create_mm_bondlength_library_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, mm_bondlength_library_, SAFELY_PASS_MUTEX( mm_bondlengthlibrary_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( mm_bondlengthlibrary_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *mm_bondlength_library_;
 }
@@ -909,7 +908,7 @@ ScoringManager::get_MMBondLengthLibrary() const
 nv::NVlookup const &
 ScoringManager::get_NVLookupTable() const
 {
-	boost::function< nv::NVlookupOP () > creator( boost::bind( &ScoringManager::create_nvlookup_instance ) );
+	std::function< nv::NVlookupOP () > creator( std::bind( &ScoringManager::create_nvlookup_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator,  NV_lookup_table_, SAFELY_PASS_MUTEX( nv_lookup_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( nv_lookup_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *NV_lookup_table_;
 }
@@ -920,7 +919,7 @@ ScoringManager::get_NVLookupTable() const
 orbitals::OrbitalsLookup const &
 ScoringManager::get_OrbitalsLookupTable() const
 {
-	boost::function< orbitals::OrbitalsLookupOP () > creator( boost::bind( &ScoringManager::create_orbitals_lookup_instance ) );
+	std::function< orbitals::OrbitalsLookupOP () > creator( std::bind( &ScoringManager::create_orbitals_lookup_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator,  orbitals_lookup_table_, SAFELY_PASS_MUTEX( orbitals_lookup_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( orbitals_lookup_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *orbitals_lookup_table_;
 }
@@ -931,7 +930,7 @@ ScoringManager::get_OrbitalsLookupTable() const
 interface_::DDPlookup const &
 ScoringManager::get_DDPLookupTable() const
 {
-	boost::function< interface_::DDPlookupOP () > creator( boost::bind( &ScoringManager::create_ddp_lookup_instance ) );
+	std::function< interface_::DDPlookupOP () > creator( std::bind( &ScoringManager::create_ddp_lookup_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator,  DDP_lookup_table_, SAFELY_PASS_MUTEX( ddp_lookup_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( ddp_lookup_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *DDP_lookup_table_;
 }
@@ -943,7 +942,7 @@ std::string const &
 ScoringManager::get_nmer_svm_list_file_contents(
 	std::string const & filename
 ) const {
-	boost::function< utility::pointer::shared_ptr< std::string > () > creator( boost::bind( &ScoringManager::create_file_contents_instance, filename ) );
+	std::function< utility::pointer::shared_ptr< std::string > () > creator( std::bind( &ScoringManager::create_file_contents_instance, filename ) );
 	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( nmer_svm_list_mutex_ ), filename, nmer_svm_list_file_contents_map_ ) );
 }
 
@@ -954,7 +953,7 @@ utility::libsvm::Svm_rosettaCOP
 ScoringManager::get_nmer_svm(
 	std::string const & filename
 ) const {
-	boost::function< utility::libsvm::Svm_rosettaOP () > creator( boost::bind( &ScoringManager::create_svm_rosetta, filename ) );
+	std::function< utility::libsvm::Svm_rosettaOP () > creator( std::bind( &ScoringManager::create_svm_rosetta, filename ) );
 	return utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( nmer_svm_mutex_ ), filename, nmer_svm_map_ );
 }
 
@@ -965,7 +964,7 @@ std::string const &
 ScoringManager::get_nmer_svm_rank_list_file_contents(
 	std::string const & filename
 ) const {
-	boost::function< utility::pointer::shared_ptr< std::string > () > creator( boost::bind( &ScoringManager::create_file_contents_instance, filename ) );
+	std::function< utility::pointer::shared_ptr< std::string > () > creator( std::bind( &ScoringManager::create_file_contents_instance, filename ) );
 	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( nmer_svm_rank_list_mutex_ ), filename, nmer_svm_rank_list_file_contents_map_ ) );
 }
 
@@ -976,7 +975,7 @@ utility::vector1< core::Real > const &
 ScoringManager::get_nmer_svm_rank(
 	std::string const & filename
 ) const {
-	boost::function< utility::pointer::shared_ptr< utility::vector1< core::Real > > () > creator( boost::bind( &ScoringManager::create_nmer_svm_rank, filename ) );
+	std::function< utility::pointer::shared_ptr< utility::vector1< core::Real > > () > creator( std::bind( &ScoringManager::create_nmer_svm_rank, filename ) );
 	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( nmer_svm_rank_mutex_ ), filename, nmer_svm_rank_map_ ) );
 }
 
@@ -986,7 +985,7 @@ std::map<core::chemical::AA, utility::vector1<core::Real> > const &
 ScoringManager::get_nmer_pssm(
 	std::string const & filename, core::Size nmer_length
 ) const {
-	boost::function< utility::pointer::shared_ptr< std::map<core::chemical::AA, utility::vector1<core::Real> > > () > creator( boost::bind( &ScoringManager::create_nmer_pssm, boost::cref(filename), boost::cref(nmer_length) ) );
+	std::function< utility::pointer::shared_ptr< std::map<core::chemical::AA, utility::vector1<core::Real> > > () > creator( std::bind( &ScoringManager::create_nmer_pssm, std::cref(filename), std::cref(nmer_length) ) );
 	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( nmer_pssm_mutex_ ), filename, nmer_pssm_map_ ) );
 }
 
@@ -997,7 +996,7 @@ std::map< char, utility::vector1< core::Real > > const &
 ScoringManager::get_nmer_svm_aa_matrix(
 	std::string const & filename
 ) const {
-	boost::function< utility::pointer::shared_ptr< std::map< char, utility::vector1< core::Real > > > () > creator( boost::bind( &ScoringManager::create_nmer_svm_aa_matrix, filename ) );
+	std::function< utility::pointer::shared_ptr< std::map< char, utility::vector1< core::Real > > > () > creator( std::bind( &ScoringManager::create_nmer_svm_aa_matrix, filename ) );
 	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( nmer_svm_aa_encoding_matrix_mutex_ ), filename, nmer_svm_aa_matrix_map_ ) );
 }
 
@@ -1007,7 +1006,7 @@ ScoringManager::get_nmer_svm_aa_matrix(
 UnfoldedStatePotential const &
 ScoringManager::get_UnfoldedStatePotential( std::string const & type ) const
 {
-	boost::function< UnfoldedStatePotentialOP () > creator( boost::bind( &ScoringManager::create_unfolded_state_potential_instance, boost::cref( type ) ) );
+	std::function< UnfoldedStatePotentialOP () > creator( std::bind( &ScoringManager::create_unfolded_state_potential_instance, std::cref( type ) ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator,  unf_state_, SAFELY_PASS_MUTEX( unfoldedstate_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( unfoldedstate_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *unf_state_;
 }
@@ -1018,7 +1017,7 @@ ScoringManager::get_UnfoldedStatePotential( std::string const & type ) const
 WaterAdductHBondPotential const &
 ScoringManager::get_WaterAdductHBondPotential() const
 {
-	boost::function< WaterAdductHBondPotentialOP () > creator( boost::bind( &ScoringManager::create_water_adduct_hbond_potential_instance ) );
+	std::function< WaterAdductHBondPotentialOP () > creator( std::bind( &ScoringManager::create_water_adduct_hbond_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator,  water_adduct_hbond_potential_, SAFELY_PASS_MUTEX( wateradduct_hbond_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( wateradduct_hbond_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *water_adduct_hbond_potential_;
 }
@@ -1029,7 +1028,7 @@ ScoringManager::get_WaterAdductHBondPotential() const
 MembranePotential const &
 ScoringManager::get_MembranePotential() const
 {
-	boost::function< MembranePotentialOP () > creator( boost::bind( &ScoringManager::create_membrane_potential_instance ) );
+	std::function< MembranePotentialOP () > creator( std::bind( &ScoringManager::create_membrane_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator,  membrane_potential_, SAFELY_PASS_MUTEX( membranepot_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( membranepot_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *membrane_potential_;
 }
@@ -1040,7 +1039,7 @@ ScoringManager::get_MembranePotential() const
 membrane::MembraneData const &
 ScoringManager::get_MembraneData() const
 {
-	boost::function< membrane::MembraneDataOP () > creator( boost::bind( &ScoringManager::create_membrane_data_instance ) );
+	std::function< membrane::MembraneDataOP () > creator( std::bind( &ScoringManager::create_membrane_data_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator,  mp_base_potential_, SAFELY_PASS_MUTEX( membranedata_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( membranedata_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *mp_base_potential_;
 }
@@ -1052,7 +1051,7 @@ ScoringManager::get_MembraneData() const
 Membrane_FAPotential const &
 ScoringManager::get_Membrane_FAPotential() const //pba
 {
-	boost::function< Membrane_FAPotentialOP () > creator( boost::bind( &ScoringManager::create_membrane_fa_potential_instance ) );
+	std::function< Membrane_FAPotentialOP () > creator( std::bind( &ScoringManager::create_membrane_fa_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, membrane_fapotential_, SAFELY_PASS_MUTEX( membrane_fapot_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( membrane_fapot_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *membrane_fapotential_;
 }
@@ -1063,7 +1062,7 @@ ScoringManager::get_Membrane_FAPotential() const //pba
 ProQPotential const &
 ScoringManager::get_ProQPotential() const
 {
-	boost::function< ProQPotentialOP () > creator( boost::bind( &ScoringManager::create_proq_potential_instance ) );
+	std::function< ProQPotentialOP () > creator( std::bind( &ScoringManager::create_proq_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, ProQ_potential_, SAFELY_PASS_MUTEX( proq_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( proq_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *ProQ_potential_;
 }
@@ -1072,7 +1071,7 @@ ScoringManager::get_ProQPotential() const
 PointWaterPotential const &
 ScoringManager::get_PointWaterPotential() const
 {
-	boost::function< PointWaterPotentialOP () > creator( boost::bind( &ScoringManager::create_point_water_potential_instance ) );
+	std::function< PointWaterPotentialOP () > creator( std::bind( &ScoringManager::create_point_water_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, pwp_, SAFELY_PASS_MUTEX( pwp_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( pwp_bool_ ) );
 	return *pwp_;
 	//  if ( pwp_ == 0 ) {
@@ -1087,7 +1086,7 @@ ScoringManager::get_PointWaterPotential() const
 PoissonBoltzmannPotential const &
 ScoringManager::get_PoissonBoltzmannPotential() const
 {
-	boost::function< PoissonBoltzmannPotentialOP () > creator( boost::bind( &ScoringManager::create_poisson_boltzmann_potential_instance ) );
+	std::function< PoissonBoltzmannPotentialOP () > creator( std::bind( &ScoringManager::create_poisson_boltzmann_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, PB_potential_, SAFELY_PASS_MUTEX( poissonboltzman_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( poissonboltzman_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *PB_potential_;
 }
@@ -1098,7 +1097,7 @@ ScoringManager::get_PoissonBoltzmannPotential() const
 SplitUnfoldedTwoBodyPotential const &
 ScoringManager::get_SplitUnfoldedTwoBodyPotential(std::string const & label_type,std::string const & value_type, std::string const & score_func_type) const
 {
-	boost::function< SplitUnfoldedTwoBodyPotentialOP () > creator( boost::bind( &ScoringManager::create_split_unfolded_2body_potential_instance, boost::cref( label_type ), boost::cref( value_type ), boost::cref( score_func_type ) ) );
+	std::function< SplitUnfoldedTwoBodyPotentialOP () > creator( std::bind( &ScoringManager::create_split_unfolded_2body_potential_instance, std::cref( label_type ), std::cref( value_type ), std::cref( score_func_type ) ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, sutbp_, SAFELY_PASS_MUTEX( splitunfolded_2body_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( splitunfolded_2body_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *sutbp_;
 }
@@ -1109,7 +1108,7 @@ ScoringManager::get_SplitUnfoldedTwoBodyPotential(std::string const & label_type
 disulfides::FullatomDisulfidePotential const &
 ScoringManager::get_FullatomDisulfidePotential() const
 {
-	boost::function< disulfides::FullatomDisulfidePotentialOP () > creator( boost::bind( &ScoringManager::create_fullatom_disulfide_potential_instance ) );
+	std::function< disulfides::FullatomDisulfidePotentialOP () > creator( std::bind( &ScoringManager::create_fullatom_disulfide_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, fa_disulfide_potential_, SAFELY_PASS_MUTEX( fa_disulf_potential_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( fa_disulf_potential_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *fa_disulfide_potential_;
 }
@@ -1120,7 +1119,7 @@ ScoringManager::get_FullatomDisulfidePotential() const
 disulfides::CentroidDisulfidePotential const &
 ScoringManager::get_CentroidDisulfidePotential() const
 {
-	boost::function< disulfides::CentroidDisulfidePotentialOP () > creator( boost::bind( &ScoringManager::create_centroid_disulfide_potential_instance ) );
+	std::function< disulfides::CentroidDisulfidePotentialOP () > creator( std::bind( &ScoringManager::create_centroid_disulfide_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, cen_disulfide_potential_, SAFELY_PASS_MUTEX( cent_disulf_potential_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( cent_disulf_potential_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *cen_disulfide_potential_;
 }
@@ -1131,7 +1130,7 @@ ScoringManager::get_CentroidDisulfidePotential() const
 disulfides::DisulfideMatchingPotential const &
 ScoringManager::get_DisulfideMatchingPotential() const
 {
-	boost::function< disulfides::DisulfideMatchingPotentialOP () > creator( boost::bind( &ScoringManager::create_disulfide_matching_potential_instance ) );
+	std::function< disulfides::DisulfideMatchingPotentialOP () > creator( std::bind( &ScoringManager::create_disulfide_matching_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, disulfide_matching_potential_, SAFELY_PASS_MUTEX( disulf_matching_potential_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( disulf_matching_potential_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *disulfide_matching_potential_;
 }
@@ -1141,7 +1140,7 @@ ScoringManager::get_DisulfideMatchingPotential() const
 carbohydrates::CHIEnergyFunction const &
 ScoringManager::get_CHIEnergyFunction( bool const setup_for_sampling /* false */, core::Real const & step_size /* 0.1 */ ) const
 {
-	boost::function< carbohydrates::CHIEnergyFunctionOP () > creator( boost::bind( &ScoringManager::create_chi_energy_function_instance ) );
+	std::function< carbohydrates::CHIEnergyFunctionOP () > creator( std::bind( &ScoringManager::create_chi_energy_function_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, CHI_energy_function_, SAFELY_PASS_MUTEX( carb_chienergy_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( carb_chienergy_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 
 	if ( setup_for_sampling ) {
@@ -1164,7 +1163,7 @@ ScoringManager::get_CHIEnergyFunction( bool const setup_for_sampling /* false */
 carbohydrates::OmegaPreferencesFunction const &
 ScoringManager::get_OmegaPreferencesFunction(  bool const setup_for_sampling /* false */, core::Real const & step_size /* 0.1 */ ) const
 {
-	boost::function< carbohydrates::OmegaPreferencesFunctionOP () > creator( boost::bind( &ScoringManager::create_omega_preferences_function_instance ) );
+	std::function< carbohydrates::OmegaPreferencesFunctionOP () > creator( std::bind( &ScoringManager::create_omega_preferences_function_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, carbohydrate_omega_preferences_function_, SAFELY_PASS_MUTEX( carb_omegapref_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( carb_omegapref_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 
 	if ( setup_for_sampling ) {
@@ -1227,7 +1226,7 @@ ScoringManager::add_memb_etable( std::string const & name, etable::MembEtableOP 
 #ifndef MULTI_THREADED
 	debug_assert( memb_etables_.count(name) == 0 );
 #endif
-	boost::function< etable::MembEtableOP () > builder( boost::bind( &ScoringManager::create_memb_etable_instance_silly, etable ) ); //Note that this is a silly "builder" function that just returns the object passed to it.
+	std::function< etable::MembEtableOP () > builder( std::bind( &ScoringManager::create_memb_etable_instance_silly, etable ) ); //Note that this is a silly "builder" function that just returns the object passed to it.
 	utility::thread::safely_check_map_for_key_and_insert_if_absent( builder, SAFELY_PASS_MUTEX( memb_etable_mutex_ ), name, memb_etables_ );
 }
 
@@ -1237,7 +1236,7 @@ ScoringManager::add_memb_etable( std::string const & name, etable::MembEtableOP 
 etable::MembEtableCAP
 ScoringManager::memb_etable( std::string const & table_id ) const //pba
 {
-	boost::function< etable::MembEtableOP () > builder( boost::bind( &ScoringManager::create_memb_etable_instance, boost::cref( table_id ) ) ); //Note that this calls the non-silly version of the function.
+	std::function< etable::MembEtableOP () > builder( std::bind( &ScoringManager::create_memb_etable_instance, std::cref( table_id ) ) ); //Note that this calls the non-silly version of the function.
 	return ( utility::thread::safely_check_map_for_key_and_insert_if_absent(builder, SAFELY_PASS_MUTEX(memb_etable_mutex_), table_id, memb_etables_ ) );
 }
 
@@ -1322,7 +1321,7 @@ ScoringManager::etable( etable::EtableOptions const & options_in ) const
 		}
 
 #ifdef MULTI_THREADED
-		boost::function< EtableOP () > builder( boost::bind( &ScoringManager::create_etable_instance, etable_ptr ) ); //Note that this is a silly "builder" function that just returns the object passed to it.
+		std::function< EtableOP () > builder( std::bind( &ScoringManager::create_etable_instance, etable_ptr ) ); //Note that this is a silly "builder" function that just returns the object passed to it.
 		it = utility::thread::create_and_insert( builder, SAFELY_PASS_MUTEX( etable_mutex_ ), options_in, etables_by_options_ );
 #else
 		etables_by_options_[ options_in ] = etable_ptr;
@@ -1352,7 +1351,7 @@ ScoringManager::etable( std::string const & etable_id ) const
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 core::scoring::elec::CPRepMapTypeCOP
 ScoringManager::get_cp_rep_map_byname() const {
-	boost::function< core::scoring::elec::CPRepMapTypeOP () > creator( boost::bind( &core::scoring::elec::read_cp_tables_from_db, std::string("scoring/score_functions/elec_cp_reps.dat") ) );
+	std::function< core::scoring::elec::CPRepMapTypeOP () > creator( std::bind( &core::scoring::elec::read_cp_tables_from_db, std::string("scoring/score_functions/elec_cp_reps.dat") ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, cp_rep_map_byname_, SAFELY_PASS_MUTEX(cp_rep_map_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(cp_rep_map_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return cp_rep_map_byname_;
 }
@@ -1373,7 +1372,7 @@ ScoringManager::get_cloned_aa_comp_setup_helpers(
 
 	// Load the data if necessary (once, in a threadsafe manner), and populate the return vector:
 	for ( core::Size i(1); i<=n_setup_helpers; ++i ) {
-		boost::function< core::scoring::aa_composition_energy::AACompositionEnergySetupOP () > creator( boost::bind( &ScoringManager::create_aa_composition_energy_setup_instance, boost::cref( options.aa_composition_setup_file(i) ) ) );
+		std::function< core::scoring::aa_composition_energy::AACompositionEnergySetupOP () > creator( std::bind( &ScoringManager::create_aa_composition_energy_setup_instance, std::cref( options.aa_composition_setup_file(i) ) ) );
 		return_vect.push_back( ( utility::thread::safely_check_map_for_key_and_insert_if_absent(creator, SAFELY_PASS_MUTEX(aa_comp_mutex_), options.aa_composition_setup_file(i), aa_composition_setup_helpers_) )->clone() );
 	}
 
@@ -1396,7 +1395,7 @@ ScoringManager::get_cloned_netcharge_setup_helpers(
 
 	// Load the data if necessary (once, in a threadsafe manner), and populate the return vector:
 	for ( core::Size i(1); i<=n_setup_helpers; ++i ) {
-		boost::function< core::scoring::netcharge_energy::NetChargeEnergySetupOP () > creator( boost::bind( &ScoringManager::create_netcharge_energy_setup_instance, boost::cref( options.netcharge_setup_file(i) ) ) );
+		std::function< core::scoring::netcharge_energy::NetChargeEnergySetupOP () > creator( std::bind( &ScoringManager::create_netcharge_energy_setup_instance, std::cref( options.netcharge_setup_file(i) ) ) );
 		return_vect.push_back( ( utility::thread::safely_check_map_for_key_and_insert_if_absent(creator, SAFELY_PASS_MUTEX(netcharge_mutex_), options.netcharge_setup_file(i), netcharge_setup_helpers_) )->clone() );
 	}
 
@@ -1419,7 +1418,7 @@ ScoringManager::get_cloned_mhc_epitope_setup_helpers(
 
 	// Load the data if necessary (once, in a threadsafe manner), and populate the return vector:
 	for ( core::Size i(1); i<=n_setup_helpers; ++i ) {
-		boost::function< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupOP () > creator( boost::bind( &ScoringManager::create_mhc_epitope_energy_setup_instance, boost::cref( options.mhc_epitope_setup_file(i) ) ) );
+		std::function< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupOP () > creator( std::bind( &ScoringManager::create_mhc_epitope_energy_setup_instance, std::cref( options.mhc_epitope_setup_file(i) ) ) );
 		return_vect.push_back( ( utility::thread::safely_check_map_for_key_and_insert_if_absent(creator, SAFELY_PASS_MUTEX(mhc_epitope_mutex_), options.mhc_epitope_setup_file(i), mhc_epitope_setup_helpers_) )->clone() );
 	}
 
@@ -1434,7 +1433,7 @@ std::list<std::string> const &
 ScoringManager::get_mhc_matrix_contents(
 	std::string const & filename
 ) const{
-	boost::function< utility::pointer::shared_ptr< std::list<std::string> > () > creator( boost::bind( &ScoringManager::create_mhc_matrix_contents, filename ) );
+	std::function< utility::pointer::shared_ptr< std::list<std::string> > () > creator( std::bind( &ScoringManager::create_mhc_matrix_contents, filename ) );
 	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( mhc_matrix_contents_mutex_ ), filename, mhc_matrix_contents_map_ ) );
 }
 
@@ -1445,7 +1444,7 @@ std::pair<std::map<std::string, core::Real>, core::Size> const &
 ScoringManager::get_mhc_map_from_db(
 	std::string const & filename
 ) const{
-	boost::function< utility::pointer::shared_ptr< std::pair<std::map<std::string, core::Real>, core::Size> > () > creator( boost::bind( &ScoringManager::create_mhc_map_from_db, filename ) );
+	std::function< utility::pointer::shared_ptr< std::pair<std::map<std::string, core::Real>, core::Size> > () > creator( std::bind( &ScoringManager::create_mhc_map_from_db, filename ) );
 	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( mhc_sqlite_db_contents_mutex_ ), filename, mhc_sqlite_db_contents_map_ ) );
 }
 
@@ -1456,7 +1455,7 @@ std::list<std::string> const &
 ScoringManager::get_mhc_csv_contents(
 	std::string const & filename
 ) const{
-	boost::function< utility::pointer::shared_ptr< std::list <std::string> > () > creator( boost::bind( &ScoringManager::create_mhc_csv_contents, filename ) );
+	std::function< utility::pointer::shared_ptr< std::list <std::string> > () > creator( std::bind( &ScoringManager::create_mhc_csv_contents, filename ) );
 	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( mhc_csv_db_contents_mutex_ ), filename, mhc_csv_db_contents_map_ ) );
 }
 
@@ -1509,7 +1508,7 @@ ScoringManager::get_rama_prepro_mainchain_torsion_potential(
 			// just return that one.
 			// 2.  If it's not in the map, it gets a write lock for the ReadWriteMutex and adds it to the map (checking one more time, once the write lock is on, before doing
 			// the addition).
-			boost::function< MainchainScoreTableOP () > builder( boost::bind( &ScoringManager::create_mainchain_scoretable_instance, newtables[i].second ) ); //Note that this is a silly "builder" function that just returns the object passed to it.
+			std::function< MainchainScoreTableOP () > builder( std::bind( &ScoringManager::create_mainchain_scoretable_instance, newtables[i].second ) ); //Note that this is a silly "builder" function that just returns the object passed to it.
 			temptable = utility::thread::safely_check_map_for_key_and_insert_if_absent( builder, SAFELY_PASS_MUTEX( mut ), newtables[i].first, prepro_table ? rama_prepro_mainchain_potentials_beforeproline_ : rama_prepro_mainchain_potentials_ );
 			if ( newtables[i].first.compare( mapname ) == 0 ) {
 				mytype_found = true; //Found the type we're trying to load.

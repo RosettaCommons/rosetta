@@ -27,7 +27,7 @@
 #include <string>
 
 // External headers
-#include <boost/function.hpp>
+#include <functional>
 #include <boost/unordered_map.hpp>
 
 // Utility headers
@@ -52,7 +52,7 @@ namespace protocols {
 namespace evolution {
 
 /// @brief Trigger API definition
-typedef boost::function<bool(core::Size,
+typedef std::function<bool(core::Size,
 	core::Size,
 	const core::pose::Pose&,
 	core::scoring::ScoreFunctionOP)> EvolutionaryDynamicsMoverTrigger;

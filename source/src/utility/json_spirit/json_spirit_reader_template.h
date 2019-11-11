@@ -17,8 +17,7 @@
 
 //#define BOOST_SPIRIT_THREADSAFE  // uncomment for multithreaded use, requires linking to boost.thread
 
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
+#include <functional>
 #include <boost/version.hpp>
 
 #if BOOST_VERSION >= 103800
@@ -417,24 +416,24 @@ public:
 			// first we convert the semantic action class methods to functors with the
 			// parameter signature expected by spirit
 
-			typedef boost::function< void( Char_type )            > Char_action;
-			typedef boost::function< void( Iter_type, Iter_type ) > Str_action;
-			typedef boost::function< void( double )               > Real_action;
-			typedef boost::function< void( boost::int64_t )       > Int_action;
-			typedef boost::function< void( boost::uint64_t )      > Uint64_action;
+			typedef std::function< void( Char_type )            > Char_action;
+			typedef std::function< void( Iter_type, Iter_type ) > Str_action;
+			typedef std::function< void( double )               > Real_action;
+			typedef std::function< void( boost::int64_t )       > Int_action;
+			typedef std::function< void( boost::uint64_t )      > Uint64_action;
 
-			Char_action   begin_obj  ( boost::bind( &Semantic_actions_t::begin_obj,   &self.actions_, _1 ) );
-			Char_action   end_obj    ( boost::bind( &Semantic_actions_t::end_obj,     &self.actions_, _1 ) );
-			Char_action   begin_array( boost::bind( &Semantic_actions_t::begin_array, &self.actions_, _1 ) );
-			Char_action   end_array  ( boost::bind( &Semantic_actions_t::end_array,   &self.actions_, _1 ) );
-			Str_action    new_name   ( boost::bind( &Semantic_actions_t::new_name,    &self.actions_, _1, _2 ) );
-			Str_action    new_str    ( boost::bind( &Semantic_actions_t::new_str,     &self.actions_, _1, _2 ) );
-			Str_action    new_true   ( boost::bind( &Semantic_actions_t::new_true,    &self.actions_, _1, _2 ) );
-			Str_action    new_false  ( boost::bind( &Semantic_actions_t::new_false,   &self.actions_, _1, _2 ) );
-			Str_action    new_null   ( boost::bind( &Semantic_actions_t::new_null,    &self.actions_, _1, _2 ) );
-			Real_action   new_real   ( boost::bind( &Semantic_actions_t::new_real,    &self.actions_, _1 ) );
-			Int_action    new_int    ( boost::bind( &Semantic_actions_t::new_int,     &self.actions_, _1 ) );
-			Uint64_action new_uint64 ( boost::bind( &Semantic_actions_t::new_uint64,  &self.actions_, _1 ) );
+			Char_action   begin_obj  ( std::bind( &Semantic_actions_t::begin_obj,   &self.actions_, std::placeholders::_1 ) );
+			Char_action   end_obj    ( std::bind( &Semantic_actions_t::end_obj,     &self.actions_, std::placeholders::_1 ) );
+			Char_action   begin_array( std::bind( &Semantic_actions_t::begin_array, &self.actions_, std::placeholders::_1 ) );
+			Char_action   end_array  ( std::bind( &Semantic_actions_t::end_array,   &self.actions_, std::placeholders::_1 ) );
+			Str_action    new_name   ( std::bind( &Semantic_actions_t::new_name,    &self.actions_, std::placeholders::_1, std::placeholders::_2 ) );
+			Str_action    new_str    ( std::bind( &Semantic_actions_t::new_str,     &self.actions_, std::placeholders::_1, std::placeholders::_2 ) );
+			Str_action    new_true   ( std::bind( &Semantic_actions_t::new_true,    &self.actions_, std::placeholders::_1, std::placeholders::_2 ) );
+			Str_action    new_false  ( std::bind( &Semantic_actions_t::new_false,   &self.actions_, std::placeholders::_1, std::placeholders::_2 ) );
+			Str_action    new_null   ( std::bind( &Semantic_actions_t::new_null,    &self.actions_, std::placeholders::_1, std::placeholders::_2 ) );
+			Real_action   new_real   ( std::bind( &Semantic_actions_t::new_real,    &self.actions_, std::placeholders::_1 ) );
+			Int_action    new_int    ( std::bind( &Semantic_actions_t::new_int,     &self.actions_, std::placeholders::_1 ) );
+			Uint64_action new_uint64 ( std::bind( &Semantic_actions_t::new_uint64,  &self.actions_, std::placeholders::_1 ) );
 
 			// actual grammer
 
