@@ -89,12 +89,38 @@ void TCRseqInfo::parse_tcrsegs(std::string alpha_chain_sequence, std::string bet
 		assign_achain_CDRs_using_REGEX(alpha_chain_sequence, atcr_, aseq_posi_);
 		assign_bchain_CDRs_using_REGEX(beta_chain_sequence, btcr_, bseq_posi_);
 	}
+
+	if ( atcr_.truncdomain.empty() && anarci_path_.empty() ) {
+    TR <<"Try using '-anarci_path' flag to use ANARCI program for assigning CDR positions"<<std::endl;
+    TR <<"Try using '-assign_cdr' flag to assign CDR positions manually"<<std::endl;
+		TR <<"No RegEx match for TCR chain sequence : "<< alpha_chain_sequence <<std::endl;
+	}
+
+	if ( btcr_.truncdomain.empty() && anarci_path_.empty() ) {
+    TR <<"Try using '-anarci_path' flag to use ANARCI program for assigning CDR positions"<<std::endl;
+    TR <<"Try using '-assign_cdr' flag to assign CDR positions manually"<<std::endl;
+		TR <<"No RegEx match for TCR chain sequence : "<< beta_chain_sequence <<std::endl;
+	}
+
 	if ( atcr_.truncdomain.empty() && !anarci_path_.empty() ) {
 		assign_CDRs_using_anarci(alpha_chain_sequence, anarci_path_, aaho_posi_, aseq_posi_, atcr_);
 	}
 	if ( btcr_.truncdomain.empty() && !anarci_path_.empty() ) {
 		assign_CDRs_using_anarci(beta_chain_sequence, anarci_path_, baho_posi_, bseq_posi_, btcr_);
 	}
+
+	if ( atcr_.truncdomain.empty() ) {
+    TR <<"Try using '-anarci_path' flag to use ANARCI program for assigning CDR positions"<<std::endl;
+    TR <<"Try using '-assign_cdr' flag to assign CDR positions manually"<<std::endl;
+		utility_exit_with_message("No RegEx match for TCR chain sequence : " + alpha_chain_sequence);
+	}
+
+	if ( btcr_.truncdomain.empty() ) {
+    TR <<"Try using '-anarci_path' flag to use ANARCI program for assigning CDR positions"<<std::endl;
+    TR <<"Try using '-assign_cdr' flag to assign CDR positions manually"<<std::endl;
+		utility_exit_with_message("No RegEx match for TCR chain sequence : " + beta_chain_sequence);
+	}
+
 	adjust_position_for_chain(bseq_posi_, btcr_.truncdomain.length());
 	return;
 }

@@ -300,7 +300,9 @@ CCDEndsGraftMover::apply(Pose & pose){
 		repack_connection_and_residues_in_movemap_and_piece_and_neighbors( pose, fa_scorefxn(),
 			start(), end(), movemap(), neighbor_dis());
 	}
-	TR <<"Graft meets ideal geometry " << std::boolalpha << graft_closed(combined, *loop_set) << std::endl;
+
+	if ( graft_closed(combined, *loop_set) ) graft_is_closed_ = true;
+	TR <<"Graft meets ideal geometry " << std::boolalpha << graft_is_closed_ << std::endl;
 	TR << "Complete"<<std::endl;
 	pose = combined;
 

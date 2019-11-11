@@ -103,12 +103,15 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-
+	bool graft_is_closed() const {
+		return graft_is_closed_;
+	}
 
 private:
 
 	protocols::simple_moves::SmallMoverOP
 	setup_default_small_mover() override;
+	bool graft_is_closed_ = false;
 
 }; //Class CCDEndsGraftMover
 

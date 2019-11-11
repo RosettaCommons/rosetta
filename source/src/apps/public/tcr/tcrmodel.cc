@@ -94,7 +94,7 @@ int main(int argc, char * argv [])
 			TR << "Beta CDR1 template : "<<tcrinfo.btmplt().cdr1.tid<<std::endl;
 			TR << "Beta CDR2 template : "<<tcrinfo.btmplt().cdr2hv4.tid<<std::endl;
 		}
-		TR << "Beta CDR3 template : "<<tcrinfo.atmplt().cdr3.tid<<std::endl;
+		TR << "Beta CDR3 template : "<<tcrinfo.btmplt().cdr3.tid<<std::endl;
 		//orientation template
 		TR << "Alpha Beta orientation template : "<< tcrinfo.atmplt().ori.tid << " " << tcrinfo.btmplt().ori.tid << std::endl;
 		std::string const prefix = basic::options::option[basic::options::OptionKeys::out::prefix];

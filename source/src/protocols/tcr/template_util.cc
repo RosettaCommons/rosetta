@@ -53,7 +53,7 @@ std::pair<core::Real, std::string> find_template( std::string const &query, std:
 	std::string best_name, best_content;
 	core::Real best_score = MINSCORE;
 	core::Real best_resolution = MAXRESOLUTION;
-	while ( std::getline(inp, line) ) {
+	while ( std::getline( inp, line ) ) {
 		if ( line.empty() || line[0] == '>' ) {
 			if ( !name.empty() ) {
 				std::string first_four = name.substr(0, 4);
@@ -65,11 +65,6 @@ std::pair<core::Real, std::string> find_template( std::string const &query, std:
 						}
 						core::Real curr_score = score_alignment( query, content, tcr_ss );
 						if ( curr_score > best_score ) {
-							best_score = curr_score;
-							best_content = content;
-							best_name = name;
-							best_resolution = curr_resolution;
-						} else if ( curr_score == best_score ) {
 							best_score = curr_score;
 							best_content = content;
 							best_name = name;
@@ -90,14 +85,39 @@ std::pair<core::Real, std::string> find_template( std::string const &query, std:
 				name = line.substr(1);
 			}
 			content.clear();
-		} else {
+		} else if ( !name.empty() ) {
 			content += line;
+		}
+	}
+	if ( !name.empty() ) {
+		//the last fasta sequence is read here...
+		std::string first_four = name.substr(0, 4);
+		if ( !ignore_template(first_four, ignore_lists) ) {
+			if ( calculate_identity_score(query,content) <= cutoff ) {
+				core::Real curr_resolution = MAXRESOLUTION;
+				if ( !(name.substr(9) == "None") ) {
+					curr_resolution = std::stof(name.substr(9));
+				}
+				core::Real curr_score = score_alignment( query, content, tcr_ss );
+				if ( curr_score > best_score ) {
+					best_score = curr_score;
+					best_content = content;
+					best_name = name;
+					best_resolution = curr_resolution;
+				} else if ( curr_score == best_score ) {
+					if ( curr_resolution < best_resolution ) {
+						best_score = curr_score;
+						best_content = content;
+						best_name = name;
+						best_resolution = curr_resolution;
+					}
+				}
+			}
 		}
 	}
 	std::pair<core::Real, std::string> best_pair(best_score, best_name.substr(0,8));
 	return best_pair;
 }
-
 
 std::pair<core::Real, std::string> find_template_from_multiple_input_db( std::string const &query, utility::vector1< std::string > const &multidb, std::list< std::set< std::string > > const &ignore_lists, core::Real const &cutoff, core::sequence::ScoringSchemeOP const &tcr_ss) {
 	std::pair<core::Real, std::string> best_pair(MINSCORE, "");
@@ -298,6 +318,7 @@ std::pair<std::string, std::string> get_orientation_template_from_db(std::string
 	for ( core::Size i=1; i<=multidb.size(); ++i ) {
 		std::ifstream fwinp(multidb[i]);
 		while ( std::getline(fwinp, fwline) ) {
+			if ( fwline.empty() ) continue;
 			std::stringstream ss(fwline);
 			std::string item;
 			std::vector<std::string> tokens;

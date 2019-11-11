@@ -137,6 +137,10 @@ public:
 		return idealize_insert_;
 	}
 
+	bool graft_is_closed() const {
+		return graft_is_closed_;
+	}
+
 public:
 
 	virtual void
@@ -327,6 +331,7 @@ private:
 	std::string scaffold_start_;
 	std::string scaffold_end_;
 	bool idealize_insert_;
+	bool graft_is_closed_ = false;
 
 	utility::pointer::DeepCopyOP< protocols::loops::Loops > loops_ = nullptr;
 

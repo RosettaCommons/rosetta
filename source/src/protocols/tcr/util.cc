@@ -39,6 +39,7 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/sequence/Sequence.hh>
+#include <utility/file/file_sys_util.hh>
 
 static basic::Tracer TR( "protocols.tcr.util" );
 /// @brief MINSCORE const value with large negative number
@@ -54,6 +55,12 @@ void initialize_aho_numbers(TCRseqInfo::tcrposi &a_aho_pos, TCRseqInfo::tcrposi 
 	//adopted from AntibodyNumberingParser
 	utility::vector1< utility::vector1< std::string > > tcr_num_scheme;
 	utility::file::FileName tcr_cdr_definition_file(basic::database::full_name("sampling/antibodies/numbering_schemes/tcr_cdr_definitions.txt"));
+	//check if tcr_cdr_definitions.txt file exists
+	if ( !utility::file::file_exists(tcr_cdr_definition_file) ) {
+		TR <<"The TCR CDR definitions file not found in Rosetta database!"<<std::endl;
+		TR <<"use '-databse' flag to provide the path for the Rosetta database directory."<<std::endl;
+		TR <<"'tcr_cdr_definitions.txt' file should be located in database/sampling/antibodies/numbering_schemes/tcr_cdr_definitions.txt"<<std::endl;
+  }
 	std::ifstream tcr_cdr_numbering_file(tcr_cdr_definition_file);
 	std::string line;
 	while ( getline(tcr_cdr_numbering_file, line) ) {
@@ -241,7 +248,7 @@ void assign_achain_CDRs_using_REGEX( std::string const &seq, TCRseqInfo::tcrsegs
 		pose_posi.cdr3.end = tcr_res.position(8)-tcr_res.position(1);
 	}
 	if ( !found_regex_match ) {
-		utility_exit_with_message("No RegEx match for TCR chain sequence : " + seq);
+		TR <<"No RegEx match for TCR chain sequence: "<< seq <<std::endl;
 	}
 	return;
 }

@@ -21,6 +21,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <protocols/grafting/CCDEndsGraftMover.hh>
 #include <core/pose/chains_util.hh>
+#include <protocols/grafting/util.hh>
 
 static basic::Tracer TR( "protocols.tcr.grafting_util" );
 
@@ -28,37 +29,35 @@ namespace protocols {
 namespace tcr {
 
 void graft_cdr_to_fw(core::pose::Pose &scafold, core::pose::Pose const &cdr_piece, core::Size const &start, core::Size const &end, core::Size &nter_overhang, core::Size &cter_overhang ) {
+	core::pose::Pose curr_scafold = scafold;
 	protocols::grafting::CCDEndsGraftMover ccd_graft_mover;
-	ccd_graft_mover = protocols::grafting::CCDEndsGraftMover(start, end, cdr_piece, cter_overhang, nter_overhang);
-	ccd_graft_mover.set_cycles(50);
+	ccd_graft_mover = protocols::grafting::CCDEndsGraftMover(start, end, cdr_piece, nter_overhang, cter_overhang);
+	ccd_graft_mover.set_cycles(100);
 	ccd_graft_mover.final_repack(true);
 	ccd_graft_mover.stop_at_closure(true);
 	ccd_graft_mover.idealize_insert(true);
 	ccd_graft_mover.copy_pdbinfo(true);
-	ccd_graft_mover.apply(scafold);
+	ccd_graft_mover.apply(curr_scafold);
 	//Check if graft closed
-	//use AnchoredGraftMover if not closed
-	using namespace protocols::loops;
-	LoopsOP currloop_set( new Loops() );
-	Loop Nter_loop = Loop(start-1,start+1,start);
-	Loop Cter_loop = Loop(end-1,end+1,end-1);
-	currloop_set->add_loop(Nter_loop);
-	currloop_set->add_loop(Cter_loop);
-	if ( !grafting::graft_closed(scafold, *currloop_set) ) {
+	//try CCDEndsGraftMover if not closed
+	if ( !ccd_graft_mover.graft_is_closed() ) {
 		TR<<"CCDEndsGraftMover: Graft not closed"<<std::endl;
-		TR<<"Using AnchoredGraftMover"<<std::endl;
+		/*
+		curr_scafold = scafold;
 		protocols::grafting::AnchoredGraftMover anchored_graft_mover;
-		anchored_graft_mover = protocols::grafting::AnchoredGraftMover(start, end, cdr_piece, cter_overhang, nter_overhang);
-		anchored_graft_mover.set_cycles(50);
+		anchored_graft_mover = protocols::grafting::AnchoredGraftMover(start, end, cdr_piece, nter_overhang, cter_overhang);
+		anchored_graft_mover.set_cycles(100);
 		anchored_graft_mover.final_repack(true);
 		anchored_graft_mover.stop_at_closure(true);
 		anchored_graft_mover.idealize_insert(true);
 		anchored_graft_mover.copy_pdbinfo(true);
-		anchored_graft_mover.apply(scafold);
-	}
-	if ( !grafting::graft_closed(scafold, *currloop_set) ) {
+		anchored_graft_mover.apply(curr_scafold);
+		if ( !anchored_graft_mover.graft_is_closed() ) {
 		TR<<"AnchoredGraftMover: Graft not closed"<<std::endl;
+		}
+		*/
 	}
+	scafold = curr_scafold;
 	return;
 }
 

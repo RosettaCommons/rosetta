@@ -601,8 +601,9 @@ AnchoredGraftMover::apply(Pose & pose){
 		repack_connection_and_residues_in_movemap_and_piece_and_neighbors( pose, fa_scorefxn_,
 			start(), end(), movemap_, neighbor_dis());
 	}
-	TR <<"Graft meets ideal geometry " << std::boolalpha << graft_closed(combined, *loops_) << std::endl;
 
+	if ( graft_closed(combined, *loops_) ) graft_is_closed_ = true;
+	TR <<"Graft meets ideal geometry " << std::boolalpha << graft_is_closed_ << std::endl;
 	TR << "Complete"<<std::endl;
 	pose = combined;
 

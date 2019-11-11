@@ -28,6 +28,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 // Utility Headers
+#include <utility/file/file_sys_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
@@ -113,17 +114,24 @@ void TCRmodel::set_default() {
 	using namespace basic::options;
 	std::string tcr_db_path = option[ OptionKeys::tcrmodel::tcr_template_db_path ];
 	if ( tcr_db_path == "" ) {
-		TR <<"Using TCR template from database/additional_protocol_data"<<std::endl;
-		TR <<"Using TCR template from database/additional_protocol_data"<<std::endl;
-		TR <<"You may have to clone or download the template database separately within the Rosetta/database/additional_protocol_data"<<std::endl;
-		TR <<"https://github.com/RosettaCommons/additional_protocol_data"<<std::endl;
 		tseq_db_ = basic::database::full_name("additional_protocol_data/tcr/seq/");
 		tpdb_db_ = basic::database::full_name("additional_protocol_data/tcr/pdb/");
 	} else {
-		TR <<"Using TCR template databse provided by the user : "<<tcr_db_path<<std::endl;
 		tseq_db_ = tcr_db_path + "/seq/";
 		tpdb_db_ = tcr_db_path + "/pdb/";
 	}
+	if ( utility::file::file_exists(tseq_db_) &&  utility::file::file_exists(tpdb_db_) ) {
+		TR <<"TCR template database found:"<<std::endl;
+		TR <<tseq_db_<<std::endl;
+		TR <<tpdb_db_<<std::endl;
+	} else {
+		TR <<"You may have to clone or download the template database separately within the Rosetta/database/additional_protocol_data"<<std::endl;
+		TR <<"Clone the template database from GitHub: https://github.com/RosettaCommons/additional_protocol_data"<<std::endl;
+		TR <<"Download the template database from TCRmodel web server: https://tcrmodel.ibbr.umd.edu/links" <<std::endl;
+		TR <<"The default location for the database path is 'Rosetta/database/additional_protocol_data/tcr'. If placed in a different location, use the flag '-tcr_template_db_path' to provide the path to the template database."<<std::endl;
+		utility_exit_with_message("Unable to locate template database file ");
+	}
+
 	if ( include_ab_templates_ ) {
 		ab_db_path_ = option[ OptionKeys::tcrmodel::ab_template_db_path ];
 		if ( ab_db_path_.empty() ) {
