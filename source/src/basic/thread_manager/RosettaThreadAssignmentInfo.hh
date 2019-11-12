@@ -51,9 +51,6 @@ public:
 	/// @brief Destructor.
 	virtual ~RosettaThreadAssignmentInfo();
 
-	/// @brief Clone operation: copy this object and return an owning pointer to the copy.
-	RosettaThreadAssignmentInfoOP clone() const;
-
 public: //Setters and getters
 
 	/// @brief Set the list of assigned threads (indices ranging from 1 to nthreads - 1 ).  These don't include the calling thread.

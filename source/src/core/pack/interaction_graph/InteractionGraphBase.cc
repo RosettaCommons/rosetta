@@ -909,15 +909,15 @@ void InteractionGraphBase::set_onebody_energies_multithreaded(
 	task::PackerTask const & task,
 	utility::graph::GraphCOP packer_neighbor_graph,
 #ifdef MULTI_THREADED
-	basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignments
+	basic::thread_manager::RosettaThreadAssignmentInfo const & thread_assignments
 #else
-	basic::thread_manager::RosettaThreadAssignmentInfoCOP
+	basic::thread_manager::RosettaThreadAssignmentInfo const &
 #endif
 ) {
 	debug_assert( node_index > 0 && node_index <= static_cast< core::Size >(num_ig_nodes_) );
 #ifdef MULTI_THREADED
 	if ( TR.Debug.visible() ) {
-		TR.Debug << "Computing onebody energies for interaction graph node " << node_index << " in thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " (one of " << thread_assignments->get_assigned_total_thread_count() << " threads assigned)." << std::endl;
+		TR.Debug << "Computing onebody energies for interaction graph node " << node_index << " in thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " (one of " << thread_assignments.get_assigned_total_thread_count() << " threads assigned)." << std::endl;
 	}
 #endif
 

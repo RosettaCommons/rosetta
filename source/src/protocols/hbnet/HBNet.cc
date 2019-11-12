@@ -3259,12 +3259,10 @@ HBNet::run( Pose & pose )
 	}
 
 	// The following lines precompute twobody energies, in thread if available, or in a single thread if not:
-	basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info(
-		utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >(
+	basic::thread_manager::RosettaThreadAssignmentInfo thread_assignment_info(
 		basic::thread_manager::RosettaThreadRequestOriginatingLevel::PROTOCOLS_GENERIC
-		)
 	); //This object stores information about how the work was actually divided over threads.  (Note that actual threads <= requested threads, depending on availability.)
-	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector; //Allocate space for the work that needs to be done.
+	utility::vector1< basic::thread_manager::RosettaThreadFunction > work_vector; //Allocate space for the work that needs to be done.
 	rotamer_sets_->append_two_body_energy_computations_to_work_vector( pose, *init_scorefxn_, packer_neighbor_graph_, pig, work_vector, thread_assignment_info ); //Figure out the work that needs to be done.
 	basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, task_->ig_threads_to_request(), thread_assignment_info ); //Do the work.
 	pig->declare_all_edge_energies_final(); //In a single thread, finalize the edges (not threadsafe; occures in O(Nedge) time).

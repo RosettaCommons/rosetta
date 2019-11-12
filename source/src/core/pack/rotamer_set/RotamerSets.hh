@@ -179,13 +179,13 @@ public:
 	/// are much less expensive than the two-body energies).
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org).
 	virtual
-	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP >
+	utility::vector1< basic::thread_manager::RosettaThreadFunction >
 	construct_one_body_energy_work_vector(
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const & scfxn,
 		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::InteractionGraphBaseOP ig,
-		basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignment_info
+		basic::thread_manager::RosettaThreadAssignmentInfo const & thread_assignment_info
 	) const;
 
 	/// @brief Append to a vector of calculations that already contains one-body energy calculations additonal work units
@@ -201,8 +201,8 @@ public:
 		core::scoring::ScoreFunction const & scfxn,
 		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
-		utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > & work_vector,
-		basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignment_info
+		utility::vector1< basic::thread_manager::RosettaThreadFunction > & work_vector,
+		basic::thread_manager::RosettaThreadAssignmentInfo const & thread_assignment_info
 	) const;
 
 public:

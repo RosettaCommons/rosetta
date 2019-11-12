@@ -72,8 +72,8 @@ scoring::hbonds::graph::HBondGraphOP create_init_and_create_edges_for_hbond_grap
 
 	//The following lines precompute the twobody interaction energies, using threads if available:
 	//An object to store information about the actual threads that got assigned to the work we'll do.  (Actual threads can be less than requested threads.):
-	basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info( utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >(basic::thread_manager::RosettaThreadRequestOriginatingLevel::CORE_PACK) );
-	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector; //Allocate space for the list of work to be done.
+	basic::thread_manager::RosettaThreadAssignmentInfo thread_assignment_info( basic::thread_manager::RosettaThreadRequestOriginatingLevel::CORE_PACK );
+	utility::vector1< basic::thread_manager::RosettaThreadFunction > work_vector; //Allocate space for the list of work to be done.
 	rotamer_sets->append_two_body_energy_computations_to_work_vector( pose, sfxn, packer_neighbor_graph, ig, work_vector, thread_assignment_info ); //Make a list of work to be done.
 	basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, rotamer_sets->task()->ig_threads_to_request(), thread_assignment_info ); //Do the work.
 	ig->declare_all_edge_energies_final(); //In a single thread, finalize the edges (not threadsafe, but happens in O(Nedge) time).

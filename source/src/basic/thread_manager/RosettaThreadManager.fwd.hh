@@ -36,7 +36,6 @@ typedef utility::pointer::weak_ptr< RosettaThreadManager > RosettaThreadManagerA
 typedef utility::pointer::weak_ptr< RosettaThreadManager const > RosettaThreadManagerCAP;
 
 typedef std::function< void () > RosettaThreadFunction;
-typedef utility::pointer::shared_ptr< std::function< void () > > RosettaThreadFunctionOP;
 
 } //thread_manager
 } //basic

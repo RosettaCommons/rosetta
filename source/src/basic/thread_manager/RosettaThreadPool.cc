@@ -57,19 +57,25 @@ RosettaThreadPool::~RosettaThreadPool(){
 }
 
 /// @brief Given a function that was bundled with its arguments with std::bind, run it in many threads.
+///
 /// @details The function is assigned to as many threads as are available, including the thread from which the request
 /// originates.  It is guaranteed to run in 1 <= actual_thread_count <= requested_thread_count threads.  After assigning
 /// the function to up to (requsted_thread_count - 1) other threads, the function executes in the current thread, then
 /// the current thread blocks until the assigned threads report that they are idle.
-/// @note Optionally, a RosettaThreadAssignmentInfo object can be passed in.  If provided, it will be populated with
-/// the number of threads requested, the number actually assigned, the indices of the assigned threads, etc.  The same
-/// owning pointer may optionally be provided to the function to execute by the calling function if the function to
-/// execute requires access to this information.
+///
+/// The RosettaThreadManager must provide a strong guarantee that the RosettaThreadFunction object exists and will continue
+/// to exist until execution terminates.  Since the RosettaThreadManager is the only class that can instantiate or access
+/// the RosettaThreadPool, this is a safe ownership arrangement.
+///
+/// @note A RosettaThreadAssignmentInfo object should be passed in.  It will be populated with
+/// the number of threads requested, the number actually assigned, the indices of the assigned threads, and a map of
+/// system thread ID to Rosetta thread index.  The same owning pointer may optionally be provided to the function to
+/// execute by the calling function if the function to execute requires access to this information.
 void
 RosettaThreadPool::run_function_in_threads(
-	RosettaThreadFunctionOP function_to_execute,
+	RosettaThreadFunction * function_to_execute,
 	Size const requested_thread_count,
-	RosettaThreadAssignmentInfoOP thread_assignment /*=nullptr*/
+	RosettaThreadAssignmentInfo & thread_assignment
 ) {
 	runtime_assert_string_msg( function_to_execute != nullptr, "Error in RosettaThreadPool::run_function_in_threads():  A null pointer was passed to this function!" );
 	runtime_assert_string_msg( requested_thread_count > 0, "Error in RosettaThreadPool::run_function_in_threads():  Zero threads were requested!");
@@ -103,11 +109,9 @@ RosettaThreadPool::run_function_in_threads(
 		}
 
 		//Store the information about assignments
-		if ( thread_assignment != nullptr ) {
-			debug_assert( assigned_thread_count == assigned_threads.size() );
-			thread_assignment->set_assigned_child_threads( assigned_threads );
-			thread_assignment->set_requested_thread_count( requested_thread_count );
-		}
+		debug_assert( assigned_thread_count == assigned_threads.size() );
+		thread_assignment.set_assigned_child_threads( assigned_threads );
+		thread_assignment.set_requested_thread_count( requested_thread_count );
 
 		//Release all of the threads and let them run
 		for ( platform::Size const & thread_index : assigned_threads ) {

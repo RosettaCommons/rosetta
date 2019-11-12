@@ -91,20 +91,26 @@ public:
 public: //Functions
 
 	/// @brief Given a function that was bundled with its arguments with std::bind, run it in many threads.
+	///
 	/// @details The function is assigned to as many threads as are available, including the thread from which the request
 	/// originates.  It is guaranteed to run in 1 <= actual_thread_count <= requested_thread_count threads.  After assigning
 	/// the function to up to (requsted_thread_count - 1) other threads, the function executes in the current thread, then
 	/// the current thread blocks until the assigned threads report that they are idle.
-	/// @note Optionally, a RosettaThreadAssignmentInfo object can be passed in.  If provided, it will be populated with
+	///
+	/// The RosettaThreadManager must provide a strong guarantee that the RosettaThreadFunction object exists and will continue
+	/// to exist until execution terminates.  Since the RosettaThreadManager is the only class that can instantiate or access
+	/// the RosettaThreadPool, this is a safe ownership arrangement.
+	///
+	/// @note A RosettaThreadAssignmentInfo object should be passed in.  It will be populated with
 	/// the number of threads requested, the number actually assigned, the indices of the assigned threads, and a map of
 	/// system thread ID to Rosetta thread index.  The same owning pointer may optionally be provided to the function to
 	/// execute by the calling function if the function to execute requires access to this information.
 	virtual
 	void
 	run_function_in_threads(
-		RosettaThreadFunctionOP function_to_execute,
+		RosettaThreadFunction * function_to_execute,
 		platform::Size const requested_thread_count,
-		RosettaThreadAssignmentInfoOP thread_assignment = nullptr
+		RosettaThreadAssignmentInfo & thread_assignment
 	);
 
 	/// @brief Force all threads to terminate.  Called by the destructor of the RosettaThreadManager class, and

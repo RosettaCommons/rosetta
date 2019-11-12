@@ -553,8 +553,8 @@ GreenPacker::compute_reference_intragroup_rpes(
 	pig->initialize( *reference_rotamer_sets_ );
 
 	// The following lines pre-compute the twobody energies, using threads if available:
-	basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info( utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >(basic::thread_manager::RosettaThreadRequestOriginatingLevel::PROTOCOLS_MINIMIZATION_PACKING) ); //Keeps track of the *actual* threads assigned (as opposed to requested), for later reporting.
-	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector; //Storage for the list of work to be done.
+	basic::thread_manager::RosettaThreadAssignmentInfo thread_assignment_info( basic::thread_manager::RosettaThreadRequestOriginatingLevel::PROTOCOLS_MINIMIZATION_PACKING ); //Keeps track of the *actual* threads assigned (as opposed to requested), for later reporting.
+	utility::vector1< basic::thread_manager::RosettaThreadFunction > work_vector; //Storage for the list of work to be done.
 	reference_rotamer_sets_->append_two_body_energy_computations_to_work_vector(
 		pose,
 		*ci_sfxn_,
@@ -822,12 +822,10 @@ GreenPacker::compute_energies(
 
 	/// 1. Compute all pair energies across the interface, and declare those edges final.
 	/// Let the rotamer sets class do all the hard work here...
-	basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info(
-		utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >(
+	basic::thread_manager::RosettaThreadAssignmentInfo thread_assignment_info(
 		basic::thread_manager::RosettaThreadRequestOriginatingLevel::PROTOCOLS_MINIMIZATION_PACKING
-		)
 	);
-	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector1;
+	utility::vector1< basic::thread_manager::RosettaThreadFunction > work_vector1;
 	reference_rotamer_sets_->append_two_body_energy_computations_to_work_vector(
 		pose,
 		*full_sfxn_,

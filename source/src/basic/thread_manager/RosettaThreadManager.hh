@@ -122,9 +122,9 @@ public:  // Public methods ////////////////////////////////////////////////////
 	/// number of threads requested.
 	void
 	do_work_vector_in_threads(
-		utility::vector1< RosettaThreadFunctionOP > const & vector_of_work,
+		utility::vector1< RosettaThreadFunction > const & vector_of_work,
 		platform::Size const requested_thread_count,
-		RosettaThreadAssignmentInfoOP thread_assignment = nullptr
+		RosettaThreadAssignmentInfo & thread_assignment
 	);
 
 	/// @brief VARIANT BASIC API THAT SHOULD BE USED WHERE THE BASIC API CAN'T BE USED.  Given a vector of vectors of functions
@@ -143,9 +143,9 @@ public:  // Public methods ////////////////////////////////////////////////////
 	/// number of threads requested.
 	void
 	do_multistage_work_vector_in_threads(
-		utility::vector1< utility::vector1< RosettaThreadFunctionOP > > const & multistage_vector_of_work,
+		utility::vector1< utility::vector1< RosettaThreadFunction > > const & multistage_vector_of_work,
 		platform::Size const requested_thread_count,
-		RosettaThreadAssignmentInfoOP thread_assignment = nullptr
+		RosettaThreadAssignmentInfo & thread_assignment
 	);
 
 	/// @brief ADVANCED API THAT SHOULD NOT BE USED IN MOST CIRCUMSTANCES.  Given a function that was bundled with its
@@ -170,7 +170,7 @@ public:  // Public methods ////////////////////////////////////////////////////
 	/// they are idle.  All of this is handled by the RosettaThreadPool class (or its derived classes, which may have)
 	/// different logic for assigning thread requests to threads).
 	///
-	/// @note Optionally, a RosettaThreadAssignmentInfo object can be passed in.  If provided, it will be populated with
+	/// @note A RosettaThreadAssignmentInfo object should be passed in.  It will be populated with
 	/// the number of threads requested, the number actually assigned, the indices of the assigned threads, and a map of
 	/// system thread ID to Rosetta thread index.  The same owning pointer may optionally be provided to the function to
 	/// execute by the calling function if the function to execute requires access to this information.  Note also that the
@@ -181,10 +181,10 @@ public:  // Public methods ////////////////////////////////////////////////////
 	/// RosettaThreadManager API.
 	void
 	run_function_in_threads(
-		RosettaThreadFunctionOP function_to_execute,
+		RosettaThreadFunction & function_to_execute,
 		platform::Size const requested_thread_count,
 		RosettaThreadManagerAdvancedAPIKey const & key,
-		RosettaThreadAssignmentInfoOP thread_assignment = nullptr
+		RosettaThreadAssignmentInfo & thread_assignment
 	);
 
 	/// @brief Get the Rosetta thread index.
@@ -198,7 +198,7 @@ private:  // Private fxns /////////////////////////////////////////////////////
 	/// to execute a vector of work in a threadsafe manner.
 	void
 	work_vector_thread_function(
-		utility::vector1< RosettaThreadFunctionOP > const & vector_of_work,
+		utility::vector1< RosettaThreadFunction > const & vector_of_work,
 		utility::vector1< utility::thread::ReadWriteMutex > & job_mutexes,
 		utility::vector1< bool > & jobs_completed
 	) const;
@@ -207,13 +207,13 @@ private:  // Private fxns /////////////////////////////////////////////////////
 	/// to execute a vector of work in a threadsafe manner.
 	void
 	multistage_work_vector_thread_function(
-		utility::vector1< utility::vector1< RosettaThreadFunctionOP > > const & multistage_vector_of_work,
+		utility::vector1< utility::vector1< RosettaThreadFunction > > const & multistage_vector_of_work,
 		utility::vector1< utility::pointer::shared_ptr< utility::vector1< utility::thread::ReadWriteMutex > > > & multistage_job_mutexes,
 		utility::vector1< utility::vector1< bool > > & multistage_jobs_completed,
 		std::mutex & barrier_mutex,
 		utility::vector1< platform::Size > & barrier_threadcount,
 		std::condition_variable & barrier_cv,
-		RosettaThreadAssignmentInfoOP thread_assignment
+		RosettaThreadAssignmentInfo & thread_assignment
 	) const;
 
 #endif

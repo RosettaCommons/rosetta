@@ -118,12 +118,12 @@ RosettaThreadManager::launch_threads() {
 /// other functions in the vector are operating on.
 void
 RosettaThreadManager::do_work_vector_in_threads(
-	utility::vector1< RosettaThreadFunctionOP > const & vector_of_work,
+	utility::vector1< RosettaThreadFunction > const & vector_of_work,
 	platform::Size const requested_thread_count,
 #ifdef MULTI_THREADED
-	RosettaThreadAssignmentInfoOP thread_assignment /*= nullptr*/
+	RosettaThreadAssignmentInfo & thread_assignment
 #else
-	RosettaThreadAssignmentInfoOP /*= nullptr*/
+	RosettaThreadAssignmentInfo &
 #endif
 ) {
 	if ( vector_of_work.size() == 0 ) {
@@ -136,13 +136,18 @@ RosettaThreadManager::do_work_vector_in_threads(
 	utility::vector1< utility::thread::ReadWriteMutex > mutexes( vector_of_work.size() );
 	utility::vector1< bool > jobs_completed( vector_of_work.size(), false );
 
-	RosettaThreadFunctionOP fxn( utility::pointer::make_shared< RosettaThreadFunction > ( std::bind( &RosettaThreadManager::work_vector_thread_function, this, std::cref( vector_of_work ), std::ref( mutexes ), std::ref( jobs_completed ) ) ) );
+	RosettaThreadFunction fxn(
+		std::bind(
+		&RosettaThreadManager::work_vector_thread_function, this,
+		std::cref( vector_of_work ), std::ref( mutexes ), std::ref( jobs_completed )
+		)
+	);
 	run_function_in_threads( fxn, actual_threads_to_request, RosettaThreadManagerAdvancedAPIKey(), thread_assignment );
 #else
 	//In non-threaded builds, just iterate through and do all of the work.
 	runtime_assert_string_msg( requested_thread_count == 0 || requested_thread_count == 1, "Error in RosettaThreadManager::do_work_vector_in_threads(): In non-threaded builds, only one thread may be requested.  Compile Rosetta with the \"extras=cxx11thread\" option to enable multi-threading." );
 	for ( platform::Size i(1), imax(vector_of_work.size()); i<=imax; ++i ) {
-		(*vector_of_work[i])(); //Do the ith piece of work.
+		(vector_of_work[i])(); //Do the ith piece of work.
 	}
 #endif
 }
@@ -163,12 +168,12 @@ RosettaThreadManager::do_work_vector_in_threads(
 /// number of threads requested.
 void
 RosettaThreadManager::do_multistage_work_vector_in_threads(
-	utility::vector1< utility::vector1< RosettaThreadFunctionOP > > const & multistage_vector_of_work,
+	utility::vector1< utility::vector1< RosettaThreadFunction > > const & multistage_vector_of_work,
 	platform::Size const requested_thread_count,
 #ifdef MULTI_THREADED
-	RosettaThreadAssignmentInfoOP thread_assignment /*= nullptr*/
+	RosettaThreadAssignmentInfo & thread_assignment
 #else
-	RosettaThreadAssignmentInfoOP /*= nullptr*/
+	RosettaThreadAssignmentInfo &
 #endif
 ) {
 	if ( multistage_vector_of_work.size() == 0 ) {
@@ -207,18 +212,21 @@ RosettaThreadManager::do_multistage_work_vector_in_threads(
 	utility::vector1< platform::Size > barrier_threadcount( multistage_vector_of_work.size() - 1, 0 );
 	std::condition_variable barrier_cv;
 
-	RosettaThreadAssignmentInfoOP thread_assignment2( thread_assignment == nullptr ? utility::pointer::make_shared< RosettaThreadAssignmentInfo >(RosettaThreadRequestOriginatingLevel::UNKNOWN) : thread_assignment );
+	RosettaThreadFunction fxn(
+		std::bind(
+		&RosettaThreadManager::multistage_work_vector_thread_function, this,
+		std::cref( multistage_vector_of_work ), std::ref( mutexes ), std::ref( jobs_completed ),
+		std::ref( barrier_mutex ), std::ref( barrier_threadcount ), std::ref( barrier_cv ), std::ref(thread_assignment)
+		)
+	);
 
-	RosettaThreadFunctionOP fxn( utility::pointer::make_shared< RosettaThreadFunction > ( std::bind( &RosettaThreadManager::multistage_work_vector_thread_function, this, std::cref( multistage_vector_of_work ), std::ref( mutexes ), std::ref( jobs_completed ),
-		std::ref( barrier_mutex ), std::ref( barrier_threadcount ), std::ref( barrier_cv ), thread_assignment2 ) ) );
-
-	run_function_in_threads( fxn, actual_threads_to_request, RosettaThreadManagerAdvancedAPIKey(), thread_assignment2 );
+	run_function_in_threads( fxn, actual_threads_to_request, RosettaThreadManagerAdvancedAPIKey(), thread_assignment );
 #else
 	//In non-threaded builds, just do the work.
 	runtime_assert_string_msg( requested_thread_count == 0 || requested_thread_count == 1, "Error in RosettaThreadManager::do_multistage_work_vector_in_threads(): In non-threaded builds, only one thread may be requested.  Compile Rosetta with the \"extras=cxx11thread\" option to enable multi-threading." );
 	for ( platform::Size i(1), imax(multistage_vector_of_work.size()); i<=imax; ++i ) {
 		for ( platform::Size j(1), jmax(multistage_vector_of_work[i].size()); j<=jmax; ++j ) {
-			(*(multistage_vector_of_work[i][j]))(); //Do jth piece of work in the ith round of work.
+			((multistage_vector_of_work[i][j]))(); //Do jth piece of work in the ith round of work.
 		}
 	}
 #endif
@@ -246,7 +254,7 @@ RosettaThreadManager::do_multistage_work_vector_in_threads(
 /// they are idle.  All of this is handled by the RosettaThreadPool class (or its derived classes, which may have)
 /// different logic for assigning thread requests to threads).
 ///
-/// @note Optionally, a RosettaThreadAssignmentInfo object can be passed in.  If provided, it will be populated with
+/// @note A RosettaThreadAssignmentInfo object should be passed in.  It will be populated with
 /// the number of threads requested, the number actually assigned, the indices of the assigned threads, and a map of
 /// system thread ID to Rosetta thread index.  The same owning pointer may optionally be provided to the function to
 /// execute by the calling function if the function to execute requires access to this information.  Note also that the
@@ -257,13 +265,13 @@ RosettaThreadManager::do_multistage_work_vector_in_threads(
 /// RosettaThreadManager API.
 void
 RosettaThreadManager::run_function_in_threads(
-	RosettaThreadFunctionOP function_to_execute,
+	RosettaThreadFunction & function_to_execute,
 	platform::Size const requested_thread_count,
 	RosettaThreadManagerAdvancedAPIKey const &,
 #ifdef MULTI_THREADED
-	RosettaThreadAssignmentInfoOP thread_assignment /*= nullptr*/
+	RosettaThreadAssignmentInfo & thread_assignment
 #else
-	RosettaThreadAssignmentInfoOP /*= nullptr*/
+	RosettaThreadAssignmentInfo &
 #endif
 ) {
 #ifdef MULTI_THREADED
@@ -273,11 +281,11 @@ RosettaThreadManager::run_function_in_threads(
 			create_thread_pool();
 		}
 	} //End of lock scope.
-	thread_pool_->run_function_in_threads( function_to_execute, requested_thread_count, thread_assignment );
+	thread_pool_->run_function_in_threads( &function_to_execute, requested_thread_count, thread_assignment );
 #else
 	// In non-threaded builds, just run the function.
 	runtime_assert_string_msg( requested_thread_count == 0 || requested_thread_count == 1, "Error in RosettaThreadManager::run_function_in_threads(): In non-threaded builds, only one thread may be requested.  Compile Rosetta with the \"extras=cxx11thread\" option to enable multi-threading." );
-	(*function_to_execute)();
+	(function_to_execute)();
 #endif
 }
 
@@ -313,7 +321,7 @@ RosettaThreadManager::get_rosetta_thread_index() const {
 /// to execute a vector of work in a threadsafe manner.
 void
 RosettaThreadManager::work_vector_thread_function(
-	utility::vector1< RosettaThreadFunctionOP > const & vector_of_work,
+	utility::vector1< RosettaThreadFunction > const & vector_of_work,
 	utility::vector1< utility::thread::ReadWriteMutex > & job_mutexes,
 	utility::vector1< bool > & jobs_completed
 ) const {
@@ -329,7 +337,7 @@ RosettaThreadManager::work_vector_thread_function(
 			jobs_completed[i] = true;
 		}
 		//If we reach here, we have a free hand to carry out the job.  (We don't even need a read lock, since the bool is flipped).
-		(*vector_of_work[i])(); //Do the ith piece of work.
+		(vector_of_work[i])(); //Do the ith piece of work.
 		if ( TR.visible() ) ++jobcount;
 	}
 	TR << "Thread " << get_rosetta_thread_index() << " completed " << jobcount << " of " << vector_of_work.size() << " work units." << std::endl; //Switch to debug output later.
@@ -339,21 +347,21 @@ RosettaThreadManager::work_vector_thread_function(
 /// to execute a vector of work in a threadsafe manner.
 void
 RosettaThreadManager::multistage_work_vector_thread_function(
-	utility::vector1< utility::vector1< RosettaThreadFunctionOP > > const & multistage_vector_of_work,
+	utility::vector1< utility::vector1< RosettaThreadFunction > > const & multistage_vector_of_work,
 	utility::vector1< utility::pointer::shared_ptr< utility::vector1< utility::thread::ReadWriteMutex > > > & multistage_job_mutexes,
 	utility::vector1< utility::vector1< bool > > & multistage_jobs_completed,
 	std::mutex & barrier_mutex,
 	utility::vector1< platform::Size > & barrier_threadcount,
 	std::condition_variable & barrier_cv,
-	RosettaThreadAssignmentInfoOP thread_assignment
+	RosettaThreadAssignmentInfo & thread_assignment
 ) const {
 	platform::Size jobcount(0);
 
-	platform::Size nthreads( thread_assignment->get_assigned_total_thread_count() );
+	platform::Size nthreads( thread_assignment.get_assigned_total_thread_count() );
 
 	//Loop through the blocks of work that must be done sequentially:
 	for ( platform::Size iblock(1), iblockmax( multistage_vector_of_work.size() ); iblock <= iblockmax; ++iblock ) {
-		utility::vector1< RosettaThreadFunctionOP > const & vector_of_work( multistage_vector_of_work[iblock] );
+		utility::vector1< RosettaThreadFunction > const & vector_of_work( multistage_vector_of_work[iblock] );
 		utility::vector1< utility::thread::ReadWriteMutex > & job_mutexes( *(multistage_job_mutexes[iblock]) );
 		utility::vector1< bool > & jobs_completed( multistage_jobs_completed[iblock] );
 
@@ -371,7 +379,7 @@ RosettaThreadManager::multistage_work_vector_thread_function(
 				jobs_completed[i] = true;
 			}
 			//If we reach here, we have a free hand to carry out the job.  (We don't even need a read lock, since the bool is flipped).
-			(*vector_of_work[i])(); //Do the ith piece of work.
+			(vector_of_work[i])(); //Do the ith piece of work.
 			if ( TR.visible() ) ++jobcount;
 		}
 		TR << "In work block " << iblock << " of " << iblockmax << ", thread " << get_rosetta_thread_index() << " completed " << jobcount << " of " << vector_of_work.size() << " work units." << std::endl; //Switch to debug output later.

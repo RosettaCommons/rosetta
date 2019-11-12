@@ -127,7 +127,7 @@ public:
 	/// graph calculator or the gradient vector calculator.
 	void
 	level_three_function(
-		basic::thread_manager::RosettaThreadAssignmentInfoOP l3_thread_assignment_info,
+		basic::thread_manager::RosettaThreadAssignmentInfo const & l3_thread_assignment_info,
 		AppSettings const & appsettings,
 		utility::vector1< core::Size > const & numbers,
 		utility::vector1< std::mutex > & mutexes,
@@ -136,7 +136,7 @@ public:
 	) {
 		core::Size const thread_index( basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() );
 
-		TR_level3 << "Level three thread " << thread_index << " reporting in.  " << appsettings.threads_level3_ << " threads were requested at this level.  " << l3_thread_assignment_info->get_assigned_total_thread_count() << " were assigned." << std::endl;
+		TR_level3 << "Level three thread " << thread_index << " reporting in.  " << appsettings.threads_level3_ << " threads were requested at this level.  " << l3_thread_assignment_info.get_assigned_total_thread_count() << " were assigned." << std::endl;
 		std::this_thread::sleep_for( std::chrono::microseconds( appsettings.delay_level3_ ) );
 
 		//Do something here: compute a times table.
@@ -160,20 +160,20 @@ public:
 	/// @brief Imagine that this were the main loop for the threads of a multi-threaded mover.
 	void
 	level_two_function(
-		basic::thread_manager::RosettaThreadAssignmentInfoOP l2_thread_assignment_info,
+		basic::thread_manager::RosettaThreadAssignmentInfo const & l2_thread_assignment_info,
 		AppSettings const & appsettings,
 		utility::vector1< core::Size > const & numbers,
 		utility::vector1< std::mutex > & mutexes,
 		utility::vector1< std::atomic_bool > & completed,
 		utility::vector1< utility::vector1< core::Size > > & multiples
 	) {
-		TR_level2 << "Level two thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " reporting in.  " << appsettings.threads_level2_ << " threads were requested at this level.  " << l2_thread_assignment_info->get_assigned_total_thread_count() << " were assigned." << std::endl;
+		TR_level2 << "Level two thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " reporting in.  " << appsettings.threads_level2_ << " threads were requested at this level.  " << l2_thread_assignment_info.get_assigned_total_thread_count() << " were assigned." << std::endl;
 		std::this_thread::sleep_for( std::chrono::microseconds( appsettings.delay_level2_ ) );
 
 		//Launch level three job:
 		basic::thread_manager::RosettaThreadManager* thread_manager( basic::thread_manager::RosettaThreadManager::get_instance() );
-		basic::thread_manager::RosettaThreadAssignmentInfoOP l3_thread_assignment_info( utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >( basic::thread_manager::RosettaThreadRequestOriginatingLevel::CORE_GENERIC ) ); //Pretend that this request comes from a core layer.
-		basic::thread_manager::RosettaThreadFunctionOP fxn( utility::pointer::make_shared< basic::thread_manager::RosettaThreadFunction >( std::bind( &RosettaThreadManagerTests::level_three_function, this, l3_thread_assignment_info, std::cref( appsettings ), std::cref( numbers ), std::ref( mutexes ), std::ref( completed ), std::ref( multiples ) ) ) );
+		basic::thread_manager::RosettaThreadAssignmentInfo l3_thread_assignment_info( basic::thread_manager::RosettaThreadRequestOriginatingLevel::CORE_GENERIC ); //Pretend that this request comes from a core layer.
+		basic::thread_manager::RosettaThreadFunction fxn( std::bind( &RosettaThreadManagerTests::level_three_function, this, std::cref(l3_thread_assignment_info), std::cref( appsettings ), std::cref( numbers ), std::ref( mutexes ), std::ref( completed ), std::ref( multiples ) ) );
 		thread_manager->run_function_in_threads( fxn, appsettings.threads_level3_, basic::thread_manager::RosettaThreadManagerAdvancedAPIKey(), l3_thread_assignment_info );
 
 		TR_level2 << "Level two thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " signing off." << std::endl;
@@ -183,20 +183,20 @@ public:
 	/// @details Imagine that this were the main loop for, say, the jobs of a multi-threaded job distributor.
 	void
 	level_one_function(
-		basic::thread_manager::RosettaThreadAssignmentInfoOP l1_thread_assignment_info,
+		basic::thread_manager::RosettaThreadAssignmentInfo const & l1_thread_assignment_info,
 		AppSettings const & appsettings,
 		utility::vector1< core::Size > const & numbers,
 		utility::vector1< std::mutex > & mutexes,
 		utility::vector1< std::atomic_bool > & completed,
 		utility::vector1< utility::vector1< core::Size > > & multiples
 	) {
-		TR_level1 << "Level one thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " reporting in.  " << appsettings.threads_level1_ << " threads were requested at this level.  " << l1_thread_assignment_info->get_assigned_total_thread_count() << " were assigned." << std::endl;
+		TR_level1 << "Level one thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " reporting in.  " << appsettings.threads_level1_ << " threads were requested at this level.  " << l1_thread_assignment_info.get_assigned_total_thread_count() << " were assigned." << std::endl;
 		std::this_thread::sleep_for( std::chrono::microseconds( appsettings.delay_level1_ ) );
 
 		//Launch level two job:
 		basic::thread_manager::RosettaThreadManager* thread_manager( basic::thread_manager::RosettaThreadManager::get_instance() );
-		basic::thread_manager::RosettaThreadAssignmentInfoOP l2_thread_assignment_info( utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >( basic::thread_manager::RosettaThreadRequestOriginatingLevel::PROTOCOLS_GENERIC ) ); //Pretend that this request comes from a protocols layer.
-		basic::thread_manager::RosettaThreadFunctionOP fxn( utility::pointer::make_shared< basic::thread_manager::RosettaThreadFunction >( std::bind( &RosettaThreadManagerTests::level_two_function, this, l2_thread_assignment_info, std::cref( appsettings ), std::cref( numbers ), std::ref( mutexes ), std::ref( completed ), std::ref( multiples )) ) );
+		basic::thread_manager::RosettaThreadAssignmentInfo l2_thread_assignment_info( basic::thread_manager::RosettaThreadRequestOriginatingLevel::PROTOCOLS_GENERIC ); //Pretend that this request comes from a protocols layer.
+		basic::thread_manager::RosettaThreadFunction fxn( std::bind( &RosettaThreadManagerTests::level_two_function, this, std::cref(l2_thread_assignment_info), std::cref( appsettings ), std::cref( numbers ), std::ref( mutexes ), std::ref( completed ), std::ref( multiples )) );
 		thread_manager->run_function_in_threads( fxn, appsettings.threads_level2_, basic::thread_manager::RosettaThreadManagerAdvancedAPIKey(), l2_thread_assignment_info );
 
 		TR_level1 << "Level one thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " signing off." << std::endl;
@@ -215,10 +215,10 @@ public:
 		// Create the thread manager and launch threads:
 		TR_level0 << "Spinning up global Rosetta thread manager with " << appsettings.nthreads_ << " total threads." << std::endl;
 		basic::thread_manager::RosettaThreadManager* thread_manager( basic::thread_manager::RosettaThreadManager::get_instance() );
-		basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info( utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >( basic::thread_manager::RosettaThreadRequestOriginatingLevel::APPLICATIONS_OR_APPLICATION_PROTOCOLS ) ); //This request comes from the applications layer.
+		basic::thread_manager::RosettaThreadAssignmentInfo thread_assignment_info( basic::thread_manager::RosettaThreadRequestOriginatingLevel::APPLICATIONS_OR_APPLICATION_PROTOCOLS ); //This request comes from the applications layer.
 
 		// Create the function with std::bind:
-		basic::thread_manager::RosettaThreadFunctionOP fxn( utility::pointer::make_shared< basic::thread_manager::RosettaThreadFunction >( std::bind( &RosettaThreadManagerTests::level_one_function, this, thread_assignment_info, std::cref( appsettings ), std::cref( numbers ), std::ref( mutexes ), std::ref( completed ),  std::ref( multiples ) ) ) );
+		basic::thread_manager::RosettaThreadFunction fxn( std::bind( &RosettaThreadManagerTests::level_one_function, this, std::cref(thread_assignment_info), std::cref( appsettings ), std::cref( numbers ), std::ref( mutexes ), std::ref( completed ),  std::ref( multiples ) ) );
 
 		// Pass it to the Rosetta thread manager to run in threads.  The minimum will be 1 thread, and the maximum will be min(nthread_level1, nthread_total) threads.
 		thread_manager->run_function_in_threads( fxn, appsettings.threads_level1_, basic::thread_manager::RosettaThreadManagerAdvancedAPIKey(), thread_assignment_info );

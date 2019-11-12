@@ -37,12 +37,6 @@ RosettaThreadAssignmentInfo::RosettaThreadAssignmentInfo( RosettaThreadAssignmen
 /// @brief Destructor.
 RosettaThreadAssignmentInfo::~RosettaThreadAssignmentInfo(){}
 
-/// @brief Clone operation: copy this object and return an owning pointer to the copy.
-RosettaThreadAssignmentInfoOP
-RosettaThreadAssignmentInfo::clone() const {
-	return utility::pointer::make_shared< RosettaThreadAssignmentInfo >( *this );
-}
-
 /// @brief Set the list of assigned threads (indices ranging from 1 to nthreads - 1 ).  These don't include the calling thread.
 void
 RosettaThreadAssignmentInfo::set_assigned_child_threads(

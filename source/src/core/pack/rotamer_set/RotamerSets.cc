@@ -445,16 +445,16 @@ RotamerSets::offset_data_up_to_date() {
 /// as possible, but more finely-grained parallelism would be harder to implement (and anyways the one-body energies
 /// are much less expensive than the two-body energies).
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org).
-utility::vector1< basic::thread_manager::RosettaThreadFunctionOP >
+utility::vector1< basic::thread_manager::RosettaThreadFunction >
 RotamerSets::construct_one_body_energy_work_vector(
 	core::pose::Pose const & pose,
 	core::scoring::ScoreFunction const & scfxn,
 	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::InteractionGraphBaseOP ig,
-	basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignment_info
+	basic::thread_manager::RosettaThreadAssignmentInfo const & thread_assignment_info
 ) const {
 	TR.Debug << "Constructing work vector for multi-threaded evaluation of onebody energies." << std::endl;
-	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector;
+	utility::vector1< basic::thread_manager::RosettaThreadFunction > work_vector;
 	work_vector.reserve( nmoltenres_ );
 
 	//Loop through all packable positions:
@@ -464,10 +464,9 @@ RotamerSets::construct_one_body_energy_work_vector(
 		//ig->set_num_states_for_node( i, set_of_rotamer_sets_[i]->num_rotamers() );
 
 		work_vector.push_back(
-			utility::pointer::make_shared< basic::thread_manager::RosettaThreadFunction >(
 			std::bind(
 			&interaction_graph::InteractionGraphBase::set_onebody_energies_multithreaded, ig.get(),
-			i, set_of_rotamer_sets_[i], std::cref(pose), std::cref(scfxn), std::cref(*task_), packer_neighbor_graph, thread_assignment_info )
+			i, set_of_rotamer_sets_[i], std::cref(pose), std::cref(scfxn), std::cref(*task_), packer_neighbor_graph, std::cref(thread_assignment_info)
 			)
 		);
 	}
@@ -487,8 +486,8 @@ RotamerSets::append_two_body_energy_computations_to_work_vector(
 	core::scoring::ScoreFunction const & scfxn,
 	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
-	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > & work_vector,
-	basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignment_info
+	utility::vector1< basic::thread_manager::RosettaThreadFunction > & work_vector,
+	basic::thread_manager::RosettaThreadAssignmentInfo const & thread_assignment_info
 ) const {
 	using namespace interaction_graph;
 	using namespace scoring;
@@ -514,12 +513,10 @@ RotamerSets::append_two_body_energy_computations_to_work_vector(
 			//NOTE: The behaviour of std::bind is to pass EVERYTHING by copy UNLESS std::cref or std::ref is used.  So in
 			//the following, all of the std::pairs are passed by copy.
 			work_vector.push_back(
-				utility::pointer::make_shared< basic::thread_manager::RosettaThreadFunction >(
 				std::bind(
 				&interaction_graph::PrecomputedPairEnergiesInteractionGraph::set_twobody_energies_multithreaded, pig.get(),
 				std::make_pair( ii, jj ), std::make_pair( set_of_rotamer_sets_[ii], set_of_rotamer_sets_[jj] ), std::cref(pose), std::cref(scfxn),
-				thread_assignment_info, false, nullptr, std::pair< core::Size, core::Size >(0, 0), false, false
-				)
+				std::cref(thread_assignment_info), false, nullptr, std::pair< core::Size, core::Size >(0, 0), false, false
 				)
 			);
 		}
@@ -563,12 +560,10 @@ RotamerSets::append_two_body_energy_computations_to_work_vector(
 				//NOTE: The behaviour of std::bind is to pass EVERYTHING by copy UNLESS std::cref or std::ref is used.  So in
 				//the following, all of the std::pairs are passed by copy.
 				work_vector.push_back(
-					utility::pointer::make_shared< basic::thread_manager::RosettaThreadFunction >(
 					std::bind(
 					&interaction_graph::PrecomputedPairEnergiesInteractionGraph::add_longrange_twobody_energies_multithreaded, pig.get(),
 					std::make_pair( iiprime, jjprime), std::make_pair( set_of_rotamer_sets_[iiprime], set_of_rotamer_sets_[jjprime] ), std::cref(pose), *lr_iter, std::cref(scfxn),
-					thread_assignment_info, false, nullptr, std::pair< core::Size, core::Size >(0, 0), false, false
-					)
+					std::cref(thread_assignment_info), false, nullptr, std::pair< core::Size, core::Size >(0, 0), false, false
 					)
 				);
 			}
@@ -594,8 +589,8 @@ RotamerSets::compute_energies(
 	ig->initialize( *this );
 
 	//In the multithreaded case, we create a vector of computations to do.
-	basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info( utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >(basic::thread_manager::RosettaThreadRequestOriginatingLevel::CORE_PACK) );
-	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector;
+	basic::thread_manager::RosettaThreadAssignmentInfo thread_assignment_info( basic::thread_manager::RosettaThreadRequestOriginatingLevel::CORE_PACK );
+	utility::vector1< basic::thread_manager::RosettaThreadFunction > work_vector;
 	work_vector = construct_one_body_energy_work_vector( pose, scfxn, packer_neighbor_graph, ig, thread_assignment_info );
 
 	PrecomputedPairEnergiesInteractionGraphOP pig =
@@ -623,7 +618,7 @@ RotamerSets::compute_energies(
 	}
 
 #ifdef MULTI_THREADED
-	TR << "Completed interaction graph pre-calculation in " << thread_assignment_info->get_assigned_total_thread_count() << " available threads (" << (thread_assignment_info->get_requested_thread_count() == 0 ? std::string( "all available" ) : std::to_string( thread_assignment_info->get_requested_thread_count() ) ) << " had been requested)." << std::endl;
+	TR << "Completed interaction graph pre-calculation in " << thread_assignment_info.get_assigned_total_thread_count() << " available threads (" << (thread_assignment_info.get_requested_thread_count() == 0 ? std::string( "all available" ) : std::to_string( thread_assignment_info.get_requested_thread_count() ) ) << " had been requested)." << std::endl;
 #endif
 
 }

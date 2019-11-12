@@ -85,10 +85,12 @@ public:
 public:
 
 	/// @brief Set the function to run on this thread.
-	/// @details Requires a function that returns void (bundled with its arguments with std::bind).
+	/// @details Requires a function that returns void (bundled with its arguments with std::bind).  The RosttaThreadFunction object
+	/// must exist.  Existence is guaranteed by the RosettaThreadManager, the only class that can instantiate RosettaThreadPools, which
+	/// in turn are the only class able to instantiate or access RosettaThread objects.
 	/// @returns False for failure (thread was occupied), true for success (function was assigned to thread).
 	/// @note The job_completion_* objects are used to signal job completion to the RosettaThreadPool.
-	bool set_function( RosettaThreadFunctionOP function_to_execute, std::mutex & job_completion_mutex, std::condition_variable & job_completion_condition_variable, platform::Size & job_completion_count );
+	bool set_function( RosettaThreadFunction * function_to_execute, std::mutex & job_completion_mutex, std::condition_variable & job_completion_condition_variable, platform::Size & job_completion_count );
 
 	/// @brief Set the idle state of this thread.  If set to true and a function is already running, it continues
 	/// to run, but no new function will run until this is set to false.
@@ -146,7 +148,7 @@ private:
 	std::atomic_bool is_available_for_new_work_;
 
 	/// @brief The function to execute.
-	RosettaThreadFunctionOP function_to_execute_ = nullptr;
+	RosettaThreadFunction * function_to_execute_ = nullptr;
 
 	/// @brief The thread managed by this object.
 	std::thread this_thread_;

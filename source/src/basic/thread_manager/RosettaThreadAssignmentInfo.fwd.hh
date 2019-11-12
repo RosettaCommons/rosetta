@@ -36,9 +36,6 @@ enum class RosettaThreadRequestOriginatingLevel {
 
 class RosettaThreadAssignmentInfo;
 
-typedef utility::pointer::shared_ptr< RosettaThreadAssignmentInfo > RosettaThreadAssignmentInfoOP;
-typedef utility::pointer::shared_ptr< RosettaThreadAssignmentInfo const > RosettaThreadAssignmentInfoCOP;
-
 } //thread_manager
 } //basic
 

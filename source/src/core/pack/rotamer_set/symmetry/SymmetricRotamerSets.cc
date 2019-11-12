@@ -87,8 +87,8 @@ SymmetricRotamerSets::compute_energies(
 
 	ig->initialize( *this );
 	//We create a vector of computations to do.
-	basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info( utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >(basic::thread_manager::RosettaThreadRequestOriginatingLevel::CORE_PACK) );
-	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector;
+	basic::thread_manager::RosettaThreadAssignmentInfo thread_assignment_info( basic::thread_manager::RosettaThreadRequestOriginatingLevel::CORE_PACK );
+	utility::vector1< basic::thread_manager::RosettaThreadFunction > work_vector;
 	work_vector = construct_one_body_energy_work_vector( pose, scfxn, packer_neighbor_graph, ig, thread_assignment_info );
 
 	PrecomputedPairEnergiesInteractionGraphOP pig =
@@ -115,7 +115,7 @@ SymmetricRotamerSets::compute_energies(
 	}
 
 #ifdef MULTI_THREADED
-	TR << "Completed interaction graph pre-calculation in " << thread_assignment_info->get_assigned_total_thread_count() << " available threads (" << (thread_assignment_info->get_requested_thread_count() == 0 ? std::string( "all available" ) : std::to_string( thread_assignment_info->get_requested_thread_count() ) ) << " had been requested)." << std::endl;
+	TR << "Completed symmetric interaction graph pre-calculation in " << thread_assignment_info.get_assigned_total_thread_count() << " available threads (" << (thread_assignment_info.get_requested_thread_count() == 0 ? std::string( "all available" ) : std::to_string( thread_assignment_info.get_requested_thread_count() ) ) << " had been requested)." << std::endl;
 #endif
 }
 
@@ -131,8 +131,8 @@ SymmetricRotamerSets::append_two_body_energy_computations_to_work_vector(
 	core::scoring::ScoreFunction const & scfxn,
 	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
-	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > & work_vector,
-	basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignment_info
+	utility::vector1< basic::thread_manager::RosettaThreadFunction > & work_vector,
+	basic::thread_manager::RosettaThreadAssignmentInfo const & thread_assignment_info
 ) const {
 	// find SymmInfo
 	auto const & SymmConf (
@@ -194,13 +194,11 @@ SymmetricRotamerSets::append_two_body_energy_computations_to_work_vector(
 			//NOTE: The behaviour of std::bind is to pass EVERYTHING by copy UNLESS std::cref or std::ref is used.  So in
 			//the following, all of the std::pairs are passed by copy.
 			work_vector.push_back(
-				utility::pointer::make_shared< basic::thread_manager::RosettaThreadFunction >(
 				std::bind(
 				&interaction_graph::PrecomputedPairEnergiesInteractionGraph::set_twobody_energies_multithreaded, pig.get(),
 				std::make_pair( ii_master, jj_master ), std::make_pair( ii_rotset, jj_rotset ), std::cref(pose), std::cref(scfxn),
-				thread_assignment_info, false, symm_info, std::make_pair( ii_resid, jj_resid ),
+				std::cref(thread_assignment_info), false, symm_info, std::make_pair( ii_resid, jj_resid ),
 				symm_info->chi_follows( jj_resid ) != 0 && jj == 0, swap
-				)
 				)
 			);
 		}
@@ -271,13 +269,11 @@ SymmetricRotamerSets::append_two_body_energy_computations_to_work_vector(
 				//NOTE: The behaviour of std::bind is to pass EVERYTHING by copy UNLESS std::cref or std::ref is used.  So in
 				//the following, all of the std::pairs are passed by copy.
 				work_vector.push_back(
-					utility::pointer::make_shared< basic::thread_manager::RosettaThreadFunction >(
 					std::bind(
 					&interaction_graph::PrecomputedPairEnergiesInteractionGraph::add_longrange_twobody_energies_multithreaded, pig.get(),
 					std::make_pair( ii_master, jj_master ), std::make_pair( ii_rotset, jj_rotset ), std::cref(pose), *lr_iter, std::cref(scfxn),
-					thread_assignment_info, false, symm_info, std::make_pair( ii_resid, jj_resid ),
+					std::cref(thread_assignment_info), false, symm_info, std::make_pair( ii_resid, jj_resid ),
 					symm_info->chi_follows( jj_resid ) != 0 && jj == 0, swap
-					)
 					)
 				);
 			}

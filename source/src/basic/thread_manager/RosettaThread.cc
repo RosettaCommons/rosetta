@@ -47,10 +47,14 @@ RosettaThread::~RosettaThread(){
 //////////////// PUBLIC FUNCTIONS ////////////////
 
 /// @brief Set the function to run on this thread.
-/// @details Requires a function that returns void (bundled with its arguments with std::bind).
+/// @details Requires a function that returns void (bundled with its arguments with std::bind).  The RosttaThreadFunction object
+/// must exist.  Existence is guaranteed by the RosettaThreadManager, the only class that can instantiate RosettaThreadPools, which
+/// in turn are the only class able to instantiate or access RosettaThread objects.
+/// @returns False for failure (thread was occupied), true for success (function was assigned to thread).
+/// @note The job_completion_* objects are used to signal job completion to the RosettaThreadPool.
 bool
 RosettaThread::set_function(
-	RosettaThreadFunctionOP function_to_execute,
+	RosettaThreadFunction* function_to_execute,
 	std::mutex & job_completion_mutex,
 	std::condition_variable & job_completion_condition_variable,
 	platform::Size & job_completion_count
@@ -109,11 +113,11 @@ RosettaThread::thread_function() {
 		}
 		if ( !(hold_thread_.load()) /*Thread not externally set to idle.*/ && function_to_execute_ != nullptr /*We have a function to execute.*/ ) {
 			(*function_to_execute_)(); //Run the function to execute in this thread.
-			function_to_execute_.reset(); //Delete the function (or at least clear this owning pointer, if there are other owners).
+			function_to_execute_ = nullptr; //Reset the pointer, indicating that this thread is now free.
 			debug_assert( job_completion_mutex_ != nullptr );
 			debug_assert( job_completion_condition_variable_ != nullptr );
 			debug_assert( job_completion_count_ != nullptr );
-			{
+			{ //Signal that this thread is now free:
 				std::lock_guard< std::mutex > lock( *job_completion_mutex_ );
 				++(*job_completion_count_);
 				job_completion_condition_variable_->notify_one(); //Moving this inside the scope of the lock to try to avoid a rare race condition.

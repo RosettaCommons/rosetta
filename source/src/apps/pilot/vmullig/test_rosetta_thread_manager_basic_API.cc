@@ -69,13 +69,13 @@ void level3_function(
 	utility::vector1< utility::vector1< core::Size > > & random_numbers,
 	core::Size const row,
 	core::Size const column,
-	basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignments
+	basic::thread_manager::RosettaThreadAssignmentInfo const & thread_assignments
 ) {
 	using namespace basic::thread_manager;
 
 	core::Size const curthread( RosettaThreadManager::get_instance()->get_rosetta_thread_index() );
 
-	TR_level3 << "Level 3 reporting in from thread " << curthread << ".  " << thread_assignments->get_requested_thread_count() << " threads were requested, and " << thread_assignments->get_assigned_total_thread_count() << " were assigned.  Computing (row, col)=(" << row << "," << column << ")." << std::endl;
+	TR_level3 << "Level 3 reporting in from thread " << curthread << ".  " << thread_assignments.get_requested_thread_count() << " threads were requested, and " << thread_assignments.get_assigned_total_thread_count() << " were assigned.  Computing (row, col)=(" << row << "," << column << ")." << std::endl;
 
 	random_numbers[row][column] += numeric::random::random_range( 1, 10 );
 
@@ -88,7 +88,7 @@ void level2_function(
 	core::Size const row,
 	core::Size const level_3_threads,
 	bool const whole_row,
-	basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignments
+	basic::thread_manager::RosettaThreadAssignmentInfo const & thread_assignments
 ) {
 	using namespace basic::thread_manager;
 
@@ -98,7 +98,7 @@ void level2_function(
 
 	core::Size const curthread( RosettaThreadManager::get_instance()->get_rosetta_thread_index() );
 
-	TR_level2 << "Level 2 reporting in from thread " << curthread << ".  " << thread_assignments->get_requested_thread_count() << " threads were requested, and " << thread_assignments->get_assigned_total_thread_count() << " were assigned.  Computing row " << row << "." << std::endl;
+	TR_level2 << "Level 2 reporting in from thread " << curthread << ".  " << thread_assignments.get_requested_thread_count() << " threads were requested, and " << thread_assignments.get_assigned_total_thread_count() << " were assigned.  Computing row " << row << "." << std::endl;
 
 	if ( whole_row ) {
 		for ( core::Size column(1); column <= 100; ++column ) {
@@ -106,10 +106,10 @@ void level2_function(
 		}
 	} else {
 		//Create the vector of work to do:
-		utility::vector1< RosettaThreadFunctionOP > level3_thread_functions( 100, nullptr );
-		RosettaThreadAssignmentInfoOP thread_assignments3( utility::pointer::make_shared< RosettaThreadAssignmentInfo >( RosettaThreadRequestOriginatingLevel::CORE_GENERIC ) );
-		for ( core::Size i(0); i < level3_thread_functions.size(); ++i ) {
-			level3_thread_functions[i+1] = utility::pointer::make_shared< RosettaThreadFunction >( std::bind( &level3_function, std::ref(random_numbers), row, i+1, thread_assignments3 ) );
+		utility::vector1< RosettaThreadFunction > level3_thread_functions;
+		RosettaThreadAssignmentInfo thread_assignments3( RosettaThreadRequestOriginatingLevel::CORE_GENERIC );
+		for ( core::Size i(0); i < 100; ++i ) {
+			level3_thread_functions.push_back( std::bind( &level3_function, std::ref(random_numbers), row, i+1, std::cref(thread_assignments3) ) );
 		}
 		RosettaThreadManager::get_instance()->do_work_vector_in_threads( level3_thread_functions, level_3_threads, thread_assignments3 );
 	}
@@ -125,20 +125,20 @@ void level1_function(
 	core::Size const level_2_threads,
 	core::Size const level_3_threads,
 	bool const whole_row,
-	basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignments
+	basic::thread_manager::RosettaThreadAssignmentInfo const & thread_assignments
 ) {
 	using namespace basic::thread_manager;
 	debug_assert( row_end >= row_start );
 
 	core::Size const curthread( RosettaThreadManager::get_instance()->get_rosetta_thread_index() );
 
-	TR_level1 << "Level 1 reporting in from thread " << curthread << ".  " << thread_assignments->get_requested_thread_count() << " threads were requested, and " << thread_assignments->get_assigned_total_thread_count() << " were assigned.  Computing rows " << row_start << " through " << row_end << "." << std::endl;
+	TR_level1 << "Level 1 reporting in from thread " << curthread << ".  " << thread_assignments.get_requested_thread_count() << " threads were requested, and " << thread_assignments.get_assigned_total_thread_count() << " were assigned.  Computing rows " << row_start << " through " << row_end << "." << std::endl;
 
 	//Create the vector of work to do:
-	utility::vector1< RosettaThreadFunctionOP > level2_thread_functions( row_end - row_start + 1, nullptr );
-	RosettaThreadAssignmentInfoOP thread_assignments2( utility::pointer::make_shared< RosettaThreadAssignmentInfo >( RosettaThreadRequestOriginatingLevel::PROTOCOLS_GENERIC ) );
-	for ( core::Size i(0); i < level2_thread_functions.size(); ++i ) {
-		level2_thread_functions[i+1] = utility::pointer::make_shared< RosettaThreadFunction >( std::bind( &level2_function, std::ref(random_numbers), row_start + i, level_3_threads, whole_row, thread_assignments2 ) );
+	utility::vector1< RosettaThreadFunction > level2_thread_functions;
+	RosettaThreadAssignmentInfo thread_assignments2( RosettaThreadRequestOriginatingLevel::PROTOCOLS_GENERIC );
+	for ( core::Size i(0), imax(row_end - row_start + 1); i < imax; ++i ) {
+		level2_thread_functions.push_back( std::bind( &level2_function, std::ref(random_numbers), row_start + i, level_3_threads, whole_row, std::cref(thread_assignments2) ) );
 	}
 	RosettaThreadManager::get_instance()->do_work_vector_in_threads( level2_thread_functions, level_2_threads, thread_assignments2 );
 
@@ -183,10 +183,10 @@ main( int argc, char * argv [] )
 		utility::vector1< utility::vector1 < core::Size > > random_numbers( 1000, utility::vector1< core::Size >( 100, 0 ) );
 
 		//Create the vector of work to do:
-		utility::vector1< RosettaThreadFunctionOP > level1_thread_functions( 50, nullptr );
-		RosettaThreadAssignmentInfoOP thread_assignments( utility::pointer::make_shared< RosettaThreadAssignmentInfo >( RosettaThreadRequestOriginatingLevel::APPLICATIONS_OR_APPLICATION_PROTOCOLS ) );
+		utility::vector1< RosettaThreadFunction > level1_thread_functions;
+		RosettaThreadAssignmentInfo thread_assignments( RosettaThreadRequestOriginatingLevel::APPLICATIONS_OR_APPLICATION_PROTOCOLS );
 		for ( core::Size i(0); i<50; ++i ) {
-			level1_thread_functions[i+1] = utility::pointer::make_shared< RosettaThreadFunction >( std::bind( &level1_function, std::ref(random_numbers), i*20+1, (i+1)*20, l2_threads, l3_threads, whole_row, thread_assignments ) );
+			level1_thread_functions.push_back( std::bind( &level1_function, std::ref(random_numbers), i*20+1, (i+1)*20, l2_threads, l3_threads, whole_row, std::cref(thread_assignments) ) );
 		}
 
 		//Pass it to the RosettaThreadManager:

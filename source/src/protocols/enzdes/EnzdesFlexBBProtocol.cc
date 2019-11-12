@@ -1654,8 +1654,8 @@ EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 
 	//The following lines compute onebody energies, in threads if available:
 	//First, make an object that will store the requested and actual thread assignments, for reporting purposes:
-	basic::thread_manager::RosettaThreadAssignmentInfoOP thread_assignment_info( utility::pointer::make_shared< basic::thread_manager::RosettaThreadAssignmentInfo >(basic::thread_manager::RosettaThreadRequestOriginatingLevel::PROTOCOLS_GENERIC ) );
-	utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > work_vector; //Storage for the list of work to do.
+	basic::thread_manager::RosettaThreadAssignmentInfo thread_assignment_info( basic::thread_manager::RosettaThreadRequestOriginatingLevel::PROTOCOLS_GENERIC );
+	utility::vector1< basic::thread_manager::RosettaThreadFunction > work_vector; //Storage for the list of work to do.
 	work_vector = rotsets->construct_one_body_energy_work_vector( pose, *scorefxn, packer_neighbor_graph, ig, thread_assignment_info ); //Make a list of work to do.
 	basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, threads_to_request, thread_assignment_info ); //...And do it, in threads, if available.
 

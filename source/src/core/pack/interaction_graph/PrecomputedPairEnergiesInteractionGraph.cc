@@ -149,9 +149,9 @@ PrecomputedPairEnergiesInteractionGraph::set_twobody_energies_multithreaded(
 	core::pose::Pose const & pose,
 	core::scoring::ScoreFunction const & sfxn,
 #ifdef MULTI_THREADED
-	basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_info,
+	basic::thread_manager::RosettaThreadAssignmentInfo const & thread_info,
 #else
-	basic::thread_manager::RosettaThreadAssignmentInfoCOP,
+	basic::thread_manager::RosettaThreadAssignmentInfo const &,
 #endif
 	bool const finalize_edges,
 	core::conformation::symmetry::SymmetryInfoCOP symminfo,
@@ -161,7 +161,7 @@ PrecomputedPairEnergiesInteractionGraph::set_twobody_energies_multithreaded(
 ) {
 #ifdef MULTI_THREADED
 	if ( TR.Debug.visible() ) {
-		TR.Debug << "Thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " (of " << thread_info->get_assigned_total_thread_count() << " threads assigned to interaction graph precomputation) computing" << (symminfo == nullptr ? " " : " symmetric ") << "interaction between nodes " << nodes.first  << " and " << nodes.second << "." << std::endl;
+		TR.Debug << "Thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " (of " << thread_info.get_assigned_total_thread_count() << " threads assigned to interaction graph precomputation) computing" << (symminfo == nullptr ? " " : " symmetric ") << "interaction between nodes " << nodes.first  << " and " << nodes.second << "." << std::endl;
 	}
 #endif //MULTI_THREADED
 
@@ -212,9 +212,9 @@ PrecomputedPairEnergiesInteractionGraph::add_longrange_twobody_energies_multithr
 	core::scoring::methods::LongRangeTwoBodyEnergyCOP lr_energy,
 	core::scoring::ScoreFunction const & sfxn,
 #ifdef MULTI_THREADED
-	basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_info,
+	basic::thread_manager::RosettaThreadAssignmentInfo const & thread_info,
 #else
-	basic::thread_manager::RosettaThreadAssignmentInfoCOP ,
+	basic::thread_manager::RosettaThreadAssignmentInfo const &,
 #endif
 	bool const finalize_edges,
 	core::conformation::symmetry::SymmetryInfoCOP symminfo,
@@ -224,7 +224,7 @@ PrecomputedPairEnergiesInteractionGraph::add_longrange_twobody_energies_multithr
 ) {
 #ifdef MULTI_THREADED
 	if ( TR.Debug.visible() ) {
-		TR.Debug << "Thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " (of " << thread_info->get_assigned_total_thread_count() << " threads assigned to interaction graph precomputation) computing a" << (symminfo == nullptr ? " " : " symmetric ") << "long-range energy between nodes " << nodes.first  << " and " << nodes.second << "." << std::endl;
+		TR.Debug << "Thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " (of " << thread_info.get_assigned_total_thread_count() << " threads assigned to interaction graph precomputation) computing a" << (symminfo == nullptr ? " " : " symmetric ") << "long-range energy between nodes " << nodes.first  << " and " << nodes.second << "." << std::endl;
 	}
 #endif //MULTI_THREADED
 

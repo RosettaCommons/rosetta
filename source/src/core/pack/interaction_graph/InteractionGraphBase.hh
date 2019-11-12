@@ -353,7 +353,7 @@ public:
 		core::scoring::ScoreFunction const & sfxn,
 		task::PackerTask const & task,
 		utility::graph::GraphCOP packer_neighbor_graph,
-		basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignments
+		basic::thread_manager::RosettaThreadAssignmentInfo const & thread_assignments
 	);
 
 	/// @brief iterate across edges and nodes and allow them to prepare

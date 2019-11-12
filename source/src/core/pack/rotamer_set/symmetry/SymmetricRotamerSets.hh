@@ -76,8 +76,8 @@ public:
 		core::scoring::ScoreFunction const & scfxn,
 		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
-		utility::vector1< basic::thread_manager::RosettaThreadFunctionOP > & work_vector,
-		basic::thread_manager::RosettaThreadAssignmentInfoCOP thread_assignment_info
+		utility::vector1< basic::thread_manager::RosettaThreadFunction > & work_vector,
+		basic::thread_manager::RosettaThreadAssignmentInfo const & thread_assignment_info
 	) const override;
 
 public:
