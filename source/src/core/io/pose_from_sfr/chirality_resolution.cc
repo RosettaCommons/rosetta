@@ -488,10 +488,21 @@ remap_names_on_geometry( NameBimap & mapping,
 		std::string const & elem1( aigraph[ name_aivd_map[ atomname ] ].element );
 		for ( core::Size jj(ii+1); jj <= rinfo.atoms().size(); ++jj ) {
 			std::string const & atom2name( rinfo.atoms()[jj].name );
+			if ( atomname == atom2name ) {
+				// OOPS! The user has residue input that has multiple atoms of the same name in the input PDB
+				// This isn't going to work well with name-based remaping
+				// Warn them, and then skip making bonds (it'll only be zero length bonds).
+				TR.Warning << "WARNING: Two or more different atoms for residue '" << rinfo.resName() << "' in the input PDB have the same name:" << atomname << std::endl;
+				continue;
+			}
 			Vector const &atom2xyz( rinfo.xyz().find( atom2name )->second );
 			std::string const & elem2( aigraph[ name_aivd_map[ atom2name ] ].element );
 			core::Real bond_thresh( bonding_distance_threshold(elem1,elem2) );
 			if ( atomxyz.distance_squared( atom2xyz ) < (bond_thresh*bond_thresh) ) {
+				if ( TR.Trace.visible() ) {
+					TR.Trace << "Adding edge between " << atomname << " " << ii << " and " << atom2name << " " << jj
+						<< " distance " << atomxyz.distance(atom2xyz) << " threshold " << bond_thresh << std::endl;
+				}
 				boost::add_edge( name_aivd_map[atomname], name_aivd_map[atom2name], aigraph);
 			}
 		}

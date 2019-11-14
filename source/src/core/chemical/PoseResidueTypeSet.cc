@@ -14,6 +14,7 @@
 
 #include <core/chemical/PoseResidueTypeSet.hh>
 
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSetCache.hh>
@@ -43,9 +44,13 @@ static basic::Tracer TR( "core.chemical.PoseResidueTypeSet" );
 namespace core {
 namespace chemical {
 
-PoseResidueTypeSet::PoseResidueTypeSet():
-	ResidueTypeSet()
-{}
+PoseResidueTypeSet::PoseResidueTypeSet(TypeSetMode mode/*=INVALID_t*/):
+	ResidueTypeSet( mode )
+{
+	if ( mode != INVALID_t ) {
+		default_rts( ChemicalManager::get_instance()->residue_type_set( mode ) );
+	}
+}
 
 PoseResidueTypeSet::~PoseResidueTypeSet()= default;
 

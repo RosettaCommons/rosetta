@@ -233,6 +233,35 @@ convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 }
 
 
+/// @brief Load a given file into one or more residue types
+/// If load_rotamers is false, each will be loaded as a single ResidueType
+/// Otherwise, entries with the same name will be loaded as rotamers
+utility::vector1< MutableResidueTypeOP > convert_to_ResidueTypes( std::string const & filename,
+	bool load_rotamers,
+	std::string atom_type_tag,
+	std::string elements_tag,
+	std::string mm_atom_type_tag) {
+
+	AtomTypeSetCOP atom_types( ChemicalManager::get_instance()->atom_type_set( atom_type_tag ) );
+	ElementSetCOP elements( ChemicalManager::get_instance()->element_set( elements_tag ) );
+	MMAtomTypeSetCOP mm_atom_types( ChemicalManager::get_instance()->mm_atom_type_set( mm_atom_type_tag ) );
+	return convert_to_ResidueTypes(filename, load_rotamers, atom_types, elements, mm_atom_types);
+}
+
+/// @brief Load a given file into one or more residue types
+/// If load_rotamers is false, each will be loaded as a single ResidueType
+/// Otherwise, entries with the same name will be loaded as rotamers
+utility::vector1< MutableResidueTypeOP > convert_to_ResidueTypes( std::string const & filename,
+	bool load_rotamers,
+	AtomTypeSetCOP atom_types,
+	ElementSetCOP element_types,
+	MMAtomTypeSetCOP mm_atom_types) {
+
+	MolFileIOReader reader;
+	utility::vector1< MolFileIOMoleculeOP > molfile_data( reader.parse_file( filename ) );
+	return convert_to_ResidueTypes(molfile_data, load_rotamers, atom_types, element_types, mm_atom_types);
+}
+
 }
 }
 }

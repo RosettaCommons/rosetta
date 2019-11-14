@@ -391,6 +391,11 @@ AtomICoor::build(
 	return kinematics::Stub::create_orthogonal( v1, v2, v3 ).spherical( phi_, theta_, d_ );
 }
 
+void
+AtomICoor::show( std::ostream & out ) const {
+	out << phi_ << " " << theta_ << " " << d_ << " : " << stub_atom1().atomno() << " " << stub_atom2().atomno() << " " << stub_atom3().atomno();
+}
+
 using AtomMemo = basic::datacache::DataMapObj<std::set<std::string> >;
 using AtomMemoOP = utility::pointer::shared_ptr<AtomMemo>;
 
@@ -483,7 +488,6 @@ std::ostream & operator <<( std::ostream & out, ICoordAtomIDType type ) {
 	}
 	return out;
 }
-
 
 } // chemical
 } // core

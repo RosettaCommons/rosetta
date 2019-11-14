@@ -106,11 +106,13 @@ MolWriter::output_residue_impl(std::ostream & output_stream, core::chemical::Mut
 	if ( ! basic::options::option[ basic::options::OptionKeys::out::file::no_extra_sdf_data ] ) {
 		// These entries should be kept up-to-date with those processed in for MolFileIOData.cc
 		std::list<std::string> naming = this->compose_naming(residue);
+		std::list<std::string> atomnames = this->compose_atomnames(residue);
 		std::list<std::string> typeinfo = this->compose_typeinfo(residue);
 		std::list<std::string> nbr_atom = this->compose_nbr_atom(residue);
 		std::list<std::string> properties = this->compose_rosetta_properties(residue);
 
 		prepared_lines.insert(prepared_lines.end(),naming.begin(),naming.end());
+		prepared_lines.insert(prepared_lines.end(),atomnames.begin(),atomnames.end());
 		prepared_lines.insert(prepared_lines.end(),typeinfo.begin(),typeinfo.end());
 		prepared_lines.insert(prepared_lines.end(),nbr_atom.begin(),nbr_atom.end());
 		prepared_lines.insert(prepared_lines.end(),properties.begin(),properties.end());
@@ -362,6 +364,27 @@ std::list<std::string> MolWriter::compose_properties(core::chemical::MutableResi
 	return lines;
 }
 
+std::list<std::string> MolWriter::compose_atomnames(core::chemical::MutableResidueType const & residue_type)
+{
+	std::list<std::string> lines;
+
+	std::string header = "> <Atom Names>\n";
+	std::string type_data = "";
+	utility::vector1< VD > const & all_atoms( residue_type.all_atoms() ); // Hopefully this is consistent enough for our purposes.
+	for ( core::Size index =1; index <= all_atoms.size(); ++index ) {
+		std::string const & atom_name = residue_type.atom_name( all_atoms[index] );
+		std::string data_string = "("+utility::to_string<core::Size>(index)+","+atom_name+") ";
+		type_data.append(data_string);
+	}
+	type_data.append("\n");
+
+	lines.push_back(header);
+	lines.push_back(type_data);
+	lines.push_back("\n");
+
+	return lines;
+}
+
 std::list<std::string> MolWriter::compose_typeinfo(core::chemical::MutableResidueType const & residue)
 {
 	std::list<std::string> lines;
@@ -416,7 +439,7 @@ std::list<std::string> MolWriter::compose_naming(core::chemical::MutableResidueT
 
 	if ( residue.name3() != residue.name().substr(0,3) || residue.name1() != 'Z' ) {
 		std::string header2 = "> <Rosetta IO_string>\n";
-		std::string io_string = residue.name3() + ' ' + residue.name1() + "\n";
+		std::string io_string = residue.name3() + " " + residue.name1() + "\n";
 
 		lines.push_back(header2);
 		lines.push_back(io_string);

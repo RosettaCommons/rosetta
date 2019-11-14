@@ -264,10 +264,23 @@ public:
 	utility::vector1< VD >
 	bonded_neighbors( VD const & atom ) const;
 
+	///@brief indicates how many proton bonded neighbors an atom has
+	Size
+	number_bonded_hydrogens( VD atomvd ) const;
+
 	/// @brief Get the atoms bonded to the specified atom, if they're annotated as hydrogens.
 	/// @details This is recalculated each time the function is called.
 	utility::vector1< VD >
 	bonded_hydrogens( VD const & atom ) const;
+
+	///@brief indicates how many heavyatom bonded neighbors an atom has, graph version
+	Size
+	number_bonded_heavyatoms( VD atomvd ) const;
+
+	/// @brief Get the atoms bonded to the specified atom, if they're annotated as heavyatoms.
+	/// @details This is recalculated each time the function is called.
+	utility::vector1< VD >
+	bonded_heavyatoms( VD const & atom ) const;
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -660,6 +673,11 @@ public:
 	/// @brief add a bond between atom1 and atom2, specifying a bond type (SingleBond, DoubleBond, TripleBond, AromaticBond)
 	void add_bond(VD atom1, VD atom2, BondName bondLabel = SingleBond);
 
+	/// @brief Delete a bond between the two atoms.
+	/// @details Note that this might leave dangling atoms.
+	void
+	delete_bond(VD atom1, VD atom2);
+
 	/// @brief  Change the bond type of the given bond from one type to another.
 	/// @details Acts like a bond deletion + bond add, rather than a change.
 	void change_bond_type(
@@ -730,6 +748,10 @@ public:
 		std::string const & stub_atom3,
 		bool const update_xyz = false
 	);
+
+	// @brief Reset all the icoord records
+	void
+	clear_icoor();
 
 	/// @brief The atom base is the distance atom the atom is bonded to.
 	/// If the specified atom doesn't have valid ICOOR record yet, this function will return

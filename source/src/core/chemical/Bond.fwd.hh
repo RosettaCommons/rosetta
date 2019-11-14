@@ -38,6 +38,7 @@ enum BondOrder
 	DoubleBondOrder=2,
 	TripleBondOrder=3,
 	OrbitalBondOrder,
+	DeleteBondOrder,
 	PseudoBondOrder=99 // Not a true bond - just there for connectivity representation.
 };
 

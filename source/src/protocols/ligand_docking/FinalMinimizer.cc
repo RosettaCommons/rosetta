@@ -56,17 +56,19 @@ static basic::Tracer TR( "protocols.ligand_docking.ligand_options.FinalMinimizer
 FinalMinimizer::FinalMinimizer():
 	Mover("FinalMinimizer"),
 	score_fxn_(/* NULL */),
-	movemap_builder_(/* NULL */)
+	movemap_builder_(/* NULL */),
+	remove_bb_constraints_(false)
 {}
 
 FinalMinimizer::FinalMinimizer(
 	core::scoring::ScoreFunctionOP score_fxn,
-	MoveMapBuilderOP movemap_builder
+	MoveMapBuilderOP movemap_builder,
+	bool remove_constraints
 ):
 	Mover("FinalMinimizer"),
-	score_fxn_(std::move(score_fxn)),
-	movemap_builder_(std::move(movemap_builder))
-
+	score_fxn_(score_fxn),
+	movemap_builder_(movemap_builder),
+	remove_bb_constraints_( remove_constraints )
 {}
 
 FinalMinimizer::FinalMinimizer(FinalMinimizer const & /*that*/) = default;
@@ -104,6 +106,8 @@ FinalMinimizer::parse_my_tag(
 	std::string movemap_builder_name= tag->getOption<std::string>("movemap_builder");
 	movemap_builder_= datamap.get_ptr<protocols::ligand_docking::MoveMapBuilder>( "movemap_builders", movemap_builder_name);
 
+	remove_bb_constraints_ = tag->getOption<bool>("remove_constraints", false);
+
 }
 
 void
@@ -120,12 +124,17 @@ FinalMinimizer::apply( core::pose::Pose & pose ){
 		backbone_foldtree_setup.apply(pose);
 		TR.Debug << "FoldTree Reordered: " << pose.fold_tree() << std::endl;
 
-		protocols::minimization_packing::MinMoverOP const dfpMinTightTol = get_final_min_mover(pose);
+		protocols::minimization_packing::MinMoverOP const dfpMinTightTol = get_final_min_mover(pose, true);
 		dfpMinTightTol->min_options()->nblist_auto_update(true);
 		dfpMinTightTol->apply(pose);
 		pose.fold_tree(fold_tree_copy);
+		backbone_foldtree_setup.remove_cutpoints(pose); //We redid the foldtree - we should redo the cutpoints.
+		if ( remove_bb_constraints_ ) {
+			backbone_foldtree_setup.remove_constraints(pose);
+		}
+		TR.Debug << "FoldTree Restored: " << pose.fold_tree() << std::endl;
 	} else {
-		protocols::minimization_packing::MinMoverOP const dfpMinTightTol = get_final_min_mover(pose);
+		protocols::minimization_packing::MinMoverOP const dfpMinTightTol = get_final_min_mover(pose, false);
 		dfpMinTightTol->min_options()->nblist_auto_update(true);
 		dfpMinTightTol->apply(pose);
 	}
@@ -134,14 +143,21 @@ FinalMinimizer::apply( core::pose::Pose & pose ){
 }
 
 protocols::minimization_packing::MinMoverOP const
-FinalMinimizer::get_final_min_mover(core::pose::Pose const & pose) const{
+FinalMinimizer::get_final_min_mover(core::pose::Pose const & pose, bool backbone) const{
 	std::string min_type= "lbfgs_armijo_nonmonotone_atol";
 	core::Real tolerance= 0.02;
 	bool use_nb_list=true;
 	core::kinematics::MoveMapOP movemap= movemap_builder_->build(pose);
+	core::scoring::ScoreFunctionCOP scorefxn( score_fxn_ );
+	if ( backbone && scorefxn->get_weight( core::scoring::chainbreak ) == 0 ) {
+		TR.Warning << "Warning: FinalMinimizer with backbone minimization used without chainbreak scoreterm - setting chainbreak to 1" << std::endl;
+		core::scoring::ScoreFunctionOP new_scorefxn( scorefxn->clone() );
+		new_scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
+		scorefxn = new_scorefxn;
+	}
 	movemap->show(TR.Debug, pose.size());
 	TR.Debug << std::endl;
-	return utility::pointer::make_shared< protocols::minimization_packing::MinMover >(movemap, score_fxn_, min_type, tolerance, use_nb_list);
+	return utility::pointer::make_shared< protocols::minimization_packing::MinMover >(movemap, scorefxn, min_type, tolerance, use_nb_list);
 }
 
 std::string FinalMinimizer::get_name() const {
@@ -158,7 +174,8 @@ void FinalMinimizer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	AttributeList attlist;
 	attlist
 		+ XMLSchemaAttribute::required_attribute("scorefxn", xs_string, "Used scorefunction. Required.")
-		+ XMLSchemaAttribute::required_attribute("movemap_builder", xs_string, "Name of a previously defined MoveMapBuilder. Required.");
+		+ XMLSchemaAttribute::required_attribute("movemap_builder", xs_string, "Name of a previously defined MoveMapBuilder. Required.")
+		+ XMLSchemaAttribute::attribute_w_default("remove_constraints", xsct_rosetta_bool, "Remove any added constraints after minimization.", "false" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Do a gradient based minimization of the final docked pose.", attlist );
 }
 

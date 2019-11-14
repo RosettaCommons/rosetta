@@ -194,6 +194,12 @@ private:
 
 	bool index_valid(AtomIndex index, MutableResidueType const & restype, std::map< mioAD, core::chemical::VD > & restype_from_mio);
 
+	/// @brief Parse a multiple value item, say for per-atom or per-bond data
+	/// This assumes that the passed vector is pre-initialized to the appropriate size.
+	/// Valid formats are a series of space-separated sequential items, or a space-separated
+	/// set of items in the form of "(index,value)". Spaces are not valid in either entry.
+	void parse_multi( std::istream & estream, utility::vector1< std::string > & parsed, std::string label) const;
+
 	void create_dummy_atom(MutableResidueTypeOP restype, std::string atom_name, core::Vector const & xyz_offset, chemical::ElementSetCOP elements, chemical::MMAtomTypeSetCOP mm_atom_types);
 
 private:

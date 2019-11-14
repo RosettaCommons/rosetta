@@ -26,6 +26,7 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/conformation/util.hh>
 #include <core/kinematics/tree/Atom.hh>
+#include <core/kinematics/constants.hh>
 //#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 
@@ -115,7 +116,8 @@ ResidueAtomTreeCollection::ResidueAtomTreeCollection(
 		tree_atoms2d[ 1 ].resize( residue_representatives_[ ii ]->natoms() );
 		kinematics::AtomPointer1D tree_atoms1d( residue_representatives_[ ii ]->natoms() );
 
-		conformation::build_residue_tree( 1, *residue_representatives_[ ii ], tree_atoms1d, true );
+		int root_atomno = get_root_atomno( *residue_representatives_[ ii ], kinematics::dir_jump );
+		conformation::build_residue_tree( root_atomno, *residue_representatives_[ ii ], tree_atoms1d, true );
 		std::copy( tree_atoms1d.begin(), tree_atoms1d.end(), tree_atoms2d[1].begin() );
 		atom_tree_representatives_[ ii ] = utility::pointer::make_shared< kinematics::AtomTree >( tree_atoms2d );
 
@@ -141,7 +143,8 @@ ResidueAtomTreeCollection::ResidueAtomTreeCollection(
 		tree_atoms2d[ 1 ].resize( residue_representatives_[ ii ]->natoms() );
 		kinematics::AtomPointer1D tree_atoms1d( residue_representatives_[ ii ]->natoms() );
 
-		conformation::build_residue_tree( 1, *residue_representatives_[ ii ], tree_atoms1d, true );
+		int root_atomno = get_root_atomno( *residue_representatives_[ ii ], kinematics::dir_jump );
+		conformation::build_residue_tree( root_atomno, *residue_representatives_[ ii ], tree_atoms1d, true );
 		std::copy( tree_atoms1d.begin(), tree_atoms1d.end(), tree_atoms2d[1].begin() );
 		atom_tree_representatives_[ ii ] = utility::pointer::make_shared< kinematics::AtomTree >( tree_atoms2d );
 
@@ -225,8 +228,7 @@ void ResidueAtomTreeCollection::update_atom_tree()
 	}
 
 	// force a dof update
-	id::DOF_ID dofid( id::AtomID( 1, 1 ), id::RB1 );
-	tree.dof( dofid );
+	tree.atom( id::AtomID( 1, 1 ) );
 }
 
 core::Real ResidueAtomTreeCollection::dof( core::id::DOF_ID const &dofid )

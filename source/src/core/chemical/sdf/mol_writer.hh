@@ -72,6 +72,7 @@ private:
 	std::list<std::string> compose_atoms(core::chemical::MutableResidueType const & residue, std::map< std::string, core::Vector > const & coords);
 	std::list<std::string> compose_bonds(core::chemical::MutableResidueType const & residue);
 	std::list<std::string> compose_properties(core::chemical::MutableResidueType const & residue);
+	std::list<std::string> compose_atomnames(core::chemical::MutableResidueType const & residue);
 	std::list<std::string> compose_typeinfo(core::chemical::MutableResidueType const & residue);
 	std::list<std::string> compose_nbr_atom(core::chemical::MutableResidueType const & residue);
 	std::list<std::string> compose_naming(core::chemical::MutableResidueType const & residue);

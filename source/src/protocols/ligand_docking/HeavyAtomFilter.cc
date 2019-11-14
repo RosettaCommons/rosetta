@@ -45,17 +45,22 @@ static basic::Tracer heavy_atom_tracer( "protocols.ligand_docking.HeavyAtomFilte
 
 bool
 HeavyAtomFilter::apply( core::pose::Pose const & pose ) const {
+
+	if ( report_sm(pose) > heavy_atom_limit_ ) {
+		heavy_atom_tracer<< "Reached heavy atom limit"<< std::endl;
+		return false;
+	}
+	return true;
+}
+
+core::Real
+HeavyAtomFilter::report_sm( core::pose::Pose const & pose ) const {
 	debug_assert(chain_.size()==1 );
 	debug_assert(heavy_atom_limit_ >0 );
 	core::Size const chain_id= core::pose::get_chain_id_from_chain(chain_, pose);
 	core::Size const start = pose.conformation().chain_begin(chain_id);
 	core::Size const end = pose.conformation().chain_end(chain_id);
-
-	if ( core::pose::num_heavy_atoms(start,end,pose) > heavy_atom_limit_ ) {
-		heavy_atom_tracer<< "Reached heavy atom limit"<< std::endl;
-		return false;
-	}
-	return true;
+	return core::pose::num_heavy_atoms(start,end,pose);
 }
 
 void

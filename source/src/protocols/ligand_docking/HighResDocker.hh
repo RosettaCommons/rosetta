@@ -100,7 +100,9 @@ private:
 	MoveMapBuilderOP movemap_builder_;
 	std::string resfile_;
 
-	MinimizeLigandOPs setup_ligands_to_minimize(core::pose::Pose pose, char chain = 0);
+	MinimizeLigandOPs setup_ligands_to_minimize(core::pose::Pose & pose, char chain = 0);
+	void remove_ligand_dihedral_restraints(core::pose::Pose & pose, MinimizeLigandOPs & minimized_ligands) const;
+
 	TetherLigandOPs tether_ligands(core::pose::Pose & pose, char chain = 0);
 	void remove_ligand_tethers(core::pose::Pose pose, TetherLigandOPs ligand_tethers);
 

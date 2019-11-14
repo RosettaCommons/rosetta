@@ -42,9 +42,9 @@ class PoseResidueTypeSet : public core::chemical::ResidueTypeSet {
 
 public:
 
-	PoseResidueTypeSet();
-	PoseResidueTypeSet(PoseResidueTypeSet const & src);
+	PoseResidueTypeSet(TypeSetMode mode = INVALID_t);
 	PoseResidueTypeSet(ResidueTypeSetCOP deflt_rts);
+	PoseResidueTypeSet(PoseResidueTypeSet const & src);
 
 	// Note: this is *not* from the base class.
 	virtual

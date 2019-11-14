@@ -513,7 +513,7 @@ void MolFileIOMolecule::set_from_extra_data(MutableResidueType & restype, std::m
 			} else {
 				TR.Warning << "Unable to parse Rosetta Name for " << name() << std::endl;
 			}
-		} else if ( header == "Rosetta IO_String" ) {
+		} else if ( header == "Rosetta IO_String" || header == "Rosetta IO_string" ) {
 			/// Format: 01234
 			///         LIG X
 			if ( entry.size() >= 5 ) {
@@ -564,48 +564,49 @@ void MolFileIOMolecule::set_from_extra_data(MutableResidueType & restype, std::m
 				TR.Warning << "Unable to parse Rosetta nbr_radius for " << name() << std::endl;
 			}
 		} else if ( header == "Atom Names" ) {
-			if ( TR.Trace.visible() ) {
-				TR.Trace << "Atom Names string : " << entry << std::endl;
-			}
-			std::string name;
-			core::Size ii(1);
-			for ( ii=1, estream >> name; estream.good(); ++ii, estream >> name ) {
-				if ( ! index_valid(ii, restype, restype_from_mio) ) {
-					TR.Warning << "Atom " << ii << " not found when setting atom name '" << name << "' on molecule '" << this->name() << "'" << std::endl;
-					continue;
+			utility::vector1< std::string > names(index_atom_map_.size(), ""); // Here we assume that all the indicies are consecutive.
+			parse_multi( estream, names, "<Atom Names>" );
+			for ( core::Size ii(1); ii <= names.size(); ++ii ) {
+				if ( names[ii] != "" ) {
+					if ( ! index_valid(ii, restype, restype_from_mio) ) {
+						TR.Warning << "Atom " << ii << " not found when setting atom name '" << names[ii] << "' on molecule '" << this->name() << "'" << std::endl;
+						continue;
+					}
+					std::string name( names[ii] );
+					switch( name.size() ) {
+					// Won't be zero, because we checked earlier
+					case 1 :
+						name = " " + name + "  ";
+						break;
+					case 2 :
+						name = " " + name + " ";
+						break;
+					case 3 :
+						name = " " + name;
+						break;
+					case 4 :
+						break; // Don't change anything
+					default :
+						TR.Warning << "Atom name '" << name << "' for atom " << ii << " on " << this->name() << " is longer than 4 characters." << std::endl;
+						break;
+					}
+					restype.rename_atom( restype_from_mio[ index_atom_map_[ii] ], name );
 				}
-				switch( name.size() ) {
-				// Won't be zero, because of >> input
-				case 1 :
-					name = " " + name + "  ";
-					break;
-				case 2 :
-					name = " " + name + " ";
-					break;
-				case 3 :
-					name = " " + name;
-					break;
-				case 4 :
-					break; // Don't change anything
-				default :
-					TR.Warning << "Atom name '" << name << "' for atom " << ii << " on " << this->name() << " is longer than 4 charachters." << std::endl;
-					break;
-				}
-				restype.rename_atom( restype_from_mio[ index_atom_map_[ii] ], name );
 			}
 		} else if ( header == "Rosetta AtomTypes" ) {
-			std::string type;
-			core::Size ii(1);
-			for ( ii=1, estream >> type; estream.good(); ++ii, estream >> type ) {
-				if ( ! restype.atom_type_set().has_atom( type ) ) {
-					TR.Warning << "Atom type " << type << " not recognized for molecule '" << name() << "' - skipping." << std::endl;
-					continue;
+			utility::vector1< std::string > types(index_atom_map_.size(), ""); // Here we assume that all the indicies are consecutive.
+			parse_multi( estream, types, "<Rosetta AtomTypes>" );
+			for ( core::Size ii(1); ii <= types.size(); ++ii ) {
+				std::string const & type( types[ii] );
+				if ( type != "" ) {
+					if ( ! restype.atom_type_set().has_atom( type ) ) {
+						TR.Warning << "Atom type " << type << " not recognized for molecule '" << name() << "' - skipping." << std::endl;
+					} else if ( ! index_valid(ii, restype, restype_from_mio) ) {
+						TR.Warning << "Atom " << ii << " not found when setting Rosetta type '" << type << "' on molecule '" << name() << "'" << std::endl;
+					} else {
+						restype.set_atom_type( restype_from_mio[ index_atom_map_[ii] ], type );
+					}
 				}
-				if ( ! index_valid(ii, restype, restype_from_mio) ) {
-					TR.Warning << "Atom " << ii << " not found when setting Rosetta type '" << type << "' on molecule '" << name() << "'" << std::endl;
-					continue;
-				}
-				restype.set_atom_type( restype_from_mio[ index_atom_map_[ii] ], type );
 			}
 		} else if ( header == "Rosetta Properties" ) {
 			std::string prop;
@@ -632,6 +633,32 @@ bool MolFileIOMolecule::index_valid(AtomIndex index, MutableResidueType const & 
 	return index_atom_map_.count(index) &&
 		restype_from_mio.count(index_atom_map_[index]) &&
 		restype.has(restype_from_mio[ index_atom_map_[index] ]);
+}
+
+/// @brief Parse a multiple value item, say for per-atom or per-bond data
+/// This assumes that the passed vector is pre-initialized to the appropriate size.
+/// Valid formats are a series of space-separated sequential items, or a space-separated
+/// set of items in the form of "(index,value)". Spaces are not valid in either entry.
+void MolFileIOMolecule::parse_multi( std::istream & estream, utility::vector1< std::string > & parsed, std::string label) const {
+	std::string entry;
+	core::Size ii(1);
+
+	for ( ii=1, estream >> entry; estream.good(); ++ii, estream >> entry ) {
+		core::Size index( ii );
+		if ( entry[0] == '(' && entry[ entry.size()-1 ] == ')' ) {
+			// In the form "(index,value)"
+			core::Size comma_pos( entry.find( ',' ) );
+			if ( comma_pos != std::string::npos ) {
+				index = utility::string2Size( entry.substr(1,comma_pos-1) );
+				entry = entry.substr(comma_pos+1,entry.size()-comma_pos-2); // 2 = the comma and the end parenthesis
+			} // If no comma, assume that the value contains parenthesis
+		}
+		if ( index == 0 || index > parsed.size() ) {
+			TR.Warning << "When parsing " << label << " cannot find position " << index << " - ignoring." << std::endl;
+		} else {
+			parsed[index] = entry;
+		}
+	}
 }
 
 }

@@ -2441,6 +2441,7 @@ private:
 	void
 	apply_transform_downstream(
 		core::Size const atomno,
+		core::Size const upstream_atomno,
 		numeric::xyzMatrix< Real > const & R,
 		Vector const & v
 	);

@@ -824,8 +824,8 @@ transfer_jumps( const core::pose::Pose& srcpose, core::pose::Pose& tgtpose )
 }
 
 
-/// helper function for residue replacement/residuetype switching
-/// these functions should probably move to pose/util.cc
+/// Helper function for residue replacement/residuetype switching
+/// Will match up old and new atoms based on their atom names.
 /// @note  Will call new_rsd->fill_missing_atoms if the new residue has atoms
 /// that the old one doesn't
 void
@@ -839,6 +839,25 @@ replace_pose_residue_copying_existing_coordinates(
 	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( old_rsd, *new_rsd, pose.conformation() );
 	pose.replace_residue( seqpos, *new_rsd, false );
 
+}
+
+/// Helper function for residue replacement/residuetype switching
+/// Matches up old an new atoms based on the provided map.
+/// (Indexed by new_rsd_type atom number, giving corresponding atom number in the current pose residue.)
+/// @note  Will call new_rsd->fill_missing_atoms if the new residue has atoms
+/// that the old one doesn't
+void
+replace_pose_residue_copying_existing_coordinates(
+	pose::Pose & pose,
+	Size const seqpos,
+	core::chemical::ResidueType const & new_rsd_type,
+	utility::vector1< core::Size > const & mapping
+)
+{
+	core::conformation::Residue const & old_rsd( pose.residue( seqpos ) );
+	core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( new_rsd_type ) );
+	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( old_rsd, *new_rsd, mapping, pose.conformation() );
+	pose.replace_residue( seqpos, *new_rsd, false );
 }
 
 core::chemical::ResidueTypeCOP

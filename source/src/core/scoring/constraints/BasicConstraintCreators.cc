@@ -20,6 +20,7 @@
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <core/scoring/constraints/BasePairConstraint.hh>
 #include <core/scoring/constraints/BigBinConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
@@ -101,6 +102,18 @@ ConstraintOP AtomPairConstraintCreator::create_constraint() const {
 std::string AtomPairConstraintCreator::keyname() const
 {
 	return "AtomPair";
+}
+
+NamedAtomPairConstraintCreator::NamedAtomPairConstraintCreator() = default;
+NamedAtomPairConstraintCreator::~NamedAtomPairConstraintCreator() = default;
+
+ConstraintOP NamedAtomPairConstraintCreator::create_constraint() const {
+	return ConstraintOP( new NamedAtomPairConstraint( id::NamedAtomID(), id::NamedAtomID(), NULL ) );
+}
+
+std::string NamedAtomPairConstraintCreator::keyname() const
+{
+	return "NamedAtomPair";
 }
 
 BasePairConstraintCreator::BasePairConstraintCreator() = default;

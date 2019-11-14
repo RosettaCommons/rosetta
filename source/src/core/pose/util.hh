@@ -189,6 +189,14 @@ replace_pose_residue_copying_existing_coordinates(
 	core::chemical::ResidueType const & new_rsd_type
 );
 
+void
+replace_pose_residue_copying_existing_coordinates(
+	pose::Pose & pose,
+	Size const seqpos,
+	core::chemical::ResidueType const & new_rsd_type,
+	utility::vector1< core::Size > const & mapping
+);
+
 /// @brief Return the residue type in the correct
 /// "mode" (fullatom, centroid ...) the pose is in.
 core::chemical::ResidueTypeCOP

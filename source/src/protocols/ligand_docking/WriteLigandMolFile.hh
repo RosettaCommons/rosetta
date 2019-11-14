@@ -25,8 +25,6 @@ class WriteLigandMolFile: public protocols::moves::Mover
 {
 public:
 	WriteLigandMolFile();
-	~WriteLigandMolFile() override;
-	WriteLigandMolFile(WriteLigandMolFile const & that);
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
@@ -57,7 +55,8 @@ private:
 	std::string chain_;
 	std::string directory_;
 	std::string prefix_;
-	bool hash_file_names_;
+	bool use_residue_name_ = false;
+	bool hash_file_names_ = false;
 };
 
 }

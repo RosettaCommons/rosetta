@@ -47,6 +47,22 @@
 namespace core {
 namespace chemical {
 
+/// @brief It's a frustrating truth, but num_vertices doesn't give the number of filtered vertices
+/// for filtered graphs, but instead gives the number of underlying vertices ... this gets the true
+/// number of filtered vertices.
+template< class Graph >
+core::Size filtered_num_vertices( Graph const & graph ) {
+	typedef typename Graph::vertex_iterator Viter;
+	typedef typename std::pair< Viter, Viter > Viterpair;
+	core::Size node_count(0);
+	for ( Viterpair vip( boost::vertices(graph) );
+			vip.first != vip.second;
+			++vip.first, ++node_count ) {
+		//std::cout << node_count << " " << graph[ *vip.first ].name() << std::endl;
+	}
+	return node_count;
+}
+
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 ////////// PREDICATES for FILTERED GRAPHS ///////////////////

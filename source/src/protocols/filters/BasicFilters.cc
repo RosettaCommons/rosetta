@@ -205,6 +205,10 @@ CompoundFilter::compute( Pose const & pose ) const
 				value = !value;
 			}
 		} else {
+			bool subfilter_value( it->first->apply( pose ) );
+			TR << "CompoundFilter subfilter "
+				<< (it->first->get_user_defined_name().empty() ? it->first->get_type() : it->first->get_user_defined_name() )
+				<< (subfilter_value ? " succeeded." : " failed." ) << std::endl;
 			switch( it->second  ) {
 			case ( AND ) : value = value && compute_subfilter( it->first, pose ); break;
 			case ( OR  ) : value = value || compute_subfilter( it->first, pose ); break;

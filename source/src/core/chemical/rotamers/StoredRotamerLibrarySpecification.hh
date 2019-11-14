@@ -75,6 +75,10 @@ public:
 		ref_energy_ = ref_E_in;
 	}
 
+	/// @brief Set the coordinates list in an all-at-once fashion
+	void
+	set_rotamers( utility::vector1< std::map< std::string, core::Vector > > const & confs );
+
 	std::string
 	keyname() const override;
 

@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/pack/task/ResfileReader.hh
-/// @brief  header of classes for resfile options
+/// @file   protocols/ligand/docking/Rotate.hh
+/// @brief  Rotate the ligand!
 /// @author Gordon Lemmon
 
 #ifndef INCLUDED_protocols_ligand_docking_Rotate_hh

@@ -97,6 +97,16 @@ public:
 		Real const temperature
 	);
 
+	/// @brief Constructor for external scoring
+	///
+	/// Pose           init_pose   /manipulated during the simulation
+	/// Real           init_score  /externally computed initial score
+	/// Real (float)   temp        /used in the Metropolis Criterion
+	MonteCarlo(
+		Pose const & init_pose,
+		Real const init_score,
+		Real const temperature
+	);
 
 	/// @brief Constructor without Pose -- call reset(pose) before first use
 	MonteCarlo(
@@ -181,6 +191,26 @@ public:
 		core::Real const inner_score_delta_over_temperature = 0
 	);
 
+	/// @brief Applies the Metropolis Criterion on pose based on
+	/// the externally computes score, temperature, and the last accepted
+	/// pose. This method evaluates the change in score, compares
+	/// the trial pose to the last accepted pose, and updates the
+	/// pose structure and simulation statistics appropriately
+	///
+	/// example(s):
+	///     mc.boltzmann( pose, score )
+	/// See also:
+	///     MonteCarlo
+	///     MonteCarlo.last_accepted_score
+	///     MonteCarlo.lowest_score
+	virtual bool
+	boltzmann(
+		Pose & pose,//PoseOP pose,
+		core::Real const score,
+		std::string const & move_type = "unk",
+		core::Real const proposal_density_ratio = 1,
+		core::Real const inner_score_temperature_delta = 0
+	);
 
 	/// @brief Applies the Metropolis Criterion on the inputted
 	/// pose based on the supplied score delta
@@ -231,6 +261,22 @@ public:
 	virtual
 	void
 	reset( Pose const & pose );
+
+	/// @brief Sets lowest score pose and last accepted pose to
+	/// the score of  <pose>
+	/// @note (does not reset counters)
+	///
+	/// example(s):
+	///     mc.reset(pose, score)
+	/// See also:
+	///     MonteCarlo
+	///     MonteCarlo.last_accepted_pose
+	///     MonteCarlo.last_accepted_score
+	///     MonteCarlo.lowest_score
+	///     MonteCarlo.lowest_scored_pose
+	virtual
+	void
+	reset( Pose const & pose, Real const score );
 
 	/// @brief Sets the last accepted pose to the score of  <pose>
 	/// @note (does not reset counters)

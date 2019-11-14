@@ -602,6 +602,38 @@ copy_residue_coordinates_and_rebuild_missing_atoms(
 
 }
 
+/// @brief  Fills coords of target_rsd with coords from source_rsd using the provided mapping, rebuilds others
+/// The mapping is indexed by target_rsd atom index, giving source_rsd index or zero for not present.
+void
+copy_residue_coordinates_and_rebuild_missing_atoms(
+	Residue const & source_rsd,
+	Residue & target_rsd,
+	utility::vector1< core::Size > const & mapping,
+	Conformation const & conformation
+) {
+	Size const natoms( target_rsd.natoms() );
+
+	utility::vector1< bool > missing( natoms, false );
+	bool any_missing( false );
+
+	for ( Size i=1; i<= natoms; ++i ) {
+		if ( mapping.size() >= i && mapping[i] != 0 ) {
+			target_rsd.atom( i ).xyz( source_rsd.atom( mapping[i] ).xyz() );
+		} else {
+			TR.Debug << "copy_residue_coordinates_and_rebuild_missing_atoms: missing atom " << target_rsd.name() << ' ' <<
+				target_rsd.atom_name(i) << std::endl;
+			any_missing = true;
+			missing[i] = true;
+		}
+	}
+
+	if ( any_missing ) {
+		target_rsd.seqpos( source_rsd.seqpos() ); // in case fill_missing_atoms needs context info
+		target_rsd.chain ( source_rsd.chain () );
+		target_rsd.fill_missing_atoms( missing, conformation );
+	}
+}
+
 /// @details  Helper function for below
 std::ostream &
 print_atom( id::AtomID const & id, Conformation const & conf, std::ostream & os )

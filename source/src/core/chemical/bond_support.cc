@@ -162,7 +162,7 @@ Real create_bond_length(
 /// * Complete Atom/bond graph
 /// * All element types have been set
 /// * All bond_names have been set.
-/// * Ringness has been set for all bonds in rings
+/// * Ringness has been set for all bonds
 /// * The Icoor graph has been set.
 
 utility::vector1<VDs> find_chi_bonds( MutableResidueType const & restype ) {
@@ -175,6 +175,7 @@ utility::vector1<VDs> find_chi_bonds( MutableResidueType const & restype ) {
 		Bond const & bond( restype.bond( *eiter ) );
 		VD source(boost::source(*eiter,restype.graph()));
 		VD target(boost::target(*eiter,restype.graph()));
+		debug_assert( bond.ringness() != UnknownRingness ); // Ringness must be calculated prior to calling function
 		// Step 1.1) Bonds which aren't single, which are in rings,
 		//     or which are terminal/to hydrogen aren't rotatable.
 		if ( bond.bond_name() != SingleBond || // Should this be bond order instead?
@@ -305,5 +306,5 @@ bool is_sp2_proton_chi( core::Size chi, MutableResidueType const & restype ) {
 	return false;
 }
 
-}
-}
+} // namespace chemical
+} // namespace core

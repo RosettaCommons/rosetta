@@ -81,6 +81,24 @@ utility::vector1< MutableResidueTypeOP > convert_to_ResidueTypes( utility::vecto
 	ElementSetCOP element_types,
 	MMAtomTypeSetCOP mm_atom_types);
 
+/// @brief Load a given file into one or more residue types
+/// If load_rotamers is false, each will be loaded as a single ResidueType
+/// Otherwise, entries with the same name will be loaded as rotamers
+utility::vector1< MutableResidueTypeOP > convert_to_ResidueTypes( std::string const & filename,
+	bool load_rotamers = true,
+	std::string atom_type_tag = "fa_standard",
+	std::string element_type_tag = "default",
+	std::string mm_atom_type_tag = "fa_standard");
+
+/// @brief Load a given file into one or more residue types
+/// If load_rotamers is false, each will be loaded as a single ResidueType
+/// Otherwise, entries with the same name will be loaded as rotamers
+utility::vector1< MutableResidueTypeOP > convert_to_ResidueTypes( std::string const & filename,
+	bool load_rotamers,
+	AtomTypeSetCOP atom_types,
+	ElementSetCOP element_types,
+	MMAtomTypeSetCOP mm_atom_types);
+
 
 }
 }

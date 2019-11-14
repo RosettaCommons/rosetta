@@ -19,7 +19,8 @@
 #include <core/chemical/MutableResidueConnection.hh>
 #include <core/chemical/bond_support.hh>
 
-//#include <core/kinematics/AtomTree.hh>
+#include <core/chemical/bond_support.hh>
+
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/tree/BondedAtom.hh>
@@ -301,6 +302,7 @@ reroot_restype( core::chemical::MutableResidueType & restype, core::chemical::Re
 	}
 
 	// Now pull the icoord data out of the kinematic atoms
+	restype.clear_icoor(); // Clear the icoor records, so they can be properly reset.
 
 	core::chemical::VIter iter, iter_end;
 	for ( boost::tie(iter, iter_end) = boost::vertices(graph); iter != iter_end; ++iter ) {
@@ -356,7 +358,11 @@ reroot_restype( core::chemical::MutableResidueType & restype, core::chemical::Re
 	// Check the validity of the chi settings.
 	bool reset_chis( false );
 	for ( core::Size chino(1); chino <= restype.nchi(); ++chino ) {
-		// These are the check which are made in Residue::set_chi() - Remember that atomindicies aren't valid yet ...
+		if ( ! restype.chi_valid( chino ) ) {
+			reset_chis = true;
+			break;
+		}
+		// Do we want/need to fold the following checks into MutableResidueType::chi_valid()?
 		VDs const & chi_vds( restype.chi_atom_vds(chino) );
 		if ( restype.atom_base( chi_vds[3] ) != chi_vds[2] ||
 				restype.atom_base( chi_vds[4] ) != chi_vds[3] ) {

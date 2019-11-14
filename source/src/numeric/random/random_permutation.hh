@@ -38,7 +38,7 @@ template< class T >
 void
 random_permutation(
 	utility::vector1< T > & vect,
-	RandomGenerator & rg
+	RandomGenerator & rg = numeric::random::rg()
 )
 {
 	Size const vsize = vect.size();
@@ -55,7 +55,7 @@ template< class T >
 void
 random_permutation(
 	utility::vector0< T > & vect,
-	RandomGenerator & rg
+	RandomGenerator & rg = numeric::random::rg()
 )
 {
 	Size const vsize = vect.size();
@@ -73,7 +73,7 @@ template< class T >
 void
 random_permutation(
 	std::vector< T > & vect,
-	RandomGenerator & rg
+	RandomGenerator & rg = numeric::random::rg()
 )
 {
 	Size const vsize = vect.size();
@@ -93,7 +93,7 @@ void
 random_permutation(
 	RandomAccessIterator first,
 	RandomAccessIterator last,
-	RandomGenerator & rg
+	RandomGenerator & rg = numeric::random::rg()
 )
 {
 	if ( first != last ) {

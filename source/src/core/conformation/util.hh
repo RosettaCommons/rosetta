@@ -147,6 +147,16 @@ check_good_cutpoint_neighbour(
 void
 update_cutpoint_virtual_atoms_if_connected( core::conformation::Conformation & conformation, core::Size const cutpoint_res, bool recurse = true );
 
+/// @brief  Fills coords of target_rsd with coords from source_rsd using the provided mapping, rebuilds others
+/// The mapping is indexed by target_rsd atom index, giving source_rsd index or zero for not present.
+void
+copy_residue_coordinates_and_rebuild_missing_atoms(
+	Residue const & source_rsd,
+	Residue & target_rsd,
+	utility::vector1< core::Size > const & mapping,
+	Conformation const & conf
+);
+
 void
 show_atom_tree( kinematics::tree::Atom const & atom, Conformation const & conf, std::ostream & os );
 

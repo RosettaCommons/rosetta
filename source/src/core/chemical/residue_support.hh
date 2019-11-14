@@ -24,7 +24,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
-
+#include <core/chemical/Bond.fwd.hh>
 
 namespace core {
 namespace chemical {
@@ -67,9 +67,33 @@ LightWeightResidueGraph convert_residuetype_to_light_graph(MutableResidueType co
 void
 rename_atoms( MutableResidueType & res, bool preserve=true );
 
-/// @brief Calculate the rigid matrix for neighbor atom finding
-/// Assume that distances has been initialized to some really large value, and is square
-void calculate_rigid_matrix( MutableResidueType const & res, utility::vector1< utility::vector1< core::Real > > & distances );
+/// @brief Utility class for VD-indexed matrix
+class VDDistanceMatrix {
+private:
+	typedef boost::unordered_map< VD, core::Real > InternalVector;
+	typedef boost::unordered_map< VD, InternalVector > InternalMatrix;
+public:
+
+	VDDistanceMatrix(core::Real default_val):
+		default_(default_val)
+	{}
+
+	core::Real &
+	operator() ( VD a, VD b );
+
+	core::Real
+	find_max_over( VD a );
+
+private:
+
+	InternalMatrix matrix_;
+	core::Real default_;
+
+};
+
+/// @brief Calculate the rigid matrix - assume that distances has been initialized to some really large value, and is square
+/// Helper for find_nbr_dist
+void calculate_rigid_matrix( MutableResidueType const & res, VDDistanceMatrix & distances );
 
 /// @brief Find the neighbor distance to the given neighbor atom.
 /// If nbr_atom is null_vertex, give the smallest neighbor distance,

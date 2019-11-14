@@ -122,9 +122,6 @@ void MultiThreadingMover::apply(
 	using core::Size;
 	using core::pose::Pose;
 	using core::sequence::SequenceAlignment;
-	static basic::Tracer tr(
-		"protocols.comparative_modeling.MultiThreadingMover.apply"
-	);
 
 	check_internals();
 

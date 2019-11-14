@@ -126,6 +126,7 @@ public:
 	AtomTypeSet const &
 	atom_type_set() const
 	{
+		debug_assert( atom_types_ );
 		return *atom_types_;
 	}
 
@@ -146,6 +147,7 @@ public:
 	ElementSet const &
 	element_set() const
 	{
+		debug_assert( elements_ );
 		return *elements_;
 	}
 

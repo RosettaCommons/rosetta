@@ -31,9 +31,10 @@ void quick_ring_detection( MutableResidueType & res);
 
 utility::vector1<VD> get_connecting_atoms(MutableResidueType const & res, ED const & edge);
 utility::vector1<VD> get_connecting_atoms(ResidueGraph const & res, ED const & edge);
+
 ED get_bond(MutableResidueType const & res, VD const & source, VD const & target);
 
-//this will create a bond length based on gasteiger atom type definitions of bonds
+/// @brief this will create a bond length based on gasteiger atom type definitions of bonds
 Real create_bond_length(gasteiger::GasteigerAtomTypeData const & atom1,
 	gasteiger::GasteigerAtomTypeData const & atom2, BondName bond_type);
 

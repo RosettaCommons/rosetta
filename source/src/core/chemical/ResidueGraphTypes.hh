@@ -106,7 +106,6 @@ void regenerate_graph_vertex_index(Graph & graph){
 	}
 }
 
-
 ///Light weight graph typedefs
 ///The light weight graph is a graph that holds a pointer to the edge descriptor
 ///and vertex descriptor or the ResidueGraph. We generate the light weight graph

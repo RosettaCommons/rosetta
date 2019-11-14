@@ -240,7 +240,7 @@ public:
 
 	//! @brief returns the number of lone pairs in hybrid orbitals
 	//! @return the number of lone pairs in hybrid orbitals
-	core::Size get_nNumber_hybrid_lone_pairs() const;
+	core::Size get_number_hybrid_lone_pairs() const;
 
 	//! @return Number of hybridized bonds
 	core::Size get_number_hybrid_bonds() const;

@@ -141,7 +141,9 @@ public:
 protected:
 	friend MutableResidueType; // Only for these functions! don't access other private members!
 
+	// @details Use MutableResidueType::rename_atom() instead.
 	void name( std::string const & name ) { name_ = name; };
+	// @details Use MutableResidueType::set_atom_type() instead.
 	void atom_type_index( Size const & atom_type_index ) { atom_type_index_ = atom_type_index; };
 
 public:

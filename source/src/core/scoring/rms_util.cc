@@ -324,52 +324,17 @@ automorphic_rmsd(
 		//std::cout << " ]\n";
 		//for(Size j = 1; j <= old2new.size(); ++j) std::cout << "  " << j << " --> " << old2new[j] << "  /  " << rsd1.type().atom_name(j) << " --> " << rsd1.type().atom_name(old2new[j]) << "\n";
 
+		core::Real curr_rms;
 		// Compute rmsd
 		if ( superimpose ) {
-			utility::vector0< core::Vector > p1_coords;
-			utility::vector0< core::Vector > p2_coords;
-			for ( core::Size j = 1; j <= rsd1.type().natoms(); ++j ) {
-				if ( !rsd1.atom_type(j).is_hydrogen() ) {
-					// This is the step where we effectively re-assign atom names
-					// in hopes of reducing RMS (e.g. by "flipping" a phenyl ring).
-					p1_coords.push_back( rsd1.xyz( j ) );
-					p2_coords.push_back( rsd2.xyz( old2new[j] ) );
-				}
-			}
-			runtime_assert( p1_coords.size() == p2_coords.size() );
-			int const natoms = p1_coords.size();
-			ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
-			ObjexxFCL::FArray2D< core::Real > p2a( 3, natoms );
-			for ( int j = 0; j < natoms; ++j ) {
-				for ( int k = 0; k < 3; ++k ) { // k = X, Y and Z
-					p1a(k+1,j+1) = p1_coords[j][k];
-					p2a(k+1,j+1) = p2_coords[j][k];
-				}
-			}
-			core::Real const curr_rms = numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
-			// Check vs. minimum rmsd
-			if ( curr_rms < best_rms ) {
-				//tr.Debug << "New rms of " << curr_rms << " beats previous best of " << best_rms << std::endl;
-				best_rms = curr_rms;
-			}
+			curr_rms = residue_rmsd_super( rsd1, rsd2, old2new, /* skip_hydro= */ true );
 		} else { // don't superimpose
-			core::Real sum2( 0.0 );
-			core::Size natoms( 0 );
-			for ( core::Size j = 1; j <= rsd1.type().natoms(); ++j ) {
-				if ( !rsd1.atom_type(j).is_hydrogen() ) {
-					// This is the step where we effectively re-assign atom names
-					// in hopes of reducing RMS (e.g. by "flipping" a phenyl ring).
-					core::Vector diff = rsd1.xyz( j ) - rsd2.xyz( old2new[j] );
-					sum2 += diff.length_squared();
-					natoms += 1;
-				}
-			}
-			core::Real const curr_rms = std::sqrt(sum2 / natoms);
-			// Check vs. minimum rmsd
-			if ( curr_rms < best_rms ) {
-				//tr.Debug << "New rms of " << curr_rms << " beats previous best of " << best_rms << std::endl;
-				best_rms = curr_rms;
-			}
+			curr_rms = residue_rmsd_nosuper( rsd1, rsd2, old2new, /* skip_hydro= */ true);
+		}
+		// Check vs. minimum rmsd
+		if ( curr_rms < best_rms ) {
+			//tr.Debug << "New rms of " << curr_rms << " beats previous best of " << best_rms << std::endl;
+			best_rms = curr_rms;
 		}
 		old2new = ai.next();
 	} // done checking all automorphisms
@@ -382,6 +347,62 @@ automorphic_rmsd(
 	return best_rms;
 }
 
+/// @brief Calculate the RMSD between two residues, using the provided atom map.
+/// The atom map is indexed by rsd1 index, and give the corresponding rsd2 index.
+/// Use a value of 0 to omit the rsd pairing.
+/// Superimposes the residues (remove rigid-body rotational/translational component of the rmsd.)
+core::Real
+residue_rmsd_super(
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
+	utility::vector1< core::Size > const & atom_map,
+	bool skip_hydro /* = true */
+) {
+	utility::vector0< core::Vector > p1_coords;
+	utility::vector0< core::Vector > p2_coords;
+	for ( core::Size j = 1; j <= rsd1.type().natoms() && j <= atom_map.size(); ++j ) {
+		if ( skip_hydro && rsd1.atom_type(j).is_hydrogen() ) { continue; }
+		if ( atom_map[j] != 0 ) {
+			p1_coords.push_back( rsd1.xyz( j ) );
+			p2_coords.push_back( rsd2.xyz( atom_map[j] ) );
+		}
+	}
+	runtime_assert( p1_coords.size() == p2_coords.size() );
+	int const natoms = p1_coords.size();
+	ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
+	ObjexxFCL::FArray2D< core::Real > p2a( 3, natoms );
+	for ( int j = 0; j < natoms; ++j ) {
+		for ( int k = 0; k < 3; ++k ) { // k = X, Y and Z
+			p1a(k+1,j+1) = p1_coords[j][k];
+			p2a(k+1,j+1) = p2_coords[j][k];
+		}
+	}
+	return numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
+}
+
+/// @brief Calculate the RMSD between two residues, using the provided atom map.
+/// The atom map is indexed by rsd1 index, and give the corresponding rsd2 index.
+/// Use a value of 0 to omit the rsd pairing.
+/// Does not superimpose the residues.
+core::Real
+residue_rmsd_nosuper(
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
+	utility::vector1< core::Size > const & atom_map,
+	bool skip_hydro /* = true */
+) {
+	core::Real sum2( 0.0 );
+	core::Size natoms( 0 );
+	for ( core::Size j = 1; j <= rsd1.type().natoms() && j <= atom_map.size(); ++j ) {
+		if ( skip_hydro && rsd1.atom_type(j).is_hydrogen() ) { continue; }
+		if ( atom_map[j] != 0 ) {
+			core::Vector diff = rsd1.xyz( j ) - rsd2.xyz( atom_map[j] );
+			sum2 += diff.length_squared();
+			natoms += 1;
+		}
+	}
+	return std::sqrt(sum2 / natoms);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // Predicate functions to use with rmsd_no_super() and rmsd_with_super()

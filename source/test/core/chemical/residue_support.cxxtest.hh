@@ -160,19 +160,19 @@ public:
 
 		MutableResidueTypeOP rsd( new MutableResidueType( atom_types, element_types, mm_atom_types, NULL ) );
 
-		rsd->add_atom( "C1", "aroC", "VIRT", 0 );
-		rsd->add_atom( "C2", "aroC", "VIRT", 0 );
-		rsd->add_atom( "C3", "aroC", "VIRT", 0 );
-		rsd->add_atom( "C4", "aroC", "VIRT", 0 );
-		rsd->add_atom( "C5", "aroC", "VIRT", 0 );
-		rsd->add_atom( "C6", "aroC", "VIRT", 0 );
-		rsd->add_atom( "C7", "aroC", "VIRT", 0 );
-		rsd->add_atom( "C8", "aroC", "VIRT", 0 );
-		rsd->add_atom( "C9", "aroC", "VIRT", 0 );
-		rsd->add_atom( "H10", "Haro", "VIRT", 0 );
-		rsd->add_atom( "H11", "Haro", "VIRT", 0 );
-		rsd->add_atom( "H12", "Haro", "VIRT", 0 );
-		rsd->add_atom( "O13", "OOC", "VIRT", 0 );
+		VD vd1 = rsd->add_atom( "C1", "aroC", "VIRT", 0 );
+		VD vd2 = rsd->add_atom( "C2", "aroC", "VIRT", 0 );
+		VD vd3 = rsd->add_atom( "C3", "aroC", "VIRT", 0 );
+		VD vd4 = rsd->add_atom( "C4", "aroC", "VIRT", 0 );
+		VD vd5 = rsd->add_atom( "C5", "aroC", "VIRT", 0 );
+		VD vd6 = rsd->add_atom( "C6", "aroC", "VIRT", 0 );
+		VD vd7 = rsd->add_atom( "C7", "aroC", "VIRT", 0 );
+		VD vd8 = rsd->add_atom( "C8", "aroC", "VIRT", 0 );
+		VD vd9 = rsd->add_atom( "C9", "aroC", "VIRT", 0 );
+		VD vd10 = rsd->add_atom( "H10", "Haro", "VIRT", 0 );
+		VD vd11 = rsd->add_atom( "H11", "Haro", "VIRT", 0 );
+		VD vd12 = rsd->add_atom( "H12", "Haro", "VIRT", 0 );
+		/*VD vd13 =*/ rsd->add_atom( "O13", "OOC", "VIRT", 0 );
 		// shape :
 		//    8-9-10
 		//    #
@@ -214,41 +214,38 @@ public:
 		rsd->bond("C3","C4").ringness(BondInRing);
 		rsd->bond("C2","C4").ringness(BondInRing);
 
-		core::Size natoms( rsd->natoms() );
-		utility::vector1< utility::vector1< core::Real > > distances(natoms, utility::vector1< core::Real >( natoms, 1e9 ) );
+		core::chemical::VDDistanceMatrix distances(1e9);
 
 		calculate_rigid_matrix( *rsd, distances );
 
 		core::Real const delta( 0.001 );
 		// Distances should be symetrical.
-		for ( core::Size ii(1); ii <= natoms; ++ii ) {
-			for ( core::Size jj(ii+1); jj <= natoms; ++jj ) {
-				TS_ASSERT_DELTA( distances[ii][jj], distances[jj][ii], delta );
+		for ( VD atm1: rsd->all_atoms() ) {
+			for ( VD atm2: rsd->all_atoms() ) {
+				TS_ASSERT_DELTA( distances(atm1,atm2), distances(atm2,atm1), delta );
 			}
 		}
-		//Atom ordering should be the same as numerical ordering.
-		TS_ASSERT_DELTA( distances[1][2], 1.0, delta );
-		TS_ASSERT_DELTA( distances[2][1], 1.0, delta );
-		TS_ASSERT_DELTA( distances[1][4], sqrt( 1.0*1.0 + 1.0*1.0), delta );
-		TS_ASSERT_DELTA( distances[1][4], distances[4][1], delta );
-		TS_ASSERT_DELTA( distances[1][5], sqrt(2) + 1.1, delta );
-		TS_ASSERT_DELTA( distances[5][3], 1 + 1.1, delta );
-		TS_ASSERT_DELTA( distances[1][6], sqrt(2) + 1.1 + 1.1, delta );
-		TS_ASSERT_DELTA( distances[6][4], 1.1 + 1.1, delta );
+
+		TS_ASSERT_DELTA( distances(vd1,vd2), 1.0, delta );
+		TS_ASSERT_DELTA( distances(vd1,vd4), sqrt( 1.0*1.0 + 1.0*1.0), delta );
+		TS_ASSERT_DELTA( distances(vd1,vd5), sqrt(2) + 1.1, delta );
+		TS_ASSERT_DELTA( distances(vd5,vd3), 1 + 1.1, delta );
+		TS_ASSERT_DELTA( distances(vd1,vd6), sqrt(2) + 1.1 + 1.1, delta );
+		TS_ASSERT_DELTA( distances(vd6,vd4), 1.1 + 1.1, delta );
 		//Bonding issues
-		TS_ASSERT_DELTA( distances[7][8],1.2, delta );
-		TS_ASSERT_DELTA( distances[7][6],1.1, delta );
-		TS_ASSERT_DELTA( distances[6][8], sqrt( 1.1*1.1 + 1.2*1.2 ), delta );
-		TS_ASSERT_DELTA( distances[4][8], 1.1 + 1.1 + sqrt( 1.1*1.1 + 1.2*1.2 ), delta );
+		TS_ASSERT_DELTA( distances(vd7,vd8),1.2, delta );
+		TS_ASSERT_DELTA( distances(vd7,vd6),1.1, delta );
+		TS_ASSERT_DELTA( distances(vd6,vd8), sqrt( 1.1*1.1 + 1.2*1.2 ), delta );
+		TS_ASSERT_DELTA( distances(vd4,vd8), 1.1 + 1.1 + sqrt( 1.1*1.1 + 1.2*1.2 ), delta );
 		//C9 is a Non-rotameric stub, so should be non-rotameric
-		TS_ASSERT_DELTA( distances[9][6],sqrt( 0.4*0.4 + 1.2*1.2), delta );
+		TS_ASSERT_DELTA( distances(vd9,vd6),sqrt( 0.4*0.4 + 1.2*1.2), delta );
 		//Across everything
-		TS_ASSERT_DELTA( distances[1][9], sqrt(2) + 1.1 + 1.1 + sqrt( 0.4*0.4 + 1.2*1.2 ), delta );
+		TS_ASSERT_DELTA( distances(vd1,vd9), sqrt(2) + 1.1 + 1.1 + sqrt( 0.4*0.4 + 1.2*1.2 ), delta );
 		//Hydrogens add to rigid unit.
-		TS_ASSERT_DELTA( distances[7][10],sqrt(2*2 + 1.2*1.2), delta );
-		TS_ASSERT_DELTA( distances[3][11],sqrt(1*1+1.5*1.5), delta );
+		TS_ASSERT_DELTA( distances(vd7,vd10),sqrt(2*2 + 1.2*1.2), delta );
+		TS_ASSERT_DELTA( distances(vd3,vd11),sqrt(1*1+1.5*1.5), delta );
 		//But polar hydrogens don't
-		TS_ASSERT_DELTA( distances[5][12],1.2+1, delta );
+		TS_ASSERT_DELTA( distances(vd5,vd12),1.2+1, delta );
 	}
 
 

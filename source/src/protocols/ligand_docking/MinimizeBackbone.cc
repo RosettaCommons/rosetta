@@ -67,7 +67,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer minimize_backbone_tracer( "protocols.ligand_docking.ligand_options.MinimizeBackbone", basic::t_debug );
+static basic::Tracer TR( "protocols.ligand_docking.ligand_options.MinimizeBackbone" );
 
 
 
@@ -118,13 +118,35 @@ void
 MinimizeBackbone::apply( core::pose::Pose & pose ){
 	debug_assert(pose.fold_tree().check_edges_for_atom_info());
 	debug_assert(interface_builder_);// make sure the pointer points
+	constraints_.clear(); // Reset constraints for new pose
+	cutpoints_.clear(); // Reset cutpoints for new pose.
 	ligand_options::Interface interface= interface_builder_->build(pose);
 	restrict_to_protein_residues(interface, pose);
-	minimize_backbone_tracer.Debug << "interface for fold_tree: "<< interface << std::endl;
+	TR.Debug << "interface for fold_tree: "<< interface << std::endl;
 	debug_assert(pose.fold_tree().check_edges_for_atom_info());
 	reorder_foldtree_around_mobile_regions(interface, pose);
 	restrain_protein_Calphas(interface, pose);
 	debug_assert(pose.fold_tree().check_edges_for_atom_info());
+}
+
+void
+MinimizeBackbone::remove_constraints( core::pose::Pose & pose ) {
+	for ( core::Size ii(1); ii <= constraints_.size(); ++ii ) {
+		pose.remove_constraint(constraints_[ii],true);
+	}
+}
+
+void
+MinimizeBackbone::remove_cutpoints( core::pose::Pose & pose ) {
+	for ( core::Size ii(1); ii <= cutpoints_.size(); ++ii ) {
+		core::Size cutpt( cutpoints_[ii] );
+		if ( cutpt+1 > pose.total_residue() ) {
+			TR.Warning << "Warning: pose no longer has one of the residues listed as a surrounding a cutpoint." << std::endl;
+			continue;
+		}
+		core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_LOWER, cutpt);
+		core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_UPPER, cutpt + 1);
+	}
 }
 
 void MinimizeBackbone::reorder_foldtree_around_mobile_regions(
@@ -134,19 +156,19 @@ void MinimizeBackbone::reorder_foldtree_around_mobile_regions(
 	debug_assert(pose.fold_tree().check_edges_for_atom_info());
 	core::kinematics::FoldTree const & fold_tree_copy = pose.fold_tree();
 	debug_assert(fold_tree_copy.check_edges_for_atom_info());
-	minimize_backbone_tracer.Debug << "Initial foldtree " << fold_tree_copy << std::endl;
+	TR.Debug << "Initial foldtree " << fold_tree_copy << std::endl;
 	core::kinematics::FoldTreeOP better_ligand_jumps = create_fold_tree_with_ligand_jumps_from_attach_pts(fold_tree_copy, interface, pose);
 	debug_assert(better_ligand_jumps->check_edges_for_atom_info());
-	minimize_backbone_tracer.Debug << "foldtree with ligand jumps from attach pts" << *better_ligand_jumps << std::endl;
+	TR.Debug << "foldtree with ligand jumps from attach pts" << *better_ligand_jumps << std::endl;
 	core::kinematics::FoldTreeOP with_cutpoints = create_fold_tree_with_cutpoints(better_ligand_jumps, interface, pose);
-	minimize_backbone_tracer.Debug  << "foldtree with cutpoints" << *with_cutpoints << std::endl;
+	TR.Debug  << "foldtree with cutpoints" << *with_cutpoints << std::endl;
 	debug_assert(with_cutpoints->check_edges_for_atom_info());
 	with_cutpoints->delete_extra_vertices();
 	debug_assert(with_cutpoints->check_edges_for_atom_info());
-	minimize_backbone_tracer.Debug << "foldtree with less vertices" << *with_cutpoints << std::endl;
+	TR.Debug << "foldtree with less vertices" << *with_cutpoints << std::endl;
 	debug_assert(with_cutpoints->check_edges_for_atom_info());
 	reorder_with_first_non_mobile_as_root(with_cutpoints, interface, pose);
-	minimize_backbone_tracer.Debug << "Final loops foldtree " << *with_cutpoints << std::endl;
+	TR.Debug << "Final loops foldtree " << *with_cutpoints << std::endl;
 	if ( !with_cutpoints->check_fold_tree() ) {
 		utility_exit_with_message("Invalid fold tree after trying to set up for minimization!");
 	}
@@ -233,11 +255,11 @@ utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
 	while ( start ) {
 		stop= interface.find_stop_of_this_interface_region(start, edge.stop());
 
-		minimize_backbone_tracer.Debug << "start,stop:"<< start << ','<< stop << std::endl;
-		minimize_backbone_tracer.Debug << "edge.start,edge.stop:"<< edge.start() << ','<< edge.stop() << std::endl;
+		TR.Debug << "start,stop:"<< start << ','<< stop << std::endl;
+		TR.Debug << "edge.start,edge.stop:"<< edge.start() << ','<< edge.stop() << std::endl;
 		runtime_assert( stop >= start );
 		if ( (stop - start + 1) < 4 ) {
-			minimize_backbone_tracer.Warning
+			TR.Warning
 				<< "for backbone minimization to work properly, a stretch of at least 4 residues needs to be allowed to move. Stretch between "
 				<< start << " and " << stop << " is too short.  This should never happen after extending the interface"
 				<< std::endl;
@@ -255,6 +277,7 @@ utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
 
 		loops.push_back(protocols::loops::Loop(start, stop, cutpt));
 		// also need to set up residue variants so chainbreak score works correctly!
+		cutpoints_.push_back( cutpt ); // So we can remove the variants later
 		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_LOWER, cutpt);
 		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_UPPER, cutpt + 1);
 
@@ -325,7 +348,7 @@ void MinimizeBackbone::restrain_protein_Calphas(
 	core::pose::Pose & pose
 ) {
 	core::id::AtomID fixed_pt(pose.atom_tree().root()->atom_id());
-	minimize_backbone_tracer.Debug << interface << std::endl;
+	TR.Debug << interface << std::endl;
 	for ( core::Size residue_id = 1; residue_id <= interface.size(); ++residue_id ) { // didn't use an iterator because pose needs a #
 		if ( interface[residue_id].type != ligand_options::InterfaceInfo::non_interface ) {
 			restrain_protein_Calpha(interface, pose, residue_id, fixed_pt);
@@ -358,8 +381,10 @@ void MinimizeBackbone::restrain_protein_Calpha(
 		harmonic_function
 		) )
 		;
-	minimize_backbone_tracer.Debug << "Restraining C-alpha of residue " << residue_id << " with "<< ligand_area->Calpha_restraints_<< std::endl;
+	TR.Debug << "Restraining C-alpha of residue " << residue_id << " with "<< ligand_area->Calpha_restraints_<< std::endl;
+
 	pose.add_constraint(constraint);
+	constraints_.push_back(constraint);
 }
 
 std::string MinimizeBackbone::get_name() const {

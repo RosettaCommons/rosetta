@@ -63,27 +63,27 @@ public: // Creation
 
 public: // Methods
 
-	// get weights
+	/// @brief get weights
 	utility::vector1<numeric::Real> const &
 	weights() const {
 		return weights_;
 	}
 
-	// set weights
+	/// @brief set weights
 	void
 	weights( utility::vector1<numeric::Real> const & weights ) {
 		weights_ = weights;
 		cumulative_distribution_valid_ = false;
 	}
 
-	// add a single weight to the end
+	/// @brief add a single weight to the end
 	void
 	add_weight( numeric::Real weight ) {
 		weights_.push_back(weight);
 		cumulative_distribution_valid_ = false;
 	}
 
-	// set a single weight
+	/// @brief set a single weight
 	void
 	set_weight(
 		numeric::Size weight_num,
@@ -93,20 +93,20 @@ public: // Methods
 		cumulative_distribution_valid_ = false;
 	}
 
-	// clear weights
+	/// @brief clear weights
 	void
 	clear() {
 		weights_.clear();
 		cumulative_distribution_valid_ = false;
 	}
 
-	// get number of weights
+	/// @brief get number of weights
 	numeric::Size
 	size() const {
 		return weights_.size();
 	}
 
-	// resize weights
+	/// @brief resize weights
 	void
 	resize(
 		numeric::Size num_weights,
@@ -115,15 +115,22 @@ public: // Methods
 		weights_.resize(num_weights, default_weight);
 	}
 
-	// get a random sample by passing a random number from 0 to 1
+	/// @brief get a random sample using the default random generator
 	numeric::Size
-	random_sample( numeric::Real randnum ) const;
+	random_sample() const;
 
-	// get a random sample by passing a random generator
+	/// @brief get a random sample by passing a random generator
 	numeric::Size
 	random_sample( numeric::random::RandomGenerator& ) const;
 
-	void
+	/// @brief get a random sample by passing a random number from 0 to 1
+	numeric::Size
+	random_sample( numeric::Real randnum ) const;
+
+	/// @brief Update the internal cumulative distribution results
+	/// Returns false if there's an issue with updating the distribution
+	/// (e.g. empty or all zero weights)
+	bool
 	update_cumulative_distribution() const;
 
 private: // Fields
@@ -134,6 +141,8 @@ private: // Fields
 
 }; // WeightedSampler
 
+
+std::ostream & operator<< (std::ostream & out, WeightedSampler const & sampler );
 
 } // namespace random
 } // namespace numeric

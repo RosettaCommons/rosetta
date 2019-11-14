@@ -19,9 +19,9 @@
 namespace core {
 namespace chemical {
 
-class AtomDatabaseIO;
-typedef utility::pointer::shared_ptr< AtomDatabaseIO > AtomDatabaseIOOP;
-typedef utility::pointer::shared_ptr< AtomDatabaseIO const > AtomDatabaseIOCOP;
+class AtomTypeDatabaseIO;
+typedef utility::pointer::shared_ptr< AtomTypeDatabaseIO > AtomTypeDatabaseIOOP
+	typedef utility::pointer::shared_ptr< AtomTypeDatabaseIO const > AtomTypeDatabaseIOCOP;
 
 }
 }

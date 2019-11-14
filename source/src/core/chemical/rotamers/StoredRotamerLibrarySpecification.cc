@@ -84,6 +84,11 @@ StoredRotamerLibrarySpecification::add_rotamers( utility::vector1< std::map< std
 	for ( auto const & rotamer : rotamers ) coordinates_.push_back( rotamer );
 }
 
+void
+StoredRotamerLibrarySpecification::set_rotamers( utility::vector1< std::map< std::string, core::Vector > > const & confs ) {
+	coordinates_ = confs;
+}
+
 std::string
 StoredRotamerLibrarySpecification::keyname() const {
 	return library_name();

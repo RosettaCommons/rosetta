@@ -340,6 +340,8 @@ public:
 	}
 
 
+	void show( std::ostream & ) const;
+
 public:
 
 	Vector
@@ -388,7 +390,10 @@ public:
 
 };
 
+/// @brief print the icoord table starting at the root.
 void pretty_print_atomicoor(std::ostream & out, ResidueType const & rsd_type);
+
+/// @brief print the icoord table starting with the given icoord record
 void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, ResidueType const & rsd_type, core::Size indent=0);
 
 std::ostream & operator <<( std::ostream & out, ICoordAtomIDType type );

@@ -44,6 +44,9 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 
+	/// @brief Remove the constraints added by this mover to the pose in apply, if any.
+	void remove_constraints( core::pose::Pose & pose );
+
 	std::string get_name() const override;
 
 	bool operator==(char const & chain) const;

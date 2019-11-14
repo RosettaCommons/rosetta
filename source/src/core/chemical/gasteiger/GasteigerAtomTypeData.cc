@@ -272,7 +272,7 @@ void GasteigerAtomTypeData::initialize() {
 	} else {
 		// all singular bonds; contribution to pi system is 2 if there are any lone pairs, 0 otherwise
 		max_e_contribution_to_pi_system_ =
-			2 * std::min( get_number_unhybridized_lone_pairs() + get_nNumber_hybrid_lone_pairs(), core::Size( 1));
+			2 * std::min( get_number_unhybridized_lone_pairs() + get_number_hybrid_lone_pairs(), core::Size( 1));
 	}
 	stability_metric_ = calculate_stability_metric();
 
@@ -334,7 +334,7 @@ core::Size GasteigerAtomTypeData::get_number_hybrid_orbitals() const
 
 //! @brief returns the number of lone pairs in hybrid orbitals
 //! @return the number of lone pairs in hybrid orbitals
-core::Size GasteigerAtomTypeData::get_nNumber_hybrid_lone_pairs() const
+core::Size GasteigerAtomTypeData::get_number_hybrid_lone_pairs() const
 {
 	return number_hybrid_orbitals_nonbinding_;
 }
@@ -762,13 +762,13 @@ GasteigerAtomTypeData::TypeDifference GasteigerAtomTypeData::difference_from( co
 
 	if
 			(
-					get_nNumber_hybrid_lone_pairs() + get_number_unhybridized_lone_pairs()
-					!= OTHER.get_nNumber_hybrid_lone_pairs() + OTHER.get_number_unhybridized_lone_pairs()
+					get_number_hybrid_lone_pairs() + get_number_unhybridized_lone_pairs()
+					!= OTHER.get_number_hybrid_lone_pairs() + OTHER.get_number_unhybridized_lone_pairs()
 					) {
 		const core::Size number_unhybridized_lone_pairs( get_number_unhybridized_lone_pairs());
 		const core::Size number_unhybridized_lone_pairs_b( OTHER.get_number_unhybridized_lone_pairs());
-		const core::Size number_hybridized_lone_pairs( get_nNumber_hybrid_lone_pairs());
-		const core::Size number_hybridized_lone_pairs_b( OTHER.get_nNumber_hybrid_lone_pairs());
+		const core::Size number_hybridized_lone_pairs( get_number_hybrid_lone_pairs());
+		const core::Size number_hybridized_lone_pairs_b( OTHER.get_number_hybrid_lone_pairs());
 
 		const core::Size lone_pairs( number_unhybridized_lone_pairs + number_hybridized_lone_pairs);
 		const core::Size lone_pairs_b( number_unhybridized_lone_pairs_b + number_hybridized_lone_pairs_b);

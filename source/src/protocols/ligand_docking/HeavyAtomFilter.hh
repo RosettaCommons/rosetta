@@ -57,6 +57,8 @@ public:
 		return utility::pointer::make_shared< HeavyAtomFilter >( *this );
 	}
 
+	virtual core::Real report_sm( core::pose::Pose const & ) const override;
+
 	protocols::filters::FilterOP fresh_instance() const override{
 		return utility::pointer::make_shared< HeavyAtomFilter >();
 	}

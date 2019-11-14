@@ -1204,7 +1204,12 @@ ResidueType::copy_atom_info(
 		if ( atom.element_type() != nullptr ) {
 			mass_ += atom.element_type()->weight();
 		}
-		mm_atom_type_index_.push_back( mm_atom_types_ptr()->atom_type_index( atom.mm_name() ) );
+		if ( atom.mm_name().empty() ) {
+			TR << "Atom " << atom.name() << " on residue " << ResidueTypeBase::name() << " is mising the MM type. Typing as VIRT." << std::endl;
+			mm_atom_type_index_.push_back( mm_atom_types_ptr()->atom_type_index( "VIRT" ) ); // Type as VIRT if missing??
+		} else {
+			mm_atom_type_index_.push_back( mm_atom_types_ptr()->atom_type_index( atom.mm_name() ) );
+		}
 		if ( gasteiger_atom_typeset() == nullptr || atom.gasteiger_atom_type() == nullptr ) {
 			gasteiger_atom_type_index_.push_back( 0 );
 		} else {

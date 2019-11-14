@@ -79,6 +79,14 @@ MinimizeLigand::apply( core::pose::Pose & pose ){
 	}
 }
 
+/// @brief Remove the constraints added by this mover to the pose in apply, if any.
+void
+MinimizeLigand::remove_constraints( core::pose::Pose & pose ) {
+	for ( core::Size ii(1); ii<= ligand_torsion_restraints_.size(); ++ii ) {
+		ligand_torsion_restraints_[ii]->disable(pose);
+	}
+}
+
 bool MinimizeLigand::operator==(char const & chain) const{
 	return chain == chain_;
 }

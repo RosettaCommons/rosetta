@@ -29,12 +29,15 @@
 #include <core/chemical/Atom.hh>
 #include <core/chemical/AtomProperties.hh>
 #include <core/chemical/Bond.hh>
+#include <core/chemical/Elements.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/MutableResidueConnection.hh>
 #include <utility/graph/RingDetection.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
 
 #include <basic/Tracer.hh>
-
+#include <utility/exit.hh>
+#include <boost/unordered_map.hpp>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/graph/BFS_prune.hh>
@@ -45,6 +48,7 @@
 #include <boost/graph/breadth_first_search.hpp>
 
 #include <algorithm>
+#include <boost/unordered_map.hpp>
 
 namespace core {
 namespace chemical {
@@ -260,21 +264,42 @@ rename_atoms( MutableResidueType & res, bool preserve/*=true*/ ) {
 	}
 }
 
+core::Real &
+VDDistanceMatrix::operator() ( VD a, VD b ) {
+	// Accessing matrix_[a] will force creation if it doesn't exist
+	if ( ! matrix_[a].count(b) ) {
+		matrix_[a][b] = default_;
+	}
+	return matrix_[a][b];
+}
+
+core::Real
+VDDistanceMatrix::find_max_over( VD a ) {
+	InternalVector const & submap( matrix_[a] );
+	core::Real max_element = 0; // Distances are always greater than zero.
+	for ( InternalVector::const_iterator iter( submap.begin() ), iter_end(submap.end()); iter != iter_end; ++iter ) {
+		if ( iter->second > max_element ) {
+			max_element = iter->second;
+		}
+	}
+	return max_element;
+}
+
+
 /// @brief Utility visitor for find_nbr_dist
 /// Will only traverse those atoms in the "rigid" portion of graph around the starting atom.
 /// "Rigid" includes direct neighbors and atoms connected by non-rotatable bonds
 /// e.g. all rings, all double/triple bonds, methyl groups, single atoms, etc.
 class RigidDistanceVisitor: public utility::graph::null_bfs_prune_visitor {
-	using Matrix = utility::vector1<utility::vector1<core::Real> >;
 
 public:
-	RigidDistanceVisitor( Matrix & distances, MutableResidueType const & restype, VD start ) :
+	RigidDistanceVisitor( VDDistanceMatrix & distances, MutableResidueType const & restype, VD start ) :
 		distances_(distances),
 		restype_(restype),
 		start_(start),
 		start_pos_( restype.atom(start).ideal_xyz() )
 	{
-		start_index_ = restype.atom_index( start );
+		//start_index_ = restype.atom_index( start );
 	}
 
 	template <class ED, class ResidueGraphType>
@@ -287,8 +312,8 @@ public:
 			// Directly connected atoms are part of the rigid units, for distance purposes,
 			// but we shouldn't propagate across them unless the fit the other criteria
 			// (see TODO below, though)
-			core::Size index( restype_.atom_index( target ) );
-			distances_[start_index_][ index ] = restype_.atom( target ).ideal_xyz().distance( start_pos_ );
+			//core::Size index( restype_.atom_index( target ) );
+			distances_(start_, target) = restype_.atom( target ).ideal_xyz().distance( start_pos_ );
 		}
 		// Follow across non-rotatable bonds. (Ring and double bonds)
 		Bond const & bond( restype_.bond( edge ) );
@@ -310,8 +335,8 @@ public:
 	template <class VD, class ResidueGraphType>
 	bool examine_vertex( VD vertex, ResidueGraphType & ) {
 		// If we're examining the vertex, it's in the rigid unit -- add distances to the matrix
-		core::Size index( restype_.atom_index( vertex ) );
-		distances_[start_index_][index] = restype_.atom( vertex ).ideal_xyz().distance( start_pos_ );
+		//core::Size index( restype_.atom_index( vertex ) );
+		distances_(start_,vertex) = restype_.atom( vertex ).ideal_xyz().distance( start_pos_ );
 		// The reverse will be taken care of in a later iteration.
 		return false; // Always examine out edges.
 	}
@@ -337,15 +362,15 @@ public:
 
 
 private:
-	Matrix & distances_;
+	VDDistanceMatrix & distances_;
 	MutableResidueType const & restype_;
 	VD start_;
-	core::Size start_index_;
+	//core::Size start_index_;
 	Vector const & start_pos_;
 };
 
 /// @brief Calculate the rigid matrix - assume that distances has been initialized to some really large value, and is square
-void calculate_rigid_matrix( MutableResidueType const & res, utility::vector1< utility::vector1< core::Real > > & distances ) {
+void calculate_rigid_matrix( MutableResidueType const & res, VDDistanceMatrix & distances ) {
 	// Set up bonded and rigid distances
 	VIter iter, iter_end;
 	for ( boost::tie( iter, iter_end ) = res.atom_iterators(); iter != iter_end; ++iter ) {
@@ -356,12 +381,13 @@ void calculate_rigid_matrix( MutableResidueType const & res, utility::vector1< u
 	// The Floyd-Warshall algorithm. We do this in-line instead of with boost
 	// because some of the distance weights don't correspond to edge weights.
 	// (Besides, it's easy enough.)
-	for ( core::Size kk(1); kk <= res.natoms(); ++kk ) {
-		for ( core::Size jj(1); jj <= res.natoms(); ++jj ) {
-			for ( core::Size ii(1); ii <= res.natoms(); ++ii ) {
-				core::Real new_dist( distances[ii][kk] + distances[kk][jj] );
-				if ( new_dist < distances[ii][jj] ) {
-					distances[ii][jj] = new_dist;
+	VIter kk, kk_end, jj, jj_end, ii, ii_end;
+	for ( boost::tie(kk, kk_end) = res.atom_iterators(); kk != kk_end; ++kk ) {
+		for ( boost::tie(jj, jj_end) = res.atom_iterators(); jj != jj_end; ++jj ) {
+			for ( boost::tie(ii, ii_end) = res.atom_iterators(); ii != ii_end; ++ii ) {
+				core::Real new_dist( distances(*ii,*kk) + distances(*kk,*jj) );
+				if ( new_dist < distances(*ii,*jj) ) {
+					distances(*ii,*jj) = new_dist;
 				}
 			}
 		}
@@ -378,8 +404,8 @@ void calculate_rigid_matrix( MutableResidueType const & res, utility::vector1< u
 		TR.Trace << std::endl;
 		for ( VD yy: res.all_atoms() ) {
 			TR.Trace << res.atom_name(yy) << '\t';
-			for (  core::Size xx(1); xx <= res.natoms(); ++xx ) {
-				TR.Trace << distances[res.atom_index(yy)][xx] << '\t';
+			for ( VD xx: res.all_atoms() ) {
+				TR.Trace << distances(yy,xx) << '\t';
 			}
 			TR.Trace << std::endl;
 		}
@@ -406,27 +432,35 @@ find_nbr_dist( MutableResidueType const & res, VD & nbr_atom ) {
 		utility_exit_with_message("Cannot find neighbor atom distance for empty residue type.");
 	}
 	core::Real maxdist = 1e9; // Hopefully sufficiently large.
-	utility::vector1< utility::vector1< core::Real > > distances(res.natoms(), utility::vector1< core::Real >( res.natoms(), maxdist ) );
+	VDDistanceMatrix distances( maxdist );
 	calculate_rigid_matrix( res, distances );
 
 	// TODO: Although we throw out hydrogens as potential neighbor atoms,
 	// I believe the meaning of neighbor atoms is heavy-atom distances
 	// We could get smaller values by removing hydrogens from distance considerations.
 
-	utility::vector1< core::Real > maxdists;
-	for ( core::Size ii(1); ii<= res.natoms(); ++ii ) {
-		maxdists.push_back( *(std::max_element( distances[ii].begin(), distances[ii].end() )) );
+	boost::unordered_map< VD, core::Real > maxdists;
+	VIter ii, ii_end;
+	for ( boost::tie(ii, ii_end) = res.atom_iterators(); ii != ii_end; ++ii ) {
+		maxdists[*ii] = distances.find_max_over( *ii );
 	}
 
 	if ( nbr_atom != MutableResidueType::null_vertex ) {
-		// We have an atom in mind - we just need the distance.
-		return maxdists[ res.atom_index( nbr_atom ) ];
+		if ( maxdists.count( nbr_atom ) ) {
+			// We have an atom in mind - we just need the distance.
+			if ( res.atom(nbr_atom).element_type() && res.atom(nbr_atom).element_type()->element() == element::H ) {
+				TR.Warning << "Specified neighbor atom is a Hydrogen!!." << std::endl;
+			}
+			return maxdists[ nbr_atom ];
+		} else {
+			TR.Warning << "Specified neighbor atom is not present in the distance calculation - recomputing." << std::endl;
+			nbr_atom = MutableResidueType::null_vertex;
+		}
 	}
 
 	//maxdist initialized above
 	for ( VD atom_vd: res.all_atoms() ) {
-		core::Size jj( res.atom_index( atom_vd ) );
-		if ( maxdists[jj] < maxdist &&
+		if ( maxdists[atom_vd] < maxdist &&
 				res.atom(atom_vd).element_type()->element() != core::chemical::element::H ) { // not hydrogen
 			//Use graph directly, as other neighbor annotations may not be fully baked
 			core::Size bonded_heavy(0);
@@ -437,17 +471,23 @@ find_nbr_dist( MutableResidueType const & res, VD & nbr_atom ) {
 				}
 			}
 			if ( bonded_heavy >= 2 ) {
-				maxdist = maxdists[jj];
+				maxdist = maxdists[atom_vd];
 				nbr_atom = atom_vd;
 			}
 		}
 	}
 
-	if ( nbr_atom == MutableResidueType::null_vertex ) { // No suitable neighbor -- just pick atom 1
-		VD first_atom = res.all_atoms()[1];
-		TR.Warning << "No suitable neighbor atom found for " << res.name() << " -- picking first atom (" << res.atom_name(first_atom) << ") instead." << std::endl;
-		nbr_atom = first_atom;
-		maxdist = maxdists[1];
+	if ( nbr_atom == MutableResidueType::null_vertex ) { // No suitable neighbor -- just pick any atom, preferring a heavy atom
+		nbr_atom = maxdists.begin()->first;
+		maxdist = maxdists.begin()->second;
+		for ( boost::unordered_map< VD, core::Real >::const_iterator iter(maxdists.begin()), iter_end(maxdists.end()); iter != iter_end; ++iter ) {
+			if ( res.atom(iter->first).element_type() && res.atom(iter->first).element_type()->element() != element::H ) {
+				nbr_atom = iter->first;
+				maxdist = iter->second;
+				break;
+			}
+		}
+		TR.Warning << "No suitable neighbor atom found for " << res.name() << " -- picking atom (" << res.atom_name(nbr_atom) << ") instead." << std::endl;
 	}
 	return maxdist;
 }

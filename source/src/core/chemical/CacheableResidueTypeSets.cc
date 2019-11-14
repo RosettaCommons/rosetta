@@ -78,6 +78,15 @@ CacheableResidueTypeSets::get_res_type_set( TypeSetMode mode /*= FULL_ATOM_t*/ )
 	return res_type_sets_[ mode ];
 }
 
+/// @brief Return a ResidueTypeSet of the appropriate type,
+/// If one doesn't already exist, return a null pointer.
+PoseResidueTypeSetOP
+CacheableResidueTypeSets::get_res_type_set( TypeSetMode mode /*= FULL_ATOM_t*/ ) {
+	debug_assert( core::Size(mode) >= 1 );
+	debug_assert( mode <= TYPE_SET_MODES_LENGTH );
+	return res_type_sets_[ mode ];
+}
+
 /// @brief Replace the current ResidueTypeSet of the appropriate type
 /// with the given RTS.
 void

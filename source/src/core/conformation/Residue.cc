@@ -28,6 +28,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/AtomICoor.hh>
 #include <core/chemical/rings/RingConformer.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -691,40 +692,56 @@ Residue::orient_onto_residue( Residue const & src )
 	using kinematics::Stub;
 	using ObjexxFCL::stripped_whitespace;
 
-	Size center, nbr1, nbr2;
+	Size center(0), nbr1(0), nbr2(0);
 	select_orient_atoms( center, nbr1, nbr2 );
-	//TR << "ARGH ok " << center << "  " << nbr1 << "  " << nbr2 << std::endl;
-	//TR << "ARGH ok " << src.atom_name( center ) << "  " << src.atom_name( nbr1 ) << "  " << src.atom_name( nbr2 ) << std::endl;
+	debug_assert( center && nbr1 && nbr2 );
 
-	if (
-			! src.type().has( rsd_type_.atom_name( center ) ) ||
-			! src.type().has( rsd_type_.atom_name( nbr1 ) ) ||
-			! src.type().has( rsd_type_.atom_name( nbr2 ) )
+	Size src_center(0), src_nbr1(0), src_nbr2(0);
+
+	// This started out as just name based correspondence.
+	// The current system preserves this, as much as possible, but if that's going to fail
+	// We just assume that we want to place the orient atoms of the two ontop of each other.
+	// (RM: I think just matching the orient atoms should probably be the default way, but I don't what edge cases that would change.)
+	if ( src.type().has( stripped_whitespace( rsd_type_.atom_name( center ) ) ) &&
+			src.type().has( stripped_whitespace( rsd_type_.atom_name( nbr1 ) ) ) &&
+			src.type().has( stripped_whitespace( rsd_type_.atom_name( nbr2 ) ) )
 			) {
-		// If the src residue doesn't have these atoms, try using src's orient atoms
-		src.select_orient_atoms( center, nbr1, nbr2 );
+		src_center = src.atom_index( stripped_whitespace( rsd_type_.atom_name( center ) ) );
+		src_nbr1 = src.atom_index( stripped_whitespace( rsd_type_.atom_name( nbr1 ) ) );
+		src_nbr2 = src.atom_index( stripped_whitespace( rsd_type_.atom_name( nbr2 ) ) );
+	} else {
+		// If the src residue doesn't have this residues orient atoms, try using the names of src's orient atoms
+		src.select_orient_atoms( src_center, src_nbr1, src_nbr2 );
+		debug_assert( src_center && src_nbr1 && src_nbr2 );
+
 		if (
-				! rsd_type_.has( src.type().atom_name( center ) ) ||
-				! rsd_type_.has( src.type().atom_name( nbr1 ) ) ||
-				! rsd_type_.has( src.type().atom_name( nbr2 ) )
+				rsd_type_.has( stripped_whitespace( src.type().atom_name( src_center ) ) ) &&
+				rsd_type_.has( stripped_whitespace( src.type().atom_name( src_nbr1 ) ) ) &&
+				rsd_type_.has( stripped_whitespace( src.type().atom_name( src_nbr2 ) ) )
 				) {
-			rsd_type_.show_all_atom_names( TR.Error );
-			src.type().show_all_atom_names( TR.Error );
-			utility_exit_with_message("Cannot orient residues " + name() + " and " + src.name() + " as they don't have the the appropriately matched atom names.");
+			TR.Debug << "When orienting residue " << rsd_type_.name() << " onto " << src.name() << " - using inverse name-based correspondences." << std::endl;
+			center = rsd_type_.atom_index( stripped_whitespace( src.type().atom_name( src_center ) ) );
+			nbr1 = rsd_type_.atom_index( stripped_whitespace( src.type().atom_name( src_nbr1 ) ) );
+			nbr2 = rsd_type_.atom_index( stripped_whitespace( src.type().atom_name( src_nbr2 ) ) );
+		} else {
+			TR.Debug << "When orienting residue " << rsd_type_.name() << " onto " << src.name() << " - name-based correspondences not found: matching orient atoms." << std::endl;
+			// The variables have the respective orient atoms in them already.
 		}
 	}
 
 	// std::cout << " CENTER " << atom_name( center ) << "   NBR1 " << atom_name( nbr1 ) << "    NBR2 " << atom_name( nbr2 ) << std::endl;
 
 	debug_assert( center && nbr1 && nbr2 );
+	debug_assert( src_center && src_nbr1 && src_nbr2 );
+
 	orient_onto_residue(
 		src,
-		(center),
-		(nbr1),
-		(nbr2),
-		src.atom_index( stripped_whitespace(rsd_type_.atom_name( center) )),
-		src.atom_index( stripped_whitespace(rsd_type_.atom_name( nbr1) )),
-		src.atom_index( stripped_whitespace(rsd_type_.atom_name( nbr2) )));
+		center,
+		nbr1,
+		nbr2,
+		src_center,
+		src_nbr1,
+		src_nbr2);
 
 } // orient_onto_residue( Residue const & src)
 
@@ -1790,7 +1807,7 @@ Residue::set_d( int const chino, Real const setting ) {
 	Vector const v( (setting-current_d)*axis );
 
 	// apply the transform to all "downstream" atoms
-	apply_transform_downstream( chi_atoms[baseatom+1], R, v );
+	apply_transform_downstream( chi_atoms[baseatom+1], chi_atoms[baseatom], R, v );
 
 	ASSERT_ONLY(Real const new_d( ( atom(chi_atoms[baseatom+1]).xyz() - atom(chi_atoms[baseatom]).xyz() ).length() );)
 	debug_assert( std::abs( new_d - setting ) < 1e-2 );
@@ -1826,7 +1843,7 @@ Residue::set_theta( int const chino, Real const setting ) {
 	Vector const v( chi_atom2_xyz - R * chi_atom2_xyz );
 
 	// apply the transform to all "downstream" atoms
-	apply_transform_downstream( chi_atoms[baseatom], R, v );
+	apply_transform_downstream( chi_atoms[baseatom], chi_atoms[baseatom-1], R, v );
 
 	ASSERT_ONLY(Real const new_th(numeric::angle_degrees(
 		atom( chi_atoms[baseatom-1] ).xyz(), atom( chi_atoms[baseatom] ).xyz(), atom( chi_atoms[baseatom+1] ).xyz() )); )
@@ -1857,7 +1874,7 @@ Residue::set_tau( Size const nuno, Real const setting )
 	Vector const v( nu_atom2_xyz - R * nu_atom2_xyz );
 
 	// apply the transform to all "downstream" atoms
-	apply_transform_downstream( nu_atoms[ base_id+1 ], R, v );
+	apply_transform_downstream( nu_atoms[ base_id+1 ], nu_atoms[ base_id ], R, v );
 
 	//ASSERT_ONLY(Real const new_tau(numeric::angle_degrees(
 	//  atom( nu_atoms[ base_id-1 ] ).xyz(), atom( nu_atoms[ base_id ] ).xyz(), atom( nu_atoms[ base_id+1 ] ).xyz() )); )
@@ -1905,7 +1922,7 @@ Residue::set_all_ring_nu( Size first, Size last, utility::vector1< Real > const 
 		Vector const v( nu_atom3_xyz - R * nu_atom3_xyz );
 
 		// apply the transform to all "downstream" atoms
-		apply_transform_downstream( nu_atoms[3], R, v );
+		apply_transform_downstream( nu_atoms[3], nu_atoms[2], R, v );
 
 		ASSERT_ONLY(Real const new_nu
 			( numeric::dihedral_degrees( atom( nu_atoms[1] ).xyz(),
@@ -1956,16 +1973,16 @@ Residue::set_chi( int const chino, Real const setting )
 	Vector const v( chi_atom3_xyz - R * chi_atom3_xyz );
 
 	// apply the transform to all "downstream" atoms
-	apply_transform_downstream( chi_atoms[3], R, v );
+	apply_transform_downstream( chi_atoms[3], chi_atoms[2], R, v );
 
 
-	ASSERT_ONLY(Real const new_chi
-		( numeric::dihedral_degrees( atom( chi_atoms[1] ).xyz(),
+	ASSERT_ONLY(
+		Real const new_chi( numeric::dihedral_degrees( atom( chi_atoms[1] ).xyz(),
 		atom( chi_atoms[2] ).xyz(),
 		atom( chi_atoms[3] ).xyz(),
-		atom( chi_atoms[4] ).xyz() ) );)
-	debug_assert( std::abs( basic::subtract_degree_angles( new_chi, setting ) ) <
-		1e-2 );
+		atom( chi_atoms[4] ).xyz() ) );
+		);
+	debug_assert( std::abs( basic::subtract_degree_angles( new_chi, setting ) ) < 1e-2 );
 
 	update_actcoord();//ek added 4/28/10
 }
@@ -1993,6 +2010,7 @@ Residue::set_all_chi( utility::vector1< Real > const & chis )
 void
 Residue::apply_transform_downstream(
 	core::Size const atomno,
+	core::Size const upstream_atomno,
 	numeric::xyzMatrix< Real > const & R,
 	Vector const & v
 )
@@ -2007,12 +2025,15 @@ Residue::apply_transform_downstream(
 	for ( Size i=1; i<= nbrs.size(); ++i ) {
 		core::Size const nbr( nbrs[i] );
 		core::Size const nbr_base( rsd_type_.atom_base( nbr ) );
-		if ( nbr_base == atomno ) {
-			if ( my_atom_base != nbr ) {
-				apply_transform_downstream( nbr, R, v );
+		if ( nbr_base == atomno && nbr != upstream_atomno ) {
+			// Note: The atom base of the root atom is the first child atom. Propagate outward from the root anyway.
+			if ( my_atom_base != nbr || atomno == rsd_type_.root_atom() ) {
+				apply_transform_downstream( nbr, atomno, R, v );
 			} else {
-				if ( atomno!=1 && atomno!=2 ) TR.Warning << "DANGER: almost got stuck in infinite loop!  Atom " << atomno << " is apparently a parent AND child of atom " << nbr << "." << std::endl;
-				//Note: atom 1 and atom 2 have a weird relationship, and that leads to bogus warning messages here.
+				// We have a cycle - we shouldn't ... (well, except for the aforementioned root/first child case)
+				if ( nbr != rsd_type_.root_atom() ) {
+					TR.Warning << "DANGER: almost got stuck in infinite loop!  Atom " << atomno << " is apparently a parent AND child of atom " << nbr << "." << std::endl;
+				}
 			}
 		}
 	}

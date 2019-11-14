@@ -7,8 +7,6 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 //
-// This file is based off of code from the Biochemistry Library (BCL).
-// The BCL is copyright Vanderbilt University (Meiler Lab), a RosettaCommons member
 
 /// @file   core/chemical/Elements.hh
 /// @brief  All the elements known to mankind (me)...as of4/18/2014

@@ -96,7 +96,13 @@ WeightedSampler::random_sample(
 	assert(randnum >= 0);
 	assert(randnum <= 1);
 
-	if  ( !cumulative_distribution_valid_ ) update_cumulative_distribution();
+	if ( !cumulative_distribution_valid_ ) {
+		if ( !update_cumulative_distribution() ) {
+			// Error in calculating cumulative distribution - just pick an evenly weighted one.
+			// 0.999999 to deal with randnum == 1.0 case
+			return numeric::Size(cumulative_distribution_.size() * randnum * 0.999999 ) + 1;
+		}
+	}
 
 	for ( numeric::Size i = 1; i <= cumulative_distribution_.size(); ++i ) {
 		if ( cumulative_distribution_[i] && cumulative_distribution_[i] >= randnum ) return i;
@@ -112,7 +118,13 @@ WeightedSampler::random_sample(
 	return random_sample(rg.uniform());
 }
 
-void
+
+numeric::Size
+WeightedSampler::random_sample() const {
+	return random_sample(numeric::random::rg().uniform());
+}
+
+bool
 WeightedSampler::update_cumulative_distribution() const {
 
 	runtime_assert(weights_.size());
@@ -126,6 +138,11 @@ WeightedSampler::update_cumulative_distribution() const {
 		weight_sum += weight;
 	}
 
+	if ( weight_sum == 0.0 ) {
+		// Exact comparison is desired here - it's only an issue if the weight sum is exactly zero
+		return false;
+	}
+
 	cumulative_distribution_[1] = weights_[1]/weight_sum;
 
 	for ( numeric::Size i = 2; i < weights_.size(); ++i ) {
@@ -135,8 +152,16 @@ WeightedSampler::update_cumulative_distribution() const {
 	cumulative_distribution_.back() = 1;
 
 	cumulative_distribution_valid_ = true;
+	return true;
 }
 
+std::ostream & operator<< (std::ostream & out, WeightedSampler const & sampler ) {
+	out << "WeightedSampler weights:";
+	for ( numeric::Size ii(1); ii <= sampler.size(); ++ii ) {
+		out << " " << sampler.weights()[ii];
+	}
+	return out;
+}
 
 } // namespace random
 } // namespace numeric

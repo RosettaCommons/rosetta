@@ -34,6 +34,7 @@
 #include <core/chemical/ResidueSubGraphTypes.hh>
 #include <core/chemical/AtomTypeSet.hh> // operator []
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/Elements.hh>
 // Package headers
 
 namespace core {
@@ -95,8 +96,7 @@ bool HeavyAtomWithHydrogensFilter::operator()(VD const vd) const{
 
 
 bool HydrogenAtomFilter::operator()(VD const vd) const{
-	AtomTypeSetCOP atom_types( atom_types_ );
-	return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_hydrogen();
+	return (*graph_)[vd].element() == element::H;
 }
 
 bool AromaticAtomFilter::operator()(VD const vd) const{

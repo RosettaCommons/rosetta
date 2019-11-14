@@ -110,6 +110,32 @@ MonteCarlo::MonteCarlo(
 	check_frequency_ = basic::options::option[ basic::options::OptionKeys::mc::convergence_check_frequency ]();
 }
 
+// constructor for monte_carlo object, with externally computed scores
+MonteCarlo::MonteCarlo(
+	Pose const & init_pose,
+	Real const init_score,
+	Real const temperature
+):
+	temperature_( temperature ),
+	autotemp_( false ),
+	quench_temp_( 0.0 ),
+	last_accept_( 0 ),
+	mc_accepted_( MCA_accepted_score_beat_last ), // init_pose beats the absence of a pose
+	counter_( new TrialCounter ),
+	update_boinc_( true ),
+	total_score_of_last_considered_pose_( 0.0 ),
+	last_accepted_score_( 0.0 ),
+	lowest_score_( 0.0 ),
+	heat_after_cycles_( 150 )
+{
+	last_accepted_pose_ = PoseOP( new Pose() );
+	lowest_score_pose_ = PoseOP( new Pose() );
+	reset( init_pose, init_score );
+
+	last_check_ = 0;
+	check_frequency_ = basic::options::option[ basic::options::OptionKeys::mc::convergence_check_frequency ]();
+}
+
 MonteCarlo::MonteCarlo(
 	ScoreFunction const & scorefxn, // ScoreFunctionCOP scorefxn,
 	Real const temperature
@@ -174,10 +200,15 @@ MonteCarlo::recover_low( Pose & pose )
 void
 MonteCarlo::show_state() const
 {
-	TR << "MC: " << temperature_
-		<< "  " << (*score_function_)(*last_accepted_pose_)
-		<< "  " << (*score_function_)(*lowest_score_pose_)
-		<< "  " << last_accepted_score()
+	TR << "MC: " << temperature_;
+	if ( score_function_ ) {
+		TR << "  " << (*score_function_)(*last_accepted_pose_)
+			<< "  " << (*score_function_)(*lowest_score_pose_);
+	} else {
+		TR << "  " << "n/a"
+			<< "  " << "n/a";
+	}
+	TR << "  " << last_accepted_score()
 		<< "  " << lowest_score()
 		<< "  " << last_accept_
 		<< "  " << autotemp_
@@ -365,6 +396,60 @@ MonteCarlo::boltzmann(
 //////////////////////////////////////////////////////////
 bool
 MonteCarlo::boltzmann(
+	Pose & pose,
+	Real const score,
+	std::string const & move_type, // = unk
+	core::Real const proposal_density_ratio, // = 1
+	core::Real const inner_score_temperature_delta // = 0
+)
+{
+
+	// Work around a current bug in the pose observer classes..
+#ifdef BOINC_GRAPHICS
+	if ( update_boinc_ ) {
+		boinc::Boinc::update_graphics_current( pose );
+	}
+#endif
+
+	//now delegate deciscion making...
+	bool const accept( boltzmann( score, move_type, proposal_density_ratio, inner_score_temperature_delta ) );
+
+	//rejected ?
+	if ( !accept ) {
+		evaluate_convergence_checks( pose, true /*reject*/, false /* not final*/ );
+		pose = ( *last_accepted_pose_ );
+		return false; // rejected
+	}
+
+	//accepted !
+	PROF_START( basic::MC_ACCEPT );
+	*last_accepted_pose_ = pose;
+
+#ifdef BOINC_GRAPHICS
+	if ( update_boinc_ ) {
+		boinc::Boinc::update_graphics_last_accepted( pose, last_accepted_score() );
+	}
+#endif
+
+	if ( mc_accepted_ == MCA_accepted_score_beat_low ) {
+		*lowest_score_pose_ = pose;
+		evaluate_convergence_checks( pose, false /*not reject*/, false /*not final*/ );
+
+#ifdef BOINC_GRAPHICS
+		if ( update_boinc_ ) {
+			boinc::Boinc::update_graphics_low_energy( pose, lowest_score() );
+		}
+#endif
+
+	} //MCA_accepted_score_beat_low
+
+	PROF_STOP( basic::MC_ACCEPT );
+	return true; // accept!
+}
+
+
+bool
+MonteCarlo::boltzmann(
 	core::Real score,
 	std::string const & move_type, // = "unk"
 	core::Real const proposal_density_ratio, // = 1
@@ -482,6 +567,22 @@ MonteCarlo::reset( Pose const & pose )
 	last_accepted_score_ = score;
 	lowest_score_ = score;
 }
+
+void
+MonteCarlo::reset( Pose const & pose, Real const score )
+{
+	PROF_START( basic::MC_ACCEPT );
+	*last_accepted_pose_ = pose;
+	PROF_STOP( basic::MC_ACCEPT );
+
+	PROF_START( basic::MC_ACCEPT );
+	*lowest_score_pose_ = *last_accepted_pose_;
+	PROF_STOP( basic::MC_ACCEPT );
+
+	last_accepted_score_ = score;
+	lowest_score_ = score;
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 void

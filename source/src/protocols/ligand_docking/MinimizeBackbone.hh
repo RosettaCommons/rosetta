@@ -22,6 +22,7 @@
 // Package Headers
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/Edge.fwd.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 
 //// Project Headers
 #include <protocols/moves/Mover.hh>
@@ -51,6 +52,12 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 
+	/// @brief Remove any constraints which were added during the apply() call
+	virtual void remove_constraints( core::pose::Pose & pose );
+
+	/// @brief Remove any cutpoint variants which were added during the apply() call
+	virtual void remove_cutpoints( core::pose::Pose & pose );
+
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 
@@ -75,9 +82,14 @@ public:
 
 
 private:
-	// map of ligand chains to minimize backbone around and how much minimization around each chain
-	// Real is the Size of one standard deviation.  For restraints placed on C-alphas
+	/// @brief map of ligand chains to minimize backbone around and how much minimization around each chain
+	/// Real is the Size of one standard deviation.  For restraints placed on C-alphas
 	InterfaceBuilderOP interface_builder_;
+	/// @brief The constraints which were added to the pose in apply()
+	/// Stored in case we want to remove them later.
+	core::scoring::constraints::ConstraintCOPs constraints_;
+	/// @brief The cutpoints for which we added cutpoint variants - remove them when we're done with them.
+	utility::vector1< core::Size > cutpoints_;
 
 	void reorder_foldtree_around_mobile_regions(
 		ligand_options::Interface const & interface,

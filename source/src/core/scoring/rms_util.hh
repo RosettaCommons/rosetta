@@ -100,6 +100,30 @@ automorphic_rmsd(
 	bool superimpose
 );
 
+/// @brief Calculate the RMSD between two residues, using the provided atom map.
+/// The atom map is indexed by rsd1 index, and give the corresponding rsd2 index.
+/// Use a value of 0 to omit the rsd pairing.
+/// Superimposes the residues (remove rigid-body rotational/translational component of the rmsd.)
+core::Real
+residue_rmsd_super(
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
+	utility::vector1< core::Size > const & atom_map,
+	bool skip_hydro = true
+);
+
+/// @brief Calculate the RMSD between two residues, using the provided atom map.
+/// The atom map is indexed by rsd1 index, and give the corresponding rsd2 index.
+/// Use a value of 0 to omit the rsd pairing.
+/// Does not superimpose the residues.
+core::Real
+residue_rmsd_nosuper(
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
+	utility::vector1< core::Size > const & atom_map,
+	bool skip_hydro = true
+);
+
 /// @brief  Compute the CA RMSD between two poses.
 core::Real CA_rmsd(const core::pose::Pose& pose1,
 	const core::pose::Pose& pose2,

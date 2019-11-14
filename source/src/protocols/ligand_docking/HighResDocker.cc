@@ -44,6 +44,7 @@
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 
 #include <core/scoring/ScoreFunction.hh>
+
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
@@ -80,7 +81,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer high_res_docker_tracer( "protocols.ligand_docking.ligand_options.Protocol", basic::t_debug );
+static basic::Tracer TR( "protocols.ligand_docking.ligand_options.Protocol" );
 
 
 
@@ -169,7 +170,7 @@ HighResDocker::parse_my_tag(
 
 MinimizeLigandOPs
 HighResDocker::setup_ligands_to_minimize(
-	core::pose::Pose pose,
+	core::pose::Pose & pose,
 	char chain // =0 This is for dealing with multiple ligand docking
 ){
 	MinimizeLigandOPs minimize_ligands;
@@ -196,6 +197,13 @@ HighResDocker::setup_ligands_to_minimize(
 		}
 	}
 	return minimize_ligands;
+}
+
+void
+HighResDocker::remove_ligand_dihedral_restraints(core::pose::Pose & pose, MinimizeLigandOPs & minimized_ligands) const {
+	for ( core::Size ii(1); ii <= minimized_ligands.size(); ++ii ) {
+		minimized_ligands[ii]->remove_constraints( pose );
+	}
 }
 
 TetherLigandOPs
@@ -262,11 +270,11 @@ HighResDocker::apply(core::pose::Pose & pose) {
 		protocols::moves::MoverOP pack_mover;
 
 		if ( cycle % repack_every_Nth_ == 1 ) {
-			high_res_docker_tracer.Debug << "making PackRotamersMover" << std::endl;
-			pack_mover= utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
+			TR.Debug << "making PackRotamersMover" << std::endl;
+			pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
 		} else {
-			high_res_docker_tracer.Debug << "making RotamerTrialsMover" << std::endl;
-			pack_mover= utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(score_fxn_, *packer_task);
+			TR.Debug << "making RotamerTrialsMover" << std::endl;
+			pack_mover = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(score_fxn_, *packer_task);
 		}
 
 		// Wrap it in something to disable the torsion constraints before packing!
@@ -288,10 +296,12 @@ HighResDocker::apply(core::pose::Pose & pose) {
 
 	}
 
-	remove_ligand_tethers(pose, ligand_tethers);
 	// keep the best structure we found, not the current one
 	monteCarlo->show_scores();
 	monteCarlo->recover_low(pose);
+
+	remove_ligand_tethers(pose, ligand_tethers);
+	remove_ligand_dihedral_restraints(pose, minimized_ligands);
 }
 
 void
@@ -320,11 +330,11 @@ HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector
 		protocols::moves::MoverOP pack_mover;
 
 		if ( cycle % repack_every_Nth_ == 1 ) {
-			high_res_docker_tracer.Debug << "making PackRotamersMover" << std::endl;
+			TR.Debug << "making PackRotamersMover" << std::endl;
 			pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
 		} else {
-			high_res_docker_tracer.Debug << "making RotamerTrialsMover" << std::endl;
-			pack_mover= utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(score_fxn_, *packer_task);
+			TR.Debug << "making RotamerTrialsMover" << std::endl;
+			pack_mover = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(score_fxn_, *packer_task);
 		}
 
 		// Wrap it in something to disable the torsion constraints before packing!
@@ -366,10 +376,10 @@ HighResDocker::apply(core::pose::Pose & pose, core::Real & current_score, char q
 	protocols::moves::MoverOP pack_mover;
 
 	if ( cycle % repack_every_Nth_ == 1 ) {
-		high_res_docker_tracer.Debug << "making PackRotamersMover" << std::endl;
+		TR.Debug << "making PackRotamersMover" << std::endl;
 		pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
 	} else {
-		high_res_docker_tracer.Debug << "making RotamerTrialsMover" << std::endl;
+		TR.Debug << "making RotamerTrialsMover" << std::endl;
 		pack_mover = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(score_fxn_, *packer_task);
 	}
 
@@ -432,17 +442,17 @@ HighResDocker::make_packer_task_from_vector(
 		/// If several params files have the same name, allow switching among them
 		/// This was previously only enabled with mutate_same_name3.  Now default.
 		if ( ! pose.residue(i).is_ligand() ) continue;
-		high_res_docker_tracer.Debug<<  "enabling packing for ligand residue "<< i << std::endl;
+		TR.Debug<<  "enabling packing for ligand residue "<< i << std::endl;
 		enable_ligand_rotamer_packing(pose, i, pack_task);
 	}
 
 	if ( resfile_.empty() ) {
 		bool const use_resfile= basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() ;
 		if ( use_resfile ) {
-			high_res_docker_tracer<< "using OPTIONS resfile"<< std::endl;
+			TR.Debug << "using OPTIONS resfile"<< std::endl;
 			core::pack::task::parse_resfile(pose, *pack_task);
 		} else {
-			high_res_docker_tracer<< "restricting to repack"<< std::endl;
+			TR.Debug << "restricting to repack"<< std::endl;
 			for ( core::Size i = 1; i <= pose.size(); ++i ) {
 				if ( ! pose.residue(i).is_ligand() ) {
 					pack_task->nonconst_residue_task( i ).restrict_to_repacking();
@@ -450,7 +460,7 @@ HighResDocker::make_packer_task_from_vector(
 			}
 		}
 	} else {
-		high_res_docker_tracer<< "using XML resfile"<< std::endl;
+		TR.Debug << "using XML resfile"<< std::endl;
 		core::pack::task::parse_resfile(pose, *pack_task, resfile_);
 	}
 

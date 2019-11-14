@@ -408,12 +408,34 @@ MutableResidueType::bonded_neighbors( VD const & atom ) const {
 	return nbrs;
 }
 
+Size
+MutableResidueType::number_bonded_hydrogens( VD atomvd ) const {
+	return bonded_hydrogens( atomvd ).size();
+}
+
 utility::vector1< VD >
 MutableResidueType::bonded_hydrogens( VD const & atm ) const {
 	utility::vector1< VD > nbrs;
 	AdjacentIter itr, itr_end;
 	for ( boost::tie(itr, itr_end) = boost::adjacent_vertices( atm, graph_ ); itr != itr_end; ++itr ) {
 		if ( atom( *itr ).is_hydrogen() ) {
+			nbrs.push_back( *itr );
+		}
+	}
+	return nbrs;
+}
+
+Size
+MutableResidueType::number_bonded_heavyatoms( VD atomvd ) const {
+	return bonded_heavyatoms( atomvd ).size();
+}
+
+utility::vector1< VD >
+MutableResidueType::bonded_heavyatoms( VD const & atm ) const {
+	utility::vector1< VD > nbrs;
+	AdjacentIter itr, itr_end;
+	for ( boost::tie(itr, itr_end) = boost::adjacent_vertices( atm, graph_ ); itr != itr_end; ++itr ) {
+		if ( ! atom( *itr ).is_hydrogen() ) {
 			nbrs.push_back( *itr );
 		}
 	}
@@ -873,6 +895,7 @@ MutableResidueType::add_atom(
 	ordered_atoms_.push_back(v);
 	debug_assert( boost::num_vertices(graph_) == ordered_atoms_.size() );
 
+	core::chemical::regenerate_graph_vertex_index(graph_);
 	return v;
 }
 
@@ -897,6 +920,7 @@ MutableResidueType::add_atom(Atom const & atom, MutableICoorRecord const & icoor
 
 	graph_[v].icoor( utility::pointer::make_shared< MutableICoorRecord >( icoor ) ); // set icoor for this atom
 
+	core::chemical::regenerate_graph_vertex_index(graph_);
 	return v;
 }
 
@@ -1177,6 +1201,20 @@ MutableResidueType::change_bond_type(
 	graph_.add_edge( vd_source, vd_target, Bond( -1, new_bond_label ) ); /// -1 means Bond distance not set here.
 }
 
+/// @brief Delete a bond between the two atoms.
+/// @details Note that this might leave dangling atoms.
+void
+MutableResidueType::delete_bond(VD atom1, VD atom2) {
+	ED edge;
+	bool found;
+	boost::tie(edge, found) = boost::edge(atom1, atom2, graph_ );
+	if ( !found ) {
+		utility_exit_with_message("Cannot delete non-existent bond."); // TODO: add checking for atom presense.
+	}
+	boost::remove_edge( edge, graph_ );
+}
+
+
 /// @details add a cut_bond between atom1 and atom2, which disallows an atom-tree connection,
 ///            though the atoms are really bonded.
 void
@@ -1318,6 +1356,14 @@ MutableResidueType::set_icoor(
 
 	if ( update_xyz ) {
 		set_ideal_xyz( atm, ic->build( *this ) );
+	}
+}
+
+void
+MutableResidueType::clear_icoor() {
+	root_atom_ = MutableResidueType::null_vertex;
+	for ( VD atm: ordered_atoms_ ) {
+		atom(atm).icoor( nullptr );
 	}
 }
 
@@ -1780,11 +1826,20 @@ MutableResidueType::dump_vd_info() const {
 void
 MutableResidueType::show_all_atom_names( std::ostream & out ) const {
 
+	out << "atom_name atom_index atom_vertex" << std::endl;
 	for ( VIterPair vp = boost::vertices(graph_); vp.first != vp.second; ++vp.first ) {
 		auto v_iter= vp.first;
 		VD vd = *v_iter;
 		Atom a = graph_[vd];
-		out << "'" << a.name() << "' " << &graph_[vd] << std::endl;
+		// Can't use atom_index(), as if that fails it would call show_all_atom_names, leading to recursion.
+		core::Size index(0);
+		for ( core::Size ii(1); ii <= ordered_atoms_.size(); ++ii ) {
+			if ( ordered_atoms_[ii] == vd ) {
+				index = ii;
+				break;
+			}
+		}
+		out << "'" << a.name() << "' " << index << " " << vd << std::endl;
 	}
 
 }
@@ -1826,13 +1881,20 @@ void MutableResidueType::assign_internal_coordinates()
 	// Reuse the existing root, or failing that, the neighbor atom
 	// As a last resort, just use atom #1
 	VD new_root( root_atom_ );
-	if ( new_root == MutableResidueType::null_vertex ) {
+	if ( new_root == MutableResidueType::null_vertex || ! has(new_root) ) {
 		new_root = nbr_atom_;
 	}
-	if ( new_root == MutableResidueType::null_vertex ) {
-		new_root = ordered_atoms_[1];
+	if ( new_root == MutableResidueType::null_vertex || ! has(new_root) ) {
+		// Make sure we're not assigning a null vertex to the root.
+		for ( VD oa: ordered_atoms_ ) {
+			if ( oa != MutableResidueType::null_vertex && has(oa) ) {
+				new_root = oa;
+				break;
+			}
+		}
 	}
 	debug_assert( new_root != MutableResidueType::null_vertex );
+	debug_assert( has( new_root ) );
 	assign_internal_coordinates( new_root );
 }
 

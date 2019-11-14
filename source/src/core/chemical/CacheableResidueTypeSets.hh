@@ -60,6 +60,11 @@ public:
 	PoseResidueTypeSetCOP
 	get_res_type_set( TypeSetMode mode = FULL_ATOM_t ) const;
 
+	/// @brief Return a ResidueTypeSet of the appropriate type, non-const version
+	/// If one doesn't already exist, return a null pointer.
+	PoseResidueTypeSetOP
+	get_res_type_set( TypeSetMode mode = FULL_ATOM_t );
+
 	/// @brief Replace the current ResidueTypeSet of the given mode with the given RTS.
 	/// If mode is INVALID_t (the recommended default) the mode will be autodetermined from the rts.
 	void

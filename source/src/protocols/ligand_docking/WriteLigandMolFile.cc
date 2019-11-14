@@ -44,20 +44,8 @@ static basic::Tracer write_ligand_tracer( "protocols.ligand_docking.WriteLigandM
 
 
 WriteLigandMolFile::WriteLigandMolFile() :
-	Mover("WriteLigandMolFile"), chain_(""),directory_(""),prefix_(""),hash_file_names_(false)
-{
-
-}
-WriteLigandMolFile::~WriteLigandMolFile() = default;
-
-WriteLigandMolFile::WriteLigandMolFile(WriteLigandMolFile const & that) :
-	Mover("WriteLigandMolFile"),chain_(that.chain_),
-	directory_(that.directory_),
-	prefix_(that.prefix_),
-	hash_file_names_(that.hash_file_names_)
-{
-
-}
+	Mover("WriteLigandMolFile")
+{}
 
 protocols::moves::MoverOP WriteLigandMolFile::clone() const
 {
@@ -85,9 +73,6 @@ void WriteLigandMolFile::parse_my_tag(
 	if ( !tag->hasOption("directory") ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'WriteLigandMolFile' requires the option 'directory'");
 	}
-	if ( !tag->hasOption("prefix") ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'WriteLigandMolFile' requires the option 'prefix'");
-	}
 
 	std::string hash_status = tag->getOption<std::string>("hash_file_names","false");
 	if ( hash_status == "true" ) {
@@ -98,7 +83,12 @@ void WriteLigandMolFile::parse_my_tag(
 
 	chain_ = tag->getOption<std::string>("chain");
 	directory_ = tag->getOption<std::string>("directory");
-	prefix_ = tag->getOption<std::string>("prefix");
+	prefix_ = tag->getOption<std::string>("prefix","");
+	use_residue_name_ = tag->getOption< bool >("use_residue_name", false);
+
+	if ( prefix_.empty() && ! use_residue_name_ ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'WriteLigandMolFile' requires either the 'prefix' or the 'use_residue_name' options.");
+	}
 
 }
 
@@ -127,14 +117,23 @@ void WriteLigandMolFile::apply(core::pose::Pose & pose)
 
 	utility::file::create_directory(directory_);
 
+	std::string output_file( directory_+"/"+prefix_ );
+
+	if ( use_residue_name_ ) {
+		if ( ! prefix_.empty() ) {
+			output_file += "_";
+		}
+		output_file += ligand_residue->name();
+	}
+
 #ifdef USEMPI
 	int mpi_rank;
 	MPI_Comm_rank (MPI_COMM_WORLD, &mpi_rank);/* get current process id */
 	std::string mpi_rank_string(utility::to_string(mpi_rank));
-	std::string output_file = directory_+"/"+prefix_+"_"+mpi_rank_string+".sdf.gz";
-#else
-	std::string output_file = directory_+"/"+prefix_+".sdf.gz";
+	output_file += "_" + mpi_rank_string;
 #endif
+	output_file += ".sdf.gz";
+
 	utility::io::ozstream output;
 	std::stringstream header;
 	output.open_append_if_existed( output_file, header);
@@ -162,7 +161,8 @@ void WriteLigandMolFile::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		+ XMLSchemaAttribute::required_attribute("directory", xs_string,
 		"The directory all mol records will be output to. "
 		"Directory will be created if it does not exist.")
-		+ XMLSchemaAttribute::required_attribute("prefix", xs_string, "Set a file prefix for the output files.");
+		+ XMLSchemaAttribute("prefix", xs_string, "Set a file prefix for the output files.")
+		+ XMLSchemaAttribute::attribute_w_default("use_residue_name", xsct_rosetta_bool, "Use the residue name as part of the prefix for the output files.", "false");
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"Output a V2000 mol file record containing all atoms of the specified ligand "
 		"chain and all data stored in the current Job for each processed pose", attlist );

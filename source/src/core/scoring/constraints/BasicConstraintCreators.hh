@@ -23,7 +23,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-/// @brief Mover creator for the AtomPairConstraint constraint
+/// @brief Constraint creator for the AtomPairConstraint constraint
 class AtomPairConstraintCreator : public ConstraintCreator
 {
 public:
@@ -34,7 +34,18 @@ public:
 	std::string keyname() const override;
 };
 
-/// @brief Mover creator for the BasePairConstraint constraint
+/// @brief Constraint creator for the NamedAtomPairConstraint constraint
+class NamedAtomPairConstraintCreator : public ConstraintCreator
+{
+public:
+	NamedAtomPairConstraintCreator();
+	virtual ~NamedAtomPairConstraintCreator();
+
+	virtual ConstraintOP create_constraint() const;
+	virtual std::string keyname() const;
+};
+
+/// @brief Constraint creator for the BasePairConstraint constraint
 class BasePairConstraintCreator : public ConstraintCreator
 {
 public:
@@ -45,7 +56,7 @@ public:
 	std::string keyname() const override;
 };
 
-/// @brief Mover creator for the AngleConstraint constraint
+/// @brief Constraint creator for the AngleConstraint constraint
 class AngleConstraintCreator : public ConstraintCreator
 {
 public:
@@ -56,7 +67,7 @@ public:
 	std::string keyname() const override;
 };
 
-/// @brief Mover creator for the DihedralConstraint constraint
+/// @brief Constraint creator for the DihedralConstraint constraint
 class DihedralConstraintCreator : public ConstraintCreator
 {
 public:
@@ -78,7 +89,7 @@ public:
 	std::string keyname() const override;
 };
 
-/// @brief Mover creator for the BigBinConstraint constraint
+/// @brief Constraint creator for the BigBinConstraint constraint
 class BigBinConstraintCreator : public ConstraintCreator
 {
 public:
@@ -89,7 +100,7 @@ public:
 	std::string keyname() const override;
 };
 
-/// @brief Mover creator for the MultiConstraint constraint
+/// @brief Constraint creator for the MultiConstraint constraint
 class MultiConstraintCreator : public ConstraintCreator
 {
 public:
@@ -100,7 +111,7 @@ public:
 	std::string keyname() const override;
 };
 
-/// @brief Mover creator for the AmbiguousConstraint constraint
+/// @brief Constraint creator for the AmbiguousConstraint constraint
 class AmbiguousConstraintCreator : public ConstraintCreator
 {
 public:
@@ -111,7 +122,7 @@ public:
 	std::string keyname() const override;
 };
 
-/// @brief Mover creator for the KofNConstraint constraint
+/// @brief Constraint creator for the KofNConstraint constraint
 class KofNConstraintCreator : public ConstraintCreator
 {
 public:
@@ -122,7 +133,7 @@ public:
 	std::string keyname() const override;
 };
 
-/// @brief Mover creator for the CoordinateConstraint constraint
+/// @brief Constraint creator for the CoordinateConstraint constraint
 class CoordinateConstraintCreator : public ConstraintCreator
 {
 public:
@@ -133,7 +144,7 @@ public:
 	std::string keyname() const override;
 };
 
-/// @brief Mover creator for the LocalCoordinateConstraint constraint
+/// @brief Constraint creator for the LocalCoordinateConstraint constraint
 class LocalCoordinateConstraintCreator : public ConstraintCreator
 {
 public:
@@ -144,7 +155,7 @@ public:
 	std::string keyname() const override;
 };
 
-/// @brief Mover creator for the AmbiguousNMRDistanceConstraint constraint
+/// @brief Constraint creator for the AmbiguousNMRDistanceConstraint constraint
 class AmbiguousNMRDistanceConstraintCreator : public ConstraintCreator
 {
 public:
@@ -154,7 +165,7 @@ public:
 	ConstraintOP create_constraint() const override;
 	std::string keyname() const override;
 };
-/// @brief Mover creator for the AmbiguousNMRConstraint constraint
+/// @brief Constraint creator for the AmbiguousNMRConstraint constraint
 class AmbiguousNMRConstraintCreator : public ConstraintCreator
 {
 public:
@@ -165,7 +176,7 @@ public:
 	std::string keyname() const override;
 };
 
-/// @brief Mover creator for the SiteConstraint constraint
+/// @brief Constraint creator for the SiteConstraint constraint
 class SiteConstraintCreator : public ConstraintCreator
 {
 public:
@@ -176,7 +187,7 @@ public:
 	std::string keyname() const override;
 };
 
-/// @brief Mover creator for the SiteConstraintResidues constraint
+/// @brief Constraint creator for the SiteConstraintResidues constraint
 class SiteConstraintResiduesCreator : public ConstraintCreator
 {
 public:
@@ -187,7 +198,7 @@ public:
 	std::string keyname() const override;
 };
 
-/// @brief Mover creator for the FabConstraint constraint
+/// @brief Constraint creator for the FabConstraint constraint
 class FabConstraintCreator : public ConstraintCreator
 {
 public:
