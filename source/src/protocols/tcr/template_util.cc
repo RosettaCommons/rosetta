@@ -103,13 +103,13 @@ std::pair<core::Real, std::string> find_template( std::string const &query, std:
 					best_score = curr_score;
 					best_content = content;
 					best_name = name;
-					best_resolution = curr_resolution;
+					//best_resolution = curr_resolution;
 				} else if ( curr_score == best_score ) {
 					if ( curr_resolution < best_resolution ) {
 						best_score = curr_score;
 						best_content = content;
 						best_name = name;
-						best_resolution = curr_resolution;
+						//best_resolution = curr_resolution;
 					}
 				}
 			}
