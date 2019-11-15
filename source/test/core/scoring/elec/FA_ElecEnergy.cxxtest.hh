@@ -51,44 +51,6 @@ public:
 
 	void tearDown(){}
 
-	void test_elec_pre_talaris_2013_settings()
-	{
-		using namespace core;
-		using namespace core::pose;
-		using namespace core::scoring;
-
-		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior -override_rsd_type_limit" );
-
-		core::pose::Pose pose = create_twores_1ubq_pose();
-
-		core::Real const TOL(1e-5);
-
-		core::scoring::ScoreFunction sfxn;
-		sfxn.set_weight( fa_elec, 1 );
-
-		methods::EnergyMethodOptions options; // default is what we want
-
-		core::scoring::etable::coulomb::Coulomb coulomb( options );
-		//options.show(TR);
-
-		EnergyMap emap;
-
-		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-			pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
-		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-			pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.006643886, TOL ); // CB-CA at 4.49784 (no count pair)
-		TS_ASSERT_DELTA( coulomb.eval_atom_atom_fa_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-			pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -3.175849739, TOL ); // C-N at 1.29914 (no count pair)
-
-		core::scoring::elec::FA_ElecEnergy elec( options );
-		elec.residue_pair_energy( pose.residue(1), pose.residue(2), pose, sfxn, emap );
-		// Value calculated for 1.5/5.5 min/max, die=10r,
-		// with no fa_elec on atoms 1,2,or 3 bonds apart, and a scaling of 0.2 on those 4 bonds apart
-		TS_ASSERT_DELTA( emap[ fa_elec ] , 0.337019896208238, TOL);
-		TS_ASSERT_DELTA( sfxn(pose), 0.337019896208238, TOL);
-
-	}
-
 	void test_elec_default_settings()
 	{
 		using namespace core;
@@ -150,8 +112,8 @@ public:
 		//std::cout << "TS_ASSERT_DELTA( emap[ fa_elec ], " << emap[ fa_elec ] << ", TOL);" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( sfxn(pose)," <<  sfxn(pose) << ", TOL);" << std::endl;
 
-		TS_ASSERT_DELTA( emap[ fa_elec ], -0.8124022402989522, TOL);
-		TS_ASSERT_DELTA( sfxn(pose),-0.8124022402989522, TOL);
+		TS_ASSERT_DELTA( emap[ fa_elec ], -1.056290753044864, TOL);
+		TS_ASSERT_DELTA( sfxn(pose),-1.056290753044864, TOL);
 	}
 
 
@@ -223,9 +185,8 @@ public:
 		//std::cout << "TS_ASSERT_DELTA( emap[ fa_elec ], " << emap[ fa_elec ] << ", TOL);" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( sfxn(pose)," <<  sfxn(pose) << ", TOL);" << std::endl;
 
-		TS_ASSERT_DELTA( emap[ fa_elec ], -0.8906966012189631, TOL);
-		TS_ASSERT_DELTA( sfxn(pose),-0.8906966012189631, TOL);
-
+		TS_ASSERT_DELTA( emap[ fa_elec ], -1.198974700105081, TOL);
+		TS_ASSERT_DELTA( sfxn(pose),-1.198974700105081, TOL);
 	}
 
 	void test_elec_min_dis()
@@ -294,9 +255,8 @@ public:
 		//std::cout << "TS_ASSERT_DELTA( emap[ fa_elec ], " << emap[ fa_elec ] << ", TOL);" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( sfxn(pose)," <<  sfxn(pose) << ", TOL);" << std::endl;
 
-		TS_ASSERT_DELTA( emap[ fa_elec ], -0.8323107992575097, TOL);
-		TS_ASSERT_DELTA( sfxn(pose),-0.8323107992575097, TOL);
-
+		TS_ASSERT_DELTA( emap[ fa_elec ], -1.077426539510834, TOL);
+		TS_ASSERT_DELTA( sfxn(pose),-1.077426539510834, TOL);
 	}
 
 	void test_elec_die()
@@ -364,8 +324,8 @@ public:
 		//std::cout << "TS_ASSERT_DELTA( emap[ fa_elec ], " << emap[ fa_elec ] << ", TOL);" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( sfxn(pose)," <<  sfxn(pose) << ", TOL);" << std::endl;
 
-		TS_ASSERT_DELTA( emap[ fa_elec ], -0.8124022402989522, TOL);
-		TS_ASSERT_DELTA( sfxn(pose),-0.8124022402989522, TOL);
+		TS_ASSERT_DELTA( emap[ fa_elec ], -1.056290753044864, TOL);
+		TS_ASSERT_DELTA( sfxn(pose),-1.056290753044864, TOL);
 	}
 
 	void test_elec_no_dis_dep_die()
@@ -433,8 +393,8 @@ public:
 		//std::cout << "TS_ASSERT_DELTA( emap[ fa_elec ], " << emap[ fa_elec ] << ", TOL);" << std::endl;
 		//std::cout << "TS_ASSERT_DELTA( sfxn(pose)," <<  sfxn(pose) << ", TOL);" << std::endl;
 
-		TS_ASSERT_DELTA( emap[ fa_elec ], -0.8124022402989522, TOL);
-		TS_ASSERT_DELTA( sfxn(pose),-0.8124022402989522, TOL);
+		TS_ASSERT_DELTA( emap[ fa_elec ], -1.056290753044864, TOL);
+		TS_ASSERT_DELTA( sfxn(pose),-1.056290753044864, TOL);
 	}
 
 	/// @brief Setup for minimization using a move map that says "minimize all bb and sc torsions"

@@ -429,6 +429,7 @@ sources = {
 	],
 	"scoring/elec" : [
 		"FA_ElecEnergy",
+		"FA_ElecEnergy_pre_talaris",
 		"RNA_FA_ElecEnergy",
 	],
 	"scoring/electron_density" : [
