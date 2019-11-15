@@ -1240,8 +1240,8 @@ Matcher::process_matches( output::MatchProcessor & processor ) const
 	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		representative_downstream_algorithm_[ ii ]->prepare_for_match_enumeration( *this );
 	}
-	for ( auto const & all_downstream_builder : all_downstream_builders_ ) {
-		if ( all_downstream_builder->hits_potentially_incompatible() ) {
+	for ( auto const & downstream_builder : all_downstream_builders_ ) {
+		if ( downstream_builder->hits_potentially_incompatible() ) {
 			check_potential_dsbuilder_incompatibility_ = true;
 			break;
 		}
@@ -2246,14 +2246,14 @@ Matcher::refine_grid_and_subsample_for_hit_subsets(
 	Size const take_it( 300000 );
 	Size const bare_minimum( 20 );
 
-	Size n_combos = predict_n_matches_for_hit_subsets( euclidean_bin_widths_, euler_bin_widths_, neighbor_hits, take_it );
+	Size n_combos = estimate_n_matches_for_hit_subsets( euclidean_bin_widths_, euler_bin_widths_, neighbor_hits, take_it );
 	Size const initial_n_combos = n_combos;
 
 	if ( n_combos > take_it ) {
 		utility::vector1< std::list< Hit const * > > good_subsamples = subsample_hits( euclidean_bin_widths_, euler_bin_widths_, neighbor_hits );
 		utility::vector1< std::list< Hit const * > > subsamples;
 
-		Size n_combos = predict_n_matches_for_hit_subsets( euclidean_bin_widths_, euler_bin_widths_, good_subsamples, take_it );
+		Size n_combos = estimate_n_matches_for_hit_subsets( euclidean_bin_widths_, euler_bin_widths_, good_subsamples, take_it );
 		Size last_n_combos = n_combos;
 		TR << "subsampling would produce " << n_combos << " matches down from " << initial_n_combos << " matches." << std::endl;
 
@@ -2265,7 +2265,7 @@ Matcher::refine_grid_and_subsample_for_hit_subsets(
 			test_euclidean_bin_widths *= 0.75;
 			test_euler_bin_widths *= 0.75;
 			subsamples = subsample_hits( test_euclidean_bin_widths, test_euler_bin_widths, neighbor_hits ); // subsample the ORIGINAL set of hits
-			n_combos = predict_n_matches_for_hit_subsets( test_euclidean_bin_widths, test_euler_bin_widths, good_subsamples, take_it );
+			n_combos = estimate_n_matches_for_hit_subsets( test_euclidean_bin_widths, test_euler_bin_widths, good_subsamples, take_it );
 
 			TR << "Grid refinement #" << count_refinement + 1 << " predicts " << n_combos << " matches." << std::endl;
 
@@ -2292,7 +2292,7 @@ Matcher::refine_grid_and_subsample_for_hit_subsets(
 				test_euclidean_bin_widths2 *= 0.9;
 				test_euler_bin_widths2 *= 0.9;
 				subsamples = subsample_hits( test_euclidean_bin_widths2, test_euler_bin_widths2, neighbor_hits ); // subsample the ORIGINAL set of hits
-				n_combos = predict_n_matches_for_hit_subsets( test_euclidean_bin_widths2, test_euler_bin_widths2, subsamples, take_it );
+				n_combos = estimate_n_matches_for_hit_subsets( test_euclidean_bin_widths2, test_euler_bin_widths2, subsamples, take_it );
 
 				TR << "(Partial) Grid refinement #" << count_refinement + 1 << " predicts " << n_combos << " matches." << std::endl;
 				if ( n_combos > bare_minimum ) {
@@ -2410,7 +2410,7 @@ Matcher::subsample_hits(
 }
 
 Matcher::Size
-Matcher::predict_n_matches_for_hit_subsets(
+Matcher::estimate_n_matches_for_hit_subsets(
 	Vector const & euclidean_bin_widths,
 	Vector const & euler_bin_widths,
 	utility::vector1< std::list< Hit const * > > const & neighbor_hits,
@@ -2432,7 +2432,7 @@ Matcher::predict_n_matches_for_hit_subsets(
 		}
 		//std::cout << "blah 1 " << std::endl;
 	}
-	TR << std::endl;
+	TR << "; log(combos) " << log_n_combos << std::endl;
 	if ( log_n_combos < std::log( (core::Real) accuracy_threshold ) ) return static_cast< Size > ( exp( log_n_combos )) + 1; // good enough approximation
 
 
@@ -2454,7 +2454,9 @@ Matcher::predict_n_matches_for_hit_subsets(
 			match_counter.add_hits( count_non_upstream_only_hits, neighbor_hits[ ii ] );
 		}
 	}
-	return match_counter.count_n_matches(); // the heavy lifting happens inside here
+	auto count = match_counter.count_n_matches(); // the heavy lifting happens inside here
+	TR << "Approximately " << count << " matches" << std::endl;
+	return count;
 }
 
 /// This loop iterates across all 64 origin definitions (loop "ii"), inserts the "neighbor hits" into

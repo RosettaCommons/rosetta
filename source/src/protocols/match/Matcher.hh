@@ -480,7 +480,7 @@ private:
 
 
 	Size
-	predict_n_matches_for_hit_subsets(
+	estimate_n_matches_for_hit_subsets(
 		Vector const & euclidean_bin_widths,
 		Vector const & euler_bin_widths,
 		utility::vector1< std::list< Hit const * > > const & neighbor_hits,

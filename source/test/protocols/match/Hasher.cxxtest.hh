@@ -1342,24 +1342,32 @@ public:
 
 		counter.initialize();
 
-		Real6 pA, pB; //pC, pD; pE;
+		// (a,c) will be preicted as a match; (a,b) will not
+		// because a's first euler angle (coordinate 4) is in a different
+		// bin from b's first euler angle.
+		Real6 pA, pB, pC; //, pD; pE;
+
 		pA[ 1 ] = 13.6; pA[ 2 ] = 19.4; pA[ 3 ] = 5.3;
 		pA[ 4 ] = 49;   pA[ 5 ] = 127;  pA[ 6 ] = 176;
 
-		pB[ 1 ] = 13.7; pB[ 2 ] = 19.3; pB[ 3 ] = 5.2;
+		pB[ 1 ] = 13.7; pB[ 2 ] = 19.3; pB[ 3 ] = 5.0;
 		pB[ 4 ] = 50.1;   pB[ 5 ] = 122;  pB[ 6 ] = 176;
 
-		//pC[ 1 ] = 13.6; pC[ 2 ] = 19.4; pC[ 3 ] = 5.3;
-		//pC[ 4 ] = 62;   pC[ 5 ] = 127;  pC[ 6 ] = 171;
+		pC[ 1 ] = 13.6; pC[ 2 ] = 19.5; pC[ 3 ] = 5.4;
+		pC[ 4 ] = 48;   pC[ 5 ] = 122;  pC[ 6 ] = 171;
 
-		//pD[ 1 ] = 13.6; pD[ 2 ] = 19.4; pD[ 3 ] = 5.3; // pD will span the pB-pC gap
-		//pD[ 4 ] = 55;   pD[ 5 ] = 127;  pD[ 6 ] = 171;
+		// TEMP!!
+		pC[ 1 ] = 13.6; pC[ 2 ] = 19.4; pC[ 3 ] = 5.3;
+		pC[ 4 ] = 49;   pC[ 5 ] = 127;  pC[ 6 ] = 176;
 
-		Hit hA, hB/*, hC, hD*/; hA.second() = pA; hB.second() = pB;// hC.second() = pC; hD.second() = pD;
-		std::list< Hit > hitlist_a, hitlist_b;
-		hitlist_a.push_back( hA ); hitlist_b.push_back( hB );// hitlist.push_back( hC ); hitlist.push_back( hD );
-		counter.add_hits( 1, hitlist_a );
-		counter.add_hits( 2, hitlist_b );
+		Hit hA, hB, hC;
+		hA.second() = pA; hB.second() = pB; hC.second() = pC;
+
+		std::list< Hit > hitlist_cst1, hitlist_cst2;
+		hitlist_cst1.push_back( hA );
+		hitlist_cst2.push_back( hB ); hitlist_cst2.push_back( hC );
+		counter.add_hits( 1, hitlist_cst1 );
+		counter.add_hits( 2, hitlist_cst2 );
 
 		Size n_matches = counter.count_n_matches();
 		TS_ASSERT( n_matches == 1 );
@@ -1387,7 +1395,7 @@ public:
 		pA[ 4 ] = 49;   pA[ 5 ] = 127;  pA[ 6 ] = 176;
 
 		pB[ 1 ] = 13.7; pB[ 2 ] = 19.3; pB[ 3 ] = 5.2;
-		pB[ 4 ] = 50.1;   pB[ 5 ] = 122;  pB[ 6 ] = 176;
+		pB[ 4 ] = 47;   pB[ 5 ] = 122;  pB[ 6 ] = 176;
 
 		pC[ 1 ] = 13.6; pC[ 2 ] = 19.4; pC[ 3 ] = 5.3;
 		pC[ 4 ] = 48;   pC[ 5 ] = 126;  pC[ 6 ] = 171;
@@ -1405,6 +1413,107 @@ public:
 		Size n_matches = counter.count_n_matches();
 		TS_ASSERT( n_matches == 1 );
 	}
+
+	void test_MatchCounter_three_geomcsts_expect_eight_matches()
+	{
+		using namespace protocols::match;
+		MatchCounter counter;
+
+		Vector lower( 12, 16, 4 );
+		Vector upper( 15, 20, 8 );
+
+		BoundingBox bb( lower, upper );
+		counter.set_n_geometric_constraints( 3 );
+		counter.set_bounding_box( bb );
+
+		counter.set_uniform_xyz_bin_width( 1 );
+		counter.set_uniform_euler_angle_bin_width( 10 );
+
+		counter.initialize();
+
+		Real6 pA, pB, pC;// pD; pE;
+		pA[ 1 ] = 13.6; pA[ 2 ] = 19.4; pA[ 3 ] = 5.3;
+		pA[ 4 ] = 49;   pA[ 5 ] = 127;  pA[ 6 ] = 176;
+
+		pB[ 1 ] = 13.7; pB[ 2 ] = 19.3; pB[ 3 ] = 5.2;
+		pB[ 4 ] = 47;   pB[ 5 ] = 122;  pB[ 6 ] = 176;
+
+		pC[ 1 ] = 13.6; pC[ 2 ] = 19.4; pC[ 3 ] = 5.3;
+		pC[ 4 ] = 48;   pC[ 5 ] = 126;  pC[ 6 ] = 171;
+
+		//pD[ 1 ] = 13.6; pD[ 2 ] = 19.4; pD[ 3 ] = 5.3; // pD will span the pB-pC gap
+		//pD[ 4 ] = 55;   pD[ 5 ] = 127;  pD[ 6 ] = 171;
+
+		Hit hA, hB, hC/*, hD*/; hA.second() = pA; hB.second() = pB; hC.second() = pC;// hD.second() = pD;
+		std::list< Hit > hitlist_a, hitlist_b, hitlist_c;
+		hitlist_a.push_back( hA );
+		hitlist_a.push_back( hA );
+		hitlist_b.push_back( hB );
+		hitlist_b.push_back( hB );
+		hitlist_c.push_back( hC );
+		hitlist_c.push_back( hC );
+		// hitlist.push_back( hD );
+		counter.add_hits( 1, hitlist_a );
+		counter.add_hits( 2, hitlist_b );
+		counter.add_hits( 3, hitlist_c );
+
+		Size n_matches = counter.count_n_matches();
+		TS_ASSERT( n_matches == 8 );
+	}
+
+	void test_MatchCounter_three_geomcsts_expect_four_matches()
+	{
+		using namespace protocols::match;
+		MatchCounter counter;
+
+		Vector lower( 12, 16, 4 );
+		Vector upper( 15, 20, 8 );
+
+		BoundingBox bb( lower, upper );
+		counter.set_n_geometric_constraints( 3 );
+		counter.set_bounding_box( bb );
+
+		counter.set_uniform_xyz_bin_width( 1 );
+		counter.set_uniform_euler_angle_bin_width( 10 );
+
+		counter.initialize();
+
+		Real6 pA, pB1, pB2, pC;// pD; pE;
+		pA[ 1 ] = 13.6; pA[ 2 ] = 19.4; pA[ 3 ] = 5.3;
+		pA[ 4 ] = 49;   pA[ 5 ] = 127;  pA[ 6 ] = 176;
+
+		pB1[ 1 ] = 13.7; pB1[ 2 ] = 19.3; pB1[ 3 ] = 5.2;
+		pB1[ 4 ] = 47;   pB1[ 5 ] = 122;  pB1[ 6 ] = 176;
+
+		// this hit crosses a boundary into another bin in 6D space,
+		// and though it is close to the other hits, it will not be
+		// grouped with the others as a match.
+		pB2[ 1 ] = 14.1; pB2[ 2 ] = 19.3; pB2[ 3 ] = 5.2;
+		pB2[ 4 ] = 47;   pB2[ 5 ] = 122;  pB2[ 6 ] = 176;
+
+		pC[ 1 ] = 13.6; pC[ 2 ] = 19.4; pC[ 3 ] = 5.3;
+		pC[ 4 ] = 48;   pC[ 5 ] = 126;  pC[ 6 ] = 171;
+
+		//pD[ 1 ] = 13.6; pD[ 2 ] = 19.4; pD[ 3 ] = 5.3; // pD will span the pB-pC gap
+		//pD[ 4 ] = 55;   pD[ 5 ] = 127;  pD[ 6 ] = 171;
+
+		Hit hA, hB1, hB2, hC/*, hD*/; hA.second() = pA; hB1.second() = pB1; hB2.second() = pB2; hC.second() = pC;// hD.second() = pD;
+		std::list< Hit > hitlist_a, hitlist_b, hitlist_c;
+		hitlist_a.push_back( hA );
+		hitlist_a.push_back( hA );
+		hitlist_b.push_back( hB1 );
+		hitlist_b.push_back( hB2 );
+		hitlist_c.push_back( hC );
+		hitlist_c.push_back( hC );
+		// hitlist.push_back( hD );
+		counter.add_hits( 1, hitlist_a );
+		counter.add_hits( 2, hitlist_b );
+		counter.add_hits( 3, hitlist_c );
+
+		Size n_matches = counter.count_n_matches();
+		TS_ASSERT( n_matches == 4 );
+	}
+
 
 	void test_MatchCounter_three_geomcsts_expect_zero_matches()
 	{

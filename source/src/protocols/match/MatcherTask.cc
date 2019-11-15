@@ -1202,6 +1202,14 @@ MatcherTask::determine_all_match_relevant_downstream_atoms()
 			} //loop over template atoms
 		} //loop over mcifs
 	} //loop over mcfi lists
+
+	// Also make sure that the orientation atoms are relevant.
+	for ( auto const & oat: downstream_orientation_atoms_ ) {
+		if ( seen_atoms.find(oat) == seen_atoms.end() ) {
+			seen_atoms.insert(oat); // though, really, we
+			relevant_downstream_atoms_.push_back( oat );
+		}
+	}
 }
 
 void

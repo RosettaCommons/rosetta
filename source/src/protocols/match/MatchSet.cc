@@ -719,7 +719,7 @@ void MatchCounter::add_hits( Size geomcst_id, std::list< Hit const * > const & h
 	}
 }
 
-/// @details hash based on halfbin widths.
+/// @details Construct the hash table based on the parameters set previously
 void
 MatchCounter::initialize()
 {
@@ -734,13 +734,18 @@ MatchCounter::initialize()
 	bin_widths[ 1 ] = xyz_bin_widths_[ 1 ];   bin_widths[ 2 ] = xyz_bin_widths_[ 2 ];   bin_widths[ 3 ] = xyz_bin_widths_[ 3 ];
 	bin_widths[ 4 ] = euler_bin_widths_[ 1 ]; bin_widths[ 5 ] = euler_bin_widths_[ 2 ]; bin_widths[ 6 ] = euler_bin_widths_[ 3 ];
 
-	for ( Size ii = 1; ii <=6; ++ii ) bin_widths[ ii ] *= 0.5;
-
 	binner_ = utility::pointer::make_shared< numeric::geometry::hashing::SixDCoordinateBinner >( bb_, euler_offsets, bin_widths );
 
 }
 
-
+/// @details This function computes a lower bound on the number of matches. It will miss matches
+/// that are neighboring grid cells -- matches that the match enumeration step later will find.
+/// This function, though, needs to be fast more than it needs to be perfectly accurate. A
+/// previous implementation performed a perfect, non-redundant counting of all the matches,
+/// but at considerable computational expense: at each decrease in the grid spacing, the
+/// number of non-empty cells in the hash table increases. The result was that the dynamic-grid
+/// refinement step would slow more and more as finer grid spacings were considered: exactly
+/// opposite of the purpose of the dynamic grid refinment.
 MatchCounter::Size
 MatchCounter::count_n_matches() const
 {
@@ -748,135 +753,30 @@ MatchCounter::count_n_matches() const
 	Size const two_billion = 2000000000;
 	Real const ln2e9 = 21.4; // e^21.4 ~ 2 billion
 
-	Size const three_to_the_sixth = 729;
-
-	utility::vector1< utility::vector1< Size > > neighbor_bin_hit_counts( three_to_the_sixth );
-	utility::vector1< utility::vector1< Real > > log_neighbor_bin_hit_counts( three_to_the_sixth );
-	for ( Size ii = 1; ii <= three_to_the_sixth; ++ii ) {
-		neighbor_bin_hit_counts[ ii ].resize( n_geom_csts_, 0 );
-		log_neighbor_bin_hit_counts[ ii ].resize( n_geom_csts_, 0 );
-	}
-
-	utility::vector1< Size > seventwentynines( n_geom_csts_ - 1, three_to_the_sixth );
-	utility::LexicographicalIterator lex( seventwentynines );
-
-	Bin6D threes( 3 );
-	utility::FixedSizeLexicographicalIterator< 6 > neighbor_halfbin_lex( threes ), geomcst2_lex( threes ), comp_lex( threes );
-
-	/// TEMP: reporting counts per bin
-	//for ( HitHash::const_iterator iter = hash_.begin(), iter_end = hash_.end(); iter != iter_end; ++iter ) {
-	// boost::uint64_t bin_index = iter->first;
-	// std::cout << "  bin " << bin_index << " w/counts:";
-	// for ( Size ii = 1; ii <= n_geom_csts_; ++ii ) std::cout << " " << iter->second[ ii ];
-	// std::cout << std::endl;
-	//}//
-
-
-	Size grand_total = 0;
-	Size last_grand_total = 0;
+	Size total = 0;
+	Size last_total = 0;
 	for ( HitHash::const_iterator iter = hash_.begin(), iter_end = hash_.end(); iter != iter_end; ++iter ) {
-		for ( Size ii = 1; ii <= three_to_the_sixth; ++ii ) std::fill( neighbor_bin_hit_counts[ ii ].begin(), neighbor_bin_hit_counts[ ii ].end(), 0 );
-
-		HitCounts const & center_hits = iter->second;
-		Size const halfbin_center_first_geom_cst_nhits = center_hits[ 1 ];
-
-		if ( halfbin_center_first_geom_cst_nhits == 0 ) continue;
-
-		Real const log_halfbin_center_first_geom_cst_nhits = std::log( (double) halfbin_center_first_geom_cst_nhits );
-		boost::uint64_t bin_index = iter->first;
-		Bin6D bin = binner_->bin_from_index( bin_index );
-		Real6 bin_center = binner_->bin_center_point( bin );
-
-		/// 1.  Look at all 729 neighbors of this halfbin and record the hit-counts for each
-		neighbor_halfbin_lex.begin();
-		while ( ! neighbor_halfbin_lex.at_end() ) {
-			Bin6D neighbor_bin;
-			Real6 steps( 0 );
-			for ( Size ii = 1; ii <= 6; ++ii ) {
-				if ( neighbor_halfbin_lex[ ii ] == 1 )      steps[ ii ] = -1 * binner_->bin_widths()[ ii ];
-				else if ( neighbor_halfbin_lex[ ii ] == 3 ) steps[ ii ] =      binner_->bin_widths()[ ii ];
+		HitCounts const & hit_counts = iter->second;
+		Size counts_this_bin = 1;
+		Real log_counts_this_bin = 0;
+		for ( Size ii = 1; ii <= hit_counts.size(); ++ii ) {
+			counts_this_bin *= hit_counts[ii];
+			if ( hit_counts[ii] != 0 ) {
+				log_counts_this_bin += log((Real)hit_counts[ii]);
 			}
-			Size oo_bounds_dim = advance_to_neighbor_bin( bin_center, steps, *binner_, neighbor_bin );
-			if ( oo_bounds_dim != 0 ) {
-				/// advance the lex and continue;
-				neighbor_halfbin_lex.continue_at_dimension( oo_bounds_dim );
-				continue;
-			}
-			boost::uint64_t neighbor_bin_index = binner_->bin_index( neighbor_bin );
-			HitHash::const_iterator nbr_hits = hash_.find( neighbor_bin_index );
-			if ( nbr_hits != hash_.end() ) {
-				Size const neighbor_halfbin_lex_index = neighbor_halfbin_lex.index();
-				neighbor_bin_hit_counts[ neighbor_halfbin_lex_index ] = nbr_hits->second;
-				for ( Size ii = 1; ii <= n_geom_csts_; ++ii ) {
-					if ( neighbor_bin_hit_counts[ neighbor_halfbin_lex_index ][ ii ] > 1 ) {
-						// don't try to take the log of 0, don't bother taking the log of 1
-						log_neighbor_bin_hit_counts[ neighbor_halfbin_lex_index ][ ii ] =
-							std::log( (double) (neighbor_bin_hit_counts[ neighbor_halfbin_lex_index ][ ii ]) );
-					}
-				}
-			}
-			++neighbor_halfbin_lex;
 		}
-
-		/// 2. Now that we have all the neighbor bin hit counts, enumerate all halfbin combinations of hit sources
-		/// and add up the number of matches that each halfbin combination generates.  At 2 billion, quit.
-		/// Make sure not to matches that are from bins which are too far apart -- use geom-cst #2 to restrict
-		/// how far apart hits can be before they should not be counted together.
-		Size total = 0;
-		Size last_total = 0;
-		lex.begin();
-		while ( ! lex.at_end() ) {
-			Size this_combo_n_hits = halfbin_center_first_geom_cst_nhits; // non-zero
-			Real this_combo_log_n_hits = log_halfbin_center_first_geom_cst_nhits;
-
-			/// OK: the logic in here is pretty complicated.
-			if ( n_geom_csts_ > 2 ) {
-				if ( geomcst2_lex.index() != lex[ 1 ] ) geomcst2_lex.set_position_from_index( lex[ 1 ] );
-				Bin6D outer_corner;
-				for ( Size ii = 1; ii <= 6; ++ii ) outer_corner[ ii ] = geomcst2_lex[ ii ];
-				bool out_of_range = false;
-				for ( Size ii = 3; ii <= n_geom_csts_; ++ii ) {
-					comp_lex.set_position_from_index( lex[ ii-1 ] );
-					for ( Size jj = 1; jj <= 6; ++jj ) {
-						/// 3 ways in which the halfbin for geomcst ii at dimension jj is within range of a match.
-						if ( comp_lex[ jj ] == 2 ) continue; // 1. It's in the center.
-						if ( outer_corner[ jj ] == 2 ) { outer_corner[ jj ] = comp_lex[ jj ]; continue; } // 2. It's defined a new outer-edge
-						if ( comp_lex[ jj ] == outer_corner[ jj ] ) continue; // 3. It's
-
-						out_of_range = true;
-						lex.continue_at_dimension( ii-1 );
-						break;
-					}
-					if ( out_of_range ) break;
-				}
-				if ( out_of_range ) continue; // don't count any matches from this bin; note lex has already been advanced
-			}
-
-			for ( Size ii = 2; ii <= n_geom_csts_; ++ii ) {
-				this_combo_n_hits *= neighbor_bin_hit_counts[ lex[ ii-1 ] ][ ii ];
-				this_combo_log_n_hits += log_neighbor_bin_hit_counts[ lex[ ii-1 ] ][ ii ];
-				if ( this_combo_n_hits == 0 ) {
-					lex.continue_at_dimension( ii-1 ); // no matches possible for this lex combo; skip ahead
-					break;
-				}
-			}
-			if ( this_combo_n_hits == 0 ) continue; // the lex has already been advanced;
-
-			if ( this_combo_log_n_hits > ln2e9 ) { return two_billion; } // bail: we can't represent this number
-			total += this_combo_n_hits;
-			if ( total < last_total ) { return two_billion; } // crap; we wrapped
-			last_total = total;
-
-			++lex;
+		if ( log_counts_this_bin > ln2e9 ) {
+			return two_billion;
 		}
-
-		grand_total += total;
-		if ( grand_total < last_grand_total ) { return two_billion; } // crap; we wrapped
-		last_grand_total = grand_total;
-
+		total += counts_this_bin;
+		if ( total < last_total ) {
+			// then we have had an integer overflow
+			return two_billion;
+		}
+		last_total = total;
 	}
+	return total;
 
-	return grand_total;
 }
 
 ////////////////
