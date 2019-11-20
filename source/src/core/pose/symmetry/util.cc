@@ -20,6 +20,7 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
 #include <core/conformation/symmetry/util.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
@@ -292,7 +293,49 @@ void extract_asymmetric_unit(
 		}
 
 		Residue residue( pose_in.residue( i ) );
-		if ( residue.type().is_lower_terminus() ||
+		//Special case carbohydrates
+		if ( residue.is_carbohydrate() ) {
+			Size const parent_resnum = symm_conf.glycan_tree_set()->get_parent(i);
+			Residue const & parent_res = symm_conf.residue( parent_resnum );
+
+			//Connection between child (i) and parent is a branched connection.
+			if ( parent_res.connected_residue_at_upper() != i ) {
+				Size const anchor_atom_num = parent_res.connect_atom(residue);
+
+				Size const child_atom_num = symm_conf.residue_type(i).lower_connect_atom();
+
+				// Determine both connections...
+				uint anchor_connection( 0 );
+				uint connection( 0 );
+				Size n_connections( parent_res.n_possible_residue_connections() );
+				for ( Size ii = 1; ii <= n_connections; ++ii ) {
+					if ( parent_res.residue_connect_atom_index( ii ) == anchor_atom_num ) {
+						anchor_connection = ii;
+						break;
+					}
+				}
+				n_connections = residue.n_possible_residue_connections();
+				for ( Size ii = 1; ii <= n_connections; ++ii ) {
+					if ( residue.residue_connect_atom_index( ii ) == child_atom_num ) {
+						connection = ii;
+						break;
+					}
+				}
+
+				if ( ( ! anchor_connection ) || ( ! connection ) ) {
+					utility_exit_with_message( "Can't append by these atoms, "
+						"since they do not correspond to connections on the Residues in question!" );
+				}
+
+				pose_out.append_residue_by_bond( residue, false, connection, parent_resnum,
+					anchor_connection);
+
+			} else {
+				//Connection is normal.
+				pose_out.append_residue_by_bond( residue, false );
+			}
+
+		} else if ( residue.type().is_lower_terminus() ||
 				( ( residue.aa() == aa_unk ) && !with_unknown_aa ) ||
 				residue.aa() == aa_h2o ||
 				residue.aa() == aa_vrt ||
