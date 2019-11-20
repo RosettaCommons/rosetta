@@ -1084,7 +1084,7 @@ def generateTestCommandline(test, outdir, globalparams=None, options=None, host=
             preamble = preamble + " --main-stacksize=" + str( 64*1024*1024 ) # Default is ~32 MB, try ~64 MB stack
         params["bin"] = preamble + " " + params["bin"]
 
-    cmd=''
+    cmd=u''
     # A horrible hack b/c SSH doesn't honor login scripts like .bash_profile
     # when executing specific remote commands.
     # This causes problems with e.g. the custom Python install on the Whips.
