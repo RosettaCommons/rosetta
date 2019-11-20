@@ -150,6 +150,7 @@ static FilterRegistrator< protocols::simple_filters::AtomicContactFilterCreator 
 static FilterRegistrator< protocols::simple_filters::AtomicDistanceFilterCreator > reg_AtomicDistanceFilterCreator;
 static FilterRegistrator< protocols::simple_filters::AveragePathLengthFilterCreator > reg_AveragePathLengthFilterCreator;
 static FilterRegistrator< protocols::simple_filters::BuriedSurfaceAreaFilterCreator > reg_BuriedSurfaceAreaFilterCreator;
+static FilterRegistrator< protocols::simple_filters::ContactMolecularSurfaceFilterCreator > reg_ContactMolecularSurfaceFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ChainCountFilterCreator > reg_ChainCountFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ChainBreakFilterCreator > reg_ChainBreakFilterCreator;
 static FilterRegistrator< protocols::simple_filters::DeltaFilterCreator > reg_DeltaFilterCreator;

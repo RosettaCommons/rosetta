@@ -1,0 +1,3 @@
+-in:file:s inputs/aaFR02_54569.pdb
+-parser:protocol inputs/test.xml
+-out:file:score_only score.sc

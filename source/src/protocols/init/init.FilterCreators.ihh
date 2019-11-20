@@ -122,6 +122,7 @@
 #include <protocols/simple_filters/BuriedSurfaceAreaFilterCreator.hh>
 #include <protocols/simple_filters/BuriedUnsatHbondFilterCreator.hh>
 #include <protocols/simple_filters/ChainBreakFilterCreator.hh>
+#include <protocols/simple_filters/ContactMolecularSurfaceFilterCreator.hh>
 #include <protocols/calc_taskop_filters/ConservedPosMutationFilterCreator.hh>
 #include <protocols/simple_ddg/DdgFilterCreator.hh>
 #include <protocols/constraint_filters/ConstraintScoreFilterCreator.hh>

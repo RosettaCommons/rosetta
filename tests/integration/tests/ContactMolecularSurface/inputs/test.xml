@@ -1,0 +1,12 @@
+<ROSETTASCRIPTS>
+    <RESIDUE_SELECTORS>
+        <Chain name="chainH" chains="H"/>
+        <Chain name="chainL" chains="L"/>
+    </RESIDUE_SELECTORS>
+   	<FILTERS>
+        <ContactMolecularSurface name="contact_molecular_surface" distance_weight="0.5" target_selector="chainH" binder_selector="chainL" confidence="0" />
+	</FILTERS>
+	<PROTOCOLS>
+		<Add filter="contact_molecular_surface"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

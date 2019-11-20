@@ -765,6 +765,7 @@ sources = {
 		"SinXOverX",
 	],
 	"core/scoring/sc": [
+		"ContactMolecularSurfaceCalculator",
 		"ElectrostaticComplementarityCalculator",
 		"ShapeComplementarityCalculator",
 		"MolecularSurfaceCalculator",

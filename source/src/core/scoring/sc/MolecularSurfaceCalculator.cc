@@ -503,6 +503,8 @@ int MolecularSurfaceCalculator::CalcDotsForAllAtoms(std::vector<Atom> & )
 struct CloserToAtom
 {
 	bool operator() ( Atom * a1, Atom * a2 ) {
+		runtime_assert( a1 ); // This segfault is so rare I don't know how to debug it
+		runtime_assert( a2 ); // at least this way its an exception so we don't kill jobs - bcov
 		MolecularSurfaceCalculator::ScValue d1 = ref_atom_->distance( * a1 );
 		MolecularSurfaceCalculator::ScValue d2 = ref_atom_->distance( * a2 );
 		return d1 < d2;
@@ -542,6 +544,7 @@ int MolecularSurfaceCalculator::FindNeighborsForAtom(Atom &atom1)
 {
 	std::vector<Atom>::iterator iAtom2;
 	std::vector<Atom*> &neighbors = atom1.neighbors;
+	runtime_assert( atom1.neighbors.size() == 0 ); // std::sort segfaults from time to time, this could be a cause - bcov
 	ScValue d2;
 	ScValue bridge;
 	ScValue bb2 = pow(4 * run_.radmax + 4 * settings.rp, 2);
