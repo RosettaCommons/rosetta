@@ -39,10 +39,10 @@ class NamedAtomPairConstraintCreator : public ConstraintCreator
 {
 public:
 	NamedAtomPairConstraintCreator();
-	virtual ~NamedAtomPairConstraintCreator();
+	~NamedAtomPairConstraintCreator() override;
 
-	virtual ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Constraint creator for the BasePairConstraint constraint

@@ -130,7 +130,7 @@ MonteCarlo::MonteCarlo(
 {
 	last_accepted_pose_ = PoseOP( new Pose() );
 	lowest_score_pose_ = PoseOP( new Pose() );
-	reset( init_pose, init_score );
+	MonteCarlo::reset( init_pose, init_score ); // Can't call derived class's reset in constructor
 
 	last_check_ = 0;
 	check_frequency_ = basic::options::option[ basic::options::OptionKeys::mc::convergence_check_frequency ]();
