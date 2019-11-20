@@ -693,7 +693,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 	core::pose::Pose pose_copy = pose;
 	for ( core::Size i = 1; i <= pose_copy.size(); ++i ) {
-		if ( pose_copy.residue(i).name3() != "GLY" ) {
+		if ( pose_copy.residue_type(i).is_protein() && pose_copy.residue(i).name3() != "GLY" ) {
 			protocols::simple_moves::MutateResidue make_ala(i,"ALA");
 			make_ala.apply(pose_copy);
 			TR << "Mutating residue " << i << " to ALA" << std::endl;
@@ -710,7 +710,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 					(*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart ) {
 				TR << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
 				// distance check
-				if ( pose.residue(*itr).aa() != aa_gly && pose.residue(*itr2).aa() != aa_gly ) {
+				if ( pose.residue_type(*itr).is_protein() && pose.residue_type(*itr2).is_protein() && pose.residue(*itr).aa() != aa_gly && pose.residue(*itr2).aa() != aa_gly ) {
 					//TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
 					if ( !rosetta_scripts_keep_current_ds || ( ! pose.residue(*itr).has_variant_type( core::chemical::DISULFIDE ) && ! pose.residue(*itr2).has_variant_type( core::chemical::DISULFIDE ) ) ) {
 						Real dist_squared = pose.residue(*itr).xyz("CB").distance_squared(pose.residue(*itr2).xyz("CB"));
