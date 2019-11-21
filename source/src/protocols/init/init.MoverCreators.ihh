@@ -581,6 +581,7 @@
 #include <protocols/simple_moves/sidechain_moves/PerturbChiSidechainMoverCreator.hh>
 
 #include <protocols/symmetry/DetectSymmetryMoverCreator.hh>
+#include <protocols/symmetry/SetupForSequenceSymmetryMoverCreator.hh>
 #include <protocols/symmetry/SetupForSymmetryMoverCreator.hh>
 #include <protocols/symmetry/SetupNCSMoverCreator.hh>
 #include <protocols/simple_moves/WriteFiltersToPoseCreator.hh>

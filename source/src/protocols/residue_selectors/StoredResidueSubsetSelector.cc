@@ -107,7 +107,7 @@ StoredResidueSubsetSelector::apply( core::pose::Pose const & pose ) const
 	}
 
 	core::select::residue_selector::ResidueSubsetCOP subset = stored_subsets.get_subset( subset_name_ );
-	if ( !subset ) {
+	if ( subset == nullptr ) {
 		utility_exit_with_message( "Stored residue subset with name " + subset_name_ + " is NULL" );
 	}
 

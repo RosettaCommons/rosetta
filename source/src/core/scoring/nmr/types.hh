@@ -21,6 +21,8 @@
 #include <numeric/HomogeneousTransform.fwd.hh>
 #include <utility/fixedsizearray1.hh>
 
+#undef CONST
+
 namespace core {
 namespace scoring {
 namespace nmr {

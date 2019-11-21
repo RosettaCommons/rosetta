@@ -74,7 +74,7 @@ KeepSequenceSymmetry::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	using namespace utility::tag;
 	std::string const description = "If true, Rosetta will activate the SequenceSymmetricAnnealer. Use this when you give Rosetta a multimer to design and you want the sequences of the chains to be the same but you don't need strict physical symmetry.";
 	AttributeList attrs;
-	attrs + XMLSchemaAttribute( "setting", xsct_rosetta_bool, description );
+	attrs + XMLSchemaAttribute::attribute_w_default( "setting", xsct_rosetta_bool, description, "true" );
 	task_op_schema_w_attributes( xsd, keyname(), attrs, description );
 }
 

@@ -46,6 +46,8 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/simple_moves/VirtualRootMover.hh>
+#include <protocols/symmetry/SetupForSequenceSymmetryMover.hh>
+#include <core/select/residue_selector/ChainSelector.hh>
 
 #include <list>
 #include <basic/Tracer.hh>
@@ -237,6 +239,43 @@ public:
 
 		TR << "New sequences: _" << pose->chain_sequence( 1 ) << " " << pose->chain_sequence( 2 ) << " " << pose->chain_sequence( 3 ) << "_" << std::endl;
 	}
+
+
+	void test_residue_selectors() {
+		TR << "starting test_residue_selectors" << std::endl;
+		std::list< core::pack::task::operation::TaskOperationCOP > operations;
+		operations.emplace_back( utility::pointer::make_shared< task::operation::KeepSequenceSymmetry >() );
+
+		{//for speedup
+			utility::vector1< std::string > base_types = { "ALA", "GLY", "SER", "THR" };
+			operations.emplace_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToSpecifiedBaseResidueTypes >( base_types ) );
+		}
+
+		protocols::minimization_packing::PackRotamersMover packer;
+		packer.initialize_task_factory_with_operations( operations );
+
+		pose::PoseOP pose =
+			import_pose::pose_from_file( "core/scoring/symmetry/2akf.pdb" );
+		TS_ASSERT_EQUALS( pose->num_chains(), 3 );
+		TS_ASSERT_EQUALS( pose->chain_sequence( 1 ), pose->chain_sequence( 2 ) );
+		TS_ASSERT_EQUALS( pose->chain_sequence( 1 ), pose->chain_sequence( 3 ) );
+
+		protocols::symmetry::SetupForSequenceSymmetryMover sfssm;
+		sfssm.add_residue_selector( utility::pointer::make_shared< core::select::residue_selector::ChainSelector >( "2,3" ) );
+		TR << "sfssm.apply( * pose );" << std::endl;
+		sfssm.apply( * pose );
+
+		auto const old_sequence = pose->chain_sequence( 1 );
+		TR << "PACKING" << std::endl;
+		packer.apply( * pose );
+		TS_ASSERT( pose->chain_sequence( 1 ) != old_sequence );//Failure here is a failure of the unit test, not of the protocol
+		TS_ASSERT( pose->chain_sequence( 2 ) != old_sequence );//Failure here is a failure of the unit test, not of the protocol
+		TS_ASSERT( pose->chain_sequence( 1 ) != pose->chain_sequence( 2 ) );//Failure here is a failure of the unit test, not of the protocol
+		TS_ASSERT_EQUALS( pose->chain_sequence( 2 ), pose->chain_sequence( 3 ) );//Failure here is a failure of the protocol
+
+		TR << "New sequences: " << pose->chain_sequence( 1 ) << " " << pose->chain_sequence( 2 ) << " " << pose->chain_sequence( 3 ) << std::endl;
+	}
+
 
 	//Provide the packer an impossible problem
 	//This is a branch off of test_unequal_chain_lengths

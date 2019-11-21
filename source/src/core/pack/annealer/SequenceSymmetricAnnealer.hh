@@ -20,7 +20,7 @@
 #include <core/pack/annealer/RotamerAssigningAnnealer.hh>
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
-
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
@@ -29,6 +29,7 @@
 // Utility headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/cxx_versioning_macros.hh>
 
 // C++ headers
 #include <string>
@@ -88,6 +89,11 @@ public:
 	void record_annealer_trajectory( bool setting );
 	void trajectory_file_name( std::string const & setting );
 
+	NODISCARD
+	utility::vector1< utility::vector1< Size > >
+	create_corresponding_mress_for_mres() const;
+
+
 private:
 	std::string starting_sequence_;
 	core::Size num_chains_;
@@ -96,6 +102,10 @@ private:
 	bool record_annealer_trajectory_;
 	std::string trajectory_file_name_;
 	SequenceSymmetricAnnealer( SequenceSymmetricAnnealer const & rhs );
+
+	//Documented on wiki site for SetupForSequenceSymmetryMover
+	bool power_mode_ = false;
+	utility::vector1< utility::vector1< bool > > residue_subsets_;
 };
 
 }//end namespace annealer

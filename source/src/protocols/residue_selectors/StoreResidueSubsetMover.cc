@@ -82,15 +82,9 @@ StoreResidueSubsetMover::apply( core::pose::Pose & pose )
 	if ( subset_name_.empty() ) {
 		utility_exit_with_message( "No subset_name specified to StoreResidueSubset mover.  You must specify one." );
 	}
-	if ( selector_ ) {
+	if ( selector_ != nullptr ) {
 		subset_.reset( new core::select::residue_selector::ResidueSubset( selector_->apply( pose ) ) );
 	}
-	//core::select::residue_selector::ResidueSubsetCOP const subset( new core::select::residue_selector::ResidueSubset( selector_->apply( pose ) ) );
-	/*
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-	core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // Does this need to be fixed or omitted?
-	}
-	*/
 
 	CachedResidueSubset & stored_subsets = CachedResidueSubset::from_pose_datacache(pose);
 

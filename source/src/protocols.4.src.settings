@@ -254,6 +254,7 @@ sources = {
 
 	"protocols/symmetry": [
 		"SetupForSymmetryMover",
+		"SetupForSequenceSymmetryMover",
 		"DetectSymmetryMover",
 		"SetupNCSMover",
 		"SymDockingInitialPerturbation",
