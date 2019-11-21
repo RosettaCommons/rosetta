@@ -55,3 +55,4 @@ RNA_EnergyMethodOptions::show
 FreeDOF_Options::show
 read in [0-9.]+ s
 Found in [0-9.]+ s
+Your CPU supports instructions that this TensorFlow binary was not compiled to use
