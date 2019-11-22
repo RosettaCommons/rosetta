@@ -1,4 +1,4 @@
--s 6ofx_errasermin_CCA_start.pdb 
+-s 6ofx_errasermin_CCA_start3.pdb 
 -fasta target.fasta 
 -score:weights stepwise/rna/rna_res_level_energy7beta.wts 
 -extra_res_fa MMA.params 
@@ -6,4 +6,4 @@
 -allow_internal_local_moves false
 -out:levels protocols.stepwise.monte_carlo.mover.TransientCutpointHandler:500
 -use_legacy_stepwise_job_distributor true
--cycles 20
+-cycles 2
