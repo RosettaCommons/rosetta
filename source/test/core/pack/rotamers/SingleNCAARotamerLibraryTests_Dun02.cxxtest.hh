@@ -41,7 +41,7 @@
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR("SingleNCAARotamerLibraryTests_Dun02");
-
+#define TEST_DELTA 1.0e-6
 
 class SingleNCAARotamerLibraryTests_Dun02 : public CxxTest::TestSuite {
 	//Define Variables
@@ -55,6 +55,22 @@ public:
 
 	void tearDown(){
 
+	}
+
+	bool vectequal( utility::fixedsizearray1< double, 5 > const & vecta, utility::fixedsizearray1< double, 5 > const & vectb ) {
+		for( core::Size i(1); i<=5; ++i ) {
+			if( std::abs( vecta[i] - vectb[i] ) > TEST_DELTA ) return false;
+		}
+		return true;
+	}
+
+	bool vectequal( utility::fixedsizearray1< utility::fixedsizearray1< double, 5 >, 5 > const & vecta, utility::fixedsizearray1< utility::fixedsizearray1< double, 5 >, 5 > const & vectb ) {
+		for( core::Size i(1); i<=5; ++i ) {
+			for( core::Size j(1); j<=5; ++j ) {
+				if( std::abs( vecta[i][j] - vectb[i][j] ) > TEST_DELTA ) return false;
+			}
+		}
+		return true;
 	}
 
 	/// @author Andy Watkins
@@ -77,7 +93,7 @@ public:
 		for ( Real phi = -180; phi <= 180; phi += 5 ) {
 			for ( Real psi = -180; psi <= 180; psi += 5 ) {
 				for ( Size ii = 1; ii <= 9; ++ii ) {
-					TS_ASSERT( rl_cleu->get_probability_for_rotamer( phi, psi, ii ) == rl_nleu->get_probability_for_rotamer( phi, psi, ii ) );
+					TS_ASSERT_DELTA( rl_cleu->get_probability_for_rotamer( phi, psi, ii ), rl_nleu->get_probability_for_rotamer( phi, psi, ii ), TEST_DELTA );
 				}
 			}
 		}
@@ -93,9 +109,9 @@ public:
 					TS_ASSERT( nleu_samples[ii].nrchi_sample() == cleu_samples[ii].nrchi_sample() );
 					TS_ASSERT( nleu_samples[ii].nchi() == cleu_samples[ii].nchi() );
 					TS_ASSERT( nleu_samples[ii].rot_well() == cleu_samples[ii].rot_well() );
-					TS_ASSERT( nleu_samples[ii].chi_mean() == cleu_samples[ii].chi_mean() );
-					TS_ASSERT( nleu_samples[ii].chi_sd() == cleu_samples[ii].chi_sd() );
-					TS_ASSERT( nleu_samples[ii].probability() == cleu_samples[ii].probability() );
+					TS_ASSERT( vectequal( nleu_samples[ii].chi_mean(), cleu_samples[ii].chi_mean() ) );
+					TS_ASSERT( vectequal( nleu_samples[ii].chi_sd(), cleu_samples[ii].chi_sd() ) );
+					TS_ASSERT_DELTA( nleu_samples[ii].probability(), cleu_samples[ii].probability(), TEST_DELTA );
 				}
 			}
 		}
@@ -116,17 +132,17 @@ public:
 						pose_ncaa.set_chi( 2, 2, chi2 );
 						Real cv = rl_cleu->rotamer_energy( pose_ca.residue( 2 ), pose_ca, cscratch );
 						Real nv = rl_nleu->rotamer_energy( pose_ncaa.residue( 2 ), pose_ncaa, nscratch );
-						TS_ASSERT( cv == nv );
-						TS_ASSERT( cscratch.chimean() == nscratch.chimean() );
-						TS_ASSERT( cscratch.chisd() == nscratch.chisd() );
-						TS_ASSERT( cscratch.chidev() == nscratch.chidev() );
-						TS_ASSERT( cscratch.chidevpen() == nscratch.chidevpen() );
-						TS_ASSERT( cscratch.dchidevpen_dchi() == nscratch.dchidevpen_dchi() );
-						TS_ASSERT( cscratch.dchidevpen_dbb() == nscratch.dchidevpen_dbb() );
-						TS_ASSERT( cscratch.drotprob_dbb() == nscratch.drotprob_dbb() );
-						TS_ASSERT( cscratch.dneglnrotprob_dbb() == nscratch.dneglnrotprob_dbb() );
-						TS_ASSERT( cscratch.dchimean_dbb() == nscratch.dchimean_dbb() );
-						TS_ASSERT( cscratch.dchisd_dbb() == nscratch.dchisd_dbb() );
+						TS_ASSERT_DELTA( cv, nv, TEST_DELTA );
+						TS_ASSERT( vectequal( cscratch.chimean(), nscratch.chimean() ) );
+						TS_ASSERT( vectequal( cscratch.chisd(), nscratch.chisd() ) );
+						TS_ASSERT( vectequal( cscratch.chidev(), nscratch.chidev() ) );
+						TS_ASSERT( vectequal( cscratch.chidevpen(), nscratch.chidevpen() ) );
+						TS_ASSERT( vectequal( cscratch.dchidevpen_dchi(), nscratch.dchidevpen_dchi() ) );
+						TS_ASSERT( vectequal( cscratch.dchidevpen_dbb(), nscratch.dchidevpen_dbb() ) );
+						TS_ASSERT( vectequal( cscratch.drotprob_dbb(), nscratch.drotprob_dbb() ) );
+						TS_ASSERT( vectequal( cscratch.dneglnrotprob_dbb(), nscratch.dneglnrotprob_dbb() ) );
+						TS_ASSERT( vectequal( cscratch.dchimean_dbb(), nscratch.dchimean_dbb() ) );
+						TS_ASSERT( vectequal( cscratch.dchisd_dbb(), nscratch.dchisd_dbb() ) );
 
 					}
 				}
@@ -164,7 +180,7 @@ public:
 			core::Real const score_ca( sfxn(pose_ca) );
 			core::Real const score_ncaa( sfxn(pose_ncaa) );
 			TR << trial_conformations[i][1] << "\t" << trial_conformations[i][2] << "\t" << trial_conformations[i][3] << "\t" << trial_conformations[i][4] << "\t" << score_ca << "\t" << score_ncaa << std::endl;
-			TS_ASSERT_DELTA( score_ca, score_ncaa, 1e-6 );
+			TS_ASSERT_DELTA( score_ca, score_ncaa, TEST_DELTA );
 		}
 
 		TR << std::endl;
@@ -213,13 +229,13 @@ public:
 			core::Real const dEdomg_ncaa(  dun.eval_residue_dof_derivative( pose_ncaa.residue( 2 ), rmm, core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::BB, 3), pose_ncaa, sfxn, sfxn.weights() ) );
 
 			TR << trial_conformations[i][1] << "\t" << trial_conformations[i][2] << "\t" << trial_conformations[i][3] << "\t" << trial_conformations[i][4] << "\t" << dEdphi_ca << "\t" << dEdphi_ncaa << "\t" << dEdpsi_ca << "\t" << dEdpsi_ncaa << "\t" << dEdchi1_ca << "\t" << dEdchi1_ncaa << "\t" << dEdchi2_ca << "\t" << dEdchi2_ncaa << "\t" << dEdomg_ca << "\t" << dEdomg_ncaa << std::endl;
-			TS_ASSERT_DELTA( dEdphi_ca, dEdphi_ncaa, 1e-6 );
-			TS_ASSERT_DELTA( dEdpsi_ca, dEdpsi_ncaa, 1e-6 );
-			TS_ASSERT_DELTA( dEdchi1_ca, dEdchi1_ncaa, 1e-6 );
-			TS_ASSERT_DELTA( dEdchi2_ca, dEdchi2_ncaa, 1e-6 );
-			TS_ASSERT_DELTA( dEdomg_ca, dEdomg_ncaa, 1e-6 );
-			TS_ASSERT_DELTA( dEdomg_ca, 0.0, 1e-6 );
-			TS_ASSERT_DELTA( dEdomg_ncaa, 0.0, 1e-6 );
+			TS_ASSERT_DELTA( dEdphi_ca, dEdphi_ncaa, TEST_DELTA );
+			TS_ASSERT_DELTA( dEdpsi_ca, dEdpsi_ncaa, TEST_DELTA );
+			TS_ASSERT_DELTA( dEdchi1_ca, dEdchi1_ncaa, TEST_DELTA );
+			TS_ASSERT_DELTA( dEdchi2_ca, dEdchi2_ncaa, TEST_DELTA );
+			TS_ASSERT_DELTA( dEdomg_ca, dEdomg_ncaa, TEST_DELTA );
+			TS_ASSERT_DELTA( dEdomg_ca, 0.0, TEST_DELTA );
+			TS_ASSERT_DELTA( dEdomg_ncaa, 0.0, TEST_DELTA );
 		}
 
 		TR << std::endl;
