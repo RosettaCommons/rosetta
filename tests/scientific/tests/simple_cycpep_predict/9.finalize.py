@@ -41,7 +41,8 @@ for line in summary_text:
     _index_html_template_ += line + "<br/>\n"
 
 # add image for results
-_index_html_template_ += '<img src="plot_results.png" alt="Energy landscape computed for peptide.  This should look funnel-shaped." style="max-width: 100%">\n'
+_index_html_template_ += '<img src="plot_results.png" alt="Energy landscape computed for peptide to known crystal structure.  This should look funnel-shaped." style="max-width: 100%">\n'
+_index_html_template_ += '<img src="plot_results2.png" alt="Energy landscape computed for peptide to lowest-energy structure.  This should also look funnel-shaped." style="max-width: 100%">\n'
 
 # add text from readme
 for l in readme:

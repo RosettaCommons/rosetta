@@ -168,6 +168,12 @@ std::string GeneralizedKICperturber::get_perturber_effect_name( core::Size &effe
 	case randomize_backbone_by_bins :
 		returnstring = "randomize_backbone_by_bins";
 		break;
+	case perturb_bondlength :
+		returnstring = "perturb_bondlength";
+		break;
+	case perturb_bondangle :
+		returnstring = "perturb_bondangle";
+		break;
 	case perturb_dihedral :
 		returnstring = "perturb_dihedral";
 		break;
@@ -263,22 +269,22 @@ void GeneralizedKICperturber::apply(
 	switch(effect_) {
 	case set_dihedral :
 		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
-		apply_set_dihedral(AtomIDs_loopindexed, atomlist, inputvalues_real_, torsions, 0);
+		apply_set_dihedral(AtomIDs_loopindexed, atomlist, inputvalues_real_, torsions, GenKICPerturberEffect::set );
 		break;
 	case set_bondangle :
 		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
-		apply_set_bondangle(AtomIDs_loopindexed, atomlist, inputvalues_real_, bondangles);
+		apply_set_bondangle(AtomIDs_loopindexed, atomlist, inputvalues_real_, bondangles, GenKICPerturberEffect::set );
 		break;
 	case set_bondlength :
 		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
-		apply_set_bondlength(AtomIDs_loopindexed, atomlist, inputvalues_real_, bondlengths);
+		apply_set_bondlength(AtomIDs_loopindexed, atomlist, inputvalues_real_, bondlengths, GenKICPerturberEffect::set );
 		break;
 	case set_backbone_bin :
 		apply_set_backbone_bin( original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions );
 		break;
 	case randomize_dihedral :
 		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
-		apply_set_dihedral(AtomIDs_loopindexed, atomlist, inputvalues_real_, torsions, 1); //We recycle the apply_set_dihedral() function to avoid code duplication
+		apply_set_dihedral(AtomIDs_loopindexed, atomlist, inputvalues_real_, torsions, GenKICPerturberEffect::randomize ); //We recycle the apply_set_dihedral() function to avoid code duplication
 		break;
 	case randomize_alpha_backbone_by_rama :
 		apply_randomize_alpha_backbone_by_rama(original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions);
@@ -289,9 +295,17 @@ void GeneralizedKICperturber::apply(
 	case randomize_backbone_by_bins :
 		apply_randomize_backbone_by_bins( original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions );
 		break;
+	case perturb_bondlength :
+		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
+		apply_set_bondlength(AtomIDs_loopindexed, atomlist, inputvalues_real_, bondlengths, GenKICPerturberEffect::perturb ); // We recycle the apply_set_bondlength() function to avoid code duplication.
+		break;
+	case perturb_bondangle :
+		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
+		apply_set_bondangle(AtomIDs_loopindexed, atomlist, inputvalues_real_, bondangles, GenKICPerturberEffect::perturb ); // We recycle the apply_set_bondangle() function to avoid code duplication.
+		break;
 	case perturb_dihedral :
 		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
-		apply_set_dihedral(AtomIDs_loopindexed, atomlist, inputvalues_real_, torsions, 2); //We recycle the apply_set_dihedral() function to avoid code duplication
+		apply_set_dihedral(AtomIDs_loopindexed, atomlist, inputvalues_real_, torsions, GenKICPerturberEffect::perturb ); //We recycle the apply_set_dihedral() function to avoid code duplication
 		break;
 	case perturb_dihedral_bbg :
 		reindex_AtomIDs(residue_map, AtomIDs_loopindexed, original_pose);
@@ -385,22 +399,22 @@ void GeneralizedKICperturber::apply_set_dihedral (
 	utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 	utility::vector1 < core::Real > const &inputvalues_real,
 	utility::vector1< core::Real > &torsions, //desired torsions for each atom (input/output)
-	core::Size const effect //0=set, 1=randomize, 2=perturb
+	GenKICPerturberEffect const effect //set/randomize/perturb
 ) const {
 	//TR << "Applying set_dihedral perturbation effect." << std::endl;
 
 	runtime_assert_string_msg( dihedrallist.size() > 0, "Could not apply GeneralizedKICperturber::apply_set_dihedral, since no atoms were provided as input." );
-	if ( effect==0 ) runtime_assert_string_msg( inputvalues_real.size() > 0, "Could not set dihedral value with GeneralizedKICperturber::apply_set_dihedral, since no value for the dihedral angle was provided as input." );
-	if ( effect==2 ) runtime_assert_string_msg( inputvalues_real.size() > 0, "Could not perturb dihedrals with GeneralizedKICperturber::apply_set_dihedral, since no value for the dihedral angle perturbation magnitude provided as input." );
+	if ( effect==GenKICPerturberEffect::set ) runtime_assert_string_msg( inputvalues_real.size() > 0, "Could not set dihedral value with GeneralizedKICperturber::apply_set_dihedral, since no value for the dihedral angle was provided as input." );
+	if ( effect==GenKICPerturberEffect::perturb ) runtime_assert_string_msg( inputvalues_real.size() > 0, "Could not perturb dihedrals with GeneralizedKICperturber::apply_set_dihedral, since no value for the dihedral angle perturbation magnitude provided as input." );
 
 
 	bool separate_values = false; //Have separate dihedral values been provided for each dihedral in the list, or are we setting everything to one value?
-	if ( effect==0 || effect==2 ) {
+	if ( effect==GenKICPerturberEffect::set || effect==GenKICPerturberEffect::perturb ) {
 		std::string str1=" set";
 		std::string str2=" to";
 		std::string str3="Setting ";
 		std::string str4=" to ";
-		if ( effect==2 ) {
+		if ( effect==GenKICPerturberEffect::perturb ) {
 			str1=" perturbed"; str2=" by"; str3="Perturbing "; str4=" by ";
 		}
 		if ( inputvalues_real.size()>=dihedrallist.size() ) {
@@ -456,11 +470,11 @@ void GeneralizedKICperturber::apply_set_dihedral (
 			if ( torsion_index > 0 ) break;
 		}
 		runtime_assert_string_msg(torsion_index > 0, "Error in GeneralizedKICperturber::apply_set_dihedral.  The dihedral angle specified was not found in the chain of atoms to be closed.");
-		if ( effect==2 ) {
+		if ( effect==GenKICPerturberEffect::perturb ) {
 			torsions[torsion_index] += numeric::random::rg().gaussian() * (separate_values ? inputvalues_real[i] : inputvalues_real[1]); //Add a randomly chosen value from a gaussian distribution of specified bredth.
-		} else if ( effect==1 ) { //randomizing torsions
+		} else if ( effect==GenKICPerturberEffect::randomize ) { //randomizing torsions
 			torsions[torsion_index] = numeric::random::rg().uniform()*360.0; //Set the desired torsion to the user-specified value.
-		} else if ( effect==0 ) { //setting torsions
+		} else if ( effect==GenKICPerturberEffect::set ) { //setting torsions
 			torsions[torsion_index] = (separate_values ? inputvalues_real[i] : inputvalues_real[1]); //Set the desired torsion to the user-specified value.
 		}
 	}
@@ -643,24 +657,34 @@ void GeneralizedKICperturber::apply_set_bondangle (
 	utility::vector1 < utility::vector1 < core::id::AtomID > > const &bondanglelist, //List of sets of atoms defining bond angles, indexed based on the loop_pose.
 	utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 	utility::vector1 < core::Real > const &inputvalues_real,
-	utility::vector1< core::Real > &bondangles //desired bond angles for each atom (input/output)
+	utility::vector1< core::Real > &bondangles, //desired bond angles for each atom (input/output)
+	GenKICPerturberEffect const effect //set/randomize/perturb
 ) const {
 	//TR << "Applying set_bondangle perturbation effect." << std::endl;
+
+	debug_assert( effect != GenKICPerturberEffect::randomize ); //For now, we have no support for randomizing bond angles.  We probably never will -- it doesn't really make sense.
 
 	runtime_assert_string_msg( bondanglelist.size() > 0, "Could not apply GeneralizedKICperturber::apply_set_bondangle, since no atoms were provided as input." );
 	runtime_assert_string_msg( inputvalues_real.size() > 0, "Could not apply GeneralizedKICperturber::apply_set_bondangle, since no value for the bond angle was provided as input." );
 
 	bool separate_values = false; //Have separate bond angle values been provided for each bond angle in the list, or are we setting everything to one value?
-	if ( inputvalues_real.size()>=bondanglelist.size() ) {
-		separate_values = true;
-		if ( inputvalues_real.size()>bondanglelist.size() ) {
-			if ( TR.Warning.visible() ) TR.Warning << "Number of input values for set_bondangle pertruber effect exceeds the number of bond angles to be set.  Using only the first " << bondanglelist.size() << " values." << std::endl;
+	{
+		//Strings used for warning and debug messages:
+		std::string const to_by( effect == GenKICPerturberEffect::perturb ? "by" : "to" );
+		std::string const set_perturbed( effect == GenKICPerturberEffect::perturb ? "perturbed" : "set" );
+		std::string const setting_perturbing( effect == GenKICPerturberEffect::perturb ? "Perturbing" : "Setting" );
+
+		if ( inputvalues_real.size()>=bondanglelist.size() ) {
+			separate_values = true;
+			if ( inputvalues_real.size()>bondanglelist.size() ) {
+				if ( TR.Warning.visible() ) TR.Warning << "Number of input values for set_bondangle pertruber effect exceeds the number of bond angles to be " << set_perturbed << ".  Using only the first " << bondanglelist.size() << " values." << std::endl;
+			}
+		} else if ( inputvalues_real.size()!=1 ) {
+			separate_values = false;
+			if ( TR.Warning.visible() ) TR.Warning << "Number of input values does not match the number of bond angles specified.  All angles will be " << set_perturbed  << " " << to_by << " the first value." << std::endl;
+		} else { //inputvalues_real.size()==1 and bondanglelist.size() > 1
+			if ( TR.Debug.visible() ) TR.Debug << setting_perturbing << " all specified bond angles " << to_by << " " << inputvalues_real[1] << "." << std::endl;
 		}
-	} else if ( inputvalues_real.size()!=1 ) {
-		separate_values = false;
-		if ( TR.Warning.visible() ) TR.Warning << "Number of input values does not match the number of bond angles specified.  All angles will be set to the first value." << std::endl;
-	} else { //inputvalues_real.size()==1 and bondanglelist.size() > 1
-		if ( TR.Debug.visible() ) TR.Debug << "Setting all specified bond angles to " << inputvalues_real[1] << "." << std::endl;
 	}
 
 	for ( core::Size i=1, imax=bondanglelist.size(); i<=imax; ++i ) { //Loop through each bond angle given as input
@@ -692,7 +716,13 @@ void GeneralizedKICperturber::apply_set_bondangle (
 			if ( bondangle_index > 0 ) break;
 		}
 		runtime_assert_string_msg(bondangle_index > 0, "Error in GeneralizedKICperturber::apply_set_bondangle.  The bond angle specified was not found in the chain of atoms to be closed.");
-		bondangles[bondangle_index] = (separate_values ? inputvalues_real[i] : inputvalues_real[1]); //Set the desired bond angle to the user-specified value.
+		if ( effect == GenKICPerturberEffect::set ) { //setting
+			bondangles[bondangle_index] = (separate_values ? inputvalues_real[i] : inputvalues_real[1]); //Set the desired bond angle to the user-specified value.
+		} else if ( effect == GenKICPerturberEffect::perturb ) { //perturbing
+			bondangles[bondangle_index] = bondangles[bondangle_index] + numeric::random::rg().gaussian() * (separate_values ? inputvalues_real[i] : inputvalues_real[1]); //Perturb the desired bond angle by a Gaussian with user-specified bredth.
+		} else {
+			utility_exit_with_message( "Error in GeneralizedKICperturber::apply_set_bondangle(): Could not interpret effect=" + std::to_string( static_cast<core::Size>(effect) ) + "!" );
+		}
 	}
 
 	if ( TR.Warning.visible() ) TR.Warning.flush();
@@ -714,24 +744,35 @@ void GeneralizedKICperturber::apply_set_bondlength (
 	utility::vector1 < utility::vector1 < core::id::AtomID > > const &bondlengthlist, //List of sets of atoms defining bond lengths, indexed based on the loop_pose.
 	utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 	utility::vector1 < core::Real > const &inputvalues_real,
-	utility::vector1< core::Real > &bondlengths //desired bond lengths for each atom (input/output)
+	utility::vector1< core::Real > &bondlengths, //desired bond lengths for each atom (input/output)
+	GenKICPerturberEffect const effect //set/randomize/perturb
 ) const {
 	//TR << "Applying set_bondlength perturbation effect." << std::endl;
+
+	debug_assert( effect != GenKICPerturberEffect::randomize ); //For now, we have no support for randomizing bond lengths.
+	debug_assert( effect <= GenKICPerturberEffect::perturb );
 
 	runtime_assert_string_msg( bondlengthlist.size() > 0, "Could not apply GeneralizedKICperturber::apply_set_bondlength, since no atoms were provided as input." );
 	runtime_assert_string_msg( inputvalues_real.size() > 0, "Could not apply GeneralizedKICperturber::apply_set_bondlength, since no value for the bond length was provided as input." );
 
 	bool separate_values = false; //Have separate bond length values been provided for each bond length in the list, or are we setting everything to one value?
-	if ( inputvalues_real.size()>=bondlengthlist.size() ) {
-		separate_values = true;
-		if ( inputvalues_real.size()>bondlengthlist.size() ) {
-			if ( TR.Warning.visible() ) TR.Warning << "Number of input values for set_bondlength pertruber effect exceeds the number of bond lengths to be set.  Using only the first " << bondlengthlist.size() << " values." << std::endl;
+	{
+		//Strings used for warning and debug messages:
+		std::string const to_by( effect == GenKICPerturberEffect::perturb ? "by" : "to" );
+		std::string const set_perturbed( effect == GenKICPerturberEffect::perturb ? "perturbed" : "set" );
+		std::string const setting_perturbing( effect == GenKICPerturberEffect::perturb ? "Perturbing" : "Setting" );
+
+		if ( inputvalues_real.size()>=bondlengthlist.size() ) {
+			separate_values = true;
+			if ( inputvalues_real.size()>bondlengthlist.size() ) {
+				if ( TR.Warning.visible() ) TR.Warning << "Number of input values for set_bondlength pertruber effect exceeds the number of bond lengths to be " << set_perturbed << ".  Using only the first " << bondlengthlist.size() << " values." << std::endl;
+			}
+		} else if ( inputvalues_real.size()!=1 ) {
+			separate_values = false;
+			if ( TR.Warning.visible() ) TR.Warning << "Number of input values does not match the number of bond lengths specified.  All lengths will be " << set_perturbed << " " <<  to_by << " the first value." << std::endl;
+		} else { //inputvalues_real.size()==1 and bondlengthlist.size() > 1
+			if ( TR.Debug.visible() ) TR.Debug << setting_perturbing << " all specified bond lengths " << to_by << " " << inputvalues_real[1] << "." << std::endl;
 		}
-	} else if ( inputvalues_real.size()!=1 ) {
-		separate_values = false;
-		if ( TR.Warning.visible() ) TR.Warning << "Number of input values does not match the number of bond lengths specified.  All lengths will be set to the first value." << std::endl;
-	} else { //inputvalues_real.size()==1 and bondlengthlist.size() > 1
-		if ( TR.Debug.visible() ) TR.Debug << "Setting all specified bond lengths to " << inputvalues_real[1] << "." << std::endl;
 	}
 
 	for ( core::Size i=1, imax=bondlengthlist.size(); i<=imax; ++i ) { //Loop through each bond length given as input
@@ -750,14 +791,18 @@ void GeneralizedKICperturber::apply_set_bondlength (
 			if ( bondlength_index > 0 ) break;
 		}
 		runtime_assert_string_msg(bondlength_index > 0, "Error in GeneralizedKICperturber::apply_set_bondlength.  The bond length specified was not found in the chain of atoms to be closed.");
-		bondlengths[bondlength_index] = (separate_values ? inputvalues_real[i] : inputvalues_real[1]); //Set the desired bond length to the user-specified value.
+		if ( effect == GenKICPerturberEffect::set ) {
+			bondlengths[bondlength_index] = (separate_values ? inputvalues_real[i] : inputvalues_real[1]); //Set the desired bond length to the user-specified value.
+		} else if ( effect == GenKICPerturberEffect::perturb ) {
+			bondlengths[bondlength_index] = bondlengths[bondlength_index] + numeric::random::rg().gaussian() * (separate_values ? inputvalues_real[i] : inputvalues_real[1]); //Perturb by a Gaussian of user-specified bredth.
+		} else {
+			utility_exit_with_message( "Error in GeneralizedKICperturber::apply_set_bondlength(): Cannot interpret effect=" + std::to_string( static_cast<core::Size>( effect) ) + "!" );
+		}
 	}
 
 	if ( TR.Warning.visible() ) TR.Warning.flush();
 	if ( TR.Debug.visible() ) TR.Debug.flush();
 	if ( TR.visible() ) TR.flush();
-
-	return;
 } //set_bondlength
 
 /// @brief Applies a set_backbone_bin perturbation to the list of torsions.
@@ -835,7 +880,7 @@ void GeneralizedKICperturber::apply_set_backbone_bin (
 		}
 	}
 
-	apply_set_dihedral ( dihedral_list, atomlist, inputvalues_real, torsions, 0); //Recycle this function.
+	apply_set_dihedral ( dihedral_list, atomlist, inputvalues_real, torsions, GenKICPerturberEffect::set ); //Recycle this function.
 
 	return;
 }
@@ -1160,7 +1205,7 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_bins(
 		}
 	}
 
-	apply_set_dihedral ( dihedral_list, atomlist, inputvalues_real, torsions, 0); //Recycle this function.
+	apply_set_dihedral ( dihedral_list, atomlist, inputvalues_real, torsions, GenKICPerturberEffect::set ); //Recycle this function.
 
 	return;
 }
@@ -1263,7 +1308,7 @@ void GeneralizedKICperturber::apply_perturb_backbone_by_bins(
 			dihedral_list.push_back( cur_atomid_list );
 		}
 
-		apply_set_dihedral ( dihedral_list, atomlist, mainchain_torsions, torsions, 0); //Recycle this function.
+		apply_set_dihedral ( dihedral_list, atomlist, mainchain_torsions, torsions, GenKICPerturberEffect::set ); //Recycle this function.
 	} //Iterate until the number of iterations is reached
 
 	return;
@@ -1391,7 +1436,7 @@ GeneralizedKICperturber::apply_copy_backbone_dihedrals(
 		}
 	}
 
-	apply_set_dihedral ( dihedral_list, atomlist, inputvalues_real, torsions, 0); //Recycle this function.
+	apply_set_dihedral ( dihedral_list, atomlist, inputvalues_real, torsions, GenKICPerturberEffect::set ); //Recycle this function.
 }
 
 

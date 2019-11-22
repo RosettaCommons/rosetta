@@ -46,6 +46,8 @@ command_line = '''
 -out:file:silent out.silent
 -multithreading:total_threads 1
 -threads_per_slave 1
+-cyclic_peptide:compute_rmsd_to_lowest true
+-cyclic_peptide:compute_ensemble_sasa_metrics true
 -cyclic_peptide:MPI_stop_after_time {run_time}
 -out:file:silent out.silent
 -cyclic_peptide:sample_cis_pro_frequency 0.3

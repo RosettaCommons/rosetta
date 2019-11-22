@@ -62,11 +62,16 @@ public:
 		std::string tag = "empty_tag"
 	);
 
+	BinarySilentStruct( BinarySilentStruct const & src );
+
 	BinarySilentStructOP shared_from_this() { return utility::pointer::static_pointer_cast<BinarySilentStruct>( SilentStruct::shared_from_this() ); }
 
 	SilentStructOP clone() const override {
 		return utility::pointer::make_shared< BinarySilentStruct >( *this );
 	}
+
+	/// @brief Assignment operator.
+	BinarySilentStruct & operator= ( BinarySilentStruct const & src );
 
 	/// @brief Re-dimension the storage capacity of this BinarySilentStruct to the given number of residues.
 	void resize(

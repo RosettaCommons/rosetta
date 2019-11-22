@@ -52,6 +52,11 @@ namespace protocols {
 namespace generalized_kinematic_closure {
 namespace perturber {
 
+enum class GenKICPerturberEffect {
+	set = 1, //Keep first
+	randomize,
+	perturb
+};
 
 /// @brief The effect of the perturber (e.g. randomizing alpha-amino acid phi/psi angles, altering side-chains, etc.)
 /// @details  Perturbation effects starting with "set" set parameters to defined values (e.g. set the third phi angle
@@ -75,6 +80,8 @@ enum perturber_effect {
 	//randomize_chi,
 	//randomize_rotamer
 
+	perturb_bondlength,
+	perturb_bondangle,
 	perturb_dihedral,
 	perturb_dihedral_bbg,
 	perturb_backbone_by_bins,
@@ -331,7 +338,7 @@ private:
 		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 		utility::vector1 < core::Real > const &inputvalues_real,
 		utility::vector1< core::Real > &torsions, //desired torsions for each atom (input/output)
-		core::Size const effect //0=set, 1=randomize, 2=perturb
+		GenKICPerturberEffect const effect //set/randomize/perturb
 	) const;
 
 	/// @brief Applies a set_bondangle perturbation to a list of bond angles.
@@ -346,7 +353,8 @@ private:
 		utility::vector1 < utility::vector1 < core::id::AtomID > > const &bondanglelist, //List of sets of atoms defining bond angles, indexed based on the loop_pose.
 		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose).
 		utility::vector1 < core::Real > const &inputvalues_real,
-		utility::vector1< core::Real > &bondangles //desired bond angles for each atom (input/output)
+		utility::vector1< core::Real > &bondangles, //desired bond angles for each atom (input/output)
+		GenKICPerturberEffect const effect //set/randomize/perturb
 	) const;
 
 	/// @brief Applies a set_bondlength perturbation to a list of bond lengths.
@@ -361,7 +369,8 @@ private:
 		utility::vector1 < utility::vector1 < core::id::AtomID > > const &bondlengthlist, //List of sets of atoms defining bond lengths, indexed based on the loop_pose.
 		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose).
 		utility::vector1 < core::Real > const &inputvalues_real,
-		utility::vector1< core::Real > &bondlengths //desired bond lengths for each atom (input/output)
+		utility::vector1< core::Real > &bondlengths, //desired bond lengths for each atom (input/output)
+		GenKICPerturberEffect const effect //set/randomize/perturb
 	) const;
 
 	/// @brief Applies a set_backbone_bin perturbation to the list of torsions.

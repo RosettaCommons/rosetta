@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "includePath": [
+                "${workspaceFolder}",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/external",
+                "${workspaceFolder}/external/include",
+                "${workspaceFolder}/external/boost_1_55_0",
+                "${workspaceFolder}/external/dbio",
+                "${workspaceFolder}/src/platform/linux/",
+                "/usr/include",
+                "/usr/local/include"
+            ],
+            "defines": [
+                "PTR_STD"
+            ],
+            "intelliSenseMode": "gcc-x64",
+            "cStandard": "c11",
+            "cppStandard": "c++11"
+        }
+    ],
+    "version": 4
+}

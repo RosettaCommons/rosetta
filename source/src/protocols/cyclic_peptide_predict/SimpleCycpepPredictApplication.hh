@@ -714,6 +714,26 @@ private:
 	/// isopeptide bond, false otherwise.
 	bool is_isopeptide_forming_carbonyl_type( core::chemical::AA const aa ) const;
 
+	/// @brief Given a GenKIC object, a pose, and a bond length perturbation magnitude, add
+	/// bond length perturbation to all bond lengths in the pose.
+	void
+	add_bondlength_perturbation(
+		protocols::generalized_kinematic_closure::GeneralizedKIC & genkic,
+		core::Real const bondlength_perturbation_magnitude,
+		core::pose::Pose const & pose,
+		core::Size const anchor_res
+	) const;
+
+	/// @brief Given a GenKIC object, a pose, and a bond angle perturbation magnitude, add
+	/// bond angle perturbation to all bond angles in the pose.
+	void
+	add_bondangle_perturbation(
+		protocols::generalized_kinematic_closure::GeneralizedKIC & genkic,
+		core::Real const bondangle_perturbation_magnitude,
+		core::pose::Pose const & pose,
+		core::Size const anchor_res
+	) const;
+
 private:
 	/// ------------- Data -------------------------------
 	/// -------- When you add new data to this class, ----
@@ -891,7 +911,13 @@ private:
 
 	/// @brief A small random value added to all user-set dihedral values.  Defaults to 0.
 	///
-	core::Real user_set_dihedral_perturbation_;
+	core::Real user_set_dihedral_perturbation_ = 0.0;
+
+	/// @brief A small random value added to all backbone bond lengths.  Defaults to 0.
+	core::Real bondlength_perturbation_magnitude_ = 0.0;
+
+	/// @brief A small random value added to all backbone bond angles.  Defaults to 0.
+	core::Real bondangle_perturbation_magnitude_ = 0.0;
 
 	/// @brief Should we filter out solutions that have more than the allowed number of hydrogen bonds
 	/// to an acceptor?

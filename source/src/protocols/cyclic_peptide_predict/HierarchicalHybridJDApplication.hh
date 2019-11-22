@@ -27,6 +27,7 @@
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJDApplication.fwd.hh>
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.fwd.hh>
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_RMSDToBestSummary.fwd.hh>
+#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_SASASummary.fwd.hh>
 #include <protocols/cyclic_peptide_predict/util.hh>
 
 // Package Headers
@@ -64,12 +65,14 @@ enum HIERARCHICAL_MPI_COMMUNICATION_TYPE {
 	REQUEST_TOP_POSE_BCAST, // The emperor is asking that the top pose be shared with all nodes.
 	OFFER_NEW_JOBRESULTSSUMMARY_BATCH_UPWARD,
 	OFFER_NEW_RMSD_TO_BEST_SUMMARY_BATCH_UPWARD,
+	OFFER_NEW_SASA_SUMMARY_BATCH_UPWARD,
 	OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD,
 	OFFER_NEW_POSE_BATCH_UPWARD,
 	SILENT_STRUCT_TRANSMISSION,
 	GIVE_COMPLETION_SIGNAL_UPWARD,
 	OFFER_NEW_JOBS_BATCH_DOWNWARD,
 	REQUEST_NEW_POSE_BATCH_DOWNWARD,
+	REQUEST_SASA_SUMMARIES_DOWNWARD, // The emperor is asking that all slaves transmit SASA summaries upward.
 	HALT_SIGNAL
 };
 
@@ -192,6 +195,15 @@ protected:
 		std::string const &sequence
 	) const = 0;
 
+	/// @brief Compute SASA metrics for this pose and bundle them in a SASASummary.
+	/// @details Although derived classes MAY override this, they needn't.  The default behaviour
+	/// is just to use SASA metrics, which should be pretty general.
+	virtual HierarchicalHybridJD_SASASummaryOP
+	generate_sasa_summary(
+		core::pose::Pose const &pose,
+		HierarchicalHybridJD_JobResultsSummaryCOP jobsummary
+	) const;
+
 	/// @brief Get a const owning pointer to the native pose.
 	/// @details Returns nullptr if native_ == nullptr.
 	inline core::pose::PoseCOP native() const { return native_; }
@@ -249,7 +261,6 @@ private:
 	/// @brief Get the amino acid sequence of the peptide we're going to predict; set the sequence_ private member variable.
 	/// @details The emperor reads this from disk and broadcasts it to all other nodes.  This function should be called from all nodes;
 	/// it figures out which behaviour it should be performing.
-	/// @note This function necessarily uses new and delete[].
 	void get_sequence();
 
 	/// @brief Get the native structure of the peptide we're going to predict (if the user has specified one with the -in:file:native flag).
@@ -260,7 +271,6 @@ private:
 protected:
 
 	/// @brief Given a map of indicies to lists of residue names, broadcast it to all MPI ranks.
-	/// @note This necessarily uses new and delete for the data sent via MPI_Bcast.
 	void broadcast_res_list( std::map< core::Size, utility::vector1 < std::string > > &res_list) const;
 
 private:
@@ -303,13 +313,11 @@ private:
 
 	/// @brief Non-emperor nodes must call this when the emperor calls emperor_broadcast_silent_struct.
 	/// @details This will build a pose and return an owning pointer to it.
-	/// @note This function necessarily uses new and delete[].
 	core::pose::PoseCOP receive_broadcast_silent_struct_and_build_pose() const;
 
 	/// @brief Convert a vector of silent structs into a character string and send it to a node.
 	/// @details Intended to be used with receive_pose_batch_as_string() to allow another node to receive the transmission.
-	/// Message is tagged with SILENT_STRUCT_TRANSMISSION
-	/// @note This function necessarily uses new and delete[].
+	/// Message is tagged with SILENT_STRUCT_TRANSMISSION.
 	void send_silent_structs( utility::vector1 < core::io::silent::SilentStructOP > const &ss_vect, int const target_node) const;
 
 	/// @brief Receive a transmitted set of poses (as silent strings).
@@ -332,7 +340,7 @@ private:
 	/// the hierarchy to the original node that carried out the job.
 	void receive_and_sort_job_summaries( utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > &original_summary_list, int const originating_node, bool const append_to_handler_list ) const;
 
-	/// @brief Recieve a list of job summaries.
+	/// @brief Send a list of job summaries.
 	/// @details To be used in conjunction with receive_and_sort_job_summaries().  Sending and receiving procs must send messages to synchronize, first.
 	void send_job_summaries( utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &summary_list, int const target_node ) const;
 
@@ -404,6 +412,32 @@ protected:
 		bool const append_to_handler_list
 	) const;
 
+	/// @brief Given a vector of SASA summaries, send them to a target node.
+	/// @details This function complements receive_sasa_summaries_from_below().
+	void
+	send_sasa_summaries_upward(
+		utility::vector1< HierarchicalHybridJD_SASASummaryOP > const & sasa_summaries,
+		int const receiving_node
+	) const;
+
+	/// @brief A child node has sent a batch of SASA summaries.  Receive them.
+	/// @details This function complements send_sasa_summaries_upward().
+	void
+	receive_sasa_summaries_from_below(
+		utility::vector1< HierarchicalHybridJD_SASASummaryOP > & sasa_summaries,
+		int const requesting_node,
+		bool const append_to_handler_list
+	) const;
+
+	/// @brief Recieve all SASA summaries from all children, and sort them into the order that jobsummaries is in.
+	/// @details This is intended for use with send_sasa_summaries_upward().
+	void
+	receive_and_sort_all_sasa_summaries(
+		utility::vector1< HierarchicalHybridJD_SASASummaryOP > & sasa_summaries,
+		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const & job_summary_list,
+		bool const append_to_handler_list
+	) const;
+
 	/// ------------- Emperor Methods --------------------
 
 	/// @brief Is this an emperor (root) node?
@@ -419,7 +453,6 @@ private:
 
 	/// @brief Convert a silent struct into a character string and broadcast it to all nodes.
 	/// @details Intended to be used with receive_broadcast_silent_struct_and_build_pose() to allow all other nodes to receive the broadcast.
-	/// @note This function necessarily uses new and delete[].
 	void emperor_broadcast_silent_struct( core::io::silent::SilentStructOP ss ) const;
 
 	/// @brief Write out a summary of the jobs completed (node, job index on node, total energy, rmsd, handler path) to the summary tracer.
@@ -427,7 +460,8 @@ private:
 	void
 	emperor_write_summaries_to_tracer(
 		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &summary_list,
-		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > const &rmsds_to_best_pose
+		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > const &rmsds_to_best_pose,
+		utility::vector1< HierarchicalHybridJD_SASASummaryOP > const &sasa_summaries
 	) const;
 
 	/// @brief Based on the sorted list of summaries, populate a short list of jobs, the results of which will be collected from below for output to disk.
@@ -445,6 +479,9 @@ private:
 	/// @brief Write all the collected results from below to disk.
 	/// @details Assumes silent output.
 	void emperor_write_to_disk( std::string const &output ) const;
+
+	/// @brief The emperor is asking for SASA metrics to be sent up the hierarchy.
+	void emperor_send_request_for_sasa_summaries_downward() const;
 
 	/// ------------- Intermediate Master Methods --------
 
@@ -465,6 +502,11 @@ private:
 	/// @brief Relay the jobs received from below, held as a concatenated string, up the hierarchy.
 	/// @details Transmission to be received with receive_pose_batch_as_string().
 	void intermediate_master_send_poses_as_string_upward( std::string const &results, int const target_node ) const;
+
+	/// @brief Receive a request for SASA summaries from above, and send it to all children.
+	/// @details This function expects that the only possible message that can be received
+	/// at this point is the request for SASA summaries!
+	void intermediate_master_relay_request_for_sasa_summaries_downward() const;
 
 	/// ------------- Slave Methods ----------------------
 
@@ -520,6 +562,20 @@ private:
 	/// @brief Given a list of jobs that have been requested from above, send the corresponding poses up the hierarchy.
 	/// @details Throws an error if any jbo was completed on a different node than this slave.
 	void slave_send_poses_upward( utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &requested_jobs, utility::vector1 < core::io::silent::SilentStructOP > const &all_output ) const;
+
+
+	/// @brief Receive a request for SASA metrics from above.
+	/// @details This must be the ONLY type of request that this slave can receive at this time!
+	void slave_receive_request_for_sasa_summaries() const;
+
+	/// @brief Generate SASA metrics, and sort these for transmission up the hierarchy.
+	/// @details Sort order matches the order of jobsummaries.
+	void
+	slave_generate_and_sort_sasa_summaries(
+		utility::vector1< HierarchicalHybridJD_SASASummaryOP > & sasa_summaries,
+		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &jobsummaries,
+		utility::vector1< core::io::silent::SilentStructOP > const &poses_from_this_slave
+	) const;
 
 private:
 	/// ------------- Data -------------------------------

@@ -170,6 +170,8 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_postrelax              );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedrals             );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedral_perturbation );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::bondlength_perturbation_magnitude    );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::bondangle_perturbation_magnitude     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::filter_oversaturated_hbond_acceptors );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::hbond_acceptor_energy_cutoff         );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::design_peptide                       );
@@ -338,6 +340,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	disulf_energy_cutoff_postrelax_(0.5),
 	user_set_alpha_dihedrals_(),
 	user_set_dihedral_perturbation_(0.0),
+	bondlength_perturbation_magnitude_(0.0),
+	bondangle_perturbation_magnitude_(0.0),
 	filter_oversaturated_hbond_acceptors_(true),
 	oversaturated_hbond_cutoff_energy_(-0.1),
 	sample_cis_pro_(true),
@@ -461,6 +465,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	disulf_energy_cutoff_postrelax_(src.disulf_energy_cutoff_postrelax_),
 	user_set_alpha_dihedrals_(src.user_set_alpha_dihedrals_),
 	user_set_dihedral_perturbation_(src.user_set_dihedral_perturbation_),
+	bondlength_perturbation_magnitude_(src.bondlength_perturbation_magnitude_),
+	bondangle_perturbation_magnitude_(src.bondangle_perturbation_magnitude_),
 	filter_oversaturated_hbond_acceptors_(src.filter_oversaturated_hbond_acceptors_),
 	oversaturated_hbond_cutoff_energy_(src.oversaturated_hbond_cutoff_energy_),
 	sample_cis_pro_(src.sample_cis_pro_),
@@ -677,6 +683,8 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		}
 	}
 	user_set_dihedral_perturbation_ = option[basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedral_perturbation]();
+	bondlength_perturbation_magnitude_ = option[basic::options::OptionKeys::cyclic_peptide::bondlength_perturbation_magnitude]();
+	bondangle_perturbation_magnitude_ = option[basic::options::OptionKeys::cyclic_peptide::bondangle_perturbation_magnitude]();
 
 	filter_oversaturated_hbond_acceptors_ = option[basic::options::OptionKeys::cyclic_peptide::filter_oversaturated_hbond_acceptors]();
 	oversaturated_hbond_cutoff_energy_ = option[basic::options::OptionKeys::cyclic_peptide::hbond_acceptor_energy_cutoff]();
@@ -870,6 +878,11 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		//If not specified:
 		sidechain_isopeptide_indices_.first = 0;
 		sidechain_isopeptide_indices_.second = 0;
+	}
+
+	if ( cyclization_type_ != SCPA_n_to_c_amide_bond ) {
+		runtime_assert_string_msg( !bondlength_perturbation_magnitude_, "Error in simple_cycpep_predict application: The \"-bondlength_perturbation_magnitude\" option may only be used with N-to-C cyclization." );
+		runtime_assert_string_msg( !bondangle_perturbation_magnitude_, "Error in simple_cycpep_predict application: The \"-bondangle_perturbation_magnitude\" option may only be used with N-to-C cyclization." );
 	}
 
 	return;
@@ -1780,6 +1793,7 @@ SimpleCycpepPredictApplication::run() const {
 
 		if ( silent_out_ || silentlist_out_ ) { //Writing directly to silent file or to a list of silent file data OPs
 			core::io::silent::SilentFileOptions opts;
+			opts.in_fullatom(true);
 			core::io::silent::SilentStructOP ss( core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts ) );
 			char tag[512];
 			if ( my_rank_ > 0 ) {
@@ -1798,7 +1812,6 @@ SimpleCycpepPredictApplication::run() const {
 			protocols::boinc::Boinc::update_graphics_low_energy( *pose, pose->energies().total_energy() );
 #endif
 			if ( silent_out_ ) {
-				//core::io::silent::SilentFileOptions opts;
 				core::io::silent::SilentFileDataOP silent_file (new core::io::silent::SilentFileData( opts ) );
 				silent_file->set_filename( out_filename_ );
 				silent_file->write_silent_struct( *ss, out_filename_ );
@@ -3545,9 +3558,9 @@ SimpleCycpepPredictApplication::genkic_close(
 				core::id::NamedAtomID Catom( "C", i );
 				core::Size const nextres( i==nres ? 1 : i+1 );
 				core::id::NamedAtomID Nnextatom( "N", nextres );
-				utility::vector1< core::id::NamedAtomID > phivect; phivect.push_back( Natom ); phivect.push_back( CAatom );
-				utility::vector1< core::id::NamedAtomID > psivect; psivect.push_back( CAatom ); psivect.push_back( Catom );
-				utility::vector1< core::id::NamedAtomID > omegavect; omegavect.push_back( Catom ); omegavect.push_back( Nnextatom );
+				utility::vector1< core::id::NamedAtomID > const phivect = { Natom, CAatom };
+				utility::vector1< core::id::NamedAtomID > const psivect = { CAatom, Catom };
+				utility::vector1< core::id::NamedAtomID > const omegavect = { Catom, Nnextatom };
 				genkic->add_atomset_to_perturber_atomset_list(phivect);
 				genkic->add_atomset_to_perturber_atomset_list(psivect);
 				if ( nextres != anchor_res ) genkic->add_atomset_to_perturber_atomset_list(omegavect);
@@ -3605,6 +3618,14 @@ SimpleCycpepPredictApplication::genkic_close(
 				genkic->add_residue_to_perturber_residue_list( i==1 ? nres : i-1 ); //The residue PRECEDING the proline is perturbed
 			}
 		}
+	}
+
+	//Additional perturbers: randomize backbone bond lengths and bond angles.
+	if ( bondlength_perturbation_magnitude_ /*If the perturbation is nonzero...*/ ) {
+		add_bondlength_perturbation( *genkic, bondlength_perturbation_magnitude_, *pose, anchor_res );
+	}
+	if ( bondangle_perturbation_magnitude_ /*If the perturbation is nonzero...*/ ) {
+		add_bondangle_perturbation( *genkic, bondangle_perturbation_magnitude_, *pose, anchor_res );
 	}
 
 	//Very last sampling: copy symmetric positions.  Must be after ALL other perturbers.
@@ -4421,6 +4442,134 @@ bool SimpleCycpepPredictApplication::is_isopeptide_forming_amide_type( std::stri
 bool SimpleCycpepPredictApplication::is_isopeptide_forming_carbonyl_type( core::chemical::AA const aa ) const {
 	using namespace core::chemical;
 	return (aa == aa_asp || aa == aa_glu || aa == aa_das || aa == aa_dgu);
+}
+
+/// @brief Given a GenKIC object, a pose, and a bond length perturbation magnitude, add
+/// bond length perturbation to all bond lengths in the pose.
+void
+SimpleCycpepPredictApplication::add_bondlength_perturbation(
+	protocols::generalized_kinematic_closure::GeneralizedKIC & genkic,
+	core::Real const bondlength_perturbation_magnitude,
+	core::pose::Pose const & pose,
+	core::Size const anchor_res
+) const {
+	if ( !bondlength_perturbation_magnitude ) return;
+	debug_assert( cyclization_type_ == SCPA_n_to_c_amide_bond );
+
+	using namespace protocols::generalized_kinematic_closure;
+	using namespace protocols::generalized_kinematic_closure::perturber;
+	using namespace core::id;
+
+	genkic.add_perturber( perturb_bondlength );
+	for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
+		if ( i == anchor_res ) continue;
+		core::chemical::ResidueType const & restype( pose.residue_type(i) );
+		core::Size next_i( i + 1 );
+		if ( next_i == anchor_res ) next_i = 0;
+		if ( next_i > imax ) next_i = 1;
+		if ( next_i == anchor_res ) next_i = 0; //Have to do this twice.
+		core::chemical::AtomIndices const & mainchain_atoms( restype.mainchain_atoms() );
+		core::Size next_atom_index( 0 );
+		if ( next_i != 0 ) { //If we're not adjacent to the anchor residue.
+			core::chemical::AtomIndices const & mainchain_atoms2( pose.residue_type(next_i).mainchain_atoms() );
+			runtime_assert( mainchain_atoms2.size() >= 1);
+			next_atom_index = mainchain_atoms2[1];
+		}
+		for ( core::Size j(1), jmax(mainchain_atoms.size()); j<=jmax; ++j ) {
+			if ( j<jmax ) {
+				genkic.add_atomset_to_perturber_atomset_list(
+					utility::vector1< NamedAtomID > {
+					NamedAtomID( restype.atom_name(mainchain_atoms[j]), i),
+					NamedAtomID( restype.atom_name(mainchain_atoms[j+1]), i)
+					}
+				);
+			} else { //j == jmax
+				if ( next_i != 0 ) { //If we're not adjacent to the anchor residue.
+					genkic.add_atomset_to_perturber_atomset_list(
+						utility::vector1< NamedAtomID > {
+						NamedAtomID( restype.atom_name(mainchain_atoms[j]), i),
+						NamedAtomID( restype.atom_name(next_atom_index), next_i)
+						}
+					);
+				}
+			}
+		}
+	}
+	genkic.add_value_to_perturber_value_list( bondlength_perturbation_magnitude );
+}
+
+/// @brief Given a GenKIC object, a pose, and a bond angle perturbation magnitude, add
+/// bond angle perturbation to all bond angles in the pose.
+void
+SimpleCycpepPredictApplication::add_bondangle_perturbation(
+	protocols::generalized_kinematic_closure::GeneralizedKIC & genkic,
+	core::Real const bondangle_perturbation_magnitude,
+	core::pose::Pose const & pose,
+	core::Size const anchor_res
+) const {
+	if ( !bondangle_perturbation_magnitude ) return;
+	debug_assert( cyclization_type_ == SCPA_n_to_c_amide_bond );
+
+	using namespace protocols::generalized_kinematic_closure;
+	using namespace protocols::generalized_kinematic_closure::perturber;
+	using namespace core::id;
+
+	genkic.add_perturber( perturb_bondangle );
+	for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
+		if ( i == anchor_res ) continue;
+		core::chemical::ResidueType const & restype( pose.residue_type(i) );
+		core::Size next_i( i + 1 ), prev_i( i - 1 );
+		if ( next_i == anchor_res ) next_i = 0;
+		if ( next_i > imax ) next_i = 1;
+		if ( next_i == anchor_res ) next_i = 0; //Have to do this twice.
+		if ( i == 1 ) prev_i = imax;
+		if ( prev_i == anchor_res ) prev_i = 0;
+		core::chemical::AtomIndices const & mainchain_atoms( restype.mainchain_atoms() );
+		core::Size next_atom_index( 0 ), prev_atom_index( 0 );
+		if ( next_i != 0 ) { //If we're not before the anchor residue.
+			core::chemical::AtomIndices const & mainchain_atoms2( pose.residue_type(next_i).mainchain_atoms() );
+			runtime_assert( mainchain_atoms2.size() >= 1);
+			next_atom_index = mainchain_atoms2[1];
+		}
+		if ( prev_i != 0 ) { //If we're not after the anchor residue.
+			core::chemical::AtomIndices const & mainchain_atoms3( pose.residue_type(prev_i).mainchain_atoms() );
+			runtime_assert( mainchain_atoms3.size() >= 1);
+			prev_atom_index = mainchain_atoms3[mainchain_atoms3.size()];
+		}
+		runtime_assert( mainchain_atoms.size() > 1 ); //Doesn't work if we have only 1 mainchain atom.
+		for ( core::Size j(1), jmax(mainchain_atoms.size()); j<=jmax; ++j ) {
+			if ( j == 1 ) {
+				if ( prev_i != 0 ) {
+					genkic.add_atomset_to_perturber_atomset_list(
+						utility::vector1< NamedAtomID > {
+						NamedAtomID( restype.atom_name(prev_atom_index), prev_i),
+						NamedAtomID( restype.atom_name(mainchain_atoms[j]), i),
+						NamedAtomID( restype.atom_name(mainchain_atoms[j+1]), i)
+						}
+					);
+				}
+			} else if ( j<jmax ) { //j > 1 but j < jmax
+				genkic.add_atomset_to_perturber_atomset_list(
+					utility::vector1< NamedAtomID > {
+					NamedAtomID( restype.atom_name(mainchain_atoms[j-1]), i),
+					NamedAtomID( restype.atom_name(mainchain_atoms[j]), i),
+					NamedAtomID( restype.atom_name(mainchain_atoms[j+1]), i)
+					}
+				);
+			} else { //j == jmax
+				if ( next_i != 0 ) { //If we're not adjacent to the anchor residue.
+					genkic.add_atomset_to_perturber_atomset_list(
+						utility::vector1< NamedAtomID > {
+						NamedAtomID( restype.atom_name(mainchain_atoms[j-1]), i),
+						NamedAtomID( restype.atom_name(mainchain_atoms[j]), i),
+						NamedAtomID( restype.atom_name(next_atom_index), next_i)
+						}
+					);
+				}
+			}
+		}
+	}
+	genkic.add_value_to_perturber_value_list( bondangle_perturbation_magnitude );
 }
 
 

@@ -120,6 +120,16 @@ BinarySilentStruct::BinarySilentStruct(
 	BinarySilentStruct::fill_struct( pose, tag ); // Virtual dispatch doesn't work fully in constructor
 } // BinarySilentStruct
 
+BinarySilentStruct::BinarySilentStruct(
+	BinarySilentStruct const &
+) = default;
+
+/// @brief Assignment operator.
+BinarySilentStruct &
+BinarySilentStruct::operator= (
+	BinarySilentStruct const &
+) = default;
+
 BinarySilentStruct::~BinarySilentStruct() = default;
 
 void
@@ -652,7 +662,7 @@ void BinarySilentStruct::fill_pose(
 					<< "   (in residue " << pose.residue(seqpos).name() << " at " << seqpos
 					<< " and atm_seqpos of " << atm_seqpos
 					<< "  natoms_pose=" << natoms_pose
-					<< "  natoms_struct=" << natoms_struct << ")" << tr.Reset << std::endl;
+					<< "  natoms_struct=" << natoms_struct << "  tag=\"" << decoy_tag() << "\")" << tr.Reset << std::endl;
 				tr.Warning << "Likely explanations: " << std::endl;
 				tr.Warning << "\t1. You are trying to extract, with residue type set A, a silent file created with residue type set B." << std::endl;
 				tr.Warning << "\t2. You have specified a database with -database that is out of sync with your chosen executable." << std::endl;

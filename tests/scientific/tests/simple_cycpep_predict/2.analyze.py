@@ -14,15 +14,14 @@
 ## @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 
 import os, sys, subprocess, math
-import numpy as np
 import benchmark
-#from benchmark import quality_measures as qm
 
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into 	s
 config = benchmark.config()
 
 # Things we'll check
 pnear_good = False
+pnear_to_lowest_good = False
 enough_sampling = False
 lowest_E_is_first = False
 lowest_E_close_enough = False
@@ -49,11 +48,14 @@ else:
 	logfile = f'{working_dir}/hpc-logs/.hpc.{testname}.log'
 
 # read relevant data:
-rmsd_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 7 ) {print $3} }'" ) ).split() ]
-energy_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 7 ) {print $4} }'" ) ).split() ]
+rmsd_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $3} }'" ) ).split() ]
+rmsd_vals_to_lowest = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $4} }'" ) ).split() ]
+energy_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $5} }'" ) ).split() ]
 pnear = float( str( subprocess.getoutput( "grep PNear: " + logfile + " | awk '{print $2}'" ) ) )
+pnear_to_lowest = float( str( subprocess.getoutput( "grep PNearLowest: " + logfile + " | awk '{print $2}'" ) ) )
 
 print( "Read PNear=" + str(pnear) + " from " + logfile + "." ) 
+print( "Read PNearLowest=" + str(pnear_to_lowest) + " from " + logfile + "." ) 
 
 total_samples = int( str( subprocess.getoutput( 'grep "application completed" ' + logfile + " | awk '{print $8}'" ) ) )
 print ( "Determined that " + str( total_samples ) + " samples were performed." )
@@ -64,7 +66,11 @@ if( total_samples > samples_expected ) :
 
 # Check that PNear is reasonable:
 if ( pnear >0.94 ):
-	pnear_good = True	
+	pnear_good = True
+
+# Check that PNear to loweset energy is reasonable:
+if ( pnear_to_lowest >0.97 ):
+	pnear_to_lowest_good = True
 
 # Cheack that lowest energy is first entry
 lowestE = min( energy_vals )
@@ -105,13 +111,14 @@ if( len( energies_over_1_5 ) > 0 ) :
 		big_energy_gap = True
 
 # Determine if we passed overall
-if( pnear_good == True and enough_sampling and lowest_E_is_first == True and lowest_E_close_enough == True and sampling_under_0_25_A == True and  sampling_beyond_1_5_A == True and sampling_beyond_2_6_A == True and big_energy_gap == True ):
+if( pnear_good == True and pnear_to_lowest_good == True and enough_sampling and lowest_E_is_first == True and lowest_E_close_enough == True and sampling_under_0_25_A == True and  sampling_beyond_1_5_A == True and sampling_beyond_2_6_A == True and big_energy_gap == True ):
 	overall_pass = True
 
 # Write out results
 with open( outfile, "w" ) as f:
 	f.write( "Total samples =\t" + str(total_samples) + "\n" )
 	f.write( "Computed PNear =\t" + str(pnear) + "\n" )
+	f.write( "Computed PNear to lowest E =\t" + str(pnear_to_lowest) + "\n" )
 	f.write( "Lowest energy =\t" + str(lowestE) + " kcal/mol\n" )
 	f.write( "RMSD of lowest energy =\t" + str(rmsd_vals[0]) + " Angstroms\n" )
 	f.write( "Lowest RMSD =\t" + str(min_rmsd) + " Angstroms\n" )
@@ -124,6 +131,7 @@ with open( outfile, "w" ) as f:
 	else:
 		f.write( "More than 260,000 samples?\t" + bool_to_string( enough_sampling ) + "\n" )
 	f.write( "PNear value over 0.94?\t" + bool_to_string( pnear_good ) + "\n" )
+	f.write( "PNear value to lowest E over 0.97?\t" + bool_to_string( pnear_to_lowest_good ) + "\n" )
 	f.write( "Lowest energy under 0.3 A RMSD?\t" + bool_to_string( lowest_E_close_enough ) + "\n" )
 	f.write( "Sampling below 0.25 A RMSD?\t" + bool_to_string( sampling_under_0_25_A ) + "\n" )
 	f.write( "Sampling beyond 1.5 A RMSD?\t" + bool_to_string( sampling_beyond_1_5_A ) + "\n" )
@@ -131,5 +139,5 @@ with open( outfile, "w" ) as f:
 	f.write( "6+ kcal/mol energy gap?\t" + bool_to_string( big_energy_gap ) + "\n" )
 	f.write( "OVERALL PASS?\t" + bool_to_string( overall_pass ) + "\n" )
 
-benchmark.save_variables('working_dir testname enough_sampling pnear_good lowest_E_close_enough sampling_under_0_25_A sampling_beyond_1_5_A sampling_beyond_2_6_A big_energy_gap overall_pass')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('working_dir testname enough_sampling pnear_good pnear_to_lowest_good lowest_E_close_enough sampling_under_0_25_A sampling_beyond_1_5_A sampling_beyond_2_6_A big_energy_gap overall_pass')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
 #benchmark.save_variables('targets nstruct working_dir testname results scorefiles cutoffs_rmsd_dict cutoffs_score_dict failures')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

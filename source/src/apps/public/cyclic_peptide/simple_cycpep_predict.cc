@@ -12,9 +12,6 @@
 /// @details
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
-//#define USEMPI //DELETE ME -- this is temporarily here for my IDE
-//#define MULTI_THREADED //DELETE ME -- this is temporarily here for my IDE
-
 #ifdef BOINC
 #include <utility/boinc/boinc_util.hh>
 #include <protocols/boinc/boinc.hh>

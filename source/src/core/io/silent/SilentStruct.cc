@@ -105,38 +105,9 @@ SilentStruct::SilentStruct( SilentFileOptions const & opts ) :
 
 SilentStruct::~SilentStruct() = default;
 
-SilentStruct::SilentStruct( SilentStruct const & src ) :
-	ReferenceCount(src),
-	utility::pointer::enable_shared_from_this< SilentStruct >(src)
-{
-	*this = src;
-}
+SilentStruct::SilentStruct( SilentStruct const & ) = default;
 
-SilentStruct& SilentStruct::operator= ( SilentStruct const & src ) {
-	if ( this != &src ) {
-		force_bitflip_ = src.force_bitflip_;
-		strict_column_mode_ = src.strict_column_mode_;
-		nres_ = src.nres_;
-		decoy_tag_ = src.decoy_tag_;
-		sequence_ = src.sequence_;
-		// ??? Is the omission of parent_remarks_map_ deliberate?
-		silent_comments_ = src.silent_comments_;
-		silent_energies_ = src.silent_energies_;
-		cache_remarks_ = src.cache_remarks_;
-		pdbinfo_labels_ = src.pdbinfo_labels_;
-		residue_numbers_ = src.residue_numbers_;
-		segment_IDs_ = src.segment_IDs_;
-		chains_ = src.chains_;
-		// ??? is the omission of other_struct_list_ deliberate?
-		full_model_parameters_ = src.full_model_parameters_;
-		// ??? is the omisson of segment_IDs_ deliberate?
-		// ??? is the omission of submotif_info_list_ deliberate?
-		precision_ = src.precision_;
-		scoreline_prefix_ = src.scoreline_prefix_;
-		options_ = src.options_;
-	}
-	return *this;
-}
+SilentStruct& SilentStruct::operator= ( SilentStruct const & ) = default;
 
 void SilentStruct::fill_pose(
 	core::pose::Pose & pose,

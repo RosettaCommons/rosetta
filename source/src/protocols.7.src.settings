@@ -113,6 +113,7 @@ sources = {
 		"HierarchicalHybridJD_JobResultsSummary",
 		"HierarchicalHybridJD_ResultsSummaryBase",
 		"HierarchicalHybridJD_RMSDToBestSummary",
+		"HierarchicalHybridJD_SASASummary",
 		"SimpleCycpepPredictApplication",
 		"SimpleCycpepPredictApplication_MPI",
 		"util",

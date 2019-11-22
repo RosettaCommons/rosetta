@@ -1,5 +1,6 @@
 -nstruct 4
 -compute_rmsd_to_lowest
+-compute_ensemble_sasa_metrics
 -out:file:silent out.silent
 -MPI_batchsize_by_level 3 2
 -MPI_processes_by_level 1 1 1
