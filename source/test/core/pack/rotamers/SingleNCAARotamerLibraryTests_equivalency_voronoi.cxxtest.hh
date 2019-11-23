@@ -61,16 +61,16 @@ public:
 
 
 	bool vectequal( utility::fixedsizearray1< double, 5 > const & vecta, utility::fixedsizearray1< double, 5 > const & vectb ) {
-		for( core::Size i(1); i<=5; ++i ) {
-			if( std::abs( vecta[i] - vectb[i] ) > TEST_DELTA ) return false;
+		for ( core::Size i(1); i<=5; ++i ) {
+			if ( std::abs( vecta[i] - vectb[i] ) > TEST_DELTA ) return false;
 		}
 		return true;
 	}
 
 	bool vectequal( utility::fixedsizearray1< utility::fixedsizearray1< double, 5 >, 5 > const & vecta, utility::fixedsizearray1< utility::fixedsizearray1< double, 5 >, 5 > const & vectb ) {
-		for( core::Size i(1); i<=5; ++i ) {
-			for( core::Size j(1); j<=5; ++j ) {
-				if( std::abs( vecta[i][j] - vectb[i][j] ) > TEST_DELTA ) return false;
+		for ( core::Size i(1); i<=5; ++i ) {
+			for ( core::Size j(1); j<=5; ++j ) {
+				if ( std::abs( vecta[i][j] - vectb[i][j] ) > TEST_DELTA ) return false;
 			}
 		}
 		return true;
