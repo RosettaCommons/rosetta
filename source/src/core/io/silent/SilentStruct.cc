@@ -94,7 +94,8 @@ bool ProteinSilentStruct_Template< core::Real >::is_single_precision() { return 
 
 SilentStruct::SilentStruct( SilentFileOptions const & opts ) :
 	force_bitflip_(false),
-	strict_column_mode_(false),
+	// unused variable - commenting out
+	//strict_column_mode_(false),
 	nres_(0),
 	decoy_tag_(""),
 	sequence_(""),

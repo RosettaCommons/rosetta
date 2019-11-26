@@ -386,7 +386,8 @@ private:
 	bool force_bitflip_;
 
 
-	bool strict_column_mode_;
+	// unused variable - commenting out
+	//bool strict_column_mode_;
 	Size nres_;
 	std::string decoy_tag_;
 	core::sequence::AnnotatedSequence sequence_;
