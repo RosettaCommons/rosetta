@@ -31,10 +31,27 @@ def run_state_test(rosetta_dir, working_dir, platform, config):
     return {_StateKey_ : state,  _ResultsKey_ : {},  _LogKey_ : f'run_state_test: setting test state to {state!r}...' }
 
 
+def run_subtests_test(rosetta_dir, working_dir, platform, config):
+    tests = {}
+    for i in range(16):
+        name = f's-{i:02}'
+        log = ('x'*63 + '\n') * 16 * 256 * i 
+        s = i % 3
+        if   s == 0: state = _S_passed_
+        elif s == 1: state = _S_failed_
+        else:        state = _S_script_failed_
+
+        tests[name] = { _StateKey_ : state, _LogKey_   : log, }
+
+    test_log = ('*'*63 + '\n') * 16 * 1024 * 16
+    return {_StateKey_ : _S_failed_,  _ResultsKey_ : {_TestsKey_: tests},  _LogKey_ : test_log }
+
+
 def run_regression_test(rosetta_dir, working_dir, platform, config):
-    const    = 'const'
-    volatile = 'volatile'
-    new      = ''.join( random.sample( string.ascii_letters + string.digits, 8) )
+    const     = 'const'
+    volatile  = 'volatile'
+    new       = ''.join( random.sample( string.ascii_letters + string.digits, 8) )
+    oversized = 'oversized'
 
     sub_tests = [const, volatile, new]
 
@@ -50,6 +67,11 @@ def run_regression_test(rosetta_dir, working_dir, platform, config):
     new_dir = working_dir + '/' + new
     os.mkdir(new_dir)
     with open(new_dir + '/data', 'w') as f: f.write( '\n'.join( (str(i) for i in range(64)) ) )
+
+
+    new_dir = working_dir + '/' + oversized
+    os.mkdir(new_dir)
+    with open(new_dir + '/large', 'w') as f: f.write( ('x'*63 + '\n')*16*1024*256 +'extra')
 
     return {_StateKey_ : _S_queued_for_comparison_,  _ResultsKey_ : {},  _LogKey_ : f'sub-tests: {sub_tests!r}' }
 
@@ -110,6 +132,8 @@ def compare(test, results, files_path, previous_results, previous_files_path):
 
 
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if   test == 'state':      return run_state_test(rosetta_dir, working_dir, platform, config)
-    elif test == 'regression': return run_regression_test(rosetta_dir, working_dir, platform, config)
+    if   test == 'state':      return run_state_test      (rosetta_dir, working_dir, platform, config)
+    elif test == 'regression': return run_regression_test (rosetta_dir, working_dir, platform, config)
+    elif test == 'subtests':   return run_subtests_test   (rosetta_dir, working_dir, platform, config)
+    
     else: raise BenchmarkError(f'Dummy test script does not support run with test={test!r}!')

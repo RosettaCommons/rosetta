@@ -71,11 +71,11 @@ def setup_from_options(options):
     else:
         Config = ConfigParser()
         Config.set('DEFAULT', 'cpu_count',  '1')
-        Config.set('DEFAULT', 'hpc_driver', 'MultiCore')
-        Config.set('DEFAULT', 'branch',     'unknown')
-        Config.set('DEFAULT', 'revision',   '42')
-        Config.set('DEFAULT', 'user_name',  'Jane Roe')
-        Config.set('DEFAULT', 'user_email', 'jane.roe@university.edu')
+        Config.set('config', 'hpc_driver', 'MultiCore')
+        Config.set('config', 'branch',     'unknown')
+        Config.set('config', 'revision',   '42')
+        Config.set('config', 'user_name',  'Jane Roe')
+        Config.set('config', 'user_email', 'jane.roe@university.edu')
         Config.add_section('config')
 
     if options.jobs: Config.set('DEFAULT', 'cpu_count', str(options.jobs) )
@@ -87,7 +87,7 @@ def setup_from_options(options):
     config = dict(config,
                   cpu_count = Config.getint('DEFAULT', 'cpu_count'),
                   memory = memory,
-                  revision = Config.getint('DEFAULT', 'revision'),
+                  revision = Config.getint('config', 'revision'),
                   emulation=True,
     )  # debug=options.debug,
 
@@ -168,7 +168,12 @@ def truncate_log(log):
 
     return log
 
-
+def truncate_results_logs(results):
+    results[_LogKey_] = truncate_log( results[_LogKey_] )
+    if _ResultsKey_ in results  and  _TestsKey_ in results[_ResultsKey_]:
+        tests = results[_ResultsKey_][_TestsKey_]
+        for test in tests:
+            tests[test][_LogKey_] = truncate_log( tests[test][_LogKey_] )
 
 
 def find_test_description(test_name, test_script_file_name):
@@ -245,10 +250,13 @@ def run_test(setup):
             res[_StateKey_] = _S_failed_
 
 
-        # Caution! Some of the strings in the result object may be unicode. Be robust to unicode in the log messages.
-        with codecs.open(setup.working_dir+'/.comparison.log.txt', 'w', encoding='utf-8', errors='replace') as f: f.write( truncate_log( res[_LogKey_] ) )
+        # # Caution! Some of the strings in the result object may be unicode. Be robust to unicode in the log messages.
+        # with codecs.open(setup.working_dir+'/.comparison.log.txt', 'w', encoding='utf-8', errors='replace') as f: f.write( truncate_log( res[_LogKey_] ) )
+        # res[_LogKey_] = truncate_log( res[_LogKey_] )
 
-        res[_LogKey_] = truncate_log( res[_LogKey_] )
+        # # Caution! Some of the strings in the result object may be unicode. Be robust to unicode in the log messages.
+        with codecs.open(setup.working_dir+'/.comparison.log.txt', 'w', encoding='utf-8', errors='replace') as f: f.write(res[_LogKey_])
+        truncate_results_logs(res)
 
         print( 'Comparison finished with output:\n{}'.format( res[_LogKey_] ) )
 
@@ -281,7 +289,8 @@ def run_test(setup):
         # Caution! Some of the strings in the result object may be unicode. Be robust to unicode in the log messages
         with codecs.open(working_dir+'/.execution.log.txt', 'w', encoding='utf-8', errors='replace') as f: f.write( res[_LogKey_] )
 
-        res[_LogKey_] = truncate_log( res[_LogKey_] )
+        # res[_LogKey_] = truncate_log( res[_LogKey_] )
+        truncate_results_logs(res)
 
         if _DescriptionKey_ not in res: res[_DescriptionKey_] = test_description
 

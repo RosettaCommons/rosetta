@@ -21,7 +21,7 @@ import types as types_module
 
 __all__ = ['execute',
            '_S_Values_', '_S_draft_', '_S_queued_', '_S_running_', '_S_passed_', '_S_failed_', '_S_build_failed_', '_S_script_failed_',
-           '_StateKey_', '_ResultsKey_', '_LogKey_', '_DescriptionKey_',
+           '_StateKey_', '_ResultsKey_', '_LogKey_', '_DescriptionKey_', '_TestsKey_',
            '_multi_step_config_', '_multi_step_error_', '_multi_step_result_',
            'to_bytes',
 ]

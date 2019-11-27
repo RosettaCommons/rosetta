@@ -43,9 +43,15 @@ def symlink_tree(source, dest):
     for dir_name, dirs, files in os.walk(source):
         prefix = dir_name[len(source):] + '/'
 
-        # for d in dirs:
-        #     dst = dest + prefix + d
-        #     if not os.path.isdir(dst): os.makedirs(dst)
+        for d in dirs:
+            dst = dest + prefix + d
+            src = source + prefix + d
+
+            #print(f'source:{source}, dir_name: {dir_name}, d: {d}')
+            #print(f'src: {src}, dst: {dst}')
+
+            if os.path.islink(src): symlink(src, dst)
+            elif not os.path.isdir(dst): os.makedirs(dst)
 
         for f in files: symlink(source + prefix + f, dest + prefix + f)
 
@@ -122,7 +128,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
 
         mp_f19_energy_landscape  = 'numpy matplotlib scipy',
         mp_f19_sequence_recovery = 'numpy matplotlib',
-        mp_f19_ddG_of_mutation = 'numpy matplotlib', 
+        mp_f19_ddG_of_mutation = 'numpy matplotlib',
         mp_f19_decoy_discrimination = 'numpy matplotlib',
 
         mp_dock                  = 'numpy matplotlib',
