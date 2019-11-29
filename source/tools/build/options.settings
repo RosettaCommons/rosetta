@@ -46,6 +46,7 @@ options = {
         "coverage",
         "addsan", # Mode adding special instrumentation to check for (sanitize) address errors
         "memsan", # Mode adding special instrumentation to check for (sanitize) memory errors
+        "tsan",   # Mode adding special instrumentation to check for (sanitize) thread safety issues
         "ubsan",  # Mode adding special instrumentation to check for (sanitize) undefined behavior
 
         #"pyrosetta", # PyRosetta is no longer built with scons -- see src/python/PyRosetta/build.py instead for settings 
