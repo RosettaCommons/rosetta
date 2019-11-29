@@ -50,7 +50,7 @@ public:
 	HierarchicalHybridJD_SASASummary(HierarchicalHybridJD_SASASummary const & ) = default;
 
 	/// @brief Destructor.
-	virtual ~HierarchicalHybridJD_SASASummary();
+	~HierarchicalHybridJD_SASASummary() override;
 
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	HierarchicalHybridJD_ResultsSummaryBaseOP clone() const override;
