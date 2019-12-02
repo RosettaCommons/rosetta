@@ -901,6 +901,8 @@ void init_crash_reporter(int argc, char * argv [])
 	option_stream << basic::options::option;
 	utility::set_options_string( option_stream.str() );
 
+	utility::set_show_crash_report_on_console( option[ run::crash_to_console ]() );
+
 	if ( ! option[ run::nosignal ]() ) {
 		utility::install_crash_handler(); // Install the signal listener
 	}

@@ -1281,6 +1281,9 @@ Options = Option_Group( '',
 		Option( 'nosignal', 'Boolean',
 			default='false', desc="Don't install the signal handler to catch segfaults, etc. in the crash reporter. Useful for running under a debugger."),
 
+		Option( 'crash_to_console', 'Boolean',
+			default='false', desc="Show the backtrace on the console/tracer in addition to the crash report file."),
+
 		Option( 'condor',   'Boolean',      desc='if condor say yes -- proc_id counting starts at 0',     default='false' ),
 		Option( 'nproc',    'Integer',      desc='number of process... needed if proc_id is specified',     default='0' ),
 		Option( 'proc_id',  'Integer',      desc='give process number... Jobdistributor will only work on proc_id mod nproc part of work ',     default='0' ),

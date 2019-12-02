@@ -32,6 +32,9 @@ void set_application_name( char const * appname);
 /// Should only be called once on startup.
 void set_options_string(std::string const & options);
 
+/// @brief If passed true, any backtrace will show up on stderr in addition to the crash report file.
+void set_show_crash_report_on_console( bool setting );
+
 /// @brief Save a crash report to the crash reporter file.
 void save_crash_report(char const * message = "(none)", std::string const & file = "(none)", int const line = 0);
 
@@ -47,6 +50,9 @@ inline
 void save_crash_report(std::string const & message, std::string const & file, int const line, std::string const & traceback) {
 	save_crash_report( message.c_str(), file, line, traceback );
 }
+
+void save_crash_report_to_file(char const * message, std::string const & file, int line, std::string const & traceback);
+void save_crash_report_to_console(char const * message, std::string const &, int, std::string const & traceback);
 
 } // namespace utility
 

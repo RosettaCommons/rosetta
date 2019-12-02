@@ -225,6 +225,8 @@ static std::string const CRASH_FILE("ROSETTA_CRASH.log");
 static std::string APPNAME("UNKNOWN APPLICATION");
 static std::string OPTIONS("NO OPTIONS SPECIFIED");
 
+static bool show_crash_report_on_console_ = false;
+
 static std::string const HEADER(
 	"##############################################################################################################\n"
 	"#\n"
@@ -341,12 +343,33 @@ void set_options_string(std::string const & options) {
 	OPTIONS = options;
 }
 
+void set_show_crash_report_on_console( bool setting ) {
+	show_crash_report_on_console_ = setting;
+}
+
 void save_crash_report(char const * message, std::string const & file, int line) {
 	save_crash_report(message, file, line, backtrace_string(1)); // Capture current backtrace.
 }
 
-#ifndef NOCRASHREPORT
 void save_crash_report(char const * message, std::string const & file, int line, std::string const & traceback) {
+
+#ifdef NOCRASHREPORT
+
+	// If we're running NOCRASHREPORT, just print the backtrace.
+	save_crash_report_to_console(message, file, line, traceback);
+
+#else
+
+	if ( show_crash_report_on_console_ ) {
+		save_crash_report_to_console(message, file, line, traceback);
+	}
+	save_crash_report_to_file(message, file, line, traceback);
+
+#endif
+
+}
+
+void save_crash_report_to_file(char const * message, std::string const & file, int line, std::string const & traceback) {
 	// We create a single string with all the contents here, as
 	// we want to save it all in one go to avoid interleaving multiple simultaneous crash reports.
 	std::stringstream crash_log;
@@ -398,15 +421,14 @@ void save_crash_report(char const * message, std::string const & file, int line,
 	std::cerr << "\n\nAN INTERNAL ERROR HAS OCCURED. PLEASE SEE THE CONTENTS OF " << CRASH_FILE << " FOR DETAILS.\n\n" << std::endl;
 	// TODO: Have a script which does the submission for you (and then deletes)
 }
-#else
 
-// If we're running NOCRASHREPORT, just print the backtrace.
-void save_crash_report(char const * message, std::string const &, int, std::string const & traceback) {
+void save_crash_report_to_console(char const *, std::string const &, int, std::string const & traceback) {
+	std::cerr << " ------------------------ Begin developer's backtrace ------------------------- \n";
 	std::cerr << utility::CSI_Magenta(); // set color of cerr to magenta
 	std::cerr << "BACKTRACE:\n";
 	std::cerr << traceback;
 	std::cerr << utility::CSI_Reset();
+	std::cerr << " ------------------------- End developer's backtrace -------------------------- \n";
 }
-#endif
 
 } // namespace utility
