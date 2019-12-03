@@ -20,6 +20,7 @@
 #include <core/scoring/methods/CartBondedParameters.hh>
 
 // Package headers
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/RestypeDestructionEvent.fwd.hh>
 #include <core/chemical/rings/RingConformer.hh>

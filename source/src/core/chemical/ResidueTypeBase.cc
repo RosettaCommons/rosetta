@@ -129,21 +129,6 @@ ResidueTypeBase::set_gasteiger_atom_typeset( gasteiger::GasteigerAtomTypeSetCOP 
 
 //////////////////////////////////////////////////////////////////////////////
 
-// Add alternate atoms for anomeric  pseudo torsion
-void
-ResidueTypeBase::set_anomeric_pseudotorsion( utility::vector1< std::string > const & alternate_atoms )
-{
-	anomeric_pseudotorsion_ = alternate_atoms;
-}
-
-// Add alternate atoms for anomeric  pseudo torsion
-void
-ResidueTypeBase::set_anomeric_sidechain( utility::vector1< std::string > const & anomeric_sidechain )
-{
-	anomeric_sidechain_ = anomeric_sidechain;
-}
-
-
 //////////////////////////////////////////////////////////////////////
 ////////////////          Orbital Functions     //////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -604,8 +589,6 @@ core::chemical::ResidueTypeBase::save( Archive & arc ) const {
 	arc( CEREAL_NVP( rotamer_library_specification_ ) ); // rotamers::RotamerLibrarySpecificationOP
 
 	arc( CEREAL_NVP( metal_binding_atoms_ ) ); // utility::vector1<std::string>
-	arc( CEREAL_NVP( anomeric_pseudotorsion_ ) ); // utility::vector1<std::string>
-	arc( CEREAL_NVP( anomeric_sidechain_ ) ); // utility::vector1<std::string>
 	arc( CEREAL_NVP( disulfide_atom_name_ ) ); // std::string
 	arc( CEREAL_NVP( atom_aliases_ ) ); // std::map<std::string, std::string>
 	arc( CEREAL_NVP( canonical_atom_aliases_ ) ); // std::map<std::string, std::string>
@@ -651,8 +634,6 @@ core::chemical::ResidueTypeBase::load( Archive & arc ) {
 	arc( rotamer_library_specification_ );
 
 	arc( metal_binding_atoms_ ); // utility::vector1<std::string>
-	arc( anomeric_pseudotorsion_ ); // utility::vector1<std::string>
-	arc( anomeric_sidechain_ ); // utility::vector1<std::string>
 	arc( disulfide_atom_name_ ); // std::string
 	arc( atom_aliases_ ); // std::map<std::string, std::string>
 	arc( canonical_atom_aliases_ ); // std::map<std::string, std::string>

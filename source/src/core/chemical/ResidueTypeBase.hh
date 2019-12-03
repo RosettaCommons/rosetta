@@ -287,24 +287,6 @@ public:
 		return canonical_atom_aliases_.at(name);
 	}
 
-	/// @ brief Gets atom names used for alternate anomeric pseudotorsion.
-	utility::vector1<std::string>
-	get_anomeric_pseudotorsion() const{
-		return anomeric_pseudotorsion_;
-	}
-
-	/// @ brief Gets atom names that are part of the anomeric side chain.
-	utility::vector1<std::string>
-	get_anomeric_sidechain() const{
-		return anomeric_sidechain_;
-	}
-
-	/// @brief  Set atoms to use for anomeric pseudotorsion (if not using defaults, lower, C1, C5, C6)
-	void set_anomeric_pseudotorsion( utility::vector1< std::string > const & alternate_atoms );
-
-	/// @brief Sets the atoms to use in the anomeric side hain.
-	void set_anomeric_sidechain( utility::vector1< std::string > const & anomeric_sidechain );
-
 protected: // Non-const accessors
 
 	utility::vector1< std::string > &
@@ -918,12 +900,6 @@ private:
 	/// @brief Names of all of the atoms that are able to make a bond to a metal, for metal-binding residue types
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	utility::vector1 < std::string > metal_binding_atoms_;
-
-	/// @brief Atoms used to determine the anomeric pseudotorsion of glycans.
-	utility::vector1< std::string > anomeric_pseudotorsion_;
-
-	/// @brief Atoms to use in the anomeric side chain of glycans.
-	utility::vector1< std::string > anomeric_sidechain_;
 
 	/// @brief Name of the disulfide-forming atom, if any
 	std::string disulfide_atom_name_ = "NONE";

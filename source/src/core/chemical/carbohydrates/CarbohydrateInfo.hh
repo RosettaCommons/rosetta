@@ -484,6 +484,13 @@ public: // Accessors/Mutators /////////////////////////////////////////////////
 		return has_exocyclic_linkage_to_child_mainchain_;
 	}
 
+	/// @brief Get pseudotorsion of anomeric carbon from ideal residue: defined as the out-of-plane angle
+	///   of the anomeric O with respect to the Oring-Canomeric-Cadjacent plane w/i the ring
+	core::Real anomeric_pseudotorsion() const;
+
+	/// @brief  Get the index of the non-ring atom bound to the anomeric carbon
+	core::Size anomeric_sidechain_index() const;
+
 	// Side-chain modifications
 	/// @brief  Return true if any hydroxyl group has been modified to an acetylated amino group.
 	bool is_N_acetylated() const;
@@ -514,6 +521,9 @@ private: // Private methods ///////////////////////////////////////////////////
 	// Get connection data from the residue type.
 	void determine_polymer_connections();
 
+	// Get pseudotorsion around anomeric C from the params file (for fast lookup in cart_bonded)
+	void determine_anomeric_pseudotorsion();
+
 	// Determine and set the full and abbreviated IUPAC names.
 	void determine_IUPAC_names();
 
@@ -538,6 +548,9 @@ private: // Private data //////////////////////////////////////////////////////
 	bool is_glycoside_;
 	utility::vector1< std::string > modifications_;  // indexed by position
 
+	// fd information on pseudotorsion around anomeric carbon
+	core::Real anomeric_pseudotorsion_; // pseudotorsion around anomeric C
+	core::Size anomeric_sidechain_index_; // index of fourth atom bound to anomeric C (typically H1)
 
 	// Glycosidic bond attachment points, i.e., the second integer in (1->n) notations.
 	core::uint mainchain_glycosidic_bond_acceptor_;  // 0 if N/A, i.e., if residue type is an upper terminus

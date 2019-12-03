@@ -112,6 +112,7 @@ OPT_1GRP_KEY(Boolean, min, cartesian)
 OPT_1GRP_KEY(Boolean, min, pack)
 OPT_1GRP_KEY(RealVector, min, ramp)
 OPT_1GRP_KEY(String, min, minimizer)
+OPT_1GRP_KEY(String, min, ref)
 OPT_1GRP_KEY(StringVector, min, fix_chains)
 
 static basic::Tracer TR( "min_test" );
@@ -126,7 +127,7 @@ public:
 	MinTestMover()= default;
 
 	// TO DO make symm-friendly
-	void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::pose::Pose &constraint_pose ){
+	void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::pose::Pose &constraint_pose, bool allatom=false ){
 		using namespace core;
 		using namespace conformation;
 		using namespace pose;
@@ -155,8 +156,10 @@ public:
 		Real const coord_sdev( 0.5 );
 		for ( Size i = 1; i<= (Size)nres; ++i ) {
 			if ( i==(Size)pose.fold_tree().root() ) continue;
+			if ( allatom && pose.residue(i).is_protein() ) continue;
 			Residue const & nat_i_rsd( constraint_pose.residue(i) );
-			for ( Size ii = 1; ii<= 3; ++ii ) {  // N/CA/C only
+			Size natoms = allatom? nat_i_rsd.nheavyatoms() : 3;
+			for ( Size ii = 1; ii<=natoms; ++ii ) {  // N/CA/C only
 				func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
 				pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(
 					AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
@@ -401,6 +404,15 @@ public:
 			}
 		}
 
+		if ( option[ OptionKeys::min::ref ].user() ) {
+			core::pose::Pose reference_pose;
+			core::import_pose::pose_from_file(reference_pose, option[ OptionKeys::min::ref ](), core::import_pose::PDB_file);
+			add_coordinate_constraints_to_pose( pose, reference_pose, true );
+			if ( scorefxn->get_weight( core::scoring::coordinate_constraint ) == 0 ) {
+				scorefxn->set_weight( core::scoring::coordinate_constraint, option[ OptionKeys::constraints::cst_fa_weight ] );
+			}
+		}
+
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::symmetry::SetupForSymmetryMoverOP symm( new protocols::symmetry::SetupForSymmetryMover );
 			symm->apply( pose );
@@ -565,6 +577,7 @@ main( int argc, char * argv [] )
 		NEW_OPT(min::ramp, "ramp", utility::vector1<core::Real>(1,1.0));
 		NEW_OPT(min::pack, "pack first?", false);
 		NEW_OPT(min::minimizer, "minimizer?", "lbfgs_armijo_nonmonotone");
+		NEW_OPT(min::ref, "reference structure", "");
 		NEW_OPT(min::fix_chains, "fix chains", utility::vector1<std::string>());
 
 		devel::init(argc, argv);

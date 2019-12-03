@@ -18,10 +18,15 @@
 // Package headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/ResidueConnection.hh>
+#include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/Residue.hh>
 
 // Utility headers
 #include <utility/py/PyAssert.hh>
 #include <utility/exit.hh>
+
+#include <numeric/xyz.functions.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -202,6 +207,22 @@ CarbohydrateInfo::branch_point( core::uint const i ) const
 	return branch_points_[ i ];
 }
 
+// Get pseudotorsion of anomeric carbon from ideal residue: defined as the out-of-plane angle
+//   of the anomeric O with respect to the Oring-Canomeric-Cadjacent plane w/i the ring
+core::Real
+CarbohydrateInfo::anomeric_pseudotorsion() const {
+	return anomeric_pseudotorsion_;
+}
+
+/// Get the index of the non-ring atom bound to the anomeric carbon
+/// @return  The atom index of the non-ring atom bound to the anomeric carbon.
+///   Typically, this is "H1", but not always.  0 if there is no such atom
+///   (which happens with virtualized residues)
+core::Size
+CarbohydrateInfo::anomeric_sidechain_index() const {
+	return anomeric_sidechain_index_;
+}
+
 
 // Side-chain modifications
 // Return true if any hydroxyl group has been modified to an acetylated amino group.
@@ -235,6 +256,7 @@ CarbohydrateInfo::is_uronic_acid() const {
 }
 
 
+
 // Private methods /////////////////////////////////////////////////////////////
 // Empty constructor
 CarbohydrateInfo::CarbohydrateInfo() : utility::pointer::ReferenceCount()
@@ -252,6 +274,8 @@ CarbohydrateInfo::init( core::chemical::ResidueTypeCAP residue_type_in )
 	cyclic_oxygen_name_ = "";
 	cyclic_oxygen_index_ = 0;
 	virtual_cyclic_oxygen_index_ = 0;
+	anomeric_pseudotorsion_ = 0.0;
+	anomeric_sidechain_index_ = 0;
 
 	ResidueTypeCOP residue_type( residue_type_ );
 	if ( residue_type->is_lower_terminus() ) {
@@ -261,6 +285,8 @@ CarbohydrateInfo::init( core::chemical::ResidueTypeCAP residue_type_in )
 	}
 
 	read_and_set_properties();
+
+	determine_anomeric_pseudotorsion(); // after read_and_set_properties()
 
 	determine_polymer_connections();
 
@@ -449,6 +475,57 @@ CarbohydrateInfo::read_and_set_properties()
 		virtual_cyclic_oxygen_index_ = residue_type->atom_index( "VO" + cyclic_oxygen_position );
 	}
 }
+
+// Collect information on the geometry around the anomeric carbon, for use by cart_bonded
+//   in generating chirality constraints (ensuring sugars stay in alpha/beta conformation)
+// Note: assumes properties are already set!
+void
+CarbohydrateInfo::determine_anomeric_pseudotorsion()
+{
+	using namespace std;
+	using namespace id;
+
+	ResidueTypeCOP residue_type( residue_type_ );
+
+	// if we are not cyclic, return
+	if ( residue_type->n_rings() ) {
+		return;
+	}
+
+	// build an idealized sugar conformer
+	conformation::ResidueOP tempres = conformation::ResidueFactory::create_residue( *residue_type );
+
+	// 1) get pseudotorsion of anomeric carbon from ideal residue
+	//    defined as the out-of-plane angle of the anomeric O
+	//      with respect to the Cn-C1-C2 plane w/i the ring
+	utility::vector1< core::Size > ring_atoms = residue_type->ring_atoms( 1 );
+	core::Vector x_ring1 = tempres->xyz( ring_atoms[ ring_atoms.size() ] );
+	core::Vector x_ring2 = tempres->xyz( ring_atoms[ 2 ] );
+	core::Vector x_anoC = tempres->xyz( ring_atoms[ 1 ] );
+
+	// if there is no connection to anomeric O, leave early
+	if ( residue_type->n_residue_connections_for_atom( ring_atoms[ 1 ] )==0 ) {
+		return;
+	}
+
+	core::Vector x_glycosideO = tempres->residue_connection(
+		residue_type->residue_connection_id_for_atom( ring_atoms[ 1 ] )
+		).icoor().build( *residue_type );
+	anomeric_pseudotorsion_ = numeric::dihedral_radians( x_ring1, x_ring2, x_anoC, x_glycosideO );
+
+	// 2) get the index of the final chiral atom
+	anomeric_sidechain_index_ = 0;
+	chemical::AtomIndices atm_nbrs = residue_type->nbrs( ring_atoms[1] );
+	for ( core::Size i=1; i<=atm_nbrs.size(); ++i ) {
+		if ( atm_nbrs[i] != ring_atoms[ 2 ] && atm_nbrs[i] != ring_atoms[ ring_atoms.size() ] &&
+				!residue_type->atom_type(atm_nbrs[i]).is_virtual() ) {
+			anomeric_sidechain_index_ = atm_nbrs[i];
+		}
+	}
+	//fd we cannot assert this as some protocols use fully virtual CHOs
+	//runtime_assert( anomeric_sidechain_index_ != 0 );
+}
+
 
 // Get connection data from the residue type.
 void

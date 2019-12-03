@@ -2671,7 +2671,8 @@ CartesianBondedEnergy::eval_residue_pair_energies(
 	eval_interresidue_angle_energies_two_from_rsd1( rsd1, rsd2, rsd1params, rsd2params, phi1, psi1, pose, emap );
 	eval_interresidue_angle_energies_two_from_rsd2( rsd1, rsd2, rsd1params, rsd2params, phi2, psi2, pose, emap );
 	eval_interresidue_bond_energy( rsd1, rsd2, rsd1params, rsd2params, phi2, psi2, pose, emap );
-	eval_interresidue_ring_energy( rsd1, rsd2, pose, emap );  // A misnomer: technically, this only functions for a limited set of aldohexopyranoses. ~Labonte
+	// fd this is really "anomer" constraints (though part of cart_bonded_ring)
+	eval_interresidue_ring_energy( rsd1, rsd2, pose, emap );
 }
 
 void
@@ -3187,82 +3188,75 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 	}
 }
 
-// Evaluate the torsion constraints for alpha/beta aldohexopyranoses.
-// rsd2 should be the structure being evaluated and rsd1 should be the lower connection
+// FD: this function handles chirality restraints around the anomeric carbon
+//     it is a rule-based system
 void
 CartesianBondedEnergy::eval_interresidue_ring_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	EnergyMap & emap
-) const
-{
-
+) const {
+	// ensure this is called with linked CHOs
 	if ( !rsd1.is_bonded( rsd2 ) ) return;
-	Size const n_rings( rsd2.type().n_rings() );
-	if ( n_rings == 0 || !rsd1.is_polymer_bonded( rsd2 ) ) return;
-	core::Real Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
-	//core::Real Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
+	if ( !rsd1.is_carbohydrate() || !rsd2.is_carbohydrate() ) return;
+	if ( rsd2.type().n_rings() != 1 ) return;
 
-	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
-		// Even though aldohexopyranoses only ever have a single ring, I'm leaving this here in case someone ever wants
-		// to expand this to be more general for other kinds of rings.
+	core::Real Ktheta = db_->k_torsion_improper();  // use default torsion weight
 
-		// Only apply this to aldohexopyranose rings.
-		// The hard-coded atom names below are not a good idea and should be fixed.
-		// The ResidueType stores the indices of all its ring atoms. ~ Labonte
-		if ( ! rsd2.is_carbohydrate() ) { continue; }
-		chemical::carbohydrates::CarbohydrateInfoCOP info( rsd2.carbohydrate_info() );
-		if ( ( ! info->is_aldose() ) || ( ! info->is_hexose() ) || ( ! info->is_pyranose() ) ) { continue; }
-		// 2 constrain torsion
-		core::Size atom1, atom2, atom3, atom4;
-		utility::vector1< std::string > alternate_atoms = rsd2.type().get_anomeric_pseudotorsion();
-		if ( alternate_atoms.size() == 0 ) {
-			atom1 = rsd1.connect_atom( rsd2 );//lower
-			atom2 = rsd2.type().atom_index("C1");
-			atom3 = rsd2.type().atom_index("C5");
-			atom4 = rsd2.type().atom_index("C6");
-		} else {
-			utility::vector1<core::Size> alternate_indexes;
-			for ( core::Size i=1; i<=alternate_atoms.size(); i++ ) {
-				core::Size aa_index;
-				if ( alternate_atoms[i] == "LOWER" ) {
-					aa_index = rsd1.connect_atom( rsd2 );//lower
-				} else {
-					aa_index = rsd2.type().atom_index(alternate_atoms[i]);
-				}
-				alternate_indexes.push_back(aa_index);
-			}
-			atom1 = alternate_indexes[1];
-			atom2 = alternate_indexes[2];
-			atom3 = alternate_indexes[3];
-			atom4 = alternate_indexes[4];
-		}
-
-		Real alpha = -2.0944;
-		Real beta = 0;
-		Real phi0 = beta;
-		if ( rsd2.type().name().find("alpha") != std::string::npos ) {
-			phi0 = alpha;
-		}
-		core::Real angle = numeric::dihedral_radians(
-			rsd1.xyz( atom1 ), rsd2.xyz( atom2 ), rsd2.xyz( atom3 ), rsd2.xyz( atom4 ) );
-		Real del_phi = basic::subtract_radian_angles(angle, phi0);
-
-		Real energy_torsion = eval_score( del_phi, Ktheta, 0 );
-
-		if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
-			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd2.seqpos() << " pdbpos: " <<
-				pose.pdb_info()->number(rsd2.seqpos()) << " RING torsion: " <<
-				get_restag(rsd2.type()) << " : " <<
-				rsd1.atom_name( atom1 ) << " , " << rsd2.atom_name( atom2 ) << " , " <<
-				rsd2.atom_name( atom3 ) << " , " << rsd2.atom_name( atom4 ) << "   (" <<
-				Ktheta << ") " << 180/3.14 * angle << " " << 180/3.14 * phi0 << "    sc="  << energy_torsion << std::endl;
-		}
-
-		emap[ cart_bonded_ring ] += energy_torsion;
-		emap[ cart_bonded ] += energy_torsion; // potential double counting*/
+	// lookup target chirality
+	chemical::carbohydrates::CarbohydrateInfoCOP carbo_info( rsd2.carbohydrate_info() );
+	core::Real phi0 = 2.38; // more than ideal but with other terms it matches molprobity chiral vol check
+	if ( carbo_info->anomeric_pseudotorsion() < 0 ) {
+		phi0 *= -1.0;
 	}
+
+	//  index of the anomeric C + neighbors
+	utility::vector1< core::Size > atms = rsd2.type().ring_atoms( 1 );
+	core::Size atom1 = atms[ atms.size() ];
+	core::Size atom2 = atms[ 2 ];
+	core::Size atom3 = atms[ 1 ];
+	core::Size atom4a = rsd1.connect_atom( rsd2 );
+
+	core::Real angle = numeric::dihedral_radians(
+		rsd2.xyz( atom1 ), rsd2.xyz( atom2 ), rsd2.xyz( atom3 ), rsd1.xyz( atom4a ) );
+	Real del_phi = basic::subtract_radian_angles(angle, phi0);
+	Real energy_torsion = eval_score( del_phi, Ktheta, 0 );
+
+	if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+		TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd2.seqpos() << " pdbpos: " <<
+			pose.pdb_info()->number(rsd2.seqpos()) << " RING O pseudotorsion: " <<
+			get_restag(rsd2.type()) << " : " <<
+			rsd2.atom_name( atom1 ) << " , " << rsd2.atom_name( atom2 ) << " , " <<
+			rsd2.atom_name( atom3 ) << " , " << rsd1.atom_name( atom4a ) << "   (" <<
+			Ktheta << ") " << 180/3.14 * angle << " " << 180/3.14 * phi0 << "    sc="  << energy_torsion << std::endl;
+	}
+
+	emap[ cart_bonded_ring ] += energy_torsion;
+	emap[ cart_bonded ] += energy_torsion;
+
+	// also constrain the "other" bonded atom (to atom3)
+	core::Size atom4b = carbo_info->anomeric_sidechain_index();
+	if ( atom4b == 0 ) {
+		return; // no anomeric sidechain (can happen with virtualized residues)
+	}
+
+	angle = numeric::dihedral_radians(
+		rsd2.xyz( atom1 ), rsd2.xyz( atom2 ), rsd2.xyz( atom3 ), rsd2.xyz( atom4b ) );
+	del_phi = basic::subtract_radian_angles(angle, -phi0);
+	energy_torsion = eval_score( del_phi, Ktheta, 0 );
+
+	if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+		TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd2.seqpos() << " pdbpos: " <<
+			pose.pdb_info()->number(rsd2.seqpos()) << " RING sc pseudotorsion: " <<
+			get_restag(rsd2.type()) << " : " <<
+			rsd2.atom_name( atom1 ) << " , " << rsd2.atom_name( atom2 ) << " , " <<
+			rsd2.atom_name( atom3 ) << " , " << rsd2.atom_name( atom4b ) << "   (" <<
+			Ktheta << ") " << 180/3.14 * angle << " " << 180/3.14 * phi0 << "    sc="  << energy_torsion << std::endl;
+	}
+
+	emap[ cart_bonded_ring ] += energy_torsion;
+	emap[ cart_bonded ] += energy_torsion;
 }
 
 
@@ -4200,9 +4194,7 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 }
 
 
-// Evaluate the torsion constraints for alpha/beta aldohexopyranoses.
-// rsd2 should be the structure being evaluated and rsd1 should be the lower connection
-// There is a lot of duplicated code here that could be consolidated. ~Labonte
+// FD: this function handles chirality restraints around the anomeric carbon
 void
 CartesianBondedEnergy::eval_interresidue_ring_derivatives(
 	conformation::Residue const & rsd1,
@@ -4210,92 +4202,98 @@ CartesianBondedEnergy::eval_interresidue_ring_derivatives(
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
-) const
-{
+) const {
+	// ensure this is called with linked CHOs
+	if ( !rsd1.is_bonded( rsd2 ) ) return;
+	if ( !rsd1.is_carbohydrate() || !rsd2.is_carbohydrate() ) return;
+	if ( rsd2.type().n_rings() != 1 ) return;
 
-	if ( !rsd1.is_bonded( rsd2 ) )  return;
-	Size const n_rings( rsd2.type().n_rings() );
-	if ( n_rings == 0 || !rsd1.is_polymer_bonded( rsd2 ) ) return;
-	core::Real Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
-	//core::Real Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
+	core::Real Ktheta = db_->k_torsion_improper();  // use default torsion weight
 	Real const weight = weights[ cart_bonded_ring ] + weights[ cart_bonded ];
 
-	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
-		// Even though aldohexopyranoses only ever have a single ring, I'm leaving this here in case someone ever wants
-		// to expand this to be more general for other kinds of rings.
-
-		// Only apply this to aldohexopyranose rings.
-		// The hard-coded atom names below are not a good idea and should be fixed.
-		// The ResidueType stores the indices of all its ring atoms. ~ Labonte
-		if ( ! rsd2.is_carbohydrate() ) { continue; }
-		chemical::carbohydrates::CarbohydrateInfoCOP info( rsd2.carbohydrate_info() );
-		if ( ( ! info->is_aldose() ) || ( ! info->is_hexose() ) || ( ! info->is_pyranose() ) ) { continue; }
-
-		core::Size atom1, atom2, atom3, atom4;
-		utility::vector1< std::string > alternate_atoms = rsd2.type().get_anomeric_pseudotorsion();
-		if ( alternate_atoms.size() == 0 ) {
-			atom1 = rsd1.connect_atom( rsd2 );//lower
-			atom2 = rsd2.type().atom_index("C1");
-			atom3 = rsd2.type().atom_index("C5");
-			atom4 = rsd2.type().atom_index("C6");
-		} else {
-			utility::vector1<core::Size> alternate_indexes;
-			for ( core::Size i=1; i<=alternate_atoms.size(); i++ ) {
-				core::Size aa_index;
-				if ( alternate_atoms[i] == "LOWER" ) {
-					aa_index = rsd1.connect_atom( rsd2 );//lower
-				} else {
-					aa_index = rsd2.type().atom_index(alternate_atoms[i]);
-				}
-				alternate_indexes.push_back(aa_index);
-			}
-			atom1 = alternate_indexes[1];
-			atom2 = alternate_indexes[2];
-			atom3 = alternate_indexes[3];
-			atom4 = alternate_indexes[4];
-		}
-
-
-		Real alpha = -2.0944;
-		Real beta = 0;
-		Real phi0 = beta;
-		if ( rsd2.type().name().find("alpha") != std::string::npos ) {
-			phi0 = alpha;
-		}
-
-		Vector f1(0.0), f2(0.0);
-		Real phi=0, dE_dphi;
-
-		numeric::deriv::dihedral_p1_cosine_deriv(
-			rsd1.xyz( atom1 ), rsd2.xyz( atom2 ), rsd2.xyz( atom3 ), rsd2.xyz( atom4 ), phi, f1, f2 );
-		Real del_phi = basic::subtract_radian_angles(phi, phi0);
-		//del_phi = basic::periodic_range( del_phi, phi_step );
-		if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
-			dE_dphi = weight * Ktheta * (del_phi>0? 0.5 : -0.5);
-		} else {
-			dE_dphi = weight * Ktheta * del_phi;
-		}
-		r1_atom_derivs[ atom1 ].f1() += dE_dphi * f1;
-		r1_atom_derivs[ atom1 ].f2() += dE_dphi * f2;
-
-		f1 = f2 = Vector(0.0);
-		numeric::deriv::dihedral_p2_cosine_deriv(
-			rsd1.xyz( atom1 ), rsd2.xyz( atom2 ), rsd2.xyz( atom3 ), rsd2.xyz( atom4 ), phi, f1, f2 );
-		r2_atom_derivs[ atom2 ].f1() += dE_dphi * f1;
-		r2_atom_derivs[ atom2 ].f2() += dE_dphi * f2;
-
-		f1 = f2 = Vector(0.0);
-		numeric::deriv::dihedral_p2_cosine_deriv(
-			rsd2.xyz( atom4 ), rsd2.xyz( atom3 ), rsd2.xyz( atom2 ), rsd1.xyz( atom1 ), phi, f1, f2 );
-		r2_atom_derivs[ atom3 ].f1() += dE_dphi * f1;
-		r2_atom_derivs[ atom3 ].f2() += dE_dphi * f2;
-
-		f1 = f2 = Vector(0.0);
-		numeric::deriv::dihedral_p1_cosine_deriv(
-			rsd2.xyz( atom4 ), rsd2.xyz( atom3 ), rsd2.xyz( atom2 ), rsd1.xyz( atom1 ), phi, f1, f2 );
-		r2_atom_derivs[ atom4 ].f1() += dE_dphi * f1;
-		r2_atom_derivs[ atom4 ].f2() += dE_dphi * f2;
+	// lookup target chirality
+	chemical::carbohydrates::CarbohydrateInfoCOP carbo_info( rsd2.carbohydrate_info() );
+	core::Real phi0 = 2.38; // more than ideal but with other terms it matches molprobity chiral vol check
+	if ( carbo_info->anomeric_pseudotorsion() < 0 ) {
+		phi0 *= -1.0;
 	}
+
+	//  index of the anomeric C + neighbors
+	utility::vector1< core::Size > atms = rsd2.type().ring_atoms( 1 );
+	core::Size atom1 = atms[ atms.size() ];
+	core::Size atom2 = atms[ 2 ];
+	core::Size atom3 = atms[ 1 ];
+	core::Size atom4a = rsd1.connect_atom( rsd2 );
+
+	// constrain anomeric O
+	Real phi, dE_dphi;
+	Vector f1,f2;
+	numeric::deriv::dihedral_p1_cosine_deriv(
+		rsd2.xyz( atom1 ), rsd2.xyz( atom2 ), rsd2.xyz( atom3 ), rsd1.xyz( atom4a ), phi, f1, f2 );
+	Real del_phi = basic::subtract_radian_angles(phi, phi0);
+
+	if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
+		dE_dphi = weight * Ktheta * (del_phi>0? 0.5 : -0.5);
+	} else {
+		dE_dphi = weight * Ktheta * del_phi;
+	}
+	r2_atom_derivs[ atom1 ].f1() += dE_dphi * f1;
+	r2_atom_derivs[ atom1 ].f2() += dE_dphi * f2;
+
+	f1 = f2 = Vector(0.0);
+	numeric::deriv::dihedral_p2_cosine_deriv(
+		rsd2.xyz( atom1 ), rsd2.xyz( atom2 ), rsd2.xyz( atom3 ), rsd1.xyz( atom4a ), phi, f1, f2 );
+	r2_atom_derivs[ atom2 ].f1() += dE_dphi * f1;
+	r2_atom_derivs[ atom2 ].f2() += dE_dphi * f2;
+
+	f1 = f2 = Vector(0.0);
+	numeric::deriv::dihedral_p2_cosine_deriv(
+		rsd1.xyz( atom4a ), rsd2.xyz( atom3 ), rsd2.xyz( atom2 ), rsd2.xyz( atom1 ), phi, f1, f2 );
+	r2_atom_derivs[ atom3 ].f1() += dE_dphi * f1;
+	r2_atom_derivs[ atom3 ].f2() += dE_dphi * f2;
+
+	f1 = f2 = Vector(0.0);
+	numeric::deriv::dihedral_p1_cosine_deriv(
+		rsd1.xyz( atom4a ), rsd2.xyz( atom3 ), rsd2.xyz( atom2 ), rsd2.xyz( atom1 ), phi, f1, f2 );
+	r1_atom_derivs[ atom4a ].f1() += dE_dphi * f1;
+	r1_atom_derivs[ atom4a ].f2() += dE_dphi * f2;
+
+	// also constrain the "other" bonded atom (to atom3)
+	core::Size atom4b = carbo_info->anomeric_sidechain_index();
+	if ( atom4b == 0 ) {
+		return; // no anomeric sidechain (can happen with virtualized residues)
+	}
+
+	numeric::deriv::dihedral_p1_cosine_deriv(
+		rsd2.xyz( atom1 ), rsd2.xyz( atom2 ), rsd2.xyz( atom3 ), rsd2.xyz( atom4b ), phi, f1, f2 );
+	del_phi = basic::subtract_radian_angles(phi, -phi0);
+
+	if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
+		dE_dphi = weight * Ktheta * (del_phi>0? 0.5 : -0.5);
+	} else {
+		dE_dphi = weight * Ktheta * del_phi;
+	}
+	r2_atom_derivs[ atom1 ].f1() += dE_dphi * f1;
+	r2_atom_derivs[ atom1 ].f2() += dE_dphi * f2;
+
+	f1 = f2 = Vector(0.0);
+	numeric::deriv::dihedral_p2_cosine_deriv(
+		rsd2.xyz( atom1 ), rsd2.xyz( atom2 ), rsd2.xyz( atom3 ), rsd2.xyz( atom4b ), phi, f1, f2 );
+	r2_atom_derivs[ atom2 ].f1() += dE_dphi * f1;
+	r2_atom_derivs[ atom2 ].f2() += dE_dphi * f2;
+
+	f1 = f2 = Vector(0.0);
+	numeric::deriv::dihedral_p2_cosine_deriv(
+		rsd2.xyz( atom4b ), rsd2.xyz( atom3 ), rsd2.xyz( atom2 ), rsd2.xyz( atom1 ), phi, f1, f2 );
+	r2_atom_derivs[ atom3 ].f1() += dE_dphi * f1;
+	r2_atom_derivs[ atom3 ].f2() += dE_dphi * f2;
+
+	f1 = f2 = Vector(0.0);
+	numeric::deriv::dihedral_p1_cosine_deriv(
+		rsd2.xyz( atom4b ), rsd2.xyz( atom3 ), rsd2.xyz( atom2 ), rsd2.xyz( atom1 ), phi, f1, f2 );
+	r2_atom_derivs[ atom4b ].f1() += dE_dphi * f1;
+	r2_atom_derivs[ atom4b ].f2() += dE_dphi * f2;
+
 }
 
 

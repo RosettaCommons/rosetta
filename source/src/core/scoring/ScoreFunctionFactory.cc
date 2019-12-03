@@ -486,7 +486,7 @@ get_score_function(
 	}
 
 	// Turn on carbohydrate energy method weights if the user has supplied the -include_sugars flag.
-	if ( options[ in::include_sugars ].value() ) {
+	if ( options[ in::include_sugars ].value() && scorefxn->get_weight(sugar_bb) == 0.0 ) {
 		if ( TR.Info.visible() ) {
 			TR.Info << "The -include_sugars flag was used with no sugar_bb weight set in the weights file.  " <<
 				"Setting sugar_bb weight to 1.0 by default." << std::endl;

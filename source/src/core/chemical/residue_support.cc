@@ -731,8 +731,6 @@ residue_type_bases_identical( ResidueTypeBase const & r1, ResidueTypeBase const 
 	//if ( *r1.rotamer_library_specification() != *r2.rotamer_library_specification() ) return false;
 
 	if ( r1.get_metal_binding_atoms() != r2.get_metal_binding_atoms() ) return false;
-	if ( r1.get_anomeric_pseudotorsion() != r2.get_anomeric_pseudotorsion() ) return false;
-	if ( r1.get_anomeric_sidechain() != r2.get_anomeric_sidechain() ) return false;
 	if ( r1.get_disulfide_atom_name() != r2.get_disulfide_atom_name() ) return false;
 
 	if ( r1.atom_aliases() != r2.atom_aliases() ) return false;
