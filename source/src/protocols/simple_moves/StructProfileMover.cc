@@ -376,7 +376,7 @@ vector1<vector1<Real> > StructProfileMover::generate_profile_score_wo_background
 
 
 void StructProfileMover::save_MSAcst_file(vector1<vector1<Real> > profile_score,core::pose::Pose const & pose){
-	std::string profile_name = profile_save_filename_.empty() ? "profile" : profile_save_filename_;
+	std::string profile_name = (profile_save_filename_.empty() || profile_save_filename_ == "profile") ? "profile" : profile_save_filename_ + ".profile";
 	Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
@@ -400,10 +400,11 @@ void StructProfileMover::save_MSAcst_file(vector1<vector1<Real> > profile_score,
 		profile_out << std::endl;
 	}
 	profile_out.close();
-	std::string msa_name( "MSAcst" );
+	// This terrible line of code is here to make the default behavior unchanged
+	std::string msa_name = profile_name == "profile" ? "MSAcst" : profile_save_filename_ + ".MSAcst";
 	utility::io::ozstream msa_out(msa_name);
 	for ( Size ii=1; ii<=nres1; ++ii ) {
-		msa_out << "SequenceProfile " << ii << " profile" << std::endl;
+		msa_out << "SequenceProfile " << ii << " " << profile_name << std::endl;
 	}
 	msa_out.close();
 }
@@ -532,11 +533,12 @@ StructProfileMover::parse_my_tag(
 			set_residue_selector( *selector );
 		}
 	}
-	if ( data.has( "strings", "current_output_name" ) ) {
+	profile_save_filename_ = tag->getOption<std::string>("profile_name", "profile");
+	if ( profile_save_filename_.empty() && data.has( "strings", "current_output_name" ) ) {
 		using StringWrapper = basic::datacache::DataMapObj< std::string >;
 		auto ptr = data.get_ptr< StringWrapper >( "strings", "current_output_name" );
 		runtime_assert( ptr );
-		set_profile_save_name( ptr->obj  + ".profile");
+		set_profile_save_name( ptr->obj );
 	}
 }
 
@@ -564,6 +566,8 @@ void StructProfileMover::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		+ XMLSchemaAttribute::attribute_w_default( "outputProfile", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "add_csts_to_pose", xsct_rosetta_bool, "XRW TO DO", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "ignore_terminal_residue", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "profile_name", xs_string, "Name of the profile to output. Empty string results in using the pdb output name."
+		" Setting this the the special word \"profile\" results in the original behavior of profile named \"profile\" and MSAcst named \"MSAcst\"", "profile" )
 		+ XMLSchemaAttribute( "residue_selector", xs_string, "Only compute structure profile for residues within residue selector" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Quickly generates a structure profile", attlist );
 }

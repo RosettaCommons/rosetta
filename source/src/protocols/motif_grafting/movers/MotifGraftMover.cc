@@ -104,6 +104,7 @@ void MotifGraftMover::init_parameters(
 	std::string const & s_motif,
 	core::Real  const & r_RMSD_tolerance,
 	core::Real  const & r_NC_points_RMSD_tolerance,
+	core::Real  const & r_clash_atom_scale,
 	core::Size  const & i_clash_score_cutoff,
 	core::Size  const & i_min_fragment_size,
 	std::string const & s_combinatory_fragment_size_delta,
@@ -126,6 +127,7 @@ void MotifGraftMover::init_parameters(
 		s_motif,
 		r_RMSD_tolerance,
 		r_NC_points_RMSD_tolerance,
+		r_clash_atom_scale,
 		i_clash_score_cutoff,
 		i_min_fragment_size,
 		s_combinatory_fragment_size_delta,
@@ -378,6 +380,7 @@ std::priority_queue<MotifMatch> MotifGraftMover::generate_scaffold_matches(
 		target_contextStructure_,
 		gp_r_RMSD_tolerance_,
 		gp_r_NC_points_RMSD_tolerance_,
+		gp_r_clash_atom_scale_,
 		gp_i_clash_score_cutoff_,
 		gp_i_min_fragment_size_,
 		gp_s_clash_test_residue_,
@@ -400,6 +403,7 @@ void MotifGraftMover::get_matching_fragments(
 	core::pose::PoseOP const & p_contextStructure_,
 	core::Real const & RMSD_tol,
 	core::Real const & NC_points_RMSD_tol,
+	core::Real const & clash_atom_scale,
 	core::Size const & clash_cutoff,
 	core::Size const & min_fragment_size,
 	std::string const & clash_test_residue,
@@ -432,7 +436,7 @@ void MotifGraftMover::get_matching_fragments(
 	// Ok, so here's the deal with the atomic radii we choose here. 2.0 is carbon, 1.6 is oxygen.
 	// But Daniel's clashing function uses half the atomic radii. So 1.6 is too small, but the
 	// "correct" number might be something like 0.9
-	numeric::geometry::hashing::MinimalClashHash context_clash_hash( 0.25f, 1.6f, context_balls );
+	numeric::geometry::hashing::MinimalClashHash context_clash_hash( 0.25f, clash_atom_scale*1.8f, context_balls );
 
 
 	//Test combinations of fragments (outer loop)
@@ -513,7 +517,7 @@ void MotifGraftMover::get_matching_fragments(
 		//p_motif_mono_aa.dump_pdb( "test_y"+utility::to_string(numPermutation)+".pdb");
 
 		//Test the remaining fragments based on the clash score
-		MotifGraftMover::test_epigraft_and_contextStructure_clashes( p_scaffold_mono_aa, p_motif_mono_aa, *p_contextStructure_, clash_cutoff, v_m2s_data, context_clash_hash);
+		MotifGraftMover::test_epigraft_and_contextStructure_clashes( p_scaffold_mono_aa, p_motif_mono_aa, *p_contextStructure_, clash_cutoff, v_m2s_data, context_clash_hash, clash_atom_scale);
 		TR.Debug << "Num of Fragments so far: " << v_m2s_data.size() << std::endl;
 		if ( v_m2s_data.size() == 0 ) {
 			//throw CREATE_EXCEPTION(utility::excn::Exception, "For this scaffold I couldn't find any suitable fragment combination that pass the clash_score test.");
@@ -608,10 +612,11 @@ void MotifGraftMover::test_epigraft_and_contextStructure_clashes(
 	core::pose::Pose const & p_contextStructure_,
 	core::Size const & clash_cutoff,
 	utility::vector1< motif2scaffold_data > & v_m2s_data,
-	numeric::geometry::hashing::MinimalClashHash const & context_clash_hash)
+	numeric::geometry::hashing::MinimalClashHash const & context_clash_hash,
+	core::Real clash_atom_scale)
 {
 	//Just a sanity check of the motif and scaffold clashes
-	core::Size motif_context_clash_count  = MotifGraftMover::count_clashes_between_two_poses(p_motif_, p_contextStructure_, std::numeric_limits<int>::max() );
+	core::Size motif_context_clash_count  = MotifGraftMover::count_clashes_between_two_poses(p_motif_, p_contextStructure_, std::numeric_limits<int>::max(), clash_atom_scale );
 	if ( motif_context_clash_count > 0 ) {
 		TR.Warning << "Check your motif-context interaction! I found a total of: " << motif_context_clash_count << "clashes between them" << std::endl;
 		TR.Warning << "These clashes will not be counted in the clash count score!" << std::endl;
@@ -652,7 +657,7 @@ void MotifGraftMover::test_epigraft_and_contextStructure_clashes(
 
 		if ( scaffold_context_clash_count <= clash_cutoff ) {
 
-			motif_scaffold_clash_count   = MotifGraftMover::count_clashes_between_two_poses( p_this_motif, p_frankenstein, clash_cutoff );
+			motif_scaffold_clash_count   = MotifGraftMover::count_clashes_between_two_poses( p_this_motif, p_frankenstein, clash_cutoff, clash_atom_scale );
 
 			clash_score = motif_scaffold_clash_count + scaffold_context_clash_count;
 		} else {
@@ -698,7 +703,8 @@ void MotifGraftMover::test_epigraft_and_contextStructure_clashes(
 core::Size MotifGraftMover::count_clashes_between_two_poses(
 	core::pose::Pose const & p_A,
 	core::pose::Pose const & p_B,
-	core::Size clash_cutoff)
+	core::Size clash_cutoff,
+	core::Real clash_atom_scale)
 {
 
 	///HASH THE p_A?
@@ -743,6 +749,12 @@ core::Size MotifGraftMover::count_clashes_between_two_poses(
 
 	///END HASH THE CONTEXT
 
+	core::Real const c_c_dist = 2.25 * 2 * clash_atom_scale;
+	core::Real const c_n_dist = 2.02 * 2 * clash_atom_scale;
+	core::Real const c_o_dist = 1.96 * 2 * clash_atom_scale;
+	core::Real const c_s_dist = 2.13 * 2 * clash_atom_scale;
+	core::Real const n_o_dist = 1.70 * 2 * clash_atom_scale;
+
 	numeric::xyzVector< core::Real > xyzv_tmpCoorA;
 	numeric::xyzVector< core::Real > xyzv_tmpCoorB;
 	core::Size clash_counter = 0;
@@ -758,35 +770,35 @@ core::Size MotifGraftMover::count_clashes_between_two_poses(
 						elementB = p_B.residue_type(ib).atom_type(jb).element();
 						if ( (elementA == "C") && (elementB == "C") ) {
 							xyzv_tmpCoorB = p_B.residue(ib).atom(jb).xyz();
-							if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < 2.25 ) {
+							if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < c_c_dist ) {
 								clash_counter+=1;
 								///TR.Info << "TEST-clash: " << ia << " " << ib << " " << elementA << " " << elementB << " " << ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() << std::endl;
 								continue;
 							}
 						} else if ( ((elementA == "C") && (elementB == "N")) || ((elementA == "N") && (elementB == "C")) ) {
 							xyzv_tmpCoorB = p_B.residue(ib).atom(jb).xyz();
-							if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < 2.02 ) {
+							if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < c_n_dist ) {
 								clash_counter+=1;
 								///TR.Info << "TEST-clash: " << ia << " " << ib << " " << elementA << " " << elementB << " " << ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() << std::endl;
 								continue;
 							}
 						} else if ( ((elementA == "C") && (elementB == "O")) || ((elementA == "O") && (elementB == "C")) ) {
 							xyzv_tmpCoorB = p_B.residue(ib).atom(jb).xyz();
-							if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < 1.96 ) {
+							if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < c_o_dist ) {
 								clash_counter+=1;
 								///TR.Info << "TEST-clash: " << ia << " " << ib << " " << elementA << " " << elementB << " " << ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() << std::endl;
 								continue;
 							}
 						} else if ( ((elementA == "C") && (elementB == "S")) || ((elementA == "S") && (elementB == "C")) ) {
 							xyzv_tmpCoorB = p_B.residue(ib).atom(jb).xyz();
-							if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < 2.13 ) {
+							if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < c_s_dist ) {
 								clash_counter+=1;
 								///TR.Info << "TEST-clash: " << ia << " " << ib << " " << elementA << " " << elementB << " " << ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() << std::endl;
 								continue;
 							}
 						} else if ( ((elementA == "N") && (elementB == "O")) || ((elementA == "O") && (elementB == "N")) ) {
 							xyzv_tmpCoorB = p_B.residue(ib).atom(jb).xyz();
-							if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < 1.70 ) {
+							if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < n_o_dist ) {
 								clash_counter+=1;
 								///TR.Info << "TEST-clash: " << ia << " " << ib << " " << elementA << " " << elementB << " " << ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() << std::endl;
 								continue;
@@ -1661,6 +1673,7 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 	std::string const & s_motif,
 	core::Real  const & r_RMSD_tolerance,
 	core::Real  const & r_NC_points_RMSD_tolerance,
+	core::Real  const & r_clash_atom_scale,
 	core::Size  const & i_clash_score_cutoff,
 	core::Size  const & i_min_fragment_size,
 	std::string const & s_combinatory_fragment_size_delta,
@@ -1686,6 +1699,10 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 	//REQUIRED: RMSD_tolerance
 	gp_r_RMSD_tolerance_= r_RMSD_tolerance;
 	TR.Info << "RMSD tolerance settled to: " << gp_r_RMSD_tolerance_ << std::endl;
+
+	//OPTIONAL: clash_atom_scale
+	gp_r_clash_atom_scale_= r_clash_atom_scale;
+	TR.Info << "clash_atom_scale settled to: " << gp_r_clash_atom_scale_ << std::endl;
 
 	//OPTIONAL: NC_points_RMSD_tolerance
 	gp_r_NC_points_RMSD_tolerance_= r_NC_points_RMSD_tolerance;
@@ -1913,6 +1930,7 @@ void MotifGraftMover::parse_my_tag(
 	std::string s_motif;
 	core::Real  r_RMSD_tolerance;
 	core::Real  r_NC_points_RMSD_tolerance;
+	core::Real  r_clash_atom_scale;
 	core::Size  i_clash_score_cutoff;
 	core::Size  i_min_fragment_size;
 	std::string s_combinatory_fragment_size_delta;
@@ -1959,6 +1977,13 @@ void MotifGraftMover::parse_my_tag(
 	} else {
 		TR.Warning << "No NC_points_RMSD_tolerance defined the default: " << std::numeric_limits<float>::max() << " will be used" << std::endl;
 		r_NC_points_RMSD_tolerance=std::numeric_limits<float>::max();
+	}
+
+	//OPTIONAL: clash_atom_scale
+	if ( tag->hasOption("clash_atom_scale") ) {
+		r_clash_atom_scale = tag->getOption<core::Real>( "clash_atom_scale" );
+	} else {
+		r_clash_atom_scale = 0.5;
 	}
 
 	//REQUIRED: clash_score_cutoff
@@ -2084,6 +2109,7 @@ void MotifGraftMover::parse_my_tag(
 		s_motif,
 		r_RMSD_tolerance,
 		r_NC_points_RMSD_tolerance,
+		r_clash_atom_scale,
 		i_clash_score_cutoff,
 		i_min_fragment_size,
 		s_combinatory_fragment_size_delta,
@@ -2133,6 +2159,10 @@ void MotifGraftMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		"NC_points_RMSD_tolerance", xsct_real,
 		"The maximum RMSD tolerance (Angstrom) for the alignment",
 		std::to_string(std::numeric_limits<float>::max()));
+	attlist + XMLSchemaAttribute(
+		"clash_atom_scale", xsct_real,
+		"The relative scale of the atoms used during clash checking compared to their normal size. "
+		"Set this number less than 1 if you want to use a soft clash check. Defaults to 0.5 due to legacy.");
 	attlist + XMLSchemaAttribute::required_attribute(
 		"clash_score_cutoff", xsct_non_negative_integer,
 		"The maximum number of atomic clashes that are tolerated. "

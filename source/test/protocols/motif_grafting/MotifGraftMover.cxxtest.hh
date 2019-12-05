@@ -80,6 +80,7 @@ public:
 		std::string s_motif      = "protocols/motif_grafting/1zx3a_as_motif_1fragment.pdb"; //motif with one fragment
 		core::Real r_RMSD      = 0.5;               //RMSD tol
 		core::Real r_NC_RMSD     = 0.5;               //NC points RMSD tol
+		core::Real r_clash_atom_scale = 0.5;          //Clash atom scale
 		core::Size  s_ClashTol    = 5;                //Clash Score tol
 		core::Size  s_min_frag_size = 0;      // min_frag_length
 		std::string s_comb_d     = "0:0";              //Combinatory delta
@@ -101,6 +102,7 @@ public:
 			s_motif,
 			r_RMSD,
 			r_NC_RMSD,
+			r_clash_atom_scale,
 			s_ClashTol,
 			s_min_frag_size,
 			s_comb_d,
@@ -180,6 +182,7 @@ public:
 		std::string s_motif      = "protocols/motif_grafting/1zx3a_as_motif_2fragment.pdb"; //motif with one fragment
 		core::Real r_RMSD      = 0.5;               //RMSD tol
 		core::Real r_NC_RMSD     = 0.5;               //NC points RMSD tol
+		core::Real r_clash_atom_scale = 0.5;          //Clash atom scale
 		core::Size  s_ClashTol    = 5;                //Clash Score tol
 		core::Size  s_min_frag_size = 0;      // min_frag_length
 		std::string s_comb_d     = "0:0,0:0";            //Combinatory delta
@@ -201,6 +204,7 @@ public:
 			s_motif,
 			r_RMSD,
 			r_NC_RMSD,
+			r_clash_atom_scale,
 			s_ClashTol,
 			s_min_frag_size,
 			s_comb_d,
@@ -281,6 +285,7 @@ public:
 		std::string s_motif      = "protocols/motif_grafting/1zx3a_as_motif_1fragment.pdb"; //motif with one fragment
 		core::Real r_RMSD      = 0.5;               //RMSD tol
 		core::Real r_NC_RMSD     = 0.5;               //NC points RMSD tol
+		core::Real r_clash_atom_scale = 0.5;          //Clash atom scale
 		core::Size  s_ClashTol    = 5;                //Clash Score tol
 		core::Size  s_min_frag_size = 0;      // min_frag_length
 		std::string s_comb_d     = "0:0";              //Combinatory delta
@@ -302,6 +307,7 @@ public:
 			s_motif,
 			r_RMSD,
 			r_NC_RMSD,
+			r_clash_atom_scale,
 			s_ClashTol,
 			s_min_frag_size,
 			s_comb_d,
@@ -381,6 +387,7 @@ public:
 		std::string s_motif      = "protocols/motif_grafting/1zx3a_as_motif_2fragment.pdb"; //motif with one fragment
 		core::Real r_RMSD      = 0.5;               //RMSD tol
 		core::Real r_NC_RMSD     = 0.5;               //NC points RMSD tol
+		core::Real r_clash_atom_scale = 0.5;          //Clash atom scale
 		core::Size  s_ClashTol    = 5;                //Clash Score tol
 		core::Size  s_min_frag_size = 0;      // min_frag_length
 		std::string s_comb_d     = "0:0,0:0";            //Combinatory delta
@@ -402,6 +409,7 @@ public:
 			s_motif,
 			r_RMSD,
 			r_NC_RMSD,
+			r_clash_atom_scale,
 			s_ClashTol,
 			s_min_frag_size,
 			s_comb_d,

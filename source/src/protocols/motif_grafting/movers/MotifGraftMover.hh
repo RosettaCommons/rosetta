@@ -216,6 +216,7 @@ public:
 		std::string const & s_motif,
 		core::Real  const & r_RMSD_tolerance,
 		core::Real  const & r_NC_points_RMSD_tolerance,
+		core::Real  const & gp_r_clash_atom_scale,
 		core::Size  const & i_clash_score_cutoff,
 		core::Size  const & i_min_fragment_size,
 		std::string const & s_combinatory_fragment_size_delta,
@@ -296,6 +297,7 @@ public:
 		core::pose::PoseOP const & target_contextStructure_,
 		core::Real const & RMSD_tol,
 		core::Real const & NC_points_RMSD_tol,
+		core::Real const & clash_atom_scale,
 		core::Size const & clash_cutoff,
 		core::Size const & min_fragment_size,
 		std::string const & clash_test_residue,
@@ -317,13 +319,15 @@ public:
 		core::pose::Pose const & p_contextStructure_,
 		core::Size const & clash_cutoff,
 		utility::vector1< motif2scaffold_data > & v_m2s_data,
-		numeric::geometry::hashing::MinimalClashHash const & context_clash_hash);
+		numeric::geometry::hashing::MinimalClashHash const & context_clash_hash,
+		core::Real clash_atom_scale);
 
 	/**@brief Count the Number of Clashes between two poses*/
 	core::Size count_clashes_between_two_poses(
 		core::pose::Pose const & p_A,
 		core::pose::Pose const & p_B,
-		core::Size clash_cutoff);
+		core::Size clash_cutoff,
+		core::Real clash_atom_scale);
 
 	/**@brief Function that returns by reference a rotated copy of the pose */
 	core::pose::Pose get_rotated_and_translated_pose(
@@ -451,6 +455,7 @@ public:
 		std::string const & s_motif,
 		core::Real  const & r_RMSD_tolerance,
 		core::Real  const & r_NC_points_RMSD_tolerance,
+		core::Real  const & r_clash_atom_scale,
 		core::Size  const & i_clash_score_cutoff,
 		core::Size  const & i_min_fragment_size,
 		std::string const & s_combinatory_fragment_size_delta,
@@ -484,6 +489,7 @@ protected:
 	core::pose::PoseOP gp_p_motif_;
 	core::Real         gp_r_RMSD_tolerance_;
 	core::Real         gp_r_NC_points_RMSD_tolerance_;
+	core::Real         gp_r_clash_atom_scale_;
 	core::Size         gp_i_clash_score_cutoff_;
 	core::Size         gp_i_min_fragment_size_;
 	utility::vector1 < std::pair< core::Size, core::Size > >  gp_vp_combinatory_fragment_size_delta_;
