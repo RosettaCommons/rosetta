@@ -55,15 +55,13 @@ using core::Probability;
 using core::conformation::Residue;
 
 SugarBBSampler::SugarBBSampler():
-	BBDihedralSampler(core::id::phi_dihedral, probability),
-	sampling_step_size_(0.1)
+	BBDihedralSampler(core::id::phi_dihedral, probability)
 {
 
 }
 
-SugarBBSampler::SugarBBSampler( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type, core::Real sampling_step_size):
-	BBDihedralSampler(torsion_type, sampling_type),
-	sampling_step_size_(sampling_step_size)
+SugarBBSampler::SugarBBSampler( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type):
+	BBDihedralSampler(torsion_type, sampling_type)
 {
 
 }
@@ -97,7 +95,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 
 	if ( torsion_type_ == core::id::phi_dihedral || torsion_type_ == core::id::psi_dihedral ) {
 		CHIEnergyFunction const & sugar_bb =
-			ScoringManager::get_instance()->get_CHIEnergyFunction( true /*setup for scoring*/, sampling_step_size_ );
+			ScoringManager::get_instance()->get_CHIEnergyFunction();
 
 		// Get linkage type.
 		CHIEnergyFunctionLinkageType linkage_type =
@@ -131,7 +129,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 
 
 		OmegaPreferencesFunction const & omega_pref  =
-			ScoringManager::get_instance()->get_OmegaPreferencesFunction( true /*setup for scoring*/, sampling_step_size_ );
+			ScoringManager::get_instance()->get_OmegaPreferencesFunction();
 
 		// Get linkage type.
 		OmegaPreferenceType preference_type = get_omega_preference_for_residue_in_pose( pose, resnum );

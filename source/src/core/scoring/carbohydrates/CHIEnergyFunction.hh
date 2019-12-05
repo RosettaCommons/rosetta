@@ -57,7 +57,9 @@ struct CHIDihedralSamplingData {
 /// @ref      A.K. Nivedha et al. J. Comput. Chem. 2014, 35, 526-39
 /// @ref      A.K. Nivedha et al. JCTC 2016, 12, 892-901
 class CHIEnergyFunction : public utility::pointer::ReferenceCount {
+
 public:  // Standard Methods //////////////////////////////////////////////////
+
 	/// @brief  Default constructor
 	CHIEnergyFunction();
 
@@ -65,33 +67,44 @@ public:  // Standard Methods //////////////////////////////////////////////////
 
 
 public:  // Other Public Methods //////////////////////////////////////////////
-	Energy operator()( CHIEnergyFunctionLinkageType type, Angle x ) const;
 
-	Real evaluate_derivative( CHIEnergyFunctionLinkageType type, Angle x ) const;
+	Energy
+	operator()( CHIEnergyFunctionLinkageType type, Angle x ) const;
+
+	Real
+	evaluate_derivative( CHIEnergyFunctionLinkageType type, Angle x ) const;
 
 
 public: // Dihedral Sampling Methods //////////////////////////////////////////
-	CHIDihedralSamplingData const & get_sampling_data( CHIEnergyFunctionLinkageType type ) const;
 
-	///@brief Set up CHI sampling data.
-	void setup_for_sampling( core::Real step_size = 0.1 );
+	CHIDihedralSamplingData const &
+	get_sampling_data( CHIEnergyFunctionLinkageType type ) const;
 
-	bool sampling_data_setup() const;
+	bool
+	sampling_data_setup() const;
 
-	bool sampling_data_setup( CHIEnergyFunctionLinkageType linkage_type ) const;
-
+	bool
+	sampling_data_setup( CHIEnergyFunctionLinkageType linkage_type ) const;
 
 private:  // Private methods //////////////////////////////////////////////////
+
 	// Return single CHI Energy Function term, ae^-((x-b)^2/c), for the given type and index.
-	Energy evaluate_term( CHIEnergyFunctionLinkageType type, uint i, Angle x ) const;
+	Energy
+	evaluate_term( CHIEnergyFunctionLinkageType type, uint i, Angle x ) const;
 
 	// Sum the individual terms.
-	Energy evaluate_function( CHIEnergyFunctionLinkageType type, Angle x ) const;
+	Energy
+	evaluate_function( CHIEnergyFunctionLinkageType type, Angle x ) const;
 
-	void init();
+	///@brief Set up CHI sampling data if not already setup.
+	void
+	setup_for_sampling();
 
+	void
+	init();
 
 private:  // Private Data /////////////////////////////////////////////////////
+
 	// Gaussian function parameters for the CHI energy function as defined in:
 	// A.K. Nivedha et al. J. Comput. Chem. 2014, 35, 526-39 and
 	// A.K. Nivedha et al. JCTC 2016, 12, 892-901.

@@ -53,17 +53,6 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		TR <<  "Testing whether the omega-preferences functions return the correct energies."  << std::endl;
 
-#ifdef MULTI_THREADED
-		try {
-			core::scoring::ScoringManager::get_instance()->get_OmegaPreferencesFunction();
-		} catch (utility::excn::Exception& excn )  {
-			TR << excn.msg() << std::endl;
-			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate OmegaPreferencesFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
-			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
-		}
-		return;
-#endif
-
 		OmegaPreferencesFunction const & E( core::scoring::ScoringManager::get_instance()->get_OmegaPreferencesFunction() );
 		core::Angle x;
 
@@ -112,17 +101,6 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace core::scoring::carbohydrates;
 
 		TR <<  "Testing whether the omega-preferences function derivatives return the correct values."  << std::endl;
-
-#ifdef MULTI_THREADED
-		try {
-			core::scoring::ScoringManager::get_instance()->get_OmegaPreferencesFunction();
-		} catch (utility::excn::Exception& excn )  {
-			TR << excn.msg() << std::endl;
-			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate OmegaPreferencesFunction is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jason Labonte (JWLabonte@jhu.edu) to complain about this." );
-			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
-		}
-		return;
-#endif
 
 		OmegaPreferencesFunction const & E( core::scoring::ScoringManager::get_instance()->get_OmegaPreferencesFunction() );
 		core::Angle x;

@@ -117,6 +117,7 @@ CHIEnergyFunction::init()
 		c_[ type ] = params[ 'c' ];
 		d_[ type ] = params[ 'd' ][ 1 ];  // There is only one d value.
 	}
+	setup_for_sampling();
 }
 
 
@@ -152,14 +153,19 @@ CHIEnergyFunction::evaluate_function( CHIEnergyFunctionLinkageType type, core::A
 
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 void
-CHIEnergyFunction::setup_for_sampling( core::Real step_size ){
+CHIEnergyFunction::setup_for_sampling(){
 	using utility::to_string;
+
+	core::Real const step_size = .1;
 
 	//Note:
 	// Probability from energy: -ln(p)=E -> p = e^-E
 	// Used to get rotamer probabilities from energy in PyRosetta Toolkit - need to double check this.
 
 	//Get phi/get psi linkages.
+
+	if ( sampling_data_setup() ) return;
+
 	TR << "Setting up chi sampling" << std::endl;
 
 	utility::vector1< CHIEnergyFunctionLinkageType > phi_linkages( 2 );

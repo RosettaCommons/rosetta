@@ -44,7 +44,9 @@ struct OmegaPreferenceSamplingData {
 
 /// @details  TBD
 class OmegaPreferencesFunction : public utility::pointer::ReferenceCount {
+
 public:  // Standard Methods //////////////////////////////////////////////////
+
 	/// @brief  Default constructor
 	OmegaPreferencesFunction();
 
@@ -52,27 +54,38 @@ public:  // Standard Methods //////////////////////////////////////////////////
 
 
 public:  // Other Public Methods //////////////////////////////////////////////
-	Energy operator()( OmegaPreferenceType preference, Angle x ) const;
 
-	Real evaluate_derivative( OmegaPreferenceType preference, Angle x ) const;
+	Energy
+	operator()( OmegaPreferenceType preference, Angle x ) const;
+
+	Real
+	evaluate_derivative( OmegaPreferenceType preference, Angle x ) const;
 
 public: // Dihedral Sampling Methods //////////////////////////////////////////
-	OmegaPreferenceSamplingData const & get_sampling_data( OmegaPreferenceType const type ) const;
 
-	///@brief Set up CHI sampling data.
-	void setup_for_sampling( core::Real step_size = 0.1 );
+	OmegaPreferenceSamplingData const &
+	get_sampling_data( OmegaPreferenceType const type ) const;
 
-	bool sampling_data_setup() const;
+	bool
+	sampling_data_setup() const;
 
-	bool sampling_data_setup( OmegaPreferenceType const linkage_type ) const;
+	bool
+	sampling_data_setup( OmegaPreferenceType const linkage_type ) const;
 
 private:  // Private methods //////////////////////////////////////////////////
-	void set_parameters( OmegaPreferenceType preference, Angle x ) const;
 
-	Energy evaluate_function( OmegaPreferenceType preference, Angle x ) const;
+	void
+	set_parameters( OmegaPreferenceType preference, Angle x ) const;
 
-	void init();
+	Energy
+	evaluate_function( OmegaPreferenceType preference, Angle x ) const;
 
+	///@brief Set up CHI sampling data if not already setup.
+	void
+	setup_for_sampling();
+
+	void
+	init();
 
 private:  // Private Data /////////////////////////////////////////////////////
 	// Parabolic function parameters as defined in:

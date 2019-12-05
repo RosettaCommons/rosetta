@@ -175,19 +175,8 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using core::scoring::ScoringManager;
 		using namespace core::scoring::carbohydrates;
 
-#ifdef MULTI_THREADED
-		try {
-			core::scoring::ScoringManager::get_instance()->get_CHIEnergyFunction( true, .1 );
-		} catch (utility::excn::Exception& excn )  {
-			TR << excn.msg() << std::endl;
-			std::string expected( "ERROR: Error in ScoringManager: the carbohydrate CHIEnergyFunction with setup_for_sampling is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jared Adolf-Bryfogle (jadolfbr@gmail.com) to complain about this." );
-			TS_ASSERT_EQUALS( excn.msg().substr( excn.msg().find( "ERROR: " ), expected.size() ), expected );
-		}
-		return;
-#endif
-
 		CHIEnergyFunction const & sugar_bb =
-			ScoringManager::get_instance()->get_CHIEnergyFunction( true /*setup for scoring*/, .1 );
+			ScoringManager::get_instance()->get_CHIEnergyFunction();
 
 
 		TS_ASSERT( sugar_bb.sampling_data_setup() );

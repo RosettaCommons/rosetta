@@ -72,7 +72,7 @@ OmegaPreferencesFunction::evaluate_derivative( OmegaPreferenceType preference, c
 void
 OmegaPreferencesFunction::init()
 {
-	// TODO: Fill in, if we ever decide to make this function for complicated.
+	setup_for_sampling();
 }
 
 void
@@ -118,8 +118,12 @@ OmegaPreferencesFunction::evaluate_function( OmegaPreferenceType preference, Ang
 
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 void
-OmegaPreferencesFunction::setup_for_sampling( core::Real step_size ){
+OmegaPreferencesFunction::setup_for_sampling(){
 	using utility::to_string;
+
+	core::Real step_size = 0.1;
+
+	if ( sampling_data_setup() ) return;
 
 	//Note:
 	// Probability from energy: -ln(p)=E -> p = e^-E

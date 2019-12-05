@@ -1136,47 +1136,24 @@ ScoringManager::get_DisulfideMatchingPotential() const
 }
 
 /// @brief Get an instance of the CHIEnergyFunction scoring object.
-/// @details Lazily loaded, but fundamentally NOT THREADSAFE.
+/// @details Threadsafe and lazily loaded.
 carbohydrates::CHIEnergyFunction const &
-ScoringManager::get_CHIEnergyFunction( bool const setup_for_sampling /* false */, core::Real const & step_size /* 0.1 */ ) const
+ScoringManager::get_CHIEnergyFunction() const
 {
 	std::function< carbohydrates::CHIEnergyFunctionOP () > creator( std::bind( &ScoringManager::create_chi_energy_function_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, CHI_energy_function_, SAFELY_PASS_MUTEX( carb_chienergy_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( carb_chienergy_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
-
-	if ( setup_for_sampling ) {
-#ifdef MULTI_THREADED
-		utility_exit_with_message( "Error in ScoringManager: the carbohydrate CHIEnergyFunction with setup_for_sampling is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jared Adolf-Bryfogle (jadolfbr@gmail.com) to complain about this." );
-#endif
-		// VKM 20 July 2017: The following is fundamentally not threadsafe, since different threads could simultaneously
-		// be trying to configure the global CHI energy function for sampling or not for sampling.
-		if ( ! CHI_energy_function_->sampling_data_setup() ) {
-			TR << "should be setting up for sampling..." << std::endl;
-			CHI_energy_function_->setup_for_sampling( step_size );
-		}
-	}
 
 	return *CHI_energy_function_;
 }
 
 /// @brief Get an instance of the OmegaPreferencesFunction scoring object.
-/// @details Lazily loaded, but fundamentally NOT THREADSAFE.
+/// @details Threadsafe and lazily loaded.
 carbohydrates::OmegaPreferencesFunction const &
-ScoringManager::get_OmegaPreferencesFunction(  bool const setup_for_sampling /* false */, core::Real const & step_size /* 0.1 */ ) const
+ScoringManager::get_OmegaPreferencesFunction( ) const
 {
 	std::function< carbohydrates::OmegaPreferencesFunctionOP () > creator( std::bind( &ScoringManager::create_omega_preferences_function_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, carbohydrate_omega_preferences_function_, SAFELY_PASS_MUTEX( carb_omegapref_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( carb_omegapref_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 
-	if ( setup_for_sampling ) {
-#ifdef MULTI_THREADED
-		utility_exit_with_message( "Error in ScoringManager: the carbohydrate OmegaPreferencesFunction with setup_for_sampling is fundamentally not threadsafe, and cannot be used in a multithreaded environment.  Please contact Jared Adolf-Bryfogle (jadolfbr@gmail.com) to complain about this." );
-#endif
-		// VKM 20 July 2017: The following is fundamentally not threadsafe, since different threads could simultaneously
-		// be trying to configure the global OmegaPreferences energy function for sampling or not for sampling.
-		if ( ! carbohydrate_omega_preferences_function_->sampling_data_setup() ) {
-			TR << "should be setting up for sampling..." << std::endl;
-			carbohydrate_omega_preferences_function_->setup_for_sampling( step_size );
-		}
-	}
 
 	return *carbohydrate_omega_preferences_function_;
 }

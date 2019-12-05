@@ -571,16 +571,10 @@ public:
 	disulfides::DisulfideMatchingPotential const & get_DisulfideMatchingPotential() const;
 
 	/// @brief Get an instance of the CHIEnergyFunction scoring object.
-	/// @details Lazily loaded, but fundamentally NOT THREADSAFE.
-	carbohydrates::CHIEnergyFunction const & get_CHIEnergyFunction(
-		bool const setup_sampling_data = false,
-		Real const & sampling_step_size = 0.1 ) const;
+	carbohydrates::CHIEnergyFunction const & get_CHIEnergyFunction() const;
 
 	/// @brief Get an instance of the OmegaPreferencesFunction scoring object.
-	/// @details Lazily loaded, but fundamentally NOT THREADSAFE.
-	carbohydrates::OmegaPreferencesFunction const & get_OmegaPreferencesFunction(
-		bool const setup_sampling_data = false,
-		core::Real const & sampling_step_size = 0.1 ) const;
+	carbohydrates::OmegaPreferencesFunction const & get_OmegaPreferencesFunction() const;
 
 	/// @brief Test if there is an EnergyMethod class defined for a
 	/// given score type.

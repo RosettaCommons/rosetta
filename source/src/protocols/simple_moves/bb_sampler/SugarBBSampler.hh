@@ -35,8 +35,7 @@ public:
 
 	//Constructor with options.  Sampling step size is for initialization of the sampling data - here we have phi/psi probability and angles at every .1 degrees by default.
 	SugarBBSampler( core::id::MainchainTorsionType torsion_type,
-		BBSampleType sampling_type = probability,
-		core::Real sampling_step_size = .1);
+		BBSampleType sampling_type = probability);
 
 	SugarBBSampler(SugarBBSampler const & src);
 
@@ -64,10 +63,6 @@ public:
 	get_name() const override {
 		return name();
 	}
-
-private:
-
-	core::Real sampling_step_size_;
 
 };
 
