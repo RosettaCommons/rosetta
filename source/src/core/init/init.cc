@@ -803,6 +803,7 @@ static ResidueSelectorRegistrator< SecondaryStructureSelectorCreator > reg_Secon
 static ResidueSelectorRegistrator< SSElementSelectorCreator > reg_SSElementSelectorCreator;
 static ResidueSelectorRegistrator< SymmetricalResidueSelectorCreator > reg_SymmetricalResidueSelectorCreator;
 static ResidueSelectorRegistrator< ScoreTermValueBasedSelectorCreator > reg_ScoreTermValueBasedSelectorCreator;
+static ResidueSelectorRegistrator< SliceResidueSelectorCreator > reg_SliceResidueSelectorCreator;
 
 // Jump Selectors
 using namespace core::select::jump_selector;

@@ -626,6 +626,7 @@ sources = {
 		"ResiduePropertySelectorTests",
 		"NeighborhoodResidueSelector",
 		"SecondaryStructureSelector",
+		"SliceResidueSelector",
 		"ResidueInSequenceMotifSelectorTest",
 		"SelectorLogicParser",
 		"TestAsymmetricUnitSelector",
