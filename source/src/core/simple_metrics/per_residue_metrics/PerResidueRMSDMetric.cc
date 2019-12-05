@@ -253,7 +253,7 @@ PerResidueRMSDMetric::create_atom_id_map( core::pose::Pose const & pose, bool de
 				if ( ! ref_pose_->residue_type( res_pair.second).has( atom_name ) ) continue;
 
 				core::Size pose_atom = pose.residue_type( res_pair.first).atom_index( atom_name );
-				core::Size ref_atom = pose.residue_type( res_pair.second).atom_index( atom_name );
+				core::Size ref_atom = ref_pose_->residue_type( res_pair.second).atom_index( atom_name );
 
 				atom_map[ core::id::AtomID( pose_atom, res_pair.first)] = core::id::AtomID( ref_atom, res_pair.second);
 			}
@@ -290,7 +290,7 @@ PerResidueRMSDMetric::create_atom_id_map( core::pose::Pose const & pose, bool de
 					utility_exit_with_message(msg);
 				}
 				if ( ref_pose_->residue_type( res_pair.second).has( pose_atom_name ) ) {
-					core::Size ref_atom_index = pose.residue_type( res_pair.second).atom_index( pose_atom_name );
+					core::Size ref_atom_index = ref_pose_->residue_type( res_pair.second).atom_index( pose_atom_name );
 					atom_map[ core::id::AtomID( i, res_pair.first)] = core::id::AtomID( ref_atom_index, res_pair.second);
 				} else if ( (!robust_) ) {
 					std::string msg = "RMSDMetric.  Robust set to false.  ref pose is missing "+pose_atom_name+" at residue "+to_string( res_pair.second );
