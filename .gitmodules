@@ -28,3 +28,12 @@
 [submodule "PyRosetta.notebooks"]
 	path = PyRosetta.notebooks
 	url = git@github.com:RosettaCommons/PyRosetta.notebooks.git
+[submodule "tools"]
+	path = tools
+	url = git@github.com:RosettaCommons/tools.git
+[submodule "demos"]
+	path = demos
+	url = git@github.com:RosettaCommons/demos.git
+[submodule "documentation"]
+	path = documentation
+	url = git@github.com:RosettaCommons/documentation.git

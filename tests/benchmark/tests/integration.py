@@ -66,7 +66,7 @@ def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_co
     """
 
     if re.search("--demos", additional_flags) or re.search("--tutorials", additional_flags):
-        new_ref_files_location = os.path.realpath(rosetta_dir+'/../demos')
+        new_ref_files_location = os.path.realpath(rosetta_dir+'/demos')
     else:
         new_ref_files_location = rosetta_dir+'/tests/integration'
 
@@ -186,7 +186,7 @@ def run_demo_tests(mode, rosetta_dir, working_dir, platform, config, hpc_driver=
 
     ignore = []
 
-    files_location = os.path.realpath(rosetta_dir+'/../demos/new')
+    files_location = os.path.realpath(rosetta_dir+'/demos/new')
     copy_files(files_location, working_dir)
 
     with open(working_dir + '/full-log.txt', 'wb') as f: f.write( to_bytes(full_log) )
