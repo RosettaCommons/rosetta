@@ -83,13 +83,13 @@ settings = {
             # Leading '#' means relative to the base directory, (i.e.,
             # main/external/boinc/api, etc.)
             "include_path" : [
-                "#external/boost_1_55_0",
-                "#external/libxml2/include",
-                "#external/",
-                "#external/dbio",
-                "/usr/include",
-                "/usr/local/include",
-                        ],
+
+            # now done with -isystem flag at "compiler" handles
+                # "#external/libxml2/include",
+                # "#external/boost_1_55_0",
+                # "#external/",
+                # "#external/dbio",
+            ],
             "library_path" : [
                 "/usr/lib",
                 "/usr/local/lib",
@@ -2149,6 +2149,13 @@ settings = {
                 "link"   : [ "stdlib=libc++"],
                 # There is at least one variable only used on non-Macs.
                 "warn" : ["Wno-unused-variable"],
+
+                #fd OSX clang (at least clang-11 on OSX 10.4 adds /usr/local/include as a default)
+                #fd   Declaring it as isystem "demotes" it to under other isystem headers
+                "cxx" : [
+                    "isystem /usr/local/include",
+                ],
+
             },
         },
         "removes" : {
