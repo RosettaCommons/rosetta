@@ -13,7 +13,7 @@
   </TASKOPERATIONS>
 
   <MOVERS>
-    <FastDesign name="design" scorefxn="commandline" repeats="1" task_operations="ifc,decrease_sample_size_dramatically" relaxscript="KillA2019"/>
+    <FastDesign name="design" scorefxn="commandline" repeats="1" task_operations="ifc,decrease_sample_size_dramatically" relaxscript="PolarDesign2019"/>
   </MOVERS>
 
   <PROTOCOLS>

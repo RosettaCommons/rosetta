@@ -1252,6 +1252,11 @@ FastRelax::read_script_file(
 		script_file = "no_cst_ramping";
 	}
 
+	if ( script_file == "KillA2019" ) {
+		TR << "KillA2019 has been renamed to PolarDesign2019" << std::endl;
+		script_file = "PolarDesign2019";
+	}
+
 	RelaxScriptFileContents const & relax_script (
 		RelaxScriptManager::get_instance()->get_relax_script( script_file, get_scorefxn(), dualspace_ )
 	);

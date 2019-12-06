@@ -95,13 +95,13 @@ if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
 fi
 
-#############
-# KillA2019 #
-#############
+###################
+# PolarDesign2019 #
+###################
 
-script="KillA2019"
+script="PolarDesign2019"
 dualspace="0"
-expected_filename="KillA2019.ref2015.txt"
+expected_filename="PolarDesign2019.ref2015.txt"
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" > subtest6.log 2>&1
 filename=`cat subtest6.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
@@ -109,9 +109,9 @@ if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
 fi
 
-script="KillA2019"
+script="PolarDesign2019"
 dualspace="1"
-expected_filename="KillA2019.ref2015.dualspace.txt"
+expected_filename="PolarDesign2019.ref2015.dualspace.txt"
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" dualspace="$dualspace" sfxn="ref2015_cart" > subtest7.log 2>&1
 filename=`cat subtest7.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
@@ -119,9 +119,9 @@ if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
 fi
 
-script="KillA2019"
+script="PolarDesign2019"
 dualspace="0"
-expected_filename="KillA2019.beta_nov16.txt"
+expected_filename="PolarDesign2019.beta_nov16.txt"
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16 > subtest8.log 2>&1
 filename=`cat subtest8.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
@@ -129,9 +129,9 @@ if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
 fi
 
-script="KillA2019"
+script="PolarDesign2019"
 dualspace="1"
-expected_filename="KillA2019.beta_nov16.dualspace.txt"
+expected_filename="PolarDesign2019.beta_nov16.dualspace.txt"
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16_cart > subtest9.log 2>&1
 filename=`cat subtest9.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
@@ -141,9 +141,9 @@ fi
 
 # OLD SFXNS:
 
-script="KillA2019"
+script="PolarDesign2019"
 dualspace="0"
-expected_filename="KillA2019.talaris2014.txt"
+expected_filename="PolarDesign2019.talaris2014.txt"
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" dualspace="$dualspace" sfxn="talaris2014" -corrections::restore_talaris_behavior 1 > subtest10.log 2>&1
 filename=`cat subtest10.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
@@ -151,9 +151,9 @@ if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
 fi
 
-script="KillA2019"
+script="PolarDesign2019"
 dualspace="0"
-expected_filename="KillA2019.talaris2013.txt"
+expected_filename="PolarDesign2019.talaris2013.txt"
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" dualspace="$dualspace" sfxn="talaris2013" -corrections::restore_talaris_behavior 1 > subtest11.log 2>&1
 filename=`cat subtest11.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
@@ -161,9 +161,9 @@ if [ "$filename" != "$expected_filename" ]; then
     echo "FAIL " `date` >> log
 fi
 
-script="KillA2019"
+script="PolarDesign2019"
 dualspace="0"
-expected_filename="KillA2019.score12.txt"
+expected_filename="PolarDesign2019.score12.txt"
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @custom_sfxn_flags -script_vars script="$script" dualspace="$dualspace" sfxn="score12" -restore_pre_talaris_2013_behavior 1 > subtest12.log 2>&1
 filename=`cat subtest12.log | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
 echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
