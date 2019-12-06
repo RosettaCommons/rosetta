@@ -114,7 +114,7 @@ public:
 			ResidueSubset result = sel.apply( pose );
 
 			TS_ASSERT( false );
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception const & e ) {
 
 		}
 	}

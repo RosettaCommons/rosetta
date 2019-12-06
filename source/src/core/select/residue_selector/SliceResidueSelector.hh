@@ -55,10 +55,6 @@ public:
 	// derived from base class
 	SliceResidueSelector();
 
-	/// @brief Copy constructor
-	///
-	SliceResidueSelector( SliceResidueSelector const &src);
-
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.
 	ResidueSelectorOP clone() const override;
@@ -77,7 +73,6 @@ public:
 		utility::vector1< int > const & indices,
 		slice_enums::OutOfBoundsMode oob_mode = slice_enums::ERROR
 	);
-	~SliceResidueSelector() override;
 
 	ResidueSubset apply( core::pose::Pose const & pose ) const override;
 

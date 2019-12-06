@@ -95,13 +95,6 @@ SliceResidueSelector::SliceResidueSelector(
 {}
 
 
-
-SliceResidueSelector::~SliceResidueSelector() = default;
-
-/// @brief Copy constructor
-///
-SliceResidueSelector::SliceResidueSelector( SliceResidueSelector const &) = default;
-
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
 ResidueSelectorOP SliceResidueSelector::clone() const { return utility::pointer::make_shared<SliceResidueSelector>(*this); }
