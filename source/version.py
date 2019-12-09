@@ -73,7 +73,7 @@ def update_file_if_changed(filename, contents):
             f.close()
 
 
-def generate_version_information(rosetta_dir, url=None, branch=None, package=None, revision=None, date=None, file_name=None, version=None):
+def generate_version_information(rosetta_dir, url=None, branch=None, package=None, public_release=False, revision=None, date=None, file_name=None, version=None):
     ''' Generate JSON-like data with Rosetta vesion information. If some of the fields is not supplied either try to autodetect them (if possible) or supply `null` value for it
         Example output:
         {
@@ -168,17 +168,18 @@ def generate_version_information(rosetta_dir, url=None, branch=None, package=Non
             version = 'unknown'
 
     info = dict(branch = branch,
-                revision      = revision,
-                package       = package,
-                version       = version,
-                url           = url,
+                revision       = revision,
+                public_release = public_release,
+                package        = package,
+                version        = version,
+                url            = url,
 
-                date          = date.isoformat(),
-                year          = year,
-                week          = week,
+                date           = date.isoformat(),
+                year           = year,
+                week           = week,
 
-                source        = versions,
-                git_describe  = git_describe,
+                source         = versions,
+                git_describe   = git_describe,
     )
 
     if file_name:
@@ -263,6 +264,7 @@ def generate_version_files():
     update_file_if_changed( os.path.normpath("src/utility/version.hh"),
                             version_utility_template % dict(info,
                                                             package = info['package'] if info['package'] else 'devel',
+                                                            public_release = "true" if 'public_release' in info and info['public_release'] else "false",
                                                             commit = info['source']['main']) )
 
 
@@ -308,6 +310,7 @@ struct Version
     static inline std::string package()  { return "%(package)s"; }
     static inline std::string version()  { return "%(version)s"; }
     static inline std::string revision() { return "%(revision)s"; }
+    static inline bool public_release()  { return %(public_release)s; }
     static inline std::string commit()   { return "%(commit)s"; }
     static inline std::string url()      { return "%(url)s"; }
     static inline std::string date()     { return "%(date)s"; }

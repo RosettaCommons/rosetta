@@ -902,7 +902,13 @@ void init_crash_reporter(int argc, char * argv [])
 	option_stream << basic::options::option;
 	utility::set_options_string( option_stream.str() );
 
-	utility::set_show_crash_report_on_console( option[ run::crash_to_console ]() );
+	if ( option[ run::crash_to_console ].user() ) { // If option is explicitly set, use that.
+		utility::set_show_crash_report_on_console( option[ run::crash_to_console ]() );
+	} else if ( utility::Version::public_release() ) {
+		utility::set_show_crash_report_on_console( false ); // Don't show tracer backtrace for release versions
+	} else {
+		utility::set_show_crash_report_on_console( true ); // Developers seem to want the backtrace in the tracer.
+	}
 
 	if ( ! option[ run::nosignal ]() ) {
 		utility::install_crash_handler(); // Install the signal listener

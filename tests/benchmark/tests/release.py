@@ -119,6 +119,7 @@ def convert_to_release(rosetta_dir, working_dir, config, git_repository_name, re
     '''
     info = generate_version_information(rosetta_dir,
                                         branch=config['branch'],
+                                        public_release=True,
                                         revision=config['revision'],
                                         date=datetime.datetime.now(),
                                         package=release_name,
