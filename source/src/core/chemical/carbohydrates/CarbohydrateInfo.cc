@@ -488,7 +488,7 @@ CarbohydrateInfo::determine_anomeric_pseudotorsion()
 	ResidueTypeCOP residue_type( residue_type_ );
 
 	// if we are not cyclic, return
-	if ( residue_type->n_rings() ) {
+	if ( residue_type->n_rings() == 0 ) {
 		return;
 	}
 

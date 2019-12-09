@@ -78,6 +78,10 @@ IdealizeAnomericHydrogens::apply( core::pose::Pose & pose )
 
 		CarbohydrateInfoCOP carbo_info( pose.residue(i).carbohydrate_info() );
 		core::Size anomeric_sidechain_index = carbo_info->anomeric_sidechain_index();
+		if ( anomeric_sidechain_index == 0 ) {
+			TR.Warning << "Cannot idealize residue " << i << " [" << pose.residue_type(i).name() << "] as it is missing an anomeric designation." << std::endl;
+			continue;
+		}
 		core::chemical::AtomICoor icoor = pose.residue_type(i).icoor(anomeric_sidechain_index);
 		core::id::AtomID id(anomeric_sidechain_index,i);
 		numeric::xyzVector<core::Real> icoor_xyz = icoor.build( pose.residue(i), pose.conformation() );

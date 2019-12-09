@@ -238,9 +238,9 @@ public:
 
 class SliceResidueSelectorCreator : public ResidueSelectorCreator {
 public:
-	virtual ResidueSelectorOP create_residue_selector() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
+	ResidueSelectorOP create_residue_selector() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
 } //namespace residue_selector
