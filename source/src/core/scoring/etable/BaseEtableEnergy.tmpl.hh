@@ -643,7 +643,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 			tcpfxn = utility::pointer::make_shared< TrieCountPair1BC4 >( conn1, conn2 );
 			break;
 		case CP_CROSSOVER_3FULL : // check
-			tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC3( conn1, conn2 ) );
+			tcpfxn = utility::pointer::make_shared< TrieCountPair1BC3 >( conn1, conn2 );
 			break;
 		default :
 			utility_exit_with_message("Data consistency error in BaseEtableEnergy");
@@ -652,7 +652,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 	} else if ( connection == CP_MULTIPLE_BONDS_OR_PSEUDOBONDS ) {
 		CPCrossoverBehavior crossover = determine_crossover_behavior( res1, res2, pose, sfxn );
 
-		TrieCountPairGenericOP cpgen( new TrieCountPairGeneric( res1, res2, conn1, conn2 ) );
+		TrieCountPairGenericOP cpgen( utility::pointer::make_shared< TrieCountPairGeneric >( res1, res2, conn1, conn2 ) );
 		if ( crossover == CP_CROSSOVER_3 ) {
 			cpgen->crossover( 3 );
 		} else if ( crossover == CP_CROSSOVER_4 ) {
@@ -723,8 +723,9 @@ BaseEtableEnergy< Derived >::determine_crossover_behavior(
 		*/
 		// Let's make it simple -- let count_pair_hybrid to count even regular modifications (e.g. disulf/terminius...)
 		// regardless of D/L
-		bool const is_rsd1_baseAA = res1.type().is_base_type();
-		bool const is_rsd2_baseAA = res2.type().is_base_type();
+		// @danpf -- is_base_type returns false for disulfide bonded caa
+		bool const is_rsd1_baseAA = res1.type().is_base_type() || res1.type().is_disulfide_bonded();
+		bool const is_rsd2_baseAA = res2.type().is_base_type() || res1.type().is_disulfide_bonded();
 
 		bool const is_rsd1_ncaa_polymer = res1.is_ligand() || ( res1.is_polymer() && !is_rsd1_baseAA );
 		bool const is_rsd2_ncaa_polymer = res2.is_ligand() || ( res2.is_polymer() && !is_rsd2_baseAA );
@@ -742,8 +743,8 @@ BaseEtableEnergy< Derived >::determine_crossover_behavior(
 		}
 	} else if ( res1.seqpos() == res2.seqpos() ) {
 		// logic for controlling intra-residue count pair behavior goes here; for now, default to crossover 3
-		bool is_ligand = res1.is_ligand();
-		bool is_non_polymer = !(res1.is_protein() || res1.is_polymer()); //apply to any non-[protein/polymers] too
+		bool const is_ligand = res1.is_ligand();
+		bool const is_non_polymer = !(res1.is_protein() || res1.is_polymer()); //apply to any non-[protein/polymers] too
 
 		// apply to ncaa-polymers too
 		bool const is_rsd1_baseAA = res1.type().is_base_type();
