@@ -74,7 +74,6 @@ R1A
 # Not loaded by default - skip
 
 ## Water
-HOH
 
 ## L-NCAA Types
 # In general, the NCAA types don't match chemically between the CCD and Rosetta.
