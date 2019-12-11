@@ -137,6 +137,7 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	genbonded_score_hybrid_(false),
 	pb_bound_tag_("bound"),
 	pb_unbound_tag_("unbound"),
+	arg_cation_pi_his_can_be_pi_(true),
 	ordered_wat_penalty_(1.5),
 	ordered_pt_wat_penalty_(2.15),
 	symmetric_gly_tables_(false),
@@ -272,6 +273,7 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		genbonded_score_hybrid_ = src.genbonded_score_hybrid_;
 		pb_bound_tag_ = src.pb_bound_tag_;
 		pb_unbound_tag_ = src.pb_unbound_tag_;
+		arg_cation_pi_his_can_be_pi_ = src.arg_cation_pi_his_can_be_pi_;
 		fastdens_perres_weights_ = src.fastdens_perres_weights_;
 		ordered_wat_penalty_ = src.ordered_wat_penalty_;
 		ordered_pt_wat_penalty_ = src.ordered_pt_wat_penalty_;
@@ -380,6 +382,7 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	genbonded_score_full_ = options[ basic::options::OptionKeys::score::genbonded_score_full ]();
 	genbonded_score_hybrid_ = options[ basic::options::OptionKeys::score::genbonded_score_hybrid ]();
 	cartbonded_skip_cutpoints_ = options[ basic::options::OptionKeys::score::cart_bonded_skip_cutpoints ]();
+	arg_cation_pi_his_can_be_pi_ = options[ basic::options::OptionKeys::score::arg_cation_pi_his_can_be_pi ]();
 
 	//Options for the NMerSVMEnergy:
 	nmer_ref_seq_length_ = options[ basic::options::OptionKeys::score::nmer_ref_seq_length ]();
@@ -500,6 +503,7 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::genbonded_score_full
 		+ basic::options::OptionKeys::score::genbonded_score_hybrid
 		+ basic::options::OptionKeys::score::cart_bonded_skip_cutpoints
+		+ basic::options::OptionKeys::score::arg_cation_pi_his_can_be_pi
 		+ basic::options::OptionKeys::score::use_gen_kirkwood
 		+ basic::options::OptionKeys::score::use_polarization
 
@@ -1030,6 +1034,18 @@ EnergyMethodOptions::pb_unbound_tag() {
 void
 EnergyMethodOptions::pb_unbound_tag( std::string const & tag ) {
 	pb_unbound_tag_ = tag;
+}
+
+/// @brief For the arg_cation_pi scoreterm. Can histidine be the pi-side of an Arginine cation-pi interaction?
+bool
+EnergyMethodOptions::arg_cation_pi_his_can_be_pi() const {
+	return arg_cation_pi_his_can_be_pi_;
+}
+
+/// @brief For the arg_cation_pi scoreterm. Can histidine be the pi-side of an Arginine cation-pi interaction?
+void
+EnergyMethodOptions::arg_cation_pi_his_can_be_pi( bool const setting ) {
+	arg_cation_pi_his_can_be_pi_ = setting;
 }
 
 /// @brief Should glyceine's Ramachandran and P_AA_PP tables be symmetrized (e.g. for scoring in a mixed D/L context)?
@@ -1772,6 +1788,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.bond_angle_residue_type_param_set_ == b.bond_angle_residue_type_param_set_ ) &&
 		( a.pb_bound_tag_ == b.pb_bound_tag_ ) &&
 		( a.pb_unbound_tag_ == b.pb_unbound_tag_ ) &&
+		( a.arg_cation_pi_his_can_be_pi_ == b.arg_cation_pi_his_can_be_pi_ ) &&
 		( a.ordered_wat_penalty_ == b.ordered_wat_penalty_ ) &&
 		( a.ordered_pt_wat_penalty_ == b.ordered_pt_wat_penalty_ ) &&
 
@@ -1923,6 +1940,7 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: cst_max_seq_sep: " << cst_max_seq_sep_ << std::endl;
 	out << "EnergyMethodOptions::show: pb_bound_tag: " << pb_bound_tag_ << std::endl;
 	out << "EnergyMethodOptions::show: pb_unbound_tag: " << pb_unbound_tag_ << std::endl;
+	out << "EnergyMethodOptions::show: arg_cation_pi_his_can_be_pi: " << arg_cation_pi_his_can_be_pi_ << std::endl;
 	out << "EnergyMethodOptions::show: ordered_wat_penalty: " << ordered_wat_penalty_ << std::endl;
 	out << "EnergyMethodOptions::show: ordered_pt_wat_penalty: " << ordered_pt_wat_penalty_ << std::endl;
 
@@ -2274,6 +2292,7 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( genbonded_score_hybrid_ ) ); // _Bool
 	arc( CEREAL_NVP( pb_bound_tag_ ) ); // std::string
 	arc( CEREAL_NVP( pb_unbound_tag_ ) ); // std::string
+	arc( CEREAL_NVP( arg_cation_pi_his_can_be_pi_ ) ); // _Bool
 	arc( CEREAL_NVP( fastdens_perres_weights_ ) ); // utility::vector1<core::Real>
 	arc( CEREAL_NVP( symmetric_gly_tables_ ) ); // _Bool
 	arc( CEREAL_NVP( loop_close_use_6D_potential_ ) ); // _Bool
@@ -2395,6 +2414,7 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( genbonded_score_hybrid_ ); // _Bool
 	arc( pb_bound_tag_ ); // std::string
 	arc( pb_unbound_tag_ ); // std::string
+	arc( arg_cation_pi_his_can_be_pi_ ); // _Bool
 	arc( fastdens_perres_weights_ ); // utility::vector1<core::Real>
 	arc( symmetric_gly_tables_ ); // _Bool
 	arc( loop_close_use_6D_potential_ ); // _Bool

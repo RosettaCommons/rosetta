@@ -312,6 +312,9 @@ ScoreFunctionLoader::create_scorefxn_from_tag(
 				emoptions.pb_unbound_tag( mod_tag->getOption<std::string>("pb_unbound_tag" ) );
 				TR << "User defined unbound tag: " << emoptions.pb_unbound_tag() << std::endl;
 			}
+			if ( mod_tag->hasOption( "arg_cation_pi_his_can_be_pi" ) ) {
+				emoptions.arg_cation_pi_his_can_be_pi( mod_tag->getOption<bool>("arg_cation_pi_his_can_be_pi" ) );
+			}
 			if ( mod_tag->hasOption( "scale_sc_dens" ) ) {
 				auto scale_sc_dens = mod_tag->getOption<core::Real>("scale_sc_dens" );
 				emoptions.set_density_sc_scale_byres( scale_sc_dens );

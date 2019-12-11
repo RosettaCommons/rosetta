@@ -1596,6 +1596,7 @@ Options = Option_Group( '',
 		Option( 'hbond_new_sp3_acc',"Boolean", desc="fade_factor for hbond geometry softmax", default='false' ),
 		Option( 'alignment_sharpness',"Real", desc="When computing a harmonic function of RMSD for the alignment score, what should the standard deviation be?", default='1.0' ),
 		Option( 'rna_torsion_potential', 'String', desc="In RNA torsion calculation, directory containing 1D torsional potentials" , default="ps_04282011"), # probably should be in score:rna namespace, but hardwired as score:rna_torsion_potential in ERRASER, etc.
+		Option( 'arg_cation_pi_his_can_be_pi', "Boolean", desc="For the arg_cation_pi scoreterm. Can histidine be the pi-side of an Arginine cation-pi interaction?", default="true" ),
 
 		Option('mc_optimize_dG', 'Boolean',
 			desc = 'Optimize the dG during MonteCarlo.  It is not possible to do this within overall scoring, \

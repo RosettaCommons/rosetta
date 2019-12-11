@@ -14,6 +14,7 @@ sources = {
 		"FACTSEnergy",
 		"AACompositionEnergy",
 		"AARepeatEnergy",
+		"ArgCationPiEnergy",
 
 		"XtalMLEnergy",
 

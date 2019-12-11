@@ -223,6 +223,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_["pci_salt_bridge"] =pci_salt_bridge;
 	name2score_type_["pci_hbond"] =pci_hbond;
 
+	name2score_type_["arg_cation_pi"] = arg_cation_pi;
+
 
 	name2score_type_[ "geom_sol"    ] = geom_sol;
 	name2score_type_[ "occ_sol_fitted"    ] = occ_sol_fitted;

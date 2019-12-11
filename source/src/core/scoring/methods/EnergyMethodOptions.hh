@@ -495,6 +495,12 @@ public:
 	std::string & pb_unbound_tag();
 	void pb_unbound_tag( std::string const & tag );
 
+	/// @brief For the arg_cation_pi scoreterm. Can histidine be the pi-side of an Arginine cation-pi interaction?
+	bool arg_cation_pi_his_can_be_pi() const;
+
+	/// @brief For the arg_cation_pi scoreterm. Can histidine be the pi-side of an Arginine cation-pi interaction?
+	void arg_cation_pi_his_can_be_pi( bool const setting );
+
 	/// @brief Should glyceine's Ramachandran and P_AA_PP tables be symmetrized (e.g. for scoring in a mixed D/L context)?
 	/// @details Default false.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
@@ -1102,6 +1108,7 @@ private:
 	bool genbonded_score_hybrid_;
 	std::string pb_bound_tag_;
 	std::string pb_unbound_tag_;
+	bool arg_cation_pi_his_can_be_pi_;
 	utility::vector1< core::Real > fastdens_perres_weights_;
 	core::Real ordered_wat_penalty_;    //fpd -> penalty for removing water from bulk (HOH_V->HOH)
 	core::Real ordered_pt_wat_penalty_; //fpd -> penalty for removing point water from bulk (PWAT_V->PWAT)

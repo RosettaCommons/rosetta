@@ -508,6 +508,7 @@ sources = {
         ],
 	"scoring/methods" : [
 		"AARepeatEnergy",
+		"ArgCationPiEnergy",
 		"AspartimidePenaltyEnergy",
 		"CartesianBondedEnergy",
 		"CartesianBondedEnergyBBDep",
@@ -1188,6 +1189,7 @@ testinputfiles = [
 	"scoring/loop_graph/P3.pdb",
 	"scoring/loop_graph/SRL_1JBT.pdb",
 	"scoring/loop_graph/bound_seq_GC_SRL.fasta",
+	"scoring/methods/arg_cation_pi_examples.pdb",
 	"scoring/methods/cyclic_pep.pdb",
 	"scoring/methods/HEM.fa.params",
 	"scoring/methods/HEM.fa.tors",

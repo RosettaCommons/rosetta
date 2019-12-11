@@ -47,6 +47,7 @@
 #include <core/scoring/hbonds/HBondEnergyCreator.hh>
 #include <core/energy_methods/NPDHBondEnergyCreator.hh>
 #include <core/scoring/methods/EnergyMethodRegistrator.hh>
+#include <core/energy_methods/ArgCationPiEnergyCreator.hh>
 #include <core/energy_methods/AspartimidePenaltyEnergyCreator.hh>
 #include <core/energy_methods/CenPairEnergyCreator.hh>
 #include <core/energy_methods/ChainbreakEnergyCreator.hh>
@@ -434,6 +435,7 @@ static EnergyMethodRegistrator< pack::guidance_scoreterms::hbnet_energy::HBNetEn
 static EnergyMethodRegistrator< scoring::hbonds::HBondEnergyCreator > HBondEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::mhc_epitope_energy::MHCEpitopeEnergyCreator > MHCEpitopeEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hbonds::NPDHBondEnergyCreator > NPDHBondEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::ArgCationPiEnergyCreator > ArgCationPiEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::AspartimidePenaltyEnergyCreator > AspartimidePenaltyEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ChainbreakEnergyCreator > ChainbreakEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::BranchEnergyCreator > BranchEnergyCreator_registrator;

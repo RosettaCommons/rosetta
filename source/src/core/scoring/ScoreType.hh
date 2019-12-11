@@ -240,6 +240,8 @@ enum ScoreType {
 	pci_salt_bridge,
 	pci_hbond,
 
+	arg_cation_pi,
+
 #ifdef PYROSETTA
 		PyRosettaTwoBodyContextIndepenedentEnergy_first,
 		PyRosettaTwoBodyContextIndepenedentEnergy_last = PyRosettaTwoBodyContextIndepenedentEnergy_first + 10,
