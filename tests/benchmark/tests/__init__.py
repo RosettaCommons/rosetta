@@ -625,12 +625,14 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
     return NT(activate = activate, python = bin + '/python', root = working_dir, bin = bin)
 
 
-def generate_version_information(rosetta_dir, url=None, branch=None, package=None, revision=None, date=None, file_name=None):
-    ''' Generate standard Rosetta version structure and save it to JSON file if file_name is provided
+def generate_version_information(rosetta_dir, **kwargs):
+    ''' Generate standard Rosetta version structure and save it to JSON file if file_name is provided.
+    
+    This is a light wrapper around the generate_version_information() function in Rosetta/main/source/version.py -- see there for the interface definition.
     '''
 
     version = imp.load_source('version', rosetta_dir + '/source/version.py')
-    return version.generate_version_information(rosetta_dir=rosetta_dir, url=url, branch=branch, package=package, revision=revision, date=date, file_name=file_name)
+    return version.generate_version_information(rosetta_dir=rosetta_dir, **kwargs)
 
 
 
