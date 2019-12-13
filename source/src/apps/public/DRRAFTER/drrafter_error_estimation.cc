@@ -27,6 +27,7 @@
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
+#include <core/pose/PDBInfo.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -41,8 +42,11 @@
 OPT_KEY( Boolean, rmsd_nosuper )
 OPT_KEY( Boolean, protein_align )
 OPT_KEY( Boolean, rna_rmsd )
+OPT_KEY( Boolean, per_residue_convergence )
 OPT_KEY( IntegerVector, rmsd_res )
 OPT_KEY( IntegerVector, align_residues )
+OPT_KEY( FileVector, sgroup1 )
+OPT_KEY( FileVector, sgroup2 )
 
 static basic::Tracer TR( "apps.public.DRRAFTER.drrafter_error_estimation" );
 
@@ -170,24 +174,13 @@ setup_align_atom_map( core::pose::Pose const & pose ) {
 
 ///////////////////////////////////////////////////////////////////////////////
 std::map<core::id::AtomID, core::id::AtomID>
-setup_rmsd_atom_map( core::pose::Pose const & pose ) {
+setup_rmsd_atom_map( core::pose::Pose const & pose, utility::vector1< core::Size > rmsd_residues ) {
 
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	std::map<core::id::AtomID, core::id::AtomID> atom_map_rms;
-	utility::vector1< core::Size > rmsd_residues;
-
-	if ( option[ rna_rmsd ]() ) {
-		for ( core::Size i = 1; i<= pose.total_residue(); ++i ) {
-			if ( pose.residue( i ).is_RNA() ) {
-				rmsd_residues.push_back( i );
-			}
-		}
-	} else {
-		rmsd_residues = option[ rmsd_res ]();
-	}
 
 	// RNA heavy atom map
 	for ( core::Size i = 1; i<= rmsd_residues.size(); ++i ) {
@@ -205,6 +198,33 @@ setup_rmsd_atom_map( core::pose::Pose const & pose ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+utility::vector1< std::map< core::id::AtomID, core::id::AtomID > >
+setup_per_residue_rmsd_atom_map( core::pose::Pose const & pose, utility::vector1< core::Size > rmsd_residues ) {
+
+	using namespace core;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	utility::vector1< std::map< core::id::AtomID, core::id::AtomID > > per_residue_atom_map_rms;
+
+	for ( core::Size i = 1; i<=rmsd_residues.size(); ++i ) {
+		std::map< core::id::AtomID, core::id::AtomID > this_residue_atom_map_rms;
+
+		core::conformation::Residue const & rsd = pose.residue( rmsd_residues[i] );
+
+		for ( Size j = 1; j<=rsd.nheavyatoms(); ++j ) {
+			std::string name( rsd.atom_name( j ) );
+			if ( rsd.is_virtual( j ) ) continue;
+			id::AtomID const id1( rsd.atom_index( name ), rmsd_residues[ i ] );
+			this_residue_atom_map_rms[ id1 ] = id1;
+		}
+		per_residue_atom_map_rms.push_back( this_residue_atom_map_rms );
+	}
+
+
+	return per_residue_atom_map_rms;
+}
+///////////////////////////////////////////////////////////////////////////////
 void
 drrafter_error_estimation()
 {
@@ -215,13 +235,23 @@ drrafter_error_estimation()
 	using namespace core::scoring;
 	using namespace core::import_pose::pose_stream;
 
+	if ( option[ in::file::s ].user() && ( option[ sgroup1 ].user() || option[ sgroup2 ].user() ) ) {
+		TR << "Error: please provide EITHER -s or -sgroup1 and -sgroup2." << std::endl;
+		exit( 0 );
+	}
+
+	if ( option[ sgroup1 ].user() && !option[ sgroup2 ].user() ) {
+		TR << "Error: please provide BOTH sgroup1 AND sgroup2, or instead provide -s." << std::endl;
+		exit( 0 );
+	}
+
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	///////////////////////////////////////////////
 	// input stream
 	///////////////////////////////////////////////
-	PoseInputStreamOP input;
+	PoseInputStreamOP input, input_group1, input_group2;
 	if ( option[ in::file::silent ].user() ) {
 		if ( option[ in::file::tags ].user() ) {
 			input = utility::pointer::make_shared< SilentFilePoseInputStream >(
@@ -231,8 +261,11 @@ drrafter_error_estimation()
 		} else {
 			input = utility::pointer::make_shared< SilentFilePoseInputStream >( option[ in::file::silent ]() );
 		}
+	} else if ( option[ in::file::s ].user() ) {
+		input = PoseInputStreamOP( new PDBPoseInputStream( option[ in::file::s ]() ) );
 	} else {
-		input = utility::pointer::make_shared< PDBPoseInputStream >( option[ in::file::s ]() );
+		input_group1 = PoseInputStreamOP( new PDBPoseInputStream( option[ sgroup1 ]() ) );
+		input_group2 = PoseInputStreamOP( new PDBPoseInputStream( option[ sgroup2 ]() ) );
 	}
 
 	///////////////////////////////////////////////
@@ -242,17 +275,55 @@ drrafter_error_estimation()
 	pose::Pose pose;
 
 	utility::vector1< pose::Pose > all_poses;
+	utility::vector1< pose::Pose > all_poses_group1;
+	utility::vector1< pose::Pose > all_poses_group2;
 	utility::vector1< std::string > all_pose_tags;
+	utility::vector1< std::string > all_pose_tags_group1;
+	utility::vector1< std::string > all_pose_tags_group2;
 
-	while ( input->has_another_pose() ) {
+	if ( option[ in::file::s ].user() ) {
+		while ( input->has_another_pose() ) {
 
-		input->fill_pose( pose, *rsd_set );
+			input->fill_pose( pose, *rsd_set );
 
-		// tag
-		std::string tag = tag_from_pose( pose );
+			// tag
+			std::string tag = tag_from_pose( pose );
 
-		all_poses.push_back( pose );
-		all_pose_tags.push_back( tag );
+			all_poses.push_back( pose );
+			all_pose_tags.push_back( tag );
+		}
+	} else if ( option[ sgroup1 ].user() ) {
+		while ( input_group1->has_another_pose() ) {
+
+			input_group1->fill_pose( pose, *rsd_set );
+
+			std::string tag = tag_from_pose( pose );
+
+			all_poses_group1.push_back( pose );
+			all_pose_tags_group1.push_back( tag );
+		}
+
+		while ( input_group2->has_another_pose() ) {
+
+			input_group2->fill_pose( pose, *rsd_set );
+
+			std::string tag = tag_from_pose( pose );
+
+			all_poses_group2.push_back( pose );
+			all_pose_tags_group2.push_back( tag );
+		}
+	}
+
+	if ( all_poses_group1.size() > 1 and all_poses.size() > 1 ) return;
+
+	for ( core::Size i = 1; i <= all_poses_group1.size(); ++i ) {
+		all_poses.push_back( all_poses_group1[ i ] );
+		all_pose_tags.push_back( all_pose_tags_group1[ i ] );
+	}
+
+	for ( core::Size i = 1; i <= all_poses_group2.size(); ++i ) {
+		all_poses.push_back( all_poses_group2[ i ] );
+		all_pose_tags.push_back( all_pose_tags_group2[ i ] );
 	}
 
 	///////////////////////////////////////////////
@@ -265,10 +336,28 @@ drrafter_error_estimation()
 	// set up the alignment and RMSD atom maps
 	///////////////////////////////////////////////
 
+	utility::vector1< core::Size > rmsd_residues;
+
+	if ( option[ rna_rmsd ]() ) {
+		for ( core::Size i =1; i<= pose.size(); ++i ) {
+			if ( pose.residue( i ).is_RNA() ) {
+				rmsd_residues.push_back( i );
+			}
+		}
+	} else {
+		rmsd_residues = option[ rmsd_res ]();
+	}
+
 	core::id::AtomID_Map< id::AtomID > align_atom_map;
 	align_atom_map = setup_align_atom_map( all_poses[1] );
 	std::map<core::id::AtomID, core::id::AtomID> atom_map_rms;
-	atom_map_rms = setup_rmsd_atom_map( all_poses[1] );
+	atom_map_rms = setup_rmsd_atom_map( all_poses[1], rmsd_residues );
+
+	// per residue RMSD map
+	utility::vector1< std::map< core::id::AtomID, core::id::AtomID > > per_residue_atom_map_rms;
+	if ( option[ per_residue_convergence ]() ) {
+		per_residue_atom_map_rms = setup_per_residue_rmsd_atom_map( all_poses[1], rmsd_residues );
+	}
 
 	///////////////////////////////////////////////
 	// calculate all the pairwise RMSDs
@@ -276,6 +365,19 @@ drrafter_error_estimation()
 
 	std::map< std::string, std::map< std::string, Real > > pairwise_rmsds;
 	utility::vector1< Real > pairwise_rmsds_list;
+	utility::vector1< utility::vector1< Real > > per_residue_pairwise_rmsds_lists;
+
+	std::map< std::string, std::map< std::string, Real > > pairwise_rmsds_groups;
+	utility::vector1< Real > pairwise_rmsds_list_groups;
+	utility::vector1< utility::vector1< Real > > per_residue_pairwise_rmsds_lists_groups;
+
+	if ( option[ per_residue_convergence ]() ) {
+		for ( core::Size i = 1; i <= per_residue_atom_map_rms.size(); ++i ) {
+			utility::vector1< Real > empty_rmsd_list;
+			per_residue_pairwise_rmsds_lists.push_back( empty_rmsd_list );
+			per_residue_pairwise_rmsds_lists_groups.push_back( empty_rmsd_list );
+		}
+	}
 
 	for ( core::Size i = 1; i <= all_pose_tags.size(); ++i ) {
 		std::string tag1 = all_pose_tags[ i ];
@@ -297,6 +399,53 @@ drrafter_error_estimation()
 			pairwise_rmsds[ tag2 ][ tag1 ] = rmsd;
 			pairwise_rmsds_list.push_back( rmsd );
 
+			// get the per residue RMSDs
+			if ( option[ per_residue_convergence ]() ) {
+				for ( core::Size r=1; r<=per_residue_atom_map_rms.size(); ++r ) {
+					Real residue_rmsd( 0.0 );
+					residue_rmsd = rms_at_corresponding_atoms_no_super( all_poses[i], all_poses[j], per_residue_atom_map_rms[r] );
+					//std::cout << i << " " << j << " " << r << " " << residue_rmsd << std::endl;
+					per_residue_pairwise_rmsds_lists[ r ].push_back( residue_rmsd );
+				}
+			}
+
+		}
+	}
+
+	///////////////////////////////////////////////
+	// calculate all the pairwise RMSDs between groups, if specified by user
+	///////////////////////////////////////////////
+
+	for ( core::Size i = 1; i <= all_pose_tags_group1.size(); ++i ) {
+		std::string tag1 = all_pose_tags_group1[ i ];
+		for ( core::Size j = 1; j <= all_pose_tags_group2.size(); ++j ) {
+			std::string tag2 = all_pose_tags_group2[ j ];
+
+			// get the RMSD
+			Real align_rmsd( 0.0 );
+			Real rmsd;
+			if ( !option[ rmsd_nosuper ]() ) {
+				align_rmsd = superimpose_pose( all_poses_group1[i], all_poses_group2[j], align_atom_map );
+			}
+
+			rmsd = rms_at_corresponding_atoms_no_super( all_poses_group1[i], all_poses_group2[j], atom_map_rms );
+			TR.Debug << "Align " << i << ", " << j << " " << align_rmsd << std::endl;
+			TR.Debug << "RMSD " << tag1 << ", " << tag2 << " " << rmsd << std::endl;
+
+			pairwise_rmsds_groups[ tag1 ][ tag2 ] = rmsd;
+			pairwise_rmsds_groups[ tag2 ][ tag1 ] = rmsd;
+			pairwise_rmsds_list_groups.push_back( rmsd );
+
+			// get the per residue RMSDs
+			if ( option[ per_residue_convergence ]() ) {
+				for ( core::Size r=1; r<=per_residue_atom_map_rms.size(); ++r ) {
+					Real residue_rmsd( 0.0 );
+					residue_rmsd = rms_at_corresponding_atoms_no_super( all_poses_group1[i], all_poses_group2[j], per_residue_atom_map_rms[r] );
+					//std::cout << i << " " << j << " " << r << " " << residue_rmsd << std::endl;
+					per_residue_pairwise_rmsds_lists_groups[ r ].push_back( residue_rmsd );
+				}
+			}
+
 		}
 	}
 
@@ -306,6 +455,22 @@ drrafter_error_estimation()
 
 	Real mean_pairwise_rmsd = mean( pairwise_rmsds_list );
 	TR.Debug << "Mean pairwise rmsd: " << mean_pairwise_rmsd << std::endl;
+
+	Real mean_pairwise_rmsd_groups = mean( pairwise_rmsds_list_groups );
+
+	utility::vector1< Real > mean_per_residue_rmsds;
+	if ( option[ per_residue_convergence ]() ) {
+		for ( core::Size r=1; r<=per_residue_pairwise_rmsds_lists.size(); ++r ) {
+			mean_per_residue_rmsds.push_back( mean( per_residue_pairwise_rmsds_lists[ r ] ) );
+		}
+	}
+
+	utility::vector1< Real > mean_per_residue_rmsds_groups;
+	if ( option[ per_residue_convergence ]() ) {
+		for ( core::Size r=1; r<=per_residue_pairwise_rmsds_lists_groups.size(); ++r ) {
+			mean_per_residue_rmsds_groups.push_back( mean( per_residue_pairwise_rmsds_lists_groups[ r ] ) );
+		}
+	}
 
 	///////////////////////////////////////////////
 	// get error estimates from convergence RMSD
@@ -329,10 +494,26 @@ drrafter_error_estimation()
 
 	TR << "#############################################" << std::endl;
 	TR << "Mean pairwise RMSD (convergence): " << mean_pairwise_rmsd << std::endl;
+	if ( option[ sgroup1 ].user() ) {
+		TR << "Group vs group mean pairwise RMSD (convergence): " << mean_pairwise_rmsd_groups << std::endl;
+	}
 	TR << "Estimated minimum RMSD: " << estimated_min_rmsd << std::endl;
 	TR << "Estimated mean RMSD: " << estimated_mean_rmsd << std::endl;
 	TR << "Estimated RMSD of median structure: " << estimated_rmsd_median << std::endl;
 	TR << "Median structure: " << median_struct << std::endl;
+	if ( option[ per_residue_convergence ]() ) {
+		TR << "Mean pairwise RMSDs (convergence) per residue: " << std::endl;
+		core::pose::PDBInfoOP pdbinfo = all_poses[1].pdb_info();
+		for ( core::Size i=1; i<= mean_per_residue_rmsds.size(); ++i ) {
+			TR << "Residue " << pdbinfo->number( rmsd_residues[i] ) << " : " << mean_per_residue_rmsds[i] << std::endl;
+		}
+		if ( option[ sgroup1 ].user() ) {
+			TR << "Group vs group mean pairwise RMSDs (convergence) per residue: " << std::endl;
+			for ( core::Size i=1; i<= mean_per_residue_rmsds_groups.size(); ++i ) {
+				TR << "Group vs group Residue " << pdbinfo->number( rmsd_residues[i] ) << " : " << mean_per_residue_rmsds_groups[i] << std::endl;
+			}
+		}
+	}
 	TR << "#############################################" << std::endl;
 
 }
@@ -361,9 +542,12 @@ main( int argc, char * argv [] )
 		option.add_relevant( in::file::s );
 		option.add_relevant( in::file::silent );
 		option.add_relevant( in::file::tags );
+		NEW_OPT( sgroup1, "structures group 1, e.g. built into half map 1", "");
+		NEW_OPT( sgroup2, "structures group 2, e.g. built into half map 2", "");
 		NEW_OPT( rmsd_nosuper, "Calculate rmsd without superposition first", false);
 		NEW_OPT( rna_rmsd, "Calculate rmsd over rna", true);
 		NEW_OPT( protein_align, "align structures over protein residues", true);
+		NEW_OPT( per_residue_convergence, "get the convergence per residue", false);
 		NEW_OPT( rmsd_res, "residues to calculate rmsd for", 1);
 		NEW_OPT( align_residues, "residues to align over, default all", 1);
 

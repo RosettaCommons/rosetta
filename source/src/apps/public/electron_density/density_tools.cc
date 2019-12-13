@@ -328,6 +328,7 @@ densityTools()
 	}
 
 
+
 	// map vs map stats
 	TR.Trace << "Stage 3: map vs map" << std::endl;
 	core::scoring::electron_density::ElectronDensity mapAlt;
@@ -389,8 +390,17 @@ densityTools()
 			for ( core::uint r = 1; r <= nres; ++r ) {
 				perResCC[r] = core::scoring::electron_density::getDensityMap().matchRes( r , fullpose.residue(r), fullpose, nullptr , false);
 			}
-			protocols::hybridization::FragmentBiasAssigner fa(fullpose);
-			fa.automode_scores( fullpose, perResStrain );
+			// This fails if the pose has any RNA residues.
+			bool ok_to_automode = true;
+			for ( core::uint r = 1; r <= nres; ++r ) {
+				if ( fullpose.residue_type( r ).is_RNA() ) {
+					ok_to_automode = false;
+				}
+			}
+			if ( ok_to_automode ) {
+				protocols::hybridization::FragmentBiasAssigner fa(fullpose);
+				fa.automode_scores( fullpose, perResStrain );
+			}
 		}
 
 		TR.Trace << "       : FSCs" << std::endl;

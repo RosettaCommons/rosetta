@@ -95,6 +95,9 @@ public:
 	void set_fixed_stems( bool const & setting ){ fixed_stems_ = setting; }
 	bool fixed_stems() const { return fixed_stems_; }
 
+	void set_ft_close_chains( bool const & setting ){ ft_close_chains_ = setting; }
+	bool ft_close_chains() const { return ft_close_chains_; }
+
 	void set_jump_change_frequency( core::Real const & setting ){ jump_change_frequency_ = setting; }
 	core::Real jump_change_frequency() const { return jump_change_frequency_; }
 
@@ -237,6 +240,12 @@ public:
 	void set_dock_each_chunk_per_chain( bool const & setting ){ dock_each_chunk_per_chain_ = setting; }
 	bool dock_each_chunk_per_chain() const { return dock_each_chunk_per_chain_; }
 
+	void
+	set_dock_chunks( utility::vector1< std::string > const & dock_chunks ) {
+		dock_chunks_ = dock_chunks;
+	}
+	utility::vector1< std::string > const & dock_chunks() const { return dock_chunks_; };
+
 	void set_center_jumps_in_single_stranded( bool const & setting ){ center_jumps_in_single_stranded_ = setting; }
 	bool center_jumps_in_single_stranded() const { return center_jumps_in_single_stranded_; }
 
@@ -286,6 +295,13 @@ public:
 	}
 
 	utility::vector1< utility::vector1< core::Size > > const & helical_substruct_res() const { return helical_substruct_res_;}
+
+	void
+	set_dock_chunks_res( utility::vector1< core::Size > const & setting ) {
+		dock_chunks_res_ = setting;
+	}
+
+	utility::vector1< core::Size > const & dock_chunks_res() const { return dock_chunks_res_;}
 
 	void
 	set_chunk_initialization_pdb_files( utility::vector1< std::string > const & input_files ) {
@@ -466,14 +482,17 @@ private:
 	bool superimpose_over_all_ = false;
 
 	bool fixed_stems_ = false;
+	bool ft_close_chains_ = true;
 
 	std::string all_rna_fragments_file_ = ""; // gets set in initialize_from_options
 	std::string rna_params_file_ = "";
 	std::string jump_library_file_ = "";
 
 	utility::vector1< std::string > chunk_pdb_files_;
+	utility::vector1< std::string > dock_chunks_;
 	utility::vector1< std::string > helical_substructs_;
 	utility::vector1< utility::vector1< Size > > helical_substruct_res_;
+	utility::vector1< Size > dock_chunks_res_;
 	utility::vector1< std::string > chunk_initialization_pdb_files_;
 	utility::vector1< std::string > chunk_silent_files_;
 	utility::vector1< core::Size > input_res_;

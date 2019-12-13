@@ -831,6 +831,12 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 					break;
 				}
 			}
+			// check whether this is a dock_chunks_res --> if yes, merge_chunk = true (but if not, merge_chunk could still be true)
+			for ( auto const i : const_full_model_info( *chunk_poses[n] ).res_list() ) {
+				if ( std::find( dock_chunks_res_.begin(), dock_chunks_res_.end(), i ) != dock_chunks_res_.end() ) {
+					merge_chunk = true;
+				}
+			}
 			// we're including the chunk, add the chains to the chains_in_start_pose
 			if ( merge_chunk ) {
 				for ( auto const i : chains_in_chunk ) {
@@ -966,8 +972,9 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		Size chunk_num_first = map_merged_chunk_res_to_chunk_poses[ 1 ].first;
 		Size resid_first = map_merged_chunk_res_to_chunk_poses[ 1 ].second;
 		new_start_pose.append_residue_by_jump( chunk_poses[ chunk_num_first ]->residue( resid_first ), 1 );
-		// then add the virtual residue
-		new_start_pose.append_residue_by_jump( chunk_poses[ chunk_num_first ]->residue( chunk_poses[chunk_num_first]->size() ), 1 );
+		// then add the virtual residue -- always on chunk # 1
+		new_start_pose.append_residue_by_jump( chunk_poses[ 1 ]->residue( chunk_poses[1]->size() ), 1 );
+		//new_start_pose.append_residue_by_jump( chunk_poses[ chunk_num_first ]->residue( chunk_poses[chunk_num_first]->size() ), 1 );
 		//new_start_pose.conformation().append_residue_by_jump( pose.residue( pose.size() ), 1 );
 
 

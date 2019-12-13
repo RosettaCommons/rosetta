@@ -208,6 +208,7 @@ void RNA_DeNovoSetup::initialize_inputs_from_options( utility::options::OptionCo
 		minimize_rna_has_been_specified_ = true;
 	}
 	if ( opts[ OptionKeys::rna::denovo::helical_substructs ].user() ) helical_substructs_ = opts[ OptionKeys::rna::denovo::helical_substructs ]();
+	if ( opts[ OptionKeys::rna::denovo::dock_chunks ].user() ) dock_chunks_ = opts[ OptionKeys::rna::denovo::dock_chunks ]();
 	if ( opts[ OptionKeys::rna::denovo::initial_structures ].user() ) {
 		input_initialization_pdbs_ = option[ OptionKeys::rna::denovo::initial_structures ]();
 	}
@@ -532,6 +533,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	vector1< Size > input_res;
 	Size input_res_user_defined_count( 0 );
 	vector1< vector1< Size > > helical_substruct_res;
+	vector1< Size > dock_chunks_res;
 	for ( std::string const & pdb : input_pdbs_ ) {
 		std::string pdb_seq;
 		vector1< int > resnum;
@@ -578,6 +580,12 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		// check whether this is one of the helical_substructs
 		if ( helical_substructs_.contains( pdb ) ) {
 			helical_substruct_res.push_back( resnum_in_full_model );
+		}
+		// check whether this is one of the dock chunks
+		if ( dock_chunks_.contains( pdb ) ) {
+			for ( auto const r : resnum_in_full_model ) {
+				dock_chunks_res.push_back( r );
+			}
 		}
 	}
 
@@ -686,6 +694,14 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		if ( helical_substructs_.contains( silent ) ) {
 			helical_substruct_res.push_back( resnum_in_full_model );
 		}
+
+		// check whether this is one of the dock chunks
+		if ( dock_chunks_.contains( silent ) ) {
+			for ( auto const r : resnum_in_full_model ) {
+				dock_chunks_res.push_back( r );
+			}
+		}
+
 	}
 	runtime_assert( input_silent_res_user_defined_count == input_silent_res.size() );
 
@@ -871,6 +887,10 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		working_helical_substruct_res.push_back( working_res_map( helical_substruct_res[i] , working_res) );
 	}
 	TR.Debug << "IN setup working helical substruct res: " << working_helical_substruct_res << std::endl;
+	vector1< Size > working_dock_chunks_res;
+	//for ( Size i=1; i<= dock_chunks_res.size(); ++i ) {
+	working_dock_chunks_res = working_res_map( dock_chunks_res, working_res );
+	//}
 	if ( options_->fixed_stems() ) {
 		update_working_obligate_pairs_with_stems( working_obligate_pairs, working_stems, working_input_res );
 	}
@@ -1317,6 +1337,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	options_->set_input_res( working_input_res );
 	options_->set_input_res_initialize( working_input_res_initialize );
 	options_->set_helical_substruct_res( working_helical_substruct_res );
+	options_->set_dock_chunks_res( working_dock_chunks_res );
 	options_->set_extra_minimize_res( working_res_map( extra_minimize_res, working_res ) );
 	options_->set_extra_minimize_chi_res( working_res_map( extra_minimize_chi_res, working_res ) );
 	options_->set_output_jump_res( working_res_map( output_jump_res, working_res ) );

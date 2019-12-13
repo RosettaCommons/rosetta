@@ -277,6 +277,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	rna_de_novo_pose_initializer->set_root_at_first_rigid_body( options_->root_at_first_rigid_body() );
 	rna_de_novo_pose_initializer->set_dock_each_chunk( options_->dock_each_chunk() );
 	rna_de_novo_pose_initializer->set_dock_each_chunk_per_chain( options_->dock_each_chunk_per_chain() );
+	rna_de_novo_pose_initializer->set_dock_chunks_res( options_->dock_chunks_res() );
 	rna_de_novo_pose_initializer->set_center_jumps_in_single_stranded( options_->center_jumps_in_single_stranded() );
 	rna_de_novo_pose_initializer->set_new_fold_tree_initializer( options_->new_fold_tree_initializer() );
 	rna_de_novo_pose_initializer->set_model_with_density( options_->model_with_density() );

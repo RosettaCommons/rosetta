@@ -161,6 +161,7 @@ sources = {
 	],
 	"public/DRRAFTER": [
 		"drrafter_error_estimation",
+		"fit_helix_in_map",
 	],
 	"public/electron_density": [
 		"denovo_density",

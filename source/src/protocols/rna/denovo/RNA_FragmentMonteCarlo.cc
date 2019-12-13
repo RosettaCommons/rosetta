@@ -190,7 +190,13 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 			save_structure = pose;
 		}
 
-		if ( (!refine_pose_ || options_->refine_native_get_good_FT()) && rna_de_novo_pose_initializer_ != nullptr ) rna_de_novo_pose_initializer_->setup_fold_tree_and_jumps_and_variants( pose, *(rna_denovo_master_mover_->rna_jump_mover()), atom_level_domain_map_, *rna_chunk_library_ );
+		if ( (!refine_pose_ || options_->refine_native_get_good_FT()) && rna_de_novo_pose_initializer_ != nullptr ) {
+			if ( options_->initial_structures_provided() && !options_->ft_close_chains() ) {
+				rna_de_novo_pose_initializer_->setup_fold_tree_and_jumps_and_variants( pose, *(rna_denovo_master_mover_->rna_jump_mover()), atom_level_domain_map_, *rna_chunk_library_, true );
+			} else {
+				rna_de_novo_pose_initializer_->setup_fold_tree_and_jumps_and_variants( pose, *(rna_denovo_master_mover_->rna_jump_mover()), atom_level_domain_map_, *rna_chunk_library_ );
+			}
+		}
 
 		// the new fold tree initializer changes the structure of the pose, but especially with density
 		// we really need to use it to get a reasonable fold tree
@@ -216,6 +222,13 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 		if ( refine_pose_ ) core::pose::copydofs::copy_dofs_match_atom_names( pose, start_pose );
 
 		if ( options_->initial_structures_provided() ) core::pose::copydofs::copy_dofs_match_atom_names( pose, initial_structure );
+
+		// check that the fold tree is OK if we're using initial_structures and not ft_close_chains
+		// residues with cutpoint lower variant should also be cutpoints in the fold tree
+		// otherwise it may not be possible to close chain breaks
+		if ( options_->initial_structures_provided() && !options_->ft_close_chains() ) {
+			check_fold_tree_cutpoints_ok( pose );
+		}
 
 		rna_denovo_master_mover_->set_close_loops( options_->close_loops_after_each_move() );
 		if ( options_->close_loops_after_each_move() ) rna_loop_closer_->apply( pose );
@@ -1058,7 +1071,7 @@ RNA_FragmentMonteCarlo::setup_full_initial_structure( core::pose::Pose & pose ) 
 	Pose start_pose = pose;
 	while ( score > 0.5 && tries < 4 ) {
 		pose = start_pose;
-		score = randomize_and_close_all_chains( pose );
+		score = randomize_and_close_all_chains( pose, options_->ft_close_chains() );
 		tries += 1;
 	}
 
@@ -1066,7 +1079,8 @@ RNA_FragmentMonteCarlo::setup_full_initial_structure( core::pose::Pose & pose ) 
 
 //////////////////////////////////////////////////////////////////////////////////
 core::Real
-RNA_FragmentMonteCarlo::randomize_and_close_all_chains( core::pose::Pose & pose ) const
+RNA_FragmentMonteCarlo::randomize_and_close_all_chains( core::pose::Pose & pose,
+	bool const & close_chains ) const
 {
 
 	/////////////////
@@ -1078,6 +1092,8 @@ RNA_FragmentMonteCarlo::randomize_and_close_all_chains( core::pose::Pose & pose 
 	} else {
 		rna_denovo_master_mover_init_->do_random_moves( pose, monte_carlo_cycles_ );
 	}
+
+	if ( !close_chains ) return 0.0;
 
 	protocols::moves::MonteCarlo mc( pose, *chainbreak_sfxn_, options_->temperature() );
 	mc.score_function( *chainbreak_sfxn_ );
@@ -1131,6 +1147,27 @@ RNA_FragmentMonteCarlo::copy_structure_keep_fold_tree( core::pose::Pose & pose,
 
 }
 
+////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::check_fold_tree_cutpoints_ok( core::pose::Pose const & pose ) const
+{
+
+	bool ft_ok = true;
+
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
+		bool is_cutpoint_lower = pose.residue_type( i ).has_variant_type(
+			chemical::CUTPOINT_LOWER );
+		if ( is_cutpoint_lower && !pose.fold_tree().is_cutpoint( i ) ) {
+			ft_ok = false;
+			break;
+		}
+	}
+
+	if ( !ft_ok ) {
+		utility_exit_with_message( "Fold tree is not set up properly: there are residues with cutpoint variants that are not cutpoints in the fold tree. All chunks that are concatenated in -initial_structures must be provided as -dock_chunks OR -dock_each_chunk_per_chain must be true." );
+	}
+
+}
 //////////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarlo::show(std::ostream & output) const

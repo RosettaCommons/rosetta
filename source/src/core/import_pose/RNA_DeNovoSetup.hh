@@ -153,6 +153,7 @@ private:
 	bool minimize_rna_;
 	bool minimize_rna_has_been_specified_ = false;
 	utility::vector1< std::string > helical_substructs_;
+	utility::vector1< std::string > dock_chunks_;
 	utility::vector1< std::string > input_initialization_pdbs_;
 };
 

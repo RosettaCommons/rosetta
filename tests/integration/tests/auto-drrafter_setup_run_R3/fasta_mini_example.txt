@@ -1,0 +1,2 @@
+>mini_example.pdb A:0-34
+gggggggaaaccccccuuugggggggaaacccccc

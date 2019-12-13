@@ -194,7 +194,10 @@ private:
 	setup_full_initial_structure( core::pose::Pose & pose ) const;
 
 	core::Real
-	randomize_and_close_all_chains( core::pose::Pose & pose ) const;
+	randomize_and_close_all_chains( core::pose::Pose & pose, bool const & close_chains ) const;
+
+	void
+	check_fold_tree_cutpoints_ok( core::pose::Pose const & pose ) const;
 
 	void
 	copy_structure_keep_fold_tree( core::pose::Pose & pose,

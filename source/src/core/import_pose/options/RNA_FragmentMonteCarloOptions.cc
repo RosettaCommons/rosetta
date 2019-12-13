@@ -88,6 +88,7 @@ RNA_FragmentMonteCarloOptions::initialize_from_options( utility::options::Option
 	set_root_at_first_rigid_body( opts[ OptionKeys::rna::denovo::root_at_first_rigid_body ] );
 	set_dock_each_chunk( opts[ OptionKeys::rna::denovo::dock_each_chunk ]() );
 	set_dock_each_chunk_per_chain( opts[ OptionKeys::rna::denovo::dock_each_chunk_per_chain ]() );
+	set_dock_chunks( opts[ OptionKeys::rna::denovo::dock_chunks ]() );
 	set_center_jumps_in_single_stranded( opts[ OptionKeys::rna::denovo::center_jumps_in_single_stranded ]() );
 	set_autofilter( opts[ OptionKeys::rna::denovo::autofilter ] );
 	set_bps_moves( opts[ OptionKeys::rna::denovo::bps_moves ] );
@@ -187,6 +188,8 @@ RNA_FragmentMonteCarloOptions::initialize_from_options( utility::options::Option
 	set_superimpose_over_all( opts[ stepwise::superimpose_over_all ]() );
 
 	set_fixed_stems( opts[ OptionKeys::rna::denovo::fixed_stems ]() );
+
+	set_ft_close_chains( opts[ OptionKeys::rna::denovo::ft_close_chains ]() );
 
 	std::string const in_path = opts[ in::path::path ]()[1];
 
@@ -293,6 +296,7 @@ RNA_FragmentMonteCarloOptions::list_options_read( utility::options::OptionKeyLis
 		+ OptionKeys::rna::denovo::simple_relax
 		+ OptionKeys::stepwise::superimpose_over_all
 		+ OptionKeys::rna::denovo::fixed_stems
+		+ OptionKeys::rna::denovo::ft_close_chains
 		+ OptionKeys::in::path::path
 		+ OptionKeys::rna::denovo::vall_torsions
 		+ OptionKeys::rna::denovo::use_1jj2_torsions
@@ -306,6 +310,7 @@ RNA_FragmentMonteCarloOptions::list_options_read( utility::options::OptionKeyLis
 		+ OptionKeys::stepwise::rmsd_screen
 		+ OptionKeys::rna::denovo::dock_each_chunk
 		+ OptionKeys::rna::denovo::dock_each_chunk_per_chain
+		+ OptionKeys::rna::denovo::dock_chunks
 		+ OptionKeys::rna::denovo::center_jumps_in_single_stranded
 		+ OptionKeys::rna::denovo::ramp_rnp_vdw
 		+ OptionKeys::rna::denovo::rna_protein_docking_freq

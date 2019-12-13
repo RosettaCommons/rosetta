@@ -1,0 +1,36 @@
+-fasta fasta_mini_example.txt
+-secstruct_file secstruct_mini_example.txt
+-s all_aligned_mini_example_1.REORDER.pdb mini_example_H0_full.out.1.pdb 
+-ft_close_chains false
+-edensity:mapfile input_files/map.mrc
+-edensity:mapreso 10.0
+-new_fold_tree_initializer true
+-bps_moves false
+-out:file:silent mini_example_1_R1.out
+-minimize_rna true
+-minimize_protein_sc true
+-rna_protein_docking true
+-rnp_min_first true
+-rnp_pack_first true
+-cycles 200
+-rnp_high_res_cycles 2
+-minimize_rounds 1
+-nstruct 1
+-dock_into_density false
+-ignore_zero_occupancy false
+-convert_protein_CEN false
+-FA_low_res_rnp_scoring true
+-ramp_rnp_vdw true
+-docking_move_size 0.5 
+-dock_each_chunk_per_chain false
+-mute protocols.moves.RigidBodyMover
+-mute protocols.rna.denovo.movers.RNA_HelixMover
+-use_legacy_job_distributor true
+-no_filters
+-set_weights linear_chainbreak 20.0
+-jump_library_file RNA18_HUB_2.154_2.5.jump 
+-vall_torsions RNA18_HUB_2.154_2.5.torsions
+-score:weights stepwise/rna/rna_res_level_energy4.wts 
+-restore_talaris_behavior
+-edensity:cryoem_scatterers
+-testing:INTEGRATION_TEST
